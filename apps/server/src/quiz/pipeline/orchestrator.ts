@@ -229,7 +229,13 @@ export async function resolveAssets(input: QuizOrchestratorInput): Promise<{ ass
     visualStyle,
     activeEngine: input.activeEngine,
     antigravityClient: input.antigravityClient,
-    imageConfig: input.config.image_generation ? { api_key: input.config.image_generation.api_key, model: input.config.image_generation.model } : undefined,
+    imageConfig: input.config.image_generation ? {
+      api_key: input.config.image_generation.api_key,
+      model: input.config.image_generation.model,
+      provider: input.config.image_generation.provider,
+      base_url: input.config.image_generation.base_url,
+      quality: input.config.image_generation.quality,
+    } : undefined,
     onProgress: input.onAssetProgress,
   });
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidateQuizArtifacts("asset_resolution"));

@@ -125,6 +125,7 @@ export const api = {
   saveHistorySettings: (body: Partial<QuestionHistorySettings>) => request<{ question_history: QuestionHistorySettings }>("/api/history/settings", { method: "POST", body: JSON.stringify(body) }),
   imageSettings: () => request<{ settings: AppConfig["image_generation"] & { has_api_key?: boolean }; models: Array<{ id: string; label: string }> }>("/api/image/settings"),
   imageBalance: () => request<{ balance_vnd: number; rpm?: number }>("/api/image/balance"),
+  verifyImageConnection: (body?: { provider?: string; api_key?: string; base_url?: string; model?: string }) => request<{ balance_vnd?: number; rpm?: number; ok?: boolean; message?: string }>("/api/image/verify", { method: "POST", body: JSON.stringify(body || {}) }),
   saveImageSettings: (body: Partial<AppConfig["image_generation"]>) => request<{ image_generation: AppConfig["image_generation"] }>("/api/image/settings", { method: "POST", body: JSON.stringify(body) }),
   codexModels: () => request<{ models: CodexSettingsResponse["models"] }>("/api/codex/models"),
   storage: () => request<StorageInfo>("/api/storage"),
@@ -140,6 +141,7 @@ export const api = {
   openVideoFolder: (channelId: string, episodeId: string) => request<{ opened: true; folder_path: string }>(`/api/channels/${channelId}/episodes/${episodeId}/video/open-folder`, { method: "POST", body: "{}" }),
   generateAudio: (channelId: string, episodeId: string, sceneNumber: number) => request<{ task: Task }>(`/api/channels/${channelId}/episodes/${episodeId}/scenes/${sceneNumber}/audio`, { method: "POST", body: "{}" }),
   mergeNextScene: (channelId: string, episodeId: string, sceneNumber: number) => request<{ scenes: Scene[] }>(`/api/channels/${channelId}/episodes/${episodeId}/scenes/${sceneNumber}/merge-next`, { method: "POST", body: "{}" }),
+  voiceRenderedMetrics: () => request<{ rendered_characters: number; rendered_duration_seconds: number; rendered_segments_count: number; rendered_episodes_count: number }>("/api/voice/rendered-metrics"),
   reconnectCodex: () => request<{ status: string; message?: string }>("/api/codex/reconnect", { method: "POST", body: "{}" }),
 };
 
