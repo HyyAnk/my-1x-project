@@ -740,6 +740,7 @@ export type QuestionHistoryCheckResult = z.infer<typeof QuestionHistoryCheckResu
 
 export const RemixQuestionsInputSchema = z.object({
   question_ids: z.array(z.string()).optional(),
+  mode: z.enum(["rephrase", "replace"]).default("rephrase").optional(),
 });
 export type RemixQuestionsInput = z.infer<typeof RemixQuestionsInputSchema>;
 

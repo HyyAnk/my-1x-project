@@ -87,6 +87,7 @@ export function EpisodeDetail({
   const [historyCheck, setHistoryCheck] = useState<QuestionHistoryCheckResult | null>(null);
   const [isRemixing, setIsRemixing] = useState(false);
   const [remixingQuestionId, setRemixingQuestionId] = useState<string | null>(null);
+  const [remixAction, setRemixAction] = useState<{ questionId: string; mode: "rephrase" | "replace" } | null>(null);
   const initialWorkflowTab = (activeTab === "script" || activeTab === "visual" || activeTab === "timeline" || activeTab === "remix")
     ? activeTab
     : simplifyMode
@@ -113,23 +114,27 @@ export function EpisodeDetail({
     }
   }, [simplifyMode]);
 
-  const handleRemix = async (questionIds?: string[]) => {
+  const handleRemix = async (questionIds?: string[], mode: "rephrase" | "replace" = "rephrase") => {
     try {
       setIsRemixing(true);
       if (questionIds && questionIds.length === 1) {
         setRemixingQuestionId(questionIds[0]);
+        setRemixAction({ questionId: questionIds[0], mode });
       } else {
         setRemixingQuestionId(null);
+        setRemixAction(null);
       }
-      const res = await api.remixQuizQuestions(channel.channel_id, episodeId, questionIds);
+      const res = await api.remixQuizQuestions(channel.channel_id, episodeId, questionIds, mode);
       setHistoryCheck(res.history_check);
       await load();
-      onNotice({ tone: "good", message: `Successfully remixed ${res.remixed_count} questions and re-checked history!` });
+      const modeText = mode === "replace" ? "replaced with new questions" : "rephrased";
+      onNotice({ tone: "good", message: `Successfully ${modeText} ${res.remixed_count} questions and re-checked history!` });
     } catch (error) {
       onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Question remix failed" });
     } finally {
       setIsRemixing(false);
       setRemixingQuestionId(null);
+      setRemixAction(null);
     }
   };
 
@@ -719,8 +724,9 @@ export function EpisodeDetail({
           historyCheck={historyCheck}
           isRemixing={isRemixing}
           remixingQuestionId={remixingQuestionId}
-          onRemixAll={() => void handleRemix()}
-          onRemixSingle={(qId) => void handleRemix([qId])}
+          remixAction={remixAction}
+          onRemixAll={(mode) => void handleRemix(undefined, mode)}
+          onRemixSingle={(qId, mode) => void handleRemix([qId], mode)}
           onContinueBuild={() => switchWorkflowTab("timeline")}
         />
       ) : null}

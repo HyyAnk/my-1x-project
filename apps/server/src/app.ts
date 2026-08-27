@@ -588,8 +588,10 @@ export async function buildApp(rootDirectory = process.env.STUDIO_ROOT ?? proces
         episodeId: params.episodeId,
         activeEngine: tasks.getActiveEngine(),
         antigravityClient: antigravity,
+        codexClient: codex,
       },
-      input.question_ids
+      input.question_ids,
+      input.mode
     );
   });
   server.post("/api/channels/:channelId/episodes/:episodeId/quiz-v2/render", async (request, reply) => {
