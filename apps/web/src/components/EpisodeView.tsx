@@ -543,7 +543,6 @@ export function EpisodeDetail({
           completionLabel="Production pipeline complete"
           now={episodeClock}
           progressLabel="Production pipeline progress"
-          onCancel={handleCancelActiveTask}
         />
       ) : null}
 
@@ -591,7 +590,6 @@ export function EpisodeDetail({
             completionLabel="Video ready"
             now={episodeClock}
             compact
-            onCancel={handleCancelActiveTask}
           />
         ) : null}
         {episode.video_asset_path ? (
@@ -709,7 +707,6 @@ export function EpisodeDetail({
                   defaultOpen={config.filename === "script.md" || (!isReady(artifact.value) && index === 0)}
                   onGenerate={() => void createTask(config.taskType)}
                   onSave={(content) => void saveArtifact(config.filename, content)}
-                  onCancel={handleCancelActiveTask}
                 />
               );
             })}
@@ -748,7 +745,6 @@ export function EpisodeDetail({
                 defaultOpen={true}
                 onGenerate={() => void createTask(config.taskType)}
                 onSave={(content) => void saveArtifact("visual_bible.md", content)}
-                onCancel={handleCancelActiveTask}
               />
             );
           })()}
@@ -768,7 +764,6 @@ export function EpisodeDetail({
               onGenerate={(bundleNumber) => void generateBundleImage(bundleNumber)}
               onGenerateAll={() => void generateAllBundleImages()}
               onPreviewImage={(img) => setPreviewImage(img)}
-              onCancel={handleCancelActiveTask}
             />
           ) : null}
         </div>
@@ -852,7 +847,6 @@ export function EpisodeDetail({
               activeLabel="Building sequence-aware shots"
               completionLabel="Shot plan ready"
               now={episodeClock}
-              onCancel={handleCancelActiveTask}
             />
           ) : null}
 
@@ -1085,7 +1079,6 @@ export function EpisodeDetail({
                   completionLabel="Narration ready"
                   now={episodeClock}
                   compact
-                  onCancel={handleCancelActiveTask}
                 />
               ) : null}
               {episode.narration_asset_path ? (
@@ -1275,7 +1268,7 @@ function ImagePreviewModal({ image, onClose }: { image: PreviewImageData; onClos
   );
 }
 
-function BundleImagesPanel({ bundles, images, tasks, now, channelId, episodeId, imagesPerBundle, resolvedStyle, busy, disabled, onGenerate, onGenerateAll, onPreviewImage, onCancel }: { bundles: ReturnType<typeof parseContinuityBundles>; images: BundleImage[]; tasks: Task[]; now: number; channelId: string; episodeId: string; imagesPerBundle: number; resolvedStyle?: QuizImageStyle; busy: string | null; disabled: boolean; onGenerate: (bundleNumber: number) => void; onGenerateAll: () => void; onPreviewImage: (data: PreviewImageData) => void; onCancel?: (task: Task) => void }) {
+function BundleImagesPanel({ bundles, images, tasks, now, channelId, episodeId, imagesPerBundle, resolvedStyle, busy, disabled, onGenerate, onGenerateAll, onPreviewImage }: { bundles: ReturnType<typeof parseContinuityBundles>; images: BundleImage[]; tasks: Task[]; now: number; channelId: string; episodeId: string; imagesPerBundle: number; resolvedStyle?: QuizImageStyle; busy: string | null; disabled: boolean; onGenerate: (bundleNumber: number) => void; onGenerateAll: () => void; onPreviewImage: (data: PreviewImageData) => void }) {
   const activeImageTask = tasks.some((task) => task.task_type === "GENERATE_BUNDLE_IMAGE" && isTaskActive(task));
   return <section className="panel bundle-images-panel">
     <div className="panel-heading">
@@ -1337,7 +1330,7 @@ function BundleImagesPanel({ bundles, images, tasks, now, channelId, episodeId, 
           ))}
           <button className="quiet-button compact" disabled={disabled || taskActive || busy === `bundle-image-${bundle.bundle_number}`} onClick={() => onGenerate(bundle.bundle_number)}>{taskActive || busy === `bundle-image-${bundle.bundle_number}` ? <CircleNotch className="spin" size={14} /> : <Play size={14} />}{bundleImages.length ? "Regenerate" : "Generate anchor"}</button>
         </div>
-        {task ? <TaskProgressPanel task={task} title={bundle.bundle_id} activeLabel="Generating anchor image" completionLabel="Anchor image ready" now={now} compact onCancel={onCancel} /> : null}
+        {task ? <TaskProgressPanel task={task} title={bundle.bundle_id} activeLabel="Generating anchor image" completionLabel="Anchor image ready" now={now} compact /> : null}
       </article>;
     })}</div>}
   </section>;
@@ -1376,7 +1369,7 @@ function AssessmentPanel({ assessment }: { assessment: ProductionAssessment }) {
   return <section className={`assessment-panel ${assessment.rating}`}><div className="assessment-score"><strong>{assessment.score}</strong><span>Production score</span></div><div className="assessment-summary"><div><h2>{assessment.rating === "production_ready" ? "Production ready" : assessment.rating === "needs_work" ? "Needs review" : "Not ready"}</h2><span>{assessment.metrics.narration_word_count} / {targetWords} calibrated words · {assessment.metrics.sequence_count} sequences · {assessment.metrics.scene_count} shots · {Math.round((assessment.metrics.overlay_coverage_ratio ?? 0) * 100)}% overlays</span></div>{blockers.length ? <details><summary><WarningCircle size={16} />{blockers.length} blocker{blockers.length === 1 ? "" : "s"}</summary><ul>{assessment.issues.map((issue) => <li key={issue.code} className={issue.severity}><strong>{issue.message}</strong><span>{issue.next_action}</span></li>)}</ul></details> : <span className="assessment-ready"><CheckCircle size={16} />Quality gates passed</span>}</div></section>;
 }
 
-function ArtifactPanel({ filename, title, taskType, active, complete, content, setContent, task, now, disabled, saving, defaultOpen, onGenerate, onSave, onCancel }: { filename: ArtifactName; title: string; taskType: Task["task_type"]; active: string; complete: string; content: string; setContent: (value: string) => void; task: Task | null; now: number; disabled: boolean; saving: boolean; defaultOpen: boolean; onGenerate: () => void; onSave: (content: string) => void; onCancel?: (task: Task) => void }) {
+function ArtifactPanel({ filename, title, taskType, active, complete, content, setContent, task, now, disabled, saving, defaultOpen, onGenerate, onSave }: { filename: ArtifactName; title: string; taskType: Task["task_type"]; active: string; complete: string; content: string; setContent: (value: string) => void; task: Task | null; now: number; disabled: boolean; saving: boolean; defaultOpen: boolean; onGenerate: () => void; onSave: (content: string) => void }) {
   const [editing, setEditing] = useState(false);
   const ready = isReady(content);
   const activeTask = Boolean(task && isTaskActive(task));
@@ -1384,7 +1377,7 @@ function ArtifactPanel({ filename, title, taskType, active, complete, content, s
     <summary><div><span className="artifact-status">{ready ? <CheckCircle size={16} weight="fill" /> : <span />}</span><h2>{title}</h2></div><span>{ready ? "Ready" : "Pending"}</span></summary>
     <div className="artifact-panel-body">
       <div className="artifact-actions">{editing ? <><button className="quiet-button compact" onClick={() => setEditing(false)}><X size={14} />Cancel</button><button className="primary-button compact" disabled={saving} onClick={() => { onSave(content); setEditing(false); }}>{saving ? <CircleNotch className="spin" size={14} /> : <FloppyDisk size={14} />}Save</button></> : <><button className="quiet-button compact" disabled={!ready || activeTask} onClick={() => setEditing(true)}><PencilSimple size={14} />Edit</button><button className="primary-button compact" disabled={disabled || activeTask} onClick={onGenerate}>{activeTask ? <CircleNotch className="spin" size={14} /> : <Play size={14} />}{ready ? "Regenerate" : taskLabel(taskType)}</button></>}</div>
-      {task ? <TaskProgressPanel task={task} title={title} activeLabel={active} completionLabel={complete} now={now} compact onCancel={onCancel} /> : null}
+      {task ? <TaskProgressPanel task={task} title={title} activeLabel={active} completionLabel={complete} now={now} compact /> : null}
       {editing ? <textarea className="markdown-editor artifact-editor" value={content} onChange={(event) => setContent(event.target.value)} spellCheck={false} /> : <pre className="markdown-preview artifact-preview">{ready ? content : `${title} has not started.`}</pre>}
     </div>
   </details>;

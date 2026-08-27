@@ -298,7 +298,7 @@ export function App() {
           }}
           onShutdown={() => void stopDashboard()}
         />
-        {page !== "tasks" && (
+        {page !== "tasks" && !selectedEpisodeId && (
           <TaskActivityBar tasks={activeEpisodeTasks} realtimeStatus={realtimeStatus} now={taskClock} onOpenTasks={() => navigate("tasks")} onOpenEpisode={openEpisode} />
         )}
         {loading ? <LoadingState /> : page === "dashboard" ? (
