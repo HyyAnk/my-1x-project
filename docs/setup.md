@@ -1,0 +1,56 @@
+# Setup
+
+## One-click startup on Windows
+
+Use [`run dashboard.bat`](../run%20dashboard.bat) as the normal launcher. It checks Node.js, Python, Corepack, pnpm, and workspace dependencies, then:
+
+1. creates `services/tts/.venv` when needed;
+2. installs Chatterbox, PyTorch, FastAPI, and Uvicorn once;
+3. starts the local Chatterbox Turbo sidecar on `127.0.0.1:8890` with native `[chuckle]`/`[laugh]` support;
+4. waits for the model to finish loading;
+5. starts the dashboard only after audio is ready.
+
+Use the Power button in the dashboard top bar to stop the local services when you are finished. The same action is available from [`stop dashboard.bat`](../stop%20dashboard.bat); it leaves the selected content storage folder and all channel files untouched.
+
+The first startup can take several minutes and uses substantial disk space because PyTorch and the Chatterbox model are downloaded. Later startups reuse the ignored virtual environment and cached model. If installation or model loading fails, the launcher stops with a readable error and points to `.documentary-studio/logs/tts.stderr.log` instead of opening a dashboard that cannot generate audio.
+
+The current Chatterbox package requires Python 3.10 or newer and is tested upstream on Python 3.11. The launcher prefers Python 3.11, then 3.10, then 3.13. If no suitable Python is installed, it attempts to install Python 3.11 through winget.
+
+## Manual development startup
+
+For frontend/backend development without the managed audio bootstrap:
+
+```text
+pnpm install
+pnpm dev
+```
+
+To prepare and run audio manually instead:
+
+```text
+python -m venv services/tts/.venv
+services/tts/.venv/Scripts/python -m pip install -r services/tts/requirements.txt
+cd services/tts
+.venv/Scripts/python -m uvicorn app:app --host 127.0.0.1 --port 8890
+```
+
+Check `http://127.0.0.1:8890/health`. It returns ready only after the Turbo model is loaded and `paralinguistic_tags` is enabled. The Node server talks to this service over loopback HTTP; it never imports Python packages directly.
+
+Narration scripts may contain invisible `AUDIO_CUE` comments for restrained chuckles or laughs. The one-click launcher enables the English Turbo model automatically, so no extra command is required. For manual startup, use:
+
+```powershell
+$env:CHATTERBOX_MODEL = "turbo"
+.\services\tts\.venv\Scripts\python -m uvicorn app:app --host 127.0.0.1 --port 8890
+```
+
+Turbo supports `[chuckle]` and `[laugh]`; the launcher also restarts an already-running cue-less sidecar when needed. The health endpoint reports `paralinguistic_tags: true` when Turbo is active.
+
+Audio settings are available in Settings. The service URL, Chatterbox controls, and optional per-channel WAV voice reference are stored locally. Voice references and generated WAV files stay in the selected content storage folder, which is ignored by Git.
+
+Settings also contains a shared voice library. Adding a voice creates a reusable reference and a cached preview under `.documentary-studio/voices/`; assigning it to a channel controls the next audio generation task. Episode audio can be queued with Generate all audio and downloaded as separate scene files or one merged WAV.
+
+The Codex settings panel also controls session cleanup. Completed sessions are auto-deleted by default; failed/cancelled sessions are retained for seven days by default. The cleanup action is safe to run manually and only removes Codex transcripts, never channel or episode files.
+
+On the first launch, the dashboard asks for a local content storage folder. It creates `channels/`, `.documentary-studio/tasks/`, `.documentary-studio/codex/`, and `.documentary-studio/logs/` inside that folder. The code, templates, and shared rules remain in the Git project.
+
+The selected folder is saved locally in `.documentary-studio/storage.local.json`, which is ignored by Git. Change it later from Settings → Storage folder. Existing content is not moved automatically when switching folders. To use a different code project root, set `STUDIO_ROOT` before starting the server. To enable extra structured diagnostics, set `STUDIO_DEBUG=1`.

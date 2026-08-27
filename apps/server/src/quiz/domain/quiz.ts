@@ -1,0 +1,230 @@
+import {
+  QuizQuestionFormatSchema,
+  QuizV2Schema,
+  QUIZ_MAX_CHOICES_PER_QUESTION,
+  QUIZ_MIN_CHOICES_PER_QUESTION,
+  type QuizConfig,
+  type QuizQuestion,
+  type QuizQuestionFormat,
+  type QuizV2,
+  type Scene,
+} from "@studio/shared";
+
+export class QuizDomainError extends Error {
+  constructor(message: string, public readonly code = "QUIZ_DOMAIN_ERROR") {
+    super(message);
+    this.name = "QuizDomainError";
+  }
+}
+
+export function normalizeQuizText(value: string): string {
+  return value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase();
+}
+
+export function stripQuizChoiceLabel(value: string): string {
+  return value.trim().replace(/^(?:(?:choice|option)[\s_-]*)?(?:[a-z]|\d{1,2})\s*[-–—:.)]\s+/i, "").trim();
+}
+
+function normalizeQuizChoiceText(value: string): string {
+  return normalizeQuizText(stripQuizChoiceLabel(value)).replace(/[.!?…。！？]+$/u, "");
+}
+
+/**
+ * Returns the unique visible choice represented by a spoken/scripted answer.
+ * Quiz shot plans often say "B — Inclined plane" while the visible choice is
+ * only "Inclined plane". The label is accepted only when its suffix is empty
+ * or still matches the referenced visible choice.
+ */
+export function resolveVisibleQuizChoice(choices: string[], answer: string): number | null {
+  const normalizedAnswer = normalizeQuizChoiceText(answer);
+  const normalizedChoices = choices.map((choice, index) => ({ index, normalized: normalizeQuizChoiceText(choice) }));
+  const exactMatches = normalizedChoices.filter((choice) => choice.normalized === normalizedAnswer);
+  if (exactMatches.length === 1) return exactMatches[0].index;
+  if (exactMatches.length > 1) return null;
+
+  const candidates = [answer.trim(), stripAnswerLead(answer)].filter(Boolean);
+  for (const candidate of candidates) {
+    const candidateNormalized = normalizeQuizChoiceText(candidate);
+    const candidateExactMatches = normalizedChoices.filter((choice) => choice.normalized === candidateNormalized);
+    if (candidateExactMatches.length === 1) return candidateExactMatches[0].index;
+    if (candidateExactMatches.length > 1) return null;
+
+    const labeled = candidate.match(/^(?:(?:choice|option)[\s_-]*)?([a-z]|\d{1,2})(?:\s*(?:[-–—:.)]\s*|\s+)(.*))?$/i);
+    if (!labeled) continue;
+    const token = labeled[1] ?? "";
+    const index = /^[a-z]$/i.test(token) ? token.toLowerCase().charCodeAt(0) - 97 : Number(token) - 1;
+    const visibleChoice = normalizedChoices[index];
+    if (!visibleChoice) continue;
+    const suffix = normalizeQuizChoiceText(labeled[2] ?? "");
+    if (!suffix || matchesVisibleChoiceText(suffix, visibleChoice.normalized)) return index;
+  }
+
+  return null;
+}
+
+export function canonicalizeVisibleQuizAnswer(choices: string[], answer: string): string | null {
+  const index = resolveVisibleQuizChoice(choices, answer);
+  return index === null ? null : stripQuizChoiceLabel(choices[index] ?? "");
+}
+
+function stripAnswerLead(value: string): string {
+  return value.trim().replace(/^(?:(?:the\s+)?(?:correct|right|canonical)\s+)?(?:answer|choice|option)\s*(?:is|:|=|-)?\s*/i, "").trim();
+}
+
+function matchesVisibleChoiceText(candidate: string, visibleChoice: string): boolean {
+  if (candidate === visibleChoice) return true;
+  if (!candidate.startsWith(`${visibleChoice} `)) return false;
+  const remainder = candidate.slice(visibleChoice.length).trim();
+  return /^(?:because|since|as|is|means|[([—–,:;])/i.test(remainder);
+}
+
+export function validateQuizV2(value: unknown): QuizV2 {
+  try {
+    return QuizV2Schema.parse(value);
+  } catch (error) {
+    throw new QuizDomainError(error instanceof Error ? error.message : "Quiz V2 is invalid", "QUIZ_INVALID");
+  }
+}
+
+export function deriveQuizV2FromScenes(input: {
+  episodeId: string;
+  language: string;
+  ageBand: QuizConfig["age_band"];
+  format: QuizConfig["quiz_format"];
+  scenes: Scene[];
+}): QuizV2 {
+  const grouped = new Map<number, Scene[]>();
+  for (const scene of input.scenes) {
+    const number = scene.quiz?.question_number;
+    if (!number) continue;
+    grouped.set(number, [...(grouped.get(number) ?? []), scene]);
+  }
+  if (!grouped.size) throw new QuizDomainError("Quiz scenes contain no numbered questions", "QUIZ_QUESTIONS_MISSING");
+
+  const questions = [...grouped.entries()].sort(([a], [b]) => a - b).map(([number, questionScenes], index) => {
+    const quizScenes = questionScenes.map((scene) => scene.quiz).filter((quiz): quiz is NonNullable<Scene["quiz"]> => Boolean(quiz));
+    const question = quizScenes.find((quiz) => quiz.question.trim())?.question.trim() ?? "";
+    const format = normalizeQuestionFormat(input.format);
+    const maxChoices = format === "true_false" ? 2 : QUIZ_MAX_CHOICES_PER_QUESTION;
+    const minChoices = format === "true_false" ? 2 : QUIZ_MIN_CHOICES_PER_QUESTION;
+    const rawChoices = (quizScenes.find((quiz) => quiz.choices.length > 0)?.choices ?? []);
+    const answer = quizScenes.find((quiz) => quiz.answer.trim())?.answer.trim() ?? "";
+    const explanation = quizScenes.find((quiz) => quiz.explanation.trim())?.explanation.trim() ?? "";
+
+    let choicesText: string[];
+    if (format === "true_false" && rawChoices.length > 2) {
+      const matchIdx = resolveVisibleQuizChoice(rawChoices, answer);
+      if (matchIdx !== null && matchIdx >= 2) {
+        choicesText = [rawChoices[0] ?? "", rawChoices[matchIdx]];
+      } else {
+        choicesText = rawChoices.slice(0, 2);
+      }
+    } else {
+      choicesText = rawChoices.slice(0, maxChoices);
+    }
+
+    if (!question || choicesText.length < minChoices || choicesText.length > maxChoices || !answer || !explanation) {
+      throw new QuizDomainError(
+        "Question " + number + " is missing question, choices (" +
+        (format === "true_false" ? "must have exactly 2 choices: True/False" : "must have 2–3 choices: A, B, or C") +
+        "), canonical answer, or explanation",
+        "QUIZ_QUESTION_INCOMPLETE"
+      );
+    }
+    const choices = choicesText.map((text, choiceIndex) => ({ id: "choice-" + String.fromCharCode(97 + choiceIndex), text: stripQuizChoiceLabel(text) }));
+    const canonicalChoiceIndex = resolveVisibleQuizChoice(choices.map((choice) => choice.text), answer);
+    if (canonicalChoiceIndex === null) throw new QuizDomainError("Question " + number + " answer \"" + answer + "\" does not match exactly one visible choice", "QUIZ_CANONICAL_ANSWER_INVALID");
+    const normalizedChoices = choices.map((choice) => normalizeQuizChoiceText(choice.text));
+    if (new Set(normalizedChoices).size !== normalizedChoices.length) throw new QuizDomainError("Question " + number + " contains duplicate visible choices", "QUIZ_DUPLICATE_CHOICE");
+    const sourceIds = [...new Set(questionScenes.flatMap((scene) => scene.source_ids))];
+    const visualOpportunity = quizScenes.find((quiz) => quiz.image_prompt.trim())?.image_prompt.trim() ?? "";
+    return {
+      id: "question-" + String(index + 1).padStart(2, "0"),
+      number: index + 1,
+      format,
+      difficulty: Math.min(5, 1 + Math.floor(index / Math.max(1, Math.ceil(grouped.size / 5)))),
+      question,
+      choices,
+      correct_choice_id: choices[canonicalChoiceIndex].id,
+      explanation,
+      fun_fact: "",
+      source_ids: sourceIds,
+      visual_opportunity: visualOpportunity,
+      validation: { semantic_status: "validated", source_coverage: sourceIds.length > 0, fact_locked: true },
+    };
+  });
+  const balancedQuestions = balanceQuizChoicePositions(questions);
+  return validateQuizV2({ schema_version: 2, episode_id: input.episodeId, age_band: input.ageBand, language: input.language, questions: balancedQuestions });
+}
+
+/**
+ * Ensures balanced choice positions across questions and strictly prevents
+ * two consecutive questions from sharing the same correct answer position
+ * (e.g. choice A followed by choice A) for layouts with 3 choices.
+ */
+export function balanceQuizChoicePositions(questions: QuizQuestion[]): QuizQuestion[] {
+  let previousCorrectIndex: number | null = null;
+  const positionCounts: number[] = [0, 0, 0];
+
+  return questions.map((question) => {
+    if (question.choices.length < 3) {
+      const currentIdx = question.choices.findIndex((c) => c.id === question.correct_choice_id);
+      if (currentIdx >= 0) {
+        positionCounts[currentIdx] = (positionCounts[currentIdx] ?? 0) + 1;
+        previousCorrectIndex = currentIdx;
+      }
+      return question;
+    }
+
+    const currentCorrectIdx = question.choices.findIndex((c) => c.id === question.correct_choice_id);
+    if (currentCorrectIdx < 0) return question;
+
+    const correctChoiceText = question.choices[currentCorrectIdx]!.text;
+    const otherChoicesTexts = question.choices.filter((_, idx) => idx !== currentCorrectIdx).map((c) => c.text);
+
+    let targetCorrectIdx = currentCorrectIdx;
+
+    if (previousCorrectIndex !== null && currentCorrectIdx === previousCorrectIndex) {
+      const candidates: number[] = [];
+      for (let i = 0; i < question.choices.length; i++) {
+        if (i !== previousCorrectIndex) {
+          candidates.push(i);
+        }
+      }
+      candidates.sort((a, b) => {
+        const countDiff = (positionCounts[a] ?? 0) - (positionCounts[b] ?? 0);
+        if (countDiff !== 0) return countDiff;
+        return a - b;
+      });
+      targetCorrectIdx = candidates[0] ?? ((currentCorrectIdx + 1) % question.choices.length);
+    }
+
+    const newChoicesTexts = new Array<string>(question.choices.length);
+    newChoicesTexts[targetCorrectIdx] = correctChoiceText;
+    let otherIdx = 0;
+    for (let i = 0; i < question.choices.length; i++) {
+      if (i !== targetCorrectIdx) {
+        newChoicesTexts[i] = otherChoicesTexts[otherIdx++] ?? "";
+      }
+    }
+
+    const newChoices = newChoicesTexts.map((text, idx) => ({
+      id: "choice-" + String.fromCharCode(97 + idx),
+      text,
+    }));
+
+    positionCounts[targetCorrectIdx] = (positionCounts[targetCorrectIdx] ?? 0) + 1;
+    previousCorrectIndex = targetCorrectIdx;
+
+    return {
+      ...question,
+      choices: newChoices,
+      correct_choice_id: newChoices[targetCorrectIdx]!.id,
+    };
+  });
+}
+
+function normalizeQuestionFormat(format: QuizConfig["quiz_format"]): QuizQuestionFormat {
+  const candidate = format === "knowledge" ? "multiple_choice" : format;
+  return QuizQuestionFormatSchema.parse(candidate);
+}

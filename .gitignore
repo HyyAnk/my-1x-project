@@ -1,0 +1,57 @@
+node_modules/
+apps/*/dist/
+packages/*/dist/
+coverage/
+.vite/
+*.tsbuildinfo
+test-results/
+playwright-report/
+blob-report/
+.documentary-studio/logs/
+.documentary-studio/tasks/
+.documentary-studio/codex/
+.documentary-studio/voices/
+.documentary-studio/*.local.*
+apps/*/.documentary-studio/
+**/.documentary-studio/logs/
+**/.documentary-studio/tasks/
+**/.documentary-studio/codex/
+**/.documentary-studio/voices/
+services/tts/.venv/
+services/tts/__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.tmp
+*.bak
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local production content: keep the folder, never publish channel artifacts.
+channels/*
+!channels/.gitkeep
+
+# Generated validation, preview, and render output.
+tmp/
+output/
+.context/
+
+# Machine-local Documentary Studio configuration.
+.documentary-studio/config.json
+.documentary-studio/*.json
+
+# Heavy media assets managed via GitHub Releases
+assets/audio/bgm/tracks/*.mp3
+!assets/audio/bgm/tracks/.gitkeep
+assets/audio/bgm/*.zip
+dist-assets/
+*.zip
+
+
