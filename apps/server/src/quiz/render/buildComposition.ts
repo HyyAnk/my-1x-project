@@ -171,7 +171,7 @@ function questionClip(input: {
   const choices = showChoices ? choiceMarkup(q, input.phase, input.beat.archetype) : "";
   const illustration = input.beat.archetype === "illustrated_multiple_choice" || input.beat.archetype === "image_guess"
     ? topicIllustration(q.question) : "";
-  const mascotState = input.phase === "explain" ? input.mascotState ?? "celebrate" : input.phase === "think" ? input.mascotState ?? "thinking" : input.phase === "countdown" ? "thinking" : input.mascotState ?? input.beat.mascot_state ?? "curious";
+  const mascotState = (input.phase === "explain" || input.phase === "reveal") ? "celebrate" : "thinking";
   const tone = (q.number - 1) % 4;
   return "<section id=\"quiz-q" + q.number + "-" + input.phase + "-" + Math.round(input.start * 1000) + "\" class=\"clip quiz-v2-clip theme-" + input.theme + " tone-" + tone + " phase-" + input.phase + " archetype-" + input.beat.archetype + (isFinal ? " is-final" : "") + "\" data-start=\"" + input.start.toFixed(3) + "\" data-duration=\"" + duration.toFixed(3) + "\" data-track-index=\"0\"><div class=\"pattern pattern-one\"></div><div class=\"pattern pattern-two\"></div><header><div class=\"counter\">" + escapeHtml(input.copy.question) + " " + q.number + " / " + input.count + "</div><div class=\"mode-pill\">" + escapeHtml(questionTitle) + "</div></header><div class=\"content-wrap\"><div class=\"question-panel\"><h1>" + escapeHtml(q.question) + "</h1>" + illustration + "</div>" + choices + body + "</div><div class=\"mascot mascot-" + escapeHtml(mascotState) + "\"><i></i><b></b><em></em></div><div class=\"progress-dots\">" + progressDots(q.number, input.count) + "</div></section>";
 }

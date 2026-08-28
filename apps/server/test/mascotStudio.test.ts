@@ -1,7 +1,7 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildApp } from "../src/app.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 import { preflightQuizRender } from "../src/quiz/qa/preflight.js";
@@ -330,4 +330,68 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       await app.server.close();
     }
   }, 30_000);
+
+  it("passes referenceImageBase64 from master concept to generateGpti2ImageBytes when API key is active", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "mascot-ref-test-"));
+    roots.push(root);
+    await mkdir(path.join(root, "templates"), { recursive: true });
+    await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
+    await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
+
+    const app = await buildApp(root);
+    try {
+      const { generateMascotActionSprite } = await import("../src/quiz/mascotService.js");
+      const fakePngBytes = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "base64");
+
+      const mascot = await app.repository.saveMascot({
+        name: "Test Milo",
+        description: "Cute test owl",
+        visual_style: "pixar_3d",
+        master_prompt: "Cute test owl with red glasses",
+        color_theme: "#06b6d4",
+      });
+
+      // Save master concept asset
+      const masterUrl = await app.repository.saveMascotAsset(mascot.id, "master_concept_1.png", fakePngBytes);
+      const mascotWithMaster = await app.repository.saveMascot({
+        ...mascot,
+        master_image_url: masterUrl,
+      });
+
+      // Mock global fetch to capture request
+      const originalFetch = globalThis.fetch;
+      let capturedBody: any = null;
+      globalThis.fetch = vi.fn().mockImplementation((_url: string, init: any) => {
+        capturedBody = JSON.parse(init.body as string);
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          text: async () => JSON.stringify({
+            data: [{ b64_json: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" }],
+            price_vnd: 50,
+          }),
+        } as unknown as Response);
+      });
+
+      try {
+        const result = await generateMascotActionSprite(
+          app.repository,
+          mascotWithMaster,
+          "wave",
+          { enabled: true, api_key: "sk-mock-key", model: "gpt-image-2", provider: "gpti2", base_url: "https://gpti2.store", image_size: "1024x1024", quality: "low" },
+        );
+
+        expect(result.action_sprite.action).toBe("wave");
+        expect(capturedBody).toBeDefined();
+        expect(capturedBody.image_base64).toBeDefined();
+        expect(capturedBody.image_url).toContain("data:image/png;base64,");
+        expect(capturedBody.ref_images[0]).toContain("data:image/png;base64,");
+        expect(result.prompt_used).toContain("STRICT CHARACTER CONTINUITY");
+      } finally {
+        globalThis.fetch = originalFetch;
+      }
+    } finally {
+      await app.server.close();
+    }
+  });
 });

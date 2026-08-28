@@ -20,6 +20,7 @@ import {
   CaretRight,
   Check,
   CheckCircle,
+  Circle,
   CircleNotch,
   Copy,
   DownloadSimple,
@@ -33,6 +34,7 @@ import {
   MagnifyingGlassPlus,
   PaintBrush,
   Pause,
+  PencilSimple,
   Play,
   Plus,
   Rocket,
@@ -48,6 +50,7 @@ import {
 import { api } from "../api";
 import type { Notice } from "./types";
 import { EmptyState } from "./EmptyState";
+import { MascotAssignModal } from "./MascotAssignModal";
 import { useTranslation } from "../i18n";
 
 const STYLE_OPTIONS: { id: QuizImageStyle; icon: string; title: string; descKey: string }[] = [
@@ -144,10 +147,6 @@ export function MascotStudioView({
 
   // Quick Assign Modal state
   const [quickAssignMascot, setQuickAssignMascot] = useState<MascotProfile | null>(null);
-  const [quickAssignedChannels, setQuickAssignedChannels] = useState<string[]>([]);
-  const [quickPosition, setQuickPosition] = useState<"bottom_left" | "bottom_right">("bottom_left");
-  const [quickScale, setQuickScale] = useState<number>(1.0);
-  const [savingQuickAssign, setSavingQuickAssign] = useState(false);
 
   // Scenario Playback state
   const [isScenarioMode, setIsScenarioMode] = useState(false);
@@ -170,7 +169,7 @@ export function MascotStudioView({
 
   // Generator State
   const [editingMascot, setEditingMascot] = useState<MascotProfile | null>(null);
-  const [generatorStep, setGeneratorStep] = useState<1 | 2 | 3 | 4>(1);
+  const [generatorStep, setGeneratorStep] = useState<1 | 2 | 3>(1);
   const [genName, setGenName] = useState("");
   const [genDescription, setGenDescription] = useState("");
   const [genStyle, setGenStyle] = useState<QuizImageStyle>("pixar_3d");
@@ -221,6 +220,10 @@ export function MascotStudioView({
   const [promptCopied, setPromptCopied] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
+
+  // Step 2 UI States
+  const [dragOverAction, setDragOverAction] = useState<MascotActionType | null>(null);
+  const [promptEditAction, setPromptEditAction] = useState<MascotActionType | null>(null);
 
   // Live Studio Player state
   const [activePreviewAction, setActivePreviewAction] = useState<MascotActionType>("wave");
@@ -403,7 +406,7 @@ export function MascotStudioView({
       }
       onNotice({ tone: "good", message: t("notices.batchCompleted", { count: actionsToGen.length }) });
       await loadMascots();
-      setGeneratorStep(4);
+      setGeneratorStep(3);
     } catch (err) {
       onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.batchFailed") });
     } finally {
@@ -443,6 +446,17 @@ export function MascotStudioView({
       onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.uploadFailed") });
     } finally {
       setBusyAction(null);
+    }
+  };
+
+  // Drag & drop upload handler
+  const handleDropSprite = (action: MascotActionType, e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverAction(null);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      void handleUploadSprite(action, file);
     }
   };
 
@@ -519,48 +533,6 @@ export function MascotStudioView({
   // Quick Assign Handlers (Instant from Library)
   const handleOpenQuickAssign = (mascot: MascotProfile) => {
     setQuickAssignMascot(mascot);
-    setQuickAssignedChannels(mascot.assigned_channel_ids || []);
-    const sampleChannel = channels.find((c) => c.mascot_id === mascot.id);
-    if (sampleChannel?.mascot_config) {
-      setQuickPosition(sampleChannel.mascot_config.position || "bottom_left");
-      setQuickScale(sampleChannel.mascot_config.scale || 1.0);
-    } else {
-      setQuickPosition("bottom_left");
-      setQuickScale(1.0);
-    }
-  };
-
-  const handleSaveQuickAssign = async () => {
-    if (!quickAssignMascot) return;
-    setSavingQuickAssign(true);
-    try {
-      for (const channel of channels) {
-        const isAssigned = quickAssignedChannels.includes(channel.channel_id);
-        if (isAssigned && channel.mascot_id !== quickAssignMascot.id) {
-          await api.assignMascotToChannel(channel.channel_id, {
-            mascot_id: quickAssignMascot.id,
-            config: { enabled: true, position: quickPosition, scale: quickScale },
-          });
-        } else if (!isAssigned && channel.mascot_id === quickAssignMascot.id) {
-          await api.assignMascotToChannel(channel.channel_id, {
-            mascot_id: null,
-          });
-        } else if (isAssigned && channel.mascot_id === quickAssignMascot.id) {
-          await api.assignMascotToChannel(channel.channel_id, {
-            mascot_id: quickAssignMascot.id,
-            config: { enabled: true, position: quickPosition, scale: quickScale },
-          });
-        }
-      }
-      onNotice({ tone: "good", message: t("notices.channelsAssigned") });
-      await onRefreshChannels();
-      await loadMascots();
-      setQuickAssignMascot(null);
-    } catch (err) {
-      onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.channelsAssignFailed") });
-    } finally {
-      setSavingQuickAssign(false);
-    }
   };
 
   // Phase 3: Director Timeline Keyframing Engine
@@ -825,66 +797,77 @@ export function MascotStudioView({
           ) : (
             <div className="mascot-grid">
               {filteredMascots.map((mascot) => {
-                const availableActionsCount = Object.values(mascot.actions).filter((act) => act?.sprite_url).length;
                 const assignedCount = mascot.assigned_channel_ids?.length || 0;
+                const assignedNames = mascot.assigned_channel_ids
+                  ?.map((cid) => channels.find((c) => c.channel_id === cid)?.display_name || cid)
+                  .join(", ") || "";
 
                 return (
-                  <article key={mascot.id} className="mascot-card" style={{ borderColor: mascot.color_theme || "var(--line)" }}>
-                    <div className="mascot-card-preview-box">
+                  <article key={mascot.id} className="mascot-card">
+                    <div
+                      className="mascot-card-preview-box"
+                      onClick={() => handleEditMascot(mascot)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          handleEditMascot(mascot);
+                        }
+                      }}
+                    >
                       {mascot.master_image_url ? (
                         <img src={mascot.master_image_url} alt={mascot.name} className="mascot-card-img" />
                       ) : (
                         <div className="mascot-card-placeholder">
-                          <Smiley size={48} weight="duotone" style={{ color: mascot.color_theme || "var(--accent)" }} />
+                          <Smiley size={44} weight="duotone" />
                           <span>{t("mascots.noImagePlaceholder")}</span>
                         </div>
                       )}
-                      <span className="mascot-style-pill" style={{ backgroundColor: mascot.color_theme || "var(--accent)" }}>
-                        {QUIZ_IMAGE_STYLE_LABELS[mascot.visual_style] || mascot.visual_style}
-                      </span>
+
+                      <div className="mascot-card-meta-top">
+                        <span className="mascot-style-pill">
+                          {QUIZ_IMAGE_STYLE_LABELS[mascot.visual_style] || mascot.visual_style}
+                        </span>
+
+                        <div className="mascot-card-quick-actions" onClick={(e) => e.stopPropagation()}>
+                          <a
+                            href={api.exportMascotUrl(mascot.id)}
+                            download={`mascot_${mascot.id}.zip`}
+                            className="mascot-quick-action-btn"
+                            title={t("mascots.exportZipTooltip")}
+                          >
+                            <DownloadSimple size={14} />
+                          </a>
+                          <button
+                            type="button"
+                            className="mascot-quick-action-btn is-danger"
+                            aria-label={t("mascots.deleteMascotAria", { name: mascot.name })}
+                            onClick={() => setDeleteTarget(mascot)}
+                            title={t("common.delete")}
+                          >
+                            <Trash size={14} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {assignedCount > 0 ? (
+                        <div className="mascot-card-meta-bottom" title={assignedNames}>
+                          <span className="mascot-channel-badge">
+                            <Broadcast size={12} weight="fill" />
+                            <span>{t("mascots.activeChannelsShort", { count: assignedCount })}</span>
+                          </span>
+                        </div>
+                      ) : null}
                     </div>
 
                     <div className="mascot-card-content">
                       <div className="mascot-card-header">
-                        <h3>{mascot.name}</h3>
-                        <span className="mascot-sprites-badge" title={`${availableActionsCount} / 7 Sprite Sheets`}>
-                          {t("mascots.posesBadge", { count: availableActionsCount })}
-                        </span>
+                        <h3 onClick={() => handleEditMascot(mascot)}>{mascot.name}</h3>
                       </div>
 
-                      <p className="mascot-card-desc">{mascot.description || mascot.master_prompt || t("mascots.noDescPlaceholder")}</p>
-
-                      {/* Action Pills ready */}
-                      <div className="mascot-card-action-tags">
-                        {ALL_MASCOT_ACTIONS.map((action) => {
-                          const actionMeta = getLocalizedActionMeta(action, t);
-                          const ready = Boolean(mascot.actions[action]?.sprite_url);
-                          return (
-                            <span
-                              key={action}
-                              className={`action-tag-pill ${ready ? "is-ready" : "is-missing"}`}
-                              title={ready ? t("mascots.poseReadyTooltip", { label: actionMeta.label }) : t("mascots.poseMissingTooltip", { label: actionMeta.label })}
-                            >
-                              {actionMeta.icon} {action}
-                            </span>
-                          );
-                        })}
-                      </div>
-
-                      {/* Assigned Channels */}
-                      <div className="mascot-card-channels-row">
-                        <Broadcast size={14} weight="fill" style={{ color: "var(--accent)" }} />
-                        <span>
-                          {assignedCount === 0
-                            ? t("mascots.notAssignedChannels")
-                            : t("mascots.assignedChannelsCount", {
-                                count: assignedCount,
-                                names: mascot.assigned_channel_ids
-                                  .map((cid) => channels.find((c) => c.channel_id === cid)?.display_name || cid)
-                                  .join(", "),
-                              })}
-                        </span>
-                      </div>
+                      <p className={`mascot-card-desc ${!mascot.description && !mascot.master_prompt ? "is-empty" : ""}`}>
+                        {mascot.description || mascot.master_prompt || t("mascots.noDescPlaceholder")}
+                      </p>
 
                       <div className="mascot-card-footer">
                         <button
@@ -905,24 +888,6 @@ export function MascotStudioView({
                           <MagicWand size={14} weight="bold" />
                           <span>{t("mascots.generatorBtn")}</span>
                         </button>
-                        <a
-                          href={api.exportMascotUrl(mascot.id)}
-                          download={`mascot_${mascot.id}.zip`}
-                          className="icon-button"
-                          title={t("mascots.exportZipTooltip")}
-                          style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
-                        >
-                          <DownloadSimple size={15} />
-                        </a>
-                        <button
-                          type="button"
-                          className="icon-button danger"
-                          aria-label={t("mascots.deleteMascotAria", { name: mascot.name })}
-                          onClick={() => setDeleteTarget(mascot)}
-                          title={t("common.delete")}
-                        >
-                          <Trash size={16} />
-                        </button>
                       </div>
                     </div>
                   </article>
@@ -933,7 +898,7 @@ export function MascotStudioView({
         </div>
       ) : null}
 
-      {/* TAB 2: MASCOT GENERATOR (4-STEP WIZARD) */}
+      {/* TAB 2: MASCOT GENERATOR (3-STEP STREAMLINED STUDIO) */}
       {activeTab === "generator" ? (
         <div className="mascot-generator-container">
           {/* Stepper Header */}
@@ -951,6 +916,7 @@ export function MascotStudioView({
               type="button"
               className={`wizard-step-btn ${generatorStep === 2 ? "is-active" : generatorStep > 2 ? "is-done" : ""}`}
               onClick={() => setGeneratorStep(2)}
+              disabled={!editingMascot?.master_image_url}
             >
               <span className="step-num">2</span>
               <span className="step-label">{t("mascots.generatorStep2")}</span>
@@ -958,20 +924,12 @@ export function MascotStudioView({
             <div className="wizard-step-line" />
             <button
               type="button"
-              className={`wizard-step-btn ${generatorStep === 3 ? "is-active" : generatorStep > 3 ? "is-done" : ""}`}
+              className={`wizard-step-btn ${generatorStep === 3 ? "is-active" : ""}`}
               onClick={() => setGeneratorStep(3)}
+              disabled={!editingMascot?.master_image_url}
             >
               <span className="step-num">3</span>
               <span className="step-label">{t("mascots.generatorStep3")}</span>
-            </button>
-            <div className="wizard-step-line" />
-            <button
-              type="button"
-              className={`wizard-step-btn ${generatorStep === 4 ? "is-active" : ""}`}
-              onClick={() => setGeneratorStep(4)}
-            >
-              <span className="step-num">4</span>
-              <span className="step-label">{t("mascots.generatorStep4")}</span>
             </button>
           </div>
 
@@ -1230,9 +1188,9 @@ export function MascotStudioView({
                       className={`quiet-button ${editingMascot?.master_image_url ? "is-ready-forward" : ""}`}
                       onClick={() => setGeneratorStep(2)}
                       disabled={!editingMascot?.master_image_url}
-                      title={!editingMascot?.master_image_url ? "Vui lòng sinh Master Concept Sheet trước khi sang bước 2" : undefined}
+                      title={!editingMascot?.master_image_url ? "Vui lòng sinh hoặc tải lên Master Concept trước khi sang bước 2" : undefined}
                     >
-                      <span>{t("mascots.nextActionMatrixBtn")}</span>
+                      <span>{t("mascots.nextStatesBtn")}</span>
                       <ArrowRight size={15} />
                     </button>
                   </div>
@@ -1334,79 +1292,202 @@ export function MascotStudioView({
             </div>
           ) : null}
 
-          {/* STEP 2: ACTION MATRIX */}
+          {/* STEP 2: EXPRESSIVE STATES STUDIO & MICRO-MOTION */}
           {generatorStep === 2 ? (
             <div className="wizard-step-content">
               <div className="wizard-card">
                 <div className="wizard-card-header-flex">
                   <div>
-                    <h3>{t("mascots.actionMatrixTitle")}</h3>
-                    <p className="wizard-card-sub">{t("mascots.actionMatrixSub")}</p>
-                  </div>
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    <button
-                      type="button"
-                      className="quiet-button compact"
-                      onClick={() => {
-                        const allSelected = Object.fromEntries(ALL_MASCOT_ACTIONS.map((a) => [a, true])) as Record<MascotActionType, boolean>;
-                        setSelectedActions(allSelected);
-                      }}
-                    >
-                      {t("mascots.selectAllBtn")}
-                    </button>
+                    <h3>{t("mascots.statesStudioTitle")}</h3>
+                    <p className="wizard-card-sub">{t("mascots.statesStudioSub")}</p>
                   </div>
                 </div>
 
-                <div className="action-matrix-grid">
-                  {ALL_MASCOT_ACTIONS.map((action) => {
-                    const meta = getLocalizedActionMeta(action, t);
-                    const isSelected = selectedActions[action];
-                    const hasSprite = Boolean(editingMascot?.actions[action]?.sprite_url);
+                <div className="states-studio-layout">
+                  {/* Left Sidebar: Master Concept Anchor & Batch Hub */}
+                  <aside className="states-master-sidebar">
+                    <div className="states-master-capsule">
+                      <div className="states-master-header">
+                        <div
+                          className="states-master-avatar-wrap"
+                          style={{ borderColor: genColor, cursor: editingMascot?.master_image_url ? "pointer" : "default" }}
+                          onClick={() => {
+                            if (editingMascot?.master_image_url) setLightboxImage(editingMascot.master_image_url);
+                          }}
+                          title={t("mascots.zoomPreviewBtn")}
+                        >
+                          {editingMascot?.master_image_url ? (
+                            <img src={editingMascot.master_image_url} alt={editingMascot.name} />
+                          ) : (
+                            <Smiley size={26} weight="duotone" style={{ color: genColor }} />
+                          )}
+                        </div>
+                        <div className="states-master-info">
+                          <h3>{editingMascot?.name || genName || t("mascots.unnamedMascot")}</h3>
+                          <span className="states-master-style-pill">
+                            <Sparkle size={12} weight="fill" />
+                            {QUIZ_IMAGE_STYLE_LABELS[editingMascot?.visual_style || genStyle]}
+                          </span>
+                        </div>
+                      </div>
 
-                    return (
-                      <div
-                        key={action}
-                        className={`action-matrix-card ${isSelected ? "is-selected" : ""} ${hasSprite ? "is-ready" : ""}`}
-                        onClick={() => setSelectedActions((prev) => ({ ...prev, [action]: !prev[action] }))}
-                      >
-                        <div className="action-card-header">
-                          <div className="action-card-title-group">
-                            <span className="action-card-icon">{meta.icon}</span>
-                            <div>
-                              <h4>{meta.label}</h4>
-                              <span className="action-usage-tag">{meta.usage}</span>
+                      {(() => {
+                        const readyCount = ALL_MASCOT_ACTIONS.filter((act) => Boolean(editingMascot?.actions[act]?.sprite_url)).length;
+                        const pct = Math.round((readyCount / ALL_MASCOT_ACTIONS.length) * 100);
+                        return (
+                          <div className="states-progress-box">
+                            <div className="states-progress-label">
+                              <span>{t("mascots.progressLabel")}</span>
+                              <span style={{ color: "var(--accent)" }}>{readyCount}/7 ({pct}%)</span>
+                            </div>
+                            <div className="states-progress-track">
+                              <div className="states-progress-fill" style={{ width: `${pct}%` }} />
                             </div>
                           </div>
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={(e) => {
-                              e.stopPropagation();
-                              setSelectedActions((prev) => ({ ...prev, [action]: e.target.checked }));
-                            }}
-                            aria-label={meta.label}
-                          />
-                        </div>
+                        );
+                      })()}
 
-                        <p className="action-card-desc">{meta.description}</p>
+                      <div className="states-sidebar-actions">
+                        <button
+                          type="button"
+                          className="primary-button"
+                          style={{ justifyContent: "center", width: "100%" }}
+                          disabled={busyAction !== null}
+                          onClick={() => void handleBatchGenerateSprites()}
+                        >
+                          {busyAction === "batch" ? <CircleNotch className="spin" size={16} /> : <Rocket size={16} />}
+                          <span>{busyAction === "batch" ? t("mascots.batchGeneratingBtn") : t("mascots.batchGenerateBtn")}</span>
+                        </button>
 
-                        <div className="action-card-controls" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} onClick={(e) => e.stopPropagation()}>
-                          <span className="action-tag-pill is-ready" style={{ fontSize: "11px", fontWeight: 700 }}>
-                            ✨ Motion: {meta.label.split(" ")[0]}
-                          </span>
-                          <span style={{ fontSize: "11px", color: "var(--muted)" }}>
-                            HD State (1:1)
-                          </span>
-                        </div>
-
-                        {hasSprite ? (
-                          <span className="action-ready-badge">{t("mascots.hasSpriteBadge")}</span>
-                        ) : (
-                          <span className="action-missing-badge">{t("mascots.noSpriteBadge")}</span>
-                        )}
+                        {ALL_MASCOT_ACTIONS.some((act) => Boolean(editingMascot?.actions[act]?.sprite_url)) ? (
+                          <button
+                            type="button"
+                            className="quiet-button compact"
+                            style={{ justifyContent: "center", width: "100%" }}
+                            disabled={busyAction !== null}
+                            onClick={() => void handleRemoveBackground("all")}
+                            title={t("mascots.batchMattingTooltip")}
+                          >
+                            {busyAction === "matting-all" ? <CircleNotch className="spin" size={14} /> : <PaintBrush size={14} />}
+                            <span>{busyAction === "matting-all" ? t("mascots.mattingInProgress") : t("mascots.batchMattingBtn")}</span>
+                          </button>
+                        ) : null}
                       </div>
-                    );
-                  })}
+                    </div>
+                  </aside>
+
+                  {/* Right Column: 7-State Artistic Pose Grid */}
+                  <main className="artistic-states-grid">
+                    {ALL_MASCOT_ACTIONS.map((action, idx) => {
+                      const meta = getLocalizedActionMeta(action, t);
+                      const sprite = editingMascot?.actions[action];
+                      const isBusy = busyAction === action || busyAction === `upload-${action}` || busyAction === `matting-${action}`;
+                      const hasSprite = Boolean(sprite?.sprite_url);
+                      const isDragOver = dragOverAction === action;
+
+                      return (
+                        <div
+                          key={action}
+                          className={`artistic-state-card ${hasSprite ? "is-ready" : "is-missing"} ${isDragOver ? "is-dragover" : ""}`}
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setDragOverAction(action);
+                          }}
+                          onDragLeave={() => setDragOverAction(null)}
+                          onDrop={(e) => handleDropSprite(action, e)}
+                        >
+                          <div className="artistic-card-header">
+                            <div className="artistic-header-title">
+                              <span className="pose-icon">{meta.icon}</span>
+                              <h4 title={meta.label}>{idx + 1}. {meta.label.split(" ")[0]}</h4>
+                            </div>
+                            <span className={`artistic-motion-pill ${hasSprite ? "is-active" : ""}`}>
+                              {meta.label.split(" ")[0]}
+                            </span>
+                          </div>
+
+                          <div className="artistic-card-canvas">
+                            {sprite?.sprite_url ? (
+                              <>
+                                <img
+                                  src={sprite.sprite_url}
+                                  alt={action}
+                                  className={`artistic-mascot-img mascot-anim-${action}`}
+                                />
+                                <div className="artistic-hover-actions">
+                                  <button
+                                    type="button"
+                                    className="artistic-action-btn is-primary"
+                                    disabled={isBusy}
+                                    onClick={() => void handleGenerateSprite(action)}
+                                    title={t("mascots.reGenerateBtn")}
+                                  >
+                                    {isBusy ? <CircleNotch className="spin" size={15} /> : <MagicWand size={15} weight="bold" />}
+                                  </button>
+
+                                  <label className="artistic-action-btn" title={t("mascots.uploadStripBtn")} style={{ margin: 0 }}>
+                                    <Upload size={15} />
+                                    <input
+                                      type="file"
+                                      accept="image/png,image/webp,image/jpeg"
+                                      style={{ display: "none" }}
+                                      onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) void handleUploadSprite(action, file);
+                                      }}
+                                    />
+                                  </label>
+
+                                  <button
+                                    type="button"
+                                    className="artistic-action-btn"
+                                    disabled={isBusy}
+                                    onClick={() => void handleRemoveBackground(action)}
+                                    title={t("mascots.mattingSpriteBtn")}
+                                  >
+                                    <PaintBrush size={15} />
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    className="artistic-action-btn"
+                                    onClick={() => {
+                                      setActivePreviewAction(action);
+                                      setGeneratorStep(3);
+                                    }}
+                                    title={t("mascots.previewStep3Btn")}
+                                  >
+                                    <Eye size={15} />
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    className="artistic-action-btn"
+                                    onClick={() => setPromptEditAction(action)}
+                                    title={t("mascots.customPromptTooltip")}
+                                  >
+                                    <PencilSimple size={15} />
+                                  </button>
+                                </div>
+                              </>
+                            ) : (
+                              <div
+                                className="artistic-empty-dropzone"
+                                onClick={() => void handleGenerateSprite(action)}
+                              >
+                                <div className="artistic-empty-icon">
+                                  {isBusy ? <CircleNotch className="spin" size={15} /> : <Plus size={15} weight="bold" />}
+                                </div>
+                                <p className="artistic-empty-text">
+                                  {isBusy ? t("mascots.generatingBtn") : t("mascots.addPoseBtn")}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </main>
                 </div>
 
                 <div className="wizard-action-row" style={{ marginTop: "24px" }}>
@@ -1415,7 +1496,7 @@ export function MascotStudioView({
                     <span>{t("mascots.backIdentityBtn")}</span>
                   </button>
                   <button type="button" className="primary-button" onClick={() => setGeneratorStep(3)}>
-                    <span>{t("mascots.nextSpriteBtn")}</span>
+                    <span>{t("mascots.nextStageDeployBtn")}</span>
                     <ArrowRight size={15} />
                   </button>
                 </div>
@@ -1423,182 +1504,16 @@ export function MascotStudioView({
             </div>
           ) : null}
 
-          {/* STEP 3: STATE SYNTHESIS & PROCESSING */}
+          {/* STEP 3: STAGE THEATER & CHANNEL DEPLOY */}
           {generatorStep === 3 ? (
-            <div className="wizard-step-content">
-              <div className="wizard-card">
-                <div className="wizard-card-header-flex">
-                  <div>
-                    <h3>{t("mascots.spriteGenTitle")}</h3>
-                    <p className="wizard-card-sub">{t("mascots.spriteGenSub")}</p>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="primary-button"
-                    disabled={busyAction !== null}
-                    onClick={() => void handleBatchGenerateSprites()}
-                  >
-                    {busyAction === "batch" ? <CircleNotch className="spin" size={16} /> : <Rocket size={16} />}
-                    <span>{busyAction === "batch" ? t("mascots.batchGeneratingBtn") : t("mascots.batchGenerateBtn")}</span>
-                  </button>
-                </div>
-
-                <div className="sprite-synthesis-grid">
-                  {ALL_MASCOT_ACTIONS.filter((act) => selectedActions[act]).map((action) => {
-                    const meta = getLocalizedActionMeta(action, t);
-                    const sprite = editingMascot?.actions[action];
-                    const isBusy = busyAction === action || busyAction === `upload-${action}`;
-                    const hasSprite = Boolean(sprite?.sprite_url);
-                    const isSingleFrame = (sprite?.frames_count || 1) === 1;
-
-                    return (
-                      <div key={action} className={`sprite-card-modern ${hasSprite ? "is-ready" : "is-missing"}`}>
-                        <div className="sprite-card-header">
-                          <div className="sprite-card-meta">
-                            <span className="sprite-card-icon">{meta.icon}</span>
-                            <div className="sprite-card-title">
-                              <h4>{meta.label}</h4>
-                              <span>{meta.usage}</span>
-                            </div>
-                          </div>
-                          <div className="sprite-card-badges">
-                            {hasSprite ? (
-                              <span className="action-ready-badge" style={{ fontSize: "11px", padding: "3px 8px" }}>
-                                ✓ {isSingleFrame ? "HD State" : `${sprite?.frames_count}f @ ${sprite?.fps}fps`}
-                              </span>
-                            ) : (
-                              <span className="action-missing-badge" style={{ fontSize: "11px", padding: "3px 8px" }}>
-                                {t("mascots.notGeneratedBadge")}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* State visualizer */}
-                        <div className="sprite-card-strip-wrap" style={{ height: "130px", background: "radial-gradient(circle, #1e293b 0%, #0f172a 100%)" }}>
-                          {sprite?.sprite_url ? (
-                            isSingleFrame ? (
-                              <div style={{ position: "relative", width: "100%", height: "100%", display: "grid", placeItems: "center", overflow: "hidden" }}>
-                                <img
-                                  src={sprite.sprite_url}
-                                  alt={action}
-                                  className={`mascot-anim-${action}`}
-                                  style={{
-                                    maxHeight: "110px",
-                                    maxWidth: "110px",
-                                    objectFit: "contain",
-                                    filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.4))",
-                                  }}
-                                />
-                              </div>
-                            ) : (
-                              <div className="sprite-strip-visualizer">
-                                <img src={sprite.sprite_url} alt={action} className="sprite-strip-img" />
-                                <div
-                                  className="strip-grid-overlay"
-                                  style={{
-                                    backgroundSize: `${100 / (sprite.frames_count || 6)}% 100%`,
-                                  }}
-                                />
-                              </div>
-                            )
-                          ) : (
-                            <div className="sprite-strip-placeholder">
-                              <span>{t("mascots.noSpritePlaceholder", { count: 1 })}</span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="sprite-card-footer">
-                          <div className="sprite-card-configs">
-                            <span style={{ color: "var(--accent)", fontWeight: 700 }}>Micro-Motion: {meta.label.split(" ")[0]}</span>
-                          </div>
-
-                          <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
-                            <button
-                              type="button"
-                              className="primary-button compact"
-                              disabled={isBusy}
-                              onClick={() => void handleGenerateSprite(action)}
-                              title={t("mascots.generateAiBtn")}
-                            >
-                              {isBusy ? <CircleNotch className="spin" size={13} /> : <MagicWand size={13} />}
-                              <span>{isBusy ? t("mascots.generatingBtn") : sprite ? t("mascots.reGenerateBtn") : t("mascots.generateAiBtn")}</span>
-                            </button>
-
-                            <label className="quiet-button compact" style={{ cursor: "pointer", margin: 0 }} title={t("mascots.uploadStripBtn")}>
-                              <Upload size={13} />
-                              <span>{t("common.upload")}</span>
-                              <input
-                                type="file"
-                                accept="image/png,image/webp,image/jpeg"
-                                style={{ display: "none" }}
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) void handleUploadSprite(action, file);
-                                }}
-                              />
-                            </label>
-
-                            {hasSprite ? (
-                              <>
-                                <button
-                                  type="button"
-                                  className="quiet-button compact"
-                                  disabled={isBusy || busyAction === `matting-${action}`}
-                                  title={t("mascots.mattingSpriteBtn")}
-                                  onClick={() => void handleRemoveBackground(action)}
-                                >
-                                  {busyAction === `matting-${action}` ? <CircleNotch className="spin" size={13} /> : <PaintBrush size={13} />}
-                                  <span>{busyAction === `matting-${action}` ? t("mascots.mattingInProgress") : t("mascots.mattingShortBtn")}</span>
-                                </button>
-
-                                <button
-                                  type="button"
-                                  className="icon-button"
-                                  style={{ width: "30px", height: "30px" }}
-                                  title={t("mascots.previewStep4Btn")}
-                                  onClick={() => {
-                                    setActivePreviewAction(action);
-                                    setGeneratorStep(4);
-                                  }}
-                                >
-                                  <Eye size={14} />
-                                </button>
-                              </>
-                            ) : null}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="wizard-action-row" style={{ marginTop: "24px" }}>
-                  <button type="button" className="quiet-button" onClick={() => setGeneratorStep(2)}>
-                    <ArrowLeft size={15} />
-                    <span>{t("mascots.backMatrixBtn")}</span>
-                  </button>
-                  <button type="button" className="primary-button" onClick={() => setGeneratorStep(4)}>
-                    <span>{t("mascots.nextLiveStageBtn")}</span>
-                    <ArrowRight size={15} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          {/* STEP 4: LIVE ANIMATION STUDIO & CHANNEL BINDING */}
-          {generatorStep === 4 ? (
             <div className="wizard-step-content step-live-studio-grid">
               {/* Left Column: Interactive Frame Player & Stage Simulator */}
               <div className="live-player-col">
                 <div className="wizard-card">
                   <div className="wizard-card-header-flex">
                     <div>
-                      <h3>{t("mascots.liveStudioTitle")}</h3>
-                      <p className="wizard-card-sub">{t("mascots.liveStudioSub")}</p>
+                      <h3>{t("mascots.stageTheaterTitle")}</h3>
+                      <p className="wizard-card-sub">{t("mascots.stageTheaterSub")}</p>
                     </div>
 
                     <div className="stage-mode-toggles" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -2071,52 +1986,133 @@ export function MascotStudioView({
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label htmlFor="target-scale">{t("mascots.scaleLabel", { scale: targetScale.toFixed(2) })}</label>
+                  <div className="stage-control-card">
+                    <div className="stage-scale-header">
+                      <label className="stage-control-label">
+                        {t("mascots.scaleLabel", { scale: targetScale.toFixed(2) })}
+                      </label>
+                      <span className="scale-value-badge">{Math.round(targetScale * 100)}%</span>
+                    </div>
                     <input
                       id="target-scale"
                       type="range"
+                      className="scale-range-slider"
                       min={0.7}
                       max={1.3}
                       step={0.05}
                       value={targetScale}
                       onChange={(e) => setTargetScale(Number(e.target.value))}
                     />
-                  </div>
-
-                  <div className="form-group" style={{ marginTop: "16px" }}>
-                    <label>{t("mascots.assignChannelsLabel", { count: assignedChannels.length })}</label>
-                    <div className="channels-checklist">
-                      {channels.map((channel) => {
-                        const checked = assignedChannels.includes(channel.channel_id);
-                        return (
-                          <label key={channel.channel_id} className="channel-checkbox-row">
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setAssignedChannels((prev) => [...prev, channel.channel_id]);
-                                } else {
-                                  setAssignedChannels((prev) => prev.filter((id) => id !== channel.channel_id));
-                                }
-                              }}
-                            />
-                            <div className="channel-check-info">
-                              <strong>{channel.display_name}</strong>
-                              <small>{channel.market || channel.language}</small>
-                            </div>
-                          </label>
-                        );
-                      })}
+                    <div className="scale-presets-row">
+                      <button
+                        type="button"
+                        className={`scale-preset-chip ${Math.abs(targetScale - 0.85) < 0.01 ? "is-active" : ""}`}
+                        onClick={() => setTargetScale(0.85)}
+                      >
+                        {t("mascots.presetCompact")}
+                      </button>
+                      <button
+                        type="button"
+                        className={`scale-preset-chip ${Math.abs(targetScale - 1.0) < 0.01 ? "is-active" : ""}`}
+                        onClick={() => setTargetScale(1.0)}
+                      >
+                        {t("mascots.presetStandard")}
+                      </button>
+                      <button
+                        type="button"
+                        className={`scale-preset-chip ${Math.abs(targetScale - 1.15) < 0.01 ? "is-active" : ""}`}
+                        onClick={() => setTargetScale(1.15)}
+                      >
+                        {t("mascots.presetLarge")}
+                      </button>
                     </div>
                   </div>
 
-                  <div className="wizard-action-row" style={{ marginTop: "24px" }}>
+                  <div className="form-group" style={{ marginTop: "16px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                      <label style={{ margin: 0 }}>{t("mascots.assignChannelsLabel", { count: assignedChannels.length })}</label>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <button
+                          type="button"
+                          className="quiet-button compact"
+                          onClick={() => setAssignedChannels(channels.map((c) => c.channel_id))}
+                          disabled={channels.length === 0}
+                        >
+                          {t("mascots.selectAllBtn")}
+                        </button>
+                        <button
+                          type="button"
+                          className="quiet-button compact"
+                          onClick={() => setAssignedChannels([])}
+                          disabled={assignedChannels.length === 0}
+                        >
+                          {t("mascots.deselectAllBtn")}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="channels-card-list" style={{ maxHeight: "220px" }}>
+                      {channels.length === 0 ? (
+                        <div className="channels-empty-state" style={{ padding: "20px" }}>
+                          <p style={{ margin: 0, fontSize: "12px" }}>{t("mascots.noChannelsAvailable")}</p>
+                        </div>
+                      ) : (
+                        channels.map((channel) => {
+                          const checked = assignedChannels.includes(channel.channel_id);
+                          const isOther = channel.mascot_id && channel.mascot_id !== editingMascot?.id;
+                          const otherName = isOther ? mascots.find((m) => m.id === channel.mascot_id)?.name || channel.mascot_id : null;
+                          const lang = channel.language || channel.market || "EN";
+                          const langTag = lang.toLowerCase().includes("viet") ? "🇻🇳 VI" : lang.toLowerCase().includes("eng") ? "🇺🇸 EN" : lang.toUpperCase().slice(0, 4);
+
+                          return (
+                            <article
+                              key={channel.channel_id}
+                              className={`channel-select-card ${checked ? "is-selected" : ""} ${isOther ? "has-other-mascot" : ""}`}
+                              style={{ padding: "8px 12px" }}
+                              onClick={() => {
+                                if (checked) {
+                                  setAssignedChannels((prev) => prev.filter((id) => id !== channel.channel_id));
+                                } else {
+                                  setAssignedChannels((prev) => [...prev, channel.channel_id]);
+                                }
+                              }}
+                            >
+                              <div className="channel-select-checkbox">
+                                {checked ? (
+                                  <CheckCircle size={18} weight="fill" className="check-icon checked" />
+                                ) : (
+                                  <Circle size={18} weight="regular" className="check-icon unchecked" />
+                                )}
+                              </div>
+                              <div className="channel-select-info">
+                                <div className="channel-select-title-row">
+                                  <strong className="channel-select-name" style={{ fontSize: "12.5px" }}>{channel.display_name}</strong>
+                                  <span className="channel-lang-chip" style={{ fontSize: "10px" }}>{langTag}</span>
+                                </div>
+                                {isOther && otherName ? (
+                                  <div style={{ marginTop: "2px" }}>
+                                    <span className="mascot-state-badge other" style={{ fontSize: "10px", padding: "0 5px" }}>
+                                      {t("mascots.currentlyAssignedToOther", { name: otherName })}
+                                    </span>
+                                  </div>
+                                ) : null}
+                              </div>
+                            </article>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="wizard-action-row" style={{ marginTop: "24px", display: "flex", gap: "10px" }}>
+                    <button type="button" className="quiet-button" onClick={() => setGeneratorStep(2)}>
+                      <ArrowLeft size={15} />
+                      <span>{t("mascots.backStatesBtn")}</span>
+                    </button>
                     <button
                       type="button"
                       className="primary-button"
-                      style={{ width: "100%", justifyContent: "center" }}
+                      style={{ flex: 1, justifyContent: "center" }}
                       disabled={busyAction === "assign"}
                       onClick={() => void handleApplyToChannels()}
                     >
@@ -2132,113 +2128,18 @@ export function MascotStudioView({
       ) : null}
 
       {/* Quick Channel Assignment Modal */}
-      {quickAssignMascot ? (
-        <div className="modal-backdrop" role="presentation">
-          <section className="modal" role="dialog" aria-modal="true" style={{ maxWidth: "560px" }}>
-            <div className="modal-heading">
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <span style={{ fontSize: "24px" }}>🎯</span>
-                <div>
-                  <p className="eyebrow">{t("mascots.quickAssignEyebrow")}</p>
-                  <h2>{t("mascots.quickAssignTitle", { name: quickAssignMascot.name })}</h2>
-                </div>
-              </div>
-              <button
-                type="button"
-                className="icon-button"
-                aria-label={t("common.close")}
-                onClick={() => setQuickAssignMascot(null)}
-                disabled={savingQuickAssign}
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "18px", marginTop: "14px" }}>
-              <div className="form-group">
-                <label>{t("mascots.stagePositionLabel")}</label>
-                <div className="position-toggle-row">
-                  <button
-                    type="button"
-                    className={`pos-toggle-btn ${quickPosition === "bottom_left" ? "is-selected" : ""}`}
-                    onClick={() => setQuickPosition("bottom_left")}
-                  >
-                    {t("mascots.bottomLeftOption")}
-                  </button>
-                  <button
-                    type="button"
-                    className={`pos-toggle-btn ${quickPosition === "bottom_right" ? "is-selected" : ""}`}
-                    onClick={() => setQuickPosition("bottom_right")}
-                  >
-                    {t("mascots.bottomRightOption")}
-                  </button>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="quick-scale">{t("mascots.scaleLabel", { scale: quickScale.toFixed(2) })}</label>
-                <input
-                  id="quick-scale"
-                  type="range"
-                  min={0.7}
-                  max={1.3}
-                  step={0.05}
-                  value={quickScale}
-                  onChange={(e) => setQuickScale(Number(e.target.value))}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>{t("mascots.assignChannelsLabel", { count: quickAssignedChannels.length })}</label>
-                <div className="channels-checklist" style={{ maxHeight: "200px", overflowY: "auto" }}>
-                  {channels.map((channel) => {
-                    const checked = quickAssignedChannels.includes(channel.channel_id);
-                    return (
-                      <label key={channel.channel_id} className="channel-checkbox-row">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setQuickAssignedChannels((prev) => [...prev, channel.channel_id]);
-                            } else {
-                              setQuickAssignedChannels((prev) => prev.filter((id) => id !== channel.channel_id));
-                            }
-                          }}
-                        />
-                        <div className="channel-check-info">
-                          <strong>{channel.display_name}</strong>
-                          <small>{channel.market || channel.language}</small>
-                        </div>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            <div className="modal-actions" style={{ marginTop: "22px" }}>
-              <button
-                type="button"
-                className="quiet-button"
-                onClick={() => setQuickAssignMascot(null)}
-                disabled={savingQuickAssign}
-              >
-                {t("common.cancel")}
-              </button>
-              <button
-                type="button"
-                className="primary-button"
-                onClick={() => void handleSaveQuickAssign()}
-                disabled={savingQuickAssign}
-              >
-                {savingQuickAssign ? <CircleNotch className="spin" size={16} /> : <FloppyDisk size={16} />}
-                <span>{savingQuickAssign ? t("mascots.quickAssignSavingBtn") : t("mascots.quickAssignSaveBtn")}</span>
-              </button>
-            </div>
-          </section>
-        </div>
-      ) : null}
+      <MascotAssignModal
+        isOpen={Boolean(quickAssignMascot)}
+        mascot={quickAssignMascot}
+        channels={channels}
+        allMascots={mascots}
+        onClose={() => setQuickAssignMascot(null)}
+        onSaved={async () => {
+          await onRefreshChannels();
+          await loadMascots();
+        }}
+        onNotice={onNotice}
+      />
 
       {/* Delete Mascot Confirmation Modal */}
       {deleteTarget ? (
@@ -2343,6 +2244,72 @@ export function MascotStudioView({
               <button type="button" className="primary-button" onClick={() => setIsPromptModalOpen(false)}>
                 <Check size={16} />
                 <span>{t("common.saved")}</span>
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      {/* State Custom Prompt Edit Modal */}
+      {promptEditAction ? (
+        <div className="modal-backdrop" role="presentation" onClick={() => setPromptEditAction(null)}>
+          <section
+            className="modal"
+            role="dialog"
+            aria-modal="true"
+            style={{ maxWidth: "520px" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-heading">
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <span style={{ fontSize: "24px" }}>{getLocalizedActionMeta(promptEditAction, t).icon}</span>
+                <div>
+                  <p className="eyebrow">{t("mascots.customPromptEyebrow")}</p>
+                  <h2>{getLocalizedActionMeta(promptEditAction, t).label}</h2>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="icon-button"
+                aria-label={t("common.close")}
+                onClick={() => setPromptEditAction(null)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="modal-body" style={{ marginTop: "16px" }}>
+              <div className="form-group">
+                <label>{t("mascots.customPromptLabel")}</label>
+                <textarea
+                  className="full-prompt-textarea"
+                  rows={4}
+                  value={actionPrompts[promptEditAction]}
+                  onChange={(e) => setActionPrompts((prev) => ({ ...prev, [promptEditAction]: e.target.value }))}
+                  placeholder={getLocalizedActionMeta(promptEditAction, t).description}
+                  style={{ width: "100%", fontSize: "13px", resize: "vertical" }}
+                />
+                <span style={{ fontSize: "11.5px", color: "var(--muted)", marginTop: "4px", display: "block" }}>
+                  {t("mascots.customPromptSub")}
+                </span>
+              </div>
+            </div>
+
+            <div className="modal-actions" style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end", gap: "8px" }}>
+              <button type="button" className="quiet-button" onClick={() => setPromptEditAction(null)}>
+                {t("common.cancel")}
+              </button>
+              <button
+                type="button"
+                className="primary-button"
+                onClick={() => {
+                  const act = promptEditAction;
+                  setPromptEditAction(null);
+                  void handleGenerateSprite(act);
+                }}
+              >
+                <MagicWand size={16} />
+                <span>{t("mascots.saveAndRegenerateBtn")}</span>
               </button>
             </div>
           </section>

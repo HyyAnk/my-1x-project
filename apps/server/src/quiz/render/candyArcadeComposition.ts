@@ -180,37 +180,23 @@ function mascotElement(mascot: MascotProfile | null | undefined, config: Channel
     return `<div class="candy-mascot-container mascot-outro anchor-bottom_right" style="--mascot-scale:${scale};--mascot-frames:${frames};--mascot-fps:${fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(spriteToUse || ""))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
   }
 
-  const idleUrl = idleSprite ? source(idleSprite) : "";
-  const thinkUrl = thinkingSprite ? source(thinkingSprite) : idleUrl;
-  const celebUrl = celebrateSprite ? source(celebrateSprite) : idleUrl;
-  const pointUrl = pointSprite ? source(pointSprite) : idleUrl;
+  const thinkUrl = thinkingSprite ? source(thinkingSprite) : (idleSprite ? source(idleSprite) : "");
+  const celebUrl = celebrateSprite ? source(celebrateSprite) : (waveSprite ? source(waveSprite) : thinkUrl);
 
-  const idleFrames = mascot.actions.idle?.frames_count || 1;
-  const thinkFrames = mascot.actions.thinking?.frames_count || 1;
-  const celebFrames = mascot.actions.celebrate?.frames_count || 1;
-  const pointFrames = mascot.actions.point?.frames_count || 1;
+  const thinkFrames = mascot.actions.thinking?.frames_count || mascot.actions.idle?.frames_count || 1;
+  const celebFrames = mascot.actions.celebrate?.frames_count || mascot.actions.wave?.frames_count || 1;
 
-  const idleOffX = mascot.actions.idle?.offset_x || 0;
-  const idleOffY = mascot.actions.idle?.offset_y || 0;
-  const thinkOffX = mascot.actions.thinking?.offset_x || 0;
-  const thinkOffY = mascot.actions.thinking?.offset_y || 0;
-  const celebOffX = mascot.actions.celebrate?.offset_x || 0;
-  const celebOffY = mascot.actions.celebrate?.offset_y || 0;
-  const pointOffX = mascot.actions.point?.offset_x || 0;
-  const pointOffY = mascot.actions.point?.offset_y || 0;
+  const thinkFps = mascot.actions.thinking?.fps || mascot.actions.idle?.fps || 8;
+  const celebFps = mascot.actions.celebrate?.fps || mascot.actions.wave?.fps || 10;
 
-  const oopsSprite = mascot.actions.oops?.sprite_url;
-  const oopsUrl = oopsSprite ? source(oopsSprite) : "";
-  const oopsFrames = mascot.actions.oops?.frames_count || 1;
-  const oopsOffX = mascot.actions.oops?.offset_x || 0;
-  const oopsOffY = mascot.actions.oops?.offset_y || 0;
+  const thinkOffX = mascot.actions.thinking?.offset_x || mascot.actions.idle?.offset_x || 0;
+  const thinkOffY = mascot.actions.thinking?.offset_y || mascot.actions.idle?.offset_y || 0;
+  const celebOffX = mascot.actions.celebrate?.offset_x || mascot.actions.wave?.offset_x || 0;
+  const celebOffY = mascot.actions.celebrate?.offset_y || mascot.actions.wave?.offset_y || 0;
 
   return `<div class="candy-mascot-container mascot-stage anchor-${position}" style="--mascot-scale:${scale};--mascot-color:${mascot.color_theme || "#06b6d4"};" data-layout-allow-overflow data-layout-ignore aria-hidden="true">
-    <div class="mascot-state-layer state-idle" style="--sprite-url:url('${escAttr(idleUrl)}');--mascot-frames:${idleFrames};--mascot-fps:${mascot.actions.idle?.fps || 6};--action-offset-x:${idleOffX}px;--action-offset-y:${idleOffY}px;"><div class="candy-mascot-sprite"></div></div>
-    <div class="mascot-state-layer state-thinking" style="--sprite-url:url('${escAttr(thinkUrl)}');--mascot-frames:${thinkFrames};--mascot-fps:${mascot.actions.thinking?.fps || 8};--action-offset-x:${thinkOffX}px;--action-offset-y:${thinkOffY}px;"><div class="candy-mascot-sprite"></div></div>
-    <div class="mascot-state-layer state-celebrate" style="--sprite-url:url('${escAttr(celebUrl)}');--mascot-frames:${celebFrames};--mascot-fps:${mascot.actions.celebrate?.fps || 10};--action-offset-x:${celebOffX}px;--action-offset-y:${celebOffY}px;"><div class="candy-mascot-sprite"></div></div>
-    ${oopsUrl ? `<div class="mascot-state-layer state-oops" style="--sprite-url:url('${escAttr(oopsUrl)}');--mascot-frames:${oopsFrames};--mascot-fps:${mascot.actions.oops?.fps || 8};--action-offset-x:${oopsOffX}px;--action-offset-y:${oopsOffY}px;"><div class="candy-mascot-sprite"></div></div>` : ""}
-    <div class="mascot-state-layer state-point" style="--sprite-url:url('${escAttr(pointUrl)}');--mascot-frames:${pointFrames};--mascot-fps:${mascot.actions.point?.fps || 8};--action-offset-x:${pointOffX}px;--action-offset-y:${pointOffY}px;"><div class="candy-mascot-sprite"></div></div>
+    <div class="mascot-state-layer state-thinking" style="--sprite-url:url('${escAttr(thinkUrl)}');--mascot-frames:${thinkFrames};--mascot-fps:${thinkFps};--action-offset-x:${thinkOffX}px;--action-offset-y:${thinkOffY}px;"><div class="candy-mascot-sprite"></div></div>
+    <div class="mascot-state-layer state-celebrate" style="--sprite-url:url('${escAttr(celebUrl)}');--mascot-frames:${celebFrames};--mascot-fps:${celebFps};--action-offset-x:${celebOffX}px;--action-offset-y:${celebOffY}px;"><div class="candy-mascot-sprite"></div></div>
   </div>`;
 }
 
@@ -891,12 +877,8 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .state-oops[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-oops[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-shake 2.0s ease-in-out infinite; }
 .state-point[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-point[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-pulse 1.8s ease-in-out infinite alternate; }
 .mascot-intro .candy-mascot-sprite, .mascot-outro .candy-mascot-sprite { animation: mascot-sprite-play calc(var(--mascot-frames, 1) / var(--mascot-fps, 8) * 1s) steps(calc(var(--mascot-frames, 1) - 1)) infinite; }
-.mascot-intro[style*="--mascot-frames:1;"] .candy-mascot-sprite, .mascot-intro[style*="--mascot-frames: 1;"] .candy-mascot-sprite, .mascot-outro[style*="--mascot-frames:1;"] .candy-mascot-sprite, .mascot-outro[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-wave 1.6s ease-in-out infinite alternate; }
-.quiz-question-clip .mascot-state-layer.state-idle { animation: phase-enter .001s linear var(--clip-start) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--thinking-at)) forwards, phase-enter .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
-.quiz-question-clip .mascot-state-layer.state-thinking { animation: phase-enter .001s linear calc(var(--clip-start) + var(--thinking-at)) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards; }
-.quiz-question-clip .mascot-state-layer.state-celebrate { animation: phase-enter .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
-.quiz-question-clip .mascot-state-layer.state-oops { animation: phase-enter .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
-.quiz-question-clip .mascot-state-layer.state-point { animation: phase-enter .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
+.quiz-question-clip .mascot-state-layer.state-thinking { animation: phase-enter .001s linear var(--clip-start) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards; }
+.quiz-question-clip .mascot-state-layer.state-celebrate { animation: phase-enter .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards; }
 @keyframes mascot-sprite-play { from { background-position: 0% 0%; } to { background-position: 100% 0%; } }
 @keyframes mascot-single-breathe { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 6px)) scale(1.025, 0.98); } }
 @keyframes mascot-single-sway { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(-2.5deg); } 100% { transform: translate(calc(var(--action-offset-x, 0px) + 4px), calc(var(--action-offset-y, 0px) - 8px)) rotate(3.5deg); } }

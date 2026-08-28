@@ -1,79 +1,267 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,
   Broadcast,
-  ChartBar,
   CheckCircle,
+  Copy,
   Cpu,
   CurrencyDollar,
+  DotsThreeVertical,
   FilmSlate,
-  FolderOpen,
   Image as ImageIcon,
   Lightning,
+  MagnifyingGlass,
   Plus,
+  Smiley,
   SpeakerHigh,
   Trash,
-  TrendUp,
   VideoCamera,
   Wallet,
+  X,
 } from "@phosphor-icons/react";
-import type { AppConfig, Channel, StorageInfo, Task } from "@studio/shared";
+import {
+  QUIZ_IMAGE_STYLE_LABELS,
+  type AppConfig,
+  type Channel,
+  type MascotProfile,
+  type StorageInfo,
+  type Task,
+} from "@studio/shared";
 import type { GitInfo, Page } from "./types";
 import { PageTitle } from "./AppChrome";
 import { EmptyState } from "./EmptyState";
 import { useTranslation } from "../i18n";
+import { api } from "../api";
 
 export type ChannelGroupId = "quiz";
+
+function formatRelativeTime(dateString: string, t?: (key: string, params?: Record<string, string | number>) => string): string {
+  try {
+    const diffMs = Date.now() - new Date(dateString).getTime();
+    const diffSec = Math.floor(diffMs / 1000);
+    if (diffSec < 60) return t ? t("channels.updatedJustNow") : "Just now";
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return t ? t("channels.updatedAgo", { time: `${diffMin}m` }) : `${diffMin}m ago`;
+    const diffHour = Math.floor(diffMin / 60);
+    if (diffHour < 24) return t ? t("channels.updatedAgo", { time: `${diffHour}h` }) : `${diffHour}h ago`;
+    const diffDays = Math.floor(diffHour / 24);
+    if (diffDays < 30) return t ? t("channels.updatedAgo", { time: `${diffDays}d` }) : `${diffDays}d ago`;
+    const diffMonths = Math.floor(diffDays / 30);
+    return t ? t("channels.updatedAgo", { time: `${diffMonths}mo` }) : `${diffMonths}mo ago`;
+  } catch {
+    return "";
+  }
+}
 
 export function ChannelCard({
   channel,
   index,
+  mascots = [],
   onOpen,
   onDelete,
 }: {
   channel: Channel;
   index: number;
+  mascots?: MascotProfile[];
   onOpen: () => void;
   onDelete: (channel: Channel) => void;
 }) {
   const { t } = useTranslation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
+
+  const assignedMascot = mascots.find((m) => m.id === channel.mascot_id);
+
+  const handleCopyId = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    void navigator.clipboard.writeText(channel.channel_id);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+      setMenuOpen(false);
+    }, 1200);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setMenuOpen(false);
+    onDelete(channel);
+  };
+
+  const langDisplay = channel.language || "English";
+  const langTag = langDisplay.toLowerCase().includes("viet") ? "🇻🇳 VI" : langDisplay.toLowerCase().includes("eng") ? "🇺🇸 EN" : langDisplay;
+  const timeAgo = formatRelativeTime(channel.updated_at, t);
+
+  const activeStyles = channel.selected_styles && channel.selected_styles.length > 0 ? channel.selected_styles : [];
+  const primaryStyleLabel = activeStyles[0] ? QUIZ_IMAGE_STYLE_LABELS[activeStyles[0]] : null;
+  const extraStylesCount = activeStyles.length > 1 ? activeStyles.length - 1 : 0;
+
   return (
-    <article className="channel-card quiz-channel-card">
-      <div className="card-top">
-        <span className="channel-kind">Quiz Engine</span>
-        <span className={`status-badge ${channel.status.toLowerCase()}`}>
-          {channel.status.toLowerCase()}
-        </span>
-        <button
-          type="button"
-          className="icon-button danger channel-card-delete"
-          title={`${t("common.delete")} ${channel.display_name}`}
-          aria-label="Delete channel"
-          onClick={() => onDelete(channel)}
-        >
-          <Trash size={16} />
-        </button>
-      </div>
-      <button
-        className="channel-card-open"
-        aria-label={`${String(index).padStart(2, "0")} ${channel.display_name}`}
-        onClick={onOpen}
-      >
-        <h3>{channel.display_name}</h3>
-        {channel.description ? <p>{channel.description}</p> : null}
-        <div className="card-bottom">
-          <span>
-            {channel.episode_count}{" "}
-            {channel.episode_count === 1 ? "video" : "videos"}
+    <article
+      className="channel-card"
+      style={{ animationDelay: `${Math.min(index * 35, 300)}ms` }}
+      onClick={onOpen}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
+      aria-label={`${channel.display_name} (${channel.status.toLowerCase()})`}
+    >
+      <div className="channel-card-header">
+        <div className="channel-card-chips">
+          <span className={`channel-status-pill ${channel.status.toLowerCase()}`}>
+            <span className="channel-status-dot" />
+            {channel.status === "ACTIVE"
+              ? t("channels.activeStatus")
+              : channel.status === "DRAFT"
+              ? t("channels.draftStatus")
+              : t("channels.archivedStatus")}
           </span>
-          {channel.mascot_id ? (
-            <span style={{ fontSize: "11px", color: "var(--accent)", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "4px" }}>
-              🎨 Mascot
+
+          <span className="channel-chip lang" title={`Language: ${langDisplay}`}>
+            {langTag}
+          </span>
+
+          {channel.target_audience ? (
+            <span className="channel-chip audience" title={`Audience: ${channel.target_audience}`}>
+              🎯 {channel.target_audience}
             </span>
           ) : null}
-          <ArrowUpRight size={17} />
         </div>
-      </button>
+
+        <div className="channel-card-menu-wrap" ref={menuRef} onClick={(e) => e.stopPropagation()}>
+          <button
+            type="button"
+            className={`channel-card-menu-btn ${menuOpen ? "is-active" : ""}`}
+            title={t("channels.moreActions")}
+            aria-label={t("channels.moreActions")}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((prev) => !prev)}
+          >
+            <DotsThreeVertical size={18} weight="bold" />
+          </button>
+
+          {menuOpen ? (
+            <div className="channel-menu-dropdown" role="menu">
+              <button
+                type="button"
+                className="channel-menu-item"
+                role="menuitem"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onOpen();
+                }}
+              >
+                <ArrowUpRight size={15} />
+                <span>{t("channels.openChannel")}</span>
+              </button>
+
+              <button
+                type="button"
+                className="channel-menu-item"
+                role="menuitem"
+                onClick={handleCopyId}
+              >
+                <Copy size={15} />
+                <span>{copied ? t("channels.idCopied") : t("channels.copyId")}</span>
+              </button>
+
+              <div className="channel-menu-divider" />
+
+              <button
+                type="button"
+                className="channel-menu-item danger"
+                role="menuitem"
+                onClick={handleDelete}
+              >
+                <Trash size={15} />
+                <span>{t("common.delete")}</span>
+              </button>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="channel-card-body">
+        <h3 className="channel-card-title">{channel.display_name}</h3>
+        {channel.description ? (
+          <p className="channel-card-desc">{channel.description}</p>
+        ) : (
+          <p className="channel-card-desc" style={{ opacity: 0.6, fontStyle: "italic" }}>
+            {channel.target_audience ? `Target: ${channel.target_audience}` : "Quiz Channel"}
+          </p>
+        )}
+      </div>
+
+      <div className="channel-card-meta">
+        {channel.mascot_id ? (
+          <span
+            className="channel-mascot-pill"
+            title={assignedMascot?.description || assignedMascot?.name || "Mascot"}
+          >
+            {assignedMascot?.master_image_url ? (
+              <img
+                src={assignedMascot.master_image_url}
+                alt={assignedMascot.name}
+                className="channel-mascot-avatar"
+              />
+            ) : (
+              <span className="channel-mascot-avatar-fallback">
+                <Smiley size={12} weight="fill" />
+              </span>
+            )}
+            <span>{assignedMascot?.name || "Mascot"}</span>
+          </span>
+        ) : null}
+
+        {primaryStyleLabel ? (
+          <span className="channel-styles-pill" title={`Visual Styles: ${activeStyles.map((s) => QUIZ_IMAGE_STYLE_LABELS[s]).join(", ")}`}>
+            <span className="style-dot" />
+            <span>
+              {primaryStyleLabel}
+              {extraStylesCount > 0 ? ` +${extraStylesCount}` : ""}
+            </span>
+          </span>
+        ) : null}
+      </div>
+
+      <div className="channel-card-footer">
+        <div className="channel-footer-stats">
+          <span className="stat-item">
+            <FilmSlate size={14} />
+            <span>
+              {channel.episode_count || 0} {channel.episode_count === 1 ? "video" : "videos"}
+            </span>
+          </span>
+          {timeAgo ? (
+            <>
+              <span style={{ opacity: 0.4 }}>•</span>
+              <span className="stat-item" style={{ opacity: 0.85 }}>
+                {timeAgo}
+              </span>
+            </>
+          ) : null}
+        </div>
+        <span className="channel-card-arrow">
+          <ArrowUpRight size={16} weight="bold" />
+        </span>
+      </div>
     </article>
   );
 }
@@ -173,11 +361,7 @@ export function DashboardView({
   storage: _storage = null,
   git: _git = { branch: null, dirty: false, changed_files: 0 },
   engineStatus: _engineStatus = "ready",
-  onCreate,
-  openChannel,
-  onDelete,
-  openChannelsList,
-  openTaskList,
+  openTaskList: _openTaskList,
   onNavigate: _onNavigate,
 }: {
   channels: Channel[];
@@ -198,14 +382,11 @@ export function DashboardView({
   storage?: StorageInfo | null;
   git?: GitInfo;
   engineStatus?: string;
-  onCreate?: (groupId?: ChannelGroupId) => void;
-  openChannel?: (id: string) => void;
-  onDelete?: (channel: Channel) => void;
-  openChannelsList?: () => void;
   openTaskList?: () => void;
   onNavigate?: (page: Page, params?: Record<string, string>) => void;
 }) {
   const { t } = useTranslation();
+
   // Channel & Episode metrics
   const activeChannelsCount = channels.filter((c) => c.status === "ACTIVE").length;
   const draftChannelsCount = channels.filter((c) => c.status === "DRAFT").length;
@@ -296,12 +477,6 @@ export function DashboardView({
             {t("dashboard.subtitle")}
           </p>
         </div>
-        <div className="hero-actions-group" style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-          <button className="primary-button hero-action" onClick={() => onCreate?.("quiz")}>
-            <Plus size={16} weight="bold" />
-            <span>{t("channels.newQuizChannel")}</span>
-          </button>
-        </div>
       </div>
 
       {/* Top Level Metric KPIs */}
@@ -337,42 +512,6 @@ export function DashboardView({
           icon={Wallet}
         />
       </div>
-
-      {/* Channels Section in Dashboard */}
-      <div className="section-heading" style={{ marginTop: "24px" }}>
-        <div>
-          <p className="eyebrow">{t("channels.pageEyebrow")}</p>
-          <h2>{t("channels.pageTitle")}</h2>
-        </div>
-        {openChannelsList ? (
-          <button className="text-button" onClick={openChannelsList}>
-            <span>{t("common.viewAll")}</span>
-            <ArrowUpRight size={15} />
-          </button>
-        ) : null}
-      </div>
-
-      {channels.length === 0 ? (
-        <EmptyState
-          icon={<Broadcast size={26} />}
-          title={t("channels.noQuizChannelsTitle")}
-          copy={t("channels.noQuizChannelsCopy")}
-          action={t("channels.newQuizChannel")}
-          onAction={() => onCreate?.("quiz")}
-        />
-      ) : (
-        <div className="channel-grid">
-          {channels.slice(0, 6).map((channel, index) => (
-            <ChannelCard
-              key={channel.channel_id}
-              index={index + 1}
-              channel={channel}
-              onOpen={() => openChannel?.(channel.channel_id)}
-              onDelete={onDelete || (() => {})}
-            />
-          ))}
-        </div>
-      )}
 
       <div className="dashboard-grid" style={{ marginTop: "24px" }}>
         {/* Cost Savings & ROI Section */}
@@ -441,11 +580,13 @@ export function DashboardView({
 
 export function ChannelsListView({
   channels,
+  mascots: initialMascots,
   onCreate,
   openChannel,
   onDelete,
 }: {
   channels: Channel[];
+  mascots?: MascotProfile[];
   activeGroup?: ChannelGroupId;
   onActiveGroupChange?: (groupId: ChannelGroupId) => void;
   onCreate: (groupId?: ChannelGroupId) => void;
@@ -453,62 +594,177 @@ export function ChannelsListView({
   onDelete: (channel: Channel) => void;
 }) {
   const { t } = useTranslation();
-  const quizChannels = channels;
+  const [mascots, setMascots] = useState<MascotProfile[]>(initialMascots || []);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "draft" | "archived">("all");
+  const [sortBy, setSortBy] = useState<"latest" | "episodes" | "name">("latest");
+
+  useEffect(() => {
+    if (!initialMascots || initialMascots.length === 0) {
+      void api.mascots().then((res) => setMascots(res.mascots)).catch(() => {});
+    }
+  }, [initialMascots]);
+
+  const activeCount = channels.filter((c) => c.status === "ACTIVE").length;
+  const draftCount = channels.filter((c) => c.status === "DRAFT").length;
+  const archivedCount = channels.filter((c) => c.status === "ARCHIVED").length;
+
+  const filteredChannels = useMemo(() => {
+    return channels
+      .filter((c) => {
+        if (statusFilter !== "all" && c.status.toLowerCase() !== statusFilter) {
+          return false;
+        }
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase().trim();
+          const matchName = c.display_name.toLowerCase().includes(q);
+          const matchDesc = c.description?.toLowerCase().includes(q);
+          const matchAudience = c.target_audience?.toLowerCase().includes(q);
+          const matchLang = c.language?.toLowerCase().includes(q);
+          if (!matchName && !matchDesc && !matchAudience && !matchLang) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortBy === "episodes") {
+          return (b.episode_count || 0) - (a.episode_count || 0);
+        }
+        if (sortBy === "name") {
+          return a.display_name.localeCompare(b.display_name);
+        }
+        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+      });
+  }, [channels, statusFilter, searchQuery, sortBy]);
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("all");
+  };
 
   return (
     <section className="page-wrap">
-      <PageTitle eyebrow={t("channels.pageEyebrow")} title={t("channels.pageTitle")} />
-      <div
-        id="quiz-channels-panel"
-        className="channel-group-panel"
-        role="region"
-        aria-label="Quiz Channels"
-      >
-        <div className="channel-group-card" aria-labelledby="quiz-channels-title">
-          <div className="channel-group-icon">
-            <FolderOpen size={24} weight="duotone" />
+      <div className="hero-row" style={{ marginBottom: "20px" }}>
+        <div>
+          <p className="eyebrow">{t("channels.pageEyebrow")}</p>
+          <h1>{t("channels.pageTitle")}</h1>
+        </div>
+        <button className="primary-button hero-action" onClick={() => onCreate("quiz")}>
+          <Plus size={16} weight="bold" />
+          <span>{t("channels.newQuizChannel")}</span>
+        </button>
+      </div>
+
+      {/* Smart Toolbar */}
+      <div className="channel-toolbar">
+        <div className="channel-toolbar-left">
+          <div className="channel-search-box">
+            <MagnifyingGlass size={16} className="search-icon" />
+            <input
+              type="text"
+              className="channel-search-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t("channels.searchPlaceholder")}
+              aria-label={t("channels.searchPlaceholder")}
+            />
+            {searchQuery ? (
+              <button
+                type="button"
+                className="channel-search-clear"
+                onClick={() => setSearchQuery("")}
+                title="Clear search"
+                aria-label="Clear search"
+              >
+                <X size={12} />
+              </button>
+            ) : null}
           </div>
-          <div className="channel-group-heading">
-            <strong id="quiz-channels-title">{t("channels.quizChannels")}</strong>
-            <span>
-              {quizChannels.length} {quizChannels.length === 1 ? "channel" : "channels"}
-            </span>
+
+          <div className="channel-filter-pills" role="radiogroup" aria-label="Filter channels by status">
+            <button
+              type="button"
+              className={`channel-filter-btn ${statusFilter === "all" ? "is-active" : ""}`}
+              onClick={() => setStatusFilter("all")}
+            >
+              <span>{t("channels.filterAll")}</span>
+              <span className="channel-filter-count">{channels.length}</span>
+            </button>
+            <button
+              type="button"
+              className={`channel-filter-btn ${statusFilter === "active" ? "is-active" : ""}`}
+              onClick={() => setStatusFilter("active")}
+            >
+              <span>{t("channels.filterActive")}</span>
+              <span className="channel-filter-count">{activeCount}</span>
+            </button>
+            <button
+              type="button"
+              className={`channel-filter-btn ${statusFilter === "draft" ? "is-active" : ""}`}
+              onClick={() => setStatusFilter("draft")}
+            >
+              <span>{t("channels.filterDraft")}</span>
+              <span className="channel-filter-count">{draftCount}</span>
+            </button>
+            {archivedCount > 0 ? (
+              <button
+                type="button"
+                className={`channel-filter-btn ${statusFilter === "archived" ? "is-active" : ""}`}
+                onClick={() => setStatusFilter("archived")}
+              >
+                <span>{t("channels.filterArchived")}</span>
+                <span className="channel-filter-count">{archivedCount}</span>
+              </button>
+            ) : null}
           </div>
-          <div className="group-format-list">
-            <span>{t("channels.formatKnowledge")}</span>
-            <span>{t("channels.formatImageGuess")}</span>
-            <span>{t("channels.formatMultipleChoice")}</span>
-            <span>{t("channels.formatTrueFalse")}</span>
-            <span>{t("channels.formatOddOneOut")}</span>
-          </div>
-          <button className="quiet-button group-create-button" onClick={() => onCreate("quiz")}>
-            <Plus size={15} />
-            <span>{t("channels.newQuizChannel")}</span>
+        </div>
+
+        <div className="channel-toolbar-right">
+          <select
+            className="channel-sort-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as "latest" | "episodes" | "name")}
+            aria-label={t("channels.sortBy")}
+          >
+            <option value="latest">{t("channels.sortLatest")}</option>
+            <option value="episodes">{t("channels.sortEpisodes")}</option>
+            <option value="name">{t("channels.sortName")}</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Grid or Empty state */}
+      {channels.length === 0 ? (
+        <EmptyState
+          icon={<Broadcast size={26} />}
+          title={t("channels.noQuizChannelsTitle")}
+          copy={t("channels.noQuizChannelsCopy")}
+          action={t("channels.newQuizChannel")}
+          onAction={() => onCreate("quiz")}
+        />
+      ) : filteredChannels.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "48px 16px", background: "var(--surface)", borderRadius: "var(--radius-lg)", border: "1px dashed var(--line)" }}>
+          <MagnifyingGlass size={36} style={{ color: "var(--muted)", margin: "0 auto 12px" }} />
+          <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 6px" }}>{t("channels.noResultsTitle")}</h3>
+          <p style={{ fontSize: "13px", color: "var(--muted)", margin: "0 0 16px" }}>{t("channels.noResultsCopy")}</p>
+          <button type="button" className="quiet-button" onClick={clearFilters} style={{ margin: "0 auto" }}>
+            <X size={14} />
+            <span>{t("channels.clearFilters")}</span>
           </button>
         </div>
-        {quizChannels.length === 0 ? (
-          <EmptyState
-            compact
-            icon={<Broadcast size={26} />}
-            title={t("channels.noQuizChannelsTitle")}
-            copy={t("channels.noQuizChannelsCopy")}
-            action={t("channels.newQuizChannel")}
-            onAction={() => onCreate("quiz")}
-          />
-        ) : (
-          <div className="channel-grid channel-grid-wide">
-            {quizChannels.map((channel, index) => (
-              <ChannelCard
-                key={channel.channel_id}
-                index={index + 1}
-                channel={channel}
-                onOpen={() => openChannel(channel.channel_id)}
-                onDelete={onDelete}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      ) : (
+        <div className="channel-grid">
+          {filteredChannels.map((channel, index) => (
+            <ChannelCard
+              key={channel.channel_id}
+              index={index + 1}
+              channel={channel}
+              mascots={mascots}
+              onOpen={() => openChannel(channel.channel_id)}
+              onDelete={onDelete}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

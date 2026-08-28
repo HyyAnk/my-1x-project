@@ -55,7 +55,7 @@ test("channel library separates Quiz and Documentary groups into tabs", async ({
   const documentary = { ...quiz, channel_id: "ch_group_doc", slug: "group-doc", display_name: "Group documentary", description: "Documentary", group_id: "documentary", engine: "documentary" };
   await page.route("**/api/channels", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ channels: [quiz, documentary] }) }));
   await page.goto("/");
-  await page.getByRole("button", { name: "View all", exact: true }).first().click();
+  await page.getByRole("button", { name: "Channels", exact: true }).click();
   await expect(page.getByText("Quiz Channels", { exact: true }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: "New Quiz channel", exact: true })).toBeVisible();
   await expect(page.getByRole("tab", { name: "Documentary Channels", exact: true })).toBeVisible();
@@ -82,7 +82,7 @@ test("channel deletion requires an explicit Yes and typed confirmation", async (
     await route.fulfill({ contentType: "application/json", body: JSON.stringify({ ok: true }) });
   });
 
-  await page.goto("/");
+  await page.goto("/#/channels");
   const card = page.locator(".channel-card").filter({ hasText: "Delete demo" });
   await card.hover();
   const deleteButton = card.getByRole("button", { name: "Delete channel", exact: true });
@@ -148,7 +148,7 @@ test("episode deletion uses a direct Yes or No confirmation", async ({ page }) =
     await route.fulfill({ contentType: "application/json", body: JSON.stringify({ ok: true }) });
   });
 
-  await page.goto("/");
+  await page.goto("/#/channels");
   await page.getByRole("button", { name: /01.*Episode delete channel/ }).click();
   const row = page.locator(".episode-row").filter({ hasText: "Episode to delete" });
   await expect(row).toBeVisible();
@@ -172,10 +172,10 @@ test("channel detail keeps topic generation progress visible", async ({ page }) 
   const task = { task_id: "task_demo", task_type: "SUGGEST_TOPICS", channel_id: "ch_demo", episode_id: null, status: "RUNNING", created_at: "2026-08-16T00:00:00.000Z", started_at: "2026-08-16T00:00:05.000Z", completed_at: null, codex_thread_id: "thread_demo", codex_turn_id: "turn_demo", error: null, output_files: [], lock_key: "ch_demo", queue_position: null, progress_message: "Receiving output", scene_number: null };
   await page.route("**/api/channels", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ channels: [channel] }) }));
   await page.route("**/api/tasks", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ tasks: [task], codex_status: "connected" }) }));
-  await page.route("**/api/channels/ch_demo/dna", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ content: "# Channel DNA\n", path: channel.channel_dna_path, modified_at: channel.updated_at }) }));
-  await page.route("**/api/channels/ch_demo/topics", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ topics: [] }) }));
-  await page.route("**/api/channels/ch_demo/episodes", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ episodes: [] }) }));
-  await page.goto("/");
+  await page.route(`**/api/channels/ch_demo/dna`, (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ content: "# Channel DNA\n", path: channel.channel_dna_path, modified_at: channel.updated_at }) }));
+  await page.route(`**/api/channels/ch_demo/topics`, (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ topics: [] }) }));
+  await page.route(`**/api/channels/ch_demo/episodes`, (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ episodes: [] }) }));
+  await page.goto("/#/channels");
   await expect(page.getByRole("button", { name: /01.*Demo channel/ })).toBeVisible();
   await page.getByRole("button", { name: /01.*Demo channel/ }).click();
   await expect(page.getByRole("heading", { name: "Production status" })).toBeVisible();
@@ -215,7 +215,7 @@ test("topic confirmation sends the selected question count before episode genera
     await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ episode }) });
   });
 
-  await page.goto("/");
+  await page.goto("/#/channels");
   await page.getByRole("button", { name: /01.*Topic count/ }).click();
   const topicCard = page.locator(".topic-card").filter({ hasText: topic.title });
   const questionPicker = topicCard.getByRole("spinbutton", { name: `Question count for ${topic.title}` });
@@ -274,7 +274,7 @@ test("episode generation stays visible and refreshes completed work without F5",
   await page.route(`**/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/scenes`, (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ scenes: [] }) }));
   await page.route(`**/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/production-assessment`, (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ assessment }) }));
 
-  await page.goto("/");
+  await page.goto("/#/channels");
   await page.getByRole("button", { name: /01.*Episode demo/ }).click();
   await page.getByRole("button", { name: /The Demo Story/ }).click();
 
@@ -338,7 +338,7 @@ test("scene audio updates inline and exposes the duration match action", async (
     await route.fulfill({ status: 202, contentType: "application/json", body: JSON.stringify({ task: audioTask }) });
   });
 
-  await page.goto("/");
+  await page.goto("/#/channels");
   await page.getByRole("button", { name: /01.*Audio demo/ }).click();
   await page.getByRole("button", { name: /The Audio Story/ }).click();
   await expect(page.getByRole("button", { name: "Preview audio", exact: true })).toBeVisible();

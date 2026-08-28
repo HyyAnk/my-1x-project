@@ -158,6 +158,30 @@ export interface TranslationSchema {
     uploadDna: string;
     manualSetup: string;
     dnaFileLabel: string;
+    searchPlaceholder: string;
+    filterAll: string;
+    filterActive: string;
+    filterDraft: string;
+    filterArchived: string;
+    sortBy: string;
+    sortLatest: string;
+    sortEpisodes: string;
+    sortName: string;
+    noResultsTitle: string;
+    noResultsCopy: string;
+    clearFilters: string;
+    channelCountSummary: string;
+    showingCount: string;
+    copyId: string;
+    idCopied: string;
+    openChannel: string;
+    moreActions: string;
+    noMascotAssigned: string;
+    updatedJustNow: string;
+    updatedAgo: string;
+    activeStatus: string;
+    draftStatus: string;
+    archivedStatus: string;
   };
   channelDetail: {
     productionStatus: string;
@@ -307,7 +331,6 @@ export interface TranslationSchema {
     generatorStep1: string;
     generatorStep2: string;
     generatorStep3: string;
-    generatorStep4: string;
 
     // Step 1: Identity & Concept
     conceptTitle: string;
@@ -322,7 +345,7 @@ export interface TranslationSchema {
     promptPlaceholder: string;
     generateConceptBtn: string;
     generatingConceptBtn: string;
-    nextActionMatrixBtn: string;
+    nextStatesBtn: string;
     masterPreviewTitle: string;
     masterPreviewSub: string;
     masterPreviewPlaceholder: string;
@@ -351,22 +374,21 @@ export interface TranslationSchema {
     styleToyDesc: string;
     focusPromptTitle: string;
 
-    // Step 2: Action Matrix
-    actionMatrixTitle: string;
-    actionMatrixSub: string;
-    selectAllBtn: string;
-    framesCountLabel: string;
-    fpsLabel: string;
-    hasSpriteBadge: string;
-    noSpriteBadge: string;
-    backIdentityBtn: string;
-    nextSpriteBtn: string;
-
-    // Step 3: Sprite Generation
-    spriteGenTitle: string;
-    spriteGenSub: string;
+    // Step 2: Expressive States Studio & Micro-Motion
+    statesStudioTitle: string;
+    statesStudioSub: string;
     batchGenerateBtn: string;
     batchGeneratingBtn: string;
+    batchMattingBtn: string;
+    batchMattingTooltip: string;
+    progressLabel: string;
+    addPoseBtn: string;
+    customPromptTooltip: string;
+    customPromptEyebrow: string;
+    customPromptLabel: string;
+    customPromptSub: string;
+    saveAndRegenerateBtn: string;
+    unnamedMascot: string;
     notGeneratedBadge: string;
     reGenerateBtn: string;
     generateAiBtn: string;
@@ -374,14 +396,16 @@ export interface TranslationSchema {
     uploadStripBtn: string;
     mattingSpriteBtn: string;
     mattingShortBtn: string;
-    previewStep4Btn: string;
-    backMatrixBtn: string;
-    nextLiveStageBtn: string;
+    previewStep3Btn: string;
+    backIdentityBtn: string;
+    nextStageDeployBtn: string;
     noSpritePlaceholder: string;
+    statesReadyBadge: string;
 
-    // Step 4: Live Animation Studio & Simulator
-    liveStudioTitle: string;
-    liveStudioSub: string;
+    // Step 3: Stage Theater & Channel Deploy
+    stageTheaterTitle: string;
+    stageTheaterSub: string;
+    backStatesBtn: string;
     videoStageMode: string;
     gridMode: string;
     theaterModeExpand: string;
@@ -447,11 +471,30 @@ export interface TranslationSchema {
     saveAndApplyChannelsBtn: string;
     savingAndApplyingBtn: string;
 
-    // Modals
+    // Modals & Assign Hub
     quickAssignEyebrow: string;
     quickAssignTitle: string;
     quickAssignSaveBtn: string;
     quickAssignSavingBtn: string;
+    searchChannelsPlaceholder: string;
+    filterAll: string;
+    filterSelected: string;
+    filterUnassigned: string;
+    filterOtherMascots: string;
+    selectAllBtn: string;
+    deselectAllBtn: string;
+    currentlyAssignedToOther: string;
+    transferWarningNotice: string;
+    noChannelsFound: string;
+    noChannelsAvailable: string;
+    previewAspectRatioShorts: string;
+    previewAspectRatioVideo: string;
+    presetCompact: string;
+    presetStandard: string;
+    presetLarge: string;
+    channelItemCurrentlyThis: string;
+    channelItemUnassigned: string;
+    selectedChannelsSummary: string;
     deleteEyebrow: string;
     deleteTitle: string;
     deleteWarning: string;
@@ -465,7 +508,9 @@ export interface TranslationSchema {
     poseReadyTooltip: string;
     poseMissingTooltip: string;
     notAssignedChannels: string;
+    unassignedChannelsShort: string;
     assignedChannelsCount: string;
+    activeChannelsShort: string;
     quickAssignBtn: string;
     generatorBtn: string;
     exportZipTooltip: string;

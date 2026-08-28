@@ -88,19 +88,36 @@ export async function generateMascotActionSprite(
   const loop = options.loop !== undefined ? options.loop : true;
 
   const styleDesc = STYLE_PROMPTS[mascot.visual_style] || STYLE_PROMPTS.pixar_3d;
-  const baseDesc = mascot.master_prompt || mascot.description || mascot.name;
+  const baseDesc = mascot.master_prompt?.trim() || mascot.description?.trim() || `${mascot.name} cute friendly companion`;
   const actionSpecific = options.prompt?.trim() || meta.description;
 
+  // Load master concept image bytes if available for reference conditioning
+  let referenceImageBase64: string | undefined;
+  if (mascot.master_image_url) {
+    const masterFilename = mascot.master_image_url.split("/").pop();
+    if (masterFilename) {
+      try {
+        const fileInfo = await repository.getMascotAssetFile(mascot.id, masterFilename);
+        const rawMasterBytes = await readFile(fileInfo.absolutePath);
+        if (rawMasterBytes && rawMasterBytes.length > 0) {
+          referenceImageBase64 = `data:image/png;base64,${Buffer.from(rawMasterBytes).toString("base64")}`;
+        }
+      } catch (err) {
+        logger?.warn(`Could not load master concept image for reference: ${err instanceof Error ? err.message : String(err)}`, { profileId: mascot.id });
+      }
+    }
+  }
+
   const characterDna = [
-    `Character Identity: "${mascot.name}"`,
-    `Master Character Design: ${baseDesc}`,
+    `Character: "${mascot.name}"`,
+    `Visual Appearance: ${baseDesc}`,
     `Color Palette: Primary theme ${mascot.color_theme || "#06b6d4"}`,
-    `Anatomy & Proportions: Chibi 1:2 head-to-body proportion, large expressive sparkling eyes, ${styleDesc}`,
-    `STRICT CONTINUITY ANCHOR: Exactly the same character face, costume, colors, and accessories as master concept. Do not change character design.`,
+    `Style & Proportions: Chibi 1:2 head-to-body proportion, large expressive sparkling eyes, ${styleDesc}`,
+    `STRICT CHARACTER CONTINUITY: Identical face, eyes, head shape, costume, accessories, and colors matching master reference image. Keep the same exact character identity.`,
   ].join(". ");
 
   const fullPrompt = framesCount === 1
-    ? `Full-body expressive character pose of "${mascot.name}". ${characterDna}. Expressive quiz state pose: ${actionSpecific}. Single centered subject standing facing camera, dynamic energetic posture, sharp clean silhouette. Solid neutral light gray background (#E8E8E8), high contrast studio rim lighting, floating character, no ground shadow, no floor, no contact shadow, pure uniform backdrop.`
+    ? `Full-body 3D character pose of "${mascot.name}". ${characterDna}. Current pose and expression: ${actionSpecific}. Single centered subject standing facing camera, dynamic posture, sharp clean silhouette. Solid neutral light gray background (#E8E8E8), high contrast studio rim lighting, floating character, no ground shadow, no floor, no contact shadow, no pedestal, pure uniform backdrop.`
     : `Horizontal 2D sprite strip keyframe breakdown of character "${mascot.name}". ${characterDna}. Performing ${action} action: ${actionSpecific}. Exactly ${framesCount} sequential keyframe animation poses arranged horizontally in 1 row from left to right. Frame 1 to ${framesCount} smooth continuous loop motion animation. Solid neutral light gray seamless background (#E8E8E8), uniform studio lighting, floating character, no ground shadow, no floor, no pedestal, consistent character proportion across all frames.`;
 
   let spriteBytes: Uint8Array;
@@ -110,12 +127,14 @@ export async function generateMascotActionSprite(
 
   if (imageConfig.enabled && imageConfig.api_key) {
     try {
-      logger?.info(`Generating mascot state for ${mascot.name} action ${action} (frames: ${framesCount})`, { profileId: mascot.id });
+      logger?.info(`Generating mascot state for ${mascot.name} action ${action} (frames: ${framesCount}, hasRefImage: ${Boolean(referenceImageBase64)})`, { profileId: mascot.id });
       const result = await generateGpti2ImageBytes(fullPrompt, {
         apiKey: imageConfig.api_key,
         aspect_ratio: framesCount === 1 ? "1:1" : "16:9",
         size: framesCount === 1 ? "1024x1024" : "1280x720",
         model: imageConfig.model || "gpt-image-2",
+        referenceImageBase64,
+        referenceStrength: 0.75,
         cancellationSignal: AbortSignal.timeout(90_000),
       });
       spriteBytes = await removeImageBackground(result.bytes);

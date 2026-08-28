@@ -97,9 +97,9 @@ export type MascotMotionPreset = "breathe" | "sway" | "jump" | "shake" | "wave" 
 export const MASCOT_ACTION_META: Record<MascotActionType, { label: string; description: string; defaultFps: number; defaultFrames: number; icon: string; usage: string; motionPreset: MascotMotionPreset }> = {
   idle: { label: "Idle / Listening (Breathing Pose)", description: "Natural subtle breathing and blinking pose while questions are read", defaultFps: 6, defaultFrames: 1, icon: "🧘", usage: "During question reading and transitions", motionPreset: "breathe" },
   wave: { label: "Wave Hello (Intro Greeting)", description: "Playful welcoming wave gesture at opening", defaultFps: 8, defaultFrames: 1, icon: "👋", usage: "Episode intro opening", motionPreset: "wave" },
-  thinking: { label: "Thinking (Countdown Pondering)", description: "Chin-resting, pondering or checking timer with players", defaultFps: 8, defaultFrames: 1, icon: "🤔", usage: "Countdown 5-4-3-2-1 phase", motionPreset: "sway" },
+  thinking: { label: "Thinking (Question & Countdown)", description: "Chin-resting, pondering or companion pose while question is presented and timer counts down", defaultFps: 8, defaultFrames: 1, icon: "🤔", usage: "Question presentation and countdown phase", motionPreset: "sway" },
   point: { label: "Point Board (Explanation Highlight)", description: "Pointing hand or pointer stick at question / explanation card", defaultFps: 8, defaultFrames: 1, icon: "👉", usage: "Answer explanation & Fact Card", motionPreset: "point" },
-  celebrate: { label: "Celebrate (Joyful Triumph)", description: "Jumping with joy, raised hands or celebratory pose", defaultFps: 10, defaultFrames: 1, icon: "🎉", usage: "Correct answer reveal moment", motionPreset: "jump" },
+  celebrate: { label: "Celebrate (Reveal & Fact Reading)", description: "Jumping with joy, raised hands or celebratory pose during reveal and fun fact", defaultFps: 10, defaultFrames: 1, icon: "🎉", usage: "Answer reveal and Fact reading phase", motionPreset: "jump" },
   oops: { label: "Oops / Confused (Time Out)", description: "Scratching head or shrugging with playful comical reaction", defaultFps: 8, defaultFrames: 1, icon: "😅", usage: "Time out / Wrong answer", motionPreset: "shake" },
   outro: { label: "Wave Bye & CTA (Ending)", description: "Waving goodbye and pointing to Like, Subscribe, Comment", defaultFps: 8, defaultFrames: 1, icon: "🌟", usage: "Episode outro ending", motionPreset: "wave" },
 };
@@ -144,6 +144,7 @@ export const ChannelMascotConfigSchema = z.object({
   sfx_oops_style: z.enum(["whistle_fall", "cute_boing", "soft_sigh", "none"]).optional(),
 });
 export type ChannelMascotConfig = z.infer<typeof ChannelMascotConfigSchema>;
+export type MascotPosition = "bottom_left" | "bottom_right";
 
 export const CalibrateMascotActionInputSchema = z.object({
   offset_x: z.number().min(-100).max(100),
@@ -186,6 +187,7 @@ export const UploadMascotSpriteInputSchema = z.object({
   loop: z.boolean().default(true),
   frame_width: z.number().int().min(32).max(2048).default(512),
   frame_height: z.number().int().min(32).max(2048).default(512),
+  motion_preset: z.enum(["breathe", "sway", "jump", "shake", "wave", "point", "none"]).optional(),
 });
 export type UploadMascotSpriteInput = z.infer<typeof UploadMascotSpriteInputSchema>;
 

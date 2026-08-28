@@ -85,6 +85,9 @@ type Gpti2GenerationOptions = {
   idempotencyKey?: string;
   cancellationSignal?: AbortSignal;
   pollIntervalMs?: number;
+  referenceImageBase64?: string;
+  referenceImageUrl?: string;
+  referenceStrength?: number;
 };
 
 const DEFAULT_BASE_URL = "https://gpti2.store";
@@ -131,7 +134,8 @@ export async function generateGpti2ImageBytes(
   const model = options.model?.trim() || DEFAULT_MODEL;
   const isNano = model.startsWith("nano-banana");
   const dimensions = resolveImageDimensions(options.aspect_ratio || "16:9", model);
-  const idempotencyKey = options.idempotencyKey || generateIdempotencyKey("img", `${model}:${dimensions.aspect_ratio}:${prompt}`);
+  const idempotencySeed = `${model}:${dimensions.aspect_ratio}:${prompt}:${options.referenceImageUrl || (options.referenceImageBase64 ? options.referenceImageBase64.slice(0, 64) : "")}`;
+  const idempotencyKey = options.idempotencyKey || generateIdempotencyKey("img", idempotencySeed);
 
   if (isNano) {
     return generateNanoBananaImage(apiKey, prompt, model, { ...options, aspect_ratio: dimensions.aspect_ratio }, idempotencyKey);
@@ -155,6 +159,30 @@ async function generateGptImage(
     ? AbortSignal.any([options.cancellationSignal, AbortSignal.timeout(REQUEST_TIMEOUT_MS)])
     : AbortSignal.timeout(REQUEST_TIMEOUT_MS);
 
+  const requestBody: Record<string, unknown> = {
+    model,
+    prompt,
+    size,
+    quality,
+    n: 1,
+  };
+
+  if (options.referenceImageBase64) {
+    const dataUrl = options.referenceImageBase64.startsWith("data:")
+      ? options.referenceImageBase64
+      : `data:image/png;base64,${options.referenceImageBase64}`;
+    const rawBase64 = options.referenceImageBase64.replace(/^data:image\/[^;]+;base64,/i, "");
+    requestBody.image_base64 = rawBase64;
+    requestBody.image_url = dataUrl;
+    requestBody.ref_images = [dataUrl];
+    if (typeof options.referenceStrength === "number") {
+      requestBody.image_strength = options.referenceStrength;
+    }
+  } else if (options.referenceImageUrl) {
+    requestBody.image_url = options.referenceImageUrl;
+    requestBody.ref_images = [options.referenceImageUrl];
+  }
+
   let response: Response;
   try {
     response = await fetch(`${DEFAULT_BASE_URL}/v1/images/generations`, {
@@ -165,13 +193,7 @@ async function generateGptImage(
         Prefer: "respond-async", // Ensure job queues and does not get dropped
         "Idempotency-Key": idempotencyKey, // Prevent duplicate billing
       },
-      body: JSON.stringify({
-        model,
-        prompt,
-        size,
-        quality,
-        n: 1,
-      }),
+      body: JSON.stringify(requestBody),
       signal: requestSignal,
     });
   } catch (error) {
@@ -334,6 +356,23 @@ async function generateNanoBananaImage(
     ? AbortSignal.any([options.cancellationSignal, AbortSignal.timeout(REQUEST_TIMEOUT_MS)])
     : AbortSignal.timeout(REQUEST_TIMEOUT_MS);
 
+  const requestBody: Record<string, unknown> = {
+    model,
+    prompt,
+    aspect_ratio: aspectRatio,
+  };
+
+  if (options.referenceImageBase64) {
+    const dataUrl = options.referenceImageBase64.startsWith("data:")
+      ? options.referenceImageBase64
+      : `data:image/png;base64,${options.referenceImageBase64}`;
+    requestBody.image_urls = [dataUrl];
+    requestBody.ref_images = [dataUrl];
+  } else if (options.referenceImageUrl) {
+    requestBody.image_urls = [options.referenceImageUrl];
+    requestBody.ref_images = [options.referenceImageUrl];
+  }
+
   let response: Response;
   try {
     response = await fetch(`${DEFAULT_BASE_URL}/v1/images/nano/generations`, {
@@ -343,11 +382,7 @@ async function generateNanoBananaImage(
         "Content-Type": "application/json",
         "Idempotency-Key": idempotencyKey,
       },
-      body: JSON.stringify({
-        model,
-        prompt,
-        aspect_ratio: aspectRatio,
-      }),
+      body: JSON.stringify(requestBody),
       signal: requestSignal,
     });
   } catch (error) {

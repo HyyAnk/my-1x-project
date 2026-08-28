@@ -320,10 +320,6 @@ function AppContent() {
             storage={storage}
             git={git}
             engineStatus={currentEngineStatus}
-            onCreate={requestCreateChannel}
-            openChannel={openChannel}
-            onDelete={requestDeleteChannel}
-            openChannelsList={() => openPage("channels")}
             openTaskList={() => openPage("tasks")}
             onNavigate={(nextPage, params) => {
               openPage(nextPage);

@@ -265,4 +265,76 @@ describe("gpti2.store Image Provider", () => {
     expect(balance.balance_vnd).toBe(50000);
     expect(balance.rpm).toBe(10);
   });
+
+  it("attaches referenceImageBase64 to gpt-image-2 payload correctly", async () => {
+    const fakeBase64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: async () => JSON.stringify({
+        data: [{ b64_json: fakeBase64 }],
+        price_vnd: 50,
+      }),
+    } as unknown as Response);
+    globalThis.fetch = fetchMock;
+
+    await generateGpti2ImageBytes("Character waving", {
+      apiKey: "sk-test-key",
+      model: "gpt-image-2",
+      referenceImageBase64: fakeBase64,
+      referenceStrength: 0.8,
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init.body as string);
+    expect(body.image_base64).toBe(fakeBase64);
+    expect(body.image_url).toBe(`data:image/png;base64,${fakeBase64}`);
+    expect(body.ref_images).toEqual([`data:image/png;base64,${fakeBase64}`]);
+    expect(body.image_strength).toBe(0.8);
+  });
+
+  it("attaches referenceImageBase64 to nano-banana-2 payload correctly", async () => {
+    const fakeBase64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (url.endsWith("/nano/generations")) {
+        return Promise.resolve({
+          ok: true,
+          status: 202,
+          text: async () => JSON.stringify({ id: "nb_ref_123", price_vnd: 100 }),
+        } as unknown as Response);
+      }
+      if (url.includes("/nano/nb_ref_123")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          json: async () => ({
+            status: "succeeded",
+            data: [{ url: "https://gpti2.store/download/nb_ref_123.png" }],
+            price_vnd: 100,
+          }),
+        } as unknown as Response);
+      }
+      if (url.includes("/download/nb_ref_123.png")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          arrayBuffer: async () => new Uint8Array([137, 80, 78, 71]).buffer,
+        } as unknown as Response);
+      }
+      return Promise.reject(new Error(`Unexpected url: ${url}`));
+    });
+    globalThis.fetch = fetchMock;
+
+    await generateGpti2ImageBytes("Character celebrating", {
+      apiKey: "sk-test-key",
+      model: "nano-banana-2",
+      referenceImageBase64: fakeBase64,
+      pollIntervalMs: 10,
+    });
+
+    const firstCallBody = JSON.parse(fetchMock.mock.calls[0][1].body as string);
+    expect(firstCallBody.image_urls).toEqual([`data:image/png;base64,${fakeBase64}`]);
+    expect(firstCallBody.ref_images).toEqual([`data:image/png;base64,${fakeBase64}`]);
+  });
 });

@@ -39,7 +39,7 @@ test("Quiz Engine V2 rail is status-only and Build video is the single productio
   let folderOpened = false;
   await page.route("**/api/channels/" + channel.channel_id + "/episodes/" + episode.episode_id + "/video/open-folder", async (route) => { folderOpened = route.request().method() === "POST"; await route.fulfill({ contentType: "application/json", body: JSON.stringify({ opened: true, folder_path: "channels/quiz-v2/episodes/quiz-story/assets" }) }); });
 
-  await page.goto("/");
+  await page.goto("/#/channels");
   await page.getByRole("button", { name: /01.*Quiz V2 channel/ }).click();
   await page.getByRole("button", { name: /Quiz Story/ }).click();
   await expect(page.getByRole("heading", { name: "Production rail", exact: true })).toBeVisible();
@@ -67,7 +67,7 @@ test("Quiz Engine V2 rail is status-only and Build video is the single productio
     { task_id: "scene_cancelled", task_type: "GENERATE_SEQUENCE_SCENES", channel_id: channel.channel_id, episode_id: episode.episode_id, status: "CANCELLED", created_at: "2026-08-16T01:00:00.000Z", started_at: "2026-08-16T01:00:01.000Z", completed_at: "2026-08-16T01:00:02.000Z", codex_thread_id: null, codex_turn_id: null, error: "Cancelled by user", output_files: [], lock_key: episode.episode_id, queue_position: null, progress_message: "Cancelled by user", scene_number: 1 },
     ...[1, 2, 3].map((sceneNumber) => ({ task_id: `scene_complete_${sceneNumber}`, task_type: "GENERATE_SEQUENCE_SCENES", channel_id: channel.channel_id, episode_id: episode.episode_id, status: "COMPLETED", created_at: `2026-08-16T02:00:0${sceneNumber}.000Z`, started_at: "2026-08-16T02:00:00.000Z", completed_at: "2026-08-16T02:01:00.000Z", codex_thread_id: null, codex_turn_id: null, error: null, output_files: [], lock_key: episode.episode_id, queue_position: null, progress_message: "Completed", scene_number: sceneNumber })),
   ];
-  await page.goto("/");
+  await page.goto("/#/channels");
   await page.getByRole("button", { name: /01.*Quiz V2 channel/ }).click();
   await page.getByRole("button", { name: /Quiz Story/ }).click();
   const refreshedRail = page.getByRole("list", { name: "Quiz production stages" });
