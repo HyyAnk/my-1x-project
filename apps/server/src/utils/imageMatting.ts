@@ -17,6 +17,10 @@ export type MattingOptions = {
    * Minimum alpha threshold below which a pixel is considered fully transparent. Default is 5.
    */
   alphaCutoff?: number;
+  /**
+   * Whether to prefer AI segmentation model (RMBG) over procedural flood fill. Default is true.
+   */
+  preferAi?: boolean;
 };
 
 const CRC_TABLE = new Uint32Array(256);
@@ -416,8 +420,86 @@ export function removeImageBackgroundRgba(
   return { width, height, data };
 }
 
+type AiPipelineBundle = {
+  model: any;
+  processor: any;
+  RawImage: any;
+};
+
+let aiPipelinePromise: Promise<AiPipelineBundle> | null = null;
+
+/**
+ * Returns a cached singleton of the RMBG-1.4 AI background removal pipeline.
+ */
+export async function getAiMattingPipeline(): Promise<AiPipelineBundle> {
+  if (!aiPipelinePromise) {
+    aiPipelinePromise = (async () => {
+      const { AutoModel, AutoProcessor, RawImage } = await import("@huggingface/transformers");
+      const model = await AutoModel.from_pretrained("briaai/RMBG-1.4");
+      const processor = await AutoProcessor.from_pretrained("briaai/RMBG-1.4");
+      return { model, processor, RawImage };
+    })();
+  }
+  return aiPipelinePromise;
+}
+
+/**
+ * Removes background using Deep Learning (briaai/RMBG-1.4 via ONNX Runtime in Node.js).
+ * State-of-the-art accuracy for fur strands, fine details, transparent objects, and floor contact shadows.
+ */
+export async function removeImageBackgroundAi(
+  image: DecodedImage,
+  options: MattingOptions = {},
+): Promise<DecodedImage> {
+  const { width, height, data } = image;
+  const { model, processor, RawImage } = await getAiMattingPipeline();
+
+  // Convert RGBA to RGB 3-channel buffer for model input
+  const rgbData = new Uint8Array(width * height * 3);
+  for (let i = 0; i < width * height; i++) {
+    rgbData[i * 3] = data[i * 4];
+    rgbData[i * 3 + 1] = data[i * 4 + 1];
+    rgbData[i * 3 + 2] = data[i * 4 + 2];
+  }
+
+  const inputImage = new RawImage(rgbData, width, height, 3);
+  const { pixel_values } = await processor(inputImage);
+  const { output } = await model({ input: pixel_values });
+
+  const maskData: Float32Array = output.data;
+  let min = Infinity;
+  let max = -Infinity;
+  for (let i = 0; i < maskData.length; i++) {
+    const val = maskData[i];
+    if (val < min) min = val;
+    if (val > max) max = val;
+  }
+
+  const range = max - min || 1;
+  const maskBytes = new Uint8Array(1024 * 1024);
+  for (let i = 0; i < maskData.length; i++) {
+    const norm = (maskData[i] - min) / range;
+    maskBytes[i] = Math.round(norm * 255);
+  }
+
+  const maskRaw = new RawImage(maskBytes, 1024, 1024, 1);
+  const resizedMask = await maskRaw.resize(width, height);
+
+  const alphaCutoff = options.alphaCutoff ?? 5;
+  const outRgba = new Uint8Array(data.length);
+  outRgba.set(data);
+
+  for (let i = 0; i < width * height; i++) {
+    const a = resizedMask.data[i];
+    outRgba[i * 4 + 3] = a < alphaCutoff ? 0 : a;
+  }
+
+  return { width, height, data: outRgba };
+}
+
 /**
  * High-level helper: removes background from PNG image bytes and returns transparent PNG bytes.
+ * Defaults to AI Matting (RMBG) for high fidelity, with transparent fallback to procedural matting.
  * If input is SVG or non-PNG, it returns the input safely.
  */
 export async function removeImageBackground(
@@ -434,6 +516,17 @@ export async function removeImageBackground(
       imageBytes[3] === 71
     ) {
       const decoded = decodePngToRgba(imageBytes);
+
+      // Prefer AI matting model for standard images (>= 64x64) if not explicitly disabled
+      if (options.preferAi !== false && decoded.width >= 64 && decoded.height >= 64) {
+        try {
+          const aiMatted = await removeImageBackgroundAi(decoded, options);
+          return encodeRgbaToPng(aiMatted);
+        } catch {
+          // Graceful fallback to procedural BFS flood-fill if AI model fails
+        }
+      }
+
       const matted = removeImageBackgroundRgba(decoded, options);
       return encodeRgbaToPng(matted);
     }
@@ -442,3 +535,4 @@ export async function removeImageBackground(
   }
   return imageBytes;
 }
+

@@ -31,7 +31,7 @@ export async function generateMascotConceptArt(
 ): Promise<{ master_image_url: string; prompt_used: string }> {
   const styleDesc = STYLE_PROMPTS[mascot.visual_style] || STYLE_PROMPTS.pixar_3d;
   const userPrompt = overridePrompt?.trim() || mascot.master_prompt?.trim() || mascot.description?.trim() || `${mascot.name} cute friendly animal companion`;
-  const fullPrompt = `Full-body 3D character design concept art of ${userPrompt}. Single centered subject standing proudly facing camera, cute chibi proportions (1:2 head-to-body), large expressive sparkling eyes, friendly and joyful expression. Primary color theme ${mascot.color_theme || "#06b6d4"}. ${styleDesc}. Solid clean white seamless background, high contrast studio rim lighting, sharp clean silhouette, master character sheet.`;
+  const fullPrompt = `Full-body 3D character design concept art of ${userPrompt}. Single centered subject standing proudly facing camera, cute chibi proportions (1:2 head-to-body), large expressive sparkling eyes, friendly and joyful expression. Primary color theme ${mascot.color_theme || "#06b6d4"}. ${styleDesc}. Solid neutral light gray background (#E8E8E8), high contrast studio rim lighting, sharp clean silhouette, floating character, no ground shadow, no floor, no contact shadow, no pedestal, pure uniform backdrop, master character sheet.`;
 
   let imageBytes: Uint8Array;
   const filename = `master_concept_${Date.now()}.png`;
@@ -83,7 +83,7 @@ export async function generateMascotActionSprite(
   logger?: StudioLogger,
 ): Promise<{ action_sprite: MascotSpriteAction; prompt_used: string }> {
   const meta = MASCOT_ACTION_META[action] || MASCOT_ACTION_META.idle;
-  const framesCount = options.frames_count || meta.defaultFrames || 6;
+  const framesCount = options.frames_count !== undefined ? options.frames_count : (meta.defaultFrames || 1);
   const fps = options.fps || meta.defaultFps || 8;
   const loop = options.loop !== undefined ? options.loop : true;
 
@@ -100,17 +100,17 @@ export async function generateMascotActionSprite(
   ].join(". ");
 
   const fullPrompt = framesCount === 1
-    ? `Full-body hero action pose of character "${mascot.name}". ${characterDna}. Expressive pose: ${actionSpecific}. Single centered subject facing camera, dynamic energetic posture, sharp clean silhouette. Solid clean white background, uniform studio lighting.`
-    : `Horizontal 2D sprite strip keyframe breakdown of character "${mascot.name}". ${characterDna}. Performing ${action} action: ${actionSpecific}. Exactly ${framesCount} sequential keyframe animation poses arranged horizontally in 1 row from left to right. Frame 1 to ${framesCount} smooth continuous loop motion animation. Solid clean white seamless background, uniform studio lighting, consistent character proportion across all frames.`;
+    ? `Full-body expressive character pose of "${mascot.name}". ${characterDna}. Expressive quiz state pose: ${actionSpecific}. Single centered subject standing facing camera, dynamic energetic posture, sharp clean silhouette. Solid neutral light gray background (#E8E8E8), high contrast studio rim lighting, floating character, no ground shadow, no floor, no contact shadow, pure uniform backdrop.`
+    : `Horizontal 2D sprite strip keyframe breakdown of character "${mascot.name}". ${characterDna}. Performing ${action} action: ${actionSpecific}. Exactly ${framesCount} sequential keyframe animation poses arranged horizontally in 1 row from left to right. Frame 1 to ${framesCount} smooth continuous loop motion animation. Solid neutral light gray seamless background (#E8E8E8), uniform studio lighting, floating character, no ground shadow, no floor, no pedestal, consistent character proportion across all frames.`;
 
   let spriteBytes: Uint8Array;
-  const filename = `sprite_${action}_${Date.now()}.png`;
-  const frameWidth = 256;
-  const frameHeight = 256;
+  const filename = `state_${action}_${Date.now()}.png`;
+  const frameWidth = framesCount === 1 ? 512 : 256;
+  const frameHeight = framesCount === 1 ? 512 : 256;
 
   if (imageConfig.enabled && imageConfig.api_key) {
     try {
-      logger?.info(`Generating mascot sprite for ${mascot.name} action ${action}`, { profileId: mascot.id });
+      logger?.info(`Generating mascot state for ${mascot.name} action ${action} (frames: ${framesCount})`, { profileId: mascot.id });
       const result = await generateGpti2ImageBytes(fullPrompt, {
         apiKey: imageConfig.api_key,
         aspect_ratio: framesCount === 1 ? "1:1" : "16:9",
@@ -120,11 +120,11 @@ export async function generateMascotActionSprite(
       });
       spriteBytes = await removeImageBackground(result.bytes);
     } catch (err) {
-      logger?.warn(`Mascot sprite API failed, using procedural fallback: ${err instanceof Error ? err.message : String(err)}`, { profileId: mascot.id });
-      spriteBytes = generateProceduralSpriteStrip(mascot.name, mascot.color_theme, action, framesCount);
+      logger?.warn(`Mascot state API failed, using procedural fallback: ${err instanceof Error ? err.message : String(err)}`, { profileId: mascot.id });
+      spriteBytes = generateProceduralStateArt(mascot.name, mascot.color_theme, action, framesCount);
     }
   } else {
-    spriteBytes = generateProceduralSpriteStrip(mascot.name, mascot.color_theme, action, framesCount);
+    spriteBytes = generateProceduralStateArt(mascot.name, mascot.color_theme, action, framesCount);
   }
 
   // Cleanup previous action sprite if it exists and differs
@@ -148,6 +148,7 @@ export async function generateMascotActionSprite(
     offset_x: mascot.actions[action]?.offset_x || 0,
     offset_y: mascot.actions[action]?.offset_y || 0,
     preview_url: assetUrl,
+    motion_preset: meta.motionPreset,
   };
 
   const updatedActions = {
@@ -379,7 +380,110 @@ export function generateProceduralMascotArt(name: string, color: string, state: 
 }
 
 /**
- * Generates a multi-frame horizontal sprite strip SVG for testing / fallback
+ * Generates an expressive procedural SVG state artwork for quiz stages
+ */
+export function generateProceduralStateArt(
+  name: string,
+  color: string,
+  action: MascotActionType,
+  framesCount: number = 1,
+): Uint8Array {
+  if (framesCount > 1) {
+    return generateProceduralSpriteStrip(name, color, action, framesCount);
+  }
+
+  const primaryColor = color || "#06b6d4";
+  let armLeft = `<ellipse cx="140" cy="330" rx="26" ry="18" fill="${primaryColor}"/>`;
+  let armRight = `<ellipse cx="372" cy="330" rx="26" ry="18" fill="${primaryColor}"/>`;
+  let mouth = `<path d="M 238 250 Q 256 266 274 250" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>`;
+  let eyeLeft = `<ellipse cx="205" cy="210" rx="16" ry="22" fill="#0f172a"/><circle cx="211" cy="202" r="7" fill="#ffffff"/><circle cx="202" cy="218" r="3" fill="#ffffff"/>`;
+  let eyeRight = `<ellipse cx="307" cy="210" rx="16" ry="22" fill="#0f172a"/><circle cx="313" cy="202" r="7" fill="#ffffff"/><circle cx="304" cy="218" r="3" fill="#ffffff"/>`;
+  let extraDecor = "";
+
+  if (action === "wave" || action === "outro") {
+    // Waving right hand up
+    armRight = `<g transform="translate(372, 230) rotate(-45)"><ellipse cx="0" cy="0" rx="34" ry="18" fill="${primaryColor}"/><circle cx="24" cy="0" r="10" fill="#fbcfe8"/></g>`;
+    mouth = `<path d="M 234 246 Q 256 274 278 246 Z" fill="#f43f5e" stroke="#0f172a" stroke-width="4"/>`;
+    extraDecor = `<text x="420" y="190" font-size="36" fill="#fbbf24">✨</text>`;
+  } else if (action === "thinking") {
+    // Pondering with hand on chin & tilted eyes
+    armRight = `<g transform="translate(310, 260) rotate(-75)"><ellipse cx="0" cy="0" rx="36" ry="18" fill="${primaryColor}"/></g>`;
+    eyeLeft = `<ellipse cx="205" cy="204" rx="16" ry="18" fill="#0f172a"/><circle cx="209" cy="198" r="6" fill="#ffffff"/>`;
+    eyeRight = `<ellipse cx="307" cy="204" rx="16" ry="18" fill="#0f172a"/><circle cx="311" cy="198" r="6" fill="#ffffff"/>`;
+    mouth = `<path d="M 242 254 Q 256 248 270 254" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>`;
+    extraDecor = `<text x="360" y="140" font-size="44" font-weight="bold" fill="#fbbf24">❓</text>`;
+  } else if (action === "celebrate") {
+    // Both hands raised in victory, joyful jumping eyes
+    armLeft = `<g transform="translate(130, 220) rotate(50)"><ellipse cx="0" cy="0" rx="36" ry="18" fill="${primaryColor}"/></g>`;
+    armRight = `<g transform="translate(382, 220) rotate(-50)"><ellipse cx="0" cy="0" rx="36" ry="18" fill="${primaryColor}"/></g>`;
+    eyeLeft = `<path d="M 190 216 Q 206 194 222 216" fill="none" stroke="#0f172a" stroke-width="7" stroke-linecap="round"/>`;
+    eyeRight = `<path d="M 292 216 Q 308 194 324 216" fill="none" stroke="#0f172a" stroke-width="7" stroke-linecap="round"/>`;
+    mouth = `<path d="M 230 244 Q 256 280 282 244 Z" fill="#f43f5e" stroke="#0f172a" stroke-width="4"/>`;
+    extraDecor = `<text x="100" y="160" font-size="36">🎉</text><text x="380" y="160" font-size="36">⭐</text>`;
+  } else if (action === "oops") {
+    // Hand scratching head, comical sweatdrop
+    armLeft = `<g transform="translate(170, 160) rotate(110)"><ellipse cx="0" cy="0" rx="36" ry="18" fill="${primaryColor}"/></g>`;
+    mouth = `<path d="M 240 258 Q 256 242 272 258" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>`;
+    extraDecor = `<text x="350" y="150" font-size="40">💧</text>`;
+  } else if (action === "point") {
+    // Pointing right towards question
+    armRight = `<g transform="translate(380, 270) rotate(-10)"><ellipse cx="20" cy="0" rx="42" ry="16" fill="${primaryColor}"/><rect x="54" y="-4" width="28" height="8" rx="4" fill="#fbbf24"/></g>`;
+    mouth = `<path d="M 240 248 Q 256 268 272 248" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>`;
+    extraDecor = `<text x="430" y="275" font-size="32">👉</text>`;
+  }
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bodyGrad_${action}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${primaryColor}"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <filter id="shadow_${action}" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="rgba(0,0,0,0.3)"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="64" fill="none"/>
+  <ellipse cx="256" cy="460" rx="140" ry="24" fill="rgba(0,0,0,0.15)"/>
+  <g filter="url(#shadow_${action})">
+    <!-- Ears -->
+    <circle cx="160" cy="140" r="48" fill="${primaryColor}"/>
+    <circle cx="160" cy="140" r="28" fill="#fbcfe8"/>
+    <circle cx="352" cy="140" r="48" fill="${primaryColor}"/>
+    <circle cx="352" cy="140" r="28" fill="#fbcfe8"/>
+    
+    <!-- Body -->
+    <ellipse cx="256" cy="330" rx="130" ry="115" fill="url(#bodyGrad_${action})"/>
+    <ellipse cx="256" cy="345" rx="80" ry="70" fill="#ffffff" opacity="0.9"/>
+    
+    <!-- Arms -->
+    ${armLeft}
+    ${armRight}
+    
+    <!-- Head -->
+    <circle cx="256" cy="220" r="115" fill="url(#bodyGrad_${action})"/>
+    
+    <!-- Cheeks -->
+    <circle cx="185" cy="250" r="16" fill="#f43f5e" opacity="0.5"/>
+    <circle cx="327" cy="250" r="16" fill="#f43f5e" opacity="0.5"/>
+    
+    <!-- Eyes -->
+    ${eyeLeft}
+    ${eyeRight}
+    
+    <!-- Nose & Mouth -->
+    <ellipse cx="256" cy="238" rx="10" ry="7" fill="#0f172a"/>
+    ${mouth}
+    
+    <!-- Star Badge / Charm -->
+    <path d="M 256 310 L 264 326 L 282 328 L 268 340 L 272 358 L 256 348 L 240 358 L 244 340 L 230 328 L 248 326 Z" fill="#fbbf24"/>
+    ${extraDecor}
+  </g>
+</svg>`;
+  return Buffer.from(svg, "utf8");
+}
+
+/**
+ * Generates a multi-frame horizontal sprite strip SVG for testing / legacy fallback
  */
 export function generateProceduralSpriteStrip(
   name: string,

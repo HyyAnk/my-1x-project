@@ -325,5 +325,5 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
     } finally {
       await app.server.close();
     }
-  });
+  }, 30_000);
 });

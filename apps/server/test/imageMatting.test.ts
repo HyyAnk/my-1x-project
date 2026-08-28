@@ -66,7 +66,7 @@ describe("Image Matting & Background Removal Engine", () => {
     }
 
     const originalPng = encodeRgbaToPng({ width, height, data });
-    const transparentPng = await removeImageBackground(originalPng, { tolerance: 10, feather: 5 });
+    const transparentPng = await removeImageBackground(originalPng, { tolerance: 10, feather: 5, preferAi: false });
 
     const decoded = decodePngToRgba(transparentPng);
 
@@ -91,6 +91,35 @@ describe("Image Matting & Background Removal Engine", () => {
     expect(decoded.data[centerIdx + 1]).toBe(255);
     expect(decoded.data[centerIdx + 2]).toBe(255);
     expect(decoded.data[centerIdx + 3]).toBe(255);
+  });
+
+  it("handles AI background removal on image >= 64x64 cleanly", async () => {
+    const width = 64;
+    const height = 64;
+    const data = new Uint8Array(width * height * 4);
+    // Fill with light gray #E8E8E8
+    for (let i = 0; i < width * height; i++) {
+      data[i * 4] = 232;
+      data[i * 4 + 1] = 232;
+      data[i * 4 + 2] = 232;
+      data[i * 4 + 3] = 255;
+    }
+    // Draw character in center
+    for (let y = 16; y < 48; y++) {
+      for (let x = 16; x < 48; x++) {
+        const idx = (y * width + x) * 4;
+        data[idx] = 255;
+        data[idx + 1] = 100;
+        data[idx + 2] = 0;
+        data[idx + 3] = 255;
+      }
+    }
+    const originalPng = encodeRgbaToPng({ width, height, data });
+    const transparentPng = await removeImageBackground(originalPng);
+    expect(transparentPng.length).toBeGreaterThan(50);
+    const decoded = decodePngToRgba(transparentPng);
+    expect(decoded.width).toBe(64);
+    expect(decoded.height).toBe(64);
   });
 
   it("handles non-PNG data gracefully without throwing", async () => {

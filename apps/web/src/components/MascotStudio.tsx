@@ -204,13 +204,13 @@ export function MascotStudioView({
     outro: 8,
   });
   const [actionFrames, setActionFrames] = useState<Record<MascotActionType, number>>({
-    wave: 6,
-    idle: 4,
-    thinking: 6,
-    point: 5,
-    celebrate: 8,
-    oops: 5,
-    outro: 6,
+    wave: 1,
+    idle: 1,
+    thinking: 1,
+    point: 1,
+    celebrate: 1,
+    oops: 1,
+    outro: 1,
   });
 
   // Action Generation Busy states
@@ -2274,6 +2274,87 @@ export function MascotStudioView({
               </button>
             </div>
           </section>
+        </div>
+      ) : null}
+
+      {/* Fullscreen Prompt Focus Modal */}
+      {isPromptModalOpen ? (
+        <div className="modal-backdrop" role="presentation" onClick={() => setIsPromptModalOpen(false)}>
+          <section
+            className="modal prompt-focus-modal"
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-heading">
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Sparkle size={20} weight="fill" style={{ color: genColor }} />
+                <h2 style={{ fontSize: "16px", margin: 0 }}>{t("mascots.focusPromptTitle")}</h2>
+              </div>
+              <button type="button" className="icon-button" onClick={() => setIsPromptModalOpen(false)}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="prompt-modal-body" style={{ padding: "16px 20px" }}>
+              <div className="quick-tags-bar" style={{ marginBottom: "12px" }}>
+                <span className="prompt-chips-label">{t("mascots.quickTagsLabel")}</span>
+                <div className="quick-tags-list">
+                  {QUICK_PROMPT_TAGS.map((tag, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      className="quick-tag-chip"
+                      onClick={() => handleInjectTag(tag)}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <textarea
+                rows={12}
+                className="prompt-modal-textarea"
+                style={{ width: "100%", fontSize: "14px", lineHeight: "1.6" }}
+                value={genPrompt}
+                onChange={(e) => setGenPrompt(e.target.value)}
+                placeholder={t("mascots.promptPlaceholder")}
+                autoFocus
+              />
+
+              <div className="hero-prompt-footer" style={{ marginTop: "10px" }}>
+                <div className="hero-prompt-stats">
+                  <span>{t("mascots.charsCount", { count: genPrompt.length })}</span>
+                  <span>•</span>
+                  <span>
+                    {t("mascots.wordsCount", {
+                      count: genPrompt.trim() ? genPrompt.trim().split(/\s+/).length : 0,
+                    })}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-actions" style={{ justifyContent: "flex-end" }}>
+              <button type="button" className="primary-button" onClick={() => setIsPromptModalOpen(false)}>
+                <Check size={16} />
+                <span>{t("common.saved")}</span>
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      {/* Image Lightbox Modal */}
+      {lightboxImage ? (
+        <div className="modal-backdrop lightbox-backdrop" role="presentation" onClick={() => setLightboxImage(null)}>
+          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="lightbox-close-btn" onClick={() => setLightboxImage(null)}>
+              <X size={20} />
+            </button>
+            <img src={lightboxImage} alt="Master Concept Large Preview" className="lightbox-img" />
+          </div>
         </div>
       ) : null}
     </section>

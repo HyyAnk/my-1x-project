@@ -92,14 +92,16 @@ export const ALL_MASCOT_ACTIONS: MascotActionType[] = [
   "outro",
 ];
 
-export const MASCOT_ACTION_META: Record<MascotActionType, { label: string; description: string; defaultFps: number; defaultFrames: number; icon: string; usage: string }> = {
-  idle: { label: "Idle (Breathing & Blinking)", description: "Natural subtle breathing and blinking motion while waiting", defaultFps: 6, defaultFrames: 4, icon: "🧘", usage: "During question reading and transitions" },
-  wave: { label: "Wave Hello (Intro Greeting)", description: "Playful and welcoming hand wave at opening", defaultFps: 8, defaultFrames: 6, icon: "👋", usage: "Episode intro opening" },
-  thinking: { label: "Thinking (Countdown Pose)", description: "Chin-resting, pondering or checking timer with players", defaultFps: 8, defaultFrames: 6, icon: "🤔", usage: "Countdown 5-4-3-2-1 phase" },
-  point: { label: "Point Board (Explanation)", description: "Pointing hand or pointer stick at question / explanation", defaultFps: 8, defaultFrames: 5, icon: "👉", usage: "Answer explanation & Fact Card" },
-  celebrate: { label: "Celebrate (Joyful Jump)", description: "Jumping with joy, clapping or celebratory confetti", defaultFps: 10, defaultFrames: 8, icon: "🎉", usage: "Correct answer reveal moment" },
-  oops: { label: "Oops / Confused (Time Out)", description: "Scratching head or shrugging with playful disappointment", defaultFps: 8, defaultFrames: 5, icon: "😅", usage: "Time out / Wrong answer" },
-  outro: { label: "Wave Bye & CTA (Ending)", description: "Waving goodbye and pointing to Like, Subscribe, Comment", defaultFps: 8, defaultFrames: 6, icon: "🌟", usage: "Episode outro ending" },
+export type MascotMotionPreset = "breathe" | "sway" | "jump" | "shake" | "wave" | "point" | "none";
+
+export const MASCOT_ACTION_META: Record<MascotActionType, { label: string; description: string; defaultFps: number; defaultFrames: number; icon: string; usage: string; motionPreset: MascotMotionPreset }> = {
+  idle: { label: "Idle / Listening (Breathing Pose)", description: "Natural subtle breathing and blinking pose while questions are read", defaultFps: 6, defaultFrames: 1, icon: "🧘", usage: "During question reading and transitions", motionPreset: "breathe" },
+  wave: { label: "Wave Hello (Intro Greeting)", description: "Playful welcoming wave gesture at opening", defaultFps: 8, defaultFrames: 1, icon: "👋", usage: "Episode intro opening", motionPreset: "wave" },
+  thinking: { label: "Thinking (Countdown Pondering)", description: "Chin-resting, pondering or checking timer with players", defaultFps: 8, defaultFrames: 1, icon: "🤔", usage: "Countdown 5-4-3-2-1 phase", motionPreset: "sway" },
+  point: { label: "Point Board (Explanation Highlight)", description: "Pointing hand or pointer stick at question / explanation card", defaultFps: 8, defaultFrames: 1, icon: "👉", usage: "Answer explanation & Fact Card", motionPreset: "point" },
+  celebrate: { label: "Celebrate (Joyful Triumph)", description: "Jumping with joy, raised hands or celebratory pose", defaultFps: 10, defaultFrames: 1, icon: "🎉", usage: "Correct answer reveal moment", motionPreset: "jump" },
+  oops: { label: "Oops / Confused (Time Out)", description: "Scratching head or shrugging with playful comical reaction", defaultFps: 8, defaultFrames: 1, icon: "😅", usage: "Time out / Wrong answer", motionPreset: "shake" },
+  outro: { label: "Wave Bye & CTA (Ending)", description: "Waving goodbye and pointing to Like, Subscribe, Comment", defaultFps: 8, defaultFrames: 1, icon: "🌟", usage: "Episode outro ending", motionPreset: "wave" },
 };
 
 export const MascotSpriteActionSchema = z.object({
@@ -108,11 +110,12 @@ export const MascotSpriteActionSchema = z.object({
   frames_count: z.number().int().default(1),
   fps: z.number().default(8),
   loop: z.boolean().default(true),
-  frame_width: z.number().default(256),
-  frame_height: z.number().default(256),
+  frame_width: z.number().default(512),
+  frame_height: z.number().default(512),
   offset_x: z.number().default(0),
   offset_y: z.number().default(0),
   preview_url: z.string().optional(),
+  motion_preset: z.enum(["breathe", "sway", "jump", "shake", "wave", "point", "none"]).optional(),
 });
 export type MascotSpriteAction = z.infer<typeof MascotSpriteActionSchema>;
 
@@ -169,7 +172,7 @@ export type GenerateMascotConceptInput = z.infer<typeof GenerateMascotConceptInp
 export const GenerateMascotSpriteInputSchema = z.object({
   action: MascotActionTypeSchema,
   prompt: z.string().optional(),
-  frames_count: z.number().int().min(1).max(16).optional().default(6),
+  frames_count: z.number().int().min(1).max(16).optional().default(1),
   fps: z.number().min(1).max(30).optional().default(8),
   loop: z.boolean().optional().default(true),
 });
@@ -181,8 +184,8 @@ export const UploadMascotSpriteInputSchema = z.object({
   frames_count: z.number().int().min(1).max(32).default(1),
   fps: z.number().min(1).max(30).default(8),
   loop: z.boolean().default(true),
-  frame_width: z.number().int().min(32).max(2048).default(256),
-  frame_height: z.number().int().min(32).max(2048).default(256),
+  frame_width: z.number().int().min(32).max(2048).default(512),
+  frame_height: z.number().int().min(32).max(2048).default(512),
 });
 export type UploadMascotSpriteInput = z.infer<typeof UploadMascotSpriteInputSchema>;
 
