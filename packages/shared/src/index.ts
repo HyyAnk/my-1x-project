@@ -140,6 +140,9 @@ export const ChannelMascotConfigSchema = z.object({
   scale: z.number().default(1.0),
   offset_x: z.number().default(0),
   offset_y: z.number().default(0),
+  show_in_intro: z.boolean().default(false),
+  show_in_outro: z.boolean().default(false),
+  show_in_question: z.boolean().default(true),
   sfx_enabled: z.boolean().optional(),
   sfx_volume: z.number().optional(),
   sfx_celebrate_style: z.enum(["cheer_fanfare", "cute_chime", "arcade_whistle", "none"]).optional(),
@@ -149,8 +152,8 @@ export type ChannelMascotConfig = z.infer<typeof ChannelMascotConfigSchema>;
 export type MascotPosition = "bottom_left" | "bottom_right";
 
 export const CalibrateMascotActionInputSchema = z.object({
-  offset_x: z.number().min(-1000).max(1000),
-  offset_y: z.number().min(-1000).max(1000),
+  offset_x: z.number().min(-5000).max(5000),
+  offset_y: z.number().min(-5000).max(5000),
 });
 export type CalibrateMascotActionInput = z.infer<typeof CalibrateMascotActionInputSchema>;
 
@@ -352,6 +355,139 @@ export function getLanguageDisplay(lang?: string | null): string {
   return normalized;
 }
 
+export const QuizVisualThemeSchema = z.enum(["candy_arcade", "candy_pop", "space_lab", "jungle_jamboree", "ocean_explorer"]);
+export type QuizVisualTheme = z.infer<typeof QuizVisualThemeSchema>;
+
+export const QuizThinkingBarStyleSchema = z.enum([
+  "auto",
+  "star_slider",
+  "capsule_liquid",
+  "energy_laser",
+  "retro_pixel",
+  "flame_fuse",
+  "minimal_glow",
+]);
+export type QuizThinkingBarStyle = z.infer<typeof QuizThinkingBarStyleSchema>;
+
+export const ALL_THINKING_BAR_STYLES: QuizThinkingBarStyle[] = [
+  "star_slider",
+  "capsule_liquid",
+  "energy_laser",
+  "retro_pixel",
+  "flame_fuse",
+  "minimal_glow",
+];
+
+export const THINKING_BAR_STYLE_LABELS: Record<Exclude<QuizThinkingBarStyle, "auto">, string> = {
+  star_slider: "Arcade Star Runner",
+  capsule_liquid: "Neon Jelly Liquid",
+  energy_laser: "Cyber Plasma Bar",
+  retro_pixel: "8-Bit Arcade Heart/Blocks",
+  flame_fuse: "Dynamite Fuse Spark",
+  minimal_glow: "Modern Sleek Highlight",
+};
+
+export const THINKING_BAR_STYLE_DESCRIPTIONS: Record<Exclude<QuizThinkingBarStyle, "auto">, string> = {
+  star_slider: "Classic bright star sliding over milestone stars with 5-4-3-2-1 countdown marker and sparkles.",
+  capsule_liquid: "Glowing translucent capsule filled with bubbling neon fluid draining down with dynamic color shift.",
+  energy_laser: "Sci-Fi high-voltage plasma laser beam with pulsing electric arcs and intense charge decay.",
+  retro_pixel: "Nostalgic 8-bit chunky pixel arcade gauge with segment ticks and retro gaming font indicators.",
+  flame_fuse: "Thrilling dynamite burning rope fuse with animated ember sparks racing towards the finale point.",
+  minimal_glow: "Ultra-clean modern frosted-glass pill with smooth running neon accent line and elegant typography.",
+};
+
+export const QuizQuestionCounterStyleSchema = z.enum([
+  "auto",
+  "hanging_woodsign",
+  "neon_badge",
+  "floating_balloon",
+  "golden_shield",
+]);
+export type QuizQuestionCounterStyle = z.infer<typeof QuizQuestionCounterStyleSchema>;
+
+export const ALL_QUESTION_COUNTER_STYLES: QuizQuestionCounterStyle[] = [
+  "hanging_woodsign",
+  "neon_badge",
+  "floating_balloon",
+  "golden_shield",
+];
+
+export const QUESTION_COUNTER_STYLE_LABELS: Record<Exclude<QuizQuestionCounterStyle, "auto">, string> = {
+  hanging_woodsign: "Hanging Wood Sign",
+  neon_badge: "Cyber Neon Badge",
+  floating_balloon: "Floating Party Balloon",
+  golden_shield: "Golden Trophy Shield",
+};
+
+export const QUESTION_COUNTER_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionCounterStyle, "auto">, string> = {
+  hanging_woodsign: "Classic rustic wooden plank suspended by dangling ropes.",
+  neon_badge: "Futuristic glowing neon badge with high-voltage border.",
+  floating_balloon: "Whimsical floating helium balloon gently bobbing with question number.",
+  golden_shield: "Arcade metallic gold shield with glistening highlight.",
+};
+
+export const QuizQuestionBoxStyleSchema = z.enum([
+  "auto",
+  "candy_pop",
+  "comic_bubble",
+  "glass_morphism",
+  "parchment_scroll",
+]);
+export type QuizQuestionBoxStyle = z.infer<typeof QuizQuestionBoxStyleSchema>;
+
+export const ALL_QUESTION_BOX_STYLES: QuizQuestionBoxStyle[] = [
+  "candy_pop",
+  "comic_bubble",
+  "glass_morphism",
+  "parchment_scroll",
+];
+
+export const QUESTION_BOX_STYLE_LABELS: Record<Exclude<QuizQuestionBoxStyle, "auto">, string> = {
+  candy_pop: "Candy Pop Card",
+  comic_bubble: "Comic Book Bubble",
+  glass_morphism: "Frosted Glassmorphism",
+  parchment_scroll: "Adventure Parchment Scroll",
+};
+
+export const QUESTION_BOX_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionBoxStyle, "auto">, string> = {
+  candy_pop: "Vibrant card with rounded 3D borders, stars, and candy corner accents.",
+  comic_bubble: "Playful comic speech bubble with bold outline, halftone dots, and tail.",
+  glass_morphism: "Ultra-modern translucent frosted glass card with glowing outline.",
+  parchment_scroll: "Classic rolled parchment banner with ancient adventurous aesthetics.",
+};
+
+export const SandboxPreviewInputSchema = z.object({
+  theme: QuizVisualThemeSchema.optional().default("candy_arcade"),
+  palette_id: z.string().optional().default("lime"),
+  thinking_bar_style: QuizThinkingBarStyleSchema.optional().default("star_slider"),
+  question_box_style: QuizQuestionBoxStyleSchema.optional().default("candy_pop"),
+  counter_style: QuizQuestionCounterStyleSchema.optional().default("hanging_woodsign"),
+  phase: z.enum(["question", "choices", "thinking", "reveal", "explain"]).optional().default("thinking"),
+  question_text: z.string().optional().default("Which planet in our solar system has the most prominent rings?"),
+  choices: z.array(z.string()).optional().default(["Jupiter", "Saturn", "Uranus", "Neptune"]),
+  correct_choice_index: z.number().int().min(0).max(3).optional().default(1),
+  question_number: z.number().int().min(1).optional().default(1),
+  total_questions: z.number().int().min(1).optional().default(10),
+  countdown_progress: z.number().min(0).max(1).optional().default(0.5), // 0 to 1
+  mascot_id: z.string().nullable().optional(),
+  mascot_action: MascotActionTypeSchema.optional().default("thinking"),
+  mascot_position: z.enum(["bottom_left", "bottom_right"]).optional().default("bottom_left"),
+  mascot_scale: z.number().optional().default(1.0),
+});
+export type SandboxPreviewInput = z.infer<typeof SandboxPreviewInputSchema>;
+
+export const SandboxPreviewResponseSchema = z.object({
+  html: z.string(),
+  css: z.string(),
+  contrast_report: z.object({
+    ok: z.boolean(),
+    ratio: z.number().optional(),
+    required_ratio: z.number().optional(),
+    message: z.string().optional(),
+  }),
+});
+export type SandboxPreviewResponse = z.infer<typeof SandboxPreviewResponseSchema>;
+
 export const ChannelSchema = z.object({
   channel_id: z.string().min(1),
   slug: z.string().min(1),
@@ -371,6 +507,10 @@ export const ChannelSchema = z.object({
   group_id: z.enum(["quiz", "documentary"]).default("quiz"),
   engine: z.enum(["quiz", "documentary"]).default("quiz"),
   selected_styles: z.array(QuizImageStyleSchema).default(["pixar_3d", "flat_vector", "kawaii_chibi", "voxel_lowpoly", "plastic_toy"]),
+  default_thinking_bar_style: QuizThinkingBarStyleSchema.optional().default("auto"),
+  default_question_box_style: QuizQuestionBoxStyleSchema.optional().default("auto"),
+  default_counter_style: QuizQuestionCounterStyleSchema.optional().default("auto"),
+  default_palette_id: z.string().optional().default("auto"),
   mascot_id: z.string().nullable().default(null),
   mascot_config: ChannelMascotConfigSchema.default({ enabled: true, position: "bottom_left", scale: 1.0 }),
 });
@@ -405,9 +545,6 @@ export const EpisodeTopicSchema = z.object({
   hook: z.string().min(1),
 });
 
-export const QuizVisualThemeSchema = z.enum(["candy_arcade", "candy_pop", "space_lab", "jungle_jamboree", "ocean_explorer"]);
-export type QuizVisualTheme = z.infer<typeof QuizVisualThemeSchema>;
-
 export const QuizConfigSchema = z.object({
   question_count: z.number().int().min(QUIZ_MIN_QUESTION_COUNT).max(QUIZ_MAX_QUESTION_COUNT).default(8),
   quiz_format: z.enum(["knowledge", "image_guess", "multiple_choice", "true_false", "odd_one_out"]).default("knowledge"),
@@ -416,6 +553,9 @@ export const QuizConfigSchema = z.object({
   visual_theme: QuizVisualThemeSchema.default("candy_arcade"),
   visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "voxel_lowpoly", "plastic_toy"]).default("mixed"),
   resolved_visual_style: QuizImageStyleSchema.default("pixar_3d"),
+  thinking_bar_style: QuizThinkingBarStyleSchema.default("auto"),
+  question_counter_style: QuizQuestionCounterStyleSchema.default("auto"),
+  question_box_style: QuizQuestionBoxStyleSchema.default("auto"),
 });
 export type QuizConfig = z.infer<typeof QuizConfigSchema>;
 
@@ -548,6 +688,9 @@ export const DirectorBeatSchema = z.object({
   layout_id: QuizLayoutIdSchema.default("auto"),
   motion_id: QuizMotionIdSchema.default("auto"),
   transition_id: QuizTransitionIdSchema.default("auto"),
+  thinking_bar_style: QuizThinkingBarStyleSchema.default("auto"),
+  question_counter_style: QuizQuestionCounterStyleSchema.default("auto"),
+  question_box_style: QuizQuestionBoxStyleSchema.default("auto"),
   thinking_seconds: z.number().positive().max(30),
   beat_intents: DirectorBeatIntentSchema.array().min(1),
   asset_intents: DirectorAssetIntentSchema.array().default([]),
@@ -1217,6 +1360,12 @@ export const UpdateChannelInputSchema = z.object({
   market: z.string().trim().max(120).optional(),
   status: ChannelStatusSchema.optional(),
   selected_styles: z.array(QuizImageStyleSchema).optional(),
+  default_thinking_bar_style: QuizThinkingBarStyleSchema.optional(),
+  default_question_box_style: QuizQuestionBoxStyleSchema.optional(),
+  default_counter_style: QuizQuestionCounterStyleSchema.optional(),
+  default_palette_id: z.string().optional(),
+  mascot_id: z.string().nullable().optional(),
+  mascot_config: ChannelMascotConfigSchema.optional(),
 });
 
 export const SaveTextInputSchema = z.object({ content: z.string() });
@@ -1236,6 +1385,9 @@ export const EpisodeSettingsInputSchema = z.object({
   visual_theme: QuizVisualThemeSchema.optional(),
   visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "voxel_lowpoly", "plastic_toy"]).optional(),
   resolved_visual_style: QuizImageStyleSchema.optional(),
+  thinking_bar_style: QuizThinkingBarStyleSchema.optional(),
+  question_counter_style: QuizQuestionCounterStyleSchema.optional(),
+  question_box_style: QuizQuestionBoxStyleSchema.optional(),
 });
 export type EpisodeSettingsInput = z.infer<typeof EpisodeSettingsInputSchema>;
 

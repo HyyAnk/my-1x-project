@@ -65,6 +65,7 @@ export interface TranslationSchema {
     dashboard: string;
     channels: string;
     mascotStudio: string;
+    sandbox: string;
     tasks: string;
     settings: string;
     newChannel: string;
@@ -541,6 +542,13 @@ export interface TranslationSchema {
     stageConfigTitle: string;
     stageConfigSub: string;
     stagePositionLabel: string;
+    positionLabel?: string;
+    posBottomLeft?: string;
+    posBottomRight?: string;
+    visibilityLabel?: string;
+    showInIntro?: string;
+    showInQuestion?: string;
+    showInOutro?: string;
     bottomLeftOption: string;
     bottomRightOption: string;
     scaleLabel: string;

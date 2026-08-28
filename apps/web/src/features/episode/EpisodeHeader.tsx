@@ -79,7 +79,6 @@ export function EpisodeHeader({
 
       <header className="detail-header episode-detail-header">
         <div>
-          <p className="eyebrow">Quiz Production Studio</p>
           <h1>{episode.topic.title}</h1>
           <p className="detail-copy">{episode.topic.premise}</p>
         </div>
@@ -93,38 +92,7 @@ export function EpisodeHeader({
               💰 {totalImageCostVnd.toLocaleString("en-US")} VND
             </span>
           ) : null}
-          {isQuiz ? (
-            <div className="episode-quiz-controls">
-              <label className="duration-target">
-                Questions
-                <input
-                  aria-label="Question count"
-                  type="number"
-                  min={QUIZ_MIN_QUESTION_COUNT}
-                  max={QUIZ_MAX_QUESTION_COUNT}
-                  value={questionCountDraft}
-                  onChange={(event) => setQuestionCountDraft(Number(event.target.value))}
-                  onBlur={() => void onSaveQuestionCount()}
-                />
-              </label>
-              <label className="visual-style-picker-label">
-                Style
-                <select
-                  aria-label="Visual style"
-                  value={episode.quiz_config?.visual_style ?? "mixed"}
-                  disabled={Boolean(activeEpisodeTask)}
-                  onChange={(event) => void onSaveVisualStyle(event.target.value as QuizImageStyle | "mixed")}
-                >
-                  <option value="mixed">🎲 Mixed (Random)</option>
-                  {channelStyles.map((style) => (
-                    <option key={style} value={style}>
-                      {QUIZ_IMAGE_STYLE_LABELS[style]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-          ) : (
+          {!isQuiz ? (
             <label className="duration-target">
               Target
               <input
@@ -138,7 +106,7 @@ export function EpisodeHeader({
               />
               min
             </label>
-          )}
+          ) : null}
           <button
             className="primary-button"
             disabled={Boolean(activeEpisodeTask) || busy === "GENERATE_PIPELINE"}

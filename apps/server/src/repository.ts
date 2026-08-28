@@ -52,6 +52,7 @@ import path from "node:path";
 import { stripEditorialOverlayInstructions } from "./visualPrompt.js";
 import { invalidateQuizArtifacts as quizInvalidationStages } from "./quiz/pipeline/invalidation.js";
 import { pruneQuestionHistory, normalizeQuestionText } from "./quiz/qa/questionHistory.js";
+import { writeBinaryAtomic, writeJsonAtomic, writeTextAtomic } from "./utils/fs.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -268,7 +269,7 @@ export class RepositoryService {
     return channel;
   }
 
-  async updateChannel(channelId: string, patch: Partial<Pick<Channel, "display_name" | "description" | "target_audience" | "language" | "country" | "market" | "status" | "updated_at" | "voice_reference_path" | "selected_styles" | "mascot_id" | "mascot_config">>): Promise<Channel> {
+  async updateChannel(channelId: string, patch: Partial<Channel>): Promise<Channel> {
     const current = await this.getChannel(channelId);
     const next = ChannelSchema.parse({ ...current, ...patch, updated_at: nowIso() });
     await this.writeJsonAtomic(this.resolvePath("channels", current.slug, "channel.json"), next);
@@ -371,14 +372,19 @@ export class RepositoryService {
   async calibrateMascotAction(mascotId: string, action: MascotActionType, calibration: { offset_x: number; offset_y: number }): Promise<MascotProfile> {
     const mascot = await this.getMascot(mascotId);
     const currentAction = mascot.actions[action];
-    if (!currentAction) {
-      throw new RepositoryError(`Action ${action} not found on mascot`, "MASCOT_ACTION_NOT_FOUND");
-    }
 
     const updatedAction: MascotSpriteAction = {
-      ...currentAction,
+      action,
+      sprite_url: currentAction?.sprite_url || "",
+      frames_count: currentAction?.frames_count || 1,
+      fps: currentAction?.fps || 8,
+      loop: currentAction?.loop ?? true,
+      frame_width: currentAction?.frame_width || 512,
+      frame_height: currentAction?.frame_height || 512,
       offset_x: calibration.offset_x,
       offset_y: calibration.offset_y,
+      preview_url: currentAction?.preview_url,
+      motion_preset: currentAction?.motion_preset,
     };
 
     const updatedMascot: MascotProfile = {
@@ -978,6 +984,9 @@ export class RepositoryService {
       ...(input.age_band === undefined ? {} : { age_band: input.age_band }),
       ...(input.answer_mode === undefined ? {} : { answer_mode: input.answer_mode }),
       ...(input.visual_theme === undefined ? {} : { visual_theme: input.visual_theme }),
+      ...(input.thinking_bar_style === undefined ? {} : { thinking_bar_style: input.thinking_bar_style }),
+      ...(input.question_counter_style === undefined ? {} : { question_counter_style: input.question_counter_style }),
+      ...(input.question_box_style === undefined ? {} : { question_box_style: input.question_box_style }),
       visual_style: nextStyle,
       resolved_visual_style: nextResolvedStyle,
     };
@@ -986,7 +995,10 @@ export class RepositoryService {
       || nextQuizConfig.age_band !== episode.quiz_config.age_band
       || nextQuizConfig.visual_theme !== episode.quiz_config.visual_theme
       || nextQuizConfig.visual_style !== episode.quiz_config.visual_style
-      || nextQuizConfig.resolved_visual_style !== episode.quiz_config.resolved_visual_style;
+      || nextQuizConfig.resolved_visual_style !== episode.quiz_config.resolved_visual_style
+      || nextQuizConfig.thinking_bar_style !== episode.quiz_config.thinking_bar_style
+      || nextQuizConfig.question_counter_style !== episode.quiz_config.question_counter_style
+      || nextQuizConfig.question_box_style !== episode.quiz_config.question_box_style;
     const targetDurationMinutes = input.target_duration_minutes ?? estimateQuizTargetDurationMinutes(nextQuizConfig.question_count);
     const targetWordCount = estimateQuizTargetWordCount(targetDurationMinutes, episode.measured_narration_words_per_second ?? wordsPerSecond);
     const next = EpisodeSchema.parse({
@@ -1560,22 +1572,15 @@ export class RepositoryService {
   }
 
   private async writeJsonAtomic(target: string, value: unknown): Promise<void> {
-    await mkdir(path.dirname(target), { recursive: true });
-    await this.writeTextAtomic(target, `${JSON.stringify(value, null, 2)}\n`);
+    await writeJsonAtomic(target, value);
   }
 
   private async writeTextAtomic(target: string, content: string): Promise<void> {
-    await mkdir(path.dirname(target), { recursive: true });
-    const temporary = `${target}.${process.pid}.${Date.now()}.tmp`;
-    await writeFile(temporary, content, "utf8");
-    await rename(temporary, target);
+    await writeTextAtomic(target, content);
   }
 
   private async writeBinaryAtomic(target: string, content: Uint8Array): Promise<void> {
-    await mkdir(path.dirname(target), { recursive: true });
-    const temporary = `${target}.${process.pid}.${Date.now()}.tmp`;
-    await writeFile(temporary, content);
-    await rename(temporary, target);
+    await writeBinaryAtomic(target, content);
   }
 
   private async removeTree(target: string): Promise<void> {

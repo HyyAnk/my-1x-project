@@ -51,6 +51,12 @@ export type MascotCalibrationStepProps = {
   setTargetPosition: (pos: "bottom_left" | "bottom_right") => void;
   targetScale: number;
   setTargetScale: (scale: number) => void;
+  showInIntro?: boolean;
+  setShowInIntro?: (show: boolean) => void;
+  showInOutro?: boolean;
+  setShowInOutro?: (show: boolean) => void;
+  showInQuestion?: boolean;
+  setShowInQuestion?: (show: boolean) => void;
   assignedChannels: string[];
   setAssignedChannels: React.Dispatch<React.SetStateAction<string[]>>;
   channelSearchQuery: string;
@@ -103,6 +109,12 @@ export function MascotCalibrationStep({
   setTargetPosition,
   targetScale,
   setTargetScale,
+  showInIntro = false,
+  setShowInIntro,
+  showInOutro = false,
+  setShowInOutro,
+  showInQuestion = true,
+  setShowInQuestion,
   assignedChannels,
   setAssignedChannels,
   channelSearchQuery,
@@ -184,10 +196,10 @@ export function MascotCalibrationStep({
       if (!dragStartRef.current) return;
       const dx = (e.clientX - dragStartRef.current.startX) / stageScale;
       const dy = (e.clientY - dragStartRef.current.startY) / stageScale;
-      const nextX = Math.round(dragStartRef.current.initNudgeX + (flipHorizontal ? -dx : dx));
+      const nextX = Math.round(dragStartRef.current.initNudgeX + dx);
       const nextY = Math.round(dragStartRef.current.initNudgeY + dy);
-      setNudgeX(Math.max(-500, Math.min(500, nextX)));
-      setNudgeY(Math.max(-500, Math.min(500, nextY)));
+      setNudgeX(Math.max(-2000, Math.min(2000, nextX)));
+      setNudgeY(Math.max(-1500, Math.min(1500, nextY)));
     };
     const onMouseUp = () => {
       setIsDragging(false);
@@ -199,7 +211,7 @@ export function MascotCalibrationStep({
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
     };
-  }, [isDragging, stageScale, flipHorizontal, setNudgeX, setNudgeY]);
+  }, [isDragging, stageScale, setNudgeX, setNudgeY]);
 
   // Map channel_id -> other mascot info if assigned to another mascot
   const channelOtherMascotMap = useMemo(() => {
@@ -526,92 +538,131 @@ export function MascotCalibrationStep({
                 ) : null}
 
                 {/* 3. True 1920x1080 Mascot Container (Exact match to candyArcadeComposition.ts) */}
-                <div
-                  className={`candy-mascot-container mascot-stage anchor-${targetPosition} ${
-                    isDragging ? "is-dragging" : ""
-                  }`}
-                  style={{
-                    transformOrigin: "bottom center",
-                    transform: `scale(${targetScale})`,
-                  }}
-                  onMouseDown={handleMascotMouseDown}
-                >
-                  {/* Bounding box guide when guides are active */}
-                  {showGuides ? (
-                    <div className="mascot-1920-bounding-box" aria-hidden="true">
-                      <span className="bounding-coord-tag">
-                        X: {nudgeX > 0 ? `+${nudgeX}` : nudgeX}px, Y: {nudgeY > 0 ? `+${nudgeY}` : nudgeY}px ({Math.round(targetScale * 100)}%)
-                      </span>
-                      <span className="bounding-handle handle-tl" />
-                      <span className="bounding-handle handle-tr" />
-                      <span className="bounding-handle handle-bl" />
-                      <span className="bounding-handle handle-br" />
-                    </div>
-                  ) : null}
+                {(() => {
+                  const isVisibleInPhase =
+                    !isScenarioMode ? true :
+                    scenarioPhase === "intro" ? Boolean(showInIntro) :
+                    (scenarioPhase as string) === "outro" ? Boolean(showInOutro) :
+                    showInQuestion !== false;
 
-                  {/* Onion Skin Ghost Reference Layer (Idle Pose Comparison) */}
-                  {onionSkinEnabled && editingMascot?.actions.idle?.sprite_url ? (
+                  return (
                     <div
-                      className="candy-mascot-sprite onion-skin-layer"
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        backgroundImage: `url(${editingMascot.actions.idle.sprite_url})`,
-                        opacity: onionSkinOpacity,
-                        filter: "sepia(100%) hue-rotate(150deg) saturate(300%)",
-                        transform: `translate(${nudgeX}px, ${nudgeY}px) scaleX(${flipHorizontal ? -1 : 1})`,
-                        zIndex: 1,
-                        pointerEvents: "none",
-                      }}
-                    />
-                  ) : null}
-
-                  {/* Active Mascot Sprite Render */}
-                  {currentActionSprite?.sprite_url ? (
-                    <div
-                      className={`candy-mascot-sprite ${
-                        isPlaying ? `mascot-anim-${activePreviewAction}` : ""
+                      className={`candy-mascot-container mascot-stage anchor-${targetPosition} ${
+                        isDragging ? "is-dragging" : ""
                       }`}
                       style={{
-                        backgroundImage: `url(${currentActionSprite.sprite_url})`,
-                        transform: `translate(${nudgeX}px, ${nudgeY}px) scaleX(${flipHorizontal ? -1 : 1})`,
-                        position: "relative",
-                        zIndex: 2,
+                        zIndex: 25,
+                        transformOrigin: "bottom center",
+                        transform: `scale(${targetScale})`,
+                        ["--action-offset-x" as any]: `${nudgeX}px`,
+                        ["--action-offset-y" as any]: `${nudgeY}px`,
+                        ["--mascot-scale" as any]: targetScale,
+                        pointerEvents: isVisibleInPhase ? "auto" : "none",
+                        opacity: isVisibleInPhase ? 1 : (showGuides ? 0.25 : 0),
+                        transition: "opacity 0.2s ease",
                         cursor: isDragging ? "grabbing" : "grab",
+                        userSelect: "none",
                       }}
-                      title={t("mascots.dragHint") || "Drag to reposition mascot"}
-                    />
-                  ) : editingMascot?.master_image_url ? (
-                    <img
-                      src={editingMascot.master_image_url}
-                      alt={editingMascot.name}
-                      className={isPlaying ? "mascot-anim-idle" : ""}
-                      style={{
-                        width: "220px",
-                        height: "220px",
-                        objectFit: "contain",
-                        transform: `translate(${nudgeX}px, ${nudgeY}px) scaleX(${flipHorizontal ? -1 : 1})`,
-                        position: "relative",
-                        zIndex: 2,
-                        cursor: isDragging ? "grabbing" : "grab",
-                      }}
-                      title={t("mascots.dragHint") || "Drag to reposition mascot"}
-                    />
-                  ) : (
-                    <div
-                      className="stage-mascot-placeholder"
-                      style={{
-                        width: "220px",
-                        height: "220px",
-                        display: "grid",
-                        placeItems: "center",
-                        transform: `translate(${nudgeX}px, ${nudgeY}px)`,
-                      }}
+                      onMouseDown={isVisibleInPhase ? handleMascotMouseDown : undefined}
                     >
-                      <Smiley size={80} style={{ color: genColor }} />
+                      {/* Bounding box guide when guides are active */}
+                      {showGuides ? (
+                        <div
+                          className="mascot-1920-bounding-box"
+                          style={{
+                            transform: `translate(${nudgeX}px, ${nudgeY}px)`,
+                          }}
+                          aria-hidden="true"
+                        >
+                          <span className="bounding-coord-tag">
+                            X: {nudgeX > 0 ? `+${nudgeX}` : nudgeX}px, Y: {nudgeY > 0 ? `+${nudgeY}` : nudgeY}px ({Math.round(targetScale * 100)}%) {!isVisibleInPhase ? "[Ẩn trong phân cảnh này]" : ""}
+                          </span>
+                          <span className="bounding-handle handle-tl" />
+                          <span className="bounding-handle handle-tr" />
+                          <span className="bounding-handle handle-bl" />
+                          <span className="bounding-handle handle-br" />
+                        </div>
+                      ) : null}
+
+                      {/* Onion Skin Ghost Reference Layer (Idle Pose Comparison) */}
+                      {onionSkinEnabled && editingMascot?.actions.idle?.sprite_url ? (
+                        <div
+                          className="candy-mascot-sprite onion-skin-layer"
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            backgroundImage: `url(${editingMascot.actions.idle.sprite_url})`,
+                            opacity: onionSkinOpacity,
+                            filter: "sepia(100%) hue-rotate(150deg) saturate(300%)",
+                            transform: `translate(${nudgeX}px, ${nudgeY}px)`,
+                            ["--action-offset-x" as any]: `${nudgeX}px`,
+                            ["--action-offset-y" as any]: `${nudgeY}px`,
+                            zIndex: 1,
+                            pointerEvents: "none",
+                          }}
+                        />
+                      ) : null}
+
+                      {/* Active Mascot Sprite Render */}
+                      {currentActionSprite?.sprite_url ? (
+                        <div
+                          className={`candy-mascot-sprite ${
+                            isPlaying ? `mascot-anim-${activePreviewAction}` : ""
+                          }`}
+                          style={{
+                            backgroundImage: `url(${currentActionSprite.sprite_url})`,
+                            transform: `translate(${nudgeX}px, ${nudgeY}px)`,
+                            ["--action-offset-x" as any]: `${nudgeX}px`,
+                            ["--action-offset-y" as any]: `${nudgeY}px`,
+                            position: "relative",
+                            zIndex: 2,
+                            cursor: isDragging ? "grabbing" : "grab",
+                            pointerEvents: isVisibleInPhase ? "auto" : "none",
+                          }}
+                          title={t("mascots.dragHint") || "Drag to reposition mascot"}
+                        />
+                      ) : editingMascot?.master_image_url ? (
+                        <img
+                          src={editingMascot.master_image_url}
+                          alt={editingMascot.name}
+                          className={isPlaying ? "mascot-anim-idle" : ""}
+                          draggable={false}
+                          onDragStart={(e) => e.preventDefault()}
+                          style={{
+                            width: "220px",
+                            height: "220px",
+                            objectFit: "contain",
+                            transform: `translate(${nudgeX}px, ${nudgeY}px)`,
+                            ["--action-offset-x" as any]: `${nudgeX}px`,
+                            ["--action-offset-y" as any]: `${nudgeY}px`,
+                            position: "relative",
+                            zIndex: 2,
+                            cursor: isDragging ? "grabbing" : "grab",
+                            pointerEvents: isVisibleInPhase ? "auto" : "none",
+                          }}
+                          title={t("mascots.dragHint") || "Drag to reposition mascot"}
+                        />
+                      ) : (
+                        <div
+                          className="stage-mascot-placeholder"
+                          style={{
+                            width: "220px",
+                            height: "220px",
+                            display: "grid",
+                            placeItems: "center",
+                            transform: `translate(${nudgeX}px, ${nudgeY}px)`,
+                            ["--action-offset-x" as any]: `${nudgeX}px`,
+                            ["--action-offset-y" as any]: `${nudgeY}px`,
+                            cursor: isDragging ? "grabbing" : "grab",
+                            pointerEvents: isVisibleInPhase ? "auto" : "none",
+                          }}
+                        >
+                          <Smiley size={80} style={{ color: genColor }} />
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
+                  );
+                })()}
               </div>
             </div>
 
@@ -812,51 +863,62 @@ export function MascotCalibrationStep({
                 </div>
               </div>
 
-              {/* Stage Position Anchor & Flip Horizontal */}
-              <div className="config-section">
-                <div className="section-title-row">
-                  <label className="config-section-label" style={{ margin: 0 }}>
-                    {t("mascots.stagePositionLabel")}
+              {/* Position & Visibility Section */}
+              <div className="config-section position-visibility-card" style={{ background: "var(--surface-hover)", padding: "12px", borderRadius: "8px", border: "1px solid var(--line)" }}>
+                <div style={{ marginBottom: "10px" }}>
+                  <label className="config-section-label" style={{ marginBottom: "6px" }}>
+                    {t("mascots.positionLabel") || "Vị trí Mascot"}
                   </label>
-                  <button
-                    type="button"
-                    className="quiet-button compact"
-                    onClick={handleResetAll}
-                    title={t("mascots.resetAllBtn") || "Reset All"}
-                  >
-                    <ArrowClockwise size={13} />
-                    <span>{t("mascots.resetAllBtn") || "Reset All"}</span>
-                  </button>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+                    <button
+                      type="button"
+                      className={`pos-toggle-btn ${targetPosition === "bottom_left" ? "is-selected" : ""}`}
+                      onClick={() => setTargetPosition("bottom_left")}
+                      style={{ padding: "6px 10px", fontSize: "12px", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                    >
+                      <span>👈</span> {t("mascots.posBottomLeft") || "Góc trái"}
+                    </button>
+                    <button
+                      type="button"
+                      className={`pos-toggle-btn ${targetPosition === "bottom_right" ? "is-selected" : ""}`}
+                      onClick={() => setTargetPosition("bottom_right")}
+                      style={{ padding: "6px 10px", fontSize: "12px", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                    >
+                      <span>👉</span> {t("mascots.posBottomRight") || "Góc phải"}
+                    </button>
+                  </div>
                 </div>
 
-                <div className="position-toggle-row" style={{ marginTop: "8px" }}>
-                  <button
-                    type="button"
-                    className={`pos-toggle-btn ${targetPosition === "bottom_left" ? "is-selected" : ""}`}
-                    onClick={() => setTargetPosition("bottom_left")}
-                  >
-                    {t("mascots.bottomLeftOption")}
-                  </button>
-                  <button
-                    type="button"
-                    className={`pos-toggle-btn ${targetPosition === "bottom_right" ? "is-selected" : ""}`}
-                    onClick={() => setTargetPosition("bottom_right")}
-                  >
-                    {t("mascots.bottomRightOption")}
-                  </button>
-                </div>
-
-                {/* Flip Horizontal Toggle */}
-                <div className="flip-toggle-row" style={{ marginTop: "10px" }}>
-                  <label className="custom-checkbox-row" style={{ cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={flipHorizontal}
-                      onChange={(e) => setFlipHorizontal(e.target.checked)}
-                    />
-                    <span>{t("mascots.flipHorizontalLabel")}</span>
+                <div>
+                  <label className="config-section-label" style={{ marginBottom: "6px" }}>
+                    {t("mascots.visibilityLabel") || "Hiển thị theo phân cảnh"}
                   </label>
-                  <small style={{ color: "var(--muted)" }}>{t("mascots.flipHorizontalTooltip")}</small>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={showInIntro}
+                        onChange={(e) => setShowInIntro?.(e.target.checked)}
+                      />
+                      <span>🎬 {t("mascots.showInIntro") || "Intro mở đầu (Mặc định: Tắt)"}</span>
+                    </label>
+                    <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={showInQuestion}
+                        onChange={(e) => setShowInQuestion?.(e.target.checked)}
+                      />
+                      <span>❓ {t("mascots.showInQuestion") || "Câu hỏi & Reveal đáp án (Khuyên dùng)"}</span>
+                    </label>
+                    <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={showInOutro}
+                        onChange={(e) => setShowInOutro?.(e.target.checked)}
+                      />
+                      <span>🏁 {t("mascots.showInOutro") || "Outro kết thúc (Mặc định: Tắt)"}</span>
+                    </label>
+                  </div>
                 </div>
               </div>
 
@@ -870,13 +932,13 @@ export function MascotCalibrationStep({
                     <span className="scale-value-badge">{Math.round(targetScale * 100)}%</span>
                     <input
                       type="number"
-                      min={50}
-                      max={200}
+                      min={30}
+                      max={400}
                       step={1}
                       value={Math.round(targetScale * 100)}
                       onChange={(e) => {
                         const val = Number(e.target.value);
-                        if (!isNaN(val)) setTargetScale(Math.max(0.5, Math.min(2.0, val / 100)));
+                        if (!isNaN(val)) setTargetScale(Math.max(0.3, Math.min(4.0, val / 100)));
                       }}
                       className="precision-number-input"
                       title="Direct percentage input"
@@ -890,7 +952,15 @@ export function MascotCalibrationStep({
                   <button
                     type="button"
                     className="precision-step-btn"
-                    onClick={() => setTargetScale(Math.max(0.5, Math.round((targetScale - 0.1) * 100) / 100))}
+                    onClick={() => setTargetScale(Math.max(0.3, Math.round((targetScale - 0.25) * 100) / 100))}
+                    title="-25%"
+                  >
+                    -25%
+                  </button>
+                  <button
+                    type="button"
+                    className="precision-step-btn"
+                    onClick={() => setTargetScale(Math.max(0.3, Math.round((targetScale - 0.1) * 100) / 100))}
                     title="-10%"
                   >
                     -10%
@@ -898,15 +968,7 @@ export function MascotCalibrationStep({
                   <button
                     type="button"
                     className="precision-step-btn"
-                    onClick={() => setTargetScale(Math.max(0.5, Math.round((targetScale - 0.05) * 100) / 100))}
-                    title="-5%"
-                  >
-                    -5%
-                  </button>
-                  <button
-                    type="button"
-                    className="precision-step-btn"
-                    onClick={() => setTargetScale(Math.max(0.5, Math.round((targetScale - 0.01) * 100) / 100))}
+                    onClick={() => setTargetScale(Math.max(0.3, Math.round((targetScale - 0.01) * 100) / 100))}
                     title="-1%"
                   >
                     -1%
@@ -914,7 +976,7 @@ export function MascotCalibrationStep({
                   <button
                     type="button"
                     className="precision-step-btn"
-                    onClick={() => setTargetScale(Math.min(2.0, Math.round((targetScale + 0.01) * 100) / 100))}
+                    onClick={() => setTargetScale(Math.min(4.0, Math.round((targetScale + 0.01) * 100) / 100))}
                     title="+1%"
                   >
                     +1%
@@ -922,18 +984,18 @@ export function MascotCalibrationStep({
                   <button
                     type="button"
                     className="precision-step-btn"
-                    onClick={() => setTargetScale(Math.min(2.0, Math.round((targetScale + 0.05) * 100) / 100))}
-                    title="+5%"
+                    onClick={() => setTargetScale(Math.min(4.0, Math.round((targetScale + 0.1) * 100) / 100))}
+                    title="+10%"
                   >
-                    +5%
+                    +10%
                   </button>
                   <button
                     type="button"
                     className="precision-step-btn"
-                    onClick={() => setTargetScale(Math.min(2.0, Math.round((targetScale + 0.1) * 100) / 100))}
-                    title="+10%"
+                    onClick={() => setTargetScale(Math.min(4.0, Math.round((targetScale + 0.25) * 100) / 100))}
+                    title="+25%"
                   >
-                    +10%
+                    +25%
                   </button>
                 </div>
 
@@ -941,8 +1003,8 @@ export function MascotCalibrationStep({
                 <input
                   type="range"
                   className="scale-range-slider"
-                  min={0.5}
-                  max={1.8}
+                  min={0.3}
+                  max={3.0}
                   step={0.01}
                   value={targetScale}
                   onChange={(e) => setTargetScale(Number(e.target.value))}
@@ -955,28 +1017,35 @@ export function MascotCalibrationStep({
                     className={`scale-preset-chip ${Math.abs(targetScale - 0.75) < 0.02 ? "is-active" : ""}`}
                     onClick={() => setTargetScale(0.75)}
                   >
-                    {t("mascots.presetCompact75") || "75% (Compact)"}
+                    75%
                   </button>
                   <button
                     type="button"
                     className={`scale-preset-chip ${Math.abs(targetScale - 1.0) < 0.02 ? "is-active" : ""}`}
                     onClick={() => setTargetScale(1.0)}
                   >
-                    {t("mascots.presetStandard100") || "100% (Standard)"}
+                    100%
                   </button>
                   <button
                     type="button"
                     className={`scale-preset-chip ${Math.abs(targetScale - 1.25) < 0.02 ? "is-active" : ""}`}
                     onClick={() => setTargetScale(1.25)}
                   >
-                    {t("mascots.presetLarge125") || "125% (Large)"}
+                    125%
                   </button>
                   <button
                     type="button"
                     className={`scale-preset-chip ${Math.abs(targetScale - 1.5) < 0.02 ? "is-active" : ""}`}
                     onClick={() => setTargetScale(1.5)}
                   >
-                    {t("mascots.presetGiant150") || "150% (Giant)"}
+                    150%
+                  </button>
+                  <button
+                    type="button"
+                    className={`scale-preset-chip ${Math.abs(targetScale - 2.0) < 0.02 ? "is-active" : ""}`}
+                    onClick={() => setTargetScale(2.0)}
+                  >
+                    200%
                   </button>
                 </div>
               </div>
@@ -1013,12 +1082,12 @@ export function MascotCalibrationStep({
                     <div className="direct-px-input-wrap">
                       <input
                         type="number"
-                        min={-500}
-                        max={500}
+                        min={-2000}
+                        max={2000}
                         value={nudgeX}
                         onChange={(e) => {
                           const val = Number(e.target.value);
-                          if (!isNaN(val)) setNudgeX(Math.max(-500, Math.min(500, val)));
+                          if (!isNaN(val)) setNudgeX(Math.max(-2000, Math.min(2000, val)));
                         }}
                         className="precision-number-input"
                       />
@@ -1038,7 +1107,15 @@ export function MascotCalibrationStep({
                     <button
                       type="button"
                       className="precision-step-btn"
-                      onClick={() => setNudgeX((prev) => Math.max(-500, prev - 20))}
+                      onClick={() => setNudgeX((prev) => Math.max(-2000, prev - 100))}
+                      title="-100px"
+                    >
+                      -100
+                    </button>
+                    <button
+                      type="button"
+                      className="precision-step-btn"
+                      onClick={() => setNudgeX((prev) => Math.max(-2000, prev - 20))}
                       title="-20px"
                     >
                       -20
@@ -1046,7 +1123,7 @@ export function MascotCalibrationStep({
                     <button
                       type="button"
                       className="precision-step-btn"
-                      onClick={() => setNudgeX((prev) => Math.max(-500, prev - 5))}
+                      onClick={() => setNudgeX((prev) => Math.max(-2000, prev - 5))}
                       title="-5px"
                     >
                       -5
@@ -1054,23 +1131,7 @@ export function MascotCalibrationStep({
                     <button
                       type="button"
                       className="precision-step-btn"
-                      onClick={() => setNudgeX((prev) => Math.max(-500, prev - 1))}
-                      title="-1px"
-                    >
-                      <Minus size={11} weight="bold" /> 1
-                    </button>
-                    <button
-                      type="button"
-                      className="precision-step-btn"
-                      onClick={() => setNudgeX((prev) => Math.min(500, prev + 1))}
-                      title="+1px"
-                    >
-                      <Plus size={11} weight="bold" /> 1
-                    </button>
-                    <button
-                      type="button"
-                      className="precision-step-btn"
-                      onClick={() => setNudgeX((prev) => Math.min(500, prev + 5))}
+                      onClick={() => setNudgeX((prev) => Math.min(2000, prev + 5))}
                       title="+5px"
                     >
                       +5
@@ -1078,17 +1139,25 @@ export function MascotCalibrationStep({
                     <button
                       type="button"
                       className="precision-step-btn"
-                      onClick={() => setNudgeX((prev) => Math.min(500, prev + 20))}
+                      onClick={() => setNudgeX((prev) => Math.min(2000, prev + 20))}
                       title="+20px"
                     >
                       +20
+                    </button>
+                    <button
+                      type="button"
+                      className="precision-step-btn"
+                      onClick={() => setNudgeX((prev) => Math.min(2000, prev + 100))}
+                      title="+100px"
+                    >
+                      +100
                     </button>
                   </div>
 
                   <input
                     type="range"
-                    min={-300}
-                    max={300}
+                    min={-500}
+                    max={1800}
                     value={nudgeX}
                     onChange={(e) => setNudgeX(Number(e.target.value))}
                     className="nudge-slider"
@@ -1104,12 +1173,12 @@ export function MascotCalibrationStep({
                     <div className="direct-px-input-wrap">
                       <input
                         type="number"
-                        min={-500}
-                        max={500}
+                        min={-1500}
+                        max={1500}
                         value={nudgeY}
                         onChange={(e) => {
                           const val = Number(e.target.value);
-                          if (!isNaN(val)) setNudgeY(Math.max(-500, Math.min(500, val)));
+                          if (!isNaN(val)) setNudgeY(Math.max(-1500, Math.min(1500, val)));
                         }}
                         className="precision-number-input"
                       />
@@ -1129,7 +1198,15 @@ export function MascotCalibrationStep({
                     <button
                       type="button"
                       className="precision-step-btn"
-                      onClick={() => setNudgeY((prev) => Math.max(-500, prev - 20))}
+                      onClick={() => setNudgeY((prev) => Math.max(-1500, prev - 100))}
+                      title="-100px"
+                    >
+                      -100
+                    </button>
+                    <button
+                      type="button"
+                      className="precision-step-btn"
+                      onClick={() => setNudgeY((prev) => Math.max(-1500, prev - 20))}
                       title="-20px"
                     >
                       -20
@@ -1137,7 +1214,7 @@ export function MascotCalibrationStep({
                     <button
                       type="button"
                       className="precision-step-btn"
-                      onClick={() => setNudgeY((prev) => Math.max(-500, prev - 5))}
+                      onClick={() => setNudgeY((prev) => Math.max(-1500, prev - 5))}
                       title="-5px"
                     >
                       -5
@@ -1145,23 +1222,7 @@ export function MascotCalibrationStep({
                     <button
                       type="button"
                       className="precision-step-btn"
-                      onClick={() => setNudgeY((prev) => Math.max(-500, prev - 1))}
-                      title="-1px"
-                    >
-                      <Minus size={11} weight="bold" /> 1
-                    </button>
-                    <button
-                      type="button"
-                      className="precision-step-btn"
-                      onClick={() => setNudgeY((prev) => Math.min(500, prev + 1))}
-                      title="+1px"
-                    >
-                      <Plus size={11} weight="bold" /> 1
-                    </button>
-                    <button
-                      type="button"
-                      className="precision-step-btn"
-                      onClick={() => setNudgeY((prev) => Math.min(500, prev + 5))}
+                      onClick={() => setNudgeY((prev) => Math.min(1500, prev + 5))}
                       title="+5px"
                     >
                       +5
@@ -1169,17 +1230,25 @@ export function MascotCalibrationStep({
                     <button
                       type="button"
                       className="precision-step-btn"
-                      onClick={() => setNudgeY((prev) => Math.min(500, prev + 20))}
+                      onClick={() => setNudgeY((prev) => Math.min(1500, prev + 20))}
                       title="+20px"
                     >
                       +20
+                    </button>
+                    <button
+                      type="button"
+                      className="precision-step-btn"
+                      onClick={() => setNudgeY((prev) => Math.min(1500, prev + 100))}
+                      title="+100px"
+                    >
+                      +100
                     </button>
                   </div>
 
                   <input
                     type="range"
-                    min={-300}
-                    max={300}
+                    min={-1000}
+                    max={600}
                     value={nudgeY}
                     onChange={(e) => setNudgeY(Number(e.target.value))}
                     className="nudge-slider"

@@ -5,6 +5,7 @@ import {
   type Channel,
   type QuestionHistoryCheckResult,
   type QuizImageStyle,
+  type QuizThinkingBarStyle,
   type Scene,
   type Task,
 } from "@studio/shared";
@@ -372,6 +373,20 @@ export function useEpisodePipeline({
     }
   };
 
+  const saveThinkingBarStyle = async (newStyle: QuizThinkingBarStyle) => {
+    if (!episode || newStyle === (episode.quiz_config?.thinking_bar_style ?? "auto")) return;
+    setBusy("thinking-bar-style");
+    try {
+      await api.updateEpisode(channel.channel_id, episodeId, { thinking_bar_style: newStyle });
+      await load();
+      onNotice({ tone: "good", message: `Thinking bar style set to ${newStyle === "auto" ? "Channel Default" : newStyle}` });
+    } catch (error) {
+      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not update thinking bar style" });
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const saveDuration = async () => {
     if (!episode || durationDraft === episode.target_duration_minutes) return;
     setBusy("duration");
@@ -529,6 +544,7 @@ export function useEpisodePipeline({
     saveArtifact,
     saveQuestionCount,
     saveVisualStyle,
+    saveThinkingBarStyle,
     saveDuration,
     saveScenes,
     mergeNext,

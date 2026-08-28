@@ -37,6 +37,7 @@ import {
   RemoveMascotBackgroundInputSchema,
   AssignMascotInputSchema,
   CalibrateMascotActionInputSchema,
+  SandboxPreviewInputSchema,
   MASCOT_ACTION_META,
   type MascotActionType,
   type AppConfig,
@@ -45,6 +46,7 @@ import {
   type Task,
   type TaskType,
 } from "@studio/shared";
+import { buildSandboxComposition } from "./quiz/render/sandboxComposition.js";
 import {
   generateMascotConceptArt,
   generateMascotActionSprite,
@@ -761,6 +763,11 @@ export async function buildApp(rootDirectory = process.env.STUDIO_ROOT ?? proces
     await assertQuizRenderReady({ repository, config, channelId: params.channelId, episodeId: params.episodeId });
     const task = tasks.submit("GENERATE_VIDEO", params.channelId, params.episodeId);
     return reply.code(202).send({ task });
+  });
+  server.post("/api/quiz/preview-composition", async (request) => {
+    const input = SandboxPreviewInputSchema.parse(request.body ?? {});
+    const mascot = input.mascot_id ? await repository.getMascot(input.mascot_id).catch(() => null) : null;
+    return buildSandboxComposition(input, mascot);
   });
   server.get("/api/channels/:channelId/episodes/:episodeId/visual-bible/images", async (request) => {
     const params = request.params as { channelId: string; episodeId: string };

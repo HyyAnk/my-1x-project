@@ -33,6 +33,8 @@ import type {
   RemoveMascotBackgroundInput,
   AssignMascotInput,
   CalibrateMascotActionInput,
+  SandboxPreviewInput,
+  SandboxPreviewResponse,
 } from "@studio/shared";
 
 export type BundleImage = {
@@ -103,6 +105,7 @@ export const api = {
   compileQuizTimeline: (channelId: string, episodeId: string) => request<{ timeline: QuizTimeline; artifact_path: string; invalidated: string[] }>(`/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/timeline/compile`, { method: "POST", body: "{}" }),
   assessQuiz: (channelId: string, episodeId: string) => request<{ assessment: QuizAssessment; artifact_path: string }>(`/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/qa`, { method: "POST", body: "{}" }),
   renderQuizVideo: (channelId: string, episodeId: string) => request<{ task: Task }>(`/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/render`, { method: "POST", body: "{}" }),
+  previewSandboxComposition: (body: SandboxPreviewInput) => request<SandboxPreviewResponse>("/api/quiz/preview-composition", { method: "POST", body: JSON.stringify(body) }),
   bundleImages: (channelId: string, episodeId: string) => request<{ images: BundleImage[] }>(`/api/channels/${channelId}/episodes/${episodeId}/visual-bible/images`),
   generateBundleImage: (channelId: string, episodeId: string, bundleNumber: number) => request<{ task: Task }>(`/api/channels/${channelId}/episodes/${episodeId}/visual-bible/bundles/${bundleNumber}/image`, { method: "POST", body: "{}" }),
   generateAllBundleImages: (channelId: string, episodeId: string, force = false) => request<{ tasks: Task[]; bundle_count: number }>(`/api/channels/${channelId}/episodes/${episodeId}/visual-bible/images/generate-all`, { method: "POST", body: JSON.stringify({ force }) }),

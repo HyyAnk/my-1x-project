@@ -208,6 +208,9 @@ export function useMascotGenerator({
   const [activeConfigTab, setActiveConfigTab] = useState<"calibration" | "channels">("calibration");
   const [targetPosition, setTargetPosition] = useState<"bottom_left" | "bottom_right">("bottom_left");
   const [targetScale, setTargetScale] = useState(1.0);
+  const [showInIntro, setShowInIntro] = useState(false);
+  const [showInOutro, setShowInOutro] = useState(false);
+  const [showInQuestion, setShowInQuestion] = useState(true);
   const [assignedChannels, setAssignedChannels] = useState<string[]>([]);
   const [channelSearchQuery, setChannelSearchQuery] = useState("");
   const [channelFilterTab, setChannelFilterTab] = useState<"all" | "selected" | "unassigned" | "other">("all");
@@ -235,6 +238,11 @@ export function useMascotGenerator({
     setGenStyle("pixar_3d");
     setGenColor("#06b6d4");
     setGenPrompt("Cute wise baby owl with big sparkling eyes and small red glasses, fluffy feathers, friendly and enthusiastic expression");
+    setTargetPosition("bottom_left");
+    setTargetScale(1.0);
+    setShowInIntro(false);
+    setShowInOutro(false);
+    setShowInQuestion(true);
     setGeneratorStep(1);
   };
 
@@ -247,6 +255,21 @@ export function useMascotGenerator({
     setGenColor(mascot.color_theme || "#06b6d4");
     setGenPrompt(mascot.master_prompt || "");
     setAssignedChannels(mascot.assigned_channel_ids || []);
+
+    const sampleChannel = channels.find((c) => c.mascot_id === mascot.id);
+    if (sampleChannel?.mascot_config) {
+      setTargetPosition(sampleChannel.mascot_config.position || "bottom_left");
+      setTargetScale(sampleChannel.mascot_config.scale || 1.0);
+      setShowInIntro(Boolean(sampleChannel.mascot_config.show_in_intro));
+      setShowInOutro(Boolean(sampleChannel.mascot_config.show_in_outro));
+      setShowInQuestion(sampleChannel.mascot_config.show_in_question !== false);
+    } else {
+      setTargetPosition("bottom_left");
+      setTargetScale(1.0);
+      setShowInIntro(false);
+      setShowInOutro(false);
+      setShowInQuestion(true);
+    }
 
     const availableAction = ALL_MASCOT_ACTIONS.find((act) => mascot.actions[act]?.sprite_url) || "wave";
     setActivePreviewAction(availableAction);
@@ -588,32 +611,61 @@ export function useMascotGenerator({
     if (!editingMascot) return;
     setBusyAction("assign");
     try {
-      const assignmentPromises = channels.map((channel) => {
-        const isAssigned = assignedChannels.includes(channel.channel_id);
-        if (isAssigned && channel.mascot_id !== editingMascot.id) {
-          return api.assignMascotToChannel(channel.channel_id, {
-            mascot_id: editingMascot.id,
-            config: { enabled: true, position: targetPosition, scale: targetScale },
-          });
-        } else if (!isAssigned && channel.mascot_id === editingMascot.id) {
-          return api.assignMascotToChannel(channel.channel_id, {
-            mascot_id: null,
-          });
-        } else if (isAssigned && channel.mascot_id === editingMascot.id) {
-          return api.assignMascotToChannel(channel.channel_id, {
-            mascot_id: editingMascot.id,
-            config: { enabled: true, position: targetPosition, scale: targetScale },
-          });
-        }
-        return Promise.resolve(null);
+      // 1. Persist current pose offset calibration
+      await api.calibrateMascotAction(editingMascot.id, activePreviewAction, {
+        offset_x: nudgeX,
+        offset_y: nudgeY,
       });
 
-      await Promise.all(assignmentPromises);
-      onNotice({ tone: "good", message: t("notices.channelsAssigned") });
+      // 2. Persist channel bindings with offsets and scale
+      const assignmentPromises = channels
+        .map((channel) => {
+          const isAssigned = assignedChannels.includes(channel.channel_id);
+          if (isAssigned && channel.mascot_id !== editingMascot.id) {
+            return api.assignMascotToChannel(channel.channel_id, {
+              mascot_id: editingMascot.id,
+              config: {
+                enabled: true,
+                position: targetPosition,
+                scale: targetScale,
+                offset_x: 0,
+                offset_y: 0,
+                show_in_intro: showInIntro,
+                show_in_outro: showInOutro,
+                show_in_question: showInQuestion,
+              },
+            });
+          } else if (!isAssigned && channel.mascot_id === editingMascot.id) {
+            return api.assignMascotToChannel(channel.channel_id, {
+              mascot_id: null,
+            });
+          } else if (isAssigned && channel.mascot_id === editingMascot.id) {
+            return api.assignMascotToChannel(channel.channel_id, {
+              mascot_id: editingMascot.id,
+              config: {
+                enabled: true,
+                position: targetPosition,
+                scale: targetScale,
+                offset_x: 0,
+                offset_y: 0,
+                show_in_intro: showInIntro,
+                show_in_outro: showInOutro,
+                show_in_question: showInQuestion,
+              },
+            });
+          }
+          return null;
+        })
+        .filter((p): p is Promise<any> => p !== null);
+
+      if (assignmentPromises.length > 0) {
+        await Promise.all(assignmentPromises);
+      }
+      onNotice({ tone: "good", message: t("notices.channelsAssigned") || "Mascot settings saved & applied successfully!" });
       await onRefreshChannels();
       await onMascotsChanged();
     } catch (err) {
-      onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.channelsAssignFailed") });
+      onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.channelsAssignFailed") || "Failed to save and apply mascot settings" });
     } finally {
       setBusyAction(null);
     }
@@ -671,6 +723,12 @@ export function useMascotGenerator({
     setTargetPosition,
     targetScale,
     setTargetScale,
+    showInIntro,
+    setShowInIntro,
+    showInOutro,
+    setShowInOutro,
+    showInQuestion,
+    setShowInQuestion,
     assignedChannels,
     setAssignedChannels,
     channelSearchQuery,

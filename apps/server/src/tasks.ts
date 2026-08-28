@@ -55,6 +55,7 @@ import type { QuizVoicePacingClamp } from "./quiz/audio/voiceSynthesis.js";
 import { canonicalizeVisibleQuizAnswer, resolveVisibleQuizChoice, stripQuizChoiceLabel } from "./quiz/domain/quiz.js";
 import { validateQuizResearchCopyright, validateQuizScriptCopyright } from "./quiz/qa/copyrightValidator.js";
 import { removeImageBackground } from "./utils/imageMatting.js";
+import { writeJsonAtomic } from "./utils/fs.js";
 
 export { buildQuizComposition };
 
@@ -2036,10 +2037,7 @@ async function readNarrationCheckpoint(filePath: string): Promise<NarrationCheck
 }
 
 async function writeNarrationCheckpoint(filePath: string, checkpoint: NarrationCheckpoint): Promise<void> {
-  await mkdir(path.dirname(filePath), { recursive: true });
-  const temporary = `${filePath}.${process.pid}.${Date.now()}.tmp`;
-  await writeFile(temporary, `${JSON.stringify(checkpoint, null, 2)}\n`, "utf8");
-  await rename(temporary, filePath);
+  await writeJsonAtomic(filePath, checkpoint);
 }
 
 function renderSourceFingerprint(html: string, narrationModifiedAt: string, narrationSize: number, assets: Array<{ asset_id: string; fingerprint: string; path: string }>): string {
@@ -2057,9 +2055,7 @@ async function readRenderCheckpoint(filePath: string): Promise<RenderCheckpoint 
 }
 
 async function writeRenderCheckpoint(filePath: string, checkpoint: RenderCheckpoint): Promise<void> {
-  const temporary = `${filePath}.${process.pid}.${Date.now()}.tmp`;
-  await writeFile(temporary, `${JSON.stringify(checkpoint, null, 2)}\n`, "utf8");
-  await rename(temporary, filePath);
+  await writeJsonAtomic(filePath, checkpoint);
 }
 
 async function hasNonEmptyFile(filePath: string): Promise<boolean> {

@@ -269,20 +269,27 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       // Verify mascot HTML and CSS classes are present
       expect(compositionBundle.html).toContain("candy-mascot-container");
       expect(compositionBundle.html).toContain("mascot-sprite-play");
-      expect(compositionBundle.html).toContain("anchor-bottom_left");
-      expect(compositionBundle.html).toContain("has-mascot-left");
+      expect(compositionBundle.html).toContain(".quiz-question-clip .mascot-state-layer.state-thinking { opacity: 1; animation: phase-exit .001s linear var(--reveal-at) forwards; }");
+      expect(compositionBundle.html).toContain(".quiz-question-clip .mascot-state-layer.state-celebrate { opacity: 0; animation: phase-enter .001s linear var(--reveal-at) forwards; }");
+      expect(compositionBundle.html).not.toContain(".quiz-question-clip .mascot-state-layer.state-thinking { animation: phase-enter .001s linear var(--clip-start)");
+
+      // Verify intro and outro do NOT contain mascot DOM elements when show_in_intro and show_in_outro are false
+      expect(compositionBundle.html).not.toContain("<div class=\"candy-mascot-container mascot-intro");
+      expect(compositionBundle.html).not.toContain("<div class=\"candy-mascot-container mascot-outro");
 
       // Verify mascot does not generate redundant mascot SFX audio tags
       expect(compositionBundle.html).not.toContain("mascot-sfx");
       expect(compositionBundle.html).not.toContain("mascot-think-");
       expect(compositionBundle.html).not.toContain("mascot-react-");
 
-      // Verify composition files for subcompositions contain the mascot layers
+      // Verify composition files for subcompositions contain the mascot layers outside game-stage
       const subCompKeys = Object.keys(compositionBundle.files);
       expect(subCompKeys.length).toBeGreaterThan(0);
       const questionSubComp = compositionBundle.files[subCompKeys[1] || subCompKeys[0]];
       expect(questionSubComp).toContain("candy-mascot-container");
       expect(questionSubComp).toContain("mascot-state-layer");
+      expect(questionSubComp).toContain("</div></header><div class=\"game-stage\"");
+      expect(questionSubComp).toContain("</div><div class=\"candy-mascot-container");
 
       // 9b. Test QA Assessment & Preflight Mascot Integrity
       const dummyQuiz = {

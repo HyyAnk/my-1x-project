@@ -7,6 +7,7 @@ import {
   Image,
 } from "@phosphor-icons/react";
 import type { Channel, Task } from "@studio/shared";
+import { isTaskActive } from "../lib/utils";
 import { parseContinuityBundles } from "../lib/continuity";
 import { useEpisode } from "../hooks/useEpisode";
 import { LoadingState } from "./EmptyState";
@@ -27,6 +28,7 @@ import { BundleImagesPanel } from "../features/episode/components/BundleImagesPa
 import { AssessmentPanel } from "../features/episode/components/AssessmentPanel";
 import { ArtifactPanel } from "../features/episode/components/ArtifactPanel";
 import { EpisodeHeader } from "../features/episode/EpisodeHeader";
+import { EpisodeQuizCustomizationBar } from "../features/episode/components/EpisodeQuizCustomizationBar";
 import { QuizVideoPanel } from "../features/episode/QuizVideoPanel";
 import { NarrationTrackPanel } from "../features/episode/NarrationTrackPanel";
 import { ShotPlanSection } from "../features/episode/ShotPlanSection";
@@ -118,7 +120,7 @@ export function EpisodeDetail({
         onCancelActiveTask={pipeline.handleCancelActiveTask}
       />
 
-      {pipeline.pipelineTask ? (
+      {pipeline.pipelineTask && (isTaskActive(pipeline.pipelineTask) || pipeline.pipelineTask.status === "FAILED") ? (
         <TaskProgressPanel
           task={pipeline.pipelineTask}
           title="Production pipeline"
@@ -129,15 +131,28 @@ export function EpisodeDetail({
         />
       ) : null}
 
-      {/* Persistent Top Monitors: Pipeline Rail, QA Scorecard, and Final Video Player */}
+      {/* Customization Toolbar & Production Rail */}
       {isQuiz ? (
-        <QuizV2Panel
-          state={quizV2}
-          readiness={pipeline.readiness}
-          pipelineTask={pipeline.pipelineTask}
-          tasks={pipeline.episodeTasks}
-          questionCount={episode.quiz_config?.question_count ?? 0}
-        />
+        <>
+          <EpisodeQuizCustomizationBar
+            channel={channel}
+            episode={episode}
+            activeEpisodeTask={pipeline.activeEpisodeTask}
+            busy={pipeline.busy}
+            questionCountDraft={pipeline.questionCountDraft}
+            setQuestionCountDraft={pipeline.setQuestionCountDraft}
+            onSaveQuestionCount={pipeline.saveQuestionCount}
+            onSaveVisualStyle={pipeline.saveVisualStyle}
+            onSaveThinkingBarStyle={pipeline.saveThinkingBarStyle}
+          />
+          <QuizV2Panel
+            state={quizV2}
+            readiness={pipeline.readiness}
+            pipelineTask={pipeline.pipelineTask}
+            tasks={pipeline.episodeTasks}
+            questionCount={episode.quiz_config?.question_count ?? 0}
+          />
+        </>
       ) : (
         <PipelineRail readiness={pipeline.readiness} quiz={false} pipelineTask={pipeline.pipelineTask} tasks={pipeline.episodeTasks} />
       )}

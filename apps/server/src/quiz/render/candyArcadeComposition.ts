@@ -1,12 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import type { ChannelMascotConfig, DirectorPlan, MascotProfile, QuizConfig, QuizTimeline, QuizV2 } from "@studio/shared";
+import type { ChannelMascotConfig, DirectorPlan, MascotProfile, QuizConfig, QuizThinkingBarStyle, QuizTimeline, QuizV2 } from "@studio/shared";
 import { getQuizVisualTemplate } from "../visual/registry.js";
 import { ambientPhaseSeconds, motionCssClass, textLayout, visualAnswerState } from "../visual/candyArcade.js";
 import type { QuizTemplateScene } from "../visual/types.js";
 import { defaultBgmRegistry, type ResolveBgmOptions } from "../audio/bgmRegistry.js";
 import { DEFAULT_SFX_MAP } from "../audio/sfxRegistry.js";
+import { getThinkingBarsCss, resolveThinkingBarVariant, starSliderVariant } from "../visual/elements/index.js";
 
 
 export type CandyArcadeCompositionInput = {
@@ -85,7 +86,8 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     const rewardStart = eventAt(question.id, "reward.play", revealStart + .8);
     const transition = eventOf(question.id, "transition.start");
     const end = Math.min(duration, nextQuestion ? eventAt(nextQuestion.id, "question.enter", duration) : transition?.at_seconds ?? outroStart ?? duration);
-    if (end - start > .04) clips.push(questionClip({ start, choicesStart, thinkingStart, revealStart, rewardStart, end, question, questionIndex: index, count: input.quiz.questions.length, visual, copy, assets: input.assets ?? {}, isFinal: index === input.quiz.questions.length - 1, mascot: input.mascot, mascotConfig: input.mascotConfig }));
+    const thinkingBarStyle = beat.thinking_bar_style ?? "auto";
+    if (end - start > .04) clips.push(questionClip({ start, choicesStart, thinkingStart, revealStart, rewardStart, end, question, questionIndex: index, count: input.quiz.questions.length, visual, copy, assets: input.assets ?? {}, isFinal: index === input.quiz.questions.length - 1, mascot: input.mascot, mascotConfig: input.mascotConfig, thinkingBarStyle }));
     if (transition) clips.push(transitionClip({ start: transition.at_seconds, end: transition.at_seconds + transition.duration_seconds, visual, nextPalette: nextQuestion ? template.resolveScene({ question: nextQuestion, questionIndex: index + 1, totalQuestions: input.quiz.questions.length, archetype: input.director.beats.find((candidate) => candidate.question_id === nextQuestion.id)?.archetype ?? "text_multiple_choice", requestedPalette: input.director.beats.find((candidate) => candidate.question_id === nextQuestion.id)?.palette_id ?? "auto", requestedLayout: "auto", requestedMotion: "auto", requestedTransition: "auto", previousPaletteId: visual.palette.id }).palette : visual.palette }));
   });
   if (typeof outroStart === "number" && outroStart < duration - .04) clips.push(outroClip(outroStart, duration, input.quiz.questions.length, copy, input.mascot, input.mascotConfig));
@@ -152,6 +154,17 @@ function subCompositionMount(scene: SubComposition): string {
 
 function mascotElement(mascot: MascotProfile | null | undefined, config: ChannelMascotConfig | null | undefined, phase: "intro" | "question" | "outro"): string {
   if (!mascot || (config && !config.enabled)) return "";
+
+  if (phase === "intro" && (!config || config.show_in_intro !== true)) {
+    return "";
+  }
+  if (phase === "outro" && (!config || config.show_in_outro !== true)) {
+    return "";
+  }
+  if (phase === "question" && (config && config.show_in_question === false)) {
+    return "";
+  }
+
   const position = config?.position || "bottom_left";
   const scale = config?.scale || 1.0;
   const cfgOffX = config?.offset_x || 0;
@@ -170,7 +183,7 @@ function mascotElement(mascot: MascotProfile | null | undefined, config: Channel
     const fps = mascot.actions.wave?.fps || 8;
     const offX = (mascot.actions.wave?.offset_x || 0) + cfgOffX;
     const offY = (mascot.actions.wave?.offset_y || 0) + cfgOffY;
-    return `<div class="candy-mascot-container mascot-intro anchor-bottom_right" style="--mascot-scale:${scale};--mascot-frames:${frames};--mascot-fps:${fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(spriteToUse || ""))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
+    return `<div class="candy-mascot-container mascot-intro anchor-${position}" style="--mascot-scale:${scale};--mascot-frames:${frames};--mascot-fps:${fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(spriteToUse || ""))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
   }
 
   if (phase === "outro") {
@@ -179,7 +192,7 @@ function mascotElement(mascot: MascotProfile | null | undefined, config: Channel
     const fps = (mascot.actions.outro || mascot.actions.wave)?.fps || 8;
     const offX = ((mascot.actions.outro || mascot.actions.wave)?.offset_x || 0) + cfgOffX;
     const offY = ((mascot.actions.outro || mascot.actions.wave)?.offset_y || 0) + cfgOffY;
-    return `<div class="candy-mascot-container mascot-outro anchor-bottom_right" style="--mascot-scale:${scale};--mascot-frames:${frames};--mascot-fps:${fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(spriteToUse || ""))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
+    return `<div class="candy-mascot-container mascot-outro anchor-${position}" style="--mascot-scale:${scale};--mascot-frames:${frames};--mascot-fps:${fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(spriteToUse || ""))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
   }
 
   const thinkUrl = thinkingSprite ? source(thinkingSprite) : (idleSprite ? source(idleSprite) : "");
@@ -205,7 +218,7 @@ function mascotElement(mascot: MascotProfile | null | undefined, config: Channel
 function introClip(end: number, count: number, copy: Copy, mascot?: MascotProfile | null, mascotConfig?: ChannelMascotConfig | null): string {
   if (end < .08) return "";
   const mascotHtml = mascotElement(mascot, mascotConfig, "intro");
-  const fallbackMascot = mascotHtml ? "" : `<div class="brand-mascot mascot-wave" data-layout-ignore aria-hidden="true">✦</div>`;
+  const fallbackMascot = mascot || mascotHtml ? "" : `<div class="brand-mascot mascot-wave" data-layout-ignore aria-hidden="true">✦</div>`;
   return `<section id="candy-intro" class="clip candy-scene candy-intro" data-start="0" data-duration="${end.toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="intro-dot dot-a"></div><div class="intro-dot dot-b"></div><div class="intro-card"><span>QUIZ TIME</span><h1>${esc(copy.ready)}</h1><p>${count} ${esc(copy.questions(count))}</p><div class="intro-stars" data-layout-ignore aria-hidden="true">✦&nbsp;&nbsp;★&nbsp;&nbsp;✦</div></div>${mascotHtml || fallbackMascot}</section>`;
 }
 
@@ -214,12 +227,12 @@ function outroClip(start: number, end: number, count: number, copy: Copy, mascot
   return `<section id="candy-outro" class="clip candy-scene candy-outro" data-start="${start.toFixed(3)}" data-duration="${Math.max(.04, end - start).toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="outro-blob blob-a"></div><div class="outro-blob blob-b"></div><div class="outro-card"><span>${esc(copy.scorePrompt)}</span><h1>${esc(copy.playAgain)}</h1><p>${esc(copy.exploreMore)}</p><div class="outro-cta-badges"><span class="badge-cta badge-comment">💬 ${esc(copy.ctaComment)}</span><span class="badge-cta badge-like">👍 ${esc(copy.ctaLike)}</span><span class="badge-cta badge-sub">🔔 ${esc(copy.ctaSubscribe)}</span></div><div class="outro-stars" data-layout-ignore aria-hidden="true">★&nbsp;&nbsp;✦&nbsp;&nbsp;★</div></div>${mascotHtml}</section>`;
 }
 
-function questionClip(input: { start: number; choicesStart: number; thinkingStart: number; revealStart: number; rewardStart: number; end: number; question: QuizV2["questions"][number]; questionIndex: number; count: number; visual: QuizTemplateScene; copy: Copy; assets: Record<string, string>; isFinal: boolean; mascot?: MascotProfile | null; mascotConfig?: ChannelMascotConfig | null }): string {
+function questionClip(input: { start: number; choicesStart: number; thinkingStart: number; revealStart: number; rewardStart: number; end: number; question: QuizV2["questions"][number]; questionIndex: number; count: number; visual: QuizTemplateScene; copy: Copy; assets: Record<string, string>; isFinal: boolean; mascot?: MascotProfile | null; mascotConfig?: ChannelMascotConfig | null; thinkingBarStyle?: QuizThinkingBarStyle | null }): string {
   const { question, visual } = input;
   const questionLayout = textLayout(question.question, "question");
   const answer = question.choices.find((choice) => choice.id === question.correct_choice_id);
   const config = styleAttributes(visual, questionLayout, input.start, input.choicesStart, input.thinkingStart, input.revealStart, input.rewardStart, input.end);
-  const hasMascot = Boolean(input.mascot && (!input.mascotConfig || input.mascotConfig.enabled));
+  const hasMascot = Boolean(input.mascot && (!input.mascotConfig || input.mascotConfig.enabled) && input.mascotConfig?.show_in_question !== false);
   const mascotPos = input.mascotConfig?.position || "bottom_left";
   const mascotClass = hasMascot ? `has-mascot has-mascot-${mascotPos === "bottom_right" ? "right" : "left"}` : "";
   const classNames = ["clip", "candy-scene", "quiz-question-clip", `layout-${visual.layoutId}`, `archetype-${question.format}`, motionCssClass(visual.motionId), input.isFinal ? "is-final-scene" : "", mascotClass].filter(Boolean).join(" ");
@@ -228,8 +241,17 @@ function questionClip(input: { start: number; choicesStart: number; thinkingStar
   const hero = visual.layoutId === "visual_choices_three" ? "" : imageCard(questionAsset, question.visual_opportunity || question.question, "hero-image", question.number);
   const visualAnswers = visual.layoutId === "visual_choices_three" ? visualAnswerCards(question, input.assets, input.questionIndex) : "";
   const mascotHtml = mascotElement(input.mascot, input.mascotConfig, "question");
-  const body = `<div class="game-stage" data-layout-allow-overflow><div class="question-title question-tier-${questionLayout.tier}" data-layout-allow-occlusion><div class="question-card-inner"><div class="q-badge-star" data-layout-ignore aria-hidden="true"><span class="star-shape">★</span><i class="star-sparkle star-sp-1">✦</i><i class="star-sparkle star-sp-2">•</i></div><div class="q-decor-corner q-decor-top-right" data-layout-ignore aria-hidden="true"><span class="corner-gem">✦</span></div><div class="q-decor-corner q-decor-bottom-right" data-layout-ignore aria-hidden="true"><span class="corner-petal">✿</span></div><h1>${highlightQuestionMarkup(question.question, question.visual_opportunity)}</h1></div></div>${hero}${visualAnswers || answers}<div class="phase-region">${thinkingBar({ clipStart: input.start, revealStart: input.revealStart })}${revealPanel(input)}</div>${mascotHtml}</div>`;
-  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(.04, input.end - input.start).toFixed(3)}" data-track-index="0"><div class="bg-gradient"></div><div class="bg-rays"></div><div class="bg-pattern pattern-circles"></div><div class="bg-pattern pattern-sprinkles"></div><div class="bg-shape shape-a" data-layout-allow-overflow></div>${sceneDecorations(input.questionIndex)}<header class="game-header" data-layout-allow-occlusion><div class="hanging-wood-sign" data-layout-allow-occlusion><div class="hanging-ropes" aria-hidden="true"><span class="wood-rope rope-left"></span><span class="wood-rope rope-right"></span></div><div class="wood-sign-plank"><span class="rope-bracket bracket-left" aria-hidden="true"></span><span class="rope-bracket bracket-right" aria-hidden="true"></span><div class="wood-inner-panel"><span class="question-number-val">${question.number}</span></div><span class="wood-sign-star star-tl" data-layout-ignore aria-hidden="true">✦</span><span class="wood-sign-star star-br" data-layout-ignore aria-hidden="true">★</span></div></div></header>${body}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
+  const thinkingBarVariant = resolveThinkingBarVariant(input.thinkingBarStyle);
+  const thinkingBarHtml = thinkingBarVariant.renderHtml({
+    clipStart: input.start,
+    revealStart: input.revealStart,
+    thinkingStart: input.thinkingStart,
+    duration: input.end - input.start,
+    questionNumber: question.number,
+    paletteAccent: visual.palette.accent,
+  });
+  const body = `<div class="game-stage" data-layout-allow-overflow><div class="question-title question-tier-${questionLayout.tier}" data-layout-allow-occlusion><div class="question-card-inner"><div class="q-badge-star" data-layout-ignore aria-hidden="true"><span class="star-shape">★</span><i class="star-sparkle star-sp-1">✦</i><i class="star-sparkle star-sp-2">•</i></div><div class="q-decor-corner q-decor-top-right" data-layout-ignore aria-hidden="true"><span class="corner-gem">✦</span></div><div class="q-decor-corner q-decor-bottom-right" data-layout-ignore aria-hidden="true"><span class="corner-petal">✿</span></div><h1>${highlightQuestionMarkup(question.question, question.visual_opportunity)}</h1></div></div>${hero}${visualAnswers || answers}<div class="phase-region">${thinkingBarHtml}${revealPanel(input)}</div></div>`;
+  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(.04, input.end - input.start).toFixed(3)}" data-track-index="0"><div class="bg-gradient"></div><div class="bg-rays"></div><div class="bg-pattern pattern-circles"></div><div class="bg-pattern pattern-sprinkles"></div><div class="bg-shape shape-a" data-layout-allow-overflow></div>${sceneDecorations(input.questionIndex)}<header class="game-header" data-layout-allow-occlusion><div class="hanging-wood-sign" data-layout-allow-occlusion><div class="hanging-ropes" aria-hidden="true"><span class="wood-rope rope-left"></span><span class="wood-rope rope-right"></span></div><div class="wood-sign-plank"><span class="rope-bracket bracket-left" aria-hidden="true"></span><span class="rope-bracket bracket-right" aria-hidden="true"></span><div class="wood-inner-panel"><span class="question-number-val">${question.number}</span></div><span class="wood-sign-star star-tl" data-layout-ignore aria-hidden="true">✦</span><span class="wood-sign-star star-br" data-layout-ignore aria-hidden="true">★</span></div></div></header>${body}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
 }
 
 function transitionClip(input: { start: number; end: number; visual: QuizTemplateScene; nextPalette: QuizTemplateScene["palette"] }): string {
@@ -868,8 +890,10 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .has-mascot-right .phase-region > .thinking-bar, .has-mascot-right .phase-region > .fact-card { width: min(70vw, 1300px); left: calc(50% - 110px); }
 .has-mascot-left.layout-media_left_choices_right .candy-mascot-container.anchor-bottom_left { bottom: 14px; left: 24px; }
 .has-mascot-right.layout-media_left_choices_right .candy-mascot-container.anchor-bottom_right { bottom: 14px; right: 24px; }
-.candy-mascot-container.mascot-intro { bottom: 60px; right: 180px; }
-.candy-mascot-container.mascot-outro { bottom: 60px; right: 180px; }
+.candy-mascot-container.mascot-intro { bottom: 40px; }
+.candy-mascot-container.mascot-outro { bottom: 40px; }
+.candy-mascot-container.mascot-intro.anchor-bottom_right, .candy-mascot-container.mascot-outro.anchor-bottom_right { right: 80px; }
+.candy-mascot-container.mascot-intro.anchor-bottom_left, .candy-mascot-container.mascot-outro.anchor-bottom_left { left: 80px; }
 .candy-mascot-sprite { width: 220px; height: 220px; background-image: var(--sprite-url); background-repeat: no-repeat; background-position: center bottom; background-size: contain; transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)); filter: drop-shadow(0 14px 18px rgba(13,35,71,.35)); }
 .mascot-state-layer { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.15s ease-out; }
 .mascot-state-layer:not([style*="--mascot-frames:1;"]):not([style*="--mascot-frames: 1;"]) .candy-mascot-sprite { background-size: calc(var(--mascot-frames, 1) * 100%) 100%; background-position: 0% 50%; animation: mascot-sprite-play calc(var(--mascot-frames, 1) / var(--mascot-fps, 8) * 1s) steps(calc(var(--mascot-frames, 1) - 1)) infinite; }
@@ -879,8 +903,8 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .state-oops[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-oops[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-shake 2.0s ease-in-out infinite; }
 .state-point[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-point[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-pulse 1.8s ease-in-out infinite alternate; }
 .mascot-intro .candy-mascot-sprite, .mascot-outro .candy-mascot-sprite { animation: mascot-sprite-play calc(var(--mascot-frames, 1) / var(--mascot-fps, 8) * 1s) steps(calc(var(--mascot-frames, 1) - 1)) infinite; }
-.quiz-question-clip .mascot-state-layer.state-thinking { animation: phase-enter .001s linear var(--clip-start) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards; }
-.quiz-question-clip .mascot-state-layer.state-celebrate { animation: phase-enter .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards; }
+.quiz-question-clip .mascot-state-layer.state-thinking { opacity: 1; animation: phase-exit .001s linear var(--reveal-at) forwards; }
+.quiz-question-clip .mascot-state-layer.state-celebrate { opacity: 0; animation: phase-enter .001s linear var(--reveal-at) forwards; }
 @keyframes mascot-sprite-play { from { background-position: 0% 0%; } to { background-position: 100% 0%; } }
 @keyframes mascot-single-breathe { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 6px)) scale(1.025, 0.98); } }
 @keyframes mascot-single-sway { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(-2.5deg); } 100% { transform: translate(calc(var(--action-offset-x, 0px) + 4px), calc(var(--action-offset-y, 0px) - 8px)) rotate(3.5deg); } }
@@ -888,6 +912,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 @keyframes mascot-single-shake { 0%, 100% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(0deg); } 25% { transform: translate(calc(var(--action-offset-x, 0px) - 5px), var(--action-offset-y, 0px)) rotate(-4deg); } 75% { transform: translate(calc(var(--action-offset-x, 0px) + 5px), var(--action-offset-y, 0px)) rotate(4deg); } }
 @keyframes mascot-single-pulse { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); } 100% { transform: translate(calc(var(--action-offset-x, 0px) + 6px), calc(var(--action-offset-y, 0px) - 4px)) scale(1.03); } }
 @keyframes mascot-single-wave { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(-3deg); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 10px)) rotate(4deg) scale(1.03); } }
+${getThinkingBarsCss()}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; } }
 `;
 }

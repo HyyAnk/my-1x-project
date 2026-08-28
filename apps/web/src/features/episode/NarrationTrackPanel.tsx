@@ -28,19 +28,21 @@ export function NarrationTrackPanel({
   narrationWordsPerSecond,
   onCreateTask,
 }: NarrationTrackPanelProps) {
+  const narrationTask = latestTask(episodeTasks, ["GENERATE_NARRATION"]);
+  const showProgress = narrationTask && (isTaskActive(narrationTask) || narrationTask.status === "FAILED" || (!episode.narration_asset_path && narrationTask.status !== "COMPLETED"));
+
   return (
     <section className="panel narration-production-panel" style={{ marginTop: "24px" }}>
       <div className="panel-heading">
         <div>
-          <p className="eyebrow">Master Audio</p>
-          <h2>Production Narration Track</h2>
+          <h2>Narration Audio</h2>
         </div>
         <button
           className="primary-button compact"
           disabled={!readiness.script || Boolean(activeEpisodeTask)}
           onClick={() => onCreateTask("GENERATE_NARRATION")}
         >
-          {latestTask(episodeTasks, ["GENERATE_NARRATION"]) && isTaskActive(latestTask(episodeTasks, ["GENERATE_NARRATION"])!) ? (
+          {narrationTask && isTaskActive(narrationTask) ? (
             <CircleNotch className="spin" size={15} />
           ) : (
             <SpeakerHigh size={15} />
@@ -48,9 +50,9 @@ export function NarrationTrackPanel({
           <span>{readiness.narration ? "Regenerate" : "Generate Audio"}</span>
         </button>
       </div>
-      {latestTask(episodeTasks, ["GENERATE_NARRATION"]) ? (
+      {showProgress ? (
         <TaskProgressPanel
-          task={latestTask(episodeTasks, ["GENERATE_NARRATION"])!}
+          task={narrationTask}
           title="Narration"
           activeLabel="Generating by sequence"
           completionLabel="Narration ready"
@@ -80,7 +82,7 @@ export function NarrationTrackPanel({
           </a>
         </div>
       ) : (
-        <p className="artifact-empty">Generate after script approval to lock speech pacing and timing calibration.</p>
+        <p className="artifact-empty">No narration audio generated yet.</p>
       )}
     </section>
   );

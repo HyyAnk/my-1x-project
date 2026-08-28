@@ -8,6 +8,7 @@ import { DashboardView, type ChannelGroupId } from "./components/ChannelList";
 import { ChannelsView, CreateChannelModal, DeleteChannelModal } from "./components/ChannelView";
 import { SettingsView, StorageSetupModal } from "./components/SettingsPanel";
 import { MascotStudioView } from "./components/MascotStudio";
+import { VisualSandboxTab } from "./features/sandbox/VisualSandboxTab";
 import { Sidebar, Topbar, NoticeBanner } from "./components/AppChrome";
 import { TaskActivityBar, TasksView } from "./components/TaskPanel";
 import { LoadingState } from "./components/EmptyState";
@@ -356,6 +357,13 @@ function AppContent() {
         ) : null}
         {!loading && page === "mascots" ? (
           <MascotStudioView
+            channels={channels}
+            onNotice={setNotice}
+            onRefreshChannels={async () => { await refreshChannels(); }}
+          />
+        ) : null}
+        {!loading && page === "sandbox" ? (
+          <VisualSandboxTab
             channels={channels}
             onNotice={setNotice}
             onRefreshChannels={async () => { await refreshChannels(); }}

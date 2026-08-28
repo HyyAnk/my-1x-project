@@ -57,7 +57,6 @@ export function QuestionRemixPanel({
       {/* Header Section */}
       <div className="section-heading remix-header-row">
         <div>
-          <p className="eyebrow">{t("remix.eyebrow")}</p>
           <h2 className="remix-main-title">{t("remix.title")}</h2>
         </div>
         <div className="scene-heading-actions">
@@ -118,11 +117,11 @@ export function QuestionRemixPanel({
                 {historyCheck?.passed ? t("remix.readyTag") : t("remix.actionRecommendedTag")}
               </span>
             </div>
-            <p className="status-subtext">
-              {historyCheck?.passed
-                ? t("remix.passedSubtext")
-                : t("remix.thresholdSubtext", { threshold: historyCheck?.pass_threshold ?? 2 })}
-            </p>
+            {!historyCheck?.passed ? (
+              <p className="status-subtext">
+                {t("remix.thresholdSubtext", { threshold: historyCheck?.pass_threshold ?? 2 })}
+              </p>
+            ) : null}
           </div>
         </div>
 
@@ -165,9 +164,6 @@ export function QuestionRemixPanel({
               <h3 className="remix-list-heading">
                 {t("remix.historyHeader", { count: displayedItems.length, total: showOnlyDuplicates ? ` / ${totalQuestions}` : "" })}
               </h3>
-              <span className="remix-list-hint">
-                {t("remix.historyHint")}
-              </span>
             </div>
 
             {/* Filter On/Off Toggle */}

@@ -23,6 +23,7 @@ import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
 import { CountryFlag } from "../../../components/CountryFlag";
 import { VisualStylesMenu } from "./VisualStylesMenu";
+import { ThinkingBarStyleMenu } from "./ThinkingBarStyleMenu";
 
 type ChannelDnaTabProps = {
   channel: Channel;
@@ -79,7 +80,10 @@ export function ChannelDnaTab({
           </div>
           <div className="panel-actions">
             {channel.engine === "quiz" ? (
-              <VisualStylesMenu channel={channel} onRefresh={onRefresh} onNotice={onNotice} />
+              <>
+                <VisualStylesMenu channel={channel} onRefresh={onRefresh} onNotice={onNotice} />
+                <ThinkingBarStyleMenu channel={channel} onRefresh={onRefresh} onNotice={onNotice} />
+              </>
             ) : null}
             {editingDna ? (
               <>
@@ -236,24 +240,59 @@ export function ChannelDnaTab({
 
               <div className="mascot-branding-controls">
                 <div className="form-group">
-                  <label>{t("channelDetail.stageAnchorLabel")}</label>
-                  <div className="position-toggle-row">
+                  <label style={{ marginBottom: "6px", display: "block" }}>{t("mascots.positionLabel") || "Vị trí hiển thị"}</label>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
                     <button
                       type="button"
-                      className={`pos-toggle-btn ${cfg.position === "bottom_left" ? "is-selected" : ""}`}
-                      disabled={changingMascot}
+                      className={`quiet-button ${cfg.position === "bottom_left" ? "primary" : ""}`}
                       onClick={() => void onMascotConfigUpdate({ position: "bottom_left" })}
+                      disabled={changingMascot}
+                      style={{ padding: "4px 8px", fontSize: "12px" }}
                     >
-                      {t("channelDetail.bottomLeftLabel")}
+                      👈 {t("mascots.posBottomLeft") || "Góc trái"}
                     </button>
                     <button
                       type="button"
-                      className={`pos-toggle-btn ${cfg.position === "bottom_right" ? "is-selected" : ""}`}
-                      disabled={changingMascot}
+                      className={`quiet-button ${cfg.position === "bottom_right" ? "primary" : ""}`}
                       onClick={() => void onMascotConfigUpdate({ position: "bottom_right" })}
+                      disabled={changingMascot}
+                      style={{ padding: "4px 8px", fontSize: "12px" }}
                     >
-                      {t("channelDetail.bottomRightLabel")}
+                      👉 {t("mascots.posBottomRight") || "Góc phải"}
                     </button>
+                  </div>
+                </div>
+
+                <div className="form-group" style={{ marginTop: "10px" }}>
+                  <label style={{ marginBottom: "6px", display: "block" }}>{t("mascots.visibilityLabel") || "Hiển thị theo phân cảnh"}</label>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={Boolean(cfg.show_in_intro)}
+                        disabled={changingMascot}
+                        onChange={(e) => void onMascotConfigUpdate({ show_in_intro: e.target.checked })}
+                      />
+                      <span>🎬 {t("mascots.showInIntro") || "Intro mở đầu (Mặc định: Tắt)"}</span>
+                    </label>
+                    <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={cfg.show_in_question !== false}
+                        disabled={changingMascot}
+                        onChange={(e) => void onMascotConfigUpdate({ show_in_question: e.target.checked })}
+                      />
+                      <span>❓ {t("mascots.showInQuestion") || "Câu hỏi & Reveal đáp án"}</span>
+                    </label>
+                    <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={Boolean(cfg.show_in_outro)}
+                        disabled={changingMascot}
+                        onChange={(e) => void onMascotConfigUpdate({ show_in_outro: e.target.checked })}
+                      />
+                      <span>🏁 {t("mascots.showInOutro") || "Outro kết thúc (Mặc định: Tắt)"}</span>
+                    </label>
                   </div>
                 </div>
 

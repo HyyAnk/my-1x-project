@@ -64,18 +64,26 @@ export const PROMPT_TEMPLATES = [
 ];
 
 export function getLocalizedActionMeta(
-  action: MascotActionType,
+  action: MascotActionType | string | null | undefined,
   t: (path: string, params?: Record<string, string | number>) => string
 ) {
-  const base = MASCOT_ACTION_META[action];
-  const cap = action.charAt(0).toUpperCase() + action.slice(1);
+  const safeAction = (action && MASCOT_ACTION_META[action as MascotActionType]) ? (action as MascotActionType) : "idle";
+  const base = MASCOT_ACTION_META[safeAction] || {
+    labelKey: "mascots.actionIdle",
+    descKey: "mascots.actionIdleDesc",
+    usageKey: "mascots.actionIdleUsage",
+    icon: "✨",
+    defaultFps: 8,
+    defaultFrames: 1,
+  };
+  const cap = safeAction.charAt(0).toUpperCase() + safeAction.slice(1);
   return {
-    label: t(`mascots.action${cap}`),
-    description: t(`mascots.action${cap}Desc`),
-    usage: t(`mascots.action${cap}Usage`),
-    icon: base.icon,
-    defaultFps: base.defaultFps,
-    defaultFrames: base.defaultFrames,
+    label: t(`mascots.action${cap}`) || safeAction,
+    description: t(`mascots.action${cap}Desc`) || "",
+    usage: t(`mascots.action${cap}Usage`) || "",
+    icon: base.icon || "✨",
+    defaultFps: base.defaultFps || 8,
+    defaultFrames: base.defaultFrames || 1,
   };
 }
 

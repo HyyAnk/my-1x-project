@@ -6786,6 +6786,215 @@ h3 {
   flex-wrap: wrap;
 }
 
+/* ==========================================================================
+   Episode Quiz Customization Toolbar (Above Production Rail)
+   ========================================================================== */
+.episode-customization-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 14px 0 16px;
+  padding: 12px 18px;
+  background: var(--surface-subtle, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(12px);
+  flex-wrap: wrap;
+}
+
+.customization-bar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.customization-bar-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+}
+
+.customization-bar-hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.customization-button-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.customization-dropdown-item {
+  position: relative;
+}
+
+.customization-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px 6px 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.customization-pill-btn:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.customization-pill-btn.is-active {
+  border-color: var(--accent);
+  background: var(--soft-accent);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.customization-pill-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.pill-btn-icon-wrap {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--surface-subtle);
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.pill-btn-icon-wrap.icon-hash {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.pill-btn-icon-wrap.icon-palette {
+  color: #f43f5e;
+  background: rgba(244, 63, 94, 0.15);
+}
+
+.pill-btn-icon-wrap.icon-timer {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.15);
+}
+
+.pill-btn-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  line-height: 1.15;
+}
+
+.pill-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: var(--muted);
+}
+
+.pill-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.pill-caret {
+  color: var(--muted);
+  transition: transform 0.15s ease;
+  margin-left: 2px;
+}
+
+.customization-pill-btn.is-active .pill-caret {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.customization-popover-sm {
+  width: 260px;
+  right: auto;
+  left: 0;
+}
+
+.customization-popover-wide {
+  right: auto;
+  left: 0;
+}
+
+.preset-count-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 4px 0 8px;
+}
+
+.preset-count-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 4px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.preset-count-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.preset-count-btn.is-active {
+  background: var(--accent);
+  color: #FFFFFF;
+  border-color: var(--accent);
+}
+
+.custom-count-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.custom-count-input {
+  width: 60px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 12px;
+  text-align: center;
+}
+
 .visual-style-picker-label {
   display: inline-flex;
   align-items: center;
@@ -10858,12 +11067,15 @@ h3 {
 
 .candy-mascot-container.is-dragging {
   filter: drop-shadow(0 0 14px var(--accent));
+  cursor: grabbing !important;
 }
 
 .candy-mascot-container {
   position: absolute;
-  z-index: 7;
+  z-index: 25;
+  pointer-events: auto;
   transform-origin: bottom center;
+  user-select: none;
 }
 
 .candy-mascot-container.anchor-bottom_left {
@@ -10882,7 +11094,10 @@ h3 {
   background-repeat: no-repeat;
   background-position: center bottom;
   background-size: contain;
+  transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px));
   filter: drop-shadow(0 14px 18px rgba(13, 35, 71, 0.35));
+  pointer-events: auto;
+  touch-action: none;
 }
 
 /* Director Rehearsal Playbar */

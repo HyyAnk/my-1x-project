@@ -97,7 +97,6 @@ export function ShotPlanSection({
     <section className="shot-plan-section">
       <div className="section-heading scene-heading" style={{ marginTop: "12px" }}>
         <div>
-          <p className="eyebrow">Shot Breakdown</p>
           <h2>Timeline & Shots ({scenes.length})</h2>
         </div>
         <div className="scene-heading-actions">

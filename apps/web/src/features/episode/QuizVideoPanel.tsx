@@ -32,12 +32,14 @@ export function QuizVideoPanel({
   onCreateTask,
   onOpenVideoFolder,
 }: QuizVideoPanelProps) {
+  const videoTask = latestTask(episodeTasks, ["GENERATE_VIDEO"]);
+  const showProgress = videoTask && (isTaskActive(videoTask) || videoTask.status === "FAILED" || (!episode.video_asset_path && videoTask.status !== "COMPLETED"));
+
   return (
     <section className="panel quiz-video-panel">
       <div className="panel-heading">
         <div>
-          <p className="eyebrow">Rendered Master</p>
-          <h2>Quiz Video MP4</h2>
+          <h2>{isQuiz ? "Quiz Video" : "Video"}</h2>
         </div>
         {!isQuiz ? (
           <button
@@ -45,7 +47,7 @@ export function QuizVideoPanel({
             disabled={!readiness.narration || !readiness.scenes || Boolean(activeEpisodeTask)}
             onClick={() => onCreateTask("GENERATE_VIDEO")}
           >
-            {latestTask(episodeTasks, ["GENERATE_VIDEO"]) && isTaskActive(latestTask(episodeTasks, ["GENERATE_VIDEO"])!) ? (
+            {videoTask && isTaskActive(videoTask) ? (
               <CircleNotch className="spin" size={15} />
             ) : (
               <FilmSlate size={15} />
@@ -54,10 +56,10 @@ export function QuizVideoPanel({
           </button>
         ) : null}
       </div>
-      {latestTask(episodeTasks, ["GENERATE_VIDEO"]) ? (
+      {showProgress ? (
         <TaskProgressPanel
-          task={latestTask(episodeTasks, ["GENERATE_VIDEO"])!}
-          title="HyperFrames render"
+          task={videoTask}
+          title="Video render"
           activeLabel="Rendering video"
           completionLabel="Video ready"
           now={episodeClock}
@@ -73,8 +75,8 @@ export function QuizVideoPanel({
             aria-label="Rendered video"
           />
           <div>
-            <strong>MP4 with Chatterbox audio</strong>
-            <span>{formatDuration(episode.video_duration_seconds ?? 0)} · HyperFrames Render</span>
+            <strong>{episode.topic?.title || "Video"}</strong>
+            <span>{formatDuration(episode.video_duration_seconds ?? 0)}</span>
             <div className="video-result-actions">
               <a
                 className="quiet-button compact"
@@ -96,7 +98,7 @@ export function QuizVideoPanel({
           </div>
         </div>
       ) : (
-        <p className="artifact-empty">Render video once narration and shot breakdown are complete.</p>
+        <p className="artifact-empty">No video rendered yet. Run production pipeline to generate video.</p>
       )}
     </section>
   );

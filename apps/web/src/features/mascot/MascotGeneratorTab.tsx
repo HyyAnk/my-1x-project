@@ -67,6 +67,12 @@ export function MascotGeneratorTab({
     setTargetPosition,
     targetScale,
     setTargetScale,
+    showInIntro,
+    setShowInIntro,
+    showInOutro,
+    setShowInOutro,
+    showInQuestion,
+    setShowInQuestion,
     assignedChannels,
     setAssignedChannels,
     channelSearchQuery,
@@ -154,7 +160,9 @@ export function MascotGeneratorTab({
                       ? t("mascots.globalGenTitleBatchCore")
                       : busyAction === "batch"
                       ? t("mascots.globalGenTitleBatchAll", { total: batchState?.total || 7 })
-                      : busyAction === "matting-master" || busyAction.startsWith("matting-")
+                      : busyAction === "assign"
+                      ? t("mascots.savingAndApplyingBtn") || "Saving & Applying..."
+                      : busyAction === "matting-master" || busyAction?.startsWith("matting-")
                       ? busyAction === "matting-all"
                         ? t("mascots.globalGenTitleMattingAll", { total: 7 })
                         : t("mascots.globalGenTitleMatting")
@@ -277,6 +285,12 @@ export function MascotGeneratorTab({
           setTargetPosition={setTargetPosition}
           targetScale={targetScale}
           setTargetScale={setTargetScale}
+          showInIntro={showInIntro}
+          setShowInIntro={setShowInIntro}
+          showInOutro={showInOutro}
+          setShowInOutro={setShowInOutro}
+          showInQuestion={showInQuestion}
+          setShowInQuestion={setShowInQuestion}
           assignedChannels={assignedChannels}
           setAssignedChannels={setAssignedChannels}
           channelSearchQuery={channelSearchQuery}

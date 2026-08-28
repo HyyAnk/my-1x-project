@@ -41,7 +41,6 @@ export function BundleImagesPanel({
     <section className="panel bundle-images-panel">
       <div className="panel-heading">
         <div>
-          <p className="eyebrow">Style lock</p>
           <div className="bundle-heading-with-badge">
             <h2>Continuity images</h2>
             {resolvedStyle ? (
