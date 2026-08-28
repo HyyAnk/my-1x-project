@@ -138,6 +138,8 @@ export const ChannelMascotConfigSchema = z.object({
   enabled: z.boolean().default(true),
   position: z.enum(["bottom_left", "bottom_right"]).default("bottom_left"),
   scale: z.number().default(1.0),
+  offset_x: z.number().default(0),
+  offset_y: z.number().default(0),
   sfx_enabled: z.boolean().optional(),
   sfx_volume: z.number().optional(),
   sfx_celebrate_style: z.enum(["cheer_fanfare", "cute_chime", "arcade_whistle", "none"]).optional(),
@@ -147,8 +149,8 @@ export type ChannelMascotConfig = z.infer<typeof ChannelMascotConfigSchema>;
 export type MascotPosition = "bottom_left" | "bottom_right";
 
 export const CalibrateMascotActionInputSchema = z.object({
-  offset_x: z.number().min(-100).max(100),
-  offset_y: z.number().min(-100).max(100),
+  offset_x: z.number().min(-1000).max(1000),
+  offset_y: z.number().min(-1000).max(1000),
 });
 export type CalibrateMascotActionInput = z.infer<typeof CalibrateMascotActionInputSchema>;
 

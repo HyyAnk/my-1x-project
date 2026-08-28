@@ -258,16 +258,52 @@ export function ChannelDnaTab({
                 </div>
 
                 <div className="form-group" style={{ marginTop: "10px" }}>
-                  <label>{t("channelDetail.scaleLabel", { scale: (cfg.scale || 1.0).toFixed(2) })}</label>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <label>{t("channelDetail.scaleLabel", { scale: (cfg.scale || 1.0).toFixed(2) })}</label>
+                    <span className="scale-value-badge" style={{ fontSize: "11px", padding: "1px 6px" }}>{Math.round((cfg.scale || 1.0) * 100)}%</span>
+                  </div>
                   <input
                     type="range"
-                    min={0.7}
-                    max={1.3}
-                    step={0.05}
+                    min={0.5}
+                    max={1.8}
+                    step={0.01}
                     value={cfg.scale || 1.0}
                     disabled={changingMascot}
                     onChange={(e) => void onMascotConfigUpdate({ scale: Number(e.target.value) })}
                   />
+                </div>
+
+                <div className="form-group" style={{ marginTop: "10px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                    <label style={{ margin: 0 }}>Offset X / Y (1920x1080 px)</label>
+                    <span style={{ fontSize: "11px", color: "var(--accent)", fontWeight: 600 }}>
+                      X: {cfg.offset_x || 0}px | Y: {cfg.offset_y || 0}px
+                    </span>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                    <div>
+                      <small style={{ color: "var(--muted)", fontSize: "11px" }}>X (Ngang):</small>
+                      <input
+                        type="range"
+                        min={-300}
+                        max={300}
+                        value={cfg.offset_x || 0}
+                        disabled={changingMascot}
+                        onChange={(e) => void onMascotConfigUpdate({ offset_x: Number(e.target.value) })}
+                      />
+                    </div>
+                    <div>
+                      <small style={{ color: "var(--muted)", fontSize: "11px" }}>Y (Dọc):</small>
+                      <input
+                        type="range"
+                        min={-300}
+                        max={300}
+                        value={cfg.offset_y || 0}
+                        disabled={changingMascot}
+                        onChange={(e) => void onMascotConfigUpdate({ offset_y: Number(e.target.value) })}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

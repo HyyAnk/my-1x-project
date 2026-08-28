@@ -527,8 +527,15 @@ export interface TranslationSchema {
     nudgeDownTooltip: string;
     resetOffsetTooltip: string;
     resetBtn: string;
+    resetAllBtn?: string;
     saveCalibrationBtn: string;
     savingCalibrationBtn: string;
+    renderTarget1080pBadge?: string;
+    dragHint?: string;
+    presetCompact75?: string;
+    presetStandard100?: string;
+    presetLarge125?: string;
+    presetGiant150?: string;
 
     // Stage Position & Channel Bind
     stageConfigTitle: string;

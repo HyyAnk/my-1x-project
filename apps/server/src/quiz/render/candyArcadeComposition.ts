@@ -154,6 +154,8 @@ function mascotElement(mascot: MascotProfile | null | undefined, config: Channel
   if (!mascot || (config && !config.enabled)) return "";
   const position = config?.position || "bottom_left";
   const scale = config?.scale || 1.0;
+  const cfgOffX = config?.offset_x || 0;
+  const cfgOffY = config?.offset_y || 0;
 
   const waveSprite = mascot.actions.wave?.sprite_url;
   const idleSprite = mascot.actions.idle?.sprite_url || mascot.master_image_url;
@@ -166,8 +168,8 @@ function mascotElement(mascot: MascotProfile | null | undefined, config: Channel
     const spriteToUse = waveSprite || mascot.master_image_url;
     const frames = mascot.actions.wave?.frames_count || 1;
     const fps = mascot.actions.wave?.fps || 8;
-    const offX = mascot.actions.wave?.offset_x || 0;
-    const offY = mascot.actions.wave?.offset_y || 0;
+    const offX = (mascot.actions.wave?.offset_x || 0) + cfgOffX;
+    const offY = (mascot.actions.wave?.offset_y || 0) + cfgOffY;
     return `<div class="candy-mascot-container mascot-intro anchor-bottom_right" style="--mascot-scale:${scale};--mascot-frames:${frames};--mascot-fps:${fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(spriteToUse || ""))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
   }
 
@@ -175,8 +177,8 @@ function mascotElement(mascot: MascotProfile | null | undefined, config: Channel
     const spriteToUse = outroSprite || waveSprite || mascot.master_image_url;
     const frames = (mascot.actions.outro || mascot.actions.wave)?.frames_count || 1;
     const fps = (mascot.actions.outro || mascot.actions.wave)?.fps || 8;
-    const offX = (mascot.actions.outro || mascot.actions.wave)?.offset_x || 0;
-    const offY = (mascot.actions.outro || mascot.actions.wave)?.offset_y || 0;
+    const offX = ((mascot.actions.outro || mascot.actions.wave)?.offset_x || 0) + cfgOffX;
+    const offY = ((mascot.actions.outro || mascot.actions.wave)?.offset_y || 0) + cfgOffY;
     return `<div class="candy-mascot-container mascot-outro anchor-bottom_right" style="--mascot-scale:${scale};--mascot-frames:${frames};--mascot-fps:${fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(spriteToUse || ""))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
   }
 
@@ -189,10 +191,10 @@ function mascotElement(mascot: MascotProfile | null | undefined, config: Channel
   const thinkFps = mascot.actions.thinking?.fps || mascot.actions.idle?.fps || 8;
   const celebFps = mascot.actions.celebrate?.fps || mascot.actions.wave?.fps || 10;
 
-  const thinkOffX = mascot.actions.thinking?.offset_x || mascot.actions.idle?.offset_x || 0;
-  const thinkOffY = mascot.actions.thinking?.offset_y || mascot.actions.idle?.offset_y || 0;
-  const celebOffX = mascot.actions.celebrate?.offset_x || mascot.actions.wave?.offset_x || 0;
-  const celebOffY = mascot.actions.celebrate?.offset_y || mascot.actions.wave?.offset_y || 0;
+  const thinkOffX = (mascot.actions.thinking?.offset_x || mascot.actions.idle?.offset_x || 0) + cfgOffX;
+  const thinkOffY = (mascot.actions.thinking?.offset_y || mascot.actions.idle?.offset_y || 0) + cfgOffY;
+  const celebOffX = (mascot.actions.celebrate?.offset_x || mascot.actions.wave?.offset_x || 0) + cfgOffX;
+  const celebOffY = (mascot.actions.celebrate?.offset_y || mascot.actions.wave?.offset_y || 0) + cfgOffY;
 
   return `<div class="candy-mascot-container mascot-stage anchor-${position}" style="--mascot-scale:${scale};--mascot-color:${mascot.color_theme || "#06b6d4"};" data-layout-allow-overflow data-layout-ignore aria-hidden="true">
     <div class="mascot-state-layer state-thinking" style="--sprite-url:url('${escAttr(thinkUrl)}');--mascot-frames:${thinkFrames};--mascot-fps:${thinkFps};--action-offset-x:${thinkOffX}px;--action-offset-y:${thinkOffY}px;"><div class="candy-mascot-sprite"></div></div>

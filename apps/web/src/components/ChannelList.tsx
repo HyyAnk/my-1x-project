@@ -2,21 +2,18 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,
   Broadcast,
-  CheckCircle,
   Copy,
   Cpu,
   CurrencyDollar,
   DotsThreeVertical,
   FilmSlate,
   Image as ImageIcon,
-  Lightning,
   MagnifyingGlass,
   Plus,
   Smiley,
   SpeakerHigh,
   Trash,
   VideoCamera,
-  Wallet,
   X,
 } from "@phosphor-icons/react";
 import {
@@ -275,33 +272,53 @@ function Metric({
   label,
   value,
   note,
-  icon: Icon,
+  badge,
+  isRunning,
+  valueColor,
+  className = "",
   href,
   onClick,
 }: {
   label: string;
   value: string | number;
   note: string;
-  icon?: typeof Broadcast;
+  badge?: string;
+  isRunning?: boolean;
+  valueColor?: string;
+  className?: string;
   href?: string;
   onClick?: () => void;
 }) {
   const content = (
     <>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div className="metric-header">
         <span className="metric-label">{label}</span>
-        {Icon ? <Icon size={18} style={{ color: "var(--accent-deep)", opacity: 0.85 }} /> : null}
+        {isRunning ? (
+          <span className="metric-live-badge">
+            <span className="metric-live-dot" />
+            <span>{badge || "RUNNING"}</span>
+          </span>
+        ) : badge ? (
+          <span className="metric-badge">{badge}</span>
+        ) : null}
       </div>
-      <strong>{value}</strong>
-      <span className="metric-note">{note}</span>
+      <div className="metric-body">
+        <span className="metric-value" style={valueColor ? { color: valueColor } : undefined}>
+          {value}
+        </span>
+      </div>
+      <div className="metric-footer">
+        <span className="metric-note">{note}</span>
+      </div>
     </>
   );
+
+  const cardClasses = `metric ${isRunning ? "is-running" : ""} ${href || onClick ? "is-clickable" : ""} ${className}`.trim();
 
   if (href || onClick) {
     return (
       <a
-        className="metric is-clickable"
-        style={{ cursor: "pointer", display: "block" }}
+        className={cardClasses}
         {...getNavProps(href || "#", onClick)}
       >
         {content}
@@ -310,7 +327,7 @@ function Metric({
   }
 
   return (
-    <div className="metric">
+    <div className={cardClasses}>
       {content}
     </div>
   );
@@ -389,7 +406,7 @@ export function DashboardView({
   git: _git = { branch: null, dirty: false, changed_files: 0 },
   engineStatus: _engineStatus = "ready",
   openTaskList: _openTaskList,
-  onNavigate: _onNavigate,
+  onNavigate,
 }: {
   channels: Channel[];
   tasks: Task[];
@@ -512,7 +529,6 @@ export function DashboardView({
           label={t("dashboard.kpiChannels")}
           value={channels.length}
           note={t("dashboard.kpiNoteChannels", { active: activeChannelsCount, draft: draftChannelsCount })}
-          icon={Broadcast}
           href="#/channels"
           onClick={() => onNavigate?.("channels")}
         />
@@ -520,7 +536,6 @@ export function DashboardView({
           label={t("dashboard.kpiEpisodes")}
           value={totalEpisodes}
           note={t("dashboard.kpiNoteEpisodes", { count: channels.length })}
-          icon={FilmSlate}
           href="#/channels"
           onClick={() => onNavigate?.("channels")}
         />
@@ -528,7 +543,6 @@ export function DashboardView({
           label={t("dashboard.kpiSuccessRate")}
           value={`${successRate}%`}
           note={t("dashboard.kpiNoteSuccessRate", { completed: completedCount, failed: failedCount })}
-          icon={CheckCircle}
           href="#/tasks"
           onClick={() => onNavigate?.("tasks")}
         />
@@ -536,7 +550,9 @@ export function DashboardView({
           label={t("dashboard.kpiActiveTasks")}
           value={activeTasks.length}
           note={t("dashboard.kpiNoteActiveTasks", { running: runningCount, queued: queuedCount })}
-          icon={Lightning}
+          isRunning={runningCount > 0}
+          badge={runningCount > 0 ? t("dashboard.running").toUpperCase() : undefined}
+          valueColor={runningCount > 0 ? "var(--accent-deep)" : undefined}
           href="#/tasks"
           onClick={() => onNavigate?.("tasks")}
         />
@@ -544,7 +560,6 @@ export function DashboardView({
           label={t("dashboard.kpiImageBalance")}
           value={formattedBalance}
           note={balanceRateNote}
-          icon={Wallet}
           href="#/settings?tab=media"
           onClick={() => onNavigate?.("settings", { tab: "media" })}
         />

@@ -1,13 +1,17 @@
-import { useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
+  ArrowClockwise,
   Broadcast,
   CheckCircle,
   Circle,
   CircleNotch,
+  Crosshair,
   DeviceMobile,
   FloppyDisk,
   MagnifyingGlass,
+  Minus,
   MonitorPlay,
+  Plus,
   Smiley,
   Warning,
   X,
@@ -53,10 +57,13 @@ export function MascotAssignModal({
 
   const [position, setPosition] = useState<MascotPosition>(() => sampleChannel?.mascot_config?.position || "bottom_left");
   const [scale, setScale] = useState<number>(() => sampleChannel?.mascot_config?.scale || 1.0);
+  const [offsetX, setOffsetX] = useState<number>(() => sampleChannel?.mascot_config?.offset_x || 0);
+  const [offsetY, setOffsetY] = useState<number>(() => sampleChannel?.mascot_config?.offset_y || 0);
   const [selectedChannelIds, setSelectedChannelIds] = useState<string[]>(() => mascot?.assigned_channel_ids || []);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterTab, setFilterTab] = useState<FilterTab>("all");
-  const [aspectRatio, setAspectRatio] = useState<AspectRatio>("9:16");
+  const [aspectRatio, setAspectRatio] = useState<AspectRatio>("16:9");
+  const [showGuides, setShowGuides] = useState(true);
   const [saving, setSaving] = useState(false);
 
   // Sync state when mascot changes
@@ -69,12 +76,75 @@ export function MascotAssignModal({
       if (sample?.mascot_config) {
         setPosition(sample.mascot_config.position || "bottom_left");
         setScale(sample.mascot_config.scale || 1.0);
+        setOffsetX(sample.mascot_config.offset_x || 0);
+        setOffsetY(sample.mascot_config.offset_y || 0);
       } else {
         setPosition("bottom_left");
         setScale(1.0);
+        setOffsetX(0);
+        setOffsetY(0);
       }
     }
   }, [mascotId, currentAssignedIds, channels, mascot]);
+
+  // Scaled 1920x1080 Viewport
+  const stageWrapperRef = useRef<HTMLDivElement | null>(null);
+  const [containerWidth, setContainerWidth] = useState<number>(360);
+
+  useLayoutEffect(() => {
+    if (!stageWrapperRef.current) return;
+    const el = stageWrapperRef.current;
+    const updateSize = () => {
+      if (el.clientWidth > 0) {
+        setContainerWidth(el.clientWidth);
+      }
+    };
+    updateSize();
+    const ro = new ResizeObserver(updateSize);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [isOpen]);
+
+  const targetStageWidth = aspectRatio === "16:9" ? 1920 : 1080;
+  const targetStageHeight = aspectRatio === "16:9" ? 1080 : 1920;
+  const stageScale = Math.min(1, containerWidth / targetStageWidth);
+
+  // Interactive Direct Dragging
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef<{ startX: number; startY: number; initX: number; initY: number } | null>(null);
+
+  const handleMascotMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+    dragStartRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      initX: offsetX,
+      initY: offsetY,
+    };
+  };
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const onMouseMove = (e: MouseEvent) => {
+      if (!dragStartRef.current) return;
+      const dx = (e.clientX - dragStartRef.current.startX) / stageScale;
+      const dy = (e.clientY - dragStartRef.current.startY) / stageScale;
+      setOffsetX(Math.max(-500, Math.min(500, Math.round(dragStartRef.current.initX + dx))));
+      setOffsetY(Math.max(-500, Math.min(500, Math.round(dragStartRef.current.initY + dy))));
+    };
+    const onMouseUp = () => {
+      setIsDragging(false);
+      dragStartRef.current = null;
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, [isDragging, stageScale]);
 
   // Mascot preview image/sprite fallback
   const previewImage = useMemo(() => {
@@ -123,7 +193,6 @@ export function MascotAssignModal({
   // Filtered channel list
   const filteredChannels = useMemo(() => {
     return channels.filter((ch) => {
-      // 1. Search Query Filter
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
         const matchesName = ch.display_name.toLowerCase().includes(query);
@@ -135,7 +204,6 @@ export function MascotAssignModal({
         }
       }
 
-      // 2. Tab Filter
       if (filterTab === "selected") {
         return selectedChannelIds.includes(ch.channel_id);
       }
@@ -176,7 +244,7 @@ export function MascotAssignModal({
           // Reassign from other/null to this mascot
           await api.assignMascotToChannel(channel.channel_id, {
             mascot_id: mascot.id,
-            config: { enabled: true, position, scale },
+            config: { enabled: true, position, scale, offset_x: offsetX, offset_y: offsetY },
           });
         } else if (!isAssigned && channel.mascot_id === mascot.id) {
           // Unassign from this mascot
@@ -184,10 +252,10 @@ export function MascotAssignModal({
             mascot_id: null,
           });
         } else if (isAssigned && channel.mascot_id === mascot.id) {
-          // Update config (position & scale)
+          // Update config (position, scale, offsets)
           await api.assignMascotToChannel(channel.channel_id, {
             mascot_id: mascot.id,
-            config: { enabled: true, position, scale },
+            config: { enabled: true, position, scale, offset_x: offsetX, offset_y: offsetY },
           });
         }
       }
@@ -211,6 +279,12 @@ export function MascotAssignModal({
     if (lower.includes("thai") || lower === "th") return "TH";
     if (lower.includes("indonesia") || lower === "id") return "ID";
     return lang.toUpperCase().slice(0, 4);
+  };
+
+  const handleResetAll = () => {
+    setOffsetX(0);
+    setOffsetY(0);
+    setScale(1.0);
   };
 
   return (
@@ -263,17 +337,13 @@ export function MascotAssignModal({
           {/* LEFT: Live Stage Simulator & Positioning */}
           <aside className="mascot-assign-stage-preview">
             <div className="stage-simulator-header">
-              <strong>{t("mascots.stageConfigTitle")}</strong>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <strong>{t("mascots.stageConfigTitle")}</strong>
+                <span className="render-target-pill" style={{ fontSize: "10px", padding: "1px 6px" }}>
+                  1080P
+                </span>
+              </div>
               <div className="stage-aspect-toggles">
-                <button
-                  type="button"
-                  className={`stage-aspect-btn ${aspectRatio === "9:16" ? "is-active" : ""}`}
-                  onClick={() => setAspectRatio("9:16")}
-                  title={t("mascots.previewAspectRatioShorts")}
-                >
-                  <DeviceMobile size={14} />
-                  <span>9:16</span>
-                </button>
                 <button
                   type="button"
                   className={`stage-aspect-btn ${aspectRatio === "16:9" ? "is-active" : ""}`}
@@ -283,53 +353,174 @@ export function MascotAssignModal({
                   <MonitorPlay size={14} />
                   <span>16:9</span>
                 </button>
+                <button
+                  type="button"
+                  className={`stage-aspect-btn ${aspectRatio === "9:16" ? "is-active" : ""}`}
+                  onClick={() => setAspectRatio("9:16")}
+                  title={t("mascots.previewAspectRatioShorts")}
+                >
+                  <DeviceMobile size={14} />
+                  <span>9:16</span>
+                </button>
               </div>
             </div>
 
-            {/* Simulated Stage Canvas */}
-            <div className={`stage-simulator-canvas-container aspect-${aspectRatio.replace(":", "-")}`}>
-              <div className="stage-simulator-frame">
-                {/* Mock quiz UI overlay */}
-                <div className="mock-quiz-overlay">
-                  <div className="mock-quiz-header">
-                    <span className="mock-dot red" />
-                    <span className="mock-dot yellow" />
-                    <span className="mock-dot green" />
-                    <span className="mock-quiz-title-bar" />
-                  </div>
-                  <div className="mock-quiz-card">
-                    <div className="mock-quiz-line full" />
-                    <div className="mock-quiz-line half" />
-                  </div>
-                  <div className="mock-quiz-options">
-                    <div className="mock-quiz-opt" />
-                    <div className="mock-quiz-opt" />
+            {/* Simulated Stage Canvas (Scaled 1920x1080) */}
+            <div
+              ref={stageWrapperRef}
+              className={`stage-simulator-viewport-container aspect-${aspectRatio.replace(":", "-")}`}
+              style={{
+                height: `${targetStageHeight * stageScale}px`,
+                position: "relative",
+                overflow: "hidden",
+                borderRadius: "10px",
+                border: "1px solid var(--line)",
+              }}
+            >
+              <div
+                className="stage-master-1920-canvas is-video-bg"
+                style={{
+                  width: `${targetStageWidth}px`,
+                  height: `${targetStageHeight}px`,
+                  transform: `scale(${stageScale})`,
+                  transformOrigin: "top left",
+                  position: "absolute",
+                  inset: 0,
+                }}
+              >
+                {/* 1920x1080 Mock Scene */}
+                <div className="stage-1920-scene clip candy-scene">
+                  <div className="bg-gradient" />
+                  <div className="bg-rays" />
+                  <div className="bg-pattern pattern-circles" />
+
+                  <header className="game-header">
+                    <div className="hanging-wood-sign">
+                      <div className="wood-sign-plank">
+                        <div className="wood-inner-panel">
+                          <span className="question-number-val">1</span>
+                        </div>
+                      </div>
+                    </div>
+                  </header>
+
+                  <div className="game-stage">
+                    <div className="question-title">
+                      <div className="question-card-inner">
+                        <h1>{t("mascots.simQuestionTitle")}</h1>
+                      </div>
+                    </div>
+
+                    <div className="sim-1920-split-row">
+                      <figure className="image-card sim-hero-image">
+                        <div className="hero-img-placeholder">
+                          <span>🐆 Hero Image</span>
+                        </div>
+                      </figure>
+
+                      <div className="answer-grid answer-count-3">
+                        <div className="answer-card">
+                          <b>A</b>
+                          <span>{t("mascots.simChoiceA")}</span>
+                        </div>
+                        <div className="answer-card answer-correct">
+                          <b>B</b>
+                          <span>{t("mascots.simChoiceB")}</span>
+                          <i className="answer-check">✓</i>
+                        </div>
+                        <div className="answer-card">
+                          <b>C</b>
+                          <span>{t("mascots.simChoiceC")}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Mascot on Stage */}
+                {/* Alignment Guides */}
+                {showGuides ? (
+                  <div className="alignment-guides-overlay-1920" aria-hidden="true">
+                    <div className="guide-1920-crosshair-h" />
+                    <div className="guide-1920-crosshair-v" />
+                    <div className="guide-1920-safe-margins" />
+                    <div className="guide-1920-ground-baseline" />
+                  </div>
+                ) : null}
+
+                {/* Mascot on Stage (Matching 1920x1080 Render) */}
                 <div
-                  className={`stage-simulator-mascot pos-${position}`}
+                  className={`candy-mascot-container mascot-stage anchor-${position} ${
+                    isDragging ? "is-dragging" : ""
+                  }`}
                   style={{
+                    transformOrigin: "bottom center",
                     transform: `scale(${scale})`,
-                    transformOrigin: position === "bottom_left" ? "bottom left" : "bottom right",
+                    cursor: isDragging ? "grabbing" : "grab",
                   }}
+                  onMouseDown={handleMascotMouseDown}
                 >
+                  {showGuides ? (
+                    <div className="mascot-1920-bounding-box" aria-hidden="true">
+                      <span className="bounding-coord-tag">
+                        X: {offsetX > 0 ? `+${offsetX}` : offsetX}px, Y: {offsetY > 0 ? `+${offsetY}` : offsetY}px
+                      </span>
+                    </div>
+                  ) : null}
+
                   {previewImage ? (
-                    <img src={previewImage} alt={mascot.name} />
+                    <div
+                      className="candy-mascot-sprite"
+                      style={{
+                        backgroundImage: `url(${previewImage})`,
+                        transform: `translate(${offsetX}px, ${offsetY}px)`,
+                        position: "relative",
+                        zIndex: 2,
+                      }}
+                      title="Drag to reposition"
+                    />
                   ) : (
-                    <div className="stage-simulator-placeholder">
-                      <Smiley size={36} style={{ color: mascot.color_theme || "var(--accent)" }} />
+                    <div
+                      className="stage-mascot-placeholder"
+                      style={{
+                        width: "220px",
+                        height: "220px",
+                        display: "grid",
+                        placeItems: "center",
+                        transform: `translate(${offsetX}px, ${offsetY}px)`,
+                      }}
+                    >
+                      <Smiley size={64} style={{ color: mascot.color_theme || "var(--accent)" }} />
                     </div>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Position Controls */}
+            {/* Drag helper hint */}
+            <div className="stage-drag-helper-strip" style={{ margin: "6px 0 10px" }}>
+              <Crosshair size={13} weight="bold" style={{ color: "var(--accent)" }} />
+              <span>{t("mascots.dragHint") || "Drag to reposition"}</span>
+              <span className="coord-readout-badge" style={{ fontSize: "11px" }}>
+                X: <strong>{offsetX}px</strong> &nbsp;|&nbsp; Y: <strong>{offsetY}px</strong> &nbsp;|&nbsp; <strong>{Math.round(scale * 100)}%</strong>
+              </span>
+            </div>
+
+            {/* Position Anchor & Reset */}
             <div className="stage-control-card">
-              <label className="stage-control-label">{t("mascots.stagePositionLabel")}</label>
-              <div className="position-toggle-row">
+              <div className="section-title-row">
+                <label className="stage-control-label" style={{ margin: 0 }}>{t("mascots.stagePositionLabel")}</label>
+                <button
+                  type="button"
+                  className="quiet-button compact"
+                  onClick={handleResetAll}
+                  title="Reset All"
+                >
+                  <ArrowClockwise size={12} />
+                  <span>Reset</span>
+                </button>
+              </div>
+
+              <div className="position-toggle-row" style={{ marginTop: "6px" }}>
                 <button
                   type="button"
                   className={`pos-toggle-btn ${position === "bottom_left" ? "is-selected" : ""}`}
@@ -348,44 +539,142 @@ export function MascotAssignModal({
             </div>
 
             {/* Scale Slider & Presets */}
-            <div className="stage-control-card">
+            <div className="stage-control-card" style={{ marginTop: "8px" }}>
               <div className="stage-scale-header">
-                <label className="stage-control-label">
+                <label className="stage-control-label" style={{ margin: 0 }}>
                   {t("mascots.scaleLabel", { scale: scale.toFixed(2) })}
                 </label>
-                <span className="scale-value-badge">{Math.round(scale * 100)}%</span>
+                <div className="precision-badge-group">
+                  <span className="scale-value-badge">{Math.round(scale * 100)}%</span>
+                  <input
+                    type="number"
+                    min={50}
+                    max={200}
+                    step={1}
+                    value={Math.round(scale * 100)}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (!isNaN(val)) setScale(Math.max(0.5, Math.min(2.0, val / 100)));
+                    }}
+                    className="precision-number-input"
+                  />
+                  <span className="unit-label">%</span>
+                </div>
               </div>
+
+              <div className="stepper-action-row" style={{ margin: "6px 0" }}>
+                <button
+                  type="button"
+                  className="precision-step-btn"
+                  onClick={() => setScale(Math.max(0.5, Math.round((scale - 0.05) * 100) / 100))}
+                >
+                  -5%
+                </button>
+                <button
+                  type="button"
+                  className="precision-step-btn"
+                  onClick={() => setScale(Math.max(0.5, Math.round((scale - 0.01) * 100) / 100))}
+                >
+                  -1%
+                </button>
+                <button
+                  type="button"
+                  className="precision-step-btn"
+                  onClick={() => setScale(Math.min(2.0, Math.round((scale + 0.01) * 100) / 100))}
+                >
+                  +1%
+                </button>
+                <button
+                  type="button"
+                  className="precision-step-btn"
+                  onClick={() => setScale(Math.min(2.0, Math.round((scale + 0.05) * 100) / 100))}
+                >
+                  +5%
+                </button>
+              </div>
+
               <input
                 type="range"
                 className="scale-range-slider"
-                min={0.7}
-                max={1.3}
-                step={0.05}
+                min={0.5}
+                max={1.8}
+                step={0.01}
                 value={scale}
                 onChange={(e) => setScale(Number(e.target.value))}
               />
-              <div className="scale-presets-row">
+
+              <div className="scale-presets-row" style={{ marginTop: "4px" }}>
                 <button
                   type="button"
-                  className={`scale-preset-chip ${Math.abs(scale - 0.85) < 0.01 ? "is-active" : ""}`}
-                  onClick={() => setScale(0.85)}
+                  className={`scale-preset-chip ${Math.abs(scale - 0.75) < 0.02 ? "is-active" : ""}`}
+                  onClick={() => setScale(0.75)}
                 >
-                  {t("mascots.presetCompact")}
+                  75%
                 </button>
                 <button
                   type="button"
-                  className={`scale-preset-chip ${Math.abs(scale - 1.0) < 0.01 ? "is-active" : ""}`}
+                  className={`scale-preset-chip ${Math.abs(scale - 1.0) < 0.02 ? "is-active" : ""}`}
                   onClick={() => setScale(1.0)}
                 >
-                  {t("mascots.presetStandard")}
+                  100%
                 </button>
                 <button
                   type="button"
-                  className={`scale-preset-chip ${Math.abs(scale - 1.15) < 0.01 ? "is-active" : ""}`}
-                  onClick={() => setScale(1.15)}
+                  className={`scale-preset-chip ${Math.abs(scale - 1.25) < 0.02 ? "is-active" : ""}`}
+                  onClick={() => setScale(1.25)}
                 >
-                  {t("mascots.presetLarge")}
+                  125%
                 </button>
+                <button
+                  type="button"
+                  className={`scale-preset-chip ${Math.abs(scale - 1.5) < 0.02 ? "is-active" : ""}`}
+                  onClick={() => setScale(1.5)}
+                >
+                  150%
+                </button>
+              </div>
+            </div>
+
+            {/* X & Y Offsets */}
+            <div className="stage-control-card" style={{ marginTop: "8px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <Crosshair size={13} weight="bold" style={{ color: "var(--accent)" }} />
+                  <label className="stage-control-label" style={{ margin: 0 }}>Offset X / Y</label>
+                </div>
+                <button
+                  type="button"
+                  className="quiet-button compact"
+                  onClick={() => {
+                    setOffsetX(0);
+                    setOffsetY(0);
+                  }}
+                  title="Reset Offset"
+                >
+                  0
+                </button>
+              </div>
+
+              {/* X Row */}
+              <div className="precision-axis-header" style={{ marginTop: "4px" }}>
+                <span className="nudge-axis-tag x-tag">X: <strong>{offsetX > 0 ? `+${offsetX}` : offsetX}px</strong></span>
+                <div className="stepper-action-row" style={{ margin: 0 }}>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.max(-500, p - 5))}>-5</button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.max(-500, p - 1))}>-1</button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.min(500, p + 1))}>+1</button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.min(500, p + 5))}>+5</button>
+                </div>
+              </div>
+
+              {/* Y Row */}
+              <div className="precision-axis-header" style={{ marginTop: "6px" }}>
+                <span className="nudge-axis-tag y-tag">Y: <strong>{offsetY > 0 ? `+${offsetY}` : offsetY}px</strong></span>
+                <div className="stepper-action-row" style={{ margin: 0 }}>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.max(-500, p - 5))}>-5</button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.max(-500, p - 1))}>-1</button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.min(500, p + 1))}>+1</button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.min(500, p + 5))}>+5</button>
+                </div>
               </div>
             </div>
           </aside>

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowClockwise,
   ArrowLeft,
@@ -6,6 +6,7 @@ import {
   CheckCircle,
   Circle,
   CircleNotch,
+  Crosshair,
   DeviceMobile,
   FloppyDisk,
   MagnifyingGlass,
@@ -135,6 +136,71 @@ export function MascotCalibrationStep({
 
   const currentActionSprite = editingMascot?.actions[activePreviewAction];
 
+  // 1920x1080 Scaled Stage Viewport Resizing
+  const stageWrapperRef = useRef<HTMLDivElement | null>(null);
+  const [containerWidth, setContainerWidth] = useState<number>(760);
+
+  useLayoutEffect(() => {
+    if (!stageWrapperRef.current) return;
+    const el = stageWrapperRef.current;
+    const updateSize = () => {
+      if (el.clientWidth > 0) {
+        setContainerWidth(el.clientWidth);
+      }
+    };
+    updateSize();
+    const ro = new ResizeObserver(updateSize);
+    ro.observe(el);
+    window.addEventListener("resize", updateSize);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", updateSize);
+    };
+  }, []);
+
+  const targetStageWidth = aspectRatio === "16:9" ? 1920 : 1080;
+  const targetStageHeight = aspectRatio === "16:9" ? 1080 : 1920;
+  const stageScale = Math.min(1, containerWidth / targetStageWidth);
+
+  // Interactive Direct Dragging on Stage
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef<{ startX: number; startY: number; initNudgeX: number; initNudgeY: number } | null>(null);
+
+  const handleMascotMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+    dragStartRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      initNudgeX: nudgeX,
+      initNudgeY: nudgeY,
+    };
+  };
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const onMouseMove = (e: MouseEvent) => {
+      if (!dragStartRef.current) return;
+      const dx = (e.clientX - dragStartRef.current.startX) / stageScale;
+      const dy = (e.clientY - dragStartRef.current.startY) / stageScale;
+      const nextX = Math.round(dragStartRef.current.initNudgeX + (flipHorizontal ? -dx : dx));
+      const nextY = Math.round(dragStartRef.current.initNudgeY + dy);
+      setNudgeX(Math.max(-500, Math.min(500, nextX)));
+      setNudgeY(Math.max(-500, Math.min(500, nextY)));
+    };
+    const onMouseUp = () => {
+      setIsDragging(false);
+      dragStartRef.current = null;
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, [isDragging, stageScale, flipHorizontal, setNudgeX, setNudgeY]);
+
   // Map channel_id -> other mascot info if assigned to another mascot
   const channelOtherMascotMap = useMemo(() => {
     const map = new Map<string, { id: string; name: string }>();
@@ -166,7 +232,6 @@ export function MascotCalibrationStep({
   // Filtered channel list
   const filteredChannels = useMemo(() => {
     return channels.filter((ch) => {
-      // 1. Search Query Filter
       if (channelSearchQuery.trim()) {
         const query = channelSearchQuery.toLowerCase().trim();
         const matchesName = ch.display_name.toLowerCase().includes(query);
@@ -178,7 +243,6 @@ export function MascotCalibrationStep({
         }
       }
 
-      // 2. Tab Filter
       if (channelFilterTab === "selected") {
         return assignedChannels.includes(ch.channel_id);
       }
@@ -224,9 +288,15 @@ export function MascotCalibrationStep({
     nudgeX === (currentActionSprite?.offset_x || 0) &&
     nudgeY === (currentActionSprite?.offset_y || 0);
 
+  const handleResetAll = () => {
+    setNudgeX(0);
+    setNudgeY(0);
+    setTargetScale(1.0);
+  };
+
   return (
     <div className="wizard-step-content step-live-studio-grid">
-      {/* 1. Left Column: Studio Stage Monitor & Interactive Rehearsal */}
+      {/* 1. Left Column: True 1920x1080 Studio Stage Monitor & Interactive Rehearsal */}
       <div className="live-player-col">
         <div className="wizard-card studio-monitor-card">
           {/* Monitor Top Control Header */}
@@ -234,9 +304,14 @@ export function MascotCalibrationStep({
             <div className="monitor-title-group">
               <span className="live-status-pill">
                 <span className="live-pulse-dot" />
-                LIVE STAGE
+                LIVE 1080P
               </span>
-              <h3>{t("mascots.stageTheaterTitle")}</h3>
+              <div className="monitor-heading-wrap">
+                <h3>{t("mascots.stageTheaterTitle")}</h3>
+                <span className="render-target-pill">
+                  {aspectRatio === "16:9" ? "1920 × 1080 px" : "1080 × 1920 px"} [1:1 Match]
+                </span>
+              </div>
             </div>
 
             <div className="monitor-header-controls">
@@ -282,145 +357,273 @@ export function MascotCalibrationStep({
             </div>
           </div>
 
-          {/* Stage Simulator Screen Box */}
+          {/* Stage Simulator Outer Scaler Viewport */}
           <div className="stage-screen-outer-wrapper">
             <div
-              className={`stage-simulator-screen aspect-${aspectRatio.replace(":", "-")} ${
-                stagePreviewMode === "video_stage" ? "is-video-bg" : "is-grid-bg"
-              }`}
+              ref={stageWrapperRef}
+              className={`stage-simulator-viewport-container aspect-${aspectRatio.replace(":", "-")}`}
+              style={{
+                height: `${targetStageHeight * stageScale}px`,
+              }}
             >
-              {/* Simulated Quiz UI Layers (Video Stage Mode) */}
-              {stagePreviewMode === "video_stage" ? (
-                scenarioPhase === "intro" ? (
-                  <div className="sim-intro-view">
-                    <span className="sim-intro-badge">{t("mascots.simIntroBadge")}</span>
-                    <h2 className="sim-intro-title">{t("mascots.simIntroTitle")}</h2>
-                    <p className="sim-intro-sub">{t("mascots.simIntroSub")}</p>
-                  </div>
-                ) : scenarioPhase === "explain" ? (
-                  <div className="simulated-quiz-ui">
-                    <div className="sim-wood-sign">Q1</div>
-                    <div className="sim-question-card">{t("mascots.simQuestionTitle")}</div>
-                    <div className="sim-fact-view">
-                      <span className="sim-fact-label">{t("mascots.simFactLabel")}</span>
-                      <p className="sim-fact-text">{t("mascots.simFactText")}</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="simulated-quiz-ui">
-                    <div className="sim-wood-sign">Q1</div>
-                    <div className="sim-question-card">{t("mascots.simQuestionTitle")}</div>
-                    <div className="sim-hero-box">🖼️ HERO (Cheetah)</div>
-                    <div className="sim-choices-box">
-                      <div className={`sim-choice ${scenarioPhase === "reveal" ? "is-dimmed" : ""}`}>
-                        {t("mascots.simChoiceA")}
-                      </div>
-                      <div className={`sim-choice ${scenarioPhase === "reveal" ? "is-correct" : ""}`}>
-                        {scenarioPhase === "reveal" ? `✓ ${t("mascots.simChoiceB")}` : t("mascots.simChoiceB")}
-                      </div>
-                      <div className={`sim-choice ${scenarioPhase === "reveal" ? "is-dimmed" : ""}`}>
-                        {t("mascots.simChoiceC")}
-                      </div>
-                    </div>
-                    <div className="sim-thinking-bar">
-                      <div
-                        className="sim-bar-progress"
-                        style={{
-                          width: scenarioPhase === "thinking" ? `${(scenarioCountdown / 5) * 100}%` : "100%",
-                          transition: "width 1s linear",
-                        }}
-                      />
-                      <span
-                        className="sim-star-marker"
-                        style={{
-                          left: scenarioPhase === "thinking" ? `${(scenarioCountdown / 5) * 95}%` : "95%",
-                          transition: "left 1s linear",
-                        }}
-                      >
-                        ★ {scenarioPhase === "thinking" ? scenarioCountdown : 5}
-                      </span>
-                    </div>
-                  </div>
-                )
-              ) : null}
-
-              {/* Dynamic Alignment Guides Overlay */}
-              {showGuides ? (
-                <div className="alignment-guides-overlay" aria-hidden="true">
-                  <div className="guide-center-crosshair-h" />
-                  <div className="guide-center-crosshair-v" />
-                  <div className="guide-ground-baseline" />
-                  <div className={`guide-bounds-box pos-${targetPosition}`} />
-                </div>
-              ) : null}
-
-              {/* Animated Mascot Character Anchor */}
+              {/* Inner 1920x1080 (or 1080x1920) Master Frame */}
               <div
-                className={`stage-mascot-anchor anchor-${targetPosition}`}
+                className={`stage-master-1920-canvas ${stagePreviewMode === "video_stage" ? "is-video-bg" : "is-grid-bg"}`}
                 style={{
-                  transform: `scale(${targetScale}) scaleX(${flipHorizontal ? -1 : 1})`,
-                  transformOrigin: targetPosition === "bottom_left" ? "bottom left" : "bottom right",
+                  width: `${targetStageWidth}px`,
+                  height: `${targetStageHeight}px`,
+                  transform: `scale(${stageScale})`,
+                  transformOrigin: "top left",
                 }}
               >
-                {/* Onion Skin Ghost Reference Layer (Idle Pose Comparison) */}
-                {onionSkinEnabled && editingMascot?.actions.idle?.sprite_url ? (
-                  <div
-                    className="stage-mascot-sprite-render onion-skin-layer"
-                    style={{
-                      width: "220px",
-                      height: "220px",
-                      backgroundImage: `url(${editingMascot.actions.idle.sprite_url})`,
-                      backgroundSize: "contain",
-                      backgroundPosition: "center bottom",
-                      backgroundRepeat: "no-repeat",
-                      opacity: onionSkinOpacity,
-                      filter: "sepia(100%) hue-rotate(150deg) saturate(300%)",
-                      position: "absolute",
-                      inset: 0,
-                      zIndex: 1,
-                      pointerEvents: "none",
-                    }}
-                  />
+                {/* 1. Real Quiz Video Stage Elements (1920x1080 Space) */}
+                {stagePreviewMode === "video_stage" ? (
+                  <div className="stage-1920-scene clip candy-scene">
+                    <div className="bg-gradient" />
+                    <div className="bg-rays" />
+                    <div className="bg-pattern pattern-circles" />
+                    <div className="bg-pattern pattern-sprinkles" />
+                    <div className="bg-shape shape-a" />
+
+                    {/* Intro Phase */}
+                    {scenarioPhase === "intro" ? (
+                      <div className="sim-1920-intro-card">
+                        <span className="mini-badge">{t("mascots.simIntroBadge")}</span>
+                        <h1>{t("mascots.simIntroTitle")}</h1>
+                        <p>{t("mascots.simIntroSub")}</p>
+                        <div className="intro-stars">✦&nbsp;&nbsp;★&nbsp;&nbsp;✦</div>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Hanging Wood Sign Header (Left Top) */}
+                        <header className="game-header">
+                          <div className="hanging-wood-sign">
+                            <div className="hanging-ropes">
+                              <span className="wood-rope rope-left" />
+                              <span className="wood-rope rope-right" />
+                            </div>
+                            <div className="wood-sign-plank">
+                              <span className="rope-bracket bracket-left" />
+                              <span className="rope-bracket bracket-right" />
+                              <div className="wood-inner-panel">
+                                <span className="question-number-val">1</span>
+                              </div>
+                              <span className="wood-sign-star star-tl">✦</span>
+                              <span className="wood-sign-star star-br">★</span>
+                            </div>
+                          </div>
+                        </header>
+
+                        {/* Game Stage Content Wrap */}
+                        <div className="game-stage">
+                          {/* Question Card Inner */}
+                          <div className="question-title">
+                            <div className="question-card-inner">
+                              <div className="q-badge-star">
+                                <span className="star-shape">★</span>
+                                <i className="star-sparkle star-sp-1">✦</i>
+                                <i className="star-sparkle star-sp-2">•</i>
+                              </div>
+                              <div className="q-decor-corner q-decor-top-right">
+                                <span className="corner-gem">✦</span>
+                              </div>
+                              <div className="q-decor-corner q-decor-bottom-right">
+                                <span className="corner-petal">✿</span>
+                              </div>
+                              <h1>{t("mascots.simQuestionTitle")}</h1>
+                            </div>
+                          </div>
+
+                          {/* Phase Body Content */}
+                          {scenarioPhase === "explain" ? (
+                            <div className="fact-card" style={{ opacity: 1, marginTop: "24px" }}>
+                              <span>{t("mascots.simFactLabel")}</span>
+                              <p>{t("mascots.simFactText")}</p>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="sim-1920-split-row">
+                                <figure className="image-card sim-hero-image">
+                                  <div className="hero-img-placeholder">
+                                    <span>🐆 Cheetah (110 km/h)</span>
+                                  </div>
+                                  <span className="image-shine" />
+                                </figure>
+
+                                <div className="answer-grid answer-count-3" style={{ opacity: 1 }}>
+                                  <div className={`answer-card ${scenarioPhase === "reveal" ? "answer-incorrect" : ""}`}>
+                                    <b>A</b>
+                                    <span>{t("mascots.simChoiceA")}</span>
+                                  </div>
+                                  <div className={`answer-card ${scenarioPhase === "reveal" ? "answer-correct" : ""}`}>
+                                    <b>B</b>
+                                    <span>{t("mascots.simChoiceB")}</span>
+                                    {scenarioPhase === "reveal" ? <i className="answer-check">✓</i> : null}
+                                  </div>
+                                  <div className={`answer-card ${scenarioPhase === "reveal" ? "answer-incorrect" : ""}`}>
+                                    <b>C</b>
+                                    <span>{t("mascots.simChoiceC")}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Thinking Countdown Bar */}
+                              <div className="phase-region">
+                                <div className="thinking-bar" style={{ opacity: 1 }}>
+                                  <div className="thinking-track">
+                                    <div className="timer-milestones">
+                                      <span className="milestone-star star-1">★</span>
+                                      <span className="milestone-star star-2">★</span>
+                                      <span className="milestone-star star-3">★</span>
+                                      <span className="milestone-star star-4">★</span>
+                                    </div>
+                                    <div
+                                      className="timer-progress"
+                                      style={{
+                                        width:
+                                          scenarioPhase === "thinking"
+                                            ? `${(scenarioCountdown / 5) * 100}%`
+                                            : "100%",
+                                        transition: "width 1s linear",
+                                      }}
+                                    />
+                                    <span
+                                      className="timer-marker"
+                                      style={{
+                                        left:
+                                          scenarioPhase === "thinking"
+                                            ? `${Math.max(5, (scenarioCountdown / 5) * 98)}%`
+                                            : "98%",
+                                        transition: "left 1s linear",
+                                      }}
+                                    >
+                                      <b className="marker-val" style={{ opacity: 1 }}>
+                                        {scenarioPhase === "thinking" ? scenarioCountdown : "?"}
+                                      </b>
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 ) : null}
 
-                {/* Main Active Sprite Render with CSS Micro-Motion */}
-                {currentActionSprite?.sprite_url ? (
-                  <div
-                    className={`stage-mascot-sprite-render ${
-                      isPlaying ? `mascot-anim-${activePreviewAction}` : ""
-                    }`}
-                    style={{
-                      width: "220px",
-                      height: "220px",
-                      backgroundImage: `url(${currentActionSprite.sprite_url})`,
-                      backgroundSize: "contain",
-                      backgroundPosition: "center bottom",
-                      backgroundRepeat: "no-repeat",
-                      transform: `translate(${nudgeX}px, ${nudgeY}px)`,
-                      position: "relative",
-                      zIndex: 2,
-                    }}
-                  />
-                ) : editingMascot?.master_image_url ? (
-                  <img
-                    src={editingMascot.master_image_url}
-                    alt={editingMascot.name}
-                    className={isPlaying ? "mascot-anim-idle" : ""}
-                    style={{
-                      width: "200px",
-                      height: "200px",
-                      objectFit: "contain",
-                      transform: `translate(${nudgeX}px, ${nudgeY}px)`,
-                      position: "relative",
-                      zIndex: 2,
-                    }}
-                  />
-                ) : (
-                  <div className="stage-mascot-placeholder">
-                    <Smiley size={64} style={{ color: genColor }} />
+                {/* 2. Alignment Guides (1920x1080 Grid Overlay) */}
+                {showGuides ? (
+                  <div className="alignment-guides-overlay-1920" aria-hidden="true">
+                    <div className="guide-1920-crosshair-h" />
+                    <div className="guide-1920-crosshair-v" />
+                    <div className="guide-1920-safe-margins" />
+                    <div className="guide-1920-ground-baseline" />
+                    <div className="guide-1920-dimension-badge">
+                      <span>{aspectRatio === "16:9" ? "1920 × 1080 FHD" : "1080 × 1920 SHORTS"}</span>
+                    </div>
                   </div>
-                )}
+                ) : null}
+
+                {/* 3. True 1920x1080 Mascot Container (Exact match to candyArcadeComposition.ts) */}
+                <div
+                  className={`candy-mascot-container mascot-stage anchor-${targetPosition} ${
+                    isDragging ? "is-dragging" : ""
+                  }`}
+                  style={{
+                    transformOrigin: "bottom center",
+                    transform: `scale(${targetScale})`,
+                  }}
+                  onMouseDown={handleMascotMouseDown}
+                >
+                  {/* Bounding box guide when guides are active */}
+                  {showGuides ? (
+                    <div className="mascot-1920-bounding-box" aria-hidden="true">
+                      <span className="bounding-coord-tag">
+                        X: {nudgeX > 0 ? `+${nudgeX}` : nudgeX}px, Y: {nudgeY > 0 ? `+${nudgeY}` : nudgeY}px ({Math.round(targetScale * 100)}%)
+                      </span>
+                      <span className="bounding-handle handle-tl" />
+                      <span className="bounding-handle handle-tr" />
+                      <span className="bounding-handle handle-bl" />
+                      <span className="bounding-handle handle-br" />
+                    </div>
+                  ) : null}
+
+                  {/* Onion Skin Ghost Reference Layer (Idle Pose Comparison) */}
+                  {onionSkinEnabled && editingMascot?.actions.idle?.sprite_url ? (
+                    <div
+                      className="candy-mascot-sprite onion-skin-layer"
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        backgroundImage: `url(${editingMascot.actions.idle.sprite_url})`,
+                        opacity: onionSkinOpacity,
+                        filter: "sepia(100%) hue-rotate(150deg) saturate(300%)",
+                        transform: `translate(${nudgeX}px, ${nudgeY}px) scaleX(${flipHorizontal ? -1 : 1})`,
+                        zIndex: 1,
+                        pointerEvents: "none",
+                      }}
+                    />
+                  ) : null}
+
+                  {/* Active Mascot Sprite Render */}
+                  {currentActionSprite?.sprite_url ? (
+                    <div
+                      className={`candy-mascot-sprite ${
+                        isPlaying ? `mascot-anim-${activePreviewAction}` : ""
+                      }`}
+                      style={{
+                        backgroundImage: `url(${currentActionSprite.sprite_url})`,
+                        transform: `translate(${nudgeX}px, ${nudgeY}px) scaleX(${flipHorizontal ? -1 : 1})`,
+                        position: "relative",
+                        zIndex: 2,
+                        cursor: isDragging ? "grabbing" : "grab",
+                      }}
+                      title={t("mascots.dragHint") || "Drag to reposition mascot"}
+                    />
+                  ) : editingMascot?.master_image_url ? (
+                    <img
+                      src={editingMascot.master_image_url}
+                      alt={editingMascot.name}
+                      className={isPlaying ? "mascot-anim-idle" : ""}
+                      style={{
+                        width: "220px",
+                        height: "220px",
+                        objectFit: "contain",
+                        transform: `translate(${nudgeX}px, ${nudgeY}px) scaleX(${flipHorizontal ? -1 : 1})`,
+                        position: "relative",
+                        zIndex: 2,
+                        cursor: isDragging ? "grabbing" : "grab",
+                      }}
+                      title={t("mascots.dragHint") || "Drag to reposition mascot"}
+                    />
+                  ) : (
+                    <div
+                      className="stage-mascot-placeholder"
+                      style={{
+                        width: "220px",
+                        height: "220px",
+                        display: "grid",
+                        placeItems: "center",
+                        transform: `translate(${nudgeX}px, ${nudgeY}px)`,
+                      }}
+                    >
+                      <Smiley size={80} style={{ color: genColor }} />
+                    </div>
+                  )}
+                </div>
               </div>
+            </div>
+
+            {/* Drag helper hint strip */}
+            <div className="stage-drag-helper-strip">
+              <Crosshair size={14} weight="bold" style={{ color: "var(--accent)" }} />
+              <span>{t("mascots.dragHint") || "Drag mascot directly on stage to reposition"}</span>
+              <span className="coord-readout-badge">
+                X: <strong>{nudgeX > 0 ? `+${nudgeX}` : nudgeX}px</strong> &nbsp;|&nbsp; Y:{" "}
+                <strong>{nudgeY > 0 ? `+${nudgeY}` : nudgeY}px</strong> &nbsp;|&nbsp; Scale:{" "}
+                <strong>{Math.round(targetScale * 100)}%</strong>
+              </span>
             </div>
           </div>
 
@@ -539,7 +742,7 @@ export function MascotCalibrationStep({
         </div>
       </div>
 
-      {/* 2. Right Column: Dual-Tab Pro Control Panel */}
+      {/* 2. Right Column: Precision Coordinate & Scale Control Panel */}
       <div className="stage-config-col">
         <div className="wizard-card studio-config-card">
           {/* Tab Navigation Header */}
@@ -567,7 +770,7 @@ export function MascotCalibrationStep({
             </button>
           </div>
 
-          {/* TAB 1: CALIBRATION & SPATIAL ALIGNMENT */}
+          {/* TAB 1: CALIBRATION & PRECISION POSITIONING */}
           {activeConfigTab === "calibration" ? (
             <div className="studio-tab-body">
               {/* Active Pose Selector */}
@@ -609,10 +812,24 @@ export function MascotCalibrationStep({
                 </div>
               </div>
 
-              {/* Stage Position, Scale & Flip */}
+              {/* Stage Position Anchor & Flip Horizontal */}
               <div className="config-section">
-                <label className="config-section-label">{t("mascots.stagePositionLabel")}</label>
-                <div className="position-toggle-row">
+                <div className="section-title-row">
+                  <label className="config-section-label" style={{ margin: 0 }}>
+                    {t("mascots.stagePositionLabel")}
+                  </label>
+                  <button
+                    type="button"
+                    className="quiet-button compact"
+                    onClick={handleResetAll}
+                    title={t("mascots.resetAllBtn") || "Reset All"}
+                  >
+                    <ArrowClockwise size={13} />
+                    <span>{t("mascots.resetAllBtn") || "Reset All"}</span>
+                  </button>
+                </div>
+
+                <div className="position-toggle-row" style={{ marginTop: "8px" }}>
                   <button
                     type="button"
                     className={`pos-toggle-btn ${targetPosition === "bottom_left" ? "is-selected" : ""}`}
@@ -629,48 +846,6 @@ export function MascotCalibrationStep({
                   </button>
                 </div>
 
-                {/* Scale Control with Range Slider & Presets */}
-                <div className="stage-control-card" style={{ marginTop: "12px" }}>
-                  <div className="stage-scale-header">
-                    <label className="stage-control-label">
-                      {t("mascots.scaleLabel", { scale: targetScale.toFixed(2) })}
-                    </label>
-                    <span className="scale-value-badge">{Math.round(targetScale * 100)}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    className="scale-range-slider"
-                    min={0.7}
-                    max={1.3}
-                    step={0.05}
-                    value={targetScale}
-                    onChange={(e) => setTargetScale(Number(e.target.value))}
-                  />
-                  <div className="scale-presets-row">
-                    <button
-                      type="button"
-                      className={`scale-preset-chip ${Math.abs(targetScale - 0.85) < 0.01 ? "is-active" : ""}`}
-                      onClick={() => setTargetScale(0.85)}
-                    >
-                      {t("mascots.presetCompact")} (85%)
-                    </button>
-                    <button
-                      type="button"
-                      className={`scale-preset-chip ${Math.abs(targetScale - 1.0) < 0.01 ? "is-active" : ""}`}
-                      onClick={() => setTargetScale(1.0)}
-                    >
-                      {t("mascots.presetStandard")} (100%)
-                    </button>
-                    <button
-                      type="button"
-                      className={`scale-preset-chip ${Math.abs(targetScale - 1.15) < 0.01 ? "is-active" : ""}`}
-                      onClick={() => setTargetScale(1.15)}
-                    >
-                      {t("mascots.presetLarge")} (115%)
-                    </button>
-                  </div>
-                </div>
-
                 {/* Flip Horizontal Toggle */}
                 <div className="flip-toggle-row" style={{ marginTop: "10px" }}>
                   <label className="custom-checkbox-row" style={{ cursor: "pointer" }}>
@@ -685,12 +860,136 @@ export function MascotCalibrationStep({
                 </div>
               </div>
 
-              {/* Pixel Precision Nudge Controls */}
+              {/* Precise Scale Control (Steppers + Slider + Direct Input) */}
+              <div className="config-section precision-control-card">
+                <div className="precision-header-row">
+                  <label className="config-section-label" style={{ margin: 0 }}>
+                    {t("mascots.scaleLabel", { scale: targetScale.toFixed(2) })}
+                  </label>
+                  <div className="precision-badge-group">
+                    <span className="scale-value-badge">{Math.round(targetScale * 100)}%</span>
+                    <input
+                      type="number"
+                      min={50}
+                      max={200}
+                      step={1}
+                      value={Math.round(targetScale * 100)}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        if (!isNaN(val)) setTargetScale(Math.max(0.5, Math.min(2.0, val / 100)));
+                      }}
+                      className="precision-number-input"
+                      title="Direct percentage input"
+                    />
+                    <span className="unit-label">%</span>
+                  </div>
+                </div>
+
+                {/* Scale Stepper Button Group */}
+                <div className="stepper-action-row">
+                  <button
+                    type="button"
+                    className="precision-step-btn"
+                    onClick={() => setTargetScale(Math.max(0.5, Math.round((targetScale - 0.1) * 100) / 100))}
+                    title="-10%"
+                  >
+                    -10%
+                  </button>
+                  <button
+                    type="button"
+                    className="precision-step-btn"
+                    onClick={() => setTargetScale(Math.max(0.5, Math.round((targetScale - 0.05) * 100) / 100))}
+                    title="-5%"
+                  >
+                    -5%
+                  </button>
+                  <button
+                    type="button"
+                    className="precision-step-btn"
+                    onClick={() => setTargetScale(Math.max(0.5, Math.round((targetScale - 0.01) * 100) / 100))}
+                    title="-1%"
+                  >
+                    -1%
+                  </button>
+                  <button
+                    type="button"
+                    className="precision-step-btn"
+                    onClick={() => setTargetScale(Math.min(2.0, Math.round((targetScale + 0.01) * 100) / 100))}
+                    title="+1%"
+                  >
+                    +1%
+                  </button>
+                  <button
+                    type="button"
+                    className="precision-step-btn"
+                    onClick={() => setTargetScale(Math.min(2.0, Math.round((targetScale + 0.05) * 100) / 100))}
+                    title="+5%"
+                  >
+                    +5%
+                  </button>
+                  <button
+                    type="button"
+                    className="precision-step-btn"
+                    onClick={() => setTargetScale(Math.min(2.0, Math.round((targetScale + 0.1) * 100) / 100))}
+                    title="+10%"
+                  >
+                    +10%
+                  </button>
+                </div>
+
+                {/* Scale Slider */}
+                <input
+                  type="range"
+                  className="scale-range-slider"
+                  min={0.5}
+                  max={1.8}
+                  step={0.01}
+                  value={targetScale}
+                  onChange={(e) => setTargetScale(Number(e.target.value))}
+                />
+
+                {/* Preset Chips */}
+                <div className="scale-presets-row" style={{ marginTop: "6px" }}>
+                  <button
+                    type="button"
+                    className={`scale-preset-chip ${Math.abs(targetScale - 0.75) < 0.02 ? "is-active" : ""}`}
+                    onClick={() => setTargetScale(0.75)}
+                  >
+                    {t("mascots.presetCompact75") || "75% (Compact)"}
+                  </button>
+                  <button
+                    type="button"
+                    className={`scale-preset-chip ${Math.abs(targetScale - 1.0) < 0.02 ? "is-active" : ""}`}
+                    onClick={() => setTargetScale(1.0)}
+                  >
+                    {t("mascots.presetStandard100") || "100% (Standard)"}
+                  </button>
+                  <button
+                    type="button"
+                    className={`scale-preset-chip ${Math.abs(targetScale - 1.25) < 0.02 ? "is-active" : ""}`}
+                    onClick={() => setTargetScale(1.25)}
+                  >
+                    {t("mascots.presetLarge125") || "125% (Large)"}
+                  </button>
+                  <button
+                    type="button"
+                    className={`scale-preset-chip ${Math.abs(targetScale - 1.5) < 0.02 ? "is-active" : ""}`}
+                    onClick={() => setTargetScale(1.5)}
+                  >
+                    {t("mascots.presetGiant150") || "150% (Giant)"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Pixel Precision X & Y Nudge Controls */}
               <div className="config-section nudge-box">
                 <div className="nudge-header-row">
-                  <label className="config-section-label" style={{ margin: 0 }}>
-                    {t("mascots.nudgeFineTuneLabel")}
-                  </label>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    <Crosshair size={15} weight="bold" style={{ color: "var(--accent)" }} />
+                    <label className="config-section-label" style={{ margin: 0 }}>
+                      {t("mascots.nudgeFineTuneLabel")}
+                    </label>
+                  </div>
                   <button
                     type="button"
                     className="quiet-button compact"
@@ -705,105 +1004,193 @@ export function MascotCalibrationStep({
                   </button>
                 </div>
 
-                {/* X Axis Stepper */}
-                <div className="nudge-axis-row">
-                  <span className="nudge-axis-tag">X: {nudgeX > 0 ? `+${nudgeX}` : nudgeX}px</span>
-                  <div className="nudge-stepper-group">
+                {/* X Axis Stepper & Slider */}
+                <div className="precision-axis-block">
+                  <div className="precision-axis-header">
+                    <span className="nudge-axis-tag x-tag">
+                      X: <strong>{nudgeX > 0 ? `+${nudgeX}` : nudgeX}px</strong>
+                    </span>
+                    <div className="direct-px-input-wrap">
+                      <input
+                        type="number"
+                        min={-500}
+                        max={500}
+                        value={nudgeX}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          if (!isNaN(val)) setNudgeX(Math.max(-500, Math.min(500, val)));
+                        }}
+                        className="precision-number-input"
+                      />
+                      <span className="unit-label">px</span>
+                      <button
+                        type="button"
+                        className="quick-zero-btn"
+                        onClick={() => setNudgeX(0)}
+                        title="Reset X to 0"
+                      >
+                        0
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="stepper-action-row">
                     <button
                       type="button"
-                      className="stepper-btn"
-                      onClick={() => setNudgeX((prev) => Math.max(-40, prev - 5))}
+                      className="precision-step-btn"
+                      onClick={() => setNudgeX((prev) => Math.max(-500, prev - 20))}
+                      title="-20px"
+                    >
+                      -20
+                    </button>
+                    <button
+                      type="button"
+                      className="precision-step-btn"
+                      onClick={() => setNudgeX((prev) => Math.max(-500, prev - 5))}
                       title="-5px"
                     >
                       -5
                     </button>
                     <button
                       type="button"
-                      className="stepper-btn"
-                      onClick={() => setNudgeX((prev) => Math.max(-40, prev - 1))}
+                      className="precision-step-btn"
+                      onClick={() => setNudgeX((prev) => Math.max(-500, prev - 1))}
                       title="-1px"
                     >
-                      <Minus size={12} />
+                      <Minus size={11} weight="bold" /> 1
                     </button>
-                    <input
-                      type="range"
-                      min={-40}
-                      max={40}
-                      value={nudgeX}
-                      onChange={(e) => setNudgeX(Number(e.target.value))}
-                      className="nudge-slider"
-                    />
                     <button
                       type="button"
-                      className="stepper-btn"
-                      onClick={() => setNudgeX((prev) => Math.min(40, prev + 1))}
+                      className="precision-step-btn"
+                      onClick={() => setNudgeX((prev) => Math.min(500, prev + 1))}
                       title="+1px"
                     >
-                      <Plus size={12} />
+                      <Plus size={11} weight="bold" /> 1
                     </button>
                     <button
                       type="button"
-                      className="stepper-btn"
-                      onClick={() => setNudgeX((prev) => Math.min(40, prev + 5))}
+                      className="precision-step-btn"
+                      onClick={() => setNudgeX((prev) => Math.min(500, prev + 5))}
                       title="+5px"
                     >
                       +5
                     </button>
+                    <button
+                      type="button"
+                      className="precision-step-btn"
+                      onClick={() => setNudgeX((prev) => Math.min(500, prev + 20))}
+                      title="+20px"
+                    >
+                      +20
+                    </button>
                   </div>
+
+                  <input
+                    type="range"
+                    min={-300}
+                    max={300}
+                    value={nudgeX}
+                    onChange={(e) => setNudgeX(Number(e.target.value))}
+                    className="nudge-slider"
+                  />
                 </div>
 
-                {/* Y Axis Stepper */}
-                <div className="nudge-axis-row">
-                  <span className="nudge-axis-tag">Y: {nudgeY > 0 ? `+${nudgeY}` : nudgeY}px</span>
-                  <div className="nudge-stepper-group">
+                {/* Y Axis Stepper & Slider */}
+                <div className="precision-axis-block" style={{ marginTop: "12px" }}>
+                  <div className="precision-axis-header">
+                    <span className="nudge-axis-tag y-tag">
+                      Y: <strong>{nudgeY > 0 ? `+${nudgeY}` : nudgeY}px</strong>
+                    </span>
+                    <div className="direct-px-input-wrap">
+                      <input
+                        type="number"
+                        min={-500}
+                        max={500}
+                        value={nudgeY}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          if (!isNaN(val)) setNudgeY(Math.max(-500, Math.min(500, val)));
+                        }}
+                        className="precision-number-input"
+                      />
+                      <span className="unit-label">px</span>
+                      <button
+                        type="button"
+                        className="quick-zero-btn"
+                        onClick={() => setNudgeY(0)}
+                        title="Reset Y to 0"
+                      >
+                        0
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="stepper-action-row">
                     <button
                       type="button"
-                      className="stepper-btn"
-                      onClick={() => setNudgeY((prev) => Math.max(-40, prev - 5))}
+                      className="precision-step-btn"
+                      onClick={() => setNudgeY((prev) => Math.max(-500, prev - 20))}
+                      title="-20px"
+                    >
+                      -20
+                    </button>
+                    <button
+                      type="button"
+                      className="precision-step-btn"
+                      onClick={() => setNudgeY((prev) => Math.max(-500, prev - 5))}
                       title="-5px"
                     >
                       -5
                     </button>
                     <button
                       type="button"
-                      className="stepper-btn"
-                      onClick={() => setNudgeY((prev) => Math.max(-40, prev - 1))}
+                      className="precision-step-btn"
+                      onClick={() => setNudgeY((prev) => Math.max(-500, prev - 1))}
                       title="-1px"
                     >
-                      <Minus size={12} />
+                      <Minus size={11} weight="bold" /> 1
                     </button>
-                    <input
-                      type="range"
-                      min={-40}
-                      max={40}
-                      value={nudgeY}
-                      onChange={(e) => setNudgeY(Number(e.target.value))}
-                      className="nudge-slider"
-                    />
                     <button
                       type="button"
-                      className="stepper-btn"
-                      onClick={() => setNudgeY((prev) => Math.min(40, prev + 1))}
+                      className="precision-step-btn"
+                      onClick={() => setNudgeY((prev) => Math.min(500, prev + 1))}
                       title="+1px"
                     >
-                      <Plus size={12} />
+                      <Plus size={11} weight="bold" /> 1
                     </button>
                     <button
                       type="button"
-                      className="stepper-btn"
-                      onClick={() => setNudgeY((prev) => Math.min(40, prev + 5))}
+                      className="precision-step-btn"
+                      onClick={() => setNudgeY((prev) => Math.min(500, prev + 5))}
                       title="+5px"
                     >
                       +5
                     </button>
+                    <button
+                      type="button"
+                      className="precision-step-btn"
+                      onClick={() => setNudgeY((prev) => Math.min(500, prev + 20))}
+                      title="+20px"
+                    >
+                      +20
+                    </button>
                   </div>
+
+                  <input
+                    type="range"
+                    min={-300}
+                    max={300}
+                    value={nudgeY}
+                    onChange={(e) => setNudgeY(Number(e.target.value))}
+                    className="nudge-slider"
+                  />
                 </div>
 
                 {/* Save Offset for active pose */}
                 <button
                   type="button"
                   className="primary-button compact"
-                  style={{ width: "100%", justifyContent: "center", marginTop: "12px" }}
+                  style={{ width: "100%", justifyContent: "center", marginTop: "14px" }}
                   disabled={calibrating || isCurrentActionOffsetClean}
                   onClick={onSaveCalibration}
                 >
