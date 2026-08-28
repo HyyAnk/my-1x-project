@@ -6,6 +6,7 @@ import { getQuizVisualTemplate } from "../visual/registry.js";
 import { ambientPhaseSeconds, motionCssClass, textLayout, visualAnswerState } from "../visual/candyArcade.js";
 import type { QuizTemplateScene } from "../visual/types.js";
 import { defaultBgmRegistry, type ResolveBgmOptions } from "../audio/bgmRegistry.js";
+import { DEFAULT_SFX_MAP } from "../audio/sfxRegistry.js";
 
 
 export type CandyArcadeCompositionInput = {
@@ -413,8 +414,18 @@ function buildBgmClips(duration: number, assets?: Record<string, string>, outroS
   });
 }
 
+type SfxRawClip = {
+  id: string;
+  className: string;
+  start: number;
+  duration: number;
+  trackIndex: number;
+  volume: string;
+  src: string;
+};
+
 function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, string>, mascot?: MascotProfile | null, mascotConfig?: ChannelMascotConfig | null): string[] {
-  const clips: string[] = [];
+  const rawClips: SfxRawClip[] = [];
   const sfxEnabled = mascotConfig?.sfx_enabled !== false;
   const sfxVolume = mascotConfig?.sfx_volume || 1.0;
 
@@ -425,46 +436,137 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
 
     if (event.type === "choices.enter") {
       const src = sfxSource("ui_pop.wav", assets);
-      clips.push(`<audio id="${id}" class="clip sfx-clip" data-start="${event.at_seconds.toFixed(3)}" data-duration="0.120" data-track-index="3" data-volume="0.55" src="${src}"></audio>`);
+      rawClips.push({
+        id,
+        className: "clip sfx-clip",
+        start: event.at_seconds,
+        duration: 0.120,
+        trackIndex: 3,
+        volume: "0.55",
+        src,
+      });
     } else if (event.type === "countdown.start" && mascot && sfxEnabled) {
-      const src = sfxSource("ui_soft.wav", assets);
-      clips.push(`<audio id="mascot-think-${timeMs}" class="clip sfx-clip mascot-sfx" data-start="${event.at_seconds.toFixed(3)}" data-duration="0.250" data-track-index="3" data-volume="${(0.50 * sfxVolume).toFixed(2)}" src="${src}"></audio>`);
+      const src = sfxSource("ui_pop.wav", assets);
+      rawClips.push({
+        id: `mascot-think-${timeMs}`,
+        className: "clip sfx-clip mascot-sfx",
+        start: event.at_seconds,
+        duration: 0.250,
+        trackIndex: 5,
+        volume: (0.50 * sfxVolume).toFixed(2),
+        src,
+      });
     } else if (event.type === "countdown.tick") {
       const isFinalTick = event.payload?.value === 1;
       const filename = isFinalTick ? "countdown_final.wav" : "countdown_tick.wav";
-      const dur = isFinalTick ? "0.350" : "0.080";
+      const dur = isFinalTick ? 0.350 : 0.080;
       const vol = isFinalTick ? "0.60" : "0.45";
       const src = sfxSource(filename, assets);
-      clips.push(`<audio id="${id}" class="clip sfx-clip" data-start="${event.at_seconds.toFixed(3)}" data-duration="${dur}" data-track-index="3" data-volume="${vol}" src="${src}"></audio>`);
+      rawClips.push({
+        id,
+        className: "clip sfx-clip",
+        start: event.at_seconds,
+        duration: dur,
+        trackIndex: 3,
+        volume: String(vol),
+        src,
+      });
     } else if (event.type === "answer.reveal" && mascot && sfxEnabled) {
       const src = sfxSource("streak.wav", assets);
-      clips.push(`<audio id="mascot-react-${timeMs}" class="clip sfx-clip mascot-sfx" data-start="${event.at_seconds.toFixed(3)}" data-duration="0.600" data-track-index="3" data-volume="${(0.65 * sfxVolume).toFixed(2)}" src="${src}"></audio>`);
+      rawClips.push({
+        id: `mascot-react-${timeMs}`,
+        className: "clip sfx-clip mascot-sfx",
+        start: event.at_seconds,
+        duration: 0.600,
+        trackIndex: 5,
+        volume: (0.65 * sfxVolume).toFixed(2),
+        src,
+      });
     } else if (event.type === "reward.play") {
       const isBig = event.payload?.intensity === "big";
       const filename = isBig ? "correct_triumph.wav" : "correct_ding.wav";
-      const dur = isBig ? "1.500" : "1.100";
+      const dur = isBig ? 1.500 : 1.100;
       const src = sfxSource(filename, assets);
-      clips.push(`<audio id="${id}" class="clip sfx-clip" data-start="${event.at_seconds.toFixed(3)}" data-duration="${dur}" data-track-index="3" data-volume="0.75" src="${src}"></audio>`);
+      rawClips.push({
+        id,
+        className: "clip sfx-clip",
+        start: event.at_seconds,
+        duration: dur,
+        trackIndex: 3,
+        volume: "0.75",
+        src,
+      });
     } else if (event.type === "transition.start") {
       const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";
       const filename = isLightning ? "lightning_brush.wav" : "bubble_splash.wav";
-      const dur = isLightning ? "0.700" : "0.650";
+      const dur = isLightning ? 0.700 : 0.650;
       const src = sfxSource(filename, assets);
-      clips.push(`<audio id="${id}" class="clip sfx-clip" data-start="${event.at_seconds.toFixed(3)}" data-duration="${dur}" data-track-index="3" data-volume="0.60" src="${src}"></audio>`);
+      rawClips.push({
+        id,
+        className: "clip sfx-clip",
+        start: event.at_seconds,
+        duration: dur,
+        trackIndex: 3,
+        volume: "0.60",
+        src,
+      });
     } else if ((event.type === "fact.enter" || event.type === "mascot.state") && mascot && sfxEnabled) {
       const src = sfxSource("streak.wav", assets);
-      clips.push(`<audio id="mascot-point-${timeMs}" class="clip sfx-clip mascot-sfx" data-start="${event.at_seconds.toFixed(3)}" data-duration="0.800" data-track-index="3" data-volume="${(0.60 * sfxVolume).toFixed(2)}" src="${src}"></audio>`);
+      rawClips.push({
+        id: `mascot-point-${timeMs}`,
+        className: "clip sfx-clip mascot-sfx",
+        start: event.at_seconds,
+        duration: 0.800,
+        trackIndex: 5,
+        volume: (0.60 * sfxVolume).toFixed(2),
+        src,
+      });
     }
   }
 
-  return clips;
+  // Prevent overlap within each track
+  const scheduledClips: SfxRawClip[] = [];
+  const clipsByTrack = new Map<number, SfxRawClip[]>();
+  for (const clip of rawClips) {
+    const list = clipsByTrack.get(clip.trackIndex) ?? [];
+    list.push(clip);
+    clipsByTrack.set(clip.trackIndex, list);
+  }
+
+  for (const [_, trackClips] of clipsByTrack.entries()) {
+    trackClips.sort((a, b) => a.start - b.start);
+    const resolved: SfxRawClip[] = [];
+    for (const current of trackClips) {
+      if (resolved.length === 0) {
+        resolved.push(current);
+        continue;
+      }
+      const prev = resolved[resolved.length - 1]!;
+      // If exact same start time or within 40ms, skip duplicate
+      if (current.start <= prev.start + 0.04) {
+        continue;
+      }
+      // If previous clip overlaps into current, clamp previous clip duration
+      if (prev.start + prev.duration > current.start) {
+        prev.duration = Math.max(0.04, current.start - prev.start);
+      }
+      resolved.push(current);
+    }
+    scheduledClips.push(...resolved);
+  }
+
+  return scheduledClips.map(
+    (clip) => `<audio id="${clip.id}" class="${clip.className}" data-start="${clip.start.toFixed(3)}" data-duration="${clip.duration.toFixed(3)}" data-track-index="${clip.trackIndex}" data-volume="${clip.volume}" src="${clip.src}"></audio>`
+  );
 }
 
 function sfxSource(filename: string, assets?: Record<string, string>): string {
   const intentKey = filename.replace(/\.wav$/, "");
   if (assets?.[`sfx:${intentKey}`]) return source(assets[`sfx:${intentKey}`]);
   if (assets?.[filename]) return source(assets[filename]);
-  return `./sfx/${filename}`;
+  const defaultMapped = DEFAULT_SFX_MAP[intentKey as keyof typeof DEFAULT_SFX_MAP];
+  const finalFilename = defaultMapped ?? (filename.endsWith(".wav") ? filename : `${filename}.wav`);
+  return `./sfx/${finalFilename}`;
 }
 
 function quizCopy(language: string) {

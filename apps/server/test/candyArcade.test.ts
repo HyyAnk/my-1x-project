@@ -256,6 +256,69 @@ describe("Candy Arcade visual template", () => {
     const outroEvent = viTimeline.events.find((e) => e.segment_id === "outro")!;
     expect(viTimeline.duration_seconds - (outroEvent.at_seconds + outroEvent.duration_seconds)).toBeGreaterThanOrEqual(4.9);
   });
+
+  it("separates Game and Mascot SFX onto distinct tracks and prevents audio overlaps on the same track", () => {
+    const director = createDefaultDirectorPlan(quiz);
+    const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
+    const dummyMascot = {
+      id: "mascot-1",
+      name: "Buddy",
+      description: "Friendly mascot",
+      channel_id: "ch-1",
+      actions: {},
+    };
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz,
+      director,
+      timeline,
+      theme: "candy_arcade",
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      mascot: dummyMascot as any,
+      mascotConfig: { mascot_id: "mascot-1", position: "bottom_left", scale: 1, sfx_enabled: true, sfx_volume: 1 },
+    });
+
+    // 1. Must NOT reference non-existent ui_soft.wav
+    expect(bundle.html).not.toContain("ui_soft.wav");
+    expect(bundle.html).toContain("ui_pop.wav");
+
+    // 2. Extract all audio tags and verify tracks and overlaps
+    const audioRegex = /<audio\s+id="([^"]+)"[^>]*data-start="([^"]+)"\s+data-duration="([^"]+)"\s+data-track-index="([^"]+)"[^>]*src="([^"]+)"/g;
+    const matches = Array.from(bundle.html.matchAll(audioRegex));
+    expect(matches.length).toBeGreaterThan(0);
+
+    const tracks = new Map<number, Array<{ id: string; start: number; end: number; src: string }>>();
+    for (const match of matches) {
+      const id = match[1]!;
+      const start = parseFloat(match[2]!);
+      const duration = parseFloat(match[3]!);
+      const trackIndex = parseInt(match[4]!, 10);
+      const src = match[5]!;
+      const end = start + duration;
+
+      if (!tracks.has(trackIndex)) tracks.set(trackIndex, []);
+      tracks.get(trackIndex)!.push({ id, start, end, src });
+    }
+
+    // Verify mascot SFX is on track 5 and game SFX is on track 3
+    const track3 = tracks.get(3) ?? [];
+    const track5 = tracks.get(5) ?? [];
+    expect(track3.length).toBeGreaterThan(0);
+    expect(track5.length).toBeGreaterThan(0);
+
+    // Verify no overlapping audio clips on any track
+    for (const [trackIndex, clips] of tracks.entries()) {
+      clips.sort((a, b) => a.start - b.start);
+      for (let i = 0; i < clips.length - 1; i++) {
+        const current = clips[i]!;
+        const next = clips[i + 1]!;
+        expect(
+          current.end,
+          `Track ${trackIndex} overlap between ${current.id} (${current.start}-${current.end}) and ${next.id} (${next.start}-${next.end})`
+        ).toBeLessThanOrEqual(next.start + 0.001);
+      }
+    }
+  });
 });
 
 function contrastRatio(foreground: string, background: string): number {
