@@ -71,13 +71,13 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       expect(conceptData.master_image_url).toContain(`/api/mascots/${createdMascot.id}/assets/`);
       expect(conceptData.mascot.master_image_url).toBe(conceptData.master_image_url);
 
-      // 5. Generate Sprite Action (e.g. wave and thinking)
+      // 5. Generate State Action (e.g. wave and thinking with default 1 frame & motion_preset)
       const waveRes = await app.server.inject({
         method: "POST",
         url: `/api/mascots/${createdMascot.id}/generate-sprite`,
         payload: {
           action: "wave",
-          frames_count: 6,
+          frames_count: 1,
           fps: 8,
           loop: true,
         },
@@ -85,7 +85,8 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       expect(waveRes.statusCode).toBe(200);
       const waveData = waveRes.json();
       expect(waveData.action_sprite.action).toBe("wave");
-      expect(waveData.action_sprite.frames_count).toBe(6);
+      expect(waveData.action_sprite.frames_count).toBe(1);
+      expect(waveData.action_sprite.motion_preset).toBe("wave");
       expect(waveData.action_sprite.sprite_url).toBeDefined();
 
       const thinkRes = await app.server.inject({
@@ -93,31 +94,34 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         url: `/api/mascots/${createdMascot.id}/generate-sprite`,
         payload: {
           action: "thinking",
-          frames_count: 6,
+          frames_count: 1,
           fps: 8,
           loop: true,
         },
       });
       expect(thinkRes.statusCode).toBe(200);
+      const thinkData = thinkRes.json();
+      expect(thinkData.action_sprite.motion_preset).toBe("sway");
 
-      // 6. Upload Custom Sprite Sheet
+      // 6. Upload Custom State Image (1 frame)
       const uploadRes = await app.server.inject({
         method: "POST",
         url: `/api/mascots/${createdMascot.id}/upload-sprite`,
         payload: {
           action: "celebrate",
           data: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-          frames_count: 8,
-          fps: 10,
+          frames_count: 1,
+          fps: 8,
           loop: true,
-          frame_width: 256,
-          frame_height: 256,
+          frame_width: 512,
+          frame_height: 512,
         },
       });
       expect(uploadRes.statusCode).toBe(200);
       const uploadData = uploadRes.json();
       expect(uploadData.action_sprite.action).toBe("celebrate");
-      expect(uploadData.action_sprite.frames_count).toBe(8);
+      expect(uploadData.action_sprite.frames_count).toBe(1);
+      expect(uploadData.action_sprite.motion_preset).toBe("jump");
 
       // 7. Get Mascot Detail
       const getRes = await app.server.inject({

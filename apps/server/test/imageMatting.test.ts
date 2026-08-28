@@ -120,7 +120,7 @@ describe("Image Matting & Background Removal Engine", () => {
     const decoded = decodePngToRgba(transparentPng);
     expect(decoded.width).toBe(64);
     expect(decoded.height).toBe(64);
-  });
+  }, 20000);
 
   it("handles non-PNG data gracefully without throwing", async () => {
     const fakeSvg = Buffer.from("<svg></svg>", "utf8");

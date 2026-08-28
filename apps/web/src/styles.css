@@ -10001,6 +10001,55 @@ h3 {
   letter-spacing: -0.01em;
 }
 
+/* ==========================================================================
+   Mascot State Micro-Motion Animations for Live Web Preview
+   ========================================================================== */
+.mascot-anim-idle, .mascot-anim-breathe {
+  animation: mascot-single-breathe 3.2s ease-in-out infinite alternate;
+}
+.mascot-anim-thinking, .mascot-anim-sway {
+  animation: mascot-single-sway 2.4s ease-in-out infinite alternate;
+}
+.mascot-anim-celebrate, .mascot-anim-jump {
+  animation: mascot-single-jump 0.85s cubic-bezier(0.18, 1.42, 0.34, 1) infinite alternate;
+}
+.mascot-anim-oops, .mascot-anim-shake {
+  animation: mascot-single-shake 2.0s ease-in-out infinite;
+}
+.mascot-anim-point, .mascot-anim-pulse {
+  animation: mascot-single-pulse 1.8s ease-in-out infinite alternate;
+}
+.mascot-anim-wave, .mascot-anim-outro {
+  animation: mascot-single-wave 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes mascot-single-breathe {
+  0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); }
+  100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 6px)) scale(1.025, 0.98); }
+}
+@keyframes mascot-single-sway {
+  0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(-2.5deg); }
+  100% { transform: translate(calc(var(--action-offset-x, 0px) + 4px), calc(var(--action-offset-y, 0px) - 8px)) rotate(3.5deg); }
+}
+@keyframes mascot-single-jump {
+  0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1, 0.95); }
+  40% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 22px)) scale(1.04, 1.05) rotate(2deg); }
+  100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 28px)) scale(1.06, 1.06) rotate(-2deg); }
+}
+@keyframes mascot-single-shake {
+  0%, 100% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(0deg); }
+  25% { transform: translate(calc(var(--action-offset-x, 0px) - 5px), var(--action-offset-y, 0px)) rotate(-4deg); }
+  75% { transform: translate(calc(var(--action-offset-x, 0px) + 5px), var(--action-offset-y, 0px)) rotate(4deg); }
+}
+@keyframes mascot-single-pulse {
+  0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); }
+  100% { transform: translate(calc(var(--action-offset-x, 0px) + 6px), calc(var(--action-offset-y, 0px) - 4px)) scale(1.03); }
+}
+@keyframes mascot-single-wave {
+  0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(-3deg); }
+  100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 10px)) rotate(4deg) scale(1.03); }
+}
+
 
 
 

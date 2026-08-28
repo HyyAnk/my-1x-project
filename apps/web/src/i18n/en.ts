@@ -357,31 +357,31 @@ export const en: TranslationSchema = {
     selectAllBtn: "Select All",
     framesCountLabel: "Frames Count",
     fpsLabel: "Speed (FPS)",
-    hasSpriteBadge: "✓ Sprite Sheet Ready",
-    noSpriteBadge: "Sprite Not Generated",
+    hasSpriteBadge: "✓ State Image Ready",
+    noSpriteBadge: "State Not Generated",
     backIdentityBtn: "Back to Identity",
-    nextSpriteBtn: "Next: Sprite Synthesis",
+    nextSpriteBtn: "Next: Generate Expressive States",
 
-    // Step 3: Sprite Generation
-    spriteGenTitle: "3. Generate & Manage Sprite Sheets",
-    spriteGenSub: "Synthesize frame-by-frame animation strips for each action. Supports automated AI generation and custom PNG sprite uploads.",
-    batchGenerateBtn: "⚡ Generate All Sprite Sheets",
-    batchGeneratingBtn: "Generating All Sprites…",
+    // Step 3: State Generation
+    spriteGenTitle: "3. Generate & Manage Expressive States",
+    spriteGenSub: "Synthesize crisp HD pose artwork with CSS micro-motion for each quiz stage. Supports automated AI single-state generation and custom PNG uploads.",
+    batchGenerateBtn: "⚡ Generate All HD States",
+    batchGeneratingBtn: "Generating All States…",
     notGeneratedBadge: "Not generated",
     reGenerateBtn: "Regenerate",
     generateAiBtn: "Generate AI",
     generatingBtn: "Generating…",
-    uploadStripBtn: "Upload PNG sprite strip",
-    mattingSpriteBtn: "Remove background for this sprite",
+    uploadStripBtn: "Upload State PNG",
+    mattingSpriteBtn: "Remove background for this state",
     mattingShortBtn: "Remove BG",
-    previewStep4Btn: "Preview live animation in Step 4",
+    previewStep4Btn: "Preview micro-motion in Step 4",
     backMatrixBtn: "Back to Matrix",
     nextLiveStageBtn: "Next: Live Stage & Assign",
-    noSpritePlaceholder: "No Sprite Sheet yet ({count} frames)",
+    noSpritePlaceholder: "No State image yet ({count} frame)",
 
     // Step 4: Live Animation Studio & Simulator
-    liveStudioTitle: "4. Interactive Animation Studio",
-    liveStudioSub: "Real-time frame player & stage alignment simulator on Candy Arcade video layout.",
+    liveStudioTitle: "4. Interactive State Studio & Stage Simulator",
+    liveStudioSub: "Real-time micro-motion player & stage alignment simulator on Candy Arcade video layout.",
     videoStageMode: "📺 Video Stage",
     gridMode: "🏁 Grid",
     theaterModeExpand: "Expand Fullscreen (Theater Mode)",
@@ -413,7 +413,7 @@ export const en: TranslationSchema = {
     simChoiceC: "C. Lion",
 
     // Player Controls
-    playAnimTooltip: "Play animation",
+    playAnimTooltip: "Play Micro-motion",
     pauseAnimTooltip: "Pause animation",
     prevFrameTooltip: "Previous frame",
     nextFrameTooltip: "Next frame",
@@ -421,7 +421,7 @@ export const en: TranslationSchema = {
     speedLabel: "Speed: {fps} FPS",
 
     // Calibration & Onion Skin
-    inspectorTitle: "Sprite Alignment & Onion-Skinning Inspector",
+    inspectorTitle: "State Alignment & Offset Inspector",
     guidesToggle: "📐 Alignment Guides",
     onionSkinToggle: "👻 Onion Skin (Ghost Idle)",
     onionOpacityLabel: "Ghost Reference Opacity: {percent}%",
@@ -454,13 +454,13 @@ export const en: TranslationSchema = {
     quickAssignSavingBtn: "Saving…",
     deleteEyebrow: "Delete Mascot",
     deleteTitle: "Delete \"{name}\"?",
-    deleteWarning: "This action will permanently delete mascot {name} and all generated sprite sheet assets.",
+    deleteWarning: "This action will permanently delete mascot {name} and all generated state assets.",
     deleteConfirmBtn: "Delete Permanently",
     deletingBtn: "Deleting…",
 
     // Library Cards
     noImagePlaceholder: "No concept art",
-    posesBadge: "✨ {count}/7 Poses",
+    posesBadge: "✨ {count}/7 States",
     noDescPlaceholder: "No character description provided.",
     poseReadyTooltip: "{label} - Ready",
     poseMissingTooltip: "{label} - Not generated",
@@ -468,7 +468,7 @@ export const en: TranslationSchema = {
     assignedChannelsCount: "{count} active channel(s): {names}",
     quickAssignBtn: "Assign Channels",
     generatorBtn: "Studio & Generator",
-    exportZipTooltip: "Download Sprite Pack (ZIP)",
+    exportZipTooltip: "Download Mascot Pack (ZIP)",
     deleteMascotAria: "Delete {name}",
   },
   tasks: {

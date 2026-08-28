@@ -37,6 +37,7 @@ import {
   RemoveMascotBackgroundInputSchema,
   AssignMascotInputSchema,
   CalibrateMascotActionInputSchema,
+  MASCOT_ACTION_META,
   type MascotActionType,
   type AppConfig,
   type StorageInfo,
@@ -563,6 +564,7 @@ export async function buildApp(rootDirectory = process.env.STUDIO_ROOT ?? proces
     const filename = `sprite_${input.action}_${Date.now()}.png`;
     const assetUrl = await repository.saveMascotAsset(mascotId, filename, buffer);
 
+    const meta = MASCOT_ACTION_META[input.action];
     const actionSprite = {
       action: input.action,
       sprite_url: assetUrl,
@@ -571,6 +573,7 @@ export async function buildApp(rootDirectory = process.env.STUDIO_ROOT ?? proces
       loop: input.loop,
       frame_width: input.frame_width,
       frame_height: input.frame_height,
+      motion_preset: input.motion_preset ?? meta?.motionPreset ?? "breathe",
       preview_url: assetUrl,
     };
 

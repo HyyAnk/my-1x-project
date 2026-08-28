@@ -357,31 +357,31 @@ export const vi: TranslationSchema = {
     selectAllBtn: "Chọn tất cả",
     framesCountLabel: "Số Frames",
     fpsLabel: "Tốc độ FPS",
-    hasSpriteBadge: "✓ Đã có Sprite Sheet",
-    noSpriteBadge: "Chưa sinh sprite",
+    hasSpriteBadge: "✓ Đã có ảnh State",
+    noSpriteBadge: "Chưa sinh state",
     backIdentityBtn: "Quay lại Identity",
-    nextSpriteBtn: "Tiếp theo: Sinh Sprite Sheets",
+    nextSpriteBtn: "Tiếp theo: Sinh các State biểu cảm",
 
-    // Step 3: Sprite Generation
-    spriteGenTitle: "3. Sinh & Quản lý Sprite Sheets",
-    spriteGenSub: "Tạo dải chuyển động frame-by-frame cho từng hành động. Hỗ trợ tự động sinh qua AI hoặc tải lên file Sprite Strip có sẵn.",
-    batchGenerateBtn: "⚡ Sinh tất cả Sprite Sheets",
+    // Step 3: State Generation
+    spriteGenTitle: "3. Sinh & Quản lý Expressive States",
+    spriteGenSub: "Tạo các tư thế biểu cảm sắc nét (HD Single State) kết hợp Micro-motion CSS cho từng giai đoạn Quiz. Hỗ trợ tự động sinh qua AI hoặc tải lên ảnh PNG riêng biệt.",
+    batchGenerateBtn: "⚡ Sinh tất cả HD States",
     batchGeneratingBtn: "Đang sinh toàn bộ…",
     notGeneratedBadge: "Chưa sinh",
     reGenerateBtn: "Sinh lại",
     generateAiBtn: "Sinh AI",
     generatingBtn: "Đang sinh…",
-    uploadStripBtn: "Tải lên ảnh PNG sprite strip",
-    mattingSpriteBtn: "Tách nền trong suốt cho sprite này",
+    uploadStripBtn: "Tải lên ảnh State PNG",
+    mattingSpriteBtn: "Tách nền trong suốt cho state này",
     mattingShortBtn: "Tách nền",
-    previewStep4Btn: "Xem thử hoạt họa ở Step 4",
+    previewStep4Btn: "Xem thử micro-motion ở Step 4",
     backMatrixBtn: "Quay lại Ma trận",
     nextLiveStageBtn: "Tiếp theo: Live Stage & Gán Kênh",
-    noSpritePlaceholder: "Chưa có Sprite Sheet ({count} frames)",
+    noSpritePlaceholder: "Chưa có ảnh State ({count} frame)",
 
     // Step 4: Live Animation Studio & Simulator
-    liveStudioTitle: "4. Interactive Animation Studio",
-    liveStudioSub: "Trình phát hoạt họa thời gian thực & giả lập vị trí trên video Candy Arcade.",
+    liveStudioTitle: "4. Interactive State Studio & Stage Simulator",
+    liveStudioSub: "Xem trước micro-motion thời gian thực & giả lập vị trí đứng trên video Candy Arcade.",
     videoStageMode: "📺 Video Stage",
     gridMode: "🏁 Grid",
     theaterModeExpand: "Phóng to toàn cảnh (Theater Mode)",
@@ -413,7 +413,7 @@ export const vi: TranslationSchema = {
     simChoiceC: "C. Sư tử",
 
     // Player Controls
-    playAnimTooltip: "Phát animation",
+    playAnimTooltip: "Bật Micro-motion",
     pauseAnimTooltip: "Tạm dừng",
     prevFrameTooltip: "Frame trước",
     nextFrameTooltip: "Frame kế tiếp",
@@ -421,7 +421,7 @@ export const vi: TranslationSchema = {
     speedLabel: "Tốc độ: {fps} FPS",
 
     // Calibration & Onion Skin
-    inspectorTitle: "Sprite Alignment & Onion-Skinning Inspector",
+    inspectorTitle: "State Alignment & Offset Inspector",
     guidesToggle: "📐 Vạch Căn Trục",
     onionSkinToggle: "👻 Onion Skin (Idle mờ)",
     onionOpacityLabel: "Độ mờ Ghost Reference (Idle): {percent}%",
@@ -454,13 +454,13 @@ export const vi: TranslationSchema = {
     quickAssignSavingBtn: "Đang lưu…",
     deleteEyebrow: "Xóa Mascot",
     deleteTitle: "Xóa \"{name}\"?",
-    deleteWarning: "Hành động này sẽ xóa vĩnh viễn linh vật {name} cùng toàn bộ các file Sprite Sheets đã sinh.",
+    deleteWarning: "Hành động này sẽ xóa vĩnh viễn linh vật {name} cùng toàn bộ các file State ảnh đã sinh.",
     deleteConfirmBtn: "Xóa vĩnh viễn",
     deletingBtn: "Đang xóa…",
 
     // Library Cards
     noImagePlaceholder: "Chưa có ảnh",
-    posesBadge: "✨ {count}/7 Poses",
+    posesBadge: "✨ {count}/7 States",
     noDescPlaceholder: "Chưa có mô tả tính cách.",
     poseReadyTooltip: "{label} - Đã sẵn sàng",
     poseMissingTooltip: "{label} - Chưa tạo",
@@ -468,7 +468,7 @@ export const vi: TranslationSchema = {
     assignedChannelsCount: "{count} kênh đang dùng: {names}",
     quickAssignBtn: "Gán kênh",
     generatorBtn: "Studio & Generator",
-    exportZipTooltip: "Tải trọn bộ Sprite Pack (ZIP)",
+    exportZipTooltip: "Tải trọn bộ Mascot Pack (ZIP)",
     deleteMascotAria: "Xóa {name}",
   },
   tasks: {

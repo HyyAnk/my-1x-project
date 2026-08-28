@@ -354,7 +354,7 @@ export function MascotStudioView({
     }
   };
 
-  // Step 3: Generate Single Sprite
+  // Step 3: Generate Single Sprite / State
   const handleGenerateSprite = async (action: MascotActionType) => {
     if (!editingMascot) return;
     setBusyAction(action);
@@ -364,7 +364,7 @@ export function MascotStudioView({
       const res = await api.generateMascotSprite(editingMascot.id, {
         action,
         prompt: actionPrompts[action]?.trim() || undefined,
-        frames_count: actionFrames[action] || 6,
+        frames_count: actionFrames[action] || 1,
         fps: actionFps[action] || 8,
         loop: true,
       });
@@ -395,7 +395,7 @@ export function MascotStudioView({
         const res = await api.generateMascotSprite(editingMascot.id, {
           action,
           prompt: actionPrompts[action]?.trim() || undefined,
-          frames_count: actionFrames[action] || 6,
+          frames_count: actionFrames[action] || 1,
           fps: actionFps[action] || 8,
           loop: true,
         });
@@ -411,7 +411,7 @@ export function MascotStudioView({
     }
   };
 
-  // Upload Custom Sprite Strip
+  // Upload Custom Sprite / State
   const handleUploadSprite = async (action: MascotActionType, file: File) => {
     if (!editingMascot) return;
     setBusyAction(`upload-${action}`);
@@ -428,11 +428,11 @@ export function MascotStudioView({
       const res = await api.uploadMascotSprite(editingMascot.id, {
         action,
         data: base64,
-        frames_count: actionFrames[action] || 6,
+        frames_count: actionFrames[action] || 1,
         fps: actionFps[action] || 8,
         loop: true,
-        frame_width: 256,
-        frame_height: 256,
+        frame_width: 512,
+        frame_height: 512,
       });
 
       setEditingMascot(res.mascot);
@@ -1390,27 +1390,13 @@ export function MascotStudioView({
 
                         <p className="action-card-desc">{meta.description}</p>
 
-                        <div className="action-card-controls" onClick={(e) => e.stopPropagation()}>
-                          <div className="action-control-col">
-                            <label>{t("mascots.framesCountLabel")}</label>
-                            <input
-                              type="number"
-                              min={3}
-                              max={16}
-                              value={actionFrames[action]}
-                              onChange={(e) => setActionFrames((prev) => ({ ...prev, [action]: Number(e.target.value) }))}
-                            />
-                          </div>
-                          <div className="action-control-col">
-                            <label>{t("mascots.fpsLabel")}</label>
-                            <input
-                              type="number"
-                              min={4}
-                              max={24}
-                              value={actionFps[action]}
-                              onChange={(e) => setActionFps((prev) => ({ ...prev, [action]: Number(e.target.value) }))}
-                            />
-                          </div>
+                        <div className="action-card-controls" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} onClick={(e) => e.stopPropagation()}>
+                          <span className="action-tag-pill is-ready" style={{ fontSize: "11px", fontWeight: 700 }}>
+                            ✨ Motion: {meta.label.split(" ")[0]}
+                          </span>
+                          <span style={{ fontSize: "11px", color: "var(--muted)" }}>
+                            HD State (1:1)
+                          </span>
                         </div>
 
                         {hasSprite ? (
@@ -1437,7 +1423,7 @@ export function MascotStudioView({
             </div>
           ) : null}
 
-          {/* STEP 3: SPRITE SYNTHESIS & PROCESSING */}
+          {/* STEP 3: STATE SYNTHESIS & PROCESSING */}
           {generatorStep === 3 ? (
             <div className="wizard-step-content">
               <div className="wizard-card">
@@ -1464,6 +1450,7 @@ export function MascotStudioView({
                     const sprite = editingMascot?.actions[action];
                     const isBusy = busyAction === action || busyAction === `upload-${action}`;
                     const hasSprite = Boolean(sprite?.sprite_url);
+                    const isSingleFrame = (sprite?.frames_count || 1) === 1;
 
                     return (
                       <div key={action} className={`sprite-card-modern ${hasSprite ? "is-ready" : "is-missing"}`}>
@@ -1478,7 +1465,7 @@ export function MascotStudioView({
                           <div className="sprite-card-badges">
                             {hasSprite ? (
                               <span className="action-ready-badge" style={{ fontSize: "11px", padding: "3px 8px" }}>
-                                ✓ {sprite?.frames_count || 6}f @ {sprite?.fps || 8}fps
+                                ✓ {isSingleFrame ? "HD State" : `${sprite?.frames_count}f @ ${sprite?.fps}fps`}
                               </span>
                             ) : (
                               <span className="action-missing-badge" style={{ fontSize: "11px", padding: "3px 8px" }}>
@@ -1488,30 +1475,44 @@ export function MascotStudioView({
                           </div>
                         </div>
 
-                        {/* Strip visualizer */}
-                        <div className="sprite-card-strip-wrap">
+                        {/* State visualizer */}
+                        <div className="sprite-card-strip-wrap" style={{ height: "130px", background: "radial-gradient(circle, #1e293b 0%, #0f172a 100%)" }}>
                           {sprite?.sprite_url ? (
-                            <div className="sprite-strip-visualizer">
-                              <img src={sprite.sprite_url} alt={action} className="sprite-strip-img" />
-                              <div
-                                className="strip-grid-overlay"
-                                style={{
-                                  backgroundSize: `${100 / (sprite.frames_count || 6)}% 100%`,
-                                }}
-                              />
-                            </div>
+                            isSingleFrame ? (
+                              <div style={{ position: "relative", width: "100%", height: "100%", display: "grid", placeItems: "center", overflow: "hidden" }}>
+                                <img
+                                  src={sprite.sprite_url}
+                                  alt={action}
+                                  className={`mascot-anim-${action}`}
+                                  style={{
+                                    maxHeight: "110px",
+                                    maxWidth: "110px",
+                                    objectFit: "contain",
+                                    filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.4))",
+                                  }}
+                                />
+                              </div>
+                            ) : (
+                              <div className="sprite-strip-visualizer">
+                                <img src={sprite.sprite_url} alt={action} className="sprite-strip-img" />
+                                <div
+                                  className="strip-grid-overlay"
+                                  style={{
+                                    backgroundSize: `${100 / (sprite.frames_count || 6)}% 100%`,
+                                  }}
+                                />
+                              </div>
+                            )
                           ) : (
                             <div className="sprite-strip-placeholder">
-                              <span>{t("mascots.noSpritePlaceholder", { count: actionFrames[action] || 6 })}</span>
+                              <span>{t("mascots.noSpritePlaceholder", { count: 1 })}</span>
                             </div>
                           )}
                         </div>
 
                         <div className="sprite-card-footer">
                           <div className="sprite-card-configs">
-                            <span>FPS: {actionFps[action] || 8}</span>
-                            <span>•</span>
-                            <span>{actionFrames[action] || 6} Frames</span>
+                            <span style={{ color: "var(--accent)", fontWeight: 700 }}>Micro-Motion: {meta.label.split(" ")[0]}</span>
                           </div>
 
                           <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
@@ -1531,7 +1532,7 @@ export function MascotStudioView({
                               <span>{t("common.upload")}</span>
                               <input
                                 type="file"
-                                accept="image/png,image/webp"
+                                accept="image/png,image/webp,image/jpeg"
                                 style={{ display: "none" }}
                                 onChange={(e) => {
                                   const file = e.target.files?.[0];
@@ -1863,13 +1864,14 @@ export function MascotStudioView({
 
                       {currentActionSprite?.sprite_url ? (
                         <div
-                          className="stage-mascot-sprite-render"
+                          className={`stage-mascot-sprite-render ${isPlaying && (currentActionSprite.frames_count || 1) === 1 ? `mascot-anim-${activePreviewAction}` : ""}`}
                           style={{
                             width: "220px",
                             height: "220px",
                             backgroundImage: `url(${currentActionSprite.sprite_url})`,
-                            backgroundSize: `${(currentActionSprite.frames_count || 1) * 100}% 100%`,
-                            backgroundPosition: `${(currentFrameIndex / ((currentActionSprite.frames_count || 1) - 1 || 1)) * 100}% 0%`,
+                            backgroundSize: (currentActionSprite.frames_count || 1) === 1 ? "contain" : `${(currentActionSprite.frames_count || 1) * 100}% 100%`,
+                            backgroundPosition: (currentActionSprite.frames_count || 1) === 1 ? "center bottom" : `${(currentFrameIndex / ((currentActionSprite.frames_count || 1) - 1 || 1)) * 100}% 0%`,
+                            backgroundRepeat: "no-repeat",
                             transform: `translate(${nudgeX}px, ${nudgeY}px)`,
                             position: "relative",
                             zIndex: 2,
@@ -1879,6 +1881,7 @@ export function MascotStudioView({
                         <img
                           src={editingMascot.master_image_url}
                           alt="Mascot"
+                          className={isPlaying ? "mascot-anim-idle" : ""}
                           style={{ width: "200px", height: "200px", objectFit: "contain", transform: `translate(${nudgeX}px, ${nudgeY}px)` }}
                         />
                       ) : (
