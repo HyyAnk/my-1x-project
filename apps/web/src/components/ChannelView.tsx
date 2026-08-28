@@ -862,10 +862,10 @@ export function ChannelDetail({
     try {
       setChangingMascot(true);
       await api.assignMascotToChannel(channel.channel_id, { mascot_id: mascotId });
-      onNotice({ tone: "good", message: mascotId ? "Đã gán Mascot cho kênh" : "Đã hủy gán Mascot" });
+      onNotice({ tone: "good", message: mascotId ? t("notices.mascotAssignedChannel") : t("notices.mascotUnassignedChannel") });
       await onRefresh();
     } catch (err) {
-      onNotice({ tone: "bad", message: err instanceof Error ? err.message : "Lỗi gán mascot" });
+      onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.mascotAssignFailed") });
     } finally {
       setChangingMascot(false);
     }
@@ -878,10 +878,10 @@ export function ChannelDetail({
         mascot_id: channel.mascot_id,
         config: updates,
       });
-      onNotice({ tone: "good", message: "Đã cập nhật cấu hình Mascot cho kênh" });
+      onNotice({ tone: "good", message: t("notices.mascotConfigUpdated") });
       await onRefresh();
     } catch (err) {
-      onNotice({ tone: "bad", message: err instanceof Error ? err.message : "Lỗi cập nhật cấu hình mascot" });
+      onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.mascotAssignFailed") });
     } finally {
       setChangingMascot(false);
     }
@@ -1006,9 +1006,9 @@ export function ChannelDetail({
                 disabled={changingMascot}
                 style={{ fontSize: "12px", padding: "4px 8px", borderRadius: "6px", background: "var(--surface-hover)", border: "1px solid var(--line)" }}
                 onChange={(e) => void handleMascotChange(e.target.value || null)}
-                title="Gán Mascot cho Kênh này"
+                title={t("channelDetail.mascotSelectTitle")}
               >
-                <option value="">🚫 Không dùng Mascot</option>
+                <option value="">{t("channelDetail.noMascotOption")}</option>
                 {mascotsList.map((m) => (
                   <option key={m.id} value={m.id}>
                     🎨 {m.name}
@@ -1406,12 +1406,12 @@ export function ChannelDetail({
                     disabled={changingMascot}
                     style={{ fontSize: "12px", padding: "6px 12px", borderRadius: "6px", background: "var(--surface-hover)", border: "1px solid var(--line)" }}
                     onChange={(e) => void handleMascotChange(e.target.value || null)}
-                    title="Chọn Mascot cho Kênh"
+                    title={t("channelDetail.mascotSelectTitle")}
                   >
-                    <option value="">🚫 Không dùng Mascot</option>
+                    <option value="">{t("channelDetail.noMascotOption")}</option>
                     {mascotsList.map((m) => (
                       <option key={m.id} value={m.id}>
-                        🎨 {m.name} ({Object.values(m.actions).filter((a) => a?.sprite_url).length}/7 Poses)
+                        🎨 {m.name} ({t("mascots.posesBadge", { count: Object.values(m.actions).filter((a) => a?.sprite_url).length })})
                       </option>
                     ))}
                   </select>
@@ -1434,16 +1434,16 @@ export function ChannelDetail({
                       )}
                       <div className="mascot-branding-info">
                         <h3>{assignedMascot?.name || "Mascot"}</h3>
-                        <p>{assignedMascot?.description || assignedMascot?.master_prompt || "Linh vật đại diện video Quiz."}</p>
+                        <p>{assignedMascot?.description || assignedMascot?.master_prompt || t("channelDetail.mascotDefaultDesc")}</p>
                         <span className="action-ready-badge" style={{ display: "inline-block", marginTop: "4px" }}>
-                          ✨ {Object.values(assignedMascot?.actions || {}).filter((a) => a?.sprite_url).length}/7 Poses Sẵn Sàng
+                          {t("channelDetail.posesReadyBadge", { count: Object.values(assignedMascot?.actions || {}).filter((a) => a?.sprite_url).length })}
                         </span>
                       </div>
                     </div>
 
                     <div className="mascot-branding-controls">
                       <div className="form-group">
-                        <label>Vị trí đứng trên Video (Stage Anchor)</label>
+                        <label>{t("channelDetail.stageAnchorLabel")}</label>
                         <div className="position-toggle-row">
                           <button
                             type="button"
@@ -1451,7 +1451,7 @@ export function ChannelDetail({
                             disabled={changingMascot}
                             onClick={() => void handleMascotConfigUpdate({ position: "bottom_left" })}
                           >
-                            👈 Góc Trái (Bottom-Left)
+                            {t("channelDetail.bottomLeftLabel")}
                           </button>
                           <button
                             type="button"
@@ -1459,13 +1459,13 @@ export function ChannelDetail({
                             disabled={changingMascot}
                             onClick={() => void handleMascotConfigUpdate({ position: "bottom_right" })}
                           >
-                            👉 Góc Phải (Bottom-Right)
+                            {t("channelDetail.bottomRightLabel")}
                           </button>
                         </div>
                       </div>
 
                       <div className="form-group" style={{ marginTop: "10px" }}>
-                        <label>Tỉ lệ Kích thước (Scale): {(cfg.scale || 1.0).toFixed(2)}x</label>
+                        <label>{t("channelDetail.scaleLabel", { scale: (cfg.scale || 1.0).toFixed(2) })}</label>
                         <input
                           type="range"
                           min={0.7}
@@ -1481,7 +1481,7 @@ export function ChannelDetail({
                 );
               })() : (
                 <div style={{ padding: "16px", color: "var(--muted)", fontSize: "13px" }}>
-                  Kênh này hiện chưa gán Mascot. Hãy chọn một linh vật ở menu phía trên để xuất hiện trong video Quiz!
+                  {t("channelDetail.noMascotEmptyText")}
                 </div>
               )}
             </section>

@@ -10,6 +10,7 @@ import {
 } from "@phosphor-icons/react";
 import type { QuestionHistoryCheckResult } from "@studio/shared";
 import { useState } from "react";
+import { useTranslation } from "../i18n";
 
 export interface QuestionRemixPanelProps {
   historyCheck: QuestionHistoryCheckResult | null;
@@ -30,6 +31,7 @@ export function QuestionRemixPanel({
   onRemixSingle,
   onContinueBuild,
 }: QuestionRemixPanelProps) {
+  const { t } = useTranslation();
   const [expandedCleanIds, setExpandedCleanIds] = useState<Record<string, boolean>>({});
 
   const toggleExpandClean = (id: string) => {
@@ -55,8 +57,8 @@ export function QuestionRemixPanel({
       {/* Header Section */}
       <div className="section-heading remix-header-row">
         <div>
-          <p className="eyebrow">Content Quality & Anti-Duplicate</p>
-          <h2 className="remix-main-title">Question Remix & Quality Check</h2>
+          <p className="eyebrow">{t("remix.eyebrow")}</p>
+          <h2 className="remix-main-title">{t("remix.title")}</h2>
         </div>
         <div className="scene-heading-actions">
           {duplicateCount > 0 ? (
@@ -65,20 +67,20 @@ export function QuestionRemixPanel({
               className="remix-bulk-btn has-duplicates"
               onClick={() => void onRemixAll("rephrase")}
               disabled={isRemixing || !historyCheck}
-              title={`Remix all ${duplicateCount} duplicate question(s) with AI`}
+              title={t("remix.remixAllTooltip", { count: duplicateCount })}
             >
               {isGlobalRemixing ? (
                 <CircleNotch className="spin" size={16} />
               ) : (
                 <ArrowsClockwise size={16} weight="bold" />
               )}
-              <span>Remix Duplicates</span>
+              <span>{t("remix.remixDuplicatesBtn")}</span>
               <span className="remix-count-pill">{duplicateCount}</span>
             </button>
           ) : (
-            <div className="remix-clean-badge" title="All questions passed duplicate check">
+            <div className="remix-clean-badge" title={t("remix.allCleanBadge")}>
               <CheckCircle size={16} weight="fill" />
-              <span>All Questions Clean</span>
+              <span>{t("remix.allCleanBadge")}</span>
             </div>
           )}
 
@@ -88,7 +90,7 @@ export function QuestionRemixPanel({
               className="primary-button"
               onClick={onContinueBuild}
             >
-              <span>Continue Build</span>
+              <span>{t("remix.continueBuildBtn")}</span>
               <ArrowRight size={16} />
             </button>
           ) : null}
@@ -109,40 +111,40 @@ export function QuestionRemixPanel({
             <div className="status-headline">
               <strong className="status-title">
                 {historyCheck?.passed
-                  ? "Passed History Validation"
-                  : `${duplicateCount} Duplicate Question${duplicateCount > 1 ? "s" : ""} Found`}
+                  ? t("remix.passedHistoryTitle")
+                  : t("remix.duplicatesFoundTitle", { count: duplicateCount, plural: duplicateCount > 1 ? "s" : "" })}
               </strong>
               <span className={`status-tag ${historyCheck?.passed ? "is-success" : "is-warning"}`}>
-                {historyCheck?.passed ? "READY" : "ACTION RECOMMENDED"}
+                {historyCheck?.passed ? t("remix.readyTag") : t("remix.actionRecommendedTag")}
               </span>
             </div>
             <p className="status-subtext">
               {historyCheck?.passed
-                ? "All questions are unique against past 30 days history."
-                : `Anti-duplicate check threshold: <= ${historyCheck?.pass_threshold ?? 2} duplicates allowed.`}
+                ? t("remix.passedSubtext")
+                : t("remix.thresholdSubtext", { threshold: historyCheck?.pass_threshold ?? 2 })}
             </p>
           </div>
         </div>
 
         <div className="stats-metrics-grid">
           <div className="metric-box">
-            <span className="metric-label">Total Questions</span>
+            <span className="metric-label">{t("remix.totalQuestions")}</span>
             <span className="metric-value">{totalQuestions}</span>
           </div>
 
           <div className={`metric-box ${duplicateCount > 0 ? "has-warning" : ""}`}>
-            <span className="metric-label">Duplicates</span>
+            <span className="metric-label">{t("remix.duplicates")}</span>
             <span className="metric-value warning-text">{duplicateCount}</span>
           </div>
 
           <div className={`metric-box ${remixedCount > 0 ? "has-remixed" : ""}`}>
-            <span className="metric-label">AI Remixed</span>
+            <span className="metric-label">{t("remix.aiRemixed")}</span>
             <span className="metric-value remixed-text">{remixedCount}</span>
           </div>
 
           <div className="metric-box clean-rate-box">
             <div className="clean-rate-header">
-              <span className="metric-label">Clean Rate</span>
+              <span className="metric-label">{t("remix.cleanRate")}</span>
               <span className="clean-rate-percent">{cleanRate}%</span>
             </div>
             <div className="clean-progress-track">
@@ -161,10 +163,10 @@ export function QuestionRemixPanel({
           <div className="remix-list-header">
             <div className="remix-list-header-left">
               <h3 className="remix-list-heading">
-                Questions & History Verification ({displayedItems.length}{showOnlyDuplicates ? ` of ${totalQuestions}` : ""})
+                {t("remix.historyHeader", { count: displayedItems.length, total: showOnlyDuplicates ? ` / ${totalQuestions}` : "" })}
               </h3>
               <span className="remix-list-hint">
-                Adaptive View: Clean questions are condensed. Duplicates show comparison & remix action.
+                {t("remix.historyHint")}
               </span>
             </div>
 
@@ -181,7 +183,7 @@ export function QuestionRemixPanel({
                   <span className="remix-toggle-thumb" />
                 </span>
                 <span className="remix-toggle-text">
-                  Chỉ hiện câu trùng lặp {duplicateCount > 0 ? `(${duplicateCount})` : ""}
+                  {t("remix.showOnlyDuplicates", { count: duplicateCount > 0 ? `(${duplicateCount})` : "" })}
                 </span>
               </label>
             </div>
@@ -190,16 +192,16 @@ export function QuestionRemixPanel({
           {displayedItems.length === 0 && showOnlyDuplicates ? (
             <div className="artifact-empty remix-filter-empty">
               <CheckCircle size={32} weight="fill" style={{ color: "#10b981", marginBottom: "8px" }} />
-              <p><strong>Không có câu hỏi nào bị trùng lặp!</strong></p>
+              <p><strong>{t("remix.noDuplicatesTitle")}</strong></p>
               <p style={{ fontSize: "13px", color: "var(--muted)", margin: "4px 0 12px" }}>
-                Tất cả {totalQuestions} câu hỏi trong tập này đều sạch và đạt tiêu chuẩn.
+                {t("remix.noDuplicatesSubtext", { count: totalQuestions })}
               </p>
               <button
                 type="button"
                 className="quiet-button compact"
                 onClick={() => setShowOnlyDuplicates(false)}
               >
-                <span>Xem tất cả câu hỏi</span>
+                <span>{t("remix.viewAllQuestions")}</span>
               </button>
             </div>
           ) : (
@@ -221,7 +223,7 @@ export function QuestionRemixPanel({
                           <span className="q-badge">#{index + 1}</span>
                           <span className="match-status-pill is-clean-pill">
                             <ShieldCheck size={14} weight="bold" />
-                            <span>Clean</span>
+                            <span>{t("remix.cleanBadge")}</span>
                           </span>
                           <p className="compact-question-text">{item.current_question_text}</p>
                         </div>
@@ -247,14 +249,14 @@ export function QuestionRemixPanel({
                             className="remix-action-btn is-replace compact-btn"
                             onClick={() => void onRemixSingle(item.current_question_id, "replace")}
                             disabled={isRemixing}
-                            title="Đổi sang câu hỏi và đáp án mới toanh cùng chủ đề"
+                            title={t("remix.replaceTooltip")}
                           >
                             {isRemixing && remixAction?.questionId === qId && remixAction?.mode === "replace" ? (
                               <CircleNotch className="spin" size={13} />
                             ) : (
                               <Sparkle size={13} weight="fill" />
                             )}
-                            <span>Đổi câu mới</span>
+                            <span>{t("remix.replaceBtn")}</span>
                           </button>
                         </div>
                       </div>
@@ -275,29 +277,29 @@ export function QuestionRemixPanel({
                     {/* Card Header with Question number, Badges, Similarity meter & Action buttons */}
                     <div className="remix-card-header">
                       <div className="remix-card-left-meta">
-                        <span className="q-badge">Question #{index + 1}</span>
+                        <span className="q-badge">{t("quiz.questionNumber", { number: index + 1 })}</span>
                         <span className={`match-status-badge is-${item.status}`}>
                           {isDupe ? (
                             <>
                               <WarningCircle size={15} weight="fill" />
-                              <span>Duplicate in History</span>
+                              <span>{t("remix.duplicateBadge")}</span>
                             </>
                           ) : isRemixed ? (
                             <>
                               <Sparkle size={15} weight="fill" />
-                              <span>AI Remixed</span>
+                              <span>{t("remix.remixedBadge")}</span>
                             </>
                           ) : (
                             <>
                               <ShieldCheck size={15} weight="fill" />
-                              <span>Verified Clean</span>
+                              <span>{t("remix.cleanBadge")}</span>
                             </>
                           )}
                         </span>
 
                         {item.matched_entry ? (
                           <div className={`similarity-meter-box ${simColorClass}`}>
-                            <span className="similarity-label">Similarity: {simPercent}%</span>
+                            <span className="similarity-label">{t("remix.similarityLabel", { score: simPercent })}</span>
                             <div className="similarity-meter-track">
                               <div
                                 className="similarity-meter-fill"
@@ -316,14 +318,14 @@ export function QuestionRemixPanel({
                               className="remix-action-btn is-rephrase"
                               onClick={() => void onRemixSingle(item.current_question_id, "rephrase")}
                               disabled={isRemixing}
-                              title="Giữ nguyên 4 đáp án & đáp án đúng, AI chỉ đổi góc nhìn/manh mối câu hỏi"
+                              title={t("remix.rephraseTooltip")}
                             >
                               {isRemixing && remixAction?.questionId === qId && remixAction?.mode === "rephrase" ? (
                                 <CircleNotch className="spin" size={14} />
                               ) : (
                                 <ArrowsClockwise size={14} />
                               )}
-                              <span>Đổi cách hỏi</span>
+                              <span>{t("remix.rephraseBtn")}</span>
                             </button>
                           ) : null}
 
@@ -332,14 +334,14 @@ export function QuestionRemixPanel({
                             className="remix-action-btn is-replace"
                             onClick={() => void onRemixSingle(item.current_question_id, "replace")}
                             disabled={isRemixing}
-                            title="Sinh câu hỏi và bộ 4 đáp án mới toanh thuộc cùng chủ đề tập phim"
+                            title={t("remix.replaceTooltip")}
                           >
                             {isRemixing && remixAction?.questionId === qId && remixAction?.mode === "replace" ? (
                               <CircleNotch className="spin" size={14} />
-                            ) : (
+                              ) : (
                               <Sparkle size={14} weight="fill" />
                             )}
-                            <span>Đổi câu mới</span>
+                            <span>{t("remix.replaceBtn")}</span>
                           </button>
                         </div>
 
@@ -349,7 +351,7 @@ export function QuestionRemixPanel({
                             className="compact-toggle-button"
                             onClick={() => toggleExpandClean(qId)}
                           >
-                            Collapse
+                            {t("common.close")}
                           </button>
                         )}
                       </div>
@@ -361,7 +363,7 @@ export function QuestionRemixPanel({
                       <div className="remix-col current-col">
                         <div className="col-header-tag">
                           <span className="col-tag-dot" />
-                          <span className="col-label">Current Episode Version</span>
+                          <span className="col-label">{t("remix.currentVersionLabel")}</span>
                         </div>
                         <p className="remix-question-text">"{item.current_question_text}"</p>
                         <div className="remix-choices-list">
@@ -386,7 +388,7 @@ export function QuestionRemixPanel({
                           <div className="col-header-tag is-history">
                             <span className="col-tag-dot is-warning" />
                             <span className="col-label">
-                              Matched Past Episode: <strong>{item.matched_entry.episode_title}</strong>
+                              {t("remix.matchedPastLabel", { title: item.matched_entry.episode_title })}
                             </span>
                           </div>
                           <p className="remix-question-text history-text">
@@ -412,7 +414,7 @@ export function QuestionRemixPanel({
                         <div className="remix-col history-col is-empty-match">
                           <p className="clean-note">
                             <ShieldCheck size={16} />
-                            <span>No similar questions found in past 30 days history.</span>
+                            <span>{t("remix.noSimilarQuestionsNote")}</span>
                           </p>
                         </div>
                       )}
@@ -425,10 +427,7 @@ export function QuestionRemixPanel({
         </div>
       ) : (
         <div className="artifact-empty remix-empty-state">
-          <p>
-            No question history comparison available. Click <strong>Generate script / Quiz</strong> in
-            Step 1 to perform automated history checking.
-          </p>
+          <p>{t("remix.emptyStateNote")}</p>
         </div>
       )}
     </section>

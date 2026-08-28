@@ -93,13 +93,13 @@ export const ALL_MASCOT_ACTIONS: MascotActionType[] = [
 ];
 
 export const MASCOT_ACTION_META: Record<MascotActionType, { label: string; description: string; defaultFps: number; defaultFrames: number; icon: string; usage: string }> = {
-  idle: { label: "Idle (Thở nhẹ & Chớp mắt)", description: "Chuyển động thở nhẹ và chớp mắt tự nhiên trong lúc chờ", defaultFps: 6, defaultFrames: 4, icon: "🧘", usage: "Lúc đọc câu hỏi và chuyển cảnh" },
-  wave: { label: "Wave Hello (Vẫy tay chào)", description: "Vẫy tay chào vui nhộn tạo thiện cảm đầu video", defaultFps: 8, defaultFrames: 6, icon: "👋", usage: "Intro mở đầu tập phim" },
-  thinking: { label: "Thinking (Gãi cằm suy nghĩ)", description: "Chống cằm, đăm chiêu hoặc nhìn đồng hồ cùng người chơi", defaultFps: 8, defaultFrames: 6, icon: "🤔", usage: "Giai đoạn đếm ngược Countdown 5-4-3-2-1" },
-  point: { label: "Point Board (Chỉ vào bảng)", description: "Chỉ tay hoặc cầm que chỉ về phía câu hỏi / giải thích", defaultFps: 8, defaultFrames: 5, icon: "👉", usage: "Giải thích đáp án & Fact Card" },
-  celebrate: { label: "Celebrate (Nhảy cẫng ăn mừng)", description: "Nhảy lên vui mừng, vỗ tay hoặc tung hoa giấy rực rỡ", defaultFps: 10, defaultFrames: 8, icon: "🎉", usage: "Khoảnh khắc công bố đáp án đúng" },
-  oops: { label: "Oops / Confused (Bối rối tiếc nuối)", description: "Gãi đầu bối rối hoặc nhún vai tiếc nuối khi hết giờ", defaultFps: 8, defaultFrames: 5, icon: "😅", usage: "Hết giờ / Trả lời sai" },
-  outro: { label: "Wave Bye & CTA (Tạm biệt & Kêu gọi)", description: "Vẫy tay tạm biệt và chỉ vào nút Like, Sub, Comment", defaultFps: 8, defaultFrames: 6, icon: "🌟", usage: "Outro kết thúc tập phim" },
+  idle: { label: "Idle (Breathing & Blinking)", description: "Natural subtle breathing and blinking motion while waiting", defaultFps: 6, defaultFrames: 4, icon: "🧘", usage: "During question reading and transitions" },
+  wave: { label: "Wave Hello (Intro Greeting)", description: "Playful and welcoming hand wave at opening", defaultFps: 8, defaultFrames: 6, icon: "👋", usage: "Episode intro opening" },
+  thinking: { label: "Thinking (Countdown Pose)", description: "Chin-resting, pondering or checking timer with players", defaultFps: 8, defaultFrames: 6, icon: "🤔", usage: "Countdown 5-4-3-2-1 phase" },
+  point: { label: "Point Board (Explanation)", description: "Pointing hand or pointer stick at question / explanation", defaultFps: 8, defaultFrames: 5, icon: "👉", usage: "Answer explanation & Fact Card" },
+  celebrate: { label: "Celebrate (Joyful Jump)", description: "Jumping with joy, clapping or celebratory confetti", defaultFps: 10, defaultFrames: 8, icon: "🎉", usage: "Correct answer reveal moment" },
+  oops: { label: "Oops / Confused (Time Out)", description: "Scratching head or shrugging with playful disappointment", defaultFps: 8, defaultFrames: 5, icon: "😅", usage: "Time out / Wrong answer" },
+  outro: { label: "Wave Bye & CTA (Ending)", description: "Waving goodbye and pointing to Like, Subscribe, Comment", defaultFps: 8, defaultFrames: 6, icon: "🌟", usage: "Episode outro ending" },
 };
 
 export const MascotSpriteActionSchema = z.object({

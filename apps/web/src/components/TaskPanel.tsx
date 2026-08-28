@@ -976,7 +976,7 @@ export function TasksView({
               className={`task-kpi-chip is-waiting_approval ${statusFilter === "waiting_approval" ? "is-active" : ""}`}
               onClick={() => setStatusFilter("waiting_approval")}
             >
-              <span className="kpi-label">Waiting</span>
+              <span className="kpi-label">{t("tasks.filterWaiting")}</span>
               <span className="kpi-count">{waitingApprovalCount}</span>
             </button>
           )}
@@ -1008,7 +1008,7 @@ export function TasksView({
               className={`task-kpi-chip is-cancelled ${statusFilter === "cancelled" ? "is-active" : ""}`}
               onClick={() => setStatusFilter("cancelled")}
             >
-              <span className="kpi-label">Cancelled</span>
+              <span className="kpi-label">{t("tasks.filterCancelled")}</span>
               <span className="kpi-count">{cancelledCount}</span>
             </button>
           )}

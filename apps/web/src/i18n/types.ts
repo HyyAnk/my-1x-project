@@ -47,11 +47,17 @@ export interface TranslationSchema {
     remove: string;
     add: string;
     clear: string;
+    reset: string;
     typeYesToConfirm: string;
     videosCount: string;
     wordsPerMin: string;
     seconds: string;
     minutes: string;
+    noResults: string;
+    importZip: string;
+    importing: string;
+    copy: string;
+    copied: string;
   };
   sidebar: {
     brandName: string;
@@ -148,6 +154,7 @@ export interface TranslationSchema {
     deleteChannelTitle: string;
     deleteChannelWarning: string;
     deleteChannelBtn: string;
+    startingDna: string;
     uploadDna: string;
     manualSetup: string;
     dnaFileLabel: string;
@@ -174,6 +181,17 @@ export interface TranslationSchema {
     deleteEpisodeWarning: string;
     assignedVoice: string;
     defaultVoice: string;
+    
+    // Channel Mascot
+    mascotSelectTitle: string;
+    noMascotOption: string;
+    mascotDefaultDesc: string;
+    posesReadyBadge: string;
+    stageAnchorLabel: string;
+    bottomLeftLabel: string;
+    bottomRightLabel: string;
+    scaleLabel: string;
+    noMascotEmptyText: string;
   };
   episode: {
     productionRail: string;
@@ -215,6 +233,42 @@ export interface TranslationSchema {
     remixWithAi: string;
     passHistory: string;
   };
+  remix: {
+    eyebrow: string;
+    title: string;
+    remixDuplicatesBtn: string;
+    remixAllTooltip: string;
+    allCleanBadge: string;
+    continueBuildBtn: string;
+    passedHistoryTitle: string;
+    duplicatesFoundTitle: string;
+    readyTag: string;
+    actionRecommendedTag: string;
+    passedSubtext: string;
+    thresholdSubtext: string;
+    totalQuestions: string;
+    duplicates: string;
+    aiRemixed: string;
+    cleanRate: string;
+    historyHeader: string;
+    historyHint: string;
+    showOnlyDuplicates: string;
+    noDuplicatesTitle: string;
+    noDuplicatesSubtext: string;
+    viewAllQuestions: string;
+    rephraseBtn: string;
+    rephraseTooltip: string;
+    replaceBtn: string;
+    replaceTooltip: string;
+    cleanBadge: string;
+    duplicateBadge: string;
+    remixedBadge: string;
+    similarityLabel: string;
+    currentVersionLabel: string;
+    matchedPastLabel: string;
+    noSimilarQuestionsNote: string;
+    emptyStateNote: string;
+  };
   mascots: {
     pageTitle: string;
     pageSubtitle: string;
@@ -225,32 +279,212 @@ export interface TranslationSchema {
     newMascot: string;
     noMascotsTitle: string;
     noMascotsCopy: string;
-    quickAssign: string;
-    scenarioPlayback: string;
-    calibrateSprites: string;
-    onionSkinning: string;
-    removeBackground: string;
+    
+    // Actions Meta (Dynamic Localized Labels)
     actionIdle: string;
+    actionIdleDesc: string;
+    actionIdleUsage: string;
     actionWave: string;
+    actionWaveDesc: string;
+    actionWaveUsage: string;
     actionThinking: string;
+    actionThinkingDesc: string;
+    actionThinkingUsage: string;
     actionPoint: string;
+    actionPointDesc: string;
+    actionPointUsage: string;
     actionCelebrate: string;
+    actionCelebrateDesc: string;
+    actionCelebrateUsage: string;
     actionOops: string;
+    actionOopsDesc: string;
+    actionOopsUsage: string;
     actionOutro: string;
+    actionOutroDesc: string;
+    actionOutroUsage: string;
+
+    // Wizard Stepper
     generatorStep1: string;
     generatorStep2: string;
     generatorStep3: string;
     generatorStep4: string;
-    generateConcept: string;
-    generateSprites: string;
+
+    // Step 1: Identity & Concept
+    conceptTitle: string;
+    conceptSub: string;
+    nameLabel: string;
+    namePlaceholder: string;
+    styleLabel: string;
+    colorLabel: string;
+    descLabel: string;
+    descPlaceholder: string;
+    promptLabel: string;
+    promptPlaceholder: string;
+    generateConceptBtn: string;
+    generatingConceptBtn: string;
+    nextActionMatrixBtn: string;
+    masterPreviewTitle: string;
+    masterPreviewSub: string;
+    masterPreviewPlaceholder: string;
+    statusIdentityLocked: string;
+    statusStyle: string;
+    mattingMasterBtn: string;
+    mattingInProgress: string;
+    quickTagsLabel: string;
+    templatesLabel: string;
+    notesAccordionTitle: string;
+    notesAccordionSub: string;
+    zoomPreviewBtn: string;
+    copyPromptBtn: string;
+    clearPromptBtn: string;
+    charsCount: string;
+    wordsCount: string;
+    customColorPicker: string;
+    presetOwl: string;
+    presetDino: string;
+    presetRobot: string;
+    presetFox: string;
+    stylePixarDesc: string;
+    styleChibiDesc: string;
+    styleVectorDesc: string;
+    styleVoxelDesc: string;
+    styleToyDesc: string;
+    focusPromptTitle: string;
+
+    // Step 2: Action Matrix
+    actionMatrixTitle: string;
+    actionMatrixSub: string;
+    selectAllBtn: string;
+    framesCountLabel: string;
+    fpsLabel: string;
+    hasSpriteBadge: string;
+    noSpriteBadge: string;
+    backIdentityBtn: string;
+    nextSpriteBtn: string;
+
+    // Step 3: Sprite Generation
+    spriteGenTitle: string;
+    spriteGenSub: string;
+    batchGenerateBtn: string;
+    batchGeneratingBtn: string;
+    notGeneratedBadge: string;
+    reGenerateBtn: string;
+    generateAiBtn: string;
+    generatingBtn: string;
+    uploadStripBtn: string;
+    mattingSpriteBtn: string;
+    mattingShortBtn: string;
+    previewStep4Btn: string;
+    backMatrixBtn: string;
+    nextLiveStageBtn: string;
+    noSpritePlaceholder: string;
+
+    // Step 4: Live Animation Studio & Simulator
+    liveStudioTitle: string;
+    liveStudioSub: string;
+    videoStageMode: string;
+    gridMode: string;
+    theaterModeExpand: string;
+    theaterModeCollapse: string;
+    stopScenarioBtn: string;
+    playTimelineBtn: string;
+    celebrateReactionBtn: string;
+    celebrateReactionTooltip: string;
+    oopsReactionBtn: string;
+    oopsReactionTooltip: string;
+    
+    // Director Timeline
+    timelineIntro: string;
+    timelineQuestion: string;
+    timelineThinking: string;
+    timelineReveal: string;
+    timelineOops: string;
+    timelineExplain: string;
+
+    // Simulator Theater Mock
+    simIntroBadge: string;
+    simIntroTitle: string;
+    simIntroSub: string;
+    simQuestionTitle: string;
+    simFactLabel: string;
+    simFactText: string;
+    simChoiceA: string;
+    simChoiceB: string;
+    simChoiceC: string;
+
+    // Player Controls
+    playAnimTooltip: string;
+    pauseAnimTooltip: string;
+    prevFrameTooltip: string;
+    nextFrameTooltip: string;
+    frameIndicator: string;
+    speedLabel: string;
+
+    // Calibration & Onion Skin
+    inspectorTitle: string;
+    guidesToggle: string;
+    onionSkinToggle: string;
+    onionOpacityLabel: string;
+    axisXLabel: string;
+    axisYLabel: string;
+    nudgeLeftTooltip: string;
+    nudgeRightTooltip: string;
+    nudgeUpTooltip: string;
+    nudgeDownTooltip: string;
+    resetOffsetTooltip: string;
+    resetBtn: string;
+    saveCalibrationBtn: string;
+    savingCalibrationBtn: string;
+
+    // Stage Position & Channel Bind
+    stageConfigTitle: string;
+    stageConfigSub: string;
+    stagePositionLabel: string;
+    bottomLeftOption: string;
+    bottomRightOption: string;
+    scaleLabel: string;
+    assignChannelsLabel: string;
+    saveAndApplyChannelsBtn: string;
+    savingAndApplyingBtn: string;
+
+    // Modals
+    quickAssignEyebrow: string;
+    quickAssignTitle: string;
+    quickAssignSaveBtn: string;
+    quickAssignSavingBtn: string;
+    deleteEyebrow: string;
+    deleteTitle: string;
+    deleteWarning: string;
+    deleteConfirmBtn: string;
+    deletingBtn: string;
+
+    // Library Cards
+    noImagePlaceholder: string;
+    posesBadge: string;
+    noDescPlaceholder: string;
+    poseReadyTooltip: string;
+    poseMissingTooltip: string;
+    notAssignedChannels: string;
+    assignedChannelsCount: string;
+    quickAssignBtn: string;
+    generatorBtn: string;
+    exportZipTooltip: string;
+    deleteMascotAria: string;
   };
   tasks: {
     pageTitle: string;
     pageSubtitle: string;
     activityTitle: string;
+    eyebrow: string;
+    refreshTasks: string;
+    searchPlaceholder: string;
+    taskActivityTitle: string;
+    reconnectingLive: string;
+    activeTasksCount: string;
     filterAll: string;
     filterRunning: string;
     filterQueued: string;
+    filterWaiting: string;
     filterCompleted: string;
     filterFailed: string;
     filterCancelled: string;
@@ -339,5 +573,33 @@ export interface TranslationSchema {
     apiKeyInvalid: string;
     switchedEngine: string;
     languageChanged: string;
+    mascotNameRequired: string;
+    generatingConcept: string;
+    conceptGenerated: string;
+    conceptFailed: string;
+    generatingSprite: string;
+    spriteCompleted: string;
+    spriteFailed: string;
+    batchGenerating: string;
+    batchCompleted: string;
+    batchFailed: string;
+    spriteUploaded: string;
+    uploadFailed: string;
+    mattingSuccess: string;
+    mattingFailed: string;
+    channelsAssigned: string;
+    channelsAssignFailed: string;
+    mascotDeleted: string;
+    mascotDeleteFailed: string;
+    calibrationSaved: string;
+    calibrationFailed: string;
+    mascotImported: string;
+    mascotImportFailed: string;
+    cannotReadZip: string;
+    selectActionRequired: string;
+    mascotAssignedChannel: string;
+    mascotUnassignedChannel: string;
+    mascotConfigUpdated: string;
+    mascotAssignFailed: string;
   };
 }
