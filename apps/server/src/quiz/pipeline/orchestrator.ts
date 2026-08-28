@@ -483,20 +483,48 @@ export async function compileTimeline(input: QuizOrchestratorInput): Promise<{ t
 }
 
 export async function runQa(input: QuizOrchestratorInput): Promise<{ assessment: QuizAssessment; artifact_path: string }> {
-  const artifacts = await readQuizArtifacts(input);
+  const [artifacts, channel] = await Promise.all([
+    readQuizArtifacts(input),
+    input.repository.getChannel(input.channelId),
+  ]);
   if (!artifacts.quiz) throw new RepositoryError("Generate the Quiz facts before running QA", "QUIZ_REQUIRED");
-  const assessment = assessQuiz({ quiz: artifacts.quiz, director: artifacts.director_plan, assetPlan: artifacts.asset_plan, resolvedAssets: artifacts.asset_resolution?.assets ?? [], voicePlan: artifacts.voice_plan, timeline: artifacts.timeline, measuredAudio: artifacts.voice_plan ? artifacts.voice_plan.segments.every((segment) => segment.duration_seconds !== null) : false });
+  const mascot = channel.mascot_id ? await input.repository.getMascot(channel.mascot_id).catch(() => null) : null;
+  const assessment = assessQuiz({
+    quiz: artifacts.quiz,
+    director: artifacts.director_plan,
+    assetPlan: artifacts.asset_plan,
+    resolvedAssets: artifacts.asset_resolution?.assets ?? [],
+    voicePlan: artifacts.voice_plan,
+    timeline: artifacts.timeline,
+    measuredAudio: artifacts.voice_plan ? artifacts.voice_plan.segments.every((segment) => segment.duration_seconds !== null) : false,
+    mascot,
+    mascotConfig: channel.mascot_config,
+  });
   const artifact_path = await input.repository.writeQuizAssessment(input.channelId, input.episodeId, assessment);
   return { assessment, artifact_path };
 }
 
 export async function assertQuizRenderReady(input: QuizOrchestratorInput): Promise<{ artifacts: QuizArtifacts; assessment: QuizAssessment }> {
-  const episode = await input.repository.getEpisode(input.channelId, input.episodeId);
-  const artifacts = await readQuizArtifacts(input);
+  const [episode, channel, artifacts] = await Promise.all([
+    input.repository.getEpisode(input.channelId, input.episodeId),
+    input.repository.getChannel(input.channelId),
+    readQuizArtifacts(input),
+  ]);
   if (!artifacts.quiz || !artifacts.director_plan || !artifacts.asset_plan || !artifacts.voice_plan || !artifacts.timeline) {
     throw new RepositoryError("Complete the Quiz V2 stages before rendering", "QUIZ_V2_INCOMPLETE");
   }
-  const preflight = preflightQuizRender({ quiz: artifacts.quiz, director: artifacts.director_plan, assetPlan: artifacts.asset_plan, resolvedAssets: artifacts.asset_resolution?.assets ?? [], voicePlan: artifacts.voice_plan, timeline: artifacts.timeline, measuredAudio: episode.narration_duration_seconds !== null });
+  const mascot = channel.mascot_id ? await input.repository.getMascot(channel.mascot_id).catch(() => null) : null;
+  const preflight = preflightQuizRender({
+    quiz: artifacts.quiz,
+    director: artifacts.director_plan,
+    assetPlan: artifacts.asset_plan,
+    resolvedAssets: artifacts.asset_resolution?.assets ?? [],
+    voicePlan: artifacts.voice_plan,
+    timeline: artifacts.timeline,
+    measuredAudio: episode.narration_duration_seconds !== null,
+    mascot,
+    mascotConfig: channel.mascot_config,
+  });
   if (!preflight.ok) {
     const blocker = preflight.assessment.issues.find((issue) => issue.severity === "blocker");
     throw new RepositoryError("Quiz V2 preflight blocked render: " + (blocker?.message ?? "Resolve the reported QA blockers before rendering."), "QUIZ_PREFLIGHT_BLOCKED");

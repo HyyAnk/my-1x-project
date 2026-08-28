@@ -64,6 +64,11 @@ export function ChannelCard({
             {channel.episode_count}{" "}
             {channel.episode_count === 1 ? "video" : "videos"}
           </span>
+          {channel.mascot_id ? (
+            <span style={{ fontSize: "11px", color: "var(--accent)", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "4px" }}>
+              🎨 Mascot
+            </span>
+          ) : null}
           <ArrowUpRight size={17} />
         </div>
       </button>

@@ -9,6 +9,8 @@ import {
   TaskSchema,
   type AppConfig,
   type ContextManifest,
+  type MascotProfile,
+  type MascotActionType,
   type Scene,
   type Task,
   type TaskEvent,
@@ -895,6 +897,50 @@ export class TaskManager extends EventEmitter {
         }
       }
       const bgmHistory = await this.repository.readBgmHistory(task.channel_id);
+      let mascotProfile: MascotProfile | null = null;
+      if (channel.mascot_id) {
+        mascotProfile = await this.repository.getMascot(channel.mascot_id).catch(() => null);
+        if (mascotProfile) {
+          const renderMascotDir = path.join(renderRoot, "mascot-assets");
+          await mkdir(renderMascotDir, { recursive: true });
+
+          const localizeMascotAsset = async (url?: string | null): Promise<string | undefined> => {
+            if (!url) return undefined;
+            if (url.startsWith("data:") || url.startsWith("./") || url.startsWith("../")) return url;
+            const match = url.match(/\/api\/mascots\/[^/]+\/assets\/([^/?#]+)/);
+            if (match && match[1]) {
+              const filename = match[1];
+              try {
+                const assetFile = await this.repository.getMascotAssetFile(mascotProfile!.id, filename);
+                await copyFile(assetFile.absolutePath, path.join(renderMascotDir, filename));
+                return `./mascot-assets/${filename}`;
+              } catch {
+                return url;
+              }
+            }
+            return url;
+          };
+
+          const localizedMasterImage = await localizeMascotAsset(mascotProfile.master_image_url);
+          const localizedActions: MascotProfile["actions"] = {};
+          for (const [actKey, actSprite] of Object.entries(mascotProfile.actions)) {
+            if (actSprite) {
+              const localizedSpriteUrl = await localizeMascotAsset(actSprite.sprite_url);
+              localizedActions[actKey as MascotActionType] = {
+                ...actSprite,
+                sprite_url: localizedSpriteUrl || actSprite.sprite_url,
+                preview_url: localizedSpriteUrl || actSprite.preview_url,
+              };
+            }
+          }
+
+          mascotProfile = {
+            ...mascotProfile,
+            master_image_url: localizedMasterImage || mascotProfile.master_image_url,
+            actions: localizedActions,
+          };
+        }
+      }
       const preparedQuizRender = completeQuizV2
         ? await quizRenderer.prepare({
             quiz: completeQuizV2.quiz,
@@ -909,6 +955,8 @@ export class TaskManager extends EventEmitter {
               recentTrackIds: bgmHistory.map((entry) => entry.track_id),
               seed: episode.episode_id,
             },
+            mascot: mascotProfile,
+            mascotConfig: channel.mascot_config,
           })
         : null;
       const html = preparedQuizRender?.html ?? buildQuizComposition(episode.quiz_config, scenes, "./narration.wav", episode.narration_duration_seconds ?? undefined);

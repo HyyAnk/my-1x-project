@@ -22,6 +22,16 @@ import type {
   VoiceProfile,
   VoicePlan,
   QuizImageStyle,
+  MascotProfile,
+  MascotSpriteAction,
+  MascotActionType,
+  CreateMascotInput,
+  UpdateMascotInput,
+  GenerateMascotConceptInput,
+  GenerateMascotSpriteInput,
+  UploadMascotSpriteInput,
+  AssignMascotInput,
+  CalibrateMascotActionInput,
 } from "@studio/shared";
 
 export type BundleImage = {
@@ -143,6 +153,18 @@ export const api = {
   mergeNextScene: (channelId: string, episodeId: string, sceneNumber: number) => request<{ scenes: Scene[] }>(`/api/channels/${channelId}/episodes/${episodeId}/scenes/${sceneNumber}/merge-next`, { method: "POST", body: "{}" }),
   voiceRenderedMetrics: () => request<{ rendered_characters: number; rendered_duration_seconds: number; rendered_segments_count: number; rendered_episodes_count: number }>("/api/voice/rendered-metrics"),
   reconnectCodex: () => request<{ status: string; message?: string }>("/api/codex/reconnect", { method: "POST", body: "{}" }),
+  mascots: () => request<{ mascots: MascotProfile[] }>("/api/mascots"),
+  mascot: (id: string) => request<{ mascot: MascotProfile }>(`/api/mascots/${id}`),
+  createMascot: (body: CreateMascotInput) => request<{ mascot: MascotProfile }>("/api/mascots", { method: "POST", body: JSON.stringify(body) }),
+  updateMascot: (id: string, body: UpdateMascotInput) => request<{ mascot: MascotProfile }>(`/api/mascots/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteMascot: (id: string) => request<{ ok: true }>(`/api/mascots/${id}`, { method: "DELETE" }),
+  generateMascotConcept: (id: string, body?: GenerateMascotConceptInput) => request<{ mascot: MascotProfile; master_image_url: string; prompt_used: string }>(`/api/mascots/${id}/generate-concept`, { method: "POST", body: JSON.stringify(body ?? {}) }),
+  generateMascotSprite: (id: string, body: GenerateMascotSpriteInput) => request<{ mascot: MascotProfile; action_sprite: MascotSpriteAction; prompt_used: string }>(`/api/mascots/${id}/generate-sprite`, { method: "POST", body: JSON.stringify(body) }),
+  uploadMascotSprite: (id: string, body: UploadMascotSpriteInput) => request<{ mascot: MascotProfile; action_sprite: MascotSpriteAction }>(`/api/mascots/${id}/upload-sprite`, { method: "POST", body: JSON.stringify(body) }),
+  assignMascotToChannel: (channelId: string, body: AssignMascotInput) => request<{ channel: Channel }>(`/api/channels/${channelId}/mascot`, { method: "PUT", body: JSON.stringify(body) }),
+  exportMascotUrl: (id: string) => `/api/mascots/${id}/export`,
+  importMascotZip: (data: string) => request<{ mascot: MascotProfile }>("/api/mascots/import", { method: "POST", body: JSON.stringify({ data }) }),
+  calibrateMascotAction: (id: string, action: MascotActionType, body: CalibrateMascotActionInput) => request<{ mascot: MascotProfile; action: MascotSpriteAction }>(`/api/mascots/${id}/actions/${action}/calibrate`, { method: "PATCH", body: JSON.stringify(body) }),
 };
 
 export type RealtimeStatus = "connecting" | "connected" | "reconnecting";

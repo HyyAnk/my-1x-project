@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowClockwise, Broadcast, CaretDown, Check, CheckCircle, CircleNotch, FileText, Gear, House, Image, ListChecks, MoonStars, Plus, Queue, SpeakerHigh, Sparkle, Sun, TerminalWindow, VideoCamera, Wallet, WarningCircle, X } from "@phosphor-icons/react";
+import { ArrowClockwise, Broadcast, CaretDown, Check, CheckCircle, CircleNotch, FileText, Gear, House, Image, ListChecks, MoonStars, Plus, Queue, Smiley, SpeakerHigh, Sparkle, Sun, TerminalWindow, VideoCamera, Wallet, WarningCircle, X } from "@phosphor-icons/react";
 import type { Channel, CodexSettingsResponse, Task } from "@studio/shared";
 import type { GitInfo, Notice, Page, Theme } from "./types";
 import { formatTaskType } from "../lib/utils";
@@ -141,6 +141,7 @@ export function Sidebar({
   const items: Array<{ page: Page; label: string; icon: typeof House }> = [
     { page: "dashboard", label: "Dashboard", icon: House },
     { page: "channels", label: "Channels", icon: Broadcast },
+    { page: "mascots", label: "Mascot Studio", icon: Smiley },
     { page: "tasks", label: "Tasks", icon: ListChecks },
   ];
   return (

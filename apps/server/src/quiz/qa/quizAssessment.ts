@@ -1,4 +1,4 @@
-import { nowIso, QuizAssessmentSchema, type DirectorPlan, type QuizAssessment, type QuizAssetPlan, type QuizIssue, type QuizTimeline, type QuizV2, type VoicePlan } from "@studio/shared";
+import { nowIso, QuizAssessmentSchema, type ChannelMascotConfig, type DirectorPlan, type MascotProfile, type QuizAssessment, type QuizAssetPlan, type QuizIssue, type QuizTimeline, type QuizV2, type VoicePlan } from "@studio/shared";
 import { validateDirectorPlan } from "../director/validateDirectorPlan.js";
 import { validateQuizTimeline } from "../timeline/validateTimeline.js";
 import { assessQuizVisualLayout } from "./visualQa.js";
@@ -15,6 +15,8 @@ export type QuizAssessmentInput = {
   measuredAudio?: boolean;
   renderIntegrity?: boolean;
   staticIntervalThresholdSeconds?: number;
+  mascot?: MascotProfile | null;
+  mascotConfig?: ChannelMascotConfig | null;
 };
 
 export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
@@ -93,6 +95,44 @@ export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
           stage: "assets",
         });
       }
+    }
+  }
+  if (input.mascotConfig?.enabled && !input.mascot) {
+    add({
+      code: "mascot_unresolved",
+      severity: "warning",
+      message: "Channel has mascot enabled but no mascot profile could be loaded.",
+      next_action: "Verify channel mascot configuration in Mascot Studio.",
+      question_ids: [],
+      stage: "assets",
+    });
+  } else if (input.mascot && (input.mascotConfig?.enabled !== false)) {
+    const hasIdle = Boolean(input.mascot.actions.idle?.sprite_url || input.mascot.master_image_url);
+    if (!hasIdle) {
+      add({
+        code: "mascot_idle_missing",
+        severity: "warning",
+        message: `Mascot "${input.mascot.name}" has neither an idle sprite nor a master concept image.`,
+        next_action: "Generate master concept art or idle sprite sheet in Mascot Studio.",
+        question_ids: [],
+        stage: "assets",
+      });
+    }
+
+    const missingPoses: string[] = [];
+    if (!input.mascot.actions.thinking?.sprite_url) missingPoses.push("thinking");
+    if (!input.mascot.actions.celebrate?.sprite_url) missingPoses.push("celebrate");
+    if (!input.mascot.actions.point?.sprite_url) missingPoses.push("point");
+
+    if (missingPoses.length > 0) {
+      add({
+        code: "mascot_pose_incomplete",
+        severity: "warning",
+        message: `Mascot "${input.mascot.name}" is missing key animation poses (${missingPoses.join(", ")}). Fallback to idle will be used.`,
+        next_action: "Generate the missing action sprite sheets in Mascot Studio for best video engagement.",
+        question_ids: [],
+        stage: "assets",
+      });
     }
   }
   if (input.voicePlan && input.measuredAudio === false) add({ code: "voice_measurement_missing", severity: "blocker", message: "Voice segments exist but measured narration durations are missing.", next_action: "Synthesize narration through Chatterbox and persist measured WAV durations.", question_ids: [], stage: "voice" });

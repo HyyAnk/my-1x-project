@@ -29,12 +29,26 @@ import {
   ImageSettingsInputSchema,
   RemixQuestionsInputSchema,
   SaveHistorySettingsInputSchema,
+  CreateMascotInputSchema,
+  UpdateMascotInputSchema,
+  GenerateMascotConceptInputSchema,
+  GenerateMascotSpriteInputSchema,
+  UploadMascotSpriteInputSchema,
+  AssignMascotInputSchema,
+  CalibrateMascotActionInputSchema,
+  type MascotActionType,
   type AppConfig,
   type StorageInfo,
   type TaskEvent,
   type Task,
   type TaskType,
 } from "@studio/shared";
+import {
+  generateMascotConceptArt,
+  generateMascotActionSprite,
+  exportMascotPackage,
+  importMascotPackage,
+} from "./quiz/mascotService.js";
 import {
   loadConfig,
   loadStorageRoot,
@@ -463,11 +477,134 @@ export async function buildApp(rootDirectory = process.env.STUDIO_ROOT ?? proces
     const assigned = await repository.assignVoice(channelId, voice.voice_id);
     return { path: assigned.voice_reference_path, modified_at: new Date().toISOString(), voice, channel: assigned };
   });
+  server.put("/api/channels/:channelId/mascot", async (request) => {
+    const channelId = (request.params as { channelId: string }).channelId;
+    const { mascot_id: mascotId, config: mascotConfig } = AssignMascotInputSchema.parse(request.body);
+    const updatedChannel = await repository.assignMascotToChannel(channelId, mascotId, mascotConfig);
+    return { channel: updatedChannel };
+  });
   server.delete("/api/channels/:channelId", async (request) => {
     const params = request.params as { channelId: string };
     const query = request.query as { confirm?: string };
     await repository.deleteChannel(params.channelId, query.confirm === "true");
     return { ok: true };
+  });
+
+  // --- Mascot Hub & Studio Endpoints ---
+  server.get("/api/mascots", async () => ({ mascots: await repository.listMascots() }));
+
+  server.get("/api/mascots/:mascotId", async (request) => {
+    const mascotId = (request.params as { mascotId: string }).mascotId;
+    return { mascot: await repository.getMascot(mascotId) };
+  });
+
+  server.post("/api/mascots", async (request, reply) => {
+    const input = CreateMascotInputSchema.parse(request.body);
+    const mascot = await repository.saveMascot(input);
+    return reply.code(201).send({ mascot });
+  });
+
+  server.put("/api/mascots/:mascotId", async (request) => {
+    const mascotId = (request.params as { mascotId: string }).mascotId;
+    const input = UpdateMascotInputSchema.parse(request.body);
+    const current = await repository.getMascot(mascotId);
+    const updated = await repository.saveMascot({ ...current, ...input, id: mascotId });
+    return { mascot: updated };
+  });
+
+  server.delete("/api/mascots/:mascotId", async (request) => {
+    const mascotId = (request.params as { mascotId: string }).mascotId;
+    await repository.deleteMascot(mascotId);
+    return { ok: true };
+  });
+
+  server.get("/api/mascots/:mascotId/assets/:filename", async (request, reply) => {
+    const params = request.params as { mascotId: string; filename: string };
+    const file = await repository.getMascotAssetFile(params.mascotId, params.filename);
+    const ext = path.extname(params.filename).toLowerCase();
+    const contentType = ext === ".svg" ? "image/svg+xml" : ext === ".webp" ? "image/webp" : ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "image/png";
+    return reply.headers({ "content-type": contentType, "content-length": file.size, "cache-control": "public, max-age=86400" }).send(createReadStream(file.absolutePath));
+  });
+
+  server.post("/api/mascots/:mascotId/generate-concept", async (request) => {
+    const mascotId = (request.params as { mascotId: string }).mascotId;
+    const input = GenerateMascotConceptInputSchema.parse(request.body ?? {});
+    const mascot = await repository.getMascot(mascotId);
+    if (input.style) mascot.visual_style = input.style;
+    const result = await generateMascotConceptArt(repository, mascot, config.image_generation, input.prompt, logger);
+    const updatedMascot = await repository.getMascot(mascotId);
+    return { mascot: updatedMascot, ...result };
+  });
+
+  server.post("/api/mascots/:mascotId/generate-sprite", async (request) => {
+    const mascotId = (request.params as { mascotId: string }).mascotId;
+    const input = GenerateMascotSpriteInputSchema.parse(request.body);
+    const mascot = await repository.getMascot(mascotId);
+    const result = await generateMascotActionSprite(repository, mascot, input.action, config.image_generation, {
+      prompt: input.prompt,
+      frames_count: input.frames_count,
+      fps: input.fps,
+      loop: input.loop,
+    }, logger);
+    const updatedMascot = await repository.getMascot(mascotId);
+    return { mascot: updatedMascot, ...result };
+  });
+
+  server.post("/api/mascots/:mascotId/upload-sprite", async (request) => {
+    const mascotId = (request.params as { mascotId: string }).mascotId;
+    const input = UploadMascotSpriteInputSchema.parse(request.body);
+    const mascot = await repository.getMascot(mascotId);
+    const base64Data = input.data.replace(/^data:image\/[^;]+;base64,/i, "");
+    const buffer = Buffer.from(base64Data, "base64");
+    const filename = `sprite_${input.action}_${Date.now()}.png`;
+    const assetUrl = await repository.saveMascotAsset(mascotId, filename, buffer);
+
+    const actionSprite = {
+      action: input.action,
+      sprite_url: assetUrl,
+      frames_count: input.frames_count,
+      fps: input.fps,
+      loop: input.loop,
+      frame_width: input.frame_width,
+      frame_height: input.frame_height,
+      preview_url: assetUrl,
+    };
+
+    const updated = await repository.saveMascot({
+      ...mascot,
+      actions: {
+        ...mascot.actions,
+        [input.action]: actionSprite,
+      },
+      updated_at: new Date().toISOString(),
+    });
+
+    return { mascot: updated, action_sprite: actionSprite };
+  });
+  server.get("/api/mascots/:mascotId/export", async (request, reply) => {
+    const mascotId = (request.params as { mascotId: string }).mascotId;
+    const { zipBuffer, filename } = await exportMascotPackage(repository, mascotId);
+    return reply
+      .header("content-type", "application/zip")
+      .header("content-disposition", `attachment; filename="${filename}"`)
+      .header("content-length", zipBuffer.length)
+      .send(zipBuffer);
+  });
+  server.post("/api/mascots/import", async (request, reply) => {
+    const body = request.body as { data: string };
+    if (!body || !body.data) {
+      return reply.code(400).send({ message: "Missing base64 data for import" });
+    }
+    const base64Data = body.data.replace(/^data:[^;]+;base64,/i, "");
+    const zipBuffer = Buffer.from(base64Data, "base64");
+    const mascot = await importMascotPackage(repository, zipBuffer);
+    return reply.code(201).send({ mascot });
+  });
+  server.patch("/api/mascots/:mascotId/actions/:action/calibrate", async (request) => {
+    const { mascotId, action } = request.params as { mascotId: string; action: MascotActionType };
+    const input = CalibrateMascotActionInputSchema.parse(request.body);
+    const updated = await repository.calibrateMascotAction(mascotId, action, input);
+    return { mascot: updated, action: updated.actions[action] };
   });
   server.get("/api/channels/:channelId/dna", async (request) => repository.getChannelDna((request.params as { channelId: string }).channelId));
   server.put("/api/channels/:channelId/dna", async (request) => {

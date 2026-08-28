@@ -1,6 +1,6 @@
-import { Archive, ArrowLeft, ArrowUpRight, CaretDown, CheckCircle, CircleNotch, Clock, Eye, FileText, FilmSlate, FloppyDisk, Lightbulb, MagnifyingGlass, Palette, PencilSimple, Plus, Play, Sparkle, Trash, VideoCamera, X } from "@phosphor-icons/react";
+import { Archive, ArrowLeft, ArrowUpRight, CaretDown, CheckCircle, CircleNotch, Clock, Eye, FileText, FilmSlate, FloppyDisk, Lightbulb, MagnifyingGlass, Palette, PencilSimple, Plus, Play, Smiley, Sparkle, Trash, VideoCamera, X } from "@phosphor-icons/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ALL_QUIZ_IMAGE_STYLES, QUIZ_IMAGE_STYLE_LABELS, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT, QUIZ_SECONDS_PER_QUESTION, type Channel, type Episode, type QuizImageStyle, type Task, type TopicCandidate } from "@studio/shared";
+import { ALL_QUIZ_IMAGE_STYLES, QUIZ_IMAGE_STYLE_LABELS, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT, QUIZ_SECONDS_PER_QUESTION, type Channel, type ChannelMascotConfig, type Episode, type MascotProfile, type QuizImageStyle, type Task, type TopicCandidate } from "@studio/shared";
 import { api } from "../api";
 import { formatDate, isTaskActive, isTaskTerminal, latestTask } from "../lib/utils";
 import { EmptyState } from "./EmptyState";
@@ -769,8 +769,43 @@ export function ChannelDetail({
   const topicTaskActive = Boolean(topicTask && isTaskActive(topicTask));
   const [topicClock, setTopicClock] = useState(() => Date.now());
   const [topicHint, setTopicHint] = useState("");
+  const [mascotsList, setMascotsList] = useState<MascotProfile[]>([]);
+  const [changingMascot, setChangingMascot] = useState(false);
   const observedTerminalTasks = useRef(new Set<string>());
   const loadVersion = useRef(0);
+
+  useEffect(() => {
+    void api.mascots().then((res) => setMascotsList(res.mascots)).catch(() => undefined);
+  }, []);
+
+  const handleMascotChange = async (mascotId: string | null) => {
+    try {
+      setChangingMascot(true);
+      await api.assignMascotToChannel(channel.channel_id, { mascot_id: mascotId });
+      onNotice({ tone: "good", message: mascotId ? "Đã gán Mascot cho kênh" : "Đã hủy gán Mascot" });
+      await onRefresh();
+    } catch (err) {
+      onNotice({ tone: "bad", message: err instanceof Error ? err.message : "Lỗi gán mascot" });
+    } finally {
+      setChangingMascot(false);
+    }
+  };
+
+  const handleMascotConfigUpdate = async (updates: Partial<ChannelMascotConfig>) => {
+    try {
+      setChangingMascot(true);
+      await api.assignMascotToChannel(channel.channel_id, {
+        mascot_id: channel.mascot_id,
+        config: updates,
+      });
+      onNotice({ tone: "good", message: "Đã cập nhật cấu hình Mascot cho kênh" });
+      await onRefresh();
+    } catch (err) {
+      onNotice({ tone: "bad", message: err instanceof Error ? err.message : "Lỗi cập nhật cấu hình mascot" });
+    } finally {
+      setChangingMascot(false);
+    }
+  };
 
   const load = useCallback(async (showLoading = false) => {
     const version = ++loadVersion.current;
@@ -884,6 +919,23 @@ export function ChannelDetail({
             {channel.description ? <p className="detail-copy">{channel.description}</p> : null}
           </div>
           <div className="detail-actions">
+            <div className="channel-mascot-quick-select" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+              <Smiley size={18} weight={channel.mascot_id ? "fill" : "regular"} style={{ color: channel.mascot_id ? "var(--accent)" : "var(--muted)" }} />
+              <select
+                value={channel.mascot_id || ""}
+                disabled={changingMascot}
+                style={{ fontSize: "12px", padding: "4px 8px", borderRadius: "6px", background: "var(--surface-hover)", border: "1px solid var(--line)" }}
+                onChange={(e) => void handleMascotChange(e.target.value || null)}
+                title="Gán Mascot cho Kênh này"
+              >
+                <option value="">🚫 Không dùng Mascot</option>
+                {mascotsList.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    🎨 {m.name}
+                  </option>
+                ))}
+              </select>
+            </div>
             <StatusBadge status={channel.status} />
             <button className="quiet-button" onClick={() => void archive()}>
               <Archive size={16} />
@@ -1259,6 +1311,111 @@ export function ChannelDetail({
                 <StatusLine label="Language" value={channel.language || "English"} />
                 <StatusLine label="Market" value={channel.market || "Global"} />
               </div>
+            </section>
+
+            {/* Mascot & Video Host Persona Branding Panel */}
+            <section className="panel mascot-channel-branding-panel" style={{ gridColumn: "1 / -1" }}>
+              <div className="panel-heading">
+                <div>
+                  <p className="eyebrow">Visual Persona & Host</p>
+                  <h2>Mascot Video Host</h2>
+                </div>
+                <div className="panel-actions">
+                  <select
+                    value={channel.mascot_id || ""}
+                    disabled={changingMascot}
+                    style={{ fontSize: "12px", padding: "6px 12px", borderRadius: "6px", background: "var(--surface-hover)", border: "1px solid var(--line)" }}
+                    onChange={(e) => void handleMascotChange(e.target.value || null)}
+                    title="Chọn Mascot cho Kênh"
+                  >
+                    <option value="">🚫 Không dùng Mascot</option>
+                    {mascotsList.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        🎨 {m.name} ({Object.values(m.actions).filter((a) => a?.sprite_url).length}/7 Poses)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {channel.mascot_id ? (() => {
+                const assignedMascot = mascotsList.find((m) => m.id === channel.mascot_id);
+                const cfg = channel.mascot_config || { enabled: true, position: "bottom_left", scale: 1.0, sfx_enabled: true };
+
+                return (
+                  <div className="mascot-branding-content">
+                    <div className="mascot-branding-preview">
+                      {assignedMascot?.master_image_url ? (
+                        <img src={assignedMascot.master_image_url} alt={assignedMascot.name} className="mascot-branding-img" />
+                      ) : (
+                        <div className="mascot-branding-placeholder">
+                          <Smiley size={48} style={{ color: assignedMascot?.color_theme || "var(--accent)" }} />
+                        </div>
+                      )}
+                      <div className="mascot-branding-info">
+                        <h3>{assignedMascot?.name || "Mascot"}</h3>
+                        <p>{assignedMascot?.description || assignedMascot?.master_prompt || "Linh vật đại diện video Quiz."}</p>
+                        <span className="action-ready-badge" style={{ display: "inline-block", marginTop: "4px" }}>
+                          ✨ {Object.values(assignedMascot?.actions || {}).filter((a) => a?.sprite_url).length}/7 Poses Sẵn Sàng
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mascot-branding-controls">
+                      <div className="form-group">
+                        <label>Vị trí đứng trên Video (Stage Anchor)</label>
+                        <div className="position-toggle-row">
+                          <button
+                            type="button"
+                            className={`pos-toggle-btn ${cfg.position === "bottom_left" ? "is-selected" : ""}`}
+                            disabled={changingMascot}
+                            onClick={() => void handleMascotConfigUpdate({ position: "bottom_left" })}
+                          >
+                            👈 Góc Trái (Bottom-Left)
+                          </button>
+                          <button
+                            type="button"
+                            className={`pos-toggle-btn ${cfg.position === "bottom_right" ? "is-selected" : ""}`}
+                            disabled={changingMascot}
+                            onClick={() => void handleMascotConfigUpdate({ position: "bottom_right" })}
+                          >
+                            👉 Góc Phải (Bottom-Right)
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="form-group" style={{ marginTop: "10px" }}>
+                        <label>Tỉ lệ Kích thước (Scale): {(cfg.scale || 1.0).toFixed(2)}x</label>
+                        <input
+                          type="range"
+                          min={0.7}
+                          max={1.3}
+                          step={0.05}
+                          value={cfg.scale || 1.0}
+                          disabled={changingMascot}
+                          onChange={(e) => void handleMascotConfigUpdate({ scale: Number(e.target.value) })}
+                        />
+                      </div>
+
+                      <div className="form-group" style={{ marginTop: "10px" }}>
+                        <label className="checkbox-row" style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+                          <input
+                            type="checkbox"
+                            checked={cfg.sfx_enabled !== false}
+                            disabled={changingMascot}
+                            onChange={(e) => void handleMascotConfigUpdate({ sfx_enabled: e.target.checked })}
+                          />
+                          <span>🔊 Bật âm thanh phản ứng (SFX Audio Reactions) khi công bố kết quả</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })() : (
+                <div style={{ padding: "16px", color: "var(--muted)", fontSize: "13px" }}>
+                  Kênh này hiện chưa gán Mascot. Hãy chọn một linh vật ở menu phía trên để xuất hiện trong video Quiz!
+                </div>
+              )}
             </section>
           </div>
         ) : null}

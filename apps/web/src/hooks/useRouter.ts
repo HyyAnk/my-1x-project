@@ -59,6 +59,17 @@ export function parseHash(hash: string): RouteState {
     };
   }
 
+  if (root === "mascots") {
+    return {
+      page: "mascots",
+      channelId: null,
+      episodeId: null,
+      tab,
+      group,
+      rawHash: hash,
+    };
+  }
+
   if (root === "channels") {
     const channelId = segments[1] ? decodeURIComponent(segments[1]) : null;
     const isEpisodesSegment = segments[2] === "episodes";

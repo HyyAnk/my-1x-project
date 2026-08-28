@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import type { DirectorPlan, QuizConfig, QuizTimeline, QuizV2 } from "@studio/shared";
+import type { ChannelMascotConfig, DirectorPlan, MascotProfile, QuizConfig, QuizTimeline, QuizV2 } from "@studio/shared";
 import { getQuizVisualTemplate } from "../visual/registry.js";
 import { ambientPhaseSeconds, motionCssClass, textLayout, visualAnswerState } from "../visual/candyArcade.js";
 import type { QuizTemplateScene } from "../visual/types.js";
@@ -17,6 +17,8 @@ export type CandyArcadeCompositionInput = {
   narrationDurationSeconds: number;
   assets?: Record<string, string>;
   bgmOptions?: ResolveBgmOptions;
+  mascot?: MascotProfile | null;
+  mascotConfig?: ChannelMascotConfig | null;
 };
 
 export type CandyArcadeCompositionBundle = {
@@ -55,7 +57,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   const eventAt = (questionId: string, type: string, fallback: number) => events.find((event) => event.question_id === questionId && event.type === type)?.at_seconds ?? fallback;
   const eventOf = (questionId: string, type: string) => events.find((event) => event.question_id === questionId && event.type === type);
   const firstStart = input.quiz.questions[0] ? eventAt(input.quiz.questions[0].id, "question.enter", 0) : 0;
-  const clips: string[] = [introClip(firstStart, input.quiz.questions.length, copy)];
+  const clips: string[] = [introClip(firstStart, input.quiz.questions.length, copy, input.mascot, input.mascotConfig)];
   const outroStart = events.find((event) => event.type === "narration.segment" && event.segment_id === "outro")?.at_seconds;
   let previousPaletteId: string | undefined;
 
@@ -82,10 +84,10 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     const rewardStart = eventAt(question.id, "reward.play", revealStart + .8);
     const transition = eventOf(question.id, "transition.start");
     const end = Math.min(duration, nextQuestion ? eventAt(nextQuestion.id, "question.enter", duration) : transition?.at_seconds ?? outroStart ?? duration);
-    if (end - start > .04) clips.push(questionClip({ start, choicesStart, thinkingStart, revealStart, rewardStart, end, question, questionIndex: index, count: input.quiz.questions.length, visual, copy, assets: input.assets ?? {}, isFinal: index === input.quiz.questions.length - 1 }));
+    if (end - start > .04) clips.push(questionClip({ start, choicesStart, thinkingStart, revealStart, rewardStart, end, question, questionIndex: index, count: input.quiz.questions.length, visual, copy, assets: input.assets ?? {}, isFinal: index === input.quiz.questions.length - 1, mascot: input.mascot, mascotConfig: input.mascotConfig }));
     if (transition) clips.push(transitionClip({ start: transition.at_seconds, end: transition.at_seconds + transition.duration_seconds, visual, nextPalette: nextQuestion ? template.resolveScene({ question: nextQuestion, questionIndex: index + 1, totalQuestions: input.quiz.questions.length, archetype: input.director.beats.find((candidate) => candidate.question_id === nextQuestion.id)?.archetype ?? "text_multiple_choice", requestedPalette: input.director.beats.find((candidate) => candidate.question_id === nextQuestion.id)?.palette_id ?? "auto", requestedLayout: "auto", requestedMotion: "auto", requestedTransition: "auto", previousPaletteId: visual.palette.id }).palette : visual.palette }));
   });
-  if (typeof outroStart === "number" && outroStart < duration - .04) clips.push(outroClip(outroStart, duration, input.quiz.questions.length, copy));
+  if (typeof outroStart === "number" && outroStart < duration - .04) clips.push(outroClip(outroStart, duration, input.quiz.questions.length, copy, input.mascot, input.mascotConfig));
 
   const scenes = clips.filter(Boolean).map(toSubComposition);
   const audioSrc = source(input.audioPath);
@@ -94,7 +96,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     seed: input.quiz.episode_id,
     ...input.bgmOptions,
   });
-  const sfxClips = buildSfxClips(events, input.assets);
+  const sfxClips = buildSfxClips(events, input.assets, input.mascot, input.mascotConfig);
   const audioTags = [
     `<audio id="quiz-narration" class="clip" data-start="0" data-duration="${narrationDuration.toFixed(3)}" data-track-index="2" data-volume="1" src="${audioSrc}"></audio>`,
     ...bgmClips,
@@ -140,33 +142,104 @@ function requiredAttribute(tag: string, name: string): string {
 function rootRelativeSubCompositionAssets(html: string): string {
   return html
     .replace(/\b(src|poster)="\.\//g, "$1=\"")
-    .replace(/url\("\.\//g, 'url("');
+    .replace(/url\((['"]?)\.\//g, 'url($1');
 }
 
 function subCompositionMount(scene: SubComposition): string {
   return `<div id="${scene.id}-mount" data-composition-id="${scene.id}" data-composition-src="compositions/${scene.id}.html" data-start="${scene.start}" data-duration="${scene.duration}" data-track-index="${scene.trackIndex}" data-no-timeline></div>`;
 }
 
-function introClip(end: number, count: number, copy: Copy): string {
+function mascotElement(mascot: MascotProfile | null | undefined, config: ChannelMascotConfig | null | undefined, phase: "intro" | "question" | "outro"): string {
+  if (!mascot || (config && !config.enabled)) return "";
+  const position = config?.position || "bottom_left";
+  const scale = config?.scale || 1.0;
+
+  const waveSprite = mascot.actions.wave?.sprite_url;
+  const idleSprite = mascot.actions.idle?.sprite_url || mascot.master_image_url;
+  const thinkingSprite = mascot.actions.thinking?.sprite_url || idleSprite;
+  const celebrateSprite = mascot.actions.celebrate?.sprite_url || waveSprite || idleSprite;
+  const pointSprite = mascot.actions.point?.sprite_url || idleSprite;
+  const outroSprite = mascot.actions.outro?.sprite_url || waveSprite || idleSprite;
+
+  if (phase === "intro") {
+    const spriteToUse = waveSprite || mascot.master_image_url;
+    const frames = mascot.actions.wave?.frames_count || 1;
+    const fps = mascot.actions.wave?.fps || 8;
+    const offX = mascot.actions.wave?.offset_x || 0;
+    const offY = mascot.actions.wave?.offset_y || 0;
+    return `<div class="candy-mascot-container mascot-intro anchor-bottom_right" style="--mascot-scale:${scale};--mascot-frames:${frames};--mascot-fps:${fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(spriteToUse || ""))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
+  }
+
+  if (phase === "outro") {
+    const spriteToUse = outroSprite || waveSprite || mascot.master_image_url;
+    const frames = (mascot.actions.outro || mascot.actions.wave)?.frames_count || 1;
+    const fps = (mascot.actions.outro || mascot.actions.wave)?.fps || 8;
+    const offX = (mascot.actions.outro || mascot.actions.wave)?.offset_x || 0;
+    const offY = (mascot.actions.outro || mascot.actions.wave)?.offset_y || 0;
+    return `<div class="candy-mascot-container mascot-outro anchor-bottom_right" style="--mascot-scale:${scale};--mascot-frames:${frames};--mascot-fps:${fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(spriteToUse || ""))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
+  }
+
+  const idleUrl = idleSprite ? source(idleSprite) : "";
+  const thinkUrl = thinkingSprite ? source(thinkingSprite) : idleUrl;
+  const celebUrl = celebrateSprite ? source(celebrateSprite) : idleUrl;
+  const pointUrl = pointSprite ? source(pointSprite) : idleUrl;
+
+  const idleFrames = mascot.actions.idle?.frames_count || 1;
+  const thinkFrames = mascot.actions.thinking?.frames_count || 1;
+  const celebFrames = mascot.actions.celebrate?.frames_count || 1;
+  const pointFrames = mascot.actions.point?.frames_count || 1;
+
+  const idleOffX = mascot.actions.idle?.offset_x || 0;
+  const idleOffY = mascot.actions.idle?.offset_y || 0;
+  const thinkOffX = mascot.actions.thinking?.offset_x || 0;
+  const thinkOffY = mascot.actions.thinking?.offset_y || 0;
+  const celebOffX = mascot.actions.celebrate?.offset_x || 0;
+  const celebOffY = mascot.actions.celebrate?.offset_y || 0;
+  const pointOffX = mascot.actions.point?.offset_x || 0;
+  const pointOffY = mascot.actions.point?.offset_y || 0;
+
+  const oopsSprite = mascot.actions.oops?.sprite_url;
+  const oopsUrl = oopsSprite ? source(oopsSprite) : "";
+  const oopsFrames = mascot.actions.oops?.frames_count || 1;
+  const oopsOffX = mascot.actions.oops?.offset_x || 0;
+  const oopsOffY = mascot.actions.oops?.offset_y || 0;
+
+  return `<div class="candy-mascot-container mascot-stage anchor-${position}" style="--mascot-scale:${scale};--mascot-color:${mascot.color_theme || "#06b6d4"};" data-layout-allow-overflow data-layout-ignore aria-hidden="true">
+    <div class="mascot-state-layer state-idle" style="--sprite-url:url('${escAttr(idleUrl)}');--mascot-frames:${idleFrames};--mascot-fps:${mascot.actions.idle?.fps || 6};--action-offset-x:${idleOffX}px;--action-offset-y:${idleOffY}px;"><div class="candy-mascot-sprite"></div></div>
+    <div class="mascot-state-layer state-thinking" style="--sprite-url:url('${escAttr(thinkUrl)}');--mascot-frames:${thinkFrames};--mascot-fps:${mascot.actions.thinking?.fps || 8};--action-offset-x:${thinkOffX}px;--action-offset-y:${thinkOffY}px;"><div class="candy-mascot-sprite"></div></div>
+    <div class="mascot-state-layer state-celebrate" style="--sprite-url:url('${escAttr(celebUrl)}');--mascot-frames:${celebFrames};--mascot-fps:${mascot.actions.celebrate?.fps || 10};--action-offset-x:${celebOffX}px;--action-offset-y:${celebOffY}px;"><div class="candy-mascot-sprite"></div></div>
+    ${oopsUrl ? `<div class="mascot-state-layer state-oops" style="--sprite-url:url('${escAttr(oopsUrl)}');--mascot-frames:${oopsFrames};--mascot-fps:${mascot.actions.oops?.fps || 8};--action-offset-x:${oopsOffX}px;--action-offset-y:${oopsOffY}px;"><div class="candy-mascot-sprite"></div></div>` : ""}
+    <div class="mascot-state-layer state-point" style="--sprite-url:url('${escAttr(pointUrl)}');--mascot-frames:${pointFrames};--mascot-fps:${mascot.actions.point?.fps || 8};--action-offset-x:${pointOffX}px;--action-offset-y:${pointOffY}px;"><div class="candy-mascot-sprite"></div></div>
+  </div>`;
+}
+
+function introClip(end: number, count: number, copy: Copy, mascot?: MascotProfile | null, mascotConfig?: ChannelMascotConfig | null): string {
   if (end < .08) return "";
-  return `<section id="candy-intro" class="clip candy-scene candy-intro" data-start="0" data-duration="${end.toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="intro-dot dot-a"></div><div class="intro-dot dot-b"></div><div class="intro-card"><span>QUIZ TIME</span><h1>${esc(copy.ready)}</h1><p>${count} ${esc(copy.questions(count))}</p><div class="intro-stars" data-layout-ignore aria-hidden="true">✦&nbsp;&nbsp;★&nbsp;&nbsp;✦</div></div><div class="brand-mascot mascot-wave" data-layout-ignore aria-hidden="true">✦</div></section>`;
+  const mascotHtml = mascotElement(mascot, mascotConfig, "intro");
+  const fallbackMascot = mascotHtml ? "" : `<div class="brand-mascot mascot-wave" data-layout-ignore aria-hidden="true">✦</div>`;
+  return `<section id="candy-intro" class="clip candy-scene candy-intro" data-start="0" data-duration="${end.toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="intro-dot dot-a"></div><div class="intro-dot dot-b"></div><div class="intro-card"><span>QUIZ TIME</span><h1>${esc(copy.ready)}</h1><p>${count} ${esc(copy.questions(count))}</p><div class="intro-stars" data-layout-ignore aria-hidden="true">✦&nbsp;&nbsp;★&nbsp;&nbsp;✦</div></div>${mascotHtml || fallbackMascot}</section>`;
 }
 
-function outroClip(start: number, end: number, count: number, copy: Copy): string {
-  return `<section id="candy-outro" class="clip candy-scene candy-outro" data-start="${start.toFixed(3)}" data-duration="${Math.max(.04, end - start).toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="outro-blob blob-a"></div><div class="outro-blob blob-b"></div><div class="outro-card"><span>${esc(copy.scorePrompt)}</span><h1>${esc(copy.playAgain)}</h1><p>${esc(copy.exploreMore)}</p><div class="outro-cta-badges"><span class="badge-cta badge-comment">💬 ${esc(copy.ctaComment)}</span><span class="badge-cta badge-like">👍 ${esc(copy.ctaLike)}</span><span class="badge-cta badge-sub">🔔 ${esc(copy.ctaSubscribe)}</span></div><div class="outro-stars" data-layout-ignore aria-hidden="true">★&nbsp;&nbsp;✦&nbsp;&nbsp;★</div></div></section>`;
+function outroClip(start: number, end: number, count: number, copy: Copy, mascot?: MascotProfile | null, mascotConfig?: ChannelMascotConfig | null): string {
+  const mascotHtml = mascotElement(mascot, mascotConfig, "outro");
+  return `<section id="candy-outro" class="clip candy-scene candy-outro" data-start="${start.toFixed(3)}" data-duration="${Math.max(.04, end - start).toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="outro-blob blob-a"></div><div class="outro-blob blob-b"></div><div class="outro-card"><span>${esc(copy.scorePrompt)}</span><h1>${esc(copy.playAgain)}</h1><p>${esc(copy.exploreMore)}</p><div class="outro-cta-badges"><span class="badge-cta badge-comment">💬 ${esc(copy.ctaComment)}</span><span class="badge-cta badge-like">👍 ${esc(copy.ctaLike)}</span><span class="badge-cta badge-sub">🔔 ${esc(copy.ctaSubscribe)}</span></div><div class="outro-stars" data-layout-ignore aria-hidden="true">★&nbsp;&nbsp;✦&nbsp;&nbsp;★</div></div>${mascotHtml}</section>`;
 }
 
-function questionClip(input: { start: number; choicesStart: number; thinkingStart: number; revealStart: number; rewardStart: number; end: number; question: QuizV2["questions"][number]; questionIndex: number; count: number; visual: QuizTemplateScene; copy: Copy; assets: Record<string, string>; isFinal: boolean }): string {
+function questionClip(input: { start: number; choicesStart: number; thinkingStart: number; revealStart: number; rewardStart: number; end: number; question: QuizV2["questions"][number]; questionIndex: number; count: number; visual: QuizTemplateScene; copy: Copy; assets: Record<string, string>; isFinal: boolean; mascot?: MascotProfile | null; mascotConfig?: ChannelMascotConfig | null }): string {
   const { question, visual } = input;
   const questionLayout = textLayout(question.question, "question");
   const answer = question.choices.find((choice) => choice.id === question.correct_choice_id);
   const config = styleAttributes(visual, questionLayout, input.start, input.choicesStart, input.thinkingStart, input.revealStart, input.rewardStart, input.end);
-  const classNames = ["clip", "candy-scene", "quiz-question-clip", `layout-${visual.layoutId}`, `archetype-${question.format}`, motionCssClass(visual.motionId), input.isFinal ? "is-final-scene" : ""].filter(Boolean).join(" ");
+  const hasMascot = Boolean(input.mascot && (!input.mascotConfig || input.mascotConfig.enabled));
+  const mascotPos = input.mascotConfig?.position || "bottom_left";
+  const mascotClass = hasMascot ? `has-mascot has-mascot-${mascotPos === "bottom_right" ? "right" : "left"}` : "";
+  const classNames = ["clip", "candy-scene", "quiz-question-clip", `layout-${visual.layoutId}`, `archetype-${question.format}`, motionCssClass(visual.motionId), input.isFinal ? "is-final-scene" : "", mascotClass].filter(Boolean).join(" ");
   const questionAsset = assetFor(input.assets, `asset-${question.id}-hero`, `asset-${question.id}-question`);
   const answers = answerCards(question, input.assets);
   const hero = visual.layoutId === "visual_choices_three" ? "" : imageCard(questionAsset, question.visual_opportunity || question.question, "hero-image", question.number);
   const visualAnswers = visual.layoutId === "visual_choices_three" ? visualAnswerCards(question, input.assets, input.questionIndex) : "";
-  const body = `<div class="game-stage" data-layout-allow-overflow><div class="question-title question-tier-${questionLayout.tier}" data-layout-allow-occlusion><div class="question-card-inner"><div class="q-badge-star" data-layout-ignore aria-hidden="true"><span class="star-shape">★</span><i class="star-sparkle star-sp-1">✦</i><i class="star-sparkle star-sp-2">•</i></div><div class="q-decor-corner q-decor-top-right" data-layout-ignore aria-hidden="true"><span class="corner-gem">✦</span></div><div class="q-decor-corner q-decor-bottom-right" data-layout-ignore aria-hidden="true"><span class="corner-petal">✿</span></div><h1>${highlightQuestionMarkup(question.question, question.visual_opportunity)}</h1></div></div>${hero}${visualAnswers || answers}<div class="phase-region">${thinkingBar({ clipStart: input.start, revealStart: input.revealStart })}${revealPanel(input)}</div></div>`;
+  const mascotHtml = mascotElement(input.mascot, input.mascotConfig, "question");
+  const body = `<div class="game-stage" data-layout-allow-overflow><div class="question-title question-tier-${questionLayout.tier}" data-layout-allow-occlusion><div class="question-card-inner"><div class="q-badge-star" data-layout-ignore aria-hidden="true"><span class="star-shape">★</span><i class="star-sparkle star-sp-1">✦</i><i class="star-sparkle star-sp-2">•</i></div><div class="q-decor-corner q-decor-top-right" data-layout-ignore aria-hidden="true"><span class="corner-gem">✦</span></div><div class="q-decor-corner q-decor-bottom-right" data-layout-ignore aria-hidden="true"><span class="corner-petal">✿</span></div><h1>${highlightQuestionMarkup(question.question, question.visual_opportunity)}</h1></div></div>${hero}${visualAnswers || answers}<div class="phase-region">${thinkingBar({ clipStart: input.start, revealStart: input.revealStart })}${revealPanel(input)}</div>${mascotHtml}</div>`;
   return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(.04, input.end - input.start).toFixed(3)}" data-track-index="0"><div class="bg-gradient"></div><div class="bg-rays"></div><div class="bg-pattern pattern-circles"></div><div class="bg-pattern pattern-sprinkles"></div><div class="bg-shape shape-a" data-layout-allow-overflow></div>${sceneDecorations(input.questionIndex)}<header class="game-header" data-layout-allow-occlusion><div class="hanging-wood-sign" data-layout-allow-occlusion><div class="hanging-ropes" aria-hidden="true"><span class="wood-rope rope-left"></span><span class="wood-rope rope-right"></span></div><div class="wood-sign-plank"><span class="rope-bracket bracket-left" aria-hidden="true"></span><span class="rope-bracket bracket-right" aria-hidden="true"></span><div class="wood-inner-panel"><span class="question-number-val">${question.number}</span></div><span class="wood-sign-star star-tl" data-layout-ignore aria-hidden="true">✦</span><span class="wood-sign-star star-br" data-layout-ignore aria-hidden="true">★</span></div></div></header>${body}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
 }
 
@@ -340,8 +413,10 @@ function buildBgmClips(duration: number, assets?: Record<string, string>, outroS
   });
 }
 
-function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, string>): string[] {
+function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, string>, mascot?: MascotProfile | null, mascotConfig?: ChannelMascotConfig | null): string[] {
   const clips: string[] = [];
+  const sfxEnabled = mascotConfig?.sfx_enabled !== false;
+  const sfxVolume = mascotConfig?.sfx_volume || 1.0;
 
   for (const event of events) {
     const timeMs = Math.round(event.at_seconds * 1000);
@@ -351,6 +426,9 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
     if (event.type === "choices.enter") {
       const src = sfxSource("ui_pop.wav", assets);
       clips.push(`<audio id="${id}" class="clip sfx-clip" data-start="${event.at_seconds.toFixed(3)}" data-duration="0.120" data-track-index="3" data-volume="0.55" src="${src}"></audio>`);
+    } else if (event.type === "countdown.start" && mascot && sfxEnabled) {
+      const src = sfxSource("ui_soft.wav", assets);
+      clips.push(`<audio id="mascot-think-${timeMs}" class="clip sfx-clip mascot-sfx" data-start="${event.at_seconds.toFixed(3)}" data-duration="0.250" data-track-index="3" data-volume="${(0.50 * sfxVolume).toFixed(2)}" src="${src}"></audio>`);
     } else if (event.type === "countdown.tick") {
       const isFinalTick = event.payload?.value === 1;
       const filename = isFinalTick ? "countdown_final.wav" : "countdown_tick.wav";
@@ -358,6 +436,9 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
       const vol = isFinalTick ? "0.60" : "0.45";
       const src = sfxSource(filename, assets);
       clips.push(`<audio id="${id}" class="clip sfx-clip" data-start="${event.at_seconds.toFixed(3)}" data-duration="${dur}" data-track-index="3" data-volume="${vol}" src="${src}"></audio>`);
+    } else if (event.type === "answer.reveal" && mascot && sfxEnabled) {
+      const src = sfxSource("streak.wav", assets);
+      clips.push(`<audio id="mascot-react-${timeMs}" class="clip sfx-clip mascot-sfx" data-start="${event.at_seconds.toFixed(3)}" data-duration="0.600" data-track-index="3" data-volume="${(0.65 * sfxVolume).toFixed(2)}" src="${src}"></audio>`);
     } else if (event.type === "reward.play") {
       const isBig = event.payload?.intensity === "big";
       const filename = isBig ? "correct_triumph.wav" : "correct_ding.wav";
@@ -370,6 +451,9 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
       const dur = isLightning ? "0.700" : "0.650";
       const src = sfxSource(filename, assets);
       clips.push(`<audio id="${id}" class="clip sfx-clip" data-start="${event.at_seconds.toFixed(3)}" data-duration="${dur}" data-track-index="3" data-volume="0.60" src="${src}"></audio>`);
+    } else if ((event.type === "fact.enter" || event.type === "mascot.state") && mascot && sfxEnabled) {
+      const src = sfxSource("streak.wav", assets);
+      clips.push(`<audio id="mascot-point-${timeMs}" class="clip sfx-clip mascot-sfx" data-start="${event.at_seconds.toFixed(3)}" data-duration="0.800" data-track-index="3" data-volume="${(0.60 * sfxVolume).toFixed(2)}" src="${src}"></audio>`);
     }
   }
 
@@ -722,6 +806,24 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 @keyframes splash-brand-hit { 0%, 32% { opacity: 0; transform: translate(-50%,-50%) scale(0) rotate(-22deg); } 53% { opacity: 1; transform: translate(-50%,-50%) scale(1.16) rotate(8deg); } 67% { opacity: 1; transform: translate(-50%,-50%) scale(1) rotate(0); } 100% { opacity: 0; transform: translate(-50%,-50%) scale(.92) rotate(0); } }
 @keyframes splash-particle { 0% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 0; transform: translate(0,0) scale(.4); } }
 @keyframes splash-release { 0%, 55% { opacity: 0; transform: scale(1.08); } 72% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(.98); } }
+@keyframes phase-exit { to { opacity: 0; } }
+.candy-mascot-container { position: absolute; z-index: 7; pointer-events: none; transform-origin: bottom center; transform: scale(var(--mascot-scale, 1)); }
+.candy-mascot-container.anchor-bottom_left { bottom: 18px; left: 32px; }
+.candy-mascot-container.anchor-bottom_right { bottom: 18px; right: 32px; }
+.has-mascot-left .phase-region > .thinking-bar, .has-mascot-left .phase-region > .fact-card { width: min(70vw, 1300px); left: calc(50% + 110px); }
+.has-mascot-right .phase-region > .thinking-bar, .has-mascot-right .phase-region > .fact-card { width: min(70vw, 1300px); left: calc(50% - 110px); }
+.has-mascot-left.layout-media_left_choices_right .candy-mascot-container.anchor-bottom_left { bottom: 14px; left: 24px; }
+.has-mascot-right.layout-media_left_choices_right .candy-mascot-container.anchor-bottom_right { bottom: 14px; right: 24px; }
+.candy-mascot-container.mascot-intro { bottom: 60px; right: 180px; }
+.candy-mascot-container.mascot-outro { bottom: 60px; right: 180px; }
+.candy-mascot-sprite { width: 220px; height: 220px; background-image: var(--sprite-url); background-repeat: no-repeat; background-size: calc(var(--mascot-frames, 1) * 100%) 100%; animation: mascot-sprite-play calc(var(--mascot-frames, 1) / var(--mascot-fps, 8) * 1s) steps(calc(var(--mascot-frames, 1) - 1)) infinite; transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)); filter: drop-shadow(0 14px 18px rgba(13,35,71,.35)); }
+.mascot-state-layer { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.quiz-question-clip .mascot-state-layer.state-idle { animation: phase-enter .001s linear var(--clip-start) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--thinking-at)) forwards, phase-enter .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
+.quiz-question-clip .mascot-state-layer.state-thinking { animation: phase-enter .001s linear calc(var(--clip-start) + var(--thinking-at)) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards; }
+.quiz-question-clip .mascot-state-layer.state-celebrate { animation: phase-enter .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
+.quiz-question-clip .mascot-state-layer.state-oops { animation: phase-enter .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
+.quiz-question-clip .mascot-state-layer.state-point { animation: phase-enter .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
+@keyframes mascot-sprite-play { from { background-position: 0% 0%; } to { background-position: 100% 0%; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; } }
 `;
 }

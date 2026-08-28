@@ -71,6 +71,127 @@ export const QUIZ_IMAGE_STYLE_LABELS: Record<QuizImageStyle, string> = {
   plastic_toy: "3D Glossy Vinyl Toy",
 };
 
+export const MascotActionTypeSchema = z.enum([
+  "idle",
+  "wave",
+  "thinking",
+  "point",
+  "celebrate",
+  "oops",
+  "outro",
+]);
+export type MascotActionType = z.infer<typeof MascotActionTypeSchema>;
+
+export const ALL_MASCOT_ACTIONS: MascotActionType[] = [
+  "idle",
+  "wave",
+  "thinking",
+  "point",
+  "celebrate",
+  "oops",
+  "outro",
+];
+
+export const MASCOT_ACTION_META: Record<MascotActionType, { label: string; description: string; defaultFps: number; defaultFrames: number; icon: string; usage: string }> = {
+  idle: { label: "Idle (Thở nhẹ & Chớp mắt)", description: "Chuyển động thở nhẹ và chớp mắt tự nhiên trong lúc chờ", defaultFps: 6, defaultFrames: 4, icon: "🧘", usage: "Lúc đọc câu hỏi và chuyển cảnh" },
+  wave: { label: "Wave Hello (Vẫy tay chào)", description: "Vẫy tay chào vui nhộn tạo thiện cảm đầu video", defaultFps: 8, defaultFrames: 6, icon: "👋", usage: "Intro mở đầu tập phim" },
+  thinking: { label: "Thinking (Gãi cằm suy nghĩ)", description: "Chống cằm, đăm chiêu hoặc nhìn đồng hồ cùng người chơi", defaultFps: 8, defaultFrames: 6, icon: "🤔", usage: "Giai đoạn đếm ngược Countdown 5-4-3-2-1" },
+  point: { label: "Point Board (Chỉ vào bảng)", description: "Chỉ tay hoặc cầm que chỉ về phía câu hỏi / giải thích", defaultFps: 8, defaultFrames: 5, icon: "👉", usage: "Giải thích đáp án & Fact Card" },
+  celebrate: { label: "Celebrate (Nhảy cẫng ăn mừng)", description: "Nhảy lên vui mừng, vỗ tay hoặc tung hoa giấy rực rỡ", defaultFps: 10, defaultFrames: 8, icon: "🎉", usage: "Khoảnh khắc công bố đáp án đúng" },
+  oops: { label: "Oops / Confused (Bối rối tiếc nuối)", description: "Gãi đầu bối rối hoặc nhún vai tiếc nuối khi hết giờ", defaultFps: 8, defaultFrames: 5, icon: "😅", usage: "Hết giờ / Trả lời sai" },
+  outro: { label: "Wave Bye & CTA (Tạm biệt & Kêu gọi)", description: "Vẫy tay tạm biệt và chỉ vào nút Like, Sub, Comment", defaultFps: 8, defaultFrames: 6, icon: "🌟", usage: "Outro kết thúc tập phim" },
+};
+
+export const MascotSpriteActionSchema = z.object({
+  action: MascotActionTypeSchema,
+  sprite_url: z.string().default(""),
+  frames_count: z.number().int().default(1),
+  fps: z.number().default(8),
+  loop: z.boolean().default(true),
+  frame_width: z.number().default(256),
+  frame_height: z.number().default(256),
+  offset_x: z.number().default(0),
+  offset_y: z.number().default(0),
+  preview_url: z.string().optional(),
+});
+export type MascotSpriteAction = z.infer<typeof MascotSpriteActionSchema>;
+
+export const MascotProfileSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  description: z.string().default(""),
+  visual_style: QuizImageStyleSchema.default("pixar_3d"),
+  master_prompt: z.string().default(""),
+  master_image_url: z.string().nullable().default(null),
+  color_theme: z.string().default("#06b6d4"),
+  actions: z.record(MascotActionTypeSchema, MascotSpriteActionSchema.nullable().optional()).default({}),
+  assigned_channel_ids: z.array(z.string()).default([]),
+  created_at: IsoDate,
+  updated_at: IsoDate,
+});
+export type MascotProfile = z.infer<typeof MascotProfileSchema>;
+
+export const ChannelMascotConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  position: z.enum(["bottom_left", "bottom_right"]).default("bottom_left"),
+  scale: z.number().default(1.0),
+  sfx_enabled: z.boolean().default(true),
+  sfx_volume: z.number().default(0.8),
+  sfx_celebrate_style: z.enum(["cheer_fanfare", "cute_chime", "arcade_whistle", "none"]).default("cheer_fanfare"),
+  sfx_oops_style: z.enum(["whistle_fall", "cute_boing", "soft_sigh", "none"]).default("cute_boing"),
+});
+export type ChannelMascotConfig = z.infer<typeof ChannelMascotConfigSchema>;
+
+export const CalibrateMascotActionInputSchema = z.object({
+  offset_x: z.number().min(-100).max(100),
+  offset_y: z.number().min(-100).max(100),
+});
+export type CalibrateMascotActionInput = z.infer<typeof CalibrateMascotActionInputSchema>;
+
+export const CreateMascotInputSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional().default(""),
+  visual_style: QuizImageStyleSchema.optional().default("pixar_3d"),
+  master_prompt: z.string().optional().default(""),
+  color_theme: z.string().optional().default("#06b6d4"),
+});
+export type CreateMascotInput = z.infer<typeof CreateMascotInputSchema>;
+
+export const UpdateMascotInputSchema = MascotProfileSchema.partial();
+export type UpdateMascotInput = z.infer<typeof UpdateMascotInputSchema>;
+
+export const GenerateMascotConceptInputSchema = z.object({
+  prompt: z.string().optional(),
+  style: QuizImageStyleSchema.optional(),
+});
+export type GenerateMascotConceptInput = z.infer<typeof GenerateMascotConceptInputSchema>;
+
+export const GenerateMascotSpriteInputSchema = z.object({
+  action: MascotActionTypeSchema,
+  prompt: z.string().optional(),
+  frames_count: z.number().int().min(1).max(16).optional().default(6),
+  fps: z.number().min(1).max(30).optional().default(8),
+  loop: z.boolean().optional().default(true),
+});
+export type GenerateMascotSpriteInput = z.infer<typeof GenerateMascotSpriteInputSchema>;
+
+export const UploadMascotSpriteInputSchema = z.object({
+  action: MascotActionTypeSchema,
+  data: z.string().min(1),
+  frames_count: z.number().int().min(1).max(32).default(1),
+  fps: z.number().min(1).max(30).default(8),
+  loop: z.boolean().default(true),
+  frame_width: z.number().int().min(32).max(2048).default(256),
+  frame_height: z.number().int().min(32).max(2048).default(256),
+});
+export type UploadMascotSpriteInput = z.infer<typeof UploadMascotSpriteInputSchema>;
+
+export const AssignMascotInputSchema = z.object({
+  mascot_id: z.string().nullable(),
+  config: ChannelMascotConfigSchema.partial().optional(),
+});
+export type AssignMascotInput = z.infer<typeof AssignMascotInputSchema>;
+
 export const ChannelSchema = z.object({
   channel_id: z.string().min(1),
   slug: z.string().min(1),
@@ -89,6 +210,8 @@ export const ChannelSchema = z.object({
   group_id: z.enum(["quiz", "documentary"]).default("quiz"),
   engine: z.enum(["quiz", "documentary"]).default("quiz"),
   selected_styles: z.array(QuizImageStyleSchema).default(["pixar_3d", "flat_vector", "kawaii_chibi", "voxel_lowpoly", "plastic_toy"]),
+  mascot_id: z.string().nullable().default(null),
+  mascot_config: ChannelMascotConfigSchema.default({ enabled: true, position: "bottom_left", scale: 1.0 }),
 });
 export type Channel = z.infer<typeof ChannelSchema>;
 

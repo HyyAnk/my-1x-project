@@ -7,6 +7,7 @@ import { useRouter } from "./hooks/useRouter";
 import { DashboardView, type ChannelGroupId } from "./components/ChannelList";
 import { ChannelsView, CreateChannelModal, DeleteChannelModal } from "./components/ChannelView";
 import { SettingsView, StorageSetupModal } from "./components/SettingsPanel";
+import { MascotStudioView } from "./components/MascotStudio";
 import { Sidebar, Topbar, NoticeBanner } from "./components/AppChrome";
 import { TaskActivityBar, TasksView } from "./components/TaskPanel";
 import { LoadingState } from "./components/EmptyState";
@@ -236,7 +237,7 @@ export function App() {
     <div className="app-shell">
       <Sidebar
         page={page}
-        setPage={navigate}
+        setPage={openPage}
         activeTaskCount={activeEpisodeTasks.length}
         tasks={tasks}
         channels={channels}
@@ -347,6 +348,13 @@ export function App() {
             imageGenerationEnabled={appConfig?.image_generation?.enabled ?? true}
             imagesPerBundle={appConfig?.image_generation?.images_per_bundle ?? 1}
             simplifyMode={simplifyMode}
+          />
+        ) : null}
+        {!loading && page === "mascots" ? (
+          <MascotStudioView
+            channels={channels}
+            onNotice={setNotice}
+            onRefreshChannels={async () => { await refreshChannels(); }}
           />
         ) : null}
         {!loading && page === "tasks" ? (

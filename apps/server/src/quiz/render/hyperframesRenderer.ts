@@ -12,6 +12,8 @@ export class HyperframesRenderer implements QuizRenderer {
       narrationDurationSeconds: input.narrationDurationSeconds ?? input.timeline.duration_seconds,
       assets: input.assets,
       bgmOptions: input.bgmOptions,
+      mascot: input.mascot,
+      mascotConfig: input.mascotConfig,
     });
     return {
       html: composition.html,

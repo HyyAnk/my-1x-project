@@ -1,4 +1,4 @@
-import type { DirectorPlan, QuizConfig, QuizTimeline, QuizV2, Scene } from "@studio/shared";
+import type { ChannelMascotConfig, DirectorPlan, MascotProfile, QuizConfig, QuizTimeline, QuizV2, Scene } from "@studio/shared";
 import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
 
 export type QuizRenderInput = {
@@ -11,6 +11,8 @@ export type QuizRenderInput = {
   narrationDurationSeconds?: number;
   assets?: Record<string, string>;
   bgmOptions?: ResolveBgmOptions;
+  mascot?: MascotProfile | null;
+  mascotConfig?: ChannelMascotConfig | null;
 };
 
 export type PreparedQuizRender = { html: string; compositionFiles: Record<string, string>; durationSeconds: number; questionCount: number };

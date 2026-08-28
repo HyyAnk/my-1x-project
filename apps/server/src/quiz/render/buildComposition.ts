@@ -1,5 +1,5 @@
 import { pathToFileURL } from "node:url";
-import type { DirectorPlan, QuizConfig, QuizTimeline, QuizV2, Scene } from "@studio/shared";
+import type { ChannelMascotConfig, DirectorPlan, MascotProfile, QuizConfig, QuizTimeline, QuizV2, Scene } from "@studio/shared";
 import { buildCandyArcadeComposition, buildCandyArcadeCompositionBundle, type CandyArcadeCompositionBundle } from "./candyArcadeComposition.js";
 import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
 
@@ -31,7 +31,7 @@ function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;").replaceAll("'", "&#39;");
 }
 
-type QuizV2CompositionInput = {
+export type QuizV2CompositionInput = {
   quiz: QuizV2;
   director: DirectorPlan;
   timeline: QuizTimeline;
@@ -40,6 +40,8 @@ type QuizV2CompositionInput = {
   narrationDurationSeconds: number;
   assets?: Record<string, string>;
   bgmOptions?: ResolveBgmOptions;
+  mascot?: MascotProfile | null;
+  mascotConfig?: ChannelMascotConfig | null;
 };
 
 /**
