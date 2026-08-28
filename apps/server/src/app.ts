@@ -34,6 +34,7 @@ import {
   GenerateMascotConceptInputSchema,
   GenerateMascotSpriteInputSchema,
   UploadMascotSpriteInputSchema,
+  RemoveMascotBackgroundInputSchema,
   AssignMascotInputSchema,
   CalibrateMascotActionInputSchema,
   type MascotActionType,
@@ -48,7 +49,9 @@ import {
   generateMascotActionSprite,
   exportMascotPackage,
   importMascotPackage,
+  removeMascotAssetBackground,
 } from "./quiz/mascotService.js";
+import { removeImageBackground } from "./utils/imageMatting.js";
 import {
   loadConfig,
   loadStorageRoot,
@@ -555,7 +558,8 @@ export async function buildApp(rootDirectory = process.env.STUDIO_ROOT ?? proces
     const input = UploadMascotSpriteInputSchema.parse(request.body);
     const mascot = await repository.getMascot(mascotId);
     const base64Data = input.data.replace(/^data:image\/[^;]+;base64,/i, "");
-    const buffer = Buffer.from(base64Data, "base64");
+    let buffer = Buffer.from(base64Data, "base64");
+    buffer = Buffer.from(await removeImageBackground(buffer));
     const filename = `sprite_${input.action}_${Date.now()}.png`;
     const assetUrl = await repository.saveMascotAsset(mascotId, filename, buffer);
 
@@ -580,6 +584,14 @@ export async function buildApp(rootDirectory = process.env.STUDIO_ROOT ?? proces
     });
 
     return { mascot: updated, action_sprite: actionSprite };
+  });
+
+  server.post("/api/mascots/:mascotId/remove-background", async (request) => {
+    const mascotId = (request.params as { mascotId: string }).mascotId;
+    const body = request.body && typeof request.body === "object" ? request.body : {};
+    const input = RemoveMascotBackgroundInputSchema.parse(body);
+    const updated = await removeMascotAssetBackground(repository, mascotId, input.target);
+    return { mascot: updated };
   });
   server.get("/api/mascots/:mascotId/export", async (request, reply) => {
     const mascotId = (request.params as { mascotId: string }).mascotId;

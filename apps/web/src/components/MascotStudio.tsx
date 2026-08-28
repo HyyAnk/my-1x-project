@@ -44,6 +44,7 @@ import {
 import { api } from "../api";
 import type { Notice } from "./types";
 import { EmptyState } from "./EmptyState";
+import { useTranslation } from "../i18n";
 
 export function MascotStudioView({
   channels,
@@ -54,7 +55,9 @@ export function MascotStudioView({
   onNotice: (notice: NonNullable<Notice>) => void;
   onRefreshChannels: () => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"library" | "generator">("library");
+
   const [mascots, setMascots] = useState<MascotProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -330,6 +333,25 @@ export function MascotStudioView({
     }
   };
 
+  // Background Matting / Removal
+  const handleRemoveBackground = async (target: "master" | "all" | MascotActionType = "all") => {
+    if (!editingMascot) return;
+    setBusyAction(`matting-${target}`);
+    try {
+      const res = await api.removeMascotBackground(editingMascot.id, target);
+      setEditingMascot(res.mascot);
+      onNotice({
+        tone: "good",
+        message: `Đã tách nền trong suốt thành công cho ${target === "master" ? "Master Concept" : target === "all" ? "toàn bộ Mascot" : MASCOT_ACTION_META[target as MascotActionType]?.label || target}!`,
+      });
+      await loadMascots();
+    } catch (err) {
+      onNotice({ tone: "bad", message: err instanceof Error ? err.message : "Tách nền thất bại" });
+    } finally {
+      setBusyAction(null);
+    }
+  };
+
   // Step 4: Save & Bind to Channels
   const handleApplyToChannels = async () => {
     if (!editingMascot) return;
@@ -552,20 +574,20 @@ export function MascotStudioView({
             <span className="mascot-title-icon" style={{ fontSize: "28px" }}>🎨</span>
             <div>
               <p className="eyebrow">Video Host & Brand Persona</p>
-              <h1>Mascot Studio Hub</h1>
+              <h1>{t("mascots.pageTitle")}</h1>
             </div>
           </div>
           <p className="detail-copy" style={{ marginTop: "4px" }}>
-            Quản lý linh vật cho các kênh và tạo Sprite Sheet hoạt họa frame-by-frame đồng bộ cho video Quiz.
+            {t("mascots.pageSubtitle")}
           </p>
         </div>
 
         <div className="mascot-top-actions" style={{ display: "flex", gap: "10px", alignItems: "center" }}>
           {activeTab === "library" ? (
             <>
-              <label className="quiet-button" style={{ cursor: "pointer", margin: 0 }} title="Nhập trọn bộ Mascot từ file ZIP đã xuất">
+              <label className="quiet-button" style={{ cursor: "pointer", margin: 0 }} title="Import full Mascot bundle from ZIP">
                 {importingZip ? <CircleNotch className="spin" size={15} /> : <Upload size={15} />}
-                <span>{importingZip ? "Đang nhập..." : "Nhập Mascot (ZIP)"}</span>
+                <span>{importingZip ? "Importing..." : "Import ZIP"}</span>
                 <input
                   type="file"
                   accept=".zip,application/zip"
@@ -578,7 +600,7 @@ export function MascotStudioView({
               </label>
               <button type="button" className="primary-button" onClick={handleStartNew}>
                 <Plus size={16} weight="bold" />
-                <span>Tạo Mascot Mới</span>
+                <span>{t("mascots.newMascotBtn")}</span>
               </button>
             </>
           ) : (
@@ -591,7 +613,7 @@ export function MascotStudioView({
               }}
             >
               <ArrowLeft size={16} />
-              <span>Về Thư viện</span>
+              <span>{t("mascots.libraryTab")}</span>
             </button>
           )}
         </div>
@@ -607,7 +629,7 @@ export function MascotStudioView({
           onClick={() => setActiveTab("library")}
         >
           <Smiley size={18} weight={activeTab === "library" ? "fill" : "regular"} />
-          <span>Thư viện Mascot</span>
+          <span>{t("mascots.libraryTab")}</span>
           <small>{mascots.length}</small>
         </button>
         <button
@@ -621,7 +643,7 @@ export function MascotStudioView({
           }}
         >
           <MagicWand size={18} weight={activeTab === "generator" ? "fill" : "regular"} />
-          <span>Mascot Generator (Quy trình 4 Bước)</span>
+          <span>{t("mascots.generatorTab")}</span>
           {editingMascot ? <small>{editingMascot.name}</small> : null}
         </button>
       </div>
@@ -635,7 +657,7 @@ export function MascotStudioView({
               <MagnifyingGlass size={15} className="search-icon" />
               <input
                 type="text"
-                placeholder="Tìm kiếm mascot theo tên hoặc tính cách..."
+                placeholder={t("mascots.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="episode-search-input"
@@ -653,7 +675,7 @@ export function MascotStudioView({
                 className={`filter-chip ${styleFilter === "all" ? "is-active" : ""}`}
                 onClick={() => setStyleFilter("all")}
               >
-                Tất cả ({mascots.length})
+                All ({mascots.length})
               </button>
               {ALL_QUIZ_IMAGE_STYLES.map((style) => (
                 <button
@@ -671,18 +693,18 @@ export function MascotStudioView({
           {loading ? (
             <div style={{ display: "grid", placeItems: "center", padding: "60px 0" }}>
               <CircleNotch size={32} className="spin" style={{ color: "var(--accent)" }} />
-              <p style={{ marginTop: "12px", color: "var(--muted)" }}>Đang tải thư viện linh vật...</p>
+              <p style={{ marginTop: "12px", color: "var(--muted)" }}>{t("common.loading")}</p>
             </div>
           ) : filteredMascots.length === 0 ? (
             <EmptyState
               icon={<Smiley size={36} />}
-              title={searchQuery ? "Không tìm thấy Mascot phù hợp" : "Chưa có Mascot nào được tạo"}
+              title={searchQuery ? t("common.noResults") : t("mascots.noMascotsTitle")}
               copy={
                 searchQuery
-                  ? `Không có linh vật nào khớp với từ khóa "${searchQuery}".`
-                  : "Hãy bắt đầu tạo Mascot đầu tiên để làm linh vật đại diện và tăng retention cho các video quiz!"
+                  ? `No mascots match "${searchQuery}".`
+                  : t("mascots.noMascotsCopy")
               }
-              action={searchQuery ? "Xóa bộ lọc" : "Tạo Mascot ngay"}
+              action={searchQuery ? t("common.clear") : t("mascots.newMascotBtn")}
               onAction={searchQuery ? () => setSearchQuery("") : handleStartNew}
             />
           ) : (
@@ -954,16 +976,32 @@ export function MascotStudioView({
                   </div>
 
                   {editingMascot?.master_image_url ? (
-                    <div className="concept-meta-box">
-                      <div className="concept-meta-item">
-                        <span>Trạng thái:</span>
-                        <strong style={{ color: "var(--green)" }}>✓ Đã khóa Identity</strong>
+                    <>
+                      <div className="concept-meta-box">
+                        <div className="concept-meta-item">
+                          <span>Trạng thái:</span>
+                          <strong style={{ color: "var(--green)" }}>✓ Đã khóa Identity</strong>
+                        </div>
+                        <div className="concept-meta-item">
+                          <span>Phong cách:</span>
+                          <strong>{QUIZ_IMAGE_STYLE_LABELS[editingMascot.visual_style]}</strong>
+                        </div>
                       </div>
-                      <div className="concept-meta-item">
-                        <span>Phong cách:</span>
-                        <strong>{QUIZ_IMAGE_STYLE_LABELS[editingMascot.visual_style]}</strong>
+
+                      <div style={{ marginTop: "12px", display: "flex", gap: "8px" }}>
+                        <button
+                          type="button"
+                          className="quiet-button compact"
+                          disabled={busyAction === "matting-master"}
+                          onClick={() => void handleRemoveBackground("master")}
+                          style={{ width: "100%", justifyContent: "center" }}
+                          title="Khử nền trắng thành PNG trong suốt"
+                        >
+                          {busyAction === "matting-master" ? <CircleNotch className="spin" size={14} /> : <PaintBrush size={14} />}
+                          <span>{busyAction === "matting-master" ? "Đang tách nền..." : "✂ Tách nền trong suốt (AI Matting)"}</span>
+                        </button>
                       </div>
-                    </div>
+                    </>
                   ) : null}
                 </div>
               </div>
@@ -1179,18 +1217,31 @@ export function MascotStudioView({
                             </label>
 
                             {hasSprite ? (
-                              <button
-                                type="button"
-                                className="icon-button"
-                                style={{ width: "30px", height: "30px" }}
-                                title="Xem thử hoạt họa ở Step 4"
-                                onClick={() => {
-                                  setActivePreviewAction(action);
-                                  setGeneratorStep(4);
-                                }}
-                              >
-                                <Eye size={14} />
-                              </button>
+                              <>
+                                <button
+                                  type="button"
+                                  className="quiet-button compact"
+                                  disabled={isBusy || busyAction === `matting-${action}`}
+                                  title="Tách nền trong suốt cho sprite này"
+                                  onClick={() => void handleRemoveBackground(action)}
+                                >
+                                  {busyAction === `matting-${action}` ? <CircleNotch className="spin" size={13} /> : <PaintBrush size={13} />}
+                                  <span>{busyAction === `matting-${action}` ? "Tách..." : "Tách nền"}</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  className="icon-button"
+                                  style={{ width: "30px", height: "30px" }}
+                                  title="Xem thử hoạt họa ở Step 4"
+                                  onClick={() => {
+                                    setActivePreviewAction(action);
+                                    setGeneratorStep(4);
+                                  }}
+                                >
+                                  <Eye size={14} />
+                                </button>
+                              </>
                             ) : null}
                           </div>
                         </div>

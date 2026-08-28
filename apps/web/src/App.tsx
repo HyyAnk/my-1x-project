@@ -14,8 +14,11 @@ import { LoadingState } from "./components/EmptyState";
 import type { GitInfo, Notice, Page, Theme } from "./components/types";
 import { formatTaskType } from "./lib/utils";
 import { Power } from "@phosphor-icons/react";
+import { LanguageProvider, useTranslation } from "./i18n";
 
-export function App() {
+function AppContent() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const { page, channelId: selectedChannelId, episodeId: selectedEpisodeId, tab, group, openPage, openChannel, openEpisode, setQueryParam } = router;
   const [git, setGit] = useState<GitInfo>({ branch: null, dirty: false, changed_files: 0 });
@@ -317,6 +320,11 @@ export function App() {
             storage={storage}
             git={git}
             engineStatus={currentEngineStatus}
+            onCreate={requestCreateChannel}
+            openChannel={openChannel}
+            onDelete={requestDeleteChannel}
+            openChannelsList={() => openPage("channels")}
+            openTaskList={() => openPage("tasks")}
             onNavigate={(nextPage, params) => {
               openPage(nextPage);
               if (params) {
@@ -406,3 +414,12 @@ export function App() {
     </div>
   );
 }
+
+export function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
+  );
+}
+

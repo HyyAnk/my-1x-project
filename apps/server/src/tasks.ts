@@ -54,6 +54,7 @@ import { healQuizVoicePacingWithLLM } from "./quiz/audio/voicePacingHealer.js";
 import type { QuizVoicePacingClamp } from "./quiz/audio/voiceSynthesis.js";
 import { canonicalizeVisibleQuizAnswer, resolveVisibleQuizChoice, stripQuizChoiceLabel } from "./quiz/domain/quiz.js";
 import { validateQuizResearchCopyright, validateQuizScriptCopyright } from "./quiz/qa/copyrightValidator.js";
+import { removeImageBackground } from "./utils/imageMatting.js";
 
 export { buildQuizComposition };
 
@@ -912,7 +913,9 @@ export class TaskManager extends EventEmitter {
               const filename = match[1];
               try {
                 const assetFile = await this.repository.getMascotAssetFile(mascotProfile!.id, filename);
-                await copyFile(assetFile.absolutePath, path.join(renderMascotDir, filename));
+                const rawContent = await readFile(assetFile.absolutePath);
+                const transparentContent = await removeImageBackground(rawContent);
+                await writeFile(path.join(renderMascotDir, filename), transparentContent);
                 return `./mascot-assets/${filename}`;
               } catch {
                 return url;

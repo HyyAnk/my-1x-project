@@ -135,10 +135,10 @@ export const ChannelMascotConfigSchema = z.object({
   enabled: z.boolean().default(true),
   position: z.enum(["bottom_left", "bottom_right"]).default("bottom_left"),
   scale: z.number().default(1.0),
-  sfx_enabled: z.boolean().default(true),
-  sfx_volume: z.number().default(0.8),
-  sfx_celebrate_style: z.enum(["cheer_fanfare", "cute_chime", "arcade_whistle", "none"]).default("cheer_fanfare"),
-  sfx_oops_style: z.enum(["whistle_fall", "cute_boing", "soft_sigh", "none"]).default("cute_boing"),
+  sfx_enabled: z.boolean().optional(),
+  sfx_volume: z.number().optional(),
+  sfx_celebrate_style: z.enum(["cheer_fanfare", "cute_chime", "arcade_whistle", "none"]).optional(),
+  sfx_oops_style: z.enum(["whistle_fall", "cute_boing", "soft_sigh", "none"]).optional(),
 });
 export type ChannelMascotConfig = z.infer<typeof ChannelMascotConfigSchema>;
 
@@ -185,6 +185,11 @@ export const UploadMascotSpriteInputSchema = z.object({
   frame_height: z.number().int().min(32).max(2048).default(256),
 });
 export type UploadMascotSpriteInput = z.infer<typeof UploadMascotSpriteInputSchema>;
+
+export const RemoveMascotBackgroundInputSchema = z.object({
+  target: z.enum(["master", "all", "wave", "idle", "thinking", "point", "celebrate", "oops", "outro"]).optional().default("all"),
+});
+export type RemoveMascotBackgroundInput = z.infer<typeof RemoveMascotBackgroundInputSchema>;
 
 export const AssignMascotInputSchema = z.object({
   mascot_id: z.string().nullable(),

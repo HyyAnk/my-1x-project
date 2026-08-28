@@ -21,6 +21,7 @@ import type { AppConfig, Channel, StorageInfo, Task } from "@studio/shared";
 import type { GitInfo, Page } from "./types";
 import { PageTitle } from "./AppChrome";
 import { EmptyState } from "./EmptyState";
+import { useTranslation } from "../i18n";
 
 export type ChannelGroupId = "quiz";
 
@@ -35,6 +36,7 @@ export function ChannelCard({
   onOpen: () => void;
   onDelete: (channel: Channel) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <article className="channel-card quiz-channel-card">
       <div className="card-top">
@@ -45,7 +47,7 @@ export function ChannelCard({
         <button
           type="button"
           className="icon-button danger channel-card-delete"
-          title={`Delete ${channel.display_name}`}
+          title={`${t("common.delete")} ${channel.display_name}`}
           aria-label="Delete channel"
           onClick={() => onDelete(channel)}
         >
@@ -109,6 +111,7 @@ function CostSavingsSection({
     rendered_episodes_count: number;
   } | null;
 }) {
+  const { t } = useTranslation();
   const elevenLabsRatePer1k = 0.10; // $0.10 per 1,000 characters
   const usdToVnd = 25500;
 
@@ -123,14 +126,14 @@ function CostSavingsSection({
       <div className="dashboard-section-header">
         <div className="dashboard-section-title">
           <CurrencyDollar size={18} weight="duotone" style={{ color: "var(--green)" }} />
-          <h2>Voice Cost Savings (vs ElevenLabs $0.10 / 1K chars)</h2>
+          <h2>{t("dashboard.voiceSavingsTitle")}</h2>
         </div>
       </div>
 
       <div className="savings-card">
         <div className="savings-metrics-row">
           <div className="savings-submetric">
-            <span className="submetric-label">Estimated Savings</span>
+            <span className="submetric-label">{t("dashboard.estimatedSavings")}</span>
             <strong className="submetric-val" style={{ color: "var(--green)" }}>
               ${savedUsd.toFixed(2)} USD{" "}
               <span style={{ fontSize: "12px", color: "var(--muted)", fontWeight: 500 }}>
@@ -139,13 +142,13 @@ function CostSavingsSection({
             </strong>
           </div>
           <div className="savings-submetric">
-            <span className="submetric-label">Rendered Characters</span>
+            <span className="submetric-label">{t("dashboard.renderedCharacters")}</span>
             <strong className="submetric-val">
               {renderedChars.toLocaleString("vi-VN")} chars
             </strong>
           </div>
           <div className="savings-submetric">
-            <span className="submetric-label">Audio Produced</span>
+            <span className="submetric-label">{t("dashboard.audioProduced")}</span>
             <strong className="submetric-val">
               {renderedSeconds > 0 ? `${(renderedSeconds / 60).toFixed(1)} mins` : "0 mins"}
             </strong>
@@ -170,6 +173,11 @@ export function DashboardView({
   storage: _storage = null,
   git: _git = { branch: null, dirty: false, changed_files: 0 },
   engineStatus: _engineStatus = "ready",
+  onCreate,
+  openChannel,
+  onDelete,
+  openChannelsList,
+  openTaskList,
   onNavigate: _onNavigate,
 }: {
   channels: Channel[];
@@ -190,8 +198,14 @@ export function DashboardView({
   storage?: StorageInfo | null;
   git?: GitInfo;
   engineStatus?: string;
+  onCreate?: (groupId?: ChannelGroupId) => void;
+  openChannel?: (id: string) => void;
+  onDelete?: (channel: Channel) => void;
+  openChannelsList?: () => void;
+  openTaskList?: () => void;
   onNavigate?: (page: Page, params?: Record<string, string>) => void;
 }) {
+  const { t } = useTranslation();
   // Channel & Episode metrics
   const activeChannelsCount = channels.filter((c) => c.status === "ACTIVE").length;
   const draftChannelsCount = channels.filter((c) => c.status === "DRAFT").length;
@@ -209,23 +223,27 @@ export function DashboardView({
   const formattedBalance = imageBalance
     ? `${imageBalance.balance_vnd.toLocaleString("vi-VN")} ₫`
     : "N/A";
-  const balanceRateNote = imageBalance?.rpm ? `${imageBalance.rpm} RPM rate limit` : "Image API quota";
-
+  const balanceRateNote = imageBalance?.rpm
+    ? t("dashboard.kpiNoteRateLimit", { rpm: imageBalance.rpm })
+    : t("dashboard.kpiNoteImageQuota");
 
   // Category breakdown
   const categoryStats = [
     {
-      domain: "Visual Art & Assets",
+      domainKey: "domainVisualArt",
+      domain: t("dashboard.domainVisualArt"),
       filter: (t: Task) => t.task_type === "GENERATE_BUNDLE_IMAGE",
       icon: ImageIcon,
     },
     {
-      domain: "Voice & Speech (TTS)",
+      domainKey: "domainVoiceTTS",
+      domain: t("dashboard.domainVoiceTTS"),
       filter: (t: Task) => t.task_type === "GENERATE_AUDIO" || t.task_type === "GENERATE_NARRATION",
       icon: SpeakerHigh,
     },
     {
-      domain: "Script & Intelligence",
+      domainKey: "domainScriptIntelligence",
+      domain: t("dashboard.domainScriptIntelligence"),
       filter: (t: Task) =>
         [
           "SUGGEST_TOPICS",
@@ -244,7 +262,8 @@ export function DashboardView({
       icon: Cpu,
     },
     {
-      domain: "Video Composition",
+      domainKey: "domainVideoComposition",
+      domain: t("dashboard.domainVideoComposition"),
       filter: (t: Task) => t.task_type === "GENERATE_VIDEO",
       icon: VideoCamera,
     },
@@ -269,51 +288,93 @@ export function DashboardView({
     <section className="page-wrap">
       <div className="hero-row">
         <div>
-          <p className="eyebrow">Studio Workspace</p>
+          <p className="eyebrow">{t("dashboard.eyebrow")}</p>
           <h1>
-            Studio <em>Dashboard</em>
+            {t("dashboard.title")} <em>{t("dashboard.titleEmphasis")}</em>
           </h1>
           <p className="hero-copy">
-            System metrics, real-time pipeline telemetry, and economic ROI analysis.
+            {t("dashboard.subtitle")}
           </p>
+        </div>
+        <div className="hero-actions-group" style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <button className="primary-button hero-action" onClick={() => onCreate?.("quiz")}>
+            <Plus size={16} weight="bold" />
+            <span>{t("channels.newQuizChannel")}</span>
+          </button>
         </div>
       </div>
 
       {/* Top Level Metric KPIs */}
       <div className="metric-grid">
         <Metric
-          label="Channels"
+          label={t("dashboard.kpiChannels")}
           value={channels.length}
-          note={`${activeChannelsCount} active · ${draftChannelsCount} draft`}
+          note={t("dashboard.kpiNoteChannels", { active: activeChannelsCount, draft: draftChannelsCount })}
           icon={Broadcast}
         />
         <Metric
-          label="Episodes"
+          label={t("dashboard.kpiEpisodes")}
           value={totalEpisodes}
-          note={`Across ${channels.length} projects`}
+          note={t("dashboard.kpiNoteEpisodes", { count: channels.length })}
           icon={FilmSlate}
         />
         <Metric
-          label="Success Rate"
+          label={t("dashboard.kpiSuccessRate")}
           value={`${successRate}%`}
-          note={`${completedCount} completed · ${failedCount} failed`}
+          note={t("dashboard.kpiNoteSuccessRate", { completed: completedCount, failed: failedCount })}
           icon={CheckCircle}
         />
         <Metric
-          label="Active Tasks"
+          label={t("dashboard.kpiActiveTasks")}
           value={activeTasks.length}
-          note={`${runningCount} running · ${queuedCount} queued`}
+          note={t("dashboard.kpiNoteActiveTasks", { running: runningCount, queued: queuedCount })}
           icon={Lightning}
         />
         <Metric
-          label="Image Balance"
+          label={t("dashboard.kpiImageBalance")}
           value={formattedBalance}
           note={balanceRateNote}
           icon={Wallet}
         />
       </div>
 
-      <div className="dashboard-grid">
+      {/* Channels Section in Dashboard */}
+      <div className="section-heading" style={{ marginTop: "24px" }}>
+        <div>
+          <p className="eyebrow">{t("channels.pageEyebrow")}</p>
+          <h2>{t("channels.pageTitle")}</h2>
+        </div>
+        {openChannelsList ? (
+          <button className="text-button" onClick={openChannelsList}>
+            <span>{t("common.viewAll")}</span>
+            <ArrowUpRight size={15} />
+          </button>
+        ) : null}
+      </div>
+
+      {channels.length === 0 ? (
+        <EmptyState
+          icon={<Broadcast size={26} />}
+          title={t("channels.noQuizChannelsTitle")}
+          copy={t("channels.noQuizChannelsCopy")}
+          action={t("channels.newQuizChannel")}
+          onAction={() => onCreate?.("quiz")}
+        />
+      ) : (
+        <div className="channel-grid">
+          {channels.slice(0, 6).map((channel, index) => (
+            <ChannelCard
+              key={channel.channel_id}
+              index={index + 1}
+              channel={channel}
+              onOpen={() => openChannel?.(channel.channel_id)}
+              onDelete={onDelete || (() => {})}
+            />
+          ))}
+        </div>
+      )}
+
+      <div className="dashboard-grid" style={{ marginTop: "24px" }}>
         {/* Cost Savings & ROI Section */}
         <CostSavingsSection voiceMetrics={voiceMetrics} />
 
@@ -324,19 +385,19 @@ export function DashboardView({
             <table className="dashboard-table">
               <thead>
                 <tr>
-                  <th>Production Domain</th>
-                  <th>Total Runs</th>
-                  <th>Running</th>
-                  <th>Completed</th>
-                  <th>Failed</th>
-                  <th>Success Rate</th>
+                  <th>{t("dashboard.productionDomain")}</th>
+                  <th>{t("dashboard.totalRuns")}</th>
+                  <th>{t("dashboard.running")}</th>
+                  <th>{t("dashboard.completed")}</th>
+                  <th>{t("dashboard.failed")}</th>
+                  <th>{t("dashboard.successRate")}</th>
                 </tr>
               </thead>
               <tbody>
                 {categoryStats.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <tr key={item.domain}>
+                    <tr key={item.domainKey}>
                       <td>
                         <div className="table-domain-cell">
                           <Icon size={16} style={{ color: "var(--accent-deep)" }} />
@@ -391,11 +452,12 @@ export function ChannelsListView({
   openChannel: (id: string) => void;
   onDelete: (channel: Channel) => void;
 }) {
+  const { t } = useTranslation();
   const quizChannels = channels;
 
   return (
     <section className="page-wrap">
-      <PageTitle eyebrow="Quiz Studio" title="Channels" />
+      <PageTitle eyebrow={t("channels.pageEyebrow")} title={t("channels.pageTitle")} />
       <div
         id="quiz-channels-panel"
         className="channel-group-panel"
@@ -407,30 +469,30 @@ export function ChannelsListView({
             <FolderOpen size={24} weight="duotone" />
           </div>
           <div className="channel-group-heading">
-            <strong id="quiz-channels-title">Quiz Channels</strong>
+            <strong id="quiz-channels-title">{t("channels.quizChannels")}</strong>
             <span>
               {quizChannels.length} {quizChannels.length === 1 ? "channel" : "channels"}
             </span>
           </div>
           <div className="group-format-list">
-            <span>Knowledge</span>
-            <span>Image guess</span>
-            <span>Multiple choice</span>
-            <span>True/False</span>
-            <span>Odd one out</span>
+            <span>{t("channels.formatKnowledge")}</span>
+            <span>{t("channels.formatImageGuess")}</span>
+            <span>{t("channels.formatMultipleChoice")}</span>
+            <span>{t("channels.formatTrueFalse")}</span>
+            <span>{t("channels.formatOddOneOut")}</span>
           </div>
           <button className="quiet-button group-create-button" onClick={() => onCreate("quiz")}>
             <Plus size={15} />
-            <span>New Quiz Channel</span>
+            <span>{t("channels.newQuizChannel")}</span>
           </button>
         </div>
         {quizChannels.length === 0 ? (
           <EmptyState
             compact
             icon={<Broadcast size={26} />}
-            title="No Quiz channels"
-            copy="Create the first channel inside this group to begin producing quiz episodes."
-            action="New Quiz Channel"
+            title={t("channels.noQuizChannelsTitle")}
+            copy={t("channels.noQuizChannelsCopy")}
+            action={t("channels.newQuizChannel")}
             onAction={() => onCreate("quiz")}
           />
         ) : (
@@ -450,3 +512,4 @@ export function ChannelsListView({
     </section>
   );
 }
+

@@ -10,6 +10,8 @@ import { TaskProgressPanel, TopicProgress } from "./TaskProgressPanel";
 import { EpisodeDetail } from "./EpisodeView";
 import { ChannelBreadcrumb } from "./Breadcrumbs";
 import type { Notice } from "./types";
+import { useTranslation } from "../i18n";
+
 
 export function ChannelsView({
   selectedChannel,
@@ -128,6 +130,7 @@ export function ChannelsView({
 }
 
 export function DeleteChannelModal({ channel, onClose, onDeleted, onError }: { channel: Channel; onClose: () => void; onDeleted: (channel: Channel) => Promise<void>; onError: (error: unknown) => void }) {
+  const { t } = useTranslation();
   const [step, setStep] = useState<"choice" | "type">("choice");
   const [confirmation, setConfirmation] = useState("");
   const [busy, setBusy] = useState(false);
@@ -146,13 +149,67 @@ export function DeleteChannelModal({ channel, onClose, onDeleted, onError }: { c
       setBusy(false);
     }
   };
-  return <div className="modal-backdrop" role="presentation"><section className="modal confirm-modal" role="dialog" aria-modal="true" aria-labelledby="delete-channel-title" aria-describedby="delete-channel-copy">
-    <div className="modal-heading"><div><p className="eyebrow">Delete channel</p><h2 id="delete-channel-title">{step === "choice" ? "Delete this channel" : "Type Yes to confirm"}</h2></div><button type="button" className="icon-button" aria-label="Close delete dialog" onClick={onClose} disabled={busy}><X size={18} /></button></div>
-    {step === "choice" ? <><p id="delete-channel-copy" className="modal-copy">This permanently removes <strong>{channel.display_name}</strong> and its repository folder.</p><div className="modal-actions"><button type="button" className="quiet-button" onClick={onClose}>No</button><button type="button" className="primary-button danger-confirm" onClick={() => setStep("type")}>Yes</button></div></> : <><p id="delete-channel-copy" className="modal-copy">Enter the exact word <strong>Yes</strong> to permanently delete this channel.</p><label>Confirmation<input autoFocus aria-label="Type Yes to confirm" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} placeholder="Yes" autoComplete="off" /></label>{error ? <p className="form-error" role="alert">{error}</p> : null}<div className="modal-actions"><button type="button" className="quiet-button" onClick={() => { setStep("choice"); setConfirmation(""); setError(""); }} disabled={busy}>Back</button><button type="button" className="primary-button danger-confirm" disabled={busy || confirmation !== "Yes"} onClick={() => void submit()}>{busy ? <CircleNotch className="spin" size={16} /> : <Trash size={16} />}Delete channel</button></div></>}
-  </section></div>;
+  return (
+    <div className="modal-backdrop" role="presentation">
+      <section className="modal confirm-modal" role="dialog" aria-modal="true" aria-labelledby="delete-channel-title" aria-describedby="delete-channel-copy">
+        <div className="modal-heading">
+          <div>
+            <p className="eyebrow">{t("channels.deleteChannelBtn")}</p>
+            <h2 id="delete-channel-title">{step === "choice" ? t("channels.deleteChannelTitle") : t("common.typeYesToConfirm")}</h2>
+          </div>
+          <button type="button" className="icon-button" aria-label="Close delete dialog" onClick={onClose} disabled={busy}>
+            <X size={18} />
+          </button>
+        </div>
+        {step === "choice" ? (
+          <>
+            <p id="delete-channel-copy" className="modal-copy">
+              {t("channels.deleteChannelWarning")}
+            </p>
+            <div className="modal-actions">
+              <button type="button" className="quiet-button" onClick={onClose}>
+                {t("common.no")}
+              </button>
+              <button type="button" className="primary-button danger-confirm" onClick={() => setStep("type")}>
+                {t("common.yes")}
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p id="delete-channel-copy" className="modal-copy">
+              {t("channels.deleteChannelWarning")}
+            </p>
+            <label>
+              Confirmation
+              <input
+                autoFocus
+                aria-label="Type Yes to confirm"
+                value={confirmation}
+                onChange={(event) => setConfirmation(event.target.value)}
+                placeholder="Yes"
+                autoComplete="off"
+              />
+            </label>
+            {error ? <p className="form-error" role="alert">{error}</p> : null}
+            <div className="modal-actions">
+              <button type="button" className="quiet-button" onClick={() => { setStep("choice"); setConfirmation(""); setError(""); }} disabled={busy}>
+                {t("common.back")}
+              </button>
+              <button type="button" className="primary-button danger-confirm" disabled={busy || confirmation !== "Yes"} onClick={() => void submit()}>
+                {busy ? <CircleNotch className="spin" size={16} /> : <Trash size={16} />}
+                {t("channels.deleteChannelBtn")}
+              </button>
+            </div>
+          </>
+        )}
+      </section>
+    </div>
+  );
 }
 
 export function DeleteEpisodeModal({ channel, episode, onClose, onDeleted, onError }: { channel: Channel; episode: Episode; onClose: () => void; onDeleted: (episode: Episode) => Promise<void>; onError: (error: unknown) => void }) {
+  const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const submit = async () => {
@@ -169,12 +226,34 @@ export function DeleteEpisodeModal({ channel, episode, onClose, onDeleted, onErr
       setBusy(false);
     }
   };
-  return <div className="modal-backdrop" role="presentation"><section className="modal confirm-modal" role="dialog" aria-modal="true" aria-labelledby="delete-episode-title" aria-describedby="delete-episode-copy">
-    <div className="modal-heading"><div><p className="eyebrow">Delete episode</p><h2 id="delete-episode-title">Delete this episode</h2></div><button type="button" className="icon-button" aria-label="Close delete dialog" onClick={onClose} disabled={busy}><X size={18} /></button></div>
-    <p id="delete-episode-copy" className="modal-copy">This permanently removes <strong>{episode.topic.title}</strong> and its generated assets.</p>
-    {error ? <p className="form-error" role="alert">{error}</p> : null}
-    <div className="modal-actions"><button type="button" className="quiet-button" onClick={onClose} disabled={busy}>No</button><button type="button" className="primary-button danger-confirm" onClick={() => void submit()} disabled={busy}>{busy ? <CircleNotch className="spin" size={16} /> : <Trash size={16} />}{busy ? "Deleting…" : "Yes"}</button></div>
-  </section></div>;
+  return (
+    <div className="modal-backdrop" role="presentation">
+      <section className="modal confirm-modal" role="dialog" aria-modal="true" aria-labelledby="delete-episode-title" aria-describedby="delete-episode-copy">
+        <div className="modal-heading">
+          <div>
+            <p className="eyebrow">{t("channelDetail.deleteEpisodeTitle")}</p>
+            <h2 id="delete-episode-title">{t("channelDetail.deleteEpisodeTitle")}</h2>
+          </div>
+          <button type="button" className="icon-button" aria-label="Close delete dialog" onClick={onClose} disabled={busy}>
+            <X size={18} />
+          </button>
+        </div>
+        <p id="delete-episode-copy" className="modal-copy">
+          {t("channelDetail.deleteEpisodeWarning")}
+        </p>
+        {error ? <p className="form-error" role="alert">{error}</p> : null}
+        <div className="modal-actions">
+          <button type="button" className="quiet-button" onClick={onClose} disabled={busy}>
+            {t("common.no")}
+          </button>
+          <button type="button" className="primary-button danger-confirm" onClick={() => void submit()} disabled={busy}>
+            {busy ? <CircleNotch className="spin" size={16} /> : <Trash size={16} />}
+            {busy ? t("common.working") : t("common.yes")}
+          </button>
+        </div>
+      </section>
+    </div>
+  );
 }
 
 export const QUIZ_IMAGE_STYLE_DESCRIPTIONS: Record<QuizImageStyle, string> = {
@@ -505,7 +584,7 @@ export function TopicCard({
       <div className="topic-question-picker">
         <label htmlFor={inputId}>Questions</label>
         <input id={inputId} type="number" min={QUIZ_MIN_QUESTION_COUNT} max={QUIZ_MAX_QUESTION_COUNT} step={1} inputMode="numeric" value={questionCount} aria-label={`Question count for ${topic.title}`} aria-invalid={!isQuestionCountValid} disabled={disabled} onChange={(event) => setQuestionCount(Number(event.target.value))} />
-        <span aria-live="polite">{isQuestionCountValid ? `~${estimatedDurationMinutes} min` : `Choose ${QUIZ_MIN_QUESTION_COUNT}-${QUIZ_MAX_QUESTION_COUNT}`}</span>
+        <span aria-live="polite">{isQuestionCountValid ? `About ${estimatedDurationMinutes} min` : `Choose ${QUIZ_MIN_QUESTION_COUNT}-${QUIZ_MAX_QUESTION_COUNT}`}</span>
       </div>
       <div className="topic-style-picker">
         <label htmlFor={styleSelectId}>Visual Style</label>
@@ -725,6 +804,7 @@ export function ChannelDetail({
   openEpisode: (channelId: string, episodeId: string, tab?: string) => void;
   simplifyMode?: boolean;
 }) {
+  const { t } = useTranslation();
   const [dna, setDna] = useState<{ content: string; path: string; modified_at: string } | null>(null);
   const [topics, setTopics] = useState<TopicCandidate[]>([]);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -1300,7 +1380,7 @@ export function ChannelDetail({
               <div className="panel-heading">
                 <div>
                   <p className="eyebrow">Metadata</p>
-                  <h2>Production Status</h2>
+                  <h2>{t("channelDetail.productionStatus")}</h2>
                 </div>
               </div>
               <div className="status-stack">
@@ -1340,7 +1420,7 @@ export function ChannelDetail({
 
               {channel.mascot_id ? (() => {
                 const assignedMascot = mascotsList.find((m) => m.id === channel.mascot_id);
-                const cfg = channel.mascot_config || { enabled: true, position: "bottom_left", scale: 1.0, sfx_enabled: true };
+                const cfg = channel.mascot_config || { enabled: true, position: "bottom_left", scale: 1.0 };
 
                 return (
                   <div className="mascot-branding-content">
@@ -1395,18 +1475,6 @@ export function ChannelDetail({
                           disabled={changingMascot}
                           onChange={(e) => void handleMascotConfigUpdate({ scale: Number(e.target.value) })}
                         />
-                      </div>
-
-                      <div className="form-group" style={{ marginTop: "10px" }}>
-                        <label className="checkbox-row" style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-                          <input
-                            type="checkbox"
-                            checked={cfg.sfx_enabled !== false}
-                            disabled={changingMascot}
-                            onChange={(e) => void handleMascotConfigUpdate({ sfx_enabled: e.target.checked })}
-                          />
-                          <span>🔊 Bật âm thanh phản ứng (SFX Audio Reactions) khi công bố kết quả</span>
-                        </label>
                       </div>
                     </div>
                   </div>
@@ -1471,14 +1539,181 @@ function ChannelLoadingState({
   );
 }
 
-type CreateChannelForm = { name: string; description: string; target_audience: string; language: string; market: string; group_id: ChannelGroupId; dna_mode: "example" | "ai" | "upload"; dna_content: string };
+type CreateChannelForm = {
+  name: string;
+  description: string;
+  target_audience: string;
+  language: string;
+  market: string;
+  group_id: ChannelGroupId;
+  dna_mode: "example" | "ai" | "upload";
+  dna_content: string;
+};
 
-export function CreateChannelModal({ initialGroupId = "quiz", onClose, onCreated, onError }: { initialGroupId?: ChannelGroupId; onClose: () => void; onCreated: (channelId: string, message: string, task: Task | null) => Promise<void>; onError: (error: unknown) => void }) {
-  const [form, setForm] = useState<CreateChannelForm>({ name: "", description: "", target_audience: "Children and families", language: "English", market: "Global", group_id: initialGroupId, dna_mode: "example", dna_content: "" });
+export function CreateChannelModal({
+  initialGroupId = "quiz",
+  onClose,
+  onCreated,
+  onError,
+}: {
+  initialGroupId?: ChannelGroupId;
+  onClose: () => void;
+  onCreated: (channelId: string, message: string, task: Task | null) => Promise<void>;
+  onError: (error: unknown) => void;
+}) {
+  const { t } = useTranslation();
+  const [form, setForm] = useState<CreateChannelForm>({
+    name: "",
+    description: "",
+    target_audience: "Children and families",
+    language: "English",
+    market: "Global",
+    group_id: initialGroupId,
+    dna_mode: "example",
+    dna_content: "",
+  });
   const [dnaFileName, setDnaFileName] = useState("");
   const [busy, setBusy] = useState(false);
-  const handleDnaUpload = async (event: React.ChangeEvent<HTMLInputElement>) => { const file = event.target.files?.[0]; if (!file) return; if (!file.name.toLowerCase().endsWith(".md")) { event.target.value = ""; onError(new Error("Choose a Markdown file (.md) for channel DNA.")); return; } try { const content = await file.text(); if (!content.trim()) throw new Error("The selected channel DNA file is empty."); setForm((current) => ({ ...current, dna_mode: "upload", dna_content: content })); setDnaFileName(file.name); } catch (error) { event.target.value = ""; onError(error); } };
-  const submit = async (event: React.FormEvent) => { event.preventDefault(); if (form.dna_mode === "upload" && !form.dna_content.trim()) { onError(new Error("Choose a channel_dna.md file before creating the channel.")); return; } setBusy(true); try { const result = await api.createChannel(form); const message = result.task ? "Channel created and DNA generation queued" : form.dna_mode === "upload" ? "Channel created from uploaded DNA" : "Channel created with example DNA"; await onCreated(result.channel.channel_id, message, result.task); } catch (error) { onError(error); } finally { setBusy(false); } };
-  return <div className="modal-backdrop" role="presentation"><form className="modal" onSubmit={(event) => void submit(event)}><div className="modal-heading"><div><p className="eyebrow">Quiz Channels</p><h2>Create channel</h2></div><button type="button" className="icon-button" onClick={onClose}><X size={18} /></button></div><label>Channel name<input required autoFocus value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} placeholder="World Wonder Quiz" /></label><label>Concept or description<textarea value={form.description} onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))} placeholder="What should children discover?" /></label><div className="form-grid"><label>Audience<input value={form.target_audience} onChange={(event) => setForm((current) => ({ ...current, target_audience: event.target.value }))} placeholder="Children and families" /></label><label>Market<input value={form.market} onChange={(event) => setForm((current) => ({ ...current, market: event.target.value }))} placeholder="Global" /></label></div><div className="dna-choice"><span className="field-label">Starting DNA</span><div className="choice-row dna-choice-row">{(["example", "ai", "upload"] as const).map((value) => <button type="button" key={value} className={`choice ${form.dna_mode === value ? "is-selected" : ""}`} onClick={() => setForm((current) => ({ ...current, dna_mode: value }))}><span className="choice-radio" />{value === "example" ? "Use Quiz DNA" : value === "ai" ? "Create with AI" : "Upload DNA"}</button>)}</div>{form.dna_mode === "upload" ? <div className="dna-upload"><label className="dna-upload-button"><FileText size={15} />{dnaFileName || "Choose channel_dna.md"}<input aria-label="Channel DNA file" type="file" accept=".md,text/markdown" onChange={(event) => void handleDnaUpload(event)} /></label>{dnaFileName ? <span className="dna-file-name">{dnaFileName}</span> : <span className="dna-upload-hint">Markdown only</span>}</div> : null}</div><div className="modal-actions"><button type="button" className="quiet-button" onClick={onClose}>Cancel</button><button className="primary-button" disabled={busy || (form.dna_mode === "upload" && !form.dna_content.trim())}>{busy ? <CircleNotch className="spin" size={16} /> : <Plus size={16} />}Create channel</button></div></form></div>;
+
+  const handleDnaUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith(".md")) {
+      event.target.value = "";
+      onError(new Error("Choose a Markdown file (.md) for channel DNA."));
+      return;
+    }
+    try {
+      const content = await file.text();
+      if (!content.trim()) throw new Error("The selected channel DNA file is empty.");
+      setForm((current) => ({ ...current, dna_mode: "upload", dna_content: content }));
+      setDnaFileName(file.name);
+    } catch (error) {
+      event.target.value = "";
+      onError(error);
+    }
+  };
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (form.dna_mode === "upload" && !form.dna_content.trim()) {
+      onError(new Error("Choose a channel_dna.md file before creating the channel."));
+      return;
+    }
+    setBusy(true);
+    try {
+      const result = await api.createChannel(form);
+      const message = result.task
+        ? "Channel created and DNA generation queued"
+        : form.dna_mode === "upload"
+        ? "Channel created from uploaded DNA"
+        : "Channel created with example DNA";
+      await onCreated(result.channel.channel_id, message, result.task);
+    } catch (error) {
+      onError(error);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="modal-backdrop" role="presentation">
+      <form className="modal" onSubmit={(event) => void submit(event)}>
+        <div className="modal-heading">
+          <div>
+            <p className="eyebrow">{t("channels.quizChannels")}</p>
+            <h2>{t("channels.createChannelTitle")}</h2>
+          </div>
+          <button type="button" className="icon-button" onClick={onClose}>
+            <X size={18} />
+          </button>
+        </div>
+        <label>
+          {t("channels.channelNameLabel")}
+          <input
+            required
+            autoFocus
+            value={form.name}
+            onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
+            placeholder="World Wonder Quiz"
+          />
+        </label>
+        <label>
+          {t("channels.descriptionLabel")}
+          <textarea
+            value={form.description}
+            onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
+            placeholder="What should children discover?"
+          />
+        </label>
+        <div className="form-grid">
+          <label>
+            {t("channels.targetAudienceLabel")}
+            <input
+              value={form.target_audience}
+              onChange={(event) => setForm((current) => ({ ...current, target_audience: event.target.value }))}
+              placeholder="Children and families"
+            />
+          </label>
+          <label>
+            Market
+            <input
+              value={form.market}
+              onChange={(event) => setForm((current) => ({ ...current, market: event.target.value }))}
+              placeholder="Global"
+            />
+          </label>
+        </div>
+        <div className="dna-choice">
+          <span className="field-label">{t("channels.startingDna")}</span>
+          <div className="choice-row dna-choice-row">
+            {(["example", "ai", "upload"] as const).map((value) => (
+              <button
+                type="button"
+                key={value}
+                className={`choice ${form.dna_mode === value ? "is-selected" : ""}`}
+                onClick={() => setForm((current) => ({ ...current, dna_mode: value }))}
+              >
+                <span className="choice-radio" />
+                {value === "example" ? "Use Quiz DNA" : value === "ai" ? "Create with AI" : t("channels.uploadDna")}
+              </button>
+            ))}
+          </div>
+          {form.dna_mode === "upload" ? (
+            <div className="dna-upload">
+              <label className="dna-upload-button">
+                <FileText size={15} />
+                {dnaFileName || "Choose channel_dna.md"}
+                <input
+                  aria-label="Channel DNA file"
+                  type="file"
+                  accept=".md,text/markdown"
+                  onChange={(event) => void handleDnaUpload(event)}
+                />
+              </label>
+              {dnaFileName ? (
+                <span className="dna-file-name">{dnaFileName}</span>
+              ) : (
+                <span className="dna-upload-hint">Markdown only</span>
+              )}
+            </div>
+          ) : null}
+        </div>
+        <div className="modal-actions">
+          <button type="button" className="quiet-button" onClick={onClose}>
+            {t("common.cancel")}
+          </button>
+          <button
+            className="primary-button"
+            disabled={busy || (form.dna_mode === "upload" && !form.dna_content.trim())}
+          >
+            {busy ? <CircleNotch className="spin" size={16} /> : <Plus size={16} />}
+            {t("channels.createFirstChannel")}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 }
+
 

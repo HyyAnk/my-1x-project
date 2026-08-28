@@ -167,7 +167,17 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       expect(calibratedAction.offset_x).toBe(8);
       expect(calibratedAction.offset_y).toBe(-4);
 
-      // 8c. Export Mascot ZIP Package
+      // 8c. Remove Background Endpoint Test
+      const removeBgRes = await app.server.inject({
+        method: "POST",
+        url: `/api/mascots/${createdMascot.id}/remove-background`,
+        payload: { target: "all" },
+      });
+      expect(removeBgRes.statusCode).toBe(200);
+      const mattedMascot: MascotProfile = removeBgRes.json().mascot;
+      expect(mattedMascot.id).toBe(createdMascot.id);
+
+      // 8d. Export Mascot ZIP Package
       const exportRes = await app.server.inject({
         method: "GET",
         url: `/api/mascots/${createdMascot.id}/export`,
@@ -258,10 +268,10 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       expect(compositionBundle.html).toContain("anchor-bottom_left");
       expect(compositionBundle.html).toContain("has-mascot-left");
 
-      // Verify mascot reaction SFX audio tags (Phase 3 feature)
-      expect(compositionBundle.html).toContain("mascot-sfx");
-      expect(compositionBundle.html).toContain("mascot-think-");
-      expect(compositionBundle.html).toContain("mascot-react-");
+      // Verify mascot does not generate redundant mascot SFX audio tags
+      expect(compositionBundle.html).not.toContain("mascot-sfx");
+      expect(compositionBundle.html).not.toContain("mascot-think-");
+      expect(compositionBundle.html).not.toContain("mascot-react-");
 
       // Verify composition files for subcompositions contain the mascot layers
       const subCompKeys = Object.keys(compositionBundle.files);

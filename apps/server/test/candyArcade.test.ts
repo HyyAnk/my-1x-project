@@ -257,7 +257,7 @@ describe("Candy Arcade visual template", () => {
     expect(viTimeline.duration_seconds - (outroEvent.at_seconds + outroEvent.duration_seconds)).toBeGreaterThanOrEqual(4.9);
   });
 
-  it("separates Game and Mascot SFX onto distinct tracks and prevents audio overlaps on the same track", () => {
+  it("renders Game SFX onto track 3, avoids Mascot-specific SFX, and prevents audio overlaps on the same track", () => {
     const director = createDefaultDirectorPlan(quiz);
     const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
     const dummyMascot = {
@@ -275,14 +275,17 @@ describe("Candy Arcade visual template", () => {
       audioPath: "./narration.wav",
       narrationDurationSeconds: timeline.duration_seconds,
       mascot: dummyMascot as any,
-      mascotConfig: { mascot_id: "mascot-1", position: "bottom_left", scale: 1, sfx_enabled: true, sfx_volume: 1 },
+      mascotConfig: { mascot_id: "mascot-1", position: "bottom_left", scale: 1 },
     });
 
     // 1. Must NOT reference non-existent ui_soft.wav
     expect(bundle.html).not.toContain("ui_soft.wav");
     expect(bundle.html).toContain("ui_pop.wav");
 
-    // 2. Extract all audio tags and verify tracks and overlaps
+    // 2. Mascot SFX should not exist
+    expect(bundle.html).not.toContain("mascot-sfx");
+
+    // 3. Extract all audio tags and verify tracks and overlaps
     const audioRegex = /<audio\s+id="([^"]+)"[^>]*data-start="([^"]+)"\s+data-duration="([^"]+)"\s+data-track-index="([^"]+)"[^>]*src="([^"]+)"/g;
     const matches = Array.from(bundle.html.matchAll(audioRegex));
     expect(matches.length).toBeGreaterThan(0);
@@ -300,11 +303,11 @@ describe("Candy Arcade visual template", () => {
       tracks.get(trackIndex)!.push({ id, start, end, src });
     }
 
-    // Verify mascot SFX is on track 5 and game SFX is on track 3
+    // Verify game SFX is on track 3 and no mascot SFX on track 5
     const track3 = tracks.get(3) ?? [];
     const track5 = tracks.get(5) ?? [];
     expect(track3.length).toBeGreaterThan(0);
-    expect(track5.length).toBeGreaterThan(0);
+    expect(track5.length).toBe(0);
 
     // Verify no overlapping audio clips on any track
     for (const [trackIndex, clips] of tracks.entries()) {

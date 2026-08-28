@@ -88,9 +88,10 @@ export function EpisodeDetail({
   const [isRemixing, setIsRemixing] = useState(false);
   const [remixingQuestionId, setRemixingQuestionId] = useState<string | null>(null);
   const [remixAction, setRemixAction] = useState<{ questionId: string; mode: "rephrase" | "replace" } | null>(null);
+  const isQuiz = channel.engine === "quiz" || channel.group_id === "quiz";
   const initialWorkflowTab = (activeTab === "script" || activeTab === "visual" || activeTab === "timeline" || activeTab === "remix")
     ? activeTab
-    : simplifyMode
+    : (simplifyMode && isQuiz)
     ? "remix"
     : "timeline";
   const [workflowTab, setWorkflowTab] = useState<"script" | "visual" | "timeline" | "remix">(initialWorkflowTab);
@@ -216,7 +217,6 @@ export function EpisodeDetail({
     return filteredScenes.reduce((sum, s) => sum + s.duration_seconds, 0);
   }, [filteredScenes]);
 
-  const isQuiz = channel.engine === "quiz";
   useEffect(() => {
     if (episode) {
       setQuestionCountDraft(episode.quiz_config?.question_count ?? 8);

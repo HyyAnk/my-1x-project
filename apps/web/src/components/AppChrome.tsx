@@ -3,6 +3,8 @@ import { ArrowClockwise, Broadcast, CaretDown, Check, CheckCircle, CircleNotch, 
 import type { Channel, CodexSettingsResponse, Task } from "@studio/shared";
 import type { GitInfo, Notice, Page, Theme } from "./types";
 import { formatTaskType } from "../lib/utils";
+import { useTranslation } from "../i18n";
+
 
 export function SidebarQueueWidget({
   tasks = [],
@@ -17,37 +19,38 @@ export function SidebarQueueWidget({
   onOpenTasks?: () => void;
   onOpenEpisode?: (channelId: string, episodeId: string) => void;
 }) {
+  const { t } = useTranslation();
   const episodeTasks = tasks.filter((task) => Boolean(task.episode_id));
   const queuedTasks = episodeTasks.filter((task) => task.status === "QUEUED").reverse();
   const runningTasks = episodeTasks.filter((task) => task.status === "RUNNING");
   const channelMap = new Map(channels.map((c) => [c.channel_id, c.display_name]));
 
   const formatEpisodeLabel = (channelId: string, episodeId: string | null) => {
-    const chName = channelMap.get(channelId) || "Channel";
+    const chName = channelMap.get(channelId) || t("channels.quizChannels");
     if (!episodeId) return chName;
     return `${chName} · EP ${episodeId.slice(-4).toUpperCase()}`;
   };
 
   return (
-    <div className="sidebar-queue-widget" title="Task Queue">
+    <div className="sidebar-queue-widget" title={t("tasks.taskQueue")}>
       <div className="sidebar-queue-header" onClick={onOpenTasks} style={{ cursor: "pointer" }}>
         <div className="sidebar-queue-title">
           <Queue size={14} weight="duotone" />
-          <span>Queue</span>
+          <span>{t("sidebar.queue")}</span>
         </div>
         <div className="sidebar-queue-badges">
           {runningTasks.length > 0 ? (
-            <span className="queue-badge running" title={`${runningTasks.length} running tasks`}>
+            <span className="queue-badge running" title={t("sidebar.runningCount", { count: runningTasks.length })}>
               <CircleNotch size={10} className="spin" />
               <span>{runningTasks.length}</span>
             </span>
           ) : null}
           {queuedTasks.length > 0 ? (
-            <span className="queue-badge queued" title={`${queuedTasks.length} queued tasks`}>
-              {queuedTasks.length} queued
+            <span className="queue-badge queued" title={t("sidebar.queuedCount", { count: queuedTasks.length })}>
+              {t("sidebar.queuedCount", { count: queuedTasks.length })}
             </span>
           ) : runningTasks.length === 0 ? (
-            <span className="queue-badge empty">Idle</span>
+            <span className="queue-badge empty">{t("sidebar.idle")}</span>
           ) : null}
         </div>
       </div>
@@ -58,7 +61,7 @@ export function SidebarQueueWidget({
             <div
               key={task.task_id}
               className="sidebar-queue-item"
-              title={`${formatTaskType(task.task_type)} - ${task.progress_message || "Queued"}`}
+              title={`${formatTaskType(task.task_type)} - ${task.progress_message || t("tasks.filterQueued")}`}
               onClick={() => {
                 if (task.channel_id && task.episode_id && onOpenEpisode) {
                   onOpenEpisode(task.channel_id, task.episode_id);
@@ -82,8 +85,8 @@ export function SidebarQueueWidget({
                 <button
                   type="button"
                   className="sidebar-queue-cancel-btn"
-                  title="Cancel queued task"
-                  aria-label="Cancel task"
+                  title={t("sidebar.cancelQueuedTask")}
+                  aria-label={t("sidebar.cancelQueuedTask")}
                   onClick={(e) => {
                     e.stopPropagation();
                     void onCancelTask(task.task_id);
@@ -98,11 +101,11 @@ export function SidebarQueueWidget({
       ) : runningTasks.length > 0 ? (
         <div className="sidebar-queue-running-hint" onClick={onOpenTasks} style={{ cursor: "pointer" }}>
           <span className="status-pulse-dot" />
-          <span>{runningTasks.length} running · 0 queued</span>
+          <span>{t("sidebar.runningAndQueued", { running: runningTasks.length, queued: 0 })}</span>
         </div>
       ) : (
         <div className="sidebar-queue-empty" onClick={onOpenTasks} style={{ cursor: "pointer" }}>
-          <span>Queue is empty</span>
+          <span>{t("sidebar.queueEmpty")}</span>
         </div>
       )}
     </div>
@@ -138,21 +141,22 @@ export function Sidebar({
   onOpenSettings?: () => void;
   onCreateChannel?: () => void;
 }) {
+  const { t } = useTranslation();
   const items: Array<{ page: Page; label: string; icon: typeof House }> = [
-    { page: "dashboard", label: "Dashboard", icon: House },
-    { page: "channels", label: "Channels", icon: Broadcast },
-    { page: "mascots", label: "Mascot Studio", icon: Smiley },
-    { page: "tasks", label: "Tasks", icon: ListChecks },
+    { page: "dashboard", label: t("sidebar.dashboard"), icon: House },
+    { page: "channels", label: t("sidebar.channels"), icon: Broadcast },
+    { page: "mascots", label: t("sidebar.mascotStudio"), icon: Smiley },
+    { page: "tasks", label: t("sidebar.tasks"), icon: ListChecks },
   ];
   return (
     <aside className="sidebar">
       <div className="brand-lockup">
-        <div className="brand-mark" title="AI Quiz Studio">
+        <div className="brand-mark" title={t("sidebar.brandName")}>
           <Sparkle size={18} weight="fill" />
         </div>
         <div>
-          <span className="brand-name">Quiz Studio</span>
-          <span className="brand-subtitle">AI Video Engine</span>
+          <span className="brand-name">{t("sidebar.brandName")}</span>
+          <span className="brand-subtitle">{t("sidebar.brandSubtitle")}</span>
         </div>
       </div>
       {onCreateChannel ? (
@@ -160,10 +164,10 @@ export function Sidebar({
           type="button"
           className="sidebar-create-btn"
           onClick={onCreateChannel}
-          title="Create New Channel"
+          title={t("sidebar.newChannel")}
         >
           <Plus size={16} weight="bold" />
-          <span>New Channel</span>
+          <span>{t("sidebar.newChannel")}</span>
         </button>
       ) : null}
       <div className="sidebar-rule" />
@@ -183,11 +187,11 @@ export function Sidebar({
         ))}
         <button
           className={`nav-item mobile-settings-nav ${page === "settings" ? "is-active" : ""}`}
-          aria-label="Settings"
+          aria-label={t("sidebar.settings")}
           onClick={() => setPage("settings")}
         >
           <Gear size={18} />
-          <span>Settings</span>
+          <span>{t("sidebar.settings")}</span>
         </button>
       </nav>
       <div className="sidebar-bottom">
@@ -210,13 +214,13 @@ export function Sidebar({
           <div className="sidebar-balance-header">
             <div className="sidebar-balance-title">
               <Wallet size={14} weight="duotone" />
-              <span>API Balance</span>
+              <span>{t("sidebar.apiBalance")}</span>
             </div>
             <button
               type="button"
               className="sidebar-balance-refresh-btn"
-              title="Refresh API balance"
-              aria-label="Refresh API balance"
+              title={t("sidebar.refreshBalance")}
+              aria-label={t("sidebar.refreshBalance")}
               disabled={loadingBalance}
               onClick={(e) => {
                 e.stopPropagation();
@@ -233,9 +237,9 @@ export function Sidebar({
                 <span className="sidebar-balance-unit">VND</span>
               </>
             ) : balanceError ? (
-              <span className="sidebar-balance-error" title={balanceError}>No API Key</span>
+              <span className="sidebar-balance-error" title={balanceError}>{t("sidebar.noApiKey")}</span>
             ) : (
-              <span className="sidebar-balance-loading">Loading…</span>
+              <span className="sidebar-balance-loading">{t("common.loading")}</span>
             )}
           </div>
           {balanceInfo?.rpm ? (
@@ -250,11 +254,11 @@ export function Sidebar({
           onClick={() => setPage("settings")}
         >
           <Gear size={18} weight={page === "settings" ? "fill" : "regular"} />
-          <span>Settings</span>
+          <span>{t("sidebar.settings")}</span>
         </button>
         <div className="local-badge">
           <span className="status-dot" />
-          <span>Local workspace</span>
+          <span>{t("sidebar.localWorkspace")}</span>
         </div>
       </div>
     </aside>
@@ -304,14 +308,15 @@ export function Topbar({
   onReconnect: () => void;
   onShutdown: () => void;
 }) {
+  const { t } = useTranslation();
   const reconnectable = engineStatus === "disconnected" || engineStatus === "unavailable";
-  const label = engineStatus === "connected" ? "Ready" : engineStatus === "connecting" ? "Connecting" : engineStatus === "disconnected" ? "Disconnected" : "Unavailable";
-  const engineDefaultLabel = activeEngine === "antigravity" ? "Antigravity default (gemini-2.5-pro)" : "Codex default";
+  const label = engineStatus === "connected" ? t("common.ready") : engineStatus === "connecting" ? t("common.connecting") : engineStatus === "disconnected" ? t("common.disconnected") : t("common.unavailable");
+  const engineDefaultLabel = activeEngine === "antigravity" ? t("topbar.antigravityDefault") : t("topbar.codexDefault");
 
   return (
     <header className="topbar">
       <div className="context-trail">
-        <span className="context-kicker">Workspace</span>
+        <span className="context-kicker">{t("topbar.workspace")}</span>
         {channels && channels.length > 0 ? (
           <div className="topbar-channel-selector">
             <select
@@ -322,7 +327,7 @@ export function Topbar({
               }}
             >
               <option value="" disabled={Boolean(channel)}>
-                {channel ? channel.display_name : "Select Channel…"}
+                {channel ? channel.display_name : t("topbar.selectChannel")}
               </option>
               {channels.map((ch) => (
                 <option key={ch.channel_id} value={ch.channel_id}>
@@ -334,11 +339,11 @@ export function Topbar({
             <CaretDown size={12} className="selector-caret" />
           </div>
         ) : (
-          <span className="context-title">{channel?.display_name ?? "Overview"}</span>
+          <span className="context-title">{channel?.display_name ?? t("common.overview")}</span>
         )}
       </div>
       <div className="topbar-meta">
-        <div className="engine-toggle-group" role="group" aria-label="Dual-Engine Selection">
+        <div className="engine-toggle-group" role="group" aria-label={t("topbar.engineSelection")}>
           <button
             type="button"
             className={`engine-toggle-btn ${activeEngine === "codex" ? "is-active" : ""}`}
@@ -346,7 +351,7 @@ export function Topbar({
             title="OpenAI Codex JSON-RPC Engine"
           >
             <TerminalWindow size={14} weight={activeEngine === "codex" ? "bold" : "regular"} />
-            <span>Codex</span>
+            <span>{t("topbar.codexEngine")}</span>
           </button>
           <button
             type="button"
@@ -355,7 +360,7 @@ export function Topbar({
             title="Google Antigravity Engine"
           >
             <Sparkle size={14} weight={activeEngine === "antigravity" ? "bold" : "regular"} />
-            <span>Antigravity</span>
+            <span>{t("topbar.antigravityEngine")}</span>
           </button>
         </div>
 
@@ -367,12 +372,12 @@ export function Topbar({
             title="gpti2.store API Key is not configured. Click to open Settings."
           >
             <WarningCircle size={14} weight="fill" className="key-warning-icon" />
-            <span>Missing Image Key</span>
+            <span>{t("topbar.missingImageKey")}</span>
           </button>
         ) : (
           <label className="model-select image-model-select" title="Image Generation Model (gpti2.store)">
             <Image size={13} style={{ marginRight: 2 }} />
-            <span>Image</span>
+            <span>{t("topbar.imageModel")}</span>
             <CaretDown size={13} />
             <select
               aria-label="Image generation model"
@@ -386,15 +391,15 @@ export function Topbar({
         )}
 
         <label className="model-select">
-          <span>Model</span>
+          <span>{t("topbar.model")}</span>
           <CaretDown size={13} />
           {loadingModels ? (
-            <select aria-label="Active engine model" disabled>
-              <option>Loading models…</option>
+            <select aria-label={activeEngine === "antigravity" ? "Antigravity model" : "Codex model"} disabled>
+              <option>{t("topbar.loadingModels")}</option>
             </select>
           ) : (
             <select
-              aria-label="Active engine model"
+              aria-label={activeEngine === "antigravity" ? "Antigravity model" : "Codex model"}
               value={currentModel}
               onChange={(event) => void onModelChange(event.target.value)}
             >
@@ -420,13 +425,13 @@ export function Topbar({
         </span>
         {reconnectable ? (
           <button className="link-button" onClick={onReconnect}>
-            Reconnect
+            {t("topbar.reconnectBtn")}
           </button>
         ) : null}
         <button
           className="icon-button theme-toggle"
-          title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          title={theme === "dark" ? t("topbar.themeToggleLight") : t("topbar.themeToggleDark")}
+          aria-label={theme === "dark" ? t("topbar.themeToggleLight") : t("topbar.themeToggleDark")}
           onClick={onThemeToggle}
         >
           {theme === "dark" ? <Sun size={16} /> : <MoonStars size={16} />}
@@ -435,6 +440,7 @@ export function Topbar({
     </header>
   );
 }
+
 
 export function PageTitle({ eyebrow, title, copy, action }: { eyebrow: string; title: string; copy?: string; action?: React.ReactNode }) { return <div className="page-title"><div><p className="eyebrow">{eyebrow}</p><h1>{title}</h1>{copy ? <p className="page-copy">{copy}</p> : null}</div>{action ? <div>{action}</div> : null}</div>; }
 export function StatusLine({ label, value }: { label: string; value: string }) { return <div className="status-line"><span>{label}</span><strong>{value}</strong></div>; }

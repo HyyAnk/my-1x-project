@@ -97,7 +97,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     seed: input.quiz.episode_id,
     ...input.bgmOptions,
   });
-  const sfxClips = buildSfxClips(events, input.assets, input.mascot, input.mascotConfig);
+  const sfxClips = buildSfxClips(events, input.assets);
   const audioTags = [
     `<audio id="quiz-narration" class="clip" data-start="0" data-duration="${narrationDuration.toFixed(3)}" data-track-index="2" data-volume="1" src="${audioSrc}"></audio>`,
     ...bgmClips,
@@ -424,10 +424,8 @@ type SfxRawClip = {
   src: string;
 };
 
-function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, string>, mascot?: MascotProfile | null, mascotConfig?: ChannelMascotConfig | null): string[] {
+function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, string>): string[] {
   const rawClips: SfxRawClip[] = [];
-  const sfxEnabled = mascotConfig?.sfx_enabled !== false;
-  const sfxVolume = mascotConfig?.sfx_volume || 1.0;
 
   for (const event of events) {
     const timeMs = Math.round(event.at_seconds * 1000);
@@ -445,17 +443,6 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
         volume: "0.55",
         src,
       });
-    } else if (event.type === "countdown.start" && mascot && sfxEnabled) {
-      const src = sfxSource("ui_pop.wav", assets);
-      rawClips.push({
-        id: `mascot-think-${timeMs}`,
-        className: "clip sfx-clip mascot-sfx",
-        start: event.at_seconds,
-        duration: 0.250,
-        trackIndex: 5,
-        volume: (0.50 * sfxVolume).toFixed(2),
-        src,
-      });
     } else if (event.type === "countdown.tick") {
       const isFinalTick = event.payload?.value === 1;
       const filename = isFinalTick ? "countdown_final.wav" : "countdown_tick.wav";
@@ -469,17 +456,6 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
         duration: dur,
         trackIndex: 3,
         volume: String(vol),
-        src,
-      });
-    } else if (event.type === "answer.reveal" && mascot && sfxEnabled) {
-      const src = sfxSource("streak.wav", assets);
-      rawClips.push({
-        id: `mascot-react-${timeMs}`,
-        className: "clip sfx-clip mascot-sfx",
-        start: event.at_seconds,
-        duration: 0.600,
-        trackIndex: 5,
-        volume: (0.65 * sfxVolume).toFixed(2),
         src,
       });
     } else if (event.type === "reward.play") {
@@ -508,17 +484,6 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
         duration: dur,
         trackIndex: 3,
         volume: "0.60",
-        src,
-      });
-    } else if ((event.type === "fact.enter" || event.type === "mascot.state") && mascot && sfxEnabled) {
-      const src = sfxSource("streak.wav", assets);
-      rawClips.push({
-        id: `mascot-point-${timeMs}`,
-        className: "clip sfx-clip mascot-sfx",
-        start: event.at_seconds,
-        duration: 0.800,
-        trackIndex: 5,
-        volume: (0.60 * sfxVolume).toFixed(2),
         src,
       });
     }
@@ -606,7 +571,6 @@ function getHeadlineFontBase64(): string {
   if (cachedHeadlineFontBase64 !== null) return cachedHeadlineFontBase64;
   const candidates = [
     path.resolve(process.cwd(), "assets", "fonts", "SVN-Hello Headline.otf"),
-    path.resolve(process.cwd(), "templates", "fonts", "SVN-Hello Headline.otf"),
     path.resolve(process.cwd(), "..", "assets", "fonts", "SVN-Hello Headline.otf"),
     path.resolve(process.cwd(), "..", "..", "assets", "fonts", "SVN-Hello Headline.otf"),
   ];
@@ -918,14 +882,28 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .has-mascot-right.layout-media_left_choices_right .candy-mascot-container.anchor-bottom_right { bottom: 14px; right: 24px; }
 .candy-mascot-container.mascot-intro { bottom: 60px; right: 180px; }
 .candy-mascot-container.mascot-outro { bottom: 60px; right: 180px; }
-.candy-mascot-sprite { width: 220px; height: 220px; background-image: var(--sprite-url); background-repeat: no-repeat; background-size: calc(var(--mascot-frames, 1) * 100%) 100%; animation: mascot-sprite-play calc(var(--mascot-frames, 1) / var(--mascot-fps, 8) * 1s) steps(calc(var(--mascot-frames, 1) - 1)) infinite; transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)); filter: drop-shadow(0 14px 18px rgba(13,35,71,.35)); }
+.candy-mascot-sprite { width: 220px; height: 220px; background-image: var(--sprite-url); background-repeat: no-repeat; background-position: 0% 50%; background-size: calc(var(--mascot-frames, 1) * 100%) 100%; transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)); filter: drop-shadow(0 14px 18px rgba(13,35,71,.35)); }
 .mascot-state-layer { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.mascot-state-layer:not([style*="--mascot-frames:1;"]):not([style*="--mascot-frames: 1;"]) .candy-mascot-sprite { animation: mascot-sprite-play calc(var(--mascot-frames, 1) / var(--mascot-fps, 8) * 1s) steps(calc(var(--mascot-frames, 1) - 1)) infinite; }
+.state-idle[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-idle[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-breathe 3.2s ease-in-out infinite alternate; background-size: contain; background-position: center bottom; }
+.state-thinking[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-thinking[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-sway 2.4s ease-in-out infinite alternate; background-size: contain; background-position: center bottom; }
+.state-celebrate[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-celebrate[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-jump 0.85s cubic-bezier(.18,1.42,.34,1) infinite alternate; background-size: contain; background-position: center bottom; }
+.state-oops[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-oops[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-shake 2.0s ease-in-out infinite; background-size: contain; background-position: center bottom; }
+.state-point[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-point[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-pulse 1.8s ease-in-out infinite alternate; background-size: contain; background-position: center bottom; }
+.mascot-intro .candy-mascot-sprite, .mascot-outro .candy-mascot-sprite { animation: mascot-sprite-play calc(var(--mascot-frames, 1) / var(--mascot-fps, 8) * 1s) steps(calc(var(--mascot-frames, 1) - 1)) infinite; }
+.mascot-intro[style*="--mascot-frames:1;"] .candy-mascot-sprite, .mascot-intro[style*="--mascot-frames: 1;"] .candy-mascot-sprite, .mascot-outro[style*="--mascot-frames:1;"] .candy-mascot-sprite, .mascot-outro[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-wave 1.6s ease-in-out infinite alternate; background-size: contain; background-position: center bottom; }
 .quiz-question-clip .mascot-state-layer.state-idle { animation: phase-enter .001s linear var(--clip-start) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--thinking-at)) forwards, phase-enter .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
 .quiz-question-clip .mascot-state-layer.state-thinking { animation: phase-enter .001s linear calc(var(--clip-start) + var(--thinking-at)) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards; }
 .quiz-question-clip .mascot-state-layer.state-celebrate { animation: phase-enter .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
 .quiz-question-clip .mascot-state-layer.state-oops { animation: phase-enter .001s linear calc(var(--clip-start) + var(--reveal-at)) forwards, phase-exit .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
 .quiz-question-clip .mascot-state-layer.state-point { animation: phase-enter .001s linear calc(var(--clip-start) + var(--reward-at)) forwards; }
 @keyframes mascot-sprite-play { from { background-position: 0% 0%; } to { background-position: 100% 0%; } }
+@keyframes mascot-single-breathe { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 6px)) scale(1.025, 0.98); } }
+@keyframes mascot-single-sway { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(-2.5deg); } 100% { transform: translate(calc(var(--action-offset-x, 0px) + 4px), calc(var(--action-offset-y, 0px) - 8px)) rotate(3.5deg); } }
+@keyframes mascot-single-jump { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1, 0.95); } 40% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 22px)) scale(1.04, 1.05) rotate(2deg); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 28px)) scale(1.06, 1.06) rotate(-2deg); } }
+@keyframes mascot-single-shake { 0%, 100% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(0deg); } 25% { transform: translate(calc(var(--action-offset-x, 0px) - 5px), var(--action-offset-y, 0px)) rotate(-4deg); } 75% { transform: translate(calc(var(--action-offset-x, 0px) + 5px), var(--action-offset-y, 0px)) rotate(4deg); } }
+@keyframes mascot-single-pulse { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); } 100% { transform: translate(calc(var(--action-offset-x, 0px) + 6px), calc(var(--action-offset-y, 0px) - 4px)) scale(1.03); } }
+@keyframes mascot-single-wave { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(-3deg); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 10px)) rotate(4deg) scale(1.03); } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; } }
 `;
 }

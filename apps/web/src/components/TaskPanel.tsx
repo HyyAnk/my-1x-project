@@ -32,6 +32,8 @@ import {
 import { EmptyState } from "./EmptyState";
 import { PageTitle } from "./AppChrome";
 import type { Notice } from "./types";
+import { useTranslation } from "../i18n";
+
 
 export type StatusFilter =
   | "all"
@@ -102,6 +104,7 @@ export function TaskActivityBar({
   onOpenTasks: () => void;
   onOpenEpisode?: (channelId: string, episodeId: string) => void;
 }) {
+  const { t } = useTranslation();
   const episodeTasks = tasks.filter((t) => Boolean(t.episode_id));
   if (episodeTasks.length === 0 && realtimeStatus === "connected") return null;
   const task = episodeTasks[0] ?? null;
@@ -129,18 +132,18 @@ export function TaskActivityBar({
           handleAction();
         }
       }}
-      title={task?.episode_id ? `Open episode (${progress}%)` : "View active tasks"}
+      title={task?.episode_id ? `Open episode (${progress}%)` : t("tasks.taskActivityTitle")}
       aria-label={
         task?.episode_id
           ? `Active task: ${formatTaskType(task.task_type)}, ${progress}% complete. Click to open episode.`
           : reconnecting
-          ? "Reconnecting live updates"
-          : "View tasks"
+          ? t("tasks.reconnectingLive")
+          : t("tasks.pageTitle")
       }
     >
       <div className="task-activity-signal">
         <span className="live-pulse" />
-        <span>{reconnecting ? "Reconnecting live updates" : `${episodeTasks.length} active ${episodeTasks.length === 1 ? "task" : "tasks"}`}</span>
+        <span>{reconnecting ? t("tasks.reconnectingLive") : t("tasks.activeTasksCount", { count: episodeTasks.length })}</span>
       </div>
       {task ? (
         <>
@@ -622,9 +625,11 @@ export function TasksView({
   onNotice: (notice: NonNullable<Notice>) => void;
   onOpenEpisode?: (channelId: string, episodeId: string) => void;
 }) {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
+
   const [selectedInspectItem, setSelectedInspectItem] = useState<ProductionItemSummary | null>(null);
   const [dismissedTaskIds, setDismissedTaskIds] = useState<Set<string>>(new Set());
   const [episodeTitleMap, setEpisodeTitleMap] = useState<Map<string, string>>(new Map());
@@ -913,18 +918,18 @@ export function TasksView({
     <section className="page-wrap task-manager-page">
       {/* Row 1: Header with Refresh Action */}
       <PageTitle
-        eyebrow="Operations & Jobs"
-        title="Task Manager"
+        eyebrow={t("tasks.eyebrow")}
+        title={t("tasks.pageTitle")}
         action={
           <button
             type="button"
             className="quiet-button"
             onClick={() => void handleManualRefresh()}
             disabled={isRefreshing}
-            aria-label="Refresh tasks"
+            aria-label={t("tasks.refreshTasks")}
           >
             <ArrowClockwise size={15} className={isRefreshing ? "spin" : ""} />
-            <span>Refresh</span>
+            <span>{t("tasks.refreshTasks")}</span>
           </button>
         }
       />
@@ -939,7 +944,7 @@ export function TasksView({
             className={`task-kpi-chip ${statusFilter === "all" ? "is-active" : ""}`}
             onClick={() => setStatusFilter("all")}
           >
-            <span className="kpi-label">All</span>
+            <span className="kpi-label">{t("tasks.filterAll")}</span>
             <span className="kpi-count">{totalCount}</span>
           </button>
 
@@ -950,7 +955,7 @@ export function TasksView({
             onClick={() => setStatusFilter("running")}
           >
             {runningCount > 0 && <span className="live-dot-pulse" />}
-            <span className="kpi-label">Running</span>
+            <span className="kpi-label">{t("tasks.filterRunning")}</span>
             <span className="kpi-count">{runningCount}</span>
           </button>
 
@@ -960,7 +965,7 @@ export function TasksView({
             className={`task-kpi-chip is-queued ${statusFilter === "queued" ? "is-active" : ""}`}
             onClick={() => setStatusFilter("queued")}
           >
-            <span className="kpi-label">Queued</span>
+            <span className="kpi-label">{t("tasks.filterQueued")}</span>
             <span className="kpi-count">{queuedCount}</span>
           </button>
 
@@ -982,7 +987,7 @@ export function TasksView({
             className={`task-kpi-chip is-failed ${statusFilter === "failed" ? "is-active" : ""}`}
             onClick={() => setStatusFilter("failed")}
           >
-            <span className="kpi-label">Failed</span>
+            <span className="kpi-label">{t("tasks.filterFailed")}</span>
             <span className={`kpi-count ${failedCount > 0 ? "has-errors" : ""}`}>{failedCount}</span>
           </button>
 
@@ -992,7 +997,7 @@ export function TasksView({
             className={`task-kpi-chip is-completed ${statusFilter === "completed" ? "is-active" : ""}`}
             onClick={() => setStatusFilter("completed")}
           >
-            <span className="kpi-label">Done</span>
+            <span className="kpi-label">{t("tasks.filterCompleted")}</span>
             <span className="kpi-count">{completedCount}</span>
           </button>
 
@@ -1016,10 +1021,10 @@ export function TasksView({
             <MagnifyingGlass size={14} className="search-icon" />
             <input
               type="search"
-              placeholder="Search tasks..."
+              placeholder={t("tasks.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Search tasks"
+              aria-label={t("tasks.searchPlaceholder")}
             />
             {searchQuery && (
               <button

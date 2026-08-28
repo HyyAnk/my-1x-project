@@ -12,6 +12,7 @@ import { generateGpti2ImageBytes } from "../providers/gpti2Image.js";
 import type { RepositoryService } from "../repository.js";
 import type { StudioLogger } from "../logger.js";
 import { createZipArchive, parseZipArchive } from "./zipHelper.js";
+import { removeImageBackground } from "../utils/imageMatting.js";
 
 const STYLE_PROMPTS: Record<QuizImageStyle, string> = {
   pixar_3d: "3D Pixar animation style, soft volumetric lighting, smooth stylized textures, cute rounded features, vibrant saturated colors, cinema 4D octane render, highly expressive",
@@ -30,7 +31,7 @@ export async function generateMascotConceptArt(
 ): Promise<{ master_image_url: string; prompt_used: string }> {
   const styleDesc = STYLE_PROMPTS[mascot.visual_style] || STYLE_PROMPTS.pixar_3d;
   const userPrompt = overridePrompt?.trim() || mascot.master_prompt?.trim() || mascot.description?.trim() || `${mascot.name} cute friendly animal companion`;
-  const fullPrompt = `Full-body character turnaround concept art of ${userPrompt}. Single centered subject standing proudly, looking at the camera, friendly and expressive. ${styleDesc}. Solid neutral light background, high contrast silhouette, sharp clean details, master character sheet.`;
+  const fullPrompt = `Full-body 3D character design concept art of ${userPrompt}. Single centered subject standing proudly facing camera, cute chibi proportions (1:2 head-to-body), large expressive sparkling eyes, friendly and joyful expression. Primary color theme ${mascot.color_theme || "#06b6d4"}. ${styleDesc}. Solid clean white seamless background, high contrast studio rim lighting, sharp clean silhouette, master character sheet.`;
 
   let imageBytes: Uint8Array;
   const filename = `master_concept_${Date.now()}.png`;
@@ -45,7 +46,7 @@ export async function generateMascotConceptArt(
         model: imageConfig.model || "gpt-image-2",
         cancellationSignal: AbortSignal.timeout(60_000),
       });
-      imageBytes = result.bytes;
+      imageBytes = await removeImageBackground(result.bytes);
     } catch (err) {
       logger?.warn(`Mascot concept API failed, using procedural fallback: ${err instanceof Error ? err.message : String(err)}`, { profileId: mascot.id });
       imageBytes = generateProceduralMascotArt(mascot.name, mascot.color_theme, "master");
@@ -89,9 +90,18 @@ export async function generateMascotActionSprite(
   const styleDesc = STYLE_PROMPTS[mascot.visual_style] || STYLE_PROMPTS.pixar_3d;
   const baseDesc = mascot.master_prompt || mascot.description || mascot.name;
   const actionSpecific = options.prompt?.trim() || meta.description;
-  const masterAnchor = mascot.master_prompt ? `Reference Character Design: ${mascot.master_prompt}. ` : "";
 
-  const fullPrompt = `2D Sprite sheet strip of character "${mascot.name}". ${masterAnchor}Performing ${action} action: ${actionSpecific}. Exactly ${framesCount} sequential keyframe animation breakdown poses arranged horizontally in 1 row from left to right. Frame 1 to ${framesCount} smooth continuous loop motion animation. ${styleDesc}. Solid clean white seamless background, uniform lighting, consistent character proportion and clothing across all frames.`;
+  const characterDna = [
+    `Character Identity: "${mascot.name}"`,
+    `Master Character Design: ${baseDesc}`,
+    `Color Palette: Primary theme ${mascot.color_theme || "#06b6d4"}`,
+    `Anatomy & Proportions: Chibi 1:2 head-to-body proportion, large expressive sparkling eyes, ${styleDesc}`,
+    `STRICT CONTINUITY ANCHOR: Exactly the same character face, costume, colors, and accessories as master concept. Do not change character design.`,
+  ].join(". ");
+
+  const fullPrompt = framesCount === 1
+    ? `Full-body hero action pose of character "${mascot.name}". ${characterDna}. Expressive pose: ${actionSpecific}. Single centered subject facing camera, dynamic energetic posture, sharp clean silhouette. Solid clean white background, uniform studio lighting.`
+    : `Horizontal 2D sprite strip keyframe breakdown of character "${mascot.name}". ${characterDna}. Performing ${action} action: ${actionSpecific}. Exactly ${framesCount} sequential keyframe animation poses arranged horizontally in 1 row from left to right. Frame 1 to ${framesCount} smooth continuous loop motion animation. Solid clean white seamless background, uniform studio lighting, consistent character proportion across all frames.`;
 
   let spriteBytes: Uint8Array;
   const filename = `sprite_${action}_${Date.now()}.png`;
@@ -103,12 +113,12 @@ export async function generateMascotActionSprite(
       logger?.info(`Generating mascot sprite for ${mascot.name} action ${action}`, { profileId: mascot.id });
       const result = await generateGpti2ImageBytes(fullPrompt, {
         apiKey: imageConfig.api_key,
-        aspect_ratio: "16:9",
-        size: "1280x720",
+        aspect_ratio: framesCount === 1 ? "1:1" : "16:9",
+        size: framesCount === 1 ? "1024x1024" : "1280x720",
         model: imageConfig.model || "gpt-image-2",
         cancellationSignal: AbortSignal.timeout(90_000),
       });
-      spriteBytes = result.bytes;
+      spriteBytes = await removeImageBackground(result.bytes);
     } catch (err) {
       logger?.warn(`Mascot sprite API failed, using procedural fallback: ${err instanceof Error ? err.message : String(err)}`, { profileId: mascot.id });
       spriteBytes = generateProceduralSpriteStrip(mascot.name, mascot.color_theme, action, framesCount);
@@ -152,6 +162,65 @@ export async function generateMascotActionSprite(
   });
 
   return { action_sprite: actionSprite, prompt_used: fullPrompt };
+}
+
+/**
+ * Removes background from an existing mascot master image or action sprites
+ */
+export async function removeMascotAssetBackground(
+  repository: RepositoryService,
+  mascotId: string,
+  target: "master" | "all" | MascotActionType = "all",
+): Promise<MascotProfile> {
+  const mascot = await repository.getMascot(mascotId);
+  const updatedActions = { ...mascot.actions };
+  const updatedMaster = mascot.master_image_url;
+
+  if (target === "master" || target === "all") {
+    if (mascot.master_image_url) {
+      const filename = mascot.master_image_url.split("/").pop();
+      if (filename) {
+        try {
+          const file = await repository.getMascotAssetFile(mascotId, filename);
+          const rawBytes = await readFile(file.absolutePath);
+          const transparentBytes = await removeImageBackground(rawBytes);
+          await repository.saveMascotAsset(mascotId, filename, transparentBytes);
+        } catch {
+          // Ignore if file read fails
+        }
+      }
+    }
+  }
+
+  const actionsToProcess = target === "all"
+    ? ALL_MASCOT_ACTIONS
+    : target !== "master"
+    ? [target as MascotActionType]
+    : [];
+
+  for (const action of actionsToProcess) {
+    const sprite = mascot.actions[action];
+    if (sprite?.sprite_url) {
+      const filename = sprite.sprite_url.split("/").pop();
+      if (filename) {
+        try {
+          const file = await repository.getMascotAssetFile(mascotId, filename);
+          const rawBytes = await readFile(file.absolutePath);
+          const transparentBytes = await removeImageBackground(rawBytes);
+          await repository.saveMascotAsset(mascotId, filename, transparentBytes);
+        } catch {
+          // Ignore if file read fails
+        }
+      }
+    }
+  }
+
+  return repository.saveMascot({
+    ...mascot,
+    master_image_url: updatedMaster,
+    actions: updatedActions,
+    updated_at: new Date().toISOString(),
+  });
 }
 
 /**

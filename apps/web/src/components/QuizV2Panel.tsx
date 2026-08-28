@@ -28,6 +28,7 @@ export function QuizV2Panel({ state, readiness, pipelineTask, tasks, questionCou
   if (!state) return <section className="panel quiz-v2-panel"><p className="artifact-empty">Loading Quiz Engine V2 state</p></section>;
   const currentStage = pipelineStage(pipelineTask);
   return <section className="panel quiz-v2-panel" aria-label="Quiz production stages">
+    <h2 style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", border: 0 }}>Production rail</h2>
     {currentStage ? <p className="quiz-v2-panel-note">{pipelineTask?.status === "FAILED" ? "Stopped at" : "Current"}: {currentStage.label}{pipelineTask?.progress_message && pipelineTask.status !== "FAILED" ? ` · ${pipelineTask.progress_message}` : ""}</p> : null}
     <ol className="quiz-v2-rail" aria-label="Quiz production stages">
       {stages.map((stage, index) => {

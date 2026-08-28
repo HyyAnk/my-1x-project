@@ -1,9 +1,11 @@
-import { ArrowsClockwise, CircleNotch, Eye, EyeSlash, FileText, FloppyDisk, HardDrives, Info, Play, Plus, SlidersHorizontal, Sparkle, SpeakerHigh, TerminalWindow, Trash, VideoCamera } from "@phosphor-icons/react";
+import { ArrowsClockwise, CircleNotch, Eye, EyeSlash, FileText, FloppyDisk, Globe, HardDrives, Info, Play, Plus, SlidersHorizontal, Sparkle, SpeakerHigh, TerminalWindow, Trash, VideoCamera } from "@phosphor-icons/react";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import type { AppConfig, Channel, CodexSettingsResponse, AntigravitySettingsResponse, StorageInfo, VoiceProfile, ImageProviderId } from "@studio/shared";
 import { api } from "../api";
 import { PageTitle, StatusLine } from "./AppChrome";
 import type { Notice } from "./types";
+import { useTranslation } from "../i18n";
+
 
 export type SettingsTab = "engines" | "voice" | "media" | "system";
 
@@ -110,11 +112,13 @@ export function SettingsView({
   simplifyMode = true,
   onSimplifyChange,
 }: SettingsViewProps) {
+  const { t, language, setLanguage } = useTranslation();
   const initialTab: SettingsTab =
     activeTab === "engines" || activeTab === "voice" || activeTab === "media" || activeTab === "system"
       ? activeTab
       : "engines";
   const [currentTab, setCurrentTab] = useState<SettingsTab>(initialTab);
+
 
   useEffect(() => {
     if (
@@ -587,7 +591,7 @@ export function SettingsView({
 
   return (
     <section className="page-wrap">
-      <PageTitle eyebrow="Workspace" title="Settings" />
+      <PageTitle eyebrow={t("topbar.workspace")} title={t("settings.pageTitle")} />
 
       {/* 4-Category Structured Settings Navigation */}
       <div className="channel-group-tabs" role="tablist" aria-label="Settings categories" style={{ margin: "16px 0 24px" }}>
@@ -599,7 +603,7 @@ export function SettingsView({
           onClick={() => switchTab("engines")}
         >
           <TerminalWindow size={18} weight={currentTab === "engines" ? "fill" : "regular"} />
-          <span>AI Engines & Models</span>
+          <span>{t("settings.tabEngines")}</span>
         </button>
 
         <button
@@ -610,7 +614,7 @@ export function SettingsView({
           onClick={() => switchTab("voice")}
         >
           <SpeakerHigh size={18} weight={currentTab === "voice" ? "fill" : "regular"} />
-          <span>Voice & Speech</span>
+          <span>{t("settings.tabVoice")}</span>
           {voices.length > 0 ? <small>{voices.length} voices</small> : null}
         </button>
 
@@ -622,7 +626,7 @@ export function SettingsView({
           onClick={() => switchTab("media")}
         >
           <VideoCamera size={18} weight={currentTab === "media" ? "fill" : "regular"} />
-          <span>Media & Generation</span>
+          <span>{t("settings.tabMedia")}</span>
         </button>
 
         <button
@@ -633,7 +637,7 @@ export function SettingsView({
           onClick={() => switchTab("system")}
         >
           <HardDrives size={18} weight={currentTab === "system" ? "fill" : "regular"} />
-          <span>Storage & System</span>
+          <span>{t("settings.tabSystem")}</span>
         </button>
       </div>
 
@@ -1450,35 +1454,72 @@ export function SettingsView({
       {/* Tab 4: Storage & System */}
       {currentTab === "system" ? (
         <div className="settings-grid">
+          {/* Language Selector Section */}
+          <section className="panel language-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{t("settings.languageTitle")}</p>
+                <h2>{t("settings.languageSubtitle")}</h2>
+              </div>
+              <Globe size={22} />
+            </div>
+            <p className="storage-hint">{t("settings.languageHint")}</p>
+            <div className="language-toggle-group" role="group" aria-label={t("settings.languageTitle")}>
+              <button
+                type="button"
+                className={`language-toggle-btn ${language === "en" ? "is-active" : ""}`}
+                onClick={() => {
+                  setLanguage("en");
+                  onNotice({ tone: "good", message: "Language switched to English" });
+                }}
+              >
+                <span className="lang-flag">🇬🇧</span>
+                <span className="lang-label">{t("settings.languageSelectEn")}</span>
+              </button>
+              <button
+                type="button"
+                className={`language-toggle-btn ${language === "vi" ? "is-active" : ""}`}
+                onClick={() => {
+                  setLanguage("vi");
+                  onNotice({ tone: "good", message: "Đã chuyển ngôn ngữ sang Tiếng Việt" });
+                }}
+              >
+                <span className="lang-flag">🇻🇳</span>
+                <span className="lang-label">{t("settings.languageSelectVi")}</span>
+              </button>
+            </div>
+          </section>
+
           <section className="panel workspace-panel">
             <div className="panel-heading">
               <div>
-                <p className="eyebrow">Workspace Experience</p>
-                <h2>Simplify</h2>
+                <p className="eyebrow">{t("settings.workspaceTitle")}</p>
+                <h2>{t("settings.simplifyTitle")}</h2>
               </div>
               <SimplifyToggle
                 enabled={simplifyMode}
                 onChange={(enabled) => onSimplifyChange?.(enabled)}
               />
             </div>
+            <p className="storage-hint">{t("settings.simplifyDesc")}</p>
           </section>
 
           <section className="panel storage-panel">
             <div className="panel-heading">
               <div>
-                <p className="eyebrow">Local Storage</p>
-                <h2>Content Data Folder</h2>
+                <p className="eyebrow">{t("settings.localStorageTitle")}</p>
+                <h2>{t("settings.contentDataFolder")}</h2>
               </div>
               <HardDrives size={22} />
             </div>
-            <StatusLine label="Status" value={storage?.configured ? "Configured" : "Using project folder"} />
+            <StatusLine label={t("common.status")} value={storage?.configured ? "Configured" : "Using project folder"} />
             <div className="storage-location">
-              <span>Channel data folder</span>
-              <code>{storage?.channel_path ?? "Loading..."}</code>
+              <span>{t("settings.contentDataFolder")}</span>
+              <code>{storage?.channel_path ?? t("common.loading")}</code>
             </div>
             <form className="storage-form" onSubmit={(event) => void saveStorage(event)}>
               <label>
-                Parent folder path
+                {t("settings.storagePathLabel")}
                 <input
                   aria-label="Content storage folder"
                   value={storagePath}
@@ -1488,10 +1529,10 @@ export function SettingsView({
               </label>
               <button className="primary-button" disabled={savingStorage || !storagePath.trim()}>
                 {savingStorage ? <CircleNotch className="spin" size={16} /> : <FloppyDisk size={16} />}
-                <span>Save Storage Location</span>
+                <span>{t("settings.saveStorageLocation")}</span>
               </button>
             </form>
-            <p className="storage-hint">Channel and episode media files stay here and are excluded from Git repository.</p>
+            <p className="storage-hint">{t("settings.storageHint")}</p>
           </section>
         </div>
       ) : null}
