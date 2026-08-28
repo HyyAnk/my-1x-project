@@ -88,6 +88,7 @@ type Gpti2GenerationOptions = {
   referenceImageBase64?: string;
   referenceImageUrl?: string;
   referenceStrength?: number;
+  background?: "transparent" | "opaque" | "auto";
 };
 
 const DEFAULT_BASE_URL = "https://gpti2.store";
@@ -159,43 +160,59 @@ async function generateGptImage(
     ? AbortSignal.any([options.cancellationSignal, AbortSignal.timeout(REQUEST_TIMEOUT_MS)])
     : AbortSignal.timeout(REQUEST_TIMEOUT_MS);
 
-  const requestBody: Record<string, unknown> = {
-    model,
-    prompt,
-    size,
-    quality,
-    n: 1,
-  };
-
-  if (options.referenceImageBase64) {
-    const dataUrl = options.referenceImageBase64.startsWith("data:")
-      ? options.referenceImageBase64
-      : `data:image/png;base64,${options.referenceImageBase64}`;
-    const rawBase64 = options.referenceImageBase64.replace(/^data:image\/[^;]+;base64,/i, "");
-    requestBody.image_base64 = rawBase64;
-    requestBody.image_url = dataUrl;
-    requestBody.ref_images = [dataUrl];
-    if (typeof options.referenceStrength === "number") {
-      requestBody.image_strength = options.referenceStrength;
-    }
-  } else if (options.referenceImageUrl) {
-    requestBody.image_url = options.referenceImageUrl;
-    requestBody.ref_images = [options.referenceImageUrl];
-  }
-
   let response: Response;
   try {
-    response = await fetch(`${DEFAULT_BASE_URL}/v1/images/generations`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        Prefer: "respond-async", // Ensure job queues and does not get dropped
-        "Idempotency-Key": idempotencyKey, // Prevent duplicate billing
-      },
-      body: JSON.stringify(requestBody),
-      signal: requestSignal,
-    });
+    if (options.referenceImageBase64) {
+      const rawBase64 = options.referenceImageBase64.replace(/^data:image\/[^;]+;base64,/i, "");
+      const rawBytes = Buffer.from(rawBase64, "base64");
+      const blob = new Blob([rawBytes], { type: "image/png" });
+      const formData = new FormData();
+      formData.append("image[]", blob, "reference.png");
+      formData.append("prompt", prompt);
+      formData.append("size", size);
+      formData.append("quality", quality);
+      if (options.background) {
+        formData.append("background", options.background);
+      }
+
+      response = await fetch(`${DEFAULT_BASE_URL}/v1/images/edits`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          Prefer: "respond-async",
+          "Idempotency-Key": idempotencyKey,
+        },
+        body: formData,
+        signal: requestSignal,
+      });
+    } else {
+      const requestBody: Record<string, unknown> = {
+        model,
+        prompt,
+        size,
+        quality,
+        n: 1,
+      };
+      if (options.background) {
+        requestBody.background = options.background;
+      }
+      if (options.referenceImageUrl) {
+        requestBody.image_url = options.referenceImageUrl;
+        requestBody.ref_images = [options.referenceImageUrl];
+      }
+
+      response = await fetch(`${DEFAULT_BASE_URL}/v1/images/generations`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+          Prefer: "respond-async",
+          "Idempotency-Key": idempotencyKey,
+        },
+        body: JSON.stringify(requestBody),
+        signal: requestSignal,
+      });
+    }
   } catch (error) {
     if (options.cancellationSignal?.aborted) throw new Error("Image generation was cancelled");
     throw new RepositoryError(

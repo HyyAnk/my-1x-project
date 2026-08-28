@@ -9,6 +9,7 @@ import {
   type QuizImageStyle,
 } from "@studio/shared";
 import { generateGpti2ImageBytes } from "../providers/gpti2Image.js";
+import { generateShopAiKeyImageBytes } from "../providers/shopAiKeyImage.js";
 import type { RepositoryService } from "../repository.js";
 import type { StudioLogger } from "../logger.js";
 import { createZipArchive, parseZipArchive } from "./zipHelper.js";
@@ -22,6 +23,51 @@ const STYLE_PROMPTS: Record<QuizImageStyle, string> = {
   plastic_toy: "Glossy vinyl designer toy style, smooth plastic reflections, pop mart blind box aesthetic, studio lighting",
 };
 
+async function generateMascotAiImageBytes(
+  prompt: string,
+  imageConfig: AppConfig["image_generation"],
+  options: {
+    aspectRatio?: "1:1" | "16:9";
+    size?: string;
+    referenceImageBase64?: string;
+    background?: "transparent" | "opaque" | "auto";
+    cancellationSignal?: AbortSignal;
+  } = {},
+  logger?: StudioLogger,
+): Promise<Uint8Array> {
+  const apiKey = (imageConfig.api_key || process.env.SHOPAIKEY_API_KEY || process.env.GPTI2_API_KEY || process.env.CUSTOM_IMAGE_API_KEY || "").trim();
+  if (!apiKey) {
+    throw new Error("No image generation API key configured in Settings or Environment.");
+  }
+
+  const provider = imageConfig.provider || (imageConfig.base_url?.includes("shopaikey") ? "shopaikey" : (process.env.SHOPAIKEY_API_KEY ? "shopaikey" : "gpti2"));
+
+  if (provider === "shopaikey" || provider === "custom" || (provider !== "gpti2" && Boolean(imageConfig.base_url))) {
+    const baseUrl = imageConfig.base_url || (provider === "shopaikey" ? "https://direct.shopaikey.com/v1" : "https://api.openai.com/v1");
+    logger?.info(`Calling ShopAiKey/OpenAI-compatible image generation (${baseUrl})`, { model: imageConfig.model });
+    return await generateShopAiKeyImageBytes(prompt, options.cancellationSignal, {
+      apiKey,
+      baseUrl,
+      model: imageConfig.model || "gpt-image-2",
+      size: options.size || (options.aspectRatio === "1:1" ? "1024x1024" : "1536x1024"),
+      quality: imageConfig.quality || "low",
+    });
+  }
+
+  logger?.info("Calling gpti2.store image generation", { model: imageConfig.model, hasRef: Boolean(options.referenceImageBase64) });
+  const result = await generateGpti2ImageBytes(prompt, {
+    apiKey,
+    aspect_ratio: options.aspectRatio || "1:1",
+    size: options.size || (options.aspectRatio === "1:1" ? "1024x1024" : "1280x720"),
+    model: imageConfig.model || "gpt-image-2",
+    referenceImageBase64: options.referenceImageBase64,
+    referenceStrength: 0.75,
+    background: options.background || "transparent",
+    cancellationSignal: options.cancellationSignal || AbortSignal.timeout(90_000),
+  });
+  return result.bytes;
+}
+
 export async function generateMascotConceptArt(
   repository: RepositoryService,
   mascot: MascotProfile,
@@ -31,22 +77,27 @@ export async function generateMascotConceptArt(
 ): Promise<{ master_image_url: string; prompt_used: string }> {
   const styleDesc = STYLE_PROMPTS[mascot.visual_style] || STYLE_PROMPTS.pixar_3d;
   const userPrompt = overridePrompt?.trim() || mascot.master_prompt?.trim() || mascot.description?.trim() || `${mascot.name} cute friendly animal companion`;
-  const fullPrompt = `Full-body 3D character design concept art of ${userPrompt}. Single centered subject standing proudly facing camera, cute chibi proportions (1:2 head-to-body), large expressive sparkling eyes, friendly and joyful expression. Primary color theme ${mascot.color_theme || "#06b6d4"}. ${styleDesc}. Solid neutral light gray background (#E8E8E8), high contrast studio rim lighting, sharp clean silhouette, floating character, no ground shadow, no floor, no contact shadow, no pedestal, pure uniform backdrop, master character sheet.`;
+  const fullPrompt = `Full-body 3D character design concept art of ${userPrompt}. Single centered subject standing proudly facing camera, cute chibi proportions (1:2 head-to-body), large expressive sparkling eyes, friendly and joyful expression. Primary color theme ${mascot.color_theme || "#06b6d4"}. ${styleDesc}. Master character sheet.`;
 
   let imageBytes: Uint8Array;
   const filename = `master_concept_${Date.now()}.png`;
+  const hasApiKey = Boolean(imageConfig.api_key || process.env.SHOPAIKEY_API_KEY || process.env.GPTI2_API_KEY || process.env.CUSTOM_IMAGE_API_KEY);
 
-  if (imageConfig.enabled && imageConfig.api_key) {
+  if (imageConfig.enabled && hasApiKey) {
     try {
       logger?.info(`Generating mascot concept for ${mascot.name} (${mascot.id})`, { profileId: mascot.id });
-      const result = await generateGpti2ImageBytes(fullPrompt, {
-        apiKey: imageConfig.api_key,
-        aspect_ratio: "1:1",
+      const rawBytes = await generateMascotAiImageBytes(fullPrompt, imageConfig, {
+        aspectRatio: "1:1",
         size: "1024x1024",
-        model: imageConfig.model || "gpt-image-2",
-        cancellationSignal: AbortSignal.timeout(60_000),
-      });
-      imageBytes = await removeImageBackground(result.bytes);
+        background: "transparent",
+        cancellationSignal: AbortSignal.timeout(90_000),
+      }, logger);
+      try {
+        imageBytes = await removeImageBackground(rawBytes);
+      } catch (mattingErr) {
+        logger?.warn(`Mascot concept background removal failed, using raw AI image: ${mattingErr instanceof Error ? mattingErr.message : String(mattingErr)}`, { profileId: mascot.id });
+        imageBytes = rawBytes;
+      }
     } catch (err) {
       logger?.warn(`Mascot concept API failed, using procedural fallback: ${err instanceof Error ? err.message : String(err)}`, { profileId: mascot.id });
       imageBytes = generateProceduralMascotArt(mascot.name, mascot.color_theme, "master");
@@ -117,27 +168,33 @@ export async function generateMascotActionSprite(
   ].join(". ");
 
   const fullPrompt = framesCount === 1
-    ? `Full-body 3D character pose of "${mascot.name}". ${characterDna}. Current pose and expression: ${actionSpecific}. Single centered subject standing facing camera, dynamic posture, sharp clean silhouette. Solid neutral light gray background (#E8E8E8), high contrast studio rim lighting, floating character, no ground shadow, no floor, no contact shadow, no pedestal, pure uniform backdrop.`
+    ? (referenceImageBase64
+        ? `Giữ nguyên nhân vật ${mascot.name} trong @1 (màu lông/da, đặc điểm khuôn mặt, kính mắt, trang phục, tỷ lệ chibi 1:2). Tư thế và hành động hiện tại: ${actionSpecific}. Single centered full-body character standing facing camera, dynamic posture, sharp clean silhouette, high contrast studio rim lighting, floating character, no ground shadow, no floor, no contact shadow, no pedestal, pure uniform backdrop.`
+        : `Full-body 3D character pose of "${mascot.name}". ${characterDna}. Current pose and expression: ${actionSpecific}. Single centered subject standing facing camera, dynamic posture, sharp clean silhouette, solid neutral light gray background (#E8E8E8), high contrast studio rim lighting, floating character, no ground shadow, no floor, no contact shadow, no pedestal, pure uniform backdrop.`)
     : `Horizontal 2D sprite strip keyframe breakdown of character "${mascot.name}". ${characterDna}. Performing ${action} action: ${actionSpecific}. Exactly ${framesCount} sequential keyframe animation poses arranged horizontally in 1 row from left to right. Frame 1 to ${framesCount} smooth continuous loop motion animation. Solid neutral light gray seamless background (#E8E8E8), uniform studio lighting, floating character, no ground shadow, no floor, no pedestal, consistent character proportion across all frames.`;
 
   let spriteBytes: Uint8Array;
   const filename = `state_${action}_${Date.now()}.png`;
   const frameWidth = framesCount === 1 ? 512 : 256;
   const frameHeight = framesCount === 1 ? 512 : 256;
+  const hasApiKey = Boolean(imageConfig.api_key || process.env.SHOPAIKEY_API_KEY || process.env.GPTI2_API_KEY || process.env.CUSTOM_IMAGE_API_KEY);
 
-  if (imageConfig.enabled && imageConfig.api_key) {
+  if (imageConfig.enabled && hasApiKey) {
     try {
       logger?.info(`Generating mascot state for ${mascot.name} action ${action} (frames: ${framesCount}, hasRefImage: ${Boolean(referenceImageBase64)})`, { profileId: mascot.id });
-      const result = await generateGpti2ImageBytes(fullPrompt, {
-        apiKey: imageConfig.api_key,
-        aspect_ratio: framesCount === 1 ? "1:1" : "16:9",
+      const rawBytes = await generateMascotAiImageBytes(fullPrompt, imageConfig, {
+        aspectRatio: framesCount === 1 ? "1:1" : "16:9",
         size: framesCount === 1 ? "1024x1024" : "1280x720",
-        model: imageConfig.model || "gpt-image-2",
         referenceImageBase64,
-        referenceStrength: 0.75,
+        background: "transparent",
         cancellationSignal: AbortSignal.timeout(90_000),
-      });
-      spriteBytes = await removeImageBackground(result.bytes);
+      }, logger);
+      try {
+        spriteBytes = await removeImageBackground(rawBytes);
+      } catch (mattingErr) {
+        logger?.warn(`Mascot state background removal failed, using raw AI image: ${mattingErr instanceof Error ? mattingErr.message : String(mattingErr)}`, { profileId: mascot.id });
+        spriteBytes = rawBytes;
+      }
     } catch (err) {
       logger?.warn(`Mascot state API failed, using procedural fallback: ${err instanceof Error ? err.message : String(err)}`, { profileId: mascot.id });
       spriteBytes = generateProceduralStateArt(mascot.name, mascot.color_theme, action, framesCount);

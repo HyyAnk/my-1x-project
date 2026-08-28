@@ -128,6 +128,10 @@ function getLocalizedActionMeta(
   };
 }
 
+export const CORE_GAMEPLAY_ACTIONS: MascotActionType[] = ["thinking", "celebrate"];
+export const BRAND_IDENTITY_ACTIONS: MascotActionType[] = ["wave", "outro"];
+export const AUXILIARY_ACTIONS: MascotActionType[] = ["idle", "point", "oops"];
+
 export function MascotStudioView({
   channels,
   onNotice,
@@ -212,8 +216,87 @@ export function MascotStudioView({
     outro: 1,
   });
 
-  // Action Generation Busy states
+  // Action Generation Busy & Progress states
   const [busyAction, setBusyAction] = useState<string | null>(null);
+  const [generationStartTime, setGenerationStartTime] = useState<number | null>(null);
+  const [generationElapsed, setGenerationElapsed] = useState<number>(0);
+  const [batchState, setBatchState] = useState<{
+    currentIndex: number;
+    total: number;
+    currentAction: MascotActionType | null;
+    queue: MascotActionType[];
+  } | null>(null);
+
+  // Live generation timer
+  useEffect(() => {
+    if (!busyAction) {
+      setGenerationStartTime(null);
+      setGenerationElapsed(0);
+      return;
+    }
+    const start = Date.now();
+    setGenerationStartTime(start);
+    setGenerationElapsed(0);
+
+    const interval = setInterval(() => {
+      setGenerationElapsed(Math.max(0.1, (Date.now() - start) / 1000));
+    }, 120);
+
+    return () => clearInterval(interval);
+  }, [busyAction]);
+
+  // Smooth item progress curve (asymptotic towards 95% while waiting)
+  const itemProgress = useMemo(() => {
+    if (!busyAction) return 0;
+    const tSec = generationElapsed;
+    if (tSec <= 0) return 8;
+    const progress = Math.min(95, Math.round(95 * (1 - Math.exp(-tSec / 7)) + 8));
+    return Math.min(95, Math.max(8, progress));
+  }, [busyAction, generationElapsed]);
+
+  // Overall progress in batch or single mode
+  const overallProgress = useMemo(() => {
+    if (!busyAction) return 0;
+    if (batchState && batchState.total > 0) {
+      const completed = batchState.currentIndex;
+      const total = batchState.total;
+      const currentPortion = itemProgress / 100;
+      const pct = Math.round(((completed + currentPortion) / total) * 100);
+      return Math.min(96, Math.max(5, pct));
+    }
+    return itemProgress;
+  }, [busyAction, batchState, itemProgress]);
+
+  // Dynamic progressive stage message based on elapsed seconds
+  const currentStageMessage = useMemo(() => {
+    if (!busyAction) return "";
+    if (busyAction === "concept") {
+      if (generationElapsed < 3) return t("mascots.genStageInit");
+      if (generationElapsed < 8) return t("mascots.genStageDiffusion");
+      if (generationElapsed < 15) return t("mascots.genStageRendering");
+      return t("mascots.genStageFinalizing");
+    }
+    if (busyAction.startsWith("matting")) {
+      if (generationElapsed < 3) return t("mascots.genMattingScan");
+      return t("mascots.genMattingAlpha");
+    }
+    if (busyAction === "batch" || busyAction === "batch-core") {
+      if (batchState?.currentAction) {
+        const actionMeta = getLocalizedActionMeta(batchState.currentAction, t);
+        if (generationElapsed < 3) return t("mascots.genPoseInit");
+        if (generationElapsed < 10) return t("mascots.genPoseRendering", { action: actionMeta.label.split(" ")[0] });
+        return t("mascots.genPoseFinalizing", { action: actionMeta.label.split(" ")[0] });
+      }
+      return t("mascots.batchGeneratingBtn");
+    }
+    if (ALL_MASCOT_ACTIONS.includes(busyAction as MascotActionType)) {
+      const actionMeta = getLocalizedActionMeta(busyAction as MascotActionType, t);
+      if (generationElapsed < 3) return t("mascots.genPoseInit");
+      if (generationElapsed < 10) return t("mascots.genPoseRendering", { action: actionMeta.label.split(" ")[0] });
+      return t("mascots.genPoseFinalizing", { action: actionMeta.label.split(" ")[0] });
+    }
+    return t("mascots.activeAiGenerating");
+  }, [busyAction, generationElapsed, batchState, t]);
 
   // Step 1 UI Enhancement States
   const [showNotesAccordion, setShowNotesAccordion] = useState(false);
@@ -316,6 +399,7 @@ export function MascotStudioView({
       onNotice({ tone: "bad", message: t("notices.mascotNameRequired") });
       return;
     }
+    setBatchState(null);
     setBusyAction("concept");
     try {
       let mascotToUse = editingMascot;
@@ -354,12 +438,17 @@ export function MascotStudioView({
       onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.conceptFailed") });
     } finally {
       setBusyAction(null);
+      setBatchState(null);
     }
   };
 
   // Step 3: Generate Single Sprite / State
   const handleGenerateSprite = async (action: MascotActionType) => {
-    if (!editingMascot) return;
+    if (!editingMascot) {
+      onNotice({ tone: "bad", message: t("notices.mascotNameRequired") });
+      return;
+    }
+    setBatchState(null);
     setBusyAction(action);
     const actionMeta = getLocalizedActionMeta(action, t);
     try {
@@ -379,20 +468,37 @@ export function MascotStudioView({
       onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.spriteFailed", { action }) });
     } finally {
       setBusyAction(null);
+      setBatchState(null);
     }
   };
 
   // Batch Generate all selected
   const handleBatchGenerateSprites = async () => {
-    if (!editingMascot) return;
+    if (!editingMascot) {
+      onNotice({ tone: "bad", message: t("notices.mascotNameRequired") });
+      return;
+    }
     const actionsToGen = ALL_MASCOT_ACTIONS.filter((act) => selectedActions[act]);
     if (actionsToGen.length === 0) {
       onNotice({ tone: "bad", message: t("notices.selectActionRequired") });
       return;
     }
     setBusyAction("batch");
+    setBatchState({
+      currentIndex: 0,
+      total: actionsToGen.length,
+      currentAction: actionsToGen[0],
+      queue: actionsToGen,
+    });
     try {
-      for (const action of actionsToGen) {
+      for (let i = 0; i < actionsToGen.length; i++) {
+        const action = actionsToGen[i];
+        setBatchState({
+          currentIndex: i,
+          total: actionsToGen.length,
+          currentAction: action,
+          queue: actionsToGen.slice(i + 1),
+        });
         const actionMeta = getLocalizedActionMeta(action, t);
         onNotice({ tone: "good", message: t("notices.generatingSprite", { action: actionMeta.label }) });
         const res = await api.generateMascotSprite(editingMascot.id, {
@@ -411,6 +517,51 @@ export function MascotStudioView({
       onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.batchFailed") });
     } finally {
       setBusyAction(null);
+      setBatchState(null);
+    }
+  };
+
+  // Batch Generate Core Gameplay States (thinking & celebrate)
+  const handleBatchGenerateCoreSprites = async () => {
+    if (!editingMascot) {
+      onNotice({ tone: "bad", message: t("notices.mascotNameRequired") });
+      return;
+    }
+    setBusyAction("batch-core");
+    setBatchState({
+      currentIndex: 0,
+      total: CORE_GAMEPLAY_ACTIONS.length,
+      currentAction: CORE_GAMEPLAY_ACTIONS[0],
+      queue: [...CORE_GAMEPLAY_ACTIONS],
+    });
+    try {
+      for (let i = 0; i < CORE_GAMEPLAY_ACTIONS.length; i++) {
+        const action = CORE_GAMEPLAY_ACTIONS[i];
+        setBatchState({
+          currentIndex: i,
+          total: CORE_GAMEPLAY_ACTIONS.length,
+          currentAction: action,
+          queue: CORE_GAMEPLAY_ACTIONS.slice(i + 1),
+        });
+        const actionMeta = getLocalizedActionMeta(action, t);
+        onNotice({ tone: "good", message: t("notices.generatingSprite", { action: actionMeta.label }) });
+        const res = await api.generateMascotSprite(editingMascot.id, {
+          action,
+          prompt: actionPrompts[action]?.trim() || undefined,
+          frames_count: actionFrames[action] || 1,
+          fps: actionFps[action] || (action === "celebrate" ? 10 : 8),
+          loop: true,
+        });
+        setEditingMascot(res.mascot);
+      }
+      onNotice({ tone: "good", message: t("notices.batchCompleted", { count: CORE_GAMEPLAY_ACTIONS.length }) });
+      await loadMascots();
+      setGeneratorStep(3);
+    } catch (err) {
+      onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.batchFailed") });
+    } finally {
+      setBusyAction(null);
+      setBatchState(null);
     }
   };
 
@@ -463,6 +614,7 @@ export function MascotStudioView({
   // Background Matting / Removal
   const handleRemoveBackground = async (target: "master" | "all" | MascotActionType = "all") => {
     if (!editingMascot) return;
+    setBatchState(null);
     setBusyAction(`matting-${target}`);
     try {
       const res = await api.removeMascotBackground(editingMascot.id, target);
@@ -477,6 +629,7 @@ export function MascotStudioView({
       onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.mattingFailed") });
     } finally {
       setBusyAction(null);
+      setBatchState(null);
     }
   };
 
@@ -543,7 +696,7 @@ export function MascotStudioView({
       setActivePreviewAction("wave");
     } else if (timeSec < 4.0) {
       setScenarioPhase("question");
-      setActivePreviewAction("idle");
+      setActivePreviewAction("thinking");
     } else if (timeSec < 9.0) {
       setScenarioPhase("thinking");
       setActivePreviewAction("thinking");
@@ -553,7 +706,7 @@ export function MascotStudioView({
       setActivePreviewAction(reaction);
     } else {
       setScenarioPhase("explain");
-      setActivePreviewAction("point");
+      setActivePreviewAction("celebrate");
     }
   }, [reactionStyle]);
 
@@ -933,6 +1086,56 @@ export function MascotStudioView({
             </button>
           </div>
 
+          {/* GLOBAL GENERATOR PROGRESS & ANIMATION BANNER */}
+          {busyAction !== null ? (
+            <div className="mascot-gen-progress-banner" role="progressbar" aria-valuenow={overallProgress} aria-valuemin={0} aria-valuemax={100}>
+              <div className="mascot-gen-banner-main">
+                <div className="mascot-gen-banner-left">
+                  <div className="mascot-gen-icon-glow">
+                    <Sparkle size={18} weight="fill" />
+                  </div>
+                  <div className="mascot-gen-banner-text">
+                    <div className="mascot-gen-banner-title-row">
+                      <h4 className="mascot-gen-banner-title">
+                        {busyAction === "concept"
+                          ? t("mascots.globalGenTitleConcept")
+                          : busyAction === "batch-core"
+                          ? t("mascots.globalGenTitleBatchCore")
+                          : busyAction === "batch"
+                          ? t("mascots.globalGenTitleBatchAll", { total: batchState?.total || 7 })
+                          : busyAction === "matting-master" || busyAction.startsWith("matting-")
+                          ? busyAction === "matting-all"
+                            ? t("mascots.globalGenTitleMattingAll", { total: ALL_MASCOT_ACTIONS.length })
+                            : t("mascots.globalGenTitleMatting")
+                          : t("mascots.globalGenTitleSingle", {
+                              action: getLocalizedActionMeta(busyAction as MascotActionType, t).label.split(" ")[0],
+                            })}
+                      </h4>
+                      <span className="mascot-gen-badge-active">
+                        <span className="mascot-gen-pulse-dot" />
+                        {t("mascots.globalGenActiveBadge")}
+                      </span>
+                    </div>
+                    <p className="mascot-gen-banner-sub">
+                      {currentStageMessage || t("mascots.globalGenReassurance")}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mascot-gen-banner-right">
+                  <span className="mascot-gen-timer-pill">
+                    ⏱ {Math.floor(generationElapsed)}s
+                  </span>
+                  <span className="mascot-gen-percent-text">{overallProgress}%</span>
+                </div>
+              </div>
+
+              <div className="mascot-gen-bar-track">
+                <div className="mascot-gen-bar-fill" style={{ width: `${overallProgress}%` }} />
+              </div>
+            </div>
+          ) : null}
+
           {/* STEP 1: IDENTITY & MASTER CONCEPT */}
           {generatorStep === 1 ? (
             <div className="wizard-step-content step-identity-grid">
@@ -1176,18 +1379,22 @@ export function MascotStudioView({
                         background: `linear-gradient(135deg, ${genColor} 0%, #0284c7 100%)`,
                         boxShadow: `0 4px 20px ${genColor}45`,
                       }}
-                      disabled={busyAction === "concept" || !genName.trim()}
+                      disabled={busyAction !== null || !genName.trim()}
                       onClick={() => void handleGenerateConcept()}
                     >
                       {busyAction === "concept" ? <CircleNotch className="spin" size={18} /> : <MagicWand size={18} weight="bold" />}
-                      <span>{busyAction === "concept" ? t("mascots.generatingConceptBtn") : t("mascots.generateConceptBtn")}</span>
+                      <span>
+                        {busyAction === "concept"
+                          ? `${t("mascots.generatingConceptBtn")} (${itemProgress}%)`
+                          : t("mascots.generateConceptBtn")}
+                      </span>
                     </button>
 
                     <button
                       type="button"
                       className={`quiet-button ${editingMascot?.master_image_url ? "is-ready-forward" : ""}`}
                       onClick={() => setGeneratorStep(2)}
-                      disabled={!editingMascot?.master_image_url}
+                      disabled={!editingMascot?.master_image_url || busyAction !== null}
                       title={!editingMascot?.master_image_url ? "Vui lòng sinh hoặc tải lên Master Concept trước khi sang bước 2" : undefined}
                     >
                       <span>{t("mascots.nextStatesBtn")}</span>
@@ -1205,7 +1412,7 @@ export function MascotStudioView({
                       <h3>{t("mascots.masterPreviewTitle")}</h3>
                       <p className="wizard-card-sub">{t("mascots.masterPreviewSub")}</p>
                     </div>
-                    {editingMascot?.master_image_url ? (
+                    {editingMascot?.master_image_url && !busyAction ? (
                       <button
                         type="button"
                         className="icon-button compact"
@@ -1220,13 +1427,58 @@ export function MascotStudioView({
                   <div
                     className="concept-preview-frame studio-stage-frame"
                     style={{
-                      borderColor: editingMascot?.master_image_url ? genColor : undefined,
-                      boxShadow: editingMascot?.master_image_url
+                      borderColor: busyAction === "concept" ? "var(--accent)" : editingMascot?.master_image_url ? genColor : undefined,
+                      boxShadow: busyAction === "concept"
+                        ? `0 0 28px var(--accent-glow)`
+                        : editingMascot?.master_image_url
                         ? `0 16px 36px rgba(0, 0, 0, 0.4), 0 0 28px ${genColor}30`
                         : "var(--shadow-sm)",
                     }}
                   >
-                    {editingMascot?.master_image_url ? (
+                    {busyAction === "concept" ? (
+                      <div className="concept-generating-overlay">
+                        <div className="concept-gen-holo-mesh" />
+                        <div className="concept-gen-laser-scan" />
+                        <div className="concept-gen-holo-orb">
+                          <div className="concept-gen-ring-outer" />
+                          <div className="concept-gen-ring-inner" />
+                          <div className="concept-gen-core">
+                            <Sparkle size={28} weight="fill" />
+                          </div>
+                        </div>
+
+                        <div className="concept-gen-info-box">
+                          <div className="concept-gen-header-row">
+                            <span className="concept-gen-headline">
+                              <CircleNotch className="spin" size={14} />
+                              {t("mascots.globalGenTitleConcept")}
+                            </span>
+                            <span className="concept-gen-percent-badge">{itemProgress}%</span>
+                          </div>
+
+                          <div className="concept-gen-track">
+                            <div className="mascot-gen-bar-fill" style={{ width: `${itemProgress}%` }} />
+                          </div>
+
+                          <p className="concept-gen-stage-label">{currentStageMessage}</p>
+
+                          <div className="concept-gen-footer-row">
+                            <span>⏱ {t("mascots.elapsedTimer", { seconds: Math.floor(generationElapsed) })}</span>
+                            <span>{QUIZ_IMAGE_STYLE_LABELS[genStyle]}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : busyAction === "matting-master" ? (
+                      <div className="matting-active-overlay">
+                        <div className="matting-laser" />
+                        <CircleNotch className="spin" size={32} color="#a855f7" />
+                        <h4 style={{ color: "#fff", margin: 0, fontSize: "14px" }}>{t("mascots.mattingInProgress")}</h4>
+                        <p style={{ color: "#c084fc", fontSize: "12px", margin: 0 }}>{currentStageMessage}</p>
+                        <div className="concept-gen-track" style={{ width: "80%" }}>
+                          <div className="mascot-gen-bar-fill" style={{ width: `${itemProgress}%`, backgroundColor: "#a855f7" }} />
+                        </div>
+                      </div>
+                    ) : editingMascot?.master_image_url ? (
                       <div className="concept-preview-img-container" onClick={() => setLightboxImage(editingMascot.master_image_url)}>
                         <img src={editingMascot.master_image_url} alt="Master Concept" className="concept-preview-img" />
                         <div className="preview-hover-overlay">
@@ -1245,7 +1497,7 @@ export function MascotStudioView({
                     )}
                   </div>
 
-                  {editingMascot?.master_image_url ? (
+                  {editingMascot?.master_image_url && !busyAction ? (
                     <>
                       <div className="concept-meta-box modern-meta-box">
                         <div className="concept-meta-item">
@@ -1264,7 +1516,7 @@ export function MascotStudioView({
                         <button
                           type="button"
                           className="quiet-button compact"
-                          disabled={busyAction === "matting-master"}
+                          disabled={busyAction !== null}
                           onClick={() => void handleRemoveBackground("master")}
                           style={{ justifyContent: "center" }}
                           title={t("mascots.mattingMasterBtn")}
@@ -1331,21 +1583,90 @@ export function MascotStudioView({
                         </div>
                       </div>
 
-                      {(() => {
-                        const readyCount = ALL_MASCOT_ACTIONS.filter((act) => Boolean(editingMascot?.actions[act]?.sprite_url)).length;
-                        const pct = Math.round((readyCount / ALL_MASCOT_ACTIONS.length) * 100);
-                        return (
-                          <div className="states-progress-box">
-                            <div className="states-progress-label">
-                              <span>{t("mascots.progressLabel")}</span>
-                              <span style={{ color: "var(--accent)" }}>{readyCount}/7 ({pct}%)</span>
-                            </div>
-                            <div className="states-progress-track">
-                              <div className="states-progress-fill" style={{ width: `${pct}%` }} />
-                            </div>
+                      {busyAction === "batch" || busyAction === "batch-core" ? (
+                        <div className="states-batch-active-box">
+                          <div className="states-batch-header">
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                              <CircleNotch className="spin" size={14} style={{ color: "var(--accent)" }} />
+                              {busyAction === "batch-core" ? t("mascots.globalGenTitleBatchCore") : t("mascots.batchGeneratingBtn")}
+                            </span>
+                            <span style={{ fontFamily: "monospace", color: "var(--accent)" }}>{overallProgress}%</span>
                           </div>
-                        );
-                      })()}
+
+                          <div className="mascot-gen-bar-track" style={{ height: "6px" }}>
+                            <div className="mascot-gen-bar-fill" style={{ width: `${overallProgress}%` }} />
+                          </div>
+
+                          {batchState?.currentAction ? (
+                            <div className="states-batch-active-item">
+                              <span className="mascot-gen-pulse-dot" />
+                              <span>
+                                {t("mascots.batchCurrentState", {
+                                  current: (batchState.currentIndex || 0) + 1,
+                                  total: batchState.total || 2,
+                                  action: getLocalizedActionMeta(batchState.currentAction, t).label.split(" ")[0],
+                                })}
+                              </span>
+                            </div>
+                          ) : null}
+
+                          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10.5px", color: "var(--muted)" }}>
+                            <span>{t("mascots.batchItemRendering", { percent: itemProgress })}</span>
+                            <span style={{ fontFamily: "monospace", color: "#38bdf8" }}>⏱ {Math.floor(generationElapsed)}s</span>
+                          </div>
+                          <div className="states-batch-sub-track">
+                            <div className="mascot-gen-bar-fill" style={{ width: `${itemProgress}%`, height: "100%" }} />
+                          </div>
+                        </div>
+                      ) : busyAction === "matting-all" ? (
+                        <div className="states-batch-active-box">
+                          <div className="states-batch-header">
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                              <CircleNotch className="spin" size={14} style={{ color: "#a855f7" }} />
+                              {t("mascots.globalGenTitleMattingAll", { total: ALL_MASCOT_ACTIONS.length })}
+                            </span>
+                            <span style={{ fontFamily: "monospace", color: "#c084fc" }}>{itemProgress}%</span>
+                          </div>
+                          <div className="mascot-gen-bar-track" style={{ height: "6px" }}>
+                            <div className="mascot-gen-bar-fill" style={{ width: `${itemProgress}%`, backgroundColor: "#a855f7" }} />
+                          </div>
+                          <small style={{ color: "#c084fc", fontSize: "11px" }}>{currentStageMessage}</small>
+                        </div>
+                      ) : (
+                        (() => {
+                          const coreReadyCount = CORE_GAMEPLAY_ACTIONS.filter((act) => Boolean(editingMascot?.actions[act]?.sprite_url)).length;
+                          const isCoreReady = coreReadyCount === CORE_GAMEPLAY_ACTIONS.length;
+                          const readyCount = ALL_MASCOT_ACTIONS.filter((act) => Boolean(editingMascot?.actions[act]?.sprite_url)).length;
+                          const pct = Math.round((readyCount / ALL_MASCOT_ACTIONS.length) * 100);
+                          return (
+                            <>
+                              <div className={`states-core-readiness ${isCoreReady ? "is-ready" : ""}`}>
+                                {isCoreReady ? (
+                                  <>
+                                    <CheckCircle size={14} weight="fill" />
+                                    <span>{t("mascots.coreReadyStatus")}</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Sparkle size={14} weight="fill" />
+                                    <span>{t("mascots.coreNotReadyStatus", { ready: coreReadyCount })}</span>
+                                  </>
+                                )}
+                              </div>
+
+                              <div className="states-progress-box">
+                                <div className="states-progress-label">
+                                  <span>{t("mascots.progressLabel")}</span>
+                                  <span style={{ color: "var(--accent)" }}>{readyCount}/7 ({pct}%)</span>
+                                </div>
+                                <div className="states-progress-track">
+                                  <div className="states-progress-fill" style={{ width: `${pct}%` }} />
+                                </div>
+                              </div>
+                            </>
+                          );
+                        })()
+                      )}
 
                       <div className="states-sidebar-actions">
                         <button
@@ -1353,9 +1674,20 @@ export function MascotStudioView({
                           className="primary-button"
                           style={{ justifyContent: "center", width: "100%" }}
                           disabled={busyAction !== null}
+                          onClick={() => void handleBatchGenerateCoreSprites()}
+                        >
+                          {busyAction === "batch-core" ? <CircleNotch className="spin" size={16} /> : <Lightning size={16} weight="fill" />}
+                          <span>{busyAction === "batch-core" ? t("mascots.batchGeneratingCoreBtn") : t("mascots.batchGenerateCoreBtn")}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          className="secondary-button compact"
+                          style={{ justifyContent: "center", width: "100%" }}
+                          disabled={busyAction !== null}
                           onClick={() => void handleBatchGenerateSprites()}
                         >
-                          {busyAction === "batch" ? <CircleNotch className="spin" size={16} /> : <Rocket size={16} />}
+                          {busyAction === "batch" ? <CircleNotch className="spin" size={14} /> : <Rocket size={14} />}
                           <span>{busyAction === "batch" ? t("mascots.batchGeneratingBtn") : t("mascots.batchGenerateBtn")}</span>
                         </button>
 
@@ -1376,19 +1708,23 @@ export function MascotStudioView({
                     </div>
                   </aside>
 
-                  {/* Right Column: 7-State Artistic Pose Grid */}
-                  <main className="artistic-states-grid">
-                    {ALL_MASCOT_ACTIONS.map((action, idx) => {
+                  {/* Right Column: Grouped Expressive States Sections */}
+                  {(() => {
+                    const renderActionCard = (action: MascotActionType, isCore: boolean = false) => {
                       const meta = getLocalizedActionMeta(action, t);
                       const sprite = editingMascot?.actions[action];
-                      const isBusy = busyAction === action || busyAction === `upload-${action}` || busyAction === `matting-${action}`;
+                      const isActivelyGenerating = busyAction === action || (Boolean(batchState && batchState.currentAction === action));
+                      const isQueued = Boolean(batchState && batchState.queue?.includes(action) && batchState.currentAction !== action);
+                      const isMatting = busyAction === `matting-${action}` || (busyAction === "matting-all" && Boolean(sprite?.sprite_url));
+                      const isUploadBusy = busyAction === `upload-${action}`;
+                      const isBusy = isActivelyGenerating || isQueued || isMatting || isUploadBusy;
                       const hasSprite = Boolean(sprite?.sprite_url);
                       const isDragOver = dragOverAction === action;
 
                       return (
                         <div
                           key={action}
-                          className={`artistic-state-card ${hasSprite ? "is-ready" : "is-missing"} ${isDragOver ? "is-dragover" : ""}`}
+                          className={`artistic-state-card ${isCore ? "is-core-card" : ""} ${hasSprite ? "is-ready" : "is-missing"} ${isDragOver ? "is-dragover" : ""} ${isActivelyGenerating ? "is-generating" : ""}`}
                           onDragOver={(e) => {
                             e.preventDefault();
                             setDragOverAction(action);
@@ -1399,14 +1735,64 @@ export function MascotStudioView({
                           <div className="artistic-card-header">
                             <div className="artistic-header-title">
                               <span className="pose-icon">{meta.icon}</span>
-                              <h4 title={meta.label}>{idx + 1}. {meta.label.split(" ")[0]}</h4>
+                              <h4 title={meta.label}>{meta.label.split(" ")[0]}</h4>
                             </div>
                             <span className={`artistic-motion-pill ${hasSprite ? "is-active" : ""}`}>
-                              {meta.label.split(" ")[0]}
+                              {isActivelyGenerating ? t("mascots.currentRenderingBadge") : isQueued ? t("mascots.queuedBadge") : meta.label.split(" ")[0]}
                             </span>
                           </div>
 
                           <div className="artistic-card-canvas">
+                            {/* 1. Actively Generating Overlay */}
+                            {isActivelyGenerating ? (
+                              <div className="card-generating-overlay">
+                                <div className="concept-gen-laser-scan" />
+                                <div className="card-gen-spinner-wrap">
+                                  <div className="card-gen-ring" />
+                                  <div className="card-gen-core-icon">
+                                    <Sparkle size={15} weight="fill" />
+                                  </div>
+                                </div>
+                                <strong className="card-gen-label">
+                                  {t("mascots.generatingPose", { action: meta.label.split(" ")[0] })}
+                                </strong>
+                                <small className="card-gen-stage">{currentStageMessage}</small>
+                                <div className="card-gen-bar-wrap">
+                                  <div className="mascot-gen-bar-fill" style={{ width: `${itemProgress}%` }} />
+                                </div>
+                                <div className="card-gen-footer-meta">
+                                  <span>⏱ {Math.floor(generationElapsed)}s</span>
+                                  <span style={{ color: "#38bdf8" }}>{itemProgress}%</span>
+                                </div>
+                              </div>
+                            ) : isQueued ? (
+                              /* 2. Queued in Batch Overlay */
+                              <div className="card-queued-overlay">
+                                <span className="card-queued-badge">
+                                  <CircleNotch className="spin" size={12} />
+                                  {t("mascots.queuedBadge")}
+                                </span>
+                                <p style={{ margin: 0, fontSize: "10.5px", color: "#94a3b8" }}>
+                                  {t("mascots.batchCurrentState", {
+                                    current: (batchState?.currentIndex || 0) + 1,
+                                    total: batchState?.total || 7,
+                                    action: meta.label.split(" ")[0],
+                                  })}
+                                </p>
+                              </div>
+                            ) : isMatting ? (
+                              /* 3. Matting Overlay */
+                              <div className="matting-active-overlay">
+                                <div className="matting-laser" />
+                                <CircleNotch className="spin" size={20} color="#a855f7" />
+                                <strong style={{ color: "#fff", fontSize: "11px" }}>{t("mascots.mattingInProgress")}</strong>
+                                <div className="card-gen-bar-wrap" style={{ width: "80%" }}>
+                                  <div className="mascot-gen-bar-fill" style={{ width: `${itemProgress}%`, backgroundColor: "#a855f7" }} />
+                                </div>
+                              </div>
+                            ) : null}
+
+                            {/* Regular Image or Empty Dropzone */}
                             {sprite?.sprite_url ? (
                               <>
                                 <img
@@ -1418,11 +1804,11 @@ export function MascotStudioView({
                                   <button
                                     type="button"
                                     className="artistic-action-btn is-primary"
-                                    disabled={isBusy}
+                                    disabled={busyAction !== null}
                                     onClick={() => void handleGenerateSprite(action)}
                                     title={t("mascots.reGenerateBtn")}
                                   >
-                                    {isBusy ? <CircleNotch className="spin" size={15} /> : <MagicWand size={15} weight="bold" />}
+                                    <MagicWand size={15} weight="bold" />
                                   </button>
 
                                   <label className="artistic-action-btn" title={t("mascots.uploadStripBtn")} style={{ margin: 0 }}>
@@ -1431,6 +1817,7 @@ export function MascotStudioView({
                                       type="file"
                                       accept="image/png,image/webp,image/jpeg"
                                       style={{ display: "none" }}
+                                      disabled={busyAction !== null}
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
                                         if (file) void handleUploadSprite(action, file);
@@ -1441,7 +1828,7 @@ export function MascotStudioView({
                                   <button
                                     type="button"
                                     className="artistic-action-btn"
-                                    disabled={isBusy}
+                                    disabled={busyAction !== null}
                                     onClick={() => void handleRemoveBackground(action)}
                                     title={t("mascots.mattingSpriteBtn")}
                                   >
@@ -1473,21 +1860,85 @@ export function MascotStudioView({
                             ) : (
                               <div
                                 className="artistic-empty-dropzone"
-                                onClick={() => void handleGenerateSprite(action)}
+                                onClick={() => {
+                                  if (busyAction === null) void handleGenerateSprite(action);
+                                }}
                               >
                                 <div className="artistic-empty-icon">
-                                  {isBusy ? <CircleNotch className="spin" size={15} /> : <Plus size={15} weight="bold" />}
+                                  <Plus size={15} weight="bold" />
                                 </div>
                                 <p className="artistic-empty-text">
-                                  {isBusy ? t("mascots.generatingBtn") : t("mascots.addPoseBtn")}
+                                  {t("mascots.addPoseBtn")}
                                 </p>
                               </div>
                             )}
                           </div>
                         </div>
                       );
-                    })}
-                  </main>
+                    };
+
+                    return (
+                      <main className="states-groups-container">
+                        {/* Section 1: Core Gameplay Poses (2) */}
+                        <section className="states-group-section is-core-group">
+                          <div className="states-group-header">
+                            <div className="states-group-title-wrap">
+                              <h4>
+                                <Sparkle size={16} weight="fill" style={{ color: "#f59e0b" }} />
+                                {t("mascots.coreGroupTitle")}
+                              </h4>
+                              <p>{t("mascots.coreGroupSub")}</p>
+                            </div>
+                            <span className="states-group-badge is-core">
+                              <Lightning size={12} weight="fill" />
+                              {t("mascots.coreBadge")}
+                            </span>
+                          </div>
+                          <div className="artistic-states-grid">
+                            {CORE_GAMEPLAY_ACTIONS.map((action) => renderActionCard(action, true))}
+                          </div>
+                        </section>
+
+                        {/* Section 2: Brand & Signature Poses (2) */}
+                        <section className="states-group-section">
+                          <div className="states-group-header">
+                            <div className="states-group-title-wrap">
+                              <h4>
+                                <Broadcast size={16} weight="duotone" style={{ color: "#a78bfa" }} />
+                                {t("mascots.brandGroupTitle")}
+                              </h4>
+                              <p>{t("mascots.brandGroupSub")}</p>
+                            </div>
+                            <span className="states-group-badge is-brand">
+                              {t("mascots.brandBadge")}
+                            </span>
+                          </div>
+                          <div className="artistic-states-grid">
+                            {BRAND_IDENTITY_ACTIONS.map((action) => renderActionCard(action, false))}
+                          </div>
+                        </section>
+
+                        {/* Section 3: Auxiliary Reactions (3) */}
+                        <section className="states-group-section">
+                          <div className="states-group-header">
+                            <div className="states-group-title-wrap">
+                              <h4>
+                                <Smiley size={16} weight="duotone" style={{ color: "var(--muted)" }} />
+                                {t("mascots.auxGroupTitle")}
+                              </h4>
+                              <p>{t("mascots.auxGroupSub")}</p>
+                            </div>
+                            <span className="states-group-badge is-aux">
+                              {t("mascots.auxBadge")}
+                            </span>
+                          </div>
+                          <div className="artistic-states-grid">
+                            {AUXILIARY_ACTIONS.map((action) => renderActionCard(action, false))}
+                          </div>
+                        </section>
+                      </main>
+                    );
+                  })()}
                 </div>
 
                 <div className="wizard-action-row" style={{ marginTop: "24px" }}>
@@ -1606,18 +2057,10 @@ export function MascotStudioView({
                           {t("mascots.timelineIntro")}
                         </div>
                         <div
-                          className={`scrubber-segment seg-question ${scenarioPhase === "question" ? "is-current" : ""}`}
-                          style={{ width: "12.5%" }}
-                          onClick={() => { setIsScenarioMode(false); applyTimelineTime(3.0); }}
-                          title="[2s - 4s] Question (Pose: idle)"
-                        >
-                          {t("mascots.timelineQuestion")}
-                        </div>
-                        <div
-                          className={`scrubber-segment seg-thinking ${scenarioPhase === "thinking" ? "is-current" : ""}`}
-                          style={{ width: "31.25%" }}
-                          onClick={() => { setIsScenarioMode(false); applyTimelineTime(6.5); }}
-                          title="[4s - 9s] 5s Countdown (Pose: thinking)"
+                          className={`scrubber-segment seg-thinking ${scenarioPhase === "question" || scenarioPhase === "thinking" ? "is-current" : ""}`}
+                          style={{ width: "43.75%" }}
+                          onClick={() => { setIsScenarioMode(false); applyTimelineTime(5.5); }}
+                          title="[2s - 9s] Question & 5s Countdown (Pose: thinking)"
                         >
                           {t("mascots.timelineThinking")}
                         </div>
@@ -1633,7 +2076,7 @@ export function MascotStudioView({
                           className={`scrubber-segment seg-explain ${scenarioPhase === "explain" ? "is-current" : ""}`}
                           style={{ width: "25%" }}
                           onClick={() => { setIsScenarioMode(false); applyTimelineTime(14.0); }}
-                          title="[12s - 16s] Fact Card (Pose: point)"
+                          title="[12s - 16s] Fact Card (Pose: celebrate)"
                         >
                           {t("mascots.timelineExplain")}
                         </div>
@@ -1659,19 +2102,21 @@ export function MascotStudioView({
                     {ALL_MASCOT_ACTIONS.map((action) => {
                       const meta = getLocalizedActionMeta(action, t);
                       const hasSprite = Boolean(editingMascot?.actions[action]?.sprite_url);
+                      const isActionBusy = busyAction === action || (Boolean(batchState && batchState.currentAction === action));
                       return (
                         <button
                           key={action}
                           type="button"
-                          className={`live-action-pill ${activePreviewAction === action ? "is-active" : ""} ${hasSprite ? "" : "is-disabled"}`}
+                          className={`live-action-pill ${activePreviewAction === action ? "is-active" : ""} ${hasSprite || isActionBusy ? "" : "is-disabled"}`}
                           onClick={() => {
                             setIsScenarioMode(false);
                             setActivePreviewAction(action);
                             setCurrentFrameIndex(0);
                           }}
                         >
-                          <span>{meta.icon}</span>
+                          <span>{isActionBusy ? <CircleNotch className="spin" size={13} /> : meta.icon}</span>
                           <span>{meta.label.split(" ")[0]}</span>
+                          {isActionBusy ? <span style={{ fontSize: "10px", color: "var(--accent)" }}>({itemProgress}%)</span> : null}
                         </button>
                       );
                     })}
@@ -2305,7 +2750,7 @@ export function MascotStudioView({
                 onClick={() => {
                   const act = promptEditAction;
                   setPromptEditAction(null);
-                  void handleGenerateSprite(act);
+                  if (act) void handleGenerateSprite(act);
                 }}
               >
                 <MagicWand size={16} />

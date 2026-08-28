@@ -362,7 +362,16 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       const originalFetch = globalThis.fetch;
       let capturedBody: any = null;
       globalThis.fetch = vi.fn().mockImplementation((_url: string, init: any) => {
-        capturedBody = JSON.parse(init.body as string);
+        if (typeof init.body === "string") {
+          capturedBody = JSON.parse(init.body);
+        } else if (init.body && typeof init.body.get === "function") {
+          capturedBody = {
+            isFormData: true,
+            prompt: init.body.get("prompt"),
+            hasImage: init.body.has("image[]"),
+            background: init.body.get("background"),
+          };
+        }
         return Promise.resolve({
           ok: true,
           status: 200,
@@ -383,10 +392,9 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
 
         expect(result.action_sprite.action).toBe("wave");
         expect(capturedBody).toBeDefined();
-        expect(capturedBody.image_base64).toBeDefined();
-        expect(capturedBody.image_url).toContain("data:image/png;base64,");
-        expect(capturedBody.ref_images[0]).toContain("data:image/png;base64,");
-        expect(result.prompt_used).toContain("STRICT CHARACTER CONTINUITY");
+        expect(capturedBody.hasImage).toBe(true);
+        expect(capturedBody.prompt).toContain("@1");
+        expect(capturedBody.background).toBe("transparent");
       } finally {
         globalThis.fetch = originalFetch;
       }

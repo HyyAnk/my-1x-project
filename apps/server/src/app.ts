@@ -526,7 +526,15 @@ export async function buildApp(rootDirectory = process.env.STUDIO_ROOT ?? proces
     const params = request.params as { mascotId: string; filename: string };
     const file = await repository.getMascotAssetFile(params.mascotId, params.filename);
     const ext = path.extname(params.filename).toLowerCase();
-    const contentType = ext === ".svg" ? "image/svg+xml" : ext === ".webp" ? "image/webp" : ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "image/png";
+    let contentType = ext === ".svg" ? "image/svg+xml" : ext === ".webp" ? "image/webp" : ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "image/png";
+    try {
+      const sample = await readFile(file.absolutePath, { encoding: "utf8" });
+      if (sample.trimStart().startsWith("<svg") || sample.trimStart().startsWith("<?xml")) {
+        contentType = "image/svg+xml";
+      }
+    } catch {
+      // Keep default contentType
+    }
     return reply.headers({ "content-type": contentType, "content-length": file.size, "cache-control": "public, max-age=86400" }).send(createReadStream(file.absolutePath));
   });
 

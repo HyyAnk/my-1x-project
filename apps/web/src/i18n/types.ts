@@ -377,6 +377,19 @@ export interface TranslationSchema {
     // Step 2: Expressive States Studio & Micro-Motion
     statesStudioTitle: string;
     statesStudioSub: string;
+    coreGroupTitle: string;
+    coreGroupSub: string;
+    coreBadge: string;
+    brandGroupTitle: string;
+    brandGroupSub: string;
+    brandBadge: string;
+    auxGroupTitle: string;
+    auxGroupSub: string;
+    auxBadge: string;
+    batchGenerateCoreBtn: string;
+    batchGeneratingCoreBtn: string;
+    coreReadyStatus: string;
+    coreNotReadyStatus: string;
     batchGenerateBtn: string;
     batchGeneratingBtn: string;
     batchMattingBtn: string;
@@ -401,6 +414,32 @@ export interface TranslationSchema {
     nextStageDeployBtn: string;
     noSpritePlaceholder: string;
     statesReadyBadge: string;
+
+    // Progress Bar & Generating Animation
+    genStageInit: string;
+    genStageDiffusion: string;
+    genStageRendering: string;
+    genStageFinalizing: string;
+    genPoseInit: string;
+    genPoseRendering: string;
+    genPoseFinalizing: string;
+    genMattingScan: string;
+    genMattingAlpha: string;
+    globalGenTitleConcept: string;
+    globalGenTitleSingle: string;
+    globalGenTitleBatchCore: string;
+    globalGenTitleBatchAll: string;
+    globalGenTitleMatting: string;
+    globalGenTitleMattingAll: string;
+    globalGenActiveBadge: string;
+    globalGenReassurance: string;
+    elapsedTimer: string;
+    queuedBadge: string;
+    currentRenderingBadge: string;
+    completedBadge: string;
+    batchItemRendering: string;
+    batchCurrentState: string;
+    batchOverallProgress: string;
 
     // Step 3: Stage Theater & Channel Deploy
     stageTheaterTitle: string;
