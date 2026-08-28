@@ -7,6 +7,7 @@ import {
 } from "@studio/shared";
 import { formatDate, isTaskActive } from "../../../lib/utils";
 import { EpisodeAssetPills, StageBadge } from "../../../components/AppChrome";
+import { buildHash, getNavProps } from "../../../hooks/useRouter";
 
 export function EpisodeCard({
   episode,
@@ -38,6 +39,7 @@ export function EpisodeCard({
 
   const episodeTasks = tasks.filter((t) => t.episode_id === episode.episode_id);
   const hasActiveTask = episodeTasks.some(isTaskActive);
+  const episodeUrl = buildHash({ page: "channels", channelId: episode.channel_id, episodeId: episode.episode_id });
 
   return (
     <article className={`episode-card ${isVideoReady ? "is-video-ready" : ""} ${hasActiveTask ? "is-active-task" : ""}`}>
@@ -71,7 +73,7 @@ export function EpisodeCard({
         className="episode-card-main"
         role="button"
         tabIndex={0}
-        onClick={onOpen}
+        {...getNavProps(episodeUrl, onOpen)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();

@@ -1,4 +1,3 @@
-import { Sparkle } from "@phosphor-icons/react";
 import type { Channel, MascotActionType, MascotProfile } from "@studio/shared";
 import { useTranslation } from "../../i18n";
 import { getLocalizedActionMeta } from "./constants";
@@ -54,26 +53,30 @@ export function MascotGeneratorTab({
     setPromptEditAction,
     activePreviewAction,
     setActivePreviewAction,
-    previewFps,
-    setPreviewFps,
     isPlaying,
     setIsPlaying,
-    currentFrameIndex,
-    setCurrentFrameIndex,
     stagePreviewMode,
     setStagePreviewMode,
+    aspectRatio,
+    setAspectRatio,
+    flipHorizontal,
+    setFlipHorizontal,
+    activeConfigTab,
+    setActiveConfigTab,
     targetPosition,
     setTargetPosition,
     targetScale,
     setTargetScale,
     assignedChannels,
     setAssignedChannels,
+    channelSearchQuery,
+    setChannelSearchQuery,
+    channelFilterTab,
+    setChannelFilterTab,
     isScenarioMode,
     setIsScenarioMode,
     scenarioPhase,
     scenarioCountdown,
-    theaterMode,
-    setTheaterMode,
     scrubberTime,
     reactionStyle,
     setReactionStyle,
@@ -142,9 +145,6 @@ export function MascotGeneratorTab({
         <div className="mascot-gen-progress-banner" role="progressbar" aria-valuenow={overallProgress} aria-valuemin={0} aria-valuemax={100}>
           <div className="mascot-gen-banner-main">
             <div className="mascot-gen-banner-left">
-              <div className="mascot-gen-icon-glow">
-                <Sparkle size={18} weight="fill" />
-              </div>
               <div className="mascot-gen-banner-text">
                 <div className="mascot-gen-banner-title-row">
                   <h4 className="mascot-gen-banner-title">
@@ -175,7 +175,7 @@ export function MascotGeneratorTab({
 
             <div className="mascot-gen-banner-right">
               <span className="mascot-gen-timer-pill">
-                ⏱ {Math.floor(generationElapsed)}s
+                {Math.floor(generationElapsed)}s
               </span>
               <span className="mascot-gen-percent-text">{overallProgress}%</span>
             </div>
@@ -261,30 +261,32 @@ export function MascotGeneratorTab({
           channels={channels}
           genColor={genColor}
           busyAction={busyAction}
-          batchState={batchState}
-          itemProgress={itemProgress}
           activePreviewAction={activePreviewAction}
           setActivePreviewAction={setActivePreviewAction}
-          previewFps={previewFps}
-          setPreviewFps={setPreviewFps}
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
-          currentFrameIndex={currentFrameIndex}
-          setCurrentFrameIndex={setCurrentFrameIndex}
           stagePreviewMode={stagePreviewMode}
           setStagePreviewMode={setStagePreviewMode}
+          aspectRatio={aspectRatio}
+          setAspectRatio={setAspectRatio}
+          flipHorizontal={flipHorizontal}
+          setFlipHorizontal={setFlipHorizontal}
+          activeConfigTab={activeConfigTab}
+          setActiveConfigTab={setActiveConfigTab}
           targetPosition={targetPosition}
           setTargetPosition={setTargetPosition}
           targetScale={targetScale}
           setTargetScale={setTargetScale}
           assignedChannels={assignedChannels}
           setAssignedChannels={setAssignedChannels}
+          channelSearchQuery={channelSearchQuery}
+          setChannelSearchQuery={setChannelSearchQuery}
+          channelFilterTab={channelFilterTab}
+          setChannelFilterTab={setChannelFilterTab}
           isScenarioMode={isScenarioMode}
           setIsScenarioMode={setIsScenarioMode}
           scenarioPhase={scenarioPhase}
           scenarioCountdown={scenarioCountdown}
-          theaterMode={theaterMode}
-          setTheaterMode={setTheaterMode}
           scrubberTime={scrubberTime}
           reactionStyle={reactionStyle}
           setReactionStyle={setReactionStyle}

@@ -90,7 +90,8 @@ export function useMascotGenerator({
     queue: MascotActionType[];
   } | null>(null);
 
-  // Live generation timer
+  // Live generation timer - tracks elapsed time and resets when new action/batch item begins
+  const activeBatchAction = batchState?.currentAction;
   useEffect(() => {
     if (!busyAction) {
       setGenerationStartTime(null);
@@ -106,16 +107,43 @@ export function useMascotGenerator({
     }, 120);
 
     return () => clearInterval(interval);
-  }, [busyAction]);
+  }, [busyAction, activeBatchAction]);
 
-  // Smooth item progress curve (asymptotic towards 95% while waiting)
+  // Expected duration: ~60s for full AI image diffusion/synthesis, ~15s for background matting
+  const isMatting = Boolean(busyAction?.startsWith("matting"));
+  const expectedDuration = isMatting ? 15 : 60;
+
+  // Smooth, continuous interpolation tailored for realistic 60s generation time
   const itemProgress = useMemo(() => {
     if (!busyAction) return 0;
     const tSec = generationElapsed;
-    if (tSec <= 0) return 8;
-    const progress = Math.min(95, Math.round(95 * (1 - Math.exp(-tSec / 7)) + 8));
-    return Math.min(95, Math.max(8, progress));
-  }, [busyAction, generationElapsed]);
+    if (tSec <= 0) return 4;
+    const ratio = tSec / expectedDuration;
+
+    let progress: number;
+    if (ratio < 0.2) {
+      // 0% - 20% of expected time (0 - 12s): 4% -> 22%
+      progress = Math.round(4 + (ratio / 0.2) * 18);
+    } else if (ratio < 0.5) {
+      // 20% - 50% of expected time (12s - 30s): 22% -> 55%
+      const subRatio = (ratio - 0.2) / 0.3;
+      progress = Math.round(22 + subRatio * 33);
+    } else if (ratio < 0.85) {
+      // 50% - 85% of expected time (30s - 51s): 55% -> 85%
+      const subRatio = (ratio - 0.5) / 0.35;
+      progress = Math.round(55 + subRatio * 30);
+    } else if (ratio < 1.1) {
+      // 85% - 110% of expected time (51s - 66s): 85% -> 93%
+      const subRatio = (ratio - 0.85) / 0.25;
+      progress = Math.round(85 + subRatio * 8);
+    } else {
+      // Beyond 66s (up to 90s+): asymptotic crawl towards 97%
+      const overtime = tSec - (expectedDuration * 1.1);
+      const crawl = 4 * (1 - Math.exp(-overtime / 20));
+      progress = Math.min(97, Math.round(93 + crawl));
+    }
+    return Math.min(97, Math.max(4, progress));
+  }, [busyAction, generationElapsed, expectedDuration]);
 
   // Overall progress in batch or single mode
   const overallProgress = useMemo(() => {
@@ -125,37 +153,37 @@ export function useMascotGenerator({
       const total = batchState.total;
       const currentPortion = itemProgress / 100;
       const pct = Math.round(((completed + currentPortion) / total) * 100);
-      return Math.min(96, Math.max(5, pct));
+      return Math.min(97, Math.max(4, pct));
     }
     return itemProgress;
   }, [busyAction, batchState, itemProgress]);
 
-  // Dynamic progressive stage message based on elapsed seconds
+  // Dynamic progressive stage message calibrated for 60s generation time
   const currentStageMessage = useMemo(() => {
     if (!busyAction) return "";
     if (busyAction === "concept") {
-      if (generationElapsed < 3) return t("mascots.genStageInit");
-      if (generationElapsed < 8) return t("mascots.genStageDiffusion");
-      if (generationElapsed < 15) return t("mascots.genStageRendering");
+      if (generationElapsed < 12) return t("mascots.genStageInit");
+      if (generationElapsed < 28) return t("mascots.genStageDiffusion");
+      if (generationElapsed < 50) return t("mascots.genStageRendering");
       return t("mascots.genStageFinalizing");
     }
     if (busyAction.startsWith("matting")) {
-      if (generationElapsed < 3) return t("mascots.genMattingScan");
+      if (generationElapsed < 6) return t("mascots.genMattingScan");
       return t("mascots.genMattingAlpha");
     }
     if (busyAction === "batch" || busyAction === "batch-core") {
       if (batchState?.currentAction) {
         const actionMeta = getLocalizedActionMeta(batchState.currentAction, t);
-        if (generationElapsed < 3) return t("mascots.genPoseInit");
-        if (generationElapsed < 10) return t("mascots.genPoseRendering", { action: actionMeta.label.split(" ")[0] });
+        if (generationElapsed < 12) return t("mascots.genPoseInit");
+        if (generationElapsed < 45) return t("mascots.genPoseRendering", { action: actionMeta.label.split(" ")[0] });
         return t("mascots.genPoseFinalizing", { action: actionMeta.label.split(" ")[0] });
       }
       return t("mascots.batchGeneratingBtn");
     }
     if (ALL_MASCOT_ACTIONS.includes(busyAction as MascotActionType)) {
       const actionMeta = getLocalizedActionMeta(busyAction as MascotActionType, t);
-      if (generationElapsed < 3) return t("mascots.genPoseInit");
-      if (generationElapsed < 10) return t("mascots.genPoseRendering", { action: actionMeta.label.split(" ")[0] });
+      if (generationElapsed < 12) return t("mascots.genPoseInit");
+      if (generationElapsed < 45) return t("mascots.genPoseRendering", { action: actionMeta.label.split(" ")[0] });
       return t("mascots.genPoseFinalizing", { action: actionMeta.label.split(" ")[0] });
     }
     return t("mascots.activeAiGenerating");
@@ -173,19 +201,21 @@ export function useMascotGenerator({
 
   // Step 3 Live Studio Player & Stage Simulator
   const [activePreviewAction, setActivePreviewAction] = useState<MascotActionType>("wave");
-  const [previewFps, setPreviewFps] = useState(8);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
   const [stagePreviewMode, setStagePreviewMode] = useState<"grid" | "video_stage">("video_stage");
+  const [aspectRatio, setAspectRatio] = useState<"16:9" | "9:16">("16:9");
+  const [flipHorizontal, setFlipHorizontal] = useState(false);
+  const [activeConfigTab, setActiveConfigTab] = useState<"calibration" | "channels">("calibration");
   const [targetPosition, setTargetPosition] = useState<"bottom_left" | "bottom_right">("bottom_left");
   const [targetScale, setTargetScale] = useState(1.0);
   const [assignedChannels, setAssignedChannels] = useState<string[]>([]);
+  const [channelSearchQuery, setChannelSearchQuery] = useState("");
+  const [channelFilterTab, setChannelFilterTab] = useState<"all" | "selected" | "unassigned" | "other">("all");
 
   // Scenario Playback state
   const [isScenarioMode, setIsScenarioMode] = useState(false);
   const [scenarioPhase, setScenarioPhase] = useState<"intro" | "question" | "thinking" | "reveal" | "explain">("intro");
   const [scenarioCountdown, setScenarioCountdown] = useState<number>(5);
-  const [theaterMode, setTheaterMode] = useState(false);
   const [scrubberTime, setScrubberTime] = useState<number>(0);
   const [reactionStyle, setReactionStyle] = useState<"celebrate" | "oops">("celebrate");
 
@@ -553,29 +583,32 @@ export function useMascotGenerator({
     }
   };
 
-  // Step 3: Save & Bind to Channels
+  // Step 3: Save & Bind to Channels (Parallel Execution)
   const handleApplyToChannels = async () => {
     if (!editingMascot) return;
     setBusyAction("assign");
     try {
-      for (const channel of channels) {
+      const assignmentPromises = channels.map((channel) => {
         const isAssigned = assignedChannels.includes(channel.channel_id);
         if (isAssigned && channel.mascot_id !== editingMascot.id) {
-          await api.assignMascotToChannel(channel.channel_id, {
+          return api.assignMascotToChannel(channel.channel_id, {
             mascot_id: editingMascot.id,
             config: { enabled: true, position: targetPosition, scale: targetScale },
           });
         } else if (!isAssigned && channel.mascot_id === editingMascot.id) {
-          await api.assignMascotToChannel(channel.channel_id, {
+          return api.assignMascotToChannel(channel.channel_id, {
             mascot_id: null,
           });
         } else if (isAssigned && channel.mascot_id === editingMascot.id) {
-          await api.assignMascotToChannel(channel.channel_id, {
+          return api.assignMascotToChannel(channel.channel_id, {
             mascot_id: editingMascot.id,
             config: { enabled: true, position: targetPosition, scale: targetScale },
           });
         }
-      }
+        return Promise.resolve(null);
+      });
+
+      await Promise.all(assignmentPromises);
       onNotice({ tone: "good", message: t("notices.channelsAssigned") });
       await onRefreshChannels();
       await onMascotsChanged();
@@ -585,19 +618,6 @@ export function useMascotGenerator({
       setBusyAction(null);
     }
   };
-
-  // Frame Stepper Timer for Active Preview
-  const currentActionSprite = editingMascot?.actions[activePreviewAction];
-  const activeFramesCount = currentActionSprite?.frames_count || 1;
-
-  useEffect(() => {
-    if (!isPlaying || activeFramesCount <= 1) return;
-    const intervalMs = 1000 / (previewFps || 8);
-    const timer = setInterval(() => {
-      setCurrentFrameIndex((prev) => (prev + 1) % activeFramesCount);
-    }, intervalMs);
-    return () => clearInterval(timer);
-  }, [isPlaying, activeFramesCount, previewFps]);
 
   return {
     generatorStep,
@@ -618,10 +638,6 @@ export function useMascotGenerator({
     setSelectedActions,
     actionPrompts,
     setActionPrompts,
-    actionFps,
-    setActionFps,
-    actionFrames,
-    setActionFrames,
     busyAction,
     generationElapsed,
     batchState,
@@ -641,26 +657,30 @@ export function useMascotGenerator({
     setPromptEditAction,
     activePreviewAction,
     setActivePreviewAction,
-    previewFps,
-    setPreviewFps,
     isPlaying,
     setIsPlaying,
-    currentFrameIndex,
-    setCurrentFrameIndex,
     stagePreviewMode,
     setStagePreviewMode,
+    aspectRatio,
+    setAspectRatio,
+    flipHorizontal,
+    setFlipHorizontal,
+    activeConfigTab,
+    setActiveConfigTab,
     targetPosition,
     setTargetPosition,
     targetScale,
     setTargetScale,
     assignedChannels,
     setAssignedChannels,
+    channelSearchQuery,
+    setChannelSearchQuery,
+    channelFilterTab,
+    setChannelFilterTab,
     isScenarioMode,
     setIsScenarioMode,
     scenarioPhase,
     scenarioCountdown,
-    theaterMode,
-    setTheaterMode,
     scrubberTime,
     reactionStyle,
     setReactionStyle,

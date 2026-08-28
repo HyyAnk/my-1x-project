@@ -69,6 +69,7 @@ export function EpisodeHeader({
     <>
       <EpisodeBreadcrumb
         channelName={channel.display_name}
+        channelId={channel.channel_id}
         episodeTitle={episode.topic.title}
         engine={channel.engine}
         onNavigateHome={onNavigateHome}

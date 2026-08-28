@@ -10,6 +10,7 @@ import type { Task } from "@studio/shared";
 import { formatDate, formatTaskElapsed, formatTaskType, isTaskActive } from "../../../lib/utils";
 import type { ProductionItemSummary } from "../types";
 import { TaskStatusChip } from "./TaskStatusChip";
+import { buildHash, getNavProps } from "../../../hooks/useRouter";
 
 export function StreamlinedTaskCard({
   item,
@@ -34,11 +35,13 @@ export function StreamlinedTaskCard({
   const isCancelled = item.status === "CANCELLED";
 
   const targetTask = item.activeTask || item.latestTask;
+  const episodeUrl = item.channelId && item.episodeId ? buildHash({ page: "channels", channelId: item.channelId, episodeId: item.episodeId }) : null;
 
   return (
     <article
       className={`streamlined-task-card is-${item.status.toLowerCase()}`}
       onClick={() => onInspect(item)}
+      data-nav-href={episodeUrl || undefined}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -161,17 +164,16 @@ export function StreamlinedTaskCard({
             </button>
           ) : null}
 
-          {onOpenEpisode ? (
-            <button
-              type="button"
+          {onOpenEpisode && episodeUrl ? (
+            <a
               className="quiet-button compact ep-rail-btn"
               title="Open in Production Rail"
               aria-label="Open in Production Rail"
-              onClick={() => onOpenEpisode(item.channelId, item.episodeId)}
+              {...getNavProps(episodeUrl, () => onOpenEpisode(item.channelId, item.episodeId))}
             >
               <span>Rail</span>
               <ArrowUpRight size={13} />
-            </button>
+            </a>
           ) : null}
         </div>
       </div>

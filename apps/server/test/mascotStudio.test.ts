@@ -394,12 +394,73 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         expect(capturedBody).toBeDefined();
         expect(capturedBody.hasImage).toBe(true);
         expect(capturedBody.prompt).toContain("@1");
-        expect(capturedBody.background).toBe("transparent");
+        expect(capturedBody.background).toBe("opaque");
       } finally {
         globalThis.fetch = originalFetch;
       }
     } finally {
       await app.server.close();
     }
+  });
+
+  it("strictly enforces Studio Isolation Prompt Contract and AI Matting invariants", async () => {
+    const {
+      buildMascotConceptPrompt,
+      buildMascotActionPrompt,
+      validateMascotPromptContract,
+      MASCOT_STUDIO_ISOLATION_TAGS,
+    } = await import("../src/quiz/mascotPromptContract.js");
+
+    const mascot = {
+      name: "Guardian Dragon",
+      description: "A friendly baby emerald dragon with golden horns",
+      visual_style: "pixar_3d" as const,
+      master_prompt: "Cute baby dragon with large expressive emerald eyes",
+      color_theme: "#10b981",
+    };
+
+    // 1. Concept prompt must contain mandatory studio isolation tokens and forbid character sheets / multiple views
+    const conceptPrompt = buildMascotConceptPrompt(mascot);
+    expect(conceptPrompt).toContain("floating character");
+    expect(conceptPrompt).toContain("no ground shadow");
+    expect(conceptPrompt).toContain("no floor");
+    expect(conceptPrompt).toContain("solid neutral light gray background (#E8E8E8)");
+    expect(conceptPrompt).toContain("high contrast studio rim lighting");
+    expect(conceptPrompt).toContain("sharp clean silhouette");
+    expect(conceptPrompt).toContain("single standalone character");
+    expect(conceptPrompt).toContain("no character sheet");
+    expect(conceptPrompt).toContain("no multiple angles");
+    expect(conceptPrompt).toContain("no turnaround");
+    expect(conceptPrompt).not.toContain("Master character sheet");
+    expect(validateMascotPromptContract(conceptPrompt, false)).toBe(true);
+
+    // 2. Action prompt with reference image must enforce @1 character continuity and studio isolation
+    const actionWithRef = buildMascotActionPrompt(mascot, "thinking", {
+      hasReferenceImage: true,
+      prompt: "Đang gãi đầu suy nghĩ",
+    });
+    expect(actionWithRef).toContain("@1");
+    expect(actionWithRef).toContain("Giữ nguyên nhân vật Guardian Dragon trong @1");
+    expect(actionWithRef).toContain("floating character");
+    expect(actionWithRef).toContain("no ground shadow");
+    expect(actionWithRef).toContain("solid neutral light gray background (#E8E8E8)");
+    expect(actionWithRef).toContain("no floor");
+    expect(actionWithRef).toContain("no character sheet");
+    expect(actionWithRef).toContain("no multiple angles");
+    expect(validateMascotPromptContract(actionWithRef, true)).toBe(true);
+
+    // 3. Action prompt without reference image must still enforce character DNA + studio isolation
+    const actionWithoutRef = buildMascotActionPrompt(mascot, "celebrate", {
+      hasReferenceImage: false,
+    });
+    expect(actionWithoutRef).toContain("Character: \"Guardian Dragon\"");
+    expect(actionWithoutRef).toContain("floating character");
+    expect(actionWithoutRef).toContain("no ground shadow");
+    expect(actionWithoutRef).toContain("no character sheet");
+    expect(validateMascotPromptContract(actionWithoutRef, false)).toBe(true);
+
+    // 4. Invalid prompt missing isolation tokens is rejected by validator
+    expect(validateMascotPromptContract("A regular cute dragon on grass", false)).toBe(false);
+    expect(validateMascotPromptContract("Dragon dancing with @1 on a table", true)).toBe(false);
   });
 });

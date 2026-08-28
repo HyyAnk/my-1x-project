@@ -1,5 +1,6 @@
 import { CaretRight, FilmSlate, House, Television } from "@phosphor-icons/react";
 import React from "react";
+import { buildHash, getNavProps } from "../hooks/useRouter";
 
 export type BreadcrumbItem = {
   label: string;
@@ -33,19 +34,11 @@ export function Breadcrumbs({
                     {item.label}
                   </span>
                 </span>
-              ) : item.onClick ? (
-                <button
-                  type="button"
+              ) : item.onClick || item.href ? (
+                <a
                   className="breadcrumb-link-btn"
-                  onClick={item.onClick}
+                  {...getNavProps(item.href || "#", item.onClick)}
                 >
-                  {item.icon && <span className="breadcrumb-icon">{item.icon}</span>}
-                  <span className="breadcrumb-label" title={item.label}>
-                    {item.label}
-                  </span>
-                </button>
-              ) : item.href ? (
-                <a href={item.href} className="breadcrumb-link">
                   {item.icon && <span className="breadcrumb-icon">{item.icon}</span>}
                   <span className="breadcrumb-label" title={item.label}>
                     {item.label}
@@ -69,11 +62,13 @@ export function Breadcrumbs({
 
 export function ChannelBreadcrumb({
   channelName,
+  channelId,
   engine = "quiz",
   onNavigateHome,
   onNavigateChannels,
 }: {
   channelName: string;
+  channelId?: string;
   engine?: "quiz" | "documentary";
   onNavigateHome?: () => void;
   onNavigateChannels?: () => void;
@@ -83,13 +78,13 @@ export function ChannelBreadcrumb({
       label: "Dashboard",
       icon: <House size={14} />,
       onClick: onNavigateHome,
-      href: onNavigateHome ? undefined : "#/dashboard",
+      href: "#/dashboard",
     },
     {
       label: "Channels",
       icon: <Television size={14} />,
       onClick: onNavigateChannels,
-      href: onNavigateChannels ? undefined : "#/channels",
+      href: "#/channels",
     },
     {
       label: channelName,
@@ -103,6 +98,7 @@ export function ChannelBreadcrumb({
 
 export function EpisodeBreadcrumb({
   channelName,
+  channelId,
   episodeTitle,
   engine = "quiz",
   onNavigateHome,
@@ -110,6 +106,7 @@ export function EpisodeBreadcrumb({
   onNavigateChannel,
 }: {
   channelName: string;
+  channelId?: string;
   episodeTitle: string;
   engine?: "quiz" | "documentary";
   onNavigateHome?: () => void;
@@ -121,18 +118,19 @@ export function EpisodeBreadcrumb({
       label: "Dashboard",
       icon: <House size={14} />,
       onClick: onNavigateHome,
-      href: onNavigateHome ? undefined : "#/dashboard",
+      href: "#/dashboard",
     },
     {
       label: "Channels",
       icon: <Television size={14} />,
       onClick: onNavigateChannels,
-      href: onNavigateChannels ? undefined : "#/channels",
+      href: "#/channels",
     },
     {
       label: channelName,
       icon: <span style={{ fontSize: "13px" }}>{engine === "quiz" ? "🎯" : "🎬"}</span>,
       onClick: onNavigateChannel,
+      href: channelId ? buildHash({ page: "channels", channelId }) : "#/channels",
     },
     {
       label: episodeTitle,

@@ -204,13 +204,13 @@ export function MascotAssignModal({
   const formatLangTag = (channel: Channel) => {
     const lang = channel.language || channel.market || "EN";
     const lower = lang.toLowerCase();
-    if (lower.includes("viet") || lower === "vi") return "🇻🇳 VI";
-    if (lower.includes("eng") || lower === "en") return "🇺🇸 EN";
-    if (lower.includes("japan") || lower === "ja") return "🇯🇵 JA";
-    if (lower.includes("korea") || lower === "ko") return "🇰🇷 KO";
-    if (lower.includes("thai") || lower === "th") return "🇹🇭 TH";
-    if (lower.includes("indonesia") || lower === "id") return "🇮🇩 ID";
-    return `🌐 ${lang.toUpperCase().slice(0, 4)}`;
+    if (lower.includes("viet") || lower === "vi") return "VI";
+    if (lower.includes("eng") || lower === "en") return "EN";
+    if (lower.includes("japan") || lower === "ja") return "JA";
+    if (lower.includes("korea") || lower === "ko") return "KO";
+    if (lower.includes("thai") || lower === "th") return "TH";
+    if (lower.includes("indonesia") || lower === "id") return "ID";
+    return lang.toUpperCase().slice(0, 4);
   };
 
   return (
@@ -233,16 +233,15 @@ export function MascotAssignModal({
               {mascot.master_image_url ? (
                 <img src={mascot.master_image_url} alt={mascot.name} />
               ) : (
-                <Smiley size={24} weight="duotone" style={{ color: mascot.color_theme || "var(--accent)" }} />
+                <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `${mascot.color_theme || "var(--accent)"}20` }} />
               )}
             </div>
             <div>
-              <p className="eyebrow">{t("mascots.quickAssignEyebrow")}</p>
-              <h2 id="mascot-assign-title">{t("mascots.quickAssignTitle", { name: mascot.name })}</h2>
+              <h2 id="mascot-assign-title" style={{ fontSize: "16px", margin: 0 }}>{t("mascots.quickAssignTitle", { name: mascot.name })}</h2>
             </div>
             <span
               className="mascot-style-pill"
-              style={{ backgroundColor: mascot.color_theme || "var(--accent)", marginLeft: "4px" }}
+              style={{ backgroundColor: `${mascot.color_theme || "var(--accent)"}20`, color: mascot.color_theme || "var(--accent)", marginLeft: "4px" }}
             >
               {QUIZ_IMAGE_STYLE_LABELS[mascot.visual_style] || mascot.visual_style}
             </span>

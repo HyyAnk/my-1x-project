@@ -119,6 +119,40 @@ export function buildHash(state: {
   return `#${path}${queryString ? `?${queryString}` : ""}`;
 }
 
+export function openInNewTab(to: string) {
+  if (!to) return;
+  const targetHash = to.startsWith("#") ? to : `#${to}`;
+  const url = new URL(window.location.href);
+  url.hash = targetHash;
+  window.open(url.toString(), "_blank", "noopener,noreferrer");
+}
+
+export function getNavProps(to: string, onNavigate?: () => void) {
+  const hash = to.startsWith("#") ? to : `#${to}`;
+  return {
+    href: hash,
+    "data-nav-href": hash,
+    onClick: (e: React.MouseEvent) => {
+      if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
+        e.preventDefault();
+        onNavigate?.();
+      }
+    },
+    onMouseDown: (e: React.MouseEvent) => {
+      if (e.button === 1) {
+        e.preventDefault();
+      }
+    },
+    onAuxClick: (e: React.MouseEvent) => {
+      if (e.button === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+        openInNewTab(hash);
+      }
+    },
+  };
+}
+
 export function useRouter() {
   const [route, setRoute] = useState<RouteState>(() => parseHash(window.location.hash || "#/dashboard"));
 
@@ -132,12 +166,44 @@ export function useRouter() {
       setRoute(parseHash(window.location.hash));
     };
 
+    const getNavHref = (target: HTMLElement | null): string | null => {
+      if (!target) return null;
+      const el = target.closest("a[href], [data-nav-href], [data-href]") as HTMLElement | null;
+      if (!el) return null;
+      const href = el.getAttribute("data-nav-href") || el.getAttribute("data-href") || el.getAttribute("href");
+      return href && href !== "#" && !href.startsWith("javascript:") ? href : null;
+    };
+
+    const handleGlobalMouseDown = (e: MouseEvent) => {
+      if (e.button === 1) {
+        const href = getNavHref(e.target as HTMLElement);
+        if (href) {
+          e.preventDefault();
+        }
+      }
+    };
+
+    const handleGlobalAuxClick = (e: MouseEvent) => {
+      if (e.button === 1) {
+        const href = getNavHref(e.target as HTMLElement);
+        if (href) {
+          e.preventDefault();
+          e.stopPropagation();
+          openInNewTab(href);
+        }
+      }
+    };
+
     window.addEventListener("hashchange", handleHashChange);
     window.addEventListener("popstate", handleHashChange);
+    window.addEventListener("mousedown", handleGlobalMouseDown);
+    window.addEventListener("auxclick", handleGlobalAuxClick);
 
     return () => {
       window.removeEventListener("hashchange", handleHashChange);
       window.removeEventListener("popstate", handleHashChange);
+      window.removeEventListener("mousedown", handleGlobalMouseDown);
+      window.removeEventListener("auxclick", handleGlobalAuxClick);
     };
   }, []);
 

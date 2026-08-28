@@ -286,12 +286,11 @@ describe("gpti2.store Image Provider", () => {
     });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [, init] = fetchMock.mock.calls[0];
-    const body = JSON.parse(init.body as string);
-    expect(body.image_base64).toBe(fakeBase64);
-    expect(body.image_url).toBe(`data:image/png;base64,${fakeBase64}`);
-    expect(body.ref_images).toEqual([`data:image/png;base64,${fakeBase64}`]);
-    expect(body.image_strength).toBe(0.8);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toContain("/v1/images/edits");
+    expect(init.body).toBeInstanceOf(FormData);
+    const formData = init.body as FormData;
+    expect(formData.get("prompt")).toBe("Character waving");
   });
 
   it("attaches referenceImageBase64 to nano-banana-2 payload correctly", async () => {

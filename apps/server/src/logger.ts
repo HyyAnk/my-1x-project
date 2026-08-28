@@ -8,6 +8,7 @@ type LogContext = {
   wallet?: string;
   workerId?: string;
   step?: string;
+  [key: string]: unknown;
 };
 
 const colors: Record<LogLevel, string> = {

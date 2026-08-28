@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import {
   ArrowClockwise,
-  ArrowsClockwise,
   CaretDown,
   FilmSlate,
   Funnel,
@@ -20,6 +19,7 @@ import { useTranslation } from "../../i18n";
 import { calculateProgress, type ProductionItemSummary, type StatusFilter } from "./types";
 import { TaskDetailDrawer } from "./components/TaskDetailDrawer";
 import { StreamlinedTaskCard } from "./components/StreamlinedTaskCard";
+import { getNavProps } from "../../hooks/useRouter";
 
 export function TasksView({
   tasks,
@@ -223,10 +223,20 @@ export function TasksView({
   }, [productionItems, statusFilter, channelFilter, searchQuery]);
 
   // Grouped priority subsets for default "all" view
-  const attentionItems = useMemo(
-    () => filteredItems.filter((i) => i.status === "FAILED" || i.status === "WAITING_APPROVAL"),
-    [filteredItems]
-  );
+  // Failed episodes only need attention within a 10-hour window
+  const attentionItems = useMemo(() => {
+    const TEN_HOURS_MS = 10 * 60 * 60 * 1000;
+    return filteredItems.filter((i) => {
+      if (i.status === "WAITING_APPROVAL") return true;
+      if (i.status === "FAILED") {
+        const timeStr = i.completedAt || i.startedAt;
+        const timeMs = Date.parse(timeStr);
+        if (Number.isNaN(timeMs)) return false;
+        return now - timeMs <= TEN_HOURS_MS;
+      }
+      return false;
+    });
+  }, [filteredItems, now]);
   const inProgressItems = useMemo(
     () => filteredItems.filter((i) => i.status === "RUNNING" || i.status === "QUEUED"),
     [filteredItems]
@@ -276,26 +286,6 @@ export function TasksView({
       return next;
     });
     onNotice({ tone: "good", message: "Cleared finished tasks from view" });
-  };
-
-  const retryAllFailed = async () => {
-    const failedTasks = productionItems.filter((i) => i.status === "FAILED").map((i) => i.activeTask || i.latestTask);
-    if (failedTasks.length === 0) return;
-
-    try {
-      for (const t of failedTasks) {
-        await api.createTask({
-          task_type: t.task_type,
-          channel_id: t.channel_id,
-          episode_id: t.episode_id,
-          scene_number: t.scene_number,
-        });
-      }
-      onNotice({ tone: "good", message: `Retried ${failedTasks.length} failed ${failedTasks.length === 1 ? "task" : "tasks"}` });
-      await onRefresh();
-    } catch (err) {
-      onNotice({ tone: "bad", message: err instanceof Error ? err.message : "Failed to retry all" });
-    }
   };
 
   const cancelAllQueued = async () => {
@@ -349,79 +339,72 @@ export function TasksView({
       <div className="task-toolbar-unified">
         {/* Left: Status Filter Chips */}
         <div className="task-kpi-bar" role="group" aria-label="Filter tasks by status">
-          <button
-            type="button"
+          <a
             aria-pressed={statusFilter === "all"}
             className={`task-kpi-chip ${statusFilter === "all" ? "is-active" : ""}`}
-            onClick={() => setStatusFilter("all")}
+            {...getNavProps("#/tasks?tab=all", () => setStatusFilter("all"))}
           >
             <span className="kpi-label">{t("tasks.filterAll")}</span>
             <span className="kpi-count">{totalCount}</span>
-          </button>
+          </a>
 
-          <button
-            type="button"
+          <a
             aria-pressed={statusFilter === "running"}
             className={`task-kpi-chip is-running ${statusFilter === "running" ? "is-active" : ""}`}
-            onClick={() => setStatusFilter("running")}
+            {...getNavProps("#/tasks?tab=running", () => setStatusFilter("running"))}
           >
             {runningCount > 0 && <span className="live-dot-pulse" />}
             <span className="kpi-label">{t("tasks.filterRunning")}</span>
             <span className="kpi-count">{runningCount}</span>
-          </button>
+          </a>
 
-          <button
-            type="button"
+          <a
             aria-pressed={statusFilter === "queued"}
             className={`task-kpi-chip is-queued ${statusFilter === "queued" ? "is-active" : ""}`}
-            onClick={() => setStatusFilter("queued")}
+            {...getNavProps("#/tasks?tab=queued", () => setStatusFilter("queued"))}
           >
             <span className="kpi-label">{t("tasks.filterQueued")}</span>
             <span className="kpi-count">{queuedCount}</span>
-          </button>
+          </a>
 
           {waitingApprovalCount > 0 && (
-            <button
-              type="button"
+            <a
               aria-pressed={statusFilter === "waiting_approval"}
               className={`task-kpi-chip is-waiting_approval ${statusFilter === "waiting_approval" ? "is-active" : ""}`}
-              onClick={() => setStatusFilter("waiting_approval")}
+              {...getNavProps("#/tasks?tab=waiting_approval", () => setStatusFilter("waiting_approval"))}
             >
               <span className="kpi-label">{t("tasks.filterWaiting")}</span>
               <span className="kpi-count">{waitingApprovalCount}</span>
-            </button>
+            </a>
           )}
 
-          <button
-            type="button"
+          <a
             aria-pressed={statusFilter === "failed"}
             className={`task-kpi-chip is-failed ${statusFilter === "failed" ? "is-active" : ""}`}
-            onClick={() => setStatusFilter("failed")}
+            {...getNavProps("#/tasks?tab=failed", () => setStatusFilter("failed"))}
           >
             <span className="kpi-label">{t("tasks.filterFailed")}</span>
             <span className={`kpi-count ${failedCount > 0 ? "has-errors" : ""}`}>{failedCount}</span>
-          </button>
+          </a>
 
-          <button
-            type="button"
+          <a
             aria-pressed={statusFilter === "completed"}
             className={`task-kpi-chip is-completed ${statusFilter === "completed" ? "is-active" : ""}`}
-            onClick={() => setStatusFilter("completed")}
+            {...getNavProps("#/tasks?tab=completed", () => setStatusFilter("completed"))}
           >
             <span className="kpi-label">{t("tasks.filterCompleted")}</span>
             <span className="kpi-count">{completedCount}</span>
-          </button>
+          </a>
 
           {cancelledCount > 0 && (
-            <button
-              type="button"
+            <a
               aria-pressed={statusFilter === "cancelled"}
               className={`task-kpi-chip is-cancelled ${statusFilter === "cancelled" ? "is-active" : ""}`}
-              onClick={() => setStatusFilter("cancelled")}
+              {...getNavProps("#/tasks?tab=cancelled", () => setStatusFilter("cancelled"))}
             >
               <span className="kpi-label">{t("tasks.filterCancelled")}</span>
               <span className="kpi-count">{cancelledCount}</span>
-            </button>
+            </a>
           )}
         </div>
 
@@ -486,19 +469,6 @@ export function TasksView({
 
             {actionsMenuOpen && (
               <div className="task-actions-dropdown-menu" role="menu">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="task-dropdown-item"
-                  disabled={failedCount === 0}
-                  onClick={() => {
-                    setActionsMenuOpen(false);
-                    void retryAllFailed();
-                  }}
-                >
-                  <ArrowsClockwise size={14} />
-                  <span>Retry Failed ({failedCount})</span>
-                </button>
                 <button
                   type="button"
                   role="menuitem"
@@ -592,16 +562,6 @@ export function TasksView({
                   <span className="task-group-badge is-attention">Needs Attention</span>
                   <span className="task-group-count">{attentionItems.length}</span>
                 </div>
-                {failedCount > 0 && (
-                  <button
-                    type="button"
-                    className="text-button compact warn-text"
-                    onClick={() => void retryAllFailed()}
-                  >
-                    <ArrowsClockwise size={13} />
-                    <span>Retry All Failed</span>
-                  </button>
-                )}
               </div>
               <div className="streamlined-task-grid">
                 {attentionItems.map((item) => (

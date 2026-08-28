@@ -3,6 +3,7 @@ import { FilmSlate, MagnifyingGlass, Plus, X } from "@phosphor-icons/react";
 import type { Channel, Episode, Task } from "@studio/shared";
 import { EmptyState } from "../../../components/EmptyState";
 import { EpisodeCard } from "./EpisodeCard";
+import { buildHash, getNavProps } from "../../../hooks/useRouter";
 
 type ChannelEpisodesTabProps = {
   channel: Channel;
@@ -23,6 +24,7 @@ export function ChannelEpisodesTab({
 }: ChannelEpisodesTabProps) {
   const [episodeSearch, setEpisodeSearch] = useState("");
   const [episodeFilter, setEpisodeFilter] = useState<"all" | "in_progress" | "video_ready">("all");
+  const topicsUrl = buildHash({ page: "channels", channelId: channel.channel_id, tab: "topics" });
 
   const videoReadyCount = episodes.filter((e) => Boolean(e.video_asset_path)).length;
   const inProgressCount = episodes.length - videoReadyCount;
@@ -51,10 +53,13 @@ export function ChannelEpisodesTab({
           <span className="count-note">
             {episodes.length} {episodes.length === 1 ? "episode" : "episodes"}
           </span>
-          <button className="primary-button compact" onClick={onGoToTopics}>
+          <a
+            className="primary-button compact"
+            {...getNavProps(topicsUrl, onGoToTopics)}
+          >
             <Plus size={15} />
             <span>New Episode from Topics</span>
-          </button>
+          </a>
         </div>
       </div>
 
@@ -65,6 +70,7 @@ export function ChannelEpisodesTab({
           title="No episodes confirmed yet"
           copy="Explore and confirm ideas in the Idea Lab to start generating video episodes."
           action="Explore Idea Lab"
+          actionHref={topicsUrl}
           onAction={onGoToTopics}
         />
       ) : (

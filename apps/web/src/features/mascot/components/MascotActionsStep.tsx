@@ -1,18 +1,12 @@
 import {
   ArrowLeft,
   ArrowRight,
-  Broadcast,
-  CheckCircle,
   CircleNotch,
   Eye,
-  Lightning,
   MagicWand,
   PaintBrush,
   PencilSimple,
   Plus,
-  Rocket,
-  Smiley,
-  Sparkle,
   Upload,
   X,
 } from "@phosphor-icons/react";
@@ -101,7 +95,6 @@ export function MascotActionsStep({
     const isActivelyGenerating = busyAction === action || Boolean(batchState && batchState.currentAction === action);
     const isQueued = Boolean(batchState && batchState.queue?.includes(action) && batchState.currentAction !== action);
     const isMatting = busyAction === `matting-${action}` || (busyAction === "matting-all" && Boolean(sprite?.sprite_url));
-    const isUploadBusy = busyAction === `upload-${action}`;
     const isDragOver = dragOverAction === action;
     const hasSprite = Boolean(sprite?.sprite_url);
 
@@ -118,7 +111,6 @@ export function MascotActionsStep({
       >
         <div className="artistic-card-header">
           <div className="artistic-header-title">
-            <span className="pose-icon">{meta.icon}</span>
             <h4 title={meta.label}>{meta.label.split(" ")[0]}</h4>
           </div>
           <span className={`artistic-motion-pill ${hasSprite ? "is-active" : ""}`}>
@@ -130,13 +122,6 @@ export function MascotActionsStep({
           {/* 1. Actively Generating Overlay */}
           {isActivelyGenerating ? (
             <div className="card-generating-overlay">
-              <div className="concept-gen-laser-scan" />
-              <div className="card-gen-spinner-wrap">
-                <div className="card-gen-ring" />
-                <div className="card-gen-core-icon">
-                  <Sparkle size={15} weight="fill" />
-                </div>
-              </div>
               <strong className="card-gen-label">
                 {t("mascots.generatingPose", { action: meta.label.split(" ")[0] })}
               </strong>
@@ -156,18 +141,10 @@ export function MascotActionsStep({
                 <CircleNotch className="spin" size={12} />
                 {t("mascots.queuedBadge")}
               </span>
-              <p style={{ margin: 0, fontSize: "10.5px", color: "#94a3b8" }}>
-                {t("mascots.batchCurrentState", {
-                  current: (batchState?.currentIndex || 0) + 1,
-                  total: batchState?.total || 7,
-                  action: meta.label.split(" ")[0],
-                })}
-              </p>
             </div>
           ) : isMatting ? (
             /* 3. Matting Overlay */
             <div className="matting-active-overlay">
-              <div className="matting-laser" />
               <CircleNotch className="spin" size={20} color="#a855f7" />
               <strong style={{ color: "#fff", fontSize: "11px" }}>{t("mascots.mattingInProgress")}</strong>
               <div className="card-gen-bar-wrap" style={{ width: "80%" }}>
@@ -192,11 +169,11 @@ export function MascotActionsStep({
                   onClick={() => onGenerateSprite(action)}
                   title={t("mascots.reGenerateBtn")}
                 >
-                  <MagicWand size={15} weight="bold" />
+                  <MagicWand size={14} weight="bold" />
                 </button>
 
                 <label className="artistic-action-btn" title={t("mascots.uploadStripBtn")} style={{ margin: 0 }}>
-                  <Upload size={15} />
+                  <Upload size={14} />
                   <input
                     type="file"
                     accept="image/png,image/webp,image/jpeg"
@@ -216,7 +193,7 @@ export function MascotActionsStep({
                   onClick={() => onRemoveBackground(action)}
                   title={t("mascots.mattingSpriteBtn")}
                 >
-                  <PaintBrush size={15} />
+                  <PaintBrush size={14} />
                 </button>
 
                 <button
@@ -228,7 +205,7 @@ export function MascotActionsStep({
                   }}
                   title={t("mascots.previewStep3Btn")}
                 >
-                  <Eye size={15} />
+                  <Eye size={14} />
                 </button>
 
                 <button
@@ -237,7 +214,7 @@ export function MascotActionsStep({
                   onClick={() => setPromptEditAction(action)}
                   title={t("mascots.customPromptTooltip")}
                 >
-                  <PencilSimple size={15} />
+                  <PencilSimple size={14} />
                 </button>
               </div>
             </>
@@ -249,7 +226,7 @@ export function MascotActionsStep({
               }}
             >
               <div className="artistic-empty-icon">
-                <Plus size={15} weight="bold" />
+                <Plus size={14} weight="bold" />
               </div>
               <p className="artistic-empty-text">
                 {t("mascots.addPoseBtn")}
@@ -272,7 +249,6 @@ export function MascotActionsStep({
         <div className="wizard-card-header-flex">
           <div>
             <h3>{t("mascots.statesStudioTitle")}</h3>
-            <p className="wizard-card-sub">{t("mascots.statesStudioSub")}</p>
           </div>
         </div>
 
@@ -292,13 +268,12 @@ export function MascotActionsStep({
                   {editingMascot?.master_image_url ? (
                     <img src={editingMascot.master_image_url} alt={editingMascot.name} />
                   ) : (
-                    <Smiley size={26} weight="duotone" style={{ color: genColor }} />
+                    <div style={{ width: "26px", height: "26px", borderRadius: "50%", background: `${genColor}20` }} />
                   )}
                 </div>
                 <div className="states-master-info">
                   <h3>{editingMascot?.name || genName || t("mascots.unnamedMascot")}</h3>
                   <span className="states-master-style-pill">
-                    <Sparkle size={12} weight="fill" />
                     {QUIZ_IMAGE_STYLE_LABELS[editingMascot?.visual_style || genStyle]}
                   </span>
                 </div>
@@ -320,7 +295,6 @@ export function MascotActionsStep({
 
                   {batchState?.currentAction ? (
                     <div className="states-batch-active-item">
-                      <span className="mascot-gen-pulse-dot" />
                       <span>
                         {t("mascots.batchCurrentState", {
                           current: (batchState.currentIndex || 0) + 1,
@@ -356,17 +330,7 @@ export function MascotActionsStep({
               ) : (
                 <>
                   <div className={`states-core-readiness ${isCoreReady ? "is-ready" : ""}`}>
-                    {isCoreReady ? (
-                      <>
-                        <CheckCircle size={14} weight="fill" />
-                        <span>{t("mascots.coreReadyStatus")}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkle size={14} weight="fill" />
-                        <span>{t("mascots.coreNotReadyStatus", { ready: coreReadyCount })}</span>
-                      </>
-                    )}
+                    <span>{isCoreReady ? t("mascots.coreReadyStatus") : t("mascots.coreNotReadyStatus", { ready: coreReadyCount })}</span>
                   </div>
 
                   <div className="states-progress-box">
@@ -389,7 +353,7 @@ export function MascotActionsStep({
                   disabled={busyAction !== null}
                   onClick={onBatchGenerateCoreSprites}
                 >
-                  {busyAction === "batch-core" ? <CircleNotch className="spin" size={16} /> : <Lightning size={16} weight="fill" />}
+                  {busyAction === "batch-core" ? <CircleNotch className="spin" size={16} /> : null}
                   <span>{busyAction === "batch-core" ? t("mascots.batchGeneratingCoreBtn") : t("mascots.batchGenerateCoreBtn")}</span>
                 </button>
 
@@ -400,7 +364,7 @@ export function MascotActionsStep({
                   disabled={busyAction !== null}
                   onClick={onBatchGenerateSprites}
                 >
-                  {busyAction === "batch" ? <CircleNotch className="spin" size={14} /> : <Rocket size={14} />}
+                  {busyAction === "batch" ? <CircleNotch className="spin" size={14} /> : null}
                   <span>{busyAction === "batch" ? t("mascots.batchGeneratingBtn") : t("mascots.batchGenerateBtn")}</span>
                 </button>
 
@@ -427,16 +391,8 @@ export function MascotActionsStep({
             <section className="states-group-section is-core-group">
               <div className="states-group-header">
                 <div className="states-group-title-wrap">
-                  <h4>
-                    <Sparkle size={16} weight="fill" style={{ color: "#f59e0b" }} />
-                    {t("mascots.coreGroupTitle")}
-                  </h4>
-                  <p>{t("mascots.coreGroupSub")}</p>
+                  <h4>{t("mascots.coreGroupTitle")}</h4>
                 </div>
-                <span className="states-group-badge is-core">
-                  <Lightning size={12} weight="fill" />
-                  {t("mascots.coreBadge")}
-                </span>
               </div>
               <div className="artistic-states-grid">
                 {CORE_GAMEPLAY_ACTIONS.map((action) => renderActionCard(action, true))}
@@ -447,15 +403,8 @@ export function MascotActionsStep({
             <section className="states-group-section">
               <div className="states-group-header">
                 <div className="states-group-title-wrap">
-                  <h4>
-                    <Broadcast size={16} weight="duotone" style={{ color: "#a78bfa" }} />
-                    {t("mascots.brandGroupTitle")}
-                  </h4>
-                  <p>{t("mascots.brandGroupSub")}</p>
+                  <h4>{t("mascots.brandGroupTitle")}</h4>
                 </div>
-                <span className="states-group-badge is-brand">
-                  {t("mascots.brandBadge")}
-                </span>
               </div>
               <div className="artistic-states-grid">
                 {BRAND_IDENTITY_ACTIONS.map((action) => renderActionCard(action, false))}
@@ -466,15 +415,8 @@ export function MascotActionsStep({
             <section className="states-group-section">
               <div className="states-group-header">
                 <div className="states-group-title-wrap">
-                  <h4>
-                    <Smiley size={16} weight="duotone" style={{ color: "var(--muted)" }} />
-                    {t("mascots.auxGroupTitle")}
-                  </h4>
-                  <p>{t("mascots.auxGroupSub")}</p>
+                  <h4>{t("mascots.auxGroupTitle")}</h4>
                 </div>
-                <span className="states-group-badge is-aux">
-                  {t("mascots.auxBadge")}
-                </span>
               </div>
               <div className="artistic-states-grid">
                 {AUXILIARY_ACTIONS.map((action) => renderActionCard(action, false))}
@@ -506,12 +448,9 @@ export function MascotActionsStep({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="modal-heading">
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <span style={{ fontSize: "24px" }}>{getLocalizedActionMeta(promptEditAction, t).icon}</span>
-                <div>
-                  <p className="eyebrow">{t("mascots.customPromptEyebrow")}</p>
-                  <h2>{getLocalizedActionMeta(promptEditAction, t).label}</h2>
-                </div>
+              <div>
+                <p className="eyebrow">{t("mascots.customPromptEyebrow")}</p>
+                <h2>{getLocalizedActionMeta(promptEditAction, t).label}</h2>
               </div>
               <button
                 type="button"
@@ -534,9 +473,6 @@ export function MascotActionsStep({
                   placeholder={getLocalizedActionMeta(promptEditAction, t).description}
                   style={{ width: "100%", fontSize: "13px", resize: "vertical" }}
                 />
-                <span style={{ fontSize: "11.5px", color: "var(--muted)", marginTop: "4px", display: "block" }}>
-                  {t("mascots.customPromptSub")}
-                </span>
               </div>
             </div>
 

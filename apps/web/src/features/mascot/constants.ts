@@ -4,12 +4,12 @@ import {
   type QuizImageStyle,
 } from "@studio/shared";
 
-export const STYLE_OPTIONS: { id: QuizImageStyle; icon: string; title: string; descKey: string }[] = [
-  { id: "pixar_3d", icon: "🎬", title: "3D Pixar", descKey: "mascots.stylePixarDesc" },
-  { id: "kawaii_chibi", icon: "🧸", title: "Kawaii Chibi", descKey: "mascots.styleChibiDesc" },
-  { id: "flat_vector", icon: "🎨", title: "Flat Vector", descKey: "mascots.styleVectorDesc" },
-  { id: "voxel_lowpoly", icon: "🕹️", title: "Voxel 3D", descKey: "mascots.styleVoxelDesc" },
-  { id: "plastic_toy", icon: "🎁", title: "Plastic Toy", descKey: "mascots.styleToyDesc" },
+export const STYLE_OPTIONS: { id: QuizImageStyle; title: string }[] = [
+  { id: "pixar_3d", title: "3D Pixar" },
+  { id: "kawaii_chibi", title: "Kawaii Chibi" },
+  { id: "flat_vector", title: "Flat Vector" },
+  { id: "voxel_lowpoly", title: "Voxel 3D" },
+  { id: "plastic_toy", title: "Plastic Toy" },
 ];
 
 export const COLOR_PRESETS = [
@@ -22,14 +22,14 @@ export const COLOR_PRESETS = [
 ];
 
 export const QUICK_PROMPT_TAGS = [
-  "+ Sparkling big eyes",
-  "+ Cute chibi proportions",
-  "+ Volumetric soft lighting",
-  "+ Fluffy feathers/fur",
-  "+ Friendly expression",
-  "+ Sharp clean silhouette",
-  "+ Solid white background",
-  "+ Vibrant colors",
+  "Sparkling big eyes",
+  "Cute chibi proportions",
+  "Volumetric soft lighting",
+  "Fluffy texture",
+  "Friendly expression",
+  "Sharp clean silhouette",
+  "Solid white background",
+  "Vibrant colors",
 ];
 
 export const PROMPT_TEMPLATES = [

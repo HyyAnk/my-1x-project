@@ -4,15 +4,12 @@ import {
   CaretDown,
   CaretRight,
   Check,
-  CheckCircle,
   CircleNotch,
   Copy,
   DownloadSimple,
   MagicWand,
   MagnifyingGlassPlus,
   PaintBrush,
-  Smiley,
-  Sparkle,
   Trash,
   X,
 } from "@phosphor-icons/react";
@@ -96,9 +93,6 @@ export function MascotConceptStep({
           <div className="wizard-card-header-flex" style={{ marginBottom: "16px" }}>
             <div>
               <h3>{t("mascots.conceptTitle")}</h3>
-              <p className="wizard-card-sub" style={{ marginBottom: 0 }}>
-                {t("mascots.conceptSub")}
-              </p>
             </div>
           </div>
 
@@ -171,19 +165,10 @@ export function MascotConceptStep({
                     key={opt.id}
                     type="button"
                     className={`visual-style-card ${isSelected ? "is-selected" : ""}`}
-                    style={isSelected ? { borderColor: genColor, boxShadow: `0 0 14px ${genColor}35` } : undefined}
+                    style={isSelected ? { borderColor: genColor, backgroundColor: `${genColor}15` } : undefined}
                     onClick={() => setGenStyle(opt.id)}
                   >
-                    <span className="style-card-icon">{opt.icon}</span>
-                    <div className="style-card-info">
-                      <strong className="style-card-title">{opt.title}</strong>
-                      <small className="style-card-desc">{t(opt.descKey)}</small>
-                    </div>
-                    {isSelected ? (
-                      <span className="style-card-badge" style={{ backgroundColor: genColor }}>
-                        <Check size={11} weight="bold" />
-                      </span>
-                    ) : null}
+                    <span className="style-card-title">{opt.title}</span>
                   </button>
                 );
               })}
@@ -191,16 +176,11 @@ export function MascotConceptStep({
           </div>
 
           {/* HERO PROMPT STUDIO */}
-          <div className="hero-prompt-studio-box" style={{ borderColor: `${genColor}45` }}>
+          <div className="hero-prompt-studio-box" style={{ borderColor: `${genColor}35` }}>
             <div className="hero-prompt-header">
-              <div className="hero-prompt-title-group">
-                <Sparkle size={18} weight="fill" style={{ color: genColor }} />
-                <div>
-                  <label htmlFor="mascot-prompt" className="hero-prompt-label">
-                    {t("mascots.promptLabel")} <span className="hero-prompt-subtag">(AI Character Anchor)</span>
-                  </label>
-                </div>
-              </div>
+              <label htmlFor="mascot-prompt" className="hero-prompt-label">
+                {t("mascots.promptLabel")}
+              </label>
 
               <div className="hero-prompt-actions">
                 <button
@@ -232,7 +212,6 @@ export function MascotConceptStep({
 
             {/* Quick AI Mascot Template Chips */}
             <div className="prompt-template-chips-bar">
-              <span className="prompt-chips-label">{t("mascots.templatesLabel")}</span>
               <div className="prompt-chips-list">
                 {PROMPT_TEMPLATES.map((tpl, idx) => (
                   <button
@@ -250,7 +229,6 @@ export function MascotConceptStep({
 
             {/* Quick AI Keyword Tags */}
             <div className="quick-tags-bar">
-              <span className="prompt-chips-label">{t("mascots.quickTagsLabel")}</span>
               <div className="quick-tags-list">
                 {QUICK_PROMPT_TAGS.map((tag, idx) => (
                   <button
@@ -258,7 +236,6 @@ export function MascotConceptStep({
                     type="button"
                     className="quick-tag-chip"
                     onClick={() => onInjectTag(tag)}
-                    title={`+ "${tag}"`}
                   >
                     {tag}
                   </button>
@@ -270,26 +247,12 @@ export function MascotConceptStep({
             <div className="hero-prompt-textarea-wrap">
               <textarea
                 id="mascot-prompt"
-                rows={5}
+                rows={4}
                 className="hero-prompt-textarea"
                 placeholder={t("mascots.promptPlaceholder")}
                 value={genPrompt}
                 onChange={(e) => setGenPrompt(e.target.value)}
               />
-            </div>
-
-            {/* Prompt Box Footer Stats */}
-            <div className="hero-prompt-footer">
-              <div className="hero-prompt-stats">
-                <span>{t("mascots.charsCount", { count: genPrompt.length })}</span>
-                <span>•</span>
-                <span>
-                  {t("mascots.wordsCount", {
-                    count: genPrompt.trim() ? genPrompt.trim().split(/\s+/).length : 0,
-                  })}
-                </span>
-              </div>
-              {promptCopied ? <span className="prompt-copied-notice">{t("common.copied")}!</span> : null}
             </div>
           </div>
 
@@ -304,7 +267,6 @@ export function MascotConceptStep({
                 {showNotesAccordion ? <CaretDown size={14} weight="bold" /> : <CaretRight size={14} weight="bold" />}
                 <span>{t("mascots.notesAccordionTitle")}</span>
               </div>
-              <small>{t("mascots.notesAccordionSub")}</small>
             </button>
 
             {showNotesAccordion ? (
@@ -328,7 +290,7 @@ export function MascotConceptStep({
               className="primary-button ai-magic-btn"
               style={{
                 background: `linear-gradient(135deg, ${genColor} 0%, #0284c7 100%)`,
-                boxShadow: `0 4px 20px ${genColor}45`,
+                boxShadow: `0 4px 16px ${genColor}35`,
               }}
               disabled={busyAction !== null || !genName.trim()}
               onClick={onGenerateConcept}
@@ -346,7 +308,6 @@ export function MascotConceptStep({
               className={`quiet-button ${editingMascot?.master_image_url ? "is-ready-forward" : ""}`}
               onClick={onNextStep}
               disabled={!editingMascot?.master_image_url || busyAction !== null}
-              title={!editingMascot?.master_image_url ? "Vui lòng sinh hoặc tải lên Master Concept trước khi sang bước 2" : undefined}
             >
               <span>{t("mascots.nextStatesBtn")}</span>
               <ArrowRight size={15} />
@@ -361,7 +322,6 @@ export function MascotConceptStep({
           <div className="wizard-card-header-flex">
             <div>
               <h3>{t("mascots.masterPreviewTitle")}</h3>
-              <p className="wizard-card-sub">{t("mascots.masterPreviewSub")}</p>
             </div>
             {editingMascot?.master_image_url && !busyAction ? (
               <button
@@ -378,26 +338,16 @@ export function MascotConceptStep({
           <div
             className="concept-preview-frame studio-stage-frame"
             style={{
-              borderColor: busyAction === "concept" ? "var(--accent)" : editingMascot?.master_image_url ? genColor : undefined,
+              borderColor: busyAction === "concept" ? "var(--accent)" : editingMascot?.master_image_url ? `${genColor}80` : undefined,
               boxShadow: busyAction === "concept"
-                ? `0 0 28px var(--accent-glow)`
+                ? `0 0 20px var(--accent-glow)`
                 : editingMascot?.master_image_url
-                ? `0 16px 36px rgba(0, 0, 0, 0.4), 0 0 28px ${genColor}30`
+                ? `0 8px 24px rgba(0, 0, 0, 0.25)`
                 : "var(--shadow-sm)",
             }}
           >
             {busyAction === "concept" ? (
               <div className="concept-generating-overlay">
-                <div className="concept-gen-holo-mesh" />
-                <div className="concept-gen-laser-scan" />
-                <div className="concept-gen-holo-orb">
-                  <div className="concept-gen-ring-outer" />
-                  <div className="concept-gen-ring-inner" />
-                  <div className="concept-gen-core">
-                    <Sparkle size={28} weight="fill" />
-                  </div>
-                </div>
-
                 <div className="concept-gen-info-box">
                   <div className="concept-gen-header-row">
                     <span className="concept-gen-headline">
@@ -421,10 +371,8 @@ export function MascotConceptStep({
               </div>
             ) : busyAction === "matting-master" ? (
               <div className="matting-active-overlay">
-                <div className="matting-laser" />
-                <CircleNotch className="spin" size={32} color="#a855f7" />
-                <h4 style={{ color: "#fff", margin: 0, fontSize: "14px" }}>{t("mascots.mattingInProgress")}</h4>
-                <p style={{ color: "#c084fc", fontSize: "12px", margin: 0 }}>{currentStageMessage}</p>
+                <CircleNotch className="spin" size={28} color="#a855f7" />
+                <h4 style={{ color: "#fff", margin: 0, fontSize: "13px" }}>{t("mascots.mattingInProgress")}</h4>
                 <div className="concept-gen-track" style={{ width: "80%" }}>
                   <div className="mascot-gen-bar-fill" style={{ width: `${itemProgress}%`, backgroundColor: "#a855f7" }} />
                 </div>
@@ -439,10 +387,6 @@ export function MascotConceptStep({
               </div>
             ) : (
               <div className="concept-preview-placeholder studio-placeholder">
-                <div className="placeholder-aura-glow" style={{ backgroundColor: `${genColor}20`, borderColor: `${genColor}40` }}>
-                  <Smiley size={56} weight="duotone" style={{ color: genColor }} />
-                </div>
-                <h4>{t("mascots.masterPreviewTitle")}</h4>
                 <p>{t("mascots.masterPreviewPlaceholder")}</p>
               </div>
             )}
@@ -453,8 +397,8 @@ export function MascotConceptStep({
               <div className="concept-meta-box modern-meta-box">
                 <div className="concept-meta-item">
                   <span>{t("common.status")}:</span>
-                  <strong style={{ color: "var(--green)", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                    <CheckCircle size={14} weight="fill" /> {t("mascots.statusIdentityLocked")}
+                  <strong style={{ color: "var(--green)" }}>
+                    {t("mascots.statusIdentityLocked")}
                   </strong>
                 </div>
                 <div className="concept-meta-item">
@@ -503,8 +447,7 @@ export function MascotConceptStep({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="modal-heading">
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Sparkle size={20} weight="fill" style={{ color: genColor }} />
+              <div>
                 <h2 style={{ fontSize: "16px", margin: 0 }}>{t("mascots.focusPromptTitle")}</h2>
               </div>
               <button type="button" className="icon-button" onClick={() => setIsPromptModalOpen(false)}>
@@ -514,7 +457,6 @@ export function MascotConceptStep({
 
             <div className="prompt-modal-body" style={{ padding: "16px 20px" }}>
               <div className="quick-tags-bar" style={{ marginBottom: "12px" }}>
-                <span className="prompt-chips-label">{t("mascots.quickTagsLabel")}</span>
                 <div className="quick-tags-list">
                   {QUICK_PROMPT_TAGS.map((tag, idx) => (
                     <button
@@ -538,18 +480,6 @@ export function MascotConceptStep({
                 placeholder={t("mascots.promptPlaceholder")}
                 autoFocus
               />
-
-              <div className="hero-prompt-footer" style={{ marginTop: "10px" }}>
-                <div className="hero-prompt-stats">
-                  <span>{t("mascots.charsCount", { count: genPrompt.length })}</span>
-                  <span>•</span>
-                  <span>
-                    {t("mascots.wordsCount", {
-                      count: genPrompt.trim() ? genPrompt.trim().split(/\s+/).length : 0,
-                    })}
-                  </span>
-                </div>
-              </div>
             </div>
 
             <div className="modal-actions" style={{ justifyContent: "flex-end" }}>

@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, CircleNotch, MagicWand, Plus, Smiley, Upload } from "@phosphor-icons/react";
+import { ArrowLeft, CircleNotch, Plus, Upload } from "@phosphor-icons/react";
 import type { Channel, MascotProfile } from "@studio/shared";
 import type { Notice } from "./types";
 import { useTranslation } from "../i18n";
+import { getNavProps } from "../hooks/useRouter";
 import {
   AUXILIARY_ACTIONS,
   BRAND_IDENTITY_ACTIONS,
@@ -54,16 +55,7 @@ export function MascotStudioView({
       {/* Studio Header */}
       <div className="section-heading mascot-header">
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span className="mascot-title-icon" style={{ fontSize: "28px" }}>🎨</span>
-            <div>
-              <p className="eyebrow">Video Host & Brand Persona</p>
-              <h1>{t("mascots.pageTitle")}</h1>
-            </div>
-          </div>
-          <p className="detail-copy" style={{ marginTop: "4px" }}>
-            {t("mascots.pageSubtitle")}
-          </p>
+          <h1>{t("mascots.pageTitle")}</h1>
         </div>
 
         <div className="mascot-top-actions" style={{ display: "flex", gap: "10px", alignItems: "center" }}>
@@ -105,31 +97,27 @@ export function MascotStudioView({
 
       {/* Navigation Tabs */}
       <div className="channel-group-tabs" role="tablist" aria-label="Mascot Studio Tabs" style={{ marginBottom: "20px" }}>
-        <button
-          type="button"
+        <a
           role="tab"
           aria-selected={activeTab === "library"}
           className={`channel-group-tab ${activeTab === "library" ? "is-selected" : ""}`}
-          onClick={() => setActiveTab("library")}
+          {...getNavProps("#/mascots?tab=library", () => setActiveTab("library"))}
         >
-          <Smiley size={18} weight={activeTab === "library" ? "fill" : "regular"} />
           <span>{t("mascots.tabLibrary")}</span>
           <small>{libraryState.mascots.length}</small>
-        </button>
-        <button
-          type="button"
+        </a>
+        <a
           role="tab"
           aria-selected={activeTab === "generator"}
           className={`channel-group-tab ${activeTab === "generator" ? "is-selected" : ""}`}
-          onClick={() => {
+          {...getNavProps("#/mascots?tab=generator", () => {
             if (!generatorState.editingMascot) handleStartNew();
             else setActiveTab("generator");
-          }}
+          })}
         >
-          <MagicWand size={18} weight={activeTab === "generator" ? "fill" : "regular"} />
           <span>{t("mascots.tabGenerator")}</span>
           {generatorState.editingMascot ? <small>{generatorState.editingMascot.name}</small> : null}
-        </button>
+        </a>
       </div>
 
       {/* Tab 1: Library */}

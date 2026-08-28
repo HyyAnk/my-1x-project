@@ -245,6 +245,7 @@ export class RepositoryService {
     await writeFile(path.join(directory, "channel_dna.md"), `${dnaContent.trim()}\n`, "utf8");
     await writeFile(path.join(directory, "style_guide.md"), `${styleGuide.trim()}\n`, "utf8");
 
+    const channelCountry = input.country || input.market || "GLOBAL";
     const channel = ChannelSchema.parse({
       channel_id: channelId,
       slug,
@@ -252,7 +253,8 @@ export class RepositoryService {
       description: input.description,
       target_audience: input.target_audience,
       language: input.language,
-      market: input.market,
+      country: channelCountry,
+      market: input.market || channelCountry,
       channel_dna_path: `channels/${slug}/channel_dna.md`,
       style_guide_path: `channels/${slug}/style_guide.md`,
       status: "DRAFT",
@@ -266,7 +268,7 @@ export class RepositoryService {
     return channel;
   }
 
-  async updateChannel(channelId: string, patch: Partial<Pick<Channel, "display_name" | "description" | "target_audience" | "language" | "market" | "status" | "updated_at" | "voice_reference_path" | "selected_styles" | "mascot_id" | "mascot_config">>): Promise<Channel> {
+  async updateChannel(channelId: string, patch: Partial<Pick<Channel, "display_name" | "description" | "target_audience" | "language" | "country" | "market" | "status" | "updated_at" | "voice_reference_path" | "selected_styles" | "mascot_id" | "mascot_config">>): Promise<Channel> {
     const current = await this.getChannel(channelId);
     const next = ChannelSchema.parse({ ...current, ...patch, updated_at: nowIso() });
     await this.writeJsonAtomic(this.resolvePath("channels", current.slug, "channel.json"), next);

@@ -1,5 +1,5 @@
 import { CircleNotch, MagnifyingGlass, Smiley, Trash, X } from "@phosphor-icons/react";
-import { ALL_QUIZ_IMAGE_STYLES, QUIZ_IMAGE_STYLE_LABELS, type Channel, type MascotProfile } from "@studio/shared";
+import type { Channel, MascotProfile } from "@studio/shared";
 import { EmptyState } from "../../components/EmptyState";
 import { MascotAssignModal } from "../../components/MascotAssignModal";
 import type { Notice } from "../../components/types";
@@ -30,8 +30,6 @@ export function MascotLibraryTab({
     loading,
     searchQuery,
     setSearchQuery,
-    styleFilter,
-    setStyleFilter,
     filteredMascots,
     quickAssignMascot,
     setQuickAssignMascot,
@@ -44,44 +42,26 @@ export function MascotLibraryTab({
 
   return (
     <div className="mascot-library-container">
-      {/* Search & Style Filter Toolbar */}
-      <div className="episode-toolbar" style={{ marginBottom: "18px" }}>
-        <div className="episode-search-wrap">
-          <MagnifyingGlass size={15} className="search-icon" />
-          <input
-            type="text"
-            placeholder={t("mascots.searchPlaceholder")}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="episode-search-input"
-          />
-          {searchQuery ? (
-            <button type="button" className="search-clear-btn" onClick={() => setSearchQuery("")}>
-              <X size={13} />
-            </button>
-          ) : null}
+      {/* Search Toolbar (only shown when mascots exist) */}
+      {mascots.length > 0 ? (
+        <div className="episode-toolbar" style={{ marginBottom: "18px" }}>
+          <div className="episode-search-wrap" style={{ maxWidth: "340px" }}>
+            <MagnifyingGlass size={15} className="search-icon" />
+            <input
+              type="text"
+              placeholder={t("mascots.searchPlaceholder")}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="episode-search-input"
+            />
+            {searchQuery ? (
+              <button type="button" className="search-clear-btn" onClick={() => setSearchQuery("")}>
+                <X size={13} />
+              </button>
+            ) : null}
+          </div>
         </div>
-
-        <div className="episode-filter-chips">
-          <button
-            type="button"
-            className={`filter-chip ${styleFilter === "all" ? "is-active" : ""}`}
-            onClick={() => setStyleFilter("all")}
-          >
-            {t("mascots.filterAllStyles")} ({mascots.length})
-          </button>
-          {ALL_QUIZ_IMAGE_STYLES.map((style) => (
-            <button
-              key={style}
-              type="button"
-              className={`filter-chip ${styleFilter === style ? "is-active" : ""}`}
-              onClick={() => setStyleFilter(style)}
-            >
-              {QUIZ_IMAGE_STYLE_LABELS[style]}
-            </button>
-          ))}
-        </div>
-      </div>
+      ) : null}
 
       {loading ? (
         <div style={{ display: "grid", placeItems: "center", padding: "60px 0" }}>
@@ -90,14 +70,11 @@ export function MascotLibraryTab({
         </div>
       ) : filteredMascots.length === 0 ? (
         <EmptyState
-          icon={<Smiley size={36} />}
+          icon={<Smiley size={32} />}
           title={searchQuery ? t("common.noResults") : t("mascots.noMascotsTitle")}
-          copy={
-            searchQuery
-              ? t("common.noResults")
-              : t("mascots.noMascotsCopy")
-          }
+          copy=""
           action={searchQuery ? t("common.clear") : t("mascots.newMascot")}
+          actionHref={searchQuery ? undefined : "#/mascots?tab=generator"}
           onAction={searchQuery ? () => setSearchQuery("") : onStartNew}
         />
       ) : (

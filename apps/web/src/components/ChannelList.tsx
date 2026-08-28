@@ -21,6 +21,9 @@ import {
 } from "@phosphor-icons/react";
 import {
   QUIZ_IMAGE_STYLE_LABELS,
+  getCountryFlag,
+  getCountryName,
+  getLanguageDisplay,
   type AppConfig,
   type Channel,
   type MascotProfile,
@@ -30,8 +33,10 @@ import {
 import type { GitInfo, Page } from "./types";
 import { PageTitle } from "./AppChrome";
 import { EmptyState } from "./EmptyState";
+import { CountryFlag } from "./CountryFlag";
 import { useTranslation } from "../i18n";
 import { api } from "../api";
+import { buildHash, getNavProps } from "../hooks/useRouter";
 
 export type ChannelGroupId = "quiz";
 
@@ -100,19 +105,22 @@ export function ChannelCard({
     onDelete(channel);
   };
 
-  const langDisplay = channel.language || "English";
-  const langTag = langDisplay.toLowerCase().includes("viet") ? "🇻🇳 VI" : langDisplay.toLowerCase().includes("eng") ? "🇺🇸 EN" : langDisplay;
+  const countryValue = channel.country || channel.market || "GLOBAL";
+  const countryFlag = getCountryFlag(countryValue);
+  const countryName = getCountryName(countryValue);
+  const langDisplay = getLanguageDisplay(channel.language || "English");
   const timeAgo = formatRelativeTime(channel.updated_at, t);
 
   const activeStyles = channel.selected_styles && channel.selected_styles.length > 0 ? channel.selected_styles : [];
   const primaryStyleLabel = activeStyles[0] ? QUIZ_IMAGE_STYLE_LABELS[activeStyles[0]] : null;
   const extraStylesCount = activeStyles.length > 1 ? activeStyles.length - 1 : 0;
+  const channelUrl = buildHash({ page: "channels", channelId: channel.channel_id });
 
   return (
     <article
       className="channel-card"
       style={{ animationDelay: `${Math.min(index * 35, 300)}ms` }}
-      onClick={onOpen}
+      {...getNavProps(channelUrl, onOpen)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -134,15 +142,13 @@ export function ChannelCard({
               : t("channels.archivedStatus")}
           </span>
 
-          <span className="channel-chip lang" title={`Language: ${langDisplay}`}>
-            {langTag}
+          <span className="channel-chip country" title={t("channels.countryTooltip", { country: countryName })}>
+            <CountryFlag code={countryValue} size={14} />
           </span>
 
-          {channel.target_audience ? (
-            <span className="channel-chip audience" title={`Audience: ${channel.target_audience}`}>
-              🎯 {channel.target_audience}
-            </span>
-          ) : null}
+          <span className="channel-chip lang" title={t("channels.languageTooltip", { language: langDisplay })}>
+            {langDisplay}
+          </span>
         </div>
 
         <div className="channel-card-menu-wrap" ref={menuRef} onClick={(e) => e.stopPropagation()}>
@@ -159,18 +165,17 @@ export function ChannelCard({
 
           {menuOpen ? (
             <div className="channel-menu-dropdown" role="menu">
-              <button
-                type="button"
+              <a
                 className="channel-menu-item"
                 role="menuitem"
-                onClick={() => {
+                {...getNavProps(channelUrl, () => {
                   setMenuOpen(false);
                   onOpen();
-                }}
+                })}
               >
                 <ArrowUpRight size={15} />
                 <span>{t("channels.openChannel")}</span>
-              </button>
+              </a>
 
               <button
                 type="button"
@@ -204,7 +209,7 @@ export function ChannelCard({
           <p className="channel-card-desc">{channel.description}</p>
         ) : (
           <p className="channel-card-desc" style={{ opacity: 0.6, fontStyle: "italic" }}>
-            {channel.target_audience ? `Target: ${channel.target_audience}` : "Quiz Channel"}
+            {t("channels.quizChannel")}
           </p>
         )}
       </div>
@@ -271,20 +276,42 @@ function Metric({
   value,
   note,
   icon: Icon,
+  href,
+  onClick,
 }: {
   label: string;
   value: string | number;
   note: string;
   icon?: typeof Broadcast;
+  href?: string;
+  onClick?: () => void;
 }) {
-  return (
-    <div className="metric">
+  const content = (
+    <>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <span className="metric-label">{label}</span>
         {Icon ? <Icon size={18} style={{ color: "var(--accent-deep)", opacity: 0.85 }} /> : null}
       </div>
       <strong>{value}</strong>
       <span className="metric-note">{note}</span>
+    </>
+  );
+
+  if (href || onClick) {
+    return (
+      <a
+        className="metric is-clickable"
+        style={{ cursor: "pointer", display: "block" }}
+        {...getNavProps(href || "#", onClick)}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <div className="metric">
+      {content}
     </div>
   );
 }
@@ -486,30 +513,40 @@ export function DashboardView({
           value={channels.length}
           note={t("dashboard.kpiNoteChannels", { active: activeChannelsCount, draft: draftChannelsCount })}
           icon={Broadcast}
+          href="#/channels"
+          onClick={() => onNavigate?.("channels")}
         />
         <Metric
           label={t("dashboard.kpiEpisodes")}
           value={totalEpisodes}
           note={t("dashboard.kpiNoteEpisodes", { count: channels.length })}
           icon={FilmSlate}
+          href="#/channels"
+          onClick={() => onNavigate?.("channels")}
         />
         <Metric
           label={t("dashboard.kpiSuccessRate")}
           value={`${successRate}%`}
           note={t("dashboard.kpiNoteSuccessRate", { completed: completedCount, failed: failedCount })}
           icon={CheckCircle}
+          href="#/tasks"
+          onClick={() => onNavigate?.("tasks")}
         />
         <Metric
           label={t("dashboard.kpiActiveTasks")}
           value={activeTasks.length}
           note={t("dashboard.kpiNoteActiveTasks", { running: runningCount, queued: queuedCount })}
           icon={Lightning}
+          href="#/tasks"
+          onClick={() => onNavigate?.("tasks")}
         />
         <Metric
           label={t("dashboard.kpiImageBalance")}
           value={formattedBalance}
           note={balanceRateNote}
           icon={Wallet}
+          href="#/settings?tab=media"
+          onClick={() => onNavigate?.("settings", { tab: "media" })}
         />
       </div>
 
@@ -619,9 +656,9 @@ export function ChannelsListView({
           const q = searchQuery.toLowerCase().trim();
           const matchName = c.display_name.toLowerCase().includes(q);
           const matchDesc = c.description?.toLowerCase().includes(q);
-          const matchAudience = c.target_audience?.toLowerCase().includes(q);
-          const matchLang = c.language?.toLowerCase().includes(q);
-          if (!matchName && !matchDesc && !matchAudience && !matchLang) return false;
+          const matchLang = c.language?.toLowerCase().includes(q) || getLanguageDisplay(c.language).toLowerCase().includes(q);
+          const matchCountry = (c.country?.toLowerCase().includes(q) || c.market?.toLowerCase().includes(q) || getCountryName(c.country || c.market).toLowerCase().includes(q));
+          if (!matchName && !matchDesc && !matchLang && !matchCountry) return false;
         }
         return true;
       })

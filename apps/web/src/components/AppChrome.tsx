@@ -4,6 +4,7 @@ import type { Channel, CodexSettingsResponse, Task } from "@studio/shared";
 import type { GitInfo, Notice, Page, Theme } from "./types";
 import { formatTaskType } from "../lib/utils";
 import { useTranslation } from "../i18n";
+import { buildHash, getNavProps, openInNewTab } from "../hooks/useRouter";
 
 
 export function SidebarQueueWidget({
@@ -33,7 +34,11 @@ export function SidebarQueueWidget({
 
   return (
     <div className="sidebar-queue-widget" title={t("tasks.taskQueue")}>
-      <div className="sidebar-queue-header" onClick={onOpenTasks} style={{ cursor: "pointer" }}>
+      <div
+        className="sidebar-queue-header"
+        {...getNavProps("#/tasks", onOpenTasks)}
+        style={{ cursor: "pointer" }}
+      >
         <div className="sidebar-queue-title">
           <Queue size={14} weight="duotone" />
           <span>{t("sidebar.queue")}</span>
@@ -57,54 +62,68 @@ export function SidebarQueueWidget({
 
       {queuedTasks.length > 0 ? (
         <div className="sidebar-queue-list">
-          {queuedTasks.map((task, index) => (
-            <div
-              key={task.task_id}
-              className="sidebar-queue-item"
-              title={`${formatTaskType(task.task_type)} - ${task.progress_message || t("tasks.filterQueued")}`}
-              onClick={() => {
-                if (task.channel_id && task.episode_id && onOpenEpisode) {
-                  onOpenEpisode(task.channel_id, task.episode_id);
-                } else if (onOpenTasks) {
-                  onOpenTasks();
-                }
-              }}
-            >
-              <div className="sidebar-queue-item-left">
-                <span className="sidebar-queue-pos">#{index + 1}</span>
-                <div className="sidebar-queue-info">
-                  <strong className="sidebar-queue-name">
-                    {formatEpisodeLabel(task.channel_id, task.episode_id)}
-                  </strong>
-                  <span className="sidebar-queue-type">
-                    {formatTaskType(task.task_type)}
-                  </span>
+          {queuedTasks.map((task, index) => {
+            const itemHash = task.channel_id && task.episode_id
+              ? buildHash({ page: "channels", channelId: task.channel_id, episodeId: task.episode_id })
+              : "#/tasks";
+
+            return (
+              <a
+                key={task.task_id}
+                className="sidebar-queue-item"
+                title={`${formatTaskType(task.task_type)} - ${task.progress_message || t("tasks.filterQueued")}`}
+                {...getNavProps(itemHash, () => {
+                  if (task.channel_id && task.episode_id && onOpenEpisode) {
+                    onOpenEpisode(task.channel_id, task.episode_id);
+                  } else if (onOpenTasks) {
+                    onOpenTasks();
+                  }
+                })}
+              >
+                <div className="sidebar-queue-item-left">
+                  <span className="sidebar-queue-pos">#{index + 1}</span>
+                  <div className="sidebar-queue-info">
+                    <strong className="sidebar-queue-name">
+                      {formatEpisodeLabel(task.channel_id, task.episode_id)}
+                    </strong>
+                    <span className="sidebar-queue-type">
+                      {formatTaskType(task.task_type)}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              {onCancelTask ? (
-                <button
-                  type="button"
-                  className="sidebar-queue-cancel-btn"
-                  title={t("sidebar.cancelQueuedTask")}
-                  aria-label={t("sidebar.cancelQueuedTask")}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    void onCancelTask(task.task_id);
-                  }}
-                >
-                  <X size={12} />
-                </button>
-              ) : null}
-            </div>
-          ))}
+                {onCancelTask ? (
+                  <button
+                    type="button"
+                    className="sidebar-queue-cancel-btn"
+                    title={t("sidebar.cancelQueuedTask")}
+                    aria-label={t("sidebar.cancelQueuedTask")}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      void onCancelTask(task.task_id);
+                    }}
+                  >
+                    <X size={12} />
+                  </button>
+                ) : null}
+              </a>
+            );
+          })}
         </div>
       ) : runningTasks.length > 0 ? (
-        <div className="sidebar-queue-running-hint" onClick={onOpenTasks} style={{ cursor: "pointer" }}>
+        <div
+          className="sidebar-queue-running-hint"
+          {...getNavProps("#/tasks", onOpenTasks)}
+          style={{ cursor: "pointer" }}
+        >
           <span className="status-pulse-dot" />
           <span>{t("sidebar.runningAndQueued", { running: runningTasks.length, queued: 0 })}</span>
         </div>
       ) : (
-        <div className="sidebar-queue-empty" onClick={onOpenTasks} style={{ cursor: "pointer" }}>
+        <div
+          className="sidebar-queue-empty"
+          {...getNavProps("#/tasks", onOpenTasks)}
+          style={{ cursor: "pointer" }}
+        >
           <span>{t("sidebar.queueEmpty")}</span>
         </div>
       )}
@@ -173,26 +192,26 @@ export function Sidebar({
       <div className="sidebar-rule" />
       <nav className="primary-nav" aria-label="Primary navigation">
         {items.map(({ page: itemPage, label, icon: Icon }) => (
-          <button
+          <a
             key={itemPage}
             className={`nav-item ${page === itemPage ? "is-active" : ""}`}
-            onClick={() => setPage(itemPage)}
+            {...getNavProps(buildHash({ page: itemPage }), () => setPage(itemPage))}
           >
             <Icon size={18} weight={page === itemPage ? "fill" : "regular"} />
             <span>{label}</span>
             {itemPage === "tasks" && activeTaskCount > 0 ? (
               <span className="nav-count">{activeTaskCount}</span>
             ) : null}
-          </button>
+          </a>
         ))}
-        <button
+        <a
           className={`nav-item mobile-settings-nav ${page === "settings" ? "is-active" : ""}`}
           aria-label={t("sidebar.settings")}
-          onClick={() => setPage("settings")}
+          {...getNavProps("#/settings", () => setPage("settings"))}
         >
           <Gear size={18} />
           <span>{t("sidebar.settings")}</span>
-        </button>
+        </a>
       </nav>
       <div className="sidebar-bottom">
         <SidebarQueueWidget
@@ -207,9 +226,9 @@ export function Sidebar({
           className="sidebar-balance-widget"
           title="Image API Balance (Auto-refreshed every 30s)"
           style={{ cursor: !balanceInfo && onOpenSettings ? "pointer" : "default" }}
-          onClick={() => {
+          {...getNavProps("#/settings?tab=media", () => {
             if (!balanceInfo && onOpenSettings) onOpenSettings();
-          }}
+          })}
         >
           <div className="sidebar-balance-header">
             <div className="sidebar-balance-title">
@@ -249,13 +268,13 @@ export function Sidebar({
           ) : null}
         </div>
 
-        <button
+        <a
           className={`nav-item ${page === "settings" ? "is-active" : ""}`}
-          onClick={() => setPage("settings")}
+          {...getNavProps("#/settings", () => setPage("settings"))}
         >
           <Gear size={18} weight={page === "settings" ? "fill" : "regular"} />
           <span>{t("sidebar.settings")}</span>
-        </button>
+        </a>
         <div className="local-badge">
           <span className="status-dot" />
           <span>{t("sidebar.localWorkspace")}</span>
@@ -443,7 +462,7 @@ export function Topbar({
 
 
 export function PageTitle({ eyebrow, title, copy, action }: { eyebrow: string; title: string; copy?: string; action?: React.ReactNode }) { return <div className="page-title"><div><p className="eyebrow">{eyebrow}</p><h1>{title}</h1>{copy ? <p className="page-copy">{copy}</p> : null}</div>{action ? <div>{action}</div> : null}</div>; }
-export function StatusLine({ label, value }: { label: string; value: string }) { return <div className="status-line"><span>{label}</span><strong>{value}</strong></div>; }
+export function StatusLine({ label, value }: { label: string; value: React.ReactNode }) { return <div className="status-line"><span>{label}</span><strong>{value}</strong></div>; }
 export function StatusBadge({ status }: { status: string }) { return <span className={`status-badge ${status.toLowerCase()}`}>{status.toLowerCase()}</span>; }
 
 export type ProductionStageCategory = "research" | "script" | "visual" | "timeline" | "assembly" | "final";

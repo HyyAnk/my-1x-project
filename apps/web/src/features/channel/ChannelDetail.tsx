@@ -15,6 +15,7 @@ import { ChannelBreadcrumb } from "../../components/Breadcrumbs";
 import { StatusBadge } from "../../components/AppChrome";
 import type { Notice } from "../../components/types";
 import { useTranslation } from "../../i18n";
+import { buildHash, getNavProps } from "../../hooks/useRouter";
 import { ChannelLoadingState } from "./components/ChannelLoadingState";
 import { DeleteEpisodeModal } from "./components/DeleteEpisodeModal";
 import { ChannelEpisodesTab } from "./components/ChannelEpisodesTab";
@@ -260,6 +261,7 @@ export function ChannelDetail({
       <section className="page-wrap detail-page">
         <ChannelBreadcrumb
           channelName={channel.display_name}
+          channelId={channel.channel_id}
           engine={channel.engine}
           onNavigateHome={onNavigateHome}
           onNavigateChannels={onBack}
@@ -317,39 +319,36 @@ export function ChannelDetail({
 
         {/* 3-Tab Navigation Bar */}
         <div className="channel-group-tabs" role="tablist" aria-label="Channel workspace tabs">
-          <button
-            type="button"
+          <a
             role="tab"
             aria-selected={channelTab === "episodes"}
             className={`channel-group-tab ${channelTab === "episodes" ? "is-selected" : ""}`}
-            onClick={() => switchTab("episodes")}
+            {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: "episodes" }), () => switchTab("episodes"))}
           >
             <FilmSlate size={18} weight={channelTab === "episodes" ? "fill" : "regular"} />
             <span>Episodes</span>
             <small>{episodes.length}</small>
-          </button>
-          <button
-            type="button"
+          </a>
+          <a
             role="tab"
             aria-selected={channelTab === "topics"}
             className={`channel-group-tab ${channelTab === "topics" ? "is-selected" : ""}`}
-            onClick={() => switchTab("topics")}
+            {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: "topics" }), () => switchTab("topics"))}
           >
             <Lightbulb size={18} weight={channelTab === "topics" ? "fill" : "regular"} />
             <span>Idea Lab & Topics</span>
             <small>{topics.length}</small>
-          </button>
+          </a>
           {!simplifyMode ? (
-            <button
-              type="button"
+            <a
               role="tab"
               aria-selected={channelTab === "dna"}
               className={`channel-group-tab ${channelTab === "dna" ? "is-selected" : ""}`}
-              onClick={() => switchTab("dna")}
+              {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: "dna" }), () => switchTab("dna"))}
             >
               <FileText size={18} weight={channelTab === "dna" ? "fill" : "regular"} />
               <span>Channel DNA & Identity</span>
-            </button>
+            </a>
           ) : null}
         </div>
 

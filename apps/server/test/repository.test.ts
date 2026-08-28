@@ -2,6 +2,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
+import { getCountryFlag, getCountryName, getLanguageDisplay } from "@studio/shared";
 import { RepositoryService, parseScenes, serializeScenes } from "../src/repository.js";
 
 const roots: string[] = [];
@@ -95,6 +96,40 @@ describe("RepositoryService", () => {
     await repository.deleteEpisode(channel.channel_id, episode.episode_id, true);
     expect(await repository.listEpisodes(channel.channel_id)).toHaveLength(0);
     expect((await repository.getChannel(channel.channel_id)).episode_count).toBe(0);
+  });
+
+  it("supports target country flags and language labels", async () => {
+    const repository = await fixture();
+    const channel = await repository.createChannel({
+      name: "Kids Science VN",
+      description: "Science quiz for kids in Vietnam",
+      target_audience: "Children and families",
+      language: "Vietnamese",
+      country: "VN",
+      dna_mode: "example",
+    });
+
+    expect(channel.language).toBe("Vietnamese");
+    expect(channel.country).toBe("VN");
+    expect(getCountryFlag(channel.country)).toBe("🇻🇳");
+    expect(getCountryName(channel.country)).toBe("Vietnam");
+    expect(getLanguageDisplay(channel.language)).toBe("Vietnamese");
+
+    const updated = await repository.updateChannel(channel.channel_id, {
+      country: "JP",
+      language: "Japanese",
+    });
+    expect(updated.country).toBe("JP");
+    expect(updated.language).toBe("Japanese");
+    expect(getCountryFlag(updated.country)).toBe("🇯🇵");
+    expect(getCountryName(updated.country)).toBe("Japan");
+    expect(getLanguageDisplay(updated.language)).toBe("Japanese");
+
+    // Global / fallback cases
+    expect(getCountryFlag("GLOBAL")).toBe("🌐");
+    expect(getCountryFlag(null)).toBe("🌐");
+    expect(getCountryName("GLOBAL")).toBe("Global");
+    expect(getCountryFlag("US")).toBe("🇺🇸");
   });
 });
 

@@ -31,6 +31,7 @@ import { QuizVideoPanel } from "../features/episode/QuizVideoPanel";
 import { NarrationTrackPanel } from "../features/episode/NarrationTrackPanel";
 import { ShotPlanSection } from "../features/episode/ShotPlanSection";
 import { useEpisodePipeline } from "../features/episode/hooks/useEpisodePipeline";
+import { buildHash, getNavProps } from "../hooks/useRouter";
 
 export type { PreviewImageData };
 
@@ -160,24 +161,22 @@ export function EpisodeDetail({
       {/* Workspace Tabs: In Simplify Mode, Question Remix is ALWAYS shown. In Full Mode, all 4 tabs are shown */}
       <div className="channel-group-tabs" role="tablist" aria-label="Episode creation workspace" style={{ margin: "24px 0 26px" }}>
         {!simplifyMode ? (
-          <button
-            type="button"
+          <a
             role="tab"
             aria-selected={pipeline.workflowTab === "script"}
             className={`channel-group-tab ${pipeline.workflowTab === "script" ? "is-selected" : ""}`}
-            onClick={() => pipeline.switchWorkflowTab("script")}
+            {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "script" }), () => pipeline.switchWorkflowTab("script"))}
           >
             <FileText size={17} weight={pipeline.workflowTab === "script" ? "fill" : "regular"} />
             <span>1. Script & Plan</span>
             {pipeline.readiness.script ? <CheckCircle size={14} weight="fill" style={{ color: "var(--green)" }} /> : null}
-          </button>
+          </a>
         ) : null}
-        <button
-          type="button"
+        <a
           role="tab"
           aria-selected={pipeline.workflowTab === "remix"}
           className={`channel-group-tab ${pipeline.workflowTab === "remix" ? "is-selected" : ""}`}
-          onClick={() => pipeline.switchWorkflowTab("remix")}
+          {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "remix" }), () => pipeline.switchWorkflowTab("remix"))}
         >
           <ArrowsClockwise size={17} weight={pipeline.workflowTab === "remix" ? "bold" : "regular"} />
           <span>Question Remix</span>
@@ -186,31 +185,29 @@ export function EpisodeDetail({
               {pipeline.historyCheck.duplicate_count}
             </span>
           ) : null}
-        </button>
+        </a>
         {!simplifyMode ? (
           <>
-            <button
-              type="button"
+            <a
               role="tab"
               aria-selected={pipeline.workflowTab === "visual"}
               className={`channel-group-tab ${pipeline.workflowTab === "visual" ? "is-selected" : ""}`}
-              onClick={() => pipeline.switchWorkflowTab("visual")}
+              {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "visual" }), () => pipeline.switchWorkflowTab("visual"))}
             >
               <Image size={17} weight={pipeline.workflowTab === "visual" ? "fill" : "regular"} />
               <span>2. Visual & Continuity</span>
               {bundleImages.length > 0 ? <small>{bundleImages.length}</small> : null}
-            </button>
-            <button
-              type="button"
+            </a>
+            <a
               role="tab"
               aria-selected={pipeline.workflowTab === "timeline"}
               className={`channel-group-tab ${pipeline.workflowTab === "timeline" ? "is-selected" : ""}`}
-              onClick={() => pipeline.switchWorkflowTab("timeline")}
+              {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "timeline" }), () => pipeline.switchWorkflowTab("timeline"))}
             >
               <FilmSlate size={17} weight={pipeline.workflowTab === "timeline" ? "fill" : "regular"} />
               <span>3. Timeline & Shots</span>
               {scenes.length > 0 ? <small>{scenes.length}</small> : null}
-            </button>
+            </a>
           </>
         ) : null}
       </div>

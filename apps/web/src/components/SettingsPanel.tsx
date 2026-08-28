@@ -12,6 +12,7 @@ import { api } from "../api";
 import { PageTitle } from "./AppChrome";
 import type { Notice } from "./types";
 import { useTranslation } from "../i18n";
+import { getNavProps } from "../hooks/useRouter";
 import { EngineSettingsTab } from "../features/settings/EngineSettingsTab";
 import { VoiceSettingsTab } from "../features/settings/VoiceSettingsTab";
 import { MediaSettingsTab } from "../features/settings/MediaSettingsTab";
@@ -102,50 +103,46 @@ export function SettingsView({
 
       {/* 4-Category Structured Settings Navigation */}
       <div className="channel-group-tabs" role="tablist" aria-label="Settings categories" style={{ margin: "16px 0 24px" }}>
-        <button
-          type="button"
+        <a
           role="tab"
           aria-selected={currentTab === "engines"}
           className={`channel-group-tab ${currentTab === "engines" ? "is-selected" : ""}`}
-          onClick={() => switchTab("engines")}
+          {...getNavProps("#/settings?tab=engines", () => switchTab("engines"))}
         >
           <TerminalWindow size={18} weight={currentTab === "engines" ? "fill" : "regular"} />
           <span>{t("settings.tabEngines")}</span>
-        </button>
+        </a>
 
-        <button
-          type="button"
+        <a
           role="tab"
           aria-selected={currentTab === "voice"}
           className={`channel-group-tab ${currentTab === "voice" ? "is-selected" : ""}`}
-          onClick={() => switchTab("voice")}
+          {...getNavProps("#/settings?tab=voice", () => switchTab("voice"))}
         >
           <SpeakerHigh size={18} weight={currentTab === "voice" ? "fill" : "regular"} />
           <span>{t("settings.tabVoice")}</span>
           {voices.length > 0 ? <small>{voices.length} voices</small> : null}
-        </button>
+        </a>
 
-        <button
-          type="button"
+        <a
           role="tab"
           aria-selected={currentTab === "media"}
           className={`channel-group-tab ${currentTab === "media" ? "is-selected" : ""}`}
-          onClick={() => switchTab("media")}
+          {...getNavProps("#/settings?tab=media", () => switchTab("media"))}
         >
           <VideoCamera size={18} weight={currentTab === "media" ? "fill" : "regular"} />
           <span>{t("settings.tabMedia")}</span>
-        </button>
+        </a>
 
-        <button
-          type="button"
+        <a
           role="tab"
           aria-selected={currentTab === "system"}
           className={`channel-group-tab ${currentTab === "system" ? "is-selected" : ""}`}
-          onClick={() => switchTab("system")}
+          {...getNavProps("#/settings?tab=system", () => switchTab("system"))}
         >
           <HardDrives size={18} weight={currentTab === "system" ? "fill" : "regular"} />
           <span>{t("settings.tabSystem")}</span>
-        </button>
+        </a>
       </div>
 
       {/* Tab 1: AI Engines */}

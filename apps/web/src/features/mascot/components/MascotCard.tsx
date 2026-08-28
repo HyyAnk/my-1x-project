@@ -1,4 +1,4 @@
-import { Broadcast, DownloadSimple, MagicWand, Smiley, Trash } from "@phosphor-icons/react";
+import { DownloadSimple, Trash } from "@phosphor-icons/react";
 import { QUIZ_IMAGE_STYLE_LABELS, type Channel, type MascotProfile } from "@studio/shared";
 import { api } from "../../../api";
 import { useTranslation } from "../../../i18n";
@@ -28,6 +28,7 @@ export function MascotCard({
     <article className="mascot-card">
       <div
         className="mascot-card-preview-box"
+        data-nav-href="#/mascots?tab=generator"
         onClick={() => onEdit(mascot)}
         role="button"
         tabIndex={0}
@@ -41,7 +42,6 @@ export function MascotCard({
           <img src={mascot.master_image_url} alt={mascot.name} className="mascot-card-img" />
         ) : (
           <div className="mascot-card-placeholder">
-            <Smiley size={44} weight="duotone" />
             <span>{t("mascots.noImagePlaceholder")}</span>
           </div>
         )}
@@ -75,7 +75,7 @@ export function MascotCard({
         {assignedCount > 0 ? (
           <div className="mascot-card-meta-bottom" title={assignedNames}>
             <span className="mascot-channel-badge">
-              <Broadcast size={12} weight="fill" />
+              <span className="channel-badge-dot" />
               <span>{t("mascots.activeChannelsShort", { count: assignedCount })}</span>
             </span>
           </div>
@@ -84,30 +84,25 @@ export function MascotCard({
 
       <div className="mascot-card-content">
         <div className="mascot-card-header">
-          <h3 onClick={() => onEdit(mascot)}>{mascot.name}</h3>
+          <h3 onClick={() => onEdit(mascot)} title={mascot.name}>
+            {mascot.name}
+          </h3>
         </div>
-
-        <p className={`mascot-card-desc ${!mascot.description && !mascot.master_prompt ? "is-empty" : ""}`}>
-          {mascot.description || mascot.master_prompt || t("mascots.noDescPlaceholder")}
-        </p>
 
         <div className="mascot-card-footer">
           <button
             type="button"
             className="quiet-button compact"
             onClick={() => onQuickAssign(mascot)}
-            title={t("mascots.quickAssignBtn")}
           >
-            <Broadcast size={14} />
             <span>{t("mascots.quickAssignBtn")}</span>
           </button>
           <button
             type="button"
             className="primary-button compact"
+            data-nav-href="#/mascots?tab=generator"
             onClick={() => onEdit(mascot)}
-            title={t("mascots.generatorBtn")}
           >
-            <MagicWand size={14} weight="bold" />
             <span>{t("mascots.generatorBtn")}</span>
           </button>
         </div>

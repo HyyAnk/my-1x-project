@@ -444,6 +444,56 @@ export async function getAiMattingPipeline(): Promise<AiPipelineBundle> {
 }
 
 /**
+ * Detects if an image already contains genuine alpha transparency (e.g. from GPTi2 with background: "transparent").
+ */
+export function hasNativeTransparency(image: DecodedImage, thresholdRatio = 0.10): boolean {
+  const { width, height, data } = image;
+  const totalPixels = width * height;
+  if (totalPixels === 0) return false;
+
+  let transparentPixels = 0;
+  for (let i = 0; i < totalPixels; i++) {
+    if (data[i * 4 + 3] < 20) {
+      transparentPixels++;
+    }
+  }
+
+  // Also check borders
+  let borderTransparent = 0;
+  let borderTotal = 0;
+  for (let x = 0; x < width; x++) {
+    if (data[(0 * width + x) * 4 + 3] < 20) borderTransparent++;
+    if (data[((height - 1) * width + x) * 4 + 3] < 20) borderTransparent++;
+    borderTotal += 2;
+  }
+  for (let y = 1; y < height - 1; y++) {
+    if (data[(y * width + 0) * 4 + 3] < 20) borderTransparent++;
+    if (data[(y * width + (width - 1)) * 4 + 3] < 20) borderTransparent++;
+    borderTotal += 2;
+  }
+
+  return (transparentPixels / totalPixels) >= thresholdRatio && (borderTransparent / borderTotal) >= 0.3;
+}
+
+/**
+ * Cleans up isolated stray noise specks on an already transparent PNG without eroding soft antialiased edges.
+ */
+export function cleanupTransparentImage(image: DecodedImage): DecodedImage {
+  const { width, height, data } = image;
+  const out = new Uint8Array(data.length);
+  out.set(data);
+
+  // Eliminate near-zero alpha noise (e.g. compression artifacts with alpha < 5)
+  for (let i = 0; i < width * height; i++) {
+    const a = out[i * 4 + 3];
+    if (a < 5) {
+      out[i * 4 + 3] = 0;
+    }
+  }
+  return { width, height, data: out };
+}
+
+/**
  * Removes background using Deep Learning (briaai/RMBG-1.4 via ONNX Runtime in Node.js).
  * State-of-the-art accuracy for fur strands, fine details, transparent objects, and floor contact shadows.
  */
@@ -454,12 +504,16 @@ export async function removeImageBackgroundAi(
   const { width, height, data } = image;
   const { model, processor, RawImage } = await getAiMattingPipeline();
 
-  // Convert RGBA to RGB 3-channel buffer for model input
+  // Convert RGBA to RGB 3-channel buffer for model input, compositing against light neutral gray instead of pitch black
   const rgbData = new Uint8Array(width * height * 3);
   for (let i = 0; i < width * height; i++) {
-    rgbData[i * 3] = data[i * 4];
-    rgbData[i * 3 + 1] = data[i * 4 + 1];
-    rgbData[i * 3 + 2] = data[i * 4 + 2];
+    const a = data[i * 4 + 3] / 255;
+    const r = data[i * 4];
+    const g = data[i * 4 + 1];
+    const b = data[i * 4 + 2];
+    rgbData[i * 3] = Math.round(r * a + 240 * (1 - a));
+    rgbData[i * 3 + 1] = Math.round(g * a + 240 * (1 - a));
+    rgbData[i * 3 + 2] = Math.round(b * a + 240 * (1 - a));
   }
 
   const inputImage = new RawImage(rgbData, width, height, 3);
@@ -500,7 +554,7 @@ export async function removeImageBackgroundAi(
 /**
  * High-level helper: removes background from PNG image bytes and returns transparent PNG bytes.
  * Defaults to AI Matting (RMBG) for high fidelity, with transparent fallback to procedural matting.
- * If input is SVG or non-PNG, it returns the input safely.
+ * If input is already cleanly transparent, preserves original alpha without destructive re-matting.
  */
 export async function removeImageBackground(
   imageBytes: Uint8Array,
@@ -517,7 +571,14 @@ export async function removeImageBackground(
     ) {
       const decoded = decodePngToRgba(imageBytes);
 
-      // Prefer AI matting model for standard images (>= 64x64) if not explicitly disabled
+      // 1. If image already has genuine native alpha transparency (e.g. from GPTi2 transparent PNG),
+      // preserve the pristine AI edges directly instead of destructive re-matting!
+      if (hasNativeTransparency(decoded)) {
+        const cleaned = cleanupTransparentImage(decoded);
+        return encodeRgbaToPng(cleaned);
+      }
+
+      // 2. If image is opaque, run AI matting model (briaai/RMBG-1.4) via ONNX Runtime
       if (options.preferAi !== false && decoded.width >= 64 && decoded.height >= 64) {
         try {
           const aiMatted = await removeImageBackgroundAi(decoded, options);
@@ -527,6 +588,7 @@ export async function removeImageBackground(
         }
       }
 
+      // 3. Procedural flood-fill fallback for opaque images
       const matted = removeImageBackgroundRgba(decoded, options);
       return encodeRgbaToPng(matted);
     }

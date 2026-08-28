@@ -3,6 +3,7 @@ import type { RealtimeStatus } from "../../../api";
 import { formatTaskElapsed, formatTaskStatus, formatTaskType } from "../../../lib/utils";
 import { useTranslation } from "../../../i18n";
 import { calculateProgress } from "../types";
+import { buildHash, getNavProps } from "../../../hooks/useRouter";
 
 export function TaskActivityBar({
   tasks,
@@ -32,13 +33,16 @@ export function TaskActivityBar({
   };
 
   const progress = task ? calculateProgress(task, task.status) : 0;
+  const targetHash = task && task.channel_id && task.episode_id
+    ? buildHash({ page: "channels", channelId: task.channel_id, episodeId: task.episode_id })
+    : "#/tasks";
 
   return (
     <div
       className={`task-activity-bar ${reconnecting ? "is-reconnecting" : ""}`}
       role="button"
       tabIndex={0}
-      onClick={handleAction}
+      {...getNavProps(targetHash, handleAction)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();

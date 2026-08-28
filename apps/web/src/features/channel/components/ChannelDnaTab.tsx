@@ -7,12 +7,21 @@ import {
   Smiley,
   X,
 } from "@phosphor-icons/react";
-import type { Channel, ChannelMascotConfig, MascotProfile, Task } from "@studio/shared";
+import {
+  getCountryFlag,
+  getCountryName,
+  getLanguageDisplay,
+  type Channel,
+  type ChannelMascotConfig,
+  type MascotProfile,
+  type Task,
+} from "@studio/shared";
 import { formatDate } from "../../../lib/utils";
 import { StatusLine } from "../../../components/AppChrome";
 import { TaskProgressPanel } from "../../../components/TaskProgressPanel";
 import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
+import { CountryFlag } from "../../../components/CountryFlag";
 import { VisualStylesMenu } from "./VisualStylesMenu";
 
 type ChannelDnaTabProps = {
@@ -156,9 +165,16 @@ export function ChannelDnaTab({
           <StatusLine label="Engine" value="Quiz Engine" />
           <StatusLine label="Channel Status" value={channel.status} />
           <StatusLine label="Total Episodes" value={String(totalEpisodes)} />
-          <StatusLine label="Target Audience" value={channel.target_audience || "General Audience"} />
-          <StatusLine label="Language" value={channel.language || "English"} />
-          <StatusLine label="Market" value={channel.market || "Global"} />
+          <StatusLine label="Language" value={getLanguageDisplay(channel.language || "English")} />
+          <StatusLine
+            label="Target Country"
+            value={
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <CountryFlag code={channel.country || channel.market} size={15} />
+                <span>{getCountryName(channel.country || channel.market)}</span>
+              </span>
+            }
+          />
         </div>
       </section>
 

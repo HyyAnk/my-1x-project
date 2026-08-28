@@ -122,6 +122,47 @@ describe("Image Matting & Background Removal Engine", () => {
     expect(decoded.height).toBe(64);
   }, 20000);
 
+  it("detects and preserves native alpha transparency without destructive re-matting", async () => {
+    const { hasNativeTransparency } = await import("../src/utils/imageMatting.js");
+    const width = 32;
+    const height = 32;
+    const data = new Uint8Array(width * height * 4);
+
+    // Create a native transparent PNG where borders are alpha = 0 and center is character
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const idx = (y * width + x) * 4;
+        if (x >= 10 && x <= 22 && y >= 10 && y <= 22) {
+          data[idx] = 16;
+          data[idx + 1] = 185;
+          data[idx + 2] = 129;
+          data[idx + 3] = 255;
+        } else {
+          data[idx] = 0;
+          data[idx + 1] = 0;
+          data[idx + 2] = 0;
+          data[idx + 3] = 0;
+        }
+      }
+    }
+
+    const decoded = { width, height, data };
+    expect(hasNativeTransparency(decoded)).toBe(true);
+
+    const originalPng = encodeRgbaToPng(decoded);
+    const resultPng = await removeImageBackground(originalPng);
+    const resultDecoded = decodePngToRgba(resultPng);
+
+    // Verify center character is preserved
+    const centerIdx = (16 * width + 16) * 4;
+    expect(resultDecoded.data[centerIdx]).toBe(16);
+    expect(resultDecoded.data[centerIdx + 3]).toBe(255);
+
+    // Verify border is transparent
+    const borderIdx = (0 * width + 0) * 4;
+    expect(resultDecoded.data[borderIdx + 3]).toBe(0);
+  });
+
   it("handles non-PNG data gracefully without throwing", async () => {
     const fakeSvg = Buffer.from("<svg></svg>", "utf8");
     const result = await removeImageBackground(fakeSvg);

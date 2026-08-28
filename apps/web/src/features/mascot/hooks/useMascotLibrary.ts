@@ -15,7 +15,6 @@ export function useMascotLibrary({
   const [mascots, setMascots] = useState<MascotProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [styleFilter, setStyleFilter] = useState<string>("all");
 
   const [quickAssignMascot, setQuickAssignMascot] = useState<MascotProfile | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<MascotProfile | null>(null);
@@ -40,7 +39,6 @@ export function useMascotLibrary({
 
   const filteredMascots = useMemo(() => {
     return mascots.filter((m) => {
-      if (styleFilter !== "all" && m.visual_style !== styleFilter) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchName = m.name.toLowerCase().includes(q);
@@ -50,7 +48,7 @@ export function useMascotLibrary({
       }
       return true;
     });
-  }, [mascots, styleFilter, searchQuery]);
+  }, [mascots, searchQuery]);
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
@@ -97,8 +95,6 @@ export function useMascotLibrary({
     loading,
     searchQuery,
     setSearchQuery,
-    styleFilter,
-    setStyleFilter,
     filteredMascots,
     quickAssignMascot,
     setQuickAssignMascot,
