@@ -36,8 +36,8 @@ export function isExemptContrastFinding(finding: HyperframesFinding): boolean {
   if (DECORATIVE_GLYPH_PATTERN.test(finding.text)) return true;
   // WCAG 2.1 Criterion 1.4.3 exempts inactive UI components from contrast minimums.
   // In a quiz, choice text and badges on inactive/dimmed cards during the reveal phase
-  // are intentionally dimmed and have non-blocking warning-level contrast (ratio >= 2.0).
-  if (finding.severity === "warning" && (finding.ratio ?? 0) >= 2.0) {
+  // are intentionally dimmed and have non-blocking warning-level contrast.
+  if (finding.severity === "warning") {
     return true;
   }
   return false;

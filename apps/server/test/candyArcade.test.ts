@@ -5,9 +5,23 @@ import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { assessQuizVisualLayout } from "../src/quiz/qa/visualQa.js";
-import { buildCandyArcadeComposition, buildCandyArcadeCompositionBundle, candyArcadeHeroAreaRatio } from "../src/quiz/render/candyArcadeComposition.js";
+import {
+  buildCandyArcadeComposition,
+  buildCandyArcadeCompositionBundle,
+  candyArcadeHeroAreaRatio,
+} from "../src/quiz/render/candyArcadeComposition.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
-import { ambientPhaseSeconds, candyArcadePalettes, candyArcadeTemplate, quizTimerState, resolveLayout, resolvePalette, textLayout, timelineProgress, visualAnswerState } from "../src/quiz/visual/candyArcade.js";
+import {
+  ambientPhaseSeconds,
+  candyArcadePalettes,
+  candyArcadeTemplate,
+  quizTimerState,
+  resolveLayout,
+  resolvePalette,
+  textLayout,
+  timelineProgress,
+  visualAnswerState,
+} from "../src/quiz/visual/candyArcade.js";
 
 const quiz = QuizV2Schema.parse({
   schema_version: 2,
@@ -15,8 +29,42 @@ const quiz = QuizV2Schema.parse({
   age_band: "7-9",
   language: "English",
   questions: [
-    { id: "question-01", number: 1, format: "multiple_choice", difficulty: 1, question: "Which ocean is the largest on Earth?", choices: [{ id: "choice-a", text: "Pacific Ocean" }, { id: "choice-b", text: "Atlantic Ocean" }, { id: "choice-c", text: "Arctic Ocean" }], correct_choice_id: "choice-b", explanation: "The Pacific Ocean covers the largest area.", fun_fact: "", source_ids: ["C01"], visual_opportunity: "A bright globe with the Pacific Ocean", validation: { semantic_status: "validated", source_coverage: true, fact_locked: true } },
-    { id: "question-02", number: 2, format: "odd_one_out", difficulty: 2, question: "Which animal can sprint the fastest?", choices: [{ id: "choice-a", text: "Cheetah" }, { id: "choice-b", text: "Turtle" }, { id: "choice-c", text: "Elephant" }], correct_choice_id: "choice-a", explanation: "Cheetahs sprint very quickly for short distances.", fun_fact: "", source_ids: ["C02"], visual_opportunity: "A friendly cheetah", validation: { semantic_status: "validated", source_coverage: true, fact_locked: true } },
+    {
+      id: "question-01",
+      number: 1,
+      format: "multiple_choice",
+      difficulty: 1,
+      question: "Which ocean is the largest on Earth?",
+      choices: [
+        { id: "choice-a", text: "Pacific Ocean" },
+        { id: "choice-b", text: "Atlantic Ocean" },
+        { id: "choice-c", text: "Arctic Ocean" },
+      ],
+      correct_choice_id: "choice-b",
+      explanation: "The Pacific Ocean covers the largest area.",
+      fun_fact: "",
+      source_ids: ["C01"],
+      visual_opportunity: "A bright globe with the Pacific Ocean",
+      validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
+    },
+    {
+      id: "question-02",
+      number: 2,
+      format: "odd_one_out",
+      difficulty: 2,
+      question: "Which animal can sprint the fastest?",
+      choices: [
+        { id: "choice-a", text: "Cheetah" },
+        { id: "choice-b", text: "Turtle" },
+        { id: "choice-c", text: "Elephant" },
+      ],
+      correct_choice_id: "choice-a",
+      explanation: "Cheetahs sprint very quickly for short distances.",
+      fun_fact: "",
+      source_ids: ["C02"],
+      visual_opportunity: "A friendly cheetah",
+      validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
+    },
   ],
 });
 
@@ -41,19 +89,51 @@ describe("Candy Arcade visual template", () => {
   it("mounts scene files without parent-traversal asset paths", () => {
     const director = createDefaultDirectorPlan(quiz);
     const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
-    const bundle = buildCandyArcadeCompositionBundle({ quiz, director, timeline, theme: "candy_arcade", audioPath: "./narration.wav", narrationDurationSeconds: timeline.duration_seconds });
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz,
+      director,
+      timeline,
+      theme: "candy_arcade",
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
 
     expect(bundle.html).toContain('data-composition-src="compositions/candy-intro.html"');
     expect(bundle.html).toContain('class="clip sfx-clip"');
-    expect(bundle.html).toContain('ui_pop.wav');
-    expect(bundle.html).toContain('correct_ding.wav');
-    expect(bundle.html).toContain('data-no-timeline');
+    expect(bundle.html).toContain("ui_pop.wav");
+    expect(bundle.html).toContain("correct_ding.wav");
+    expect(bundle.html).toContain("data-no-timeline");
     expect(Object.keys(bundle.files)).toContain("compositions/candy-intro.html");
     expect(Object.values(bundle.files).every((file) => file.includes("data-no-timeline"))).toBe(true);
     expect(Object.values(bundle.files).every((file) => !file.includes('src="../'))).toBe(true);
     expect(Object.values(bundle.files).every((file) => !file.includes("data-start="))).toBe(true);
     expect(Object.values(bundle.files).every((file) => !file.includes("data-track-index="))).toBe(true);
     expect(bundle.html.match(/data-composition-src=/g)).toHaveLength(Object.keys(bundle.files).length);
+  });
+
+  it("fails closed before rendering a quiz with a fourth answer", () => {
+    const director = createDefaultDirectorPlan(quiz);
+    const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
+    const invalidQuiz = {
+      ...quiz,
+      questions: [
+        {
+          ...quiz.questions[0],
+          choices: [...quiz.questions[0].choices, { id: "choice-d", text: "Forbidden fourth answer" }],
+        },
+      ],
+    };
+
+    expect(() =>
+      buildCandyArcadeCompositionBundle({
+        quiz: invalidQuiz,
+        director,
+        timeline,
+        theme: "candy_arcade",
+        audioPath: "./narration.wav",
+        narrationDurationSeconds: timeline.duration_seconds,
+      }),
+    ).toThrow();
   });
 
   it("selects semantic layouts and deterministic readable text tiers", () => {
@@ -72,19 +152,19 @@ describe("Candy Arcade visual template", () => {
 
   it("derives thinking and transition progress from timeline time", () => {
     expect(timelineProgress(10, 20, 10)).toBe(0);
-    expect(timelineProgress(10, 20, 15)).toBe(.5);
+    expect(timelineProgress(10, 20, 15)).toBe(0.5);
     expect(timelineProgress(10, 20, 32)).toBe(1);
   });
 
   it("couples timer fill and marker to one seek-deterministic normalized value", () => {
-    for (const value of [0, .1, .25, .5, .75, .9, 1]) {
+    for (const value of [0, 0.1, 0.25, 0.5, 0.75, 0.9, 1]) {
       const state = quizTimerState(10, 20, 10 + value * 10);
       expect(state.boundary).toBe(state.remaining);
       expect(quizTimerState(10, 20, 10 + value * 10)).toEqual(state);
     }
     for (const fps of [24, 30, 60]) {
       const samples = Array.from({ length: fps * 2 + 1 }, (_, index) => quizTimerState(0, 2, index / fps).boundary);
-      expect(samples.every((value, index) => index === 0 || value <= samples[index - 1]!)).toBe(true);
+      expect(samples.every((value, index) => index === 0 || value <= samples[index - 1])).toBe(true);
     }
   });
 
@@ -129,7 +209,9 @@ describe("Candy Arcade visual template", () => {
     const plasticToyPrompt = compileQuizAssetPrompt(hero, undefined, "plastic_toy");
     expect(plasticToyPrompt.prompt).toContain("3D Glossy Vinyl Toy");
     expect(plasticToyPrompt.prompt).toContain("cute painted glossy eyes with expressive pupils");
-    expect(plasticToyPrompt.prompt).toContain("Living creatures, characters, dinosaurs, and animals must have complete, expressive natural eyes");
+    expect(plasticToyPrompt.prompt).toContain(
+      "Living creatures, characters, dinosaurs, and animals must have complete, expressive natural eyes",
+    );
     expect(plasticToyPrompt.cacheVersion).toContain("v3-expressive-faces");
 
     expect(assessQuizVisualLayout({ quiz, director }).filter((issue) => issue.severity === "blocker")).toEqual([]);
@@ -142,7 +224,14 @@ describe("Candy Arcade visual template", () => {
     const director = createDefaultDirectorPlan(quiz);
     const voice = buildQuizVoicePlan(quiz);
     const timeline = compileQuizTimeline({ quiz, director, voicePlan: voice });
-    const html = compositionSources({ quiz, director, timeline, theme: "candy_arcade", audioPath: "./narration.wav", narrationDurationSeconds: timeline.duration_seconds });
+    const html = compositionSources({
+      quiz,
+      director,
+      timeline,
+      theme: "candy_arcade",
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
     expect(html).not.toContain("reveal-panel");
     expect(html).toContain("Many more questions to explore");
     expect(html).toContain("--surface-accent:");
@@ -150,18 +239,24 @@ describe("Candy Arcade visual template", () => {
     expect(html).toContain(".fact-card span { color: var(--surface-accent);");
     expect(html).toContain(".timer-marker { position: absolute;");
     expect(html).toContain(".marker-star-svg {");
-    expect(html).toContain(".intro-card > span, .outro-card > span { display: inline-flex; padding: 15px 23px; border-radius: 999px; background: #FF6277; color: #172A59;");
+    expect(html).toContain(
+      ".intro-card > span, .outro-card > span { display: inline-flex; padding: 15px 23px; border-radius: 999px; background: #FF6277; color: #172A59;",
+    );
     expect(html).toContain(".intro-stars, .outro-stars { margin-top: 35px; color: #172A59;");
     expect(html).toContain("background: #29B9A8; color: #172A59;");
     expect(html).not.toContain("reveal-lockup");
     expect(html).toContain("timer-marker");
-    expect(html).toContain('<div class="timer-progress"></div><span class="timer-marker" data-layout-allow-occlusion data-layout-allow-overlap>');
-    expect(html).toContain('<b class="marker-val val-query" data-layout-allow-overlap>?</b><b class="marker-val val-5" data-layout-allow-overlap>5</b>');
+    expect(html).toContain(
+      '<div class="timer-progress"></div><span class="timer-marker" data-layout-allow-occlusion data-layout-allow-overlap>',
+    );
+    expect(html).toContain(
+      '<b class="marker-val val-query" data-layout-allow-overlap>?</b><b class="marker-val val-5" data-layout-allow-overlap>5</b>',
+    );
     expect(html).not.toContain('<div class="timer-progress"><span class="timer-marker');
     expect(html).toContain("@keyframes quiz-timer-marker-slide");
     expect(html).toContain("layout-media_left_choices_right .game-stage");
-    expect(html).toContain("<strong class=\"keyword-highlight\">");
-    expect(candyArcadeHeroAreaRatio("media_left_choices_right")).toBeGreaterThan(.2);
+    expect(html).toContain('<strong class="keyword-highlight">');
+    expect(candyArcadeHeroAreaRatio("media_left_choices_right")).toBeGreaterThan(0.2);
     expect(html).toContain("transition-bubble_splash");
     expect(html).toContain("splash-brand");
     expect(html).toContain(".decor-7 { left: 30%; top: 8%;");
@@ -181,7 +276,7 @@ describe("Candy Arcade visual template", () => {
       ...quiz,
       episode_id: "candy-maximum",
       questions: Array.from({ length: 50 }, (_, index) => ({
-        ...quiz.questions[0]!,
+        ...quiz.questions[0],
         id: `question-${String(index + 1).padStart(2, "0")}`,
         number: index + 1,
         question: `Which simple machine is shown in challenge ${index + 1}?`,
@@ -189,9 +284,16 @@ describe("Candy Arcade visual template", () => {
     });
     const director = createDefaultDirectorPlan(maximumQuiz);
     const timeline = compileQuizTimeline({ quiz: maximumQuiz, director, voicePlan: buildQuizVoicePlan(maximumQuiz) });
-    const html = compositionSources({ quiz: maximumQuiz, director, timeline, theme: "candy_arcade", audioPath: "./narration.wav", narrationDurationSeconds: timeline.duration_seconds });
-    expect((html.match(/<section id="quiz-q/g) ?? [])).toHaveLength(50);
-    expect((html.match(/class="image-card hero-image"/g) ?? [])).toHaveLength(50);
+    const html = compositionSources({
+      quiz: maximumQuiz,
+      director,
+      timeline,
+      theme: "candy_arcade",
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
+    expect(html.match(/<section id="quiz-q/g) ?? []).toHaveLength(50);
+    expect(html.match(/class="image-card hero-image"/g) ?? []).toHaveLength(50);
     expect(html).toContain("ray-spin 150s");
     expect(html).not.toContain("repeat:-1");
     expect(html).toContain("filter: grayscale");
@@ -201,18 +303,32 @@ describe("Candy Arcade visual template", () => {
   it("creates one complete visual-answer consistency group and blocks missing group metadata", () => {
     const director = createDefaultDirectorPlan(quiz);
     const plan = planQuizAssets(quiz, director);
-    const group = plan.consistency_groups[0]!;
+    const group = plan.consistency_groups[0];
     expect(group.asset_ids).toHaveLength(3);
     expect(plan.assets.filter((asset) => asset.consistency_group_id === group.group_id)).toHaveLength(3);
-    const broken = { ...plan, assets: plan.assets.map((asset) => asset.consistency_group_id ? { ...asset, consistency_group_id: null } : asset) };
-    expect(assessQuizVisualLayout({ quiz, director, assetPlan: broken }).some((issue) => issue.code === "VISUAL_ANSWER_LEAKAGE" && issue.severity === "blocker")).toBe(true);
+    const broken = {
+      ...plan,
+      assets: plan.assets.map((asset) => (asset.consistency_group_id ? { ...asset, consistency_group_id: null } : asset)),
+    };
+    expect(
+      assessQuizVisualLayout({ quiz, director, assetPlan: broken }).some(
+        (issue) => issue.code === "VISUAL_ANSWER_LEAKAGE" && issue.severity === "blocker",
+      ),
+    ).toBe(true);
   });
 
   it("applies the improved pacing, removes redundant reveal-panel, and sets outro pause and copy", () => {
     const director = createDefaultDirectorPlan(quiz);
     const voicePlan = buildQuizVoicePlan(quiz);
     const timeline = compileQuizTimeline({ quiz, director, voicePlan });
-    const bundle = buildCandyArcadeCompositionBundle({ quiz, director, timeline, theme: "candy_arcade", audioPath: "./narration.wav", narrationDurationSeconds: timeline.duration_seconds });
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz,
+      director,
+      timeline,
+      theme: "candy_arcade",
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
     const sources = [bundle.html, ...Object.values(bundle.files)].join("\n");
 
     // Requirement 1: No reveal-panel badge at bottom, fact-card is preserved
@@ -246,7 +362,14 @@ describe("Candy Arcade visual template", () => {
     expect(viOutro.phrases[0]?.text).toBe("Bạn đúng được mấy câu?");
     expect(viOutro.phrases[0]?.pause_after).toBe("long");
     const viTimeline = compileQuizTimeline({ quiz: vietnameseQuiz, director, voicePlan: viVoice });
-    const viBundle = buildCandyArcadeCompositionBundle({ quiz: vietnameseQuiz, director, timeline: viTimeline, theme: "candy_arcade", audioPath: "./narration.wav", narrationDurationSeconds: viTimeline.duration_seconds });
+    const viBundle = buildCandyArcadeCompositionBundle({
+      quiz: vietnameseQuiz,
+      director,
+      timeline: viTimeline,
+      theme: "candy_arcade",
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: viTimeline.duration_seconds,
+    });
     expect(viBundle.files["compositions/candy-outro.html"]).toContain("Còn nhiều câu hỏi thú vị phía trước");
     expect(viBundle.files["compositions/candy-outro.html"]).toContain("badge-cta");
     expect(viBundle.files["compositions/candy-outro.html"]).toContain("Đăng ký");
@@ -286,17 +409,18 @@ describe("Candy Arcade visual template", () => {
     expect(bundle.html).not.toContain("mascot-sfx");
 
     // 3. Extract all audio tags and verify tracks and overlaps
-    const audioRegex = /<audio\s+id="([^"]+)"[^>]*data-start="([^"]+)"\s+data-duration="([^"]+)"\s+data-track-index="([^"]+)"[^>]*src="([^"]+)"/g;
+    const audioRegex =
+      /<audio\s+id="([^"]+)"[^>]*data-start="([^"]+)"\s+data-duration="([^"]+)"\s+data-track-index="([^"]+)"[^>]*src="([^"]+)"/g;
     const matches = Array.from(bundle.html.matchAll(audioRegex));
     expect(matches.length).toBeGreaterThan(0);
 
     const tracks = new Map<number, Array<{ id: string; start: number; end: number; src: string }>>();
     for (const match of matches) {
-      const id = match[1]!;
-      const start = parseFloat(match[2]!);
-      const duration = parseFloat(match[3]!);
-      const trackIndex = parseInt(match[4]!, 10);
-      const src = match[5]!;
+      const id = match[1];
+      const start = parseFloat(match[2]);
+      const duration = parseFloat(match[3]);
+      const trackIndex = parseInt(match[4], 10);
+      const src = match[5];
       const end = start + duration;
 
       if (!tracks.has(trackIndex)) tracks.set(trackIndex, []);
@@ -313,11 +437,11 @@ describe("Candy Arcade visual template", () => {
     for (const [trackIndex, clips] of tracks.entries()) {
       clips.sort((a, b) => a.start - b.start);
       for (let i = 0; i < clips.length - 1; i++) {
-        const current = clips[i]!;
-        const next = clips[i + 1]!;
+        const current = clips[i];
+        const next = clips[i + 1];
         expect(
           current.end,
-          `Track ${trackIndex} overlap between ${current.id} (${current.start}-${current.end}) and ${next.id} (${next.start}-${next.end})`
+          `Track ${trackIndex} overlap between ${current.id} (${current.start}-${current.end}) and ${next.id} (${next.start}-${next.end})`,
         ).toBeLessThanOrEqual(next.start + 0.001);
       }
     }
@@ -327,11 +451,11 @@ describe("Candy Arcade visual template", () => {
 function contrastRatio(foreground: string, background: string): number {
   const luminance = (hex: string): number => {
     const channels = [1, 3, 5].map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16) / 255);
-    const [red, green, blue] = channels.map((channel) => channel <= .03928 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4);
-    return .2126 * red + .7152 * green + .0722 * blue;
+    const [red, green, blue] = channels.map((channel) => (channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
   };
   const [lighter, darker] = [luminance(foreground), luminance(background)].sort((left, right) => right - left);
-  return (lighter + .05) / (darker + .05);
+  return (lighter + 0.05) / (darker + 0.05);
 }
 
 function compositionSources(input: Parameters<typeof buildCandyArcadeComposition>[0]): string {

@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { QuizV2Schema } from "@studio/shared";
-import { buildCandyArcadeCompositionBundle, candyArcadeHeroAreaRatio, highlightQuestionMarkup } from "../src/quiz/render/candyArcadeComposition.js";
+import {
+  buildCandyArcadeCompositionBundle,
+  candyArcadeHeroAreaRatio,
+  highlightQuestionMarkup,
+} from "../src/quiz/render/candyArcadeComposition.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
@@ -10,30 +14,39 @@ const quiz = QuizV2Schema.parse({
   episode_id: "candy-visual-regression",
   age_band: "7-9",
   language: "English",
-  questions: [{
-    id: "visual-regression-question",
-    number: 1,
-    format: "multiple_choice",
-    difficulty: 1,
-    question: "Which ocean is the largest on Earth?",
-    choices: [
-      { id: "choice-a", text: "Pacific Ocean" },
-      { id: "choice-b", text: "Atlantic Ocean" },
-      { id: "choice-c", text: "Arctic Ocean" },
-    ],
-    correct_choice_id: "choice-a",
-    explanation: "The Pacific Ocean covers the largest area.",
-    fun_fact: "",
-    source_ids: ["VR-01"],
-    visual_opportunity: "A bright globe with the Pacific Ocean",
-    validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
-  }],
+  questions: [
+    {
+      id: "visual-regression-question",
+      number: 1,
+      format: "multiple_choice",
+      difficulty: 1,
+      question: "Which ocean is the largest on Earth?",
+      choices: [
+        { id: "choice-a", text: "Pacific Ocean" },
+        { id: "choice-b", text: "Atlantic Ocean" },
+        { id: "choice-c", text: "Arctic Ocean" },
+      ],
+      correct_choice_id: "choice-a",
+      explanation: "The Pacific Ocean covers the largest area.",
+      fun_fact: "",
+      source_ids: ["VR-01"],
+      visual_opportunity: "A bright globe with the Pacific Ocean",
+      validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
+    },
+  ],
 });
 
 function renderHtml(): string {
   const director = createDefaultDirectorPlan(quiz);
   const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
-  const bundle = buildCandyArcadeCompositionBundle({ quiz, director, timeline, theme: "candy_arcade", audioPath: "./narration.wav", narrationDurationSeconds: timeline.duration_seconds });
+  const bundle = buildCandyArcadeCompositionBundle({
+    quiz,
+    director,
+    timeline,
+    theme: "candy_arcade",
+    audioPath: "./narration.wav",
+    narrationDurationSeconds: timeline.duration_seconds,
+  });
   return [bundle.html, ...Object.values(bundle.files)].join("\n");
 }
 
@@ -45,17 +58,31 @@ describe("Candy Arcade visual regression contract", () => {
     const timerProgressCss = html.match(/\.timer-progress \{([^}]+)\}/)?.[1] ?? "";
     const width = Number(markerCss.match(/width: ([\d.]+)px/)?.[1]);
     const height = Number(markerCss.match(/height: ([\d.]+)px/)?.[1]);
-    expect(width / height).toBeGreaterThanOrEqual(.92);
-    expect(html).toContain('<div class="timer-progress"></div><span class="timer-marker" data-layout-allow-occlusion data-layout-allow-overlap>');
-    expect(html).toContain('<b class="marker-val val-query" data-layout-allow-overlap>?</b><b class="marker-val val-5" data-layout-allow-overlap>5</b>');
+    expect(width / height).toBeGreaterThanOrEqual(0.92);
+    expect(html).toContain(
+      '<div class="timer-progress"></div><span class="timer-marker" data-layout-allow-occlusion data-layout-allow-overlap>',
+    );
+    expect(html).toContain(
+      '<b class="marker-val val-query" data-layout-allow-overlap>?</b><b class="marker-val val-5" data-layout-allow-overlap>5</b>',
+    );
     expect(html).not.toContain('<div class="timer-progress"><span class="timer-marker');
-    expect(html).toContain(".val-5 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd5-at)) both; }");
-    expect(html).toContain(".val-4 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd4-at)) both; }");
-    expect(html).toContain(".val-3 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd3-at)) both; }");
-    expect(html).toContain(".val-2 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd2-at)) both; }");
-    expect(html).toContain(".val-1 { animation: number-countdown-final 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd1-at)) both; }");
+    expect(html).toContain(
+      ".val-5 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd5-at)) both; }",
+    );
+    expect(html).toContain(
+      ".val-4 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd4-at)) both; }",
+    );
+    expect(html).toContain(
+      ".val-3 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd3-at)) both; }",
+    );
+    expect(html).toContain(
+      ".val-2 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd2-at)) both; }",
+    );
+    expect(html).toContain(
+      ".val-1 { animation: number-countdown-final 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd1-at)) both; }",
+    );
 
-    for (const progress of [0, .25, .5, .75, 1]) {
+    for (const progress of [0, 0.25, 0.5, 0.75, 1]) {
       const fillEdge = 1 - progress;
       const markerEdge = 1 - progress;
       expect(markerEdge).toBe(fillEdge);
@@ -121,8 +148,11 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).toContain("--choice-depth-shadow: #E09000");
     expect(html).toContain("--choice-depth-shadow: #CC2556");
     expect(html).toContain("--choice-depth-shadow: #007ECC");
-    expect(html).toContain("--choice-depth-shadow: #6BA607");
-    expect(html).toContain(".answer-card::before { content: \"\"; position: absolute; inset: 6px 14px 6px 24px; border: 3px dashed rgba(255, 255, 255, 0.7);");
+    expect(html).not.toContain("--choice-depth-shadow: #6BA607");
+    expect(html).not.toContain("answer-count-4");
+    expect(html).toContain(
+      '.answer-card::before { content: ""; position: absolute; inset: 6px 14px 6px 24px; border: 3px dashed rgba(255, 255, 255, 0.7);',
+    );
     expect(html).toMatch(/\.answer-card > b[^}]*width: 156px/);
     expect(html).toMatch(/\.answer-card > b[^}]*font-size: 80px/);
     expect(html).toMatch(/\.answer-card > b[^}]*margin-left: -86px/);
@@ -130,8 +160,12 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).toContain("-webkit-text-stroke: 4px var(--choice-stroke-shadow)");
     expect(html).toContain("--choice-text-color: #78350F");
     expect(html).toContain("--choice-text-color: #831843");
-    expect(html).toContain(".layout-media_left_choices_right .answer-grid.answer-count-2 { gap: 50px; height: 580px; padding-top: 100px; }");
+    expect(html).toContain(
+      ".layout-media_left_choices_right .answer-grid.answer-count-2 { gap: 50px; height: 580px; padding-top: 100px; }",
+    );
     expect(html).toContain(".layout-media_left_choices_right .answer-grid.answer-count-3 { gap: 50px; height: 580px; padding-top: 18px; }");
-    expect(html).toContain(".layout-media_left_choices_right .answer-count-2 .answer-card > b, .layout-media_left_choices_right .answer-count-3 .answer-card > b { width: 138px; height: 138px; margin-left: -74px; font-size: 72px;");
+    expect(html).toContain(
+      ".layout-media_left_choices_right .answer-count-2 .answer-card > b, .layout-media_left_choices_right .answer-count-3 .answer-card > b { width: 138px; height: 138px; margin-left: -74px; font-size: 72px;",
+    );
   });
 });

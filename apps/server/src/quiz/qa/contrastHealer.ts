@@ -16,10 +16,9 @@ export function generateContrastSelfHealingCss(report: HyperframesCheckReport | 
     "/* Contrast Self-Healing Core Overrides */",
     ".keyword-highlight { color: #047857 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.9) !important; font-weight: 900 !important; }",
     ".question-title h1 { color: #1e1b4b !important; text-shadow: 0 2px 0 rgba(255,255,255,0.9), 0 3px 0 rgba(16,35,75,0.12) !important; }",
-    ".answer-card:nth-child(4n+1) span, .visual-answer-card:nth-child(4n+1) span { color: #78350F !important; text-shadow: 0 1px 0 rgba(255,255,255,0.75) !important; }",
-    ".answer-card:nth-child(4n+2) span, .visual-answer-card:nth-child(4n+2) span { color: #831843 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.75) !important; }",
-    ".answer-card:nth-child(4n+3) span, .visual-answer-card:nth-child(4n+3) span { color: #0C4A6E !important; text-shadow: 0 1px 0 rgba(255,255,255,0.75) !important; }",
-    ".answer-card:nth-child(4n) span, .visual-answer-card:nth-child(4n) span { color: #14532D !important; text-shadow: 0 1px 0 rgba(255,255,255,0.75) !important; }",
+    ".answer-card:nth-child(1) span, .visual-answer-card:nth-child(1) span { color: #78350F !important; text-shadow: 0 1px 0 rgba(255,255,255,0.75) !important; }",
+    ".answer-card:nth-child(2) span, .visual-answer-card:nth-child(2) span { color: #831843 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.75) !important; }",
+    ".answer-card:nth-child(3) span, .visual-answer-card:nth-child(3) span { color: #0C4A6E !important; text-shadow: 0 1px 0 rgba(255,255,255,0.75) !important; }",
     ".answer-card > b, .visual-answer-label > b { color: #ffffff !important; -webkit-text-stroke: 4.5px var(--choice-stroke-shadow, #034E7B) !important; paint-order: stroke fill !important; }",
     ".fact-card p { color: #1e293b !important; }",
     ".fact-card span { color: #0f766e !important; }",
@@ -28,7 +27,7 @@ export function generateContrastSelfHealingCss(report: HyperframesCheckReport | 
     ".mini-badge { color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.4) !important; }",
     ".choice span { color: #ffffff !important; text-shadow: 0 3px 0 rgba(0,0,0,0.35) !important; }",
     ".badge-cta { color: #172a59 !important; border-color: #172a59 !important; }",
-    ".badge-comment, .badge-like, .badge-sub { color: #172a59 !important; }"
+    ".badge-comment, .badge-like, .badge-sub { color: #172a59 !important; }",
   );
 
   // If specific text findings were reported, target elements specifically
@@ -38,7 +37,7 @@ export function generateContrastSelfHealingCss(report: HyperframesCheckReport | 
     if (textSnippet.length > 0) {
       rules.push(
         `/* Specific contrast boost for text "${finding.text}" */`,
-        `[data-text*="${finding.text}" i] { color: #0f172a !important; text-shadow: 0 1px 0 #ffffff !important; }`
+        `[data-text*="${finding.text}" i] { color: #0f172a !important; text-shadow: 0 1px 0 #ffffff !important; }`,
       );
     }
   }

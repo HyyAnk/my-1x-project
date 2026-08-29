@@ -65,7 +65,7 @@ describe("buildSandboxComposition Preview Engine", () => {
       counter_style: "neon_badge",
       phase: "thinking",
       question_text: "What is the biggest mammal on Earth?",
-      choices: ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
+      choices: ["Elephant", "Blue Whale", "Giraffe"],
       correct_choice_index: 1,
       question_number: 3,
       total_questions: 10,
@@ -84,7 +84,7 @@ describe("buildSandboxComposition Preview Engine", () => {
     const revealResult = buildSandboxComposition({
       phase: "reveal",
       correct_choice_index: 2,
-      choices: ["Option A", "Option B", "Option C", "Option D"],
+      choices: ["Option A", "Option B", "Option C"],
     });
 
     expect(revealResult.html).toContain("answer-correct");
@@ -94,6 +94,16 @@ describe("buildSandboxComposition Preview Engine", () => {
       phase: "explain",
     });
     expect(explainResult.html).toContain("sandbox-explain-card");
+  });
+
+  it("rejects a fourth sandbox answer before rendering HTML", () => {
+    expect(() =>
+      buildSandboxComposition({
+        phase: "reveal",
+        correct_choice_index: 2,
+        choices: ["Option A", "Option B", "Option C", "Forbidden fourth option"],
+      } as never),
+    ).toThrow();
   });
 
   it("supports rendering with all thinking bar, question box, and counter combinations without error", () => {

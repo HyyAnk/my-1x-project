@@ -31,4 +31,24 @@ describe("HyperFrames quality reporting", () => {
 
     expect(hasHyperframesContrastIssue(report)).toBe(false);
   });
+
+  it("does not block build on non-blocking contrast warnings for dimmed answer choices during reveal", () => {
+    const report = parseHyperframesCheckReport(JSON.stringify({
+      ok: true,
+      contrast: {
+        findings: [
+          {
+            severity: "warning",
+            message: "Contrast is 1.96:1; WCAG AA requires 3:1.",
+            text: "Mount Everest",
+            ratio: 1.96,
+            requiredRatio: 3,
+            time: 209.53,
+          },
+        ],
+      },
+    }));
+
+    expect(hasHyperframesContrastIssue(report)).toBe(false);
+  });
 });

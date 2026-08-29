@@ -24,7 +24,15 @@ const scene = (number: number, answer = "Tiger"): Scene => ({
   reconstruction: true,
   sound_cue: "",
   editorial_overlay: { kind: "none", text: "", motion: "none", placement: "lower_third", duration_seconds: null, data: [], source_ids: [] },
-  quiz: { phase: "question", question_number: number, question: "Which animal has stripes?", choices: ["Tiger", "Dolphin", "Elephant"], answer, explanation: "Tigers have stripes.", image_prompt: "" },
+  quiz: {
+    phase: "question",
+    question_number: number,
+    question: "Which animal has stripes?",
+    choices: ["Tiger", "Dolphin", "Elephant"],
+    answer,
+    explanation: "Tigers have stripes.",
+    image_prompt: "",
+  },
   audio_asset_path: null,
   audio_generated_at: null,
   audio_duration_seconds: null,
@@ -32,18 +40,38 @@ const scene = (number: number, answer = "Tiger"): Scene => ({
 
 describe("Quiz V2 domain and Director", () => {
   it("derives facts with stable choice IDs and canonical answer mapping", () => {
-    const quiz = deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "7-9", format: "multiple_choice", scenes: [scene(1), scene(2)] });
+    const quiz = deriveQuizV2FromScenes({
+      episodeId: "episode-1",
+      language: "English",
+      ageBand: "7-9",
+      format: "multiple_choice",
+      scenes: [scene(1), scene(2)],
+    });
     expect(quiz.questions.map((question) => question.id)).toEqual(["question-01", "question-02"]);
     expect(quiz.questions[0].correct_choice_id).toBe("choice-a");
     expect(quiz.questions[1].source_ids).toEqual(["C02"]);
   });
 
   it("blocks a legacy scene answer that is not one visible choice", () => {
-    expect(() => deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "7-9", format: "multiple_choice", scenes: [scene(1, "Lion")] })).toThrow("does not match exactly one visible choice");
+    expect(() =>
+      deriveQuizV2FromScenes({
+        episodeId: "episode-1",
+        language: "English",
+        ageBand: "7-9",
+        format: "multiple_choice",
+        scenes: [scene(1, "Lion")],
+      }),
+    ).toThrow("does not match exactly one visible choice");
   });
 
   it("normalizes a labeled answer to the referenced visible choice", () => {
-    const quiz = deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "7-9", format: "multiple_choice", scenes: [scene(1, "A — Tiger")] });
+    const quiz = deriveQuizV2FromScenes({
+      episodeId: "episode-1",
+      language: "English",
+      ageBand: "7-9",
+      format: "multiple_choice",
+      scenes: [scene(1, "A — Tiger")],
+    });
     expect(quiz.questions[0].correct_choice_id).toBe("choice-a");
     expect(resolveVisibleQuizChoice(["Lever", "Inclined plane", "Pulley"], "B — Inclined plane")).toBe(1);
     expect(resolveVisibleQuizChoice(["A. Lever", "B. Inclined plane", "C. Pulley"], "B — Inclined plane")).toBe(1);
@@ -58,23 +86,50 @@ describe("Quiz V2 domain and Director", () => {
   it("strips labels from generated choices before storing canonical Quiz V2 facts", () => {
     const labeled = scene(1, "B — Inclined plane");
     labeled.quiz = { ...labeled.quiz!, choices: ["A. Lever", "B. Inclined plane", "C. Pulley"] };
-    const quiz = deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "7-9", format: "multiple_choice", scenes: [labeled] });
+    const quiz = deriveQuizV2FromScenes({
+      episodeId: "episode-1",
+      language: "English",
+      ageBand: "7-9",
+      format: "multiple_choice",
+      scenes: [labeled],
+    });
     expect(quiz.questions[0].choices.map((choice) => choice.text)).toEqual(["Lever", "Inclined plane", "Pulley"]);
     expect(quiz.questions[0].correct_choice_id).toBe("choice-b");
   });
 
   it("creates an episode-level plan without copying fact fields", () => {
-    const quiz = deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "7-9", format: "multiple_choice", scenes: [scene(1), scene(2), scene(3)] });
+    const quiz = deriveQuizV2FromScenes({
+      episodeId: "episode-1",
+      language: "English",
+      ageBand: "7-9",
+      format: "multiple_choice",
+      scenes: [scene(1), scene(2), scene(3)],
+    });
     const plan = createDefaultDirectorPlan(quiz);
     expect(plan.beats).toHaveLength(3);
     expect(plan.beats.at(-1)?.archetype).toBe("final_challenge");
-    expect(() => parseDirectorPlanOutput(JSON.stringify({ ...plan, beats: [{ ...plan.beats[0], question: "mutated fact" }, ...plan.beats.slice(1)] }), quiz)).toThrow();
+    expect(() =>
+      parseDirectorPlanOutput(
+        JSON.stringify({ ...plan, beats: [{ ...plan.beats[0], question: "mutated fact" }, ...plan.beats.slice(1)] }),
+        quiz,
+      ),
+    ).toThrow();
   });
 
   it("reports poor episode variation and thinking time as actionable issues", () => {
-    const quiz = deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "4-6", format: "multiple_choice", scenes: [scene(1), scene(2), scene(3), scene(4), scene(5)] });
+    const quiz = deriveQuizV2FromScenes({
+      episodeId: "episode-1",
+      language: "English",
+      ageBand: "4-6",
+      format: "multiple_choice",
+      scenes: [scene(1), scene(2), scene(3), scene(4), scene(5)],
+    });
     const plan = createDefaultDirectorPlan(quiz);
-    const result = validateDirectorPlan(quiz, { ...plan, midpoint_question_id: null, beats: plan.beats.map((beat) => ({ ...beat, archetype: "text_multiple_choice", thinking_seconds: 2 })) });
+    const result = validateDirectorPlan(quiz, {
+      ...plan,
+      midpoint_question_id: null,
+      beats: plan.beats.map((beat) => ({ ...beat, archetype: "text_multiple_choice", thinking_seconds: 2 })),
+    });
     expect(result.issues.some((issue) => issue.code === "director_thinking_too_short")).toBe(true);
     expect(result.issues.some((issue) => issue.code === "director_repeated_archetype")).toBe(true);
     expect(result.issues.some((issue) => issue.code === "director_midpoint_missing")).toBe(true);
@@ -112,7 +167,11 @@ describe("Quiz V2 domain and Director", () => {
           format: "multiple_choice" as const,
           difficulty: 1,
           question: "Question 1",
-          choices: [{ id: "choice-a", text: "Alpha" }, { id: "choice-b", text: "Beta" }, { id: "choice-c", text: "Gamma" }],
+          choices: [
+            { id: "choice-a", text: "Alpha" },
+            { id: "choice-b", text: "Beta" },
+            { id: "choice-c", text: "Gamma" },
+          ],
           correct_choice_id: "choice-a",
           explanation: "Explanation 1",
           fun_fact: "",
@@ -126,7 +185,11 @@ describe("Quiz V2 domain and Director", () => {
           format: "multiple_choice" as const,
           difficulty: 2,
           question: "Question 2",
-          choices: [{ id: "choice-a", text: "One" }, { id: "choice-b", text: "Two" }, { id: "choice-c", text: "Three" }],
+          choices: [
+            { id: "choice-a", text: "One" },
+            { id: "choice-b", text: "Two" },
+            { id: "choice-c", text: "Three" },
+          ],
           correct_choice_id: "choice-a",
           explanation: "Explanation 2",
           fun_fact: "",
@@ -137,7 +200,9 @@ describe("Quiz V2 domain and Director", () => {
       ],
     };
     const assessment = assessQuiz({ quiz: rawQuiz });
-    expect(assessment.issues.some((issue) => issue.code === "quiz_consecutive_same_answer_position" && issue.severity === "warning")).toBe(true);
+    expect(assessment.issues.some((issue) => issue.code === "quiz_consecutive_same_answer_position" && issue.severity === "warning")).toBe(
+      true,
+    );
   });
 
   it("flags answer-position bias when correct answers are heavily concentrated in one position", () => {
@@ -152,7 +217,11 @@ describe("Quiz V2 domain and Director", () => {
         format: "multiple_choice" as const,
         difficulty: 1,
         question: `Question ${index + 1}`,
-        choices: [{ id: "choice-a", text: "Alpha" }, { id: "choice-b", text: "Beta" }, { id: "choice-c", text: "Gamma" }],
+        choices: [
+          { id: "choice-a", text: "Alpha" },
+          { id: "choice-b", text: "Beta" },
+          { id: "choice-c", text: "Gamma" },
+        ],
         correct_choice_id: index < 5 ? "choice-a" : "choice-b",
         explanation: `Explanation ${index + 1}`,
         fun_fact: "",
@@ -166,32 +235,51 @@ describe("Quiz V2 domain and Director", () => {
   });
 
   it("blocks a media question without a semantic visual subject", () => {
-    const quiz = deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "7-9", format: "multiple_choice", scenes: [scene(1)] });
+    const quiz = deriveQuizV2FromScenes({
+      episodeId: "episode-1",
+      language: "English",
+      ageBand: "7-9",
+      format: "multiple_choice",
+      scenes: [scene(1)],
+    });
     const assessment = assessQuiz({ quiz, director: createDefaultDirectorPlan(quiz) });
     expect(assessment.issues.some((issue) => issue.code === "visual_subject_missing" && issue.severity === "blocker")).toBe(true);
   });
 
-  it("limits choices to a maximum of 3 (A, B, C) and rejects fewer than 2 choices", () => {
-    // 4 choices should be sliced down to 3
+  it("rejects standard quiz questions unless they have exactly 3 choices", () => {
     const sceneWith4Choices = scene(1, "Tiger");
     sceneWith4Choices.quiz = {
       ...sceneWith4Choices.quiz!,
       choices: ["Tiger", "Dolphin", "Elephant", "Leopard"],
     };
-    const quiz = deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "7-9", format: "multiple_choice", scenes: [sceneWith4Choices] });
-    expect(quiz.questions[0].choices).toHaveLength(3);
-    expect(quiz.questions[0].choices.map((c) => c.text)).toEqual(["Tiger", "Dolphin", "Elephant"]);
+    expect(() =>
+      deriveQuizV2FromScenes({
+        episodeId: "episode-1",
+        language: "English",
+        ageBand: "7-9",
+        format: "multiple_choice",
+        scenes: [sceneWith4Choices],
+      }),
+    ).toThrow("received 4");
 
-    // 1 choice should throw QUIZ_QUESTION_INCOMPLETE
+    // 1 choice should fail the same exact-count contract
     const sceneWith1Choice = scene(1, "Tiger");
     sceneWith1Choice.quiz = {
       ...sceneWith1Choice.quiz!,
       choices: ["Tiger"],
     };
-    expect(() => deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "7-9", format: "multiple_choice", scenes: [sceneWith1Choice] })).toThrow("missing question, choices");
+    expect(() =>
+      deriveQuizV2FromScenes({
+        episodeId: "episode-1",
+        language: "English",
+        ageBand: "7-9",
+        format: "multiple_choice",
+        scenes: [sceneWith1Choice],
+      }),
+    ).toThrow("received 1");
   });
 
-  it("handles true_false quiz format with strictly 2 choices and normalizes 3 choices", () => {
+  it("handles true_false quiz format with strictly 2 choices and rejects every other count", () => {
     // Exact 2 choices for true_false
     const trueFalseScene = scene(1, "True");
     trueFalseScene.quiz = {
@@ -199,23 +287,34 @@ describe("Quiz V2 domain and Director", () => {
       choices: ["True", "False"],
       answer: "True",
     };
-    const quiz = deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "7-9", format: "true_false", scenes: [trueFalseScene] });
+    const quiz = deriveQuizV2FromScenes({
+      episodeId: "episode-1",
+      language: "English",
+      ageBand: "7-9",
+      format: "true_false",
+      scenes: [trueFalseScene],
+    });
     expect(quiz.questions[0].format).toBe("true_false");
     expect(quiz.questions[0].choices).toHaveLength(2);
     expect(quiz.questions[0].choices.map((c) => c.text)).toEqual(["True", "False"]);
     expect(quiz.questions[0].correct_choice_id).toBe("choice-a");
 
-    // 3 choices normalized down to 2 choices for true_false without throwing schema validation error
+    // A third option is rejected instead of being silently removed
     const threeChoiceTfScene = scene(1, "False");
     threeChoiceTfScene.quiz = {
       ...threeChoiceTfScene.quiz!,
       choices: ["True", "False", "Neither"],
       answer: "False",
     };
-    const normalizedQuiz = deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "7-9", format: "true_false", scenes: [threeChoiceTfScene] });
-    expect(normalizedQuiz.questions[0].format).toBe("true_false");
-    expect(normalizedQuiz.questions[0].choices).toHaveLength(2);
-    expect(normalizedQuiz.questions[0].correct_choice_id).toBe("choice-b");
+    expect(() =>
+      deriveQuizV2FromScenes({
+        episodeId: "episode-1",
+        language: "English",
+        ageBand: "7-9",
+        format: "true_false",
+        scenes: [threeChoiceTfScene],
+      }),
+    ).toThrow("received 3");
 
     // 1 choice throws for true_false
     const singleChoiceTfScene = scene(1, "True");
@@ -224,6 +323,14 @@ describe("Quiz V2 domain and Director", () => {
       choices: ["True"],
       answer: "True",
     };
-    expect(() => deriveQuizV2FromScenes({ episodeId: "episode-1", language: "English", ageBand: "7-9", format: "true_false", scenes: [singleChoiceTfScene] })).toThrow("must have exactly 2 choices: True/False");
+    expect(() =>
+      deriveQuizV2FromScenes({
+        episodeId: "episode-1",
+        language: "English",
+        ageBand: "7-9",
+        format: "true_false",
+        scenes: [singleChoiceTfScene],
+      }),
+    ).toThrow("received 1");
   });
 });

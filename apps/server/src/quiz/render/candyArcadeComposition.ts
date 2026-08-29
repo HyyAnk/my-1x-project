@@ -1,14 +1,22 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import type { ChannelMascotConfig, DirectorPlan, MascotProfile, QuizConfig, QuizThinkingBarStyle, QuizTimeline, QuizV2 } from "@studio/shared";
+import {
+  QuizV2Schema,
+  type ChannelMascotConfig,
+  type DirectorPlan,
+  type MascotProfile,
+  type QuizConfig,
+  type QuizThinkingBarStyle,
+  type QuizTimeline,
+  type QuizV2,
+} from "@studio/shared";
 import { getQuizVisualTemplate } from "../visual/registry.js";
 import { ambientPhaseSeconds, motionCssClass, textLayout, visualAnswerState } from "../visual/candyArcade.js";
 import type { QuizTemplateScene } from "../visual/types.js";
 import { defaultBgmRegistry, type ResolveBgmOptions } from "../audio/bgmRegistry.js";
 import { DEFAULT_SFX_MAP } from "../audio/sfxRegistry.js";
 import { getThinkingBarsCss, resolveThinkingBarVariant, starSliderVariant } from "../visual/elements/index.js";
-
 
 export type CandyArcadeCompositionInput = {
   quiz: QuizV2;
@@ -52,11 +60,13 @@ export function buildCandyArcadeComposition(input: CandyArcadeCompositionInput):
 }
 
 export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionInput): CandyArcadeCompositionBundle {
+  QuizV2Schema.parse(input.quiz);
   const duration = Math.max(3, input.narrationDurationSeconds, input.timeline.duration_seconds);
   const copy = quizCopy(input.quiz.language);
   const template = getQuizVisualTemplate(input.theme);
   const events = input.timeline.events;
-  const eventAt = (questionId: string, type: string, fallback: number) => events.find((event) => event.question_id === questionId && event.type === type)?.at_seconds ?? fallback;
+  const eventAt = (questionId: string, type: string, fallback: number) =>
+    events.find((event) => event.question_id === questionId && event.type === type)?.at_seconds ?? fallback;
   const eventOf = (questionId: string, type: string) => events.find((event) => event.question_id === questionId && event.type === type);
   const firstStart = input.quiz.questions[0] ? eventAt(input.quiz.questions[0].id, "question.enter", 0) : 0;
   const clips: string[] = [introClip(firstStart, input.quiz.questions.length, copy, input.mascot, input.mascotConfig)];
@@ -83,14 +93,59 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     const choicesStart = eventAt(question.id, "choices.enter", start + 1);
     const thinkingStart = eventAt(question.id, "countdown.start", choicesStart + 1);
     const revealStart = eventAt(question.id, "answer.reveal", thinkingStart + 8);
-    const rewardStart = eventAt(question.id, "reward.play", revealStart + .8);
+    const rewardStart = eventAt(question.id, "reward.play", revealStart + 0.8);
     const transition = eventOf(question.id, "transition.start");
-    const end = Math.min(duration, nextQuestion ? eventAt(nextQuestion.id, "question.enter", duration) : transition?.at_seconds ?? outroStart ?? duration);
+    const end = Math.min(
+      duration,
+      nextQuestion ? eventAt(nextQuestion.id, "question.enter", duration) : (transition?.at_seconds ?? outroStart ?? duration),
+    );
     const thinkingBarStyle = beat.thinking_bar_style ?? "auto";
-    if (end - start > .04) clips.push(questionClip({ start, choicesStart, thinkingStart, revealStart, rewardStart, end, question, questionIndex: index, count: input.quiz.questions.length, visual, copy, assets: input.assets ?? {}, isFinal: index === input.quiz.questions.length - 1, mascot: input.mascot, mascotConfig: input.mascotConfig, thinkingBarStyle }));
-    if (transition) clips.push(transitionClip({ start: transition.at_seconds, end: transition.at_seconds + transition.duration_seconds, visual, nextPalette: nextQuestion ? template.resolveScene({ question: nextQuestion, questionIndex: index + 1, totalQuestions: input.quiz.questions.length, archetype: input.director.beats.find((candidate) => candidate.question_id === nextQuestion.id)?.archetype ?? "text_multiple_choice", requestedPalette: input.director.beats.find((candidate) => candidate.question_id === nextQuestion.id)?.palette_id ?? "auto", requestedLayout: "auto", requestedMotion: "auto", requestedTransition: "auto", previousPaletteId: visual.palette.id }).palette : visual.palette }));
+    if (end - start > 0.04)
+      clips.push(
+        questionClip({
+          start,
+          choicesStart,
+          thinkingStart,
+          revealStart,
+          rewardStart,
+          end,
+          question,
+          questionIndex: index,
+          count: input.quiz.questions.length,
+          visual,
+          copy,
+          assets: input.assets ?? {},
+          isFinal: index === input.quiz.questions.length - 1,
+          mascot: input.mascot,
+          mascotConfig: input.mascotConfig,
+          thinkingBarStyle,
+        }),
+      );
+    if (transition)
+      clips.push(
+        transitionClip({
+          start: transition.at_seconds,
+          end: transition.at_seconds + transition.duration_seconds,
+          visual,
+          nextPalette: nextQuestion
+            ? template.resolveScene({
+                question: nextQuestion,
+                questionIndex: index + 1,
+                totalQuestions: input.quiz.questions.length,
+                archetype:
+                  input.director.beats.find((candidate) => candidate.question_id === nextQuestion.id)?.archetype ?? "text_multiple_choice",
+                requestedPalette: input.director.beats.find((candidate) => candidate.question_id === nextQuestion.id)?.palette_id ?? "auto",
+                requestedLayout: "auto",
+                requestedMotion: "auto",
+                requestedTransition: "auto",
+                previousPaletteId: visual.palette.id,
+              }).palette
+            : visual.palette,
+        }),
+      );
   });
-  if (typeof outroStart === "number" && outroStart < duration - .04) clips.push(outroClip(outroStart, duration, input.quiz.questions.length, copy, input.mascot, input.mascotConfig));
+  if (typeof outroStart === "number" && outroStart < duration - 0.04)
+    clips.push(outroClip(outroStart, duration, input.quiz.questions.length, copy, input.mascot, input.mascotConfig));
 
   const scenes = clips.filter(Boolean).map(toSubComposition);
   const audioSrc = source(input.audioPath);
@@ -143,16 +198,18 @@ function requiredAttribute(tag: string, name: string): string {
 }
 
 function rootRelativeSubCompositionAssets(html: string): string {
-  return html
-    .replace(/\b(src|poster)="\.\//g, "$1=\"")
-    .replace(/url\((['"]?)\.\//g, 'url($1');
+  return html.replace(/\b(src|poster)="\.\//g, '$1="').replace(/url\((['"]?)\.\//g, "url($1");
 }
 
 function subCompositionMount(scene: SubComposition): string {
   return `<div id="${scene.id}-mount" data-composition-id="${scene.id}" data-composition-src="compositions/${scene.id}.html" data-start="${scene.start}" data-duration="${scene.duration}" data-track-index="${scene.trackIndex}" data-no-timeline></div>`;
 }
 
-function mascotElement(mascot: MascotProfile | null | undefined, config: ChannelMascotConfig | null | undefined, phase: "intro" | "question" | "outro"): string {
+function mascotElement(
+  mascot: MascotProfile | null | undefined,
+  config: ChannelMascotConfig | null | undefined,
+  phase: "intro" | "question" | "outro",
+): string {
   if (!mascot || (config && !config.enabled)) return "";
 
   if (phase === "intro" && (!config || config.show_in_intro !== true)) {
@@ -161,7 +218,7 @@ function mascotElement(mascot: MascotProfile | null | undefined, config: Channel
   if (phase === "outro" && (!config || config.show_in_outro !== true)) {
     return "";
   }
-  if (phase === "question" && (config && config.show_in_question === false)) {
+  if (phase === "question" && config && config.show_in_question === false) {
     return "";
   }
 
@@ -195,8 +252,8 @@ function mascotElement(mascot: MascotProfile | null | undefined, config: Channel
     return `<div class="candy-mascot-container mascot-outro anchor-${position}" style="--mascot-scale:${scale};--mascot-frames:${frames};--mascot-fps:${fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(spriteToUse || ""))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
   }
 
-  const thinkUrl = thinkingSprite ? source(thinkingSprite) : (idleSprite ? source(idleSprite) : "");
-  const celebUrl = celebrateSprite ? source(celebrateSprite) : (waveSprite ? source(waveSprite) : thinkUrl);
+  const thinkUrl = thinkingSprite ? source(thinkingSprite) : idleSprite ? source(idleSprite) : "";
+  const celebUrl = celebrateSprite ? source(celebrateSprite) : waveSprite ? source(waveSprite) : thinkUrl;
 
   const thinkFrames = mascot.actions.thinking?.frames_count || mascot.actions.idle?.frames_count || 1;
   const celebFrames = mascot.actions.celebrate?.frames_count || mascot.actions.wave?.frames_count || 1;
@@ -215,30 +272,85 @@ function mascotElement(mascot: MascotProfile | null | undefined, config: Channel
   </div>`;
 }
 
-function introClip(end: number, count: number, copy: Copy, mascot?: MascotProfile | null, mascotConfig?: ChannelMascotConfig | null): string {
-  if (end < .08) return "";
+function introClip(
+  end: number,
+  count: number,
+  copy: Copy,
+  mascot?: MascotProfile | null,
+  mascotConfig?: ChannelMascotConfig | null,
+): string {
+  if (end < 0.08) return "";
   const mascotHtml = mascotElement(mascot, mascotConfig, "intro");
   const fallbackMascot = mascot || mascotHtml ? "" : `<div class="brand-mascot mascot-wave" data-layout-ignore aria-hidden="true">✦</div>`;
   return `<section id="candy-intro" class="clip candy-scene candy-intro" data-start="0" data-duration="${end.toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="intro-dot dot-a"></div><div class="intro-dot dot-b"></div><div class="intro-card"><span>QUIZ TIME</span><h1>${esc(copy.ready)}</h1><p>${count} ${esc(copy.questions(count))}</p><div class="intro-stars" data-layout-ignore aria-hidden="true">✦&nbsp;&nbsp;★&nbsp;&nbsp;✦</div></div>${mascotHtml || fallbackMascot}</section>`;
 }
 
-function outroClip(start: number, end: number, count: number, copy: Copy, mascot?: MascotProfile | null, mascotConfig?: ChannelMascotConfig | null): string {
+function outroClip(
+  start: number,
+  end: number,
+  count: number,
+  copy: Copy,
+  mascot?: MascotProfile | null,
+  mascotConfig?: ChannelMascotConfig | null,
+): string {
   const mascotHtml = mascotElement(mascot, mascotConfig, "outro");
-  return `<section id="candy-outro" class="clip candy-scene candy-outro" data-start="${start.toFixed(3)}" data-duration="${Math.max(.04, end - start).toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="outro-blob blob-a"></div><div class="outro-blob blob-b"></div><div class="outro-card"><span>${esc(copy.scorePrompt)}</span><h1>${esc(copy.playAgain)}</h1><p>${esc(copy.exploreMore)}</p><div class="outro-cta-badges"><span class="badge-cta badge-comment">💬 ${esc(copy.ctaComment)}</span><span class="badge-cta badge-like">👍 ${esc(copy.ctaLike)}</span><span class="badge-cta badge-sub">🔔 ${esc(copy.ctaSubscribe)}</span></div><div class="outro-stars" data-layout-ignore aria-hidden="true">★&nbsp;&nbsp;✦&nbsp;&nbsp;★</div></div>${mascotHtml}</section>`;
+  return `<section id="candy-outro" class="clip candy-scene candy-outro" data-start="${start.toFixed(3)}" data-duration="${Math.max(0.04, end - start).toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="outro-blob blob-a"></div><div class="outro-blob blob-b"></div><div class="outro-card"><span>${esc(copy.scorePrompt)}</span><h1>${esc(copy.playAgain)}</h1><p>${esc(copy.exploreMore)}</p><div class="outro-cta-badges"><span class="badge-cta badge-comment">💬 ${esc(copy.ctaComment)}</span><span class="badge-cta badge-like">👍 ${esc(copy.ctaLike)}</span><span class="badge-cta badge-sub">🔔 ${esc(copy.ctaSubscribe)}</span></div><div class="outro-stars" data-layout-ignore aria-hidden="true">★&nbsp;&nbsp;✦&nbsp;&nbsp;★</div></div>${mascotHtml}</section>`;
 }
 
-function questionClip(input: { start: number; choicesStart: number; thinkingStart: number; revealStart: number; rewardStart: number; end: number; question: QuizV2["questions"][number]; questionIndex: number; count: number; visual: QuizTemplateScene; copy: Copy; assets: Record<string, string>; isFinal: boolean; mascot?: MascotProfile | null; mascotConfig?: ChannelMascotConfig | null; thinkingBarStyle?: QuizThinkingBarStyle | null }): string {
+function questionClip(input: {
+  start: number;
+  choicesStart: number;
+  thinkingStart: number;
+  revealStart: number;
+  rewardStart: number;
+  end: number;
+  question: QuizV2["questions"][number];
+  questionIndex: number;
+  count: number;
+  visual: QuizTemplateScene;
+  copy: Copy;
+  assets: Record<string, string>;
+  isFinal: boolean;
+  mascot?: MascotProfile | null;
+  mascotConfig?: ChannelMascotConfig | null;
+  thinkingBarStyle?: QuizThinkingBarStyle | null;
+}): string {
   const { question, visual } = input;
   const questionLayout = textLayout(question.question, "question");
   const answer = question.choices.find((choice) => choice.id === question.correct_choice_id);
-  const config = styleAttributes(visual, questionLayout, input.start, input.choicesStart, input.thinkingStart, input.revealStart, input.rewardStart, input.end);
-  const hasMascot = Boolean(input.mascot && (!input.mascotConfig || input.mascotConfig.enabled) && input.mascotConfig?.show_in_question !== false);
+  const config = styleAttributes(
+    visual,
+    questionLayout,
+    input.start,
+    input.choicesStart,
+    input.thinkingStart,
+    input.revealStart,
+    input.rewardStart,
+    input.end,
+  );
+  const hasMascot = Boolean(
+    input.mascot && (!input.mascotConfig || input.mascotConfig.enabled) && input.mascotConfig?.show_in_question !== false,
+  );
   const mascotPos = input.mascotConfig?.position || "bottom_left";
   const mascotClass = hasMascot ? `has-mascot has-mascot-${mascotPos === "bottom_right" ? "right" : "left"}` : "";
-  const classNames = ["clip", "candy-scene", "quiz-question-clip", `layout-${visual.layoutId}`, `archetype-${question.format}`, motionCssClass(visual.motionId), input.isFinal ? "is-final-scene" : "", mascotClass].filter(Boolean).join(" ");
+  const classNames = [
+    "clip",
+    "candy-scene",
+    "quiz-question-clip",
+    `layout-${visual.layoutId}`,
+    `archetype-${question.format}`,
+    motionCssClass(visual.motionId),
+    input.isFinal ? "is-final-scene" : "",
+    mascotClass,
+  ]
+    .filter(Boolean)
+    .join(" ");
   const questionAsset = assetFor(input.assets, `asset-${question.id}-hero`, `asset-${question.id}-question`);
   const answers = answerCards(question, input.assets);
-  const hero = visual.layoutId === "visual_choices_three" ? "" : imageCard(questionAsset, question.visual_opportunity || question.question, "hero-image", question.number);
+  const hero =
+    visual.layoutId === "visual_choices_three"
+      ? ""
+      : imageCard(questionAsset, question.visual_opportunity || question.question, "hero-image", question.number);
   const visualAnswers = visual.layoutId === "visual_choices_three" ? visualAnswerCards(question, input.assets, input.questionIndex) : "";
   const mascotHtml = mascotElement(input.mascot, input.mascotConfig, "question");
   const thinkingBarVariant = resolveThinkingBarVariant(input.thinkingBarStyle);
@@ -251,11 +363,16 @@ function questionClip(input: { start: number; choicesStart: number; thinkingStar
     paletteAccent: visual.palette.accent,
   });
   const body = `<div class="game-stage" data-layout-allow-overflow><div class="question-title question-tier-${questionLayout.tier}" data-layout-allow-occlusion><div class="question-card-inner"><div class="q-badge-star" data-layout-ignore aria-hidden="true"><span class="star-shape">★</span><i class="star-sparkle star-sp-1">✦</i><i class="star-sparkle star-sp-2">•</i></div><div class="q-decor-corner q-decor-top-right" data-layout-ignore aria-hidden="true"><span class="corner-gem">✦</span></div><div class="q-decor-corner q-decor-bottom-right" data-layout-ignore aria-hidden="true"><span class="corner-petal">✿</span></div><h1>${highlightQuestionMarkup(question.question, question.visual_opportunity)}</h1></div></div>${hero}${visualAnswers || answers}<div class="phase-region">${thinkingBarHtml}${revealPanel(input)}</div></div>`;
-  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(.04, input.end - input.start).toFixed(3)}" data-track-index="0"><div class="bg-gradient"></div><div class="bg-rays"></div><div class="bg-pattern pattern-circles"></div><div class="bg-pattern pattern-sprinkles"></div><div class="bg-shape shape-a" data-layout-allow-overflow></div>${sceneDecorations(input.questionIndex)}<header class="game-header" data-layout-allow-occlusion><div class="hanging-wood-sign" data-layout-allow-occlusion><div class="hanging-ropes" aria-hidden="true"><span class="wood-rope rope-left"></span><span class="wood-rope rope-right"></span></div><div class="wood-sign-plank"><span class="rope-bracket bracket-left" aria-hidden="true"></span><span class="rope-bracket bracket-right" aria-hidden="true"></span><div class="wood-inner-panel"><span class="question-number-val">${question.number}</span></div><span class="wood-sign-star star-tl" data-layout-ignore aria-hidden="true">✦</span><span class="wood-sign-star star-br" data-layout-ignore aria-hidden="true">★</span></div></div></header>${body}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
+  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0"><div class="bg-gradient"></div><div class="bg-rays"></div><div class="bg-pattern pattern-circles"></div><div class="bg-pattern pattern-sprinkles"></div><div class="bg-shape shape-a" data-layout-allow-overflow></div>${sceneDecorations(input.questionIndex)}<header class="game-header" data-layout-allow-occlusion><div class="hanging-wood-sign" data-layout-allow-occlusion><div class="hanging-ropes" aria-hidden="true"><span class="wood-rope rope-left"></span><span class="wood-rope rope-right"></span></div><div class="wood-sign-plank"><span class="rope-bracket bracket-left" aria-hidden="true"></span><span class="rope-bracket bracket-right" aria-hidden="true"></span><div class="wood-inner-panel"><span class="question-number-val">${question.number}</span></div><span class="wood-sign-star star-tl" data-layout-ignore aria-hidden="true">✦</span><span class="wood-sign-star star-br" data-layout-ignore aria-hidden="true">★</span></div></div></header>${body}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
 }
 
-function transitionClip(input: { start: number; end: number; visual: QuizTemplateScene; nextPalette: QuizTemplateScene["palette"] }): string {
-  if (input.end - input.start < .04) return "";
+function transitionClip(input: {
+  start: number;
+  end: number;
+  visual: QuizTemplateScene;
+  nextPalette: QuizTemplateScene["palette"];
+}): string {
+  if (input.end - input.start < 0.04) return "";
   const special = input.visual.transitionId === "lightning_brush";
   const body = special
     ? `<div class="brush brush-one" data-layout-allow-occlusion data-layout-allow-overflow></div><div class="brush brush-two" data-layout-allow-occlusion data-layout-allow-overflow></div><div class="transition-mark" data-layout-ignore aria-hidden="true">✦</div>`
@@ -286,31 +403,60 @@ export function highlightQuestionMarkup(question: string, visualOpportunity: str
 }
 
 const QUESTION_KEYWORD_STOP_WORDS = new Set([
-  "about", "animal", "bright", "blue", "cartoon", "child", "clear", "colorful", "cool", "cute", "educational", "friendly", "globe",
-  "green", "image", "illustration", "large", "object", "picture", "red", "scene", "showing", "simple", "soft", "subject", "warm", "with",
+  "about",
+  "animal",
+  "bright",
+  "blue",
+  "cartoon",
+  "child",
+  "clear",
+  "colorful",
+  "cool",
+  "cute",
+  "educational",
+  "friendly",
+  "globe",
+  "green",
+  "image",
+  "illustration",
+  "large",
+  "object",
+  "picture",
+  "red",
+  "scene",
+  "showing",
+  "simple",
+  "soft",
+  "subject",
+  "warm",
+  "with",
 ]);
 
 function answerCards(question: QuizV2["questions"][number], assets: Record<string, string>): string {
-  return `<div class="answer-grid answer-count-${question.choices.length}">${question.choices.map((choice, index) => {
-    const state = "answer-" + visualAnswerState(choice.id, question.correct_choice_id, "reveal");
-    const layout = textLayout(choice.text, "choice");
-    const optionAsset = assetFor(assets, `asset-${question.id}-${choice.id}`);
-    const phaseSeconds = ambientPhaseSeconds("float", index, question.id);
-    return `<div class="answer-card ${state} choice-tier-${layout.tier}" style="--item-phase:${phaseSeconds}s" data-layout-allow-occlusion data-layout-allow-overflow><b data-layout-allow-occlusion data-text="${String.fromCharCode(65 + index)}">${String.fromCharCode(65 + index)}</b>${optionAsset ? `<img src="${escAttr(optionAsset)}" alt="">` : ""}<span data-layout-allow-occlusion data-text="${escAttr(choice.text)}">${esc(choice.text)}</span></div>`;
-  }).join("")}</div>`;
+  return `<div class="answer-grid answer-count-${question.choices.length}">${question.choices
+    .map((choice, index) => {
+      const state = "answer-" + visualAnswerState(choice.id, question.correct_choice_id, "reveal");
+      const layout = textLayout(choice.text, "choice");
+      const optionAsset = assetFor(assets, `asset-${question.id}-${choice.id}`);
+      const phaseSeconds = ambientPhaseSeconds("float", index, question.id);
+      return `<div class="answer-card ${state} choice-tier-${layout.tier}" style="--item-phase:${phaseSeconds}s" data-layout-allow-occlusion data-layout-allow-overflow><b data-layout-allow-occlusion data-text="${String.fromCharCode(65 + index)}">${String.fromCharCode(65 + index)}</b>${optionAsset ? `<img src="${escAttr(optionAsset)}" alt="">` : ""}<span data-layout-allow-occlusion data-text="${escAttr(choice.text)}">${esc(choice.text)}</span></div>`;
+    })
+    .join("")}</div>`;
 }
 
 function visualAnswerCards(question: QuizV2["questions"][number], assets: Record<string, string>, questionIndex: number): string {
-  return `<div class="visual-answer-grid">${question.choices.map((choice, index) => {
-    const state = "answer-" + visualAnswerState(choice.id, question.correct_choice_id, "reveal");
-    const layout = textLayout(choice.text, "choice");
-    const phaseSeconds = ambientPhaseSeconds("float", index, question.id);
-    return `<div class="visual-answer-card ${state} choice-tier-${layout.tier}" style="--item-phase:${phaseSeconds}s" data-layout-allow-occlusion data-layout-allow-overflow>${imageCard(assetFor(assets, `asset-${question.id}-${choice.id}`), choice.text, "option-image", index + question.number * 10)}<div class="visual-answer-label" data-layout-allow-overflow><b data-layout-allow-occlusion data-text="${String.fromCharCode(65 + index)}">${String.fromCharCode(65 + index)}</b><span data-layout-allow-occlusion data-text="${escAttr(choice.text)}">${esc(choice.text)}</span></div></div>`;
-  }).join("")}</div>`;
+  return `<div class="visual-answer-grid">${question.choices
+    .map((choice, index) => {
+      const state = "answer-" + visualAnswerState(choice.id, question.correct_choice_id, "reveal");
+      const layout = textLayout(choice.text, "choice");
+      const phaseSeconds = ambientPhaseSeconds("float", index, question.id);
+      return `<div class="visual-answer-card ${state} choice-tier-${layout.tier}" style="--item-phase:${phaseSeconds}s" data-layout-allow-occlusion data-layout-allow-overflow>${imageCard(assetFor(assets, `asset-${question.id}-${choice.id}`), choice.text, "option-image", index + question.number * 10)}<div class="visual-answer-label" data-layout-allow-overflow><b data-layout-allow-occlusion data-text="${String.fromCharCode(65 + index)}">${String.fromCharCode(65 + index)}</b><span data-layout-allow-occlusion data-text="${escAttr(choice.text)}">${esc(choice.text)}</span></div></div>`;
+    })
+    .join("")}</div>`;
 }
 
 function thinkingBar(input: { clipStart: number; revealStart: number }): string {
-  const duration = Math.max(.05, input.revealStart - input.clipStart);
+  const duration = Math.max(0.05, input.revealStart - input.clipStart);
   const cd5 = Math.max(0, duration - 5);
   const cd4 = Math.max(0, duration - 4);
   const cd3 = Math.max(0, duration - 3);
@@ -331,10 +477,19 @@ function sceneDecorations(questionIndex: number): string {
   return `<div class="scene-decor" data-layout-ignore aria-hidden="true">${symbols.map((symbol, index) => `<i class="decor-${index + 1}" data-layout-ignore aria-hidden="true" style="--decor-phase:${ambientPhaseSeconds("drift", index, String(questionIndex))}s">${symbol}</i>`).join("")}</div>`;
 }
 
-function styleAttributes(visual: QuizTemplateScene, layout: ReturnType<typeof textLayout>, clipStart: number, choicesStart: number, thinkingStart: number, revealStart: number, rewardStart: number, clipEnd: number): string {
+function styleAttributes(
+  visual: QuizTemplateScene,
+  layout: ReturnType<typeof textLayout>,
+  clipStart: number,
+  choicesStart: number,
+  thinkingStart: number,
+  revealStart: number,
+  rewardStart: number,
+  clipEnd: number,
+): string {
   const palette = visual.palette;
-  const timerDuration = Math.max(.04, revealStart - clipStart);
-  return `style="--bg-primary:${palette.backgroundPrimary};--bg-secondary:${palette.backgroundSecondary};--accent:${palette.accent};--surface-accent:${palette.surfaceAccent};--on-accent:${palette.onAccent};--badge:${palette.answerBadge};--correct:${palette.correct};--incorrect:${palette.incorrect};--surface:${palette.surface};--ink:${palette.text};--muted:${palette.muted};--question-size:${layout.fontSize}px;--question-leading:${layout.lineHeight};--clip-start:${clipStart.toFixed(3)}s;--scene-duration:${Math.max(.04, clipEnd - clipStart).toFixed(3)}s;--choices-at:${Math.max(0, choicesStart - clipStart).toFixed(3)}s;--thinking-at:${Math.max(0, thinkingStart - clipStart).toFixed(3)}s;--reveal-at:${Math.max(0, revealStart - clipStart).toFixed(3)}s;--reward-at:${Math.max(0, rewardStart - clipStart).toFixed(3)}s;--choices-duration:${Math.max(.04, revealStart - choicesStart).toFixed(3)}s;--timer-duration:${timerDuration.toFixed(3)}s;--reveal-duration:${Math.max(.04, rewardStart - revealStart).toFixed(3)}s;--ambient-phase:${ambientPhaseSeconds("drift", 0, String(clipStart))}s"`;
+  const timerDuration = Math.max(0.04, revealStart - clipStart);
+  return `style="--bg-primary:${palette.backgroundPrimary};--bg-secondary:${palette.backgroundSecondary};--accent:${palette.accent};--surface-accent:${palette.surfaceAccent};--on-accent:${palette.onAccent};--badge:${palette.answerBadge};--correct:${palette.correct};--incorrect:${palette.incorrect};--surface:${palette.surface};--ink:${palette.text};--muted:${palette.muted};--question-size:${layout.fontSize}px;--question-leading:${layout.lineHeight};--clip-start:${clipStart.toFixed(3)}s;--scene-duration:${Math.max(0.04, clipEnd - clipStart).toFixed(3)}s;--choices-at:${Math.max(0, choicesStart - clipStart).toFixed(3)}s;--thinking-at:${Math.max(0, thinkingStart - clipStart).toFixed(3)}s;--reveal-at:${Math.max(0, revealStart - clipStart).toFixed(3)}s;--reward-at:${Math.max(0, rewardStart - clipStart).toFixed(3)}s;--choices-duration:${Math.max(0.04, revealStart - choicesStart).toFixed(3)}s;--timer-duration:${timerDuration.toFixed(3)}s;--reveal-duration:${Math.max(0.04, rewardStart - revealStart).toFixed(3)}s;--ambient-phase:${ambientPhaseSeconds("drift", 0, String(clipStart))}s"`;
 }
 
 function assetFor(assets: Record<string, string>, ...keys: string[]): string | null {
@@ -448,7 +603,7 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
         id,
         className: "clip sfx-clip",
         start: event.at_seconds,
-        duration: 0.120,
+        duration: 0.12,
         trackIndex: 3,
         volume: "0.55",
         src,
@@ -456,7 +611,7 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
     } else if (event.type === "countdown.tick") {
       const isFinalTick = event.payload?.value === 1;
       const filename = isFinalTick ? "countdown_final.wav" : "countdown_tick.wav";
-      const dur = isFinalTick ? 0.350 : 0.080;
+      const dur = isFinalTick ? 0.35 : 0.08;
       const vol = isFinalTick ? "0.60" : "0.45";
       const src = sfxSource(filename, assets);
       rawClips.push({
@@ -471,7 +626,7 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
     } else if (event.type === "reward.play") {
       const isBig = event.payload?.intensity === "big";
       const filename = isBig ? "correct_triumph.wav" : "correct_ding.wav";
-      const dur = isBig ? 1.500 : 1.100;
+      const dur = isBig ? 1.5 : 1.1;
       const src = sfxSource(filename, assets);
       rawClips.push({
         id,
@@ -485,7 +640,7 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
     } else if (event.type === "transition.start") {
       const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";
       const filename = isLightning ? "lightning_brush.wav" : "bubble_splash.wav";
-      const dur = isLightning ? 0.700 : 0.650;
+      const dur = isLightning ? 0.7 : 0.65;
       const src = sfxSource(filename, assets);
       rawClips.push({
         id,
@@ -531,7 +686,8 @@ function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, s
   }
 
   return scheduledClips.map(
-    (clip) => `<audio id="${clip.id}" class="${clip.className}" data-start="${clip.start.toFixed(3)}" data-duration="${clip.duration.toFixed(3)}" data-track-index="${clip.trackIndex}" data-volume="${clip.volume}" src="${clip.src}"></audio>`
+    (clip) =>
+      `<audio id="${clip.id}" class="${clip.className}" data-start="${clip.start.toFixed(3)}" data-duration="${clip.duration.toFixed(3)}" data-track-index="${clip.trackIndex}" data-volume="${clip.volume}" src="${clip.src}"></audio>`,
   );
 }
 
@@ -547,11 +703,45 @@ function sfxSource(filename: string, assets?: Record<string, string>): string {
 function quizCopy(language: string) {
   const vietnamese = /^(vi|vietnamese|tiếng việt)/i.test(language.trim());
   return vietnamese
-    ? { ready: "Sẵn sàng chơi chưa?", questions: (count: number) => count === 1 ? "câu hỏi" : "câu hỏi đầy bất ngờ", question: "Câu", getReady: "Quan sát thật kỹ nhé!", choose: "Chọn một đáp án", time: "Sắp hết giờ!", correct: "Đúng rồi!", why: "Bạn có biết?", funFact: "Bạn có biết?", final: "Thử thách cuối", scorePrompt: "Bạn đúng được mấy câu?", playAgain: "Chơi lại nhé", exploreMore: "Còn nhiều câu hỏi thú vị phía trước", ctaComment: "Bình luận", ctaLike: "Thích", ctaSubscribe: "Đăng ký" }
-    : { ready: "Ready to play?", questions: (count: number) => count === 1 ? "question" : "questions to explore", question: "Question", getReady: "Look closely and get ready!", choose: "Choose one", time: "Final seconds!", correct: "That's right!", why: "Did you know?", funFact: "Did you know?", final: "Final challenge", scorePrompt: "How many did you get right?", playAgain: "Play again soon", exploreMore: "Many more questions to explore", ctaComment: "Comment", ctaLike: "Like", ctaSubscribe: "Subscribe" };
+    ? {
+        ready: "Sẵn sàng chơi chưa?",
+        questions: (count: number) => (count === 1 ? "câu hỏi" : "câu hỏi đầy bất ngờ"),
+        question: "Câu",
+        getReady: "Quan sát thật kỹ nhé!",
+        choose: "Chọn một đáp án",
+        time: "Sắp hết giờ!",
+        correct: "Đúng rồi!",
+        why: "Bạn có biết?",
+        funFact: "Bạn có biết?",
+        final: "Thử thách cuối",
+        scorePrompt: "Bạn đúng được mấy câu?",
+        playAgain: "Chơi lại nhé",
+        exploreMore: "Còn nhiều câu hỏi thú vị phía trước",
+        ctaComment: "Bình luận",
+        ctaLike: "Thích",
+        ctaSubscribe: "Đăng ký",
+      }
+    : {
+        ready: "Ready to play?",
+        questions: (count: number) => (count === 1 ? "question" : "questions to explore"),
+        question: "Question",
+        getReady: "Look closely and get ready!",
+        choose: "Choose one",
+        time: "Final seconds!",
+        correct: "That's right!",
+        why: "Did you know?",
+        funFact: "Did you know?",
+        final: "Final challenge",
+        scorePrompt: "How many did you get right?",
+        playAgain: "Play again soon",
+        exploreMore: "Many more questions to explore",
+        ctaComment: "Comment",
+        ctaLike: "Like",
+        ctaSubscribe: "Subscribe",
+      };
 }
 
-function illustrationDataUri(subject: string, seed: number): string {
+export function illustrationDataUri(subject: string, seed: number): string {
   const hue = (seed * 41) % 360;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="hsl(${hue} 92% 66%)"/><stop offset="1" stop-color="hsl(${(hue + 55) % 360} 82% 48%)"/></linearGradient></defs><rect width="800" height="520" rx="58" fill="url(#g)"/><g opacity=".18" fill="#fff"><circle cx="91" cy="103" r="40"/><circle cx="694" cy="108" r="61"/><circle cx="707" cy="419" r="32"/></g>${fallbackSubjectArtwork(subject, hue)}</svg>`;
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
@@ -559,21 +749,34 @@ function illustrationDataUri(subject: string, seed: number): string {
 
 function fallbackSubjectArtwork(subject: string, hue: number): string {
   const value = subject.toLocaleLowerCase();
-  if (/(ocean|pacific|earth|planet|globe)/.test(value)) return `<circle cx="400" cy="255" r="150" fill="#dff7ff"/><path d="M270 180c50-38 83 16 120 2s64-47 120-20 52 51 39 91c-22 69-97 123-176 128-79-6-135-59-146-117 3-38 8-58 43-84Z" fill="#35b7e6"/><path d="M315 183c34 11 43 43 74 38 35-5 46-41 91-29 31 8 53 24 67 48M266 266c53-25 68 20 110 13 48-8 58-41 108-27 25 7 44 18 61 37M300 328c49-22 82 13 123 4 35-8 59-36 91-13" fill="none" stroke="#fff" stroke-width="20" stroke-linecap="round"/><circle cx="454" cy="189" r="22" fill="#a6e368"/><path d="M328 262c20-31 54-36 76-15-24 8-42 33-49 58-28-6-44-21-27-43Z" fill="#a6e368"/>`;
-  if (/cheetah/.test(value)) return `<path d="M158 320c70-14 102-66 177-53 76 13 110-34 176-11 42 15 82 50 102 83l-33 20-54-29-18 65-50-7-24-74-102 8-48 70-50-11 29-70-82 16Z" fill="#ffbf4c"/><circle cx="559" cy="259" r="63" fill="#ffbf4c"/><path d="M546 205l24-38 23 42M597 208l38-21-13 44" fill="#ffbf4c"/><circle cx="577" cy="247" r="7" fill="#26355b"/><circle cx="614" cy="247" r="7" fill="#26355b"/><path d="M582 275q17 14 34 0" stroke="#26355b" stroke-width="8" fill="none" stroke-linecap="round"/>${Array.from({ length: 13 }, (_, index) => `<circle cx="${235 + (index * 47) % 295}" cy="${278 + (index * 31) % 85}" r="9" fill="#74453c"/>`).join("")}`;
-  if (/elephant/.test(value)) return `<circle cx="400" cy="260" r="143" fill="#aeb9ca"/><circle cx="279" cy="266" r="89" fill="#c8d2df"/><circle cx="521" cy="266" r="89" fill="#c8d2df"/><path d="M369 261c0 126 14 143 35 143s35-17 35-143v70c0 38 19 46 40 28" fill="none" stroke="#aeb9ca" stroke-width="43" stroke-linecap="round"/><circle cx="360" cy="237" r="10" fill="#243257"/><circle cx="440" cy="237" r="10" fill="#243257"/><path d="M374 280q26 20 52 0" stroke="#243257" stroke-width="9" fill="none" stroke-linecap="round"/>`;
-  if (/turtle/.test(value)) return `<ellipse cx="394" cy="277" rx="151" ry="112" fill="#45bd72"/><path d="M286 276q108-108 216 0-108 108-216 0Z" fill="#7bd75b"/><path d="M320 236l72 42-72 42M468 236l-72 42 72 42" fill="none" stroke="#42a860" stroke-width="17" stroke-linejoin="round"/><circle cx="560" cy="274" r="50" fill="#8be171"/><circle cx="574" cy="264" r="8" fill="#243257"/><path d="M573 293h15" stroke="#243257" stroke-width="8" stroke-linecap="round"/><ellipse cx="262" cy="188" rx="47" ry="24" fill="#8be171"/><ellipse cx="262" cy="358" rx="47" ry="24" fill="#8be171"/>`;
-  if (/(geometric|shapes)/.test(value)) return `<circle cx="253" cy="277" r="91" fill="#ffcf48" stroke="#fff" stroke-width="16"/><rect x="347" y="178" width="180" height="180" rx="22" fill="#5f70e8" stroke="#fff" stroke-width="16"/><path d="M614 161 741 380H487Z" fill="#4ed17a" stroke="#fff" stroke-width="16" stroke-linejoin="round"/>`;
-  if (/triangle/.test(value)) return `<path d="M400 103 654 401H146Z" fill="#ffd34d" stroke="#fff" stroke-width="18" stroke-linejoin="round"/>`;
+  if (/(ocean|pacific|earth|planet|globe)/.test(value))
+    return `<circle cx="400" cy="255" r="150" fill="#dff7ff"/><path d="M270 180c50-38 83 16 120 2s64-47 120-20 52 51 39 91c-22 69-97 123-176 128-79-6-135-59-146-117 3-38 8-58 43-84Z" fill="#35b7e6"/><path d="M315 183c34 11 43 43 74 38 35-5 46-41 91-29 31 8 53 24 67 48M266 266c53-25 68 20 110 13 48-8 58-41 108-27 25 7 44 18 61 37M300 328c49-22 82 13 123 4 35-8 59-36 91-13" fill="none" stroke="#fff" stroke-width="20" stroke-linecap="round"/><circle cx="454" cy="189" r="22" fill="#a6e368"/><path d="M328 262c20-31 54-36 76-15-24 8-42 33-49 58-28-6-44-21-27-43Z" fill="#a6e368"/>`;
+  if (/cheetah/.test(value))
+    return `<path d="M158 320c70-14 102-66 177-53 76 13 110-34 176-11 42 15 82 50 102 83l-33 20-54-29-18 65-50-7-24-74-102 8-48 70-50-11 29-70-82 16Z" fill="#ffbf4c"/><circle cx="559" cy="259" r="63" fill="#ffbf4c"/><path d="M546 205l24-38 23 42M597 208l38-21-13 44" fill="#ffbf4c"/><circle cx="577" cy="247" r="7" fill="#26355b"/><circle cx="614" cy="247" r="7" fill="#26355b"/><path d="M582 275q17 14 34 0" stroke="#26355b" stroke-width="8" fill="none" stroke-linecap="round"/>${Array.from({ length: 13 }, (_, index) => `<circle cx="${235 + ((index * 47) % 295)}" cy="${278 + ((index * 31) % 85)}" r="9" fill="#74453c"/>`).join("")}`;
+  if (/elephant/.test(value))
+    return `<circle cx="400" cy="260" r="143" fill="#aeb9ca"/><circle cx="279" cy="266" r="89" fill="#c8d2df"/><circle cx="521" cy="266" r="89" fill="#c8d2df"/><path d="M369 261c0 126 14 143 35 143s35-17 35-143v70c0 38 19 46 40 28" fill="none" stroke="#aeb9ca" stroke-width="43" stroke-linecap="round"/><circle cx="360" cy="237" r="10" fill="#243257"/><circle cx="440" cy="237" r="10" fill="#243257"/><path d="M374 280q26 20 52 0" stroke="#243257" stroke-width="9" fill="none" stroke-linecap="round"/>`;
+  if (/turtle/.test(value))
+    return `<ellipse cx="394" cy="277" rx="151" ry="112" fill="#45bd72"/><path d="M286 276q108-108 216 0-108 108-216 0Z" fill="#7bd75b"/><path d="M320 236l72 42-72 42M468 236l-72 42 72 42" fill="none" stroke="#42a860" stroke-width="17" stroke-linejoin="round"/><circle cx="560" cy="274" r="50" fill="#8be171"/><circle cx="574" cy="264" r="8" fill="#243257"/><path d="M573 293h15" stroke="#243257" stroke-width="8" stroke-linecap="round"/><ellipse cx="262" cy="188" rx="47" ry="24" fill="#8be171"/><ellipse cx="262" cy="358" rx="47" ry="24" fill="#8be171"/>`;
+  if (/(geometric|shapes)/.test(value))
+    return `<circle cx="253" cy="277" r="91" fill="#ffcf48" stroke="#fff" stroke-width="16"/><rect x="347" y="178" width="180" height="180" rx="22" fill="#5f70e8" stroke="#fff" stroke-width="16"/><path d="M614 161 741 380H487Z" fill="#4ed17a" stroke="#fff" stroke-width="16" stroke-linejoin="round"/>`;
+  if (/triangle/.test(value))
+    return `<path d="M400 103 654 401H146Z" fill="#ffd34d" stroke="#fff" stroke-width="18" stroke-linejoin="round"/>`;
   if (/square/.test(value)) return `<rect x="239" y="94" width="322" height="322" rx="24" fill="#5a69de" stroke="#fff" stroke-width="18"/>`;
-  if (/circle|moon/.test(value)) return `<circle cx="400" cy="255" r="154" fill="#ffd34d" stroke="#fff" stroke-width="18"/><circle cx="347" cy="203" r="24" fill="#f0ab3d" opacity=".6"/><circle cx="452" cy="302" r="32" fill="#f0ab3d" opacity=".6"/>`;
-  if (/comet/.test(value)) return `<path d="M185 360c121-20 200-90 287-218-22 128-82 223-211 276Z" fill="#fff4b0" opacity=".72"/><circle cx="514" cy="150" r="84" fill="#fff4b0"/><path d="M480 116l68 68M548 116l-68 68" stroke="#ff9c49" stroke-width="18" stroke-linecap="round"/>`;
-  if (/(leaf|plant|carbon|dioxide|gas)/.test(value)) return `<path d="M390 416c6-143 59-228 167-286-7 117-55 223-167 286Z" fill="#6fd66a"/><path d="M388 416C299 346 255 263 254 143c111 39 165 129 134 273Z" fill="#9fe779"/><path d="M398 406 306 193M398 406 520 177" stroke="#2f9867" stroke-width="16" stroke-linecap="round"/>`;
+  if (/circle|moon/.test(value))
+    return `<circle cx="400" cy="255" r="154" fill="#ffd34d" stroke="#fff" stroke-width="18"/><circle cx="347" cy="203" r="24" fill="#f0ab3d" opacity=".6"/><circle cx="452" cy="302" r="32" fill="#f0ab3d" opacity=".6"/>`;
+  if (/comet/.test(value))
+    return `<path d="M185 360c121-20 200-90 287-218-22 128-82 223-211 276Z" fill="#fff4b0" opacity=".72"/><circle cx="514" cy="150" r="84" fill="#fff4b0"/><path d="M480 116l68 68M548 116l-68 68" stroke="#ff9c49" stroke-width="18" stroke-linecap="round"/>`;
+  if (/(leaf|plant|carbon|dioxide|gas)/.test(value))
+    return `<path d="M390 416c6-143 59-228 167-286-7 117-55 223-167 286Z" fill="#6fd66a"/><path d="M388 416C299 346 255 263 254 143c111 39 165 129 134 273Z" fill="#9fe779"/><path d="M398 406 306 193M398 406 520 177" stroke="#2f9867" stroke-width="16" stroke-linecap="round"/>`;
   return `<circle cx="400" cy="255" r="160" fill="#fff" opacity=".94"/><path d="M400 156l31 63 70 10-51 50 12 70-62-33-62 33 12-70-51-50 70-10z" fill="hsl(${(hue + 35) % 360} 95% 52%)"/>`;
 }
 
-function esc(value: string): string { return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;"); }
-function escAttr(value: string): string { return esc(value); }
+function esc(value: string): string {
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+}
+function escAttr(value: string): string {
+  return esc(value);
+}
 
 let cachedHeadlineFontBase64: string | null = null;
 
@@ -609,7 +812,7 @@ function getHeadlineFontBase64(): string {
   return cachedHeadlineFontBase64;
 }
 
-function candyArcadeCss(): string {
+export function candyArcadeCss(): string {
   const fontBase64 = getHeadlineFontBase64();
   const fontSources = [
     ...(fontBase64 ? [`url("data:font/otf;base64,${fontBase64}") format("opentype")`] : []),
@@ -709,11 +912,6 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .layout-media_left_choices_right .answer-count-2.choice-tier-long span, .layout-media_left_choices_right .answer-count-3.choice-tier-long span, .layout-media_left_choices_right .choice-tier-long.answer-card span { font-size: 32px; }
 .layout-media_left_choices_right .answer-count-2.choice-tier-very_long span, .layout-media_left_choices_right .answer-count-2.choice-tier-overflow span, .layout-media_left_choices_right .answer-count-3.choice-tier-very_long span, .layout-media_left_choices_right .answer-count-3.choice-tier-overflow span, .layout-media_left_choices_right .choice-tier-very_long.answer-card span, .layout-media_left_choices_right .choice-tier-overflow.answer-card span { font-size: 26px; }
 .layout-media_left_choices_right .answer-grid.answer-count-3 { gap: 50px; height: 580px; padding-top: 18px; }
-.layout-media_left_choices_right .answer-grid.answer-count-4, .layout-media_left_choices_right .answer-grid.answer-count-5, .layout-media_left_choices_right .answer-grid.answer-count-6 { gap: 18px; height: 580px; padding-top: 16px; }
-.layout-media_left_choices_right .answer-count-4 .answer-card, .layout-media_left_choices_right .answer-count-5 .answer-card, .layout-media_left_choices_right .answer-count-6 .answer-card { height: 98px; min-height: 98px; margin-left: 64px; padding: 8px 24px 8px 32px; }
-.layout-media_left_choices_right .answer-count-4 .answer-card::before, .layout-media_left_choices_right .answer-count-5 .answer-card::before, .layout-media_left_choices_right .answer-count-6 .answer-card::before { inset: 5px 12px 5px 20px; border-width: 2.5px; }
-.layout-media_left_choices_right .answer-count-4 .answer-card > b, .layout-media_left_choices_right .answer-count-5 .answer-card > b, .layout-media_left_choices_right .answer-count-6 .answer-card > b { width: 130px; height: 130px; margin-left: -70px; font-size: 66px; border-width: 8px; }
-.layout-media_left_choices_right .answer-count-4 .answer-card span, .layout-media_left_choices_right .answer-count-5 .answer-card span, .layout-media_left_choices_right .answer-count-6 .answer-card span { font-size: 38px; }
 .layout-visual_choices_three .game-stage { grid-template-columns: 1fr; grid-template-areas: "title" "answers"; align-items: start; row-gap: 35px; }
 .layout-visual_choices_three .question-title { grid-area: title; width: 100%; max-width: 1440px; justify-self: end; margin-left: auto; }
 .layout-visual_choices_three .visual-answer-grid { grid-area: answers; width: 1560px; margin-top: 0; gap: 28px; }
@@ -721,14 +919,12 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .phase-region > .thinking-bar, .phase-region > .fact-card { position: absolute; z-index: 5; bottom: 0; left: 50%; margin-top: 0; transform: translateX(-50%); }
 .phase-region > .thinking-bar { width: min(82vw, 1540px); min-height: 84px; }
 .phase-region > .fact-card { width: min(1220px, 100%); }
-.answer-card:nth-child(4n+1), .visual-answer-card:nth-child(4n+1) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #9A3412; --choice-depth-shadow: #E09000; --choice-badge-grad: linear-gradient(180deg, #FFB800 0%, #FF6D00 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #FFDF40 0%, #FFB800 100%); --choice-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M0 16 Q 16 6 32 16 T 64 16' fill='none' stroke='%23FFFFFF' stroke-opacity='0.12' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); --choice-text-color: #78350F; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
-.answer-card:nth-child(4n+2), .visual-answer-card:nth-child(4n+2) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #881337; --choice-depth-shadow: #CC2556; --choice-badge-grad: linear-gradient(180deg, #FF4572 0%, #D80036 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #FF80A6 0%, #FF4D7E 100%); --choice-pattern: repeating-linear-gradient(-45deg, transparent, transparent 16px, rgba(255,255,255,0.09) 16px, rgba(255,255,255,0.09) 32px); --choice-text-color: #831843; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
-.answer-card:nth-child(4n+3), .visual-answer-card:nth-child(4n+3) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #034E7B; --choice-depth-shadow: #007ECC; --choice-badge-grad: linear-gradient(180deg, #2E93FF 0%, #0062E6 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #66D1FF 0%, #29B2FF 100%); --choice-pattern: radial-gradient(circle, rgba(255,255,255,0.12) 28%, transparent 29%); --choice-text-color: #0C4A6E; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
-.answer-card:nth-child(4n), .visual-answer-card:nth-child(4n) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #14532D; --choice-depth-shadow: #6BA607; --choice-badge-grad: linear-gradient(180deg, #8EE000 0%, #5BB800 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #C2F045 0%, #99DE1D 100%); --choice-pattern: repeating-linear-gradient(45deg, transparent, transparent 16px, rgba(255,255,255,0.09) 16px, rgba(255,255,255,0.09) 32px); --choice-text-color: #14532D; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
+.answer-card:nth-child(1), .visual-answer-card:nth-child(1) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #9A3412; --choice-depth-shadow: #E09000; --choice-badge-grad: linear-gradient(180deg, #FFB800 0%, #FF6D00 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #FFDF40 0%, #FFB800 100%); --choice-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M0 16 Q 16 6 32 16 T 64 16' fill='none' stroke='%23FFFFFF' stroke-opacity='0.12' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); --choice-text-color: #78350F; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
+.answer-card:nth-child(2), .visual-answer-card:nth-child(2) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #881337; --choice-depth-shadow: #CC2556; --choice-badge-grad: linear-gradient(180deg, #FF4572 0%, #D80036 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #FF80A6 0%, #FF4D7E 100%); --choice-pattern: repeating-linear-gradient(-45deg, transparent, transparent 16px, rgba(255,255,255,0.09) 16px, rgba(255,255,255,0.09) 32px); --choice-text-color: #831843; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
+.answer-card:nth-child(3), .visual-answer-card:nth-child(3) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #034E7B; --choice-depth-shadow: #007ECC; --choice-badge-grad: linear-gradient(180deg, #2E93FF 0%, #0062E6 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #66D1FF 0%, #29B2FF 100%); --choice-pattern: radial-gradient(circle, rgba(255,255,255,0.12) 28%, transparent 29%); --choice-text-color: #0C4A6E; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
 .answer-grid { position: relative; z-index: 3; display: grid; gap: 28px; width: 1540px; margin-top: 28px; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--choices-at)) both; }
 .answer-count-2 { grid-template-columns: repeat(2, 1fr); }
 .answer-count-3 { grid-template-columns: repeat(3, 1fr); }
-.answer-count-4, .answer-count-5, .answer-count-6 { grid-template-columns: repeat(2, 1fr); }
 .answer-card { position: relative; z-index: 3; display: flex; align-items: center; min-height: 122px; gap: 20px; margin-left: 76px; padding: 14px 36px 14px 40px; overflow: visible; border: 8px solid var(--choice-stroke); border-radius: 9999px; background: var(--choice-pattern), var(--choice-bg-tint); background-size: 64px 32px, 100% 100%; box-shadow: 0 16px 0 var(--choice-depth-shadow), inset 0 4px 0 rgba(255,255,255,.7), 0 18px 32px rgba(10,25,60,.28); font-size: 44px; font-weight: 900; }
 .answer-card::before { content: ""; position: absolute; inset: 6px 14px 6px 24px; border: 3px dashed rgba(255, 255, 255, 0.7); border-radius: 9999px; pointer-events: none; z-index: 3; }
 .answer-card > b, .visual-answer-label > b { position: relative; z-index: 4; display: grid; flex: 0 0 auto; place-items: center; width: 156px; height: 156px; margin-left: -86px; border: 8px solid var(--choice-badge-border); border-radius: 50%; background: var(--choice-badge-grad); color: #FFFFFF !important; box-shadow: 0 12px 0 var(--choice-stroke-shadow), 0 14px 28px rgba(10,25,60,.35), -4px 6px 14px rgba(0,0,0,0.18), inset 0 -6px 0 rgba(0,0,0,0.22), inset 0 4px 0 rgba(255,255,255,0.85); font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 80px; font-weight: 900; line-height: 1; -webkit-text-stroke: 4px var(--choice-stroke-shadow); paint-order: stroke fill; text-shadow: 0 4px 0 var(--choice-stroke-shadow), 0 2px 6px rgba(0,0,0,.35); letter-spacing: -0.5px; }
@@ -861,7 +1057,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 @keyframes correct-badge-reveal { 0% { transform: scale(1); } 55% { transform: scale(1.14); } 100% { transform: scale(1.06); } }
 @keyframes visual-correct-card-reveal { 0% { transform: translateY(0) scale(1); } 55% { transform: translateY(-12px) scale(1.06); } 100% { transform: translateY(-4px) scale(1.03); } }
 @keyframes visual-correct-border { 0% { border-color: #fff; } 55%,100% { border-color: var(--correct); } }
-@keyframes incorrect-card-settle { from { opacity: 1; transform: scale(1); filter: grayscale(0%) contrast(1) brightness(1); } to { opacity: .28; transform: scale(.92); filter: grayscale(88%) contrast(0.85) brightness(0.88); border-color: rgba(255,255,255,0.25); box-shadow: 0 2px 0 rgba(10,25,60,.08); } }
+@keyframes incorrect-card-settle { from { opacity: 1; transform: scale(1); filter: grayscale(0%) contrast(1) brightness(1); } to { opacity: .35; transform: scale(.94); filter: grayscale(78%) contrast(0.95) brightness(0.92); border-color: rgba(255,255,255,0.25); box-shadow: 0 2px 0 rgba(10,25,60,.08); } }
 @keyframes status-pop { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
 @keyframes cross-pop { 0% { transform: scale(0); } 65% { transform: scale(1.15); } 100% { transform: scale(1); } }
 @keyframes hero-reveal-push { from { transform: scale(1); } to { transform: scale(1.035); } }

@@ -28,7 +28,15 @@ const mockScene = (number: number): Scene => ({
   reconstruction: true,
   sound_cue: "",
   editorial_overlay: { kind: "none", text: "", motion: "none", placement: "lower_third", duration_seconds: null, data: [], source_ids: [] },
-  quiz: { phase: "question", question_number: number, question: "What is the capital?", choices: ["Paris", "Rome"], answer: "Paris", explanation: "Paris is capital.", image_prompt: "" },
+  quiz: {
+    phase: "question",
+    question_number: number,
+    question: "What is the capital?",
+    choices: ["Paris", "Rome", "Berlin"],
+    answer: "Paris",
+    explanation: "Paris is capital.",
+    image_prompt: "",
+  },
   audio_asset_path: null,
   audio_generated_at: null,
   audio_duration_seconds: null,
@@ -43,8 +51,16 @@ describe("Multi-Tier Image Pipeline", () => {
   beforeEach(async () => {
     temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "documentary-studio-image-"));
     await mkdir(path.join(temporaryRoot, "templates"), { recursive: true });
-    await writeFile(path.join(temporaryRoot, "templates", "example_channel_dna.md"), "# Channel DNA\n- Channel name: \n- Primary audience: \n- Market: \n- Language: \n", "utf8");
-    await writeFile(path.join(temporaryRoot, "templates", "quiz_channel_dna.md"), "# Quiz DNA\n- Channel name: \n- Primary audience: \n- Market: \n- Language: \n", "utf8");
+    await writeFile(
+      path.join(temporaryRoot, "templates", "example_channel_dna.md"),
+      "# Channel DNA\n- Channel name: \n- Primary audience: \n- Market: \n- Language: \n",
+      "utf8",
+    );
+    await writeFile(
+      path.join(temporaryRoot, "templates", "quiz_channel_dna.md"),
+      "# Quiz DNA\n- Channel name: \n- Primary audience: \n- Market: \n- Language: \n",
+      "utf8",
+    );
     await writeFile(path.join(temporaryRoot, "templates", "example_style_guide.md"), "# Style Guide\n", "utf8");
 
     repository = new RepositoryService(temporaryRoot, temporaryRoot);
@@ -75,13 +91,7 @@ describe("Multi-Tier Image Pipeline", () => {
       generated_at: nowIso(),
     });
 
-    await repository.saveTopicRun(channelId, [
-      makeCandidate(1),
-      makeCandidate(2),
-      makeCandidate(3),
-      makeCandidate(4),
-      makeCandidate(5),
-    ]);
+    await repository.saveTopicRun(channelId, [makeCandidate(1), makeCandidate(2), makeCandidate(3), makeCandidate(4), makeCandidate(5)]);
     const episode = await repository.confirmTopic(channelId, "top-1", 5);
     episodeId = episode.episode_id;
   });
@@ -104,12 +114,12 @@ describe("Multi-Tier Image Pipeline", () => {
     // Verify PNG 8-byte header: 89 50 4E 47 0D 0A 1A 0A
     expect(buffer[0]).toBe(0x89);
     expect(buffer[1]).toBe(0x50); // P
-    expect(buffer[2]).toBe(0x4E); // N
+    expect(buffer[2]).toBe(0x4e); // N
     expect(buffer[3]).toBe(0x47); // G
-    expect(buffer[4]).toBe(0x0D);
-    expect(buffer[5]).toBe(0x0A);
-    expect(buffer[6]).toBe(0x1A);
-    expect(buffer[7]).toBe(0x0A);
+    expect(buffer[4]).toBe(0x0d);
+    expect(buffer[5]).toBe(0x0a);
+    expect(buffer[6]).toBe(0x1a);
+    expect(buffer[7]).toBe(0x0a);
 
     // Verify IHDR width and height (960x540, 16:9 aspect ratio)
     const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
@@ -122,26 +132,36 @@ describe("Multi-Tier Image Pipeline", () => {
 
   it("AntigravityImageChainProvider throws IMAGE_GENERATION_FAILED by default when Tier 1 fails without Tier 2 fallback", async () => {
     const failingClient = {
-      startThread: async () => { throw new Error("Antigravity offline"); },
-      startTurn: async () => { throw new Error("Antigravity offline"); },
+      startThread: async () => {
+        throw new Error("Antigravity offline");
+      },
+      startTurn: async () => {
+        throw new Error("Antigravity offline");
+      },
       interruptTurn: async () => {},
       on: () => {},
       off: () => {},
     };
     const provider = new AntigravityImageChainProvider(repository, { channelId, episodeId, bundleNumber: 2 }, failingClient as never);
-    
+
     await expect(provider.generateReference("Neon arcade machine in the 1980s")).rejects.toThrow("Image generation failed");
   });
 
   it("AntigravityImageChainProvider cascades down to Tier 3 when allowTier3Fallback is true", async () => {
     const failingClient = {
-      startThread: async () => { throw new Error("Antigravity offline"); },
-      startTurn: async () => { throw new Error("Antigravity offline"); },
+      startThread: async () => {
+        throw new Error("Antigravity offline");
+      },
+      startTurn: async () => {
+        throw new Error("Antigravity offline");
+      },
       interruptTurn: async () => {},
       on: () => {},
       off: () => {},
     };
-    const provider = new AntigravityImageChainProvider(repository, { channelId, episodeId, bundleNumber: 2 }, failingClient as never, { allowTier3Fallback: true });
+    const provider = new AntigravityImageChainProvider(repository, { channelId, episodeId, bundleNumber: 2 }, failingClient as never, {
+      allowTier3Fallback: true,
+    });
     const result = await provider.generateReference("Neon arcade machine in the 1980s");
 
     expect(result.fallback_tier).toBe(3);
@@ -158,7 +178,9 @@ describe("Multi-Tier Image Pipeline", () => {
     const fakeBrainDir = path.join(userHome, ".gemini", "antigravity", "brain", "test-img-conv");
     await mkdir(fakeBrainDir, { recursive: true });
 
-    const fakePng = Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 3, 192, 0, 0, 2, 28, 8, 6, 0, 0, 0]);
+    const fakePng = Uint8Array.from([
+      137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 3, 192, 0, 0, 2, 28, 8, 6, 0, 0, 0,
+    ]);
     await writeFile(path.join(fakeBrainDir, "bundle_cb_01_12345.png"), fakePng);
 
     // Mock client that immediately resolves turn
@@ -170,7 +192,10 @@ describe("Multi-Tier Image Pipeline", () => {
       interruptTurn: async () => {},
       on: (event: string, handler: (payload: unknown) => void) => {
         if (event === "notification") {
-          setTimeout(() => handler({ method: "turn/completed", params: { turnId: "mock-turn", turn: { id: "mock-turn", status: "completed" } } }), 10);
+          setTimeout(
+            () => handler({ method: "turn/completed", params: { turnId: "mock-turn", turn: { id: "mock-turn", status: "completed" } } }),
+            10,
+          );
         }
       },
       off: () => {},

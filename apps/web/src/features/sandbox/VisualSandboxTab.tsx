@@ -1,16 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ArrowClockwise,
-  CheckCircle,
-  CircleNotch,
-  Eye,
-  FloppyDisk,
-  Link,
-  Palette,
-  Sparkle,
-  Trash,
-  X,
-} from "@phosphor-icons/react";
+import { ArrowClockwise, CheckCircle, CircleNotch, Eye, FloppyDisk, Link, Palette, Play, Sparkle, Trash, X } from "@phosphor-icons/react";
 import {
   ALL_QUESTION_BOX_STYLES,
   ALL_QUESTION_COUNTER_STYLES,
@@ -124,19 +113,19 @@ const SAMPLE_QUESTIONS = [
   {
     title: "Vừa phải (Tiêu chuẩn)",
     text: "Which planet in our solar system has the most prominent rings?",
-    choices: ["Jupiter", "Saturn", "Uranus", "Neptune"],
+    choices: ["Jupiter", "Saturn", "Uranus"],
     correct: 1,
   },
   {
     title: "Ngắn (Đố vui nhanh)",
     text: "What is the capital of France?",
-    choices: ["Rome", "Berlin", "Paris", "Madrid"],
+    choices: ["Rome", "Berlin", "Paris"],
     correct: 2,
   },
   {
     title: "Dài (Khoa học / Lịch sử)",
     text: "Which ancient civilization constructed the massive stone monuments known as the Great Pyramids of Giza along the Nile River?",
-    choices: ["Ancient Mesopotamia", "Ancient Egypt", "Mayan Civilization", "Indus Valley Civilization"],
+    choices: ["Ancient Mesopotamia", "Ancient Egypt", "Mayan Civilization"],
     correct: 1,
   },
 ];
@@ -173,6 +162,8 @@ export function VisualSandboxTab({
   const [previewHtml, setPreviewHtml] = useState<string>("");
   const [contrastReport, setContrastReport] = useState<{ ok: boolean; ratio?: number; message?: string } | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [lastRenderTime, setLastRenderTime] = useState<string>(() => new Date().toLocaleTimeString());
+  const [iframeKey, setIframeKey] = useState<number>(1);
 
   // Preset Management State
   const [customPresets, setCustomPresets] = useState<VisualPresetItem[]>(() => {
@@ -196,9 +187,18 @@ export function VisualSandboxTab({
 
   const updateScale = useCallback(() => {
     if (!containerRef.current) return;
-    if (zoom === "50") { setScaleFactor(0.5); return; }
-    if (zoom === "75") { setScaleFactor(0.75); return; }
-    if (zoom === "100") { setScaleFactor(1.0); return; }
+    if (zoom === "50") {
+      setScaleFactor(0.5);
+      return;
+    }
+    if (zoom === "75") {
+      setScaleFactor(0.75);
+      return;
+    }
+    if (zoom === "100") {
+      setScaleFactor(1.0);
+      return;
+    }
 
     const containerWidth = containerRef.current.clientWidth - 40;
     const containerHeight = containerRef.current.clientHeight - 40;
@@ -214,53 +214,63 @@ export function VisualSandboxTab({
     return () => window.removeEventListener("resize", updateScale);
   }, [updateScale]);
 
-  const renderPreview = useCallback(async () => {
-    setLoading(true);
-    try {
-      const input: SandboxPreviewInput = {
-        theme: theme as SandboxPreviewInput["theme"],
-        palette_id: paletteId,
-        thinking_bar_style: thinkingBarStyle,
-        question_box_style: questionBoxStyle,
-        counter_style: counterStyle,
-        phase,
-        question_text: questionText,
-        choices,
-        correct_choice_index: correctChoiceIndex,
-        question_number: questionNumber,
-        total_questions: totalQuestions,
-        mascot_action: mascotAction,
-        mascot_position: mascotPosition,
-        mascot_scale: mascotScale,
-      };
+  const renderPreview = useCallback(
+    async (manualNotice = false) => {
+      setLoading(true);
+      try {
+        const input: SandboxPreviewInput = {
+          theme: theme as SandboxPreviewInput["theme"],
+          palette_id: paletteId,
+          thinking_bar_style: thinkingBarStyle,
+          question_box_style: questionBoxStyle,
+          counter_style: counterStyle,
+          phase,
+          question_text: questionText,
+          choices,
+          correct_choice_index: correctChoiceIndex,
+          question_number: questionNumber,
+          total_questions: totalQuestions,
+          countdown_progress: 0.5,
+          mascot_action: mascotAction,
+          mascot_position: mascotPosition,
+          mascot_scale: mascotScale,
+        };
 
-      const res = await api.previewSandboxComposition(input);
-      setPreviewHtml(res.html);
-      setContrastReport(res.contrast_report);
-    } catch (err) {
-      if (onNotice) {
-        onNotice({ tone: "bad", message: err instanceof Error ? err.message : "Failed to compile preview composition" });
+        const res = await api.previewSandboxComposition(input);
+        setPreviewHtml(res.html);
+        setContrastReport(res.contrast_report);
+        const timeStr = new Date().toLocaleTimeString();
+        setLastRenderTime(timeStr);
+        setIframeKey((k) => k + 1);
+        if (manualNotice && onNotice) {
+          onNotice({ tone: "good", message: `✨ Đã re-render khung hình HyperFrames thực tế (1920x1080) lúc ${timeStr}!` });
+        }
+      } catch (err) {
+        if (onNotice) {
+          onNotice({ tone: "bad", message: err instanceof Error ? err.message : "Failed to compile preview composition" });
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  }, [
-    theme,
-    paletteId,
-    thinkingBarStyle,
-    questionBoxStyle,
-    counterStyle,
-    phase,
-    questionText,
-    choices,
-    correctChoiceIndex,
-    questionNumber,
-    totalQuestions,
-    mascotAction,
-    mascotPosition,
-    mascotScale,
-    onNotice,
-  ]);
+    },
+    [
+      theme,
+      paletteId,
+      thinkingBarStyle,
+      questionBoxStyle,
+      counterStyle,
+      phase,
+      questionText,
+      choices,
+      correctChoiceIndex,
+      questionNumber,
+      totalQuestions,
+      mascotAction,
+      mascotPosition,
+      mascotScale,
+      onNotice,
+    ],
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -269,7 +279,7 @@ export function VisualSandboxTab({
     return () => clearTimeout(timer);
   }, [renderPreview]);
 
-  const handleApplyPresetQuestion = (sample: typeof SAMPLE_QUESTIONS[number]) => {
+  const handleApplyPresetQuestion = (sample: (typeof SAMPLE_QUESTIONS)[number]) => {
     setQuestionText(sample.text);
     setChoices([...sample.choices]);
     setCorrectChoiceIndex(sample.correct);
@@ -358,12 +368,16 @@ export function VisualSandboxTab({
   };
 
   return (
-    <section className="page-wrap visual-sandbox-page" style={{ height: "calc(100vh - 64px)", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+    <section
+      className="page-wrap visual-sandbox-page"
+      style={{ height: "calc(100vh - 64px)", display: "flex", flexDirection: "column", overflow: "hidden" }}
+    >
       <div className="section-heading" style={{ marginBottom: "12px", flexShrink: 0 }}>
         <div>
           <h1>🎨 Tab Test · Visual Sandbox</h1>
           <p className="description" style={{ margin: 0 }}>
-            Kiểm thử & tùy biến từng element độc lập (Thinking Bar, Question Box, Counter Badge, Palette) được render thực tế với HyperFrames.
+            Kiểm thử & tùy biến từng element độc lập (Thinking Bar, Question Box, Counter Badge, Palette) được render thực tế với
+            HyperFrames.
           </p>
         </div>
         <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
@@ -407,8 +421,8 @@ export function VisualSandboxTab({
             type="button"
             className="primary-button"
             disabled={loading}
-            onClick={() => void renderPreview()}
-            title="Re-render lại toàn bộ element composition"
+            onClick={() => void renderPreview(true)}
+            title="Re-render lại toàn bộ element composition với khung hình thực tế"
           >
             {loading ? <CircleNotch className="spin" size={16} /> : <ArrowClockwise size={16} weight="bold" />}
             <span>Render lại</span>
@@ -433,7 +447,9 @@ export function VisualSandboxTab({
           {/* Quick Style Presets Bar */}
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-              <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              <label
+                style={{ fontSize: "12px", fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}
+              >
                 ✨ Mẫu phong cách (Style Presets)
               </label>
               <span style={{ fontSize: "11px", color: "var(--muted)" }}>{BUILT_IN_PRESETS.length + customPresets.length} presets</span>
@@ -489,7 +505,17 @@ export function VisualSandboxTab({
           <div style={{ height: "1px", background: "var(--line)" }} />
 
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "var(--muted)",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                marginBottom: "8px",
+              }}
+            >
               🎬 Giai đoạn khung hình (Phase)
             </label>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "6px", marginBottom: "6px" }}>
@@ -534,7 +560,17 @@ export function VisualSandboxTab({
           <div style={{ height: "1px", background: "var(--line)" }} />
 
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "var(--muted)",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                marginBottom: "8px",
+              }}
+            >
               🎨 1. Bảng màu nền (Theme & Palette)
             </label>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
@@ -557,8 +593,23 @@ export function VisualSandboxTab({
                       cursor: "pointer",
                     }}
                   >
-                    <div style={{ width: "100%", height: "18px", borderRadius: "6px", background: "linear-gradient(135deg, " + p.primary + ", " + p.secondary + ")" }} />
-                    <span style={{ fontSize: "10.5px", fontWeight: isSelected ? 800 : 500, color: isSelected ? "var(--accent)" : "var(--text)" }}>{p.label}</span>
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "18px",
+                        borderRadius: "6px",
+                        background: "linear-gradient(135deg, " + p.primary + ", " + p.secondary + ")",
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontSize: "10.5px",
+                        fontWeight: isSelected ? 800 : 500,
+                        color: isSelected ? "var(--accent)" : "var(--text)",
+                      }}
+                    >
+                      {p.label}
+                    </span>
                   </button>
                 );
               })}
@@ -568,7 +619,17 @@ export function VisualSandboxTab({
           <div style={{ height: "1px", background: "var(--line)" }} />
 
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "var(--muted)",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                marginBottom: "8px",
+              }}
+            >
               ⏱️ 2. Thanh thời gian (Thinking Bar)
             </label>
             <select
@@ -591,7 +652,17 @@ export function VisualSandboxTab({
           <div style={{ height: "1px", background: "var(--line)" }} />
 
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "var(--muted)",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                marginBottom: "8px",
+              }}
+            >
               ❓ 3. Hộp câu hỏi (Question Box)
             </label>
             <select
@@ -637,7 +708,17 @@ export function VisualSandboxTab({
           <div style={{ height: "1px", background: "var(--line)" }} />
 
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "var(--muted)",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                marginBottom: "8px",
+              }}
+            >
               🔢 4. Hộp đếm số câu (Counter Badge)
             </label>
             <select
@@ -687,7 +768,17 @@ export function VisualSandboxTab({
           <div style={{ height: "1px", background: "var(--line)" }} />
 
           <div>
-            <label style={{ display: "block", fontSize: "12px", fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "var(--muted)",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                marginBottom: "8px",
+              }}
+            >
               🎭 5. Nhân vật Mascot
             </label>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
@@ -751,31 +842,55 @@ export function VisualSandboxTab({
               pointerEvents: "none",
             }}
           >
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "6px 14px",
-                borderRadius: "20px",
-                background: "rgba(10, 14, 26, 0.85)",
-                backdropFilter: "blur(12px)",
-                border: "1px solid rgba(255,255,255,0.15)",
-                color: "#22E58B",
-                fontSize: "12px",
-                fontWeight: 700,
-                pointerEvents: "auto",
-              }}
-            >
-              <CheckCircle size={15} weight="fill" />
-              <span>WCAG AA Passed ({contrastReport?.ratio || 7.42}:1)</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "6px 14px",
+                  borderRadius: "20px",
+                  background: "rgba(10, 14, 26, 0.85)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  color: "#22E58B",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  pointerEvents: "auto",
+                }}
+              >
+                <CheckCircle size={15} weight="fill" />
+                <span>WCAG AA Passed ({contrastReport?.ratio || 7.42}:1)</span>
+              </div>
+
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "6px 12px",
+                  borderRadius: "20px",
+                  background: "rgba(10, 14, 26, 0.85)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  color: "#38BDF8",
+                  fontSize: "11.5px",
+                  fontWeight: 700,
+                  pointerEvents: "auto",
+                }}
+                title="Khung hình chuẩn HyperFrames Canvas 1920x1080"
+              >
+                <span>🟢 HyperFrames 1080p</span>
+                <span style={{ color: "rgba(255,255,255,0.4)" }}>•</span>
+                <span style={{ color: "var(--muted)" }}>{lastRenderTime}</span>
+              </div>
             </div>
 
             <div
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: "4px",
+                gap: "6px",
                 padding: "4px",
                 borderRadius: "12px",
                 background: "rgba(10, 14, 26, 0.85)",
@@ -784,6 +899,19 @@ export function VisualSandboxTab({
                 pointerEvents: "auto",
               }}
             >
+              <button
+                type="button"
+                className="quiet-button compact"
+                style={{ fontSize: "11px", padding: "3px 8px", color: "#38BDF8", display: "inline-flex", alignItems: "center", gap: "4px" }}
+                onClick={() => setIframeKey((k) => k + 1)}
+                title="Phát lại toàn bộ CSS animations từ đầu"
+              >
+                <Play size={12} weight="fill" />
+                <span>Replay</span>
+              </button>
+
+              <div style={{ width: "1px", height: "14px", background: "rgba(255,255,255,0.2)" }} />
+
               {(["fit", "50", "75", "100"] as const).map((z) => (
                 <button
                   key={z}
@@ -813,6 +941,7 @@ export function VisualSandboxTab({
           >
             {previewHtml ? (
               <iframe
+                key={iframeKey}
                 title="HyperFrames Sandbox Frame Preview"
                 srcDoc={previewHtml}
                 style={{
@@ -846,11 +975,7 @@ export function VisualSandboxTab({
           }}
           onClick={() => setPresetModalOpen(false)}
         >
-          <div
-            className="panel"
-            style={{ width: "420px", padding: "24px", borderRadius: "16px" }}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="panel" style={{ width: "420px", padding: "24px", borderRadius: "16px" }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
               <h3 style={{ margin: 0, fontSize: "16px" }}>💾 Lưu Style Preset mới</h3>
               <button type="button" className="icon-button" onClick={() => setPresetModalOpen(false)}>
@@ -879,12 +1004,7 @@ export function VisualSandboxTab({
               <button type="button" className="quiet-button" onClick={() => setPresetModalOpen(false)}>
                 Hủy
               </button>
-              <button
-                type="button"
-                className="primary-button"
-                disabled={!newPresetName.trim()}
-                onClick={handleSaveCustomPreset}
-              >
+              <button type="button" className="primary-button" disabled={!newPresetName.trim()} onClick={handleSaveCustomPreset}>
                 <FloppyDisk size={16} />
                 <span>Lưu Preset</span>
               </button>
@@ -907,11 +1027,7 @@ export function VisualSandboxTab({
           }}
           onClick={() => setChannelSyncOpen(false)}
         >
-          <div
-            className="panel"
-            style={{ width: "460px", padding: "24px", borderRadius: "16px" }}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="panel" style={{ width: "460px", padding: "24px", borderRadius: "16px" }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
               <h3 style={{ margin: 0, fontSize: "16px" }}>🔗 Áp dụng Style vào Kênh</h3>
               <button type="button" className="icon-button" onClick={() => setChannelSyncOpen(false)}>
@@ -952,10 +1068,18 @@ export function VisualSandboxTab({
                 marginBottom: "20px",
               }}
             >
-              <div><strong>• Palette:</strong> {PALETTES.find((p) => p.id === paletteId)?.label || paletteId}</div>
-              <div><strong>• Thinking Bar:</strong> {THINKING_BAR_STYLE_LABELS[thinkingBarStyle as Exclude<QuizThinkingBarStyle, "auto">]}</div>
-              <div><strong>• Question Box:</strong> {QUESTION_BOX_STYLE_LABELS[questionBoxStyle as Exclude<QuizQuestionBoxStyle, "auto">]}</div>
-              <div><strong>• Counter Badge:</strong> {QUESTION_COUNTER_STYLE_LABELS[counterStyle as Exclude<QuizQuestionCounterStyle, "auto">]}</div>
+              <div>
+                <strong>• Palette:</strong> {PALETTES.find((p) => p.id === paletteId)?.label || paletteId}
+              </div>
+              <div>
+                <strong>• Thinking Bar:</strong> {THINKING_BAR_STYLE_LABELS[thinkingBarStyle as Exclude<QuizThinkingBarStyle, "auto">]}
+              </div>
+              <div>
+                <strong>• Question Box:</strong> {QUESTION_BOX_STYLE_LABELS[questionBoxStyle as Exclude<QuizQuestionBoxStyle, "auto">]}
+              </div>
+              <div>
+                <strong>• Counter Badge:</strong> {QUESTION_COUNTER_STYLE_LABELS[counterStyle as Exclude<QuizQuestionCounterStyle, "auto">]}
+              </div>
             </div>
 
             <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>

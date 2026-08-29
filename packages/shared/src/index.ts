@@ -26,14 +26,7 @@ export const EpisodeStageSchema = z.enum([
 ]);
 export type EpisodeStage = z.infer<typeof EpisodeStageSchema>;
 
-export const TaskStatusSchema = z.enum([
-  "QUEUED",
-  "RUNNING",
-  "WAITING_APPROVAL",
-  "COMPLETED",
-  "FAILED",
-  "CANCELLED",
-]);
+export const TaskStatusSchema = z.enum(["QUEUED", "RUNNING", "WAITING_APPROVAL", "COMPLETED", "FAILED", "CANCELLED"]);
 export type TaskStatus = z.infer<typeof TaskStatusSchema>;
 
 export const TaskTypeSchema = z.enum([
@@ -71,37 +64,88 @@ export const QUIZ_IMAGE_STYLE_LABELS: Record<QuizImageStyle, string> = {
   plastic_toy: "3D Glossy Vinyl Toy",
 };
 
-export const MascotActionTypeSchema = z.enum([
-  "idle",
-  "wave",
-  "thinking",
-  "point",
-  "celebrate",
-  "oops",
-  "outro",
-]);
+export const MascotActionTypeSchema = z.enum(["idle", "wave", "thinking", "point", "celebrate", "oops", "outro"]);
 export type MascotActionType = z.infer<typeof MascotActionTypeSchema>;
 
-export const ALL_MASCOT_ACTIONS: MascotActionType[] = [
-  "idle",
-  "wave",
-  "thinking",
-  "point",
-  "celebrate",
-  "oops",
-  "outro",
-];
+export const ALL_MASCOT_ACTIONS: MascotActionType[] = ["idle", "wave", "thinking", "point", "celebrate", "oops", "outro"];
 
 export type MascotMotionPreset = "breathe" | "sway" | "jump" | "shake" | "wave" | "point" | "none";
 
-export const MASCOT_ACTION_META: Record<MascotActionType, { label: string; description: string; defaultFps: number; defaultFrames: number; icon: string; usage: string; motionPreset: MascotMotionPreset }> = {
-  idle: { label: "Idle / Listening (Breathing Pose)", description: "Natural subtle breathing and blinking pose while questions are read", defaultFps: 6, defaultFrames: 1, icon: "🧘", usage: "During question reading and transitions", motionPreset: "breathe" },
-  wave: { label: "Wave Hello (Intro Greeting)", description: "Playful welcoming wave gesture at opening", defaultFps: 8, defaultFrames: 1, icon: "👋", usage: "Episode intro opening", motionPreset: "wave" },
-  thinking: { label: "Thinking (Question & Countdown)", description: "Chin-resting, pondering or companion pose while question is presented and timer counts down", defaultFps: 8, defaultFrames: 1, icon: "🤔", usage: "Question presentation and countdown phase", motionPreset: "sway" },
-  point: { label: "Point Board (Explanation Highlight)", description: "Pointing hand or pointer stick at question / explanation card", defaultFps: 8, defaultFrames: 1, icon: "👉", usage: "Answer explanation & Fact Card", motionPreset: "point" },
-  celebrate: { label: "Celebrate (Reveal & Fact Reading)", description: "Jumping with joy, raised hands or celebratory pose during reveal and fun fact", defaultFps: 10, defaultFrames: 1, icon: "🎉", usage: "Answer reveal and Fact reading phase", motionPreset: "jump" },
-  oops: { label: "Oops / Confused (Time Out)", description: "Scratching head or shrugging with playful comical reaction", defaultFps: 8, defaultFrames: 1, icon: "😅", usage: "Time out / Wrong answer", motionPreset: "shake" },
-  outro: { label: "Wave Bye & CTA (Ending)", description: "Waving goodbye and pointing to Like, Subscribe, Comment", defaultFps: 8, defaultFrames: 1, icon: "🌟", usage: "Episode outro ending", motionPreset: "wave" },
+export const MASCOT_ACTION_META: Record<
+  MascotActionType,
+  {
+    label: string;
+    description: string;
+    defaultFps: number;
+    defaultFrames: number;
+    icon: string;
+    usage: string;
+    motionPreset: MascotMotionPreset;
+  }
+> = {
+  idle: {
+    label: "Idle / Listening (Breathing Pose)",
+    description: "Natural subtle breathing and blinking pose while questions are read",
+    defaultFps: 6,
+    defaultFrames: 1,
+    icon: "🧘",
+    usage: "During question reading and transitions",
+    motionPreset: "breathe",
+  },
+  wave: {
+    label: "Wave Hello (Intro Greeting)",
+    description: "Playful welcoming wave gesture at opening",
+    defaultFps: 8,
+    defaultFrames: 1,
+    icon: "👋",
+    usage: "Episode intro opening",
+    motionPreset: "wave",
+  },
+  thinking: {
+    label: "Thinking (Question & Countdown)",
+    description: "Chin-resting, pondering or companion pose while question is presented and timer counts down",
+    defaultFps: 8,
+    defaultFrames: 1,
+    icon: "🤔",
+    usage: "Question presentation and countdown phase",
+    motionPreset: "sway",
+  },
+  point: {
+    label: "Point Board (Explanation Highlight)",
+    description: "Pointing hand or pointer stick at question / explanation card",
+    defaultFps: 8,
+    defaultFrames: 1,
+    icon: "👉",
+    usage: "Answer explanation & Fact Card",
+    motionPreset: "point",
+  },
+  celebrate: {
+    label: "Celebrate (Reveal & Fact Reading)",
+    description: "Jumping with joy, raised hands or celebratory pose during reveal and fun fact",
+    defaultFps: 10,
+    defaultFrames: 1,
+    icon: "🎉",
+    usage: "Answer reveal and Fact reading phase",
+    motionPreset: "jump",
+  },
+  oops: {
+    label: "Oops / Confused (Time Out)",
+    description: "Scratching head or shrugging with playful comical reaction",
+    defaultFps: 8,
+    defaultFrames: 1,
+    icon: "😅",
+    usage: "Time out / Wrong answer",
+    motionPreset: "shake",
+  },
+  outro: {
+    label: "Wave Bye & CTA (Ending)",
+    description: "Waving goodbye and pointing to Like, Subscribe, Comment",
+    defaultFps: 8,
+    defaultFrames: 1,
+    icon: "🌟",
+    usage: "Episode outro ending",
+    motionPreset: "wave",
+  },
 };
 
 export const MascotSpriteActionSchema = z.object({
@@ -250,25 +294,196 @@ export interface TargetCountryOption {
 }
 
 export const TARGET_COUNTRY_OPTIONS: TargetCountryOption[] = [
-  { rank: 1, code: "AU", name: "Úc (Australia)", nameVi: "Úc", nameEn: "Australia", flag: "🇦🇺", defaultLanguage: "English", languageNameVi: "Tiếng Anh" },
-  { rank: 2, code: "US", name: "Hoa Kỳ (USA)", nameVi: "Hoa Kỳ", nameEn: "United States", flag: "🇺🇸", defaultLanguage: "English", languageNameVi: "Tiếng Anh" },
-  { rank: 3, code: "CA", name: "Canada", nameVi: "Canada", nameEn: "Canada", flag: "🇨🇦", defaultLanguage: "English", languageNameVi: "Tiếng Anh" },
-  { rank: 4, code: "NZ", name: "New Zealand", nameVi: "New Zealand", nameEn: "New Zealand", flag: "🇳🇿", defaultLanguage: "English", languageNameVi: "Tiếng Anh" },
-  { rank: 5, code: "CH", name: "Thụy Sĩ (Switzerland)", nameVi: "Thụy Sĩ", nameEn: "Switzerland", flag: "🇨🇭", defaultLanguage: "German", languageNameVi: "Tiếng Đức" },
-  { rank: 6, code: "GB", name: "Vương quốc Anh (UK)", nameVi: "Vương quốc Anh", nameEn: "United Kingdom", flag: "🇬🇧", defaultLanguage: "English", languageNameVi: "Tiếng Anh" },
-  { rank: 7, code: "NO", name: "Na Uy (Norway)", nameVi: "Na Uy", nameEn: "Norway", flag: "🇳🇴", defaultLanguage: "Norwegian", languageNameVi: "Tiếng Na Uy" },
-  { rank: 8, code: "DE", name: "Đức (Germany)", nameVi: "Đức", nameEn: "Germany", flag: "🇩🇪", defaultLanguage: "German", languageNameVi: "Tiếng Đức" },
-  { rank: 9, code: "IE", name: "Ireland", nameVi: "Ireland", nameEn: "Ireland", flag: "🇮🇪", defaultLanguage: "English", languageNameVi: "Tiếng Anh" },
-  { rank: 10, code: "NL", name: "Hà Lan (Netherlands)", nameVi: "Hà Lan", nameEn: "Netherlands", flag: "🇳🇱", defaultLanguage: "Dutch", languageNameVi: "Tiếng Hà Lan" },
-  { rank: 11, code: "DK", name: "Đan Mạch (Denmark)", nameVi: "Đan Mạch", nameEn: "Denmark", flag: "🇩🇰", defaultLanguage: "Danish", languageNameVi: "Tiếng Đan Mạch" },
-  { rank: 12, code: "SE", name: "Thụy Điển (Sweden)", nameVi: "Thụy Điển", nameEn: "Sweden", flag: "🇸🇪", defaultLanguage: "Swedish", languageNameVi: "Tiếng Thụy Điển" },
-  { rank: 13, code: "AT", name: "Áo (Austria)", nameVi: "Áo", nameEn: "Austria", flag: "🇦🇹", defaultLanguage: "German", languageNameVi: "Tiếng Đức" },
-  { rank: 14, code: "FI", name: "Phần Lan (Finland)", nameVi: "Phần Lan", nameEn: "Finland", flag: "🇫🇮", defaultLanguage: "Finnish", languageNameVi: "Tiếng Phần Lan" },
-  { rank: 15, code: "BE", name: "Bỉ (Belgium)", nameVi: "Bỉ", nameEn: "Belgium", flag: "🇧🇪", defaultLanguage: "Dutch", languageNameVi: "Tiếng Hà Lan" },
-  { rank: 16, code: "FR", name: "Pháp (France)", nameVi: "Pháp", nameEn: "France", flag: "🇫🇷", defaultLanguage: "French", languageNameVi: "Tiếng Pháp" },
-  { rank: 17, code: "SG", name: "Singapore", nameVi: "Singapore", nameEn: "Singapore", flag: "🇸🇬", defaultLanguage: "English", languageNameVi: "Tiếng Anh" },
-  { rank: 18, code: "KR", name: "Hàn Quốc (South Korea)", nameVi: "Hàn Quốc", nameEn: "South Korea", flag: "🇰🇷", defaultLanguage: "Korean", languageNameVi: "Tiếng Hàn" },
-  { rank: 19, code: "JP", name: "Nhật Bản (Japan)", nameVi: "Nhật Bản", nameEn: "Japan", flag: "🇯🇵", defaultLanguage: "Japanese", languageNameVi: "Tiếng Nhật" },
+  {
+    rank: 1,
+    code: "AU",
+    name: "Úc (Australia)",
+    nameVi: "Úc",
+    nameEn: "Australia",
+    flag: "🇦🇺",
+    defaultLanguage: "English",
+    languageNameVi: "Tiếng Anh",
+  },
+  {
+    rank: 2,
+    code: "US",
+    name: "Hoa Kỳ (USA)",
+    nameVi: "Hoa Kỳ",
+    nameEn: "United States",
+    flag: "🇺🇸",
+    defaultLanguage: "English",
+    languageNameVi: "Tiếng Anh",
+  },
+  {
+    rank: 3,
+    code: "CA",
+    name: "Canada",
+    nameVi: "Canada",
+    nameEn: "Canada",
+    flag: "🇨🇦",
+    defaultLanguage: "English",
+    languageNameVi: "Tiếng Anh",
+  },
+  {
+    rank: 4,
+    code: "NZ",
+    name: "New Zealand",
+    nameVi: "New Zealand",
+    nameEn: "New Zealand",
+    flag: "🇳🇿",
+    defaultLanguage: "English",
+    languageNameVi: "Tiếng Anh",
+  },
+  {
+    rank: 5,
+    code: "CH",
+    name: "Thụy Sĩ (Switzerland)",
+    nameVi: "Thụy Sĩ",
+    nameEn: "Switzerland",
+    flag: "🇨🇭",
+    defaultLanguage: "German",
+    languageNameVi: "Tiếng Đức",
+  },
+  {
+    rank: 6,
+    code: "GB",
+    name: "Vương quốc Anh (UK)",
+    nameVi: "Vương quốc Anh",
+    nameEn: "United Kingdom",
+    flag: "🇬🇧",
+    defaultLanguage: "English",
+    languageNameVi: "Tiếng Anh",
+  },
+  {
+    rank: 7,
+    code: "NO",
+    name: "Na Uy (Norway)",
+    nameVi: "Na Uy",
+    nameEn: "Norway",
+    flag: "🇳🇴",
+    defaultLanguage: "Norwegian",
+    languageNameVi: "Tiếng Na Uy",
+  },
+  {
+    rank: 8,
+    code: "DE",
+    name: "Đức (Germany)",
+    nameVi: "Đức",
+    nameEn: "Germany",
+    flag: "🇩🇪",
+    defaultLanguage: "German",
+    languageNameVi: "Tiếng Đức",
+  },
+  {
+    rank: 9,
+    code: "IE",
+    name: "Ireland",
+    nameVi: "Ireland",
+    nameEn: "Ireland",
+    flag: "🇮🇪",
+    defaultLanguage: "English",
+    languageNameVi: "Tiếng Anh",
+  },
+  {
+    rank: 10,
+    code: "NL",
+    name: "Hà Lan (Netherlands)",
+    nameVi: "Hà Lan",
+    nameEn: "Netherlands",
+    flag: "🇳🇱",
+    defaultLanguage: "Dutch",
+    languageNameVi: "Tiếng Hà Lan",
+  },
+  {
+    rank: 11,
+    code: "DK",
+    name: "Đan Mạch (Denmark)",
+    nameVi: "Đan Mạch",
+    nameEn: "Denmark",
+    flag: "🇩🇰",
+    defaultLanguage: "Danish",
+    languageNameVi: "Tiếng Đan Mạch",
+  },
+  {
+    rank: 12,
+    code: "SE",
+    name: "Thụy Điển (Sweden)",
+    nameVi: "Thụy Điển",
+    nameEn: "Sweden",
+    flag: "🇸🇪",
+    defaultLanguage: "Swedish",
+    languageNameVi: "Tiếng Thụy Điển",
+  },
+  {
+    rank: 13,
+    code: "AT",
+    name: "Áo (Austria)",
+    nameVi: "Áo",
+    nameEn: "Austria",
+    flag: "🇦🇹",
+    defaultLanguage: "German",
+    languageNameVi: "Tiếng Đức",
+  },
+  {
+    rank: 14,
+    code: "FI",
+    name: "Phần Lan (Finland)",
+    nameVi: "Phần Lan",
+    nameEn: "Finland",
+    flag: "🇫🇮",
+    defaultLanguage: "Finnish",
+    languageNameVi: "Tiếng Phần Lan",
+  },
+  {
+    rank: 15,
+    code: "BE",
+    name: "Bỉ (Belgium)",
+    nameVi: "Bỉ",
+    nameEn: "Belgium",
+    flag: "🇧🇪",
+    defaultLanguage: "Dutch",
+    languageNameVi: "Tiếng Hà Lan",
+  },
+  {
+    rank: 16,
+    code: "FR",
+    name: "Pháp (France)",
+    nameVi: "Pháp",
+    nameEn: "France",
+    flag: "🇫🇷",
+    defaultLanguage: "French",
+    languageNameVi: "Tiếng Pháp",
+  },
+  {
+    rank: 17,
+    code: "SG",
+    name: "Singapore",
+    nameVi: "Singapore",
+    nameEn: "Singapore",
+    flag: "🇸🇬",
+    defaultLanguage: "English",
+    languageNameVi: "Tiếng Anh",
+  },
+  {
+    rank: 18,
+    code: "KR",
+    name: "Hàn Quốc (South Korea)",
+    nameVi: "Hàn Quốc",
+    nameEn: "South Korea",
+    flag: "🇰🇷",
+    defaultLanguage: "Korean",
+    languageNameVi: "Tiếng Hàn",
+  },
+  {
+    rank: 19,
+    code: "JP",
+    name: "Nhật Bản (Japan)",
+    nameVi: "Nhật Bản",
+    nameEn: "Japan",
+    flag: "🇯🇵",
+    defaultLanguage: "Japanese",
+    languageNameVi: "Tiếng Nhật",
+  },
   { rank: 20, code: "AE", name: "UAE", nameVi: "UAE", nameEn: "UAE", flag: "🇦🇪", defaultLanguage: "English", languageNameVi: "Tiếng Anh" },
 ];
 
@@ -280,7 +495,7 @@ export function getCountryOption(countryCodeOrName?: string | null): TargetCount
       c.code.toUpperCase() === normalized ||
       c.name.toUpperCase() === normalized ||
       c.nameEn.toUpperCase() === normalized ||
-      c.nameVi.toUpperCase() === normalized
+      c.nameVi.toUpperCase() === normalized,
   );
 }
 
@@ -349,7 +564,7 @@ export function getLanguageDisplay(lang?: string | null): string {
   const lower = normalized.toLowerCase();
 
   const found = TARGET_LANGUAGE_OPTIONS.find(
-    (l) => l.code.toLowerCase() === lower || l.name.toLowerCase() === lower || l.nativeName.toLowerCase() === lower
+    (l) => l.code.toLowerCase() === lower || l.name.toLowerCase() === lower || l.nativeName.toLowerCase() === lower,
   );
   if (found) return found.name;
   return normalized;
@@ -396,13 +611,7 @@ export const THINKING_BAR_STYLE_DESCRIPTIONS: Record<Exclude<QuizThinkingBarStyl
   minimal_glow: "Ultra-clean modern frosted-glass pill with smooth running neon accent line and elegant typography.",
 };
 
-export const QuizQuestionCounterStyleSchema = z.enum([
-  "auto",
-  "hanging_woodsign",
-  "neon_badge",
-  "floating_balloon",
-  "golden_shield",
-]);
+export const QuizQuestionCounterStyleSchema = z.enum(["auto", "hanging_woodsign", "neon_badge", "floating_balloon", "golden_shield"]);
 export type QuizQuestionCounterStyle = z.infer<typeof QuizQuestionCounterStyleSchema>;
 
 export const ALL_QUESTION_COUNTER_STYLES: QuizQuestionCounterStyle[] = [
@@ -426,21 +635,10 @@ export const QUESTION_COUNTER_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionCou
   golden_shield: "Arcade metallic gold shield with glistening highlight.",
 };
 
-export const QuizQuestionBoxStyleSchema = z.enum([
-  "auto",
-  "candy_pop",
-  "comic_bubble",
-  "glass_morphism",
-  "parchment_scroll",
-]);
+export const QuizQuestionBoxStyleSchema = z.enum(["auto", "candy_pop", "comic_bubble", "glass_morphism", "parchment_scroll"]);
 export type QuizQuestionBoxStyle = z.infer<typeof QuizQuestionBoxStyleSchema>;
 
-export const ALL_QUESTION_BOX_STYLES: QuizQuestionBoxStyle[] = [
-  "candy_pop",
-  "comic_bubble",
-  "glass_morphism",
-  "parchment_scroll",
-];
+export const ALL_QUESTION_BOX_STYLES: QuizQuestionBoxStyle[] = ["candy_pop", "comic_bubble", "glass_morphism", "parchment_scroll"];
 
 export const QUESTION_BOX_STYLE_LABELS: Record<Exclude<QuizQuestionBoxStyle, "auto">, string> = {
   candy_pop: "Candy Pop Card",
@@ -456,24 +654,34 @@ export const QUESTION_BOX_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionBoxStyl
   parchment_scroll: "Classic rolled parchment banner with ancient adventurous aesthetics.",
 };
 
-export const SandboxPreviewInputSchema = z.object({
-  theme: QuizVisualThemeSchema.optional().default("candy_arcade"),
-  palette_id: z.string().optional().default("lime"),
-  thinking_bar_style: QuizThinkingBarStyleSchema.optional().default("star_slider"),
-  question_box_style: QuizQuestionBoxStyleSchema.optional().default("candy_pop"),
-  counter_style: QuizQuestionCounterStyleSchema.optional().default("hanging_woodsign"),
-  phase: z.enum(["question", "choices", "thinking", "reveal", "explain"]).optional().default("thinking"),
-  question_text: z.string().optional().default("Which planet in our solar system has the most prominent rings?"),
-  choices: z.array(z.string()).optional().default(["Jupiter", "Saturn", "Uranus", "Neptune"]),
-  correct_choice_index: z.number().int().min(0).max(3).optional().default(1),
-  question_number: z.number().int().min(1).optional().default(1),
-  total_questions: z.number().int().min(1).optional().default(10),
-  countdown_progress: z.number().min(0).max(1).optional().default(0.5), // 0 to 1
-  mascot_id: z.string().nullable().optional(),
-  mascot_action: MascotActionTypeSchema.optional().default("thinking"),
-  mascot_position: z.enum(["bottom_left", "bottom_right"]).optional().default("bottom_left"),
-  mascot_scale: z.number().optional().default(1.0),
-});
+export const SandboxPreviewInputSchema = z
+  .object({
+    theme: QuizVisualThemeSchema.optional().default("candy_arcade"),
+    palette_id: z.string().optional().default("lime"),
+    thinking_bar_style: QuizThinkingBarStyleSchema.optional().default("star_slider"),
+    question_box_style: QuizQuestionBoxStyleSchema.optional().default("candy_pop"),
+    counter_style: QuizQuestionCounterStyleSchema.optional().default("hanging_woodsign"),
+    phase: z.enum(["question", "choices", "thinking", "reveal", "explain"]).optional().default("thinking"),
+    question_text: z.string().optional().default("Which planet in our solar system has the most prominent rings?"),
+    choices: z.array(z.string().trim().min(1)).length(3).optional().default(["Jupiter", "Saturn", "Uranus"]),
+    correct_choice_index: z.number().int().min(0).max(2).optional().default(1),
+    question_number: z.number().int().min(1).optional().default(1),
+    total_questions: z.number().int().min(1).optional().default(10),
+    countdown_progress: z.number().min(0).max(1).optional().default(0.5), // 0 to 1
+    mascot_id: z.string().nullable().optional(),
+    mascot_action: MascotActionTypeSchema.optional().default("thinking"),
+    mascot_position: z.enum(["bottom_left", "bottom_right"]).optional().default("bottom_left"),
+    mascot_scale: z.number().optional().default(1.0),
+  })
+  .superRefine((input, ctx) => {
+    if (input.correct_choice_index >= input.choices.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["correct_choice_index"],
+        message: "Correct choice must reference one of the three visible choices",
+      });
+    }
+  });
 export type SandboxPreviewInput = z.infer<typeof SandboxPreviewInputSchema>;
 
 export const SandboxPreviewResponseSchema = z.object({
@@ -569,7 +777,13 @@ export type QuizAgeBand = z.infer<typeof QuizAgeBandSchema>;
 // Keep this shared so topic selection and episode creation make the same promise.
 export const QUIZ_SECONDS_PER_QUESTION = 33;
 export const QUIZ_MIN_CHOICES_PER_QUESTION = 2;
+export const QUIZ_STANDARD_CHOICES_PER_QUESTION = 3;
+export const QUIZ_TRUE_FALSE_CHOICES_PER_QUESTION = 2;
 export const QUIZ_MAX_CHOICES_PER_QUESTION = 3;
+
+export function quizChoiceCountForFormat(format: QuizQuestionFormat): number {
+  return format === "true_false" ? QUIZ_TRUE_FALSE_CHOICES_PER_QUESTION : QUIZ_STANDARD_CHOICES_PER_QUESTION;
+}
 
 export const QuizChoiceSchema = z.object({
   id: z.string().regex(/^[a-z][a-z0-9_-]{0,31}$/),
@@ -584,51 +798,83 @@ export const QuizQuestionValidationSchema = z.object({
 });
 export type QuizQuestionValidation = z.infer<typeof QuizQuestionValidationSchema>;
 
-export const QuizQuestionSchema = z.object({
-  id: z.string().min(1).max(80),
-  number: z.number().int().positive(),
-  format: QuizQuestionFormatSchema,
-  difficulty: z.number().int().min(1).max(5),
-  question: z.string().trim().min(1).max(320),
-  choices: QuizChoiceSchema.array().min(QUIZ_MIN_CHOICES_PER_QUESTION).max(QUIZ_MAX_CHOICES_PER_QUESTION),
-  correct_choice_id: z.string().min(1),
-  explanation: z.string().trim().min(1).max(600),
-  fun_fact: z.string().trim().max(600).default(""),
-  source_ids: z.string().min(1).array().default([]),
-  visual_opportunity: z.string().trim().max(1000).default(""),
-  validation: QuizQuestionValidationSchema.default({}),
-}).superRefine((question, ctx) => {
-  const choiceIds = new Set<string>();
-  const choiceTexts = new Set<string>();
-  for (const choice of question.choices) {
-    if (choiceIds.has(choice.id)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["choices"], message: `Choice ID ${choice.id} is duplicated` });
-    choiceIds.add(choice.id);
-    const normalizedText = choice.text.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase();
-    if (choiceTexts.has(normalizedText)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["choices"], message: "Visible choices must be unique after normalization" });
-    choiceTexts.add(normalizedText);
-  }
-  if (!choiceIds.has(question.correct_choice_id)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["correct_choice_id"], message: "Canonical answer must reference a visible choice" });
-  if (question.format === "true_false" && question.choices.length !== 2) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["choices"], message: "True or false questions require exactly two choices" });
-});
+export const QuizQuestionSchema = z
+  .object({
+    id: z.string().min(1).max(80),
+    number: z.number().int().positive(),
+    format: QuizQuestionFormatSchema,
+    difficulty: z.number().int().min(1).max(5),
+    question: z.string().trim().min(1).max(320),
+    choices: QuizChoiceSchema.array().min(QUIZ_MIN_CHOICES_PER_QUESTION).max(QUIZ_MAX_CHOICES_PER_QUESTION),
+    correct_choice_id: z.string().min(1),
+    explanation: z.string().trim().min(1).max(600),
+    fun_fact: z.string().trim().max(600).default(""),
+    source_ids: z.string().min(1).array().default([]),
+    visual_opportunity: z.string().trim().max(1000).default(""),
+    validation: QuizQuestionValidationSchema.default({}),
+  })
+  .superRefine((question, ctx) => {
+    const choiceIds = new Set<string>();
+    const choiceTexts = new Set<string>();
+    for (const choice of question.choices) {
+      if (choiceIds.has(choice.id))
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["choices"], message: `Choice ID ${choice.id} is duplicated` });
+      choiceIds.add(choice.id);
+      const normalizedText = choice.text.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase();
+      if (choiceTexts.has(normalizedText))
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["choices"], message: "Visible choices must be unique after normalization" });
+      choiceTexts.add(normalizedText);
+    }
+    if (!choiceIds.has(question.correct_choice_id))
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["correct_choice_id"],
+        message: "Canonical answer must reference a visible choice",
+      });
+    const requiredChoiceCount = quizChoiceCountForFormat(question.format);
+    if (question.choices.length !== requiredChoiceCount) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["choices"],
+        message:
+          question.format === "true_false"
+            ? "True or false questions require exactly two choices"
+            : "Quiz questions require exactly three choices: A, B, and C",
+      });
+    }
+  });
 export type QuizQuestion = z.infer<typeof QuizQuestionSchema>;
 
-export const QuizV2Schema = z.object({
-  schema_version: z.literal(2),
-  episode_id: z.string().min(1),
-  age_band: QuizAgeBandSchema,
-  language: z.string().trim().min(1).max(80),
-  questions: QuizQuestionSchema.array().min(1).max(QUIZ_MAX_QUESTION_COUNT),
-}).superRefine((quiz, ctx) => {
-  const ids = new Set<string>();
-  const numbers = new Set<number>();
-  quiz.questions.forEach((question, index) => {
-    if (ids.has(question.id)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["questions", index, "id"], message: `Question ID ${question.id} is duplicated` });
-    ids.add(question.id);
-    if (numbers.has(question.number)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["questions", index, "number"], message: `Question number ${question.number} is duplicated` });
-    numbers.add(question.number);
-    if (question.number !== index + 1) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["questions", index, "number"], message: "Question numbers must be sequential" });
+export const QuizV2Schema = z
+  .object({
+    schema_version: z.literal(2),
+    episode_id: z.string().min(1),
+    age_band: QuizAgeBandSchema,
+    language: z.string().trim().min(1).max(80),
+    questions: QuizQuestionSchema.array().min(1).max(QUIZ_MAX_QUESTION_COUNT),
+  })
+  .superRefine((quiz, ctx) => {
+    const ids = new Set<string>();
+    const numbers = new Set<number>();
+    quiz.questions.forEach((question, index) => {
+      if (ids.has(question.id))
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["questions", index, "id"],
+          message: `Question ID ${question.id} is duplicated`,
+        });
+      ids.add(question.id);
+      if (numbers.has(question.number))
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["questions", index, "number"],
+          message: `Question number ${question.number} is duplicated`,
+        });
+      numbers.add(question.number);
+      if (question.number !== index + 1)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["questions", index, "number"], message: "Question numbers must be sequential" });
+    });
   });
-});
 export type QuizV2 = z.infer<typeof QuizV2Schema>;
 
 export const DirectorArchetypeSchema = z.enum([
@@ -671,53 +917,97 @@ export const QuizMotionIdSchema = z.enum([
 export type QuizMotionId = z.infer<typeof QuizMotionIdSchema>;
 export const QuizTransitionIdSchema = z.enum(["auto", "bubble_splash", "brush_wave", "lightning_brush"]);
 export type QuizTransitionId = z.infer<typeof QuizTransitionIdSchema>;
-export const DirectorBeatIntentSchema = z.enum(["question_enter", "choice_reveal", "thinking", "countdown", "answer_reveal", "explanation", "fun_fact", "celebrate", "transition"]);
-export const DirectorAssetIntentSchema = z.enum(["question_illustration", "choice_illustration", "answer_reveal", "background", "mascot_pose"]);
+export const DirectorBeatIntentSchema = z.enum([
+  "question_enter",
+  "choice_reveal",
+  "thinking",
+  "countdown",
+  "answer_reveal",
+  "explanation",
+  "fun_fact",
+  "celebrate",
+  "transition",
+]);
+export const DirectorAssetIntentSchema = z.enum([
+  "question_illustration",
+  "choice_illustration",
+  "answer_reveal",
+  "background",
+  "mascot_pose",
+]);
 export const MascotStateSchema = z.enum(["idle", "wave", "curious", "thinking", "point", "surprised", "celebrate", "encourage"]);
-export const SfxIntentSchema = z.enum(["ui_pop", "ui_soft", "countdown_tick", "countdown_final", "correct_small", "correct_medium", "correct_big", "transition_soft", "transition_fast", "score_gain", "streak"]);
+export const SfxIntentSchema = z.enum([
+  "ui_pop",
+  "ui_soft",
+  "countdown_tick",
+  "countdown_final",
+  "correct_small",
+  "correct_medium",
+  "correct_big",
+  "transition_soft",
+  "transition_fast",
+  "score_gain",
+  "streak",
+]);
 export type SfxIntent = z.infer<typeof SfxIntentSchema>;
 export const TransitionIntentSchema = z.enum(["cut", "slide", "wipe", "zoom"]);
 export const RewardIntensitySchema = z.enum(["small", "medium", "big"]);
 
-export const DirectorBeatSchema = z.object({
-  question_id: z.string().min(1),
-  archetype: DirectorArchetypeSchema,
-  energy: DirectorEnergySchema,
-  visual_density: DirectorVisualDensitySchema,
-  palette_id: QuizPaletteIdSchema.default("auto"),
-  layout_id: QuizLayoutIdSchema.default("auto"),
-  motion_id: QuizMotionIdSchema.default("auto"),
-  transition_id: QuizTransitionIdSchema.default("auto"),
-  thinking_bar_style: QuizThinkingBarStyleSchema.default("auto"),
-  question_counter_style: QuizQuestionCounterStyleSchema.default("auto"),
-  question_box_style: QuizQuestionBoxStyleSchema.default("auto"),
-  thinking_seconds: z.number().positive().max(30),
-  beat_intents: DirectorBeatIntentSchema.array().min(1),
-  asset_intents: DirectorAssetIntentSchema.array().default([]),
-  mascot_state: MascotStateSchema.nullable().default(null),
-  sfx_intents: SfxIntentSchema.array().default([]),
-  transition_intent: TransitionIntentSchema,
-  reward_intensity: RewardIntensitySchema,
-}).strict();
+export const DirectorBeatSchema = z
+  .object({
+    question_id: z.string().min(1),
+    archetype: DirectorArchetypeSchema,
+    energy: DirectorEnergySchema,
+    visual_density: DirectorVisualDensitySchema,
+    palette_id: QuizPaletteIdSchema.default("auto"),
+    layout_id: QuizLayoutIdSchema.default("auto"),
+    motion_id: QuizMotionIdSchema.default("auto"),
+    transition_id: QuizTransitionIdSchema.default("auto"),
+    thinking_bar_style: QuizThinkingBarStyleSchema.default("auto"),
+    question_counter_style: QuizQuestionCounterStyleSchema.default("auto"),
+    question_box_style: QuizQuestionBoxStyleSchema.default("auto"),
+    thinking_seconds: z.number().positive().max(30),
+    beat_intents: DirectorBeatIntentSchema.array().min(1),
+    asset_intents: DirectorAssetIntentSchema.array().default([]),
+    mascot_state: MascotStateSchema.nullable().default(null),
+    sfx_intents: SfxIntentSchema.array().default([]),
+    transition_intent: TransitionIntentSchema,
+    reward_intensity: RewardIntensitySchema,
+  })
+  .strict();
 export type DirectorBeat = z.infer<typeof DirectorBeatSchema>;
 
-export const DirectorPlanSchema = z.object({
-  schema_version: z.literal(2),
-  episode_id: z.string().min(1),
-  archetype_family: z.string().min(1).max(80),
-  beats: DirectorBeatSchema.array().min(1).max(QUIZ_MAX_QUESTION_COUNT),
-  midpoint_question_id: z.string().nullable().default(null),
-  final_challenge_question_id: z.string().nullable().default(null),
-}).superRefine((plan, ctx) => {
-  const seen = new Set<string>();
-  plan.beats.forEach((beat, index) => {
-    if (seen.has(beat.question_id)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["beats", index, "question_id"], message: "Each question may have only one director beat" });
-    seen.add(beat.question_id);
+export const DirectorPlanSchema = z
+  .object({
+    schema_version: z.literal(2),
+    episode_id: z.string().min(1),
+    archetype_family: z.string().min(1).max(80),
+    beats: DirectorBeatSchema.array().min(1).max(QUIZ_MAX_QUESTION_COUNT),
+    midpoint_question_id: z.string().nullable().default(null),
+    final_challenge_question_id: z.string().nullable().default(null),
+  })
+  .superRefine((plan, ctx) => {
+    const seen = new Set<string>();
+    plan.beats.forEach((beat, index) => {
+      if (seen.has(beat.question_id))
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["beats", index, "question_id"],
+          message: "Each question may have only one director beat",
+        });
+      seen.add(beat.question_id);
+    });
   });
-});
 export type DirectorPlan = z.infer<typeof DirectorPlanSchema>;
 
-export const QuizAssetPurposeSchema = z.enum(["answer_option", "question_illustration", "hero_question_image", "answer_reveal", "background", "mascot"]);
+export const QuizAssetPurposeSchema = z.enum([
+  "answer_option",
+  "question_illustration",
+  "hero_question_image",
+  "answer_reveal",
+  "background",
+  "mascot",
+]);
 export const QuizAssetStyleSchema = z.enum(["cute_illustration", "bold_icon", "photo_reference", "abstract_shape", "mascot_pose"]);
 export const ImageAspectRatioSchema = z.enum(["1:1", "16:9", "9:16", "4:3", "3:4", "2:3", "3:2"]);
 export type ImageAspectRatio = z.infer<typeof ImageAspectRatioSchema>;
@@ -755,33 +1045,56 @@ export const QuizAssetRequirementSchema = z.object({
 });
 export type QuizAssetRequirement = z.infer<typeof QuizAssetRequirementSchema>;
 
-export const QuizAssetPlanSchema = z.object({
-  schema_version: z.literal(2),
-  episode_id: z.string().min(1),
-  assets: QuizAssetRequirementSchema.array(),
-  consistency_groups: AssetConsistencyGroupSchema.array().default([]),
-}).superRefine((plan, ctx) => {
-  const ids = new Set<string>();
-  const semanticKeys = new Set<string>();
-  plan.assets.forEach((asset, index) => {
-    if (ids.has(asset.asset_id)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["assets", index, "asset_id"], message: "Asset IDs must be unique" });
-    if (semanticKeys.has(asset.semantic_key)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["assets", index, "semantic_key"], message: "Asset semantic keys must be unique" });
-    ids.add(asset.asset_id);
-    semanticKeys.add(asset.semantic_key);
-  });
-  const assetIds = new Set(plan.assets.map((asset) => asset.asset_id));
-  const groupIds = new Set<string>();
-  plan.consistency_groups.forEach((group, index) => {
-    if (groupIds.has(group.group_id)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["consistency_groups", index, "group_id"], message: "Asset consistency group IDs must be unique" });
-    groupIds.add(group.group_id);
-    group.asset_ids.forEach((assetId, assetIndex) => {
-      if (!assetIds.has(assetId)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["consistency_groups", index, "asset_ids", assetIndex], message: "Consistency group references an unknown asset" });
+export const QuizAssetPlanSchema = z
+  .object({
+    schema_version: z.literal(2),
+    episode_id: z.string().min(1),
+    assets: QuizAssetRequirementSchema.array(),
+    consistency_groups: AssetConsistencyGroupSchema.array().default([]),
+  })
+  .superRefine((plan, ctx) => {
+    const ids = new Set<string>();
+    const semanticKeys = new Set<string>();
+    plan.assets.forEach((asset, index) => {
+      if (ids.has(asset.asset_id))
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["assets", index, "asset_id"], message: "Asset IDs must be unique" });
+      if (semanticKeys.has(asset.semantic_key))
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["assets", index, "semantic_key"],
+          message: "Asset semantic keys must be unique",
+        });
+      ids.add(asset.asset_id);
+      semanticKeys.add(asset.semantic_key);
+    });
+    const assetIds = new Set(plan.assets.map((asset) => asset.asset_id));
+    const groupIds = new Set<string>();
+    plan.consistency_groups.forEach((group, index) => {
+      if (groupIds.has(group.group_id))
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["consistency_groups", index, "group_id"],
+          message: "Asset consistency group IDs must be unique",
+        });
+      groupIds.add(group.group_id);
+      group.asset_ids.forEach((assetId, assetIndex) => {
+        if (!assetIds.has(assetId))
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["consistency_groups", index, "asset_ids", assetIndex],
+            message: "Consistency group references an unknown asset",
+          });
+      });
+    });
+    plan.assets.forEach((asset, index) => {
+      if (asset.consistency_group_id && !groupIds.has(asset.consistency_group_id))
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["assets", index, "consistency_group_id"],
+          message: "Asset references an unknown consistency group",
+        });
     });
   });
-  plan.assets.forEach((asset, index) => {
-    if (asset.consistency_group_id && !groupIds.has(asset.consistency_group_id)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["assets", index, "consistency_group_id"], message: "Asset references an unknown consistency group" });
-  });
-});
 export type QuizAssetPlan = z.infer<typeof QuizAssetPlanSchema>;
 
 export const QuizResolvedAssetSchema = QuizAssetRequirementSchema.extend({
@@ -801,7 +1114,18 @@ export const QuizAssetResolutionSchema = z.object({
 });
 export type QuizAssetResolution = z.infer<typeof QuizAssetResolutionSchema>;
 
-export const VoiceSegmentRoleSchema = z.enum(["intro", "question", "choice", "thinking_prompt", "countdown", "reveal", "explanation", "fun_fact", "midpoint", "outro"]);
+export const VoiceSegmentRoleSchema = z.enum([
+  "intro",
+  "question",
+  "choice",
+  "thinking_prompt",
+  "countdown",
+  "reveal",
+  "explanation",
+  "fun_fact",
+  "midpoint",
+  "outro",
+]);
 export type VoiceSegmentRole = z.infer<typeof VoiceSegmentRoleSchema>;
 export const VoicePhraseDeliverySchema = z.enum(["normal", "emphasis", "question_end", "playful", "warm"]);
 export type VoicePhraseDelivery = z.infer<typeof VoicePhraseDeliverySchema>;
@@ -822,9 +1146,12 @@ export const VoiceSegmentSchema = z.object({
   phrases: VoicePhraseSchema.array().default([]),
 });
 export type VoiceSegment = z.infer<typeof VoiceSegmentSchema>;
-export const VoicePlanSchema = z.object({ schema_version: z.literal(2), episode_id: z.string().min(1), segments: VoiceSegmentSchema.array().min(1) }).superRefine((plan, ctx) => {
-  if (new Set(plan.segments.map((segment) => segment.segment_id)).size !== plan.segments.length) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["segments"], message: "Voice segment IDs must be unique" });
-});
+export const VoicePlanSchema = z
+  .object({ schema_version: z.literal(2), episode_id: z.string().min(1), segments: VoiceSegmentSchema.array().min(1) })
+  .superRefine((plan, ctx) => {
+    if (new Set(plan.segments.map((segment) => segment.segment_id)).size !== plan.segments.length)
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["segments"], message: "Voice segment IDs must be unique" });
+  });
 export type VoicePlan = z.infer<typeof VoicePlanSchema>;
 
 export const QuizTimelineEventTypeSchema = z.enum([
@@ -856,19 +1183,28 @@ export const QuizTimelineEventSchema = z.object({
   payload: z.record(z.unknown()).default({}),
 });
 export type QuizTimelineEvent = z.infer<typeof QuizTimelineEventSchema>;
-export const QuizTimelineSchema = z.object({
-  schema_version: z.literal(2),
-  episode_id: z.string().min(1),
-  duration_seconds: z.number().positive(),
-  events: QuizTimelineEventSchema.array().min(1),
-}).superRefine((timeline, ctx) => {
-  if (new Set(timeline.events.map((event) => event.event_id)).size !== timeline.events.length) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["events"], message: "Timeline event IDs must be unique" });
-  for (let index = 1; index < timeline.events.length; index += 1) {
-    if (timeline.events[index].at_seconds < timeline.events[index - 1].at_seconds) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["events", index, "at_seconds"], message: "Timeline events must be ordered by timestamp" });
-  }
-  const end = Math.max(...timeline.events.map((event) => event.at_seconds + event.duration_seconds));
-  if (end > timeline.duration_seconds + 0.001) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["duration_seconds"], message: "Timeline duration must cover every event" });
-});
+export const QuizTimelineSchema = z
+  .object({
+    schema_version: z.literal(2),
+    episode_id: z.string().min(1),
+    duration_seconds: z.number().positive(),
+    events: QuizTimelineEventSchema.array().min(1),
+  })
+  .superRefine((timeline, ctx) => {
+    if (new Set(timeline.events.map((event) => event.event_id)).size !== timeline.events.length)
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["events"], message: "Timeline event IDs must be unique" });
+    for (let index = 1; index < timeline.events.length; index += 1) {
+      if (timeline.events[index].at_seconds < timeline.events[index - 1].at_seconds)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["events", index, "at_seconds"],
+          message: "Timeline events must be ordered by timestamp",
+        });
+    }
+    const end = Math.max(...timeline.events.map((event) => event.at_seconds + event.duration_seconds));
+    if (end > timeline.duration_seconds + 0.001)
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["duration_seconds"], message: "Timeline duration must cover every event" });
+  });
 export type QuizTimeline = z.infer<typeof QuizTimelineSchema>;
 
 export const QuizIssueStageSchema = z.enum(["semantic", "director", "assets", "voice", "timeline", "layout", "render"]);
@@ -896,30 +1232,36 @@ export const QuizAssessmentSchema = z.object({
     variety: z.number().int().min(0).max(100),
     render_integrity: z.number().int().min(0).max(100),
   }),
-  candy_arcade_visual: z.object({
-    pacing: z.number().int().min(0).max(20),
-    hierarchy: z.number().int().min(0).max(15),
-    asset_consistency: z.number().int().min(0).max(15),
-    motion: z.number().int().min(0).max(15),
-    reveal: z.number().int().min(0).max(10),
-    transition: z.number().int().min(0).max(10),
-    readability: z.number().int().min(0).max(10),
-    visual_variety: z.number().int().min(0).max(5),
-    total: z.number().int().min(0).max(100),
-  }).optional(),
+  candy_arcade_visual: z
+    .object({
+      pacing: z.number().int().min(0).max(20),
+      hierarchy: z.number().int().min(0).max(15),
+      asset_consistency: z.number().int().min(0).max(15),
+      motion: z.number().int().min(0).max(15),
+      reveal: z.number().int().min(0).max(10),
+      transition: z.number().int().min(0).max(10),
+      readability: z.number().int().min(0).max(10),
+      visual_variety: z.number().int().min(0).max(5),
+      total: z.number().int().min(0).max(100),
+    })
+    .optional(),
   issues: QuizIssueSchema.array(),
 });
 export type QuizAssessment = z.infer<typeof QuizAssessmentSchema>;
 
-export const EditorialOverlaySchema = z.object({
-  kind: z.enum(["none", "caption", "stat_card", "timeline", "bar_chart", "line_chart", "map_callout", "comparison", "quote"]).default("none"),
-  text: z.string().default(""),
-  motion: z.enum(["none", "fade_up", "slide_in", "draw_on", "count_up", "highlight"]).default("none"),
-  placement: z.enum(["lower_third", "upper_left", "upper_right", "center", "side_panel"]).default("lower_third"),
-  duration_seconds: z.number().positive().max(20).nullable().default(null),
-  data: z.array(z.object({ label: z.string(), value: z.union([z.string(), z.number()]), unit: z.string().default("") })).default([]),
-  source_ids: z.array(z.string()).default([]),
-}).default({ kind: "none", motion: "none", placement: "lower_third" });
+export const EditorialOverlaySchema = z
+  .object({
+    kind: z
+      .enum(["none", "caption", "stat_card", "timeline", "bar_chart", "line_chart", "map_callout", "comparison", "quote"])
+      .default("none"),
+    text: z.string().default(""),
+    motion: z.enum(["none", "fade_up", "slide_in", "draw_on", "count_up", "highlight"]).default("none"),
+    placement: z.enum(["lower_third", "upper_left", "upper_right", "center", "side_panel"]).default("lower_third"),
+    duration_seconds: z.number().positive().max(20).nullable().default(null),
+    data: z.array(z.object({ label: z.string(), value: z.union([z.string(), z.number()]), unit: z.string().default("") })).default([]),
+    source_ids: z.array(z.string()).default([]),
+  })
+  .default({ kind: "none", motion: "none", placement: "lower_third" });
 export type EditorialOverlay = z.infer<typeof EditorialOverlaySchema>;
 
 export const QuizSceneContentSchema = z.object({
@@ -945,7 +1287,9 @@ export const SceneSchema = z.object({
   sequence_id: z.string().default("sequence-1"),
   sequence_title: z.string().default("Sequence 1"),
   shot_id: z.string().default(""),
-  asset_type: z.enum(["archive", "document", "map", "diagram", "ai_reconstruction", "contemporary", "transition"]).default("ai_reconstruction"),
+  asset_type: z
+    .enum(["archive", "document", "map", "diagram", "ai_reconstruction", "contemporary", "transition"])
+    .default("ai_reconstruction"),
   continuity_bundle_id: z.string().default(""),
   reference_asset_ids: z.array(z.string()).default([]),
   source_ids: z.array(z.string()).default([]),
@@ -1102,12 +1446,14 @@ export const AppConfigSchema = z.object({
     merge_gap_ms: z.number().int().nonnegative().default(300),
     match_target_duration: z.boolean().default(true),
   }),
-  question_history: z.object({
-    enabled: z.boolean().default(true),
-    pass_threshold: z.number().int().min(0).max(50).default(2),
-    ttl_days: z.number().int().min(1).max(365).default(30),
-    auto_remix: z.boolean().default(false),
-  }).default({}),
+  question_history: z
+    .object({
+      enabled: z.boolean().default(true),
+      pass_threshold: z.number().int().min(0).max(50).default(2),
+      ttl_days: z.number().int().min(1).max(365).default(30),
+      auto_remix: z.boolean().default(false),
+    })
+    .default({}),
 });
 export type AppConfig = z.infer<typeof AppConfigSchema>;
 
@@ -1123,7 +1469,7 @@ export const QuestionHistoryEntrySchema = z.object({
   question_id: z.string().min(1),
   question_text: z.string().min(1),
   normalized_question: z.string().default(""),
-  choices: z.array(z.string()).default([]),
+  choices: z.array(z.string()).max(QUIZ_MAX_CHOICES_PER_QUESTION).default([]),
   correct_answer: z.string().default(""),
   episode_id: z.string().min(1),
   episode_title: z.string().min(1),
@@ -1145,7 +1491,7 @@ export type BgmHistoryEntry = z.infer<typeof BgmHistoryEntrySchema>;
 export const QuestionHistoryCheckItemSchema = z.object({
   current_question_id: z.string().min(1),
   current_question_text: z.string().min(1),
-  current_choices: z.array(z.string()).default([]),
+  current_choices: z.array(z.string()).max(QUIZ_MAX_CHOICES_PER_QUESTION).default([]),
   current_correct_answer: z.string().default(""),
   matched_entry: QuestionHistoryEntrySchema.nullable().default(null),
   similarity_score: z.number().min(0).max(1).default(0),

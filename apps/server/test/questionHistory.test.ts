@@ -10,38 +10,22 @@ import type { QuestionHistoryEntry, QuizQuestion } from "@studio/shared";
 
 describe("Question History & Similarity Checking", () => {
   it("normalizes question text accurately", () => {
-    expect(normalizeQuestionText("  Đố bạn: Con gì chạy nhanh nhất thế giới?!  ")).toBe(
-      "đố bạn con gì chạy nhanh nhất thế giới"
-    );
+    expect(normalizeQuestionText("  Đố bạn: Con gì chạy nhanh nhất thế giới?!  ")).toBe("đố bạn con gì chạy nhanh nhất thế giới");
   });
 
   it("calculates similarity accurately", () => {
-    const identical = calculateQuestionSimilarity(
-      "Hành tinh nào lớn nhất Hệ Mặt Trời?",
-      "Hành tinh nào lớn nhất Hệ Mặt Trời?"
-    );
+    const identical = calculateQuestionSimilarity("Hành tinh nào lớn nhất Hệ Mặt Trời?", "Hành tinh nào lớn nhất Hệ Mặt Trời?");
     expect(identical).toBe(1);
 
-    const highSim = calculateQuestionSimilarity(
-      "Đố bạn con gì chạy nhanh nhất trên cạn?",
-      "Loài động vật nào chạy nhanh nhất trên cạn?"
-    );
+    const highSim = calculateQuestionSimilarity("Đố bạn con gì chạy nhanh nhất trên cạn?", "Loài động vật nào chạy nhanh nhất trên cạn?");
     expect(highSim).toBeGreaterThan(0.5);
 
-    const lowSim = calculateQuestionSimilarity(
-      "Đố bạn con gì chạy nhanh nhất?",
-      "Thủ đô của nước Pháp là gì?"
-    );
+    const lowSim = calculateQuestionSimilarity("Đố bạn con gì chạy nhanh nhất?", "Thủ đô của nước Pháp là gì?");
     expect(lowSim).toBeLessThan(0.3);
   });
 
   it("evaluates exact and fuzzy duplicate matches correctly", () => {
-    const exact = evaluateQuestionMatch(
-      "Loài chim nào không biết bay?",
-      "Loài chim nào không biết bay?",
-      "Chim cánh cụt",
-      "Chim cánh cụt"
-    );
+    const exact = evaluateQuestionMatch("Loài chim nào không biết bay?", "Loài chim nào không biết bay?", "Chim cánh cụt", "Chim cánh cụt");
     expect(exact.isDuplicate).toBe(true);
     expect(exact.similarity).toBe(1.0);
 
@@ -49,7 +33,7 @@ describe("Question History & Similarity Checking", () => {
       "Con chim nào bơi giỏi nhưng không thể bay?",
       "Loài chim nào bơi giỏi mà không biết bay?",
       "Chim cánh cụt",
-      "Chim cánh cụt"
+      "Chim cánh cụt",
     );
     expect(similarWithSameAnswer.isDuplicate).toBe(true);
     expect(similarWithSameAnswer.similarity).toBeGreaterThanOrEqual(0.8);
@@ -106,7 +90,7 @@ describe("Question History & Similarity Checking", () => {
         question_id: "hist-2",
         question_text: "Hành tinh nào gần Mặt Trời nhất?",
         normalized_question: "hành tinh nào gần mặt trời nhất",
-        choices: ["Sao Thủy", "Sao Kim", "Sao Hỏa", "Trái Đất"],
+        choices: ["Sao Thủy", "Sao Kim", "Sao Hỏa"],
         correct_answer: "Sao Thủy",
         episode_id: "ep-old-2",
         episode_title: "Khám phá Vũ trụ",

@@ -8,7 +8,14 @@ import { ContextEngine } from "../src/context.js";
 import { DEFAULT_CONFIG } from "../src/config.js";
 import { StudioLogger } from "../src/logger.js";
 import { RepositoryService } from "../src/repository.js";
-import { TaskManager, extractMarkdown, isSequenceOutputFailure, normalizeQuizBeatMetadata, parseBeatsOutput, planSequenceResume } from "../src/tasks.js";
+import {
+  TaskManager,
+  extractMarkdown,
+  isSequenceOutputFailure,
+  normalizeQuizBeatMetadata,
+  parseBeatsOutput,
+  planSequenceResume,
+} from "../src/tasks.js";
 import type { AudioProvider } from "../src/providers/index.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
@@ -40,21 +47,56 @@ describe("sequence retry planning", () => {
   });
 
   it("canonicalizes quiz answer labels and prefixes to the visible choice text", () => {
-    const beats = parseBeatsOutput(JSON.stringify([{
-      dialogue: "The answer is ready.",
-      visual_prompt: "CAMERA\nCard\nACTION\nChoices appear\nLIGHTING\nSoft\nATMOSPHERE\nBright\nCONTINUITY\nQuiz palette",
-      quiz: { phase: "question", question_number: 1, question: "Which lever?", choices: ["A. Lever", "B. Inclined plane", "C. Pulley"], answer: "The correct answer is B — Inclined plane", explanation: "It changes force direction." },
-    }]));
+    const beats = parseBeatsOutput(
+      JSON.stringify([
+        {
+          dialogue: "The answer is ready.",
+          visual_prompt: "CAMERA\nCard\nACTION\nChoices appear\nLIGHTING\nSoft\nATMOSPHERE\nBright\nCONTINUITY\nQuiz palette",
+          quiz: {
+            phase: "question",
+            question_number: 1,
+            question: "Which lever?",
+            choices: ["A. Lever", "B. Inclined plane", "C. Pulley"],
+            answer: "The correct answer is B — Inclined plane",
+            explanation: "It changes force direction.",
+          },
+        },
+      ]),
+    );
 
     expect(beats[0]!.quiz?.choices).toEqual(["Lever", "Inclined plane", "Pulley"]);
     expect(beats[0]!.quiz?.answer).toBe("Inclined plane");
   });
 
   it("repairs repeated quiz beats that omit or corrupt redundant answer metadata", () => {
-    const beats = parseBeatsOutput(JSON.stringify([
-      { dialogue: "Question.", visual_prompt: "CAMERA\nA\nACTION\nB\nLIGHTING\nC\nATMOSPHERE\nD\nCONTINUITY\nE", quiz: { phase: "question", question_number: 1, question: "Which lever?", choices: ["Lever", "Inclined plane", "Pulley"], answer: "Inclined plane", explanation: "It changes force direction." } },
-      { dialogue: "Reveal.", visual_prompt: "CAMERA\nA2\nACTION\nB2\nLIGHTING\nC2\nATMOSPHERE\nD2\nCONTINUITY\nE2", quiz: { phase: "reveal", question_number: 1, question: "Which lever?", choices: ["Wrong choice", "Another choice"], answer: "Option C", explanation: "" } },
-    ]));
+    const beats = parseBeatsOutput(
+      JSON.stringify([
+        {
+          dialogue: "Question.",
+          visual_prompt: "CAMERA\nA\nACTION\nB\nLIGHTING\nC\nATMOSPHERE\nD\nCONTINUITY\nE",
+          quiz: {
+            phase: "question",
+            question_number: 1,
+            question: "Which lever?",
+            choices: ["Lever", "Inclined plane", "Pulley"],
+            answer: "Inclined plane",
+            explanation: "It changes force direction.",
+          },
+        },
+        {
+          dialogue: "Reveal.",
+          visual_prompt: "CAMERA\nA2\nACTION\nB2\nLIGHTING\nC2\nATMOSPHERE\nD2\nCONTINUITY\nE2",
+          quiz: {
+            phase: "reveal",
+            question_number: 1,
+            question: "Which lever?",
+            choices: ["Wrong choice", "Another choice"],
+            answer: "Option C",
+            explanation: "",
+          },
+        },
+      ]),
+    );
 
     const normalized = normalizeQuizBeatMetadata(beats);
     expect(normalized[1]!.quiz?.choices).toEqual(["Lever", "Inclined plane", "Pulley"]);
@@ -65,10 +107,33 @@ describe("sequence retry planning", () => {
   });
 
   it("populates fallback source_ids for quiz beats lacking source_ids to pass quality gate", () => {
-    const rawBeats = parseBeatsOutput(JSON.stringify([
-      { dialogue: "Welcome to the quiz!", sequence_id: "sequence-1", visual_prompt: "CAMERA\nA\nACTION\nB\nLIGHTING\nC\nATMOSPHERE\nD\nCONTINUITY\nE", continuity_bundle_id: "CB-01", continuity_note: "Fix theme", quiz: { phase: "intro", question_number: null } },
-      { dialogue: "Which planet is red?", sequence_id: "sequence-1", visual_prompt: "CAMERA\nA2\nACTION\nB2\nLIGHTING\nC2\nATMOSPHERE\nD2\nCONTINUITY\nE2", continuity_bundle_id: "CB-01", continuity_note: "Fix theme", quiz: { phase: "question", question_number: 1, question: "Which planet is red?", choices: ["Mars", "Venus"], answer: "Mars", explanation: "Mars has iron oxide." } },
-    ]));
+    const rawBeats = parseBeatsOutput(
+      JSON.stringify([
+        {
+          dialogue: "Welcome to the quiz!",
+          sequence_id: "sequence-1",
+          visual_prompt: "CAMERA\nA\nACTION\nB\nLIGHTING\nC\nATMOSPHERE\nD\nCONTINUITY\nE",
+          continuity_bundle_id: "CB-01",
+          continuity_note: "Fix theme",
+          quiz: { phase: "intro", question_number: null },
+        },
+        {
+          dialogue: "Which planet is red?",
+          sequence_id: "sequence-1",
+          visual_prompt: "CAMERA\nA2\nACTION\nB2\nLIGHTING\nC2\nATMOSPHERE\nD2\nCONTINUITY\nE2",
+          continuity_bundle_id: "CB-01",
+          continuity_note: "Fix theme",
+          quiz: {
+            phase: "question",
+            question_number: 1,
+            question: "Which planet is red?",
+            choices: ["Mars", "Venus", "Jupiter"],
+            answer: "Mars",
+            explanation: "Mars has iron oxide.",
+          },
+        },
+      ]),
+    );
 
     expect(rawBeats[0]!.source_ids).toEqual([]);
     expect(rawBeats[1]!.source_ids).toEqual([]);
@@ -80,19 +145,42 @@ describe("sequence retry planning", () => {
 
   it("reuses fresh sequence drafts and queues only missing sequences", () => {
     const scriptModifiedAt = "2026-08-20T10:00:00.000Z";
-    const plan = planSequenceResume(4, [
-      { sequenceNumber: 1, modified_at: "2026-08-20T10:00:01.000Z" },
-      { sequenceNumber: 2, modified_at: "2026-08-20T10:00:02.000Z" },
-    ], scriptModifiedAt, false);
+    const plan = planSequenceResume(
+      4,
+      [
+        { sequenceNumber: 1, modified_at: "2026-08-20T10:00:01.000Z" },
+        { sequenceNumber: 2, modified_at: "2026-08-20T10:00:02.000Z" },
+      ],
+      scriptModifiedAt,
+      false,
+    );
 
     expect(plan).toEqual({ shouldClearDrafts: false, reusedSequenceNumbers: [1, 2], pendingSequenceNumbers: [3, 4] });
   });
 
   it("invalidates every draft when an upstream artifact changed or a draft is stale", () => {
     const scriptModifiedAt = "2026-08-20T10:00:00.000Z";
-    expect(planSequenceResume(3, [{ sequenceNumber: 1, modified_at: "2026-08-20T09:59:59.000Z" }], scriptModifiedAt, false)).toEqual({ shouldClearDrafts: true, reusedSequenceNumbers: [], pendingSequenceNumbers: [1, 2, 3] });
-    expect(planSequenceResume(3, [{ sequenceNumber: 1, modified_at: "2026-08-20T10:00:01.000Z" }], scriptModifiedAt, true)).toEqual({ shouldClearDrafts: true, reusedSequenceNumbers: [], pendingSequenceNumbers: [1, 2, 3] });
-    expect(planSequenceResume(2, [{ sequenceNumber: 1, modified_at: "2026-08-20T10:00:01.000Z" }, { sequenceNumber: 3, modified_at: "2026-08-20T10:00:02.000Z" }], scriptModifiedAt, false)).toEqual({ shouldClearDrafts: true, reusedSequenceNumbers: [], pendingSequenceNumbers: [1, 2] });
+    expect(planSequenceResume(3, [{ sequenceNumber: 1, modified_at: "2026-08-20T09:59:59.000Z" }], scriptModifiedAt, false)).toEqual({
+      shouldClearDrafts: true,
+      reusedSequenceNumbers: [],
+      pendingSequenceNumbers: [1, 2, 3],
+    });
+    expect(planSequenceResume(3, [{ sequenceNumber: 1, modified_at: "2026-08-20T10:00:01.000Z" }], scriptModifiedAt, true)).toEqual({
+      shouldClearDrafts: true,
+      reusedSequenceNumbers: [],
+      pendingSequenceNumbers: [1, 2, 3],
+    });
+    expect(
+      planSequenceResume(
+        2,
+        [
+          { sequenceNumber: 1, modified_at: "2026-08-20T10:00:01.000Z" },
+          { sequenceNumber: 3, modified_at: "2026-08-20T10:00:02.000Z" },
+        ],
+        scriptModifiedAt,
+        false,
+      ),
+    ).toEqual({ shouldClearDrafts: true, reusedSequenceNumbers: [], pendingSequenceNumbers: [1, 2] });
   });
 });
 
@@ -102,9 +190,15 @@ class FakeCodex extends EventEmitter {
   maxActiveTurns = 0;
   deletedThreads: string[] = [];
   prompts: string[] = [];
-  async connect(): Promise<void> { this.emit("status", "connected"); }
-  async startThread(): Promise<string> { return `thread_${this.turnNumber + 1}`; }
-  async resumeThread(threadId: string): Promise<string> { return threadId; }
+  async connect(): Promise<void> {
+    this.emit("status", "connected");
+  }
+  async startThread(): Promise<string> {
+    return `thread_${this.turnNumber + 1}`;
+  }
+  async resumeThread(threadId: string): Promise<string> {
+    return threadId;
+  }
   async startTurn(threadId: string, prompt = ""): Promise<string> {
     const turnId = `turn_${++this.turnNumber}`;
     this.prompts.push(prompt);
@@ -120,28 +214,91 @@ class FakeCodex extends EventEmitter {
       const strictQuizResearchRetry = quizResearch && prompt.includes("STRICT RETRY");
       const quizVisualBibleCount = Number(prompt.match(/Create exactly (\d+) continuity bundles/)?.[1] ?? 0);
       const quizVisualBible = visualBible && quizVisualBibleCount > 0;
-      const safeMotionSection = "\n## Safe motion\n\n- Allowed motion: gentle fades, slow scale changes, and calm card slides.\n- Prohibited motion: strobing, flashing, seizure-triggering patterns, and unsafe rapid camera movement.\n- Reduced-motion fallback: hold still frames and use opacity changes only.\n";
-      const validVisualBible = "# Episode Visual Bible\n\n- Palette: Warm candy colors\n- Countdown: A clear, calm countdown\n- Answer reveal: One focused reveal state\n" + safeMotionSection + Array.from({ length: Math.max(5, quizVisualBibleCount) }, (_, index) => `## Continuity bundle CB-${String(index + 1).padStart(2, "0")} — Bundle ${index + 1}\n\n- Era: 1950s\n- Location: Test location\n- Subjects: Test subject\n- Palette: Warm neutral\n- Lighting: Soft side light\n- Anchor-frame prompt: A coherent documentary environment for bundle ${index + 1}.\n- Reference asset slots: anchor`).join("\n\n");
-      const invalidSequenceBeats = Array.from({ length: 5 }, (_, index) => ({ dialogue: index === 0 ? "Opening narration." : `Additional beat ${index + 1}.`, sequence_id: "sequence-1", sequence_title: "Opening", shot_id: `shot-${index + 1}`, visual_prompt: `Unstructured shot ${index + 1}`, asset_type: "ai_reconstruction", continuity_key: "opening", continuity_bundle_id: "", reference_asset_ids: [], source_ids: ["C01"], reconstruction: true, sound_cue: "", transition_note: "", continuity_note: "", editorial_overlay: { kind: "none" } }));
-      const validSequenceBeat = [{ dialogue: "Opening narration.", sequence_id: "sequence-1", sequence_title: "Opening", shot_id: "shot-1", visual_prompt: "CAMERA\nWide 35mm locked shot.\nACTION\nThe subject enters and pauses.\nLIGHTING\nSoft 5600K window light.\nATMOSPHERE\nCalm air with 10% haze.\nCONTINUITY\nCB-01 palette and subject identity remain fixed.", asset_type: "ai_reconstruction", continuity_key: "opening", continuity_bundle_id: "CB-01", reference_asset_ids: [], source_ids: ["C01"], reconstruction: true, sound_cue: "", transition_note: "", continuity_note: "Keep CB-01 palette, location, and subject identity.", editorial_overlay: { kind: "none" }, quiz: { phase: "question" as const, question_number: 1, question: "What animal is this?", choices: ["Tiger", "Lion", "Leopard"], answer: "Tiger", explanation: "Tigers have distinct orange and black stripes.", image_prompt: "A friendly cartoon tiger in a bright tropical forest." } }];
+      const safeMotionSection =
+        "\n## Safe motion\n\n- Allowed motion: gentle fades, slow scale changes, and calm card slides.\n- Prohibited motion: strobing, flashing, seizure-triggering patterns, and unsafe rapid camera movement.\n- Reduced-motion fallback: hold still frames and use opacity changes only.\n";
+      const validVisualBible =
+        "# Episode Visual Bible\n\n- Palette: Warm candy colors\n- Countdown: A clear, calm countdown\n- Answer reveal: One focused reveal state\n" +
+        safeMotionSection +
+        Array.from(
+          { length: Math.max(5, quizVisualBibleCount) },
+          (_, index) =>
+            `## Continuity bundle CB-${String(index + 1).padStart(2, "0")} — Bundle ${index + 1}\n\n- Era: 1950s\n- Location: Test location\n- Subjects: Test subject\n- Palette: Warm neutral\n- Lighting: Soft side light\n- Anchor-frame prompt: A coherent documentary environment for bundle ${index + 1}.\n- Reference asset slots: anchor`,
+        ).join("\n\n");
+      const invalidSequenceBeats = Array.from({ length: 5 }, (_, index) => ({
+        dialogue: index === 0 ? "Opening narration." : `Additional beat ${index + 1}.`,
+        sequence_id: "sequence-1",
+        sequence_title: "Opening",
+        shot_id: `shot-${index + 1}`,
+        visual_prompt: `Unstructured shot ${index + 1}`,
+        asset_type: "ai_reconstruction",
+        continuity_key: "opening",
+        continuity_bundle_id: "",
+        reference_asset_ids: [],
+        source_ids: ["C01"],
+        reconstruction: true,
+        sound_cue: "",
+        transition_note: "",
+        continuity_note: "",
+        editorial_overlay: { kind: "none" },
+      }));
+      const validSequenceBeat = [
+        {
+          dialogue: "Opening narration.",
+          sequence_id: "sequence-1",
+          sequence_title: "Opening",
+          shot_id: "shot-1",
+          visual_prompt:
+            "CAMERA\nWide 35mm locked shot.\nACTION\nThe subject enters and pauses.\nLIGHTING\nSoft 5600K window light.\nATMOSPHERE\nCalm air with 10% haze.\nCONTINUITY\nCB-01 palette and subject identity remain fixed.",
+          asset_type: "ai_reconstruction",
+          continuity_key: "opening",
+          continuity_bundle_id: "CB-01",
+          reference_asset_ids: [],
+          source_ids: ["C01"],
+          reconstruction: true,
+          sound_cue: "",
+          transition_note: "",
+          continuity_note: "Keep CB-01 palette, location, and subject identity.",
+          editorial_overlay: { kind: "none" },
+          quiz: {
+            phase: "question" as const,
+            question_number: 1,
+            question: "What animal is this?",
+            choices: ["Tiger", "Lion", "Leopard"],
+            answer: "Tiger",
+            explanation: "Tigers have distinct orange and black stripes.",
+            image_prompt: "A friendly cartoon tiger in a bright tropical forest.",
+          },
+        },
+      ];
       const delta = prompt.includes("Generate exactly one reference image")
         ? "data:image/png;base64,iVBORw0KGgo="
         : sequenceTask
           ? JSON.stringify(strictSequenceRetry ? validSequenceBeat : invalidSequenceBeats)
           : visualBible
-          ? strictVisualRetry ? validVisualBible : quizVisualBible ? validVisualBible.replace(safeMotionSection, "") : "# Episode Visual Bible\n\nThe visual bible needs revision."
-          : quizResearch
-            ? `# Research Dossier\n\n${Array.from({ length: strictQuizResearchRetry ? quizResearchCount : Math.max(1, quizResearchCount - 7) }, (_, index) => `C${String(index + 1).padStart(2, "0")} https://example.com/quiz-${index + 1}`).join("\n")}`
-            : "# Research Dossier\n\nC01 https://example.com/1\nC02 https://example.com/2\nC03 https://example.com/3\nC04 https://example.com/4\nC05 https://example.com/5";
+            ? strictVisualRetry
+              ? validVisualBible
+              : quizVisualBible
+                ? validVisualBible.replace(safeMotionSection, "")
+                : "# Episode Visual Bible\n\nThe visual bible needs revision."
+            : quizResearch
+              ? `# Research Dossier\n\n${Array.from({ length: strictQuizResearchRetry ? quizResearchCount : Math.max(1, quizResearchCount - 7) }, (_, index) => `C${String(index + 1).padStart(2, "0")} https://example.com/quiz-${index + 1}`).join("\n")}`
+              : "# Research Dossier\n\nC01 https://example.com/1\nC02 https://example.com/2\nC03 https://example.com/3\nC04 https://example.com/4\nC05 https://example.com/5";
       this.emit("notification", { method: "item/agentMessage/delta", params: { threadId, turnId, delta } });
       this.activeTurns -= 1;
       this.emit("notification", { method: "turn/completed", params: { turn: { id: turnId, status: "completed" } } });
     }, 30);
     return turnId;
   }
-  async interruptTurn(): Promise<void> { /* deterministic fake */ }
-  async deleteThread(threadId: string): Promise<boolean> { this.deletedThreads.push(threadId); return true; }
-  respond(): void { /* deterministic fake */ }
+  async interruptTurn(): Promise<void> {
+    /* deterministic fake */
+  }
+  async deleteThread(threadId: string): Promise<boolean> {
+    this.deletedThreads.push(threadId);
+    return true;
+  }
+  respond(): void {
+    /* deterministic fake */
+  }
 }
 
 function fakeWav(seconds = 2): Uint8Array {
@@ -149,13 +306,28 @@ function fakeWav(seconds = 2): Uint8Array {
   const dataSize = sampleRate * seconds * 2;
   const buffer = new ArrayBuffer(44 + dataSize);
   const view = new DataView(buffer);
-  const write = (offset: number, value: string) => [...value].forEach((character, index) => view.setUint8(offset + index, character.charCodeAt(0)));
-  write(0, "RIFF"); view.setUint32(4, 36 + dataSize, true); write(8, "WAVE"); write(12, "fmt "); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true); view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true); write(36, "data"); view.setUint32(40, dataSize, true);
+  const write = (offset: number, value: string) =>
+    [...value].forEach((character, index) => view.setUint8(offset + index, character.charCodeAt(0)));
+  write(0, "RIFF");
+  view.setUint32(4, 36 + dataSize, true);
+  write(8, "WAVE");
+  write(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  write(36, "data");
+  view.setUint32(40, dataSize, true);
   return new Uint8Array(buffer);
 }
 
 afterEach(async () => {
-  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }).catch(() => undefined)));
+  await Promise.all(
+    roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }).catch(() => undefined)),
+  );
 });
 
 describe("TaskManager locks", () => {
@@ -168,8 +340,29 @@ describe("TaskManager locks", () => {
     await writeFile(path.join(root, "templates", "quiz_channel_dna.md"), "# Quiz DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Quiz Narration Guard", description: "", target_audience: "", language: "English", market: "Global", group_id: "quiz", dna_mode: "example" });
-    const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `guard_topic_${index}`, channel_id: channel.channel_id, title: `Guard Topic ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false, quiz_format: "multiple_choice" as const, question_count: 3, age_band: "7-9" as const }));
+    const channel = await repository.createChannel({
+      name: "Quiz Narration Guard",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "Global",
+      group_id: "quiz",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `guard_topic_${index}`,
+      channel_id: channel.channel_id,
+      title: `Guard Topic ${index}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+      quiz_format: "multiple_choice" as const,
+      question_count: 3,
+      age_band: "7-9" as const,
+    }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, topics[0]!.topic_id);
     const logger = new StudioLogger(root);
@@ -189,8 +382,25 @@ describe("TaskManager locks", () => {
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     await writeFile(path.join(root, "shared", "script_rules.md"), "# Script\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Task Channel", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `topic_${index}`, channel_id: channel.channel_id, title: `Topic ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false }));
+    const channel = await repository.createChannel({
+      name: "Task Channel",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `topic_${index}`,
+      channel_id: channel.channel_id,
+      title: `Topic ${index}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
     const logger = new StudioLogger(root);
@@ -222,12 +432,44 @@ describe("TaskManager locks", () => {
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Audio Tasks", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `audio_task_topic_${index}`, channel_id: channel.channel_id, title: `Audio Task Topic ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false }));
+    const channel = await repository.createChannel({
+      name: "Audio Tasks",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `audio_task_topic_${index}`,
+      channel_id: channel.channel_id,
+      title: `Audio Task Topic ${index}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const firstEpisode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
     const secondEpisode = await repository.confirmTopic(channel.channel_id, topics[1].topic_id);
-    for (const episode of [firstEpisode, secondEpisode]) await repository.saveScenes(channel.channel_id, episode.episode_id, [{ scene_id: `${episode.episode_id}_scene_1`, episode_id: episode.episode_id, scene_number: 1, duration_seconds: 6, dialogue: "Narrate this line", visual_prompt: "A documentary shot", transition_note: "", continuity_note: "", audio_asset_path: null, audio_generated_at: null, audio_duration_seconds: null }]);
+    for (const episode of [firstEpisode, secondEpisode])
+      await repository.saveScenes(channel.channel_id, episode.episode_id, [
+        {
+          scene_id: `${episode.episode_id}_scene_1`,
+          episode_id: episode.episode_id,
+          scene_number: 1,
+          duration_seconds: 6,
+          dialogue: "Narrate this line",
+          visual_prompt: "A documentary shot",
+          transition_note: "",
+          continuity_note: "",
+          audio_asset_path: null,
+          audio_generated_at: null,
+          audio_duration_seconds: null,
+        },
+      ]);
     const logger = new StudioLogger(root);
     await logger.init();
     const fake = new FakeCodex();
@@ -243,7 +485,16 @@ describe("TaskManager locks", () => {
         return { asset_path: assetPath };
       },
     });
-    const manager = new TaskManager(repository, new ContextEngine(repository, logger), fake as never, 1, 8, logger, { provider: "chatterbox", service_url: "http://127.0.0.1:8890", exaggeration: 0.5, cfg_weight: 0.5, max_concurrent_tasks: 2 }, providerFactory);
+    const manager = new TaskManager(
+      repository,
+      new ContextEngine(repository, logger),
+      fake as never,
+      1,
+      8,
+      logger,
+      { provider: "chatterbox", service_url: "http://127.0.0.1:8890", exaggeration: 0.5, cfg_weight: 0.5, max_concurrent_tasks: 2 },
+      providerFactory,
+    );
     await manager.load();
     const first = manager.submit("GENERATE_AUDIO", channel.channel_id, firstEpisode.episode_id, 1);
     const second = manager.submit("GENERATE_AUDIO", channel.channel_id, secondEpisode.episode_id, 1);
@@ -286,7 +537,10 @@ describe("TaskManager locks", () => {
     };
     await mkdir(path.join(repository.roots.runtime, "tasks"), { recursive: true });
     await writeFile(path.join(repository.roots.runtime, "tasks", "task_old_thread.json"), `${JSON.stringify(task)}\n`, "utf8");
-    const manager = new TaskManager(repository, new ContextEngine(repository, logger), fake as never, 1, 8, logger, undefined, undefined, { auto_delete_threads: false, failed_thread_retention_days: 7 });
+    const manager = new TaskManager(repository, new ContextEngine(repository, logger), fake as never, 1, 8, logger, undefined, undefined, {
+      auto_delete_threads: false,
+      failed_thread_retention_days: 7,
+    });
     await manager.load();
     expect(fake.deletedThreads).toHaveLength(0);
     expect(await manager.cleanupCodexThreads()).toEqual({ removed: 0 });
@@ -308,13 +562,40 @@ describe("TaskManager locks", () => {
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Visual Retry", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `visual_retry_topic_${index}`, channel_id: channel.channel_id, title: `Visual Retry ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false }));
+    const channel = await repository.createChannel({
+      name: "Visual Retry",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `visual_retry_topic_${index}`,
+      channel_id: channel.channel_id,
+      title: `Visual Retry ${index}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 verified");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "treatment.md", "# Documentary Treatment\n\n## Sequence 1\nTime budget and claim C01");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "script.md", "# Visual Retry 0\n\n<!-- HUMOR_POLICY: v1 -->\n\n1956 C01 evidence.");
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "treatment.md",
+      "# Documentary Treatment\n\n## Sequence 1\nTime budget and claim C01",
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "script.md",
+      "# Visual Retry 0\n\n<!-- HUMOR_POLICY: v1 -->\n\n1956 C01 evidence.",
+    );
     const logger = new StudioLogger(root, true);
     await logger.init();
     const fake = new FakeCodex();
@@ -336,13 +617,44 @@ describe("TaskManager locks", () => {
     await writeFile(path.join(root, "templates", "quiz_channel_dna.md"), "# Quiz DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Quiz Visual Retry", description: "", target_audience: "Children", language: "English", market: "Global", group_id: "quiz", dna_mode: "example" });
-    const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `quiz_visual_retry_topic_${index}`, channel_id: channel.channel_id, title: `Quiz Visual Retry ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false, quiz_format: "multiple_choice" as const, question_count: 3, age_band: "7-9" as const }));
+    const channel = await repository.createChannel({
+      name: "Quiz Visual Retry",
+      description: "",
+      target_audience: "Children",
+      language: "English",
+      market: "Global",
+      group_id: "quiz",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `quiz_visual_retry_topic_${index}`,
+      channel_id: channel.channel_id,
+      title: `Quiz Visual Retry ${index}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+      quiz_format: "multiple_choice" as const,
+      question_count: 3,
+      age_band: "7-9" as const,
+    }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, topics[0]!.topic_id);
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 verified");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "treatment.md", "# Documentary Treatment\n\n## Question 1\nTime budget and correct answer");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "script.md", "# Quiz Visual Retry 0\n\n<!-- HUMOR_POLICY: v1 -->\n\n## Question 1\nGuess, answer, and explanation.");
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "treatment.md",
+      "# Documentary Treatment\n\n## Question 1\nTime budget and correct answer",
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "script.md",
+      "# Quiz Visual Retry 0\n\n<!-- HUMOR_POLICY: v1 -->\n\n## Question 1\nGuess, answer, and explanation.",
+    );
     const logger = new StudioLogger(root, true);
     await logger.init();
     const fake = new FakeCodex();
@@ -366,14 +678,46 @@ describe("TaskManager locks", () => {
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Shot Plan Retry", description: "", target_audience: "Viewers", language: "English", market: "Global", dna_mode: "example" });
-    const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `shot_retry_topic_${index}`, channel_id: channel.channel_id, title: `Shot Retry ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false }));
+    const channel = await repository.createChannel({
+      name: "Shot Plan Retry",
+      description: "",
+      target_audience: "Viewers",
+      language: "English",
+      market: "Global",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `shot_retry_topic_${index}`,
+      channel_id: channel.channel_id,
+      title: `Shot Retry ${index}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, topics[0]!.topic_id);
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 verified");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "treatment.md", "# Documentary Treatment\n\n## Sequence 1 — Opening\n\nTime budget: 8 seconds. Claim IDs: C01.");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "script.md", "# Shot Plan Retry\n\n## Sequence 1 — Opening\n\nOpening narration.");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "visual_bible.md", "# Episode Visual Bible\n\n## Continuity bundle CB-01 — Opening\n\n- Palette: Warm\n- Lighting: Soft\n- Anchor-frame prompt: A coherent opening.\n- Reference asset slots: anchor");
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "treatment.md",
+      "# Documentary Treatment\n\n## Sequence 1 — Opening\n\nTime budget: 8 seconds. Claim IDs: C01.",
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "script.md",
+      "# Shot Plan Retry\n\n## Sequence 1 — Opening\n\nOpening narration.",
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "visual_bible.md",
+      "# Episode Visual Bible\n\n## Continuity bundle CB-01 — Opening\n\n- Palette: Warm\n- Lighting: Soft\n- Anchor-frame prompt: A coherent opening.\n- Reference asset slots: anchor",
+    );
     const logger = new StudioLogger(root, true);
     await logger.init();
     const fake = new FakeCodex();
@@ -390,7 +734,9 @@ describe("TaskManager locks", () => {
     expect(scenes[0]!.continuity_note).toContain("CB-01");
     expect(manager.get(task.task_id).progress_message).toBe("Completed");
     expect(fake.deletedThreads).toEqual([]);
-    expect(fake.prompts.some((prompt) => prompt.includes("EXACT NARRATION TO COVER VERBATIM") && prompt.includes("Opening narration."))).toBe(true);
+    expect(
+      fake.prompts.some((prompt) => prompt.includes("EXACT NARRATION TO COVER VERBATIM") && prompt.includes("Opening narration.")),
+    ).toBe(true);
   });
 
   it("retries quiz research when a question claim is missing", async () => {
@@ -403,8 +749,29 @@ describe("TaskManager locks", () => {
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     await writeFile(path.join(root, "shared", "research_rules.md"), "# Research\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Quiz Research Retry", description: "", target_audience: "Children", language: "English", market: "Global", group_id: "quiz", dna_mode: "example" });
-    const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `quiz_research_topic_${index}`, channel_id: channel.channel_id, title: `Quiz Research ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false, quiz_format: "multiple_choice" as const, question_count: 15, age_band: "10-12" as const }));
+    const channel = await repository.createChannel({
+      name: "Quiz Research Retry",
+      description: "",
+      target_audience: "Children",
+      language: "English",
+      market: "Global",
+      group_id: "quiz",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `quiz_research_topic_${index}`,
+      channel_id: channel.channel_id,
+      title: `Quiz Research ${index}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+      quiz_format: "multiple_choice" as const,
+      question_count: 15,
+      age_band: "10-12" as const,
+    }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
     const logger = new StudioLogger(root, true);
@@ -431,27 +798,126 @@ describe("TaskManager locks", () => {
     await writeFile(path.join(root, "templates", "quiz_channel_dna.md"), "# Quiz DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Quiz V2 Pipeline", description: "", target_audience: "", language: "English", market: "Global", group_id: "quiz", dna_mode: "example" });
-    const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `v2_pipeline_topic_${index}`, channel_id: channel.channel_id, title: `V2 Pipeline Topic ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false, quiz_format: "multiple_choice" as const, question_count: 3, age_band: "7-9" as const }));
+    const channel = await repository.createChannel({
+      name: "Quiz V2 Pipeline",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "Global",
+      group_id: "quiz",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `v2_pipeline_topic_${index}`,
+      channel_id: channel.channel_id,
+      title: `V2 Pipeline Topic ${index}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+      quiz_format: "multiple_choice" as const,
+      question_count: 3,
+      age_band: "7-9" as const,
+    }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, topics[0]!.topic_id);
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 verified");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "treatment.md", "# Documentary Treatment\n\n## Sequence 1\nA short quiz sequence.");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "script.md", "# V2 Pipeline Topic 0\n\n<!-- HUMOR_POLICY: v1 -->\n\n## Question 1\nWhich animal has stripes?\n\nTiger is the answer.");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "visual_bible.md", "# Episode Visual Bible\n\nReady visual system.");
-    await repository.saveScenes(channel.channel_id, episode.episode_id, [{ scene_id: "v2-pipeline-scene", episode_id: episode.episode_id, scene_number: 1, duration_seconds: 6, dialogue: "Which animal has stripes?", visual_prompt: "CAMERA\nA quiz card.\nACTION\nChoices appear.\nLIGHTING\nSoft.\nATMOSPHERE\nBright.\nCONTINUITY\nCandy palette.", transition_note: "", continuity_note: "Candy palette", sequence_id: "sequence-1", sequence_title: "Quiz", shot_id: "shot-1", asset_type: "ai_reconstruction", continuity_bundle_id: "CB-01", reference_asset_ids: [], source_ids: [], reconstruction: true, sound_cue: "", editorial_overlay: { kind: "none" }, audio_asset_path: null, audio_generated_at: null, audio_duration_seconds: null, quiz: { phase: "question" as const, question_number: 1, question: "Which animal has stripes?", choices: ["Tiger", "Dolphin"], answer: "Tiger", explanation: "Tigers have stripes.", image_prompt: "" } }]);
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "treatment.md",
+      "# Documentary Treatment\n\n## Sequence 1\nA short quiz sequence.",
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "script.md",
+      "# V2 Pipeline Topic 0\n\n<!-- HUMOR_POLICY: v1 -->\n\n## Question 1\nWhich animal has stripes?\n\nTiger is the answer.",
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "visual_bible.md",
+      "# Episode Visual Bible\n\nReady visual system.",
+    );
+    await repository.saveScenes(channel.channel_id, episode.episode_id, [
+      {
+        scene_id: "v2-pipeline-scene",
+        episode_id: episode.episode_id,
+        scene_number: 1,
+        duration_seconds: 6,
+        dialogue: "Which animal has stripes?",
+        visual_prompt: "CAMERA\nA quiz card.\nACTION\nChoices appear.\nLIGHTING\nSoft.\nATMOSPHERE\nBright.\nCONTINUITY\nCandy palette.",
+        transition_note: "",
+        continuity_note: "Candy palette",
+        sequence_id: "sequence-1",
+        sequence_title: "Quiz",
+        shot_id: "shot-1",
+        asset_type: "ai_reconstruction",
+        continuity_bundle_id: "CB-01",
+        reference_asset_ids: [],
+        source_ids: [],
+        reconstruction: true,
+        sound_cue: "",
+        editorial_overlay: { kind: "none" },
+        audio_asset_path: null,
+        audio_generated_at: null,
+        audio_duration_seconds: null,
+        quiz: {
+          phase: "question" as const,
+          question_number: 1,
+          question: "Which animal has stripes?",
+          choices: ["Tiger", "Dolphin", "Elephant"],
+          answer: "Tiger",
+          explanation: "Tigers have stripes.",
+          image_prompt: "",
+        },
+      },
+    ]);
     const scenes = await repository.readScenes(channel.channel_id, episode.episode_id);
-    const quiz = deriveQuizV2FromScenes({ episodeId: episode.episode_id, language: channel.language, ageBand: episode.quiz_config.age_band, format: episode.quiz_config.quiz_format, scenes });
+    const quiz = deriveQuizV2FromScenes({
+      episodeId: episode.episode_id,
+      language: channel.language,
+      ageBand: episode.quiz_config.age_band,
+      format: episode.quiz_config.quiz_format,
+      scenes,
+    });
     const director = createDefaultDirectorPlan(quiz);
     const voice = buildQuizVoicePlan(quiz);
     const measuredVoice = { ...voice, segments: voice.segments.map((segment) => ({ ...segment, duration_seconds: 4 })) };
     await repository.writeQuiz(channel.channel_id, episode.episode_id, quiz);
     await repository.writeDirectorPlan(channel.channel_id, episode.episode_id, director);
-    await repository.writeAssetPlan(channel.channel_id, episode.episode_id, QuizAssetPlanSchema.parse({ schema_version: 2, episode_id: episode.episode_id, assets: [], consistency_groups: [] }));
-    await repository.writeQuizAssetResolution(channel.channel_id, episode.episode_id, QuizAssetResolutionSchema.parse({ schema_version: 2, episode_id: episode.episode_id, template_id: "candy_arcade", assets: [] }));
+    await repository.writeAssetPlan(
+      channel.channel_id,
+      episode.episode_id,
+      QuizAssetPlanSchema.parse({ schema_version: 2, episode_id: episode.episode_id, assets: [], consistency_groups: [] }),
+    );
+    await repository.writeQuizAssetResolution(
+      channel.channel_id,
+      episode.episode_id,
+      QuizAssetResolutionSchema.parse({ schema_version: 2, episode_id: episode.episode_id, template_id: "candy_arcade", assets: [] }),
+    );
     await repository.writeVoicePlan(channel.channel_id, episode.episode_id, measuredVoice);
-    await repository.writeQuizTimeline(channel.channel_id, episode.episode_id, compileQuizTimeline({ quiz, director, voicePlan: measuredVoice }));
-    await repository.writeQuizAssessment(channel.channel_id, episode.episode_id, QuizAssessmentSchema.parse({ schema_version: 2, episode_id: episode.episode_id, assessed_at: new Date().toISOString(), score: 90, rating: "production_ready", categories: { semantic: 100, visual: 100, pacing: 100, audio: 100, variety: 100, render_integrity: 100 }, issues: [] }));
+    await repository.writeQuizTimeline(
+      channel.channel_id,
+      episode.episode_id,
+      compileQuizTimeline({ quiz, director, voicePlan: measuredVoice }),
+    );
+    await repository.writeQuizAssessment(
+      channel.channel_id,
+      episode.episode_id,
+      QuizAssessmentSchema.parse({
+        schema_version: 2,
+        episode_id: episode.episode_id,
+        assessed_at: new Date().toISOString(),
+        score: 90,
+        rating: "production_ready",
+        categories: { semantic: 100, visual: 100, pacing: 100, audio: 100, variety: 100, render_integrity: 100 },
+        issues: [],
+      }),
+    );
     const narrationPath = await repository.writeQuizNarrationAudio(channel.channel_id, episode.episode_id, fakeWav(2));
     await repository.saveNarrationMetadata(channel.channel_id, episode.episode_id, narrationPath, 30, measuredVoice.segments.length, 20);
 
@@ -459,11 +925,17 @@ describe("TaskManager locks", () => {
     await logger.init();
     const manager = new TaskManager(repository, new ContextEngine(repository, logger), new FakeCodex() as never, 1, 8, logger);
     await manager.load();
-    const internals = manager as unknown as { runVideoTask: (task: { task_id: string }) => Promise<void>; finish: (taskId: string, status: "COMPLETED", error: string | null, outputFiles?: string[]) => Promise<void> };
+    const internals = manager as unknown as {
+      runVideoTask: (task: { task_id: string }) => Promise<void>;
+      finish: (taskId: string, status: "COMPLETED", error: string | null, outputFiles?: string[]) => Promise<void>;
+    };
     internals.runVideoTask = async (task) => internals.finish(task.task_id, "COMPLETED", null, []);
     const pipeline = manager.submit("GENERATE_PIPELINE", channel.channel_id, episode.episode_id);
     await waitFor(() => manager.get(pipeline.task_id).status === "COMPLETED");
-    const taskTypes = manager.list().filter((task) => task.episode_id === episode.episode_id).map((task) => task.task_type);
+    const taskTypes = manager
+      .list()
+      .filter((task) => task.episode_id === episode.episode_id)
+      .map((task) => task.task_type);
     expect(taskTypes).toContain("GENERATE_VIDEO");
     expect(taskTypes).not.toContain("GENERATE_NARRATION");
   });
@@ -475,8 +947,25 @@ describe("TaskManager locks", () => {
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# Channel DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style Guide\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Timer Channel", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `timer_topic_${index}`, channel_id: channel.channel_id, title: `Timer Topic ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false }));
+    const channel = await repository.createChannel({
+      name: "Timer Channel",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `timer_topic_${index}`,
+      channel_id: channel.channel_id,
+      title: `Timer Topic ${index}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, topics[0]!.topic_id);
 
@@ -516,7 +1005,14 @@ describe("TaskManager locks", () => {
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Queue Channel", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
+    const channel = await repository.createChannel({
+      name: "Queue Channel",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `topic_${index}`,
       channel_id: channel.channel_id,
@@ -540,7 +1036,9 @@ describe("TaskManager locks", () => {
     await manager.load();
 
     let releaseTasks: () => void = () => undefined;
-    const holdPromise = new Promise<void>((resolve) => { releaseTasks = resolve; });
+    const holdPromise = new Promise<void>((resolve) => {
+      releaseTasks = resolve;
+    });
     const internals = manager as unknown as {
       update: (taskId: string, patch: Partial<Task>) => Promise<Task>;
       finish: (taskId: string, status: string, error?: string | null) => Promise<Task>;

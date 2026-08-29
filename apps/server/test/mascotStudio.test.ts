@@ -209,6 +209,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       // 9. Build Candy Arcade Video Composition Bundle with Mascot
       const compositionBundle = buildCandyArcadeCompositionBundle({
         quiz: {
+          schema_version: 2,
           episode_id: "ep_test",
           target_audience: "Kids",
           age_band: "7-9",
@@ -218,7 +219,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
             {
               id: "q1",
               number: 1,
-              format: "text_multiple_choice",
+              format: "multiple_choice",
               question: "What is the largest animal on Earth?",
               choices: [
                 { id: "a", text: "Elephant" },
@@ -229,7 +230,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
               explanation: "The Blue Whale is the largest mammal and animal.",
               visual_opportunity: "blue whale swimming in deep ocean",
               fun_fact: "A blue whale heart is the size of a car!",
-              difficulty: "easy",
+              difficulty: 1,
               estimated_duration_seconds: 12,
             },
           ],
@@ -269,13 +270,19 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       // Verify mascot HTML and CSS classes are present
       expect(compositionBundle.html).toContain("candy-mascot-container");
       expect(compositionBundle.html).toContain("mascot-sprite-play");
-      expect(compositionBundle.html).toContain(".quiz-question-clip .mascot-state-layer.state-thinking { opacity: 1; animation: phase-exit .001s linear var(--reveal-at) forwards; }");
-      expect(compositionBundle.html).toContain(".quiz-question-clip .mascot-state-layer.state-celebrate { opacity: 0; animation: phase-enter .001s linear var(--reveal-at) forwards; }");
-      expect(compositionBundle.html).not.toContain(".quiz-question-clip .mascot-state-layer.state-thinking { animation: phase-enter .001s linear var(--clip-start)");
+      expect(compositionBundle.html).toContain(
+        ".quiz-question-clip .mascot-state-layer.state-thinking { opacity: 1; animation: phase-exit .001s linear var(--reveal-at) forwards; }",
+      );
+      expect(compositionBundle.html).toContain(
+        ".quiz-question-clip .mascot-state-layer.state-celebrate { opacity: 0; animation: phase-enter .001s linear var(--reveal-at) forwards; }",
+      );
+      expect(compositionBundle.html).not.toContain(
+        ".quiz-question-clip .mascot-state-layer.state-thinking { animation: phase-enter .001s linear var(--clip-start)",
+      );
 
       // Verify intro and outro do NOT contain mascot DOM elements when show_in_intro and show_in_outro are false
-      expect(compositionBundle.html).not.toContain("<div class=\"candy-mascot-container mascot-intro");
-      expect(compositionBundle.html).not.toContain("<div class=\"candy-mascot-container mascot-outro");
+      expect(compositionBundle.html).not.toContain('<div class="candy-mascot-container mascot-intro');
+      expect(compositionBundle.html).not.toContain('<div class="candy-mascot-container mascot-outro');
 
       // Verify mascot does not generate redundant mascot SFX audio tags
       expect(compositionBundle.html).not.toContain("mascot-sfx");
@@ -288,8 +295,8 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       const questionSubComp = compositionBundle.files[subCompKeys[1] || subCompKeys[0]];
       expect(questionSubComp).toContain("candy-mascot-container");
       expect(questionSubComp).toContain("mascot-state-layer");
-      expect(questionSubComp).toContain("</div></header><div class=\"game-stage\"");
-      expect(questionSubComp).toContain("</div><div class=\"candy-mascot-container");
+      expect(questionSubComp).toContain('</div></header><div class="game-stage"');
+      expect(questionSubComp).toContain('</div><div class="candy-mascot-container');
 
       // 9b. Test QA Assessment & Preflight Mascot Integrity
       const dummyQuiz = {
@@ -348,7 +355,10 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
     const app = await buildApp(root);
     try {
       const { generateMascotActionSprite } = await import("../src/quiz/mascotService.js");
-      const fakePngBytes = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "base64");
+      const fakePngBytes = Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+        "base64",
+      );
 
       const mascot = await app.repository.saveMascot({
         name: "Test Milo",
@@ -382,20 +392,24 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         return Promise.resolve({
           ok: true,
           status: 200,
-          text: async () => JSON.stringify({
-            data: [{ b64_json: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" }],
-            price_vnd: 50,
-          }),
+          text: async () =>
+            JSON.stringify({
+              data: [{ b64_json: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" }],
+              price_vnd: 50,
+            }),
         } as unknown as Response);
       });
 
       try {
-        const result = await generateMascotActionSprite(
-          app.repository,
-          mascotWithMaster,
-          "wave",
-          { enabled: true, api_key: "sk-mock-key", model: "gpt-image-2", provider: "gpti2", base_url: "https://gpti2.store", image_size: "1024x1024", quality: "low" },
-        );
+        const result = await generateMascotActionSprite(app.repository, mascotWithMaster, "wave", {
+          enabled: true,
+          api_key: "sk-mock-key",
+          model: "gpt-image-2",
+          provider: "gpti2",
+          base_url: "https://gpti2.store",
+          image_size: "1024x1024",
+          quality: "low",
+        });
 
         expect(result.action_sprite.action).toBe("wave");
         expect(capturedBody).toBeDefined();
@@ -411,12 +425,8 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
   });
 
   it("strictly enforces Studio Isolation Prompt Contract and AI Matting invariants", async () => {
-    const {
-      buildMascotConceptPrompt,
-      buildMascotActionPrompt,
-      validateMascotPromptContract,
-      MASCOT_STUDIO_ISOLATION_TAGS,
-    } = await import("../src/quiz/mascotPromptContract.js");
+    const { buildMascotConceptPrompt, buildMascotActionPrompt, validateMascotPromptContract, MASCOT_STUDIO_ISOLATION_TAGS } =
+      await import("../src/quiz/mascotPromptContract.js");
 
     const mascot = {
       name: "Guardian Dragon",
@@ -460,7 +470,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
     const actionWithoutRef = buildMascotActionPrompt(mascot, "celebrate", {
       hasReferenceImage: false,
     });
-    expect(actionWithoutRef).toContain("Character: \"Guardian Dragon\"");
+    expect(actionWithoutRef).toContain('Character: "Guardian Dragon"');
     expect(actionWithoutRef).toContain("floating character");
     expect(actionWithoutRef).toContain("no ground shadow");
     expect(actionWithoutRef).toContain("no character sheet");

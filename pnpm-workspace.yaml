@@ -2,7 +2,10 @@ packages:
   - apps/*
   - packages/*
 allowBuilds:
+  '@google/genai': false
   esbuild: true
-  onnxruntime-node: set this to true or false
-  protobufjs: set this to true or false
-  sharp: set this to true or false
+  onnxruntime-node: false
+  protobufjs: false
+  sharp: false
+minimumReleaseAgeExclude:
+  - hyperframes@0.8.17

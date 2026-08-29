@@ -5,15 +5,27 @@
   "scripts": {
     "dev": "concurrently -k -n server,web -c cyan,magenta \"pnpm --filter @studio/server dev\" \"pnpm --filter @studio/web dev\"",
     "build": "pnpm -r build",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"{apps,packages}/**/*.{ts,tsx,css,json}\" \"*.{json,yml,yaml,md,mjs}\" \".github/**/*.yml\"",
+    "format:check": "node scripts/check-format.mjs",
+    "format:baseline": "node scripts/check-format.mjs --update-baseline",
+    "audit:quiz-choices": "node scripts/audit-quiz-choice-count.mjs",
     "start": "pnpm --filter @studio/server start",
     "typecheck": "pnpm --filter @studio/shared build && pnpm -r typecheck",
-    "test": "pnpm --filter @studio/shared build && pnpm --filter @studio/server test",
+    "test": "pnpm --filter @studio/shared build && pnpm --filter @studio/server test && node scripts/audit-quiz-choice-count.mjs",
     "test:e2e": "pnpm --filter @studio/web test:e2e"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.52.0",
     "concurrently": "^9.1.2",
+    "eslint": "^10.9.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.11.0",
+    "prettier": "^3.9.6",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.68.0"
   }
 }

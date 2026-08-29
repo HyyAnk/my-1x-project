@@ -226,7 +226,7 @@ export const vi: TranslationSchema = {
     deleteEpisodeWarning: "Hành động này sẽ xóa vĩnh viễn toàn bộ tài nguyên của tập (kịch bản, âm thanh, khung hình, video).",
     assignedVoice: "Giọng đọc đã chỉ định",
     defaultVoice: "Giọng đọc mặc định tích hợp",
-    
+
     // Channel Mascot
     mascotSelectTitle: "Gán Mascot cho Kênh này",
     noMascotOption: "🚫 Không dùng Mascot",
@@ -302,9 +302,9 @@ export const vi: TranslationSchema = {
     noDuplicatesSubtext: "Tất cả {count} câu hỏi trong tập này đều sạch và đạt tiêu chuẩn.",
     viewAllQuestions: "Xem tất cả câu hỏi",
     rephraseBtn: "Đổi cách hỏi",
-    rephraseTooltip: "Giữ nguyên 4 đáp án & đáp án đúng, AI chỉ đổi góc nhìn/manh mối câu hỏi",
+    rephraseTooltip: "Giữ nguyên 3 đáp án và đáp án đúng; AI chỉ đổi góc nhìn hoặc manh mối",
     replaceBtn: "Đổi câu mới",
-    replaceTooltip: "Sinh câu hỏi và bộ 4 đáp án mới toanh thuộc cùng chủ đề tập phim",
+    replaceTooltip: "Sinh câu hỏi mới với 3 đáp án trong cùng chủ đề tập phim",
     cleanBadge: "Sạch",
     duplicateBadge: "Trùng trong lịch sử",
     remixedBadge: "Đã phối lại AI",
@@ -324,7 +324,7 @@ export const vi: TranslationSchema = {
     newMascot: "Mascot mới",
     noMascotsTitle: "Chưa có Mascot nào",
     noMascotsCopy: "Thiết kế một linh vật hoạt hình đại diện cho kênh để thu hút người xem hơn.",
-    
+
     // Actions Meta (Dynamic Localized Labels)
     actionIdle: "Idle (Thở nhẹ)",
     actionIdleDesc: "Chuyển động thở nhẹ và chớp mắt tự nhiên trong lúc chờ",
@@ -487,7 +487,7 @@ export const vi: TranslationSchema = {
     celebrateReactionTooltip: "Mascot reo mừng khi người chơi chọn đúng",
     oopsReactionBtn: "Sai (Oops)",
     oopsReactionTooltip: "Mascot bối rối/tiếc nuối khi câu hỏi gài bẫy hoặc sai",
-    
+
     // Director Timeline
     timelineIntro: "Intro (2s)",
     timelineQuestion: "Question (2s)",
@@ -558,7 +558,7 @@ export const vi: TranslationSchema = {
 
     // Modals & Assign Hub
     quickAssignEyebrow: "Cấu hình Nhanh",
-    quickAssignTitle: "Gán kênh phát sóng cho \"{name}\"",
+    quickAssignTitle: 'Gán kênh phát sóng cho "{name}"',
     quickAssignSaveBtn: "Lưu & Áp Dụng",
     quickAssignSavingBtn: "Đang lưu…",
     searchChannelsPlaceholder: "Tìm kiếm kênh theo tên, ngôn ngữ, ID...",
@@ -569,7 +569,7 @@ export const vi: TranslationSchema = {
     selectAllBtn: "Chọn tất cả",
     deselectAllBtn: "Bỏ chọn tất cả",
     currentlyAssignedToOther: "Đang dùng: {name}",
-    transferWarningNotice: "{count} kênh sẽ được chuyển từ linh vật khác sang \"{name}\"",
+    transferWarningNotice: '{count} kênh sẽ được chuyển từ linh vật khác sang "{name}"',
     noChannelsFound: "Không tìm thấy kênh nào khớp với bộ lọc",
     noChannelsAvailable: "Chưa có kênh nào trong hệ thống",
     previewAspectRatioShorts: "Shorts (9:16)",
@@ -581,7 +581,7 @@ export const vi: TranslationSchema = {
     channelItemUnassigned: "Chưa gán linh vật",
     selectedChannelsSummary: "Đã chọn {count} / {total} kênh",
     deleteEyebrow: "Xóa Mascot",
-    deleteTitle: "Xóa \"{name}\"?",
+    deleteTitle: 'Xóa "{name}"?',
     deleteWarning: "Hành động này sẽ xóa vĩnh viễn linh vật {name} cùng toàn bộ các file State ảnh đã sinh.",
     deleteConfirmBtn: "Xóa vĩnh viễn",
     deletingBtn: "Đang xóa…",
@@ -631,14 +631,14 @@ export const vi: TranslationSchema = {
     tabVoice: "Giọng nói & Âm thanh",
     tabMedia: "Hình ảnh & Video",
     tabSystem: "Hệ thống & Lưu trữ",
-    
+
     // Language Section
     languageTitle: "Ngôn ngữ giao diện",
     languageSubtitle: "Chọn ngôn ngữ hiển thị bảng điều khiển (English / Tiếng Việt)",
     languageSelectEn: "English",
     languageSelectVi: "Tiếng Việt",
     languageHint: "Cài đặt ngôn ngữ được lưu cục bộ và áp dụng ngay lập tức cho toàn bộ giao diện dashboard.",
-    
+
     // System & Workspace
     workspaceTitle: "Trải nghiệm không gian làm việc",
     simplifyTitle: "Chế độ Rút gọn (Simplify Mode)",
@@ -648,7 +648,7 @@ export const vi: TranslationSchema = {
     saveStorageLocation: "Lưu vị trí lưu trữ",
     storagePathLabel: "Đường dẫn thư mục cha",
     storageHint: "Tất cả tệp video, âm thanh và hình ảnh sẽ lưu ở đây và được loại trừ khỏi Git repository.",
-    
+
     // Engines
     codexTitle: "OpenAI Codex JSON-RPC Engine",
     antigravityTitle: "Google Antigravity Engine",
@@ -656,7 +656,7 @@ export const vi: TranslationSchema = {
     cleanupOldSessions: "Dọn dẹp các phiên Codex cũ",
     saveCodexSettings: "Lưu cài đặt Codex",
     saveAntigravitySettings: "Lưu cài đặt Antigravity",
-    
+
     // Voice
     ttsTitle: "Tổng hợp Giọng nói (Chatterbox TTS)",
     voiceClarity: "Độ bám giọng mẫu & Độ nét âm thanh (CFG)",
@@ -665,7 +665,7 @@ export const vi: TranslationSchema = {
     voiceLibraryTitle: "Thư viện Giọng mẫu",
     addVoice: "Thêm giọng mới",
     saveVoiceSettings: "Lưu cài đặt Âm thanh",
-    
+
     // Media & Image
     videoTimingTitle: "Định thời lượng & Nhịp độ Video",
     sceneDurationAndSpeed: "Thời lượng cảnh & Tốc độ nói",
@@ -684,7 +684,7 @@ export const vi: TranslationSchema = {
     saveImageSettings: "Lưu cài đặt Hình ảnh",
     duplicateGateTitle: "Lịch sử Câu hỏi & Chống Trùng lặp",
     saveHistorySettings: "Lưu cài đặt Lịch sử",
-    
+
     // Storage Setup Modal
     firstLaunchTitle: "Khởi chạy lần đầu",
     chooseStorage: "Chọn thư mục lưu trữ",
@@ -719,11 +719,11 @@ export const vi: TranslationSchema = {
     mattingFailed: "Tách nền thất bại",
     channelsAssigned: "Đã cập nhật gán Mascot cho các Channel thành công!",
     channelsAssignFailed: "Lỗi gán channel",
-    mascotDeleted: "Đã xóa Mascot \"{name}\"",
+    mascotDeleted: 'Đã xóa Mascot "{name}"',
     mascotDeleteFailed: "Lỗi khi xóa mascot",
-    calibrationSaved: "Đã lưu cân chỉnh tọa độ cho pose \"{pose}\"!",
+    calibrationSaved: 'Đã lưu cân chỉnh tọa độ cho pose "{pose}"!',
     calibrationFailed: "Lỗi lưu căn chỉnh",
-    mascotImported: "Đã nhập thành công Mascot \"{name}\"!",
+    mascotImported: 'Đã nhập thành công Mascot "{name}"!',
     mascotImportFailed: "Lỗi nhập file ZIP",
     cannotReadZip: "Không thể đọc file ZIP",
     selectActionRequired: "Vui lòng chọn ít nhất 1 hành động để sinh Sprite!",
@@ -733,4 +733,3 @@ export const vi: TranslationSchema = {
     mascotAssignFailed: "Lỗi gán hoặc cập nhật Mascot",
   },
 };
-

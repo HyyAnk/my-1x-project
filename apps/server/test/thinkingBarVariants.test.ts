@@ -26,6 +26,7 @@ const sampleQuiz = QuizV2Schema.parse({
       choices: [
         { id: "choice-a", text: "Paris" },
         { id: "choice-b", text: "London" },
+        { id: "choice-c", text: "Rome" },
       ],
       correct_choice_id: "choice-a",
       explanation: "Paris is the capital of France.",
@@ -78,7 +79,7 @@ describe("Thinking Bar Element Suite", () => {
       const variant = THINKING_BAR_VARIANTS[style as Exclude<QuizThinkingBarStyle, "auto">];
       const html = variant.renderHtml(input);
 
-      expect(html).toContain("class=\"thinking-bar");
+      expect(html).toContain('class="thinking-bar');
       expect(html).toContain(`thinking-bar-${style.replace(/_/g, "-")}`);
       expect(html).toContain("--timer-duration:8.000s");
       expect(html).toContain("--cd-query-dur:3.000s");

@@ -25,8 +25,22 @@ describe("ContextEngine", () => {
     await writeFile(path.join(root, "shared", "research_rules.md"), "# Research\n", "utf8");
     await writeFile(path.join(root, "shared", "script_rules.md"), "# Script\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "One Channel", description: "Only this channel", target_audience: "Viewers", language: "English", market: "Global", dna_mode: "example" });
-    const other = await repository.createChannel({ name: "Other Channel", description: "SECRET_OTHER_CHANNEL", target_audience: "", language: "English", market: "", dna_mode: "example" });
+    const channel = await repository.createChannel({
+      name: "One Channel",
+      description: "Only this channel",
+      target_audience: "Viewers",
+      language: "English",
+      market: "Global",
+      dna_mode: "example",
+    });
+    const other = await repository.createChannel({
+      name: "Other Channel",
+      description: "SECRET_OTHER_CHANNEL",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
     await repository.saveChannelDna(other.channel_id, "# SECRET_OTHER_CHANNEL\n");
     const logger = new StudioLogger(root, true);
     await logger.init();
@@ -48,10 +62,24 @@ describe("ContextEngine", () => {
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     await writeFile(path.join(root, "shared", "research_rules.md"), "# Research\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Jobs Channel", description: "Careers for kids", target_audience: "Kids", language: "Vietnamese", market: "VN", dna_mode: "example" });
+    const channel = await repository.createChannel({
+      name: "Jobs Channel",
+      description: "Careers for kids",
+      target_audience: "Kids",
+      language: "Vietnamese",
+      market: "VN",
+      dna_mode: "example",
+    });
     const logger = new StudioLogger(root, true);
     await logger.init();
-    const context = await new ContextEngine(repository, logger).build("SUGGEST_TOPICS", channel.channel_id, null, undefined, 0, "Các loại nghề nghiệp");
+    const context = await new ContextEngine(repository, logger).build(
+      "SUGGEST_TOPICS",
+      channel.channel_id,
+      null,
+      undefined,
+      0,
+      "Các loại nghề nghiệp",
+    );
     expect(context.prompt).toContain("IMPORTANT TOPIC THEME REQUIREMENT");
     expect(context.prompt).toContain("Các loại nghề nghiệp");
     expect(context.prompt).toContain("Exactly 2 candidates MUST be directly inspired by");
@@ -63,10 +91,22 @@ describe("ContextEngine", () => {
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# Documentary DNA\n", "utf8");
-    await writeFile(path.join(root, "templates", "quiz_channel_dna.md"), "# Quiz Channel DNA\n\n## Quiz formats\n\n- Knowledge quiz\n", "utf8");
+    await writeFile(
+      path.join(root, "templates", "quiz_channel_dna.md"),
+      "# Quiz Channel DNA\n\n## Quiz formats\n\n- Knowledge quiz\n",
+      "utf8",
+    );
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Quiz DNA", description: "A quiz test", target_audience: "Children", language: "English", market: "Global", group_id: "quiz", dna_mode: "ai" });
+    const channel = await repository.createChannel({
+      name: "Quiz DNA",
+      description: "A quiz test",
+      target_audience: "Children",
+      language: "English",
+      market: "Global",
+      group_id: "quiz",
+      dna_mode: "ai",
+    });
     const logger = new StudioLogger(root, true);
     await logger.init();
 
@@ -85,12 +125,41 @@ describe("ContextEngine", () => {
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Target Matrix", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topic = { topic_id: "target_matrix_topic", channel_id: channel.channel_id, title: "Target Matrix Topic", premise: "A test premise", why_it_fits: "A test fit", hook: "A test hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false };
-    await repository.saveTopicRun(channel.channel_id, [topic, ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `target_matrix_topic_${index + 2}`, title: `Other Target ${index + 2}` }))]);
+    const channel = await repository.createChannel({
+      name: "Target Matrix",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topic = {
+      topic_id: "target_matrix_topic",
+      channel_id: channel.channel_id,
+      title: "Target Matrix Topic",
+      premise: "A test premise",
+      why_it_fits: "A test fit",
+      hook: "A test hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    };
+    await repository.saveTopicRun(channel.channel_id, [
+      topic,
+      ...Array.from({ length: 4 }, (_, index) => ({
+        ...topic,
+        topic_id: `target_matrix_topic_${index + 2}`,
+        title: `Other Target ${index + 2}`,
+      })),
+    ]);
     const episode = await repository.confirmTopic(channel.channel_id, topic.topic_id);
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 verified source");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "treatment.md", "# Documentary Treatment\n\n## Sequence 1\nTime budget and claim C01");
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "treatment.md",
+      "# Documentary Treatment\n\n## Sequence 1\nTime budget and claim C01",
+    );
     const logger = new StudioLogger(root, true);
     await logger.init();
     const engine = new ContextEngine(repository, logger);
@@ -100,7 +169,7 @@ describe("ContextEngine", () => {
       const context = await engine.build("GENERATE_SCRIPT", channel.channel_id, episode.episode_id);
       expect(context.prompt).toContain("Return only one completed Markdown quiz narration script");
       expect(context.prompt).toContain("Question");
-      expect(context.prompt).toContain("maximum 3 options");
+      expect(context.prompt).toContain("exactly 3 options");
       const treatmentContext = await engine.build("GENERATE_TREATMENT", channel.channel_id, episode.episode_id);
       expect(treatmentContext.prompt).toContain("question blocks");
     }
@@ -114,12 +183,38 @@ describe("ContextEngine", () => {
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "TF Channel", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topic = { topic_id: "tf_topic", channel_id: channel.channel_id, title: "TF Topic", premise: "A test premise", why_it_fits: "A test fit", hook: "A test hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false, quiz_format: "true_false" as const };
-    await repository.saveTopicRun(channel.channel_id, [topic, ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `tf_topic_${index + 2}`, title: `Other TF Topic ${index + 2}` }))]);
+    const channel = await repository.createChannel({
+      name: "TF Channel",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topic = {
+      topic_id: "tf_topic",
+      channel_id: channel.channel_id,
+      title: "TF Topic",
+      premise: "A test premise",
+      why_it_fits: "A test fit",
+      hook: "A test hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+      quiz_format: "true_false" as const,
+    };
+    await repository.saveTopicRun(channel.channel_id, [
+      topic,
+      ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `tf_topic_${index + 2}`, title: `Other TF Topic ${index + 2}` })),
+    ]);
     const episode = await repository.confirmTopic(channel.channel_id, topic.topic_id);
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 verified source");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "treatment.md", "# Documentary Treatment\n\n## Question 1\nTime budget and claim C01");
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "treatment.md",
+      "# Documentary Treatment\n\n## Question 1\nTime budget and claim C01",
+    );
     const logger = new StudioLogger(root, true);
     await logger.init();
     const engine = new ContextEngine(repository, logger);
@@ -132,8 +227,18 @@ describe("ContextEngine", () => {
     expect(treatmentContext.prompt).toContain("strictly exactly 2 choices: True or False");
     expect(treatmentContext.prompt).toContain("Never generate more than 2 answer choices");
 
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "script.md", "# Quiz Script\n\n<!-- HUMOR_POLICY: v1 -->\n\n## Question 1\nScript content");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "visual_bible.md", "# Quiz Visual Bible\n\n## Safe motion\nAllowed\n\n## Continuity bundle CB-01 — Bundle\n- Anchor-frame prompt: A cartoon illustration");
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "script.md",
+      "# Quiz Script\n\n<!-- HUMOR_POLICY: v1 -->\n\n## Question 1\nScript content",
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "visual_bible.md",
+      "# Quiz Visual Bible\n\n## Safe motion\nAllowed\n\n## Continuity bundle CB-01 — Bundle\n- Anchor-frame prompt: A cartoon illustration",
+    );
 
     const sceneContext = await engine.build("GENERATE_SCENES", channel.channel_id, episode.episode_id);
     expect(sceneContext.prompt).toContain("Choices must have exactly 2 options (True and False only; never exceed 2 choices).");
@@ -145,16 +250,49 @@ describe("ContextEngine", () => {
     roots.push(root, storage);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
-    await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n\n## Visual Style\nWarm\n\n## Visual Language\nCinematic\n", "utf8");
+    await writeFile(
+      path.join(root, "templates", "example_channel_dna.md"),
+      "# DNA\n\n## Visual Style\nWarm\n\n## Visual Language\nCinematic\n",
+      "utf8",
+    );
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     await writeFile(path.join(root, "shared", "visual_bible_rules.md"), "# Visual rules\n", "utf8");
     await writeFile(path.join(root, "shared", "visual_rules.md"), "# Visual rules\n", "utf8");
     const repository = new RepositoryService(root, storage);
-    const channel = await repository.createChannel({ name: "Image Context", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topic = { topic_id: "image_context_topic", channel_id: channel.channel_id, title: "Image Context Topic", premise: "A test premise", why_it_fits: "A test fit", hook: "A test hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false };
-    await repository.saveTopicRun(channel.channel_id, [topic, ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `image_context_topic_${index + 2}`, title: `Other Image Topic ${index + 2}` }))]);
+    const channel = await repository.createChannel({
+      name: "Image Context",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topic = {
+      topic_id: "image_context_topic",
+      channel_id: channel.channel_id,
+      title: "Image Context Topic",
+      premise: "A test premise",
+      why_it_fits: "A test fit",
+      hook: "A test hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    };
+    await repository.saveTopicRun(channel.channel_id, [
+      topic,
+      ...Array.from({ length: 4 }, (_, index) => ({
+        ...topic,
+        topic_id: `image_context_topic_${index + 2}`,
+        title: `Other Image Topic ${index + 2}`,
+      })),
+    ]);
     const episode = await repository.confirmTopic(channel.channel_id, topic.topic_id);
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "visual_bible.md", "# Episode Visual Bible\n\n## Continuity bundle CB-01 — Workshop\n\n- Era: 1950s\n- Anchor-frame prompt: A warm workshop.\n- Reference asset slots: anchor\n");
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "visual_bible.md",
+      "# Episode Visual Bible\n\n## Continuity bundle CB-01 — Workshop\n\n- Era: 1950s\n- Anchor-frame prompt: A warm workshop.\n- Reference asset slots: anchor\n",
+    );
     const logger = new StudioLogger(root, true);
     await logger.init();
     const context = await new ContextEngine(repository, logger).build("GENERATE_BUNDLE_IMAGE", channel.channel_id, episode.episode_id, 1);
@@ -171,21 +309,75 @@ describe("ContextEngine", () => {
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Sequence Recovery", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topic = { topic_id: "sequence_recovery_topic", channel_id: channel.channel_id, title: "Sequence Recovery Topic", premise: "A test premise", why_it_fits: "A test fit", hook: "A test hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false };
-    await repository.saveTopicRun(channel.channel_id, [topic, ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `sequence_recovery_topic_${index + 2}`, title: `Other Recovery Topic ${index + 2}` }))]);
+    const channel = await repository.createChannel({
+      name: "Sequence Recovery",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topic = {
+      topic_id: "sequence_recovery_topic",
+      channel_id: channel.channel_id,
+      title: "Sequence Recovery Topic",
+      premise: "A test premise",
+      why_it_fits: "A test fit",
+      hook: "A test hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    };
+    await repository.saveTopicRun(channel.channel_id, [
+      topic,
+      ...Array.from({ length: 4 }, (_, index) => ({
+        ...topic,
+        topic_id: `sequence_recovery_topic_${index + 2}`,
+        title: `Other Recovery Topic ${index + 2}`,
+      })),
+    ]);
     const episode = await repository.confirmTopic(channel.channel_id, topic.topic_id);
-    const sequenceHeadings = Array.from({ length: 6 }, (_, index) => `## Sequence ${index + 1} — Part ${index + 1}\n\nSequence ${index + 1} narration.`).join("\n\n");
-    const scriptHeadings = Array.from({ length: 6 }, (_, index) => `## Sequence ${index + 1} — Part ${index + 1}\n\nSequence ${index + 1} narration.`).join("\n\n");
-    const bundleHeadings = Array.from({ length: 5 }, (_, index) => `## Continuity bundle CB-${String(index + 1).padStart(2, "0")} — Bundle ${index + 1}\n\n- Anchor-frame prompt: Bundle ${index + 1}.`).join("\n\n");
+    const sequenceHeadings = Array.from(
+      { length: 6 },
+      (_, index) => `## Sequence ${index + 1} — Part ${index + 1}\n\nSequence ${index + 1} narration.`,
+    ).join("\n\n");
+    const scriptHeadings = Array.from(
+      { length: 6 },
+      (_, index) => `## Sequence ${index + 1} — Part ${index + 1}\n\nSequence ${index + 1} narration.`,
+    ).join("\n\n");
+    const bundleHeadings = Array.from(
+      { length: 5 },
+      (_, index) =>
+        `## Continuity bundle CB-${String(index + 1).padStart(2, "0")} — Bundle ${index + 1}\n\n- Anchor-frame prompt: Bundle ${index + 1}.`,
+    ).join("\n\n");
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 verified");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "treatment.md", `# Documentary Treatment\n\n${sequenceHeadings}`);
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "script.md", `# Sequence Recovery\n\n<!-- HUMOR_POLICY: v1 -->\n\n${scriptHeadings}`);
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "visual_bible.md", `# Episode Visual Bible\n\n${bundleHeadings}`);
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "treatment.md",
+      `# Documentary Treatment\n\n${sequenceHeadings}`,
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "script.md",
+      `# Sequence Recovery\n\n<!-- HUMOR_POLICY: v1 -->\n\n${scriptHeadings}`,
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "visual_bible.md",
+      `# Episode Visual Bible\n\n${bundleHeadings}`,
+    );
     const logger = new StudioLogger(root, true);
     await logger.init();
 
-    const context = await new ContextEngine(repository, logger).build("GENERATE_SEQUENCE_SCENES", channel.channel_id, episode.episode_id, 6);
+    const context = await new ContextEngine(repository, logger).build(
+      "GENERATE_SEQUENCE_SCENES",
+      channel.channel_id,
+      episode.episode_id,
+      6,
+    );
 
     expect(context.prompt).toContain("visual bible fallback for requested section 6");
     expect(context.prompt).toContain("CB-05");
@@ -200,9 +392,29 @@ describe("ContextEngine", () => {
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Lean Scoping", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topic = { topic_id: "scoped_topic", channel_id: channel.channel_id, title: "Scoped Topic", premise: "A premise", why_it_fits: "A fit", hook: "A hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false };
-    await repository.saveTopicRun(channel.channel_id, [topic, ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `scoped_topic_${index + 2}`, title: `Other ${index + 2}` }))]);
+    const channel = await repository.createChannel({
+      name: "Lean Scoping",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topic = {
+      topic_id: "scoped_topic",
+      channel_id: channel.channel_id,
+      title: "Scoped Topic",
+      premise: "A premise",
+      why_it_fits: "A fit",
+      hook: "A hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    };
+    await repository.saveTopicRun(channel.channel_id, [
+      topic,
+      ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `scoped_topic_${index + 2}`, title: `Other ${index + 2}` })),
+    ]);
     const episode = await repository.confirmTopic(channel.channel_id, topic.topic_id);
 
     // Create a large 10-claim research dossier (> 5000 chars)
@@ -222,13 +434,33 @@ describe("ContextEngine", () => {
     ].join("\n");
 
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", longResearch);
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "treatment.md", "## Question 5 — Polar Icebreaker\nPurpose: Ice crushing test");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "script.md", "## Question 5 — Polar Icebreaker\nLook at this red bow!");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "visual_bible.md", "## Continuity bundle CB-05 — Polar Icebreaker\n- Anchor-frame prompt: Red icebreaker prow.");
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "treatment.md",
+      "## Question 5 — Polar Icebreaker\nPurpose: Ice crushing test",
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "script.md",
+      "## Question 5 — Polar Icebreaker\nLook at this red bow!",
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "visual_bible.md",
+      "## Continuity bundle CB-05 — Polar Icebreaker\n- Anchor-frame prompt: Red icebreaker prow.",
+    );
 
     const logger = new StudioLogger(root, true);
     await logger.init();
-    const context = await new ContextEngine(repository, logger).build("GENERATE_SEQUENCE_SCENES", channel.channel_id, episode.episode_id, 5);
+    const context = await new ContextEngine(repository, logger).build(
+      "GENERATE_SEQUENCE_SCENES",
+      channel.channel_id,
+      episode.episode_id,
+      5,
+    );
 
     expect(context.prompt).toContain("Polar Icebreaker");
     expect(context.prompt).toContain("Icebreaker crushing physics");

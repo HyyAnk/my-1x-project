@@ -1,8 +1,7 @@
 import {
   QuizQuestionFormatSchema,
   QuizV2Schema,
-  QUIZ_MAX_CHOICES_PER_QUESTION,
-  QUIZ_MIN_CHOICES_PER_QUESTION,
+  quizChoiceCountForFormat,
   type QuizConfig,
   type QuizQuestion,
   type QuizQuestionFormat,
@@ -11,7 +10,10 @@ import {
 } from "@studio/shared";
 
 export class QuizDomainError extends Error {
-  constructor(message: string, public readonly code = "QUIZ_DOMAIN_ERROR") {
+  constructor(
+    message: string,
+    public readonly code = "QUIZ_DOMAIN_ERROR",
+  ) {
     super(message);
     this.name = "QuizDomainError";
   }
@@ -22,7 +24,10 @@ export function normalizeQuizText(value: string): string {
 }
 
 export function stripQuizChoiceLabel(value: string): string {
-  return value.trim().replace(/^(?:(?:choice|option)[\s_-]*)?(?:[a-z]|\d{1,2})\s*[-–—:.)]\s+/i, "").trim();
+  return value
+    .trim()
+    .replace(/^(?:(?:choice|option)[\s_-]*)?(?:[a-z]|\d{1,2})\s*[-–—:.)]\s+/i, "")
+    .trim();
 }
 
 function normalizeQuizChoiceText(value: string): string {
@@ -68,7 +73,10 @@ export function canonicalizeVisibleQuizAnswer(choices: string[], answer: string)
 }
 
 function stripAnswerLead(value: string): string {
-  return value.trim().replace(/^(?:(?:the\s+)?(?:correct|right|canonical)\s+)?(?:answer|choice|option)\s*(?:is|:|=|-)?\s*/i, "").trim();
+  return value
+    .trim()
+    .replace(/^(?:(?:the\s+)?(?:correct|right|canonical)\s+)?(?:answer|choice|option)\s*(?:is|:|=|-)?\s*/i, "")
+    .trim();
 }
 
 function matchesVisibleChoiceText(candidate: string, visibleChoice: string): boolean {
@@ -101,60 +109,79 @@ export function deriveQuizV2FromScenes(input: {
   }
   if (!grouped.size) throw new QuizDomainError("Quiz scenes contain no numbered questions", "QUIZ_QUESTIONS_MISSING");
 
-  const questions = [...grouped.entries()].sort(([a], [b]) => a - b).map(([number, questionScenes], index) => {
-    const quizScenes = questionScenes.map((scene) => scene.quiz).filter((quiz): quiz is NonNullable<Scene["quiz"]> => Boolean(quiz));
-    const question = quizScenes.find((quiz) => quiz.question.trim())?.question.trim() ?? "";
-    const format = normalizeQuestionFormat(input.format);
-    const maxChoices = format === "true_false" ? 2 : QUIZ_MAX_CHOICES_PER_QUESTION;
-    const minChoices = format === "true_false" ? 2 : QUIZ_MIN_CHOICES_PER_QUESTION;
-    const rawChoices = (quizScenes.find((quiz) => quiz.choices.length > 0)?.choices ?? []);
-    const answer = quizScenes.find((quiz) => quiz.answer.trim())?.answer.trim() ?? "";
-    const explanation = quizScenes.find((quiz) => quiz.explanation.trim())?.explanation.trim() ?? "";
+  const questions = [...grouped.entries()]
+    .sort(([a], [b]) => a - b)
+    .map(([number, questionScenes], index) => {
+      const quizScenes = questionScenes.map((scene) => scene.quiz).filter((quiz): quiz is NonNullable<Scene["quiz"]> => Boolean(quiz));
+      const question = quizScenes.find((quiz) => quiz.question.trim())?.question.trim() ?? "";
+      const format = normalizeQuestionFormat(input.format);
+      const requiredChoiceCount = quizChoiceCountForFormat(format);
+      const rawChoices = quizScenes.find((quiz) => quiz.choices.length > 0)?.choices ?? [];
+      const answer = quizScenes.find((quiz) => quiz.answer.trim())?.answer.trim() ?? "";
+      const explanation = quizScenes.find((quiz) => quiz.explanation.trim())?.explanation.trim() ?? "";
 
-    let choicesText: string[];
-    if (format === "true_false" && rawChoices.length > 2) {
-      const matchIdx = resolveVisibleQuizChoice(rawChoices, answer);
-      if (matchIdx !== null && matchIdx >= 2) {
-        choicesText = [rawChoices[0] ?? "", rawChoices[matchIdx]];
-      } else {
-        choicesText = rawChoices.slice(0, 2);
+      const choicesText = rawChoices;
+
+      if (choicesText.length !== requiredChoiceCount) {
+        throw new QuizDomainError(
+          "Question " +
+            number +
+            " must have exactly " +
+            requiredChoiceCount +
+            (format === "true_false" ? " choices: True and False" : " choices: A, B, and C") +
+            "; received " +
+            choicesText.length,
+          "QUIZ_CHOICE_COUNT_INVALID",
+        );
       }
-    } else {
-      choicesText = rawChoices.slice(0, maxChoices);
-    }
 
-    if (!question || choicesText.length < minChoices || choicesText.length > maxChoices || !answer || !explanation) {
-      throw new QuizDomainError(
-        "Question " + number + " is missing question, choices (" +
-        (format === "true_false" ? "must have exactly 2 choices: True/False" : "must have 2–3 choices: A, B, or C") +
-        "), canonical answer, or explanation",
-        "QUIZ_QUESTION_INCOMPLETE"
+      if (!question || !answer || !explanation) {
+        throw new QuizDomainError(
+          "Question " + number + " is missing question, canonical answer, or explanation",
+          "QUIZ_QUESTION_INCOMPLETE",
+        );
+      }
+      const choices = choicesText.map((text, choiceIndex) => ({
+        id: "choice-" + String.fromCharCode(97 + choiceIndex),
+        text: stripQuizChoiceLabel(text),
+      }));
+      const canonicalChoiceIndex = resolveVisibleQuizChoice(
+        choices.map((choice) => choice.text),
+        answer,
       );
-    }
-    const choices = choicesText.map((text, choiceIndex) => ({ id: "choice-" + String.fromCharCode(97 + choiceIndex), text: stripQuizChoiceLabel(text) }));
-    const canonicalChoiceIndex = resolveVisibleQuizChoice(choices.map((choice) => choice.text), answer);
-    if (canonicalChoiceIndex === null) throw new QuizDomainError("Question " + number + " answer \"" + answer + "\" does not match exactly one visible choice", "QUIZ_CANONICAL_ANSWER_INVALID");
-    const normalizedChoices = choices.map((choice) => normalizeQuizChoiceText(choice.text));
-    if (new Set(normalizedChoices).size !== normalizedChoices.length) throw new QuizDomainError("Question " + number + " contains duplicate visible choices", "QUIZ_DUPLICATE_CHOICE");
-    const sourceIds = [...new Set(questionScenes.flatMap((scene) => scene.source_ids))];
-    const visualOpportunity = quizScenes.find((quiz) => quiz.image_prompt.trim())?.image_prompt.trim() ?? "";
-    return {
-      id: "question-" + String(index + 1).padStart(2, "0"),
-      number: index + 1,
-      format,
-      difficulty: Math.min(5, 1 + Math.floor(index / Math.max(1, Math.ceil(grouped.size / 5)))),
-      question,
-      choices,
-      correct_choice_id: choices[canonicalChoiceIndex].id,
-      explanation,
-      fun_fact: "",
-      source_ids: sourceIds,
-      visual_opportunity: visualOpportunity,
-      validation: { semantic_status: "validated" as const, source_coverage: sourceIds.length > 0, fact_locked: true },
-    };
-  });
+      if (canonicalChoiceIndex === null)
+        throw new QuizDomainError(
+          "Question " + number + ' answer "' + answer + '" does not match exactly one visible choice',
+          "QUIZ_CANONICAL_ANSWER_INVALID",
+        );
+      const normalizedChoices = choices.map((choice) => normalizeQuizChoiceText(choice.text));
+      if (new Set(normalizedChoices).size !== normalizedChoices.length)
+        throw new QuizDomainError("Question " + number + " contains duplicate visible choices", "QUIZ_DUPLICATE_CHOICE");
+      const sourceIds = [...new Set(questionScenes.flatMap((scene) => scene.source_ids))];
+      const visualOpportunity = quizScenes.find((quiz) => quiz.image_prompt.trim())?.image_prompt.trim() ?? "";
+      return {
+        id: "question-" + String(index + 1).padStart(2, "0"),
+        number: index + 1,
+        format,
+        difficulty: Math.min(5, 1 + Math.floor(index / Math.max(1, Math.ceil(grouped.size / 5)))),
+        question,
+        choices,
+        correct_choice_id: choices[canonicalChoiceIndex].id,
+        explanation,
+        fun_fact: "",
+        source_ids: sourceIds,
+        visual_opportunity: visualOpportunity,
+        validation: { semantic_status: "validated" as const, source_coverage: sourceIds.length > 0, fact_locked: true },
+      };
+    });
   const balancedQuestions = balanceQuizChoicePositions(questions);
-  return validateQuizV2({ schema_version: 2, episode_id: input.episodeId, age_band: input.ageBand, language: input.language, questions: balancedQuestions });
+  return validateQuizV2({
+    schema_version: 2,
+    episode_id: input.episodeId,
+    age_band: input.ageBand,
+    language: input.language,
+    questions: balancedQuestions,
+  });
 }
 
 /**
@@ -196,7 +223,7 @@ export function balanceQuizChoicePositions(questions: QuizQuestion[]): QuizQuest
         if (countDiff !== 0) return countDiff;
         return a - b;
       });
-      targetCorrectIdx = candidates[0] ?? ((currentCorrectIdx + 1) % question.choices.length);
+      targetCorrectIdx = candidates[0] ?? (currentCorrectIdx + 1) % question.choices.length;
     }
 
     const newChoicesTexts = new Array<string>(question.choices.length);

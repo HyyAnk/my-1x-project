@@ -1,0 +1,11 @@
+**/dist
+**/node_modules
+.codegraph
+.context
+.documentary-studio
+assets
+channels
+services
+test-results
+playwright-report
+pnpm-lock.yaml

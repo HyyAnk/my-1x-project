@@ -226,7 +226,7 @@ export const en: TranslationSchema = {
     deleteEpisodeWarning: "This action will permanently delete all episode assets (script, audio, frames, video).",
     assignedVoice: "Assigned Voice",
     defaultVoice: "Built-in default voice",
-    
+
     // Channel Mascot
     mascotSelectTitle: "Assign Mascot to this Channel",
     noMascotOption: "🚫 No Mascot assigned",
@@ -302,9 +302,9 @@ export const en: TranslationSchema = {
     noDuplicatesSubtext: "All {count} questions in this episode meet uniqueness quality standards.",
     viewAllQuestions: "View all questions",
     rephraseBtn: "Rephrase",
-    rephraseTooltip: "Keep 4 choices & correct answer, AI only changes perspective/hook",
+    rephraseTooltip: "Keep 3 choices and the correct answer; AI only changes the perspective or hook",
     replaceBtn: "New Question",
-    replaceTooltip: "Generate a brand new question and 4 choices within the same topic",
+    replaceTooltip: "Generate a brand new question with 3 choices in the same topic",
     cleanBadge: "Clean",
     duplicateBadge: "Duplicate in History",
     remixedBadge: "AI Remixed",
@@ -324,7 +324,7 @@ export const en: TranslationSchema = {
     newMascot: "New Mascot",
     noMascotsTitle: "No Mascots Created",
     noMascotsCopy: "Design an animated mascot to guide your quiz audiences and boost engagement.",
-    
+
     // Actions Meta (Dynamic Localized Labels)
     actionIdle: "Idle (Breathing)",
     actionIdleDesc: "Natural subtle breathing and blinking motion while waiting",
@@ -487,7 +487,7 @@ export const en: TranslationSchema = {
     celebrateReactionTooltip: "Mascot celebration when player selects correct answer",
     oopsReactionBtn: "Oops (Confused)",
     oopsReactionTooltip: "Mascot confused/disappointed reaction on time-out or wrong answer",
-    
+
     // Director Timeline
     timelineIntro: "Intro (2s)",
     timelineQuestion: "Question (2s)",
@@ -558,7 +558,7 @@ export const en: TranslationSchema = {
 
     // Modals & Assign Hub
     quickAssignEyebrow: "Quick Configuration",
-    quickAssignTitle: "Assign broadcast channels to \"{name}\"",
+    quickAssignTitle: 'Assign broadcast channels to "{name}"',
     quickAssignSaveBtn: "Save & Apply",
     quickAssignSavingBtn: "Saving…",
     searchChannelsPlaceholder: "Search channels by name, language, ID...",
@@ -569,7 +569,7 @@ export const en: TranslationSchema = {
     selectAllBtn: "Select All",
     deselectAllBtn: "Deselect All",
     currentlyAssignedToOther: "Active on: {name}",
-    transferWarningNotice: "{count} channels will be transferred from other mascots to \"{name}\"",
+    transferWarningNotice: '{count} channels will be transferred from other mascots to "{name}"',
     noChannelsFound: "No matching channels found",
     noChannelsAvailable: "No channels configured in system",
     previewAspectRatioShorts: "Shorts (9:16)",
@@ -581,7 +581,7 @@ export const en: TranslationSchema = {
     channelItemUnassigned: "Unassigned",
     selectedChannelsSummary: "{count} / {total} channels selected",
     deleteEyebrow: "Delete Mascot",
-    deleteTitle: "Delete \"{name}\"?",
+    deleteTitle: 'Delete "{name}"?',
     deleteWarning: "This action will permanently delete mascot {name} and all generated state assets.",
     deleteConfirmBtn: "Delete Permanently",
     deletingBtn: "Deleting…",
@@ -631,14 +631,14 @@ export const en: TranslationSchema = {
     tabVoice: "Voice & Audio",
     tabMedia: "Media & Generation",
     tabSystem: "Storage & System",
-    
+
     // Language Section
     languageTitle: "Interface Language",
     languageSubtitle: "Choose dashboard display language (English / Tiếng Việt)",
     languageSelectEn: "English",
     languageSelectVi: "Tiếng Việt",
     languageHint: "Language setting is saved locally and applied instantly across all dashboard views.",
-    
+
     // System & Workspace
     workspaceTitle: "Workspace Experience",
     simplifyTitle: "Simplify Mode",
@@ -648,7 +648,7 @@ export const en: TranslationSchema = {
     saveStorageLocation: "Save Storage Location",
     storagePathLabel: "Parent folder path",
     storageHint: "Channel and episode media files stay here and are excluded from Git repository.",
-    
+
     // Engines
     codexTitle: "OpenAI Codex JSON-RPC Engine",
     antigravityTitle: "Google Antigravity Engine",
@@ -656,7 +656,7 @@ export const en: TranslationSchema = {
     cleanupOldSessions: "Clean up old Codex sessions",
     saveCodexSettings: "Save Codex Settings",
     saveAntigravitySettings: "Save Antigravity Settings",
-    
+
     // Voice
     ttsTitle: "Text-to-Speech (Chatterbox TTS)",
     voiceClarity: "Voice Clarity & Reference Adherence (CFG)",
@@ -665,7 +665,7 @@ export const en: TranslationSchema = {
     voiceLibraryTitle: "Voice Library",
     addVoice: "Add voice",
     saveVoiceSettings: "Save Audio Settings",
-    
+
     // Media & Image
     videoTimingTitle: "Video Timing & Pacing",
     sceneDurationAndSpeed: "Scene Duration & Speed",
@@ -684,7 +684,7 @@ export const en: TranslationSchema = {
     saveImageSettings: "Save Image Settings",
     duplicateGateTitle: "Question History & Duplicate Gate",
     saveHistorySettings: "Save History Settings",
-    
+
     // Storage Setup Modal
     firstLaunchTitle: "First launch",
     chooseStorage: "Choose storage",
@@ -719,11 +719,11 @@ export const en: TranslationSchema = {
     mattingFailed: "Background removal failed",
     channelsAssigned: "Mascot channel assignments updated successfully!",
     channelsAssignFailed: "Failed to assign channels",
-    mascotDeleted: "Deleted mascot \"{name}\"",
+    mascotDeleted: 'Deleted mascot "{name}"',
     mascotDeleteFailed: "Failed to delete mascot",
-    calibrationSaved: "Calibration offsets saved for pose \"{pose}\"!",
+    calibrationSaved: 'Calibration offsets saved for pose "{pose}"!',
     calibrationFailed: "Failed to save calibration",
-    mascotImported: "Imported mascot \"{name}\" successfully!",
+    mascotImported: 'Imported mascot "{name}" successfully!',
     mascotImportFailed: "Failed to import ZIP bundle",
     cannotReadZip: "Unable to read ZIP file",
     selectActionRequired: "Please select at least 1 action to generate sprites!",
@@ -733,4 +733,3 @@ export const en: TranslationSchema = {
     mascotAssignFailed: "Failed to update channel mascot",
   },
 };
-

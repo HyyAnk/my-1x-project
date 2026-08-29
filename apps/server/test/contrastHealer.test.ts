@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
-import { generateContrastSelfHealingCss, healCompositionContrast, patchCompositionFilesWithContrastFix } from "../src/quiz/qa/contrastHealer.js";
+import {
+  generateContrastSelfHealingCss,
+  healCompositionContrast,
+  patchCompositionFilesWithContrastFix,
+} from "../src/quiz/qa/contrastHealer.js";
 import type { HyperframesCheckReport } from "../src/quiz/qa/hyperframesQuality.js";
 
 describe("Contrast Self-Healing & Auto-Correction", () => {
@@ -11,14 +15,22 @@ describe("Contrast Self-Healing & Auto-Correction", () => {
       ok: false,
       contrast: {
         findings: [
-          { severity: "error", message: "Contrast is 1.85:1; WCAG AA requires 3:1.", text: "space", ratio: 1.85, requiredRatio: 3, time: 50.75 },
+          {
+            severity: "error",
+            message: "Contrast is 1.85:1; WCAG AA requires 3:1.",
+            text: "space",
+            ratio: 1.85,
+            requiredRatio: 3,
+            time: 50.75,
+          },
         ],
       },
     };
 
     const css = generateContrastSelfHealingCss(report);
     expect(css).toContain(".keyword-highlight { color: #047857 !important;");
-    expect(css).toContain(".answer-card:nth-child(4n+1) span, .visual-answer-card:nth-child(4n+1) span { color: #78350F !important;");
+    expect(css).toContain(".answer-card:nth-child(1) span, .visual-answer-card:nth-child(1) span { color: #78350F !important;");
+    expect(css).not.toContain("nth-child(4n");
     expect(css).toContain(".answer-card > b, .visual-answer-label > b { color: #ffffff !important;");
     expect(css).toContain(".badge-comment, .badge-like, .badge-sub { color: #172a59 !important;");
     expect(css).toContain('[data-text*="space" i]');
