@@ -22,14 +22,6 @@
       "count": 1
     }
   },
-  "apps/server/src/app.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 2
-    },
-    "@typescript-eslint/require-await": {
-      "count": 5
-    }
-  },
   "apps/server/src/codex.ts": {
     "@typescript-eslint/no-base-to-string": {
       "count": 1
