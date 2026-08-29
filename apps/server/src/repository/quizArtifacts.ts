@@ -238,7 +238,7 @@ export async function readQuestionHistory(this: RepositoryRuntime, channelId: st
   try {
     const raw = JSON.parse(await readFile(historyPath, "utf8")) as unknown;
     if (!Array.isArray(raw)) return [];
-    return raw.map((item) => QuestionHistoryEntrySchema.parse(item));
+    return pruneQuestionHistory(raw.map((item) => QuestionHistoryEntrySchema.parse(item)));
   } catch {
     return [];
   }
@@ -250,34 +250,65 @@ export async function appendQuestionHistory(
   episodeId: string,
   questions: QuizQuestion[],
   ttlDays = 30,
+  renderTaskId?: string,
 ): Promise<void> {
   const channel = await this.getChannel(channelId);
   const episode = await this.getEpisode(channelId, episodeId).catch(() => null);
   const episodeTitle = episode?.topic?.title || episodeId;
   const historyPath = this.resolvePath("channels", channel.slug, "question_history.json");
-  const existing = await this.readQuestionHistory(channelId);
-
-  const filteredExisting = existing.filter((e) => e.episode_id !== episodeId);
-
-  const newEntries: QuestionHistoryEntry[] = questions.map((q) => {
-    const correctChoice = q.choices.find((c) => c.id === q.correct_choice_id)?.text || "";
-    return {
-      question_id: q.id,
-      question_text: q.question,
-      normalized_question: normalizeQuestionText(q.question),
-      choices: q.choices.map((c) => c.text),
-      correct_answer: correctChoice,
-      episode_id: episodeId,
-      episode_title: episodeTitle,
-      channel_id: channelId,
-      rendered_at: nowIso(),
-    };
+  await queueQuestionHistoryWrite.call(this, channelId, async () => {
+    const existing = await this.readQuestionHistory(channelId);
+    const filteredExisting = existing.filter((entry) => entry.episode_id !== episodeId);
+    const newEntries = questions.map((question): QuestionHistoryEntry => {
+      const correctChoice = question.choices.find((choice) => choice.id === question.correct_choice_id)?.text || "";
+      return {
+        question_id: question.id,
+        question_text: question.question,
+        normalized_question: normalizeQuestionText(question.question),
+        choices: question.choices.map((choice) => choice.text),
+        correct_answer: correctChoice,
+        episode_id: episodeId,
+        episode_title: episodeTitle,
+        channel_id: channelId,
+        ...(renderTaskId ? { render_task_id: renderTaskId } : {}),
+        rendered_at: nowIso(),
+      };
+    });
+    await mkdir(path.dirname(historyPath), { recursive: true });
+    await this.writeJsonAtomic(historyPath, pruneQuestionHistory([...filteredExisting, ...newEntries], ttlDays));
   });
+}
 
-  const combined = [...filteredExisting, ...newEntries];
-  const pruned = pruneQuestionHistory(combined, ttlDays);
-  await mkdir(path.dirname(historyPath), { recursive: true });
-  await this.writeJsonAtomic(historyPath, pruned);
+export async function removeQuestionHistoryEntries(
+  this: RepositoryRuntime,
+  channelId: string,
+  filter: { episodeIds?: string[]; renderTaskIds?: string[] },
+  ttlDays = 30,
+): Promise<void> {
+  const episodeIds = new Set(filter.episodeIds ?? []);
+  const renderTaskIds = new Set(filter.renderTaskIds ?? []);
+  if (episodeIds.size === 0 && renderTaskIds.size === 0) return;
+  const channel = await this.getChannel(channelId);
+  const historyPath = this.resolvePath("channels", channel.slug, "question_history.json");
+  await queueQuestionHistoryWrite.call(this, channelId, async () => {
+    const existing = await this.readQuestionHistory(channelId);
+    const retained = existing.filter(
+      (entry) => !episodeIds.has(entry.episode_id) && !(entry.render_task_id && renderTaskIds.has(entry.render_task_id)),
+    );
+    await mkdir(path.dirname(historyPath), { recursive: true });
+    await this.writeJsonAtomic(historyPath, pruneQuestionHistory(retained, ttlDays));
+  });
+}
+
+async function queueQuestionHistoryWrite(this: RepositoryRuntime, channelId: string, operation: () => Promise<void>): Promise<void> {
+  const previous = this.questionHistoryWrites.get(channelId) ?? Promise.resolve();
+  const current = previous.catch(() => undefined).then(operation);
+  this.questionHistoryWrites.set(channelId, current);
+  try {
+    await current;
+  } finally {
+    if (this.questionHistoryWrites.get(channelId) === current) this.questionHistoryWrites.delete(channelId);
+  }
 }
 
 export async function readBgmHistory(this: RepositoryRuntime, channelId: string): Promise<BgmHistoryEntry[]> {

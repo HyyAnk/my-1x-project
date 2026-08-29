@@ -66,7 +66,10 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
     server.put("/api/channels/:channelId/mascot", async (request) => {
       const channelId = (request.params as { channelId: string }).channelId;
       const { mascot_id: mascotId, config: mascotConfig } = AssignMascotInputSchema.parse(request.body);
-      const updatedChannel = await repository.assignMascotToChannel(channelId, mascotId, mascotConfig);
+      const channel = await repository.getChannel(channelId);
+      const isNewAssignment = Boolean(mascotId && mascotId !== channel.mascot_id);
+      const config = mascotConfig ?? (isNewAssignment ? state.config.mascot_stage.default_placement : undefined);
+      const updatedChannel = await repository.assignMascotToChannel(channelId, mascotId, config);
       return { channel: updatedChannel };
     });
     server.delete("/api/channels/:channelId", async (request) => {

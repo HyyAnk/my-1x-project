@@ -180,6 +180,7 @@ export interface TranslationSchema {
     dnaUploadDesc: string;
     dropDnaFile: string;
     searchPlaceholder: string;
+    filterByLanguage: string;
     filterAll: string;
     filterActive: string;
     filterDraft: string;
@@ -1024,6 +1025,12 @@ export interface TranslationSchema {
     offsetsTitle: string;
     resetOffsetsBtn: string;
     resetOffsetsTooltip: string;
+    defaultPresetTitle: string;
+    defaultPresetPurpose: string;
+    loadingDefaultPreset: string;
+    defaultPresetLoadFailed: string;
+    applyDefaultPreset: string;
+    saveCurrentAsDefault: string;
     phaseVisibilityTitle: string;
     introPhaseRule: string;
     questionPhaseRule: string;
@@ -1058,6 +1065,8 @@ export interface TranslationSchema {
     noticeUnassignedSingle: string;
     noticeSaveSuccessMulti: string;
     noticeSaveFailed: string;
+    noticeDefaultPresetSaved: string;
+    noticeDefaultPresetSaveFailed: string;
   };
   notices: {
     savedSuccessfully: string;

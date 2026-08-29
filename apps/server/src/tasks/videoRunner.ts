@@ -441,12 +441,10 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     );
     const videoPath = await this.repository.writeVideoArtifact(task.channel_id, task.episode_id, await readFile(outputPath));
     await this.repository.saveVideoMetadata(task.channel_id, task.episode_id, videoPath, Number(duration.toFixed(3)), manifestPath);
+    await this.update(task.task_id, { progress_message: "Quiz video ready", progress_percent: 100 });
+    await this.finish(task.task_id, "COMPLETED", null, [videoPath, manifestPath]);
     if (completeQuizV2?.quiz && completeQuizV2.quiz.questions.length > 0) {
-      try {
-        await this.repository.appendQuestionHistory(task.channel_id, task.episode_id, completeQuizV2.quiz.questions);
-      } catch {
-        // Ignore non-fatal question history save error
-      }
+      await this.repository.appendQuestionHistory(task.channel_id, task.episode_id, completeQuizV2.quiz.questions, undefined, task.task_id);
     }
     if (selectedBgmTrackId && selectedBgmFilename) {
       try {
@@ -455,11 +453,17 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
         // Ignore non-fatal BGM history save error
       }
     }
-    await this.update(task.task_id, { progress_message: "Quiz video ready", progress_percent: 100 });
-    await this.finish(task.task_id, "COMPLETED", null, [videoPath, manifestPath]);
     this.logger.ok("Quiz video rendered", { ...context, step: "render_video" });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Video render failed";
+    if (task.episode_id) {
+      await this.repository.removeQuestionHistoryEntries(task.channel_id, { renderTaskIds: [task.task_id] }).catch((historyError) => {
+        this.logger.warn(`Question history rollback deferred: ${historyError instanceof Error ? historyError.message : "unknown error"}`, {
+          ...context,
+          step: "question_history_rollback",
+        });
+      });
+    }
     await this.finish(task.task_id, "FAILED", message);
     this.logger.error(message, context);
   }

@@ -2,7 +2,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { getCountryFlag, getCountryName, getLanguageDisplay } from "@studio/shared";
+import { TARGET_COUNTRY_LANGUAGES, getCountryFlag, getCountryName, getLanguageDisplay, matchChannelLanguage } from "@studio/shared";
 import { RepositoryService, parseScenes, serializeScenes } from "../src/repository.js";
 
 const roots: string[] = [];
@@ -181,6 +181,24 @@ describe("RepositoryService", () => {
     expect(getCountryFlag(null)).toBe("🌐");
     expect(getCountryName("GLOBAL")).toBe("Global");
     expect(getCountryFlag("US")).toBe("🇺🇸");
+
+    // TARGET_COUNTRY_LANGUAGES has exactly 10 distinct synced languages from 20 countries
+    expect(TARGET_COUNTRY_LANGUAGES).toHaveLength(10);
+    const langKeys = TARGET_COUNTRY_LANGUAGES.map((l) => l.key);
+    expect(langKeys).toEqual(["English", "German", "Norwegian", "Dutch", "Danish", "Swedish", "Finnish", "French", "Korean", "Japanese"]);
+    const countryCodes = TARGET_COUNTRY_LANGUAGES.map((l) => l.primaryCountryCode);
+    expect(countryCodes).toEqual(["US", "DE", "NO", "NL", "DK", "SE", "FI", "FR", "KR", "JP"]);
+
+    // Language matching tests
+    expect(matchChannelLanguage(channel, "all")).toBe(true);
+    expect(matchChannelLanguage(channel, "Vietnamese")).toBe(true);
+    expect(matchChannelLanguage(updated, "Japanese")).toBe(true);
+    expect(matchChannelLanguage(updated, "German")).toBe(false);
+
+    // Matching by country default language when channel language is omitted
+    expect(matchChannelLanguage({ country: "US" }, "English")).toBe(true);
+    expect(matchChannelLanguage({ country: "DE" }, "German")).toBe(true);
+    expect(matchChannelLanguage({ country: "JP" }, "Japanese")).toBe(true);
   });
 });
 

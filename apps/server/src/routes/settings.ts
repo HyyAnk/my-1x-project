@@ -5,6 +5,7 @@ import {
   CodexSettingsInputSchema,
   EngineSettingsInputSchema,
   ImageSettingsInputSchema,
+  MascotStageSettingsInputSchema,
   SaveHistorySettingsInputSchema,
   VideoSettingsInputSchema,
 } from "@studio/shared";
@@ -17,6 +18,7 @@ import {
   saveEngineSettings,
   saveHistorySettings,
   saveImageSettings,
+  saveMascotStageSettings,
   saveVideoSettings,
 } from "../config.js";
 import { checkGpti2Balance } from "../providers/gpti2Image.js";
@@ -170,6 +172,11 @@ export function registerSettingsRoutes(deps: SettingsRouteDeps): FastifyPluginCa
       state.config = await saveVideoSettings(rootDirectory, input);
       tasks.updateVideoConfig(state.config.video_generation);
       return { video_generation: state.config.video_generation };
+    });
+    server.post("/api/mascot-stage/settings", async (request) => {
+      const input = MascotStageSettingsInputSchema.parse(request.body);
+      state.config = await saveMascotStageSettings(rootDirectory, input);
+      return { mascot_stage: state.config.mascot_stage };
     });
     server.post("/api/history/settings", async (request) => {
       const input = SaveHistorySettingsInputSchema.parse(request.body);

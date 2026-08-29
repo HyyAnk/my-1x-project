@@ -101,6 +101,8 @@
   border-radius: var(--radius);
   padding: 3px;
   gap: 2px;
+  flex-wrap: wrap;
+  max-width: 100%;
 }
 
 .channel-filter-btn {
@@ -116,6 +118,14 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
+}
+
+.channel-filter-flag {
+  font-size: 13px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 
 .channel-filter-btn:hover {
@@ -1722,7 +1732,7 @@
   color: #ffffff;
   display: grid;
   place-items: center;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .style-toggle-meta {
@@ -1981,7 +1991,9 @@
   border: 0;
   background: var(--paper);
   color: var(--ink);
-  font: 400 12.5px/1.7 "JetBrains Mono", monospace;
+  font:
+    400 12.5px/1.7 "JetBrains Mono",
+    monospace;
   white-space: pre-wrap;
   overflow: auto;
 }
@@ -2002,7 +2014,9 @@
   border-top: 1px solid var(--line);
   background: var(--surface-strong);
   color: var(--muted);
-  font: 500 11px "JetBrains Mono", monospace;
+  font:
+    500 11px "JetBrains Mono",
+    monospace;
   flex-wrap: wrap;
 }
 
@@ -2015,4 +2029,3 @@
 .meta-right {
   margin-left: auto;
 }
-

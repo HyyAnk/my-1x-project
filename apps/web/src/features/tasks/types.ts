@@ -1,4 +1,4 @@
-import type { Task } from "@studio/shared";
+import { FAILED_TASK_ATTENTION_WINDOW_MS, type Task } from "@studio/shared";
 
 export type StatusFilter = "all" | "running" | "queued" | "waiting_approval" | "failed" | "completed" | "cancelled";
 
@@ -57,4 +57,13 @@ export function calculateProgress(task: Task | null, fallbackStatus: Task["statu
     default:
       return 15;
   }
+}
+
+export function needsAttention(item: ProductionItemSummary, nowMs: number): boolean {
+  if (item.status === "WAITING_APPROVAL") return true;
+  if (item.status !== "FAILED") return false;
+  const failedAtMs = Date.parse(item.completedAt || item.startedAt);
+  if (Number.isNaN(failedAtMs)) return false;
+  const ageMs = nowMs - failedAtMs;
+  return ageMs >= 0 && ageMs <= FAILED_TASK_ATTENTION_WINDOW_MS;
 }

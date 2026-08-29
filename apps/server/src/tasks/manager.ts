@@ -50,6 +50,10 @@ import {
   startCleanupTimer as startCleanupTimerImplementation,
   tryDeleteThread as tryDeleteThreadImplementation,
 } from "./threadCleanup.js";
+import {
+  cleanupExpiredFailedBuilds as cleanupExpiredFailedBuildsImplementation,
+  reconcileQuestionHistory as reconcileQuestionHistoryImplementation,
+} from "./taskLifecycle.js";
 import { runVideoTask as runVideoTaskImplementation } from "./videoRunner.js";
 import type { ActiveRun, CodexCleanupConfig, PipelineRun, TaskManagerRuntime } from "./runtime.js";
 
@@ -83,6 +87,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   codexCleanupConfig: CodexCleanupConfig;
   antigravityCleanupConfig: CodexCleanupConfig;
   cleanupTimer: NodeJS.Timeout | null = null;
+  failedBuildCleanupPromise: Promise<{ removedEpisodes: number; removedTasks: number }> | null = null;
   private connectionStatus: "connected" | "disconnected" | "unavailable" | "connecting" = "disconnected";
   private antigravityStatus: "connected" | "disconnected" | "unavailable" | "connecting" = "disconnected";
   activeEngine: "codex" | "antigravity" = "codex";
@@ -159,10 +164,13 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
           task.completed_at = nowIso();
         }
         this.tasks.set(task.task_id, task);
+        if (task.error === "Task interrupted by dashboard restart") await this.persist(task);
       } catch {
         // Ignore a single corrupt operational record; repository artifacts remain safe.
       }
     }
+    await this.reconcileQuestionHistory();
+    await this.cleanupExpiredFailedBuilds();
     this.startCleanupTimer();
     void this.cleanupCodexThreads();
     void this.cleanupAntigravityThreads();
@@ -259,6 +267,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
       this.runningImageCount > 0 ||
       this.runningVideoCount > 0 ||
       this.runningPipelineCount > 0 ||
+      this.failedBuildCleanupPromise !== null ||
       this.list().some((task) => ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(task.status))
     );
   }
@@ -604,6 +613,19 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
 
   async cleanupAntigravityThreads(force = false): Promise<{ removed: number }> {
     return cleanupAntigravityThreadsImplementation.call(this, force);
+  }
+
+  cleanupExpiredFailedBuilds(nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }> {
+    if (this.failedBuildCleanupPromise) return this.failedBuildCleanupPromise;
+    const cleanup = cleanupExpiredFailedBuildsImplementation.call(this, nowMs);
+    this.failedBuildCleanupPromise = cleanup;
+    return cleanup.finally(() => {
+      if (this.failedBuildCleanupPromise === cleanup) this.failedBuildCleanupPromise = null;
+    });
+  }
+
+  reconcileQuestionHistory(): Promise<void> {
+    return reconcileQuestionHistoryImplementation.call(this);
   }
 
   startCleanupTimer(): void {

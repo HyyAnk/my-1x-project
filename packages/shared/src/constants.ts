@@ -10,6 +10,10 @@ import type { VoiceSegmentRole } from "./enums.js";
  */
 export const MAX_DEDUP_HISTORY_QUESTIONS = 15;
 
+/** Failed builds remain actionable briefly, then are retained for forensic review. */
+export const FAILED_TASK_ATTENTION_WINDOW_MS = 10 * 60 * 60 * 1000;
+export const FAILED_BUILD_RETENTION_MS = 48 * 60 * 60 * 1000;
+
 /**
  * Default TTS playback tempo multiplier mapped by voice segment role.
  * Role-specific pacing ensures engaging delivery for young audiences:

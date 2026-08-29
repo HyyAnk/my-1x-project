@@ -86,8 +86,10 @@ export const TaskSchema = z.object({
 export type Task = z.infer<typeof TaskSchema>;
 
 export type TaskEvent = {
-  type: "task.updated" | "codex.status" | "antigravity.status" | "engine.status" | "approval.requested" | "system";
+  type: "task.updated" | "tasks.pruned" | "codex.status" | "antigravity.status" | "engine.status" | "approval.requested" | "system";
   task?: Task;
+  task_ids?: string[];
+  episode_ids?: string[];
   engine?: EngineId;
   status?: "connected" | "disconnected" | "unavailable" | "connecting";
   message?: string;

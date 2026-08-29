@@ -7,7 +7,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { PageTitle } from "../../components/AppChrome";
 import type { Notice } from "../../components/types";
 import { useTranslation } from "../../i18n";
-import { calculateProgress, type ProductionItemSummary, type StatusFilter } from "./types";
+import { calculateProgress, needsAttention, type ProductionItemSummary, type StatusFilter } from "./types";
 import { TaskDetailDrawer } from "./components/TaskDetailDrawer";
 import { StreamlinedTaskCard } from "./components/StreamlinedTaskCard";
 import { getNavProps } from "../../hooks/useRouter";
@@ -222,19 +222,7 @@ export function TasksView({
 
   // Grouped priority subsets for default "all" view
   // Failed episodes only need attention within a 10-hour window
-  const attentionItems = useMemo(() => {
-    const TEN_HOURS_MS = 10 * 60 * 60 * 1000;
-    return filteredItems.filter((i) => {
-      if (i.status === "WAITING_APPROVAL") return true;
-      if (i.status === "FAILED") {
-        const timeStr = i.completedAt || i.startedAt;
-        const timeMs = Date.parse(timeStr);
-        if (Number.isNaN(timeMs)) return false;
-        return now - timeMs <= TEN_HOURS_MS;
-      }
-      return false;
-    });
-  }, [filteredItems, now]);
+  const attentionItems = useMemo(() => filteredItems.filter((item) => needsAttention(item, now)), [filteredItems, now]);
   const inProgressItems = useMemo(() => filteredItems.filter((i) => i.status === "RUNNING" || i.status === "QUEUED"), [filteredItems]);
   const doneItems = useMemo(() => filteredItems.filter((i) => i.status === "COMPLETED" || i.status === "CANCELLED"), [filteredItems]);
 

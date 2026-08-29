@@ -39,6 +39,7 @@ export interface RepositoryRuntime {
   readonly rootDirectory: string;
   readonly storageRoot: string;
   roots: RepositoryRoots;
+  questionHistoryWrites: Map<string, Promise<void>>;
 
   // Infrastructure & Path safety
   resolvePath(root: keyof RepositoryRoots, ...segments: string[]): string;
@@ -91,11 +92,7 @@ export interface RepositoryRuntime {
   deleteMascot(mascotId: string): Promise<void>;
   saveMascotAsset(mascotId: string, filename: string, content: Uint8Array): Promise<string>;
   getMascotAssetFile(mascotId: string, filename: string): Promise<{ absolutePath: string; size: number; modified_at: string }>;
-  calibrateMascotAction(
-    mascotId: string,
-    action: MascotActionType,
-    calibration: CalibrateMascotActionInput,
-  ): Promise<MascotProfile>;
+  calibrateMascotAction(mascotId: string, action: MascotActionType, calibration: CalibrateMascotActionInput): Promise<MascotProfile>;
   listMascotAssets(mascotId: string): Promise<string[]>;
   deleteMascotAssetFile(mascotId: string, filename: string): Promise<void>;
   assignMascotToChannel(channelId: string, mascotId: string | null, config?: Partial<ChannelMascotConfig>): Promise<Channel>;
@@ -152,7 +149,18 @@ export interface RepositoryRuntime {
   readHistoryCheck(channelId: string, episodeId: string): Promise<QuestionHistoryCheckResult | null>;
   writeHistoryCheck(channelId: string, episodeId: string, result: QuestionHistoryCheckResult): Promise<string>;
   readQuestionHistory(channelId: string): Promise<QuestionHistoryEntry[]>;
-  appendQuestionHistory(channelId: string, episodeId: string, questions: QuizQuestion[], ttlDays?: number): Promise<void>;
+  appendQuestionHistory(
+    channelId: string,
+    episodeId: string,
+    questions: QuizQuestion[],
+    ttlDays?: number,
+    renderTaskId?: string,
+  ): Promise<void>;
+  removeQuestionHistoryEntries(
+    channelId: string,
+    filter: { episodeIds?: string[]; renderTaskIds?: string[] },
+    ttlDays?: number,
+  ): Promise<void>;
   readBgmHistory(channelId: string): Promise<BgmHistoryEntry[]>;
   appendBgmHistory(channelId: string, episodeId: string, trackId: string, filename: string, ttlDays?: number): Promise<void>;
   invalidateQuizArtifacts(channelId: string, episodeId: string, stages: string[]): Promise<string[]>;
@@ -247,6 +255,7 @@ export interface RepositoryRuntime {
 
   // Sequence Drafts
   clearSequenceDrafts(episodeId: string): Promise<void>;
+  removeEpisodeRuntimeArtifacts(episodeId: string): Promise<void>;
   saveSequenceDraft(episodeId: string, sequenceNumber: number, scenes: Scene[]): Promise<void>;
   readSequenceDrafts(episodeId: string): Promise<Array<{ sequenceNumber: number; scenes: Scene[]; modified_at: string }>>;
   commitSequenceDrafts(channelId: string, episodeId: string, expectedCount: number): Promise<boolean>;

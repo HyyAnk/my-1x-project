@@ -75,7 +75,17 @@ function AppContent() {
     if (task.status === "COMPLETED") setNotice({ tone: "good", message: `${formatTaskType(task.task_type)} completed` });
     else if (task.status === "FAILED") setNotice({ tone: "bad", message: task.error || `${formatTaskType(task.task_type)} failed` });
   }, []);
-  const taskStore = useTasks(handleTerminalTask);
+  const handlePrunedTasks = useCallback(
+    (episodeIds: string[]) => {
+      void refreshChannels();
+      if (selectedEpisodeId && episodeIds.includes(selectedEpisodeId)) {
+        setNotice({ tone: "good", message: "Expired failed build and assets removed" });
+        openPage("dashboard");
+      }
+    },
+    [openPage, refreshChannels, selectedEpisodeId],
+  );
+  const taskStore = useTasks(handleTerminalTask, handlePrunedTasks);
   const { tasks, activeTasks, now: taskClock, codexStatus, realtimeStatus, upsertTask, setCodexStatus, refresh: refreshTasks } = taskStore;
 
   const fetchBalance = useCallback(async () => {

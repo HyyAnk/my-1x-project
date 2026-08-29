@@ -5,6 +5,7 @@ import {
   AudioSettingsInputSchema,
   CodexSettingsInputSchema,
   ImageSettingsInputSchema,
+  MascotStageSettingsInputSchema,
   VideoSettingsInputSchema,
   AntigravitySettingsInputSchema,
   EngineSettingsInputSchema,
@@ -13,6 +14,7 @@ import {
   type AudioSettingsInput,
   type CodexSettingsInput,
   type ImageSettingsInput,
+  type MascotStageSettingsInput,
   type VideoSettingsInput,
   type AntigravitySettingsInput,
   type EngineSettingsInput,
@@ -21,6 +23,14 @@ import {
 
 export const DEFAULT_CONFIG: AppConfig = {
   active_engine: "codex",
+  mascot_stage: {
+    default_placement: {
+      position: "bottom_left",
+      scale: 1.84,
+      offset_x: 21,
+      offset_y: 90,
+    },
+  },
   video_generation: {
     provider: "hyperframes",
     model: "",
@@ -132,6 +142,7 @@ export async function loadConfig(rootDirectory: string): Promise<AppConfig> {
     return AppConfigSchema.parse({
       ...DEFAULT_CONFIG,
       ...raw,
+      mascot_stage: { ...DEFAULT_CONFIG.mascot_stage, ...(raw.mascot_stage as object | undefined) },
       video_generation: { ...DEFAULT_CONFIG.video_generation, ...(raw.video_generation as object | undefined) },
       codex: { ...DEFAULT_CONFIG.codex, ...trackedCodex, api_key: "", ...localCodex },
       antigravity: { ...DEFAULT_CONFIG.antigravity, ...trackedAgy, api_key: "", ...localAgySettings },
@@ -274,6 +285,15 @@ export async function saveVideoSettings(rootDirectory: string, input: VideoSetti
   await mkdir(path.dirname(configPath), { recursive: true });
   const raw = await readJsonFile(configPath);
   await writeFile(configPath, `${JSON.stringify({ ...raw, video_generation: next }, null, 2)}\n`, "utf8");
+  return loadConfig(rootDirectory);
+}
+
+export async function saveMascotStageSettings(rootDirectory: string, input: MascotStageSettingsInput): Promise<AppConfig> {
+  const parsed = MascotStageSettingsInputSchema.parse(input);
+  const configPath = path.join(rootDirectory, ".documentary-studio", "config.json");
+  await mkdir(path.dirname(configPath), { recursive: true });
+  const raw = await readJsonFile(configPath);
+  await writeFile(configPath, `${JSON.stringify({ ...raw, mascot_stage: parsed }, null, 2)}\n`, "utf8");
   return loadConfig(rootDirectory);
 }
 

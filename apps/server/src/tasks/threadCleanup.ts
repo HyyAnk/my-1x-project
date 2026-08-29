@@ -33,8 +33,9 @@ export function startCleanupTimer(this: TaskManagerRuntime): void {
     () => {
       void this.cleanupCodexThreads();
       void this.cleanupAntigravityThreads();
+      void this.cleanupExpiredFailedBuilds();
     },
-    3 * 60 * 60 * 1000,
+    15 * 60 * 1000,
   );
   this.cleanupTimer.unref?.();
 }

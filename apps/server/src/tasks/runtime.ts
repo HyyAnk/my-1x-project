@@ -23,6 +23,7 @@ export type CodexCleanupConfig = { auto_delete_threads: boolean; failed_thread_r
 export type PipelineRun = { cancelled: boolean; children: Set<string> };
 
 export interface TaskManagerRuntime {
+  tasks: Map<string, Task>;
   active: Map<string, ActiveRun>;
   activeAudio: Set<string>;
   activeEngine: "codex" | "antigravity";
@@ -38,6 +39,7 @@ export interface TaskManagerRuntime {
   codexCleanupConfig: CodexCleanupConfig;
   completionWaiters: Map<string, () => void>;
   contextEngine: ContextEngine;
+  failedBuildCleanupPromise: Promise<{ removedEpisodes: number; removedTasks: number }> | null;
   imageConfig: AppConfig["image_generation"];
   imageVariants: Map<string, number>;
   logger: StudioLogger;
@@ -49,6 +51,7 @@ export interface TaskManagerRuntime {
   cancel(taskId: string): Promise<Task>;
   cleanupAntigravityThreads(force?: boolean): Promise<{ removed: number }>;
   cleanupCodexThreads(force?: boolean): Promise<{ removed: number }>;
+  cleanupExpiredFailedBuilds(nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }>;
   completeWithOutput(active: ActiveRun): Promise<void>;
   createImageProvider(
     imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
@@ -81,6 +84,7 @@ export interface TaskManagerRuntime {
   retryScript(active: ActiveRun, reason: string): Promise<void>;
   retrySequenceScenes(active: ActiveRun, reason: string): Promise<void>;
   retryVisualBible(active: ActiveRun, reason: string): Promise<void>;
+  reconcileQuestionHistory(): Promise<void>;
   run(task: Task): Promise<void>;
   runAntigravityBundleImageTask(task: Task): Promise<void>;
   runAudioTask(task: Task): Promise<void>;

@@ -90,6 +90,28 @@ export const ChannelMascotConfigSchema = z.object({
 
 export type ChannelMascotConfig = z.infer<typeof ChannelMascotConfigSchema>;
 
+export const RECOMMENDED_MASCOT_PLACEMENT_PRESET = {
+  position: "bottom_left",
+  scale: 1.84,
+  offset_x: 21,
+  offset_y: 90,
+} as const;
+
+export const MascotPlacementPresetSchema = z.object({
+  position: z.enum(["bottom_left", "bottom_right"]).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.position),
+  scale: z.number().min(0.3).max(3).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale),
+  offset_x: z.number().int().min(-1500).max(1500).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_x),
+  offset_y: z.number().int().min(-1500).max(1500).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_y),
+});
+
+export type MascotPlacementPreset = z.infer<typeof MascotPlacementPresetSchema>;
+
+export const MascotStageSettingsSchema = z.object({
+  default_placement: MascotPlacementPresetSchema.default(RECOMMENDED_MASCOT_PLACEMENT_PRESET),
+});
+
+export type MascotStageSettings = z.infer<typeof MascotStageSettingsSchema>;
+
 export const ChannelSchema = z.object({
   channel_id: z.string().min(1),
   slug: z.string().min(1),
@@ -623,6 +645,7 @@ export type ProductionAssessment = z.infer<typeof ProductionAssessmentSchema>;
 
 export const AppConfigSchema = z.object({
   active_engine: EngineIdSchema.default("codex"),
+  mascot_stage: MascotStageSettingsSchema.default({}),
   video_generation: z.object({
     provider: z.string().default("hyperframes"),
     model: z.string().default(""),
@@ -706,6 +729,7 @@ export const QuestionHistoryEntrySchema = z.object({
   episode_id: z.string().min(1),
   episode_title: z.string().min(1),
   channel_id: z.string().min(1),
+  render_task_id: z.string().min(1).optional(),
   rendered_at: IsoDate,
 });
 

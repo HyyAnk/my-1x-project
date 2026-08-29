@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { Channel, MascotActionType, MascotProfile } from "@studio/shared";
+import { RECOMMENDED_MASCOT_PLACEMENT_PRESET, type Channel, type MascotActionType, type MascotProfile } from "@studio/shared";
 import { api } from "../../../api";
 import { useTranslation } from "../../../i18n";
 import type {
@@ -13,6 +13,7 @@ import type {
   StageScenarioPhase,
   StageViewMode,
 } from "../types";
+import { useMascotPlacementPreset } from "./useMascotPlacementPreset";
 
 type SandboxPreviewTiming = {
   phase: "question" | "choices" | "thinking" | "reveal" | "explain";
@@ -87,9 +88,9 @@ export function useStageStudio({
 
   // Transform & Layout Settings (Saved to ChannelMascotConfig)
   const [position, setPosition] = useState<StagePosition>("bottom_left");
-  const [scale, setScale] = useState<number>(1.0);
-  const [offsetX, setOffsetX] = useState<number>(0);
-  const [offsetY, setOffsetY] = useState<number>(0);
+  const [scale, setScale] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale);
+  const [offsetX, setOffsetX] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_x);
+  const [offsetY, setOffsetY] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_y);
   const [showInIntro, setShowInIntro] = useState<boolean>(false);
   const [showInOutro, setShowInOutro] = useState<boolean>(false);
   const [showInQuestion, setShowInQuestion] = useState<boolean>(true);
@@ -103,9 +104,30 @@ export function useStageStudio({
 
   const [saving, setSaving] = useState(false);
 
+  const placementPreset = useMascotPlacementPreset({
+    isOpen,
+    position,
+    scale,
+    offsetX,
+    offsetY,
+    setPosition,
+    setScale,
+    setOffsetX,
+    setOffsetY,
+    onNotice,
+    t,
+  });
+  const { defaultPlacement, presetReady, applyPlacement, applyDefaultPlacement } = placementPreset;
+
+  const initializedForOpenRef = useRef(false);
+
   // Sync state on open
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      initializedForOpenRef.current = false;
+      return;
+    }
+    if (!presetReady || initializedForOpenRef.current) return;
 
     setQuestionLayoutId(
       (targetChannel as unknown as { layout_id?: StageQuestionLayout })?.layout_id === "visual_choices_three"
@@ -116,19 +138,13 @@ export function useStageStudio({
     if (isSingleChannelMode && targetChannel) {
       const assignedId = targetChannel.mascot_id || (allMascots.length > 0 ? allMascots[0].id : null);
       setSelectedMascotId(assignedId);
-      if (targetChannel.mascot_config) {
-        setPosition(targetChannel.mascot_config.position || "bottom_left");
-        setScale(targetChannel.mascot_config.scale || 1.0);
-        setOffsetX(targetChannel.mascot_config.offset_x || 0);
-        setOffsetY(targetChannel.mascot_config.offset_y || 0);
+      if (targetChannel.mascot_id && targetChannel.mascot_config) {
+        applyPlacement(targetChannel.mascot_config);
         setShowInIntro(targetChannel.mascot_config.show_in_intro ?? false);
         setShowInOutro(targetChannel.mascot_config.show_in_outro ?? false);
         setShowInQuestion(targetChannel.mascot_config.show_in_question ?? true);
       } else {
-        setPosition("bottom_left");
-        setScale(1.0);
-        setOffsetX(0);
-        setOffsetY(0);
+        applyPlacement(defaultPlacement);
         setShowInIntro(false);
         setShowInOutro(false);
         setShowInQuestion(true);
@@ -138,24 +154,26 @@ export function useStageStudio({
       setSelectedChannelIds(mascot.assigned_channel_ids || []);
       const sample = channels.find((c) => c.mascot_id === mascot.id);
       if (sample?.mascot_config) {
-        setPosition(sample.mascot_config.position || "bottom_left");
-        setScale(sample.mascot_config.scale || 1.0);
-        setOffsetX(sample.mascot_config.offset_x || 0);
-        setOffsetY(sample.mascot_config.offset_y || 0);
+        applyPlacement(sample.mascot_config);
         setShowInIntro(sample.mascot_config.show_in_intro ?? false);
         setShowInOutro(sample.mascot_config.show_in_outro ?? false);
         setShowInQuestion(sample.mascot_config.show_in_question ?? true);
       } else {
-        setPosition("bottom_left");
-        setScale(1.0);
-        setOffsetX(0);
-        setOffsetY(0);
+        applyPlacement(defaultPlacement);
         setShowInIntro(false);
         setShowInOutro(false);
         setShowInQuestion(true);
       }
     }
-  }, [isOpen, isSingleChannelMode, targetChannel, mascot, allMascots, channels]);
+    initializedForOpenRef.current = true;
+  }, [isOpen, presetReady, isSingleChannelMode, targetChannel, mascot, allMascots, channels, applyPlacement, defaultPlacement]);
+
+  const selectMascot = (mascotId: string | null) => {
+    setSelectedMascotId(mascotId);
+    if (isSingleChannelMode && mascotId && mascotId !== targetChannel?.mascot_id) {
+      applyDefaultPlacement();
+    }
+  };
 
   // Active Mascot Object
   const activeMascot = useMemo(() => {
@@ -362,10 +380,7 @@ export function useStageStudio({
 
   // Reset all transforms to default
   const handleResetLayout = () => {
-    setPosition("bottom_left");
-    setScale(1.0);
-    setOffsetX(0);
-    setOffsetY(0);
+    applyDefaultPlacement();
     setFlipHorizontal(false);
     setShowInIntro(false);
     setShowInOutro(false);
@@ -458,7 +473,7 @@ export function useStageStudio({
     flipHorizontal,
     setFlipHorizontal,
     selectedMascotId,
-    setSelectedMascotId,
+    setSelectedMascotId: selectMascot,
     selectedChannelIds,
     setSelectedChannelIds,
     channelSearchQuery,
@@ -488,6 +503,7 @@ export function useStageStudio({
     activePose,
     setActivePose,
     saving,
+    ...placementPreset,
     activeMascot,
     stageViewportRef,
     targetStageWidth,

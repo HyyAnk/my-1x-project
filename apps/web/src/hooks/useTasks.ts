@@ -3,7 +3,7 @@ import type { Task, TaskEvent } from "@studio/shared";
 import { api, subscribeEvents, type RealtimeStatus } from "../api";
 import { isTaskActive, isTaskTerminal } from "../lib/utils";
 
-export function useTasks(onTerminal?: (task: Task) => void) {
+export function useTasks(onTerminal?: (task: Task) => void, onPruned?: (episodeIds: string[]) => void) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [codexStatus, setCodexStatus] = useState("disconnected");
   const [realtimeStatus, setRealtimeStatus] = useState<RealtimeStatus>("connecting");
@@ -31,6 +31,10 @@ export function useTasks(onTerminal?: (task: Task) => void) {
       (event: TaskEvent) => {
         if (event.status) setCodexStatus(event.status);
         if (event.task) upsertTask(event.task);
+        if (event.type === "tasks.pruned") {
+          onPruned?.(event.episode_ids ?? []);
+          void refresh();
+        }
         if (event.type === "task.updated" && event.task && isTaskTerminal(event.task)) {
           onTerminal?.(event.task);
           void refresh();
@@ -41,11 +45,11 @@ export function useTasks(onTerminal?: (task: Task) => void) {
         if (status === "connected") void refresh();
       },
     );
-  }, [onTerminal, refresh, upsertTask]);
+  }, [onPruned, onTerminal, refresh, upsertTask]);
   const activeTasks = tasks.filter(isTaskActive);
   useEffect(() => {
-    if (activeTasks.length === 0) return;
-    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    setNow(Date.now());
+    const timer = window.setInterval(() => setNow(Date.now()), activeTasks.length > 0 ? 1000 : 60_000);
     return () => window.clearInterval(timer);
   }, [activeTasks.length]);
   return { tasks, activeTasks, now, codexStatus, realtimeStatus, setTasks, setCodexStatus, upsertTask, refresh };

@@ -104,8 +104,7 @@ export const api = {
   dna: (id: string) => request<{ content: string; path: string; modified_at: string }>(`/api/channels/${id}/dna`),
   saveDna: (id: string, content: string) =>
     request<{ path: string; modified_at: string }>(`/api/channels/${id}/dna`, { method: "PUT", body: JSON.stringify({ content }) }),
-  generateDna: (id: string) =>
-    request<{ task: Task }>(`/api/channels/${id}/dna/generate`, { method: "POST", body: "{}" }),
+  generateDna: (id: string) => request<{ task: Task }>(`/api/channels/${id}/dna/generate`, { method: "POST", body: "{}" }),
   resetDnaTemplate: (id: string) =>
     request<{ content: string; path: string; modified_at: string }>(`/api/channels/${id}/dna/reset`, { method: "POST", body: "{}" }),
   topics: (id: string) => request<{ topics: TopicCandidate[] }>(`/api/channels/${id}/topics`),
@@ -256,6 +255,11 @@ export const api = {
     request<{ audio_generation: AppConfig["audio_generation"] }>("/api/audio/settings", { method: "POST", body: JSON.stringify(body) }),
   saveVideoSettings: (body: Partial<AppConfig["video_generation"]>) =>
     request<{ video_generation: AppConfig["video_generation"] }>("/api/video/settings", { method: "POST", body: JSON.stringify(body) }),
+  saveMascotStageSettings: (body: AppConfig["mascot_stage"]) =>
+    request<{ mascot_stage: AppConfig["mascot_stage"] }>("/api/mascot-stage/settings", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
   saveHistorySettings: (body: Partial<QuestionHistorySettings>) =>
     request<{ question_history: QuestionHistorySettings }>("/api/history/settings", { method: "POST", body: JSON.stringify(body) }),
   imageSettings: () =>

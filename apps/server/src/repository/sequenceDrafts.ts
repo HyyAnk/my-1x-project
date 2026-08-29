@@ -10,6 +10,13 @@ export async function clearSequenceDrafts(this: RepositoryRuntime, episodeId: st
   await this.removeTree(this.resolvePath("runtime", "shot-drafts", episodeId));
 }
 
+export async function removeEpisodeRuntimeArtifacts(this: RepositoryRuntime, episodeId: string): Promise<void> {
+  await Promise.all([
+    this.removeTree(this.resolvePath("runtime", "shot-drafts", episodeId)),
+    this.removeTree(this.resolvePath("runtime", "hyperframes", episodeId)),
+  ]);
+}
+
 export async function saveSequenceDraft(
   this: RepositoryRuntime,
   episodeId: string,

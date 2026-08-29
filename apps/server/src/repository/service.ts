@@ -101,6 +101,7 @@ import {
   writeHistoryCheck as writeHistoryCheckImplementation,
   readQuestionHistory as readQuestionHistoryImplementation,
   appendQuestionHistory as appendQuestionHistoryImplementation,
+  removeQuestionHistoryEntries as removeQuestionHistoryEntriesImplementation,
   readBgmHistory as readBgmHistoryImplementation,
   appendBgmHistory as appendBgmHistoryImplementation,
   invalidateQuizArtifacts as invalidateQuizArtifactsImplementation,
@@ -140,6 +141,7 @@ import {
 } from "./media.js";
 import {
   clearSequenceDrafts as clearSequenceDraftsImplementation,
+  removeEpisodeRuntimeArtifacts as removeEpisodeRuntimeArtifactsImplementation,
   saveSequenceDraft as saveSequenceDraftImplementation,
   readSequenceDrafts as readSequenceDraftsImplementation,
   commitSequenceDrafts as commitSequenceDraftsImplementation,
@@ -150,6 +152,7 @@ import { getGitInfo as getGitInfoImplementation } from "./gitInfo.js";
 
 export class RepositoryService implements RepositoryRuntime {
   roots: RepositoryRoots;
+  readonly questionHistoryWrites = new Map<string, Promise<void>>();
 
   constructor(
     readonly rootDirectory: string,
@@ -214,11 +217,7 @@ export class RepositoryService implements RepositoryRuntime {
   getMascotAssetFile(mascotId: string, filename: string): Promise<{ absolutePath: string; size: number; modified_at: string }> {
     return getMascotAssetFileImplementation.call(this, mascotId, filename);
   }
-  calibrateMascotAction(
-    mascotId: string,
-    action: MascotActionType,
-    calibration: CalibrateMascotActionInput,
-  ): Promise<MascotProfile> {
+  calibrateMascotAction(mascotId: string, action: MascotActionType, calibration: CalibrateMascotActionInput): Promise<MascotProfile> {
     return calibrateMascotActionImplementation.call(this, mascotId, action, calibration);
   }
   listMascotAssets(mascotId: string): Promise<string[]> {
@@ -353,8 +352,21 @@ export class RepositoryService implements RepositoryRuntime {
   readQuestionHistory(channelId: string): Promise<QuestionHistoryEntry[]> {
     return readQuestionHistoryImplementation.call(this, channelId);
   }
-  appendQuestionHistory(channelId: string, episodeId: string, questions: QuizQuestion[], ttlDays?: number): Promise<void> {
-    return appendQuestionHistoryImplementation.call(this, channelId, episodeId, questions, ttlDays);
+  appendQuestionHistory(
+    channelId: string,
+    episodeId: string,
+    questions: QuizQuestion[],
+    ttlDays?: number,
+    renderTaskId?: string,
+  ): Promise<void> {
+    return appendQuestionHistoryImplementation.call(this, channelId, episodeId, questions, ttlDays, renderTaskId);
+  }
+  removeQuestionHistoryEntries(
+    channelId: string,
+    filter: { episodeIds?: string[]; renderTaskIds?: string[] },
+    ttlDays?: number,
+  ): Promise<void> {
+    return removeQuestionHistoryEntriesImplementation.call(this, channelId, filter, ttlDays);
   }
   readBgmHistory(channelId: string): Promise<BgmHistoryEntry[]> {
     return readBgmHistoryImplementation.call(this, channelId);
@@ -517,6 +529,9 @@ export class RepositoryService implements RepositoryRuntime {
   }
   clearSequenceDrafts(episodeId: string): Promise<void> {
     return clearSequenceDraftsImplementation.call(this, episodeId);
+  }
+  removeEpisodeRuntimeArtifacts(episodeId: string): Promise<void> {
+    return removeEpisodeRuntimeArtifactsImplementation.call(this, episodeId);
   }
   saveSequenceDraft(episodeId: string, sequenceNumber: number, scenes: Scene[]): Promise<void> {
     return saveSequenceDraftImplementation.call(this, episodeId, sequenceNumber, scenes);

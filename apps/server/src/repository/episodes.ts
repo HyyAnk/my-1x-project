@@ -19,7 +19,8 @@ export async function deleteEpisode(this: RepositoryRuntime, channelId: string, 
   const episodesRoot = this.resolvePath("channels", channel.slug, "episodes");
   const directory = this.resolvePath("channels", channel.slug, "episodes", episode.slug);
   await this.assertRealPathInside(episodesRoot, directory);
-  await this.removeTree(directory);
+  await this.removeQuestionHistoryEntries(channelId, { episodeIds: [episodeId] });
+  await Promise.all([this.removeTree(directory), this.removeEpisodeRuntimeArtifacts(episodeId)]);
   await this.updateChannel(channelId, { updated_at: nowIso() });
 }
 

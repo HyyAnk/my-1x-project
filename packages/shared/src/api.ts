@@ -15,6 +15,7 @@ import {
 
 import {
   ChannelMascotConfigSchema,
+  MascotPlacementPresetSchema,
   MascotProfileSchema,
   QUIZ_MAX_QUESTION_COUNT,
   QUIZ_MIN_QUESTION_COUNT,
@@ -212,6 +213,12 @@ export const VideoSettingsInputSchema = z.object({
 });
 
 export type VideoSettingsInput = z.infer<typeof VideoSettingsInputSchema>;
+
+export const MascotStageSettingsInputSchema = z.object({
+  default_placement: MascotPlacementPresetSchema,
+});
+
+export type MascotStageSettingsInput = z.infer<typeof MascotStageSettingsInputSchema>;
 
 export const VoiceReferenceUploadSchema = z.object({
   data: z.string().min(1).max(50_000_000),

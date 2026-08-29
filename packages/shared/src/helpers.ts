@@ -317,6 +317,89 @@ export function getLanguageDisplay(lang?: string | null): string {
   return normalized;
 }
 
+export interface SyncedCountryLanguage {
+  key: string;
+  name: string;
+  nameVi: string;
+  primaryFlag: string;
+  primaryCountryCode: string;
+  countryCodes: string[];
+}
+
+const PREFERRED_LANGUAGE_FLAGS: Record<string, string> = {
+  English: "🇺🇸",
+  German: "🇩🇪",
+  Dutch: "🇳🇱",
+  French: "🇫🇷",
+  Japanese: "🇯🇵",
+  Korean: "🇰🇷",
+  Norwegian: "🇳🇴",
+  Danish: "🇩🇰",
+  Swedish: "🇸🇪",
+  Finnish: "🇫🇮",
+};
+
+const PREFERRED_LANGUAGE_COUNTRIES: Record<string, string> = {
+  English: "US",
+  German: "DE",
+  Dutch: "NL",
+  French: "FR",
+  Japanese: "JP",
+  Korean: "KR",
+  Norwegian: "NO",
+  Danish: "DK",
+  Swedish: "SE",
+  Finnish: "FI",
+};
+
+export function getSyncedCountryLanguages(): SyncedCountryLanguage[] {
+  const langMap = new Map<string, SyncedCountryLanguage>();
+  for (const c of TARGET_COUNTRY_OPTIONS) {
+    const existing = langMap.get(c.defaultLanguage);
+    if (!existing) {
+      langMap.set(c.defaultLanguage, {
+        key: c.defaultLanguage,
+        name: c.defaultLanguage,
+        nameVi: c.languageNameVi,
+        primaryFlag: PREFERRED_LANGUAGE_FLAGS[c.defaultLanguage] || c.flag,
+        primaryCountryCode: PREFERRED_LANGUAGE_COUNTRIES[c.defaultLanguage] || c.code,
+        countryCodes: [c.code],
+      });
+    } else {
+      existing.countryCodes.push(c.code);
+    }
+  }
+  return Array.from(langMap.values());
+}
+
+export const TARGET_COUNTRY_LANGUAGES: SyncedCountryLanguage[] = getSyncedCountryLanguages();
+
+export function matchChannelLanguage(
+  channel: { language?: string | null; country?: string | null; market?: string | null },
+  targetLanguageKey: string,
+): boolean {
+  if (!targetLanguageKey || targetLanguageKey === "all") return true;
+  const targetKeyLower = targetLanguageKey.trim().toLowerCase();
+  const chLang = (channel.language || "").trim().toLowerCase();
+  const chCountry = (channel.country || channel.market || "").trim().toUpperCase();
+
+  // Direct match with stored language
+  if (chLang === targetKeyLower) return true;
+
+  // Display name match
+  if (channel.language && getLanguageDisplay(channel.language).toLowerCase() === targetKeyLower) return true;
+
+  // Country default language match
+  const countryOption = getCountryOption(chCountry);
+  if (countryOption && countryOption.defaultLanguage.toLowerCase() === targetKeyLower) return true;
+
+  // Synced country list match
+  const synced = TARGET_COUNTRY_LANGUAGES.find((l) => l.key.toLowerCase() === targetKeyLower);
+  if (synced && synced.countryCodes.includes(chCountry)) return true;
+
+  return false;
+}
+
 export function nowIso(): string {
   return new Date().toISOString();
 }

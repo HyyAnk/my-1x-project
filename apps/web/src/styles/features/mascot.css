@@ -4733,6 +4733,95 @@
   font-weight: 600;
 }
 
+.stage-default-preset-section {
+  gap: 8px;
+  background: #0a0f19;
+}
+
+.stage-preset-spinner {
+  color: #a5b4fc;
+}
+
+.stage-preset-readout {
+  display: grid;
+  grid-template-columns: minmax(48px, 1fr) repeat(3, auto);
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 1px solid rgba(129, 140, 248, 0.2);
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.08);
+  color: #9aa6b9;
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.stage-preset-readout strong {
+  color: #c7d2fe;
+  font-size: 10.5px;
+}
+
+.stage-preset-purpose {
+  margin: 0;
+  color: #738096;
+  font-size: 9.75px;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.stage-preset-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.stage-preset-actions .quiet-button {
+  width: 100%;
+  justify-content: center;
+  min-height: 30px;
+}
+
+.stage-preset-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #d6a94f;
+  font-size: 9.75px;
+}
+
+.stage-preset-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 3px 7px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #d6a94f;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.stage-preset-retry:hover,
+.stage-preset-retry:focus-visible {
+  outline: none;
+  background: rgba(214, 169, 79, 0.1);
+  color: #f0c56d;
+}
+
+.stage-preset-retry:active {
+  transform: translateY(1px);
+}
+
 .inspector-card {
   background: #0b0f19;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -5471,12 +5560,46 @@
     justify-content: space-between;
   }
 
+  .stage-studio-toolbar > .studio-segmented-group:nth-of-type(2) .studio-segment-btn span,
+  .studio-header-divider {
+    display: none;
+  }
+
+  .stage-studio-toolbar > .studio-segmented-group:nth-of-type(2) .studio-segment-btn {
+    min-width: 32px;
+    justify-content: center;
+    padding-inline: 7px;
+  }
+
   .stage-studio-main-body {
     grid-template-rows: minmax(245px, 47%) minmax(0, 1fr);
   }
 
   .stage-canvas-workspace {
     padding: 8px;
+  }
+
+  .stage-timeline-header-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+  }
+
+  .stage-timeline-actions-left,
+  .stage-timeline-actions-right {
+    min-width: 0;
+    justify-content: space-between;
+  }
+
+  .stage-phase-pills-row {
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .stage-phase-pill-btn {
+    flex: 0 0 auto;
+    padding-inline: 6px;
   }
 
   .stage-footer-summary {
@@ -5513,7 +5636,8 @@
   .stage-canvas-letterbox,
   .studio-segment-btn,
   .stage-pill-btn,
-  .stage-rule-item {
+  .stage-rule-item,
+  .stage-preset-retry {
     animation: none;
     transition: none;
   }

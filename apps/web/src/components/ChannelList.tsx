@@ -7,8 +7,8 @@ import {
   CurrencyDollar,
   DotsThreeVertical,
   FilmSlate,
+  Globe,
   Image as ImageIcon,
-  MagnifyingGlass,
   Plus,
   Smiley,
   SpeakerHigh,
@@ -18,9 +18,11 @@ import {
 } from "@phosphor-icons/react";
 import {
   QUIZ_IMAGE_STYLE_LABELS,
+  TARGET_COUNTRY_LANGUAGES,
   getCountryFlag,
   getCountryName,
   getLanguageDisplay,
+  matchChannelLanguage,
   type AppConfig,
   type Channel,
   type MascotProfile,
@@ -608,10 +610,9 @@ export function ChannelsListView({
   openChannel: (id: string) => void;
   onDelete: (channel: Channel) => void;
 }) {
-  const { t } = useTranslation();
+  const { t, language: uiLang } = useTranslation();
   const [mascots, setMascots] = useState<MascotProfile[]>(initialMascots || []);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "draft" | "archived">("all");
+  const [languageFilter, setLanguageFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"latest" | "episodes" | "name">("latest");
 
   useEffect(() => {
@@ -623,28 +624,27 @@ export function ChannelsListView({
     }
   }, [initialMascots]);
 
-  const activeCount = channels.filter((c) => c.status === "ACTIVE").length;
-  const draftCount = channels.filter((c) => c.status === "DRAFT").length;
-  const archivedCount = channels.filter((c) => c.status === "ARCHIVED").length;
+  // Compute channel counts for each synchronized target language (10 languages from 20 countries)
+  const languageCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const lang of TARGET_COUNTRY_LANGUAGES) {
+      counts[lang.key] = 0;
+    }
+    for (const c of channels) {
+      for (const lang of TARGET_COUNTRY_LANGUAGES) {
+        if (matchChannelLanguage(c, lang.key)) {
+          counts[lang.key] = (counts[lang.key] || 0) + 1;
+        }
+      }
+    }
+    return counts;
+  }, [channels]);
 
   const filteredChannels = useMemo(() => {
     return channels
       .filter((c) => {
-        if (statusFilter !== "all" && c.status.toLowerCase() !== statusFilter) {
+        if (languageFilter !== "all" && !matchChannelLanguage(c, languageFilter)) {
           return false;
-        }
-        if (searchQuery.trim()) {
-          const q = searchQuery.toLowerCase().trim();
-          const matchName = c.display_name.toLowerCase().includes(q);
-          const matchDesc = c.description?.toLowerCase().includes(q);
-          const matchLang = c.language?.toLowerCase().includes(q) || getLanguageDisplay(c.language).toLowerCase().includes(q);
-          const matchCountry =
-            c.country?.toLowerCase().includes(q) ||
-            c.market?.toLowerCase().includes(q) ||
-            getCountryName(c.country || c.market)
-              .toLowerCase()
-              .includes(q);
-          if (!matchName && !matchDesc && !matchLang && !matchCountry) return false;
         }
         return true;
       })
@@ -657,11 +657,10 @@ export function ChannelsListView({
         }
         return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
       });
-  }, [channels, statusFilter, searchQuery, sortBy]);
+  }, [channels, languageFilter, sortBy]);
 
   const clearFilters = () => {
-    setSearchQuery("");
-    setStatusFilter("all");
+    setLanguageFilter("all");
   };
 
   return (
@@ -677,67 +676,37 @@ export function ChannelsListView({
         </button>
       </div>
 
-      {/* Smart Toolbar */}
+      {/* Synchronized 10-Language Filter Toolbar */}
       <div className="channel-toolbar">
         <div className="channel-toolbar-left">
-          <div className="channel-search-box">
-            <MagnifyingGlass size={16} className="search-icon" />
-            <input
-              type="text"
-              className="channel-search-input"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("channels.searchPlaceholder")}
-              aria-label={t("channels.searchPlaceholder")}
-            />
-            {searchQuery ? (
-              <button
-                type="button"
-                className="channel-search-clear"
-                onClick={() => setSearchQuery("")}
-                title="Clear search"
-                aria-label="Clear search"
-              >
-                <X size={12} />
-              </button>
-            ) : null}
-          </div>
-
-          <div className="channel-filter-pills" role="radiogroup" aria-label="Filter channels by status">
+          <div className="channel-filter-pills" role="radiogroup" aria-label={t("channels.filterByLanguage") || "Filter by language"}>
             <button
               type="button"
-              className={`channel-filter-btn ${statusFilter === "all" ? "is-active" : ""}`}
-              onClick={() => setStatusFilter("all")}
+              className={`channel-filter-btn ${languageFilter === "all" ? "is-active" : ""}`}
+              onClick={() => setLanguageFilter("all")}
             >
+              <CountryFlag code="GLOBAL" size={13} />
               <span>{t("channels.filterAll")}</span>
               <span className="channel-filter-count">{channels.length}</span>
             </button>
-            <button
-              type="button"
-              className={`channel-filter-btn ${statusFilter === "active" ? "is-active" : ""}`}
-              onClick={() => setStatusFilter("active")}
-            >
-              <span>{t("channels.filterActive")}</span>
-              <span className="channel-filter-count">{activeCount}</span>
-            </button>
-            <button
-              type="button"
-              className={`channel-filter-btn ${statusFilter === "draft" ? "is-active" : ""}`}
-              onClick={() => setStatusFilter("draft")}
-            >
-              <span>{t("channels.filterDraft")}</span>
-              <span className="channel-filter-count">{draftCount}</span>
-            </button>
-            {archivedCount > 0 ? (
-              <button
-                type="button"
-                className={`channel-filter-btn ${statusFilter === "archived" ? "is-active" : ""}`}
-                onClick={() => setStatusFilter("archived")}
-              >
-                <span>{t("channels.filterArchived")}</span>
-                <span className="channel-filter-count">{archivedCount}</span>
-              </button>
-            ) : null}
+            {TARGET_COUNTRY_LANGUAGES.map((lang) => {
+              const count = languageCounts[lang.key] || 0;
+              const isActive = languageFilter === lang.key;
+              const label = uiLang === "vi" ? lang.nameVi : lang.name;
+              return (
+                <button
+                  type="button"
+                  key={lang.key}
+                  className={`channel-filter-btn ${isActive ? "is-active" : ""}`}
+                  onClick={() => setLanguageFilter(lang.key)}
+                  title={`${lang.name} (${lang.nameVi})`}
+                >
+                  <CountryFlag code={lang.primaryCountryCode || lang.countryCodes[0]} size={13} />
+                  <span>{label}</span>
+                  <span className="channel-filter-count">{count}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -774,7 +743,7 @@ export function ChannelsListView({
             border: "1px dashed var(--line)",
           }}
         >
-          <MagnifyingGlass size={36} style={{ color: "var(--muted)", margin: "0 auto 12px" }} />
+          <Globe size={36} style={{ color: "var(--muted)", margin: "0 auto 12px" }} />
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 6px" }}>{t("channels.noResultsTitle")}</h3>
           <p style={{ fontSize: "13px", color: "var(--muted)", margin: "0 0 16px" }}>{t("channels.noResultsCopy")}</p>
           <button type="button" className="quiet-button" onClick={clearFilters} style={{ margin: "0 auto" }}>

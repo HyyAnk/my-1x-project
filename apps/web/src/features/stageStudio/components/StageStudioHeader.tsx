@@ -50,6 +50,7 @@ export function StageStudioHeader({ studio, onClose }: StageStudioHeaderProps) {
             type="button"
             className={`studio-segment-btn ${aspectRatio === "16:9" ? "is-active" : ""}`}
             onClick={() => setAspectRatio("16:9")}
+            aria-label="16:9"
           >
             <MonitorPlay size={13} />
             <span>16:9</span>
@@ -58,6 +59,7 @@ export function StageStudioHeader({ studio, onClose }: StageStudioHeaderProps) {
             type="button"
             className={`studio-segment-btn ${aspectRatio === "9:16" ? "is-active" : ""}`}
             onClick={() => setAspectRatio("9:16")}
+            aria-label="9:16"
           >
             <DeviceMobile size={13} />
             <span>9:16</span>
@@ -70,6 +72,7 @@ export function StageStudioHeader({ studio, onClose }: StageStudioHeaderProps) {
             type="button"
             className={`studio-segment-btn ${stageViewMode === "video_stage" ? "is-active" : ""}`}
             onClick={() => setStageViewMode("video_stage")}
+            aria-label={t("stageStudio.videoSceneMode")}
           >
             <Broadcast size={13} />
             <span>{t("stageStudio.videoSceneMode")}</span>
@@ -78,6 +81,7 @@ export function StageStudioHeader({ studio, onClose }: StageStudioHeaderProps) {
             type="button"
             className={`studio-segment-btn ${stageViewMode === "grid" ? "is-active" : ""}`}
             onClick={() => setStageViewMode("grid")}
+            aria-label={t("stageStudio.gridBlueprintMode")}
           >
             <GridFour size={13} />
             <span>{t("stageStudio.gridBlueprintMode")}</span>
