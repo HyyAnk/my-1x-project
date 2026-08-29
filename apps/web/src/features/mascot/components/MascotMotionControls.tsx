@@ -14,7 +14,7 @@ export type MascotMotionControlsProps = {
   onChangeMotionSpeed: (action: MascotActionType, speed: number) => void;
   onChangeMotionIntensity: (action: MascotActionType, intensity: MascotMotionIntensity) => void;
   onResetDefaultMotions: () => void;
-  onSaveMotion: () => void;
+  onSaveMotion: (action?: MascotActionType) => void;
   onFinishMascot: () => void;
   onBackStep: () => void;
   calibrating: boolean;
@@ -101,7 +101,7 @@ export function MascotMotionControls({
             className="quiet-button primary compact"
             style={{ width: "100%", justifyContent: "center", marginTop: "10px" }}
             disabled={calibrating}
-            onClick={onSaveMotion}
+            onClick={() => onSaveMotion(activePreviewAction)}
           >
             {calibrating ? <CircleNotch className="spin" size={14} /> : <FloppyDisk size={14} />}
             <span>

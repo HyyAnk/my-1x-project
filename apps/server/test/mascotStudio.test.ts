@@ -157,19 +157,35 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       const listAfterAssign = await app.server.inject({ method: "GET", url: "/api/mascots" });
       expect(listAfterAssign.json().mascots[0].assigned_channel_ids).toContain(channel.channel_id);
 
-      // 8b. Calibrate Mascot Action Offsets (Phase 2 feature)
+      // 8b. Calibrate Mascot Action Offsets and Motion Presets
       const calibrateRes = await app.server.inject({
         method: "PATCH",
         url: `/api/mascots/${createdMascot.id}/actions/wave/calibrate`,
         payload: {
           offset_x: 8,
           offset_y: -4,
+          motion_preset: "wave",
+          motion_speed: 1.5,
+          motion_intensity: "dynamic",
         },
       });
       expect(calibrateRes.statusCode).toBe(200);
       const calibratedAction = calibrateRes.json().action;
       expect(calibratedAction.offset_x).toBe(8);
       expect(calibratedAction.offset_y).toBe(-4);
+      expect(calibratedAction.motion_preset).toBe("wave");
+      expect(calibratedAction.motion_speed).toBe(1.5);
+      expect(calibratedAction.motion_intensity).toBe("dynamic");
+
+      // 8b-2. Calibrate with invalid action returns validation error
+      const invalidCalibrateRes = await app.server.inject({
+        method: "PATCH",
+        url: `/api/mascots/${createdMascot.id}/actions/[object Object]/calibrate`,
+        payload: {
+          motion_preset: "jump",
+        },
+      });
+      expect(invalidCalibrateRes.statusCode).toBe(400);
 
       // 8c. Remove Background Endpoint Test
       const removeBgRes = await app.server.inject({

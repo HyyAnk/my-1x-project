@@ -25,7 +25,7 @@ export type MascotAnimationStepProps = {
   onChangeMotionSpeed: (action: MascotActionType, speed: number) => void;
   onChangeMotionIntensity: (action: MascotActionType, intensity: MascotMotionIntensity) => void;
   onResetDefaultMotions: () => void;
-  onSaveMotion: () => void;
+  onSaveMotion: (action?: MascotActionType) => void;
   onFinishMascot: () => void;
   onBackStep: () => void;
 };

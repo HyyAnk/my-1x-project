@@ -175,15 +175,19 @@ export function useMascotMotionStudio({
     onNotice({ tone: "good", message: "Restored recommended motion presets!" });
   };
 
-  const handleSaveMotion = async (action: MascotActionType = activePreviewAction) => {
+  const handleSaveMotion = async (action?: MascotActionType | unknown) => {
     if (!editingMascot) return;
+    const targetAction: MascotActionType =
+      typeof action === "string" && (ALL_MASCOT_ACTIONS as readonly string[]).includes(action)
+        ? (action as MascotActionType)
+        : activePreviewAction;
     setCalibrating(true);
-    const actionMeta = getLocalizedActionMeta(action, t);
-    const preset = actionMotions[action] || DEFAULT_ACTION_MOTIONS[action];
-    const speed = actionSpeeds[action] || DEFAULT_ACTION_SPEEDS[action];
-    const intensity = actionIntensities[action] || DEFAULT_ACTION_INTENSITIES[action];
+    const actionMeta = getLocalizedActionMeta(targetAction, t);
+    const preset = actionMotions[targetAction] || DEFAULT_ACTION_MOTIONS[targetAction];
+    const speed = actionSpeeds[targetAction] || DEFAULT_ACTION_SPEEDS[targetAction];
+    const intensity = actionIntensities[targetAction] || DEFAULT_ACTION_INTENSITIES[targetAction];
     try {
-      const res = await api.calibrateMascotAction(editingMascot.id, action, {
+      const res = await api.calibrateMascotAction(editingMascot.id, targetAction, {
         motion_preset: preset,
         motion_speed: speed,
         motion_intensity: intensity,

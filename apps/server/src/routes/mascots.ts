@@ -7,6 +7,7 @@ import {
   CreateMascotInputSchema,
   GenerateMascotConceptInputSchema,
   GenerateMascotSpriteInputSchema,
+  MascotActionTypeSchema,
   MascotMigrationInputSchema,
   MASCOT_ACTION_META,
   RemoveMascotBackgroundInputSchema,
@@ -172,7 +173,8 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
       return reply.code(201).send({ mascot });
     });
     server.patch("/api/mascots/:mascotId/actions/:action/calibrate", async (request) => {
-      const { mascotId, action } = request.params as { mascotId: string; action: MascotActionType };
+      const { mascotId, action: rawAction } = request.params as { mascotId: string; action: string };
+      const action = MascotActionTypeSchema.parse(rawAction);
       const input = CalibrateMascotActionInputSchema.parse(request.body);
       const updated = await repository.calibrateMascotAction(mascotId, action, input);
       return { mascot: updated, action: updated.actions[action] };
