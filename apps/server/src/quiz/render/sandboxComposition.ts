@@ -12,7 +12,7 @@ import {
   resolveThinkingBarVariant,
 } from "../visual/elements/index.js";
 import { candyArcadeCss, illustrationDataUri, highlightQuestionMarkup } from "./candyArcadeComposition.js";
-import { esc, escAttr } from "./candyArcade/candyArcadeSvg.js";
+import { esc } from "./candyArcade/candyArcadeSvg.js";
 import { renderMascotHtmlLayer } from "./mascotStateResolver.js";
 
 export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
@@ -137,12 +137,12 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
       },
       "question",
       {
-        overrideAction: mascotAction as any,
+        overrideAction: mascotAction,
       },
     );
   }
 
-  const mascotClass = hasMascot ? `has-mascot has-mascot-${mascotPos === "bottom_right" ? "right" : "left"}` : "";
+  const mascotClass = hasMascot ? "has-mascot" : "";
 
   // 8. Reward FX
   const rewardFxHtml =

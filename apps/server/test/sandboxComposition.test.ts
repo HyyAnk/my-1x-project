@@ -241,35 +241,40 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(resNone.html).not.toContain('<div class="candy-mascot-container');
     });
 
-    it("renders stage_preview_layout_only with proper mascot classes and no duplicate sprite", () => {
+    it("uses one fixed Mascot-on content layout regardless of mascot anchor", () => {
       const resLeft = buildSandboxComposition({
         mascot_id: "stage_preview_layout_only",
         mascot_position: "bottom_left",
         layout_id: "media_left_choices_right",
       });
 
-      expect(resLeft.html).toContain("has-mascot has-mascot-left");
+      expect(resLeft.html).toContain("layout-media_left_choices_right has-mascot sandbox-preview-stage");
       expect(resLeft.html).toContain("layout-media_left_choices_right");
-      expect(resLeft.html).toContain(".has-mascot .game-stage { width: 1420px; }");
-      expect(resLeft.html).toContain(".has-mascot .question-title { width: 1440px; max-width: 1440px; }");
-      expect(resLeft.html).toContain(".has-mascot-left { --question-card-left-edge: 360px; }");
+      expect(resLeft.html).toContain(
+        ".has-mascot { --mascot-content-width: 1420px; --question-card-width: 1440px; --question-card-left-edge: 360px; }",
+      );
       expect(resLeft.html).toContain(
         ".has-mascot .game-header { left: calc(var(--question-card-left-edge) / 2); transform: translateX(-50%); }",
       );
-      expect(resLeft.html).toContain(".has-mascot-left .game-stage { margin-right: 40px; }");
+      expect(resLeft.html).toContain(".has-mascot .game-stage { width: var(--mascot-content-width); margin-right: 40px; }");
+      expect(resLeft.html).toContain(
+        ".has-mascot .question-title { width: var(--question-card-width); max-width: var(--question-card-width); }",
+      );
+      expect(resLeft.html).toContain(".has-mascot .phase-region { left: 0; width: var(--question-card-width); transform: none; }");
+      expect(resLeft.html).toContain(
+        ".has-mascot .phase-region > .thinking-bar, .has-mascot .phase-region > .fact-card { width: min(70vw, 1300px); left: 50%; }",
+      );
+      expect(resLeft.html).not.toContain("has-mascot-left");
+      expect(resLeft.html).not.toContain("has-mascot-right");
       expect(resLeft.html).not.toContain('<div class="candy-mascot-container');
 
       const resRight = buildSandboxComposition({
         mascot_id: "stage_preview_layout_only",
         mascot_position: "bottom_right",
-        layout_id: "visual_choices_three",
+        layout_id: "media_left_choices_right",
       });
 
-      expect(resRight.html).toContain("has-mascot has-mascot-right");
-      expect(resRight.html).toContain("layout-visual_choices_three");
-      expect(resRight.html).toContain(".has-mascot-right { --question-card-left-edge: 60px; }");
-      expect(resRight.html).toContain(".has-mascot-right .game-stage { margin-right: 340px; }");
-      expect(resRight.html).toContain(".has-mascot.layout-visual_choices_three .visual-answer-grid { width: 100%; gap: 24px; }");
+      expect(resRight.html).toBe(resLeft.html);
       expect(resRight.html).not.toContain('<div class="candy-mascot-container');
     });
   });

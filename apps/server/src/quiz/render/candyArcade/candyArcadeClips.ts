@@ -4,7 +4,7 @@ import type { QuizTemplateScene } from "../../visual/types.js";
 import { resolveThinkingBarVariant } from "../../visual/elements/index.js";
 import { esc, escAttr, highlightQuestionMarkup, illustrationDataUri } from "./candyArcadeSvg.js";
 import { assetFor, source } from "./candyArcadeAudio.js";
-import { renderMascotHtmlLayer, resolveMascotLayout, resolveMascotPose, shouldRenderMascot } from "../mascotStateResolver.js";
+import { renderMascotHtmlLayer } from "../mascotStateResolver.js";
 
 export type SubComposition = {
   id: string;
@@ -153,8 +153,7 @@ export function questionClip(input: {
   const hasMascot = Boolean(
     input.mascot && (!input.mascotConfig || input.mascotConfig.enabled) && input.mascotConfig?.show_in_question !== false,
   );
-  const mascotPos = input.mascotConfig?.position || "bottom_left";
-  const mascotClass = hasMascot ? `has-mascot has-mascot-${mascotPos === "bottom_right" ? "right" : "left"}` : "";
+  const mascotClass = hasMascot ? "has-mascot" : "";
   const classNames = [
     "clip",
     "candy-scene",

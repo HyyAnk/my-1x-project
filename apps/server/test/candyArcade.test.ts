@@ -68,6 +68,20 @@ const quiz = QuizV2Schema.parse({
   ],
 });
 
+const dummyMascot: MascotProfile = {
+  id: "mascot-1",
+  name: "Buddy",
+  description: "Friendly mascot",
+  visual_style: "pixar_3d",
+  master_prompt: "",
+  master_image_url: null,
+  color_theme: "#06b6d4",
+  assigned_channel_ids: ["ch-1"],
+  actions: {},
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+};
+
 describe("Candy Arcade visual template", () => {
   it("reserves AA-compliant colors for text on light cards and bright badges", () => {
     for (const palette of candyArcadePalettes) {
@@ -265,6 +279,13 @@ describe("Candy Arcade visual template", () => {
     expect(html).toContain("is-final-scene");
     expect(html).toContain(".game-stage { position: relative; z-index: 3;");
     expect(html).toContain(".reward-fx { position: absolute; z-index: 7; inset: 0;");
+    expect(html).toContain("--candy-layer-transition: 10;");
+    expect(html).toContain("--candy-layer-mascot: 11;");
+    expect(html).toContain(".candy-transition { position: absolute; z-index: var(--candy-layer-transition);");
+    expect(html).toContain(
+      ".candy-mascot-container { position: absolute; width: 220px; height: 220px; z-index: var(--candy-layer-mascot);",
+    );
+    expect(html).toContain(".brand-mascot { position: absolute; z-index: var(--candy-layer-mascot);");
     expect(html).toContain("hanging-wood-sign");
     expect(html).toContain("wood-sign-plank");
     expect(html).toContain("question-number-val");
@@ -380,22 +401,38 @@ describe("Candy Arcade visual template", () => {
     expect(viTimeline.duration_seconds - (outroEvent.at_seconds + outroEvent.duration_seconds)).toBeGreaterThanOrEqual(4.9);
   });
 
+  it("keeps the production Mascot-on content layout independent of the mascot anchor", () => {
+    const director = createDefaultDirectorPlan(quiz);
+    const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
+    const renderAt = (position: "bottom_left" | "bottom_right") =>
+      buildCandyArcadeCompositionBundle({
+        quiz,
+        director,
+        timeline,
+        theme: "candy_arcade",
+        audioPath: "./narration.wav",
+        narrationDurationSeconds: timeline.duration_seconds,
+        mascot: dummyMascot,
+        mascotConfig: { mascot_id: "mascot-1", enabled: true, position, scale: 1, show_in_question: true },
+      });
+    const leftBundle = renderAt("bottom_left");
+    const rightBundle = renderAt("bottom_right");
+    const bundleSources = (bundle: ReturnType<typeof renderAt>) => [bundle.html, ...Object.values(bundle.files)].join("\n");
+    const questionClasses = (bundle: ReturnType<typeof renderAt>) =>
+      Array.from(bundleSources(bundle).matchAll(/<section id="quiz-q[^"]+" class="([^"]+)"/g), (match) => match[1]);
+
+    expect(questionClasses(leftBundle).length).toBeGreaterThan(0);
+    expect(questionClasses(leftBundle)).toEqual(questionClasses(rightBundle));
+    expect(questionClasses(leftBundle).every((className) => className.split(" ").includes("has-mascot"))).toBe(true);
+    expect(bundleSources(leftBundle)).not.toContain("has-mascot-left");
+    expect(bundleSources(rightBundle)).not.toContain("has-mascot-right");
+    expect(bundleSources(leftBundle)).toContain("anchor-bottom_left");
+    expect(bundleSources(rightBundle)).toContain("anchor-bottom_right");
+  });
+
   it("renders Game SFX onto track 3, avoids Mascot-specific SFX, and prevents audio overlaps on the same track", () => {
     const director = createDefaultDirectorPlan(quiz);
     const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
-    const dummyMascot: MascotProfile = {
-      id: "mascot-1",
-      name: "Buddy",
-      description: "Friendly mascot",
-      visual_style: "pixar_3d",
-      master_prompt: "",
-      master_image_url: null,
-      color_theme: "#06b6d4",
-      assigned_channel_ids: ["ch-1"],
-      actions: {},
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
     const bundle = buildCandyArcadeCompositionBundle({
       quiz,
       director,
@@ -404,7 +441,7 @@ describe("Candy Arcade visual template", () => {
       audioPath: "./narration.wav",
       narrationDurationSeconds: timeline.duration_seconds,
       mascot: dummyMascot,
-      mascotConfig: { mascot_id: "mascot-1", position: "bottom_left", scale: 1 },
+      mascotConfig: { mascot_id: "mascot-1", enabled: true, position: "bottom_left", scale: 1, show_in_question: true },
     });
 
     // 1. Must NOT reference non-existent ui_soft.wav
