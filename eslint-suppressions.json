@@ -10,10 +10,7 @@
       "count": 2
     },
     "complexity": {
-      "count": 2
-    },
-    "no-empty": {
-      "count": 14
+      "count": 1
     },
     "no-useless-escape": {
       "count": 2

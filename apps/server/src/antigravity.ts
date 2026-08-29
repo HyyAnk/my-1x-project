@@ -46,6 +46,28 @@ export type ResolvedAntigravityTarget =
   | { kind: "cli"; command: string; argsPrefix: string[]; label: string; version: string }
   | { kind: "api"; command: string; argsPrefix: string[]; label: string; version: string };
 
+type TranscriptToolCall = {
+  name?: string;
+  args?: { CodeContent?: string; ReplacementContent?: string };
+};
+
+type TranscriptStep = {
+  source?: string;
+  type?: string;
+  status?: string;
+  content?: string;
+  is_truncated?: boolean;
+  tool_calls?: TranscriptToolCall[];
+};
+
+function describeError(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function isNotFoundError(error: unknown): boolean {
+  return typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";
+}
+
 export class AntigravityClient extends EventEmitter {
   private process: ChildProcessWithoutNullStreams | null = null;
   private connected = false;
@@ -78,14 +100,26 @@ export class AntigravityClient extends EventEmitter {
           }
         }
       }
-    } catch {}
+    } catch (error) {
+      if (!isNotFoundError(error)) {
+        this.logger.debug(`Failed to load managed Antigravity sessions from ${this.managedSessionsFile}: ${describeError(error)}`, {
+          step: "antigravity_sessions_load",
+          filePath: this.managedSessionsFile,
+        });
+      }
+    }
   }
 
   private async saveManagedSessions(): Promise<void> {
     try {
       await mkdir(path.dirname(this.managedSessionsFile), { recursive: true });
       await writeFile(this.managedSessionsFile, `${JSON.stringify([...this.managedConversations], null, 2)}\n`, "utf8");
-    } catch {}
+    } catch (error) {
+      this.logger.debug(`Failed to save managed Antigravity sessions to ${this.managedSessionsFile}: ${describeError(error)}`, {
+        step: "antigravity_sessions_save",
+        filePath: this.managedSessionsFile,
+      });
+    }
   }
 
   get isConnected(): boolean {
@@ -103,138 +137,120 @@ export class AntigravityClient extends EventEmitter {
       return this.withCurrentModel(this.cachedModels);
     }
 
-    // 1. If connected via AgentAPI (native Antigravity IDE session with Zero API Key)
     const target = await this.resolveTarget().catch(() => null);
     if (target && target.kind === "agentapi") {
-      const session = await this.getActiveSession();
-      if (session.address && session.csrfToken) {
-        try {
-          const port = session.address.replace(/^localhost:/, "").replace(/^127\.0\.0\.1:/, "");
-          const res = await fetch(`http://127.0.0.1:${port}/exa.language_server_pb.LanguageServerService/GetAvailableModels`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-codeium-csrf-token": session.csrfToken,
-            },
-            body: JSON.stringify({
-              metadata: {
-                ideName: "antigravity",
-                ideVersion: "2.9.1",
-                extensionVersion: "2.9.1",
-              },
-            }),
-            signal: AbortSignal.timeout(3000),
-          });
-
-          if (res.ok) {
-            const data = (await res.json()) as {
-              response?: {
-                models?: Record<string, { displayName?: string; model?: string }>;
-                agentModelSorts?: Array<{ groups?: Array<{ modelIds?: string[] }> }>;
-              };
-            };
-            const modelsDict = data.response?.models || {};
-            const sortIds = data.response?.agentModelSorts?.[0]?.groups?.[0]?.modelIds || [];
-
-            const models: AntigravityModel[] = [];
-            const seenIds = new Set<string>();
-            const seenLabels = new Set<string>();
-
-            // Add recommended/agent models first in order
-            for (const id of sortIds) {
-              if (modelsDict[id] && !seenIds.has(id)) {
-                seenIds.add(id);
-                const item = modelsDict[id];
-                const label = item.displayName || this.formatModelLabel(id);
-                seenLabels.add(label);
-                models.push({ id, label });
-              }
-            }
-
-            // Add any other user-facing models
-            for (const [id, item] of Object.entries(modelsDict)) {
-              if (!seenIds.has(id) && item.displayName && !id.startsWith("chat_") && !id.startsWith("tab_") && !this.isNonTextModel(id) && !seenLabels.has(item.displayName)) {
-                seenIds.add(id);
-                seenLabels.add(item.displayName);
-                models.push({
-                  id,
-                  label: item.displayName,
-                });
-              }
-            }
-
-            if (models.length > 0) {
-              this.cachedModels = models;
-              return this.withCurrentModel(models);
-            }
-          }
-        } catch (error) {
-          this.logger.debug(`Language server GetAvailableModels query failed: ${error instanceof Error ? error.message : "unknown error"}`, { step: "antigravity_models" });
-        }
-      }
-      this.cachedModels = DEFAULT_ANTIGRAVITY_MODELS;
-      return this.withCurrentModel(DEFAULT_ANTIGRAVITY_MODELS);
+      const models = (await this.getAgentApiModels()) ?? DEFAULT_ANTIGRAVITY_MODELS;
+      return this.cacheModels(models);
     }
 
-    // 2. Try Google AI API if API key is provided
-    if (this.config.antigravity.api_key.trim()) {
-      try {
-        const response = await this.googleApiRequest("/models");
-        if (response.ok) {
-          const payload = (await response.json()) as {
-            models?: Array<{ name?: string; displayName?: string; description?: string; supportedGenerationMethods?: string[] }>;
-          };
-          const models = (payload.models ?? [])
-            .filter((m) => !m.supportedGenerationMethods || m.supportedGenerationMethods.includes("generateContent"))
-            .map((m) => {
-              const id = (m.name ?? "").replace(/^models\//, "").trim();
-              const label = (m.displayName ?? "").trim() || id;
-              return { id, label };
-            })
-            .filter((m) => m.id && !this.isNonTextModel(m.id));
-          if (models.length > 0) {
-            this.cachedModels = models;
-            return this.withCurrentModel(models);
-          }
-        }
-      } catch (error) {
-        this.logger.debug(`Google AI API model query failed: ${error instanceof Error ? error.message : "unknown error"}`, { step: "antigravity_models" });
-      }
+    const models = (await this.getGoogleApiModels()) ?? (await this.getCliModels(target)) ?? DEFAULT_ANTIGRAVITY_MODELS;
+    return this.cacheModels(models);
+  }
+
+  private cacheModels(models: AntigravityModel[]): AntigravityModel[] {
+    this.cachedModels = models;
+    return this.withCurrentModel(models);
+  }
+
+  private async getAgentApiModels(): Promise<AntigravityModel[] | null> {
+    const session = await this.getActiveSession();
+    if (!session.address || !session.csrfToken) return null;
+
+    try {
+      const port = session.address.replace(/^localhost:/, "").replace(/^127\.0\.0\.1:/, "");
+      const response = await fetch(`http://127.0.0.1:${port}/exa.language_server_pb.LanguageServerService/GetAvailableModels`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-codeium-csrf-token": session.csrfToken },
+        body: JSON.stringify({ metadata: { ideName: "antigravity", ideVersion: "2.9.1", extensionVersion: "2.9.1" } }),
+        signal: AbortSignal.timeout(3000),
+      });
+      if (!response.ok) return null;
+      const payload = (await response.json()) as {
+        response?: {
+          models?: Record<string, { displayName?: string; model?: string }>;
+          agentModelSorts?: Array<{ groups?: Array<{ modelIds?: string[] }> }>;
+        };
+      };
+      return this.parseAgentApiModels(payload);
+    } catch (error) {
+      this.logger.debug(`Language server GetAvailableModels query failed: ${describeError(error)}`, { step: "antigravity_models" });
+      return null;
+    }
+  }
+
+  private parseAgentApiModels(payload: {
+    response?: {
+      models?: Record<string, { displayName?: string; model?: string }>;
+      agentModelSorts?: Array<{ groups?: Array<{ modelIds?: string[] }> }>;
+    };
+  }): AntigravityModel[] | null {
+    const modelsDict = payload.response?.models ?? {};
+    const sortIds = payload.response?.agentModelSorts?.[0]?.groups?.[0]?.modelIds ?? [];
+    const models: AntigravityModel[] = [];
+    const seenIds = new Set<string>();
+    const seenLabels = new Set<string>();
+
+    for (const id of sortIds) {
+      const item = modelsDict[id];
+      if (!item || seenIds.has(id)) continue;
+      const label = item.displayName || this.formatModelLabel(id);
+      seenIds.add(id);
+      seenLabels.add(label);
+      models.push({ id, label });
     }
 
-    // 3. Query dynamic models via agy CLI
-    if (target && target.kind === "cli") {
-      try {
-        const result = await execFileAsync(target.command, ["models", "--json"], {
-          cwd: this.rootDirectory,
-          timeout: 10_000,
-          windowsHide: true,
-          shell: process.platform === "win32" && /\.(cmd|bat)$/i.test(target.command),
-        }).catch(async () => {
-          return execFileAsync(target.command, ["model", "list", "--json"], {
-            cwd: this.rootDirectory,
-            timeout: 10_000,
-            windowsHide: true,
-            shell: process.platform === "win32" && /\.(cmd|bat)$/i.test(target.command),
-          });
-        });
-
-        const stdout = `${result.stdout}`.trim();
-        if (stdout) {
-          const models = this.parseModelListOutput(stdout);
-          if (models.length > 0) {
-            this.cachedModels = models;
-            return this.withCurrentModel(models);
-          }
-        }
-      } catch (error) {
-        this.logger.warn(`Antigravity dynamic model listing failed: ${error instanceof Error ? error.message : "unknown error"}`, { step: "antigravity_models" });
-      }
+    for (const [id, item] of Object.entries(modelsDict)) {
+      if (seenIds.has(id) || !item.displayName || id.startsWith("chat_") || id.startsWith("tab_")) continue;
+      if (this.isNonTextModel(id) || seenLabels.has(item.displayName)) continue;
+      seenIds.add(id);
+      seenLabels.add(item.displayName);
+      models.push({ id, label: item.displayName });
     }
+    return models.length > 0 ? models : null;
+  }
 
-    // Default fallback
-    this.cachedModels = DEFAULT_ANTIGRAVITY_MODELS;
-    return this.withCurrentModel(DEFAULT_ANTIGRAVITY_MODELS);
+  private async getGoogleApiModels(): Promise<AntigravityModel[] | null> {
+    if (!this.config.antigravity.api_key.trim()) return null;
+    try {
+      const response = await this.googleApiRequest("/models");
+      if (!response.ok) return null;
+      const payload = (await response.json()) as {
+        models?: Array<{ name?: string; displayName?: string; supportedGenerationMethods?: string[] }>;
+      };
+      const models = (payload.models ?? [])
+        .filter((model) => !model.supportedGenerationMethods || model.supportedGenerationMethods.includes("generateContent"))
+        .map((model) => {
+          const id = (model.name ?? "").replace(/^models\//, "").trim();
+          return { id, label: (model.displayName ?? "").trim() || id };
+        })
+        .filter((model) => model.id && !this.isNonTextModel(model.id));
+      return models.length > 0 ? models : null;
+    } catch (error) {
+      this.logger.debug(`Google AI API model query failed: ${describeError(error)}`, { step: "antigravity_models" });
+      return null;
+    }
+  }
+
+  private async getCliModels(target: ResolvedAntigravityTarget | null): Promise<AntigravityModel[] | null> {
+    if (!target || target.kind !== "cli") return null;
+    try {
+      const options = {
+        cwd: this.rootDirectory,
+        timeout: 10_000,
+        windowsHide: true,
+        shell: process.platform === "win32" && /\.(cmd|bat)$/i.test(target.command),
+      };
+      const result = await execFileAsync(target.command, ["models", "--json"], options).catch(async () => {
+        return execFileAsync(target.command, ["model", "list", "--json"], options);
+      });
+      const stdout = `${result.stdout}`.trim();
+      if (!stdout) return null;
+      const models = this.parseModelListOutput(stdout);
+      return models.length > 0 ? models : null;
+    } catch (error) {
+      this.logger.warn(`Antigravity dynamic model listing failed: ${describeError(error)}`, { step: "antigravity_models" });
+      return null;
+    }
   }
 
   parseModelListOutput(stdout: string): AntigravityModel[] {
@@ -242,12 +258,13 @@ export class AntigravityClient extends EventEmitter {
     if (!trimmed) return [];
     try {
       const parsed = JSON.parse(trimmed) as unknown;
-      const rawList = Array.isArray(parsed) ? parsed : (parsed as { models?: unknown[] }).models ?? [];
-      return rawList
-        .map((item) => this.normalizeModel(item))
-        .filter((model): model is AntigravityModel => Boolean(model));
+      const rawList = Array.isArray(parsed) ? parsed : ((parsed as { models?: unknown[] }).models ?? []);
+      return rawList.map((item) => this.normalizeModel(item)).filter((model): model is AntigravityModel => Boolean(model));
     } catch {
-      const lines = trimmed.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+      const lines = trimmed
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean);
       const models: AntigravityModel[] = [];
       for (const line of lines) {
         if (/^(available|models|list):?$/i.test(line)) continue;
@@ -264,7 +281,13 @@ export class AntigravityClient extends EventEmitter {
     }
   }
 
-  async detectInstallation(): Promise<{ installed: boolean; command: string; version: string | null; authenticated: boolean; error?: string }> {
+  async detectInstallation(): Promise<{
+    installed: boolean;
+    command: string;
+    version: string | null;
+    authenticated: boolean;
+    error?: string;
+  }> {
     try {
       const target = await this.resolveTarget();
       return {
@@ -337,7 +360,10 @@ export class AntigravityClient extends EventEmitter {
         return res.ok;
       }
     } catch (error) {
-      this.logger.debug(`DeleteCascadeTrajectory RPC failed for ${conversationId}: ${error instanceof Error ? error.message : "unknown error"}`, { step: "antigravity_rpc_delete" });
+      this.logger.debug(
+        `DeleteCascadeTrajectory RPC failed for ${conversationId}: ${error instanceof Error ? error.message : "unknown error"}`,
+        { step: "antigravity_rpc_delete" },
+      );
     }
     return false;
   }
@@ -369,7 +395,14 @@ export class AntigravityClient extends EventEmitter {
       ];
 
       return studioSignatures.some((sig) => sig.test(str));
-    } catch {
+    } catch (error) {
+      if (!isNotFoundError(error)) {
+        this.logger.debug(`Failed to inspect Antigravity conversation ${convId} at ${dbPath}: ${describeError(error)}`, {
+          step: "antigravity_conversation_inspect",
+          conversationId: convId,
+          filePath: dbPath,
+        });
+      }
       return false;
     }
   }
@@ -386,35 +419,9 @@ export class AntigravityClient extends EventEmitter {
       await this.callDeleteCascadeTrajectory(conversationId);
 
       const baseDir = this.getAntigravityBaseDir();
-
-      // 2. Delete conversation SQLite database and WAL/SHM files
-      const convDir = path.join(baseDir, "conversations");
-      for (const ext of [".db", ".db-wal", ".db-shm"]) {
-        try {
-          await rm(path.join(convDir, `${conversationId}${ext}`), { force: true });
-        } catch {}
-      }
-
-      // 3. Delete brain directory (logs, transcripts, scratch files)
-      try {
-        await rm(path.join(baseDir, "brain", conversationId), { recursive: true, force: true });
-      } catch {}
-
-      // 4. Delete annotations directory
-      try {
-        await rm(path.join(baseDir, "annotations", conversationId), { recursive: true, force: true });
-      } catch {}
-
-      // 5. Delete context state file if any
-      try {
-        await rm(path.join(baseDir, "context_state", `${conversationId}.pb`), { force: true });
-      } catch {}
-
-      // 6. Delete temporary prompt markdown in .context
-      try {
-        const promptFile = path.join(this.rootDirectory, ".context", `task_prompt_${threadId}.md`);
-        await rm(promptFile, { force: true });
-      } catch {}
+      await this.removeConversationArtifacts(baseDir, conversationId, threadId);
+      const promptFile = path.join(this.rootDirectory, ".context", `task_prompt_${threadId}.md`);
+      await this.removePathIfPresent(promptFile, "remove temporary task prompt", { conversationId, threadId });
 
       this.logger.debug(`Cleaned up tool-generated Antigravity session ${conversationId}`, { step: "antigravity_cleanup" });
       return true;
@@ -427,14 +434,10 @@ export class AntigravityClient extends EventEmitter {
     await this.loadManagedSessions();
     const baseDir = this.getAntigravityBaseDir();
     const convDir = path.join(baseDir, "conversations");
-    const brainDir = path.join(baseDir, "brain");
-    const annotationsDir = path.join(baseDir, "annotations");
-    const contextStateDir = path.join(baseDir, "context_state");
 
     const activeIds = new Set(this.threadConversations.values());
     const candidates = new Set(this.managedConversations);
 
-    // Also discover any orphan studio-generated sessions in conversations folder
     try {
       const files = await readdir(convDir);
       for (const file of files) {
@@ -445,7 +448,14 @@ export class AntigravityClient extends EventEmitter {
           }
         }
       }
-    } catch {}
+    } catch (error) {
+      if (!isNotFoundError(error)) {
+        this.logger.debug(`Failed to scan Antigravity conversations directory ${convDir}: ${describeError(error)}`, {
+          step: "antigravity_cleanup_scan",
+          filePath: convDir,
+        });
+      }
+    }
 
     let removed = 0;
 
@@ -458,27 +468,7 @@ export class AntigravityClient extends EventEmitter {
       // 1. Notify language server via RPC
       await this.callDeleteCascadeTrajectory(convId);
 
-      // 2. Delete database files
-      for (const ext of [".db", ".db-wal", ".db-shm"]) {
-        try {
-          await rm(path.join(convDir, `${convId}${ext}`), { force: true });
-        } catch {}
-      }
-
-      // 3. Delete brain artifacts
-      try {
-        await rm(path.join(brainDir, convId), { recursive: true, force: true });
-      } catch {}
-
-      // 4. Delete annotations
-      try {
-        await rm(path.join(annotationsDir, convId), { recursive: true, force: true });
-      } catch {}
-
-      // 5. Delete context state
-      try {
-        await rm(path.join(contextStateDir, `${convId}.pb`), { force: true });
-      } catch {}
+      await this.removeConversationArtifacts(baseDir, convId);
 
       this.managedConversations.delete(convId);
       removed += 1;
@@ -486,9 +476,53 @@ export class AntigravityClient extends EventEmitter {
 
     await this.saveManagedSessions();
     if (removed > 0) {
-      this.logger.info(`Cleaned up ${removed} tool-generated Antigravity sessions (user conversations strictly preserved)`, { step: "antigravity_cleanup" });
+      this.logger.info(`Cleaned up ${removed} tool-generated Antigravity sessions (user conversations strictly preserved)`, {
+        step: "antigravity_cleanup",
+      });
     }
     return { removed };
+  }
+
+  private async removeConversationArtifacts(baseDir: string, conversationId: string, threadId?: string): Promise<void> {
+    const convDir = path.join(baseDir, "conversations");
+    for (const extension of [".db", ".db-wal", ".db-shm"]) {
+      const filePath = path.join(convDir, `${conversationId}${extension}`);
+      await this.removePathIfPresent(filePath, `remove conversation database${extension}`, { conversationId, threadId });
+    }
+    await this.removePathIfPresent(
+      path.join(baseDir, "brain", conversationId),
+      "remove brain artifacts",
+      { conversationId, threadId },
+      true,
+    );
+    await this.removePathIfPresent(
+      path.join(baseDir, "annotations", conversationId),
+      "remove annotations",
+      { conversationId, threadId },
+      true,
+    );
+    await this.removePathIfPresent(path.join(baseDir, "context_state", `${conversationId}.pb`), "remove context state", {
+      conversationId,
+      threadId,
+    });
+  }
+
+  private async removePathIfPresent(
+    filePath: string,
+    operation: string,
+    context: { conversationId?: string; threadId?: string },
+    recursive = false,
+  ): Promise<void> {
+    try {
+      await rm(filePath, { force: true, recursive });
+    } catch (error) {
+      if (isNotFoundError(error)) return;
+      this.logger.debug(`Failed to ${operation} at ${filePath}: ${describeError(error)}`, {
+        step: "antigravity_cleanup",
+        filePath,
+        ...context,
+      });
+    }
   }
 
   async startTurn(threadId: string, prompt: string, modelOverride?: string): Promise<string> {
@@ -526,7 +560,13 @@ export class AntigravityClient extends EventEmitter {
     if (!this.isConnected) await this.connect();
   }
 
-  private async runTurn(threadId: string, turnId: string, prompt: string, controller: AbortController, modelOverride?: string): Promise<void> {
+  private async runTurn(
+    threadId: string,
+    turnId: string,
+    prompt: string,
+    controller: AbortController,
+    modelOverride?: string,
+  ): Promise<void> {
     let promptFile: string | null = null;
     try {
       const target = await this.resolveTarget();
@@ -611,14 +651,23 @@ export class AntigravityClient extends EventEmitter {
           }
 
           if (controller.signal.aborted) {
-            this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, threadId, status: "interrupted" } } });
+            this.emit("notification", {
+              method: "turn/completed",
+              params: { threadId, turnId, turn: { id: turnId, threadId, status: "interrupted" } },
+            });
             return;
           }
 
           try {
             // Check transcript_full.jsonl first for complete content, fallback to transcript.jsonl
-            const fullExists = await access(transcriptFullPath, constants.R_OK).then(() => true).catch(() => false);
-            const normExists = !fullExists && (await access(transcriptPath, constants.R_OK).then(() => true).catch(() => false));
+            const fullExists = await access(transcriptFullPath, constants.R_OK)
+              .then(() => true)
+              .catch(() => false);
+            const normExists =
+              !fullExists &&
+              (await access(transcriptPath, constants.R_OK)
+                .then(() => true)
+                .catch(() => false));
             const filePath = fullExists ? transcriptFullPath : normExists ? transcriptPath : null;
 
             if (filePath) {
@@ -630,16 +679,13 @@ export class AntigravityClient extends EventEmitter {
               }
               for (const line of lines) {
                 try {
-                  const step = JSON.parse(line) as {
-                    source?: string;
-                    type?: string;
-                    status?: string;
-                    content?: string;
-                    is_truncated?: boolean;
-                    tool_calls?: Array<{ name?: string; args?: { CodeContent?: string; ReplacementContent?: string } }>;
-                  };
+                  const step = JSON.parse(line) as TranscriptStep;
 
-                  if (step.type === "ERROR_MESSAGE" && typeof step.content === "string" && step.content.includes("stream was interrupted")) {
+                  if (
+                    step.type === "ERROR_MESSAGE" &&
+                    typeof step.content === "string" &&
+                    step.content.includes("stream was interrupted")
+                  ) {
                     if (!streamInterrupted) {
                       streamInterrupted = true;
                       streamInterruptedAt = Date.now();
@@ -654,7 +700,9 @@ export class AntigravityClient extends EventEmitter {
                   const isModel = step.source === "MODEL";
                   const isPlanner = step.type === "PLANNER_RESPONSE";
                   const hasNoToolCalls = !step.tool_calls || step.tool_calls.length === 0;
-                  const isTruncated = Boolean(step.is_truncated || (typeof step.content === "string" && step.content.includes("<truncated ")));
+                  const isTruncated = Boolean(
+                    step.is_truncated || (typeof step.content === "string" && step.content.includes("<truncated ")),
+                  );
                   let currentContent = typeof step.content === "string" ? step.content : "";
 
                   // If content is empty in planner response, check if content was written via tool call
@@ -681,40 +729,56 @@ export class AntigravityClient extends EventEmitter {
                     }
                     // If truncated and status is DONE, wait for transcript_full.jsonl in next iteration
                   }
-                } catch {
-                  // Ignore partial lines
+                } catch (error) {
+                  this.logger.debug(
+                    `Skipped partial Antigravity transcript line for conversation ${conversationId} from ${filePath}: ${describeError(error)}`,
+                    {
+                      step: "antigravity_stream_parse",
+                      conversationId,
+                      threadId,
+                      filePath,
+                    },
+                  );
                 }
               }
             }
             if (isDone) break;
 
             // If stream was interrupted by IDE language server and stayed completely inactive for >60s with zero progress
-            if (streamInterrupted && Date.now() - streamInterruptedAt > 60_000 && Date.now() - lastActivityTime > 30_000 && !lastDelivered.trim()) {
+            if (
+              streamInterrupted &&
+              Date.now() - streamInterruptedAt > 60_000 &&
+              Date.now() - lastActivityTime > 30_000 &&
+              !lastDelivered.trim()
+            ) {
               throw new Error("Antigravity IDE session stream was interrupted and remained inactive for 60s.");
             }
           } catch (watchErr) {
             if (watchErr instanceof Error && watchErr.message.includes("remained inactive")) {
               throw watchErr;
             }
-            // File might still be creating
+            this.logger.debug(`Antigravity transcript poll is waiting for conversation ${conversationId}: ${describeError(watchErr)}`, {
+              step: "antigravity_stream_poll",
+              conversationId,
+              threadId,
+              filePath: transcriptFullPath,
+            });
           }
           await new Promise((resolve) => setTimeout(resolve, 300));
         }
 
         // Final verification pass from transcript_full.jsonl to guarantee full content delivery
         try {
-          if (await access(transcriptFullPath, constants.R_OK).then(() => true).catch(() => false)) {
+          if (
+            await access(transcriptFullPath, constants.R_OK)
+              .then(() => true)
+              .catch(() => false)
+          ) {
             const rawFull = await readFile(transcriptFullPath, "utf8");
             const fullLines = rawFull.split(/\r?\n/).filter(Boolean);
             for (const line of fullLines) {
               try {
-                const step = JSON.parse(line) as {
-                  source?: string;
-                  type?: string;
-                  status?: string;
-                  content?: string;
-                  tool_calls?: Array<{ name?: string; args?: { CodeContent?: string; ReplacementContent?: string } }>;
-                };
+                const step = JSON.parse(line) as TranscriptStep;
                 const isModel = step.source === "MODEL";
                 const isPlanner = step.type === "PLANNER_RESPONSE";
                 const hasNoToolCalls = !step.tool_calls || step.tool_calls.length === 0;
@@ -738,16 +802,39 @@ export class AntigravityClient extends EventEmitter {
                     isDone = true;
                   }
                 }
-              } catch {}
+              } catch (error) {
+                this.logger.debug(
+                  `Skipped partial Antigravity final transcript line for conversation ${conversationId} from ${transcriptFullPath}: ${describeError(error)}`,
+                  {
+                    step: "antigravity_stream_parse",
+                    conversationId,
+                    threadId,
+                    filePath: transcriptFullPath,
+                  },
+                );
+              }
             }
           }
-        } catch {}
+        } catch (error) {
+          this.logger.debug(
+            `Final Antigravity transcript verification failed for conversation ${conversationId} at ${transcriptFullPath}: ${describeError(error)}`,
+            {
+              step: "antigravity_stream_verify",
+              conversationId,
+              threadId,
+              filePath: transcriptFullPath,
+            },
+          );
+        }
 
         if (!isDone && !lastDelivered) {
           throw new Error("Antigravity turn timed out waiting for response from active IDE session");
         }
 
-        this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, threadId, status: "completed" } } });
+        this.emit("notification", {
+          method: "turn/completed",
+          params: { threadId, turnId, turn: { id: turnId, threadId, status: "completed" } },
+        });
         return;
       }
 
@@ -786,7 +873,10 @@ export class AntigravityClient extends EventEmitter {
         }
 
         this.emit("notification", { method: "item/agentMessage/delta", params: { threadId, turnId, delta: output } });
-        this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, threadId, status: "completed" } } });
+        this.emit("notification", {
+          method: "turn/completed",
+          params: { threadId, turnId, turn: { id: turnId, threadId, status: "completed" } },
+        });
         return;
       }
 
@@ -824,7 +914,10 @@ export class AntigravityClient extends EventEmitter {
       });
 
       if (controller.signal.aborted) {
-        this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, threadId, status: "interrupted" } } });
+        this.emit("notification", {
+          method: "turn/completed",
+          params: { threadId, turnId, turn: { id: turnId, threadId, status: "interrupted" } },
+        });
         return;
       }
 
@@ -842,19 +935,28 @@ export class AntigravityClient extends EventEmitter {
         throw new Error(`Antigravity process failed with code ${exitCode}: ${errorOutput.slice(0, 300) || "unknown error"}`);
       }
 
-      this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, threadId, status: "completed" } } });
+      this.emit("notification", {
+        method: "turn/completed",
+        params: { threadId, turnId, turn: { id: turnId, threadId, status: "completed" } },
+      });
     } catch (error) {
       if (controller.signal.aborted) {
-        this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, threadId, status: "interrupted" } } });
+        this.emit("notification", {
+          method: "turn/completed",
+          params: { threadId, turnId, turn: { id: turnId, threadId, status: "interrupted" } },
+        });
       } else {
         const message = error instanceof Error ? error.message : "Antigravity turn execution failed";
         this.emit("notification", { method: "error", params: { threadId, turnId, error: { message } } });
-        this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, threadId, status: "failed", error: { message } } } });
+        this.emit("notification", {
+          method: "turn/completed",
+          params: { threadId, turnId, turn: { id: turnId, threadId, status: "failed", error: { message } } },
+        });
       }
     } finally {
       this.turnControllers.delete(turnId);
       if (promptFile) {
-        await rm(promptFile, { force: true }).catch(() => {});
+        await this.removePathIfPresent(promptFile, "remove completed turn prompt", { threadId });
       }
     }
   }
@@ -944,7 +1046,10 @@ export class AntigravityClient extends EventEmitter {
     // 5. Search where.exe on Windows for CLI
     const whereRes = await execFileAsync("where.exe", [cliCandidate], { timeout: 3000, windowsHide: true }).catch(() => null);
     if (whereRes && whereRes.stdout) {
-      const candidate = whereRes.stdout.split(/\r?\n/).map((l) => l.trim()).find(Boolean);
+      const candidate = whereRes.stdout
+        .split(/\r?\n/)
+        .map((l) => l.trim())
+        .find(Boolean);
       if (candidate && (await this.canExecute(candidate))) {
         this.resolvedTarget = {
           kind: "cli",
@@ -1001,13 +1106,14 @@ export class AntigravityClient extends EventEmitter {
   private withCurrentModel(models: AntigravityModel[]): AntigravityModel[] {
     const current = this.config.antigravity.model;
     if (!current || models.some((m) => m.id === current)) return models;
-    const label = current === "pro"
-      ? "Antigravity Pro (Auto)"
-      : current === "flash"
-      ? "Antigravity Flash (Auto)"
-      : current === "flash_lite"
-      ? "Antigravity Flash Lite (Auto)"
-      : this.formatModelLabel(current);
+    const label =
+      current === "pro"
+        ? "Antigravity Pro (Auto)"
+        : current === "flash"
+          ? "Antigravity Flash (Auto)"
+          : current === "flash_lite"
+            ? "Antigravity Flash Lite (Auto)"
+            : this.formatModelLabel(current);
     return [{ id: current, label }, ...models];
   }
 
@@ -1025,10 +1131,12 @@ export class AntigravityClient extends EventEmitter {
   private normalizeModel(value: unknown): AntigravityModel | null {
     if (!value || typeof value !== "object") return null;
     const m = value as Record<string, unknown>;
-    const rawId = typeof m.id === "string" ? m.id.trim() : typeof m.name === "string" ? m.name.trim() : typeof m.slug === "string" ? m.slug.trim() : "";
+    const rawId =
+      typeof m.id === "string" ? m.id.trim() : typeof m.name === "string" ? m.name.trim() : typeof m.slug === "string" ? m.slug.trim() : "";
     if (!rawId || this.isNonTextModel(rawId)) return null;
     const id = rawId.replace(/^models\//, "");
-    const label = typeof m.label === "string" ? m.label.trim() : typeof m.displayName === "string" ? m.displayName.trim() : this.formatModelLabel(id);
+    const label =
+      typeof m.label === "string" ? m.label.trim() : typeof m.displayName === "string" ? m.displayName.trim() : this.formatModelLabel(id);
     return { id, label };
   }
 
@@ -1104,7 +1212,9 @@ export class AntigravityClient extends EventEmitter {
         if (port && !address) address = `localhost:${port}`;
         if (discoveredCsrf && !csrfToken) csrfToken = discoveredCsrf.trim();
       } catch (err) {
-        this.logger.debug(`Language server session discovery failed: ${err instanceof Error ? err.message : "unknown"}`, { step: "antigravity_discovery" });
+        this.logger.debug(`Language server session discovery failed: ${err instanceof Error ? err.message : "unknown"}`, {
+          step: "antigravity_discovery",
+        });
       }
     }
 

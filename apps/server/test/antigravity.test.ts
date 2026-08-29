@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
+import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -60,10 +60,14 @@ describe("Antigravity Client", () => {
       const mockScript = path.join(temporaryRoot, "mock-agy.cmd");
       await writeFile(mockScript, `@echo off\r\necho - gemini-2.5-pro (default)\r\necho - gemini-2.5-flash\r\n`, "utf8");
 
-      const client = new AntigravityClient(temporaryRoot, {
-        ...DEFAULT_CONFIG,
-        antigravity: { ...DEFAULT_CONFIG.antigravity, command: mockScript, model: "gemini-2.5-pro" },
-      }, logger);
+      const client = new AntigravityClient(
+        temporaryRoot,
+        {
+          ...DEFAULT_CONFIG,
+          antigravity: { ...DEFAULT_CONFIG.antigravity, command: mockScript, model: "gemini-2.5-pro" },
+        },
+        logger,
+      );
 
       const models = await client.getModels();
       expect(models).toEqual([
@@ -91,9 +95,21 @@ describe("Antigravity Client", () => {
     const transcriptLines = [
       JSON.stringify({ step_index: 0, source: "USER_EXPLICIT", type: "USER_INPUT", status: "DONE", content: "Prompt" }),
       JSON.stringify({ step_index: 1, source: "SYSTEM", type: "CHECKPOINT", status: "DONE" }),
-      JSON.stringify({ step_index: 2, source: "MODEL", type: "PLANNER_RESPONSE", status: "DONE", tool_calls: [{ name: "search_web", args: {} }] }),
+      JSON.stringify({
+        step_index: 2,
+        source: "MODEL",
+        type: "PLANNER_RESPONSE",
+        status: "DONE",
+        tool_calls: [{ name: "search_web", args: {} }],
+      }),
       JSON.stringify({ step_index: 3, source: "MODEL", type: "GENERIC", status: "DONE", content: "Tool search result: found 0 items" }),
-      JSON.stringify({ step_index: 4, source: "MODEL", type: "PLANNER_RESPONSE", status: "DONE", content: "# Research Dossier\n\nC01 https://example.com/1\nC02 https://example.com/2\nC03 https://example.com/3" }),
+      JSON.stringify({
+        step_index: 4,
+        source: "MODEL",
+        type: "PLANNER_RESPONSE",
+        status: "DONE",
+        content: "# Research Dossier\n\nC01 https://example.com/1\nC02 https://example.com/2\nC03 https://example.com/3",
+      }),
     ];
 
     let extracted = "";
@@ -155,10 +171,18 @@ describe("Antigravity Client", () => {
     const deleted = await client.deleteThread("agy_thread_test");
     expect(deleted).toBe(false);
 
-    const dbExists = await access(convDb, constants.F_OK).then(() => true).catch(() => false);
-    const walExists = await access(convWal, constants.F_OK).then(() => true).catch(() => false);
-    const brainExists = await access(brainDir, constants.F_OK).then(() => true).catch(() => false);
-    const annotExists = await access(annotDir, constants.F_OK).then(() => true).catch(() => false);
+    const dbExists = await access(convDb, constants.F_OK)
+      .then(() => true)
+      .catch(() => false);
+    const walExists = await access(convWal, constants.F_OK)
+      .then(() => true)
+      .catch(() => false);
+    const brainExists = await access(brainDir, constants.F_OK)
+      .then(() => true)
+      .catch(() => false);
+    const annotExists = await access(annotDir, constants.F_OK)
+      .then(() => true)
+      .catch(() => false);
 
     expect(dbExists).toBe(true);
     expect(walExists).toBe(true);
@@ -167,10 +191,62 @@ describe("Antigravity Client", () => {
 
     client.updateConfig({ ...DEFAULT_CONFIG, antigravity: { ...DEFAULT_CONFIG.antigravity, auto_delete_threads: true } });
     expect(await client.deleteThread("agy_thread_test")).toBe(true);
-    expect(await access(convDb, constants.F_OK).then(() => true).catch(() => false)).toBe(false);
-    expect(await access(convWal, constants.F_OK).then(() => true).catch(() => false)).toBe(false);
-    expect(await access(brainDir, constants.F_OK).then(() => true).catch(() => false)).toBe(false);
-    expect(await access(annotDir, constants.F_OK).then(() => true).catch(() => false)).toBe(false);
+    expect(
+      await access(convDb, constants.F_OK)
+        .then(() => true)
+        .catch(() => false),
+    ).toBe(false);
+    expect(
+      await access(convWal, constants.F_OK)
+        .then(() => true)
+        .catch(() => false),
+    ).toBe(false);
+    expect(
+      await access(brainDir, constants.F_OK)
+        .then(() => true)
+        .catch(() => false),
+    ).toBe(false);
+    expect(
+      await access(annotDir, constants.F_OK)
+        .then(() => true)
+        .catch(() => false),
+    ).toBe(false);
+  });
+
+  it("logs cleanup failures at debug level without failing the cleanup", async () => {
+    const logger = new StudioLogger(temporaryRoot);
+    await logger.init();
+    const debugSpy = vi.spyOn(logger, "debug");
+    const client = new AntigravityClient(
+      temporaryRoot,
+      {
+        ...DEFAULT_CONFIG,
+        antigravity: { ...DEFAULT_CONFIG.antigravity, auto_delete_threads: true },
+      },
+      logger,
+    );
+
+    const threadId = "agy_thread_cleanup_log";
+    const conversationId = "66666666-7777-8888-9999-000000000000";
+    const conversationDb = path.join(os.homedir(), ".gemini", "antigravity", "conversations", `${conversationId}.db`);
+    await mkdir(conversationDb, { recursive: true });
+    await writeFile(path.join(conversationDb, "prevents-file-removal.txt"), "keep", "utf8");
+    (client as unknown as { threadConversations: Map<string, string> }).threadConversations.set(threadId, conversationId);
+
+    try {
+      await expect(client.deleteThread(threadId)).resolves.toBe(true);
+      expect(debugSpy).toHaveBeenCalledWith(
+        expect.stringContaining(`Failed to remove conversation database.db at ${conversationDb}`),
+        expect.objectContaining({
+          step: "antigravity_cleanup",
+          conversationId,
+          threadId,
+          filePath: conversationDb,
+        }),
+      );
+    } finally {
+      await rm(conversationDb, { recursive: true, force: true });
+    }
   });
 
   it("keeps all Antigravity sessions until cleanup is enabled", async () => {
@@ -198,15 +274,23 @@ describe("Antigravity Client", () => {
     const res = await client.cleanupOldSessions(0);
     expect(res).toEqual({ removed: 0 });
 
-    const userDbStillExists = await access(userConvDb, constants.F_OK).then(() => true).catch(() => false);
-    const toolDbExists = await access(toolConvDb, constants.F_OK).then(() => true).catch(() => false);
+    const userDbStillExists = await access(userConvDb, constants.F_OK)
+      .then(() => true)
+      .catch(() => false);
+    const toolDbExists = await access(toolConvDb, constants.F_OK)
+      .then(() => true)
+      .catch(() => false);
 
     expect(userDbStillExists).toBe(true); // User manual session MUST NOT be deleted
     expect(toolDbExists).toBe(true);
 
     client.updateConfig({ ...DEFAULT_CONFIG, antigravity: { ...DEFAULT_CONFIG.antigravity, auto_delete_threads: true } });
     expect((await client.cleanupOldSessions(0)).removed).toBeGreaterThanOrEqual(1);
-    expect(await access(toolConvDb, constants.F_OK).then(() => true).catch(() => false)).toBe(false);
+    expect(
+      await access(toolConvDb, constants.F_OK)
+        .then(() => true)
+        .catch(() => false),
+    ).toBe(false);
 
     // Clean up the user-created test conversation.
     await rm(userConvDb, { force: true });
