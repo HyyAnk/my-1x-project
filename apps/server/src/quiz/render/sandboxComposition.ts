@@ -13,10 +13,11 @@ import {
 } from "../visual/elements/index.js";
 import { candyArcadeCss, illustrationDataUri, highlightQuestionMarkup } from "./candyArcadeComposition.js";
 import { MASCOT_CANVAS_SIZES } from "@studio/shared";
-import { esc } from "./candyArcade/candyArcadeSvg.js";
+import { esc, escAttr } from "./candyArcade/candyArcadeSvg.js";
 import { renderPreviewMascotHtmlLayer } from "./previewMascotRenderer.js";
 import { candyArcadeFontReadinessScript } from "./candyArcade/candyArcadeFonts.js";
 import { renderChannelBrandMark } from "./candyArcade/channelBrandMark.js";
+import { renderQuizLayoutBody } from "./layouts/registry.js";
 
 export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
   input = SandboxPreviewInputSchema.parse(input);
@@ -29,7 +30,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
   const correctIdx = Math.max(0, Math.min(choices.length - 1, input.correct_choice_index ?? 1));
   const questionNumber = input.question_number ?? 1;
   const totalQuestions = input.total_questions ?? 10;
-  const layoutId = input.layout_id || "media_left_choices_right";
+  const layoutId = input.layout_id;
 
   // Phase & Timeline Scrubbing
   let phase = input.phase ?? "thinking";
@@ -166,54 +167,13 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
       : "";
 
   // 9. Stage Layout Rendering
-  let stageContent = "";
-  if (layoutId === "visual_choices_three") {
-    stageContent = `
-      ${qbHtml}
-      <div class="visual-answer-grid" style="${answerGridStyle}">
-        ${choices
-          .map((c, i) => {
-            const isCorrect = i === correctIdx;
-            const state = phase === "reveal" || phase === "explain" ? (isCorrect ? "answer-correct" : "answer-incorrect") : "answer-normal";
-            const optImg = illustrationDataUri(c, questionNumber + i + 1);
-            return `
-              <div class="visual-answer-card ${state}">
-                <figure class="image-card option-image"><img src="${optImg}" alt=""><span class="image-shine"></span></figure>
-                <div class="visual-answer-label">
-                  <b>${String.fromCharCode(65 + i)}</b>
-                  <span>${esc(c)}</span>
-                  ${phase === "reveal" || phase === "explain" ? (isCorrect ? '<i class="answer-check" style="opacity:1;">✓</i>' : '<i class="answer-cross" style="opacity:1;">✕</i>') : ""}
-                </div>
-              </div>
-            `;
-          })
-          .join("")}
-      </div>
-      <div class="phase-region">
-        ${tbHtml}
-        ${factCardHtml}
-      </div>
-    `;
-  } else {
-    // Default & Media Left Choices Right
-    stageContent = `
-      ${qbHtml}
-
-      <figure class="image-card hero-image" data-layout-allow-overflow>
-        <img src="${heroImgUri}" alt="Quiz Illustration">
-        <span class="image-shine"></span>
-      </figure>
-
-      <div class="answer-grid answer-count-${choices.length}" style="${answerGridStyle}">
-        ${answerCardsHtml}
-      </div>
-
-      <div class="phase-region">
-        ${tbHtml}
-        ${factCardHtml}
-      </div>
-    `;
-  }
+  const stageContent = renderQuizLayoutBody(layoutId, {
+    questionBoxHtml: qbHtml,
+    heroHtml: `<figure class="image-card hero-image" data-layout-allow-overflow><img src="${heroImgUri}" alt="${escAttr(questionText)}"><span class="image-shine"></span></figure>`,
+    textChoicesHtml: `<div class="answer-grid answer-count-${choices.length}" style="${answerGridStyle}">${answerCardsHtml}</div>`,
+    visualChoicesHtml: renderSandboxVisualChoices(choices, correctIdx, phase, questionNumber, answerGridStyle),
+    phaseHtml: `${tbHtml}${factCardHtml}`,
+  });
 
   // 10. Full Production HyperFrames HTML Document
   const fullHtml = `<!doctype html>
@@ -302,6 +262,35 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
     css: candyArcadeCss({ fontMode: "preview", aspectRatio }),
     contrast_report: contrastReport,
   };
+}
+
+function renderSandboxVisualChoices(
+  choices: string[],
+  correctIndex: number,
+  phase: SandboxPreviewInput["phase"],
+  questionNumber: number,
+  style: string,
+): string {
+  const cards = choices.map((choice, index) => renderSandboxVisualChoice(choice, index, correctIndex, phase, questionNumber)).join("");
+  return `<div class="visual-answer-grid" style="${style}">${cards}</div>`;
+}
+
+function renderSandboxVisualChoice(
+  choice: string,
+  index: number,
+  correctIndex: number,
+  phase: SandboxPreviewInput["phase"],
+  questionNumber: number,
+): string {
+  const revealed = phase === "reveal" || phase === "explain";
+  const isCorrect = index === correctIndex;
+  const state = revealed ? (isCorrect ? "answer-correct" : "answer-incorrect") : "answer-normal";
+  const resultIcon = revealed
+    ? isCorrect
+      ? '<i class="answer-check" style="opacity:1;">✓</i>'
+      : '<i class="answer-cross" style="opacity:1;">✕</i>'
+    : "";
+  return `<div class="visual-answer-card ${state}"><figure class="image-card option-image"><img src="${illustrationDataUri(choice, questionNumber + index + 1)}" alt="${escAttr(choice)}"><span class="image-shine"></span></figure><div class="visual-answer-label"><b>${String.fromCharCode(65 + index)}</b><span>${esc(choice)}</span>${resultIcon}</div></div>`;
 }
 
 function previewTimeForPhase(phase: "intro" | "question" | "choices" | "thinking" | "reveal" | "explain" | "outro"): number {

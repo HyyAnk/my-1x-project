@@ -15,14 +15,16 @@ import {
   type QuizAnswerCardStyle,
   type QuizQuestionBoxStyle,
   type QuizQuestionCounterStyle,
+  type QuizPreviewLayoutId,
   type QuizThinkingBarStyle,
 } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
+import { QUIZ_LAYOUT_UI_DEFINITIONS } from "../../quizLayouts/quizLayoutUiCatalog";
 import { PALETTES } from "../constants";
 
 export interface SandboxDesignTabProps {
-  layoutId: "media_left_choices_right" | "visual_choices_three" | "baseline";
-  setLayoutId: (layout: "media_left_choices_right" | "visual_choices_three" | "baseline") => void;
+  layoutId: QuizPreviewLayoutId;
+  setLayoutId: (layout: QuizPreviewLayoutId) => void;
   paletteId: string;
   setPaletteId: (id: string) => void;
   thinkingBarStyle: QuizThinkingBarStyle;
@@ -69,63 +71,38 @@ export function SandboxDesignTab({
           {t("visualSandbox.layoutSection")}
         </label>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
-          <button
-            type="button"
-            onClick={() => setLayoutId("media_left_choices_right")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "8px 10px",
-              borderRadius: "10px",
-              background: layoutId === "media_left_choices_right" ? "var(--soft-accent)" : "var(--surface-strong)",
-              border: layoutId === "media_left_choices_right" ? "2px solid var(--accent)" : "1px solid var(--line)",
-              cursor: "pointer",
-              fontSize: "11px",
-              fontWeight: layoutId === "media_left_choices_right" ? 700 : 500,
-              color: layoutId === "media_left_choices_right" ? "var(--accent)" : "var(--text)",
-              textAlign: "left",
-            }}
-          >
-            <SquareSplitHorizontal size={18} />
-            <div style={{ minWidth: 0 }}>
-              <div style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {t("visualSandbox.layoutMediaLeftChoicesRight")}
-              </div>
-              <small style={{ color: "var(--muted)", fontSize: "9.5px", display: "block" }}>
-                {t("visualSandbox.layoutMediaLeftChoicesRightSub")}
-              </small>
-            </div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setLayoutId("visual_choices_three")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "8px 10px",
-              borderRadius: "10px",
-              background: layoutId === "visual_choices_three" ? "var(--soft-accent)" : "var(--surface-strong)",
-              border: layoutId === "visual_choices_three" ? "2px solid var(--accent)" : "1px solid var(--line)",
-              cursor: "pointer",
-              fontSize: "11px",
-              fontWeight: layoutId === "visual_choices_three" ? 700 : 500,
-              color: layoutId === "visual_choices_three" ? "var(--accent)" : "var(--text)",
-              textAlign: "left",
-            }}
-          >
-            <ListNumbers size={18} />
-            <div style={{ minWidth: 0 }}>
-              <div style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {t("visualSandbox.layoutVisualChoicesThree")}
-              </div>
-              <small style={{ color: "var(--muted)", fontSize: "9.5px", display: "block" }}>
-                {t("visualSandbox.layoutVisualChoicesThreeSub")}
-              </small>
-            </div>
-          </button>
+          {QUIZ_LAYOUT_UI_DEFINITIONS.map((layout) => {
+            const active = layoutId === layout.id;
+            return (
+              <button
+                key={layout.id}
+                type="button"
+                onClick={() => setLayoutId(layout.id)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "8px 10px",
+                  borderRadius: "10px",
+                  background: active ? "var(--soft-accent)" : "var(--surface-strong)",
+                  border: active ? "2px solid var(--accent)" : "1px solid var(--line)",
+                  cursor: "pointer",
+                  fontSize: "11px",
+                  fontWeight: active ? 700 : 500,
+                  color: active ? "var(--accent)" : "var(--text)",
+                  textAlign: "left",
+                }}
+              >
+                {layout.icon === "split" ? <SquareSplitHorizontal size={18} /> : <ListNumbers size={18} />}
+                <span style={{ minWidth: 0 }}>
+                  <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block" }}>
+                    {t(layout.sandboxLabelKey)}
+                  </span>
+                  <small style={{ color: "var(--muted)", fontSize: "9.5px", display: "block" }}>{t(layout.sandboxDescriptionKey)}</small>
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 

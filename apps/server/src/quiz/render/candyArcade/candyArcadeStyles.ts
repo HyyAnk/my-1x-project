@@ -3,12 +3,9 @@ import { MASCOT_CANVAS_SIZES, type MascotRenderAspectRatio } from "@studio/share
 import { candyArcadeFontFaceCss, type CandyArcadeFontMode } from "./candyArcadeFonts.js";
 import { channelBrandMarkCss } from "./channelBrandMarkStyles.js";
 import { productionMascotCss } from "./productionMascotStyles.js";
+import { QUIZ_LAYOUT_DIMENSIONS, quizLayoutCss } from "../layouts/registry.js";
 
-export const CANDY_ARCADE_LAYOUT_DIMENSIONS = {
-  baseline: { width: 800, height: 284 },
-  media_left_choices_right: { width: 840, height: 580 },
-  visual_choices_three: { width: 501, height: 500, count: 3 },
-} as const;
+export const CANDY_ARCADE_LAYOUT_DIMENSIONS = QUIZ_LAYOUT_DIMENSIONS;
 
 export function candyArcadeHeroAreaRatio(
   layout: keyof typeof CANDY_ARCADE_LAYOUT_DIMENSIONS,
@@ -81,22 +78,6 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .image-shine { position: absolute; z-index: 4; inset: 0; background: linear-gradient(125deg, rgba(255,255,255,.35), transparent 31%); pointer-events: none; }
 .game-stage > .hero-image { width: ${CANDY_ARCADE_LAYOUT_DIMENSIONS.baseline.width}px; height: ${CANDY_ARCADE_LAYOUT_DIMENSIONS.baseline.height}px; margin-top: 39px; }
 .hero-image img { transform-origin: center; animation: hero-ken-burn var(--scene-duration) ease-in-out var(--clip-start) 1 alternate both; }
-.layout-media_left_choices_right .game-stage { grid-template-columns: minmax(0, 1.08fr) minmax(520px, .92fr); grid-template-areas: "title title" "hero answers"; align-items: start; column-gap: 42px; row-gap: 35px; }
-.layout-media_left_choices_right .question-title { grid-area: title; width: 100%; max-width: 1440px; justify-self: end; margin-left: auto; }
-.layout-media_left_choices_right .game-stage > .hero-image { grid-area: hero; width: 100%; height: 580px; margin-top: 0; }
-.layout-media_left_choices_right .answer-grid { grid-area: answers; grid-template-columns: 1fr; width: 100%; height: 580px; margin-top: 0; padding-top: 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start; }
-.layout-media_left_choices_right .answer-grid.answer-count-2 { gap: 50px; height: 580px; padding-top: 100px; }
-.layout-media_left_choices_right .answer-count-2 .answer-card, .layout-media_left_choices_right .answer-count-3 .answer-card { height: 116px; min-height: 116px; margin-left: 76px; padding: 12px 34px 12px 42px; }
-.layout-media_left_choices_right .answer-count-2 .answer-card::before, .layout-media_left_choices_right .answer-count-3 .answer-card::before { inset: 6px 14px 6px 24px; border-width: 3px; }
-.layout-media_left_choices_right .answer-count-2 .answer-card > b, .layout-media_left_choices_right .answer-count-3 .answer-card > b { width: 138px; height: 138px; margin-left: -74px; font-size: 72px; border-width: 8px; }
-.layout-media_left_choices_right .answer-count-2 .answer-card span, .layout-media_left_choices_right .answer-count-3 .answer-card span { font-size: 48px; }
-.layout-media_left_choices_right .answer-count-2.choice-tier-medium span, .layout-media_left_choices_right .answer-count-3.choice-tier-medium span, .layout-media_left_choices_right .choice-tier-medium.answer-card span { font-size: 40px; }
-.layout-media_left_choices_right .answer-count-2.choice-tier-long span, .layout-media_left_choices_right .answer-count-3.choice-tier-long span, .layout-media_left_choices_right .choice-tier-long.answer-card span { font-size: 32px; }
-.layout-media_left_choices_right .answer-count-2.choice-tier-very_long span, .layout-media_left_choices_right .answer-count-2.choice-tier-overflow span, .layout-media_left_choices_right .answer-count-3.choice-tier-very_long span, .layout-media_left_choices_right .answer-count-3.choice-tier-overflow span, .layout-media_left_choices_right .choice-tier-very_long.answer-card span, .layout-media_left_choices_right .choice-tier-overflow.answer-card span { font-size: 26px; }
-.layout-media_left_choices_right .answer-grid.answer-count-3 { gap: 50px; height: 580px; padding-top: 18px; }
-.layout-visual_choices_three .game-stage { grid-template-columns: 1fr; grid-template-areas: "title" "answers"; align-items: start; row-gap: 35px; }
-.layout-visual_choices_three .question-title { grid-area: title; width: 100%; max-width: 1440px; justify-self: end; margin-left: auto; }
-.layout-visual_choices_three .visual-answer-grid { grid-area: answers; width: 1560px; margin-top: 0; gap: 28px; }
 .phase-region { position: absolute; z-index: 5; left: 50%; bottom: 10px; width: 100%; height: 110px; transform: translateX(-50%); }
 .phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: -15px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(82vw, 1540px); min-height: 84px; }
 .phase-region > .fact-card { position: absolute; z-index: 5; bottom: -45px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(1220px, 100%); }
@@ -171,7 +152,6 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .quiz-question-clip::after { position: absolute; z-index: 2; top: 58%; left: 50%; width: 980px; height: 440px; border: 26px solid rgba(255,255,255,.54); border-radius: 50%; content: ""; pointer-events: none; transform: translate(-50%,-50%) scale(.45); animation: reveal-impact .7s ease-out calc(var(--clip-start) + var(--reveal-at) + .04s) both; }
 .is-final-scene .question-card-inner { border-color: #FF708A; box-shadow: inset 0 4px 0 rgba(255,255,255,0.95), inset 0 8px 0 rgba(255,182,193,0.35), inset 0 -5px 0 rgba(230,60,90,0.25), 0 16px 0 rgba(230,60,90,0.32), 0 26px 42px rgba(10,25,60,0.2); }
 .quiz-question-clip .question-title { animation: question-card-enter 0.52s cubic-bezier(0.18, 1.42, 0.34, 1) var(--clip-start) both, question-card-float 4.2s ease-in-out calc(var(--clip-start) + 0.52s) infinite alternate both; }
-.layout-media_left_choices_right.quiz-question-clip .hero-image { animation: enter-from-left .66s cubic-bezier(.22,.8,.3,1) var(--clip-start) both, hero-float var(--scene-duration) ease-in-out calc(var(--clip-start) + .66s) 1 alternate both; }
 .candy-transition { position: absolute; z-index: var(--candy-layer-transition); inset: 0; overflow: hidden; background: transparent; pointer-events: none; }
 .transition-bubble_splash { background: transparent; }
 .splash-bed { position: absolute; inset: 0; background: var(--from); opacity: 0; transform: scale(.96); animation: splash-bed .86s cubic-bezier(.22,.8,.3,1) var(--clip-start) both; }
@@ -267,8 +247,6 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .has-mascot .game-header { left: calc(var(--question-card-left-edge) / 2); transform: translateX(-50%); }
 .has-mascot .game-stage { width: var(--mascot-content-width); margin-right: 40px; }
 .has-mascot .question-title { width: var(--question-card-width); max-width: var(--question-card-width); }
-.has-mascot.layout-visual_choices_three .visual-answer-grid { width: 100%; gap: 24px; }
-.has-mascot.layout-media_left_choices_right .game-stage { column-gap: 34px; }
 .has-mascot .phase-region { left: 0; width: var(--question-card-width); transform: none; }
 .has-mascot .phase-region > .thinking-bar, .has-mascot .phase-region > .fact-card { width: min(70vw, 1300px); left: 50%; }
 .candy-mascot-container.mascot-intro { bottom: 40px; }
@@ -306,18 +284,8 @@ ${
 #stage[data-aspect-ratio="9:16"] .has-mascot .game-stage { width: calc(100% - 72px); min-height: 0; margin: 184px auto 0; }
 #stage[data-aspect-ratio="9:16"] .has-mascot { --mascot-content-width: calc(100% - 20px); --question-card-width: 100%; --question-card-left-edge: 0px; }
 #stage[data-aspect-ratio="9:16"] .has-mascot .game-header { left: 24px; transform: none; }
-#stage[data-aspect-ratio="9:16"] .question-title,
-#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .question-title,
-#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .question-title { width: 100%; max-width: 100%; height: auto; min-height: 208px; margin: 0; }
+#stage[data-aspect-ratio="9:16"] .question-title { width: 100%; max-width: 100%; height: auto; min-height: 208px; margin: 0; }
 #stage[data-aspect-ratio="9:16"] .question-card-inner { padding: 24px 34px; }
-#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .game-stage { grid-template-columns: 1fr; grid-template-areas: "title" "hero" "answers"; row-gap: 24px; }
-#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .game-stage > .hero-image { width: 100%; height: 520px; margin: 0; }
-#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .answer-grid { width: 100%; height: auto; margin: 0; padding: 0; gap: 24px; }
-#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .answer-card { min-height: 116px; height: auto; margin-left: 68px; padding: 12px 28px 12px 32px; }
-#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .answer-card > b { width: 124px; height: 124px; margin-left: -70px; font-size: 68px; }
-#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .answer-card span { font-size: 40px; }
-#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .game-stage { grid-template-columns: 1fr; grid-template-areas: "title" "answers"; row-gap: 24px; }
-#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .visual-answer-grid { width: 100%; grid-template-columns: 1fr; gap: 26px; }
 #stage[data-aspect-ratio="9:16"] .phase-region { left: 36px; right: 36px; bottom: 18px; width: auto; transform: none; }
 #stage[data-aspect-ratio="9:16"] .phase-region > .thinking-bar,
 #stage[data-aspect-ratio="9:16"] .phase-region > .fact-card { width: 100%; left: 0; transform: none; }
@@ -337,6 +305,7 @@ ${
 `
     : ""
 }
+${quizLayoutCss(aspectRatio)}
 ${productionMascotCss()}
 ${channelBrandMarkCss()}
 ${getThinkingBarsCss()}

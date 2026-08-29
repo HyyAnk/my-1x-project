@@ -23,6 +23,7 @@ import {
   type ProductionMascotRenderOptions,
   type ProductionMascotTimelineEvent,
 } from "../productionMascotRenderer.js";
+import { renderQuizLayoutBody } from "../layouts/registry.js";
 import { renderChannelBrandMark } from "./channelBrandMark.js";
 
 export type SubComposition = {
@@ -212,11 +213,8 @@ export function questionClip(input: {
     .join(" ");
   const questionAsset = assetFor(input.assets, `asset-${question.id}-hero`, `asset-${question.id}-question`);
   const answers = answerCards(question, input.assets, input.answerCardStyle);
-  const hero =
-    visual.layoutId === "visual_choices_three"
-      ? ""
-      : imageCard(questionAsset, question.visual_opportunity || question.question, "hero-image", question.number);
-  const visualAnswers = visual.layoutId === "visual_choices_three" ? visualAnswerCards(question, input.assets) : "";
+  const hero = imageCard(questionAsset, question.visual_opportunity || question.question, "hero-image", question.number);
+  const visualAnswers = visualAnswerCards(question, input.assets);
   const mascotHtml = mascotElement(input.mascot, input.mascotConfig, "question", {
     clipStartSeconds: input.start,
     clipDurationSeconds: Math.max(0.04, input.end - input.start),
@@ -249,7 +247,14 @@ export function questionClip(input: {
     paletteAccent: visual.palette.accent,
     isFinal: input.isFinal,
   });
-  const body = `<div class="game-stage" data-layout-allow-overflow>${questionBoxHtml}${hero}${visualAnswers || answers}<div class="phase-region">${thinkingBarHtml}${revealPanel(input)}</div></div>`;
+  const layoutBody = renderQuizLayoutBody(visual.layoutId, {
+    questionBoxHtml,
+    heroHtml: hero,
+    textChoicesHtml: answers,
+    visualChoicesHtml: visualAnswers,
+    phaseHtml: `${thinkingBarHtml}${revealPanel(input)}`,
+  });
+  const body = `<div class="game-stage" data-layout-allow-overflow>${layoutBody}</div>`;
   return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0"><div class="bg-gradient"></div><div class="bg-rays"></div><div class="bg-pattern pattern-circles"></div><div class="bg-pattern pattern-sprinkles"></div><div class="bg-shape shape-a" data-layout-allow-overflow></div>${sceneDecorations(input.questionIndex)}<header class="game-header" data-layout-allow-occlusion>${counterBadgeHtml}</header>${body}${brandMarkHtml}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
 }
 

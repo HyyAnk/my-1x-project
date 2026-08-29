@@ -4,13 +4,14 @@ import type {
   QuizQuestionBoxStyle,
   QuizQuestionCounterStyle,
   QuizThinkingBarStyle,
+  QuizPreviewLayoutId,
   SandboxPreviewInput,
 } from "@studio/shared";
 
 export function useSandboxDesignState() {
   const [theme, setTheme] = useState<SandboxPreviewInput["theme"]>("candy_arcade");
   const [paletteId, setPaletteId] = useState("lime");
-  const [layoutId, setLayoutId] = useState<"media_left_choices_right" | "visual_choices_three" | "baseline">("media_left_choices_right");
+  const [layoutId, setLayoutId] = useState<QuizPreviewLayoutId>("media_left_choices_right");
   const [thinkingBarStyle, setThinkingBarStyle] = useState<QuizThinkingBarStyle>("star_slider");
   const [questionBoxStyle, setQuestionBoxStyle] = useState<QuizQuestionBoxStyle>("candy_pop");
   const [answerCardStyle, setAnswerCardStyle] = useState<QuizAnswerCardStyle>("glossy_arcade");

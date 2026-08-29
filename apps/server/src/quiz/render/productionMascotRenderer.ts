@@ -18,10 +18,7 @@ export function renderProductionMascotHtmlLayer(
   const markers = resolveProductionMascotMarkers(options, clipStart, clipDuration);
   const states = markers.map((marker, index) => ({
     phase: marker.phase,
-    // HyperFrames mounts this HTML as a nested composition at clipStart. CSS
-    // animation delays therefore need clip-local time, while the resolver's
-    // motion timestamp stays on the absolute composition clock below.
-    atSeconds: Math.max(0, marker.atSeconds - clipStart),
+    atSeconds: Math.max(0, marker.atSeconds),
     durationSeconds: Math.max(0.04, (markers[index + 1]?.atSeconds ?? clipStart + clipDuration) - marker.atSeconds),
     timelineTimeSeconds: marker.atSeconds,
     actionOverride: marker.actionOverride,

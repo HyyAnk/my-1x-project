@@ -127,6 +127,8 @@ export function EpisodeDetail({
           <EpisodeQuizCustomizationBar
             channel={channel}
             episode={episode}
+            quiz={quizV2?.quiz ?? null}
+            directorPlan={quizV2?.director_plan ?? null}
             activeEpisodeTask={pipeline.activeEpisodeTask}
             busy={pipeline.busy}
             questionCountDraft={pipeline.questionCountDraft}

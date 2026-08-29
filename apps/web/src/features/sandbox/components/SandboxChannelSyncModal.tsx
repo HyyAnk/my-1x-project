@@ -9,9 +9,11 @@ import {
   type QuizAnswerCardStyle,
   type QuizQuestionBoxStyle,
   type QuizQuestionCounterStyle,
+  type QuizPreviewLayoutId,
   type QuizThinkingBarStyle,
 } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
+import { getQuizLayoutUiDefinition } from "../../quizLayouts/quizLayoutUiCatalog";
 import { PALETTES } from "../constants";
 
 export interface SandboxChannelSyncModalProps {
@@ -24,7 +26,7 @@ export interface SandboxChannelSyncModalProps {
   activeMascot?: MascotProfile | null;
   syncMascotToChannel: boolean;
   setSyncMascotToChannel: (sync: boolean) => void;
-  layoutId: string;
+  layoutId: QuizPreviewLayoutId;
   paletteId: string;
   thinkingBarStyle: QuizThinkingBarStyle;
   questionBoxStyle: QuizQuestionBoxStyle;
@@ -58,6 +60,7 @@ export function SandboxChannelSyncModal({
   onApply,
 }: SandboxChannelSyncModalProps) {
   const { t } = useTranslation();
+  const layoutLabel = layoutId === "baseline" ? layoutId : t(getQuizLayoutUiDefinition(layoutId).sandboxLabelKey);
 
   if (!isOpen) return null;
 
@@ -129,12 +132,7 @@ export function SandboxChannelSyncModal({
           }}
         >
           <div>
-            <strong>• {t("visualSandbox.summaryLayout")}</strong>{" "}
-            {layoutId === "media_left_choices_right"
-              ? t("visualSandbox.layoutMediaLeftChoicesRight")
-              : layoutId === "visual_choices_three"
-                ? t("visualSandbox.layoutVisualChoicesThree")
-                : layoutId}
+            <strong>• {t("visualSandbox.summaryLayout")}</strong> {layoutLabel}
           </div>
           <div>
             <strong>• {t("visualSandbox.summaryPalette")}</strong> {PALETTES.find((p) => p.id === paletteId)?.label || paletteId}

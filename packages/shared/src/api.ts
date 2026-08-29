@@ -18,12 +18,15 @@ import {
   ChannelMascotConfigSchema,
   MascotPlacementPresetSchema,
   MascotProfileSchema,
+  QUIZ_MAX_CHOICES_PER_QUESTION,
   QUIZ_MAX_QUESTION_COUNT,
+  QUIZ_MIN_CHOICES_PER_QUESTION,
   QUIZ_MIN_QUESTION_COUNT,
   QuestionHistorySettingsSchema,
 } from "./schemas.js";
 import { MascotRenderAspectRatioSchema } from "./mascot/renderSchema.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "./branding.js";
+import { QuizPreviewLayoutIdSchema } from "./quizLayouts.js";
 
 export const CalibrateMascotActionInputSchema = z.object({
   offset_x: z.number().min(-5000).max(5000).optional().default(0),
@@ -112,7 +115,7 @@ export const SandboxPreviewInputSchema = z
     aspect_ratio: MascotRenderAspectRatioSchema.optional().default("16:9"),
     theme: QuizVisualThemeSchema.optional().default("candy_arcade"),
     palette_id: z.string().optional().default("lime"),
-    layout_id: z.enum(["media_left_choices_right", "visual_choices_three", "baseline"]).optional().default("media_left_choices_right"),
+    layout_id: QuizPreviewLayoutIdSchema.optional().default("media_left_choices_right"),
     thinking_bar_style: QuizThinkingBarStyleSchema.optional().default("star_slider"),
     question_box_style: QuizQuestionBoxStyleSchema.optional().default("candy_pop"),
     answer_card_style: QuizAnswerCardStyleSchema.optional().default("glossy_arcade"),
@@ -120,8 +123,19 @@ export const SandboxPreviewInputSchema = z
     phase: z.enum(["question", "choices", "thinking", "reveal", "explain"]).optional().default("thinking"),
     timeline_time_seconds: z.number().min(0).max(15).optional(),
     question_text: z.string().optional().default("Which planet in our solar system has the most prominent rings?"),
-    choices: z.array(z.string().trim().min(1)).length(3).optional().default(["Jupiter", "Saturn", "Uranus"]),
-    correct_choice_index: z.number().int().min(0).max(2).optional().default(1),
+    choices: z
+      .array(z.string().trim().min(1))
+      .min(QUIZ_MIN_CHOICES_PER_QUESTION)
+      .max(QUIZ_MAX_CHOICES_PER_QUESTION)
+      .optional()
+      .default(["Jupiter", "Saturn", "Uranus"]),
+    correct_choice_index: z
+      .number()
+      .int()
+      .min(0)
+      .max(QUIZ_MAX_CHOICES_PER_QUESTION - 1)
+      .optional()
+      .default(1),
     question_number: z.number().int().min(1).optional().default(1),
     total_questions: z.number().int().min(1).optional().default(10),
     countdown_progress: z.number().min(0).max(1).optional().default(0.5), // 0 to 1
@@ -149,7 +163,7 @@ export const SandboxPreviewInputSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["correct_choice_index"],
-        message: "Correct choice must reference one of the three visible choices",
+        message: "Correct choice must reference a visible choice",
       });
     }
   });

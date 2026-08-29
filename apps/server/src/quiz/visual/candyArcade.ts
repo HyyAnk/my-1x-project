@@ -1,4 +1,12 @@
-import type { QuizLayoutId, QuizMotionId, QuizPaletteId, QuizTransitionId } from "@studio/shared";
+import {
+  resolveQuizLayoutId,
+  type DirectorArchetype,
+  type QuizLayoutId,
+  type QuizMotionId,
+  type QuizPaletteId,
+  type QuizQuestionFormat,
+  type QuizTransitionId,
+} from "@studio/shared";
 import type { QuizPalette, QuizTemplateContext, QuizTemplateScene, QuizVisualTemplate, TextLayout, TextTier } from "./types.js";
 
 const roundedFont = '"Nunito", "Trebuchet MS", sans-serif';
@@ -214,10 +222,12 @@ export function resolvePalette(requested: QuizPaletteId, questionIndex: number, 
   return candyArcadePalettes[start];
 }
 
-export function resolveLayout(requested: QuizLayoutId, archetype: string, format: string): Exclude<QuizLayoutId, "auto"> {
-  if (requested !== "auto") return requested;
-  if (archetype === "visual_multiple_choice" || format === "odd_one_out") return "visual_choices_three";
-  return "media_left_choices_right";
+export function resolveLayout(
+  requested: QuizLayoutId,
+  archetype: DirectorArchetype,
+  format: QuizQuestionFormat,
+): Exclude<QuizLayoutId, "auto"> {
+  return resolveQuizLayoutId({ requestedLayout: requested, archetype, questionFormat: format });
 }
 
 export function resolveMotion(requested: QuizMotionId, questionIndex: number): Exclude<QuizMotionId, "auto"> {

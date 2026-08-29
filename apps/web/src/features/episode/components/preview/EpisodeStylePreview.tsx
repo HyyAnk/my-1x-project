@@ -1,9 +1,14 @@
-import { CheckCircle, Eye, CircleNotch, WarningCircle } from "@phosphor-icons/react";
-import type { Channel, Episode } from "@studio/shared";
+import { useMemo } from "react";
+import type { Channel, DirectorPlan, Episode, QuizV2 } from "@studio/shared";
 import { CompositionPreviewFrame } from "../../../../components/composition-preview";
 import { useTranslation } from "../../../../i18n";
 import { useEpisodeStylePreview, type EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview";
 import { useElementWidth } from "../../hooks/useElementWidth";
+import { useEpisodePreviewQuestion } from "../../hooks/useEpisodePreviewQuestion";
+import { buildEpisodePreviewQuestions } from "../../utils/episodePreviewQuestions";
+import { getQuizLayoutUiDefinition } from "../../../quizLayouts/quizLayoutUiCatalog";
+import { EpisodePreviewQuestionSelect } from "./EpisodePreviewQuestionSelect";
+import { EpisodePreviewStatusPill, type EpisodePreviewStatus } from "./EpisodePreviewStatusPill";
 
 const COMPOSITION_WIDTH = 1920;
 const COMPOSITION_HEIGHT = 1080;
@@ -11,28 +16,41 @@ const COMPOSITION_HEIGHT = 1080;
 type EpisodeStylePreviewProps = {
   channel: Channel;
   episode: Episode | null;
+  quiz: QuizV2 | null;
+  directorPlan: DirectorPlan | null;
   candidate: EpisodePreviewCandidate | null;
   channelBrandName?: string;
 };
 
-export function EpisodeStylePreview({ channel, episode, candidate, channelBrandName }: EpisodeStylePreviewProps) {
+export function EpisodeStylePreview({ channel, episode, quiz, directorPlan, candidate, channelBrandName }: EpisodeStylePreviewProps) {
   const { t } = useTranslation();
   const { ref, width } = useElementWidth<HTMLDivElement>();
+  const questions = useMemo(() => buildEpisodePreviewQuestions(quiz, directorPlan), [directorPlan, quiz]);
+  const questionSelection = useEpisodePreviewQuestion(questions);
   const { previewHtml, pendingPreviewHtml, loading, previewError, iframeKey, commitPendingPreview, retryPreview } = useEpisodeStylePreview({
     channel,
     episode,
     candidate,
     channelBrandName,
+    previewQuestion: questionSelection.selectedQuestion,
   });
 
   const scale = width > 0 ? width / COMPOSITION_WIDTH : 0;
   const status = getPreviewStatus({ loading, pending: Boolean(pendingPreviewHtml), error: previewError, candidate });
+  const savedCaption = getSavedPreviewCaption(questionSelection.selectedQuestion, t);
 
   return (
     <aside className="episode-style-preview">
       <div className="episode-style-preview-header">
         <strong>{t("episodeCustomization.previewTitle")}</strong>
-        <PreviewStatusPill status={status} onRetry={retryPreview} />
+        <div className="episode-style-preview-actions">
+          <EpisodePreviewQuestionSelect
+            questions={questions}
+            selectedQuestionId={questionSelection.selectedQuestionId}
+            onSelectQuestion={questionSelection.selectQuestion}
+          />
+          <EpisodePreviewStatusPill status={status} onRetry={retryPreview} />
+        </div>
       </div>
       <div ref={ref} className="episode-style-preview-canvas">
         {scale > 0 ? (
@@ -59,13 +77,11 @@ export function EpisodeStylePreview({ channel, episode, candidate, channelBrandN
         ) : null}
       </div>
       <p className={`episode-style-preview-caption ${candidate ? "is-candidate" : ""}`}>
-        {candidate ? t("episodeCustomization.previewingLabel", { label: candidate.label }) : t("episodeCustomization.previewSavedLabel")}
+        {candidate ? t("episodeCustomization.previewingLabel", { label: candidate.label }) : savedCaption}
       </p>
     </aside>
   );
 }
-
-type PreviewStatus = "loading" | "error" | "previewing" | "saved";
 
 function getPreviewStatus({
   loading,
@@ -77,40 +93,21 @@ function getPreviewStatus({
   pending: boolean;
   error: string | null;
   candidate: EpisodePreviewCandidate | null;
-}): PreviewStatus {
+}): EpisodePreviewStatus {
   if (error) return "error";
   if (loading || pending) return "loading";
   return candidate ? "previewing" : "saved";
 }
 
-function PreviewStatusPill({ status, onRetry }: { status: PreviewStatus; onRetry: () => void }) {
-  const { t } = useTranslation();
-  if (status === "error") {
-    return (
-      <button type="button" className="episode-style-preview-status is-error" onClick={onRetry}>
-        <WarningCircle size={13} weight="fill" />
-        <span>{t("common.retry")}</span>
-      </button>
-    );
-  }
-  const icon =
-    status === "loading" ? (
-      <CircleNotch className="spin" size={13} />
-    ) : status === "previewing" ? (
-      <Eye size={13} />
-    ) : (
-      <CheckCircle size={13} weight="fill" />
-    );
-  const label =
-    status === "loading"
-      ? t("episodeCustomization.previewRendering")
-      : status === "previewing"
-        ? t("episodeCustomization.previewStatusPreviewing")
-        : t("episodeCustomization.previewStatusSaved");
-  return (
-    <span className={`episode-style-preview-status is-${status}`}>
-      {icon}
-      <span>{label}</span>
-    </span>
-  );
+function getSavedPreviewCaption(
+  question: ReturnType<typeof useEpisodePreviewQuestion>["selectedQuestion"],
+  t: (path: string, params?: Record<string, string | number>) => string,
+): string {
+  if (!question) return t("episodeCustomization.previewSavedLabel");
+  const layout = getQuizLayoutUiDefinition(question.layoutId);
+  const key =
+    question.layoutSource === "inferred"
+      ? "episodeCustomization.previewInferredQuestionLabel"
+      : "episodeCustomization.previewQuestionLabelValue";
+  return t(key, { number: question.number, layout: t(layout.labelKey) });
 }

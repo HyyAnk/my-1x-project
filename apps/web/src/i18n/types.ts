@@ -1136,6 +1136,10 @@ export interface TranslationSchema {
     previewStatusPreviewing: string;
     previewSavedLabel: string;
     previewingLabel: string;
+    previewQuestionLabel: string;
+    previewQuestionOption: string;
+    previewQuestionLabelValue: string;
+    previewInferredQuestionLabel: string;
     channelNameLabel: string;
     channelNamePlaceholder: string;
     channelNameSaving: string;

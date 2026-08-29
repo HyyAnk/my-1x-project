@@ -51,7 +51,7 @@ export function createDefaultDirectorPlan(quiz: QuizV2): DirectorPlan {
       thinking_seconds: minimumThinking[quiz.age_band] + (isFinal ? 0.6 : 0),
       beat_intents: beatIntents,
       asset_intents: archetype === "visual_multiple_choice" ? ["choice_illustration"] : ["question_illustration"],
-      mascot_state: isFinal ? "celebrate" : index % 2 ? "thinking" : "curious",
+      mascot_state: "celebrate",
       sfx_intents: isFinal
         ? ["countdown_final", "correct_big", "score_gain"]
         : ["countdown_tick", index % 2 ? "correct_medium" : "correct_small"],

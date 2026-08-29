@@ -97,7 +97,7 @@ export const DEFAULT_MASCOT_PHASE_RULES: Record<MascotRenderPhase, MascotPhaseRu
   choices: { visible: true, action: "thinking", enter_transition: "none", exit_transition: "fade" },
   thinking: { visible: true, action: "thinking", enter_transition: "none", exit_transition: "fade" },
   reveal: { visible: true, action: "celebrate", enter_transition: "pop", exit_transition: "fade" },
-  explain: { visible: true, action: "point", enter_transition: "fade", exit_transition: "fade" },
+  explain: { visible: true, action: "celebrate", enter_transition: "fade", exit_transition: "fade" },
   outro: { visible: false, action: "outro", enter_transition: "fade", exit_transition: "fade" },
 };
 

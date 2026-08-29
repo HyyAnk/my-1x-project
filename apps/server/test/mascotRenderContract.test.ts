@@ -40,7 +40,7 @@ describe("MascotRenderContract V2", () => {
     expect(config.version).toBe(2);
     expect(config.placements["16:9"].scale).toBe(1);
     expect(config.placements["9:16"].anchor).toBe("bottom_right");
-    expect(config.visibility.phase_rules.explain.action).toBe("point");
+    expect(config.visibility.phase_rules.explain.action).toBe("celebrate");
   });
 
   it("rejects placement values outside the contract range", () => {

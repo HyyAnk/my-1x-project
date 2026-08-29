@@ -87,6 +87,15 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
       segment_id: null,
       payload: { archetype: beat.archetype, energy: beat.energy },
     });
+    add({
+      type: "mascot.state",
+      at_seconds: questionStart,
+      duration_seconds: 0,
+      question_id: question.id,
+      choice_id: null,
+      segment_id: null,
+      payload: { state: "thinking", phase: "question_start" },
+    });
     const questionSegment = input.voicePlan.segments.find((segment) => segment.segment_id === question.id + ":question");
     const questionNarrationAt = round(questionStart + policy.question_narration_lead_seconds);
     const questionNarrationDuration = questionSegment
@@ -122,7 +131,7 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
           question_id: question.id,
           choice_id: null,
           segment_id: null,
-          payload: { state: "curious", phase: "choices_pulse" },
+          payload: { state: "thinking", phase: "choices_pulse" },
         });
       choiceNarrationEnd = round(choiceAt + choiceDuration);
     }
@@ -168,7 +177,7 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
         question_id: question.id,
         choice_id: null,
         segment_id: null,
-        payload: { state: "encourage", phase: "thinking_pulse" },
+        payload: { state: "thinking", phase: "thinking_pulse" },
       });
     for (let tick = 0; tick < policy.countdown_seconds; tick += 1) {
       add({
@@ -204,6 +213,15 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
       payload: { canonical_choice_id: question.correct_choice_id, answer_text: correctChoice?.text ?? "" },
     });
     add({
+      type: "mascot.state",
+      at_seconds: revealAt,
+      duration_seconds: 0,
+      question_id: question.id,
+      choice_id: null,
+      segment_id: null,
+      payload: { state: "celebrate", phase: "answer_reveal" },
+    });
+    add({
       type: "answer.dim_wrong",
       at_seconds: revealAt,
       duration_seconds: policy.reveal_seconds,
@@ -231,6 +249,15 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
       segment_id: null,
       payload: { intensity: beat.reward_intensity },
     });
+    add({
+      type: "mascot.state",
+      at_seconds: rewardAt,
+      duration_seconds: 0,
+      question_id: question.id,
+      choice_id: null,
+      segment_id: null,
+      payload: { state: "celebrate", phase: "reward_play" },
+    });
     const explanationSegment = input.voicePlan.segments.find((segment) => segment.segment_id === question.id + ":explanation");
     let postReveal = Math.max(
       revealNarrationEnd + policy.reveal_hold_seconds,
@@ -246,18 +273,8 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
         question_id: question.id,
         choice_id: null,
         segment_id: null,
-        payload: { state: "point", phase: "explanation_start" },
+        payload: { state: "celebrate", phase: "explanation_start" },
       });
-      if (explanationDuration >= 4)
-        add({
-          type: "mascot.state",
-          at_seconds: round(explanationAt + explanationDuration / 2),
-          duration_seconds: 0,
-          question_id: question.id,
-          choice_id: null,
-          segment_id: null,
-          payload: { state: "encourage", phase: "explanation_pulse" },
-        });
       postReveal = explanationAt + explanationDuration;
     }
     postReveal = round(postReveal + policy.explanation_hold_seconds);
@@ -274,17 +291,17 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
         segment_id: factSegment.segment_id,
         payload: {},
       });
+      add({
+        type: "mascot.state",
+        at_seconds: factAt,
+        duration_seconds: 0,
+        question_id: question.id,
+        choice_id: null,
+        segment_id: null,
+        payload: { state: "celebrate", phase: "fact_start" },
+      });
       postReveal = round(factAt + factDuration + policy.fact_hold_seconds);
     }
-    add({
-      type: "mascot.state",
-      at_seconds: rewardAt,
-      duration_seconds: 0,
-      question_id: question.id,
-      choice_id: null,
-      segment_id: null,
-      payload: { state: beat.mascot_state },
-    });
     add({
       type: "sfx.play",
       at_seconds: rewardAt,

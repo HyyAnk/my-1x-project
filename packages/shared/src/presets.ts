@@ -15,7 +15,10 @@ export type VisualPresetItem = {
   icon: string;
   theme: QuizVisualTheme;
   palette_id: Exclude<QuizPaletteId, "auto">;
-  layout_id: Exclude<QuizLayoutId, "auto"> | "baseline";
+  /** Sandbox showcase layout. Production episodes continue to resolve layout per director beat. */
+  preview_layout_id?: Exclude<QuizLayoutId, "auto"> | "baseline";
+  /** @deprecated Legacy custom-preset field. Use preview_layout_id. */
+  layout_id?: Exclude<QuizLayoutId, "auto"> | "baseline";
   thinking_bar_style: Exclude<QuizThinkingBarStyle, "auto">;
   question_box_style: Exclude<QuizQuestionBoxStyle, "auto">;
   answer_card_style: Exclude<QuizAnswerCardStyle, "auto">;
@@ -42,7 +45,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     icon: "🍬",
     theme: "candy_arcade",
     palette_id: "lime",
-    layout_id: "media_left_choices_right",
+    preview_layout_id: "media_left_choices_right",
     thinking_bar_style: "star_slider",
     question_box_style: "candy_pop",
     answer_card_style: "glossy_arcade",
@@ -58,7 +61,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     icon: "⚡",
     theme: "candy_arcade",
     palette_id: "purple",
-    layout_id: "media_left_choices_right",
+    preview_layout_id: "media_left_choices_right",
     thinking_bar_style: "energy_laser",
     question_box_style: "glass_morphism",
     answer_card_style: "glass_neon",
@@ -74,7 +77,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     icon: "💥",
     theme: "candy_arcade",
     palette_id: "sunny",
-    layout_id: "media_left_choices_right",
+    preview_layout_id: "media_left_choices_right",
     thinking_bar_style: "flame_fuse",
     question_box_style: "comic_bubble",
     answer_card_style: "comic_chunky",
@@ -90,7 +93,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     icon: "📜",
     theme: "candy_arcade",
     palette_id: "orange",
-    layout_id: "media_left_choices_right",
+    preview_layout_id: "media_left_choices_right",
     thinking_bar_style: "retro_pixel",
     question_box_style: "parchment_scroll",
     answer_card_style: "glossy_arcade",
@@ -106,7 +109,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     icon: "✨",
     theme: "candy_arcade",
     palette_id: "aqua",
-    layout_id: "media_left_choices_right",
+    preview_layout_id: "media_left_choices_right",
     thinking_bar_style: "minimal_glow",
     question_box_style: "glass_morphism",
     answer_card_style: "minimal_soft",
@@ -122,7 +125,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     icon: "🖼️",
     theme: "candy_arcade",
     palette_id: "pink",
-    layout_id: "visual_choices_three",
+    preview_layout_id: "visual_choices_three",
     thinking_bar_style: "capsule_liquid",
     question_box_style: "candy_pop",
     answer_card_style: "glossy_arcade",
@@ -140,6 +143,10 @@ export function findBuiltInPresetById(id?: string | null): VisualPresetItem | un
   return BUILT_IN_PRESETS.find((p) => p.id === id);
 }
 
+export function resolvePresetPreviewLayoutId(preset: VisualPresetItem): Exclude<QuizLayoutId, "auto"> | "baseline" {
+  return preset.preview_layout_id ?? preset.layout_id ?? "media_left_choices_right";
+}
+
 export function matchVisualPreset(
   config: {
     palette_id?: string;
@@ -154,7 +161,7 @@ export function matchVisualPreset(
   return presets.find(
     (p) =>
       (!config.palette_id || config.palette_id === "auto" || p.palette_id === config.palette_id) &&
-      (!config.layout_id || config.layout_id === "auto" || p.layout_id === config.layout_id) &&
+      (!config.layout_id || config.layout_id === "auto" || resolvePresetPreviewLayoutId(p) === config.layout_id) &&
       (!config.thinking_bar_style || config.thinking_bar_style === "auto" || p.thinking_bar_style === config.thinking_bar_style) &&
       (!config.question_box_style || config.question_box_style === "auto" || p.question_box_style === config.question_box_style) &&
       (!config.answer_card_style || config.answer_card_style === "auto" || p.answer_card_style === config.answer_card_style) &&

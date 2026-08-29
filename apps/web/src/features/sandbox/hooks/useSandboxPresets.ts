@@ -5,7 +5,7 @@ import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
 import type { SandboxBrandNameState } from "./useSandboxBrandNameState";
 
-import { BUILT_IN_PRESETS, QuizPaletteIdSchema, type VisualPresetItem } from "@studio/shared";
+import { BUILT_IN_PRESETS, QuizPaletteIdSchema, resolvePresetPreviewLayoutId, type VisualPresetItem } from "@studio/shared";
 export type { VisualPresetItem };
 
 const STORAGE_KEY = "studio-visual-custom-presets";
@@ -45,7 +45,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
       allPresets.find(
         (preset) =>
           preset.palette_id === design.paletteId &&
-          preset.layout_id === design.layoutId &&
+          resolvePresetPreviewLayoutId(preset) === design.layoutId &&
           preset.thinking_bar_style === design.thinkingBarStyle &&
           preset.question_box_style === design.questionBoxStyle &&
           preset.answer_card_style === design.answerCardStyle &&
@@ -81,7 +81,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
 
   const handleLoadPreset = (preset: VisualPresetItem) => {
     design.setPaletteId(preset.palette_id);
-    design.setLayoutId(preset.layout_id || "media_left_choices_right");
+    design.setLayoutId(resolvePresetPreviewLayoutId(preset));
     design.setThinkingBarStyle(preset.thinking_bar_style);
     design.setQuestionBoxStyle(preset.question_box_style);
     design.setAnswerCardStyle(preset.answer_card_style || "glossy_arcade");
@@ -116,7 +116,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
       description: t("visualSandbox.customPresetDefaultDesc"),
       theme: design.theme,
       palette_id: resolvedPalette,
-      layout_id: design.layoutId,
+      preview_layout_id: design.layoutId,
       thinking_bar_style: resolvedTb,
       question_box_style: resolvedQb,
       answer_card_style: resolvedAc,

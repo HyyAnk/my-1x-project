@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type {
   Channel,
+  DirectorPlan,
   Episode,
   QuizAnswerCardStyle,
   QuizImageStyle,
@@ -8,6 +9,7 @@ import type {
   QuizQuestionBoxStyle,
   QuizQuestionCounterStyle,
   QuizThinkingBarStyle,
+  QuizV2,
   Task,
   VisualPresetItem,
 } from "@studio/shared";
@@ -32,6 +34,8 @@ export type EpisodeCustomizationDropdownName =
 type Props = {
   channel: Channel;
   episode: Episode;
+  quiz: QuizV2 | null;
+  directorPlan: DirectorPlan | null;
   activeEpisodeTask: Task | null;
   busy: string | null;
   questionCountDraft: number;
@@ -51,6 +55,8 @@ type Props = {
 export function EpisodeQuizCustomizationBar({
   channel,
   episode,
+  quiz,
+  directorPlan,
   activeEpisodeTask,
   busy,
   questionCountDraft,
@@ -238,7 +244,14 @@ export function EpisodeQuizCustomizationBar({
         </div>
       </div>
 
-      <EpisodeStylePreview channel={channel} episode={episode} candidate={candidate} channelBrandName={brandNameControl.draft} />
+      <EpisodeStylePreview
+        channel={channel}
+        episode={episode}
+        quiz={quiz}
+        directorPlan={directorPlan}
+        candidate={candidate}
+        channelBrandName={brandNameControl.draft}
+      />
     </section>
   );
 }
