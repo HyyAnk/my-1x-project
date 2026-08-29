@@ -10,13 +10,7 @@ type ChannelMascotCardProps = {
   onOpenStageStudio: () => void;
 };
 
-export function ChannelMascotCard({
-  channel,
-  mascotsList,
-  changingMascot,
-  onMascotChange,
-  onOpenStageStudio,
-}: ChannelMascotCardProps) {
+export function ChannelMascotCard({ channel, mascotsList, changingMascot, onMascotChange, onOpenStageStudio }: ChannelMascotCardProps) {
   const { t } = useTranslation();
   const assignedMascot = mascotsList.find((m) => m.id === channel.mascot_id);
   const cfg = channel.mascot_config || { enabled: true, position: "bottom_left", scale: 1.0 };

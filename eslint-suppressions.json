@@ -542,11 +542,6 @@
       "count": 1
     }
   },
-  "apps/web/src/features/episode/EpisodeHeader.tsx": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 8
-    }
-  },
   "apps/web/src/features/episode/ShotPlanSection.tsx": {
     "complexity": {
       "count": 1

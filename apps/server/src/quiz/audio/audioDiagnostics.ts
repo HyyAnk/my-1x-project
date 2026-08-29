@@ -187,3 +187,66 @@ function readWavFormat(buffer: Uint8Array): {
     throw new Error("Audio diagnostics could not find complete WAV format/data chunks");
   return { sampleRate, channels, bitsPerSample, dataOffset, dataSize };
 }
+
+export type MasterSoundtrackDiagnostics = {
+  ok: boolean;
+  sample_rate: number;
+  channels: number;
+  duration_seconds: number;
+  expected_duration_seconds: number;
+  peak: number;
+  clipping_samples: number;
+  issues: Array<{ severity: "blocker" | "warning"; message: string }>;
+  raw_diagnostics: VoiceAudioDiagnostics;
+};
+
+export function diagnoseMasterSoundtrack(
+  buffer: Uint8Array,
+  expectedDurationSeconds: number,
+  toleranceSeconds = 0.15,
+): MasterSoundtrackDiagnostics {
+  const diagnostics = analyzeWavAudio(buffer);
+  const issues: Array<{ severity: "blocker" | "warning"; message: string }> = [];
+
+  const durationDiff = Math.abs(diagnostics.duration_seconds - expectedDurationSeconds);
+  if (durationDiff > toleranceSeconds) {
+    issues.push({
+      severity: durationDiff > 1.0 ? "blocker" : "warning",
+      message: `Soundtrack duration ${diagnostics.duration_seconds}s differs from expected ${expectedDurationSeconds}s by ${durationDiff.toFixed(3)}s`,
+    });
+  }
+
+  if (diagnostics.clipping_samples > 0) {
+    issues.push({
+      severity: "blocker",
+      message: `Soundtrack contains ${diagnostics.clipping_samples} clipped samples (peak: ${diagnostics.peak})`,
+    });
+  }
+
+  if (diagnostics.sample_rate !== 48000 || diagnostics.channels !== 2) {
+    issues.push({
+      severity: "blocker",
+      message: `Soundtrack format mismatch: expected 48kHz stereo, got ${diagnostics.sample_rate}Hz ${diagnostics.channels}ch`,
+    });
+  }
+
+  if (diagnostics.max_unexpected_silence_seconds > 4.0) {
+    issues.push({
+      severity: "warning",
+      message: `Soundtrack contains unexpected silence of ${diagnostics.max_unexpected_silence_seconds}s`,
+    });
+  }
+
+  return {
+    ok: !issues.some((issue) => issue.severity === "blocker"),
+    sample_rate: diagnostics.sample_rate,
+    channels: diagnostics.channels,
+    duration_seconds: diagnostics.duration_seconds,
+    expected_duration_seconds: Number(expectedDurationSeconds.toFixed(3)),
+    peak: diagnostics.peak,
+    clipping_samples: diagnostics.clipping_samples,
+    issues,
+    raw_diagnostics: diagnostics,
+  };
+}
+

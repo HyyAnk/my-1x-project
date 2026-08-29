@@ -10,6 +10,7 @@ export class HyperframesRenderer implements QuizRenderer {
       theme: input.theme,
       audioPath: input.audioPath,
       narrationDurationSeconds: input.narrationDurationSeconds ?? input.timeline.duration_seconds,
+      aspectRatio: input.aspectRatio,
       assets: input.assets,
       bgmOptions: input.bgmOptions,
       mascot: input.mascot,
@@ -19,6 +20,7 @@ export class HyperframesRenderer implements QuizRenderer {
       defaultAnswerCardStyle: input.defaultAnswerCardStyle,
       defaultCounterStyle: input.defaultCounterStyle,
       defaultPaletteId: input.defaultPaletteId,
+      premixedAudio: input.premixedAudio,
     });
     return {
       html: composition.html,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { SandboxPreviewInput } from "@studio/shared";
+import type { SandboxPreviewRequest } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
@@ -14,6 +14,7 @@ type UseSandboxPreviewRendererInput = {
   mascot: SandboxMascotState;
   question: SandboxQuestionState;
   timeline: SandboxTimelineState;
+  aspectRatio: "16:9" | "9:16";
   onNotice?: (notice: NonNullable<Notice>) => void;
 };
 
@@ -26,7 +27,7 @@ type PendingPreview = {
   requestId: number;
 };
 
-export function useSandboxPreviewRenderer({ design, mascot, question, timeline, onNotice }: UseSandboxPreviewRendererInput) {
+export function useSandboxPreviewRenderer({ design, mascot, question, timeline, aspectRatio, onNotice }: UseSandboxPreviewRendererInput) {
   const { t } = useTranslation();
   const [previewHtml, setPreviewHtml] = useState("");
   const [pendingPreview, setPendingPreview] = useState<PendingPreview | null>(null);
@@ -43,7 +44,8 @@ export function useSandboxPreviewRenderer({ design, mascot, question, timeline, 
       setLoading(true);
       setPreviewError(null);
       try {
-        const input: SandboxPreviewInput = {
+        const input: SandboxPreviewRequest = {
+          aspect_ratio: aspectRatio,
           theme: design.theme,
           palette_id: design.paletteId,
           layout_id: design.layoutId,
@@ -68,6 +70,9 @@ export function useSandboxPreviewRenderer({ design, mascot, question, timeline, 
           mascot_scale: mascot.mascotScale,
           mascot_offset_x: mascot.mascotOffsetX,
           mascot_offset_y: mascot.mascotOffsetY,
+          mascot_flip_x: mascot.mascotFlipX,
+          mascot_timeline_time_seconds: timeline.useScrubber ? timeline.timelineSeconds : undefined,
+          mascot_playing: timeline.isPlaying,
         };
 
         const response = await api.previewSandboxComposition(input);
@@ -108,6 +113,9 @@ export function useSandboxPreviewRenderer({ design, mascot, question, timeline, 
       mascot.mascotScale,
       mascot.mascotOffsetX,
       mascot.mascotOffsetY,
+      mascot.mascotFlipX,
+      timeline.isPlaying,
+      aspectRatio,
       onNotice,
       t,
     ],

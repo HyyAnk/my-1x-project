@@ -12,12 +12,15 @@ import {
   resolveThinkingBarVariant,
 } from "../visual/elements/index.js";
 import { candyArcadeCss, illustrationDataUri, highlightQuestionMarkup } from "./candyArcadeComposition.js";
+import { MASCOT_CANVAS_SIZES } from "@studio/shared";
 import { esc } from "./candyArcade/candyArcadeSvg.js";
-import { renderMascotHtmlLayer } from "./mascotStateResolver.js";
+import { renderPreviewMascotHtmlLayer } from "./previewMascotRenderer.js";
 import { candyArcadeFontReadinessScript } from "./candyArcade/candyArcadeFonts.js";
 
 export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
   input = SandboxPreviewInputSchema.parse(input);
+  const aspectRatio = input.aspect_ratio;
+  const canvas = MASCOT_CANVAS_SIZES[aspectRatio];
   const palette = candyArcadePalettes.find((p) => p.id === input.palette_id) ?? candyArcadePalettes[0];
   const questionText = input.question_text || "Which planet in our solar system has the most prominent rings?";
   const questionLayout = textLayout(questionText, "question");
@@ -113,36 +116,38 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
   // 7. Mascot HTML
   let mascotHtml = "";
   const mascotEnabled = input.mascot_enabled !== false && input.mascot_id !== "none";
-  const mascotAction = input.mascot_action || (phase === "reveal" ? "celebrate" : phase === "explain" ? "point" : "thinking");
+  const mascotPhase = input.mascot_phase ?? phase;
+  const mascotAction = input.mascot_action || (mascotPhase === "reveal" ? "celebrate" : mascotPhase === "explain" ? "point" : "thinking");
   const mascotPos = input.mascot_position || "bottom_left";
   const mascotScale = input.mascot_scale || 1.0;
-  let hasMascot = false;
+  const mascotTimelineTime = input.mascot_timeline_time_seconds ?? input.timeline_time_seconds ?? previewTimeForPhase(mascotPhase);
 
-  if (input.mascot_id === "stage_preview_layout_only") {
-    // Stage Studio interactive preview: apply Mascot layout spacing & classes without rendering static duplicate sprite
-    hasMascot = true;
-    mascotHtml = "";
-  } else if (mascotEnabled && mascotProfile) {
-    hasMascot = true;
-    mascotHtml = renderMascotHtmlLayer(
+  if (mascotEnabled && mascotProfile) {
+    mascotHtml = renderPreviewMascotHtmlLayer(
       mascotProfile,
       {
-        enabled: true,
+        enabled: input.mascot_enabled,
         position: mascotPos,
         scale: mascotScale,
         offset_x: input.mascot_offset_x || 0,
         offset_y: input.mascot_offset_y || 0,
-        show_in_intro: true,
-        show_in_outro: true,
-        show_in_question: true,
+        flip_x: input.mascot_flip_x,
+        show_in_intro: input.mascot_show_in_intro,
+        show_in_outro: input.mascot_show_in_outro,
+        show_in_question: input.mascot_show_in_question,
       },
-      "question",
       {
-        overrideAction: mascotAction,
+        aspectRatio,
+        phase: mascotPhase,
+        timelineTimeSeconds: mascotTimelineTime,
+        revealOutcome: mascotPhase === "reveal" ? input.mascot_reveal_outcome : null,
+        actionOverride: mascotAction,
+        playing: input.mascot_playing,
       },
     );
   }
 
+  const hasMascot = Boolean(mascotHtml);
   const mascotClass = hasMascot ? "has-mascot" : "";
 
   // 8. Reward FX
@@ -216,7 +221,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
   <base href="/">
   <title>HyperFrames Sandbox Live Preview</title>
   <style>
-    ${candyArcadeCss({ fontMode: "preview" })}
+    ${candyArcadeCss({ fontMode: "preview", aspectRatio })}
     ${getQuestionBoxesCss()}
     ${getCounterBadgesCss()}
     ${getThinkingBarsCss()}
@@ -245,8 +250,8 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
       --question-leading: ${questionLayout.lineHeight};
       position: absolute;
       inset: 0;
-      width: 1920px;
-      height: 1080px;
+      width: ${canvas.width}px;
+      height: ${canvas.height}px;
       overflow: hidden;
     }
 
@@ -255,14 +260,10 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
       animation: none;
     }
 
-    .sandbox-preview-stage .mascot-state-layer {
-      opacity: 1 !important;
-      animation: none !important;
-    }
   </style>
 </head>
 <body>
-  <main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="1920" data-height="1080" data-duration="10" data-fps="30">
+  <main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="${canvas.width}" data-height="${canvas.height}" data-aspect-ratio="${aspectRatio}" data-duration="10" data-fps="30">
     <section class="clip candy-scene quiz-question-clip layout-${layoutId} ${mascotClass} sandbox-preview-stage ${questionNumber >= totalQuestions ? "is-final-scene" : ""}">
       <div class="bg-gradient"></div>
       <div class="bg-rays"></div>
@@ -295,7 +296,12 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
 
   return {
     html: fullHtml,
-    css: candyArcadeCss({ fontMode: "preview" }),
+    css: candyArcadeCss({ fontMode: "preview", aspectRatio }),
     contrast_report: contrastReport,
   };
+}
+
+function previewTimeForPhase(phase: "intro" | "question" | "choices" | "thinking" | "reveal" | "explain" | "outro"): number {
+  const times = { intro: 0.5, question: 0.5, choices: 2, thinking: 5, reveal: 8, explain: 9.5, outro: 9.5 } as const;
+  return times[phase];
 }

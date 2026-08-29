@@ -6,6 +6,7 @@ import type {
   QuizQuestionCounterStyle,
   QuizThinkingBarStyle,
   QuizV2,
+  MascotRenderAspectRatio,
 } from "@studio/shared";
 import { ambientPhaseSeconds, motionCssClass, textLayout, visualAnswerState } from "../../visual/candyArcade.js";
 import type { QuizTemplateScene } from "../../visual/types.js";
@@ -17,7 +18,11 @@ import {
 } from "../../visual/elements/index.js";
 import { esc, escAttr, highlightQuestionMarkup, illustrationDataUri } from "./candyArcadeSvg.js";
 import { assetFor, source } from "./candyArcadeAudio.js";
-import { renderMascotHtmlLayer } from "../mascotStateResolver.js";
+import {
+  renderProductionMascotHtmlLayer,
+  type ProductionMascotRenderOptions,
+  type ProductionMascotTimelineEvent,
+} from "../productionMascotRenderer.js";
 
 export type SubComposition = {
   id: string;
@@ -70,7 +75,7 @@ export function quizCopy(language: string) {
       };
 }
 
-export function toSubComposition(clip: string): SubComposition {
+export function toSubComposition(clip: string, aspectRatio: MascotRenderAspectRatio = "16:9"): SubComposition {
   const openingTag = clip.match(/^<section\b[^>]*>/)?.[0];
   if (!openingTag) throw new Error("Candy Arcade clip must start with a section element");
   const id = requiredAttribute(openingTag, "id");
@@ -81,7 +86,10 @@ export function toSubComposition(clip: string): SubComposition {
     .replace(/\sdata-start="[^"]*"/g, "")
     .replace(/\sdata-duration="[^"]*"/g, "")
     .replace(/\sdata-track-index="[^"]*"/g, "")
-    .replace(/>$/, ` data-composition-id="${id}" data-no-timeline data-width="1920" data-height="1080">`);
+    .replace(
+      />$/,
+      ` data-composition-id="${id}" data-no-timeline data-width="${aspectRatio === "9:16" ? 1080 : 1920}" data-height="${aspectRatio === "9:16" ? 1920 : 1080}" data-aspect-ratio="${aspectRatio}">`,
+    );
   const body = rootRelativeSubCompositionAssets(clip.replace(openingTag, sceneRoot));
   return { id, start, duration, trackIndex, html: `<template id="${id}-template">${body}</template>` };
 }
@@ -104,8 +112,18 @@ export function mascotElement(
   mascot: MascotProfile | null | undefined,
   config: ChannelMascotConfig | null | undefined,
   phase: "intro" | "question" | "outro",
+  options: Partial<Omit<ProductionMascotRenderOptions, "phase">> = {},
 ): string {
-  return renderMascotHtmlLayer(mascot, config, phase, { sourceMapper: source });
+  return renderProductionMascotHtmlLayer(mascot, config, {
+    phase,
+    clipStartSeconds: options.clipStartSeconds ?? 0,
+    clipDurationSeconds: options.clipDurationSeconds ?? 10,
+    timelineEvents: options.timelineEvents,
+    revealOutcome: options.revealOutcome,
+    aspectRatio: options.aspectRatio ?? "16:9",
+    sourceMapper: source,
+    extraClass: options.extraClass,
+  });
 }
 
 export function introClip(
@@ -114,9 +132,10 @@ export function introClip(
   copy: Copy,
   mascot?: MascotProfile | null,
   mascotConfig?: ChannelMascotConfig | null,
+  aspectRatio: MascotRenderAspectRatio = "16:9",
 ): string {
   if (end < 0.08) return "";
-  const mascotHtml = mascotElement(mascot, mascotConfig, "intro");
+  const mascotHtml = mascotElement(mascot, mascotConfig, "intro", { clipStartSeconds: 0, clipDurationSeconds: end, aspectRatio });
   const fallbackMascot = mascot || mascotHtml ? "" : `<div class="brand-mascot mascot-wave" data-layout-ignore aria-hidden="true">✦</div>`;
   return `<section id="candy-intro" class="clip candy-scene candy-intro" data-start="0" data-duration="${end.toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="intro-dot dot-a"></div><div class="intro-dot dot-b"></div><div class="intro-card"><span>QUIZ TIME</span><h1>${esc(copy.ready)}</h1><p>${count} ${esc(copy.questions(count))}</p><div class="intro-stars" data-layout-ignore aria-hidden="true">✦&nbsp;&nbsp;★&nbsp;&nbsp;✦</div></div>${mascotHtml || fallbackMascot}</section>`;
 }
@@ -128,8 +147,13 @@ export function outroClip(
   copy: Copy,
   mascot?: MascotProfile | null,
   mascotConfig?: ChannelMascotConfig | null,
+  aspectRatio: MascotRenderAspectRatio = "16:9",
 ): string {
-  const mascotHtml = mascotElement(mascot, mascotConfig, "outro");
+  const mascotHtml = mascotElement(mascot, mascotConfig, "outro", {
+    clipStartSeconds: start,
+    clipDurationSeconds: Math.max(0.04, end - start),
+    aspectRatio,
+  });
   return `<section id="candy-outro" class="clip candy-scene candy-outro" data-start="${start.toFixed(3)}" data-duration="${Math.max(0.04, end - start).toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="outro-blob blob-a"></div><div class="outro-blob blob-b"></div><div class="outro-card"><span>${esc(copy.scorePrompt)}</span><h1>${esc(copy.playAgain)}</h1><p>${esc(copy.exploreMore)}</p><div class="outro-cta-badges"><span class="badge-cta badge-comment">💬 ${esc(copy.ctaComment)}</span><span class="badge-cta badge-like">👍 ${esc(copy.ctaLike)}</span><span class="badge-cta badge-sub">🔔 ${esc(copy.ctaSubscribe)}</span></div><div class="outro-stars" data-layout-ignore aria-hidden="true">★&nbsp;&nbsp;✦&nbsp;&nbsp;★</div></div>${mascotHtml}</section>`;
 }
 
@@ -149,10 +173,12 @@ export function questionClip(input: {
   isFinal: boolean;
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
+  mascotEvents?: readonly ProductionMascotTimelineEvent[];
   thinkingBarStyle?: QuizThinkingBarStyle | null;
   questionBoxStyle?: QuizQuestionBoxStyle | null;
   answerCardStyle?: QuizAnswerCardStyle | null;
   counterStyle?: QuizQuestionCounterStyle | null;
+  aspectRatio?: MascotRenderAspectRatio;
 }): string {
   const { question, visual } = input;
   const questionLayout = textLayout(question.question, "question");
@@ -189,7 +215,13 @@ export function questionClip(input: {
       ? ""
       : imageCard(questionAsset, question.visual_opportunity || question.question, "hero-image", question.number);
   const visualAnswers = visual.layoutId === "visual_choices_three" ? visualAnswerCards(question, input.assets) : "";
-  const mascotHtml = mascotElement(input.mascot, input.mascotConfig, "question");
+  const mascotHtml = mascotElement(input.mascot, input.mascotConfig, "question", {
+    clipStartSeconds: input.start,
+    clipDurationSeconds: Math.max(0.04, input.end - input.start),
+    timelineEvents: input.mascotEvents,
+    revealOutcome: "correct",
+    aspectRatio: input.aspectRatio ?? "16:9",
+  });
   const thinkingBarVariant = resolveThinkingBarVariant(input.thinkingBarStyle);
   const thinkingBarHtml = thinkingBarVariant.renderHtml({
     clipStart: input.start,
@@ -250,7 +282,10 @@ export function answerCards(
     const variant = resolveAnswerCardVariant(style);
     const rendered = variant.renderHtml({
       choices: question.choices.map((c) => c.text),
-      correctIndex: Math.max(0, question.choices.findIndex((c) => c.id === question.correct_choice_id)),
+      correctIndex: Math.max(
+        0,
+        question.choices.findIndex((c) => c.id === question.correct_choice_id),
+      ),
       phase: "reveal",
       assets,
     });

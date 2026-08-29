@@ -194,7 +194,9 @@ required = ('chatterbox', 'fastapi', 'uvicorn', 'torch', 'torchaudio', 'perth')
 missing = [name for name in required if importlib.util.find_spec(name) is None]
 if missing:
     raise SystemExit(1)
-import perth
+import perth, torch, shutil
+if shutil.which('nvidia-smi') is not None and not torch.cuda.is_available():
+    raise SystemExit(1)
 raise SystemExit(0 if getattr(perth, 'PerthImplicitWatermarker', None) is not None else 1)
 '@
 $previousErrorAction = $ErrorActionPreference

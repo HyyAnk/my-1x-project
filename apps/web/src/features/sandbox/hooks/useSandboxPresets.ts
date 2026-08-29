@@ -1,17 +1,10 @@
 import { useMemo, useState, type MouseEvent } from "react";
-import type {
-  QuizAnswerCardStyle,
-  QuizQuestionBoxStyle,
-  QuizQuestionCounterStyle,
-  QuizThinkingBarStyle,
-  SandboxPreviewInput,
-} from "@studio/shared";
 import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
 import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
 
-import { BUILT_IN_PRESETS, type VisualPresetItem } from "@studio/shared";
+import { BUILT_IN_PRESETS, QuizPaletteIdSchema, type VisualPresetItem } from "@studio/shared";
 export type { VisualPresetItem };
 
 const STORAGE_KEY = "studio-visual-custom-presets";
@@ -94,13 +87,16 @@ export function useSandboxPresets({ design, mascot, onNotice }: UseSandboxPreset
     if (preset.mascot_scale !== undefined) mascot.setMascotScale(preset.mascot_scale);
     if (preset.mascot_offset_x !== undefined) mascot.setMascotOffsetX(preset.mascot_offset_x);
     if (preset.mascot_offset_y !== undefined) mascot.setMascotOffsetY(preset.mascot_offset_y);
+    if (preset.mascot_flip_x !== undefined) mascot.setMascotFlipX(preset.mascot_flip_x);
     if (onNotice) onNotice({ tone: "good", message: t("visualSandbox.noticeLoadedPreset", { name: preset.name }) });
   };
 
   const handleSaveCustomPreset = () => {
     const name = newPresetName.trim();
     if (!name) return;
-    const resolvedPalette = (design.paletteId === "auto" || !design.paletteId ? "lime" : design.paletteId) as any;
+    const parsedPalette = QuizPaletteIdSchema.safeParse(design.paletteId);
+    const resolvedPalette: VisualPresetItem["palette_id"] =
+      parsedPalette.success && parsedPalette.data !== "auto" ? parsedPalette.data : "lime";
     const resolvedTb = design.thinkingBarStyle === "auto" ? "star_slider" : design.thinkingBarStyle;
     const resolvedQb = design.questionBoxStyle === "auto" ? "candy_pop" : design.questionBoxStyle;
     const resolvedAc = design.answerCardStyle === "auto" ? "glossy_arcade" : design.answerCardStyle;
@@ -123,6 +119,7 @@ export function useSandboxPresets({ design, mascot, onNotice }: UseSandboxPreset
       mascot_scale: mascot.mascotScale,
       mascot_offset_x: mascot.mascotOffsetX,
       mascot_offset_y: mascot.mascotOffsetY,
+      mascot_flip_x: mascot.mascotFlipX,
       isBuiltIn: false,
     };
     persistPresets([newPreset, ...customPresets]);

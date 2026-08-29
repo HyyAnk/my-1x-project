@@ -1,14 +1,5 @@
 import { CircleNotch, Play, Stop } from "@phosphor-icons/react";
-import {
-  ALL_QUIZ_IMAGE_STYLES,
-  QUIZ_IMAGE_STYLE_LABELS,
-  QUIZ_MAX_QUESTION_COUNT,
-  QUIZ_MIN_QUESTION_COUNT,
-  type Channel,
-  type Episode,
-  type QuizImageStyle,
-  type Task,
-} from "@studio/shared";
+import type { Channel, Episode, Task } from "@studio/shared";
 import { EpisodeBreadcrumb } from "../../components/Breadcrumbs";
 import { EpisodeAssetPills, StageBadge } from "../../components/AppChrome";
 
@@ -18,8 +9,6 @@ type EpisodeHeaderProps = {
   episodeTasks: Task[];
   totalImageCostVnd: number;
   isQuiz: boolean;
-  questionCountDraft: number;
-  setQuestionCountDraft: (count: number) => void;
   durationDraft: number;
   setDurationDraft: (dur: number) => void;
   activeEpisodeTask: Task | null;
@@ -31,8 +20,6 @@ type EpisodeHeaderProps = {
   onNavigateChannels?: () => void;
   onNavigateChannel?: () => void;
   onBack: () => void;
-  onSaveQuestionCount: () => void;
-  onSaveVisualStyle: (style: QuizImageStyle | "mixed") => void;
   onSaveDuration: () => void;
   onCreateTask: (type: Task["task_type"]) => void;
   onCancelActiveTask: (task?: Task | null) => void;
@@ -44,8 +31,6 @@ export function EpisodeHeader({
   episodeTasks,
   totalImageCostVnd,
   isQuiz,
-  questionCountDraft,
-  setQuestionCountDraft,
   durationDraft,
   setDurationDraft,
   activeEpisodeTask,
@@ -57,14 +42,10 @@ export function EpisodeHeader({
   onNavigateChannels,
   onNavigateChannel,
   onBack,
-  onSaveQuestionCount,
-  onSaveVisualStyle,
   onSaveDuration,
   onCreateTask,
   onCancelActiveTask,
 }: EpisodeHeaderProps) {
-  const channelStyles = channel.selected_styles && channel.selected_styles.length > 0 ? channel.selected_styles : ALL_QUIZ_IMAGE_STYLES;
-
   return (
     <>
       <EpisodeBreadcrumb

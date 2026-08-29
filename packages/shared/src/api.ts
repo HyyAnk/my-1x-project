@@ -22,6 +22,7 @@ import {
   QUIZ_MIN_QUESTION_COUNT,
   QuestionHistorySettingsSchema,
 } from "./schemas.js";
+import { MascotRenderAspectRatioSchema } from "./mascot/renderSchema.js";
 
 export const CalibrateMascotActionInputSchema = z.object({
   offset_x: z.number().min(-5000).max(5000).optional().default(0),
@@ -80,6 +81,18 @@ export const UploadMascotSpriteInputSchema = z.object({
 
 export type UploadMascotSpriteInput = z.infer<typeof UploadMascotSpriteInputSchema>;
 
+export const MascotMigrationInputSchema = z.object({
+  mode: z.enum(["dry_run", "apply", "rollback"]).default("dry_run"),
+  migration_id: z
+    .string()
+    .trim()
+    .regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,80}$/)
+    .optional(),
+  mascot_id: z.string().trim().min(1).optional(),
+});
+
+export type MascotMigrationInput = z.infer<typeof MascotMigrationInputSchema>;
+
 export const RemoveMascotBackgroundInputSchema = z.object({
   target: z.enum(["master", "all", "wave", "idle", "thinking", "point", "celebrate", "oops", "outro"]).optional().default("all"),
 });
@@ -95,6 +108,7 @@ export type AssignMascotInput = z.infer<typeof AssignMascotInputSchema>;
 
 export const SandboxPreviewInputSchema = z
   .object({
+    aspect_ratio: MascotRenderAspectRatioSchema.optional().default("16:9"),
     theme: QuizVisualThemeSchema.optional().default("candy_arcade"),
     palette_id: z.string().optional().default("lime"),
     layout_id: z.enum(["media_left_choices_right", "visual_choices_three", "baseline"]).optional().default("media_left_choices_right"),
@@ -119,6 +133,14 @@ export const SandboxPreviewInputSchema = z
     mascot_scale: z.number().optional().default(1.0),
     mascot_offset_x: z.number().optional().default(0),
     mascot_offset_y: z.number().optional().default(0),
+    mascot_flip_x: z.boolean().optional().default(false),
+    mascot_phase: z.enum(["intro", "question", "choices", "thinking", "reveal", "explain", "outro"]).optional(),
+    mascot_reveal_outcome: z.enum(["correct", "wrong", "timeout"]).optional().default("correct"),
+    mascot_timeline_time_seconds: z.number().min(0).max(3600).optional(),
+    mascot_playing: z.boolean().optional().default(false),
+    mascot_show_in_intro: z.boolean().optional().default(true),
+    mascot_show_in_outro: z.boolean().optional().default(true),
+    mascot_show_in_question: z.boolean().optional().default(true),
   })
   .superRefine((input, ctx) => {
     if (input.correct_choice_index >= input.choices.length) {
@@ -210,6 +232,7 @@ export type AudioSettingsInput = z.infer<typeof AudioSettingsInputSchema>;
 export const VideoSettingsInputSchema = z.object({
   max_scene_duration_seconds: z.number().positive().max(120).optional(),
   narration_words_per_second: z.number().positive().max(20).optional(),
+  aspect_ratio: MascotRenderAspectRatioSchema.optional(),
   max_concurrent_tasks: z.number().int().min(1).max(10).optional(),
 });
 

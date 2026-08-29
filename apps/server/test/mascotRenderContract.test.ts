@@ -60,6 +60,26 @@ describe("MascotRenderContract V2", () => {
     ).toThrow();
   });
 
+  it("rejects registration bounds that exceed the source image", () => {
+    expect(() =>
+      MascotRenderSpecV2Schema.parse({
+        version: 2,
+        canvas: { width: 1920, height: 1080 },
+        phase: "thinking",
+        reveal_outcome: null,
+        visible: true,
+        placement,
+        asset: {
+          ...asset,
+          registration: { ...asset.registration, content_bounds: { x: 400, y: 0, width: 200, height: 200 } },
+        },
+        motion: asset.motion,
+        timeline_time_seconds: 0,
+        playing: true,
+      }),
+    ).toThrow();
+  });
+
   it("keeps render context and resolved spec framework-independent", () => {
     const context = MascotRenderContextSchema.parse({
       aspect_ratio: "16:9",

@@ -10,6 +10,7 @@ import type {
   QuizThinkingBarStyle,
   QuizTimeline,
   QuizV2,
+  MascotRenderAspectRatio,
   Scene,
 } from "@studio/shared";
 import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
@@ -22,6 +23,8 @@ export type QuizRenderInput = {
   audioPath: string;
   theme: QuizConfig["visual_theme"];
   narrationDurationSeconds?: number;
+  /** Canonical output canvas used by production and preview renderers. */
+  aspectRatio?: MascotRenderAspectRatio;
   assets?: Record<string, string>;
   bgmOptions?: ResolveBgmOptions;
   mascot?: MascotProfile | null;
@@ -31,6 +34,7 @@ export type QuizRenderInput = {
   defaultAnswerCardStyle?: QuizAnswerCardStyle | null;
   defaultCounterStyle?: QuizQuestionCounterStyle | null;
   defaultPaletteId?: QuizPaletteId | null;
+  premixedAudio?: boolean;
 };
 
 export type PreparedQuizRender = { html: string; compositionFiles: Record<string, string>; durationSeconds: number; questionCount: number };

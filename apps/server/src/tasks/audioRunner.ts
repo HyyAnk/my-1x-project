@@ -74,7 +74,7 @@ export async function runNarrationTask(this: TaskManagerRuntime, task: Task): Pr
   const checkpoint = await readNarrationCheckpoint(checkpointPath);
   const nextCheckpoint: NarrationCheckpoint = { schema_version: 1, script_modified_at: script.modified_at, segments: {} };
   const segmentPaths: string[] = [];
-  const concurrency = Math.max(1, Math.min(3, this.audioConfig.max_concurrent_tasks || 2));
+  const concurrency = Math.max(1, Math.min(6, this.audioConfig.max_concurrent_tasks || 3));
   let completed = 0;
   const segmentResults = await runConcurrent(sections, concurrency, async (section, index) => {
     const segmentNumber = index + 1;

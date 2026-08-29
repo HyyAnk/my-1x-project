@@ -1,4 +1,4 @@
-import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { ChannelSchema, makeId, nowIso, type Channel, type CreateChannelInput } from "@studio/shared";
 import { RepositoryError } from "./errors.js";
@@ -28,6 +28,25 @@ export async function getChannel(this: RepositoryRuntime, channelId: string): Pr
 
 export async function getChannelBySlug(this: RepositoryRuntime, slug: string): Promise<Channel> {
   return this.readChannelBySlug(this.assertSlug(slug));
+}
+
+export async function readChannelBySlug(this: RepositoryRuntime, slug: string): Promise<Channel> {
+  const directory = this.resolvePath("channels", this.assertSlug(slug));
+  await this.assertRealPathInside(this.roots.channels, directory);
+  const metadataPath = path.join(directory, "channel.json");
+  const raw = JSON.parse(await readFile(metadataPath, "utf8")) as unknown;
+  const metadata = ChannelSchema.parse(raw);
+  const episodes = await this.safeEpisodeCount(directory);
+  return ChannelSchema.parse({ ...metadata, episode_count: episodes });
+}
+
+export async function safeEpisodeCount(_channelDirectory: string): Promise<number> {
+  try {
+    const entries = await readdir(path.join(_channelDirectory, "episodes"), { withFileTypes: true });
+    return entries.filter((entry) => entry.isDirectory()).length;
+  } catch {
+    return 0;
+  }
 }
 
 export async function createChannel(this: RepositoryRuntime, input: CreateChannelInput): Promise<Channel> {

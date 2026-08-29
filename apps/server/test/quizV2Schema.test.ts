@@ -345,4 +345,3 @@ describe("Quiz V2 shared schemas", () => {
     });
   });
 });
-

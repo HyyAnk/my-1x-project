@@ -10,10 +10,12 @@ type PlacementPresetOptions = {
   scale: number;
   offsetX: number;
   offsetY: number;
+  flipHorizontal: boolean;
   setPosition: (position: StagePosition) => void;
   setScale: (scale: number) => void;
   setOffsetX: (offset: number) => void;
   setOffsetY: (offset: number) => void;
+  setFlipHorizontal: (flipped: boolean) => void;
   onNotice: (notice: NonNullable<Notice>) => void;
   t: (path: string, params?: Record<string, string | number>) => string;
 };
@@ -69,8 +71,9 @@ export function useMascotPlacementPreset(options: PlacementPresetOptions) {
       options.setScale(preset.scale);
       options.setOffsetX(preset.offset_x);
       options.setOffsetY(preset.offset_y);
+      options.setFlipHorizontal(preset.flip_x);
     },
-    [options.setOffsetX, options.setOffsetY, options.setPosition, options.setScale],
+    [options.setFlipHorizontal, options.setOffsetX, options.setOffsetY, options.setPosition, options.setScale],
   );
 
   const applyDefaultPlacement = useCallback(() => {
@@ -88,6 +91,7 @@ export function useMascotPlacementPreset(options: PlacementPresetOptions) {
       scale: options.scale,
       offset_x: options.offsetX,
       offset_y: options.offsetY,
+      flip_x: options.flipHorizontal,
     };
     try {
       const response = await api.saveMascotStageSettings({ default_placement: placement });

@@ -86,12 +86,7 @@ export function ChannelDnaTab({
 
       {/* Modal: Edit Channel Profile */}
       {isEditModalOpen ? (
-        <EditChannelModal
-          channel={channel}
-          onClose={() => setIsEditModalOpen(false)}
-          onSaved={onRefresh}
-          onNotice={onNotice}
-        />
+        <EditChannelModal channel={channel} onClose={() => setIsEditModalOpen(false)} onSaved={onRefresh} onNotice={onNotice} />
       ) : null}
     </div>
   );

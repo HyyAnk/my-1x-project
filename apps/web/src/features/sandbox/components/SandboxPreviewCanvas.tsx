@@ -1,5 +1,5 @@
 import type React from "react";
-import { CheckCircle, DeviceMobile, Eye, Pause, Play } from "@phosphor-icons/react";
+import { CheckCircle, DeviceMobile, Eye, MonitorPlay, Pause, Play } from "@phosphor-icons/react";
 import { computeSandboxPhaseTimeline, getSandboxPhaseAtTime, getSandboxPhaseTimestamps, type SandboxPhase } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { ContrastReport } from "../hooks/useSandboxPreviewRenderer";
@@ -13,6 +13,8 @@ export interface SandboxPreviewCanvasProps {
   setShowSafeArea: (updater: (prev: boolean) => boolean) => void;
   showShortsGuide: boolean;
   setShowShortsGuide: (updater: (prev: boolean) => boolean) => void;
+  aspectRatio: "16:9" | "9:16";
+  setAspectRatio: (ratio: "16:9" | "9:16") => void;
   iframeKey: number;
   setIframeKey: (updater: (prev: number) => number) => void;
   zoom: "fit" | "50" | "75" | "100";
@@ -42,6 +44,8 @@ export function SandboxPreviewCanvas({
   setShowSafeArea,
   showShortsGuide,
   setShowShortsGuide,
+  aspectRatio,
+  setAspectRatio,
   iframeKey,
   setIframeKey,
   zoom,
@@ -115,7 +119,7 @@ export function SandboxPreviewCanvas({
                 boxShadow: "0 0 6px #22c55e",
               }}
             />
-            1080P FHD
+            {aspectRatio === "16:9" ? "1920 × 1080" : "1080 × 1920"}
           </span>
 
           <div
@@ -162,6 +166,42 @@ export function SandboxPreviewCanvas({
 
         {/* Right: Viewport Overlays & Zoom Actions */}
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "2px",
+              background: "var(--surface-strong)",
+              padding: "2px",
+              borderRadius: "8px",
+              border: "1px solid var(--line)",
+            }}
+            title="Output aspect ratio"
+          >
+            <button
+              type="button"
+              className={aspectRatio === "16:9" ? "primary-button compact" : "quiet-button compact"}
+              style={{ fontSize: "10.5px", padding: "3px 7px", borderRadius: "6px", display: "inline-flex", gap: "4px" }}
+              onClick={() => setAspectRatio("16:9")}
+              aria-label="16:9"
+            >
+              <MonitorPlay size={12} />
+              <span>16:9</span>
+            </button>
+            <button
+              type="button"
+              className={aspectRatio === "9:16" ? "primary-button compact" : "quiet-button compact"}
+              style={{ fontSize: "10.5px", padding: "3px 7px", borderRadius: "6px", display: "inline-flex", gap: "4px" }}
+              onClick={() => setAspectRatio("9:16")}
+              aria-label="9:16"
+            >
+              <DeviceMobile size={12} />
+              <span>9:16</span>
+            </button>
+          </div>
+
+          <div style={{ width: "1px", height: "16px", background: "var(--line)", margin: "0 2px" }} />
+
           {/* Safe Area 16:9 Toggle */}
           <button
             type="button"
@@ -174,7 +214,7 @@ export function SandboxPreviewCanvas({
             <span>{t("visualSandbox.safeArea")}</span>
           </button>
 
-          {/* Shorts 9:16 Toggle */}
+          {/* Shorts 9:16 Crop Guide */}
           <button
             type="button"
             className={showShortsGuide ? "primary-button compact" : "quiet-button compact"}
@@ -253,12 +293,12 @@ export function SandboxPreviewCanvas({
           minHeight: 0,
         }}
       >
-        {/* 1920x1080 Frame Wrapper */}
+        {/* Canonical output frame wrapper */}
         <div
           style={{
             position: "relative",
-            width: "1920px",
-            height: "1080px",
+            width: `${aspectRatio === "16:9" ? 1920 : 1080}px`,
+            height: `${aspectRatio === "16:9" ? 1080 : 1920}px`,
             transform: `scale(${scaleFactor})`,
             transformOrigin: "center center",
             boxShadow: "0 25px 60px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.12)",
@@ -276,6 +316,8 @@ export function SandboxPreviewCanvas({
             previewError={previewError}
             onPendingPreviewLoad={onPendingPreviewLoad}
             onRetryPreview={onRetryPreview}
+            width={aspectRatio === "16:9" ? 1920 : 1080}
+            height={aspectRatio === "16:9" ? 1080 : 1920}
           />
 
           {/* Safe Area 16:9 Overlay (strictly inside frame) */}
@@ -292,7 +334,7 @@ export function SandboxPreviewCanvas({
               <div
                 style={{
                   position: "absolute",
-                  inset: "54px 96px",
+                  inset: aspectRatio === "16:9" ? "54px 96px" : "96px 54px",
                   border: "2px dashed rgba(255, 220, 40, 0.75)",
                   borderRadius: "16px",
                 }}
@@ -318,7 +360,7 @@ export function SandboxPreviewCanvas({
               <div
                 style={{
                   position: "absolute",
-                  inset: "108px 192px",
+                  inset: aspectRatio === "16:9" ? "108px 192px" : "192px 108px",
                   border: "2px dashed rgba(56, 189, 248, 0.75)",
                   borderRadius: "16px",
                 }}
@@ -343,7 +385,7 @@ export function SandboxPreviewCanvas({
           )}
 
           {/* Shorts 9:16 Center Crop Guide Overlay (strictly inside frame) */}
-          {showShortsGuide && (
+          {showShortsGuide && aspectRatio === "16:9" && (
             <div
               style={{
                 position: "absolute",

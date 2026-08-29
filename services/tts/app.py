@@ -124,16 +124,20 @@ def synthesize(request: SynthesizeRequest) -> bytes:
     if reference in (None, "", "default"):
         reference = None
     with SYNTHESIS_LOCK:
-        with torch.inference_mode():
-            waveform = MODEL.generate(
-                prepare_text(request.text),
-                audio_prompt_path=reference,
-                exaggeration=request.exaggeration,
-                cfg_weight=request.cfg_weight,
-            )
-        output = io.BytesIO()
-        torchaudio.save(output, waveform.detach().cpu(), MODEL.sr, format="wav")
-        return output.getvalue()
+        try:
+            with torch.inference_mode():
+                waveform = MODEL.generate(
+                    prepare_text(request.text),
+                    audio_prompt_path=reference,
+                    exaggeration=request.exaggeration,
+                    cfg_weight=request.cfg_weight,
+                )
+            output = io.BytesIO()
+            torchaudio.save(output, waveform.detach().cpu(), MODEL.sr, format="wav")
+            return output.getvalue()
+        finally:
+            if DEVICE == "cuda":
+                torch.cuda.empty_cache()
 
 
 @app.post("/synthesize")

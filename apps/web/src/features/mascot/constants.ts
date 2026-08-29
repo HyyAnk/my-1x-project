@@ -143,4 +143,3 @@ export const DEFAULT_ACTION_INTENSITIES: Record<MascotActionType, MascotMotionIn
   oops: "normal",
   outro: "normal",
 };
-

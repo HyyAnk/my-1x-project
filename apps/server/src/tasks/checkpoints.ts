@@ -47,3 +47,27 @@ export async function readRenderCheckpoint(filePath: string): Promise<RenderChec
 export async function writeRenderCheckpoint(filePath: string, checkpoint: RenderCheckpoint): Promise<void> {
   await writeJsonAtomic(filePath, checkpoint);
 }
+
+export type SoundtrackCheckpoint = {
+  schema_version: 1;
+  soundtrack_fingerprint: string;
+  duration_seconds: number;
+  bgm_track_id: string | null;
+  bgm_filename: string | null;
+  created_at: string;
+};
+
+export async function readSoundtrackCheckpoint(filePath: string): Promise<SoundtrackCheckpoint | null> {
+  try {
+    const parsed = JSON.parse(await readFile(filePath, "utf8")) as Partial<SoundtrackCheckpoint>;
+    if (parsed.schema_version !== 1 || typeof parsed.soundtrack_fingerprint !== "string") return null;
+    return parsed as SoundtrackCheckpoint;
+  } catch {
+    return null;
+  }
+}
+
+export async function writeSoundtrackCheckpoint(filePath: string, checkpoint: SoundtrackCheckpoint): Promise<void> {
+  await writeJsonAtomic(filePath, checkpoint);
+}
+

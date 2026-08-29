@@ -372,6 +372,8 @@ export const DirectorAssetIntentSchema = z.enum([
 
 export const MascotStateSchema = z.enum(["idle", "wave", "curious", "thinking", "point", "surprised", "celebrate", "encourage"]);
 
+export type MascotState = z.infer<typeof MascotStateSchema>;
+
 export const SfxIntentSchema = z.enum([
   "ui_pop",
   "ui_soft",

@@ -25,6 +25,7 @@ export type VisualPresetItem = {
   mascot_scale?: number;
   mascot_offset_x?: number;
   mascot_offset_y?: number;
+  mascot_flip_x?: boolean;
   isBuiltIn?: boolean;
   nameKey?: string;
   descKey?: string;

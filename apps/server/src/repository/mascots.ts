@@ -2,7 +2,6 @@ import { mkdir, readFile, readdir, stat, unlink, writeFile } from "node:fs/promi
 import path from "node:path";
 import {
   MascotProfileSchema,
-  MascotSpriteActionSchema,
   makeId,
   nowIso,
   type Channel,
@@ -13,6 +12,8 @@ import {
 } from "@studio/shared";
 import { RepositoryError } from "./errors.js";
 import { isValidImageBuffer } from "./helpers.js";
+import { buildCalibratedMascotAction } from "./mascotActionCalibration.js";
+import { buildPersistedMascotProfile } from "./mascotRenderPersistence.js";
 import type { RepositoryRuntime } from "./runtime.js";
 
 export async function listMascots(this: RepositoryRuntime): Promise<MascotProfile[]> {
@@ -50,22 +51,10 @@ export async function getMascot(this: RepositoryRuntime, mascotId: string): Prom
 
 export async function saveMascot(this: RepositoryRuntime, profile: Partial<MascotProfile> & { name: string }): Promise<MascotProfile> {
   await this.ensureBootstrap();
-  const id = profile.id || makeId("mascot");
+  const id = profile.id ?? makeId("mascot");
   const existing = profile.id ? await this.getMascot(profile.id).catch(() => null) : null;
   const timestamp = nowIso();
-  const validated = MascotProfileSchema.parse({
-    id,
-    name: profile.name,
-    description: profile.description ?? existing?.description ?? "",
-    visual_style: profile.visual_style ?? existing?.visual_style ?? "pixar_3d",
-    master_prompt: profile.master_prompt ?? existing?.master_prompt ?? "",
-    master_image_url: profile.master_image_url ?? existing?.master_image_url ?? null,
-    color_theme: profile.color_theme ?? existing?.color_theme ?? "#06b6d4",
-    actions: profile.actions ?? existing?.actions ?? {},
-    assigned_channel_ids: profile.assigned_channel_ids ?? existing?.assigned_channel_ids ?? [],
-    created_at: existing?.created_at ?? timestamp,
-    updated_at: timestamp,
-  });
+  const validated = buildPersistedMascotProfile(profile, existing, id, timestamp);
 
   const mascotDir = path.join(this.roots.mascots, id);
   await mkdir(path.join(mascotDir, "assets"), { recursive: true });
@@ -120,22 +109,7 @@ export async function calibrateMascotAction(
 ): Promise<MascotProfile> {
   const mascot = await this.getMascot(mascotId);
   const currentAction = mascot.actions[action];
-
-  const updatedAction: MascotSpriteAction = {
-    action,
-    sprite_url: currentAction?.sprite_url || "",
-    frames_count: calibration.frames_count ?? currentAction?.frames_count ?? 1,
-    fps: calibration.fps ?? currentAction?.fps ?? 8,
-    loop: calibration.loop ?? currentAction?.loop ?? true,
-    frame_width: currentAction?.frame_width || 512,
-    frame_height: currentAction?.frame_height || 512,
-    offset_x: calibration.offset_x ?? currentAction?.offset_x ?? 0,
-    offset_y: calibration.offset_y ?? currentAction?.offset_y ?? 0,
-    preview_url: currentAction?.preview_url,
-    motion_preset: calibration.motion_preset ?? currentAction?.motion_preset ?? "breathe",
-    motion_speed: calibration.motion_speed ?? currentAction?.motion_speed ?? 1.0,
-    motion_intensity: calibration.motion_intensity ?? currentAction?.motion_intensity ?? "normal",
-  };
+  const updatedAction = buildCalibratedMascotAction(action, currentAction, calibration);
 
   const updatedMascot: MascotProfile = {
     ...mascot,

@@ -239,6 +239,18 @@ describe("Quiz V2 route workflow", () => {
       });
       expect(response.statusCode).toBe(202);
       expect(response.json().task.task_type).toBe("GENERATE_VIDEO");
+
+      // Test soundtrack streaming endpoint
+      const soundtrackDir = app.repository.resolvePath("runtime", "hyperframes", episode.episode_id);
+      await mkdir(soundtrackDir, { recursive: true });
+      await writeFile(path.join(soundtrackDir, "soundtrack.wav"), new Uint8Array([82, 73, 70, 70, 0, 0, 0, 0]));
+
+      const soundtrackRes = await app.server.inject({
+        method: "GET",
+        url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/quiz-v2/soundtrack`,
+      });
+      expect(soundtrackRes.statusCode).toBe(200);
+      expect(soundtrackRes.headers["content-type"]).toBe("audio/wav");
     } finally {
       await app.close();
     }

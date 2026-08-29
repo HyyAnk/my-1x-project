@@ -14,6 +14,7 @@ export function StageTimelineBar({ studio }: StageTimelineBarProps) {
     { id: "question", label: t("stageStudio.phases.question"), time: 3.5 },
     { id: "thinking", label: t("stageStudio.phases.thinking"), time: 6.0 },
     { id: "reveal", label: t("stageStudio.phases.reveal"), time: 10.5 },
+    { id: "explain", label: t("stageStudio.phases.explain"), time: 12.5 },
     { id: "outro", label: t("stageStudio.phases.outro"), time: 14.0 },
   ];
 

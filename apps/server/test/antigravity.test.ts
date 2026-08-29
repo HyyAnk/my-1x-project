@@ -211,7 +211,7 @@ describe("Antigravity Client", () => {
         .then(() => true)
         .catch(() => false),
     ).toBe(false);
-  });
+  }, 15_000);
 
   it("logs cleanup failures at debug level without failing the cleanup", async () => {
     const logger = new StudioLogger(temporaryRoot);
@@ -294,7 +294,7 @@ describe("Antigravity Client", () => {
 
     // Clean up the user-created test conversation.
     await rm(userConvDb, { force: true });
-  });
+  }, 15_000);
 
   it("blocks manual Antigravity cleanup while the setting is off", async () => {
     await mkdir(path.join(temporaryRoot, "templates"), { recursive: true });

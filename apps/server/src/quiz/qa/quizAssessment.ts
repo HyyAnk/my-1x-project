@@ -193,7 +193,7 @@ export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
         code: "mascot_idle_missing",
         severity: "warning",
         message: `Mascot "${input.mascot.name}" has neither an idle sprite nor a master concept image.`,
-        next_action: "Generate master concept art or idle sprite sheet in Mascot Studio.",
+        next_action: "Generate master concept art or an idle action image in Mascot Studio.",
         question_ids: [],
         stage: "assets",
       });
@@ -209,7 +209,7 @@ export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
         code: "mascot_pose_incomplete",
         severity: "warning",
         message: `Mascot "${input.mascot.name}" is missing key animation poses (${missingPoses.join(", ")}). Fallback to idle will be used.`,
-        next_action: "Generate the missing action sprite sheets in Mascot Studio for best video engagement.",
+        next_action: "Generate the missing action images in Mascot Studio for best video engagement.",
         question_ids: [],
         stage: "assets",
       });

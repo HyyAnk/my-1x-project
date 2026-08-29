@@ -1,7 +1,5 @@
-import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { EventEmitter } from "node:events";
-import { TaskSchema, makeId, nowIso, type AppConfig, type Task, type TaskEvent, type TaskStatus, type TaskType } from "@studio/shared";
+import { nowIso, type AppConfig, type Task, type TaskEvent, type TaskStatus, type TaskType } from "@studio/shared";
 import { AntigravityClient } from "../antigravity.js";
 import { CodexAppServerClient, type CodexServerRequest } from "../codex.js";
 import { DEFAULT_CONFIG } from "../config.js";
@@ -55,13 +53,11 @@ import {
   reconcileQuestionHistory as reconcileQuestionHistoryImplementation,
 } from "./taskLifecycle.js";
 import { runVideoTask as runVideoTaskImplementation } from "./videoRunner.js";
+import { pumpTaskQueue } from "./taskQueuePump.js";
+import { applyTaskPatch, loadTasksFromDisk, persistTask } from "./taskStateStore.js";
+import { decideTaskApproval } from "./taskApprovalManager.js";
+import { cancelTask, submitTask } from "./taskSubmission.js";
 import type { ActiveRun, CodexCleanupConfig, PipelineRun, TaskManagerRuntime } from "./runtime.js";
-
-const channelTaskTypes = new Set<TaskType>(["GENERATE_DNA", "SUGGEST_TOPICS"]);
-const audioTaskTypes = new Set<TaskType>(["GENERATE_AUDIO", "GENERATE_NARRATION"]);
-const imageTaskTypes = new Set<TaskType>(["GENERATE_BUNDLE_IMAGE"]);
-const videoTaskTypes = new Set<TaskType>(["GENERATE_VIDEO"]);
-const pipelineTaskTypes = new Set<TaskType>(["GENERATE_PIPELINE"]);
 
 export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   readonly tasks = new Map<string, Task>();
@@ -74,11 +70,11 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   readonly activeImageControllers = new Map<string, AbortController>();
   readonly imageVariants = new Map<string, number>();
   readonly topicHints = new Map<string, string>();
-  private runningCount = 0;
-  private runningAudioCount = 0;
-  private runningImageCount = 0;
-  private runningVideoCount = 0;
-  private runningPipelineCount = 0;
+  runningCount = 0;
+  runningAudioCount = 0;
+  runningImageCount = 0;
+  runningVideoCount = 0;
+  runningPipelineCount = 0;
   readonly activeAudio = new Set<string>();
   audioConfig: AppConfig["audio_generation"];
   imageConfig: AppConfig["image_generation"];
@@ -152,22 +148,9 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
 
   async load(): Promise<void> {
-    const directory = path.join(this.repository.roots.runtime, "tasks");
-    await mkdir(directory, { recursive: true });
-    const entries = await readdir(directory, { withFileTypes: true });
-    for (const entry of entries.filter((item) => item.isFile() && item.name.endsWith(".json"))) {
-      try {
-        const task = TaskSchema.parse(JSON.parse(await readFile(path.join(directory, entry.name), "utf8")));
-        if (task.status === "RUNNING" || task.status === "WAITING_APPROVAL") {
-          task.status = "FAILED";
-          task.error = "Task interrupted by dashboard restart";
-          task.completed_at = nowIso();
-        }
-        this.tasks.set(task.task_id, task);
-        if (task.error === "Task interrupted by dashboard restart") await this.persist(task);
-      } catch {
-        // Ignore a single corrupt operational record; repository artifacts remain safe.
-      }
+    const loaded = await loadTasksFromDisk(this.repository.roots.runtime);
+    for (const task of loaded) {
+      this.tasks.set(task.task_id, task);
     }
     await this.reconcileQuestionHistory();
     await this.cleanupExpiredFailedBuilds();
@@ -280,79 +263,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     requestedImageVariant?: number,
     topicHint?: string,
   ): Task {
-    if (taskType === "GENERATE_BUNDLE_IMAGE" && !this.imageConfig.enabled)
-      throw new RepositoryError("Image generation is disabled in Settings", "IMAGE_GENERATION_DISABLED");
-    const imageVariant =
-      taskType === "GENERATE_BUNDLE_IMAGE" && episodeId && sceneNumber
-        ? (requestedImageVariant ??
-          this.list().filter(
-            (item) =>
-              item.task_type === "GENERATE_BUNDLE_IMAGE" &&
-              item.episode_id === episodeId &&
-              item.scene_number === sceneNumber &&
-              ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(item.status),
-          ).length % Math.max(1, this.imageConfig.images_per_bundle))
-        : 0;
-    const lockKey =
-      taskType === "GENERATE_PIPELINE" && episodeId
-        ? `${episodeId}:pipeline`
-        : taskType === "GENERATE_SEQUENCE_SCENES" && episodeId && sceneNumber
-          ? `${episodeId}:sequence:${sceneNumber}`
-          : taskType === "GENERATE_BUNDLE_IMAGE" && episodeId && sceneNumber
-            ? `${episodeId}:bundle:${sceneNumber}:variant:${imageVariant}`
-            : channelTaskTypes.has(taskType)
-              ? channelId
-              : episodeId;
-    if (!lockKey) throw new RepositoryError("Episode is required for this task", "EPISODE_REQUIRED");
-    if (
-      taskType === "GENERATE_PIPELINE" &&
-      this.list().some((item) => item.lock_key === lockKey && ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(item.status))
-    ) {
-      throw new RepositoryError("Production pipeline is already running for this episode", "PIPELINE_ACTIVE");
-    }
-    const existingQueue = this.list().filter((task) => task.lock_key === lockKey && task.status === "QUEUED").length;
-
-    // When retrying or restarting a pipeline or task, accumulate duration from previous attempts
-    const previousMatchingTasks = this.list().filter(
-      (item) =>
-        item.lock_key === lockKey &&
-        item.channel_id === channelId &&
-        item.episode_id === episodeId &&
-        item.task_type === taskType &&
-        item.scene_number === (sceneNumber ?? null) &&
-        ["FAILED", "CANCELLED", "COMPLETED"].includes(item.status),
-    );
-
-    const latestPreviousTask = previousMatchingTasks.sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
-    let accumulatedDuration = 0;
-    if (latestPreviousTask) {
-      const start = latestPreviousTask.started_at || latestPreviousTask.created_at;
-      const end = latestPreviousTask.completed_at || nowIso();
-      const elapsed = Math.max(0, Math.floor((new Date(end).getTime() - new Date(start).getTime()) / 1000));
-      accumulatedDuration = (latestPreviousTask.accumulated_duration_seconds || 0) + elapsed;
-    }
-
-    const task = TaskSchema.parse({
-      task_id: makeId("task"),
-      task_type: taskType,
-      channel_id: channelId,
-      episode_id: episodeId,
-      status: "QUEUED",
-      created_at: nowIso(),
-      started_at: null,
-      completed_at: null,
-      codex_thread_id: null,
-      codex_turn_id: null,
-      error: null,
-      output_files: [],
-      lock_key: lockKey,
-      queue_position: existingQueue,
-      progress_message: "Queued",
-      scene_number: sceneNumber ?? null,
-      accumulated_duration_seconds: accumulatedDuration,
-    });
-    if (taskType === "GENERATE_BUNDLE_IMAGE") this.imageVariants.set(task.task_id, imageVariant);
-    if (taskType === "SUGGEST_TOPICS" && topicHint?.trim()) this.topicHints.set(task.task_id, topicHint.trim());
+    const task = submitTask(this, taskType, channelId, episodeId, sceneNumber, requestedImageVariant, topicHint);
     this.tasks.set(task.task_id, task);
     void this.persist(task);
     this.emitTask(task);
@@ -361,124 +272,26 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
 
   async cancel(taskId: string): Promise<Task> {
-    const task = this.get(taskId);
-    if (task.status === "QUEUED") {
-      await this.update(taskId, { status: "CANCELLED", completed_at: nowIso(), progress_message: "Cancelled before start" });
-      this.imageVariants.delete(taskId);
-      this.topicHints.delete(taskId);
-      void this.pump();
-      return this.get(taskId);
-    }
-    const active = this.active.get(taskId);
-    if (active) {
-      await this.update(taskId, { progress_message: "Interrupting task" });
-      await this.codex.interruptTurn(active.threadId, active.turnId).catch(() => undefined);
-      await this.finish(taskId, "CANCELLED", "Cancelled by user");
-    } else if (this.activeAudio.has(taskId)) {
-      await this.finish(taskId, "CANCELLED", "Cancelled by user");
-    } else if (this.activeImageControllers.has(taskId)) {
-      await this.update(taskId, { status: "CANCELLED", progress_message: "Interrupting image generation" });
-      this.activeImageControllers.get(taskId)?.abort();
-      await this.finish(taskId, "CANCELLED", "Cancelled by user");
-    } else {
-      const pipeline = this.pipelineRuns.get(taskId);
-      if (pipeline) {
-        pipeline.cancelled = true;
-        await Promise.all([...pipeline.children].map((childId) => this.cancel(childId).catch(() => undefined)));
-      }
-    }
-    return this.get(taskId);
+    const res = await cancelTask(this, taskId);
+    void this.pump();
+    return res;
   }
 
-  async decideApproval(taskId: string, requestId: number, decision: "accept" | "acceptForSession" | "decline" | "cancel"): Promise<Task> {
-    const pending = this.approvalRequests.get(requestId);
-    if (!pending || pending.taskId !== taskId) throw new RepositoryError("Approval request not found", "APPROVAL_NOT_FOUND");
-    this.approvalRequests.delete(requestId);
-    this.codex.respond(requestId, { decision });
-    if (decision === "decline" || decision === "cancel") await this.finish(taskId, "CANCELLED", "Approval denied");
-    else await this.update(taskId, { status: "RUNNING", progress_message: "Approval granted" });
-    return this.get(taskId);
+  decideApproval(taskId: string, requestId: number, decision: "accept" | "acceptForSession" | "decline" | "cancel"): Promise<Task> {
+    return decideTaskApproval(
+      taskId,
+      requestId,
+      decision,
+      this.approvalRequests,
+      this.codex,
+      (id, status, msg) => this.finish(id, status, msg),
+      (id, patch) => this.update(id, patch),
+      (id) => this.get(id),
+    );
   }
 
-  private async pump(): Promise<void> {
-    const maxVideoConcurrent = this.videoConfig.max_concurrent_tasks ?? 2;
-
-    while (this.runningVideoCount < maxVideoConcurrent) {
-      const next = this.list()
-        .reverse()
-        .find((task) => task.status === "QUEUED" && task.task_type === "GENERATE_VIDEO" && !this.locks.has(task.lock_key));
-      if (!next) break;
-      this.locks.add(next.lock_key);
-      this.runningVideoCount += 1;
-      void this.run(next).finally(() => {
-        this.locks.delete(next.lock_key);
-        this.runningVideoCount -= 1;
-        void this.pump();
-      });
-    }
-
-    while (this.runningPipelineCount < maxVideoConcurrent) {
-      const next = this.list()
-        .reverse()
-        .find((task) => task.status === "QUEUED" && task.task_type === "GENERATE_PIPELINE" && !this.locks.has(task.lock_key));
-      if (!next) break;
-      this.locks.add(next.lock_key);
-      this.runningPipelineCount += 1;
-      void this.run(next).finally(() => {
-        this.locks.delete(next.lock_key);
-        this.runningPipelineCount -= 1;
-        void this.pump();
-      });
-    }
-
-    while (this.runningCount < this.maxConcurrent) {
-      const next = this.list()
-        .reverse()
-        .find(
-          (task) =>
-            task.status === "QUEUED" &&
-            !audioTaskTypes.has(task.task_type) &&
-            !imageTaskTypes.has(task.task_type) &&
-            !videoTaskTypes.has(task.task_type) &&
-            !pipelineTaskTypes.has(task.task_type) &&
-            !this.locks.has(task.lock_key),
-        );
-      if (!next) break;
-      this.locks.add(next.lock_key);
-      this.runningCount += 1;
-      void this.run(next).finally(() => {
-        this.locks.delete(next.lock_key);
-        this.runningCount -= 1;
-        void this.pump();
-      });
-    }
-    const maxImageConcurrent = this.imageConfig.max_concurrent_tasks ?? 3;
-    while (this.runningImageCount < maxImageConcurrent) {
-      const next = this.list()
-        .reverse()
-        .find((task) => task.status === "QUEUED" && imageTaskTypes.has(task.task_type) && !this.locks.has(task.lock_key));
-      if (!next) break;
-      this.locks.add(next.lock_key);
-      this.runningImageCount += 1;
-      void this.run(next).finally(() => {
-        this.locks.delete(next.lock_key);
-        this.runningImageCount -= 1;
-        void this.pump();
-      });
-    }
-    while (this.runningAudioCount < this.audioConfig.max_concurrent_tasks) {
-      const next = this.list()
-        .reverse()
-        .find((task) => task.status === "QUEUED" && audioTaskTypes.has(task.task_type) && !this.locks.has(task.lock_key));
-      if (!next) break;
-      this.locks.add(next.lock_key);
-      this.runningAudioCount += 1;
-      void this.runAudioTask(next).finally(() => {
-        this.locks.delete(next.lock_key);
-        this.runningAudioCount -= 1;
-        void this.pump();
-      });
-    }
+  private pump(): Promise<void> {
+    return pumpTaskQueue(this);
   }
 
   run(task: Task): Promise<void> {
@@ -607,11 +420,11 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
       await this.update(taskId, { codex_thread_id: null });
   }
 
-  async cleanupCodexThreads(force = false): Promise<{ removed: number }> {
+  cleanupCodexThreads(force = false): Promise<{ removed: number }> {
     return cleanupCodexThreadsImplementation.call(this, force);
   }
 
-  async cleanupAntigravityThreads(force = false): Promise<{ removed: number }> {
+  cleanupAntigravityThreads(force = false): Promise<{ removed: number }> {
     return cleanupAntigravityThreadsImplementation.call(this, force);
   }
 
@@ -639,28 +452,14 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
   async update(taskId: string, patch: Partial<Task>): Promise<void> {
     const current = this.get(taskId);
-    let effectivePatch = patch;
-    if (["COMPLETED", "FAILED", "CANCELLED"].includes(current.status) && patch.status === undefined) {
-      const { progress_message, progress_percent, ...rest } = patch;
-      if (progress_message !== undefined || progress_percent !== undefined) {
-        if (Object.keys(rest).length === 0) return;
-        effectivePatch = rest;
-      }
-    }
-    if (current.started_at && patch.started_at && patch.status === "RUNNING") {
-      const { started_at, ...rest } = effectivePatch;
-      effectivePatch = rest;
-    }
-    const next = TaskSchema.parse({ ...current, ...effectivePatch });
+    const next = applyTaskPatch(current, patch);
     this.tasks.set(taskId, next);
     await this.persist(next);
     this.emitTask(next);
   }
 
-  private async persist(task: Task): Promise<void> {
-    const directory = path.join(this.repository.roots.runtime, "tasks");
-    await mkdir(directory, { recursive: true });
-    await writeFile(path.join(directory, `${task.task_id}.json`), `${JSON.stringify(task, null, 2)}\n`, "utf8");
+  private persist(task: Task): Promise<void> {
+    return persistTask(this.repository.roots.runtime, task);
   }
 
   private emitTask(task: Task): void {

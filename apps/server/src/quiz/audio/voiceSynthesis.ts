@@ -64,7 +64,7 @@ export async function synthesizeQuizVoiceSegments(input: {
   const pacingLimit = quizVoicePacingLimit(input.targetWordsPerSecond);
 
   let completedCount = 0;
-  const voiceConcurrency = Math.max(1, Math.min(4, input.config.max_concurrent_tasks || 2));
+  const voiceConcurrency = Math.max(1, Math.min(8, input.config.max_concurrent_tasks || 3));
 
   const results = await runConcurrent(input.voicePlan.segments, voiceConcurrency, async (segment, index) => {
     const tempo = quizVoiceTempo(segment.role);
@@ -183,13 +183,19 @@ async function renderPerformanceSegment(
     : [{ text: segment.text, delivery: "normal" as const, pause_after: "none" as const }];
   const phrasePaths: string[] = [];
   try {
-    for (const [phraseIndex, phrase] of phrases.entries()) {
-      const raw = await synthesizeWav(voicePerformanceConfig(config, segment.role), phrase.text, voice);
-      const gainDb = segment.role === "reveal" ? 2.0 : segment.role === "intro" || segment.role === "outro" ? 1.5 : 0;
-      const paced = await paceQuizVoiceAudio(raw, quizVoiceTempo(segment.role), directory, segmentNumber * 100 + phraseIndex + 1, gainDb);
-      const phrasePath = path.join(directory, `segment-${String(segmentNumber).padStart(3, "0")}-phrase-${phraseIndex + 1}.wav`);
-      await writeFile(phrasePath, paced);
-      phrasePaths.push(phrasePath);
+    const renderedPhrases = await Promise.all(
+      phrases.map(async (phrase, phraseIndex) => {
+        const raw = await synthesizeWav(voicePerformanceConfig(config, segment.role), phrase.text, voice);
+        const gainDb = segment.role === "reveal" ? 2.0 : segment.role === "intro" || segment.role === "outro" ? 1.5 : 0;
+        const paced = await paceQuizVoiceAudio(raw, quizVoiceTempo(segment.role), directory, segmentNumber * 100 + phraseIndex + 1, gainDb);
+        const phrasePath = path.join(directory, `segment-${String(segmentNumber).padStart(3, "0")}-phrase-${phraseIndex + 1}.wav`);
+        await writeFile(phrasePath, paced);
+        return { phraseIndex, phrasePath };
+      }),
+    );
+    renderedPhrases.sort((a, b) => a.phraseIndex - b.phraseIndex);
+    for (const item of renderedPhrases) {
+      phrasePaths.push(item.phrasePath);
     }
     if (phrasePaths.length === 1) return new Uint8Array(await readFile(phrasePaths[0]));
     return await concatenatePerformancePhrases(phrasePaths, phrases, directory, segmentNumber);

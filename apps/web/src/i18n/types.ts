@@ -868,6 +868,7 @@ export interface TranslationSchema {
     mascotPositionSection: string;
     posBottomLeft: string;
     posBottomRight: string;
+    flipDirection: string;
     mascotScaleSection: string;
     mascotOffsetSection: string;
     offsetX: string;
@@ -1110,5 +1111,30 @@ export interface TranslationSchema {
     mascotUnassignedChannel: string;
     mascotConfigUpdated: string;
     mascotAssignFailed: string;
+  };
+  episodeCustomization: {
+    barTitle: string;
+    pillPreset: string;
+    pillQuestions: string;
+    pillArtStyle: string;
+    pillPalette: string;
+    pillQuestionCard: string;
+    pillAnswerCards: string;
+    pillCounterBadge: string;
+    pillThinkingBar: string;
+    valueMixed: string;
+    valueCustomKit: string;
+    valueChannelKit: string;
+    valueChannelDefault: string;
+    valueQuestionCount: string;
+    customCountLabel: string;
+    applyCount: string;
+    previewTitle: string;
+    previewRendering: string;
+    previewError: string;
+    previewStatusSaved: string;
+    previewStatusPreviewing: string;
+    previewSavedLabel: string;
+    previewingLabel: string;
   };
 }

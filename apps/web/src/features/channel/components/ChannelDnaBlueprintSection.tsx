@@ -110,12 +110,7 @@ export function ChannelDnaBlueprintSection({
                 <span>{t("channelDetail.cancelEdit")}</span>
               </button>
 
-              <button
-                type="button"
-                className="primary-button compact"
-                disabled={busy === "dna"}
-                onClick={() => void onSaveDna()}
-              >
+              <button type="button" className="primary-button compact" disabled={busy === "dna"} onClick={() => void onSaveDna()}>
                 {busy === "dna" ? <CircleNotch className="spin" size={15} /> : <FloppyDisk size={15} />}
                 <span>{t("channelDetail.saveDna")}</span>
               </button>
@@ -155,11 +150,7 @@ export function ChannelDnaBlueprintSection({
                 <span>{t("channelDetail.regenerateDna")}</span>
               </button>
 
-              <button
-                type="button"
-                className="primary-button compact"
-                onClick={() => setEditingDna(true)}
-              >
+              <button type="button" className="primary-button compact" onClick={() => setEditingDna(true)}>
                 <PencilSimple size={15} />
                 <span>{t("channelDetail.editDna")}</span>
               </button>

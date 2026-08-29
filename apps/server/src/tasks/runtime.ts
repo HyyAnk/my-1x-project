@@ -43,6 +43,8 @@ export interface TaskManagerRuntime {
   imageConfig: AppConfig["image_generation"];
   imageVariants: Map<string, number>;
   logger: StudioLogger;
+  locks: Set<string>;
+  maxConcurrent: number;
   pipelineRuns: Map<string, PipelineRun>;
   repository: RepositoryService;
   topicHints: Map<string, string>;

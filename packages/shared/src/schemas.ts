@@ -36,6 +36,7 @@ import {
   VoicePhraseDeliverySchema,
   VoiceSegmentRoleSchema,
 } from "./enums.js";
+import { MascotRenderAspectRatioSchema, MascotRenderBundleV2Schema } from "./mascot/renderSchema.js";
 
 const IsoDate = z.string().datetime({ offset: true });
 
@@ -70,6 +71,9 @@ export const MascotProfileSchema = z.object({
   master_image_url: z.string().nullable().default(null),
   color_theme: z.string().default("#06b6d4"),
   actions: z.record(MascotActionTypeSchema, MascotSpriteActionSchema.nullable().optional()).default({}),
+  /** Persisted V2 render data; absent on V1 manifests until migration. */
+  schema_version: z.number().int().positive().optional(),
+  render_bundle: MascotRenderBundleV2Schema.optional(),
   assigned_channel_ids: z.array(z.string()).default([]),
   created_at: IsoDate,
   updated_at: IsoDate,
@@ -83,6 +87,7 @@ export const ChannelMascotConfigSchema = z.object({
   scale: z.number().default(1.0),
   offset_x: z.number().default(0),
   offset_y: z.number().default(0),
+  flip_x: z.boolean().default(false),
   show_in_intro: z.boolean().default(false),
   show_in_outro: z.boolean().default(false),
   show_in_question: z.boolean().default(true),
@@ -95,6 +100,7 @@ export const RECOMMENDED_MASCOT_PLACEMENT_PRESET = {
   scale: 1.84,
   offset_x: 21,
   offset_y: 90,
+  flip_x: false,
 } as const;
 
 export const MascotPlacementPresetSchema = z.object({
@@ -102,6 +108,7 @@ export const MascotPlacementPresetSchema = z.object({
   scale: z.number().min(0.3).max(3).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale),
   offset_x: z.number().int().min(-1500).max(1500).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_x),
   offset_y: z.number().int().min(-1500).max(1500).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_y),
+  flip_x: z.boolean().default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.flip_x),
 });
 
 export type MascotPlacementPreset = z.infer<typeof MascotPlacementPresetSchema>;
@@ -659,7 +666,7 @@ export const AppConfigSchema = z.object({
     max_scene_duration_seconds: z.number().positive().default(8),
     default_scene_duration_seconds: z.number().positive().default(6),
     narration_words_per_second: z.number().positive().default(2.3),
-    aspect_ratio: z.string().default("16:9"),
+    aspect_ratio: MascotRenderAspectRatioSchema.default("16:9"),
     max_concurrent_tasks: z.number().int().min(1).max(10).default(2),
   }),
   image_generation: z.object({

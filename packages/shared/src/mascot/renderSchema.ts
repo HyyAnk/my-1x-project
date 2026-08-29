@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { MascotActionTypeSchema, MascotMotionIntensitySchema, MascotMotionPresetSchema, MascotPositionSchema } from "../enums.js";
+import {
+  MascotActionTypeSchema,
+  MascotMotionIntensitySchema,
+  MascotMotionPresetSchema,
+  MascotPositionSchema,
+  MascotStateSchema,
+} from "../enums.js";
 
 export const MascotRenderAspectRatioSchema = z.enum(["16:9", "9:16"]);
 
@@ -26,20 +32,39 @@ const MascotBoundsSchema = z.object({
   height: z.number().finite().positive().max(8192),
 });
 
+export const MascotLegacyAnimationV1Schema = z.object({
+  frames_count: z.number().int().min(2).max(32),
+  fps: z.number().finite().positive().max(120),
+  loop: z.boolean(),
+  frame_width: z.number().int().positive().max(8192),
+  frame_height: z.number().int().positive().max(8192),
+});
+
 export const MascotMotionConfigV2Schema = z.object({
   preset: MascotMotionPresetSchema,
   speed: z.number().finite().min(0.1).max(5),
   intensity: MascotMotionIntensitySchema,
 });
 
-export const MascotAssetRegistrationSchema = z.object({
-  source_width: z.number().int().positive().max(8192),
-  source_height: z.number().int().positive().max(8192),
-  content_bounds: MascotBoundsSchema,
-  pivot: MascotPointSchema,
-  offset_x: z.number().finite().min(-8192).max(8192),
-  offset_y: z.number().finite().min(-8192).max(8192),
-});
+export const MascotAssetRegistrationSchema = z
+  .object({
+    source_width: z.number().int().positive().max(8192),
+    source_height: z.number().int().positive().max(8192),
+    content_bounds: MascotBoundsSchema,
+    pivot: MascotPointSchema,
+    offset_x: z.number().finite().min(-8192).max(8192),
+    offset_y: z.number().finite().min(-8192).max(8192),
+  })
+  .superRefine((registration, ctx) => {
+    if (registration.content_bounds.x + registration.content_bounds.width > registration.source_width)
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["content_bounds", "width"], message: "Content bounds exceed source width" });
+    if (registration.content_bounds.y + registration.content_bounds.height > registration.source_height)
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["content_bounds", "height"], message: "Content bounds exceed source height" });
+    if (registration.pivot.x > registration.source_width)
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["pivot", "x"], message: "Pivot exceeds source width" });
+    if (registration.pivot.y > registration.source_height)
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["pivot", "y"], message: "Pivot exceeds source height" });
+  });
 
 export const MascotActionAssetV2Schema = z.object({
   version: z.literal(2),
@@ -47,6 +72,18 @@ export const MascotActionAssetV2Schema = z.object({
   image_url: z.string().trim().min(1),
   registration: MascotAssetRegistrationSchema,
   motion: MascotMotionConfigV2Schema,
+  legacy_animation: MascotLegacyAnimationV1Schema.optional(),
+});
+
+export const MascotMasterAssetV2Schema = z.object({
+  version: z.literal(2),
+  image_url: z.string().trim().min(1),
+  registration: MascotAssetRegistrationSchema,
+});
+
+export const MascotRenderAssetCatalogV2Schema = z.object({
+  actions: z.record(MascotActionTypeSchema, MascotActionAssetV2Schema.nullable().optional()).default({}),
+  master: MascotMasterAssetV2Schema.nullable(),
 });
 
 export const MascotPlacementV2Schema = z.object({
@@ -93,10 +130,16 @@ export const MascotRenderConfigV2Schema = z.object({
   visibility: MascotVisibilityPolicyV2Schema,
 });
 
+export const MascotRenderBundleV2Schema = z.object({
+  config: MascotRenderConfigV2Schema,
+  assets: MascotRenderAssetCatalogV2Schema,
+});
+
 export const MascotRenderContextSchema = z.object({
   aspect_ratio: MascotRenderAspectRatioSchema,
   phase: MascotRenderPhaseSchema,
   reveal_outcome: MascotRevealOutcomeSchema.nullable(),
+  action_override: z.union([MascotActionTypeSchema, MascotStateSchema]).nullable().optional(),
   timeline_time_seconds: z.number().finite().min(0),
   playing: z.boolean(),
 });

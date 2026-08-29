@@ -41,7 +41,7 @@ export function VisualSandboxTab({
   const timeline = useSandboxTimelineState();
   const question = useSandboxQuestionState(language);
   const viewport = useSandboxViewportState();
-  const preview = useSandboxPreviewRenderer({ design, mascot, timeline, question, onNotice });
+  const preview = useSandboxPreviewRenderer({ design, mascot, timeline, question, aspectRatio: viewport.aspectRatio, onNotice });
   const presets = useSandboxPresets({ design, mascot, onNotice });
   const channelSync = useSandboxChannelSync({ channels, design, mascot, onNotice, onRefreshChannels });
 
@@ -130,6 +130,8 @@ export function VisualSandboxTab({
               setMascotOffsetX={mascot.setMascotOffsetX}
               mascotOffsetY={mascot.mascotOffsetY}
               setMascotOffsetY={mascot.setMascotOffsetY}
+              mascotFlipX={mascot.mascotFlipX}
+              setMascotFlipX={mascot.setMascotFlipX}
             />
           )}
 
@@ -165,6 +167,8 @@ export function VisualSandboxTab({
           setShowSafeArea={viewport.setShowSafeArea}
           showShortsGuide={viewport.showShortsGuide}
           setShowShortsGuide={viewport.setShowShortsGuide}
+          aspectRatio={viewport.aspectRatio}
+          setAspectRatio={viewport.setAspectRatio}
           iframeKey={preview.iframeKey}
           setIframeKey={preview.setIframeKey}
           zoom={viewport.zoom}

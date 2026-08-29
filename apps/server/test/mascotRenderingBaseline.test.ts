@@ -85,6 +85,7 @@ describe("current mascot rendering baseline", () => {
       },
     );
 
-    expect(result.html).toContain("--mascot-frames:4");
+    expect(result.html).toContain('data-mascot-legacy-frames="4"');
+    expect(result.html).toContain("mascot-v2-legacy-frame");
   });
 });

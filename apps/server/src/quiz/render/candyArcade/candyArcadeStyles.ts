@@ -1,5 +1,7 @@
 import { getAnswerCardsCss, getCounterBadgesCss, getQuestionBoxesCss, getThinkingBarsCss } from "../../visual/elements/index.js";
+import { MASCOT_CANVAS_SIZES, type MascotRenderAspectRatio } from "@studio/shared";
 import { candyArcadeFontFaceCss, type CandyArcadeFontMode } from "./candyArcadeFonts.js";
+import { productionMascotCss } from "./productionMascotStyles.js";
 
 export const CANDY_ARCADE_LAYOUT_DIMENSIONS = {
   baseline: { width: 800, height: 284 },
@@ -7,8 +9,12 @@ export const CANDY_ARCADE_LAYOUT_DIMENSIONS = {
   visual_choices_three: { width: 501, height: 500, count: 3 },
 } as const;
 
-export function candyArcadeHeroAreaRatio(layout: keyof typeof CANDY_ARCADE_LAYOUT_DIMENSIONS): number {
-  const frameArea = 1920 * 1080;
+export function candyArcadeHeroAreaRatio(
+  layout: keyof typeof CANDY_ARCADE_LAYOUT_DIMENSIONS,
+  aspectRatio: MascotRenderAspectRatio = "16:9",
+): number {
+  const canvas = MASCOT_CANVAS_SIZES[aspectRatio];
+  const frameArea = canvas.width * canvas.height;
   if (layout === "visual_choices_three") {
     const dimensions = CANDY_ARCADE_LAYOUT_DIMENSIONS.visual_choices_three;
     return Number(((dimensions.width * dimensions.height * dimensions.count) / frameArea).toFixed(4));
@@ -17,7 +23,9 @@ export function candyArcadeHeroAreaRatio(layout: keyof typeof CANDY_ARCADE_LAYOU
   return Number(((dimensions.width * dimensions.height) / frameArea).toFixed(4));
 }
 
-export function candyArcadeCss(options: { fontMode?: CandyArcadeFontMode } = {}): string {
+export function candyArcadeCss(options: { fontMode?: CandyArcadeFontMode; aspectRatio?: MascotRenderAspectRatio } = {}): string {
+  const aspectRatio = options.aspectRatio ?? "16:9";
+  const canvas = MASCOT_CANVAS_SIZES[aspectRatio];
   return `
 ${candyArcadeFontFaceCss(options.fontMode ?? "render")}
 :root {
@@ -27,7 +35,7 @@ ${candyArcadeFontFaceCss(options.fontMode ?? "render")}
 }
 * { box-sizing: border-box; }
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #16285c; }
-#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+#stage { position: relative; width: ${canvas.width}px; height: ${canvas.height}px; overflow: hidden; }
 .clip { position: absolute; inset: 0; }
 .candy-scene { --depth-edge: rgba(13,35,71,.16); --depth-shadow: rgba(13,35,71,.22); isolation: isolate; overflow: hidden; padding: 33px 80px 16px; background: var(--bg-primary); color: var(--ink); }
 .bg-gradient { position: absolute; z-index: 0; inset: 0; background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary)); }
@@ -286,6 +294,48 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 @keyframes mascot-single-pulse { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); } 100% { transform: translate(calc(var(--action-offset-x, 0px) + 6px), calc(var(--action-offset-y, 0px) - 4px)) scale(1.03); } }
 @keyframes mascot-single-wave { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(-3deg); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 10px)) rotate(4deg) scale(1.03); } }
 @keyframes mascot-single-float { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) translateY(0) rotate(0deg); } 50% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 14px)) rotate(1.5deg); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 6px)) rotate(-1.5deg); } }
+${
+  aspectRatio === "9:16"
+    ? `
+/* True portrait composition: all coordinates stay in the 1080×1920 canvas. */
+#stage[data-aspect-ratio="9:16"] .candy-scene { padding: 32px 36px 24px; }
+#stage[data-aspect-ratio="9:16"] .game-header { top: 0; left: 24px; transform: none; }
+#stage[data-aspect-ratio="9:16"] .game-stage,
+#stage[data-aspect-ratio="9:16"] .has-mascot .game-stage { width: calc(100% - 72px); min-height: 0; margin: 184px auto 0; }
+#stage[data-aspect-ratio="9:16"] .has-mascot { --mascot-content-width: calc(100% - 20px); --question-card-width: 100%; --question-card-left-edge: 0px; }
+#stage[data-aspect-ratio="9:16"] .has-mascot .game-header { left: 24px; transform: none; }
+#stage[data-aspect-ratio="9:16"] .question-title,
+#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .question-title,
+#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .question-title { width: 100%; max-width: 100%; height: auto; min-height: 208px; margin: 0; }
+#stage[data-aspect-ratio="9:16"] .question-card-inner { padding: 24px 34px; }
+#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .game-stage { grid-template-columns: 1fr; grid-template-areas: "title" "hero" "answers"; row-gap: 24px; }
+#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .game-stage > .hero-image { width: 100%; height: 520px; margin: 0; }
+#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .answer-grid { width: 100%; height: auto; margin: 0; padding: 0; gap: 24px; }
+#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .answer-card { min-height: 116px; height: auto; margin-left: 68px; padding: 12px 28px 12px 32px; }
+#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .answer-card > b { width: 124px; height: 124px; margin-left: -70px; font-size: 68px; }
+#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .answer-card span { font-size: 40px; }
+#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .game-stage { grid-template-columns: 1fr; grid-template-areas: "title" "answers"; row-gap: 24px; }
+#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .visual-answer-grid { width: 100%; grid-template-columns: 1fr; gap: 26px; }
+#stage[data-aspect-ratio="9:16"] .phase-region { left: 36px; right: 36px; bottom: 18px; width: auto; transform: none; }
+#stage[data-aspect-ratio="9:16"] .phase-region > .thinking-bar,
+#stage[data-aspect-ratio="9:16"] .phase-region > .fact-card { width: 100%; left: 0; transform: none; }
+#stage[data-aspect-ratio="9:16"] .candy-intro .intro-card,
+#stage[data-aspect-ratio="9:16"] .candy-outro .outro-card { width: min(900px, 100%); padding: 0 28px; }
+#stage[data-aspect-ratio="9:16"] .intro-card h1,
+#stage[data-aspect-ratio="9:16"] .outro-card h1 { max-width: 850px; font-size: 76px; letter-spacing: -2px; }
+#stage[data-aspect-ratio="9:16"] .intro-card p,
+#stage[data-aspect-ratio="9:16"] .outro-card p { max-width: 800px; font-size: 30px; }
+#stage[data-aspect-ratio="9:16"] .outro-cta-badges { flex-wrap: wrap; max-width: 760px; }
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-intro,
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-outro { bottom: 24px; }
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-intro.anchor-bottom_left,
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-outro.anchor-bottom_left { left: 24px; }
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-intro.anchor-bottom_right,
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-outro.anchor-bottom_right { right: 24px; }
+`
+    : ""
+}
+${productionMascotCss()}
 ${getThinkingBarsCss()}
 ${getQuestionBoxesCss()}
 ${getCounterBadgesCss()}

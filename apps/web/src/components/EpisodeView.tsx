@@ -94,8 +94,6 @@ export function EpisodeDetail({
         episodeTasks={pipeline.episodeTasks}
         totalImageCostVnd={pipeline.totalImageCostVnd}
         isQuiz={isQuiz}
-        questionCountDraft={pipeline.questionCountDraft}
-        setQuestionCountDraft={pipeline.setQuestionCountDraft}
         durationDraft={pipeline.durationDraft}
         setDurationDraft={pipeline.setDurationDraft}
         activeEpisodeTask={pipeline.activeEpisodeTask}
@@ -107,8 +105,6 @@ export function EpisodeDetail({
         onNavigateChannels={onNavigateChannels}
         onNavigateChannel={onNavigateChannel}
         onBack={onBack}
-        onSaveQuestionCount={pipeline.saveQuestionCount}
-        onSaveVisualStyle={pipeline.saveVisualStyle}
         onSaveDuration={pipeline.saveDuration}
         onCreateTask={pipeline.createTask}
         onCancelActiveTask={pipeline.handleCancelActiveTask}

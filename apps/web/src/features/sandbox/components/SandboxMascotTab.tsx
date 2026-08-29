@@ -18,6 +18,8 @@ export interface SandboxMascotTabProps {
   setMascotOffsetX: (offset: number | ((prev: number) => number)) => void;
   mascotOffsetY: number;
   setMascotOffsetY: (offset: number | ((prev: number) => number)) => void;
+  mascotFlipX: boolean;
+  setMascotFlipX: (flipped: boolean | ((prev: boolean) => boolean)) => void;
 }
 
 export function SandboxMascotTab({
@@ -36,6 +38,8 @@ export function SandboxMascotTab({
   setMascotOffsetX,
   mascotOffsetY,
   setMascotOffsetY,
+  mascotFlipX,
+  setMascotFlipX,
 }: SandboxMascotTabProps) {
   const { t } = useTranslation();
 
@@ -285,6 +289,15 @@ export function SandboxMascotTab({
             {t("visualSandbox.posBottomRight")}
           </button>
         </div>
+        <button
+          type="button"
+          className={mascotFlipX ? "primary-button compact" : "quiet-button compact"}
+          style={{ width: "100%", marginTop: "6px", fontSize: "11px", justifyContent: "center" }}
+          onClick={() => setMascotFlipX((current) => !current)}
+          aria-pressed={mascotFlipX}
+        >
+          {t("visualSandbox.flipDirection")}
+        </button>
       </div>
 
       {/* Live Animation Status Badge */}

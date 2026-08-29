@@ -1,9 +1,10 @@
 import { execFile } from "node:child_process";
 import { copyFile, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
+import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import { nowIso, type MascotActionType, type MascotProfile, type Task } from "@studio/shared";
+import { MASCOT_CANVAS_SIZES, nowIso, type MascotActionType, type MascotProfile, type Task } from "@studio/shared";
 import { RepositoryError } from "../repository.js";
 import { buildQuizComposition } from "../quiz/render/buildComposition.js";
 import { HyperframesRenderer } from "../quiz/render/hyperframesRenderer.js";
@@ -15,10 +16,11 @@ import { isQuizAssetResolutionComplete, resolveQuizAssets } from "../quiz/assets
 import { quizVoicePlanNeedsRegeneration } from "../quiz/audio/voicePolicy.js";
 import { removeImageBackground } from "../utils/imageMatting.js";
 import { hasNonEmptyFile } from "./artifactFiles.js";
-import { readRenderCheckpoint, writeRenderCheckpoint } from "./checkpoints.js";
-import { renderSourceFingerprint } from "./fingerprints.js";
+import { readRenderCheckpoint, readSoundtrackCheckpoint, writeRenderCheckpoint, writeSoundtrackCheckpoint } from "./checkpoints.js";
+import { renderSourceFingerprint, soundtrackFingerprint } from "./fingerprints.js";
 import type { TaskManagerRuntime } from "./runtime.js";
 import { copyCandyArcadeFonts, resolveCandyArcadeFonts } from "../quiz/render/candyArcade/candyArcadeFonts.js";
+import { mixMasterSoundtrack } from "../quiz/audio/soundtrackMixer.js";
 
 const execFileAsync = promisify(execFile);
 const require = createRequire(import.meta.url);
@@ -27,6 +29,8 @@ const quizRenderer = new HyperframesRenderer();
 export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   const context = { profileId: task.channel_id, workerId: task.task_id, step: "render_video" };
   try {
+    const renderAspectRatio = this.videoConfig.aspect_ratio;
+    const renderCanvas = MASCOT_CANVAS_SIZES[renderAspectRatio];
     await this.update(task.task_id, {
       status: "RUNNING",
       started_at: nowIso(),
@@ -168,13 +172,66 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
         };
       }
     }
+    let selectedBgmTrackId: string | null = null;
+    let selectedBgmFilename: string | null = null;
+
+    if (completeQuizV2) {
+      const renderSoundtrackPath = path.join(renderRoot, "soundtrack.wav");
+      const soundtrackCheckpointPath = path.join(renderRoot, "soundtrack-checkpoint.json");
+      const currentSoundtrackFp = soundtrackFingerprint(
+        narration.modified_at,
+        narration.size,
+        completeQuizV2.timeline.events,
+        undefined,
+        bgmHistory.map((entry) => entry.track_id),
+      );
+      const existingSoundtrackCheckpoint = await readSoundtrackCheckpoint(soundtrackCheckpointPath);
+      const hasValidCachedSoundtrack =
+        existingSoundtrackCheckpoint?.soundtrack_fingerprint === currentSoundtrackFp &&
+        (await hasNonEmptyFile(renderSoundtrackPath));
+
+      if (hasValidCachedSoundtrack) {
+        selectedBgmTrackId = existingSoundtrackCheckpoint.bgm_track_id;
+        selectedBgmFilename = existingSoundtrackCheckpoint.bgm_filename;
+        await this.update(task.task_id, { progress_message: "Quiz · reusing cached master soundtrack", progress_percent: 15 });
+      } else {
+        await this.update(task.task_id, { progress_message: "Quiz · pre-mixing master soundtrack", progress_percent: 15 });
+        const mixResult = await mixMasterSoundtrack({
+          narrationPath: narration.absolutePath,
+          timeline: completeQuizV2.timeline,
+          durationSeconds: episode.narration_duration_seconds ?? completeQuizV2.timeline.duration_seconds,
+          workingDirectory: path.join(renderRoot, "audio-mix-temp"),
+          outputPath: renderSoundtrackPath,
+          bgmOptions: {
+            recentTrackIds: bgmHistory.map((entry) => entry.track_id),
+            seed: episode.episode_id,
+          },
+          assets: assetSources,
+        });
+        if (mixResult.plan.bgmItems.length > 0) {
+          selectedBgmTrackId = mixResult.plan.bgmItems[0].trackId;
+          selectedBgmFilename = mixResult.plan.bgmItems[0].filename;
+        }
+        await writeSoundtrackCheckpoint(soundtrackCheckpointPath, {
+          schema_version: 1,
+          soundtrack_fingerprint: currentSoundtrackFp,
+          duration_seconds: mixResult.durationSeconds,
+          bgm_track_id: selectedBgmTrackId,
+          bgm_filename: selectedBgmFilename,
+          created_at: nowIso(),
+        });
+      }
+    }
+
     const preparedQuizRender = completeQuizV2
       ? await quizRenderer.prepare({
           quiz: completeQuizV2.quiz,
           director: completeQuizV2.director,
           timeline: completeQuizV2.timeline,
           scenes,
-          audioPath: "./narration.wav",
+          audioPath: "./soundtrack.wav",
+          premixedAudio: true,
+          aspectRatio: renderAspectRatio,
           theme: episode.quiz_config.visual_theme,
           narrationDurationSeconds: episode.narration_duration_seconds ?? undefined,
           assets: assetSources,
@@ -193,7 +250,9 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       : null;
     const html =
       preparedQuizRender?.html ??
-      buildQuizComposition(episode.quiz_config, scenes, "./narration.wav", episode.narration_duration_seconds ?? undefined);
+      buildQuizComposition(episode.quiz_config, scenes, "./narration.wav", episode.narration_duration_seconds ?? undefined, {
+        aspectRatio: renderAspectRatio,
+      });
     await writeFile(compositionPath, html, "utf8");
     for (const [relativePath, content] of Object.entries(preparedQuizRender?.compositionFiles ?? {})) {
       const filePath = path.join(renderRoot, relativePath);
@@ -326,7 +385,11 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     }
     let reusableRender = layoutReady && checkpoint?.render?.status === "passed" && (await hasNonEmptyFile(outputPath));
     if (reusableRender) {
-      const existingProbe = await inspectRenderedVideo(outputPath, { width: 1920, height: 1080, fps: this.videoConfig.fps });
+      const existingProbe = await inspectRenderedVideo(outputPath, {
+        width: renderCanvas.width,
+        height: renderCanvas.height,
+        fps: this.videoConfig.fps,
+      });
       reusableRender = !existingProbe.issues.some((issue) => issue.severity === "blocker");
     }
     if (reusableRender) {
@@ -343,6 +406,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
         PRODUCER_EXPERIMENTAL_FAST_CAPTURE: process.env.PRODUCER_EXPERIMENTAL_FAST_CAPTURE || "true",
         ...(process.env.HYPERFRAMES_BROWSER_PATH ? { HYPERFRAMES_BROWSER_PATH: process.env.HYPERFRAMES_BROWSER_PATH } : {}),
       };
+      const optimalWorkers = Math.max(2, Math.min(8, os.cpus().length ? Math.floor(os.cpus().length / 2) : 4));
       const renderInvocation = getHyperframesInvocation(
         "render",
         renderRoot,
@@ -352,6 +416,10 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
         String(this.videoConfig.fps),
         "--quality",
         this.videoConfig.render_quality,
+        "--workers",
+        String(optimalWorkers),
+        "--gpu",
+        "--browser-gpu",
         "--browser-timeout",
         browserTimeout,
         "--strict",
@@ -366,7 +434,11 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       });
     }
     await this.update(task.task_id, { progress_message: "Video · verifying MP4 and audio track", progress_percent: 95 });
-    const probe = await inspectRenderedVideo(outputPath, { width: 1920, height: 1080, fps: this.videoConfig.fps });
+    const probe = await inspectRenderedVideo(outputPath, {
+      width: renderCanvas.width,
+      height: renderCanvas.height,
+      fps: this.videoConfig.fps,
+    });
     const renderBlocker = probe.issues.find((issue) => issue.severity === "blocker");
     if (renderBlocker) throw new RepositoryError(renderBlocker.message, "QUIZ_RENDER_QA_FAILED");
     await writeRenderCheckpoint(checkpointPath, {
@@ -379,9 +451,11 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     if (!Number.isFinite(duration) || duration <= 0) throw new Error("Rendered MP4 has no readable duration");
     const degradedAssets = (assetResolution?.assets ?? []).filter((a) => a.degraded || a.fallback_tier === 3 || a.source === "fallback");
     const hasDegradedFallback = degradedAssets.length > 0;
-    const bgmMatch = html.match(/src=["']\.\/bgm\/([^"']+)["']/);
-    const selectedBgmFilename = bgmMatch ? bgmMatch[1] : null;
-    const selectedBgmTrackId = selectedBgmFilename ? selectedBgmFilename.replace(/\.mp3$/i, "") : null;
+    if (!selectedBgmFilename) {
+      const bgmMatch = html.match(/src=["']\.\/bgm\/([^"']+)["']/);
+      selectedBgmFilename = bgmMatch ? bgmMatch[1] : null;
+      selectedBgmTrackId = selectedBgmFilename ? selectedBgmFilename.replace(/\.mp3$/i, "") : null;
+    }
     const manifestPath = await this.repository.writeRenderManifest(
       task.channel_id,
       task.episode_id,
@@ -394,7 +468,8 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
         question_count: episode.quiz_config.question_count,
         format: episode.quiz_config.quiz_format,
         duration_seconds: Number(duration.toFixed(3)),
-        resolution: { width: 1920, height: 1080 },
+        aspect_ratio: renderAspectRatio,
+        resolution: { width: renderCanvas.width, height: renderCanvas.height },
         fps: this.videoConfig.fps,
         bgm_track_id: selectedBgmTrackId ?? undefined,
         bgm_filename: selectedBgmFilename ?? undefined,

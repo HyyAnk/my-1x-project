@@ -29,6 +29,7 @@ export const DEFAULT_CONFIG: AppConfig = {
       scale: 1.84,
       offset_x: 21,
       offset_y: 90,
+      flip_x: false,
     },
   },
   video_generation: {
@@ -79,7 +80,7 @@ export const DEFAULT_CONFIG: AppConfig = {
     service_url: "http://127.0.0.1:8890",
     exaggeration: 0.5,
     cfg_weight: 0.5,
-    max_concurrent_tasks: 2,
+    max_concurrent_tasks: 3,
     merge_gap_ms: 300,
     match_target_duration: true,
   },

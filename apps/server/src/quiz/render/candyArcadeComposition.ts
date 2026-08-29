@@ -11,6 +11,8 @@ import {
   type QuizThinkingBarStyle,
   type QuizTimeline,
   type QuizV2,
+  type MascotRenderAspectRatio,
+  MASCOT_CANVAS_SIZES,
 } from "@studio/shared";
 import { getQuizVisualTemplate } from "../visual/registry.js";
 import { type ResolveBgmOptions } from "../audio/bgmRegistry.js";
@@ -37,6 +39,7 @@ export type CandyArcadeCompositionInput = {
   theme: QuizConfig["visual_theme"];
   audioPath: string;
   narrationDurationSeconds: number;
+  aspectRatio?: MascotRenderAspectRatio;
   assets?: Record<string, string>;
   bgmOptions?: ResolveBgmOptions;
   mascot?: MascotProfile | null;
@@ -46,6 +49,7 @@ export type CandyArcadeCompositionInput = {
   defaultAnswerCardStyle?: QuizAnswerCardStyle | null;
   defaultCounterStyle?: QuizQuestionCounterStyle | null;
   defaultPaletteId?: QuizPaletteId | null;
+  premixedAudio?: boolean;
 };
 
 export type CandyArcadeCompositionBundle = {
@@ -83,6 +87,8 @@ export function buildCandyArcadeComposition(input: CandyArcadeCompositionInput):
 
 export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionInput): CandyArcadeCompositionBundle {
   QuizV2Schema.parse(input.quiz);
+  const aspectRatio = input.aspectRatio ?? "16:9";
+  const canvas = MASCOT_CANVAS_SIZES[aspectRatio];
   const duration = Math.max(3, input.narrationDurationSeconds, input.timeline.duration_seconds);
   const copy = quizCopy(input.quiz.language);
   const template = getQuizVisualTemplate(input.theme);
@@ -91,7 +97,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     events.find((event) => event.question_id === questionId && event.type === type)?.at_seconds ?? fallback;
   const eventOf = (questionId: string, type: string) => events.find((event) => event.question_id === questionId && event.type === type);
   const firstStart = input.quiz.questions[0] ? eventAt(input.quiz.questions[0].id, "question.enter", 0) : 0;
-  const clips: string[] = [introClip(firstStart, input.quiz.questions.length, copy, input.mascot, input.mascotConfig)];
+  const clips: string[] = [introClip(firstStart, input.quiz.questions.length, copy, input.mascot, input.mascotConfig, aspectRatio)];
   const outroStart = events.find((event) => event.type === "narration.segment" && event.segment_id === "outro")?.at_seconds;
   let previousPaletteId: string | undefined;
 
@@ -129,21 +135,15 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
       nextQuestion ? eventAt(nextQuestion.id, "question.enter", duration) : (transition?.at_seconds ?? outroStart ?? duration),
     );
     const thinkingBarStyle =
-      beat.thinking_bar_style && beat.thinking_bar_style !== "auto"
-        ? beat.thinking_bar_style
-        : input.defaultThinkingBarStyle ?? "auto";
+      beat.thinking_bar_style && beat.thinking_bar_style !== "auto" ? beat.thinking_bar_style : (input.defaultThinkingBarStyle ?? "auto");
     const questionBoxStyle =
-      beat.question_box_style && beat.question_box_style !== "auto"
-        ? beat.question_box_style
-        : input.defaultQuestionBoxStyle ?? "auto";
+      beat.question_box_style && beat.question_box_style !== "auto" ? beat.question_box_style : (input.defaultQuestionBoxStyle ?? "auto");
     const answerCardStyle =
-      beat.answer_card_style && beat.answer_card_style !== "auto"
-        ? beat.answer_card_style
-        : input.defaultAnswerCardStyle ?? "auto";
+      beat.answer_card_style && beat.answer_card_style !== "auto" ? beat.answer_card_style : (input.defaultAnswerCardStyle ?? "auto");
     const counterStyle =
       beat.question_counter_style && beat.question_counter_style !== "auto"
         ? beat.question_counter_style
-        : input.defaultCounterStyle ?? "auto";
+        : (input.defaultCounterStyle ?? "auto");
     if (end - start > 0.04)
       clips.push(
         questionClip({
@@ -162,6 +162,8 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
           isFinal: index === input.quiz.questions.length - 1,
           mascot: input.mascot,
           mascotConfig: input.mascotConfig,
+          aspectRatio,
+          mascotEvents: events.filter((event) => event.question_id === question.id),
           thinkingBarStyle,
           questionBoxStyle,
           answerCardStyle,
@@ -192,25 +194,30 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
       );
   });
   if (typeof outroStart === "number" && outroStart < duration - 0.04)
-    clips.push(outroClip(outroStart, duration, input.quiz.questions.length, copy, input.mascot, input.mascotConfig));
+    clips.push(outroClip(outroStart, duration, input.quiz.questions.length, copy, input.mascot, input.mascotConfig, aspectRatio));
 
-  const scenes = clips.filter(Boolean).map(toSubComposition);
+  const scenes = clips.filter(Boolean).map((clip) => toSubComposition(clip, aspectRatio));
   const audioSrc = source(input.audioPath);
   const narrationDuration = input.narrationDurationSeconds > 0 ? input.narrationDurationSeconds : duration;
-  const bgmClips = buildBgmClips(duration, input.assets, outroStart, {
-    seed: input.quiz.episode_id,
-    ...input.bgmOptions,
-  });
-  const sfxClips = buildSfxClips(events, input.assets);
+  const isPremixed = input.premixedAudio ?? input.audioPath.includes("soundtrack");
+  const bgmClips = isPremixed
+    ? []
+    : buildBgmClips(duration, input.assets, outroStart, {
+        seed: input.quiz.episode_id,
+        ...input.bgmOptions,
+      });
+  const sfxClips = isPremixed ? [] : buildSfxClips(events, input.assets);
   const mascotPreloads = getMascotPreloadTags(input.mascot, source);
-  const audioTags = [
-    `<audio id="quiz-narration" class="clip" data-start="0" data-duration="${narrationDuration.toFixed(3)}" data-track-index="2" data-volume="1" src="${audioSrc}"></audio>`,
-    ...bgmClips,
-    ...sfxClips,
-  ].join("\n");
+  const audioTags = isPremixed
+    ? `<audio id="master-soundtrack" class="clip" data-start="0" data-duration="${duration.toFixed(3)}" data-track-index="1" data-volume="1" src="${audioSrc}"></audio>`
+    : [
+        `<audio id="quiz-narration" class="clip" data-start="0" data-duration="${narrationDuration.toFixed(3)}" data-track-index="2" data-volume="1" src="${audioSrc}"></audio>`,
+        ...bgmClips,
+        ...sfxClips,
+      ].join("\n");
 
   return {
-    html: `<!doctype html><html><head><meta charset="utf-8"><title>Candy Arcade Quiz</title>${mascotPreloads ? `\n${mascotPreloads}` : ""}<style>${candyArcadeCss()}</style></head><body><main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="1920" data-height="1080" data-duration="${duration.toFixed(3)}" data-fps="30">${scenes.map(subCompositionMount).join("\n")}\n${audioTags}</main><script>${candyArcadeFontReadinessScript()}</script></body></html>`,
+    html: `<!doctype html><html><head><meta charset="utf-8"><title>Candy Arcade Quiz</title>${mascotPreloads ? `\n${mascotPreloads}` : ""}<style>${candyArcadeCss({ aspectRatio })}</style></head><body><main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="${canvas.width}" data-height="${canvas.height}" data-aspect-ratio="${aspectRatio}" data-duration="${duration.toFixed(3)}" data-fps="30">${scenes.map(subCompositionMount).join("\n")}\n${audioTags}</main><script>${candyArcadeFontReadinessScript()}</script></body></html>`,
     files: Object.fromEntries(scenes.map((scene) => [`compositions/${scene.id}.html`, scene.html])),
   };
 }

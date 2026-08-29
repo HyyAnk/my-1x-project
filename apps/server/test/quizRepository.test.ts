@@ -198,4 +198,3 @@ describe("Quiz V2 repository artifacts", () => {
     expect(reloaded.quiz_config.style_preset_id).toBe("preset_cyber_neon");
   });
 });
-

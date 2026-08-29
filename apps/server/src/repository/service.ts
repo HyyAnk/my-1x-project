@@ -45,7 +45,18 @@ import {
   getChannelBySlug as getChannelBySlugImplementation,
   createChannel as createChannelImplementation,
   updateChannel as updateChannelImplementation,
+  readChannelBySlug as readChannelBySlugImplementation,
+  safeEpisodeCount as safeEpisodeCountImplementation,
 } from "./channels.js";
+import {
+  listTopics as listTopicsImplementation,
+  saveTopicRun as saveTopicRunImplementation,
+  confirmTopic as confirmTopicImplementation,
+  updateEpisodeSettings as updateEpisodeSettingsImplementation,
+  markTopicSelected as markTopicSelectedImplementation,
+} from "./topics.js";
+import { getTemplate as getTemplateImplementation } from "./templates.js";
+import { quizArtifactTarget, readQuizArtifact, writeQuizArtifact } from "./quizArtifactTarget.js";
 import {
   listMascots as listMascotsImplementation,
   getMascot as getMascotImplementation,
@@ -106,12 +117,7 @@ import {
   appendBgmHistory as appendBgmHistoryImplementation,
   invalidateQuizArtifacts as invalidateQuizArtifactsImplementation,
 } from "./quizArtifacts.js";
-import {
-  listTopics as listTopicsImplementation,
-  saveTopicRun as saveTopicRunImplementation,
-  confirmTopic as confirmTopicImplementation,
-  updateEpisodeSettings as updateEpisodeSettingsImplementation,
-} from "./topics.js";
+
 import {
   readScenes as readScenesImplementation,
   listBundleImages as listBundleImagesImplementation,
@@ -566,92 +572,45 @@ export class RepositoryService implements RepositoryRuntime {
     return createSlug(input);
   }
 
-  async readQuizArtifact<T>(
+  readQuizArtifact<T>(
     channelId: string,
     episodeId: string,
     filename: QuizArtifactFilename,
     schema: { parse(value: unknown): T },
   ): Promise<T | null> {
-    const target = await this.quizArtifactTarget(channelId, episodeId, filename);
-    try {
-      const raw = JSON.parse(await readFile(target.absolutePath, "utf8")) as unknown;
-      return schema.parse(raw);
-    } catch (error) {
-      if (error && typeof error === "object" && "code" in error && (error as { code?: string }).code === "ENOENT") return null;
-      if (error instanceof RepositoryError) throw error;
-      throw new RepositoryError("Quiz artifact " + filename + " is malformed", "QUIZ_ARTIFACT_INVALID");
-    }
+    return readQuizArtifact(this, channelId, episodeId, filename, schema);
   }
 
-  async writeQuizArtifact<T>(channelId: string, episodeId: string, filename: QuizArtifactFilename, value: T): Promise<string> {
-    const target = await this.quizArtifactTarget(channelId, episodeId, filename);
-    await this.writeJsonAtomic(target.absolutePath, value);
-    return target.relativePath;
+  writeQuizArtifact<T>(channelId: string, episodeId: string, filename: QuizArtifactFilename, value: T): Promise<string> {
+    return writeQuizArtifact(this, channelId, episodeId, filename, value);
   }
 
-  async quizArtifactTarget(
+  quizArtifactTarget(
     channelId: string,
     episodeId: string,
     filename: QuizArtifactFilename,
   ): Promise<{ absolutePath: string; relativePath: string }> {
-    const episode = await this.getEpisode(channelId, episodeId);
-    const channel = await this.getChannel(channelId);
-    const episodeDirectory = this.resolvePath("channels", channel.slug, "episodes", episode.slug);
-    await this.assertRealPathInside(this.roots.channels, episodeDirectory);
-    const absolutePath = path.join(episodeDirectory, "quiz", filename);
-    return { absolutePath, relativePath: ["channels", channel.slug, "episodes", episode.slug, "quiz", filename].join("/") };
+    return quizArtifactTarget(this, channelId, episodeId, filename);
   }
 
-  async readChannelBySlug(slug: string): Promise<Channel> {
-    const directory = this.resolvePath("channels", this.assertSlug(slug));
-    await this.assertRealPathInside(this.roots.channels, directory);
-    const metadataPath = path.join(directory, "channel.json");
-    const raw = JSON.parse(await readFile(metadataPath, "utf8")) as unknown;
-    const metadata = ChannelSchema.parse(raw);
-    const episodes = await this.safeEpisodeCount(directory);
-    return ChannelSchema.parse({ ...metadata, episode_count: episodes });
+  readChannelBySlug(slug: string): Promise<Channel> {
+    return readChannelBySlugImplementation.call(this, slug);
   }
 
-  async safeEpisodeCount(channelDirectory: string): Promise<number> {
-    try {
-      const entries = await readdir(path.join(channelDirectory, "episodes"), { withFileTypes: true });
-      return entries.filter((entry) => entry.isDirectory()).length;
-    } catch {
-      return 0;
-    }
+  safeEpisodeCount(channelDirectory: string): Promise<number> {
+    return safeEpisodeCountImplementation(channelDirectory);
   }
 
-  async getTemplate(filename: string): Promise<string> {
-    try {
-      return await readFile(this.resolvePath("templates", filename), "utf8");
-    } catch {
-      throw new RepositoryError(`Required template is missing: ${filename}`, "TEMPLATE_MISSING");
-    }
+  getTemplate(filename: string): Promise<string> {
+    return getTemplateImplementation(this, filename);
   }
 
   createRoots(storageRoot: string): RepositoryRoots {
     return createRoots(this.rootDirectory, storageRoot);
   }
 
-  async markTopicSelected(channelId: string, topicId: string, questionCount: number): Promise<void> {
-    const channel = await this.getChannel(channelId);
-    const directory = this.resolvePath("channels", channel.slug, "topics");
-    const entries = await readdir(directory, { withFileTypes: true });
-    for (const entry of entries.filter((item) => item.isFile() && item.name.endsWith(".json"))) {
-      const filePath = path.join(directory, entry.name);
-      try {
-        const run = JSON.parse(await readFile(filePath, "utf8")) as TopicRun;
-        let changed = false;
-        run.candidates = run.candidates.map((topic) => {
-          if (topic.topic_id !== topicId) return topic;
-          changed = true;
-          return { ...topic, question_count: questionCount, selected: true };
-        });
-        if (changed) await this.writeJsonAtomic(filePath, run);
-      } catch {
-        // Ignore malformed historical runs.
-      }
-    }
+  markTopicSelected(channelId: string, topicId: string, questionCount: number): Promise<void> {
+    return markTopicSelectedImplementation.call(this, channelId, topicId, questionCount);
   }
 
   assertSlug(value: string): string {

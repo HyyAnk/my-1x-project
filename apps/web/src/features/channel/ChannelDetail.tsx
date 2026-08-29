@@ -270,11 +270,7 @@ export function ChannelDetail({
           </div>
           <div className="detail-actions">
             <StatusBadge status={channel.status} />
-            <button
-              className="quiet-button"
-              onClick={() => setIsEditProfileOpen(true)}
-              title={t("channelDetail.editProfileBtn")}
-            >
+            <button className="quiet-button" onClick={() => setIsEditProfileOpen(true)} title={t("channelDetail.editProfileBtn")}>
               <PencilSimple size={16} />
               <span>{t("channelDetail.editProfileBtn")}</span>
             </button>

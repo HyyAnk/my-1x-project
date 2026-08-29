@@ -58,7 +58,13 @@ export function MascotAnimationCanvas({
                 className={`motion-bg-btn ${canvasBackground === mode ? "is-active" : ""}`}
                 onClick={() => setCanvasBackground(mode)}
               >
-                {mode === "dark" ? t("mascots.bgDark") : mode === "light" ? t("mascots.bgLight") : mode === "grid" ? t("mascots.bgGrid") : t("mascots.bgClean")}
+                {mode === "dark"
+                  ? t("mascots.bgDark")
+                  : mode === "light"
+                    ? t("mascots.bgLight")
+                    : mode === "grid"
+                      ? t("mascots.bgGrid")
+                      : t("mascots.bgClean")}
               </button>
             ))}
           </div>

@@ -235,4 +235,3 @@ function sendRange(
     .headers({ ...baseHeaders, "content-length": end - start + 1, "content-range": `bytes ${start}-${end}/${file.size}` })
     .send(createReadStream(file.absolutePath, { start, end }));
 }
-

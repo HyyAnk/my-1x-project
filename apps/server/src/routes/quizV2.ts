@@ -164,6 +164,16 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
         .header("X-Content-Type-Options", "nosniff")
         .send(content);
     });
+    server.get("/api/channels/:channelId/episodes/:episodeId/quiz-v2/soundtrack", async (request, reply) => {
+      const params = request.params as { channelId: string; episodeId: string };
+      const soundtrackPath = repository.resolvePath("runtime", "hyperframes", params.episodeId, "soundtrack.wav");
+      try {
+        const content = await readFile(soundtrackPath);
+        return reply.type("audio/wav").header("Content-Disposition", 'inline; filename="soundtrack.wav"').send(content);
+      } catch {
+        throw new RepositoryError("Soundtrack not found for this episode", "SOUNDTRACK_NOT_FOUND");
+      }
+    });
     done();
   };
 }

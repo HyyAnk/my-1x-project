@@ -37,6 +37,7 @@ describe("Mascot Stage default placement preset", () => {
         scale: 1.84,
         offset_x: 21,
         offset_y: 90,
+        flip_x: false,
       });
 
       const savedPreset = await app.server.inject({
@@ -52,6 +53,7 @@ describe("Mascot Stage default placement preset", () => {
         scale: 1.62,
         offset_x: 35,
         offset_y: 84,
+        flip_x: false,
       });
 
       const channel = await app.repository.createChannel({

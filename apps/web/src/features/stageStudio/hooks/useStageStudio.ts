@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { RECOMMENDED_MASCOT_PLACEMENT_PRESET, type Channel, type MascotActionType, type MascotProfile } from "@studio/shared";
+import { RECOMMENDED_MASCOT_PLACEMENT_PRESET, type Channel, type MascotActionType } from "@studio/shared";
 import { api } from "../../../api";
 import { useTranslation } from "../../../i18n";
 import type {
@@ -14,34 +14,8 @@ import type {
   StageViewMode,
 } from "../types";
 import { useMascotPlacementPreset } from "./useMascotPlacementPreset";
-import { verifyPreviewFonts } from "../../previewFonts/verifyPreviewFonts";
-
-type SandboxPreviewTiming = {
-  phase: "question" | "choices" | "thinking" | "reveal" | "explain";
-  timeSec: number;
-};
-
-const SANDBOX_PREVIEW_TIMINGS: Record<StageScenarioPhase, SandboxPreviewTiming> = {
-  intro: { phase: "question", timeSec: 0.5 },
-  question: { phase: "choices", timeSec: 2 },
-  thinking: { phase: "thinking", timeSec: 5 },
-  reveal: { phase: "reveal", timeSec: 8 },
-  explain: { phase: "explain", timeSec: 9.5 },
-  outro: { phase: "explain", timeSec: 9.5 },
-};
-
-function resolvePreviewSpriteUrl(mascot: MascotProfile | null, pose: MascotActionType): string | null {
-  if (!mascot) return null;
-  const actions = mascot.actions;
-  const directSprite = actions[pose]?.sprite_url;
-  if (directSprite) return directSprite;
-  if (pose === "celebrate") return actions.wave?.sprite_url || actions.idle?.sprite_url || mascot.master_image_url || null;
-  if (pose === "oops") return actions.thinking?.sprite_url || actions.idle?.sprite_url || mascot.master_image_url || null;
-  if (pose === "outro") {
-    return actions.wave?.sprite_url || actions.celebrate?.sprite_url || actions.idle?.sprite_url || mascot.master_image_url || null;
-  }
-  return actions.idle?.sprite_url || mascot.master_image_url || null;
-}
+import { useStagePreview } from "./useStagePreview";
+import { resolveStageTimelineState, stageBackgroundTime, STAGE_TIMELINE_DURATION_SECONDS } from "../utils/stageTimeline";
 
 export function useStageStudio({
   isOpen,
@@ -74,14 +48,6 @@ export function useStageStudio({
   const [showSafeMargins, setShowSafeMargins] = useState(false);
   const [flipHorizontal, setFlipHorizontal] = useState(false);
 
-  // Authentic Video Background Preview State (Powered by HyperFrames Engine)
-  const [previewHtml, setPreviewHtml] = useState<string>("");
-  const [pendingPreviewHtml, setPendingPreviewHtml] = useState<string>("");
-  const [previewLoading, setPreviewLoading] = useState<boolean>(false);
-  const [previewError, setPreviewError] = useState<boolean>(false);
-  const [previewRevision, setPreviewRevision] = useState(0);
-  const [iframeKey, setIframeKey] = useState<number>(1);
-
   // Selected Mascot & Channels
   const [selectedMascotId, setSelectedMascotId] = useState<string | null>(null);
   const [selectedChannelIds, setSelectedChannelIds] = useState<string[]>([]);
@@ -112,10 +78,12 @@ export function useStageStudio({
     scale,
     offsetX,
     offsetY,
+    flipHorizontal,
     setPosition,
     setScale,
     setOffsetX,
     setOffsetY,
+    setFlipHorizontal,
     onNotice,
     t,
   });
@@ -185,7 +153,7 @@ export function useStageStudio({
     return mascot || (allMascots.length > 0 ? allMascots[0] : null);
   }, [selectedMascotId, allMascots, mascot]);
 
-  // Scaled 1920x1080 Viewport
+  // Scale the selected canonical output canvas within the available editor viewport.
   const stageViewportRef = useRef<HTMLDivElement | null>(null);
   const [viewportDims, setViewportDims] = useState<{ width: number; height: number }>({ width: 800, height: 450 });
 
@@ -206,7 +174,7 @@ export function useStageStudio({
   const targetStageWidth = aspectRatio === "16:9" ? 1920 : 1080;
   const targetStageHeight = aspectRatio === "16:9" ? 1080 : 1920;
 
-  // Fit 1920x1080 within container while keeping aspect ratio
+  // Fit the selected canvas within the container while keeping its aspect ratio.
   const stageScale = useMemo(() => {
     const scaleX = (viewportDims.width - 32) / targetStageWidth;
     const scaleY = (viewportDims.height - 32) / targetStageHeight;
@@ -235,7 +203,7 @@ export function useStageStudio({
       if (!dragStartRef.current) return;
       const dx = (e.clientX - dragStartRef.current.startX) / stageScale;
       const dy = (e.clientY - dragStartRef.current.startY) / stageScale;
-      setOffsetX(Math.max(-2000, Math.min(2000, Math.round(dragStartRef.current.initX + dx))));
+      setOffsetX(Math.max(-1500, Math.min(1500, Math.round(dragStartRef.current.initX + dx))));
       setOffsetY(Math.max(-1500, Math.min(1500, Math.round(dragStartRef.current.initY + dy))));
     };
     const onMouseUp = () => {
@@ -285,22 +253,15 @@ export function useStageStudio({
   }, [isResizing, stageScale, scale]);
 
   // Timeline Director Rehearsal Scrubber Logic
-  const applyTimelineTime = (timeSec: number) => {
-    setScrubberTime(timeSec);
-    if (timeSec < 2.0) {
-      setScenarioPhase("intro");
-      setActivePose("wave");
-    } else if (timeSec < 9.0) {
-      setScenarioPhase("question");
-      setActivePose("thinking");
-    } else if (timeSec < 12.0) {
-      setScenarioPhase("reveal");
-      setActivePose(reactionStyle === "celebrate" ? "celebrate" : "oops");
-    } else {
-      setScenarioPhase("outro");
-      setActivePose("wave");
-    }
-  };
+  const applyTimelineTime = useCallback(
+    (timeSec: number) => {
+      setScrubberTime(timeSec);
+      const state = resolveStageTimelineState(timeSec, reactionStyle);
+      setScenarioPhase(state.phase);
+      setActivePose(state.pose);
+    },
+    [reactionStyle],
+  );
 
   // Check if Mascot is enabled to appear in the currently previewed phase
   const isMascotVisibleInCurrentPhase = useMemo(() => {
@@ -312,6 +273,29 @@ export function useStageStudio({
     }
     return showInQuestion !== false;
   }, [scenarioPhase, showInIntro, showInOutro, showInQuestion]);
+  const mascotPreviewTime = isPlaying ? stageBackgroundTime(scenarioPhase) : scrubberTime;
+  const preview = useStagePreview({
+    isOpen,
+    stageViewMode,
+    aspectRatio,
+    targetChannel,
+    questionLayoutId,
+    activeMascot,
+    selectedMascotId,
+    position,
+    scale,
+    offsetX,
+    offsetY,
+    flipHorizontal,
+    scenarioPhase,
+    activePose,
+    reactionStyle,
+    mascotPreviewTime,
+    isPlaying,
+    showInIntro,
+    showInOutro,
+    showInQuestion,
+  });
 
   // Rehearsal Playback Loop
   useEffect(() => {
@@ -319,7 +303,7 @@ export function useStageStudio({
     const interval = setInterval(() => {
       setScrubberTime((prev) => {
         const next = prev + 0.1;
-        if (next > 16.0) {
+        if (next > STAGE_TIMELINE_DURATION_SECONDS) {
           applyTimelineTime(0);
           return 0;
         }
@@ -328,82 +312,11 @@ export function useStageStudio({
       });
     }, 100);
     return () => clearInterval(interval);
-  }, [isPlaying, reactionStyle]);
-
-  // Mascot sprite/pose resolution with hierarchical fallback matching MascotStateResolver
-  const currentSpriteUrl = useMemo(() => resolvePreviewSpriteUrl(activeMascot, activePose), [activeMascot, activePose]);
-
-  // Fetch authentic HyperFrames background composition (Matching Visual Sandbox Layout)
-  useEffect(() => {
-    if (!isOpen || stageViewMode !== "video_stage") return;
-
-    let isMounted = true;
-    const fetchBackground = async () => {
-      try {
-        setPreviewLoading(true);
-        setPreviewError(false);
-        setPendingPreviewHtml("");
-        const previewTiming = SANDBOX_PREVIEW_TIMINGS[scenarioPhase];
-
-        const res = await api.previewSandboxComposition({
-          theme: "candy_arcade",
-          palette_id: targetChannel?.default_palette_id || "lime",
-          layout_id: questionLayoutId,
-          thinking_bar_style: targetChannel?.default_thinking_bar_style || "star_slider",
-          question_box_style: targetChannel?.default_question_box_style || "candy_pop",
-          answer_card_style: "glossy_arcade",
-          counter_style: targetChannel?.default_counter_style || "hanging_woodsign",
-          phase: previewTiming.phase,
-          timeline_time_seconds: previewTiming.timeSec,
-          mascot_enabled: true,
-          mascot_id: "stage_preview_layout_only",
-          mascot_position: position,
-        });
-
-        if (isMounted && res?.html) setPendingPreviewHtml(res.html);
-      } catch (err) {
-        console.warn("Failed to fetch stage background composition", err);
-        if (isMounted) {
-          setPreviewError(true);
-          setPreviewLoading(false);
-        }
-      }
-    };
-
-    const timer = setTimeout(() => void fetchBackground(), 100);
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-    };
-  }, [isOpen, stageViewMode, scenarioPhase, targetChannel, questionLayoutId, position, previewRevision]);
-
-  const retryPreview = () => setPreviewRevision((revision) => revision + 1);
-
-  const verifyPendingPreview = useCallback(
-    async (frame: HTMLIFrameElement, html: string) => {
-      try {
-        await verifyPreviewFonts(frame);
-        if (html !== pendingPreviewHtml) return;
-        setPreviewHtml(html);
-        setPendingPreviewHtml("");
-        setIframeKey((key) => key + 1);
-        setPreviewError(false);
-      } catch (error) {
-        if (html !== pendingPreviewHtml) return;
-        console.warn("Stage preview font verification failed", error);
-        setPendingPreviewHtml("");
-        setPreviewError(true);
-      } finally {
-        if (html === pendingPreviewHtml) setPreviewLoading(false);
-      }
-    },
-    [pendingPreviewHtml],
-  );
+  }, [applyTimelineTime, isPlaying]);
 
   // Reset all transforms to default
   const handleResetLayout = () => {
     applyDefaultPlacement();
-    setFlipHorizontal(false);
     setShowInIntro(false);
     setShowInOutro(false);
     setShowInQuestion(true);
@@ -419,6 +332,7 @@ export function useStageStudio({
         scale,
         offset_x: offsetX,
         offset_y: offsetY,
+        flip_x: flipHorizontal,
         show_in_intro: showInIntro,
         show_in_outro: showInOutro,
         show_in_question: showInQuestion,
@@ -533,15 +447,7 @@ export function useStageStudio({
     stageScale,
     isDragging,
     isResizing,
-    currentSpriteUrl,
-    previewHtml,
-    pendingPreviewHtml,
-    previewLoading,
-    previewError,
-    retryPreview,
-    verifyPendingPreview,
-    iframeKey,
-    setIframeKey,
+    ...preview,
     isMascotVisibleInCurrentPhase,
     handleMascotMouseDown,
     handleResizeHandleMouseDown,

@@ -149,8 +149,7 @@ export function MascotActionsStep({
                 style={
                   {
                     "--anim-speed": sprite.motion_speed || 1.0,
-                    "--anim-intensity":
-                      sprite.motion_intensity === "subtle" ? 0.35 : sprite.motion_intensity === "dynamic" ? 2.2 : 1.0,
+                    "--anim-intensity": sprite.motion_intensity === "subtle" ? 0.35 : sprite.motion_intensity === "dynamic" ? 2.2 : 1.0,
                   } as React.CSSProperties
                 }
               />

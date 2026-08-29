@@ -51,9 +51,10 @@ describe("route config propagation", () => {
       const saved = await app.server.inject({
         method: "POST",
         url: "/api/video/settings",
-        payload: { narration_words_per_second: 4 },
+        payload: { narration_words_per_second: 4, aspect_ratio: "9:16" },
       });
       expect(saved.statusCode).toBe(200);
+      expect(saved.json<{ video_generation: { aspect_ratio: string } }>().video_generation.aspect_ratio).toBe("9:16");
 
       const updated = await app.server.inject({
         method: "PATCH",

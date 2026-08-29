@@ -185,12 +185,13 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(res.html).toContain("state-thinking");
       expect(res.html).toContain("/api/mascots/mascot_test_123/assets/thinking_sprite.png");
       expect(res.html).toContain("--mascot-scale:1.25");
-      expect(res.html).toContain("--mascot-frames:6");
-      expect(res.html).toContain("--mascot-fps:12");
-      expect(res.html).toContain("--action-offset-x:20px");
-      expect(res.html).toContain("--action-offset-y:-10px");
+      expect(res.html).toContain('data-mascot-contract-version="2"');
+      expect(res.html).toContain('data-mascot-legacy-frames="6"');
+      expect(res.html).toContain('data-mascot-legacy-fps="12"');
+      expect(res.html).toContain('data-mascot-offset-x="20"');
+      expect(res.html).toContain('data-mascot-offset-y="-10"');
       expect(res.html).toContain('<base href="/">');
-      expect(res.html).toContain(".sandbox-preview-stage .mascot-state-layer");
+      expect(res.html).toContain("mascot-v2-preview");
     });
 
     it("falls back to master_image_url when selected action does not have a dedicated sprite", () => {
@@ -242,11 +243,10 @@ describe("buildSandboxComposition Preview Engine", () => {
     });
 
     it("uses one fixed Mascot-on content layout regardless of mascot anchor", () => {
-      const resLeft = buildSandboxComposition({
-        mascot_id: "stage_preview_layout_only",
-        mascot_position: "bottom_left",
-        layout_id: "media_left_choices_right",
-      });
+      const resLeft = buildSandboxComposition(
+        { mascot_id: "mascot_test_123", mascot_position: "bottom_left", layout_id: "media_left_choices_right" },
+        mockMascotProfile,
+      );
 
       expect(resLeft.html).toContain("layout-media_left_choices_right has-mascot sandbox-preview-stage");
       expect(resLeft.html).toContain("layout-media_left_choices_right");
@@ -266,16 +266,16 @@ describe("buildSandboxComposition Preview Engine", () => {
       );
       expect(resLeft.html).not.toContain("has-mascot-left");
       expect(resLeft.html).not.toContain("has-mascot-right");
-      expect(resLeft.html).not.toContain('<div class="candy-mascot-container');
+      expect(resLeft.html).toContain('<div class="candy-mascot-container');
 
-      const resRight = buildSandboxComposition({
-        mascot_id: "stage_preview_layout_only",
-        mascot_position: "bottom_right",
-        layout_id: "media_left_choices_right",
-      });
+      const resRight = buildSandboxComposition(
+        { mascot_id: "mascot_test_123", mascot_position: "bottom_right", layout_id: "media_left_choices_right" },
+        mockMascotProfile,
+      );
 
-      expect(resRight.html).toBe(resLeft.html);
-      expect(resRight.html).not.toContain('<div class="candy-mascot-container');
+      expect(resRight.html).toContain("layout-media_left_choices_right has-mascot sandbox-preview-stage");
+      expect(resRight.html).toContain("anchor-bottom_right");
+      expect(resRight.html).toContain('<div class="candy-mascot-container');
     });
   });
 });

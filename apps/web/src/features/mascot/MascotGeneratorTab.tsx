@@ -1,6 +1,5 @@
 import { lazy, Suspense } from "react";
 import { CircleNotch } from "@phosphor-icons/react";
-import type { Channel, MascotProfile } from "@studio/shared";
 import { useTranslation } from "../../i18n";
 import { getLocalizedActionMeta } from "./constants";
 import { MascotConceptStep } from "./components/MascotConceptStep";
@@ -12,12 +11,10 @@ const MascotAnimationStep = lazy(() =>
 );
 
 type MascotGeneratorTabProps = {
-  channels: Channel[];
-  mascots: MascotProfile[];
   generatorState: ReturnType<typeof useMascotGenerator>;
 };
 
-export function MascotGeneratorTab({ channels, mascots, generatorState }: MascotGeneratorTabProps) {
+export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) {
   const { t } = useTranslation();
   const {
     generatorStep,

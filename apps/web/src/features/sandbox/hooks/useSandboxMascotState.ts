@@ -11,6 +11,7 @@ export function useSandboxMascotState() {
   const [mascotScale, setMascotScale] = useState(1);
   const [mascotOffsetX, setMascotOffsetX] = useState(0);
   const [mascotOffsetY, setMascotOffsetY] = useState(0);
+  const [mascotFlipX, setMascotFlipX] = useState(false);
 
   useEffect(() => {
     api
@@ -44,6 +45,8 @@ export function useSandboxMascotState() {
     setMascotOffsetX,
     mascotOffsetY,
     setMascotOffsetY,
+    mascotFlipX,
+    setMascotFlipX,
     activeMascot,
   };
 }

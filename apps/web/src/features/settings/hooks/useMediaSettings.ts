@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import type { AppConfig, ImageProviderId } from "@studio/shared";
+import type { AppConfig, ImageProviderId, MascotRenderAspectRatio } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 
@@ -13,6 +13,7 @@ type UseMediaSettingsProps = {
 export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNotice }: UseMediaSettingsProps) {
   const [maxSceneDuration, setMaxSceneDuration] = useState(appConfig?.video_generation.max_scene_duration_seconds ?? 8);
   const [narrationWordsPerSecond, setNarrationWordsPerSecond] = useState(appConfig?.video_generation.narration_words_per_second ?? 2.3);
+  const [aspectRatio, setAspectRatio] = useState<MascotRenderAspectRatio>(appConfig?.video_generation.aspect_ratio ?? "16:9");
   const [maxConcurrentVideoTasks, setMaxConcurrentVideoTasks] = useState(appConfig?.video_generation.max_concurrent_tasks ?? 2);
   const [savingVideo, setSavingVideo] = useState(false);
 
@@ -44,6 +45,7 @@ export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNoti
     if (video) {
       setMaxSceneDuration(video.max_scene_duration_seconds ?? 8);
       setNarrationWordsPerSecond(video.narration_words_per_second ?? 2.3);
+      setAspectRatio(video.aspect_ratio ?? "16:9");
       setMaxConcurrentVideoTasks(video.max_concurrent_tasks ?? 2);
     }
     if (appConfig?.image_generation) {
@@ -71,6 +73,7 @@ export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNoti
       const next = await api.saveVideoSettings({
         max_scene_duration_seconds: maxSceneDuration,
         narration_words_per_second: narrationWordsPerSecond,
+        aspect_ratio: aspectRatio,
         max_concurrent_tasks: maxConcurrentVideoTasks,
       });
       await onVideoSaved(next.video_generation);
@@ -183,6 +186,8 @@ export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNoti
     setMaxSceneDuration,
     narrationWordsPerSecond,
     setNarrationWordsPerSecond,
+    aspectRatio,
+    setAspectRatio,
     maxConcurrentVideoTasks,
     setMaxConcurrentVideoTasks,
     savingVideo,

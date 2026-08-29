@@ -1,4 +1,4 @@
-import { Crosshair, EyeSlash, Smiley } from "@phosphor-icons/react";
+import { Crosshair, EyeSlash } from "@phosphor-icons/react";
 import type { useStageStudio } from "../hooks/useStageStudio";
 import { StageCanvasBackdrop } from "./StageCanvasBackdrop";
 import { StageCanvasGuides } from "./StageCanvasGuides";
@@ -15,17 +15,12 @@ export function StageCanvasViewport({ studio }: StageCanvasViewportProps) {
     stageViewMode,
     showGuides,
     showSafeMargins,
-    flipHorizontal,
     position,
     scale,
     offsetX,
     offsetY,
-    activePose,
-    isPlaying,
     isDragging,
     isResizing,
-    activeMascot,
-    currentSpriteUrl,
     previewHtml,
     pendingPreviewHtml,
     previewLoading,
@@ -41,10 +36,6 @@ export function StageCanvasViewport({ studio }: StageCanvasViewportProps) {
     handleMascotMouseDown,
     handleResizeHandleMouseDown,
   } = studio;
-
-  const currentActionMeta = activeMascot?.actions[activePose];
-  const spriteOffsetX = currentActionMeta?.offset_x || 0;
-  const spriteOffsetY = currentActionMeta?.offset_y || 0;
 
   return (
     <div className="stage-canvas-workspace" ref={stageViewportRef}>
@@ -89,29 +80,21 @@ export function StageCanvasViewport({ studio }: StageCanvasViewportProps) {
             titleSafeLabel={t("stageStudio.titleSafeLabel")}
           />
 
-          {/* Mascot on Stage (Conditioned on Scene Visibility) */}
+          {/* Transparent editor controls; the visible mascot is rendered inside the canonical V2 iframe. */}
           {isMascotVisibleInCurrentPhase ? (
             <div
               className={`stage-mascot-container anchor-${position} ${isDragging ? "is-dragging" : ""} ${isResizing ? "is-resizing" : ""}`}
               style={
                 {
                   zIndex: 40,
-                  transform: `scale(${scale}) ${flipHorizontal ? "scaleX(-1)" : ""}`,
+                  transform: `translate3d(${offsetX}px, ${offsetY}px, 0) scale(${scale})`,
                   transformOrigin: "bottom center",
                   "--mascot-scale": scale,
-                  "--action-offset-x": `${offsetX + spriteOffsetX}px`,
-                  "--action-offset-y": `${offsetY + spriteOffsetY}px`,
                 } as React.CSSProperties
               }
               onMouseDown={handleMascotMouseDown}
             >
-              {/* Transform Bounding Box with Corner Resize Handles */}
-              <div
-                className="stage-mascot-bounding-box"
-                style={{
-                  transform: `translate(${offsetX + spriteOffsetX}px, ${offsetY + spriteOffsetY}px)`,
-                }}
-              >
+              <div className="stage-mascot-bounding-box">
                 {/* Corner Resize Handles */}
                 <div
                   className="transform-handle handle-tl"
@@ -142,46 +125,13 @@ export function StageCanvasViewport({ studio }: StageCanvasViewportProps) {
                   </span>
                 </div>
               </div>
-
-              {/* Mascot Visual Render */}
-              {currentSpriteUrl ? (
-                <div
-                  className={`stage-mascot-sprite ${isPlaying ? `motion-${currentActionMeta?.motion_preset || "breathe"}` : ""}`}
-                  style={
-                    {
-                      backgroundImage: `url(${currentSpriteUrl})`,
-                      transform: `translate(${offsetX + spriteOffsetX}px, ${offsetY + spriteOffsetY}px)`,
-                      "--action-offset-x": `${offsetX + spriteOffsetX}px`,
-                      "--action-offset-y": `${offsetY + spriteOffsetY}px`,
-                      "--anim-speed": currentActionMeta?.motion_speed || 1.0,
-                      "--anim-intensity":
-                        currentActionMeta?.motion_intensity === "subtle"
-                          ? 0.35
-                          : currentActionMeta?.motion_intensity === "dynamic"
-                            ? 2.2
-                            : 1.0,
-                    } as React.CSSProperties
-                  }
-                  title={t("stageStudio.dragToRepositionTooltip")}
-                />
-              ) : (
-                <div
-                  className="stage-mascot-placeholder-box"
-                  style={{
-                    transform: `translate(${offsetX + spriteOffsetX}px, ${offsetY + spriteOffsetY}px)`,
-                  }}
-                >
-                  <Smiley size={64} style={{ color: activeMascot?.color_theme || "var(--accent)" }} />
-                  <span>{activeMascot?.name || "Mascot"}</span>
-                </div>
-              )}
             </div>
           ) : (
             /* Subtle silhouette indicator when Mascot is toggled OFF in current phase */
             <div
               className={`stage-mascot-hidden-indicator anchor-${position}`}
               style={{
-                transform: `scale(${scale}) translate(${offsetX + spriteOffsetX}px, ${offsetY + spriteOffsetY}px)`,
+                transform: `translate3d(${offsetX}px, ${offsetY}px, 0) scale(${scale})`,
                 transformOrigin: "bottom center",
               }}
             >

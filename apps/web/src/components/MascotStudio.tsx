@@ -30,7 +30,6 @@ export function MascotStudioView({
   });
 
   const generatorState = useMascotGenerator({
-    channels,
     onNotice,
     onRefreshChannels,
     onMascotsChanged: libraryState.loadMascots,
@@ -129,9 +128,7 @@ export function MascotStudioView({
       ) : null}
 
       {/* Tab 2: Generator */}
-      {activeTab === "generator" ? (
-        <MascotGeneratorTab channels={channels} mascots={libraryState.mascots} generatorState={generatorState} />
-      ) : null}
+      {activeTab === "generator" ? <MascotGeneratorTab generatorState={generatorState} /> : null}
     </section>
   );
 }

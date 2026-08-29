@@ -14,6 +14,8 @@ import {
   type QuizThinkingBarStyle,
   type QuizTimeline,
   type QuizV2,
+  MASCOT_CANVAS_SIZES,
+  type MascotRenderAspectRatio,
   type Scene,
 } from "@studio/shared";
 import {
@@ -32,11 +34,14 @@ export function buildQuizComposition(
   options?: {
     assets?: Record<string, string>;
     bgmOptions?: ResolveBgmOptions;
+    aspectRatio?: MascotRenderAspectRatio;
     mascot?: MascotProfile | null;
     mascotConfig?: ChannelMascotConfig | null;
   },
 ): string {
   const normalizedFormat = (config.quiz_format === "knowledge" ? "multiple_choice" : config.quiz_format) as QuizQuestionFormat;
+  const aspectRatio = options?.aspectRatio ?? "16:9";
+  const canvas = MASCOT_CANVAS_SIZES[aspectRatio];
   const requiredChoiceCount = quizChoiceCountForFormat(normalizedFormat);
   for (const scene of scenes) {
     if (!scene.quiz || !scene.quiz.question_number || ["intro", "outro"].includes(scene.quiz.phase)) continue;
@@ -100,12 +105,23 @@ export function buildQuizComposition(
     })
     .join("\n");
   const css =
-    candyArcadeFontFaceCss("render") +
-    ':root{color-scheme:dark;--ink:#18212b;--cream:#fff8e8;--yellow:#ffd65a;--coral:#ff7866;--mint:#73d6bd;--blue:#78b9ff}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--ink);font-family:Arial,sans-serif}body{color:var(--cream)}#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:radial-gradient(circle at 18% 10%,#31445c 0,#18212b 45%,#111820 100%)}#stage:before{content:"";position:absolute;inset:0;opacity:.17;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:34px 34px}section.clip{position:absolute;inset:0;padding:125px 160px 100px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}.scene-kicker{padding:14px 24px;border:4px solid var(--yellow);border-radius:999px;color:var(--yellow);font-size:34px;font-weight:800;letter-spacing:.14em}section.clip h1{max-width:1420px;margin:36px 0 42px;color:var(--cream);font-family:"SVN-Hello Headline",Arial,sans-serif;font-size:82px;line-height:1.04;letter-spacing:-.04em;text-wrap:balance}.answer-grid{display:grid;grid-template-columns:repeat(3,260px);gap:24px;margin-bottom:38px}.answer-grid div{min-width:220px;display:grid;gap:8px;padding:22px 16px;border-radius:26px;color:var(--ink);font-size:58px;font-weight:900}.answer-grid div span{font-size:22px;line-height:1.15;font-weight:700}.answer-grid div:nth-child(1){background:var(--coral)}.answer-grid div:nth-child(2){background:var(--mint)}.answer-grid div:nth-child(3){background:var(--blue)}.voice-line{max-width:1180px;margin:0;color:#dce7ef;font-size:31px;line-height:1.35}.countdown{display:flex;gap:14px;margin-top:34px}.countdown span{width:18px;height:18px;border-radius:50%;background:var(--yellow)}.sparkle{position:absolute;color:var(--yellow);font-size:88px}.sparkle-one{top:120px;left:190px}.sparkle-two{right:210px;bottom:150px;color:var(--coral)}';
+    (
+      candyArcadeFontFaceCss("render") +
+      ':root{color-scheme:dark;--ink:#18212b;--cream:#fff8e8;--yellow:#ffd65a;--coral:#ff7866;--mint:#73d6bd;--blue:#78b9ff}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--ink);font-family:Arial,sans-serif}body{color:var(--cream)}#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:radial-gradient(circle at 18% 10%,#31445c 0,#18212b 45%,#111820 100%)}#stage:before{content:"";position:absolute;inset:0;opacity:.17;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:34px 34px}section.clip{position:absolute;inset:0;padding:125px 160px 100px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}.scene-kicker{padding:14px 24px;border:4px solid var(--yellow);border-radius:999px;color:var(--yellow);font-size:34px;font-weight:800;letter-spacing:.14em}section.clip h1{max-width:1420px;margin:36px 0 42px;color:var(--cream);font-family:"SVN-Hello Headline",Arial,sans-serif;font-size:82px;line-height:1.04;letter-spacing:-.04em;text-wrap:balance}.answer-grid{display:grid;grid-template-columns:repeat(3,260px);gap:24px;margin-bottom:38px}.answer-grid div{min-width:220px;display:grid;gap:8px;padding:22px 16px;border-radius:26px;color:var(--ink);font-size:58px;font-weight:900}.answer-grid div span{font-size:22px;line-height:1.15;font-weight:700}.answer-grid div:nth-child(1){background:var(--coral)}.answer-grid div:nth-child(2){background:var(--mint)}.answer-grid div:nth-child(3){background:var(--blue)}.voice-line{max-width:1180px;margin:0;color:#dce7ef;font-size:31px;line-height:1.35}.countdown{display:flex;gap:14px;margin-top:34px}.countdown span{width:18px;height:18px;border-radius:50%;background:var(--yellow)}.sparkle{position:absolute;color:var(--yellow);font-size:88px}.sparkle-one{top:120px;left:190px}.sparkle-two{right:210px;bottom:150px;color:var(--coral)}'
+    ).replace(
+      "#stage{position:relative;width:1920px;height:1080px;",
+      `#stage{position:relative;width:${canvas.width}px;height:${canvas.height}px;`,
+    ) + (aspectRatio === "9:16" ? legacyPortraitCss : "");
   return (
     '<!doctype html><html><head><meta charset="utf-8"><title>Quiz composition</title><style>' +
     css +
-    '</style></head><body><main id="stage" data-composition-id="quiz" data-no-timeline data-start="0" data-width="1920" data-height="1080" data-duration="' +
+    '</style></head><body><main id="stage" data-composition-id="quiz" data-no-timeline data-start="0" data-width="' +
+    canvas.width +
+    '" data-height="' +
+    canvas.height +
+    '" data-aspect-ratio="' +
+    aspectRatio +
+    '" data-duration="' +
     totalDuration.toFixed(3) +
     '" data-fps="30">' +
     clips +
@@ -130,6 +146,7 @@ export type QuizV2CompositionInput = {
   theme: QuizConfig["visual_theme"];
   audioPath: string;
   narrationDurationSeconds: number;
+  aspectRatio?: MascotRenderAspectRatio;
   assets?: Record<string, string>;
   bgmOptions?: ResolveBgmOptions;
   mascot?: MascotProfile | null;
@@ -139,6 +156,7 @@ export type QuizV2CompositionInput = {
   defaultAnswerCardStyle?: QuizAnswerCardStyle | null;
   defaultCounterStyle?: QuizQuestionCounterStyle | null;
   defaultPaletteId?: QuizPaletteId | null;
+  premixedAudio?: boolean;
 };
 
 /**
@@ -158,3 +176,6 @@ export function buildQuizV2CompositionBundle(input: QuizV2CompositionInput): Can
 function audioSource(value: string): string {
   return escapeHtml(value.startsWith("./") || value.startsWith("../") ? value : pathToFileURL(value).href);
 }
+
+const legacyPortraitCss =
+  '#stage[data-aspect-ratio="9:16"] section.clip{padding:96px 64px 80px}#stage[data-aspect-ratio="9:16"] section.clip h1{max-width:900px;font-size:72px}#stage[data-aspect-ratio="9:16"] .answer-grid{grid-template-columns:1fr;gap:22px}#stage[data-aspect-ratio="9:16"] .voice-line{max-width:860px;font-size:28px}';

@@ -63,4 +63,3 @@ export function wavDurationSeconds(buffer: Uint8Array): number {
   if (!byteRate || !dataSize) throw new Error("Invalid WAV headers: missing fmt or data chunk");
   return Math.round((dataSize / byteRate) * 100) / 100;
 }
-

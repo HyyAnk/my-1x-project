@@ -190,3 +190,24 @@ export async function updateEpisodeSettings(
   if (quizSettingsChanged) await this.invalidateQuizSourceArtifacts(channelId, episodeId);
   return next;
 }
+
+export async function markTopicSelected(this: RepositoryRuntime, channelId: string, topicId: string, questionCount: number): Promise<void> {
+  const channel = await this.getChannel(channelId);
+  const directory = this.resolvePath("channels", channel.slug, "topics");
+  const entries = await readdir(directory, { withFileTypes: true });
+  for (const entry of entries.filter((item) => item.isFile() && item.name.endsWith(".json"))) {
+    const filePath = path.join(directory, entry.name);
+    try {
+      const run = JSON.parse(await readFile(filePath, "utf8")) as TopicRun;
+      let changed = false;
+      run.candidates = run.candidates.map((topic) => {
+        if (topic.topic_id !== topicId) return topic;
+        changed = true;
+        return { ...topic, question_count: questionCount, selected: true };
+      });
+      if (changed) await this.writeJsonAtomic(filePath, run);
+    } catch {
+      // Ignore malformed historical runs.
+    }
+  }
+}

@@ -48,6 +48,7 @@ export function useSandboxChannelSync({ channels, design, mascot, onNotice, onRe
               scale: mascot.mascotScale,
               offset_x: mascot.mascotOffsetX,
               offset_y: mascot.mascotOffsetY,
+              flip_x: mascot.mascotFlipX,
               show_in_question: true,
             },
           });

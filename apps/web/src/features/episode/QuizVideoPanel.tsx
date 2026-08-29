@@ -69,7 +69,11 @@ export function QuizVideoPanel({
           <video
             controls
             preload="metadata"
-            src={`${api.videoUrl(channel.channel_id, episodeId)}?v=${encodeURIComponent(episode.video_generated_at ?? "")}`}
+            src={
+              episode.video_generated_at
+                ? `${api.videoUrl(channel.channel_id, episodeId)}?v=${encodeURIComponent(episode.video_generated_at)}`
+                : api.videoUrl(channel.channel_id, episodeId)
+            }
             aria-label="Rendered video"
           />
           <div>

@@ -46,6 +46,8 @@ describe("useSandboxPresets", () => {
       setMascotOffsetX: vi.fn(),
       mascotOffsetY: 0,
       setMascotOffsetY: vi.fn(),
+      mascotFlipX: false,
+      setMascotFlipX: vi.fn(),
       activeMascot: null,
     };
   });

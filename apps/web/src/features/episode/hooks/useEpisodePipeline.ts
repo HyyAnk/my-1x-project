@@ -3,6 +3,7 @@ import {
   QUIZ_MAX_QUESTION_COUNT,
   QUIZ_MIN_QUESTION_COUNT,
   type Channel,
+  type Episode,
   type QuestionHistoryCheckResult,
   type QuizAnswerCardStyle,
   type QuizImageStyle,
@@ -47,6 +48,7 @@ export function useEpisodePipeline({
 }: UseEpisodePipelineProps) {
   const {
     episode,
+    setEpisode,
     research,
     setResearch,
     treatment,
@@ -333,13 +335,24 @@ export function useEpisodePipeline({
     }
   };
 
-  const saveQuestionCount = async () => {
-    if (!episode || questionCountDraft === (episode.quiz_config?.question_count ?? 8)) return;
-    if (
-      !Number.isInteger(questionCountDraft) ||
-      questionCountDraft < QUIZ_MIN_QUESTION_COUNT ||
-      questionCountDraft > QUIZ_MAX_QUESTION_COUNT
-    ) {
+  // Style saves only touch quiz_config: apply the PATCH response directly instead
+  // of refetching every episode artifact through load().
+  const saveQuizStyles = async (busyKey: string, patch: Partial<Episode["quiz_config"]>, successMessage: string) => {
+    setBusy(busyKey);
+    try {
+      const updated = await api.updateEpisode(channel.channel_id, episodeId, patch);
+      setEpisode(updated);
+      onNotice({ tone: "good", message: successMessage });
+    } catch (error) {
+      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not update episode" });
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const saveQuestionCount = async (count: number) => {
+    if (!episode || count === (episode.quiz_config?.question_count ?? 8)) return;
+    if (!Number.isInteger(count) || count < QUIZ_MIN_QUESTION_COUNT || count > QUIZ_MAX_QUESTION_COUNT) {
       onNotice({
         tone: "bad",
         message: `Questions must be between ${QUIZ_MIN_QUESTION_COUNT} and ${QUIZ_MAX_QUESTION_COUNT}`,
@@ -347,107 +360,69 @@ export function useEpisodePipeline({
       setQuestionCountDraft(episode.quiz_config?.question_count ?? 8);
       return;
     }
-    setBusy("question-count");
-    try {
-      await api.updateEpisode(channel.channel_id, episodeId, { question_count: questionCountDraft });
-      await load();
-      onNotice({ tone: "good", message: "Question count updated" });
-    } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not update question count" });
-    } finally {
-      setBusy(null);
-    }
+    setQuestionCountDraft(count);
+    await saveQuizStyles("question-count", { question_count: count }, "Question count updated");
   };
 
   const saveVisualStyle = async (newStyle: QuizImageStyle | "mixed") => {
     if (!episode || newStyle === (episode.quiz_config?.visual_style ?? "mixed")) return;
-    setBusy("visual-style");
-    try {
-      await api.updateEpisode(channel.channel_id, episodeId, { visual_style: newStyle });
-      await load();
-      onNotice({ tone: "good", message: `Visual style set to ${newStyle === "mixed" ? "Mixed" : newStyle}` });
-    } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not update visual style" });
-    } finally {
-      setBusy(null);
-    }
+    await saveQuizStyles(
+      "visual-style",
+      { visual_style: newStyle },
+      `Visual style set to ${newStyle === "mixed" ? "Mixed" : newStyle}`,
+    );
   };
 
   const saveThinkingBarStyle = async (newStyle: QuizThinkingBarStyle) => {
     if (!episode || newStyle === (episode.quiz_config?.thinking_bar_style ?? "auto")) return;
-    setBusy("thinking-bar-style");
-    try {
-      await api.updateEpisode(channel.channel_id, episodeId, { thinking_bar_style: newStyle });
-      await load();
-      onNotice({ tone: "good", message: `Thinking bar style set to ${newStyle === "auto" ? "Channel Default" : newStyle}` });
-    } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not update thinking bar style" });
-    } finally {
-      setBusy(null);
-    }
+    await saveQuizStyles(
+      "thinking-bar-style",
+      { thinking_bar_style: newStyle },
+      `Thinking bar style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
+    );
   };
 
   const saveQuestionBoxStyle = async (newStyle: QuizQuestionBoxStyle) => {
     if (!episode || newStyle === (episode.quiz_config?.question_box_style ?? "auto")) return;
-    setBusy("question-box-style");
-    try {
-      await api.updateEpisode(channel.channel_id, episodeId, { question_box_style: newStyle, style_preset_id: "custom" });
-      await load();
-      onNotice({ tone: "good", message: `Question box style set to ${newStyle === "auto" ? "Channel Default" : newStyle}` });
-    } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not update question box style" });
-    } finally {
-      setBusy(null);
-    }
+    await saveQuizStyles(
+      "question-box-style",
+      { question_box_style: newStyle, style_preset_id: "custom" },
+      `Question box style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
+    );
   };
 
   const saveAnswerCardStyle = async (newStyle: QuizAnswerCardStyle) => {
     if (!episode || newStyle === (episode.quiz_config?.answer_card_style ?? "auto")) return;
-    setBusy("answer-card-style");
-    try {
-      await api.updateEpisode(channel.channel_id, episodeId, { answer_card_style: newStyle, style_preset_id: "custom" });
-      await load();
-      onNotice({ tone: "good", message: `Answer card style set to ${newStyle === "auto" ? "Channel Default" : newStyle}` });
-    } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not update answer card style" });
-    } finally {
-      setBusy(null);
-    }
+    await saveQuizStyles(
+      "answer-card-style",
+      { answer_card_style: newStyle, style_preset_id: "custom" },
+      `Answer card style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
+    );
   };
 
   const saveCounterStyle = async (newStyle: QuizQuestionCounterStyle) => {
     if (!episode || newStyle === (episode.quiz_config?.question_counter_style ?? "auto")) return;
-    setBusy("counter-style");
-    try {
-      await api.updateEpisode(channel.channel_id, episodeId, { question_counter_style: newStyle, style_preset_id: "custom" });
-      await load();
-      onNotice({ tone: "good", message: `Counter badge style set to ${newStyle === "auto" ? "Channel Default" : newStyle}` });
-    } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not update counter badge style" });
-    } finally {
-      setBusy(null);
-    }
+    await saveQuizStyles(
+      "counter-style",
+      { question_counter_style: newStyle, style_preset_id: "custom" },
+      `Counter badge style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
+    );
   };
 
   const savePaletteId = async (newPalette: QuizPaletteId) => {
     if (!episode || newPalette === (episode.quiz_config?.palette_id ?? "auto")) return;
-    setBusy("palette-id");
-    try {
-      await api.updateEpisode(channel.channel_id, episodeId, { palette_id: newPalette, style_preset_id: "custom" });
-      await load();
-      onNotice({ tone: "good", message: `Color palette set to ${newPalette === "auto" ? "Channel Default" : newPalette}` });
-    } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not update color palette" });
-    } finally {
-      setBusy(null);
-    }
+    await saveQuizStyles(
+      "palette-id",
+      { palette_id: newPalette, style_preset_id: "custom" },
+      `Color palette set to ${newPalette === "auto" ? "Channel Default" : newPalette}`,
+    );
   };
 
   const applyStylePreset = async (preset: VisualPresetItem) => {
     if (!episode) return;
-    setBusy("style-preset");
-    try {
-      await api.updateEpisode(channel.channel_id, episodeId, {
+    await saveQuizStyles(
+      "style-preset",
+      {
         style_preset_id: preset.id,
         visual_theme: preset.theme,
         palette_id: preset.palette_id,
@@ -455,14 +430,9 @@ export function useEpisodePipeline({
         answer_card_style: preset.answer_card_style,
         question_counter_style: preset.counter_style,
         thinking_bar_style: preset.thinking_bar_style,
-      });
-      await load();
-      onNotice({ tone: "good", message: `Applied "${preset.name}" preset pack` });
-    } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not apply style preset" });
-    } finally {
-      setBusy(null);
-    }
+      },
+      `Applied "${preset.name}" preset pack`,
+    );
   };
 
   const saveDuration = async () => {

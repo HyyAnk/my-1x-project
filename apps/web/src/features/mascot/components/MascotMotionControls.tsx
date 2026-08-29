@@ -2,12 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, CheckCircle, CircleNotch, Sparkle, ArrowCounterClockwise, FloppyDisk } from "@phosphor-icons/react";
 import type { MascotActionType, MascotProfile } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
-import {
-  getLocalizedActionMeta,
-  MOTION_PRESETS,
-  type MascotMotionPreset,
-  type MascotMotionIntensity,
-} from "../constants";
+import { getLocalizedActionMeta, MOTION_PRESETS, type MascotMotionPreset, type MascotMotionIntensity } from "../constants";
 
 export type MascotMotionControlsProps = {
   editingMascot: MascotProfile | null;
@@ -110,9 +105,7 @@ export function MascotMotionControls({
           >
             {calibrating ? <CircleNotch className="spin" size={14} /> : <FloppyDisk size={14} />}
             <span>
-              {calibrating
-                ? t("mascots.savingMotionBtn")
-                : `${t("mascots.saveMotionBtn")} (${activeActionMeta.label.split(" ")[0]})`}
+              {calibrating ? t("mascots.savingMotionBtn") : `${t("mascots.saveMotionBtn")} (${activeActionMeta.label.split(" ")[0]})`}
             </span>
           </button>
         </div>
@@ -197,9 +190,7 @@ export function MascotMotionControls({
                 borderRadius: "var(--radius-sm)",
               }}
             >
-              <span style={{ fontSize: "11.5px", color: "var(--ink-secondary)" }}>
-                {t("mascots.resetConfirmPrompt")}
-              </span>
+              <span style={{ fontSize: "11.5px", color: "var(--ink-secondary)" }}>{t("mascots.resetConfirmPrompt")}</span>
               <div style={{ display: "flex", gap: "6px" }}>
                 <button
                   type="button"

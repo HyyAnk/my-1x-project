@@ -7,6 +7,7 @@ import {
   CreateMascotInputSchema,
   GenerateMascotConceptInputSchema,
   GenerateMascotSpriteInputSchema,
+  MascotMigrationInputSchema,
   MASCOT_ACTION_META,
   RemoveMascotBackgroundInputSchema,
   UpdateMascotInputSchema,
@@ -24,6 +25,7 @@ import {
 import type { RepositoryService } from "../repository.js";
 import { removeImageBackground } from "../utils/imageMatting.js";
 import type { AppState } from "./state.js";
+import { migrateMascotStorage, rollbackMascotStorage } from "../repository/mascotMigration.js";
 
 export type MascotsRouteDeps = {
   repository: RepositoryService;
@@ -35,6 +37,20 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
   return (server, _options, done) => {
     const { repository, logger, state } = deps;
     server.get("/api/mascots", async () => ({ mascots: await repository.listMascots() }));
+    server.post("/api/mascots/migration", async (request) => {
+      const input = MascotMigrationInputSchema.parse(request.body ?? {});
+      if (input.mode === "rollback") {
+        if (!input.migration_id) throw new Error("migration_id is required for mascot rollback");
+        return { report: await rollbackMascotStorage(repository, input.migration_id) };
+      }
+      return {
+        report: await migrateMascotStorage(repository, {
+          mode: input.mode,
+          migration_id: input.migration_id,
+          mascot_id: input.mascot_id,
+        }),
+      };
+    });
     server.get("/api/mascots/:mascotId", async (request) => {
       const mascotId = (request.params as { mascotId: string }).mascotId;
       return { mascot: await repository.getMascot(mascotId) };
@@ -81,6 +97,7 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
       const updatedMascot = await repository.getMascot(mascotId);
       return { mascot: updatedMascot, ...result };
     });
+    /** Compatibility endpoint: new clients should create one action image and use V2 motion metadata. */
     server.post("/api/mascots/:mascotId/generate-sprite", async (request) => {
       const mascotId = (request.params as { mascotId: string }).mascotId;
       const input = GenerateMascotSpriteInputSchema.parse(request.body);
@@ -101,6 +118,7 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
       const updatedMascot = await repository.getMascot(mascotId);
       return { mascot: updatedMascot, ...result };
     });
+    /** Compatibility endpoint: imported multi-frame strips remain readable but are not the V2 authoring model. */
     server.post("/api/mascots/:mascotId/upload-sprite", async (request) => {
       const mascotId = (request.params as { mascotId: string }).mascotId;
       const input = UploadMascotSpriteInputSchema.parse(request.body);
