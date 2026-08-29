@@ -231,6 +231,24 @@ export async function generatePipelineBundleImages(this: TaskManagerRuntime, tas
 }
 
 export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): Promise<void> {
+  let assetState = { completed: 0, total: 0, reused: false };
+  let voiceState = { completed: 0, total: 0, reused: false };
+  let isParallelMode = false;
+
+  const updateParallelProgress = async () => {
+    if (isParallelMode) {
+      const assetRatio = assetState.total > 0 ? assetState.completed / assetState.total : 1;
+      const voiceRatio = voiceState.total > 0 ? voiceState.completed / voiceState.total : 1;
+      const progress_percent = 36 + Math.round(assetRatio * 9 + voiceRatio * 7);
+      const assetLabel = `assets ${assetState.completed}/${Math.max(1, assetState.total)}`;
+      const voiceLabel = `voice ${voiceState.completed}/${Math.max(1, voiceState.total)}`;
+      await this.update(task.task_id, {
+        progress_message: `Quiz · ${assetLabel} | ${voiceLabel}`,
+        progress_percent,
+      });
+    }
+  };
+
   const input = {
     repository: this.repository,
     config: { audio_generation: this.audioConfig, image_generation: this.imageConfig },
@@ -239,16 +257,26 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
     activeEngine: this.activeEngine,
     antigravityClient: this.antigravity,
     onAssetProgress: async ({ completed, total, reused }: { completed: number; total: number; reused: boolean }) => {
-      await this.update(task.task_id, {
-        progress_message: `Quiz · resolving assets ${completed}/${total}${reused ? " · reused" : ""}`,
-        progress_percent: 36 + Math.round((completed / Math.max(1, total)) * 9),
-      });
+      assetState = { completed, total, reused };
+      if (isParallelMode) {
+        await updateParallelProgress();
+      } else {
+        await this.update(task.task_id, {
+          progress_message: `Quiz · resolving assets ${completed}/${total}${reused ? " · reused" : ""}`,
+          progress_percent: 36 + Math.round((completed / Math.max(1, total)) * 9),
+        });
+      }
     },
     onVoiceProgress: async ({ completed, total, reused }: { completed: number; total: number; reused: boolean }) => {
-      await this.update(task.task_id, {
-        progress_message: `Quiz · ${reused ? "reusing" : "generating"} voice ${completed}/${total}`,
-        progress_percent: 46 + Math.round((completed / Math.max(1, total)) * 7),
-      });
+      voiceState = { completed, total, reused };
+      if (isParallelMode) {
+        await updateParallelProgress();
+      } else {
+        await this.update(task.task_id, {
+          progress_message: `Quiz · ${reused ? "reusing" : "generating"} voice ${completed}/${total}`,
+          progress_percent: 46 + Math.round((completed / Math.max(1, total)) * 7),
+        });
+      }
     },
     onVoicePacingClamp: (details: QuizVoicePacingClamp) => {
       this.logger.warn(`Quiz voice pacing clamp hit ${JSON.stringify(details)}`, {
@@ -275,7 +303,8 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
     await planAssets(input);
     artifacts = await readQuizArtifacts(input);
   }
-  if (
+
+  const needsAssets =
     !artifacts.asset_resolution ||
     !artifacts.asset_plan ||
     !(await isQuizAssetResolutionComplete({
@@ -285,12 +314,8 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
       plan: artifacts.asset_plan,
       resolution: artifacts.asset_resolution,
       activeEngine: this.activeEngine,
-    }))
-  ) {
-    await this.update(task.task_id, { progress_message: "Quiz · resolving semantic assets", progress_percent: 36 });
-    await resolveAssets(input);
-    artifacts = await readQuizArtifacts(input);
-  }
+    }));
+
   const voicePaceNeedsRegeneration = artifacts.quiz
     ? quizVoicePlanNeedsRegeneration({
         voicePlan: artifacts.voice_plan,
@@ -298,17 +323,34 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
         assessmentIssueCodes: artifacts.assessment?.issues.map((issue) => issue.code),
       })
     : false;
-  if (
+
+  const needsVoice =
     !artifacts.voice_plan ||
     voicePaceNeedsRegeneration ||
     !(await this.hasValidNarrationAsset(task.channel_id, task.episode_id!, episode.narration_asset_path)) ||
-    artifacts.voice_plan.segments.some((segment) => segment.duration_seconds === null)
-  ) {
+    artifacts.voice_plan.segments.some((segment) => segment.duration_seconds === null);
+
+  if (needsAssets && needsVoice) {
+    isParallelMode = true;
+    await this.update(task.task_id, {
+      progress_message: "Quiz · resolving assets and voice in parallel",
+      progress_percent: 36,
+    });
+    await Promise.all([resolveAssets(input), generateVoice(input)]);
+    isParallelMode = false;
+    artifacts = await readQuizArtifacts(input);
+    episode = await this.repository.getEpisode(task.channel_id, task.episode_id!);
+  } else if (needsAssets) {
+    await this.update(task.task_id, { progress_message: "Quiz · resolving semantic assets", progress_percent: 36 });
+    await resolveAssets(input);
+    artifacts = await readQuizArtifacts(input);
+  } else if (needsVoice) {
     await this.update(task.task_id, { progress_message: "Quiz · generating per-question voice", progress_percent: 46 });
     await generateVoice(input);
     artifacts = await readQuizArtifacts(input);
     episode = await this.repository.getEpisode(task.channel_id, task.episode_id!);
   }
+
   if (!artifacts.timeline) {
     await this.update(task.task_id, { progress_message: "Quiz · compiling deterministic timeline", progress_percent: 53 });
     await compileTimeline(input);
@@ -332,7 +374,41 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
     const hasVoicePaceBlockers = blockers.some((issue) => issue.code === "voice_pace_unsafe" || issue.code === "voice_pace_fast");
 
     if (cycle < maxHealingCycles && (hasUnresolvedAssetBlockers || hasVoicePaceBlockers)) {
-      if (hasUnresolvedAssetBlockers) {
+      if (hasUnresolvedAssetBlockers && hasVoicePaceBlockers && artifacts.quiz && artifacts.voice_plan) {
+        this.logger.warn(`Auto-healing visual assets and voice pacing concurrently (attempt ${cycle}/${maxHealingCycles})...`, {
+          profileId: task.channel_id,
+          workerId: task.task_id,
+          step: "auto_heal_parallel",
+        });
+        await this.update(task.task_id, {
+          progress_message: `Quiz · auto-retrying assets & voice pacing (${cycle}/${maxHealingCycles})`,
+          progress_percent: 80,
+        });
+        const client = this.antigravity ?? (this.activeEngine === "codex" ? this.codex : undefined);
+        const healVoiceTask = async () => {
+          const healResult = await healQuizVoicePacingWithLLM({
+            voicePlan: artifacts.voice_plan!,
+            ageBand: artifacts.quiz!.age_band,
+            targetWordsPerSecond: quizVoiceTargetWordsPerSecond(artifacts.quiz!.age_band),
+            client,
+            logger: this.logger,
+            channelId: task.channel_id,
+            episodeId: task.episode_id!,
+          });
+          if (healResult.healed) {
+            await this.repository.writeVoicePlan(task.channel_id, task.episode_id!, healResult.voicePlan);
+            await this.repository.invalidateQuizArtifacts(task.channel_id, task.episode_id!, ["timeline", "assessment"]);
+            await generateVoice(input);
+          }
+        };
+        const healAssetsTask = async () => {
+          await resolveAssets(input);
+          await this.repository.invalidateQuizArtifacts(task.channel_id, task.episode_id!, ["assessment"]);
+        };
+        await Promise.all([healAssetsTask(), healVoiceTask()]);
+        artifacts = await readQuizArtifacts(input);
+        episode = await this.repository.getEpisode(task.channel_id, task.episode_id!);
+      } else if (hasUnresolvedAssetBlockers) {
         this.logger.warn(`Auto-healing unresolved visual assets (attempt ${cycle}/${maxHealingCycles})...`, {
           profileId: task.channel_id,
           workerId: task.task_id,
@@ -345,9 +421,7 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
         await resolveAssets(input);
         await this.repository.invalidateQuizArtifacts(task.channel_id, task.episode_id!, ["assessment"]);
         artifacts = await readQuizArtifacts(input);
-      }
-
-      if (hasVoicePaceBlockers && artifacts.quiz && artifacts.voice_plan) {
+      } else if (hasVoicePaceBlockers && artifacts.quiz && artifacts.voice_plan) {
         this.logger.warn(`Auto-healing voice pacing with LLM (attempt ${cycle}/${maxHealingCycles})...`, {
           profileId: task.channel_id,
           workerId: task.task_id,

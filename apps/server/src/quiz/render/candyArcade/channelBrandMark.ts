@@ -46,9 +46,10 @@ export function channelBrandMarkFitScript(): string {
       elements.forEach(function(el) {
         const parent = el.parentElement;
         if (!parent) return;
-        const maxWidth = parent.clientWidth || 240;
-        let size = parent.getAttribute('data-aspect-ratio') === '9:16' ? 18 : 22;
-        const minSize = 13;
+        const isPortrait = parent.getAttribute('data-aspect-ratio') === '9:16';
+        const maxWidth = (parent.clientWidth ? parent.clientWidth - 24 : 0) || (isPortrait ? 330 : 296);
+        let size = isPortrait ? 68 : 84;
+        const minSize = isPortrait ? 32 : 36;
         el.style.fontSize = size + 'px';
         while (el.scrollWidth > maxWidth && size > minSize) {
           size -= 1;

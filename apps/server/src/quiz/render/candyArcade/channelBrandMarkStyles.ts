@@ -24,12 +24,13 @@ export function channelBrandMarkCss(): string {
   pointer-events: none;
   user-select: none;
   color: #ffffff;
-  width: 240px;
-  max-width: 240px;
+  width: 320px;
+  max-width: 320px;
   left: calc(var(--question-card-left-edge, 360px) / 2);
-  top: 290px;
+  top: 390px;
   transform: translateX(-50%);
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .channel-brand-mark .brand-mark-icon {
@@ -37,20 +38,20 @@ export function channelBrandMarkCss(): string {
   align-items: center;
   justify-content: center;
   opacity: 0.22;
-  margin-bottom: 4px;
+  margin-bottom: 10px;
   line-height: 1;
 }
 
 .channel-brand-mark .brand-mark-icon svg {
-  width: 32px;
-  height: 22px;
+  width: 136px;
+  height: 94px;
   fill: #ffffff;
   display: block;
 }
 
 .channel-brand-mark .brand-mark-channel-name {
   font-family: "Fredoka", "Nunito", "Trebuchet MS", sans-serif;
-  font-size: 22px;
+  font-size: 84px;
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: 0.5px;
@@ -61,46 +62,51 @@ export function channelBrandMarkCss(): string {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
-  padding: 0 4px;
+  padding: 0 12px;
   box-sizing: border-box;
 }
 
 .channel-brand-mark .brand-mark-sub {
   font-family: "Fredoka", "Nunito", "Trebuchet MS", sans-serif;
-  font-size: 14px;
+  font-size: 40px;
   font-weight: 900;
   line-height: 1;
-  letter-spacing: 3px;
+  letter-spacing: 8px;
   text-transform: uppercase;
   color: #ffffff;
   opacity: 0.20;
-  margin-top: 2px;
+  margin-top: 6px;
 }
 
 /* 9:16 Portrait Canvas */
 #stage[data-aspect-ratio="9:16"] .channel-brand-mark {
-  left: 36px;
+  left: 40px;
   top: auto;
-  bottom: 230px;
+  bottom: 150px;
   transform: none;
-  width: 200px;
-  max-width: 200px;
+  width: 350px;
+  max-width: 350px;
   align-items: flex-start;
   text-align: left;
 }
 
 #stage[data-aspect-ratio="9:16"] .channel-brand-mark .brand-mark-icon {
-  margin-bottom: 3px;
+  margin-bottom: 8px;
+}
+
+#stage[data-aspect-ratio="9:16"] .channel-brand-mark .brand-mark-icon svg {
+  width: 108px;
+  height: 74px;
 }
 
 #stage[data-aspect-ratio="9:16"] .channel-brand-mark .brand-mark-channel-name {
-  font-size: 18px;
-  padding: 0;
+  font-size: 68px;
+  padding: 0 10px;
 }
 
 #stage[data-aspect-ratio="9:16"] .channel-brand-mark .brand-mark-sub {
-  font-size: 12px;
-  letter-spacing: 2px;
+  font-size: 34px;
+  letter-spacing: 6px;
 }
 `;
 }

@@ -123,11 +123,17 @@ describe("Channel Brand Mark Layer Contract & CSS", () => {
     expect(css).toContain("--candy-layer-brand: 9;");
     expect(css).toContain("z-index: var(--candy-layer-brand, 9);");
     expect(css).toContain("pointer-events: none;");
+    expect(css).toContain("width: 320px;");
+    expect(css).toContain("top: 390px;");
+    expect(css).toContain("font-size: 84px;");
   });
 
   it("provides specific styling rules for 9:16 aspect ratio", () => {
     const css = channelBrandMarkCss();
     expect(css).toContain('#stage[data-aspect-ratio="9:16"] .channel-brand-mark');
+    expect(css).toContain("bottom: 150px;");
+    expect(css).toContain("width: 350px;");
+    expect(css).toContain("font-size: 68px;");
   });
 });
 
