@@ -1,10 +1,15 @@
+import { lazy, Suspense } from "react";
+import { CircleNotch } from "@phosphor-icons/react";
 import type { Channel, MascotActionType, MascotProfile } from "@studio/shared";
 import { useTranslation } from "../../i18n";
 import { getLocalizedActionMeta } from "./constants";
 import { MascotConceptStep } from "./components/MascotConceptStep";
 import { MascotActionsStep } from "./components/MascotActionsStep";
-import { MascotCalibrationStep } from "./components/MascotCalibrationStep";
 import { useMascotGenerator } from "./hooks/useMascotGenerator";
+
+const MascotCalibrationStep = lazy(() =>
+  import("./components/MascotCalibrationStep").then((module) => ({ default: module.MascotCalibrationStep })),
+);
 
 type MascotGeneratorTabProps = {
   channels: Channel[];
@@ -12,11 +17,7 @@ type MascotGeneratorTabProps = {
   generatorState: ReturnType<typeof useMascotGenerator>;
 };
 
-export function MascotGeneratorTab({
-  channels,
-  mascots,
-  generatorState,
-}: MascotGeneratorTabProps) {
+export function MascotGeneratorTab({ channels, mascots, generatorState }: MascotGeneratorTabProps) {
   const { t } = useTranslation();
   const {
     generatorStep,
@@ -148,7 +149,13 @@ export function MascotGeneratorTab({
 
       {/* GLOBAL GENERATOR PROGRESS & ANIMATION BANNER */}
       {busyAction !== null ? (
-        <div className="mascot-gen-progress-banner" role="progressbar" aria-valuenow={overallProgress} aria-valuemin={0} aria-valuemax={100}>
+        <div
+          className="mascot-gen-progress-banner"
+          role="progressbar"
+          aria-valuenow={overallProgress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
           <div className="mascot-gen-banner-main">
             <div className="mascot-gen-banner-left">
               <div className="mascot-gen-banner-text">
@@ -157,34 +164,30 @@ export function MascotGeneratorTab({
                     {busyAction === "concept"
                       ? t("mascots.globalGenTitleConcept")
                       : busyAction === "batch-core"
-                      ? t("mascots.globalGenTitleBatchCore")
-                      : busyAction === "batch"
-                      ? t("mascots.globalGenTitleBatchAll", { total: batchState?.total || 7 })
-                      : busyAction === "assign"
-                      ? t("mascots.savingAndApplyingBtn") || "Saving & Applying..."
-                      : busyAction === "matting-master" || busyAction?.startsWith("matting-")
-                      ? busyAction === "matting-all"
-                        ? t("mascots.globalGenTitleMattingAll", { total: 7 })
-                        : t("mascots.globalGenTitleMatting")
-                      : t("mascots.globalGenTitleSingle", {
-                          action: getLocalizedActionMeta(busyAction as MascotActionType, t).label.split(" ")[0],
-                        })}
+                        ? t("mascots.globalGenTitleBatchCore")
+                        : busyAction === "batch"
+                          ? t("mascots.globalGenTitleBatchAll", { total: batchState?.total || 7 })
+                          : busyAction === "assign"
+                            ? t("mascots.savingAndApplyingBtn") || "Saving & Applying..."
+                            : busyAction === "matting-master" || busyAction?.startsWith("matting-")
+                              ? busyAction === "matting-all"
+                                ? t("mascots.globalGenTitleMattingAll", { total: 7 })
+                                : t("mascots.globalGenTitleMatting")
+                              : t("mascots.globalGenTitleSingle", {
+                                  action: getLocalizedActionMeta(busyAction as MascotActionType, t).label.split(" ")[0],
+                                })}
                   </h4>
                   <span className="mascot-gen-badge-active">
                     <span className="mascot-gen-pulse-dot" />
                     {t("mascots.globalGenActiveBadge")}
                   </span>
                 </div>
-                <p className="mascot-gen-banner-sub">
-                  {currentStageMessage || t("mascots.globalGenReassurance")}
-                </p>
+                <p className="mascot-gen-banner-sub">{currentStageMessage || t("mascots.globalGenReassurance")}</p>
               </div>
             </div>
 
             <div className="mascot-gen-banner-right">
-              <span className="mascot-gen-timer-pill">
-                {Math.floor(generationElapsed)}s
-              </span>
+              <span className="mascot-gen-timer-pill">{Math.floor(generationElapsed)}s</span>
               <span className="mascot-gen-percent-text">{overallProgress}%</span>
             </div>
           </div>
@@ -263,63 +266,72 @@ export function MascotGeneratorTab({
 
       {/* STEP 3: STAGE THEATER & CHANNEL DEPLOY */}
       {generatorStep === 3 ? (
-        <MascotCalibrationStep
-          editingMascot={editingMascot}
-          mascots={mascots}
-          channels={channels}
-          genColor={genColor}
-          busyAction={busyAction}
-          activePreviewAction={activePreviewAction}
-          setActivePreviewAction={setActivePreviewAction}
-          isPlaying={isPlaying}
-          setIsPlaying={setIsPlaying}
-          stagePreviewMode={stagePreviewMode}
-          setStagePreviewMode={setStagePreviewMode}
-          aspectRatio={aspectRatio}
-          setAspectRatio={setAspectRatio}
-          flipHorizontal={flipHorizontal}
-          setFlipHorizontal={setFlipHorizontal}
-          activeConfigTab={activeConfigTab}
-          setActiveConfigTab={setActiveConfigTab}
-          targetPosition={targetPosition}
-          setTargetPosition={setTargetPosition}
-          targetScale={targetScale}
-          setTargetScale={setTargetScale}
-          showInIntro={showInIntro}
-          setShowInIntro={setShowInIntro}
-          showInOutro={showInOutro}
-          setShowInOutro={setShowInOutro}
-          showInQuestion={showInQuestion}
-          setShowInQuestion={setShowInQuestion}
-          assignedChannels={assignedChannels}
-          setAssignedChannels={setAssignedChannels}
-          channelSearchQuery={channelSearchQuery}
-          setChannelSearchQuery={setChannelSearchQuery}
-          channelFilterTab={channelFilterTab}
-          setChannelFilterTab={setChannelFilterTab}
-          isScenarioMode={isScenarioMode}
-          setIsScenarioMode={setIsScenarioMode}
-          scenarioPhase={scenarioPhase}
-          scenarioCountdown={scenarioCountdown}
-          scrubberTime={scrubberTime}
-          reactionStyle={reactionStyle}
-          setReactionStyle={setReactionStyle}
-          onionSkinEnabled={onionSkinEnabled}
-          setOnionSkinEnabled={setOnionSkinEnabled}
-          onionSkinOpacity={onionSkinOpacity}
-          setOnionSkinOpacity={setOnionSkinOpacity}
-          showGuides={showGuides}
-          setShowGuides={setShowGuides}
-          nudgeX={nudgeX}
-          setNudgeX={setNudgeX}
-          nudgeY={nudgeY}
-          setNudgeY={setNudgeY}
-          calibrating={calibrating}
-          onApplyTimelineTime={applyTimelineTime}
-          onSaveCalibration={handleSaveCalibration}
-          onApplyToChannels={handleApplyToChannels}
-          onBackStep={() => setGeneratorStep(2)}
-        />
+        <Suspense
+          fallback={
+            <div role="status" aria-live="polite" style={{ display: "grid", placeItems: "center", padding: "60px 0" }}>
+              <CircleNotch size={32} className="spin" style={{ color: "var(--accent)" }} />
+              <p style={{ marginTop: "12px", color: "var(--muted)" }}>{t("common.loading")}</p>
+            </div>
+          }
+        >
+          <MascotCalibrationStep
+            editingMascot={editingMascot}
+            mascots={mascots}
+            channels={channels}
+            genColor={genColor}
+            busyAction={busyAction}
+            activePreviewAction={activePreviewAction}
+            setActivePreviewAction={setActivePreviewAction}
+            isPlaying={isPlaying}
+            setIsPlaying={setIsPlaying}
+            stagePreviewMode={stagePreviewMode}
+            setStagePreviewMode={setStagePreviewMode}
+            aspectRatio={aspectRatio}
+            setAspectRatio={setAspectRatio}
+            flipHorizontal={flipHorizontal}
+            setFlipHorizontal={setFlipHorizontal}
+            activeConfigTab={activeConfigTab}
+            setActiveConfigTab={setActiveConfigTab}
+            targetPosition={targetPosition}
+            setTargetPosition={setTargetPosition}
+            targetScale={targetScale}
+            setTargetScale={setTargetScale}
+            showInIntro={showInIntro}
+            setShowInIntro={setShowInIntro}
+            showInOutro={showInOutro}
+            setShowInOutro={setShowInOutro}
+            showInQuestion={showInQuestion}
+            setShowInQuestion={setShowInQuestion}
+            assignedChannels={assignedChannels}
+            setAssignedChannels={setAssignedChannels}
+            channelSearchQuery={channelSearchQuery}
+            setChannelSearchQuery={setChannelSearchQuery}
+            channelFilterTab={channelFilterTab}
+            setChannelFilterTab={setChannelFilterTab}
+            isScenarioMode={isScenarioMode}
+            setIsScenarioMode={setIsScenarioMode}
+            scenarioPhase={scenarioPhase}
+            scenarioCountdown={scenarioCountdown}
+            scrubberTime={scrubberTime}
+            reactionStyle={reactionStyle}
+            setReactionStyle={setReactionStyle}
+            onionSkinEnabled={onionSkinEnabled}
+            setOnionSkinEnabled={setOnionSkinEnabled}
+            onionSkinOpacity={onionSkinOpacity}
+            setOnionSkinOpacity={setOnionSkinOpacity}
+            showGuides={showGuides}
+            setShowGuides={setShowGuides}
+            nudgeX={nudgeX}
+            setNudgeX={setNudgeX}
+            nudgeY={nudgeY}
+            setNudgeY={setNudgeY}
+            calibrating={calibrating}
+            onApplyTimelineTime={applyTimelineTime}
+            onSaveCalibration={handleSaveCalibration}
+            onApplyToChannels={handleApplyToChannels}
+            onBackStep={() => setGeneratorStep(2)}
+          />
+        </Suspense>
       ) : null}
     </div>
   );

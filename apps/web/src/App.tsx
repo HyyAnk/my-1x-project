@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import type { AppConfig, Channel, CodexSettingsResponse, AntigravitySettingsResponse, StorageInfo, Task } from "@studio/shared";
 import { api } from "./api";
 import { useChannels } from "./hooks/useChannels";
@@ -8,7 +8,6 @@ import { DashboardView, type ChannelGroupId } from "./components/ChannelList";
 import { ChannelsView, CreateChannelModal, DeleteChannelModal } from "./components/ChannelView";
 import { SettingsView, StorageSetupModal } from "./components/SettingsPanel";
 import { MascotStudioView } from "./components/MascotStudio";
-import { VisualSandboxTab } from "./features/sandbox/VisualSandboxTab";
 import { Sidebar, Topbar, NoticeBanner } from "./components/AppChrome";
 import { TaskActivityBar, TasksView } from "./components/TaskPanel";
 import { LoadingState } from "./components/EmptyState";
@@ -17,11 +16,23 @@ import { formatTaskType } from "./lib/utils";
 import { Power } from "@phosphor-icons/react";
 import { LanguageProvider, useTranslation } from "./i18n";
 
+const VisualSandboxTab = lazy(() => import("./features/sandbox/VisualSandboxTab").then((module) => ({ default: module.VisualSandboxTab })));
+
 function AppContent() {
   const { t } = useTranslation();
 
   const router = useRouter();
-  const { page, channelId: selectedChannelId, episodeId: selectedEpisodeId, tab, group, openPage, openChannel, openEpisode, setQueryParam } = router;
+  const {
+    page,
+    channelId: selectedChannelId,
+    episodeId: selectedEpisodeId,
+    tab,
+    group,
+    openPage,
+    openChannel,
+    openEpisode,
+    setQueryParam,
+  } = router;
   const [git, setGit] = useState<GitInfo>({ branch: null, dirty: false, changed_files: 0 });
   const [appConfig, setAppConfig] = useState<AppConfig | null>(null);
   const [activeEngine, setActiveEngine] = useState<"codex" | "antigravity">("codex");
@@ -39,7 +50,7 @@ function AppContent() {
   const [notice, setNotice] = useState<Notice>(null);
   const [loading, setLoading] = useState(true);
   const [stopped, setStopped] = useState(false);
-  const [theme, setTheme] = useState<Theme>(() => window.localStorage.getItem("studio-theme") === "light" ? "light" : "dark");
+  const [theme, setTheme] = useState<Theme>(() => (window.localStorage.getItem("studio-theme") === "light" ? "light" : "dark"));
   const [simplifyMode, setSimplifyMode] = useState<boolean>(() => {
     const saved = window.localStorage.getItem("studio-simplify-mode");
     if (saved === null) return true;
@@ -152,12 +163,21 @@ function AppContent() {
     setLoading(false);
   }, [refreshChannels, refreshPeripheralState, refreshTasks]);
 
-  useEffect(() => { document.documentElement.dataset.theme = theme; window.localStorage.setItem("studio-theme", theme); }, [theme]);
-  useEffect(() => { void refresh().catch((error: Error) => { setNotice({ tone: "bad", message: error.message }); setLoading(false); }); }, [refresh]);
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem("studio-theme", theme);
+  }, [theme]);
+  useEffect(() => {
+    void refresh().catch((error: Error) => {
+      setNotice({ tone: "bad", message: error.message });
+      setLoading(false);
+    });
+  }, [refresh]);
 
   const selectedChannel = channels.find((channel) => channel.channel_id === selectedChannelId) ?? null;
   const handleCloseNotice = useCallback(() => setNotice(null), []);
-  const showError = (error: unknown) => setNotice({ tone: "bad", message: error instanceof Error ? error.message : "Something went wrong" });
+  const showError = (error: unknown) =>
+    setNotice({ tone: "bad", message: error instanceof Error ? error.message : "Something went wrong" });
   const showGood = (message: string) => setNotice({ tone: "good", message });
   const requestDeleteChannel = (channel: Channel) => setDeleteTarget(channel);
   const requestCreateChannel = (groupId: ChannelGroupId = "quiz") => setShowCreate(groupId);
@@ -172,7 +192,10 @@ function AppContent() {
     showGood(`Channel deleted: ${channel.display_name}`);
   };
 
-  const applyStorage = async (nextStorage: StorageInfo) => { setStorage(nextStorage); await refresh(); };
+  const applyStorage = async (nextStorage: StorageInfo) => {
+    setStorage(nextStorage);
+    await refresh();
+  };
   const saveCodex = async (input: Parameters<typeof api.saveCodexSettings>[0]) => {
     const next = await api.saveCodexSettings(input);
     setCodex(next);
@@ -214,7 +237,7 @@ function AppContent() {
     try {
       const next = await api.saveImageSettings({ model });
       setCurrentImageModel(model);
-      setAppConfig((current) => current ? { ...current, image_generation: next.image_generation } : current);
+      setAppConfig((current) => (current ? { ...current, image_generation: next.image_generation } : current));
       showGood(`Image Model: ${model}`);
     } catch (error) {
       showError(error);
@@ -232,7 +255,19 @@ function AppContent() {
   };
 
   const navigate = (next: Page) => openPage(next);
-  if (stopped) return <main className="shutdown-screen"><div className="shutdown-card"><Power size={24} weight="bold" /><p className="eyebrow">Local workspace</p><h1>Dashboard stopped</h1><p>Run <strong>run dashboard.bat</strong> to start it again. Your channel files are still on this computer.</p></div></main>;
+  if (stopped)
+    return (
+      <main className="shutdown-screen">
+        <div className="shutdown-card">
+          <Power size={24} weight="bold" />
+          <p className="eyebrow">Local workspace</p>
+          <h1>Dashboard stopped</h1>
+          <p>
+            Run <strong>run dashboard.bat</strong> to start it again. Your channel files are still on this computer.
+          </p>
+        </div>
+      </main>
+    );
 
   const currentEngineStatus = activeEngine === "antigravity" ? antigravityStatus : codexStatus;
   const activeEpisodeTasks = activeTasks.filter((t) => Boolean(t.episode_id));
@@ -281,7 +316,7 @@ function AppContent() {
           hasImageApiKey={Boolean(appConfig?.image_generation?.has_api_key || appConfig?.image_generation?.api_key)}
           theme={theme}
           onEngineToggle={handleEngineToggle}
-          onThemeToggle={() => setTheme((current) => current === "dark" ? "light" : "dark")}
+          onThemeToggle={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
           onModelChange={handleModelChange}
           onImageModelChange={handleImageModelChange}
           onOpenImageSettings={() => navigate("settings")}
@@ -304,9 +339,17 @@ function AppContent() {
           onShutdown={() => void stopDashboard()}
         />
         {page !== "tasks" && !selectedEpisodeId && (
-          <TaskActivityBar tasks={activeEpisodeTasks} realtimeStatus={realtimeStatus} now={taskClock} onOpenTasks={() => navigate("tasks")} onOpenEpisode={openEpisode} />
+          <TaskActivityBar
+            tasks={activeEpisodeTasks}
+            realtimeStatus={realtimeStatus}
+            now={taskClock}
+            onOpenTasks={() => navigate("tasks")}
+            onOpenEpisode={openEpisode}
+          />
         )}
-        {loading ? <LoadingState /> : page === "dashboard" ? (
+        {loading ? (
+          <LoadingState />
+        ) : page === "dashboard" ? (
           <DashboardView
             channels={channels}
             tasks={tasks}
@@ -359,15 +402,21 @@ function AppContent() {
           <MascotStudioView
             channels={channels}
             onNotice={setNotice}
-            onRefreshChannels={async () => { await refreshChannels(); }}
+            onRefreshChannels={async () => {
+              await refreshChannels();
+            }}
           />
         ) : null}
         {!loading && page === "sandbox" ? (
-          <VisualSandboxTab
-            channels={channels}
-            onNotice={setNotice}
-            onRefreshChannels={async () => { await refreshChannels(); }}
-          />
+          <Suspense fallback={<LoadingState />}>
+            <VisualSandboxTab
+              channels={channels}
+              onNotice={setNotice}
+              onRefreshChannels={async () => {
+                await refreshChannels();
+              }}
+            />
+          </Suspense>
         ) : null}
         {!loading && page === "tasks" ? (
           <TasksView
@@ -394,13 +443,15 @@ function AppContent() {
             onStorageSaved={applyStorage}
             onCodexSaved={setCodex}
             onAntigravitySaved={setAntigravity}
-            onAudioSaved={(audio) => setAppConfig((current) => current ? { ...current, audio_generation: audio } : current)}
-            onVideoSaved={(video) => setAppConfig((current) => current ? { ...current, video_generation: video } : current)}
+            onAudioSaved={(audio) => setAppConfig((current) => (current ? { ...current, audio_generation: audio } : current))}
+            onVideoSaved={(video) => setAppConfig((current) => (current ? { ...current, video_generation: video } : current))}
             onImageSaved={(image) => {
-              setAppConfig((current) => current ? { ...current, image_generation: image } : current);
+              setAppConfig((current) => (current ? { ...current, image_generation: image } : current));
               void fetchBalance();
             }}
-            onChannelUpdated={(channel) => setChannels((current) => current.map((item) => item.channel_id === channel.channel_id ? channel : item))}
+            onChannelUpdated={(channel) =>
+              setChannels((current) => current.map((item) => (item.channel_id === channel.channel_id ? channel : item)))
+            }
             onNotice={setNotice}
             simplifyMode={simplifyMode}
             onSimplifyChange={handleSimplifyToggle}
@@ -411,9 +462,38 @@ function AppContent() {
           <span className="app-credit-mobile">HyyAnk | Dư Ngọc Minh Hoàng</span>
         </footer>
       </main>
-      {storage && !storage.configured ? <StorageSetupModal storage={storage} onSaved={async (next) => { await applyStorage(next); showGood("Content storage is ready"); }} onError={showError} /> : null}
-      {showCreate ? <CreateChannelModal initialGroupId={showCreate} onClose={() => setShowCreate(null)} onCreated={async (channelId, message, task) => { if (task) upsertTask(task); setShowCreate(null); await refresh(); openChannel(channelId); setNotice({ tone: "good", message }); }} onError={showError} /> : null}
-      {deleteTarget ? <DeleteChannelModal channel={deleteTarget} onClose={() => setDeleteTarget(null)} onDeleted={handleChannelDeleted} onError={showError} /> : null}
+      {storage && !storage.configured ? (
+        <StorageSetupModal
+          storage={storage}
+          onSaved={async (next) => {
+            await applyStorage(next);
+            showGood("Content storage is ready");
+          }}
+          onError={showError}
+        />
+      ) : null}
+      {showCreate ? (
+        <CreateChannelModal
+          initialGroupId={showCreate}
+          onClose={() => setShowCreate(null)}
+          onCreated={async (channelId, message, task) => {
+            if (task) upsertTask(task);
+            setShowCreate(null);
+            await refresh();
+            openChannel(channelId);
+            setNotice({ tone: "good", message });
+          }}
+          onError={showError}
+        />
+      ) : null}
+      {deleteTarget ? (
+        <DeleteChannelModal
+          channel={deleteTarget}
+          onClose={() => setDeleteTarget(null)}
+          onDeleted={handleChannelDeleted}
+          onError={showError}
+        />
+      ) : null}
       {notice ? <NoticeBanner notice={notice} onClose={handleCloseNotice} /> : null}
     </div>
   );
@@ -426,4 +506,3 @@ export function App() {
     </LanguageProvider>
   );
 }
-
