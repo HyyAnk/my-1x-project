@@ -654,24 +654,56 @@ export const QUESTION_BOX_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionBoxStyl
   parchment_scroll: "Classic rolled parchment banner with ancient adventurous aesthetics.",
 };
 
+export const QuizAnswerCardStyleSchema = z.enum(["auto", "glossy_arcade", "comic_chunky", "glass_neon", "minimal_soft"]);
+export type QuizAnswerCardStyle = z.infer<typeof QuizAnswerCardStyleSchema>;
+
+export const ALL_ANSWER_CARD_STYLES: QuizAnswerCardStyle[] = [
+  "glossy_arcade",
+  "comic_chunky",
+  "glass_neon",
+  "minimal_soft",
+];
+
+export const ANSWER_CARD_STYLE_LABELS: Record<Exclude<QuizAnswerCardStyle, "auto">, string> = {
+  glossy_arcade: "Glossy Arcade 3D",
+  comic_chunky: "Comic Pop Art",
+  glass_neon: "Glassmorphism Neon",
+  minimal_soft: "Minimalist Soft Card",
+};
+
+export const ANSWER_CARD_STYLE_DESCRIPTIONS: Record<Exclude<QuizAnswerCardStyle, "auto">, string> = {
+  glossy_arcade: "Vibrant candy 3D glossy pill with circular letter badge, dashed border & shine.",
+  comic_chunky: "Retro comic book style with thick ink borders, shadow offsets & pop-art fonts.",
+  glass_neon: "Translucent frosted acrylic panel with luminous edge glows & cyber typography.",
+  minimal_soft: "Ultra-clean modern card with subtle shadows, rounded pill badge & soft elegance.",
+};
+
 export const SandboxPreviewInputSchema = z
   .object({
     theme: QuizVisualThemeSchema.optional().default("candy_arcade"),
     palette_id: z.string().optional().default("lime"),
+    layout_id: z.enum(["media_left_choices_right", "visual_choices_three", "baseline"]).optional().default("media_left_choices_right"),
     thinking_bar_style: QuizThinkingBarStyleSchema.optional().default("star_slider"),
     question_box_style: QuizQuestionBoxStyleSchema.optional().default("candy_pop"),
+    answer_card_style: QuizAnswerCardStyleSchema.optional().default("glossy_arcade"),
     counter_style: QuizQuestionCounterStyleSchema.optional().default("hanging_woodsign"),
     phase: z.enum(["question", "choices", "thinking", "reveal", "explain"]).optional().default("thinking"),
+    timeline_time_seconds: z.number().min(0).max(15).optional(),
     question_text: z.string().optional().default("Which planet in our solar system has the most prominent rings?"),
     choices: z.array(z.string().trim().min(1)).length(3).optional().default(["Jupiter", "Saturn", "Uranus"]),
     correct_choice_index: z.number().int().min(0).max(2).optional().default(1),
     question_number: z.number().int().min(1).optional().default(1),
     total_questions: z.number().int().min(1).optional().default(10),
     countdown_progress: z.number().min(0).max(1).optional().default(0.5), // 0 to 1
+    fact_card_title: z.string().optional().default("BẠN CÓ BIẾT?"),
+    fact_card_text: z.string().optional().default("Hành tinh này có các đặc điểm kỳ thú và hệ thống vành đai ấn tượng nhất trong vũ trụ!"),
     mascot_id: z.string().nullable().optional(),
+    mascot_enabled: z.boolean().optional().default(true),
     mascot_action: MascotActionTypeSchema.optional().default("thinking"),
     mascot_position: z.enum(["bottom_left", "bottom_right"]).optional().default("bottom_left"),
     mascot_scale: z.number().optional().default(1.0),
+    mascot_offset_x: z.number().optional().default(0),
+    mascot_offset_y: z.number().optional().default(0),
   })
   .superRefine((input, ctx) => {
     if (input.correct_choice_index >= input.choices.length) {
@@ -717,6 +749,7 @@ export const ChannelSchema = z.object({
   selected_styles: z.array(QuizImageStyleSchema).default(["pixar_3d", "flat_vector", "kawaii_chibi", "voxel_lowpoly", "plastic_toy"]),
   default_thinking_bar_style: QuizThinkingBarStyleSchema.optional().default("auto"),
   default_question_box_style: QuizQuestionBoxStyleSchema.optional().default("auto"),
+  default_answer_card_style: QuizAnswerCardStyleSchema.optional().default("auto"),
   default_counter_style: QuizQuestionCounterStyleSchema.optional().default("auto"),
   default_palette_id: z.string().optional().default("auto"),
   mascot_id: z.string().nullable().default(null),

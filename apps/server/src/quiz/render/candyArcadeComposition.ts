@@ -16,7 +16,17 @@ import { ambientPhaseSeconds, motionCssClass, textLayout, visualAnswerState } fr
 import type { QuizTemplateScene } from "../visual/types.js";
 import { defaultBgmRegistry, type ResolveBgmOptions } from "../audio/bgmRegistry.js";
 import { DEFAULT_SFX_MAP } from "../audio/sfxRegistry.js";
-import { getThinkingBarsCss, resolveThinkingBarVariant, starSliderVariant } from "../visual/elements/index.js";
+import {
+  getAnswerCardsCss,
+  getCounterBadgesCss,
+  getQuestionBoxesCss,
+  getThinkingBarsCss,
+  resolveAnswerCardVariant,
+  resolveCounterBadgeVariant,
+  resolveQuestionBoxVariant,
+  resolveThinkingBarVariant,
+  starSliderVariant,
+} from "../visual/elements/index.js";
 
 export type CandyArcadeCompositionInput = {
   quiz: QuizV2;
@@ -1098,6 +1108,13 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .state-celebrate[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-celebrate[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-jump 0.85s cubic-bezier(.18,1.42,.34,1) infinite alternate; }
 .state-oops[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-oops[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-shake 2.0s ease-in-out infinite; }
 .state-point[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-point[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-pulse 1.8s ease-in-out infinite alternate; }
+.state-wave[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-wave[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-wave 2.0s ease-in-out infinite alternate; }
+.sandbox-mascot-fallback .state-thinking .fallback-mascot-badge { animation: mascot-single-sway 2.4s ease-in-out infinite alternate; }
+.sandbox-mascot-fallback .state-celebrate .fallback-mascot-badge { animation: mascot-single-jump 0.85s cubic-bezier(.18,1.42,.34,1) infinite alternate; }
+.sandbox-mascot-fallback .state-oops .fallback-mascot-badge { animation: mascot-single-shake 2.0s ease-in-out infinite; }
+.sandbox-mascot-fallback .state-point .fallback-mascot-badge { animation: mascot-single-pulse 1.8s ease-in-out infinite alternate; }
+.sandbox-mascot-fallback .state-idle .fallback-mascot-badge { animation: mascot-single-breathe 3.2s ease-in-out infinite alternate; }
+.sandbox-mascot-fallback .state-wave .fallback-mascot-badge { animation: mascot-single-wave 2.0s ease-in-out infinite alternate; }
 .mascot-intro .candy-mascot-sprite, .mascot-outro .candy-mascot-sprite { animation: mascot-sprite-play calc(var(--mascot-frames, 1) / var(--mascot-fps, 8) * 1s) steps(calc(var(--mascot-frames, 1) - 1)) infinite; }
 .quiz-question-clip .mascot-state-layer.state-thinking { opacity: 1; animation: phase-exit .001s linear var(--reveal-at) forwards; }
 .quiz-question-clip .mascot-state-layer.state-celebrate { opacity: 0; animation: phase-enter .001s linear var(--reveal-at) forwards; }
@@ -1109,6 +1126,9 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 @keyframes mascot-single-pulse { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); } 100% { transform: translate(calc(var(--action-offset-x, 0px) + 6px), calc(var(--action-offset-y, 0px) - 4px)) scale(1.03); } }
 @keyframes mascot-single-wave { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(-3deg); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 10px)) rotate(4deg) scale(1.03); } }
 ${getThinkingBarsCss()}
+${getQuestionBoxesCss()}
+${getCounterBadgesCss()}
+${getAnswerCardsCss()}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; } }
 `;
 }

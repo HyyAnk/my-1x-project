@@ -691,6 +691,168 @@ export interface TranslationSchema {
     useProjectFolder: string;
     saveFolder: string;
   };
+  visualSandbox: {
+    pageTitle: string;
+    pageSubtitle: string;
+    pageDesc: string;
+    
+    // Header actions
+    safeArea: string;
+    safeAreaOn: string;
+    safeAreaOff: string;
+    safeAreaTooltip: string;
+    shortsGuide: string;
+    shortsGuideOn: string;
+    shortsGuideOff: string;
+    shortsTooltip: string;
+    savePresetBtn: string;
+    savePresetTooltip: string;
+    applyToChannelBtn: string;
+    applyToChannelTooltip: string;
+    rerenderBtn: string;
+    rerenderTooltip: string;
+
+    // Presets bar & selector
+    stylePresetsLabel: string;
+    presetsCount: string;
+    selectPresetPlaceholder: string;
+    presetCustomGroup: string;
+    presetBuiltInGroup: string;
+    deletePresetTooltip: string;
+    customPresetDefaultDesc: string;
+    presetModifiedBadge: string;
+    presetBuiltInBadge: string;
+    presetCustomBadge: string;
+    activePresetLabel: string;
+    saveAsNewPreset: string;
+    deletePresetConfirm: string;
+
+    // Built-in presets names & descriptions
+    presetArcadeClassicName: string;
+    presetArcadeClassicDesc: string;
+    presetCyberNeonName: string;
+    presetCyberNeonDesc: string;
+    presetComicBoomName: string;
+    presetComicBoomDesc: string;
+    presetTreasureQuestName: string;
+    presetTreasureQuestDesc: string;
+    presetMinimalStudioName: string;
+    presetMinimalStudioDesc: string;
+    presetVisualShowcaseName: string;
+    presetVisualShowcaseDesc: string;
+
+    // Tabs
+    tabElements: string;
+    tabMascot: string;
+    tabContent: string;
+    mascotStateOn: string;
+    mascotStateOff: string;
+
+    // Tab 1: Design & 4 Elements
+    layoutSection: string;
+    layoutMediaLeftChoicesRight: string;
+    layoutMediaLeftChoicesRightSub: string;
+    layoutVisualChoicesThree: string;
+    layoutVisualChoicesThreeSub: string;
+    paletteSection: string;
+    thinkingBarSection: string;
+    questionBoxSection: string;
+    answerCardSection: string;
+    counterBadgeSection: string;
+
+    // Tab 2: Mascot
+    mascotVisibilityTitle: string;
+    mascotVisibilityDesc: string;
+    mascotEnabledBadge: string;
+    mascotDisabledBadge: string;
+    mascotPickerSection: string;
+    noMascotTitle: string;
+    noMascotSub: string;
+    defaultMascotTitle: string;
+    defaultMascotSub: string;
+    mascotPoseSection: string;
+    poseThinking: string;
+    poseCelebrate: string;
+    posePoint: string;
+    poseOops: string;
+    poseIdle: string;
+    poseWave: string;
+    mascotPositionSection: string;
+    posBottomLeft: string;
+    posBottomRight: string;
+    mascotScaleSection: string;
+    mascotOffsetSection: string;
+    offsetX: string;
+    offsetY: string;
+
+    // Tab 3: Content & Testing
+    sampleQuestionsLabel: string;
+    sampleStandard: string;
+    sampleShort: string;
+    sampleLong: string;
+    questionTextLabel: string;
+    questionTextPlaceholder: string;
+    choicesLabel: string;
+    choicePlaceholder: string;
+    correctChoiceTitle: string;
+    correctBadge: string;
+    questionCountSettings: string;
+    currentQuestionNumber: string;
+    totalQuestionsCount: string;
+    factCardSection: string;
+    factCardTitleLabel: string;
+    factCardTitlePlaceholder: string;
+    factCardTextLabel: string;
+    factCardTextPlaceholder: string;
+    factCardHint: string;
+
+    // Timeline & Canvas
+    phaseLabel: string;
+    phaseQuestion: string;
+    phaseChoices: string;
+    phaseThinking: string;
+    phaseReveal: string;
+    phaseExplain: string;
+    playTimelineTooltip: string;
+    playBtn: string;
+    pauseBtn: string;
+    replayBtn: string;
+    replayTooltip: string;
+    wcagContrast: string;
+    hyperframesEngine: string;
+    actionSafeLabel: string;
+    titleSafeLabel: string;
+    shortsSafeLabel: string;
+
+    // Modals
+    modalSavePresetTitle: string;
+    modalSavePresetDesc: string;
+    presetNameLabel: string;
+    presetNamePlaceholder: string;
+    modalApplyChannelTitle: string;
+    modalApplyChannelDesc: string;
+    selectChannelLabel: string;
+    syncMascotCheckbox: string;
+    summaryLayout: string;
+    summaryPalette: string;
+    summaryThinkingBar: string;
+    summaryQuestionBox: string;
+    summaryAnswerCard: string;
+    summaryCounter: string;
+    summaryMascot: string;
+    summaryMascotDisabled: string;
+    summaryMascotDefault: string;
+    confirmApplyBtn: string;
+    applyingBtn: string;
+
+    // Notice messages
+    noticeRerendered: string;
+    noticeLoadedPreset: string;
+    noticeSavedPreset: string;
+    noticeDeletedPreset: string;
+    noticeAppliedToChannel: string;
+    noticeSaveError: string;
+  };
   notices: {
     savedSuccessfully: string;
     failedToSave: string;

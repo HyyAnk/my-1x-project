@@ -9,15 +9,18 @@ export const hangingWoodSignVariant: CounterBadgeVariant = {
   },
   renderCss(): string {
     return `
-.cb-hanging-woodsign { position: relative; width: 140px; height: 110px; }
-.cb-hanging-woodsign .hanging-ropes { position: absolute; top: 0; left: 0; right: 0; height: 36px; display: flex; justify-content: space-between; padding: 0 28px; }
-.cb-hanging-woodsign .wood-rope { width: 6px; height: 100%; background: repeating-linear-gradient(45deg, #B8860B, #B8860B 4px, #8B5A2B 4px, #8B5A2B 8px); border-radius: 3px; box-shadow: 2px 2px 4px rgba(0,0,0,.35); }
-.cb-hanging-woodsign .wood-sign-plank { position: absolute; bottom: 0; left: 0; right: 0; height: 82px; border-radius: 20px; background: linear-gradient(180deg, #D49B5B 0%, #8C5828 100%); border: 4px solid #5C3814; box-shadow: 0 10px 0 #3D230B, 0 16px 24px rgba(0,0,0,.35); display: grid; place-items: center; }
-.cb-hanging-woodsign .wood-inner-panel { width: 104px; height: 56px; border-radius: 12px; background: #FFFEE8; border: 3px solid #5C3814; display: grid; place-items: center; box-shadow: inset 0 2px 6px rgba(0,0,0,.2); }
-.cb-hanging-woodsign .question-number-val { font-size: 38px; font-weight: 900; color: #5C3814; line-height: 1; }
-.cb-hanging-woodsign .wood-sign-star { position: absolute; font-size: 16px; color: #FFE484; text-shadow: 0 0 6px #FFA500; }
-.cb-hanging-woodsign .star-tl { top: 4px; left: 6px; }
-.cb-hanging-woodsign .star-br { bottom: 4px; right: 6px; }
+.cb-hanging-woodsign { position: relative; z-index: 6; display: flex; flex-direction: column; align-items: center; width: 250px; transform-origin: 50% 0; animation: hanging-sign-enter .64s cubic-bezier(.18,1.42,.34,1) var(--clip-start, 0s) both, hanging-sign-sway 4.8s ease-in-out calc(var(--clip-start, 0s) + .64s) infinite alternate both; }
+.cb-hanging-woodsign .hanging-ropes { position: relative; display: flex; justify-content: space-between; width: 170px; height: 44px; pointer-events: none; }
+.cb-hanging-woodsign .wood-rope { width: 9px; height: 100%; border-radius: 4px; background: repeating-linear-gradient(135deg, #D4A373 0px, #D4A373 5px, #A75C1C 5px, #A75C1C 10px); box-shadow: 2px 2px 5px rgba(13,35,71,.28); }
+.cb-hanging-woodsign .wood-sign-plank { position: relative; width: 240px; height: 150px; min-height: 150px; padding: 10px; border: 6.5px solid #48200A; border-radius: 34px; background: linear-gradient(180deg, #A25324 0%, #823E17 50%, #642B0D 100%); box-shadow: inset 0 4px 0 rgba(255,215,120,.5), inset 0 -5px 0 rgba(35,14,5,.6), 0 12px 0 rgba(13,35,71,.22), 0 22px 32px rgba(10,25,60,.24); display: grid; place-items: center; }
+.cb-hanging-woodsign .rope-bracket { position: absolute; top: -9px; width: 24px; height: 16px; border: 4px solid #331505; border-radius: 8px; background: #FFC436; box-shadow: inset 0 2px 0 #FFF, 0 2px 4px rgba(0,0,0,.3); }
+.cb-hanging-woodsign .bracket-left { left: 28px; }
+.cb-hanging-woodsign .bracket-right { right: 28px; }
+.cb-hanging-woodsign .wood-inner-panel { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; min-height: 108px; border-radius: 22px; border: 4px solid #3E1A07; background: linear-gradient(180deg, #6F3010 0%, #522208 100%); box-shadow: inset 0 4px 8px rgba(0,0,0,.55), inset 0 -3px 0 rgba(255,215,120,.22); }
+.cb-hanging-woodsign .question-number-val { font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 74px; font-weight: 900; line-height: 1; color: #FFFDF0; text-shadow: 0 4px 0 #331505, 0 8px 18px rgba(0,0,0,.5); letter-spacing: -1px; }
+.cb-hanging-woodsign .wood-sign-star { position: absolute; pointer-events: none; }
+.cb-hanging-woodsign .wood-sign-star.star-tl { top: -10px; left: -10px; color: #FFD43F; font-size: 26px; text-shadow: 0 0 12px rgba(255,212,63,.85); transform: rotate(-15deg); }
+.cb-hanging-woodsign .wood-sign-star.star-br { bottom: -10px; right: -10px; color: #FFB703; font-size: 28px; text-shadow: 0 3px 0 #331505; transform: rotate(15deg); }
 `;
   },
 };

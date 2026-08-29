@@ -92,8 +92,12 @@ describe("buildSandboxComposition Preview Engine", () => {
 
     const explainResult = buildSandboxComposition({
       phase: "explain",
+      fact_card_title: "DID YOU KNOW?",
+      fact_card_text: "Saturn rings are made of ice particles!",
     });
     expect(explainResult.html).toContain("sandbox-explain-card");
+    expect(explainResult.html).toContain("DID YOU KNOW?");
+    expect(explainResult.html).toContain("Saturn rings are made of ice particles!");
   });
 
   it("rejects a fourth sandbox answer before rendering HTML", () => {
@@ -106,7 +110,7 @@ describe("buildSandboxComposition Preview Engine", () => {
     ).toThrow();
   });
 
-  it("supports rendering with all thinking bar, question box, and counter combinations without error", () => {
+  it("supports rendering with all thinking bar, question box, counter, and answer card combinations without error", () => {
     for (const tb of ALL_THINKING_BAR_STYLES) {
       for (const qb of ALL_QUESTION_BOX_STYLES) {
         for (const cb of ALL_QUESTION_COUNTER_STYLES) {
@@ -114,11 +118,37 @@ describe("buildSandboxComposition Preview Engine", () => {
             thinking_bar_style: tb,
             question_box_style: qb,
             counter_style: cb,
+            answer_card_style: "comic_chunky",
+            layout_id: "media_left_choices_right",
           });
           expect(res.html).toBeTruthy();
           expect(res.css).toBeTruthy();
+          expect(res.html).toContain("layout-media_left_choices_right");
+          expect(res.html).toContain("ac-comic-chunky");
         }
       }
     }
   });
+
+  it("supports timeline_time_seconds scrubbing", () => {
+    const resQuestion = buildSandboxComposition({
+      timeline_time_seconds: 0.5,
+      choices: ["A", "B", "C"],
+    });
+    expect(resQuestion.html).toContain("opacity:0");
+
+    const resThinking = buildSandboxComposition({
+      timeline_time_seconds: 4.5,
+      choices: ["A", "B", "C"],
+    });
+    expect(resThinking.html).toContain("opacity:1");
+
+    const resReveal = buildSandboxComposition({
+      timeline_time_seconds: 8.0,
+      correct_choice_index: 1,
+      choices: ["A", "B", "C"],
+    });
+    expect(resReveal.html).toContain("answer-correct");
+  });
 });
+
