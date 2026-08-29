@@ -101,11 +101,7 @@ export function defaultBgmCandidateDirectories(): string[] {
   ];
 }
 
-export function resolveSfxCandidatePath(
-  filename: string,
-  candidateDirs: string[],
-  assets?: Record<string, string>,
-): string | null {
+export function resolveSfxCandidatePath(filename: string, candidateDirs: string[], assets?: Record<string, string>): string | null {
   const intentKey = filename.replace(/\.wav$/, "");
   if (assets?.[`sfx:${intentKey}`]) return assets[`sfx:${intentKey}`];
   if (assets?.[filename]) return assets[filename];
@@ -301,10 +297,7 @@ export function resolveBgmScheduleItems(
   return items;
 }
 
-export function buildFilterGraphScript(
-  plan: MasterSoundtrackPlan,
-  inputIndices: Map<string, number>,
-): string {
+export function buildFilterGraphScript(plan: MasterSoundtrackPlan, inputIndices: Map<string, number>): string {
   const lines: string[] = [];
   const enableDucking = plan.ducking !== false && plan.bgmItems.length > 0;
   const duckingThreshold = plan.duckingThreshold ?? 0.08;
@@ -444,9 +437,7 @@ export function buildFilterGraphScript(
   return lines.join("\n");
 }
 
-export async function mixMasterSoundtrack(
-  options: MixMasterSoundtrackOptions,
-): Promise<MixMasterSoundtrackResult> {
+export async function mixMasterSoundtrack(options: MixMasterSoundtrackOptions): Promise<MixMasterSoundtrackResult> {
   const duration = Math.max(3, Number(options.durationSeconds.toFixed(3)));
   const workingDir = options.workingDirectory;
   await mkdir(workingDir, { recursive: true });
@@ -455,13 +446,7 @@ export async function mixMasterSoundtrack(
   const bgmCandidateDirs = options.bgmCandidateDirectories ?? defaultBgmCandidateDirectories();
 
   const sfxItems = resolveSfxSchedule(options.timeline.events, sfxCandidateDirs, options.assets);
-  const bgmItems = resolveBgmScheduleItems(
-    duration,
-    bgmCandidateDirs,
-    options.bgmOptions,
-    options.bgmRegistry,
-    options.outroStartSeconds,
-  );
+  const bgmItems = resolveBgmScheduleItems(duration, bgmCandidateDirs, options.bgmOptions, options.bgmRegistry, options.outroStartSeconds);
 
   const plan: MasterSoundtrackPlan = {
     durationSeconds: duration,

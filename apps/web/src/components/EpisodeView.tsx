@@ -139,6 +139,8 @@ export function EpisodeDetail({
             onSaveCounterStyle={pipeline.saveCounterStyle}
             onSavePaletteId={pipeline.savePaletteId}
             onApplyStylePreset={pipeline.applyStylePreset}
+            setEpisode={state.setEpisode}
+            onNotice={onNotice}
           />
           <QuizV2Panel
             state={quizV2}

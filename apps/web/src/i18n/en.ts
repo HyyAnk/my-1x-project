@@ -1138,5 +1138,11 @@ export const en: TranslationSchema = {
     previewStatusPreviewing: "Previewing",
     previewSavedLabel: "Preview reflects the styles saved on this episode.",
     previewingLabel: "Previewing: {label}",
+    channelNameLabel: "Channel name",
+    channelNamePlaceholder: "Enter channel name",
+    channelNameSaving: "Saving…",
+    channelNameSaved: "Saved",
+    channelNameError: "Failed to save channel name",
+    channelNameSuccess: "Channel name updated",
   },
 };

@@ -12,13 +12,18 @@ type EpisodeStylePreviewProps = {
   channel: Channel;
   episode: Episode | null;
   candidate: EpisodePreviewCandidate | null;
+  channelBrandName?: string;
 };
 
-export function EpisodeStylePreview({ channel, episode, candidate }: EpisodeStylePreviewProps) {
+export function EpisodeStylePreview({ channel, episode, candidate, channelBrandName }: EpisodeStylePreviewProps) {
   const { t } = useTranslation();
   const { ref, width } = useElementWidth<HTMLDivElement>();
-  const { previewHtml, pendingPreviewHtml, loading, previewError, iframeKey, commitPendingPreview, retryPreview } =
-    useEpisodeStylePreview({ channel, episode, candidate });
+  const { previewHtml, pendingPreviewHtml, loading, previewError, iframeKey, commitPendingPreview, retryPreview } = useEpisodeStylePreview({
+    channel,
+    episode,
+    candidate,
+    channelBrandName,
+  });
 
   const scale = width > 0 ? width / COMPOSITION_WIDTH : 0;
   const status = getPreviewStatus({ loading, pending: Boolean(pendingPreviewHtml), error: previewError, candidate });
@@ -54,9 +59,7 @@ export function EpisodeStylePreview({ channel, episode, candidate }: EpisodeStyl
         ) : null}
       </div>
       <p className={`episode-style-preview-caption ${candidate ? "is-candidate" : ""}`}>
-        {candidate
-          ? t("episodeCustomization.previewingLabel", { label: candidate.label })
-          : t("episodeCustomization.previewSavedLabel")}
+        {candidate ? t("episodeCustomization.previewingLabel", { label: candidate.label }) : t("episodeCustomization.previewSavedLabel")}
       </p>
     </aside>
   );
@@ -90,7 +93,14 @@ function PreviewStatusPill({ status, onRetry }: { status: PreviewStatus; onRetry
       </button>
     );
   }
-  const icon = status === "loading" ? <CircleNotch className="spin" size={13} /> : status === "previewing" ? <Eye size={13} /> : <CheckCircle size={13} weight="fill" />;
+  const icon =
+    status === "loading" ? (
+      <CircleNotch className="spin" size={13} />
+    ) : status === "previewing" ? (
+      <Eye size={13} />
+    ) : (
+      <CheckCircle size={13} weight="fill" />
+    );
   const label =
     status === "loading"
       ? t("episodeCustomization.previewRendering")

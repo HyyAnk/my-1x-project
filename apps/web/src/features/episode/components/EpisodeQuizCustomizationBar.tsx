@@ -12,10 +12,13 @@ import type {
   VisualPresetItem,
 } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
+import type { Notice } from "../../../components/types";
 import type { EpisodePreviewCandidate } from "../hooks/useEpisodeStylePreview";
+import { useEpisodeChannelBrandName } from "../hooks/useEpisodeChannelBrandName";
 import { EpisodeStylePreview } from "./preview/EpisodeStylePreview";
 import { PresetPickerDropdown } from "./customization/PresetPickerDropdown";
 import { QuestionCountDropdown } from "./customization/QuestionCountDropdown";
+import { ChannelBrandNameControl } from "./customization/ChannelBrandNameControl";
 import { ArtStyleDropdown } from "./customization/ArtStyleDropdown";
 import { QuestionBoxDropdown } from "./customization/QuestionBoxDropdown";
 import { AnswerCardDropdown } from "./customization/AnswerCardDropdown";
@@ -24,15 +27,7 @@ import { ThinkingBarDropdown } from "./customization/ThinkingBarDropdown";
 import { PaletteDropdown } from "./customization/PaletteDropdown";
 
 export type EpisodeCustomizationDropdownName =
-  | "preset"
-  | "questions"
-  | "visualStyle"
-  | "questionBox"
-  | "answerCard"
-  | "counterBadge"
-  | "thinkingBar"
-  | "palette"
-  | null;
+  "preset" | "questions" | "visualStyle" | "questionBox" | "answerCard" | "counterBadge" | "thinkingBar" | "palette" | null;
 
 type Props = {
   channel: Channel;
@@ -49,6 +44,8 @@ type Props = {
   onSaveCounterStyle: (style: QuizQuestionCounterStyle) => void;
   onSavePaletteId: (palette: QuizPaletteId) => void;
   onApplyStylePreset: (preset: VisualPresetItem) => void;
+  setEpisode?: (episode: Episode | null) => void;
+  onNotice?: (notice: NonNullable<Notice>) => void;
 };
 
 export function EpisodeQuizCustomizationBar({
@@ -66,12 +63,22 @@ export function EpisodeQuizCustomizationBar({
   onSaveCounterStyle,
   onSavePaletteId,
   onApplyStylePreset,
+  setEpisode,
+  onNotice,
 }: Props) {
   const { t } = useTranslation();
   const [openDropdown, setOpenDropdown] = useState<EpisodeCustomizationDropdownName>(null);
   const [candidate, setCandidate] = useState<EpisodePreviewCandidate | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isPipelineRunning = Boolean(activeEpisodeTask);
+
+  const brandNameControl = useEpisodeChannelBrandName({
+    channel,
+    episode,
+    setEpisode: setEpisode ?? (() => {}),
+    onNotice: onNotice ?? (() => {}),
+    disabled: isPipelineRunning,
+  });
 
   useEffect(() => {
     if (!openDropdown) setCandidate(null);
@@ -133,6 +140,16 @@ export function EpisodeQuizCustomizationBar({
               setQuestionCountDraft={setQuestionCountDraft}
               onSaveQuestionCount={onSaveQuestionCount}
               onPreview={setCandidate}
+            />
+            <ChannelBrandNameControl
+              value={brandNameControl.draft}
+              onChange={brandNameControl.setDraft}
+              onSave={brandNameControl.save}
+              onRevert={brandNameControl.revert}
+              onRetry={brandNameControl.retry}
+              saving={brandNameControl.saving}
+              error={brandNameControl.error}
+              disabled={isPipelineRunning}
             />
           </div>
 
@@ -221,7 +238,7 @@ export function EpisodeQuizCustomizationBar({
         </div>
       </div>
 
-      <EpisodeStylePreview channel={channel} episode={episode} candidate={candidate} />
+      <EpisodeStylePreview channel={channel} episode={episode} candidate={candidate} channelBrandName={brandNameControl.draft} />
     </section>
   );
 }

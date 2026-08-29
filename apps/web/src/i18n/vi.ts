@@ -1138,5 +1138,11 @@ export const vi: TranslationSchema = {
     previewStatusPreviewing: "Đang xem trước",
     previewSavedLabel: "Bản xem trước theo style đã lưu của tập phim.",
     previewingLabel: "Đang xem trước: {label}",
+    channelNameLabel: "Tên kênh",
+    channelNamePlaceholder: "Nhập tên kênh",
+    channelNameSaving: "Đang lưu…",
+    channelNameSaved: "Đã lưu",
+    channelNameError: "Lỗi khi lưu tên kênh",
+    channelNameSuccess: "Đã cập nhật tên kênh",
   },
 };

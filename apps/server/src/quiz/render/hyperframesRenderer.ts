@@ -21,6 +21,7 @@ export class HyperframesRenderer implements QuizRenderer {
       defaultCounterStyle: input.defaultCounterStyle,
       defaultPaletteId: input.defaultPaletteId,
       premixedAudio: input.premixedAudio,
+      channelBrandName: input.channelBrandName,
     });
     return {
       html: composition.html,

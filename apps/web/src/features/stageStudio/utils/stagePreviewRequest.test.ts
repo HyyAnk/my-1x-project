@@ -41,6 +41,31 @@ describe("Stage Studio preview request", () => {
       mascot_show_in_intro: false,
       mascot_show_in_outro: true,
       mascot_show_in_question: true,
+      channel_brand_name: "Channel",
     });
+  });
+
+  it("uses target channel display name when available", () => {
+    const request = buildStagePreviewRequest({
+      targetChannel: { display_name: "Robot World" } as never,
+      questionLayoutId: "media_left_choices_right",
+      activeMascot: mascot,
+      selectedMascotId: mascot.id,
+      position: "bottom_right",
+      scale: 1.0,
+      offsetX: 0,
+      offsetY: 0,
+      flipHorizontal: false,
+      scenarioPhase: "question",
+      activePose: "thinking",
+      reactionStyle: "celebrate",
+      mascotPreviewTime: 0,
+      isPlaying: false,
+      showInIntro: false,
+      showInOutro: false,
+      showInQuestion: true,
+    });
+
+    expect(request.channel_brand_name).toBe("Robot World");
   });
 });

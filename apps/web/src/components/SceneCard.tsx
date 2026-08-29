@@ -1,21 +1,11 @@
-import {
-  ArrowClockwise,
-  ArrowRight,
-  ArrowsOutSimple,
-  CaretDown,
-  CaretUp,
-  Check,
-  CircleNotch,
-  Copy,
-  PencilSimple,
-  SpeakerHigh,
-  WarningCircle,
-} from "@phosphor-icons/react";
+import { ArrowClockwise, ArrowRight, Check, CircleNotch, Copy, SpeakerHigh } from "@phosphor-icons/react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { estimateSpokenSeconds, type Scene, type Task } from "@studio/shared";
-import { api } from "../api";
 import { InlineTaskState } from "./InlineTaskState";
 import { isTaskActive } from "../lib/utils";
+import { SceneAudioMismatchWarning, SceneAudioPlayer } from "./scene/SceneAudioPlayer";
+import { ScenePromptEditor } from "./scene/ScenePromptEditor";
+import { SceneOverlayEditor } from "./scene/SceneOverlayEditor";
 
 export function SceneCard({
   scene,
@@ -97,8 +87,6 @@ export function SceneCard({
     data: [],
     source_ids: [],
   };
-  const referenceAsset = scene.reference_asset_ids.find((asset) => /(?:CB-\d{2,})(?:-alt)?\.png$/i.test(asset));
-  const referenceFilename = referenceAsset?.split("/").pop() ?? null;
   const matchDuration = () => {
     if (scene.audio_duration_seconds !== null && scene.audio_duration_seconds !== undefined)
       onChange({ ...scene, duration_seconds: Math.min(maxDuration, Math.max(1, Math.round(scene.audio_duration_seconds))) });
@@ -152,15 +140,12 @@ export function SceneCard({
             {scene.duration_seconds}s · {shotCount} cuts
           </span>
         ) : null}
-        {audioMismatch ? (
-          <div className="audio-duration-warning" role="status">
-            <WarningCircle size={13} />
-            Preview is {audioDelta.toFixed(1)}s {audioDirection}
-            <button type="button" onClick={matchDuration}>
-              Match
-            </button>
-          </div>
-        ) : null}
+        <SceneAudioMismatchWarning
+          audioMismatch={audioMismatch}
+          audioDelta={audioDelta}
+          audioDirection={audioDirection}
+          onMatchDuration={matchDuration}
+        />
         <div className="scene-tools">
           <button
             className="quiet-button compact"
@@ -210,27 +195,20 @@ export function SceneCard({
               ) : null}
             </div>
           </div>
-          {audioTask ? <InlineTaskState task={audioTask} now={now} /> : null}
-          {audioSrc ? (
-            <div className="audio-player-row">
-              <audio
-                controls={!processing && !mergePending}
-                preload="metadata"
-                src={audioSrc}
-                aria-label={`Shot ${scene.scene_number} preview audio`}
-              />
-              <button
-                className="icon-button"
-                type="button"
-                title="Regenerate preview audio"
-                aria-label="Regenerate preview audio"
-                disabled={processing || mergePending}
-                onClick={onGenerateAudio}
-              >
-                <ArrowClockwise size={15} />
-              </button>
-            </div>
-          ) : null}
+          <SceneAudioPlayer
+            scene={scene}
+            audioTask={audioTask}
+            audioSrc={audioSrc}
+            processing={processing}
+            mergePending={mergePending}
+            audioFailed={audioFailed}
+            audioMismatch={audioMismatch}
+            audioDelta={audioDelta}
+            audioDirection={audioDirection}
+            now={now}
+            onGenerateAudio={onGenerateAudio}
+            onMatchDuration={matchDuration}
+          />
           <textarea
             ref={dialogueRef}
             rows={1}
@@ -240,67 +218,21 @@ export function SceneCard({
             onChange={(event) => onChange(clearAudioWhenDialogueChanges(event.target.value))}
           />
         </div>
-        <div className={`scene-block prompt-block ${isPromptExpanded ? "is-expanded" : "is-collapsed"}`}>
-          <div className="block-heading">
-            <span>Video generation prompt</span>
-            <div className="scene-block-actions">
-              {scene.continuity_bundle_id ? <span className="reference-asset-tag">Ref: {scene.continuity_bundle_id}</span> : null}
-              {referenceFilename ? (
-                <a
-                  className="copy-button"
-                  href={api.bundleImageUrl(channelId, episodeId, referenceFilename)}
-                  target="_blank"
-                  rel="noreferrer"
-                  download={referenceFilename}
-                >
-                  Download Ref
-                </a>
-              ) : null}
-              {onOpenPromptModal ? (
-                <button
-                  type="button"
-                  className="copy-button"
-                  onClick={() => onOpenPromptModal(scene)}
-                  title="Open full prompt editor modal"
-                >
-                  <ArrowsOutSimple size={13} />
-                  <span>Modal</span>
-                </button>
-              ) : null}
-              <button type="button" className="copy-button" onClick={() => void onCopy(`${scene.scene_id}-prompt`, scene.visual_prompt)}>
-                {copied === `${scene.scene_id}-prompt` ? <Check size={14} /> : <Copy size={14} />}
-                <span>{copied === `${scene.scene_id}-prompt` ? "Copied" : "Copy"}</span>
-              </button>
-              <button
-                type="button"
-                className="copy-button prompt-expand-btn"
-                onClick={() => setLocalPromptExpanded(!isPromptExpanded)}
-                title={isPromptExpanded ? "Collapse prompt view" : "Expand full prompt view"}
-              >
-                {isPromptExpanded ? <CaretUp size={13} /> : <CaretDown size={13} />}
-                <span>{isPromptExpanded ? "Collapse" : "Expand"}</span>
-              </button>
-            </div>
-          </div>
-          <div className="prompt-textarea-wrap">
-            <textarea
-              ref={promptRef}
-              rows={2}
-              className={`scene-prompt-textarea ${isPromptExpanded ? "is-expanded" : "is-collapsed"}`}
-              value={scene.visual_prompt}
-              disabled={processing || mergePending}
-              onInput={(event) => {
-                if (isPromptExpanded) autoGrow(event.currentTarget);
-              }}
-              onChange={(event) => onChange({ ...scene, visual_prompt: event.target.value })}
-            />
-            {!isPromptExpanded && scene.visual_prompt.length > 120 ? (
-              <div className="prompt-expand-overlay" onClick={() => setLocalPromptExpanded(true)} title="Click to expand prompt">
-                <span>Click to view full prompt ({scene.visual_prompt.length} chars)</span>
-              </div>
-            ) : null}
-          </div>
-        </div>
+        <ScenePromptEditor
+          scene={scene}
+          channelId={channelId}
+          episodeId={episodeId}
+          isPromptExpanded={isPromptExpanded}
+          setLocalPromptExpanded={setLocalPromptExpanded}
+          promptRef={promptRef}
+          processing={processing}
+          mergePending={mergePending}
+          copied={copied}
+          onCopy={onCopy}
+          onChange={onChange}
+          onOpenPromptModal={onOpenPromptModal}
+          autoGrow={autoGrow}
+        />
       </div>
       <div className="scene-notes">
         <input
@@ -318,159 +250,14 @@ export function SceneCard({
           onChange={(event) => onChange({ ...scene, continuity_note: event.target.value })}
         />
       </div>
-      <details className="shot-metadata">
-        <summary>Production metadata</summary>
-        <div className="shot-metadata-grid">
-          <label>
-            Asset type
-            <select
-              value={scene.asset_type}
-              onChange={(event) => onChange({ ...scene, asset_type: event.target.value as Scene["asset_type"] })}
-            >
-              <option value="archive">Archive</option>
-              <option value="document">Document</option>
-              <option value="map">Map</option>
-              <option value="diagram">Diagram</option>
-              <option value="ai_reconstruction">AI reconstruction</option>
-              <option value="contemporary">Contemporary</option>
-              <option value="transition">Transition</option>
-            </select>
-          </label>
-          <label>
-            Continuity bundle
-            <input
-              value={scene.continuity_bundle_id}
-              onChange={(event) => onChange({ ...scene, continuity_bundle_id: event.target.value })}
-            />
-          </label>
-          <label>
-            Reference assets
-            <input
-              value={scene.reference_asset_ids.join(", ")}
-              onChange={(event) => onChange({ ...scene, reference_asset_ids: list(event.target.value) })}
-            />
-          </label>
-          <label>
-            Source IDs
-            <input value={scene.source_ids.join(", ")} onChange={(event) => onChange({ ...scene, source_ids: list(event.target.value) })} />
-          </label>
-          <label>
-            Sound cue
-            <input value={scene.sound_cue} onChange={(event) => onChange({ ...scene, sound_cue: event.target.value })} />
-          </label>
-        </div>
-        <div className="editorial-overlay-editor">
-          <div className="block-heading">
-            <span>Editorial overlay</span>
-            <span>{overlay.kind === "none" ? "None" : "Edit layer"}</span>
-          </div>
-          <div className="shot-metadata-grid">
-            <label>
-              Overlay kind
-              <select
-                value={overlay.kind}
-                onChange={(event) =>
-                  onChange({ ...scene, editorial_overlay: { ...overlay, kind: event.target.value as typeof overlay.kind } })
-                }
-              >
-                <option value="none">None</option>
-                <option value="caption">Caption</option>
-                <option value="stat_card">Stat card</option>
-                <option value="timeline">Timeline</option>
-                <option value="bar_chart">Bar chart</option>
-                <option value="line_chart">Line chart</option>
-                <option value="map_callout">Map callout</option>
-                <option value="comparison">Comparison</option>
-                <option value="quote">Quote</option>
-              </select>
-            </label>
-            <label>
-              Motion
-              <select
-                value={overlay.motion}
-                onChange={(event) =>
-                  onChange({ ...scene, editorial_overlay: { ...overlay, motion: event.target.value as typeof overlay.motion } })
-                }
-              >
-                <option value="none">None</option>
-                <option value="fade_up">Fade up</option>
-                <option value="slide_in">Slide in</option>
-                <option value="draw_on">Draw on</option>
-                <option value="count_up">Count up</option>
-                <option value="highlight">Highlight</option>
-              </select>
-            </label>
-            <label>
-              Placement
-              <select
-                value={overlay.placement}
-                onChange={(event) =>
-                  onChange({ ...scene, editorial_overlay: { ...overlay, placement: event.target.value as typeof overlay.placement } })
-                }
-              >
-                <option value="lower_third">Lower third</option>
-                <option value="upper_left">Upper left</option>
-                <option value="upper_right">Upper right</option>
-                <option value="center">Center</option>
-                <option value="side_panel">Side panel</option>
-              </select>
-            </label>
-            <label>
-              Overlay duration
-              <input
-                type="number"
-                min="0.5"
-                max="20"
-                step="0.5"
-                value={overlay.duration_seconds ?? ""}
-                onChange={(event) =>
-                  onChange({
-                    ...scene,
-                    editorial_overlay: { ...overlay, duration_seconds: event.target.value ? Number(event.target.value) : null },
-                  })
-                }
-              />
-            </label>
-            <label className="overlay-text-field">
-              Overlay text
-              <input
-                value={overlay.text}
-                placeholder="Only when the viewer needs context"
-                onChange={(event) => onChange({ ...scene, editorial_overlay: { ...overlay, text: event.target.value } })}
-              />
-            </label>
-            <label className="overlay-text-field">
-              Overlay sources
-              <input
-                value={overlay.source_ids.join(", ")}
-                placeholder="C01, C02"
-                onChange={(event) => onChange({ ...scene, editorial_overlay: { ...overlay, source_ids: list(event.target.value) } })}
-              />
-            </label>
-            <label className="overlay-text-field">
-              Chart data <span className="field-hint">label | value | unit, comma separated</span>
-              <input
-                value={overlay.data
-                  .map((item) => [item.label, item.value, item.unit].filter((value) => value !== "").join(" | "))
-                  .join(", ")}
-                placeholder="1956 | 1 | program"
-                onChange={(event) => onChange({ ...scene, editorial_overlay: { ...overlay, data: parseOverlayData(event.target.value) } })}
-              />
-            </label>
-          </div>
-        </div>
-      </details>
+      <SceneOverlayEditor
+        scene={scene}
+        overlay={overlay}
+        processing={processing}
+        mergePending={mergePending}
+        onChange={onChange}
+        list={list}
+      />
     </article>
   );
-}
-
-function parseOverlayData(value: string): Array<{ label: string; value: string | number; unit: string }> {
-  return value
-    .split(",")
-    .map((entry) => {
-      const [label = "", rawValue = "", unit = ""] = entry.split("|").map((part) => part.trim());
-      const numericValue = Number(rawValue);
-      return { label, value: rawValue && Number.isFinite(numericValue) ? numericValue : rawValue, unit };
-    })
-    .filter((item) => item.label && item.value !== "");
 }

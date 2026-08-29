@@ -4,7 +4,7 @@ import { createRequire } from "node:module";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import { MASCOT_CANVAS_SIZES, nowIso, type MascotActionType, type MascotProfile, type Task } from "@studio/shared";
+import { MASCOT_CANVAS_SIZES, nowIso, resolveChannelBrandName, type MascotProfile, type Task } from "@studio/shared";
 import { RepositoryError } from "../repository.js";
 import { buildQuizComposition } from "../quiz/render/buildComposition.js";
 import { HyperframesRenderer } from "../quiz/render/hyperframesRenderer.js";
@@ -12,15 +12,14 @@ import { preflightQuizRender } from "../quiz/qa/preflight.js";
 import { inspectRenderedVideo } from "../quiz/qa/postRenderQa.js";
 import { formatHyperframesCheckFailure, hasHyperframesContrastIssue, parseHyperframesCheckReport } from "../quiz/qa/hyperframesQuality.js";
 import { healCompositionContrast } from "../quiz/qa/contrastHealer.js";
-import { isQuizAssetResolutionComplete, resolveQuizAssets } from "../quiz/assets/resolveQuizAssets.js";
-import { quizVoicePlanNeedsRegeneration } from "../quiz/audio/voicePolicy.js";
-import { removeImageBackground } from "../utils/imageMatting.js";
+import { resolveQuizAssets } from "../quiz/assets/resolveQuizAssets.js";
 import { hasNonEmptyFile } from "./artifactFiles.js";
-import { readRenderCheckpoint, readSoundtrackCheckpoint, writeRenderCheckpoint, writeSoundtrackCheckpoint } from "./checkpoints.js";
-import { renderSourceFingerprint, soundtrackFingerprint } from "./fingerprints.js";
+import { readRenderCheckpoint, writeRenderCheckpoint } from "./checkpoints.js";
+import { renderSourceFingerprint } from "./fingerprints.js";
 import type { TaskManagerRuntime } from "./runtime.js";
 import { copyCandyArcadeFonts, resolveCandyArcadeFonts } from "../quiz/render/candyArcade/candyArcadeFonts.js";
-import { mixMasterSoundtrack } from "../quiz/audio/soundtrackMixer.js";
+import { prepareLocalizedMascot } from "./video/mascotLocalization.js";
+import { prepareSoundtrack } from "./video/soundtrackPreparation.js";
 
 const execFileAsync = promisify(execFile);
 const require = createRequire(import.meta.url);
@@ -84,8 +83,6 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       ).resolution;
     }
     // HyperFrames only discovers local media inside the composition directory.
-    // Copy resolved assets into this ephemeral render root instead of exposing
-    // absolute repository paths (which would become invalid file:// URLs).
     const renderAssetDirectory = path.join(renderRoot, "quiz-images");
     await mkdir(renderAssetDirectory, { recursive: true });
     const resolvedAssetEntries: Array<readonly [string, string] | null> = await Promise.all(
@@ -126,101 +123,25 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       }
     }
     const bgmHistory = await this.repository.readBgmHistory(task.channel_id);
-    let mascotProfile: MascotProfile | null = null;
-    if (channel.mascot_id) {
-      mascotProfile = await this.repository.getMascot(channel.mascot_id).catch(() => null);
-      if (mascotProfile) {
-        const renderMascotDir = path.join(renderRoot, "mascot-assets");
-        await mkdir(renderMascotDir, { recursive: true });
+    const mascotProfile: MascotProfile | null = await prepareLocalizedMascot(channel, this.repository, renderRoot);
 
-        const localizeMascotAsset = async (url?: string | null): Promise<string | undefined> => {
-          if (!url) return undefined;
-          if (url.startsWith("data:") || url.startsWith("./") || url.startsWith("../")) return url;
-          const match = url.match(/\/api\/mascots\/[^/]+\/assets\/([^/?#]+)/);
-          if (match && match[1]) {
-            const filename = match[1];
-            try {
-              const assetFile = await this.repository.getMascotAssetFile(mascotProfile!.id, filename);
-              const rawContent = await readFile(assetFile.absolutePath);
-              const transparentContent = await removeImageBackground(rawContent);
-              await writeFile(path.join(renderMascotDir, filename), transparentContent);
-              return `./mascot-assets/${filename}`;
-            } catch {
-              return url;
-            }
-          }
-          return url;
-        };
-
-        const localizedMasterImage = await localizeMascotAsset(mascotProfile.master_image_url);
-        const localizedActions: MascotProfile["actions"] = {};
-        for (const [actKey, actSprite] of Object.entries(mascotProfile.actions)) {
-          if (actSprite) {
-            const localizedSpriteUrl = await localizeMascotAsset(actSprite.sprite_url);
-            localizedActions[actKey as MascotActionType] = {
-              ...actSprite,
-              sprite_url: localizedSpriteUrl || actSprite.sprite_url,
-              preview_url: localizedSpriteUrl || actSprite.preview_url,
-            };
-          }
-        }
-
-        mascotProfile = {
-          ...mascotProfile,
-          master_image_url: localizedMasterImage || mascotProfile.master_image_url,
-          actions: localizedActions,
-        };
-      }
-    }
     let selectedBgmTrackId: string | null = null;
     let selectedBgmFilename: string | null = null;
 
     if (completeQuizV2) {
-      const renderSoundtrackPath = path.join(renderRoot, "soundtrack.wav");
-      const soundtrackCheckpointPath = path.join(renderRoot, "soundtrack-checkpoint.json");
-      const currentSoundtrackFp = soundtrackFingerprint(
-        narration.modified_at,
-        narration.size,
-        completeQuizV2.timeline.events,
-        undefined,
-        bgmHistory.map((entry) => entry.track_id),
-      );
-      const existingSoundtrackCheckpoint = await readSoundtrackCheckpoint(soundtrackCheckpointPath);
-      const hasValidCachedSoundtrack =
-        existingSoundtrackCheckpoint?.soundtrack_fingerprint === currentSoundtrackFp &&
-        (await hasNonEmptyFile(renderSoundtrackPath));
-
-      if (hasValidCachedSoundtrack) {
-        selectedBgmTrackId = existingSoundtrackCheckpoint.bgm_track_id;
-        selectedBgmFilename = existingSoundtrackCheckpoint.bgm_filename;
-        await this.update(task.task_id, { progress_message: "Quiz · reusing cached master soundtrack", progress_percent: 15 });
-      } else {
-        await this.update(task.task_id, { progress_message: "Quiz · pre-mixing master soundtrack", progress_percent: 15 });
-        const mixResult = await mixMasterSoundtrack({
-          narrationPath: narration.absolutePath,
-          timeline: completeQuizV2.timeline,
-          durationSeconds: episode.narration_duration_seconds ?? completeQuizV2.timeline.duration_seconds,
-          workingDirectory: path.join(renderRoot, "audio-mix-temp"),
-          outputPath: renderSoundtrackPath,
-          bgmOptions: {
-            recentTrackIds: bgmHistory.map((entry) => entry.track_id),
-            seed: episode.episode_id,
-          },
-          assets: assetSources,
-        });
-        if (mixResult.plan.bgmItems.length > 0) {
-          selectedBgmTrackId = mixResult.plan.bgmItems[0].trackId;
-          selectedBgmFilename = mixResult.plan.bgmItems[0].filename;
-        }
-        await writeSoundtrackCheckpoint(soundtrackCheckpointPath, {
-          schema_version: 1,
-          soundtrack_fingerprint: currentSoundtrackFp,
-          duration_seconds: mixResult.durationSeconds,
-          bgm_track_id: selectedBgmTrackId,
-          bgm_filename: selectedBgmFilename,
-          created_at: nowIso(),
-        });
-      }
+      const soundtrackResult = await prepareSoundtrack({
+        renderRoot,
+        narration,
+        timeline: completeQuizV2.timeline,
+        episode,
+        bgmHistory,
+        assetSources,
+        onProgressMessage: async (message) => {
+          await this.update(task.task_id, { progress_message: message, progress_percent: 15 });
+        },
+      });
+      selectedBgmTrackId = soundtrackResult.selectedBgmTrackId;
+      selectedBgmFilename = soundtrackResult.selectedBgmFilename;
     }
 
     const preparedQuizRender = completeQuizV2
@@ -246,6 +167,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
           defaultAnswerCardStyle: episode.quiz_config?.answer_card_style,
           defaultCounterStyle: episode.quiz_config?.question_counter_style,
           defaultPaletteId: episode.quiz_config?.palette_id,
+          channelBrandName: resolveChannelBrandName(episode.quiz_config?.channel_brand_name, channel.display_name),
         })
       : null;
     const html =

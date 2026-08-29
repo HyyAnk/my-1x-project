@@ -96,4 +96,73 @@ describe("useSandboxPresets", () => {
 
     expect(result.current.customPresets).toHaveLength(0);
   });
+
+  it("saves custom preset with channel_brand_name and restores it on load", () => {
+    const mockBrand = {
+      channelBrandName: "Robot World",
+      setChannelBrandName: vi.fn(),
+    };
+
+    const { result } = renderHook(() => useSandboxPresets({ design: mockDesign, mascot: mockMascot, brandName: mockBrand }), { wrapper });
+
+    act(() => {
+      result.current.setNewPresetName("Robot Preset");
+    });
+    act(() => {
+      result.current.handleSaveCustomPreset();
+    });
+
+    expect(result.current.customPresets[0].channel_brand_name).toBe("Robot World");
+
+    // Load the saved preset
+    act(() => {
+      result.current.handleLoadPreset(result.current.customPresets[0]);
+    });
+
+    expect(mockBrand.setChannelBrandName).toHaveBeenCalledWith("Robot World");
+  });
+
+  it("keeps current brand name when loading built-in presets or legacy presets without brand name", () => {
+    const mockBrand = {
+      channelBrandName: "Custom Channel",
+      setChannelBrandName: vi.fn(),
+    };
+
+    // Store legacy preset without channel_brand_name in localStorage
+    localStorage.setItem(
+      "studio-visual-custom-presets",
+      JSON.stringify([
+        {
+          id: "legacy_preset",
+          name: "Legacy Preset",
+          palette_id: "lime",
+          layout_id: "media_left_choices_right",
+          thinking_bar_style: "star_slider",
+          question_box_style: "candy_pop",
+          answer_card_style: "glossy_arcade",
+          counter_style: "hanging_woodsign",
+        },
+      ]),
+    );
+
+    const { result } = renderHook(() => useSandboxPresets({ design: mockDesign, mascot: mockMascot, brandName: mockBrand }), { wrapper });
+
+    expect(result.current.customPresets).toHaveLength(1);
+
+    // Load legacy preset
+    act(() => {
+      result.current.handleLoadPreset(result.current.customPresets[0]);
+    });
+
+    // setChannelBrandName should NOT have been called (keeps "Custom Channel")
+    expect(mockBrand.setChannelBrandName).not.toHaveBeenCalled();
+
+    // Load built-in preset
+    const builtIn = result.current.builtInPresets[0];
+    act(() => {
+      result.current.handleLoadPreset(builtIn);
+    });
+
+    expect(mockBrand.setChannelBrandName).not.toHaveBeenCalled();
+  });
 });

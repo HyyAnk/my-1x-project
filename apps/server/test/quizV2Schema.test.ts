@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   BUILT_IN_PRESETS,
+  CHANNEL_BRAND_NAME_FALLBACK,
+  CHANNEL_BRAND_NAME_MAX_LENGTH,
   DirectorPlanSchema,
+  EpisodeSchema,
   EpisodeSettingsInputSchema,
   findBuiltInPresetById,
   matchVisualPreset,
@@ -9,6 +12,8 @@ import {
   QuizConfigSchema,
   QuizTimelineSchema,
   QuizV2Schema,
+  resolveChannelBrandName,
+  SandboxPreviewInputSchema,
 } from "@studio/shared";
 
 const choice = (id: string, text: string) => ({ id, text });
@@ -342,6 +347,97 @@ describe("Quiz V2 shared schemas", () => {
         counter_style: "neon_badge",
       });
       expect(matched?.id).toBe("preset_cyber_neon");
+    });
+  });
+
+  describe("Channel Brand Mark Contracts & Helpers (@studio/shared)", () => {
+    it("exports standard branding constants", () => {
+      expect(CHANNEL_BRAND_NAME_MAX_LENGTH).toBe(32);
+      expect(CHANNEL_BRAND_NAME_FALLBACK).toBe("Channel");
+    });
+
+    it("parses QuizConfigSchema with default channel_brand_name as empty string", () => {
+      const config = QuizConfigSchema.parse({});
+      expect(config.channel_brand_name).toBe("");
+    });
+
+    it("parses legacy episode JSON lacking channel_brand_name backward-compatibly", () => {
+      const parsed = EpisodeSchema.parse({
+        episode_id: "ep_legacy_1",
+        channel_id: "ch_legacy_1",
+        slug: "legacy-quiz",
+        topic: { title: "Legacy", premise: "Test", hook: "Hook" },
+        stage: "SELECTED",
+        script_path: "script.md",
+        scene_plan_path: "scene_plan.md",
+        dialogue_script_path: "dialogue.md",
+        video_prompts_path: "prompts.md",
+        quiz_config: {
+          question_count: 8,
+          quiz_format: "knowledge",
+          age_band: "7-9",
+          answer_mode: "voice_and_reveal",
+          visual_theme: "candy_arcade",
+          visual_style: "pixar_3d",
+          resolved_visual_style: "pixar_3d",
+        },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+      expect(parsed.quiz_config.channel_brand_name).toBe("");
+    });
+
+    it("trims whitespace from channel_brand_name in QuizConfigSchema", () => {
+      const config = QuizConfigSchema.parse({ channel_brand_name: "   Tino Quiz   " });
+      expect(config.channel_brand_name).toBe("Tino Quiz");
+    });
+
+    it("accepts exactly 32 characters in QuizConfigSchema", () => {
+      const exactly32 = "A".repeat(32);
+      const config = QuizConfigSchema.parse({ channel_brand_name: exactly32 });
+      expect(config.channel_brand_name).toBe(exactly32);
+    });
+
+    it("rejects channel_brand_name longer than 32 characters with structured validation error", () => {
+      const tooLong = "A".repeat(33);
+      expect(() => QuizConfigSchema.parse({ channel_brand_name: tooLong })).toThrow();
+    });
+
+    it("validates EpisodeSettingsInputSchema with channel_brand_name and max length", () => {
+      const valid = EpisodeSettingsInputSchema.parse({ channel_brand_name: "  Robot World  " });
+      expect(valid.channel_brand_name).toBe("Robot World");
+
+      const tooLong = "B".repeat(33);
+      expect(() => EpisodeSettingsInputSchema.parse({ channel_brand_name: tooLong })).toThrow();
+    });
+
+    it("parses SandboxPreviewInputSchema with channel_brand_name defaulting to empty string", () => {
+      const input = SandboxPreviewInputSchema.parse({});
+      expect(input.channel_brand_name).toBe("");
+
+      const custom = SandboxPreviewInputSchema.parse({ channel_brand_name: "  Jurassic World  " });
+      expect(custom.channel_brand_name).toBe("Jurassic World");
+
+      const tooLong = "C".repeat(33);
+      expect(() => SandboxPreviewInputSchema.parse({ channel_brand_name: tooLong })).toThrow();
+    });
+
+    it("resolves brand name in order: episode override -> channel name -> fallback", () => {
+      // 1. Episode override is present
+      expect(resolveChannelBrandName("Tino", "My Main Channel")).toBe("Tino");
+      expect(resolveChannelBrandName("  Mingy  ", "My Main Channel")).toBe("Mingy");
+
+      // 2. Episode override is empty/whitespace/null/undefined -> fall back to channel name
+      expect(resolveChannelBrandName("", "Kiddo World")).toBe("Kiddo World");
+      expect(resolveChannelBrandName("   ", "Kiddo World")).toBe("Kiddo World");
+      expect(resolveChannelBrandName(null, "Kiddo World")).toBe("Kiddo World");
+      expect(resolveChannelBrandName(undefined, "Kiddo World")).toBe("Kiddo World");
+
+      // 3. Both override and channel name are empty/whitespace/null/undefined -> fall back to "Channel"
+      expect(resolveChannelBrandName("", "")).toBe("Channel");
+      expect(resolveChannelBrandName("   ", "   ")).toBe("Channel");
+      expect(resolveChannelBrandName(null, null)).toBe("Channel");
+      expect(resolveChannelBrandName(undefined, undefined)).toBe("Channel");
     });
   });
 });

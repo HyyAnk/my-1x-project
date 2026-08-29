@@ -70,4 +70,3 @@ export async function readSoundtrackCheckpoint(filePath: string): Promise<Soundt
 export async function writeSoundtrackCheckpoint(filePath: string, checkpoint: SoundtrackCheckpoint): Promise<void> {
   await writeJsonAtomic(filePath, checkpoint);
 }
-

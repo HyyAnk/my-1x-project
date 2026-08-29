@@ -15,6 +15,7 @@ type UseSandboxPreviewRendererInput = {
   question: SandboxQuestionState;
   timeline: SandboxTimelineState;
   aspectRatio: "16:9" | "9:16";
+  channelBrandName?: string;
   onNotice?: (notice: NonNullable<Notice>) => void;
 };
 
@@ -27,7 +28,15 @@ type PendingPreview = {
   requestId: number;
 };
 
-export function useSandboxPreviewRenderer({ design, mascot, question, timeline, aspectRatio, onNotice }: UseSandboxPreviewRendererInput) {
+export function useSandboxPreviewRenderer({
+  design,
+  mascot,
+  question,
+  timeline,
+  aspectRatio,
+  channelBrandName,
+  onNotice,
+}: UseSandboxPreviewRendererInput) {
   const { t } = useTranslation();
   const [previewHtml, setPreviewHtml] = useState("");
   const [pendingPreview, setPendingPreview] = useState<PendingPreview | null>(null);
@@ -63,6 +72,7 @@ export function useSandboxPreviewRenderer({ design, mascot, question, timeline, 
           countdown_progress: Math.max(0, Math.min(1, (timeline.timelineSeconds - 2.5) / 5)),
           fact_card_title: question.factCardTitle,
           fact_card_text: question.factCardText,
+          channel_brand_name: channelBrandName ?? "Tino",
           mascot_id: mascot.mascotId === "none" ? null : mascot.mascotId,
           mascot_enabled: mascot.mascotEnabled && mascot.mascotId !== "none",
           mascot_action: mascot.mascotAction,
@@ -116,6 +126,7 @@ export function useSandboxPreviewRenderer({ design, mascot, question, timeline, 
       mascot.mascotFlipX,
       timeline.isPlaying,
       aspectRatio,
+      channelBrandName,
       onNotice,
       t,
     ],

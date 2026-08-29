@@ -1,14 +1,22 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { execFile } from "node:child_process";
-import { copyFile, mkdir, readdir, readFile, stat } from "node:fs/promises";
 import { promisify } from "node:util";
 import readline from "node:readline";
 import { EventEmitter } from "node:events";
 import WebSocket from "ws";
-import { homedir } from "node:os";
-import path from "node:path";
 import { makeId, type AppConfig, type CodexModel } from "@studio/shared";
 import { StudioLogger } from "./logger.js";
+import {
+  DEFAULT_CODEX_MODELS,
+  getLocalCatalogModels,
+  normalizeModel,
+  withCurrentModel,
+  extractOpenAiOutput,
+} from "./codex/modelCatalog.js";
+import { CodexUnavailableError, resolveCodexCommand } from "./codex/commandResolver.js";
+
+export { DEFAULT_CODEX_MODELS } from "./codex/modelCatalog.js";
+export { CodexUnavailableError } from "./codex/commandResolver.js";
 
 type RpcMessage = {
   id?: number;
@@ -21,24 +29,6 @@ type Pending = { resolve: (value: unknown) => void; reject: (error: Error) => vo
 const execFileAsync = promisify(execFile);
 
 export type CodexServerRequest = { id: number; method: string; params: Record<string, unknown> };
-
-export const DEFAULT_CODEX_MODELS: CodexModel[] = [
-  { id: "gpt-5.6-sol", label: "GPT-5.6 Sol" },
-  { id: "gpt-5.6-terra", label: "GPT-5.6 Terra" },
-  { id: "gpt-5.6-luna", label: "GPT-5.6 Luna" },
-  { id: "gpt-5.5", label: "GPT-5.5" },
-  { id: "gpt-5.4", label: "GPT-5.4" },
-  { id: "gpt-5.4-mini", label: "GPT-5.4 Mini" },
-  { id: "gpt-5.3-codex", label: "GPT-5.3 Codex" },
-  { id: "gpt-5.3-codex-spark", label: "GPT-5.3 Codex Spark" },
-];
-
-export class CodexUnavailableError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "CodexUnavailableError";
-  }
-}
 
 export class CodexAppServerClient extends EventEmitter {
   private process: ChildProcessWithoutNullStreams | null = null;
@@ -69,17 +59,17 @@ export class CodexAppServerClient extends EventEmitter {
 
   async getModels(): Promise<CodexModel[]> {
     if (this.config.codex.transport !== "openai_compatible") {
-      const catalogModels = await this.getLocalCatalogModels();
-      return this.withCurrentModel(catalogModels.length ? catalogModels : DEFAULT_CODEX_MODELS);
+      const catalogModels = await getLocalCatalogModels();
+      return withCurrentModel(catalogModels.length ? catalogModels : DEFAULT_CODEX_MODELS, this.config.codex.model);
     }
     try {
       const response = await this.apiRequest("/models");
-      if (!response.ok) return this.withCurrentModel(DEFAULT_CODEX_MODELS);
+      if (!response.ok) return withCurrentModel(DEFAULT_CODEX_MODELS, this.config.codex.model);
       const payload = (await response.json()) as { data?: unknown[] };
-      const models = (payload.data ?? []).map((model) => this.normalizeModel(model)).filter((model): model is CodexModel => Boolean(model));
-      return this.withCurrentModel(models.length ? models : DEFAULT_CODEX_MODELS);
+      const models = (payload.data ?? []).map((model) => normalizeModel(model)).filter((model): model is CodexModel => Boolean(model));
+      return withCurrentModel(models.length ? models : DEFAULT_CODEX_MODELS, this.config.codex.model);
     } catch {
-      return this.withCurrentModel(DEFAULT_CODEX_MODELS);
+      return withCurrentModel(DEFAULT_CODEX_MODELS, this.config.codex.model);
     }
   }
 
@@ -356,162 +346,8 @@ export class CodexAppServerClient extends EventEmitter {
 
   private async resolveCommand(): Promise<string> {
     if (this.resolvedCommand) return this.resolvedCommand;
-    const configured = this.config.codex.command.trim() || "codex";
-    if (await this.canExecute(configured)) {
-      this.resolvedCommand = configured;
-      return configured;
-    }
-    if (process.platform === "win32" && /(^|[\\/])codex(?:\.exe)?$/i.test(configured)) {
-      const cacheDirectory = path.join(this.rootDirectory, ".documentary-studio", "codex");
-      const cached = path.join(cacheDirectory, "codex.exe");
-      const tried: string[] = [configured];
-
-      const located = await this.locateWindowsCodexCommands();
-      const packageRoot = path.join(process.env.ProgramFiles ?? "C:\\Program Files", "WindowsApps");
-      const packageNames = await readdir(packageRoot).catch(() => [] as string[]);
-      const packageCandidates = packageNames
-        .filter((name) => /^OpenAI\.Codex_/i.test(name))
-        .sort()
-        .reverse()
-        .map((name) => path.join(packageRoot, name, "app", "resources", "codex.exe"));
-      const candidates = [...new Set([...located, ...packageCandidates])];
-
-      for (const source of candidates) {
-        if (!source || tried.includes(source)) continue;
-        tried.push(source);
-        const sourceStats = await stat(source).catch(() => null);
-        if (!sourceStats) continue;
-
-        // A .cmd wrapper can be executed directly. Binary paths from
-        // WindowsApps are copied to a workspace-local path because Windows'
-        // package ACL may reject direct execution from an un-packaged Node
-        // process (EPERM/Access denied).
-        if (/\.(cmd|bat)$/i.test(source) && (await this.canExecute(source))) {
-          this.resolvedCommand = source;
-          this.logger.info("Using the Codex command wrapper discovered on PATH", { step: "codex_resolve" });
-          return source;
-        }
-
-        await mkdir(cacheDirectory, { recursive: true });
-        const cachedStats = await stat(cached).catch(() => null);
-        if (!cachedStats || sourceStats.mtimeMs > cachedStats.mtimeMs || sourceStats.size !== cachedStats.size) {
-          await copyFile(source, cached).catch((error) => {
-            this.logger.debug(`Could not cache Codex candidate ${source}: ${error instanceof Error ? error.message : "copy failed"}`, {
-              step: "codex_resolve",
-            });
-          });
-        }
-        if (await this.canExecute(cached)) {
-          this.resolvedCommand = cached;
-          this.logger.info("Using a local Codex binary copied from the Windows package", { step: "codex_resolve" });
-          return cached;
-        }
-      }
-
-      // Keep the last known-good binary as a fallback. This covers a server
-      // launched with a PATH that cannot see the Windows Store execution alias.
-      if (await this.canExecute(cached)) {
-        this.resolvedCommand = cached;
-        this.logger.info("Using the cached Codex binary", { step: "codex_resolve" });
-        return cached;
-      }
-
-      const suffix = tried.length > 1 ? ` (tried ${tried.slice(0, 6).join(", ")}${tried.length > 7 ? ", …" : ""})` : "";
-      throw new CodexUnavailableError(`Codex command could not be executed: ${configured}${suffix}`);
-    }
-    throw new CodexUnavailableError(`Codex command could not be executed: ${configured}`);
-  }
-
-  private async locateWindowsCodexCommands(): Promise<string[]> {
-    const located: string[] = [];
-    for (const name of ["codex.exe", "codex"]) {
-      const result = await execFileAsync("where.exe", [name], { cwd: this.rootDirectory, timeout: 5_000, windowsHide: true }).catch(
-        () => null,
-      );
-      if (!result) continue;
-      located.push(
-        ...result.stdout
-          .split(/\r?\n/)
-          .map((value) => value.trim())
-          .filter(Boolean),
-      );
-    }
-    return [...new Set(located)];
-  }
-
-  private async canExecute(command: string): Promise<boolean> {
-    if (!command) return false;
-    try {
-      await execFileAsync(command, ["--version"], {
-        cwd: this.rootDirectory,
-        timeout: 5_000,
-        windowsHide: true,
-        shell: process.platform === "win32" && /\.(cmd|bat)$/i.test(command),
-      });
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  private withCurrentModel(models: CodexModel[]): CodexModel[] {
-    if (!this.config.codex.model || models.some((model) => model.id === this.config.codex.model)) return models;
-    return [{ id: this.config.codex.model, label: this.config.codex.model }, ...models];
-  }
-
-  private async getLocalCatalogModels(): Promise<CodexModel[]> {
-    const codexHome = process.env.CODEX_HOME?.trim() || path.join(homedir(), ".codex");
-    const configText = await readFile(path.join(codexHome, "config.toml"), "utf8").catch(() => "");
-    const catalogReference = configText.match(/^\s*model_catalog_json\s*=\s*["']([^"']+)["']/m)?.[1];
-    if (!catalogReference) return [];
-
-    const catalogPath = path.isAbsolute(catalogReference) ? catalogReference : path.resolve(codexHome, catalogReference);
-    try {
-      const payload = JSON.parse(await readFile(catalogPath, "utf8")) as { models?: unknown };
-      if (!Array.isArray(payload.models)) return [];
-      return payload.models.map((model) => this.normalizeCatalogModel(model)).filter((model): model is CodexModel => Boolean(model));
-    } catch {
-      return [];
-    }
-  }
-
-  private normalizeCatalogModel(value: unknown): CodexModel | null {
-    if (!value || typeof value !== "object") return null;
-    const model = value as Record<string, unknown>;
-    if (model.visibility === "hide") return null;
-    const id = typeof model.slug === "string" ? model.slug.trim() : "";
-    if (!id || this.isNonTextModel(id)) return null;
-    const displayName = typeof model.display_name === "string" && model.display_name.trim() ? model.display_name.trim() : undefined;
-    return { id, label: this.modelLabel(id, displayName) };
-  }
-
-  private normalizeModel(value: unknown): CodexModel | null {
-    if (!value || typeof value !== "object") return null;
-    const model = value as Record<string, unknown>;
-    const id = typeof model.id === "string" ? model.id.trim() : "";
-    if (!id || model.visibility === "hide" || this.isNonTextModel(id)) return null;
-    const displayName = [model.name, model.display_name]
-      .find((candidate): candidate is string => typeof candidate === "string" && Boolean(candidate.trim()))
-      ?.trim();
-    return { id, label: this.modelLabel(id, displayName) };
-  }
-
-  private isNonTextModel(id: string): boolean {
-    return /(^|[-_])(audio|embedding|image|moderation|realtime|transcri(?:be|ption)?|tts|whisper)([-_]|$)/i.test(id);
-  }
-
-  private modelLabel(id: string, fallback?: string): string {
-    const labels: Record<string, string> = {
-      "gpt-5.6-sol": "GPT-5.6 Sol",
-      "gpt-5.6-terra": "GPT-5.6 Terra",
-      "gpt-5.6-luna": "GPT-5.6 Luna",
-      "gpt-5.5": "GPT-5.5",
-      "gpt-5.4": "GPT-5.4",
-      "gpt-5.4-mini": "GPT-5.4 Mini",
-      "gpt-5.3-codex": "GPT-5.3 Codex",
-      "gpt-5.3-codex-spark": "GPT-5.3 Codex Spark",
-    };
-    return labels[id.toLowerCase()] ?? fallback ?? id;
+    this.resolvedCommand = await resolveCodexCommand(this.config.codex.command, this.rootDirectory, this.logger);
+    return this.resolvedCommand;
   }
 
   private apiBaseUrl(): string {
@@ -576,29 +412,4 @@ export class CodexAppServerClient extends EventEmitter {
     }
     if (message.method) this.emit("notification", { method: message.method, params: message.params ?? {} });
   }
-}
-
-function extractOpenAiOutput(payload: Record<string, unknown>): string {
-  if (typeof payload.output_text === "string") return payload.output_text;
-  const output = payload.output;
-  if (Array.isArray(output)) {
-    const text = output.flatMap((item) => {
-      if (!item || typeof item !== "object") return [];
-      const content = (item as { content?: unknown }).content;
-      if (!Array.isArray(content)) return [];
-      return content.flatMap((part) => {
-        if (!part || typeof part !== "object") return [];
-        const value = (part as { text?: unknown }).text;
-        return typeof value === "string" ? [value] : [];
-      });
-    });
-    if (text.length) return text.join("");
-    if (JSON.stringify(output).match(/(?:b64_json|base64|data:image|\.png)/i)) return JSON.stringify(output);
-  }
-  const choices = payload.choices;
-  if (Array.isArray(choices)) {
-    const content = (choices[0] as { message?: { content?: unknown } } | undefined)?.message?.content;
-    if (typeof content === "string") return content;
-  }
-  throw new Error("Cockpit API returned no text output");
 }

@@ -2185,7 +2185,10 @@
   border-radius: 10px;
   color: var(--ink);
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .customization-pill-btn:hover:not(:disabled) {
@@ -2206,6 +2209,105 @@
 .customization-pill-btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.customization-brand-name-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 170px;
+  max-width: 260px;
+}
+
+.customization-brand-name-control .brand-name-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  user-select: none;
+}
+
+.customization-brand-name-control .brand-name-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.customization-brand-name-control .brand-name-input {
+  width: 100%;
+  height: 32px;
+  padding: 4px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.customization-brand-name-control.has-error .brand-name-input {
+  border-color: var(--bad);
+}
+
+.customization-brand-name-control .brand-name-input:focus:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.customization-brand-name-control .brand-name-input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.customization-brand-name-control .brand-name-status {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  color: var(--accent);
+  pointer-events: none;
+}
+
+.customization-brand-name-control .brand-name-error-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--bad);
+}
+
+.customization-brand-name-control .brand-name-error-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customization-brand-name-control .brand-name-retry-btn {
+  padding: 2px 6px;
+  background: var(--bad-soft);
+  color: var(--bad);
+  border: 1px solid var(--bad-line);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.customization-brand-name-control .brand-name-retry-btn:hover:not(:disabled) {
+  background: var(--bad);
+  color: #fff;
 }
 
 .pill-spinner {

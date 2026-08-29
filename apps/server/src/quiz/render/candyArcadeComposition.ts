@@ -30,6 +30,7 @@ import {
   transitionClip,
   mascotElement,
 } from "./candyArcade/candyArcadeClips.js";
+import { renderChannelBrandMark } from "./candyArcade/channelBrandMark.js";
 import { getMascotPreloadTags } from "./mascotStateResolver.js";
 
 export type CandyArcadeCompositionInput = {
@@ -50,6 +51,7 @@ export type CandyArcadeCompositionInput = {
   defaultCounterStyle?: QuizQuestionCounterStyle | null;
   defaultPaletteId?: QuizPaletteId | null;
   premixedAudio?: boolean;
+  channelBrandName?: string | null;
 };
 
 export type CandyArcadeCompositionBundle = {
@@ -79,6 +81,7 @@ export {
   quizCopy,
   toSubComposition,
   subCompositionMount,
+  renderChannelBrandMark,
 };
 
 export function buildCandyArcadeComposition(input: CandyArcadeCompositionInput): string {
@@ -168,6 +171,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
           questionBoxStyle,
           answerCardStyle,
           counterStyle,
+          channelBrandName: input.channelBrandName,
         }),
       );
     if (transition)

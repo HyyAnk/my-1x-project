@@ -1,4 +1,4 @@
-﻿import type {
+import type {
   QuizAnswerCardStyle,
   QuizLayoutId,
   QuizPaletteId,
@@ -26,6 +26,7 @@ export type VisualPresetItem = {
   mascot_offset_x?: number;
   mascot_offset_y?: number;
   mascot_flip_x?: boolean;
+  channel_brand_name?: string;
   isBuiltIn?: boolean;
   nameKey?: string;
   descKey?: string;

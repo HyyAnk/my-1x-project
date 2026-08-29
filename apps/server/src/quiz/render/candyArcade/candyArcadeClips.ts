@@ -23,6 +23,7 @@ import {
   type ProductionMascotRenderOptions,
   type ProductionMascotTimelineEvent,
 } from "../productionMascotRenderer.js";
+import { renderChannelBrandMark } from "./channelBrandMark.js";
 
 export type SubComposition = {
   id: string;
@@ -179,6 +180,7 @@ export function questionClip(input: {
   answerCardStyle?: QuizAnswerCardStyle | null;
   counterStyle?: QuizQuestionCounterStyle | null;
   aspectRatio?: MascotRenderAspectRatio;
+  channelBrandName?: string | null;
 }): string {
   const { question, visual } = input;
   const questionLayout = textLayout(question.question, "question");
@@ -222,6 +224,7 @@ export function questionClip(input: {
     revealOutcome: "correct",
     aspectRatio: input.aspectRatio ?? "16:9",
   });
+  const brandMarkHtml = renderChannelBrandMark(input.channelBrandName, Boolean(mascotHtml), input.aspectRatio ?? "16:9");
   const thinkingBarVariant = resolveThinkingBarVariant(input.thinkingBarStyle);
   const thinkingBarHtml = thinkingBarVariant.renderHtml({
     clipStart: input.start,
@@ -247,7 +250,7 @@ export function questionClip(input: {
     isFinal: input.isFinal,
   });
   const body = `<div class="game-stage" data-layout-allow-overflow>${questionBoxHtml}${hero}${visualAnswers || answers}<div class="phase-region">${thinkingBarHtml}${revealPanel(input)}</div></div>`;
-  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0"><div class="bg-gradient"></div><div class="bg-rays"></div><div class="bg-pattern pattern-circles"></div><div class="bg-pattern pattern-sprinkles"></div><div class="bg-shape shape-a" data-layout-allow-overflow></div>${sceneDecorations(input.questionIndex)}<header class="game-header" data-layout-allow-occlusion>${counterBadgeHtml}</header>${body}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
+  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0"><div class="bg-gradient"></div><div class="bg-rays"></div><div class="bg-pattern pattern-circles"></div><div class="bg-pattern pattern-sprinkles"></div><div class="bg-shape shape-a" data-layout-allow-overflow></div>${sceneDecorations(input.questionIndex)}<header class="game-header" data-layout-allow-occlusion>${counterBadgeHtml}</header>${body}${brandMarkHtml}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
 }
 
 export function transitionClip(input: {

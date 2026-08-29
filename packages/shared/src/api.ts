@@ -23,6 +23,7 @@ import {
   QuestionHistorySettingsSchema,
 } from "./schemas.js";
 import { MascotRenderAspectRatioSchema } from "./mascot/renderSchema.js";
+import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "./branding.js";
 
 export const CalibrateMascotActionInputSchema = z.object({
   offset_x: z.number().min(-5000).max(5000).optional().default(0),
@@ -141,6 +142,7 @@ export const SandboxPreviewInputSchema = z
     mascot_show_in_intro: z.boolean().optional().default(true),
     mascot_show_in_outro: z.boolean().optional().default(true),
     mascot_show_in_question: z.boolean().optional().default(true),
+    channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).optional().default(""),
   })
   .superRefine((input, ctx) => {
     if (input.correct_choice_index >= input.choices.length) {
@@ -413,6 +415,7 @@ export const EpisodeSettingsInputSchema = z.object({
   answer_card_style: QuizAnswerCardStyleSchema.optional(),
   palette_id: QuizPaletteIdSchema.optional(),
   style_preset_id: z.string().optional(),
+  channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).optional(),
 });
 
 export type EpisodeSettingsInput = z.infer<typeof EpisodeSettingsInputSchema>;

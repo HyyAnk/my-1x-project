@@ -1136,5 +1136,11 @@ export interface TranslationSchema {
     previewStatusPreviewing: string;
     previewSavedLabel: string;
     previewingLabel: string;
+    channelNameLabel: string;
+    channelNamePlaceholder: string;
+    channelNameSaving: string;
+    channelNameSaved: string;
+    channelNameError: string;
+    channelNameSuccess: string;
   };
 }

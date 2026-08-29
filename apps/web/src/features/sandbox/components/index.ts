@@ -7,3 +7,4 @@ export { SandboxContentTab } from "./SandboxContentTab";
 export { SandboxPreviewCanvas } from "./SandboxPreviewCanvas";
 export { SandboxPresetModal } from "./SandboxPresetModal";
 export { SandboxChannelSyncModal } from "./SandboxChannelSyncModal";
+export { SandboxChannelBrandControl } from "./SandboxChannelBrandControl";

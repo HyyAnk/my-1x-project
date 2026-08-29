@@ -1,0 +1,126 @@
+/* ==========================================================================
+   Mascot State Micro-Motion Animations for Live Web Preview
+   ========================================================================== */
+.mascot-anim-idle,
+.mascot-anim-breathe {
+  animation: mascot-single-breathe 3.2s ease-in-out infinite alternate;
+}
+.mascot-anim-thinking,
+.mascot-anim-sway {
+  animation: mascot-single-sway 2.4s ease-in-out infinite alternate;
+}
+.mascot-anim-celebrate,
+.mascot-anim-jump {
+  animation: mascot-single-jump 1.35s ease-in-out infinite;
+}
+.mascot-anim-oops,
+.mascot-anim-shake {
+  animation: mascot-single-shake 2s ease-in-out infinite;
+}
+.mascot-anim-point,
+.mascot-anim-pulse {
+  animation: mascot-single-pulse 1.8s ease-in-out infinite alternate;
+}
+.mascot-anim-wave,
+.mascot-anim-outro {
+  animation: mascot-single-wave 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes mascot-single-breathe {
+  0% {
+    transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1);
+  }
+  100% {
+    transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 8px * var(--anim-intensity, 1)))
+      scale(calc(1 + 0.035 * var(--anim-intensity, 1)), calc(1 - 0.02 * var(--anim-intensity, 1)));
+  }
+}
+@keyframes mascot-single-sway {
+  0% {
+    transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(calc(-3deg * var(--anim-intensity, 1)));
+  }
+  100% {
+    transform: translate(
+        calc(var(--action-offset-x, 0px) + 6px * var(--anim-intensity, 1)),
+        calc(var(--action-offset-y, 0px) - 10px * var(--anim-intensity, 1))
+      )
+      rotate(calc(4.5deg * var(--anim-intensity, 1)));
+  }
+}
+@keyframes mascot-single-jump {
+  0% {
+    transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1, 1) rotate(0deg);
+  }
+  12% {
+    /* Anticipation / Crouch down */
+    transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) + 5px * var(--anim-intensity, 1)))
+      scale(calc(1 + 0.08 * var(--anim-intensity, 1)), calc(1 - 0.1 * var(--anim-intensity, 1))) rotate(0deg);
+  }
+  32% {
+    /* Explode upward / Stretch */
+    transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 16px * var(--anim-intensity, 1)))
+      scale(calc(1 - 0.05 * var(--anim-intensity, 1)), calc(1 + 0.1 * var(--anim-intensity, 1)))
+      rotate(calc(1.5deg * var(--anim-intensity, 1)));
+  }
+  50% {
+    /* Apex / Peak in air */
+    transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 26px * var(--anim-intensity, 1)))
+      scale(calc(1 + 0.02 * var(--anim-intensity, 1)), calc(1 + 0.02 * var(--anim-intensity, 1)))
+      rotate(calc(-1deg * var(--anim-intensity, 1)));
+  }
+  68% {
+    /* Fast Fall / Descent */
+    transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 10px * var(--anim-intensity, 1)))
+      scale(calc(1 - 0.04 * var(--anim-intensity, 1)), calc(1 + 0.08 * var(--anim-intensity, 1)))
+      rotate(calc(0.5deg * var(--anim-intensity, 1)));
+  }
+  82% {
+    /* Landing impact / Squash */
+    transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) + 6px * var(--anim-intensity, 1)))
+      scale(calc(1 + 0.1 * var(--anim-intensity, 1)), calc(1 - 0.12 * var(--anim-intensity, 1))) rotate(0deg);
+  }
+  92% {
+    /* Rebound */
+    transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 3px * var(--anim-intensity, 1)))
+      scale(calc(1 - 0.02 * var(--anim-intensity, 1)), calc(1 + 0.03 * var(--anim-intensity, 1))) rotate(0deg);
+  }
+  100% {
+    /* Rest / Smooth seamless loop to 0% */
+    transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1, 1) rotate(0deg);
+  }
+}
+@keyframes mascot-single-shake {
+  0%,
+  100% {
+    transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(0deg);
+  }
+  25% {
+    transform: translate(calc(var(--action-offset-x, 0px) - 8px * var(--anim-intensity, 1)), var(--action-offset-y, 0px))
+      rotate(calc(-6deg * var(--anim-intensity, 1)));
+  }
+  75% {
+    transform: translate(calc(var(--action-offset-x, 0px) + 8px * var(--anim-intensity, 1)), var(--action-offset-y, 0px))
+      rotate(calc(6deg * var(--anim-intensity, 1)));
+  }
+}
+@keyframes mascot-single-pulse {
+  0% {
+    transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1);
+  }
+  100% {
+    transform: translate(
+        calc(var(--action-offset-x, 0px) + 6px * var(--anim-intensity, 1)),
+        calc(var(--action-offset-y, 0px) - 6px * var(--anim-intensity, 1))
+      )
+      scale(calc(1 + 0.06 * var(--anim-intensity, 1)));
+  }
+}
+@keyframes mascot-single-wave {
+  0% {
+    transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(calc(-4deg * var(--anim-intensity, 1)));
+  }
+  100% {
+    transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 12px * var(--anim-intensity, 1)))
+      rotate(calc(5deg * var(--anim-intensity, 1))) scale(calc(1 + 0.04 * var(--anim-intensity, 1)));
+  }
+}

@@ -197,4 +197,30 @@ describe("Quiz V2 repository artifacts", () => {
     expect(reloaded.quiz_config.answer_card_style).toBe("glass_neon");
     expect(reloaded.quiz_config.style_preset_id).toBe("preset_cyber_neon");
   });
+
+  it("initializes new episodes with empty channel_brand_name and persists updates without invalidating quiz artifacts", async () => {
+    const { repository, channelId, episodeId } = await fixture();
+    const initialEpisode = await repository.getEpisode(channelId, episodeId);
+    expect(initialEpisode.quiz_config.channel_brand_name).toBe("");
+
+    // Setup an existing quiz artifact to check invalidation behavior
+    const value = quiz(episodeId);
+    await repository.writeQuiz(channelId, episodeId, value);
+    expect(await repository.readQuiz(channelId, episodeId)).not.toBeNull();
+
+    const previousUpdatedAt = initialEpisode.updated_at;
+
+    // Update ONLY channel_brand_name
+    const updated = await repository.updateEpisodeSettings(channelId, episodeId, { channel_brand_name: "   Tino Gaming   " }, 2.3);
+
+    expect(updated.quiz_config.channel_brand_name).toBe("Tino Gaming");
+    expect(new Date(updated.updated_at).getTime()).toBeGreaterThanOrEqual(new Date(previousUpdatedAt).getTime());
+
+    // Verify it reloads cleanly from disk
+    const reloaded = await repository.getEpisode(channelId, episodeId);
+    expect(reloaded.quiz_config.channel_brand_name).toBe("Tino Gaming");
+
+    // Changing only brand name MUST NOT invalidate quiz source artifacts
+    expect(await repository.readQuiz(channelId, episodeId)).not.toBeNull();
+  });
 });

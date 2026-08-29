@@ -100,6 +100,7 @@ export async function confirmTopic(
       answer_card_style: channel.default_answer_card_style ?? "auto",
       palette_id: (channel.default_palette_id as any) ?? "auto",
       style_preset_id: "auto",
+      channel_brand_name: "",
     },
     created_at: timestamp,
     updated_at: timestamp,
@@ -161,6 +162,7 @@ export async function updateEpisodeSettings(
     ...(input.answer_card_style === undefined ? {} : { answer_card_style: input.answer_card_style }),
     ...(input.palette_id === undefined ? {} : { palette_id: input.palette_id }),
     ...(input.style_preset_id === undefined ? {} : { style_preset_id: input.style_preset_id }),
+    ...(input.channel_brand_name === undefined ? {} : { channel_brand_name: input.channel_brand_name }),
     visual_style: nextStyle,
     resolved_visual_style: nextResolvedStyle,
   };

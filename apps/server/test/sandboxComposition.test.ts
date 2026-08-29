@@ -277,5 +277,33 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(resRight.html).toContain("anchor-bottom_right");
       expect(resRight.html).toContain('<div class="candy-mascot-container');
     });
+
+    it("renders Channel Brand Mark in sandbox when mascot is present and respects channel_brand_name", () => {
+      const res = buildSandboxComposition(
+        {
+          mascot_id: "mascot_test_123",
+          mascot_enabled: true,
+          channel_brand_name: "Robot World",
+        },
+        mockMascotProfile,
+      );
+
+      expect(res.html).toContain('<div class="channel-brand-mark"');
+      expect(res.html).toContain("Robot World");
+      expect(res.html).toContain("QUIZ");
+    });
+
+    it("does not render Channel Brand Mark in sandbox when mascot is disabled", () => {
+      const res = buildSandboxComposition(
+        {
+          mascot_id: "mascot_test_123",
+          mascot_enabled: false,
+          channel_brand_name: "Robot World",
+        },
+        mockMascotProfile,
+      );
+
+      expect(res.html).not.toContain('<div class="channel-brand-mark"');
+    });
   });
 });

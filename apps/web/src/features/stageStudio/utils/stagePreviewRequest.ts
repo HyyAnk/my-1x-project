@@ -35,6 +35,7 @@ export function buildStagePreviewRequest(input: StagePreviewRequestInput): Sandb
     counter_style: input.targetChannel?.default_counter_style || "hanging_woodsign",
     phase: stageBackgroundPhase(input.scenarioPhase),
     timeline_time_seconds: stageBackgroundTime(input.scenarioPhase),
+    channel_brand_name: input.targetChannel?.display_name || "Channel",
     mascot_enabled: Boolean(input.selectedMascotId && input.activeMascot),
     mascot_id: input.selectedMascotId,
     mascot_position: input.position,

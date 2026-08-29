@@ -157,6 +157,7 @@ export type QuizV2CompositionInput = {
   defaultCounterStyle?: QuizQuestionCounterStyle | null;
   defaultPaletteId?: QuizPaletteId | null;
   premixedAudio?: boolean;
+  channelBrandName?: string | null;
 };
 
 /**

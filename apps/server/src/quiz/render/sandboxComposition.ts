@@ -16,6 +16,7 @@ import { MASCOT_CANVAS_SIZES } from "@studio/shared";
 import { esc } from "./candyArcade/candyArcadeSvg.js";
 import { renderPreviewMascotHtmlLayer } from "./previewMascotRenderer.js";
 import { candyArcadeFontReadinessScript } from "./candyArcade/candyArcadeFonts.js";
+import { renderChannelBrandMark } from "./candyArcade/channelBrandMark.js";
 
 export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
   input = SandboxPreviewInputSchema.parse(input);
@@ -149,6 +150,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
 
   const hasMascot = Boolean(mascotHtml);
   const mascotClass = hasMascot ? "has-mascot" : "";
+  const brandMarkHtml = renderChannelBrandMark(input.channel_brand_name, hasMascot, aspectRatio);
 
   // 8. Reward FX
   const rewardFxHtml =
@@ -284,6 +286,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
         ${stageContent}
       </div>
 
+      ${brandMarkHtml}
       ${mascotHtml}
       ${rewardFxHtml}
     </section>

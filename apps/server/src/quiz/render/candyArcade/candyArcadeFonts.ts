@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import { copyFile, mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
+import { channelBrandMarkFitScript } from "./channelBrandMark.js";
 
 export type CandyArcadeFontMode = "preview" | "render";
 
@@ -113,6 +114,7 @@ export async function copyCandyArcadeFonts(renderRoot: string, rootDirectory: st
 export function candyArcadeFontReadinessScript(): string {
   const checks = CANDY_ARCADE_FONTS.map(({ family, testWeight }) => ({ family, testWeight }));
   return `(function(){
+    ${channelBrandMarkFitScript()}
     const checks=${JSON.stringify(checks)};
     const sample="BẠN CÓ BIẾT? Hành tinh kỳ thú 0123456789";
     window.__playerReady=false;
@@ -126,6 +128,7 @@ export function candyArcadeFontReadinessScript(): string {
           if (!loaded.length || !document.fonts.check(descriptor,sample)) throw new Error('Font unavailable: '+item.family);
         }
         await document.fonts.ready;
+        fitChannelBrandMarks();
         document.documentElement.dataset.fontsReady="true";
         window.__fontStatus={state:"ready",families:checks.map((item)=>item.family)};
         window.__playerReady=true;

@@ -3,6 +3,7 @@ import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
 import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
+import type { SandboxBrandNameState } from "./useSandboxBrandNameState";
 
 import { BUILT_IN_PRESETS, QuizPaletteIdSchema, type VisualPresetItem } from "@studio/shared";
 export type { VisualPresetItem };
@@ -12,10 +13,11 @@ const STORAGE_KEY = "studio-visual-custom-presets";
 type UseSandboxPresetsInput = {
   design: SandboxDesignState;
   mascot: SandboxMascotState;
+  brandName?: SandboxBrandNameState;
   onNotice?: (notice: NonNullable<Notice>) => void;
 };
 
-export function useSandboxPresets({ design, mascot, onNotice }: UseSandboxPresetsInput) {
+export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSandboxPresetsInput) {
   const { t } = useTranslation();
   const [customPresets, setCustomPresets] = useState<VisualPresetItem[]>(() => {
     try {
@@ -48,7 +50,8 @@ export function useSandboxPresets({ design, mascot, onNotice }: UseSandboxPreset
           preset.question_box_style === design.questionBoxStyle &&
           preset.answer_card_style === design.answerCardStyle &&
           preset.counter_style === design.counterStyle &&
-          (preset.mascot_id === undefined || preset.mascot_id === mascot.mascotId),
+          (preset.mascot_id === undefined || preset.mascot_id === mascot.mascotId) &&
+          (preset.channel_brand_name === undefined || preset.channel_brand_name === brandName?.channelBrandName),
       ),
     [
       allPresets,
@@ -59,6 +62,7 @@ export function useSandboxPresets({ design, mascot, onNotice }: UseSandboxPreset
       design.answerCardStyle,
       design.counterStyle,
       mascot.mascotId,
+      brandName?.channelBrandName,
     ],
   );
   const activeCustomPreset = useMemo(
@@ -88,6 +92,9 @@ export function useSandboxPresets({ design, mascot, onNotice }: UseSandboxPreset
     if (preset.mascot_offset_x !== undefined) mascot.setMascotOffsetX(preset.mascot_offset_x);
     if (preset.mascot_offset_y !== undefined) mascot.setMascotOffsetY(preset.mascot_offset_y);
     if (preset.mascot_flip_x !== undefined) mascot.setMascotFlipX(preset.mascot_flip_x);
+    if (preset.channel_brand_name !== undefined && brandName) {
+      brandName.setChannelBrandName(preset.channel_brand_name);
+    }
     if (onNotice) onNotice({ tone: "good", message: t("visualSandbox.noticeLoadedPreset", { name: preset.name }) });
   };
 
@@ -120,6 +127,7 @@ export function useSandboxPresets({ design, mascot, onNotice }: UseSandboxPreset
       mascot_offset_x: mascot.mascotOffsetX,
       mascot_offset_y: mascot.mascotOffsetY,
       mascot_flip_x: mascot.mascotFlipX,
+      channel_brand_name: brandName?.channelBrandName,
       isBuiltIn: false,
     };
     persistPresets([newPreset, ...customPresets]);

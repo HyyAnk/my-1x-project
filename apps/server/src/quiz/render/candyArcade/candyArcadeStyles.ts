@@ -1,6 +1,7 @@
 import { getAnswerCardsCss, getCounterBadgesCss, getQuestionBoxesCss, getThinkingBarsCss } from "../../visual/elements/index.js";
 import { MASCOT_CANVAS_SIZES, type MascotRenderAspectRatio } from "@studio/shared";
 import { candyArcadeFontFaceCss, type CandyArcadeFontMode } from "./candyArcadeFonts.js";
+import { channelBrandMarkCss } from "./channelBrandMarkStyles.js";
 import { productionMascotCss } from "./productionMascotStyles.js";
 
 export const CANDY_ARCADE_LAYOUT_DIMENSIONS = {
@@ -29,6 +30,7 @@ export function candyArcadeCss(options: { fontMode?: CandyArcadeFontMode; aspect
   return `
 ${candyArcadeFontFaceCss(options.fontMode ?? "render")}
 :root {
+  --candy-layer-brand: 9;
   --candy-layer-transition: 10;
   --candy-layer-mascot: 11;
   font-family: "Fredoka", "Nunito", "Trebuchet MS", sans-serif;
@@ -336,6 +338,7 @@ ${
     : ""
 }
 ${productionMascotCss()}
+${channelBrandMarkCss()}
 ${getThinkingBarsCss()}
 ${getQuestionBoxesCss()}
 ${getCounterBadgesCss()}

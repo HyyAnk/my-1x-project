@@ -35,6 +35,7 @@ export type QuizRenderInput = {
   defaultCounterStyle?: QuizQuestionCounterStyle | null;
   defaultPaletteId?: QuizPaletteId | null;
   premixedAudio?: boolean;
+  channelBrandName?: string | null;
 };
 
 export type PreparedQuizRender = { html: string; compositionFiles: Record<string, string>; durationSeconds: number; questionCount: number };

@@ -23,6 +23,7 @@ export type EpisodeStyleOverride = {
   answerCardStyle?: ResolvedAnswerCardStyle;
   counterStyle?: ResolvedCounterStyle;
   totalQuestions?: number;
+  channelBrandName?: string;
 };
 
 export type EpisodePreviewCandidate = {
@@ -34,13 +35,14 @@ type UseEpisodeStylePreviewProps = {
   channel: Channel;
   episode: Episode | null;
   candidate: EpisodePreviewCandidate | null;
+  channelBrandName?: string;
 };
 
 type PendingPreview = { html: string; requestId: number };
 
 const RENDER_DEBOUNCE_MS = 150;
 
-export function useEpisodeStylePreview({ channel, episode, candidate }: UseEpisodeStylePreviewProps) {
+export function useEpisodeStylePreview({ channel, episode, candidate, channelBrandName }: UseEpisodeStylePreviewProps) {
   const [previewHtml, setPreviewHtml] = useState("");
   const [pendingPreview, setPendingPreview] = useState<PendingPreview | null>(null);
   const [loading, setLoading] = useState(false);
@@ -58,12 +60,18 @@ export function useEpisodeStylePreview({ channel, episode, candidate }: UseEpiso
       answerCardStyle: resolveAnswerCardStyle(channel, quizConfig),
       counterStyle: resolveCounterStyle(channel, quizConfig),
       totalQuestions: quizConfig?.question_count ?? 8,
+      channelBrandName:
+        channelBrandName !== undefined ? channelBrandName : episode?.quiz_config?.channel_brand_name || channel.display_name || "",
     };
-  }, [channel, episode]);
+  }, [channel, channelBrandName, episode]);
 
   const renderPreview = useCallback(async () => {
     const requestId = ++latestRequestId.current;
     const override = candidate?.override ?? {};
+    const mascotConfig = channel.mascot_config;
+    const mascotId = channel.mascot_id;
+    const effectiveBrandName = override.channelBrandName !== undefined ? override.channelBrandName : resolved.channelBrandName;
+
     setLoading(true);
     setPreviewError(null);
     try {
@@ -77,7 +85,17 @@ export function useEpisodeStylePreview({ channel, episode, candidate }: UseEpiso
         phase: "choices",
         question_number: 1,
         total_questions: override.totalQuestions ?? resolved.totalQuestions,
-        mascot_enabled: false,
+        mascot_id: mascotId && mascotId !== "none" ? mascotId : undefined,
+        mascot_enabled: mascotConfig ? mascotConfig.enabled : false,
+        mascot_position: mascotConfig?.position,
+        mascot_scale: mascotConfig?.scale,
+        mascot_offset_x: mascotConfig?.offset_x,
+        mascot_offset_y: mascotConfig?.offset_y,
+        mascot_flip_x: mascotConfig?.flip_x,
+        mascot_show_in_intro: mascotConfig?.show_in_intro,
+        mascot_show_in_outro: mascotConfig?.show_in_outro,
+        mascot_show_in_question: mascotConfig?.show_in_question,
+        channel_brand_name: effectiveBrandName,
       });
       if (requestId !== latestRequestId.current) return;
       setPendingPreview({ html: response.html, requestId });
@@ -86,7 +104,7 @@ export function useEpisodeStylePreview({ channel, episode, candidate }: UseEpiso
       setPreviewError(error instanceof Error ? error.message : "Failed to render preview");
       setLoading(false);
     }
-  }, [candidate, resolved]);
+  }, [candidate, channel.mascot_config, channel.mascot_id, resolved]);
 
   const commitPendingPreview = useCallback(
     async (frame: HTMLIFrameElement, html: string) => {

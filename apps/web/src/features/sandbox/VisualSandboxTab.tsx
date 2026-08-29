@@ -5,6 +5,7 @@ import { useTranslation } from "../../i18n";
 import { useSandboxChannelSync } from "./hooks/useSandboxChannelSync";
 import { useSandboxDesignState } from "./hooks/useSandboxDesignState";
 import { useSandboxMascotState } from "./hooks/useSandboxMascotState";
+import { useSandboxBrandNameState } from "./hooks/useSandboxBrandNameState";
 import { useSandboxPresets } from "./hooks/useSandboxPresets";
 import { useSandboxPreviewRenderer } from "./hooks/useSandboxPreviewRenderer";
 import { useSandboxQuestionState } from "./hooks/useSandboxQuestionState";
@@ -38,11 +39,20 @@ export function VisualSandboxTab({
 
   const design = useSandboxDesignState();
   const mascot = useSandboxMascotState();
+  const brandName = useSandboxBrandNameState();
   const timeline = useSandboxTimelineState();
   const question = useSandboxQuestionState(language);
   const viewport = useSandboxViewportState();
-  const preview = useSandboxPreviewRenderer({ design, mascot, timeline, question, aspectRatio: viewport.aspectRatio, onNotice });
-  const presets = useSandboxPresets({ design, mascot, onNotice });
+  const preview = useSandboxPreviewRenderer({
+    design,
+    mascot,
+    timeline,
+    question,
+    channelBrandName: brandName.channelBrandName,
+    aspectRatio: viewport.aspectRatio,
+    onNotice,
+  });
+  const presets = useSandboxPresets({ design, mascot, brandName, onNotice });
   const channelSync = useSandboxChannelSync({ channels, design, mascot, onNotice, onRefreshChannels });
 
   return (
@@ -120,6 +130,8 @@ export function VisualSandboxTab({
               setMascotId={mascot.setMascotId}
               mascotEnabled={mascot.mascotEnabled}
               setMascotEnabled={mascot.setMascotEnabled}
+              channelBrandName={brandName.channelBrandName}
+              setChannelBrandName={brandName.setChannelBrandName}
               mascotAction={mascot.mascotAction}
               setMascotAction={mascot.setMascotAction}
               mascotPosition={mascot.mascotPosition}

@@ -1,4 +1,11 @@
-import { ALL_QUIZ_PALETTES, QUIZ_PALETTE_COLORS, QUIZ_PALETTE_LABELS, type Channel, type Episode, type QuizPaletteId } from "@studio/shared";
+import {
+  ALL_QUIZ_PALETTES,
+  QUIZ_PALETTE_COLORS,
+  QUIZ_PALETTE_LABELS,
+  type Channel,
+  type Episode,
+  type QuizPaletteId,
+} from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import { resolvePaletteId } from "../../utils/quizStyleResolution";
 import type { EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview";

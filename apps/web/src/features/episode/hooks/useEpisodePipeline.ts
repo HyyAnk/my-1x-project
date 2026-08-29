@@ -1,25 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  QUIZ_MAX_QUESTION_COUNT,
-  QUIZ_MIN_QUESTION_COUNT,
-  type Channel,
-  type Episode,
-  type QuestionHistoryCheckResult,
-  type QuizAnswerCardStyle,
-  type QuizImageStyle,
-  type QuizPaletteId,
-  type QuizQuestionBoxStyle,
-  type QuizQuestionCounterStyle,
-  type QuizThinkingBarStyle,
-  type Scene,
-  type Task,
-  type VisualPresetItem,
-} from "@studio/shared";
+import { useEffect, useMemo, useState } from "react";
+import type { Channel, Scene, Task } from "@studio/shared";
 import { api } from "../../../api";
 import { formatTaskType, isTaskActive, isTaskTerminal, latestTask } from "../../../lib/utils";
 import type { useEpisode } from "../../../hooks/useEpisode";
 import type { Notice } from "../../../components/types";
 import { artifactConfig, isReady, taskLabel, type ArtifactName, type PreviewImageData } from "../types";
+import { useEpisodeSceneFiltering } from "./useEpisodeSceneFiltering";
+import { useEpisodeStyles } from "./useEpisodeStyles";
+import { useEpisodeRemix } from "./useEpisodeRemix";
 
 type EpisodeState = ReturnType<typeof useEpisode>;
 
@@ -67,18 +55,11 @@ export function useEpisodePipeline({
   const [busy, setBusy] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
   const [episodeClock, setEpisodeClock] = useState(() => Date.now());
-  const [questionCountDraft, setQuestionCountDraft] = useState(8);
-  const [durationDraft, setDurationDraft] = useState(8);
   const [previewImage, setPreviewImage] = useState<PreviewImageData | null>(null);
   const [promptModalScene, setPromptModalScene] = useState<Scene | null>(null);
-  const [selectedSequenceId, setSelectedSequenceId] = useState<string>("all");
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>("all");
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [globalPromptExpanded, setGlobalPromptExpanded] = useState<boolean | null>(false);
-  const [historyCheck, setHistoryCheck] = useState<QuestionHistoryCheckResult | null>(null);
-  const [isRemixing, setIsRemixing] = useState(false);
-  const [remixingQuestionId, setRemixingQuestionId] = useState<string | null>(null);
-  const [remixAction, setRemixAction] = useState<{ questionId: string; mode: "rephrase" | "replace" } | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [observedTerminalTasks, setObservedTerminalTasks] = useState(() => new Set<string>());
 
   const isQuiz = channel.engine === "quiz" || channel.group_id === "quiz";
   const initialWorkflowTab =
@@ -89,48 +70,16 @@ export function useEpisodePipeline({
         : "timeline";
   const [workflowTab, setWorkflowTab] = useState<"script" | "visual" | "timeline" | "remix">(initialWorkflowTab);
 
-  const loadHistoryCheck = useCallback(async () => {
-    try {
-      const res = await api.quizHistoryCheck(channel.channel_id, episodeId);
-      setHistoryCheck(res.history_check);
-    } catch {
-      // Ignore non-fatal check error
-    }
-  }, [channel.channel_id, episodeId]);
-
-  useEffect(() => {
-    void loadHistoryCheck();
-  }, [loadHistoryCheck, quizV2?.quiz, scenes.length]);
+  // Sub-hooks
+  const sceneFiltering = useEpisodeSceneFiltering(scenes);
+  const styles = useEpisodeStyles({ channel, episodeId, episode, setEpisode, load, onNotice, setBusy });
+  const remix = useEpisodeRemix({ channel, episodeId, quizV2, scenes, load, onNotice });
 
   useEffect(() => {
     if (simplifyMode && workflowTab !== "remix") {
       setWorkflowTab("remix");
     }
   }, [simplifyMode]);
-
-  const handleRemix = async (questionIds?: string[], mode: "rephrase" | "replace" = "rephrase") => {
-    try {
-      setIsRemixing(true);
-      if (questionIds && questionIds.length === 1) {
-        setRemixingQuestionId(questionIds[0]);
-        setRemixAction({ questionId: questionIds[0], mode });
-      } else {
-        setRemixingQuestionId(null);
-        setRemixAction(null);
-      }
-      const res = await api.remixQuizQuestions(channel.channel_id, episodeId, questionIds, mode);
-      setHistoryCheck(res.history_check);
-      await load();
-      const modeText = mode === "replace" ? "replaced with new questions" : "rephrased";
-      onNotice({ tone: "good", message: `Successfully ${modeText} ${res.remixed_count} questions and re-checked history!` });
-    } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Question remix failed" });
-    } finally {
-      setIsRemixing(false);
-      setRemixingQuestionId(null);
-      setRemixAction(null);
-    }
-  };
 
   useEffect(() => {
     if (
@@ -160,80 +109,6 @@ export function useEpisodePipeline({
   const completedShotSequences = currentShotBatch.filter((task) => task.status === "COMPLETED").length;
   const activeEpisodeTask = episodeTasks.find(isTaskActive) ?? null;
   const pipelineTask = latestTask(episodeTasks, ["GENERATE_PIPELINE"]);
-  const [observedTerminalTasks, setObservedTerminalTasks] = useState(() => new Set<string>());
-
-  const sequences = useMemo(() => {
-    const map = new Map<string, { id: string; title: string; count: number }>();
-    for (const s of scenes) {
-      const existing = map.get(s.sequence_id);
-      if (existing) {
-        existing.count += 1;
-      } else {
-        map.set(s.sequence_id, { id: s.sequence_id, title: s.sequence_title || s.sequence_id, count: 1 });
-      }
-    }
-    return Array.from(map.values());
-  }, [scenes]);
-
-  const filterCounts = useMemo(() => {
-    let missingAudio = 0;
-    let audioMismatch = 0;
-    let hasOverlay = 0;
-    let multiCut = 0;
-    for (const s of scenes) {
-      if (!s.audio_asset_path) missingAudio += 1;
-      if (
-        s.audio_duration_seconds !== null &&
-        s.audio_duration_seconds !== undefined &&
-        Math.abs(s.audio_duration_seconds - s.duration_seconds) > Math.max(1, s.duration_seconds * 0.15)
-      ) {
-        audioMismatch += 1;
-      }
-      if (s.editorial_overlay && s.editorial_overlay.kind !== "none") hasOverlay += 1;
-      if (s.visual_prompt.trim() && s.visual_prompt.split(/^\s*(?:CUT|HARD CUT)\s*$/m).length > 1) multiCut += 1;
-    }
-    return { missingAudio, audioMismatch, hasOverlay, multiCut };
-  }, [scenes]);
-
-  const filteredScenes = useMemo(() => {
-    return scenes.filter((scene) => {
-      if (selectedSequenceId !== "all" && scene.sequence_id !== selectedSequenceId) return false;
-      if (selectedStatusFilter === "missing_audio" && scene.audio_asset_path) return false;
-      if (selectedStatusFilter === "audio_mismatch") {
-        const isMismatch =
-          scene.audio_duration_seconds !== null &&
-          scene.audio_duration_seconds !== undefined &&
-          Math.abs(scene.audio_duration_seconds - scene.duration_seconds) > Math.max(1, scene.duration_seconds * 0.15);
-        if (!isMismatch) return false;
-      }
-      if (selectedStatusFilter === "has_overlay" && (!scene.editorial_overlay || scene.editorial_overlay.kind === "none")) return false;
-      if (selectedStatusFilter === "multi_cut") {
-        const cuts = scene.visual_prompt.trim() ? scene.visual_prompt.split(/^\s*(?:CUT|HARD CUT)\s*$/m).length : 0;
-        if (cuts <= 1) return false;
-      }
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchNumber = String(scene.scene_number).includes(q);
-        const matchDialogue = scene.dialogue.toLowerCase().includes(q);
-        const matchPrompt = scene.visual_prompt.toLowerCase().includes(q);
-        const matchSeq = scene.sequence_title.toLowerCase().includes(q);
-        const matchOverlay = scene.editorial_overlay?.text?.toLowerCase().includes(q);
-        if (!matchNumber && !matchDialogue && !matchPrompt && !matchSeq && !matchOverlay) return false;
-      }
-      return true;
-    });
-  }, [scenes, selectedSequenceId, selectedStatusFilter, searchQuery]);
-
-  const filteredTotalSeconds = useMemo(() => {
-    return filteredScenes.reduce((sum, s) => sum + s.duration_seconds, 0);
-  }, [filteredScenes]);
-
-  useEffect(() => {
-    if (episode) {
-      setQuestionCountDraft(episode.quiz_config?.question_count ?? 8);
-      setDurationDraft(episode.target_duration_minutes);
-    }
-  }, [episode?.episode_id, episode?.quiz_config?.question_count, episode?.target_duration_minutes]);
 
   useEffect(() => {
     setObservedTerminalTasks(new Set(episodeTasks.filter(isTaskTerminal).map((task) => task.task_id)));
@@ -301,8 +176,6 @@ export function useEpisodePipeline({
     }
   };
 
-  const [cancelling, setCancelling] = useState(false);
-
   const handleCancelActiveTask = async (taskToCancel?: Task | null) => {
     const target = taskToCancel || activeEpisodeTask;
     if (!target) return;
@@ -330,120 +203,6 @@ export function useEpisodePipeline({
       await load();
     } catch (error) {
       onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not save artifact" });
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  // Style saves only touch quiz_config: apply the PATCH response directly instead
-  // of refetching every episode artifact through load().
-  const saveQuizStyles = async (busyKey: string, patch: Partial<Episode["quiz_config"]>, successMessage: string) => {
-    setBusy(busyKey);
-    try {
-      const updated = await api.updateEpisode(channel.channel_id, episodeId, patch);
-      setEpisode(updated);
-      onNotice({ tone: "good", message: successMessage });
-    } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not update episode" });
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const saveQuestionCount = async (count: number) => {
-    if (!episode || count === (episode.quiz_config?.question_count ?? 8)) return;
-    if (!Number.isInteger(count) || count < QUIZ_MIN_QUESTION_COUNT || count > QUIZ_MAX_QUESTION_COUNT) {
-      onNotice({
-        tone: "bad",
-        message: `Questions must be between ${QUIZ_MIN_QUESTION_COUNT} and ${QUIZ_MAX_QUESTION_COUNT}`,
-      });
-      setQuestionCountDraft(episode.quiz_config?.question_count ?? 8);
-      return;
-    }
-    setQuestionCountDraft(count);
-    await saveQuizStyles("question-count", { question_count: count }, "Question count updated");
-  };
-
-  const saveVisualStyle = async (newStyle: QuizImageStyle | "mixed") => {
-    if (!episode || newStyle === (episode.quiz_config?.visual_style ?? "mixed")) return;
-    await saveQuizStyles(
-      "visual-style",
-      { visual_style: newStyle },
-      `Visual style set to ${newStyle === "mixed" ? "Mixed" : newStyle}`,
-    );
-  };
-
-  const saveThinkingBarStyle = async (newStyle: QuizThinkingBarStyle) => {
-    if (!episode || newStyle === (episode.quiz_config?.thinking_bar_style ?? "auto")) return;
-    await saveQuizStyles(
-      "thinking-bar-style",
-      { thinking_bar_style: newStyle },
-      `Thinking bar style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
-    );
-  };
-
-  const saveQuestionBoxStyle = async (newStyle: QuizQuestionBoxStyle) => {
-    if (!episode || newStyle === (episode.quiz_config?.question_box_style ?? "auto")) return;
-    await saveQuizStyles(
-      "question-box-style",
-      { question_box_style: newStyle, style_preset_id: "custom" },
-      `Question box style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
-    );
-  };
-
-  const saveAnswerCardStyle = async (newStyle: QuizAnswerCardStyle) => {
-    if (!episode || newStyle === (episode.quiz_config?.answer_card_style ?? "auto")) return;
-    await saveQuizStyles(
-      "answer-card-style",
-      { answer_card_style: newStyle, style_preset_id: "custom" },
-      `Answer card style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
-    );
-  };
-
-  const saveCounterStyle = async (newStyle: QuizQuestionCounterStyle) => {
-    if (!episode || newStyle === (episode.quiz_config?.question_counter_style ?? "auto")) return;
-    await saveQuizStyles(
-      "counter-style",
-      { question_counter_style: newStyle, style_preset_id: "custom" },
-      `Counter badge style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
-    );
-  };
-
-  const savePaletteId = async (newPalette: QuizPaletteId) => {
-    if (!episode || newPalette === (episode.quiz_config?.palette_id ?? "auto")) return;
-    await saveQuizStyles(
-      "palette-id",
-      { palette_id: newPalette, style_preset_id: "custom" },
-      `Color palette set to ${newPalette === "auto" ? "Channel Default" : newPalette}`,
-    );
-  };
-
-  const applyStylePreset = async (preset: VisualPresetItem) => {
-    if (!episode) return;
-    await saveQuizStyles(
-      "style-preset",
-      {
-        style_preset_id: preset.id,
-        visual_theme: preset.theme,
-        palette_id: preset.palette_id,
-        question_box_style: preset.question_box_style,
-        answer_card_style: preset.answer_card_style,
-        question_counter_style: preset.counter_style,
-        thinking_bar_style: preset.thinking_bar_style,
-      },
-      `Applied "${preset.name}" preset pack`,
-    );
-  };
-
-  const saveDuration = async () => {
-    if (!episode || durationDraft === episode.target_duration_minutes) return;
-    setBusy("duration");
-    try {
-      await api.updateEpisode(channel.channel_id, episodeId, { target_duration_minutes: durationDraft });
-      await load();
-      onNotice({ tone: "good", message: "Duration target updated" });
-    } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not update duration" });
     } finally {
       setBusy(null);
     }
@@ -550,27 +309,12 @@ export function useEpisodePipeline({
     busy,
     copied,
     episodeClock,
-    questionCountDraft,
-    setQuestionCountDraft,
-    durationDraft,
-    setDurationDraft,
     previewImage,
     setPreviewImage,
     promptModalScene,
     setPromptModalScene,
-    selectedSequenceId,
-    setSelectedSequenceId,
-    selectedStatusFilter,
-    setSelectedStatusFilter,
-    searchQuery,
-    setSearchQuery,
     globalPromptExpanded,
     setGlobalPromptExpanded,
-    historyCheck,
-    isRemixing,
-    remixingQuestionId,
-    remixAction,
-    handleRemix,
     workflowTab,
     switchWorkflowTab,
     episodeTasks,
@@ -578,10 +322,6 @@ export function useEpisodePipeline({
     completedShotSequences,
     activeEpisodeTask,
     pipelineTask,
-    sequences,
-    filterCounts,
-    filteredScenes,
-    filteredTotalSeconds,
     readiness,
     totalImageCostVnd,
     cancelling,
@@ -590,15 +330,6 @@ export function useEpisodePipeline({
     createTask,
     handleCancelActiveTask,
     saveArtifact,
-    saveQuestionCount,
-    saveVisualStyle,
-    saveThinkingBarStyle,
-    saveQuestionBoxStyle,
-    saveAnswerCardStyle,
-    saveCounterStyle,
-    savePaletteId,
-    applyStylePreset,
-    saveDuration,
     saveScenes,
     mergeNext,
     openVideoFolder,
@@ -606,5 +337,36 @@ export function useEpisodePipeline({
     copyAllVisualPrompts,
     generateBundleImage,
     generateAllBundleImages,
+    // From useEpisodeSceneFiltering
+    selectedSequenceId: sceneFiltering.selectedSequenceId,
+    setSelectedSequenceId: sceneFiltering.setSelectedSequenceId,
+    selectedStatusFilter: sceneFiltering.selectedStatusFilter,
+    setSelectedStatusFilter: sceneFiltering.setSelectedStatusFilter,
+    searchQuery: sceneFiltering.searchQuery,
+    setSearchQuery: sceneFiltering.setSearchQuery,
+    sequences: sceneFiltering.sequences,
+    filterCounts: sceneFiltering.filterCounts,
+    filteredScenes: sceneFiltering.filteredScenes,
+    filteredTotalSeconds: sceneFiltering.filteredTotalSeconds,
+    // From useEpisodeStyles
+    questionCountDraft: styles.questionCountDraft,
+    setQuestionCountDraft: styles.setQuestionCountDraft,
+    durationDraft: styles.durationDraft,
+    setDurationDraft: styles.setDurationDraft,
+    saveQuestionCount: styles.saveQuestionCount,
+    saveVisualStyle: styles.saveVisualStyle,
+    saveThinkingBarStyle: styles.saveThinkingBarStyle,
+    saveQuestionBoxStyle: styles.saveQuestionBoxStyle,
+    saveAnswerCardStyle: styles.saveAnswerCardStyle,
+    saveCounterStyle: styles.saveCounterStyle,
+    savePaletteId: styles.savePaletteId,
+    applyStylePreset: styles.applyStylePreset,
+    saveDuration: styles.saveDuration,
+    // From useEpisodeRemix
+    historyCheck: remix.historyCheck,
+    isRemixing: remix.isRemixing,
+    remixingQuestionId: remix.remixingQuestionId,
+    remixAction: remix.remixAction,
+    handleRemix: remix.handleRemix,
   };
 }
