@@ -25,13 +25,13 @@ const DEFAULT_ACTION_MOTIONS: Record<MascotActionType, MascotMotionPreset> = {
 };
 
 const ACTION_FALLBACK_CHAINS: Record<MascotActionType, MascotActionType[]> = {
-  celebrate: ["celebrate", "wave", "idle"],
-  oops: ["oops", "thinking", "idle"],
-  point: ["point", "idle"],
-  wave: ["wave", "idle"],
+  celebrate: ["celebrate", "wave", "thinking", "idle"],
+  oops: ["oops", "thinking", "celebrate", "idle"],
+  point: ["point", "celebrate", "thinking", "idle"],
+  wave: ["wave", "celebrate", "thinking", "idle"],
   thinking: ["thinking", "idle"],
   outro: ["outro", "wave", "celebrate", "idle"],
-  idle: ["idle"],
+  idle: ["idle", "thinking", "celebrate"],
 };
 
 function escAttr(val: string): string {

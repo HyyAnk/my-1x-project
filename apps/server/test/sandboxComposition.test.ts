@@ -202,7 +202,7 @@ describe("buildSandboxComposition Preview Engine", () => {
           mascot_action: "point",
           mascot_position: "bottom_right",
         },
-        mockMascotProfile,
+        { ...mockMascotProfile, actions: {} },
       );
 
       expect(res.html).toContain('<div class="candy-mascot-container');

@@ -31,12 +31,12 @@ export const MASCOT_DEFAULT_ACTION_MOTIONS: Record<MascotActionType, MascotMotio
 };
 
 export const MASCOT_ACTION_FALLBACK_CHAINS: Record<MascotActionType, MascotActionType[]> = {
-  idle: ["idle"],
-  wave: ["wave", "idle"],
+  idle: ["idle", "thinking", "celebrate"],
+  wave: ["wave", "celebrate", "thinking", "idle"],
   thinking: ["thinking", "idle"],
-  point: ["point", "idle"],
-  celebrate: ["celebrate", "wave", "idle"],
-  oops: ["oops", "thinking", "idle"],
+  point: ["point", "celebrate", "thinking", "idle"],
+  celebrate: ["celebrate", "wave", "thinking", "idle"],
+  oops: ["oops", "thinking", "celebrate", "idle"],
   outro: ["outro", "wave", "celebrate", "idle"],
 };
 

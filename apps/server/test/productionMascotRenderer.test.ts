@@ -79,8 +79,8 @@ describe("production mascot renderer", () => {
     expect(html).toContain('data-mascot-offset-y="90"');
     expect(html).toContain('data-mascot-phase="reveal"');
     expect(html).toContain('data-mascot-phase="explain"');
-    expect(html).toContain("--mascot-state-delay:0s");
     expect(html).toContain("--mascot-state-delay:5s");
+    expect(html).toContain("--mascot-state-delay:10s");
     expect(html).toContain('data-mascot-action="point"');
     expect(html).toContain("--mascot-pivot-x:");
     expect(html).toContain("--mascot-registration-x:12px");
