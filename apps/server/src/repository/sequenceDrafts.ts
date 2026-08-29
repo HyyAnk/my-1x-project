@@ -6,18 +6,26 @@ import { allowedEpisodeFiles } from "./helpers.js";
 import { parseScenes, serializeScenes } from "./sceneCodec.js";
 import type { RepositoryRuntime } from "./runtime.js";
 
-export async function clearSequenceDrafts(this: RepositoryRuntime,episodeId: string): Promise<void> {
+export async function clearSequenceDrafts(this: RepositoryRuntime, episodeId: string): Promise<void> {
   await this.removeTree(this.resolvePath("runtime", "shot-drafts", episodeId));
 }
 
-export async function saveSequenceDraft(this: RepositoryRuntime,episodeId: string, sequenceNumber: number, scenes: Scene[]): Promise<void> {
+export async function saveSequenceDraft(
+  this: RepositoryRuntime,
+  episodeId: string,
+  sequenceNumber: number,
+  scenes: Scene[],
+): Promise<void> {
   const directory = this.resolvePath("runtime", "shot-drafts", episodeId);
   await mkdir(directory, { recursive: true });
   const normalized = scenes.map((scene, index) => SceneSchema.parse({ ...scene, episode_id: episodeId, scene_number: index + 1 }));
   await this.writeJsonAtomic(path.join(directory, `sequence-${String(sequenceNumber).padStart(2, "0")}.json`), normalized);
 }
 
-export async function readSequenceDrafts(this: RepositoryRuntime,episodeId: string): Promise<Array<{ sequenceNumber: number; scenes: Scene[]; modified_at: string }>> {
+export async function readSequenceDrafts(
+  this: RepositoryRuntime,
+  episodeId: string,
+): Promise<Array<{ sequenceNumber: number; scenes: Scene[]; modified_at: string }>> {
   const directory = this.resolvePath("runtime", "shot-drafts", episodeId);
   const entries = await readdir(directory, { withFileTypes: true }).catch(() => []);
   const drafts: Array<{ sequenceNumber: number; scenes: Scene[]; modified_at: string }> = [];
@@ -26,7 +34,11 @@ export async function readSequenceDrafts(this: RepositoryRuntime,episodeId: stri
     try {
       const filePath = path.join(directory, entry.name);
       const [payload, metadata] = await Promise.all([readFile(filePath, "utf8"), stat(filePath)]);
-      drafts.push({ sequenceNumber, scenes: SceneSchema.array().parse(JSON.parse(payload) as unknown), modified_at: metadata.mtime.toISOString() });
+      drafts.push({
+        sequenceNumber,
+        scenes: SceneSchema.array().parse(JSON.parse(payload) as unknown),
+        modified_at: metadata.mtime.toISOString(),
+      });
     } catch {
       // An incomplete draft remains isolated and cannot corrupt the committed scene plan.
     }
@@ -34,15 +46,29 @@ export async function readSequenceDrafts(this: RepositoryRuntime,episodeId: stri
   return drafts.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
 }
 
-export async function commitSequenceDrafts(this: RepositoryRuntime,channelId: string, episodeId: string, expectedCount: number): Promise<boolean> {
+export async function commitSequenceDrafts(
+  this: RepositoryRuntime,
+  channelId: string,
+  episodeId: string,
+  expectedCount: number,
+): Promise<boolean> {
   const drafts = await this.readSequenceDrafts(episodeId);
   if (drafts.length !== expectedCount || drafts.some((draft, index) => draft.sequenceNumber !== index + 1)) return false;
-  await this.saveScenes(channelId, episodeId, drafts.flatMap((draft) => draft.scenes));
+  await this.saveScenes(
+    channelId,
+    episodeId,
+    drafts.flatMap((draft) => draft.scenes),
+  );
   await this.clearSequenceDrafts(episodeId);
   return true;
 }
 
-export async function updateEpisodeStage(this: RepositoryRuntime,channelId: string, episodeId: string, stage: Episode["stage"]): Promise<Episode> {
+export async function updateEpisodeStage(
+  this: RepositoryRuntime,
+  channelId: string,
+  episodeId: string,
+  stage: Episode["stage"],
+): Promise<Episode> {
   const episode = await this.getEpisode(channelId, episodeId);
   const channel = await this.getChannel(channelId);
   const next = EpisodeSchema.parse({ ...episode, stage, updated_at: nowIso() });
@@ -50,7 +76,12 @@ export async function updateEpisodeStage(this: RepositoryRuntime,channelId: stri
   return next;
 }
 
-export async function backupEpisodeFile(this: RepositoryRuntime,channelId: string, episodeId: string, filename: string): Promise<string | null> {
+export async function backupEpisodeFile(
+  this: RepositoryRuntime,
+  channelId: string,
+  episodeId: string,
+  filename: string,
+): Promise<string | null> {
   if (!allowedEpisodeFiles.has(filename)) throw new RepositoryError("Unsupported episode file", "FILE_NOT_ALLOWED");
   const episode = await this.getEpisode(channelId, episodeId);
   const channel = await this.getChannel(channelId);

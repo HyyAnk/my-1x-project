@@ -11,8 +11,8 @@ permissions:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    runs-on: windows-latest
+    timeout-minutes: 15
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -47,8 +47,8 @@ jobs:
         run: pnpm build
 
   e2e:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: windows-latest
+    timeout-minutes: 25
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -68,7 +68,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install chromium
 
       - name: Run Playwright end-to-end tests
         run: pnpm test:e2e

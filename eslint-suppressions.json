@@ -31,9 +31,6 @@
     }
   },
   "apps/server/src/context.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 2
     },
@@ -42,9 +39,6 @@
     }
   },
   "apps/server/src/production.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
-    },
     "complexity": {
       "count": 1
     }
@@ -86,40 +80,19 @@
     }
   },
   "apps/server/src/quiz/audio/bgmRegistry.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 3
-    },
     "complexity": {
       "count": 1
     }
   },
-  "apps/server/src/quiz/audio/voicePlan.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 4
-    }
-  },
-  "apps/server/src/quiz/audio/voiceSynthesis.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    }
-  },
-  "apps/server/src/quiz/domain/quiz.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
-    }
-  },
   "apps/server/src/quiz/mascotService.ts": {
     "@typescript-eslint/no-explicit-any": {
-      "count": 2
-    },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
+      "count": 1
     },
     "@typescript-eslint/no-unsafe-argument": {
       "count": 2
     },
     "@typescript-eslint/no-unsafe-assignment": {
-      "count": 5
+      "count": 4
     },
     "@typescript-eslint/no-unsafe-call": {
       "count": 2
@@ -149,30 +122,13 @@
     }
   },
   "apps/server/src/quiz/qa/hyperframesQuality.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 1
     }
   },
   "apps/server/src/quiz/qa/quizAssessment.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    },
     "complexity": {
       "count": 1
-    }
-  },
-  "apps/server/src/quiz/render/candyArcadeComposition.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 4
-    },
-    "complexity": {
-      "count": 1
-    },
-    "no-empty": {
-      "count": 2
     }
   },
   "apps/server/src/quiz/render/hyperframesRenderer.ts": {
@@ -214,75 +170,28 @@
     }
   },
   "apps/server/src/repository/channels.ts": {
-    "@typescript-eslint/no-unsafe-argument": {
-      "count": 2
-    },
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 5
-    },
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 14
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 8
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 2
     }
   },
   "apps/server/src/repository/episodes.ts": {
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 5
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 1
     }
   },
   "apps/server/src/repository/mascots.ts": {
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 10
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 2
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 3
     }
   },
   "apps/server/src/repository/media.ts": {
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 1
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 2
     }
   },
   "apps/server/src/repository/quizArtifacts.ts": {
-    "@typescript-eslint/no-unsafe-argument": {
-      "count": 2
-    },
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 2
-    },
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 20
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 10
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 16
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 4
-    },
-    "@typescript-eslint/require-await": {
-      "count": 16
-    }
-  },
-  "apps/server/src/repository/runtime.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
     }
   },
   "apps/server/src/repository/sceneCodec.ts": {
@@ -293,55 +202,12 @@
       "count": 1
     }
   },
-  "apps/server/src/repository/scenes.ts": {
-    "@typescript-eslint/no-unsafe-argument": {
-      "count": 5
-    },
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 4
-    },
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 10
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 5
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 2
-    }
-  },
   "apps/server/src/repository/sequenceDrafts.ts": {
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 3
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 2
     }
   },
-  "apps/server/src/repository/topics.ts": {
-    "@typescript-eslint/no-unsafe-argument": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 2
-    },
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 4
-    }
-  },
   "apps/server/src/repository/voices.ts": {
-    "@typescript-eslint/no-unsafe-argument": {
-      "count": 3
-    },
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 2
-    },
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 7
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 1
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 2
     }
@@ -379,17 +245,11 @@
     "@typescript-eslint/no-base-to-string": {
       "count": 33
     },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
     "preserve-caught-error": {
       "count": 1
     }
   },
   "apps/server/src/tasks/pipelineRunner.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 2
     },
@@ -406,18 +266,6 @@
     }
   },
   "apps/server/src/utils/imageMatting.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 3
-    },
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 12
-    },
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 5
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 3
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 1
     },
@@ -428,18 +276,6 @@
   "apps/server/src/utils/promptSanitizer.ts": {
     "@typescript-eslint/no-base-to-string": {
       "count": 2
-    },
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 1
     }
   },
   "apps/server/test/antigravity.test.ts": {
@@ -450,14 +286,6 @@
   "apps/server/test/bundleImageTask.test.ts": {
     "@typescript-eslint/require-await": {
       "count": 11
-    }
-  },
-  "apps/server/test/candyArcade.test.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 1
     }
   },
   "apps/server/test/candyArcadeVisualRegression.test.ts": {
@@ -499,9 +327,6 @@
     }
   },
   "apps/server/test/gpti2Image.test.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 8
-    },
     "@typescript-eslint/no-unsafe-assignment": {
       "count": 8
     },
@@ -526,20 +351,11 @@
     }
   },
   "apps/server/test/mascotStudio.test.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 3
-    },
-    "@typescript-eslint/no-unsafe-argument": {
-      "count": 1
-    },
     "@typescript-eslint/no-unsafe-assignment": {
-      "count": 17
-    },
-    "@typescript-eslint/no-unsafe-call": {
-      "count": 3
+      "count": 12
     },
     "@typescript-eslint/no-unsafe-member-access": {
-      "count": 37
+      "count": 27
     },
     "@typescript-eslint/no-unused-vars": {
       "count": 2
@@ -554,9 +370,6 @@
     }
   },
   "apps/server/test/quizBgm.test.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 15
-    },
     "@typescript-eslint/no-unsafe-assignment": {
       "count": 2
     },
@@ -565,15 +378,7 @@
     }
   },
   "apps/server/test/quizPacing.test.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
-    },
     "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    }
-  },
-  "apps/server/test/quizRepository.test.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
       "count": 1
     }
   },
@@ -586,27 +391,11 @@
     }
   },
   "apps/server/test/quizV2Route.test.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
     "@typescript-eslint/no-unsafe-call": {
       "count": 1
     },
     "@typescript-eslint/no-unsafe-member-access": {
       "count": 5
-    }
-  },
-  "apps/server/test/sandboxComposition.test.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
-    },
-    "@typescript-eslint/no-unused-vars": {
-      "count": 3
-    }
-  },
-  "apps/server/test/sceneMergeRoute.test.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
     }
   },
   "apps/server/test/scriptQuality.test.ts": {
@@ -629,9 +418,6 @@
     }
   },
   "apps/server/test/tasks.test.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 22
-    },
     "@typescript-eslint/no-unsafe-argument": {
       "count": 2
     },
@@ -640,11 +426,6 @@
     },
     "@typescript-eslint/require-await": {
       "count": 5
-    }
-  },
-  "apps/server/test/thinkingBarVariants.test.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 3
     }
   },
   "apps/server/test/topicConfirmRoute.test.ts": {
@@ -716,9 +497,6 @@
     }
   },
   "apps/web/src/components/MascotAssignModal.tsx": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 7
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 3
     },
@@ -759,11 +537,6 @@
       "count": 1
     }
   },
-  "apps/web/src/features/channel/components/ThinkingBarStyleMenu.tsx": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
-    }
-  },
   "apps/web/src/features/channel/components/TopicHistoryRow.tsx": {
     "@typescript-eslint/no-unused-vars": {
       "count": 1
@@ -779,20 +552,7 @@
       "count": 1
     }
   },
-  "apps/web/src/features/episode/components/EpisodeQuizCustomizationBar.tsx": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
-    }
-  },
-  "apps/web/src/features/mascot/MascotGeneratorTab.tsx": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    }
-  },
   "apps/web/src/features/mascot/components/MascotCalibrationStep.tsx": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 11
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 6
     },
@@ -814,20 +574,12 @@
     "@typescript-eslint/no-explicit-any": {
       "count": 1
     },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
-    },
     "@typescript-eslint/no-unused-vars": {
       "count": 3
     }
   },
   "apps/web/src/features/mascot/hooks/useMascotLibrary.ts": {
     "@typescript-eslint/require-await": {
-      "count": 1
-    }
-  },
-  "apps/web/src/features/sandbox/VisualSandboxTab.tsx": {
-    "@typescript-eslint/no-unused-vars": {
       "count": 1
     }
   },
@@ -842,9 +594,6 @@
     }
   },
   "apps/web/src/features/settings/hooks/useMediaSettings.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
     "complexity": {
       "count": 1
     }
@@ -855,20 +604,12 @@
     }
   },
   "apps/web/src/features/tasks/TasksView.tsx": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
     "complexity": {
       "count": 1
     }
   },
   "apps/web/src/features/tasks/components/TaskDetailDrawer.tsx": {
     "complexity": {
-      "count": 1
-    }
-  },
-  "apps/web/src/hooks/useRouter.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
       "count": 1
     }
   },

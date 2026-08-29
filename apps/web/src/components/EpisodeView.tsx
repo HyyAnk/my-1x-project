@@ -1,11 +1,5 @@
 import { useCallback } from "react";
-import {
-  ArrowsClockwise,
-  CheckCircle,
-  FileText,
-  FilmSlate,
-  Image,
-} from "@phosphor-icons/react";
+import { ArrowsClockwise, CheckCircle, FileText, FilmSlate, Image } from "@phosphor-icons/react";
 import type { Channel, Task } from "@studio/shared";
 import { isTaskActive } from "../lib/utils";
 import { parseContinuityBundles } from "../lib/continuity";
@@ -16,12 +10,7 @@ import { QuizV2Panel } from "./QuizV2Panel";
 import { PromptFocusModal } from "./PromptFocusModal";
 import { QuestionRemixPanel } from "./QuestionRemixPanel";
 import type { Notice } from "./types";
-import {
-  artifactConfig,
-  isReady,
-  type ArtifactName,
-  type PreviewImageData,
-} from "../features/episode/types";
+import { artifactConfig, isReady, type ArtifactName, type PreviewImageData } from "../features/episode/types";
 import { PipelineRail } from "../features/episode/components/PipelineRail";
 import { ImagePreviewModal } from "../features/episode/components/ImagePreviewModal";
 import { BundleImagesPanel } from "../features/episode/components/BundleImagesPanel";
@@ -90,7 +79,12 @@ export function EpisodeDetail({
 
   const isQuiz = channel.engine === "quiz" || channel.group_id === "quiz";
 
-  if (!episode) return <section className="page-wrap"><LoadingState /></section>;
+  if (!episode)
+    return (
+      <section className="page-wrap">
+        <LoadingState />
+      </section>
+    );
 
   return (
     <section className="page-wrap detail-page">
@@ -180,7 +174,9 @@ export function EpisodeDetail({
             role="tab"
             aria-selected={pipeline.workflowTab === "script"}
             className={`channel-group-tab ${pipeline.workflowTab === "script" ? "is-selected" : ""}`}
-            {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "script" }), () => pipeline.switchWorkflowTab("script"))}
+            {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "script" }), () =>
+              pipeline.switchWorkflowTab("script"),
+            )}
           >
             <FileText size={17} weight={pipeline.workflowTab === "script" ? "fill" : "regular"} />
             <span>1. Script & Plan</span>
@@ -191,7 +187,9 @@ export function EpisodeDetail({
           role="tab"
           aria-selected={pipeline.workflowTab === "remix"}
           className={`channel-group-tab ${pipeline.workflowTab === "remix" ? "is-selected" : ""}`}
-          {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "remix" }), () => pipeline.switchWorkflowTab("remix"))}
+          {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "remix" }), () =>
+            pipeline.switchWorkflowTab("remix"),
+          )}
         >
           <ArrowsClockwise size={17} weight={pipeline.workflowTab === "remix" ? "bold" : "regular"} />
           <span>Question Remix</span>
@@ -207,7 +205,9 @@ export function EpisodeDetail({
               role="tab"
               aria-selected={pipeline.workflowTab === "visual"}
               className={`channel-group-tab ${pipeline.workflowTab === "visual" ? "is-selected" : ""}`}
-              {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "visual" }), () => pipeline.switchWorkflowTab("visual"))}
+              {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "visual" }), () =>
+                pipeline.switchWorkflowTab("visual"),
+              )}
             >
               <Image size={17} weight={pipeline.workflowTab === "visual" ? "fill" : "regular"} />
               <span>2. Visual & Continuity</span>
@@ -217,7 +217,9 @@ export function EpisodeDetail({
               role="tab"
               aria-selected={pipeline.workflowTab === "timeline"}
               className={`channel-group-tab ${pipeline.workflowTab === "timeline" ? "is-selected" : ""}`}
-              {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "timeline" }), () => pipeline.switchWorkflowTab("timeline"))}
+              {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, episodeId, tab: "timeline" }), () =>
+                pipeline.switchWorkflowTab("timeline"),
+              )}
             >
               <FilmSlate size={17} weight={pipeline.workflowTab === "timeline" ? "fill" : "regular"} />
               <span>3. Timeline & Shots</span>
@@ -243,7 +245,10 @@ export function EpisodeDetail({
                   setContent={artifact.set}
                   task={task ?? null}
                   now={pipeline.episodeClock}
-                  disabled={!pipeline.prerequisites[config.filename] || Boolean(pipeline.activeEpisodeTask && pipeline.activeEpisodeTask.task_id !== task?.task_id)}
+                  disabled={
+                    !pipeline.prerequisites[config.filename] ||
+                    Boolean(pipeline.activeEpisodeTask && pipeline.activeEpisodeTask.task_id !== task?.task_id)
+                  }
                   saving={pipeline.busy === config.filename}
                   defaultOpen={config.filename === "script.md" || (!isReady(artifact.value) && index === 0)}
                   onGenerate={() => void pipeline.createTask(config.taskType)}
@@ -282,7 +287,10 @@ export function EpisodeDetail({
                 setContent={artifact.set}
                 task={task ?? null}
                 now={pipeline.episodeClock}
-                disabled={!pipeline.prerequisites["visual_bible.md"] || Boolean(pipeline.activeEpisodeTask && pipeline.activeEpisodeTask.task_id !== task?.task_id)}
+                disabled={
+                  !pipeline.prerequisites["visual_bible.md"] ||
+                  Boolean(pipeline.activeEpisodeTask && pipeline.activeEpisodeTask.task_id !== task?.task_id)
+                }
                 saving={pipeline.busy === "visual_bible.md"}
                 defaultOpen={true}
                 onGenerate={() => void pipeline.createTask(config.taskType)}
@@ -367,9 +375,7 @@ export function EpisodeDetail({
         />
       ) : null}
 
-      {pipeline.previewImage ? (
-        <ImagePreviewModal image={pipeline.previewImage} onClose={() => pipeline.setPreviewImage(null)} />
-      ) : null}
+      {pipeline.previewImage ? <ImagePreviewModal image={pipeline.previewImage} onClose={() => pipeline.setPreviewImage(null)} /> : null}
 
       {pipeline.promptModalScene ? (
         <PromptFocusModal
@@ -379,8 +385,8 @@ export function EpisodeDetail({
           onSave={(updatedPrompt) => {
             setScenes((current) =>
               current.map((item) =>
-                item.scene_id === pipeline.promptModalScene?.scene_id ? { ...item, visual_prompt: updatedPrompt } : item
-              )
+                item.scene_id === pipeline.promptModalScene?.scene_id ? { ...item, visual_prompt: updatedPrompt } : item,
+              ),
             );
           }}
           onClose={() => pipeline.setPromptModalScene(null)}

@@ -4,11 +4,7 @@ import type { Channel, MascotProfile } from "@studio/shared";
 import type { Notice } from "./types";
 import { useTranslation } from "../i18n";
 import { getNavProps } from "../hooks/useRouter";
-import {
-  AUXILIARY_ACTIONS,
-  BRAND_IDENTITY_ACTIONS,
-  CORE_GAMEPLAY_ACTIONS,
-} from "../features/mascot/constants";
+import { AUXILIARY_ACTIONS, BRAND_IDENTITY_ACTIONS, CORE_GAMEPLAY_ACTIONS } from "../features/mascot/constants";
 import { useMascotLibrary } from "../features/mascot/hooks/useMascotLibrary";
 import { useMascotGenerator } from "../features/mascot/hooks/useMascotGenerator";
 import { MascotLibraryTab } from "../features/mascot/MascotLibraryTab";
@@ -134,11 +130,7 @@ export function MascotStudioView({
 
       {/* Tab 2: Generator */}
       {activeTab === "generator" ? (
-        <MascotGeneratorTab
-          channels={channels}
-          mascots={libraryState.mascots}
-          generatorState={generatorState}
-        />
+        <MascotGeneratorTab channels={channels} mascots={libraryState.mascots} generatorState={generatorState} />
       ) : null}
     </section>
   );

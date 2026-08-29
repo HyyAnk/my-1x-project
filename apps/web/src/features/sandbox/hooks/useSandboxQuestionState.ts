@@ -54,6 +54,8 @@ const SAMPLE_QUESTIONS_VI = [
   },
 ];
 
+export type PresetSampleQuestion = (typeof SAMPLE_QUESTIONS_EN)[number];
+
 export function useSandboxQuestionState(language: string) {
   const sampleQuestions = language === "vi" ? SAMPLE_QUESTIONS_VI : SAMPLE_QUESTIONS_EN;
   const [questionText, setQuestionText] = useState(sampleQuestions[0].text);

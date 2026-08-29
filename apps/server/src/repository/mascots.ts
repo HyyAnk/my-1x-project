@@ -1,6 +1,16 @@
 import { mkdir, readFile, readdir, stat, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { MascotProfileSchema, MascotSpriteActionSchema, makeId, nowIso, type Channel, type ChannelMascotConfig, type MascotActionType, type MascotProfile, type MascotSpriteAction } from "@studio/shared";
+import {
+  MascotProfileSchema,
+  MascotSpriteActionSchema,
+  makeId,
+  nowIso,
+  type Channel,
+  type ChannelMascotConfig,
+  type MascotActionType,
+  type MascotProfile,
+  type MascotSpriteAction,
+} from "@studio/shared";
 import { RepositoryError } from "./errors.js";
 import { isValidImageBuffer } from "./helpers.js";
 import type { RepositoryRuntime } from "./runtime.js";
@@ -25,7 +35,7 @@ export async function listMascots(this: RepositoryRuntime): Promise<MascotProfil
   return mascots.sort((a, b) => b.updated_at.localeCompare(a.updated_at));
 }
 
-export async function getMascot(this: RepositoryRuntime,mascotId: string): Promise<MascotProfile> {
+export async function getMascot(this: RepositoryRuntime, mascotId: string): Promise<MascotProfile> {
   await this.ensureBootstrap();
   const metadataPath = path.join(this.roots.mascots, mascotId, "mascot.json");
   if (!(await this.exists(metadataPath))) {
@@ -38,7 +48,7 @@ export async function getMascot(this: RepositoryRuntime,mascotId: string): Promi
   return { ...profile, assigned_channel_ids: assignedChannels };
 }
 
-export async function saveMascot(this: RepositoryRuntime,profile: Partial<MascotProfile> & { name: string }): Promise<MascotProfile> {
+export async function saveMascot(this: RepositoryRuntime, profile: Partial<MascotProfile> & { name: string }): Promise<MascotProfile> {
   await this.ensureBootstrap();
   const id = profile.id || makeId("mascot");
   const existing = profile.id ? await this.getMascot(profile.id).catch(() => null) : null;
@@ -63,7 +73,7 @@ export async function saveMascot(this: RepositoryRuntime,profile: Partial<Mascot
   return validated;
 }
 
-export async function deleteMascot(this: RepositoryRuntime,mascotId: string): Promise<void> {
+export async function deleteMascot(this: RepositoryRuntime, mascotId: string): Promise<void> {
   await this.ensureBootstrap();
   const mascotDir = path.join(this.roots.mascots, mascotId);
   await this.removeTree(mascotDir);
@@ -76,7 +86,7 @@ export async function deleteMascot(this: RepositoryRuntime,mascotId: string): Pr
   }
 }
 
-export async function saveMascotAsset(this: RepositoryRuntime,mascotId: string, filename: string, content: Uint8Array): Promise<string> {
+export async function saveMascotAsset(this: RepositoryRuntime, mascotId: string, filename: string, content: Uint8Array): Promise<string> {
   await this.ensureBootstrap();
   const mascotDir = path.join(this.roots.mascots, mascotId);
   const assetDir = path.join(mascotDir, "assets");
@@ -86,7 +96,11 @@ export async function saveMascotAsset(this: RepositoryRuntime,mascotId: string, 
   return `/api/mascots/${mascotId}/assets/${filename}`;
 }
 
-export async function getMascotAssetFile(this: RepositoryRuntime,mascotId: string, filename: string): Promise<{ absolutePath: string; size: number; modified_at: string }> {
+export async function getMascotAssetFile(
+  this: RepositoryRuntime,
+  mascotId: string,
+  filename: string,
+): Promise<{ absolutePath: string; size: number; modified_at: string }> {
   const mascotDir = path.join(this.roots.mascots, mascotId);
   const absolutePath = path.join(mascotDir, "assets", filename);
   try {
@@ -98,7 +112,12 @@ export async function getMascotAssetFile(this: RepositoryRuntime,mascotId: strin
   }
 }
 
-export async function calibrateMascotAction(this: RepositoryRuntime,mascotId: string, action: MascotActionType, calibration: { offset_x: number; offset_y: number }): Promise<MascotProfile> {
+export async function calibrateMascotAction(
+  this: RepositoryRuntime,
+  mascotId: string,
+  action: MascotActionType,
+  calibration: { offset_x: number; offset_y: number },
+): Promise<MascotProfile> {
   const mascot = await this.getMascot(mascotId);
   const currentAction = mascot.actions[action];
 
@@ -128,7 +147,7 @@ export async function calibrateMascotAction(this: RepositoryRuntime,mascotId: st
   return this.saveMascot(updatedMascot);
 }
 
-export async function listMascotAssets(this: RepositoryRuntime,mascotId: string): Promise<string[]> {
+export async function listMascotAssets(this: RepositoryRuntime, mascotId: string): Promise<string[]> {
   const mascotDir = path.join(this.roots.mascots, mascotId, "assets");
   try {
     const entries = await readdir(mascotDir, { withFileTypes: true });
@@ -138,7 +157,7 @@ export async function listMascotAssets(this: RepositoryRuntime,mascotId: string)
   }
 }
 
-export async function deleteMascotAssetFile(this: RepositoryRuntime,mascotId: string, filename: string): Promise<void> {
+export async function deleteMascotAssetFile(this: RepositoryRuntime, mascotId: string, filename: string): Promise<void> {
   const mascotDir = path.join(this.roots.mascots, mascotId);
   const absolutePath = path.join(mascotDir, "assets", filename);
   try {
@@ -149,7 +168,12 @@ export async function deleteMascotAssetFile(this: RepositoryRuntime,mascotId: st
   }
 }
 
-export async function assignMascotToChannel(this: RepositoryRuntime,channelId: string, mascotId: string | null, config?: Partial<ChannelMascotConfig>): Promise<Channel> {
+export async function assignMascotToChannel(
+  this: RepositoryRuntime,
+  channelId: string,
+  mascotId: string | null,
+  config?: Partial<ChannelMascotConfig>,
+): Promise<Channel> {
   const channel = await this.getChannel(channelId);
   const updatedConfig = config ? { ...channel.mascot_config, ...config } : channel.mascot_config;
   return this.updateChannel(channelId, { mascot_id: mascotId, mascot_config: updatedConfig });

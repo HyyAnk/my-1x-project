@@ -8,13 +8,7 @@ export type CountryFlagProps = {
   title?: string;
 };
 
-export function CountryFlag({
-  code,
-  size = 14,
-  className = "",
-  style,
-  title,
-}: CountryFlagProps) {
+export function CountryFlag({ code, size = 14, className = "", style, title }: CountryFlagProps) {
   const normalized = (code || "GLOBAL").trim().toUpperCase();
   const width = Math.round((size * 4) / 3);
   const height = size;
@@ -71,23 +65,51 @@ function getFlagSvgContent(code: string): React.ReactNode {
       return (
         <g>
           <rect width="640" height="480" fill="#bd3d44" />
-          <path
-            stroke="#fff"
-            strokeWidth="36.9"
-            d="M0,55.4H640M0,129.2H640M0,203H640M0,276.9H640M0,350.8H640M0,424.6H640"
-          />
+          <path stroke="#fff" strokeWidth="36.9" d="M0,55.4H640M0,129.2H640M0,203H640M0,276.9H640M0,350.8H640M0,424.6H640" />
           <rect width="256" height="258.5" fill="#192f5d" />
           <g fill="#fff">
             {[
-              [25, 25], [76, 25], [128, 25], [180, 25], [231, 25],
-              [51, 51], [103, 51], [154, 51], [206, 51],
-              [25, 77], [76, 77], [128, 77], [180, 77], [231, 77],
-              [51, 103], [103, 103], [154, 103], [206, 103],
-              [25, 129], [76, 129], [128, 129], [180, 129], [231, 129],
-              [51, 155], [103, 155], [154, 155], [206, 155],
-              [25, 181], [76, 181], [128, 181], [180, 181], [231, 181],
-              [51, 207], [103, 207], [154, 207], [206, 207],
-              [25, 233], [76, 233], [128, 233], [180, 233], [231, 233],
+              [25, 25],
+              [76, 25],
+              [128, 25],
+              [180, 25],
+              [231, 25],
+              [51, 51],
+              [103, 51],
+              [154, 51],
+              [206, 51],
+              [25, 77],
+              [76, 77],
+              [128, 77],
+              [180, 77],
+              [231, 77],
+              [51, 103],
+              [103, 103],
+              [154, 103],
+              [206, 103],
+              [25, 129],
+              [76, 129],
+              [128, 129],
+              [180, 129],
+              [231, 129],
+              [51, 155],
+              [103, 155],
+              [154, 155],
+              [206, 155],
+              [25, 181],
+              [76, 181],
+              [128, 181],
+              [180, 181],
+              [231, 181],
+              [51, 207],
+              [103, 207],
+              [154, 207],
+              [206, 207],
+              [25, 233],
+              [76, 233],
+              [128, 233],
+              [180, 233],
+              [231, 233],
             ].map(([cx, cy], i) => (
               <circle key={i} cx={cx} cy={cy} r="6.5" />
             ))}
@@ -290,11 +312,7 @@ function getFlagSvgContent(code: string): React.ReactNode {
       return (
         <g>
           <rect width="640" height="480" fill="#cc0000" />
-          <path
-            stroke="#fff"
-            strokeWidth="34.3"
-            d="M0,51.4H640M0,120H640M0,188.6H640M0,257.1H640M0,325.7H640M0,394.3H640M0,462.9H640"
-          />
+          <path stroke="#fff" strokeWidth="34.3" d="M0,51.4H640M0,120H640M0,188.6H640M0,257.1H640M0,325.7H640M0,394.3H640M0,462.9H640" />
           <rect width="320" height="274.3" fill="#000066" />
           <path d="M130,70 A70,70 0 0,0 130,210 A85,85 0 0,1 130,70" fill="#ffcc00" />
           <circle cx="190" cy="140" r="36" fill="#ffcc00" />

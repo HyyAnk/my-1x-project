@@ -3,12 +3,24 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import { VoicePlanSchema, type AppConfig, type QuizTimeline, type VoicePauseClass, type VoiceSegment, type VoiceSegmentRole, type VoicePlan } from "@studio/shared";
+import {
+  VoicePlanSchema,
+  DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE,
+  type AppConfig,
+  type QuizTimeline,
+  type VoicePauseClass,
+  type VoiceSegment,
+  type VoiceSegmentRole,
+  type VoicePlan,
+} from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import { synthesizeWav } from "../../providers/chatterbox.js";
 import { runConcurrent } from "../../utils/concurrency.js";
 import { audioDiagnosticsForTimeline, type VoiceAudioDiagnostics } from "./audioDiagnostics.js";
 import { countQuizVoiceWords, quizVoicePacingLimit } from "./voicePolicy.js";
+import { wavDurationSeconds } from "../../utils/binary.js";
+
+export { wavDurationSeconds };
 
 const execFileAsync = promisify(execFile);
 export const QUIZ_VOICE_PACING_VERSION = "paced-v13-expressive-playful";
@@ -62,7 +74,9 @@ export async function synthesizeQuizVoiceSegments(input: {
     let rendered = cache.get(key);
     let reused = Boolean(rendered);
     if (!rendered) {
-      const existing = await input.repository.getQuizVoiceSegmentAudioFile(input.channelId, input.episodeId, index + 1, pacingVersion).catch(() => null);
+      const existing = await input.repository
+        .getQuizVoiceSegmentAudioFile(input.channelId, input.episodeId, index + 1, pacingVersion)
+        .catch(() => null);
       if (existing) {
         try {
           const audio = new Uint8Array(await readFile(existing.absolutePath));
@@ -79,7 +93,13 @@ export async function synthesizeQuizVoiceSegments(input: {
         const sourceAudio = await renderPerformanceSegment(input.config, segment, voice, pacingDirectory, index + 1);
         const audio = await enforceQuizVoicePace(sourceAudio, segment, pacingLimit, pacingDirectory, index + 1, input.onPacingClamp);
         const duration = wavDurationSeconds(audio);
-        const assetPath = await input.repository.writeQuizVoiceSegmentAudio(input.channelId, input.episodeId, index + 1, audio, pacingVersion);
+        const assetPath = await input.repository.writeQuizVoiceSegmentAudio(
+          input.channelId,
+          input.episodeId,
+          index + 1,
+          audio,
+          pacingVersion,
+        );
         rendered = { duration, absolutePath: input.repository.resolveContextPath(assetPath) };
       }
       cache.set(key, rendered);
@@ -102,63 +122,76 @@ export async function synthesizeQuizVoiceSegments(input: {
 }
 
 export function quizVoiceTempo(role: VoicePlan["segments"][number]["role"]): number {
-  if (role === "question" || role === "choice") return 1.1;
-  if (role === "reveal" || role === "intro" || role === "outro") return 1.12;
-  if (role === "explanation" || role === "fun_fact") return 1;
-  if (role === "thinking_prompt") return 1.04;
-  if (role === "midpoint") return 1.06;
-  return 1;
+  return DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE[role] ?? 1.0;
 }
 
-export function quizVoiceFingerprint(segment: VoiceSegment, tempo: number, voice: string, config: AppConfig["audio_generation"], targetWordsPerSecond = 0): string {
+export function quizVoiceFingerprint(
+  segment: VoiceSegment,
+  tempo: number,
+  voice: string,
+  config: AppConfig["audio_generation"],
+  targetWordsPerSecond = 0,
+): string {
   const performance = voicePerformanceConfig(config, segment.role);
-  return createHash("sha256").update(JSON.stringify({
-    version: QUIZ_VOICE_PACING_VERSION,
-    segment_id: segment.segment_id,
-    role: segment.role,
-    question_id: segment.question_id,
-    text: segment.text.trim().replace(/\s+/g, " "),
-    phrases: segment.phrases,
-    tempo,
-    targetWordsPerSecond,
-    voice,
-    provider: config.provider,
-    service_url: config.service_url,
-    exaggeration: performance.exaggeration,
-    cfg_weight: performance.cfg_weight,
-  })).digest("hex");
+  return createHash("sha256")
+    .update(
+      JSON.stringify({
+        version: QUIZ_VOICE_PACING_VERSION,
+        segment_id: segment.segment_id,
+        role: segment.role,
+        question_id: segment.question_id,
+        text: segment.text.trim().replace(/\s+/g, " "),
+        phrases: segment.phrases,
+        tempo,
+        targetWordsPerSecond,
+        voice,
+        provider: config.provider,
+        service_url: config.service_url,
+        exaggeration: performance.exaggeration,
+        cfg_weight: performance.cfg_weight,
+      }),
+    )
+    .digest("hex");
 }
 
 /** Only controls supported by the local Chatterbox adapter are used here. */
 export function voicePerformanceConfig(config: AppConfig["audio_generation"], role: VoiceSegmentRole): AppConfig["audio_generation"] {
   const settings: Record<VoiceSegmentRole, { exaggeration: number; cfg_weight: number }> = {
-    intro: { exaggeration: .84, cfg_weight: .34 },
-    question: { exaggeration: .62, cfg_weight: .48 },
-    choice: { exaggeration: .56, cfg_weight: .50 },
-    thinking_prompt: { exaggeration: .75, cfg_weight: .42 },
-    countdown: { exaggeration: .60, cfg_weight: .48 },
-    reveal: { exaggeration: .86, cfg_weight: .30 },
-    explanation: { exaggeration: .58, cfg_weight: .52 },
-    fun_fact: { exaggeration: .62, cfg_weight: .50 },
-    midpoint: { exaggeration: .70, cfg_weight: .45 },
-    outro: { exaggeration: .84, cfg_weight: .34 },
+    intro: { exaggeration: 0.84, cfg_weight: 0.34 },
+    question: { exaggeration: 0.62, cfg_weight: 0.48 },
+    choice: { exaggeration: 0.56, cfg_weight: 0.5 },
+    thinking_prompt: { exaggeration: 0.75, cfg_weight: 0.42 },
+    countdown: { exaggeration: 0.6, cfg_weight: 0.48 },
+    reveal: { exaggeration: 0.86, cfg_weight: 0.3 },
+    explanation: { exaggeration: 0.58, cfg_weight: 0.52 },
+    fun_fact: { exaggeration: 0.62, cfg_weight: 0.5 },
+    midpoint: { exaggeration: 0.7, cfg_weight: 0.45 },
+    outro: { exaggeration: 0.84, cfg_weight: 0.34 },
   };
   return { ...config, ...settings[role] };
 }
 
-async function renderPerformanceSegment(config: AppConfig["audio_generation"], segment: VoiceSegment, voice: string, directory: string, segmentNumber: number): Promise<Uint8Array> {
-  const phrases = segment.phrases.length ? segment.phrases : [{ text: segment.text, delivery: "normal" as const, pause_after: "none" as const }];
+async function renderPerformanceSegment(
+  config: AppConfig["audio_generation"],
+  segment: VoiceSegment,
+  voice: string,
+  directory: string,
+  segmentNumber: number,
+): Promise<Uint8Array> {
+  const phrases = segment.phrases.length
+    ? segment.phrases
+    : [{ text: segment.text, delivery: "normal" as const, pause_after: "none" as const }];
   const phrasePaths: string[] = [];
   try {
     for (const [phraseIndex, phrase] of phrases.entries()) {
       const raw = await synthesizeWav(voicePerformanceConfig(config, segment.role), phrase.text, voice);
-      const gainDb = segment.role === "reveal" ? 2.0 : (segment.role === "intro" || segment.role === "outro") ? 1.5 : 0;
+      const gainDb = segment.role === "reveal" ? 2.0 : segment.role === "intro" || segment.role === "outro" ? 1.5 : 0;
       const paced = await paceQuizVoiceAudio(raw, quizVoiceTempo(segment.role), directory, segmentNumber * 100 + phraseIndex + 1, gainDb);
       const phrasePath = path.join(directory, `segment-${String(segmentNumber).padStart(3, "0")}-phrase-${phraseIndex + 1}.wav`);
       await writeFile(phrasePath, paced);
       phrasePaths.push(phrasePath);
     }
-    if (phrasePaths.length === 1) return new Uint8Array(await readFile(phrasePaths[0]!));
+    if (phrasePaths.length === 1) return new Uint8Array(await readFile(phrasePaths[0]));
     return await concatenatePerformancePhrases(phrasePaths, phrases, directory, segmentNumber);
   } finally {
     await Promise.all(phrasePaths.map((file) => rm(file, { force: true })));
@@ -172,12 +205,21 @@ export function createSilenceWav(durationSeconds: number): Uint8Array {
   const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
 
   // "RIFF"
-  buffer[0] = 0x52; buffer[1] = 0x49; buffer[2] = 0x46; buffer[3] = 0x46;
+  buffer[0] = 0x52;
+  buffer[1] = 0x49;
+  buffer[2] = 0x46;
+  buffer[3] = 0x46;
   view.setUint32(4, 36 + dataSize, true);
   // "WAVE"
-  buffer[8] = 0x57; buffer[9] = 0x41; buffer[10] = 0x56; buffer[11] = 0x45;
+  buffer[8] = 0x57;
+  buffer[9] = 0x41;
+  buffer[10] = 0x56;
+  buffer[11] = 0x45;
   // "fmt "
-  buffer[12] = 0x66; buffer[13] = 0x6d; buffer[14] = 0x74; buffer[15] = 0x20;
+  buffer[12] = 0x66;
+  buffer[13] = 0x6d;
+  buffer[14] = 0x74;
+  buffer[15] = 0x20;
   view.setUint32(16, 16, true);
   view.setUint16(20, 1, true); // PCM
   view.setUint16(22, 2, true); // 2 channels
@@ -186,12 +228,20 @@ export function createSilenceWav(durationSeconds: number): Uint8Array {
   view.setUint16(32, 4, true); // block align
   view.setUint16(34, 16, true); // 16-bit
   // "data"
-  buffer[36] = 0x64; buffer[37] = 0x61; buffer[38] = 0x74; buffer[39] = 0x61;
+  buffer[36] = 0x64;
+  buffer[37] = 0x61;
+  buffer[38] = 0x74;
+  buffer[39] = 0x61;
   view.setUint32(40, dataSize, true);
   return buffer;
 }
 
-async function concatenatePerformancePhrases(paths: string[], phrases: VoiceSegment["phrases"], directory: string, segmentNumber: number): Promise<Uint8Array> {
+async function concatenatePerformancePhrases(
+  paths: string[],
+  phrases: VoiceSegment["phrases"],
+  directory: string,
+  segmentNumber: number,
+): Promise<Uint8Array> {
   const outputPath = path.join(directory, `segment-${String(segmentNumber).padStart(3, "0")}-joined.wav`);
   const concatManifestPath = path.join(directory, `segment-${String(segmentNumber).padStart(3, "0")}-concat.txt`);
   const temporaryFiles: string[] = [concatManifestPath];
@@ -215,37 +265,51 @@ async function concatenatePerformancePhrases(paths: string[], phrases: VoiceSegm
     }
     await writeFile(concatManifestPath, manifestLines.join("\n") + "\n", "utf8");
 
-    await execFileAsync("ffmpeg", [
-      "-y",
-      "-f", "concat",
-      "-safe", "0",
-      "-i", concatManifestPath,
-      "-af", "aformat=sample_rates=48000:channel_layouts=stereo,asetpts=N/SR/TB",
-      "-ar", "48000",
-      "-ac", "2",
-      "-c:a", "pcm_s16le",
-      outputPath,
-    ], { timeout: 2 * 60_000, windowsHide: true });
+    await execFileAsync(
+      "ffmpeg",
+      [
+        "-y",
+        "-f",
+        "concat",
+        "-safe",
+        "0",
+        "-i",
+        concatManifestPath,
+        "-af",
+        "aformat=sample_rates=48000:channel_layouts=stereo,asetpts=N/SR/TB",
+        "-ar",
+        "48000",
+        "-ac",
+        "2",
+        "-c:a",
+        "pcm_s16le",
+        outputPath,
+      ],
+      { timeout: 2 * 60_000, windowsHide: true },
+    );
     return new Uint8Array(await readFile(outputPath));
   } finally {
-    await Promise.all([
-      rm(outputPath, { force: true }),
-      ...temporaryFiles.map((file) => rm(file, { force: true })),
-    ]);
+    await Promise.all([rm(outputPath, { force: true }), ...temporaryFiles.map((file) => rm(file, { force: true }))]);
   }
 }
 
 function pauseSeconds(pauseClass: VoicePauseClass, segmentNumber: number, phraseIndex: number): number {
   if (pauseClass === "none") return 0;
   if (pauseClass === "long") return 1.0;
-  const variation = ((segmentNumber + phraseIndex) % 3) * .018;
-  if (pauseClass === "micro") return .09 + variation;
-  if (pauseClass === "anticipation") return .16 + variation;
-  if (pauseClass === "phrase") return .15 + variation;
-  return .2 + variation;
+  const variation = ((segmentNumber + phraseIndex) % 3) * 0.018;
+  if (pauseClass === "micro") return 0.09 + variation;
+  if (pauseClass === "anticipation") return 0.16 + variation;
+  if (pauseClass === "phrase") return 0.15 + variation;
+  return 0.2 + variation;
 }
 
-async function paceQuizVoiceAudio(audio: Uint8Array, tempo: number, directory: string, segmentNumber: number, gainDb = 0): Promise<Uint8Array> {
+async function paceQuizVoiceAudio(
+  audio: Uint8Array,
+  tempo: number,
+  directory: string,
+  segmentNumber: number,
+  gainDb = 0,
+): Promise<Uint8Array> {
   const base = `segment-${String(segmentNumber).padStart(3, "0")}`;
   const inputPath = path.join(directory, `${base}-source.wav`);
   const outputPath = path.join(directory, `${base}-paced.wav`);
@@ -254,7 +318,10 @@ async function paceQuizVoiceAudio(audio: Uint8Array, tempo: number, directory: s
     const filters = atempoFilters(tempo);
     if (gainDb !== 0) filters.push(`volume=${Math.pow(10, gainDb / 20).toFixed(4)}`);
     const filterArgs = filters.length > 0 ? ["-filter:a", filters.join(",")] : [];
-    await execFileAsync("ffmpeg", ["-y", "-i", inputPath, ...filterArgs, "-ar", "48000", "-ac", "2", "-c:a", "pcm_s16le", outputPath], { timeout: 2 * 60_000, windowsHide: true });
+    await execFileAsync("ffmpeg", ["-y", "-i", inputPath, ...filterArgs, "-ar", "48000", "-ac", "2", "-c:a", "pcm_s16le", outputPath], {
+      timeout: 2 * 60_000,
+      windowsHide: true,
+    });
     return new Uint8Array(await readFile(outputPath));
   } finally {
     await Promise.all([rm(inputPath, { force: true }), rm(outputPath, { force: true })]);
@@ -266,7 +333,14 @@ function segmentPace(segment: VoiceSegment, duration: number): number {
   return countQuizVoiceWords(segment.text) / Math.max(0.1, duration);
 }
 
-async function enforceQuizVoicePace(audio: Uint8Array, segment: VoiceSegment, pacingLimit: number, directory: string, segmentNumber: number, onPacingClamp?: (details: QuizVoicePacingClamp) => Promise<void> | void): Promise<Uint8Array> {
+async function enforceQuizVoicePace(
+  audio: Uint8Array,
+  segment: VoiceSegment,
+  pacingLimit: number,
+  directory: string,
+  segmentNumber: number,
+  onPacingClamp?: (details: QuizVoicePacingClamp) => Promise<void> | void,
+): Promise<Uint8Array> {
   const actual = segmentPace(segment, wavDurationSeconds(audio));
   if (actual <= pacingLimit) return audio;
   const requestedTempo = pacingLimit / actual;
@@ -355,53 +429,46 @@ export async function assembleQuizNarration(input: {
     await writeFile(concatManifestPath, manifestLines.join("\n") + "\n", "utf8");
 
     const duration = totalDuration;
-    await execFileAsync("ffmpeg", [
-      "-y",
-      "-f", "concat",
-      "-safe", "0",
-      "-i", concatManifestPath,
-      "-af", `aformat=sample_rates=48000:channel_layouts=stereo,atrim=duration=${duration},asetpts=N/SR/TB,loudnorm=I=-16:TP=-1.5:LRA=7`,
-      "-ar", "48000",
-      "-ac", "2",
-      "-c:a", "pcm_s16le",
-      outputPath,
-    ], { timeout: 10 * 60_000, windowsHide: true });
+    await execFileAsync(
+      "ffmpeg",
+      [
+        "-y",
+        "-f",
+        "concat",
+        "-safe",
+        "0",
+        "-i",
+        concatManifestPath,
+        "-af",
+        `aformat=sample_rates=48000:channel_layouts=stereo,atrim=duration=${duration},asetpts=N/SR/TB,loudnorm=I=-16:TP=-1.5:LRA=7`,
+        "-ar",
+        "48000",
+        "-ac",
+        "2",
+        "-c:a",
+        "pcm_s16le",
+        outputPath,
+      ],
+      { timeout: 10 * 60_000, windowsHide: true },
+    );
 
     const audio = new Uint8Array(await readFile(outputPath));
     const assetPath = await input.repository.writeQuizNarrationAudio(input.channelId, input.episodeId, audio);
     const durationSeconds = wavDurationSeconds(audio);
     const diagnostics = audioDiagnosticsForTimeline(audio, input.timeline);
     await writeFile(path.join(workingDirectory, "narration-diagnostics.json"), `${JSON.stringify(diagnostics, null, 2)}\n`, "utf8");
-    await input.repository.saveNarrationMetadata(input.channelId, input.episodeId, assetPath, durationSeconds, input.voicePlan.segments.length, wordCount(input.voicePlan.segments.map((segment) => segment.text).join(" ")));
+    await input.repository.saveNarrationMetadata(
+      input.channelId,
+      input.episodeId,
+      assetPath,
+      durationSeconds,
+      input.voicePlan.segments.length,
+      countQuizVoiceWords(input.voicePlan.segments.map((segment) => segment.text).join(" ")),
+    );
     return { assetPath, durationSeconds, diagnostics };
   } finally {
-    await Promise.all([
-      rm(outputPath, { force: true }),
-      ...temporaryFiles.map((file) => rm(file, { force: true })),
-    ]);
+    await Promise.all([rm(outputPath, { force: true }), ...temporaryFiles.map((file) => rm(file, { force: true }))]);
   }
-}
-
-export function wavDurationSeconds(buffer: Uint8Array): number {
-  if (buffer.length < 44) throw new Error("Quiz voice output is an incomplete WAV file");
-  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
-  if (new TextDecoder().decode(buffer.slice(0, 4)) !== "RIFF" || new TextDecoder().decode(buffer.slice(8, 12)) !== "WAVE") throw new Error("Quiz voice output is not a WAV file");
-  let offset = 12;
-  let byteRate = 0;
-  let dataSize = 0;
-  while (offset + 8 <= buffer.length) {
-    const id = new TextDecoder().decode(buffer.slice(offset, offset + 4));
-    const size = view.getUint32(offset + 4, true);
-    if (id === "fmt " && size >= 16 && offset + 24 <= buffer.length) byteRate = view.getUint32(offset + 16, true);
-    if (id === "data") { dataSize = size; break; }
-    offset += 8 + size + (size % 2);
-  }
-  if (!byteRate || !dataSize) throw new Error("Quiz voice output has no duration metadata");
-  return Number((dataSize / byteRate).toFixed(3));
-}
-
-function wordCount(value: string): number {
-  return countQuizVoiceWords(value);
 }
 
 export function isStandardPcmWav(buffer: Uint8Array, expectedSampleRate = 48000, expectedChannels = 2): boolean {
@@ -423,4 +490,3 @@ export function isStandardPcmWav(buffer: Uint8Array, expectedSampleRate = 48000,
   }
   return false;
 }
-

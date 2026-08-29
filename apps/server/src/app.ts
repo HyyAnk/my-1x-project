@@ -42,7 +42,10 @@ export type BuildAppOptions = {
   revealFile?: (filePath: string) => Promise<void>;
 };
 
-export async function buildApp(rootDirectory = process.env.STUDIO_ROOT ?? process.cwd(), options: BuildAppOptions = {}): Promise<StudioApp> {
+export async function buildApp(
+  rootDirectory = process.env.STUDIO_ROOT ?? process.cwd(),
+  options: BuildAppOptions = {},
+): Promise<StudioApp> {
   await loadServerEnv(options.environmentRoot ?? rootDirectory);
   const revealFile = options.revealFile ?? revealFileInSystem;
   const configuredStorageRoot = await loadStorageRoot(rootDirectory);
@@ -90,9 +93,16 @@ export async function buildApp(rootDirectory = process.env.STUDIO_ROOT ?? proces
 
   server.setErrorHandler((error, _request, reply) => {
     const message = error instanceof Error ? error.message : "Request failed";
-    const statusCode = error instanceof RepositoryError && error.code.endsWith("NOT_FOUND") ? 404 : error instanceof RepositoryError && error.code === "CONFIRMATION_REQUIRED" ? 400 : 400;
+    const statusCode =
+      error instanceof RepositoryError && error.code.endsWith("NOT_FOUND")
+        ? 404
+        : error instanceof RepositoryError && error.code === "CONFIRMATION_REQUIRED"
+          ? 400
+          : 400;
     logger.warn(`Request failed: ${message}`, { step: "http" });
-    void reply.code(statusCode).send({ error: message, detail: process.env.STUDIO_DEBUG === "1" && error instanceof Error ? error.stack : undefined });
+    void reply
+      .code(statusCode)
+      .send({ error: message, detail: process.env.STUDIO_DEBUG === "1" && error instanceof Error ? error.stack : undefined });
   });
 
   await server.register(registerSystemRoutes({ rootDirectory, repository, tasks, codex, antigravity, logger, state }));
@@ -131,11 +141,12 @@ async function registerFrontend(server: FastifyInstance, rootDirectory: string):
 }
 
 async function revealFileInSystem(filePath: string): Promise<void> {
-  const launch = process.platform === "win32"
-    ? { command: "explorer.exe", args: ["/select,", filePath], windowsHide: false }
-    : process.platform === "darwin"
-      ? { command: "open", args: ["-R", filePath], windowsHide: true }
-      : { command: "xdg-open", args: [path.dirname(filePath)], windowsHide: true };
+  const launch =
+    process.platform === "win32"
+      ? { command: "explorer.exe", args: ["/select,", filePath], windowsHide: false }
+      : process.platform === "darwin"
+        ? { command: "open", args: ["-R", filePath], windowsHide: true }
+        : { command: "xdg-open", args: [path.dirname(filePath)], windowsHide: true };
   await new Promise<void>((resolve, reject) => {
     const child = spawn(launch.command, launch.args, { detached: true, stdio: "ignore", windowsHide: launch.windowsHide });
     child.once("error", reject);

@@ -1,14 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Archive, FileText, FilmSlate, Lightbulb, Smiley, Trash } from "@phosphor-icons/react";
-import type {
-  Channel,
-  ChannelMascotConfig,
-  Episode,
-  MascotProfile,
-  QuizImageStyle,
-  Task,
-  TopicCandidate,
-} from "@studio/shared";
+import type { Channel, ChannelMascotConfig, Episode, MascotProfile, QuizImageStyle, Task, TopicCandidate } from "@studio/shared";
 import { api } from "../../api";
 import { isTaskActive, isTaskTerminal, latestTask } from "../../lib/utils";
 import { ChannelBreadcrumb } from "../../components/Breadcrumbs";
@@ -62,10 +54,7 @@ export function ChannelDetail({
   const [confirmingTopicId, setConfirmingTopicId] = useState<string | null>(null);
   const [deleteEpisodeTarget, setDeleteEpisodeTarget] = useState<Episode | null>(null);
   const [loadingChannel, setLoadingChannel] = useState(true);
-  const initialTab =
-    activeTab === "episodes" || activeTab === "topics" || (activeTab === "dna" && !simplifyMode)
-      ? activeTab
-      : "episodes";
+  const initialTab = activeTab === "episodes" || activeTab === "topics" || (activeTab === "dna" && !simplifyMode) ? activeTab : "episodes";
   const [channelTab, setChannelTab] = useState<"episodes" | "topics" | "dna">(initialTab);
 
   useEffect(() => {
@@ -101,7 +90,10 @@ export function ChannelDetail({
   const loadVersion = useRef(0);
 
   useEffect(() => {
-    void api.mascots().then((res) => setMascotsList(res.mascots)).catch(() => undefined);
+    void api
+      .mascots()
+      .then((res) => setMascotsList(res.mascots))
+      .catch(() => undefined);
   }, []);
 
   const handleMascotChange = async (mascotId: string | null) => {
@@ -133,24 +125,27 @@ export function ChannelDetail({
     }
   };
 
-  const load = useCallback(async (showLoading = false) => {
-    const version = ++loadVersion.current;
-    if (showLoading) setLoadingChannel(true);
-    try {
-      const [dnaResponse, topicResponse, episodeResponse] = await Promise.all([
-        api.dna(channel.channel_id),
-        api.topics(channel.channel_id),
-        api.episodes(channel.channel_id),
-      ]);
-      if (version !== loadVersion.current) return;
-      setDna(dnaResponse);
-      setDnaDraft(dnaResponse.content);
-      setTopics(topicResponse.topics);
-      setEpisodes(episodeResponse.episodes);
-    } finally {
-      if (showLoading && version === loadVersion.current) setLoadingChannel(false);
-    }
-  }, [channel.channel_id]);
+  const load = useCallback(
+    async (showLoading = false) => {
+      const version = ++loadVersion.current;
+      if (showLoading) setLoadingChannel(true);
+      try {
+        const [dnaResponse, topicResponse, episodeResponse] = await Promise.all([
+          api.dna(channel.channel_id),
+          api.topics(channel.channel_id),
+          api.episodes(channel.channel_id),
+        ]);
+        if (version !== loadVersion.current) return;
+        setDna(dnaResponse);
+        setDnaDraft(dnaResponse.content);
+        setTopics(topicResponse.topics);
+        setEpisodes(episodeResponse.episodes);
+      } finally {
+        if (showLoading && version === loadVersion.current) setLoadingChannel(false);
+      }
+    },
+    [channel.channel_id],
+  );
 
   useEffect(() => {
     void load(true).catch((error: Error) => onNotice({ tone: "bad", message: error.message }));
@@ -173,7 +168,9 @@ export function ChannelDetail({
     const newlyTerminal = channelTasks.filter((task) => isTaskTerminal(task) && !observedTerminalTasks.current.has(task.task_id));
     if (newlyTerminal.length === 0) return;
     newlyTerminal.forEach((task) => observedTerminalTasks.current.add(task.task_id));
-    void load().then(onRefresh).catch((error: Error) => onNotice({ tone: "bad", message: error.message }));
+    void load()
+      .then(onRefresh)
+      .catch((error: Error) => onNotice({ tone: "bad", message: error.message }));
   }, [channelTasks.map((task) => `${task.task_id}:${task.status}`).join("|"), load, onNotice, onRefresh]);
 
   const suggest = async (overrideHint?: string) => {
@@ -185,9 +182,7 @@ export function ChannelDetail({
       onTaskSubmitted(result.task);
       onNotice({
         tone: "good",
-        message: hintToUse
-          ? `Generating 5 topic ideas (2 on "${hintToUse}" + 3 random)...`
-          : "Generating 5 lightweight topic ideas...",
+        message: hintToUse ? `Generating 5 topic ideas (2 on "${hintToUse}" + 3 random)...` : "Generating 5 lightweight topic ideas...",
       });
       switchTab("topics");
     } catch (error) {
@@ -197,11 +192,7 @@ export function ChannelDetail({
     }
   };
 
-  const confirmTopic = async (
-    topic: TopicCandidate,
-    questionCount: number,
-    visualStyle: QuizImageStyle | "mixed" = "mixed"
-  ) => {
+  const confirmTopic = async (topic: TopicCandidate, questionCount: number, visualStyle: QuizImageStyle | "mixed" = "mixed") => {
     if (confirmingTopicId) return;
     setConfirmingTopicId(topic.topic_id);
     try {
@@ -413,9 +404,7 @@ export function ChannelDetail({
           episode={deleteEpisodeTarget}
           onClose={() => setDeleteEpisodeTarget(null)}
           onDeleted={handleEpisodeDeleted}
-          onError={(error) =>
-            onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not delete episode" })
-          }
+          onError={(error) => onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not delete episode" })}
         />
       ) : null}
     </>

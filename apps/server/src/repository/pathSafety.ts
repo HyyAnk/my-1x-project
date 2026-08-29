@@ -41,7 +41,14 @@ export function resolveContextPath(roots: RepositoryRoots, relativePath: string)
 export function resolvePath(roots: RepositoryRoots, root: keyof RepositoryRoots, ...segments: string[]): string {
   const rootPath = roots[root];
   for (const segment of segments) {
-    if (!segment || segment.includes("\0") || path.isAbsolute(segment) || segment.includes("/") || segment.includes("\\") || /^[A-Za-z]:/.test(segment)) {
+    if (
+      !segment ||
+      segment.includes("\0") ||
+      path.isAbsolute(segment) ||
+      segment.includes("/") ||
+      segment.includes("\\") ||
+      /^[A-Za-z]:/.test(segment)
+    ) {
       throw new RepositoryError("Unsafe filesystem path", "UNSAFE_PATH");
     }
   }
@@ -51,8 +58,18 @@ export function resolvePath(roots: RepositoryRoots, root: keyof RepositoryRoots,
 }
 
 export function slugify(input: string): string {
-  const normalized = input.trim().replaceAll("đ", "d").replaceAll("Đ", "D").normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
-  const slug = normalized.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60).replace(/-+$/g, "");
+  const normalized = input
+    .trim()
+    .replaceAll("đ", "d")
+    .replaceAll("Đ", "D")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "");
+  const slug = normalized
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60)
+    .replace(/-+$/g, "");
   if (!slug) throw new RepositoryError("Name cannot produce a safe slug", "EMPTY_SLUG");
   return slug;
 }

@@ -23,9 +23,29 @@ describe("GoogleImagenProvider", () => {
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
 
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Imagen Channel", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topic = { topic_id: "topic_1", channel_id: channel.channel_id, title: "Topic 1", premise: "P", why_it_fits: "W", hook: "H", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false };
-    await repository.saveTopicRun(channel.channel_id, [topic, ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `topic_${index + 2}`, title: `Other ${index + 2}` }))]);
+    const channel = await repository.createChannel({
+      name: "Imagen Channel",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topic = {
+      topic_id: "topic_1",
+      channel_id: channel.channel_id,
+      title: "Topic 1",
+      premise: "P",
+      why_it_fits: "W",
+      hook: "H",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    };
+    await repository.saveTopicRun(channel.channel_id, [
+      topic,
+      ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `topic_${index + 2}`, title: `Other ${index + 2}` })),
+    ]);
     const episode = await repository.confirmTopic(channel.channel_id, "topic_1");
 
     const fakePngBase64 = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).toString("base64");
@@ -42,7 +62,7 @@ describe("GoogleImagenProvider", () => {
       repository,
       { channelId: channel.channel_id, episodeId: episode.episode_id, bundleNumber: 1, variant: 0 },
       "test-api-key",
-      "imagen-3.0-generate-002"
+      "imagen-3.0-generate-002",
     );
 
     const result = await provider.generateReference("Anchor-frame prompt: High speed bullet train in snow.");
@@ -70,9 +90,29 @@ describe("GoogleImagenProvider", () => {
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
 
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Flash Image Channel", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topic = { topic_id: "topic_1", channel_id: channel.channel_id, title: "Topic 1", premise: "P", why_it_fits: "W", hook: "H", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false };
-    await repository.saveTopicRun(channel.channel_id, [topic, ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `topic_${index + 2}`, title: `Other ${index + 2}` }))]);
+    const channel = await repository.createChannel({
+      name: "Flash Image Channel",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topic = {
+      topic_id: "topic_1",
+      channel_id: channel.channel_id,
+      title: "Topic 1",
+      premise: "P",
+      why_it_fits: "W",
+      hook: "H",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    };
+    await repository.saveTopicRun(channel.channel_id, [
+      topic,
+      ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `topic_${index + 2}`, title: `Other ${index + 2}` })),
+    ]);
     const episode = await repository.confirmTopic(channel.channel_id, "topic_1");
 
     const fakePngBase64 = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).toString("base64");
@@ -81,13 +121,17 @@ describe("GoogleImagenProvider", () => {
       ok: true,
       status: 200,
       json: async () => ({
-        candidates: [{
-          content: {
-            parts: [{
-              inlineData: { data: fakePngBase64, mimeType: "image/png" }
-            }]
-          }
-        }],
+        candidates: [
+          {
+            content: {
+              parts: [
+                {
+                  inlineData: { data: fakePngBase64, mimeType: "image/png" },
+                },
+              ],
+            },
+          },
+        ],
       }),
     } as Response);
 
@@ -95,7 +139,7 @@ describe("GoogleImagenProvider", () => {
       repository,
       { channelId: channel.channel_id, episodeId: episode.episode_id, bundleNumber: 1, variant: 0 },
       "test-api-key",
-      "gemini-3.1-flash-lite-image"
+      "gemini-3.1-flash-lite-image",
     );
 
     const result = await provider.generateReference("A futuristic sports car on neon highway.");
@@ -118,11 +162,7 @@ describe("GoogleImagenProvider", () => {
     roots.push(root);
     const repository = new RepositoryService(root);
 
-    const provider = new GoogleImagenProvider(
-      repository,
-      { channelId: "ch_1", episodeId: "ep_1", bundleNumber: 1 },
-      ""
-    );
+    const provider = new GoogleImagenProvider(repository, { channelId: "ch_1", episodeId: "ep_1", bundleNumber: 1 }, "");
 
     await expect(provider.generateReference("test prompt")).rejects.toThrow("Google Gemini/Imagen API Key is required");
   });

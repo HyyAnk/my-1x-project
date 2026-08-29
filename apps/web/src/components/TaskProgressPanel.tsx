@@ -62,8 +62,22 @@ function resolveThinkingCategory(task: Task): string {
   if (type === "GENERATE_TREATMENT" || msg.includes("treatment")) return "treatment";
   if (type === "GENERATE_SCRIPT" || msg.includes("script") || msg.includes("writing")) return "script";
   if (type === "GENERATE_VISUAL_BIBLE" || msg.includes("visual") || msg.includes("bible")) return "visualBible";
-  if (type === "GENERATE_SCENES" || type === "GENERATE_SEQUENCE_SCENES" || msg.includes("shot") || msg.includes("scene") || msg.includes("sequence")) return "scenes";
-  if (type === "GENERATE_NARRATION" || type === "GENERATE_AUDIO" || msg.includes("audio") || msg.includes("narration") || msg.includes("voice")) return "narration";
+  if (
+    type === "GENERATE_SCENES" ||
+    type === "GENERATE_SEQUENCE_SCENES" ||
+    msg.includes("shot") ||
+    msg.includes("scene") ||
+    msg.includes("sequence")
+  )
+    return "scenes";
+  if (
+    type === "GENERATE_NARRATION" ||
+    type === "GENERATE_AUDIO" ||
+    msg.includes("audio") ||
+    msg.includes("narration") ||
+    msg.includes("voice")
+  )
+    return "narration";
   if (type === "GENERATE_VIDEO" || msg.includes("video") || msg.includes("render")) return "video";
 
   if (typeof task.progress_percent === "number") {
@@ -115,7 +129,7 @@ function useContinuousProgress(task: Task, rawPercent: number | null): number | 
     return null;
   }
 
-  const initial = completed ? 100 : rawPercent ?? 0;
+  const initial = completed ? 100 : (rawPercent ?? 0);
   const [displayPercent, setDisplayPercent] = useState<number>(initial);
   const backendTargetRef = useRef<number>(initial);
 
@@ -212,12 +226,12 @@ export function TaskProgressPanel({
   const label = completed
     ? completionLabel.replace(new RegExp(`^${title}\\s*`, "i"), "") || "Ready"
     : failed
-    ? "Failed"
-    : cancelled
-    ? "Cancelled"
-    : task.status === "WAITING_APPROVAL"
-    ? "Waiting for approval"
-    : thinkingLabel;
+      ? "Failed"
+      : cancelled
+        ? "Cancelled"
+        : task.status === "WAITING_APPROVAL"
+          ? "Waiting for approval"
+          : thinkingLabel;
 
   const progressMessage = task.error || task.progress_message || task.status;
   const rawPercent = completed ? 100 : typeof task.progress_percent === "number" ? task.progress_percent : null;
@@ -242,14 +256,8 @@ export function TaskProgressPanel({
           </strong>
         </div>
         <div className="task-progress-meta">
-          {percent !== null ? (
-            <span className="task-progress-percent-badge">
-              {Math.round(percent)}%
-            </span>
-          ) : null}
-          <span className="task-progress-time">
-            {formatTaskElapsed(task, now)}
-          </span>
+          {percent !== null ? <span className="task-progress-percent-badge">{Math.round(percent)}%</span> : null}
+          <span className="task-progress-time">{formatTaskElapsed(task, now)}</span>
           {active && onCancel ? (
             <button
               type="button"
@@ -298,4 +306,3 @@ export function TopicProgress({ task, now, onCancel }: { task: Task; now: number
     />
   );
 }
-

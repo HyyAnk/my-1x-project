@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { SfxIntent } from "./types.js";
+import type { SfxIntent } from "@studio/shared";
 
 export type SfxAsset = { intent: SfxIntent; path: string; decorative: boolean };
 

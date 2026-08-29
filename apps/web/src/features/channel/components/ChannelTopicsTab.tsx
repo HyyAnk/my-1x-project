@@ -98,9 +98,7 @@ export function ChannelTopicsTab({
               <div className="section-heading" style={{ marginTop: "32px", marginBottom: "14px" }}>
                 <div>
                   <p className="eyebrow">Archive & Previous Ideas</p>
-                  <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700 }}>
-                    Older Ideas History ({topics.length - 5})
-                  </h3>
+                  <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700 }}>Older Ideas History ({topics.length - 5})</h3>
                 </div>
                 <span className="count-note">Single-line archive view</span>
               </div>

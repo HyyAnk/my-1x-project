@@ -38,7 +38,12 @@ export class ChatterboxProvider implements AudioProvider {
   }
 }
 
-export async function synthesizeWav(config: ChatterboxConfig, text: string, voice = "default", timeoutMs = 15 * 60 * 1000): Promise<Uint8Array> {
+export async function synthesizeWav(
+  config: ChatterboxConfig,
+  text: string,
+  voice = "default",
+  timeoutMs = 15 * 60 * 1000,
+): Promise<Uint8Array> {
   const cleanText = sanitizeTextForSpeech(text);
   const body = {
     text: cleanText,
@@ -59,7 +64,11 @@ export async function synthesizeWav(config: ChatterboxConfig, text: string, voic
   }
   if (!response.ok) throw new AudioServiceUnavailableError();
   const audio = new Uint8Array(await response.arrayBuffer());
-  if (audio.length < 12 || new TextDecoder().decode(audio.slice(0, 4)) !== "RIFF" || new TextDecoder().decode(audio.slice(8, 12)) !== "WAVE") {
+  if (
+    audio.length < 12 ||
+    new TextDecoder().decode(audio.slice(0, 4)) !== "RIFF" ||
+    new TextDecoder().decode(audio.slice(8, 12)) !== "WAVE"
+  ) {
     throw new AudioServiceUnavailableError("Audio service returned an invalid WAV file");
   }
   return audio;

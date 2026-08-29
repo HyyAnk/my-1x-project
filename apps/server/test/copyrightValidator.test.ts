@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  validateTextCopyright,
-  validateQuizScriptCopyright,
-  validateQuizResearchCopyright,
-} from "../src/quiz/qa/copyrightValidator.js";
+import { validateTextCopyright, validateQuizScriptCopyright, validateQuizResearchCopyright } from "../src/quiz/qa/copyrightValidator.js";
 import { validateQuizScript } from "../src/tasks.js";
 import { assessQuiz } from "../src/quiz/qa/quizAssessment.js";
 import type { QuizV2 } from "@studio/shared";
@@ -107,7 +103,7 @@ describe("Copyright and IP Blacklist Validator", () => {
       expect(result.category).toBe("LION_CUB");
 
       expect(() => validateQuizScript(markdown, 3)).toThrowError(
-        /Quiz script quality gate failed: Question 2 contains prohibited term 'sư tử con'/i
+        /Quiz script quality gate failed: Question 2 contains prohibited term 'sư tử con'/i,
       );
     });
 

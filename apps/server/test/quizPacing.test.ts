@@ -1,8 +1,28 @@
 import { describe, expect, it } from "vitest";
-import { QuizV2Schema } from "@studio/shared";
+import {
+  QuizV2Schema,
+  computeSandboxPhaseTimeline,
+  getSandboxPhaseAtTime,
+  getSandboxPhaseTimestamps,
+  MAX_DEDUP_HISTORY_QUESTIONS,
+  DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE,
+} from "@studio/shared";
 import { buildQuizVoicePlan, splitChoicePhrases } from "../src/quiz/audio/voicePlan.js";
-import { createSilenceWav, isStandardPcmWav, MIN_QUIZ_VOICE_SLOWDOWN_TEMPO, quizVoiceFingerprint, quizVoicePaceCorrectionTempo, quizVoiceTempo, voicePerformanceConfig } from "../src/quiz/audio/voiceSynthesis.js";
-import { quizVoicePacingLimit, quizVoicePlanNeedsRegeneration, quizVoiceTargetWordsPerSecond, quizVoiceWordsPerSecond } from "../src/quiz/audio/voicePolicy.js";
+import {
+  createSilenceWav,
+  isStandardPcmWav,
+  MIN_QUIZ_VOICE_SLOWDOWN_TEMPO,
+  quizVoiceFingerprint,
+  quizVoicePaceCorrectionTempo,
+  quizVoiceTempo,
+  voicePerformanceConfig,
+} from "../src/quiz/audio/voiceSynthesis.js";
+import {
+  quizVoicePacingLimit,
+  quizVoicePlanNeedsRegeneration,
+  quizVoiceTargetWordsPerSecond,
+  quizVoiceWordsPerSecond,
+} from "../src/quiz/audio/voicePolicy.js";
 import { DEFAULT_CONFIG } from "../src/config.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { assessQuiz } from "../src/quiz/qa/quizAssessment.js";
@@ -20,7 +40,11 @@ const quiz = QuizV2Schema.parse({
     format: "multiple_choice" as const,
     difficulty: 2,
     question: "Which animal has stripes?",
-    choices: [{ id: "choice-a", text: "Tiger" }, { id: "choice-b", text: "Dolphin" }, { id: "choice-c", text: "Rabbit" }],
+    choices: [
+      { id: "choice-a", text: "Tiger" },
+      { id: "choice-b", text: "Dolphin" },
+      { id: "choice-c", text: "Rabbit" },
+    ],
     correct_choice_id: "choice-a",
     explanation: "Tigers have stripes on their fur.",
     fun_fact: index === 1 ? "Each tiger has a different stripe pattern." : "",
@@ -33,14 +57,14 @@ const quiz = QuizV2Schema.parse({
 describe("Quiz V2 pacing", () => {
   it("centralizes the Candy Arcade V2 timing targets", () => {
     const timing = timingPolicyForAgeBand("7-9");
-    expect(timing.question_entrance_seconds).toBeGreaterThanOrEqual(.8);
+    expect(timing.question_entrance_seconds).toBeGreaterThanOrEqual(0.8);
     expect(timing.question_entrance_seconds).toBeLessThanOrEqual(1.2);
     expect(timing.minimum_thinking_seconds).toBeGreaterThanOrEqual(6);
     expect(timing.maximum_thinking_seconds).toBeLessThanOrEqual(8.5);
-    expect(timing.reveal_seconds).toBeGreaterThanOrEqual(.4);
-    expect(timing.reveal_seconds).toBeLessThanOrEqual(.7);
-    expect(timing.transition_seconds).toBeGreaterThanOrEqual(.65);
-    expect(timing.transition_seconds).toBeLessThanOrEqual(.95);
+    expect(timing.reveal_seconds).toBeGreaterThanOrEqual(0.4);
+    expect(timing.reveal_seconds).toBeLessThanOrEqual(0.7);
+    expect(timing.transition_seconds).toBeGreaterThanOrEqual(0.65);
+    expect(timing.transition_seconds).toBeLessThanOrEqual(0.95);
   });
 
   it("centralizes age-band voice targets and leaves a rounding safety margin", () => {
@@ -71,15 +95,18 @@ describe("Quiz V2 pacing", () => {
     expect(choice?.phrases).toHaveLength(1);
     expect(choice?.phrases[0]?.text).toContain("Tiger, Dolphin, or Rabbit?");
     expect(splitChoicePhrases("Elephant, Giraffe, or Tiger?")).toEqual(["Elephant, Giraffe, or Tiger?"]);
-    expect(splitChoicePhrases("Choose the best answer, then explain why it fits.")).toEqual(["Choose the best answer,", "then explain why it fits."]);
+    expect(splitChoicePhrases("Choose the best answer, then explain why it fits.")).toEqual([
+      "Choose the best answer,",
+      "then explain why it fits.",
+    ]);
     expect(voice.segments.find((segment) => segment.role === "reveal")?.text).toBe("That's right! It's Tiger!");
-    expect(voicePerformanceConfig(DEFAULT_CONFIG.audio_generation, "reveal").exaggeration).toBe(.86);
+    expect(voicePerformanceConfig(DEFAULT_CONFIG.audio_generation, "reveal").exaggeration).toBe(0.86);
   });
 
   it("never slows a voice segment below the audible correction floor", () => {
     const pacingLimit = quizVoicePacingLimit(quizVoiceTargetWordsPerSecond(quiz.age_band));
     expect(quizVoicePaceCorrectionTempo(pacingLimit, pacingLimit)).toBe(1);
-    for (const actual of [pacingLimit + .1, 3, 10, 100, Number.POSITIVE_INFINITY]) {
+    for (const actual of [pacingLimit + 0.1, 3, 10, 100, Number.POSITIVE_INFINITY]) {
       expect(quizVoicePaceCorrectionTempo(actual, pacingLimit)).toBeGreaterThanOrEqual(MIN_QUIZ_VOICE_SLOWDOWN_TEMPO);
     }
     expect(quizVoicePaceCorrectionTempo(100, pacingLimit)).toBe(MIN_QUIZ_VOICE_SLOWDOWN_TEMPO);
@@ -87,25 +114,49 @@ describe("Quiz V2 pacing", () => {
 
   it("flags measured speech that is too fast for the selected age band", () => {
     const voice = buildQuizVoicePlan(quiz);
-    const measured = { ...voice, segments: voice.segments.map((segment) => ({ ...segment, duration_seconds: segment.role === "countdown" ? 1 : 0.25 })) };
+    const measured = {
+      ...voice,
+      segments: voice.segments.map((segment) => ({ ...segment, duration_seconds: segment.role === "countdown" ? 1 : 0.25 })),
+    };
     const timeline = compileQuizTimeline({ quiz, director: createDefaultDirectorPlan(quiz), voicePlan: measured });
-    const assessment = assessQuiz({ quiz, director: createDefaultDirectorPlan(quiz), voicePlan: measured, timeline, measuredAudio: true, renderIntegrity: true });
+    const assessment = assessQuiz({
+      quiz,
+      director: createDefaultDirectorPlan(quiz),
+      voicePlan: measured,
+      timeline,
+      measuredAudio: true,
+      renderIntegrity: true,
+    });
     expect(assessment.issues.some((issue) => issue.code === "voice_pace_unsafe" && issue.severity === "blocker")).toBe(true);
     expect(assessment.candy_arcade_visual?.pacing).toBeLessThan(20);
   });
 
   it("forces stale fast voice plans through regeneration", () => {
-    const fast = { ...buildQuizVoicePlan(quiz), segments: buildQuizVoicePlan(quiz).segments.map((segment) => ({ ...segment, duration_seconds: segment.role === "countdown" ? 1 : 0.25 })) };
+    const fast = {
+      ...buildQuizVoicePlan(quiz),
+      segments: buildQuizVoicePlan(quiz).segments.map((segment) => ({
+        ...segment,
+        duration_seconds: segment.role === "countdown" ? 1 : 0.25,
+      })),
+    };
     expect(quizVoiceWordsPerSecond(fast)).toBeGreaterThan(quizVoiceTargetWordsPerSecond(quiz.age_band));
     expect(quizVoicePlanNeedsRegeneration({ voicePlan: fast, ageBand: quiz.age_band })).toBe(true);
-    expect(quizVoicePlanNeedsRegeneration({ voicePlan: buildQuizVoicePlan(quiz), ageBand: quiz.age_band, assessmentIssueCodes: ["voice_pace_unsafe"] })).toBe(true);
+    expect(
+      quizVoicePlanNeedsRegeneration({
+        voicePlan: buildQuizVoicePlan(quiz),
+        ageBand: quiz.age_band,
+        assessmentIssueCodes: ["voice_pace_unsafe"],
+      }),
+    ).toBe(true);
   });
 
   it("adds an encouragement visual beat during the extended thinking pause", () => {
     const timeline = compileQuizTimeline({ quiz, director: createDefaultDirectorPlan(quiz), voicePlan: buildQuizVoicePlan(quiz) });
     for (const question of quiz.questions) {
       const thinking = timeline.events.find((event) => event.type === "countdown.start" && event.question_id === question.id)!;
-      const pulse = timeline.events.find((event) => event.type === "mascot.state" && event.question_id === question.id && event.payload.phase === "thinking_pulse");
+      const pulse = timeline.events.find(
+        (event) => event.type === "mascot.state" && event.question_id === question.id && event.payload.phase === "thinking_pulse",
+      );
       expect(pulse?.at_seconds ?? 0).toBeGreaterThan(thinking.at_seconds);
       expect(pulse?.at_seconds ?? 0).toBeLessThan(thinking.at_seconds + thinking.duration_seconds);
     }
@@ -113,9 +164,14 @@ describe("Quiz V2 pacing", () => {
 
   it("uses the compact overlapping game-show beat model instead of serial narration waits", () => {
     const voice = buildQuizVoicePlan(quiz);
-    const durations = Object.fromEntries(voice.segments.map((segment) => [segment.segment_id, segment.role === "question" ? 3.2 : segment.role === "choice" ? 2.6 : segment.role === "explanation" ? 3.2 : 1]));
+    const durations = Object.fromEntries(
+      voice.segments.map((segment) => [
+        segment.segment_id,
+        segment.role === "question" ? 3.2 : segment.role === "choice" ? 2.6 : segment.role === "explanation" ? 3.2 : 1,
+      ]),
+    );
     const timeline = compileQuizTimeline({ quiz, director: createDefaultDirectorPlan(quiz), voicePlan: voice, audioDurations: durations });
-    const q1 = quiz.questions[0]!;
+    const q1 = quiz.questions[0];
     const enter = timeline.events.find((event) => event.type === "question.enter" && event.question_id === q1.id)!;
     const narration = timeline.events.find((event) => event.segment_id === q1.id + ":question")!;
     const choices = timeline.events.find((event) => event.type === "choices.enter" && event.question_id === q1.id)!;
@@ -127,10 +183,40 @@ describe("Quiz V2 pacing", () => {
   });
 
   it("keeps a deterministic five-question Golden Demo timeline below the 140 second gate", () => {
-    const golden = QuizV2Schema.parse({ ...quiz, questions: Array.from({ length: 5 }, (_, index) => ({ ...quiz.questions[index % quiz.questions.length]!, id: `golden-${index + 1}`, number: index + 1, fun_fact: "" })) });
+    const golden = QuizV2Schema.parse({
+      ...quiz,
+      questions: Array.from({ length: 5 }, (_, index) => ({
+        ...quiz.questions[index % quiz.questions.length],
+        id: `golden-${index + 1}`,
+        number: index + 1,
+        fun_fact: "",
+      })),
+    });
     const voice = buildQuizVoicePlan(golden);
-    const durations = Object.fromEntries(voice.segments.map((segment) => [segment.segment_id, segment.role === "intro" || segment.role === "outro" ? 3.8 : segment.role === "question" ? 3.8 : segment.role === "choice" ? 3 : segment.role === "thinking_prompt" ? 1.1 : segment.role === "countdown" ? 2.1 : segment.role === "reveal" ? 1.5 : 3.5]));
-    const timeline = compileQuizTimeline({ quiz: golden, director: createDefaultDirectorPlan(golden), voicePlan: voice, audioDurations: durations });
+    const durations = Object.fromEntries(
+      voice.segments.map((segment) => [
+        segment.segment_id,
+        segment.role === "intro" || segment.role === "outro"
+          ? 3.8
+          : segment.role === "question"
+            ? 3.8
+            : segment.role === "choice"
+              ? 3
+              : segment.role === "thinking_prompt"
+                ? 1.1
+                : segment.role === "countdown"
+                  ? 2.1
+                  : segment.role === "reveal"
+                    ? 1.5
+                    : 3.5,
+      ]),
+    );
+    const timeline = compileQuizTimeline({
+      quiz: golden,
+      director: createDefaultDirectorPlan(golden),
+      voicePlan: voice,
+      audioDurations: durations,
+    });
     expect(timeline.duration_seconds).toBeLessThanOrEqual(140);
   });
 
@@ -144,7 +230,14 @@ describe("Quiz V2 pacing", () => {
   });
 
   it("adds a visual acknowledgement while long answer choices are being read", () => {
-    const timeline = compileQuizTimeline({ quiz, director: createDefaultDirectorPlan(quiz), voicePlan: buildQuizVoicePlan(quiz), audioDurations: Object.fromEntries(buildQuizVoicePlan(quiz).segments.map((segment) => [segment.segment_id, segment.role === "choice" ? 6 : 1])) });
+    const timeline = compileQuizTimeline({
+      quiz,
+      director: createDefaultDirectorPlan(quiz),
+      voicePlan: buildQuizVoicePlan(quiz),
+      audioDurations: Object.fromEntries(
+        buildQuizVoicePlan(quiz).segments.map((segment) => [segment.segment_id, segment.role === "choice" ? 6 : 1]),
+      ),
+    });
     expect(timeline.events.some((event) => event.type === "mascot.state" && event.payload.phase === "choices_pulse")).toBe(true);
   });
 
@@ -158,5 +251,32 @@ describe("Quiz V2 pacing", () => {
     const view = new DataView(modified.buffer, modified.byteOffset, modified.byteLength);
     view.setUint32(24, 24000, true);
     expect(isStandardPcmWav(modified)).toBe(false);
+  });
+
+  it("resolves dynamic Sandbox preview phases accurately across the timeline", () => {
+    const timeline = computeSandboxPhaseTimeline();
+    expect(timeline.questionStart).toBe(0);
+    expect(timeline.choicesStart).toBeGreaterThan(0);
+    expect(timeline.thinkingStart).toBeGreaterThan(timeline.choicesStart);
+    expect(timeline.revealStart).toBeGreaterThan(timeline.thinkingStart);
+    expect(timeline.explainStart).toBeGreaterThan(timeline.revealStart);
+    expect(timeline.totalDuration).toBeGreaterThan(timeline.explainStart);
+
+    expect(getSandboxPhaseAtTime(0)).toBe("question");
+    expect(getSandboxPhaseAtTime(timeline.choicesStart + 0.1)).toBe("choices");
+    expect(getSandboxPhaseAtTime(timeline.thinkingStart + 0.1)).toBe("thinking");
+    expect(getSandboxPhaseAtTime(timeline.revealStart + 0.1)).toBe("reveal");
+    expect(getSandboxPhaseAtTime(timeline.explainStart + 0.1)).toBe("explain");
+
+    const buttons = getSandboxPhaseTimestamps();
+    expect(buttons).toHaveLength(5);
+    expect(buttons.map((b) => b.id)).toEqual(["question", "choices", "thinking", "reveal", "explain"]);
+  });
+
+  it("exports standardized workspace constants without magic numbers", () => {
+    expect(MAX_DEDUP_HISTORY_QUESTIONS).toBe(15);
+    expect(DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE.question).toBe(1.1);
+    expect(DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE.reveal).toBe(1.12);
+    expect(DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE.explanation).toBe(1.0);
   });
 });

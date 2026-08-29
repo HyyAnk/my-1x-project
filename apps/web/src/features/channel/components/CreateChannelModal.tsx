@@ -1,14 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import {
-  CaretDown,
-  Check,
-  CircleNotch,
-  Globe,
-  MagnifyingGlass,
-  Plus,
-  Translate,
-  X,
-} from "@phosphor-icons/react";
+import { CaretDown, Check, CircleNotch, Globe, MagnifyingGlass, Plus, Translate, X } from "@phosphor-icons/react";
 import {
   TARGET_COUNTRY_OPTIONS,
   getCountryDefaultLanguage,
@@ -146,12 +137,7 @@ export function CreateChannelModal({
           <div className="channel-create-header-info">
             <h2>{t("channels.createChannelTitle")}</h2>
           </div>
-          <button
-            type="button"
-            className="channel-create-close-btn"
-            onClick={onClose}
-            aria-label={t("common.close")}
-          >
+          <button type="button" className="channel-create-close-btn" onClick={onClose} aria-label={t("common.close")}>
             <X size={18} />
           </button>
         </div>
@@ -231,11 +217,7 @@ export function CreateChannelModal({
                       onChange={(e) => setCountrySearch(e.target.value)}
                     />
                     {countrySearch && (
-                      <button
-                        type="button"
-                        className="country-search-clear"
-                        onClick={() => setCountrySearch("")}
-                      >
+                      <button type="button" className="country-search-clear" onClick={() => setCountrySearch("")}>
                         <X size={12} />
                       </button>
                     )}
@@ -249,9 +231,8 @@ export function CreateChannelModal({
                     ) : (
                       filteredCountries.map((c) => {
                         const isSelected = c.code === form.country;
-                        const countryItemName = language === "vi" ? (c.nameVi || c.name) : (c.nameEn || c.name);
-                        const countryLangTag =
-                          language === "vi" ? `${c.languageNameVi} (${c.defaultLanguage})` : c.defaultLanguage;
+                        const countryItemName = language === "vi" ? c.nameVi || c.name : c.nameEn || c.name;
+                        const countryLangTag = language === "vi" ? `${c.languageNameVi} (${c.defaultLanguage})` : c.defaultLanguage;
                         return (
                           <button
                             key={c.code}
@@ -267,9 +248,7 @@ export function CreateChannelModal({
                               </div>
                             </div>
                             <div className="channel-country-item-right">
-                              <span className="country-item-lang-tag">
-                                {countryLangTag}
-                              </span>
+                              <span className="country-item-lang-tag">{countryLangTag}</span>
                               {isSelected && <Check size={16} weight="bold" className="country-item-check" />}
                             </div>
                           </button>
@@ -288,15 +267,11 @@ export function CreateChannelModal({
               </div>
               <div className="channel-auto-lang-content">
                 <div className="channel-auto-lang-row">
-                  <span className="channel-auto-lang-label">
-                    {t("channels.contentLanguage")}:
-                  </span>
+                  <span className="channel-auto-lang-label">{t("channels.contentLanguage")}:</span>
                   <span className="channel-auto-lang-value">
                     {language === "vi" ? `${getCountryDefaultLanguageVi(form.country)} (${form.language})` : form.language}
                   </span>
-                  <span className="channel-auto-lang-badge">
-                    ⚡ {t("channels.autoLanguageBadge")}
-                  </span>
+                  <span className="channel-auto-lang-badge">⚡ {t("channels.autoLanguageBadge")}</span>
                 </div>
               </div>
             </div>
@@ -308,13 +283,9 @@ export function CreateChannelModal({
           <button type="button" className="quiet-button channel-cancel-btn" onClick={onClose}>
             {t("common.cancel")}
           </button>
-          <button
-            type="submit"
-            className="primary-button channel-submit-btn"
-            disabled={busy || !form.name.trim()}
-          >
+          <button type="submit" className="primary-button channel-submit-btn" disabled={busy || !form.name.trim()}>
             {busy ? <CircleNotch className="spin" size={16} /> : <Plus size={16} weight="bold" />}
-            <span>{busy ? (t("channels.creatingChannel") || "Creating channel…") : t("channels.createFirstChannel")}</span>
+            <span>{busy ? t("channels.creatingChannel") || "Creating channel…" : t("channels.createFirstChannel")}</span>
           </button>
         </div>
       </form>

@@ -28,9 +28,11 @@ export function quizVoicePlanNeedsRegeneration(input: {
 }): boolean {
   if (!input.voicePlan) return true;
   const issueCodes = new Set(input.assessmentIssueCodes ?? []);
-  return quizVoiceWordsPerSecond(input.voicePlan) > quizVoiceTargetWordsPerSecond(input.ageBand)
-    || issueCodes.has("voice_pace_fast")
-    || issueCodes.has("voice_pace_unsafe");
+  return (
+    quizVoiceWordsPerSecond(input.voicePlan) > quizVoiceTargetWordsPerSecond(input.ageBand) ||
+    issueCodes.has("voice_pace_fast") ||
+    issueCodes.has("voice_pace_unsafe")
+  );
 }
 
 export function countQuizVoiceWords(value: string): number {

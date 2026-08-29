@@ -351,10 +351,6 @@ function questionCycleRangeSeconds(ageBand: QuizV2["age_band"]): [number, number
   return ranges[ageBand];
 }
 
-function countWords(value: string): number {
-  return value.trim().split(/\s+/).filter(Boolean).length;
-}
-
 function categoryScore(issues: QuizIssue[], stage: QuizIssue["stage"], weight: number): number {
   const relevant = issues.filter((issue) => issue.stage === stage);
   const penalty = relevant.reduce((sum, issue) => sum + (issue.severity === "blocker" ? 35 : issue.severity === "warning" ? 12 : 2), 0);

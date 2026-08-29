@@ -694,8 +694,9 @@ export const en: TranslationSchema = {
   visualSandbox: {
     pageTitle: "Visual Sandbox",
     pageSubtitle: "Video Element & Mascot Studio (1080p)",
-    pageDesc: "Test and customize 4 core elements (Thinking Bar, Question Card, Answer Card, Counter Badge) and real mascot composition in real-time WYSIWYG.",
-    
+    pageDesc:
+      "Test and customize 4 core elements (Thinking Bar, Question Card, Answer Card, Counter Badge) and real mascot composition in real-time WYSIWYG.",
+
     // Header actions
     safeArea: "Safe Area",
     safeAreaOn: "Safe Area: On",
@@ -804,7 +805,7 @@ export const en: TranslationSchema = {
     factCardTitlePlaceholder: "DID YOU KNOW?",
     factCardTextLabel: "Fun Fact / Explanation Text",
     factCardTextPlaceholder: "Enter punchy fun fact to show during Explain phase…",
-    factCardHint: "Displayed when timeline reaches Explain phase (>8.8s) or when phase is set to Explain.",
+    factCardHint: "Displayed when timeline reaches Explain phase or when phase is set to Explain.",
 
     // Timeline & Canvas
     phaseLabel: "Phase:",

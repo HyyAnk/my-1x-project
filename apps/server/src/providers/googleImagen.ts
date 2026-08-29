@@ -24,14 +24,17 @@ export class GoogleImagenProvider implements ImageProvider {
     this.logger = new StudioLogger(repository.rootDirectory);
   }
 
-  async generateReference(prompt: string, cancellationSignal?: AbortSignal): Promise<{ asset_path: string; fallback_tier: number; degraded: boolean }> {
+  async generateReference(
+    prompt: string,
+    cancellationSignal?: AbortSignal,
+  ): Promise<{ asset_path: string; fallback_tier: number; degraded: boolean }> {
     if (!this.apiKey.trim()) {
       throw new RepositoryError(`Google Gemini/Imagen API Key is required for ${this.model}`, "API_KEY_REQUIRED");
     }
 
     const cleanPrompt = this.extractCleanVisualPrompt(prompt);
-    const ratioMatch = prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i)
-      || prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
+    const ratioMatch =
+      prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i) || prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
     const targetAspectRatio = ratioMatch ? ratioMatch[1] : "16:9";
     const isGeminiContentModel = !this.model.startsWith("imagen-");
     const method = isGeminiContentModel ? "generateContent" : "predict";
@@ -87,7 +90,10 @@ export class GoogleImagenProvider implements ImageProvider {
           if (response.status === 429) {
             throw new RepositoryError(`Google Gemini/Imagen quota exceeded (429)`, "RATE_LIMIT_EXCEEDED");
           }
-          throw new RepositoryError(`Google Gemini/Imagen request failed (${response.status}): ${raw.slice(0, 200)}`, "IMAGE_GENERATION_FAILED");
+          throw new RepositoryError(
+            `Google Gemini/Imagen request failed (${response.status}): ${raw.slice(0, 200)}`,
+            "IMAGE_GENERATION_FAILED",
+          );
         }
 
         const data = (await response.json()) as {
@@ -115,9 +121,21 @@ export class GoogleImagenProvider implements ImageProvider {
         const imageBytes = Buffer.from(base64, "base64");
         let assetPath: string;
         if (this.target.assetId && this.target.fingerprint) {
-          assetPath = await this.repository.writeQuizImageAsset(this.target.channelId, this.target.episodeId, this.target.assetId, this.target.fingerprint, imageBytes);
+          assetPath = await this.repository.writeQuizImageAsset(
+            this.target.channelId,
+            this.target.episodeId,
+            this.target.assetId,
+            this.target.fingerprint,
+            imageBytes,
+          );
         } else {
-          assetPath = await this.repository.writeBundleImage(this.target.channelId, this.target.episodeId, this.target.bundleNumber ?? 1, imageBytes, this.target.variant ?? 0);
+          assetPath = await this.repository.writeBundleImage(
+            this.target.channelId,
+            this.target.episodeId,
+            this.target.bundleNumber ?? 1,
+            imageBytes,
+            this.target.variant ?? 0,
+          );
         }
 
         const cooldownMs = process.env.NODE_ENV === "test" ? 10 : 8000;
@@ -148,7 +166,9 @@ export class GoogleImagenProvider implements ImageProvider {
       const subject = subjectMatch ? subjectMatch[1].replace(/\.$/, "").trim() : "";
       const visualStyleMatch = rawPrompt.match(/Visual Style\s*:\s*([^\n\r]+)/i);
       const visualStyle = visualStyleMatch ? visualStyleMatch[1].replace(/\.$/, "").trim() : "";
-      const artContractMatch = rawPrompt.match(/(?:Solo hero art contract|Every option in this set must share this exact art direction)\s*:\s*([^\n\r]+)/i);
+      const artContractMatch = rawPrompt.match(
+        /(?:Solo hero art contract|Every option in this set must share this exact art direction)\s*:\s*([^\n\r]+)/i,
+      );
       const artContract = artContractMatch ? artContractMatch[1].replace(/\.$/, "").trim() : "";
       const lightingMatch = rawPrompt.match(/Lighting\s*:\s*([^\n\r]+)/i);
       const lighting = lightingMatch ? lightingMatch[1].replace(/\.$/, "").trim() : "";

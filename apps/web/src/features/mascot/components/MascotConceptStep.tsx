@@ -15,12 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import { QUIZ_IMAGE_STYLE_LABELS, type MascotProfile, type QuizImageStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
-import {
-  COLOR_PRESETS,
-  PROMPT_TEMPLATES,
-  QUICK_PROMPT_TAGS,
-  STYLE_OPTIONS,
-} from "../constants";
+import { COLOR_PRESETS, PROMPT_TEMPLATES, QUICK_PROMPT_TAGS, STYLE_OPTIONS } from "../constants";
 
 type MascotConceptStepProps = {
   genName: string;
@@ -126,9 +121,7 @@ export function MascotConceptStep({
                       title={`${preset.name} (${preset.hex})`}
                       aria-label={preset.name}
                     >
-                      {genColor.toLowerCase() === preset.hex.toLowerCase() ? (
-                        <Check size={12} weight="bold" color="#fff" />
-                      ) : null}
+                      {genColor.toLowerCase() === preset.hex.toLowerCase() ? <Check size={12} weight="bold" color="#fff" /> : null}
                     </button>
                   ))}
                 </div>
@@ -183,12 +176,7 @@ export function MascotConceptStep({
               </label>
 
               <div className="hero-prompt-actions">
-                <button
-                  type="button"
-                  className="quiet-button compact icon-only"
-                  onClick={onCopyPrompt}
-                  title={t("mascots.copyPromptBtn")}
-                >
+                <button type="button" className="quiet-button compact icon-only" onClick={onCopyPrompt} title={t("mascots.copyPromptBtn")}>
                   {promptCopied ? <Check size={14} color="var(--green)" /> : <Copy size={14} />}
                 </button>
                 <button
@@ -214,13 +202,7 @@ export function MascotConceptStep({
             <div className="prompt-template-chips-bar">
               <div className="prompt-chips-list">
                 {PROMPT_TEMPLATES.map((tpl, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    className="prompt-template-chip"
-                    onClick={() => onApplyTemplate(tpl)}
-                    title={tpl.prompt}
-                  >
+                  <button key={idx} type="button" className="prompt-template-chip" onClick={() => onApplyTemplate(tpl)} title={tpl.prompt}>
                     {t(tpl.nameKey)}
                   </button>
                 ))}
@@ -231,12 +213,7 @@ export function MascotConceptStep({
             <div className="quick-tags-bar">
               <div className="quick-tags-list">
                 {QUICK_PROMPT_TAGS.map((tag, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    className="quick-tag-chip"
-                    onClick={() => onInjectTag(tag)}
-                  >
+                  <button key={idx} type="button" className="quick-tag-chip" onClick={() => onInjectTag(tag)}>
                     {tag}
                   </button>
                 ))}
@@ -258,11 +235,7 @@ export function MascotConceptStep({
 
           {/* Collapsible Personality / Lore Notes */}
           <div className="notes-accordion-section">
-            <button
-              type="button"
-              className="notes-accordion-toggle"
-              onClick={() => setShowNotesAccordion((p) => !p)}
-            >
+            <button type="button" className="notes-accordion-toggle" onClick={() => setShowNotesAccordion((p) => !p)}>
               <div className="accordion-title-wrap">
                 {showNotesAccordion ? <CaretDown size={14} weight="bold" /> : <CaretRight size={14} weight="bold" />}
                 <span>{t("mascots.notesAccordionTitle")}</span>
@@ -297,9 +270,7 @@ export function MascotConceptStep({
             >
               {busyAction === "concept" ? <CircleNotch className="spin" size={18} /> : <MagicWand size={18} weight="bold" />}
               <span>
-                {busyAction === "concept"
-                  ? `${t("mascots.generatingConceptBtn")} (${itemProgress}%)`
-                  : t("mascots.generateConceptBtn")}
+                {busyAction === "concept" ? `${t("mascots.generatingConceptBtn")} (${itemProgress}%)` : t("mascots.generateConceptBtn")}
               </span>
             </button>
 
@@ -339,11 +310,12 @@ export function MascotConceptStep({
             className="concept-preview-frame studio-stage-frame"
             style={{
               borderColor: busyAction === "concept" ? "var(--accent)" : editingMascot?.master_image_url ? `${genColor}80` : undefined,
-              boxShadow: busyAction === "concept"
-                ? `0 0 20px var(--accent-glow)`
-                : editingMascot?.master_image_url
-                ? `0 8px 24px rgba(0, 0, 0, 0.25)`
-                : "var(--shadow-sm)",
+              boxShadow:
+                busyAction === "concept"
+                  ? `0 0 20px var(--accent-glow)`
+                  : editingMascot?.master_image_url
+                    ? `0 8px 24px rgba(0, 0, 0, 0.25)`
+                    : "var(--shadow-sm)",
             }}
           >
             {busyAction === "concept" ? (
@@ -397,9 +369,7 @@ export function MascotConceptStep({
               <div className="concept-meta-box modern-meta-box">
                 <div className="concept-meta-item">
                   <span>{t("common.status")}:</span>
-                  <strong style={{ color: "var(--green)" }}>
-                    {t("mascots.statusIdentityLocked")}
-                  </strong>
+                  <strong style={{ color: "var(--green)" }}>{t("mascots.statusIdentityLocked")}</strong>
                 </div>
                 <div className="concept-meta-item">
                   <span>{t("mascots.statusStyle")}</span>
@@ -407,7 +377,10 @@ export function MascotConceptStep({
                 </div>
               </div>
 
-              <div className="master-action-buttons-row" style={{ marginTop: "14px", display: "grid", gridTemplateColumns: "1fr auto", gap: "8px" }}>
+              <div
+                className="master-action-buttons-row"
+                style={{ marginTop: "14px", display: "grid", gridTemplateColumns: "1fr auto", gap: "8px" }}
+              >
                 <button
                   type="button"
                   className="quiet-button compact"
@@ -440,12 +413,7 @@ export function MascotConceptStep({
       {/* Fullscreen Prompt Focus Modal */}
       {isPromptModalOpen ? (
         <div className="modal-backdrop" role="presentation" onClick={() => setIsPromptModalOpen(false)}>
-          <section
-            className="modal prompt-focus-modal"
-            role="dialog"
-            aria-modal="true"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <section className="modal prompt-focus-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
             <div className="modal-heading">
               <div>
                 <h2 style={{ fontSize: "16px", margin: 0 }}>{t("mascots.focusPromptTitle")}</h2>
@@ -459,12 +427,7 @@ export function MascotConceptStep({
               <div className="quick-tags-bar" style={{ marginBottom: "12px" }}>
                 <div className="quick-tags-list">
                   {QUICK_PROMPT_TAGS.map((tag, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      className="quick-tag-chip"
-                      onClick={() => onInjectTag(tag)}
-                    >
+                    <button key={idx} type="button" className="quick-tag-chip" onClick={() => onInjectTag(tag)}>
                       {tag}
                     </button>
                   ))}

@@ -27,9 +27,7 @@ export function TopicCard({
   const [questionCount, setQuestionCount] = useState(topic.question_count);
   const [selectedStyle, setSelectedStyle] = useState<QuizImageStyle | "mixed">(topic.visual_style ?? "mixed");
   const isQuestionCountValid =
-    Number.isInteger(questionCount) &&
-    questionCount >= QUIZ_MIN_QUESTION_COUNT &&
-    questionCount <= QUIZ_MAX_QUESTION_COUNT;
+    Number.isInteger(questionCount) && questionCount >= QUIZ_MIN_QUESTION_COUNT && questionCount <= QUIZ_MAX_QUESTION_COUNT;
   const estimatedDurationMinutes = Math.max(3, Math.round((questionCount * QUIZ_SECONDS_PER_QUESTION) / 60));
   const inputId = `topic-question-count-${topic.topic_id}`;
   const styleSelectId = `topic-style-select-${topic.topic_id}`;
@@ -75,7 +73,9 @@ export function TopicCard({
             onChange={(event) => setQuestionCount(Number(event.target.value))}
           />
           <span aria-live="polite">
-            {isQuestionCountValid ? `About ${estimatedDurationMinutes} min` : `Choose ${QUIZ_MIN_QUESTION_COUNT}-${QUIZ_MAX_QUESTION_COUNT}`}
+            {isQuestionCountValid
+              ? `About ${estimatedDurationMinutes} min`
+              : `Choose ${QUIZ_MIN_QUESTION_COUNT}-${QUIZ_MAX_QUESTION_COUNT}`}
           </span>
         </div>
         <div className="topic-style-picker">

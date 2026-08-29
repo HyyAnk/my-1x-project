@@ -60,14 +60,17 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
       const params = request.params as { mascotId: string; filename: string };
       const file = await repository.getMascotAssetFile(params.mascotId, params.filename);
       const ext = path.extname(params.filename).toLowerCase();
-      let contentType = ext === ".svg" ? "image/svg+xml" : ext === ".webp" ? "image/webp" : ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "image/png";
+      let contentType =
+        ext === ".svg" ? "image/svg+xml" : ext === ".webp" ? "image/webp" : ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "image/png";
       try {
         const sample = await readFile(file.absolutePath, { encoding: "utf8" });
         if (sample.trimStart().startsWith("<svg") || sample.trimStart().startsWith("<?xml")) contentType = "image/svg+xml";
       } catch {
         // Keep default contentType
       }
-      return reply.headers({ "content-type": contentType, "content-length": file.size, "cache-control": "public, max-age=86400" }).send(createReadStream(file.absolutePath));
+      return reply
+        .headers({ "content-type": contentType, "content-length": file.size, "cache-control": "public, max-age=86400" })
+        .send(createReadStream(file.absolutePath));
     });
     server.post("/api/mascots/:mascotId/generate-concept", async (request) => {
       const mascotId = (request.params as { mascotId: string }).mascotId;
@@ -82,12 +85,19 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
       const mascotId = (request.params as { mascotId: string }).mascotId;
       const input = GenerateMascotSpriteInputSchema.parse(request.body);
       const mascot = await repository.getMascot(mascotId);
-      const result = await generateMascotActionSprite(repository, mascot, input.action, state.config.image_generation, {
-        prompt: input.prompt,
-        frames_count: input.frames_count,
-        fps: input.fps,
-        loop: input.loop,
-      }, logger);
+      const result = await generateMascotActionSprite(
+        repository,
+        mascot,
+        input.action,
+        state.config.image_generation,
+        {
+          prompt: input.prompt,
+          frames_count: input.frames_count,
+          fps: input.fps,
+          loop: input.loop,
+        },
+        logger,
+      );
       const updatedMascot = await repository.getMascot(mascotId);
       return { mascot: updatedMascot, ...result };
     });
@@ -129,7 +139,11 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
     server.get("/api/mascots/:mascotId/export", async (request, reply) => {
       const mascotId = (request.params as { mascotId: string }).mascotId;
       const { zipBuffer, filename } = await exportMascotPackage(repository, mascotId);
-      return reply.header("content-type", "application/zip").header("content-disposition", `attachment; filename="${filename}"`).header("content-length", zipBuffer.length).send(zipBuffer);
+      return reply
+        .header("content-type", "application/zip")
+        .header("content-disposition", `attachment; filename="${filename}"`)
+        .header("content-length", zipBuffer.length)
+        .send(zipBuffer);
     });
     server.post("/api/mascots/import", async (request, reply) => {
       const body = request.body as { data: string };

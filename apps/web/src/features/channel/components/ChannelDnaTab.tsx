@@ -1,12 +1,4 @@
-import {
-  CaretDown,
-  CircleNotch,
-  FileText,
-  FloppyDisk,
-  PencilSimple,
-  Smiley,
-  X,
-} from "@phosphor-icons/react";
+import { CaretDown, CircleNotch, FileText, FloppyDisk, PencilSimple, Smiley, X } from "@phosphor-icons/react";
 import {
   getCountryFlag,
   getCountryName,
@@ -97,11 +89,7 @@ export function ChannelDnaTab({
                   <X size={15} />
                   <span>Cancel</span>
                 </button>
-                <button
-                  className="primary-button compact"
-                  disabled={busy === "dna"}
-                  onClick={() => void onSaveDna()}
-                >
+                <button className="primary-button compact" disabled={busy === "dna"} onClick={() => void onSaveDna()}>
                   {busy === "dna" ? <CircleNotch className="spin" size={15} /> : <FloppyDisk size={15} />}
                   <span>Save</span>
                 </button>
@@ -213,144 +201,148 @@ export function ChannelDnaTab({
           </div>
         </div>
 
-        {channel.mascot_id ? (() => {
-          const assignedMascot = mascotsList.find((m) => m.id === channel.mascot_id);
-          const cfg = channel.mascot_config || { enabled: true, position: "bottom_left", scale: 1.0 };
+        {channel.mascot_id ? (
+          (() => {
+            const assignedMascot = mascotsList.find((m) => m.id === channel.mascot_id);
+            const cfg = channel.mascot_config || { enabled: true, position: "bottom_left", scale: 1.0 };
 
-          return (
-            <div className="mascot-branding-content">
-              <div className="mascot-branding-preview">
-                {assignedMascot?.master_image_url ? (
-                  <img src={assignedMascot.master_image_url} alt={assignedMascot.name} className="mascot-branding-img" />
-                ) : (
-                  <div className="mascot-branding-placeholder">
-                    <Smiley size={48} style={{ color: assignedMascot?.color_theme || "var(--accent)" }} />
-                  </div>
-                )}
-                <div className="mascot-branding-info">
-                  <h3>{assignedMascot?.name || "Mascot"}</h3>
-                  <p>{assignedMascot?.description || assignedMascot?.master_prompt || t("channelDetail.mascotDefaultDesc")}</p>
-                  <span className="action-ready-badge" style={{ display: "inline-block", marginTop: "4px" }}>
-                    {t("channelDetail.posesReadyBadge", {
-                      count: Object.values(assignedMascot?.actions || {}).filter((a) => a?.sprite_url).length,
-                    })}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mascot-branding-controls">
-                <div className="form-group">
-                  <label style={{ marginBottom: "6px", display: "block" }}>{t("mascots.positionLabel") || "Vị trí hiển thị"}</label>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
-                    <button
-                      type="button"
-                      className={`quiet-button ${cfg.position === "bottom_left" ? "primary" : ""}`}
-                      onClick={() => void onMascotConfigUpdate({ position: "bottom_left" })}
-                      disabled={changingMascot}
-                      style={{ padding: "4px 8px", fontSize: "12px" }}
-                    >
-                      👈 {t("mascots.posBottomLeft") || "Góc trái"}
-                    </button>
-                    <button
-                      type="button"
-                      className={`quiet-button ${cfg.position === "bottom_right" ? "primary" : ""}`}
-                      onClick={() => void onMascotConfigUpdate({ position: "bottom_right" })}
-                      disabled={changingMascot}
-                      style={{ padding: "4px 8px", fontSize: "12px" }}
-                    >
-                      👉 {t("mascots.posBottomRight") || "Góc phải"}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="form-group" style={{ marginTop: "10px" }}>
-                  <label style={{ marginBottom: "6px", display: "block" }}>{t("mascots.visibilityLabel") || "Hiển thị theo phân cảnh"}</label>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px" }}>
-                    <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-                      <input
-                        type="checkbox"
-                        checked={Boolean(cfg.show_in_intro)}
-                        disabled={changingMascot}
-                        onChange={(e) => void onMascotConfigUpdate({ show_in_intro: e.target.checked })}
-                      />
-                      <span>🎬 {t("mascots.showInIntro") || "Intro mở đầu (Mặc định: Tắt)"}</span>
-                    </label>
-                    <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-                      <input
-                        type="checkbox"
-                        checked={cfg.show_in_question !== false}
-                        disabled={changingMascot}
-                        onChange={(e) => void onMascotConfigUpdate({ show_in_question: e.target.checked })}
-                      />
-                      <span>❓ {t("mascots.showInQuestion") || "Câu hỏi & Reveal đáp án"}</span>
-                    </label>
-                    <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-                      <input
-                        type="checkbox"
-                        checked={Boolean(cfg.show_in_outro)}
-                        disabled={changingMascot}
-                        onChange={(e) => void onMascotConfigUpdate({ show_in_outro: e.target.checked })}
-                      />
-                      <span>🏁 {t("mascots.showInOutro") || "Outro kết thúc (Mặc định: Tắt)"}</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="form-group" style={{ marginTop: "10px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <label>{t("channelDetail.scaleLabel", { scale: (cfg.scale || 1.0).toFixed(2) })}</label>
-                    <span className="scale-value-badge" style={{ fontSize: "11px", padding: "1px 6px" }}>{Math.round((cfg.scale || 1.0) * 100)}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min={0.5}
-                    max={1.8}
-                    step={0.01}
-                    value={cfg.scale || 1.0}
-                    disabled={changingMascot}
-                    onChange={(e) => void onMascotConfigUpdate({ scale: Number(e.target.value) })}
-                  />
-                </div>
-
-                <div className="form-group" style={{ marginTop: "10px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                    <label style={{ margin: 0 }}>Offset X / Y (1920x1080 px)</label>
-                    <span style={{ fontSize: "11px", color: "var(--accent)", fontWeight: 600 }}>
-                      X: {cfg.offset_x || 0}px | Y: {cfg.offset_y || 0}px
+            return (
+              <div className="mascot-branding-content">
+                <div className="mascot-branding-preview">
+                  {assignedMascot?.master_image_url ? (
+                    <img src={assignedMascot.master_image_url} alt={assignedMascot.name} className="mascot-branding-img" />
+                  ) : (
+                    <div className="mascot-branding-placeholder">
+                      <Smiley size={48} style={{ color: assignedMascot?.color_theme || "var(--accent)" }} />
+                    </div>
+                  )}
+                  <div className="mascot-branding-info">
+                    <h3>{assignedMascot?.name || "Mascot"}</h3>
+                    <p>{assignedMascot?.description || assignedMascot?.master_prompt || t("channelDetail.mascotDefaultDesc")}</p>
+                    <span className="action-ready-badge" style={{ display: "inline-block", marginTop: "4px" }}>
+                      {t("channelDetail.posesReadyBadge", {
+                        count: Object.values(assignedMascot?.actions || {}).filter((a) => a?.sprite_url).length,
+                      })}
                     </span>
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                    <div>
-                      <small style={{ color: "var(--muted)", fontSize: "11px" }}>X (Ngang):</small>
-                      <input
-                        type="range"
-                        min={-300}
-                        max={300}
-                        value={cfg.offset_x || 0}
+                </div>
+
+                <div className="mascot-branding-controls">
+                  <div className="form-group">
+                    <label style={{ marginBottom: "6px", display: "block" }}>{t("mascots.positionLabel") || "Vị trí hiển thị"}</label>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+                      <button
+                        type="button"
+                        className={`quiet-button ${cfg.position === "bottom_left" ? "primary" : ""}`}
+                        onClick={() => void onMascotConfigUpdate({ position: "bottom_left" })}
                         disabled={changingMascot}
-                        onChange={(e) => void onMascotConfigUpdate({ offset_x: Number(e.target.value) })}
-                      />
+                        style={{ padding: "4px 8px", fontSize: "12px" }}
+                      >
+                        👈 {t("mascots.posBottomLeft") || "Góc trái"}
+                      </button>
+                      <button
+                        type="button"
+                        className={`quiet-button ${cfg.position === "bottom_right" ? "primary" : ""}`}
+                        onClick={() => void onMascotConfigUpdate({ position: "bottom_right" })}
+                        disabled={changingMascot}
+                        style={{ padding: "4px 8px", fontSize: "12px" }}
+                      >
+                        👉 {t("mascots.posBottomRight") || "Góc phải"}
+                      </button>
                     </div>
-                    <div>
-                      <small style={{ color: "var(--muted)", fontSize: "11px" }}>Y (Dọc):</small>
-                      <input
-                        type="range"
-                        min={-300}
-                        max={300}
-                        value={cfg.offset_y || 0}
-                        disabled={changingMascot}
-                        onChange={(e) => void onMascotConfigUpdate({ offset_y: Number(e.target.value) })}
-                      />
+                  </div>
+
+                  <div className="form-group" style={{ marginTop: "10px" }}>
+                    <label style={{ marginBottom: "6px", display: "block" }}>
+                      {t("mascots.visibilityLabel") || "Hiển thị theo phân cảnh"}
+                    </label>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px" }}>
+                      <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                        <input
+                          type="checkbox"
+                          checked={Boolean(cfg.show_in_intro)}
+                          disabled={changingMascot}
+                          onChange={(e) => void onMascotConfigUpdate({ show_in_intro: e.target.checked })}
+                        />
+                        <span>🎬 {t("mascots.showInIntro") || "Intro mở đầu (Mặc định: Tắt)"}</span>
+                      </label>
+                      <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                        <input
+                          type="checkbox"
+                          checked={cfg.show_in_question !== false}
+                          disabled={changingMascot}
+                          onChange={(e) => void onMascotConfigUpdate({ show_in_question: e.target.checked })}
+                        />
+                        <span>❓ {t("mascots.showInQuestion") || "Câu hỏi & Reveal đáp án"}</span>
+                      </label>
+                      <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                        <input
+                          type="checkbox"
+                          checked={Boolean(cfg.show_in_outro)}
+                          disabled={changingMascot}
+                          onChange={(e) => void onMascotConfigUpdate({ show_in_outro: e.target.checked })}
+                        />
+                        <span>🏁 {t("mascots.showInOutro") || "Outro kết thúc (Mặc định: Tắt)"}</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="form-group" style={{ marginTop: "10px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <label>{t("channelDetail.scaleLabel", { scale: (cfg.scale || 1.0).toFixed(2) })}</label>
+                      <span className="scale-value-badge" style={{ fontSize: "11px", padding: "1px 6px" }}>
+                        {Math.round((cfg.scale || 1.0) * 100)}%
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0.5}
+                      max={1.8}
+                      step={0.01}
+                      value={cfg.scale || 1.0}
+                      disabled={changingMascot}
+                      onChange={(e) => void onMascotConfigUpdate({ scale: Number(e.target.value) })}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ marginTop: "10px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                      <label style={{ margin: 0 }}>Offset X / Y (1920x1080 px)</label>
+                      <span style={{ fontSize: "11px", color: "var(--accent)", fontWeight: 600 }}>
+                        X: {cfg.offset_x || 0}px | Y: {cfg.offset_y || 0}px
+                      </span>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                      <div>
+                        <small style={{ color: "var(--muted)", fontSize: "11px" }}>X (Ngang):</small>
+                        <input
+                          type="range"
+                          min={-300}
+                          max={300}
+                          value={cfg.offset_x || 0}
+                          disabled={changingMascot}
+                          onChange={(e) => void onMascotConfigUpdate({ offset_x: Number(e.target.value) })}
+                        />
+                      </div>
+                      <div>
+                        <small style={{ color: "var(--muted)", fontSize: "11px" }}>Y (Dọc):</small>
+                        <input
+                          type="range"
+                          min={-300}
+                          max={300}
+                          value={cfg.offset_y || 0}
+                          disabled={changingMascot}
+                          onChange={(e) => void onMascotConfigUpdate({ offset_y: Number(e.target.value) })}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })() : (
-          <div style={{ padding: "16px", color: "var(--muted)", fontSize: "13px" }}>
-            {t("channelDetail.noMascotEmptyText")}
-          </div>
+            );
+          })()
+        ) : (
+          <div style={{ padding: "16px", color: "var(--muted)", fontSize: "13px" }}>{t("channelDetail.noMascotEmptyText")}</div>
         )}
       </section>
     </div>

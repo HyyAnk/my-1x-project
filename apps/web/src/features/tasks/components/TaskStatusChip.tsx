@@ -2,13 +2,7 @@ import { CheckCircle, CircleNotch, Clock, Hourglass, WarningCircle, XCircle } fr
 import type { Task } from "@studio/shared";
 import { formatTaskStatus } from "../../../lib/utils";
 
-export function TaskStatusChip({
-  status,
-  compact = false,
-}: {
-  status: Task["status"];
-  compact?: boolean;
-}) {
+export function TaskStatusChip({ status, compact = false }: { status: Task["status"]; compact?: boolean }) {
   const isRunning = status === "RUNNING";
   const isQueued = status === "QUEUED";
   const isWaiting = status === "WAITING_APPROVAL";

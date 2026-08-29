@@ -1,13 +1,6 @@
 import { textLayout } from "../../../candyArcade.js";
+import { esc, escAttr } from "../../../../render/candyArcade/candyArcadeSvg.js";
 import type { AnswerCardRenderInput, AnswerCardVariant } from "../types.js";
-
-function esc(value: string): string {
-  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
-}
-
-function escAttr(value: string): string {
-  return esc(value);
-}
 
 export const minimalSoftVariant: AnswerCardVariant = {
   id: "minimal_soft",

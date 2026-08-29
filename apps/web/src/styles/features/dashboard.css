@@ -1,0 +1,479 @@
+/* ==========================================================================
+   Dashboard Metric Widgets
+   ========================================================================== */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.metric {
+  min-height: 108px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.metric.is-clickable {
+  cursor: pointer;
+}
+
+.metric.is-clickable:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  background: var(--surface-hover);
+}
+
+.metric.is-clickable:active {
+  transform: translateY(0);
+}
+
+.metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.metric-header .metric-label {
+  color: var(--muted);
+  font:
+    600 11px "JetBrains Mono",
+    monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.metric-badge {
+  font-size: 10px;
+  font-weight: 600;
+  font-family: "JetBrains Mono", monospace;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--soft-accent);
+  color: var(--accent-deep);
+}
+
+.metric-body {
+  margin: 6px 0 4px;
+}
+
+.metric .metric-value,
+.metric strong {
+  display: block;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metric-footer {
+  display: flex;
+  align-items: center;
+  min-height: 16px;
+}
+
+.metric-note,
+.count-note {
+  color: var(--muted);
+  font:
+    500 11px/1.35 "JetBrains Mono",
+    monospace;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Running Task Active State & Animation */
+.metric.is-running {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 6%, var(--surface)) 0%, var(--surface) 100%);
+  box-shadow:
+    0 2px 12px rgba(6, 182, 212, 0.12),
+    var(--shadow-sm);
+}
+
+.metric.is-running::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--accent-deep) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: metric-scanner 2.4s ease-in-out infinite;
+}
+
+@keyframes metric-scanner {
+  0% {
+    background-position: -150% 0;
+  }
+  50% {
+    background-position: 50% 0;
+  }
+  100% {
+    background-position: 250% 0;
+  }
+}
+
+.metric-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9.5px;
+  font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.05em;
+  padding: 1.5px 7px;
+  border-radius: 999px;
+  background: var(--soft-accent);
+  color: var(--accent-deep);
+  border: 1px solid color-mix(in srgb, var(--accent-deep) 30%, transparent);
+}
+
+.metric-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-deep);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-deep) 60%, transparent);
+  animation: live-pulse 1.6s ease-out infinite;
+}
+
+/* ==========================================================================
+   Dashboard Telemetry & Analytics Layout
+   ========================================================================== */
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   Dashboard Cost Savings & ROI Section
+   ========================================================================== */
+.savings-card {
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--green) 30%, var(--line));
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--green) 4%, var(--surface)) 0%, var(--surface) 100%);
+  transition: all 0.2s ease;
+}
+
+.savings-card:hover {
+  border-color: var(--green);
+  box-shadow: var(--shadow-md);
+}
+
+.savings-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.savings-submetric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.submetric-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+.submetric-val {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dashboard-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dashboard-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dashboard-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dashboard-section-title h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.dashboard-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.dashboard-telemetry-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.dashboard-telemetry-card:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.telemetry-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.telemetry-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.telemetry-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--soft-accent);
+  color: var(--accent-deep);
+  flex-shrink: 0;
+}
+
+.telemetry-icon-wrap.green {
+  background: var(--soft-green);
+  color: var(--green);
+}
+
+.telemetry-icon-wrap.purple {
+  background: var(--soft-purple);
+  color: var(--purple);
+}
+
+.telemetry-icon-wrap.coral {
+  background: var(--soft-coral);
+  color: var(--coral);
+}
+
+.telemetry-icon-wrap.yellow {
+  background: var(--soft-yellow);
+  color: var(--yellow);
+}
+
+.telemetry-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.telemetry-card-subtitle {
+  font-size: 11px;
+  color: var(--muted);
+  display: block;
+}
+
+.telemetry-status-pill {
+  font-size: 10px;
+  font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.telemetry-status-pill.ready,
+.telemetry-status-pill.active,
+.telemetry-status-pill.connected {
+  background: var(--soft-green);
+  color: var(--green);
+  border: 1px solid color-mix(in srgb, var(--green) 30%, transparent);
+}
+
+.telemetry-status-pill.warning,
+.telemetry-status-pill.disconnected,
+.telemetry-status-pill.unconfigured {
+  background: var(--soft-yellow);
+  color: var(--yellow);
+  border: 1px solid color-mix(in srgb, var(--yellow) 30%, transparent);
+}
+
+.telemetry-status-pill.error {
+  background: var(--danger-surface);
+  color: var(--notice-error);
+  border: 1px solid color-mix(in srgb, var(--notice-error) 30%, transparent);
+}
+
+.telemetry-params-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 14px;
+  background: var(--surface-strong);
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+}
+
+.telemetry-param-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.telemetry-param-item.full-width {
+  grid-column: span 2;
+}
+
+.telemetry-param-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.telemetry-param-val {
+  font-size: 12px;
+  font-weight: 600;
+  font-family: "JetBrains Mono", monospace;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Category Statistics Table */
+.dashboard-table-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+
+.dashboard-table th {
+  background: var(--surface-strong);
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+}
+
+.dashboard-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  vertical-align: middle;
+}
+
+.dashboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+.dashboard-table tr:hover td {
+  background: var(--surface-hover);
+}
+
+.table-domain-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.table-num-cell {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 600;
+}
+
+.progress-pill-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.progress-mini-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-strong);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.progress-mini-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--green);
+}

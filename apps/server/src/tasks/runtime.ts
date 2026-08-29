@@ -50,12 +50,26 @@ export interface TaskManagerRuntime {
   cleanupAntigravityThreads(force?: boolean): Promise<{ removed: number }>;
   cleanupCodexThreads(force?: boolean): Promise<{ removed: number }>;
   completeWithOutput(active: ActiveRun): Promise<void>;
-  createImageProvider(imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string }, output?: string): ImageProvider;
+  createImageProvider(
+    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+    output?: string,
+  ): ImageProvider;
   emitEvent(event: TaskEvent): void;
   findSceneNumber(taskId: string): number | undefined;
   finish(taskId: string, status: TaskStatus, error: string | null, outputFiles?: string[]): Promise<void>;
-  generateBundleImageWithSafetyRetry(task: Task, imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string }, initialPrompt: string, signal?: AbortSignal, output?: string, visualBibleContent?: string): Promise<{ image: { asset_path: string }; updatedPrompt?: string }>;
+  generateBundleImageWithSafetyRetry(
+    task: Task,
+    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+    initialPrompt: string,
+    signal?: AbortSignal,
+    output?: string,
+    visualBibleContent?: string,
+  ): Promise<{ image: { asset_path: string }; updatedPrompt?: string }>;
+  generatePipelineBundleImages(task: Task, run: PipelineRun): Promise<void>;
+  attachPipelineBundleImages(channelId: string, episodeId: string): Promise<void>;
   get(taskId: string): Task;
+  handleNotification(method: string, params: Record<string, unknown>): void;
+  handleServerRequest(request: CodexServerRequest): void;
   hasReadyArtifact(channelId: string, episodeId: string, filename: string): Promise<boolean>;
   hasReadyScript(channelId: string, episodeId: string): Promise<boolean>;
   hasValidNarrationAsset(channelId: string, episodeId: string, assetPath: string | null): Promise<boolean>;
@@ -67,14 +81,24 @@ export interface TaskManagerRuntime {
   retryScript(active: ActiveRun, reason: string): Promise<void>;
   retrySequenceScenes(active: ActiveRun, reason: string): Promise<void>;
   retryVisualBible(active: ActiveRun, reason: string): Promise<void>;
+  run(task: Task): Promise<void>;
   runAntigravityBundleImageTask(task: Task): Promise<void>;
+  runAudioTask(task: Task): Promise<void>;
   runGpti2BundleImageTask(task: Task): Promise<void>;
   runNarrationTask(task: Task): Promise<void>;
   runPipelineTask(task: Task): Promise<void>;
   runQuizV2Pipeline(task: Task): Promise<void>;
   runShopAiKeyImageTask(task: Task): Promise<void>;
   runVideoTask(task: Task): Promise<void>;
-  submit(taskType: TaskType, channelId: string, episodeId: string | null, sceneNumber?: number, requestedImageVariant?: number, topicHint?: string): Task;
+  startCleanupTimer(): void;
+  submit(
+    taskType: TaskType,
+    channelId: string,
+    episodeId: string | null,
+    sceneNumber?: number,
+    requestedImageVariant?: number,
+    topicHint?: string,
+  ): Task;
   tryDeleteThread(threadId: string, engine?: "codex" | "antigravity"): Promise<boolean>;
   update(taskId: string, patch: Partial<Task>): Promise<void>;
   waitForTaskTerminal(taskId: string, run: PipelineRun): Promise<Task>;

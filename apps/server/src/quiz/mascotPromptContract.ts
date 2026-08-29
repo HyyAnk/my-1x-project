@@ -1,12 +1,8 @@
-import {
-  MASCOT_ACTION_META,
-  type MascotActionType,
-  type MascotProfile,
-  type QuizImageStyle,
-} from "@studio/shared";
+import { MASCOT_ACTION_META, type MascotActionType, type MascotProfile, type QuizImageStyle } from "@studio/shared";
 
 export const MASCOT_STYLE_PROMPTS: Record<QuizImageStyle, string> = {
-  pixar_3d: "3D Pixar animation style, soft volumetric lighting, smooth stylized textures, cute rounded features, vibrant saturated colors, cinema 4D octane render, highly expressive",
+  pixar_3d:
+    "3D Pixar animation style, soft volumetric lighting, smooth stylized textures, cute rounded features, vibrant saturated colors, cinema 4D octane render, highly expressive",
   flat_vector: "2D flat vector art, clean bold outlines, solid color blocks, minimalist modern mascot, sticker style",
   kawaii_chibi: "Chibi kawaii anime style, oversized cute sparkling eyes, mini body, joyful expression, pastel accents, cute anime mascot",
   voxel_lowpoly: "Voxel art 3D low-poly style, isometric grid cubes, playful blocky character, vibrant lighting",
@@ -46,7 +42,8 @@ export function buildMascotConceptPrompt(
   overridePrompt?: string,
 ): string {
   const styleDesc = MASCOT_STYLE_PROMPTS[mascot.visual_style] || MASCOT_STYLE_PROMPTS.pixar_3d;
-  const userPrompt = overridePrompt?.trim() || mascot.master_prompt?.trim() || mascot.description?.trim() || `${mascot.name} cute friendly animal companion`;
+  const userPrompt =
+    overridePrompt?.trim() || mascot.master_prompt?.trim() || mascot.description?.trim() || `${mascot.name} cute friendly animal companion`;
 
   return [
     `Full-body single character concept illustration of ${userPrompt}.`,

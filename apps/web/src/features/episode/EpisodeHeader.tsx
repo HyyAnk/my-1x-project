@@ -112,23 +112,19 @@ export function EpisodeHeader({
             disabled={Boolean(activeEpisodeTask) || busy === "GENERATE_PIPELINE"}
             onClick={() => void onCreateTask("GENERATE_PIPELINE")}
           >
-            {activeEpisodeTask || busy === "GENERATE_PIPELINE" ? (
-              <CircleNotch className="spin" size={16} />
-            ) : (
-              <Play size={16} />
-            )}
+            {activeEpisodeTask || busy === "GENERATE_PIPELINE" ? <CircleNotch className="spin" size={16} /> : <Play size={16} />}
             <span>
               {activeEpisodeTask
                 ? "Working…"
                 : isQuiz && readiness.video
-                ? "Render again"
-                : pipelineTask?.status === "FAILED"
-                ? "Retry pipeline"
-                : isQuiz
-                ? "Build video"
-                : readiness.narration
-                ? "Run pipeline again"
-                : "Start production"}
+                  ? "Render again"
+                  : pipelineTask?.status === "FAILED"
+                    ? "Retry pipeline"
+                    : isQuiz
+                      ? "Build video"
+                      : readiness.narration
+                        ? "Run pipeline again"
+                        : "Start production"}
             </span>
           </button>
           {activeEpisodeTask ? (
@@ -140,11 +136,7 @@ export function EpisodeHeader({
               title="Stop current task immediately"
               aria-label="Stop current task"
             >
-              {cancelling ? (
-                <CircleNotch className="spin" size={16} />
-              ) : (
-                <Stop size={16} weight="fill" />
-              )}
+              {cancelling ? <CircleNotch className="spin" size={16} /> : <Stop size={16} weight="fill" />}
               <span>Stop</span>
             </button>
           ) : null}

@@ -24,22 +24,32 @@ export function registerVisualBibleRoutes(deps: VisualBibleRouteDeps): FastifyPl
       return { images: await repository.listBundleImages(params.channelId, params.episodeId) };
     });
     server.post("/api/channels/:channelId/episodes/:episodeId/visual-bible/bundles/:bundleNumber/image", async (request, reply) => {
-      if (!state.config.image_generation.enabled) throw new RepositoryError("Image generation is disabled in Settings", "IMAGE_GENERATION_DISABLED");
+      if (!state.config.image_generation.enabled)
+        throw new RepositoryError("Image generation is disabled in Settings", "IMAGE_GENERATION_DISABLED");
       const params = request.params as { channelId: string; episodeId: string; bundleNumber: string };
       const bundleNumber = Number(params.bundleNumber);
       const visualBible = await repository.getEpisodeFile(params.channelId, params.episodeId, "visual_bible.md");
-      if (!parseContinuityBundles(visualBible.content).some((bundle) => bundle.bundle_number === bundleNumber)) throw new RepositoryError("Continuity bundle was not found", "BUNDLE_NOT_FOUND");
+      if (!parseContinuityBundles(visualBible.content).some((bundle) => bundle.bundle_number === bundleNumber))
+        throw new RepositoryError("Continuity bundle was not found", "BUNDLE_NOT_FOUND");
       const task = tasks.submit("GENERATE_BUNDLE_IMAGE", params.channelId, params.episodeId, bundleNumber);
       return reply.code(202).send({ task });
     });
     server.post("/api/channels/:channelId/episodes/:episodeId/visual-bible/images/generate-all", async (request, reply) => {
-      if (!state.config.image_generation.enabled) throw new RepositoryError("Image generation is disabled in Settings", "IMAGE_GENERATION_DISABLED");
+      if (!state.config.image_generation.enabled)
+        throw new RepositoryError("Image generation is disabled in Settings", "IMAGE_GENERATION_DISABLED");
       const params = request.params as { channelId: string; episodeId: string };
       const { force } = GenerateAllBundleImagesInputSchema.parse(request.body ?? {});
       const visualBible = await repository.getEpisodeFile(params.channelId, params.episodeId, "visual_bible.md");
       const bundles = parseContinuityBundles(visualBible.content);
       const existing = await repository.listBundleImages(params.channelId, params.episodeId);
-      const active = tasks.list().filter((task) => task.episode_id === params.episodeId && task.task_type === "GENERATE_BUNDLE_IMAGE" && ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(task.status));
+      const active = tasks
+        .list()
+        .filter(
+          (task) =>
+            task.episode_id === params.episodeId &&
+            task.task_type === "GENERATE_BUNDLE_IMAGE" &&
+            ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(task.status),
+        );
       const created: Task[] = [];
       for (const bundle of bundles) {
         if (active.some((task) => task.scene_number === bundle.bundle_number)) continue;
@@ -57,13 +67,28 @@ export function registerVisualBibleRoutes(deps: VisualBibleRouteDeps): FastifyPl
       const episode = await repository.getEpisode(params.channelId, params.episodeId);
       const images = await repository.listBundleImages(params.channelId, params.episodeId);
       if (images.length === 0) throw new RepositoryError("No reference images have been generated", "IMAGE_NOT_FOUND");
-      const zip = createStoredZip(await Promise.all(images.map(async (image) => ({ name: image.filename, data: await readFile(image.absolutePath) }))));
-      return reply.headers({ "content-type": "application/zip", "content-disposition": `attachment; filename="${episode.slug}-reference-images.zip"` }).send(zip);
+      const zip = createStoredZip(
+        await Promise.all(images.map(async (image) => ({ name: image.filename, data: await readFile(image.absolutePath) }))),
+      );
+      return reply
+        .headers({
+          "content-type": "application/zip",
+          "content-disposition": `attachment; filename="${episode.slug}-reference-images.zip"`,
+        })
+        .send(zip);
     });
     server.get("/api/channels/:channelId/episodes/:episodeId/visual-bible/images/:filename", async (request, reply) => {
       const params = request.params as { channelId: string; episodeId: string; filename: string };
       const file = await repository.getBundleImageFile(params.channelId, params.episodeId, params.filename);
-      return reply.headers({ "content-type": "image/png", "content-length": file.size, "last-modified": file.modified_at, "cache-control": "no-store", "content-disposition": `inline; filename="${file.filename}"` }).send(createReadStream(file.absolutePath));
+      return reply
+        .headers({
+          "content-type": "image/png",
+          "content-length": file.size,
+          "last-modified": file.modified_at,
+          "cache-control": "no-store",
+          "content-disposition": `inline; filename="${file.filename}"`,
+        })
+        .send(createReadStream(file.absolutePath));
     });
     server.get("/api/channels/:channelId/episodes/:episodeId/production-assessment", async (request) => {
       const params = request.params as { channelId: string; episodeId: string };
@@ -75,7 +100,17 @@ export function registerVisualBibleRoutes(deps: VisualBibleRouteDeps): FastifyPl
         repository.getEpisodeFile(params.channelId, params.episodeId, "script.md"),
         repository.readScenes(params.channelId, params.episodeId),
       ]);
-      return { assessment: assessProduction({ episode, research: research.content, treatment: treatment.content, visualBible: visualBible.content, script: script.content, scenes, fallbackWordsPerSecond: state.config.video_generation.narration_words_per_second }) };
+      return {
+        assessment: assessProduction({
+          episode,
+          research: research.content,
+          treatment: treatment.content,
+          visualBible: visualBible.content,
+          script: script.content,
+          scenes,
+          fallbackWordsPerSecond: state.config.video_generation.narration_words_per_second,
+        }),
+      };
     });
     server.post("/api/channels/:channelId/episodes/:episodeId/shots/generate", async (request, reply) => {
       const params = request.params as { channelId: string; episodeId: string };
@@ -90,8 +125,15 @@ export function registerVisualBibleRoutes(deps: VisualBibleRouteDeps): FastifyPl
         const committed = await repository.commitSequenceDrafts(params.channelId, params.episodeId, sequenceCount);
         if (!committed) throw new RepositoryError("Completed shot drafts could not be committed", "SHOT_PLAN_COMMIT_FAILED");
       }
-      const created = resumePlan.pendingSequenceNumbers.map((sequenceNumber) => tasks.submit("GENERATE_SEQUENCE_SCENES", params.channelId, params.episodeId, sequenceNumber));
-      return reply.code(202).send({ tasks: created, sequence_count: sequenceCount, reused_sequence_numbers: resumePlan.reusedSequenceNumbers, pending_sequence_numbers: resumePlan.pendingSequenceNumbers });
+      const created = resumePlan.pendingSequenceNumbers.map((sequenceNumber) =>
+        tasks.submit("GENERATE_SEQUENCE_SCENES", params.channelId, params.episodeId, sequenceNumber),
+      );
+      return reply.code(202).send({
+        tasks: created,
+        sequence_count: sequenceCount,
+        reused_sequence_numbers: resumePlan.reusedSequenceNumbers,
+        pending_sequence_numbers: resumePlan.pendingSequenceNumbers,
+      });
     });
     server.post("/api/channels/:channelId/episodes/:episodeId/shots/optimize", async (request) => {
       const params = request.params as { channelId: string; episodeId: string };

@@ -24,27 +24,97 @@ const stages: Array<{ key: RailStage; label: string }> = [
 
 type Readiness = { research: boolean; treatment: boolean; script: boolean; visualBible: boolean; scenes: boolean; video: boolean };
 
-export function QuizV2Panel({ state, readiness, pipelineTask, tasks, questionCount = 0 }: { state: QuizV2State | null; readiness: Readiness; pipelineTask: Task | null; tasks: Task[]; questionCount?: number }) {
-  if (!state) return <section className="panel quiz-v2-panel"><p className="artifact-empty">Loading Quiz Engine V2 state</p></section>;
+export function QuizV2Panel({
+  state,
+  readiness,
+  pipelineTask,
+  tasks,
+  questionCount = 0,
+}: {
+  state: QuizV2State | null;
+  readiness: Readiness;
+  pipelineTask: Task | null;
+  tasks: Task[];
+  questionCount?: number;
+}) {
+  if (!state)
+    return (
+      <section className="panel quiz-v2-panel">
+        <p className="artifact-empty">Loading Quiz Engine V2 state</p>
+      </section>
+    );
   const currentStage = pipelineStage(pipelineTask);
-  return <section className="panel quiz-v2-panel" aria-label="Quiz production stages">
-    <h2 style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0, 0, 0, 0)", border: 0 }}>Production rail</h2>
-    {currentStage ? <p className="quiz-v2-panel-note">{pipelineTask?.status === "FAILED" ? "Stopped at" : "Current"}: {currentStage.label}{pipelineTask?.progress_message && pipelineTask.status !== "FAILED" ? ` · ${pipelineTask.progress_message}` : ""}</p> : null}
-    <ol className="quiz-v2-rail" aria-label="Quiz production stages">
-      {stages.map((stage, index) => {
-        const status = resolveStatus(stage.key, index, readiness, state, pipelineTask, tasks, currentStage);
-        const progress = resolveProgress(stage.key, readiness, state, tasks, questionCount, pipelineTask);
-        return <li key={stage.key} className={"quiz-v2-stage is-" + status} aria-label={`${stage.label}: ${progress.completed} of ${progress.total} ${progress.unit} complete, ${progress.percent}%`}>
-          <span className="quiz-v2-stage-icon">{status === "ready" ? <CheckCircle size={16} weight="fill" /> : status === "failed" ? <WarningCircle size={16} weight="fill" /> : status === "running" ? <CircleNotch className="spin" size={16} /> : <span>{index + 1}</span>}</span>
-          <div><strong>{stage.label}</strong><span>{statusLabel(status)}</span><span className="quiz-v2-stage-progress">{progress.completed}/{progress.total} {progress.unit} · {progress.percent}%</span><span className="quiz-v2-stage-track" aria-hidden="true"><span style={{ width: `${progress.percent}%` }} /></span></div>
-        </li>;
-      })}
-    </ol>
-    {state.assessment ? <QuizV2Assessment assessment={state.assessment} /> : <QuizV2PendingAssessment />}
-  </section>;
+  return (
+    <section className="panel quiz-v2-panel" aria-label="Quiz production stages">
+      <h2
+        style={{
+          position: "absolute",
+          width: "1px",
+          height: "1px",
+          padding: 0,
+          margin: "-1px",
+          overflow: "hidden",
+          clip: "rect(0, 0, 0, 0)",
+          border: 0,
+        }}
+      >
+        Production rail
+      </h2>
+      {currentStage ? (
+        <p className="quiz-v2-panel-note">
+          {pipelineTask?.status === "FAILED" ? "Stopped at" : "Current"}: {currentStage.label}
+          {pipelineTask?.progress_message && pipelineTask.status !== "FAILED" ? ` · ${pipelineTask.progress_message}` : ""}
+        </p>
+      ) : null}
+      <ol className="quiz-v2-rail" aria-label="Quiz production stages">
+        {stages.map((stage, index) => {
+          const status = resolveStatus(stage.key, index, readiness, state, pipelineTask, tasks, currentStage);
+          const progress = resolveProgress(stage.key, readiness, state, tasks, questionCount, pipelineTask);
+          return (
+            <li
+              key={stage.key}
+              className={"quiz-v2-stage is-" + status}
+              aria-label={`${stage.label}: ${progress.completed} of ${progress.total} ${progress.unit} complete, ${progress.percent}%`}
+            >
+              <span className="quiz-v2-stage-icon">
+                {status === "ready" ? (
+                  <CheckCircle size={16} weight="fill" />
+                ) : status === "failed" ? (
+                  <WarningCircle size={16} weight="fill" />
+                ) : status === "running" ? (
+                  <CircleNotch className="spin" size={16} />
+                ) : (
+                  <span>{index + 1}</span>
+                )}
+              </span>
+              <div>
+                <strong>{stage.label}</strong>
+                <span>{statusLabel(status)}</span>
+                <span className="quiz-v2-stage-progress">
+                  {progress.completed}/{progress.total} {progress.unit} · {progress.percent}%
+                </span>
+                <span className="quiz-v2-stage-track" aria-hidden="true">
+                  <span style={{ width: `${progress.percent}%` }} />
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+      {state.assessment ? <QuizV2Assessment assessment={state.assessment} /> : <QuizV2PendingAssessment />}
+    </section>
+  );
 }
 
-function resolveStatus(stage: RailStage, index: number, readiness: Readiness, state: QuizV2State, pipelineTask: Task | null, tasks: Task[], currentStage: { key: RailStage; label: string } | null): RailStatus {
+function resolveStatus(
+  stage: RailStage,
+  index: number,
+  readiness: Readiness,
+  state: QuizV2State,
+  pipelineTask: Task | null,
+  tasks: Task[],
+  currentStage: { key: RailStage; label: string } | null,
+): RailStatus {
   const base = baseStatus(stage, readiness, state);
   const failedStage = pipelineTask?.status === "FAILED" ? currentStage?.key : null;
   if (failedStage === stage) return "failed";
@@ -75,10 +145,18 @@ function baseStatus(stage: RailStage, readiness: Readiness, state: QuizV2State):
   return state.stages[stage];
 }
 
-function resolveProgress(stage: RailStage, readiness: Readiness, state: QuizV2State, tasks: Task[], questionCount: number, pipelineTask?: Task | null): StageProgress {
+function resolveProgress(
+  stage: RailStage,
+  readiness: Readiness,
+  state: QuizV2State,
+  tasks: Task[],
+  questionCount: number,
+  pipelineTask?: Task | null,
+): StageProgress {
   const questionTotal = Math.max(0, questionCount || state.quiz?.questions.length || 0);
   if (stage === "questions") return itemProgress(state.quiz?.questions.length ?? 0, questionTotal, "questions");
-  if (stage === "director") return itemProgress(state.director_plan?.beats.length ?? 0, questionTotal || state.director_plan?.beats.length || 1, "beats");
+  if (stage === "director")
+    return itemProgress(state.director_plan?.beats.length ?? 0, questionTotal || state.director_plan?.beats.length || 1, "beats");
   if (stage === "assets") {
     if (pipelineTask && isTaskActive(pipelineTask) && pipelineTask.progress_message) {
       const match = /(?:resolving\s+)?assets\s+(\d+)\/(\d+)/i.exec(pipelineTask.progress_message);
@@ -87,7 +165,9 @@ function resolveProgress(stage: RailStage, readiness: Readiness, state: QuizV2St
       }
     }
     const total = state.asset_plan?.assets.length ?? 0;
-    return total > 0 ? itemProgress(state.asset_resolution?.assets.length ?? 0, total, "assets") : itemProgress(state.asset_plan ? 1 : 0, 1, "task");
+    return total > 0
+      ? itemProgress(state.asset_resolution?.assets.length ?? 0, total, "assets")
+      : itemProgress(state.asset_plan ? 1 : 0, 1, "task");
   }
   if (stage === "voice") {
     if (pipelineTask && isTaskActive(pipelineTask) && pipelineTask.progress_message) {
@@ -97,10 +177,13 @@ function resolveProgress(stage: RailStage, readiness: Readiness, state: QuizV2St
       }
     }
     const segments = state.voice_plan?.segments ?? [];
-    return segments.length > 0 ? itemProgress(segments.filter((segment) => segment.duration_seconds !== null).length, segments.length, "segments") : itemProgress(0, 1, "task");
+    return segments.length > 0
+      ? itemProgress(segments.filter((segment) => segment.duration_seconds !== null).length, segments.length, "segments")
+      : itemProgress(0, 1, "task");
   }
   if (stage === "timeline") {
-    const coveredQuestions = new Set((state.timeline?.events ?? []).filter((event) => event.question_id).map((event) => event.question_id)).size;
+    const coveredQuestions = new Set((state.timeline?.events ?? []).filter((event) => event.question_id).map((event) => event.question_id))
+      .size;
     return questionTotal > 0 ? itemProgress(coveredQuestions, questionTotal, "questions") : itemProgress(state.timeline ? 1 : 0, 1, "task");
   }
   if (stage === "qa") return itemProgress(state.assessment ? 1 : 0, 1, "check");
@@ -112,7 +195,9 @@ function resolveProgress(stage: RailStage, readiness: Readiness, state: QuizV2St
       }
     }
     const sequenceTasks = tasks.filter((task) => task.task_type === "GENERATE_SEQUENCE_SCENES");
-    return sequenceTasks.length > 0 ? sequenceTaskProgress(sequenceTasks, questionTotal) : itemProgress(readiness.scenes ? 1 : 0, 1, "task");
+    return sequenceTasks.length > 0
+      ? sequenceTaskProgress(sequenceTasks, questionTotal)
+      : itemProgress(readiness.scenes ? 1 : 0, 1, "task");
   }
   const taskTypes: Partial<Record<RailStage, Task["task_type"][]>> = {
     research: ["GENERATE_RESEARCH"],
@@ -124,7 +209,21 @@ function resolveProgress(stage: RailStage, readiness: Readiness, state: QuizV2St
   const taskTypeList = taskTypes[stage];
   if (taskTypeList) {
     const task = latestTask(tasks, taskTypeList);
-    return task ? taskProgress([task], "task") : itemProgress(stage === "research" ? Number(readiness.research) : stage === "treatment" ? Number(readiness.treatment) : stage === "script" ? Number(readiness.script) : stage === "visualBible" ? Number(readiness.visualBible) : Number(readiness.video), 1, "task");
+    return task
+      ? taskProgress([task], "task")
+      : itemProgress(
+          stage === "research"
+            ? Number(readiness.research)
+            : stage === "treatment"
+              ? Number(readiness.treatment)
+              : stage === "script"
+                ? Number(readiness.script)
+                : stage === "visualBible"
+                  ? Number(readiness.visualBible)
+                  : Number(readiness.video),
+          1,
+          "task",
+        );
   }
   return itemProgress(0, 1, "task");
 }
@@ -138,7 +237,8 @@ function itemProgress(completed: number, total: number, unit: string): StageProg
 function taskProgress(tasks: Task[], unit: string): StageProgress {
   const completed = tasks.filter((task) => task.status === "COMPLETED").length;
   const fallback = itemProgress(completed, tasks.length, unit);
-  if (tasks.length === 1 && isTaskActive(tasks[0]) && typeof tasks[0].progress_percent === "number") return { ...fallback, percent: tasks[0].progress_percent };
+  if (tasks.length === 1 && isTaskActive(tasks[0]) && typeof tasks[0].progress_percent === "number")
+    return { ...fallback, percent: tasks[0].progress_percent };
   return fallback;
 }
 
@@ -164,36 +264,85 @@ function latestRelevantTask(stage: RailStage, tasks: Task[]): Task | null {
   const stageTypes = types[stage];
   if (!stageTypes) return null;
   const matching = tasks.filter((task) => stageTypes.includes(task.task_type));
-  if (stage === "scenes") return matching.sort((a, b) => b.created_at.localeCompare(a.created_at)).find((task) => isTaskActive(task) || task.status === "FAILED" || task.status === "CANCELLED") ?? null;
+  if (stage === "scenes")
+    return (
+      matching
+        .sort((a, b) => b.created_at.localeCompare(a.created_at))
+        .find((task) => isTaskActive(task) || task.status === "FAILED" || task.status === "CANCELLED") ?? null
+    );
   return latestTask(tasks, stageTypes);
 }
 
 function pipelineStage(task: Task | null): { key: RailStage; label: string } | null {
   if (!task || (!isTaskActive(task) && task.status !== "FAILED")) return null;
   const text = `${task.error ?? ""} ${task.progress_message ?? ""}`.toLowerCase();
-  const match = text.includes("research") ? "research"
-    : text.includes("treatment") ? "treatment"
-      : text.includes("narration script") || text.includes("script") ? "script"
-        : text.includes("visual bible") || text.includes("style anchor") ? "visualBible"
-          : text.includes("shot plan") || text.includes("sequence") ? "scenes"
-            : text.includes("question facts") || text.includes("quiz · locking") ? "questions"
-              : text.includes("directing") || text.includes("director") ? "director"
-                : text.includes("semantic assets") || text.includes("resolving") || text.includes("assets") ? "assets"
-                  : text.includes("voice") || text.includes("narration") ? "voice"
-                    : text.includes("timeline") ? "timeline"
-                      : text.includes("qa") || text.includes("quality") ? "qa"
-                        : text.includes("video") || text.includes("render") || text.includes("composition") ? "render"
+  const match = text.includes("research")
+    ? "research"
+    : text.includes("treatment")
+      ? "treatment"
+      : text.includes("narration script") || text.includes("script")
+        ? "script"
+        : text.includes("visual bible") || text.includes("style anchor")
+          ? "visualBible"
+          : text.includes("shot plan") || text.includes("sequence")
+            ? "scenes"
+            : text.includes("question facts") || text.includes("quiz · locking")
+              ? "questions"
+              : text.includes("directing") || text.includes("director")
+                ? "director"
+                : text.includes("semantic assets") || text.includes("resolving") || text.includes("assets")
+                  ? "assets"
+                  : text.includes("voice") || text.includes("narration")
+                    ? "voice"
+                    : text.includes("timeline")
+                      ? "timeline"
+                      : text.includes("qa") || text.includes("quality")
+                        ? "qa"
+                        : text.includes("video") || text.includes("render") || text.includes("composition")
+                          ? "render"
                           : null;
-  return match ? stages.find((stage) => stage.key === match) ?? null : null;
+  return match ? (stages.find((stage) => stage.key === match) ?? null) : null;
 }
 
 function QuizV2Assessment({ assessment }: { assessment: QuizAssessment }) {
   const blockers = assessment.issues.filter((issue) => issue.severity === "blocker");
-  return <div className={"quiz-v2-assessment " + assessment.rating}><div className="quiz-v2-score"><strong>{assessment.score}</strong><span>QA score</span></div><div><strong>{assessment.rating.replaceAll("_", " ")}</strong><span>{blockers.length ? blockers.length + " blocker" + (blockers.length === 1 ? "" : "s") : "No blockers"}</span></div>{blockers.length ? <ul>{blockers.slice(0, 3).map((issue) => <li key={issue.code}><strong>{issue.message}</strong><span>{issue.next_action}</span></li>)}</ul> : null}</div>;
+  return (
+    <div className={"quiz-v2-assessment " + assessment.rating}>
+      <div className="quiz-v2-score">
+        <strong>{assessment.score}</strong>
+        <span>QA score</span>
+      </div>
+      <div>
+        <strong>{assessment.rating.replaceAll("_", " ")}</strong>
+        <span>{blockers.length ? blockers.length + " blocker" + (blockers.length === 1 ? "" : "s") : "No blockers"}</span>
+      </div>
+      {blockers.length ? (
+        <ul>
+          {blockers.slice(0, 3).map((issue) => (
+            <li key={issue.code}>
+              <strong>{issue.message}</strong>
+              <span>{issue.next_action}</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
 }
 
 function QuizV2PendingAssessment() {
-  return <div className="quiz-v2-assessment pending" aria-label="Quiz QA score not assessed"><div className="quiz-v2-score"><strong>—</strong><span>Quiz QA score</span></div><div><strong>Not assessed</strong><span>Available after Timeline and QA</span></div></div>;
+  return (
+    <div className="quiz-v2-assessment pending" aria-label="Quiz QA score not assessed">
+      <div className="quiz-v2-score">
+        <strong>—</strong>
+        <span>Quiz QA score</span>
+      </div>
+      <div>
+        <strong>Not assessed</strong>
+        <span>Available after Timeline and QA</span>
+      </div>
+    </div>
+  );
 }
 
 function statusLabel(status: RailStatus): string {

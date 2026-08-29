@@ -3,7 +3,8 @@ import { stripEditorialOverlayInstructions } from "../src/visualPrompt.js";
 
 describe("visual prompt sanitization", () => {
   it("removes disclosure and evidence markers from footage prompts", () => {
-    const prompt = "ATMOSPHERE\n12% grain. Lower-left: `RECONSTRUCTION — AI VISUALIZATION`. Lower-right evidence marker FACT — C05. CONTINUITY\nKeep the road stable.";
+    const prompt =
+      "ATMOSPHERE\n12% grain. Lower-left: `RECONSTRUCTION — AI VISUALIZATION`. Lower-right evidence marker FACT — C05. CONTINUITY\nKeep the road stable.";
     const clean = stripEditorialOverlayInstructions(prompt);
 
     expect(clean).not.toMatch(/AI VISUALIZATION|Lower-left|Lower-right|evidence marker|FACT —/i);

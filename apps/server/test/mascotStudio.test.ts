@@ -6,7 +6,7 @@ import { buildApp } from "../src/app.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 import { preflightQuizRender } from "../src/quiz/qa/preflight.js";
 import { assessQuiz } from "../src/quiz/qa/quizAssessment.js";
-import type { MascotProfile } from "@studio/shared";
+import { type MascotProfile, QuizV2Schema } from "@studio/shared";
 
 const roots: string[] = [];
 
@@ -299,16 +299,17 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       expect(questionSubComp).toContain('</div><div class="candy-mascot-container');
 
       // 9b. Test QA Assessment & Preflight Mascot Integrity
-      const dummyQuiz = {
+      const dummyQuiz = QuizV2Schema.parse({
+        schema_version: 2,
         episode_id: "ep_test",
-        target_audience: "Kids",
-        age_band: "7-9" as const,
-        format: "multiple_choice" as const,
+        age_band: "7-9",
+        language: "English",
         questions: [
           {
             id: "q1",
             number: 1,
-            format: "text_multiple_choice" as const,
+            format: "multiple_choice",
+            difficulty: 1,
             question: "What is the largest animal on Earth?",
             choices: [
               { id: "a", text: "Elephant" },
@@ -317,14 +318,16 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
             ],
             correct_choice_id: "b",
             explanation: "The Blue Whale is the largest mammal.",
+            fun_fact: "",
             source_ids: ["src_1"],
-            validation: { fact_locked: true, checked_at: new Date().toISOString(), model: "test" },
+            visual_opportunity: "",
+            validation: { semantic_status: "validated", fact_locked: true, source_coverage: true },
           },
         ],
-      };
+      });
 
       const qaAssessment = assessQuiz({
-        quiz: dummyQuiz as any,
+        quiz: dummyQuiz,
         mascot: detailedMascot,
         mascotConfig: updatedChannel.mascot_config,
       });
@@ -377,16 +380,17 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
 
       // Mock global fetch to capture request
       const originalFetch = globalThis.fetch;
-      let capturedBody: any = null;
-      globalThis.fetch = vi.fn().mockImplementation((_url: string, init: any) => {
-        if (typeof init.body === "string") {
-          capturedBody = JSON.parse(init.body);
-        } else if (init.body && typeof init.body.get === "function") {
+      let capturedBody: Record<string, unknown> | null = null;
+      globalThis.fetch = vi.fn().mockImplementation((_url: string | URL | Request, init?: RequestInit) => {
+        if (typeof init?.body === "string") {
+          capturedBody = JSON.parse(init.body) as Record<string, unknown>;
+        } else if (init?.body && typeof (init.body as unknown as { get: (k: string) => unknown }).get === "function") {
+          const form = init.body as unknown as { get: (k: string) => unknown; has: (k: string) => boolean };
           capturedBody = {
             isFormData: true,
-            prompt: init.body.get("prompt"),
-            hasImage: init.body.has("image[]"),
-            background: init.body.get("background"),
+            prompt: form.get("prompt"),
+            hasImage: form.has("image[]"),
+            background: form.get("background"),
           };
         }
         return Promise.resolve({
@@ -413,9 +417,9 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
 
         expect(result.action_sprite.action).toBe("wave");
         expect(capturedBody).toBeDefined();
-        expect(capturedBody.hasImage).toBe(true);
-        expect(capturedBody.prompt).toContain("@1");
-        expect(capturedBody.background).toBe("opaque");
+        expect(capturedBody?.hasImage).toBe(true);
+        expect(String(capturedBody?.prompt)).toContain("@1");
+        expect(capturedBody?.background).toBe("opaque");
       } finally {
         globalThis.fetch = originalFetch;
       }

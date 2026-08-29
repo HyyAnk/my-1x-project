@@ -1,11 +1,4 @@
-import {
-  ArrowClockwise,
-  ArrowUpRight,
-  Clock,
-  Hourglass,
-  WarningCircle,
-  X,
-} from "@phosphor-icons/react";
+import { ArrowClockwise, ArrowUpRight, Clock, Hourglass, WarningCircle, X } from "@phosphor-icons/react";
 import type { Task } from "@studio/shared";
 import { formatDate, formatTaskElapsed, formatTaskType, isTaskActive } from "../../../lib/utils";
 import type { ProductionItemSummary } from "../types";
@@ -35,7 +28,8 @@ export function StreamlinedTaskCard({
   const isCancelled = item.status === "CANCELLED";
 
   const targetTask = item.activeTask || item.latestTask;
-  const episodeUrl = item.channelId && item.episodeId ? buildHash({ page: "channels", channelId: item.channelId, episodeId: item.episodeId }) : null;
+  const episodeUrl =
+    item.channelId && item.episodeId ? buildHash({ page: "channels", channelId: item.channelId, episodeId: item.episodeId }) : null;
 
   return (
     <article
@@ -61,18 +55,14 @@ export function StreamlinedTaskCard({
         </div>
 
         <div className="task-card-status-badges">
-          {item.queuePosition !== null && isQueued && (
-            <span className="queue-position-pill">Queue #{item.queuePosition + 1}</span>
-          )}
+          {item.queuePosition !== null && isQueued && <span className="queue-position-pill">Queue #{item.queuePosition + 1}</span>}
           <TaskStatusChip status={item.status} />
         </div>
       </div>
 
       {/* Main Title & Type Subtext */}
       <div className="task-card-title-row">
-        <h3 className="task-card-topic-title">
-          {item.episodeTitle || formatTaskType(targetTask.task_type)}
-        </h3>
+        <h3 className="task-card-topic-title">{item.episodeTitle || formatTaskType(targetTask.task_type)}</h3>
         <span className="task-card-type-subtext">{formatTaskType(targetTask.task_type)}</span>
       </div>
 
@@ -80,9 +70,7 @@ export function StreamlinedTaskCard({
       {isQueued ? (
         <div className="task-card-queue-notice">
           <Clock size={14} className="queue-notice-icon" />
-          <span>
-            Waiting in queue · Position #{item.queuePosition !== null ? item.queuePosition + 1 : "—"}
-          </span>
+          <span>Waiting in queue · Position #{item.queuePosition !== null ? item.queuePosition + 1 : "—"}</span>
         </div>
       ) : isWaiting ? (
         <div className="task-card-waiting-notice">
@@ -92,9 +80,7 @@ export function StreamlinedTaskCard({
       ) : isRunning ? (
         <div className="task-card-progress-section">
           <div className="task-card-progress-info">
-            <span className="task-card-progress-msg">
-              {item.progressMessage || "Processing in progress..."}
-            </span>
+            <span className="task-card-progress-msg">{item.progressMessage || "Processing in progress..."}</span>
             <span className="task-card-progress-pct">{item.progressPercent}%</span>
           </div>
           <div
@@ -105,10 +91,7 @@ export function StreamlinedTaskCard({
             aria-valuemax={100}
             aria-label={`${formatTaskType(targetTask.task_type)} progress`}
           >
-            <div
-              className="task-card-progress-fill is-running"
-              style={{ width: `${Math.max(6, Math.min(100, item.progressPercent))}%` }}
-            />
+            <div className="task-card-progress-fill is-running" style={{ width: `${Math.max(6, Math.min(100, item.progressPercent))}%` }} />
           </div>
         </div>
       ) : isFailed && item.error ? (
@@ -120,11 +103,7 @@ export function StreamlinedTaskCard({
       ) : (
         <div className="task-card-done-info">
           <span className="task-card-done-msg">
-            {isCompleted
-              ? item.progressMessage || "Completed successfully"
-              : isCancelled
-              ? "Cancelled by user"
-              : "Execution finished"}
+            {isCompleted ? item.progressMessage || "Completed successfully" : isCancelled ? "Cancelled by user" : "Execution finished"}
           </span>
         </div>
       )}
@@ -134,9 +113,7 @@ export function StreamlinedTaskCard({
         <div className="task-card-meta">
           <Clock size={13} className="meta-icon" />
           <span>{formatTaskElapsed(targetTask, now)}</span>
-          {targetTask.completed_at ? (
-            <span className="task-card-meta-date">· {formatDate(targetTask.completed_at)}</span>
-          ) : null}
+          {targetTask.completed_at ? <span className="task-card-meta-date">· {formatDate(targetTask.completed_at)}</span> : null}
         </div>
 
         <div className="task-card-actions" onClick={(e) => e.stopPropagation()}>

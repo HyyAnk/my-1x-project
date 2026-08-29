@@ -38,7 +38,13 @@ export function DeleteEpisodeModal({
 
   return (
     <div className="modal-backdrop" role="presentation">
-      <section className="modal confirm-modal" role="dialog" aria-modal="true" aria-labelledby="delete-episode-title" aria-describedby="delete-episode-copy">
+      <section
+        className="modal confirm-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-episode-title"
+        aria-describedby="delete-episode-copy"
+      >
         <div className="modal-heading">
           <div>
             <p className="eyebrow">{t("channelDetail.deleteEpisodeTitle")}</p>
@@ -51,7 +57,11 @@ export function DeleteEpisodeModal({
         <p id="delete-episode-copy" className="modal-copy">
           {t("channelDetail.deleteEpisodeWarning")}
         </p>
-        {error ? <p className="form-error" role="alert">{error}</p> : null}
+        {error ? (
+          <p className="form-error" role="alert">
+            {error}
+          </p>
+        ) : null}
         <div className="modal-actions">
           <button type="button" className="quiet-button" onClick={onClose} disabled={busy}>
             {t("common.no")}

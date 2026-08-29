@@ -46,4 +46,13 @@ export function EmptyState({
   );
 }
 
-export function LoadingState() { return <section className="page-wrap"><div className="loading-state"><CircleNotch className="spin" size={22} /><span>Loading workspace</span></div></section>; }
+export function LoadingState() {
+  return (
+    <section className="page-wrap">
+      <div className="loading-state">
+        <CircleNotch className="spin" size={22} />
+        <span>Loading workspace</span>
+      </div>
+    </section>
+  );
+}

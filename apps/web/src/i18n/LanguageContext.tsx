@@ -86,7 +86,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       t,
       dict,
     }),
-    [language, t, dict]
+    [language, t, dict],
   );
 
   return <LanguageContext.Provider value={contextValue}>{children}</LanguageContext.Provider>;

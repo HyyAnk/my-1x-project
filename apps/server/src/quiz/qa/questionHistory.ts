@@ -84,7 +84,10 @@ export function evaluateQuestionMatch(
 
   const normCurrentAns = currentAnswer ? normalizeQuestionText(currentAnswer) : "";
   const normHistoryAns = historyAnswer ? normalizeQuestionText(historyAnswer) : "";
-  const answersMatch = normCurrentAns && normHistoryAns && (normCurrentAns === normHistoryAns || normCurrentAns.includes(normHistoryAns) || normHistoryAns.includes(normCurrentAns));
+  const answersMatch =
+    normCurrentAns &&
+    normHistoryAns &&
+    (normCurrentAns === normHistoryAns || normCurrentAns.includes(normHistoryAns) || normHistoryAns.includes(normCurrentAns));
 
   if (answersMatch && similarity >= 0.5) {
     similarity = Math.max(similarity, 0.85);
@@ -113,11 +116,7 @@ export function evaluateQuestionMatch(
 /**
  * Loại bỏ các câu hỏi quá hạn (TTL) khỏi danh sách lịch sử.
  */
-export function pruneQuestionHistory(
-  entries: QuestionHistoryEntry[],
-  ttlDays = 30,
-  nowMs = Date.now(),
-): QuestionHistoryEntry[] {
+export function pruneQuestionHistory(entries: QuestionHistoryEntry[], ttlDays = 30, nowMs = Date.now()): QuestionHistoryEntry[] {
   const cutOff = nowMs - ttlDays * 24 * 60 * 60 * 1000;
   return entries.filter((entry) => {
     const entryTime = new Date(entry.rendered_at).getTime();
@@ -145,12 +144,7 @@ export function checkQuestionsAgainstHistory(
     let isDupe = false;
 
     for (const entry of validHistory) {
-      const result = evaluateQuestionMatch(
-        question.question,
-        entry.question_text,
-        currentCorrectChoice,
-        entry.correct_answer,
-      );
+      const result = evaluateQuestionMatch(question.question, entry.question_text, currentCorrectChoice, entry.correct_answer);
 
       if (result.similarity > highestSimilarity) {
         highestSimilarity = result.similarity;

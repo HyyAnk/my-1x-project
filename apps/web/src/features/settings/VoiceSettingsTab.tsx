@@ -14,13 +14,7 @@ type VoiceSettingsTabProps = {
   onNotice: (notice: NonNullable<Notice>) => void;
 };
 
-export function VoiceSettingsTab({
-  channels,
-  appConfig,
-  onAudioSaved,
-  onChannelUpdated,
-  onNotice,
-}: VoiceSettingsTabProps) {
+export function VoiceSettingsTab({ channels, appConfig, onAudioSaved, onChannelUpdated, onNotice }: VoiceSettingsTabProps) {
   const {
     audioUrl,
     setAudioUrl,
@@ -70,20 +64,14 @@ export function VoiceSettingsTab({
         <form className="codex-form" onSubmit={(event) => void saveAudio(event)}>
           <label>
             Service URL
-            <input
-              value={audioUrl}
-              onChange={(event) => setAudioUrl(event.target.value)}
-              placeholder="http://127.0.0.1:8890"
-            />
+            <input value={audioUrl} onChange={(event) => setAudioUrl(event.target.value)} placeholder="http://127.0.0.1:8890" />
             <small className="field-help">Local Chatterbox Python TTS API server address.</small>
           </label>
 
           {/* Humanized Exaggeration Parameter */}
           <div className="setting-slider-group">
             <div className="setting-slider-header">
-              <label htmlFor="exaggeration-input">
-                Vocal Expressiveness (Exaggeration)
-              </label>
+              <label htmlFor="exaggeration-input">Vocal Expressiveness (Exaggeration)</label>
               <span className="setting-slider-val">{exaggeration.toFixed(2)}</span>
             </div>
             <div className="setting-presets">
@@ -119,38 +107,25 @@ export function VoiceSettingsTab({
               onChange={(event) => setExaggeration(Number(event.target.value))}
             />
             <small className="field-help">
-              Controls vocal energy, emotion, and dynamic pitch variation. Higher values sound more animated; lower values are calm and steady.
+              Controls vocal energy, emotion, and dynamic pitch variation. Higher values sound more animated; lower values are calm and
+              steady.
             </small>
           </div>
 
           {/* Humanized CFG Weight Parameter */}
           <div className="setting-slider-group">
             <div className="setting-slider-header">
-              <label htmlFor="cfg-weight-input">
-                Voice Clarity & Reference Adherence (CFG)
-              </label>
+              <label htmlFor="cfg-weight-input">Voice Clarity & Reference Adherence (CFG)</label>
               <span className="setting-slider-val">{cfgWeight.toFixed(2)}</span>
             </div>
             <div className="setting-presets">
-              <button
-                type="button"
-                className={`preset-chip ${cfgWeight === 0.35 ? "is-selected" : ""}`}
-                onClick={() => setCfgWeight(0.35)}
-              >
+              <button type="button" className={`preset-chip ${cfgWeight === 0.35 ? "is-selected" : ""}`} onClick={() => setCfgWeight(0.35)}>
                 Soft (0.35)
               </button>
-              <button
-                type="button"
-                className={`preset-chip ${cfgWeight === 0.5 ? "is-selected" : ""}`}
-                onClick={() => setCfgWeight(0.5)}
-              >
+              <button type="button" className={`preset-chip ${cfgWeight === 0.5 ? "is-selected" : ""}`} onClick={() => setCfgWeight(0.5)}>
                 Balanced (0.5)
               </button>
-              <button
-                type="button"
-                className={`preset-chip ${cfgWeight === 0.75 ? "is-selected" : ""}`}
-                onClick={() => setCfgWeight(0.75)}
-              >
+              <button type="button" className={`preset-chip ${cfgWeight === 0.75 ? "is-selected" : ""}`} onClick={() => setCfgWeight(0.75)}>
                 Crisp (0.75)
               </button>
             </div>
@@ -180,16 +155,13 @@ export function VoiceSettingsTab({
               onChange={(event) => setMergeGapMs(Number(event.target.value))}
             />
             <small className="field-help">
-              Minimum silence duration (in ms) between sentence fragments before splitting into a separate narration track ({mergeGapMs}ms = {(mergeGapMs / 1000).toFixed(2)}s).
+              Minimum silence duration (in ms) between sentence fragments before splitting into a separate narration track ({mergeGapMs}ms ={" "}
+              {(mergeGapMs / 1000).toFixed(2)}s).
             </small>
           </label>
 
           <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={matchTargetDuration}
-              onChange={(event) => setMatchTargetDuration(event.target.checked)}
-            />
+            <input type="checkbox" checked={matchTargetDuration} onChange={(event) => setMatchTargetDuration(event.target.checked)} />
             <span>Match episode target duration (auto-calibrate narration pacing)</span>
           </label>
 
@@ -256,12 +228,7 @@ export function VoiceSettingsTab({
                 <label className="file-picker">
                   <FileText size={15} />
                   Upload new voice for this channel
-                  <input
-                    type="file"
-                    accept="audio/wav,.wav"
-                    onChange={(event) => void uploadForChannel(event)}
-                    disabled={voiceBusy}
-                  />
+                  <input type="file" accept="audio/wav,.wav" onChange={(event) => void uploadForChannel(event)} disabled={voiceBusy} />
                 </label>
               </>
             ) : (
@@ -288,16 +255,9 @@ export function VoiceSettingsTab({
             <label className="file-picker">
               <FileText size={15} />
               {voiceFile?.name ?? "Choose WAV reference (10-30s)"}
-              <input
-                type="file"
-                accept="audio/wav,.wav"
-                onChange={(event) => setVoiceFile(event.target.files?.[0] ?? null)}
-              />
+              <input type="file" accept="audio/wav,.wav" onChange={(event) => setVoiceFile(event.target.files?.[0] ?? null)} />
             </label>
-            <button
-              className="primary-button compact"
-              disabled={voiceBusy || !voiceName.trim() || !voiceFile}
-            >
+            <button className="primary-button compact" disabled={voiceBusy || !voiceName.trim() || !voiceFile}>
               {voiceBusy ? <CircleNotch className="spin" size={15} /> : <Plus size={15} />}
               <span>Add voice</span>
             </button>
@@ -312,12 +272,7 @@ export function VoiceSettingsTab({
                     <strong>{voice.name}</strong>
                     <span>{new Date(voice.created_at).toLocaleDateString()}</span>
                   </div>
-                  <audio
-                    controls
-                    preload="none"
-                    aria-label={`Preview ${voice.name}`}
-                    src={api.voiceSampleUrl(voice.voice_id)}
-                  />
+                  <audio controls preload="none" aria-label={`Preview ${voice.name}`} src={api.voiceSampleUrl(voice.voice_id)} />
                   <button
                     className="icon-button danger"
                     title={`Delete ${voice.name}`}

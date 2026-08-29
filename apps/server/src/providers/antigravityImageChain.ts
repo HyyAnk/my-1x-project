@@ -29,7 +29,8 @@ export class AntigravityImageChainProvider implements ImageProvider {
     client?: AntigravityClient,
     options: { allowTier3Fallback?: boolean; apiKey?: string } = {},
   ) {
-    const apiKey = options.apiKey || (client as unknown as { config?: { antigravity?: { api_key?: string } } })?.config?.antigravity?.api_key || "";
+    const apiKey =
+      options.apiKey || (client as unknown as { config?: { antigravity?: { api_key?: string } } })?.config?.antigravity?.api_key || "";
     if (apiKey.trim()) {
       this.imagenTier = new GoogleImagenProvider(repository, target, apiKey.trim(), "gemini-3.1-flash-lite-image");
     }
@@ -39,7 +40,10 @@ export class AntigravityImageChainProvider implements ImageProvider {
     this.allowTier3Fallback = options.allowTier3Fallback ?? false;
   }
 
-  async generateReference(prompt: string, cancellationSignal?: AbortSignal): Promise<{ asset_path: string; fallback_tier: number; degraded: boolean }> {
+  async generateReference(
+    prompt: string,
+    cancellationSignal?: AbortSignal,
+  ): Promise<{ asset_path: string; fallback_tier: number; degraded: boolean }> {
     const context = { profileId: this.target.channelId, workerId: this.target.episodeId, step: "antigravity_image_chain" };
     let tier1Error: Error | null = null;
 
@@ -51,7 +55,10 @@ export class AntigravityImageChainProvider implements ImageProvider {
         return result;
       } catch (error) {
         tier1Error = error instanceof Error ? error : new Error(String(error));
-        this.logger.warn(`Google Gemini Flash Lite Image (gemini-3.1-flash-lite-image) failed: ${tier1Error.message}, falling back to Native Tool...`, context);
+        this.logger.warn(
+          `Google Gemini Flash Lite Image (gemini-3.1-flash-lite-image) failed: ${tier1Error.message}, falling back to Native Tool...`,
+          context,
+        );
       }
     }
 
@@ -78,5 +85,3 @@ export class AntigravityImageChainProvider implements ImageProvider {
     return result;
   }
 }
-
-

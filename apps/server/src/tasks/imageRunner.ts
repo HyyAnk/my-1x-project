@@ -11,7 +11,8 @@ import { removeImageBackground } from "../utils/imageMatting.js";
 import { isValidPngFile } from "./artifactFiles.js";
 import type { TaskManagerRuntime } from "./runtime.js";
 
-export function createImageProvider(this: TaskManagerRuntime,
+export function createImageProvider(
+  this: TaskManagerRuntime,
   imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
   output?: string,
 ): ImageProvider {
@@ -51,7 +52,8 @@ export function createImageProvider(this: TaskManagerRuntime,
   return new CodexImageProvider(this.repository, imageTarget, output ?? "");
 }
 
-export async function generateBundleImageWithSafetyRetry(this: TaskManagerRuntime,
+export async function generateBundleImageWithSafetyRetry(
+  this: TaskManagerRuntime,
   task: Task,
   imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
   initialPrompt: string,
@@ -75,10 +77,13 @@ export async function generateBundleImageWithSafetyRetry(this: TaskManagerRuntim
         const reason = extractFilterReason(err);
         const client = this.activeEngine === "antigravity" && this.antigravity ? this.antigravity : this.codex;
         const engineLabel = this.activeEngine === "antigravity" ? "Antigravity" : "Codex";
-        this.logger.warn(`Style anchor ${imageTarget.bundleNumber} prompt rejected by content filter (${reason}). Auto-rephrasing with ${engineLabel} (attempt ${attempt + 1}/${maxAttempts})...`, {
-          profileId: imageTarget.channelId,
-          step: "image_safety_rephrase",
-        });
+        this.logger.warn(
+          `Style anchor ${imageTarget.bundleNumber} prompt rejected by content filter (${reason}). Auto-rephrasing with ${engineLabel} (attempt ${attempt + 1}/${maxAttempts})...`,
+          {
+            profileId: imageTarget.channelId,
+            step: "image_safety_rephrase",
+          },
+        );
         await this.update(task.task_id, {
           progress_message: `Prompt rejected by safety filter. Auto-rephrasing with ${engineLabel} (${attempt + 1}/${maxAttempts})...`,
         });
@@ -94,7 +99,9 @@ export async function generateBundleImageWithSafetyRetry(this: TaskManagerRuntim
           if (visualBibleContent) {
             const updated = replaceBundleAnchorPrompt(visualBibleContent, imageTarget.bundleNumber, rephrased);
             if (updated !== visualBibleContent) {
-              await this.repository.saveEpisodeFile(imageTarget.channelId, imageTarget.episodeId, "visual_bible.md", updated).catch(() => undefined);
+              await this.repository
+                .saveEpisodeFile(imageTarget.channelId, imageTarget.episodeId, "visual_bible.md", updated)
+                .catch(() => undefined);
               visualBibleContent = updated;
             }
           }
@@ -111,16 +118,28 @@ export async function generateBundleImageWithSafetyRetry(this: TaskManagerRuntim
   throw lastError ?? new Error("Failed to generate continuity image");
 }
 
-export async function runGpti2BundleImageTask(this: TaskManagerRuntime,task: Task): Promise<void> {
+export async function runGpti2BundleImageTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   const context = { profileId: task.channel_id, workerId: task.task_id, step: "run_gpti2_image" };
   const controller = new AbortController();
   this.activeImageControllers.set(task.task_id, controller);
   try {
-    await this.update(task.task_id, { status: "RUNNING", started_at: nowIso(), queue_position: null, progress_message: "Preparing continuity context", progress_percent: 10 });
+    await this.update(task.task_id, {
+      status: "RUNNING",
+      started_at: nowIso(),
+      queue_position: null,
+      progress_message: "Preparing continuity context",
+      progress_percent: 10,
+    });
     if (!task.episode_id) throw new RepositoryError("Episode is required", "EPISODE_REQUIRED");
     const bundleNumber = this.findSceneNumber(task.task_id);
     if (!bundleNumber) throw new RepositoryError("Bundle number is required", "BUNDLE_REQUIRED");
-    const manifest = await this.contextEngine.build(task.task_type, task.channel_id, task.episode_id, bundleNumber, this.imageVariants.get(task.task_id) ?? 0);
+    const manifest = await this.contextEngine.build(
+      task.task_type,
+      task.channel_id,
+      task.episode_id,
+      bundleNumber,
+      this.imageVariants.get(task.task_id) ?? 0,
+    );
     const imageModel = this.imageConfig.model || "gpt-image-2";
     await this.update(task.task_id, { progress_message: `Generating continuity image (${imageModel})`, progress_percent: 35 });
     const visualBible = await this.repository.getEpisodeFile(task.channel_id, task.episode_id, "visual_bible.md").catch(() => null);
@@ -138,7 +157,14 @@ export async function runGpti2BundleImageTask(this: TaskManagerRuntime,task: Tas
       bundleNumber,
       variant: this.imageVariants.get(task.task_id) ?? 0,
     };
-    const { image } = await this.generateBundleImageWithSafetyRetry(task, imageTarget, promptToUse, controller.signal, undefined, visualBible?.content);
+    const { image } = await this.generateBundleImageWithSafetyRetry(
+      task,
+      imageTarget,
+      promptToUse,
+      controller.signal,
+      undefined,
+      visualBible?.content,
+    );
     const bundleId = `CB-${String(bundleNumber).padStart(2, "0")}`;
     await this.repository.attachBundleReference(task.channel_id, task.episode_id, bundleId, image.asset_path);
     await this.update(task.task_id, { progress_message: "Saving continuity image", progress_percent: 90 });
@@ -153,17 +179,29 @@ export async function runGpti2BundleImageTask(this: TaskManagerRuntime,task: Tas
   }
 }
 
-export async function runAntigravityBundleImageTask(this: TaskManagerRuntime,task: Task): Promise<void> {
+export async function runAntigravityBundleImageTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   const context = { profileId: task.channel_id, workerId: task.task_id, step: "run_antigravity_image" };
   const controller = new AbortController();
   this.activeImageControllers.set(task.task_id, controller);
   try {
-    await this.update(task.task_id, { status: "RUNNING", started_at: nowIso(), queue_position: null, progress_message: "Preparing continuity context", progress_percent: 10 });
+    await this.update(task.task_id, {
+      status: "RUNNING",
+      started_at: nowIso(),
+      queue_position: null,
+      progress_message: "Preparing continuity context",
+      progress_percent: 10,
+    });
     if (!task.episode_id) throw new RepositoryError("Episode is required", "EPISODE_REQUIRED");
     const bundleNumber = this.findSceneNumber(task.task_id);
     if (!bundleNumber) throw new RepositoryError("Bundle number is required", "BUNDLE_REQUIRED");
     const episode = await this.repository.getEpisode(task.channel_id, task.episode_id);
-    const manifest = await this.contextEngine.build(task.task_type, task.channel_id, task.episode_id, bundleNumber, this.imageVariants.get(task.task_id) ?? 0);
+    const manifest = await this.contextEngine.build(
+      task.task_type,
+      task.channel_id,
+      task.episode_id,
+      bundleNumber,
+      this.imageVariants.get(task.task_id) ?? 0,
+    );
     await this.update(task.task_id, { progress_message: "Generating continuity image (3-tier chain)", progress_percent: 35 });
     const visualBible = await this.repository.getEpisodeFile(task.channel_id, task.episode_id, "visual_bible.md").catch(() => null);
     let promptToUse = manifest.prompt;
@@ -181,7 +219,14 @@ export async function runAntigravityBundleImageTask(this: TaskManagerRuntime,tas
       variant: this.imageVariants.get(task.task_id) ?? 0,
       theme: episode.quiz_config?.visual_theme,
     };
-    const { image } = await this.generateBundleImageWithSafetyRetry(task, imageTarget, promptToUse, controller.signal, undefined, visualBible?.content);
+    const { image } = await this.generateBundleImageWithSafetyRetry(
+      task,
+      imageTarget,
+      promptToUse,
+      controller.signal,
+      undefined,
+      visualBible?.content,
+    );
     const bundleId = `CB-${String(bundleNumber).padStart(2, "0")}`;
     await this.repository.attachBundleReference(task.channel_id, task.episode_id, bundleId, image.asset_path);
     await this.update(task.task_id, { progress_message: "Saving continuity image", progress_percent: 90 });
@@ -196,16 +241,28 @@ export async function runAntigravityBundleImageTask(this: TaskManagerRuntime,tas
   }
 }
 
-export async function runShopAiKeyImageTask(this: TaskManagerRuntime,task: Task): Promise<void> {
+export async function runShopAiKeyImageTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   const context = { profileId: task.channel_id, workerId: task.task_id, step: "run_image" };
   const controller = new AbortController();
   this.activeImageControllers.set(task.task_id, controller);
   try {
-    await this.update(task.task_id, { status: "RUNNING", started_at: nowIso(), queue_position: null, progress_message: "Preparing continuity context", progress_percent: 10 });
+    await this.update(task.task_id, {
+      status: "RUNNING",
+      started_at: nowIso(),
+      queue_position: null,
+      progress_message: "Preparing continuity context",
+      progress_percent: 10,
+    });
     if (!task.episode_id) throw new RepositoryError("Episode is required", "EPISODE_REQUIRED");
     const bundleNumber = this.findSceneNumber(task.task_id);
     if (!bundleNumber) throw new RepositoryError("Bundle number is required", "BUNDLE_REQUIRED");
-    const manifest = await this.contextEngine.build(task.task_type, task.channel_id, task.episode_id, bundleNumber, this.imageVariants.get(task.task_id) ?? 0);
+    const manifest = await this.contextEngine.build(
+      task.task_type,
+      task.channel_id,
+      task.episode_id,
+      bundleNumber,
+      this.imageVariants.get(task.task_id) ?? 0,
+    );
     await this.update(task.task_id, { progress_message: "Generating continuity image", progress_percent: 35 });
     const visualBible = await this.repository.getEpisodeFile(task.channel_id, task.episode_id, "visual_bible.md").catch(() => null);
     let promptToUse = manifest.prompt;
@@ -222,7 +279,14 @@ export async function runShopAiKeyImageTask(this: TaskManagerRuntime,task: Task)
       bundleNumber,
       variant: this.imageVariants.get(task.task_id) ?? 0,
     };
-    const { image } = await this.generateBundleImageWithSafetyRetry(task, imageTarget, promptToUse, controller.signal, undefined, visualBible?.content);
+    const { image } = await this.generateBundleImageWithSafetyRetry(
+      task,
+      imageTarget,
+      promptToUse,
+      controller.signal,
+      undefined,
+      visualBible?.content,
+    );
     const bundleId = `CB-${String(bundleNumber).padStart(2, "0")}`;
     await this.repository.attachBundleReference(task.channel_id, task.episode_id, bundleId, image.asset_path);
     await this.update(task.task_id, { progress_message: "Saving continuity image", progress_percent: 90 });

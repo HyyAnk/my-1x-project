@@ -13,10 +13,22 @@ afterEach(async () => {
 
 describe("continuity bundles", () => {
   it("extracts bundle sections and multiline anchor prompts", () => {
-    const bundles = parseContinuityBundles(`# Episode Visual Bible\n\n## Continuity bundle CB-01 — The workshop\n\n- Era: 1950s\n- Anchor-frame prompt: A warm workshop at dawn, brass tools on a wooden bench.\n- Reference asset slots: anchor\n\n## Continuity bundle CB-02 — The archive\n\n- Anchor-frame prompt: A cool archive room with tall shelves and dust in window light.\n- Allowed shot variation: lens and camera height`);
+    const bundles = parseContinuityBundles(
+      `# Episode Visual Bible\n\n## Continuity bundle CB-01 — The workshop\n\n- Era: 1950s\n- Anchor-frame prompt: A warm workshop at dawn, brass tools on a wooden bench.\n- Reference asset slots: anchor\n\n## Continuity bundle CB-02 — The archive\n\n- Anchor-frame prompt: A cool archive room with tall shelves and dust in window light.\n- Allowed shot variation: lens and camera height`,
+    );
     expect(bundles).toMatchObject([
-      { bundle_id: "CB-01", bundle_number: 1, title: "The workshop", anchor_prompt: "A warm workshop at dawn, brass tools on a wooden bench." },
-      { bundle_id: "CB-02", bundle_number: 2, title: "The archive", anchor_prompt: "A cool archive room with tall shelves and dust in window light." },
+      {
+        bundle_id: "CB-01",
+        bundle_number: 1,
+        title: "The workshop",
+        anchor_prompt: "A warm workshop at dawn, brass tools on a wooden bench.",
+      },
+      {
+        bundle_id: "CB-02",
+        bundle_number: 2,
+        title: "The archive",
+        anchor_prompt: "A cool archive room with tall shelves and dust in window light.",
+      },
     ]);
   });
 
@@ -45,8 +57,25 @@ describe("continuity bundles", () => {
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Bundle Channel", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `bundle_topic_${index}`, channel_id: channel.channel_id, title: `Bundle Topic ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false }));
+    const channel = await repository.createChannel({
+      name: "Bundle Channel",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `bundle_topic_${index}`,
+      channel_id: channel.channel_id,
+      title: `Bundle Topic ${index}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
     await repository.saveScenes(channel.channel_id, episode.episode_id, [
@@ -62,12 +91,19 @@ describe("continuity bundles", () => {
     expect(scenes[1].reference_asset_ids).toEqual([assetPath]);
     expect(scenes[0].dialogue).toBe("First dialogue");
     expect(scenes[0].visual_prompt).toBe("Shot for First dialogue");
-    expect((await repository.listBundleImages(channel.channel_id, episode.episode_id))[0]).toMatchObject({ bundle_id: "CB-01", filename: "CB-01.png" });
+    expect((await repository.listBundleImages(channel.channel_id, episode.episode_id))[0]).toMatchObject({
+      bundle_id: "CB-01",
+      filename: "CB-01.png",
+    });
   });
 
   it("replaces anchor prompt for a target bundle without altering other bundles", () => {
     const original = `# Episode Visual Bible\n\n## Continuity bundle CB-01 — The workshop\n\n- Era: 1950s\n- Anchor-frame prompt: A bloody battlefield with wounded soldiers.\n- Reference asset slots: anchor\n\n## Continuity bundle CB-02 — The archive\n\n- Anchor-frame prompt: A cool archive room with tall shelves.\n- Allowed shot variation: lens and camera height`;
-    const updated = replaceBundleAnchorPrompt(original, 1, "A cinematic historical battlefield shrouded in misty twilight with fallen banners.");
+    const updated = replaceBundleAnchorPrompt(
+      original,
+      1,
+      "A cinematic historical battlefield shrouded in misty twilight with fallen banners.",
+    );
     const parsed = parseContinuityBundles(updated);
     expect(parsed[0].anchor_prompt).toBe("A cinematic historical battlefield shrouded in misty twilight with fallen banners.");
     expect(parsed[1].anchor_prompt).toBe("A cool archive room with tall shelves.");

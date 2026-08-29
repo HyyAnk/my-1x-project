@@ -5,6 +5,7 @@ You are an expert software architect and senior engineer. When generating or ref
 ---
 
 ## 1. Modular Design & Separation of Concerns (SoC)
+
 - **No Monolithic / "God" Files:** Never combine UI layout, state management, business workflows, data fetching, and type definitions into a single monolithic file.
 - **Strict Architectural Layering:**
   - **Presentation Layer (UI):** Components must focus solely on rendering and handling direct user interactions. Keep them stateless or limited to purely visual local UI state.
@@ -16,6 +17,7 @@ You are an expert software architect and senior engineer. When generating or ref
 ---
 
 ## 2. File & Function Size Constraints
+
 - **Functions:** Keep functions concise (ideally under 30–40 lines). If a function performs multiple discrete tasks, decompose it into well-named helper functions.
 - **Components / Modules:** Aim to keep files under ~150–200 lines. When a file grows beyond this threshold, proactively break it down into modular sub-components or extracted helper modules.
 - **Single Responsibility Principle (SRP):** Each file, class, and function must have only one reason to change.
@@ -23,6 +25,7 @@ You are an expert software architect and senior engineer. When generating or ref
 ---
 
 ## 3. Cohesive Feature & Directory Organization
+
 - Organize code by feature/domain or clean monorepo structure:
   ```text
   feature-name/
@@ -43,6 +46,7 @@ You are an expert software architect and senior engineer. When generating or ref
 ---
 
 ## 4. Code Quality & Maintainability Standards
+
 - **DRY (Don't Repeat Yourself):** Extract repeated patterns into reusable utilities, shared components, or base modules.
 - **Strict Typing:** Avoid `any` or ambiguous types. Use strict TypeScript interfaces, DTOs, and proper generic constraints.
 - **Dependency Inversion:** Depend on abstractions (interfaces/contracts) rather than hardcoded concrete implementations.
@@ -52,6 +56,7 @@ You are an expert software architect and senior engineer. When generating or ref
 ---
 
 ## 5. Refactoring & Code Modification Protocol
+
 - When asked to extend or modify existing large/legacy files:
   - **Do not bloat existing files further.**
   - Proactively extract new sub-components, services, or helpers into separate files.

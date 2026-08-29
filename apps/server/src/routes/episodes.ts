@@ -11,8 +11,12 @@ export type EpisodesRouteDeps = {
 export function registerEpisodesRoutes(deps: EpisodesRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
     const { repository, state } = deps;
-    server.get("/api/channels/:channelId/episodes", async (request) => ({ episodes: await repository.listEpisodes((request.params as { channelId: string }).channelId) }));
-    server.get("/api/channels/:channelId/bgm-history", async (request) => ({ history: await repository.readBgmHistory((request.params as { channelId: string }).channelId) }));
+    server.get("/api/channels/:channelId/episodes", async (request) => ({
+      episodes: await repository.listEpisodes((request.params as { channelId: string }).channelId),
+    }));
+    server.get("/api/channels/:channelId/bgm-history", async (request) => ({
+      history: await repository.readBgmHistory((request.params as { channelId: string }).channelId),
+    }));
     server.delete("/api/channels/:channelId/episodes/:episodeId", async (request) => {
       const params = request.params as { channelId: string; episodeId: string };
       const query = request.query as { confirm?: string };
@@ -22,7 +26,12 @@ export function registerEpisodesRoutes(deps: EpisodesRouteDeps): FastifyPluginCa
     server.patch("/api/channels/:channelId/episodes/:episodeId", async (request) => {
       const params = request.params as { channelId: string; episodeId: string };
       const input = EpisodeSettingsInputSchema.parse(request.body);
-      return repository.updateEpisodeSettings(params.channelId, params.episodeId, input, state.config.video_generation.narration_words_per_second);
+      return repository.updateEpisodeSettings(
+        params.channelId,
+        params.episodeId,
+        input,
+        state.config.video_generation.narration_words_per_second,
+      );
     });
     server.get("/api/channels/:channelId/episodes/:episodeId/file/:filename", async (request) => {
       const params = request.params as { channelId: string; episodeId: string; filename: string };

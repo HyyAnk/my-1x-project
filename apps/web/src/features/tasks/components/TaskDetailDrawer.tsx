@@ -95,14 +95,14 @@ export function TaskDetailDrawer({
                     (isRunning
                       ? "Task currently running on engine"
                       : isQueued
-                      ? `Position #${(targetTask.queue_position ?? 0) + 1} in build queue`
-                      : isWaiting
-                      ? "Waiting for manual approval"
-                      : isCompleted
-                      ? "Execution finished successfully"
-                      : isCancelled
-                      ? "Execution cancelled by user"
-                      : "Execution failed")}
+                        ? `Position #${(targetTask.queue_position ?? 0) + 1} in build queue`
+                        : isWaiting
+                          ? "Waiting for manual approval"
+                          : isCompleted
+                            ? "Execution finished successfully"
+                            : isCancelled
+                              ? "Execution cancelled by user"
+                              : "Execution failed")}
                 </span>
               </div>
             </div>

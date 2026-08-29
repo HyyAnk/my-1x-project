@@ -14,13 +14,7 @@ describe("runConcurrent worker pool", () => {
       return `result-${index}-${ms}`;
     });
 
-    expect(results).toEqual([
-      "result-0-50",
-      "result-1-10",
-      "result-2-30",
-      "result-3-20",
-      "result-4-40",
-    ]);
+    expect(results).toEqual(["result-0-50", "result-1-10", "result-2-30", "result-3-20", "result-4-40"]);
     expect(startedOrder.slice(0, 3)).toEqual([0, 1, 2]);
     expect(completedOrder[0]).toBe(1); // 10ms finished first
   });

@@ -179,7 +179,7 @@ export function useRouter() {
 
     const getNavHref = (target: HTMLElement | null): string | null => {
       if (!target) return null;
-      const el = target.closest("a[href], [data-nav-href], [data-href]") as HTMLElement | null;
+      const el = target.closest("a[href], [data-nav-href], [data-href]");
       if (!el) return null;
       const href = el.getAttribute("data-nav-href") || el.getAttribute("data-href") || el.getAttribute("href");
       return href && href !== "#" && !href.startsWith("javascript:") ? href : null;
@@ -230,55 +230,70 @@ export function useRouter() {
     setRoute(parseHash(targetHash));
   }, []);
 
-  const openPage = useCallback((page: Page) => {
-    if (page === "channels") {
-      navigate("/channels");
-    } else {
-      navigate(`/${page}`);
-    }
-  }, [navigate]);
+  const openPage = useCallback(
+    (page: Page) => {
+      if (page === "channels") {
+        navigate("/channels");
+      } else {
+        navigate(`/${page}`);
+      }
+    },
+    [navigate],
+  );
 
-  const openChannel = useCallback((channelId: string, tab?: string) => {
-    if (!channelId) {
-      navigate("/channels");
-      return;
-    }
-    const query = tab ? `?tab=${encodeURIComponent(tab)}` : "";
-    navigate(`/channels/${encodeURIComponent(channelId)}${query}`);
-  }, [navigate]);
+  const openChannel = useCallback(
+    (channelId: string, tab?: string) => {
+      if (!channelId) {
+        navigate("/channels");
+        return;
+      }
+      const query = tab ? `?tab=${encodeURIComponent(tab)}` : "";
+      navigate(`/channels/${encodeURIComponent(channelId)}${query}`);
+    },
+    [navigate],
+  );
 
-  const openEpisode = useCallback((channelId: string, episodeId: string, tab?: string) => {
-    const query = tab ? `?tab=${encodeURIComponent(tab)}` : "";
-    navigate(`/channels/${encodeURIComponent(channelId)}/episodes/${encodeURIComponent(episodeId)}${query}`);
-  }, [navigate]);
+  const openEpisode = useCallback(
+    (channelId: string, episodeId: string, tab?: string) => {
+      const query = tab ? `?tab=${encodeURIComponent(tab)}` : "";
+      navigate(`/channels/${encodeURIComponent(channelId)}/episodes/${encodeURIComponent(episodeId)}${query}`);
+    },
+    [navigate],
+  );
 
-  const setQueryParam = useCallback((key: string, value: string | null, replace = true) => {
-    const currentHash = window.location.hash || "#/dashboard";
-    const [pathPart = "", queryPart = ""] = (currentHash.startsWith("#") ? currentHash.slice(1) : currentHash).split("?");
-    const params = new URLSearchParams(queryPart);
+  const setQueryParam = useCallback(
+    (key: string, value: string | null, replace = true) => {
+      const currentHash = window.location.hash || "#/dashboard";
+      const [pathPart = "", queryPart = ""] = (currentHash.startsWith("#") ? currentHash.slice(1) : currentHash).split("?");
+      const params = new URLSearchParams(queryPart);
 
-    if (value === null || value === undefined || value === "") {
-      params.delete(key);
-    } else {
-      params.set(key, value);
-    }
+      if (value === null || value === undefined || value === "") {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
 
-    const nextQuery = params.toString();
-    const nextHash = `#${pathPart}${nextQuery ? `?${nextQuery}` : ""}`;
-    navigate(nextHash, replace);
-  }, [navigate]);
+      const nextQuery = params.toString();
+      const nextHash = `#${pathPart}${nextQuery ? `?${nextQuery}` : ""}`;
+      navigate(nextHash, replace);
+    },
+    [navigate],
+  );
 
-  return useMemo(() => ({
-    route,
-    page: route.page,
-    channelId: route.channelId,
-    episodeId: route.episodeId,
-    tab: route.tab,
-    group: route.group,
-    navigate,
-    openPage,
-    openChannel,
-    openEpisode,
-    setQueryParam,
-  }), [route, navigate, openPage, openChannel, openEpisode, setQueryParam]);
+  return useMemo(
+    () => ({
+      route,
+      page: route.page,
+      channelId: route.channelId,
+      episodeId: route.episodeId,
+      tab: route.tab,
+      group: route.group,
+      navigate,
+      openPage,
+      openChannel,
+      openEpisode,
+      setQueryParam,
+    }),
+    [route, navigate, openPage, openChannel, openEpisode, setQueryParam],
+  );
 }

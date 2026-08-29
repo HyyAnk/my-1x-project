@@ -44,7 +44,7 @@ export async function healQuizVoicePacingWithLLM(input: {
       const targetWordBudget = Math.max(2, Math.floor(segment.duration_seconds * targetPace * 0.9));
       input.logger?.info(
         `Segment ${segment.segment_id} (${segment.role}) paced too fast (${pace.toFixed(2)} wps > ${targetPace} wps target, ${currentWords} words). Rephrasing with LLM to ~${targetWordBudget} words...`,
-        { profileId: input.channelId ?? "", workerId: input.episodeId ?? "", step: "voice_pacing_heal" }
+        { profileId: input.channelId ?? "", workerId: input.episodeId ?? "", step: "voice_pacing_heal" },
       );
 
       const prompt = [
@@ -80,7 +80,7 @@ export async function healQuizVoicePacingWithLLM(input: {
         if (cleaned.length >= 3 && rewrittenWords <= currentWords) {
           input.logger?.info(
             `Segment ${segment.segment_id} successfully rephrased from ${currentWords} words to ${rewrittenWords} words: "${cleaned}"`,
-            { profileId: input.channelId ?? "", workerId: input.episodeId ?? "", step: "voice_pacing_heal" }
+            { profileId: input.channelId ?? "", workerId: input.episodeId ?? "", step: "voice_pacing_heal" },
           );
           segments.push({
             ...segment,
@@ -94,7 +94,7 @@ export async function healQuizVoicePacingWithLLM(input: {
       } catch (err) {
         input.logger?.warn(
           `Failed to rephrase voice segment ${segment.segment_id} with LLM: ${err instanceof Error ? err.message : String(err)}`,
-          { profileId: input.channelId ?? "", workerId: input.episodeId ?? "", step: "voice_pacing_heal" }
+          { profileId: input.channelId ?? "", workerId: input.episodeId ?? "", step: "voice_pacing_heal" },
         );
       }
     }

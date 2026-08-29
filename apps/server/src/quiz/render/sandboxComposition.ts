@@ -11,14 +11,7 @@ import {
   resolveThinkingBarVariant,
 } from "../visual/elements/index.js";
 import { candyArcadeCss, illustrationDataUri, highlightQuestionMarkup } from "./candyArcadeComposition.js";
-
-function esc(value: string): string {
-  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
-}
-
-function escAttr(value: string): string {
-  return esc(value);
-}
+import { esc, escAttr } from "./candyArcade/candyArcadeSvg.js";
 
 export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
   input = SandboxPreviewInputSchema.parse(input);

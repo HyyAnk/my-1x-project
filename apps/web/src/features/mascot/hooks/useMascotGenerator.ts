@@ -1,19 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  ALL_MASCOT_ACTIONS,
-  type Channel,
-  type MascotActionType,
-  type MascotProfile,
-  type QuizImageStyle,
-} from "@studio/shared";
+import { ALL_MASCOT_ACTIONS, type Channel, type MascotActionType, type MascotProfile, type QuizImageStyle } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
-import {
-  CORE_GAMEPLAY_ACTIONS,
-  PROMPT_TEMPLATES,
-  getLocalizedActionMeta,
-} from "../constants";
+import { CORE_GAMEPLAY_ACTIONS, PROMPT_TEMPLATES, getLocalizedActionMeta } from "../constants";
 
 type UseMascotGeneratorProps = {
   channels: Channel[];
@@ -22,12 +12,7 @@ type UseMascotGeneratorProps = {
   onMascotsChanged: () => Promise<void>;
 };
 
-export function useMascotGenerator({
-  channels,
-  onNotice,
-  onRefreshChannels,
-  onMascotsChanged,
-}: UseMascotGeneratorProps) {
+export function useMascotGenerator({ channels, onNotice, onRefreshChannels, onMascotsChanged }: UseMascotGeneratorProps) {
   const { t } = useTranslation();
 
   // Generator Step & Mascot Editing
@@ -138,7 +123,7 @@ export function useMascotGenerator({
       progress = Math.round(85 + subRatio * 8);
     } else {
       // Beyond 66s (up to 90s+): asymptotic crawl towards 97%
-      const overtime = tSec - (expectedDuration * 1.1);
+      const overtime = tSec - expectedDuration * 1.1;
       const crawl = 4 * (1 - Math.exp(-overtime / 20));
       progress = Math.min(97, Math.round(93 + crawl));
     }
@@ -181,7 +166,7 @@ export function useMascotGenerator({
       return t("mascots.batchGeneratingBtn");
     }
     if (ALL_MASCOT_ACTIONS.includes(busyAction as MascotActionType)) {
-      const actionMeta = getLocalizedActionMeta(busyAction as MascotActionType, t);
+      const actionMeta = getLocalizedActionMeta(busyAction, t);
       if (generationElapsed < 12) return t("mascots.genPoseInit");
       if (generationElapsed < 45) return t("mascots.genPoseRendering", { action: actionMeta.label.split(" ")[0] });
       return t("mascots.genPoseFinalizing", { action: actionMeta.label.split(" ")[0] });
@@ -527,7 +512,8 @@ export function useMascotGenerator({
     try {
       const res = await api.removeMascotBackground(editingMascot.id, target);
       setEditingMascot(res.mascot);
-      const targetLabel = target === "master" ? "Master Concept" : target === "all" ? t("common.all") : getLocalizedActionMeta(target as MascotActionType, t).label;
+      const targetLabel =
+        target === "master" ? "Master Concept" : target === "all" ? t("common.all") : getLocalizedActionMeta(target, t).label;
       onNotice({
         tone: "good",
         message: t("notices.mattingSuccess", { target: targetLabel }),
@@ -542,26 +528,29 @@ export function useMascotGenerator({
   };
 
   // Director Timeline Keyframing Engine
-  const applyTimelineTime = useCallback((timeSec: number, reaction: "celebrate" | "oops" = reactionStyle) => {
-    setScrubberTime(timeSec);
-    if (timeSec < 2.0) {
-      setScenarioPhase("intro");
-      setActivePreviewAction("wave");
-    } else if (timeSec < 4.0) {
-      setScenarioPhase("question");
-      setActivePreviewAction("thinking");
-    } else if (timeSec < 9.0) {
-      setScenarioPhase("thinking");
-      setActivePreviewAction("thinking");
-      setScenarioCountdown(Math.max(1, Math.min(5, Math.ceil(9.0 - timeSec))));
-    } else if (timeSec < 12.0) {
-      setScenarioPhase("reveal");
-      setActivePreviewAction(reaction);
-    } else {
-      setScenarioPhase("explain");
-      setActivePreviewAction("celebrate");
-    }
-  }, [reactionStyle]);
+  const applyTimelineTime = useCallback(
+    (timeSec: number, reaction: "celebrate" | "oops" = reactionStyle) => {
+      setScrubberTime(timeSec);
+      if (timeSec < 2.0) {
+        setScenarioPhase("intro");
+        setActivePreviewAction("wave");
+      } else if (timeSec < 4.0) {
+        setScenarioPhase("question");
+        setActivePreviewAction("thinking");
+      } else if (timeSec < 9.0) {
+        setScenarioPhase("thinking");
+        setActivePreviewAction("thinking");
+        setScenarioCountdown(Math.max(1, Math.min(5, Math.ceil(9.0 - timeSec))));
+      } else if (timeSec < 12.0) {
+        setScenarioPhase("reveal");
+        setActivePreviewAction(reaction);
+      } else {
+        setScenarioPhase("explain");
+        setActivePreviewAction("celebrate");
+      }
+    },
+    [reactionStyle],
+  );
 
   // Scenario Playback Simulation Clock (Smooth 100ms Scrubber)
   useEffect(() => {
@@ -665,7 +654,10 @@ export function useMascotGenerator({
       await onRefreshChannels();
       await onMascotsChanged();
     } catch (err) {
-      onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.channelsAssignFailed") || "Failed to save and apply mascot settings" });
+      onNotice({
+        tone: "bad",
+        message: err instanceof Error ? err.message : t("notices.channelsAssignFailed") || "Failed to save and apply mascot settings",
+      });
     } finally {
       setBusyAction(null);
     }

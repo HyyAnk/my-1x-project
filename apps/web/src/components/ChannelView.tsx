@@ -3,34 +3,15 @@ import type { Channel, Task } from "@studio/shared";
 import { ChannelsListView, type ChannelGroupId } from "./ChannelList";
 import { EpisodeDetail } from "./EpisodeView";
 import type { Notice } from "./types";
-import {
-  DeleteChannelModal,
-} from "../features/channel/components/DeleteChannelModal";
-import {
-  DeleteEpisodeModal,
-} from "../features/channel/components/DeleteEpisodeModal";
-import {
-  VisualStylesMenu,
-  QUIZ_IMAGE_STYLE_DESCRIPTIONS,
-} from "../features/channel/components/VisualStylesMenu";
-import {
-  TopicLayoutPreviewButton,
-} from "../features/channel/components/TopicLayoutPreviewButton";
-import {
-  TopicCard,
-} from "../features/channel/components/TopicCard";
-import {
-  TopicHistoryRow,
-} from "../features/channel/components/TopicHistoryRow";
-import {
-  EpisodeCard,
-} from "../features/channel/components/EpisodeCard";
-import {
-  CreateChannelModal,
-} from "../features/channel/components/CreateChannelModal";
-import {
-  ChannelDetail,
-} from "../features/channel/ChannelDetail";
+import { DeleteChannelModal } from "../features/channel/components/DeleteChannelModal";
+import { DeleteEpisodeModal } from "../features/channel/components/DeleteEpisodeModal";
+import { VisualStylesMenu, QUIZ_IMAGE_STYLE_DESCRIPTIONS } from "../features/channel/components/VisualStylesMenu";
+import { TopicLayoutPreviewButton } from "../features/channel/components/TopicLayoutPreviewButton";
+import { TopicCard } from "../features/channel/components/TopicCard";
+import { TopicHistoryRow } from "../features/channel/components/TopicHistoryRow";
+import { EpisodeCard } from "../features/channel/components/EpisodeCard";
+import { CreateChannelModal } from "../features/channel/components/CreateChannelModal";
+import { ChannelDetail } from "../features/channel/ChannelDetail";
 
 export {
   DeleteChannelModal,

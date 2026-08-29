@@ -36,8 +36,18 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
     server.get("/api/channels/:channelId/episodes/:episodeId/quiz-v2", async (request) => {
       const params = request.params as { channelId: string; episodeId: string };
       const episode = await repository.getEpisode(params.channelId, params.episodeId);
-      const { quiz, director_plan: directorPlan, asset_plan: assetPlan, asset_resolution: assetResolution, voice_plan: voicePlan, timeline, assessment } = await readQuizArtifacts(pipelineDeps(params.channelId, params.episodeId));
-      const active = tasks.list().find((task) => task.episode_id === params.episodeId && ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(task.status));
+      const {
+        quiz,
+        director_plan: directorPlan,
+        asset_plan: assetPlan,
+        asset_resolution: assetResolution,
+        voice_plan: voicePlan,
+        timeline,
+        assessment,
+      } = await readQuizArtifacts(pipelineDeps(params.channelId, params.episodeId));
+      const active = tasks
+        .list()
+        .find((task) => task.episode_id === params.episodeId && ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(task.status));
       return {
         quiz,
         director_plan: directorPlan,
@@ -47,13 +57,29 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
         timeline,
         assessment,
         stages: {
-          research: ["RESEARCH_READY", "TREATMENT", "TREATMENT_READY", "SCRIPT", "SCRIPT_READY", "VISUAL_BIBLE", "VISUAL_BIBLE_READY", "SCENE_BREAKDOWN", "SCENE_READY", "NARRATION_READY", "READY_FOR_GENERATION", "VIDEO_RENDERING", "VIDEO_READY"].includes(episode.stage) ? "ready" : "not_started",
+          research: [
+            "RESEARCH_READY",
+            "TREATMENT",
+            "TREATMENT_READY",
+            "SCRIPT",
+            "SCRIPT_READY",
+            "VISUAL_BIBLE",
+            "VISUAL_BIBLE_READY",
+            "SCENE_BREAKDOWN",
+            "SCENE_READY",
+            "NARRATION_READY",
+            "READY_FOR_GENERATION",
+            "VIDEO_RENDERING",
+            "VIDEO_READY",
+          ].includes(episode.stage)
+            ? "ready"
+            : "not_started",
           questions: quiz ? "ready" : "not_started",
           director: directorPlan ? "ready" : "not_started",
           assets: assetPlan ? "ready" : "not_started",
           voice: voicePlan ? "ready" : "not_started",
           timeline: timeline ? "ready" : "not_started",
-          qa: assessment ? assessment.issues.some((issue) => issue.severity === "blocker") ? "failed" : "ready" : "not_started",
+          qa: assessment ? (assessment.issues.some((issue) => issue.severity === "blocker") ? "failed" : "ready") : "not_started",
           render: active?.task_type === "GENERATE_VIDEO" ? "running" : episode.video_asset_path ? "ready" : "not_started",
         },
       };
@@ -100,7 +126,12 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
       const payload = request.body && typeof request.body === "object" && !Array.isArray(request.body) ? request.body : {};
       const input = RemixQuestionsInputSchema.parse(payload);
       return remixQuizQuestions(
-        { ...pipelineDeps(params.channelId, params.episodeId), activeEngine: tasks.getActiveEngine(), antigravityClient: antigravity, codexClient: codex },
+        {
+          ...pipelineDeps(params.channelId, params.episodeId),
+          activeEngine: tasks.getActiveEngine(),
+          antigravityClient: antigravity,
+          codexClient: codex,
+        },
         input.question_ids,
         input.mode,
       );
@@ -108,7 +139,8 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
     server.post("/api/channels/:channelId/episodes/:episodeId/quiz-v2/render", async (request, reply) => {
       const params = request.params as { channelId: string; episodeId: string };
       const channel = await repository.getChannel(params.channelId);
-      if (channel.engine !== "quiz") throw new RepositoryError("Quiz V2 rendering is only available for Quiz channels", "QUIZ_CHANNEL_REQUIRED");
+      if (channel.engine !== "quiz")
+        throw new RepositoryError("Quiz V2 rendering is only available for Quiz channels", "QUIZ_CHANNEL_REQUIRED");
       await assertQuizRenderReady(pipelineDeps(params.channelId, params.episodeId));
       const task = tasks.submit("GENERATE_VIDEO", params.channelId, params.episodeId);
       return reply.code(202).send({ task });

@@ -7,7 +7,16 @@ import { extractNarrationSections, hasHumorPolicyMarker } from "../production.js
 import { rebalanceEditorialOverlays } from "../sceneTiming.js";
 import { parseContinuityBundles } from "../visualBundles.js";
 import { isQuizAssetResolutionComplete } from "../quiz/assets/resolveQuizAssets.js";
-import { compileTimeline, generateDirector, generateQuiz, generateVoice, planAssets, readQuizArtifacts, resolveAssets, runQa } from "../quiz/pipeline/orchestrator.js";
+import {
+  compileTimeline,
+  generateDirector,
+  generateQuiz,
+  generateVoice,
+  planAssets,
+  readQuizArtifacts,
+  resolveAssets,
+  runQa,
+} from "../quiz/pipeline/orchestrator.js";
 import { quizVoicePlanNeedsRegeneration, quizVoiceTargetWordsPerSecond } from "../quiz/audio/voicePolicy.js";
 import { healQuizVoicePacingWithLLM } from "../quiz/audio/voicePacingHealer.js";
 import type { QuizVoicePacingClamp } from "../quiz/audio/voiceSynthesis.js";
@@ -18,7 +27,7 @@ import { planSequenceResume } from "./planning.js";
 import { isPlaceholderArtifact, validateQuizVisualBible, validateVisualBible } from "./validators.js";
 import type { PipelineRun, TaskManagerRuntime } from "./runtime.js";
 
-export async function runPipelineTask(this: TaskManagerRuntime,task: Task): Promise<void> {
+export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   if (!task.episode_id) {
     await this.finish(task.task_id, "FAILED", "Episode is required for the production pipeline");
     return;
@@ -41,18 +50,47 @@ export async function runPipelineTask(this: TaskManagerRuntime,task: Task): Prom
     return true;
   };
   try {
-    await this.update(task.task_id, { status: "RUNNING", started_at: nowIso(), queue_position: null, progress_message: "Starting production pipeline", progress_percent: 0 });
-    const researchChanged = await step("Research · verifying sources", 3, "GENERATE_RESEARCH", async () => !(await this.hasReadyArtifact(task.channel_id, episodeId, "research.md")));
-    const treatmentChanged = await step("Treatment · structuring the story", 6, "GENERATE_TREATMENT", async () => !(await this.hasReadyArtifact(task.channel_id, episodeId, "treatment.md")));
-    const scriptChanged = await step("Narration script · writing the argument", 12, "GENERATE_SCRIPT", async () => !(await this.hasReadyScript(task.channel_id, episodeId)));
-    const visualBibleChanged = await step("Visual bible · locking continuity", 18, "GENERATE_VISUAL_BIBLE", async () => !(await this.hasReadyArtifact(task.channel_id, episodeId, "visual_bible.md")));
+    await this.update(task.task_id, {
+      status: "RUNNING",
+      started_at: nowIso(),
+      queue_position: null,
+      progress_message: "Starting production pipeline",
+      progress_percent: 0,
+    });
+    const researchChanged = await step(
+      "Research · verifying sources",
+      3,
+      "GENERATE_RESEARCH",
+      async () => !(await this.hasReadyArtifact(task.channel_id, episodeId, "research.md")),
+    );
+    const treatmentChanged = await step(
+      "Treatment · structuring the story",
+      6,
+      "GENERATE_TREATMENT",
+      async () => !(await this.hasReadyArtifact(task.channel_id, episodeId, "treatment.md")),
+    );
+    const scriptChanged = await step(
+      "Narration script · writing the argument",
+      12,
+      "GENERATE_SCRIPT",
+      async () => !(await this.hasReadyScript(task.channel_id, episodeId)),
+    );
+    const visualBibleChanged = await step(
+      "Visual bible · locking continuity",
+      18,
+      "GENERATE_VISUAL_BIBLE",
+      async () => !(await this.hasReadyArtifact(task.channel_id, episodeId, "visual_bible.md")),
+    );
     const upstreamChanged = researchChanged || treatmentChanged || scriptChanged || visualBibleChanged;
 
     const scenes = await this.repository.readScenes(task.channel_id, episodeId);
     if (run.cancelled) throw new Error("Pipeline cancelled");
     const shotPlanFresh = await this.isShotPlanFresh(task.channel_id, episodeId);
     const regenerateShots = scenes.length === 0 || upstreamChanged || !shotPlanFresh;
-    await this.update(task.task_id, { progress_message: regenerateShots ? "Shot plan · generating sequences" : "Shot plan · already ready", progress_percent: 25 });
+    await this.update(task.task_id, {
+      progress_message: regenerateShots ? "Shot plan · generating sequences" : "Shot plan · already ready",
+      progress_percent: 25,
+    });
     if (regenerateShots) {
       const script = await this.repository.getEpisodeFile(task.channel_id, episodeId, "script.md");
       const sections = extractNarrationSections(script.content);
@@ -61,19 +99,28 @@ export async function runPipelineTask(this: TaskManagerRuntime,task: Task): Prom
       const existingDrafts = await this.repository.readSequenceDrafts(episodeId);
       const resumePlan = planSequenceResume(sections.length, existingDrafts, script.modified_at, upstreamChanged);
       if (resumePlan.shouldClearDrafts) await this.repository.clearSequenceDrafts(episodeId);
-      await this.update(task.task_id, { progress_message: resumePlan.reusedSequenceNumbers.length ? `Shot plan · resuming ${resumePlan.reusedSequenceNumbers.length}/${sections.length} completed sequences` : "Shot plan · generating sequences", progress_percent: 25 });
+      await this.update(task.task_id, {
+        progress_message: resumePlan.reusedSequenceNumbers.length
+          ? `Shot plan · resuming ${resumePlan.reusedSequenceNumbers.length}/${sections.length} completed sequences`
+          : "Shot plan · generating sequences",
+        progress_percent: 25,
+      });
       if (resumePlan.pendingSequenceNumbers.length === 0) {
         const committed = await this.repository.commitSequenceDrafts(task.channel_id, episodeId, sections.length);
         if (!committed) throw new Error("Shot plan failed: completed sequence drafts could not be committed");
       }
-      const children = resumePlan.pendingSequenceNumbers.map((sequenceNumber) => this.submit("GENERATE_SEQUENCE_SCENES", task.channel_id, episodeId, sequenceNumber));
+      const children = resumePlan.pendingSequenceNumbers.map((sequenceNumber) =>
+        this.submit("GENERATE_SEQUENCE_SCENES", task.channel_id, episodeId, sequenceNumber),
+      );
       children.forEach((child) => run.children.add(child.task_id));
       try {
-        await Promise.all(children.map(async (child) => {
-          const result = await this.waitForTaskTerminal(child.task_id, run);
-          if (result.status !== "COMPLETED") throw new Error(`Shot plan failed: ${result.error ?? result.status}`);
-          return result;
-        }));
+        await Promise.all(
+          children.map(async (child) => {
+            const result = await this.waitForTaskTerminal(child.task_id, run);
+            if (result.status !== "COMPLETED") throw new Error(`Shot plan failed: ${result.error ?? result.status}`);
+            return result;
+          }),
+        );
       } catch (error) {
         await Promise.all(children.map((child) => this.cancel(child.task_id).catch(() => undefined)));
         throw error;
@@ -101,24 +148,31 @@ export async function runPipelineTask(this: TaskManagerRuntime,task: Task): Prom
     await this.finish(task.task_id, "COMPLETED", null, []);
   } catch (error) {
     const cancelled = run.cancelled || (error instanceof Error && error.message === "Pipeline cancelled");
-    await this.finish(task.task_id, cancelled ? "CANCELLED" : "FAILED", cancelled ? "Cancelled by user" : error instanceof Error ? error.message : "Production pipeline failed");
+    await this.finish(
+      task.task_id,
+      cancelled ? "CANCELLED" : "FAILED",
+      cancelled ? "Cancelled by user" : error instanceof Error ? error.message : "Production pipeline failed",
+    );
   } finally {
     this.pipelineRuns.delete(task.task_id);
   }
 }
 
-
-export async function hasReadyArtifact(this: TaskManagerRuntime,channelId: string, episodeId: string, filename: string): Promise<boolean> {
+export async function hasReadyArtifact(this: TaskManagerRuntime, channelId: string, episodeId: string, filename: string): Promise<boolean> {
   const file = await this.repository.getEpisodeFile(channelId, episodeId, filename);
   if (isPlaceholderArtifact(file.content)) return false;
   if (filename !== "visual_bible.md") return true;
   const channel = await this.repository.getChannel(channelId);
   const treatment = await this.repository.getEpisodeFile(channelId, episodeId, "treatment.md");
-  const requiredBundles = channel.engine === "quiz"
-    ? extractArtifactSectionNumbers(treatment.content, "question").length > 0
-      ? Array.from({ length: (await this.repository.getEpisode(channelId, episodeId)).quiz_config.question_count }, (_, index) => index + 1)
-      : []
-    : extractArtifactSectionNumbers(treatment.content, "sequence");
+  const requiredBundles =
+    channel.engine === "quiz"
+      ? extractArtifactSectionNumbers(treatment.content, "question").length > 0
+        ? Array.from(
+            { length: (await this.repository.getEpisode(channelId, episodeId)).quiz_config.question_count },
+            (_, index) => index + 1,
+          )
+        : []
+      : extractArtifactSectionNumbers(treatment.content, "sequence");
   if (requiredBundles.length === 0) return true;
   try {
     if (channel.engine === "quiz") validateQuizVisualBible(file.content, requiredBundles);
@@ -129,7 +183,7 @@ export async function hasReadyArtifact(this: TaskManagerRuntime,channelId: strin
   }
 }
 
-export async function generatePipelineBundleImages(this: TaskManagerRuntime,task: Task, run: PipelineRun): Promise<void> {
+export async function generatePipelineBundleImages(this: TaskManagerRuntime, task: Task, run: PipelineRun): Promise<void> {
   if (!this.imageConfig.enabled) return;
   const visualBible = await this.repository.getEpisodeFile(task.channel_id, task.episode_id!, "visual_bible.md");
   const bundles = parseContinuityBundles(visualBible.content);
@@ -138,31 +192,45 @@ export async function generatePipelineBundleImages(this: TaskManagerRuntime,task
   const existing = await this.repository.listBundleImages(task.channel_id, task.episode_id!);
   const reusableImages = new Set<string>();
   for (const image of existing) if (await isValidPngFile(image.absolutePath)) reusableImages.add(`${image.bundle_id}:${image.variant}`);
-  const missing = bundles.flatMap((bundle) => Array.from({ length: this.imageConfig.images_per_bundle }, (_, variant) => ({ bundle, variant })))
+  const missing = bundles
+    .flatMap((bundle) => Array.from({ length: this.imageConfig.images_per_bundle }, (_, variant) => ({ bundle, variant })))
     .filter(({ bundle, variant }) => !reusableImages.has(`${bundle.bundle_id}:${variant}`));
   if (missing.length === 0) {
     await this.update(task.task_id, { progress_message: "Style anchors · already ready", progress_percent: 28 });
     return;
   }
 
-  await this.update(task.task_id, { progress_message: `Style anchors · generating ${missing.length} continuity image${missing.length === 1 ? "" : "s"}`, progress_percent: 28 });
-  const children = missing.map(({ bundle, variant }) => this.submit("GENERATE_BUNDLE_IMAGE", task.channel_id, task.episode_id!, bundle.bundle_number, variant));
+  await this.update(task.task_id, {
+    progress_message: `Style anchors · generating ${missing.length} continuity image${missing.length === 1 ? "" : "s"}`,
+    progress_percent: 28,
+  });
+  const children = missing.map(({ bundle, variant }) =>
+    this.submit("GENERATE_BUNDLE_IMAGE", task.channel_id, task.episode_id, bundle.bundle_number, variant),
+  );
   children.forEach((child) => run.children.add(child.task_id));
   try {
     for (const [index, child] of children.entries()) {
       const completed = await this.waitForTaskTerminal(child.task_id, run);
-      if (completed.status !== "COMPLETED") throw new Error(`Style anchor ${index + 1}/${children.length} failed: ${completed.error ?? completed.status}`);
-      await this.update(task.task_id, { progress_message: `Style anchors · ${index + 1}/${children.length} ready`, progress_percent: 28 + Math.round(((index + 1) / children.length) * 6) });
+      if (completed.status !== "COMPLETED")
+        throw new Error(`Style anchor ${index + 1}/${children.length} failed: ${completed.error ?? completed.status}`);
+      await this.update(task.task_id, {
+        progress_message: `Style anchors · ${index + 1}/${children.length} ready`,
+        progress_percent: 28 + Math.round(((index + 1) / children.length) * 6),
+      });
     }
   } catch (error) {
-    await Promise.all(children.filter((child) => ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(this.get(child.task_id).status)).map((child) => this.cancel(child.task_id).catch(() => undefined)));
+    await Promise.all(
+      children
+        .filter((child) => ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(this.get(child.task_id).status))
+        .map((child) => this.cancel(child.task_id).catch(() => undefined)),
+    );
     throw error;
   } finally {
     children.forEach((child) => run.children.delete(child.task_id));
   }
 }
 
-export async function runQuizV2Pipeline(this: TaskManagerRuntime,task: Task): Promise<void> {
+export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): Promise<void> {
   const input = {
     repository: this.repository,
     config: { audio_generation: this.audioConfig, image_generation: this.imageConfig },
@@ -171,13 +239,23 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime,task: Task): Pr
     activeEngine: this.activeEngine,
     antigravityClient: this.antigravity,
     onAssetProgress: async ({ completed, total, reused }: { completed: number; total: number; reused: boolean }) => {
-      await this.update(task.task_id, { progress_message: `Quiz · resolving assets ${completed}/${total}${reused ? " · reused" : ""}`, progress_percent: 36 + Math.round((completed / Math.max(1, total)) * 9) });
+      await this.update(task.task_id, {
+        progress_message: `Quiz · resolving assets ${completed}/${total}${reused ? " · reused" : ""}`,
+        progress_percent: 36 + Math.round((completed / Math.max(1, total)) * 9),
+      });
     },
     onVoiceProgress: async ({ completed, total, reused }: { completed: number; total: number; reused: boolean }) => {
-      await this.update(task.task_id, { progress_message: `Quiz · ${reused ? "reusing" : "generating"} voice ${completed}/${total}`, progress_percent: 46 + Math.round((completed / Math.max(1, total)) * 7) });
+      await this.update(task.task_id, {
+        progress_message: `Quiz · ${reused ? "reusing" : "generating"} voice ${completed}/${total}`,
+        progress_percent: 46 + Math.round((completed / Math.max(1, total)) * 7),
+      });
     },
     onVoicePacingClamp: (details: QuizVoicePacingClamp) => {
-      this.logger.warn(`Quiz voice pacing clamp hit ${JSON.stringify(details)}`, { profileId: task.channel_id, workerId: task.task_id, step: "voice_pacing_clamp" });
+      this.logger.warn(`Quiz voice pacing clamp hit ${JSON.stringify(details)}`, {
+        profileId: task.channel_id,
+        workerId: task.task_id,
+        step: "voice_pacing_clamp",
+      });
     },
   };
   let artifacts = await readQuizArtifacts(input);
@@ -197,19 +275,35 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime,task: Task): Pr
     await planAssets(input);
     artifacts = await readQuizArtifacts(input);
   }
-  if (!artifacts.asset_resolution || !artifacts.asset_plan || !(await isQuizAssetResolutionComplete({ repository: this.repository, channelId: task.channel_id, episodeId: task.episode_id!, plan: artifacts.asset_plan, resolution: artifacts.asset_resolution, activeEngine: this.activeEngine }))) {
+  if (
+    !artifacts.asset_resolution ||
+    !artifacts.asset_plan ||
+    !(await isQuizAssetResolutionComplete({
+      repository: this.repository,
+      channelId: task.channel_id,
+      episodeId: task.episode_id!,
+      plan: artifacts.asset_plan,
+      resolution: artifacts.asset_resolution,
+      activeEngine: this.activeEngine,
+    }))
+  ) {
     await this.update(task.task_id, { progress_message: "Quiz · resolving semantic assets", progress_percent: 36 });
     await resolveAssets(input);
     artifacts = await readQuizArtifacts(input);
   }
   const voicePaceNeedsRegeneration = artifacts.quiz
     ? quizVoicePlanNeedsRegeneration({
-      voicePlan: artifacts.voice_plan,
-      ageBand: artifacts.quiz.age_band,
-      assessmentIssueCodes: artifacts.assessment?.issues.map((issue) => issue.code),
-    })
+        voicePlan: artifacts.voice_plan,
+        ageBand: artifacts.quiz.age_band,
+        assessmentIssueCodes: artifacts.assessment?.issues.map((issue) => issue.code),
+      })
     : false;
-  if (!artifacts.voice_plan || voicePaceNeedsRegeneration || !(await this.hasValidNarrationAsset(task.channel_id, task.episode_id!, episode.narration_asset_path)) || artifacts.voice_plan.segments.some((segment) => segment.duration_seconds === null)) {
+  if (
+    !artifacts.voice_plan ||
+    voicePaceNeedsRegeneration ||
+    !(await this.hasValidNarrationAsset(task.channel_id, task.episode_id!, episode.narration_asset_path)) ||
+    artifacts.voice_plan.segments.some((segment) => segment.duration_seconds === null)
+  ) {
     await this.update(task.task_id, { progress_message: "Quiz · generating per-question voice", progress_percent: 46 });
     await generateVoice(input);
     artifacts = await readQuizArtifacts(input);
@@ -232,21 +326,37 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime,task: Task): Pr
       break;
     }
 
-    const hasUnresolvedAssetBlockers = blockers.some((issue) => issue.code === "asset_required_unresolved" || issue.code === "asset_generation_failed");
+    const hasUnresolvedAssetBlockers = blockers.some(
+      (issue) => issue.code === "asset_required_unresolved" || issue.code === "asset_generation_failed",
+    );
     const hasVoicePaceBlockers = blockers.some((issue) => issue.code === "voice_pace_unsafe" || issue.code === "voice_pace_fast");
 
     if (cycle < maxHealingCycles && (hasUnresolvedAssetBlockers || hasVoicePaceBlockers)) {
       if (hasUnresolvedAssetBlockers) {
-        this.logger.warn(`Auto-healing unresolved visual assets (attempt ${cycle}/${maxHealingCycles})...`, { profileId: task.channel_id, workerId: task.task_id, step: "auto_heal_assets" });
-        await this.update(task.task_id, { progress_message: `Quiz · auto-retrying unresolved assets (${cycle}/${maxHealingCycles})`, progress_percent: 80 });
+        this.logger.warn(`Auto-healing unresolved visual assets (attempt ${cycle}/${maxHealingCycles})...`, {
+          profileId: task.channel_id,
+          workerId: task.task_id,
+          step: "auto_heal_assets",
+        });
+        await this.update(task.task_id, {
+          progress_message: `Quiz · auto-retrying unresolved assets (${cycle}/${maxHealingCycles})`,
+          progress_percent: 80,
+        });
         await resolveAssets(input);
         await this.repository.invalidateQuizArtifacts(task.channel_id, task.episode_id!, ["assessment"]);
         artifacts = await readQuizArtifacts(input);
       }
 
       if (hasVoicePaceBlockers && artifacts.quiz && artifacts.voice_plan) {
-        this.logger.warn(`Auto-healing voice pacing with LLM (attempt ${cycle}/${maxHealingCycles})...`, { profileId: task.channel_id, workerId: task.task_id, step: "auto_heal_voice" });
-        await this.update(task.task_id, { progress_message: `Quiz · auto-adjusting voice pacing with AI (${cycle}/${maxHealingCycles})`, progress_percent: 84 });
+        this.logger.warn(`Auto-healing voice pacing with LLM (attempt ${cycle}/${maxHealingCycles})...`, {
+          profileId: task.channel_id,
+          workerId: task.task_id,
+          step: "auto_heal_voice",
+        });
+        await this.update(task.task_id, {
+          progress_message: `Quiz · auto-adjusting voice pacing with AI (${cycle}/${maxHealingCycles})`,
+          progress_percent: 84,
+        });
         const client = this.antigravity ?? (this.activeEngine === "codex" ? this.codex : undefined);
         const healResult = await healQuizVoicePacingWithLLM({
           voicePlan: artifacts.voice_plan,
@@ -271,26 +381,35 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime,task: Task): Pr
       continue;
     }
 
-    const blocker = blockers[0]!;
+    const blocker = blockers[0];
     throw new RepositoryError(`Quiz V2 QA blocked production: ${blocker.message}`, "QUIZ_QA_BLOCKED");
   }
 }
 
-export async function attachPipelineBundleImages(this: TaskManagerRuntime,channelId: string, episodeId: string): Promise<void> {
+export async function attachPipelineBundleImages(this: TaskManagerRuntime, channelId: string, episodeId: string): Promise<void> {
   const images = await this.repository.listBundleImages(channelId, episodeId);
   for (const image of images) await this.repository.attachBundleReference(channelId, episodeId, image.bundle_id, image.path);
 }
 
-export async function hasReadyScript(this: TaskManagerRuntime,channelId: string, episodeId: string): Promise<boolean> {
+export async function hasReadyScript(this: TaskManagerRuntime, channelId: string, episodeId: string): Promise<boolean> {
   const file = await this.repository.getEpisodeFile(channelId, episodeId, "script.md");
   if (isPlaceholderArtifact(file.content) || !hasHumorPolicyMarker(file.content)) return false;
   const treatment = await this.repository.getEpisodeFile(channelId, episodeId, "treatment.md");
   const expectedSequences = extractArtifactSectionNumbers(treatment.content, "sequence");
   const actualSequences = extractArtifactSectionNumbers(file.content, "sequence");
-  return expectedSequences.length === 0 || actualSequences.length === 0 || missingArtifactSectionNumbers(file.content, expectedSequences, "sequence").length === 0;
+  return (
+    expectedSequences.length === 0 ||
+    actualSequences.length === 0 ||
+    missingArtifactSectionNumbers(file.content, expectedSequences, "sequence").length === 0
+  );
 }
 
-export async function hasValidNarrationAsset(this: TaskManagerRuntime,channelId: string, episodeId: string, assetPath: string | null): Promise<boolean> {
+export async function hasValidNarrationAsset(
+  this: TaskManagerRuntime,
+  channelId: string,
+  episodeId: string,
+  assetPath: string | null,
+): Promise<boolean> {
   if (!assetPath) return false;
   try {
     const audio = await this.repository.getEpisodeAudioFile(channelId, episodeId, path.basename(assetPath));
@@ -300,7 +419,7 @@ export async function hasValidNarrationAsset(this: TaskManagerRuntime,channelId:
   }
 }
 
-export async function isShotPlanFresh(this: TaskManagerRuntime,channelId: string, episodeId: string): Promise<boolean> {
+export async function isShotPlanFresh(this: TaskManagerRuntime, channelId: string, episodeId: string): Promise<boolean> {
   const [script, scenePlan] = await Promise.all([
     this.repository.getEpisodeFile(channelId, episodeId, "script.md"),
     this.repository.getEpisodeFile(channelId, episodeId, "scene_plan.md"),
@@ -309,7 +428,7 @@ export async function isShotPlanFresh(this: TaskManagerRuntime,channelId: string
   return Date.parse(scenePlan.modified_at) >= Date.parse(script.modified_at);
 }
 
-export async function waitForTaskTerminal(this: TaskManagerRuntime,taskId: string, run: PipelineRun): Promise<Task> {
+export async function waitForTaskTerminal(this: TaskManagerRuntime, taskId: string, run: PipelineRun): Promise<Task> {
   while (true) {
     if (run.cancelled) throw new Error("Pipeline cancelled");
     const task = this.get(taskId);

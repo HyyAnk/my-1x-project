@@ -96,7 +96,9 @@ export function VisualStylesMenu({
           <div className="visual-styles-content-grid">
             <div className="visual-styles-list-col">
               <div className="popover-header">
-                <strong>🎨 Visual Styles ({selectedStyles.length}/{ALL_QUIZ_IMAGE_STYLES.length})</strong>
+                <strong>
+                  🎨 Visual Styles ({selectedStyles.length}/{ALL_QUIZ_IMAGE_STYLES.length})
+                </strong>
                 <small>Hover to preview art style</small>
               </div>
               <div className="popover-list">
@@ -109,11 +111,7 @@ export function VisualStylesMenu({
                       className={`style-checkbox-item ${isChecked ? "is-checked" : ""} ${isHovered ? "is-hovered" : ""}`}
                       onMouseEnter={() => setHoveredStyle(style)}
                     >
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => void toggleStyle(style)}
-                      />
+                      <input type="checkbox" checked={isChecked} onChange={() => void toggleStyle(style)} />
                       <span className="style-label">{QUIZ_IMAGE_STYLE_LABELS[style]}</span>
                     </label>
                   );

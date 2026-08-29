@@ -8,6 +8,7 @@ import { RepositoryError, type RepositoryService } from "../repository.js";
 import { composeMergedVisualPrompt, mergeEditorialOverlays } from "../sceneTiming.js";
 import type { TaskManager } from "../tasks.js";
 import { createStoredZip } from "../zip.js";
+import { wavDurationSeconds } from "../utils/binary.js";
 import type { AppState } from "./state.js";
 
 export type AudioVideoRouteDeps = {
@@ -31,24 +32,41 @@ export function registerAudioVideoRoutes(deps: AudioVideoRouteDeps): FastifyPlug
       const chunks = extractNarrationChunks(script.content, 60, true).filter((chunk) => countWords(chunk.text) >= 3);
       const paths: string[] = [];
       for (let index = 0; index < chunks.length; index += 1) {
-        paths.push((await repository.getEpisodeAudioFile(params.channelId, params.episodeId, `narration-${String(index + 1).padStart(2, "0")}.wav`)).absolutePath);
+        paths.push(
+          (await repository.getEpisodeAudioFile(params.channelId, params.episodeId, `narration-${String(index + 1).padStart(2, "0")}.wav`))
+            .absolutePath,
+        );
       }
       let response: Response;
       try {
         response = await fetch(`${state.config.audio_generation.service_url.replace(/\/$/, "")}/merge`, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ paths, gap_ms: state.config.audio_generation.merge_gap_ms, ...(state.config.audio_generation.match_target_duration ? { target_duration_seconds: episode.target_duration_minutes * 60 } : {}) }),
+          body: JSON.stringify({
+            paths,
+            gap_ms: state.config.audio_generation.merge_gap_ms,
+            ...(state.config.audio_generation.match_target_duration
+              ? { target_duration_seconds: episode.target_duration_minutes * 60 }
+              : {}),
+          }),
           signal: AbortSignal.timeout(15 * 60 * 1000),
         });
       } catch {
         throw new RepositoryError("Audio service unavailable", "AUDIO_SERVICE_UNAVAILABLE");
       }
-      if (!response.ok) throw new RepositoryError(`Narration assembly failed: ${(await response.text()).slice(0, 240)}`, "AUDIO_MERGE_FAILED");
+      if (!response.ok)
+        throw new RepositoryError(`Narration assembly failed: ${(await response.text()).slice(0, 240)}`, "AUDIO_MERGE_FAILED");
       const audio = new Uint8Array(await response.arrayBuffer());
       const assetPath = await repository.writeNarrationAudio(params.channelId, params.episodeId, audio);
       const duration = wavDurationSeconds(audio);
-      const updated = await repository.saveNarrationMetadata(params.channelId, params.episodeId, assetPath, duration, chunks.length, countWords(extractNarration(script.content)));
+      const updated = await repository.saveNarrationMetadata(
+        params.channelId,
+        params.episodeId,
+        assetPath,
+        duration,
+        chunks.length,
+        countWords(extractNarration(script.content)),
+      );
       return { episode: updated, asset_path: assetPath };
     });
     server.post("/api/channels/:channelId/episodes/:episodeId/scenes/:sceneNumber/audio", async (request, reply) => {
@@ -69,7 +87,8 @@ export function registerAudioVideoRoutes(deps: AudioVideoRouteDeps): FastifyPlug
       const current = scenes[index];
       const mergedDuration = current.duration_seconds + next.duration_seconds;
       const maxDuration = state.config.video_generation.max_scene_duration_seconds;
-      if (mergedDuration > maxDuration) return reply.code(409).send({ error: `Merged duration would exceed the ${maxDuration}s scene limit.` });
+      if (mergedDuration > maxDuration)
+        return reply.code(409).send({ error: `Merged duration would exceed the ${maxDuration}s scene limit.` });
       const merged = {
         ...current,
         duration_seconds: mergedDuration,
@@ -89,13 +108,16 @@ export function registerAudioVideoRoutes(deps: AudioVideoRouteDeps): FastifyPlug
       const params = request.params as { channelId: string; episodeId: string };
       const { force } = GenerateAllAudioInputSchema.parse(request.body ?? {});
       const scenes = await repository.readScenes(params.channelId, params.episodeId);
-      const created = scenes.filter((scene) => force || !scene.audio_asset_path).map((scene) => tasks.submit("GENERATE_AUDIO", params.channelId, params.episodeId, scene.scene_number));
+      const created = scenes
+        .filter((scene) => force || !scene.audio_asset_path)
+        .map((scene) => tasks.submit("GENERATE_AUDIO", params.channelId, params.episodeId, scene.scene_number));
       return reply.code(202).send({ tasks: created });
     });
     server.get("/api/channels/:channelId/episodes/:episodeId/audio/download", async (request, reply) => {
       const params = request.params as { channelId: string; episodeId: string };
       const mode = (request.query as { mode?: string }).mode ?? "separate";
-      if (mode !== "separate" && mode !== "merged") throw new RepositoryError("Download mode must be separate or merged", "INVALID_DOWNLOAD_MODE");
+      if (mode !== "separate" && mode !== "merged")
+        throw new RepositoryError("Download mode must be separate or merged", "INVALID_DOWNLOAD_MODE");
       const episode = await repository.getEpisode(params.channelId, params.episodeId);
       const scenes = (await repository.readScenes(params.channelId, params.episodeId)).sort((a, b) => a.scene_number - b.scene_number);
       const assets: Array<{ sceneNumber: number; absolutePath: string; filename: string }> = [];
@@ -114,11 +136,21 @@ export function registerAudioVideoRoutes(deps: AudioVideoRouteDeps): FastifyPlug
         }
       }
       if (mode === "separate") {
-        const zip = createStoredZip(await Promise.all(assets.map(async (asset) => ({ name: `scene-${String(asset.sceneNumber).padStart(2, "0")}.wav`, data: await readFile(asset.absolutePath) }))));
-        return reply.headers({ "content-type": "application/zip", "content-disposition": `attachment; filename="${episode.slug}-audio-scenes.zip"` }).send(zip);
+        const zip = createStoredZip(
+          await Promise.all(
+            assets.map(async (asset) => ({
+              name: `scene-${String(asset.sceneNumber).padStart(2, "0")}.wav`,
+              data: await readFile(asset.absolutePath),
+            })),
+          ),
+        );
+        return reply
+          .headers({ "content-type": "application/zip", "content-disposition": `attachment; filename="${episode.slug}-audio-scenes.zip"` })
+          .send(zip);
       }
       if (scenes.length === 0) return reply.code(409).send({ error: "This episode has no scenes", missing_scene_numbers: [] });
-      if (missing.length > 0) return reply.code(409).send({ error: `Scenes ${missing.join(", ")} have no audio yet`, missing_scene_numbers: missing });
+      if (missing.length > 0)
+        return reply.code(409).send({ error: `Scenes ${missing.join(", ")} have no audio yet`, missing_scene_numbers: missing });
       let response: Response;
       try {
         response = await fetch(`${state.config.audio_generation.service_url.replace(/\/$/, "")}/merge`, {
@@ -132,14 +164,24 @@ export function registerAudioVideoRoutes(deps: AudioVideoRouteDeps): FastifyPlug
       }
       if (!response.ok) throw new RepositoryError("Audio merge failed", "AUDIO_MERGE_FAILED");
       const merged = Buffer.from(await response.arrayBuffer());
-      return reply.headers({ "content-type": "audio/wav", "content-length": merged.length, "content-disposition": `attachment; filename="${episode.slug}-audio-full.wav"` }).send(merged);
+      return reply
+        .headers({
+          "content-type": "audio/wav",
+          "content-length": merged.length,
+          "content-disposition": `attachment; filename="${episode.slug}-audio-full.wav"`,
+        })
+        .send(merged);
     });
     registerStreamingRoutes(server, repository, revealFile);
     done();
   };
 }
 
-function registerStreamingRoutes(server: FastifyInstance, repository: RepositoryService, revealFile: (filePath: string) => Promise<void>): void {
+function registerStreamingRoutes(
+  server: FastifyInstance,
+  repository: RepositoryService,
+  revealFile: (filePath: string) => Promise<void>,
+): void {
   server.get("/api/channels/:channelId/episodes/:episodeId/assets/:filename", async (request, reply) => {
     const params = request.params as { channelId: string; episodeId: string; filename: string };
     const file = await repository.getEpisodeAudioFile(params.channelId, params.episodeId, params.filename);
@@ -172,7 +214,12 @@ function sendRange(
   reply: FastifyReply,
   contentDisposition?: string,
 ) {
-  const baseHeaders = { "content-type": contentType, "accept-ranges": "bytes", ...(contentDisposition ? { "content-disposition": contentDisposition } : {}), "last-modified": file.modified_at };
+  const baseHeaders = {
+    "content-type": contentType,
+    "accept-ranges": "bytes",
+    ...(contentDisposition ? { "content-disposition": contentDisposition } : {}),
+    "last-modified": file.modified_at,
+  };
   if (!range) return reply.headers({ ...baseHeaders, "content-length": file.size }).send(createReadStream(file.absolutePath));
   const match = /^bytes=(\d*)-(\d*)$/.exec(range);
   if (!match) return reply.code(416).header("content-range", `bytes */${file.size}`).send();
@@ -180,22 +227,9 @@ function sendRange(
   const requestedEnd = match[2] ? Number(match[2]) : file.size - 1;
   const end = Math.min(file.size - 1, requestedEnd);
   if (start < 0 || start > end || start >= file.size) return reply.code(416).header("content-range", `bytes */${file.size}`).send();
-  return reply.code(206).headers({ ...baseHeaders, "content-length": end - start + 1, "content-range": `bytes ${start}-${end}/${file.size}` }).send(createReadStream(file.absolutePath, { start, end }));
+  return reply
+    .code(206)
+    .headers({ ...baseHeaders, "content-length": end - start + 1, "content-range": `bytes ${start}-${end}/${file.size}` })
+    .send(createReadStream(file.absolutePath, { start, end }));
 }
 
-function wavDurationSeconds(buffer: Uint8Array): number {
-  if (buffer.length < 44) throw new RepositoryError("Narration WAV is incomplete", "INVALID_AUDIO");
-  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
-  let offset = 12;
-  let byteRate = 0;
-  let dataSize = 0;
-  while (offset + 8 <= buffer.length) {
-    const chunkId = new TextDecoder().decode(buffer.slice(offset, offset + 4));
-    const chunkSize = view.getUint32(offset + 4, true);
-    if (chunkId === "fmt " && chunkSize >= 16 && offset + 24 <= buffer.length) byteRate = view.getUint32(offset + 16, true);
-    if (chunkId === "data") { dataSize = chunkSize; break; }
-    offset += 8 + chunkSize + (chunkSize % 2);
-  }
-  if (!byteRate || !dataSize) throw new RepositoryError("Narration WAV has no duration metadata", "INVALID_AUDIO");
-  return Number((dataSize / byteRate).toFixed(3));
-}

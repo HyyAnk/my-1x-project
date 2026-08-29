@@ -9,11 +9,7 @@ type UseSystemSettingsProps = {
   onNotice: (notice: NonNullable<Notice>) => void;
 };
 
-export function useSystemSettings({
-  storage,
-  onStorageSaved,
-  onNotice,
-}: UseSystemSettingsProps) {
+export function useSystemSettings({ storage, onStorageSaved, onNotice }: UseSystemSettingsProps) {
   const [storagePath, setStoragePath] = useState(storage?.path ?? "");
   const [savingStorage, setSavingStorage] = useState(false);
 

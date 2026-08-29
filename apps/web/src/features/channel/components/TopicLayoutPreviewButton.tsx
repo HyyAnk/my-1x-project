@@ -20,40 +20,40 @@ export function TopicLayoutPreviewButton({ quizFormat }: { quizFormat: string })
         assets: "3 separate option illustrations",
       }
     : isImageGuess
-    ? {
-        id: "media_left_choices_right",
-        name: "Image Guess (Media Left + Choices Right)",
-        badge: "🖼️ Image Guess",
-        tagClass: "tag-media",
-        btnClass: "is-media-left",
-        icon: "🖼️",
-        format: "Image Guess",
-        desc: "1 large Hero clue illustration (580px) on the left with vertical multiple-choice text cards on the right.",
-        assets: "1 large Hero clue illustration",
-      }
-    : isTrueFalse
-    ? {
-        id: "media_left_choices_right",
-        name: "True / False (2 choices)",
-        badge: "⚖️ True / False (2 Choices)",
-        tagClass: "tag-tf",
-        btnClass: "is-true-false",
-        icon: "⚖️",
-        format: "True / False",
-        desc: "1 large Hero illustration (580px) on the left with 2 prominent TRUE / FALSE cards on the right.",
-        assets: "1 large Hero illustration",
-      }
-    : {
-        id: "media_left_choices_right",
-        name: "Media Left + Choices Right",
-        badge: "🖼️ Media Left + Choices Right",
-        tagClass: "tag-media",
-        btnClass: "is-media-left",
-        icon: "🖼️",
-        format: "Multiple Choice / Knowledge",
-        desc: "1 large Hero illustration (580px) on the left with vertical multiple-choice text cards on the right.",
-        assets: "1 large Hero illustration",
-      };
+      ? {
+          id: "media_left_choices_right",
+          name: "Image Guess (Media Left + Choices Right)",
+          badge: "🖼️ Image Guess",
+          tagClass: "tag-media",
+          btnClass: "is-media-left",
+          icon: "🖼️",
+          format: "Image Guess",
+          desc: "1 large Hero clue illustration (580px) on the left with vertical multiple-choice text cards on the right.",
+          assets: "1 large Hero clue illustration",
+        }
+      : isTrueFalse
+        ? {
+            id: "media_left_choices_right",
+            name: "True / False (2 choices)",
+            badge: "⚖️ True / False (2 Choices)",
+            tagClass: "tag-tf",
+            btnClass: "is-true-false",
+            icon: "⚖️",
+            format: "True / False",
+            desc: "1 large Hero illustration (580px) on the left with 2 prominent TRUE / FALSE cards on the right.",
+            assets: "1 large Hero illustration",
+          }
+        : {
+            id: "media_left_choices_right",
+            name: "Media Left + Choices Right",
+            badge: "🖼️ Media Left + Choices Right",
+            tagClass: "tag-media",
+            btnClass: "is-media-left",
+            icon: "🖼️",
+            format: "Multiple Choice / Knowledge",
+            desc: "1 large Hero illustration (580px) on the left with vertical multiple-choice text cards on the right.",
+            assets: "1 large Hero illustration",
+          };
 
   return (
     <div
@@ -82,9 +82,7 @@ export function TopicLayoutPreviewButton({ quizFormat }: { quizFormat: string })
           <div className="popover-arrow" />
           <div className="popover-header">
             <div className="popover-badge-row">
-              <span className={`popover-tag ${layoutInfo.tagClass}`}>
-                {layoutInfo.badge}
-              </span>
+              <span className={`popover-tag ${layoutInfo.tagClass}`}>{layoutInfo.badge}</span>
               <code className="popover-code">{layoutInfo.id}</code>
             </div>
             <p className="popover-desc">{layoutInfo.desc}</p>
@@ -101,15 +99,21 @@ export function TopicLayoutPreviewButton({ quizFormat }: { quizFormat: string })
                 <div className="wf-visual-row">
                   <div className="wf-visual-card">
                     <div className="wf-visual-img">🖼️ Option A</div>
-                    <div className="wf-visual-lbl"><b>A</b> <span>Choice A</span></div>
+                    <div className="wf-visual-lbl">
+                      <b>A</b> <span>Choice A</span>
+                    </div>
                   </div>
                   <div className="wf-visual-card">
                     <div className="wf-visual-img">🖼️ Option B</div>
-                    <div className="wf-visual-lbl"><b>B</b> <span>Choice B</span></div>
+                    <div className="wf-visual-lbl">
+                      <b>B</b> <span>Choice B</span>
+                    </div>
                   </div>
                   <div className="wf-visual-card">
                     <div className="wf-visual-img">🖼️ Option C</div>
-                    <div className="wf-visual-lbl"><b>C</b> <span>Choice C</span></div>
+                    <div className="wf-visual-lbl">
+                      <b>C</b> <span>Choice C</span>
+                    </div>
                   </div>
                 </div>
               ) : isTrueFalse ? (
@@ -134,9 +138,15 @@ export function TopicLayoutPreviewButton({ quizFormat }: { quizFormat: string })
                     <div className="wf-hero-lbl">HERO IMAGE (580px)</div>
                   </div>
                   <div className="wf-choices-col">
-                    <div className="wf-choice-pill"><b>A</b> <span>Choice A</span></div>
-                    <div className="wf-choice-pill"><b>B</b> <span>Choice B</span></div>
-                    <div className="wf-choice-pill"><b>C</b> <span>Choice C</span></div>
+                    <div className="wf-choice-pill">
+                      <b>A</b> <span>Choice A</span>
+                    </div>
+                    <div className="wf-choice-pill">
+                      <b>B</b> <span>Choice B</span>
+                    </div>
+                    <div className="wf-choice-pill">
+                      <b>C</b> <span>Choice C</span>
+                    </div>
                   </div>
                 </div>
               )}
@@ -148,8 +158,12 @@ export function TopicLayoutPreviewButton({ quizFormat }: { quizFormat: string })
           </div>
 
           <div className="popover-meta-footer">
-            <div><span>Format:</span> <strong>{layoutInfo.format}</strong></div>
-            <div><span>Assets:</span> <strong>{layoutInfo.assets}</strong></div>
+            <div>
+              <span>Format:</span> <strong>{layoutInfo.format}</strong>
+            </div>
+            <div>
+              <span>Assets:</span> <strong>{layoutInfo.assets}</strong>
+            </div>
           </div>
         </div>
       ) : null}

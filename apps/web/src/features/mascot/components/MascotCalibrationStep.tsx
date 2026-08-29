@@ -20,12 +20,7 @@ import {
   Warning,
   X,
 } from "@phosphor-icons/react";
-import {
-  ALL_MASCOT_ACTIONS,
-  type Channel,
-  type MascotActionType,
-  type MascotProfile,
-} from "@studio/shared";
+import { ALL_MASCOT_ACTIONS, type Channel, type MascotActionType, type MascotProfile } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import { getLocalizedActionMeta } from "../constants";
 
@@ -232,13 +227,10 @@ export function MascotCalibrationStep({
   // Tab counts
   const countAll = channels.length;
   const countSelected = assignedChannels.length;
-  const countUnassigned = useMemo(
-    () => channels.filter((c) => !c.mascot_id).length,
-    [channels]
-  );
+  const countUnassigned = useMemo(() => channels.filter((c) => !c.mascot_id).length, [channels]);
   const countOther = useMemo(
     () => channels.filter((c) => Boolean(c.mascot_id && c.mascot_id !== editingMascot?.id)).length,
-    [channels, editingMascot?.id]
+    [channels, editingMascot?.id],
   );
 
   // Filtered channel list
@@ -269,9 +261,7 @@ export function MascotCalibrationStep({
   }, [channels, channelSearchQuery, channelFilterTab, assignedChannels, editingMascot?.id]);
 
   const handleToggleChannel = (channelId: string) => {
-    setAssignedChannels((prev) =>
-      prev.includes(channelId) ? prev.filter((id) => id !== channelId) : [...prev, channelId]
-    );
+    setAssignedChannels((prev) => (prev.includes(channelId) ? prev.filter((id) => id !== channelId) : [...prev, channelId]));
   };
 
   const handleSelectAllFiltered = () => {
@@ -296,9 +286,7 @@ export function MascotCalibrationStep({
     return lang.toUpperCase().slice(0, 4);
   };
 
-  const isCurrentActionOffsetClean =
-    nudgeX === (currentActionSprite?.offset_x || 0) &&
-    nudgeY === (currentActionSprite?.offset_y || 0);
+  const isCurrentActionOffsetClean = nudgeX === (currentActionSprite?.offset_x || 0) && nudgeY === (currentActionSprite?.offset_y || 0);
 
   const handleResetAll = () => {
     setNudgeX(0);
@@ -320,9 +308,7 @@ export function MascotCalibrationStep({
               </span>
               <div className="monitor-heading-wrap">
                 <h3>{t("mascots.stageTheaterTitle")}</h3>
-                <span className="render-target-pill">
-                  {aspectRatio === "16:9" ? "1920 × 1080 px" : "1080 × 1920 px"} [1:1 Match]
-                </span>
+                <span className="render-target-pill">{aspectRatio === "16:9" ? "1920 × 1080 px" : "1080 × 1920 px"} [1:1 Match]</span>
               </div>
             </div>
 
@@ -491,20 +477,14 @@ export function MascotCalibrationStep({
                                     <div
                                       className="timer-progress"
                                       style={{
-                                        width:
-                                          scenarioPhase === "thinking"
-                                            ? `${(scenarioCountdown / 5) * 100}%`
-                                            : "100%",
+                                        width: scenarioPhase === "thinking" ? `${(scenarioCountdown / 5) * 100}%` : "100%",
                                         transition: "width 1s linear",
                                       }}
                                     />
                                     <span
                                       className="timer-marker"
                                       style={{
-                                        left:
-                                          scenarioPhase === "thinking"
-                                            ? `${Math.max(5, (scenarioCountdown / 5) * 98)}%`
-                                            : "98%",
+                                        left: scenarioPhase === "thinking" ? `${Math.max(5, (scenarioCountdown / 5) * 98)}%` : "98%",
                                         transition: "left 1s linear",
                                       }}
                                     >
@@ -538,30 +518,32 @@ export function MascotCalibrationStep({
 
                 {/* 3. True 1920x1080 Mascot Container (Exact match to candyArcadeComposition.ts) */}
                 {(() => {
-                  const isVisibleInPhase =
-                    !isScenarioMode ? true :
-                    scenarioPhase === "intro" ? Boolean(showInIntro) :
-                    (scenarioPhase as string) === "outro" ? Boolean(showInOutro) :
-                    showInQuestion !== false;
+                  const isVisibleInPhase = !isScenarioMode
+                    ? true
+                    : scenarioPhase === "intro"
+                      ? Boolean(showInIntro)
+                      : (scenarioPhase as string) === "outro"
+                        ? Boolean(showInOutro)
+                        : showInQuestion !== false;
 
                   return (
                     <div
-                      className={`candy-mascot-container mascot-stage anchor-${targetPosition} ${
-                        isDragging ? "is-dragging" : ""
-                      }`}
-                      style={{
-                        zIndex: 25,
-                        transformOrigin: "bottom center",
-                        transform: `scale(${targetScale})`,
-                        ["--action-offset-x" as any]: `${nudgeX}px`,
-                        ["--action-offset-y" as any]: `${nudgeY}px`,
-                        ["--mascot-scale" as any]: targetScale,
-                        pointerEvents: isVisibleInPhase ? "auto" : "none",
-                        opacity: isVisibleInPhase ? 1 : (showGuides ? 0.25 : 0),
-                        transition: "opacity 0.2s ease",
-                        cursor: isDragging ? "grabbing" : "grab",
-                        userSelect: "none",
-                      }}
+                      className={`candy-mascot-container mascot-stage anchor-${targetPosition} ${isDragging ? "is-dragging" : ""}`}
+                      style={
+                        {
+                          zIndex: 25,
+                          transformOrigin: "bottom center",
+                          transform: `scale(${targetScale})`,
+                          "--action-offset-x": `${nudgeX}px`,
+                          "--action-offset-y": `${nudgeY}px`,
+                          "--mascot-scale": targetScale,
+                          pointerEvents: isVisibleInPhase ? "auto" : "none",
+                          opacity: isVisibleInPhase ? 1 : showGuides ? 0.25 : 0,
+                          transition: "opacity 0.2s ease",
+                          cursor: isDragging ? "grabbing" : "grab",
+                          userSelect: "none",
+                        } as React.CSSProperties
+                      }
                       onMouseDown={isVisibleInPhase ? handleMascotMouseDown : undefined}
                     >
                       {/* Bounding box guide when guides are active */}
@@ -574,7 +556,8 @@ export function MascotCalibrationStep({
                           aria-hidden="true"
                         >
                           <span className="bounding-coord-tag">
-                            X: {nudgeX > 0 ? `+${nudgeX}` : nudgeX}px, Y: {nudgeY > 0 ? `+${nudgeY}` : nudgeY}px ({Math.round(targetScale * 100)}%) {!isVisibleInPhase ? "[Ẩn trong phân cảnh này]" : ""}
+                            X: {nudgeX > 0 ? `+${nudgeX}` : nudgeX}px, Y: {nudgeY > 0 ? `+${nudgeY}` : nudgeY}px (
+                            {Math.round(targetScale * 100)}%) {!isVisibleInPhase ? "[Ẩn trong phân cảnh này]" : ""}
                           </span>
                           <span className="bounding-handle handle-tl" />
                           <span className="bounding-handle handle-tr" />
@@ -587,37 +570,39 @@ export function MascotCalibrationStep({
                       {onionSkinEnabled && editingMascot?.actions.idle?.sprite_url ? (
                         <div
                           className="candy-mascot-sprite onion-skin-layer"
-                          style={{
-                            position: "absolute",
-                            inset: 0,
-                            backgroundImage: `url(${editingMascot.actions.idle.sprite_url})`,
-                            opacity: onionSkinOpacity,
-                            filter: "sepia(100%) hue-rotate(150deg) saturate(300%)",
-                            transform: `translate(${nudgeX}px, ${nudgeY}px)`,
-                            ["--action-offset-x" as any]: `${nudgeX}px`,
-                            ["--action-offset-y" as any]: `${nudgeY}px`,
-                            zIndex: 1,
-                            pointerEvents: "none",
-                          }}
+                          style={
+                            {
+                              position: "absolute",
+                              inset: 0,
+                              backgroundImage: `url(${editingMascot.actions.idle.sprite_url})`,
+                              opacity: onionSkinOpacity,
+                              filter: "sepia(100%) hue-rotate(150deg) saturate(300%)",
+                              transform: `translate(${nudgeX}px, ${nudgeY}px)`,
+                              "--action-offset-x": `${nudgeX}px`,
+                              "--action-offset-y": `${nudgeY}px`,
+                              zIndex: 1,
+                              pointerEvents: "none",
+                            } as React.CSSProperties
+                          }
                         />
                       ) : null}
 
                       {/* Active Mascot Sprite Render */}
                       {currentActionSprite?.sprite_url ? (
                         <div
-                          className={`candy-mascot-sprite ${
-                            isPlaying ? `mascot-anim-${activePreviewAction}` : ""
-                          }`}
-                          style={{
-                            backgroundImage: `url(${currentActionSprite.sprite_url})`,
-                            transform: `translate(${nudgeX}px, ${nudgeY}px)`,
-                            ["--action-offset-x" as any]: `${nudgeX}px`,
-                            ["--action-offset-y" as any]: `${nudgeY}px`,
-                            position: "relative",
-                            zIndex: 2,
-                            cursor: isDragging ? "grabbing" : "grab",
-                            pointerEvents: isVisibleInPhase ? "auto" : "none",
-                          }}
+                          className={`candy-mascot-sprite ${isPlaying ? `mascot-anim-${activePreviewAction}` : ""}`}
+                          style={
+                            {
+                              backgroundImage: `url(${currentActionSprite.sprite_url})`,
+                              transform: `translate(${nudgeX}px, ${nudgeY}px)`,
+                              "--action-offset-x": `${nudgeX}px`,
+                              "--action-offset-y": `${nudgeY}px`,
+                              position: "relative",
+                              zIndex: 2,
+                              cursor: isDragging ? "grabbing" : "grab",
+                              pointerEvents: isVisibleInPhase ? "auto" : "none",
+                            } as React.CSSProperties
+                          }
                           title={t("mascots.dragHint") || "Drag to reposition mascot"}
                         />
                       ) : editingMascot?.master_image_url ? (
@@ -627,34 +612,38 @@ export function MascotCalibrationStep({
                           className={isPlaying ? "mascot-anim-idle" : ""}
                           draggable={false}
                           onDragStart={(e) => e.preventDefault()}
-                          style={{
-                            width: "220px",
-                            height: "220px",
-                            objectFit: "contain",
-                            transform: `translate(${nudgeX}px, ${nudgeY}px)`,
-                            ["--action-offset-x" as any]: `${nudgeX}px`,
-                            ["--action-offset-y" as any]: `${nudgeY}px`,
-                            position: "relative",
-                            zIndex: 2,
-                            cursor: isDragging ? "grabbing" : "grab",
-                            pointerEvents: isVisibleInPhase ? "auto" : "none",
-                          }}
+                          style={
+                            {
+                              width: "220px",
+                              height: "220px",
+                              objectFit: "contain",
+                              transform: `translate(${nudgeX}px, ${nudgeY}px)`,
+                              "--action-offset-x": `${nudgeX}px`,
+                              "--action-offset-y": `${nudgeY}px`,
+                              position: "relative",
+                              zIndex: 2,
+                              cursor: isDragging ? "grabbing" : "grab",
+                              pointerEvents: isVisibleInPhase ? "auto" : "none",
+                            } as React.CSSProperties
+                          }
                           title={t("mascots.dragHint") || "Drag to reposition mascot"}
                         />
                       ) : (
                         <div
                           className="stage-mascot-placeholder"
-                          style={{
-                            width: "220px",
-                            height: "220px",
-                            display: "grid",
-                            placeItems: "center",
-                            transform: `translate(${nudgeX}px, ${nudgeY}px)`,
-                            ["--action-offset-x" as any]: `${nudgeX}px`,
-                            ["--action-offset-y" as any]: `${nudgeY}px`,
-                            cursor: isDragging ? "grabbing" : "grab",
-                            pointerEvents: isVisibleInPhase ? "auto" : "none",
-                          }}
+                          style={
+                            {
+                              width: "220px",
+                              height: "220px",
+                              display: "grid",
+                              placeItems: "center",
+                              transform: `translate(${nudgeX}px, ${nudgeY}px)`,
+                              "--action-offset-x": `${nudgeX}px`,
+                              "--action-offset-y": `${nudgeY}px`,
+                              cursor: isDragging ? "grabbing" : "grab",
+                              pointerEvents: isVisibleInPhase ? "auto" : "none",
+                            } as React.CSSProperties
+                          }
                         >
                           <Smiley size={80} style={{ color: genColor }} />
                         </div>
@@ -718,9 +707,7 @@ export function MascotCalibrationStep({
               </div>
 
               <div className="rehearsal-meta-right">
-                <span className="rehearsal-timecode-badge">
-                  ⏱ {scrubberTime.toFixed(1)}s / 16.0s
-                </span>
+                <span className="rehearsal-timecode-badge">⏱ {scrubberTime.toFixed(1)}s / 16.0s</span>
               </div>
             </div>
 
@@ -827,9 +814,7 @@ export function MascotCalibrationStep({
               <div className="config-section">
                 <label className="config-section-label">
                   {t("mascots.activePoseLabel")}{" "}
-                  <strong style={{ color: "var(--accent)" }}>
-                    {getLocalizedActionMeta(activePreviewAction, t).label.split(" ")[0]}
-                  </strong>
+                  <strong style={{ color: "var(--accent)" }}>{getLocalizedActionMeta(activePreviewAction, t).label.split(" ")[0]}</strong>
                 </label>
                 <div className="pose-selector-grid">
                   {ALL_MASCOT_ACTIONS.map((action) => {
@@ -841,9 +826,7 @@ export function MascotCalibrationStep({
                       <button
                         key={action}
                         type="button"
-                        className={`pose-selector-chip ${isSelected ? "is-selected" : ""} ${
-                          hasSprite ? "is-ready" : "is-missing"
-                        }`}
+                        className={`pose-selector-chip ${isSelected ? "is-selected" : ""} ${hasSprite ? "is-ready" : "is-missing"}`}
                         onClick={() => {
                           setIsScenarioMode(false);
                           setActivePreviewAction(action);
@@ -863,7 +846,10 @@ export function MascotCalibrationStep({
               </div>
 
               {/* Position & Visibility Section */}
-              <div className="config-section position-visibility-card" style={{ background: "var(--surface-hover)", padding: "12px", borderRadius: "8px", border: "1px solid var(--line)" }}>
+              <div
+                className="config-section position-visibility-card"
+                style={{ background: "var(--surface-hover)", padding: "12px", borderRadius: "8px", border: "1px solid var(--line)" }}
+              >
                 <div style={{ marginBottom: "10px" }}>
                   <label className="config-section-label" style={{ marginBottom: "6px" }}>
                     {t("mascots.positionLabel") || "Vị trí Mascot"}
@@ -873,7 +859,15 @@ export function MascotCalibrationStep({
                       type="button"
                       className={`pos-toggle-btn ${targetPosition === "bottom_left" ? "is-selected" : ""}`}
                       onClick={() => setTargetPosition("bottom_left")}
-                      style={{ padding: "6px 10px", fontSize: "12px", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                      style={{
+                        padding: "6px 10px",
+                        fontSize: "12px",
+                        borderRadius: "6px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px",
+                      }}
                     >
                       <span>👈</span> {t("mascots.posBottomLeft") || "Góc trái"}
                     </button>
@@ -881,7 +875,15 @@ export function MascotCalibrationStep({
                       type="button"
                       className={`pos-toggle-btn ${targetPosition === "bottom_right" ? "is-selected" : ""}`}
                       onClick={() => setTargetPosition("bottom_right")}
-                      style={{ padding: "6px 10px", fontSize: "12px", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                      style={{
+                        padding: "6px 10px",
+                        fontSize: "12px",
+                        borderRadius: "6px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px",
+                      }}
                     >
                       <span>👉</span> {t("mascots.posBottomRight") || "Góc phải"}
                     </button>
@@ -894,27 +896,15 @@ export function MascotCalibrationStep({
                   </label>
                   <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px" }}>
                     <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-                      <input
-                        type="checkbox"
-                        checked={showInIntro}
-                        onChange={(e) => setShowInIntro?.(e.target.checked)}
-                      />
+                      <input type="checkbox" checked={showInIntro} onChange={(e) => setShowInIntro?.(e.target.checked)} />
                       <span>🎬 {t("mascots.showInIntro") || "Intro mở đầu (Mặc định: Tắt)"}</span>
                     </label>
                     <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-                      <input
-                        type="checkbox"
-                        checked={showInQuestion}
-                        onChange={(e) => setShowInQuestion?.(e.target.checked)}
-                      />
+                      <input type="checkbox" checked={showInQuestion} onChange={(e) => setShowInQuestion?.(e.target.checked)} />
                       <span>❓ {t("mascots.showInQuestion") || "Câu hỏi & Reveal đáp án (Khuyên dùng)"}</span>
                     </label>
                     <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-                      <input
-                        type="checkbox"
-                        checked={showInOutro}
-                        onChange={(e) => setShowInOutro?.(e.target.checked)}
-                      />
+                      <input type="checkbox" checked={showInOutro} onChange={(e) => setShowInOutro?.(e.target.checked)} />
                       <span>🏁 {t("mascots.showInOutro") || "Outro kết thúc (Mặc định: Tắt)"}</span>
                     </label>
                   </div>
@@ -1091,12 +1081,7 @@ export function MascotCalibrationStep({
                         className="precision-number-input"
                       />
                       <span className="unit-label">px</span>
-                      <button
-                        type="button"
-                        className="quick-zero-btn"
-                        onClick={() => setNudgeX(0)}
-                        title="Reset X to 0"
-                      >
+                      <button type="button" className="quick-zero-btn" onClick={() => setNudgeX(0)} title="Reset X to 0">
                         0
                       </button>
                     </div>
@@ -1182,12 +1167,7 @@ export function MascotCalibrationStep({
                         className="precision-number-input"
                       />
                       <span className="unit-label">px</span>
-                      <button
-                        type="button"
-                        className="quick-zero-btn"
-                        onClick={() => setNudgeY(0)}
-                        title="Reset Y to 0"
-                      >
+                      <button type="button" className="quick-zero-btn" onClick={() => setNudgeY(0)} title="Reset Y to 0">
                         0
                       </button>
                     </div>
@@ -1275,19 +1255,11 @@ export function MascotCalibrationStep({
               <div className="config-section visual-aids-box">
                 <div className="visual-aids-toggles">
                   <label className="filter-chip" style={{ cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={showGuides}
-                      onChange={(e) => setShowGuides(e.target.checked)}
-                    />
+                    <input type="checkbox" checked={showGuides} onChange={(e) => setShowGuides(e.target.checked)} />
                     <span>{t("mascots.guidesToggle")}</span>
                   </label>
                   <label className="filter-chip" style={{ cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={onionSkinEnabled}
-                      onChange={(e) => setOnionSkinEnabled(e.target.checked)}
-                    />
+                    <input type="checkbox" checked={onionSkinEnabled} onChange={(e) => setOnionSkinEnabled(e.target.checked)} />
                     <span>{t("mascots.onionSkinToggle")}</span>
                   </label>
                 </div>
@@ -1325,11 +1297,7 @@ export function MascotCalibrationStep({
                   onChange={(e) => setChannelSearchQuery(e.target.value)}
                 />
                 {channelSearchQuery ? (
-                  <button
-                    type="button"
-                    className="icon-button compact clear-search-btn"
-                    onClick={() => setChannelSearchQuery("")}
-                  >
+                  <button type="button" className="icon-button compact clear-search-btn" onClick={() => setChannelSearchQuery("")}>
                     <X size={13} />
                   </button>
                 ) : null}
@@ -1414,9 +1382,7 @@ export function MascotCalibrationStep({
                     return (
                       <article
                         key={channel.channel_id}
-                        className={`channel-select-card ${isChecked ? "is-selected" : ""} ${
-                          otherMascotInfo ? "has-other-mascot" : ""
-                        }`}
+                        className={`channel-select-card ${isChecked ? "is-selected" : ""} ${otherMascotInfo ? "has-other-mascot" : ""}`}
                         onClick={() => handleToggleChannel(channel.channel_id)}
                         role="button"
                         tabIndex={0}
@@ -1449,17 +1415,12 @@ export function MascotCalibrationStep({
                                 {t("mascots.channelItemCurrentlyThis")}
                               </span>
                             ) : otherMascotInfo ? (
-                              <span
-                                className="mascot-state-badge other"
-                                title={`Current mascot: ${otherMascotInfo.name}`}
-                              >
+                              <span className="mascot-state-badge other" title={`Current mascot: ${otherMascotInfo.name}`}>
                                 <Warning size={11} weight="bold" />
                                 {t("mascots.currentlyAssignedToOther", { name: otherMascotInfo.name })}
                               </span>
                             ) : (
-                              <span className="mascot-state-badge unassigned">
-                                {t("mascots.channelItemUnassigned")}
-                              </span>
+                              <span className="mascot-state-badge unassigned">{t("mascots.channelItemUnassigned")}</span>
                             )}
                           </div>
                         </div>
@@ -1485,11 +1446,7 @@ export function MascotCalibrationStep({
               onClick={onApplyToChannels}
             >
               {busyAction === "assign" ? <CircleNotch className="spin" size={16} /> : <FloppyDisk size={16} />}
-              <span>
-                {busyAction === "assign"
-                  ? t("mascots.savingAndApplyingBtn")
-                  : t("mascots.saveAndApplyChannelsBtn")}
-              </span>
+              <span>{busyAction === "assign" ? t("mascots.savingAndApplyingBtn") : t("mascots.saveAndApplyChannelsBtn")}</span>
             </button>
           </div>
         </div>

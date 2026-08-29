@@ -38,7 +38,13 @@ export function DeleteChannelModal({
 
   return (
     <div className="modal-backdrop" role="presentation">
-      <section className="modal confirm-modal" role="dialog" aria-modal="true" aria-labelledby="delete-channel-title" aria-describedby="delete-channel-copy">
+      <section
+        className="modal confirm-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-channel-title"
+        aria-describedby="delete-channel-copy"
+      >
         <div className="modal-heading">
           <div>
             <p className="eyebrow">{t("channels.deleteChannelBtn")}</p>
@@ -78,7 +84,11 @@ export function DeleteChannelModal({
                 autoComplete="off"
               />
             </label>
-            {error ? <p className="form-error" role="alert">{error}</p> : null}
+            {error ? (
+              <p className="form-error" role="alert">
+                {error}
+              </p>
+            ) : null}
             <div className="modal-actions">
               <button
                 type="button"

@@ -16,7 +16,17 @@ export function useEpisode(channelId: string, episodeId: string, onError: (error
   const loadVersion = useRef(0);
   const load = useCallback(async () => {
     const version = ++loadVersion.current;
-    const [episodesResponse, researchResponse, treatmentResponse, scriptResponse, visualBibleResponse, scenesResponse, assessmentResponse, bundleImagesResponse, quizV2Response] = await Promise.all([
+    const [
+      episodesResponse,
+      researchResponse,
+      treatmentResponse,
+      scriptResponse,
+      visualBibleResponse,
+      scenesResponse,
+      assessmentResponse,
+      bundleImagesResponse,
+      quizV2Response,
+    ] = await Promise.all([
       api.episodes(channelId),
       api.file(channelId, episodeId, "research.md"),
       api.file(channelId, episodeId, "treatment.md"),
@@ -38,6 +48,31 @@ export function useEpisode(channelId: string, episodeId: string, onError: (error
     setBundleImages(bundleImagesResponse.images);
     setQuizV2(quizV2Response);
   }, [channelId, episodeId]);
-  useEffect(() => { void load().catch((error: Error) => onError(error)); return () => { loadVersion.current += 1; }; }, [load, onError]);
-  return { episode, setEpisode, research, setResearch, treatment, setTreatment, script, setScript, visualBible, setVisualBible, scenes, setScenes, assessment, setAssessment, bundleImages, setBundleImages, quizV2, setQuizV2, load };
+  useEffect(() => {
+    void load().catch((error: Error) => onError(error));
+    return () => {
+      loadVersion.current += 1;
+    };
+  }, [load, onError]);
+  return {
+    episode,
+    setEpisode,
+    research,
+    setResearch,
+    treatment,
+    setTreatment,
+    script,
+    setScript,
+    visualBible,
+    setVisualBible,
+    scenes,
+    setScenes,
+    assessment,
+    setAssessment,
+    bundleImages,
+    setBundleImages,
+    quizV2,
+    setQuizV2,
+    load,
+  };
 }

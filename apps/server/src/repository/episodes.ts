@@ -5,14 +5,14 @@ import { RepositoryError } from "./errors.js";
 import { allowedEpisodeFiles } from "./helpers.js";
 import type { RepositoryRuntime } from "./runtime.js";
 
-export async function deleteChannel(this: RepositoryRuntime,channelId: string, confirmed: boolean): Promise<void> {
+export async function deleteChannel(this: RepositoryRuntime, channelId: string, confirmed = true): Promise<void> {
   if (!confirmed) throw new RepositoryError("Delete confirmation is required", "CONFIRMATION_REQUIRED");
   const channel = await this.getChannel(channelId);
   const directory = this.resolvePath("channels", channel.slug);
   await this.removeTree(directory);
 }
 
-export async function deleteEpisode(this: RepositoryRuntime,channelId: string, episodeId: string, confirmed: boolean): Promise<void> {
+export async function deleteEpisode(this: RepositoryRuntime, channelId: string, episodeId: string, confirmed = true): Promise<void> {
   if (!confirmed) throw new RepositoryError("Delete confirmation is required", "CONFIRMATION_REQUIRED");
   const episode = await this.getEpisode(channelId, episodeId);
   const channel = await this.getChannel(channelId);
@@ -23,14 +23,21 @@ export async function deleteEpisode(this: RepositoryRuntime,channelId: string, e
   await this.updateChannel(channelId, { updated_at: nowIso() });
 }
 
-export async function getChannelDna(this: RepositoryRuntime,channelId: string): Promise<{ content: string; path: string; modified_at: string }> {
+export async function getChannelDna(
+  this: RepositoryRuntime,
+  channelId: string,
+): Promise<{ content: string; path: string; modified_at: string }> {
   const channel = await this.getChannel(channelId);
   const absolutePath = this.resolvePath("channels", channel.slug, "channel_dna.md");
   const [content, metadata] = await Promise.all([readFile(absolutePath, "utf8"), stat(absolutePath)]);
   return { content, path: channel.channel_dna_path, modified_at: metadata.mtime.toISOString() };
 }
 
-export async function saveChannelDna(this: RepositoryRuntime,channelId: string, content: string): Promise<{ path: string; modified_at: string }> {
+export async function saveChannelDna(
+  this: RepositoryRuntime,
+  channelId: string,
+  content: string,
+): Promise<{ path: string; modified_at: string }> {
   const channel = await this.getChannel(channelId);
   if (!content.trim()) throw new RepositoryError("Channel DNA cannot be empty", "INVALID_DNA");
   const absolutePath = this.resolvePath("channels", channel.slug, "channel_dna.md");
@@ -40,7 +47,7 @@ export async function saveChannelDna(this: RepositoryRuntime,channelId: string, 
   return { path: channel.channel_dna_path, modified_at: metadata.mtime.toISOString() };
 }
 
-export async function listEpisodes(this: RepositoryRuntime,channelId: string): Promise<Episode[]> {
+export async function listEpisodes(this: RepositoryRuntime, channelId: string): Promise<Episode[]> {
   const channel = await this.getChannel(channelId);
   const directory = this.resolvePath("channels", channel.slug, "episodes");
   await mkdir(directory, { recursive: true });
@@ -59,14 +66,19 @@ export async function listEpisodes(this: RepositoryRuntime,channelId: string): P
   return episodes.sort((a, b) => b.updated_at.localeCompare(a.updated_at));
 }
 
-export async function getEpisode(this: RepositoryRuntime,channelId: string, episodeId: string): Promise<Episode> {
+export async function getEpisode(this: RepositoryRuntime, channelId: string, episodeId: string): Promise<Episode> {
   const episodes = await this.listEpisodes(channelId);
   const episode = episodes.find((item) => item.episode_id === episodeId);
   if (!episode) throw new RepositoryError("Episode not found", "EPISODE_NOT_FOUND");
   return episode;
 }
 
-export async function getEpisodeFile(this: RepositoryRuntime,channelId: string, episodeId: string, filename: string): Promise<{ content: string; path: string; modified_at: string }> {
+export async function getEpisodeFile(
+  this: RepositoryRuntime,
+  channelId: string,
+  episodeId: string,
+  filename: string,
+): Promise<{ content: string; path: string; modified_at: string }> {
   if (!allowedEpisodeFiles.has(filename)) throw new RepositoryError("Unsupported episode file", "FILE_NOT_ALLOWED");
   const episode = await this.getEpisode(channelId, episodeId);
   const channel = await this.getChannel(channelId);
@@ -79,7 +91,13 @@ export async function getEpisodeFile(this: RepositoryRuntime,channelId: string, 
   }
 }
 
-export async function saveEpisodeFile(this: RepositoryRuntime,channelId: string, episodeId: string, filename: string, content: string): Promise<{ path: string; modified_at: string }> {
+export async function saveEpisodeFile(
+  this: RepositoryRuntime,
+  channelId: string,
+  episodeId: string,
+  filename: string,
+  content: string,
+): Promise<{ path: string; modified_at: string }> {
   if (!allowedEpisodeFiles.has(filename)) throw new RepositoryError("Unsupported episode file", "FILE_NOT_ALLOWED");
   const episode = await this.getEpisode(channelId, episodeId);
   const channel = await this.getChannel(channelId);
@@ -87,17 +105,20 @@ export async function saveEpisodeFile(this: RepositoryRuntime,channelId: string,
   await this.writeTextAtomic(absolutePath, content.endsWith("\n") ? content : `${content}\n`);
   const updated = EpisodeSchema.parse({
     ...episode,
-    ...(filename === "script.md" ? {
-      narration_asset_path: null,
-      narration_generated_at: null,
-      narration_duration_seconds: null,
-      narration_segment_count: 0,
-      measured_narration_words_per_second: null,
-    } : {}),
+    ...(filename === "script.md"
+      ? {
+          narration_asset_path: null,
+          narration_generated_at: null,
+          narration_duration_seconds: null,
+          narration_segment_count: 0,
+          measured_narration_words_per_second: null,
+        }
+      : {}),
     updated_at: nowIso(),
   });
   await this.writeJsonAtomic(path.join(path.dirname(absolutePath), "episode.json"), updated);
-  if (["research.md", "treatment.md", "script.md", "visual_bible.md"].includes(filename)) await this.invalidateQuizSourceArtifacts(channelId, episodeId);
+  if (["research.md", "treatment.md", "script.md", "visual_bible.md"].includes(filename))
+    await this.invalidateQuizSourceArtifacts(channelId, episodeId);
   const metadata = await stat(absolutePath);
   return { path: `channels/${channel.slug}/episodes/${episode.slug}/${filename}`, modified_at: metadata.mtime.toISOString() };
 }

@@ -1,4 +1,6 @@
 import { deflateSync, inflateSync } from "node:zlib";
+import type { PreTrainedModel, Processor, RawImage as RawImageType } from "@huggingface/transformers";
+import { makePngChunk } from "./binary.js";
 
 export type MattingOptions = {
   /**
@@ -22,38 +24,6 @@ export type MattingOptions = {
    */
   preferAi?: boolean;
 };
-
-const CRC_TABLE = new Uint32Array(256);
-for (let i = 0; i < 256; i++) {
-  let c = i;
-  for (let k = 0; k < 8; k++) {
-    c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-  }
-  CRC_TABLE[i] = c;
-}
-
-function crc32(buf: Uint8Array): number {
-  let c = 0xffffffff;
-  for (let i = 0; i < buf.length; i++) {
-    c = CRC_TABLE[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
-  }
-  return (c ^ 0xffffffff) >>> 0;
-}
-
-function makeChunk(type: string, data: Uint8Array): Uint8Array {
-  const len = data.length;
-  const chunk = new Uint8Array(12 + len);
-  const view = new DataView(chunk.buffer, chunk.byteOffset, chunk.byteLength);
-  view.setUint32(0, len, false);
-  chunk[4] = type.charCodeAt(0);
-  chunk[5] = type.charCodeAt(1);
-  chunk[6] = type.charCodeAt(2);
-  chunk[7] = type.charCodeAt(3);
-  chunk.set(data, 8);
-  const crc = crc32(chunk.subarray(4, 8 + len));
-  view.setUint32(8 + len, crc, false);
-  return chunk;
-}
 
 type DecodedImage = {
   width: number;
@@ -145,10 +115,14 @@ export function decodePngToRgba(bytes: Uint8Array): DecodedImage {
 
   // Determine bytes per pixel in scanline
   let bpp = 4;
-  if (colorType === 0) bpp = 1; // Grayscale (8-bit)
-  else if (colorType === 2) bpp = 3; // RGB (8-bit)
-  else if (colorType === 3) bpp = 1; // Indexed
-  else if (colorType === 4) bpp = 2; // Grayscale + Alpha
+  if (colorType === 0)
+    bpp = 1; // Grayscale (8-bit)
+  else if (colorType === 2)
+    bpp = 3; // RGB (8-bit)
+  else if (colorType === 3)
+    bpp = 1; // Indexed
+  else if (colorType === 4)
+    bpp = 2; // Grayscale + Alpha
   else if (colorType === 6) bpp = 4; // RGBA (8-bit)
 
   const scanlineLen = 1 + width * bpp;
@@ -256,9 +230,9 @@ export function encodeRgbaToPng(image: DecodedImage): Uint8Array {
   ihdr[12] = 0; // Interlace: None
 
   const pngSignature = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
-  const ihdrChunk = makeChunk("IHDR", ihdr);
-  const idatChunk = makeChunk("IDAT", idatData);
-  const iendChunk = makeChunk("IEND", new Uint8Array(0));
+  const ihdrChunk = makePngChunk("IHDR", ihdr);
+  const idatChunk = makePngChunk("IDAT", idatData);
+  const iendChunk = makePngChunk("IEND", new Uint8Array(0));
 
   const totalLength = pngSignature.length + ihdrChunk.length + idatChunk.length + iendChunk.length;
   const png = new Uint8Array(totalLength);
@@ -333,10 +307,7 @@ function sampleBorderBackgroundColor(data: Uint8Array, width: number, height: nu
  * Uses BFS Flood-Fill starting strictly from outer boundaries to remove solid/near-solid backgrounds
  * while strictly preserving all white or light details inside the character body.
  */
-export function removeImageBackgroundRgba(
-  image: DecodedImage,
-  options: MattingOptions = {},
-): DecodedImage {
+export function removeImageBackgroundRgba(image: DecodedImage, options: MattingOptions = {}): DecodedImage {
   const { width, height, data } = image;
   const tolerance = options.tolerance ?? 28;
   const feather = options.feather ?? 16;
@@ -421,9 +392,9 @@ export function removeImageBackgroundRgba(
 }
 
 type AiPipelineBundle = {
-  model: any;
-  processor: any;
-  RawImage: any;
+  model: PreTrainedModel;
+  processor: Processor;
+  RawImage: typeof RawImageType;
 };
 
 let aiPipelinePromise: Promise<AiPipelineBundle> | null = null;
@@ -440,13 +411,13 @@ export async function getAiMattingPipeline(): Promise<AiPipelineBundle> {
       return { model, processor, RawImage };
     })();
   }
-  return aiPipelinePromise;
+  return await aiPipelinePromise;
 }
 
 /**
  * Detects if an image already contains genuine alpha transparency (e.g. from GPTi2 with background: "transparent").
  */
-export function hasNativeTransparency(image: DecodedImage, thresholdRatio = 0.10): boolean {
+export function hasNativeTransparency(image: DecodedImage, thresholdRatio = 0.1): boolean {
   const { width, height, data } = image;
   const totalPixels = width * height;
   if (totalPixels === 0) return false;
@@ -472,7 +443,7 @@ export function hasNativeTransparency(image: DecodedImage, thresholdRatio = 0.10
     borderTotal += 2;
   }
 
-  return (transparentPixels / totalPixels) >= thresholdRatio && (borderTransparent / borderTotal) >= 0.3;
+  return transparentPixels / totalPixels >= thresholdRatio && borderTransparent / borderTotal >= 0.3;
 }
 
 /**
@@ -497,10 +468,7 @@ export function cleanupTransparentImage(image: DecodedImage): DecodedImage {
  * Removes background using Deep Learning (briaai/RMBG-1.4 via ONNX Runtime in Node.js).
  * State-of-the-art accuracy for fur strands, fine details, transparent objects, and floor contact shadows.
  */
-export async function removeImageBackgroundAi(
-  image: DecodedImage,
-  options: MattingOptions = {},
-): Promise<DecodedImage> {
+export async function removeImageBackgroundAi(image: DecodedImage, options: MattingOptions = {}): Promise<DecodedImage> {
   const { width, height, data } = image;
   const { model, processor, RawImage } = await getAiMattingPipeline();
 
@@ -517,8 +485,8 @@ export async function removeImageBackgroundAi(
   }
 
   const inputImage = new RawImage(rgbData, width, height, 3);
-  const { pixel_values } = await processor(inputImage);
-  const { output } = await model({ input: pixel_values });
+  const { pixel_values } = (await processor(inputImage)) as { pixel_values: unknown };
+  const { output } = (await model({ input: pixel_values })) as unknown as { output: { data: Float32Array } };
 
   const maskData: Float32Array = output.data;
   let min = Infinity;
@@ -556,19 +524,10 @@ export async function removeImageBackgroundAi(
  * Defaults to AI Matting (RMBG) for high fidelity, with transparent fallback to procedural matting.
  * If input is already cleanly transparent, preserves original alpha without destructive re-matting.
  */
-export async function removeImageBackground(
-  imageBytes: Uint8Array,
-  options: MattingOptions = {},
-): Promise<Uint8Array> {
+export async function removeImageBackground(imageBytes: Uint8Array, options: MattingOptions = {}): Promise<Uint8Array> {
   try {
     // Check if PNG
-    if (
-      imageBytes.length >= 8 &&
-      imageBytes[0] === 137 &&
-      imageBytes[1] === 80 &&
-      imageBytes[2] === 78 &&
-      imageBytes[3] === 71
-    ) {
+    if (imageBytes.length >= 8 && imageBytes[0] === 137 && imageBytes[1] === 80 && imageBytes[2] === 78 && imageBytes[3] === 71) {
       const decoded = decodePngToRgba(imageBytes);
 
       // 1. If image already has genuine native alpha transparency (e.g. from GPTi2 transparent PNG),
@@ -597,4 +556,3 @@ export async function removeImageBackground(
   }
   return imageBytes;
 }
-

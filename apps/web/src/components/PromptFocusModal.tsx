@@ -113,7 +113,9 @@ export function PromptFocusModal({
                   {cutCount > 1 ? (
                     <>
                       <span>·</span>
-                      <span className="scene-cut-badge" style={{ fontSize: "11px" }}>{cutCount} cuts</span>
+                      <span className="scene-cut-badge" style={{ fontSize: "11px" }}>
+                        {cutCount} cuts
+                      </span>
                     </>
                   ) : null}
                 </div>

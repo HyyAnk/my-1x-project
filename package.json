@@ -13,7 +13,8 @@
     "audit:quiz-choices": "node scripts/audit-quiz-choice-count.mjs",
     "start": "pnpm --filter @studio/server start",
     "typecheck": "pnpm --filter @studio/shared build && pnpm -r typecheck",
-    "test": "pnpm --filter @studio/shared build && pnpm --filter @studio/server test && node scripts/audit-quiz-choice-count.mjs",
+    "test": "pnpm --filter @studio/shared build && pnpm --filter @studio/server test && pnpm --filter @studio/web test && node scripts/audit-quiz-choice-count.mjs",
+    "test:coverage": "pnpm --filter @studio/shared build && pnpm --filter @studio/server test:coverage && pnpm --filter @studio/web test:coverage",
     "test:e2e": "pnpm --filter @studio/web test:e2e"
   },
   "devDependencies": {

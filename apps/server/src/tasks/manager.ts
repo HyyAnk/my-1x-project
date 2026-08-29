@@ -1,26 +1,30 @@
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { EventEmitter } from "node:events";
-import {
-  TaskSchema,
-  makeId,
-  nowIso,
-  type AppConfig,
-  type Task,
-  type TaskEvent,
-  type TaskStatus,
-  type TaskType,
-} from "@studio/shared";
+import { TaskSchema, makeId, nowIso, type AppConfig, type Task, type TaskEvent, type TaskStatus, type TaskType } from "@studio/shared";
 import { AntigravityClient } from "../antigravity.js";
 import { CodexAppServerClient, type CodexServerRequest } from "../codex.js";
 import { DEFAULT_CONFIG } from "../config.js";
 import { ContextEngine } from "../context.js";
 import { StudioLogger } from "../logger.js";
 import { ChatterboxProvider, type ChatterboxTarget } from "../providers/chatterbox.js";
-import type { AudioProvider } from "../providers/index.js";
+import type { AudioProvider, ImageProvider } from "../providers/index.js";
 import { RepositoryError, RepositoryService } from "../repository.js";
-import { runAudioTask as runAudioTaskImplementation, runNarrationTask as runNarrationTaskImplementation, mergeNarrationSegments as mergeNarrationSegmentsImplementation } from "./audioRunner.js";
-import { run as runImplementation, handleNotification as handleNotificationImplementation, handleServerRequest as handleServerRequestImplementation, completeWithOutput as completeWithOutputImplementation, retryQuizResearch as retryQuizResearchImplementation, retryScript as retryScriptImplementation, retryVisualBible as retryVisualBibleImplementation, retrySequenceScenes as retrySequenceScenesImplementation } from "./codexRunner.js";
+import {
+  runAudioTask as runAudioTaskImplementation,
+  runNarrationTask as runNarrationTaskImplementation,
+  mergeNarrationSegments as mergeNarrationSegmentsImplementation,
+} from "./audioRunner.js";
+import {
+  run as runImplementation,
+  handleNotification as handleNotificationImplementation,
+  handleServerRequest as handleServerRequestImplementation,
+  completeWithOutput as completeWithOutputImplementation,
+  retryQuizResearch as retryQuizResearchImplementation,
+  retryScript as retryScriptImplementation,
+  retryVisualBible as retryVisualBibleImplementation,
+  retrySequenceScenes as retrySequenceScenesImplementation,
+} from "./codexRunner.js";
 import {
   createImageProvider as createImageProviderImplementation,
   generateBundleImageWithSafetyRetry as generateBundleImageWithSafetyRetryImplementation,
@@ -28,8 +32,24 @@ import {
   runGpti2BundleImageTask as runGpti2BundleImageTaskImplementation,
   runShopAiKeyImageTask as runShopAiKeyImageTaskImplementation,
 } from "./imageRunner.js";
-import { runPipelineTask as runPipelineTaskImplementation, hasReadyArtifact as hasReadyArtifactImplementation, generatePipelineBundleImages as generatePipelineBundleImagesImplementation, runQuizV2Pipeline as runQuizV2PipelineImplementation, attachPipelineBundleImages as attachPipelineBundleImagesImplementation, hasReadyScript as hasReadyScriptImplementation, hasValidNarrationAsset as hasValidNarrationAssetImplementation, isShotPlanFresh as isShotPlanFreshImplementation, waitForTaskTerminal as waitForTaskTerminalImplementation } from "./pipelineRunner.js";
-import { cleanupAntigravityThreads as cleanupAntigravityThreadsImplementation, cleanupCodexThreads as cleanupCodexThreadsImplementation, isSessionCleanupEnabled as isSessionCleanupEnabledImplementation, startCleanupTimer as startCleanupTimerImplementation, tryDeleteThread as tryDeleteThreadImplementation } from "./threadCleanup.js";
+import {
+  runPipelineTask as runPipelineTaskImplementation,
+  hasReadyArtifact as hasReadyArtifactImplementation,
+  generatePipelineBundleImages as generatePipelineBundleImagesImplementation,
+  runQuizV2Pipeline as runQuizV2PipelineImplementation,
+  attachPipelineBundleImages as attachPipelineBundleImagesImplementation,
+  hasReadyScript as hasReadyScriptImplementation,
+  hasValidNarrationAsset as hasValidNarrationAssetImplementation,
+  isShotPlanFresh as isShotPlanFreshImplementation,
+  waitForTaskTerminal as waitForTaskTerminalImplementation,
+} from "./pipelineRunner.js";
+import {
+  cleanupAntigravityThreads as cleanupAntigravityThreadsImplementation,
+  cleanupCodexThreads as cleanupCodexThreadsImplementation,
+  isSessionCleanupEnabled as isSessionCleanupEnabledImplementation,
+  startCleanupTimer as startCleanupTimerImplementation,
+  tryDeleteThread as tryDeleteThreadImplementation,
+} from "./threadCleanup.js";
 import { runVideoTask as runVideoTaskImplementation } from "./videoRunner.js";
 import type { ActiveRun, CodexCleanupConfig, PipelineRun, TaskManagerRuntime } from "./runtime.js";
 
@@ -39,41 +59,41 @@ const imageTaskTypes = new Set<TaskType>(["GENERATE_BUNDLE_IMAGE"]);
 const videoTaskTypes = new Set<TaskType>(["GENERATE_VIDEO"]);
 const pipelineTaskTypes = new Set<TaskType>(["GENERATE_PIPELINE"]);
 
-export class TaskManager extends EventEmitter {
-  private readonly tasks = new Map<string, Task>();
-  private readonly active = new Map<string, ActiveRun>();
-  private readonly approvalRequests = new Map<number, { taskId: string; request: CodexServerRequest }>();
-  private readonly completionWaiters = new Map<string, () => void>();
-  private readonly pipelineRuns = new Map<string, PipelineRun>();
-  private readonly locks = new Set<string>();
-  private readonly assemblingEpisodes = new Set<string>();
-  private readonly activeImageControllers = new Map<string, AbortController>();
-  private readonly imageVariants = new Map<string, number>();
-  private readonly topicHints = new Map<string, string>();
+export class TaskManager extends EventEmitter implements TaskManagerRuntime {
+  readonly tasks = new Map<string, Task>();
+  readonly active = new Map<string, ActiveRun>();
+  readonly approvalRequests = new Map<number, { taskId: string; request: CodexServerRequest }>();
+  readonly completionWaiters = new Map<string, () => void>();
+  readonly pipelineRuns = new Map<string, PipelineRun>();
+  readonly locks = new Set<string>();
+  readonly assemblingEpisodes = new Set<string>();
+  readonly activeImageControllers = new Map<string, AbortController>();
+  readonly imageVariants = new Map<string, number>();
+  readonly topicHints = new Map<string, string>();
   private runningCount = 0;
   private runningAudioCount = 0;
   private runningImageCount = 0;
   private runningVideoCount = 0;
   private runningPipelineCount = 0;
-  private readonly activeAudio = new Set<string>();
-  private audioConfig: AppConfig["audio_generation"];
-  private imageConfig: AppConfig["image_generation"];
-  private videoConfig: AppConfig["video_generation"];
-  private readonly audioProviderFactory: (target: ChatterboxTarget, config: AppConfig["audio_generation"]) => AudioProvider;
-  private codexCleanupConfig: CodexCleanupConfig;
-  private antigravityCleanupConfig: CodexCleanupConfig;
-  private cleanupTimer: NodeJS.Timeout | null = null;
+  readonly activeAudio = new Set<string>();
+  audioConfig: AppConfig["audio_generation"];
+  imageConfig: AppConfig["image_generation"];
+  videoConfig: AppConfig["video_generation"];
+  readonly audioProviderFactory: (target: ChatterboxTarget, config: AppConfig["audio_generation"]) => AudioProvider;
+  codexCleanupConfig: CodexCleanupConfig;
+  antigravityCleanupConfig: CodexCleanupConfig;
+  cleanupTimer: NodeJS.Timeout | null = null;
   private connectionStatus: "connected" | "disconnected" | "unavailable" | "connecting" = "disconnected";
   private antigravityStatus: "connected" | "disconnected" | "unavailable" | "connecting" = "disconnected";
-  private activeEngine: "codex" | "antigravity" = "codex";
+  activeEngine: "codex" | "antigravity" = "codex";
 
   constructor(
-    private readonly repository: RepositoryService,
-    private readonly contextEngine: ContextEngine,
-    private readonly codex: CodexAppServerClient,
-    private readonly maxConcurrent: number,
+    readonly repository: RepositoryService,
+    readonly contextEngine: ContextEngine,
+    readonly codex: CodexAppServerClient,
+    readonly maxConcurrent: number,
     videoConfigOrMaxSceneDuration: AppConfig["video_generation"] | number,
-    private readonly logger: StudioLogger,
+    readonly logger: StudioLogger,
     audioConfig: AppConfig["audio_generation"] = {
       provider: "chatterbox",
       service_url: "http://127.0.0.1:8890",
@@ -86,24 +106,30 @@ export class TaskManager extends EventEmitter {
     audioProviderFactory?: (target: ChatterboxTarget, config: AppConfig["audio_generation"]) => AudioProvider,
     codexConfig: CodexCleanupConfig = { auto_delete_threads: false, failed_thread_retention_days: 7 },
     imageConfig: AppConfig["image_generation"] = DEFAULT_CONFIG.image_generation,
-    private readonly antigravity?: AntigravityClient,
+    readonly antigravity?: AntigravityClient,
     activeEngine: "codex" | "antigravity" = "codex",
   ) {
     super();
     this.activeEngine = activeEngine;
-    this.videoConfig = typeof videoConfigOrMaxSceneDuration === "number"
-      ? { ...DEFAULT_CONFIG.video_generation, max_scene_duration_seconds: videoConfigOrMaxSceneDuration }
-      : videoConfigOrMaxSceneDuration;
+    this.videoConfig =
+      typeof videoConfigOrMaxSceneDuration === "number"
+        ? { ...DEFAULT_CONFIG.video_generation, max_scene_duration_seconds: videoConfigOrMaxSceneDuration }
+        : videoConfigOrMaxSceneDuration;
     this.audioConfig = audioConfig;
     this.imageConfig = imageConfig;
     this.audioProviderFactory = audioProviderFactory ?? ((target, config) => new ChatterboxProvider(repository, config, target));
-    this.codexCleanupConfig = { auto_delete_threads: codexConfig.auto_delete_threads, failed_thread_retention_days: codexConfig.failed_thread_retention_days };
+    this.codexCleanupConfig = {
+      auto_delete_threads: codexConfig.auto_delete_threads,
+      failed_thread_retention_days: codexConfig.failed_thread_retention_days,
+    };
     this.antigravityCleanupConfig = { auto_delete_threads: false, failed_thread_retention_days: 0 };
     codex.on("status", (status: typeof this.connectionStatus) => {
       this.connectionStatus = status;
       this.emitEvent({ type: "codex.status", status });
     });
-    codex.on("notification", (event: { method: string; params: Record<string, unknown> }) => this.handleNotification(event.method, event.params));
+    codex.on("notification", (event: { method: string; params: Record<string, unknown> }) =>
+      this.handleNotification(event.method, event.params),
+    );
     codex.on("serverRequest", (request: CodexServerRequest) => this.handleServerRequest(request));
     codex.on("exit", () => {
       this.connectionStatus = "unavailable";
@@ -114,7 +140,9 @@ export class TaskManager extends EventEmitter {
         this.antigravityStatus = status;
         this.emitEvent({ type: "antigravity.status", status });
       });
-      antigravity.on("notification", (event: { method: string; params: Record<string, unknown> }) => this.handleNotification(event.method, event.params));
+      antigravity.on("notification", (event: { method: string; params: Record<string, unknown> }) =>
+        this.handleNotification(event.method, event.params),
+      );
     }
   }
 
@@ -173,11 +201,17 @@ export class TaskManager extends EventEmitter {
   }
 
   updateCodexConfig(config: AppConfig["codex"]): void {
-    this.codexCleanupConfig = { auto_delete_threads: config.auto_delete_threads, failed_thread_retention_days: config.failed_thread_retention_days };
+    this.codexCleanupConfig = {
+      auto_delete_threads: config.auto_delete_threads,
+      failed_thread_retention_days: config.failed_thread_retention_days,
+    };
   }
 
   updateAntigravityConfig(config: AppConfig["antigravity"]): void {
-    this.antigravityCleanupConfig = { auto_delete_threads: config.auto_delete_threads, failed_thread_retention_days: config.failed_thread_retention_days };
+    this.antigravityCleanupConfig = {
+      auto_delete_threads: config.auto_delete_threads,
+      failed_thread_retention_days: config.failed_thread_retention_days,
+    };
     if (this.antigravity) {
       this.antigravity.updateConfig({ ...DEFAULT_CONFIG, antigravity: config });
     }
@@ -215,7 +249,8 @@ export class TaskManager extends EventEmitter {
   }
 
   hasActiveWork(): boolean {
-    return this.active.size > 0 ||
+    return (
+      this.active.size > 0 ||
       this.activeAudio.size > 0 ||
       this.activeImageControllers.size > 0 ||
       this.pipelineRuns.size > 0 ||
@@ -224,35 +259,59 @@ export class TaskManager extends EventEmitter {
       this.runningImageCount > 0 ||
       this.runningVideoCount > 0 ||
       this.runningPipelineCount > 0 ||
-      this.list().some((task) => ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(task.status));
+      this.list().some((task) => ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(task.status))
+    );
   }
 
-  submit(taskType: TaskType, channelId: string, episodeId: string | null, sceneNumber?: number, requestedImageVariant?: number, topicHint?: string): Task {
-    if (taskType === "GENERATE_BUNDLE_IMAGE" && !this.imageConfig.enabled) throw new RepositoryError("Image generation is disabled in Settings", "IMAGE_GENERATION_DISABLED");
-    const imageVariant = taskType === "GENERATE_BUNDLE_IMAGE" && episodeId && sceneNumber
-      ? requestedImageVariant ?? this.list().filter((item) => item.task_type === "GENERATE_BUNDLE_IMAGE" && item.episode_id === episodeId && item.scene_number === sceneNumber && ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(item.status)).length % Math.max(1, this.imageConfig.images_per_bundle)
-      : 0;
-    const lockKey = taskType === "GENERATE_PIPELINE" && episodeId
-      ? `${episodeId}:pipeline`
-      : taskType === "GENERATE_SEQUENCE_SCENES" && episodeId && sceneNumber
-      ? `${episodeId}:sequence:${sceneNumber}`
-      : taskType === "GENERATE_BUNDLE_IMAGE" && episodeId && sceneNumber
-      ? `${episodeId}:bundle:${sceneNumber}:variant:${imageVariant}`
-      : channelTaskTypes.has(taskType) ? channelId : episodeId;
+  submit(
+    taskType: TaskType,
+    channelId: string,
+    episodeId: string | null,
+    sceneNumber?: number,
+    requestedImageVariant?: number,
+    topicHint?: string,
+  ): Task {
+    if (taskType === "GENERATE_BUNDLE_IMAGE" && !this.imageConfig.enabled)
+      throw new RepositoryError("Image generation is disabled in Settings", "IMAGE_GENERATION_DISABLED");
+    const imageVariant =
+      taskType === "GENERATE_BUNDLE_IMAGE" && episodeId && sceneNumber
+        ? (requestedImageVariant ??
+          this.list().filter(
+            (item) =>
+              item.task_type === "GENERATE_BUNDLE_IMAGE" &&
+              item.episode_id === episodeId &&
+              item.scene_number === sceneNumber &&
+              ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(item.status),
+          ).length % Math.max(1, this.imageConfig.images_per_bundle))
+        : 0;
+    const lockKey =
+      taskType === "GENERATE_PIPELINE" && episodeId
+        ? `${episodeId}:pipeline`
+        : taskType === "GENERATE_SEQUENCE_SCENES" && episodeId && sceneNumber
+          ? `${episodeId}:sequence:${sceneNumber}`
+          : taskType === "GENERATE_BUNDLE_IMAGE" && episodeId && sceneNumber
+            ? `${episodeId}:bundle:${sceneNumber}:variant:${imageVariant}`
+            : channelTaskTypes.has(taskType)
+              ? channelId
+              : episodeId;
     if (!lockKey) throw new RepositoryError("Episode is required for this task", "EPISODE_REQUIRED");
-    if (taskType === "GENERATE_PIPELINE" && this.list().some((item) => item.lock_key === lockKey && ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(item.status))) {
+    if (
+      taskType === "GENERATE_PIPELINE" &&
+      this.list().some((item) => item.lock_key === lockKey && ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(item.status))
+    ) {
       throw new RepositoryError("Production pipeline is already running for this episode", "PIPELINE_ACTIVE");
     }
     const existingQueue = this.list().filter((task) => task.lock_key === lockKey && task.status === "QUEUED").length;
 
     // When retrying or restarting a pipeline or task, accumulate duration from previous attempts
-    const previousMatchingTasks = this.list().filter((item) =>
-      item.lock_key === lockKey &&
-      item.channel_id === channelId &&
-      item.episode_id === episodeId &&
-      item.task_type === taskType &&
-      item.scene_number === (sceneNumber ?? null) &&
-      ["FAILED", "CANCELLED", "COMPLETED"].includes(item.status)
+    const previousMatchingTasks = this.list().filter(
+      (item) =>
+        item.lock_key === lockKey &&
+        item.channel_id === channelId &&
+        item.episode_id === episodeId &&
+        item.task_type === taskType &&
+        item.scene_number === (sceneNumber ?? null) &&
+        ["FAILED", "CANCELLED", "COMPLETED"].includes(item.status),
     );
 
     const latestPreviousTask = previousMatchingTasks.sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
@@ -336,7 +395,9 @@ export class TaskManager extends EventEmitter {
     const maxVideoConcurrent = this.videoConfig.max_concurrent_tasks ?? 2;
 
     while (this.runningVideoCount < maxVideoConcurrent) {
-      const next = this.list().reverse().find((task) => task.status === "QUEUED" && task.task_type === "GENERATE_VIDEO" && !this.locks.has(task.lock_key));
+      const next = this.list()
+        .reverse()
+        .find((task) => task.status === "QUEUED" && task.task_type === "GENERATE_VIDEO" && !this.locks.has(task.lock_key));
       if (!next) break;
       this.locks.add(next.lock_key);
       this.runningVideoCount += 1;
@@ -348,7 +409,9 @@ export class TaskManager extends EventEmitter {
     }
 
     while (this.runningPipelineCount < maxVideoConcurrent) {
-      const next = this.list().reverse().find((task) => task.status === "QUEUED" && task.task_type === "GENERATE_PIPELINE" && !this.locks.has(task.lock_key));
+      const next = this.list()
+        .reverse()
+        .find((task) => task.status === "QUEUED" && task.task_type === "GENERATE_PIPELINE" && !this.locks.has(task.lock_key));
       if (!next) break;
       this.locks.add(next.lock_key);
       this.runningPipelineCount += 1;
@@ -360,14 +423,17 @@ export class TaskManager extends EventEmitter {
     }
 
     while (this.runningCount < this.maxConcurrent) {
-      const next = this.list().reverse().find((task) =>
-        task.status === "QUEUED" &&
-        !audioTaskTypes.has(task.task_type) &&
-        !imageTaskTypes.has(task.task_type) &&
-        !videoTaskTypes.has(task.task_type) &&
-        !pipelineTaskTypes.has(task.task_type) &&
-        !this.locks.has(task.lock_key)
-      );
+      const next = this.list()
+        .reverse()
+        .find(
+          (task) =>
+            task.status === "QUEUED" &&
+            !audioTaskTypes.has(task.task_type) &&
+            !imageTaskTypes.has(task.task_type) &&
+            !videoTaskTypes.has(task.task_type) &&
+            !pipelineTaskTypes.has(task.task_type) &&
+            !this.locks.has(task.lock_key),
+        );
       if (!next) break;
       this.locks.add(next.lock_key);
       this.runningCount += 1;
@@ -379,7 +445,9 @@ export class TaskManager extends EventEmitter {
     }
     const maxImageConcurrent = this.imageConfig.max_concurrent_tasks ?? 3;
     while (this.runningImageCount < maxImageConcurrent) {
-      const next = this.list().reverse().find((task) => task.status === "QUEUED" && imageTaskTypes.has(task.task_type) && !this.locks.has(task.lock_key));
+      const next = this.list()
+        .reverse()
+        .find((task) => task.status === "QUEUED" && imageTaskTypes.has(task.task_type) && !this.locks.has(task.lock_key));
       if (!next) break;
       this.locks.add(next.lock_key);
       this.runningImageCount += 1;
@@ -390,7 +458,9 @@ export class TaskManager extends EventEmitter {
       });
     }
     while (this.runningAudioCount < this.audioConfig.max_concurrent_tasks) {
-      const next = this.list().reverse().find((task) => task.status === "QUEUED" && audioTaskTypes.has(task.task_type) && !this.locks.has(task.lock_key));
+      const next = this.list()
+        .reverse()
+        .find((task) => task.status === "QUEUED" && audioTaskTypes.has(task.task_type) && !this.locks.has(task.lock_key));
       if (!next) break;
       this.locks.add(next.lock_key);
       this.runningAudioCount += 1;
@@ -402,62 +472,150 @@ export class TaskManager extends EventEmitter {
     }
   }
 
-  private readonly run = runImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly createImageProvider = createImageProviderImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly generateBundleImageWithSafetyRetry = generateBundleImageWithSafetyRetryImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly runGpti2BundleImageTask = runGpti2BundleImageTaskImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly runAntigravityBundleImageTask = runAntigravityBundleImageTaskImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly runShopAiKeyImageTask = runShopAiKeyImageTaskImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly runPipelineTask = runPipelineTaskImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly runVideoTask = runVideoTaskImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly hasReadyArtifact = hasReadyArtifactImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly generatePipelineBundleImages = generatePipelineBundleImagesImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly runQuizV2Pipeline = runQuizV2PipelineImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly attachPipelineBundleImages = attachPipelineBundleImagesImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly hasReadyScript = hasReadyScriptImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly hasValidNarrationAsset = hasValidNarrationAssetImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly isShotPlanFresh = isShotPlanFreshImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly waitForTaskTerminal = waitForTaskTerminalImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly runAudioTask = runAudioTaskImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly runNarrationTask = runNarrationTaskImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly mergeNarrationSegments = mergeNarrationSegmentsImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly handleNotification = handleNotificationImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly handleServerRequest = handleServerRequestImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly completeWithOutput = completeWithOutputImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly retryQuizResearch = retryQuizResearchImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly retryScript = retryScriptImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly retryVisualBible = retryVisualBibleImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly retrySequenceScenes = retrySequenceScenesImplementation.bind(this as unknown as TaskManagerRuntime);
-  private findSceneNumber(taskId: string): number | undefined {
+  run(task: Task): Promise<void> {
+    return runImplementation.call(this, task);
+  }
+  createImageProvider(
+    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+    output?: string,
+  ): ImageProvider {
+    return createImageProviderImplementation.call(this, imageTarget, output);
+  }
+  generateBundleImageWithSafetyRetry(
+    task: Task,
+    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+    initialPrompt: string,
+    signal?: AbortSignal,
+    output?: string,
+    visualBibleContent?: string,
+  ): Promise<{ image: { asset_path: string }; updatedPrompt?: string }> {
+    return generateBundleImageWithSafetyRetryImplementation.call(
+      this,
+      task,
+      imageTarget,
+      initialPrompt,
+      signal,
+      output,
+      visualBibleContent,
+    );
+  }
+  runGpti2BundleImageTask(task: Task): Promise<void> {
+    return runGpti2BundleImageTaskImplementation.call(this, task);
+  }
+  runAntigravityBundleImageTask(task: Task): Promise<void> {
+    return runAntigravityBundleImageTaskImplementation.call(this, task);
+  }
+  runShopAiKeyImageTask(task: Task): Promise<void> {
+    return runShopAiKeyImageTaskImplementation.call(this, task);
+  }
+  runPipelineTask(task: Task): Promise<void> {
+    return runPipelineTaskImplementation.call(this, task);
+  }
+  runVideoTask(task: Task): Promise<void> {
+    return runVideoTaskImplementation.call(this, task);
+  }
+  hasReadyArtifact(channelId: string, episodeId: string, filename: string): Promise<boolean> {
+    return hasReadyArtifactImplementation.call(this, channelId, episodeId, filename);
+  }
+  generatePipelineBundleImages(task: Task, run: PipelineRun): Promise<void> {
+    return generatePipelineBundleImagesImplementation.call(this, task, run);
+  }
+  runQuizV2Pipeline(task: Task): Promise<void> {
+    return runQuizV2PipelineImplementation.call(this, task);
+  }
+  attachPipelineBundleImages(channelId: string, episodeId: string): Promise<void> {
+    return attachPipelineBundleImagesImplementation.call(this, channelId, episodeId);
+  }
+  hasReadyScript(channelId: string, episodeId: string): Promise<boolean> {
+    return hasReadyScriptImplementation.call(this, channelId, episodeId);
+  }
+  hasValidNarrationAsset(channelId: string, episodeId: string, assetPath: string | null): Promise<boolean> {
+    return hasValidNarrationAssetImplementation.call(this, channelId, episodeId, assetPath);
+  }
+  isShotPlanFresh(channelId: string, episodeId: string): Promise<boolean> {
+    return isShotPlanFreshImplementation.call(this, channelId, episodeId);
+  }
+  waitForTaskTerminal(taskId: string, run: PipelineRun): Promise<Task> {
+    return waitForTaskTerminalImplementation.call(this, taskId, run);
+  }
+  runAudioTask(task: Task): Promise<void> {
+    return runAudioTaskImplementation.call(this, task);
+  }
+  runNarrationTask(task: Task): Promise<void> {
+    return runNarrationTaskImplementation.call(this, task);
+  }
+  mergeNarrationSegments(paths: string[], targetDurationSeconds?: number): Promise<Uint8Array> {
+    return mergeNarrationSegmentsImplementation.call(this, paths, targetDurationSeconds);
+  }
+  handleNotification(method: string, params: Record<string, unknown>): void {
+    return handleNotificationImplementation.call(this, method, params);
+  }
+  handleServerRequest(request: CodexServerRequest): void {
+    return handleServerRequestImplementation.call(this, request);
+  }
+  completeWithOutput(active: ActiveRun): Promise<void> {
+    return completeWithOutputImplementation.call(this, active);
+  }
+  retryQuizResearch(active: ActiveRun, reason: string): Promise<void> {
+    return retryQuizResearchImplementation.call(this, active, reason);
+  }
+  retryScript(active: ActiveRun, reason: string): Promise<void> {
+    return retryScriptImplementation.call(this, active, reason);
+  }
+  retryVisualBible(active: ActiveRun, reason: string): Promise<void> {
+    return retryVisualBibleImplementation.call(this, active, reason);
+  }
+  retrySequenceScenes(active: ActiveRun, reason: string): Promise<void> {
+    return retrySequenceScenesImplementation.call(this, active, reason);
+  }
+  findSceneNumber(taskId: string): number | undefined {
     return this.tasks.get(taskId)?.scene_number ?? undefined;
   }
 
-  private async finish(taskId: string, status: TaskStatus, error: string | null, outputFiles: string[] = []): Promise<void> {
+  async finish(taskId: string, status: TaskStatus, error: string | null, outputFiles: string[] = []): Promise<void> {
     const threadId = this.get(taskId).codex_thread_id;
     this.active.delete(taskId);
     this.completionWaiters.get(taskId)?.();
     this.completionWaiters.delete(taskId);
-    await this.update(taskId, { status, error, completed_at: nowIso(), output_files: outputFiles.length ? outputFiles : this.get(taskId).output_files, progress_message: status === "COMPLETED" ? "Completed" : error ?? status, progress_percent: status === "COMPLETED" ? 100 : this.get(taskId).progress_percent });
+    await this.update(taskId, {
+      status,
+      error,
+      completed_at: nowIso(),
+      output_files: outputFiles.length ? outputFiles : this.get(taskId).output_files,
+      progress_message: status === "COMPLETED" ? "Completed" : (error ?? status),
+      progress_percent: status === "COMPLETED" ? 100 : this.get(taskId).progress_percent,
+    });
     this.imageVariants.delete(taskId);
     this.topicHints.delete(taskId);
     const isAntigravity = this.activeEngine === "antigravity";
     const cleanupConfig = isAntigravity ? this.antigravityCleanupConfig : this.codexCleanupConfig;
-    const shouldDelete = Boolean(threadId && cleanupConfig.auto_delete_threads && (status === "COMPLETED" || ((status === "FAILED" || status === "CANCELLED") && cleanupConfig.failed_thread_retention_days === 0)));
-    if (shouldDelete && threadId && await this.tryDeleteThread(threadId, isAntigravity ? "antigravity" : "codex")) await this.update(taskId, { codex_thread_id: null });
+    const shouldDelete = Boolean(
+      threadId &&
+      cleanupConfig.auto_delete_threads &&
+      (status === "COMPLETED" || ((status === "FAILED" || status === "CANCELLED") && cleanupConfig.failed_thread_retention_days === 0)),
+    );
+    if (shouldDelete && threadId && (await this.tryDeleteThread(threadId, isAntigravity ? "antigravity" : "codex")))
+      await this.update(taskId, { codex_thread_id: null });
   }
 
   async cleanupCodexThreads(force = false): Promise<{ removed: number }> {
-    return cleanupCodexThreadsImplementation.call(this as unknown as TaskManagerRuntime, force);
+    return cleanupCodexThreadsImplementation.call(this, force);
   }
 
   async cleanupAntigravityThreads(force = false): Promise<{ removed: number }> {
-    return cleanupAntigravityThreadsImplementation.call(this as unknown as TaskManagerRuntime, force);
+    return cleanupAntigravityThreadsImplementation.call(this, force);
   }
 
-  private readonly startCleanupTimer = startCleanupTimerImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly tryDeleteThread = tryDeleteThreadImplementation.bind(this as unknown as TaskManagerRuntime);
-  private readonly isSessionCleanupEnabled = isSessionCleanupEnabledImplementation.bind(this as unknown as TaskManagerRuntime);
-  private async update(taskId: string, patch: Partial<Task>): Promise<void> {
+  startCleanupTimer(): void {
+    return startCleanupTimerImplementation.call(this);
+  }
+  tryDeleteThread(threadId: string, engine?: "codex" | "antigravity"): Promise<boolean> {
+    return tryDeleteThreadImplementation.call(this, threadId, engine);
+  }
+  isSessionCleanupEnabled(engine?: "codex" | "antigravity"): boolean {
+    return isSessionCleanupEnabledImplementation.call(this, engine);
+  }
+  async update(taskId: string, patch: Partial<Task>): Promise<void> {
     const current = this.get(taskId);
     let effectivePatch = patch;
     if (["COMPLETED", "FAILED", "CANCELLED"].includes(current.status) && patch.status === undefined) {
@@ -487,7 +645,7 @@ export class TaskManager extends EventEmitter {
     this.emitEvent({ type: "task.updated", task });
   }
 
-  private emitEvent(event: TaskEvent): void {
+  emitEvent(event: TaskEvent): void {
     this.emit("event", event);
   }
 }

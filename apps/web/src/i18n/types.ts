@@ -226,7 +226,7 @@ export interface TranslationSchema {
     deleteEpisodeWarning: string;
     assignedVoice: string;
     defaultVoice: string;
-    
+
     // Channel Mascot
     mascotSelectTitle: string;
     noMascotOption: string;
@@ -324,7 +324,7 @@ export interface TranslationSchema {
     newMascot: string;
     noMascotsTitle: string;
     noMascotsCopy: string;
-    
+
     // Actions Meta (Dynamic Localized Labels)
     actionIdle: string;
     actionIdleDesc: string;
@@ -487,7 +487,7 @@ export interface TranslationSchema {
     celebrateReactionTooltip: string;
     oopsReactionBtn: string;
     oopsReactionTooltip: string;
-    
+
     // Director Timeline
     timelineIntro: string;
     timelineQuestion: string;
@@ -631,14 +631,14 @@ export interface TranslationSchema {
     tabVoice: string;
     tabMedia: string;
     tabSystem: string;
-    
+
     // Language Section
     languageTitle: string;
     languageSubtitle: string;
     languageSelectEn: string;
     languageSelectVi: string;
     languageHint: string;
-    
+
     // System & Workspace
     workspaceTitle: string;
     simplifyTitle: string;
@@ -648,7 +648,7 @@ export interface TranslationSchema {
     saveStorageLocation: string;
     storagePathLabel: string;
     storageHint: string;
-    
+
     // Engines
     codexTitle: string;
     antigravityTitle: string;
@@ -656,7 +656,7 @@ export interface TranslationSchema {
     cleanupOldSessions: string;
     saveCodexSettings: string;
     saveAntigravitySettings: string;
-    
+
     // Voice
     ttsTitle: string;
     voiceClarity: string;
@@ -665,7 +665,7 @@ export interface TranslationSchema {
     voiceLibraryTitle: string;
     addVoice: string;
     saveVoiceSettings: string;
-    
+
     // Media & Image
     videoTimingTitle: string;
     sceneDurationAndSpeed: string;
@@ -684,7 +684,7 @@ export interface TranslationSchema {
     saveImageSettings: string;
     duplicateGateTitle: string;
     saveHistorySettings: string;
-    
+
     // Storage Setup Modal
     firstLaunchTitle: string;
     chooseStorage: string;
@@ -695,7 +695,7 @@ export interface TranslationSchema {
     pageTitle: string;
     pageSubtitle: string;
     pageDesc: string;
-    
+
     // Header actions
     safeArea: string;
     safeAreaOn: string;

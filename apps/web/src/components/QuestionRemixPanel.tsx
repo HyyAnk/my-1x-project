@@ -68,11 +68,7 @@ export function QuestionRemixPanel({
               disabled={isRemixing || !historyCheck}
               title={t("remix.remixAllTooltip", { count: duplicateCount })}
             >
-              {isGlobalRemixing ? (
-                <CircleNotch className="spin" size={16} />
-              ) : (
-                <ArrowsClockwise size={16} weight="bold" />
-              )}
+              {isGlobalRemixing ? <CircleNotch className="spin" size={16} /> : <ArrowsClockwise size={16} weight="bold" />}
               <span>{t("remix.remixDuplicatesBtn")}</span>
               <span className="remix-count-pill">{duplicateCount}</span>
             </button>
@@ -84,11 +80,7 @@ export function QuestionRemixPanel({
           )}
 
           {onContinueBuild ? (
-            <button
-              type="button"
-              className="primary-button"
-              onClick={onContinueBuild}
-            >
+            <button type="button" className="primary-button" onClick={onContinueBuild}>
               <span>{t("remix.continueBuildBtn")}</span>
               <ArrowRight size={16} />
             </button>
@@ -118,9 +110,7 @@ export function QuestionRemixPanel({
               </span>
             </div>
             {!historyCheck?.passed ? (
-              <p className="status-subtext">
-                {t("remix.thresholdSubtext", { threshold: historyCheck?.pass_threshold ?? 2 })}
-              </p>
+              <p className="status-subtext">{t("remix.thresholdSubtext", { threshold: historyCheck?.pass_threshold ?? 2 })}</p>
             ) : null}
           </div>
         </div>
@@ -188,15 +178,13 @@ export function QuestionRemixPanel({
           {displayedItems.length === 0 && showOnlyDuplicates ? (
             <div className="artifact-empty remix-filter-empty">
               <CheckCircle size={32} weight="fill" style={{ color: "#10b981", marginBottom: "8px" }} />
-              <p><strong>{t("remix.noDuplicatesTitle")}</strong></p>
+              <p>
+                <strong>{t("remix.noDuplicatesTitle")}</strong>
+              </p>
               <p style={{ fontSize: "13px", color: "var(--muted)", margin: "4px 0 12px" }}>
                 {t("remix.noDuplicatesSubtext", { count: totalQuestions })}
               </p>
-              <button
-                type="button"
-                className="quiet-button compact"
-                onClick={() => setShowOnlyDuplicates(false)}
-              >
+              <button type="button" className="quiet-button compact" onClick={() => setShowOnlyDuplicates(false)}>
                 <span>{t("remix.viewAllQuestions")}</span>
               </button>
             </div>
@@ -229,10 +217,7 @@ export function QuestionRemixPanel({
                             {item.current_choices.map((c, i) => {
                               const isCorrect = c === item.current_correct_answer;
                               return (
-                                <span
-                                  key={i}
-                                  className={`choice-chip ${isCorrect ? "is-correct" : ""}`}
-                                >
+                                <span key={i} className={`choice-chip ${isCorrect ? "is-correct" : ""}`}>
                                   {isCorrect ? "✓ " : ""}
                                   {c}
                                 </span>
@@ -262,14 +247,10 @@ export function QuestionRemixPanel({
 
                 // 2. DUPLICATE OR REMIXED QUESTION (Expanded 2-Column Comparison Format)
                 const simPercent = Math.round(item.similarity_score * 100);
-                const simColorClass =
-                  simPercent >= 80 ? "is-high-sim" : simPercent >= 50 ? "is-med-sim" : "is-low-sim";
+                const simColorClass = simPercent >= 80 ? "is-high-sim" : simPercent >= 50 ? "is-med-sim" : "is-low-sim";
 
                 return (
-                  <div
-                    key={qId}
-                    className={`remix-card ${isDupe ? "is-duplicate" : isRemixed ? "is-remixed" : "is-clean"}`}
-                  >
+                  <div key={qId} className={`remix-card ${isDupe ? "is-duplicate" : isRemixed ? "is-remixed" : "is-clean"}`}>
                     {/* Card Header with Question number, Badges, Similarity meter & Action buttons */}
                     <div className="remix-card-header">
                       <div className="remix-card-left-meta">
@@ -297,10 +278,7 @@ export function QuestionRemixPanel({
                           <div className={`similarity-meter-box ${simColorClass}`}>
                             <span className="similarity-label">{t("remix.similarityLabel", { score: simPercent })}</span>
                             <div className="similarity-meter-track">
-                              <div
-                                className="similarity-meter-fill"
-                                style={{ width: `${Math.min(100, Math.max(10, simPercent))}%` }}
-                              />
+                              <div className="similarity-meter-fill" style={{ width: `${Math.min(100, Math.max(10, simPercent))}%` }} />
                             </div>
                           </div>
                         ) : null}
@@ -334,7 +312,7 @@ export function QuestionRemixPanel({
                           >
                             {isRemixing && remixAction?.questionId === qId && remixAction?.mode === "replace" ? (
                               <CircleNotch className="spin" size={14} />
-                              ) : (
+                            ) : (
                               <Sparkle size={14} weight="fill" />
                             )}
                             <span>{t("remix.replaceBtn")}</span>
@@ -342,11 +320,7 @@ export function QuestionRemixPanel({
                         </div>
 
                         {isClean && (
-                          <button
-                            type="button"
-                            className="compact-toggle-button"
-                            onClick={() => toggleExpandClean(qId)}
-                          >
+                          <button type="button" className="compact-toggle-button" onClick={() => toggleExpandClean(qId)}>
                             {t("common.close")}
                           </button>
                         )}
@@ -366,10 +340,7 @@ export function QuestionRemixPanel({
                           {item.current_choices.map((c, i) => {
                             const isCorrect = c === item.current_correct_answer;
                             return (
-                              <span
-                                key={i}
-                                className={`choice-chip ${isCorrect ? "is-correct" : ""}`}
-                              >
+                              <span key={i} className={`choice-chip ${isCorrect ? "is-correct" : ""}`}>
                                 {isCorrect ? "✓ " : ""}
                                 {c}
                               </span>
@@ -383,13 +354,9 @@ export function QuestionRemixPanel({
                         <div className="remix-col history-col">
                           <div className="col-header-tag is-history">
                             <span className="col-tag-dot is-warning" />
-                            <span className="col-label">
-                              {t("remix.matchedPastLabel", { title: item.matched_entry.episode_title })}
-                            </span>
+                            <span className="col-label">{t("remix.matchedPastLabel", { title: item.matched_entry.episode_title })}</span>
                           </div>
-                          <p className="remix-question-text history-text">
-                            "{item.matched_entry.question_text}"
-                          </p>
+                          <p className="remix-question-text history-text">"{item.matched_entry.question_text}"</p>
                           <div className="matched-meta-row">
                             <span className="meta-pill">
                               <CalendarBlank size={13} />
@@ -401,9 +368,7 @@ export function QuestionRemixPanel({
                                 })}
                               </span>
                             </span>
-                            {item.match_reason ? (
-                              <span className="match-reason-tag">{item.match_reason}</span>
-                            ) : null}
+                            {item.match_reason ? <span className="match-reason-tag">{item.match_reason}</span> : null}
                           </div>
                         </div>
                       ) : (

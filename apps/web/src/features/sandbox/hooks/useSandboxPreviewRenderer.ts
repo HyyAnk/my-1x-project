@@ -16,10 +16,12 @@ type UseSandboxPreviewRendererInput = {
   onNotice?: (notice: NonNullable<Notice>) => void;
 };
 
+export type ContrastReport = { ok: boolean; ratio?: number; message?: string } | null;
+
 export function useSandboxPreviewRenderer({ design, mascot, question, timeline, onNotice }: UseSandboxPreviewRendererInput) {
   const { t } = useTranslation();
   const [previewHtml, setPreviewHtml] = useState("");
-  const [contrastReport, setContrastReport] = useState<{ ok: boolean; ratio?: number; message?: string } | null>(null);
+  const [contrastReport, setContrastReport] = useState<ContrastReport>(null);
   const [loading, setLoading] = useState(false);
   const [lastRenderTime, setLastRenderTime] = useState(() => new Date().toLocaleTimeString());
   const [iframeKey, setIframeKey] = useState(1);

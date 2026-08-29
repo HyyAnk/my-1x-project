@@ -206,7 +206,7 @@ export function balanceQuizChoicePositions(questions: QuizQuestion[]): QuizQuest
     const currentCorrectIdx = question.choices.findIndex((c) => c.id === question.correct_choice_id);
     if (currentCorrectIdx < 0) return question;
 
-    const correctChoiceText = question.choices[currentCorrectIdx]!.text;
+    const correctChoiceText = question.choices[currentCorrectIdx].text;
     const otherChoicesTexts = question.choices.filter((_, idx) => idx !== currentCorrectIdx).map((c) => c.text);
 
     let targetCorrectIdx = currentCorrectIdx;
@@ -246,7 +246,7 @@ export function balanceQuizChoicePositions(questions: QuizQuestion[]): QuizQuest
     return {
       ...question,
       choices: newChoices,
-      correct_choice_id: newChoices[targetCorrectIdx]!.id,
+      correct_choice_id: newChoices[targetCorrectIdx].id,
     };
   });
 }

@@ -64,8 +64,8 @@ describe("sequence retry planning", () => {
       ]),
     );
 
-    expect(beats[0]!.quiz?.choices).toEqual(["Lever", "Inclined plane", "Pulley"]);
-    expect(beats[0]!.quiz?.answer).toBe("Inclined plane");
+    expect(beats[0].quiz?.choices).toEqual(["Lever", "Inclined plane", "Pulley"]);
+    expect(beats[0].quiz?.answer).toBe("Inclined plane");
   });
 
   it("repairs repeated quiz beats that omit or corrupt redundant answer metadata", () => {
@@ -99,11 +99,11 @@ describe("sequence retry planning", () => {
     );
 
     const normalized = normalizeQuizBeatMetadata(beats);
-    expect(normalized[1]!.quiz?.choices).toEqual(["Lever", "Inclined plane", "Pulley"]);
-    expect(normalized[1]!.quiz?.answer).toBe("Inclined plane");
-    expect(normalized[1]!.quiz?.explanation).toBe("It changes force direction.");
-    expect(normalized[0]!.source_ids).toEqual(["C01"]);
-    expect(normalized[1]!.source_ids).toEqual(["C01"]);
+    expect(normalized[1].quiz?.choices).toEqual(["Lever", "Inclined plane", "Pulley"]);
+    expect(normalized[1].quiz?.answer).toBe("Inclined plane");
+    expect(normalized[1].quiz?.explanation).toBe("It changes force direction.");
+    expect(normalized[0].source_ids).toEqual(["C01"]);
+    expect(normalized[1].source_ids).toEqual(["C01"]);
   });
 
   it("populates fallback source_ids for quiz beats lacking source_ids to pass quality gate", () => {
@@ -135,12 +135,12 @@ describe("sequence retry planning", () => {
       ]),
     );
 
-    expect(rawBeats[0]!.source_ids).toEqual([]);
-    expect(rawBeats[1]!.source_ids).toEqual([]);
+    expect(rawBeats[0].source_ids).toEqual([]);
+    expect(rawBeats[1].source_ids).toEqual([]);
 
     const normalized = normalizeQuizBeatMetadata(rawBeats);
-    expect(normalized[0]!.source_ids).toEqual(["C01"]);
-    expect(normalized[1]!.source_ids).toEqual(["C01"]);
+    expect(normalized[0].source_ids).toEqual(["C01"]);
+    expect(normalized[1].source_ids).toEqual(["C01"]);
   });
 
   it("reuses fresh sequence drafts and queues only missing sequences", () => {
@@ -364,7 +364,7 @@ describe("TaskManager locks", () => {
       age_band: "7-9" as const,
     }));
     await repository.saveTopicRun(channel.channel_id, topics);
-    const episode = await repository.confirmTopic(channel.channel_id, topics[0]!.topic_id);
+    const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
     const logger = new StudioLogger(root);
     await logger.init();
     const manager = new TaskManager(repository, new ContextEngine(repository, logger), new FakeCodex() as never, 1, 8, logger);
@@ -641,7 +641,7 @@ describe("TaskManager locks", () => {
       age_band: "7-9" as const,
     }));
     await repository.saveTopicRun(channel.channel_id, topics);
-    const episode = await repository.confirmTopic(channel.channel_id, topics[0]!.topic_id);
+    const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 verified");
     await repository.saveEpisodeFile(
       channel.channel_id,
@@ -698,7 +698,7 @@ describe("TaskManager locks", () => {
       selected: false,
     }));
     await repository.saveTopicRun(channel.channel_id, topics);
-    const episode = await repository.confirmTopic(channel.channel_id, topics[0]!.topic_id);
+    const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 verified");
     await repository.saveEpisodeFile(
       channel.channel_id,
@@ -729,9 +729,9 @@ describe("TaskManager locks", () => {
 
     const scenes = await repository.readScenes(channel.channel_id, episode.episode_id);
     expect(scenes.length).toBeGreaterThan(0);
-    expect(scenes[0]!.visual_prompt).toContain("CAMERA");
-    expect(scenes[0]!.continuity_bundle_id).toBe("cb-01");
-    expect(scenes[0]!.continuity_note).toContain("CB-01");
+    expect(scenes[0].visual_prompt).toContain("CAMERA");
+    expect(scenes[0].continuity_bundle_id).toBe("cb-01");
+    expect(scenes[0].continuity_note).toContain("CB-01");
     expect(manager.get(task.task_id).progress_message).toBe("Completed");
     expect(fake.deletedThreads).toEqual([]);
     expect(
@@ -822,7 +822,7 @@ describe("TaskManager locks", () => {
       age_band: "7-9" as const,
     }));
     await repository.saveTopicRun(channel.channel_id, topics);
-    const episode = await repository.confirmTopic(channel.channel_id, topics[0]!.topic_id);
+    const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 verified");
     await repository.saveEpisodeFile(
       channel.channel_id,
@@ -967,7 +967,7 @@ describe("TaskManager locks", () => {
       selected: false,
     }));
     await repository.saveTopicRun(channel.channel_id, topics);
-    const episode = await repository.confirmTopic(channel.channel_id, topics[0]!.topic_id);
+    const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
 
     const logger = new StudioLogger(root);
     await logger.init();
@@ -1025,9 +1025,9 @@ describe("TaskManager locks", () => {
       selected: false,
     }));
     await repository.saveTopicRun(channel.channel_id, topics);
-    const ep1 = await repository.confirmTopic(channel.channel_id, topics[0]!.topic_id);
-    const ep2 = await repository.confirmTopic(channel.channel_id, topics[1]!.topic_id);
-    const ep3 = await repository.confirmTopic(channel.channel_id, topics[2]!.topic_id);
+    const ep1 = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
+    const ep2 = await repository.confirmTopic(channel.channel_id, topics[1].topic_id);
+    const ep3 = await repository.confirmTopic(channel.channel_id, topics[2].topic_id);
 
     const logger = new StudioLogger(root);
     await logger.init();

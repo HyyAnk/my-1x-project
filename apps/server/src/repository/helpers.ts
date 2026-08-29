@@ -3,15 +3,17 @@ import { QUIZ_SECONDS_PER_QUESTION, type TopicCandidate } from "@studio/shared";
 export const DEFAULT_NARRATION_WORDS_PER_SECOND = 2.3;
 
 export function isPng(content: Uint8Array): boolean {
-  return content.length >= 8
-    && content[0] === 0x89
-    && content[1] === 0x50
-    && content[2] === 0x4e
-    && content[3] === 0x47
-    && content[4] === 0x0d
-    && content[5] === 0x0a
-    && content[6] === 0x1a
-    && content[7] === 0x0a;
+  return (
+    content.length >= 8 &&
+    content[0] === 0x89 &&
+    content[1] === 0x50 &&
+    content[2] === 0x4e &&
+    content[3] === 0x47 &&
+    content[4] === 0x0d &&
+    content[5] === 0x0a &&
+    content[6] === 0x1a &&
+    content[7] === 0x0a
+  );
 }
 
 export function isJpeg(content: Uint8Array): boolean {
@@ -19,15 +21,17 @@ export function isJpeg(content: Uint8Array): boolean {
 }
 
 export function isWebp(content: Uint8Array): boolean {
-  return content.length >= 12
-    && content[0] === 0x52
-    && content[1] === 0x49
-    && content[2] === 0x46
-    && content[3] === 0x46
-    && content[8] === 0x57
-    && content[9] === 0x45
-    && content[10] === 0x42
-    && content[11] === 0x50;
+  return (
+    content.length >= 12 &&
+    content[0] === 0x52 &&
+    content[1] === 0x49 &&
+    content[2] === 0x46 &&
+    content[3] === 0x46 &&
+    content[8] === 0x57 &&
+    content[9] === 0x45 &&
+    content[10] === 0x42 &&
+    content[11] === 0x50
+  );
 }
 
 export function isValidImageBuffer(content: Uint8Array): boolean {

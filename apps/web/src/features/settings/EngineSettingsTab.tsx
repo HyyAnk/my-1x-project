@@ -73,28 +73,16 @@ export function EngineSettingsTab({
           <TerminalWindow size={22} />
         </div>
         <StatusLine label="Status" value={codexStatus} />
-        <StatusLine
-          label="Transport"
-          value={codex?.settings.transport === "openai_compatible" ? "Cockpit API" : "App Server"}
-        />
+        <StatusLine label="Transport" value={codex?.settings.transport === "openai_compatible" ? "Cockpit API" : "App Server"} />
         <StatusLine label="Selected model" value={codex?.settings.model || "Codex default"} />
         <StatusLine
           label="Sessions"
-          value={
-            autoDeleteThreads !== codexCleanupSaved
-              ? "Save to apply"
-              : codexCleanupSaved
-              ? "Cleanup enabled"
-              : "Cleanup disabled"
-          }
+          value={autoDeleteThreads !== codexCleanupSaved ? "Save to apply" : codexCleanupSaved ? "Cleanup enabled" : "Cleanup disabled"}
         />
         <form className="codex-form" onSubmit={(event) => void saveCodex(event)}>
           <label>
             Transport
-            <select
-              value={transport}
-              onChange={(event) => setTransport(event.target.value as "app_server" | "openai_compatible")}
-            >
+            <select value={transport} onChange={(event) => setTransport(event.target.value as "app_server" | "openai_compatible")}>
               <option value="app_server">Local Codex App Server</option>
               <option value="openai_compatible">Cockpit API Service</option>
             </select>
@@ -103,11 +91,7 @@ export function EngineSettingsTab({
             <>
               <label>
                 Base URL
-                <input
-                  value={baseUrl}
-                  onChange={(event) => setBaseUrl(event.target.value)}
-                  placeholder="http://127.0.0.1:PORT/v1"
-                />
+                <input value={baseUrl} onChange={(event) => setBaseUrl(event.target.value)} placeholder="http://127.0.0.1:PORT/v1" />
               </label>
               <label>
                 API key
@@ -121,12 +105,7 @@ export function EngineSettingsTab({
               </label>
             </>
           ) : null}
-          <SessionCleanupToggle
-            engine="Codex"
-            enabled={autoDeleteThreads}
-            disabled={savingCodex}
-            onChange={setAutoDeleteThreads}
-          />
+          <SessionCleanupToggle engine="Codex" enabled={autoDeleteThreads} disabled={savingCodex} onChange={setAutoDeleteThreads} />
           {autoDeleteThreads ? (
             <label>
               Failed/cancelled retention (days)
@@ -168,18 +147,15 @@ export function EngineSettingsTab({
           label="Mode"
           value={antigravity?.settings.has_api_key ? "Google AI API (Custom Key)" : "Native AgentAPI (Zero API Key)"}
         />
-        <StatusLine
-          label="Selected model"
-          value={antigravity?.settings.model || appConfig?.antigravity.model || "gemini-3.7-flash-high"}
-        />
+        <StatusLine label="Selected model" value={antigravity?.settings.model || appConfig?.antigravity.model || "gemini-3.7-flash-high"} />
         <StatusLine
           label="Sessions"
           value={
             agyAutoDeleteThreads !== antigravityCleanupSaved
               ? "Save to apply"
               : antigravityCleanupSaved
-              ? "Cleanup enabled"
-              : "Cleanup disabled"
+                ? "Cleanup enabled"
+                : "Cleanup disabled"
           }
         />
         <form className="codex-form" onSubmit={(event) => void saveAntigravity(event)}>

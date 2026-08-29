@@ -53,7 +53,8 @@ export function ArtifactPanel({
           {editing ? (
             <>
               <button className="quiet-button compact" onClick={() => setEditing(false)}>
-                <X size={14} />Cancel
+                <X size={14} />
+                Cancel
               </button>
               <button
                 className="primary-button compact"
@@ -69,7 +70,8 @@ export function ArtifactPanel({
           ) : (
             <>
               <button className="quiet-button compact" disabled={!ready || activeTask} onClick={() => setEditing(true)}>
-                <PencilSimple size={14} />Edit
+                <PencilSimple size={14} />
+                Edit
               </button>
               <button className="primary-button compact" disabled={disabled || activeTask} onClick={onGenerate}>
                 {activeTask ? <CircleNotch className="spin" size={14} /> : <Play size={14} />}

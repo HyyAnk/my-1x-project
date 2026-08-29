@@ -1,11 +1,35 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowClockwise, Broadcast, CaretDown, Check, CheckCircle, CircleNotch, FileText, Gear, House, Image, ListChecks, MoonStars, Palette, Plus, Queue, Smiley, SpeakerHigh, Sparkle, Sun, TerminalWindow, VideoCamera, Wallet, WarningCircle, X } from "@phosphor-icons/react";
+import {
+  ArrowClockwise,
+  Broadcast,
+  CaretDown,
+  Check,
+  CheckCircle,
+  CircleNotch,
+  FileText,
+  Gear,
+  House,
+  Image,
+  ListChecks,
+  MoonStars,
+  Palette,
+  Plus,
+  Queue,
+  Smiley,
+  SpeakerHigh,
+  Sparkle,
+  Sun,
+  TerminalWindow,
+  VideoCamera,
+  Wallet,
+  WarningCircle,
+  X,
+} from "@phosphor-icons/react";
 import type { Channel, CodexSettingsResponse, Task } from "@studio/shared";
 import type { GitInfo, Notice, Page, Theme } from "./types";
 import { formatTaskType } from "../lib/utils";
 import { useTranslation } from "../i18n";
 import { buildHash, getNavProps, openInNewTab } from "../hooks/useRouter";
-
 
 export function SidebarQueueWidget({
   tasks = [],
@@ -34,11 +58,7 @@ export function SidebarQueueWidget({
 
   return (
     <div className="sidebar-queue-widget" title={t("tasks.taskQueue")}>
-      <div
-        className="sidebar-queue-header"
-        {...getNavProps("#/tasks", onOpenTasks)}
-        style={{ cursor: "pointer" }}
-      >
+      <div className="sidebar-queue-header" {...getNavProps("#/tasks", onOpenTasks)} style={{ cursor: "pointer" }}>
         <div className="sidebar-queue-title">
           <Queue size={14} weight="duotone" />
           <span>{t("sidebar.queue")}</span>
@@ -63,9 +83,10 @@ export function SidebarQueueWidget({
       {queuedTasks.length > 0 ? (
         <div className="sidebar-queue-list">
           {queuedTasks.map((task, index) => {
-            const itemHash = task.channel_id && task.episode_id
-              ? buildHash({ page: "channels", channelId: task.channel_id, episodeId: task.episode_id })
-              : "#/tasks";
+            const itemHash =
+              task.channel_id && task.episode_id
+                ? buildHash({ page: "channels", channelId: task.channel_id, episodeId: task.episode_id })
+                : "#/tasks";
 
             return (
               <a
@@ -83,12 +104,8 @@ export function SidebarQueueWidget({
                 <div className="sidebar-queue-item-left">
                   <span className="sidebar-queue-pos">#{index + 1}</span>
                   <div className="sidebar-queue-info">
-                    <strong className="sidebar-queue-name">
-                      {formatEpisodeLabel(task.channel_id, task.episode_id)}
-                    </strong>
-                    <span className="sidebar-queue-type">
-                      {formatTaskType(task.task_type)}
-                    </span>
+                    <strong className="sidebar-queue-name">{formatEpisodeLabel(task.channel_id, task.episode_id)}</strong>
+                    <span className="sidebar-queue-type">{formatTaskType(task.task_type)}</span>
                   </div>
                 </div>
                 {onCancelTask ? (
@@ -110,20 +127,12 @@ export function SidebarQueueWidget({
           })}
         </div>
       ) : runningTasks.length > 0 ? (
-        <div
-          className="sidebar-queue-running-hint"
-          {...getNavProps("#/tasks", onOpenTasks)}
-          style={{ cursor: "pointer" }}
-        >
+        <div className="sidebar-queue-running-hint" {...getNavProps("#/tasks", onOpenTasks)} style={{ cursor: "pointer" }}>
           <span className="status-pulse-dot" />
           <span>{t("sidebar.runningAndQueued", { running: runningTasks.length, queued: 0 })}</span>
         </div>
       ) : (
-        <div
-          className="sidebar-queue-empty"
-          {...getNavProps("#/tasks", onOpenTasks)}
-          style={{ cursor: "pointer" }}
-        >
+        <div className="sidebar-queue-empty" {...getNavProps("#/tasks", onOpenTasks)} style={{ cursor: "pointer" }}>
           <span>{t("sidebar.queueEmpty")}</span>
         </div>
       )}
@@ -180,12 +189,7 @@ export function Sidebar({
         </div>
       </div>
       {onCreateChannel ? (
-        <button
-          type="button"
-          className="sidebar-create-btn"
-          onClick={onCreateChannel}
-          title={t("sidebar.newChannel")}
-        >
+        <button type="button" className="sidebar-create-btn" onClick={onCreateChannel} title={t("sidebar.newChannel")}>
           <Plus size={16} weight="bold" />
           <span>{t("sidebar.newChannel")}</span>
         </button>
@@ -200,9 +204,7 @@ export function Sidebar({
           >
             <Icon size={18} weight={page === itemPage ? "fill" : "regular"} />
             <span>{label}</span>
-            {itemPage === "tasks" && activeTaskCount > 0 ? (
-              <span className="nav-count">{activeTaskCount}</span>
-            ) : null}
+            {itemPage === "tasks" && activeTaskCount > 0 ? <span className="nav-count">{activeTaskCount}</span> : null}
           </a>
         ))}
         <a
@@ -257,7 +259,9 @@ export function Sidebar({
                 <span className="sidebar-balance-unit">VND</span>
               </>
             ) : balanceError ? (
-              <span className="sidebar-balance-error" title={balanceError}>{t("sidebar.noApiKey")}</span>
+              <span className="sidebar-balance-error" title={balanceError}>
+                {t("sidebar.noApiKey")}
+              </span>
             ) : (
               <span className="sidebar-balance-loading">{t("common.loading")}</span>
             )}
@@ -269,10 +273,7 @@ export function Sidebar({
           ) : null}
         </div>
 
-        <a
-          className={`nav-item ${page === "settings" ? "is-active" : ""}`}
-          {...getNavProps("#/settings", () => setPage("settings"))}
-        >
+        <a className={`nav-item ${page === "settings" ? "is-active" : ""}`} {...getNavProps("#/settings", () => setPage("settings"))}>
           <Gear size={18} weight={page === "settings" ? "fill" : "regular"} />
           <span>{t("sidebar.settings")}</span>
         </a>
@@ -330,7 +331,14 @@ export function Topbar({
 }) {
   const { t } = useTranslation();
   const reconnectable = engineStatus === "disconnected" || engineStatus === "unavailable";
-  const label = engineStatus === "connected" ? t("common.ready") : engineStatus === "connecting" ? t("common.connecting") : engineStatus === "disconnected" ? t("common.disconnected") : t("common.unavailable");
+  const label =
+    engineStatus === "connected"
+      ? t("common.ready")
+      : engineStatus === "connecting"
+        ? t("common.connecting")
+        : engineStatus === "disconnected"
+          ? t("common.disconnected")
+          : t("common.unavailable");
   const engineDefaultLabel = activeEngine === "antigravity" ? t("topbar.antigravityDefault") : t("topbar.codexDefault");
 
   return (
@@ -461,10 +469,29 @@ export function Topbar({
   );
 }
 
-
-export function PageTitle({ eyebrow, title, copy, action }: { eyebrow: string; title: string; copy?: string; action?: React.ReactNode }) { return <div className="page-title"><div><p className="eyebrow">{eyebrow}</p><h1>{title}</h1>{copy ? <p className="page-copy">{copy}</p> : null}</div>{action ? <div>{action}</div> : null}</div>; }
-export function StatusLine({ label, value }: { label: string; value: React.ReactNode }) { return <div className="status-line"><span>{label}</span><strong>{value}</strong></div>; }
-export function StatusBadge({ status }: { status: string }) { return <span className={`status-badge ${status.toLowerCase()}`}>{status.toLowerCase()}</span>; }
+export function PageTitle({ eyebrow, title, copy, action }: { eyebrow: string; title: string; copy?: string; action?: React.ReactNode }) {
+  return (
+    <div className="page-title">
+      <div>
+        <p className="eyebrow">{eyebrow}</p>
+        <h1>{title}</h1>
+        {copy ? <p className="page-copy">{copy}</p> : null}
+      </div>
+      {action ? <div>{action}</div> : null}
+    </div>
+  );
+}
+export function StatusLine({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="status-line">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+export function StatusBadge({ status }: { status: string }) {
+  return <span className={`status-badge ${status.toLowerCase()}`}>{status.toLowerCase()}</span>;
+}
 
 export type ProductionStageCategory = "research" | "script" | "visual" | "timeline" | "assembly" | "final";
 
@@ -515,9 +542,7 @@ export function getStageMetadata(stage: string): StageMetadata {
 export function StageBadge({ stage, size = "md" }: { stage: string; size?: "sm" | "md" }) {
   const meta = getStageMetadata(stage);
   return (
-    <span
-      className={`stage-badge stage-cat-${meta.category} stage-size-${size} ${meta.isReady ? "is-ready" : "is-progress"}`}
-    >
+    <span className={`stage-badge stage-cat-${meta.category} stage-size-${size} ${meta.isReady ? "is-ready" : "is-progress"}`}>
       <span className="stage-dot" />
       <span>{meta.label}</span>
     </span>
@@ -551,9 +576,7 @@ export function EpisodeAssetPills({
   const visualReady = Boolean(episode.visual_bible_path);
 
   // Narration status
-  const audioActive = tasks.some(
-    (t) => (t.task_type === "GENERATE_NARRATION" || t.task_type === "GENERATE_AUDIO") && isTaskActiveLocal(t)
-  );
+  const audioActive = tasks.some((t) => (t.task_type === "GENERATE_NARRATION" || t.task_type === "GENERATE_AUDIO") && isTaskActiveLocal(t));
   const audioReady = Boolean(episode.narration_asset_path);
   const audioSec = episode.narration_duration_seconds ? `${Math.round(episode.narration_duration_seconds)}s` : null;
 
@@ -566,13 +589,7 @@ export function EpisodeAssetPills({
       {/* Script */}
       <span
         className={`asset-pill ${scriptReady ? "is-ready" : scriptActive ? "is-running" : "is-empty"}`}
-        title={
-          scriptReady
-            ? "Narration Script: Ready"
-            : scriptActive
-            ? "Narration Script: Generating…"
-            : "Narration Script: Not created"
-        }
+        title={scriptReady ? "Narration Script: Ready" : scriptActive ? "Narration Script: Generating…" : "Narration Script: Not created"}
       >
         {scriptActive ? <CircleNotch size={11} className="spin" /> : <FileText size={11} />}
         <span>Script</span>
@@ -582,13 +599,7 @@ export function EpisodeAssetPills({
       {/* Visual */}
       <span
         className={`asset-pill ${visualReady ? "is-ready" : visualActive ? "is-running" : "is-empty"}`}
-        title={
-          visualReady
-            ? "Visual Identity: Ready"
-            : visualActive
-            ? "Visual Identity: Generating…"
-            : "Visual Identity: Not created"
-        }
+        title={visualReady ? "Visual Identity: Ready" : visualActive ? "Visual Identity: Generating…" : "Visual Identity: Not created"}
       >
         {visualActive ? <CircleNotch size={11} className="spin" /> : <Image size={11} />}
         <span>Visual</span>
@@ -602,8 +613,8 @@ export function EpisodeAssetPills({
           audioReady
             ? `Narration Audio: Ready (${audioSec ?? "Complete"})`
             : audioActive
-            ? "Narration Audio: Synthesizing…"
-            : "Narration Audio: Not generated"
+              ? "Narration Audio: Synthesizing…"
+              : "Narration Audio: Not generated"
         }
       >
         {audioActive ? <CircleNotch size={11} className="spin" /> : <SpeakerHigh size={11} />}
@@ -614,13 +625,7 @@ export function EpisodeAssetPills({
       {/* Video */}
       <span
         className={`asset-pill ${videoReady ? "is-final-ready" : videoActive ? "is-running" : "is-empty"}`}
-        title={
-          videoReady
-            ? "Master Video: Rendered & Ready"
-            : videoActive
-            ? "Master Video: Rendering…"
-            : "Master Video: Not rendered"
-        }
+        title={videoReady ? "Master Video: Rendered & Ready" : videoActive ? "Master Video: Rendering…" : "Master Video: Not rendered"}
       >
         {videoActive ? <CircleNotch size={11} className="spin" /> : <VideoCamera size={11} />}
         <span>Video</span>

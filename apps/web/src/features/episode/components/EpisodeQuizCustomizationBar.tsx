@@ -1,12 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  CaretDown,
-  Check,
-  Hash,
-  Palette,
-  SlidersHorizontal,
-  Timer,
-} from "@phosphor-icons/react";
+import { CaretDown, Check, Hash, Palette, SlidersHorizontal, Timer } from "@phosphor-icons/react";
 import {
   ALL_QUIZ_IMAGE_STYLES,
   ALL_THINKING_BAR_STYLES,
@@ -60,21 +53,18 @@ export function EpisodeQuizCustomizationBar({
   const [openDropdown, setOpenDropdown] = useState<"questions" | "visualStyle" | "thinkingBar" | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const channelStyles =
-    channel.selected_styles && channel.selected_styles.length > 0
-      ? channel.selected_styles
-      : ALL_QUIZ_IMAGE_STYLES;
+  const channelStyles = channel.selected_styles && channel.selected_styles.length > 0 ? channel.selected_styles : ALL_QUIZ_IMAGE_STYLES;
 
   const currentVisualStyle = episode.quiz_config?.visual_style ?? "mixed";
   const [hoveredStyle, setHoveredStyle] = useState<QuizImageStyle>(
-    currentVisualStyle === "mixed" ? (channelStyles[0] || "pixar_3d") : currentVisualStyle
+    currentVisualStyle === "mixed" ? channelStyles[0] || "pixar_3d" : currentVisualStyle,
   );
 
-  const currentThinkingBar = (episode.quiz_config?.thinking_bar_style as QuizThinkingBarStyle) || "auto";
-  const channelDefaultThinkingBar = (channel.default_thinking_bar_style as QuizThinkingBarStyle) || "star_slider";
+  const currentThinkingBar = episode.quiz_config?.thinking_bar_style || "auto";
+  const channelDefaultThinkingBar = channel.default_thinking_bar_style || "star_slider";
   const resolvedThinkingBar = currentThinkingBar === "auto" ? channelDefaultThinkingBar : currentThinkingBar;
   const [hoveredThinkingBar, setHoveredThinkingBar] = useState<Exclude<QuizThinkingBarStyle, "auto">>(
-    resolvedThinkingBar === "auto" ? "star_slider" : resolvedThinkingBar
+    resolvedThinkingBar === "auto" ? "star_slider" : resolvedThinkingBar,
   );
 
   const isControlsDisabled = Boolean(activeEpisodeTask) || busy !== null;
@@ -199,9 +189,7 @@ export function EpisodeQuizCustomizationBar({
             <div className="pill-btn-text">
               <span className="pill-label">Art Style</span>
               <strong className="pill-value">
-                {currentVisualStyle === "mixed"
-                  ? "🎲 Mixed (Random)"
-                  : QUIZ_IMAGE_STYLE_LABELS[currentVisualStyle] || currentVisualStyle}
+                {currentVisualStyle === "mixed" ? "🎲 Mixed (Random)" : QUIZ_IMAGE_STYLE_LABELS[currentVisualStyle] || currentVisualStyle}
               </strong>
             </div>
             <CaretDown size={12} className="pill-caret" />
@@ -244,9 +232,7 @@ export function EpisodeQuizCustomizationBar({
                       return (
                         <label
                           key={style}
-                          className={`style-checkbox-item ${isChecked ? "is-checked" : ""} ${
-                            isHovered ? "is-hovered" : ""
-                          }`}
+                          className={`style-checkbox-item ${isChecked ? "is-checked" : ""} ${isHovered ? "is-hovered" : ""}`}
                           onMouseEnter={() => setHoveredStyle(style)}
                           onClick={() => {
                             onSaveVisualStyle(style);
@@ -323,11 +309,7 @@ export function EpisodeQuizCustomizationBar({
                   <div className="popover-list">
                     <label
                       className={`style-checkbox-item ${currentThinkingBar === "auto" ? "is-checked" : ""}`}
-                      onMouseEnter={() =>
-                        setHoveredThinkingBar(
-                          resolvedThinkingBar === "auto" ? "star_slider" : resolvedThinkingBar
-                        )
-                      }
+                      onMouseEnter={() => setHoveredThinkingBar(resolvedThinkingBar === "auto" ? "star_slider" : resolvedThinkingBar)}
                       onClick={() => {
                         onSaveThinkingBarStyle("auto");
                         setOpenDropdown(null);
@@ -355,9 +337,7 @@ export function EpisodeQuizCustomizationBar({
                       return (
                         <label
                           key={style}
-                          className={`style-checkbox-item ${isChecked ? "is-checked" : ""} ${
-                            isHovered ? "is-hovered" : ""
-                          }`}
+                          className={`style-checkbox-item ${isChecked ? "is-checked" : ""} ${isHovered ? "is-hovered" : ""}`}
                           onMouseEnter={() => setHoveredThinkingBar(style)}
                           onClick={() => {
                             onSaveThinkingBarStyle(style);
@@ -401,9 +381,7 @@ export function EpisodeQuizCustomizationBar({
                         }}
                       >
                         <span style={{ fontSize: "28px" }}>{THINKING_BAR_ICONS[hoveredThinkingBar]}</span>
-                        <strong style={{ fontSize: "16px", color: "#FFF" }}>
-                          {THINKING_BAR_STYLE_LABELS[hoveredThinkingBar]}
-                        </strong>
+                        <strong style={{ fontSize: "16px", color: "#FFF" }}>{THINKING_BAR_STYLE_LABELS[hoveredThinkingBar]}</strong>
                       </div>
                       <p
                         style={{

@@ -94,7 +94,7 @@ const imageSettingsFilename = "image.local.json";
 async function readJsonFile(filePath: string): Promise<Record<string, unknown>> {
   try {
     const raw = JSON.parse(await readFile(filePath, "utf8")) as unknown;
-    return raw && typeof raw === "object" ? raw as Record<string, unknown> : {};
+    return raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
   } catch {
     return {};
   }
@@ -110,15 +110,25 @@ export async function loadConfig(rootDirectory: string): Promise<AppConfig> {
     const localAgy = await readJsonFile(localAgyConfigPath);
     const localAudio = await readJsonFile(path.join(rootDirectory, ".documentary-studio", audioSettingsFilename));
     const localImage = await readJsonFile(path.join(rootDirectory, ".documentary-studio", imageSettingsFilename));
-    const trackedCodex = raw.codex && typeof raw.codex === "object" ? raw.codex as Record<string, unknown> : {};
-    const localCodex = local.codex && typeof local.codex === "object" ? local.codex as Record<string, unknown> : {};
-    const trackedAgy = raw.antigravity && typeof raw.antigravity === "object" ? raw.antigravity as Record<string, unknown> : {};
-    const localAgySettings = localAgy.antigravity && typeof localAgy.antigravity === "object" ? localAgy.antigravity as Record<string, unknown> : {};
-    const trackedAudio = raw.audio_generation && typeof raw.audio_generation === "object" ? raw.audio_generation as Record<string, unknown> : {};
-    const localAudioSettings = localAudio.audio_generation && typeof localAudio.audio_generation === "object" ? localAudio.audio_generation as Record<string, unknown> : {};
-    const trackedImages = raw.image_generation && typeof raw.image_generation === "object" ? raw.image_generation as Record<string, unknown> : {};
-    const localImageSettings = localImage.image_generation && typeof localImage.image_generation === "object" ? localImage.image_generation as Record<string, unknown> : {};
-    const trackedHistory = raw.question_history && typeof raw.question_history === "object" ? raw.question_history as Record<string, unknown> : {};
+    const trackedCodex = raw.codex && typeof raw.codex === "object" ? (raw.codex as Record<string, unknown>) : {};
+    const localCodex = local.codex && typeof local.codex === "object" ? (local.codex as Record<string, unknown>) : {};
+    const trackedAgy = raw.antigravity && typeof raw.antigravity === "object" ? (raw.antigravity as Record<string, unknown>) : {};
+    const localAgySettings =
+      localAgy.antigravity && typeof localAgy.antigravity === "object" ? (localAgy.antigravity as Record<string, unknown>) : {};
+    const trackedAudio =
+      raw.audio_generation && typeof raw.audio_generation === "object" ? (raw.audio_generation as Record<string, unknown>) : {};
+    const localAudioSettings =
+      localAudio.audio_generation && typeof localAudio.audio_generation === "object"
+        ? (localAudio.audio_generation as Record<string, unknown>)
+        : {};
+    const trackedImages =
+      raw.image_generation && typeof raw.image_generation === "object" ? (raw.image_generation as Record<string, unknown>) : {};
+    const localImageSettings =
+      localImage.image_generation && typeof localImage.image_generation === "object"
+        ? (localImage.image_generation as Record<string, unknown>)
+        : {};
+    const trackedHistory =
+      raw.question_history && typeof raw.question_history === "object" ? (raw.question_history as Record<string, unknown>) : {};
     return AppConfigSchema.parse({
       ...DEFAULT_CONFIG,
       ...raw,
@@ -133,13 +143,20 @@ export async function loadConfig(rootDirectory: string): Promise<AppConfig> {
     await mkdir(path.dirname(configPath), { recursive: true });
     await writeFile(configPath, `${JSON.stringify(DEFAULT_CONFIG, null, 2)}\n`, "utf8");
     const local = await readJsonFile(localConfigPath);
-    const localCodex = local.codex && typeof local.codex === "object" ? local.codex as Record<string, unknown> : {};
+    const localCodex = local.codex && typeof local.codex === "object" ? (local.codex as Record<string, unknown>) : {};
     const localAgy = await readJsonFile(localAgyConfigPath);
-    const localAgySettings = localAgy.antigravity && typeof localAgy.antigravity === "object" ? localAgy.antigravity as Record<string, unknown> : {};
+    const localAgySettings =
+      localAgy.antigravity && typeof localAgy.antigravity === "object" ? (localAgy.antigravity as Record<string, unknown>) : {};
     const localAudio = await readJsonFile(path.join(rootDirectory, ".documentary-studio", audioSettingsFilename));
-    const localAudioSettings = localAudio.audio_generation && typeof localAudio.audio_generation === "object" ? localAudio.audio_generation as Record<string, unknown> : {};
+    const localAudioSettings =
+      localAudio.audio_generation && typeof localAudio.audio_generation === "object"
+        ? (localAudio.audio_generation as Record<string, unknown>)
+        : {};
     const localImage = await readJsonFile(path.join(rootDirectory, ".documentary-studio", imageSettingsFilename));
-    const localImageSettings = localImage.image_generation && typeof localImage.image_generation === "object" ? localImage.image_generation as Record<string, unknown> : {};
+    const localImageSettings =
+      localImage.image_generation && typeof localImage.image_generation === "object"
+        ? (localImage.image_generation as Record<string, unknown>)
+        : {};
     return AppConfigSchema.parse({
       ...DEFAULT_CONFIG,
       codex: { ...DEFAULT_CONFIG.codex, ...localCodex },
@@ -166,9 +183,18 @@ export async function saveCodexSettings(rootDirectory: string, input: CodexSetti
   const settingsDirectory = path.join(rootDirectory, ".documentary-studio");
   const localPath = path.join(settingsDirectory, codexSettingsFilename);
   const currentLocal = await readJsonFile(localPath);
-  const currentCodex = currentLocal.codex && typeof currentLocal.codex === "object" ? currentLocal.codex as Record<string, unknown> : {};
+  const currentCodex = currentLocal.codex && typeof currentLocal.codex === "object" ? (currentLocal.codex as Record<string, unknown>) : {};
   const nextCodex = { ...currentCodex } as Record<string, unknown>;
-  for (const key of ["transport", "model", "api_base_url", "api_key", "app_server_endpoint", "command", "auto_delete_threads", "failed_thread_retention_days"] as const) {
+  for (const key of [
+    "transport",
+    "model",
+    "api_base_url",
+    "api_key",
+    "app_server_endpoint",
+    "command",
+    "auto_delete_threads",
+    "failed_thread_retention_days",
+  ] as const) {
     const value = parsed[key];
     if (value !== undefined) nextCodex[key] = value;
   }
@@ -182,7 +208,8 @@ export async function saveAntigravitySettings(rootDirectory: string, input: Anti
   const settingsDirectory = path.join(rootDirectory, ".documentary-studio");
   const localPath = path.join(settingsDirectory, antigravitySettingsFilename);
   const currentLocal = await readJsonFile(localPath);
-  const currentAgy = currentLocal.antigravity && typeof currentLocal.antigravity === "object" ? currentLocal.antigravity as Record<string, unknown> : {};
+  const currentAgy =
+    currentLocal.antigravity && typeof currentLocal.antigravity === "object" ? (currentLocal.antigravity as Record<string, unknown>) : {};
   const nextAgy = { ...currentAgy } as Record<string, unknown>;
   for (const key of ["model", "api_base_url", "api_key", "command", "auto_delete_threads", "failed_thread_retention_days"] as const) {
     const value = parsed[key];
@@ -217,9 +244,20 @@ export async function saveAudioSettings(rootDirectory: string, input: AudioSetti
   const settingsDirectory = path.join(rootDirectory, ".documentary-studio");
   const localPath = path.join(settingsDirectory, audioSettingsFilename);
   const currentLocal = await readJsonFile(localPath);
-  const currentAudio = currentLocal.audio_generation && typeof currentLocal.audio_generation === "object" ? currentLocal.audio_generation as Record<string, unknown> : {};
+  const currentAudio =
+    currentLocal.audio_generation && typeof currentLocal.audio_generation === "object"
+      ? (currentLocal.audio_generation as Record<string, unknown>)
+      : {};
   const nextAudio = { ...currentAudio } as Record<string, unknown>;
-  for (const key of ["provider", "service_url", "exaggeration", "cfg_weight", "max_concurrent_tasks", "merge_gap_ms", "match_target_duration"] as const) {
+  for (const key of [
+    "provider",
+    "service_url",
+    "exaggeration",
+    "cfg_weight",
+    "max_concurrent_tasks",
+    "merge_gap_ms",
+    "match_target_duration",
+  ] as const) {
     const value = parsed[key];
     if (value !== undefined) nextAudio[key] = value;
   }
@@ -244,9 +282,21 @@ export async function saveImageSettings(rootDirectory: string, input: ImageSetti
   const settingsDirectory = path.join(rootDirectory, ".documentary-studio");
   const localPath = path.join(settingsDirectory, imageSettingsFilename);
   const currentLocal = await readJsonFile(localPath);
-  const currentImage = currentLocal.image_generation && typeof currentLocal.image_generation === "object" ? currentLocal.image_generation as Record<string, unknown> : {};
+  const currentImage =
+    currentLocal.image_generation && typeof currentLocal.image_generation === "object"
+      ? (currentLocal.image_generation as Record<string, unknown>)
+      : {};
   const nextImage = { ...currentImage } as Record<string, unknown>;
-  for (const key of ["enabled", "images_per_bundle", "provider", "base_url", "model", "api_key", "quality", "max_concurrent_tasks"] as const) {
+  for (const key of [
+    "enabled",
+    "images_per_bundle",
+    "provider",
+    "base_url",
+    "model",
+    "api_key",
+    "quality",
+    "max_concurrent_tasks",
+  ] as const) {
     const value = parsed[key];
     if (value !== undefined) nextImage[key] = value;
   }
@@ -268,5 +318,9 @@ export async function loadStorageRoot(rootDirectory: string): Promise<string | n
 export async function saveStorageRoot(rootDirectory: string, storageRoot: string): Promise<void> {
   const settingsDirectory = path.join(rootDirectory, ".documentary-studio");
   await mkdir(settingsDirectory, { recursive: true });
-  await writeFile(path.join(settingsDirectory, storageSettingsFilename), `${JSON.stringify({ storage_path: path.resolve(storageRoot) }, null, 2)}\n`, "utf8");
+  await writeFile(
+    path.join(settingsDirectory, storageSettingsFilename),
+    `${JSON.stringify({ storage_path: path.resolve(storageRoot) }, null, 2)}\n`,
+    "utf8",
+  );
 }

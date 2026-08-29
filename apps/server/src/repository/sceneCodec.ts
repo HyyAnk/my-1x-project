@@ -12,7 +12,11 @@ export function parseScenes(markdown: string, episodeId: string): Scene[] {
     const continuity = stripEditorialOverlayInstructions(notes.match(/- Continuity:[ \t]*(.*)/i)?.[1]?.trim() ?? "");
     const sequenceLine = notes.match(/- Sequence:[ \t]*(.*)/i)?.[1]?.trim() ?? "sequence-1 | Sequence 1";
     const [sequenceId, ...sequenceTitleParts] = sequenceLine.split("|").map((value) => value.trim());
-    const listValue = (label: string) => (notes.match(new RegExp(`- ${label}:[ \\t]*(.*)`, "i"))?.[1] ?? "").split(",").map((value) => value.trim()).filter(Boolean);
+    const listValue = (label: string) =>
+      (notes.match(new RegExp(`- ${label}:[ \\t]*(.*)`, "i"))?.[1] ?? "")
+        .split(",")
+        .map((value) => value.trim())
+        .filter(Boolean);
     const audioAssetPath = block.match(/<!--\s*Audio asset:\s*(.*?)\s*-->/i)?.[1]?.trim() || null;
     const audioGeneratedAt = block.match(/<!--\s*Audio generated at:\s*(.*?)\s*-->/i)?.[1]?.trim() || null;
     const audioDuration = block.match(/<!--\s*Audio duration:\s*([\d.]+)\s*-->/i)?.[1];
@@ -55,34 +59,41 @@ export function parseScenes(markdown: string, episodeId: string): Scene[] {
 
 export function serializeScenes(scenes: Scene[]): string {
   scenes = scenes.map((scene) => SceneSchema.parse(scene));
-  return scenes.map((scene) => `${[
-    `# Scene ${scene.scene_number}`,
-    `**Duration:** ${scene.duration_seconds} seconds`,
-    "## Dialogue",
-    scene.dialogue.trim(),
-    "## Video Prompt",
-    stripEditorialOverlayInstructions(scene.visual_prompt.trim()),
-    "## Notes",
-    `- Transition: ${scene.transition_note.trim()}`,
-    `- Continuity: ${stripEditorialOverlayInstructions(scene.continuity_note.trim())}`,
-    `- Sequence: ${scene.sequence_id.trim()} | ${scene.sequence_title.trim()}`,
-    `- Shot: ${scene.shot_id.trim() || `shot-${scene.scene_number}`}`,
-    `- Asset type: ${scene.asset_type}`,
-    `- Continuity bundle: ${scene.continuity_bundle_id.trim()}`,
-    `- Reference assets: ${scene.reference_asset_ids.join(", ")}`,
-    `- Source IDs: ${scene.source_ids.join(", ")}`,
-    `- Reconstruction: ${scene.reconstruction ? "yes" : "no"}`,
-    `- Sound: ${scene.sound_cue.trim()}`,
-    `- Overlay kind: ${scene.editorial_overlay.kind}`,
-    `- Overlay text: ${scene.editorial_overlay.text.replace(/\s+/g, " ").trim()}`,
-    `- Overlay motion: ${scene.editorial_overlay.motion}`,
-    `- Overlay placement: ${scene.editorial_overlay.placement}`,
-    `- Overlay duration: ${scene.editorial_overlay.duration_seconds ?? ""}`,
-    `- Overlay data: ${JSON.stringify(scene.editorial_overlay.data)}`,
-    `- Overlay sources: ${scene.editorial_overlay.source_ids.join(", ")}`,
-    `- Quiz data: ${JSON.stringify(scene.quiz)}`,
-    scene.audio_asset_path ? `<!-- Audio asset: ${scene.audio_asset_path} -->\n<!-- Audio generated at: ${scene.audio_generated_at ?? ""} -->\n<!-- Audio duration: ${scene.audio_duration_seconds ?? ""} -->` : "",
-  ].join("\n\n")}\n`).join("\n");
+  return scenes
+    .map(
+      (scene) =>
+        `${[
+          `# Scene ${scene.scene_number}`,
+          `**Duration:** ${scene.duration_seconds} seconds`,
+          "## Dialogue",
+          scene.dialogue.trim(),
+          "## Video Prompt",
+          stripEditorialOverlayInstructions(scene.visual_prompt.trim()),
+          "## Notes",
+          `- Transition: ${scene.transition_note.trim()}`,
+          `- Continuity: ${stripEditorialOverlayInstructions(scene.continuity_note.trim())}`,
+          `- Sequence: ${scene.sequence_id.trim()} | ${scene.sequence_title.trim()}`,
+          `- Shot: ${scene.shot_id.trim() || `shot-${scene.scene_number}`}`,
+          `- Asset type: ${scene.asset_type}`,
+          `- Continuity bundle: ${scene.continuity_bundle_id.trim()}`,
+          `- Reference assets: ${scene.reference_asset_ids.join(", ")}`,
+          `- Source IDs: ${scene.source_ids.join(", ")}`,
+          `- Reconstruction: ${scene.reconstruction ? "yes" : "no"}`,
+          `- Sound: ${scene.sound_cue.trim()}`,
+          `- Overlay kind: ${scene.editorial_overlay.kind}`,
+          `- Overlay text: ${scene.editorial_overlay.text.replace(/\s+/g, " ").trim()}`,
+          `- Overlay motion: ${scene.editorial_overlay.motion}`,
+          `- Overlay placement: ${scene.editorial_overlay.placement}`,
+          `- Overlay duration: ${scene.editorial_overlay.duration_seconds ?? ""}`,
+          `- Overlay data: ${JSON.stringify(scene.editorial_overlay.data)}`,
+          `- Overlay sources: ${scene.editorial_overlay.source_ids.join(", ")}`,
+          `- Quiz data: ${JSON.stringify(scene.quiz)}`,
+          scene.audio_asset_path
+            ? `<!-- Audio asset: ${scene.audio_asset_path} -->\n<!-- Audio generated at: ${scene.audio_generated_at ?? ""} -->\n<!-- Audio duration: ${scene.audio_duration_seconds ?? ""} -->`
+            : "",
+        ].join("\n\n")}\n`,
+    )
+    .join("\n");
 }
 
 export function serializeDialogue(scenes: Scene[]): string {
@@ -101,8 +112,15 @@ function parseOverlayData(value: string): Array<{ label: string; value: string |
     const parsed = JSON.parse(value) as unknown;
     if (!Array.isArray(parsed)) return [];
     return parsed
-      .filter((item): item is { label?: unknown; value?: unknown; unit?: unknown } => Boolean(item) && typeof item === "object" && !Array.isArray(item))
-      .map((item) => ({ label: String(item.label ?? ""), value: typeof item.value === "number" ? item.value : String(item.value ?? ""), unit: String(item.unit ?? "") }))
+      .filter(
+        (item): item is { label?: unknown; value?: unknown; unit?: unknown } =>
+          Boolean(item) && typeof item === "object" && !Array.isArray(item),
+      )
+      .map((item) => ({
+        label: String(item.label ?? ""),
+        value: typeof item.value === "number" ? item.value : String(item.value ?? ""),
+        unit: String(item.unit ?? ""),
+      }))
       .filter((item) => item.label && item.value !== "");
   } catch {
     return [];
@@ -111,5 +129,9 @@ function parseOverlayData(value: string): Array<{ label: string; value: string |
 
 function parseQuizData(value: string): Scene["quiz"] {
   if (!value.trim() || value.trim() === "null") return null;
-  try { return SceneSchema.shape.quiz.parse(JSON.parse(value)); } catch { return null; }
+  try {
+    return SceneSchema.shape.quiz.parse(JSON.parse(value));
+  } catch {
+    return null;
+  }
 }

@@ -13,7 +13,9 @@ export function isContentFilterError(error: unknown): boolean {
     return true;
   }
   const message = error instanceof Error ? error.message : String(error);
-  return /(?:rejected by (?:the )?content filter|content filter|safety filter|safety system|policy violation|prohibited content|inappropriate content|moderation filter|safety guidelines|trigger(?:ed)? (?:a |the )?safety)/i.test(message);
+  return /(?:rejected by (?:the )?content filter|content filter|safety filter|safety system|policy violation|prohibited content|inappropriate content|moderation filter|safety guidelines|trigger(?:ed)? (?:a |the )?safety)/i.test(
+    message,
+  );
 }
 
 /**
@@ -46,6 +48,21 @@ export function sanitizePromptRuleBased(prompt: string): string {
 }
 
 /**
+ * Extracts and composes a concise continuity anchor image prompt from a full markdown visual bible prompt.
+ */
+export function compactImagePrompt(prompt: string, aspectRatio?: string): string {
+  const bundle = prompt.match(/--- FILE:[^\n]*visual_bible\.md#[^\n]*\n([\s\S]*?)(?=\n--- FILE:|$)/i)?.[1]?.trim();
+  if (!bundle) return prompt;
+  const ratioLabel = aspectRatio ? ` ${aspectRatio}` : " 16:9";
+  return [
+    `Create one${ratioLabel} documentary continuity anchor image.`,
+    "Preserve every visual detail in this continuity bundle, including era, location, subjects, objects, palette, lighting, camera, action, atmosphere, and continuity:",
+    bundle,
+    "Do not add captions, charts, watermarks, labels, logos, or readable text.",
+  ].join("\n\n");
+}
+
+/**
  * Executes a single standalone prompt turn with an LLM client (Antigravity or Codex) and returns the text result.
  */
 export async function executeSinglePromptText(
@@ -55,7 +72,7 @@ export async function executeSinglePromptText(
     modelOverride?: string;
     signal?: AbortSignal;
     timeoutMs?: number;
-  } = {}
+  } = {},
 ): Promise<string> {
   const timeoutMs = options.timeoutMs ?? 60_000;
   await client.connect();
@@ -90,26 +107,29 @@ export async function executeSinglePromptText(
     };
 
     const onNotification = (event: { method: string; params: Record<string, unknown> }) => {
-      const eventThreadId = typeof event.params.threadId === "string"
-        ? event.params.threadId
-        : typeof (event.params.turn as { threadId?: unknown } | undefined)?.threadId === "string"
-        ? (event.params.turn as { threadId: string }).threadId
-        : null;
-      const eventTurnId = typeof event.params.turnId === "string"
-        ? event.params.turnId
-        : typeof (event.params.turn as { id?: unknown } | undefined)?.id === "string"
-        ? (event.params.turn as { id: string }).id
-        : null;
+      const eventThreadId =
+        typeof event.params.threadId === "string"
+          ? event.params.threadId
+          : typeof (event.params.turn as { threadId?: unknown } | undefined)?.threadId === "string"
+            ? (event.params.turn as { threadId: string }).threadId
+            : null;
+      const eventTurnId =
+        typeof event.params.turnId === "string"
+          ? event.params.turnId
+          : typeof (event.params.turn as { id?: unknown } | undefined)?.id === "string"
+            ? (event.params.turn as { id: string }).id
+            : null;
 
       if (eventThreadId && eventThreadId !== threadId) return;
       if (turnId && eventTurnId && eventTurnId !== turnId) return;
 
       if (event.method === "item/agentMessage/delta") {
-        const delta = typeof event.params.delta === "string"
-          ? event.params.delta
-          : event.params.delta && typeof event.params.delta === "object"
-          ? JSON.stringify(event.params.delta)
-          : "";
+        const delta =
+          typeof event.params.delta === "string"
+            ? event.params.delta
+            : event.params.delta && typeof event.params.delta === "object"
+              ? JSON.stringify(event.params.delta)
+              : "";
         output += delta;
       } else if (event.method === "turn/completed") {
         const turn = event.params.turn as { status?: string; error?: { message?: string } } | undefined;
@@ -138,7 +158,10 @@ export async function executeSinglePromptText(
 
     (client as unknown as EventEmitter).on("notification", onNotification);
 
-    const startTurnPromise = (client as any).startTurn(threadId, prompt, options.modelOverride);
+    const turnClient = client as unknown as {
+      startTurn(tId: string, p: string, m?: string): Promise<string>;
+    };
+    const startTurnPromise = turnClient.startTurn(threadId, prompt, options.modelOverride);
     Promise.resolve(startTurnPromise)
       .then((tId: string) => {
         turnId = tId;

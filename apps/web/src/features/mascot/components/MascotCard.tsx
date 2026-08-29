@@ -11,18 +11,11 @@ type MascotCardProps = {
   onDeleteRequest: (mascot: MascotProfile) => void;
 };
 
-export function MascotCard({
-  mascot,
-  channels,
-  onEdit,
-  onQuickAssign,
-  onDeleteRequest,
-}: MascotCardProps) {
+export function MascotCard({ mascot, channels, onEdit, onQuickAssign, onDeleteRequest }: MascotCardProps) {
   const { t } = useTranslation();
   const assignedCount = mascot.assigned_channel_ids?.length || 0;
-  const assignedNames = mascot.assigned_channel_ids
-    ?.map((cid) => channels.find((c) => c.channel_id === cid)?.display_name || cid)
-    .join(", ") || "";
+  const assignedNames =
+    mascot.assigned_channel_ids?.map((cid) => channels.find((c) => c.channel_id === cid)?.display_name || cid).join(", ") || "";
 
   return (
     <article className="mascot-card">
@@ -47,9 +40,7 @@ export function MascotCard({
         )}
 
         <div className="mascot-card-meta-top">
-          <span className="mascot-style-pill">
-            {QUIZ_IMAGE_STYLE_LABELS[mascot.visual_style] || mascot.visual_style}
-          </span>
+          <span className="mascot-style-pill">{QUIZ_IMAGE_STYLE_LABELS[mascot.visual_style] || mascot.visual_style}</span>
 
           <div className="mascot-card-quick-actions" onClick={(e) => e.stopPropagation()}>
             <a
@@ -90,19 +81,10 @@ export function MascotCard({
         </div>
 
         <div className="mascot-card-footer">
-          <button
-            type="button"
-            className="quiet-button compact"
-            onClick={() => onQuickAssign(mascot)}
-          >
+          <button type="button" className="quiet-button compact" onClick={() => onQuickAssign(mascot)}>
             <span>{t("mascots.quickAssignBtn")}</span>
           </button>
-          <button
-            type="button"
-            className="primary-button compact"
-            data-nav-href="#/mascots?tab=generator"
-            onClick={() => onEdit(mascot)}
-          >
+          <button type="button" className="primary-button compact" data-nav-href="#/mascots?tab=generator" onClick={() => onEdit(mascot)}>
             <span>{t("mascots.generatorBtn")}</span>
           </button>
         </div>

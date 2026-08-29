@@ -58,7 +58,14 @@ describe("script quality gates", () => {
   });
 
   it("counts quiz question headings through the 50-question ceiling", () => {
-    const script = ["# Quiz script", "<!-- HUMOR_POLICY: v1 -->", ...Array.from({ length: 50 }, (_, index) => `## Question ${index + 1} — Question ${index + 1}\nGuess now. The correct answer is ready.`)].join("\n\n");
+    const script = [
+      "# Quiz script",
+      "<!-- HUMOR_POLICY: v1 -->",
+      ...Array.from(
+        { length: 50 },
+        (_, index) => `## Question ${index + 1} — Question ${index + 1}\nGuess now. The correct answer is ready.`,
+      ),
+    ].join("\n\n");
     expect(() => validateQuizScript(script, 15)).not.toThrow();
     expect(() => validateQuizScript(script, 50)).not.toThrow();
   });
@@ -74,13 +81,47 @@ describe("script task output isolation and retry", () => {
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
 
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Script Quality", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topic = { topic_id: "script_quality_topic", channel_id: channel.channel_id, title: "The Internet Before Google", premise: "A test premise", why_it_fits: "Documentary test", hook: "A test hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false };
-    await repository.saveTopicRun(channel.channel_id, [topic, ...Array.from({ length: 4 }, (_, index) => ({ ...topic, topic_id: `script_quality_topic_${index + 2}`, title: `Other Topic ${index + 2}` }))]);
+    const channel = await repository.createChannel({
+      name: "Script Quality",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topic = {
+      topic_id: "script_quality_topic",
+      channel_id: channel.channel_id,
+      title: "The Internet Before Google",
+      premise: "A test premise",
+      why_it_fits: "Documentary test",
+      hook: "A test hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    };
+    await repository.saveTopicRun(channel.channel_id, [
+      topic,
+      ...Array.from({ length: 4 }, (_, index) => ({
+        ...topic,
+        topic_id: `script_quality_topic_${index + 2}`,
+        title: `Other Topic ${index + 2}`,
+      })),
+    ]);
     const episode = await repository.confirmTopic(channel.channel_id, topic.topic_id);
     await repository.updateEpisodeSettings(channel.channel_id, episode.episode_id, { target_duration_minutes: 5 }, 2.3);
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 https://example.com/1\nC02 https://example.com/2");
-    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "treatment.md", "# Documentary Treatment\n\n## Sequence 1\nTime budget and claim C01");
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "research.md",
+      "# Research Dossier\n\nC01 https://example.com/1\nC02 https://example.com/2",
+    );
+    await repository.saveEpisodeFile(
+      channel.channel_id,
+      episode.episode_id,
+      "treatment.md",
+      "# Documentary Treatment\n\n## Sequence 1\nTime budget and claim C01",
+    );
 
     const logger = new StudioLogger(root, true);
     await logger.init();
@@ -100,14 +141,21 @@ describe("script task output isolation and retry", () => {
 });
 
 function scriptWithWordCount(wordCount: number, title: string): string {
-  const anchors = "In 1956 C01 changed the plan. In 1960 C02 measured 25 percent. In 1964 C03 covered 30 miles. In 1971 C04 ended the program. In 1987 C05 changed standards. In 1997 C06 demonstrated the replacement.";
+  const anchors =
+    "In 1956 C01 changed the plan. In 1960 C02 measured 25 percent. In 1964 C03 covered 30 miles. In 1971 C04 ended the program. In 1987 C05 changed standards. In 1997 C06 demonstrated the replacement.";
   const anchorWords = anchors.match(/\S+/g) ?? [];
-  const words = anchorWords.concat(Array.from({ length: Math.max(0, wordCount - anchorWords.length) }, (_, index) => `evidence${index + 1}`)).slice(0, wordCount);
+  const words = anchorWords
+    .concat(Array.from({ length: Math.max(0, wordCount - anchorWords.length) }, (_, index) => `evidence${index + 1}`))
+    .slice(0, wordCount);
   return `# ${title}\n\n<!-- HUMOR_POLICY: v1 -->\n\n${words.join(" ")}\n\n<!-- AUDIO_CUE: chuckle -->`;
 }
 
 function quizScriptWithQuestions(questionCount: number, title: string): string {
-  const sections = Array.from({ length: questionCount }, (_, index) => `## Question ${index + 1} — Question ${index + 1}\nWhich planet is red?\n\nA. Mars\nB. Venus\nC. Jupiter\n\nGuess now!\n\nThe answer is A — Mars.\n\nMars is covered in iron oxide.`);
+  const sections = Array.from(
+    { length: questionCount },
+    (_, index) =>
+      `## Question ${index + 1} — Question ${index + 1}\nWhich planet is red?\n\nA. Mars\nB. Venus\nC. Jupiter\n\nGuess now!\n\nThe answer is A — Mars.\n\nMars is covered in iron oxide.`,
+  );
   return `# ${title}\n\n<!-- HUMOR_POLICY: v1 -->\n\n${sections.join("\n\n")}`;
 }
 
@@ -126,21 +174,34 @@ class ScriptCodex extends EventEmitter {
   async startTurn(threadId: string, prompt: string): Promise<string> {
     const turnId = `turn_${++this.turnNumber}`;
     this.prompts.push(prompt);
-    const output = this.turnNumber === 1
-      ? quizScriptWithQuestions(1, "The Internet Before Google")
-      : quizScriptWithQuestions(8, "The Internet Before Google");
+    const output =
+      this.turnNumber === 1
+        ? quizScriptWithQuestions(1, "The Internet Before Google")
+        : quizScriptWithQuestions(8, "The Internet Before Google");
     setTimeout(() => {
-      this.emit("notification", { method: "item/userMessage", params: { threadId, turnId, delta: "reasoning payload " + "context ".repeat(100) } });
-      this.emit("notification", { method: "item/reasoning", params: { threadId, turnId, delta: "tool payload " + "context ".repeat(100) } });
+      this.emit("notification", {
+        method: "item/userMessage",
+        params: { threadId, turnId, delta: "reasoning payload " + "context ".repeat(100) },
+      });
+      this.emit("notification", {
+        method: "item/reasoning",
+        params: { threadId, turnId, delta: "tool payload " + "context ".repeat(100) },
+      });
       this.emit("notification", { method: "item/agentMessage/delta", params: { threadId, turnId, delta: output } });
       this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, status: "completed" } } });
     }, 5);
     return turnId;
   }
 
-  async interruptTurn(): Promise<void> { /* deterministic fake */ }
-  async deleteThread(): Promise<boolean> { return true; }
-  respond(): void { /* deterministic fake */ }
+  async interruptTurn(): Promise<void> {
+    /* deterministic fake */
+  }
+  async deleteThread(): Promise<boolean> {
+    return true;
+  }
+  respond(): void {
+    /* deterministic fake */
+  }
 }
 
 async function waitFor(predicate: () => boolean): Promise<void> {

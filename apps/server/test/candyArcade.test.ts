@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AssetConsistencyGroupSchema, QuizV2Schema } from "@studio/shared";
+import { AssetConsistencyGroupSchema, QuizV2Schema, type MascotProfile } from "@studio/shared";
 import { compileQuizAssetPrompt } from "../src/quiz/assets/promptCompiler.js";
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
@@ -383,12 +383,18 @@ describe("Candy Arcade visual template", () => {
   it("renders Game SFX onto track 3, avoids Mascot-specific SFX, and prevents audio overlaps on the same track", () => {
     const director = createDefaultDirectorPlan(quiz);
     const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
-    const dummyMascot = {
+    const dummyMascot: MascotProfile = {
       id: "mascot-1",
       name: "Buddy",
       description: "Friendly mascot",
-      channel_id: "ch-1",
+      visual_style: "pixar_3d",
+      master_prompt: "",
+      master_image_url: null,
+      color_theme: "#06b6d4",
+      assigned_channel_ids: ["ch-1"],
       actions: {},
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
     const bundle = buildCandyArcadeCompositionBundle({
       quiz,
@@ -397,7 +403,7 @@ describe("Candy Arcade visual template", () => {
       theme: "candy_arcade",
       audioPath: "./narration.wav",
       narrationDurationSeconds: timeline.duration_seconds,
-      mascot: dummyMascot as any,
+      mascot: dummyMascot,
       mascotConfig: { mascot_id: "mascot-1", position: "bottom_left", scale: 1 },
     });
 

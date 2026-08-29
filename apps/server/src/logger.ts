@@ -81,9 +81,7 @@ export class StudioLogger {
     const timestamp = new Date().toISOString();
     const contextParts = [
       context.workerId ? `[T:${context.workerId}]` : "",
-      context.profileId || context.profileName
-        ? `[P:${context.profileName ?? context.profileId}]`
-        : "",
+      context.profileId || context.profileName ? `[P:${context.profileName ?? context.profileId}]` : "",
       context.wallet ? `[W:${shortWallet(context.wallet)}]` : "",
       context.step ? `[STEP:${context.step}]` : "",
     ].filter(Boolean);

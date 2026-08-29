@@ -1,13 +1,6 @@
 import { HardDrives, SpeakerHigh, TerminalWindow, VideoCamera } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import type {
-  AppConfig,
-  Channel,
-  CodexSettingsResponse,
-  AntigravitySettingsResponse,
-  StorageInfo,
-  VoiceProfile,
-} from "@studio/shared";
+import type { AppConfig, Channel, CodexSettingsResponse, AntigravitySettingsResponse, StorageInfo, VoiceProfile } from "@studio/shared";
 import { api } from "../api";
 import { PageTitle } from "./AppChrome";
 import type { Notice } from "./types";
@@ -69,9 +62,7 @@ export function SettingsView({
 }: SettingsViewProps) {
   const { t } = useTranslation();
   const initialTab: SettingsTab =
-    activeTab === "engines" || activeTab === "voice" || activeTab === "media" || activeTab === "system"
-      ? activeTab
-      : "engines";
+    activeTab === "engines" || activeTab === "voice" || activeTab === "media" || activeTab === "system" ? activeTab : "engines";
   const [currentTab, setCurrentTab] = useState<SettingsTab>(initialTab);
   const [voices, setVoices] = useState<VoiceProfile[]>([]);
 
@@ -173,12 +164,7 @@ export function SettingsView({
 
       {/* Tab 3: Media & Generation */}
       {currentTab === "media" ? (
-        <MediaSettingsTab
-          appConfig={appConfig}
-          onVideoSaved={onVideoSaved}
-          onImageSaved={onImageSaved}
-          onNotice={onNotice}
-        />
+        <MediaSettingsTab appConfig={appConfig} onVideoSaved={onVideoSaved} onImageSaved={onImageSaved} onNotice={onNotice} />
       ) : null}
 
       {/* Tab 4: Storage & System */}

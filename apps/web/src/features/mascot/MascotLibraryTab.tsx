@@ -16,14 +16,7 @@ type MascotLibraryTabProps = {
   libraryState: ReturnType<typeof useMascotLibrary>;
 };
 
-export function MascotLibraryTab({
-  channels,
-  onNotice,
-  onRefreshChannels,
-  onStartNew,
-  onEditMascot,
-  libraryState,
-}: MascotLibraryTabProps) {
+export function MascotLibraryTab({ channels, onNotice, onRefreshChannels, onStartNew, onEditMascot, libraryState }: MascotLibraryTabProps) {
   const { t } = useTranslation();
   const {
     mascots,
@@ -125,9 +118,7 @@ export function MascotLibraryTab({
                 <X size={18} />
               </button>
             </div>
-            <p className="modal-copy">
-              {t("mascots.deleteWarning", { name: deleteTarget.name })}
-            </p>
+            <p className="modal-copy">{t("mascots.deleteWarning", { name: deleteTarget.name })}</p>
             <div className="modal-actions">
               <button type="button" className="quiet-button" onClick={() => setDeleteTarget(null)} disabled={deleting}>
                 {t("common.cancel")}

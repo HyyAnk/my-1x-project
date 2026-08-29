@@ -8,7 +8,10 @@ export function normalizeQuizBeatMetadata(beats: Beat[]): Beat[] {
     if (!quiz || ["intro", "outro"].includes(quiz.phase) || !quiz.question_number) continue;
     const canonicalAnswer = canonicalizeVisibleQuizAnswer(quiz.choices, quiz.answer);
     if (!quiz.question.trim() || quiz.choices.length < 2 || !canonicalAnswer) continue;
-    if (!canonicalByQuestion.has(quiz.question_number) || (!canonicalByQuestion.get(quiz.question_number)!.image_prompt.trim() && quiz.image_prompt.trim())) {
+    if (
+      !canonicalByQuestion.has(quiz.question_number) ||
+      (!canonicalByQuestion.get(quiz.question_number)!.image_prompt.trim() && quiz.image_prompt.trim())
+    ) {
       canonicalByQuestion.set(quiz.question_number, {
         ...quiz,
         choices: quiz.choices.map(stripQuizChoiceLabel),
@@ -19,19 +22,19 @@ export function normalizeQuizBeatMetadata(beats: Beat[]): Beat[] {
 
   return beats.map((beat) => {
     const quiz = beat.quiz;
-    const resolvedSourceIds = beat.source_ids.length > 0
-      ? beat.source_ids
-      : quiz?.question_number
-      ? [`C${String(quiz.question_number).padStart(2, "0")}`]
-      : beat.continuity_bundle_id && /^cb-(\d+)$/i.test(beat.continuity_bundle_id)
-      ? [`C${String(Number(beat.continuity_bundle_id.match(/^cb-(\d+)$/i)![1])).padStart(2, "0")}`]
-      : beat.sequence_id && /^sequence-(\d+)$/i.test(beat.sequence_id)
-      ? [`C${String(Number(beat.sequence_id.match(/^sequence-(\d+)$/i)![1])).padStart(2, "0")}`]
-      : [];
+    const resolvedSourceIds =
+      beat.source_ids.length > 0
+        ? beat.source_ids
+        : quiz?.question_number
+          ? [`C${String(quiz.question_number).padStart(2, "0")}`]
+          : beat.continuity_bundle_id && /^cb-(\d+)$/i.test(beat.continuity_bundle_id)
+            ? [`C${String(Number(beat.continuity_bundle_id.match(/^cb-(\d+)$/i)![1])).padStart(2, "0")}`]
+            : beat.sequence_id && /^sequence-(\d+)$/i.test(beat.sequence_id)
+              ? [`C${String(Number(beat.sequence_id.match(/^sequence-(\d+)$/i)![1])).padStart(2, "0")}`]
+              : [];
 
-    const beatWithSources = resolvedSourceIds.length > 0 && beat.source_ids.length === 0
-      ? { ...beat, source_ids: resolvedSourceIds }
-      : beat;
+    const beatWithSources =
+      resolvedSourceIds.length > 0 && beat.source_ids.length === 0 ? { ...beat, source_ids: resolvedSourceIds } : beat;
 
     if (!quiz || ["intro", "outro"].includes(quiz.phase) || !quiz.question_number) return beatWithSources;
     const canonical = canonicalByQuestion.get(quiz.question_number);

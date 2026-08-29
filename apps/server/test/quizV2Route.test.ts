@@ -175,7 +175,7 @@ describe("Quiz V2 route workflow", () => {
       });
       const director = createDefaultDirectorPlan(quiz);
       const assetPlan = planQuizAssets(quiz, director);
-      const asset = assetPlan.assets[0]!;
+      const asset = assetPlan.assets[0];
       const fingerprint = assetFingerprint(asset);
       const assetPath = await app.repository.writeQuizImageAsset(
         channel.channel_id,

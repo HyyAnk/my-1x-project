@@ -42,7 +42,7 @@ describe("Thinking Bar Element Suite", () => {
   it("registers all defined styles in the registry", () => {
     for (const style of ALL_THINKING_BAR_STYLES) {
       if (style === "auto") continue;
-      const variant = getThinkingBarVariant(style as Exclude<QuizThinkingBarStyle, "auto">);
+      const variant = getThinkingBarVariant(style);
       expect(variant).toBeDefined();
       expect(variant.id).toBe(style);
       expect(variant.displayName).toBeTruthy();
@@ -76,7 +76,7 @@ describe("Thinking Bar Element Suite", () => {
 
     for (const style of ALL_THINKING_BAR_STYLES) {
       if (style === "auto") continue;
-      const variant = THINKING_BAR_VARIANTS[style as Exclude<QuizThinkingBarStyle, "auto">];
+      const variant = THINKING_BAR_VARIANTS[style];
       const html = variant.renderHtml(input);
 
       expect(html).toContain('class="thinking-bar');
@@ -118,7 +118,7 @@ describe("Thinking Bar Element Suite", () => {
 
     for (const style of stylesToTest) {
       const director = createDefaultDirectorPlan(sampleQuiz);
-      director.beats[0]!.thinking_bar_style = style;
+      director.beats[0].thinking_bar_style = style;
       const timeline = compileQuizTimeline({ quiz: sampleQuiz, director, voicePlan: buildQuizVoicePlan(sampleQuiz) });
       const bundle = buildCandyArcadeCompositionBundle({
         quiz: sampleQuiz,

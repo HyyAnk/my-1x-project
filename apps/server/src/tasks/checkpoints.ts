@@ -17,7 +17,13 @@ export type RenderCheckpoint = {
 export async function readNarrationCheckpoint(filePath: string): Promise<NarrationCheckpoint | null> {
   try {
     const parsed = JSON.parse(await readFile(filePath, "utf8")) as Partial<NarrationCheckpoint>;
-    if (parsed.schema_version !== 1 || typeof parsed.script_modified_at !== "string" || !parsed.segments || typeof parsed.segments !== "object") return null;
+    if (
+      parsed.schema_version !== 1 ||
+      typeof parsed.script_modified_at !== "string" ||
+      !parsed.segments ||
+      typeof parsed.segments !== "object"
+    )
+      return null;
     return parsed as NarrationCheckpoint;
   } catch {
     return null;

@@ -17,11 +17,7 @@ export interface AtomicWriteOptions {
  * antivirus scanners, indexers, or momentarily open file handles by retrying
  * with exponential backoff and falling back to copy+unlink if necessary.
  */
-export async function atomicRenameWithRetry(
-  temporaryPath: string,
-  targetPath: string,
-  options: AtomicWriteOptions = {},
-): Promise<void> {
+export async function atomicRenameWithRetry(temporaryPath: string, targetPath: string, options: AtomicWriteOptions = {}): Promise<void> {
   const maxRetries = options.maxRetries ?? 10;
   const initialDelayMs = options.initialDelayMs ?? 50;
   const maxDelayMs = options.maxDelayMs ?? 1000;
@@ -39,11 +35,7 @@ export async function atomicRenameWithRetry(
     } catch (err: unknown) {
       const error = err as NodeJS.ErrnoException;
       const isTransientWindowsLock =
-        error &&
-        (error.code === "EPERM" ||
-          error.code === "EBUSY" ||
-          error.code === "EACCES" ||
-          error.code === "EEXIST");
+        error && (error.code === "EPERM" || error.code === "EBUSY" || error.code === "EACCES" || error.code === "EEXIST");
 
       if (isTransientWindowsLock && attempt < maxRetries) {
         await new Promise((resolve) => setTimeout(resolve, delay));
@@ -72,11 +64,7 @@ export async function atomicRenameWithRetry(
 /**
  * Writes a text file atomically with retry for Windows locking resilience.
  */
-export async function writeTextAtomic(
-  targetPath: string,
-  content: string,
-  options?: AtomicWriteOptions,
-): Promise<void> {
+export async function writeTextAtomic(targetPath: string, content: string, options?: AtomicWriteOptions): Promise<void> {
   await mkdir(path.dirname(targetPath), { recursive: true });
   const temporary = `${targetPath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
   await writeFile(temporary, content, "utf8");
@@ -86,11 +74,7 @@ export async function writeTextAtomic(
 /**
  * Writes a binary file atomically with retry for Windows locking resilience.
  */
-export async function writeBinaryAtomic(
-  targetPath: string,
-  content: Uint8Array,
-  options?: AtomicWriteOptions,
-): Promise<void> {
+export async function writeBinaryAtomic(targetPath: string, content: Uint8Array, options?: AtomicWriteOptions): Promise<void> {
   await mkdir(path.dirname(targetPath), { recursive: true });
   const temporary = `${targetPath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
   await writeFile(temporary, content);
@@ -100,10 +84,6 @@ export async function writeBinaryAtomic(
 /**
  * Writes a JSON file atomically with indentation and retry resilience.
  */
-export async function writeJsonAtomic(
-  targetPath: string,
-  value: unknown,
-  options?: AtomicWriteOptions,
-): Promise<void> {
+export async function writeJsonAtomic(targetPath: string, value: unknown, options?: AtomicWriteOptions): Promise<void> {
   await writeTextAtomic(targetPath, `${JSON.stringify(value, null, 2)}\n`, options);
 }

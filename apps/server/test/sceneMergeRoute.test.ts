@@ -22,11 +22,28 @@ describe("scene merge route", () => {
         scene(episodeId, 3, 1, "Third line", null),
       ]);
 
-      const response = await app.server.inject({ method: "POST", url: `/api/channels/${channel.channel_id}/episodes/${episodeId}/scenes/1/merge-next`, payload: {} });
+      const response = await app.server.inject({
+        method: "POST",
+        url: `/api/channels/${channel.channel_id}/episodes/${episodeId}/scenes/1/merge-next`,
+        payload: {},
+      });
       expect(response.statusCode).toBe(200);
-      const body = response.json() as { scenes: Array<{ scene_number: number; duration_seconds: number; dialogue: string; visual_prompt: string; audio_asset_path: string | null }> };
+      const body = response.json<{
+        scenes: Array<{
+          scene_number: number;
+          duration_seconds: number;
+          dialogue: string;
+          visual_prompt: string;
+          audio_asset_path: string | null;
+        }>;
+      }>();
       expect(body.scenes).toHaveLength(2);
-      expect(body.scenes[0]).toMatchObject({ scene_number: 1, duration_seconds: 5, dialogue: "First line Second line", audio_asset_path: null });
+      expect(body.scenes[0]).toMatchObject({
+        scene_number: 1,
+        duration_seconds: 5,
+        dialogue: "First line Second line",
+        audio_asset_path: null,
+      });
       expect(body.scenes[0].visual_prompt).toContain("5.0s total");
       expect(body.scenes[0].visual_prompt).toContain("3.0s HARD CUT");
       expect(body.scenes[1].scene_number).toBe(2);
@@ -40,8 +57,15 @@ describe("scene merge route", () => {
     const app = await buildApp(root);
     try {
       const { channel, episodeId } = await createEpisode(app.repository);
-      await app.repository.saveScenes(channel.channel_id, episodeId, [scene(episodeId, 1, 6, "First line", null), scene(episodeId, 2, 3, "Second line", null)]);
-      const response = await app.server.inject({ method: "POST", url: `/api/channels/${channel.channel_id}/episodes/${episodeId}/scenes/1/merge-next`, payload: {} });
+      await app.repository.saveScenes(channel.channel_id, episodeId, [
+        scene(episodeId, 1, 6, "First line", null),
+        scene(episodeId, 2, 3, "Second line", null),
+      ]);
+      const response = await app.server.inject({
+        method: "POST",
+        url: `/api/channels/${channel.channel_id}/episodes/${episodeId}/scenes/1/merge-next`,
+        payload: {},
+      });
       expect(response.statusCode).toBe(409);
       expect(response.json()).toEqual({ error: "Merged duration would exceed the 8s scene limit." });
     } finally {
@@ -60,8 +84,25 @@ async function createTestRoot(): Promise<string> {
 }
 
 async function createEpisode(repository: Awaited<ReturnType<typeof buildApp>>["repository"]) {
-  const channel = await repository.createChannel({ name: "Merge Channel", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-  const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `merge_topic_${index}`, channel_id: channel.channel_id, title: `Merge Topic ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false }));
+  const channel = await repository.createChannel({
+    name: "Merge Channel",
+    description: "",
+    target_audience: "",
+    language: "English",
+    market: "",
+    dna_mode: "example",
+  });
+  const topics = Array.from({ length: 5 }, (_, index) => ({
+    topic_id: `merge_topic_${index}`,
+    channel_id: channel.channel_id,
+    title: `Merge Topic ${index}`,
+    premise: "Premise",
+    why_it_fits: "Fits",
+    hook: "Hook",
+    estimated_potential: "High",
+    generated_at: new Date().toISOString(),
+    selected: false,
+  }));
   await repository.saveTopicRun(channel.channel_id, topics);
   const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
   return { channel, episodeId: episode.episode_id };

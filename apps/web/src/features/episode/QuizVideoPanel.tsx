@@ -33,7 +33,9 @@ export function QuizVideoPanel({
   onOpenVideoFolder,
 }: QuizVideoPanelProps) {
   const videoTask = latestTask(episodeTasks, ["GENERATE_VIDEO"]);
-  const showProgress = videoTask && (isTaskActive(videoTask) || videoTask.status === "FAILED" || (!episode.video_asset_path && videoTask.status !== "COMPLETED"));
+  const showProgress =
+    videoTask &&
+    (isTaskActive(videoTask) || videoTask.status === "FAILED" || (!episode.video_asset_path && videoTask.status !== "COMPLETED"));
 
   return (
     <section className="panel quiz-video-panel">
@@ -47,11 +49,7 @@ export function QuizVideoPanel({
             disabled={!readiness.narration || !readiness.scenes || Boolean(activeEpisodeTask)}
             onClick={() => onCreateTask("GENERATE_VIDEO")}
           >
-            {videoTask && isTaskActive(videoTask) ? (
-              <CircleNotch className="spin" size={15} />
-            ) : (
-              <FilmSlate size={15} />
-            )}
+            {videoTask && isTaskActive(videoTask) ? <CircleNotch className="spin" size={15} /> : <FilmSlate size={15} />}
             <span>{readiness.video ? "Render again" : "Render video"}</span>
           </button>
         ) : null}
@@ -78,19 +76,11 @@ export function QuizVideoPanel({
             <strong>{episode.topic?.title || "Video"}</strong>
             <span>{formatDuration(episode.video_duration_seconds ?? 0)}</span>
             <div className="video-result-actions">
-              <a
-                className="quiet-button compact"
-                href={api.videoUrl(channel.channel_id, episodeId)}
-                download={`${episode.slug}.mp4`}
-              >
+              <a className="quiet-button compact" href={api.videoUrl(channel.channel_id, episodeId)} download={`${episode.slug}.mp4`}>
                 <DownloadSimple size={15} />
                 <span>Download MP4</span>
               </a>
-              <button
-                className="quiet-button compact"
-                disabled={busy === "video-folder"}
-                onClick={onOpenVideoFolder}
-              >
+              <button className="quiet-button compact" disabled={busy === "video-folder"} onClick={onOpenVideoFolder}>
                 {busy === "video-folder" ? <CircleNotch className="spin" size={15} /> : <FolderOpen size={15} />}
                 <span>{busy === "video-folder" ? "Opening…" : "Open folder"}</span>
               </button>

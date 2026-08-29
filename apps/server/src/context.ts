@@ -16,6 +16,7 @@ import { calibratedScriptTargetWords, scriptWordBounds } from "./production.js";
 import { continuityBundleId } from "./visualBundles.js";
 import { extractArtifactSectionNumbers, parseArtifactSectionNumber, type ArtifactSectionKind } from "./artifactSections.js";
 import { QUIZ_STYLE_CONTRACTS } from "./quiz/assets/promptCompiler.js";
+import { isPlaceholderArtifact } from "./tasks/validators.js";
 
 type ContextFile = { path: string; reason: string; content: string };
 
@@ -438,10 +439,10 @@ function selectMarkdownSection(
   const lines = markdown.split(/\r?\n/);
   const starts = lines.map((line, index) => (headingPattern.test(line) ? index : -1)).filter((index) => index >= 0);
   const numberedStarts = kind
-    ? starts.filter((index) => parseArtifactSectionNumber(lines[index]!.replace(/^##\s+/, ""), kind) !== null)
+    ? starts.filter((index) => parseArtifactSectionNumber(lines[index].replace(/^##\s+/, ""), kind) !== null)
     : [];
   const explicitStart = kind
-    ? numberedStarts.find((index) => parseArtifactSectionNumber(lines[index]!.replace(/^##\s+/, ""), kind) === sectionNumber)
+    ? numberedStarts.find((index) => parseArtifactSectionNumber(lines[index].replace(/^##\s+/, ""), kind) === sectionNumber)
     : undefined;
   const start = explicitStart ?? (kind && numberedStarts.length > 0 ? undefined : starts[sectionNumber - 1]);
   if (start === undefined) throw new Error(`Sequence ${sectionNumber} was not found in an upstream artifact`);
@@ -516,9 +517,4 @@ function selectResearchForSequence(researchMarkdown: string, sequenceNumber: num
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function isPlaceholderArtifact(content: string): boolean {
-  const value = content.trim();
-  return !value || /(?:has not started|generation has not started|breakdown has not started)/i.test(value);
 }

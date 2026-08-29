@@ -34,4 +34,3 @@ export function getQuestionBoxesCss(): string {
     .filter(Boolean)
     .join("\n");
 }
-

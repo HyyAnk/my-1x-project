@@ -14,6 +14,7 @@ import {
   QuizV2Schema,
   SceneSchema,
   quizChoiceCountForFormat,
+  MAX_DEDUP_HISTORY_QUESTIONS,
 } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../repository.js";
 import { planQuizAssets } from "../assets/assetPlanner.js";
@@ -292,7 +293,7 @@ export async function remixQuizQuestions(
     history.length > 0
       ? "\nRECENT PAST HISTORY QUESTIONS TO AVOID (DO NOT DUPLICATE):\n" +
         history
-          .slice(0, 15)
+          .slice(0, MAX_DEDUP_HISTORY_QUESTIONS)
           .map((h, idx) => `${idx + 1}. "${h.question_text}" -> Answer: "${h.correct_answer}"`)
           .join("\n")
       : "";

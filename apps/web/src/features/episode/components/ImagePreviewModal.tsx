@@ -34,7 +34,9 @@ export function ImagePreviewModal({ image, onClose }: { image: PreviewImageData;
         <div className="image-preview-footer">
           <p className="image-preview-prompt">{image.prompt}</p>
           <div className="image-preview-meta">
-            {typeof image.priceVnd === "number" ? <span className="cost-badge">💰 {image.priceVnd.toLocaleString("en-US")} VND</span> : null}
+            {typeof image.priceVnd === "number" ? (
+              <span className="cost-badge">💰 {image.priceVnd.toLocaleString("en-US")} VND</span>
+            ) : null}
             {image.aspectRatio ? <span className="aspect-badge">{image.aspectRatio}</span> : null}
             {image.model ? <span className="cost-model">{image.model}</span> : null}
           </div>

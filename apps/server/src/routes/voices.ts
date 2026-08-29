@@ -18,7 +18,9 @@ export function registerVoicesRoutes(deps: VoicesRouteDeps): FastifyPluginCallba
     server.get("/api/voices", async () => ({ voices: await repository.listVoices() }));
     server.get("/api/voices/:voiceId/sample", async (request, reply) => {
       const file = await repository.getVoiceSampleFile((request.params as { voiceId: string }).voiceId);
-      return reply.headers({ "content-type": "audio/wav", "content-length": file.size, "cache-control": "no-store" }).send(createReadStream(file.absolutePath));
+      return reply
+        .headers({ "content-type": "audio/wav", "content-length": file.size, "cache-control": "no-store" })
+        .send(createReadStream(file.absolutePath));
     });
     server.post("/api/voices", async (request) => {
       const input = CreateVoiceInputSchema.parse(request.body);

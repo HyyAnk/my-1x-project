@@ -161,7 +161,7 @@ describe("Quiz V2 repository artifacts", () => {
 
     const channel = await repository.getChannel(channelId);
     const topics = await repository.listTopics(channelId);
-    const legacyEpisode = await repository.confirmTopic(channelId, topics[1]!.topic_id);
+    const legacyEpisode = await repository.confirmTopic(channelId, topics[1].topic_id);
     const legacyVideo = await repository.writeVideoArtifact(channelId, legacyEpisode.episode_id, new Uint8Array([4, 5, 6]));
     const legacyManifest = await repository.writeRenderManifest(channelId, legacyEpisode.episode_id, '{"quiz_engine_version":1}');
     await repository.saveVideoMetadata(channelId, legacyEpisode.episode_id, legacyVideo, 10, legacyManifest);

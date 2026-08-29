@@ -25,12 +25,16 @@ describe("Dynamic Model Fetching (Dual-Engine)", () => {
     const codexHome = path.join(temporaryRoot, "codex-home");
     await mkdir(codexHome, { recursive: true });
     await writeFile(path.join(codexHome, "config.toml"), 'model = "gpt-5.4"\nmodel_catalog_json = "catalog.json"\n', "utf8");
-    await writeFile(path.join(codexHome, "catalog.json"), JSON.stringify({
-      models: [
-        { slug: "custom-codex-v1", display_name: "Custom Codex V1", visibility: "list" },
-        { slug: "custom-codex-v2", display_name: "Custom Codex V2", visibility: "list" },
-      ],
-    }), "utf8");
+    await writeFile(
+      path.join(codexHome, "catalog.json"),
+      JSON.stringify({
+        models: [
+          { slug: "custom-codex-v1", display_name: "Custom Codex V1", visibility: "list" },
+          { slug: "custom-codex-v2", display_name: "Custom Codex V2", visibility: "list" },
+        ],
+      }),
+      "utf8",
+    );
     process.env.CODEX_HOME = codexHome;
 
     const logger = new StudioLogger(temporaryRoot);

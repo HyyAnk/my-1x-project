@@ -12,15 +12,21 @@ describe("Speech Sanitizer & Text Normalization", () => {
     });
 
     it("normalizes English titles, honorifics, and abbreviations", () => {
-      expect(sanitizeTextForSpeech("Dr. Watson and Mr. Holmes met Mrs. Hudson.")).toBe("Doctor Watson and Mister Holmes met Missus Hudson.");
+      expect(sanitizeTextForSpeech("Dr. Watson and Mr. Holmes met Mrs. Hudson.")).toBe(
+        "Doctor Watson and Mister Holmes met Missus Hudson.",
+      );
       expect(sanitizeTextForSpeech("Prof. Charles lives in St. Louis.")).toBe("Professor Charles lives in Saint Louis.");
-      expect(sanitizeTextForSpeech("Cats vs. dogs, e.g., playful pets, i.e., good companions etc.")).toBe("Cats versus dogs, for example, playful pets, that is, good companions et cetera");
+      expect(sanitizeTextForSpeech("Cats vs. dogs, e.g., playful pets, i.e., good companions etc.")).toBe(
+        "Cats versus dogs, for example, playful pets, that is, good companions et cetera",
+      );
       expect(sanitizeTextForSpeech("Episode No. 1 is in the U.S. and U.K. today.")).toBe("Episode Number 1 is in the US and UK today.");
     });
 
     it("normalizes Vietnamese academic titles, degrees, and abbreviations", () => {
       expect(sanitizeTextForSpeech("Báo cáo của TS. Hùng và ThS. Lan.")).toBe("Báo cáo của Tiến sĩ Hùng và Thạc sĩ Lan.");
-      expect(sanitizeTextForSpeech("Kính gửi PGS. TS. Nguyễn Văn A và GS. Lê.")).toBe("Kính gửi Phó Giáo sư Tiến sĩ Nguyễn Văn A và Giáo sư Lê.");
+      expect(sanitizeTextForSpeech("Kính gửi PGS. TS. Nguyễn Văn A và GS. Lê.")).toBe(
+        "Kính gửi Phó Giáo sư Tiến sĩ Nguyễn Văn A và Giáo sư Lê.",
+      );
       expect(sanitizeTextForSpeech("BS. Minh công tác tại TP. HCM.")).toBe("Bác sĩ Minh công tác tại Thành phố Hồ Chí Minh.");
       expect(sanitizeTextForSpeech("Nhiều loại quả như cam, quýt, bưởi v.v.")).toBe("Nhiều loại quả như cam, quýt, bưởi vân vân");
       expect(sanitizeTextForSpeech("Danh sách gồm A, B, C v...v...")).toBe("Danh sách gồm A, B, C vân vân");

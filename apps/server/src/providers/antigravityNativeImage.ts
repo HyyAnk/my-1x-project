@@ -29,7 +29,10 @@ export class AntigravityNativeImageProvider implements ImageProvider {
     this.logger = new StudioLogger(repository.rootDirectory);
   }
 
-  async generateReference(prompt: string, cancellationSignal?: AbortSignal): Promise<{ asset_path: string; fallback_tier: 1; degraded: false }> {
+  async generateReference(
+    prompt: string,
+    cancellationSignal?: AbortSignal,
+  ): Promise<{ asset_path: string; fallback_tier: 1; degraded: false }> {
     // Chain sequentially through static imageQueue to prevent concurrent rate limit bursts across tasks
     const result = await (AntigravityNativeImageProvider.imageQueue = AntigravityNativeImageProvider.imageQueue
       .catch(() => undefined)
@@ -40,7 +43,10 @@ export class AntigravityNativeImageProvider implements ImageProvider {
     return result as { asset_path: string; fallback_tier: 1; degraded: false };
   }
 
-  private async executeGenerationWithRetry(prompt: string, cancellationSignal?: AbortSignal): Promise<{ asset_path: string; fallback_tier: 1; degraded: false }> {
+  private async executeGenerationWithRetry(
+    prompt: string,
+    cancellationSignal?: AbortSignal,
+  ): Promise<{ asset_path: string; fallback_tier: 1; degraded: false }> {
     const config = await loadConfig(this.repository.rootDirectory);
     const client = this.client ?? new AntigravityClient(this.repository.rootDirectory, config, this.logger);
 
@@ -49,8 +55,8 @@ export class AntigravityNativeImageProvider implements ImageProvider {
       : `bundle_cb_${String(this.target.bundleNumber ?? 1).padStart(2, "0")}`;
 
     const cleanPrompt = this.extractCleanVisualPrompt(prompt);
-    const ratioMatch = prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i)
-      || prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
+    const ratioMatch =
+      prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i) || prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
     const targetAspectRatio = ratioMatch ? ratioMatch[1] : "16:9";
 
     const maxAttempts = 5;
@@ -110,21 +116,38 @@ export class AntigravityNativeImageProvider implements ImageProvider {
         if (imageBytes && imageBytes.length > 0) {
           let assetPath: string;
           if (this.target.assetId && this.target.fingerprint) {
-            assetPath = await this.repository.writeQuizImageAsset(this.target.channelId, this.target.episodeId, this.target.assetId, this.target.fingerprint, imageBytes);
+            assetPath = await this.repository.writeQuizImageAsset(
+              this.target.channelId,
+              this.target.episodeId,
+              this.target.assetId,
+              this.target.fingerprint,
+              imageBytes,
+            );
           } else {
-            assetPath = await this.repository.writeBundleImage(this.target.channelId, this.target.episodeId, this.target.bundleNumber ?? 1, imageBytes, this.target.variant ?? 0);
+            assetPath = await this.repository.writeBundleImage(
+              this.target.channelId,
+              this.target.episodeId,
+              this.target.bundleNumber ?? 1,
+              imageBytes,
+              this.target.variant ?? 0,
+            );
           }
 
           // Mandatory cooldown (8s) between successive image generation calls to avoid backend rate limits
           const cooldownMs = process.env.NODE_ENV === "test" ? 10 : 8000;
-          this.logger.info(`Image created and verified successfully for ${imageName}, cooling down for ${cooldownMs / 1000}s before next image...`);
+          this.logger.info(
+            `Image created and verified successfully for ${imageName}, cooling down for ${cooldownMs / 1000}s before next image...`,
+          );
           await new Promise((r) => setTimeout(r, cooldownMs));
 
           return { asset_path: assetPath, fallback_tier: 1, degraded: false };
         }
 
         if (!lastError || !/429|quota|rate limit|resource_exhausted|exhausted/i.test(lastError.message)) {
-          lastError = new RepositoryError(`Antigravity native image tool did not produce an image for ${imageName} (attempt ${attempt}/${maxAttempts})`, "IMAGE_GENERATION_FAILED");
+          lastError = new RepositoryError(
+            `Antigravity native image tool did not produce an image for ${imageName} (attempt ${attempt}/${maxAttempts})`,
+            "IMAGE_GENERATION_FAILED",
+          );
         }
       } catch (err) {
         lastError = err instanceof Error ? err : new Error(String(err));
@@ -138,7 +161,9 @@ export class AntigravityNativeImageProvider implements ImageProvider {
         const isRateLimit = /429|quota|rate limit|resource_exhausted|exhausted/i.test(lastError.message);
         const baseDelay = process.env.NODE_ENV === "test" ? 50 : isRateLimit ? 10000 : 3000;
         const retryDelay = attempt * baseDelay;
-        this.logger.warn(`Antigravity image generation attempt ${attempt} failed (${lastError.message}), cooling down for ${retryDelay}ms before retry...`);
+        this.logger.warn(
+          `Antigravity image generation attempt ${attempt} failed (${lastError.message}), cooling down for ${retryDelay}ms before retry...`,
+        );
         await new Promise((r) => setTimeout(r, retryDelay));
       }
     }
@@ -151,7 +176,10 @@ export class AntigravityNativeImageProvider implements ImageProvider {
     const anchorMatch = rawPrompt.match(/Anchor[- ]frame prompt\s*:\s*([^\n\r]+)/i);
     if (anchorMatch && anchorMatch[1].trim()) {
       const cleanedAnchor = anchorMatch[1]
-        .replace(/\b(?:with\s+a\s+|showing\s+a\s+|displaying\s+a\s+)?(?:question|quiz)\s+card(?:\s+overlay|\s+showing|\s+with)?[^,.]*/gi, "")
+        .replace(
+          /\b(?:with\s+a\s+|showing\s+a\s+|displaying\s+a\s+)?(?:question|quiz)\s+card(?:\s+overlay|\s+showing|\s+with)?[^,.]*/gi,
+          "",
+        )
         .replace(/\b(?:choice\s+box(?:es)?|answer\s+buttons?|countdown\s+timer|timer\s+bar)\b[^,.]*/gi, "")
         .replace(/[`"]/g, "")
         .replace(/\s+/g, " ")
@@ -165,7 +193,9 @@ export class AntigravityNativeImageProvider implements ImageProvider {
       const subject = subjectMatch ? subjectMatch[1].replace(/\.$/, "").trim() : "";
       const visualStyleMatch = rawPrompt.match(/Visual Style\s*:\s*([^\n\r]+)/i);
       const visualStyle = visualStyleMatch ? visualStyleMatch[1].replace(/\.$/, "").trim() : "";
-      const artContractMatch = rawPrompt.match(/(?:Solo hero art contract|Every option in this set must share this exact art direction)\s*:\s*([^\n\r]+)/i);
+      const artContractMatch = rawPrompt.match(
+        /(?:Solo hero art contract|Every option in this set must share this exact art direction)\s*:\s*([^\n\r]+)/i,
+      );
       const artContract = artContractMatch ? artContractMatch[1].replace(/\.$/, "").trim() : "";
       const lightingMatch = rawPrompt.match(/Lighting\s*:\s*([^\n\r]+)/i);
       const lighting = lightingMatch ? lightingMatch[1].replace(/\.$/, "").trim() : "";
@@ -203,10 +233,16 @@ export class AntigravityNativeImageProvider implements ImageProvider {
     return cleaned.slice(0, 600);
   }
 
-  private async findGeneratedImage(imageNamePrefix: string, turnStartTime?: number, specificConvId?: string | null): Promise<Uint8Array | null> {
+  private async findGeneratedImage(
+    imageNamePrefix: string,
+    turnStartTime?: number,
+    specificConvId?: string | null,
+  ): Promise<Uint8Array | null> {
     const userHome = homedir();
     const brainDir = path.join(userHome, ".gemini", "antigravity", "brain");
-    const exists = await access(brainDir, constants.R_OK).then(() => true).catch(() => false);
+    const exists = await access(brainDir, constants.R_OK)
+      .then(() => true)
+      .catch(() => false);
     if (!exists) return null;
 
     try {
@@ -218,7 +254,10 @@ export class AntigravityNativeImageProvider implements ImageProvider {
         try {
           const files = await readdir(specificPath);
           for (const file of files) {
-            if (/\.(png|jpe?g|webp)$/i.test(file) && (file.toLowerCase().startsWith(normalizedPrefix) || file.toLowerCase().includes(normalizedPrefix))) {
+            if (
+              /\.(png|jpe?g|webp)$/i.test(file) &&
+              (file.toLowerCase().startsWith(normalizedPrefix) || file.toLowerCase().includes(normalizedPrefix))
+            ) {
               const data = await readFile(path.join(specificPath, file));
               if (data.length >= 8) return new Uint8Array(data);
             }
@@ -251,9 +290,7 @@ export class AntigravityNativeImageProvider implements ImageProvider {
         }),
       );
 
-      const validConvs = convStats
-        .filter((c): c is NonNullable<typeof c> => Boolean(c && c.isDir))
-        .sort((a, b) => b.mtime - a.mtime);
+      const validConvs = convStats.filter((c): c is NonNullable<typeof c> => Boolean(c && c.isDir)).sort((a, b) => b.mtime - a.mtime);
 
       for (const { convPath } of validConvs.slice(0, 10)) {
         try {
@@ -273,7 +310,9 @@ export class AntigravityNativeImageProvider implements ImageProvider {
           imageFiles.sort((a, b) => b.mtime - a.mtime);
 
           // Look for image starting with our imageName prefix
-          const matching = imageFiles.find((img) => img.filename.toLowerCase().startsWith(normalizedPrefix) || img.filename.toLowerCase().includes(normalizedPrefix));
+          const matching = imageFiles.find(
+            (img) => img.filename.toLowerCase().startsWith(normalizedPrefix) || img.filename.toLowerCase().includes(normalizedPrefix),
+          );
           if (matching) {
             const data = await readFile(matching.filePath);
             if (data.length >= 8) return new Uint8Array(data);
@@ -303,8 +342,14 @@ export class AntigravityNativeImageProvider implements ImageProvider {
     const transcriptPath = path.join(baseDir, "transcript.jsonl");
 
     try {
-      const fullExists = await access(transcriptFullPath, constants.R_OK).then(() => true).catch(() => false);
-      const normExists = !fullExists && (await access(transcriptPath, constants.R_OK).then(() => true).catch(() => false));
+      const fullExists = await access(transcriptFullPath, constants.R_OK)
+        .then(() => true)
+        .catch(() => false);
+      const normExists =
+        !fullExists &&
+        (await access(transcriptPath, constants.R_OK)
+          .then(() => true)
+          .catch(() => false));
       const filePath = fullExists ? transcriptFullPath : normExists ? transcriptPath : null;
       if (!filePath) return null;
 
@@ -329,5 +374,3 @@ export class AntigravityNativeImageProvider implements ImageProvider {
     return null;
   }
 }
-
-

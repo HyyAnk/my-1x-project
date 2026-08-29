@@ -694,8 +694,9 @@ export const vi: TranslationSchema = {
   visualSandbox: {
     pageTitle: "Visual Sandbox",
     pageSubtitle: "Studio Phần tử Video & Mascot (1080p)",
-    pageDesc: "Kiểm tra & tùy biến 4 phần tử cốt lõi (Thanh đếm ngược, Hộp câu hỏi, Thẻ đáp án, Huy hiệu đếm câu) và gán Mascot thực tế (WYSIWYG 100%).",
-    
+    pageDesc:
+      "Kiểm tra & tùy biến 4 phần tử cốt lõi (Thanh đếm ngược, Hộp câu hỏi, Thẻ đáp án, Huy hiệu đếm câu) và gán Mascot thực tế (WYSIWYG 100%).",
+
     // Header actions
     safeArea: "Khung an toàn",
     safeAreaOn: "Khung an toàn: Bật",
@@ -804,7 +805,7 @@ export const vi: TranslationSchema = {
     factCardTitlePlaceholder: "BẠN CÓ BIẾT?",
     factCardTextLabel: "Nội dung giải thích / Fun fact",
     factCardTextPlaceholder: "Nhập thông tin thú vị ngắn gọn hiển thị ở phase Giải thích…",
-    factCardHint: "Hiển thị khi timeline chạy đến phase Giải thích (>8.8s) hoặc khi chọn phase Giải thích.",
+    factCardHint: "Hiển thị khi timeline chạy đến phase Giải thích hoặc khi chọn phase Giải thích.",
 
     // Timeline & Canvas
     phaseLabel: "Phase:",

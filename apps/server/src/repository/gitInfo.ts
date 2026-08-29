@@ -8,7 +8,11 @@ export async function getGitInfo(this: RepositoryRuntime): Promise<{ branch: str
   try {
     const { stdout: branch } = await execFileAsync("git", ["branch", "--show-current"], { cwd: this.rootDirectory });
     const { stdout: status } = await execFileAsync("git", ["status", "--short"], { cwd: this.rootDirectory });
-    return { branch: branch.trim() || null, dirty: Boolean(status.trim()), changed_files: status.trim() ? status.trim().split(/\r?\n/).length : 0 };
+    return {
+      branch: branch.trim() || null,
+      dirty: Boolean(status.trim()),
+      changed_files: status.trim() ? status.trim().split(/\r?\n/).length : 0,
+    };
   } catch {
     return { branch: null, dirty: false, changed_files: 0 };
   }

@@ -157,7 +157,7 @@ export class BgmRegistry {
     const recent = options?.recentTrackIds ?? [];
 
     if (recent.length === 0) {
-      return candidates[seedNumber % candidates.length]!;
+      return candidates[seedNumber % candidates.length];
     }
 
     // Rank candidates by recency: distance from recent usage.
@@ -173,11 +173,9 @@ export class BgmRegistry {
       return { track, distance };
     });
 
-    const bestPool = scored
-      .filter((item) => item.distance === maxDistance)
-      .map((item) => item.track);
+    const bestPool = scored.filter((item) => item.distance === maxDistance).map((item) => item.track);
 
-    return bestPool[seedNumber % bestPool.length]!;
+    return bestPool[seedNumber % bestPool.length];
   }
 
   resolveBgmSchedule(totalDurationSeconds: number, options?: ResolveBgmOptions): BgmPlacement[] {
@@ -223,11 +221,12 @@ export class BgmRegistry {
 
     while (cursor < duration - 0.1) {
       const remaining = duration - cursor;
-      const track = this.selectCandidateTrack(available, {
-        ...options,
-        recentTrackIds: usedInSequence,
-        seed: seedNumber + index,
-      }) ?? available[(seedNumber + index) % available.length]!;
+      const track =
+        this.selectCandidateTrack(available, {
+          ...options,
+          recentTrackIds: usedInSequence,
+          seed: seedNumber + index,
+        }) ?? available[(seedNumber + index) % available.length];
 
       usedInSequence.unshift(track.id);
       const segmentDuration = Math.min(remaining, track.duration_seconds);

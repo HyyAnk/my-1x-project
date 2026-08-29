@@ -1,29 +1,14 @@
 import { describe, expect, it } from "vitest";
-import {
-  ALL_QUESTION_BOX_STYLES,
-  ALL_QUESTION_COUNTER_STYLES,
-  ALL_THINKING_BAR_STYLES,
-  type QuizQuestionBoxStyle,
-  type QuizQuestionCounterStyle,
-  type QuizThinkingBarStyle,
-} from "@studio/shared";
-import {
-  getQuestionBoxVariant,
-  resolveQuestionBoxVariant,
-  QUESTION_BOX_VARIANTS,
-} from "../src/quiz/visual/elements/questionBox/registry.js";
-import {
-  getCounterBadgeVariant,
-  resolveCounterBadgeVariant,
-  COUNTER_BADGE_VARIANTS,
-} from "../src/quiz/visual/elements/counterBadge/registry.js";
+import { ALL_QUESTION_BOX_STYLES, ALL_QUESTION_COUNTER_STYLES, ALL_THINKING_BAR_STYLES } from "@studio/shared";
+import { getQuestionBoxVariant, resolveQuestionBoxVariant } from "../src/quiz/visual/elements/questionBox/registry.js";
+import { getCounterBadgeVariant, resolveCounterBadgeVariant } from "../src/quiz/visual/elements/counterBadge/registry.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
 
 describe("QuestionBox and CounterBadge Element Registries", () => {
   it("registers all QuestionBox styles", () => {
     for (const style of ALL_QUESTION_BOX_STYLES) {
       if (style === "auto") continue;
-      const variant = getQuestionBoxVariant(style as Exclude<QuizQuestionBoxStyle, "auto">);
+      const variant = getQuestionBoxVariant(style);
       expect(variant).toBeDefined();
       expect(variant.id).toBe(style);
       expect(variant.displayName).toBeTruthy();
@@ -40,7 +25,7 @@ describe("QuestionBox and CounterBadge Element Registries", () => {
   it("registers all CounterBadge styles", () => {
     for (const style of ALL_QUESTION_COUNTER_STYLES) {
       if (style === "auto") continue;
-      const variant = getCounterBadgeVariant(style as Exclude<QuizQuestionCounterStyle, "auto">);
+      const variant = getCounterBadgeVariant(style);
       expect(variant).toBeDefined();
       expect(variant.id).toBe(style);
       expect(variant.displayName).toBeTruthy();
@@ -149,4 +134,3 @@ describe("buildSandboxComposition Preview Engine", () => {
     expect(resReveal.html).toContain("answer-correct");
   });
 });
-

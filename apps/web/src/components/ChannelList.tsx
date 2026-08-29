@@ -135,8 +135,8 @@ export function ChannelCard({
             {channel.status === "ACTIVE"
               ? t("channels.activeStatus")
               : channel.status === "DRAFT"
-              ? t("channels.draftStatus")
-              : t("channels.archivedStatus")}
+                ? t("channels.draftStatus")
+                : t("channels.archivedStatus")}
           </span>
 
           <span className="channel-chip country" title={t("channels.countryTooltip", { country: countryName })}>
@@ -174,24 +174,14 @@ export function ChannelCard({
                 <span>{t("channels.openChannel")}</span>
               </a>
 
-              <button
-                type="button"
-                className="channel-menu-item"
-                role="menuitem"
-                onClick={handleCopyId}
-              >
+              <button type="button" className="channel-menu-item" role="menuitem" onClick={handleCopyId}>
                 <Copy size={15} />
                 <span>{copied ? t("channels.idCopied") : t("channels.copyId")}</span>
               </button>
 
               <div className="channel-menu-divider" />
 
-              <button
-                type="button"
-                className="channel-menu-item danger"
-                role="menuitem"
-                onClick={handleDelete}
-              >
+              <button type="button" className="channel-menu-item danger" role="menuitem" onClick={handleDelete}>
                 <Trash size={15} />
                 <span>{t("common.delete")}</span>
               </button>
@@ -213,16 +203,9 @@ export function ChannelCard({
 
       <div className="channel-card-meta">
         {channel.mascot_id ? (
-          <span
-            className="channel-mascot-pill"
-            title={assignedMascot?.description || assignedMascot?.name || "Mascot"}
-          >
+          <span className="channel-mascot-pill" title={assignedMascot?.description || assignedMascot?.name || "Mascot"}>
             {assignedMascot?.master_image_url ? (
-              <img
-                src={assignedMascot.master_image_url}
-                alt={assignedMascot.name}
-                className="channel-mascot-avatar"
-              />
+              <img src={assignedMascot.master_image_url} alt={assignedMascot.name} className="channel-mascot-avatar" />
             ) : (
               <span className="channel-mascot-avatar-fallback">
                 <Smiley size={12} weight="fill" />
@@ -317,20 +300,13 @@ function Metric({
 
   if (href || onClick) {
     return (
-      <a
-        className={cardClasses}
-        {...getNavProps(href || "#", onClick)}
-      >
+      <a className={cardClasses} {...getNavProps(href || "#", onClick)}>
         {content}
       </a>
     );
   }
 
-  return (
-    <div className={cardClasses}>
-      {content}
-    </div>
-  );
+  return <div className={cardClasses}>{content}</div>;
 }
 
 function CostSavingsSection({
@@ -344,7 +320,7 @@ function CostSavingsSection({
   } | null;
 }) {
   const { t } = useTranslation();
-  const elevenLabsRatePer1k = 0.10; // $0.10 per 1,000 characters
+  const elevenLabsRatePer1k = 0.1; // $0.10 per 1,000 characters
   const usdToVnd = 25500;
 
   const renderedChars = voiceMetrics?.rendered_characters || 0;
@@ -375,15 +351,11 @@ function CostSavingsSection({
           </div>
           <div className="savings-submetric">
             <span className="submetric-label">{t("dashboard.renderedCharacters")}</span>
-            <strong className="submetric-val">
-              {renderedChars.toLocaleString("vi-VN")} chars
-            </strong>
+            <strong className="submetric-val">{renderedChars.toLocaleString("vi-VN")} chars</strong>
           </div>
           <div className="savings-submetric">
             <span className="submetric-label">{t("dashboard.audioProduced")}</span>
-            <strong className="submetric-val">
-              {renderedSeconds > 0 ? `${(renderedSeconds / 60).toFixed(1)} mins` : "0 mins"}
-            </strong>
+            <strong className="submetric-val">{renderedSeconds > 0 ? `${(renderedSeconds / 60).toFixed(1)} mins` : "0 mins"}</strong>
           </div>
         </div>
       </div>
@@ -445,12 +417,8 @@ export function DashboardView({
   const successRate = terminalCount > 0 ? ((completedCount / terminalCount) * 100).toFixed(1) : "100";
 
   // Balance formatting
-  const formattedBalance = imageBalance
-    ? `${imageBalance.balance_vnd.toLocaleString("vi-VN")} ₫`
-    : "N/A";
-  const balanceRateNote = imageBalance?.rpm
-    ? t("dashboard.kpiNoteRateLimit", { rpm: imageBalance.rpm })
-    : t("dashboard.kpiNoteImageQuota");
+  const formattedBalance = imageBalance ? `${imageBalance.balance_vnd.toLocaleString("vi-VN")} ₫` : "N/A";
+  const balanceRateNote = imageBalance?.rpm ? t("dashboard.kpiNoteRateLimit", { rpm: imageBalance.rpm }) : t("dashboard.kpiNoteImageQuota");
 
   // Category breakdown
   const categoryStats = [
@@ -517,9 +485,7 @@ export function DashboardView({
           <h1>
             {t("dashboard.title")} <em>{t("dashboard.titleEmphasis")}</em>
           </h1>
-          <p className="hero-copy">
-            {t("dashboard.subtitle")}
-          </p>
+          <p className="hero-copy">{t("dashboard.subtitle")}</p>
         </div>
       </div>
 
@@ -608,10 +574,7 @@ export function DashboardView({
                       <td>
                         <div className="progress-pill-wrap">
                           <div className="progress-mini-bar">
-                            <div
-                              className="progress-mini-fill"
-                              style={{ width: `${item.successRate}%` }}
-                            />
+                            <div className="progress-mini-fill" style={{ width: `${item.successRate}%` }} />
                           </div>
                           <span className="table-num-cell" style={{ fontSize: "11px" }}>
                             {item.successRate}%
@@ -653,7 +616,10 @@ export function ChannelsListView({
 
   useEffect(() => {
     if (!initialMascots || initialMascots.length === 0) {
-      void api.mascots().then((res) => setMascots(res.mascots)).catch(() => {});
+      void api
+        .mascots()
+        .then((res) => setMascots(res.mascots))
+        .catch(() => {});
     }
   }, [initialMascots]);
 
@@ -672,7 +638,12 @@ export function ChannelsListView({
           const matchName = c.display_name.toLowerCase().includes(q);
           const matchDesc = c.description?.toLowerCase().includes(q);
           const matchLang = c.language?.toLowerCase().includes(q) || getLanguageDisplay(c.language).toLowerCase().includes(q);
-          const matchCountry = (c.country?.toLowerCase().includes(q) || c.market?.toLowerCase().includes(q) || getCountryName(c.country || c.market).toLowerCase().includes(q));
+          const matchCountry =
+            c.country?.toLowerCase().includes(q) ||
+            c.market?.toLowerCase().includes(q) ||
+            getCountryName(c.country || c.market)
+              .toLowerCase()
+              .includes(q);
           if (!matchName && !matchDesc && !matchLang && !matchCountry) return false;
         }
         return true;
@@ -794,7 +765,15 @@ export function ChannelsListView({
           onAction={() => onCreate("quiz")}
         />
       ) : filteredChannels.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "48px 16px", background: "var(--surface)", borderRadius: "var(--radius-lg)", border: "1px dashed var(--line)" }}>
+        <div
+          style={{
+            textAlign: "center",
+            padding: "48px 16px",
+            background: "var(--surface)",
+            borderRadius: "var(--radius-lg)",
+            border: "1px dashed var(--line)",
+          }}
+        >
           <MagnifyingGlass size={36} style={{ color: "var(--muted)", margin: "0 auto 12px" }} />
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 6px" }}>{t("channels.noResultsTitle")}</h3>
           <p style={{ fontSize: "13px", color: "var(--muted)", margin: "0 0 16px" }}>{t("channels.noResultsCopy")}</p>
@@ -820,4 +799,3 @@ export function ChannelsListView({
     </section>
   );
 }
-

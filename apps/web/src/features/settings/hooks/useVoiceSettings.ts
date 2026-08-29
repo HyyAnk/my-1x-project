@@ -20,20 +20,12 @@ function readFileAsDataUrl(file: File): Promise<string> {
   });
 }
 
-export function useVoiceSettings({
-  channels,
-  appConfig,
-  onAudioSaved,
-  onChannelUpdated,
-  onNotice,
-}: UseVoiceSettingsProps) {
+export function useVoiceSettings({ channels, appConfig, onAudioSaved, onChannelUpdated, onNotice }: UseVoiceSettingsProps) {
   const [audioUrl, setAudioUrl] = useState(appConfig?.audio_generation.service_url ?? "http://127.0.0.1:8890");
   const [exaggeration, setExaggeration] = useState(appConfig?.audio_generation.exaggeration ?? 0.5);
   const [cfgWeight, setCfgWeight] = useState(appConfig?.audio_generation.cfg_weight ?? 0.5);
   const [mergeGapMs, setMergeGapMs] = useState(appConfig?.audio_generation.merge_gap_ms ?? 300);
-  const [matchTargetDuration, setMatchTargetDuration] = useState(
-    appConfig?.audio_generation.match_target_duration ?? true
-  );
+  const [matchTargetDuration, setMatchTargetDuration] = useState(appConfig?.audio_generation.match_target_duration ?? true);
   const [savingAudio, setSavingAudio] = useState(false);
 
   const [selectedChannelId, setSelectedChannelId] = useState(channels[0]?.channel_id ?? "");

@@ -41,19 +41,29 @@ export function registerSystemRoutes(deps: SystemRouteDeps): FastifyPluginCallba
     server.post("/api/shutdown", async (_request, reply) => {
       if (process.platform === "win32") {
         const script = path.join(rootDirectory, "scripts", "stop-dashboard.ps1");
-        spawn("powershell.exe", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", script, "-ProjectRoot", rootDirectory, "-DelayMilliseconds", "900"], {
-          detached: true,
-          stdio: "ignore",
-          windowsHide: true,
-        }).unref();
+        spawn(
+          "powershell.exe",
+          ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", script, "-ProjectRoot", rootDirectory, "-DelayMilliseconds", "900"],
+          {
+            detached: true,
+            stdio: "ignore",
+            windowsHide: true,
+          },
+        ).unref();
       }
       await reply.code(202).send({ ok: true });
       setTimeout(() => {
-        void codex.close().catch(() => undefined).finally(() => {
-          void antigravity.close().catch(() => undefined).finally(() => {
-            void server.close().finally(() => process.exit(0));
+        void codex
+          .close()
+          .catch(() => undefined)
+          .finally(() => {
+            void antigravity
+              .close()
+              .catch(() => undefined)
+              .finally(() => {
+                void server.close().finally(() => process.exit(0));
+              });
           });
-        });
       }, 500);
     });
     server.get("/api/git", () => repository.getGitInfo());
@@ -61,7 +71,11 @@ export function registerSystemRoutes(deps: SystemRouteDeps): FastifyPluginCallba
       ...state.config,
       codex: { ...state.config.codex, api_key: "" },
       antigravity: { ...state.config.antigravity, api_key: "" },
-      image_generation: { ...state.config.image_generation, api_key: state.config.image_generation.api_key, has_api_key: Boolean(state.config.image_generation.api_key) },
+      image_generation: {
+        ...state.config.image_generation,
+        api_key: state.config.image_generation.api_key,
+        has_api_key: Boolean(state.config.image_generation.api_key),
+      },
     }));
     server.get("/api/storage", () => getStorageInfo());
     server.post("/api/storage", async (request) => {

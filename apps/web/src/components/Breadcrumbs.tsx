@@ -10,13 +10,7 @@ export type BreadcrumbItem = {
   isCurrent?: boolean;
 };
 
-export function Breadcrumbs({
-  items,
-  className = "",
-}: {
-  items: BreadcrumbItem[];
-  className?: string;
-}) {
+export function Breadcrumbs({ items, className = "" }: { items: BreadcrumbItem[]; className?: string }) {
   return (
     <nav className={`breadcrumbs-nav ${className}`} aria-label="Breadcrumb navigation">
       <ol className="breadcrumbs-list">
@@ -24,9 +18,7 @@ export function Breadcrumbs({
           const isLast = index === items.length - 1 || item.isCurrent;
           return (
             <li key={index} className={`breadcrumb-item ${isLast ? "is-current" : ""}`}>
-              {index > 0 && (
-                <CaretRight size={13} className="breadcrumb-separator" aria-hidden="true" />
-              )}
+              {index > 0 && <CaretRight size={13} className="breadcrumb-separator" aria-hidden="true" />}
               {isLast ? (
                 <span className="breadcrumb-current" aria-current="page">
                   {item.icon && <span className="breadcrumb-icon">{item.icon}</span>}
@@ -35,10 +27,7 @@ export function Breadcrumbs({
                   </span>
                 </span>
               ) : item.onClick || item.href ? (
-                <a
-                  className="breadcrumb-link-btn"
-                  {...getNavProps(item.href || "#", item.onClick)}
-                >
+                <a className="breadcrumb-link-btn" {...getNavProps(item.href || "#", item.onClick)}>
                   {item.icon && <span className="breadcrumb-icon">{item.icon}</span>}
                   <span className="breadcrumb-label" title={item.label}>
                     {item.label}

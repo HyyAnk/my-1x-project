@@ -12,11 +12,17 @@ import { parseWavDuration } from "./parsers.js";
 import { validateNarrationSegmentDuration } from "./validators.js";
 import type { TaskManagerRuntime } from "./runtime.js";
 
-export async function runAudioTask(this: TaskManagerRuntime,task: Task): Promise<void> {
+export async function runAudioTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   const context = { profileId: task.channel_id, workerId: task.task_id, step: "run_audio" };
   this.activeAudio.add(task.task_id);
   try {
-    await this.update(task.task_id, { status: "RUNNING", started_at: nowIso(), queue_position: null, progress_message: "Preparing audio", progress_percent: 0 });
+    await this.update(task.task_id, {
+      status: "RUNNING",
+      started_at: nowIso(),
+      queue_position: null,
+      progress_message: "Preparing audio",
+      progress_percent: 0,
+    });
     if (!task.episode_id) throw new RepositoryError("Episode is required", "EPISODE_REQUIRED");
     if (task.task_type === "GENERATE_NARRATION") {
       const channel = await this.repository.getChannel(task.channel_id);
@@ -41,9 +47,12 @@ export async function runAudioTask(this: TaskManagerRuntime,task: Task): Promise
     await this.update(task.task_id, { progress_message: "Saving dialogue", progress_percent: 90 });
     await this.finish(task.task_id, "COMPLETED", null, [result.asset_path]);
   } catch (error) {
-    const message = error instanceof Error && "code" in error && (error as { code?: string }).code === "AUDIO_SERVICE_UNAVAILABLE"
-      ? "Audio service unavailable"
-      : error instanceof Error ? error.message : "Audio generation failed";
+    const message =
+      error instanceof Error && "code" in error && (error as { code?: string }).code === "AUDIO_SERVICE_UNAVAILABLE"
+        ? "Audio service unavailable"
+        : error instanceof Error
+          ? error.message
+          : "Audio generation failed";
     await this.finish(task.task_id, "FAILED", message);
     this.logger.error(message, { ...context, step: "run_audio" });
   } finally {
@@ -51,7 +60,7 @@ export async function runAudioTask(this: TaskManagerRuntime,task: Task): Promise
   }
 }
 
-export async function runNarrationTask(this: TaskManagerRuntime,task: Task): Promise<void> {
+export async function runNarrationTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   if (!task.episode_id) throw new RepositoryError("Episode is required", "EPISODE_REQUIRED");
   const episodeId = task.episode_id;
   const channelId = task.channel_id;
@@ -69,7 +78,13 @@ export async function runNarrationTask(this: TaskManagerRuntime,task: Task): Pro
   let completed = 0;
   const segmentResults = await runConcurrent(sections, concurrency, async (section, index) => {
     const segmentNumber = index + 1;
-    const fingerprint = narrationSegmentFingerprint(section.text, voice, script.modified_at, this.audioConfig, this.videoConfig.narration_words_per_second);
+    const fingerprint = narrationSegmentFingerprint(
+      section.text,
+      voice,
+      script.modified_at,
+      this.audioConfig,
+      this.videoConfig.narration_words_per_second,
+    );
     let audio: Uint8Array | null = null;
     let assetPath: string | null = null;
     let isReused = false;
@@ -119,9 +134,13 @@ export async function runNarrationTask(this: TaskManagerRuntime,task: Task): Pro
   }
   await writeNarrationCheckpoint(checkpointPath, nextCheckpoint);
   await this.update(task.task_id, { progress_message: "Assembling narration", progress_percent: 82 });
-  const merged = sections.length === 1 && !this.audioConfig.match_target_duration
-    ? await readFile(segmentPaths[0])
-    : await this.mergeNarrationSegments(segmentPaths, this.audioConfig.match_target_duration ? episode.target_duration_minutes * 60 : undefined);
+  const merged =
+    sections.length === 1 && !this.audioConfig.match_target_duration
+      ? await readFile(segmentPaths[0])
+      : await this.mergeNarrationSegments(
+          segmentPaths,
+          this.audioConfig.match_target_duration ? episode.target_duration_minutes * 60 : undefined,
+        );
   const assetPath = await this.repository.writeNarrationAudio(channelId, episodeId, merged);
   const duration = parseWavDuration(merged);
   const narrationWordCount = countWords(extractNarration(script.content));
@@ -130,13 +149,21 @@ export async function runNarrationTask(this: TaskManagerRuntime,task: Task): Pro
   await this.finish(task.task_id, "COMPLETED", null, [assetPath]);
 }
 
-export async function mergeNarrationSegments(this: TaskManagerRuntime,paths: string[], targetDurationSeconds?: number): Promise<Uint8Array> {
+export async function mergeNarrationSegments(
+  this: TaskManagerRuntime,
+  paths: string[],
+  targetDurationSeconds?: number,
+): Promise<Uint8Array> {
   let response: Response;
   try {
     response = await fetch(`${this.audioConfig.service_url.replace(/\/$/, "")}/merge`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ paths, gap_ms: this.audioConfig.merge_gap_ms, ...(targetDurationSeconds ? { target_duration_seconds: targetDurationSeconds } : {}) }),
+      body: JSON.stringify({
+        paths,
+        gap_ms: this.audioConfig.merge_gap_ms,
+        ...(targetDurationSeconds ? { target_duration_seconds: targetDurationSeconds } : {}),
+      }),
       signal: AbortSignal.timeout(15 * 60 * 1000),
     });
   } catch {

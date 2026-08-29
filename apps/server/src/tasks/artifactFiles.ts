@@ -1,7 +1,11 @@
 import { readFile, stat } from "node:fs/promises";
 
 export async function hasNonEmptyFile(filePath: string): Promise<boolean> {
-  try { return (await stat(filePath)).size > 0; } catch { return false; }
+  try {
+    return (await stat(filePath)).size > 0;
+  } catch {
+    return false;
+  }
 }
 
 export async function isValidPngFile(filePath: string): Promise<boolean> {

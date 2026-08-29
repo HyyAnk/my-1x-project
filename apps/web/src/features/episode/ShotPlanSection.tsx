@@ -1,13 +1,4 @@
-import {
-  ArrowsInSimple,
-  ArrowsOutSimple,
-  CircleNotch,
-  Copy,
-  FilmSlate,
-  FloppyDisk,
-  MagnifyingGlass,
-  X,
-} from "@phosphor-icons/react";
+import { ArrowsInSimple, ArrowsOutSimple, CircleNotch, Copy, FilmSlate, FloppyDisk, MagnifyingGlass, X } from "@phosphor-icons/react";
 import type { Channel, Episode, Scene, Task } from "@studio/shared";
 import { isTaskActive, latestTask } from "../../lib/utils";
 import type { BundleImage } from "../../api";
@@ -154,8 +145,8 @@ export function ShotPlanSection({
               {currentShotBatch.some((task) => task.status === "FAILED")
                 ? "Retry failed sequences from Tasks"
                 : currentShotBatch.some(isTaskActive)
-                ? "Generating in parallel"
-                : "Sequence batch complete"}
+                  ? "Generating in parallel"
+                  : "Sequence batch complete"}
             </span>
           </div>
           <div>
@@ -198,12 +189,7 @@ export function ShotPlanSection({
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 {searchQuery ? (
-                  <button
-                    type="button"
-                    className="search-clear-btn"
-                    onClick={() => setSearchQuery("")}
-                    title="Clear search query"
-                  >
+                  <button type="button" className="search-clear-btn" onClick={() => setSearchQuery("")} title="Clear search query">
                     <X size={14} />
                   </button>
                 ) : null}

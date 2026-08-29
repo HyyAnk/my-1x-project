@@ -25,11 +25,17 @@ describe("Cockpit OpenAI-compatible transport", () => {
     const codexHome = path.join(temporaryRoot, "codex-home");
     await mkdir(codexHome, { recursive: true });
     await writeFile(path.join(codexHome, "config.toml"), 'model = "gpt-5.6-luna"\nmodel_catalog_json = "catalog.json"\n', "utf8");
-    await writeFile(path.join(codexHome, "catalog.json"), JSON.stringify({ models: [
-      { slug: "gpt-5.6-luna", display_name: "GPT-5.6-Luna", visibility: "list" },
-      { slug: "gpt-image-2", display_name: "GPT Image 2", visibility: "hide" },
-      { slug: "gpt-5.3-codex", display_name: "gpt-5.3-codex", visibility: "list" },
-    ] }), "utf8");
+    await writeFile(
+      path.join(codexHome, "catalog.json"),
+      JSON.stringify({
+        models: [
+          { slug: "gpt-5.6-luna", display_name: "GPT-5.6-Luna", visibility: "list" },
+          { slug: "gpt-image-2", display_name: "GPT Image 2", visibility: "hide" },
+          { slug: "gpt-5.3-codex", display_name: "gpt-5.3-codex", visibility: "list" },
+        ],
+      }),
+      "utf8",
+    );
     process.env.CODEX_HOME = codexHome;
     const logger = new StudioLogger(temporaryRoot);
     await logger.init();

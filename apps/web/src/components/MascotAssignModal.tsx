@@ -16,12 +16,7 @@ import {
   Warning,
   X,
 } from "@phosphor-icons/react";
-import {
-  QUIZ_IMAGE_STYLE_LABELS,
-  type Channel,
-  type MascotPosition,
-  type MascotProfile,
-} from "@studio/shared";
+import { QUIZ_IMAGE_STYLE_LABELS, type Channel, type MascotPosition, type MascotProfile } from "@studio/shared";
 import { useTranslation } from "../i18n";
 import { api } from "../api";
 
@@ -38,22 +33,11 @@ export interface MascotAssignModalProps {
 type FilterTab = "all" | "selected" | "unassigned" | "other";
 type AspectRatio = "9:16" | "16:9";
 
-export function MascotAssignModal({
-  mascot,
-  channels,
-  allMascots = [],
-  isOpen,
-  onClose,
-  onSaved,
-  onNotice,
-}: MascotAssignModalProps) {
+export function MascotAssignModal({ mascot, channels, allMascots = [], isOpen, onClose, onSaved, onNotice }: MascotAssignModalProps) {
   const { t } = useTranslation();
 
   // Find sample config if this mascot was already assigned to some channel
-  const sampleChannel = useMemo(
-    () => channels.find((c) => c.mascot_id === mascot?.id),
-    [channels, mascot?.id]
-  );
+  const sampleChannel = useMemo(() => channels.find((c) => c.mascot_id === mascot?.id), [channels, mascot?.id]);
 
   const [position, setPosition] = useState<MascotPosition>(() => sampleChannel?.mascot_config?.position || "bottom_left");
   const [scale, setScale] = useState<number>(() => sampleChannel?.mascot_config?.scale || 1.0);
@@ -158,12 +142,7 @@ export function MascotAssignModal({
   // Mascot preview image/sprite fallback
   const previewImage = useMemo(() => {
     if (!mascot) return null;
-    return (
-      mascot.actions.idle?.sprite_url ||
-      mascot.actions.wave?.sprite_url ||
-      mascot.master_image_url ||
-      null
-    );
+    return mascot.actions.idle?.sprite_url || mascot.actions.wave?.sprite_url || mascot.master_image_url || null;
   }, [mascot]);
 
   // Map channel_id -> other mascot name if assigned to another mascot
@@ -185,13 +164,10 @@ export function MascotAssignModal({
   // Tab counts
   const countAll = channels.length;
   const countSelected = selectedChannelIds.length;
-  const countUnassigned = useMemo(
-    () => channels.filter((c) => !c.mascot_id).length,
-    [channels]
-  );
+  const countUnassigned = useMemo(() => channels.filter((c) => !c.mascot_id).length, [channels]);
   const countOther = useMemo(
     () => channels.filter((c) => Boolean(c.mascot_id && c.mascot_id !== mascot?.id)).length,
-    [channels, mascot?.id]
+    [channels, mascot?.id],
   );
 
   // Count transferred channels from other mascots
@@ -229,9 +205,7 @@ export function MascotAssignModal({
   if (!isOpen || !mascot) return null;
 
   const handleToggleChannel = (channelId: string) => {
-    setSelectedChannelIds((prev) =>
-      prev.includes(channelId) ? prev.filter((id) => id !== channelId) : [...prev, channelId]
-    );
+    setSelectedChannelIds((prev) => (prev.includes(channelId) ? prev.filter((id) => id !== channelId) : [...prev, channelId]));
   };
 
   const handleSelectAllFiltered = () => {
@@ -316,12 +290,7 @@ export function MascotAssignModal({
 
   return (
     <div className="modal-backdrop" role="presentation">
-      <section
-        className="modal mascot-assign-modal-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="mascot-assign-title"
-      >
+      <section className="modal mascot-assign-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="mascot-assign-title">
         {/* Header */}
         <header className="mascot-assign-header">
           <div className="mascot-assign-identity">
@@ -334,27 +303,29 @@ export function MascotAssignModal({
               {mascot.master_image_url ? (
                 <img src={mascot.master_image_url} alt={mascot.name} />
               ) : (
-                <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: `${mascot.color_theme || "var(--accent)"}20` }} />
+                <div
+                  style={{ width: "24px", height: "24px", borderRadius: "50%", background: `${mascot.color_theme || "var(--accent)"}20` }}
+                />
               )}
             </div>
             <div>
-              <h2 id="mascot-assign-title" style={{ fontSize: "16px", margin: 0 }}>{t("mascots.quickAssignTitle", { name: mascot.name })}</h2>
+              <h2 id="mascot-assign-title" style={{ fontSize: "16px", margin: 0 }}>
+                {t("mascots.quickAssignTitle", { name: mascot.name })}
+              </h2>
             </div>
             <span
               className="mascot-style-pill"
-              style={{ backgroundColor: `${mascot.color_theme || "var(--accent)"}20`, color: mascot.color_theme || "var(--accent)", marginLeft: "4px" }}
+              style={{
+                backgroundColor: `${mascot.color_theme || "var(--accent)"}20`,
+                color: mascot.color_theme || "var(--accent)",
+                marginLeft: "4px",
+              }}
             >
               {QUIZ_IMAGE_STYLE_LABELS[mascot.visual_style] || mascot.visual_style}
             </span>
           </div>
 
-          <button
-            type="button"
-            className="icon-button"
-            aria-label={t("common.close")}
-            onClick={onClose}
-            disabled={saving}
-          >
+          <button type="button" className="icon-button" aria-label={t("common.close")} onClick={onClose} disabled={saving}>
             <X size={18} />
           </button>
         </header>
@@ -476,20 +447,20 @@ export function MascotAssignModal({
 
                 {/* Mascot on Stage (Matching 1920x1080 Render) */}
                 <div
-                  className={`candy-mascot-container mascot-stage anchor-bottom_left ${
-                    isDragging ? "is-dragging" : ""
-                  }`}
-                  style={{
-                    zIndex: 25,
-                    transformOrigin: "bottom center",
-                    transform: `scale(${scale})`,
-                    ["--action-offset-x" as any]: `${offsetX}px`,
-                    ["--action-offset-y" as any]: `${offsetY}px`,
-                    ["--mascot-scale" as any]: scale,
-                    pointerEvents: "auto",
-                    cursor: isDragging ? "grabbing" : "grab",
-                    userSelect: "none",
-                  }}
+                  className={`candy-mascot-container mascot-stage anchor-bottom_left ${isDragging ? "is-dragging" : ""}`}
+                  style={
+                    {
+                      zIndex: 25,
+                      transformOrigin: "bottom center",
+                      transform: `scale(${scale})`,
+                      "--action-offset-x": `${offsetX}px`,
+                      "--action-offset-y": `${offsetY}px`,
+                      "--mascot-scale": scale,
+                      pointerEvents: "auto",
+                      cursor: isDragging ? "grabbing" : "grab",
+                      userSelect: "none",
+                    } as React.CSSProperties
+                  }
                   onMouseDown={handleMascotMouseDown}
                 >
                   {showGuides ? (
@@ -509,32 +480,36 @@ export function MascotAssignModal({
                   {previewImage ? (
                     <div
                       className="candy-mascot-sprite"
-                      style={{
-                        backgroundImage: `url(${previewImage})`,
-                        transform: `translate(${offsetX}px, ${offsetY}px)`,
-                        ["--action-offset-x" as any]: `${offsetX}px`,
-                        ["--action-offset-y" as any]: `${offsetY}px`,
-                        position: "relative",
-                        zIndex: 2,
-                        cursor: isDragging ? "grabbing" : "grab",
-                        pointerEvents: "auto",
-                      }}
+                      style={
+                        {
+                          backgroundImage: `url(${previewImage})`,
+                          transform: `translate(${offsetX}px, ${offsetY}px)`,
+                          "--action-offset-x": `${offsetX}px`,
+                          "--action-offset-y": `${offsetY}px`,
+                          position: "relative",
+                          zIndex: 2,
+                          cursor: isDragging ? "grabbing" : "grab",
+                          pointerEvents: "auto",
+                        } as React.CSSProperties
+                      }
                       title="Drag to reposition"
                     />
                   ) : (
                     <div
                       className="stage-mascot-placeholder"
-                      style={{
-                        width: "220px",
-                        height: "220px",
-                        display: "grid",
-                        placeItems: "center",
-                        transform: `translate(${offsetX}px, ${offsetY}px)`,
-                        ["--action-offset-x" as any]: `${offsetX}px`,
-                        ["--action-offset-y" as any]: `${offsetY}px`,
-                        cursor: isDragging ? "grabbing" : "grab",
-                        pointerEvents: "auto",
-                      }}
+                      style={
+                        {
+                          width: "220px",
+                          height: "220px",
+                          display: "grid",
+                          placeItems: "center",
+                          transform: `translate(${offsetX}px, ${offsetY}px)`,
+                          "--action-offset-x": `${offsetX}px`,
+                          "--action-offset-y": `${offsetY}px`,
+                          cursor: isDragging ? "grabbing" : "grab",
+                          pointerEvents: "auto",
+                        } as React.CSSProperties
+                      }
                     >
                       <Smiley size={64} style={{ color: mascot.color_theme || "var(--accent)" }} />
                     </div>
@@ -548,20 +523,18 @@ export function MascotAssignModal({
               <Crosshair size={13} weight="bold" style={{ color: "var(--accent)" }} />
               <span>{t("mascots.dragHint") || "Drag to reposition"}</span>
               <span className="coord-readout-badge" style={{ fontSize: "11px" }}>
-                X: <strong>{offsetX}px</strong> &nbsp;|&nbsp; Y: <strong>{offsetY}px</strong> &nbsp;|&nbsp; <strong>{Math.round(scale * 100)}%</strong>
+                X: <strong>{offsetX}px</strong> &nbsp;|&nbsp; Y: <strong>{offsetY}px</strong> &nbsp;|&nbsp;{" "}
+                <strong>{Math.round(scale * 100)}%</strong>
               </span>
             </div>
 
             {/* Mascot Alignment & Reset */}
             <div className="stage-control-card">
               <div className="section-title-row">
-                <label className="stage-control-label" style={{ margin: 0 }}>{t("mascots.positionLabel") || "Vị trí & Tỉ lệ Mascot"}</label>
-                <button
-                  type="button"
-                  className="quiet-button compact"
-                  onClick={handleResetAll}
-                  title="Reset All"
-                >
+                <label className="stage-control-label" style={{ margin: 0 }}>
+                  {t("mascots.positionLabel") || "Vị trí & Tỉ lệ Mascot"}
+                </label>
+                <button type="button" className="quiet-button compact" onClick={handleResetAll} title="Reset All">
                   <ArrowClockwise size={12} />
                   <span>Reset All</span>
                 </button>
@@ -574,7 +547,15 @@ export function MascotAssignModal({
                     type="button"
                     className={`pos-toggle-btn ${position === "bottom_left" ? "is-selected" : ""}`}
                     onClick={() => setPosition("bottom_left")}
-                    style={{ padding: "6px 10px", fontSize: "12px", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                    style={{
+                      padding: "6px 10px",
+                      fontSize: "12px",
+                      borderRadius: "6px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "6px",
+                    }}
                   >
                     <span>👈</span> {t("mascots.posBottomLeft") || "Góc trái"}
                   </button>
@@ -582,7 +563,15 @@ export function MascotAssignModal({
                     type="button"
                     className={`pos-toggle-btn ${position === "bottom_right" ? "is-selected" : ""}`}
                     onClick={() => setPosition("bottom_right")}
-                    style={{ padding: "6px 10px", fontSize: "12px", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                    style={{
+                      padding: "6px 10px",
+                      fontSize: "12px",
+                      borderRadius: "6px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "6px",
+                    }}
                   >
                     <span>👉</span> {t("mascots.posBottomRight") || "Góc phải"}
                   </button>
@@ -596,27 +585,15 @@ export function MascotAssignModal({
                 </label>
                 <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px" }}>
                   <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={showInIntro}
-                      onChange={(e) => setShowInIntro(e.target.checked)}
-                    />
+                    <input type="checkbox" checked={showInIntro} onChange={(e) => setShowInIntro(e.target.checked)} />
                     <span>🎬 {t("mascots.showInIntro") || "Intro mở đầu (Mặc định: Tắt)"}</span>
                   </label>
                   <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={showInQuestion}
-                      onChange={(e) => setShowInQuestion(e.target.checked)}
-                    />
+                    <input type="checkbox" checked={showInQuestion} onChange={(e) => setShowInQuestion(e.target.checked)} />
                     <span>❓ {t("mascots.showInQuestion") || "Câu hỏi & Reveal đáp án (Khuyên dùng)"}</span>
                   </label>
                   <label style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={showInOutro}
-                      onChange={(e) => setShowInOutro(e.target.checked)}
-                    />
+                    <input type="checkbox" checked={showInOutro} onChange={(e) => setShowInOutro(e.target.checked)} />
                     <span>🏁 {t("mascots.showInOutro") || "Outro kết thúc (Mặc định: Tắt)"}</span>
                   </label>
                 </div>
@@ -732,7 +709,9 @@ export function MascotAssignModal({
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
                   <Crosshair size={13} weight="bold" style={{ color: "var(--accent)" }} />
-                  <label className="stage-control-label" style={{ margin: 0 }}>Offset X / Y</label>
+                  <label className="stage-control-label" style={{ margin: 0 }}>
+                    Offset X / Y
+                  </label>
                 </div>
                 <button
                   type="button"
@@ -749,23 +728,43 @@ export function MascotAssignModal({
 
               {/* X Row */}
               <div className="precision-axis-header" style={{ marginTop: "4px" }}>
-                <span className="nudge-axis-tag x-tag">X: <strong>{offsetX > 0 ? `+${offsetX}` : offsetX}px</strong></span>
+                <span className="nudge-axis-tag x-tag">
+                  X: <strong>{offsetX > 0 ? `+${offsetX}` : offsetX}px</strong>
+                </span>
                 <div className="stepper-action-row" style={{ margin: 0 }}>
-                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.max(-2000, p - 50))}>-50</button>
-                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.max(-2000, p - 10))}>-10</button>
-                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.min(2000, p + 10))}>+10</button>
-                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.min(2000, p + 50))}>+50</button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.max(-2000, p - 50))}>
+                    -50
+                  </button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.max(-2000, p - 10))}>
+                    -10
+                  </button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.min(2000, p + 10))}>
+                    +10
+                  </button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetX((p) => Math.min(2000, p + 50))}>
+                    +50
+                  </button>
                 </div>
               </div>
 
               {/* Y Row */}
               <div className="precision-axis-header" style={{ marginTop: "6px" }}>
-                <span className="nudge-axis-tag y-tag">Y: <strong>{offsetY > 0 ? `+${offsetY}` : offsetY}px</strong></span>
+                <span className="nudge-axis-tag y-tag">
+                  Y: <strong>{offsetY > 0 ? `+${offsetY}` : offsetY}px</strong>
+                </span>
                 <div className="stepper-action-row" style={{ margin: 0 }}>
-                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.max(-1500, p - 50))}>-50</button>
-                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.max(-1500, p - 10))}>-10</button>
-                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.min(1500, p + 10))}>+10</button>
-                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.min(1500, p + 50))}>+50</button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.max(-1500, p - 50))}>
+                    -50
+                  </button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.max(-1500, p - 10))}>
+                    -10
+                  </button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.min(1500, p + 10))}>
+                    +10
+                  </button>
+                  <button type="button" className="precision-step-btn" onClick={() => setOffsetY((p) => Math.min(1500, p + 50))}>
+                    +50
+                  </button>
                 </div>
               </div>
             </div>
@@ -784,11 +783,7 @@ export function MascotAssignModal({
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 {searchQuery ? (
-                  <button
-                    type="button"
-                    className="icon-button compact clear-search-btn"
-                    onClick={() => setSearchQuery("")}
-                  >
+                  <button type="button" className="icon-button compact clear-search-btn" onClick={() => setSearchQuery("")}>
                     <X size={13} />
                   </button>
                 ) : null}
@@ -917,9 +912,7 @@ export function MascotAssignModal({
                               {t("mascots.currentlyAssignedToOther", { name: otherMascotInfo.name })}
                             </span>
                           ) : (
-                            <span className="mascot-state-badge unassigned">
-                              {t("mascots.channelItemUnassigned")}
-                            </span>
+                            <span className="mascot-state-badge unassigned">{t("mascots.channelItemUnassigned")}</span>
                           )}
                         </div>
                       </div>
@@ -940,27 +933,15 @@ export function MascotAssignModal({
                 {t("mascots.transferWarningNotice", { count: transferredCount, name: mascot.name })}
               </span>
             ) : (
-              <span className="footer-summary-text">
-                {t("mascots.assignChannelsLabel", { count: selectedChannelIds.length })}
-              </span>
+              <span className="footer-summary-text">{t("mascots.assignChannelsLabel", { count: selectedChannelIds.length })}</span>
             )}
           </div>
 
           <div className="modal-actions">
-            <button
-              type="button"
-              className="quiet-button"
-              onClick={onClose}
-              disabled={saving}
-            >
+            <button type="button" className="quiet-button" onClick={onClose} disabled={saving}>
               {t("common.cancel")}
             </button>
-            <button
-              type="button"
-              className="primary-button"
-              onClick={() => void handleSave()}
-              disabled={saving}
-            >
+            <button type="button" className="primary-button" onClick={() => void handleSave()} disabled={saving}>
               {saving ? <CircleNotch className="spin" size={16} /> : <FloppyDisk size={16} />}
               <span>{saving ? t("mascots.quickAssignSavingBtn") : t("mascots.quickAssignSaveBtn")}</span>
             </button>

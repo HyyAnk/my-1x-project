@@ -1,14 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import {
-  ArrowClockwise,
-  CaretDown,
-  FilmSlate,
-  Funnel,
-  ListChecks,
-  MagnifyingGlass,
-  Trash,
-  X,
-} from "@phosphor-icons/react";
+import { ArrowClockwise, CaretDown, FilmSlate, Funnel, ListChecks, MagnifyingGlass, Trash, X } from "@phosphor-icons/react";
 import type { Channel, Task } from "@studio/shared";
 import { api } from "../../api";
 import { formatTaskStatus, formatTaskType, isTaskActive } from "../../lib/utils";
@@ -85,7 +76,7 @@ export function TasksView({
           } catch {
             // Ignore background title load errors
           }
-        })
+        }),
       );
       if (!isCancelled) {
         setEpisodeTitleMap(titleMap);
@@ -119,7 +110,7 @@ export function TasksView({
     for (const [episodeId, epTasks] of epMap.entries()) {
       const sorted = [...epTasks].sort((a, b) => b.created_at.localeCompare(a.created_at));
       const activeTask = sorted.find(isTaskActive) ?? null;
-      const latestTask = sorted[0]!;
+      const latestTask = sorted[0];
       const status = activeTask ? activeTask.status : latestTask.status;
       const channelId = latestTask.channel_id;
       const channelName = channelMap.get(channelId) || "Channel";
@@ -152,13 +143,20 @@ export function TasksView({
     return list.sort((a, b) => {
       const rank = (s: Task["status"]) => {
         switch (s) {
-          case "RUNNING": return 0;
-          case "QUEUED": return 1;
-          case "WAITING_APPROVAL": return 2;
-          case "FAILED": return 3;
-          case "COMPLETED": return 4;
-          case "CANCELLED": return 5;
-          default: return 6;
+          case "RUNNING":
+            return 0;
+          case "QUEUED":
+            return 1;
+          case "WAITING_APPROVAL":
+            return 2;
+          case "FAILED":
+            return 3;
+          case "COMPLETED":
+            return 4;
+          case "CANCELLED":
+            return 5;
+          default:
+            return 6;
         }
       };
       const rankDiff = rank(a.status) - rank(b.status);
@@ -237,14 +235,8 @@ export function TasksView({
       return false;
     });
   }, [filteredItems, now]);
-  const inProgressItems = useMemo(
-    () => filteredItems.filter((i) => i.status === "RUNNING" || i.status === "QUEUED"),
-    [filteredItems]
-  );
-  const doneItems = useMemo(
-    () => filteredItems.filter((i) => i.status === "COMPLETED" || i.status === "CANCELLED"),
-    [filteredItems]
-  );
+  const inProgressItems = useMemo(() => filteredItems.filter((i) => i.status === "RUNNING" || i.status === "QUEUED"), [filteredItems]);
+  const doneItems = useMemo(() => filteredItems.filter((i) => i.status === "COMPLETED" || i.status === "CANCELLED"), [filteredItems]);
 
   // Actions
   const cancel = async (task: Task) => {
@@ -421,12 +413,7 @@ export function TasksView({
               aria-label={t("tasks.searchPlaceholder")}
             />
             {searchQuery && (
-              <button
-                type="button"
-                className="clear-search-btn"
-                onClick={() => setSearchQuery("")}
-                aria-label="Clear search"
-              >
+              <button type="button" className="clear-search-btn" onClick={() => setSearchQuery("")} aria-label="Clear search">
                 <X size={12} />
               </button>
             )}
@@ -509,32 +496,32 @@ export function TasksView({
             searchQuery && channelFilter !== "all"
               ? "No matching tasks found"
               : searchQuery
-              ? "No tasks match your search"
-              : channelFilter !== "all"
-              ? `No tasks for "${selectedChannelObj?.display_name || "channel"}"`
-              : statusFilter !== "all"
-              ? `No ${formatTaskStatus(statusFilter.toUpperCase() as Task["status"])} tasks`
-              : "No episode tasks found"
+                ? "No tasks match your search"
+                : channelFilter !== "all"
+                  ? `No tasks for "${selectedChannelObj?.display_name || "channel"}"`
+                  : statusFilter !== "all"
+                    ? `No ${formatTaskStatus(statusFilter.toUpperCase() as Task["status"])} tasks`
+                    : "No episode tasks found"
           }
           copy={
             searchQuery && channelFilter !== "all"
               ? "Try adjusting your search query or reset your channel filter."
               : searchQuery
-              ? "Try adjusting your search terms to find what you are looking for."
-              : channelFilter !== "all"
-              ? "This channel has no matching episode tasks. Switch to All Channels or generate a new episode."
-              : "When you generate episode videos, scripts, or assets, operations will appear here in real-time."
+                ? "Try adjusting your search terms to find what you are looking for."
+                : channelFilter !== "all"
+                  ? "This channel has no matching episode tasks. Switch to All Channels or generate a new episode."
+                  : "When you generate episode videos, scripts, or assets, operations will appear here in real-time."
           }
           action={
             searchQuery && channelFilter !== "all"
               ? "Reset All Filters"
               : searchQuery
-              ? "Clear Search"
-              : channelFilter !== "all"
-              ? "Reset Channel Filter"
-              : statusFilter !== "all"
-              ? "Show All Tasks"
-              : "Refresh"
+                ? "Clear Search"
+                : channelFilter !== "all"
+                  ? "Reset Channel Filter"
+                  : statusFilter !== "all"
+                    ? "Show All Tasks"
+                    : "Refresh"
           }
           onAction={
             searchQuery && channelFilter !== "all"
@@ -543,12 +530,12 @@ export function TasksView({
                   setChannelFilter("all");
                 }
               : searchQuery
-              ? () => setSearchQuery("")
-              : channelFilter !== "all"
-              ? () => setChannelFilter("all")
-              : statusFilter !== "all"
-              ? () => setStatusFilter("all")
-              : () => void handleManualRefresh()
+                ? () => setSearchQuery("")
+                : channelFilter !== "all"
+                  ? () => setChannelFilter("all")
+                  : statusFilter !== "all"
+                    ? () => setStatusFilter("all")
+                    : () => void handleManualRefresh()
           }
         />
       ) : statusFilter === "all" ? (
@@ -588,11 +575,7 @@ export function TasksView({
                   <span className="task-group-count">{inProgressItems.length}</span>
                 </div>
                 {queuedCount > 0 && (
-                  <button
-                    type="button"
-                    className="text-button compact"
-                    onClick={() => void cancelAllQueued()}
-                  >
+                  <button type="button" className="text-button compact" onClick={() => void cancelAllQueued()}>
                     <X size={13} />
                     <span>Cancel Queue</span>
                   </button>
@@ -622,11 +605,7 @@ export function TasksView({
                   <span className="task-group-badge is-done">Completed & Cancelled</span>
                   <span className="task-group-count">{doneItems.length}</span>
                 </div>
-                <button
-                  type="button"
-                  className="text-button compact"
-                  onClick={clearCompleted}
-                >
+                <button type="button" className="text-button compact" onClick={clearCompleted}>
                   <Trash size={13} />
                   <span>Clear List</span>
                 </button>
@@ -646,11 +625,7 @@ export function TasksView({
               </div>
               {doneItems.length > 6 && (
                 <div className="task-group-expand-row">
-                  <button
-                    type="button"
-                    className="quiet-button compact"
-                    onClick={() => setShowAllDone((prev) => !prev)}
-                  >
+                  <button type="button" className="quiet-button compact" onClick={() => setShowAllDone((prev) => !prev)}>
                     <span>{showAllDone ? "Show Less" : `Show All ${doneItems.length} Finished Tasks`}</span>
                   </button>
                 </div>

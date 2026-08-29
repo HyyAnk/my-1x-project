@@ -17,7 +17,17 @@ function quiz(count: number) {
       format: index === 1 ? "true_false" : "multiple_choice",
       difficulty: Math.min(5, index + 1),
       question: "Which choice belongs to question " + (index + 1) + "?",
-      choices: index === 1 ? [{ id: "choice-a", text: "True" }, { id: "choice-b", text: "False" }] : [{ id: "choice-a", text: "Correct " + (index + 1) }, { id: "choice-b", text: "Other " + (index + 1) }, { id: "choice-c", text: "Another " + (index + 1) }],
+      choices:
+        index === 1
+          ? [
+              { id: "choice-a", text: "True" },
+              { id: "choice-b", text: "False" },
+            ]
+          : [
+              { id: "choice-a", text: "Correct " + (index + 1) },
+              { id: "choice-b", text: "Other " + (index + 1) },
+              { id: "choice-c", text: "Another " + (index + 1) },
+            ],
       correct_choice_id: "choice-a",
       explanation: "The first choice is canonical for question " + (index + 1) + ".",
       fun_fact: index % 2 ? "A small fun fact." : "",
@@ -45,7 +55,9 @@ describe("deterministic Quiz timeline compiler", () => {
       const questionNarration = timeline.events.find((event) => event.segment_id === question.id + ":question");
       const choiceNarration = timeline.events.find((event) => event.segment_id === question.id + ":choice");
       if (questionNarration && choiceNarration) {
-        expect(Number((choiceNarration.at_seconds - (questionNarration.at_seconds + questionNarration.duration_seconds)).toFixed(3))).toBeGreaterThanOrEqual(1.0);
+        expect(
+          Number((choiceNarration.at_seconds - (questionNarration.at_seconds + questionNarration.duration_seconds)).toFixed(3)),
+        ).toBeGreaterThanOrEqual(1.0);
       }
       const countdownTicks = timeline.events.filter((event) => event.type === "countdown.tick" && event.question_id === question.id);
       expect(countdownTicks).toHaveLength(5);
@@ -74,8 +86,9 @@ describe("deterministic Quiz timeline compiler", () => {
       const start = timeline.events.find((event) => event.type === "question.enter" && event.question_id === question.id)?.at_seconds ?? 0;
       const next = value.questions[index + 1];
       const end = next
-        ? timeline.events.find((event) => event.type === "question.enter" && event.question_id === next.id)?.at_seconds ?? 0
-        : timeline.events.find((event) => event.type === "transition.start" && event.question_id === question.id)?.at_seconds ?? timeline.duration_seconds;
+        ? (timeline.events.find((event) => event.type === "question.enter" && event.question_id === next.id)?.at_seconds ?? 0)
+        : (timeline.events.find((event) => event.type === "transition.start" && event.question_id === question.id)?.at_seconds ??
+          timeline.duration_seconds);
       expect(end - start).toBeGreaterThanOrEqual(14);
       expect(end - start).toBeLessThanOrEqual(32);
     }
@@ -84,7 +97,14 @@ describe("deterministic Quiz timeline compiler", () => {
   it("catches a wrong answer reveal before render", () => {
     const value = quiz(3);
     const timeline = compileQuizTimeline({ quiz: value, director: createDefaultDirectorPlan(value), voicePlan: buildQuizVoicePlan(value) });
-    const wrong = { ...timeline, events: timeline.events.map((event) => event.type === "answer.reveal" && event.question_id === "question-02" ? { ...event, choice_id: "choice-b", payload: { ...event.payload, canonical_choice_id: "choice-b" } } : event) };
+    const wrong = {
+      ...timeline,
+      events: timeline.events.map((event) =>
+        event.type === "answer.reveal" && event.question_id === "question-02"
+          ? { ...event, choice_id: "choice-b", payload: { ...event.payload, canonical_choice_id: "choice-b" } }
+          : event,
+      ),
+    };
     expect(validateQuizTimeline(value, wrong).some((issue) => issue.code === "timeline_canonical_answer_mismatch")).toBe(true);
   });
 

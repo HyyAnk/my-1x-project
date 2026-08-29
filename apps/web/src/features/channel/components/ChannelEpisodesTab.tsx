@@ -14,14 +14,7 @@ type ChannelEpisodesTabProps = {
   onGoToTopics: () => void;
 };
 
-export function ChannelEpisodesTab({
-  channel,
-  episodes,
-  tasks,
-  onOpenEpisode,
-  onDeleteEpisode,
-  onGoToTopics,
-}: ChannelEpisodesTabProps) {
+export function ChannelEpisodesTab({ channel, episodes, tasks, onOpenEpisode, onDeleteEpisode, onGoToTopics }: ChannelEpisodesTabProps) {
   const [episodeSearch, setEpisodeSearch] = useState("");
   const [episodeFilter, setEpisodeFilter] = useState<"all" | "in_progress" | "video_ready">("all");
   const topicsUrl = buildHash({ page: "channels", channelId: channel.channel_id, tab: "topics" });
@@ -53,10 +46,7 @@ export function ChannelEpisodesTab({
           <span className="count-note">
             {episodes.length} {episodes.length === 1 ? "episode" : "episodes"}
           </span>
-          <a
-            className="primary-button compact"
-            {...getNavProps(topicsUrl, onGoToTopics)}
-          >
+          <a className="primary-button compact" {...getNavProps(topicsUrl, onGoToTopics)}>
             <Plus size={15} />
             <span>New Episode from Topics</span>
           </a>
@@ -87,12 +77,7 @@ export function ChannelEpisodesTab({
                 className="episode-search-input"
               />
               {episodeSearch ? (
-                <button
-                  type="button"
-                  className="search-clear-btn"
-                  onClick={() => setEpisodeSearch("")}
-                  aria-label="Clear search"
-                >
+                <button type="button" className="search-clear-btn" onClick={() => setEpisodeSearch("")} aria-label="Clear search">
                   <X size={13} />
                 </button>
               ) : null}

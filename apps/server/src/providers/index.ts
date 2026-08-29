@@ -11,7 +11,10 @@ export interface AudioProvider {
 }
 
 export interface ImageProvider {
-  generateReference(prompt: string, cancellationSignal?: AbortSignal): Promise<{ asset_path: string; fallback_tier?: number; degraded?: boolean }>;
+  generateReference(
+    prompt: string,
+    cancellationSignal?: AbortSignal,
+  ): Promise<{ asset_path: string; fallback_tier?: number; degraded?: boolean }>;
 }
 
 export interface ResearchProvider {

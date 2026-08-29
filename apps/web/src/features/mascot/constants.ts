@@ -1,8 +1,4 @@
-import {
-  MASCOT_ACTION_META,
-  type MascotActionType,
-  type QuizImageStyle,
-} from "@studio/shared";
+import { MASCOT_ACTION_META, type MascotActionType, type QuizImageStyle } from "@studio/shared";
 
 export const STYLE_OPTIONS: { id: QuizImageStyle; title: string }[] = [
   { id: "pixar_3d", title: "3D Pixar" },
@@ -36,28 +32,32 @@ export const PROMPT_TEMPLATES = [
   {
     nameKey: "mascots.presetOwl",
     name: "Milo the Explorer",
-    prompt: "Cute wise baby owl with big sparkling eyes and small red glasses, fluffy soft feathers, wearing a tiny yellow bowtie, friendly and enthusiastic expression, sharp clean silhouette, solid seamless background",
+    prompt:
+      "Cute wise baby owl with big sparkling eyes and small red glasses, fluffy soft feathers, wearing a tiny yellow bowtie, friendly and enthusiastic expression, sharp clean silhouette, solid seamless background",
     style: "pixar_3d" as QuizImageStyle,
     color: "#06b6d4",
   },
   {
     nameKey: "mascots.presetDino",
     name: "Bingo the Dino",
-    prompt: "Adorable playful baby green dinosaur with tiny soft wings and round cute belly, joyful smiling expression, big anime eyes, wearing small sneakers, solid white background, vibrant lighting",
+    prompt:
+      "Adorable playful baby green dinosaur with tiny soft wings and round cute belly, joyful smiling expression, big anime eyes, wearing small sneakers, solid white background, vibrant lighting",
     style: "pixar_3d" as QuizImageStyle,
     color: "#10b981",
   },
   {
     nameKey: "mascots.presetRobot",
     name: "Bolt the Bot",
-    prompt: "Futuristic cute mini companion robot mascot, glossy white ceramic shell, glowing heart-shaped LED screen face, energetic hovering pose with tiny thruster sparks, solid clean background",
+    prompt:
+      "Futuristic cute mini companion robot mascot, glossy white ceramic shell, glowing heart-shaped LED screen face, energetic hovering pose with tiny thruster sparks, solid clean background",
     style: "plastic_toy" as QuizImageStyle,
     color: "#8b5cf6",
   },
   {
     nameKey: "mascots.presetFox",
     name: "Felix the Fox",
-    prompt: "Clever adventurous chibi fox cub with oversized bushy tail, warm orange coat with cream chest, curious sparkling eyes, wearing tiny aviator goggles on forehead, playful dynamic pose",
+    prompt:
+      "Clever adventurous chibi fox cub with oversized bushy tail, warm orange coat with cream chest, curious sparkling eyes, wearing tiny aviator goggles on forehead, playful dynamic pose",
     style: "kawaii_chibi" as QuizImageStyle,
     color: "#ff6b4a",
   },
@@ -65,9 +65,9 @@ export const PROMPT_TEMPLATES = [
 
 export function getLocalizedActionMeta(
   action: MascotActionType | string | null | undefined,
-  t: (path: string, params?: Record<string, string | number>) => string
+  t: (path: string, params?: Record<string, string | number>) => string,
 ) {
-  const safeAction = (action && MASCOT_ACTION_META[action as MascotActionType]) ? (action as MascotActionType) : "idle";
+  const safeAction = action && MASCOT_ACTION_META[action as MascotActionType] ? (action as MascotActionType) : "idle";
   const base = MASCOT_ACTION_META[safeAction] || {
     labelKey: "mascots.actionIdle",
     descKey: "mascots.actionIdleDesc",

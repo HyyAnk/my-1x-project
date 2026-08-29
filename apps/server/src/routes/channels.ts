@@ -53,7 +53,13 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
       }
       const channelId = (request.params as { channelId: string }).channelId;
       const channel = await repository.getChannel(channelId);
-      const voice = await createVoiceWithPreview(repository, `${channel.display_name} (uploaded)`, audio, state.config.audio_generation, logger);
+      const voice = await createVoiceWithPreview(
+        repository,
+        `${channel.display_name} (uploaded)`,
+        audio,
+        state.config.audio_generation,
+        logger,
+      );
       const assigned = await repository.assignVoice(channelId, voice.voice_id);
       return { path: assigned.voice_reference_path, modified_at: new Date().toISOString(), voice, channel: assigned };
     });
@@ -69,12 +75,16 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
       await repository.deleteChannel(params.channelId, query.confirm === "true");
       return { ok: true };
     });
-    server.get("/api/channels/:channelId/dna", async (request) => repository.getChannelDna((request.params as { channelId: string }).channelId));
+    server.get("/api/channels/:channelId/dna", async (request) =>
+      repository.getChannelDna((request.params as { channelId: string }).channelId),
+    );
     server.put("/api/channels/:channelId/dna", async (request) => {
       const { content } = SaveTextInputSchema.parse(request.body);
       return repository.saveChannelDna((request.params as { channelId: string }).channelId, content);
     });
-    server.get("/api/channels/:channelId/topics", async (request) => ({ topics: await repository.listTopics((request.params as { channelId: string }).channelId) }));
+    server.get("/api/channels/:channelId/topics", async (request) => ({
+      topics: await repository.listTopics((request.params as { channelId: string }).channelId),
+    }));
     server.post("/api/channels/:channelId/topics/suggest", async (request, reply) => {
       const channelId = (request.params as { channelId: string }).channelId;
       const payload = request.body && typeof request.body === "object" && !Array.isArray(request.body) ? request.body : {};
@@ -86,7 +96,9 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
       const params = request.params as { channelId: string; topicId: string };
       const payload = request.body && typeof request.body === "object" && !Array.isArray(request.body) ? request.body : {};
       const input = TopicConfirmInputSchema.parse({ ...payload, topic_id: params.topicId });
-      return reply.code(201).send({ episode: await repository.confirmTopic(params.channelId, input.topic_id, input.question_count, input.visual_style) });
+      return reply
+        .code(201)
+        .send({ episode: await repository.confirmTopic(params.channelId, input.topic_id, input.question_count, input.visual_style) });
     });
     done();
   };

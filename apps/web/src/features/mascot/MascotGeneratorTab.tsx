@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { CircleNotch } from "@phosphor-icons/react";
-import type { Channel, MascotActionType, MascotProfile } from "@studio/shared";
+import type { Channel, MascotProfile } from "@studio/shared";
 import { useTranslation } from "../../i18n";
 import { getLocalizedActionMeta } from "./constants";
 import { MascotConceptStep } from "./components/MascotConceptStep";
@@ -174,7 +174,7 @@ export function MascotGeneratorTab({ channels, mascots, generatorState }: Mascot
                                 ? t("mascots.globalGenTitleMattingAll", { total: 7 })
                                 : t("mascots.globalGenTitleMatting")
                               : t("mascots.globalGenTitleSingle", {
-                                  action: getLocalizedActionMeta(busyAction as MascotActionType, t).label.split(" ")[0],
+                                  action: getLocalizedActionMeta(busyAction, t).label.split(" ")[0],
                                 })}
                   </h4>
                   <span className="mascot-gen-badge-active">

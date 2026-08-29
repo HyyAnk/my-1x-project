@@ -13,13 +13,7 @@ import { api } from "../../../api";
 import { formatTaskType, isTaskActive, isTaskTerminal, latestTask } from "../../../lib/utils";
 import type { useEpisode } from "../../../hooks/useEpisode";
 import type { Notice } from "../../../components/types";
-import {
-  artifactConfig,
-  isReady,
-  taskLabel,
-  type ArtifactName,
-  type PreviewImageData,
-} from "../types";
+import { artifactConfig, isReady, taskLabel, type ArtifactName, type PreviewImageData } from "../types";
 
 type EpisodeState = ReturnType<typeof useEpisode>;
 
@@ -84,8 +78,8 @@ export function useEpisodePipeline({
     activeTab === "script" || activeTab === "visual" || activeTab === "timeline" || activeTab === "remix"
       ? activeTab
       : simplifyMode && isQuiz
-      ? "remix"
-      : "timeline";
+        ? "remix"
+        : "timeline";
   const [workflowTab, setWorkflowTab] = useState<"script" | "visual" | "timeline" | "remix">(initialWorkflowTab);
 
   const loadHistoryCheck = useCallback(async () => {
@@ -148,7 +142,11 @@ export function useEpisodePipeline({
 
   const episodeTasks = tasks.filter((task) => task.episode_id === episodeId);
   const sequenceShotTasks = episodeTasks.filter((task) => task.task_type === "GENERATE_SEQUENCE_SCENES");
-  const latestShotBatchStartedAt = sequenceShotTasks.map((task) => task.created_at).sort().at(-1) ?? null;
+  const latestShotBatchStartedAt =
+    sequenceShotTasks
+      .map((task) => task.created_at)
+      .sort()
+      .at(-1) ?? null;
   const currentShotBatch = latestShotBatchStartedAt
     ? sequenceShotTasks.filter((task) => Math.abs(Date.parse(task.created_at) - Date.parse(latestShotBatchStartedAt)) < 5_000)
     : [];
@@ -257,13 +255,10 @@ export function useEpisodePipeline({
       narration: Boolean(episode?.narration_asset_path),
       video: Boolean(episode?.video_asset_path),
     }),
-    [research, treatment, script, visualBible, scenes.length, episode?.narration_asset_path, episode?.video_asset_path]
+    [research, treatment, script, visualBible, scenes.length, episode?.narration_asset_path, episode?.video_asset_path],
   );
 
-  const totalImageCostVnd = useMemo(
-    () => bundleImages.reduce((sum, img) => sum + (img.price_vnd ?? 50), 0),
-    [bundleImages]
-  );
+  const totalImageCostVnd = useMemo(() => bundleImages.reduce((sum, img) => sum + (img.price_vnd ?? 50), 0), [bundleImages]);
 
   const createTask = async (taskType: Task["task_type"], sceneNumber?: number) => {
     if (

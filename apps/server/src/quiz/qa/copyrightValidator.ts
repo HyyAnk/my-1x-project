@@ -15,35 +15,40 @@ export type CopyrightPatternDef = {
 export const STRICT_COPYRIGHT_PATTERNS: CopyrightPatternDef[] = [
   // 1. Lion Cubs / The Lion King (Banned in any context, including nature/baby animal quizzes)
   {
-    pattern: /(?:^|[^\p{L}\p{N}_])(sư\s+tử\s+con|lion\s+cubs?|baby\s+lions?|simba|vua\s+sư\s+tử|the\s+lion\s+king|mufasa|scar|timon|pumbaa)(?:$|[^\p{L}\p{N}_])/iu,
+    pattern:
+      /(?:^|[^\p{L}\p{N}_])(sư\s+tử\s+con|lion\s+cubs?|baby\s+lions?|simba|vua\s+sư\s+tử|the\s+lion\s+king|mufasa|scar|timon|pumbaa)(?:$|[^\p{L}\p{N}_])/iu,
     category: "LION_CUB",
     reason: "Phrase 'lion cub' or 'Simba/The Lion King' is copyright-sensitive and strictly blocked by AI Image Filters.",
   },
 
   // 2. Marvel Superheroes
   {
-    pattern: /(?:^|[^\p{L}\p{N}_])(spider[- ]?man|người\s+nhện|iron[- ]?man|người\s+sắt|captain\s+america|khổng\s+lồ\s+xanh|thần\s+sấm\s+thor|thor|hulk|thanos|wolverine|deadpool|doctor\s+strange|black\s+panther|avengers|groot)(?:$|[^\p{L}\p{N}_])/iu,
+    pattern:
+      /(?:^|[^\p{L}\p{N}_])(spider[- ]?man|người\s+nhện|iron[- ]?man|người\s+sắt|captain\s+america|khổng\s+lồ\s+xanh|thần\s+sấm\s+thor|thor|hulk|thanos|wolverine|deadpool|doctor\s+strange|black\s+panther|avengers|groot)(?:$|[^\p{L}\p{N}_])/iu,
     category: "MARVEL_SUPERHERO",
     reason: "Marvel superhero characters violate copyright policy and are blocked by AI Image Filters.",
   },
 
   // 3. DC Superheroes
   {
-    pattern: /(?:^|[^\p{L}\p{N}_])(batman|người\s+dơi|bruce\s+wayne|superman|siêu\s+nhân\s+(?:clark|dơi|nhện|sắt|gao)?|clark\s+kent|wonder\s+woman|nữ\s+thần\s+chiến\s+binh|joker|harley\s+quinn|the\s+flash|tia\s+chớp\s+flash|aquaman|green\s+lantern|justice\s+league)(?:$|[^\p{L}\p{N}_])/iu,
+    pattern:
+      /(?:^|[^\p{L}\p{N}_])(batman|người\s+dơi|bruce\s+wayne|superman|siêu\s+nhân\s+(?:clark|dơi|nhện|sắt|gao)?|clark\s+kent|wonder\s+woman|nữ\s+thần\s+chiến\s+binh|joker|harley\s+quinn|the\s+flash|tia\s+chớp\s+flash|aquaman|green\s+lantern|justice\s+league)(?:$|[^\p{L}\p{N}_])/iu,
     category: "DC_SUPERHERO",
     reason: "DC superhero characters violate copyright policy and are blocked by AI Image Filters.",
   },
 
   // 4. Video Game Characters & Brands (Nintendo, Pokemon, Sega, Mojang...)
   {
-    pattern: /(?:^|[^\p{L}\p{N}_])(pikachu|pok[eé]mon|pok[eé]ball|mario|nấm\s+lùn\s+mario|luigi|bowser|nhím\s+sonic|sonic|minecraft|creeper|roblox|fortnite|pac[- ]?man)(?:$|[^\p{L}\p{N}_])/iu,
+    pattern:
+      /(?:^|[^\p{L}\p{N}_])(pikachu|pok[eé]mon|pok[eé]ball|mario|nấm\s+lùn\s+mario|luigi|bowser|nhím\s+sonic|sonic|minecraft|creeper|roblox|fortnite|pac[- ]?man)(?:$|[^\p{L}\p{N}_])/iu,
     category: "GAME_IP",
     reason: "Video game characters (Game IPs) violate copyright policy and are blocked by AI Image Filters.",
   },
 
   // 5. Classic Disney/Pixar Characters
   {
-    pattern: /(?:^|[^\p{L}\p{N}_])(mickey\s+mouse|chuột\s+mickey|donald\s+duck|vịt\s+donald|nữ\s+hoàng\s+băng\s+giá\s+elsa|elsa|olaf)(?:$|[^\p{L}\p{N}_])/iu,
+    pattern:
+      /(?:^|[^\p{L}\p{N}_])(mickey\s+mouse|chuột\s+mickey|donald\s+duck|vịt\s+donald|nữ\s+hoàng\s+băng\s+giá\s+elsa|elsa|olaf)(?:$|[^\p{L}\p{N}_])/iu,
     category: "DISNEY_CORE",
     reason: "Classic Disney characters are strictly moderated and blocked by AI Image Filters.",
   },

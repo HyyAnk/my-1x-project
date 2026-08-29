@@ -29,7 +29,11 @@ export function NarrationTrackPanel({
   onCreateTask,
 }: NarrationTrackPanelProps) {
   const narrationTask = latestTask(episodeTasks, ["GENERATE_NARRATION"]);
-  const showProgress = narrationTask && (isTaskActive(narrationTask) || narrationTask.status === "FAILED" || (!episode.narration_asset_path && narrationTask.status !== "COMPLETED"));
+  const showProgress =
+    narrationTask &&
+    (isTaskActive(narrationTask) ||
+      narrationTask.status === "FAILED" ||
+      (!episode.narration_asset_path && narrationTask.status !== "COMPLETED"));
 
   return (
     <section className="panel narration-production-panel" style={{ marginTop: "24px" }}>
@@ -42,11 +46,7 @@ export function NarrationTrackPanel({
           disabled={!readiness.script || Boolean(activeEpisodeTask)}
           onClick={() => onCreateTask("GENERATE_NARRATION")}
         >
-          {narrationTask && isTaskActive(narrationTask) ? (
-            <CircleNotch className="spin" size={15} />
-          ) : (
-            <SpeakerHigh size={15} />
-          )}
+          {narrationTask && isTaskActive(narrationTask) ? <CircleNotch className="spin" size={15} /> : <SpeakerHigh size={15} />}
           <span>{readiness.narration ? "Regenerate" : "Generate Audio"}</span>
         </button>
       </div>

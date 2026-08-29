@@ -1,4 +1,13 @@
-import type { ChannelMascotConfig, DirectorPlan, MascotProfile, QuizAssessment, QuizAssetPlan, QuizTimeline, QuizV2, VoicePlan } from "@studio/shared";
+import type {
+  ChannelMascotConfig,
+  DirectorPlan,
+  MascotProfile,
+  QuizAssessment,
+  QuizAssetPlan,
+  QuizTimeline,
+  QuizV2,
+  VoicePlan,
+} from "@studio/shared";
 import { assessQuiz } from "./quizAssessment.js";
 
 export type QuizRenderPreflightInput = {

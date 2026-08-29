@@ -1,10 +1,5 @@
 import { Play, Trash, VideoCamera } from "@phosphor-icons/react";
-import {
-  QUIZ_IMAGE_STYLE_LABELS,
-  QUIZ_SECONDS_PER_QUESTION,
-  type Episode,
-  type Task,
-} from "@studio/shared";
+import { QUIZ_IMAGE_STYLE_LABELS, QUIZ_SECONDS_PER_QUESTION, type Episode, type Task } from "@studio/shared";
 import { formatDate, isTaskActive } from "../../../lib/utils";
 import { EpisodeAssetPills, StageBadge } from "../../../components/AppChrome";
 import { buildHash, getNavProps } from "../../../hooks/useRouter";
@@ -32,10 +27,10 @@ export function EpisodeCard({
     format === "odd_one_out"
       ? "Odd One Out"
       : format === "image_guess"
-      ? "Image Guess"
-      : format === "true_false"
-      ? "True/False"
-      : "Knowledge";
+        ? "Image Guess"
+        : format === "true_false"
+          ? "True/False"
+          : "Knowledge";
 
   const episodeTasks = tasks.filter((t) => t.episode_id === episode.episode_id);
   const hasActiveTask = episodeTasks.some(isTaskActive);
@@ -93,8 +88,7 @@ export function EpisodeCard({
             </div>
             {episode.video_duration_seconds ? (
               <span className="video-ready-time">
-                {Math.floor(episode.video_duration_seconds / 60)}:
-                {String(Math.round(episode.video_duration_seconds % 60)).padStart(2, "0")}
+                {Math.floor(episode.video_duration_seconds / 60)}:{String(Math.round(episode.video_duration_seconds % 60)).padStart(2, "0")}
               </span>
             ) : null}
           </div>

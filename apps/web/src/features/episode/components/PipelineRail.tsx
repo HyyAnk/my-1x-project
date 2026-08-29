@@ -31,7 +31,15 @@ export function PipelineRail({
   pipelineTask = null,
   tasks = [],
 }: {
-  readiness: { research: boolean; treatment: boolean; script: boolean; visualBible: boolean; scenes: boolean; narration: boolean; video: boolean };
+  readiness: {
+    research: boolean;
+    treatment: boolean;
+    script: boolean;
+    visualBible: boolean;
+    scenes: boolean;
+    narration: boolean;
+    video: boolean;
+  };
   quiz?: boolean;
   pipelineTask?: Task | null;
   tasks?: Task[];
@@ -57,13 +65,7 @@ export function PipelineRail({
         return (
           <li className={className} key={step.label}>
             <span>
-              {isRunning ? (
-                <CircleNotch className="spin" size={15} />
-              ) : isReady ? (
-                <CheckCircle size={15} weight="fill" />
-              ) : (
-                index + 1
-              )}
+              {isRunning ? <CircleNotch className="spin" size={15} /> : isReady ? <CheckCircle size={15} weight="fill" /> : index + 1}
             </span>
             <div className="pipeline-rail-content">
               <strong>{step.label}</strong>

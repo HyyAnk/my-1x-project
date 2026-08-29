@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { ImageProvider } from "./index.js";
 import { RepositoryError, RepositoryService } from "../repository.js";
+import { compactImagePrompt } from "../utils/promptSanitizer.js";
 
 type Gpti2ImageTarget = {
   channelId: string;
@@ -103,27 +104,12 @@ function waitFor(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function compactImagePrompt(prompt: string, aspectRatio?: string): string {
-  const bundle = prompt.match(/--- FILE:[^\n]*visual_bible\.md#[^\n]*\n([\s\S]*?)(?=\n--- FILE:|$)/i)?.[1]?.trim();
-  if (!bundle) return prompt;
-  const ratioLabel = aspectRatio ? ` ${aspectRatio}` : " 16:9";
-  return [
-    `Create one${ratioLabel} documentary continuity anchor image.`,
-    "Preserve every visual detail in this continuity bundle, including era, location, subjects, objects, palette, lighting, camera, action, atmosphere, and continuity:",
-    bundle,
-    "Do not add captions, charts, watermarks, labels, logos, or readable text.",
-  ].join("\n\n");
-}
-
 function generateIdempotencyKey(prefix: string, seed: string): string {
   const hash = createHash("sha256").update(seed).digest("hex").slice(0, 24);
   return `${prefix}_${hash}`;
 }
 
-export async function generateGpti2ImageBytes(
-  prompt: string,
-  options: Gpti2GenerationOptions = {},
-): Promise<Gpti2ImageResult> {
+export async function generateGpti2ImageBytes(prompt: string, options: Gpti2GenerationOptions = {}): Promise<Gpti2ImageResult> {
   const apiKey = (options.apiKey || process.env.GPTI2_API_KEY || process.env.SHOPAIKEY_API_KEY || "").trim();
   if (!apiKey) {
     throw new RepositoryError(
@@ -141,7 +127,13 @@ export async function generateGpti2ImageBytes(
   if (isNano) {
     return generateNanoBananaImage(apiKey, prompt, model, { ...options, aspect_ratio: dimensions.aspect_ratio }, idempotencyKey);
   } else {
-    return generateGptImage(apiKey, prompt, model, { ...options, size: options.size || dimensions.size, aspect_ratio: dimensions.aspect_ratio }, idempotencyKey);
+    return generateGptImage(
+      apiKey,
+      prompt,
+      model,
+      { ...options, size: options.size || dimensions.size, aspect_ratio: dimensions.aspect_ratio },
+      idempotencyKey,
+    );
   }
 }
 
@@ -235,7 +227,16 @@ async function generateGptImage(
     if (!jobId) {
       throw new RepositoryError("gpti2.store returned 202 without a job ID", "IMAGE_PROVIDER_FAILED");
     }
-    return pollGptJob(apiKey, jobId, model, payload.price_vnd as number | undefined, options.cancellationSignal, options.pollIntervalMs, options.aspect_ratio, size);
+    return pollGptJob(
+      apiKey,
+      jobId,
+      model,
+      payload.price_vnd as number | undefined,
+      options.cancellationSignal,
+      options.pollIntervalMs,
+      options.aspect_ratio,
+      size,
+    );
   }
 
   if (!response.ok) {
@@ -498,9 +499,7 @@ async function pollNanoJob(
 }
 
 async function downloadImageUrl(url: string, cancellationSignal?: AbortSignal): Promise<Uint8Array> {
-  const signal = cancellationSignal
-    ? AbortSignal.any([cancellationSignal, AbortSignal.timeout(60_000)])
-    : AbortSignal.timeout(60_000);
+  const signal = cancellationSignal ? AbortSignal.any([cancellationSignal, AbortSignal.timeout(60_000)]) : AbortSignal.timeout(60_000);
 
   const response = await fetch(url, { signal });
   if (!response.ok) {

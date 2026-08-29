@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import type { SandboxPhase } from "@studio/shared";
 
-export type SandboxPhase = "question" | "choices" | "thinking" | "reveal" | "explain";
+export type { SandboxPhase };
 
 const PHASE_TIMES: Record<SandboxPhase, number> = {
   question: 0.5,

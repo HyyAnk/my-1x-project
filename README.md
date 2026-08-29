@@ -16,12 +16,15 @@
 ### 1. One-Click Startup (Recommended)
 
 Run the startup batch script in the project root:
+
 ```cmd
 "run dashboard.bat"
 ```
+
 This script checks required dependencies, configures the environment, and launches the local dashboard.
 
 To stop running services:
+
 ```cmd
 "stop dashboard.bat"
 ```
@@ -29,11 +32,13 @@ To stop running services:
 ### 2. Manual Setup
 
 1. **Install dependencies:**
+
    ```bash
    pnpm install
    ```
 
 2. **Start development server:**
+
    ```bash
    pnpm dev
    ```

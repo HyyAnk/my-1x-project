@@ -3,10 +3,32 @@ import type { DirectorArchetype, QuizLayoutId, QuizMotionId, QuizPaletteId, Quiz
 export type QuizVisualTokens = {
   spacing: { xs: number; sm: number; md: number; lg: number; xl: number; xxl: number };
   radius: { card: number; pill: number; media: number; badge: number };
-  typography: Record<"question" | "answer" | "badge" | "label" | "counter" | "fact" | "interstitial", { family: string; weight: number; size: number; lineHeight: number; letterSpacing: number; shadow: string }>;
+  typography: Record<
+    "question" | "answer" | "badge" | "label" | "counter" | "fact" | "interstitial",
+    { family: string; weight: number; size: number; lineHeight: number; letterSpacing: number; shadow: string }
+  >;
   shadow: { card: string; lift: string; sticker: string; glow: string };
-  motion: { enterMs: number; staggerMs: number; revealMs: number; transitionMs: number; ambientSeconds: number; easing: Record<"pop" | "out" | "soft" | "linear", string> };
-  zIndex: { background: number; ambient: number; decor?: number; content: number; header?: number; phaseRegion?: number; statusBadge?: number; reward?: number; mascot: number; overlay: number; transition: number };
+  motion: {
+    enterMs: number;
+    staggerMs: number;
+    revealMs: number;
+    transitionMs: number;
+    ambientSeconds: number;
+    easing: Record<"pop" | "out" | "soft" | "linear", string>;
+  };
+  zIndex: {
+    background: number;
+    ambient: number;
+    decor?: number;
+    content: number;
+    header?: number;
+    phaseRegion?: number;
+    statusBadge?: number;
+    reward?: number;
+    mascot: number;
+    overlay: number;
+    transition: number;
+  };
   safeArea: { top: number; right: number; bottom: number; left: number };
 };
 

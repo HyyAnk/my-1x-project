@@ -1,0 +1,31 @@
+/* ==========================================================================
+   Antigravity Video Studio — Main Style Entry Point
+   Modularized Architecture
+   ========================================================================== */
+
+/* 1. Design Tokens & System Variables */
+@import "./tokens.css";
+
+/* 2. Global Reset & Base Typography */
+@import "./base.css";
+
+/* 3. App Shell & Layout Structure */
+@import "./layout.css";
+
+/* 4. Common UI Components */
+@import "./components/buttons.css";
+@import "./components/cards.css";
+@import "./components/modals.css";
+
+/* 5. Feature-specific Styles */
+@import "./features/dashboard.css";
+@import "./features/channels.css";
+@import "./features/tasks.css";
+@import "./features/topics.css";
+@import "./features/episodes.css";
+@import "./features/settings.css";
+@import "./features/remix.css";
+@import "./features/mascot.css";
+
+/* 6. Responsive Breakpoints & Media Queries */
+@import "./responsive.css";

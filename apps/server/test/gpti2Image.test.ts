@@ -24,12 +24,13 @@ describe("gpti2.store Image Provider", () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      text: async () => JSON.stringify({
-        data: [{ b64_json: fakeBase64 }],
-        price_vnd: 50,
-        price_breakdown: { images_vnd: 50 },
-      }),
-    } as unknown as Response);
+      text: async () =>
+        JSON.stringify({
+          data: [{ b64_json: fakeBase64 }],
+          price_vnd: 50,
+          price_breakdown: { images_vnd: 50 },
+        }),
+    });
     globalThis.fetch = fetchMock;
 
     const result = await generateGpti2ImageBytes("A scenic mountain at sunrise", {
@@ -96,7 +97,9 @@ describe("gpti2.store Image Provider", () => {
   });
 
   it("handles nano-banana-2 async polling generation", async () => {
-    const fakePngBytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, -60, -119]);
+    const fakePngBytes = new Uint8Array([
+      137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, -60, -119,
+    ]);
     const fetchMock = vi.fn().mockImplementation((url: string) => {
       if (url.endsWith("/nano/generations")) {
         return Promise.resolve({
@@ -145,8 +148,25 @@ describe("gpti2.store Image Provider", () => {
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
     await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
     const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({ name: "Gpti2 Channel", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-    const topics = Array.from({ length: 5 }, (_, i) => ({ topic_id: `t${i + 1}`, channel_id: channel.channel_id, title: `T${i + 1}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High" as const, generated_at: new Date().toISOString(), selected: false }));
+    const channel = await repository.createChannel({
+      name: "Gpti2 Channel",
+      description: "",
+      target_audience: "",
+      language: "English",
+      market: "",
+      dna_mode: "example",
+    });
+    const topics = Array.from({ length: 5 }, (_, i) => ({
+      topic_id: `t${i + 1}`,
+      channel_id: channel.channel_id,
+      title: `T${i + 1}`,
+      premise: "Premise",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High" as const,
+      generated_at: new Date().toISOString(),
+      selected: false,
+    }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, "t1");
 
@@ -154,21 +174,26 @@ describe("gpti2.store Image Provider", () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      text: async () => JSON.stringify({
-        data: [{ b64_json: fakeBase64 }],
-        price_vnd: 50,
-        price_breakdown: { images_vnd: 50 },
-      }),
-    } as unknown as Response);
-
-    const provider = new Gpti2ImageProvider(repository, {
-      channelId: channel.channel_id,
-      episodeId: episode.episode_id,
-      bundleNumber: 1,
-    }, {
-      apiKey: "sk-test",
-      model: "gpt-image-2",
+      text: async () =>
+        JSON.stringify({
+          data: [{ b64_json: fakeBase64 }],
+          price_vnd: 50,
+          price_breakdown: { images_vnd: 50 },
+        }),
     });
+
+    const provider = new Gpti2ImageProvider(
+      repository,
+      {
+        channelId: channel.channel_id,
+        episodeId: episode.episode_id,
+        bundleNumber: 1,
+      },
+      {
+        apiKey: "sk-test",
+        model: "gpt-image-2",
+      },
+    );
 
     const output = await provider.generateReference("A tranquil forest path");
     expect(output.price_vnd).toBe(50);
@@ -185,11 +210,12 @@ describe("gpti2.store Image Provider", () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      text: async () => JSON.stringify({
-        data: [{ b64_json: fakeBase64 }],
-        price_vnd: 50,
-      }),
-    } as unknown as Response);
+      text: async () =>
+        JSON.stringify({
+          data: [{ b64_json: fakeBase64 }],
+          price_vnd: 50,
+        }),
+    });
     globalThis.fetch = fetchMock;
 
     // Test 1:1 square for gpt-image-2
@@ -220,23 +246,26 @@ describe("gpti2.store Image Provider", () => {
     expect(requestBody.size).toBe("1024x768");
 
     // Test nano-banana-2 with direct aspect_ratio
-    fetchMock.mockResolvedValueOnce({
-      ok: true,
-      status: 202,
-      text: async () => JSON.stringify({ id: "nb_square", price_vnd: 100 }),
-    } as unknown as Response).mockResolvedValueOnce({
-      ok: true,
-      status: 200,
-      json: async () => ({
-        status: "succeeded",
-        data: [{ url: "https://gpti2.store/download/nb_square.png" }],
-        price_vnd: 100,
-      }),
-    } as unknown as Response).mockResolvedValueOnce({
-      ok: true,
-      status: 200,
-      arrayBuffer: async () => new Uint8Array([137, 80, 78, 71]).buffer,
-    } as unknown as Response);
+    fetchMock
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 202,
+        text: async () => JSON.stringify({ id: "nb_square", price_vnd: 100 }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          status: "succeeded",
+          data: [{ url: "https://gpti2.store/download/nb_square.png" }],
+          price_vnd: 100,
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        arrayBuffer: async () => new Uint8Array([137, 80, 78, 71]).buffer,
+      });
 
     const nanoResult = await generateGpti2ImageBytes("A square icon", {
       apiKey: "sk-test",
@@ -255,11 +284,12 @@ describe("gpti2.store Image Provider", () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      text: async () => JSON.stringify({
-        balance_vnd: 50000,
-        rpm: 10,
-      }),
-    } as unknown as Response);
+      text: async () =>
+        JSON.stringify({
+          balance_vnd: 50000,
+          rpm: 10,
+        }),
+    });
 
     const balance = await checkGpti2Balance("sk-valid-key");
     expect(balance.balance_vnd).toBe(50000);
@@ -271,11 +301,12 @@ describe("gpti2.store Image Provider", () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      text: async () => JSON.stringify({
-        data: [{ b64_json: fakeBase64 }],
-        price_vnd: 50,
-      }),
-    } as unknown as Response);
+      text: async () =>
+        JSON.stringify({
+          data: [{ b64_json: fakeBase64 }],
+          price_vnd: 50,
+        }),
+    });
     globalThis.fetch = fetchMock;
 
     await generateGpti2ImageBytes("Character waving", {

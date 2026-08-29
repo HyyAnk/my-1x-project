@@ -124,7 +124,7 @@ describe("BGM Registry and Audio Pipeline", () => {
     // Parse automation attribute to verify fade-in and fade-out keyframes
     const bgmMatch = bundle.html.match(/<audio id="bgm-clip-[^"]*"[^>]*data-automation="([^"]+)"/);
     expect(bgmMatch).toBeTruthy();
-    const automationJson = bgmMatch![1]!.replaceAll("&quot;", '"');
+    const automationJson = bgmMatch![1].replaceAll("&quot;", '"');
     const automation = JSON.parse(automationJson);
     expect(automation.version).toBe(1);
     expect(automation.lanes).toHaveLength(1);
@@ -157,7 +157,7 @@ describe("BGM Registry and Audio Pipeline", () => {
       bpmPreference: "120_bpm_upbeat",
       seed: "episode-01",
     });
-    const firstTrackId = initialSchedule[0]!.trackId;
+    const firstTrackId = initialSchedule[0].trackId;
 
     // Next episode with firstTrackId in recent history
     const nextSchedule = registry.resolveBgmSchedule(120, {
@@ -165,7 +165,7 @@ describe("BGM Registry and Audio Pipeline", () => {
       recentTrackIds: [firstTrackId],
       seed: "episode-02",
     });
-    const secondTrackId = nextSchedule[0]!.trackId;
+    const secondTrackId = nextSchedule[0].trackId;
 
     expect(secondTrackId).not.toBe(firstTrackId);
   });
@@ -182,7 +182,7 @@ describe("BGM Registry and Audio Pipeline", () => {
         recentTrackIds: history,
         seed: `episode-series-${i}`,
       });
-      const chosen = schedule[0]!.trackId;
+      const chosen = schedule[0].trackId;
       chosenTracks.push(chosen);
       history.unshift(chosen);
     }
@@ -205,8 +205,8 @@ describe("BGM Registry and Audio Pipeline", () => {
       seed: "episode-deterministic-check",
     });
 
-    expect(run1[0]!.trackId).toBe(run2[0]!.trackId);
-    expect(run1[0]!.src).toBe(run2[0]!.src);
+    expect(run1[0].trackId).toBe(run2[0].trackId);
+    expect(run1[0].src).toBe(run2[0].src);
   });
 
   it("supports pinning an explicit track ID", () => {
@@ -216,7 +216,7 @@ describe("BGM Registry and Audio Pipeline", () => {
       trackId: "Morning_in_the_Garden",
     });
 
-    expect(schedule[0]!.trackId).toBe("Morning_in_the_Garden");
+    expect(schedule[0].trackId).toBe("Morning_in_the_Garden");
   });
 
   it("persists and prunes channel BGM history in repository", async () => {
@@ -244,22 +244,22 @@ describe("BGM Registry and Audio Pipeline", () => {
       await repository.appendBgmHistory(channel.channel_id, "ep-1", "A_Pocketful_of_Marbles", "A_Pocketful_of_Marbles.mp3");
       const history1 = await repository.readBgmHistory(channel.channel_id);
       expect(history1).toHaveLength(1);
-      expect(history1[0]!.track_id).toBe("A_Pocketful_of_Marbles");
-      expect(history1[0]!.episode_id).toBe("ep-1");
+      expect(history1[0].track_id).toBe("A_Pocketful_of_Marbles");
+      expect(history1[0].episode_id).toBe("ep-1");
 
       // Append second track
       await repository.appendBgmHistory(channel.channel_id, "ep-2", "Building_a_Paper_Castle", "Building_a_Paper_Castle.mp3");
       const history2 = await repository.readBgmHistory(channel.channel_id);
       expect(history2).toHaveLength(2);
-      expect(history2[0]!.track_id).toBe("Building_a_Paper_Castle");
-      expect(history2[1]!.track_id).toBe("A_Pocketful_of_Marbles");
+      expect(history2[0].track_id).toBe("Building_a_Paper_Castle");
+      expect(history2[1].track_id).toBe("A_Pocketful_of_Marbles");
 
       // Re-appending same episode replaces previous entry for that episode
       await repository.appendBgmHistory(channel.channel_id, "ep-2", "Chasing_Paper_Planes", "Chasing_Paper_Planes.mp3");
       const history3 = await repository.readBgmHistory(channel.channel_id);
       expect(history3).toHaveLength(2);
-      expect(history3[0]!.track_id).toBe("Chasing_Paper_Planes");
-      expect(history3[1]!.track_id).toBe("A_Pocketful_of_Marbles");
+      expect(history3[0].track_id).toBe("Chasing_Paper_Planes");
+      expect(history3[1].track_id).toBe("A_Pocketful_of_Marbles");
     } finally {
       await rm(root, { recursive: true, force: true });
     }

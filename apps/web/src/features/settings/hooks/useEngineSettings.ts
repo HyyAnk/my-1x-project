@@ -12,32 +12,21 @@ type UseEngineSettingsProps = {
   onNotice: (notice: NonNullable<Notice>) => void;
 };
 
-export function useEngineSettings({
-  appConfig,
-  codex,
-  antigravity,
-  onCodexSaved,
-  onAntigravitySaved,
-  onNotice,
-}: UseEngineSettingsProps) {
+export function useEngineSettings({ appConfig, codex, antigravity, onCodexSaved, onAntigravitySaved, onNotice }: UseEngineSettingsProps) {
   const [transport, setTransport] = useState(codex?.settings.transport ?? "app_server");
   const [baseUrl, setBaseUrl] = useState(codex?.settings.api_base_url ?? "");
   const [apiKey, setApiKey] = useState("");
   const [autoDeleteThreads, setAutoDeleteThreads] = useState(appConfig?.codex.auto_delete_threads ?? false);
-  const [failedThreadRetentionDays, setFailedThreadRetentionDays] = useState(
-    appConfig?.codex.failed_thread_retention_days ?? 7
-  );
+  const [failedThreadRetentionDays, setFailedThreadRetentionDays] = useState(appConfig?.codex.failed_thread_retention_days ?? 7);
   const [savingCodex, setSavingCodex] = useState(false);
   const [cleaningThreads, setCleaningThreads] = useState(false);
 
   const [agyApiKey, setAgyApiKey] = useState("");
   const [agyCommand, setAgyCommand] = useState(appConfig?.antigravity.command ?? "agy");
   const [agyBaseUrl, setAgyBaseUrl] = useState(appConfig?.antigravity.api_base_url ?? "");
-  const [agyAutoDeleteThreads, setAgyAutoDeleteThreads] = useState(
-    appConfig?.antigravity.auto_delete_threads ?? false
-  );
+  const [agyAutoDeleteThreads, setAgyAutoDeleteThreads] = useState(appConfig?.antigravity.auto_delete_threads ?? false);
   const [agyFailedThreadRetentionDays, setAgyFailedThreadRetentionDays] = useState(
-    appConfig?.antigravity.failed_thread_retention_days ?? 7
+    appConfig?.antigravity.failed_thread_retention_days ?? 7,
   );
   const [savingAntigravity, setSavingAntigravity] = useState(false);
   const [cleaningAgyThreads, setCleaningAgyThreads] = useState(false);
@@ -46,25 +35,20 @@ export function useEngineSettings({
     setTransport(codex?.settings.transport ?? "app_server");
     setBaseUrl(codex?.settings.api_base_url ?? "");
     setAutoDeleteThreads(codex?.settings.auto_delete_threads ?? appConfig?.codex.auto_delete_threads ?? false);
-    setFailedThreadRetentionDays(
-      codex?.settings.failed_thread_retention_days ?? appConfig?.codex.failed_thread_retention_days ?? 7
-    );
+    setFailedThreadRetentionDays(codex?.settings.failed_thread_retention_days ?? appConfig?.codex.failed_thread_retention_days ?? 7);
   }, [codex, appConfig?.codex.auto_delete_threads, appConfig?.codex.failed_thread_retention_days]);
 
   useEffect(() => {
     setAgyCommand(antigravity?.settings.command ?? appConfig?.antigravity.command ?? "agy");
     setAgyBaseUrl(antigravity?.settings.api_base_url ?? appConfig?.antigravity.api_base_url ?? "");
-    setAgyAutoDeleteThreads(
-      antigravity?.settings.auto_delete_threads ?? appConfig?.antigravity.auto_delete_threads ?? false
-    );
+    setAgyAutoDeleteThreads(antigravity?.settings.auto_delete_threads ?? appConfig?.antigravity.auto_delete_threads ?? false);
     setAgyFailedThreadRetentionDays(
-      antigravity?.settings.failed_thread_retention_days ?? appConfig?.antigravity.failed_thread_retention_days ?? 7
+      antigravity?.settings.failed_thread_retention_days ?? appConfig?.antigravity.failed_thread_retention_days ?? 7,
     );
   }, [antigravity, appConfig?.antigravity]);
 
   const codexCleanupSaved = codex?.settings.auto_delete_threads ?? appConfig?.codex.auto_delete_threads ?? false;
-  const antigravityCleanupSaved =
-    antigravity?.settings.auto_delete_threads ?? appConfig?.antigravity.auto_delete_threads ?? false;
+  const antigravityCleanupSaved = antigravity?.settings.auto_delete_threads ?? appConfig?.antigravity.auto_delete_threads ?? false;
 
   const saveCodex = async (event: FormEvent) => {
     event.preventDefault();

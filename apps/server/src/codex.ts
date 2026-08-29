@@ -10,7 +10,13 @@ import path from "node:path";
 import { makeId, type AppConfig, type CodexModel } from "@studio/shared";
 import { StudioLogger } from "./logger.js";
 
-type RpcMessage = { id?: number; method?: string; params?: Record<string, unknown>; result?: unknown; error?: { code?: number; message?: string } };
+type RpcMessage = {
+  id?: number;
+  method?: string;
+  params?: Record<string, unknown>;
+  result?: unknown;
+  error?: { code?: number; message?: string };
+};
 type Pending = { resolve: (value: unknown) => void; reject: (error: Error) => void; timer: NodeJS.Timeout };
 const execFileAsync = promisify(execFile);
 
@@ -44,7 +50,11 @@ export class CodexAppServerClient extends EventEmitter {
   private resolvedCommand: string | null = null;
   private readonly apiControllers = new Map<string, AbortController>();
 
-  constructor(private readonly rootDirectory: string, private config: AppConfig, private readonly logger: StudioLogger) {
+  constructor(
+    private readonly rootDirectory: string,
+    private config: AppConfig,
+    private readonly logger: StudioLogger,
+  ) {
     super();
   }
 
@@ -65,10 +75,8 @@ export class CodexAppServerClient extends EventEmitter {
     try {
       const response = await this.apiRequest("/models");
       if (!response.ok) return this.withCurrentModel(DEFAULT_CODEX_MODELS);
-      const payload = await response.json() as { data?: unknown[] };
-      const models = (payload.data ?? [])
-        .map((model) => this.normalizeModel(model))
-        .filter((model): model is CodexModel => Boolean(model));
+      const payload = (await response.json()) as { data?: unknown[] };
+      const models = (payload.data ?? []).map((model) => this.normalizeModel(model)).filter((model): model is CodexModel => Boolean(model));
       return this.withCurrentModel(models.length ? models : DEFAULT_CODEX_MODELS);
     } catch {
       return this.withCurrentModel(DEFAULT_CODEX_MODELS);
@@ -88,7 +96,12 @@ export class CodexAppServerClient extends EventEmitter {
       const version = `${result.stdout}\n${result.stderr}`.trim().split(/\r?\n/).find(Boolean) ?? null;
       return { installed: true, command, version };
     } catch (error) {
-      return { installed: false, command: this.config.codex.command || "codex", version: null, error: error instanceof Error ? error.message : "Codex command could not be executed" };
+      return {
+        installed: false,
+        command: this.config.codex.command || "codex",
+        version: null,
+        error: error instanceof Error ? error.message : "Codex command could not be executed",
+      };
     }
   }
 
@@ -120,7 +133,7 @@ export class CodexAppServerClient extends EventEmitter {
     if (this.config.codex.transport === "openai_compatible") return makeId("thread");
     const params: Record<string, unknown> = { cwd: this.rootDirectory };
     if (this.config.codex.model) params.model = this.config.codex.model;
-    const result = await this.request("thread/start", params) as { thread?: { id?: string } };
+    const result = (await this.request("thread/start", params)) as { thread?: { id?: string } };
     const threadId = result.thread?.id;
     if (!threadId) throw new Error("Codex did not return a thread id");
     return threadId;
@@ -129,7 +142,7 @@ export class CodexAppServerClient extends EventEmitter {
   async resumeThread(threadId: string): Promise<string> {
     await this.ensureConnected();
     if (this.config.codex.transport === "openai_compatible") return threadId;
-    const result = await this.request("thread/resume", { threadId }) as { thread?: { id?: string } };
+    const result = (await this.request("thread/resume", { threadId })) as { thread?: { id?: string } };
     return result.thread?.id ?? threadId;
   }
 
@@ -141,7 +154,9 @@ export class CodexAppServerClient extends EventEmitter {
       await this.request("thread/delete", { threadId });
       return true;
     } catch (error) {
-      this.logger.debug(`Codex thread cleanup skipped: ${error instanceof Error ? error.message : "unknown error"}`, { step: "codex_thread_cleanup" });
+      this.logger.debug(`Codex thread cleanup skipped: ${error instanceof Error ? error.message : "unknown error"}`, {
+        step: "codex_thread_cleanup",
+      });
       return false;
     }
   }
@@ -153,11 +168,11 @@ export class CodexAppServerClient extends EventEmitter {
       setTimeout(() => void this.runOpenAiTurn(threadId, turnId, prompt), 0);
       return turnId;
     }
-    const result = await this.request("turn/start", {
+    const result = (await this.request("turn/start", {
       threadId,
       input: [{ type: "text", text: prompt }],
       ...(this.config.codex.model ? { model: this.config.codex.model } : {}),
-    }) as { turn?: { id?: string } };
+    })) as { turn?: { id?: string } };
     const turnId = result.turn?.id;
     if (!turnId) throw new Error("Codex did not return a turn id");
     return turnId;
@@ -168,7 +183,10 @@ export class CodexAppServerClient extends EventEmitter {
     if (this.config.codex.transport === "openai_compatible") {
       this.apiControllers.get(turnId)?.abort();
       this.apiControllers.delete(turnId);
-      this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, threadId, status: "interrupted" } } });
+      this.emit("notification", {
+        method: "turn/completed",
+        params: { threadId, turnId, turn: { id: turnId, threadId, status: "interrupted" } },
+      });
       return;
     }
     await this.request("turn/interrupt", { threadId, turnId });
@@ -247,7 +265,9 @@ export class CodexAppServerClient extends EventEmitter {
     const response = await this.apiRequest("/models");
     if (!response.ok && response.status !== 404 && response.status !== 405) {
       const detail = await response.text().catch(() => "");
-      throw new CodexUnavailableError(`Cockpit API rejected the connection (${response.status})${detail ? `: ${detail.slice(0, 240)}` : ""}`);
+      throw new CodexUnavailableError(
+        `Cockpit API rejected the connection (${response.status})${detail ? `: ${detail.slice(0, 240)}` : ""}`,
+      );
     }
     this.connected = true;
     this.initialized = true;
@@ -270,14 +290,23 @@ export class CodexAppServerClient extends EventEmitter {
       if (!response.ok) throw new Error(`Cockpit API request failed (${response.status}): ${body.slice(0, 400)}`);
       const output = extractOpenAiOutput(JSON.parse(body) as Record<string, unknown>);
       this.emit("notification", { method: "item/agentMessage/delta", params: { threadId, turnId, delta: output } });
-      this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, threadId, status: "completed" } } });
+      this.emit("notification", {
+        method: "turn/completed",
+        params: { threadId, turnId, turn: { id: turnId, threadId, status: "completed" } },
+      });
     } catch (error) {
       if (controller.signal.aborted) {
-        this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, threadId, status: "interrupted" } } });
+        this.emit("notification", {
+          method: "turn/completed",
+          params: { threadId, turnId, turn: { id: turnId, threadId, status: "interrupted" } },
+        });
       } else {
         const message = error instanceof Error ? error.message : "Cockpit API request failed";
         this.emit("notification", { method: "error", params: { threadId, turnId, error: { message } } });
-        this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, threadId, status: "failed", error: { message } } } });
+        this.emit("notification", {
+          method: "turn/completed",
+          params: { threadId, turnId, turn: { id: turnId, threadId, status: "failed", error: { message } } },
+        });
       }
     } finally {
       this.apiControllers.delete(turnId);
@@ -357,7 +386,7 @@ export class CodexAppServerClient extends EventEmitter {
         // WindowsApps are copied to a workspace-local path because Windows'
         // package ACL may reject direct execution from an un-packaged Node
         // process (EPERM/Access denied).
-        if (/\.(cmd|bat)$/i.test(source) && await this.canExecute(source)) {
+        if (/\.(cmd|bat)$/i.test(source) && (await this.canExecute(source))) {
           this.resolvedCommand = source;
           this.logger.info("Using the Codex command wrapper discovered on PATH", { step: "codex_resolve" });
           return source;
@@ -367,7 +396,9 @@ export class CodexAppServerClient extends EventEmitter {
         const cachedStats = await stat(cached).catch(() => null);
         if (!cachedStats || sourceStats.mtimeMs > cachedStats.mtimeMs || sourceStats.size !== cachedStats.size) {
           await copyFile(source, cached).catch((error) => {
-            this.logger.debug(`Could not cache Codex candidate ${source}: ${error instanceof Error ? error.message : "copy failed"}`, { step: "codex_resolve" });
+            this.logger.debug(`Could not cache Codex candidate ${source}: ${error instanceof Error ? error.message : "copy failed"}`, {
+              step: "codex_resolve",
+            });
           });
         }
         if (await this.canExecute(cached)) {
@@ -394,9 +425,16 @@ export class CodexAppServerClient extends EventEmitter {
   private async locateWindowsCodexCommands(): Promise<string[]> {
     const located: string[] = [];
     for (const name of ["codex.exe", "codex"]) {
-      const result = await execFileAsync("where.exe", [name], { cwd: this.rootDirectory, timeout: 5_000, windowsHide: true }).catch(() => null);
+      const result = await execFileAsync("where.exe", [name], { cwd: this.rootDirectory, timeout: 5_000, windowsHide: true }).catch(
+        () => null,
+      );
       if (!result) continue;
-      located.push(...result.stdout.split(/\r?\n/).map((value) => value.trim()).filter(Boolean));
+      located.push(
+        ...result.stdout
+          .split(/\r?\n/)
+          .map((value) => value.trim())
+          .filter(Boolean),
+      );
     }
     return [...new Set(located)];
   }
@@ -431,9 +469,7 @@ export class CodexAppServerClient extends EventEmitter {
     try {
       const payload = JSON.parse(await readFile(catalogPath, "utf8")) as { models?: unknown };
       if (!Array.isArray(payload.models)) return [];
-      return payload.models
-        .map((model) => this.normalizeCatalogModel(model))
-        .filter((model): model is CodexModel => Boolean(model));
+      return payload.models.map((model) => this.normalizeCatalogModel(model)).filter((model): model is CodexModel => Boolean(model));
     } catch {
       return [];
     }
@@ -454,7 +490,9 @@ export class CodexAppServerClient extends EventEmitter {
     const model = value as Record<string, unknown>;
     const id = typeof model.id === "string" ? model.id.trim() : "";
     if (!id || model.visibility === "hide" || this.isNonTextModel(id)) return null;
-    const displayName = [model.name, model.display_name].find((candidate): candidate is string => typeof candidate === "string" && Boolean(candidate.trim()))?.trim();
+    const displayName = [model.name, model.display_name]
+      .find((candidate): candidate is string => typeof candidate === "string" && Boolean(candidate.trim()))
+      ?.trim();
     return { id, label: this.modelLabel(id, displayName) };
   }
 

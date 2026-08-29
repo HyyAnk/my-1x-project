@@ -27,11 +27,12 @@ export function formatArtifactSectionNumbers(numbers: number[]): string {
 }
 
 export function parseArtifactSectionNumber(title: string, kind: ArtifactSectionKind): number | null {
-  const match = kind === "continuity_bundle"
-    ? title.match(/\bCB[-_ ]?0*(\d+)\b/i)
-    : kind === "question"
-      ? title.match(/^(?:question\s*)?0*(\d+)(?=\s|[.)—:-]|$)/i)
-      : title.match(/^(?:(?:sequence|section|part)\s*)?0*(\d+)(?=\s|[.)—:-]|$)/i);
+  const match =
+    kind === "continuity_bundle"
+      ? title.match(/\bCB[-_ ]?0*(\d+)\b/i)
+      : kind === "question"
+        ? title.match(/^(?:question\s*)?0*(\d+)(?=\s|[.)—:-]|$)/i)
+        : title.match(/^(?:(?:sequence|section|part)\s*)?0*(\d+)(?=\s|[.)—:-]|$)/i);
   const number = Number(match?.[1]);
   return Number.isInteger(number) && number > 0 ? number : null;
 }

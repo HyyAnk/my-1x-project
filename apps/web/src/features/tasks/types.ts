@@ -1,13 +1,6 @@
 import type { Task } from "@studio/shared";
 
-export type StatusFilter =
-  | "all"
-  | "running"
-  | "queued"
-  | "waiting_approval"
-  | "failed"
-  | "completed"
-  | "cancelled";
+export type StatusFilter = "all" | "running" | "queued" | "waiting_approval" | "failed" | "completed" | "cancelled";
 
 export type ProductionItemSummary = {
   id: string;

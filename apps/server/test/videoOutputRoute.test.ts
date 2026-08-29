@@ -20,10 +20,31 @@ describe("video output routes", () => {
       writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8"),
     ]);
     const revealed: string[] = [];
-    const app = await buildApp(root, { revealFile: async (filePath) => { revealed.push(filePath); } });
+    const app = await buildApp(root, {
+      revealFile: async (filePath) => {
+        revealed.push(filePath);
+      },
+    });
     try {
-      const channel = await app.repository.createChannel({ name: "Video output", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
-      const topics = Array.from({ length: 5 }, (_, index) => ({ topic_id: `video-topic-${index}`, channel_id: channel.channel_id, title: `Video topic ${index}`, premise: "Premise", why_it_fits: "Fits", hook: "Hook", estimated_potential: "High", generated_at: new Date().toISOString(), selected: false }));
+      const channel = await app.repository.createChannel({
+        name: "Video output",
+        description: "",
+        target_audience: "",
+        language: "English",
+        market: "",
+        dna_mode: "example",
+      });
+      const topics = Array.from({ length: 5 }, (_, index) => ({
+        topic_id: `video-topic-${index}`,
+        channel_id: channel.channel_id,
+        title: `Video topic ${index}`,
+        premise: "Premise",
+        why_it_fits: "Fits",
+        hook: "Hook",
+        estimated_potential: "High",
+        generated_at: new Date().toISOString(),
+        selected: false,
+      }));
       await app.repository.saveTopicRun(channel.channel_id, topics);
       const episode = await app.repository.confirmTopic(channel.channel_id, topics[0].topic_id);
       await app.repository.writeVideoArtifact(channel.channel_id, episode.episode_id, new Uint8Array([1, 2, 3, 4]));

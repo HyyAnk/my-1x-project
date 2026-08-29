@@ -33,9 +33,10 @@ export function TaskActivityBar({
   };
 
   const progress = task ? calculateProgress(task, task.status) : 0;
-  const targetHash = task && task.channel_id && task.episode_id
-    ? buildHash({ page: "channels", channelId: task.channel_id, episodeId: task.episode_id })
-    : "#/tasks";
+  const targetHash =
+    task && task.channel_id && task.episode_id
+      ? buildHash({ page: "channels", channelId: task.channel_id, episodeId: task.episode_id })
+      : "#/tasks";
 
   return (
     <div
@@ -54,8 +55,8 @@ export function TaskActivityBar({
         task?.episode_id
           ? `Active task: ${formatTaskType(task.task_type)}, ${progress}% complete. Click to open episode.`
           : reconnecting
-          ? t("tasks.reconnectingLive")
-          : t("tasks.pageTitle")
+            ? t("tasks.reconnectingLive")
+            : t("tasks.pageTitle")
       }
     >
       <div className="task-activity-signal">
@@ -69,7 +70,14 @@ export function TaskActivityBar({
             <span>{task.progress_message || formatTaskStatus(task.status)}</span>
           </div>
           <span className="task-activity-time">{formatTaskElapsed(task, now)}</span>
-          <div className="task-activity-track" role="progressbar" aria-label="Active task progress" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
+          <div
+            className="task-activity-track"
+            role="progressbar"
+            aria-label="Active task progress"
+            aria-valuenow={progress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
             <span style={{ width: `${Math.max(4, Math.min(100, progress))}%` }} />
           </div>
           <span className="task-activity-percent">{progress}%</span>

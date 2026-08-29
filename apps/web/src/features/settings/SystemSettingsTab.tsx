@@ -14,13 +14,7 @@ type SystemSettingsTabProps = {
   onNotice: (notice: NonNullable<Notice>) => void;
 };
 
-export function SystemSettingsTab({
-  storage,
-  onStorageSaved,
-  simplifyMode = true,
-  onSimplifyChange,
-  onNotice,
-}: SystemSettingsTabProps) {
+export function SystemSettingsTab({ storage, onStorageSaved, simplifyMode = true, onSimplifyChange, onNotice }: SystemSettingsTabProps) {
   const { t, language, setLanguage } = useTranslation();
   const { storagePath, setStoragePath, savingStorage, saveStorage } = useSystemSettings({
     storage,
@@ -72,10 +66,7 @@ export function SystemSettingsTab({
             <p className="eyebrow">{t("settings.workspaceTitle")}</p>
             <h2>{t("settings.simplifyTitle")}</h2>
           </div>
-          <SimplifyToggle
-            enabled={simplifyMode}
-            onChange={(enabled) => onSimplifyChange?.(enabled)}
-          />
+          <SimplifyToggle enabled={simplifyMode} onChange={(enabled) => onSimplifyChange?.(enabled)} />
         </div>
         <p className="storage-hint">{t("settings.simplifyDesc")}</p>
       </section>

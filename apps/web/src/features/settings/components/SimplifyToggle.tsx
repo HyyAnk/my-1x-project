@@ -1,10 +1,4 @@
-export function SimplifyToggle({
-  enabled,
-  onChange,
-}: {
-  enabled: boolean;
-  onChange: (enabled: boolean) => void;
-}) {
+export function SimplifyToggle({ enabled, onChange }: { enabled: boolean; onChange: (enabled: boolean) => void }) {
   return (
     <label className="session-cleanup-switch">
       <input

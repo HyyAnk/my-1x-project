@@ -35,7 +35,7 @@ export function extractScriptMarkdown(output: string, episodeTitle: string): str
   const titleMatch = [...headings].reverse().find((heading) => heading[1].trim().toLowerCase() === normalizedTitle);
   const selected = titleMatch ?? headings.at(-1);
   if (selected?.index === undefined) return value;
-  const nextHeading = headings.find((heading) => (heading.index ?? 0) > selected.index!);
+  const nextHeading = headings.find((heading) => (heading.index ?? 0) > selected.index);
   return value.slice(selected.index, nextHeading?.index).trim();
 }
 

@@ -10,38 +10,25 @@ type UseMediaSettingsProps = {
   onNotice: (notice: NonNullable<Notice>) => void;
 };
 
-export function useMediaSettings({
-  appConfig,
-  onVideoSaved,
-  onImageSaved,
-  onNotice,
-}: UseMediaSettingsProps) {
-  const [maxSceneDuration, setMaxSceneDuration] = useState(
-    appConfig?.video_generation.max_scene_duration_seconds ?? 8
-  );
-  const [narrationWordsPerSecond, setNarrationWordsPerSecond] = useState(
-    appConfig?.video_generation.narration_words_per_second ?? 2.3
-  );
-  const [maxConcurrentVideoTasks, setMaxConcurrentVideoTasks] = useState(
-    appConfig?.video_generation.max_concurrent_tasks ?? 2
-  );
+export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNotice }: UseMediaSettingsProps) {
+  const [maxSceneDuration, setMaxSceneDuration] = useState(appConfig?.video_generation.max_scene_duration_seconds ?? 8);
+  const [narrationWordsPerSecond, setNarrationWordsPerSecond] = useState(appConfig?.video_generation.narration_words_per_second ?? 2.3);
+  const [maxConcurrentVideoTasks, setMaxConcurrentVideoTasks] = useState(appConfig?.video_generation.max_concurrent_tasks ?? 2);
   const [savingVideo, setSavingVideo] = useState(false);
 
   const [imageEnabled, setImageEnabled] = useState(appConfig?.image_generation?.enabled ?? true);
   const [imagesPerBundle, setImagesPerBundle] = useState(appConfig?.image_generation?.images_per_bundle ?? 1);
   const [imageProvider, setImageProvider] = useState<ImageProviderId>(
-    (appConfig?.image_generation?.provider as ImageProviderId) ?? "gpti2"
+    (appConfig?.image_generation?.provider as ImageProviderId) ?? "gpti2",
   );
   const [imageBaseUrl, setImageBaseUrl] = useState(appConfig?.image_generation?.base_url ?? "");
   const [imageModel, setImageModel] = useState(appConfig?.image_generation?.model ?? "gpt-image-2");
   const [imageApiKey, setImageApiKey] = useState(appConfig?.image_generation?.api_key ?? "");
   const [showImageKey, setShowImageKey] = useState(false);
   const [hasImageApiKey, setHasImageApiKey] = useState(
-    Boolean(appConfig?.image_generation?.has_api_key || appConfig?.image_generation?.api_key)
+    Boolean(appConfig?.image_generation?.has_api_key || appConfig?.image_generation?.api_key),
   );
-  const [maxConcurrentImageTasks, setMaxConcurrentImageTasks] = useState(
-    appConfig?.image_generation?.max_concurrent_tasks ?? 3
-  );
+  const [maxConcurrentImageTasks, setMaxConcurrentImageTasks] = useState(appConfig?.image_generation?.max_concurrent_tasks ?? 3);
   const [savingImage, setSavingImage] = useState(false);
   const [checkingImageBalance, setCheckingImageBalance] = useState(false);
   const [imageBalanceInfo, setImageBalanceInfo] = useState<{ balance_vnd: number; rpm?: number } | null>(null);
@@ -62,7 +49,7 @@ export function useMediaSettings({
     if (appConfig?.image_generation) {
       setImageEnabled(appConfig.image_generation.enabled);
       setImagesPerBundle(appConfig.image_generation.images_per_bundle);
-      setImageProvider((appConfig.image_generation.provider as ImageProviderId) ?? "gpti2");
+      setImageProvider(appConfig.image_generation.provider ?? "gpti2");
       setImageBaseUrl(appConfig.image_generation.base_url ?? "");
       setImageModel(appConfig.image_generation.model ?? "gpt-image-2");
       setMaxConcurrentImageTasks(appConfig.image_generation.max_concurrent_tasks ?? 3);
@@ -121,12 +108,7 @@ export function useMediaSettings({
   };
 
   const clearImageKey = async () => {
-    const providerLabel =
-      imageProvider === "gpti2"
-        ? "gpti2.store"
-        : imageProvider === "shopaikey"
-        ? "ShopAiKey"
-        : "Custom Provider";
+    const providerLabel = imageProvider === "gpti2" ? "gpti2.store" : imageProvider === "shopaikey" ? "ShopAiKey" : "Custom Provider";
     if (!window.confirm(`Are you sure you want to remove this ${providerLabel} API key?`)) return;
     setSavingImage(true);
     try {

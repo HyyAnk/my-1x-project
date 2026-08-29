@@ -8,29 +8,171 @@ export const candyArcadeTokens: QuizVisualTemplate["tokens"] = {
   spacing: { xs: 12, sm: 20, md: 32, lg: 48, xl: 72, xxl: 104 },
   radius: { card: 38, pill: 999, media: 42, badge: 25 },
   typography: {
-    question: { family: headlineFont, weight: 800, size: 58, lineHeight: 1.18, letterSpacing: -0.5, shadow: "0 2px 0 rgba(255, 255, 255, .8), 0 3px 0 rgba(16, 35, 75, .08)" },
+    question: {
+      family: headlineFont,
+      weight: 800,
+      size: 58,
+      lineHeight: 1.18,
+      letterSpacing: -0.5,
+      shadow: "0 2px 0 rgba(255, 255, 255, .8), 0 3px 0 rgba(16, 35, 75, .08)",
+    },
     answer: { family: roundedFont, weight: 900, size: 34, lineHeight: 1.1, letterSpacing: -0.6, shadow: "none" },
     badge: { family: roundedFont, weight: 900, size: 36, lineHeight: 1, letterSpacing: 0, shadow: "none" },
     label: { family: roundedFont, weight: 900, size: 23, lineHeight: 1.1, letterSpacing: 0.4, shadow: "none" },
     counter: { family: roundedFont, weight: 900, size: 27, lineHeight: 1, letterSpacing: 0.2, shadow: "none" },
     fact: { family: headlineFont, weight: 900, size: 38, lineHeight: 1.22, letterSpacing: -0.3, shadow: "none" },
-    interstitial: { family: roundedFont, weight: 900, size: 96, lineHeight: 1.02, letterSpacing: -3.2, shadow: "0 7px 0 rgba(13, 35, 71, .12)" },
+    interstitial: {
+      family: roundedFont,
+      weight: 900,
+      size: 96,
+      lineHeight: 1.02,
+      letterSpacing: -3.2,
+      shadow: "0 7px 0 rgba(13, 35, 71, .12)",
+    },
   },
-  shadow: { card: "0 18px 0 rgba(13, 35, 71, .18)", lift: "0 25px 36px rgba(13, 35, 71, .22)", sticker: "0 10px 0 rgba(13, 35, 71, .24)", glow: "0 0 0 8px rgba(255,255,255,.22), 0 0 42px rgba(255,255,255,.55)" },
-  motion: { enterMs: 440, staggerMs: 120, revealMs: 550, transitionMs: 920, ambientSeconds: 14, easing: { pop: "cubic-bezier(.18,1.42,.34,1)", out: "cubic-bezier(.22,.8,.3,1)", soft: "cubic-bezier(.4,0,.2,1)", linear: "linear" } },
-  zIndex: { background: 0, ambient: 1, decor: 2, content: 3, header: 4, phaseRegion: 5, statusBadge: 6, reward: 7, mascot: 4, overlay: 8, transition: 10 },
+  shadow: {
+    card: "0 18px 0 rgba(13, 35, 71, .18)",
+    lift: "0 25px 36px rgba(13, 35, 71, .22)",
+    sticker: "0 10px 0 rgba(13, 35, 71, .24)",
+    glow: "0 0 0 8px rgba(255,255,255,.22), 0 0 42px rgba(255,255,255,.55)",
+  },
+  motion: {
+    enterMs: 440,
+    staggerMs: 120,
+    revealMs: 550,
+    transitionMs: 920,
+    ambientSeconds: 14,
+    easing: { pop: "cubic-bezier(.18,1.42,.34,1)", out: "cubic-bezier(.22,.8,.3,1)", soft: "cubic-bezier(.4,0,.2,1)", linear: "linear" },
+  },
+  zIndex: {
+    background: 0,
+    ambient: 1,
+    decor: 2,
+    content: 3,
+    header: 4,
+    phaseRegion: 5,
+    statusBadge: 6,
+    reward: 7,
+    mascot: 4,
+    overlay: 8,
+    transition: 10,
+  },
   safeArea: { top: 64, right: 96, bottom: 58, left: 96 },
 };
 
 export const candyArcadePalettes = [
-  { id: "lime", backgroundPrimary: "#99D93E", backgroundSecondary: "#31B87A", accent: "#FF6C78", surfaceAccent: "#C0394B", onAccent: "#0F172A", answerBadge: "#FF6C78", correct: "#27B96C", incorrect: "#7B8DA1", surface: "#FFFDF7", text: "#152A57", muted: "#E8F5DF" },
-  { id: "aqua", backgroundPrimary: "#21C8CF", backgroundSecondary: "#1973CF", accent: "#FF7A63", surfaceAccent: "#BE4B3A", onAccent: "#0F172A", answerBadge: "#F6517C", correct: "#26B96C", incorrect: "#7B8DA1", surface: "#FFFDF7", text: "#102D5B", muted: "#DDF9F7" },
-  { id: "sunny", backgroundPrimary: "#FFD23F", backgroundSecondary: "#FF9D31", accent: "#E94F6D", surfaceAccent: "#B63D54", onAccent: "#0F172A", answerBadge: "#EF5A5A", correct: "#25B56D", incorrect: "#7B8DA1", surface: "#FFFDF8", text: "#19325B", muted: "#FFF2B4" },
-  { id: "purple", backgroundPrimary: "#9A66E6", backgroundSecondary: "#594DDC", accent: "#FFAA42", surfaceAccent: "#A64C00", onAccent: "#0F172A", answerBadge: "#F35B86", correct: "#33C777", incorrect: "#7B8DA1", surface: "#FFFEFF", text: "#1C2459", muted: "#E9E0FF" },
-  { id: "pink", backgroundPrimary: "#FF82AF", backgroundSecondary: "#E94F8A", accent: "#FFD44D", surfaceAccent: "#8B6500", onAccent: "#0F172A", answerBadge: "#9075E6", correct: "#29B86C", incorrect: "#7B8DA1", surface: "#FFFDFD", text: "#2A235A", muted: "#FFE4EF" },
-  { id: "orange", backgroundPrimary: "#FF964F", backgroundSecondary: "#EF5A62", accent: "#3BC7C9", surfaceAccent: "#007C82", onAccent: "#0F172A", answerBadge: "#2DADB7", correct: "#21B56A", incorrect: "#7B8DA1", surface: "#FFFDF8", text: "#1A315D", muted: "#FFE5C9" },
-  { id: "red", backgroundPrimary: "#F15B68", backgroundSecondary: "#C93D78", accent: "#FFD047", surfaceAccent: "#9A6100", onAccent: "#0F172A", answerBadge: "#F7A53D", correct: "#28B86D", incorrect: "#7B8DA1", surface: "#FFFDFC", text: "#2A2150", muted: "#FFE0E4" },
-  { id: "blue", backgroundPrimary: "#438CE8", backgroundSecondary: "#2A55C8", accent: "#FFCE45", surfaceAccent: "#8C6600", onAccent: "#0F172A", answerBadge: "#F06174", correct: "#2FC177", incorrect: "#7B8DA1", surface: "#FCFEFF", text: "#132A58", muted: "#DCEBFF" },
+  {
+    id: "lime",
+    backgroundPrimary: "#99D93E",
+    backgroundSecondary: "#31B87A",
+    accent: "#FF6C78",
+    surfaceAccent: "#C0394B",
+    onAccent: "#0F172A",
+    answerBadge: "#FF6C78",
+    correct: "#27B96C",
+    incorrect: "#7B8DA1",
+    surface: "#FFFDF7",
+    text: "#152A57",
+    muted: "#E8F5DF",
+  },
+  {
+    id: "aqua",
+    backgroundPrimary: "#21C8CF",
+    backgroundSecondary: "#1973CF",
+    accent: "#FF7A63",
+    surfaceAccent: "#BE4B3A",
+    onAccent: "#0F172A",
+    answerBadge: "#F6517C",
+    correct: "#26B96C",
+    incorrect: "#7B8DA1",
+    surface: "#FFFDF7",
+    text: "#102D5B",
+    muted: "#DDF9F7",
+  },
+  {
+    id: "sunny",
+    backgroundPrimary: "#FFD23F",
+    backgroundSecondary: "#FF9D31",
+    accent: "#E94F6D",
+    surfaceAccent: "#B63D54",
+    onAccent: "#0F172A",
+    answerBadge: "#EF5A5A",
+    correct: "#25B56D",
+    incorrect: "#7B8DA1",
+    surface: "#FFFDF8",
+    text: "#19325B",
+    muted: "#FFF2B4",
+  },
+  {
+    id: "purple",
+    backgroundPrimary: "#9A66E6",
+    backgroundSecondary: "#594DDC",
+    accent: "#FFAA42",
+    surfaceAccent: "#A64C00",
+    onAccent: "#0F172A",
+    answerBadge: "#F35B86",
+    correct: "#33C777",
+    incorrect: "#7B8DA1",
+    surface: "#FFFEFF",
+    text: "#1C2459",
+    muted: "#E9E0FF",
+  },
+  {
+    id: "pink",
+    backgroundPrimary: "#FF82AF",
+    backgroundSecondary: "#E94F8A",
+    accent: "#FFD44D",
+    surfaceAccent: "#8B6500",
+    onAccent: "#0F172A",
+    answerBadge: "#9075E6",
+    correct: "#29B86C",
+    incorrect: "#7B8DA1",
+    surface: "#FFFDFD",
+    text: "#2A235A",
+    muted: "#FFE4EF",
+  },
+  {
+    id: "orange",
+    backgroundPrimary: "#FF964F",
+    backgroundSecondary: "#EF5A62",
+    accent: "#3BC7C9",
+    surfaceAccent: "#007C82",
+    onAccent: "#0F172A",
+    answerBadge: "#2DADB7",
+    correct: "#21B56A",
+    incorrect: "#7B8DA1",
+    surface: "#FFFDF8",
+    text: "#1A315D",
+    muted: "#FFE5C9",
+  },
+  {
+    id: "red",
+    backgroundPrimary: "#F15B68",
+    backgroundSecondary: "#C93D78",
+    accent: "#FFD047",
+    surfaceAccent: "#9A6100",
+    onAccent: "#0F172A",
+    answerBadge: "#F7A53D",
+    correct: "#28B86D",
+    incorrect: "#7B8DA1",
+    surface: "#FFFDFC",
+    text: "#2A2150",
+    muted: "#FFE0E4",
+  },
+  {
+    id: "blue",
+    backgroundPrimary: "#438CE8",
+    backgroundSecondary: "#2A55C8",
+    accent: "#FFCE45",
+    surfaceAccent: "#8C6600",
+    onAccent: "#0F172A",
+    answerBadge: "#F06174",
+    correct: "#2FC177",
+    incorrect: "#7B8DA1",
+    surface: "#FCFEFF",
+    text: "#132A58",
+    muted: "#DCEBFF",
+  },
 ] as const satisfies readonly QuizPalette[];
 
 export const candyArcadeStyleBible: QuizVisualTemplate["styleBible"] = {
@@ -99,9 +241,10 @@ export function textTier(value: string, role: "question" | "choice"): TextTier {
 
 export function textLayout(value: string, role: "question" | "choice"): TextLayout {
   const tier = textTier(value, role);
-  const options = role === "question"
-    ? { short: [58, 1.18, 2], medium: [52, 1.2, 2], long: [46, 1.22, 3], very_long: [40, 1.24, 3], overflow: [36, 1.25, 4] }
-    : { short: [34, 1.1, 2], medium: [30, 1.12, 2], long: [26, 1.15, 3], very_long: [24, 1.16, 3], overflow: [24, 1.16, 3] };
+  const options =
+    role === "question"
+      ? { short: [58, 1.18, 2], medium: [52, 1.2, 2], long: [46, 1.22, 3], very_long: [40, 1.24, 3], overflow: [36, 1.25, 4] }
+      : { short: [34, 1.1, 2], medium: [30, 1.12, 2], long: [26, 1.15, 3], very_long: [24, 1.16, 3], overflow: [24, 1.16, 3] };
   const [fontSize, lineHeight, maxLines] = options[tier];
   return { tier, fontSize, lineHeight, maxLines, fits: tier !== "overflow" };
 }
@@ -149,7 +292,11 @@ export function ambientPeriodSeconds(kind: AmbientMotionKind): number {
   return 0;
 }
 
-export function visualAnswerState(choiceId: string, canonicalChoiceId: string, phase: "idle" | "reveal" | "explain"): "idle" | "correct" | "incorrect" {
+export function visualAnswerState(
+  choiceId: string,
+  canonicalChoiceId: string,
+  phase: "idle" | "reveal" | "explain",
+): "idle" | "correct" | "incorrect" {
   if (phase === "idle") return "idle";
   return choiceId === canonicalChoiceId ? "correct" : "incorrect";
 }

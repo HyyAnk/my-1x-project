@@ -1,15 +1,4 @@
-import {
-  ArrowLeft,
-  ArrowRight,
-  CircleNotch,
-  Eye,
-  MagicWand,
-  PaintBrush,
-  PencilSimple,
-  Plus,
-  Upload,
-  X,
-} from "@phosphor-icons/react";
+import { ArrowLeft, ArrowRight, CircleNotch, Eye, MagicWand, PaintBrush, PencilSimple, Plus, Upload, X } from "@phosphor-icons/react";
 import {
   ALL_MASCOT_ACTIONS,
   QUIZ_IMAGE_STYLE_LABELS,
@@ -18,12 +7,7 @@ import {
   type QuizImageStyle,
 } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
-import {
-  AUXILIARY_ACTIONS,
-  BRAND_IDENTITY_ACTIONS,
-  CORE_GAMEPLAY_ACTIONS,
-  getLocalizedActionMeta,
-} from "../constants";
+import { AUXILIARY_ACTIONS, BRAND_IDENTITY_ACTIONS, CORE_GAMEPLAY_ACTIONS, getLocalizedActionMeta } from "../constants";
 
 type MascotActionsStepProps = {
   editingMascot: MascotProfile | null;
@@ -122,9 +106,7 @@ export function MascotActionsStep({
           {/* 1. Actively Generating Overlay */}
           {isActivelyGenerating ? (
             <div className="card-generating-overlay">
-              <strong className="card-gen-label">
-                {t("mascots.generatingPose", { action: meta.label.split(" ")[0] })}
-              </strong>
+              <strong className="card-gen-label">{t("mascots.generatingPose", { action: meta.label.split(" ")[0] })}</strong>
               <small className="card-gen-stage">{currentStageMessage}</small>
               <div className="card-gen-bar-wrap">
                 <div className="mascot-gen-bar-fill" style={{ width: `${itemProgress}%` }} />
@@ -156,11 +138,7 @@ export function MascotActionsStep({
           {/* Regular Image or Empty Dropzone */}
           {sprite?.sprite_url ? (
             <>
-              <img
-                src={sprite.sprite_url}
-                alt={action}
-                className={`artistic-mascot-img mascot-anim-${action}`}
-              />
+              <img src={sprite.sprite_url} alt={action} className={`artistic-mascot-img mascot-anim-${action}`} />
               <div className="artistic-hover-actions">
                 <button
                   type="button"
@@ -228,9 +206,7 @@ export function MascotActionsStep({
               <div className="artistic-empty-icon">
                 <Plus size={14} weight="bold" />
               </div>
-              <p className="artistic-empty-text">
-                {t("mascots.addPoseBtn")}
-              </p>
+              <p className="artistic-empty-text">{t("mascots.addPoseBtn")}</p>
             </div>
           )}
         </div>
@@ -273,9 +249,7 @@ export function MascotActionsStep({
                 </div>
                 <div className="states-master-info">
                   <h3>{editingMascot?.name || genName || t("mascots.unnamedMascot")}</h3>
-                  <span className="states-master-style-pill">
-                    {QUIZ_IMAGE_STYLE_LABELS[editingMascot?.visual_style || genStyle]}
-                  </span>
+                  <span className="states-master-style-pill">{QUIZ_IMAGE_STYLE_LABELS[editingMascot?.visual_style || genStyle]}</span>
                 </div>
               </div>
 
@@ -336,7 +310,9 @@ export function MascotActionsStep({
                   <div className="states-progress-box">
                     <div className="states-progress-label">
                       <span>{t("mascots.progressLabel")}</span>
-                      <span style={{ color: "var(--accent)" }}>{readyCount}/7 ({pct}%)</span>
+                      <span style={{ color: "var(--accent)" }}>
+                        {readyCount}/7 ({pct}%)
+                      </span>
                     </div>
                     <div className="states-progress-track">
                       <div className="states-progress-fill" style={{ width: `${pct}%` }} />
@@ -394,9 +370,7 @@ export function MascotActionsStep({
                   <h4>{t("mascots.coreGroupTitle")}</h4>
                 </div>
               </div>
-              <div className="artistic-states-grid">
-                {CORE_GAMEPLAY_ACTIONS.map((action) => renderActionCard(action, true))}
-              </div>
+              <div className="artistic-states-grid">{CORE_GAMEPLAY_ACTIONS.map((action) => renderActionCard(action, true))}</div>
             </section>
 
             {/* Section 2: Brand & Signature Poses (2) */}
@@ -406,9 +380,7 @@ export function MascotActionsStep({
                   <h4>{t("mascots.brandGroupTitle")}</h4>
                 </div>
               </div>
-              <div className="artistic-states-grid">
-                {BRAND_IDENTITY_ACTIONS.map((action) => renderActionCard(action, false))}
-              </div>
+              <div className="artistic-states-grid">{BRAND_IDENTITY_ACTIONS.map((action) => renderActionCard(action, false))}</div>
             </section>
 
             {/* Section 3: Auxiliary Reactions (3) */}
@@ -418,9 +390,7 @@ export function MascotActionsStep({
                   <h4>{t("mascots.auxGroupTitle")}</h4>
                 </div>
               </div>
-              <div className="artistic-states-grid">
-                {AUXILIARY_ACTIONS.map((action) => renderActionCard(action, false))}
-              </div>
+              <div className="artistic-states-grid">{AUXILIARY_ACTIONS.map((action) => renderActionCard(action, false))}</div>
             </section>
           </main>
         </div>
@@ -440,24 +410,13 @@ export function MascotActionsStep({
       {/* State Custom Prompt Edit Modal */}
       {promptEditAction ? (
         <div className="modal-backdrop" role="presentation" onClick={() => setPromptEditAction(null)}>
-          <section
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            style={{ maxWidth: "520px" }}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <section className="modal" role="dialog" aria-modal="true" style={{ maxWidth: "520px" }} onClick={(e) => e.stopPropagation()}>
             <div className="modal-heading">
               <div>
                 <p className="eyebrow">{t("mascots.customPromptEyebrow")}</p>
                 <h2>{getLocalizedActionMeta(promptEditAction, t).label}</h2>
               </div>
-              <button
-                type="button"
-                className="icon-button"
-                aria-label={t("common.close")}
-                onClick={() => setPromptEditAction(null)}
-              >
+              <button type="button" className="icon-button" aria-label={t("common.close")} onClick={() => setPromptEditAction(null)}>
                 <X size={18} />
               </button>
             </div>

@@ -1,4 +1,11 @@
-chatterbox-tts
-fastapi
-uvicorn
-setuptools<81
+--extra-index-url https://download.pytorch.org/whl/cu124
+torch==2.6.0
+torchaudio==2.6.0
+chatterbox-tts==0.1.7
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+pydantic==2.13.4
+numpy==2.5.2
+resemble-perth==1.0.1
+s3tokenizer==0.3.0
+setuptools>=80.0.0,<81.0.0

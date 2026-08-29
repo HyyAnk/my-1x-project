@@ -4,7 +4,7 @@ import { ChannelSchema, makeId, nowIso, type Channel, type CreateChannelInput } 
 import { RepositoryError } from "./errors.js";
 import type { RepositoryRuntime } from "./runtime.js";
 
-export async function listChannels(this: RepositoryRuntime,includeArchived = true): Promise<Channel[]> {
+export async function listChannels(this: RepositoryRuntime, includeArchived = true): Promise<Channel[]> {
   await this.ensureBootstrap();
   const entries = await readdir(this.roots.channels, { withFileTypes: true });
   const channels: Channel[] = [];
@@ -19,18 +19,18 @@ export async function listChannels(this: RepositoryRuntime,includeArchived = tru
   return channels.sort((a, b) => a.display_name.localeCompare(b.display_name));
 }
 
-export async function getChannel(this: RepositoryRuntime,channelId: string): Promise<Channel> {
+export async function getChannel(this: RepositoryRuntime, channelId: string): Promise<Channel> {
   const channels = await this.listChannels(true);
   const channel = channels.find((item) => item.channel_id === channelId);
   if (!channel) throw new RepositoryError("Channel not found", "CHANNEL_NOT_FOUND");
   return channel;
 }
 
-export async function getChannelBySlug(this: RepositoryRuntime,slug: string): Promise<Channel> {
+export async function getChannelBySlug(this: RepositoryRuntime, slug: string): Promise<Channel> {
   return this.readChannelBySlug(this.assertSlug(slug));
 }
 
-export async function createChannel(this: RepositoryRuntime,input: CreateChannelInput): Promise<Channel> {
+export async function createChannel(this: RepositoryRuntime, input: CreateChannelInput): Promise<Channel> {
   await this.ensureBootstrap();
   const slug = await this.uniqueSlug(input.name, this.roots.channels);
   const channelId = makeId("ch");
@@ -43,14 +43,22 @@ export async function createChannel(this: RepositoryRuntime,input: CreateChannel
 
   const dna = await this.getTemplate(input.group_id === "quiz" ? "quiz_channel_dna.md" : "example_channel_dna.md");
   const styleGuide = await this.getTemplate("example_style_guide.md");
-  const dnaContent = input.dna_mode === "upload" && input.dna_content?.trim()
-    ? input.dna_content
-    : dna.replace("- Channel name: ", `- Channel name: ${input.name}`)
-      .replace("- Primary audience: ", `- Primary audience: ${input.target_audience}`)
-      .replace("- Market: ", `- Market: ${input.market}`)
-      .replace("- Language: ", `- Language: ${input.language}`)
-    .replace("Describe the channel's documentary territory in one clear paragraph.", input.description || "A playful, fact-checked quiz channel that turns broad knowledge into short moments of discovery.")
-    .replace("Describe the quiz channel territory in one clear paragraph.", input.description || "A playful, fact-checked quiz channel that turns broad knowledge into short moments of discovery.");
+  const dnaContent =
+    input.dna_mode === "upload" && input.dna_content?.trim()
+      ? input.dna_content
+      : dna
+          .replace("- Channel name: ", `- Channel name: ${input.name}`)
+          .replace("- Primary audience: ", `- Primary audience: ${input.target_audience}`)
+          .replace("- Market: ", `- Market: ${input.market}`)
+          .replace("- Language: ", `- Language: ${input.language}`)
+          .replace(
+            "Describe the channel's documentary territory in one clear paragraph.",
+            input.description || "A playful, fact-checked quiz channel that turns broad knowledge into short moments of discovery.",
+          )
+          .replace(
+            "Describe the quiz channel territory in one clear paragraph.",
+            input.description || "A playful, fact-checked quiz channel that turns broad knowledge into short moments of discovery.",
+          );
   await writeFile(path.join(directory, "channel_dna.md"), `${dnaContent.trim()}\n`, "utf8");
   await writeFile(path.join(directory, "style_guide.md"), `${styleGuide.trim()}\n`, "utf8");
 
@@ -77,7 +85,7 @@ export async function createChannel(this: RepositoryRuntime,input: CreateChannel
   return channel;
 }
 
-export async function updateChannel(this: RepositoryRuntime,channelId: string, patch: Partial<Channel>): Promise<Channel> {
+export async function updateChannel(this: RepositoryRuntime, channelId: string, patch: Partial<Channel>): Promise<Channel> {
   const current = await this.getChannel(channelId);
   const next = ChannelSchema.parse({ ...current, ...patch, updated_at: nowIso() });
   await this.writeJsonAtomic(this.resolvePath("channels", current.slug, "channel.json"), next);

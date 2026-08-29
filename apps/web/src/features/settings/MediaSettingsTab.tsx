@@ -1,13 +1,4 @@
-import {
-  ArrowsClockwise,
-  CircleNotch,
-  Eye,
-  EyeSlash,
-  FileText,
-  FloppyDisk,
-  Trash,
-  VideoCamera,
-} from "@phosphor-icons/react";
+import { ArrowsClockwise, CircleNotch, Eye, EyeSlash, FileText, FloppyDisk, Trash, VideoCamera } from "@phosphor-icons/react";
 import type { AppConfig, ImageProviderId } from "@studio/shared";
 import { StatusLine } from "../../components/AppChrome";
 import type { Notice } from "../../components/types";
@@ -20,12 +11,7 @@ type MediaSettingsTabProps = {
   onNotice: (notice: NonNullable<Notice>) => void;
 };
 
-export function MediaSettingsTab({
-  appConfig,
-  onVideoSaved,
-  onImageSaved,
-  onNotice,
-}: MediaSettingsTabProps) {
+export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onNotice }: MediaSettingsTabProps) {
   const {
     maxSceneDuration,
     setMaxSceneDuration,
@@ -94,10 +80,7 @@ export function MediaSettingsTab({
         <form className="codex-form" onSubmit={(event) => void saveVideo(event)}>
           <label>
             Parallel Episode Builds (Queue Limit)
-            <select
-              value={maxConcurrentVideoTasks}
-              onChange={(event) => setMaxConcurrentVideoTasks(Number(event.target.value))}
-            >
+            <select value={maxConcurrentVideoTasks} onChange={(event) => setMaxConcurrentVideoTasks(Number(event.target.value))}>
               <option value="1">1 episode (Sequential / Resource-saving)</option>
               <option value="2">2 episodes (Default - Recommended for 32GB RAM)</option>
               <option value="3">3 episodes</option>
@@ -118,7 +101,8 @@ export function MediaSettingsTab({
               onChange={(event) => setMaxSceneDuration(Number(event.target.value))}
             />
             <small className="field-help">
-              Maximum length your video generation pipeline will produce per shot. The scene breakdown engine packs dialogue beats to fit within this duration.
+              Maximum length your video generation pipeline will produce per shot. The scene breakdown engine packs dialogue beats to fit
+              within this duration.
             </small>
           </label>
           <label>
@@ -156,8 +140,8 @@ export function MediaSettingsTab({
             imageProvider === "gpti2"
               ? "gpti2.store (API)"
               : imageProvider === "shopaikey"
-              ? "ShopAiKey (Direct Proxy)"
-              : "Custom OpenAI-compatible API"
+                ? "ShopAiKey (Direct Proxy)"
+                : "Custom OpenAI-compatible API"
           }
         />
         <StatusLine label="API Key status" value={hasImageApiKey ? "Configured" : "Not configured"} />
@@ -169,11 +153,7 @@ export function MediaSettingsTab({
         ) : null}
         <form className="codex-form" onSubmit={(event) => void saveImage(event)}>
           <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={imageEnabled}
-              onChange={(event) => setImageEnabled(event.target.checked)}
-            />
+            <input type="checkbox" checked={imageEnabled} onChange={(event) => setImageEnabled(event.target.checked)} />
             <span>Enable continuity anchor images generation</span>
           </label>
 
@@ -204,8 +184,8 @@ export function MediaSettingsTab({
               {imageProvider === "gpti2"
                 ? "Optimized for high-volume automated video assets with VND pricing and balance check."
                 : imageProvider === "shopaikey"
-                ? "Direct OpenAI proxy endpoint supporting gpt-image-2, gpt-image-1.5, dall-e-3."
-                : "Connect any custom OpenAI-compatible image endpoint (OneAPI, NewAPI, Fal, OpenRouter, Local AI)."}
+                  ? "Direct OpenAI proxy endpoint supporting gpt-image-2, gpt-image-1.5, dall-e-3."
+                  : "Connect any custom OpenAI-compatible image endpoint (OneAPI, NewAPI, Fal, OpenRouter, Local AI)."}
             </small>
           </label>
 
@@ -215,11 +195,7 @@ export function MediaSettingsTab({
               <input
                 value={imageBaseUrl}
                 onChange={(event) => setImageBaseUrl(event.target.value)}
-                placeholder={
-                  imageProvider === "shopaikey"
-                    ? "https://direct.shopaikey.com/v1"
-                    : "https://your-api-endpoint.com/v1"
-                }
+                placeholder={imageProvider === "shopaikey" ? "https://direct.shopaikey.com/v1" : "https://your-api-endpoint.com/v1"}
                 autoComplete="off"
               />
               <small className="field-help">
@@ -234,8 +210,8 @@ export function MediaSettingsTab({
             {imageProvider === "gpti2"
               ? "gpti2.store API key"
               : imageProvider === "shopaikey"
-              ? "ShopAiKey API key"
-              : "API Key / Bearer Token"}
+                ? "ShopAiKey API key"
+                : "API Key / Bearer Token"}
             <div style={{ display: "flex", gap: "6px", alignItems: "center", width: "100%" }}>
               <input
                 type={showImageKey ? "text" : "password"}
@@ -245,8 +221,8 @@ export function MediaSettingsTab({
                   imageProvider === "gpti2"
                     ? "Paste gpti2.store API key (sk-...)"
                     : imageProvider === "shopaikey"
-                    ? "Paste ShopAiKey API key (sk-...)"
-                    : "Paste custom API key or Bearer token"
+                      ? "Paste ShopAiKey API key (sk-...)"
+                      : "Paste custom API key or Bearer token"
                 }
                 autoComplete="off"
                 style={{ flex: 1 }}
@@ -277,10 +253,10 @@ export function MediaSettingsTab({
               {hasImageApiKey
                 ? "Key stored securely in .documentary-studio/ (gitignored). You can edit directly to replace or click the trash icon to remove."
                 : imageProvider === "gpti2"
-                ? "Get your API key from the Account tab at https://gpti2.store. Stored securely in .documentary-studio/ (gitignored)."
-                : imageProvider === "shopaikey"
-                ? "Get your API key from https://shopaikey.com. Stored securely in .documentary-studio/ (gitignored)."
-                : "Key or token for your custom OpenAI-compatible endpoint. Stored securely in .documentary-studio/."}
+                  ? "Get your API key from the Account tab at https://gpti2.store. Stored securely in .documentary-studio/ (gitignored)."
+                  : imageProvider === "shopaikey"
+                    ? "Get your API key from https://shopaikey.com. Stored securely in .documentary-studio/ (gitignored)."
+                    : "Key or token for your custom OpenAI-compatible endpoint. Stored securely in .documentary-studio/."}
             </small>
           </label>
 
@@ -326,10 +302,7 @@ export function MediaSettingsTab({
 
           <label>
             Parallel Generation Workers
-            <select
-              value={maxConcurrentImageTasks}
-              onChange={(event) => setMaxConcurrentImageTasks(Number(event.target.value))}
-            >
+            <select value={maxConcurrentImageTasks} onChange={(event) => setMaxConcurrentImageTasks(Number(event.target.value))}>
               <option value="1">1 worker</option>
               <option value="2">2 workers</option>
               <option value="3">3 workers (Recommended)</option>
@@ -339,11 +312,7 @@ export function MediaSettingsTab({
 
           <label>
             Images per bundle
-            <select
-              value={imagesPerBundle}
-              disabled={!imageEnabled}
-              onChange={(event) => setImagesPerBundle(Number(event.target.value))}
-            >
+            <select value={imagesPerBundle} disabled={!imageEnabled} onChange={(event) => setImagesPerBundle(Number(event.target.value))}>
               <option value="1">1 anchor</option>
               <option value="2">2 anchors</option>
             </select>
@@ -359,19 +328,14 @@ export function MediaSettingsTab({
               <span>Save Image Settings</span>
             </button>
             {hasImageApiKey || imageApiKey ? (
-              <button
-                type="button"
-                className="quiet-button"
-                disabled={checkingImageBalance}
-                onClick={() => void checkImageBalance()}
-              >
+              <button type="button" className="quiet-button" disabled={checkingImageBalance} onClick={() => void checkImageBalance()}>
                 {checkingImageBalance ? <CircleNotch className="spin" size={15} /> : null}
                 <span>
                   {checkingImageBalance
                     ? "Verifying…"
                     : imageProvider === "gpti2"
-                    ? "Check Balance & Verify Key"
-                    : "Verify Connection & Key"}
+                      ? "Check Balance & Verify Key"
+                      : "Verify Connection & Key"}
                 </span>
               </button>
             ) : null}
@@ -392,11 +356,7 @@ export function MediaSettingsTab({
         <StatusLine label="Retention period (TTL)" value={`${ttlDays} days`} />
         <form className="codex-form" onSubmit={(event) => void saveHistory(event)}>
           <label className="checkbox-label" style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-            <input
-              type="checkbox"
-              checked={historyEnabled}
-              onChange={(event) => setHistoryEnabled(event.target.checked)}
-            />
+            <input type="checkbox" checked={historyEnabled} onChange={(event) => setHistoryEnabled(event.target.checked)} />
             <span>Enable Question History Duplicate Check</span>
           </label>
 
@@ -411,31 +371,21 @@ export function MediaSettingsTab({
               onChange={(event) => setPassThreshold(Number(event.target.value))}
             />
             <small className="field-help">
-              Example: 2 means if an episode has 2 or fewer duplicate questions, the pipeline continues building automatically without pausing.
+              Example: 2 means if an episode has 2 or fewer duplicate questions, the pipeline continues building automatically without
+              pausing.
             </small>
           </label>
 
           <label>
             History Retention Period (TTL in Days)
-            <input
-              type="number"
-              min="1"
-              max="365"
-              step="1"
-              value={ttlDays}
-              onChange={(event) => setTtlDays(Number(event.target.value))}
-            />
+            <input type="number" min="1" max="365" step="1" value={ttlDays} onChange={(event) => setTtlDays(Number(event.target.value))} />
             <small className="field-help">
               Default: 30 days. Questions older than this period are pruned automatically to optimize memory.
             </small>
           </label>
 
           <label className="checkbox-label" style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-            <input
-              type="checkbox"
-              checked={autoRemix}
-              onChange={(event) => setAutoRemix(event.target.checked)}
-            />
+            <input type="checkbox" checked={autoRemix} onChange={(event) => setAutoRemix(event.target.checked)} />
             <span>Auto-remix duplicate questions with AI during generation</span>
           </label>
 

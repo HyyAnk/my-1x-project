@@ -15,7 +15,14 @@ describe("topic confirmation", () => {
     const root = await createTestRoot();
     const app = await buildApp(root);
     try {
-      const channel = await app.repository.createChannel({ name: "Question count", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
+      const channel = await app.repository.createChannel({
+        name: "Question count",
+        description: "",
+        target_audience: "",
+        language: "English",
+        market: "",
+        dna_mode: "example",
+      });
       const topics = Array.from({ length: 5 }, (_, index) => ({
         topic_id: `question-count-${index}`,
         channel_id: channel.channel_id,
@@ -42,7 +49,10 @@ describe("topic confirmation", () => {
         target_duration_minutes: 7,
         target_word_count: 918,
       });
-      expect((await app.repository.listTopics(channel.channel_id)).find((topic) => topic.topic_id === topics[0].topic_id)).toMatchObject({ selected: true, question_count: 12 });
+      expect((await app.repository.listTopics(channel.channel_id)).find((topic) => topic.topic_id === topics[0].topic_id)).toMatchObject({
+        selected: true,
+        question_count: 12,
+      });
     } finally {
       await app.close();
     }
@@ -52,7 +62,14 @@ describe("topic confirmation", () => {
     const root = await createTestRoot();
     const app = await buildApp(root);
     try {
-      const channel = await app.repository.createChannel({ name: "Question limit", description: "", target_audience: "", language: "English", market: "", dna_mode: "example" });
+      const channel = await app.repository.createChannel({
+        name: "Question limit",
+        description: "",
+        target_audience: "",
+        language: "English",
+        market: "",
+        dna_mode: "example",
+      });
       const topics = Array.from({ length: 5 }, (_, index) => ({
         topic_id: `question-limit-${index}`,
         channel_id: channel.channel_id,

@@ -30,14 +30,14 @@ export function ThinkingBarStyleMenu({
 }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const currentStyle = (channel.default_thinking_bar_style as QuizThinkingBarStyle) || "star_slider";
+  const currentStyle = channel.default_thinking_bar_style || "star_slider";
   const [selectedStyle, setSelectedStyle] = useState<QuizThinkingBarStyle>(currentStyle);
   const [hoveredStyle, setHoveredStyle] = useState<Exclude<QuizThinkingBarStyle, "auto">>(
-    currentStyle === "auto" ? "star_slider" : currentStyle
+    currentStyle === "auto" ? "star_slider" : currentStyle,
   );
 
   useEffect(() => {
-    setSelectedStyle((channel.default_thinking_bar_style as QuizThinkingBarStyle) || "star_slider");
+    setSelectedStyle(channel.default_thinking_bar_style || "star_slider");
   }, [channel.default_thinking_bar_style]);
 
   useEffect(() => {
@@ -57,9 +57,7 @@ export function ThinkingBarStyleMenu({
       await onRefresh();
       onNotice({
         tone: "good",
-        message: `Thinking bar style set to: ${
-          style === "auto" ? "Auto (Default)" : THINKING_BAR_STYLE_LABELS[style]
-        }`,
+        message: `Thinking bar style set to: ${style === "auto" ? "Auto (Default)" : THINKING_BAR_STYLE_LABELS[style]}`,
       });
     } catch (err) {
       setSelectedStyle(currentStyle);
@@ -87,12 +85,7 @@ export function ThinkingBarStyleMenu({
         title="Select default Thinking Bar style for this channel"
       >
         <Timer size={15} />
-        <span>
-          Timer:{" "}
-          {selectedStyle === "auto"
-            ? "Auto"
-            : THINKING_BAR_STYLE_LABELS[selectedStyle] || "Star Runner"}
-        </span>
+        <span>Timer: {selectedStyle === "auto" ? "Auto" : THINKING_BAR_STYLE_LABELS[selectedStyle] || "Star Runner"}</span>
         <CaretDown size={12} />
       </button>
 
@@ -114,18 +107,11 @@ export function ThinkingBarStyleMenu({
                   return (
                     <label
                       key={style}
-                      className={`style-checkbox-item ${isChecked ? "is-checked" : ""} ${
-                        isHovered ? "is-hovered" : ""
-                      }`}
+                      className={`style-checkbox-item ${isChecked ? "is-checked" : ""} ${isHovered ? "is-hovered" : ""}`}
                       onMouseEnter={() => setHoveredStyle(style)}
                       onClick={() => void handleSelectStyle(style)}
                     >
-                      <input
-                        type="radio"
-                        name="thinking_bar_style"
-                        checked={isChecked}
-                        onChange={() => void handleSelectStyle(style)}
-                      />
+                      <input type="radio" name="thinking_bar_style" checked={isChecked} onChange={() => void handleSelectStyle(style)} />
                       <span className="style-icon-preview" style={{ marginRight: "6px" }}>
                         {icon}
                       </span>
@@ -155,9 +141,7 @@ export function ThinkingBarStyleMenu({
                       marginBottom: "8px",
                     }}
                   >
-                    <span style={{ fontSize: "24px" }}>
-                      {THINKING_BAR_ICONS[previewTarget]}
-                    </span>
+                    <span style={{ fontSize: "24px" }}>{THINKING_BAR_ICONS[previewTarget]}</span>
                     <strong style={{ fontSize: "15px", color: "var(--text-main, #FFF)" }}>
                       {THINKING_BAR_STYLE_LABELS[previewTarget]}
                     </strong>

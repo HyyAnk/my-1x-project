@@ -1,5 +1,7 @@
-import { EditorialOverlaySchema, type Scene } from "@studio/shared";
+import { EditorialOverlaySchema, estimateSpokenSeconds, type Scene } from "@studio/shared";
 import { splitAtNarrativeBoundaries } from "./production.js";
+
+export { estimateSpokenSeconds };
 
 export type Beat = {
   dialogue: string;
@@ -22,11 +24,6 @@ export type Beat = {
 
 export type PackedBeat = Beat & { estSeconds: number };
 
-export function estimateSpokenSeconds(dialogue: string, wordsPerSecond: number): number {
-  const words = dialogue.trim().split(/\s+/).filter(Boolean).length;
-  return words / Math.max(0.1, wordsPerSecond);
-}
-
 export function packBeatsIntoScenes(beats: Beat[], maxDuration: number, wordsPerSecond: number, episodeId: string): Scene[] {
   const safeMaxDuration = Math.max(0.1, maxDuration);
   const groups: PackedBeat[][] = [];
@@ -48,14 +45,16 @@ export function packBeatsIntoScenes(beats: Beat[], maxDuration: number, wordsPer
       const maxWords = Math.max(1, Math.floor(safeMaxDuration * wordsPerSecond));
       const chunks = splitAtNarrativeBoundaries(beat.dialogue, maxWords);
       for (const [chunkIndex, chunk] of chunks.entries()) {
-        groups.push([{
-          ...beat,
-          dialogue: chunk,
-          shot_id: `${beat.shot_id || "shot"}-${chunkIndex + 1}`,
-          visual_prompt: continuationPrompt(beat.visual_prompt, chunkIndex, chunks.length),
-          editorial_overlay: chunkIndex === 0 ? beat.editorial_overlay : EditorialOverlaySchema.parse({}),
-          estSeconds: Math.min(safeMaxDuration, estimateSpokenSeconds(chunk, wordsPerSecond)),
-        }]);
+        groups.push([
+          {
+            ...beat,
+            dialogue: chunk,
+            shot_id: `${beat.shot_id || "shot"}-${chunkIndex + 1}`,
+            visual_prompt: continuationPrompt(beat.visual_prompt, chunkIndex, chunks.length),
+            editorial_overlay: chunkIndex === 0 ? beat.editorial_overlay : EditorialOverlaySchema.parse({}),
+            estSeconds: Math.min(safeMaxDuration, estimateSpokenSeconds(chunk, wordsPerSecond)),
+          },
+        ]);
       }
       continue;
     }
@@ -85,17 +84,21 @@ export function composePackedVisualPrompt(group: PackedBeat[], sceneDuration: nu
   const timeline: string[] = [`SHOT PLAN (${formatSeconds(sceneDuration)}s total)`];
   let cursor = 0;
   group.forEach((beat, index) => {
-    const end = index === group.length - 1
-      ? sceneDuration
-      : cursor + (totalEstimated > 0 ? (beat.estSeconds / totalEstimated) * sceneDuration : sceneDuration / group.length);
+    const end =
+      index === group.length - 1
+        ? sceneDuration
+        : cursor + (totalEstimated > 0 ? (beat.estSeconds / totalEstimated) * sceneDuration : sceneDuration / group.length);
     timeline.push(`${formatSeconds(cursor)}s-${formatSeconds(end)}s — shot ${index + 1}`);
     if (index < group.length - 1) timeline.push(`${formatSeconds(end)}s HARD CUT`);
     cursor = end;
   });
 
   const details = group.map((beat, index) => `Shot ${index + 1} detail:\n${beat.visual_prompt}`);
-  const continuity = group.map((beat) => beat.continuity_note).filter(Boolean).join(" ")
-    || "Maintain identical era, subject, and lighting across all shots in this scene.";
+  const continuity =
+    group
+      .map((beat) => beat.continuity_note)
+      .filter(Boolean)
+      .join(" ") || "Maintain identical era, subject, and lighting across all shots in this scene.";
   return [...timeline, "", ...details, "", "CONTINUITY", continuity].join("\n");
 }
 
@@ -122,20 +125,24 @@ export function optimizeShortScenes(scenes: Scene[], maxDuration: number, episod
   for (let index = 0; index < scenes.length; index += 1) {
     const current = scenes[index];
     const next = scenes[index + 1];
-    const canMergeNext = current.duration_seconds < 2.5 && next
-      && current.sequence_id === next.sequence_id
-      && current.continuity_bundle_id === next.continuity_bundle_id
-      && current.duration_seconds + next.duration_seconds <= maxDuration;
+    const canMergeNext =
+      current.duration_seconds < 2.5 &&
+      next &&
+      current.sequence_id === next.sequence_id &&
+      current.continuity_bundle_id === next.continuity_bundle_id &&
+      current.duration_seconds + next.duration_seconds <= maxDuration;
     if (canMergeNext && next) {
       result.push(mergeProductionScenes(current, next));
       index += 1;
       continue;
     }
     const previous = result[result.length - 1];
-    const canMergePrevious = current.duration_seconds < 2.5 && previous
-      && current.sequence_id === previous.sequence_id
-      && current.continuity_bundle_id === previous.continuity_bundle_id
-      && current.duration_seconds + previous.duration_seconds <= maxDuration;
+    const canMergePrevious =
+      current.duration_seconds < 2.5 &&
+      previous &&
+      current.sequence_id === previous.sequence_id &&
+      current.continuity_bundle_id === previous.continuity_bundle_id &&
+      current.duration_seconds + previous.duration_seconds <= maxDuration;
     if (canMergePrevious && previous) result[result.length - 1] = mergeProductionScenes(previous, current);
     else result.push(current);
   }
@@ -143,7 +150,12 @@ export function optimizeShortScenes(scenes: Scene[], maxDuration: number, episod
   for (let index = 0; index < result.length - 1; index += 1) {
     const current = result[index];
     const next = result[index + 1];
-    if (current.duration_seconds >= 2.5 || current.sequence_id !== next.sequence_id || current.continuity_bundle_id !== next.continuity_bundle_id) continue;
+    if (
+      current.duration_seconds >= 2.5 ||
+      current.sequence_id !== next.sequence_id ||
+      current.continuity_bundle_id !== next.continuity_bundle_id
+    )
+      continue;
     const transferable = Math.min(2.5 - current.duration_seconds, Math.max(0, next.duration_seconds - 2.5));
     if (transferable <= 0) continue;
     result[index] = { ...current, duration_seconds: Number((current.duration_seconds + transferable).toFixed(1)) };
@@ -172,15 +184,6 @@ function mergeProductionScenes(first: Scene, second: Scene): Scene {
   };
 }
 
-export function splitDialogue(dialogue: string, count: number): string[] {
-  const words = dialogue.trim().split(/\s+/).filter(Boolean);
-  if (words.length === 0 || count <= 1) return [dialogue];
-  const size = Math.ceil(words.length / count);
-  const chunks: string[] = [];
-  for (let index = 0; index < words.length; index += size) chunks.push(words.slice(index, index + size).join(" "));
-  return chunks;
-}
-
 function finalizeScene(group: PackedBeat[], sceneNumber: number, episodeId: string, maxDuration: number): Scene {
   const totalEstimated = group.reduce((sum, beat) => sum + beat.estSeconds, 0);
   const minimumDuration = Math.min(2, maxDuration);
@@ -197,13 +200,20 @@ function finalizeScene(group: PackedBeat[], sceneNumber: number, episodeId: stri
     continuity_note: group[0].continuity_note,
     sequence_id: group[0].sequence_id,
     sequence_title: group[0].sequence_title,
-    shot_id: group.map((beat) => beat.shot_id).filter(Boolean).join("+") || `shot-${sceneNumber}`,
+    shot_id:
+      group
+        .map((beat) => beat.shot_id)
+        .filter(Boolean)
+        .join("+") || `shot-${sceneNumber}`,
     asset_type: group[0].asset_type,
     continuity_bundle_id: group[0].continuity_bundle_id,
     reference_asset_ids: [...new Set(group.flatMap((beat) => beat.reference_asset_ids))],
     source_ids: [...new Set(group.flatMap((beat) => beat.source_ids))],
     reconstruction: group.some((beat) => beat.reconstruction),
-    sound_cue: group.map((beat) => beat.sound_cue).filter(Boolean).join("; "),
+    sound_cue: group
+      .map((beat) => beat.sound_cue)
+      .filter(Boolean)
+      .join("; "),
     editorial_overlay: group.map((beat) => beat.editorial_overlay).reduce(mergeEditorialOverlays, EditorialOverlaySchema.parse({})),
     quiz: group.find((beat) => beat.quiz)?.quiz ?? null,
     audio_asset_path: null,
@@ -229,7 +239,7 @@ export function mergeEditorialOverlays(first: Scene["editorial_overlay"], second
 }
 
 /** Keep explanatory graphics useful without letting overlays dominate the edit. */
-export function rebalanceEditorialOverlays(scenes: Scene[], maxRatio = 0.30): Scene[] {
+export function rebalanceEditorialOverlays(scenes: Scene[], maxRatio = 0.3): Scene[] {
   const overlayScenes = scenes.filter((scene) => scene.editorial_overlay.kind !== "none");
   const maximum = Math.floor(scenes.length * Math.max(0, Math.min(1, maxRatio)));
   if (overlayScenes.length <= maximum) return scenes;
@@ -259,13 +269,19 @@ export function rebalanceEditorialOverlays(scenes: Scene[], maxRatio = 0.30): Sc
     }
   }
 
-  return scenes.map((scene) => remove.has(scene.scene_number) ? { ...scene, editorial_overlay: EditorialOverlaySchema.parse({}) } : scene);
+  return scenes.map((scene) =>
+    remove.has(scene.scene_number) ? { ...scene, editorial_overlay: EditorialOverlaySchema.parse({}) } : scene,
+  );
 }
 
 function continuationPrompt(prompt: string, index: number, count: number): string {
   if (count <= 1) return prompt;
   const shotSize = ["establishing composition", "medium observational detail", "tight evidence detail"][index % 3];
-  return [`SHOT CONTINUATION ${index + 1}/${count}`, `CAMERA VARIATION: ${shotSize}; preserve the same continuity bundle while showing a new visible action.`, prompt].join("\n");
+  return [
+    `SHOT CONTINUATION ${index + 1}/${count}`,
+    `CAMERA VARIATION: ${shotSize}; preserve the same continuity bundle while showing a new visible action.`,
+    prompt,
+  ].join("\n");
 }
 
 function formatSeconds(value: number): string {

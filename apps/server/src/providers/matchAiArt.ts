@@ -28,9 +28,21 @@ export class MatchAiArtProvider implements ImageProvider {
     const bytes = await readFile(matchingPath);
     let assetPath: string;
     if (this.target.assetId && this.target.fingerprint) {
-      assetPath = await this.repository.writeQuizImageAsset(this.target.channelId, this.target.episodeId, this.target.assetId, this.target.fingerprint, bytes);
+      assetPath = await this.repository.writeQuizImageAsset(
+        this.target.channelId,
+        this.target.episodeId,
+        this.target.assetId,
+        this.target.fingerprint,
+        bytes,
+      );
     } else {
-      assetPath = await this.repository.writeBundleImage(this.target.channelId, this.target.episodeId, this.target.bundleNumber ?? 1, bytes, this.target.variant ?? 0);
+      assetPath = await this.repository.writeBundleImage(
+        this.target.channelId,
+        this.target.episodeId,
+        this.target.bundleNumber ?? 1,
+        bytes,
+        this.target.variant ?? 0,
+      );
     }
 
     return { asset_path: assetPath, fallback_tier: 2, degraded: false };

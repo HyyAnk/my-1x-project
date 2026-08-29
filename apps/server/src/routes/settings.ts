@@ -128,12 +128,16 @@ export function registerSettingsRoutes(deps: SettingsRouteDeps): FastifyPluginCa
         const models = await antigravity.getModels();
         return { models };
       } catch (error) {
-        throw new RepositoryError(error instanceof Error ? error.message : "Failed to load Antigravity models", "ANTIGRAVITY_MODELS_FAILED");
+        throw new RepositoryError(
+          error instanceof Error ? error.message : "Failed to load Antigravity models",
+          "ANTIGRAVITY_MODELS_FAILED",
+        );
       }
     });
     server.post("/api/antigravity/settings", async (request) => {
       const input = AntigravitySettingsInputSchema.parse(request.body);
-      if (tasks.hasActiveWork()) throw new RepositoryError("Finish active tasks before changing Antigravity settings", "ANTIGRAVITY_SETTINGS_BUSY");
+      if (tasks.hasActiveWork())
+        throw new RepositoryError("Finish active tasks before changing Antigravity settings", "ANTIGRAVITY_SETTINGS_BUSY");
       const wasConnected = antigravity.isConnected;
       if (wasConnected) await antigravity.close();
       state.config = await saveAntigravitySettings(rootDirectory, input);
@@ -198,15 +202,27 @@ function registerImageSettingsRoutes(server: FastifyInstance, deps: SettingsRout
     }
   });
   server.post("/api/image/verify", async (request) => {
-    const body = (request.body && typeof request.body === "object" ? request.body : {}) as { provider?: string; api_key?: string; base_url?: string; model?: string };
+    const body = (request.body && typeof request.body === "object" ? request.body : {}) as {
+      provider?: string;
+      api_key?: string;
+      base_url?: string;
+      model?: string;
+    };
     const provider = body.provider || state.config.image_generation.provider || "gpti2";
     const apiKey = (body.api_key !== undefined ? body.api_key : state.config.image_generation.api_key) || "";
-    const baseUrl = (body.base_url !== undefined ? body.base_url : state.config.image_generation.base_url) || (provider === "shopaikey" ? "https://direct.shopaikey.com/v1" : "");
+    const baseUrl =
+      (body.base_url !== undefined ? body.base_url : state.config.image_generation.base_url) ||
+      (provider === "shopaikey" ? "https://direct.shopaikey.com/v1" : "");
     if (provider === "gpti2") return await checkGpti2Balance(apiKey);
     if (!apiKey) throw new RepositoryError("API Key is required to verify", "IMAGE_PROVIDER_NOT_CONFIGURED");
-    const effectiveBaseUrl = (baseUrl.trim() || (provider === "shopaikey" ? "https://direct.shopaikey.com/v1" : "https://api.openai.com/v1")).replace(/\/+$/, "");
+    const effectiveBaseUrl = (
+      baseUrl.trim() || (provider === "shopaikey" ? "https://direct.shopaikey.com/v1" : "https://api.openai.com/v1")
+    ).replace(/\/+$/, "");
     try {
-      const response = await fetch(`${effectiveBaseUrl}/models`, { headers: { Authorization: `Bearer ${apiKey}` }, signal: AbortSignal.timeout(10_000) });
+      const response = await fetch(`${effectiveBaseUrl}/models`, {
+        headers: { Authorization: `Bearer ${apiKey}` },
+        signal: AbortSignal.timeout(10_000),
+      });
       if (!response.ok && response.status === 401) throw new RepositoryError("Invalid API key (401 Unauthorized)", "IMAGE_AUTH_FAILED");
       return { ok: true, message: `Connected successfully to ${provider === "shopaikey" ? "ShopAiKey" : "Custom Provider"} API!` };
     } catch (error) {
@@ -220,8 +236,16 @@ function registerImageSettingsRoutes(server: FastifyInstance, deps: SettingsRout
     state.config = await saveImageSettings(rootDirectory, input);
     tasks.updateImageConfig(state.config.image_generation);
     return {
-      image_generation: { ...state.config.image_generation, api_key: state.config.image_generation.api_key, has_api_key: Boolean(state.config.image_generation.api_key) },
-      settings: { ...state.config.image_generation, api_key: state.config.image_generation.api_key, has_api_key: Boolean(state.config.image_generation.api_key) },
+      image_generation: {
+        ...state.config.image_generation,
+        api_key: state.config.image_generation.api_key,
+        has_api_key: Boolean(state.config.image_generation.api_key),
+      },
+      settings: {
+        ...state.config.image_generation,
+        api_key: state.config.image_generation.api_key,
+        has_api_key: Boolean(state.config.image_generation.api_key),
+      },
     };
   });
 }

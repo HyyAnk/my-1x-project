@@ -14,13 +14,11 @@ import type { RepositoryService } from "../repository.js";
 import type { StudioLogger } from "../logger.js";
 import { createZipArchive, parseZipArchive } from "./zipHelper.js";
 import { removeImageBackground } from "../utils/imageMatting.js";
-import {
-  buildMascotActionPrompt,
-  buildMascotConceptPrompt,
-} from "./mascotPromptContract.js";
+import { buildMascotActionPrompt, buildMascotConceptPrompt } from "./mascotPromptContract.js";
 
 const STYLE_PROMPTS: Record<QuizImageStyle, string> = {
-  pixar_3d: "3D Pixar animation style, soft volumetric lighting, smooth stylized textures, cute rounded features, vibrant saturated colors, cinema 4D octane render, highly expressive",
+  pixar_3d:
+    "3D Pixar animation style, soft volumetric lighting, smooth stylized textures, cute rounded features, vibrant saturated colors, cinema 4D octane render, highly expressive",
   flat_vector: "2D flat vector art, clean bold outlines, solid color blocks, minimalist modern mascot, sticker style",
   kawaii_chibi: "Chibi kawaii anime style, oversized cute sparkling eyes, mini body, joyful expression, pastel accents, cute anime mascot",
   voxel_lowpoly: "Voxel art 3D low-poly style, isometric grid cubes, playful blocky character, vibrant lighting",
@@ -39,12 +37,20 @@ async function generateMascotAiImageBytes(
   } = {},
   logger?: StudioLogger,
 ): Promise<Uint8Array> {
-  const apiKey = (imageConfig.api_key || process.env.SHOPAIKEY_API_KEY || process.env.GPTI2_API_KEY || process.env.CUSTOM_IMAGE_API_KEY || "").trim();
+  const apiKey = (
+    imageConfig.api_key ||
+    process.env.SHOPAIKEY_API_KEY ||
+    process.env.GPTI2_API_KEY ||
+    process.env.CUSTOM_IMAGE_API_KEY ||
+    ""
+  ).trim();
   if (!apiKey) {
     throw new Error("No image generation API key configured in Settings or Environment.");
   }
 
-  const provider = imageConfig.provider || (imageConfig.base_url?.includes("shopaikey") ? "shopaikey" : (process.env.SHOPAIKEY_API_KEY ? "shopaikey" : "gpti2"));
+  const provider =
+    imageConfig.provider ||
+    (imageConfig.base_url?.includes("shopaikey") ? "shopaikey" : process.env.SHOPAIKEY_API_KEY ? "shopaikey" : "gpti2");
 
   if (provider === "shopaikey" || provider === "custom" || (provider !== "gpti2" && Boolean(imageConfig.base_url))) {
     const baseUrl = imageConfig.base_url || (provider === "shopaikey" ? "https://direct.shopaikey.com/v1" : "https://api.openai.com/v1");
@@ -83,25 +89,37 @@ export async function generateMascotConceptArt(
 
   let imageBytes: Uint8Array;
   const filename = `master_concept_${Date.now()}.png`;
-  const hasApiKey = Boolean(imageConfig.api_key || process.env.SHOPAIKEY_API_KEY || process.env.GPTI2_API_KEY || process.env.CUSTOM_IMAGE_API_KEY);
+  const hasApiKey = Boolean(
+    imageConfig.api_key || process.env.SHOPAIKEY_API_KEY || process.env.GPTI2_API_KEY || process.env.CUSTOM_IMAGE_API_KEY,
+  );
 
   if (imageConfig.enabled && hasApiKey) {
     try {
       logger?.info(`Generating mascot concept for ${mascot.name} (${mascot.id})`, { profileId: mascot.id });
-      const rawBytes = await generateMascotAiImageBytes(fullPrompt, imageConfig, {
-        aspectRatio: "1:1",
-        size: "1024x1024",
-        background: "opaque",
-        cancellationSignal: AbortSignal.timeout(90_000),
-      }, logger);
+      const rawBytes = await generateMascotAiImageBytes(
+        fullPrompt,
+        imageConfig,
+        {
+          aspectRatio: "1:1",
+          size: "1024x1024",
+          background: "opaque",
+          cancellationSignal: AbortSignal.timeout(90_000),
+        },
+        logger,
+      );
       try {
         imageBytes = await removeImageBackground(rawBytes);
       } catch (mattingErr) {
-        logger?.warn(`Mascot concept background removal failed, using raw AI image: ${mattingErr instanceof Error ? mattingErr.message : String(mattingErr)}`, { profileId: mascot.id });
+        logger?.warn(
+          `Mascot concept background removal failed, using raw AI image: ${mattingErr instanceof Error ? mattingErr.message : String(mattingErr)}`,
+          { profileId: mascot.id },
+        );
         imageBytes = rawBytes;
       }
     } catch (err) {
-      logger?.warn(`Mascot concept API failed, using procedural fallback: ${err instanceof Error ? err.message : String(err)}`, { profileId: mascot.id });
+      logger?.warn(`Mascot concept API failed, using procedural fallback: ${err instanceof Error ? err.message : String(err)}`, {
+        profileId: mascot.id,
+      });
       imageBytes = generateProceduralMascotArt(mascot.name, mascot.color_theme, "master");
     }
   } else {
@@ -136,7 +154,7 @@ export async function generateMascotActionSprite(
   logger?: StudioLogger,
 ): Promise<{ action_sprite: MascotSpriteAction; prompt_used: string }> {
   const meta = MASCOT_ACTION_META[action] || MASCOT_ACTION_META.idle;
-  const framesCount = options.frames_count !== undefined ? options.frames_count : (meta.defaultFrames || 1);
+  const framesCount = options.frames_count !== undefined ? options.frames_count : meta.defaultFrames || 1;
   const fps = options.fps || meta.defaultFps || 8;
   const loop = options.loop !== undefined ? options.loop : true;
 
@@ -152,7 +170,9 @@ export async function generateMascotActionSprite(
           referenceImageBase64 = `data:image/png;base64,${Buffer.from(rawMasterBytes).toString("base64")}`;
         }
       } catch (err) {
-        logger?.warn(`Could not load master concept image for reference: ${err instanceof Error ? err.message : String(err)}`, { profileId: mascot.id });
+        logger?.warn(`Could not load master concept image for reference: ${err instanceof Error ? err.message : String(err)}`, {
+          profileId: mascot.id,
+        });
       }
     }
   }
@@ -167,26 +187,41 @@ export async function generateMascotActionSprite(
   const filename = `state_${action}_${Date.now()}.png`;
   const frameWidth = framesCount === 1 ? 512 : 256;
   const frameHeight = framesCount === 1 ? 512 : 256;
-  const hasApiKey = Boolean(imageConfig.api_key || process.env.SHOPAIKEY_API_KEY || process.env.GPTI2_API_KEY || process.env.CUSTOM_IMAGE_API_KEY);
+  const hasApiKey = Boolean(
+    imageConfig.api_key || process.env.SHOPAIKEY_API_KEY || process.env.GPTI2_API_KEY || process.env.CUSTOM_IMAGE_API_KEY,
+  );
 
   if (imageConfig.enabled && hasApiKey) {
     try {
-      logger?.info(`Generating mascot state for ${mascot.name} action ${action} (frames: ${framesCount}, hasRefImage: ${Boolean(referenceImageBase64)})`, { profileId: mascot.id });
-      const rawBytes = await generateMascotAiImageBytes(fullPrompt, imageConfig, {
-        aspectRatio: framesCount === 1 ? "1:1" : "16:9",
-        size: framesCount === 1 ? "1024x1024" : "1280x720",
-        referenceImageBase64,
-        background: "opaque",
-        cancellationSignal: AbortSignal.timeout(90_000),
-      }, logger);
+      logger?.info(
+        `Generating mascot state for ${mascot.name} action ${action} (frames: ${framesCount}, hasRefImage: ${Boolean(referenceImageBase64)})`,
+        { profileId: mascot.id },
+      );
+      const rawBytes = await generateMascotAiImageBytes(
+        fullPrompt,
+        imageConfig,
+        {
+          aspectRatio: framesCount === 1 ? "1:1" : "16:9",
+          size: framesCount === 1 ? "1024x1024" : "1280x720",
+          referenceImageBase64,
+          background: "opaque",
+          cancellationSignal: AbortSignal.timeout(90_000),
+        },
+        logger,
+      );
       try {
         spriteBytes = await removeImageBackground(rawBytes);
       } catch (mattingErr) {
-        logger?.warn(`Mascot state background removal failed, using raw AI image: ${mattingErr instanceof Error ? mattingErr.message : String(mattingErr)}`, { profileId: mascot.id });
+        logger?.warn(
+          `Mascot state background removal failed, using raw AI image: ${mattingErr instanceof Error ? mattingErr.message : String(mattingErr)}`,
+          { profileId: mascot.id },
+        );
         spriteBytes = rawBytes;
       }
     } catch (err) {
-      logger?.warn(`Mascot state API failed, using procedural fallback: ${err instanceof Error ? err.message : String(err)}`, { profileId: mascot.id });
+      logger?.warn(`Mascot state API failed, using procedural fallback: ${err instanceof Error ? err.message : String(err)}`, {
+        profileId: mascot.id,
+      });
       spriteBytes = generateProceduralStateArt(mascot.name, mascot.color_theme, action, framesCount);
     }
   } else {
@@ -259,11 +294,7 @@ export async function removeMascotAssetBackground(
     }
   }
 
-  const actionsToProcess = target === "all"
-    ? ALL_MASCOT_ACTIONS
-    : target !== "master"
-    ? [target as MascotActionType]
-    : [];
+  const actionsToProcess = target === "all" ? ALL_MASCOT_ACTIONS : target !== "master" ? [target] : [];
 
   for (const action of actionsToProcess) {
     const sprite = mascot.actions[action];
@@ -324,10 +355,7 @@ export async function exportMascotPackage(
 /**
  * Imports a mascot from a standard ZIP archive package
  */
-export async function importMascotPackage(
-  repository: RepositoryService,
-  zipBuffer: Buffer,
-): Promise<MascotProfile> {
+export async function importMascotPackage(repository: RepositoryService, zipBuffer: Buffer): Promise<MascotProfile> {
   const entries = parseZipArchive(zipBuffer);
   const manifestEntry = entries.find((e) => e.filename === "mascot.json" || e.filename.endsWith("/mascot.json"));
   if (!manifestEntry) {
@@ -385,7 +413,7 @@ export async function importMascotPackage(
   return repository.saveMascot({
     ...newMascot,
     master_image_url: masterUrl,
-    actions: importedActions as any,
+    actions: importedActions,
     updated_at: new Date().toISOString(),
   });
 }
@@ -449,12 +477,7 @@ export function generateProceduralMascotArt(name: string, color: string, state: 
 /**
  * Generates an expressive procedural SVG state artwork for quiz stages
  */
-export function generateProceduralStateArt(
-  name: string,
-  color: string,
-  action: MascotActionType,
-  framesCount: number = 1,
-): Uint8Array {
+export function generateProceduralStateArt(name: string, color: string, action: MascotActionType, framesCount: number = 1): Uint8Array {
   if (framesCount > 1) {
     return generateProceduralSpriteStrip(name, color, action, framesCount);
   }
@@ -552,12 +575,7 @@ export function generateProceduralStateArt(
 /**
  * Generates a multi-frame horizontal sprite strip SVG for testing / legacy fallback
  */
-export function generateProceduralSpriteStrip(
-  name: string,
-  color: string,
-  action: MascotActionType,
-  framesCount: number,
-): Uint8Array {
+export function generateProceduralSpriteStrip(name: string, color: string, action: MascotActionType, framesCount: number): Uint8Array {
   const frameWidth = 256;
   const frameHeight = 256;
   const totalWidth = frameWidth * framesCount;
@@ -568,7 +586,7 @@ export function generateProceduralSpriteStrip(
   for (let i = 0; i < framesCount; i++) {
     const offsetX = i * frameWidth;
     const progress = i / (framesCount - 1 || 1);
-    
+
     // Dynamic offsets based on action
     let bounceY = 0;
     let armAngle = 0;

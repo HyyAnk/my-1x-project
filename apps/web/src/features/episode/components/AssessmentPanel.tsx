@@ -16,11 +16,12 @@ export function AssessmentPanel({ assessment }: { assessment: ProductionAssessme
             {assessment.rating === "production_ready"
               ? "Production ready"
               : assessment.rating === "needs_work"
-              ? "Needs review"
-              : "Not ready"}
+                ? "Needs review"
+                : "Not ready"}
           </h2>
           <span>
-            {assessment.metrics.narration_word_count} / {targetWords} calibrated words · {assessment.metrics.sequence_count} sequences · {assessment.metrics.scene_count} shots · {Math.round((assessment.metrics.overlay_coverage_ratio ?? 0) * 100)}% overlays
+            {assessment.metrics.narration_word_count} / {targetWords} calibrated words · {assessment.metrics.sequence_count} sequences ·{" "}
+            {assessment.metrics.scene_count} shots · {Math.round((assessment.metrics.overlay_coverage_ratio ?? 0) * 100)}% overlays
           </span>
         </div>
         {blockers.length ? (
@@ -40,7 +41,8 @@ export function AssessmentPanel({ assessment }: { assessment: ProductionAssessme
           </details>
         ) : (
           <span className="assessment-ready">
-            <CheckCircle size={16} />Quality gates passed
+            <CheckCircle size={16} />
+            Quality gates passed
           </span>
         )}
       </div>
