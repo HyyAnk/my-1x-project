@@ -1,13 +1,4 @@
-import {
-  SandboxPreviewInputSchema,
-  type MascotProfile,
-  type QuizAnswerCardStyle,
-  type QuizQuestionBoxStyle,
-  type QuizQuestionCounterStyle,
-  type QuizThinkingBarStyle,
-  type SandboxPreviewInput,
-  type SandboxPreviewResponse,
-} from "@studio/shared";
+import { SandboxPreviewInputSchema, type MascotProfile, type SandboxPreviewInput, type SandboxPreviewResponse } from "@studio/shared";
 import { candyArcadePalettes, textLayout } from "../visual/candyArcade.js";
 import {
   getAnswerCardsCss,
@@ -42,7 +33,6 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
 
   // Phase & Timeline Scrubbing
   let phase = input.phase ?? "thinking";
-  let countdownProgress = input.countdown_progress ?? 0.5;
 
   if (input.timeline_time_seconds !== undefined) {
     const t = input.timeline_time_seconds;
@@ -52,7 +42,6 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
       phase = "choices";
     } else if (t < 7.5) {
       phase = "thinking";
-      countdownProgress = Math.max(0, Math.min(1, (t - 2.5) / 5.0));
     } else if (t < 8.8) {
       phase = "reveal";
     } else {
@@ -66,7 +55,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
   const rewardAt = phase === "explain" ? 0 : 999;
 
   // 1. Question Box Variant
-  const qbVariant = resolveQuestionBoxVariant(input.question_box_style as QuizQuestionBoxStyle);
+  const qbVariant = resolveQuestionBoxVariant(input.question_box_style);
   const qbHtml = qbVariant.renderHtml({
     question: questionText,
     tier: questionLayout.tier,
@@ -76,7 +65,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
   });
 
   // 2. Counter Badge Variant
-  const cbVariant = resolveCounterBadgeVariant(input.counter_style as QuizQuestionCounterStyle);
+  const cbVariant = resolveCounterBadgeVariant(input.counter_style);
   const cbHtml = cbVariant.renderHtml({
     questionNumber,
     totalQuestions,
@@ -85,7 +74,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
   });
 
   // 3. Thinking Bar Variant
-  const tbVariant = resolveThinkingBarVariant(input.thinking_bar_style as QuizThinkingBarStyle);
+  const tbVariant = resolveThinkingBarVariant(input.thinking_bar_style);
   const tbHtml =
     phase === "thinking" || phase === "choices"
       ? tbVariant.renderHtml({
@@ -99,7 +88,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
       : "";
 
   // 4. Answer Cards Variant
-  const acVariant = resolveAnswerCardVariant(input.answer_card_style as QuizAnswerCardStyle);
+  const acVariant = resolveAnswerCardVariant(input.answer_card_style);
   const answerCardsHtml = acVariant.renderHtml({
     choices,
     correctIndex: correctIdx,
@@ -112,13 +101,11 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
   const answerGridStyle = `opacity:${answerGridOpacity};`;
 
   // 5. Fact Card for Explain Phase
-  const factCardTitle = input.fact_card_title || "BẠN CÓ BIẾT?";
   const factCardText = input.fact_card_text || "Hành tinh này có các đặc điểm kỳ thú và hệ thống vành đai ấn tượng nhất trong vũ trụ!";
   const factCardHtml =
     phase === "explain"
       ? `
     <div class="fact-card sandbox-explain-card" style="opacity: 1; animation: none; transform: translateX(-50%);">
-      <span>${esc(factCardTitle)}</span>
       <p>${esc(factCardText)}</p>
     </div>
   `

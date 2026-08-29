@@ -21,11 +21,7 @@ import {
   getCounterBadgesCss,
   getQuestionBoxesCss,
   getThinkingBarsCss,
-  resolveAnswerCardVariant,
-  resolveCounterBadgeVariant,
-  resolveQuestionBoxVariant,
   resolveThinkingBarVariant,
-  starSliderVariant,
 } from "../visual/elements/index.js";
 
 export type CandyArcadeCompositionInput = {
@@ -47,7 +43,6 @@ export type CandyArcadeCompositionBundle = {
 };
 
 type Copy = ReturnType<typeof quizCopy>;
-type Phase = "question" | "choices" | "think" | "countdown" | "reveal" | "explain";
 
 export const CANDY_ARCADE_LAYOUT_DIMENSIONS = {
   baseline: { width: 800, height: 284 },
@@ -241,7 +236,6 @@ function mascotElement(
   const idleSprite = mascot.actions.idle?.sprite_url || mascot.master_image_url;
   const thinkingSprite = mascot.actions.thinking?.sprite_url || idleSprite;
   const celebrateSprite = mascot.actions.celebrate?.sprite_url || waveSprite || idleSprite;
-  const pointSprite = mascot.actions.point?.sprite_url || idleSprite;
   const outroSprite = mascot.actions.outro?.sprite_url || waveSprite || idleSprite;
 
   if (phase === "intro") {
@@ -327,7 +321,6 @@ function questionClip(input: {
 }): string {
   const { question, visual } = input;
   const questionLayout = textLayout(question.question, "question");
-  const answer = question.choices.find((choice) => choice.id === question.correct_choice_id);
   const config = styleAttributes(
     visual,
     questionLayout,
@@ -361,7 +354,7 @@ function questionClip(input: {
     visual.layoutId === "visual_choices_three"
       ? ""
       : imageCard(questionAsset, question.visual_opportunity || question.question, "hero-image", question.number);
-  const visualAnswers = visual.layoutId === "visual_choices_three" ? visualAnswerCards(question, input.assets, input.questionIndex) : "";
+  const visualAnswers = visual.layoutId === "visual_choices_three" ? visualAnswerCards(question, input.assets) : "";
   const mascotHtml = mascotElement(input.mascot, input.mascotConfig, "question");
   const thinkingBarVariant = resolveThinkingBarVariant(input.thinkingBarStyle);
   const thinkingBarHtml = thinkingBarVariant.renderHtml({
@@ -454,7 +447,7 @@ function answerCards(question: QuizV2["questions"][number], assets: Record<strin
     .join("")}</div>`;
 }
 
-function visualAnswerCards(question: QuizV2["questions"][number], assets: Record<string, string>, questionIndex: number): string {
+function visualAnswerCards(question: QuizV2["questions"][number], assets: Record<string, string>): string {
   return `<div class="visual-answer-grid">${question.choices
     .map((choice, index) => {
       const state = "answer-" + visualAnswerState(choice.id, question.correct_choice_id, "reveal");
@@ -465,21 +458,8 @@ function visualAnswerCards(question: QuizV2["questions"][number], assets: Record
     .join("")}</div>`;
 }
 
-function thinkingBar(input: { clipStart: number; revealStart: number }): string {
-  const duration = Math.max(0.05, input.revealStart - input.clipStart);
-  const cd5 = Math.max(0, duration - 5);
-  const cd4 = Math.max(0, duration - 4);
-  const cd3 = Math.max(0, duration - 3);
-  const cd2 = Math.max(0, duration - 2);
-  const cd1 = Math.max(0, duration - 1);
-  const queryDuration = cd5;
-  const style = `style="--timer-duration:${duration.toFixed(3)}s;--cd-query-dur:${queryDuration.toFixed(3)}s;--cd5-at:${cd5.toFixed(3)}s;--cd4-at:${cd4.toFixed(3)}s;--cd3-at:${cd3.toFixed(3)}s;--cd2-at:${cd2.toFixed(3)}s;--cd1-at:${cd1.toFixed(3)}s"`;
-  const starSvg = `<svg class="marker-star-svg" viewBox="0 0 100 100" aria-hidden="true" data-layout-ignore><defs><linearGradient id="markerStarGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFE043" /><stop offset="45%" stop-color="#FF961F" /><stop offset="100%" stop-color="#FF3366" /></linearGradient><linearGradient id="markerStarStroke" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFFFFF" /><stop offset="60%" stop-color="#FFF4B8" /><stop offset="100%" stop-color="#FFD633" /></linearGradient></defs><path d="M50 11 Q59 20 68 29.5 Q80 33 91 41 Q86 53 79.5 63.5 Q80 77 75.5 88.5 Q63 87 50 85 Q37 87 24.5 88.5 Q20 77 20.5 63.5 Q14 53 9 41 Q20 33 32 29.5 Q41 20 50 11 Z" fill="rgba(13,35,71,0.35)" /><path class="star-outer" d="M50 7 Q59 16 68 25.5 Q80 29 91 37 Q86 49 79.5 59.5 Q80 73 75.5 84.5 Q63 83 50 81 Q37 83 24.5 84.5 Q20 73 20.5 59.5 Q14 49 9 37 Q20 29 32 25.5 Q41 16 50 7 Z" fill="url(#markerStarGrad)" stroke="url(#markerStarStroke)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round" /></svg>`;
-  return `<div class="thinking-bar" ${style}><div class="thinking-track" aria-label="Quiz timer" data-layout-allow-overflow><div class="timer-milestones" data-layout-ignore aria-hidden="true"><span class="milestone-star star-1">★</span><span class="milestone-star star-2">★</span><span class="milestone-star star-3">★</span><span class="milestone-star star-4">★</span></div><div class="timer-progress"></div><span class="timer-marker" data-layout-allow-occlusion data-layout-allow-overlap>${starSvg}<b class="marker-val val-query" data-layout-allow-overlap>?</b><b class="marker-val val-5" data-layout-allow-overlap>5</b><b class="marker-val val-4" data-layout-allow-overlap>4</b><b class="marker-val val-3" data-layout-allow-overlap>3</b><b class="marker-val val-2" data-layout-allow-overlap>2</b><b class="marker-val val-1" data-layout-allow-overlap>1</b></span><div class="timer-sparkles" data-layout-ignore aria-hidden="true"><i>✦</i><i>•</i><i>✦</i></div></div></div>`;
-}
-
 function revealPanel(input: { question: QuizV2["questions"][number]; copy: Copy; isFinal: boolean }): string {
-  return `<div class="fact-card" data-layout-allow-occlusion><span>${esc(input.question.fun_fact ? input.copy.funFact : input.copy.why)}</span><p>${esc(input.question.fun_fact || input.question.explanation)}</p></div>`;
+  return `<div class="fact-card" data-layout-allow-occlusion><p>${esc(input.question.fun_fact || input.question.explanation)}</p></div>`;
 }
 
 function sceneDecorations(questionIndex: number): string {
@@ -973,9 +953,9 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .timer-sparkles i:nth-child(1) { right: 6%; top: -18px; }
 .timer-sparkles i:nth-child(2) { right: 1%; bottom: -16px; color: #5CE1E6; font-size: 22px; animation-delay: calc(var(--clip-start) + .55s); }
 .timer-sparkles i:nth-child(3) { left: 4%; top: -16px; color: #fff; animation-delay: calc(var(--clip-start) + 1.05s); }
-.fact-card { position: relative; z-index: 5; max-width: 1220px; margin-top: 14px; padding: 22px 44px 26px; border: 6px solid rgba(255,255,255,.85); border-radius: 38px; background: var(--surface); box-shadow: 0 16px 0 rgba(13,35,71,.18), 0 22px 36px rgba(10,25,60,.14); text-align: center; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--reward-at)) both; }
+.fact-card { position: relative; z-index: 5; max-width: 1220px; margin-top: 14px; padding: 24px 48px; border: 6px solid rgba(255,255,255,.85); border-radius: 38px; background: var(--surface); box-shadow: 0 16px 0 rgba(13,35,71,.18), 0 22px 36px rgba(10,25,60,.14); text-align: center; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--reward-at)) both; }
 .fact-card span { color: var(--surface-accent); font-size: 24px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; }
-.fact-card p { margin: 8px 0 0; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 38px; font-weight: 900; line-height: 1.22; letter-spacing: -0.3px; }
+.fact-card p { margin: 0; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 38px; font-weight: 900; line-height: 1.25; letter-spacing: -0.3px; }
 .visual-answer-grid { position: relative; z-index: 3; display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; width: 1560px; margin-top: 28px; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--choices-at)) both; }
 .visual-answer-card { position: relative; z-index: 3; }
 .option-image { width: 100%; height: 500px; border-width: 12px; border-radius: 40px; transform-origin: center; animation: visual-choice-float 3.8s ease-in-out calc(var(--clip-start) + var(--item-phase)) infinite alternate both; }

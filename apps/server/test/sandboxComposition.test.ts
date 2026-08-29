@@ -92,11 +92,9 @@ describe("buildSandboxComposition Preview Engine", () => {
 
     const explainResult = buildSandboxComposition({
       phase: "explain",
-      fact_card_title: "DID YOU KNOW?",
       fact_card_text: "Saturn rings are made of ice particles!",
     });
     expect(explainResult.html).toContain("sandbox-explain-card");
-    expect(explainResult.html).toContain("DID YOU KNOW?");
     expect(explainResult.html).toContain("Saturn rings are made of ice particles!");
   });
 

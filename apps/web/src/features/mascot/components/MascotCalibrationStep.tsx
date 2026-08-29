@@ -449,7 +449,6 @@ export function MascotCalibrationStep({
                           {/* Phase Body Content */}
                           {scenarioPhase === "explain" ? (
                             <div className="fact-card" style={{ opacity: 1, marginTop: "24px" }}>
-                              <span>{t("mascots.simFactLabel")}</span>
                               <p>{t("mascots.simFactText")}</p>
                             </div>
                           ) : (
