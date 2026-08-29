@@ -925,6 +925,8 @@ export interface TranslationSchema {
     actionSafeLabel: string;
     titleSafeLabel: string;
     shortsSafeLabel: string;
+    verifyingFonts: string;
+    fontLoadFailed: string;
 
     // Modals
     modalSavePresetTitle: string;

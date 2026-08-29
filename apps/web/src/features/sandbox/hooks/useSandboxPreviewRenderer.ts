@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { SandboxPreviewInput } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
@@ -7,6 +7,7 @@ import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
 import type { SandboxQuestionState } from "./useSandboxQuestionState";
 import type { SandboxTimelineState } from "./useSandboxTimelineState";
+import { verifyPreviewFonts } from "../../previewFonts/verifyPreviewFonts";
 
 type UseSandboxPreviewRendererInput = {
   design: SandboxDesignState;
@@ -18,17 +19,29 @@ type UseSandboxPreviewRendererInput = {
 
 export type ContrastReport = { ok: boolean; ratio?: number; message?: string } | null;
 
+type PendingPreview = {
+  html: string;
+  contrastReport: ContrastReport;
+  manualNotice: boolean;
+  requestId: number;
+};
+
 export function useSandboxPreviewRenderer({ design, mascot, question, timeline, onNotice }: UseSandboxPreviewRendererInput) {
   const { t } = useTranslation();
   const [previewHtml, setPreviewHtml] = useState("");
+  const [pendingPreview, setPendingPreview] = useState<PendingPreview | null>(null);
   const [contrastReport, setContrastReport] = useState<ContrastReport>(null);
   const [loading, setLoading] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
   const [lastRenderTime, setLastRenderTime] = useState(() => new Date().toLocaleTimeString());
   const [iframeKey, setIframeKey] = useState(1);
+  const latestRequestId = useRef(0);
 
   const renderPreview = useCallback(
     async (manualNotice = false) => {
+      const requestId = ++latestRequestId.current;
       setLoading(true);
+      setPreviewError(null);
       try {
         const input: SandboxPreviewInput = {
           theme: design.theme,
@@ -58,22 +71,15 @@ export function useSandboxPreviewRenderer({ design, mascot, question, timeline, 
         };
 
         const response = await api.previewSandboxComposition(input);
-        setPreviewHtml(response.html);
-        setContrastReport(response.contrast_report);
-        const renderedAt = new Date().toLocaleTimeString();
-        setLastRenderTime(renderedAt);
-        setIframeKey((key) => key + 1);
-        if (manualNotice && onNotice) {
-          onNotice({ tone: "good", message: t("visualSandbox.noticeRerendered", { time: renderedAt }) });
-        }
+        if (requestId !== latestRequestId.current) return;
+        setPendingPreview({ html: response.html, contrastReport: response.contrast_report, manualNotice, requestId });
       } catch (error) {
+        if (requestId !== latestRequestId.current) return;
+        const message = error instanceof Error ? error.message : "Failed to compile preview composition";
+        setPreviewError(message);
         if (onNotice) {
-          onNotice({
-            tone: "bad",
-            message: error instanceof Error ? error.message : "Failed to compile preview composition",
-          });
+          onNotice({ tone: "bad", message });
         }
-      } finally {
         setLoading(false);
       }
     },
@@ -107,12 +113,51 @@ export function useSandboxPreviewRenderer({ design, mascot, question, timeline, 
     ],
   );
 
+  const verifyPendingPreview = useCallback(
+    async (frame: HTMLIFrameElement, html: string) => {
+      try {
+        await verifyPreviewFonts(frame);
+        if (!pendingPreview || pendingPreview.html !== html || pendingPreview.requestId !== latestRequestId.current) return;
+        const renderedAt = new Date().toLocaleTimeString();
+        setPreviewHtml(pendingPreview.html);
+        setContrastReport(pendingPreview.contrastReport);
+        setLastRenderTime(renderedAt);
+        setPendingPreview(null);
+        setIframeKey((key) => key + 1);
+        setPreviewError(null);
+        setLoading(false);
+        if (pendingPreview.manualNotice && onNotice) {
+          onNotice({ tone: "good", message: t("visualSandbox.noticeRerendered", { time: renderedAt }) });
+        }
+      } catch (error) {
+        if (!pendingPreview || pendingPreview.html !== html) return;
+        const message = error instanceof Error ? error.message : t("visualSandbox.fontLoadFailed");
+        setPendingPreview(null);
+        setPreviewError(message);
+        setLoading(false);
+        onNotice?.({ tone: "bad", message });
+      }
+    },
+    [onNotice, pendingPreview, t],
+  );
+
   useEffect(() => {
     const timer = setTimeout(() => void renderPreview(), 150);
     return () => clearTimeout(timer);
   }, [renderPreview]);
 
-  return { previewHtml, contrastReport, loading, lastRenderTime, iframeKey, setIframeKey, renderPreview };
+  return {
+    previewHtml,
+    pendingPreviewHtml: pendingPreview?.html ?? "",
+    contrastReport,
+    loading,
+    previewError,
+    lastRenderTime,
+    iframeKey,
+    setIframeKey,
+    renderPreview,
+    verifyPendingPreview,
+  };
 }
 
 export type SandboxPreviewRenderer = ReturnType<typeof useSandboxPreviewRenderer>;

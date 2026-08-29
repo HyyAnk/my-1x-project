@@ -927,6 +927,8 @@ export const en: TranslationSchema = {
     actionSafeLabel: "Action Safe (90%)",
     titleSafeLabel: "Title Safe (80%)",
     shortsSafeLabel: "Shorts / TikTok (9:16 Safe)",
+    verifyingFonts: "Verifying video fonts",
+    fontLoadFailed: "Video fonts could not be verified",
 
     // Modals
     modalSavePresetTitle: "Save Style Preset",

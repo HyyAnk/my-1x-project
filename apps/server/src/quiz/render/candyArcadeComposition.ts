@@ -12,7 +12,7 @@ import { type ResolveBgmOptions } from "../audio/bgmRegistry.js";
 import { CANDY_ARCADE_LAYOUT_DIMENSIONS, candyArcadeCss, candyArcadeHeroAreaRatio } from "./candyArcade/candyArcadeStyles.js";
 import { highlightQuestionMarkup, illustrationDataUri, QUESTION_KEYWORD_STOP_WORDS, esc, escAttr } from "./candyArcade/candyArcadeSvg.js";
 import { assetFor, buildBgmClips, buildSfxClips, sfxSource, source } from "./candyArcade/candyArcadeAudio.js";
-import { getHeadlineFontBase64 } from "./candyArcade/candyArcadeFonts.js";
+import { candyArcadeFontReadinessScript } from "./candyArcade/candyArcadeFonts.js";
 import {
   introClip,
   outroClip,
@@ -52,7 +52,6 @@ export {
   QUESTION_KEYWORD_STOP_WORDS,
   esc,
   escAttr,
-  getHeadlineFontBase64,
   buildBgmClips,
   buildSfxClips,
   sfxSource,
@@ -176,7 +175,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   ].join("\n");
 
   return {
-    html: `<!doctype html><html><head><meta charset="utf-8"><title>Candy Arcade Quiz</title>${mascotPreloads ? `\n${mascotPreloads}` : ""}<style>${candyArcadeCss()}</style></head><body><main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="1920" data-height="1080" data-duration="${duration.toFixed(3)}" data-fps="30">${scenes.map(subCompositionMount).join("\n")}\n${audioTags}</main><script>window.__playerReady=true;window.__renderReady=true;</script></body></html>`,
+    html: `<!doctype html><html><head><meta charset="utf-8"><title>Candy Arcade Quiz</title>${mascotPreloads ? `\n${mascotPreloads}` : ""}<style>${candyArcadeCss()}</style></head><body><main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="1920" data-height="1080" data-duration="${duration.toFixed(3)}" data-fps="30">${scenes.map(subCompositionMount).join("\n")}\n${audioTags}</main><script>${candyArcadeFontReadinessScript()}</script></body></html>`,
     files: Object.fromEntries(scenes.map((scene) => [`compositions/${scene.id}.html`, scene.html])),
   };
 }

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RECOMMENDED_MASCOT_PLACEMENT_PRESET, type Channel, type MascotActionType, type MascotProfile } from "@studio/shared";
 import { api } from "../../../api";
 import { useTranslation } from "../../../i18n";
@@ -14,6 +14,7 @@ import type {
   StageViewMode,
 } from "../types";
 import { useMascotPlacementPreset } from "./useMascotPlacementPreset";
+import { verifyPreviewFonts } from "../../previewFonts/verifyPreviewFonts";
 
 type SandboxPreviewTiming = {
   phase: "question" | "choices" | "thinking" | "reveal" | "explain";
@@ -75,6 +76,7 @@ export function useStageStudio({
 
   // Authentic Video Background Preview State (Powered by HyperFrames Engine)
   const [previewHtml, setPreviewHtml] = useState<string>("");
+  const [pendingPreviewHtml, setPendingPreviewHtml] = useState<string>("");
   const [previewLoading, setPreviewLoading] = useState<boolean>(false);
   const [previewError, setPreviewError] = useState<boolean>(false);
   const [previewRevision, setPreviewRevision] = useState(0);
@@ -340,6 +342,7 @@ export function useStageStudio({
       try {
         setPreviewLoading(true);
         setPreviewError(false);
+        setPendingPreviewHtml("");
         const previewTiming = SANDBOX_PREVIEW_TIMINGS[scenarioPhase];
 
         const res = await api.previewSandboxComposition({
@@ -357,15 +360,13 @@ export function useStageStudio({
           mascot_position: position,
         });
 
-        if (isMounted && res?.html) {
-          setPreviewHtml(res.html);
-          setIframeKey((k) => k + 1);
-        }
+        if (isMounted && res?.html) setPendingPreviewHtml(res.html);
       } catch (err) {
         console.warn("Failed to fetch stage background composition", err);
-        if (isMounted) setPreviewError(true);
-      } finally {
-        if (isMounted) setPreviewLoading(false);
+        if (isMounted) {
+          setPreviewError(true);
+          setPreviewLoading(false);
+        }
       }
     };
 
@@ -377,6 +378,27 @@ export function useStageStudio({
   }, [isOpen, stageViewMode, scenarioPhase, targetChannel, questionLayoutId, position, previewRevision]);
 
   const retryPreview = () => setPreviewRevision((revision) => revision + 1);
+
+  const verifyPendingPreview = useCallback(
+    async (frame: HTMLIFrameElement, html: string) => {
+      try {
+        await verifyPreviewFonts(frame);
+        if (html !== pendingPreviewHtml) return;
+        setPreviewHtml(html);
+        setPendingPreviewHtml("");
+        setIframeKey((key) => key + 1);
+        setPreviewError(false);
+      } catch (error) {
+        if (html !== pendingPreviewHtml) return;
+        console.warn("Stage preview font verification failed", error);
+        setPendingPreviewHtml("");
+        setPreviewError(true);
+      } finally {
+        if (html === pendingPreviewHtml) setPreviewLoading(false);
+      }
+    },
+    [pendingPreviewHtml],
+  );
 
   // Reset all transforms to default
   const handleResetLayout = () => {
@@ -513,9 +535,11 @@ export function useStageStudio({
     isResizing,
     currentSpriteUrl,
     previewHtml,
+    pendingPreviewHtml,
     previewLoading,
     previewError,
     retryPreview,
+    verifyPendingPreview,
     iframeKey,
     setIframeKey,
     isMascotVisibleInCurrentPhase,

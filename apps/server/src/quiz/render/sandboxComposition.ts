@@ -14,6 +14,7 @@ import {
 import { candyArcadeCss, illustrationDataUri, highlightQuestionMarkup } from "./candyArcadeComposition.js";
 import { esc } from "./candyArcade/candyArcadeSvg.js";
 import { renderMascotHtmlLayer } from "./mascotStateResolver.js";
+import { candyArcadeFontReadinessScript } from "./candyArcade/candyArcadeFonts.js";
 
 export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
   input = SandboxPreviewInputSchema.parse(input);
@@ -215,7 +216,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
   <base href="/">
   <title>HyperFrames Sandbox Live Preview</title>
   <style>
-    ${candyArcadeCss()}
+    ${candyArcadeCss({ fontMode: "preview" })}
     ${getQuestionBoxesCss()}
     ${getCounterBadgesCss()}
     ${getThinkingBarsCss()}
@@ -286,7 +287,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
       ${rewardFxHtml}
     </section>
   </main>
-  <script>window.__playerReady=true;window.__renderReady=true;</script>
+  <script>${candyArcadeFontReadinessScript()}</script>
 </body>
 </html>`;
 
@@ -294,7 +295,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
 
   return {
     html: fullHtml,
-    css: candyArcadeCss(),
+    css: candyArcadeCss({ fontMode: "preview" }),
     contrast_report: contrastReport,
   };
 }

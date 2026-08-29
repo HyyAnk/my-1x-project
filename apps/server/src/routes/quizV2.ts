@@ -1,8 +1,10 @@
 import type { FastifyPluginCallback } from "fastify";
+import { readFile } from "node:fs/promises";
 import { RemixQuestionsInputSchema, SandboxPreviewInputSchema } from "@studio/shared";
 import type { AntigravityClient } from "../antigravity.js";
 import type { CodexAppServerClient } from "../codex.js";
 import { buildSandboxComposition } from "../quiz/render/sandboxComposition.js";
+import { resolveCandyArcadeFont } from "../quiz/render/candyArcade/candyArcadeFonts.js";
 import {
   assertQuizRenderReady,
   compileTimeline,
@@ -149,6 +151,18 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
       const input = SandboxPreviewInputSchema.parse(request.body ?? {});
       const mascot = input.mascot_id ? await repository.getMascot(input.mascot_id).catch(() => null) : null;
       return buildSandboxComposition(input, mascot);
+    });
+    server.get("/api/quiz/fonts/:fontId", async (request, reply) => {
+      const { fontId } = request.params as { fontId: string };
+      const font = resolveCandyArcadeFont(fontId, repository.rootDirectory);
+      if (!font) throw new RepositoryError("Quiz font not found", "QUIZ_FONT_NOT_FOUND");
+      const content = await readFile(font.absolutePath);
+      return reply
+        .type(font.mimeType)
+        .header("Cache-Control", "public, max-age=31536000, immutable")
+        .header("ETag", `"${font.sha256}"`)
+        .header("X-Content-Type-Options", "nosniff")
+        .send(content);
     });
     done();
   };

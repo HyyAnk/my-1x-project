@@ -1,5 +1,5 @@
 import { getAnswerCardsCss, getCounterBadgesCss, getQuestionBoxesCss, getThinkingBarsCss } from "../../visual/elements/index.js";
-import { getHeadlineFontBase64 } from "./candyArcadeFonts.js";
+import { candyArcadeFontFaceCss, type CandyArcadeFontMode } from "./candyArcadeFonts.js";
 
 export const CANDY_ARCADE_LAYOUT_DIMENSIONS = {
   baseline: { width: 800, height: 284 },
@@ -17,46 +17,9 @@ export function candyArcadeHeroAreaRatio(layout: keyof typeof CANDY_ARCADE_LAYOU
   return Number(((dimensions.width * dimensions.height) / frameArea).toFixed(4));
 }
 
-export function candyArcadeCss(): string {
-  const fontBase64 = getHeadlineFontBase64();
-  const fontSources = [
-    ...(fontBase64 ? [`url("data:font/otf;base64,${fontBase64}") format("opentype")`] : []),
-    `url("./fonts/SVN-Hello Headline.otf") format("opentype")`,
-    `local("SVN-Hello Headline")`,
-  ].join(", ");
-
+export function candyArcadeCss(options: { fontMode?: CandyArcadeFontMode } = {}): string {
   return `
-@font-face {
-  font-family: "SVN-Hello Headline";
-  src: ${fontSources};
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Fredoka";
-  src: url("./fonts/Fredoka-VariableFont_wdth,wght.ttf") format("truetype"),
-       local("Fredoka");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Baloo 2";
-  src: url("./fonts/Baloo2-VariableFont_wght.ttf") format("truetype"),
-       local("Baloo 2"), local("Baloo2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Nunito";
-  src: url("./fonts/Nunito-VariableFont_wght.ttf") format("truetype"),
-       local("Nunito");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
+${candyArcadeFontFaceCss(options.fontMode ?? "render")}
 :root {
   --candy-layer-transition: 10;
   --candy-layer-mascot: 11;

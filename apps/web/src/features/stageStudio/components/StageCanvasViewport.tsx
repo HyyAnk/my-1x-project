@@ -27,9 +27,11 @@ export function StageCanvasViewport({ studio }: StageCanvasViewportProps) {
     activeMascot,
     currentSpriteUrl,
     previewHtml,
+    pendingPreviewHtml,
     previewLoading,
     previewError,
     retryPreview,
+    verifyPendingPreview,
     iframeKey,
     targetStageWidth,
     targetStageHeight,
@@ -65,6 +67,7 @@ export function StageCanvasViewport({ studio }: StageCanvasViewportProps) {
           <StageCanvasBackdrop
             viewMode={stageViewMode}
             previewHtml={previewHtml}
+            pendingPreviewHtml={pendingPreviewHtml}
             previewLoading={previewLoading}
             previewError={previewError}
             iframeKey={iframeKey}
@@ -75,6 +78,7 @@ export function StageCanvasViewport({ studio }: StageCanvasViewportProps) {
             errorLabel={t("stageStudio.previewLoadFailed")}
             retryLabel={t("stageStudio.retryPreview")}
             onRetry={retryPreview}
+            onPendingPreviewLoad={verifyPendingPreview}
           />
           <StageCanvasGuides
             showGuides={showGuides}

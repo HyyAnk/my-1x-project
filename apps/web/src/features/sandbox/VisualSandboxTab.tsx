@@ -171,6 +171,11 @@ export function VisualSandboxTab({
           setZoom={viewport.setZoom}
           scaleFactor={viewport.scaleFactor}
           previewHtml={preview.previewHtml}
+          pendingPreviewHtml={preview.pendingPreviewHtml}
+          loading={preview.loading}
+          previewError={preview.previewError}
+          onPendingPreviewLoad={preview.verifyPendingPreview}
+          onRetryPreview={() => void preview.renderPreview()}
           phase={timeline.phase}
           useScrubber={timeline.useScrubber}
           timelineSeconds={timeline.timelineSeconds}

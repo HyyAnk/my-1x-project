@@ -18,6 +18,7 @@ import { hasNonEmptyFile } from "./artifactFiles.js";
 import { readRenderCheckpoint, writeRenderCheckpoint } from "./checkpoints.js";
 import { renderSourceFingerprint } from "./fingerprints.js";
 import type { TaskManagerRuntime } from "./runtime.js";
+import { copyCandyArcadeFonts, resolveCandyArcadeFonts } from "../quiz/render/candyArcade/candyArcadeFonts.js";
 
 const execFileAsync = promisify(execFile);
 const require = createRequire(import.meta.url);
@@ -245,37 +246,16 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
         // try next candidate
       }
     }
-    const fontTargetDir = path.join(renderRoot, "fonts");
-    await mkdir(fontTargetDir, { recursive: true });
-    const fontFiles = [
-      "SVN-Hello Headline.otf",
-      "Fredoka-VariableFont_wdth,wght.ttf",
-      "Baloo2-VariableFont_wght.ttf",
-      "Nunito-VariableFont_wght.ttf",
-    ];
-    const fontCandidates = [
-      path.join(this.repository.rootDirectory, "assets", "fonts"),
-      path.join(this.repository.rootDirectory, "templates", "fonts"),
-      path.resolve("assets", "fonts"),
-      path.resolve("templates", "fonts"),
-      path.resolve(process.cwd(), "..", "assets", "fonts"),
-      path.resolve(process.cwd(), "..", "..", "assets", "fonts"),
-    ];
-    await Promise.all(
-      fontFiles.map(async (file) => {
-        for (const candidateDir of fontCandidates) {
-          const candidateFile = path.join(candidateDir, file);
-          try {
-            await copyFile(candidateFile, path.join(fontTargetDir, file));
-            break;
-          } catch {
-            // try next candidate
-          }
-        }
-      }),
-    );
+    await copyCandyArcadeFonts(renderRoot, this.repository.rootDirectory);
 
-    const sourceFingerprint = renderSourceFingerprint(html, narration.modified_at, narration.size, assetResolution?.assets ?? []);
+    const fontFingerprints = resolveCandyArcadeFonts(this.repository.rootDirectory).map((font) => `${font.id}:${font.sha256}`);
+    const sourceFingerprint = renderSourceFingerprint(
+      html,
+      narration.modified_at,
+      narration.size,
+      assetResolution?.assets ?? [],
+      fontFingerprints,
+    );
     const checkpointPath = path.join(renderRoot, "render-checkpoint.json");
     const checkpoint = await readRenderCheckpoint(checkpointPath);
     const layoutReady = checkpoint?.source_fingerprint === sourceFingerprint && checkpoint.check.status === "passed";

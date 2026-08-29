@@ -33,15 +33,17 @@ export function renderSourceFingerprint(
   narrationModifiedAt: string,
   narrationSize: number,
   assets: Array<{ asset_id: string; fingerprint: string; path: string }>,
+  dependencies: string[] = [],
 ): string {
   return createHash("sha256")
     .update(
       JSON.stringify({
-        version: "quiz-render-v3",
+        version: "quiz-render-v4",
         html,
         narrationModifiedAt,
         narrationSize,
         assets: assets.map((asset) => ({ asset_id: asset.asset_id, fingerprint: asset.fingerprint, path: asset.path })),
+        dependencies,
       }),
     )
     .digest("hex");

@@ -1,8 +1,9 @@
 import type React from "react";
-import { CheckCircle, CircleNotch, DeviceMobile, Eye, Pause, Play } from "@phosphor-icons/react";
+import { CheckCircle, DeviceMobile, Eye, Pause, Play } from "@phosphor-icons/react";
 import { computeSandboxPhaseTimeline, getSandboxPhaseAtTime, getSandboxPhaseTimestamps, type SandboxPhase } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { ContrastReport } from "../hooks/useSandboxPreviewRenderer";
+import { SandboxVerifiedPreview } from "./SandboxVerifiedPreview";
 
 export interface SandboxPreviewCanvasProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -18,6 +19,11 @@ export interface SandboxPreviewCanvasProps {
   setZoom: (zoom: "fit" | "50" | "75" | "100") => void;
   scaleFactor: number;
   previewHtml: string;
+  pendingPreviewHtml: string;
+  loading: boolean;
+  previewError: string | null;
+  onPendingPreviewLoad: (frame: HTMLIFrameElement, html: string) => void;
+  onRetryPreview: () => void;
   phase: string;
   useScrubber: boolean;
   timelineSeconds: number;
@@ -42,6 +48,11 @@ export function SandboxPreviewCanvas({
   setZoom,
   scaleFactor,
   previewHtml,
+  pendingPreviewHtml,
+  loading,
+  previewError,
+  onPendingPreviewLoad,
+  onRetryPreview,
   phase,
   useScrubber,
   timelineSeconds,
@@ -257,24 +268,15 @@ export function SandboxPreviewCanvas({
             flexShrink: 0,
           }}
         >
-          {previewHtml ? (
-            <iframe
-              key={iframeKey}
-              title="HyperFrames Sandbox Frame Preview"
-              srcDoc={previewHtml}
-              style={{
-                width: "1920px",
-                height: "1080px",
-                border: "none",
-                display: "block",
-                pointerEvents: "auto",
-              }}
-            />
-          ) : (
-            <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center", color: "#FFF" }}>
-              <CircleNotch className="spin" size={48} />
-            </div>
-          )}
+          <SandboxVerifiedPreview
+            iframeKey={iframeKey}
+            previewHtml={previewHtml}
+            pendingPreviewHtml={pendingPreviewHtml}
+            loading={loading}
+            previewError={previewError}
+            onPendingPreviewLoad={onPendingPreviewLoad}
+            onRetryPreview={onRetryPreview}
+          />
 
           {/* Safe Area 16:9 Overlay (strictly inside frame) */}
           {showSafeArea && (
