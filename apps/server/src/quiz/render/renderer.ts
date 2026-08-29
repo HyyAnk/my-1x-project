@@ -1,4 +1,17 @@
-import type { ChannelMascotConfig, DirectorPlan, MascotProfile, QuizConfig, QuizTimeline, QuizV2, Scene } from "@studio/shared";
+import type {
+  ChannelMascotConfig,
+  DirectorPlan,
+  MascotProfile,
+  QuizAnswerCardStyle,
+  QuizConfig,
+  QuizPaletteId,
+  QuizQuestionBoxStyle,
+  QuizQuestionCounterStyle,
+  QuizThinkingBarStyle,
+  QuizTimeline,
+  QuizV2,
+  Scene,
+} from "@studio/shared";
 import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
 
 export type QuizRenderInput = {
@@ -13,6 +26,11 @@ export type QuizRenderInput = {
   bgmOptions?: ResolveBgmOptions;
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
+  defaultThinkingBarStyle?: QuizThinkingBarStyle | null;
+  defaultQuestionBoxStyle?: QuizQuestionBoxStyle | null;
+  defaultAnswerCardStyle?: QuizAnswerCardStyle | null;
+  defaultCounterStyle?: QuizQuestionCounterStyle | null;
+  defaultPaletteId?: QuizPaletteId | null;
 };
 
 export type PreparedQuizRender = { html: string; compositionFiles: Record<string, string>; durationSeconds: number; questionCount: number };

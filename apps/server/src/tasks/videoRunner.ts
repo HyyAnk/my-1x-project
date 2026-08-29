@@ -184,6 +184,11 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
           },
           mascot: mascotProfile,
           mascotConfig: channel.mascot_config,
+          defaultThinkingBarStyle: episode.quiz_config?.thinking_bar_style,
+          defaultQuestionBoxStyle: episode.quiz_config?.question_box_style,
+          defaultAnswerCardStyle: episode.quiz_config?.answer_card_style,
+          defaultCounterStyle: episode.quiz_config?.question_counter_style,
+          defaultPaletteId: episode.quiz_config?.palette_id,
         })
       : null;
     const html =

@@ -3,7 +3,12 @@ import {
   type ChannelMascotConfig,
   type DirectorPlan,
   type MascotProfile,
+  type QuizAnswerCardStyle,
   type QuizConfig,
+  type QuizPaletteId,
+  type QuizQuestionBoxStyle,
+  type QuizQuestionCounterStyle,
+  type QuizThinkingBarStyle,
   type QuizTimeline,
   type QuizV2,
 } from "@studio/shared";
@@ -36,6 +41,11 @@ export type CandyArcadeCompositionInput = {
   bgmOptions?: ResolveBgmOptions;
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
+  defaultThinkingBarStyle?: QuizThinkingBarStyle | null;
+  defaultQuestionBoxStyle?: QuizQuestionBoxStyle | null;
+  defaultAnswerCardStyle?: QuizAnswerCardStyle | null;
+  defaultCounterStyle?: QuizQuestionCounterStyle | null;
+  defaultPaletteId?: QuizPaletteId | null;
 };
 
 export type CandyArcadeCompositionBundle = {
@@ -88,12 +98,19 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   input.quiz.questions.forEach((question, index) => {
     const beat = input.director.beats.find((candidate) => candidate.question_id === question.id);
     if (!beat) return;
+    const requestedPalette =
+      beat.palette_id && beat.palette_id !== "auto"
+        ? beat.palette_id
+        : input.defaultPaletteId && input.defaultPaletteId !== "auto"
+          ? input.defaultPaletteId
+          : beat.palette_id;
+
     const visual = template.resolveScene({
       question,
       questionIndex: index,
       totalQuestions: input.quiz.questions.length,
       archetype: beat.archetype,
-      requestedPalette: beat.palette_id,
+      requestedPalette,
       requestedLayout: beat.layout_id,
       requestedMotion: beat.motion_id,
       requestedTransition: beat.transition_id,
@@ -111,7 +128,22 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
       duration,
       nextQuestion ? eventAt(nextQuestion.id, "question.enter", duration) : (transition?.at_seconds ?? outroStart ?? duration),
     );
-    const thinkingBarStyle = beat.thinking_bar_style ?? "auto";
+    const thinkingBarStyle =
+      beat.thinking_bar_style && beat.thinking_bar_style !== "auto"
+        ? beat.thinking_bar_style
+        : input.defaultThinkingBarStyle ?? "auto";
+    const questionBoxStyle =
+      beat.question_box_style && beat.question_box_style !== "auto"
+        ? beat.question_box_style
+        : input.defaultQuestionBoxStyle ?? "auto";
+    const answerCardStyle =
+      beat.answer_card_style && beat.answer_card_style !== "auto"
+        ? beat.answer_card_style
+        : input.defaultAnswerCardStyle ?? "auto";
+    const counterStyle =
+      beat.question_counter_style && beat.question_counter_style !== "auto"
+        ? beat.question_counter_style
+        : input.defaultCounterStyle ?? "auto";
     if (end - start > 0.04)
       clips.push(
         questionClip({
@@ -131,6 +163,9 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
           mascot: input.mascot,
           mascotConfig: input.mascotConfig,
           thinkingBarStyle,
+          questionBoxStyle,
+          answerCardStyle,
+          counterStyle,
         }),
       );
     if (transition)

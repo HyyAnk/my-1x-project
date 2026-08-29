@@ -7,6 +7,7 @@ import {
   MascotActionTypeSchema,
   QuizAnswerCardStyleSchema,
   QuizImageStyleSchema,
+  QuizPaletteIdSchema,
   QuizQuestionBoxStyleSchema,
   QuizQuestionCounterStyleSchema,
   QuizThinkingBarStyleSchema,
@@ -386,6 +387,9 @@ export const EpisodeSettingsInputSchema = z.object({
   thinking_bar_style: QuizThinkingBarStyleSchema.optional(),
   question_counter_style: QuizQuestionCounterStyleSchema.optional(),
   question_box_style: QuizQuestionBoxStyleSchema.optional(),
+  answer_card_style: QuizAnswerCardStyleSchema.optional(),
+  palette_id: QuizPaletteIdSchema.optional(),
+  style_preset_id: z.string().optional(),
 });
 
 export type EpisodeSettingsInput = z.infer<typeof EpisodeSettingsInputSchema>;

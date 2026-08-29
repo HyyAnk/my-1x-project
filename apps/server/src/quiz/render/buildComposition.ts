@@ -5,8 +5,13 @@ import {
   type ChannelMascotConfig,
   type DirectorPlan,
   type MascotProfile,
+  type QuizAnswerCardStyle,
   type QuizConfig,
+  type QuizPaletteId,
+  type QuizQuestionBoxStyle,
+  type QuizQuestionCounterStyle,
   type QuizQuestionFormat,
+  type QuizThinkingBarStyle,
   type QuizTimeline,
   type QuizV2,
   type Scene,
@@ -24,6 +29,12 @@ export function buildQuizComposition(
   scenes: Scene[],
   audioPath: string,
   narrationDurationSeconds?: number,
+  options?: {
+    assets?: Record<string, string>;
+    bgmOptions?: ResolveBgmOptions;
+    mascot?: MascotProfile | null;
+    mascotConfig?: ChannelMascotConfig | null;
+  },
 ): string {
   const normalizedFormat = (config.quiz_format === "knowledge" ? "multiple_choice" : config.quiz_format) as QuizQuestionFormat;
   const requiredChoiceCount = quizChoiceCountForFormat(normalizedFormat);
@@ -123,6 +134,11 @@ export type QuizV2CompositionInput = {
   bgmOptions?: ResolveBgmOptions;
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
+  defaultThinkingBarStyle?: QuizThinkingBarStyle | null;
+  defaultQuestionBoxStyle?: QuizQuestionBoxStyle | null;
+  defaultAnswerCardStyle?: QuizAnswerCardStyle | null;
+  defaultCounterStyle?: QuizQuestionCounterStyle | null;
+  defaultPaletteId?: QuizPaletteId | null;
 };
 
 /**

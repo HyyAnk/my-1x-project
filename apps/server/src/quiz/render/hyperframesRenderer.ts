@@ -14,6 +14,11 @@ export class HyperframesRenderer implements QuizRenderer {
       bgmOptions: input.bgmOptions,
       mascot: input.mascot,
       mascotConfig: input.mascotConfig,
+      defaultThinkingBarStyle: input.defaultThinkingBarStyle,
+      defaultQuestionBoxStyle: input.defaultQuestionBoxStyle,
+      defaultAnswerCardStyle: input.defaultAnswerCardStyle,
+      defaultCounterStyle: input.defaultCounterStyle,
+      defaultPaletteId: input.defaultPaletteId,
     });
     return {
       html: composition.html,

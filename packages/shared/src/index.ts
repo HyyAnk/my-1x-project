@@ -4,4 +4,6 @@ export * from "./api.js";
 export * from "./events.js";
 export * from "./helpers.js";
 export * from "./constants.js";
+export * from "./presets.js";
 export * from "./timing.js";
+export * from "./mascot/index.js";

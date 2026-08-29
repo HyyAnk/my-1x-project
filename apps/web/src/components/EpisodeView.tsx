@@ -138,6 +138,11 @@ export function EpisodeDetail({
             onSaveQuestionCount={pipeline.saveQuestionCount}
             onSaveVisualStyle={pipeline.saveVisualStyle}
             onSaveThinkingBarStyle={pipeline.saveThinkingBarStyle}
+            onSaveQuestionBoxStyle={pipeline.saveQuestionBoxStyle}
+            onSaveAnswerCardStyle={pipeline.saveAnswerCardStyle}
+            onSaveCounterStyle={pipeline.saveCounterStyle}
+            onSavePaletteId={pipeline.savePaletteId}
+            onApplyStylePreset={pipeline.applyStylePreset}
           />
           <QuizV2Panel
             state={quizV2}

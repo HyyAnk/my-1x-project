@@ -2221,6 +2221,43 @@
   background: rgba(251, 191, 36, 0.15);
 }
 
+.pill-btn-icon-wrap.icon-preset {
+  color: #a855f7;
+  background: rgba(168, 85, 247, 0.15);
+}
+
+.pill-btn-icon-wrap.icon-card {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.pill-btn-icon-wrap.icon-choice {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.pill-btn-icon-wrap.icon-counter {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.badge-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  white-space: nowrap;
+}
+
+.style-checkbox-item.is-hovered {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
 .pill-btn-text {
   display: flex;
   flex-direction: column;

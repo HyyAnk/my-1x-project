@@ -178,6 +178,9 @@ export const QuizConfigSchema = z.object({
   thinking_bar_style: QuizThinkingBarStyleSchema.default("auto"),
   question_counter_style: QuizQuestionCounterStyleSchema.default("auto"),
   question_box_style: QuizQuestionBoxStyleSchema.default("auto"),
+  answer_card_style: QuizAnswerCardStyleSchema.default("auto"),
+  palette_id: QuizPaletteIdSchema.default("auto"),
+  style_preset_id: z.string().optional().default("auto"),
 });
 
 export type QuizConfig = z.infer<typeof QuizConfigSchema>;
@@ -307,6 +310,7 @@ export const DirectorBeatSchema = z
     thinking_bar_style: QuizThinkingBarStyleSchema.default("auto"),
     question_counter_style: QuizQuestionCounterStyleSchema.default("auto"),
     question_box_style: QuizQuestionBoxStyleSchema.default("auto"),
+    answer_card_style: QuizAnswerCardStyleSchema.default("auto"),
     thinking_seconds: z.number().positive().max(30),
     beat_intents: DirectorBeatIntentSchema.array().min(1),
     asset_intents: DirectorAssetIntentSchema.array().default([]),

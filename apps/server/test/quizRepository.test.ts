@@ -169,4 +169,33 @@ describe("Quiz V2 repository artifacts", () => {
     expect((await repository.getEpisode(channelId, legacyEpisode.episode_id)).video_asset_path).toBe(legacyVideo);
     expect(channel.engine).toBe("quiz");
   });
+
+  it("updates and persists episode visual customization settings (answer_card, palette, preset)", async () => {
+    const { repository, channelId, episodeId } = await fixture();
+    const updated = await repository.updateEpisodeSettings(
+      channelId,
+      episodeId,
+      {
+        question_box_style: "glass_morphism",
+        answer_card_style: "glass_neon",
+        question_counter_style: "neon_badge",
+        thinking_bar_style: "energy_laser",
+        palette_id: "purple",
+        style_preset_id: "preset_cyber_neon",
+      },
+      2.3,
+    );
+
+    expect(updated.quiz_config.question_box_style).toBe("glass_morphism");
+    expect(updated.quiz_config.answer_card_style).toBe("glass_neon");
+    expect(updated.quiz_config.question_counter_style).toBe("neon_badge");
+    expect(updated.quiz_config.thinking_bar_style).toBe("energy_laser");
+    expect(updated.quiz_config.palette_id).toBe("purple");
+    expect(updated.quiz_config.style_preset_id).toBe("preset_cyber_neon");
+
+    const reloaded = await repository.getEpisode(channelId, episodeId);
+    expect(reloaded.quiz_config.answer_card_style).toBe("glass_neon");
+    expect(reloaded.quiz_config.style_preset_id).toBe("preset_cyber_neon");
+  });
 });
+

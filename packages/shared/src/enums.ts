@@ -70,19 +70,13 @@ export type MascotActionType = z.infer<typeof MascotActionTypeSchema>;
 
 export const ALL_MASCOT_ACTIONS: MascotActionType[] = ["idle", "wave", "thinking", "point", "celebrate", "oops", "outro"];
 
-export const MascotMotionPresetSchema = z.enum([
-  "breathe",
-  "sway",
-  "jump",
-  "shake",
-  "wave",
-  "point",
-  "pulse",
-  "float",
-  "none",
-]);
+export const MascotMotionPresetSchema = z.enum(["breathe", "sway", "jump", "shake", "wave", "point", "pulse", "float", "none"]);
 
 export type MascotMotionPreset = z.infer<typeof MascotMotionPresetSchema>;
+
+export const MascotMotionIntensitySchema = z.enum(["subtle", "normal", "dynamic"]);
+
+export type MascotMotionIntensity = z.infer<typeof MascotMotionIntensitySchema>;
 
 export const MASCOT_ACTION_META: Record<
   MascotActionType,
@@ -161,7 +155,9 @@ export const MASCOT_ACTION_META: Record<
   },
 };
 
-export type MascotPosition = "bottom_left" | "bottom_right";
+export const MascotPositionSchema = z.enum(["bottom_left", "bottom_right"]);
+
+export type MascotPosition = z.infer<typeof MascotPositionSchema>;
 
 export const QuizVisualThemeSchema = z.enum(["candy_arcade", "candy_pop", "space_lab", "jungle_jamboree", "ocean_explorer"]);
 
@@ -300,6 +296,30 @@ export const DirectorVisualDensitySchema = z.enum(["calm", "focused", "lively", 
 export const QuizPaletteIdSchema = z.enum(["auto", "lime", "aqua", "sunny", "purple", "pink", "orange", "red", "blue"]);
 
 export type QuizPaletteId = z.infer<typeof QuizPaletteIdSchema>;
+
+export const ALL_QUIZ_PALETTES: QuizPaletteId[] = ["lime", "aqua", "sunny", "purple", "pink", "orange", "red", "blue"];
+
+export const QUIZ_PALETTE_LABELS: Record<Exclude<QuizPaletteId, "auto">, string> = {
+  lime: "Lime Mint",
+  aqua: "Aqua Blue",
+  sunny: "Sunny Gold",
+  purple: "Purple Galaxy",
+  pink: "Candy Pink",
+  orange: "Sunset Orange",
+  red: "Ruby Burst",
+  blue: "Ocean Deep",
+};
+
+export const QUIZ_PALETTE_COLORS: Record<Exclude<QuizPaletteId, "auto">, { primary: string; secondary: string; accent: string }> = {
+  lime: { primary: "#99D93E", secondary: "#31B87A", accent: "#FF6C78" },
+  aqua: { primary: "#21C8CF", secondary: "#1973CF", accent: "#FF7A63" },
+  sunny: { primary: "#FFD23F", secondary: "#FF9D31", accent: "#E94F6D" },
+  purple: { primary: "#9A66E6", secondary: "#594DDC", accent: "#FFAA42" },
+  pink: { primary: "#FF82AF", secondary: "#E94F8A", accent: "#FFD44D" },
+  orange: { primary: "#FF964F", secondary: "#EF5A62", accent: "#3BC7C9" },
+  red: { primary: "#F15B68", secondary: "#C93D78", accent: "#FFD047" },
+  blue: { primary: "#438CE8", secondary: "#2A55C8", accent: "#FFCE45" },
+};
 
 export const QuizLayoutIdSchema = z.enum(["auto", "media_left_choices_right", "visual_choices_three"]);
 

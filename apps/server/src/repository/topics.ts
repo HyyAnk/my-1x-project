@@ -94,6 +94,12 @@ export async function confirmTopic(
       visual_theme: candidate.quiz_format === "image_guess" ? "jungle_jamboree" : "candy_pop",
       visual_style: requestedStyle,
       resolved_visual_style: resolvedStyle,
+      thinking_bar_style: channel.default_thinking_bar_style ?? "auto",
+      question_counter_style: channel.default_counter_style ?? "auto",
+      question_box_style: channel.default_question_box_style ?? "auto",
+      answer_card_style: channel.default_answer_card_style ?? "auto",
+      palette_id: (channel.default_palette_id as any) ?? "auto",
+      style_preset_id: "auto",
     },
     created_at: timestamp,
     updated_at: timestamp,
@@ -152,6 +158,9 @@ export async function updateEpisodeSettings(
     ...(input.thinking_bar_style === undefined ? {} : { thinking_bar_style: input.thinking_bar_style }),
     ...(input.question_counter_style === undefined ? {} : { question_counter_style: input.question_counter_style }),
     ...(input.question_box_style === undefined ? {} : { question_box_style: input.question_box_style }),
+    ...(input.answer_card_style === undefined ? {} : { answer_card_style: input.answer_card_style }),
+    ...(input.palette_id === undefined ? {} : { palette_id: input.palette_id }),
+    ...(input.style_preset_id === undefined ? {} : { style_preset_id: input.style_preset_id }),
     visual_style: nextStyle,
     resolved_visual_style: nextResolvedStyle,
   };
@@ -164,7 +173,10 @@ export async function updateEpisodeSettings(
     nextQuizConfig.resolved_visual_style !== episode.quiz_config.resolved_visual_style ||
     nextQuizConfig.thinking_bar_style !== episode.quiz_config.thinking_bar_style ||
     nextQuizConfig.question_counter_style !== episode.quiz_config.question_counter_style ||
-    nextQuizConfig.question_box_style !== episode.quiz_config.question_box_style;
+    nextQuizConfig.question_box_style !== episode.quiz_config.question_box_style ||
+    nextQuizConfig.answer_card_style !== episode.quiz_config.answer_card_style ||
+    nextQuizConfig.palette_id !== episode.quiz_config.palette_id ||
+    nextQuizConfig.style_preset_id !== episode.quiz_config.style_preset_id;
   const targetDurationMinutes = input.target_duration_minutes ?? estimateQuizTargetDurationMinutes(nextQuizConfig.question_count);
   const targetWordCount = estimateQuizTargetWordCount(targetDurationMinutes, episode.measured_narration_words_per_second ?? wordsPerSecond);
   const next = EpisodeSchema.parse({

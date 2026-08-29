@@ -47,6 +47,7 @@ export function createDefaultDirectorPlan(quiz: QuizV2): DirectorPlan {
       thinking_bar_style: "auto",
       question_counter_style: "auto",
       question_box_style: "auto",
+      answer_card_style: "auto",
       thinking_seconds: minimumThinking[quiz.age_band] + (isFinal ? 0.6 : 0),
       beat_intents: beatIntents,
       asset_intents: archetype === "visual_multiple_choice" ? ["choice_illustration"] : ["question_illustration"],

@@ -1,7 +1,20 @@
-import type { ChannelMascotConfig, MascotProfile, QuizThinkingBarStyle, QuizV2 } from "@studio/shared";
+import type {
+  ChannelMascotConfig,
+  MascotProfile,
+  QuizAnswerCardStyle,
+  QuizQuestionBoxStyle,
+  QuizQuestionCounterStyle,
+  QuizThinkingBarStyle,
+  QuizV2,
+} from "@studio/shared";
 import { ambientPhaseSeconds, motionCssClass, textLayout, visualAnswerState } from "../../visual/candyArcade.js";
 import type { QuizTemplateScene } from "../../visual/types.js";
-import { resolveThinkingBarVariant } from "../../visual/elements/index.js";
+import {
+  resolveAnswerCardVariant,
+  resolveCounterBadgeVariant,
+  resolveQuestionBoxVariant,
+  resolveThinkingBarVariant,
+} from "../../visual/elements/index.js";
 import { esc, escAttr, highlightQuestionMarkup, illustrationDataUri } from "./candyArcadeSvg.js";
 import { assetFor, source } from "./candyArcadeAudio.js";
 import { renderMascotHtmlLayer } from "../mascotStateResolver.js";
@@ -137,6 +150,9 @@ export function questionClip(input: {
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
   thinkingBarStyle?: QuizThinkingBarStyle | null;
+  questionBoxStyle?: QuizQuestionBoxStyle | null;
+  answerCardStyle?: QuizAnswerCardStyle | null;
+  counterStyle?: QuizQuestionCounterStyle | null;
 }): string {
   const { question, visual } = input;
   const questionLayout = textLayout(question.question, "question");
@@ -167,7 +183,7 @@ export function questionClip(input: {
     .filter(Boolean)
     .join(" ");
   const questionAsset = assetFor(input.assets, `asset-${question.id}-hero`, `asset-${question.id}-question`);
-  const answers = answerCards(question, input.assets);
+  const answers = answerCards(question, input.assets, input.answerCardStyle);
   const hero =
     visual.layoutId === "visual_choices_three"
       ? ""
@@ -183,8 +199,23 @@ export function questionClip(input: {
     questionNumber: question.number,
     paletteAccent: visual.palette.accent,
   });
-  const body = `<div class="game-stage" data-layout-allow-overflow><div class="question-title question-tier-${questionLayout.tier}" data-layout-allow-occlusion><div class="question-card-inner"><div class="q-badge-star" data-layout-ignore aria-hidden="true"><span class="star-shape">★</span><i class="star-sparkle star-sp-1">✦</i><i class="star-sparkle star-sp-2">•</i></div><div class="q-decor-corner q-decor-top-right" data-layout-ignore aria-hidden="true"><span class="corner-gem">✦</span></div><div class="q-decor-corner q-decor-bottom-right" data-layout-ignore aria-hidden="true"><span class="corner-petal">✿</span></div><h1>${highlightQuestionMarkup(question.question, question.visual_opportunity)}</h1></div></div>${hero}${visualAnswers || answers}<div class="phase-region">${thinkingBarHtml}${revealPanel(input)}</div></div>`;
-  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0"><div class="bg-gradient"></div><div class="bg-rays"></div><div class="bg-pattern pattern-circles"></div><div class="bg-pattern pattern-sprinkles"></div><div class="bg-shape shape-a" data-layout-allow-overflow></div>${sceneDecorations(input.questionIndex)}<header class="game-header" data-layout-allow-occlusion><div class="hanging-wood-sign" data-layout-allow-occlusion><div class="hanging-ropes" aria-hidden="true"><span class="wood-rope rope-left"></span><span class="wood-rope rope-right"></span></div><div class="wood-sign-plank"><span class="rope-bracket bracket-left" aria-hidden="true"></span><span class="rope-bracket bracket-right" aria-hidden="true"></span><div class="wood-inner-panel"><span class="question-number-val">${question.number}</span></div><span class="wood-sign-star star-tl" data-layout-ignore aria-hidden="true">✦</span><span class="wood-sign-star star-br" data-layout-ignore aria-hidden="true">★</span></div></div></header>${body}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
+  const questionBoxVariant = resolveQuestionBoxVariant(input.questionBoxStyle);
+  const questionBoxHtml = questionBoxVariant.renderHtml({
+    question: question.question,
+    tier: questionLayout.tier,
+    questionNumber: question.number,
+    paletteAccent: visual.palette.accent,
+    highlightedHtml: highlightQuestionMarkup(question.question, question.visual_opportunity),
+  });
+  const counterBadgeVariant = resolveCounterBadgeVariant(input.counterStyle);
+  const counterBadgeHtml = counterBadgeVariant.renderHtml({
+    questionNumber: question.number,
+    totalQuestions: input.count,
+    paletteAccent: visual.palette.accent,
+    isFinal: input.isFinal,
+  });
+  const body = `<div class="game-stage" data-layout-allow-overflow>${questionBoxHtml}${hero}${visualAnswers || answers}<div class="phase-region">${thinkingBarHtml}${revealPanel(input)}</div></div>`;
+  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0"><div class="bg-gradient"></div><div class="bg-rays"></div><div class="bg-pattern pattern-circles"></div><div class="bg-pattern pattern-sprinkles"></div><div class="bg-shape shape-a" data-layout-allow-overflow></div>${sceneDecorations(input.questionIndex)}<header class="game-header" data-layout-allow-occlusion>${counterBadgeHtml}</header>${body}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
 }
 
 export function transitionClip(input: {
@@ -210,7 +241,21 @@ export function imageCard(asset: string | null, subject: string, className: stri
   return `<figure class="image-card ${className}" data-layout-allow-overflow><img src="${escAttr(asset ?? illustrationDataUri(subject, seed))}" alt="${escAttr(subject)}"><span class="image-shine"></span></figure>`;
 }
 
-export function answerCards(question: QuizV2["questions"][number], assets: Record<string, string>): string {
+export function answerCards(
+  question: QuizV2["questions"][number],
+  assets: Record<string, string>,
+  style?: QuizAnswerCardStyle | null,
+): string {
+  if (style && style !== "auto" && style !== "glossy_arcade") {
+    const variant = resolveAnswerCardVariant(style);
+    const rendered = variant.renderHtml({
+      choices: question.choices.map((c) => c.text),
+      correctIndex: Math.max(0, question.choices.findIndex((c) => c.id === question.correct_choice_id)),
+      phase: "reveal",
+      assets,
+    });
+    return `<div class="answer-grid answer-count-${question.choices.length}">${rendered}</div>`;
+  }
   return `<div class="answer-grid answer-count-${question.choices.length}">${question.choices
     .map((choice, index) => {
       const state = "answer-" + visualAnswerState(choice.id, question.correct_choice_id, "reveal");

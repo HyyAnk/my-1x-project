@@ -489,6 +489,39 @@ describe("Candy Arcade visual template", () => {
       }
     }
   });
+
+  it("renders dynamic QuestionBox, CounterBadge, and AnswerCard element variants in video composition", () => {
+    const timeline = compileQuizTimeline({
+      quiz,
+      director: createDefaultDirectorPlan(quiz),
+      voicePlan: buildQuizVoicePlan(quiz, createDefaultDirectorPlan(quiz)),
+      assets: planQuizAssets(quiz, createDefaultDirectorPlan(quiz)),
+    });
+    const director = createDefaultDirectorPlan(quiz);
+    // Customize question 1 styles
+    director.beats[0].question_box_style = "comic_bubble";
+    director.beats[0].question_counter_style = "neon_badge";
+    director.beats[0].answer_card_style = "comic_chunky";
+    director.beats[0].thinking_bar_style = "flame_fuse";
+
+    const sources = compositionSources({
+      quiz,
+      director,
+      timeline,
+      theme: "candy_arcade",
+      audioPath: "./voice.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
+
+    // Verify comic bubble question box rendered
+    expect(sources).toContain("qb-comic-bubble");
+    // Verify neon badge counter rendered
+    expect(sources).toContain("cb-neon-badge");
+    // Verify comic chunky answer card rendered
+    expect(sources).toContain("ac-comic-chunky");
+    // Verify flame fuse thinking bar rendered
+    expect(sources).toContain("thinking-bar-flame-fuse");
+  });
 });
 
 function contrastRatio(foreground: string, background: string): number {

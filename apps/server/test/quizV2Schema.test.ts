@@ -1,5 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { DirectorPlanSchema, QuizAssessmentSchema, QuizTimelineSchema, QuizV2Schema } from "@studio/shared";
+import {
+  BUILT_IN_PRESETS,
+  DirectorPlanSchema,
+  EpisodeSettingsInputSchema,
+  findBuiltInPresetById,
+  matchVisualPreset,
+  QuizAssessmentSchema,
+  QuizConfigSchema,
+  QuizTimelineSchema,
+  QuizV2Schema,
+} from "@studio/shared";
 
 const choice = (id: string, text: string) => ({ id, text });
 
@@ -251,4 +261,88 @@ describe("Quiz V2 shared schemas", () => {
       }),
     ).toThrow();
   });
+
+  describe("QuizConfigSchema & EpisodeSettingsInputSchema Visual Properties", () => {
+    it("parses QuizConfigSchema with new visual styling properties and defaults", () => {
+      const config = QuizConfigSchema.parse({});
+      expect(config.thinking_bar_style).toBe("auto");
+      expect(config.question_box_style).toBe("auto");
+      expect(config.question_counter_style).toBe("auto");
+      expect(config.answer_card_style).toBe("auto");
+      expect(config.palette_id).toBe("auto");
+      expect(config.style_preset_id).toBe("auto");
+    });
+
+    it("parses explicit visual configuration in QuizConfigSchema", () => {
+      const config = QuizConfigSchema.parse({
+        question_box_style: "glass_morphism",
+        answer_card_style: "glass_neon",
+        question_counter_style: "neon_badge",
+        thinking_bar_style: "energy_laser",
+        palette_id: "purple",
+        style_preset_id: "preset_cyber_neon",
+      });
+      expect(config.question_box_style).toBe("glass_morphism");
+      expect(config.answer_card_style).toBe("glass_neon");
+      expect(config.question_counter_style).toBe("neon_badge");
+      expect(config.thinking_bar_style).toBe("energy_laser");
+      expect(config.palette_id).toBe("purple");
+      expect(config.style_preset_id).toBe("preset_cyber_neon");
+    });
+
+    it("validates EpisodeSettingsInputSchema with new visual properties", () => {
+      const input = EpisodeSettingsInputSchema.parse({
+        question_box_style: "comic_bubble",
+        answer_card_style: "comic_chunky",
+        question_counter_style: "floating_balloon",
+        thinking_bar_style: "flame_fuse",
+        palette_id: "sunny",
+        style_preset_id: "preset_comic_boom",
+      });
+      expect(input.question_box_style).toBe("comic_bubble");
+      expect(input.answer_card_style).toBe("comic_chunky");
+      expect(input.palette_id).toBe("sunny");
+      expect(input.style_preset_id).toBe("preset_comic_boom");
+    });
+  });
+
+  describe("Master Presets Library (@studio/shared)", () => {
+    it("contains all 6 built-in presets with full definitions", () => {
+      expect(BUILT_IN_PRESETS.length).toBe(6);
+      for (const preset of BUILT_IN_PRESETS) {
+        expect(preset.id).toBeTruthy();
+        expect(preset.name).toBeTruthy();
+        expect(preset.icon).toBeTruthy();
+        expect(preset.theme).toBe("candy_arcade");
+        expect(preset.palette_id).toBeTruthy();
+        expect(preset.question_box_style).toBeTruthy();
+        expect(preset.answer_card_style).toBeTruthy();
+        expect(preset.counter_style).toBeTruthy();
+        expect(preset.thinking_bar_style).toBeTruthy();
+      }
+    });
+
+    it("finds built-in preset by id", () => {
+      const arcade = findBuiltInPresetById("preset_arcade_classic");
+      expect(arcade).toBeDefined();
+      expect(arcade?.name).toBe("Arcade Pop Master");
+      expect(arcade?.palette_id).toBe("lime");
+
+      const cyber = findBuiltInPresetById("preset_cyber_neon");
+      expect(cyber).toBeDefined();
+      expect(cyber?.thinking_bar_style).toBe("energy_laser");
+    });
+
+    it("matches presets based on partial or full configuration", () => {
+      const matched = matchVisualPreset({
+        palette_id: "purple",
+        question_box_style: "glass_morphism",
+        answer_card_style: "glass_neon",
+        thinking_bar_style: "energy_laser",
+        counter_style: "neon_badge",
+      });
+      expect(matched?.id).toBe("preset_cyber_neon");
+    });
+  });
 });
+
