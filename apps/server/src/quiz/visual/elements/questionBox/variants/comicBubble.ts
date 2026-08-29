@@ -10,7 +10,7 @@ export const comicBubbleVariant: QuestionBoxVariant = {
   },
   renderCss(): string {
     return `
-.qb-comic-bubble .comic-bubble-body { position: relative; width: 100%; padding: 24px 38px; border: 8px solid #132A58; border-radius: 40px; background: #FFFEEA; box-shadow: 12px 14px 0 #132A58, 0 20px 30px rgba(0,0,0,.15); overflow: visible; }
+.qb-comic-bubble .comic-bubble-body { position: relative; width: 100%; height: 100%; min-height: 168px; display: flex; align-items: center; justify-content: center; padding: 20px 48px; box-sizing: border-box; border: 8px solid #132A58; border-radius: 40px; background: #FFFEEA; box-shadow: 12px 14px 0 #132A58, 0 20px 30px rgba(0,0,0,.15); overflow: visible; }
 .qb-comic-bubble .comic-action-badge { position: absolute; top: -26px; left: 32px; background: #FF3366; color: #FFF; font-weight: 900; font-size: 22px; padding: 4px 16px; border: 4px solid #132A58; border-radius: 12px; transform: rotate(-8deg); box-shadow: 4px 4px 0 #132A58; }
 .qb-comic-bubble .comic-halftone { position: absolute; top: 0; right: 0; bottom: 0; width: 120px; border-radius: 0 32px 32px 0; background: radial-gradient(#132A58 15%, transparent 16%); background-size: 14px 14px; opacity: 0.12; pointer-events: none; }
 .qb-comic-bubble .comic-bubble-tail { position: absolute; bottom: -28px; left: 80px; width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 28px solid #132A58; }

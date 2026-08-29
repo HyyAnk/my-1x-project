@@ -7,8 +7,8 @@ import { MascotConceptStep } from "./components/MascotConceptStep";
 import { MascotActionsStep } from "./components/MascotActionsStep";
 import { useMascotGenerator } from "./hooks/useMascotGenerator";
 
-const MascotCalibrationStep = lazy(() =>
-  import("./components/MascotCalibrationStep").then((module) => ({ default: module.MascotCalibrationStep })),
+const MascotAnimationStep = lazy(() =>
+  import("./components/MascotAnimationStep").then((module) => ({ default: module.MascotAnimationStep })),
 );
 
 type MascotGeneratorTabProps = {
@@ -56,47 +56,15 @@ export function MascotGeneratorTab({ channels, mascots, generatorState }: Mascot
     setActivePreviewAction,
     isPlaying,
     setIsPlaying,
-    stagePreviewMode,
-    setStagePreviewMode,
-    aspectRatio,
-    setAspectRatio,
+    canvasBackground,
+    setCanvasBackground,
+    canvasZoom,
+    setCanvasZoom,
     flipHorizontal,
     setFlipHorizontal,
-    activeConfigTab,
-    setActiveConfigTab,
-    targetPosition,
-    setTargetPosition,
-    targetScale,
-    setTargetScale,
-    showInIntro,
-    setShowInIntro,
-    showInOutro,
-    setShowInOutro,
-    showInQuestion,
-    setShowInQuestion,
-    assignedChannels,
-    setAssignedChannels,
-    channelSearchQuery,
-    setChannelSearchQuery,
-    channelFilterTab,
-    setChannelFilterTab,
-    isScenarioMode,
-    setIsScenarioMode,
-    scenarioPhase,
-    scenarioCountdown,
-    scrubberTime,
-    reactionStyle,
-    setReactionStyle,
-    onionSkinEnabled,
-    setOnionSkinEnabled,
-    onionSkinOpacity,
-    setOnionSkinOpacity,
-    showGuides,
-    setShowGuides,
-    nudgeX,
-    setNudgeX,
-    nudgeY,
-    setNudgeY,
+    actionMotions,
+    actionSpeeds,
+    actionIntensities,
     calibrating,
     handleInjectTag,
     handleApplyTemplate,
@@ -108,9 +76,12 @@ export function MascotGeneratorTab({ channels, mascots, generatorState }: Mascot
     handleUploadSprite,
     handleDropSprite,
     handleRemoveBackground,
-    applyTimelineTime,
-    handleSaveCalibration,
-    handleApplyToChannels,
+    handleChangeMotionPreset,
+    handleChangeMotionSpeed,
+    handleChangeMotionIntensity,
+    handleResetDefaultMotions,
+    handleSaveMotion,
+    handleFinishMascot,
   } = generatorState;
 
   return (
@@ -264,7 +235,7 @@ export function MascotGeneratorTab({ channels, mascots, generatorState }: Mascot
         />
       ) : null}
 
-      {/* STEP 3: STAGE THEATER & CHANNEL DEPLOY */}
+      {/* STEP 3: MOTION & ANIMATION STUDIO */}
       {generatorStep === 3 ? (
         <Suspense
           fallback={
@@ -274,61 +245,30 @@ export function MascotGeneratorTab({ channels, mascots, generatorState }: Mascot
             </div>
           }
         >
-          <MascotCalibrationStep
+          <MascotAnimationStep
             editingMascot={editingMascot}
-            mascots={mascots}
-            channels={channels}
             genColor={genColor}
             busyAction={busyAction}
             activePreviewAction={activePreviewAction}
             setActivePreviewAction={setActivePreviewAction}
             isPlaying={isPlaying}
             setIsPlaying={setIsPlaying}
-            stagePreviewMode={stagePreviewMode}
-            setStagePreviewMode={setStagePreviewMode}
-            aspectRatio={aspectRatio}
-            setAspectRatio={setAspectRatio}
+            canvasBackground={canvasBackground}
+            setCanvasBackground={setCanvasBackground}
+            canvasZoom={canvasZoom}
+            setCanvasZoom={setCanvasZoom}
             flipHorizontal={flipHorizontal}
             setFlipHorizontal={setFlipHorizontal}
-            activeConfigTab={activeConfigTab}
-            setActiveConfigTab={setActiveConfigTab}
-            targetPosition={targetPosition}
-            setTargetPosition={setTargetPosition}
-            targetScale={targetScale}
-            setTargetScale={setTargetScale}
-            showInIntro={showInIntro}
-            setShowInIntro={setShowInIntro}
-            showInOutro={showInOutro}
-            setShowInOutro={setShowInOutro}
-            showInQuestion={showInQuestion}
-            setShowInQuestion={setShowInQuestion}
-            assignedChannels={assignedChannels}
-            setAssignedChannels={setAssignedChannels}
-            channelSearchQuery={channelSearchQuery}
-            setChannelSearchQuery={setChannelSearchQuery}
-            channelFilterTab={channelFilterTab}
-            setChannelFilterTab={setChannelFilterTab}
-            isScenarioMode={isScenarioMode}
-            setIsScenarioMode={setIsScenarioMode}
-            scenarioPhase={scenarioPhase}
-            scenarioCountdown={scenarioCountdown}
-            scrubberTime={scrubberTime}
-            reactionStyle={reactionStyle}
-            setReactionStyle={setReactionStyle}
-            onionSkinEnabled={onionSkinEnabled}
-            setOnionSkinEnabled={setOnionSkinEnabled}
-            onionSkinOpacity={onionSkinOpacity}
-            setOnionSkinOpacity={setOnionSkinOpacity}
-            showGuides={showGuides}
-            setShowGuides={setShowGuides}
-            nudgeX={nudgeX}
-            setNudgeX={setNudgeX}
-            nudgeY={nudgeY}
-            setNudgeY={setNudgeY}
+            actionMotions={actionMotions}
+            actionSpeeds={actionSpeeds}
+            actionIntensities={actionIntensities}
             calibrating={calibrating}
-            onApplyTimelineTime={applyTimelineTime}
-            onSaveCalibration={handleSaveCalibration}
-            onApplyToChannels={handleApplyToChannels}
+            onChangeMotionPreset={handleChangeMotionPreset}
+            onChangeMotionSpeed={handleChangeMotionSpeed}
+            onChangeMotionIntensity={handleChangeMotionIntensity}
+            onResetDefaultMotions={handleResetDefaultMotions}
+            onSaveMotion={handleSaveMotion}
+            onFinishMascot={handleFinishMascot}
             onBackStep={() => setGeneratorStep(2)}
           />
         </Suspense>

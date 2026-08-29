@@ -5,6 +5,7 @@ import Fastify, { type FastifyInstance } from "fastify";
 import cors from "@fastify/cors";
 import fastifyStatic from "@fastify/static";
 import websocket from "@fastify/websocket";
+import { ZodError } from "zod";
 import type { TaskEvent } from "@studio/shared";
 import { AntigravityClient } from "./antigravity.js";
 import { CodexAppServerClient } from "./codex.js";
@@ -80,7 +81,31 @@ export async function buildApp(
 
   const server = Fastify({ logger: false, bodyLimit: 50 * 1024 * 1024 });
   const clients = new Set<EventClient>();
-  await server.register(cors, { origin: true });
+  await server.register(cors, {
+    origin: (origin, cb) => {
+      // Allow requests with no origin (e.g. same-origin, curl, server-to-server, desktop tools)
+      if (!origin) {
+        cb(null, true);
+        return;
+      }
+      try {
+        const parsed = new URL(origin);
+        const isLoopback =
+          parsed.hostname === "localhost" ||
+          parsed.hostname === "127.0.0.1" ||
+          parsed.hostname === "::1" ||
+          parsed.hostname === "[::1]" ||
+          parsed.hostname.endsWith(".localhost");
+        if (isLoopback) {
+          cb(null, true);
+          return;
+        }
+      } catch {
+        // Invalid URL format
+      }
+      cb(new Error("Not allowed by CORS"), false);
+    },
+  });
   await server.register(websocket);
   await registerFrontend(server, rootDirectory);
 
@@ -93,16 +118,23 @@ export async function buildApp(
 
   server.setErrorHandler((error, _request, reply) => {
     const message = error instanceof Error ? error.message : "Request failed";
-    const statusCode =
-      error instanceof RepositoryError && error.code.endsWith("NOT_FOUND")
-        ? 404
-        : error instanceof RepositoryError && error.code === "CONFIRMATION_REQUIRED"
-          ? 400
-          : 400;
-    logger.warn(`Request failed: ${message}`, { step: "http" });
-    void reply
-      .code(statusCode)
-      .send({ error: message, detail: process.env.STUDIO_DEBUG === "1" && error instanceof Error ? error.stack : undefined });
+    let statusCode = 500;
+    if (error instanceof RepositoryError) {
+      statusCode = error.code.endsWith("NOT_FOUND") ? 404 : 400;
+    } else if (error instanceof ZodError || (error && typeof error === "object" && "issues" in error)) {
+      statusCode = 400;
+    } else if (error && typeof error === "object" && "statusCode" in error && typeof error.statusCode === "number") {
+      statusCode = error.statusCode;
+    }
+
+    if (statusCode >= 500) {
+      logger.error(`Internal server error: ${message}${error instanceof Error && error.stack ? `\n${error.stack}` : ""}`, {
+        step: "http",
+      });
+    } else {
+      logger.warn(`Request failed: ${message}`, { step: "http" });
+    }
+    void reply.code(statusCode).send({ error: message });
   });
 
   await server.register(registerSystemRoutes({ rootDirectory, repository, tasks, codex, antigravity, logger, state }));

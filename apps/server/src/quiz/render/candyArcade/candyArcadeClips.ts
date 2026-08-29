@@ -4,6 +4,7 @@ import type { QuizTemplateScene } from "../../visual/types.js";
 import { resolveThinkingBarVariant } from "../../visual/elements/index.js";
 import { esc, escAttr, highlightQuestionMarkup, illustrationDataUri } from "./candyArcadeSvg.js";
 import { assetFor, source } from "./candyArcadeAudio.js";
+import { renderMascotHtmlLayer, resolveMascotLayout, resolveMascotPose, shouldRenderMascot } from "../mascotStateResolver.js";
 
 export type SubComposition = {
   id: string;
@@ -86,79 +87,12 @@ export function subCompositionMount(scene: SubComposition): string {
   return `<div id="${scene.id}-mount" data-composition-id="${scene.id}" data-composition-src="compositions/${scene.id}.html" data-start="${scene.start}" data-duration="${scene.duration}" data-track-index="${scene.trackIndex}" data-no-timeline></div>`;
 }
 
-function shouldRenderMascot(
-  mascot: MascotProfile | null | undefined,
-  config: ChannelMascotConfig | null | undefined,
-  phase: "intro" | "question" | "outro",
-): boolean {
-  if (!mascot || (config && !config.enabled)) return false;
-  if (phase === "intro" && (!config || config.show_in_intro !== true)) return false;
-  if (phase === "outro" && (!config || config.show_in_outro !== true)) return false;
-  if (phase === "question" && config && config.show_in_question === false) return false;
-  return true;
-}
-
-function resolveSpriteAction(
-  action: { sprite_url?: string | null; frames_count?: number; fps?: number; offset_x?: number; offset_y?: number } | null | undefined,
-  fallbackUrl: string | null | undefined,
-  defaultFps = 8,
-) {
-  return {
-    url: action?.sprite_url || fallbackUrl || "",
-    frames: action?.frames_count || 1,
-    fps: action?.fps || defaultFps,
-    offX: action?.offset_x || 0,
-    offY: action?.offset_y || 0,
-  };
-}
-
 export function mascotElement(
   mascot: MascotProfile | null | undefined,
   config: ChannelMascotConfig | null | undefined,
   phase: "intro" | "question" | "outro",
 ): string {
-  if (!shouldRenderMascot(mascot, config, phase) || !mascot) return "";
-
-  const position = config?.position || "bottom_left";
-  const scale = config?.scale || 1.0;
-  const cfgOffX = config?.offset_x || 0;
-  const cfgOffY = config?.offset_y || 0;
-
-  const waveSprite = mascot.actions.wave?.sprite_url;
-  const idleSprite = mascot.actions.idle?.sprite_url || mascot.master_image_url;
-
-  if (phase === "intro") {
-    const wave = resolveSpriteAction(mascot.actions.wave, mascot.master_image_url);
-    const offX = wave.offX + cfgOffX;
-    const offY = wave.offY + cfgOffY;
-    return `<div class="candy-mascot-container mascot-intro anchor-${position}" style="--mascot-scale:${scale};--mascot-frames:${wave.frames};--mascot-fps:${wave.fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(wave.url))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
-  }
-
-  if (phase === "outro") {
-    const outroAction = mascot.actions.outro || mascot.actions.wave;
-    const outro = resolveSpriteAction(outroAction, waveSprite || mascot.master_image_url);
-    const offX = outro.offX + cfgOffX;
-    const offY = outro.offY + cfgOffY;
-    return `<div class="candy-mascot-container mascot-outro anchor-${position}" style="--mascot-scale:${scale};--mascot-frames:${outro.frames};--mascot-fps:${outro.fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;--sprite-url:url('${escAttr(source(outro.url))}');" data-layout-ignore aria-hidden="true"><div class="candy-mascot-sprite"></div></div>`;
-  }
-
-  const thinkAction = mascot.actions.thinking || mascot.actions.idle;
-  const think = resolveSpriteAction(thinkAction, idleSprite);
-  const thinkUrl = think.url ? source(think.url) : "";
-
-  const celebAction = mascot.actions.celebrate || mascot.actions.wave;
-  const celeb = resolveSpriteAction(celebAction, waveSprite || idleSprite, 10);
-  const celebUrl = celeb.url ? source(celeb.url) : thinkUrl;
-
-  const thinkOffX = think.offX + cfgOffX;
-  const thinkOffY = think.offY + cfgOffY;
-  const celebOffX = celeb.offX + cfgOffX;
-  const celebOffY = celeb.offY + cfgOffY;
-
-  return `<div class="candy-mascot-container mascot-stage anchor-${position}" style="--mascot-scale:${scale};--mascot-color:${mascot.color_theme || "#06b6d4"};" data-layout-allow-overflow data-layout-ignore aria-hidden="true">
-    <div class="mascot-state-layer state-thinking" style="--sprite-url:url('${escAttr(thinkUrl)}');--mascot-frames:${think.frames};--mascot-fps:${think.fps};--action-offset-x:${thinkOffX}px;--action-offset-y:${thinkOffY}px;"><div class="candy-mascot-sprite"></div></div>
-    <div class="mascot-state-layer state-celebrate" style="--sprite-url:url('${escAttr(celebUrl)}');--mascot-frames:${celeb.frames};--mascot-fps:${celeb.fps};--action-offset-x:${celebOffX}px;--action-offset-y:${celebOffY}px;"><div class="candy-mascot-sprite"></div></div>
-  </div>`;
+  return renderMascotHtmlLayer(mascot, config, phase, { sourceMapper: source });
 }
 
 export function introClip(

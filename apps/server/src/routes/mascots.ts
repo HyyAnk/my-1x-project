@@ -133,7 +133,7 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
       const mascotId = (request.params as { mascotId: string }).mascotId;
       const body = request.body && typeof request.body === "object" ? request.body : {};
       const input = RemoveMascotBackgroundInputSchema.parse(body);
-      const updated = await removeMascotAssetBackground(repository, mascotId, input.target);
+      const updated = await removeMascotAssetBackground(repository, mascotId, input.target, logger);
       return { mascot: updated };
     });
     server.get("/api/mascots/:mascotId/export", async (request, reply) => {

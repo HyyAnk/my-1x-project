@@ -4,8 +4,8 @@ import { api } from "../../../api";
 
 export function useSandboxMascotState() {
   const [mascots, setMascots] = useState<MascotProfile[]>([]);
-  const [mascotId, setMascotId] = useState("fallback");
-  const [mascotEnabled, setMascotEnabled] = useState(true);
+  const [mascotId, setMascotId] = useState("none");
+  const [mascotEnabled, setMascotEnabled] = useState(false);
   const [mascotAction, setMascotAction] = useState<MascotActionType>("thinking");
   const [mascotPosition, setMascotPosition] = useState<"bottom_left" | "bottom_right">("bottom_left");
   const [mascotScale, setMascotScale] = useState(1);
@@ -19,12 +19,12 @@ export function useSandboxMascotState() {
         if (res?.mascots) setMascots(res.mascots);
       })
       .catch(() => {
-        // Mascots are optional in the sandbox, so the fallback remains available.
+        // Mascots are optional in the sandbox
       });
   }, []);
 
   const activeMascot = useMemo(() => {
-    if (!mascotId || mascotId === "none" || mascotId === "fallback") return null;
+    if (!mascotId || mascotId === "none") return null;
     return mascots.find((mascot) => mascot.id === mascotId) || null;
   }, [mascots, mascotId]);
 

@@ -29,3 +29,46 @@ export const DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE: Record<VoiceSegmentRole, number> 
   midpoint: 1.06,
   outro: 1.12,
 };
+
+export interface StarterMascotBlueprint {
+  name: string;
+  description: string;
+  visual_style: "pixar_3d" | "kawaii_chibi" | "flat_vector" | "voxel_lowpoly" | "plastic_toy";
+  color_theme: string;
+  master_prompt: string;
+}
+
+export const STARTER_MASCOT_BLUEPRINTS: StarterMascotBlueprint[] = [
+  {
+    name: "Milo the Explorer",
+    description: "Wise, witty owl with large sparkling eyes and red glasses",
+    visual_style: "pixar_3d",
+    color_theme: "#06b6d4",
+    master_prompt:
+      "Cute wise baby owl with big sparkling eyes and small red glasses, fluffy soft feathers, wearing a tiny yellow bowtie, friendly and enthusiastic expression, sharp clean silhouette, solid seamless background",
+  },
+  {
+    name: "Bingo the Dino",
+    description: "Playful baby green dinosaur with round cute belly",
+    visual_style: "pixar_3d",
+    color_theme: "#10b981",
+    master_prompt:
+      "Adorable playful baby green dinosaur with tiny soft wings and round cute belly, joyful smiling expression, big anime eyes, wearing small sneakers, solid white background, vibrant lighting",
+  },
+  {
+    name: "Bolt the Bot",
+    description: "Futuristic mini companion robot with glowing heart LED face",
+    visual_style: "plastic_toy",
+    color_theme: "#8b5cf6",
+    master_prompt:
+      "Futuristic cute mini companion robot mascot, glossy white ceramic shell, glowing heart-shaped LED screen face, energetic hovering pose with tiny thruster sparks, solid clean background",
+  },
+  {
+    name: "Felix the Fox",
+    description: "Adventurous chibi fox cub with aviator goggles",
+    visual_style: "kawaii_chibi",
+    color_theme: "#ff6b4a",
+    master_prompt:
+      "Clever adventurous chibi fox cub with oversized bushy tail, warm orange coat with cream chest, curious sparkling eyes, wearing tiny aviator goggles on forehead, playful dynamic pose",
+  },
+];

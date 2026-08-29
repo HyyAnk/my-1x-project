@@ -1,5 +1,6 @@
 import type {
   BgmHistoryEntry,
+  CalibrateMascotActionInput,
   Channel,
   ChannelMascotConfig,
   CreateChannelInput,
@@ -93,7 +94,7 @@ export interface RepositoryRuntime {
   calibrateMascotAction(
     mascotId: string,
     action: MascotActionType,
-    calibration: { offset_x: number; offset_y: number },
+    calibration: CalibrateMascotActionInput,
   ): Promise<MascotProfile>;
   listMascotAssets(mascotId: string): Promise<string[]>;
   deleteMascotAssetFile(mascotId: string, filename: string): Promise<void>;

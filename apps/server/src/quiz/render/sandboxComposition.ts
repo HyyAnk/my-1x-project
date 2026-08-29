@@ -1,5 +1,6 @@
 import { SandboxPreviewInputSchema, type MascotProfile, type SandboxPreviewInput, type SandboxPreviewResponse } from "@studio/shared";
 import { candyArcadePalettes, textLayout } from "../visual/candyArcade.js";
+import { evaluateContrast } from "../visual/contrastCalculator.js";
 import {
   getAnswerCardsCss,
   getCounterBadgesCss,
@@ -12,6 +13,7 @@ import {
 } from "../visual/elements/index.js";
 import { candyArcadeCss, illustrationDataUri, highlightQuestionMarkup } from "./candyArcadeComposition.js";
 import { esc, escAttr } from "./candyArcade/candyArcadeSvg.js";
+import { renderMascotHtmlLayer } from "./mascotStateResolver.js";
 
 export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
   input = SandboxPreviewInputSchema.parse(input);
@@ -115,32 +117,29 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
   const mascotScale = input.mascot_scale || 1.0;
   let hasMascot = false;
 
-  if (mascotEnabled) {
-    if (mascotProfile) {
-      hasMascot = true;
-      const spriteUrl = mascotProfile.actions[mascotAction]?.sprite_url || mascotProfile.master_image_url || "";
-      const frames = mascotProfile.actions[mascotAction]?.frames_count || 1;
-      const fps = mascotProfile.actions[mascotAction]?.fps || 8;
-      const offX = (mascotProfile.actions[mascotAction]?.offset_x || 0) + (input.mascot_offset_x || 0);
-      const offY = (mascotProfile.actions[mascotAction]?.offset_y || 0) + (input.mascot_offset_y || 0);
-
-      mascotHtml = `<div class="candy-mascot-container mascot-stage anchor-${mascotPos}" style="--mascot-scale:${mascotScale};--mascot-color:${mascotProfile.color_theme || "#06b6d4"};" data-layout-allow-overflow data-layout-ignore aria-hidden="true"><div class="mascot-state-layer state-${mascotAction}" style="opacity:1;--sprite-url:url('${escAttr(spriteUrl)}');--mascot-frames:${frames};--mascot-fps:${fps};--action-offset-x:${offX}px;--action-offset-y:${offY}px;"><div class="candy-mascot-sprite"></div></div></div>`;
-    } else if (input.mascot_id === "fallback" || (!input.mascot_id && input.mascot_id !== "none")) {
-      hasMascot = true;
-      const mascotEmoji =
-        mascotAction === "celebrate"
-          ? "🎉"
-          : mascotAction === "point"
-            ? "👉"
-            : mascotAction === "oops"
-              ? "😅"
-              : mascotAction === "wave"
-                ? "👋"
-                : "🤔";
-      const offX = input.mascot_offset_x || 0;
-      const offY = input.mascot_offset_y || 0;
-      mascotHtml = `<div class="candy-mascot-container mascot-stage anchor-${mascotPos} sandbox-mascot-fallback" style="--mascot-scale:${mascotScale};" data-layout-allow-overflow data-layout-ignore aria-hidden="true"><div class="mascot-state-layer state-${mascotAction}" style="opacity:1;--action-offset-x:${offX}px;--action-offset-y:${offY}px;"><div class="fallback-mascot-badge" style="display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,0.92);box-shadow:0 12px 24px rgba(0,0,0,0.25);border:3px solid ${palette.accent};transform:translate(${offX}px, ${offY}px);"><span class="mascot-emoji" style="font-size:32px;">${mascotEmoji}</span><span class="mascot-label" style="font-size:16px;font-weight:900;color:#1e293b;">${mascotAction.toUpperCase()}</span></div></div></div>`;
-    }
+  if (input.mascot_id === "stage_preview_layout_only") {
+    // Stage Studio interactive preview: apply Mascot layout spacing & classes without rendering static duplicate sprite
+    hasMascot = true;
+    mascotHtml = "";
+  } else if (mascotEnabled && mascotProfile) {
+    hasMascot = true;
+    mascotHtml = renderMascotHtmlLayer(
+      mascotProfile,
+      {
+        enabled: true,
+        position: mascotPos,
+        scale: mascotScale,
+        offset_x: input.mascot_offset_x || 0,
+        offset_y: input.mascot_offset_y || 0,
+        show_in_intro: true,
+        show_in_outro: true,
+        show_in_question: true,
+      },
+      "question",
+      {
+        overrideAction: mascotAction as any,
+      },
+    );
   }
 
   const mascotClass = hasMascot ? `has-mascot has-mascot-${mascotPos === "bottom_right" ? "right" : "left"}` : "";
@@ -213,6 +212,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
 <html>
 <head>
   <meta charset="utf-8">
+  <base href="/">
   <title>HyperFrames Sandbox Live Preview</title>
   <style>
     ${candyArcadeCss()}
@@ -253,6 +253,11 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
       opacity: 1;
       animation: none;
     }
+
+    .sandbox-preview-stage .mascot-state-layer {
+      opacity: 1 !important;
+      animation: none !important;
+    }
   </style>
 </head>
 <body>
@@ -285,14 +290,11 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
 </body>
 </html>`;
 
+  const contrastReport = evaluateContrast(palette.text, palette.surface, 4.5);
+
   return {
     html: fullHtml,
     css: candyArcadeCss(),
-    contrast_report: {
-      ok: true,
-      ratio: 7.42,
-      required_ratio: 4.5,
-      message: "Passes WCAG AA (Text contrast ratio is 7.42:1, required >= 4.5:1)",
-    },
+    contrast_report: contrastReport,
   };
 }

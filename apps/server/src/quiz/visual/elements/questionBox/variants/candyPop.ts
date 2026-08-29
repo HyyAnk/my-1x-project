@@ -10,7 +10,7 @@ export const candyPopVariant: QuestionBoxVariant = {
   },
   renderCss(): string {
     return `
-.qb-candy-pop .question-card-inner { position: relative; width: 100%; border: 7px solid #FFF; border-radius: 46px; background: linear-gradient(180deg, #FFFFFF 0%, #F5F9FF 100%); box-shadow: 0 16px 0 rgba(13,35,71,.18), 0 24px 38px rgba(13,35,71,.24), inset 0 3px 0 rgba(255,255,255,1); }
+.qb-candy-pop .question-card-inner { position: relative; width: 100%; height: 100%; min-height: 168px; display: flex; align-items: center; justify-content: center; padding: 18px 64px; box-sizing: border-box; border: 7px solid #FFF; border-radius: 46px; background: linear-gradient(180deg, #FFFFFF 0%, #F5F9FF 100%); box-shadow: 0 16px 0 rgba(13,35,71,.18), 0 24px 38px rgba(13,35,71,.24), inset 0 3px 0 rgba(255,255,255,1); }
 .qb-candy-pop .q-badge-star { position: absolute; top: -28px; left: -24px; display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; background: linear-gradient(135deg, #FFE043 0%, #FF9921 100%); border: 5px solid #FFF; box-shadow: 0 8px 16px rgba(13,35,71,.25); }
 .qb-candy-pop .q-badge-star .star-shape { font-size: 38px; color: #FFF; line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,.3); }
 .qb-candy-pop .q-decor-corner { position: absolute; font-style: normal; pointer-events: none; }

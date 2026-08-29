@@ -120,7 +120,7 @@ export function SandboxPreviewCanvas({
               fontSize: "11px",
               fontWeight: 600,
             }}
-            title="Độ tương phản màu chữ và nền đạt chuẩn WCAG AAA"
+            title={t("visualSandbox.wcagContrastTooltip")}
           >
             <CheckCircle size={14} weight="fill" />
             <span>
@@ -141,7 +141,7 @@ export function SandboxPreviewCanvas({
               fontSize: "11px",
               fontWeight: 600,
             }}
-            title="Được biên dịch bởi HyperFrames Rendering Engine"
+            title={t("visualSandbox.hyperframesEngineTooltip")}
           >
             <span>{t("visualSandbox.hyperframesEngine")}</span>
             <span style={{ color: "rgba(255,255,255,0.25)" }}>•</span>

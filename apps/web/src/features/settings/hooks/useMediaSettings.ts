@@ -94,7 +94,7 @@ export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNoti
         model: imageModel.trim() || "gpt-image-2",
         quality: "low",
         max_concurrent_tasks: maxConcurrentImageTasks,
-        api_key: imageApiKey.trim(),
+        ...(imageApiKey.trim() ? { api_key: imageApiKey.trim() } : {}),
       });
       await onImageSaved(next.image_generation);
       setHasImageApiKey(Boolean(next.image_generation.api_key || next.image_generation.has_api_key));

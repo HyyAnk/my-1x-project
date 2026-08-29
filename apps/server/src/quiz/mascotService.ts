@@ -273,6 +273,7 @@ export async function removeMascotAssetBackground(
   repository: RepositoryService,
   mascotId: string,
   target: "master" | "all" | MascotActionType = "all",
+  logger?: StudioLogger,
 ): Promise<MascotProfile> {
   const mascot = await repository.getMascot(mascotId);
   const updatedActions = { ...mascot.actions };
@@ -287,8 +288,11 @@ export async function removeMascotAssetBackground(
           const rawBytes = await readFile(file.absolutePath);
           const transparentBytes = await removeImageBackground(rawBytes);
           await repository.saveMascotAsset(mascotId, filename, transparentBytes);
-        } catch {
-          // Ignore if file read fails
+        } catch (error) {
+          logger?.warn(
+            `Failed to remove background for mascot master image (${mascotId}/${filename}): ${error instanceof Error ? error.message : String(error)}`,
+            { step: "mascot" },
+          );
         }
       }
     }
@@ -306,8 +310,11 @@ export async function removeMascotAssetBackground(
           const rawBytes = await readFile(file.absolutePath);
           const transparentBytes = await removeImageBackground(rawBytes);
           await repository.saveMascotAsset(mascotId, filename, transparentBytes);
-        } catch {
-          // Ignore if file read fails
+        } catch (error) {
+          logger?.warn(
+            `Failed to remove background for mascot sprite ${action} (${mascotId}/${filename}): ${error instanceof Error ? error.message : String(error)}`,
+            { step: "mascot" },
+          );
         }
       }
     }

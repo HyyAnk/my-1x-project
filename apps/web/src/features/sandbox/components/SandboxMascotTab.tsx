@@ -1,4 +1,4 @@
-import { Sparkle, UserCircle, X } from "@phosphor-icons/react";
+import { Sparkle, X } from "@phosphor-icons/react";
 import type { MascotActionType, MascotProfile } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 
@@ -51,7 +51,16 @@ export function SandboxMascotTab({
           type="button"
           className={mascotEnabled && mascotId !== "none" ? "primary-button compact" : "quiet-button compact"}
           style={{ fontSize: "11px", padding: "4px 12px" }}
-          onClick={() => setMascotEnabled((prev) => !prev)}
+          onClick={() => {
+            if (!mascotEnabled || mascotId === "none") {
+              if (mascotId === "none" && mascots.length > 0) {
+                setMascotId(mascots[0].id);
+              }
+              setMascotEnabled(true);
+            } else {
+              setMascotEnabled(false);
+            }
+          }}
         >
           {mascotEnabled && mascotId !== "none" ? t("visualSandbox.mascotEnabledBadge") : t("visualSandbox.mascotDisabledBadge")}
         </button>
@@ -109,52 +118,19 @@ export function SandboxMascotTab({
               <X size={16} weight="bold" />
             </div>
             <div style={{ flex: 1 }}>
-              <strong style={{ fontSize: "11.5px", color: mascotId === "none" ? "var(--accent)" : "var(--text)" }}>
+              <strong style={{ fontSize: "11.5px", color: mascotId === "none" || !mascotEnabled ? "var(--accent)" : "var(--text)" }}>
                 {t("visualSandbox.noMascotTitle")}
               </strong>
               <small style={{ display: "block", fontSize: "10px", color: "var(--muted)" }}>{t("visualSandbox.noMascotSub")}</small>
             </div>
           </button>
 
-          {/* Fallback Option */}
-          <button
-            type="button"
-            onClick={() => {
-              setMascotId("fallback");
-              setMascotEnabled(true);
-            }}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "6px 10px",
-              borderRadius: "10px",
-              background: mascotId === "fallback" && mascotEnabled ? "var(--soft-accent)" : "var(--surface-strong)",
-              border: mascotId === "fallback" && mascotEnabled ? "2px solid var(--accent)" : "1px solid var(--line)",
-              cursor: "pointer",
-              textAlign: "left",
-            }}
-          >
-            <div
-              style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "8px",
-                background: "var(--soft-accent)",
-                display: "grid",
-                placeItems: "center",
-                color: "var(--accent)",
-              }}
-            >
-              <UserCircle size={20} weight="duotone" />
+          {/* Empty Mascots Hint */}
+          {mascots.length === 0 && (
+            <div style={{ padding: "8px 10px", fontSize: "11px", color: "var(--muted)", fontStyle: "italic" }}>
+              {t("visualSandbox.noMascotsInLibrary")}
             </div>
-            <div style={{ flex: 1 }}>
-              <strong style={{ fontSize: "11.5px", color: mascotId === "fallback" ? "var(--accent)" : "var(--text)" }}>
-                {t("visualSandbox.defaultMascotTitle")}
-              </strong>
-              <small style={{ display: "block", fontSize: "10px", color: "var(--muted)" }}>{t("visualSandbox.defaultMascotSub")}</small>
-            </div>
-          </button>
+          )}
 
           {/* Real Mascots from Library */}
           {mascots.map((m) => {
@@ -326,20 +302,20 @@ export function SandboxMascotTab({
       >
         <Sparkle size={14} weight="fill" style={{ color: "#38BDF8" }} />
         <span>
-          Hoạt ảnh Live: <strong>{mascotAction.toUpperCase()}</strong>{" "}
+          {t("visualSandbox.liveMotionLabel")} <strong>{mascotAction.toUpperCase()}</strong>{" "}
           <span style={{ color: "var(--muted)" }}>
             (
             {mascotAction === "thinking"
-              ? "Đung đưa suy nghĩ"
+              ? t("visualSandbox.motionThinkingDesc")
               : mascotAction === "celebrate"
-                ? "Nhảy mừng chiến thắng"
+                ? t("visualSandbox.motionCelebrateDesc")
                 : mascotAction === "point"
-                  ? "Xung nhịp chỉ bảng"
+                  ? t("visualSandbox.motionPointDesc")
                   : mascotAction === "oops"
-                    ? "Rung lắc bối rối"
+                    ? t("visualSandbox.motionOopsDesc")
                     : mascotAction === "wave"
-                      ? "Vẫy tay chào"
-                      : "Thở nhẹ nhàng"}
+                      ? t("visualSandbox.motionWaveDesc")
+                      : t("visualSandbox.motionIdleDesc")}
             )
           </span>
         </span>
@@ -360,7 +336,7 @@ export function SandboxMascotTab({
               margin: 0,
             }}
           >
-            🔍 Kích thước thu phóng (Scale)
+            {t("visualSandbox.scaleDimensionsLabel")}
           </label>
           <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
             <input
@@ -461,7 +437,7 @@ export function SandboxMascotTab({
               margin: 0,
             }}
           >
-            🎯 Tọa độ bù trục X & Y (Pixel Offsets)
+            {t("visualSandbox.offsetsTitleLabel")}
           </label>
           <button
             type="button"
@@ -471,7 +447,7 @@ export function SandboxMascotTab({
               setMascotOffsetX(0);
               setMascotOffsetY(0);
             }}
-            title="Đặt lại tọa độ về 0, 0"
+            title={t("visualSandbox.resetOffsetsTitle")}
           >
             Reset 0
           </button>
@@ -482,7 +458,7 @@ export function SandboxMascotTab({
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
               <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--accent)" }}>
-                Trục X: {mascotOffsetX > 0 ? `+${mascotOffsetX}` : mascotOffsetX}px
+                {t("visualSandbox.axisXPrefix")}: {mascotOffsetX > 0 ? `+${mascotOffsetX}` : mascotOffsetX}px
               </span>
               <div style={{ display: "flex", gap: "2px" }}>
                 <button
@@ -534,7 +510,7 @@ export function SandboxMascotTab({
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
               <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--accent)" }}>
-                Trục Y: {mascotOffsetY > 0 ? `+${mascotOffsetY}` : mascotOffsetY}px
+                {t("visualSandbox.axisYPrefix")}: {mascotOffsetY > 0 ? `+${mascotOffsetY}` : mascotOffsetY}px
               </span>
               <div style={{ display: "flex", gap: "2px" }}>
                 <button

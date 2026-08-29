@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Archive, FileText, FilmSlate, Lightbulb, Smiley, Trash } from "@phosphor-icons/react";
+import { Archive, FileText, FilmSlate, Lightbulb, PencilSimple, Trash } from "@phosphor-icons/react";
 import type { Channel, ChannelMascotConfig, Episode, MascotProfile, QuizImageStyle, Task, TopicCandidate } from "@studio/shared";
 import { api } from "../../api";
 import { isTaskActive, isTaskTerminal, latestTask } from "../../lib/utils";
@@ -8,8 +8,10 @@ import { StatusBadge } from "../../components/AppChrome";
 import type { Notice } from "../../components/types";
 import { useTranslation } from "../../i18n";
 import { buildHash, getNavProps } from "../../hooks/useRouter";
+import { MascotAssignModal } from "../../components/MascotAssignModal";
 import { ChannelLoadingState } from "./components/ChannelLoadingState";
 import { DeleteEpisodeModal } from "./components/DeleteEpisodeModal";
+import { EditChannelModal } from "./components/EditChannelModal";
 import { ChannelEpisodesTab } from "./components/ChannelEpisodesTab";
 import { ChannelTopicsTab } from "./components/ChannelTopicsTab";
 import { ChannelDnaTab } from "./components/ChannelDnaTab";
@@ -86,6 +88,8 @@ export function ChannelDetail({
   const [topicHint, setTopicHint] = useState("");
   const [mascotsList, setMascotsList] = useState<MascotProfile[]>([]);
   const [changingMascot, setChangingMascot] = useState(false);
+  const [isStageStudioOpen, setIsStageStudioOpen] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const observedTerminalTasks = useRef(new Set<string>());
   const loadVersion = useRef(0);
 
@@ -265,34 +269,15 @@ export function ChannelDetail({
             {channel.description ? <p className="detail-copy">{channel.description}</p> : null}
           </div>
           <div className="detail-actions">
-            <div className="channel-mascot-quick-select" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-              <Smiley
-                size={18}
-                weight={channel.mascot_id ? "fill" : "regular"}
-                style={{ color: channel.mascot_id ? "var(--accent)" : "var(--muted)" }}
-              />
-              <select
-                value={channel.mascot_id || ""}
-                disabled={changingMascot}
-                style={{
-                  fontSize: "12px",
-                  padding: "4px 8px",
-                  borderRadius: "6px",
-                  background: "var(--surface-hover)",
-                  border: "1px solid var(--line)",
-                }}
-                onChange={(e) => void handleMascotChange(e.target.value || null)}
-                title={t("channelDetail.mascotSelectTitle")}
-              >
-                <option value="">{t("channelDetail.noMascotOption")}</option>
-                {mascotsList.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    🎨 {m.name}
-                  </option>
-                ))}
-              </select>
-            </div>
             <StatusBadge status={channel.status} />
+            <button
+              className="quiet-button"
+              onClick={() => setIsEditProfileOpen(true)}
+              title={t("channelDetail.editProfileBtn")}
+            >
+              <PencilSimple size={16} />
+              <span>{t("channelDetail.editProfileBtn")}</span>
+            </button>
             <button className="quiet-button" onClick={() => void archive()}>
               <Archive size={16} />
               <span>{channel.status === "ARCHIVED" ? "Restore" : "Archive"}</span>
@@ -381,8 +366,6 @@ export function ChannelDetail({
             setDnaDraft={setDnaDraft}
             editingDna={editingDna}
             setEditingDna={setEditingDna}
-            showDna={showDna}
-            setShowDna={setShowDna}
             busy={busy}
             dnaTask={dnaTask}
             topicClock={topicClock}
@@ -394,9 +377,38 @@ export function ChannelDetail({
             onSaveDna={saveDna}
             onMascotChange={handleMascotChange}
             onMascotConfigUpdate={handleMascotConfigUpdate}
+            onOpenStageStudio={() => setIsStageStudioOpen(true)}
+            onTaskSubmitted={onTaskSubmitted}
           />
         ) : null}
       </section>
+
+      {/* Edit Channel Profile Modal */}
+      {isEditProfileOpen ? (
+        <EditChannelModal
+          channel={channel}
+          onClose={() => setIsEditProfileOpen(false)}
+          onSaved={async () => {
+            await load();
+            await onRefresh();
+          }}
+          onNotice={onNotice}
+        />
+      ) : null}
+
+      {/* Unified Mascot Video Stage Studio Modal (Single Channel Mode) */}
+      <MascotAssignModal
+        isOpen={isStageStudioOpen}
+        singleChannelId={channel.channel_id}
+        mascot={mascotsList.find((m) => m.id === channel.mascot_id) || null}
+        channels={[channel]}
+        allMascots={mascotsList}
+        onClose={() => setIsStageStudioOpen(false)}
+        onSaved={async () => {
+          await onRefresh();
+        }}
+        onNotice={onNotice}
+      />
 
       {deleteEpisodeTarget ? (
         <DeleteEpisodeModal

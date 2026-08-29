@@ -82,6 +82,15 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
       const { content } = SaveTextInputSchema.parse(request.body);
       return repository.saveChannelDna((request.params as { channelId: string }).channelId, content);
     });
+    server.post("/api/channels/:channelId/dna/generate", async (request, reply) => {
+      const channelId = (request.params as { channelId: string }).channelId;
+      const task = tasks.submit("GENERATE_DNA", channelId, null);
+      return reply.code(202).send({ task });
+    });
+    server.post("/api/channels/:channelId/dna/reset", async (request) => {
+      const channelId = (request.params as { channelId: string }).channelId;
+      return repository.resetChannelDna(channelId);
+    });
     server.get("/api/channels/:channelId/topics", async (request) => ({
       topics: await repository.listTopics((request.params as { channelId: string }).channelId),
     }));

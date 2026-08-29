@@ -3,6 +3,7 @@ import path from "node:path";
 import {
   ChannelSchema,
   type BgmHistoryEntry,
+  type CalibrateMascotActionInput,
   type Channel,
   type ChannelMascotConfig,
   type CreateChannelInput,
@@ -72,6 +73,7 @@ import {
   deleteEpisode as deleteEpisodeImplementation,
   getChannelDna as getChannelDnaImplementation,
   saveChannelDna as saveChannelDnaImplementation,
+  resetChannelDna as resetChannelDnaImplementation,
   listEpisodes as listEpisodesImplementation,
   getEpisode as getEpisodeImplementation,
   getEpisodeFile as getEpisodeFileImplementation,
@@ -215,7 +217,7 @@ export class RepositoryService implements RepositoryRuntime {
   calibrateMascotAction(
     mascotId: string,
     action: MascotActionType,
-    calibration: { offset_x: number; offset_y: number },
+    calibration: CalibrateMascotActionInput,
   ): Promise<MascotProfile> {
     return calibrateMascotActionImplementation.call(this, mascotId, action, calibration);
   }
@@ -263,6 +265,9 @@ export class RepositoryService implements RepositoryRuntime {
   }
   saveChannelDna(channelId: string, content: string): Promise<{ path: string; modified_at: string }> {
     return saveChannelDnaImplementation.call(this, channelId, content);
+  }
+  resetChannelDna(channelId: string): Promise<{ content: string; path: string; modified_at: string }> {
+    return resetChannelDnaImplementation.call(this, channelId);
   }
   listEpisodes(channelId: string): Promise<Episode[]> {
     return listEpisodesImplementation.call(this, channelId);

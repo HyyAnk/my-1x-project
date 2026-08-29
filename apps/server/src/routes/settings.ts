@@ -186,7 +186,7 @@ function registerImageSettingsRoutes(server: FastifyInstance, deps: SettingsRout
   server.get("/api/image/settings", () => ({
     settings: {
       ...state.config.image_generation,
-      api_key: state.config.image_generation.api_key,
+      api_key: "",
       has_api_key: Boolean(state.config.image_generation.api_key),
     },
     models: [
@@ -238,12 +238,12 @@ function registerImageSettingsRoutes(server: FastifyInstance, deps: SettingsRout
     return {
       image_generation: {
         ...state.config.image_generation,
-        api_key: state.config.image_generation.api_key,
+        api_key: "",
         has_api_key: Boolean(state.config.image_generation.api_key),
       },
       settings: {
         ...state.config.image_generation,
-        api_key: state.config.image_generation.api_key,
+        api_key: "",
         has_api_key: Boolean(state.config.image_generation.api_key),
       },
     };

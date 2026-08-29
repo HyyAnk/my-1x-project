@@ -70,7 +70,19 @@ export type MascotActionType = z.infer<typeof MascotActionTypeSchema>;
 
 export const ALL_MASCOT_ACTIONS: MascotActionType[] = ["idle", "wave", "thinking", "point", "celebrate", "oops", "outro"];
 
-export type MascotMotionPreset = "breathe" | "sway" | "jump" | "shake" | "wave" | "point" | "none";
+export const MascotMotionPresetSchema = z.enum([
+  "breathe",
+  "sway",
+  "jump",
+  "shake",
+  "wave",
+  "point",
+  "pulse",
+  "float",
+  "none",
+]);
+
+export type MascotMotionPreset = z.infer<typeof MascotMotionPresetSchema>;
 
 export const MASCOT_ACTION_META: Record<
   MascotActionType,

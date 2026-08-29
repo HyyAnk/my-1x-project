@@ -90,3 +90,57 @@ export function getLocalizedActionMeta(
 export const CORE_GAMEPLAY_ACTIONS: MascotActionType[] = ["thinking", "celebrate"];
 export const BRAND_IDENTITY_ACTIONS: MascotActionType[] = ["wave", "outro"];
 export const AUXILIARY_ACTIONS: MascotActionType[] = ["idle", "point", "oops"];
+
+export type MascotMotionPreset = "breathe" | "sway" | "jump" | "shake" | "wave" | "point" | "pulse" | "float" | "none";
+
+export interface MotionPresetMeta {
+  id: MascotMotionPreset;
+  label: string;
+  subtitle: string;
+  icon: string;
+  recommendedFor?: MascotActionType[];
+}
+
+export const MOTION_PRESETS: MotionPresetMeta[] = [
+  { id: "breathe", label: "Breathe", subtitle: "Gentle breathing", icon: "🌬️", recommendedFor: ["idle", "thinking"] },
+  { id: "sway", label: "Sway", subtitle: "Playful sway", icon: "🌊", recommendedFor: ["idle", "outro"] },
+  { id: "jump", label: "Jump", subtitle: "Energetic hop", icon: "⚡", recommendedFor: ["celebrate"] },
+  { id: "shake", label: "Shake", subtitle: "Wobble & tremor", icon: "💫", recommendedFor: ["oops"] },
+  { id: "wave", label: "Wave", subtitle: "Floating wave", icon: "👋", recommendedFor: ["wave", "outro"] },
+  { id: "pulse", label: "Pulse", subtitle: "Dynamic pop", icon: "💓", recommendedFor: ["point", "thinking"] },
+  { id: "float", label: "Float", subtitle: "Weightless drift", icon: "🎈", recommendedFor: ["idle"] },
+  { id: "none", label: "Static", subtitle: "No motion", icon: "⏹️" },
+];
+
+export const DEFAULT_ACTION_MOTIONS: Record<MascotActionType, MascotMotionPreset> = {
+  idle: "breathe",
+  wave: "wave",
+  thinking: "breathe",
+  point: "pulse",
+  celebrate: "jump",
+  oops: "shake",
+  outro: "sway",
+};
+
+export type MascotMotionIntensity = "subtle" | "normal" | "dynamic";
+
+export const DEFAULT_ACTION_SPEEDS: Record<MascotActionType, number> = {
+  idle: 1.0,
+  wave: 1.0,
+  thinking: 1.0,
+  point: 1.0,
+  celebrate: 1.0,
+  oops: 1.0,
+  outro: 1.0,
+};
+
+export const DEFAULT_ACTION_INTENSITIES: Record<MascotActionType, MascotMotionIntensity> = {
+  idle: "normal",
+  wave: "normal",
+  thinking: "normal",
+  point: "normal",
+  celebrate: "normal",
+  oops: "normal",
+  outro: "normal",
+};
+

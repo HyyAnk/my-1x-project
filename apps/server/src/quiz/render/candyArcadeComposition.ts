@@ -23,6 +23,7 @@ import {
   transitionClip,
   mascotElement,
 } from "./candyArcade/candyArcadeClips.js";
+import { getMascotPreloadTags } from "./mascotStateResolver.js";
 
 export type CandyArcadeCompositionInput = {
   quiz: QuizV2;
@@ -167,6 +168,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     ...input.bgmOptions,
   });
   const sfxClips = buildSfxClips(events, input.assets);
+  const mascotPreloads = getMascotPreloadTags(input.mascot, source);
   const audioTags = [
     `<audio id="quiz-narration" class="clip" data-start="0" data-duration="${narrationDuration.toFixed(3)}" data-track-index="2" data-volume="1" src="${audioSrc}"></audio>`,
     ...bgmClips,
@@ -174,7 +176,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   ].join("\n");
 
   return {
-    html: `<!doctype html><html><head><meta charset="utf-8"><title>Candy Arcade Quiz</title><style>${candyArcadeCss()}</style></head><body><main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="1920" data-height="1080" data-duration="${duration.toFixed(3)}" data-fps="30">${scenes.map(subCompositionMount).join("\n")}\n${audioTags}</main><script>window.__playerReady=true;window.__renderReady=true;</script></body></html>`,
+    html: `<!doctype html><html><head><meta charset="utf-8"><title>Candy Arcade Quiz</title>${mascotPreloads ? `\n${mascotPreloads}` : ""}<style>${candyArcadeCss()}</style></head><body><main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="1920" data-height="1080" data-duration="${duration.toFixed(3)}" data-fps="30">${scenes.map(subCompositionMount).join("\n")}\n${audioTags}</main><script>window.__playerReady=true;window.__renderReady=true;</script></body></html>`,
     files: Object.fromEntries(scenes.map((scene) => [`compositions/${scene.id}.html`, scene.html])),
   };
 }

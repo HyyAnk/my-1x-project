@@ -32,8 +32,8 @@ import type {
   UploadMascotSpriteInput,
   RemoveMascotBackgroundInput,
   AssignMascotInput,
-  CalibrateMascotActionInput,
-  SandboxPreviewInput,
+  CalibrateMascotActionRequest,
+  SandboxPreviewRequest,
   SandboxPreviewResponse,
 } from "@studio/shared";
 
@@ -104,6 +104,10 @@ export const api = {
   dna: (id: string) => request<{ content: string; path: string; modified_at: string }>(`/api/channels/${id}/dna`),
   saveDna: (id: string, content: string) =>
     request<{ path: string; modified_at: string }>(`/api/channels/${id}/dna`, { method: "PUT", body: JSON.stringify({ content }) }),
+  generateDna: (id: string) =>
+    request<{ task: Task }>(`/api/channels/${id}/dna/generate`, { method: "POST", body: "{}" }),
+  resetDnaTemplate: (id: string) =>
+    request<{ content: string; path: string; modified_at: string }>(`/api/channels/${id}/dna/reset`, { method: "POST", body: "{}" }),
   topics: (id: string) => request<{ topics: TopicCandidate[] }>(`/api/channels/${id}/topics`),
   suggestTopics: (id: string, topicHint?: string) =>
     request<{ task: Task }>(`/api/channels/${id}/topics/suggest`, {
@@ -178,7 +182,7 @@ export const api = {
     }),
   renderQuizVideo: (channelId: string, episodeId: string) =>
     request<{ task: Task }>(`/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/render`, { method: "POST", body: "{}" }),
-  previewSandboxComposition: (body: SandboxPreviewInput) =>
+  previewSandboxComposition: (body: SandboxPreviewRequest) =>
     request<SandboxPreviewResponse>("/api/quiz/preview-composition", { method: "POST", body: JSON.stringify(body) }),
   bundleImages: (channelId: string, episodeId: string) =>
     request<{ images: BundleImage[] }>(`/api/channels/${channelId}/episodes/${episodeId}/visual-bible/images`),
@@ -333,7 +337,7 @@ export const api = {
   exportMascotUrl: (id: string) => `/api/mascots/${id}/export`,
   importMascotZip: (data: string) =>
     request<{ mascot: MascotProfile }>("/api/mascots/import", { method: "POST", body: JSON.stringify({ data }) }),
-  calibrateMascotAction: (id: string, action: MascotActionType, body: CalibrateMascotActionInput) =>
+  calibrateMascotAction: (id: string, action: MascotActionType, body: CalibrateMascotActionRequest) =>
     request<{ mascot: MascotProfile; action: MascotSpriteAction }>(`/api/mascots/${id}/actions/${action}/calibrate`, {
       method: "PATCH",
       body: JSON.stringify(body),

@@ -116,7 +116,7 @@ export async function calibrateMascotAction(
   this: RepositoryRuntime,
   mascotId: string,
   action: MascotActionType,
-  calibration: { offset_x: number; offset_y: number },
+  calibration: Partial<MascotSpriteAction>,
 ): Promise<MascotProfile> {
   const mascot = await this.getMascot(mascotId);
   const currentAction = mascot.actions[action];
@@ -124,15 +124,17 @@ export async function calibrateMascotAction(
   const updatedAction: MascotSpriteAction = {
     action,
     sprite_url: currentAction?.sprite_url || "",
-    frames_count: currentAction?.frames_count || 1,
-    fps: currentAction?.fps || 8,
-    loop: currentAction?.loop ?? true,
+    frames_count: calibration.frames_count ?? currentAction?.frames_count ?? 1,
+    fps: calibration.fps ?? currentAction?.fps ?? 8,
+    loop: calibration.loop ?? currentAction?.loop ?? true,
     frame_width: currentAction?.frame_width || 512,
     frame_height: currentAction?.frame_height || 512,
-    offset_x: calibration.offset_x,
-    offset_y: calibration.offset_y,
+    offset_x: calibration.offset_x ?? currentAction?.offset_x ?? 0,
+    offset_y: calibration.offset_y ?? currentAction?.offset_y ?? 0,
     preview_url: currentAction?.preview_url,
-    motion_preset: currentAction?.motion_preset,
+    motion_preset: calibration.motion_preset ?? currentAction?.motion_preset ?? "breathe",
+    motion_speed: calibration.motion_speed ?? currentAction?.motion_speed ?? 1.0,
+    motion_intensity: calibration.motion_intensity ?? currentAction?.motion_intensity ?? "normal",
   };
 
   const updatedMascot: MascotProfile = {

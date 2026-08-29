@@ -106,16 +106,14 @@ export function SandboxChannelSyncModal({
         </div>
 
         {/* Sync Mascot Checkbox */}
-        {mascotId !== "fallback" && (
-          <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", marginBottom: "14px", cursor: "pointer" }}>
-            <input type="checkbox" checked={syncMascotToChannel} onChange={(e) => setSyncMascotToChannel(e.target.checked)} />
-            <span>
-              {t("visualSandbox.syncMascotCheckbox", {
-                name: activeMascot ? activeMascot.name : t("visualSandbox.summaryMascotDisabled"),
-              })}
-            </span>
-          </label>
-        )}
+        <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", marginBottom: "14px", cursor: "pointer" }}>
+          <input type="checkbox" checked={syncMascotToChannel} onChange={(e) => setSyncMascotToChannel(e.target.checked)} />
+          <span>
+            {t("visualSandbox.syncMascotCheckbox", {
+              name: activeMascot ? activeMascot.name : t("visualSandbox.summaryMascotDisabled"),
+            })}
+          </span>
+        </label>
 
         <div
           style={{
@@ -160,11 +158,9 @@ export function SandboxChannelSyncModal({
           {syncMascotToChannel && (
             <div>
               <strong>• {t("visualSandbox.summaryMascot")}</strong>{" "}
-              {mascotId === "none"
+              {mascotId === "none" || !activeMascot
                 ? t("visualSandbox.summaryMascotDisabled")
-                : activeMascot
-                  ? `${activeMascot.name} (${mascotPosition}, ${mascotScale.toFixed(2)}x)`
-                  : t("visualSandbox.summaryMascotDefault")}
+                : `${activeMascot.name} (${mascotPosition}, ${mascotScale.toFixed(2)}x)`}
             </div>
           )}
         </div>

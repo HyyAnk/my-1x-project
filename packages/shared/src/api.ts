@@ -22,11 +22,17 @@ import {
 } from "./schemas.js";
 
 export const CalibrateMascotActionInputSchema = z.object({
-  offset_x: z.number().min(-5000).max(5000),
-  offset_y: z.number().min(-5000).max(5000),
+  offset_x: z.number().min(-5000).max(5000).optional().default(0),
+  offset_y: z.number().min(-5000).max(5000).optional().default(0),
+  motion_preset: z.enum(["breathe", "sway", "jump", "shake", "wave", "point", "pulse", "float", "none"]).optional(),
+  motion_speed: z.number().min(0.1).max(5).optional(),
+  motion_intensity: z.enum(["subtle", "normal", "dynamic"]).optional(),
+  fps: z.number().min(1).max(60).optional(),
+  loop: z.boolean().optional(),
 });
 
 export type CalibrateMascotActionInput = z.infer<typeof CalibrateMascotActionInputSchema>;
+export type CalibrateMascotActionRequest = z.input<typeof CalibrateMascotActionInputSchema>;
 
 export const CreateMascotInputSchema = z.object({
   name: z.string().min(1),
@@ -123,6 +129,7 @@ export const SandboxPreviewInputSchema = z
   });
 
 export type SandboxPreviewInput = z.infer<typeof SandboxPreviewInputSchema>;
+export type SandboxPreviewRequest = z.input<typeof SandboxPreviewInputSchema>;
 
 export const SandboxPreviewResponseSchema = z.object({
   html: z.string(),

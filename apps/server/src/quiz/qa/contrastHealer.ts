@@ -87,8 +87,8 @@ export async function patchCompositionFilesWithContrastFix(renderRoot: string, c
       }
       await fs.writeFile(file, content, "utf8");
       patchedCount++;
-    } catch {
-      // Continue to next file
+    } catch (error) {
+      console.warn(`[contrastHealer] Failed to patch file ${file}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 

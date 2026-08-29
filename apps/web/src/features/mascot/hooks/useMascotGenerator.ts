@@ -3,7 +3,17 @@ import { ALL_MASCOT_ACTIONS, type Channel, type MascotActionType, type MascotPro
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
-import { CORE_GAMEPLAY_ACTIONS, PROMPT_TEMPLATES, getLocalizedActionMeta } from "../constants";
+import {
+  CORE_GAMEPLAY_ACTIONS,
+  DEFAULT_ACTION_INTENSITIES,
+  DEFAULT_ACTION_MOTIONS,
+  DEFAULT_ACTION_SPEEDS,
+  PROMPT_TEMPLATES,
+  STYLE_OPTIONS,
+  getLocalizedActionMeta,
+  type MascotMotionIntensity,
+  type MascotMotionPreset,
+} from "../constants";
 
 type UseMascotGeneratorProps = {
   channels: Channel[];
@@ -184,35 +194,15 @@ export function useMascotGenerator({ channels, onNotice, onRefreshChannels, onMa
   const [dragOverAction, setDragOverAction] = useState<MascotActionType | null>(null);
   const [promptEditAction, setPromptEditAction] = useState<MascotActionType | null>(null);
 
-  // Step 3 Live Studio Player & Stage Simulator
-  const [activePreviewAction, setActivePreviewAction] = useState<MascotActionType>("wave");
+  // Step 3: Motion & Animation Studio State
+  const [activePreviewAction, setActivePreviewAction] = useState<MascotActionType>("idle");
   const [isPlaying, setIsPlaying] = useState(true);
-  const [stagePreviewMode, setStagePreviewMode] = useState<"grid" | "video_stage">("video_stage");
-  const [aspectRatio, setAspectRatio] = useState<"16:9" | "9:16">("16:9");
+  const [canvasBackground, setCanvasBackground] = useState<"dark" | "light" | "grid" | "clean">("dark");
+  const [canvasZoom, setCanvasZoom] = useState<number>(1.0);
   const [flipHorizontal, setFlipHorizontal] = useState(false);
-  const [activeConfigTab, setActiveConfigTab] = useState<"calibration" | "channels">("calibration");
-  const [targetPosition, setTargetPosition] = useState<"bottom_left" | "bottom_right">("bottom_left");
-  const [targetScale, setTargetScale] = useState(1.0);
-  const [showInIntro, setShowInIntro] = useState(false);
-  const [showInOutro, setShowInOutro] = useState(false);
-  const [showInQuestion, setShowInQuestion] = useState(true);
-  const [assignedChannels, setAssignedChannels] = useState<string[]>([]);
-  const [channelSearchQuery, setChannelSearchQuery] = useState("");
-  const [channelFilterTab, setChannelFilterTab] = useState<"all" | "selected" | "unassigned" | "other">("all");
-
-  // Scenario Playback state
-  const [isScenarioMode, setIsScenarioMode] = useState(false);
-  const [scenarioPhase, setScenarioPhase] = useState<"intro" | "question" | "thinking" | "reveal" | "explain">("intro");
-  const [scenarioCountdown, setScenarioCountdown] = useState<number>(5);
-  const [scrubberTime, setScrubberTime] = useState<number>(0);
-  const [reactionStyle, setReactionStyle] = useState<"celebrate" | "oops">("celebrate");
-
-  // Alignment & Calibration
-  const [onionSkinEnabled, setOnionSkinEnabled] = useState(false);
-  const [onionSkinOpacity, setOnionSkinOpacity] = useState(0.35);
-  const [showGuides, setShowGuides] = useState(true);
-  const [nudgeX, setNudgeX] = useState(0);
-  const [nudgeY, setNudgeY] = useState(0);
+  const [actionMotions, setActionMotions] = useState<Record<MascotActionType, MascotMotionPreset>>({ ...DEFAULT_ACTION_MOTIONS });
+  const [actionSpeeds, setActionSpeeds] = useState<Record<MascotActionType, number>>({ ...DEFAULT_ACTION_SPEEDS });
+  const [actionIntensities, setActionIntensities] = useState<Record<MascotActionType, MascotMotionIntensity>>({ ...DEFAULT_ACTION_INTENSITIES });
   const [calibrating, setCalibrating] = useState(false);
 
   // Start new Mascot Generator
@@ -223,11 +213,9 @@ export function useMascotGenerator({ channels, onNotice, onRefreshChannels, onMa
     setGenStyle("pixar_3d");
     setGenColor("#06b6d4");
     setGenPrompt("Cute wise baby owl with big sparkling eyes and small red glasses, fluffy feathers, friendly and enthusiastic expression");
-    setTargetPosition("bottom_left");
-    setTargetScale(1.0);
-    setShowInIntro(false);
-    setShowInOutro(false);
-    setShowInQuestion(true);
+    setActionMotions({ ...DEFAULT_ACTION_MOTIONS });
+    setActionSpeeds({ ...DEFAULT_ACTION_SPEEDS });
+    setActionIntensities({ ...DEFAULT_ACTION_INTENSITIES });
     setGeneratorStep(1);
   };
 
@@ -239,22 +227,26 @@ export function useMascotGenerator({ channels, onNotice, onRefreshChannels, onMa
     setGenStyle(mascot.visual_style);
     setGenColor(mascot.color_theme || "#06b6d4");
     setGenPrompt(mascot.master_prompt || "");
-    setAssignedChannels(mascot.assigned_channel_ids || []);
 
-    const sampleChannel = channels.find((c) => c.mascot_id === mascot.id);
-    if (sampleChannel?.mascot_config) {
-      setTargetPosition(sampleChannel.mascot_config.position || "bottom_left");
-      setTargetScale(sampleChannel.mascot_config.scale || 1.0);
-      setShowInIntro(Boolean(sampleChannel.mascot_config.show_in_intro));
-      setShowInOutro(Boolean(sampleChannel.mascot_config.show_in_outro));
-      setShowInQuestion(sampleChannel.mascot_config.show_in_question !== false);
-    } else {
-      setTargetPosition("bottom_left");
-      setTargetScale(1.0);
-      setShowInIntro(false);
-      setShowInOutro(false);
-      setShowInQuestion(true);
+    const initialMotions: Record<MascotActionType, MascotMotionPreset> = { ...DEFAULT_ACTION_MOTIONS };
+    const initialSpeeds: Record<MascotActionType, number> = { ...DEFAULT_ACTION_SPEEDS };
+    const initialIntensities: Record<MascotActionType, MascotMotionIntensity> = { ...DEFAULT_ACTION_INTENSITIES };
+
+    for (const act of ALL_MASCOT_ACTIONS) {
+      const sprite = mascot.actions[act];
+      if (sprite?.motion_preset) {
+        initialMotions[act] = sprite.motion_preset as MascotMotionPreset;
+      }
+      if (typeof sprite?.motion_speed === "number") {
+        initialSpeeds[act] = sprite.motion_speed;
+      }
+      if (sprite?.motion_intensity) {
+        initialIntensities[act] = sprite.motion_intensity as MascotMotionIntensity;
+      }
     }
+    setActionMotions(initialMotions);
+    setActionSpeeds(initialSpeeds);
+    setActionIntensities(initialIntensities);
 
     const availableAction = ALL_MASCOT_ACTIONS.find((act) => mascot.actions[act]?.sprite_url) || "wave";
     setActivePreviewAction(availableAction);
@@ -527,136 +519,235 @@ export function useMascotGenerator({ channels, onNotice, onRefreshChannels, onMa
     }
   };
 
-  // Director Timeline Keyframing Engine
-  const applyTimelineTime = useCallback(
-    (timeSec: number, reaction: "celebrate" | "oops" = reactionStyle) => {
-      setScrubberTime(timeSec);
-      if (timeSec < 2.0) {
-        setScenarioPhase("intro");
-        setActivePreviewAction("wave");
-      } else if (timeSec < 4.0) {
-        setScenarioPhase("question");
-        setActivePreviewAction("thinking");
-      } else if (timeSec < 9.0) {
-        setScenarioPhase("thinking");
-        setActivePreviewAction("thinking");
-        setScenarioCountdown(Math.max(1, Math.min(5, Math.ceil(9.0 - timeSec))));
-      } else if (timeSec < 12.0) {
-        setScenarioPhase("reveal");
-        setActivePreviewAction(reaction);
-      } else {
-        setScenarioPhase("explain");
-        setActivePreviewAction("celebrate");
+  // Sync action motions when editingMascot loads
+  useEffect(() => {
+    if (!editingMascot) return;
+    const initialMotions: Record<MascotActionType, MascotMotionPreset> = { ...DEFAULT_ACTION_MOTIONS };
+    const initialSpeeds: Record<MascotActionType, number> = { ...DEFAULT_ACTION_SPEEDS };
+    const initialIntensities: Record<MascotActionType, MascotMotionIntensity> = { ...DEFAULT_ACTION_INTENSITIES };
+
+    for (const act of ALL_MASCOT_ACTIONS) {
+      const sprite = editingMascot.actions[act];
+      if (sprite?.motion_preset) {
+        initialMotions[act] = sprite.motion_preset as MascotMotionPreset;
       }
-    },
-    [reactionStyle],
-  );
+      if (typeof sprite?.motion_speed === "number") {
+        initialSpeeds[act] = sprite.motion_speed;
+      }
+      if (sprite?.motion_intensity) {
+        initialIntensities[act] = sprite.motion_intensity as MascotMotionIntensity;
+      }
+    }
+    setActionMotions(initialMotions);
+    setActionSpeeds(initialSpeeds);
+    setActionIntensities(initialIntensities);
+  }, [editingMascot?.id]);
 
-  // Scenario Playback Simulation Clock (Smooth 100ms Scrubber)
-  useEffect(() => {
-    if (!isScenarioMode) return;
-    const interval = setInterval(() => {
-      setScrubberTime((prev) => {
-        const next = Math.round((prev + 0.1) * 10) / 10;
-        if (next >= 16.0) {
-          applyTimelineTime(0);
-          return 0;
-        }
-        applyTimelineTime(next);
-        return next;
+  const handleChangeMotionPreset = (action: MascotActionType, preset: MascotMotionPreset) => {
+    setActionMotions((prev) => ({ ...prev, [action]: preset }));
+    if (editingMascot) {
+      const existingAction = editingMascot.actions[action];
+      const updatedAction = existingAction
+        ? { ...existingAction, motion_preset: preset }
+        : {
+            action,
+            sprite_url: "",
+            frames_count: 1,
+            fps: 8,
+            loop: true,
+            frame_width: 512,
+            frame_height: 512,
+            offset_x: 0,
+            offset_y: 0,
+            motion_preset: preset,
+            motion_speed: actionSpeeds[action] || 1.0,
+            motion_intensity: actionIntensities[action] || "normal",
+          };
+      setEditingMascot({
+        ...editingMascot,
+        actions: {
+          ...editingMascot.actions,
+          [action]: updatedAction,
+        },
       });
-    }, 100);
-    return () => clearInterval(interval);
-  }, [isScenarioMode, applyTimelineTime]);
+    }
+  };
 
-  // Sync Nudge offsets when switching active pose or mascot
-  useEffect(() => {
-    const act = editingMascot?.actions[activePreviewAction];
-    setNudgeX(act?.offset_x || 0);
-    setNudgeY(act?.offset_y || 0);
-  }, [activePreviewAction, editingMascot]);
+  const handleChangeMotionSpeed = (action: MascotActionType, speed: number) => {
+    setActionSpeeds((prev) => ({ ...prev, [action]: speed }));
+    if (editingMascot) {
+      const existingAction = editingMascot.actions[action];
+      if (existingAction) {
+        setEditingMascot({
+          ...editingMascot,
+          actions: {
+            ...editingMascot.actions,
+            [action]: {
+              ...existingAction,
+              motion_speed: speed,
+            },
+          },
+        });
+      }
+    }
+  };
 
-  const handleSaveCalibration = async () => {
+  const handleChangeMotionIntensity = (action: MascotActionType, intensity: MascotMotionIntensity) => {
+    setActionIntensities((prev) => ({ ...prev, [action]: intensity }));
+    if (editingMascot) {
+      const existingAction = editingMascot.actions[action];
+      if (existingAction) {
+        setEditingMascot({
+          ...editingMascot,
+          actions: {
+            ...editingMascot.actions,
+            [action]: {
+              ...existingAction,
+              motion_intensity: intensity,
+            },
+          },
+        });
+      }
+    }
+  };
+
+  const handleApplyMotionToAll = (preset: MascotMotionPreset) => {
+    const updated: Record<MascotActionType, MascotMotionPreset> = {} as Record<MascotActionType, MascotMotionPreset>;
+    for (const act of ALL_MASCOT_ACTIONS) {
+      updated[act] = preset;
+    }
+    setActionMotions(updated);
+    if (editingMascot) {
+      const updatedActions = { ...editingMascot.actions };
+      for (const act of ALL_MASCOT_ACTIONS) {
+        const existing = updatedActions[act];
+        updatedActions[act] = existing
+          ? { ...existing, motion_preset: preset }
+          : {
+              action: act,
+              sprite_url: "",
+              frames_count: 1,
+              fps: 8,
+              loop: true,
+              frame_width: 512,
+              frame_height: 512,
+              offset_x: 0,
+              offset_y: 0,
+              motion_preset: preset,
+            };
+      }
+      setEditingMascot({
+        ...editingMascot,
+        actions: updatedActions,
+      });
+    }
+    onNotice({ tone: "good", message: "Motion preset applied to all poses!" });
+  };
+
+  const handleResetDefaultMotions = () => {
+    setActionMotions({ ...DEFAULT_ACTION_MOTIONS });
+    setActionSpeeds({ ...DEFAULT_ACTION_SPEEDS });
+    setActionIntensities({ ...DEFAULT_ACTION_INTENSITIES });
+    if (editingMascot) {
+      const updatedActions = { ...editingMascot.actions };
+      for (const act of ALL_MASCOT_ACTIONS) {
+        const existing = updatedActions[act];
+        updatedActions[act] = existing
+          ? {
+              ...existing,
+              motion_preset: DEFAULT_ACTION_MOTIONS[act],
+              motion_speed: DEFAULT_ACTION_SPEEDS[act],
+              motion_intensity: DEFAULT_ACTION_INTENSITIES[act],
+            }
+          : {
+              action: act,
+              sprite_url: "",
+              frames_count: 1,
+              fps: 8,
+              loop: true,
+              frame_width: 512,
+              frame_height: 512,
+              offset_x: 0,
+              offset_y: 0,
+              motion_preset: DEFAULT_ACTION_MOTIONS[act],
+              motion_speed: DEFAULT_ACTION_SPEEDS[act],
+              motion_intensity: DEFAULT_ACTION_INTENSITIES[act],
+            };
+      }
+      setEditingMascot({
+        ...editingMascot,
+        actions: updatedActions,
+      });
+    }
+    onNotice({ tone: "good", message: "Restored recommended motion presets!" });
+  };
+
+  const handleSaveMotion = async (action: MascotActionType = activePreviewAction) => {
     if (!editingMascot) return;
     setCalibrating(true);
-    const actionMeta = getLocalizedActionMeta(activePreviewAction, t);
+    const actionMeta = getLocalizedActionMeta(action, t);
+    const preset = actionMotions[action] || DEFAULT_ACTION_MOTIONS[action];
+    const speed = actionSpeeds[action] || DEFAULT_ACTION_SPEEDS[action];
+    const intensity = actionIntensities[action] || DEFAULT_ACTION_INTENSITIES[action];
     try {
-      const res = await api.calibrateMascotAction(editingMascot.id, activePreviewAction, {
-        offset_x: nudgeX,
-        offset_y: nudgeY,
+      const res = await api.calibrateMascotAction(editingMascot.id, action, {
+        motion_preset: preset,
+        motion_speed: speed,
+        motion_intensity: intensity,
       });
       setEditingMascot(res.mascot);
-      onNotice({ tone: "good", message: t("notices.calibrationSaved", { pose: actionMeta.label }) });
+      onNotice({ tone: "good", message: `Motion settings saved for ${actionMeta.label.split(" ")[0]}!` });
       await onMascotsChanged();
     } catch (err) {
-      onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.calibrationFailed") });
+      onNotice({ tone: "bad", message: err instanceof Error ? err.message : "Failed to save motion" });
     } finally {
       setCalibrating(false);
     }
   };
 
-  // Step 3: Save & Bind to Channels (Parallel Execution)
-  const handleApplyToChannels = async () => {
+  // Step 3: Finish Mascot & Return to Library
+  const handleFinishMascot = async () => {
     if (!editingMascot) return;
-    setBusyAction("assign");
+    setBusyAction("finish");
     try {
-      // 1. Persist current pose offset calibration
-      await api.calibrateMascotAction(editingMascot.id, activePreviewAction, {
-        offset_x: nudgeX,
-        offset_y: nudgeY,
-      });
-
-      // 2. Persist channel bindings with offsets and scale
-      const assignmentPromises = channels
-        .map((channel) => {
-          const isAssigned = assignedChannels.includes(channel.channel_id);
-          if (isAssigned && channel.mascot_id !== editingMascot.id) {
-            return api.assignMascotToChannel(channel.channel_id, {
-              mascot_id: editingMascot.id,
-              config: {
-                enabled: true,
-                position: targetPosition,
-                scale: targetScale,
-                offset_x: 0,
-                offset_y: 0,
-                show_in_intro: showInIntro,
-                show_in_outro: showInOutro,
-                show_in_question: showInQuestion,
-              },
-            });
-          } else if (!isAssigned && channel.mascot_id === editingMascot.id) {
-            return api.assignMascotToChannel(channel.channel_id, {
-              mascot_id: null,
-            });
-          } else if (isAssigned && channel.mascot_id === editingMascot.id) {
-            return api.assignMascotToChannel(channel.channel_id, {
-              mascot_id: editingMascot.id,
-              config: {
-                enabled: true,
-                position: targetPosition,
-                scale: targetScale,
-                offset_x: 0,
-                offset_y: 0,
-                show_in_intro: showInIntro,
-                show_in_outro: showInOutro,
-                show_in_question: showInQuestion,
-              },
-            });
-          }
-          return null;
-        })
-        .filter((p): p is Promise<any> => p !== null);
-
-      if (assignmentPromises.length > 0) {
-        await Promise.all(assignmentPromises);
+      const updatedActions = { ...editingMascot.actions };
+      for (const act of ALL_MASCOT_ACTIONS) {
+        const preset = actionMotions[act] || DEFAULT_ACTION_MOTIONS[act];
+        const speed = actionSpeeds[act] || DEFAULT_ACTION_SPEEDS[act];
+        const intensity = actionIntensities[act] || DEFAULT_ACTION_INTENSITIES[act];
+        const existing = updatedActions[act];
+        updatedActions[act] = existing
+          ? { ...existing, motion_preset: preset, motion_speed: speed, motion_intensity: intensity }
+          : {
+              action: act,
+              sprite_url: "",
+              frames_count: 1,
+              fps: 8,
+              loop: true,
+              frame_width: 512,
+              frame_height: 512,
+              offset_x: 0,
+              offset_y: 0,
+              motion_preset: preset,
+              motion_speed: speed,
+              motion_intensity: intensity,
+            };
       }
-      onNotice({ tone: "good", message: t("notices.channelsAssigned") || "Mascot settings saved & applied successfully!" });
+
+      const res = await api.updateMascot(editingMascot.id, { actions: updatedActions });
+      setEditingMascot(res.mascot);
+
+      onNotice({
+        tone: "good",
+        message: `Mascot "${editingMascot.name}" has been saved successfully!`,
+      });
       await onRefreshChannels();
       await onMascotsChanged();
+      setGeneratorStep(1);
     } catch (err) {
       onNotice({
         tone: "bad",
-        message: err instanceof Error ? err.message : t("notices.channelsAssignFailed") || "Failed to save and apply mascot settings",
+        message: err instanceof Error ? err.message : "Failed to finish mascot",
       });
     } finally {
       setBusyAction(null);
@@ -674,6 +765,7 @@ export function useMascotGenerator({ channels, onNotice, onRefreshChannels, onMa
     setGenDescription,
     genStyle,
     setGenStyle,
+    genStyleOption: STYLE_OPTIONS.find((s) => s.id === genStyle),
     genColor,
     setGenColor,
     genPrompt,
@@ -703,47 +795,18 @@ export function useMascotGenerator({ channels, onNotice, onRefreshChannels, onMa
     setActivePreviewAction,
     isPlaying,
     setIsPlaying,
-    stagePreviewMode,
-    setStagePreviewMode,
-    aspectRatio,
-    setAspectRatio,
+    canvasBackground,
+    setCanvasBackground,
+    canvasZoom,
+    setCanvasZoom,
     flipHorizontal,
     setFlipHorizontal,
-    activeConfigTab,
-    setActiveConfigTab,
-    targetPosition,
-    setTargetPosition,
-    targetScale,
-    setTargetScale,
-    showInIntro,
-    setShowInIntro,
-    showInOutro,
-    setShowInOutro,
-    showInQuestion,
-    setShowInQuestion,
-    assignedChannels,
-    setAssignedChannels,
-    channelSearchQuery,
-    setChannelSearchQuery,
-    channelFilterTab,
-    setChannelFilterTab,
-    isScenarioMode,
-    setIsScenarioMode,
-    scenarioPhase,
-    scenarioCountdown,
-    scrubberTime,
-    reactionStyle,
-    setReactionStyle,
-    onionSkinEnabled,
-    setOnionSkinEnabled,
-    onionSkinOpacity,
-    setOnionSkinOpacity,
-    showGuides,
-    setShowGuides,
-    nudgeX,
-    setNudgeX,
-    nudgeY,
-    setNudgeY,
+    actionMotions,
+    setActionMotions,
+    actionSpeeds,
+    setActionSpeeds,
+    actionIntensities,
+    setActionIntensities,
     calibrating,
     handleStartNew,
     handleEditMascot,
@@ -757,8 +820,11 @@ export function useMascotGenerator({ channels, onNotice, onRefreshChannels, onMa
     handleUploadSprite,
     handleDropSprite,
     handleRemoveBackground,
-    applyTimelineTime,
-    handleSaveCalibration,
-    handleApplyToChannels,
+    handleChangeMotionPreset,
+    handleChangeMotionSpeed,
+    handleChangeMotionIntensity,
+    handleResetDefaultMotions,
+    handleSaveMotion,
+    handleFinishMascot,
   };
 }

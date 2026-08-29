@@ -36,7 +36,7 @@ export function useSandboxChannelSync({ channels, design, mascot, onNotice, onRe
         default_palette_id: design.paletteId,
       });
 
-      if (syncMascotToChannel && mascot.mascotId && mascot.mascotId !== "fallback") {
+      if (syncMascotToChannel && mascot.mascotId) {
         if (mascot.mascotId === "none") {
           await api.assignMascotToChannel(selectedChannelId, { mascot_id: null, config: { enabled: false } });
         } else {

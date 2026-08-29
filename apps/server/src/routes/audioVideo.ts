@@ -49,9 +49,12 @@ export function registerAudioVideoRoutes(deps: AudioVideoRouteDeps): FastifyPlug
               ? { target_duration_seconds: episode.target_duration_minutes * 60 }
               : {}),
           }),
-          signal: AbortSignal.timeout(15 * 60 * 1000),
+          signal: AbortSignal.timeout(3 * 60 * 1000),
         });
-      } catch {
+      } catch (err) {
+        if (err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError")) {
+          throw new RepositoryError("Audio merge timed out after 3 minutes", "AUDIO_MERGE_TIMEOUT");
+        }
         throw new RepositoryError("Audio service unavailable", "AUDIO_SERVICE_UNAVAILABLE");
       }
       if (!response.ok)

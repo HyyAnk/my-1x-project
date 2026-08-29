@@ -237,6 +237,58 @@ export interface TranslationSchema {
     bottomRightLabel: string;
     scaleLabel: string;
     noMascotEmptyText: string;
+    openStageStudioBtn: string;
+    stageStudioDesc: string;
+    currentPlacement: string;
+    activeScenesLabel: string;
+    sceneIntroBadge: string;
+    sceneQuestionBadge: string;
+    sceneOutroBadge: string;
+
+    // Redesigned DNA & Identity Tab
+    profileTitle: string;
+    profileDesc: string;
+    editProfileBtn: string;
+    editProfileModalTitle: string;
+    channelName: string;
+    description: string;
+    targetAudience: string;
+    country: string;
+    language: string;
+    savingChannel: string;
+    saveChanges: string;
+    channelUpdatedNotice: string;
+    noAudienceSet: string;
+    noDescSet: string;
+
+    visualIdentityTitle: string;
+    visualIdentityDesc: string;
+    activeStylesCount: string;
+    thinkingBarStyle: string;
+    stylesHelp: string;
+
+    mascotPersonaTitle: string;
+    mascotPersonaDesc: string;
+    assignedMascot: string;
+    noMascotTitle: string;
+    colorTheme: string;
+
+    dnaBlueprintTitle: string;
+    dnaBlueprintSubtitle: string;
+    copyDna: string;
+    dnaCopied: string;
+    regenerateDna: string;
+    regeneratingDna: string;
+    regenerateDnaConfirm: string;
+    editDna: string;
+    saveDna: string;
+    cancelEdit: string;
+    resetDnaTemplate: string;
+    resetDnaConfirm: string;
+    dnaResetSuccess: string;
+    dnaGenerateStarted: string;
+    filePath: string;
+    lastUpdated: string;
   };
   episode: {
     productionRail: string;
@@ -462,7 +514,42 @@ export interface TranslationSchema {
     batchCurrentState: string;
     batchOverallProgress: string;
 
-    // Step 3: Stage Theater & Channel Deploy
+    // Step 3: Motion & Animation Studio
+    motionStudioTitle: string;
+    motionStudioSub: string;
+    nextAnimationBtn: string;
+    motionPresetLabel: string;
+    motionPresetSub: string;
+    animationSpeedLabel: string;
+    motionIntensityLabel: string;
+    intensitySubtle: string;
+    intensityNormal: string;
+    intensityDynamic: string;
+    speedSlow: string;
+    speedNormal: string;
+    speedFast: string;
+    speedDynamic: string;
+    applyAllMotionsBtn: string;
+    applyAllMotionsTooltip: string;
+    resetDefaultMotionsBtn: string;
+    resetDefaultMotionsTooltip: string;
+    resetConfirmPrompt: string;
+    confirmResetBtn: string;
+    finishMascotBtn: string;
+    saveMotionBtn: string;
+    savingMotionBtn: string;
+    bgDark: string;
+    bgLight: string;
+    bgGrid: string;
+    bgClean: string;
+    canvasFlipTooltip: string;
+    canvasZoomTooltip: string;
+    playbackPlay: string;
+    playbackPause: string;
+    motionReadyBadge: string;
+    motionMissingBadge: string;
+
+    // Legacy Stage Theater & Channel Deploy (kept for StageStudio compatibility)
     stageTheaterTitle: string;
     stageTheaterSub: string;
     tabCalibration: string;
@@ -557,6 +644,7 @@ export interface TranslationSchema {
     savingAndApplyingBtn: string;
 
     // Modals & Assign Hub
+    singleChannelStageTitle: string;
     quickAssignEyebrow: string;
     quickAssignTitle: string;
     quickAssignSaveBtn: string;
@@ -768,8 +856,7 @@ export interface TranslationSchema {
     mascotPickerSection: string;
     noMascotTitle: string;
     noMascotSub: string;
-    defaultMascotTitle: string;
-    defaultMascotSub: string;
+    noMascotsInLibrary: string;
     mascotPoseSection: string;
     poseThinking: string;
     poseCelebrate: string;
@@ -784,6 +871,18 @@ export interface TranslationSchema {
     mascotOffsetSection: string;
     offsetX: string;
     offsetY: string;
+    liveMotionLabel: string;
+    motionThinkingDesc: string;
+    motionCelebrateDesc: string;
+    motionPointDesc: string;
+    motionOopsDesc: string;
+    motionWaveDesc: string;
+    motionIdleDesc: string;
+    scaleDimensionsLabel: string;
+    offsetsTitleLabel: string;
+    resetOffsetsTitle: string;
+    axisXPrefix: string;
+    axisYPrefix: string;
 
     // Tab 3: Content & Testing
     sampleQuestionsLabel: string;
@@ -819,7 +918,9 @@ export interface TranslationSchema {
     replayBtn: string;
     replayTooltip: string;
     wcagContrast: string;
+    wcagContrastTooltip: string;
     hyperframesEngine: string;
+    hyperframesEngineTooltip: string;
     actionSafeLabel: string;
     titleSafeLabel: string;
     shortsSafeLabel: string;
@@ -841,7 +942,6 @@ export interface TranslationSchema {
     summaryCounter: string;
     summaryMascot: string;
     summaryMascotDisabled: string;
-    summaryMascotDefault: string;
     confirmApplyBtn: string;
     applyingBtn: string;
 
@@ -852,6 +952,112 @@ export interface TranslationSchema {
     noticeDeletedPreset: string;
     noticeAppliedToChannel: string;
     noticeSaveError: string;
+  };
+  stageStudio: {
+    title: string;
+    targetMascotHost: string;
+    resolutionBadge: string;
+    aspectRatioTooltip: string;
+    viewModeTooltip: string;
+    videoSceneMode: string;
+    gridBlueprintMode: string;
+    questionLayoutTooltip: string;
+    layoutMediaLeft: string;
+    layoutVisualThree: string;
+    baselineGuides: string;
+    baselineGuidesTooltip: string;
+    safeArea: string;
+    safeAreaTooltip: string;
+    viewOptions: string;
+    resetLayout: string;
+    resetLayoutTooltip: string;
+    closeTooltip: string;
+
+    // Viewport
+    loadingBackground: string;
+    updatingPreview: string;
+    previewLoadFailed: string;
+    retryPreview: string;
+    dragToResizeTooltip: string;
+    dragToRepositionTooltip: string;
+    hiddenInPhase: string;
+    groundBaselineLabel: string;
+    actionSafeLabel: string;
+    titleSafeLabel: string;
+
+    // Timeline Bar
+    phases: {
+      intro: string;
+      question: string;
+      thinking: string;
+      reveal: string;
+      outro: string;
+    };
+    play: string;
+    pause: string;
+    playTooltip: string;
+    pauseTooltip: string;
+    correctReaction: string;
+    correctReactionTooltip: string;
+    oopsReaction: string;
+    oopsReactionTooltip: string;
+
+    // Tab Bar
+    tabTransform: string;
+    tabSingleChannelMascot: string;
+    tabMultiChannelApply: string;
+
+    // Transform Tab
+    questionLayoutCardTitle: string;
+    mascotLayoutBadge: string;
+    layoutMediaLeftDesc: string;
+    layoutVisualThreeDesc: string;
+    anchorAndFlipTitle: string;
+    anchorLabel: string;
+    anchorLeft: string;
+    anchorLeftTooltip: string;
+    anchorRight: string;
+    anchorRightTooltip: string;
+    flipDirection: string;
+    flipDirectionTooltip: string;
+    scaleTitle: string;
+    offsetsTitle: string;
+    resetOffsetsBtn: string;
+    resetOffsetsTooltip: string;
+    phaseVisibilityTitle: string;
+    introPhaseRule: string;
+    questionPhaseRule: string;
+    outroPhaseRule: string;
+
+    // Channels Tab
+    targetChannelTitle: string;
+    channelNameLabel: string;
+    regionLabel: string;
+    selectMascotTitle: string;
+    noMascotOption: string;
+    noMascotDesc: string;
+    posesReadyBadge: string;
+    searchPlaceholder: string;
+    filterAll: string;
+    filterSelected: string;
+    filterUnassigned: string;
+    filterOther: string;
+    selectAllBtn: string;
+    deselectAllBtn: string;
+    noChannelsFound: string;
+    currentlyAssigned: string;
+
+    // Footer
+    channelsSummaryCount: string;
+    leftBadge: string;
+    rightBadge: string;
+    saveAndApplyBtn: string;
+
+    // Notices
+    noticeSaveSuccessSingle: string;
+    noticeUnassignedSingle: string;
+    noticeSaveSuccessMulti: string;
+    noticeSaveFailed: string;
   };
   notices: {
     savedSuccessfully: string;

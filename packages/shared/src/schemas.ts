@@ -54,7 +54,9 @@ export const MascotSpriteActionSchema = z.object({
   offset_x: z.number().default(0),
   offset_y: z.number().default(0),
   preview_url: z.string().optional(),
-  motion_preset: z.enum(["breathe", "sway", "jump", "shake", "wave", "point", "none"]).optional(),
+  motion_preset: z.enum(["breathe", "sway", "jump", "shake", "wave", "point", "pulse", "float", "none"]).optional(),
+  motion_speed: z.number().default(1.0).optional(),
+  motion_intensity: z.enum(["subtle", "normal", "dynamic"]).default("normal").optional(),
 });
 
 export type MascotSpriteAction = z.infer<typeof MascotSpriteActionSchema>;
@@ -84,10 +86,6 @@ export const ChannelMascotConfigSchema = z.object({
   show_in_intro: z.boolean().default(false),
   show_in_outro: z.boolean().default(false),
   show_in_question: z.boolean().default(true),
-  sfx_enabled: z.boolean().optional(),
-  sfx_volume: z.number().optional(),
-  sfx_celebrate_style: z.enum(["cheer_fanfare", "cute_chime", "arcade_whistle", "none"]).optional(),
-  sfx_oops_style: z.enum(["whistle_fall", "cute_boing", "soft_sigh", "none"]).optional(),
 });
 
 export type ChannelMascotConfig = z.infer<typeof ChannelMascotConfigSchema>;

@@ -73,7 +73,7 @@ export function registerSystemRoutes(deps: SystemRouteDeps): FastifyPluginCallba
       antigravity: { ...state.config.antigravity, api_key: "" },
       image_generation: {
         ...state.config.image_generation,
-        api_key: state.config.image_generation.api_key,
+        api_key: "",
         has_api_key: Boolean(state.config.image_generation.api_key),
       },
     }));

@@ -227,7 +227,10 @@ function parseQuizQuestionsFromOutput(rawOutput: string, fallbackMap: Map<string
     }
   }
 
-  if (!parsedJson) return [];
+  if (!parsedJson) {
+    const preview = cleaned.length > 120 ? `${cleaned.slice(0, 120)}...` : cleaned;
+    throw new Error(`Failed to extract valid JSON questions from LLM response (preview: "${preview}")`);
+  }
 
   const rawItems: unknown[] = Array.isArray(parsedJson)
     ? parsedJson
@@ -238,12 +241,20 @@ function parseQuizQuestionsFromOutput(rawOutput: string, fallbackMap: Map<string
       ? ((parsedJson as Record<string, unknown>).questions as unknown[])
       : [parsedJson];
 
+  if (rawItems.length === 0) {
+    throw new Error("LLM response contained an empty question list");
+  }
+
   const results: QuizQuestion[] = [];
   for (const item of rawItems) {
     const rawId = typeof (item as Record<string, unknown>)?.id === "string" ? ((item as Record<string, unknown>).id as string) : undefined;
     const fallback = rawId ? fallbackMap.get(rawId) : fallbackMap.values().next().value;
     const normalized = normalizeRawQuizQuestion(item, fallback);
     if (normalized) results.push(normalized);
+  }
+
+  if (results.length === 0) {
+    throw new Error(`Could not parse any valid QuizQuestion from items (${rawItems.length} items evaluated)`);
   }
 
   return results;

@@ -98,7 +98,11 @@ export function MascotActionsStep({
             <h4 title={meta.label}>{meta.label.split(" ")[0]}</h4>
           </div>
           <span className={`artistic-motion-pill ${hasSprite ? "is-active" : ""}`}>
-            {isActivelyGenerating ? t("mascots.currentRenderingBadge") : isQueued ? t("mascots.queuedBadge") : meta.label.split(" ")[0]}
+            {isActivelyGenerating
+              ? t("mascots.currentRenderingBadge")
+              : isQueued
+                ? t("mascots.queuedBadge")
+                : sprite?.motion_preset || meta.label.split(" ")[0]}
           </span>
         </div>
 
@@ -138,7 +142,18 @@ export function MascotActionsStep({
           {/* Regular Image or Empty Dropzone */}
           {sprite?.sprite_url ? (
             <>
-              <img src={sprite.sprite_url} alt={action} className={`artistic-mascot-img mascot-anim-${action}`} />
+              <img
+                src={sprite.sprite_url}
+                alt={action}
+                className={`artistic-mascot-img motion-${sprite.motion_preset || "breathe"}`}
+                style={
+                  {
+                    "--anim-speed": sprite.motion_speed || 1.0,
+                    "--anim-intensity":
+                      sprite.motion_intensity === "subtle" ? 0.35 : sprite.motion_intensity === "dynamic" ? 2.2 : 1.0,
+                  } as React.CSSProperties
+                }
+              />
               <div className="artistic-hover-actions">
                 <button
                   type="button"
@@ -401,7 +416,7 @@ export function MascotActionsStep({
             <span>{t("mascots.backIdentityBtn")}</span>
           </button>
           <button type="button" className="primary-button" onClick={onNextStep}>
-            <span>{t("mascots.nextStageDeployBtn")}</span>
+            <span>{t("mascots.nextAnimationBtn")}</span>
             <ArrowRight size={15} />
           </button>
         </div>

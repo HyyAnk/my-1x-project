@@ -243,7 +243,7 @@ export function textLayout(value: string, role: "question" | "choice"): TextLayo
   const tier = textTier(value, role);
   const options =
     role === "question"
-      ? { short: [58, 1.18, 2], medium: [52, 1.2, 2], long: [46, 1.22, 3], very_long: [40, 1.24, 3], overflow: [36, 1.25, 4] }
+      ? { short: [56, 1.18, 2], medium: [48, 1.2, 2], long: [42, 1.22, 2], very_long: [36, 1.24, 2], overflow: [32, 1.25, 2] }
       : { short: [34, 1.1, 2], medium: [30, 1.12, 2], long: [26, 1.15, 3], very_long: [24, 1.16, 3], overflow: [24, 1.16, 3] };
   const [fontSize, lineHeight, maxLines] = options[tier];
   return { tier, fontSize, lineHeight, maxLines, fits: tier !== "overflow" };

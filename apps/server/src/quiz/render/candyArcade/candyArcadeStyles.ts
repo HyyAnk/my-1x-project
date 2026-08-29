@@ -62,7 +62,7 @@ export function candyArcadeCss(): string {
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #16285c; }
 #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
 .clip { position: absolute; inset: 0; }
-.candy-scene { --depth-edge: rgba(13,35,71,.16); --depth-shadow: rgba(13,35,71,.22); isolation: isolate; overflow: hidden; padding: 48px 80px 16px; background: var(--bg-primary); color: var(--ink); }
+.candy-scene { --depth-edge: rgba(13,35,71,.16); --depth-shadow: rgba(13,35,71,.22); isolation: isolate; overflow: hidden; padding: 33px 80px 16px; background: var(--bg-primary); color: var(--ink); }
 .bg-gradient { position: absolute; z-index: 0; inset: 0; background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary)); }
 .bg-gradient::after { position: absolute; z-index: 0; top: 3%; left: 9%; width: 460px; height: 250px; border-radius: 50%; background: rgba(255,255,255,.16); content: ""; transform: rotate(-15deg); }
 .bg-rays { position: absolute; z-index: 1; inset: -30%; opacity: .065; background: repeating-conic-gradient(from 8deg, rgba(255,255,255,.9) 0 7deg, transparent 7deg 18deg); animation: ray-spin 150s linear var(--clip-start) infinite both; }
@@ -87,9 +87,9 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .wood-sign-star.star-tl { top: -10px; left: -10px; color: #FFD43F; font-size: 26px; text-shadow: 0 0 12px rgba(255,212,63,.85); transform: rotate(-15deg); }
 .wood-sign-star.star-br { bottom: -10px; right: -10px; color: #FFB703; font-size: 28px; text-shadow: 0 3px 0 #331505; transform: rotate(15deg); }
 .game-stage { position: relative; z-index: 3; display: grid; justify-items: center; align-content: start; width: 1580px; min-height: 945px; margin: 12px 40px 0 auto; }
-.question-title { position: relative; z-index: 3; max-width: 1440px; width: 100%; justify-self: end; margin-left: auto; text-align: center; }
-.question-card-inner { position: relative; display: block; padding: 26px 64px 28px; border: 7px solid #FFC938; border-radius: 42px; background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF7 28%, #FFF8EA 100%); box-shadow: inset 0 4px 0 rgba(255,255,255,0.95), inset 0 8px 0 rgba(56,189,248,0.25), inset 0 -5px 0 rgba(245,166,35,0.22), 0 16px 0 var(--depth-shadow), 0 26px 42px rgba(10,25,60,0.16); }
-.question-title h1 { margin: 0; color: #342245; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: var(--question-size); font-weight: 800; line-height: var(--question-leading); letter-spacing: -0.5px; text-wrap: balance; text-shadow: 0 2px 0 rgba(255,255,255,0.8), 0 3px 0 rgba(16,35,75,0.08); }
+.question-title { position: relative; z-index: 3; max-width: 1440px; width: 100%; height: 168px; min-height: 168px; justify-self: end; margin-left: auto; text-align: center; display: flex; align-items: center; justify-content: center; }
+.question-card-inner { position: relative; width: 100%; height: 100%; min-height: 168px; display: flex; align-items: center; justify-content: center; padding: 18px 64px; box-sizing: border-box; border: 7px solid #FFC938; border-radius: 42px; background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF7 28%, #FFF8EA 100%); box-shadow: inset 0 4px 0 rgba(255,255,255,0.95), inset 0 8px 0 rgba(56,189,248,0.25), inset 0 -5px 0 rgba(245,166,35,0.22), 0 16px 0 var(--depth-shadow), 0 26px 42px rgba(10,25,60,0.16); }
+.question-title h1 { margin: 0; color: #342245; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: var(--question-size); font-weight: 800; line-height: var(--question-leading); letter-spacing: -0.5px; text-wrap: balance; text-shadow: 0 2px 0 rgba(255,255,255,0.8), 0 3px 0 rgba(16,35,75,0.08); width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .keyword-highlight { color: #047857; text-shadow: 0 1px 0 rgba(255,255,255,0.8); }
 .q-badge-star { position: absolute; top: -26px; left: -18px; z-index: 5; display: grid; place-items: center; width: 68px; height: 68px; border: 4.5px solid #fff; border-radius: 22px; background: linear-gradient(145deg, #FFDD44 0%, #FFA826 100%); color: #fff; box-shadow: 0 8px 0 rgba(13,35,71,0.22), 0 12px 20px rgba(13,35,71,0.18); transform: rotate(-10deg); animation: star-wobble 3.6s ease-in-out infinite alternate; }
 .star-shape { font-size: 42px; line-height: 1; text-shadow: 0 2px 0 rgba(180,100,0,0.4); }
@@ -121,9 +121,8 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .layout-visual_choices_three .question-title { grid-area: title; width: 100%; max-width: 1440px; justify-self: end; margin-left: auto; }
 .layout-visual_choices_three .visual-answer-grid { grid-area: answers; width: 1560px; margin-top: 0; gap: 28px; }
 .phase-region { position: absolute; z-index: 5; left: 50%; bottom: 10px; width: 100%; height: 110px; transform: translateX(-50%); }
-.phase-region > .thinking-bar, .phase-region > .fact-card { position: absolute; z-index: 5; bottom: 0; left: 50%; margin-top: 0; transform: translateX(-50%); }
-.phase-region > .thinking-bar { width: min(82vw, 1540px); min-height: 84px; }
-.phase-region > .fact-card { width: min(1220px, 100%); }
+.phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: 0; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(82vw, 1540px); min-height: 84px; }
+.phase-region > .fact-card { position: absolute; z-index: 5; bottom: -45px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(1220px, 100%); }
 .answer-card:nth-child(1), .visual-answer-card:nth-child(1) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #9A3412; --choice-depth-shadow: #E09000; --choice-badge-grad: linear-gradient(180deg, #FFB800 0%, #FF6D00 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #FFDF40 0%, #FFB800 100%); --choice-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M0 16 Q 16 6 32 16 T 64 16' fill='none' stroke='%23FFFFFF' stroke-opacity='0.12' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); --choice-text-color: #78350F; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
 .answer-card:nth-child(2), .visual-answer-card:nth-child(2) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #881337; --choice-depth-shadow: #CC2556; --choice-badge-grad: linear-gradient(180deg, #FF4572 0%, #D80036 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #FF80A6 0%, #FF4D7E 100%); --choice-pattern: repeating-linear-gradient(-45deg, transparent, transparent 16px, rgba(255,255,255,0.09) 16px, rgba(255,255,255,0.09) 32px); --choice-text-color: #831843; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
 .answer-card:nth-child(3), .visual-answer-card:nth-child(3) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #034E7B; --choice-depth-shadow: #007ECC; --choice-badge-grad: linear-gradient(180deg, #2E93FF 0%, #0062E6 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #66D1FF 0%, #29B2FF 100%); --choice-pattern: radial-gradient(circle, rgba(255,255,255,0.12) 28%, transparent 29%); --choice-text-color: #0C4A6E; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
@@ -284,9 +283,18 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 @keyframes splash-particle { 0% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 0; transform: translate(0,0) scale(.4); } }
 @keyframes splash-release { 0%, 55% { opacity: 0; transform: scale(1.08); } 72% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(.98); } }
 @keyframes phase-exit { to { opacity: 0; } }
-.candy-mascot-container { position: absolute; z-index: 7; pointer-events: none; transform-origin: bottom center; transform: scale(var(--mascot-scale, 1)); }
+.candy-mascot-container { position: absolute; width: 220px; height: 220px; z-index: 7; pointer-events: none; transform-origin: bottom center; transform: scale(var(--mascot-scale, 1)); }
 .candy-mascot-container.anchor-bottom_left { bottom: 18px; left: 32px; }
 .candy-mascot-container.anchor-bottom_right { bottom: 18px; right: 32px; }
+.has-mascot-left { --question-card-left-edge: 360px; }
+.has-mascot-right { --question-card-left-edge: 60px; }
+.has-mascot .game-header { left: calc(var(--question-card-left-edge) / 2); transform: translateX(-50%); }
+.has-mascot .game-stage { width: 1420px; }
+.has-mascot-left .game-stage { margin-right: 40px; }
+.has-mascot-right .game-stage { margin-right: 340px; }
+.has-mascot .question-title { width: 1440px; max-width: 1440px; }
+.has-mascot.layout-visual_choices_three .visual-answer-grid { width: 100%; gap: 24px; }
+.has-mascot.layout-media_left_choices_right .game-stage { column-gap: 34px; }
 .has-mascot-left .phase-region > .thinking-bar, .has-mascot-left .phase-region > .fact-card { width: min(70vw, 1300px); left: calc(50% + 110px); }
 .has-mascot-right .phase-region > .thinking-bar, .has-mascot-right .phase-region > .fact-card { width: min(70vw, 1300px); left: calc(50% - 110px); }
 .has-mascot-left.layout-media_left_choices_right .candy-mascot-container.anchor-bottom_left { bottom: 14px; left: 24px; }
@@ -304,12 +312,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .state-oops[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-oops[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-shake 2.0s ease-in-out infinite; }
 .state-point[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-point[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-pulse 1.8s ease-in-out infinite alternate; }
 .state-wave[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-wave[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-wave 2.0s ease-in-out infinite alternate; }
-.sandbox-mascot-fallback .state-thinking .fallback-mascot-badge { animation: mascot-single-sway 2.4s ease-in-out infinite alternate; }
-.sandbox-mascot-fallback .state-celebrate .fallback-mascot-badge { animation: mascot-single-jump 0.85s cubic-bezier(.18,1.42,.34,1) infinite alternate; }
-.sandbox-mascot-fallback .state-oops .fallback-mascot-badge { animation: mascot-single-shake 2.0s ease-in-out infinite; }
-.sandbox-mascot-fallback .state-point .fallback-mascot-badge { animation: mascot-single-pulse 1.8s ease-in-out infinite alternate; }
-.sandbox-mascot-fallback .state-idle .fallback-mascot-badge { animation: mascot-single-breathe 3.2s ease-in-out infinite alternate; }
-.sandbox-mascot-fallback .state-wave .fallback-mascot-badge { animation: mascot-single-wave 2.0s ease-in-out infinite alternate; }
+.state-float[style*="--mascot-frames:1;"] .candy-mascot-sprite, .state-float[style*="--mascot-frames: 1;"] .candy-mascot-sprite { animation: mascot-single-float 2.8s ease-in-out infinite alternate; }
 .mascot-intro .candy-mascot-sprite, .mascot-outro .candy-mascot-sprite { animation: mascot-sprite-play calc(var(--mascot-frames, 1) / var(--mascot-fps, 8) * 1s) steps(calc(var(--mascot-frames, 1) - 1)) infinite; }
 .quiz-question-clip .mascot-state-layer.state-thinking { opacity: 1; animation: phase-exit .001s linear var(--reveal-at) forwards; }
 .quiz-question-clip .mascot-state-layer.state-celebrate { opacity: 0; animation: phase-enter .001s linear var(--reveal-at) forwards; }
@@ -320,6 +323,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 @keyframes mascot-single-shake { 0%, 100% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(0deg); } 25% { transform: translate(calc(var(--action-offset-x, 0px) - 5px), var(--action-offset-y, 0px)) rotate(-4deg); } 75% { transform: translate(calc(var(--action-offset-x, 0px) + 5px), var(--action-offset-y, 0px)) rotate(4deg); } }
 @keyframes mascot-single-pulse { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) scale(1); } 100% { transform: translate(calc(var(--action-offset-x, 0px) + 6px), calc(var(--action-offset-y, 0px) - 4px)) scale(1.03); } }
 @keyframes mascot-single-wave { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) rotate(-3deg); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 10px)) rotate(4deg) scale(1.03); } }
+@keyframes mascot-single-float { 0% { transform: translate(var(--action-offset-x, 0px), var(--action-offset-y, 0px)) translateY(0) rotate(0deg); } 50% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 14px)) rotate(1.5deg); } 100% { transform: translate(var(--action-offset-x, 0px), calc(var(--action-offset-y, 0px) - 6px)) rotate(-1.5deg); } }
 ${getThinkingBarsCss()}
 ${getQuestionBoxesCss()}
 ${getCounterBadgesCss()}
