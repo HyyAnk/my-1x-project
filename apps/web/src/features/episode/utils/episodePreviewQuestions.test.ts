@@ -79,4 +79,51 @@ describe("episode preview questions", () => {
       expect.objectContaining({ layoutId: "media_left_choices_right", layoutSource: "inferred" }),
     );
   });
+
+  it("builds a topic template preview question matching the episode format when quiz is not generated", () => {
+    const episodeOddOneOut = {
+      episode_id: "ep-odd-1",
+      topic: { title: "Find the odd animal", premise: "Identify the unique species", hook: "Can you spot it?" },
+      quiz_config: {
+        quiz_format: "odd_one_out" as const,
+        question_count: 8,
+      },
+    } as any;
+
+    const questions = buildEpisodePreviewQuestions(null, null, episodeOddOneOut);
+    expect(questions).toHaveLength(1);
+    expect(questions[0]).toEqual(
+      expect.objectContaining({
+        layoutId: "visual_choices_three",
+        layoutSource: "topic_template",
+        choices: ["Option A", "Option B", "Option C"],
+      }),
+    );
+  });
+
+  it("builds a 2-choice topic template preview question for true_false format", () => {
+    const episodeTrueFalse = {
+      episode_id: "ep-tf-1",
+      topic: { title: "Is Pluto a planet?", premise: "Solar system facts", hook: "True or False?" },
+      quiz_config: {
+        quiz_format: "true_false" as const,
+        question_count: 5,
+      },
+    } as any;
+
+    const questions = buildEpisodePreviewQuestions(null, null, episodeTrueFalse);
+    expect(questions).toHaveLength(1);
+    expect(questions[0]).toEqual(
+      expect.objectContaining({
+        layoutId: "media_left_choices_right",
+        layoutSource: "topic_template",
+        choices: ["True", "False"],
+        correctChoiceIndex: 0,
+      }),
+    );
+  });
+
+  it("returns an empty array when both quiz and episode are null", () => {
+    expect(buildEpisodePreviewQuestions(null, null, null)).toEqual([]);
+  });
 });

@@ -9,5 +9,5 @@ export type EpisodePreviewQuestion = {
   factText: string;
   totalQuestions: number;
   layoutId: ResolvedQuizLayoutId;
-  layoutSource: "director" | "inferred";
+  layoutSource: "director" | "inferred" | "topic_template";
 };

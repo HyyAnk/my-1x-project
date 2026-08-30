@@ -25,7 +25,7 @@ type EpisodeStylePreviewProps = {
 export function EpisodeStylePreview({ channel, episode, quiz, directorPlan, candidate, channelBrandName }: EpisodeStylePreviewProps) {
   const { t } = useTranslation();
   const { ref, width } = useElementWidth<HTMLDivElement>();
-  const questions = useMemo(() => buildEpisodePreviewQuestions(quiz, directorPlan), [directorPlan, quiz]);
+  const questions = useMemo(() => buildEpisodePreviewQuestions(quiz, directorPlan, episode), [directorPlan, episode, quiz]);
   const questionSelection = useEpisodePreviewQuestion(questions);
   const { previewHtml, pendingPreviewHtml, loading, previewError, iframeKey, commitPendingPreview, retryPreview } = useEpisodeStylePreview({
     channel,
@@ -105,6 +105,9 @@ function getSavedPreviewCaption(
 ): string {
   if (!question) return t("episodeCustomization.previewSavedLabel");
   const layout = getQuizLayoutUiDefinition(question.layoutId);
+  if (question.layoutSource === "topic_template") {
+    return t("episodeCustomization.previewTopicTemplateLabel", { layout: t(layout.labelKey) });
+  }
   const key =
     question.layoutSource === "inferred"
       ? "episodeCustomization.previewInferredQuestionLabel"

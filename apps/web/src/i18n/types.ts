@@ -1140,6 +1140,8 @@ export interface TranslationSchema {
     previewQuestionOption: string;
     previewQuestionLabelValue: string;
     previewInferredQuestionLabel: string;
+    previewTopicTemplateOption: string;
+    previewTopicTemplateLabel: string;
     channelNameLabel: string;
     channelNamePlaceholder: string;
     channelNameSaving: string;

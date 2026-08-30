@@ -1142,6 +1142,8 @@ export const en: TranslationSchema = {
     previewQuestionOption: "Q{number} · {layout}",
     previewQuestionLabelValue: "Q{number} · {layout}",
     previewInferredQuestionLabel: "Q{number} · {layout} · inferred",
+    previewTopicTemplateOption: "Template · {layout}",
+    previewTopicTemplateLabel: "Topic template · {layout}",
     channelNameLabel: "Channel name",
     channelNamePlaceholder: "Enter channel name",
     channelNameSaving: "Saving…",

@@ -1142,6 +1142,8 @@ export const vi: TranslationSchema = {
     previewQuestionOption: "Câu {number} · {layout}",
     previewQuestionLabelValue: "Câu {number} · {layout}",
     previewInferredQuestionLabel: "Câu {number} · {layout} · tạm tính",
+    previewTopicTemplateOption: "Mẫu layout · {layout}",
+    previewTopicTemplateLabel: "Mẫu layout theo chủ đề · {layout}",
     channelNameLabel: "Tên kênh",
     channelNamePlaceholder: "Nhập tên kênh",
     channelNameSaving: "Đang lưu…",
