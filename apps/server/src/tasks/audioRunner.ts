@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { nowIso, type Task } from "@studio/shared";
+import { BUILTIN_DEFAULT_VOICE_PROFILE, nowIso, type Task } from "@studio/shared";
 import { RepositoryError } from "../repository.js";
 import { synthesizeWav } from "../providers/chatterbox.js";
 import { countWords, extractNarration, extractNarrationChunks, extractNarrationSections } from "../production.js";
@@ -36,7 +36,12 @@ export async function runAudioTask(this: TaskManagerRuntime, task: Task): Promis
     const scene = scenes.find((item) => item.scene_number === sceneNumber);
     if (!scene) throw new RepositoryError("Audio target scene not found", "SCENE_NOT_FOUND");
     const channel = await this.repository.getChannel(task.channel_id);
-    const voice = channel.voice_reference_path ? this.repository.resolveContextPath(channel.voice_reference_path) : "default";
+    const defaultBuiltinPath = this.repository.resolveContextPath(BUILTIN_DEFAULT_VOICE_PROFILE.reference_path);
+    const voice = channel.voice_reference_path
+      ? this.repository.resolveContextPath(channel.voice_reference_path)
+      : (await this.repository.exists(defaultBuiltinPath))
+        ? defaultBuiltinPath
+        : "default";
     await this.update(task.task_id, { progress_message: "Synthesizing dialogue", progress_percent: 25 });
     const provider = this.audioProviderFactory({ channelId: task.channel_id, episodeId: task.episode_id, sceneNumber }, this.audioConfig);
     const result = await provider.generateDialogue(scene.dialogue, voice);
@@ -69,7 +74,12 @@ export async function runNarrationTask(this: TaskManagerRuntime, task: Task): Pr
   if (sections.length === 0) throw new RepositoryError("A completed script is required before narration", "SCRIPT_REQUIRED");
   const channel = await this.repository.getChannel(channelId);
   const episode = await this.repository.getEpisode(channelId, episodeId);
-  const voice = channel.voice_reference_path ? this.repository.resolveContextPath(channel.voice_reference_path) : "default";
+  const defaultBuiltinPath = this.repository.resolveContextPath(BUILTIN_DEFAULT_VOICE_PROFILE.reference_path);
+  const voice = channel.voice_reference_path
+    ? this.repository.resolveContextPath(channel.voice_reference_path)
+    : (await this.repository.exists(defaultBuiltinPath))
+      ? defaultBuiltinPath
+      : "default";
   const checkpointPath = this.repository.resolvePath("runtime", "narration-checkpoints", episodeId, "segments.json");
   const checkpoint = await readNarrationCheckpoint(checkpointPath);
   const nextCheckpoint: NarrationCheckpoint = { schema_version: 1, script_modified_at: script.modified_at, segments: {} };

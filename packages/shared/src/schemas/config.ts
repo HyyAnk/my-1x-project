@@ -138,6 +138,7 @@ export const VoiceProfileSchema = z.object({
   reference_path: z.string().min(1),
   sample_path: z.string().min(1),
   created_at: IsoDate,
+  is_builtin: z.boolean().optional().default(false),
 });
 
 export type VoiceProfile = z.infer<typeof VoiceProfileSchema>;

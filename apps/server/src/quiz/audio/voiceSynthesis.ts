@@ -4,6 +4,7 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import {
+  BUILTIN_DEFAULT_VOICE_PROFILE,
   VoicePlanSchema,
   DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE,
   type AppConfig,
@@ -58,7 +59,12 @@ export async function synthesizeQuizVoiceSegments(input: {
   onPacingClamp?: (details: QuizVoicePacingClamp) => Promise<void> | void;
 }): Promise<MeasuredQuizVoice> {
   const channel = await input.repository.getChannel(input.channelId);
-  const voice = channel.voice_reference_path ? input.repository.resolveContextPath(channel.voice_reference_path) : "default";
+  const defaultBuiltinPath = input.repository.resolveContextPath(BUILTIN_DEFAULT_VOICE_PROFILE.reference_path);
+  const voice = channel.voice_reference_path
+    ? input.repository.resolveContextPath(channel.voice_reference_path)
+    : (await input.repository.exists(defaultBuiltinPath))
+      ? defaultBuiltinPath
+      : "default";
   const cache = new Map<string, { duration: number; absolutePath: string }>();
   const segmentPaths = new Map<string, string>();
   const pacingDirectory = input.repository.resolvePath("runtime", "quiz-voice", input.episodeId);

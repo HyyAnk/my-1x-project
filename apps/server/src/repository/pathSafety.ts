@@ -9,6 +9,7 @@ export function createRoots(rootDirectory: string, storageRoot: string): Reposit
     channels: path.join(resolvedStorageRoot, "channels"),
     templates: path.join(rootDirectory, "templates"),
     shared: path.join(rootDirectory, "shared"),
+    assets: path.join(rootDirectory, "assets"),
     runtime: path.join(resolvedStorageRoot, ".documentary-studio"),
     voices: path.join(resolvedStorageRoot, ".documentary-studio", "voices"),
     mascots: path.join(resolvedStorageRoot, ".documentary-studio", "mascots"),
@@ -27,6 +28,7 @@ export function resolveContextPath(roots: RepositoryRoots, relativePath: string)
     channels: roots.channels,
     templates: roots.templates,
     shared: roots.shared,
+    assets: roots.assets,
     ".documentary-studio": roots.runtime,
   };
   const base = contextRoots[root ?? ""];

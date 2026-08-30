@@ -84,9 +84,10 @@ describe("RepositoryService", () => {
     expect(assigned.voice_reference_path).toBe(profile.reference_path);
     await expect(repository.deleteVoiceProfile(profile.voice_id)).rejects.toThrow("Voice is in use by 1 channel(s)");
     const reset = await repository.assignVoice(channel.channel_id, null);
-    expect(reset.voice_reference_path).toBeNull();
     await repository.deleteVoiceProfile(profile.voice_id);
-    expect(await repository.listVoices()).toHaveLength(0);
+    expect((await repository.listVoices()).some((voice) => voice.voice_id === profile.voice_id)).toBe(false);
+    expect(await repository.listVoices()).toHaveLength(1);
+    expect((await repository.listVoices())[0].is_builtin).toBe(true);
   });
 
   it("rejects unsafe path segments and only creates an episode after confirmation", async () => {

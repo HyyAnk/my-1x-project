@@ -32,6 +32,7 @@ export function VoiceSettingsTab({ channels, appConfig, onAudioSaved, onChannelU
     setSelectedChannelId,
     selectedChannel,
     selectedVoice,
+    effectiveVoice,
     voices,
     voiceName,
     setVoiceName,
@@ -207,20 +208,22 @@ export function VoiceSettingsTab({ channels, appConfig, onAudioSaved, onChannelU
                     disabled={voiceBusy}
                     onChange={(event) => void assignVoice(event.target.value || null)}
                   >
-                    <option value="">Default (built-in)</option>
-                    {voices.map((voice) => (
-                      <option key={voice.voice_id} value={voice.voice_id}>
-                        {voice.name}
-                      </option>
-                    ))}
+                    <option value="">Default (Voice English girl)</option>
+                    {voices
+                      .filter((voice) => !voice.is_builtin && voice.voice_id !== "voice_builtin_english_girl")
+                      .map((voice) => (
+                        <option key={voice.voice_id} value={voice.voice_id}>
+                          {voice.name}
+                        </option>
+                      ))}
                   </select>
                 </label>
-                {selectedVoice ? (
+                {effectiveVoice ? (
                   <audio
                     controls
                     preload="none"
                     aria-label={`Current voice preview for ${selectedChannel.display_name}`}
-                    src={api.voiceSampleUrl(selectedVoice.voice_id)}
+                    src={api.voiceSampleUrl(effectiveVoice.voice_id)}
                   />
                 ) : (
                   <span className="storage-hint">Built-in default voice</span>
@@ -241,7 +244,7 @@ export function VoiceSettingsTab({ channels, appConfig, onAudioSaved, onChannelU
           <div className="panel-heading">
             <div>
               <p className="eyebrow">Voice Library ({voices.length})</p>
-              <h2>Custom Reference Voices</h2>
+              <h2>Reference Voices</h2>
             </div>
             <SpeakerHigh size={22} />
           </div>
@@ -264,24 +267,32 @@ export function VoiceSettingsTab({ channels, appConfig, onAudioSaved, onChannelU
           </form>
           <div className="voice-list">
             {voices.length === 0 ? (
-              <p className="storage-hint">No custom reference voices added yet.</p>
+              <p className="storage-hint">No voices in library.</p>
             ) : (
               voices.map((voice) => (
                 <article className="voice-card" key={voice.voice_id}>
                   <div>
                     <strong>{voice.name}</strong>
-                    <span>{new Date(voice.created_at).toLocaleDateString()}</span>
+                    {voice.is_builtin || voice.voice_id === "voice_builtin_english_girl" ? (
+                      <span className="badge" style={{ marginLeft: "6px", fontSize: "0.75rem", opacity: 0.8 }}>
+                        (Built-in Default)
+                      </span>
+                    ) : (
+                      <span>{new Date(voice.created_at).toLocaleDateString()}</span>
+                    )}
                   </div>
                   <audio controls preload="none" aria-label={`Preview ${voice.name}`} src={api.voiceSampleUrl(voice.voice_id)} />
-                  <button
-                    className="icon-button danger"
-                    title={`Delete ${voice.name}`}
-                    aria-label={`Delete ${voice.name}`}
-                    disabled={voiceBusy}
-                    onClick={() => void deleteVoice(voice)}
-                  >
-                    <Trash size={15} />
-                  </button>
+                  {voice.is_builtin || voice.voice_id === "voice_builtin_english_girl" ? null : (
+                    <button
+                      className="icon-button danger"
+                      title={`Delete ${voice.name}`}
+                      aria-label={`Delete ${voice.name}`}
+                      disabled={voiceBusy}
+                      onClick={() => void deleteVoice(voice)}
+                    >
+                      <Trash size={15} />
+                    </button>
+                  )}
                 </article>
               ))
             )}

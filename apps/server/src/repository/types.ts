@@ -25,7 +25,9 @@ export type RepositoryRoots = {
   channels: string;
   templates: string;
   shared: string;
+  assets: string;
   runtime: string;
   voices: string;
   mascots: string;
 };
+

@@ -117,12 +117,23 @@ def prepare_text(text: str) -> str:
     return re.sub(r"\s{2,}", " ", re.sub(r"\[(?:chuckle|laugh)\]", "", text, flags=re.IGNORECASE)).strip()
 
 
+def resolve_voice_reference(reference_path: Optional[str]) -> Optional[str]:
+    if reference_path and reference_path not in ("", "default") and os.path.isfile(reference_path):
+        return reference_path
+    candidates = [
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "assets", "audio", "voices", "english_girl", "reference.wav")),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "assets", "audio", "voices", "english_girl.wav")),
+    ]
+    for candidate in candidates:
+        if os.path.isfile(candidate):
+            return candidate
+    return None
+
+
 def synthesize(request: SynthesizeRequest) -> bytes:
     if MODEL is None:
         raise RuntimeError("Chatterbox model is not loaded")
-    reference = request.voice_reference_path
-    if reference in (None, "", "default"):
-        reference = None
+    reference = resolve_voice_reference(request.voice_reference_path)
     with SYNTHESIS_LOCK:
         try:
             with torch.inference_mode():

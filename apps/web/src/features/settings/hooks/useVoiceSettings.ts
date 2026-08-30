@@ -35,7 +35,9 @@ export function useVoiceSettings({ channels, appConfig, onAudioSaved, onChannelU
   const [voiceBusy, setVoiceBusy] = useState(false);
 
   const selectedChannel = channels.find((channel) => channel.channel_id === selectedChannelId) ?? null;
+  const builtinVoice = voices.find((voice) => voice.is_builtin || voice.voice_id === "voice_builtin_english_girl") ?? null;
   const selectedVoice = voices.find((voice) => voice.reference_path === selectedChannel?.voice_reference_path) ?? null;
+  const effectiveVoice = selectedVoice ?? builtinVoice;
 
   useEffect(() => {
     if (!selectedChannelId && channels[0]) setSelectedChannelId(channels[0].channel_id);
@@ -89,7 +91,7 @@ export function useVoiceSettings({ channels, appConfig, onAudioSaved, onChannelU
       onChannelUpdated(updated);
       onNotice({
         tone: "good",
-        message: voiceId ? "Voice assigned to channel" : "Channel reset to built-in voice",
+        message: voiceId ? "Voice assigned to channel" : "Channel reset to built-in default voice",
       });
     } catch (error) {
       onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not assign voice" });
@@ -141,6 +143,10 @@ export function useVoiceSettings({ channels, appConfig, onAudioSaved, onChannelU
   };
 
   const deleteVoice = async (voice: VoiceProfile) => {
+    if (voice.is_builtin || voice.voice_id === "voice_builtin_english_girl") {
+      onNotice({ tone: "bad", message: "Cannot delete built-in system voice" });
+      return;
+    }
     if (!window.confirm(`Delete voice "${voice.name}" from the library?`)) return;
     setVoiceBusy(true);
     try {
@@ -171,6 +177,8 @@ export function useVoiceSettings({ channels, appConfig, onAudioSaved, onChannelU
     setSelectedChannelId,
     selectedChannel,
     selectedVoice,
+    effectiveVoice,
+    builtinVoice,
     voices,
     voiceName,
     setVoiceName,

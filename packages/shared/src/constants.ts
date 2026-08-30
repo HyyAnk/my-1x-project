@@ -76,3 +76,23 @@ export const STARTER_MASCOT_BLUEPRINTS: StarterMascotBlueprint[] = [
       "Clever adventurous chibi fox cub with oversized bushy tail, warm orange coat with cream chest, curious sparkling eyes, wearing tiny aviator goggles on forehead, playful dynamic pose",
   },
 ];
+
+/**
+ * Built-in default voice constants.
+ * Embedded in the repository under assets/audio/voices/english_girl.
+ */
+export const BUILTIN_DEFAULT_VOICE_ID = "voice_builtin_english_girl";
+export const BUILTIN_DEFAULT_VOICE_NAME = "Voice English girl";
+export const BUILTIN_DEFAULT_VOICE_REFERENCE_PATH = "assets/audio/voices/english_girl/reference.wav";
+export const BUILTIN_DEFAULT_VOICE_SAMPLE_PATH = "assets/audio/voices/english_girl/sample.wav";
+export const BUILTIN_DEFAULT_VOICE_CREATED_AT = "2026-08-27T06:06:04.466Z";
+
+export const BUILTIN_DEFAULT_VOICE_PROFILE = {
+  voice_id: BUILTIN_DEFAULT_VOICE_ID,
+  name: BUILTIN_DEFAULT_VOICE_NAME,
+  reference_path: BUILTIN_DEFAULT_VOICE_REFERENCE_PATH,
+  sample_path: BUILTIN_DEFAULT_VOICE_SAMPLE_PATH,
+  created_at: BUILTIN_DEFAULT_VOICE_CREATED_AT,
+  is_builtin: true,
+} as const;
+

@@ -29,6 +29,46 @@ function createWavBuffer(dataByteLength = 100): Buffer {
 }
 
 describe("Voice upload and management routes", () => {
+  it("includes built-in English Girl voice by default and protects it from deletion", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "voice-builtin-route-"));
+    roots.push(root);
+    await mkdir(path.join(root, "templates"), { recursive: true });
+    await mkdir(path.join(root, "assets", "audio", "voices", "english_girl"), { recursive: true });
+    await Promise.all([
+      writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8"),
+      writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8"),
+      writeFile(path.join(root, "assets", "audio", "voices", "english_girl", "sample.wav"), createWavBuffer(200)),
+      writeFile(path.join(root, "assets", "audio", "voices", "english_girl", "reference.wav"), createWavBuffer(500)),
+    ]);
+
+    const app = await buildApp(root);
+    try {
+      // 1. List voices has built-in voice
+      const listRes = await app.server.inject({ method: "GET", url: "/api/voices" });
+      expect(listRes.statusCode).toBe(200);
+      const voices = listRes.json().voices;
+      expect(voices.length).toBeGreaterThanOrEqual(1);
+      const builtin = voices.find((v: { voice_id: string }) => v.voice_id === "voice_builtin_english_girl");
+      expect(builtin).toMatchObject({
+        voice_id: "voice_builtin_english_girl",
+        name: "Voice English girl",
+        is_builtin: true,
+      });
+
+      // 2. Stream built-in voice sample
+      const sampleRes = await app.server.inject({ method: "GET", url: "/api/voices/voice_builtin_english_girl/sample" });
+      expect(sampleRes.statusCode).toBe(200);
+      expect(sampleRes.headers["content-type"]).toBe("audio/wav");
+
+      // 3. Attempting to delete built-in voice throws error
+      const deleteRes = await app.server.inject({ method: "DELETE", url: "/api/voices/voice_builtin_english_girl" });
+      expect(deleteRes.statusCode).toBe(400);
+      expect(deleteRes.json().error).toContain("Cannot delete built-in system voice");
+    } finally {
+      await app.close();
+    }
+  }, 20000);
+
   it("allows uploading a voice WAV file and creates a profile even when Chatterbox is offline", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "voice-upload-route-"));
     roots.push(root);
@@ -62,11 +102,11 @@ describe("Voice upload and management routes", () => {
         sample_path: expect.stringContaining("sample.wav"),
       });
 
-      // 2. List voices
+      // 2. List voices (contains built-in default + newly uploaded voice)
       const listRes = await app.server.inject({ method: "GET", url: "/api/voices" });
       expect(listRes.statusCode).toBe(200);
-      expect(listRes.json().voices).toHaveLength(1);
-      expect(listRes.json().voices[0].voice_id).toBe(voice.voice_id);
+      expect(listRes.json().voices.length).toBeGreaterThanOrEqual(2);
+      expect(listRes.json().voices.some((v: { voice_id: string }) => v.voice_id === voice.voice_id)).toBe(true);
 
       // 3. Get voice sample audio
       const sampleRes = await app.server.inject({ method: "GET", url: `/api/voices/${voice.voice_id}/sample` });
