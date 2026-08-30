@@ -19,7 +19,6 @@ export type ActiveRun = {
   sequenceAttempts: number;
 };
 
-export type CodexCleanupConfig = { auto_delete_threads: boolean; failed_thread_retention_days: number };
 export type PipelineRun = { cancelled: boolean; children: Set<string> };
 
 export interface TaskManagerRuntime {
@@ -29,17 +28,15 @@ export interface TaskManagerRuntime {
   activeEngine: "codex" | "antigravity";
   activeImageControllers: Map<string, AbortController>;
   antigravity?: AntigravityClient;
-  antigravityCleanupConfig: CodexCleanupConfig;
   approvalRequests: Map<number, { taskId: string; request: CodexServerRequest }>;
   assemblingEpisodes: Set<string>;
   audioConfig: AppConfig["audio_generation"];
   audioProviderFactory: (target: ChatterboxTarget, config: AppConfig["audio_generation"]) => AudioProvider;
-  cleanupTimer: NodeJS.Timeout | null;
   codex: CodexAppServerClient;
-  codexCleanupConfig: CodexCleanupConfig;
   completionWaiters: Map<string, () => void>;
   contextEngine: ContextEngine;
   failedBuildCleanupPromise: Promise<{ removedEpisodes: number; removedTasks: number }> | null;
+  failedBuildCleanupTimer: NodeJS.Timeout | null;
   imageConfig: AppConfig["image_generation"];
   imageVariants: Map<string, number>;
   logger: StudioLogger;
@@ -51,8 +48,6 @@ export interface TaskManagerRuntime {
   videoConfig: AppConfig["video_generation"];
 
   cancel(taskId: string): Promise<Task>;
-  cleanupAntigravityThreads(force?: boolean): Promise<{ removed: number }>;
-  cleanupCodexThreads(force?: boolean): Promise<{ removed: number }>;
   cleanupExpiredFailedBuilds(nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }>;
   completeWithOutput(active: ActiveRun): Promise<void>;
   createImageProvider(
@@ -78,7 +73,6 @@ export interface TaskManagerRuntime {
   hasReadyArtifact(channelId: string, episodeId: string, filename: string): Promise<boolean>;
   hasReadyScript(channelId: string, episodeId: string): Promise<boolean>;
   hasValidNarrationAsset(channelId: string, episodeId: string, assetPath: string | null): Promise<boolean>;
-  isSessionCleanupEnabled(engine?: "codex" | "antigravity"): boolean;
   isShotPlanFresh(channelId: string, episodeId: string): Promise<boolean>;
   list(): Task[];
   mergeNarrationSegments(paths: string[], targetDurationSeconds?: number): Promise<Uint8Array>;
@@ -96,7 +90,7 @@ export interface TaskManagerRuntime {
   runQuizV2Pipeline(task: Task): Promise<void>;
   runShopAiKeyImageTask(task: Task): Promise<void>;
   runVideoTask(task: Task): Promise<void>;
-  startCleanupTimer(): void;
+  startFailedBuildCleanupTimer(): void;
   submit(
     taskType: TaskType,
     channelId: string,
@@ -105,7 +99,6 @@ export interface TaskManagerRuntime {
     requestedImageVariant?: number,
     topicHint?: string,
   ): Task;
-  tryDeleteThread(threadId: string, engine?: "codex" | "antigravity"): Promise<boolean>;
   update(taskId: string, patch: Partial<Task>): Promise<void>;
   waitForTaskTerminal(taskId: string, run: PipelineRun): Promise<Task>;
 }

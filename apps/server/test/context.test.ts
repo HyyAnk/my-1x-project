@@ -351,12 +351,7 @@ describe("ContextEngine", () => {
         `## Continuity bundle CB-${String(index + 1).padStart(2, "0")} — Bundle ${index + 1}\n\n- Anchor-frame prompt: Bundle ${index + 1}.`,
     ).join("\n\n");
     await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "research.md", "# Research Dossier\n\nC01 verified");
-    await repository.saveEpisodeFile(
-      channel.channel_id,
-      episode.episode_id,
-      "treatment.md",
-      `# Treatment\n\n${sequenceHeadings}`,
-    );
+    await repository.saveEpisodeFile(channel.channel_id, episode.episode_id, "treatment.md", `# Treatment\n\n${sequenceHeadings}`);
     await repository.saveEpisodeFile(
       channel.channel_id,
       episode.episode_id,

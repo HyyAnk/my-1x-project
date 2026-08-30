@@ -254,13 +254,7 @@ export function ChannelDetail({
   return (
     <>
       <section className="page-wrap detail-page">
-        <ChannelBreadcrumb
-          channelName={channel.display_name}
-          channelId={channel.channel_id}
-          engine={channel.engine}
-          onNavigateHome={onNavigateHome}
-          onNavigateChannels={onBack}
-        />
+        <ChannelBreadcrumb channelName={channel.display_name} onNavigateHome={onNavigateHome} onNavigateChannels={onBack} />
 
         <div className="detail-header">
           <div>

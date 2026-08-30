@@ -39,8 +39,6 @@ export const AppConfigSchema = z.object({
     experimental_api: z.boolean().default(false),
     api_base_url: z.string().default(""),
     api_key: z.string().default(""),
-    auto_delete_threads: z.boolean().default(false),
-    failed_thread_retention_days: z.number().int().nonnegative().default(7),
   }),
   antigravity: z.object({
     max_concurrent_tasks: z.number().int().positive().default(3),
@@ -48,8 +46,6 @@ export const AppConfigSchema = z.object({
     model: z.string().default("gemini-2.5-pro"),
     api_base_url: z.string().default(""),
     api_key: z.string().default(""),
-    auto_delete_threads: z.boolean().default(false),
-    failed_thread_retention_days: z.number().int().nonnegative().default(7),
   }),
   audio_generation: z.object({
     provider: z.string().default("chatterbox"),

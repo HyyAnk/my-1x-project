@@ -42,22 +42,16 @@ import {
   waitForTaskTerminal as waitForTaskTerminalImplementation,
 } from "./pipelineRunner.js";
 import {
-  cleanupAntigravityThreads as cleanupAntigravityThreadsImplementation,
-  cleanupCodexThreads as cleanupCodexThreadsImplementation,
-  isSessionCleanupEnabled as isSessionCleanupEnabledImplementation,
-  startCleanupTimer as startCleanupTimerImplementation,
-  tryDeleteThread as tryDeleteThreadImplementation,
-} from "./threadCleanup.js";
-import {
   cleanupExpiredFailedBuilds as cleanupExpiredFailedBuildsImplementation,
   reconcileQuestionHistory as reconcileQuestionHistoryImplementation,
+  startFailedBuildCleanupTimer as startFailedBuildCleanupTimerImplementation,
 } from "./taskLifecycle.js";
 import { runVideoTask as runVideoTaskImplementation } from "./videoRunner.js";
 import { pumpTaskQueue } from "./taskQueuePump.js";
 import { applyTaskPatch, loadTasksFromDisk, persistTask } from "./taskStateStore.js";
 import { decideTaskApproval } from "./taskApprovalManager.js";
 import { cancelTask, submitTask } from "./taskSubmission.js";
-import type { ActiveRun, CodexCleanupConfig, PipelineRun, TaskManagerRuntime } from "./runtime.js";
+import type { ActiveRun, PipelineRun, TaskManagerRuntime } from "./runtime.js";
 
 export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   readonly tasks = new Map<string, Task>();
@@ -80,10 +74,8 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   imageConfig: AppConfig["image_generation"];
   videoConfig: AppConfig["video_generation"];
   readonly audioProviderFactory: (target: ChatterboxTarget, config: AppConfig["audio_generation"]) => AudioProvider;
-  codexCleanupConfig: CodexCleanupConfig;
-  antigravityCleanupConfig: CodexCleanupConfig;
-  cleanupTimer: NodeJS.Timeout | null = null;
   failedBuildCleanupPromise: Promise<{ removedEpisodes: number; removedTasks: number }> | null = null;
+  failedBuildCleanupTimer: NodeJS.Timeout | null = null;
   private connectionStatus: "connected" | "disconnected" | "unavailable" | "connecting" = "disconnected";
   private antigravityStatus: "connected" | "disconnected" | "unavailable" | "connecting" = "disconnected";
   activeEngine: "codex" | "antigravity" = "codex";
@@ -105,7 +97,6 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
       match_target_duration: true,
     },
     audioProviderFactory?: (target: ChatterboxTarget, config: AppConfig["audio_generation"]) => AudioProvider,
-    codexConfig: CodexCleanupConfig = { auto_delete_threads: false, failed_thread_retention_days: 7 },
     imageConfig: AppConfig["image_generation"] = DEFAULT_CONFIG.image_generation,
     readonly antigravity?: AntigravityClient,
     activeEngine: "codex" | "antigravity" = "codex",
@@ -119,11 +110,6 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     this.audioConfig = audioConfig;
     this.imageConfig = imageConfig;
     this.audioProviderFactory = audioProviderFactory ?? ((target, config) => new ChatterboxProvider(repository, config, target));
-    this.codexCleanupConfig = {
-      auto_delete_threads: codexConfig.auto_delete_threads,
-      failed_thread_retention_days: codexConfig.failed_thread_retention_days,
-    };
-    this.antigravityCleanupConfig = { auto_delete_threads: false, failed_thread_retention_days: 0 };
     codex.on("status", (status: typeof this.connectionStatus) => {
       this.connectionStatus = status;
       this.emitEvent({ type: "codex.status", status });
@@ -154,9 +140,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     }
     await this.reconcileQuestionHistory();
     await this.cleanupExpiredFailedBuilds();
-    this.startCleanupTimer();
-    void this.cleanupCodexThreads();
-    void this.cleanupAntigravityThreads();
+    this.startFailedBuildCleanupTimer();
   }
 
   async reload(): Promise<void> {
@@ -189,23 +173,6 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   updateImageConfig(config: AppConfig["image_generation"]): void {
     this.imageConfig = config;
     void this.pump();
-  }
-
-  updateCodexConfig(config: AppConfig["codex"]): void {
-    this.codexCleanupConfig = {
-      auto_delete_threads: config.auto_delete_threads,
-      failed_thread_retention_days: config.failed_thread_retention_days,
-    };
-  }
-
-  updateAntigravityConfig(config: AppConfig["antigravity"]): void {
-    this.antigravityCleanupConfig = {
-      auto_delete_threads: config.auto_delete_threads,
-      failed_thread_retention_days: config.failed_thread_retention_days,
-    };
-    if (this.antigravity) {
-      this.antigravity.updateConfig({ ...DEFAULT_CONFIG, antigravity: config });
-    }
   }
 
   setActiveEngine(engine: "codex" | "antigravity"): void {
@@ -395,7 +362,6 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
 
   async finish(taskId: string, status: TaskStatus, error: string | null, outputFiles: string[] = []): Promise<void> {
-    const threadId = this.get(taskId).codex_thread_id;
     this.active.delete(taskId);
     this.completionWaiters.get(taskId)?.();
     this.completionWaiters.delete(taskId);
@@ -409,23 +375,6 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     });
     this.imageVariants.delete(taskId);
     this.topicHints.delete(taskId);
-    const isAntigravity = this.activeEngine === "antigravity";
-    const cleanupConfig = isAntigravity ? this.antigravityCleanupConfig : this.codexCleanupConfig;
-    const shouldDelete = Boolean(
-      threadId &&
-      cleanupConfig.auto_delete_threads &&
-      (status === "COMPLETED" || ((status === "FAILED" || status === "CANCELLED") && cleanupConfig.failed_thread_retention_days === 0)),
-    );
-    if (shouldDelete && threadId && (await this.tryDeleteThread(threadId, isAntigravity ? "antigravity" : "codex")))
-      await this.update(taskId, { codex_thread_id: null });
-  }
-
-  cleanupCodexThreads(force = false): Promise<{ removed: number }> {
-    return cleanupCodexThreadsImplementation.call(this, force);
-  }
-
-  cleanupAntigravityThreads(force = false): Promise<{ removed: number }> {
-    return cleanupAntigravityThreadsImplementation.call(this, force);
   }
 
   cleanupExpiredFailedBuilds(nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }> {
@@ -441,14 +390,8 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     return reconcileQuestionHistoryImplementation.call(this);
   }
 
-  startCleanupTimer(): void {
-    return startCleanupTimerImplementation.call(this);
-  }
-  tryDeleteThread(threadId: string, engine?: "codex" | "antigravity"): Promise<boolean> {
-    return tryDeleteThreadImplementation.call(this, threadId, engine);
-  }
-  isSessionCleanupEnabled(engine?: "codex" | "antigravity"): boolean {
-    return isSessionCleanupEnabledImplementation.call(this, engine);
+  startFailedBuildCleanupTimer(): void {
+    return startFailedBuildCleanupTimerImplementation.call(this);
   }
   async update(taskId: string, patch: Partial<Task>): Promise<void> {
     const current = this.get(taskId);

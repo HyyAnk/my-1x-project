@@ -78,8 +78,6 @@ export function registerSettingsRoutes(deps: SettingsRouteDeps): FastifyPluginCa
         has_api_key: Boolean(state.config.codex.api_key),
         app_server_endpoint: state.config.codex.app_server_endpoint,
         command: state.config.codex.command,
-        auto_delete_threads: state.config.codex.auto_delete_threads,
-        failed_thread_retention_days: state.config.codex.failed_thread_retention_days,
       },
       models: await codex.getModels(),
       installation: await codex.detectInstallation(),
@@ -92,7 +90,6 @@ export function registerSettingsRoutes(deps: SettingsRouteDeps): FastifyPluginCa
       if (wasConnected) await codex.close();
       state.config = await saveCodexSettings(rootDirectory, input);
       codex.updateConfig(state.config);
-      tasks.updateCodexConfig(state.config.codex);
       if (wasConnected) await codex.connect().catch(() => undefined);
       return {
         settings: {
@@ -102,16 +99,11 @@ export function registerSettingsRoutes(deps: SettingsRouteDeps): FastifyPluginCa
           has_api_key: Boolean(state.config.codex.api_key),
           app_server_endpoint: state.config.codex.app_server_endpoint,
           command: state.config.codex.command,
-          auto_delete_threads: state.config.codex.auto_delete_threads,
-          failed_thread_retention_days: state.config.codex.failed_thread_retention_days,
         },
         models: await codex.getModels(),
         installation: await codex.detectInstallation(),
       };
     });
-    server.post("/api/codex/cleanup", async () => tasks.cleanupCodexThreads(true));
-    server.post("/api/antigravity/cleanup", async () => tasks.cleanupAntigravityThreads(true));
-
     server.get("/api/antigravity/info", async () => antigravity.detectInstallation());
     server.get("/api/antigravity/settings", async () => ({
       settings: {
@@ -119,8 +111,6 @@ export function registerSettingsRoutes(deps: SettingsRouteDeps): FastifyPluginCa
         command: state.config.antigravity.command,
         api_base_url: state.config.antigravity.api_base_url,
         has_api_key: Boolean(state.config.antigravity.api_key),
-        auto_delete_threads: state.config.antigravity.auto_delete_threads,
-        failed_thread_retention_days: state.config.antigravity.failed_thread_retention_days,
       },
       models: await antigravity.getModels().catch(() => []),
       installation: await antigravity.detectInstallation(),
@@ -144,7 +134,6 @@ export function registerSettingsRoutes(deps: SettingsRouteDeps): FastifyPluginCa
       if (wasConnected) await antigravity.close();
       state.config = await saveAntigravitySettings(rootDirectory, input);
       antigravity.updateConfig(state.config);
-      tasks.updateAntigravityConfig(state.config.antigravity);
       if (wasConnected) await antigravity.connect().catch(() => undefined);
       return {
         settings: {
@@ -152,8 +141,6 @@ export function registerSettingsRoutes(deps: SettingsRouteDeps): FastifyPluginCa
           command: state.config.antigravity.command,
           api_base_url: state.config.antigravity.api_base_url,
           has_api_key: Boolean(state.config.antigravity.api_key),
-          auto_delete_threads: state.config.antigravity.auto_delete_threads,
-          failed_thread_retention_days: state.config.antigravity.failed_thread_retention_days,
         },
         models: await antigravity.getModels().catch(() => []),
         installation: await antigravity.detectInstallation(),

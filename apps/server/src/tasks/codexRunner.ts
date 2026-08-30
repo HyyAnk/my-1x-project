@@ -347,9 +347,6 @@ export async function completeWithOutput(this: TaskManagerRuntime, active: Activ
       outputFiles = [`channels/${channel.slug}/episodes/${episode.slug}/scene_plan.md`];
     }
     await this.finish(task.task_id, "COMPLETED", null, outputFiles);
-    const isAgy = this.activeEngine === "antigravity";
-    const cleanupCfg = isAgy ? this.antigravityCleanupConfig : this.codexCleanupConfig;
-    if (cleanupCfg.auto_delete_threads) void this.tryDeleteThread(active.threadId, isAgy ? "antigravity" : "codex");
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not persist Codex output";
     if (

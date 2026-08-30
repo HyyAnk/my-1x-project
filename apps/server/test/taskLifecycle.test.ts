@@ -13,9 +13,6 @@ const roots: string[] = [];
 
 class FakeCodex extends EventEmitter {
   isConnected = false;
-  deleteThread(): Promise<boolean> {
-    return Promise.resolve(true);
-  }
 }
 
 async function fixture() {

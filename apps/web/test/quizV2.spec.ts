@@ -118,8 +118,6 @@ test("Quiz Engine V2 rail is status-only and Build video is the single productio
           experimental_api: false,
           api_base_url: "",
           api_key: "",
-          auto_delete_threads: true,
-          failed_thread_retention_days: 7,
         },
         audio_generation: {
           provider: "chatterbox",
@@ -153,8 +151,6 @@ test("Quiz Engine V2 rail is status-only and Build video is the single productio
           has_api_key: false,
           app_server_endpoint: "stdio://",
           command: "codex",
-          auto_delete_threads: true,
-          failed_thread_retention_days: 7,
         },
         models: [],
         installation: { installed: false, command: "codex", version: null },

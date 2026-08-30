@@ -88,7 +88,6 @@ export async function executeSinglePromptText(
       if (options.signal) {
         options.signal.removeEventListener("abort", onAbort);
       }
-      void client.deleteThread(threadId).catch(() => undefined);
     };
 
     const timer = setTimeout(() => {

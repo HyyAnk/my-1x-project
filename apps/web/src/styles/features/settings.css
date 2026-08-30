@@ -56,15 +56,7 @@
   border-color: var(--accent);
 }
 
-.session-cleanup-toggle {
-  display: flex !important;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px !important;
-  min-height: 48px;
-}
-
-.session-cleanup-switch {
+.segmented-switch {
   position: relative;
   display: inline-flex;
   flex: 0 0 auto;
@@ -72,7 +64,7 @@
   user-select: none;
 }
 
-.session-cleanup-switch input {
+.segmented-switch input {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -83,7 +75,7 @@
   border: 0;
 }
 
-.session-cleanup-track {
+.segmented-switch-track {
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -102,12 +94,12 @@
   transition: all 0.18s ease;
 }
 
-.session-cleanup-track > span {
+.segmented-switch-track > span {
   position: relative;
   z-index: 1;
 }
 
-.session-cleanup-track i {
+.segmented-switch-track i {
   position: absolute;
   inset: 3px auto 3px 3px;
   width: calc(50% - 3px);
@@ -118,22 +110,22 @@
     background-color 0.18s ease;
 }
 
-.session-cleanup-switch input:checked + .session-cleanup-track {
+.segmented-switch input:checked + .segmented-switch-track {
   border-color: var(--accent);
   color: var(--ink);
   background: var(--soft-accent);
 }
 
-.session-cleanup-switch input:checked + .session-cleanup-track i {
+.segmented-switch input:checked + .segmented-switch-track i {
   transform: translateX(44px);
   background: var(--accent);
 }
 
-.session-cleanup-switch input:checked + .session-cleanup-track > span:last-of-type {
+.segmented-switch input:checked + .segmented-switch-track > span:last-of-type {
   color: #ffffff;
 }
 
-.session-cleanup-switch input:not(:checked) + .session-cleanup-track > span:first-of-type {
+.segmented-switch input:not(:checked) + .segmented-switch-track > span:first-of-type {
   color: var(--ink);
 }
 

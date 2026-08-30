@@ -187,7 +187,6 @@ describe("Multi-Tier Image Pipeline", () => {
     const mockClient = {
       startThread: async () => "mock-thread",
       startTurn: async () => "mock-turn",
-      deleteThread: async () => true,
       getConversationId: () => "test-img-conv",
       interruptTurn: async () => {},
       on: (event: string, handler: (payload: unknown) => void) => {

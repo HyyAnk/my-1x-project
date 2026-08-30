@@ -1,4 +1,4 @@
-import { CaretRight, FilmSlate, House, Television } from "@phosphor-icons/react";
+import { CaretRight } from "@phosphor-icons/react";
 import React from "react";
 import { buildHash, getNavProps } from "../hooks/useRouter";
 
@@ -51,33 +51,26 @@ export function Breadcrumbs({ items, className = "" }: { items: BreadcrumbItem[]
 
 export function ChannelBreadcrumb({
   channelName,
-  channelId,
-  engine = "quiz",
   onNavigateHome,
   onNavigateChannels,
 }: {
   channelName: string;
-  channelId?: string;
-  engine?: "quiz";
   onNavigateHome?: () => void;
   onNavigateChannels?: () => void;
 }) {
   const items: BreadcrumbItem[] = [
     {
       label: "Dashboard",
-      icon: <House size={14} />,
       onClick: onNavigateHome,
       href: "#/dashboard",
     },
     {
       label: "Channels",
-      icon: <Television size={14} />,
       onClick: onNavigateChannels,
       href: "#/channels",
     },
     {
       label: channelName,
-      icon: <span style={{ fontSize: "13px" }}>🎯</span>,
       isCurrent: true,
     },
   ];
@@ -89,7 +82,6 @@ export function EpisodeBreadcrumb({
   channelName,
   channelId,
   episodeTitle,
-  engine = "quiz",
   onNavigateHome,
   onNavigateChannels,
   onNavigateChannel,
@@ -97,7 +89,6 @@ export function EpisodeBreadcrumb({
   channelName: string;
   channelId?: string;
   episodeTitle: string;
-  engine?: "quiz";
   onNavigateHome?: () => void;
   onNavigateChannels?: () => void;
   onNavigateChannel?: () => void;
@@ -105,25 +96,21 @@ export function EpisodeBreadcrumb({
   const items: BreadcrumbItem[] = [
     {
       label: "Dashboard",
-      icon: <House size={14} />,
       onClick: onNavigateHome,
       href: "#/dashboard",
     },
     {
       label: "Channels",
-      icon: <Television size={14} />,
       onClick: onNavigateChannels,
       href: "#/channels",
     },
     {
       label: channelName,
-      icon: <span style={{ fontSize: "13px" }}>🎯</span>,
       onClick: onNavigateChannel,
       href: channelId ? buildHash({ page: "channels", channelId }) : "#/channels",
     },
     {
       label: episodeTitle,
-      icon: <FilmSlate size={14} />,
       isCurrent: true,
     },
   ];

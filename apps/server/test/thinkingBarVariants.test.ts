@@ -6,6 +6,7 @@ import {
   resolveThinkingBarVariant,
   THINKING_BAR_VARIANTS,
 } from "../src/quiz/visual/elements/thinkingBar/registry.js";
+import { calculateThinkingBarTiming } from "../src/quiz/visual/elements/thinkingBar/types.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
@@ -89,6 +90,44 @@ describe("Thinking Bar Element Suite", () => {
       expect(html).toContain("val-1");
       expect(html).toContain("val-query");
     }
+  });
+
+  it("calculates accurate countdown timing and dynamic visibility flags for short durations", () => {
+    // 3 second countdown duration (should hide 5 and 4, only show 3, 2, 1)
+    const shortTiming = calculateThinkingBarTiming({ clipStart: 0, revealStart: 3 });
+    expect(shortTiming.duration).toBe(3);
+    expect(shortTiming.cd5Show).toBe(false);
+    expect(shortTiming.cd4Show).toBe(false);
+    expect(shortTiming.cd3Show).toBe(true);
+    expect(shortTiming.cd2Show).toBe(true);
+    expect(shortTiming.cd1Show).toBe(true);
+    expect(shortTiming.queryDuration).toBe(0);
+    expect(shortTiming.styleAttr).toContain("--cd5-display:none");
+    expect(shortTiming.styleAttr).toContain("--cd4-display:none");
+    expect(shortTiming.styleAttr).toContain("--cd3-display:grid");
+    expect(shortTiming.styleAttr).toContain("--cd3-at:0.000s");
+    expect(shortTiming.styleAttr).toContain("--cd2-at:1.000s");
+    expect(shortTiming.styleAttr).toContain("--cd1-at:2.000s");
+
+    // 5 second exact countdown
+    const exactTiming = calculateThinkingBarTiming({ clipStart: 2, revealStart: 7 });
+    expect(exactTiming.duration).toBe(5);
+    expect(exactTiming.cd5Show).toBe(true);
+    expect(exactTiming.cd5).toBe(0);
+    expect(exactTiming.queryDuration).toBe(0);
+    expect(exactTiming.styleAttr).toContain("--cd5-display:grid");
+    expect(exactTiming.styleAttr).toContain("--cd5-at:0.000s");
+    expect(exactTiming.styleAttr).toContain("--cd1-at:4.000s");
+
+    // 7.5 second duration with query phase
+    const fractionalTiming = calculateThinkingBarTiming({ clipStart: 1, revealStart: 8.5 });
+    expect(fractionalTiming.duration).toBe(7.5);
+    expect(fractionalTiming.cd5Show).toBe(true);
+    expect(fractionalTiming.cd5).toBe(2.5);
+    expect(fractionalTiming.queryDuration).toBe(2.5);
+    expect(fractionalTiming.styleAttr).toContain("--cd-query-dur:2.500s");
+    expect(fractionalTiming.styleAttr).toContain("--cd5-at:2.500s");
+    expect(fractionalTiming.styleAttr).toContain("--cd1-at:6.500s");
   });
 
   it("aggregates CSS for all variants containing keyframe animations", () => {

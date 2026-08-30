@@ -12,12 +12,7 @@ export function ChannelLoadingState({
 }) {
   return (
     <section className="page-wrap detail-page">
-      <ChannelBreadcrumb
-        channelName={channel.display_name}
-        engine={channel.engine}
-        onNavigateHome={onNavigateHome}
-        onNavigateChannels={onBack}
-      />
+      <ChannelBreadcrumb channelName={channel.display_name} onNavigateHome={onNavigateHome} onNavigateChannels={onBack} />
       <div className="detail-header">
         <div>
           <p className="eyebrow">Channel workspace</p>

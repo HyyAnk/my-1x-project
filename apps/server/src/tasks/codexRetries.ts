@@ -7,7 +7,6 @@ export async function retryQuizResearch(this: TaskManagerRuntime, active: Active
   const questionCount = episode.quiz_config.question_count;
   const lastClaimId = `C${String(questionCount).padStart(2, "0")}`;
   const sourceMinimum = Math.max(3, Math.ceil(questionCount / 2));
-  const previousThreadId = active.threadId;
   const client = this.activeEngine === "antigravity" && this.antigravity ? this.antigravity : this.codex;
   const threadId = await client.startThread();
   const turnId = await client.startTurn(
@@ -23,14 +22,12 @@ export async function retryQuizResearch(this: TaskManagerRuntime, active: Active
     codex_turn_id: turnId,
     progress_message: "Retrying research with complete claim ledger",
   });
-  if (previousThreadId !== threadId && this.isSessionCleanupEnabled()) void client.deleteThread(previousThreadId).catch(() => undefined);
 }
 
 export async function retryScript(this: TaskManagerRuntime, active: ActiveRun, reason: string): Promise<void> {
   const episode = await this.repository.getEpisode(active.task.channel_id, active.task.episode_id!);
   const targetWords = calibratedScriptTargetWords(episode, this.videoConfig.narration_words_per_second);
   const bounds = scriptWordBounds(targetWords);
-  const previousThreadId = active.threadId;
   const client = this.activeEngine === "antigravity" && this.antigravity ? this.antigravity : this.codex;
   const threadId = await client.startThread();
   const turnId = await client.startTurn(
@@ -49,7 +46,6 @@ export async function retryScript(this: TaskManagerRuntime, active: ActiveRun, r
         ? "Retrying quiz script with strict question format"
         : "Retrying script with strict word budget",
   });
-  if (previousThreadId !== threadId && this.isSessionCleanupEnabled()) void client.deleteThread(previousThreadId).catch(() => undefined);
 }
 
 export async function retryVisualBible(this: TaskManagerRuntime, active: ActiveRun, reason: string): Promise<void> {
@@ -68,7 +64,6 @@ export async function retryVisualBible(this: TaskManagerRuntime, active: ActiveR
   const quizMotionRequirement = isQuiz
     ? "Include an explicit second-level section named exactly `## Safe motion` with labeled Allowed motion, Prohibited motion, and Reduced-motion fallback rules. The exact phrase `safe motion` must appear in the returned Markdown."
     : "";
-  const previousThreadId = active.threadId;
   const client = this.activeEngine === "antigravity" && this.antigravity ? this.antigravity : this.codex;
   const threadId = await client.startThread();
   const turnId = await client.startTurn(
@@ -84,7 +79,6 @@ export async function retryVisualBible(this: TaskManagerRuntime, active: ActiveR
     codex_turn_id: turnId,
     progress_message: isQuiz ? "Retrying Quiz visual bible with safe motion rules" : "Retrying visual bible with strict continuity schema",
   });
-  if (previousThreadId !== threadId && this.isSessionCleanupEnabled()) void client.deleteThread(previousThreadId).catch(() => undefined);
 }
 
 export async function retrySequenceScenes(this: TaskManagerRuntime, active: ActiveRun, reason: string): Promise<void> {
@@ -105,7 +99,6 @@ export async function retrySequenceScenes(this: TaskManagerRuntime, active: Acti
     ? `Preserve every quiz field and return only a JSON array. Copy every word from the exact narration below verbatim and in order into one or more dialogue fields. Split only at natural boundaries; never paraphrase, shorten, add, or omit words. The final narration coverage must be at least 97.5%. Every beat must use a non-empty continuity_bundle_id exactly "CB-${String(sequenceNumber).padStart(2, "0")}", a non-empty continuity_note, and a distinct visual_prompt with the exact uppercase sections CAMERA, ACTION, LIGHTING, ATMOSPHERE, and CONTINUITY. Every non-intro/outro beat must repeat the same question, ${choiceRequirement}, canonical answer, and explanation for this question. Set answer to the exact text of one visible choice; do not return a bare mismatched label, invented choice, or a different answer per beat. Every beat must include complete quiz question, choices, answer, and explanation data.`
     : "Return only a JSON array. Copy every word from the exact narration below verbatim and in order into one or more dialogue fields. Split only at natural boundaries; never paraphrase, shorten, add, or omit words. The final narration coverage must be at least 97.5%. Every beat must use a non-empty continuity_bundle_id, a non-empty continuity_note, and a distinct visual_prompt with the exact uppercase sections CAMERA, ACTION, LIGHTING, ATMOSPHERE, and CONTINUITY.";
   const narrationBlock = exactNarration ? `\n\nEXACT NARRATION TO COVER VERBATIM:\n<NARRATION>\n${exactNarration}\n</NARRATION>` : "";
-  const previousThreadId = active.threadId;
   const client = this.activeEngine === "antigravity" && this.antigravity ? this.antigravity : this.codex;
   const threadId = await client.startThread();
   const turnId = await client.startTurn(
@@ -123,5 +116,4 @@ export async function retrySequenceScenes(this: TaskManagerRuntime, active: Acti
       ? "Retrying Quiz shot plan with strict continuity metadata"
       : "Retrying shot plan with strict structure metadata",
   });
-  if (previousThreadId !== threadId && this.isSessionCleanupEnabled()) void client.deleteThread(previousThreadId).catch(() => undefined);
 }

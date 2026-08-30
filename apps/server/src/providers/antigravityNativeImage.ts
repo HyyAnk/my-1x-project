@@ -67,9 +67,6 @@ export class AntigravityNativeImageProvider implements ImageProvider {
 
       const turnStartTime = Date.now();
 
-      let threadId: string | null = null;
-      let turnId: string | null = null;
-
       try {
         const turnPrompt = [
           `You are an AI illustrator. Call the generate_image tool immediately:`,
@@ -83,8 +80,8 @@ export class AntigravityNativeImageProvider implements ImageProvider {
           `3. If generate_image encounters an error or rate limit (e.g. 429 RESOURCE_EXHAUSTED), output the error message clearly so that the system retry loop can handle backoff.`,
         ].join("\n");
 
-        threadId = await client.startThread();
-        turnId = await client.startTurn(threadId, turnPrompt, "flash");
+        const threadId = await client.startThread();
+        const turnId = await client.startTurn(threadId, turnPrompt, "flash");
 
         // Actively poll for the image file in the Antigravity conversation directory for up to 45 seconds
         const pollDeadline = Date.now() + 45_000;
@@ -151,10 +148,6 @@ export class AntigravityNativeImageProvider implements ImageProvider {
         }
       } catch (err) {
         lastError = err instanceof Error ? err : new Error(String(err));
-      } finally {
-        if (threadId && typeof client.deleteThread === "function") {
-          void client.deleteThread(threadId).catch(() => undefined);
-        }
       }
 
       if (attempt < maxAttempts) {

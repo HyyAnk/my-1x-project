@@ -1,10 +1,9 @@
-import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { DEFAULT_CONFIG, loadConfig, saveAntigravitySettings, saveCodexSettings } from "../src/config.js";
 import { AntigravityClient } from "../src/antigravity.js";
-import { buildApp } from "../src/app.js";
+import { DEFAULT_CONFIG } from "../src/config.js";
 import { StudioLogger } from "../src/logger.js";
 
 describe("Antigravity Client", () => {
@@ -16,18 +15,6 @@ describe("Antigravity Client", () => {
 
   afterEach(async () => {
     if (temporaryRoot) await rm(temporaryRoot, { recursive: true, force: true });
-  });
-
-  it("defaults cleanup settings to off and persists an explicit opt-in", async () => {
-    const initial = await loadConfig(temporaryRoot);
-    expect(initial.codex.auto_delete_threads).toBe(false);
-    expect(initial.antigravity.auto_delete_threads).toBe(false);
-
-    await saveCodexSettings(temporaryRoot, { auto_delete_threads: true });
-    await saveAntigravitySettings(temporaryRoot, { auto_delete_threads: true });
-    const enabled = await loadConfig(temporaryRoot);
-    expect(enabled.codex.auto_delete_threads).toBe(true);
-    expect(enabled.antigravity.auto_delete_threads).toBe(true);
   });
 
   it("handles mock CLI output parsing correctly", async () => {
@@ -87,11 +74,7 @@ describe("Antigravity Client", () => {
     expect(typeof info.installed).toBe("boolean");
   });
 
-  it("handles multi-step transcripts by ignoring tool results and extracting final PLANNER_RESPONSE", async () => {
-    const logger = new StudioLogger(temporaryRoot);
-    await logger.init();
-    const client = new AntigravityClient(temporaryRoot, DEFAULT_CONFIG, logger);
-
+  it("handles multi-step transcripts by ignoring tool results and extracting final PLANNER_RESPONSE", () => {
     const transcriptLines = [
       JSON.stringify({ step_index: 0, source: "USER_EXPLICIT", type: "USER_INPUT", status: "DONE", content: "Prompt" }),
       JSON.stringify({ step_index: 1, source: "SYSTEM", type: "CHECKPOINT", status: "DONE" }),
@@ -130,213 +113,12 @@ describe("Antigravity Client", () => {
 
       if (isModel && isPlanner && hasNoToolCalls && currentContent.trim()) {
         extracted = currentContent;
-        if (step.status === "DONE") {
-          isDone = true;
-        }
+        if (step.status === "DONE") isDone = true;
       }
     }
 
     expect(isDone).toBe(true);
     expect(extracted).toContain("# Research Dossier");
     expect(extracted).not.toContain("Tool search result");
-  });
-
-  it("keeps Antigravity session artifacts until session cleanup is enabled", async () => {
-    const logger = new StudioLogger(temporaryRoot);
-    await logger.init();
-    const client = new AntigravityClient(temporaryRoot, DEFAULT_CONFIG, logger);
-
-    const testConvId = "11111111-2222-3333-4444-555555555555";
-    const userHome = os.homedir();
-    const agyBase = path.join(userHome, ".gemini", "antigravity");
-    const { mkdir, writeFile, access } = await import("node:fs/promises");
-    const { constants } = await import("node:fs");
-
-    const convDb = path.join(agyBase, "conversations", `${testConvId}.db`);
-    const convWal = path.join(agyBase, "conversations", `${testConvId}.db-wal`);
-    const brainDir = path.join(agyBase, "brain", testConvId);
-    const annotDir = path.join(agyBase, "annotations", testConvId);
-
-    await mkdir(path.dirname(convDb), { recursive: true });
-    await mkdir(brainDir, { recursive: true });
-    await mkdir(annotDir, { recursive: true });
-
-    await writeFile(convDb, "fake-db", "utf8");
-    await writeFile(convWal, "fake-wal", "utf8");
-    await writeFile(path.join(brainDir, "test.txt"), "hello", "utf8");
-
-    // Map threadId to convId
-    (client as unknown as { threadConversations: Map<string, string> }).threadConversations.set("agy_thread_test", testConvId);
-
-    const deleted = await client.deleteThread("agy_thread_test");
-    expect(deleted).toBe(false);
-
-    const dbExists = await access(convDb, constants.F_OK)
-      .then(() => true)
-      .catch(() => false);
-    const walExists = await access(convWal, constants.F_OK)
-      .then(() => true)
-      .catch(() => false);
-    const brainExists = await access(brainDir, constants.F_OK)
-      .then(() => true)
-      .catch(() => false);
-    const annotExists = await access(annotDir, constants.F_OK)
-      .then(() => true)
-      .catch(() => false);
-
-    expect(dbExists).toBe(true);
-    expect(walExists).toBe(true);
-    expect(brainExists).toBe(true);
-    expect(annotExists).toBe(true);
-
-    client.updateConfig({ ...DEFAULT_CONFIG, antigravity: { ...DEFAULT_CONFIG.antigravity, auto_delete_threads: true } });
-    expect(await client.deleteThread("agy_thread_test")).toBe(true);
-    expect(
-      await access(convDb, constants.F_OK)
-        .then(() => true)
-        .catch(() => false),
-    ).toBe(false);
-    expect(
-      await access(convWal, constants.F_OK)
-        .then(() => true)
-        .catch(() => false),
-    ).toBe(false);
-    expect(
-      await access(brainDir, constants.F_OK)
-        .then(() => true)
-        .catch(() => false),
-    ).toBe(false);
-    expect(
-      await access(annotDir, constants.F_OK)
-        .then(() => true)
-        .catch(() => false),
-    ).toBe(false);
-  }, 15_000);
-
-  it("logs cleanup failures at debug level without failing the cleanup", async () => {
-    const logger = new StudioLogger(temporaryRoot);
-    await logger.init();
-    const debugSpy = vi.spyOn(logger, "debug");
-    const client = new AntigravityClient(
-      temporaryRoot,
-      {
-        ...DEFAULT_CONFIG,
-        antigravity: { ...DEFAULT_CONFIG.antigravity, auto_delete_threads: true },
-      },
-      logger,
-    );
-
-    const threadId = "agy_thread_cleanup_log";
-    const conversationId = "66666666-7777-8888-9999-000000000000";
-    const conversationDb = path.join(os.homedir(), ".gemini", "antigravity", "conversations", `${conversationId}.db`);
-    await mkdir(conversationDb, { recursive: true });
-    await writeFile(path.join(conversationDb, "prevents-file-removal.txt"), "keep", "utf8");
-    (client as unknown as { threadConversations: Map<string, string> }).threadConversations.set(threadId, conversationId);
-
-    try {
-      await expect(client.deleteThread(threadId)).resolves.toBe(true);
-      expect(debugSpy).toHaveBeenCalledWith(
-        expect.stringContaining(`Failed to remove conversation database.db at ${conversationDb}`),
-        expect.objectContaining({
-          step: "antigravity_cleanup",
-          conversationId,
-          threadId,
-          filePath: conversationDb,
-        }),
-      );
-    } finally {
-      await rm(conversationDb, { recursive: true, force: true });
-    }
-  });
-
-  it("keeps all Antigravity sessions until cleanup is enabled", async () => {
-    const logger = new StudioLogger(temporaryRoot);
-    await logger.init();
-    const client = new AntigravityClient(temporaryRoot, DEFAULT_CONFIG, logger);
-
-    const userConvId = "22222222-3333-4444-5555-666666666666";
-    const toolConvId = "33333333-4444-5555-6666-777777777777";
-    const userHome = os.homedir();
-    const agyBase = path.join(userHome, ".gemini", "antigravity");
-    const { mkdir, writeFile, access } = await import("node:fs/promises");
-    const { constants } = await import("node:fs");
-
-    const userConvDb = path.join(agyBase, "conversations", `${userConvId}.db`);
-    const toolConvDb = path.join(agyBase, "conversations", `${toolConvId}.db`);
-
-    await mkdir(path.dirname(userConvDb), { recursive: true });
-    await writeFile(userConvDb, "user-created-chat with custom code", "utf8");
-    await writeFile(toolConvDb, "Task type: GENERATE_SEQUENCE_SCENES\nAuto generated content", "utf8");
-
-    // Only register toolConvId in managedConversations
-    (client as unknown as { managedConversations: Set<string> }).managedConversations.add(toolConvId);
-
-    const res = await client.cleanupOldSessions(0);
-    expect(res).toEqual({ removed: 0 });
-
-    const userDbStillExists = await access(userConvDb, constants.F_OK)
-      .then(() => true)
-      .catch(() => false);
-    const toolDbExists = await access(toolConvDb, constants.F_OK)
-      .then(() => true)
-      .catch(() => false);
-
-    expect(userDbStillExists).toBe(true); // User manual session MUST NOT be deleted
-    expect(toolDbExists).toBe(true);
-
-    client.updateConfig({ ...DEFAULT_CONFIG, antigravity: { ...DEFAULT_CONFIG.antigravity, auto_delete_threads: true } });
-    expect((await client.cleanupOldSessions(0)).removed).toBeGreaterThanOrEqual(1);
-    expect(
-      await access(toolConvDb, constants.F_OK)
-        .then(() => true)
-        .catch(() => false),
-    ).toBe(false);
-
-    // Clean up the user-created test conversation.
-    await rm(userConvDb, { force: true });
-  }, 15_000);
-
-  it("blocks manual Antigravity cleanup while the setting is off", async () => {
-    await mkdir(path.join(temporaryRoot, "templates"), { recursive: true });
-    await Promise.all([
-      writeFile(path.join(temporaryRoot, "templates", "example_channel_dna.md"), "# DNA\n", "utf8"),
-      writeFile(path.join(temporaryRoot, "templates", "example_style_guide.md"), "# Style\n", "utf8"),
-    ]);
-    const app = await buildApp(temporaryRoot);
-    try {
-      const response = await app.server.inject({ method: "POST", url: "/api/antigravity/cleanup", payload: {} });
-      expect(response.statusCode).toBe(200);
-      expect(response.json()).toEqual({ removed: 0 });
-    } finally {
-      await app.close();
-    }
-  });
-
-  it("isStudioTaskConversation accurately identifies studio tasks vs user conversations", async () => {
-    const logger = new StudioLogger(temporaryRoot);
-    await logger.init();
-    const client = new AntigravityClient(temporaryRoot, DEFAULT_CONFIG, logger);
-
-    const userConvId = "44444444-5555-6666-7777-888888888888";
-    const studioConvId = "55555555-6666-7777-8888-999999999999";
-    const userHome = os.homedir();
-    const agyBase = path.join(userHome, ".gemini", "antigravity");
-    const { mkdir, writeFile } = await import("node:fs/promises");
-
-    const userConvDb = path.join(agyBase, "conversations", `${userConvId}.db`);
-    const studioConvDb = path.join(agyBase, "conversations", `${studioConvId}.db`);
-
-    await mkdir(path.dirname(userConvDb), { recursive: true });
-    await writeFile(userConvDb, "Hi, please write a React button component for me", "utf8");
-    await writeFile(studioConvDb, "Task type: GENERATE_RESEARCH\n# Research Dossier\nC01 https://example.com", "utf8");
-
-    const isStudioUser = await client.isStudioTaskConversation(userConvId);
-    const isStudioTask = await client.isStudioTaskConversation(studioConvId);
-
-    expect(isStudioUser).toBe(false);
-    expect(isStudioTask).toBe(true);
-
-    await rm(userConvDb, { force: true });
-    await rm(studioConvDb, { force: true });
   });
 });

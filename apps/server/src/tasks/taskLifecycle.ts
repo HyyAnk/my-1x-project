@@ -12,6 +12,17 @@ export type FailedBuildCandidate = {
   failedAt: string;
 };
 
+export function startFailedBuildCleanupTimer(this: TaskManagerRuntime): void {
+  if (this.failedBuildCleanupTimer) return;
+  this.failedBuildCleanupTimer = setInterval(
+    () => {
+      void this.cleanupExpiredFailedBuilds();
+    },
+    15 * 60 * 1000,
+  );
+  this.failedBuildCleanupTimer.unref?.();
+}
+
 export function findExpiredFailedBuilds(
   tasks: Task[],
   nowMs = Date.now(),

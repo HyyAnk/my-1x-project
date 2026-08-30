@@ -52,7 +52,6 @@ export function EpisodeHeader({
         channelName={channel.display_name}
         channelId={channel.channel_id}
         episodeTitle={episode.topic.title}
-        engine={channel.engine}
         onNavigateHome={onNavigateHome}
         onNavigateChannels={onNavigateChannels}
         onNavigateChannel={onNavigateChannel || onBack}

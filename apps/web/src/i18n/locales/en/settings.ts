@@ -21,8 +21,6 @@ export const settingsEn = {
     storageHint: "Channel and episode media files stay here and are excluded from Git repository.",
     codexTitle: "OpenAI Codex JSON-RPC Engine",
     antigravityTitle: "Google Antigravity Engine",
-    sessionCleanup: "Session cleanup",
-    cleanupOldSessions: "Clean up old Codex sessions",
     saveCodexSettings: "Save Codex Settings",
     saveAntigravitySettings: "Save Antigravity Settings",
     ttsTitle: "Text-to-Speech (Chatterbox TTS)",

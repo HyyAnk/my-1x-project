@@ -1,10 +1,9 @@
 import { spawn, execFile } from "node:child_process";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import type { AppConfig } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
-import { removePathIfPresent, saveManagedSessions } from "./sessionManager.js";
 import { watchTranscriptStream } from "./transcriptWatcher.js";
 import type { ActiveSessionInfo, ResolvedAntigravityTarget } from "./types.js";
 
@@ -17,8 +16,6 @@ export type TurnRunnerContext = {
   target: ResolvedAntigravityTarget;
   session: ActiveSessionInfo;
   threadConversations: Map<string, string>;
-  managedConversations: Set<string>;
-  managedSessionsFile: string;
   onDelta: (delta: string) => void;
   onCompleted: (status: "completed" | "interrupted" | "failed", error?: string) => void;
 };
@@ -66,7 +63,13 @@ export async function executeTurn(
     }
   } finally {
     if (promptFile) {
-      await removePathIfPresent(promptFile, "remove completed turn prompt", { threadId }, false, ctx.logger);
+      await rm(promptFile, { force: true }).catch((error: unknown) => {
+        ctx.logger.debug(`Failed to remove completed turn prompt: ${error instanceof Error ? error.message : "unknown error"}`, {
+          step: "antigravity_prompt_file_remove",
+          filePath: promptFile ?? undefined,
+          workerId: threadId,
+        });
+      });
     }
   }
 }
@@ -119,8 +122,6 @@ async function runAgentApiTurn(
   }
 
   ctx.threadConversations.set(threadId, conversationId);
-  ctx.managedConversations.add(conversationId);
-  void saveManagedSessions(ctx.managedSessionsFile, ctx.managedConversations, ctx.logger);
 
   await watchTranscriptStream(conversationId, threadId, turnId, controller, {
     onDelta: ctx.onDelta,

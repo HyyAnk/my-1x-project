@@ -67,19 +67,19 @@ describe("Candy Arcade visual regression contract", () => {
     );
     expect(html).not.toContain('<div class="timer-progress"><span class="timer-marker');
     expect(html).toContain(
-      ".val-5 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd5-at)) both; }",
+      ".val-5 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd5-at)) both; display: var(--cd5-display, grid); }",
     );
     expect(html).toContain(
-      ".val-4 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd4-at)) both; }",
+      ".val-4 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd4-at)) both; display: var(--cd4-display, grid); }",
     );
     expect(html).toContain(
-      ".val-3 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd3-at)) both; }",
+      ".val-3 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd3-at)) both; display: var(--cd3-display, grid); }",
     );
     expect(html).toContain(
-      ".val-2 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd2-at)) both; }",
+      ".val-2 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd2-at)) both; display: var(--cd2-display, grid); }",
     );
     expect(html).toContain(
-      ".val-1 { animation: number-countdown-final 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd1-at)) both; }",
+      ".val-1 { animation: number-countdown-final 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd1-at)) both; display: var(--cd1-display, grid); }",
     );
 
     for (const progress of [0, 0.25, 0.5, 0.75, 1]) {

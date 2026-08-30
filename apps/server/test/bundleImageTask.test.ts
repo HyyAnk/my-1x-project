@@ -35,9 +35,6 @@ class ImageCodex extends EventEmitter {
     }, 10);
     return turnId;
   }
-  async deleteThread(): Promise<boolean> {
-    return true;
-  }
   async interruptTurn(): Promise<void> {
     return undefined;
   }
@@ -106,7 +103,6 @@ describe("bundle image tasks", () => {
       logger,
       undefined,
       undefined,
-      undefined,
       { enabled: true, images_per_bundle: 1 },
     );
     await manager.load();
@@ -172,7 +168,6 @@ describe("bundle image tasks", () => {
       logger,
       undefined,
       undefined,
-      undefined,
       { enabled: true, images_per_bundle: 1 },
     );
     await manager.load();
@@ -233,7 +228,6 @@ describe("bundle image tasks", () => {
       1,
       8,
       logger,
-      undefined,
       undefined,
       undefined,
       { enabled: true, images_per_bundle: 1 },
@@ -311,9 +305,6 @@ describe("bundle image tasks", () => {
         }, 50);
         return turnId;
       }
-      async deleteThread(): Promise<boolean> {
-        return true;
-      }
       async interruptTurn(): Promise<void> {
         return undefined;
       }
@@ -327,7 +318,6 @@ describe("bundle image tasks", () => {
       4,
       8,
       logger,
-      undefined,
       undefined,
       undefined,
       { enabled: true, images_per_bundle: 1, max_concurrent_tasks: 1 },

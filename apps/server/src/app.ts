@@ -71,12 +71,10 @@ export async function buildApp(
     logger,
     state.config.audio_generation,
     undefined,
-    state.config.codex,
     state.config.image_generation,
     antigravity,
     state.config.active_engine,
   );
-  tasks.updateAntigravityConfig(state.config.antigravity);
   await tasks.load();
 
   const server = Fastify({ logger: false, bodyLimit: 50 * 1024 * 1024 });

@@ -1,24 +1,12 @@
 import { EventEmitter } from "node:events";
-import { readdir } from "node:fs/promises";
-import path from "node:path";
 import { makeId, type AntigravityModel, type AppConfig } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
-import { discoverActiveSession, getAntigravityBaseDir, resolveAntigravityTarget } from "./discovery.js";
+import { discoverActiveSession, resolveAntigravityTarget } from "./discovery.js";
 import { formatModelLabel, getAgentApiModels, getCliModels, getGoogleApiModels, parseModelListOutput, withCurrentModel } from "./models.js";
-import {
-  deleteCascadeTrajectoryRpc,
-  isStudioTaskConversation,
-  loadManagedSessions,
-  removeConversationArtifacts,
-  removePathIfPresent,
-  saveManagedSessions,
-} from "./sessionManager.js";
 import { executeTurn, type TurnRunnerContext } from "./turnRunner.js";
 import {
   AntigravityUnavailableError,
   DEFAULT_ANTIGRAVITY_MODELS,
-  describeError,
-  isNotFoundError,
   type ActiveSessionInfo,
   type ResolvedAntigravityTarget,
 } from "./types.js";
@@ -30,8 +18,6 @@ export class AntigravityClient extends EventEmitter {
   private cachedModels: AntigravityModel[] | null = null;
   private readonly turnControllers = new Map<string, AbortController>();
   private readonly threadConversations = new Map<string, string>();
-  private readonly managedSessionsFile: string;
-  private readonly managedConversations = new Set<string>();
   private discoveredSession: ActiveSessionInfo | null = null;
 
   constructor(
@@ -40,8 +26,6 @@ export class AntigravityClient extends EventEmitter {
     private readonly logger: StudioLogger,
   ) {
     super();
-    this.managedSessionsFile = path.join(this.rootDirectory, ".documentary-studio", "managed_antigravity_sessions.json");
-    void loadManagedSessions(this.managedSessionsFile, this.managedConversations, this.logger);
   }
 
   get isConnected(): boolean {
@@ -139,84 +123,6 @@ export class AntigravityClient extends EventEmitter {
     return this.threadConversations.get(threadId) ?? null;
   }
 
-  async callDeleteCascadeTrajectory(conversationId: string): Promise<boolean> {
-    const session = await this.getActiveSession();
-    return deleteCascadeTrajectoryRpc(session, conversationId, this.logger);
-  }
-
-  async isStudioTaskConversation(convId: string): Promise<boolean> {
-    return isStudioTaskConversation(convId, this.threadConversations, this.managedConversations, this.logger);
-  }
-
-  async deleteThread(threadId: string): Promise<boolean> {
-    if (!this.config.antigravity.auto_delete_threads) return false;
-    const conversationId = this.threadConversations.get(threadId) || (this.managedConversations.has(threadId) ? threadId : null);
-    if (conversationId) {
-      this.threadConversations.delete(threadId);
-      this.managedConversations.delete(conversationId);
-      void saveManagedSessions(this.managedSessionsFile, this.managedConversations, this.logger);
-
-      await this.callDeleteCascadeTrajectory(conversationId);
-
-      const baseDir = getAntigravityBaseDir();
-      await removeConversationArtifacts(baseDir, conversationId, threadId, this.logger);
-      const promptFile = path.join(this.rootDirectory, ".context", `task_prompt_${threadId}.md`);
-      await removePathIfPresent(promptFile, "remove temporary task prompt", { conversationId, threadId }, false, this.logger);
-
-      this.logger.debug(`Cleaned up tool-generated Antigravity session ${conversationId}`, { step: "antigravity_cleanup" });
-      return true;
-    }
-    return true;
-  }
-
-  async cleanupOldSessions(retentionDays = 7): Promise<{ removed: number }> {
-    if (!this.config.antigravity.auto_delete_threads) return { removed: 0 };
-    await loadManagedSessions(this.managedSessionsFile, this.managedConversations, this.logger);
-    const baseDir = getAntigravityBaseDir();
-    const convDir = path.join(baseDir, "conversations");
-
-    const activeIds = new Set(this.threadConversations.values());
-    const candidates = new Set(this.managedConversations);
-
-    try {
-      const files = await readdir(convDir);
-      for (const file of files) {
-        if (file.endsWith(".db")) {
-          const convId = file.slice(0, -3);
-          if (!activeIds.has(convId) && (await this.isStudioTaskConversation(convId))) {
-            candidates.add(convId);
-          }
-        }
-      }
-    } catch (error) {
-      if (!isNotFoundError(error)) {
-        this.logger.debug(`Failed to scan Antigravity conversations directory ${convDir}: ${describeError(error)}`, {
-          step: "antigravity_cleanup_scan",
-          filePath: convDir,
-        });
-      }
-    }
-
-    let removed = 0;
-    for (const convId of Array.from(candidates)) {
-      if (activeIds.has(convId)) continue;
-      if (!(await this.isStudioTaskConversation(convId))) continue;
-
-      await this.callDeleteCascadeTrajectory(convId);
-      await removeConversationArtifacts(baseDir, convId, undefined, this.logger);
-      this.managedConversations.delete(convId);
-      removed += 1;
-    }
-
-    await saveManagedSessions(this.managedSessionsFile, this.managedConversations, this.logger);
-    if (removed > 0) {
-      this.logger.info(`Cleaned up ${removed} tool-generated Antigravity sessions (user conversations strictly preserved)`, {
-        step: "antigravity_cleanup",
-      });
-    }
-    return { removed };
-  }
-
   async startTurn(threadId: string, prompt: string, modelOverride?: string): Promise<string> {
     await this.ensureConnected();
     const turnId = makeId("agy_turn");
@@ -233,8 +139,6 @@ export class AntigravityClient extends EventEmitter {
       target,
       session,
       threadConversations: this.threadConversations,
-      managedConversations: this.managedConversations,
-      managedSessionsFile: this.managedSessionsFile,
       onDelta: (delta: string) => {
         this.emit("notification", { method: "item/agentMessage/delta", params: { threadId, turnId, delta } });
       },

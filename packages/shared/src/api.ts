@@ -273,8 +273,6 @@ export const CodexSettingsInputSchema = z.object({
   api_key: z.string().max(4000).optional(),
   app_server_endpoint: z.string().trim().max(2000).optional(),
   command: z.string().trim().max(500).optional(),
-  auto_delete_threads: z.boolean().optional(),
-  failed_thread_retention_days: z.number().int().nonnegative().max(3650).optional(),
 });
 
 export type CodexSettingsInput = z.infer<typeof CodexSettingsInputSchema>;
@@ -293,8 +291,6 @@ export const CodexSettingsSchema = z.object({
   has_api_key: z.boolean(),
   app_server_endpoint: z.string(),
   command: z.string(),
-  auto_delete_threads: z.boolean().default(false),
-  failed_thread_retention_days: z.number().int().nonnegative().default(7),
 });
 
 export type CodexSettings = z.infer<typeof CodexSettingsSchema>;
@@ -317,8 +313,6 @@ export const AntigravitySettingsInputSchema = z.object({
   command: z.string().trim().max(500).optional(),
   api_base_url: z.string().trim().max(2000).optional(),
   api_key: z.string().max(4000).optional(),
-  auto_delete_threads: z.boolean().optional(),
-  failed_thread_retention_days: z.number().int().nonnegative().max(3650).optional(),
 });
 
 export type AntigravitySettingsInput = z.infer<typeof AntigravitySettingsInputSchema>;
@@ -335,8 +329,6 @@ export const AntigravitySettingsSchema = z.object({
   command: z.string(),
   api_base_url: z.string(),
   has_api_key: z.boolean(),
-  auto_delete_threads: z.boolean().default(false),
-  failed_thread_retention_days: z.number().int().nonnegative().default(7),
 });
 
 export type AntigravitySettings = z.infer<typeof AntigravitySettingsSchema>;

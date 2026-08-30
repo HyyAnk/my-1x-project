@@ -37,7 +37,6 @@ describe("Quiz Self-Healing & Auto-Retry", () => {
     const mockClient = {
       connect: vi.fn().mockResolvedValue(undefined),
       startThread: vi.fn().mockResolvedValue("thread-1"),
-      deleteThread: vi.fn().mockResolvedValue(undefined),
       on: vi.fn().mockImplementation((event, handler) => {
         if (event === "notification") {
           setTimeout(() => {

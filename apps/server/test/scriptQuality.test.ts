@@ -196,9 +196,6 @@ class ScriptCodex extends EventEmitter {
   async interruptTurn(): Promise<void> {
     /* deterministic fake */
   }
-  async deleteThread(): Promise<boolean> {
-    return true;
-  }
   respond(): void {
     /* deterministic fake */
   }

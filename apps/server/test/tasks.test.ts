@@ -188,7 +188,6 @@ class FakeCodex extends EventEmitter {
   private turnNumber = 0;
   activeTurns = 0;
   maxActiveTurns = 0;
-  deletedThreads: string[] = [];
   prompts: string[] = [];
   async connect(): Promise<void> {
     this.emit("status", "connected");
@@ -291,10 +290,6 @@ class FakeCodex extends EventEmitter {
   }
   async interruptTurn(): Promise<void> {
     /* deterministic fake */
-  }
-  async deleteThread(threadId: string): Promise<boolean> {
-    this.deletedThreads.push(threadId);
-    return true;
   }
   respond(): void {
     /* deterministic fake */
@@ -415,7 +410,6 @@ describe("TaskManager locks", () => {
     await waitFor(() => manager.get(second.task_id).status === "COMPLETED");
     expect(manager.get(first.task_id).status).toBe("COMPLETED");
     expect(manager.get(second.task_id).status).toBe("COMPLETED");
-    expect(fake.deletedThreads).toEqual([]);
     const secondEpisode = await repository.confirmTopic(channel.channel_id, topics[1].topic_id);
     const parallelA = manager.submit("GENERATE_RESEARCH", channel.channel_id, episode.episode_id);
     const parallelB = manager.submit("GENERATE_RESEARCH", channel.channel_id, secondEpisode.episode_id);
@@ -504,54 +498,6 @@ describe("TaskManager locks", () => {
     expect(fake.activeTurns).toBe(0);
     expect(manager.get(first.task_id).codex_thread_id).toBeNull();
     expect((await repository.readScenes(channel.channel_id, firstEpisode.episode_id))[0].audio_duration_seconds).toBe(2);
-  });
-
-  it("keeps manual cleanup off until session cleanup is enabled", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-thread-cleanup-"));
-    roots.push(root);
-    await mkdir(path.join(root, "templates"), { recursive: true });
-    await mkdir(path.join(root, "shared"), { recursive: true });
-    await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
-    await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
-    const repository = new RepositoryService(root);
-    const logger = new StudioLogger(root);
-    await logger.init();
-    const fake = new FakeCodex();
-    const task = {
-      task_id: "task_old_thread",
-      task_type: "GENERATE_SCRIPT",
-      channel_id: "channel_old_thread",
-      episode_id: "episode_old_thread",
-      status: "COMPLETED",
-      created_at: "2026-01-01T00:00:00.000Z",
-      started_at: "2026-01-01T00:00:01.000Z",
-      completed_at: "2026-01-01T00:01:00.000Z",
-      codex_thread_id: "thread_old",
-      codex_turn_id: "turn_old",
-      error: null,
-      output_files: [],
-      lock_key: "episode_old_thread",
-      queue_position: null,
-      progress_message: "Completed",
-      scene_number: null,
-    };
-    await mkdir(path.join(repository.roots.runtime, "tasks"), { recursive: true });
-    await writeFile(path.join(repository.roots.runtime, "tasks", "task_old_thread.json"), `${JSON.stringify(task)}\n`, "utf8");
-    const manager = new TaskManager(repository, new ContextEngine(repository, logger), fake as never, 1, 8, logger, undefined, undefined, {
-      auto_delete_threads: false,
-      failed_thread_retention_days: 7,
-    });
-    await manager.load();
-    expect(fake.deletedThreads).toHaveLength(0);
-    expect(await manager.cleanupCodexThreads()).toEqual({ removed: 0 });
-    expect(await manager.cleanupCodexThreads(true)).toEqual({ removed: 0 });
-    expect(manager.get("task_old_thread").codex_thread_id).toBe("thread_old");
-    expect(fake.deletedThreads).toEqual([]);
-
-    manager.updateCodexConfig({ ...DEFAULT_CONFIG.codex, auto_delete_threads: true });
-    expect(await manager.cleanupCodexThreads(true)).toEqual({ removed: 1 });
-    expect(manager.get("task_old_thread").codex_thread_id).toBeNull();
-    expect(fake.deletedThreads).toEqual(["thread_old"]);
   });
 
   it("retries a visual bible when continuity bundles are missing", async () => {
@@ -667,7 +613,6 @@ describe("TaskManager locks", () => {
     const visualBible = await repository.getEpisodeFile(channel.channel_id, episode.episode_id, "visual_bible.md");
     expect(visualBible.content.toLowerCase()).toContain("safe motion");
     expect(manager.get(task.task_id).progress_message).toBe("Completed");
-    expect(fake.deletedThreads).toEqual([]);
   });
 
   it("retries a sequence shot plan when prompt structure or continuity metadata is missing", async () => {
@@ -733,7 +678,6 @@ describe("TaskManager locks", () => {
     expect(scenes[0].continuity_bundle_id).toBe("cb-01");
     expect(scenes[0].continuity_note).toContain("CB-01");
     expect(manager.get(task.task_id).progress_message).toBe("Completed");
-    expect(fake.deletedThreads).toEqual([]);
     expect(
       fake.prompts.some((prompt) => prompt.includes("EXACT NARRATION TO COVER VERBATIM") && prompt.includes("Opening narration.")),
     ).toBe(true);
@@ -786,7 +730,6 @@ describe("TaskManager locks", () => {
     const research = await repository.getEpisodeFile(channel.channel_id, episode.episode_id, "research.md");
     expect(research.content).toContain("C15");
     expect(manager.get(task.task_id).progress_message).toBe("Completed");
-    expect(fake.deletedThreads).toEqual([]);
   });
 
   it("runs a Quiz pipeline through V2 and submits video without legacy narration", async () => {

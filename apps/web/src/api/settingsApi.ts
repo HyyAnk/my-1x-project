@@ -20,8 +20,6 @@ export const settingsApi = {
   codexSettings: () => request<CodexSettingsResponse>("/api/codex/settings"),
   saveCodexSettings: (body: CodexSettingsInput) =>
     request<CodexSettingsResponse>("/api/codex/settings", { method: "POST", body: JSON.stringify(body) }),
-  cleanupCodex: () => request<{ removed: number }>("/api/codex/cleanup", { method: "POST", body: "{}" }),
-  cleanupAntigravity: () => request<{ removed: number }>("/api/antigravity/cleanup", { method: "POST", body: "{}" }),
   antigravitySettings: () => request<AntigravitySettingsResponse>("/api/antigravity/settings"),
   saveAntigravitySettings: (body: AntigravitySettingsInput) =>
     request<AntigravitySettingsResponse>("/api/antigravity/settings", { method: "POST", body: JSON.stringify(body) }),

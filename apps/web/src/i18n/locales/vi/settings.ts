@@ -21,8 +21,6 @@ export const settingsVi = {
     storageHint: "Tất cả tệp video, âm thanh và hình ảnh sẽ lưu ở đây và được loại trừ khỏi Git repository.",
     codexTitle: "OpenAI Codex JSON-RPC Engine",
     antigravityTitle: "Google Antigravity Engine",
-    sessionCleanup: "Dọn dẹp phiên làm việc",
-    cleanupOldSessions: "Dọn dẹp các phiên Codex cũ",
     saveCodexSettings: "Lưu cài đặt Codex",
     saveAntigravitySettings: "Lưu cài đặt Antigravity",
     ttsTitle: "Tổng hợp Giọng nói (Chatterbox TTS)",

@@ -63,8 +63,6 @@ export const DEFAULT_CONFIG: AppConfig = {
     experimental_api: false,
     api_base_url: "",
     api_key: "",
-    auto_delete_threads: false,
-    failed_thread_retention_days: 7,
   },
   antigravity: {
     max_concurrent_tasks: 3,
@@ -72,8 +70,6 @@ export const DEFAULT_CONFIG: AppConfig = {
     model: "pro",
     api_base_url: "",
     api_key: "",
-    auto_delete_threads: false,
-    failed_thread_retention_days: 7,
   },
   audio_generation: {
     provider: "chatterbox",
@@ -196,17 +192,8 @@ export async function saveCodexSettings(rootDirectory: string, input: CodexSetti
   const localPath = path.join(settingsDirectory, codexSettingsFilename);
   const currentLocal = await readJsonFile(localPath);
   const currentCodex = currentLocal.codex && typeof currentLocal.codex === "object" ? (currentLocal.codex as Record<string, unknown>) : {};
-  const nextCodex = { ...currentCodex } as Record<string, unknown>;
-  for (const key of [
-    "transport",
-    "model",
-    "api_base_url",
-    "api_key",
-    "app_server_endpoint",
-    "command",
-    "auto_delete_threads",
-    "failed_thread_retention_days",
-  ] as const) {
+  const nextCodex = withoutRemovedSessionCleanupSettings(currentCodex);
+  for (const key of ["transport", "model", "api_base_url", "api_key", "app_server_endpoint", "command"] as const) {
     const value = parsed[key];
     if (value !== undefined) nextCodex[key] = value;
   }
@@ -222,14 +209,23 @@ export async function saveAntigravitySettings(rootDirectory: string, input: Anti
   const currentLocal = await readJsonFile(localPath);
   const currentAgy =
     currentLocal.antigravity && typeof currentLocal.antigravity === "object" ? (currentLocal.antigravity as Record<string, unknown>) : {};
-  const nextAgy = { ...currentAgy } as Record<string, unknown>;
-  for (const key of ["model", "api_base_url", "api_key", "command", "auto_delete_threads", "failed_thread_retention_days"] as const) {
+  const nextAgy = withoutRemovedSessionCleanupSettings(currentAgy);
+  for (const key of ["model", "api_base_url", "api_key", "command"] as const) {
     const value = parsed[key];
     if (value !== undefined) nextAgy[key] = value;
   }
   await mkdir(settingsDirectory, { recursive: true });
   await writeFile(localPath, `${JSON.stringify({ antigravity: nextAgy }, null, 2)}\n`, "utf8");
   return loadConfig(rootDirectory);
+}
+
+function withoutRemovedSessionCleanupSettings(settings: Record<string, unknown>): Record<string, unknown> {
+  const {
+    auto_delete_threads: _removedAutoDeleteThreads,
+    failed_thread_retention_days: _removedRetentionDays,
+    ...retainedSettings
+  } = settings;
+  return retainedSettings;
 }
 
 export async function saveEngineSettings(rootDirectory: string, input: EngineSettingsInput): Promise<AppConfig> {
