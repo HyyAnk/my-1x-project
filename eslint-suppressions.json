@@ -476,7 +476,7 @@
   },
   "apps/server/test/soundtrackMixer.test.ts": {
     "@typescript-eslint/no-unused-vars": {
-      "count": 2
+      "count": 1
     }
   },
   "apps/server/test/tasks.test.ts": {

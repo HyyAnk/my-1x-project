@@ -1,6 +1,8 @@
+import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
 import { QuizV2Schema } from "@studio/shared";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
@@ -82,19 +84,29 @@ describe("Master Soundtrack Mixer", () => {
     }
   });
 
-  it("resolves BGM schedule with fades and candidate file paths", () => {
-    const bgmCandidateDirs = defaultBgmCandidateDirectories();
-    const bgmItems = resolveBgmScheduleItems(60, bgmCandidateDirs, {
-      bpmPreference: "120_bpm_upbeat",
-      seed: "soundtrack-test",
-    });
+  it("resolves BGM schedule with fades and candidate file paths", async () => {
+    const tmpDir = await mkdtemp(path.join(os.tmpdir(), "bgm-schedule-test-"));
+    try {
+      const tracksDir = path.join(tmpDir, "tracks");
+      await mkdir(tracksDir, { recursive: true });
+      const dummyWav = createSilenceWav(180);
+      await writeFile(path.join(tracksDir, "Games_in_the_Garden.mp3"), dummyWav);
+      await writeFile(path.join(tracksDir, "Morning_in_the_Garden.mp3"), dummyWav);
 
-    expect(bgmItems.length).toBe(1);
-    expect(bgmItems[0].startSeconds).toBe(0);
-    expect(bgmItems[0].durationSeconds).toBeCloseTo(60, 1);
-    expect(bgmItems[0].fadeInSeconds).toBeGreaterThanOrEqual(0.05);
-    expect(bgmItems[0].fadeOutSeconds).toBeGreaterThanOrEqual(0.5);
-    expect(bgmItems[0].filePath).toBeTruthy();
+      const bgmItems = resolveBgmScheduleItems(60, [tmpDir, tracksDir, ...defaultBgmCandidateDirectories()], {
+        bpmPreference: "120_bpm_upbeat",
+        seed: "soundtrack-test",
+      });
+
+      expect(bgmItems.length).toBe(1);
+      expect(bgmItems[0].startSeconds).toBe(0);
+      expect(bgmItems[0].durationSeconds).toBeCloseTo(60, 1);
+      expect(bgmItems[0].fadeInSeconds).toBeGreaterThanOrEqual(0.05);
+      expect(bgmItems[0].fadeOutSeconds).toBeGreaterThanOrEqual(0.5);
+      expect(bgmItems[0].filePath).toBeTruthy();
+    } finally {
+      await rm(tmpDir, { recursive: true, force: true });
+    }
   });
 
   it("builds clean FFmpeg filtergraph script with dynamic ducking and loudnorm", () => {
@@ -164,8 +176,24 @@ describe("Master Soundtrack Mixer", () => {
   });
 
   it("mixes real master soundtrack WAV using FFmpeg with ducking, loudnorm, and diagnostics", async () => {
+    let ffmpegAvailable = true;
+    try {
+      await promisify(execFile)("ffmpeg", ["-version"]);
+    } catch {
+      ffmpegAvailable = false;
+    }
+    if (!ffmpegAvailable) {
+      return;
+    }
+
     const tmpDir = await mkdtemp(path.join(os.tmpdir(), "soundtrack-test-"));
     try {
+      const tracksDir = path.join(tmpDir, "tracks");
+      await mkdir(tracksDir, { recursive: true });
+      const dummyWav = createSilenceWav(180);
+      await writeFile(path.join(tracksDir, "Games_in_the_Garden.mp3"), dummyWav);
+      await writeFile(path.join(tracksDir, "Morning_in_the_Garden.mp3"), dummyWav);
+
       const director = createDefaultDirectorPlan(sampleQuiz);
       const timeline = compileQuizTimeline({ quiz: sampleQuiz, director, voicePlan: buildQuizVoicePlan(sampleQuiz) });
 
@@ -186,6 +214,7 @@ describe("Master Soundtrack Mixer", () => {
         ducking: true,
         loudnorm: true,
         targetLufs: -14,
+        bgmCandidateDirectories: [tmpDir, tracksDir, ...defaultBgmCandidateDirectories()],
         bgmOptions: {
           bpmPreference: "120_bpm_upbeat",
           seed: "mix-test",

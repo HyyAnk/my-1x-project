@@ -28,6 +28,9 @@ jobs:
           node-version: 24
           cache: pnpm
 
+      - name: Set up FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -63,6 +66,9 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+
+      - name: Set up FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
