@@ -445,7 +445,7 @@ export const en: TranslationSchema = {
     stylePixarDesc: "3D animated, soft volumetric lighting, Octane render",
     styleChibiDesc: "Cute anime chibi, oversized sparkling eyes, pastel",
     styleVectorDesc: "2D clean vector art, bold outlines, sticker design",
-    styleVoxelDesc: "3D isometric voxel cubes, playful low-poly game look",
+    styleRealismDesc: "Cinematic documentary photography, photorealistic natural lighting",
     styleToyDesc: "Glossy vinyl designer toy, Pop Mart studio aesthetic",
     focusPromptTitle: "Master Prompt Focus Editor",
 
@@ -885,6 +885,8 @@ export const en: TranslationSchema = {
     scaleDimensionsLabel: "Scale Dimensions",
     offsetsTitleLabel: "X & Y Pixel Offsets",
     resetOffsetsTitle: "Reset offsets to 0, 0",
+    resetDefaultPlacement: "Assign Default (1.84x)",
+    resetDefaultPlacementTitle: "Reset to default assign preset (scale 1.84, offset X +67, Y +90)",
     axisXPrefix: "X Axis",
     axisYPrefix: "Y Axis",
 

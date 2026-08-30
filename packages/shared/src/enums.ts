@@ -50,17 +50,17 @@ export const TaskTypeSchema = z.enum([
 
 export type TaskType = z.infer<typeof TaskTypeSchema>;
 
-export const QuizImageStyleSchema = z.enum(["pixar_3d", "flat_vector", "kawaii_chibi", "voxel_lowpoly", "plastic_toy"]);
+export const QuizImageStyleSchema = z.enum(["pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]);
 
 export type QuizImageStyle = z.infer<typeof QuizImageStyleSchema>;
 
-export const ALL_QUIZ_IMAGE_STYLES: QuizImageStyle[] = ["pixar_3d", "flat_vector", "kawaii_chibi", "voxel_lowpoly", "plastic_toy"];
+export const ALL_QUIZ_IMAGE_STYLES: QuizImageStyle[] = ["pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"];
 
 export const QUIZ_IMAGE_STYLE_LABELS: Record<QuizImageStyle, string> = {
   pixar_3d: "3D Pixar Animation",
   flat_vector: "2D Flat Vector",
   kawaii_chibi: "Chibi Kawaii Anime",
-  voxel_lowpoly: "3D Voxel / Low-Poly",
+  natural_realism: "Cinematic Realism",
   plastic_toy: "3D Glossy Vinyl Toy",
 };
 

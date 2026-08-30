@@ -19,7 +19,7 @@ The contract defines one coordinate system and one render input for Visual Sandb
 - `scale` is a unitless multiplier in the inclusive range `0.3–3.0`.
 - `scale = 1` means the canonical 220px box at output resolution, independent of browser zoom or viewport fit.
 - The default placement is bottom-left, scale 1, zero offsets, and no horizontal flip.
-- The existing recommended placement remains available as a named preset: bottom-left, scale 1.84, X +21, Y +90.
+- The existing recommended placement remains available as a named preset: bottom-left, scale 1.84, X +67, Y +90.
 
 ## Transform order
 

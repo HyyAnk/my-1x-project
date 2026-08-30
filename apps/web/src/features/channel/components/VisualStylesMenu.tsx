@@ -8,7 +8,7 @@ export const QUIZ_IMAGE_STYLE_DESCRIPTIONS: Record<QuizImageStyle, string> = {
   pixar_3d: "Cinematic 3D animation with expressive eyes, soft cinematic studio lighting, and gentle depth.",
   flat_vector: "Clean 2D flat vector cartoon with bold outlines, bright pastel colors, and crisp geometry.",
   kawaii_chibi: "Japanese Chibi Anime with sparkling sweet eyes, soft lines, and subtle twinkling accents.",
-  voxel_lowpoly: "Blocky 3D isometric pixel voxel gaming style with clean cube geometry and volumetric shading.",
+  natural_realism: "Authentic cinematic photography with breathtaking natural lighting, photorealistic textures, and realistic depth.",
   plastic_toy: "Glossy Pop Mart vinyl art toy aesthetic with sleek studio reflections and smooth contact shadows.",
 };
 

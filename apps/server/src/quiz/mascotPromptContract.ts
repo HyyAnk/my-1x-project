@@ -5,7 +5,8 @@ export const MASCOT_STYLE_PROMPTS: Record<QuizImageStyle, string> = {
     "3D Pixar animation style, soft volumetric lighting, smooth stylized textures, cute rounded features, vibrant saturated colors, cinema 4D octane render, highly expressive",
   flat_vector: "2D flat vector art, clean bold outlines, solid color blocks, minimalist modern mascot, sticker style",
   kawaii_chibi: "Chibi kawaii anime style, oversized cute sparkling eyes, mini body, joyful expression, pastel accents, cute anime mascot",
-  voxel_lowpoly: "Voxel art 3D low-poly style, isometric grid cubes, playful blocky character, vibrant lighting",
+  natural_realism:
+    "Hyper-realistic live-action CGI creature style, intricate lifelike fur and feather textures, realistic sparkling eyes, natural soft studio lighting, cinema 4D photoreal render",
   plastic_toy: "Glossy vinyl designer toy style, smooth plastic reflections, pop mart blind box aesthetic, studio lighting",
 };
 

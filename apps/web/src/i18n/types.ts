@@ -444,7 +444,7 @@ export interface TranslationSchema {
     stylePixarDesc: string;
     styleChibiDesc: string;
     styleVectorDesc: string;
-    styleVoxelDesc: string;
+    styleRealismDesc: string;
     styleToyDesc: string;
     focusPromptTitle: string;
 
@@ -883,6 +883,8 @@ export interface TranslationSchema {
     scaleDimensionsLabel: string;
     offsetsTitleLabel: string;
     resetOffsetsTitle: string;
+    resetDefaultPlacement: string;
+    resetDefaultPlacementTitle: string;
     axisXPrefix: string;
     axisYPrefix: string;
 

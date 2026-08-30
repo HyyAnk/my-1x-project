@@ -37,7 +37,7 @@ export const DEFAULT_QUIZ_VOICE_TEMPO_BY_ROLE: Record<VoiceSegmentRole, number> 
 export interface StarterMascotBlueprint {
   name: string;
   description: string;
-  visual_style: "pixar_3d" | "kawaii_chibi" | "flat_vector" | "voxel_lowpoly" | "plastic_toy";
+  visual_style: "pixar_3d" | "kawaii_chibi" | "flat_vector" | "natural_realism" | "plastic_toy";
   color_theme: string;
   master_prompt: string;
 }

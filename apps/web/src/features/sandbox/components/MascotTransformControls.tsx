@@ -11,6 +11,7 @@ export interface MascotTransformControlsProps {
   setMascotOffsetY: (offset: number | ((prev: number) => number)) => void;
   mascotFlipX: boolean;
   setMascotFlipX: (flipped: boolean | ((prev: boolean) => boolean)) => void;
+  onResetDefaultPlacement?: () => void;
 }
 
 export function MascotTransformControls({
@@ -24,6 +25,7 @@ export function MascotTransformControls({
   setMascotOffsetY,
   mascotFlipX,
   setMascotFlipX,
+  onResetDefaultPlacement,
 }: MascotTransformControlsProps) {
   const { t } = useTranslation();
 
@@ -157,7 +159,7 @@ export function MascotTransformControls({
 
         {/* Quick Presets Row */}
         <div style={{ display: "flex", gap: "4px", marginTop: "6px", overflowX: "auto" }}>
-          {[0.75, 1.0, 1.25, 1.5, 2.0, 2.5].map((presetVal) => {
+          {[0.75, 1.0, 1.25, 1.5, 1.84, 2.0, 2.5].map((presetVal) => {
             const isActive = Math.abs(mascotScale - presetVal) < 0.02;
             return (
               <button
@@ -191,18 +193,31 @@ export function MascotTransformControls({
           >
             {t("visualSandbox.offsetsTitleLabel")}
           </label>
-          <button
-            type="button"
-            className="quiet-button compact"
-            style={{ fontSize: "10.5px", padding: "2px 6px" }}
-            onClick={() => {
-              setMascotOffsetX(0);
-              setMascotOffsetY(0);
-            }}
-            title={t("visualSandbox.resetOffsetsTitle")}
-          >
-            Reset 0
-          </button>
+          <div style={{ display: "flex", gap: "4px" }}>
+            {onResetDefaultPlacement && (
+              <button
+                type="button"
+                className="quiet-button compact"
+                style={{ fontSize: "10.5px", padding: "2px 6px", color: "var(--accent)" }}
+                onClick={onResetDefaultPlacement}
+                title={t("visualSandbox.resetDefaultPlacementTitle")}
+              >
+                {t("visualSandbox.resetDefaultPlacement")}
+              </button>
+            )}
+            <button
+              type="button"
+              className="quiet-button compact"
+              style={{ fontSize: "10.5px", padding: "2px 6px" }}
+              onClick={() => {
+                setMascotOffsetX(0);
+                setMascotOffsetY(0);
+              }}
+              title={t("visualSandbox.resetOffsetsTitle")}
+            >
+              Reset 0
+            </button>
+          </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>

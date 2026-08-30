@@ -57,7 +57,7 @@ export type ChannelMascotConfig = z.infer<typeof ChannelMascotConfigSchema>;
 export const RECOMMENDED_MASCOT_PLACEMENT_PRESET = {
   position: "bottom_left",
   scale: 1.84,
-  offset_x: 21,
+  offset_x: 67,
   offset_y: 90,
   flip_x: false,
 } as const;

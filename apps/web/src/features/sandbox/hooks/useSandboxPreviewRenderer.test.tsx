@@ -56,11 +56,15 @@ describe("useSandboxPreviewRenderer", () => {
         {
           id: "mascot-tino",
           name: "Tino",
+          description: "",
+          visual_style: "pixar_3d",
+          master_prompt: "",
+          master_image_url: "/tino.png",
+          color_theme: "#06b6d4",
+          actions: {},
+          assigned_channel_ids: [],
           created_at: "2026-08-30T00:00:00.000Z",
           updated_at: "2026-08-30T00:00:00.000Z",
-          actions: {},
-          concept_art_url: "/tino.png",
-          voice_id: "voice-1",
         },
       ],
       mascotId: "mascot-tino",
@@ -79,6 +83,7 @@ describe("useSandboxPreviewRenderer", () => {
       setMascotOffsetY: vi.fn(),
       mascotFlipX: false,
       setMascotFlipX: vi.fn(),
+      resetToDefaultPlacement: vi.fn(),
       activeMascot: null,
     };
     mockQuestion = {
@@ -97,7 +102,6 @@ describe("useSandboxPreviewRenderer", () => {
       factCardText: "Fact detail",
       setFactCardText: vi.fn(),
       handleApplyPresetQuestion: vi.fn(),
-      handleChoiceChange: vi.fn(),
     };
     mockTimeline = {
       phase: "choices",

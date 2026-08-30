@@ -3,8 +3,7 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
 export const visualChoicesThreeLayout = {
   id: "visual_choices_three",
   dimensions: { width: 501, height: 500, count: 3 },
-  renderBody: (slots) =>
-    `${slots.questionBoxHtml}${slots.visualChoicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
+  renderBody: (slots) => `${slots.questionBoxHtml}${slots.visualChoicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
   css: (aspectRatio) => `
 .layout-visual_choices_three .game-stage { grid-template-columns: 1fr; grid-template-areas: "title" "answers"; align-items: start; row-gap: 35px; }
 .layout-visual_choices_three .question-title { grid-area: title; width: 100%; max-width: 1440px; justify-self: end; margin-left: auto; }

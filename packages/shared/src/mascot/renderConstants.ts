@@ -86,7 +86,7 @@ export const MASCOT_DEFAULT_PLACEMENT: MascotPlacementV2 = {
 export const MASCOT_RECOMMENDED_PLACEMENT: MascotPlacementV2 = {
   anchor: "bottom_left",
   scale: 1.84,
-  offset_x: 21,
+  offset_x: 67,
   offset_y: 90,
   flip_x: false,
 };

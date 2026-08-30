@@ -24,6 +24,7 @@ export interface SandboxMascotTabProps {
   setMascotOffsetY: (offset: number | ((prev: number) => number)) => void;
   mascotFlipX: boolean;
   setMascotFlipX: (flipped: boolean | ((prev: boolean) => boolean)) => void;
+  resetToDefaultPlacement?: () => void;
 }
 
 export function SandboxMascotTab({
@@ -46,6 +47,7 @@ export function SandboxMascotTab({
   setMascotOffsetY,
   mascotFlipX,
   setMascotFlipX,
+  resetToDefaultPlacement,
 }: SandboxMascotTabProps) {
   return (
     <>
@@ -78,6 +80,7 @@ export function SandboxMascotTab({
         setMascotOffsetY={setMascotOffsetY}
         mascotFlipX={mascotFlipX}
         setMascotFlipX={setMascotFlipX}
+        onResetDefaultPlacement={resetToDefaultPlacement}
       />
     </>
   );

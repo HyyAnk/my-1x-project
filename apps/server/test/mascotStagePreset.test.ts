@@ -35,7 +35,7 @@ describe("Mascot Stage default placement preset", () => {
       expect(initialConfig.json<AppConfig>().mascot_stage.default_placement).toEqual({
         position: "bottom_left",
         scale: 1.84,
-        offset_x: 21,
+        offset_x: 67,
         offset_y: 90,
         flip_x: false,
       });

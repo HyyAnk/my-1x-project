@@ -219,7 +219,14 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
       await input.repository.writeVoicePlan(input.channelId, input.episodeId, voicePlan);
       await input.repository.writeQuizTimeline(input.channelId, input.episodeId, timeline);
       const narrationPath = await input.repository.writeQuizNarrationAudio(input.channelId, input.episodeId, fakeWav(2));
-      await input.repository.saveNarrationMetadata(input.channelId, input.episodeId, narrationPath, timeline.duration_seconds, voicePlan.segments.length, 10);
+      await input.repository.saveNarrationMetadata(
+        input.channelId,
+        input.episodeId,
+        narrationPath,
+        timeline.duration_seconds,
+        voicePlan.segments.length,
+        10,
+      );
       generateVoiceRunning = false;
       return {
         voice_plan: voicePlan,
@@ -349,7 +356,14 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
     await repository.writeVoicePlan(channel.channel_id, episode.episode_id, voicePlan);
     await repository.writeQuizTimeline(channel.channel_id, episode.episode_id, timeline);
     const narrationPath = await repository.writeQuizNarrationAudio(channel.channel_id, episode.episode_id, fakeWav(2));
-    await repository.saveNarrationMetadata(channel.channel_id, episode.episode_id, narrationPath, timeline.duration_seconds, voicePlan.segments.length, 10);
+    await repository.saveNarrationMetadata(
+      channel.channel_id,
+      episode.episode_id,
+      narrationPath,
+      timeline.duration_seconds,
+      voicePlan.segments.length,
+      10,
+    );
 
     const taskManager = new TaskManager(repository, new ContextEngine(repository, logger), new EventEmitter() as never, 1, 8, logger);
     await taskManager.load();
@@ -536,7 +550,14 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
       await input.repository.writeVoicePlan(input.channelId, input.episodeId, voicePlan);
       await input.repository.writeQuizTimeline(input.channelId, input.episodeId, timeline);
       const narrationPath = await input.repository.writeQuizNarrationAudio(input.channelId, input.episodeId, fakeWav(2));
-      await input.repository.saveNarrationMetadata(input.channelId, input.episodeId, narrationPath, timeline.duration_seconds, voicePlan.segments.length, 10);
+      await input.repository.saveNarrationMetadata(
+        input.channelId,
+        input.episodeId,
+        narrationPath,
+        timeline.duration_seconds,
+        voicePlan.segments.length,
+        10,
+      );
       return {
         voice_plan: voicePlan,
         timeline,

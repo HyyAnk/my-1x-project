@@ -1,11 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  QuizV2Schema,
-  adaptMascotV1ToV2,
-  resolveMascotRenderSpec,
-  type ChannelMascotConfig,
-  type MascotProfile,
-} from "@studio/shared";
+import { QuizV2Schema, adaptMascotV1ToV2, resolveMascotRenderSpec, type ChannelMascotConfig, type MascotProfile } from "@studio/shared";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
@@ -186,8 +180,8 @@ describe("Mascot Multi-Question Lifecycle & Global Timeline", () => {
       const reveal = timeline.events.find((e) => e.type === "answer.reveal" && e.question_id === q.id)!;
 
       expect(html).toContain('class="candy-mascot-container');
-      expect(html).toContain('state-thinking');
-      expect(html).toContain('state-celebrate');
+      expect(html).toContain("state-thinking");
+      expect(html).toContain("state-celebrate");
       expect(html).not.toContain("master_concept.png");
 
       // Verify that the thinking state starts at the global question entrance time

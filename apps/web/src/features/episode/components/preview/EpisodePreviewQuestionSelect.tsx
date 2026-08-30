@@ -15,11 +15,7 @@ export function EpisodePreviewQuestionSelect({ questions, selectedQuestionId, on
   return (
     <label className="episode-preview-question-select">
       <span className="sr-only">{t("episodeCustomization.previewQuestionLabel")}</span>
-      <select
-        value={selectedQuestionId}
-        onChange={(event) => onSelectQuestion(event.target.value)}
-        disabled={questions.length <= 1}
-      >
+      <select value={selectedQuestionId} onChange={(event) => onSelectQuestion(event.target.value)} disabled={questions.length <= 1}>
         {questions.map((question) => {
           const layout = getQuizLayoutUiDefinition(question.layoutId);
           const optionLabel =

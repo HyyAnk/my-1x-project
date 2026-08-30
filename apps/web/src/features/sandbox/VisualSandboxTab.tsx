@@ -144,6 +144,7 @@ export function VisualSandboxTab({
               setMascotOffsetY={mascot.setMascotOffsetY}
               mascotFlipX={mascot.mascotFlipX}
               setMascotFlipX={mascot.setMascotFlipX}
+              resetToDefaultPlacement={mascot.resetToDefaultPlacement}
             />
           )}
 

@@ -411,7 +411,7 @@ export const SaveTextInputSchema = z.object({ content: z.string() });
 export const TopicConfirmInputSchema = z.object({
   topic_id: z.string().min(1),
   question_count: z.number().int().min(QUIZ_MIN_QUESTION_COUNT).max(QUIZ_MAX_QUESTION_COUNT).optional(),
-  visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "voxel_lowpoly", "plastic_toy"]).optional(),
+  visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]).optional(),
 });
 
 export const EpisodeSettingsInputSchema = z.object({
@@ -421,7 +421,7 @@ export const EpisodeSettingsInputSchema = z.object({
   age_band: z.enum(["4-6", "7-9", "10-12", "family"]).optional(),
   answer_mode: z.enum(["voice_and_reveal", "voice_only"]).optional(),
   visual_theme: QuizVisualThemeSchema.optional(),
-  visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "voxel_lowpoly", "plastic_toy"]).optional(),
+  visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]).optional(),
   resolved_visual_style: QuizImageStyleSchema.optional(),
   thinking_bar_style: QuizThinkingBarStyleSchema.optional(),
   question_counter_style: QuizQuestionCounterStyleSchema.optional(),

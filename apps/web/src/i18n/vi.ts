@@ -445,7 +445,7 @@ export const vi: TranslationSchema = {
     stylePixarDesc: "3D hoạt hình sống động, ánh sáng mềm, render Octane",
     styleChibiDesc: "Anime chibi đáng yêu, mắt to lấp lánh, tone pastel",
     styleVectorDesc: "2D Flat Vector tối giản, nét vẽ dày, sticker art",
-    styleVoxelDesc: "3D Voxel khối lập phương, phong cách game low-poly",
+    styleRealismDesc: "Ảnh chụp tài liệu tự nhiên, ánh sáng cinematic chân thực",
     styleToyDesc: "Đồ chơi vinyl Pop Mart tráng bóng, đèn studio",
     focusPromptTitle: "Soạn thảo Master Prompt",
 
@@ -885,6 +885,8 @@ export const vi: TranslationSchema = {
     scaleDimensionsLabel: "🔍 Kích thước thu phóng (Scale)",
     offsetsTitleLabel: "🎯 Tọa độ bù trục X & Y (Pixel Offsets)",
     resetOffsetsTitle: "Đặt lại tọa độ về 0, 0",
+    resetDefaultPlacement: "Chuẩn Assign (1.84x)",
+    resetDefaultPlacementTitle: "Khôi phục chuẩn mặc định của Assign (scale 1.84, offset X +67, Y +90)",
     axisXPrefix: "Trục X",
     axisYPrefix: "Trục Y",
 

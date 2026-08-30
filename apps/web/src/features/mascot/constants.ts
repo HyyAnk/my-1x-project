@@ -4,7 +4,7 @@ export const STYLE_OPTIONS: { id: QuizImageStyle; title: string }[] = [
   { id: "pixar_3d", title: "3D Pixar" },
   { id: "kawaii_chibi", title: "Kawaii Chibi" },
   { id: "flat_vector", title: "Flat Vector" },
-  { id: "voxel_lowpoly", title: "Voxel 3D" },
+  { id: "natural_realism", title: "Realism" },
   { id: "plastic_toy", title: "Plastic Toy" },
 ];
 

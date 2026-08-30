@@ -216,9 +216,9 @@ describe("Candy Arcade visual template", () => {
     expect(vectorPrompt.prompt).toContain("2D Flat Vector");
     expect(vectorPrompt.prompt).toContain("vibrant modern vector landscape");
 
-    const voxelPrompt = compileQuizAssetPrompt(hero, undefined, "voxel_lowpoly");
-    expect(voxelPrompt.prompt).toContain("3D Voxel / Low-Poly");
-    expect(voxelPrompt.prompt).toContain("3D voxel blocky environment");
+    const realismPrompt = compileQuizAssetPrompt(hero, undefined, "natural_realism");
+    expect(realismPrompt.prompt).toContain("Cinematic Realism");
+    expect(realismPrompt.prompt).toContain("breathtaking authentic natural landscape");
 
     const plasticToyPrompt = compileQuizAssetPrompt(hero, undefined, "plastic_toy");
     expect(plasticToyPrompt.prompt).toContain("3D Glossy Vinyl Toy");
