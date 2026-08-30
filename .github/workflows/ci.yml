@@ -70,6 +70,9 @@ jobs:
       - name: Install Playwright Chromium
         run: pnpm exec playwright install chromium
 
+      - name: Build shared package
+        run: pnpm --filter @studio/shared build
+
       - name: Run Playwright end-to-end tests
         run: pnpm test:e2e
 

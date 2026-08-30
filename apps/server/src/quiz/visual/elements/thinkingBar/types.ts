@@ -26,11 +26,7 @@ export type ThinkingBarTiming = {
   styleAttr: string;
 };
 
-export function calculateThinkingBarTiming(input: {
-  clipStart: number;
-  revealStart: number;
-  thinkingStart?: number;
-}): ThinkingBarTiming {
+export function calculateThinkingBarTiming(input: { clipStart: number; revealStart: number; thinkingStart?: number }): ThinkingBarTiming {
   const duration = Math.max(0.05, input.revealStart - input.clipStart);
   const cd5Raw = duration - 5;
   const cd4Raw = duration - 4;
@@ -86,4 +82,3 @@ export function calculateThinkingBarTiming(input: {
 }
 
 export type ThinkingBarVariant = VisualElementVariant<Exclude<QuizThinkingBarStyle, "auto">, ThinkingBarRenderInput>;
-
