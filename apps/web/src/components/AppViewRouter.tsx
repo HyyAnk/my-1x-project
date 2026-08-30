@@ -6,7 +6,8 @@ import { SettingsView } from "./SettingsPanel";
 import { MascotStudioView } from "./MascotStudio";
 import { TasksView } from "./TaskPanel";
 import { LoadingState } from "./EmptyState";
-import type { BalanceInfo, GitInfo, Notice, Page } from "./types";
+import type { GitInfo, Notice, Page } from "./types";
+import type { ImageBalanceInfo, VoiceMetricsInfo } from "../hooks/useGlobalMetrics";
 
 const VisualSandboxTab = lazy(() =>
   import("../features/sandbox/VisualSandboxTab").then((module) => ({ default: module.VisualSandboxTab })),
@@ -25,8 +26,8 @@ export interface AppViewRouterProps {
   activeEngine: "codex" | "antigravity";
   currentModel: string;
   currentImageModel: string;
-  imageBalance: BalanceInfo | null;
-  voiceMetrics: { total_seconds: number; total_rendered: number } | null;
+  imageBalance: ImageBalanceInfo | null;
+  voiceMetrics: VoiceMetricsInfo | null;
   storage: StorageInfo | null;
   git: GitInfo;
   currentEngineStatus: string;
@@ -39,13 +40,13 @@ export interface AppViewRouterProps {
   antigravityStatus: string;
   openPage: (page: Page) => void;
   openChannel: (channelId: string) => void;
-  openEpisode: (episodeId: string) => void;
+  openEpisode: (channelId: string, episodeId: string, tab?: string) => void;
   setQueryParam: (key: string, value: string | null) => void;
   upsertTask: (task: Task) => void;
   requestCreateChannel: (groupId?: ChannelGroupId) => void;
   requestDeleteChannel: (channel: Channel) => void;
   refresh: () => Promise<void>;
-  refreshChannels: () => Promise<void>;
+  refreshChannels: () => Promise<unknown>;
   setNotice: (notice: Notice) => void;
   applyStorage: (storage: StorageInfo) => Promise<void>;
   setCodex: (codex: CodexSettingsResponse) => void;

@@ -25,7 +25,14 @@ export type QuizAssessmentInput = {
   quiz: QuizV2;
   director?: DirectorPlan | null;
   assetPlan?: QuizAssetPlan | null;
-  resolvedAssets?: Array<{ asset_id: string; path: string; source: string; degraded?: boolean; fallback_tier?: number; question_id?: string }>;
+  resolvedAssets?: Array<{
+    asset_id: string;
+    path: string;
+    source: string;
+    degraded?: boolean;
+    fallback_tier?: number;
+    question_id?: string | null;
+  }>;
   voicePlan?: VoicePlan | null;
   timeline?: QuizTimeline | null;
   measuredAudio?: boolean;

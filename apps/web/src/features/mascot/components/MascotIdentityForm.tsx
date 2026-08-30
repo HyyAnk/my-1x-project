@@ -12,14 +12,7 @@ export interface MascotIdentityFormProps {
   setGenStyle: (style: QuizImageStyle) => void;
 }
 
-export function MascotIdentityForm({
-  genName,
-  setGenName,
-  genColor,
-  setGenColor,
-  genStyle,
-  setGenStyle,
-}: MascotIdentityFormProps) {
+export function MascotIdentityForm({ genName, setGenName, genColor, setGenColor, genStyle, setGenStyle }: MascotIdentityFormProps) {
   const { t } = useTranslation();
 
   return (

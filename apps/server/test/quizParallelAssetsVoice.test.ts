@@ -262,7 +262,7 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
       return { assessment, artifact_path: "assessment.json" };
     });
 
-    await runQuizV2Pipeline.call(taskManager as never, task);
+    await runQuizV2Pipeline.call(taskManager, task);
 
     // Verify that resolveAssets and generateVoice ran concurrently
     expect(maxConcurrent).toBe(2);
@@ -424,7 +424,7 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
       return { assessment, artifact_path: "assessment.json" };
     });
 
-    await runQuizV2Pipeline.call(taskManager as never, task);
+    await runQuizV2Pipeline.call(taskManager, task);
 
     expect(resolveAssetsSpy).toHaveBeenCalledTimes(1);
     expect(generateVoiceSpy).not.toHaveBeenCalled();
@@ -594,7 +594,7 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
       return { timeline, artifact_path: "timeline.json", invalidated: [] };
     });
 
-    await runQuizV2Pipeline.call(taskManager as never, task);
+    await runQuizV2Pipeline.call(taskManager, task);
 
     expect(generateVoiceSpy).toHaveBeenCalledTimes(1);
     expect(resolveAssetsSpy).not.toHaveBeenCalled();

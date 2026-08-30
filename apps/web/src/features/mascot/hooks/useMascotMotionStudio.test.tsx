@@ -92,7 +92,7 @@ describe("useMascotMotionStudio", () => {
     const mockClickEvent = { type: "click", target: {}, preventDefault: () => {} } as unknown;
 
     await act(async () => {
-      await result.current.handleSaveMotion(mockClickEvent as any);
+      await result.current.handleSaveMotion(mockClickEvent);
     });
 
     // Ensure api.calibrateMascotAction was called with "idle" (activePreviewAction) and NOT "[object Object]"

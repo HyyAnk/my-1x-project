@@ -36,9 +36,7 @@ export function SandboxStyleOptionSection<T extends string>({
         >
           {sectionTitle}
         </label>
-        <span style={{ fontSize: "10px", color: "var(--accent)", fontWeight: 700 }}>
-          {activeLabel}
-        </span>
+        <span style={{ fontSize: "10px", color: "var(--accent)", fontWeight: 700 }}>{activeLabel}</span>
       </div>
 
       <div
@@ -85,11 +83,7 @@ export function SandboxStyleOptionSection<T extends string>({
         })}
       </div>
 
-      {description ? (
-        <p style={{ fontSize: "10.5px", color: "var(--muted)", margin: 0, lineHeight: 1.35 }}>
-          {description}
-        </p>
-      ) : null}
+      {description ? <p style={{ fontSize: "10.5px", color: "var(--muted)", margin: 0, lineHeight: 1.35 }}>{description}</p> : null}
     </div>
   );
 }

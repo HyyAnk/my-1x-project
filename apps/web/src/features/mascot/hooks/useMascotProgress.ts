@@ -98,7 +98,7 @@ export function useMascotProgress() {
       return t("mascots.batchGeneratingBtn");
     }
     if (ALL_MASCOT_ACTIONS.includes(busyAction as MascotActionType)) {
-      const actionMeta = getLocalizedActionMeta(busyAction as MascotActionType, t);
+      const actionMeta = getLocalizedActionMeta(busyAction, t);
       if (generationElapsed < 12) return t("mascots.genPoseInit");
       if (generationElapsed < 45) return t("mascots.genPoseRendering", { action: actionMeta.label.split(" ")[0] });
       return t("mascots.genPoseFinalizing", { action: actionMeta.label.split(" ")[0] });

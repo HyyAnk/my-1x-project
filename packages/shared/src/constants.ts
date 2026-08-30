@@ -95,4 +95,3 @@ export const BUILTIN_DEFAULT_VOICE_PROFILE = {
   created_at: BUILTIN_DEFAULT_VOICE_CREATED_AT,
   is_builtin: true,
 } as const;
-

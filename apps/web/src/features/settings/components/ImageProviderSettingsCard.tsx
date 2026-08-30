@@ -260,11 +260,7 @@ export function ImageProviderSettingsCard({
             <button type="button" className="quiet-button" disabled={checkingImageBalance} onClick={() => void onCheckImageBalance()}>
               {checkingImageBalance ? <CircleNotch className="spin" size={15} /> : null}
               <span>
-                {checkingImageBalance
-                  ? "Verifying…"
-                  : imageProvider === "gpti2"
-                    ? "Check Balance & Verify Key"
-                    : "Verify Connection & Key"}
+                {checkingImageBalance ? "Verifying…" : imageProvider === "gpti2" ? "Check Balance & Verify Key" : "Verify Connection & Key"}
               </span>
             </button>
           ) : null}

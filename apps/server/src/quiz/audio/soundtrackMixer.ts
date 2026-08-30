@@ -17,10 +17,7 @@ import {
   resolveBgmScheduleItems,
   type BgmScheduleItem,
 } from "./soundtrackBgmPlanner.js";
-import {
-  buildFilterGraphScript,
-  type MasterSoundtrackPlan,
-} from "./soundtrackFfmpegBuilder.js";
+import { buildFilterGraphScript, type MasterSoundtrackPlan } from "./soundtrackFfmpegBuilder.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -67,13 +64,7 @@ export async function mixMasterSoundtrack(options: MixMasterSoundtrackOptions): 
   const bgmCandidateDirs = options.bgmCandidateDirectories ?? defaultBgmCandidateDirectories();
 
   const sfxItems = resolveSfxSchedule(options.timeline.events, sfxCandidateDirs, options.assets);
-  const bgmItems = resolveBgmScheduleItems(
-    duration,
-    bgmCandidateDirs,
-    options.bgmOptions,
-    options.bgmRegistry,
-    options.outroStartSeconds,
-  );
+  const bgmItems = resolveBgmScheduleItems(duration, bgmCandidateDirs, options.bgmOptions, options.bgmRegistry, options.outroStartSeconds);
 
   const plan: MasterSoundtrackPlan = {
     durationSeconds: duration,

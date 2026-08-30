@@ -12,12 +12,7 @@ import {
 import { RepositoryError } from "./errors.js";
 import type { RepositoryRuntime } from "./runtime.js";
 
-const BUILTIN_VOICE_ALIASES = new Set([
-  BUILTIN_DEFAULT_VOICE_ID,
-  "voice_733cff467b40478d",
-  "voice_english_girl",
-  "default",
-]);
+const BUILTIN_VOICE_ALIASES = new Set([BUILTIN_DEFAULT_VOICE_ID, "voice_733cff467b40478d", "voice_english_girl", "default"]);
 
 export async function saveVoiceReference(
   this: RepositoryRuntime,

@@ -1,7 +1,6 @@
 import { copyFile, mkdir } from "node:fs/promises";
 import path from "node:path";
-import type { QuizAssetPlan } from "@studio/shared";
-import type { Repository } from "../../repository.js";
+import type { QuizAssetPlan, QuizAssetResolution } from "@studio/shared";
 import { resolveQuizAssets } from "../../quiz/assets/resolveQuizAssets.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 
@@ -11,12 +10,12 @@ export interface PrepareVideoAssetsOptions {
   episodeId: string;
   renderRoot: string;
   assetPlan: QuizAssetPlan;
-  assetResolution: { assets: Array<{ asset_id: string; path: string; source: string }> } | null;
+  assetResolution: QuizAssetResolution | null;
   onProgress: (message: string, percent: number) => Promise<void>;
 }
 
 export interface PrepareVideoAssetsResult {
-  assetResolution: { assets: Array<{ asset_id: string; path: string; source: string }> };
+  assetResolution: QuizAssetResolution;
   assetSources: Record<string, string>;
 }
 

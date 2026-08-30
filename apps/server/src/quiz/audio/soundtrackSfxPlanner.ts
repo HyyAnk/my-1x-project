@@ -24,11 +24,7 @@ export function defaultSfxCandidateDirectories(): string[] {
   ];
 }
 
-export function resolveSfxCandidatePath(
-  filename: string,
-  candidateDirs: string[],
-  assets?: Record<string, string>,
-): string | null {
+export function resolveSfxCandidatePath(filename: string, candidateDirs: string[], assets?: Record<string, string>): string | null {
   const intentKey = filename.replace(/\.wav$/, "");
   if (assets?.[`sfx:${intentKey}`]) return assets[`sfx:${intentKey}`];
   if (assets?.[filename]) return assets[filename];

@@ -8,7 +8,7 @@ export interface AssessAssetQaInput {
     source: string;
     degraded?: boolean;
     fallback_tier?: number;
-    question_id?: string;
+    question_id?: string | null;
   }>;
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;

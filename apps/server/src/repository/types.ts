@@ -30,4 +30,3 @@ export type RepositoryRoots = {
   voices: string;
   mascots: string;
 };
-

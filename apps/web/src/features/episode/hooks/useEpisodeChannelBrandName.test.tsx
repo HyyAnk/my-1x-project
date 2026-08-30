@@ -37,7 +37,7 @@ const mockChannel: Channel = {
     show_in_outro: false,
     show_in_question: true,
   },
-};
+} as unknown as Channel;
 
 const mockEpisode: Episode = {
   episode_id: "ep-1",
@@ -73,7 +73,7 @@ const mockEpisode: Episode = {
     question_count: 8,
     channel_brand_name: "Tino",
   },
-};
+} as unknown as Episode;
 
 describe("useEpisodeChannelBrandName", () => {
   let setEpisode: ReturnType<typeof vi.fn>;

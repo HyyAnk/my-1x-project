@@ -52,9 +52,5 @@ export function computeAssessmentRating(
   candyArcadeVisual: { total: number },
 ): QuizAssessment["rating"] {
   const hasBlocker = issues.some((issue) => issue.severity === "blocker");
-  return !hasBlocker && score >= 85 && candyArcadeVisual.total >= 85
-    ? "production_ready"
-    : score >= 70
-      ? "needs_review"
-      : "not_ready";
+  return !hasBlocker && score >= 85 && candyArcadeVisual.total >= 85 ? "production_ready" : score >= 70 ? "needs_review" : "not_ready";
 }

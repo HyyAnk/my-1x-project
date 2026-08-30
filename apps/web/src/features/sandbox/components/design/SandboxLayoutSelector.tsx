@@ -1,7 +1,7 @@
 import { ListNumbers, SquareSplitHorizontal } from "@phosphor-icons/react";
 import type { QuizPreviewLayoutId } from "@studio/shared";
-import { useTranslation } from "../../../../../i18n";
-import { QUIZ_LAYOUT_UI_DEFINITIONS } from "../../../../quizLayouts/quizLayoutUiCatalog";
+import { useTranslation } from "../../../../i18n";
+import { QUIZ_LAYOUT_UI_DEFINITIONS } from "../../../quizLayouts/quizLayoutUiCatalog";
 
 export interface SandboxLayoutSelectorProps {
   layoutId: QuizPreviewLayoutId;

@@ -1,9 +1,4 @@
-import {
-  CircleNotch,
-  DownloadSimple,
-  MagnifyingGlassPlus,
-  PaintBrush,
-} from "@phosphor-icons/react";
+import { CircleNotch, DownloadSimple, MagnifyingGlassPlus, PaintBrush } from "@phosphor-icons/react";
 import { QUIZ_IMAGE_STYLE_LABELS, type MascotProfile, type QuizImageStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 

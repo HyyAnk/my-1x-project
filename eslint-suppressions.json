@@ -1,20 +1,37 @@
 {
-  "apps/server/src/antigravity.ts": {
+  "apps/server/src/antigravity/client.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
+    },
+    "@typescript-eslint/require-await": {
+      "count": 2
+    }
+  },
+  "apps/server/src/antigravity/models.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
+    },
+    "no-useless-escape": {
+      "count": 1
+    }
+  },
+  "apps/server/src/antigravity/sessionManager.ts": {
     "@typescript-eslint/no-unsafe-assignment": {
       "count": 1
     },
     "@typescript-eslint/no-unused-vars": {
-      "count": 2
-    },
-    "@typescript-eslint/require-await": {
-      "count": 2
-    },
-    "complexity": {
       "count": 1
     },
     "no-useless-escape": {
-      "count": 2
-    },
+      "count": 1
+    }
+  },
+  "apps/server/src/antigravity/transcriptWatcher.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "apps/server/src/antigravity/turnRunner.ts": {
     "preserve-caught-error": {
       "count": 1
     }
@@ -31,8 +48,13 @@
     }
   },
   "apps/server/src/context.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "apps/server/src/contextContracts.ts": {
     "@typescript-eslint/no-unused-vars": {
-      "count": 2
+      "count": 3
     },
     "complexity": {
       "count": 1
@@ -65,8 +87,16 @@
     }
   },
   "apps/server/src/providers/gpti2Image.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
+    },
     "preserve-caught-error": {
-      "count": 2
+      "count": 1
+    }
+  },
+  "apps/server/src/providers/gpti2NanoBanana.ts": {
+    "preserve-caught-error": {
+      "count": 1
     }
   },
   "apps/server/src/providers/shopAiKeyImage.ts": {
@@ -84,7 +114,22 @@
       "count": 1
     }
   },
-  "apps/server/src/quiz/mascotService.ts": {
+  "apps/server/src/quiz/audio/soundtrackBgmPlanner.ts": {
+    "no-useless-assignment": {
+      "count": 1
+    }
+  },
+  "apps/server/src/quiz/audio/soundtrackMixer.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 4
+    }
+  },
+  "apps/server/src/quiz/mascot/artGenerator.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "apps/server/src/quiz/mascot/packageManager.ts": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
     },
@@ -99,15 +144,9 @@
     },
     "@typescript-eslint/no-unsafe-member-access": {
       "count": 5
-    },
-    "@typescript-eslint/no-unused-vars": {
-      "count": 2
-    },
-    "complexity": {
-      "count": 1
     }
   },
-  "apps/server/src/quiz/pipeline/orchestrator.ts": {
+  "apps/server/src/quiz/pipeline/remixQuestions.ts": {
     "@typescript-eslint/no-base-to-string": {
       "count": 1
     },
@@ -126,11 +165,6 @@
       "count": 1
     }
   },
-  "apps/server/src/quiz/qa/quizAssessment.ts": {
-    "complexity": {
-      "count": 1
-    }
-  },
   "apps/server/src/quiz/render/hyperframesRenderer.ts": {
     "@typescript-eslint/require-await": {
       "count": 1
@@ -138,9 +172,6 @@
   },
   "apps/server/src/quiz/render/sandboxComposition.ts": {
     "complexity": {
-      "count": 1
-    },
-    "no-useless-assignment": {
       "count": 1
     }
   },
@@ -169,11 +200,6 @@
       "count": 1
     }
   },
-  "apps/server/src/repository/channels.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 2
-    }
-  },
   "apps/server/src/repository/episodes.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 1
@@ -181,7 +207,7 @@
   },
   "apps/server/src/repository/mascots.ts": {
     "@typescript-eslint/no-unused-vars": {
-      "count": 3
+      "count": 2
     }
   },
   "apps/server/src/repository/media.ts": {
@@ -207,9 +233,25 @@
       "count": 2
     }
   },
-  "apps/server/src/repository/voices.ts": {
+  "apps/server/src/repository/service.ts": {
     "@typescript-eslint/no-unused-vars": {
-      "count": 2
+      "count": 4
+    }
+  },
+  "apps/server/src/repository/topics.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 1
+    },
+    "complexity": {
+      "count": 1
+    }
+  },
+  "apps/server/src/routes/mascots.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
     }
   },
   "apps/server/src/tasks/audioRunner.ts": {
@@ -219,7 +261,7 @@
   },
   "apps/server/src/tasks/codexRunner.ts": {
     "@typescript-eslint/no-unused-vars": {
-      "count": 5
+      "count": 6
     },
     "complexity": {
       "count": 1
@@ -230,14 +272,6 @@
       "count": 2
     },
     "@typescript-eslint/only-throw-error": {
-      "count": 1
-    }
-  },
-  "apps/server/src/tasks/manager.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    },
-    "@typescript-eslint/require-await": {
       "count": 1
     }
   },
@@ -253,19 +287,32 @@
     "@typescript-eslint/no-unused-vars": {
       "count": 2
     },
+    "complexity": {
+      "count": 1
+    },
     "no-useless-assignment": {
-      "count": 3
+      "count": 4
+    }
+  },
+  "apps/server/src/tasks/taskQueuePump.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
+    },
+    "@typescript-eslint/require-await": {
+      "count": 1
+    }
+  },
+  "apps/server/src/tasks/taskStateStore.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
     }
   },
   "apps/server/src/tasks/videoRunner.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 2
-    },
     "complexity": {
       "count": 1
     }
   },
-  "apps/server/src/utils/imageMatting.ts": {
+  "apps/server/src/utils/matting/pngCodec.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 1
     },
@@ -350,12 +397,20 @@
       "count": 7
     }
   },
+  "apps/server/test/mascotStateResolver.test.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 2
+    }
+  },
   "apps/server/test/mascotStudio.test.ts": {
     "@typescript-eslint/no-unsafe-assignment": {
       "count": 12
     },
     "@typescript-eslint/no-unsafe-member-access": {
-      "count": 27
+      "count": 30
     },
     "@typescript-eslint/no-unused-vars": {
       "count": 2
@@ -382,6 +437,14 @@
       "count": 1
     }
   },
+  "apps/server/test/quizParallelAssetsVoice.test.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
+    },
+    "@typescript-eslint/require-await": {
+      "count": 1
+    }
+  },
   "apps/server/test/quizSelfHealing.test.ts": {
     "@typescript-eslint/no-unsafe-call": {
       "count": 2
@@ -398,9 +461,25 @@
       "count": 5
     }
   },
+  "apps/server/test/repository.test.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
+    }
+  },
   "apps/server/test/scriptQuality.test.ts": {
     "@typescript-eslint/require-await": {
       "count": 4
+    }
+  },
+  "apps/server/test/securityAndResilience.test.ts": {
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "count": 6
+    },
+    "@typescript-eslint/no-unused-vars": {
+      "count": 1
     }
   },
   "apps/server/test/shopAiKeyImage.test.ts": {
@@ -415,6 +494,11 @@
     },
     "@typescript-eslint/require-await": {
       "count": 4
+    }
+  },
+  "apps/server/test/soundtrackMixer.test.ts": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 2
     }
   },
   "apps/server/test/tasks.test.ts": {
@@ -446,46 +530,31 @@
       "count": 1
     },
     "@typescript-eslint/no-unsafe-assignment": {
-      "count": 6
+      "count": 8
+    },
+    "@typescript-eslint/no-unsafe-call": {
+      "count": 2
     },
     "@typescript-eslint/no-unsafe-member-access": {
-      "count": 11
+      "count": 15
     }
   },
   "apps/web/src/App.tsx": {
-    "@typescript-eslint/no-unused-vars": {
+    "@typescript-eslint/no-unused-expressions": {
       "count": 1
     },
-    "complexity": {
+    "@typescript-eslint/no-unused-vars": {
       "count": 1
     }
   },
-  "apps/web/src/api.ts": {
+  "apps/web/src/api/client.ts": {
     "no-useless-assignment": {
       "count": 1
-    }
-  },
-  "apps/web/src/components/AppChrome.tsx": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 4
-    },
-    "complexity": {
-      "count": 2
     }
   },
   "apps/web/src/components/Breadcrumbs.tsx": {
     "@typescript-eslint/no-unused-vars": {
       "count": 2
-    }
-  },
-  "apps/web/src/components/ChannelList.tsx": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 2
-    }
-  },
-  "apps/web/src/components/CountryFlag.tsx": {
-    "complexity": {
-      "count": 1
     }
   },
   "apps/web/src/components/EpisodeView.tsx": {
@@ -496,21 +565,8 @@
       "count": 1
     }
   },
-  "apps/web/src/components/MascotAssignModal.tsx": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 3
-    },
-    "complexity": {
-      "count": 1
-    }
-  },
   "apps/web/src/components/PromptFocusModal.tsx": {
     "@typescript-eslint/no-unused-vars": {
-      "count": 2
-    }
-  },
-  "apps/web/src/components/QuestionRemixPanel.tsx": {
-    "complexity": {
       "count": 2
     }
   },
@@ -520,9 +576,6 @@
     }
   },
   "apps/web/src/components/SceneCard.tsx": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    },
     "complexity": {
       "count": 1
     }
@@ -532,9 +585,19 @@
       "count": 1
     }
   },
-  "apps/web/src/features/channel/components/ChannelDnaTab.tsx": {
-    "@typescript-eslint/no-unused-vars": {
+  "apps/web/src/components/remix/QuestionRemixItemCard.tsx": {
+    "complexity": {
       "count": 1
+    }
+  },
+  "apps/web/src/components/scene/SceneAudioPlayer.tsx": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 2
+    }
+  },
+  "apps/web/src/features/channel/ChannelDetail.tsx": {
+    "@typescript-eslint/no-unused-vars": {
+      "count": 2
     }
   },
   "apps/web/src/features/channel/components/TopicHistoryRow.tsx": {
@@ -547,17 +610,15 @@
       "count": 1
     }
   },
-  "apps/web/src/features/mascot/components/MascotCalibrationStep.tsx": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 6
-    },
-    "complexity": {
+  "apps/web/src/features/episode/utils/episodePreviewQuestions.test.ts": {
+    "@typescript-eslint/no-explicit-any": {
       "count": 2
-    }
-  },
-  "apps/web/src/features/mascot/components/MascotConceptStep.tsx": {
-    "complexity": {
-      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-argument": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 2
     }
   },
   "apps/web/src/features/mascot/constants.ts": {
@@ -565,16 +626,18 @@
       "count": 1
     }
   },
-  "apps/web/src/features/mascot/hooks/useMascotGenerator.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unused-vars": {
-      "count": 3
-    }
-  },
   "apps/web/src/features/mascot/hooks/useMascotLibrary.ts": {
     "@typescript-eslint/require-await": {
+      "count": 1
+    }
+  },
+  "apps/web/src/features/mascot/hooks/useMascotMotionStudio.test.tsx": {
+    "@typescript-eslint/no-unsafe-assignment": {
+      "count": 1
+    }
+  },
+  "apps/web/src/features/mascot/hooks/useMascotMotionStudio.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
       "count": 1
     }
   },
@@ -583,7 +646,7 @@
       "count": 2
     }
   },
-  "apps/web/src/features/settings/MediaSettingsTab.tsx": {
+  "apps/web/src/features/settings/components/ImageProviderSettingsCard.tsx": {
     "complexity": {
       "count": 1
     }
@@ -595,11 +658,6 @@
   },
   "apps/web/src/features/settings/hooks/useVoiceSettings.ts": {
     "@typescript-eslint/no-base-to-string": {
-      "count": 1
-    }
-  },
-  "apps/web/src/features/tasks/TasksView.tsx": {
-    "complexity": {
       "count": 1
     }
   },

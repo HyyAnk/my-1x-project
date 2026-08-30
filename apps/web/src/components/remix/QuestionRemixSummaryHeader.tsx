@@ -1,10 +1,4 @@
-import {
-  ArrowRight,
-  ArrowsClockwise,
-  CheckCircle,
-  CircleNotch,
-  WarningCircle,
-} from "@phosphor-icons/react";
+import { ArrowRight, ArrowsClockwise, CheckCircle, CircleNotch, WarningCircle } from "@phosphor-icons/react";
 import type { QuestionHistoryCheckResult } from "@studio/shared";
 import { useTranslation } from "../../i18n";
 
