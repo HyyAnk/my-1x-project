@@ -52,7 +52,7 @@ describe("videoLayoutChecker", () => {
         rootDir: tempDir,
         sourceFingerprint,
         fastRenderMode: true,
-        onProgress: async (msg) => {
+        onProgress: (msg) => {
           progressMessages.push(msg);
         },
       });

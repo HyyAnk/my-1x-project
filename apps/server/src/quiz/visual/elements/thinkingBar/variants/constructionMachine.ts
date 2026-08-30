@@ -7,7 +7,8 @@ const BULLDOZER_RIG_SVG = `<svg class="dozer-rig-svg" viewBox="0 0 200 160" aria
 export const constructionMachineVariant: ThinkingBarVariant = {
   id: "construction_machine",
   displayName: "Dozer Crate Push",
-  description: "Cheerful construction bulldozer pushing a wooden countdown crate along a hazard-striped dirt trench towards the build-site target.",
+  description:
+    "Cheerful construction bulldozer pushing a wooden countdown crate along a hazard-striped dirt trench towards the build-site target.",
   renderHtml(input: ThinkingBarRenderInput): string {
     const timing = calculateThinkingBarTiming(input);
     return `<div class="thinking-bar thinking-bar-construction-machine" ${timing.styleAttr}><div class="dozer-track" aria-label="Quiz construction dozer timer" data-layout-allow-overflow><div class="dozer-site-target" data-layout-ignore aria-hidden="true">${BUILD_SITE_TARGET_SVG}</div><div class="dozer-trench"><div class="dozer-debris-bg" data-layout-ignore aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="dozer-dirt-fill"></div><div class="dozer-hazard-edge edge-top" data-layout-ignore aria-hidden="true"></div><div class="dozer-hazard-edge edge-bottom" data-layout-ignore aria-hidden="true"></div></div><span class="dozer-rig-marker" data-layout-allow-occlusion data-layout-allow-overlap>${BULLDOZER_RIG_SVG}<div class="dozer-dust" data-layout-ignore aria-hidden="true"><i></i><i></i><i></i><i></i></div><b class="marker-val val-query" data-layout-allow-overlap>?</b><b class="marker-val val-5" data-layout-allow-overlap>5</b><b class="marker-val val-4" data-layout-allow-overlap>4</b><b class="marker-val val-3" data-layout-allow-overlap>3</b><b class="marker-val val-2" data-layout-allow-overlap>2</b><b class="marker-val val-1" data-layout-allow-overlap>1</b></span></div></div>`;

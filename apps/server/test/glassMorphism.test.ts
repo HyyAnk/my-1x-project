@@ -30,7 +30,7 @@ describe("Frosted Glassmorphism Question Box Variant", () => {
   it("renders highlighted html if provided", () => {
     const html = glassMorphismVariant.renderHtml({
       question: "Which planet is known as the Red Planet?",
-      highlightedHtml: "Which planet is known as the <span class=\"keyword-highlight\">Red Planet</span>?",
+      highlightedHtml: 'Which planet is known as the <span class="keyword-highlight">Red Planet</span>?',
       tier: "short",
     });
 

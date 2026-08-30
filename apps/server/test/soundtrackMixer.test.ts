@@ -96,9 +96,11 @@ describe("Master Soundtrack Mixer", () => {
       const bgmItems = resolveBgmScheduleItems(60, [tmpDir, tracksDir, ...defaultBgmCandidateDirectories()], {
         bpmPreference: "120_bpm_upbeat",
         seed: "soundtrack-test",
+        trackId: "Games_in_the_Garden",
       });
 
       expect(bgmItems.length).toBe(1);
+      expect(bgmItems[0].trackId).toBe("Games_in_the_Garden");
       expect(bgmItems[0].startSeconds).toBe(0);
       expect(bgmItems[0].durationSeconds).toBeCloseTo(60, 1);
       expect(bgmItems[0].fadeInSeconds).toBeGreaterThanOrEqual(0.05);
@@ -218,6 +220,7 @@ describe("Master Soundtrack Mixer", () => {
         bgmOptions: {
           bpmPreference: "120_bpm_upbeat",
           seed: "mix-test",
+          trackId: "Games_in_the_Garden",
         },
       });
 

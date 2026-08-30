@@ -4,11 +4,10 @@ import {
   type QuizLayoutId,
   type QuizMotionId,
   type QuizPaletteId,
-  type QuizPreviewLayoutId,
   type QuizQuestionFormat,
   type QuizTransitionId,
 } from "@studio/shared";
-import type { QuizPalette, QuizTemplateContext, QuizTemplateScene, QuizVisualTemplate, TextLayout, TextTier } from "./types.js";
+import type { QuizPalette, QuizVisualTemplate, TextLayout, TextTier } from "./types.js";
 
 const roundedFont = '"Nunito", "Trebuchet MS", sans-serif';
 const headlineFont = '"Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", "Trebuchet MS", sans-serif';
@@ -245,11 +244,7 @@ export type TextLayoutOptions = {
   layoutId?: QuizLayoutId | "baseline";
 };
 
-export function textTier(
-  value: string,
-  role: "question" | "choice",
-  options?: TextLayoutOptions | boolean,
-): TextTier {
+export function textTier(value: string, role: "question" | "choice", options?: TextLayoutOptions | boolean): TextTier {
   const hasMascot = typeof options === "boolean" ? options : Boolean(options?.hasMascot);
   const length = [...value.trim()].length;
   if (role === "question") {
@@ -268,11 +263,7 @@ export function textTier(
   return "overflow";
 }
 
-export function textLayout(
-  value: string,
-  role: "question" | "choice",
-  options?: TextLayoutOptions | boolean,
-): TextLayout {
+export function textLayout(value: string, role: "question" | "choice", options?: TextLayoutOptions | boolean): TextLayout {
   const hasMascot = typeof options === "boolean" ? options : Boolean(options?.hasMascot);
   const tier = textTier(value, role, options);
   if (role === "question") {

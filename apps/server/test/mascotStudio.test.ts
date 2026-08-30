@@ -4,9 +4,8 @@ import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildApp } from "../src/app.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
-import { preflightQuizRender } from "../src/quiz/qa/preflight.js";
 import { assessQuiz } from "../src/quiz/qa/quizAssessment.js";
-import { type MascotProfile, QuizV2Schema } from "@studio/shared";
+import { type Channel, type MascotProfile, type MascotSpriteAction, QuizV2Schema } from "@studio/shared";
 
 const roots: string[] = [];
 
@@ -49,7 +48,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         },
       });
       expect(createRes.statusCode).toBe(201);
-      const createdMascot: MascotProfile = createRes.json().mascot;
+      const createdMascot = createRes.json<{ mascot: MascotProfile }>().mascot;
       expect(createdMascot.id).toBeDefined();
       expect(createdMascot.name).toBe("Milo the Owl");
       expect(createdMascot.visual_style).toBe("pixar_3d");
@@ -57,8 +56,9 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       // 3. List Mascots
       const listRes = await app.server.inject({ method: "GET", url: "/api/mascots" });
       expect(listRes.statusCode).toBe(200);
-      expect(listRes.json().mascots.length).toBe(1);
-      expect(listRes.json().mascots[0].id).toBe(createdMascot.id);
+      const listData = listRes.json<{ mascots: MascotProfile[] }>();
+      expect(listData.mascots.length).toBe(1);
+      expect(listData.mascots[0]?.id).toBe(createdMascot.id);
 
       // 4. Generate Master Concept Art (Procedural fallback when no API key)
       const conceptRes = await app.server.inject({
@@ -67,7 +67,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         payload: { prompt: "Cute wise baby owl standing proudly" },
       });
       expect(conceptRes.statusCode).toBe(200);
-      const conceptData = conceptRes.json();
+      const conceptData = conceptRes.json<{ master_image_url: string; mascot: MascotProfile }>();
       expect(conceptData.master_image_url).toContain(`/api/mascots/${createdMascot.id}/assets/`);
       expect(conceptData.mascot.master_image_url).toBe(conceptData.master_image_url);
 
@@ -83,7 +83,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         },
       });
       expect(waveRes.statusCode).toBe(200);
-      const waveData = waveRes.json();
+      const waveData = waveRes.json<{ action_sprite: MascotSpriteAction }>();
       expect(waveData.action_sprite.action).toBe("wave");
       expect(waveData.action_sprite.frames_count).toBe(1);
       expect(waveData.action_sprite.motion_preset).toBe("wave");
@@ -100,7 +100,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         },
       });
       expect(thinkRes.statusCode).toBe(200);
-      const thinkData = thinkRes.json();
+      const thinkData = thinkRes.json<{ action_sprite: MascotSpriteAction }>();
       expect(thinkData.action_sprite.motion_preset).toBe("sway");
 
       // 6. Upload Custom State Image (1 frame)
@@ -118,7 +118,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         },
       });
       expect(uploadRes.statusCode).toBe(200);
-      const uploadData = uploadRes.json();
+      const uploadData = uploadRes.json<{ action_sprite: MascotSpriteAction }>();
       expect(uploadData.action_sprite.action).toBe("celebrate");
       expect(uploadData.action_sprite.frames_count).toBe(1);
       expect(uploadData.action_sprite.motion_preset).toBe("jump");
@@ -129,7 +129,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         url: `/api/mascots/${createdMascot.id}`,
       });
       expect(getRes.statusCode).toBe(200);
-      const detailedMascot: MascotProfile = getRes.json().mascot;
+      const detailedMascot = getRes.json<{ mascot: MascotProfile }>().mascot;
       expect(detailedMascot.actions.wave?.sprite_url).toBeDefined();
       expect(detailedMascot.actions.thinking?.sprite_url).toBeDefined();
       expect(detailedMascot.actions.celebrate?.sprite_url).toBeDefined();
@@ -148,14 +148,15 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         },
       });
       expect(assignRes.statusCode).toBe(200);
-      const updatedChannel = assignRes.json().channel;
+      const updatedChannel = assignRes.json<{ channel: Channel }>().channel;
       expect(updatedChannel.mascot_id).toBe(createdMascot.id);
       expect(updatedChannel.mascot_config.position).toBe("bottom_left");
       expect(updatedChannel.mascot_config.scale).toBe(1.1);
 
       // Verify that listMascots now returns the assigned channel id
       const listAfterAssign = await app.server.inject({ method: "GET", url: "/api/mascots" });
-      expect(listAfterAssign.json().mascots[0].assigned_channel_ids).toContain(channel.channel_id);
+      const listAfterAssignData = listAfterAssign.json<{ mascots: MascotProfile[] }>();
+      expect(listAfterAssignData.mascots[0]?.assigned_channel_ids).toContain(channel.channel_id);
 
       // 8b. Calibrate Mascot Action Offsets and Motion Presets
       const calibrateRes = await app.server.inject({
@@ -170,7 +171,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         },
       });
       expect(calibrateRes.statusCode).toBe(200);
-      const calibratedAction = calibrateRes.json().action;
+      const calibratedAction = calibrateRes.json<{ action: MascotSpriteAction }>().action;
       expect(calibratedAction.offset_x).toBe(8);
       expect(calibratedAction.offset_y).toBe(-4);
       expect(calibratedAction.motion_preset).toBe("wave");
@@ -194,7 +195,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         payload: { target: "all" },
       });
       expect(removeBgRes.statusCode).toBe(200);
-      const mattedMascot: MascotProfile = removeBgRes.json().mascot;
+      const mattedMascot = removeBgRes.json<{ mascot: MascotProfile }>().mascot;
       expect(mattedMascot.id).toBe(createdMascot.id);
 
       // 8d. Export Mascot ZIP Package
@@ -217,7 +218,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         },
       });
       expect(importRes.statusCode).toBe(201);
-      const importedMascot: MascotProfile = importRes.json().mascot;
+      const importedMascot = importRes.json<{ mascot: MascotProfile }>().mascot;
       expect(importedMascot.id).not.toBe(createdMascot.id);
       expect(importedMascot.name).toContain("Milo the Owl");
       expect(importedMascot.actions.wave?.sprite_url).toBeDefined();
@@ -520,7 +521,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
           visual_style: "pixar_3d",
         },
       });
-      const mascot1 = res1.json().mascot;
+      const mascot1 = res1.json<{ mascot: MascotProfile }>().mascot;
 
       // Create second mascot (newer)
       const res2 = await app.server.inject({
@@ -531,7 +532,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
           visual_style: "pixar_3d",
         },
       });
-      const mascot2 = res2.json().mascot;
+      const mascot2 = res2.json<{ mascot: MascotProfile }>().mascot;
 
       // Update mascot1 so its updated_at is newer than mascot2
       await app.server.inject({
@@ -545,15 +546,14 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       // Verify list order is still old -> new (mascot1 first, mascot2 second)
       const listRes = await app.server.inject({ method: "GET", url: "/api/mascots" });
       expect(listRes.statusCode).toBe(200);
-      const list = listRes.json().mascots;
+      const list = listRes.json<{ mascots: MascotProfile[] }>().mascots;
       expect(list.length).toBe(2);
-      expect(list[0].id).toBe(mascot1.id);
-      expect(list[0].name).toBe("Alpha Mascot (Old)");
-      expect(list[1].id).toBe(mascot2.id);
-      expect(list[1].name).toBe("Beta Mascot (New)");
+      expect(list[0]?.id).toBe(mascot1.id);
+      expect(list[0]?.name).toBe("Alpha Mascot (Old)");
+      expect(list[1]?.id).toBe(mascot2.id);
+      expect(list[1]?.name).toBe("Beta Mascot (New)");
     } finally {
       await app.close();
     }
   });
 });
-

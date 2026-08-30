@@ -163,11 +163,6 @@
       "count": 1
     }
   },
-  "apps/server/src/quiz/visual/candyArcade.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 2
-    }
-  },
   "apps/server/src/quiz/visual/elements/thinkingBar/types.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 1
@@ -384,14 +379,8 @@
     }
   },
   "apps/server/test/mascotStudio.test.ts": {
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 12
-    },
-    "@typescript-eslint/no-unsafe-member-access": {
-      "count": 30
-    },
     "@typescript-eslint/no-unused-vars": {
-      "count": 2
+      "count": 1
     },
     "@typescript-eslint/require-await": {
       "count": 1

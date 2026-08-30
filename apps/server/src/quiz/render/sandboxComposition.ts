@@ -273,7 +273,9 @@ function renderSandboxVisualChoices(
   style: string,
   hasMascot = false,
 ): string {
-  const cards = choices.map((choice, index) => renderSandboxVisualChoice(choice, index, correctIndex, phase, questionNumber, hasMascot)).join("");
+  const cards = choices
+    .map((choice, index) => renderSandboxVisualChoice(choice, index, correctIndex, phase, questionNumber, hasMascot))
+    .join("");
   return `<div class="visual-answer-grid" style="${style}">${cards}</div>`;
 }
 

@@ -20,7 +20,7 @@ export interface LayoutCheckOptions {
   sourceFingerprint: string;
   fastRenderMode?: boolean;
   renderQuality?: "draft" | "standard" | "high";
-  onProgress?: (message: string, percent: number) => Promise<void>;
+  onProgress?: (message: string, percent: number) => Promise<void> | void;
 }
 
 export interface LayoutCheckResult {
@@ -67,7 +67,7 @@ export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise
     await onProgress(`Video · checking layout and media (${samplesCount} samples)`, 58);
   }
 
-  let checkOutput: string = "";
+  let checkOutput: string;
   const maxCheckAttempts = 2;
   const checkTimeoutMs = Number(process.env.PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS || "300000");
   const hyperframesEnv = getHyperframesExecutionEnv();

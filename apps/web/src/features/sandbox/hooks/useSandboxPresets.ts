@@ -5,7 +5,7 @@ import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
 import type { SandboxBrandNameState } from "./useSandboxBrandNameState";
 
-import { BUILT_IN_PRESETS, QuizPaletteIdSchema, resolvePresetPreviewLayoutId, type VisualPresetItem } from "@studio/shared";
+import { BUILT_IN_PRESETS, QuizPaletteIdSchema, type VisualPresetItem } from "@studio/shared";
 export type { VisualPresetItem };
 
 const STORAGE_KEY = "studio-visual-custom-presets";

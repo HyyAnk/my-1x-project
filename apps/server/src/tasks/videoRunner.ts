@@ -1,6 +1,5 @@
 import { execFile } from "node:child_process";
 import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
-import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 import { MASCOT_CANVAS_SIZES, nowIso, resolveChannelBrandName, type MascotProfile, type Task } from "@studio/shared";

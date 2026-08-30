@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { QUIZ_LAYOUTS } from "@studio/shared";
 import { getStageQuestionLayoutDefinition, STAGE_QUESTION_LAYOUTS } from "./questionLayouts";
 
 describe("stage question layouts", () => {
@@ -6,7 +7,7 @@ describe("stage question layouts", () => {
     const ids = STAGE_QUESTION_LAYOUTS.map((layout) => layout.id);
 
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).toEqual(["media_left_choices_right", "visual_choices_three"]);
+    expect(ids.sort()).toEqual(QUIZ_LAYOUTS.map((layout) => layout.id).sort());
   });
 
   it("resolves the selected layout metadata", () => {

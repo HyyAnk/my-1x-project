@@ -182,4 +182,41 @@ describe("useSandboxPreviewRenderer", () => {
       }),
     );
   });
+
+  it("U-04 sends the latest selected layout and content after a Sandbox mutation", async () => {
+    const previewSpy = vi.spyOn(api, "previewSandboxComposition").mockResolvedValue({
+      html: "<section>Sandbox Preview</section>",
+      css: "",
+      contrast_report: { ok: true, ratio: 5, message: "OK" },
+    });
+
+    const { rerender } = renderHook(
+      ({ layoutId, questionText }: { layoutId: SandboxDesignState["layoutId"]; questionText: string }) =>
+        useSandboxPreviewRenderer({
+          design: { ...mockDesign, layoutId },
+          mascot: mockMascot,
+          question: { ...mockQuestion, questionText },
+          timeline: mockTimeline,
+          aspectRatio: "16:9",
+        }),
+      {
+        initialProps: { layoutId: "media_left_choices_right", questionText: "Initial question" },
+        wrapper,
+      },
+    );
+
+    await vi.waitFor(() =>
+      expect(previewSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ layout_id: "media_left_choices_right", question_text: "Initial question" }),
+      ),
+    );
+
+    rerender({ layoutId: "visual_choices_three", questionText: "Newest question" });
+
+    await vi.waitFor(() =>
+      expect(previewSpy).toHaveBeenLastCalledWith(
+        expect.objectContaining({ layout_id: "visual_choices_three", question_text: "Newest question" }),
+      ),
+    );
+  });
 });

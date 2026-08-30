@@ -72,11 +72,7 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
 
   const saveThinkingBarStyle = async (newStyle: QuizThinkingBarStyle) => {
     if (!episode || newStyle === (episode.quiz_config?.thinking_bar_style ?? "auto")) return;
-    await saveQuizStyles(
-      "thinking-bar-style",
-      { thinking_bar_style: newStyle },
-      `Thinking bar style set to ${newStyle}`,
-    );
+    await saveQuizStyles("thinking-bar-style", { thinking_bar_style: newStyle }, `Thinking bar style set to ${newStyle}`);
   };
 
   const saveQuestionBoxStyle = async (newStyle: QuizQuestionBoxStyle) => {
@@ -108,11 +104,7 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
 
   const savePaletteId = async (newPalette: QuizPaletteId) => {
     if (!episode || newPalette === (episode.quiz_config?.palette_id ?? "auto")) return;
-    await saveQuizStyles(
-      "palette-id",
-      { palette_id: newPalette, style_preset_id: "custom" },
-      `Color palette set to ${newPalette}`,
-    );
+    await saveQuizStyles("palette-id", { palette_id: newPalette, style_preset_id: "custom" }, `Color palette set to ${newPalette}`);
   };
 
   const applyStylePreset = async (preset: VisualPresetItem) => {
