@@ -1,4 +1,4 @@
-# AI Documentary Studio
+# AI Quiz Studio
 
 > **Note:** This is a personal project developed and supported exclusively for **Windows**. Other operating systems are not supported.
 

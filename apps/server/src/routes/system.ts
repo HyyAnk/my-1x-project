@@ -33,7 +33,7 @@ export function registerSystemRoutes(deps: SystemRouteDeps): FastifyPluginCallba
 
     server.get("/api/health", () => ({
       ok: true,
-      service: "ai-documentary-studio",
+      service: "ai-quiz-studio",
       active_engine: tasks.getActiveEngine(),
       codex_status: tasks.getCodexStatus(),
       antigravity_status: tasks.getAntigravityStatus(),

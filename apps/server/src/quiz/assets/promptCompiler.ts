@@ -59,14 +59,14 @@ export const QUIZ_STYLE_CONTRACTS: Record<QuizImageStyle, QuizStyleContract> = {
   natural_realism: {
     id: "natural_realism",
     name: "Cinematic Realism",
-    styleFamily: "National Geographic style cinematic documentary photography",
-    renderingMedium: "stunning 8k authentic natural documentary photography, highly detailed organic textures, photorealistic clarity, natural depth of field, award-winning shot",
+    styleFamily: "National Geographic style cinematic nature and wildlife photography",
+    renderingMedium: "stunning 8k authentic natural realistic photography, highly detailed organic textures, photorealistic clarity, natural depth of field, award-winning shot",
     lighting: "authentic natural sunlight, soft environmental illumination, realistic shadows, gentle atmospheric haze",
     edgeTreatment: "sharp natural optical focus on subject with smooth organic depth-of-field separation",
     detailLevel: "breathtaking true-to-life photorealism with intricate real-world details, authentic surface textures, and lifelike eyes",
     heroBackground: "a breathtaking authentic natural landscape with realistic atmospheric perspective, cinematic environmental lighting, and lush organic scenery",
-    optionBackground: "a clean high-end documentary studio backdrop with soft natural ambient light and subtle organic depth",
-    continuityPromptBrief: "cinematic photorealistic documentary photography style, 8k resolution, authentic lifelike textures, natural organic sunlight, breathtaking depth of field, crisp sharp subject focus, isolated centered subject",
+    optionBackground: "a clean high-end studio backdrop with soft natural ambient light and subtle organic depth",
+    continuityPromptBrief: "cinematic photorealistic wildlife and nature photography style, 8k resolution, authentic lifelike textures, natural organic sunlight, breathtaking depth of field, crisp sharp subject focus, isolated centered subject",
   },
   plastic_toy: {
     id: "plastic_toy",

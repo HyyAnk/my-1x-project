@@ -53,8 +53,7 @@ export async function resetChannelDna(
   channelId: string,
 ): Promise<{ content: string; path: string; modified_at: string }> {
   const channel = await this.getChannel(channelId);
-  const templateName = channel.group_id === "quiz" ? "quiz_channel_dna.md" : "example_channel_dna.md";
-  const dna = await this.getTemplate(templateName);
+  const dna = await this.getTemplate("quiz_channel_dna.md").catch(() => this.getTemplate("example_channel_dna.md"));
   const dnaContent = dna
     .replace("- Channel name: ", `- Channel name: ${channel.display_name}`)
     .replace("- Primary audience: ", `- Primary audience: ${channel.target_audience || "Children and families"}`)

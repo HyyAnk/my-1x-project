@@ -112,7 +112,7 @@ export async function confirmTopic(
   );
   await Promise.all([
     this.writeTextAtomic(path.join(episodeDirectory, "research.md"), "# Research Dossier\n\nResearch has not started.\n"),
-    this.writeTextAtomic(path.join(episodeDirectory, "treatment.md"), "# Documentary Treatment\n\nTreatment has not started.\n"),
+    this.writeTextAtomic(path.join(episodeDirectory, "treatment.md"), "# Treatment\n\nTreatment has not started.\n"),
     this.writeTextAtomic(path.join(episodeDirectory, "script.md"), "# Script\n\nScript generation has not started.\n"),
     this.writeTextAtomic(path.join(episodeDirectory, "visual_bible.md"), "# Episode Visual Bible\n\nVisual development has not started.\n"),
     this.writeTextAtomic(path.join(episodeDirectory, "scene_plan.md"), "# Scene Plan\n\nScene breakdown has not started.\n"),

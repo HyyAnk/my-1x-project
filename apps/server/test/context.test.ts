@@ -158,7 +158,7 @@ describe("ContextEngine", () => {
       channel.channel_id,
       episode.episode_id,
       "treatment.md",
-      "# Documentary Treatment\n\n## Sequence 1\nTime budget and claim C01",
+      "# Treatment\n\n## Sequence 1\nTime budget and claim C01",
     );
     const logger = new StudioLogger(root, true);
     await logger.init();
@@ -213,7 +213,7 @@ describe("ContextEngine", () => {
       channel.channel_id,
       episode.episode_id,
       "treatment.md",
-      "# Documentary Treatment\n\n## Question 1\nTime budget and claim C01",
+      "# Treatment\n\n## Question 1\nTime budget and claim C01",
     );
     const logger = new StudioLogger(root, true);
     await logger.init();
@@ -355,7 +355,7 @@ describe("ContextEngine", () => {
       channel.channel_id,
       episode.episode_id,
       "treatment.md",
-      `# Documentary Treatment\n\n${sequenceHeadings}`,
+      `# Treatment\n\n${sequenceHeadings}`,
     );
     await repository.saveEpisodeFile(
       channel.channel_id,

@@ -55,7 +55,7 @@ export function compactImagePrompt(prompt: string, aspectRatio?: string): string
   if (!bundle) return prompt;
   const ratioLabel = aspectRatio ? ` ${aspectRatio}` : " 16:9";
   return [
-    `Create one${ratioLabel} documentary continuity anchor image.`,
+    `Create one${ratioLabel} continuity anchor image.`,
     "Preserve every visual detail in this continuity bundle, including era, location, subjects, objects, palette, lighting, camera, action, atmosphere, and continuity:",
     bundle,
     "Do not add captions, charts, watermarks, labels, logos, or readable text.",

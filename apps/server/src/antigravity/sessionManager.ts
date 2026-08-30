@@ -146,7 +146,7 @@ export async function isStudioTaskConversation(
       /You are an AI illustrator\.\s*Call the generate_image tool immediately/i,
       /Please read the complete task instructions and context from file:[^ \n\r]+\.context[\\\/]task_prompt_/i,
       /task_prompt_agy_thread_/i,
-      /# Documentary Treatment\b/i,
+      /# Treatment\b/i,
       /# Episode Visual Bible\b/i,
       /# Research Dossier\b/i,
     ];

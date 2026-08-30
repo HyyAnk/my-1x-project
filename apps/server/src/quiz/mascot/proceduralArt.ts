@@ -59,11 +59,7 @@ export function generateProceduralMascotArt(name: string, color: string, _state?
 /**
  * Generates an expressive procedural SVG state artwork for quiz stages
  */
-export function generateProceduralStateArt(name: string, color: string, action: MascotActionType, framesCount: number = 1): Uint8Array {
-  if (framesCount > 1) {
-    return generateProceduralSpriteStrip(name, color, action, framesCount);
-  }
-
+export function generateProceduralStateArt(name: string, color: string, action: MascotActionType, _framesCount: number = 1): Uint8Array {
   const primaryColor = color || "#06b6d4";
   let armLeft = `<ellipse cx="140" cy="330" rx="26" ry="18" fill="${primaryColor}"/>`;
   let armRight = `<ellipse cx="372" cy="330" rx="26" ry="18" fill="${primaryColor}"/>`;

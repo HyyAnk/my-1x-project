@@ -1,4 +1,4 @@
-# AI Documentary Studio — Implementation Plan
+# AI Quiz Studio — Implementation Plan
 
 Status: initial plan for the empty workspace, prepared before application code.
 

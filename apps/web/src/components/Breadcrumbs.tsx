@@ -58,7 +58,7 @@ export function ChannelBreadcrumb({
 }: {
   channelName: string;
   channelId?: string;
-  engine?: "quiz" | "documentary";
+  engine?: "quiz";
   onNavigateHome?: () => void;
   onNavigateChannels?: () => void;
 }) {
@@ -97,7 +97,7 @@ export function EpisodeBreadcrumb({
   channelName: string;
   channelId?: string;
   episodeTitle: string;
-  engine?: "quiz" | "documentary";
+  engine?: "quiz";
   onNavigateHome?: () => void;
   onNavigateChannels?: () => void;
   onNavigateChannel?: () => void;
@@ -117,7 +117,7 @@ export function EpisodeBreadcrumb({
     },
     {
       label: channelName,
-      icon: <span style={{ fontSize: "13px" }}>{engine === "quiz" ? "🎯" : "🎬"}</span>,
+      icon: <span style={{ fontSize: "13px" }}>🎯</span>,
       onClick: onNavigateChannel,
       href: channelId ? buildHash({ page: "channels", channelId }) : "#/channels",
     },

@@ -151,12 +151,12 @@ export class ContextEngine {
     } else if (taskType === "GENERATE_SCRIPT") {
       await read(stylePath, "channel style guide");
       await artifact("research.md", "verified research dossier", true);
-      await artifact("treatment.md", "approved documentary treatment", true);
+      await artifact("treatment.md", "approved treatment", true);
       await this.readSharedRules(["script_rules.md"], sharedFiles);
     } else if (taskType === "GENERATE_VISUAL_BIBLE") {
       await read(stylePath, "channel style guide");
       await artifact("research.md", "verified research dossier", true);
-      await artifact("treatment.md", "approved documentary treatment", true);
+      await artifact("treatment.md", "approved treatment", true);
       await artifact("script.md", "confirmed episode script", true);
       await this.readSharedRules(["visual_bible_rules.md", "prompt_rules.md"], sharedFiles);
     } else if (taskType === "GENERATE_BUNDLE_IMAGE") {

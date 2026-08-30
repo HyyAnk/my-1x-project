@@ -47,7 +47,7 @@ export function StorageSetupModal({
             autoFocus
             value={storagePath}
             onChange={(event) => setStoragePath(event.target.value)}
-            placeholder="D:\Documentary Studio Data"
+            placeholder="D:\Studio Data"
           />
         </label>
         <p className="storage-hint">

@@ -71,7 +71,7 @@ export const mascotsEn = {
     stylePixarDesc: "3D animated, soft volumetric lighting, Octane render",
     styleChibiDesc: "Cute anime chibi, oversized sparkling eyes, pastel",
     styleVectorDesc: "2D clean vector art, bold outlines, sticker design",
-    styleRealismDesc: "Cinematic documentary photography, photorealistic natural lighting",
+    styleRealismDesc: "Cinematic realism photography, photorealistic natural lighting",
     styleToyDesc: "Glossy vinyl designer toy, Pop Mart studio aesthetic",
     focusPromptTitle: "Master Prompt Focus Editor",
     statesStudioTitle: "Expressive States Studio",

@@ -195,7 +195,7 @@ export async function completeWithOutput(this: TaskManagerRuntime, active: Activ
       await this.repository.updateEpisodeStage(task.channel_id, task.episode_id!, "RESEARCH_READY");
       outputFiles = [(await this.repository.getEpisodeFile(task.channel_id, task.episode_id!, "research.md")).path];
     } else if (task.task_type === "GENERATE_TREATMENT") {
-      const treatment = extractMarkdown(output, "# Documentary Treatment");
+      const treatment = extractMarkdown(output, "# Treatment");
       const episode = await this.repository.getEpisode(task.channel_id, task.episode_id!);
       if (isQuiz) validateQuizTreatment(treatment, episode.quiz_config.question_count);
       else validateTreatment(treatment);

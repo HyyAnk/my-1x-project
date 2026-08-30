@@ -71,7 +71,7 @@ export const mascotsVi = {
     stylePixarDesc: "3D hoạt hình sống động, ánh sáng mềm, render Octane",
     styleChibiDesc: "Anime chibi đáng yêu, mắt to lấp lánh, tone pastel",
     styleVectorDesc: "2D Flat Vector tối giản, nét vẽ dày, sticker art",
-    styleRealismDesc: "Ảnh chụp tài liệu tự nhiên, ánh sáng cinematic chân thực",
+    styleRealismDesc: "Ảnh chụp thực tế chân thực, ánh sáng cinematic tự nhiên",
     styleToyDesc: "Đồ chơi vinyl Pop Mart tráng bóng, đèn studio",
     focusPromptTitle: "Soạn thảo Master Prompt",
     statesStudioTitle: "Studio Trạng thái Biểu cảm",

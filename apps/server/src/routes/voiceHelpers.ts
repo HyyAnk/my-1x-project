@@ -3,7 +3,7 @@ import type { StudioLogger } from "../logger.js";
 import type { RepositoryService } from "../repository.js";
 import { synthesizeWav } from "../providers/chatterbox.js";
 
-const VOICE_PREVIEW_TEXT = "This is a preview of this narrator voice for AI Documentary Studio.";
+const VOICE_PREVIEW_TEXT = "This is a preview of this narrator voice for AI Quiz Studio.";
 
 export async function createVoiceWithPreview(
   repository: RepositoryService,

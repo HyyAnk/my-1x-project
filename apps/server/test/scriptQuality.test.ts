@@ -94,7 +94,7 @@ describe("script task output isolation and retry", () => {
       channel_id: channel.channel_id,
       title: "The Internet Before Google",
       premise: "A test premise",
-      why_it_fits: "Documentary test",
+      why_it_fits: "Quiz test",
       hook: "A test hook",
       estimated_potential: "High",
       generated_at: new Date().toISOString(),
@@ -120,7 +120,7 @@ describe("script task output isolation and retry", () => {
       channel.channel_id,
       episode.episode_id,
       "treatment.md",
-      "# Documentary Treatment\n\n## Sequence 1\nTime budget and claim C01",
+      "# Treatment\n\n## Sequence 1\nTime budget and claim C01",
     );
 
     const logger = new StudioLogger(root, true);

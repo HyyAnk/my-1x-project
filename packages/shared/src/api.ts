@@ -384,7 +384,7 @@ export const CreateChannelInputSchema = z.object({
   market: z.string().trim().max(120).default(""),
   dna_mode: z.enum(["example", "ai", "upload"]).default("example"),
   dna_content: z.string().optional(),
-  group_id: z.enum(["quiz", "documentary"]).default("quiz"),
+  group_id: z.string().default("quiz"),
 });
 
 export type CreateChannelInput = z.infer<typeof CreateChannelInputSchema>;

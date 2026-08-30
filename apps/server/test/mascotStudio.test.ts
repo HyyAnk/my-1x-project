@@ -456,7 +456,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       color_theme: "#10b981",
     };
 
-    // 1. Concept prompt must contain mandatory studio isolation tokens and forbid character sheets / multiple views
+    // 1. Concept prompt must contain mandatory studio isolation tokens and forbid character sheets / sprite sheets / multiple views
     const conceptPrompt = buildMascotConceptPrompt(mascot);
     expect(conceptPrompt).toContain("floating character");
     expect(conceptPrompt).toContain("no ground shadow");
@@ -466,6 +466,8 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
     expect(conceptPrompt).toContain("sharp clean silhouette");
     expect(conceptPrompt).toContain("single standalone character");
     expect(conceptPrompt).toContain("no character sheet");
+    expect(conceptPrompt).toContain("no sprite sheet");
+    expect(conceptPrompt).toContain("no sprite strip");
     expect(conceptPrompt).toContain("no multiple angles");
     expect(conceptPrompt).toContain("no turnaround");
     expect(conceptPrompt).not.toContain("Master character sheet");
@@ -483,6 +485,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
     expect(actionWithRef).toContain("solid neutral light gray background (#E8E8E8)");
     expect(actionWithRef).toContain("no floor");
     expect(actionWithRef).toContain("no character sheet");
+    expect(actionWithRef).toContain("no sprite sheet");
     expect(actionWithRef).toContain("no multiple angles");
     expect(validateMascotPromptContract(actionWithRef, true)).toBe(true);
 
@@ -494,6 +497,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
     expect(actionWithoutRef).toContain("floating character");
     expect(actionWithoutRef).toContain("no ground shadow");
     expect(actionWithoutRef).toContain("no character sheet");
+    expect(actionWithoutRef).toContain("no sprite sheet");
     expect(validateMascotPromptContract(actionWithoutRef, false)).toBe(true);
 
     // 4. Invalid prompt missing isolation tokens is rejected by validator

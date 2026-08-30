@@ -180,12 +180,12 @@ export function ImageProviderSettingsCard({
           </div>
           <small className="field-help">
             {hasImageApiKey
-              ? "Key stored securely in .documentary-studio/ (gitignored). You can edit directly to replace or click the trash icon to remove."
+              ? "Key stored securely in local settings (gitignored). You can edit directly to replace or click the trash icon to remove."
               : imageProvider === "gpti2"
-                ? "Get your API key from the Account tab at https://gpti2.store. Stored securely in .documentary-studio/ (gitignored)."
+                ? "Get your API key from the Account tab at https://gpti2.store. Stored securely in local settings (gitignored)."
                 : imageProvider === "shopaikey"
-                  ? "Get your API key from https://shopaikey.com. Stored securely in .documentary-studio/ (gitignored)."
-                  : "Key or token for your custom OpenAI-compatible endpoint. Stored securely in .documentary-studio/."}
+                  ? "Get your API key from https://shopaikey.com. Stored securely in local settings (gitignored)."
+                  : "Key or token for your custom OpenAI-compatible endpoint. Stored securely in local settings."}
           </small>
         </label>
 

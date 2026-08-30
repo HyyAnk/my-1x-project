@@ -78,7 +78,7 @@ describe("RepositoryService", () => {
       market: "",
       dna_mode: "example",
     });
-    const profile = await repository.createVoiceProfile("Documentary narrator", new Uint8Array([1, 2]), new Uint8Array([3, 4]));
+    const profile = await repository.createVoiceProfile("Studio narrator", new Uint8Array([1, 2]), new Uint8Array([3, 4]));
     expect((await repository.listVoices()).map((voice) => voice.voice_id)).toContain(profile.voice_id);
     const assigned = await repository.assignVoice(channel.channel_id, profile.voice_id);
     expect(assigned.voice_reference_path).toBe(profile.reference_path);

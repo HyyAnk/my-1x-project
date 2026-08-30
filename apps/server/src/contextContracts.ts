@@ -190,7 +190,7 @@ export function buildOutputContract(input: OutputContractInput): string {
   }
 
   if (taskType === "GENERATE_TREATMENT") {
-    return `Return only a completed Markdown documentary treatment. Define the thesis, audience promise, target duration and word count, then ${sequenceGuidance} numbered sequences. Format every sequence as a second-level heading exactly like \`## Sequence 1 — Title\`. Every sequence must include labeled Purpose, Time budget, Dramatic question, Claim IDs, Evidence/visual modes, Transition, and Changed understanding fields. Time budgets must sum to the target duration.`;
+    return `Return only a completed Markdown treatment. Define the thesis, audience promise, target duration and word count, then ${sequenceGuidance} numbered sequences. Format every sequence as a second-level heading exactly like \`## Sequence 1 — Title\`. Every sequence must include labeled Purpose, Time budget, Dramatic question, Claim IDs, Evidence/visual modes, Transition, and Changed understanding fields. Time budgets must sum to the target duration.`;
   }
 
   if (taskType === "GENERATE_SCRIPT") {

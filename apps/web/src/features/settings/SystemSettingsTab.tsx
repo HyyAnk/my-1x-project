@@ -91,7 +91,7 @@ export function SystemSettingsTab({ storage, onStorageSaved, simplifyMode = true
               aria-label="Content storage folder"
               value={storagePath}
               onChange={(event) => setStoragePath(event.target.value)}
-              placeholder="D:\Documentary Studio Data"
+              placeholder="D:\Studio Data"
             />
           </label>
           <button className="primary-button" disabled={savingStorage || !storagePath.trim()}>

@@ -100,23 +100,23 @@ test("channel library exposes channels and the primary create action", async ({ 
     group_id: "quiz",
     engine: "quiz",
   };
-  const documentary = {
+  const nature = {
     ...quiz,
-    channel_id: "ch_group_doc",
-    slug: "group-doc",
-    display_name: "Group documentary",
-    description: "Documentary",
-    group_id: "documentary",
-    engine: "documentary",
+    channel_id: "ch_group_nature",
+    slug: "group-nature",
+    display_name: "Group nature",
+    description: "Nature quiz",
+    group_id: "quiz",
+    engine: "quiz",
   };
   await page.route("**/api/channels", (route) =>
-    route.fulfill({ contentType: "application/json", body: JSON.stringify({ channels: [quiz, documentary] }) }),
+    route.fulfill({ contentType: "application/json", body: JSON.stringify({ channels: [quiz, nature] }) }),
   );
   await page.goto("/");
   await page.getByRole("link", { name: "Channels", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Channels", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: /Group quiz/ })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Group documentary/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Group nature/ })).toBeVisible();
   await expect(page.getByRole("button", { name: "New Quiz Channel", exact: true })).toBeVisible();
 });
 
@@ -730,7 +730,7 @@ test("confirmed episode runs script to scene to render without F5", async ({ pag
     });
   await expect(page.getByRole("button", { name: "Working…", exact: true })).toBeDisabled();
 
-  visualBibleContent = "# Visual Bible\n\n## CB-01 — Archive room\nKeep the same warm documentary lighting.";
+  visualBibleContent = "# Visual Bible\n\n## CB-01 — Archive room\nKeep the same warm studio lighting.";
   scenes = [
     {
       scene_id: "scene_pipeline_1",
@@ -780,7 +780,7 @@ test("confirmed episode runs script to scene to render without F5", async ({ pag
 
   await expect(page.getByLabel("Rendered video")).toBeVisible();
   await page.getByRole("tab", { name: "2. Visual & Continuity", exact: true }).click();
-  await expect(page.locator(".artifact-preview")).toContainText("Keep the same warm documentary lighting.");
+  await expect(page.locator(".artifact-preview")).toContainText("Keep the same warm studio lighting.");
   await page.getByRole("tab", { name: /3\. Timeline & Shots/ }).click();
   await expect(page.getByText("The finished scene arrived from the confirmed pipeline.", { exact: true })).toBeVisible();
 });
@@ -832,7 +832,7 @@ test("scene audio updates inline and exposes the duration match action", async (
     duration_seconds: 6,
     dialogue: "A line ready for local narration.",
     visual_prompt:
-      "CAMERA\nA wide documentary shot.\nACTION\nCars move.\nLIGHTING\n5600K\nATMOSPHERE\n10% haze\nCONTINUITY\nCB-01\nHARD CUT\nA close-up detail.",
+      "CAMERA\nA wide shot.\nACTION\nCars move.\nLIGHTING\n5600K\nATMOSPHERE\n10% haze\nCONTINUITY\nCB-01\nHARD CUT\nA close-up detail.",
     transition_note: "",
     continuity_note: "Keep CB-01",
     sequence_id: "sequence-1",

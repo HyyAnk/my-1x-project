@@ -60,7 +60,7 @@ export async function createChannel(this: RepositoryRuntime, input: CreateChanne
   await mkdir(path.join(directory, "assets"), { recursive: true });
   await writeFile(path.join(directory, "topic_database.json"), "[]\n", "utf8");
 
-  const dna = await this.getTemplate(input.group_id === "quiz" ? "quiz_channel_dna.md" : "example_channel_dna.md");
+  const dna = await this.getTemplate("quiz_channel_dna.md").catch(() => this.getTemplate("example_channel_dna.md"));
   const styleGuide = await this.getTemplate("example_style_guide.md");
   const dnaContent =
     input.dna_mode === "upload" && input.dna_content?.trim()
@@ -70,10 +70,6 @@ export async function createChannel(this: RepositoryRuntime, input: CreateChanne
           .replace("- Primary audience: ", `- Primary audience: ${input.target_audience}`)
           .replace("- Market: ", `- Market: ${input.market}`)
           .replace("- Language: ", `- Language: ${input.language}`)
-          .replace(
-            "Describe the channel's documentary territory in one clear paragraph.",
-            input.description || "A playful, fact-checked quiz channel that turns broad knowledge into short moments of discovery.",
-          )
           .replace(
             "Describe the quiz channel territory in one clear paragraph.",
             input.description || "A playful, fact-checked quiz channel that turns broad knowledge into short moments of discovery.",

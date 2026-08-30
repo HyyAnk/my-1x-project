@@ -12,7 +12,7 @@ export function hasHumorPolicyMarker(markdown: string): boolean {
 
 // A duration target is more useful than the historical word-count default once a
 // real narrator pace is known. Keep the gate permissive enough for natural
-// documentary phrasing while still catching scripts that would materially miss
+// narrative phrasing while still catching scripts that would materially miss
 // the requested runtime.
 export const SCRIPT_WORD_TOLERANCE = 0.2;
 
@@ -240,7 +240,7 @@ export function assessProduction(input: {
       "humor_policy",
       "warning",
       "This script predates the current humor policy and has not been reviewed for restrained humor or audio cues.",
-      "Regenerate the script once to apply the current documentary humor layer.",
+      "Regenerate the script once to apply the current humor layer.",
       2,
     );
   const calibratedTargetWords = calibratedScriptTargetWords(episode, input.fallbackWordsPerSecond);
@@ -268,7 +268,7 @@ export function assessProduction(input: {
       "sequence_count",
       "warning",
       `The breakdown uses ${sequenceCount} sequence${sequenceCount === 1 ? "" : "s"}.`,
-      "Organize the documentary into at least five purposeful sequences.",
+      "Organize the episode into at least five purposeful sequences.",
       8,
     );
   if (scenes.length > 0 && uniquePromptRatio < 0.9)

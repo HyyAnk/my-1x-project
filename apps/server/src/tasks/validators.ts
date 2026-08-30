@@ -109,7 +109,7 @@ export function validateScript(markdown: string, targetWords: number): void {
   const words = countWords(narration);
   if (!hasHumorPolicyMarker(markdown))
     throw new Error(
-      "Script quality gate failed: HUMOR_POLICY v1 marker is missing; regenerate the script with the current documentary humor layer",
+      "Script quality gate failed: HUMOR_POLICY v1 marker is missing; regenerate the script with the current humor layer",
     );
   const bounds = scriptWordBounds(targetWords);
   if (words < bounds.lower || words > bounds.upper)

@@ -222,7 +222,7 @@ class FakeCodex extends EventEmitter {
         Array.from(
           { length: Math.max(5, quizVisualBibleCount) },
           (_, index) =>
-            `## Continuity bundle CB-${String(index + 1).padStart(2, "0")} — Bundle ${index + 1}\n\n- Era: 1950s\n- Location: Test location\n- Subjects: Test subject\n- Palette: Warm neutral\n- Lighting: Soft side light\n- Anchor-frame prompt: A coherent documentary environment for bundle ${index + 1}.\n- Reference asset slots: anchor`,
+            `## Continuity bundle CB-${String(index + 1).padStart(2, "0")} — Bundle ${index + 1}\n\n- Era: 1950s\n- Location: Test location\n- Subjects: Test subject\n- Palette: Warm neutral\n- Lighting: Soft side light\n- Anchor-frame prompt: A coherent visual environment for bundle ${index + 1}.\n- Reference asset slots: anchor`,
         ).join("\n\n");
       const invalidSequenceBeats = Array.from({ length: 5 }, (_, index) => ({
         dialogue: index === 0 ? "Opening narration." : `Additional beat ${index + 1}.`,
@@ -462,7 +462,7 @@ describe("TaskManager locks", () => {
           scene_number: 1,
           duration_seconds: 6,
           dialogue: "Narrate this line",
-          visual_prompt: "A documentary shot",
+          visual_prompt: "A scene shot",
           transition_note: "",
           continuity_note: "",
           audio_asset_path: null,
@@ -588,7 +588,7 @@ describe("TaskManager locks", () => {
       channel.channel_id,
       episode.episode_id,
       "treatment.md",
-      "# Documentary Treatment\n\n## Sequence 1\nTime budget and claim C01",
+      "# Treatment\n\n## Sequence 1\nTime budget and claim C01",
     );
     await repository.saveEpisodeFile(
       channel.channel_id,
@@ -647,7 +647,7 @@ describe("TaskManager locks", () => {
       channel.channel_id,
       episode.episode_id,
       "treatment.md",
-      "# Documentary Treatment\n\n## Question 1\nTime budget and correct answer",
+      "# Treatment\n\n## Question 1\nTime budget and correct answer",
     );
     await repository.saveEpisodeFile(
       channel.channel_id,
@@ -704,7 +704,7 @@ describe("TaskManager locks", () => {
       channel.channel_id,
       episode.episode_id,
       "treatment.md",
-      "# Documentary Treatment\n\n## Sequence 1 — Opening\n\nTime budget: 8 seconds. Claim IDs: C01.",
+      "# Treatment\n\n## Sequence 1 — Opening\n\nTime budget: 8 seconds. Claim IDs: C01.",
     );
     await repository.saveEpisodeFile(
       channel.channel_id,
@@ -828,7 +828,7 @@ describe("TaskManager locks", () => {
       channel.channel_id,
       episode.episode_id,
       "treatment.md",
-      "# Documentary Treatment\n\n## Sequence 1\nA short quiz sequence.",
+      "# Treatment\n\n## Sequence 1\nA short quiz sequence.",
     );
     await repository.saveEpisodeFile(
       channel.channel_id,

@@ -188,7 +188,7 @@ export async function getRenderedVoiceMetrics(this: RepositoryRuntime): Promise<
         }
       }
 
-      // Check documentary scenes
+      // Check legacy scenes
       const scenes = await this.readScenes(channel.channel_id, episode.episode_id).catch(() => []);
       if (scenes && scenes.length) {
         for (const scene of scenes) {

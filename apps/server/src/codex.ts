@@ -330,7 +330,7 @@ export class CodexAppServerClient extends EventEmitter {
 
   private async initialize(): Promise<void> {
     const result = await this.request("initialize", {
-      clientInfo: { name: "ai_documentary_studio", title: "AI Documentary Studio", version: "0.1.0" },
+      clientInfo: { name: "ai_quiz_studio", title: "AI Quiz Studio", version: "0.1.0" },
       capabilities: {
         ...(this.config.codex.experimental_api ? { experimentalApi: true } : {}),
         mcpServerOpenaiFormElicitation: true,
