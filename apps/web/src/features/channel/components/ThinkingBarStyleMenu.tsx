@@ -14,9 +14,9 @@ const THINKING_BAR_ICONS: Record<Exclude<QuizThinkingBarStyle, "auto">, string> 
   star_slider: "⭐",
   capsule_liquid: "🧪",
   energy_laser: "⚡",
-  retro_pixel: "👾",
+  construction_machine: "🚜",
   flame_fuse: "🔥",
-  minimal_glow: "✨",
+  cosmic_rocket: "🚀",
 };
 
 export function ThinkingBarStyleMenu({

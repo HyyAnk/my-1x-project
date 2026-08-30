@@ -168,9 +168,9 @@ export const QuizThinkingBarStyleSchema = z.enum([
   "star_slider",
   "capsule_liquid",
   "energy_laser",
-  "retro_pixel",
+  "construction_machine",
   "flame_fuse",
-  "minimal_glow",
+  "cosmic_rocket",
 ]);
 
 export type QuizThinkingBarStyle = z.infer<typeof QuizThinkingBarStyleSchema>;
@@ -179,27 +179,27 @@ export const ALL_THINKING_BAR_STYLES: QuizThinkingBarStyle[] = [
   "star_slider",
   "capsule_liquid",
   "energy_laser",
-  "retro_pixel",
+  "construction_machine",
   "flame_fuse",
-  "minimal_glow",
+  "cosmic_rocket",
 ];
 
 export const THINKING_BAR_STYLE_LABELS: Record<Exclude<QuizThinkingBarStyle, "auto">, string> = {
   star_slider: "Arcade Star Runner",
   capsule_liquid: "Neon Jelly Liquid",
   energy_laser: "Cyber Plasma Bar",
-  retro_pixel: "8-Bit Arcade Heart/Blocks",
+  construction_machine: "Dozer Crate Push",
   flame_fuse: "Dynamite Fuse Spark",
-  minimal_glow: "Modern Sleek Highlight",
+  cosmic_rocket: "Cosmic Rocket Warp",
 };
 
 export const THINKING_BAR_STYLE_DESCRIPTIONS: Record<Exclude<QuizThinkingBarStyle, "auto">, string> = {
   star_slider: "Classic bright star sliding over milestone stars with 5-4-3-2-1 countdown marker and sparkles.",
   capsule_liquid: "Glowing translucent capsule filled with bubbling neon fluid draining down with dynamic color shift.",
   energy_laser: "Sci-Fi high-voltage plasma laser beam with pulsing electric arcs and intense charge decay.",
-  retro_pixel: "Nostalgic 8-bit chunky pixel arcade gauge with segment ticks and retro gaming font indicators.",
+  construction_machine: "Cheerful construction bulldozer pushing a wooden countdown crate along a hazard-striped dirt trench towards the build-site target.",
   flame_fuse: "Thrilling dynamite burning rope fuse with animated ember sparks racing towards the finale point.",
-  minimal_glow: "Ultra-clean modern frosted-glass pill with smooth running neon accent line and elegant typography.",
+  cosmic_rocket: "Retro-futuristic 3D space rocket boosting with fiery exhaust through a cosmic nebula warp highway.",
 };
 
 export const QuizQuestionCounterStyleSchema = z.enum(["auto", "hanging_woodsign", "neon_badge", "floating_balloon", "golden_shield"]);

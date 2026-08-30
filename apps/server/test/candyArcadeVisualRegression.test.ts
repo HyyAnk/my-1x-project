@@ -167,5 +167,9 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).toContain(
       ".layout-media_left_choices_right .answer-count-2 .answer-card > b, .layout-media_left_choices_right .answer-count-3 .answer-card > b { width: 138px; height: 138px; margin-left: -74px; font-size: 72px;",
     );
+    expect(html).toContain(".has-mascot .answer-card span { font-size: 36px; padding-right: 24px; }");
+    expect(html).toContain(".has-mascot .choice-tier-medium span, .has-mascot .choice-tier-medium.answer-card span { font-size: 28px; }");
+    expect(html).toContain(".has-mascot .choice-tier-long span, .has-mascot .choice-tier-long.answer-card span { font-size: 23px; }");
+    expect(html).toContain(".has-mascot.layout-media_left_choices_right .answer-card span { font-size: 38px; }");
   });
 });

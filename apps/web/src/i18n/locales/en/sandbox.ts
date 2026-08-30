@@ -42,6 +42,8 @@ export const sandboxEn = {
     presetTreasureQuestDesc: "Classic adventure parchment scroll, 8-bit retro gauge, arcade cards, and golden trophy shield.",
     presetMinimalStudioName: "Minimalist Studio",
     presetMinimalStudioDesc: "Elegant modern minimalist design with soft glowing timer and gentle pill answer cards.",
+    presetBuildZoneName: "Build Zone Crew",
+    presetBuildZoneDesc: "Cheerful construction site with a chunky bulldozer countdown, arcade cards, and a golden shield badge.",
     presetVisualShowcaseName: "Visual 3-Choice Showcase",
     presetVisualShowcaseDesc: "Wide 3-choice image showcase layout for visual multiple-choice questions.",
     tabElements: "4 Elements",

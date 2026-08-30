@@ -19,7 +19,10 @@ export const glassNeonVariant: AnswerCardVariant = {
           stateClass = isCorrect ? "answer-correct" : "answer-incorrect";
           statusIcon = isCorrect ? '<i class="answer-check" style="opacity:1;">✓</i>' : '<i class="answer-cross" style="opacity:1;">✕</i>';
         }
-        const choiceLayout = textLayout(choiceText, "choice");
+        const choiceLayout = textLayout(choiceText, "choice", {
+          hasMascot: input.hasMascot,
+          layoutId: input.layoutId,
+        });
         const letter = String.fromCharCode(65 + idx);
         return (
           `<div class="answer-card ac-glass-neon ${stateClass} choice-tier-${choiceLayout.tier}" style="--item-phase:0s" data-layout-allow-occlusion data-layout-allow-overflow>` +
@@ -45,9 +48,10 @@ export const glassNeonVariant: AnswerCardVariant = {
   overflow: visible;
   border: 4px solid rgba(255, 255, 255, 0.85) !important;
   border-radius: 32px !important;
-  background: rgba(255, 255, 255, 0.82) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(8px) saturate(140%) !important;
   box-shadow: 0 12px 32px rgba(10, 25, 60, 0.22), 0 0 24px rgba(255, 255, 255, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.95) !important;
+  contain: layout style;
 }
 .ac-glass-neon .glass-neon-edge {
   position: absolute;

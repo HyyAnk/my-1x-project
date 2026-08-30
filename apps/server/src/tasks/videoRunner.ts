@@ -1,6 +1,5 @@
 import { execFile } from "node:child_process";
-import { copyFile, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
-import { createRequire } from "node:module";
+import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -10,19 +9,19 @@ import { buildQuizComposition } from "../quiz/render/buildComposition.js";
 import { HyperframesRenderer } from "../quiz/render/hyperframesRenderer.js";
 import { preflightQuizRender } from "../quiz/qa/preflight.js";
 import { inspectRenderedVideo } from "../quiz/qa/postRenderQa.js";
-import { formatHyperframesCheckFailure, hasHyperframesContrastIssue, parseHyperframesCheckReport } from "../quiz/qa/hyperframesQuality.js";
-import { healCompositionContrast } from "../quiz/qa/contrastHealer.js";
 import { prepareVideoAssets } from "./video/videoAssetPreparation.js";
 import { hasNonEmptyFile } from "./artifactFiles.js";
 import { readRenderCheckpoint, writeRenderCheckpoint } from "./checkpoints.js";
 import { renderSourceFingerprint } from "./fingerprints.js";
 import type { TaskManagerRuntime } from "./runtime.js";
-import { copyCandyArcadeFonts, resolveCandyArcadeFonts } from "../quiz/render/candyArcade/candyArcadeFonts.js";
 import { prepareLocalizedMascot } from "./video/mascotLocalization.js";
 import { prepareSoundtrack } from "./video/soundtrackPreparation.js";
+import { calculateOptimalWorkers, getHyperframesExecutionEnv } from "./video/videoPerformance.js";
+import { syncStaticMediaAssets } from "./video/videoStaticAssets.js";
+import { verifyAndCheckLayout } from "./video/videoLayoutChecker.js";
+import { getHyperframesInvocation } from "./video/videoInvocation.js";
 
 const execFileAsync = promisify(execFile);
-const require = createRequire(import.meta.url);
 const quizRenderer = new HyperframesRenderer();
 
 export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promise<void> {
@@ -164,60 +163,8 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       await mkdir(path.dirname(filePath), { recursive: true });
       await writeFile(filePath, content, "utf8");
     }
-    const sfxTargetDir = path.join(renderRoot, "sfx");
-    await mkdir(sfxTargetDir, { recursive: true });
-    const sfxFiles = [
-      "ui_pop.wav",
-      "bubble_splash.wav",
-      "lightning_brush.wav",
-      "countdown_tick.wav",
-      "countdown_final.wav",
-      "correct_ding.wav",
-      "correct_triumph.wav",
-      "streak.wav",
-    ];
-    const sfxCandidates = [
-      path.join(this.repository.rootDirectory, "templates", "sfx"),
-      path.join(this.repository.rootDirectory, "assets", "audio", "sfx"),
-      path.resolve("templates", "sfx"),
-      path.resolve("assets", "audio", "sfx"),
-    ];
-    await Promise.all(
-      sfxFiles.map(async (file) => {
-        for (const candidateDir of sfxCandidates) {
-          const candidateFile = path.join(candidateDir, file);
-          try {
-            await copyFile(candidateFile, path.join(sfxTargetDir, file));
-            break;
-          } catch {
-            // try next candidate
-          }
-        }
-      }),
-    );
-    const bgmTargetDir = path.join(renderRoot, "bgm");
-    await mkdir(bgmTargetDir, { recursive: true });
-    const bgmCandidates = [
-      path.join(this.repository.rootDirectory, "assets", "audio", "bgm", "tracks"),
-      path.resolve("assets", "audio", "bgm", "tracks"),
-      path.join(this.repository.rootDirectory, "assets", "audio", "bgm"),
-      path.resolve("assets", "audio", "bgm"),
-    ];
-    for (const candidateDir of bgmCandidates) {
-      try {
-        const entries = await readdir(candidateDir);
-        const mp3s = entries.filter((entry) => entry.endsWith(".mp3"));
-        if (mp3s.length > 0) {
-          await Promise.all(mp3s.map((entry) => copyFile(path.join(candidateDir, entry), path.join(bgmTargetDir, entry))));
-          break;
-        }
-      } catch {
-        // try next candidate
-      }
-    }
-    await copyCandyArcadeFonts(renderRoot, this.repository.rootDirectory);
+    const { fontFingerprints } = await syncStaticMediaAssets(renderRoot, this.repository.rootDirectory);
 
-    const fontFingerprints = resolveCandyArcadeFonts(this.repository.rootDirectory).map((font) => `${font.id}:${font.sha256}`);
     const sourceFingerprint = renderSourceFingerprint(
       html,
       narration.modified_at,
@@ -226,68 +173,20 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       fontFingerprints,
     );
     const checkpointPath = path.join(renderRoot, "render-checkpoint.json");
+
+    await verifyAndCheckLayout({
+      renderRoot,
+      rootDir: this.repository.rootDirectory,
+      sourceFingerprint,
+      fastRenderMode: this.videoConfig.fast_render_mode,
+      renderQuality: this.videoConfig.render_quality,
+      onProgress: async (message, percent) => {
+        await this.update(task.task_id, { progress_message: message, progress_percent: percent });
+      },
+    });
+
     const checkpoint = await readRenderCheckpoint(checkpointPath);
     const layoutReady = checkpoint?.source_fingerprint === sourceFingerprint && checkpoint.check.status === "passed";
-    if (layoutReady) {
-      await this.update(task.task_id, { progress_message: "Video · layout and media checks already passed", progress_percent: 58 });
-    } else {
-      await this.update(task.task_id, { progress_message: "Video · checking layout and media", progress_percent: 58 });
-      let checkOutput: string = "";
-      const maxCheckAttempts = 2;
-      const checkTimeoutMs = Number(process.env.PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS || "300000");
-      const hyperframesEnv = {
-        ...process.env,
-        PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS: process.env.PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS || "300000",
-        ...(process.env.HYPERFRAMES_BROWSER_PATH ? { HYPERFRAMES_BROWSER_PATH: process.env.HYPERFRAMES_BROWSER_PATH } : {}),
-      };
-
-      for (let attempt = 1; attempt <= maxCheckAttempts; attempt++) {
-        const checkInvocation = getHyperframesInvocation(
-          "check",
-          renderRoot,
-          "--json",
-          "--samples",
-          "5",
-          "--timeout",
-          String(checkTimeoutMs),
-        );
-        try {
-          ({ stdout: checkOutput } = await execFileAsync(checkInvocation.command, checkInvocation.args, {
-            cwd: this.repository.rootDirectory,
-            timeout: 600_000,
-            windowsHide: true,
-            maxBuffer: 20 * 1024 * 1024,
-            env: hyperframesEnv,
-          }));
-        } catch (error) {
-          const failure = error as Error & { stdout?: string };
-          const errorReport = parseHyperframesCheckReport(failure.stdout);
-          if (attempt < maxCheckAttempts && hasHyperframesContrastIssue(errorReport)) {
-            await this.update(task.task_id, { progress_message: "Video · auto-healing contrast issues...", progress_percent: 60 });
-            await healCompositionContrast(renderRoot, errorReport);
-            continue;
-          }
-          throw new RepositoryError(formatHyperframesCheckFailure(errorReport, failure.message), "QUIZ_COMPOSITION_CHECK_FAILED");
-        }
-
-        const checkReport = parseHyperframesCheckReport(checkOutput);
-        if (hasHyperframesContrastIssue(checkReport)) {
-          if (attempt < maxCheckAttempts) {
-            await this.update(task.task_id, { progress_message: "Video · auto-healing contrast issues...", progress_percent: 60 });
-            await healCompositionContrast(renderRoot, checkReport);
-            continue;
-          }
-          throw new RepositoryError(formatHyperframesCheckFailure(checkReport), "QUIZ_COMPOSITION_CONTRAST_FAILED");
-        }
-
-        break;
-      }
-      await writeRenderCheckpoint(checkpointPath, {
-        schema_version: 2,
-        source_fingerprint: sourceFingerprint,
-        check: { status: "passed" },
-      });
-    }
     let reusableRender = layoutReady && checkpoint?.render?.status === "passed" && (await hasNonEmptyFile(outputPath));
     if (reusableRender) {
       const existingProbe = await inspectRenderedVideo(outputPath, {
@@ -303,15 +202,8 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       await this.update(task.task_id, { progress_message: "Video · rendering MP4 with narration", progress_percent: 65 });
       const browserTimeout = process.env.HYPERFRAMES_BROWSER_TIMEOUT_SECONDS || "300";
       const renderTimeoutMs = Number(process.env.HYPERFRAMES_RENDER_TIMEOUT_MS) || 120 * 60_000;
-      const hyperframesEnv = {
-        ...process.env,
-        PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS: process.env.PRODUCER_PAGE_NAVIGATION_TIMEOUT_MS || "300000",
-        PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS: process.env.PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS || "300000",
-        PRODUCER_PLAYER_READY_TIMEOUT_MS: process.env.PRODUCER_PLAYER_READY_TIMEOUT_MS || "60000",
-        PRODUCER_EXPERIMENTAL_FAST_CAPTURE: process.env.PRODUCER_EXPERIMENTAL_FAST_CAPTURE || "true",
-        ...(process.env.HYPERFRAMES_BROWSER_PATH ? { HYPERFRAMES_BROWSER_PATH: process.env.HYPERFRAMES_BROWSER_PATH } : {}),
-      };
-      const optimalWorkers = Math.max(2, Math.min(8, os.cpus().length ? Math.floor(os.cpus().length / 2) : 4));
+      const hyperframesEnv = getHyperframesExecutionEnv();
+      const optimalWorkers = calculateOptimalWorkers(this.videoConfig.render_workers);
       const renderInvocation = getHyperframesInvocation(
         "render",
         renderRoot,
@@ -431,27 +323,5 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     }
     await this.finish(task.task_id, "FAILED", message);
     this.logger.error(message, context);
-  }
-}
-
-function getHyperframesInvocation(...args: string[]): { command: string; args: string[] } {
-  try {
-    const pkgJson = require.resolve("hyperframes/package.json");
-    const binPath = path.join(path.dirname(pkgJson), "bin", "hyperframes.mjs");
-    return {
-      command: process.execPath,
-      args: [binPath, ...args],
-    };
-  } catch {
-    if (process.platform === "win32") {
-      return {
-        command: process.execPath,
-        args: [path.join(path.dirname(process.execPath), "node_modules", "npm", "bin", "npx-cli.js"), "--yes", "hyperframes", ...args],
-      };
-    }
-    return {
-      command: "npx",
-      args: ["--yes", "hyperframes", ...args],
-    };
   }
 }

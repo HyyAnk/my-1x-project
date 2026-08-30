@@ -1,8 +1,9 @@
-import { copyFile, mkdir } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import type { QuizAssetPlan, QuizAssetResolution } from "@studio/shared";
 import { resolveQuizAssets } from "../../quiz/assets/resolveQuizAssets.js";
 import type { TaskManagerRuntime } from "../runtime.js";
+import { optimizeRenderImage } from "./imageOptimizer.js";
 
 export interface PrepareVideoAssetsOptions {
   runtime: TaskManagerRuntime;
@@ -48,7 +49,13 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
         const sourcePath = await runtime.repository.resolveQuizAssetPath(channelId, episodeId, asset.path);
         const extension = path.extname(sourcePath) || ".png";
         const renderFilename = `${asset.asset_id}${extension}`;
-        await copyFile(sourcePath, path.join(renderAssetDirectory, renderFilename));
+        const targetPath = path.join(renderAssetDirectory, renderFilename);
+        const requirement = assetPlan.assets.find((r) => r.asset_id === asset.asset_id);
+        await optimizeRenderImage({
+          sourcePath,
+          targetPath,
+          purpose: requirement?.purpose,
+        });
         return [asset.asset_id, `./quiz-images/${renderFilename}`] as const;
       } catch {
         return null;

@@ -21,6 +21,11 @@ export const mediaLeftChoicesRightLayout = {
 .layout-media_left_choices_right .answer-grid.answer-count-3 { gap: 50px; height: 580px; padding-top: 18px; }
 .layout-media_left_choices_right.quiz-question-clip .hero-image { animation: enter-from-left .66s cubic-bezier(.22,.8,.3,1) var(--clip-start) both, hero-float var(--scene-duration) ease-in-out calc(var(--clip-start) + .66s) 1 alternate both; }
 .has-mascot.layout-media_left_choices_right .game-stage { column-gap: 34px; }
+.has-mascot.layout-media_left_choices_right .answer-card span { font-size: 38px; }
+.has-mascot.layout-media_left_choices_right .answer-count-2 .answer-card span { font-size: 42px; }
+.has-mascot.layout-media_left_choices_right .choice-tier-medium.answer-card span, .has-mascot.layout-media_left_choices_right .answer-count-3.choice-tier-medium span, .has-mascot.layout-media_left_choices_right .answer-count-2.choice-tier-medium span { font-size: 30px; }
+.has-mascot.layout-media_left_choices_right .choice-tier-long.answer-card span, .has-mascot.layout-media_left_choices_right .answer-count-3.choice-tier-long span, .has-mascot.layout-media_left_choices_right .answer-count-2.choice-tier-long span { font-size: 24px; }
+.has-mascot.layout-media_left_choices_right .choice-tier-very_long.answer-card span, .has-mascot.layout-media_left_choices_right .choice-tier-overflow.answer-card span, .has-mascot.layout-media_left_choices_right .answer-count-3.choice-tier-very_long span, .has-mascot.layout-media_left_choices_right .answer-count-3.choice-tier-overflow span, .has-mascot.layout-media_left_choices_right .answer-count-2.choice-tier-very_long span, .has-mascot.layout-media_left_choices_right .answer-count-2.choice-tier-overflow span { font-size: 20px; }
 ${
   aspectRatio === "9:16"
     ? `

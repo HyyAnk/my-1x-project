@@ -9,6 +9,10 @@ export const visualChoicesThreeLayout = {
 .layout-visual_choices_three .question-title { grid-area: title; width: 100%; max-width: 1440px; justify-self: end; margin-left: auto; }
 .layout-visual_choices_three .visual-answer-grid { grid-area: answers; width: 1560px; margin-top: 0; gap: 28px; }
 .has-mascot.layout-visual_choices_three .visual-answer-grid { width: 100%; gap: 24px; }
+.has-mascot.layout-visual_choices_three .visual-answer-label span { font-size: 26px; }
+.has-mascot.layout-visual_choices_three .choice-tier-medium .visual-answer-label span { font-size: 22px; }
+.has-mascot.layout-visual_choices_three .choice-tier-long .visual-answer-label span { font-size: 19px; }
+.has-mascot.layout-visual_choices_three .choice-tier-very_long .visual-answer-label span, .has-mascot.layout-visual_choices_three .choice-tier-overflow .visual-answer-label span { font-size: 17px; }
 ${
   aspectRatio === "9:16"
     ? `

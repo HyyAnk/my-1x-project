@@ -15,6 +15,9 @@ export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNoti
   const [narrationWordsPerSecond, setNarrationWordsPerSecond] = useState(appConfig?.video_generation.narration_words_per_second ?? 2.3);
   const [aspectRatio, setAspectRatio] = useState<MascotRenderAspectRatio>(appConfig?.video_generation.aspect_ratio ?? "16:9");
   const [maxConcurrentVideoTasks, setMaxConcurrentVideoTasks] = useState(appConfig?.video_generation.max_concurrent_tasks ?? 2);
+  const [renderWorkers, setRenderWorkers] = useState<number | undefined>(appConfig?.video_generation.render_workers);
+  const [renderQuality, setRenderQuality] = useState<"draft" | "standard" | "high">(appConfig?.video_generation.render_quality ?? "draft");
+  const [fps, setFps] = useState<number>(appConfig?.video_generation.fps ?? 30);
   const [savingVideo, setSavingVideo] = useState(false);
 
   const [imageEnabled, setImageEnabled] = useState(appConfig?.image_generation?.enabled ?? true);
@@ -47,6 +50,9 @@ export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNoti
       setNarrationWordsPerSecond(video.narration_words_per_second ?? 2.3);
       setAspectRatio(video.aspect_ratio ?? "16:9");
       setMaxConcurrentVideoTasks(video.max_concurrent_tasks ?? 2);
+      setRenderWorkers(video.render_workers);
+      setRenderQuality(video.render_quality ?? "draft");
+      setFps(video.fps ?? 30);
     }
     if (appConfig?.image_generation) {
       setImageEnabled(appConfig.image_generation.enabled);
@@ -75,6 +81,9 @@ export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNoti
         narration_words_per_second: narrationWordsPerSecond,
         aspect_ratio: aspectRatio,
         max_concurrent_tasks: maxConcurrentVideoTasks,
+        render_workers: renderWorkers,
+        render_quality: renderQuality,
+        fps,
       });
       await onVideoSaved(next.video_generation);
       onNotice({ tone: "good", message: "Video settings saved locally" });
@@ -190,6 +199,12 @@ export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNoti
     setAspectRatio,
     maxConcurrentVideoTasks,
     setMaxConcurrentVideoTasks,
+    renderWorkers,
+    setRenderWorkers,
+    renderQuality,
+    setRenderQuality,
+    fps,
+    setFps,
     savingVideo,
     saveVideo,
     imageEnabled,

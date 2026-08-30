@@ -9,7 +9,7 @@ export const goldenShieldVariant: CounterBadgeVariant = {
   },
   renderCss(): string {
     return `
-.cb-golden-shield { position: relative; z-index: 6; display: flex; flex-direction: column; align-items: center; width: 240px; transform-origin: 50% 0; animation: shield-drop-enter .64s cubic-bezier(.18,1.42,.34,1) var(--clip-start, 0s) both, shield-float 4.0s ease-in-out calc(var(--clip-start, 0s) + .64s) infinite alternate both; }
+.cb-golden-shield { position: relative; z-index: 6; display: flex; flex-direction: column; align-items: center; width: 240px; transform-origin: 50% 0; animation: shield-drop-enter .64s cubic-bezier(.18,1.42,.34,1) var(--clip-start, 0s) both, shield-float 4.0s ease-in-out calc(var(--clip-start, 0s) + .64s) infinite alternate both; contain: layout style; will-change: transform; transform: translate3d(0,0,0); }
 .cb-golden-shield .shield-chains { position: relative; display: flex; justify-content: space-between; align-items: flex-start; width: 160px; height: 34px; pointer-events: none; }
 .cb-golden-shield .shield-chain { width: 9px; height: 100%; border-radius: 4px; background: repeating-linear-gradient(180deg, #FFE066 0px, #FFE066 5px, #B37400 5px, #B37400 10px); box-shadow: 0 2px 5px rgba(13,35,71,.28), inset 0 0 2px #FFF; }
 .cb-golden-shield .shield-top-crest { position: absolute; top: 0; left: 50%; transform: translateX(-50%); display: grid; place-items: center; width: 28px; height: 14px; border: 2px solid #FFE066; border-radius: 7px; background: #5C3800; font-size: 10px; line-height: 1; box-shadow: 0 2px 5px rgba(0,0,0,.3); }
@@ -23,8 +23,8 @@ export const goldenShieldVariant: CounterBadgeVariant = {
 .cb-golden-shield .shield-star { position: absolute; pointer-events: none; }
 .cb-golden-shield .star-tl { top: -10px; left: -10px; color: #FFF099; font-size: 26px; text-shadow: 0 0 12px rgba(255,240,153,.9); transform: rotate(-12deg); }
 .cb-golden-shield .star-br { bottom: -10px; right: -10px; color: #FFB703; font-size: 28px; text-shadow: 0 3px 0 #4D2600; transform: rotate(15deg); }
-@keyframes shield-drop-enter { 0% { transform: translateY(-70px); opacity: 0; } 70% { transform: translateY(6px); opacity: 1; } 100% { transform: translateY(0); opacity: 1; } }
-@keyframes shield-float { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
+@keyframes shield-drop-enter { 0% { transform: translate3d(0, -70px, 0); opacity: 0; } 70% { transform: translate3d(0, 6px, 0); opacity: 1; } 100% { transform: translate3d(0, 0, 0); opacity: 1; } }
+@keyframes shield-float { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(0, -5px, 0); } }
 `;
   },
 };

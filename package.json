@@ -10,6 +10,7 @@
     "format": "prettier --write \"{apps,packages}/**/*.{ts,tsx,css,json}\" \"*.{json,yml,yaml,md,mjs}\" \".github/**/*.yml\"",
     "format:check": "node scripts/check-format.mjs",
     "format:baseline": "node scripts/check-format.mjs --update-baseline",
+    "benchmark:render": "node scripts/benchmark-render.mjs",
     "audit:quiz-choices": "node scripts/audit-quiz-choice-count.mjs",
     "start": "pnpm --filter @studio/server start",
     "typecheck": "pnpm --filter @studio/shared build && pnpm -r typecheck",

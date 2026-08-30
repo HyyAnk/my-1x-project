@@ -88,34 +88,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
         })
       : "";
 
-  // 4. Answer Cards Variant
-  const acVariant = resolveAnswerCardVariant(input.answer_card_style);
-  const answerCardsHtml = acVariant.renderHtml({
-    choices,
-    correctIndex: correctIdx,
-    phase,
-    layoutId,
-    paletteAccent: palette.accent,
-  });
-
-  const answerGridOpacity = phase === "question" ? "0" : "1";
-  const answerGridStyle = `opacity:${answerGridOpacity};`;
-
-  // 5. Fact Card for Explain Phase
-  const factCardText = input.fact_card_text || "Hành tinh này có các đặc điểm kỳ thú và hệ thống vành đai ấn tượng nhất trong vũ trụ!";
-  const factCardHtml =
-    phase === "explain"
-      ? `
-    <div class="fact-card sandbox-explain-card" style="opacity: 1; animation: none; transform: translateX(-50%);">
-      <p>${esc(factCardText)}</p>
-    </div>
-  `
-      : "";
-
-  // 6. Hero Artwork
-  const heroImgUri = illustrationDataUri(questionText, questionNumber);
-
-  // 7. Mascot HTML
+  // 4. Mascot HTML (Resolved early to provide hasMascot context to answer card layout & typography)
   let mascotHtml = "";
   const mascotEnabled = input.mascot_enabled !== false && input.mascot_id !== "none";
   const mascotPhase = input.mascot_phase ?? phase;
@@ -153,6 +126,34 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
   const mascotClass = hasMascot ? "has-mascot" : "";
   const brandMarkHtml = renderChannelBrandMark(input.channel_brand_name, hasMascot, aspectRatio);
 
+  // 5. Answer Cards Variant
+  const acVariant = resolveAnswerCardVariant(input.answer_card_style);
+  const answerCardsHtml = acVariant.renderHtml({
+    choices,
+    correctIndex: correctIdx,
+    phase,
+    layoutId,
+    paletteAccent: palette.accent,
+    hasMascot,
+  });
+
+  const answerGridOpacity = phase === "question" ? "0" : "1";
+  const answerGridStyle = `opacity:${answerGridOpacity};`;
+
+  // 6. Fact Card for Explain Phase
+  const factCardText = input.fact_card_text || "Hành tinh này có các đặc điểm kỳ thú và hệ thống vành đai ấn tượng nhất trong vũ trụ!";
+  const factCardHtml =
+    phase === "explain"
+      ? `
+    <div class="fact-card sandbox-explain-card" style="opacity: 1; animation: none; transform: translateX(-50%);">
+      <p>${esc(factCardText)}</p>
+    </div>
+  `
+      : "";
+
+  // 7. Hero Artwork
+  const heroImgUri = illustrationDataUri(questionText, questionNumber);
+
   // 8. Reward FX
   const rewardFxHtml =
     phase === "reveal" || phase === "explain"
@@ -171,7 +172,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
     questionBoxHtml: qbHtml,
     heroHtml: `<figure class="image-card hero-image" data-layout-allow-overflow><img src="${heroImgUri}" alt="${escAttr(questionText)}"><span class="image-shine"></span></figure>`,
     textChoicesHtml: `<div class="answer-grid answer-count-${choices.length}" style="${answerGridStyle}">${answerCardsHtml}</div>`,
-    visualChoicesHtml: renderSandboxVisualChoices(choices, correctIdx, phase, questionNumber, answerGridStyle),
+    visualChoicesHtml: renderSandboxVisualChoices(choices, correctIdx, phase, questionNumber, answerGridStyle, hasMascot),
     phaseHtml: `${tbHtml}${factCardHtml}`,
   });
 
@@ -270,8 +271,9 @@ function renderSandboxVisualChoices(
   phase: SandboxPreviewInput["phase"],
   questionNumber: number,
   style: string,
+  hasMascot = false,
 ): string {
-  const cards = choices.map((choice, index) => renderSandboxVisualChoice(choice, index, correctIndex, phase, questionNumber)).join("");
+  const cards = choices.map((choice, index) => renderSandboxVisualChoice(choice, index, correctIndex, phase, questionNumber, hasMascot)).join("");
   return `<div class="visual-answer-grid" style="${style}">${cards}</div>`;
 }
 
@@ -281,16 +283,18 @@ function renderSandboxVisualChoice(
   correctIndex: number,
   phase: SandboxPreviewInput["phase"],
   questionNumber: number,
+  hasMascot = false,
 ): string {
   const revealed = phase === "reveal" || phase === "explain";
   const isCorrect = index === correctIndex;
   const state = revealed ? (isCorrect ? "answer-correct" : "answer-incorrect") : "answer-normal";
+  const choiceLayout = textLayout(choice, "choice", { hasMascot });
   const resultIcon = revealed
     ? isCorrect
       ? '<i class="answer-check" style="opacity:1;">✓</i>'
       : '<i class="answer-cross" style="opacity:1;">✕</i>'
     : "";
-  return `<div class="visual-answer-card ${state}"><figure class="image-card option-image"><img src="${illustrationDataUri(choice, questionNumber + index + 1)}" alt="${escAttr(choice)}"><span class="image-shine"></span></figure><div class="visual-answer-label"><b>${String.fromCharCode(65 + index)}</b><span>${esc(choice)}</span>${resultIcon}</div></div>`;
+  return `<div class="visual-answer-card ${state} choice-tier-${choiceLayout.tier}"><figure class="image-card option-image"><img src="${illustrationDataUri(choice, questionNumber + index + 1)}" alt="${escAttr(choice)}"><span class="image-shine"></span></figure><div class="visual-answer-label"><b>${String.fromCharCode(65 + index)}</b><span>${esc(choice)}</span>${resultIcon}</div></div>`;
 }
 
 function previewTimeForPhase(phase: "intro" | "question" | "choices" | "thinking" | "reveal" | "explain" | "outro"): number {

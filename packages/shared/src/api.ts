@@ -250,6 +250,10 @@ export const VideoSettingsInputSchema = z.object({
   narration_words_per_second: z.number().positive().max(20).optional(),
   aspect_ratio: MascotRenderAspectRatioSchema.optional(),
   max_concurrent_tasks: z.number().int().min(1).max(10).optional(),
+  render_workers: z.number().int().min(1).max(16).optional(),
+  render_quality: z.enum(["draft", "standard", "high"]).optional(),
+  fps: z.number().int().min(24).max(60).optional(),
+  fast_render_mode: z.boolean().optional(),
 });
 
 export type VideoSettingsInput = z.infer<typeof VideoSettingsInputSchema>;

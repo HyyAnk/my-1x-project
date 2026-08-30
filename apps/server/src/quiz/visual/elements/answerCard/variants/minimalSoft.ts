@@ -19,7 +19,10 @@ export const minimalSoftVariant: AnswerCardVariant = {
           stateClass = isCorrect ? "answer-correct" : "answer-incorrect";
           statusIcon = isCorrect ? '<i class="answer-check" style="opacity:1;">✓</i>' : '<i class="answer-cross" style="opacity:1;">✕</i>';
         }
-        const choiceLayout = textLayout(choiceText, "choice");
+        const choiceLayout = textLayout(choiceText, "choice", {
+          hasMascot: input.hasMascot,
+          layoutId: input.layoutId,
+        });
         const letter = String.fromCharCode(65 + idx);
         return (
           `<div class="answer-card ac-minimal-soft ${stateClass} choice-tier-${choiceLayout.tier}" style="--item-phase:0s" data-layout-allow-occlusion data-layout-allow-overflow>` +

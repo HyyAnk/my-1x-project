@@ -135,24 +135,24 @@ describe("Thinking Bar Element Suite", () => {
     expect(css).toContain(".thinking-bar-star-slider");
     expect(css).toContain(".thinking-bar-capsule-liquid");
     expect(css).toContain(".thinking-bar-energy-laser");
-    expect(css).toContain(".thinking-bar-retro-pixel");
+    expect(css).toContain(".thinking-bar-construction-machine");
     expect(css).toContain(".thinking-bar-flame-fuse");
-    expect(css).toContain(".thinking-bar-minimal-glow");
+    expect(css).toContain(".thinking-bar-cosmic-rocket");
 
     expect(css).toContain("@keyframes liquidBubbleRise");
     expect(css).toContain("@keyframes laserPulseScan");
-    expect(css).toContain("@keyframes pixelBounce");
+    expect(css).toContain("@keyframes dozerBeaconBlink");
     expect(css).toContain("@keyframes flameWobble");
-    expect(css).toContain("@keyframes minimalBreathe");
+    expect(css).toContain("@keyframes portalSpin");
   });
 
   it("renders composition bundle with specific thinking bar styles specified on director beats", () => {
     const stylesToTest: Array<Exclude<QuizThinkingBarStyle, "auto">> = [
       "capsule_liquid",
       "energy_laser",
-      "retro_pixel",
+      "construction_machine",
       "flame_fuse",
-      "minimal_glow",
+      "cosmic_rocket",
     ];
 
     for (const style of stylesToTest) {

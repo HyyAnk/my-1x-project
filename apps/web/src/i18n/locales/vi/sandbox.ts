@@ -42,6 +42,8 @@ export const sandboxVi = {
     presetTreasureQuestDesc: "Cuộn giấy phiêu lưu cổ điển, thanh 8-bit, thẻ arcade và khiên vàng chiến thắng.",
     presetMinimalStudioName: "Minimalist Studio",
     presetMinimalStudioDesc: "Tối giản hiện đại thanh lịch với thanh phát sáng dịu và thẻ đáp án soft pill.",
+    presetBuildZoneName: "Đội Xe Công Trường",
+    presetBuildZoneDesc: "Công trường vui nhộn với xe ủi đẩy thùng đếm ngược, thẻ arcade và khiên vàng chiến thắng.",
     presetVisualShowcaseName: "Visual 3-Choice Showcase",
     presetVisualShowcaseDesc: "Bố cục trắc nghiệm 3 hình ảnh ngang khổ lớn.",
     tabElements: "4 Phần tử",

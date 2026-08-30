@@ -18,6 +18,7 @@
     "@huggingface/transformers": "^4.2.0",
     "@studio/shared": "workspace:*",
     "fastify": "^5.2.1",
+    "sharp": "^0.35.4",
     "ws": "^8.18.0",
     "zod": "^3.24.1"
   },

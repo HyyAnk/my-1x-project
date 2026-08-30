@@ -212,9 +212,9 @@ export function questionClip(input: {
     .filter(Boolean)
     .join(" ");
   const questionAsset = assetFor(input.assets, `asset-${question.id}-hero`, `asset-${question.id}-question`);
-  const answers = answerCards(question, input.assets, input.answerCardStyle);
+  const answers = answerCards(question, input.assets, input.answerCardStyle, hasMascot, visual.layoutId);
   const hero = imageCard(questionAsset, question.visual_opportunity || question.question, "hero-image", question.number);
-  const visualAnswers = visualAnswerCards(question, input.assets);
+  const visualAnswers = visualAnswerCards(question, input.assets, hasMascot, visual.layoutId);
   const mascotHtml = mascotElement(input.mascot, input.mascotConfig, "question", {
     clipStartSeconds: input.start,
     clipDurationSeconds: Math.max(0.04, input.end - input.start),
@@ -285,6 +285,8 @@ export function answerCards(
   question: QuizV2["questions"][number],
   assets: Record<string, string>,
   style?: QuizAnswerCardStyle | null,
+  hasMascot = false,
+  layoutId?: QuizPreviewLayoutId,
 ): string {
   if (style && style !== "auto" && style !== "glossy_arcade") {
     const variant = resolveAnswerCardVariant(style);
@@ -296,13 +298,15 @@ export function answerCards(
       ),
       phase: "reveal",
       assets,
+      hasMascot,
+      layoutId,
     });
     return `<div class="answer-grid answer-count-${question.choices.length}">${rendered}</div>`;
   }
   return `<div class="answer-grid answer-count-${question.choices.length}">${question.choices
     .map((choice, index) => {
       const state = "answer-" + visualAnswerState(choice.id, question.correct_choice_id, "reveal");
-      const layout = textLayout(choice.text, "choice");
+      const layout = textLayout(choice.text, "choice", { hasMascot, layoutId });
       const optionAsset = assetFor(assets, `asset-${question.id}-${choice.id}`);
       const phaseSeconds = ambientPhaseSeconds("float", index, question.id);
       return `<div class="answer-card ${state} choice-tier-${layout.tier}" style="--item-phase:${phaseSeconds}s" data-layout-allow-occlusion data-layout-allow-overflow><b data-layout-allow-occlusion data-text="${String.fromCharCode(65 + index)}">${String.fromCharCode(65 + index)}</b>${optionAsset ? `<img src="${escAttr(optionAsset)}" alt="">` : ""}<span data-layout-allow-occlusion data-text="${escAttr(choice.text)}">${esc(choice.text)}</span></div>`;
@@ -310,11 +314,16 @@ export function answerCards(
     .join("")}</div>`;
 }
 
-export function visualAnswerCards(question: QuizV2["questions"][number], assets: Record<string, string>): string {
+export function visualAnswerCards(
+  question: QuizV2["questions"][number],
+  assets: Record<string, string>,
+  hasMascot = false,
+  layoutId?: QuizPreviewLayoutId,
+): string {
   return `<div class="visual-answer-grid">${question.choices
     .map((choice, index) => {
       const state = "answer-" + visualAnswerState(choice.id, question.correct_choice_id, "reveal");
-      const layout = textLayout(choice.text, "choice");
+      const layout = textLayout(choice.text, "choice", { hasMascot, layoutId });
       const phaseSeconds = ambientPhaseSeconds("float", index, question.id);
       return `<div class="visual-answer-card ${state} choice-tier-${layout.tier}" style="--item-phase:${phaseSeconds}s" data-layout-allow-occlusion data-layout-allow-overflow>${imageCard(assetFor(assets, `asset-${question.id}-${choice.id}`), choice.text, "option-image", index + question.number * 10)}<div class="visual-answer-label" data-layout-allow-overflow><b data-layout-allow-occlusion data-text="${String.fromCharCode(65 + index)}">${String.fromCharCode(65 + index)}</b><span data-layout-allow-occlusion data-text="${escAttr(choice.text)}">${esc(choice.text)}</span></div></div>`;
     })

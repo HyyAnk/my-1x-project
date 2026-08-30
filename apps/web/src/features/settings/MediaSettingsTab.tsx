@@ -22,6 +22,12 @@ export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onNoti
     setAspectRatio,
     maxConcurrentVideoTasks,
     setMaxConcurrentVideoTasks,
+    renderWorkers,
+    setRenderWorkers,
+    renderQuality,
+    setRenderQuality,
+    fps,
+    setFps,
     savingVideo,
     saveVideo,
     imageEnabled,
@@ -76,6 +82,12 @@ export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onNoti
         setAspectRatio={setAspectRatio}
         maxConcurrentVideoTasks={maxConcurrentVideoTasks}
         setMaxConcurrentVideoTasks={setMaxConcurrentVideoTasks}
+        renderWorkers={renderWorkers}
+        setRenderWorkers={setRenderWorkers}
+        renderQuality={renderQuality}
+        setRenderQuality={setRenderQuality}
+        fps={fps}
+        setFps={setFps}
         maxSceneDuration={maxSceneDuration}
         setMaxSceneDuration={setMaxSceneDuration}
         narrationWordsPerSecond={narrationWordsPerSecond}

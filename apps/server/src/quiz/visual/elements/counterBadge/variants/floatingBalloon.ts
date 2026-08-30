@@ -9,7 +9,7 @@ export const floatingBalloonVariant: CounterBadgeVariant = {
   },
   renderCss(): string {
     return `
-.cb-floating-balloon { position: relative; z-index: 6; display: flex; flex-direction: column; align-items: center; width: 240px; transform-origin: 50% 0; animation: balloon-bounce-enter .68s cubic-bezier(.18,1.42,.34,1) var(--clip-start, 0s) both, balloon-bob-float 3.6s ease-in-out calc(var(--clip-start, 0s) + .68s) infinite alternate both; }
+.cb-floating-balloon { position: relative; z-index: 6; display: flex; flex-direction: column; align-items: center; width: 240px; transform-origin: 50% 0; animation: balloon-bounce-enter .68s cubic-bezier(.18,1.42,.34,1) var(--clip-start, 0s) both, balloon-bob-float 3.6s ease-in-out calc(var(--clip-start, 0s) + .68s) infinite alternate both; contain: layout style; will-change: transform; transform: translate3d(0,0,0); }
 .cb-floating-balloon .balloon-streamers { position: relative; display: flex; justify-content: space-between; align-items: flex-start; width: 160px; height: 34px; pointer-events: none; }
 .cb-floating-balloon .balloon-streamer { width: 8px; height: 100%; border-radius: 4px; background: repeating-linear-gradient(135deg, #FF6B8B 0px, #FF6B8B 6px, #FFD166 6px, #FFD166 12px); box-shadow: 0 2px 6px rgba(13,35,71,.25); }
 .cb-floating-balloon .balloon-top-knot { position: absolute; top: 0; left: 50%; transform: translateX(-50%); display: grid; place-items: center; width: 26px; height: 14px; border: 3px solid #FFF; border-radius: 8px; background: #FFD166; box-shadow: 0 2px 5px rgba(0,0,0,.25); }
@@ -24,8 +24,8 @@ export const floatingBalloonVariant: CounterBadgeVariant = {
 .cb-floating-balloon .balloon-bottom-tie { position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
 .cb-floating-balloon .balloon-tail-knot { width: 18px; height: 10px; border-radius: 5px; background: #FFD644; border: 2px solid #A80032; box-shadow: 0 2px 4px rgba(0,0,0,.3); }
 .cb-floating-balloon .balloon-curled-ribbon { width: 3px; height: 16px; border-radius: 2px; background: #FFD166; transform: rotate(15deg); }
-@keyframes balloon-bounce-enter { 0% { transform: translateY(-70px) scale(0.9); opacity: 0; } 65% { transform: translateY(8px) scale(1.05, 0.95); opacity: 1; } 82% { transform: translateY(-4px) scale(0.98, 1.02); } 100% { transform: translateY(0) scale(1); opacity: 1; } }
-@keyframes balloon-bob-float { 0% { transform: translateY(0); } 100% { transform: translateY(-6px); } }
+@keyframes balloon-bounce-enter { 0% { transform: translate3d(0, -70px, 0) scale(0.9); opacity: 0; } 65% { transform: translate3d(0, 8px, 0) scale(1.05, 0.95); opacity: 1; } 82% { transform: translate3d(0, -4px, 0) scale(0.98, 1.02); } 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 1; } }
+@keyframes balloon-bob-float { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(0, -6px, 0); } }
 `;
   },
 };

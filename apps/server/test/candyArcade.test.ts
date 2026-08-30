@@ -156,6 +156,21 @@ describe("Candy Arcade visual template", () => {
     expect(resolveLayout("auto", "visual_multiple_choice", "odd_one_out")).toBe("visual_choices_three");
     expect(textLayout("Which ocean is the largest on Earth?", "question").fits).toBe(true);
     expect(textLayout("x".repeat(190), "question").fits).toBe(false);
+
+    // Mascot OFF mode: standard limits [18, 34, 58, 82]
+    const offLayout = textLayout("Thái Bình Dương", "choice", { hasMascot: false });
+    expect(offLayout.tier).toBe("short");
+    expect(offLayout.fontSize).toBe(34);
+
+    // Mascot ON mode: narrower limits [10, 22, 40, 60] -> 15-char string shifts to medium tier to avoid clipping
+    const onLayout = textLayout("Thái Bình Dương", "choice", { hasMascot: true });
+    expect(onLayout.tier).toBe("medium");
+    expect(onLayout.fontSize).toBe(24);
+
+    // Ultra short text remains short tier in Mascot ON mode
+    const shortOnLayout = textLayout("Paris", "choice", { hasMascot: true });
+    expect(shortOnLayout.tier).toBe("short");
+    expect(shortOnLayout.fontSize).toBe(28);
   });
 
   it("maps answer state only from the canonical QuizV2 choice", () => {

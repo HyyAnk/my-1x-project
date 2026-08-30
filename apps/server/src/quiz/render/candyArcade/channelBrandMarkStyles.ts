@@ -31,6 +31,7 @@ export function channelBrandMarkCss(): string {
   transform: translateX(-50%);
   overflow: hidden;
   box-sizing: border-box;
+  contain: layout style;
 }
 
 .channel-brand-mark .brand-mark-icon {

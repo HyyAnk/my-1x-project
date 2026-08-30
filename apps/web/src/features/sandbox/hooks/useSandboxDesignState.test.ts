@@ -20,7 +20,7 @@ describe("useSandboxDesignState", () => {
     act(() => {
       result.current.setPaletteId("grape");
       result.current.setLayoutId("visual_choices_three");
-      result.current.setThinkingBarStyle("minimal_glow");
+      result.current.setThinkingBarStyle("cosmic_rocket");
       result.current.setQuestionBoxStyle("comic_bubble");
       result.current.setAnswerCardStyle("comic_chunky");
       result.current.setCounterStyle("neon_badge");
@@ -28,7 +28,7 @@ describe("useSandboxDesignState", () => {
 
     expect(result.current.paletteId).toBe("grape");
     expect(result.current.layoutId).toBe("visual_choices_three");
-    expect(result.current.thinkingBarStyle).toBe("minimal_glow");
+    expect(result.current.thinkingBarStyle).toBe("cosmic_rocket");
     expect(result.current.questionBoxStyle).toBe("comic_bubble");
     expect(result.current.answerCardStyle).toBe("comic_chunky");
     expect(result.current.counterStyle).toBe("neon_badge");

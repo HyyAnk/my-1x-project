@@ -18,6 +18,7 @@ export function productionMascotCss(): string {
   bottom: auto;
   overflow: visible;
   pointer-events: none;
+  contain: layout style;
   transform: translate3d(var(--mascot-placement-offset-x, 0px), var(--mascot-placement-offset-y, 0px), 0);
   transform-origin: 0 0;
 }
@@ -32,6 +33,7 @@ export function productionMascotCss(): string {
   height: 220px;
   opacity: 0;
   pointer-events: none;
+  will-change: opacity;
   animation: mascot-v2-state-window var(--mascot-state-span, .04s) linear var(--mascot-state-delay, 0s) 1 both;
 }
 .candy-mascot-container.mascot-v2-container .mascot-v2-motion {
@@ -39,6 +41,8 @@ export function productionMascotCss(): string {
   inset: 0;
   width: 220px;
   height: 220px;
+  will-change: transform;
+  backface-visibility: hidden;
   transform-origin: var(--mascot-pivot-x, 110px) var(--mascot-pivot-y, 220px);
   animation-name: mascot-v2-motion;
   animation-duration: var(--mascot-motion-cycle, 1s);
@@ -53,6 +57,8 @@ export function productionMascotCss(): string {
   inset: 0;
   width: 220px;
   height: 220px;
+  will-change: transform;
+  backface-visibility: hidden;
   transform-origin: var(--mascot-pivot-x, 110px) var(--mascot-pivot-y, 220px);
   transform: translate3d(var(--mascot-registration-x, 0px), var(--mascot-registration-y, 0px), 0) scaleX(var(--mascot-flip-sign, 1)) scale(var(--mascot-scale, 1));
   background-image: var(--mascot-art-url);

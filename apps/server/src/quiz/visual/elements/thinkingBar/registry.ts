@@ -3,17 +3,17 @@ import type { ThinkingBarVariant } from "./types.js";
 import { starSliderVariant } from "./variants/starSlider.js";
 import { capsuleLiquidVariant } from "./variants/capsuleLiquid.js";
 import { energyLaserVariant } from "./variants/energyLaser.js";
-import { retroPixelVariant } from "./variants/retroPixel.js";
+import { constructionMachineVariant } from "./variants/constructionMachine.js";
 import { flameFuseVariant } from "./variants/flameFuse.js";
-import { minimalGlowVariant } from "./variants/minimalGlow.js";
+import { cosmicRocketVariant } from "./variants/cosmicRocket.js";
 
 export const THINKING_BAR_VARIANTS: Record<Exclude<QuizThinkingBarStyle, "auto">, ThinkingBarVariant> = {
   star_slider: starSliderVariant,
   capsule_liquid: capsuleLiquidVariant,
   energy_laser: energyLaserVariant,
-  retro_pixel: retroPixelVariant,
+  construction_machine: constructionMachineVariant,
   flame_fuse: flameFuseVariant,
-  minimal_glow: minimalGlowVariant,
+  cosmic_rocket: cosmicRocketVariant,
 };
 
 export const DEFAULT_THINKING_BAR_STYLE: Exclude<QuizThinkingBarStyle, "auto"> = "star_slider";

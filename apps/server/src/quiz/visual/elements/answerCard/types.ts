@@ -8,6 +8,7 @@ export type AnswerCardRenderInput = ElementRenderContext & {
   layoutId?: QuizPreviewLayoutId;
   paletteAccent?: string;
   assets?: Record<string, string>;
+  hasMascot?: boolean;
 };
 
 export type AnswerCardVariant = VisualElementVariant<Exclude<QuizAnswerCardStyle, "auto">, AnswerCardRenderInput>;
