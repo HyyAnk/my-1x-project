@@ -1,23 +1,12 @@
-import {
-  ArrowRight,
-  ArrowsOutSimple,
-  CaretDown,
-  CaretRight,
-  Check,
-  CircleNotch,
-  Copy,
-  DownloadSimple,
-  MagicWand,
-  MagnifyingGlassPlus,
-  PaintBrush,
-  Trash,
-  X,
-} from "@phosphor-icons/react";
-import { QUIZ_IMAGE_STYLE_LABELS, type MascotProfile, type QuizImageStyle } from "@studio/shared";
+import { ArrowRight, Check, CircleNotch, MagicWand, X } from "@phosphor-icons/react";
+import type { MascotProfile, QuizImageStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
-import { COLOR_PRESETS, PROMPT_TEMPLATES, QUICK_PROMPT_TAGS, STYLE_OPTIONS } from "../constants";
+import { PROMPT_TEMPLATES, QUICK_PROMPT_TAGS } from "../constants";
+import { MascotIdentityForm } from "./MascotIdentityForm";
+import { MascotPromptStudio } from "./MascotPromptStudio";
+import { MascotConceptPreviewCard } from "./MascotConceptPreviewCard";
 
-type MascotConceptStepProps = {
+export interface MascotConceptStepProps {
   genName: string;
   setGenName: (name: string) => void;
   genDescription: string;
@@ -46,7 +35,7 @@ type MascotConceptStepProps = {
   onGenerateConcept: () => void;
   onRemoveBackground: (target: "master" | "all") => void;
   onNextStep: () => void;
-};
+}
 
 export function MascotConceptStep({
   genName,
@@ -91,170 +80,29 @@ export function MascotConceptStep({
             </div>
           </div>
 
-          {/* Mascot Name & Color Palette Row */}
-          <div className="identity-top-row">
-            <div className="form-group flex-1">
-              <label htmlFor="mascot-name">
-                {t("mascots.nameLabel")} <span style={{ color: "var(--coral)" }}>*</span>
-              </label>
-              <input
-                id="mascot-name"
-                type="text"
-                className="identity-name-input"
-                placeholder={t("mascots.namePlaceholder")}
-                value={genName}
-                onChange={(e) => setGenName(e.target.value)}
-              />
-            </div>
+          <MascotIdentityForm
+            genName={genName}
+            setGenName={setGenName}
+            genColor={genColor}
+            setGenColor={setGenColor}
+            genStyle={genStyle}
+            setGenStyle={setGenStyle}
+          />
 
-            <div className="form-group color-palette-form-group">
-              <label htmlFor="mascot-color">{t("mascots.colorLabel")}</label>
-              <div className="color-palette-wrap">
-                <div className="color-swatches-row">
-                  {COLOR_PRESETS.map((preset) => (
-                    <button
-                      key={preset.hex}
-                      type="button"
-                      className={`color-swatch-btn ${genColor.toLowerCase() === preset.hex.toLowerCase() ? "is-selected" : ""}`}
-                      style={{ backgroundColor: preset.hex }}
-                      onClick={() => setGenColor(preset.hex)}
-                      title={`${preset.name} (${preset.hex})`}
-                      aria-label={preset.name}
-                    >
-                      {genColor.toLowerCase() === preset.hex.toLowerCase() ? <Check size={12} weight="bold" color="#fff" /> : null}
-                    </button>
-                  ))}
-                </div>
-                <div className="custom-color-input-wrap">
-                  <input
-                    id="mascot-color"
-                    type="color"
-                    value={genColor}
-                    onChange={(e) => setGenColor(e.target.value)}
-                    className="native-color-picker"
-                    title={t("mascots.customColorPicker")}
-                  />
-                  <input
-                    type="text"
-                    value={genColor}
-                    onChange={(e) => setGenColor(e.target.value)}
-                    placeholder="#06b6d4"
-                    className="color-hex-input"
-                    maxLength={7}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Visual Style Selector Cards */}
-          <div className="form-group" style={{ marginTop: "14px" }}>
-            <label>{t("mascots.styleLabel")}</label>
-            <div className="visual-style-selector-grid">
-              {STYLE_OPTIONS.map((opt) => {
-                const isSelected = genStyle === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    className={`visual-style-card ${isSelected ? "is-selected" : ""}`}
-                    style={isSelected ? { borderColor: genColor, backgroundColor: `${genColor}15` } : undefined}
-                    onClick={() => setGenStyle(opt.id)}
-                  >
-                    <span className="style-card-title">{opt.title}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* HERO PROMPT STUDIO */}
-          <div className="hero-prompt-studio-box" style={{ borderColor: `${genColor}35` }}>
-            <div className="hero-prompt-header">
-              <label htmlFor="mascot-prompt" className="hero-prompt-label">
-                {t("mascots.promptLabel")}
-              </label>
-
-              <div className="hero-prompt-actions">
-                <button type="button" className="quiet-button compact icon-only" onClick={onCopyPrompt} title={t("mascots.copyPromptBtn")}>
-                  {promptCopied ? <Check size={14} color="var(--green)" /> : <Copy size={14} />}
-                </button>
-                <button
-                  type="button"
-                  className="quiet-button compact icon-only"
-                  onClick={() => setGenPrompt("")}
-                  title={t("mascots.clearPromptBtn")}
-                >
-                  <Trash size={14} />
-                </button>
-                <button
-                  type="button"
-                  className="quiet-button compact icon-only"
-                  onClick={() => setIsPromptModalOpen(true)}
-                  title={t("mascots.focusPromptTitle")}
-                >
-                  <ArrowsOutSimple size={14} />
-                </button>
-              </div>
-            </div>
-
-            {/* Quick AI Mascot Template Chips */}
-            <div className="prompt-template-chips-bar">
-              <div className="prompt-chips-list">
-                {PROMPT_TEMPLATES.map((tpl, idx) => (
-                  <button key={idx} type="button" className="prompt-template-chip" onClick={() => onApplyTemplate(tpl)} title={tpl.prompt}>
-                    {t(tpl.nameKey)}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick AI Keyword Tags */}
-            <div className="quick-tags-bar">
-              <div className="quick-tags-list">
-                {QUICK_PROMPT_TAGS.map((tag, idx) => (
-                  <button key={idx} type="button" className="quick-tag-chip" onClick={() => onInjectTag(tag)}>
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Expanded Textarea */}
-            <div className="hero-prompt-textarea-wrap">
-              <textarea
-                id="mascot-prompt"
-                rows={4}
-                className="hero-prompt-textarea"
-                placeholder={t("mascots.promptPlaceholder")}
-                value={genPrompt}
-                onChange={(e) => setGenPrompt(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* Collapsible Personality / Lore Notes */}
-          <div className="notes-accordion-section">
-            <button type="button" className="notes-accordion-toggle" onClick={() => setShowNotesAccordion((p) => !p)}>
-              <div className="accordion-title-wrap">
-                {showNotesAccordion ? <CaretDown size={14} weight="bold" /> : <CaretRight size={14} weight="bold" />}
-                <span>{t("mascots.notesAccordionTitle")}</span>
-              </div>
-            </button>
-
-            {showNotesAccordion ? (
-              <div className="notes-accordion-body">
-                <textarea
-                  id="mascot-desc"
-                  rows={3}
-                  className="notes-textarea"
-                  placeholder={t("mascots.descPlaceholder")}
-                  value={genDescription}
-                  onChange={(e) => setGenDescription(e.target.value)}
-                />
-              </div>
-            ) : null}
-          </div>
+          <MascotPromptStudio
+            genColor={genColor}
+            genPrompt={genPrompt}
+            setGenPrompt={setGenPrompt}
+            genDescription={genDescription}
+            setGenDescription={setGenDescription}
+            promptCopied={promptCopied}
+            showNotesAccordion={showNotesAccordion}
+            setShowNotesAccordion={setShowNotesAccordion}
+            onCopyPrompt={onCopyPrompt}
+            onInjectTag={onInjectTag}
+            onApplyTemplate={onApplyTemplate}
+            onOpenPromptModal={() => setIsPromptModalOpen(true)}
+          />
 
           {/* Wizard Action CTA Row */}
           <div className="wizard-action-row" style={{ marginTop: "24px", paddingTop: "16px", borderTop: "1px solid var(--line)" }}>
@@ -289,125 +137,17 @@ export function MascotConceptStep({
 
       {/* Master Preview Stage Box */}
       <div className="wizard-preview-col">
-        <div className="wizard-card preview-card studio-preview-card">
-          <div className="wizard-card-header-flex">
-            <div>
-              <h3>{t("mascots.masterPreviewTitle")}</h3>
-            </div>
-            {editingMascot?.master_image_url && !busyAction ? (
-              <button
-                type="button"
-                className="icon-button compact"
-                onClick={() => setLightboxImage(editingMascot.master_image_url)}
-                title={t("mascots.zoomPreviewBtn")}
-              >
-                <MagnifyingGlassPlus size={16} />
-              </button>
-            ) : null}
-          </div>
-
-          <div
-            className="concept-preview-frame studio-stage-frame"
-            style={{
-              borderColor: busyAction === "concept" ? "var(--accent)" : editingMascot?.master_image_url ? `${genColor}80` : undefined,
-              boxShadow:
-                busyAction === "concept"
-                  ? `0 0 20px var(--accent-glow)`
-                  : editingMascot?.master_image_url
-                    ? `0 8px 24px rgba(0, 0, 0, 0.25)`
-                    : "var(--shadow-sm)",
-            }}
-          >
-            {busyAction === "concept" ? (
-              <div className="concept-generating-overlay">
-                <div className="concept-gen-info-box">
-                  <div className="concept-gen-header-row">
-                    <span className="concept-gen-headline">
-                      <CircleNotch className="spin" size={14} />
-                      {t("mascots.globalGenTitleConcept")}
-                    </span>
-                    <span className="concept-gen-percent-badge">{itemProgress}%</span>
-                  </div>
-
-                  <div className="concept-gen-track">
-                    <div className="mascot-gen-bar-fill" style={{ width: `${itemProgress}%` }} />
-                  </div>
-
-                  <p className="concept-gen-stage-label">{currentStageMessage}</p>
-
-                  <div className="concept-gen-footer-row">
-                    <span>⏱ {t("mascots.elapsedTimer", { seconds: Math.floor(generationElapsed) })}</span>
-                    <span>{QUIZ_IMAGE_STYLE_LABELS[genStyle]}</span>
-                  </div>
-                </div>
-              </div>
-            ) : busyAction === "matting-master" ? (
-              <div className="matting-active-overlay">
-                <CircleNotch className="spin" size={28} color="#a855f7" />
-                <h4 style={{ color: "#fff", margin: 0, fontSize: "13px" }}>{t("mascots.mattingInProgress")}</h4>
-                <div className="concept-gen-track" style={{ width: "80%" }}>
-                  <div className="mascot-gen-bar-fill" style={{ width: `${itemProgress}%`, backgroundColor: "#a855f7" }} />
-                </div>
-              </div>
-            ) : editingMascot?.master_image_url ? (
-              <div className="concept-preview-img-container" onClick={() => setLightboxImage(editingMascot.master_image_url)}>
-                <img src={editingMascot.master_image_url} alt="Master Concept" className="concept-preview-img" />
-                <div className="preview-hover-overlay">
-                  <MagnifyingGlassPlus size={24} color="#fff" />
-                  <span>{t("mascots.zoomPreviewBtn")}</span>
-                </div>
-              </div>
-            ) : (
-              <div className="concept-preview-placeholder studio-placeholder">
-                <p>{t("mascots.masterPreviewPlaceholder")}</p>
-              </div>
-            )}
-          </div>
-
-          {editingMascot?.master_image_url && !busyAction ? (
-            <>
-              <div className="concept-meta-box modern-meta-box">
-                <div className="concept-meta-item">
-                  <span>{t("common.status")}:</span>
-                  <strong style={{ color: "var(--green)" }}>{t("mascots.statusIdentityLocked")}</strong>
-                </div>
-                <div className="concept-meta-item">
-                  <span>{t("mascots.statusStyle")}</span>
-                  <strong>{QUIZ_IMAGE_STYLE_LABELS[editingMascot.visual_style]}</strong>
-                </div>
-              </div>
-
-              <div
-                className="master-action-buttons-row"
-                style={{ marginTop: "14px", display: "grid", gridTemplateColumns: "1fr auto", gap: "8px" }}
-              >
-                <button
-                  type="button"
-                  className="quiet-button compact"
-                  disabled={busyAction !== null}
-                  onClick={() => onRemoveBackground("master")}
-                  style={{ justifyContent: "center" }}
-                  title={t("mascots.mattingMasterBtn")}
-                >
-                  {busyAction === "matting-master" ? <CircleNotch className="spin" size={14} /> : <PaintBrush size={14} />}
-                  <span>{busyAction === "matting-master" ? t("mascots.mattingInProgress") : t("mascots.mattingMasterBtn")}</span>
-                </button>
-
-                <a
-                  href={editingMascot.master_image_url}
-                  download={`${editingMascot.name.toLowerCase().replace(/[^a-z0-9]/g, "_")}_master.png`}
-                  className="icon-button"
-                  title={t("common.download")}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
-                >
-                  <DownloadSimple size={15} />
-                </a>
-              </div>
-            </>
-          ) : null}
-        </div>
+        <MascotConceptPreviewCard
+          editingMascot={editingMascot}
+          genColor={genColor}
+          genStyle={genStyle}
+          busyAction={busyAction}
+          itemProgress={itemProgress}
+          currentStageMessage={currentStageMessage}
+          generationElapsed={generationElapsed}
+          onZoomPreview={(url) => setLightboxImage(url)}
+          onRemoveBackground={onRemoveBackground}
+        />
       </div>
 
       {/* Fullscreen Prompt Focus Modal */}

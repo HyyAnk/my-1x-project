@@ -12,7 +12,7 @@ import { preflightQuizRender } from "../quiz/qa/preflight.js";
 import { inspectRenderedVideo } from "../quiz/qa/postRenderQa.js";
 import { formatHyperframesCheckFailure, hasHyperframesContrastIssue, parseHyperframesCheckReport } from "../quiz/qa/hyperframesQuality.js";
 import { healCompositionContrast } from "../quiz/qa/contrastHealer.js";
-import { resolveQuizAssets } from "../quiz/assets/resolveQuizAssets.js";
+import { prepareVideoAssets } from "./video/videoAssetPreparation.js";
 import { hasNonEmptyFile } from "./artifactFiles.js";
 import { readRenderCheckpoint, writeRenderCheckpoint } from "./checkpoints.js";
 import { renderSourceFingerprint } from "./fingerprints.js";
@@ -67,40 +67,23 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     if (channel.engine === "quiz" && !completeQuizV2 && !episode.video_asset_path) {
       throw new RepositoryError("Quiz V2 artifacts are required before rendering a new Quiz video", "QUIZ_V2_REQUIRED");
     }
+    let assetSources: Record<string, string> = {};
     let assetResolution = await this.repository.readQuizAssetResolution(task.channel_id, task.episode_id);
-    if (completeQuizV2 && !assetResolution) {
-      await this.update(task.task_id, { progress_message: "Quiz · preparing visual assets", progress_percent: 10 });
-      assetResolution = (
-        await resolveQuizAssets({
-          repository: this.repository,
-          channelId: task.channel_id,
-          episodeId: task.episode_id,
-          plan: completeQuizV2.assetPlan,
-          activeEngine: this.activeEngine,
-          antigravityClient: this.antigravity,
-          imageConfig: { api_key: this.imageConfig.api_key, model: this.imageConfig.model },
-        })
-      ).resolution;
+    if (completeQuizV2) {
+      const assetPrep = await prepareVideoAssets({
+        runtime: this,
+        channelId: task.channel_id,
+        episodeId: task.episode_id,
+        renderRoot,
+        assetPlan: completeQuizV2.assetPlan,
+        assetResolution,
+        onProgress: async (msg, pct) => {
+          await this.update(task.task_id, { progress_message: msg, progress_percent: pct });
+        },
+      });
+      assetResolution = assetPrep.assetResolution;
+      assetSources = assetPrep.assetSources;
     }
-    // HyperFrames only discovers local media inside the composition directory.
-    const renderAssetDirectory = path.join(renderRoot, "quiz-images");
-    await mkdir(renderAssetDirectory, { recursive: true });
-    const resolvedAssetEntries: Array<readonly [string, string] | null> = await Promise.all(
-      (assetResolution?.assets ?? []).map(async (asset) => {
-        try {
-          const sourcePath = await this.repository.resolveQuizAssetPath(task.channel_id, task.episode_id!, asset.path);
-          const extension = path.extname(sourcePath) || ".png";
-          const renderFilename = `${asset.asset_id}${extension}`;
-          await copyFile(sourcePath, path.join(renderAssetDirectory, renderFilename));
-          return [asset.asset_id, `./quiz-images/${renderFilename}`] as const;
-        } catch {
-          return null;
-        }
-      }),
-    );
-    const assetSources: Record<string, string> = Object.fromEntries(
-      resolvedAssetEntries.filter((entry): entry is readonly [string, string] => entry !== null),
-    );
     let preflightAssessment: ReturnType<typeof preflightQuizRender>["assessment"] | null = null;
     if (completeQuizV2) {
       const preflight = preflightQuizRender({
