@@ -504,4 +504,56 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
     expect(validateMascotPromptContract("A regular cute dragon on grass", false)).toBe(false);
     expect(validateMascotPromptContract("Dragon dancing with @1 on a table", true)).toBe(false);
   });
+
+  it("lists mascots in chronological order (old -> new, oldest first)", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "mascot-order-test-"));
+    roots.push(root);
+
+    const app = await buildApp(root);
+    try {
+      // Create first mascot (older)
+      const res1 = await app.server.inject({
+        method: "POST",
+        url: "/api/mascots",
+        payload: {
+          name: "Alpha Mascot (Old)",
+          visual_style: "pixar_3d",
+        },
+      });
+      const mascot1 = res1.json().mascot;
+
+      // Create second mascot (newer)
+      const res2 = await app.server.inject({
+        method: "POST",
+        url: "/api/mascots",
+        payload: {
+          name: "Beta Mascot (New)",
+          visual_style: "pixar_3d",
+        },
+      });
+      const mascot2 = res2.json().mascot;
+
+      // Update mascot1 so its updated_at is newer than mascot2
+      await app.server.inject({
+        method: "PATCH",
+        url: `/api/mascots/${mascot1.id}`,
+        payload: {
+          description: "Updated description to bump updated_at",
+        },
+      });
+
+      // Verify list order is still old -> new (mascot1 first, mascot2 second)
+      const listRes = await app.server.inject({ method: "GET", url: "/api/mascots" });
+      expect(listRes.statusCode).toBe(200);
+      const list = listRes.json().mascots;
+      expect(list.length).toBe(2);
+      expect(list[0].id).toBe(mascot1.id);
+      expect(list[0].name).toBe("Alpha Mascot (Old)");
+      expect(list[1].id).toBe(mascot2.id);
+      expect(list[1].name).toBe("Beta Mascot (New)");
+    } finally {
+      await app.close();
+    }
+  });
 });
+

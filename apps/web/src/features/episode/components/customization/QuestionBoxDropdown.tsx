@@ -21,13 +21,13 @@ export function QuestionBoxDropdown({ channel, episode, disabled, saving, isOpen
   const { t } = useTranslation();
   const currentBoxStyle = episode.quiz_config?.question_box_style || "auto";
   const resolvedBoxStyle = resolveQuestionBoxStyle(channel, episode.quiz_config);
-  const defaultLabel = t("episodeCustomization.valueChannelDefault", { name: QUESTION_BOX_STYLE_LABELS[resolvedBoxStyle] });
+  const activeStyle = currentBoxStyle === "auto" ? resolvedBoxStyle : currentBoxStyle;
 
   return (
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillQuestionCard")}
-        value={currentBoxStyle === "auto" ? defaultLabel : QUESTION_BOX_STYLE_LABELS[currentBoxStyle]}
+        value={QUESTION_BOX_STYLE_LABELS[activeStyle]}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
@@ -35,13 +35,6 @@ export function QuestionBoxDropdown({ channel, episode, disabled, saving, isOpen
       />
       {isOpen ? (
         <CustomizationPopover title={t("episodeCustomization.pillQuestionCard")}>
-          <StyleOptionRow
-            name="box_choice"
-            label={defaultLabel}
-            checked={currentBoxStyle === "auto"}
-            onSelect={() => onSelectStyle("auto")}
-            onHover={() => onPreview?.({ override: {}, label: defaultLabel })}
-          />
           {ALL_QUESTION_BOX_STYLES.map((style) => {
             if (style === "auto") return null;
             return (
@@ -49,7 +42,7 @@ export function QuestionBoxDropdown({ channel, episode, disabled, saving, isOpen
                 key={style}
                 name="box_choice"
                 label={QUESTION_BOX_STYLE_LABELS[style]}
-                checked={currentBoxStyle === style}
+                checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
                 onHover={() => onPreview?.({ override: { questionBoxStyle: style }, label: QUESTION_BOX_STYLE_LABELS[style] })}
               />

@@ -27,13 +27,13 @@ export function CounterBadgeDropdown({ channel, episode, disabled, saving, isOpe
   const { t } = useTranslation();
   const currentCounter = episode.quiz_config?.question_counter_style || "auto";
   const resolvedCounter = resolveCounterStyle(channel, episode.quiz_config);
-  const defaultLabel = t("episodeCustomization.valueChannelDefault", { name: QUESTION_COUNTER_STYLE_LABELS[resolvedCounter] });
+  const activeStyle = currentCounter === "auto" ? resolvedCounter : currentCounter;
 
   return (
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillCounterBadge")}
-        value={currentCounter === "auto" ? defaultLabel : QUESTION_COUNTER_STYLE_LABELS[currentCounter]}
+        value={QUESTION_COUNTER_STYLE_LABELS[activeStyle]}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
@@ -41,13 +41,6 @@ export function CounterBadgeDropdown({ channel, episode, disabled, saving, isOpe
       />
       {isOpen ? (
         <CustomizationPopover title={t("episodeCustomization.pillCounterBadge")}>
-          <StyleOptionRow
-            name="counter_choice"
-            label={defaultLabel}
-            checked={currentCounter === "auto"}
-            onSelect={() => onSelectStyle("auto")}
-            onHover={() => onPreview?.({ override: {}, label: defaultLabel })}
-          />
           {ALL_QUESTION_COUNTER_STYLES.map((style) => {
             if (style === "auto") return null;
             return (
@@ -55,7 +48,7 @@ export function CounterBadgeDropdown({ channel, episode, disabled, saving, isOpe
                 key={style}
                 name="counter_choice"
                 label={QUESTION_COUNTER_STYLE_LABELS[style]}
-                checked={currentCounter === style}
+                checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
                 onHover={() => onPreview?.({ override: { counterStyle: style }, label: QUESTION_COUNTER_STYLE_LABELS[style] })}
               />

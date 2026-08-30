@@ -336,11 +336,22 @@ describe("Quiz V2 shared schemas", () => {
       const cyber = findBuiltInPresetById("preset_cyber_neon");
       expect(cyber).toBeDefined();
       expect(cyber?.thinking_bar_style).toBe("energy_laser");
+
+      const pastel = findBuiltInPresetById("preset_pastel_dream");
+      expect(pastel).toBeDefined();
+      expect(pastel?.name).toBe("Sweet Pastel Pop");
+      expect(pastel?.palette_id).toBe("pink");
+
+      // Backward-compatible alias
+      const legacy = findBuiltInPresetById("preset_visual_showcase");
+      expect(legacy).toBeDefined();
+      expect(legacy?.id).toBe("preset_pastel_dream");
     });
 
-    it("matches presets based on partial or full configuration", () => {
+    it("matches presets based on partial or full configuration regardless of layout", () => {
       const matched = matchVisualPreset({
         palette_id: "purple",
+        layout_id: "visual_choices_three",
         question_box_style: "glass_morphism",
         answer_card_style: "glass_neon",
         thinking_bar_style: "energy_laser",

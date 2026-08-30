@@ -33,7 +33,7 @@ export async function listMascots(this: RepositoryRuntime): Promise<MascotProfil
       // Ignore unparseable or incomplete mascot folders
     }
   }
-  return mascots.sort((a, b) => b.updated_at.localeCompare(a.updated_at));
+  return mascots.sort((a, b) => (a.created_at || "").localeCompare(b.created_at || "") || (a.id || "").localeCompare(b.id || ""));
 }
 
 export async function getMascot(this: RepositoryRuntime, mascotId: string): Promise<MascotProfile> {

@@ -3,13 +3,9 @@ import {
   ALL_QUESTION_BOX_STYLES,
   ALL_QUESTION_COUNTER_STYLES,
   ALL_THINKING_BAR_STYLES,
-  ANSWER_CARD_STYLE_DESCRIPTIONS,
   ANSWER_CARD_STYLE_LABELS,
-  QUESTION_BOX_STYLE_DESCRIPTIONS,
   QUESTION_BOX_STYLE_LABELS,
-  QUESTION_COUNTER_STYLE_DESCRIPTIONS,
   QUESTION_COUNTER_STYLE_LABELS,
-  THINKING_BAR_STYLE_DESCRIPTIONS,
   THINKING_BAR_STYLE_LABELS,
   type QuizAnswerCardStyle,
   type QuizQuestionBoxStyle,
@@ -89,7 +85,6 @@ export function SandboxDesignTab({
       <SandboxStyleOptionSection
         sectionTitle={t("visualSandbox.thinkingBarSection")}
         activeLabel={THINKING_BAR_STYLE_LABELS[thinkingBarStyle as Exclude<QuizThinkingBarStyle, "auto">]}
-        description={THINKING_BAR_STYLE_DESCRIPTIONS[thinkingBarStyle as Exclude<QuizThinkingBarStyle, "auto">]}
         columns={3}
         options={thinkingBarOptions}
         selectedValue={thinkingBarStyle}
@@ -102,7 +97,6 @@ export function SandboxDesignTab({
       <SandboxStyleOptionSection
         sectionTitle={t("visualSandbox.questionBoxSection")}
         activeLabel={QUESTION_BOX_STYLE_LABELS[questionBoxStyle as Exclude<QuizQuestionBoxStyle, "auto">]}
-        description={QUESTION_BOX_STYLE_DESCRIPTIONS[questionBoxStyle as Exclude<QuizQuestionBoxStyle, "auto">]}
         columns={2}
         options={questionBoxOptions}
         selectedValue={questionBoxStyle}
@@ -115,7 +109,6 @@ export function SandboxDesignTab({
       <SandboxStyleOptionSection
         sectionTitle={t("visualSandbox.answerCardSection")}
         activeLabel={ANSWER_CARD_STYLE_LABELS[answerCardStyle as Exclude<QuizAnswerCardStyle, "auto">]}
-        description={ANSWER_CARD_STYLE_DESCRIPTIONS[answerCardStyle as Exclude<QuizAnswerCardStyle, "auto">]}
         columns={2}
         options={answerCardOptions}
         selectedValue={answerCardStyle}
@@ -128,7 +121,6 @@ export function SandboxDesignTab({
       <SandboxStyleOptionSection
         sectionTitle={t("visualSandbox.counterBadgeSection")}
         activeLabel={QUESTION_COUNTER_STYLE_LABELS[counterStyle as Exclude<QuizQuestionCounterStyle, "auto">]}
-        description={QUESTION_COUNTER_STYLE_DESCRIPTIONS[counterStyle as Exclude<QuizQuestionCounterStyle, "auto">]}
         columns={2}
         options={counterOptions}
         selectedValue={counterStyle}

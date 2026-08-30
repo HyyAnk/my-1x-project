@@ -45,7 +45,6 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
       allPresets.find(
         (preset) =>
           preset.palette_id === design.paletteId &&
-          resolvePresetPreviewLayoutId(preset) === design.layoutId &&
           preset.thinking_bar_style === design.thinkingBarStyle &&
           preset.question_box_style === design.questionBoxStyle &&
           preset.answer_card_style === design.answerCardStyle &&
@@ -56,7 +55,6 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
     [
       allPresets,
       design.paletteId,
-      design.layoutId,
       design.thinkingBarStyle,
       design.questionBoxStyle,
       design.answerCardStyle,
@@ -81,7 +79,6 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
 
   const handleLoadPreset = (preset: VisualPresetItem) => {
     design.setPaletteId(preset.palette_id);
-    design.setLayoutId(resolvePresetPreviewLayoutId(preset));
     design.setThinkingBarStyle(preset.thinking_bar_style);
     design.setQuestionBoxStyle(preset.question_box_style);
     design.setAnswerCardStyle(preset.answer_card_style || "glossy_arcade");

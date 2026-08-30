@@ -4,6 +4,7 @@ import {
   type QuizLayoutId,
   type QuizMotionId,
   type QuizPaletteId,
+  type QuizPreviewLayoutId,
   type QuizQuestionFormat,
   type QuizTransitionId,
 } from "@studio/shared";
@@ -241,7 +242,7 @@ export function resolveTransition(requested: QuizTransitionId): Exclude<QuizTran
 
 export type TextLayoutOptions = {
   hasMascot?: boolean;
-  layoutId?: QuizLayoutId;
+  layoutId?: QuizLayoutId | "baseline";
 };
 
 export function textTier(

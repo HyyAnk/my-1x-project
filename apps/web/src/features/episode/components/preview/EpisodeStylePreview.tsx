@@ -6,7 +6,6 @@ import { useEpisodeStylePreview, type EpisodePreviewCandidate } from "../../hook
 import { useElementWidth } from "../../hooks/useElementWidth";
 import { useEpisodePreviewQuestion } from "../../hooks/useEpisodePreviewQuestion";
 import { buildEpisodePreviewQuestions } from "../../utils/episodePreviewQuestions";
-import { getQuizLayoutUiDefinition } from "../../../quizLayouts/quizLayoutUiCatalog";
 import { EpisodePreviewQuestionSelect } from "./EpisodePreviewQuestionSelect";
 import { EpisodePreviewStatusPill, type EpisodePreviewStatus } from "./EpisodePreviewStatusPill";
 
@@ -37,7 +36,6 @@ export function EpisodeStylePreview({ channel, episode, quiz, directorPlan, cand
 
   const scale = width > 0 ? width / COMPOSITION_WIDTH : 0;
   const status = getPreviewStatus({ loading, pending: Boolean(pendingPreviewHtml), error: previewError, candidate });
-  const savedCaption = getSavedPreviewCaption(questionSelection.selectedQuestion, t);
 
   return (
     <aside className="episode-style-preview">
@@ -76,9 +74,11 @@ export function EpisodeStylePreview({ channel, episode, quiz, directorPlan, cand
           </div>
         ) : null}
       </div>
-      <p className={`episode-style-preview-caption ${candidate ? "is-candidate" : ""}`}>
-        {candidate ? t("episodeCustomization.previewingLabel", { label: candidate.label }) : savedCaption}
-      </p>
+      {candidate ? (
+        <p className="episode-style-preview-caption is-candidate">
+          {t("episodeCustomization.previewingLabel", { label: candidate.label })}
+        </p>
+      ) : null}
     </aside>
   );
 }
@@ -97,20 +97,4 @@ function getPreviewStatus({
   if (error) return "error";
   if (loading || pending) return "loading";
   return candidate ? "previewing" : "saved";
-}
-
-function getSavedPreviewCaption(
-  question: ReturnType<typeof useEpisodePreviewQuestion>["selectedQuestion"],
-  t: (path: string, params?: Record<string, string | number>) => string,
-): string {
-  if (!question) return t("episodeCustomization.previewSavedLabel");
-  const layout = getQuizLayoutUiDefinition(question.layoutId);
-  if (question.layoutSource === "topic_template") {
-    return t("episodeCustomization.previewTopicTemplateLabel", { layout: t(layout.labelKey) });
-  }
-  const key =
-    question.layoutSource === "inferred"
-      ? "episodeCustomization.previewInferredQuestionLabel"
-      : "episodeCustomization.previewQuestionLabelValue";
-  return t(key, { number: question.number, layout: t(layout.labelKey) });
 }

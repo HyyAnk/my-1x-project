@@ -72,6 +72,7 @@ describe("useSandboxPresets", () => {
 
     expect(mockDesign.setPaletteId).toHaveBeenCalledWith("purple");
     expect(mockDesign.setThinkingBarStyle).toHaveBeenCalledWith("energy_laser");
+    expect(mockDesign.setLayoutId).not.toHaveBeenCalled();
     expect(onNotice).toHaveBeenCalled();
   });
 

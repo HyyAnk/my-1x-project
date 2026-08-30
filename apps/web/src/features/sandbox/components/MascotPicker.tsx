@@ -17,10 +17,7 @@ export function MascotPicker({ mascots, mascotId, setMascotId, mascotEnabled, se
     <>
       {/* Mascot Enable Toggle */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div>
-          <strong style={{ fontSize: "12px" }}>{t("visualSandbox.mascotVisibilityTitle")}</strong>
-          <div style={{ fontSize: "10.5px", color: "var(--muted)" }}>{t("visualSandbox.mascotVisibilityDesc")}</div>
-        </div>
+        <strong style={{ fontSize: "12px" }}>{t("visualSandbox.mascotVisibilityTitle")}</strong>
         <button
           type="button"
           className={mascotEnabled && mascotId !== "none" ? "primary-button compact" : "quiet-button compact"}
@@ -95,7 +92,6 @@ export function MascotPicker({ mascots, mascotId, setMascotId, mascotEnabled, se
               <strong style={{ fontSize: "11.5px", color: mascotId === "none" || !mascotEnabled ? "var(--accent)" : "var(--text)" }}>
                 {t("visualSandbox.noMascotTitle")}
               </strong>
-              <small style={{ display: "block", fontSize: "10px", color: "var(--muted)" }}>{t("visualSandbox.noMascotSub")}</small>
             </div>
           </button>
 
@@ -170,9 +166,6 @@ export function MascotPicker({ mascots, mascotId, setMascotId, mascotEnabled, se
                   >
                     {m.name}
                   </strong>
-                  <small style={{ display: "block", fontSize: "10px", color: "var(--muted)" }}>
-                    {m.description || m.visual_style || "Mascot Profile"}
-                  </small>
                 </div>
               </button>
             );

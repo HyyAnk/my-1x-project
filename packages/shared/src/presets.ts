@@ -117,15 +117,14 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     isBuiltIn: true,
   },
   {
-    id: "preset_visual_showcase",
-    nameKey: "visualSandbox.presetVisualShowcaseName",
-    descKey: "visualSandbox.presetVisualShowcaseDesc",
-    name: "Visual 3-Choice Showcase",
-    description: "Wide 3-choice image showcase layout for visual multiple-choice questions.",
-    icon: "🖼️",
+    id: "preset_pastel_dream",
+    nameKey: "visualSandbox.presetPastelDreamName",
+    descKey: "visualSandbox.presetPastelDreamDesc",
+    name: "Sweet Pastel Pop",
+    description: "Sweet candy pink aesthetics with glowing neon jelly timer, candy pop box, and floating balloon counter.",
+    icon: "🫧",
     theme: "candy_arcade",
     palette_id: "pink",
-    preview_layout_id: "visual_choices_three",
     thinking_bar_style: "capsule_liquid",
     question_box_style: "candy_pop",
     answer_card_style: "glossy_arcade",
@@ -140,7 +139,8 @@ export function getBuiltInPresets(): VisualPresetItem[] {
 
 export function findBuiltInPresetById(id?: string | null): VisualPresetItem | undefined {
   if (!id || id === "auto" || id === "custom") return undefined;
-  return BUILT_IN_PRESETS.find((p) => p.id === id);
+  const resolvedId = id === "preset_visual_showcase" ? "preset_pastel_dream" : id;
+  return BUILT_IN_PRESETS.find((p) => p.id === resolvedId);
 }
 
 export function resolvePresetPreviewLayoutId(preset: VisualPresetItem): Exclude<QuizLayoutId, "auto"> | "baseline" {
@@ -161,7 +161,6 @@ export function matchVisualPreset(
   return presets.find(
     (p) =>
       (!config.palette_id || config.palette_id === "auto" || p.palette_id === config.palette_id) &&
-      (!config.layout_id || config.layout_id === "auto" || resolvePresetPreviewLayoutId(p) === config.layout_id) &&
       (!config.thinking_bar_style || config.thinking_bar_style === "auto" || p.thinking_bar_style === config.thinking_bar_style) &&
       (!config.question_box_style || config.question_box_style === "auto" || p.question_box_style === config.question_box_style) &&
       (!config.answer_card_style || config.answer_card_style === "auto" || p.answer_card_style === config.answer_card_style) &&

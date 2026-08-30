@@ -38,16 +38,18 @@ export function useMascotLibrary({
   }, [loadMascots]);
 
   const filteredMascots = useMemo(() => {
-    return mascots.filter((m) => {
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchName = m.name.toLowerCase().includes(q);
-        const matchDesc = m.description.toLowerCase().includes(q);
-        const matchPrompt = m.master_prompt.toLowerCase().includes(q);
-        if (!matchName && !matchDesc && !matchPrompt) return false;
-      }
-      return true;
-    });
+    return mascots
+      .filter((m) => {
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase();
+          const matchName = m.name.toLowerCase().includes(q);
+          const matchDesc = m.description.toLowerCase().includes(q);
+          const matchPrompt = m.master_prompt.toLowerCase().includes(q);
+          if (!matchName && !matchDesc && !matchPrompt) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => (a.created_at || "").localeCompare(b.created_at || "") || (a.id || "").localeCompare(b.id || ""));
   }, [mascots, searchQuery]);
 
   const handleDeleteConfirm = async () => {

@@ -28,13 +28,13 @@ export function PaletteDropdown({ channel, episode, disabled, saving, isOpen, on
   const { t } = useTranslation();
   const currentPalette = episode.quiz_config?.palette_id || "auto";
   const resolvedPalette = resolvePaletteId(channel, episode.quiz_config);
-  const defaultLabel = t("episodeCustomization.valueChannelDefault", { name: QUIZ_PALETTE_LABELS[resolvedPalette] });
+  const activePalette = currentPalette === "auto" ? resolvedPalette : currentPalette;
 
   return (
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillPalette")}
-        value={currentPalette === "auto" ? defaultLabel : QUIZ_PALETTE_LABELS[currentPalette]}
+        value={QUIZ_PALETTE_LABELS[activePalette]}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
@@ -42,13 +42,6 @@ export function PaletteDropdown({ channel, episode, disabled, saving, isOpen, on
       />
       {isOpen ? (
         <CustomizationPopover title={t("episodeCustomization.pillPalette")}>
-          <StyleOptionRow
-            name="palette_choice"
-            label={defaultLabel}
-            checked={currentPalette === "auto"}
-            onSelect={() => onSelectPalette("auto")}
-            onHover={() => onPreview?.({ override: {}, label: defaultLabel })}
-          />
           {ALL_QUIZ_PALETTES.map((palette) => {
             if (palette === "auto") return null;
             const colors = QUIZ_PALETTE_COLORS[palette];
@@ -57,7 +50,7 @@ export function PaletteDropdown({ channel, episode, disabled, saving, isOpen, on
                 key={palette}
                 name="palette_choice"
                 label={QUIZ_PALETTE_LABELS[palette]}
-                checked={currentPalette === palette}
+                checked={activePalette === palette}
                 onSelect={() => onSelectPalette(palette)}
                 onHover={() => onPreview?.({ override: { paletteId: palette }, label: QUIZ_PALETTE_LABELS[palette] })}
                 leading={

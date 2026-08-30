@@ -50,11 +50,8 @@ export function SandboxLayoutSelector({ layoutId, setLayoutId }: SandboxLayoutSe
               }}
             >
               {layout.icon === "split" ? <SquareSplitHorizontal size={18} /> : <ListNumbers size={18} />}
-              <span style={{ minWidth: 0 }}>
-                <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block" }}>
-                  {t(layout.sandboxLabelKey)}
-                </span>
-                <small style={{ color: "var(--muted)", fontSize: "9.5px", display: "block" }}>{t(layout.sandboxDescriptionKey)}</small>
+              <span style={{ minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {t(layout.sandboxLabelKey)}
               </span>
             </button>
           );

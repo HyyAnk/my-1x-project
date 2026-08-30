@@ -2,6 +2,7 @@ import type {
   ChannelMascotConfig,
   MascotProfile,
   QuizAnswerCardStyle,
+  QuizPreviewLayoutId,
   QuizQuestionBoxStyle,
   QuizQuestionCounterStyle,
   QuizThinkingBarStyle,

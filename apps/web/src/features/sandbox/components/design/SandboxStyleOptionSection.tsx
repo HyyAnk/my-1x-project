@@ -6,7 +6,6 @@ export interface StyleOptionItem<T extends string> {
 export interface SandboxStyleOptionSectionProps<T extends string> {
   sectionTitle: string;
   activeLabel: string;
-  description?: string;
   columns?: 2 | 3;
   options: StyleOptionItem<T>[];
   selectedValue: T;
@@ -16,7 +15,6 @@ export interface SandboxStyleOptionSectionProps<T extends string> {
 export function SandboxStyleOptionSection<T extends string>({
   sectionTitle,
   activeLabel,
-  description,
   columns = 2,
   options,
   selectedValue,
@@ -82,8 +80,6 @@ export function SandboxStyleOptionSection<T extends string>({
           );
         })}
       </div>
-
-      {description ? <p style={{ fontSize: "10.5px", color: "var(--muted)", margin: 0, lineHeight: 1.35 }}>{description}</p> : null}
     </div>
   );
 }

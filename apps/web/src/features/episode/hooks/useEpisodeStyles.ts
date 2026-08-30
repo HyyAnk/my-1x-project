@@ -75,7 +75,7 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     await saveQuizStyles(
       "thinking-bar-style",
       { thinking_bar_style: newStyle },
-      `Thinking bar style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
+      `Thinking bar style set to ${newStyle}`,
     );
   };
 
@@ -84,7 +84,7 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     await saveQuizStyles(
       "question-box-style",
       { question_box_style: newStyle, style_preset_id: "custom" },
-      `Question box style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
+      `Question box style set to ${newStyle}`,
     );
   };
 
@@ -93,7 +93,7 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     await saveQuizStyles(
       "answer-card-style",
       { answer_card_style: newStyle, style_preset_id: "custom" },
-      `Answer card style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
+      `Answer card style set to ${newStyle}`,
     );
   };
 
@@ -102,7 +102,7 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     await saveQuizStyles(
       "counter-style",
       { question_counter_style: newStyle, style_preset_id: "custom" },
-      `Counter badge style set to ${newStyle === "auto" ? "Channel Default" : newStyle}`,
+      `Counter badge style set to ${newStyle}`,
     );
   };
 
@@ -111,7 +111,7 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     await saveQuizStyles(
       "palette-id",
       { palette_id: newPalette, style_preset_id: "custom" },
-      `Color palette set to ${newPalette === "auto" ? "Channel Default" : newPalette}`,
+      `Color palette set to ${newPalette}`,
     );
   };
 

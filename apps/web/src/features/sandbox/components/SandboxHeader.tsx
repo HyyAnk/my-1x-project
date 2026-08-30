@@ -17,13 +17,8 @@ export function SandboxHeader({ hasChannels, loading, onOpenPresetModal, onOpenC
       <div>
         <h1 style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "19px" }}>
           <Palette size={22} weight="duotone" color="var(--accent)" />
-          <span>
-            {t("visualSandbox.pageTitle")} · {t("visualSandbox.pageSubtitle")}
-          </span>
+          <span>{t("visualSandbox.pageTitle")}</span>
         </h1>
-        <p className="description" style={{ margin: 0, fontSize: "12.5px" }}>
-          {t("visualSandbox.pageDesc")}
-        </p>
       </div>
       <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
         {/* Save Preset Button */}

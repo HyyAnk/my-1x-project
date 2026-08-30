@@ -34,7 +34,7 @@ export function PresetPickerDropdown({ episode, disabled, saving, isOpen, onTogg
       ? t("episodeCustomization.valueCustomKit")
       : activePreset
         ? t(activePreset.nameKey || "") || activePreset.name
-        : t("episodeCustomization.valueChannelKit");
+        : t(BUILT_IN_PRESETS[0].nameKey || "") || BUILT_IN_PRESETS[0].name;
 
   const previewCandidateFor = (preset: VisualPresetItem): EpisodePreviewCandidate => ({
     override: {

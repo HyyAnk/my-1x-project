@@ -21,13 +21,13 @@ export function AnswerCardDropdown({ channel, episode, disabled, saving, isOpen,
   const { t } = useTranslation();
   const currentCardStyle = episode.quiz_config?.answer_card_style || "auto";
   const resolvedCardStyle = resolveAnswerCardStyle(channel, episode.quiz_config);
-  const defaultLabel = t("episodeCustomization.valueChannelDefault", { name: ANSWER_CARD_STYLE_LABELS[resolvedCardStyle] });
+  const activeStyle = currentCardStyle === "auto" ? resolvedCardStyle : currentCardStyle;
 
   return (
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillAnswerCards")}
-        value={currentCardStyle === "auto" ? defaultLabel : ANSWER_CARD_STYLE_LABELS[currentCardStyle]}
+        value={ANSWER_CARD_STYLE_LABELS[activeStyle]}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
@@ -35,13 +35,6 @@ export function AnswerCardDropdown({ channel, episode, disabled, saving, isOpen,
       />
       {isOpen ? (
         <CustomizationPopover title={t("episodeCustomization.pillAnswerCards")}>
-          <StyleOptionRow
-            name="card_choice"
-            label={defaultLabel}
-            checked={currentCardStyle === "auto"}
-            onSelect={() => onSelectStyle("auto")}
-            onHover={() => onPreview?.({ override: {}, label: defaultLabel })}
-          />
           {ALL_ANSWER_CARD_STYLES.map((style) => {
             if (style === "auto") return null;
             return (
@@ -49,7 +42,7 @@ export function AnswerCardDropdown({ channel, episode, disabled, saving, isOpen,
                 key={style}
                 name="card_choice"
                 label={ANSWER_CARD_STYLE_LABELS[style]}
-                checked={currentCardStyle === style}
+                checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
                 onHover={() => onPreview?.({ override: { answerCardStyle: style }, label: ANSWER_CARD_STYLE_LABELS[style] })}
               />

@@ -250,10 +250,6 @@ export function SandboxContentTab({
               style={{ width: "100%", fontSize: "12px" }}
             />
           </div>
-
-          <span style={{ fontSize: "10.5px", color: "var(--muted)", fontStyle: "italic", lineHeight: 1.3 }}>
-            💡 {t("visualSandbox.factCardHint")}
-          </span>
         </div>
       </div>
     </>

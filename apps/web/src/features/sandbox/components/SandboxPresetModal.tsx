@@ -38,8 +38,6 @@ export function SandboxPresetModal({ isOpen, onClose, presetName, onChangePreset
           </button>
         </div>
 
-        <p style={{ fontSize: "13px", color: "var(--muted)", marginBottom: "16px" }}>{t("visualSandbox.modalSavePresetDesc")}</p>
-
         <div style={{ marginBottom: "18px" }}>
           <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>
             {t("visualSandbox.presetNameLabel")}

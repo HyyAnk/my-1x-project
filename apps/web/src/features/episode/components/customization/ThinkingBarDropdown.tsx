@@ -21,13 +21,13 @@ export function ThinkingBarDropdown({ channel, episode, disabled, saving, isOpen
   const { t } = useTranslation();
   const currentThinkingBar = episode.quiz_config?.thinking_bar_style || "auto";
   const resolvedThinkingBar = resolveThinkingBarStyle(channel, episode.quiz_config);
-  const defaultLabel = t("episodeCustomization.valueChannelDefault", { name: THINKING_BAR_STYLE_LABELS[resolvedThinkingBar] });
+  const activeStyle = currentThinkingBar === "auto" ? resolvedThinkingBar : currentThinkingBar;
 
   return (
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillThinkingBar")}
-        value={currentThinkingBar === "auto" ? defaultLabel : THINKING_BAR_STYLE_LABELS[currentThinkingBar]}
+        value={THINKING_BAR_STYLE_LABELS[activeStyle]}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
@@ -35,13 +35,6 @@ export function ThinkingBarDropdown({ channel, episode, disabled, saving, isOpen
       />
       {isOpen ? (
         <CustomizationPopover title={t("episodeCustomization.pillThinkingBar")}>
-          <StyleOptionRow
-            name="timer_choice"
-            label={defaultLabel}
-            checked={currentThinkingBar === "auto"}
-            onSelect={() => onSelectStyle("auto")}
-            onHover={() => onPreview?.({ override: {}, label: defaultLabel })}
-          />
           {ALL_THINKING_BAR_STYLES.map((style) => {
             if (style === "auto") return null;
             return (
@@ -49,7 +42,7 @@ export function ThinkingBarDropdown({ channel, episode, disabled, saving, isOpen
                 key={style}
                 name="timer_choice"
                 label={THINKING_BAR_STYLE_LABELS[style]}
-                checked={currentThinkingBar === style}
+                checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
                 onHover={() => onPreview?.({ override: { thinkingBarStyle: style }, label: THINKING_BAR_STYLE_LABELS[style] })}
               />

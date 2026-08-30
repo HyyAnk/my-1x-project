@@ -88,8 +88,6 @@ export function SandboxChannelSyncModal({
           </button>
         </div>
 
-        <p style={{ fontSize: "13px", color: "var(--muted)", marginBottom: "16px" }}>{t("visualSandbox.modalApplyChannelDesc")}</p>
-
         <div style={{ marginBottom: "16px" }}>
           <label style={{ display: "block", fontSize: "12px", fontWeight: 700, marginBottom: "6px" }}>
             {t("visualSandbox.selectChannelLabel")}

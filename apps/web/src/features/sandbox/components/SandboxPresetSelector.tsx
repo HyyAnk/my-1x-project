@@ -129,34 +129,8 @@ export function SandboxPresetSelector({
         )}
       </div>
 
-      {/* Active Preset Description / Tag */}
-      {matchedPreset ? (
-        <div
-          style={{
-            fontSize: "11px",
-            color: "var(--muted)",
-            lineHeight: 1.4,
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            paddingTop: "2px",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "9.5px",
-              fontWeight: 700,
-              padding: "1px 6px",
-              borderRadius: "4px",
-              background: matchedPreset.isBuiltIn ? "var(--soft-accent)" : "rgba(255,255,255,0.08)",
-              color: matchedPreset.isBuiltIn ? "var(--accent)" : "var(--text)",
-            }}
-          >
-            {matchedPreset.isBuiltIn ? t("visualSandbox.presetBuiltInBadge") : t("visualSandbox.presetCustomBadge")}
-          </span>
-          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{matchedPreset.description}</span>
-        </div>
-      ) : (
+      {/* Active Preset Tag / Modified status */}
+      {!matchedPreset && (
         <div
           style={{
             fontSize: "11px",

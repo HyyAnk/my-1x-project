@@ -1,4 +1,3 @@
-import { Sparkle } from "@phosphor-icons/react";
 import type { MascotActionType } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 
@@ -52,40 +51,6 @@ export function MascotActionSelector({ mascotAction, setMascotAction }: MascotAc
             );
           })}
         </div>
-      </div>
-
-      {/* Live Animation Status Badge */}
-      <div
-        style={{
-          padding: "8px 12px",
-          borderRadius: "10px",
-          background: "rgba(56, 189, 248, 0.08)",
-          border: "1px solid rgba(56, 189, 248, 0.25)",
-          fontSize: "11px",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-        }}
-      >
-        <Sparkle size={14} weight="fill" style={{ color: "#38BDF8" }} />
-        <span>
-          {t("visualSandbox.liveMotionLabel")} <strong>{mascotAction.toUpperCase()}</strong>{" "}
-          <span style={{ color: "var(--muted)" }}>
-            (
-            {mascotAction === "thinking"
-              ? t("visualSandbox.motionThinkingDesc")
-              : mascotAction === "celebrate"
-                ? t("visualSandbox.motionCelebrateDesc")
-                : mascotAction === "point"
-                  ? t("visualSandbox.motionPointDesc")
-                  : mascotAction === "oops"
-                    ? t("visualSandbox.motionOopsDesc")
-                    : mascotAction === "wave"
-                      ? t("visualSandbox.motionWaveDesc")
-                      : t("visualSandbox.motionIdleDesc")}
-            )
-          </span>
-        </span>
       </div>
     </>
   );
