@@ -1,4 +1,5 @@
 import { DirectorPlanSchema, type DirectorPlan, type QuizIssue, type QuizV2 } from "@studio/shared";
+import { layoutResolutionIssues, resolveQuestionLayout } from "../layoutCompatibility.js";
 
 const minimumThinkingSeconds: Record<QuizV2["age_band"], number> = { "4-6": 7.2, "7-9": 6.8, "10-12": 6.5, family: 6.8 };
 
@@ -109,6 +110,8 @@ export function validateDirectorPlan(quiz: QuizV2, value: unknown): { plan: Dire
   for (const beat of plan.beats) {
     const question = quiz.questions.find((candidate) => candidate.id === beat.question_id);
     if (!question) continue;
+    const layoutResolution = resolveQuestionLayout(question, beat);
+    if (!layoutResolution.ok) issues.push(...layoutResolutionIssues(layoutResolution, question.id, "director", "director"));
     if (beat.thinking_seconds < minimumThinkingSeconds[quiz.age_band])
       issues.push({
         code: "director_thinking_too_short",

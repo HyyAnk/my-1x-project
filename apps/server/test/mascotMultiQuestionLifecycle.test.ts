@@ -162,7 +162,7 @@ describe("Mascot Multi-Question Lifecycle & Global Timeline", () => {
       quiz: threeQuestionQuiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade" },
       audioPath: "./soundtrack.wav",
       narrationDurationSeconds: timeline.duration_seconds,
       aspectRatio: "16:9",

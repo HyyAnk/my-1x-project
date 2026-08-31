@@ -10,4 +10,5 @@ export * from "./presets.js";
 export * from "./timing.js";
 export * from "./branding.js";
 export * from "./quizLayouts.js";
+export * from "./quizStyles.js";
 export * from "./mascot/index.js";

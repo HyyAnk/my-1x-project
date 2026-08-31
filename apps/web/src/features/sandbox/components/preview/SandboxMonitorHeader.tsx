@@ -33,7 +33,7 @@ export function SandboxMonitorHeader({
 
   return (
     <div
-      className="panel"
+      className="panel sandbox-monitor-header"
       style={{
         padding: "8px 14px",
         borderRadius: "14px",
@@ -118,7 +118,7 @@ export function SandboxMonitorHeader({
       </div>
 
       {/* Right: Viewport Overlays & Zoom Actions */}
-      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+      <div className="sandbox-monitor-actions" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
         <div
           style={{
             display: "inline-flex",

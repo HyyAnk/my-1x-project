@@ -36,6 +36,7 @@ export const episodesVi = {
     pillQuestionCard: "Khung câu hỏi",
     pillAnswerCards: "Thẻ đáp án",
     pillCounterBadge: "Số câu",
+    pillBackground: "Hình nền",
     pillThinkingBar: "Thanh đếm giờ",
     valueMixed: "Ngẫu nhiên",
     valueCustomKit: "Tự chọn",

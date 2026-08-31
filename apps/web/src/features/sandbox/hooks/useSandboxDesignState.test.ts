@@ -12,6 +12,7 @@ describe("useSandboxDesignState", () => {
     expect(result.current.questionBoxStyle).toBe("candy_pop");
     expect(result.current.answerCardStyle).toBe("glossy_arcade");
     expect(result.current.counterStyle).toBe("hanging_woodsign");
+    expect(result.current.backgroundStyle).toBe("candy_rays");
   });
 
   it("updates individual design properties", () => {
@@ -24,6 +25,7 @@ describe("useSandboxDesignState", () => {
       result.current.setQuestionBoxStyle("comic_bubble");
       result.current.setAnswerCardStyle("comic_chunky");
       result.current.setCounterStyle("neon_badge");
+      result.current.setBackgroundStyle("aurora_glow");
     });
 
     expect(result.current.paletteId).toBe("grape");
@@ -32,5 +34,6 @@ describe("useSandboxDesignState", () => {
     expect(result.current.questionBoxStyle).toBe("comic_bubble");
     expect(result.current.answerCardStyle).toBe("comic_chunky");
     expect(result.current.counterStyle).toBe("neon_badge");
+    expect(result.current.backgroundStyle).toBe("aurora_glow");
   });
 });

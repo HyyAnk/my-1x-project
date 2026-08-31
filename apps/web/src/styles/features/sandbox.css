@@ -1,0 +1,102 @@
+.visual-sandbox-page {
+  display: flex;
+  height: calc(100vh - 64px);
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.visual-sandbox-workspace {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  grid-template-columns: 450px minmax(0, 1fr);
+  gap: 16px;
+  overflow: hidden;
+}
+
+.sandbox-preview-canvas {
+  min-width: 0;
+}
+
+.sandbox-monitor-header,
+.sandbox-monitor-actions,
+.sandbox-header > div:last-child {
+  flex-wrap: wrap;
+}
+
+.sandbox-channel-sync-dialog {
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+}
+
+@media (max-width: 960px) {
+  .visual-sandbox-page {
+    width: calc(100% - 24px);
+    height: auto;
+    min-height: calc(100vh - 64px);
+    padding-bottom: 24px;
+    overflow: visible;
+  }
+
+  .visual-sandbox-workspace {
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .visual-sandbox-inspector {
+    max-height: min(54vh, 620px);
+    flex: 0 0 auto;
+  }
+
+  .sandbox-preview-canvas {
+    min-height: 620px;
+    overflow: visible !important;
+  }
+
+  .sandbox-header {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .sandbox-header > div:last-child {
+    justify-content: flex-start;
+  }
+
+  .sandbox-header .compact,
+  .sandbox-monitor-header button,
+  .sandbox-channel-sync-dialog button,
+  .sandbox-channel-sync-dialog select {
+    min-height: 44px;
+  }
+
+  .sandbox-monitor-header {
+    align-items: flex-start !important;
+  }
+
+  .sandbox-monitor-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .visual-sandbox-inspector {
+    max-height: 58vh;
+    padding: 12px !important;
+  }
+
+  .sandbox-preview-canvas {
+    min-height: 560px;
+  }
+
+  .sandbox-monitor-actions {
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .sandbox-channel-sync-dialog {
+    width: calc(100vw - 24px) !important;
+    padding: 18px !important;
+  }
+}

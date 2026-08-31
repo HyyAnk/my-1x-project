@@ -1,17 +1,18 @@
 import { lazy, Suspense } from "react";
 import type { AppConfig, Channel, CodexSettingsResponse, AntigravitySettingsResponse, StorageInfo, Task } from "@studio/shared";
-import { DashboardView, type ChannelGroupId } from "./ChannelList";
-import { ChannelsView } from "./ChannelView";
-import { SettingsView } from "./SettingsPanel";
-import { MascotStudioView } from "./MascotStudio";
-import { TasksView } from "./TaskPanel";
+import type { ChannelGroupId } from "./channel/ChannelsListView";
 import { LoadingState } from "./EmptyState";
 import type { GitInfo, Notice, Page } from "./types";
 import type { ImageBalanceInfo, VoiceMetricsInfo } from "../hooks/useGlobalMetrics";
 
+const DashboardView = lazy(() => import("./dashboard/DashboardView").then((module) => ({ default: module.DashboardView })));
+const ChannelsView = lazy(() => import("./ChannelView").then((module) => ({ default: module.ChannelsView })));
+const MascotStudioView = lazy(() => import("./MascotStudio").then((module) => ({ default: module.MascotStudioView })));
 const VisualSandboxTab = lazy(() =>
   import("../features/sandbox/VisualSandboxTab").then((module) => ({ default: module.VisualSandboxTab })),
 );
+const TasksView = lazy(() => import("../features/tasks/TasksView").then((module) => ({ default: module.TasksView })));
+const SettingsView = lazy(() => import("./SettingsPanel").then((module) => ({ default: module.SettingsView })));
 
 export interface AppViewRouterProps {
   loading: boolean;
@@ -57,171 +58,129 @@ export interface AppViewRouterProps {
   handleSimplifyToggle: (enabled: boolean) => void;
 }
 
-export function AppViewRouter({
-  loading,
-  page,
-  channels,
-  selectedChannel,
-  selectedEpisodeId,
-  tasks,
-  activeTasks,
-  taskClock,
-  appConfig,
-  activeEngine,
-  currentModel,
-  currentImageModel,
-  imageBalance,
-  voiceMetrics,
-  storage,
-  git,
-  currentEngineStatus,
-  tab,
-  group,
-  simplifyMode,
-  codex,
-  codexStatus,
-  antigravity,
-  antigravityStatus,
-  openPage,
-  openChannel,
-  openEpisode,
-  setQueryParam,
-  upsertTask,
-  requestCreateChannel,
-  requestDeleteChannel,
-  refresh,
-  refreshChannels,
-  setNotice,
-  applyStorage,
-  setCodex,
-  setAntigravity,
-  setAppConfig,
-  setChannels,
-  fetchBalance,
-  handleSimplifyToggle,
-}: AppViewRouterProps) {
-  if (loading) {
+export function AppViewRouter(props: AppViewRouterProps) {
+  if (props.loading) {
     return <LoadingState />;
   }
 
-  if (page === "dashboard") {
-    return (
-      <DashboardView
-        channels={channels}
-        tasks={tasks}
-        activeTasks={activeTasks}
-        now={taskClock}
-        appConfig={appConfig}
-        activeEngine={activeEngine}
-        currentModel={currentModel}
-        currentImageModel={currentImageModel}
-        imageBalance={imageBalance}
-        voiceMetrics={voiceMetrics}
-        storage={storage}
-        git={git}
-        engineStatus={currentEngineStatus}
-        openTaskList={() => openPage("tasks")}
-        onNavigate={(nextPage, params) => {
-          openPage(nextPage);
-          if (params) {
-            Object.entries(params).forEach(([k, v]) => setQueryParam(k, v));
-          }
-        }}
-      />
-    );
-  }
+  const renderActiveView = () => {
+    switch (props.page) {
+      case "dashboard":
+        return (
+          <DashboardView
+            channels={props.channels}
+            tasks={props.tasks}
+            activeTasks={props.activeTasks}
+            now={props.taskClock}
+            appConfig={props.appConfig}
+            activeEngine={props.activeEngine}
+            currentModel={props.currentModel}
+            currentImageModel={props.currentImageModel}
+            imageBalance={props.imageBalance}
+            voiceMetrics={props.voiceMetrics}
+            storage={props.storage}
+            git={props.git}
+            engineStatus={props.currentEngineStatus}
+            openTaskList={() => props.openPage("tasks")}
+            onNavigate={(nextPage, params) => {
+              props.openPage(nextPage);
+              if (params) {
+                Object.entries(params).forEach(([k, v]) => props.setQueryParam(k, v));
+              }
+            }}
+          />
+        );
+      case "channels":
+        return (
+          <ChannelsView
+            selectedChannel={props.selectedChannel}
+            selectedEpisodeId={props.selectedEpisodeId}
+            channels={props.channels}
+            tasks={props.tasks}
+            activeTab={props.tab}
+            activeGroupQuery={props.group}
+            onTabChange={(nextTab) => props.setQueryParam("tab", nextTab)}
+            onGroupChange={(nextGroup) => props.setQueryParam("group", nextGroup)}
+            onNavigateHome={() => props.openPage("dashboard")}
+            onTaskSubmitted={props.upsertTask}
+            openChannel={props.openChannel}
+            onCreate={props.requestCreateChannel}
+            onRefresh={props.refresh}
+            onNotice={props.setNotice}
+            onDelete={props.requestDeleteChannel}
+            openEpisode={props.openEpisode}
+            maxDuration={props.appConfig?.video_generation.max_scene_duration_seconds ?? 8}
+            narrationWordsPerSecond={props.appConfig?.video_generation.narration_words_per_second ?? 2.3}
+            imageGenerationEnabled={props.appConfig?.image_generation?.enabled ?? true}
+            imagesPerBundle={props.appConfig?.image_generation?.images_per_bundle ?? 1}
+            simplifyMode={props.simplifyMode}
+          />
+        );
+      case "mascots":
+        return (
+          <MascotStudioView
+            channels={props.channels}
+            onNotice={props.setNotice}
+            onRefreshChannels={async () => {
+              await props.refreshChannels();
+            }}
+          />
+        );
+      case "sandbox":
+        return (
+          <VisualSandboxTab
+            channels={props.channels}
+            onNotice={props.setNotice}
+            onRefreshChannels={async () => {
+              await props.refreshChannels();
+            }}
+          />
+        );
+      case "tasks":
+        return (
+          <TasksView
+            tasks={props.tasks}
+            channels={props.channels}
+            now={props.taskClock}
+            onRefresh={props.refresh}
+            onNotice={props.setNotice}
+            onOpenEpisode={props.openEpisode}
+          />
+        );
+      case "settings":
+        return (
+          <SettingsView
+            channels={props.channels}
+            appConfig={props.appConfig}
+            codex={props.codex}
+            codexStatus={props.codexStatus}
+            antigravity={props.antigravity}
+            antigravityStatus={props.antigravityStatus}
+            git={props.git}
+            storage={props.storage}
+            activeTab={props.tab}
+            onTabChange={(nextTab) => props.setQueryParam("tab", nextTab)}
+            onStorageSaved={props.applyStorage}
+            onCodexSaved={props.setCodex}
+            onAntigravitySaved={props.setAntigravity}
+            onAudioSaved={(audio) => props.setAppConfig((current) => (current ? { ...current, audio_generation: audio } : current))}
+            onVideoSaved={(video) => props.setAppConfig((current) => (current ? { ...current, video_generation: video } : current))}
+            onImageSaved={(image) => {
+              props.setAppConfig((current) => (current ? { ...current, image_generation: image } : current));
+              void props.fetchBalance();
+            }}
+            onChannelUpdated={(channel) =>
+              props.setChannels((current) => current.map((item) => (item.channel_id === channel.channel_id ? channel : item)))
+            }
+            onNotice={props.setNotice}
+            simplifyMode={props.simplifyMode}
+            onSimplifyChange={props.handleSimplifyToggle}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
-  if (page === "channels") {
-    return (
-      <ChannelsView
-        selectedChannel={selectedChannel}
-        selectedEpisodeId={selectedEpisodeId}
-        channels={channels}
-        tasks={tasks}
-        activeTab={tab}
-        activeGroupQuery={group}
-        onTabChange={(nextTab) => setQueryParam("tab", nextTab)}
-        onGroupChange={(nextGroup) => setQueryParam("group", nextGroup)}
-        onNavigateHome={() => openPage("dashboard")}
-        onTaskSubmitted={upsertTask}
-        openChannel={openChannel}
-        onCreate={requestCreateChannel}
-        onRefresh={refresh}
-        onNotice={setNotice}
-        onDelete={requestDeleteChannel}
-        openEpisode={openEpisode}
-        maxDuration={appConfig?.video_generation.max_scene_duration_seconds ?? 8}
-        narrationWordsPerSecond={appConfig?.video_generation.narration_words_per_second ?? 2.3}
-        imageGenerationEnabled={appConfig?.image_generation?.enabled ?? true}
-        imagesPerBundle={appConfig?.image_generation?.images_per_bundle ?? 1}
-        simplifyMode={simplifyMode}
-      />
-    );
-  }
-
-  if (page === "mascots") {
-    return (
-      <MascotStudioView
-        channels={channels}
-        onNotice={setNotice}
-        onRefreshChannels={async () => {
-          await refreshChannels();
-        }}
-      />
-    );
-  }
-
-  if (page === "sandbox") {
-    return (
-      <Suspense fallback={<LoadingState />}>
-        <VisualSandboxTab
-          channels={channels}
-          onNotice={setNotice}
-          onRefreshChannels={async () => {
-            await refreshChannels();
-          }}
-        />
-      </Suspense>
-    );
-  }
-
-  if (page === "tasks") {
-    return (
-      <TasksView tasks={tasks} channels={channels} now={taskClock} onRefresh={refresh} onNotice={setNotice} onOpenEpisode={openEpisode} />
-    );
-  }
-
-  if (page === "settings") {
-    return (
-      <SettingsView
-        channels={channels}
-        appConfig={appConfig}
-        codex={codex}
-        codexStatus={codexStatus}
-        antigravity={antigravity}
-        antigravityStatus={antigravityStatus}
-        git={git}
-        storage={storage}
-        activeTab={tab}
-        onTabChange={(nextTab) => setQueryParam("tab", nextTab)}
-        onStorageSaved={applyStorage}
-        onCodexSaved={setCodex}
-        onAntigravitySaved={setAntigravity}
-        onAudioSaved={(audio) => setAppConfig((current) => (current ? { ...current, audio_generation: audio } : current))}
-        onVideoSaved={(video) => setAppConfig((current) => (current ? { ...current, video_generation: video } : current))}
-        onImageSaved={(image) => {
-          setAppConfig((current) => (current ? { ...current, image_generation: image } : current));
-          void fetchBalance();
-        }}
-        onChannelUpdated={(channel) =>
-          setChannels((current) => current.map((item) => (item.channel_id === channel.channel_id ? channel : item)))
-        }
-        onNotice={setNotice}
-        simplifyMode={simplifyMode}
-        onSimplifyChange={handleSimplifyToggle}
-      />
-    );
-  }
-
-  return null;
+  return <Suspense fallback={<LoadingState />}>{renderActiveView()}</Suspense>;
 }

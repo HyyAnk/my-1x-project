@@ -1,4 +1,4 @@
-import type { DirectorPlan, QuizV2 } from "@studio/shared";
+import { resolveQuizLayout, type DirectorArchetype, type DirectorPlan, type QuizQuestion, type QuizV2 } from "@studio/shared";
 import { assertDirectorPlanValid } from "./validateDirectorPlan.js";
 
 export function parseDirectorPlanOutput(output: string, quiz: QuizV2): DirectorPlan {
@@ -35,19 +35,21 @@ export function createDefaultDirectorPlan(quiz: QuizV2): DirectorPlan {
       ...(isFinal ? ["celebrate" as const] : []),
       "transition",
     ];
+    const directorArchetype = isFinal ? "final_challenge" : archetype;
     return {
       question_id: question.id,
-      archetype: isFinal ? "final_challenge" : archetype,
+      archetype: directorArchetype,
       energy: isFinal ? "triumphant" : isMidpoint ? "excited" : index % 2 ? "playful" : "curious",
       visual_density: isFinal ? "burst" : index % 2 ? "lively" : "focused",
       palette_id: (["lime", "aqua", "sunny", "purple", "pink", "orange", "red", "blue"] as const)[index % 8],
-      layout_id: archetype === "visual_multiple_choice" ? "visual_choices_three" : "media_left_choices_right",
+      layout_id: resolveDefaultLayout(question, directorArchetype),
       motion_id: (["enter.pop", "enter.slideUp", "enter.scale"] as const)[index % 3],
       transition_id: isFinal ? "lightning_brush" : "bubble_splash",
       thinking_bar_style: "auto",
       question_counter_style: "auto",
       question_box_style: "auto",
       answer_card_style: "auto",
+      background_style: "auto",
       thinking_seconds: minimumThinking[quiz.age_band] + (isFinal ? 0.6 : 0),
       beat_intents: beatIntents,
       asset_intents: archetype === "visual_multiple_choice" ? ["choice_illustration"] : ["question_illustration"],
@@ -67,4 +69,15 @@ export function createDefaultDirectorPlan(quiz: QuizV2): DirectorPlan {
     midpoint_question_id: quiz.questions[Math.floor(quiz.questions.length / 2)]?.id ?? null,
     final_challenge_question_id: quiz.questions.at(-1)?.id ?? null,
   };
+}
+
+function resolveDefaultLayout(question: QuizQuestion, archetype: DirectorArchetype) {
+  const resolution = resolveQuizLayout({
+    requestedLayout: "auto",
+    archetype,
+    questionFormat: question.format,
+    choiceCount: question.choices.length,
+  });
+  if (resolution.ok) return resolution.layoutId;
+  throw new Error(resolution.issues.map((issue) => issue.message).join(" "));
 }

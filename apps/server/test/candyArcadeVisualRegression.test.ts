@@ -43,7 +43,7 @@ function renderHtml(): string {
     quiz,
     director,
     timeline,
-    theme: "candy_arcade",
+    styleContext: { theme: "candy_arcade" },
     audioPath: "./narration.wav",
     narrationDurationSeconds: timeline.duration_seconds,
   });
@@ -163,13 +163,12 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).toContain(
       ".layout-media_left_choices_right .answer-grid.answer-count-2 { gap: 50px; height: 580px; padding-top: 100px; }",
     );
-    expect(html).toContain(".layout-media_left_choices_right .answer-grid.answer-count-3 { gap: 50px; height: 580px; padding-top: 18px; }");
-    expect(html).toContain(
-      ".layout-media_left_choices_right .answer-count-2 .answer-card > b, .layout-media_left_choices_right .answer-count-3 .answer-card > b { width: 138px; height: 138px; margin-left: -74px; font-size: 72px;",
-    );
-    expect(html).toContain(".has-mascot .answer-card span { font-size: 36px; padding-right: 24px; }");
-    expect(html).toContain(".has-mascot .choice-tier-medium span, .has-mascot .choice-tier-medium.answer-card span { font-size: 28px; }");
-    expect(html).toContain(".has-mascot .choice-tier-long span, .has-mascot .choice-tier-long.answer-card span { font-size: 23px; }");
-    expect(html).toContain(".has-mascot.layout-media_left_choices_right .answer-card span { font-size: 38px; }");
+    expect(html).toContain("--choice-badge-size: 138px;");
+    expect(html).toContain("--choice-badge-margin-left: -74px;");
+    expect(html).toContain("--choice-badge-font-size: 72px;");
+    expect(html).toContain("--choice-font-size-base: 36px;");
+    expect(html).toContain("--choice-font-size-medium: 28px;");
+    expect(html).toContain("--choice-font-size-long: 23px;");
+    expect(html).toContain("--choice-font-size-base: 38px;");
   });
 });

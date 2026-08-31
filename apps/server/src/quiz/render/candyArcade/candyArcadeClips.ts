@@ -1,31 +1,38 @@
 import type {
   ChannelMascotConfig,
+  DirectorArchetype,
   MascotProfile,
+  MascotRenderAspectRatio,
   QuizAnswerCardStyle,
-  QuizPreviewLayoutId,
+  QuizBackgroundStyle,
+  QuizLayoutResolutionResult,
+  QuizQuestion,
   QuizQuestionBoxStyle,
   QuizQuestionCounterStyle,
   QuizThinkingBarStyle,
-  QuizV2,
-  MascotRenderAspectRatio,
+  ResolvedQuizLayoutId,
 } from "@studio/shared";
-import { ambientPhaseSeconds, motionCssClass, textLayout, visualAnswerState } from "../../visual/candyArcade.js";
+import { serializeQuizPaletteInlineStyle } from "@studio/shared";
+import { ambientPhaseSeconds, motionCssClass, textLayout } from "../../visual/candyArcade.js";
 import type { QuizTemplateScene } from "../../visual/types.js";
-import {
-  resolveAnswerCardVariant,
-  resolveCounterBadgeVariant,
-  resolveQuestionBoxVariant,
-  resolveThinkingBarVariant,
-} from "../../visual/elements/index.js";
-import { esc, escAttr, highlightQuestionMarkup, illustrationDataUri } from "./candyArcadeSvg.js";
-import { assetFor, source } from "./candyArcadeAudio.js";
+import { esc, escAttr, illustrationDataUri } from "./candyArcadeSvg.js";
+import { source } from "./candyArcadeAudio.js";
 import {
   renderProductionMascotHtmlLayer,
   type ProductionMascotRenderOptions,
   type ProductionMascotTimelineEvent,
 } from "../productionMascotRenderer.js";
+import { adaptProductionQuizScene } from "../scene/productionSceneAdapter.js";
+import { buildQuizSceneParts } from "../scene/buildQuizSceneParts.js";
+import {
+  renderQuizSceneBackground,
+  renderQuizSceneChoicePart,
+  renderQuizSceneThinkingPart,
+  renderStableQuizSceneParts,
+} from "../scene/renderQuizSceneParts.js";
 import { renderQuizLayoutBody } from "../layouts/registry.js";
-import { renderChannelBrandMark } from "./channelBrandMark.js";
+import { renderCandyRaysDecorations } from "../../visual/elements/background/variants/candyRays.js";
+import type { QuizSceneTiming } from "../scene/quizScene.types.js";
 
 export type SubComposition = {
   id: string;
@@ -167,7 +174,9 @@ export function questionClip(input: {
   revealStart: number;
   rewardStart: number;
   end: number;
-  question: QuizV2["questions"][number];
+  question: QuizQuestion;
+  archetype: DirectorArchetype;
+  layoutResolution: Extract<QuizLayoutResolutionResult<ResolvedQuizLayoutId>, { ok: true }>;
   questionIndex: number;
   count: number;
   visual: QuizTemplateScene;
@@ -181,11 +190,20 @@ export function questionClip(input: {
   questionBoxStyle?: QuizQuestionBoxStyle | null;
   answerCardStyle?: QuizAnswerCardStyle | null;
   counterStyle?: QuizQuestionCounterStyle | null;
+  backgroundStyle?: QuizBackgroundStyle | null;
   aspectRatio?: MascotRenderAspectRatio;
   channelBrandName?: string | null;
 }): string {
   const { question, visual } = input;
   const questionLayout = textLayout(question.question, "question");
+  const timing: QuizSceneTiming = {
+    start: input.start,
+    choicesStart: input.choicesStart,
+    thinkingStart: input.thinkingStart,
+    revealStart: input.revealStart,
+    rewardStart: input.rewardStart,
+    end: input.end,
+  };
   const config = styleAttributes(
     visual,
     questionLayout,
@@ -196,26 +214,6 @@ export function questionClip(input: {
     input.rewardStart,
     input.end,
   );
-  const hasMascot = Boolean(
-    input.mascot && (!input.mascotConfig || input.mascotConfig.enabled) && input.mascotConfig?.show_in_question !== false,
-  );
-  const mascotClass = hasMascot ? "has-mascot" : "";
-  const classNames = [
-    "clip",
-    "candy-scene",
-    "quiz-question-clip",
-    `layout-${visual.layoutId}`,
-    `archetype-${question.format}`,
-    motionCssClass(visual.motionId),
-    input.isFinal ? "is-final-scene" : "",
-    mascotClass,
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const questionAsset = assetFor(input.assets, `asset-${question.id}-hero`, `asset-${question.id}-question`);
-  const answers = answerCards(question, input.assets, input.answerCardStyle, hasMascot, visual.layoutId);
-  const hero = imageCard(questionAsset, question.visual_opportunity || question.question, "hero-image", question.number);
-  const visualAnswers = visualAnswerCards(question, input.assets, hasMascot, visual.layoutId);
   const mascotHtml = mascotElement(input.mascot, input.mascotConfig, "question", {
     clipStartSeconds: input.start,
     clipDurationSeconds: Math.max(0.04, input.end - input.start),
@@ -223,40 +221,59 @@ export function questionClip(input: {
     revealOutcome: "correct",
     aspectRatio: input.aspectRatio ?? "16:9",
   });
-  const brandMarkHtml = renderChannelBrandMark(input.channelBrandName, Boolean(mascotHtml), input.aspectRatio ?? "16:9");
-  const thinkingBarVariant = resolveThinkingBarVariant(input.thinkingBarStyle);
-  const thinkingBarHtml = thinkingBarVariant.renderHtml({
-    clipStart: input.start,
-    revealStart: input.revealStart,
-    thinkingStart: input.thinkingStart,
-    duration: input.end - input.start,
-    questionNumber: question.number,
-    paletteAccent: visual.palette.accent,
-  });
-  const questionBoxVariant = resolveQuestionBoxVariant(input.questionBoxStyle);
-  const questionBoxHtml = questionBoxVariant.renderHtml({
-    question: question.question,
-    tier: questionLayout.tier,
-    questionNumber: question.number,
-    paletteAccent: visual.palette.accent,
-    highlightedHtml: highlightQuestionMarkup(question.question, question.visual_opportunity),
-  });
-  const counterBadgeVariant = resolveCounterBadgeVariant(input.counterStyle);
-  const counterBadgeHtml = counterBadgeVariant.renderHtml({
-    questionNumber: question.number,
+  const mascotEnabled = Boolean(
+    input.mascot && (!input.mascotConfig || input.mascotConfig.enabled) && input.mascotConfig?.show_in_question !== false,
+  );
+  const mascot = mascotEnabled
+    ? { occupied: true as const, anchor: input.mascotConfig?.position ?? "bottom_left" }
+    : { occupied: false as const, anchor: null };
+  const model = adaptProductionQuizScene({
+    question,
+    questionIndex: input.questionIndex,
     totalQuestions: input.count,
-    paletteAccent: visual.palette.accent,
+    archetype: input.archetype,
+    layoutResolution: input.layoutResolution,
+    visual,
+    timing,
+    atSeconds: input.revealStart,
+    assets: input.assets,
+    aspectRatio: input.aspectRatio ?? "16:9",
+    mascot,
+    styles: {
+      thinkingBar: input.thinkingBarStyle,
+      questionBox: input.questionBoxStyle,
+      answerCard: input.answerCardStyle,
+      counter: input.counterStyle,
+      background: input.backgroundStyle,
+    },
+    channelBrandName: input.channelBrandName,
+    brandVisible: Boolean(mascotHtml),
     isFinal: input.isFinal,
   });
-  const layoutBody = renderQuizLayoutBody(visual.layoutId, {
-    questionBoxHtml,
-    heroHtml: hero,
-    textChoicesHtml: answers,
-    visualChoicesHtml: visualAnswers,
-    phaseHtml: `${thinkingBarHtml}${revealPanel(input)}`,
+  const parts = buildQuizSceneParts(model);
+  const stableParts = renderStableQuizSceneParts(parts);
+  const choicesHtml = renderQuizSceneChoicePart(parts);
+  const mascotClass = model.mascot.occupied ? "has-mascot" : "";
+  const classNames = [
+    "clip",
+    "candy-scene",
+    "quiz-question-clip",
+    `layout-${model.layout.id}`,
+    `archetype-${question.format}`,
+    motionCssClass(visual.motionId),
+    input.isFinal ? "is-final-scene" : "",
+    mascotClass,
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const layoutBody = renderQuizLayoutBody(model.layout.id, {
+    questionBoxHtml: stableParts.questionBoxHtml,
+    heroHtml: stableParts.heroHtml,
+    choicesHtml,
+    phaseHtml: `${renderQuizSceneThinkingPart(parts, timing)}<div class="fact-card" data-layout-allow-occlusion><p>${esc(parts.phase.factText)}</p></div>`,
   });
   const body = `<div class="game-stage" data-layout-allow-overflow>${layoutBody}</div>`;
-  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0"><div class="bg-gradient"></div><div class="bg-rays"></div><div class="bg-pattern pattern-circles"></div><div class="bg-pattern pattern-sprinkles"></div><div class="bg-shape shape-a" data-layout-allow-overflow></div>${sceneDecorations(input.questionIndex)}<header class="game-header" data-layout-allow-occlusion>${counterBadgeHtml}</header>${body}${brandMarkHtml}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
+  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0">${renderQuizSceneBackground(parts, "production", { questionIndex: input.questionIndex, clipStart: input.start, duration: input.end - input.start })}<header class="game-header" data-layout-allow-occlusion>${stableParts.counterBadgeHtml}</header>${body}${stableParts.brandMarkHtml}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
 }
 
 export function transitionClip(input: {
@@ -282,62 +299,12 @@ export function imageCard(asset: string | null, subject: string, className: stri
   return `<figure class="image-card ${className}" data-layout-allow-overflow><img src="${escAttr(asset ?? illustrationDataUri(subject, seed))}" alt="${escAttr(subject)}"><span class="image-shine"></span></figure>`;
 }
 
-export function answerCards(
-  question: QuizV2["questions"][number],
-  assets: Record<string, string>,
-  style?: QuizAnswerCardStyle | null,
-  hasMascot = false,
-  layoutId?: QuizPreviewLayoutId,
-): string {
-  if (style && style !== "auto" && style !== "glossy_arcade") {
-    const variant = resolveAnswerCardVariant(style);
-    const rendered = variant.renderHtml({
-      choices: question.choices.map((c) => c.text),
-      correctIndex: Math.max(
-        0,
-        question.choices.findIndex((c) => c.id === question.correct_choice_id),
-      ),
-      phase: "reveal",
-      assets,
-      hasMascot,
-      layoutId,
-    });
-    return `<div class="answer-grid answer-count-${question.choices.length}">${rendered}</div>`;
-  }
-  return `<div class="answer-grid answer-count-${question.choices.length}">${question.choices
-    .map((choice, index) => {
-      const state = "answer-" + visualAnswerState(choice.id, question.correct_choice_id, "reveal");
-      const layout = textLayout(choice.text, "choice", { hasMascot, layoutId });
-      const optionAsset = assetFor(assets, `asset-${question.id}-${choice.id}`);
-      const phaseSeconds = ambientPhaseSeconds("float", index, question.id);
-      return `<div class="answer-card ${state} choice-tier-${layout.tier}" style="--item-phase:${phaseSeconds}s" data-layout-allow-occlusion data-layout-allow-overflow><b data-layout-allow-occlusion data-text="${String.fromCharCode(65 + index)}">${String.fromCharCode(65 + index)}</b>${optionAsset ? `<img src="${escAttr(optionAsset)}" alt="">` : ""}<span data-layout-allow-occlusion data-text="${escAttr(choice.text)}">${esc(choice.text)}</span></div>`;
-    })
-    .join("")}</div>`;
-}
-
-export function visualAnswerCards(
-  question: QuizV2["questions"][number],
-  assets: Record<string, string>,
-  hasMascot = false,
-  layoutId?: QuizPreviewLayoutId,
-): string {
-  return `<div class="visual-answer-grid">${question.choices
-    .map((choice, index) => {
-      const state = "answer-" + visualAnswerState(choice.id, question.correct_choice_id, "reveal");
-      const layout = textLayout(choice.text, "choice", { hasMascot, layoutId });
-      const phaseSeconds = ambientPhaseSeconds("float", index, question.id);
-      return `<div class="visual-answer-card ${state} choice-tier-${layout.tier}" style="--item-phase:${phaseSeconds}s" data-layout-allow-occlusion data-layout-allow-overflow>${imageCard(assetFor(assets, `asset-${question.id}-${choice.id}`), choice.text, "option-image", index + question.number * 10)}<div class="visual-answer-label" data-layout-allow-overflow><b data-layout-allow-occlusion data-text="${String.fromCharCode(65 + index)}">${String.fromCharCode(65 + index)}</b><span data-layout-allow-occlusion data-text="${escAttr(choice.text)}">${esc(choice.text)}</span></div></div>`;
-    })
-    .join("")}</div>`;
-}
-
-export function revealPanel(input: { question: QuizV2["questions"][number]; copy: Copy; isFinal: boolean }): string {
+export function revealPanel(input: { question: QuizQuestion; copy: Copy; isFinal: boolean }): string {
   return `<div class="fact-card" data-layout-allow-occlusion><p>${esc(input.question.fun_fact || input.question.explanation)}</p></div>`;
 }
 
 export function sceneDecorations(questionIndex: number): string {
-  const symbols = ["✦", "•", "○", "★", "✧", "⚡", "•"];
-  return `<div class="scene-decor" data-layout-ignore aria-hidden="true">${symbols.map((symbol, index) => `<i class="decor-${index + 1}" data-layout-ignore aria-hidden="true" style="--decor-phase:${ambientPhaseSeconds("drift", index, String(questionIndex))}s">${symbol}</i>`).join("")}</div>`;
+  return renderCandyRaysDecorations(questionIndex);
 }
 
 export function styleAttributes(
@@ -350,7 +317,7 @@ export function styleAttributes(
   rewardStart: number,
   clipEnd: number,
 ): string {
-  const palette = visual.palette;
+  const paletteInline = serializeQuizPaletteInlineStyle(visual.palette);
   const timerDuration = Math.max(0.04, revealStart - clipStart);
-  return `style="--bg-primary:${palette.backgroundPrimary};--bg-secondary:${palette.backgroundSecondary};--accent:${palette.accent};--surface-accent:${palette.surfaceAccent};--on-accent:${palette.onAccent};--badge:${palette.answerBadge};--correct:${palette.correct};--incorrect:${palette.incorrect};--surface:${palette.surface};--ink:${palette.text};--muted:${palette.muted};--question-size:${layout.fontSize}px;--question-leading:${layout.lineHeight};--clip-start:${clipStart.toFixed(3)}s;--scene-duration:${Math.max(0.04, clipEnd - clipStart).toFixed(3)}s;--choices-at:${Math.max(0, choicesStart - clipStart).toFixed(3)}s;--thinking-at:${Math.max(0, thinkingStart - clipStart).toFixed(3)}s;--reveal-at:${Math.max(0, revealStart - clipStart).toFixed(3)}s;--reward-at:${Math.max(0, rewardStart - clipStart).toFixed(3)}s;--choices-duration:${Math.max(0.04, revealStart - choicesStart).toFixed(3)}s;--timer-duration:${timerDuration.toFixed(3)}s;--reveal-duration:${Math.max(0.04, rewardStart - revealStart).toFixed(3)}s;--ambient-phase:${ambientPhaseSeconds("drift", 0, String(clipStart))}s"`;
+  return `style="${paletteInline}--question-size:${layout.fontSize}px;--question-leading:${layout.lineHeight};--clip-start:${clipStart.toFixed(3)}s;--scene-duration:${Math.max(0.04, clipEnd - clipStart).toFixed(3)}s;--choices-at:${Math.max(0, choicesStart - clipStart).toFixed(3)}s;--thinking-at:${Math.max(0, thinkingStart - clipStart).toFixed(3)}s;--reveal-at:${Math.max(0, revealStart - clipStart).toFixed(3)}s;--reward-at:${Math.max(0, rewardStart - clipStart).toFixed(3)}s;--choices-duration:${Math.max(0.04, revealStart - choicesStart).toFixed(3)}s;--timer-duration:${timerDuration.toFixed(3)}s;--reveal-duration:${Math.max(0.04, rewardStart - revealStart).toFixed(3)}s;--ambient-phase:${ambientPhaseSeconds("drift", 0, String(clipStart))}s"`;
 }

@@ -13,7 +13,7 @@ export function SandboxHeader({ hasChannels, loading, onOpenPresetModal, onOpenC
   const { t } = useTranslation();
 
   return (
-    <div className="section-heading" style={{ marginBottom: "10px", flexShrink: 0, padding: "4px 0" }}>
+    <div className="section-heading sandbox-header" style={{ marginBottom: "10px", flexShrink: 0, padding: "4px 0" }}>
       <div>
         <h1 style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "19px" }}>
           <Palette size={22} weight="duotone" color="var(--accent)" />

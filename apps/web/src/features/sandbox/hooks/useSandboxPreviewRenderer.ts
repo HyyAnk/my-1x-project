@@ -52,6 +52,7 @@ export function useSandboxPreviewRenderer({
       const requestId = ++latestRequestId.current;
       setLoading(true);
       setPreviewError(null);
+      setPendingPreview(null);
       try {
         const input: SandboxPreviewRequest = {
           aspect_ratio: aspectRatio,
@@ -62,6 +63,7 @@ export function useSandboxPreviewRenderer({
           question_box_style: design.questionBoxStyle,
           answer_card_style: design.answerCardStyle,
           counter_style: design.counterStyle,
+          background_style: design.backgroundStyle,
           phase: timeline.phase,
           timeline_time_seconds: timeline.useScrubber ? timeline.timelineSeconds : undefined,
           question_text: question.questionText,
@@ -91,6 +93,7 @@ export function useSandboxPreviewRenderer({
       } catch (error) {
         if (requestId !== latestRequestId.current) return;
         const message = error instanceof Error ? error.message : "Failed to compile preview composition";
+        setPendingPreview(null);
         setPreviewError(message);
         if (onNotice) {
           onNotice({ tone: "bad", message });
@@ -106,6 +109,7 @@ export function useSandboxPreviewRenderer({
       design.questionBoxStyle,
       design.answerCardStyle,
       design.counterStyle,
+      design.backgroundStyle,
       timeline.phase,
       timeline.useScrubber,
       timeline.timelineSeconds,

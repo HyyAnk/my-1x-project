@@ -108,7 +108,7 @@ describe("BGM Registry and Audio Pipeline", () => {
       quiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade" },
       audioPath: "./narration.wav",
       narrationDurationSeconds: timeline.duration_seconds,
     });

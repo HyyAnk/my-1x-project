@@ -56,10 +56,7 @@ export function VisualSandboxTab({
   const channelSync = useSandboxChannelSync({ channels, design, mascot, onNotice, onRefreshChannels });
 
   return (
-    <section
-      className="page-wrap visual-sandbox-page"
-      style={{ height: "calc(100vh - 64px)", display: "flex", flexDirection: "column", overflow: "hidden" }}
-    >
+    <section className="page-wrap visual-sandbox-page">
       {/* 1. Top Header Bar */}
       <SandboxHeader
         hasChannels={channels.length > 0}
@@ -70,10 +67,10 @@ export function VisualSandboxTab({
       />
 
       {/* 2. Main Studio Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "450px 1fr", gap: "16px", flex: 1, minHeight: 0, overflow: "hidden" }}>
+      <div className="visual-sandbox-workspace">
         {/* Left Inspector Panel */}
         <div
-          className="panel"
+          className="panel visual-sandbox-inspector"
           style={{
             overflowY: "auto",
             display: "flex",
@@ -120,6 +117,8 @@ export function VisualSandboxTab({
               setAnswerCardStyle={design.setAnswerCardStyle}
               counterStyle={design.counterStyle}
               setCounterStyle={design.setCounterStyle}
+              backgroundStyle={design.backgroundStyle}
+              setBackgroundStyle={design.setBackgroundStyle}
             />
           )}
 
@@ -230,6 +229,7 @@ export function VisualSandboxTab({
         questionBoxStyle={design.questionBoxStyle}
         answerCardStyle={design.answerCardStyle}
         counterStyle={design.counterStyle}
+        backgroundStyle={design.backgroundStyle}
         mascotPosition={mascot.mascotPosition}
         mascotScale={mascot.mascotScale}
         savingChannel={channelSync.savingChannel}

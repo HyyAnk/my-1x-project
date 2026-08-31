@@ -1,6 +1,14 @@
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
-import type { QuizAssetPlan, QuizAssetResolution } from "@studio/shared";
+import {
+  resolveQuizLayout,
+  type DirectorPlan,
+  type MascotRenderAspectRatio,
+  type QuizAssetPlan,
+  type QuizAssetResolution,
+  type QuizPreviewLayoutId,
+  type QuizV2,
+} from "@studio/shared";
 import { resolveQuizAssets } from "../../quiz/assets/resolveQuizAssets.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 import { optimizeRenderImage } from "./imageOptimizer.js";
@@ -12,6 +20,9 @@ export interface PrepareVideoAssetsOptions {
   renderRoot: string;
   assetPlan: QuizAssetPlan;
   assetResolution: QuizAssetResolution | null;
+  quiz: QuizV2;
+  director: DirectorPlan;
+  aspectRatio: MascotRenderAspectRatio;
   onProgress: (message: string, percent: number) => Promise<void>;
 }
 
@@ -51,10 +62,12 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
         const renderFilename = `${asset.asset_id}${extension}`;
         const targetPath = path.join(renderAssetDirectory, renderFilename);
         const requirement = assetPlan.assets.find((r) => r.asset_id === asset.asset_id);
+        const layout = resolveAssetLayout(options.quiz, options.director, requirement?.question_id, options.aspectRatio);
         await optimizeRenderImage({
           sourcePath,
           targetPath,
           purpose: requirement?.purpose,
+          layout,
         });
         return [asset.asset_id, `./quiz-images/${renderFilename}`] as const;
       } catch {
@@ -71,4 +84,24 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
     assetResolution,
     assetSources,
   };
+}
+
+function resolveAssetLayout(
+  quiz: QuizV2,
+  director: DirectorPlan,
+  questionId: string | null | undefined,
+  aspectRatio: MascotRenderAspectRatio,
+): QuizPreviewLayoutId | undefined {
+  if (!questionId) return undefined;
+  const question = quiz.questions.find((candidate) => candidate.id === questionId);
+  const beat = director.beats.find((candidate) => candidate.question_id === questionId);
+  if (!question || !beat) return undefined;
+  const resolution = resolveQuizLayout({
+    requestedLayout: beat.layout_id,
+    archetype: beat.archetype,
+    questionFormat: question.format,
+    choiceCount: question.choices.length,
+    aspectRatio,
+  });
+  return resolution.ok ? resolution.layoutId : undefined;
 }

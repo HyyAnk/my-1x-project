@@ -29,6 +29,8 @@ describe("useSandboxPresets", () => {
       setAnswerCardStyle: vi.fn(),
       counterStyle: "hanging_woodsign",
       setCounterStyle: vi.fn(),
+      backgroundStyle: "candy_rays",
+      setBackgroundStyle: vi.fn(),
     };
     mockMascot = {
       mascots: [],

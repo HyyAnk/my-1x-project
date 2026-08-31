@@ -7,6 +7,7 @@ import type { EpisodePreviewQuestion } from "../types/episodePreview.types";
 import type { EpisodePreviewCandidate, ResolvedEpisodePreviewStyle } from "../types/episodeStylePreview.types";
 import {
   resolveAnswerCardStyle,
+  resolveBackgroundStyle,
   resolveCounterStyle,
   resolvePaletteId,
   resolveQuestionBoxStyle,
@@ -45,6 +46,7 @@ export function useEpisodeStylePreview({ channel, episode, candidate, channelBra
       questionBoxStyle: resolveQuestionBoxStyle(channel, quizConfig),
       answerCardStyle: resolveAnswerCardStyle(channel, quizConfig),
       counterStyle: resolveCounterStyle(channel, quizConfig),
+      backgroundStyle: resolveBackgroundStyle(channel, quizConfig),
       totalQuestions: quizConfig?.question_count ?? 8,
       channelBrandName:
         channelBrandName !== undefined ? channelBrandName : episode?.quiz_config?.channel_brand_name || channel.display_name || "",

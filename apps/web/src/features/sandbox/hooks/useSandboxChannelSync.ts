@@ -8,8 +8,14 @@ import type { SandboxMascotState } from "./useSandboxMascotState";
 
 type UseSandboxChannelSyncInput = {
   channels: Channel[];
-  design: SandboxDesignState;
-  mascot: SandboxMascotState;
+  design: Pick<
+    SandboxDesignState,
+    "thinkingBarStyle" | "questionBoxStyle" | "answerCardStyle" | "counterStyle" | "backgroundStyle" | "paletteId"
+  >;
+  mascot: Pick<
+    SandboxMascotState,
+    "mascotId" | "mascotEnabled" | "mascotPosition" | "mascotScale" | "mascotOffsetX" | "mascotOffsetY" | "mascotFlipX"
+  >;
   onNotice?: (notice: NonNullable<Notice>) => void;
   onRefreshChannels?: () => Promise<void>;
 };
@@ -33,6 +39,7 @@ export function useSandboxChannelSync({ channels, design, mascot, onNotice, onRe
         default_question_box_style: design.questionBoxStyle,
         default_answer_card_style: design.answerCardStyle,
         default_counter_style: design.counterStyle,
+        default_background_style: design.backgroundStyle,
         default_palette_id: design.paletteId,
       });
 

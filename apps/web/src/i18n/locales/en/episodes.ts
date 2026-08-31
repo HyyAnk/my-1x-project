@@ -36,6 +36,7 @@ export const episodesEn = {
     pillQuestionCard: "Question Card",
     pillAnswerCards: "Answer Cards",
     pillCounterBadge: "Counter Badge",
+    pillBackground: "Background",
     pillThinkingBar: "Thinking Bar",
     valueMixed: "Mixed (Random)",
     valueCustomKit: "Custom Kit",

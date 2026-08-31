@@ -118,20 +118,20 @@ describe("buildSandboxComposition Preview Engine", () => {
       timeline_time_seconds: 0.5,
       choices: ["A", "B", "C"],
     });
-    expect(resQuestion.html).toContain("opacity:0");
+    expect(resQuestion.html).toContain('data-choice-visibility="hidden"');
 
     const resThinking = buildSandboxComposition({
       timeline_time_seconds: 4.5,
       choices: ["A", "B", "C"],
     });
-    expect(resThinking.html).toContain("opacity:1");
+    expect(resThinking.html).toContain('data-choice-visibility="visible"');
 
     const resReveal = buildSandboxComposition({
       timeline_time_seconds: 8.0,
       correct_choice_index: 1,
       choices: ["A", "B", "C"],
     });
-    expect(resReveal.html).toContain("answer-correct");
+    expect(resReveal.html).toContain('data-answer-state="correct"');
   });
 
   describe("Mascot rendering in Sandbox", () => {

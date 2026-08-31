@@ -2,18 +2,13 @@ import type {
   ChannelMascotConfig,
   DirectorPlan,
   MascotProfile,
-  QuizAnswerCardStyle,
-  QuizConfig,
-  QuizPaletteId,
-  QuizQuestionBoxStyle,
-  QuizQuestionCounterStyle,
-  QuizThinkingBarStyle,
   QuizTimeline,
   QuizV2,
   MascotRenderAspectRatio,
   Scene,
 } from "@studio/shared";
 import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
+import type { QuizRenderStyleContext } from "./quizRenderStyleContext.js";
 
 export type QuizRenderInput = {
   quiz: QuizV2;
@@ -21,7 +16,7 @@ export type QuizRenderInput = {
   timeline: QuizTimeline;
   scenes: Scene[];
   audioPath: string;
-  theme: QuizConfig["visual_theme"];
+  styleContext: QuizRenderStyleContext;
   narrationDurationSeconds?: number;
   /** Canonical output canvas used by production and preview renderers. */
   aspectRatio?: MascotRenderAspectRatio;
@@ -29,13 +24,7 @@ export type QuizRenderInput = {
   bgmOptions?: ResolveBgmOptions;
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
-  defaultThinkingBarStyle?: QuizThinkingBarStyle | null;
-  defaultQuestionBoxStyle?: QuizQuestionBoxStyle | null;
-  defaultAnswerCardStyle?: QuizAnswerCardStyle | null;
-  defaultCounterStyle?: QuizQuestionCounterStyle | null;
-  defaultPaletteId?: QuizPaletteId | null;
   premixedAudio?: boolean;
-  channelBrandName?: string | null;
 };
 
 export type PreparedQuizRender = { html: string; compositionFiles: Record<string, string>; durationSeconds: number; questionCount: number };

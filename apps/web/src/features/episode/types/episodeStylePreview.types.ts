@@ -1,6 +1,7 @@
 import type { QuizVisualTheme } from "@studio/shared";
 import type {
   ResolvedAnswerCardStyle,
+  ResolvedBackgroundStyle,
   ResolvedCounterStyle,
   ResolvedQuestionBoxStyle,
   ResolvedThinkingBarStyle,
@@ -13,6 +14,7 @@ export type EpisodeStyleOverride = {
   questionBoxStyle?: ResolvedQuestionBoxStyle;
   answerCardStyle?: ResolvedAnswerCardStyle;
   counterStyle?: ResolvedCounterStyle;
+  backgroundStyle?: ResolvedBackgroundStyle;
   totalQuestions?: number;
   channelBrandName?: string;
 };

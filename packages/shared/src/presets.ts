@@ -1,5 +1,6 @@
 import type {
   QuizAnswerCardStyle,
+  QuizBackgroundStyle,
   QuizLayoutId,
   QuizPaletteId,
   QuizQuestionBoxStyle,
@@ -23,6 +24,7 @@ export type VisualPresetItem = {
   question_box_style: Exclude<QuizQuestionBoxStyle, "auto">;
   answer_card_style: Exclude<QuizAnswerCardStyle, "auto">;
   counter_style: Exclude<QuizQuestionCounterStyle, "auto">;
+  background_style?: Exclude<QuizBackgroundStyle, "auto">;
   mascot_id?: string | null;
   mascot_position?: "bottom_left" | "bottom_right";
   mascot_scale?: number;
@@ -50,6 +52,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     question_box_style: "candy_pop",
     answer_card_style: "glossy_arcade",
     counter_style: "hanging_woodsign",
+    background_style: "candy_rays",
     isBuiltIn: true,
   },
   {
@@ -66,6 +69,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     question_box_style: "glass_morphism",
     answer_card_style: "glass_neon",
     counter_style: "neon_badge",
+    background_style: "aurora_glow",
     isBuiltIn: true,
   },
   {
@@ -82,6 +86,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     question_box_style: "comic_bubble",
     answer_card_style: "comic_chunky",
     counter_style: "floating_balloon",
+    background_style: "candy_rays",
     isBuiltIn: true,
   },
   {
@@ -98,6 +103,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     question_box_style: "candy_pop",
     answer_card_style: "glossy_arcade",
     counter_style: "golden_shield",
+    background_style: "candy_rays",
     isBuiltIn: true,
   },
   {
@@ -114,6 +120,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     question_box_style: "glass_morphism",
     answer_card_style: "minimal_soft",
     counter_style: "neon_badge",
+    background_style: "aurora_glow",
     isBuiltIn: true,
   },
   {
@@ -129,6 +136,7 @@ export const BUILT_IN_PRESETS: VisualPresetItem[] = [
     question_box_style: "candy_pop",
     answer_card_style: "glossy_arcade",
     counter_style: "floating_balloon",
+    background_style: "candy_rays",
     isBuiltIn: true,
   },
 ];
@@ -143,9 +151,8 @@ export function findBuiltInPresetById(id?: string | null): VisualPresetItem | un
   return BUILT_IN_PRESETS.find((p) => p.id === resolvedId);
 }
 
-export function resolvePresetPreviewLayoutId(preset: VisualPresetItem): Exclude<QuizLayoutId, "auto"> | "baseline" {
-  return preset.preview_layout_id ?? preset.layout_id ?? "media_left_choices_right";
-}
+import { resolvePresetPreviewLayoutId } from "./quizStyles.policy.js";
+export { resolvePresetPreviewLayoutId };
 
 export function matchVisualPreset(
   config: {
@@ -155,6 +162,7 @@ export function matchVisualPreset(
     question_box_style?: string;
     answer_card_style?: string;
     counter_style?: string;
+    background_style?: string;
   },
   presets: VisualPresetItem[] = BUILT_IN_PRESETS,
 ): VisualPresetItem | undefined {
@@ -164,6 +172,7 @@ export function matchVisualPreset(
       (!config.thinking_bar_style || config.thinking_bar_style === "auto" || p.thinking_bar_style === config.thinking_bar_style) &&
       (!config.question_box_style || config.question_box_style === "auto" || p.question_box_style === config.question_box_style) &&
       (!config.answer_card_style || config.answer_card_style === "auto" || p.answer_card_style === config.answer_card_style) &&
-      (!config.counter_style || config.counter_style === "auto" || p.counter_style === config.counter_style),
+      (!config.counter_style || config.counter_style === "auto" || p.counter_style === config.counter_style) &&
+      (!config.background_style || config.background_style === "auto" || (p.background_style ?? "candy_rays") === config.background_style),
   );
 }

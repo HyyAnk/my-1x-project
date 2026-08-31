@@ -1,6 +1,6 @@
 import { api } from "./api";
 import { Sidebar, Topbar, NoticeBanner } from "./components/AppChrome";
-import { TaskActivityBar } from "./components/TaskPanel";
+import { TaskActivityBar } from "./features/tasks/components/TaskActivityBar";
 import { AppModals } from "./components/AppModals";
 import { AppViewRouter } from "./components/AppViewRouter";
 import { useAppOrchestration } from "./hooks/useAppOrchestration";

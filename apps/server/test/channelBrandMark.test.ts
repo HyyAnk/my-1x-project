@@ -194,12 +194,11 @@ describe("Channel Brand Mark Integration - Production Composition Bundle", () =>
       quiz: sampleQuiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade", override: { channelBrandName: "Robot World" } },
       audioPath: "./soundtrack.wav",
       narrationDurationSeconds: 30,
       mascot: sampleMascot,
       mascotConfig,
-      channelBrandName: "Robot World",
     });
 
     const questionSubComp = Object.entries(bundle.files).find(([k]) => k.startsWith("compositions/quiz-q1-"))?.[1];
@@ -223,11 +222,10 @@ describe("Channel Brand Mark Integration - Production Composition Bundle", () =>
       quiz: sampleQuiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade", override: { channelBrandName: "Robot World" } },
       audioPath: "./soundtrack.wav",
       narrationDurationSeconds: 30,
       mascot: null,
-      channelBrandName: "Robot World",
     });
 
     const questionSubComp = Object.entries(bundle.files).find(([k]) => k.startsWith("compositions/quiz-q1-"))?.[1];
@@ -243,12 +241,11 @@ describe("Channel Brand Mark Integration - Production Composition Bundle", () =>
       quiz: sampleQuiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade", override: { channelBrandName: "Jurassic World" } },
       audioPath: "./soundtrack.wav",
       narrationDurationSeconds: 30,
       mascot: sampleMascot,
       mascotConfig,
-      channelBrandName: "Jurassic World",
     });
 
     const sandbox = buildSandboxComposition(

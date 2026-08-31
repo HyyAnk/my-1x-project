@@ -359,6 +359,7 @@ export function useEpisodePipeline({
     saveQuestionBoxStyle: styles.saveQuestionBoxStyle,
     saveAnswerCardStyle: styles.saveAnswerCardStyle,
     saveCounterStyle: styles.saveCounterStyle,
+    saveBackgroundStyle: styles.saveBackgroundStyle,
     savePaletteId: styles.savePaletteId,
     applyStylePreset: styles.applyStylePreset,
     saveDuration: styles.saveDuration,

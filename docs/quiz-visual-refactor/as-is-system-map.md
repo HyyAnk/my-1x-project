@@ -2,32 +2,37 @@
 
 Snapshot date: 2026-08-31
 
-Observed baseline: branch main, commit fd8e877
+Observed Phase 8D execution: branch main, commit 595fc3f, with the cumulative Phase 2–8 implementation uncommitted
 
-This document describes the current implementation before Phase 1. Fresh tasks must verify it against current source before relying on it.
+This document describes the Phase 8 acceptance-closed implementation. Fresh tasks must still verify it against current source before relying on it.
 
 ## System flow
 
     QuizV2 and DirectorPlan
         ↓
+    resolveQuestionLayout
+        ↓ returns the accepted Phase 2 capability result once
     candyArcadeTemplate.resolveScene
-        ↓ resolves palette, layout, foreground motion, transition
+        ↓ resolves palette, foreground motion, and transition around that layout ID
     buildCandyArcadeCompositionBundle
         ↓ resolves per-beat element styles and timeline values
     questionClip
-        ↓ renders question, both choice representations, phase, chrome, mascot
-    renderQuizLayoutBody
-        ↓ selected layout chooses pre-rendered HTML slots
-    candyArcadeCss plus all registered variant CSS
+        ↓ production state adapter and buildQuizSceneRenderModel
+    buildQuizSceneParts
+        ↓ shared question, counter, hero, choices, phase, brand, and occupancy semantics
+    renderChoiceGroup
+        ↓ one semantic choicesHtml slot selected by the accepted layout
+    candyArcadeCss plus selected background CSS and registered component/skin CSS
         ↓
     HyperFrames HTML composition and final video
 
-The web preview uses a separate path:
+The web preview uses the same model and parts through a separate surface adapter:
 
     SandboxPreviewInput
-        ↓
+        ↓ schema/capability validation and Sandbox phase/scrub adapter
     buildSandboxComposition
-        ↓ separately resolves and renders elements, choices, scene chrome, and tokens
+        ↓ buildQuizSceneRenderModel and buildQuizSceneParts
+    renderChoiceGroup and the canonical background registry renderer
     preview HTML returned to the web application
 
 ## Canonical quiz and choice constraints
@@ -50,66 +55,58 @@ packages/shared/src/enums.ts declares the persisted layout IDs:
 - auto
 - media_left_choices_right
 - visual_choices_three
+- media_top_choices_bottom
+- full_stack_list
 
-packages/shared/src/quizLayouts.ts owns the production catalog. Each entry currently declares:
+packages/shared/src/quizLayouts.ts is the public barrel for the production capability contract. The contract is split by responsibility across `quizLayouts.types.ts`, `quizLayouts.catalog.ts`, and `quizLayouts.policy.ts`. Each production entry declares:
 
 - id;
-- one choiceMode value, text or visual;
+- supported choice presentations;
 - supportedChoiceCounts;
+- supported formats;
 - recommendedFormats.
+- supported and required media kinds;
+- supported aspect ratios;
+- canonical render and asset metrics.
 
-resolveQuizLayoutId selects visual_choices_three for visual_multiple_choice or odd_one_out when requestedLayout is auto; every other auto case becomes media_left_choices_right. Explicit layout requests are returned without compatibility checks.
+`resolveQuizLayout` preserves the Phase 1 auto policy: `visual_choices_three` for `visual_multiple_choice` or `odd_one_out`, and `media_left_choices_right` otherwise. It tests every candidate against the capability contract. Compatible results and structured incompatibility results are discriminated by `ok`; incompatible explicit requests retain their requested ID in the failure result and are never replaced silently.
 
-supportsQuizLayoutChoiceCount exists, but repository search at this snapshot found no caller outside its definition. supportedChoiceCounts and recommendedFormats therefore document intent without enforcing it in Director validation, QA, preview, or rendering.
+Supported formats are validity policy while recommended formats remain advisory. The legacy resolver and unused choice-count helper have no remaining caller and were removed in Phase 2.
 
 ## Layout rendering
 
 apps/server/src/quiz/render/layouts contains:
 
 - types.ts: QuizLayoutSlots and QuizLayoutRenderDefinition;
-- registry.ts: baseline plus both production renderers;
+- registry.ts: baseline plus all four production renderers;
 - baseline.ts: preview-only compatibility layout;
 - mediaLeftChoicesRight.ts;
-- visualChoicesThree.ts.
+- visualChoicesThree.ts;
+- mediaTopChoicesBottom.ts;
+- fullStackList.ts.
 
-QuizLayoutSlots requires all of these strings even when a layout does not use them:
+QuizLayoutSlots has one active choice contract:
 
 - questionBoxHtml;
 - heroHtml;
-- textChoicesHtml;
-- visualChoicesHtml;
+- choicesHtml;
 - phaseHtml.
 
-questionClip renders text answers and visual answers for every question before the layout selects one slot. The media-left layout uses heroHtml and textChoicesHtml. The visual-three layout uses visualChoicesHtml and omits heroHtml.
+Baseline and `media_left_choices_right` use `heroHtml` plus `choicesHtml`. `visual_choices_three` uses the same `choicesHtml` slot and omits `heroHtml`. The former text/visual split-slot adapter has no remaining caller and was removed. No downstream renderer resolves layout compatibility again.
 
-QUIZ_LAYOUT_DIMENSIONS manually repeats renderer dimensions in registry.ts. candyArcadeHeroAreaRatio special-cases visual_choices_three. imageOptimizer.ts independently hard-codes dimensions by layout string.
+Renderer definitions own HTML and layout CSS only. `packages/shared/src/quizLayouts.catalog.ts` is the sole owner of render and asset dimensions. `candyArcadeCss`, `candyArcadeHeroAreaRatio`, image optimization, QA, and preview consumers read its metrics directly; the former `QUIZ_LAYOUT_DIMENSIONS` and `CANDY_ARCADE_LAYOUT_DIMENSIONS` views are removed. `baseline` remains a separate preview-only capability and renderer.
+
+Director validation and visual QA call the same shared resolver through a thin server adapter. Director artifacts still parse with the unchanged persisted ID schema; incompatible explicit beats produce stable blocker codes and next actions without rewriting stored plans. QA evaluates the selected layout capacity before layout-specific checks.
 
 ## Production choice rendering
 
-apps/server/src/quiz/render/candyArcade/candyArcadeClips.ts contains two paths:
+`questionClip` adapts production data into the shared scene model and calls `renderQuizSceneChoicePart`. That function resolves the selected Answer Card skin and delegates all text or visual content to `renderChoiceGroup`.
 
-- answerCards renders text choices;
-- visualAnswerCards renders visual choices.
-
-answerCards has another internal split:
-
-- auto and glossy_arcade use bespoke base markup;
-- other explicit styles call the Answer Card variant registry.
-
-The variant input receives choices as string arrays and has no visual-choice model. Production visualAnswerCards does not receive answerCardStyle, so selected Answer Card skins do not apply to visual layouts.
-
-Production choice markup is emitted with reveal-state classes. Timeline CSS determines when reveal styling becomes visible.
+The group renderer sorts normalized choices by `order`, assigns A/B/C labels, derives correctness from canonical choice ID, maps phase state, escapes text and attributes, assigns typography tiers, and emits deterministic media fallback. Production retains compiled timeline ownership: `revealStart` is supplied to the scene snapshot so the canonical reveal classes become visible at the existing CSS boundary.
 
 ## Sandbox choice rendering
 
-buildSandboxComposition always resolves an Answer Card variant for text choices. It separately calls renderSandboxVisualChoices for visual layouts. The visual Sandbox renderer does not consume the selected Answer Card variant.
-
-Consequences:
-
-- default glossy text markup differs between Sandbox and production;
-- visual choices ignore the selected Answer Card style in both paths;
-- state, escaping, tiering, status icons, and wrappers are duplicated;
-- preview/production parity is not guaranteed by construction.
+`buildSandboxComposition` uses its surface/state adapter, the shared scene model and parts, and the same `renderQuizSceneChoicePart` used by production. Text and visual Sandbox previews therefore emit the same semantic group/card structure and selected-skin hook as production. The Sandbox schema and API boundary still evaluate layout capabilities before rendering and return `QUIZ_LAYOUT_INCOMPATIBLE` with structured issues for invalid combinations.
 
 ## Element registries
 
@@ -120,9 +117,9 @@ The server has independent registries for:
 - Counter Badge;
 - Answer Card.
 
-All use VisualElementVariant-style contracts with id, display metadata, renderHtml, and renderCss. Registries resolve auto or missing values to a default variant and concatenate every variant's CSS into the composition.
+Thinking Bar, Question Box, and Counter Badge retain their HTML-rendering variant contracts. Answer Card now uses a narrower `AnswerCardSkin` contract: id/display metadata, a stable skin class, optional per-card class/decorative hooks, and CSS. Registries resolve auto or missing Answer Card styles to `glossy_arcade` and concatenate every skin's CSS into the composition.
 
-Answer Card variants repeat list mapping, correct/incorrect state selection, text tier calculation, escaping, letter generation, and most structural markup. Comic Chunky adds meaningful custom decorations; the other variants mostly differ through CSS.
+No Answer Card skin owns list iteration, correctness, phase workflow, escaping, labels, content type, tiers, or media fallback. Comic Chunky supplies its decorations through the bounded hook; all four registered skins consume the same semantic text and visual markup.
 
 ## Presets and style resolution
 
@@ -138,30 +135,32 @@ packages/shared/src/presets.ts defines VisualPresetItem. A preset bundles:
 
 preview_layout_id is documented as a Sandbox showcase choice. Production episodes continue resolving layout from question/director semantics. This separation is intentional and preserved by ADR-001.
 
-Web and server code resolve auto, channel defaults, episode settings, and beat overrides in more than one place. Phase 1 records this behavior; centralization belongs to a later phase.
+Web and server code call the shared pure `resolveQuizStyle`/`resolveBeatQuizStyle` policy. The explicit production style context preserves Theme, Channel, Episode, Override, and Beat layers plus provenance across the video runner, renderer, composition, preview, and persistence boundaries.
 
 ## CSS, typography, and background
 
-candyArcadeStyles.ts contains base component CSS, layout CSS injection, global state CSS, background CSS, typography tiers, and registered skin CSS.
+`candyArcadeStyles.ts` assembles base scene CSS with focused layout, shared choice base/state/typography, registered element/skin, selected background, brand, font, and mascot CSS owners.
 
-Layout modules currently target internal Answer Card selectors and set padding, badge size, border width, and font size. This couples layout geometry to skin implementation.
+Layout modules own placement, outer geometry, gaps, aspect adaptation, and capacity tokens. They do not select Answer Card skins or own decorative skin rules.
 
-textLayout accepts layoutId in TextLayoutOptions, but its calculation currently depends on role and hasMascot rather than layoutId. Layout-specific font sizing is then repeated in layout CSS. Visual QA calls textLayout without selected-layout capacity.
+Shared typography tiers consume layout capacity tokens. Visual QA and renderer calculations consume the accepted capability rather than a parallel layout-dimension table.
 
-Production and Sandbox serialize palette variables separately. At this snapshot production uses names including --badge and --ink, while Sandbox emits --answer-badge and --text. The shared CSS primarily consumes production names.
+Production and Sandbox use the shared palette serializer, including compatibility aliases for persisted output, so precedence and CSS variables remain deterministic across surfaces.
 
-Scene background markup and CSS are fixed rather than registry-driven. Production and Sandbox duplicate background layer markup; Sandbox includes a second shape that production questionClip does not emit.
+Production and Sandbox call the same background registry and emit one `.quiz-scene-background` semantic layer. Composition CSS includes only selected variants in registry order. The caller-free Phase 7 legacy adapter and its decoration export were removed in Phase 8D.
 
 ## Web layout surfaces
 
-apps/web/src/features/quizLayouts/quizLayoutUiCatalog.ts provides exhaustive UI metadata for the two production layouts. The Sandbox selector renders a fixed two-column button grid and branches between two icons. Episode and Stage Studio preview code resolve metadata from the same UI catalog.
+`apps/web/src/features/quizLayouts/quizLayoutUiCatalog.ts` provides exhaustive UI metadata for all four production layouts. The Sandbox selector is a scalable accessible combobox with keyboard, touch, immediate acknowledgement, and latest-request-wins preview behavior. Episode and Stage Studio preview code resolve metadata from the same UI catalog.
 
-This is adequate for two layouts but does not scale to a large catalog. UI redesign is outside Phase 1.
+Background selection, Channel synchronization, responsive mobile/desktop layout, pending/error/retry states, and the exact responsive footer are covered by component and running-browser evidence.
 
 ## Existing verification surfaces
 
 The most relevant server tests are:
 
+- quizLayoutCapabilities.test.ts;
+- quizLayoutPreviewRoute.test.ts;
 - quizLayoutRegistry.test.ts;
 - sandboxComposition.test.ts;
 - quizVisualContractsCharacterization.test.ts;
@@ -177,18 +176,12 @@ The most relevant web tests are:
 - sandbox/hooks/useSandboxPreviewRenderer.test.tsx;
 - episode/hooks/useEpisodeStylePreview.test.tsx.
 
-Phase 1 added an explicit deterministic baseline for layout resolution and dimensions, slot selection, production and Sandbox choice-skin divergence, phase behavior, text tiers, portrait CSS, reduced motion, preview mutation synchronization, and the six pairwise render cases. The broader existing suites continue to cover mascot geometry, selected layout propagation, stale preview response handling, schemas, and CSS contracts.
+Phase 1 added the deterministic characterization baseline. Phases 2–7 added capability, shared model/state, renderer, CSS, layout/UI, and background evidence. Phase 8 adds production-boundary, persistence, cross-surface parity, running-browser, visual artifact, and final cleanup contracts while retaining all earlier suites.
 
-## Confirmed coupling gaps
+## Acceptance-closed boundaries and remaining risk
 
-1. Layout capabilities are declared but not enforced.
-2. Text and visual choices use separate renderers.
-3. Answer Card variants mix repeated workflow logic with skin concerns.
-4. Layout CSS reaches into skin internals.
-5. Sandbox and production assemble scenes separately.
-6. Palette token serialization is duplicated and inconsistent.
-7. Background layers are fixed and duplicated.
-8. Layout-specific dimensions are repeated across render and optimization code.
-9. Supporting four choices is blocked by domain contracts, not only layout code.
-
-Phase 1 must characterize these facts without fixing them.
+1. Production and Sandbox intentionally retain separate document/timeline presentation while sharing normalized scene, semantic parts, choice rendering, style resolution, background rendering, and catalog policy.
+2. Layout dimensions have one canonical owner and no compatibility view.
+3. Backgrounds have one registry/semantic path and no legacy adapter.
+4. Structure analysis still reports large modules, but the Phase 8 modules reviewed are cohesive by responsibility; no mechanical split was justified.
+5. Supporting four choices remains blocked by domain, generation, timing, history, API, QA, and layout contracts and is a separate `DEFERRED` project.

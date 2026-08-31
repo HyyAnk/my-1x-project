@@ -121,7 +121,7 @@ describe("Quiz HTML Composition Output & Video Pipeline", () => {
         quiz: sampleQuiz,
         director,
         timeline,
-        theme: "candy_arcade",
+        styleContext: { theme: "candy_arcade" },
         audioPath: "audio/narration.wav",
         narrationDurationSeconds: timeline.duration_seconds,
         assets: {},
@@ -140,7 +140,7 @@ describe("Quiz HTML Composition Output & Video Pipeline", () => {
         quiz: sampleQuiz,
         director,
         timeline,
-        theme: "candy_arcade",
+        styleContext: { theme: "candy_arcade" },
         audioPath: "audio/narration.wav",
         narrationDurationSeconds: timeline.duration_seconds,
       });
@@ -152,7 +152,7 @@ describe("Quiz HTML Composition Output & Video Pipeline", () => {
         quiz: sampleQuiz,
         director,
         timeline,
-        theme: "candy_arcade",
+        styleContext: { theme: "candy_arcade" },
         audioPath: "audio/narration.wav",
         narrationDurationSeconds: timeline.duration_seconds,
       });
@@ -174,7 +174,7 @@ describe("Quiz HTML Composition Output & Video Pipeline", () => {
         quiz: sampleQuiz,
         director,
         timeline,
-        theme: "candy_arcade",
+        styleContext: { theme: "candy_arcade" },
         audioPath: "audio/narration.wav",
         narrationDurationSeconds: timeline.duration_seconds,
         mascot: {

@@ -1,6 +1,7 @@
 import type { DirectorPlan, QuizAssetPlan, QuizIssue, QuizTimeline, QuizV2 } from "@studio/shared";
 import { getQuizVisualTemplate } from "../visual/registry.js";
 import { textLayout } from "../visual/candyArcade.js";
+import { layoutResolutionIssues, resolveQuestionLayout } from "../layoutCompatibility.js";
 
 export function assessQuizVisualLayout(input: {
   quiz: QuizV2;
@@ -15,13 +16,17 @@ export function assessQuizVisualLayout(input: {
   for (const [index, question] of input.quiz.questions.entries()) {
     const beat = input.director.beats.find((candidate) => candidate.question_id === question.id);
     if (!beat) continue;
+    const layoutResolution = resolveQuestionLayout(question, beat);
+    if (!layoutResolution.ok) {
+      issues.push(...layoutResolutionIssues(layoutResolution, question.id, "layout", "qa"));
+      continue;
+    }
     const visual = template.resolveScene({
       question,
       questionIndex: index,
       totalQuestions: input.quiz.questions.length,
-      archetype: beat.archetype,
       requestedPalette: beat.palette_id,
-      requestedLayout: beat.layout_id,
+      resolvedLayoutId: layoutResolution.layoutId,
       requestedMotion: beat.motion_id,
       requestedTransition: beat.transition_id,
       previousPaletteId,
@@ -37,7 +42,7 @@ export function assessQuizVisualLayout(input: {
         ),
       );
     previousPaletteId = visual.palette.id;
-    if (!textLayout(question.question, "question").fits)
+    if (!textLayout(question.question, "question", { layoutId: layoutResolution.layoutId }).fits)
       issues.push(
         issue(
           question.id,
@@ -48,7 +53,7 @@ export function assessQuizVisualLayout(input: {
         ),
       );
     for (const choice of question.choices)
-      if (!textLayout(choice.text, "choice").fits)
+      if (!textLayout(choice.text, "choice", { layoutId: layoutResolution.layoutId }).fits)
         issues.push(
           issue(
             question.id,
@@ -68,7 +73,11 @@ export function assessQuizVisualLayout(input: {
           "Adjust the template palette before rendering.",
         ),
       );
-    if (beat.asset_intents.includes("question_illustration") && !question.visual_opportunity.trim())
+    if (
+      layoutResolution.capability.media.required.includes("question") &&
+      beat.asset_intents.includes("question_illustration") &&
+      !question.visual_opportunity.trim()
+    )
       issues.push(
         issue(
           question.id,

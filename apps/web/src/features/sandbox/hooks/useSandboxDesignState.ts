@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type {
   QuizAnswerCardStyle,
+  QuizBackgroundStyle,
   QuizQuestionBoxStyle,
   QuizQuestionCounterStyle,
   QuizThinkingBarStyle,
@@ -16,6 +17,7 @@ export function useSandboxDesignState() {
   const [questionBoxStyle, setQuestionBoxStyle] = useState<QuizQuestionBoxStyle>("candy_pop");
   const [answerCardStyle, setAnswerCardStyle] = useState<QuizAnswerCardStyle>("glossy_arcade");
   const [counterStyle, setCounterStyle] = useState<QuizQuestionCounterStyle>("hanging_woodsign");
+  const [backgroundStyle, setBackgroundStyle] = useState<QuizBackgroundStyle>("candy_rays");
 
   return {
     theme,
@@ -32,6 +34,8 @@ export function useSandboxDesignState() {
     setAnswerCardStyle,
     counterStyle,
     setCounterStyle,
+    backgroundStyle,
+    setBackgroundStyle,
   };
 }
 

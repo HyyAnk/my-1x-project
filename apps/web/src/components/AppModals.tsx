@@ -1,7 +1,14 @@
+import { lazy, Suspense } from "react";
 import type { Channel, StorageInfo, Task } from "@studio/shared";
-import type { ChannelGroupId } from "./ChannelList";
-import { CreateChannelModal, DeleteChannelModal } from "./ChannelView";
-import { StorageSetupModal } from "./SettingsPanel";
+import type { ChannelGroupId } from "./channel/ChannelsListView";
+
+const CreateChannelModal = lazy(() =>
+  import("../features/channel/components/CreateChannelModal").then((m) => ({ default: m.CreateChannelModal })),
+);
+const DeleteChannelModal = lazy(() =>
+  import("../features/channel/components/DeleteChannelModal").then((m) => ({ default: m.DeleteChannelModal })),
+);
+const StorageSetupModal = lazy(() => import("../features/settings/StorageSetupModal").then((m) => ({ default: m.StorageSetupModal })));
 
 export type AppModalsProps = {
   showCreate: ChannelGroupId | null;
@@ -32,8 +39,12 @@ export function AppModals({
   handleChannelDeleted,
   applyStorage,
 }: AppModalsProps) {
+  if (!showCreate && !deleteTarget && (!storage || storage.configured)) {
+    return null;
+  }
+
   return (
-    <>
+    <Suspense fallback={null}>
       {storage && !storage.configured ? (
         <StorageSetupModal
           storage={storage}
@@ -68,6 +79,6 @@ export function AppModals({
           onError={showError}
         />
       ) : null}
-    </>
+    </Suspense>
   );
 }

@@ -1,12 +1,14 @@
 import { CircleNotch, Link, X } from "@phosphor-icons/react";
 import {
   ANSWER_CARD_STYLE_LABELS,
+  BACKGROUND_STYLE_LABELS,
   QUESTION_BOX_STYLE_LABELS,
   QUESTION_COUNTER_STYLE_LABELS,
   THINKING_BAR_STYLE_LABELS,
   type Channel,
   type MascotProfile,
   type QuizAnswerCardStyle,
+  type QuizBackgroundStyle,
   type QuizQuestionBoxStyle,
   type QuizQuestionCounterStyle,
   type QuizPreviewLayoutId,
@@ -32,6 +34,7 @@ export interface SandboxChannelSyncModalProps {
   questionBoxStyle: QuizQuestionBoxStyle;
   answerCardStyle: QuizAnswerCardStyle;
   counterStyle: QuizQuestionCounterStyle;
+  backgroundStyle: QuizBackgroundStyle;
   mascotPosition: string;
   mascotScale: number;
   savingChannel: boolean;
@@ -54,6 +57,7 @@ export function SandboxChannelSyncModal({
   questionBoxStyle,
   answerCardStyle,
   counterStyle,
+  backgroundStyle,
   mascotPosition,
   mascotScale,
   savingChannel,
@@ -66,6 +70,8 @@ export function SandboxChannelSyncModal({
 
   return (
     <div
+      className="sandbox-channel-sync-overlay"
+      role="presentation"
       style={{
         position: "fixed",
         inset: 0,
@@ -77,13 +83,20 @@ export function SandboxChannelSyncModal({
       }}
       onClick={onClose}
     >
-      <div className="panel" style={{ width: "480px", padding: "24px", borderRadius: "16px" }} onClick={(e) => e.stopPropagation()}>
+      <div
+        className="panel sandbox-channel-sync-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sandbox-channel-sync-title"
+        style={{ width: "480px", padding: "24px", borderRadius: "16px" }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-          <h3 style={{ margin: 0, fontSize: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+          <h3 id="sandbox-channel-sync-title" style={{ margin: 0, fontSize: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
             <Link size={18} weight="bold" />
             <span>{t("visualSandbox.modalApplyChannelTitle")}</span>
           </h3>
-          <button type="button" className="icon-button" onClick={onClose}>
+          <button type="button" className="icon-button" aria-label={t("common.close")} onClick={onClose}>
             <X size={16} />
           </button>
         </div>
@@ -150,6 +163,10 @@ export function SandboxChannelSyncModal({
           <div>
             <strong>• {t("visualSandbox.summaryCounter")}</strong>{" "}
             {QUESTION_COUNTER_STYLE_LABELS[counterStyle as Exclude<QuizQuestionCounterStyle, "auto">]}
+          </div>
+          <div>
+            <strong>• {t("visualSandbox.summaryBackground")}</strong>{" "}
+            {BACKGROUND_STYLE_LABELS[backgroundStyle as Exclude<QuizBackgroundStyle, "auto">]}
           </div>
           {syncMascotToChannel && (
             <div>

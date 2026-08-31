@@ -1,6 +1,6 @@
-# Hướng dẫn vận hành tuần tự 7 giai đoạn
+# Hướng dẫn vận hành tuần tự Quiz Visual Refactor
 
-Tài liệu này dành cho người giao việc cho các task Codex mới. Mỗi giai đoạn nên chạy trong một task riêng, lần lượt từ Phase 1 đến Phase 7. Không chạy hai phase song song trên cùng working tree.
+Tài liệu này dành cho người giao việc cho các coding task mới. Core Phase 1–7 và stabilization Phase 8 đã hoàn tất; hiện không còn phase `READY`. Các prompt bên dưới là hồ sơ lịch sử và chỉ được dùng lại khi roadmap mới hoặc handoff mới mở lại rõ ràng một phase. Không chạy hai phase song song trên cùng working tree.
 
 ## Trước khi giao một phase
 
@@ -26,15 +26,21 @@ Nếu phase kết thúc ở `PARTIAL`, không dùng prompt phase tiếp theo. H�
 
 ## Thứ tự prompt
 
-| Thứ tự | Prompt                             | Chỉ chạy khi        |
-| ------ | ---------------------------------- | ------------------- |
-| 1      | `prompts/phase-01-codex-prompt.md` | Dossier đã sẵn sàng |
-| 2      | `prompts/phase-02-codex-prompt.md` | Phase 1 COMPLETE    |
-| 3      | `prompts/phase-03-codex-prompt.md` | Phase 2 COMPLETE    |
-| 4      | `prompts/phase-04-codex-prompt.md` | Phase 3 COMPLETE    |
-| 5      | `prompts/phase-05-codex-prompt.md` | Phase 4 COMPLETE    |
-| 6      | `prompts/phase-06-codex-prompt.md` | Phase 5 COMPLETE    |
-| 7      | `prompts/phase-07-codex-prompt.md` | Phase 6 COMPLETE    |
+Chuỗi prompt 1–8D đã hoàn tất. Handoff closure hiện tại là `handoffs/phase-08d-2026-08-31.md`; four-choice vẫn là project riêng `DEFERRED` và không được khởi động từ các prompt này.
+
+| Thứ tự | Prompt                              | Chỉ chạy khi        |
+| ------ | ----------------------------------- | ------------------- |
+| 1      | `prompts/phase-01-codex-prompt.md`  | Dossier đã sẵn sàng |
+| 2      | `prompts/phase-02-codex-prompt.md`  | Phase 1 COMPLETE    |
+| 3      | `prompts/phase-03-codex-prompt.md`  | Phase 2 COMPLETE    |
+| 4      | `prompts/phase-04-codex-prompt.md`  | Phase 3 COMPLETE    |
+| 5      | `prompts/phase-05-codex-prompt.md`  | Phase 4 COMPLETE    |
+| 6      | `prompts/phase-06-codex-prompt.md`  | Phase 5 COMPLETE    |
+| 7      | `prompts/phase-07-codex-prompt.md`  | Phase 6 COMPLETE    |
+| 8      | Phase 8A đã triển khai, không rerun | Phase 7 COMPLETE    |
+| 9      | `prompts/phase-08b-codex-prompt.md` | Phase 8A COMPLETE   |
+| 10     | `prompts/phase-08c-codex-prompt.md` | Phase 8B COMPLETE   |
+| 11     | `prompts/phase-08d-codex-prompt.md` | Phase 8C COMPLETE   |
 
 ## Quy tắc working tree
 

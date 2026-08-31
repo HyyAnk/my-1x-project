@@ -277,7 +277,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
             { at_seconds: 11, type: "reward.play", question_id: "q1" },
           ],
         },
-        theme: "candy_arcade",
+        styleContext: { theme: "candy_arcade" },
         audioPath: "./narration.wav",
         narrationDurationSeconds: 18,
         mascot: detailedMascot,

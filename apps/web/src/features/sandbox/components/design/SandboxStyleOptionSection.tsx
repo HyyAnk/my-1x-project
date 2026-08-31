@@ -51,13 +51,15 @@ export function SandboxStyleOptionSection<T extends string>({
             <button
               key={opt.id}
               type="button"
+              aria-label={`${sectionTitle}: ${opt.label}`}
+              aria-pressed={isSelected}
               onClick={() => onSelect(opt.id)}
               style={{
                 display: "flex",
                 flexDirection: columns === 3 ? "column" : "row",
                 alignItems: "center",
                 justifyContent: "center",
-                minHeight: columns === 3 ? "42px" : "36px",
+                minHeight: "44px",
                 padding: columns === 3 ? "6px 4px" : "6px 8px",
                 borderRadius: "8px",
                 background: isSelected ? "var(--soft-accent)" : "var(--surface-strong)",

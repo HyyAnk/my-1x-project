@@ -1,12 +1,4 @@
-import {
-  resolveQuizLayoutId,
-  type DirectorArchetype,
-  type QuizLayoutId,
-  type QuizMotionId,
-  type QuizPaletteId,
-  type QuizQuestionFormat,
-  type QuizTransitionId,
-} from "@studio/shared";
+import { type QuizLayoutId, type QuizMotionId, type QuizPaletteId, type QuizTransitionId } from "@studio/shared";
 import type { QuizPalette, QuizVisualTemplate, TextLayout, TextTier } from "./types.js";
 
 const roundedFont = '"Nunito", "Trebuchet MS", sans-serif';
@@ -204,7 +196,7 @@ export const candyArcadeTemplate: QuizVisualTemplate = {
     const palette = resolvePalette(context.requestedPalette, context.questionIndex, context.previousPaletteId);
     return {
       palette,
-      layoutId: resolveLayout(context.requestedLayout, context.archetype, context.question.format),
+      layoutId: context.resolvedLayoutId,
       motionId: resolveMotion(context.requestedMotion, context.questionIndex),
       transitionId: resolveTransition(context.requestedTransition),
     };
@@ -220,14 +212,6 @@ export function resolvePalette(requested: QuizPaletteId, questionIndex: number, 
     if (candidate.id !== previousPaletteId) return candidate;
   }
   return candyArcadePalettes[start];
-}
-
-export function resolveLayout(
-  requested: QuizLayoutId,
-  archetype: DirectorArchetype,
-  format: QuizQuestionFormat,
-): Exclude<QuizLayoutId, "auto"> {
-  return resolveQuizLayoutId({ requestedLayout: requested, archetype, questionFormat: format });
 }
 
 export function resolveMotion(requested: QuizMotionId, questionIndex: number): Exclude<QuizMotionId, "auto"> {

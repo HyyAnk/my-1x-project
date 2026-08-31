@@ -1,56 +1,63 @@
-import type {
-  Channel,
-  Episode,
-  QuizAnswerCardStyle,
-  QuizPaletteId,
-  QuizQuestionBoxStyle,
-  QuizQuestionCounterStyle,
-  QuizThinkingBarStyle,
-  QuizVisualTheme,
+import {
+  resolveQuizStyle,
+  type Channel,
+  type Episode,
+  type QuizAnswerCardStyle,
+  type QuizBackgroundStyle,
+  type QuizPaletteId,
+  type QuizQuestionBoxStyle,
+  type QuizQuestionCounterStyle,
+  type QuizThinkingBarStyle,
+  type QuizVisualTheme,
 } from "@studio/shared";
 
 export type ResolvedThinkingBarStyle = Exclude<QuizThinkingBarStyle, "auto">;
 export type ResolvedQuestionBoxStyle = Exclude<QuizQuestionBoxStyle, "auto">;
 export type ResolvedAnswerCardStyle = Exclude<QuizAnswerCardStyle, "auto">;
 export type ResolvedCounterStyle = Exclude<QuizQuestionCounterStyle, "auto">;
+export type ResolvedBackgroundStyle = Exclude<QuizBackgroundStyle, "auto">;
 
 type QuizConfig = NonNullable<Episode["quiz_config"]>;
 
-export function resolveThinkingBarStyle(channel: Channel, quizConfig?: QuizConfig): ResolvedThinkingBarStyle {
-  const configured = quizConfig?.thinking_bar_style ?? "auto";
-  if (configured !== "auto") return configured;
-  const channelDefault = channel.default_thinking_bar_style;
-  return channelDefault && channelDefault !== "auto" ? channelDefault : "star_slider";
+export function resolveThinkingBarStyle(
+  channel?: Partial<Channel> | null,
+  quizConfig?: Partial<QuizConfig> | null,
+): ResolvedThinkingBarStyle {
+  return resolveQuizStyle({ channel, episode: quizConfig }).thinkingBarStyle;
 }
 
-export function resolveQuestionBoxStyle(channel: Channel, quizConfig?: QuizConfig): ResolvedQuestionBoxStyle {
-  const configured = quizConfig?.question_box_style ?? "auto";
-  if (configured !== "auto") return configured;
-  const channelDefault = channel.default_question_box_style;
-  return channelDefault && channelDefault !== "auto" ? channelDefault : "candy_pop";
+export function resolveQuestionBoxStyle(
+  channel?: Partial<Channel> | null,
+  quizConfig?: Partial<QuizConfig> | null,
+): ResolvedQuestionBoxStyle {
+  return resolveQuizStyle({ channel, episode: quizConfig }).questionBoxStyle;
 }
 
-export function resolveAnswerCardStyle(channel: Channel, quizConfig?: QuizConfig): ResolvedAnswerCardStyle {
-  const configured = quizConfig?.answer_card_style ?? "auto";
-  if (configured !== "auto") return configured;
-  const channelDefault = channel.default_answer_card_style;
-  return channelDefault && channelDefault !== "auto" ? channelDefault : "glossy_arcade";
+export function resolveAnswerCardStyle(
+  channel?: Partial<Channel> | null,
+  quizConfig?: Partial<QuizConfig> | null,
+): ResolvedAnswerCardStyle {
+  return resolveQuizStyle({ channel, episode: quizConfig }).answerCardStyle;
 }
 
-export function resolveCounterStyle(channel: Channel, quizConfig?: QuizConfig): ResolvedCounterStyle {
-  const configured = quizConfig?.question_counter_style ?? "auto";
-  if (configured !== "auto") return configured;
-  const channelDefault = channel.default_counter_style;
-  return channelDefault && channelDefault !== "auto" ? channelDefault : "hanging_woodsign";
+export function resolveCounterStyle(channel?: Partial<Channel> | null, quizConfig?: Partial<QuizConfig> | null): ResolvedCounterStyle {
+  return resolveQuizStyle({ channel, episode: quizConfig }).counterStyle;
 }
 
-export function resolvePaletteId(channel: Channel, quizConfig?: QuizConfig): Exclude<QuizPaletteId, "auto"> {
-  const configured = quizConfig?.palette_id ?? "auto";
-  if (configured !== "auto") return configured;
-  const channelDefault = channel.default_palette_id;
-  return channelDefault && channelDefault !== "auto" ? (channelDefault as Exclude<QuizPaletteId, "auto">) : "lime";
+export function resolveBackgroundStyle(
+  channel?: Partial<Channel> | null,
+  quizConfig?: Partial<QuizConfig> | null,
+): ResolvedBackgroundStyle {
+  return resolveQuizStyle({ channel, episode: quizConfig }).backgroundStyle;
 }
 
-export function resolveVisualTheme(quizConfig?: QuizConfig): QuizVisualTheme {
-  return quizConfig?.visual_theme ?? "candy_arcade";
+export function resolvePaletteId(
+  channel?: Partial<Channel> | null,
+  quizConfig?: Partial<QuizConfig> | null,
+): Exclude<QuizPaletteId, "auto"> {
+  return resolveQuizStyle({ channel, episode: quizConfig }).paletteId;
+}
+
+export function resolveVisualTheme(quizConfig?: Partial<QuizConfig> | null): QuizVisualTheme {
+  return resolveQuizStyle({ episode: quizConfig }).theme;
 }

@@ -5,13 +5,7 @@ import {
   type ChannelMascotConfig,
   type DirectorPlan,
   type MascotProfile,
-  type QuizAnswerCardStyle,
-  type QuizConfig,
-  type QuizPaletteId,
-  type QuizQuestionBoxStyle,
-  type QuizQuestionCounterStyle,
   type QuizQuestionFormat,
-  type QuizThinkingBarStyle,
   type QuizTimeline,
   type QuizV2,
   MASCOT_CANVAS_SIZES,
@@ -25,6 +19,7 @@ import {
 } from "./candyArcadeComposition.js";
 import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
 import { candyArcadeFontFaceCss, candyArcadeFontReadinessScript } from "./candyArcade/candyArcadeFonts.js";
+import type { QuizRenderStyleContext } from "./quizRenderStyleContext.js";
 
 export function buildQuizComposition(
   config: { question_count: number; quiz_format: string; age_band: string; visual_theme: string },
@@ -143,7 +138,7 @@ export type QuizV2CompositionInput = {
   quiz: QuizV2;
   director: DirectorPlan;
   timeline: QuizTimeline;
-  theme: QuizConfig["visual_theme"];
+  styleContext: QuizRenderStyleContext;
   audioPath: string;
   narrationDurationSeconds: number;
   aspectRatio?: MascotRenderAspectRatio;
@@ -151,13 +146,7 @@ export type QuizV2CompositionInput = {
   bgmOptions?: ResolveBgmOptions;
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
-  defaultThinkingBarStyle?: QuizThinkingBarStyle | null;
-  defaultQuestionBoxStyle?: QuizQuestionBoxStyle | null;
-  defaultAnswerCardStyle?: QuizAnswerCardStyle | null;
-  defaultCounterStyle?: QuizQuestionCounterStyle | null;
-  defaultPaletteId?: QuizPaletteId | null;
   premixedAudio?: boolean;
-  channelBrandName?: string | null;
 };
 
 /**

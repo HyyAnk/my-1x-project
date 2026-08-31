@@ -25,6 +25,7 @@ function buildStyleRequest({ override, resolved }: BuildEpisodePreviewRequestInp
     question_box_style: override.questionBoxStyle ?? resolved.questionBoxStyle,
     answer_card_style: override.answerCardStyle ?? resolved.answerCardStyle,
     counter_style: override.counterStyle ?? resolved.counterStyle,
+    background_style: override.backgroundStyle ?? resolved.backgroundStyle,
     channel_brand_name: override.channelBrandName ?? resolved.channelBrandName,
   };
 }
@@ -32,6 +33,8 @@ function buildStyleRequest({ override, resolved }: BuildEpisodePreviewRequestInp
 function buildQuestionRequest({ override, question, resolved }: BuildEpisodePreviewRequestInput): SandboxPreviewRequest {
   return {
     layout_id: question?.layoutId ?? "media_left_choices_right",
+    question_format: question?.questionFormat,
+    archetype: question?.archetype,
     phase: "choices",
     question_text: question?.text,
     choices: question?.choices,

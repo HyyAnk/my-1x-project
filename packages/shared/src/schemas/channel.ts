@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   ChannelStatusSchema,
   QuizAnswerCardStyleSchema,
+  QuizBackgroundStyleSchema,
   QuizImageStyleSchema,
   QuizPaletteIdSchema,
   QuizQuestionBoxStyleSchema,
@@ -36,6 +37,7 @@ export const ChannelSchema = z.object({
   default_question_box_style: QuizQuestionBoxStyleSchema.optional().default("auto"),
   default_answer_card_style: QuizAnswerCardStyleSchema.optional().default("auto"),
   default_counter_style: QuizQuestionCounterStyleSchema.optional().default("auto"),
+  default_background_style: QuizBackgroundStyleSchema.optional().default("auto"),
   default_palette_id: z.string().optional().default("auto"),
   mascot_id: z.string().nullable().default(null),
   mascot_config: ChannelMascotConfigSchema.default({ enabled: true, position: "bottom_left", scale: 1.0 }),
@@ -80,6 +82,7 @@ export const QuizConfigSchema = z.object({
   question_counter_style: QuizQuestionCounterStyleSchema.default("auto"),
   question_box_style: QuizQuestionBoxStyleSchema.default("auto"),
   answer_card_style: QuizAnswerCardStyleSchema.default("auto"),
+  background_style: QuizBackgroundStyleSchema.default("auto"),
   palette_id: QuizPaletteIdSchema.default("auto"),
   style_preset_id: z.string().optional().default("auto"),
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).default(""),

@@ -20,15 +20,17 @@ function renderedBody(html: string): string {
   return html.slice(html.indexOf("<body>"));
 }
 
-describe("Phase 1 Sandbox phase and skin characterization", () => {
-  it("P-01 through P-04 preserve question, choices, thinking, reveal, and explain states", () => {
+describe("Sandbox semantic choice phases and skins", () => {
+  it("P4-SEM-03 and P4-SEM-04 preserve question, choices, thinking, reveal, and explain states", () => {
     const question = buildSandboxComposition({ phase: "question" }).html;
-    expect(question).toContain('class="answer-grid answer-count-3" style="opacity:0;"');
+    expect(question).toContain('data-choice-visibility="hidden"');
+    expect(question).toContain('data-answer-state="pending"');
+    expect(question).not.toContain('data-answer-state="correct"');
 
     for (const phase of ["choices", "thinking"] as const) {
       const html = buildSandboxComposition({ phase }).html;
-      expect(html).toContain('class="answer-grid answer-count-3" style="opacity:1;"');
-      expect(html).toContain("answer-normal");
+      expect(html).toContain('data-choice-visibility="visible"');
+      expect(html).toContain('data-answer-state="pending"');
       expect(html).toContain("thinking-bar");
     }
 
@@ -43,7 +45,7 @@ describe("Phase 1 Sandbox phase and skin characterization", () => {
     expect(explain).toContain("Deterministic fact");
   });
 
-  it("C-04 and C-05 preserve selected text skins and skin-independent visual choices", () => {
+  it("P4-SKIN-02 and P4-SKIN-03 apply the selected skin to text and visual choices", () => {
     const text = renderedBody(
       buildSandboxComposition({
         layout_id: "media_left_choices_right",
@@ -60,8 +62,9 @@ describe("Phase 1 Sandbox phase and skin characterization", () => {
         phase: "reveal",
       }).html,
     );
-    expect(visual).toContain("visual-answer-card answer-correct");
-    expect(visual).not.toContain("ac-comic-chunky");
+    expect(visual).toContain('data-choice-presentation="visual"');
+    expect(visual).toContain('data-answer-state="correct"');
+    expect(visual).toContain("ac-comic-chunky");
   });
 });
 
@@ -128,7 +131,7 @@ describe("Phase 1 minimum pairwise render baseline", () => {
 
     if (entry.layout === "visual_choices_three") {
       expect(body).toContain("visual-answer-card");
-      expect(body).not.toMatch(/\bac-(glossy-arcade|comic-chunky|glass-neon|minimal-soft)\b/);
+      expect(body).toContain(`ac-${entry.skin.replaceAll("_", "-")}`);
     } else if (entry.skin === "glossy_arcade") {
       expect(body).toContain("ac-glossy-arcade");
     } else {

@@ -2,10 +2,9 @@ import { execFile } from "node:child_process";
 import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import { MASCOT_CANVAS_SIZES, nowIso, resolveChannelBrandName, type MascotProfile, type Task } from "@studio/shared";
+import { MASCOT_CANVAS_SIZES, nowIso, type MascotProfile, type Task } from "@studio/shared";
 import { RepositoryError } from "../repository.js";
 import { buildQuizComposition } from "../quiz/render/buildComposition.js";
-import { HyperframesRenderer } from "../quiz/render/hyperframesRenderer.js";
 import { preflightQuizRender } from "../quiz/qa/preflight.js";
 import { inspectRenderedVideo } from "../quiz/qa/postRenderQa.js";
 import { prepareVideoAssets } from "./video/videoAssetPreparation.js";
@@ -19,9 +18,9 @@ import { calculateOptimalWorkers, getHyperframesExecutionEnv } from "./video/vid
 import { syncStaticMediaAssets } from "./video/videoStaticAssets.js";
 import { verifyAndCheckLayout } from "./video/videoLayoutChecker.js";
 import { getHyperframesInvocation } from "./video/videoInvocation.js";
+import { prepareQuizVideoRender } from "./video/quizVideoRenderPreparation.js";
 
 const execFileAsync = promisify(execFile);
-const quizRenderer = new HyperframesRenderer();
 
 export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   const context = { profileId: task.channel_id, workerId: task.task_id, step: "render_video" };
@@ -75,6 +74,9 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
         renderRoot,
         assetPlan: completeQuizV2.assetPlan,
         assetResolution,
+        quiz: completeQuizV2.quiz,
+        director: completeQuizV2.director,
+        aspectRatio: renderAspectRatio,
         onProgress: async (msg, pct) => {
           await this.update(task.task_id, { progress_message: msg, progress_percent: pct });
         },
@@ -126,7 +128,9 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     }
 
     const preparedQuizRender = completeQuizV2
-      ? await quizRenderer.prepare({
+      ? await prepareQuizVideoRender({
+          channel,
+          episodeQuizConfig: episode.quiz_config,
           quiz: completeQuizV2.quiz,
           director: completeQuizV2.director,
           timeline: completeQuizV2.timeline,
@@ -134,7 +138,6 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
           audioPath: "./soundtrack.wav",
           premixedAudio: true,
           aspectRatio: renderAspectRatio,
-          theme: episode.quiz_config.visual_theme,
           narrationDurationSeconds: episode.narration_duration_seconds ?? undefined,
           assets: assetSources,
           bgmOptions: {
@@ -143,12 +146,6 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
           },
           mascot: mascotProfile,
           mascotConfig: channel.mascot_config,
-          defaultThinkingBarStyle: episode.quiz_config?.thinking_bar_style,
-          defaultQuestionBoxStyle: episode.quiz_config?.question_box_style,
-          defaultAnswerCardStyle: episode.quiz_config?.answer_card_style,
-          defaultCounterStyle: episode.quiz_config?.question_counter_style,
-          defaultPaletteId: episode.quiz_config?.palette_id,
-          channelBrandName: resolveChannelBrandName(episode.quiz_config?.channel_brand_name, channel.display_name),
         })
       : null;
     const html =

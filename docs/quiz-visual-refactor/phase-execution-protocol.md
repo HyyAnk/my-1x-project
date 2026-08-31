@@ -38,11 +38,12 @@ For web UI changes, verify the interaction plan, immediate feedback, pending/err
 
 ## Handoff
 
-Create a dated handoff from the active template:
+Create a dated handoff from the active template or active subphase prompt:
 
     handoffs/phase-NN-YYYY-MM-DD.md
+    handoffs/phase-NNa-YYYY-MM-DD.md
 
-If that path already exists, add a short descriptive suffix rather than overwriting evidence. The handoff must contain repository state, matrix coverage, exact commands and outcomes, changed files, behavior changes, deviations, unrelated paths preserved, risks, and next-phase readiness.
+The letter form applies to Phase 8A–8D. If that path already exists, add a short descriptive suffix rather than overwriting evidence. The handoff must contain repository state, matrix coverage, exact commands and outcomes, changed files, behavior changes, deviations, unrelated paths preserved, risks, and next-phase readiness.
 
 ## Completion gate
 

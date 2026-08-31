@@ -3,6 +3,7 @@ import path from "node:path";
 import {
   ALL_QUIZ_IMAGE_STYLES,
   EpisodeSchema,
+  QuizPaletteIdSchema,
   TopicCandidateSchema,
   TopicConfirmInputSchema,
   makeId,
@@ -69,6 +70,7 @@ export async function confirmTopic(
   const episodeSlug = await this.uniqueSlug(candidate.title, this.resolvePath("channels", channel.slug, "episodes"));
   const episodeId = makeId("ep");
   const timestamp = nowIso();
+  const channelPalette = QuizPaletteIdSchema.safeParse(channel.default_palette_id);
   const episodeDirectory = this.resolvePath("channels", channel.slug, "episodes", episodeSlug);
   await mkdir(path.join(episodeDirectory, "assets"), { recursive: true });
   const episode = EpisodeSchema.parse({
@@ -98,7 +100,8 @@ export async function confirmTopic(
       question_counter_style: channel.default_counter_style ?? "auto",
       question_box_style: channel.default_question_box_style ?? "auto",
       answer_card_style: channel.default_answer_card_style ?? "auto",
-      palette_id: (channel.default_palette_id as any) ?? "auto",
+      background_style: channel.default_background_style ?? "auto",
+      palette_id: channelPalette.success ? channelPalette.data : "auto",
       style_preset_id: "auto",
       channel_brand_name: "",
     },
@@ -160,23 +163,26 @@ export async function updateEpisodeSettings(
     ...(input.question_counter_style === undefined ? {} : { question_counter_style: input.question_counter_style }),
     ...(input.question_box_style === undefined ? {} : { question_box_style: input.question_box_style }),
     ...(input.answer_card_style === undefined ? {} : { answer_card_style: input.answer_card_style }),
+    ...(input.background_style === undefined ? {} : { background_style: input.background_style }),
     ...(input.palette_id === undefined ? {} : { palette_id: input.palette_id }),
     ...(input.style_preset_id === undefined ? {} : { style_preset_id: input.style_preset_id }),
     ...(input.channel_brand_name === undefined ? {} : { channel_brand_name: input.channel_brand_name }),
     visual_style: nextStyle,
     resolved_visual_style: nextResolvedStyle,
   };
-  const quizSettingsChanged =
+  const quizSourceSettingsChanged =
     nextQuizConfig.question_count !== episode.quiz_config.question_count ||
     nextQuizConfig.quiz_format !== episode.quiz_config.quiz_format ||
     nextQuizConfig.age_band !== episode.quiz_config.age_band ||
-    nextQuizConfig.visual_theme !== episode.quiz_config.visual_theme ||
     nextQuizConfig.visual_style !== episode.quiz_config.visual_style ||
-    nextQuizConfig.resolved_visual_style !== episode.quiz_config.resolved_visual_style ||
+    nextQuizConfig.resolved_visual_style !== episode.quiz_config.resolved_visual_style;
+  const renderStyleSettingsChanged =
+    nextQuizConfig.visual_theme !== episode.quiz_config.visual_theme ||
     nextQuizConfig.thinking_bar_style !== episode.quiz_config.thinking_bar_style ||
     nextQuizConfig.question_counter_style !== episode.quiz_config.question_counter_style ||
     nextQuizConfig.question_box_style !== episode.quiz_config.question_box_style ||
     nextQuizConfig.answer_card_style !== episode.quiz_config.answer_card_style ||
+    nextQuizConfig.background_style !== episode.quiz_config.background_style ||
     nextQuizConfig.palette_id !== episode.quiz_config.palette_id ||
     nextQuizConfig.style_preset_id !== episode.quiz_config.style_preset_id;
   const targetDurationMinutes = input.target_duration_minutes ?? estimateQuizTargetDurationMinutes(nextQuizConfig.question_count);
@@ -189,7 +195,11 @@ export async function updateEpisodeSettings(
     updated_at: nowIso(),
   });
   await this.writeJsonAtomic(this.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
-  if (quizSettingsChanged) await this.invalidateQuizSourceArtifacts(channelId, episodeId);
+  if (quizSourceSettingsChanged) {
+    await this.invalidateQuizSourceArtifacts(channelId, episodeId);
+  } else if (renderStyleSettingsChanged) {
+    await this.invalidateQuizArtifacts(channelId, episodeId, ["render", "qa"]);
+  }
   return next;
 }
 

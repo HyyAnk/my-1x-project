@@ -2,6 +2,8 @@
 
 Each phase brief is an executable contract for one Codex task. Future briefs are prepared in advance but remain dependency-locked planning snapshots until the preceding handoff and current source confirm them.
 
+Current status: Phase 1–8D are COMPLETE. These briefs are historical contracts; no phase is presently `READY`.
+
 ## Rules
 
 - Read the repository AGENTS.md and dossier README first.
@@ -29,5 +31,6 @@ Each phase brief is an executable contract for one Codex task. Future briefs are
 | 5     | `phase-05-css-preset-boundaries.md`      | `phase-05-test-matrix.md`                                 |
 | 6     | `phase-06-new-layouts-scalable-ui.md`    | `phase-06-test-matrix.md`, `phase-06-interaction-plan.md` |
 | 7     | `phase-07-background-registry.md`        | `phase-07-test-matrix.md`, `phase-07-interaction-plan.md` |
+| 8     | `phase-08-end-to-end-stabilization.md`   | `phase-08-test-matrix.md`, dated 8A–8D handoffs           |
 
-Before implementing Phase 2–7, compare the planned brief with the immediately preceding dated handoff. Update stale file-level guidance rather than forcing it onto architecture that evolved legitimately.
+Before implementing Phase 2–8, compare the planned brief with the immediately preceding dated handoff. Update stale file-level guidance rather than forcing it onto architecture that evolved legitimately.

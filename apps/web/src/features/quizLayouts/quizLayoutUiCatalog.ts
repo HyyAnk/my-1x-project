@@ -2,12 +2,24 @@ import { QUIZ_LAYOUTS, type ResolvedQuizLayoutId } from "@studio/shared";
 
 export type QuizLayoutUiDefinition = {
   id: ResolvedQuizLayoutId;
-  labelKey: "stageStudio.layoutMediaLeft" | "stageStudio.layoutVisualThree";
-  descriptionKey: "stageStudio.layoutMediaLeftDesc" | "stageStudio.layoutVisualThreeDesc";
-  sandboxLabelKey: "visualSandbox.layoutMediaLeftChoicesRight" | "visualSandbox.layoutVisualChoicesThree";
-  sandboxDescriptionKey: "visualSandbox.layoutMediaLeftChoicesRightSub" | "visualSandbox.layoutVisualChoicesThreeSub";
-  preview: "media-left" | "visual-three";
-  icon: "split" | "visual";
+  labelKey: "stageStudio.layoutMediaLeft" | "stageStudio.layoutVisualThree" | "stageStudio.layoutMediaTop" | "stageStudio.layoutFullStack";
+  descriptionKey:
+    | "stageStudio.layoutMediaLeftDesc"
+    | "stageStudio.layoutVisualThreeDesc"
+    | "stageStudio.layoutMediaTopDesc"
+    | "stageStudio.layoutFullStackDesc";
+  sandboxLabelKey:
+    | "visualSandbox.layoutMediaLeftChoicesRight"
+    | "visualSandbox.layoutVisualChoicesThree"
+    | "visualSandbox.layoutMediaTopChoicesBottom"
+    | "visualSandbox.layoutFullStackList";
+  sandboxDescriptionKey:
+    | "visualSandbox.layoutMediaLeftChoicesRightSub"
+    | "visualSandbox.layoutVisualChoicesThreeSub"
+    | "visualSandbox.layoutMediaTopChoicesBottomSub"
+    | "visualSandbox.layoutFullStackListSub";
+  preview: "media-left" | "visual-three" | "media-top" | "full-stack";
+  icon: "split" | "visual" | "top" | "stack";
 };
 
 const QUIZ_LAYOUT_UI_BY_ID = {
@@ -28,6 +40,24 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     sandboxDescriptionKey: "visualSandbox.layoutVisualChoicesThreeSub",
     preview: "visual-three",
     icon: "visual",
+  },
+  media_top_choices_bottom: {
+    id: "media_top_choices_bottom",
+    labelKey: "stageStudio.layoutMediaTop",
+    descriptionKey: "stageStudio.layoutMediaTopDesc",
+    sandboxLabelKey: "visualSandbox.layoutMediaTopChoicesBottom",
+    sandboxDescriptionKey: "visualSandbox.layoutMediaTopChoicesBottomSub",
+    preview: "media-top",
+    icon: "top",
+  },
+  full_stack_list: {
+    id: "full_stack_list",
+    labelKey: "stageStudio.layoutFullStack",
+    descriptionKey: "stageStudio.layoutFullStackDesc",
+    sandboxLabelKey: "visualSandbox.layoutFullStackList",
+    sandboxDescriptionKey: "visualSandbox.layoutFullStackListSub",
+    preview: "full-stack",
+    icon: "stack",
   },
 } as const satisfies Record<ResolvedQuizLayoutId, QuizLayoutUiDefinition>;
 

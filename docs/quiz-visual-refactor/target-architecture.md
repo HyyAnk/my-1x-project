@@ -1,6 +1,6 @@
 # Target Quiz Visual Architecture
 
-Status: approved direction, implementation deferred to later phases
+Status: implemented and acceptance-closed through Phase 8
 
 Phase 1 does not implement this document. It creates executable evidence that later phases must preserve or intentionally migrate.
 
@@ -26,15 +26,15 @@ Shared contracts own persisted IDs, layout capabilities, choice representation t
 
 ### Scene model builder
 
-One application service normalizes question data, assets, answer state, phase, timing, mascot occupancy, selected layout, resolved styles, and palette into a render model. Sandbox supplies simulated time; production supplies compiled timeline time.
+`buildQuizSceneRenderModel` normalizes question data, resolved asset references and deterministic fallbacks, canonical answer state, phase, mascot occupancy, accepted layout capability, resolved styles, aspect ratio, and palette. Production and Sandbox use separate pure state/surface adapters, then call the same model and semantic-part builders. Production retains compiled timeline timing; Sandbox retains explicit phase and scrub-time control.
 
 ### Choice renderer
 
-One renderer owns choice iteration, canonical answer state, labels, escaping, media fallback, tier assignment, and stable semantic markup. A skin may add decorations or specialized status content but does not reimplement the workflow.
+`renderChoiceGroup` is the single choice workflow for production and Sandbox. It owns normalized ordering, A/B/C labels, canonical-ID correctness, phase states, escaping, accessible attributes, typography tiers, deterministic media fallback, and stable group/card markup. `AnswerCardSkin` owns only a stable class, optional bounded decoration/status hooks, and CSS; every registered skin supports both text and visual content.
 
 ### Layout renderer
 
-A layout arranges semantic slots and publishes capacity tokens. It does not select an Answer Card implementation or style skin internals.
+A layout arranges semantic slots and publishes capacity tokens. It does not select an Answer Card implementation or own choice workflow. The active layout contract has one `choicesHtml` slot, and layout CSS no longer owns skin decoration.
 
 The intended slot direction is:
 
@@ -56,7 +56,7 @@ Counter/header chrome remains outside layout until a concrete layout requires la
 
 ### Layout capabilities
 
-The catalog becomes executable policy. A layout declares supported choice presentations, counts, formats, media requirements, aspect ratios, and render/asset metrics. A pure resolver returns a compatible layout or a structured failure/fallback reason.
+Implemented in Phase 2 and acceptance-closed in Phase 8D. The production catalog is executable policy and the only owner of layout render/asset dimensions. It declares supported choice presentations, counts, supported versus recommended formats, media requirements, aspect ratios, and metrics. Server CSS, hero-area calculations, optimization, QA, and preview consumers read the catalog directly; no parallel dimensions view remains. The pure resolver returns a compatible layout or structured incompatibility, preserves the established auto policy, and never silently replaces an incompatible explicit request. The preview-only baseline remains outside the production catalog.
 
 ### Presets
 
@@ -64,11 +64,11 @@ Visual presets bundle theme, palette, element skins, and eventually background s
 
 ### Backgrounds
 
-Background is an independent visual axis. A SceneBackgroundVariant owns deterministic layer HTML, CSS, motion limits, and a static reduced-motion fallback. Palette remains semantic color data; foreground motion remains separate.
+Background is an independent visual axis. A `SceneBackgroundVariant` owns deterministic inner HTML, CSS, motion limits, and a static reduced-motion fallback. Both surfaces wrap it in one canonical semantic background layer and compositions bundle selected variant CSS once. The obsolete Phase 7 adapter is removed. Palette remains semantic color data; foreground motion remains separate.
 
 ## Resolution policy direction
 
-Later work must define and test one shared precedence contract for:
+The shared resolver defines and tests this precedence contract:
 
     theme defaults
         < channel defaults

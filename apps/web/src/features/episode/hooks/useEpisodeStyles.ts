@@ -5,6 +5,7 @@ import {
   type Channel,
   type Episode,
   type QuizAnswerCardStyle,
+  type QuizBackgroundStyle,
   type QuizImageStyle,
   type QuizPaletteId,
   type QuizQuestionBoxStyle,
@@ -102,6 +103,15 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     );
   };
 
+  const saveBackgroundStyle = async (newStyle: QuizBackgroundStyle) => {
+    if (!episode || newStyle === (episode.quiz_config?.background_style ?? "auto")) return;
+    await saveQuizStyles(
+      "background-style",
+      { background_style: newStyle, style_preset_id: "custom" },
+      `Background style set to ${newStyle}`,
+    );
+  };
+
   const savePaletteId = async (newPalette: QuizPaletteId) => {
     if (!episode || newPalette === (episode.quiz_config?.palette_id ?? "auto")) return;
     await saveQuizStyles("palette-id", { palette_id: newPalette, style_preset_id: "custom" }, `Color palette set to ${newPalette}`);
@@ -119,6 +129,7 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
         answer_card_style: preset.answer_card_style,
         question_counter_style: preset.counter_style,
         thinking_bar_style: preset.thinking_bar_style,
+        background_style: preset.background_style ?? "candy_rays",
       },
       `Applied "${preset.name}" preset pack`,
     );
@@ -150,6 +161,7 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     saveQuestionBoxStyle,
     saveAnswerCardStyle,
     saveCounterStyle,
+    saveBackgroundStyle,
     savePaletteId,
     applyStylePreset,
     saveDuration,

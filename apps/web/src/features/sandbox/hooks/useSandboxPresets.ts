@@ -49,6 +49,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
           preset.question_box_style === design.questionBoxStyle &&
           preset.answer_card_style === design.answerCardStyle &&
           preset.counter_style === design.counterStyle &&
+          (preset.background_style === undefined || preset.background_style === design.backgroundStyle) &&
           (preset.mascot_id === undefined || preset.mascot_id === mascot.mascotId) &&
           (preset.channel_brand_name === undefined || preset.channel_brand_name === brandName?.channelBrandName),
       ),
@@ -59,6 +60,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
       design.questionBoxStyle,
       design.answerCardStyle,
       design.counterStyle,
+      design.backgroundStyle,
       mascot.mascotId,
       brandName?.channelBrandName,
     ],
@@ -83,6 +85,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
     design.setQuestionBoxStyle(preset.question_box_style);
     design.setAnswerCardStyle(preset.answer_card_style || "glossy_arcade");
     design.setCounterStyle(preset.counter_style);
+    design.setBackgroundStyle(preset.background_style || "candy_rays");
     if (preset.mascot_id !== undefined) mascot.setMascotId(preset.mascot_id || "none");
     if (preset.mascot_position) mascot.setMascotPosition(preset.mascot_position);
     if (preset.mascot_scale !== undefined) mascot.setMascotScale(preset.mascot_scale);
@@ -105,6 +108,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
     const resolvedQb = design.questionBoxStyle === "auto" ? "candy_pop" : design.questionBoxStyle;
     const resolvedAc = design.answerCardStyle === "auto" ? "glossy_arcade" : design.answerCardStyle;
     const resolvedCb = design.counterStyle === "auto" ? "hanging_woodsign" : design.counterStyle;
+    const resolvedBg = design.backgroundStyle === "auto" ? "candy_rays" : design.backgroundStyle;
 
     const newPreset: VisualPresetItem = {
       id: `custom_${Date.now()}`,
@@ -118,6 +122,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
       question_box_style: resolvedQb,
       answer_card_style: resolvedAc,
       counter_style: resolvedCb,
+      background_style: resolvedBg,
       mascot_id: mascot.mascotId,
       mascot_position: mascot.mascotPosition,
       mascot_scale: mascot.mascotScale,

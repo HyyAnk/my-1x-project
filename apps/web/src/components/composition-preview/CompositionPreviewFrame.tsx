@@ -67,7 +67,7 @@ export function CompositionPreviewFrame({
       ) : null}
 
       {loading ? <PreviewStatus label={statusLabel} /> : null}
-      {previewError ? <PreviewError label={errorLabel} retryLabel={retryLabel} onRetry={onRetryPreview} /> : null}
+      {previewError ? <PreviewError label={previewError || errorLabel} retryLabel={retryLabel} onRetry={onRetryPreview} /> : null}
     </>
   );
 }

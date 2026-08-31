@@ -1,4 +1,4 @@
-import type { DirectorArchetype, QuizLayoutId, QuizMotionId, QuizPaletteId, QuizTransitionId, QuizV2 } from "@studio/shared";
+import type { QuizMotionId, QuizPaletteId, QuizTransitionId, QuizV2, ResolvedQuizLayoutId } from "@studio/shared";
 
 export type QuizVisualTokens = {
   spacing: { xs: number; sm: number; md: number; lg: number; xl: number; xxl: number };
@@ -64,9 +64,8 @@ export type QuizTemplateContext = {
   question: QuizV2["questions"][number];
   questionIndex: number;
   totalQuestions: number;
-  archetype: DirectorArchetype;
   requestedPalette: QuizPaletteId;
-  requestedLayout: QuizLayoutId;
+  resolvedLayoutId: ResolvedQuizLayoutId;
   requestedMotion: QuizMotionId;
   requestedTransition: QuizTransitionId;
   previousPaletteId?: string;
@@ -74,7 +73,7 @@ export type QuizTemplateContext = {
 
 export type QuizTemplateScene = {
   palette: QuizPalette;
-  layoutId: Exclude<QuizLayoutId, "auto">;
+  layoutId: ResolvedQuizLayoutId;
   motionId: Exclude<QuizMotionId, "auto">;
   transitionId: Exclude<QuizTransitionId, "auto">;
 };

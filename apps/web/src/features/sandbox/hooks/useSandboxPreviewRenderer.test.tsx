@@ -3,6 +3,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { LanguageProvider } from "../../../i18n";
 import { api } from "../../../api";
+import * as previewFontVerification from "../../previewFonts/verifyPreviewFonts";
 import { useSandboxPreviewRenderer } from "./useSandboxPreviewRenderer";
 import { useSandboxBrandNameState, SANDBOX_DEFAULT_BRAND_NAME } from "./useSandboxBrandNameState";
 import type { SandboxDesignState } from "./useSandboxDesignState";
@@ -50,6 +51,8 @@ describe("useSandboxPreviewRenderer", () => {
       setAnswerCardStyle: vi.fn(),
       counterStyle: "hanging_woodsign",
       setCounterStyle: vi.fn(),
+      backgroundStyle: "candy_rays",
+      setBackgroundStyle: vi.fn(),
     };
     mockMascot = {
       mascots: [
@@ -219,4 +222,136 @@ describe("useSandboxPreviewRenderer", () => {
       ),
     );
   });
+
+  it("P2-INT-04 acknowledges an incompatible preview error without replacing a successful preview", async () => {
+    const onNotice = vi.fn();
+    vi.spyOn(api, "previewSandboxComposition").mockRejectedValue(new Error("Layout does not support two visual choices"));
+
+    const { result } = renderHook(
+      () =>
+        useSandboxPreviewRenderer({
+          design: { ...mockDesign, layoutId: "visual_choices_three" },
+          mascot: mockMascot,
+          question: { ...mockQuestion, choices: ["True", "False"] },
+          timeline: mockTimeline,
+          aspectRatio: "16:9",
+          onNotice,
+        }),
+      { wrapper },
+    );
+
+    await vi.waitFor(() => expect(result.current.previewError).toBe("Layout does not support two visual choices"));
+    expect(result.current.loading).toBe(false);
+    expect(result.current.previewHtml).toBe("");
+    expect(onNotice).toHaveBeenCalledWith({ tone: "bad", message: "Layout does not support two visual choices" });
+  });
+
+  it("P8C-ASY-01 acknowledges a slow request immediately and confirms success after frame verification", async () => {
+    const slowResponse = deferred<ReturnType<typeof previewResponse>>();
+    vi.spyOn(api, "previewSandboxComposition").mockReturnValue(slowResponse.promise);
+    vi.spyOn(previewFontVerification, "verifyPreviewFonts").mockResolvedValue(undefined);
+
+    const { result } = renderHook(
+      () =>
+        useSandboxPreviewRenderer({
+          design: mockDesign,
+          mascot: mockMascot,
+          question: mockQuestion,
+          timeline: mockTimeline,
+          aspectRatio: "16:9",
+        }),
+      { wrapper },
+    );
+
+    await vi.waitFor(() => expect(result.current.loading).toBe(true));
+    expect(result.current.previewError).toBeNull();
+    slowResponse.resolve(previewResponse("confirmed-slow"));
+    await vi.waitFor(() => expect(result.current.pendingPreviewHtml).toContain("confirmed-slow"));
+
+    await act(async () => {
+      await result.current.verifyPendingPreview(document.createElement("iframe"), result.current.pendingPreviewHtml);
+    });
+    expect(result.current.loading).toBe(false);
+    expect(result.current.previewHtml).toContain("confirmed-slow");
+  });
+
+  it("P8C-ASY-01 preserves input on error and retries the current selection", async () => {
+    let failPreview = true;
+    const previewSpy = vi.spyOn(api, "previewSandboxComposition").mockImplementation(() => {
+      return failPreview ? Promise.reject(new Error("Preview unavailable")) : Promise.resolve(previewResponse("retry-success"));
+    });
+
+    const { result } = renderHook(
+      () =>
+        useSandboxPreviewRenderer({
+          design: { ...mockDesign, backgroundStyle: "aurora_glow" },
+          mascot: mockMascot,
+          question: mockQuestion,
+          timeline: mockTimeline,
+          aspectRatio: "16:9",
+        }),
+      { wrapper },
+    );
+
+    await vi.waitFor(() => expect(result.current.previewError).toBe("Preview unavailable"));
+    expect(result.current.loading).toBe(false);
+
+    failPreview = false;
+    await act(async () => {
+      await result.current.renderPreview();
+    });
+    await vi.waitFor(() => expect(result.current.pendingPreviewHtml).toContain("retry-success"));
+    expect(result.current.previewError).toBeNull();
+    expect(previewSpy).toHaveBeenLastCalledWith(expect.objectContaining({ background_style: "aurora_glow" }));
+  });
+
+  it("P8C-ASY-01 ignores an older response after a rapid background change", async () => {
+    const first = deferred<ReturnType<typeof previewResponse>>();
+    const second = deferred<ReturnType<typeof previewResponse>>();
+    const previewSpy = vi
+      .spyOn(api, "previewSandboxComposition")
+      .mockImplementation((input) => (input.background_style === "aurora_glow" ? second.promise : first.promise));
+
+    const { result, rerender } = renderHook(
+      ({ backgroundStyle }: { backgroundStyle: SandboxDesignState["backgroundStyle"] }) =>
+        useSandboxPreviewRenderer({
+          design: { ...mockDesign, backgroundStyle },
+          mascot: mockMascot,
+          question: mockQuestion,
+          timeline: mockTimeline,
+          aspectRatio: "16:9",
+        }),
+      { initialProps: { backgroundStyle: "candy_rays" }, wrapper },
+    );
+
+    await vi.waitFor(() => expect(previewSpy).toHaveBeenCalledWith(expect.objectContaining({ background_style: "candy_rays" })));
+    rerender({ backgroundStyle: "aurora_glow" });
+    await vi.waitFor(() => expect(previewSpy).toHaveBeenCalledWith(expect.objectContaining({ background_style: "aurora_glow" })));
+
+    second.resolve(previewResponse("latest-aurora"));
+    await vi.waitFor(() => expect(result.current.pendingPreviewHtml).toContain("latest-aurora"));
+    first.resolve(previewResponse("stale-candy"));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(result.current.pendingPreviewHtml).toContain("latest-aurora");
+    expect(result.current.pendingPreviewHtml).not.toContain("stale-candy");
+  });
 });
+
+function previewResponse(marker: string) {
+  return {
+    html: `<section>${marker}</section>`,
+    css: "",
+    contrast_report: { ok: true, ratio: 5, message: "OK" },
+  };
+}
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
+  });
+  return { promise, resolve, reject };
+}

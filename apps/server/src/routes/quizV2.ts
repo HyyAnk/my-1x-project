@@ -1,6 +1,6 @@
 import type { FastifyPluginCallback } from "fastify";
 import { readFile } from "node:fs/promises";
-import { RemixQuestionsInputSchema, SandboxPreviewInputSchema } from "@studio/shared";
+import { RemixQuestionsInputSchema, SandboxPreviewInputBaseSchema, sandboxPreviewLayoutIssues } from "@studio/shared";
 import type { AntigravityClient } from "../antigravity.js";
 import type { CodexAppServerClient } from "../codex.js";
 import { buildSandboxComposition } from "../quiz/render/sandboxComposition.js";
@@ -147,8 +147,16 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
       const task = tasks.submit("GENERATE_VIDEO", params.channelId, params.episodeId);
       return reply.code(202).send({ task });
     });
-    server.post("/api/quiz/preview-composition", async (request) => {
-      const input = SandboxPreviewInputSchema.parse(request.body ?? {});
+    server.post("/api/quiz/preview-composition", async (request, reply) => {
+      const input = SandboxPreviewInputBaseSchema.parse(request.body ?? {});
+      const layoutIssues = sandboxPreviewLayoutIssues(input);
+      if (layoutIssues.length) {
+        return reply.code(400).send({
+          error: layoutIssues[0].message,
+          code: "QUIZ_LAYOUT_INCOMPATIBLE",
+          issues: layoutIssues,
+        });
+      }
       const mascot = input.mascot_id ? await repository.getMascot(input.mascot_id).catch(() => null) : null;
       return buildSandboxComposition(input, mascot);
     });

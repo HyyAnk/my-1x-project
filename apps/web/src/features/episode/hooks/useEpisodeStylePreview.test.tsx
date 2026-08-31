@@ -80,6 +80,8 @@ describe("useEpisodeStylePreview", () => {
             factText: "Sao Thổ có hệ vành đai nổi bật.",
             totalQuestions: 8,
             layoutId: "visual_choices_three",
+            questionFormat: "multiple_choice",
+            archetype: "visual_multiple_choice",
             layoutSource: "director",
           },
         }),
@@ -90,6 +92,8 @@ describe("useEpisodeStylePreview", () => {
     expect(previewSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         layout_id: "visual_choices_three",
+        question_format: "multiple_choice",
+        archetype: "visual_multiple_choice",
         question_number: 2,
         question_text: "Đâu là Sao Thổ?",
         choices: ["Ảnh A", "Ảnh B", "Ảnh C"],
@@ -142,6 +146,8 @@ function buildPreviewQuestion(id: string, number: number, text: string): Episode
     factText: "Fact",
     totalQuestions: 2,
     layoutId: "visual_choices_three",
+    questionFormat: "multiple_choice",
+    archetype: "visual_multiple_choice",
     layoutSource: "director",
   };
 }

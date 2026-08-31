@@ -1,5 +1,5 @@
 import {
-  resolveQuizLayoutId,
+  resolveQuizLayout,
   type DirectorArchetype,
   type DirectorPlan,
   type Episode,
@@ -22,6 +22,7 @@ export function buildEpisodePreviewQuestions(
         0,
         question.choices.findIndex((choice) => choice.id === question.correct_choice_id),
       );
+      const archetype = beat?.archetype ?? inferQuestionArchetype(question.format);
       return {
         id: question.id,
         number: question.number,
@@ -30,11 +31,9 @@ export function buildEpisodePreviewQuestions(
         correctChoiceIndex,
         factText: question.fun_fact || question.explanation,
         totalQuestions: quiz.questions.length,
-        layoutId: resolveQuizLayoutId({
-          requestedLayout: beat?.layout_id ?? "auto",
-          archetype: beat?.archetype ?? inferQuestionArchetype(question.format),
-          questionFormat: question.format,
-        }),
+        layoutId: resolvePreviewLayout(beat?.layout_id ?? "auto", archetype, question.format, question.choices.length),
+        questionFormat: question.format,
+        archetype,
         layoutSource: beat ? "director" : "inferred",
       };
     });
@@ -50,11 +49,8 @@ export function buildEpisodePreviewQuestions(
 export function buildTopicTemplatePreviewQuestion(episode: Episode): EpisodePreviewQuestion {
   const quizFormat = normalizeQuizQuestionFormat(episode.quiz_config?.quiz_format);
   const archetype = inferQuestionArchetype(quizFormat);
-  const layoutId = resolveQuizLayoutId({
-    requestedLayout: "auto",
-    archetype,
-    questionFormat: quizFormat,
-  });
+  const choiceCount = quizFormat === "true_false" ? 2 : 3;
+  const layoutId = resolvePreviewLayout("auto", archetype, quizFormat, choiceCount);
   const totalQuestions = episode.quiz_config?.question_count ?? 8;
 
   const topicTitle = episode.topic?.title?.trim();
@@ -86,8 +82,22 @@ export function buildTopicTemplatePreviewQuestion(episode: Episode): EpisodePrev
     factText: topicHook || topicPremise || "Previewing visual style before generating script.",
     totalQuestions,
     layoutId,
+    questionFormat: quizFormat,
+    archetype,
     layoutSource: "topic_template",
   };
+}
+
+function resolvePreviewLayout(
+  requestedLayout: DirectorPlan["beats"][number]["layout_id"],
+  archetype: DirectorArchetype,
+  questionFormat: QuizQuestionFormat,
+  choiceCount: number,
+) {
+  const resolution = resolveQuizLayout({ requestedLayout, archetype, questionFormat, choiceCount });
+  if (resolution.ok) return resolution.layoutId;
+  if (requestedLayout !== "auto") return requestedLayout;
+  throw new Error(resolution.issues.map((issue) => issue.message).join(" "));
 }
 
 export function normalizeQuizQuestionFormat(format?: string): QuizQuestionFormat {

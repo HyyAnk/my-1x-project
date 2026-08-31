@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AssetConsistencyGroupSchema, QuizV2Schema, type MascotProfile } from "@studio/shared";
+import { AssetConsistencyGroupSchema, QuizV2Schema, resolveQuizLayout, type MascotProfile } from "@studio/shared";
 import { compileQuizAssetPrompt } from "../src/quiz/assets/promptCompiler.js";
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
@@ -16,7 +16,6 @@ import {
   candyArcadePalettes,
   candyArcadeTemplate,
   quizTimerState,
-  resolveLayout,
   resolvePalette,
   textLayout,
   timelineProgress,
@@ -107,7 +106,7 @@ describe("Candy Arcade visual template", () => {
       quiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade" },
       audioPath: "./narration.wav",
       narrationDurationSeconds: timeline.duration_seconds,
     });
@@ -143,7 +142,7 @@ describe("Candy Arcade visual template", () => {
         quiz: invalidQuiz,
         director,
         timeline,
-        theme: "candy_arcade",
+        styleContext: { theme: "candy_arcade" },
         audioPath: "./narration.wav",
         narrationDurationSeconds: timeline.duration_seconds,
       }),
@@ -151,9 +150,9 @@ describe("Candy Arcade visual template", () => {
   });
 
   it("selects semantic layouts and deterministic readable text tiers", () => {
-    expect(resolveLayout("auto", "illustrated_multiple_choice", "multiple_choice")).toBe("media_left_choices_right");
-    expect(resolveLayout("auto", "illustrated_multiple_choice", "image_guess")).toBe("media_left_choices_right");
-    expect(resolveLayout("auto", "visual_multiple_choice", "odd_one_out")).toBe("visual_choices_three");
+    expect(resolvedLayout("illustrated_multiple_choice", "multiple_choice")).toBe("media_left_choices_right");
+    expect(resolvedLayout("illustrated_multiple_choice", "image_guess")).toBe("media_left_choices_right");
+    expect(resolvedLayout("visual_multiple_choice", "odd_one_out")).toBe("visual_choices_three");
     expect(textLayout("Which ocean is the largest on Earth?", "question").fits).toBe(true);
     expect(textLayout("x".repeat(190), "question").fits).toBe(false);
 
@@ -257,7 +256,7 @@ describe("Candy Arcade visual template", () => {
       quiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade" },
       audioPath: "./narration.wav",
       narrationDurationSeconds: timeline.duration_seconds,
     });
@@ -324,7 +323,7 @@ describe("Candy Arcade visual template", () => {
       quiz: maximumQuiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade" },
       audioPath: "./narration.wav",
       narrationDurationSeconds: timeline.duration_seconds,
     });
@@ -361,7 +360,7 @@ describe("Candy Arcade visual template", () => {
       quiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade" },
       audioPath: "./narration.wav",
       narrationDurationSeconds: timeline.duration_seconds,
     });
@@ -402,7 +401,7 @@ describe("Candy Arcade visual template", () => {
       quiz: vietnameseQuiz,
       director,
       timeline: viTimeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade" },
       audioPath: "./narration.wav",
       narrationDurationSeconds: viTimeline.duration_seconds,
     });
@@ -424,7 +423,7 @@ describe("Candy Arcade visual template", () => {
         quiz,
         director,
         timeline,
-        theme: "candy_arcade",
+        styleContext: { theme: "candy_arcade" },
         audioPath: "./narration.wav",
         narrationDurationSeconds: timeline.duration_seconds,
         mascot: dummyMascot,
@@ -452,7 +451,7 @@ describe("Candy Arcade visual template", () => {
       quiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade" },
       audioPath: "./narration.wav",
       narrationDurationSeconds: timeline.duration_seconds,
       mascot: dummyMascot,
@@ -523,7 +522,7 @@ describe("Candy Arcade visual template", () => {
       quiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade" },
       audioPath: "./voice.wav",
       narrationDurationSeconds: timeline.duration_seconds,
     });
@@ -538,6 +537,20 @@ describe("Candy Arcade visual template", () => {
     expect(sources).toContain("thinking-bar-flame-fuse");
   });
 });
+
+function resolvedLayout(
+  archetype: Parameters<typeof resolveQuizLayout>[0]["archetype"],
+  questionFormat: Parameters<typeof resolveQuizLayout>[0]["questionFormat"],
+) {
+  const result = resolveQuizLayout({
+    requestedLayout: "auto",
+    archetype,
+    questionFormat,
+    choiceCount: questionFormat === "true_false" ? 2 : 3,
+  });
+  if (!result.ok) throw new Error("Expected a compatible layout");
+  return result.layoutId;
+}
 
 function contrastRatio(foreground: string, background: string): number {
   const luminance = (hex: string): number => {

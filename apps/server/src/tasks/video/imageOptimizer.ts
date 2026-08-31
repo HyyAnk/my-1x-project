@@ -1,6 +1,16 @@
 import { copyFile, stat } from "node:fs/promises";
 import path from "node:path";
+import {
+  getQuizPreviewLayoutCapability,
+  QUIZ_DEFAULT_ASSET_METRICS,
+  QUIZ_DEFAULT_CHOICE_ASSET_METRICS,
+  type QuizAssetPlan,
+  type QuizLayoutAssetMetrics,
+  type QuizPreviewLayoutId,
+} from "@studio/shared";
 import sharp from "sharp";
+
+type QuizAssetPurpose = QuizAssetPlan["assets"][number]["purpose"];
 
 export interface OptimizeRenderImageOptions {
   sourcePath: string;
@@ -8,8 +18,8 @@ export interface OptimizeRenderImageOptions {
   maxWidth?: number;
   maxHeight?: number;
   quality?: number;
-  purpose?: string;
-  layout?: string;
+  purpose?: QuizAssetPurpose | "choice_thumbnail" | "hero";
+  layout?: QuizPreviewLayoutId;
 }
 
 export interface OptimizeRenderImageResult {
@@ -25,18 +35,23 @@ export interface OptimizeRenderImageResult {
  * Calculates optimal target dimensions based on asset purpose and visual layout,
  * applying a 1.25x - 1.5x sharpness multiplier for crisp high-DPI rendering.
  */
-export function getOptimalAssetDimensions(purpose?: string, layout?: string): { maxWidth: number; maxHeight: number } {
-  if (purpose === "choice_thumbnail" || layout === "visual_choices_three") {
-    return { maxWidth: 640, maxHeight: 480 };
+export function getOptimalAssetDimensions(
+  purpose?: OptimizeRenderImageOptions["purpose"],
+  layout?: QuizPreviewLayoutId,
+): QuizLayoutAssetMetrics {
+  if (purpose === "choice_thumbnail" || purpose === "answer_option") return QUIZ_DEFAULT_CHOICE_ASSET_METRICS;
+  if (!layout) return QUIZ_DEFAULT_ASSET_METRICS;
+
+  const capability = getQuizPreviewLayoutCapability(layout);
+  const choiceAsset = capability.metrics.assets.choice;
+  if (choiceAsset && capability.media.supported.includes("choice")) {
+    return choiceAsset;
   }
-  if (layout === "media_left_choices_right") {
-    return { maxWidth: 1080, maxHeight: 810 };
+  const questionAsset = capability.metrics.assets.question;
+  if (questionAsset) {
+    return questionAsset;
   }
-  if (layout === "baseline") {
-    return { maxWidth: 1080, maxHeight: 608 };
-  }
-  // Default hero illustration (16:9 or 9:16 canvas display area)
-  return { maxWidth: 1280, maxHeight: 720 };
+  return QUIZ_DEFAULT_ASSET_METRICS;
 }
 
 /**

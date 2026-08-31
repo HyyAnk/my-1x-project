@@ -268,6 +268,22 @@ export const ANSWER_CARD_STYLE_DESCRIPTIONS: Record<Exclude<QuizAnswerCardStyle,
   minimal_soft: "Ultra-clean modern card with subtle shadows, rounded pill badge & soft elegance.",
 };
 
+export const QuizBackgroundStyleSchema = z.enum(["auto", "candy_rays", "aurora_glow"]);
+
+export type QuizBackgroundStyle = z.infer<typeof QuizBackgroundStyleSchema>;
+
+export const ALL_BACKGROUND_STYLES: QuizBackgroundStyle[] = ["candy_rays", "aurora_glow"];
+
+export const BACKGROUND_STYLE_LABELS: Record<Exclude<QuizBackgroundStyle, "auto">, string> = {
+  candy_rays: "Candy Rays",
+  aurora_glow: "Aurora Glow",
+};
+
+export const BACKGROUND_STYLE_DESCRIPTIONS: Record<Exclude<QuizBackgroundStyle, "auto">, string> = {
+  candy_rays: "Vibrant rotating candy rays with sprinkles, floating shapes, and sparkle stars.",
+  aurora_glow: "Soft undulating aurora glow with luminous ambient orbs and gentle stardust.",
+};
+
 export const QuizQuestionFormatSchema = z.enum(["multiple_choice", "image_guess", "true_false", "odd_one_out"]);
 
 export type QuizQuestionFormat = z.infer<typeof QuizQuestionFormatSchema>;
@@ -322,7 +338,13 @@ export const QUIZ_PALETTE_COLORS: Record<Exclude<QuizPaletteId, "auto">, { prima
   blue: { primary: "#438CE8", secondary: "#2A55C8", accent: "#FFCE45" },
 };
 
-export const QuizLayoutIdSchema = z.enum(["auto", "media_left_choices_right", "visual_choices_three"]);
+export const QuizLayoutIdSchema = z.enum([
+  "auto",
+  "media_left_choices_right",
+  "visual_choices_three",
+  "media_top_choices_bottom",
+  "full_stack_list",
+]);
 
 export type QuizLayoutId = z.infer<typeof QuizLayoutIdSchema>;
 

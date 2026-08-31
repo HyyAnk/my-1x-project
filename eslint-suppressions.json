@@ -153,11 +153,6 @@
       "count": 1
     }
   },
-  "apps/server/src/quiz/render/sandboxComposition.ts": {
-    "complexity": {
-      "count": 1
-    }
-  },
   "apps/server/src/quiz/timeline/validateTimeline.ts": {
     "@typescript-eslint/no-base-to-string": {
       "count": 1
@@ -217,12 +212,6 @@
     }
   },
   "apps/server/src/repository/topics.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-assignment": {
-      "count": 1
-    },
     "complexity": {
       "count": 1
     }

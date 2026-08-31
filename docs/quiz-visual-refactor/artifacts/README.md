@@ -14,14 +14,15 @@ Phase 1 owns the first artifact manifest if it creates committed fixtures or sna
 
 ## Expected evidence by phase
 
-| Phase | Preferred durable evidence                                                                 |
-| ----- | ------------------------------------------------------------------------------------------ |
-| 1     | Characterization tests and small deterministic fixtures                                    |
-| 2     | Capability/resolution contract tests and structured incompatibility fixtures               |
-| 3     | Cross-surface normalized-model or semantic-part fixtures                                   |
-| 4     | Focused text/visual skin fragments and reviewed visual diffs                               |
-| 5     | Ownership/precedence tests, token fixtures, CSS deduplication measurements                 |
-| 6     | Responsive layout screenshots or render references plus UI workflow results                |
-| 7     | Deterministic background fixtures, reduced-motion references, and performance measurements |
+| Phase | Preferred durable evidence                                                                      |
+| ----- | ----------------------------------------------------------------------------------------------- |
+| 1     | Characterization tests and small deterministic fixtures                                         |
+| 2     | Capability/resolution contract tests and structured incompatibility fixtures                    |
+| 3     | Cross-surface normalized-model or semantic-part fixtures                                        |
+| 4     | Focused text/visual skin fragments and reviewed visual diffs                                    |
+| 5     | Ownership/precedence tests, token fixtures, CSS deduplication measurements                      |
+| 6     | Responsive layout screenshots or render references plus UI workflow results                     |
+| 7     | Deterministic background fixtures, reduced-motion references, and performance measurements      |
+| 8     | Boundary tests, running-browser E2E, and the inspected 16-case production/Sandbox render matrix |
 
 Store only evidence that is deterministic and useful in review. Handoffs may reference local generated output without committing large binaries.

@@ -1,91 +1,65 @@
-import { textLayout } from "../../../candyArcade.js";
-import { esc, escAttr } from "../../../../render/candyArcade/candyArcadeSvg.js";
-import type { AnswerCardRenderInput, AnswerCardVariant } from "../types.js";
+import type { AnswerCardSkin } from "../types.js";
 
-export const comicChunkyVariant: AnswerCardVariant = {
+export const comicChunkyVariant: AnswerCardSkin = {
   id: "comic_chunky",
   displayName: "Comic Pop Art",
   description: "Retro comic book style with thick ink borders, shadow offsets & pop-art fonts.",
-  renderHtml(input: AnswerCardRenderInput): string {
-    const { choices, correctIndex, phase } = input;
-    const isReveal = phase === "reveal" || phase === "explain";
-
-    const cards = choices
-      .map((choiceText, idx) => {
-        const isCorrect = idx === correctIndex;
-        let stateClass = "answer-normal";
-        let statusIcon = "";
-        if (isReveal) {
-          stateClass = isCorrect ? "answer-correct" : "answer-incorrect";
-          statusIcon = isCorrect
-            ? '<div class="comic-status-burst answer-check" aria-hidden="true" style="opacity:1;"><span>POW!</span><i>✓</i></div>'
-            : '<div class="comic-status-burst answer-cross" aria-hidden="true" style="opacity:1;"><span>NOPE</span><i>✕</i></div>';
-        }
-        const choiceLayout = textLayout(choiceText, "choice", {
-          hasMascot: input.hasMascot,
-          layoutId: input.layoutId,
-        });
-        const letter = String.fromCharCode(65 + idx);
-        return (
-          `<div class="answer-card ac-comic-chunky comic-card-${idx} ${stateClass} choice-tier-${choiceLayout.tier}" style="--item-phase:0s" data-layout-allow-occlusion data-layout-allow-overflow>` +
-          `<div class="comic-halftone-overlay" aria-hidden="true"></div>` +
-          `<div class="comic-speed-hatch" aria-hidden="true"></div>` +
-          `<span class="comic-corner-sparkle" aria-hidden="true">✦</span>` +
-          `<b data-layout-allow-occlusion data-text="${letter}">${letter}<i class="comic-badge-glare" aria-hidden="true"></i></b>` +
-          `<span class="comic-choice-text" data-layout-allow-occlusion data-text="${escAttr(choiceText)}">${esc(choiceText)}</span>` +
-          statusIcon +
-          `</div>`
-        );
-      })
-      .join("");
-
-    return cards;
-  },
+  className: "ac-comic-chunky",
+  cardClassName: ({ order }) => `comic-card-${order}`,
+  renderDecorations: ({ state }) => ({
+    beforeLabelHtml:
+      '<div class="comic-halftone-overlay" aria-hidden="true"></div><div class="comic-speed-hatch" aria-hidden="true"></div><span class="comic-corner-sparkle" aria-hidden="true">✦</span>',
+    labelSuffixHtml: '<i class="comic-badge-glare" aria-hidden="true"></i>',
+    statusHtml:
+      state === "correct"
+        ? '<div class="comic-status-burst answer-check" aria-hidden="true" style="opacity:1;"><span>POW!</span><i>✓</i></div>'
+        : state === "incorrect"
+          ? '<div class="comic-status-burst answer-cross" aria-hidden="true" style="opacity:1;"><span>NOPE</span><i>✕</i></div>'
+          : "",
+  }),
   renderCss(): string {
     return `
-/* Comic Pop Art Answer Cards */
+/* === Answer Card: Comic Pop Art (ADR-003) === */
 .ac-comic-chunky {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  overflow: visible;
-  border: 7px solid #111827 !important;
-  border-radius: 28px !important;
-  box-shadow: 10px 12px 0 #111827, inset 0 3px 0 rgba(255,255,255,0.95), 0 16px 28px rgba(17,24,39,0.25) !important;
+  border: 7px solid #111827;
+  border-radius: 28px;
+  box-shadow: 10px 12px 0 #111827, inset 0 3px 0 rgba(255,255,255,0.95), 0 16px 28px rgba(17,24,39,0.25);
   transition: transform 0.2s cubic-bezier(0.18, 1.42, 0.34, 1);
   contain: layout style;
 }
 
-/* Suppress default arcade dashed line */
-.ac-comic-chunky::before {
-  display: none !important;
-}
-
 /* Dynamic Comic Tilt & Themes per card */
 .ac-comic-chunky.comic-card-0,
+.skin-comic_chunky:nth-child(1) .ac-comic-chunky,
+.choice-card:nth-child(1).ac-comic-chunky,
 .ac-comic-chunky:nth-child(1) {
   --comic-base-rot: -1.2deg;
   transform: rotate(var(--comic-base-rot)) translate3d(0,0,0);
-  background: var(--comic-card-bg-0, linear-gradient(135deg, #FFFFEE 0%, #FFF8D6 100%)) !important;
+  background: var(--comic-card-bg-0, linear-gradient(135deg, #FFFFEE 0%, #FFF8D6 100%));
 }
 .ac-comic-chunky.comic-card-1,
+.skin-comic_chunky:nth-child(2) .ac-comic-chunky,
+.choice-card:nth-child(2).ac-comic-chunky,
 .ac-comic-chunky:nth-child(2) {
   --comic-base-rot: 1.4deg;
   transform: rotate(var(--comic-base-rot)) translate3d(0,0,0);
-  background: var(--comic-card-bg-1, linear-gradient(135deg, #FFF5F8 0%, #FFE3EC 100%)) !important;
+  background: var(--comic-card-bg-1, linear-gradient(135deg, #FFF5F8 0%, #FFE3EC 100%));
 }
 .ac-comic-chunky.comic-card-2,
+.skin-comic_chunky:nth-child(3) .ac-comic-chunky,
+.choice-card:nth-child(3).ac-comic-chunky,
 .ac-comic-chunky:nth-child(3) {
   --comic-base-rot: -0.9deg;
   transform: rotate(var(--comic-base-rot)) translate3d(0,0,0);
-  background: var(--comic-card-bg-2, linear-gradient(135deg, #F0FBFF 0%, #DCF3FC 100%)) !important;
+  background: var(--comic-card-bg-2, linear-gradient(135deg, #F0FBFF 0%, #DCF3FC 100%));
 }
 .ac-comic-chunky.comic-card-3,
+.skin-comic_chunky:nth-child(4) .ac-comic-chunky,
+.choice-card:nth-child(4).ac-comic-chunky,
 .ac-comic-chunky:nth-child(4) {
   --comic-base-rot: 1deg;
   transform: rotate(var(--comic-base-rot)) translate3d(0,0,0);
-  background: var(--comic-card-bg-3, linear-gradient(135deg, #F4FFF7 0%, #E2FBEA 100%)) !important;
+  background: var(--comic-card-bg-3, linear-gradient(135deg, #F4FFF7 0%, #E2FBEA 100%));
 }
 
 /* Authentic Ben-Day Halftone Pattern */
@@ -141,16 +115,12 @@ export const comicChunkyVariant: AnswerCardVariant = {
 }
 
 /* Pop Art Letter Badge (A, B, C) */
-.ac-comic-chunky > b {
-  position: relative;
-  z-index: 4;
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  border: 6px solid #111827 !important;
-  border-radius: 22px !important;
-  color: #FFFFFF !important;
-  box-shadow: 6px 8px 0 #111827, inset 0 3px 0 rgba(255,255,255,0.9) !important;
+.ac-comic-chunky > b,
+.ac-comic-chunky .choice-label {
+  border: 6px solid #111827;
+  border-radius: 22px;
+  color: #FFFFFF;
+  box-shadow: 6px 8px 0 #111827, inset 0 3px 0 rgba(255,255,255,0.9);
   font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", sans-serif;
   font-weight: 900;
   line-height: 1;
@@ -162,28 +132,44 @@ export const comicChunkyVariant: AnswerCardVariant = {
 }
 
 .ac-comic-chunky.comic-card-0 > b,
-.ac-comic-chunky:nth-child(1) > b {
-  background: var(--comic-badge-0, linear-gradient(180deg, #FFE600 0%, #FF9500 100%)) !important;
+.ac-comic-chunky.comic-card-0 .choice-label,
+.choice-card:nth-child(1) .ac-comic-chunky > b,
+.choice-card:nth-child(1) .ac-comic-chunky .choice-label,
+.ac-comic-chunky:nth-child(1) > b,
+.ac-comic-chunky:nth-child(1) .choice-label {
+  background: var(--comic-badge-0, linear-gradient(180deg, #FFE600 0%, #FF9500 100%));
   transform: rotate(-6deg);
 }
 .ac-comic-chunky.comic-card-1 > b,
-.ac-comic-chunky:nth-child(2) > b {
-  background: var(--comic-badge-1, linear-gradient(180deg, #FF5E97 0%, #E60049 100%)) !important;
+.ac-comic-chunky.comic-card-1 .choice-label,
+.choice-card:nth-child(2) .ac-comic-chunky > b,
+.choice-card:nth-child(2) .ac-comic-chunky .choice-label,
+.ac-comic-chunky:nth-child(2) > b,
+.ac-comic-chunky:nth-child(2) .choice-label {
+  background: var(--comic-badge-1, linear-gradient(180deg, #FF5E97 0%, #E60049 100%));
   transform: rotate(5deg);
 }
 .ac-comic-chunky.comic-card-2 > b,
-.ac-comic-chunky:nth-child(3) > b {
-  background: var(--comic-badge-2, linear-gradient(180deg, #00D2FF 0%, #0066FF 100%)) !important;
+.ac-comic-chunky.comic-card-2 .choice-label,
+.choice-card:nth-child(3) .ac-comic-chunky > b,
+.choice-card:nth-child(3) .ac-comic-chunky .choice-label,
+.ac-comic-chunky:nth-child(3) > b,
+.ac-comic-chunky:nth-child(3) .choice-label {
+  background: var(--comic-badge-2, linear-gradient(180deg, #00D2FF 0%, #0066FF 100%));
   transform: rotate(-4deg);
 }
 .ac-comic-chunky.comic-card-3 > b,
-.ac-comic-chunky:nth-child(4) > b {
-  background: var(--comic-badge-3, linear-gradient(180deg, #38EF7D 0%, #11998E 100%)) !important;
+.ac-comic-chunky.comic-card-3 .choice-label,
+.choice-card:nth-child(4) .ac-comic-chunky > b,
+.choice-card:nth-child(4) .ac-comic-chunky .choice-label,
+.ac-comic-chunky:nth-child(4) > b,
+.ac-comic-chunky:nth-child(4) .choice-label {
+  background: var(--comic-badge-3, linear-gradient(180deg, #38EF7D 0%, #11998E 100%));
   transform: rotate(6deg);
 }
 
 /* Gloss Glare on Badge */
-.ac-comic-chunky > b .comic-badge-glare {
+.ac-comic-chunky .comic-badge-glare {
   position: absolute;
   top: 3px;
   left: 6px;
@@ -194,18 +180,16 @@ export const comicChunkyVariant: AnswerCardVariant = {
   pointer-events: none;
   z-index: 5;
 }
-.ac-comic-chunky > b::after {
-  display: none !important;
-}
 
 /* Comic Choice Text */
 .ac-comic-chunky span.comic-choice-text,
-.ac-comic-chunky span {
+.ac-comic-chunky span,
+.ac-comic-chunky .choice-text {
   position: relative;
   z-index: 4;
   font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif;
   font-weight: 900;
-  color: #111827 !important;
+  color: #111827;
   text-shadow: 0 1.5px 0 rgba(255,255,255,0.9), 0 0 1px rgba(255,255,255,0.5);
   letter-spacing: -0.2px;
 }
@@ -232,7 +216,7 @@ export const comicChunkyVariant: AnswerCardVariant = {
 .ac-comic-chunky .comic-status-burst span {
   font-size: 20px;
   line-height: 1;
-  color: #FFFFFF !important;
+  color: #FFFFFF;
   -webkit-text-stroke: 2px #111827;
   paint-order: stroke fill;
   text-shadow: 0 2px 0 #111827;
@@ -255,25 +239,34 @@ export const comicChunkyVariant: AnswerCardVariant = {
 }
 
 /* Reveal State: Correct Answer */
-.ac-comic-chunky.answer-correct {
-  background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%) !important;
-  border-color: #0F5132 !important;
-  box-shadow: 12px 14px 0 #0F5132, 0 0 26px rgba(0, 230, 118, 0.45), inset 0 3px 0 rgba(255,255,255,1) !important;
-  animation: comic-pop-win 0.64s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s) + 0.14s) forwards !important;
+.ac-comic-chunky.answer-correct,
+.choice-card.answer-correct .ac-comic-chunky,
+.visual-answer-card.answer-correct .ac-comic-chunky {
+  background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%);
+  border-color: #0F5132;
+  box-shadow: 12px 14px 0 #0F5132, 0 0 26px rgba(0, 230, 118, 0.45), inset 0 3px 0 rgba(255,255,255,1);
+  animation: comic-pop-win 0.64s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s) + 0.14s) forwards;
   z-index: 6;
 }
-.ac-comic-chunky.answer-correct > b {
-  background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%) !important;
-  border-color: #0F5132 !important;
-  box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95) !important;
-  animation: comic-badge-bounce 0.64s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s) + 0.14s) forwards !important;
+.ac-comic-chunky.answer-correct > b,
+.ac-comic-chunky.answer-correct .choice-label,
+.choice-card.answer-correct .ac-comic-chunky > b,
+.choice-card.answer-correct .ac-comic-chunky .choice-label,
+.visual-answer-card.answer-correct .ac-comic-chunky > b,
+.visual-answer-card.answer-correct .ac-comic-chunky .choice-label {
+  background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%);
+  border-color: #0F5132;
+  box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95);
+  animation: comic-badge-bounce 0.64s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s) + 0.14s) forwards;
 }
 
 /* Reveal State: Incorrect Answer */
-.ac-comic-chunky.answer-incorrect {
+.ac-comic-chunky.answer-incorrect,
+.choice-card.answer-incorrect .ac-comic-chunky,
+.visual-answer-card.answer-incorrect .ac-comic-chunky {
   opacity: 0.65;
   filter: grayscale(40%);
-  animation: comic-dud-settle 0.45s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) forwards !important;
+  animation: comic-dud-settle 0.45s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) forwards;
 }
 
 /* Comic Keyframe Animations */

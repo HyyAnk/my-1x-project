@@ -118,7 +118,7 @@ describe("Batch E portrait and mascot migration", () => {
       quiz,
       director,
       timeline,
-      theme: "candy_arcade",
+      styleContext: { theme: "candy_arcade" },
       audioPath: "./narration.wav",
       narrationDurationSeconds: timeline.duration_seconds,
       aspectRatio: "9:16",

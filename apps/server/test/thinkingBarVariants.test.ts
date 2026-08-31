@@ -163,7 +163,7 @@ describe("Thinking Bar Element Suite", () => {
         quiz: sampleQuiz,
         director,
         timeline,
-        theme: "candy_arcade",
+        styleContext: { theme: "candy_arcade" },
         audioPath: "./narration.wav",
         narrationDurationSeconds: timeline.duration_seconds,
       });

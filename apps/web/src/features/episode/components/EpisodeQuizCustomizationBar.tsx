@@ -4,6 +4,7 @@ import type {
   DirectorPlan,
   Episode,
   QuizAnswerCardStyle,
+  QuizBackgroundStyle,
   QuizImageStyle,
   QuizPaletteId,
   QuizQuestionBoxStyle,
@@ -25,11 +26,12 @@ import { ArtStyleDropdown } from "./customization/ArtStyleDropdown";
 import { QuestionBoxDropdown } from "./customization/QuestionBoxDropdown";
 import { AnswerCardDropdown } from "./customization/AnswerCardDropdown";
 import { CounterBadgeDropdown } from "./customization/CounterBadgeDropdown";
+import { BackgroundDropdown } from "./customization/BackgroundDropdown";
 import { ThinkingBarDropdown } from "./customization/ThinkingBarDropdown";
 import { PaletteDropdown } from "./customization/PaletteDropdown";
 
 export type EpisodeCustomizationDropdownName =
-  "preset" | "questions" | "visualStyle" | "questionBox" | "answerCard" | "counterBadge" | "thinkingBar" | "palette" | null;
+  "preset" | "questions" | "visualStyle" | "questionBox" | "answerCard" | "counterBadge" | "background" | "thinkingBar" | "palette" | null;
 
 type Props = {
   channel: Channel;
@@ -46,6 +48,7 @@ type Props = {
   onSaveQuestionBoxStyle: (style: QuizQuestionBoxStyle) => void;
   onSaveAnswerCardStyle: (style: QuizAnswerCardStyle) => void;
   onSaveCounterStyle: (style: QuizQuestionCounterStyle) => void;
+  onSaveBackgroundStyle: (style: QuizBackgroundStyle) => void;
   onSavePaletteId: (palette: QuizPaletteId) => void;
   onApplyStylePreset: (preset: VisualPresetItem) => void;
   setEpisode?: (episode: Episode | null) => void;
@@ -67,6 +70,7 @@ export function EpisodeQuizCustomizationBar({
   onSaveQuestionBoxStyle,
   onSaveAnswerCardStyle,
   onSaveCounterStyle,
+  onSaveBackgroundStyle,
   onSavePaletteId,
   onApplyStylePreset,
   setEpisode,
@@ -223,6 +227,19 @@ export function EpisodeQuizCustomizationBar({
               onToggle={() => toggleDropdown("counterBadge")}
               onSelectStyle={(style) => {
                 onSaveCounterStyle(style);
+                setOpenDropdown(null);
+              }}
+              onPreview={setCandidate}
+            />
+            <BackgroundDropdown
+              channel={channel}
+              episode={episode}
+              disabled={isPipelineRunning}
+              saving={isSaving("background-style")}
+              isOpen={openDropdown === "background"}
+              onToggle={() => toggleDropdown("background")}
+              onSelectStyle={(style) => {
+                onSaveBackgroundStyle(style);
                 setOpenDropdown(null);
               }}
               onPreview={setCandidate}

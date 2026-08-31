@@ -1,6 +1,6 @@
 # Quiz Visual Refactor Dossier
 
-Status: Phase 1 complete; Phase 2 ready for execution
+Status: Core 7-phase refactor and Phase 8 stabilization COMPLETE; four-choice project DEFERRED
 
 This dossier carries durable context for the quiz visual-layout and style refactor across separate Codex tasks. It is a navigation and decision layer; current source code and executable tests remain authoritative.
 
@@ -11,6 +11,8 @@ A user running the phases sequentially should start with:
 1. `operator-runbook.md`
 2. `roadmap-status.md`
 3. The prompt for the current `READY` phase in `prompts/`
+
+The current roadmap has no `READY` phase. For the accepted final state, read `handoffs/phase-08d-2026-08-31.md`; the separate four-choice project remains `DEFERRED`.
 
 A fresh implementation task must read these files in order:
 
@@ -64,17 +66,21 @@ The active prompt lists the exact subset and dependency gate. Do not begin a lat
     │   ├── phase-06-interaction-plan.md
     │   ├── phase-07-background-registry.md
     │   ├── phase-07-test-matrix.md
-    │   └── phase-07-interaction-plan.md
+    │   ├── phase-07-interaction-plan.md
+    │   ├── phase-08-end-to-end-stabilization.md
+    │   └── phase-08-test-matrix.md
     ├── prompts/
     │   ├── README.md
-    │   └── phase-01-codex-prompt.md ... phase-07-codex-prompt.md
+    │   ├── phase-01-codex-prompt.md ... phase-07-codex-prompt.md
+    │   └── phase-08b-codex-prompt.md ... phase-08d-codex-prompt.md
     ├── handoffs/
     │   ├── README.md
-    │   └── phase-01-handoff-template.md ... phase-07-handoff-template.md
+    │   ├── phase-01-handoff-template.md ... phase-07-handoff-template.md
+    │   └── phase-08a-2026-08-31.md ... phase-08d-2026-08-31.md
     └── artifacts/
         └── README.md
 
-Phase 2–7 briefs are dependency-locked planning snapshots. Each fresh task must reconcile its brief with the latest preceding handoff and current code. It may adapt implementation details and update stale documentation, but it may not bypass the phase outcome, acceptance matrix, ADRs, or dependency gate.
+Phase 2–8 briefs are dependency-locked planning snapshots. Each fresh task must reconcile its brief with the latest preceding handoff and current code. It may adapt implementation details and update stale documentation, but it may not bypass the phase outcome, acceptance matrix, ADRs, or dependency gate.
 
 ## Source-of-truth order
 

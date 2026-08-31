@@ -1,14 +1,25 @@
-import type { QuizAnswerCardStyle, QuizPreviewLayoutId } from "@studio/shared";
-import type { ElementRenderContext, VisualElementVariant } from "../types.js";
+import type { QuizAnswerCardStyle, QuizChoicePresentation } from "@studio/shared";
 
-export type AnswerCardRenderInput = ElementRenderContext & {
-  choices: string[];
-  correctIndex: number;
-  phase: "question" | "choices" | "thinking" | "reveal" | "explain";
-  layoutId?: QuizPreviewLayoutId;
-  paletteAccent?: string;
-  assets?: Record<string, string>;
-  hasMascot?: boolean;
+export type AnswerCardSemanticState = "pending" | "correct" | "incorrect";
+
+export type AnswerCardSkinHookInput = {
+  order: number;
+  presentation: QuizChoicePresentation;
+  state: AnswerCardSemanticState;
 };
 
-export type AnswerCardVariant = VisualElementVariant<Exclude<QuizAnswerCardStyle, "auto">, AnswerCardRenderInput>;
+export type AnswerCardSkinDecorations = {
+  beforeLabelHtml?: string;
+  labelSuffixHtml?: string;
+  statusHtml?: string;
+};
+
+export type AnswerCardSkin = {
+  id: Exclude<QuizAnswerCardStyle, "auto">;
+  displayName: string;
+  description: string;
+  className: string;
+  cardClassName?: (input: AnswerCardSkinHookInput) => string;
+  renderDecorations?: (input: AnswerCardSkinHookInput) => AnswerCardSkinDecorations;
+  renderCss: () => string;
+};

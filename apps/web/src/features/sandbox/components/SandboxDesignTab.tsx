@@ -1,13 +1,16 @@
 import {
   ALL_ANSWER_CARD_STYLES,
+  ALL_BACKGROUND_STYLES,
   ALL_QUESTION_BOX_STYLES,
   ALL_QUESTION_COUNTER_STYLES,
   ALL_THINKING_BAR_STYLES,
   ANSWER_CARD_STYLE_LABELS,
+  BACKGROUND_STYLE_LABELS,
   QUESTION_BOX_STYLE_LABELS,
   QUESTION_COUNTER_STYLE_LABELS,
   THINKING_BAR_STYLE_LABELS,
   type QuizAnswerCardStyle,
+  type QuizBackgroundStyle,
   type QuizQuestionBoxStyle,
   type QuizQuestionCounterStyle,
   type QuizPreviewLayoutId,
@@ -31,6 +34,8 @@ export interface SandboxDesignTabProps {
   setAnswerCardStyle: (style: QuizAnswerCardStyle) => void;
   counterStyle: QuizQuestionCounterStyle;
   setCounterStyle: (style: QuizQuestionCounterStyle) => void;
+  backgroundStyle: QuizBackgroundStyle;
+  setBackgroundStyle: (style: QuizBackgroundStyle) => void;
 }
 
 export function SandboxDesignTab({
@@ -46,6 +51,8 @@ export function SandboxDesignTab({
   setAnswerCardStyle,
   counterStyle,
   setCounterStyle,
+  backgroundStyle,
+  setBackgroundStyle,
 }: SandboxDesignTabProps) {
   const { t } = useTranslation();
 
@@ -67,6 +74,11 @@ export function SandboxDesignTab({
   const counterOptions = ALL_QUESTION_COUNTER_STYLES.filter((s) => s !== "auto").map((s) => ({
     id: s,
     label: QUESTION_COUNTER_STYLE_LABELS[s] || s,
+  }));
+
+  const backgroundOptions = ALL_BACKGROUND_STYLES.filter((s) => s !== "auto").map((s) => ({
+    id: s,
+    label: BACKGROUND_STYLE_LABELS[s] || s,
   }));
 
   return (
@@ -125,6 +137,18 @@ export function SandboxDesignTab({
         options={counterOptions}
         selectedValue={counterStyle}
         onSelect={setCounterStyle}
+      />
+
+      <div style={{ height: "1px", background: "var(--line)" }} />
+
+      {/* 7. Background Variant Selector */}
+      <SandboxStyleOptionSection
+        sectionTitle={t("visualSandbox.backgroundSection")}
+        activeLabel={BACKGROUND_STYLE_LABELS[backgroundStyle as Exclude<QuizBackgroundStyle, "auto">]}
+        columns={2}
+        options={backgroundOptions}
+        selectedValue={backgroundStyle}
+        onSelect={setBackgroundStyle}
       />
     </>
   );

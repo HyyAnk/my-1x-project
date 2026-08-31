@@ -23,7 +23,7 @@ export function useSandboxViewportState() {
     const containerWidth = containerRef.current.clientWidth - 32;
     const containerHeight = containerRef.current.clientHeight - 32;
     const calculatedScale = Math.min(containerWidth / targetWidth, containerHeight / targetHeight, 1);
-    setScaleFactor(Math.max(0.2, calculatedScale));
+    setScaleFactor(Math.max(0.1, calculatedScale));
   }, [aspectRatio, zoom]);
 
   useEffect(() => {

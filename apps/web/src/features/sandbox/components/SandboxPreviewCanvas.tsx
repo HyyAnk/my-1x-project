@@ -68,6 +68,7 @@ export function SandboxPreviewCanvas({
 }: SandboxPreviewCanvasProps) {
   return (
     <div
+      className="sandbox-preview-canvas"
       style={{
         display: "flex",
         flexDirection: "column",

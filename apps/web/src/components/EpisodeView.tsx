@@ -139,6 +139,7 @@ export function EpisodeDetail({
             onSaveQuestionBoxStyle={pipeline.saveQuestionBoxStyle}
             onSaveAnswerCardStyle={pipeline.saveAnswerCardStyle}
             onSaveCounterStyle={pipeline.saveCounterStyle}
+            onSaveBackgroundStyle={pipeline.saveBackgroundStyle}
             onSavePaletteId={pipeline.savePaletteId}
             onApplyStylePreset={pipeline.applyStylePreset}
             setEpisode={state.setEpisode}

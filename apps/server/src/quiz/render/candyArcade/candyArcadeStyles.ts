@@ -1,29 +1,41 @@
-import { getAnswerCardsCss, getCounterBadgesCss, getQuestionBoxesCss, getThinkingBarsCss } from "../../visual/elements/index.js";
-import { MASCOT_CANVAS_SIZES, type MascotRenderAspectRatio } from "@studio/shared";
+import {
+  getAnswerCardSkinsCss,
+  getSelectedBackgroundStylesCss,
+  getCounterBadgesCss,
+  getQuestionBoxesCss,
+  getThinkingBarsCss,
+  semanticBackgroundLayerCss,
+} from "../../visual/elements/index.js";
+import {
+  getQuizPreviewLayoutCapability,
+  MASCOT_CANVAS_SIZES,
+  type MascotRenderAspectRatio,
+  type QuizBackgroundStyle,
+  type QuizPreviewLayoutId,
+} from "@studio/shared";
 import { candyArcadeFontFaceCss, type CandyArcadeFontMode } from "./candyArcadeFonts.js";
 import { channelBrandMarkCss } from "./channelBrandMarkStyles.js";
 import { productionMascotCss } from "./productionMascotStyles.js";
-import { QUIZ_LAYOUT_DIMENSIONS, quizLayoutCss } from "../layouts/registry.js";
+import { quizLayoutCss } from "../layouts/registry.js";
+import { baseChoiceStyles, choiceTypographyStyles, choiceStateStyles } from "../choices/index.js";
 
-export const CANDY_ARCADE_LAYOUT_DIMENSIONS = QUIZ_LAYOUT_DIMENSIONS;
-
-export function candyArcadeHeroAreaRatio(
-  layout: keyof typeof CANDY_ARCADE_LAYOUT_DIMENSIONS,
-  aspectRatio: MascotRenderAspectRatio = "16:9",
-): number {
+export function candyArcadeHeroAreaRatio(layout: QuizPreviewLayoutId, aspectRatio: MascotRenderAspectRatio = "16:9"): number {
   const canvas = MASCOT_CANVAS_SIZES[aspectRatio];
   const frameArea = canvas.width * canvas.height;
-  if (layout === "visual_choices_three") {
-    const dimensions = CANDY_ARCADE_LAYOUT_DIMENSIONS.visual_choices_three;
-    return Number(((dimensions.width * dimensions.height * dimensions.count) / frameArea).toFixed(4));
-  }
-  const dimensions = CANDY_ARCADE_LAYOUT_DIMENSIONS[layout];
-  return Number(((dimensions.width * dimensions.height) / frameArea).toFixed(4));
+  const metrics = getQuizPreviewLayoutCapability(layout).metrics.render;
+  return Number(((metrics.width * metrics.height * metrics.itemCount) / frameArea).toFixed(4));
 }
 
-export function candyArcadeCss(options: { fontMode?: CandyArcadeFontMode; aspectRatio?: MascotRenderAspectRatio } = {}): string {
+export function candyArcadeCss(
+  options: {
+    fontMode?: CandyArcadeFontMode;
+    aspectRatio?: MascotRenderAspectRatio;
+    backgroundStyles?: Iterable<QuizBackgroundStyle | null | undefined>;
+  } = {},
+): string {
   const aspectRatio = options.aspectRatio ?? "16:9";
   const canvas = MASCOT_CANVAS_SIZES[aspectRatio];
+  const baselineRenderMetrics = getQuizPreviewLayoutCapability("baseline").metrics.render;
   return `
 ${candyArcadeFontFaceCss(options.fontMode ?? "render")}
 :root {
@@ -37,16 +49,6 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 #stage { position: relative; width: ${canvas.width}px; height: ${canvas.height}px; overflow: hidden; transform: translate3d(0,0,0); backface-visibility: hidden; }
 .clip { position: absolute; inset: 0; }
 .candy-scene { --depth-edge: rgba(13,35,71,.16); --depth-shadow: rgba(13,35,71,.22); isolation: isolate; overflow: hidden; padding: 33px 80px 16px; background: var(--bg-primary); color: var(--ink); contain: layout paint; }
-.bg-gradient { position: absolute; z-index: 0; inset: 0; background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary)); transform: translate3d(0,0,0); }
-.bg-gradient::after { position: absolute; z-index: 0; top: 3%; left: 9%; width: 460px; height: 250px; border-radius: 50%; background: rgba(255,255,255,.16); content: ""; transform: rotate(-15deg); }
-.bg-rays { position: absolute; z-index: 1; inset: -30%; opacity: .065; background: repeating-conic-gradient(from 8deg, rgba(255,255,255,.9) 0 7deg, transparent 7deg 18deg); animation: ray-spin 150s linear var(--clip-start) infinite both; will-change: transform; transform: translate3d(0,0,0); }
-.bg-pattern { position: absolute; z-index: 1; opacity: .085; pointer-events: none; }
-.pattern-circles { inset: 0; background-image: repeating-linear-gradient(45deg, transparent 0 23px, rgba(255,255,255,.9) 24px 27px, transparent 28px 52px); background-size: 82px 82px; animation: drift var(--scene-duration) linear var(--clip-start) 1 both; will-change: transform; }
-.pattern-sprinkles { right: -110px; bottom: -135px; width: 620px; height: 620px; border: 35px dotted rgba(255,255,255,.7); border-radius: 50%; transform: rotate(-14deg); }
-.bg-shape { position: absolute; z-index: 1; border-radius: 48% 52% 43% 57%; background: rgba(255,255,255,.11); animation: ambient-drift var(--scene-duration) ease-in-out var(--clip-start) 1 alternate both; will-change: transform; }
-.shape-a { top: 17%; right: 7%; width: 310px; height: 190px; transform: rotate(-15deg); }
-.shape-b { bottom: 10%; left: -4%; width: 360px; height: 250px; border-radius: 63% 37% 54% 46%; animation-delay: -7s; }
-.shape-c { right: 24%; bottom: -8%; width: 290px; height: 210px; opacity: .7; animation-delay: -12s; }
 .game-header { position: absolute; z-index: 6; top: 0; left: 40px; contain: layout style; }
 .hanging-wood-sign { position: relative; z-index: 6; display: flex; flex-direction: column; align-items: center; width: 250px; transform-origin: 50% 0; animation: hanging-sign-enter .64s cubic-bezier(.18,1.42,.34,1) var(--clip-start) both, hanging-sign-sway 4.8s ease-in-out calc(var(--clip-start) + .64s) infinite alternate both; will-change: transform; }
 .hanging-ropes { position: relative; display: flex; justify-content: space-between; width: 170px; height: 44px; pointer-events: none; }
@@ -76,31 +78,17 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .image-card { position: relative; z-index: 3; display: block; margin: 0; overflow: hidden; border: 12px solid #fff; border-radius: 42px; background: #fff; box-shadow: 0 20px 0 rgba(13,35,71,.2), 0 29px 44px rgba(13,35,71,.18); contain: layout paint; transform: translate3d(0,0,0); will-change: transform; backface-visibility: hidden; }
 .image-card img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .image-shine { position: absolute; z-index: 4; inset: 0; background: linear-gradient(125deg, rgba(255,255,255,.35), transparent 31%); pointer-events: none; }
-.game-stage > .hero-image { width: ${CANDY_ARCADE_LAYOUT_DIMENSIONS.baseline.width}px; height: ${CANDY_ARCADE_LAYOUT_DIMENSIONS.baseline.height}px; margin-top: 39px; }
+.game-stage > .hero-image { width: ${baselineRenderMetrics.width}px; height: ${baselineRenderMetrics.height}px; margin-top: 39px; }
 .hero-image img { transform-origin: center; animation: hero-ken-burn var(--scene-duration) ease-in-out var(--clip-start) 1 alternate both; will-change: transform; }
 .phase-region { position: absolute; z-index: 5; left: 50%; bottom: 10px; width: 100%; height: 110px; transform: translate3d(-50%,0,0); contain: layout style; pointer-events: none; }
 .phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: -15px; left: 50%; margin-top: 0; transform: translate3d(-50%,0,0); width: min(82vw, 1540px); min-height: 84px; }
 .phase-region > .fact-card { position: absolute; z-index: 5; bottom: -45px; left: 50%; margin-top: 0; transform: translate3d(-50%,0,0); width: min(1220px, 100%); }
-.answer-card:nth-child(1), .visual-answer-card:nth-child(1) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #9A3412; --choice-depth-shadow: #E09000; --choice-badge-grad: linear-gradient(180deg, #FFB800 0%, #FF6D00 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #FFDF40 0%, #FFB800 100%); --choice-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='32' viewBox='0 0 64 32'%3E%3Cpath d='M0 16 Q 16 6 32 16 T 64 16' fill='none' stroke='%23FFFFFF' stroke-opacity='0.12' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); --choice-text-color: #78350F; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
-.answer-card:nth-child(2), .visual-answer-card:nth-child(2) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #881337; --choice-depth-shadow: #CC2556; --choice-badge-grad: linear-gradient(180deg, #FF4572 0%, #D80036 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #FF80A6 0%, #FF4D7E 100%); --choice-pattern: repeating-linear-gradient(-45deg, transparent, transparent 16px, rgba(255,255,255,0.09) 16px, rgba(255,255,255,0.09) 32px); --choice-text-color: #831843; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
-.answer-card:nth-child(3), .visual-answer-card:nth-child(3) { --choice-stroke: #FFFFFF; --choice-stroke-shadow: #034E7B; --choice-depth-shadow: #007ECC; --choice-badge-grad: linear-gradient(180deg, #2E93FF 0%, #0062E6 100%); --choice-badge-border: #FFFFFF; --choice-bg-tint: linear-gradient(180deg, #66D1FF 0%, #29B2FF 100%); --choice-pattern: radial-gradient(circle, rgba(255,255,255,0.12) 28%, transparent 29%); --choice-text-color: #0C4A6E; --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75); }
-.answer-grid { position: relative; z-index: 3; display: grid; gap: 28px; width: 1540px; margin-top: 28px; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--choices-at)) both; contain: layout style; }
-.answer-count-2 { grid-template-columns: repeat(2, 1fr); }
-.answer-count-3 { grid-template-columns: repeat(3, 1fr); }
-.answer-card { position: relative; z-index: 3; display: flex; align-items: center; min-height: 122px; gap: 20px; margin-left: 76px; padding: 14px 36px 14px 40px; overflow: visible; border: 8px solid var(--choice-stroke); border-radius: 9999px; background: var(--choice-pattern), var(--choice-bg-tint); background-size: 64px 32px, 100% 100%; box-shadow: 0 16px 0 var(--choice-depth-shadow), inset 0 4px 0 rgba(255,255,255,.7), 0 18px 32px rgba(10,25,60,.28); font-size: 44px; font-weight: 900; contain: layout style; will-change: transform; transform: translate3d(0,0,0); backface-visibility: hidden; }
-.answer-card::before { content: ""; position: absolute; inset: 6px 14px 6px 24px; border: 3px dashed rgba(255, 255, 255, 0.7); border-radius: 9999px; pointer-events: none; z-index: 3; }
-.answer-card > b, .visual-answer-label > b { position: relative; z-index: 4; display: grid; flex: 0 0 auto; place-items: center; width: 156px; height: 156px; margin-left: -86px; border: 8px solid var(--choice-badge-border); border-radius: 50%; background: var(--choice-badge-grad); color: #FFFFFF !important; box-shadow: 0 12px 0 var(--choice-stroke-shadow), 0 14px 28px rgba(10,25,60,.35), -4px 6px 14px rgba(0,0,0,0.18), inset 0 -6px 0 rgba(0,0,0,0.22), inset 0 4px 0 rgba(255,255,255,0.85); font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 80px; font-weight: 900; line-height: 1; -webkit-text-stroke: 4px var(--choice-stroke-shadow); paint-order: stroke fill; text-shadow: 0 4px 0 var(--choice-stroke-shadow), 0 2px 6px rgba(0,0,0,.35); letter-spacing: -0.5px; contain: layout style; will-change: transform; transform: translate3d(0,0,0); }
-.answer-card > b::after, .visual-answer-label > b::after { position: absolute; top: 4px; left: 12px; right: 12px; height: 44%; border-radius: 50% 50% 35% 35%; background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.3) 65%, rgba(255,255,255,0) 100%); content: ""; pointer-events: none; z-index: 5; }
-.answer-card span { position: relative; z-index: 4; flex: 1 1 auto; min-width: 0; padding-right: 48px; line-height: 1.15; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--choice-text-color, #1e293b) !important; text-shadow: var(--choice-text-shadow); }
-.answer-card img { position: relative; z-index: 4; width: 68px; height: 68px; border-radius: 20px; object-fit: cover; animation: answer-float var(--scene-duration) ease-in-out calc(var(--clip-start) + var(--item-phase)) 1 alternate both; will-change: transform; }
-.choice-tier-medium span { font-size: 38px; }
-.choice-tier-long span { font-size: 32px; }
-.choice-tier-very_long span, .choice-tier-overflow span { font-size: 26px; }
-.answer-card.answer-correct { animation: correct-card-reveal .62s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--reveal-at) + .14s) forwards; will-change: transform; }
-.answer-card.answer-correct > b { animation: correct-badge-reveal .62s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--reveal-at) + .14s) forwards; will-change: transform; }
-.answer-card.answer-incorrect { animation: incorrect-card-settle .38s ease-out calc(var(--clip-start) + var(--reveal-at)) forwards; will-change: transform; }
-.answer-check, .answer-cross { position: absolute; z-index: 6; top: 14px; right: 20px; display: grid; place-items: center; width: 54px; height: 54px; border: 4px solid #FFFFFF; border-radius: 50%; background: var(--correct); color: #FFFFFF; box-shadow: 0 6px 0 rgba(13,35,71,.22), 0 4px 12px rgba(0,0,0,0.18); font-size: 34px; font-weight: 900; font-style: normal; opacity: 0; animation: status-pop .38s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--reveal-at) + .16s) both; will-change: transform, opacity; }
-.answer-cross { background: var(--incorrect); }
+
+/* === Choice Components & State Styles (ADR-003) === */
+${baseChoiceStyles()}
+${choiceTypographyStyles()}
+${choiceStateStyles()}
+
 .thinking-bar { position: relative; z-index: 5; isolation: isolate; display: flex; align-items: center; justify-content: center; width: min(82vw, 1540px); min-height: 84px; margin: 0 auto; padding: 6px 0; border: 0; border-radius: 9999px; background: transparent; box-shadow: none; opacity: 0; animation: phase-hold var(--timer-duration) steps(1,end) var(--clip-start) both, timer-exit-fade .28s cubic-bezier(.22,.8,.3,1) calc(var(--clip-start) + var(--timer-duration) - .28s) both; contain: layout style; will-change: transform, opacity; transform: translate3d(0,0,0); }
 .thinking-track { position: relative; z-index: 0; width: 100%; height: 58px; overflow: visible; border: 6px solid rgba(255,255,255,.98); border-radius: 9999px; background: rgba(18,38,80,.62); box-shadow: inset 0 3px 6px rgba(255,255,255,.35), inset 0 -4px 8px rgba(0,0,0,.22), 0 8px 22px rgba(13,35,71,.35), 0 0 20px rgba(255,255,255,.25); }
 .timer-milestones { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
@@ -128,18 +116,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .fact-card { position: relative; z-index: 5; max-width: 1220px; margin-top: 14px; padding: 24px 48px; border: 6px solid rgba(255,255,255,.85); border-radius: 38px; background: var(--surface); box-shadow: 0 16px 0 rgba(13,35,71,.18), 0 22px 36px rgba(10,25,60,.14); text-align: center; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--reward-at)) both; contain: layout style; will-change: transform, opacity; transform: translate3d(0,0,0); backface-visibility: hidden; }
 .fact-card span { color: var(--surface-accent); font-size: 24px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; }
 .fact-card p { margin: 0; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 38px; font-weight: 900; line-height: 1.25; letter-spacing: -0.3px; }
-.visual-answer-grid { position: relative; z-index: 3; display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; width: 1560px; margin-top: 28px; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--choices-at)) both; contain: layout style; }
-.visual-answer-card { position: relative; z-index: 3; contain: layout style; will-change: transform; transform: translate3d(0,0,0); backface-visibility: hidden; }
-.option-image { width: 100%; height: 500px; border-width: 12px; border-radius: 40px; transform-origin: center; animation: visual-choice-float 3.8s ease-in-out calc(var(--clip-start) + var(--item-phase)) infinite alternate both; will-change: transform; }
-.visual-answer-label { position: relative; z-index: 4; display: flex; align-items: center; gap: 16px; min-height: 94px; margin: -36px 18px 0 38px; padding: 12px 26px 12px 18px; overflow: visible; border: 6px solid var(--choice-stroke); border-radius: 9999px; background: var(--choice-pattern), var(--choice-bg-tint); background-size: 64px 32px, 100% 100%; box-shadow: 0 12px 0 var(--choice-depth-shadow), inset 0 3px 0 rgba(255,255,255,.6), 0 10px 22px rgba(10,25,60,.22); font-size: 32px; font-weight: 900; contain: layout style; will-change: transform; transform: translate3d(0,0,0); }
-.visual-answer-label::before { content: ""; position: absolute; inset: 5px 10px 5px 16px; border: 2px dashed rgba(255, 255, 255, 0.75); border-radius: 9999px; pointer-events: none; z-index: 3; }
-.visual-answer-label > b { width: 92px; height: 92px; margin-left: -50px; border-radius: 50%; border: 6px solid var(--choice-badge-border); font-size: 48px; -webkit-text-stroke: 3px var(--choice-stroke-shadow); paint-order: stroke fill; contain: layout style; will-change: transform; transform: translate3d(0,0,0); }
-.visual-answer-label span { font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--choice-text-color, #1e293b) !important; text-shadow: var(--choice-text-shadow); }
-.choice-tier-medium .visual-answer-label span { font-size: 28px; }
-.choice-tier-long .visual-answer-label span, .choice-tier-very_long .visual-answer-label span, .choice-tier-overflow .visual-answer-label span { font-size: 24px; }
-.visual-answer-card.answer-correct { animation: visual-correct-card-reveal .62s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--reveal-at) + .14s) forwards; will-change: transform; }
-.visual-answer-card.answer-correct .visual-answer-label > b { animation: correct-badge-reveal .62s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--reveal-at) + .14s) forwards; will-change: transform; }
-.visual-answer-card.answer-incorrect { animation: incorrect-card-settle .38s ease-out calc(var(--clip-start) + var(--reveal-at)) forwards; will-change: transform; }
+
 .quiz-question-clip .hero-image { animation: hero-enter .62s cubic-bezier(.22,.8,.3,1) var(--clip-start) both, hero-float var(--scene-duration) ease-in-out calc(var(--clip-start) + .62s) 1 alternate both; will-change: transform; }
 .reward-fx { position: absolute; z-index: 7; inset: 0; color: #fff; pointer-events: none; text-shadow: 0 7px 0 rgba(13,35,71,.18); opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--reward-at)) both; }
 .reward-fx i { position: absolute; font-size: 51px; font-style: normal; animation: star-burst .72s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--reward-at)) both; }
@@ -180,16 +157,9 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .intro-dot { position: absolute; z-index: 1; border-radius: 50%; background: #fff; opacity: .47; }.dot-a { top: 126px; left: 250px; width: 158px; height: 158px; }.dot-b { right: 235px; bottom: 149px; width: 128px; height: 128px; }
 .brand-mascot { position: absolute; z-index: var(--candy-layer-mascot); right: 255px; bottom: 95px; display: grid; place-items: center; width: 179px; height: 179px; border: 10px solid #fff; border-radius: 53px; background: #29B9A8; color: #172A59; box-shadow: 0 20px 0 rgba(13,35,71,.2); font-size: 93px; transform: rotate(-8deg); }
 .outro-blob { position: absolute; z-index: 1; border-radius: 50%; background: rgba(255,255,255,.36); }.outro-blob.blob-a { top: 112px; left: 205px; width: 170px; height: 170px; }.outro-blob.blob-b { right: 220px; bottom: 130px; width: 205px; height: 205px; background: rgba(41,185,168,.36); }
-.scene-decor { position: absolute; z-index: 2; inset: 0; pointer-events: none; color: rgba(255,255,255,.62); }
-.scene-decor i { position: absolute; display: block; font-style: normal; animation: decor-drift var(--scene-duration) ease-in-out var(--clip-start) 1 alternate both; }
-.decor-1 { top: 21%; left: 5%; font-size: 34px; color: var(--accent); }.decor-2 { top: 40%; left: 3%; font-size: 26px; }.decor-3 { top: 13%; right: 12%; font-size: 48px; color: var(--accent); }.decor-4 { right: 5%; bottom: 30%; font-size: 42px; color: rgba(255,255,255,.48); }.decor-5 { left: 18%; bottom: 11%; font-size: 31px; color: #FFD34D; }.decor-6 { right: 24%; top: 28%; font-size: 25px; color: #FFD34D; }.decor-7 { left: 30%; top: 8%; font-size: 18px; }
-@keyframes ray-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes drift { to { background-position: 230px 160px; } }
-@keyframes ambient-drift { to { transform: translate(24px,-19px) rotate(8deg); } }
 @keyframes hero-float { 50% { transform: translateY(-8px) rotate(1deg); } }
 @keyframes answer-float { 50% { transform: translateY(-4px) rotate(.25deg); } }
 @keyframes visual-choice-float { 0% { transform: translateY(0px) rotate(-0.8deg) scale(1); } 50% { transform: translateY(-7px) rotate(1deg) scale(1.012); } 100% { transform: translateY(-2px) rotate(-0.5deg) scale(1.004); } }
-@keyframes decor-drift { 50% { transform: translate(4px,-7px) rotate(2deg); } }
 @keyframes question-card-enter { from { opacity: 0; transform: translateY(24px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes question-card-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 @keyframes hanging-sign-enter { 0% { transform: translateY(-70px) rotate(5deg); opacity: 0; } 70% { transform: translateY(5px) rotate(-2deg); } 100% { transform: translateY(0) rotate(0deg); opacity: 1; } }
@@ -243,27 +213,44 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .candy-mascot-container { position: absolute; width: 220px; height: 220px; z-index: var(--candy-layer-mascot); pointer-events: none; transform-origin: bottom center; transform: scale(var(--mascot-scale, 1)); }
 .candy-mascot-container.anchor-bottom_left { bottom: 18px; left: 32px; }
 .candy-mascot-container.anchor-bottom_right { bottom: 18px; right: 32px; }
+
+/* Mascot Occupancy Capacity Tokens (ADR-003) */
 .has-mascot { --mascot-content-width: 1420px; --question-card-width: 1440px; --question-card-left-edge: 360px; }
+.has-mascot {
+  --choice-grid-width: 100%;
+  --choice-card-min-height: 114px;
+  --choice-card-margin-left: 64px;
+  --choice-card-padding: 12px 24px 12px 28px;
+  --choice-card-gap: 14px;
+  --choice-badge-size: 136px;
+  --choice-badge-margin-left: -72px;
+  --choice-badge-font-size: 70px;
+  --choice-font-size-base: 36px;
+  --choice-text-padding-right: 24px;
+  --choice-font-size-medium: 28px;
+  --choice-font-size-long: 23px;
+  --choice-font-size-very_long: 19px;
+  --choice-font-size-overflow: 19px;
+  --choice-label-font-size-base: 26px;
+  --choice-label-font-size-medium: 22px;
+  --choice-label-font-size-long: 19px;
+  --choice-label-font-size-very_long: 17px;
+  --choice-label-font-size-overflow: 17px;
+}
+.has-mascot .answer-count-2 {
+  --choice-font-size-base: 40px;
+  --choice-font-size-medium: 32px;
+  --choice-font-size-long: 26px;
+  --choice-font-size-very_long: 21px;
+  --choice-font-size-overflow: 21px;
+}
+
 .has-mascot .game-header { left: calc(var(--question-card-left-edge) / 2); transform: translateX(-50%); }
 .has-mascot .game-stage { width: var(--mascot-content-width); margin-right: 40px; }
 .has-mascot .question-title { width: var(--question-card-width); max-width: var(--question-card-width); }
 .has-mascot .phase-region { left: 0; width: var(--question-card-width); transform: none; }
 .has-mascot .phase-region > .thinking-bar, .has-mascot .phase-region > .fact-card { width: min(70vw, 1300px); left: 50%; }
-.has-mascot .answer-grid { width: 100%; max-width: var(--mascot-content-width); gap: 20px; }
-.has-mascot .answer-card { min-height: 114px; margin-left: 64px; padding: 12px 24px 12px 28px; gap: 14px; }
-.has-mascot .answer-card > b { width: 136px; height: 136px; margin-left: -72px; font-size: 70px; }
-.has-mascot .answer-card span { font-size: 36px; padding-right: 24px; }
-.has-mascot .choice-tier-medium span, .has-mascot .choice-tier-medium.answer-card span { font-size: 28px; }
-.has-mascot .choice-tier-long span, .has-mascot .choice-tier-long.answer-card span { font-size: 23px; }
-.has-mascot .choice-tier-very_long span, .has-mascot .choice-tier-overflow span, .has-mascot .choice-tier-very_long.answer-card span, .has-mascot .choice-tier-overflow.answer-card span { font-size: 19px; }
-.has-mascot .answer-count-2 .answer-card span { font-size: 40px; }
-.has-mascot .answer-count-2 .choice-tier-medium span, .has-mascot .answer-count-2.choice-tier-medium span { font-size: 32px; }
-.has-mascot .answer-count-2 .choice-tier-long span, .has-mascot .answer-count-2.choice-tier-long span { font-size: 26px; }
-.has-mascot .answer-count-2 .choice-tier-very_long span, .has-mascot .answer-count-2.choice-tier-overflow span { font-size: 21px; }
-.has-mascot .visual-answer-label span { font-size: 26px; }
-.has-mascot .choice-tier-medium .visual-answer-label span { font-size: 22px; }
-.has-mascot .choice-tier-long .visual-answer-label span { font-size: 19px; }
-.has-mascot .choice-tier-very_long .visual-answer-label span, .has-mascot .choice-tier-overflow .visual-answer-label span { font-size: 17px; }
+
 .candy-mascot-container.mascot-intro { bottom: 40px; }
 .candy-mascot-container.mascot-outro { bottom: 40px; }
 .candy-mascot-container.mascot-intro.anchor-bottom_right, .candy-mascot-container.mascot-outro.anchor-bottom_right { right: 80px; }
@@ -296,7 +283,7 @@ ${
 #stage[data-aspect-ratio="9:16"] .candy-scene { padding: 32px 36px 24px; }
 #stage[data-aspect-ratio="9:16"] .game-header { top: 0; left: 24px; transform: none; }
 #stage[data-aspect-ratio="9:16"] .game-stage,
-#stage[data-aspect-ratio="9:16"] .has-mascot .game-stage { width: calc(100% - 72px); min-height: 0; margin: 184px auto 0; }
+#stage[data-aspect-ratio="9:16"] .has-mascot .game-stage { width: calc(100% - 72px); min-height: 0; margin: 184px auto 0; padding-bottom: 160px; box-sizing: border-box; }
 #stage[data-aspect-ratio="9:16"] .has-mascot { --mascot-content-width: calc(100% - 20px); --question-card-width: 100%; --question-card-left-edge: 0px; }
 #stage[data-aspect-ratio="9:16"] .has-mascot .game-header { left: 24px; transform: none; }
 #stage[data-aspect-ratio="9:16"] .question-title { width: 100%; max-width: 100%; height: auto; min-height: 208px; margin: 0; }
@@ -326,7 +313,14 @@ ${channelBrandMarkCss()}
 ${getThinkingBarsCss()}
 ${getQuestionBoxesCss()}
 ${getCounterBadgesCss()}
-${getAnswerCardsCss()}
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; } }
+${getAnswerCardSkinsCss()}
+${semanticBackgroundLayerCss()}
+${getSelectedBackgroundStylesCss(options.backgroundStyles ?? ["candy_rays", "aurora_glow"])}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
+  .candy-mascot-container.mascot-v2-container .mascot-v2-state {
+    animation-duration: var(--mascot-state-span, .04s) !important;
+  }
+}
 `;
 }
