@@ -4,6 +4,17 @@ test.beforeEach(async ({ page }) => {
   await page.route("**/api/tasks", (route) =>
     route.fulfill({ contentType: "application/json", body: JSON.stringify({ tasks: [], codex_status: "connected" }) }),
   );
+  await page.route("**/api/storage", (route) =>
+    route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        path: "D:/Studio",
+        default_path: "D:/Studio",
+        channel_path: "D:/Studio/channels",
+        configured: true,
+      }),
+    }),
+  );
   await page.addInitScript(() => {
     window.localStorage.setItem("studio-simplify-mode", "false");
     class MockWebSocket extends EventTarget {
