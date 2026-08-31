@@ -32,7 +32,17 @@ export class WebSocketTransport {
       });
       socket.on("message", (data) => {
         try {
-          this.handlers.onMessage(JSON.parse(data.toString()) as RpcMessage);
+          const payload =
+            typeof data === "string"
+              ? data
+              : Buffer.isBuffer(data)
+                ? data.toString("utf8")
+                : Array.isArray(data)
+                  ? Buffer.concat(data).toString("utf8")
+                  : data instanceof ArrayBuffer
+                    ? Buffer.from(data).toString("utf8")
+                    : String(data);
+          this.handlers.onMessage(JSON.parse(payload) as RpcMessage);
         } catch {
           this.logger.warn("Codex WebSocket emitted invalid JSON", { step: "codex_stream" });
         }

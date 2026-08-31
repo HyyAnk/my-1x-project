@@ -3,7 +3,6 @@ import type { Channel, Episode, QuizImageStyle, Task, TopicCandidate } from "@st
 import { api } from "../../../api";
 import { isTaskActive, isTaskTerminal, latestTask } from "../../../lib/utils";
 import type { Notice } from "../../../components/types";
-import { useTranslation } from "../../../i18n";
 import { useChannelDna } from "./useChannelDna";
 import { useChannelMascotAndStyle } from "./useChannelMascotAndStyle";
 
@@ -28,7 +27,6 @@ export function useChannelDetail({
   onTaskSubmitted,
   simplifyMode = true,
 }: UseChannelDetailProps) {
-  const { t } = useTranslation();
   const [topics, setTopics] = useState<TopicCandidate[]>([]);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [busy, setBusy] = useState<string | null>(null);

@@ -1,4 +1,4 @@
-import { MASCOT_ACTION_META, type MascotActionType } from "../enums.js";
+import { type MascotActionType } from "../enums.js";
 import type { ChannelMascotConfig, MascotSpriteAction } from "../schemas.js";
 import {
   DEFAULT_MASCOT_PHASE_RULES,

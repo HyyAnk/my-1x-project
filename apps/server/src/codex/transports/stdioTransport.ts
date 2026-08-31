@@ -60,7 +60,7 @@ export class StdioTransport {
           this.handlers.onExit(code);
         });
       } catch (error) {
-        reject(error);
+        reject(error instanceof Error ? error : new Error(String(error)));
       }
     });
   }

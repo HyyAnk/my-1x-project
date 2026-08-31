@@ -42,6 +42,75 @@ export class AntigravityNativeImageProvider implements ImageProvider {
     return result as { asset_path: string; fallback_tier: 1; degraded: false };
   }
 
+  private async pollForGeneratedImage(
+    client: AntigravityClient,
+    threadId: string,
+    turnId: string,
+    imageName: string,
+    turnStartTime: number,
+    cancellationSignal?: AbortSignal,
+  ): Promise<{ imageBytes: Uint8Array | null; rateLimitError: RepositoryError | null }> {
+    const pollDeadline = Date.now() + 45_000;
+
+    while (Date.now() < pollDeadline) {
+      if (cancellationSignal?.aborted) {
+        void client.interruptTurn(threadId, turnId);
+        throw new Error("Image generation aborted");
+      }
+
+      const convId = client.getConversationId ? client.getConversationId(threadId) : null;
+      const imageBytes = await findGeneratedImage(imageName, turnStartTime, convId, this.logger);
+      if (imageBytes && imageBytes.length > 0) {
+        return { imageBytes, rateLimitError: null };
+      }
+
+      if (convId) {
+        const detectedRateLimit = await findTranscriptError(convId);
+        if (detectedRateLimit) {
+          return {
+            imageBytes: null,
+            rateLimitError: new RepositoryError(
+              `Antigravity image generation hit rate limit: ${detectedRateLimit}`,
+              "RATE_LIMIT_EXCEEDED",
+            ),
+          };
+        }
+      }
+
+      await new Promise((r) => setTimeout(r, process.env.NODE_ENV === "test" ? 20 : 1000));
+    }
+
+    return { imageBytes: null, rateLimitError: null };
+  }
+
+  private async saveGeneratedAsset(imageBytes: Uint8Array, imageName: string): Promise<string> {
+    let assetPath: string;
+    if (this.target.assetId && this.target.fingerprint) {
+      assetPath = await this.repository.writeQuizImageAsset(
+        this.target.channelId,
+        this.target.episodeId,
+        this.target.assetId,
+        this.target.fingerprint,
+        imageBytes,
+      );
+    } else {
+      assetPath = await this.repository.writeBundleImage(
+        this.target.channelId,
+        this.target.episodeId,
+        this.target.bundleNumber ?? 1,
+        imageBytes,
+        this.target.variant ?? 0,
+      );
+    }
+
+    const cooldownMs = process.env.NODE_ENV === "test" ? 10 : 8000;
+    this.logger.info(
+      `Image created and verified successfully for ${imageName}, cooling down for ${cooldownMs / 1000}s before next image...`,
+    );
+    await new Promise((r) => setTimeout(r, cooldownMs));
+    return assetPath;
+  }
+
   private async executeGenerationWithRetry(
     prompt: string,
     cancellationSignal?: AbortSignal,
@@ -82,64 +151,21 @@ export class AntigravityNativeImageProvider implements ImageProvider {
         const threadId = await client.startThread();
         const turnId = await client.startTurn(threadId, turnPrompt, "flash");
 
-        // Actively poll for the image file in the Antigravity conversation directory for up to 45 seconds
-        const pollDeadline = Date.now() + 45_000;
-        let imageBytes: Uint8Array | null = null;
-        let detectedRateLimit: string | null = null;
+        const { imageBytes, rateLimitError } = await this.pollForGeneratedImage(
+          client,
+          threadId,
+          turnId,
+          imageName,
+          turnStartTime,
+          cancellationSignal,
+        );
 
-        while (Date.now() < pollDeadline && !imageBytes) {
-          if (cancellationSignal?.aborted) {
-            void client.interruptTurn(threadId, turnId);
-            throw new Error("Image generation aborted");
-          }
-
-          const convId = client.getConversationId ? client.getConversationId(threadId) : null;
-          imageBytes = await findGeneratedImage(imageName, turnStartTime, convId, this.logger);
-          if (imageBytes && imageBytes.length > 0) break;
-
-          // Check if the conversation transcript logged a rate limit or 429 error
-          if (convId) {
-            detectedRateLimit = await findTranscriptError(convId);
-            if (detectedRateLimit) {
-              lastError = new RepositoryError(`Antigravity image generation hit rate limit: ${detectedRateLimit}`, "RATE_LIMIT_EXCEEDED");
-              break;
-            }
-          }
-
-          await new Promise((r) => setTimeout(r, process.env.NODE_ENV === "test" ? 20 : 1000));
-        }
-
-        if (imageBytes && imageBytes.length > 0) {
-          let assetPath: string;
-          if (this.target.assetId && this.target.fingerprint) {
-            assetPath = await this.repository.writeQuizImageAsset(
-              this.target.channelId,
-              this.target.episodeId,
-              this.target.assetId,
-              this.target.fingerprint,
-              imageBytes,
-            );
-          } else {
-            assetPath = await this.repository.writeBundleImage(
-              this.target.channelId,
-              this.target.episodeId,
-              this.target.bundleNumber ?? 1,
-              imageBytes,
-              this.target.variant ?? 0,
-            );
-          }
-
-          // Mandatory cooldown (8s) between successive image generation calls to avoid backend rate limits
-          const cooldownMs = process.env.NODE_ENV === "test" ? 10 : 8000;
-          this.logger.info(
-            `Image created and verified successfully for ${imageName}, cooling down for ${cooldownMs / 1000}s before next image...`,
-          );
-          await new Promise((r) => setTimeout(r, cooldownMs));
-
+        if (rateLimitError) {
+          lastError = rateLimitError;
+        } else if (imageBytes && imageBytes.length > 0) {
+          const assetPath = await this.saveGeneratedAsset(imageBytes, imageName);
           return { asset_path: assetPath, fallback_tier: 1, degraded: false };
-        }
-
-        if (!lastError || !/429|quota|rate limit|resource_exhausted|exhausted/i.test(lastError.message)) {
+        } else if (!lastError || !/429|quota|rate limit|resource_exhausted|exhausted/i.test(lastError.message)) {
           lastError = new RepositoryError(
             `Antigravity native image tool did not produce an image for ${imageName} (attempt ${attempt}/${maxAttempts})`,
             "IMAGE_GENERATION_FAILED",

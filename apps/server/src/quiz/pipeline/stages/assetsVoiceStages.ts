@@ -29,10 +29,9 @@ export async function planAssets(
 export async function resolveAssets(
   input: QuizOrchestratorInput,
 ): Promise<{ asset_resolution: QuizAssetResolution; issues: QuizIssue[]; invalidated: string[] }> {
-  const [asset_plan, channel, episode] = await Promise.all([
+  const [asset_plan, channel] = await Promise.all([
     input.repository.readAssetPlan(input.channelId, input.episodeId),
     input.repository.getChannel(input.channelId),
-    input.repository.getEpisode(input.channelId, input.episodeId),
   ]);
   if (!asset_plan) throw new RepositoryError("Generate the Asset plan before resolving visual assets", "ASSET_PLAN_REQUIRED");
   const visualStyle = channel.selected_styles?.[0];

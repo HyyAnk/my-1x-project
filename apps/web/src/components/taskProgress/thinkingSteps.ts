@@ -52,10 +52,7 @@ export const THINKING_STEPS_BY_STAGE: Record<string, string[]> = {
   ],
 };
 
-export function resolveThinkingCategory(task: Task): string {
-  const msg = (task.progress_message || "").toLowerCase();
-  const type = task.task_type;
-
+function resolveCategoryFromTask(type: Task["task_type"], msg: string): string | null {
   if (type === "GENERATE_RESEARCH" || msg.includes("research")) return "research";
   if (type === "GENERATE_TREATMENT" || msg.includes("treatment")) return "treatment";
   if (type === "GENERATE_SCRIPT" || msg.includes("script") || msg.includes("writing")) return "script";
@@ -66,27 +63,40 @@ export function resolveThinkingCategory(task: Task): string {
     msg.includes("shot") ||
     msg.includes("scene") ||
     msg.includes("sequence")
-  )
+  ) {
     return "scenes";
+  }
   if (
     type === "GENERATE_NARRATION" ||
     type === "GENERATE_AUDIO" ||
     msg.includes("audio") ||
     msg.includes("narration") ||
     msg.includes("voice")
-  )
+  ) {
     return "narration";
+  }
   if (type === "GENERATE_VIDEO" || msg.includes("video") || msg.includes("render")) return "video";
+  return null;
+}
+
+function resolveCategoryFromProgress(p: number): string {
+  if (p < 8) return "research";
+  if (p < 16) return "treatment";
+  if (p < 25) return "script";
+  if (p < 35) return "visualBible";
+  if (p < 55) return "scenes";
+  if (p < 75) return "narration";
+  if (p < 95) return "video";
+  return "general";
+}
+
+export function resolveThinkingCategory(task: Task): string {
+  const msg = (task.progress_message || "").toLowerCase();
+  const matched = resolveCategoryFromTask(task.task_type, msg);
+  if (matched) return matched;
 
   if (typeof task.progress_percent === "number") {
-    const p = task.progress_percent;
-    if (p < 8) return "research";
-    if (p < 16) return "treatment";
-    if (p < 25) return "script";
-    if (p < 35) return "visualBible";
-    if (p < 55) return "scenes";
-    if (p < 75) return "narration";
-    if (p < 95) return "video";
+    return resolveCategoryFromProgress(task.progress_percent);
   }
 
   return "general";

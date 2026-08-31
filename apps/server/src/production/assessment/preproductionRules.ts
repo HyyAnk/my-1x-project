@@ -1,5 +1,5 @@
 import type { Episode } from "@studio/shared";
-import { calibratedScriptTargetWords, scriptWordBounds, SCRIPT_WORD_TOLERANCE } from "../speechChunker.js";
+import { scriptWordBounds, SCRIPT_WORD_TOLERANCE } from "../speechChunker.js";
 import { hasHumorPolicyMarker } from "../narrationExtractor.js";
 import type { AssessmentCollector } from "./assessmentContext.js";
 

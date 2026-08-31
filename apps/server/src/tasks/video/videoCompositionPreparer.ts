@@ -36,7 +36,7 @@ export async function prepareVideoComposition(options: {
   renderAspectRatio: "16:9" | "9:16" | "1:1";
   onProgress: (message: string, percent: number) => Promise<void>;
 }): Promise<VideoCompositionContext> {
-  const { runtime, repository, taskId, channel, episode, scenes, renderAspectRatio, onProgress } = options;
+  const { runtime, repository, channel, episode, scenes, renderAspectRatio, onProgress } = options;
 
   const narration = await repository.getEpisodeAudioFile(
     channel.channel_id,

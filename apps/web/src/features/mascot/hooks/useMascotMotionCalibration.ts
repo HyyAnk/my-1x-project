@@ -42,7 +42,7 @@ export function useMascotMotionCalibration(options: {
 
   const [calibrating, setCalibrating] = useState(false);
 
-  const handleSaveMotion = async (action?: MascotActionType | unknown) => {
+  const handleSaveMotion = async (action?: unknown) => {
     if (!editingMascot) return;
     const targetAction: MascotActionType =
       typeof action === "string" && (ALL_MASCOT_ACTIONS as readonly string[]).includes(action)

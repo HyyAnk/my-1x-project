@@ -44,7 +44,9 @@ export async function findGeneratedImage(
             }
           }
         }
-      } catch {}
+      } catch {
+        // Ignore conversation-specific directory read error
+      }
     }
 
     // 2. Scan top recent conversation directories
@@ -74,7 +76,9 @@ export async function findGeneratedImage(
             try {
               const st = await stat(filePath);
               imageFiles.push({ filename: file, filePath, mtime: st.mtimeMs });
-            } catch {}
+            } catch {
+              // Ignore stat error for individual file
+            }
           }
         }
 
@@ -96,7 +100,9 @@ export async function findGeneratedImage(
           const data = await readFile(recentImage.filePath);
           if (data.length > 100) return new Uint8Array(data);
         }
-      } catch {}
+      } catch {
+        // Ignore errors reading a specific conversation directory
+      }
     }
   } catch (err) {
     logger?.warn(`Failed searching Antigravity brain for generated image: ${err instanceof Error ? err.message : "unknown error"}`);
@@ -139,8 +145,12 @@ export async function findTranscriptError(specificConvId?: string | null): Promi
           const match = text.match(/(?:429|RESOURCE_EXHAUSTED|RATE_LIMIT_EXCEEDED|exhausted your capacity|quota)[^\n\r.]*/i);
           return match ? match[0].trim() : "429 RESOURCE_EXHAUSTED (RATE_LIMIT_EXCEEDED)";
         }
-      } catch {}
+      } catch {
+        // Ignore JSON parse errors for non-JSON log lines
+      }
     }
-  } catch {}
+  } catch {
+    // Ignore transcript access/read errors
+  }
   return null;
 }

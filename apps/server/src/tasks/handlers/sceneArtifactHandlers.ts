@@ -1,4 +1,4 @@
-import type { Channel, Task } from "@studio/shared";
+import type { Channel } from "@studio/shared";
 import type { TaskManagerRuntime, ActiveRun } from "../runtime.js";
 import { extractNarrationSections } from "../../production.js";
 import { optimizeShortScenes, packBeatsIntoScenes } from "../../sceneTiming.js";
