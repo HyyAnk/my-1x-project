@@ -1,0 +1,557 @@
+/* ==========================================================================
+   Episodes Production Card Grid & Toolbar (Style B)
+   ========================================================================== */
+.episode-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0 18px;
+  flex-wrap: wrap;
+}
+
+.episode-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 240px;
+  max-width: 420px;
+}
+
+.episode-search-wrap .search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.episode-search-input {
+  width: 100%;
+  padding: 8px 32px 8px 34px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 12.5px;
+  transition: all 0.18s ease;
+}
+
+.episode-search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--surface-hover);
+  box-shadow: 0 0 0 3px var(--soft-accent);
+}
+
+.episode-search-wrap .search-clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.episode-search-wrap .search-clear-btn:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.episode-filter-chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-chip:hover {
+  background: var(--surface-hover);
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+
+.filter-chip.is-active {
+  background: var(--soft-accent);
+  color: var(--accent-deep);
+  border-color: var(--accent);
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.15);
+}
+
+.episode-empty-search {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+  gap: 12px;
+  color: var(--muted);
+  text-align: center;
+  background: var(--surface);
+  border: 1px dashed var(--line-dark);
+  border-radius: var(--radius-lg);
+  margin-top: 10px;
+}
+
+.episode-empty-search p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.episode-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.episode-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--surface) 0%, color-mix(in srgb, var(--surface) 92%, var(--paper)) 100%);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.episode-card:hover {
+  border-color: rgba(6, 182, 212, 0.45);
+  transform: translateY(-4px);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.45),
+    0 0 18px rgba(6, 182, 212, 0.15);
+}
+
+.episode-card:active {
+  transform: translateY(-1px) scale(0.995);
+}
+
+.episode-card.is-video-ready {
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.episode-card.is-video-ready:hover {
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.45),
+    0 0 18px rgba(16, 185, 129, 0.2);
+}
+
+.episode-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 16px 6px;
+  position: relative;
+  z-index: 2;
+}
+
+.episode-card-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.episode-card-index {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent-deep);
+  background: var(--soft-accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  padding: 2px 7px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.episode-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 140px;
+}
+
+.episode-badge.format-badge {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.episode-badge.style-badge {
+  color: #f472b6;
+  background: rgba(244, 114, 182, 0.08);
+  border-color: rgba(244, 114, 182, 0.25);
+}
+
+.episode-card-delete {
+  flex-shrink: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.16s ease;
+}
+
+.episode-card:hover .episode-card-delete,
+.episode-card:focus-within .episode-card-delete {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.episode-card-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 16px 16px;
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+}
+
+.episode-card-title {
+  margin: 0 0 6px 0;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.18s ease;
+}
+
+.episode-card:hover .episode-card-title {
+  color: var(--accent-deep);
+}
+
+.episode-card-premise {
+  margin: 0 0 12px 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.episode-video-ready-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: var(--green);
+  font-size: 11px;
+}
+
+.video-ready-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.video-ready-left strong {
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.video-ready-icon {
+  color: var(--green);
+  flex-shrink: 0;
+}
+
+.video-ready-time {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 10.5px;
+  background: rgba(16, 185, 129, 0.2);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.episode-card-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.episode-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.episode-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.episode-card-meta .meta-item {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.episode-card-meta .meta-date {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--muted);
+  opacity: 0.75;
+}
+
+.episode-card-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.episode-card-action .action-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--accent-deep);
+  transition: all 0.18s ease;
+}
+
+.episode-card-action .action-icon-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--soft-accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--accent-deep);
+  display: grid;
+  place-items: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.episode-card:hover .episode-card-action .action-icon-circle {
+  background: var(--accent);
+  color: #ffffff;
+  transform: translateX(2px) scale(1.08);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* ==========================================================================
+   Visual Styles Dropdown Menu & Side Preview
+   ========================================================================== */
+.visual-styles-dropdown-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.visual-styles-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.visual-styles-btn.is-active,
+.visual-styles-btn:hover {
+  background: var(--soft-accent);
+  border-color: var(--accent);
+  color: var(--accent-deep);
+}
+
+.visual-styles-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 290px;
+  background: var(--surface);
+  border: 1px solid var(--line-dark);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  backdrop-filter: blur(16px);
+}
+
+.visual-styles-popover-wide {
+  width: 540px;
+  max-width: calc(100vw - 32px);
+  padding: 14px;
+}
+
+.visual-styles-content-grid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.visual-styles-list-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.visual-styles-popover .popover-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.visual-styles-popover .popover-header strong {
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.visual-styles-popover .popover-header small {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.visual-styles-popover .popover-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.style-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.15s ease;
+  font-size: 12px;
+  color: var(--ink);
+  border-left: 3px solid transparent;
+}
+
+.style-checkbox-item:hover,
+.style-checkbox-item.is-hovered {
+  background: var(--surface-hover);
+  border-left-color: var(--accent);
+}
+
+.style-checkbox-item.is-checked {
+  background: var(--soft-accent);
+}
+
+.style-checkbox-item input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.style-preview-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: 10px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.style-preview-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+}
+
+.style-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.style-preview-tag {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  font:
+    700 10px "JetBrains Mono",
+    monospace;
+}
+
+.style-preview-desc {
+  padding: 10px 12px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.style-preview-desc p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 11px;
+  line-height: 1.5;
+  font-weight: 500;
+}

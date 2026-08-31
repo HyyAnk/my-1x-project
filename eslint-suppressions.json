@@ -22,31 +22,10 @@
       "count": 1
     }
   },
-  "apps/server/src/codex.ts": {
-    "@typescript-eslint/no-base-to-string": {
-      "count": 1
-    },
-    "@typescript-eslint/prefer-promise-reject-errors": {
-      "count": 1
-    },
-    "@typescript-eslint/require-await": {
-      "count": 1
-    }
-  },
-  "apps/server/src/context.ts": {
-    "complexity": {
-      "count": 1
-    }
-  },
   "apps/server/src/contextContracts.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 3
     },
-    "complexity": {
-      "count": 1
-    }
-  },
-  "apps/server/src/production.ts": {
     "complexity": {
       "count": 1
     }
@@ -56,24 +35,8 @@
       "count": 1
     }
   },
-  "apps/server/src/providers/antigravityNativeImage.ts": {
-    "complexity": {
-      "count": 1
-    },
-    "no-empty": {
-      "count": 5
-    }
-  },
   "apps/server/src/providers/googleImagen.ts": {
     "complexity": {
-      "count": 1
-    }
-  },
-  "apps/server/src/providers/gpti2Image.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    },
-    "preserve-caught-error": {
       "count": 1
     }
   },
@@ -129,20 +92,6 @@
       "count": 5
     }
   },
-  "apps/server/src/quiz/pipeline/remixQuestions.ts": {
-    "@typescript-eslint/no-base-to-string": {
-      "count": 1
-    },
-    "@typescript-eslint/restrict-template-expressions": {
-      "count": 1
-    },
-    "complexity": {
-      "count": 1
-    },
-    "no-empty": {
-      "count": 2
-    }
-  },
   "apps/server/src/quiz/qa/hyperframesQuality.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 1
@@ -188,11 +137,6 @@
       "count": 2
     }
   },
-  "apps/server/src/repository/quizArtifacts.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 4
-    }
-  },
   "apps/server/src/repository/sceneCodec.ts": {
     "@typescript-eslint/no-base-to-string": {
       "count": 3
@@ -204,11 +148,6 @@
   "apps/server/src/repository/sequenceDrafts.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 2
-    }
-  },
-  "apps/server/src/repository/service.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 4
     }
   },
   "apps/server/src/repository/topics.ts": {
@@ -226,18 +165,7 @@
       "count": 2
     }
   },
-  "apps/server/src/tasks/codexRunner.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 6
-    },
-    "complexity": {
-      "count": 1
-    }
-  },
   "apps/server/src/tasks/imageRunner.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 2
-    },
     "@typescript-eslint/only-throw-error": {
       "count": 1
     }
@@ -250,17 +178,6 @@
       "count": 1
     }
   },
-  "apps/server/src/tasks/pipelineRunner.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 2
-    },
-    "complexity": {
-      "count": 1
-    },
-    "no-useless-assignment": {
-      "count": 4
-    }
-  },
   "apps/server/src/tasks/taskQueuePump.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 1
@@ -271,11 +188,6 @@
   },
   "apps/server/src/tasks/taskStateStore.ts": {
     "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    }
-  },
-  "apps/server/src/tasks/videoRunner.ts": {
-    "complexity": {
       "count": 1
     }
   },
@@ -495,24 +407,8 @@
       "count": 15
     }
   },
-  "apps/web/src/App.tsx": {
-    "@typescript-eslint/no-unused-expressions": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    }
-  },
   "apps/web/src/api/client.ts": {
     "no-useless-assignment": {
-      "count": 1
-    }
-  },
-  "apps/web/src/components/EpisodeView.tsx": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    },
-    "complexity": {
       "count": 1
     }
   },
@@ -521,17 +417,7 @@
       "count": 2
     }
   },
-  "apps/web/src/components/QuizV2Panel.tsx": {
-    "complexity": {
-      "count": 2
-    }
-  },
   "apps/web/src/components/SceneCard.tsx": {
-    "complexity": {
-      "count": 1
-    }
-  },
-  "apps/web/src/components/TaskProgressPanel.tsx": {
     "complexity": {
       "count": 1
     }
@@ -548,16 +434,11 @@
   },
   "apps/web/src/features/channel/ChannelDetail.tsx": {
     "@typescript-eslint/no-unused-vars": {
-      "count": 2
+      "count": 1
     }
   },
   "apps/web/src/features/channel/components/TopicHistoryRow.tsx": {
     "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    }
-  },
-  "apps/web/src/features/episode/ShotPlanSection.tsx": {
-    "complexity": {
       "count": 1
     }
   },
@@ -584,11 +465,6 @@
   },
   "apps/web/src/features/mascot/hooks/useMascotMotionStudio.test.tsx": {
     "@typescript-eslint/no-unsafe-assignment": {
-      "count": 1
-    }
-  },
-  "apps/web/src/features/mascot/hooks/useMascotMotionStudio.ts": {
-    "@typescript-eslint/no-redundant-type-constituents": {
       "count": 1
     }
   },

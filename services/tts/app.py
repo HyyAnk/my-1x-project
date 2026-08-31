@@ -2,9 +2,7 @@ from __future__ import annotations
 
 import io
 import logging
-import math
 import os
-import re
 import threading
 from typing import Optional
 
@@ -13,9 +11,11 @@ import torchaudio
 from chatterbox.tts import ChatterboxTTS
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, Response
-from pydantic import BaseModel, Field
 
+from audio_merger import merge_audio
+from models import MergeRequest, SynthesizeRequest
 from patches import apply_chatterbox_patches
+from voice_manager import prepare_text, resolve_voice_reference
 
 
 class StructuredFormatter(logging.Formatter):
@@ -40,26 +40,9 @@ if not logger.handlers:
 logger.setLevel(logging.INFO)
 logger.propagate = False
 
-
-class SynthesizeRequest(BaseModel):
-    text: str = Field(min_length=1, max_length=50_000)
-    voice_reference_path: Optional[str] = None
-    exaggeration: float = Field(default=0.5, ge=0.0, le=1.0)
-    cfg_weight: float = Field(default=0.5, ge=0.0, le=1.0)
-
-
-class MergeRequest(BaseModel):
-    paths: list[str] = Field(min_length=1, max_length=128)
-    gap_ms: int = Field(default=300, ge=0, le=10_000)
-    target_duration_seconds: Optional[float] = Field(default=None, ge=10.0, le=7_200.0)
-
-
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 MODEL: Optional[object] = None
 MODEL_ERROR: Optional[str] = None
-# Turbo is the production default because narration scripts can contain native
-# [chuckle]/[laugh] cues. Keep the environment override for troubleshooting or
-# compatibility, but never silently fall back to the cue-less model by default.
 MODEL_KIND = "turbo" if os.getenv("CHATTERBOX_MODEL", "turbo").strip().lower() == "turbo" else "original"
 MODEL_SUPPORTS_PARALINGUISTICS = MODEL_KIND == "turbo"
 
@@ -86,6 +69,7 @@ except Exception as error:  # pragma: no cover - depends on local model and hard
     logger.error("Chatterbox model unavailable: %s", MODEL_ERROR, extra={"step": "load_model"})
 
 app = FastAPI(title="Documentary Studio TTS", docs_url=None, redoc_url=None)
+SYNTHESIS_LOCK = threading.Lock()
 
 
 @app.get("/health")
@@ -104,32 +88,6 @@ async def health() -> JSONResponse:
     )
 
 
-SYNTHESIS_LOCK = threading.Lock()
-MERGE_LOCK = threading.Lock()
-
-
-def prepare_text(text: str) -> str:
-    if MODEL_SUPPORTS_PARALINGUISTICS:
-        return text
-    # The original and multilingual Chatterbox tokenizers do not support the
-    # Turbo paralinguistic vocabulary. Remove cues instead of letting them be
-    # read aloud as literal words.
-    return re.sub(r"\s{2,}", " ", re.sub(r"\[(?:chuckle|laugh)\]", "", text, flags=re.IGNORECASE)).strip()
-
-
-def resolve_voice_reference(reference_path: Optional[str]) -> Optional[str]:
-    if reference_path and reference_path not in ("", "default") and os.path.isfile(reference_path):
-        return reference_path
-    candidates = [
-        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "assets", "audio", "voices", "english_girl", "reference.wav")),
-        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "assets", "audio", "voices", "english_girl.wav")),
-    ]
-    for candidate in candidates:
-        if os.path.isfile(candidate):
-            return candidate
-    return None
-
-
 def synthesize(request: SynthesizeRequest) -> bytes:
     if MODEL is None:
         raise RuntimeError("Chatterbox model is not loaded")
@@ -138,7 +96,7 @@ def synthesize(request: SynthesizeRequest) -> bytes:
         try:
             with torch.inference_mode():
                 waveform = MODEL.generate(
-                    prepare_text(request.text),
+                    prepare_text(request.text, MODEL_SUPPORTS_PARALINGUISTICS),
                     audio_prompt_path=reference,
                     exaggeration=request.exaggeration,
                     cfg_weight=request.cfg_weight,
@@ -166,59 +124,6 @@ async def synthesize_audio(request: SynthesizeRequest) -> Response:
     return Response(content=audio, media_type="audio/wav", headers={"cache-control": "no-store"})
 
 
-def merge_audio(paths: list[str], gap_ms: int, target_duration_seconds: Optional[float] = None) -> bytes:
-    with MERGE_LOCK:
-        waveforms = []
-        sample_rate: Optional[int] = None
-        channels: Optional[int] = None
-        for path in paths:
-            if not os.path.isabs(path) or not os.path.isfile(path):
-                raise ValueError("Audio file does not exist")
-            waveform, current_rate = torchaudio.load(path)
-            if sample_rate is None:
-                sample_rate = current_rate
-                channels = waveform.shape[0]
-            elif current_rate != sample_rate:
-                waveform = torchaudio.functional.resample(waveform, current_rate, sample_rate)
-            if channels is not None and waveform.shape[0] != channels:
-                if waveform.shape[0] == 1:
-                    waveform = waveform.repeat(channels, 1)
-                elif channels == 1:
-                    waveform = waveform.mean(dim=0, keepdim=True)
-                else:
-                    waveform = waveform.mean(dim=0, keepdim=True).repeat(channels, 1)
-            waveforms.append(waveform)
-        if not waveforms or sample_rate is None:
-            raise ValueError("At least one audio file is required")
-        gap_frames = round(sample_rate * gap_ms / 1000)
-        pieces = []
-        for index, waveform in enumerate(waveforms):
-            if index > 0 and gap_frames > 0:
-                pieces.append(torch.zeros((waveform.shape[0], gap_frames), dtype=waveform.dtype))
-            pieces.append(waveform)
-        merged = torch.cat(pieces, dim=1)
-        if target_duration_seconds is not None:
-            target_frames = round(sample_rate * target_duration_seconds)
-            current_frames = merged.shape[1]
-            rate = current_frames / max(1, target_frames)
-            if not 0.72 <= rate <= 1.28:
-                raise ValueError(f"Requested duration change is too large ({rate:.3f}x playback rate)")
-            if abs(target_frames - current_frames) > sample_rate:
-                n_fft = 1024
-                hop_length = 256
-                window = torch.hann_window(n_fft, device=merged.device)
-                spectrum = torch.stft(merged, n_fft=n_fft, hop_length=hop_length, window=window, return_complex=True)
-                phase_advance = torch.linspace(0, math.pi * hop_length, spectrum.shape[-2], device=merged.device)[..., None]
-                stretched = torchaudio.functional.phase_vocoder(spectrum, rate=rate, phase_advance=phase_advance)
-                merged = torch.istft(stretched, n_fft=n_fft, hop_length=hop_length, window=window, length=target_frames)
-                peak = merged.abs().max()
-                if peak > 0.99:
-                    merged = merged * (0.99 / peak)
-        output = io.BytesIO()
-        torchaudio.save(output, merged.cpu(), sample_rate, format="wav")
-        return output.getvalue()
-
-
 @app.post("/merge")
 async def merge_audio_files(request: MergeRequest) -> Response:
     if MODEL is None:
@@ -230,5 +135,12 @@ async def merge_audio_files(request: MergeRequest) -> Response:
     except Exception as error:
         logger.error("Merge failed: %s", error, extra={"step": "merge"})
         raise HTTPException(status_code=503, detail="Audio merge failed") from error
-    logger.info("Merged WAV files=%s bytes=%s gap_ms=%s target_seconds=%s", len(request.paths), len(audio), request.gap_ms, request.target_duration_seconds, extra={"step": "merge"})
+    logger.info(
+        "Merged WAV files=%s bytes=%s gap_ms=%s target_seconds=%s",
+        len(request.paths),
+        len(audio),
+        request.gap_ms,
+        request.target_duration_seconds,
+        extra={"step": "merge"},
+    )
     return Response(content=audio, media_type="audio/wav", headers={"cache-control": "no-store"})

@@ -84,6 +84,7 @@ export interface RepositoryRuntime {
   deleteChannel(channelId: string, confirmed?: boolean): Promise<void>;
   getChannelDna(channelId: string): Promise<{ content: string; path: string; modified_at: string }>;
   saveChannelDna(channelId: string, content: string): Promise<{ path: string; modified_at: string }>;
+  resetChannelDna(channelId: string): Promise<{ content: string; path: string; modified_at: string }>;
 
   // Mascot Operations
   listMascots(): Promise<MascotProfile[]>;

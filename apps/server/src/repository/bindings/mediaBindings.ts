@@ -1,0 +1,31 @@
+import {
+  saveSceneAudio,
+  getSceneAudioFile,
+  writeSceneAudio,
+  writeNarrationAudio,
+  writeQuizVoiceSegmentAudio,
+  writeQuizNarrationAudio,
+  getQuizVoiceSegmentAudioFile,
+  writeVideoArtifact,
+  getEpisodeVideoFile,
+  writeRenderManifest,
+  saveVideoMetadata,
+  getEpisodeAudioFile,
+  saveNarrationMetadata,
+} from "../media.js";
+
+export const mediaBindings = {
+  saveSceneAudio,
+  getSceneAudioFile,
+  writeSceneAudio,
+  writeNarrationAudio,
+  writeQuizVoiceSegmentAudio,
+  writeQuizNarrationAudio,
+  getQuizVoiceSegmentAudioFile,
+  writeVideoArtifact,
+  getEpisodeVideoFile,
+  writeRenderManifest,
+  saveVideoMetadata,
+  getEpisodeAudioFile,
+  saveNarrationMetadata,
+};

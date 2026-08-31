@@ -1,20 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { RECOMMENDED_MASCOT_PLACEMENT_PRESET, type Channel } from "@studio/shared";
-import { api } from "../../../api";
 import { useTranslation } from "../../../i18n";
-import type {
-  ChannelFilterTab,
-  MascotStageStudioModalProps,
-  StageAspectRatio,
-  StageInspectorTab,
-  StagePosition,
-  StageQuestionLayout,
-  StageViewMode,
-} from "../types";
+import type { MascotStageStudioModalProps, StageAspectRatio, StageInspectorTab, StageQuestionLayout, StageViewMode } from "../types";
 import { useMascotPlacementPreset } from "./useMascotPlacementPreset";
 import { useStagePreview } from "./useStagePreview";
 import { useStageViewportDrag } from "./useStageViewportDrag";
 import { useStageTimelineDirector } from "./useStageTimelineDirector";
+import { useStageTransformState } from "./useStageTransformState";
+import { useStageChannelFilter } from "./useStageChannelFilter";
+import { useStageSaveAction } from "./useStageSaveAction";
 
 export function useStageStudio({
   isOpen,
@@ -45,24 +38,29 @@ export function useStageStudio({
   );
   const [showGuides, setShowGuides] = useState(true);
   const [showSafeMargins, setShowSafeMargins] = useState(false);
-  const [flipHorizontal, setFlipHorizontal] = useState(false);
 
   // Selected Mascot & Channels
   const [selectedMascotId, setSelectedMascotId] = useState<string | null>(null);
-  const [selectedChannelIds, setSelectedChannelIds] = useState<string[]>([]);
-  const [channelSearchQuery, setChannelSearchQuery] = useState("");
-  const [channelFilterTab, setChannelFilterTab] = useState<ChannelFilterTab>("all");
-
-  // Transform & Layout Settings (Saved to ChannelMascotConfig)
-  const [position, setPosition] = useState<StagePosition>("bottom_left");
-  const [scale, setScale] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale);
-  const [offsetX, setOffsetX] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_x);
-  const [offsetY, setOffsetY] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_y);
-  const [showInIntro, setShowInIntro] = useState<boolean>(false);
-  const [showInOutro, setShowInOutro] = useState<boolean>(false);
-  const [showInQuestion, setShowInQuestion] = useState<boolean>(true);
-
-  const [saving, setSaving] = useState(false);
+  const channelFilter = useStageChannelFilter();
+  const transformState = useStageTransformState();
+  const {
+    position,
+    setPosition,
+    scale,
+    setScale,
+    offsetX,
+    setOffsetX,
+    offsetY,
+    setOffsetY,
+    flipHorizontal,
+    setFlipHorizontal,
+    showInIntro,
+    setShowInIntro,
+    showInOutro,
+    setShowInOutro,
+    showInQuestion,
+    setShowInQuestion,
+  } = transformState;
 
   const placementPreset = useMascotPlacementPreset({
     isOpen,
@@ -113,7 +111,7 @@ export function useStageStudio({
       }
     } else if (mascot) {
       setSelectedMascotId(mascot.id);
-      setSelectedChannelIds(mascot.assigned_channel_ids || []);
+      channelFilter.setSelectedChannelIds(mascot.assigned_channel_ids || []);
       const sample = channels.find((c) => c.mascot_id === mascot.id);
       if (sample?.mascot_config) {
         applyPlacement(sample.mascot_config);
@@ -128,7 +126,21 @@ export function useStageStudio({
       }
     }
     initializedForOpenRef.current = true;
-  }, [isOpen, presetReady, isSingleChannelMode, targetChannel, mascot, allMascots, channels, applyPlacement, defaultPlacement]);
+  }, [
+    isOpen,
+    presetReady,
+    isSingleChannelMode,
+    targetChannel,
+    mascot,
+    allMascots,
+    channels,
+    applyPlacement,
+    defaultPlacement,
+    channelFilter,
+    setShowInIntro,
+    setShowInOutro,
+    setShowInQuestion,
+  ]);
 
   const selectMascot = (mascotId: string | null) => {
     setSelectedMascotId(mascotId);
@@ -195,73 +207,26 @@ export function useStageStudio({
     setShowInQuestion(true);
   };
 
-  // Save / Apply handler
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-      const mascotConfig = {
-        enabled: true,
-        position,
-        scale,
-        offset_x: offsetX,
-        offset_y: offsetY,
-        flip_x: flipHorizontal,
-        show_in_intro: showInIntro,
-        show_in_outro: showInOutro,
-        show_in_question: showInQuestion,
-      };
-
-      if (isSingleChannelMode && targetChannel) {
-        await api.assignMascotToChannel(targetChannel.channel_id, {
-          mascot_id: selectedMascotId,
-          config: mascotConfig,
-        });
-        onNotice({
-          tone: "good",
-          message: selectedMascotId
-            ? t("stageStudio.noticeSaveSuccessSingle", {
-                name: targetChannel.display_name || targetChannel.slug,
-              })
-            : t("stageStudio.noticeUnassignedSingle"),
-        });
-      } else if (activeMascot) {
-        const promises = channels
-          .map((ch) => {
-            const isAssigned = selectedChannelIds.includes(ch.channel_id);
-            if (isAssigned) {
-              return api.assignMascotToChannel(ch.channel_id, {
-                mascot_id: activeMascot.id,
-                config: mascotConfig,
-              });
-            } else if (!isAssigned && ch.mascot_id === activeMascot.id) {
-              return api.assignMascotToChannel(ch.channel_id, {
-                mascot_id: null,
-              });
-            }
-            return null;
-          })
-          .filter((p): p is Promise<{ channel: Channel }> => p !== null);
-
-        if (promises.length > 0) {
-          await Promise.all(promises);
-        }
-        onNotice({
-          tone: "good",
-          message: t("stageStudio.noticeSaveSuccessMulti"),
-        });
-      }
-
-      await onSaved();
-      onClose();
-    } catch (err) {
-      onNotice({
-        tone: "bad",
-        message: err instanceof Error ? err.message : t("stageStudio.noticeSaveFailed"),
-      });
-    } finally {
-      setSaving(false);
-    }
-  };
+  const saveAction = useStageSaveAction({
+    isSingleChannelMode,
+    targetChannel,
+    selectedMascotId,
+    activeMascot,
+    channels,
+    selectedChannelIds: channelFilter.selectedChannelIds,
+    position,
+    scale,
+    offsetX,
+    offsetY,
+    flipHorizontal,
+    showInIntro,
+    showInOutro,
+    showInQuestion,
+    onNotice,
+    onSaved,
+    onClose,
+    t,
+  });
 
   return {
     t,
@@ -279,37 +244,16 @@ export function useStageStudio({
     setShowGuides,
     showSafeMargins,
     setShowSafeMargins,
-    flipHorizontal,
-    setFlipHorizontal,
     selectedMascotId,
     setSelectedMascotId: selectMascot,
-    selectedChannelIds,
-    setSelectedChannelIds,
-    channelSearchQuery,
-    setChannelSearchQuery,
-    channelFilterTab,
-    setChannelFilterTab,
-    position,
-    setPosition,
-    scale,
-    setScale,
-    offsetX,
-    setOffsetX,
-    offsetY,
-    setOffsetY,
-    showInIntro,
-    setShowInIntro,
-    showInOutro,
-    setShowInOutro,
-    showInQuestion,
-    setShowInQuestion,
+    ...channelFilter,
+    ...transformState,
     ...timelineDirector,
-    saving,
     ...placementPreset,
     activeMascot,
     ...viewportDrag,
     ...preview,
     handleResetLayout,
-    handleSave,
+    ...saveAction,
   };
 }

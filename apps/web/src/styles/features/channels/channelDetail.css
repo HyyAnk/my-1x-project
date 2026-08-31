@@ -1,0 +1,488 @@
+/* ==========================================================================
+   Redesigned Channel DNA & Identity Dashboard Styles
+   ========================================================================== */
+
+.channel-dna-dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.channel-dna-top-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 20px;
+}
+
+.channel-identity-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.channel-identity-card-body {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 1;
+}
+
+/* Profile Card */
+.channel-profile-main {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.channel-profile-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.channel-profile-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.channel-profile-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.channel-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.channel-profile-stat-box {
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-box-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat-box-value {
+  font-size: 13px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.country-display-pill,
+.lang-display-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.country-rank-mini {
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  color: var(--accent);
+}
+
+.auto-sync-tag {
+  font-size: 11px;
+}
+
+/* Visual Styles Card */
+.visual-styles-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.visual-styles-interactive-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.visual-styles-chips-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.visual-style-toggle-card {
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s ease;
+}
+
+.visual-style-toggle-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.visual-style-toggle-card.is-selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.style-toggle-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--surface-hover);
+}
+
+.style-toggle-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.style-toggle-check {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.style-toggle-meta {
+  padding: 6px 4px 2px;
+}
+
+.style-toggle-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.channel-timer-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.timer-setting-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.timer-setting-label strong {
+  display: block;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+
+.timer-setting-select-wrap {
+  flex-shrink: 0;
+}
+
+.timer-select-control {
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.timer-select-control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--soft-accent);
+}
+
+/* Mascot Card */
+.channel-mascot-card .channel-mascot-card-body {
+  padding: 20px 22px;
+}
+
+.mascot-select-dropdown {
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.mascot-branding-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 1.2fr) minmax(220px, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .mascot-branding-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.mascot-persona-profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mascot-persona-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: contain;
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.mascot-persona-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.mascot-persona-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mascot-persona-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mascot-persona-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.mascot-stage-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+}
+
+.stage-spec-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.stage-spec-label {
+  color: var(--muted);
+}
+
+.stage-spec-value {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.mascot-stage-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@media (max-width: 1024px) {
+  .mascot-stage-action {
+    justify-content: flex-start;
+  }
+}
+
+.stage-studio-launch-btn {
+  white-space: nowrap;
+  font-weight: 800;
+  padding: 9px 18px;
+  border-radius: 8px;
+}
+
+.mascot-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--surface-hover);
+  border-radius: var(--radius);
+  border: 1px dashed var(--line);
+  flex-wrap: wrap;
+}
+
+.mascot-empty-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mascot-empty-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.mascot-empty-info strong {
+  display: block;
+  font-size: 14px;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.mascot-empty-info p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* AI DNA Blueprint Section */
+.channel-blueprint-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.blueprint-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.blueprint-content-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.blueprint-preview,
+.blueprint-editor {
+  min-height: 400px;
+  max-height: 600px;
+  width: 100%;
+  margin: 0;
+  padding: 22px 24px;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font:
+    400 12.5px/1.7 "JetBrains Mono",
+    monospace;
+  white-space: pre-wrap;
+  overflow: auto;
+}
+
+.blueprint-editor {
+  display: block;
+  resize: vertical;
+  outline: none;
+  border: 2px solid var(--accent);
+}
+
+.blueprint-meta-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 22px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-strong);
+  color: var(--muted);
+  font:
+    500 11px "JetBrains Mono",
+    monospace;
+  flex-wrap: wrap;
+}
+
+.meta-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meta-right {
+  margin-left: auto;
+}

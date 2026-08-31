@@ -4,27 +4,27 @@ import { RepositoryError } from "./errors.js";
 import type { QuizArtifactFilename, RepositoryRuntime } from "./runtime.js";
 
 export async function quizArtifactTarget(
-  runtime: RepositoryRuntime,
+  this: RepositoryRuntime,
   channelId: string,
   episodeId: string,
   filename: QuizArtifactFilename,
 ): Promise<{ absolutePath: string; relativePath: string }> {
-  const episode = await runtime.getEpisode(channelId, episodeId);
-  const channel = await runtime.getChannel(channelId);
-  const episodeDirectory = runtime.resolvePath("channels", channel.slug, "episodes", episode.slug);
-  await runtime.assertRealPathInside(runtime.roots.channels, episodeDirectory);
+  const episode = await this.getEpisode(channelId, episodeId);
+  const channel = await this.getChannel(channelId);
+  const episodeDirectory = this.resolvePath("channels", channel.slug, "episodes", episode.slug);
+  await this.assertRealPathInside(this.roots.channels, episodeDirectory);
   const absolutePath = path.join(episodeDirectory, "quiz", filename);
   return { absolutePath, relativePath: ["channels", channel.slug, "episodes", episode.slug, "quiz", filename].join("/") };
 }
 
 export async function readQuizArtifact<T>(
-  runtime: RepositoryRuntime,
+  this: RepositoryRuntime,
   channelId: string,
   episodeId: string,
   filename: QuizArtifactFilename,
   schema: { parse(value: unknown): T },
 ): Promise<T | null> {
-  const target = await runtime.quizArtifactTarget(channelId, episodeId, filename);
+  const target = await this.quizArtifactTarget(channelId, episodeId, filename);
   try {
     const raw = JSON.parse(await readFile(target.absolutePath, "utf8")) as unknown;
     return schema.parse(raw);
@@ -36,13 +36,13 @@ export async function readQuizArtifact<T>(
 }
 
 export async function writeQuizArtifact<T>(
-  runtime: RepositoryRuntime,
+  this: RepositoryRuntime,
   channelId: string,
   episodeId: string,
   filename: QuizArtifactFilename,
   value: T,
 ): Promise<string> {
-  const target = await runtime.quizArtifactTarget(channelId, episodeId, filename);
-  await runtime.writeJsonAtomic(target.absolutePath, value);
+  const target = await this.quizArtifactTarget(channelId, episodeId, filename);
+  await this.writeJsonAtomic(target.absolutePath, value);
   return target.relativePath;
 }

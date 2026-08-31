@@ -1,34 +1,7 @@
-import { access, mkdir, readFile, readdir, rm } from "node:fs/promises";
+import { access, mkdir, rm } from "node:fs/promises";
 import path from "node:path";
-import {
-  ChannelSchema,
-  type BgmHistoryEntry,
-  type CalibrateMascotActionInput,
-  type Channel,
-  type ChannelMascotConfig,
-  type CreateChannelInput,
-  type DirectorPlan,
-  type Episode,
-  type EpisodeSettingsInput,
-  type MascotActionType,
-  type MascotProfile,
-  type QuestionHistoryCheckResult,
-  type QuestionHistoryEntry,
-  type QuizAssessment,
-  type QuizAssetPlan,
-  type QuizAssetResolution,
-  type QuizImageStyle,
-  type QuizQuestion,
-  type QuizTimeline,
-  type QuizV2,
-  type Scene,
-  type TopicCandidate,
-  type VoicePlan,
-  type VoiceProfile,
-} from "@studio/shared";
 import { writeBinaryAtomic, writeJsonAtomic, writeTextAtomic } from "../utils/fs.js";
 import { RepositoryError } from "./errors.js";
-import { type TopicRun } from "./helpers.js";
 import {
   assertRealPathInside,
   createRoots,
@@ -37,126 +10,21 @@ import {
   resolvePath as resolveSafePath,
   slugify as createSlug,
 } from "./pathSafety.js";
-import type { QuizArtifactFilename, RepositoryRuntime } from "./runtime.js";
-import type { BundleImageAsset, BundleImageMeta, RepositoryRoots } from "./types.js";
-import {
-  listChannels as listChannelsImplementation,
-  getChannel as getChannelImplementation,
-  getChannelBySlug as getChannelBySlugImplementation,
-  createChannel as createChannelImplementation,
-  updateChannel as updateChannelImplementation,
-  readChannelBySlug as readChannelBySlugImplementation,
-  safeEpisodeCount as safeEpisodeCountImplementation,
-} from "./channels.js";
-import {
-  listTopics as listTopicsImplementation,
-  saveTopicRun as saveTopicRunImplementation,
-  confirmTopic as confirmTopicImplementation,
-  updateEpisodeSettings as updateEpisodeSettingsImplementation,
-  markTopicSelected as markTopicSelectedImplementation,
-} from "./topics.js";
-import { getTemplate as getTemplateImplementation } from "./templates.js";
-import { quizArtifactTarget, readQuizArtifact, writeQuizArtifact } from "./quizArtifactTarget.js";
-import {
-  listMascots as listMascotsImplementation,
-  getMascot as getMascotImplementation,
-  saveMascot as saveMascotImplementation,
-  deleteMascot as deleteMascotImplementation,
-  saveMascotAsset as saveMascotAssetImplementation,
-  getMascotAssetFile as getMascotAssetFileImplementation,
-  calibrateMascotAction as calibrateMascotActionImplementation,
-  listMascotAssets as listMascotAssetsImplementation,
-  deleteMascotAssetFile as deleteMascotAssetFileImplementation,
-  assignMascotToChannel as assignMascotToChannelImplementation,
-} from "./mascots.js";
-import {
-  saveVoiceReference as saveVoiceReferenceImplementation,
-  listVoices as listVoicesImplementation,
-  getVoice as getVoiceImplementation,
-  createVoiceProfile as createVoiceProfileImplementation,
-  updateVoiceSample as updateVoiceSampleImplementation,
-  deleteVoiceProfile as deleteVoiceProfileImplementation,
-  assignVoice as assignVoiceImplementation,
-  getVoiceSampleFile as getVoiceSampleFileImplementation,
-} from "./voices.js";
-import {
-  deleteChannel as deleteChannelImplementation,
-  deleteEpisode as deleteEpisodeImplementation,
-  getChannelDna as getChannelDnaImplementation,
-  saveChannelDna as saveChannelDnaImplementation,
-  resetChannelDna as resetChannelDnaImplementation,
-  listEpisodes as listEpisodesImplementation,
-  getEpisode as getEpisodeImplementation,
-  getEpisodeFile as getEpisodeFileImplementation,
-  saveEpisodeFile as saveEpisodeFileImplementation,
-} from "./episodes.js";
-import {
-  readQuiz as readQuizImplementation,
-  writeQuiz as writeQuizImplementation,
-  readDirectorPlan as readDirectorPlanImplementation,
-  writeDirectorPlan as writeDirectorPlanImplementation,
-  readAssetPlan as readAssetPlanImplementation,
-  writeAssetPlan as writeAssetPlanImplementation,
-  readQuizAssetResolution as readQuizAssetResolutionImplementation,
-  writeQuizAssetResolution as writeQuizAssetResolutionImplementation,
-  writeQuizImageAsset as writeQuizImageAssetImplementation,
-  resolveQuizAssetPath as resolveQuizAssetPathImplementation,
-  readQuizTimeline as readQuizTimelineImplementation,
-  writeQuizTimeline as writeQuizTimelineImplementation,
-  readQuizAssessment as readQuizAssessmentImplementation,
-  writeQuizAssessment as writeQuizAssessmentImplementation,
-  readVoicePlan as readVoicePlanImplementation,
-  writeVoicePlan as writeVoicePlanImplementation,
-  getRenderedVoiceMetrics as getRenderedVoiceMetricsImplementation,
-  readHistoryCheck as readHistoryCheckImplementation,
-  writeHistoryCheck as writeHistoryCheckImplementation,
-  readQuestionHistory as readQuestionHistoryImplementation,
-  appendQuestionHistory as appendQuestionHistoryImplementation,
-  removeQuestionHistoryEntries as removeQuestionHistoryEntriesImplementation,
-  readBgmHistory as readBgmHistoryImplementation,
-  appendBgmHistory as appendBgmHistoryImplementation,
-  invalidateQuizArtifacts as invalidateQuizArtifactsImplementation,
-} from "./quizArtifacts.js";
+import type { RepositoryRuntime } from "./runtime.js";
+import type { RepositoryRoots } from "./types.js";
+import { channelBindings } from "./bindings/channelBindings.js";
+import { topicBindings } from "./bindings/topicBindings.js";
+import { mascotBindings } from "./bindings/mascotBindings.js";
+import { voiceBindings } from "./bindings/voiceBindings.js";
+import { episodeBindings } from "./bindings/episodeBindings.js";
+import { quizArtifactBindings } from "./bindings/quizArtifactBindings.js";
+import { sceneBindings } from "./bindings/sceneBindings.js";
+import { mediaBindings } from "./bindings/mediaBindings.js";
+import { miscBindings } from "./bindings/miscBindings.js";
 
-import {
-  readScenes as readScenesImplementation,
-  listBundleImages as listBundleImagesImplementation,
-  getBundleImagePath as getBundleImagePathImplementation,
-  getBundleImageFile as getBundleImageFileImplementation,
-  writeBundleImage as writeBundleImageImplementation,
-  writeBundleImageFromFile as writeBundleImageFromFileImplementation,
-  clearBundleImages as clearBundleImagesImplementation,
-  attachBundleReference as attachBundleReferenceImplementation,
-  saveScenes as saveScenesImplementation,
-  invalidateQuizSourceArtifacts as invalidateQuizSourceArtifactsImplementation,
-} from "./scenes.js";
-import {
-  saveSceneAudio as saveSceneAudioImplementation,
-  getSceneAudioFile as getSceneAudioFileImplementation,
-  writeSceneAudio as writeSceneAudioImplementation,
-  writeNarrationAudio as writeNarrationAudioImplementation,
-  writeQuizVoiceSegmentAudio as writeQuizVoiceSegmentAudioImplementation,
-  writeQuizNarrationAudio as writeQuizNarrationAudioImplementation,
-  getQuizVoiceSegmentAudioFile as getQuizVoiceSegmentAudioFileImplementation,
-  writeVideoArtifact as writeVideoArtifactImplementation,
-  getEpisodeVideoFile as getEpisodeVideoFileImplementation,
-  writeRenderManifest as writeRenderManifestImplementation,
-  saveVideoMetadata as saveVideoMetadataImplementation,
-  getEpisodeAudioFile as getEpisodeAudioFileImplementation,
-  saveNarrationMetadata as saveNarrationMetadataImplementation,
-} from "./media.js";
-import {
-  clearSequenceDrafts as clearSequenceDraftsImplementation,
-  removeEpisodeRuntimeArtifacts as removeEpisodeRuntimeArtifactsImplementation,
-  saveSequenceDraft as saveSequenceDraftImplementation,
-  readSequenceDrafts as readSequenceDraftsImplementation,
-  commitSequenceDrafts as commitSequenceDraftsImplementation,
-  updateEpisodeStage as updateEpisodeStageImplementation,
-  backupEpisodeFile as backupEpisodeFileImplementation,
-} from "./sequenceDrafts.js";
-import { getGitInfo as getGitInfoImplementation } from "./gitInfo.js";
+export interface RepositoryService extends RepositoryRuntime {}
 
-export class RepositoryService implements RepositoryRuntime {
+export class RepositoryService {
   roots: RepositoryRoots;
   readonly questionHistoryWrites = new Map<string, Promise<void>>();
 
@@ -190,439 +58,32 @@ export class RepositoryService implements RepositoryRuntime {
     ]);
   }
 
-  listChannels(includeArchived?: boolean): Promise<Channel[]> {
-    return listChannelsImplementation.call(this, includeArchived);
-  }
-  getChannel(channelId: string): Promise<Channel> {
-    return getChannelImplementation.call(this, channelId);
-  }
-  getChannelBySlug(slug: string): Promise<Channel> {
-    return getChannelBySlugImplementation.call(this, slug);
-  }
-  createChannel(input: CreateChannelInput): Promise<Channel> {
-    return createChannelImplementation.call(this, input);
-  }
-  updateChannel(channelId: string, patch: Partial<Channel>): Promise<Channel> {
-    return updateChannelImplementation.call(this, channelId, patch);
-  }
-  listMascots(): Promise<MascotProfile[]> {
-    return listMascotsImplementation.call(this);
-  }
-  getMascot(mascotId: string): Promise<MascotProfile> {
-    return getMascotImplementation.call(this, mascotId);
-  }
-  saveMascot(mascot: Partial<MascotProfile> & { name: string }): Promise<MascotProfile> {
-    return saveMascotImplementation.call(this, mascot);
-  }
-  deleteMascot(mascotId: string): Promise<void> {
-    return deleteMascotImplementation.call(this, mascotId);
-  }
-  saveMascotAsset(mascotId: string, filename: string, content: Uint8Array): Promise<string> {
-    return saveMascotAssetImplementation.call(this, mascotId, filename, content);
-  }
-  getMascotAssetFile(mascotId: string, filename: string): Promise<{ absolutePath: string; size: number; modified_at: string }> {
-    return getMascotAssetFileImplementation.call(this, mascotId, filename);
-  }
-  calibrateMascotAction(mascotId: string, action: MascotActionType, calibration: CalibrateMascotActionInput): Promise<MascotProfile> {
-    return calibrateMascotActionImplementation.call(this, mascotId, action, calibration);
-  }
-  listMascotAssets(mascotId: string): Promise<string[]> {
-    return listMascotAssetsImplementation.call(this, mascotId);
-  }
-  deleteMascotAssetFile(mascotId: string, filename: string): Promise<void> {
-    return deleteMascotAssetFileImplementation.call(this, mascotId, filename);
-  }
-  assignMascotToChannel(channelId: string, mascotId: string | null, config?: Partial<ChannelMascotConfig>): Promise<Channel> {
-    return assignMascotToChannelImplementation.call(this, channelId, mascotId, config);
-  }
-  saveVoiceReference(channelId: string, content: Uint8Array): Promise<{ path: string; modified_at: string }> {
-    return saveVoiceReferenceImplementation.call(this, channelId, content);
-  }
-  listVoices(): Promise<VoiceProfile[]> {
-    return listVoicesImplementation.call(this);
-  }
-  getVoice(voiceId: string): Promise<VoiceProfile> {
-    return getVoiceImplementation.call(this, voiceId);
-  }
-  createVoiceProfile(name: string, referenceContent: Uint8Array, sampleContent: Uint8Array): Promise<VoiceProfile> {
-    return createVoiceProfileImplementation.call(this, name, referenceContent, sampleContent);
-  }
-  updateVoiceSample(voiceId: string, content: Uint8Array): Promise<VoiceProfile> {
-    return updateVoiceSampleImplementation.call(this, voiceId, content);
-  }
-  deleteVoiceProfile(voiceId: string): Promise<void> {
-    return deleteVoiceProfileImplementation.call(this, voiceId);
-  }
-  assignVoice(channelId: string, voiceId: string | null): Promise<Channel> {
-    return assignVoiceImplementation.call(this, channelId, voiceId);
-  }
-  getVoiceSampleFile(voiceId: string): Promise<{ absolutePath: string; size: number; modified_at: string }> {
-    return getVoiceSampleFileImplementation.call(this, voiceId);
-  }
-  deleteChannel(channelId: string, confirmed?: boolean): Promise<void> {
-    return deleteChannelImplementation.call(this, channelId, confirmed);
-  }
-  deleteEpisode(channelId: string, episodeId: string, confirmed?: boolean): Promise<void> {
-    return deleteEpisodeImplementation.call(this, channelId, episodeId, confirmed);
-  }
-  getChannelDna(channelId: string): Promise<{ content: string; path: string; modified_at: string }> {
-    return getChannelDnaImplementation.call(this, channelId);
-  }
-  saveChannelDna(channelId: string, content: string): Promise<{ path: string; modified_at: string }> {
-    return saveChannelDnaImplementation.call(this, channelId, content);
-  }
-  resetChannelDna(channelId: string): Promise<{ content: string; path: string; modified_at: string }> {
-    return resetChannelDnaImplementation.call(this, channelId);
-  }
-  listEpisodes(channelId: string): Promise<Episode[]> {
-    return listEpisodesImplementation.call(this, channelId);
-  }
-  getEpisode(channelId: string, episodeId: string): Promise<Episode> {
-    return getEpisodeImplementation.call(this, channelId, episodeId);
-  }
-  getEpisodeFile(channelId: string, episodeId: string, filename: string): Promise<{ content: string; path: string; modified_at: string }> {
-    return getEpisodeFileImplementation.call(this, channelId, episodeId, filename);
-  }
-  saveEpisodeFile(channelId: string, episodeId: string, filename: string, content: string): Promise<{ path: string; modified_at: string }> {
-    return saveEpisodeFileImplementation.call(this, channelId, episodeId, filename, content);
-  }
-  readQuiz(channelId: string, episodeId: string): Promise<QuizV2 | null> {
-    return readQuizImplementation.call(this, channelId, episodeId);
-  }
-  writeQuiz(channelId: string, episodeId: string, quiz: QuizV2): Promise<string> {
-    return writeQuizImplementation.call(this, channelId, episodeId, quiz);
-  }
-  readDirectorPlan(channelId: string, episodeId: string): Promise<DirectorPlan | null> {
-    return readDirectorPlanImplementation.call(this, channelId, episodeId);
-  }
-  writeDirectorPlan(channelId: string, episodeId: string, plan: DirectorPlan): Promise<string> {
-    return writeDirectorPlanImplementation.call(this, channelId, episodeId, plan);
-  }
-  readAssetPlan(channelId: string, episodeId: string): Promise<QuizAssetPlan | null> {
-    return readAssetPlanImplementation.call(this, channelId, episodeId);
-  }
-  writeAssetPlan(channelId: string, episodeId: string, plan: QuizAssetPlan): Promise<string> {
-    return writeAssetPlanImplementation.call(this, channelId, episodeId, plan);
-  }
-  readQuizAssetResolution(channelId: string, episodeId: string): Promise<QuizAssetResolution | null> {
-    return readQuizAssetResolutionImplementation.call(this, channelId, episodeId);
-  }
-  writeQuizAssetResolution(channelId: string, episodeId: string, resolution: QuizAssetResolution): Promise<string> {
-    return writeQuizAssetResolutionImplementation.call(this, channelId, episodeId, resolution);
-  }
-  writeQuizImageAsset(
-    channelId: string,
-    episodeId: string,
-    assetId: string,
-    fingerprint: string,
-    content: Uint8Array,
-    meta?: BundleImageMeta,
-  ): Promise<string> {
-    return writeQuizImageAssetImplementation.call(this, channelId, episodeId, assetId, fingerprint, content, meta);
-  }
-  resolveQuizAssetPath(channelId: string, episodeId: string, assetPath: string): Promise<string> {
-    return resolveQuizAssetPathImplementation.call(this, channelId, episodeId, assetPath);
-  }
-  readQuizTimeline(channelId: string, episodeId: string): Promise<QuizTimeline | null> {
-    return readQuizTimelineImplementation.call(this, channelId, episodeId);
-  }
-  writeQuizTimeline(channelId: string, episodeId: string, timeline: QuizTimeline): Promise<string> {
-    return writeQuizTimelineImplementation.call(this, channelId, episodeId, timeline);
-  }
-  readQuizAssessment(channelId: string, episodeId: string): Promise<QuizAssessment | null> {
-    return readQuizAssessmentImplementation.call(this, channelId, episodeId);
-  }
-  writeQuizAssessment(channelId: string, episodeId: string, assessment: QuizAssessment): Promise<string> {
-    return writeQuizAssessmentImplementation.call(this, channelId, episodeId, assessment);
-  }
-  readVoicePlan(channelId: string, episodeId: string): Promise<VoicePlan | null> {
-    return readVoicePlanImplementation.call(this, channelId, episodeId);
-  }
-  writeVoicePlan(channelId: string, episodeId: string, plan: VoicePlan): Promise<string> {
-    return writeVoicePlanImplementation.call(this, channelId, episodeId, plan);
-  }
-  getRenderedVoiceMetrics(): Promise<{
-    rendered_characters: number;
-    rendered_duration_seconds: number;
-    rendered_segments_count: number;
-    rendered_episodes_count: number;
-  }> {
-    return getRenderedVoiceMetricsImplementation.call(this);
-  }
-  readHistoryCheck(channelId: string, episodeId: string): Promise<QuestionHistoryCheckResult | null> {
-    return readHistoryCheckImplementation.call(this, channelId, episodeId);
-  }
-  writeHistoryCheck(channelId: string, episodeId: string, result: QuestionHistoryCheckResult): Promise<string> {
-    return writeHistoryCheckImplementation.call(this, channelId, episodeId, result);
-  }
-  readQuestionHistory(channelId: string): Promise<QuestionHistoryEntry[]> {
-    return readQuestionHistoryImplementation.call(this, channelId);
-  }
-  appendQuestionHistory(
-    channelId: string,
-    episodeId: string,
-    questions: QuizQuestion[],
-    ttlDays?: number,
-    renderTaskId?: string,
-  ): Promise<void> {
-    return appendQuestionHistoryImplementation.call(this, channelId, episodeId, questions, ttlDays, renderTaskId);
-  }
-  removeQuestionHistoryEntries(
-    channelId: string,
-    filter: { episodeIds?: string[]; renderTaskIds?: string[] },
-    ttlDays?: number,
-  ): Promise<void> {
-    return removeQuestionHistoryEntriesImplementation.call(this, channelId, filter, ttlDays);
-  }
-  readBgmHistory(channelId: string): Promise<BgmHistoryEntry[]> {
-    return readBgmHistoryImplementation.call(this, channelId);
-  }
-  appendBgmHistory(channelId: string, episodeId: string, trackId: string, filename: string, ttlDays?: number): Promise<void> {
-    return appendBgmHistoryImplementation.call(this, channelId, episodeId, trackId, filename, ttlDays);
-  }
-  invalidateQuizArtifacts(channelId: string, episodeId: string, stages: string[]): Promise<string[]> {
-    return invalidateQuizArtifactsImplementation.call(this, channelId, episodeId, stages);
-  }
-  listTopics(channelId: string): Promise<TopicCandidate[]> {
-    return listTopicsImplementation.call(this, channelId);
-  }
-  saveTopicRun(channelId: string, candidates: TopicCandidate[]): Promise<void> {
-    return saveTopicRunImplementation.call(this, channelId, candidates);
-  }
-  confirmTopic(channelId: string, topicId: string, questionCount?: number, visualStyle?: QuizImageStyle | "mixed"): Promise<Episode> {
-    return confirmTopicImplementation.call(this, channelId, topicId, questionCount, visualStyle);
-  }
-  updateEpisodeSettings(channelId: string, episodeId: string, settings: EpisodeSettingsInput, wordsPerSecond: number): Promise<Episode> {
-    return updateEpisodeSettingsImplementation.call(this, channelId, episodeId, settings, wordsPerSecond);
-  }
-  readScenes(channelId: string, episodeId: string): Promise<Scene[]> {
-    return readScenesImplementation.call(this, channelId, episodeId);
-  }
-  listBundleImages(channelId: string, episodeId: string): Promise<BundleImageAsset[]> {
-    return listBundleImagesImplementation.call(this, channelId, episodeId);
-  }
-  getBundleImagePath(
-    channelId: string,
-    episodeId: string,
-    bundleNumber: number,
-    variant?: number,
-  ): Promise<{ bundle_id: string; filename: string; path: string; absolutePath: string }> {
-    return getBundleImagePathImplementation.call(this, channelId, episodeId, bundleNumber, variant);
-  }
-  getBundleImageFile(channelId: string, episodeId: string, filename: string): Promise<BundleImageAsset> {
-    return getBundleImageFileImplementation.call(this, channelId, episodeId, filename);
-  }
-  writeBundleImage(
-    channelId: string,
-    episodeId: string,
-    bundleNumber: number,
-    content: Uint8Array,
-    variant?: number,
-    meta?: BundleImageMeta,
-  ): Promise<string> {
-    return writeBundleImageImplementation.call(this, channelId, episodeId, bundleNumber, content, variant, meta);
-  }
-  writeBundleImageFromFile(
-    channelId: string,
-    episodeId: string,
-    bundleNumber: number,
-    sourcePath: string,
-    variant?: number,
-    meta?: BundleImageMeta,
-  ): Promise<string> {
-    return writeBundleImageFromFileImplementation.call(this, channelId, episodeId, bundleNumber, sourcePath, variant, meta);
-  }
-  clearBundleImages(channelId: string, episodeId: string, bundleNumber: number): Promise<void> {
-    return clearBundleImagesImplementation.call(this, channelId, episodeId, bundleNumber);
-  }
-  attachBundleReference(channelId: string, episodeId: string, bundleId: string, assetPath: string): Promise<number> {
-    return attachBundleReferenceImplementation.call(this, channelId, episodeId, bundleId, assetPath);
-  }
-  saveScenes(channelId: string, episodeId: string, scenes: Scene[]): Promise<void> {
-    return saveScenesImplementation.call(this, channelId, episodeId, scenes);
-  }
-  invalidateQuizSourceArtifacts(channelId: string, episodeId: string): Promise<void> {
-    return invalidateQuizSourceArtifactsImplementation.call(this, channelId, episodeId);
-  }
-  saveSceneAudio(
-    channelId: string,
-    episodeId: string,
-    sceneNumber: number,
-    audioAssetPath: string,
-    durationSeconds: number,
-  ): Promise<void> {
-    return saveSceneAudioImplementation.call(this, channelId, episodeId, sceneNumber, audioAssetPath, durationSeconds);
-  }
-  getSceneAudioFile(
-    channelId: string,
-    episodeId: string,
-    filename: string,
-  ): Promise<{ absolutePath: string; path: string; size: number; modified_at: string }> {
-    return getSceneAudioFileImplementation.call(this, channelId, episodeId, filename);
-  }
-  writeSceneAudio(channelId: string, episodeId: string, sceneNumber: number, content: Uint8Array): Promise<string> {
-    return writeSceneAudioImplementation.call(this, channelId, episodeId, sceneNumber, content);
-  }
-  writeNarrationAudio(channelId: string, episodeId: string, content: Uint8Array, segmentNumber?: number): Promise<string> {
-    return writeNarrationAudioImplementation.call(this, channelId, episodeId, content, segmentNumber);
-  }
-  writeQuizVoiceSegmentAudio(
-    channelId: string,
-    episodeId: string,
-    segmentNumber: number,
-    content: Uint8Array,
-    version?: string,
-  ): Promise<string> {
-    return writeQuizVoiceSegmentAudioImplementation.call(this, channelId, episodeId, segmentNumber, content, version);
-  }
-  writeQuizNarrationAudio(channelId: string, episodeId: string, content: Uint8Array): Promise<string> {
-    return writeQuizNarrationAudioImplementation.call(this, channelId, episodeId, content);
-  }
-  getQuizVoiceSegmentAudioFile(
-    channelId: string,
-    episodeId: string,
-    segmentNumber: number,
-    version?: string,
-  ): Promise<{ absolutePath: string; path: string; size: number; modified_at: string }> {
-    return getQuizVoiceSegmentAudioFileImplementation.call(this, channelId, episodeId, segmentNumber, version);
-  }
-  writeVideoArtifact(channelId: string, episodeId: string, content: Uint8Array, filename?: string): Promise<string> {
-    return writeVideoArtifactImplementation.call(this, channelId, episodeId, content, filename);
-  }
-  getEpisodeVideoFile(
-    channelId: string,
-    episodeId: string,
-    filename?: string,
-  ): Promise<{ absolutePath: string; path: string; size: number; modified_at: string }> {
-    return getEpisodeVideoFileImplementation.call(this, channelId, episodeId, filename);
-  }
-  writeRenderManifest(channelId: string, episodeId: string, content: string): Promise<string> {
-    return writeRenderManifestImplementation.call(this, channelId, episodeId, content);
-  }
-  saveVideoMetadata(
-    channelId: string,
-    episodeId: string,
-    assetPath: string,
-    durationSeconds: number,
-    renderManifestPath: string,
-  ): Promise<Episode> {
-    return saveVideoMetadataImplementation.call(this, channelId, episodeId, assetPath, durationSeconds, renderManifestPath);
-  }
-  getEpisodeAudioFile(
-    channelId: string,
-    episodeId: string,
-    filename: string,
-  ): Promise<{ absolutePath: string; path: string; size: number; modified_at: string }> {
-    return getEpisodeAudioFileImplementation.call(this, channelId, episodeId, filename);
-  }
-  saveNarrationMetadata(
-    channelId: string,
-    episodeId: string,
-    assetPath: string,
-    durationSeconds: number,
-    segmentCount: number,
-    narrationWordCount: number,
-  ): Promise<Episode> {
-    return saveNarrationMetadataImplementation.call(
-      this,
-      channelId,
-      episodeId,
-      assetPath,
-      durationSeconds,
-      segmentCount,
-      narrationWordCount,
-    );
-  }
-  clearSequenceDrafts(episodeId: string): Promise<void> {
-    return clearSequenceDraftsImplementation.call(this, episodeId);
-  }
-  removeEpisodeRuntimeArtifacts(episodeId: string): Promise<void> {
-    return removeEpisodeRuntimeArtifactsImplementation.call(this, episodeId);
-  }
-  saveSequenceDraft(episodeId: string, sequenceNumber: number, scenes: Scene[]): Promise<void> {
-    return saveSequenceDraftImplementation.call(this, episodeId, sequenceNumber, scenes);
-  }
-  readSequenceDrafts(episodeId: string): Promise<Array<{ sequenceNumber: number; scenes: Scene[]; modified_at: string }>> {
-    return readSequenceDraftsImplementation.call(this, episodeId);
-  }
-  commitSequenceDrafts(channelId: string, episodeId: string, expectedCount: number): Promise<boolean> {
-    return commitSequenceDraftsImplementation.call(this, channelId, episodeId, expectedCount);
-  }
-  updateEpisodeStage(channelId: string, episodeId: string, stage: Episode["stage"]): Promise<Episode> {
-    return updateEpisodeStageImplementation.call(this, channelId, episodeId, stage);
-  }
-  backupEpisodeFile(channelId: string, episodeId: string, filename: string): Promise<string | null> {
-    return backupEpisodeFileImplementation.call(this, channelId, episodeId, filename);
-  }
-  getGitInfo(): Promise<{ branch: string | null; dirty: boolean; changed_files: number }> {
-    return getGitInfoImplementation.call(this);
+  createRoots(storageRoot: string): RepositoryRoots {
+    return createRoots(this.rootDirectory, storageRoot);
   }
 
   resolvePath(root: keyof RepositoryRoots, ...segments: string[]): string {
     return resolveSafePath(this.roots, root, ...segments);
   }
 
-  assertBundleNumber(value: number): number {
-    if (!Number.isInteger(value) || value < 1 || value > 99)
-      throw new RepositoryError("Bundle number must be between 1 and 99", "INVALID_BUNDLE");
-    return value;
-  }
-
   slugify(input: string): string {
     return createSlug(input);
   }
 
-  readQuizArtifact<T>(
-    channelId: string,
-    episodeId: string,
-    filename: QuizArtifactFilename,
-    schema: { parse(value: unknown): T },
-  ): Promise<T | null> {
-    return readQuizArtifact(this, channelId, episodeId, filename, schema);
-  }
-
-  writeQuizArtifact<T>(channelId: string, episodeId: string, filename: QuizArtifactFilename, value: T): Promise<string> {
-    return writeQuizArtifact(this, channelId, episodeId, filename, value);
-  }
-
-  quizArtifactTarget(
-    channelId: string,
-    episodeId: string,
-    filename: QuizArtifactFilename,
-  ): Promise<{ absolutePath: string; relativePath: string }> {
-    return quizArtifactTarget(this, channelId, episodeId, filename);
-  }
-
-  readChannelBySlug(slug: string): Promise<Channel> {
-    return readChannelBySlugImplementation.call(this, slug);
-  }
-
-  safeEpisodeCount(channelDirectory: string): Promise<number> {
-    return safeEpisodeCountImplementation(channelDirectory);
-  }
-
-  getTemplate(filename: string): Promise<string> {
-    return getTemplateImplementation(this, filename);
-  }
-
-  createRoots(storageRoot: string): RepositoryRoots {
-    return createRoots(this.rootDirectory, storageRoot);
-  }
-
-  markTopicSelected(channelId: string, topicId: string, questionCount: number): Promise<void> {
-    return markTopicSelectedImplementation.call(this, channelId, topicId, questionCount);
-  }
-
   assertSlug(value: string): string {
-    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value) || value.length > 60) throw new RepositoryError("Invalid slug", "INVALID_SLUG");
-    return value;
+    const slug = this.slugify(value);
+    if (!slug) throw new RepositoryError(`Invalid slug: ${value}`, "INVALID_SLUG");
+    return slug;
   }
 
   async uniqueSlug(input: string, parentDirectory: string): Promise<string> {
     const base = this.slugify(input);
     let candidate = base;
     let suffix = 2;
-    while (await this.exists(path.join(parentDirectory, candidate))) candidate = `${base}-${suffix++}`;
+    while (await this.exists(path.join(parentDirectory, candidate))) {
+      candidate = `${base}-${suffix}`;
+      suffix++;
+    }
     return candidate;
   }
 
@@ -639,23 +100,44 @@ export class RepositoryService implements RepositoryRuntime {
     return isInside(rootPath, targetPath);
   }
 
-  async assertRealPathInside(rootPath: string, targetPath: string): Promise<void> {
-    await assertRealPathInside(rootPath, targetPath);
+  assertRealPathInside(rootPath: string, targetPath: string): Promise<void> {
+    return assertRealPathInside(rootPath, targetPath);
   }
 
-  async writeJsonAtomic(target: string, value: unknown): Promise<void> {
-    await writeJsonAtomic(target, value);
+  writeJsonAtomic(target: string, value: unknown): Promise<void> {
+    return writeJsonAtomic(target, value);
   }
 
-  async writeTextAtomic(target: string, content: string): Promise<void> {
-    await writeTextAtomic(target, content);
+  writeTextAtomic(target: string, content: string): Promise<void> {
+    return writeTextAtomic(target, content);
   }
 
-  async writeBinaryAtomic(target: string, content: Uint8Array): Promise<void> {
-    await writeBinaryAtomic(target, content);
+  writeBinaryAtomic(target: string, content: Uint8Array): Promise<void> {
+    return writeBinaryAtomic(target, content);
   }
 
-  async removeTree(target: string): Promise<void> {
-    await rm(target, { recursive: true, force: true });
+  removeTree(target: string): Promise<void> {
+    return rm(target, { recursive: true, force: true });
+  }
+
+  assertBundleNumber(value: number): number {
+    if (!Number.isInteger(value) || value < 1) {
+      throw new RepositoryError(`Invalid bundle number: ${value}`, "INVALID_BUNDLE_NUMBER");
+    }
+    return value;
   }
 }
+
+// Bind all domain repository implementations to RepositoryService prototype
+Object.assign(
+  RepositoryService.prototype,
+  channelBindings,
+  topicBindings,
+  mascotBindings,
+  voiceBindings,
+  episodeBindings,
+  quizArtifactBindings,
+  sceneBindings,
+  mediaBindings,
+  miscBindings,
+);

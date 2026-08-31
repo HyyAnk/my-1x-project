@@ -1,26 +1,10 @@
-import { execFile } from "node:child_process";
-import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
-import { promisify } from "node:util";
-import { MASCOT_CANVAS_SIZES, nowIso, type MascotProfile, type Task } from "@studio/shared";
+import { MASCOT_CANVAS_SIZES, nowIso, type Task } from "@studio/shared";
 import { RepositoryError } from "../repository.js";
-import { buildQuizComposition } from "../quiz/render/buildComposition.js";
-import { preflightQuizRender } from "../quiz/qa/preflight.js";
-import { inspectRenderedVideo } from "../quiz/qa/postRenderQa.js";
-import { prepareVideoAssets } from "./video/videoAssetPreparation.js";
-import { hasNonEmptyFile } from "./artifactFiles.js";
-import { readRenderCheckpoint, writeRenderCheckpoint } from "./checkpoints.js";
-import { renderSourceFingerprint } from "./fingerprints.js";
 import type { TaskManagerRuntime } from "./runtime.js";
-import { prepareLocalizedMascot } from "./video/mascotLocalization.js";
-import { prepareSoundtrack } from "./video/soundtrackPreparation.js";
-import { calculateOptimalWorkers, getHyperframesExecutionEnv } from "./video/videoPerformance.js";
-import { syncStaticMediaAssets } from "./video/videoStaticAssets.js";
 import { verifyAndCheckLayout } from "./video/videoLayoutChecker.js";
-import { getHyperframesInvocation } from "./video/videoInvocation.js";
-import { prepareQuizVideoRender } from "./video/quizVideoRenderPreparation.js";
-
-const execFileAsync = promisify(execFile);
+import { prepareVideoComposition } from "./video/videoCompositionPreparer.js";
+import { executeHyperframesRender } from "./video/videoRenderExecution.js";
+import { persistVideoRenderArtifacts } from "./video/renderManifestWriter.js";
 
 export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   const context = { profileId: task.channel_id, workerId: task.task_id, step: "render_video" };
@@ -41,139 +25,24 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     if (!(await this.hasValidNarrationAsset(task.channel_id, task.episode_id, episode.narration_asset_path)))
       throw new RepositoryError("Generate the Chatterbox narration before rendering video", "NARRATION_REQUIRED");
     if (scenes.length === 0) throw new RepositoryError("Generate Quiz scenes before rendering video", "SCENES_REQUIRED");
-    const narration = await this.repository.getEpisodeAudioFile(
-      task.channel_id,
-      task.episode_id,
-      path.basename(episode.narration_asset_path!),
-    );
-    const renderRoot = this.repository.resolvePath("runtime", "hyperframes", episode.episode_id);
-    await mkdir(renderRoot, { recursive: true });
-    const compositionPath = path.join(renderRoot, "index.html");
-    const outputPath = path.join(renderRoot, "quiz-video.mp4");
-    const renderAudioPath = path.join(renderRoot, "narration.wav");
-    await copyFile(narration.absolutePath, renderAudioPath);
-    const quizV2 = await this.repository.readQuiz(task.channel_id, task.episode_id);
-    const directorPlan = await this.repository.readDirectorPlan(task.channel_id, task.episode_id);
-    const assetPlan = await this.repository.readAssetPlan(task.channel_id, task.episode_id);
-    const voicePlan = await this.repository.readVoicePlan(task.channel_id, task.episode_id);
-    const timeline = await this.repository.readQuizTimeline(task.channel_id, task.episode_id);
-    const completeQuizV2 =
-      quizV2 && directorPlan && assetPlan && voicePlan && timeline
-        ? { quiz: quizV2, director: directorPlan, assetPlan, voicePlan, timeline }
-        : null;
-    if (channel.engine === "quiz" && !completeQuizV2 && !episode.video_asset_path) {
-      throw new RepositoryError("Quiz V2 artifacts are required before rendering a new Quiz video", "QUIZ_V2_REQUIRED");
-    }
-    let assetSources: Record<string, string> = {};
-    let assetResolution = await this.repository.readQuizAssetResolution(task.channel_id, task.episode_id);
-    if (completeQuizV2) {
-      const assetPrep = await prepareVideoAssets({
-        runtime: this,
-        channelId: task.channel_id,
-        episodeId: task.episode_id,
-        renderRoot,
-        assetPlan: completeQuizV2.assetPlan,
-        assetResolution,
-        quiz: completeQuizV2.quiz,
-        director: completeQuizV2.director,
-        aspectRatio: renderAspectRatio,
-        onProgress: async (msg, pct) => {
-          await this.update(task.task_id, { progress_message: msg, progress_percent: pct });
-        },
-      });
-      assetResolution = assetPrep.assetResolution;
-      assetSources = assetPrep.assetSources;
-    }
-    let preflightAssessment: ReturnType<typeof preflightQuizRender>["assessment"] | null = null;
-    if (completeQuizV2) {
-      const preflight = preflightQuizRender({
-        quiz: completeQuizV2.quiz,
-        director: completeQuizV2.director,
-        assetPlan: completeQuizV2.assetPlan,
-        resolvedAssets: assetResolution?.assets ?? [],
-        voicePlan: completeQuizV2.voicePlan,
-        timeline: completeQuizV2.timeline,
-        measuredAudio: episode.narration_duration_seconds !== null,
-      });
-      preflightAssessment = preflight.assessment;
-      await this.repository.writeQuizAssessment(task.channel_id, task.episode_id, preflight.assessment);
-      if (!preflight.ok) {
-        const blocker = preflight.assessment.issues.find((issue) => issue.severity === "blocker");
-        throw new RepositoryError(
-          "Quiz V2 preflight blocked render: " + (blocker?.message ?? "Resolve the reported QA blockers before rendering."),
-          "QUIZ_PREFLIGHT_BLOCKED",
-        );
-      }
-    }
-    const bgmHistory = await this.repository.readBgmHistory(task.channel_id);
-    const mascotProfile: MascotProfile | null = await prepareLocalizedMascot(channel, this.repository, renderRoot);
 
-    let selectedBgmTrackId: string | null = null;
-    let selectedBgmFilename: string | null = null;
-
-    if (completeQuizV2) {
-      const soundtrackResult = await prepareSoundtrack({
-        renderRoot,
-        narration,
-        timeline: completeQuizV2.timeline,
-        episode,
-        bgmHistory,
-        assetSources,
-        onProgressMessage: async (message) => {
-          await this.update(task.task_id, { progress_message: message, progress_percent: 15 });
-        },
-      });
-      selectedBgmTrackId = soundtrackResult.selectedBgmTrackId;
-      selectedBgmFilename = soundtrackResult.selectedBgmFilename;
-    }
-
-    const preparedQuizRender = completeQuizV2
-      ? await prepareQuizVideoRender({
-          channel,
-          episodeQuizConfig: episode.quiz_config,
-          quiz: completeQuizV2.quiz,
-          director: completeQuizV2.director,
-          timeline: completeQuizV2.timeline,
-          scenes,
-          audioPath: "./soundtrack.wav",
-          premixedAudio: true,
-          aspectRatio: renderAspectRatio,
-          narrationDurationSeconds: episode.narration_duration_seconds ?? undefined,
-          assets: assetSources,
-          bgmOptions: {
-            recentTrackIds: bgmHistory.map((entry) => entry.track_id),
-            seed: episode.episode_id,
-          },
-          mascot: mascotProfile,
-          mascotConfig: channel.mascot_config,
-        })
-      : null;
-    const html =
-      preparedQuizRender?.html ??
-      buildQuizComposition(episode.quiz_config, scenes, "./narration.wav", episode.narration_duration_seconds ?? undefined, {
-        aspectRatio: renderAspectRatio,
-      });
-    await writeFile(compositionPath, html, "utf8");
-    for (const [relativePath, content] of Object.entries(preparedQuizRender?.compositionFiles ?? {})) {
-      const filePath = path.join(renderRoot, relativePath);
-      await mkdir(path.dirname(filePath), { recursive: true });
-      await writeFile(filePath, content, "utf8");
-    }
-    const { fontFingerprints } = await syncStaticMediaAssets(renderRoot, this.repository.rootDirectory);
-
-    const sourceFingerprint = renderSourceFingerprint(
-      html,
-      narration.modified_at,
-      narration.size,
-      assetResolution?.assets ?? [],
-      fontFingerprints,
-    );
-    const checkpointPath = path.join(renderRoot, "render-checkpoint.json");
+    const comp = await prepareVideoComposition({
+      runtime: this,
+      repository: this.repository,
+      taskId: task.task_id,
+      channel,
+      episode,
+      scenes,
+      renderAspectRatio,
+      onProgress: async (message, percent) => {
+        await this.update(task.task_id, { progress_message: message, progress_percent: percent });
+      },
+    });
 
     await verifyAndCheckLayout({
-      renderRoot,
+      renderRoot: comp.renderRoot,
       rootDir: this.repository.rootDirectory,
-      sourceFingerprint,
+      sourceFingerprint: comp.sourceFingerprint,
       fastRenderMode: this.videoConfig.fast_render_mode,
       renderQuality: this.videoConfig.render_quality,
       onProgress: async (message, percent) => {
@@ -181,127 +50,47 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       },
     });
 
-    const checkpoint = await readRenderCheckpoint(checkpointPath);
-    const layoutReady = checkpoint?.source_fingerprint === sourceFingerprint && checkpoint.check.status === "passed";
-    let reusableRender = layoutReady && checkpoint?.render?.status === "passed" && (await hasNonEmptyFile(outputPath));
-    if (reusableRender) {
-      const existingProbe = await inspectRenderedVideo(outputPath, {
-        width: renderCanvas.width,
-        height: renderCanvas.height,
-        fps: this.videoConfig.fps,
-      });
-      reusableRender = !existingProbe.issues.some((issue) => issue.severity === "blocker");
-    }
-    if (reusableRender) {
-      await this.update(task.task_id, { progress_message: "Video · reusing verified MP4", progress_percent: 85 });
-    } else {
-      await this.update(task.task_id, { progress_message: "Video · rendering MP4 with narration", progress_percent: 65 });
-      const browserTimeout = process.env.HYPERFRAMES_BROWSER_TIMEOUT_SECONDS || "300";
-      const renderTimeoutMs = Number(process.env.HYPERFRAMES_RENDER_TIMEOUT_MS) || 120 * 60_000;
-      const hyperframesEnv = getHyperframesExecutionEnv();
-      const optimalWorkers = calculateOptimalWorkers(this.videoConfig.render_workers);
-      const renderInvocation = getHyperframesInvocation(
-        "render",
-        renderRoot,
-        "--output",
-        outputPath,
-        "--fps",
-        String(this.videoConfig.fps),
-        "--quality",
-        this.videoConfig.render_quality,
-        "--workers",
-        String(optimalWorkers),
-        "--gpu",
-        "--browser-gpu",
-        "--browser-timeout",
-        browserTimeout,
-        "--strict",
-        "--json",
-      );
-      await execFileAsync(renderInvocation.command, renderInvocation.args, {
-        cwd: this.repository.rootDirectory,
-        timeout: renderTimeoutMs,
-        windowsHide: true,
-        maxBuffer: 50 * 1024 * 1024,
-        env: hyperframesEnv,
-      });
-    }
-    await this.update(task.task_id, { progress_message: "Video · verifying MP4 and audio track", progress_percent: 95 });
-    const probe = await inspectRenderedVideo(outputPath, {
-      width: renderCanvas.width,
-      height: renderCanvas.height,
+    const { probe, duration } = await executeHyperframesRender({
+      renderRoot: comp.renderRoot,
+      outputPath: comp.outputPath,
+      checkpointPath: comp.checkpointPath,
+      sourceFingerprint: comp.sourceFingerprint,
+      renderCanvas,
+      videoConfig: this.videoConfig,
+      repositoryRoot: this.repository.rootDirectory,
+      onProgress: async (message, percent) => {
+        await this.update(task.task_id, { progress_message: message, progress_percent: percent });
+      },
+    });
+
+    const { videoPath, manifestPath } = await persistVideoRenderArtifacts({
+      repository: this.repository,
+      channelId: task.channel_id,
+      episodeId: task.episode_id,
+      episode,
+      outputPath: comp.outputPath,
+      html: comp.html,
+      duration,
+      renderAspectRatio,
+      renderCanvas,
       fps: this.videoConfig.fps,
+      selectedBgmTrackId: comp.selectedBgmTrackId,
+      selectedBgmFilename: comp.selectedBgmFilename,
+      assetResolution: comp.assetResolution,
+      completeQuizV2: comp.completeQuizV2,
+      preflightAssessment: comp.preflightAssessment,
+      probe,
     });
-    const renderBlocker = probe.issues.find((issue) => issue.severity === "blocker");
-    if (renderBlocker) throw new RepositoryError(renderBlocker.message, "QUIZ_RENDER_QA_FAILED");
-    await writeRenderCheckpoint(checkpointPath, {
-      schema_version: 2,
-      source_fingerprint: sourceFingerprint,
-      check: { status: "passed" },
-      render: { status: "passed" },
-    });
-    const duration = Number.parseFloat(probe.probe.format?.duration ?? "");
-    if (!Number.isFinite(duration) || duration <= 0) throw new Error("Rendered MP4 has no readable duration");
-    const degradedAssets = (assetResolution?.assets ?? []).filter((a) => a.degraded || a.fallback_tier === 3 || a.source === "fallback");
-    const hasDegradedFallback = degradedAssets.length > 0;
-    if (!selectedBgmFilename) {
-      const bgmMatch = html.match(/src=["']\.\/bgm\/([^"']+)["']/);
-      selectedBgmFilename = bgmMatch ? bgmMatch[1] : null;
-      selectedBgmTrackId = selectedBgmFilename ? selectedBgmFilename.replace(/\.mp3$/i, "") : null;
-    }
-    const manifestPath = await this.repository.writeRenderManifest(
-      task.channel_id,
-      task.episode_id,
-      JSON.stringify({
-        engine: "hyperframes",
-        quiz_engine_version: completeQuizV2 ? 2 : 1,
-        schema_version: completeQuizV2 ? 2 : 1,
-        composition: "runtime/hyperframes/" + episode.episode_id + "/index.html",
-        source_fingerprints: {},
-        question_count: episode.quiz_config.question_count,
-        format: episode.quiz_config.quiz_format,
-        duration_seconds: Number(duration.toFixed(3)),
-        aspect_ratio: renderAspectRatio,
-        resolution: { width: renderCanvas.width, height: renderCanvas.height },
-        fps: this.videoConfig.fps,
-        bgm_track_id: selectedBgmTrackId ?? undefined,
-        bgm_filename: selectedBgmFilename ?? undefined,
-        degraded: hasDegradedFallback,
-        fallback_tier: hasDegradedFallback ? 3 : undefined,
-        degraded_assets: hasDegradedFallback ? degradedAssets.map((a) => a.asset_id) : undefined,
-        preflight: preflightAssessment
-          ? {
-              status: "passed",
-              score: preflightAssessment.score,
-              blockers: preflightAssessment.issues.filter((issue) => issue.severity === "blocker").length,
-            }
-          : { status: "legacy_skipped" },
-        check: { status: "passed" },
-        render: { status: "passed", output: "quiz-video.mp4" },
-        post_render: {
-          status: "passed",
-          issues: probe.issues.length,
-          streams:
-            probe.probe.streams?.map((stream) => ({
-              codec_type: stream.codec_type,
-              width: stream.width,
-              height: stream.height,
-              r_frame_rate: stream.r_frame_rate,
-            })) ?? [],
-        },
-        generated_at: nowIso(),
-      }),
-    );
-    const videoPath = await this.repository.writeVideoArtifact(task.channel_id, task.episode_id, await readFile(outputPath));
-    await this.repository.saveVideoMetadata(task.channel_id, task.episode_id, videoPath, Number(duration.toFixed(3)), manifestPath);
+
     await this.update(task.task_id, { progress_message: "Quiz video ready", progress_percent: 100 });
     await this.finish(task.task_id, "COMPLETED", null, [videoPath, manifestPath]);
-    if (completeQuizV2?.quiz && completeQuizV2.quiz.questions.length > 0) {
-      await this.repository.appendQuestionHistory(task.channel_id, task.episode_id, completeQuizV2.quiz.questions, undefined, task.task_id);
+    const quiz = await this.repository.readQuiz(task.channel_id, task.episode_id);
+    if (quiz && quiz.questions.length > 0) {
+      await this.repository.appendQuestionHistory(task.channel_id, task.episode_id, quiz.questions, undefined, task.task_id);
     }
-    if (selectedBgmTrackId && selectedBgmFilename) {
+    if (comp.selectedBgmTrackId && comp.selectedBgmFilename) {
       try {
-        await this.repository.appendBgmHistory(task.channel_id, task.episode_id, selectedBgmTrackId, selectedBgmFilename);
+        await this.repository.appendBgmHistory(task.channel_id, task.episode_id, comp.selectedBgmTrackId, comp.selectedBgmFilename);
       } catch {
         // Ignore non-fatal BGM history save error
       }

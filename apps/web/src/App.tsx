@@ -8,81 +8,10 @@ import { Power } from "@phosphor-icons/react";
 import { LanguageProvider } from "./i18n";
 
 function AppContent() {
-  const orchestrator = useAppOrchestration();
-  const {
-    page,
-    selectedChannelId,
-    selectedEpisodeId,
-    tab,
-    group,
-    openPage,
-    openChannel,
-    openEpisode,
-    setQueryParam,
-    git,
-    appConfig,
-    activeEngine,
-    currentModel,
-    currentImageModel,
-    models,
-    loadingModels,
-    modelsError,
-    codex,
-    antigravity,
-    antigravityStatus,
-    currentEngineStatus,
-    storage,
-    showCreate,
-    setShowCreate,
-    deleteTarget,
-    setDeleteTarget,
-    notice,
-    setNotice,
-    loading,
-    stopped,
-    theme,
-    setTheme,
-    simplifyMode,
-    handleSimplifyToggle,
-    imageBalance,
-    voiceMetrics,
-    loadingBalance,
-    balanceError,
-    fetchBalance,
-    channels,
-    setChannels,
-    refreshChannels,
-    tasks,
-    activeTasks,
-    activeEpisodeTasks,
-    taskClock,
-    codexStatus,
-    realtimeStatus,
-    upsertTask,
-    setCodexStatus,
-    refreshTasks,
-    loadModelsForEngine,
-    refresh,
-    selectedChannel,
-    handleCloseNotice,
-    showError,
-    showGood,
-    requestDeleteChannel,
-    requestCreateChannel,
-    handleChannelDeleted,
-    applyStorage,
-    setCodex,
-    setAntigravity,
-    setAppConfig,
-    handleEngineToggle,
-    handleModelChange,
-    handleImageModelChange,
-    stopDashboard,
-  } = orchestrator;
+  const orch = useAppOrchestration();
+  const navigate = (next: string) => orch.openPage(next as Parameters<typeof orch.openPage>[0]);
 
-  const navigate = (next: string) => openPage(next as Parameters<typeof openPage>[0]);
-
-  if (stopped)
+  if (orch.stopped) {
     return (
       <main className="shutdown-screen">
         <div className="shutdown-card">
@@ -95,124 +24,124 @@ function AppContent() {
         </div>
       </main>
     );
+  }
 
   return (
     <div className="app-shell">
       <Sidebar
-        page={page}
-        setPage={openPage}
-        activeTaskCount={activeEpisodeTasks.length}
-        tasks={tasks}
-        channels={channels}
+        page={orch.page}
+        setPage={orch.openPage}
+        activeTaskCount={orch.activeEpisodeTasks.length}
+        tasks={orch.tasks}
+        channels={orch.channels}
         onCancelTask={async (taskId) => {
           try {
             await api.cancelTask(taskId);
-            setNotice({ tone: "good", message: "Task cancelled from queue" });
-            await refreshTasks();
+            orch.setNotice({ tone: "good", message: "Task cancelled from queue" });
+            await orch.refreshTasks();
           } catch (err) {
-            setNotice({ tone: "bad", message: err instanceof Error ? err.message : "Failed to cancel task" });
+            orch.setNotice({ tone: "bad", message: err instanceof Error ? err.message : "Failed to cancel task" });
           }
         }}
-        onOpenEpisode={openEpisode}
-        balanceInfo={imageBalance}
-        loadingBalance={loadingBalance}
-        balanceError={balanceError}
-        onRefreshBalance={fetchBalance}
+        onOpenEpisode={orch.openEpisode}
+        balanceInfo={orch.imageBalance}
+        loadingBalance={orch.loadingBalance}
+        balanceError={orch.balanceError}
+        onRefreshBalance={orch.fetchBalance}
         onOpenSettings={() => {
-          openPage("settings");
-          setQueryParam("tab", "media");
+          orch.openPage("settings");
+          orch.setQueryParam("tab", "media");
         }}
-        onCreateChannel={() => requestCreateChannel("quiz")}
+        onCreateChannel={() => orch.requestCreateChannel("quiz")}
       />
       <main className="main-column">
         <Topbar
-          channel={selectedChannel}
-          channels={channels}
-          onSelectChannel={(chId) => openChannel(chId)}
-          activeEngine={activeEngine}
-          engineStatus={currentEngineStatus}
-          git={git}
-          currentModel={currentModel}
-          models={models}
-          loadingModels={loadingModels}
-          modelsError={modelsError}
-          currentImageModel={currentImageModel}
-          hasImageApiKey={Boolean(appConfig?.image_generation?.has_api_key || appConfig?.image_generation?.api_key)}
-          theme={theme}
-          onEngineToggle={handleEngineToggle}
-          onThemeToggle={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
-          onModelChange={handleModelChange}
-          onImageModelChange={handleImageModelChange}
+          channel={orch.selectedChannel}
+          channels={orch.channels}
+          onSelectChannel={(chId) => orch.openChannel(chId)}
+          activeEngine={orch.activeEngine}
+          engineStatus={orch.currentEngineStatus}
+          git={orch.git}
+          currentModel={orch.currentModel}
+          models={orch.models}
+          loadingModels={orch.loadingModels}
+          modelsError={orch.modelsError}
+          currentImageModel={orch.currentImageModel}
+          hasImageApiKey={Boolean(orch.appConfig?.image_generation?.has_api_key || orch.appConfig?.image_generation?.api_key)}
+          theme={orch.theme}
+          onEngineToggle={orch.handleEngineToggle}
+          onThemeToggle={() => orch.setTheme((current) => (current === "dark" ? "light" : "dark"))}
+          onModelChange={orch.handleModelChange}
+          onImageModelChange={orch.handleImageModelChange}
           onOpenImageSettings={() => navigate("settings")}
           onReconnect={async () => {
             try {
-              if (activeEngine === "antigravity") {
-                await loadModelsForEngine("antigravity");
-                antigravityStatus;
-                showGood("Antigravity checked");
+              if (orch.activeEngine === "antigravity") {
+                await orch.loadModelsForEngine("antigravity");
+                orch.showGood("Antigravity checked");
               } else {
                 const result = await api.reconnectCodex();
-                setCodexStatus(result.status);
-                if (result.status === "connected") showGood("Codex connected");
-                else showError(new Error(result.message || "Codex unavailable"));
+                orch.setCodexStatus(result.status);
+                if (result.status === "connected") orch.showGood("Codex connected");
+                else orch.showError(new Error(result.message || "Codex unavailable"));
               }
             } catch (error) {
-              showError(error);
+              orch.showError(error);
             }
           }}
-          onShutdown={() => void stopDashboard()}
+          onShutdown={() => void orch.stopDashboard()}
         />
-        {page !== "tasks" && !selectedEpisodeId && (
+        {orch.page !== "tasks" && !orch.selectedEpisodeId && (
           <TaskActivityBar
-            tasks={activeEpisodeTasks}
-            realtimeStatus={realtimeStatus}
-            now={taskClock}
+            tasks={orch.activeEpisodeTasks}
+            realtimeStatus={orch.realtimeStatus}
+            now={orch.taskClock}
             onOpenTasks={() => navigate("tasks")}
-            onOpenEpisode={openEpisode}
+            onOpenEpisode={orch.openEpisode}
           />
         )}
         <AppViewRouter
-          loading={loading}
-          page={page}
-          channels={channels}
-          selectedChannel={selectedChannel}
-          selectedEpisodeId={selectedEpisodeId}
-          tasks={tasks}
-          activeTasks={activeTasks}
-          taskClock={taskClock}
-          appConfig={appConfig}
-          activeEngine={activeEngine}
-          currentModel={currentModel}
-          currentImageModel={currentImageModel}
-          imageBalance={imageBalance}
-          voiceMetrics={voiceMetrics}
-          storage={storage}
-          git={git}
-          currentEngineStatus={currentEngineStatus}
-          tab={tab}
-          group={group}
-          simplifyMode={simplifyMode}
-          codex={codex}
-          codexStatus={codexStatus}
-          antigravity={antigravity}
-          antigravityStatus={antigravityStatus}
-          openPage={openPage}
-          openChannel={openChannel}
-          openEpisode={openEpisode}
-          setQueryParam={setQueryParam}
-          upsertTask={upsertTask}
-          requestCreateChannel={requestCreateChannel}
-          requestDeleteChannel={requestDeleteChannel}
-          refresh={refresh}
-          refreshChannels={refreshChannels}
-          setNotice={setNotice}
-          applyStorage={applyStorage}
-          setCodex={setCodex}
-          setAntigravity={setAntigravity}
-          setAppConfig={setAppConfig}
-          setChannels={setChannels}
-          fetchBalance={fetchBalance}
-          handleSimplifyToggle={handleSimplifyToggle}
+          loading={orch.loading}
+          page={orch.page}
+          channels={orch.channels}
+          selectedChannel={orch.selectedChannel}
+          selectedEpisodeId={orch.selectedEpisodeId}
+          tasks={orch.tasks}
+          activeTasks={orch.activeTasks}
+          taskClock={orch.taskClock}
+          appConfig={orch.appConfig}
+          activeEngine={orch.activeEngine}
+          currentModel={orch.currentModel}
+          currentImageModel={orch.currentImageModel}
+          imageBalance={orch.imageBalance}
+          voiceMetrics={orch.voiceMetrics}
+          storage={orch.storage}
+          git={orch.git}
+          currentEngineStatus={orch.currentEngineStatus}
+          tab={orch.tab}
+          group={orch.group}
+          simplifyMode={orch.simplifyMode}
+          codex={orch.codex}
+          codexStatus={orch.codexStatus}
+          antigravity={orch.antigravity}
+          antigravityStatus={orch.antigravityStatus}
+          openPage={orch.openPage}
+          openChannel={orch.openChannel}
+          openEpisode={orch.openEpisode}
+          setQueryParam={orch.setQueryParam}
+          upsertTask={orch.upsertTask}
+          requestCreateChannel={orch.requestCreateChannel}
+          requestDeleteChannel={orch.requestDeleteChannel}
+          refresh={orch.refresh}
+          refreshChannels={orch.refreshChannels}
+          setNotice={orch.setNotice}
+          applyStorage={orch.applyStorage}
+          setCodex={orch.setCodex}
+          setAntigravity={orch.setAntigravity}
+          setAppConfig={orch.setAppConfig}
+          setChannels={orch.setChannels}
+          fetchBalance={orch.fetchBalance}
+          handleSimplifyToggle={orch.handleSimplifyToggle}
         />
         <footer className="app-credit">
           <span className="app-credit-full">Develop - Design - Deliver by HyyAnk | Dư Ngọc Minh Hoàng</span>
@@ -220,20 +149,20 @@ function AppContent() {
         </footer>
       </main>
       <AppModals
-        showCreate={showCreate}
-        setShowCreate={setShowCreate}
-        deleteTarget={deleteTarget}
-        setDeleteTarget={setDeleteTarget}
-        storage={storage}
-        openChannel={openChannel}
-        refresh={refresh}
-        upsertTask={upsertTask}
-        setNotice={setNotice}
-        showError={showError}
-        handleChannelDeleted={handleChannelDeleted}
-        applyStorage={applyStorage}
+        showCreate={orch.showCreate}
+        setShowCreate={orch.setShowCreate}
+        deleteTarget={orch.deleteTarget}
+        setDeleteTarget={orch.setDeleteTarget}
+        storage={orch.storage}
+        openChannel={orch.openChannel}
+        refresh={orch.refresh}
+        upsertTask={orch.upsertTask}
+        setNotice={orch.setNotice}
+        showError={orch.showError}
+        handleChannelDeleted={orch.handleChannelDeleted}
+        applyStorage={orch.applyStorage}
       />
-      {notice ? <NoticeBanner notice={notice} onClose={handleCloseNotice} /> : null}
+      {orch.notice ? <NoticeBanner notice={orch.notice} onClose={orch.handleCloseNotice} /> : null}
     </div>
   );
 }

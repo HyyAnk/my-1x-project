@@ -7,7 +7,7 @@ import { useTranslation } from "../../i18n";
 import { api } from "../../api";
 import { ChannelCard } from "./ChannelCard";
 
-export type ChannelGroupId = "quiz";
+export type ChannelGroupId = "quiz" | "history";
 
 export type ChannelsListViewProps = {
   channels: Channel[];

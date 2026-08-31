@@ -1,0 +1,442 @@
+/* ==========================================================================
+   Production Rails & Quiz V2 Panel
+   ========================================================================== */
+.pipeline-rail,
+.quiz-v2-rail {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1px;
+  margin: 20px 0 16px;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--line);
+}
+
+.pipeline-rail li {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.pipeline-rail li > span {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-dark);
+  border-radius: 7px;
+  font:
+    700 10px "JetBrains Mono",
+    monospace;
+}
+
+.pipeline-rail li.is-ready {
+  color: var(--ink);
+}
+
+.pipeline-rail li.is-ready > span {
+  border-color: color-mix(in srgb, var(--green) 55%, var(--line));
+  background: var(--soft-green);
+  color: var(--green);
+}
+
+.pipeline-rail li.is-running {
+  color: var(--ink);
+}
+
+.pipeline-rail li.is-running > span {
+  border-color: var(--accent);
+  background: var(--soft-accent);
+  color: var(--accent-deep);
+}
+
+.pipeline-rail-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pipeline-rail-status {
+  font:
+    600 9px "JetBrains Mono",
+    monospace;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pipeline-rail li.is-running .pipeline-rail-status {
+  color: var(--accent-deep);
+}
+
+.pipeline-rail li.is-ready .pipeline-rail-status {
+  color: var(--green);
+}
+
+.quiz-v2-panel {
+  margin: 20px 0 16px;
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.quiz-v2-rail {
+  margin: 12px 0 0;
+}
+
+.quiz-v2-stage {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: var(--surface);
+}
+
+.quiz-v2-stage-icon {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-dark);
+  border-radius: 7px;
+  color: var(--muted);
+  font:
+    700 10px "JetBrains Mono",
+    monospace;
+}
+
+.quiz-v2-stage.is-ready .quiz-v2-stage-icon {
+  border-color: color-mix(in srgb, var(--green) 55%, var(--line));
+  background: var(--soft-green);
+  color: var(--green);
+}
+
+.quiz-v2-stage.is-failed .quiz-v2-stage-icon {
+  border-color: var(--notice-error);
+  background: var(--danger-surface);
+  color: var(--notice-error);
+}
+
+.quiz-v2-stage.is-running .quiz-v2-stage-icon {
+  border-color: var(--accent);
+  background: var(--soft-accent);
+  color: var(--accent-deep);
+}
+
+.quiz-v2-stage > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.quiz-v2-stage strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.quiz-v2-stage > div > span,
+.quiz-v2-stage-note {
+  color: var(--muted);
+  font:
+    600 9px "JetBrains Mono",
+    monospace;
+  text-transform: uppercase;
+}
+
+.quiz-v2-stage-progress {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.quiz-v2-stage-track {
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--soft-muted);
+}
+
+.quiz-v2-stage-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--green);
+  transition: width 0.24s ease;
+}
+
+.quiz-v2-stage.is-running .quiz-v2-stage-track > span {
+  background: var(--accent);
+}
+
+.quiz-v2-stage.is-failed .quiz-v2-stage-track > span {
+  background: var(--notice-error);
+}
+
+/* QA Assessment Score Panel */
+.quiz-v2-assessment {
+  display: grid;
+  grid-template-columns: 88px auto minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  margin-top: 16px;
+  padding: 16px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-strong);
+}
+
+.quiz-v2-assessment.production_ready {
+  border-color: color-mix(in srgb, var(--green) 50%, var(--line));
+  background: color-mix(in srgb, var(--soft-green) 50%, var(--surface-strong));
+}
+
+.quiz-v2-assessment.not_ready {
+  border-color: color-mix(in srgb, var(--notice-error) 50%, var(--line));
+}
+
+.quiz-v2-score {
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.quiz-v2-score strong {
+  font:
+    800 28px/1 "JetBrains Mono",
+    monospace;
+  color: var(--ink);
+}
+
+.quiz-v2-score span {
+  color: var(--muted);
+  font:
+    700 9px "JetBrains Mono",
+    monospace;
+  text-transform: uppercase;
+}
+
+.assessment-panel {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  margin-bottom: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.assessment-panel.production_ready {
+  border-color: color-mix(in srgb, var(--green) 50%, var(--line));
+}
+
+.assessment-score {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 6px;
+  min-height: 110px;
+  border-right: 1px solid var(--line);
+  background: var(--surface-strong);
+}
+
+.assessment-score strong {
+  font:
+    800 38px/1 "JetBrains Mono",
+    monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--green);
+}
+
+.assessment-score span {
+  color: var(--muted);
+  font:
+    700 9px "JetBrains Mono",
+    monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.assessment-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 24px;
+}
+
+.assessment-summary h2 {
+  margin-bottom: 6px;
+  font-size: 19px;
+}
+
+.duration-target {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font:
+    600 10px "JetBrains Mono",
+    monospace;
+  text-transform: uppercase;
+}
+
+.duration-target input {
+  width: 50px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--ink);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Artifact Stack & Accordions
+   ========================================================================== */
+.artifact-stack {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.artifact-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s ease;
+}
+
+.artifact-panel:hover {
+  border-color: var(--line-strong);
+}
+
+.artifact-panel > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 60px;
+  padding: 0 22px;
+  cursor: pointer;
+  list-style: none;
+  background: var(--surface);
+  transition: background 0.15s ease;
+}
+
+.artifact-panel > summary:hover {
+  background: var(--surface-hover);
+}
+
+.artifact-panel > summary::-webkit-details-marker {
+  display: none;
+}
+
+.artifact-panel > summary > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.artifact-panel > summary h2 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.artifact-panel > summary > span {
+  color: var(--muted);
+  font:
+    600 10px "JetBrains Mono",
+    monospace;
+  text-transform: uppercase;
+}
+
+.artifact-status,
+.artifact-status > span {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  color: var(--green);
+}
+
+.artifact-status > span {
+  border: 1px solid var(--line-dark);
+  border-radius: 6px;
+}
+
+.artifact-panel-body {
+  border-top: 1px solid var(--line);
+}
+
+.artifact-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-strong);
+}
+
+.artifact-preview {
+  min-height: 180px;
+  max-height: 460px;
+}
+
+.artifact-editor {
+  min-height: 380px;
+}
+
+.artifact-empty {
+  margin: 0;
+  padding: 18px 22px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.narration-production-panel {
+  margin: 16px 0 0;
+}
+
+.master-audio-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 22px;
+}
+
+.master-audio-row audio {
+  width: 100%;
+  height: 36px;
+  accent-color: var(--accent);
+}
+
+.master-audio-row > span {
+  color: var(--muted);
+  font:
+    600 10px "JetBrains Mono",
+    monospace;
+  white-space: nowrap;
+}
