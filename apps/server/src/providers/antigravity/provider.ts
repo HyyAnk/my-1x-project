@@ -69,10 +69,7 @@ export class AntigravityNativeImageProvider implements ImageProvider {
         if (detectedRateLimit) {
           return {
             imageBytes: null,
-            rateLimitError: new RepositoryError(
-              `Antigravity image generation hit rate limit: ${detectedRateLimit}`,
-              "RATE_LIMIT_EXCEEDED",
-            ),
+            rateLimitError: new RepositoryError(`Antigravity image generation hit rate limit: ${detectedRateLimit}`, "RATE_LIMIT_EXCEEDED"),
           };
         }
       }

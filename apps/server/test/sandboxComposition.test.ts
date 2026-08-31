@@ -65,7 +65,7 @@ describe("buildSandboxComposition Preview Engine", () => {
     expect(result.contrast_report.ok).toBe(true);
   });
 
-  it("renders reveal and explain phases with correct answer highlights", () => {
+  it("renders reveal and explain phases with correct answer highlights and without check/cross icons", () => {
     const revealResult = buildSandboxComposition({
       phase: "reveal",
       correct_choice_index: 2,
@@ -74,6 +74,10 @@ describe("buildSandboxComposition Preview Engine", () => {
 
     expect(revealResult.html).toContain("answer-correct");
     expect(revealResult.html).toContain("Option C");
+    expect(revealResult.html).not.toContain("answer-check");
+    expect(revealResult.html).not.toContain("answer-cross");
+    expect(revealResult.html).not.toContain("✓");
+    expect(revealResult.html).not.toContain("✕");
 
     const explainResult = buildSandboxComposition({
       phase: "explain",

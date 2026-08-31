@@ -170,9 +170,11 @@ export function baseChoiceStyles(): string {
   display: flex;
   align-items: center;
   gap: var(--choice-label-gap, 16px);
-  min-height: var(--choice-label-min-height, 94px);
+  min-height: 76px;
+  min-height: var(--choice-label-min-height, 76px);
   margin: -36px 18px 0 38px;
-  padding: var(--choice-label-padding, 12px 26px 12px 18px);
+  padding: 8px 24px 8px 18px;
+  padding: var(--choice-label-padding, 8px 24px 8px 18px);
   overflow: visible;
   font-weight: 900;
   contain: layout style;
@@ -181,14 +183,14 @@ export function baseChoiceStyles(): string {
 }
 
 .visual-answer-card .visual-answer-label > b {
-  width: 92px;
-  width: var(--choice-badge-size, 92px);
-  height: 92px;
-  height: var(--choice-badge-size, 92px);
-  margin-left: -50px;
-  margin-left: var(--choice-badge-margin-left, -50px);
-  font-size: 48px;
-  font-size: var(--choice-badge-font-size, 48px);
+  width: 108px;
+  width: var(--choice-badge-size, 108px);
+  height: 108px;
+  height: var(--choice-badge-size, 108px);
+  margin-left: -56px;
+  margin-left: var(--choice-badge-margin-left, -56px);
+  font-size: 56px;
+  font-size: var(--choice-badge-font-size, 56px);
 }
 
 /* Default per-choice gradient token values (Arcade theme defaults) */

@@ -46,16 +46,31 @@ describe("useSandboxMascotState", () => {
     expect(result.current.activeMascot).toBeNull();
   });
 
-  it("fetches and stores mascot library list", async () => {
+  it("fetches and auto-selects first mascot with mascotEnabled true when library has mascots", async () => {
     const { result } = renderHook(() => useSandboxMascotState());
 
     await waitFor(() => {
       expect(result.current.mascots).toHaveLength(1);
     });
     expect(result.current.mascots[0].name).toBe("Star Pup");
+    expect(result.current.mascotId).toBe("mascot_1");
+    expect(result.current.mascotEnabled).toBe(true);
+    expect(result.current.activeMascot?.id).toBe("mascot_1");
   });
 
-  it("resolves activeMascot when mascotId is selected", async () => {
+  it("keeps mascot disabled and mascotId none when mascot library is empty", async () => {
+    vi.mocked(api.mascots).mockResolvedValueOnce({ mascots: [] });
+    const { result } = renderHook(() => useSandboxMascotState());
+
+    await waitFor(() => {
+      expect(result.current.mascots).toHaveLength(0);
+    });
+    expect(result.current.mascotId).toBe("none");
+    expect(result.current.mascotEnabled).toBe(false);
+    expect(result.current.activeMascot).toBeNull();
+  });
+
+  it("resolves activeMascot when mascotId is selected or switched", async () => {
     const { result } = renderHook(() => useSandboxMascotState());
 
     await waitFor(() => {

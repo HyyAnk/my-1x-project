@@ -42,32 +42,5 @@ export function choiceStateStyles(): string {
   animation: incorrect-card-settle .38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) forwards;
   will-change: transform;
 }
-
-.answer-check,
-.answer-cross {
-  position: absolute;
-  z-index: 6;
-  top: 14px;
-  right: 20px;
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border: 4px solid #FFFFFF;
-  border-radius: 50%;
-  background: var(--correct, #27B96C);
-  color: #FFFFFF;
-  box-shadow: 0 6px 0 rgba(13,35,71,.22), 0 4px 12px rgba(0,0,0,0.18);
-  font-size: 34px;
-  font-weight: 900;
-  font-style: normal;
-  opacity: 0;
-  animation: status-pop .38s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s) + .16s) both;
-  will-change: transform, opacity;
-}
-
-.answer-cross {
-  background: var(--incorrect, #7B8DA1);
-}
 `;
 }

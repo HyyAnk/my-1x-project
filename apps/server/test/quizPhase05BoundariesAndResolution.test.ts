@@ -135,16 +135,15 @@ describe("Phase 5: CSS Ownership, Boundaries, Tokens & Style Resolution Matrix",
       expect(base).toContain("var(--choice-media-height");
     });
 
-    it("P5-CSS-03: State CSS owns correct/incorrect/pending/reveal semantics shared across skins", () => {
+    it("P5-CSS-03: State CSS owns correct/incorrect/pending/reveal semantics shared across skins without status icon bloat", () => {
       const state = choiceStateStyles();
 
       expect(state).toContain(".answer-correct");
       expect(state).toContain(".answer-incorrect");
-      expect(state).toContain(".answer-check");
-      expect(state).toContain(".answer-cross");
       expect(state).toContain("correct-card-reveal");
       expect(state).toContain("incorrect-card-settle");
-      expect(state).toContain("status-pop");
+      expect(state).not.toContain(".answer-check");
+      expect(state).not.toContain(".answer-cross");
     });
 
     it("P5-CSS-04: Typography CSS provides one tier system consuming capacity tokens", () => {
@@ -279,6 +278,8 @@ describe("Phase 5: CSS Ownership, Boundaries, Tokens & Style Resolution Matrix",
       expect(mlcr).toContain("--choice-font-size-very_long: 26px;");
 
       expect(vc3).toContain("--choice-media-height: 500px;");
+      expect(vc3).toContain("--choice-badge-size: 108px;");
+      expect(vc3).toContain("--choice-label-min-height: 76px;");
       expect(vc3).toContain("--choice-label-font-size-base: 32px;");
       expect(vc3).toContain("--choice-label-font-size-medium: 28px;");
       expect(vc3).toContain("--choice-label-font-size-long: 24px;");
@@ -294,6 +295,8 @@ describe("Phase 5: CSS Ownership, Boundaries, Tokens & Style Resolution Matrix",
 
       expect(vc3916).toContain('#stage[data-aspect-ratio="9:16"]');
       expect(vc3916).toContain("--choice-media-height: 360px;");
+      expect(vc3916).toContain("--choice-badge-size: 104px;");
+      expect(vc3916).toContain("--choice-label-min-height: 74px;");
     });
 
     it("P5-TOK-05: Mascot occupancy alters capacity through layout tokens, not skin overrides", () => {

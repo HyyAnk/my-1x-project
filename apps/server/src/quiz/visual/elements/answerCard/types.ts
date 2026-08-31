@@ -11,7 +11,6 @@ export type AnswerCardSkinHookInput = {
 export type AnswerCardSkinDecorations = {
   beforeLabelHtml?: string;
   labelSuffixHtml?: string;
-  statusHtml?: string;
 };
 
 export type AnswerCardSkin = {

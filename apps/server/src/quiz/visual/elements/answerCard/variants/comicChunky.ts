@@ -6,16 +6,10 @@ export const comicChunkyVariant: AnswerCardSkin = {
   description: "Retro comic book style with thick ink borders, shadow offsets & pop-art fonts.",
   className: "ac-comic-chunky",
   cardClassName: ({ order }) => `comic-card-${order}`,
-  renderDecorations: ({ state }) => ({
+  renderDecorations: () => ({
     beforeLabelHtml:
       '<div class="comic-halftone-overlay" aria-hidden="true"></div><div class="comic-speed-hatch" aria-hidden="true"></div><span class="comic-corner-sparkle" aria-hidden="true">✦</span>',
     labelSuffixHtml: '<i class="comic-badge-glare" aria-hidden="true"></i>',
-    statusHtml:
-      state === "correct"
-        ? '<div class="comic-status-burst answer-check" aria-hidden="true" style="opacity:1;"><span>POW!</span><i>✓</i></div>'
-        : state === "incorrect"
-          ? '<div class="comic-status-burst answer-cross" aria-hidden="true" style="opacity:1;"><span>NOPE</span><i>✕</i></div>'
-          : "",
   }),
   renderCss(): string {
     return `
@@ -194,50 +188,6 @@ export const comicChunkyVariant: AnswerCardSkin = {
   letter-spacing: -0.2px;
 }
 
-/* Comic Status Burst (POW! / NOPE) */
-.ac-comic-chunky .comic-status-burst {
-  position: absolute;
-  z-index: 7;
-  top: -18px;
-  right: -8px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 14px;
-  border: 4px solid #111827;
-  border-radius: 14px;
-  font-family: "Fredoka", "SVN-Hello Headline", sans-serif;
-  font-weight: 900;
-  box-shadow: 4px 5px 0 #111827;
-  opacity: 0;
-  transform: rotate(8deg) scale(0.9);
-  animation: comic-status-pop 0.42s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s) + 0.12s) both;
-}
-.ac-comic-chunky .comic-status-burst span {
-  font-size: 20px;
-  line-height: 1;
-  color: #FFFFFF;
-  -webkit-text-stroke: 2px #111827;
-  paint-order: stroke fill;
-  text-shadow: 0 2px 0 #111827;
-}
-.ac-comic-chunky .comic-status-burst i {
-  font-style: normal;
-  font-size: 22px;
-  line-height: 1;
-  color: #FFFFFF;
-  -webkit-text-stroke: 2px #111827;
-}
-
-.ac-comic-chunky .comic-status-burst.answer-check {
-  background: #00E676;
-  transform: rotate(10deg);
-}
-.ac-comic-chunky .comic-status-burst.answer-cross {
-  background: #FF3366;
-  transform: rotate(-8deg);
-}
-
 /* Reveal State: Correct Answer */
 .ac-comic-chunky.answer-correct,
 .choice-card.answer-correct .ac-comic-chunky,
@@ -288,12 +238,6 @@ export const comicChunkyVariant: AnswerCardSkin = {
   25% { transform: rotate(calc(var(--comic-base-rot, 0deg) - 2deg)) translate3d(0, 4px, 0); }
   60% { transform: rotate(calc(var(--comic-base-rot, 0deg) + 1.5deg)) translate3d(0, 6px, 0); }
   100% { transform: rotate(var(--comic-base-rot, 0deg)) translate3d(0, 6px, 0) scale(0.96); }
-}
-
-@keyframes comic-status-pop {
-  0% { transform: scale(0.2) rotate(-20deg); opacity: 0; }
-  60% { transform: scale(1.15) rotate(12deg); opacity: 1; }
-  100% { transform: scale(1) rotate(8deg); opacity: 1; }
 }
 
 @keyframes comic-sparkle-pulse {

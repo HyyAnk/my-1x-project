@@ -92,8 +92,9 @@ export function CreateChannelModal({
         <div className="channel-create-body">
           {/* Channel Name */}
           <div className="channel-create-field">
-            <label>{t("channels.channelNameLabel")}</label>
+            <label htmlFor="channel-name-input">{t("channels.channelNameLabel")}</label>
             <input
+              id="channel-name-input"
               type="text"
               required
               value={form.name}
@@ -132,10 +133,11 @@ export function CreateChannelModal({
 
             {/* Target Language */}
             <div className="channel-create-field">
-              <label>{t("channels.languageFieldLabel")}</label>
+              <label htmlFor="channel-language-input">{t("channels.languageFieldLabel")}</label>
               <div className="input-with-icon">
                 <Translate size={16} className="input-prefix-icon" />
                 <input
+                  id="channel-language-input"
                   type="text"
                   required
                   value={form.language}
@@ -148,8 +150,9 @@ export function CreateChannelModal({
 
           {/* Target Audience */}
           <div className="channel-create-field">
-            <label>{t("channels.targetAudienceLabel")}</label>
+            <label htmlFor="channel-audience-input">{t("channels.targetAudienceLabel")}</label>
             <input
+              id="channel-audience-input"
               type="text"
               value={form.target_audience}
               onChange={(e) => setForm({ ...form, target_audience: e.target.value })}
@@ -159,8 +162,9 @@ export function CreateChannelModal({
 
           {/* Description */}
           <div className="channel-create-field">
-            <label>{t("channels.descriptionLabel")}</label>
+            <label htmlFor="channel-description-input">{t("channels.descriptionLabel")}</label>
             <textarea
+              id="channel-description-input"
               rows={2}
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}

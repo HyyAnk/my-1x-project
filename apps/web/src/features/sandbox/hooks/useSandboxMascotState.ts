@@ -17,7 +17,13 @@ export function useSandboxMascotState() {
     api
       .mascots()
       .then((res) => {
-        if (res?.mascots) setMascots(res.mascots);
+        if (res?.mascots) {
+          setMascots(res.mascots);
+          if (res.mascots.length > 0) {
+            setMascotId(res.mascots[0].id);
+            setMascotEnabled(true);
+          }
+        }
       })
       .catch(() => {
         // Mascots are optional in the sandbox

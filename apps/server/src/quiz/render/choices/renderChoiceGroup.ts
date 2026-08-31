@@ -35,7 +35,7 @@ function renderChoice(input: ChoiceGroupRenderInput, choice: QuizSceneChoice, di
   const skinClasses = [input.skin.className, input.skin.cardClassName?.(hookInput)].filter(Boolean).join(" ");
   const stateClasses = state === "pending" ? "answer-normal answer-pending" : `answer-${state}`;
   const semanticAttributes = choiceAttributes(input, choice, label, state);
-  const content = choiceSurfaceContent(choice, label, state, decorations);
+  const content = choiceSurfaceContent(choice, label, decorations);
 
   if (input.presentation === "visual") {
     return `<div class="choice-card choice-card-visual visual-answer-card skin-${input.skin.id} ${stateClasses} choice-tier-${layout.tier}" style="--item-phase:${itemPhase}s" ${semanticAttributes} data-layout-allow-occlusion data-layout-allow-overflow>${renderChoiceMedia(choice)}<div class="choice-card-surface visual-answer-label ${skinClasses}" data-layout-allow-overflow>${content}</div></div>`;
@@ -44,26 +44,14 @@ function renderChoice(input: ChoiceGroupRenderInput, choice: QuizSceneChoice, di
   return `<div class="choice-card choice-card-text choice-card-surface answer-card skin-${input.skin.id} ${skinClasses} ${stateClasses} choice-tier-${layout.tier}" style="--item-phase:${itemPhase}s" ${semanticAttributes} data-layout-allow-occlusion data-layout-allow-overflow>${content}</div>`;
 }
 
-function choiceSurfaceContent(
-  choice: QuizSceneChoice,
-  label: string,
-  state: AnswerCardSemanticState,
-  decorations: AnswerCardSkinDecorations,
-): string {
-  const statusHtml = decorations.statusHtml ?? renderDefaultStatus(state);
-  return `${decorations.beforeLabelHtml ?? ""}<b class="choice-label" data-layout-allow-occlusion data-text="${label}" aria-hidden="true">${label}${decorations.labelSuffixHtml ?? ""}</b><span class="choice-text" data-layout-allow-occlusion data-text="${escAttr(choice.text)}">${esc(choice.text)}</span>${statusHtml}`;
+function choiceSurfaceContent(choice: QuizSceneChoice, label: string, decorations: AnswerCardSkinDecorations): string {
+  return `${decorations.beforeLabelHtml ?? ""}<b class="choice-label" data-layout-allow-occlusion data-text="${label}" aria-hidden="true">${label}${decorations.labelSuffixHtml ?? ""}</b><span class="choice-text" data-layout-allow-occlusion data-text="${escAttr(choice.text)}">${esc(choice.text)}</span>`;
 }
 
 function renderChoiceMedia(choice: QuizSceneChoice): string {
   const fallback = choice.media.source === null;
   const source = choice.media.source ?? illustrationDataUri(choice.media.fallback.subject, choice.media.fallback.seed);
   return `<figure class="choice-media image-card option-image" data-media-fallback="${fallback}" data-layout-allow-overflow><img src="${escAttr(source)}" alt="${escAttr(choice.media.altText)}"><span class="image-shine" aria-hidden="true"></span></figure>`;
-}
-
-function renderDefaultStatus(state: AnswerCardSemanticState): string {
-  if (state === "pending") return "";
-  const correct = state === "correct";
-  return `<i class="${correct ? "answer-check" : "answer-cross"}" aria-hidden="true" style="opacity:1;">${correct ? "✓" : "✕"}</i>`;
 }
 
 function answerState(input: ChoiceGroupRenderInput, choiceId: string): AnswerCardSemanticState {
