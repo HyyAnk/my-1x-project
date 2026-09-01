@@ -5,6 +5,8 @@ import { api } from "../../../api";
 import { useTranslation } from "../../../i18n";
 import { CountrySelectDropdown } from "./CountrySelectDropdown";
 
+const CREATE_CHANNEL_TITLE_ID = "create-channel-title";
+
 type CreateChannelForm = {
   name: string;
   description: string;
@@ -76,20 +78,23 @@ export function CreateChannelModal({
 
   return (
     <div className="modal-backdrop" role="presentation">
-      <form className="modal channel-create-modal" onSubmit={(event) => void submit(event)}>
-        {/* Header */}
+      <form
+        className="modal channel-create-modal"
+        onSubmit={(event) => void submit(event)}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={CREATE_CHANNEL_TITLE_ID}
+      >
         <div className="channel-create-header">
           <div className="channel-create-header-info">
-            <h2>{t("channels.createChannelTitle")}</h2>
+            <h2 id={CREATE_CHANNEL_TITLE_ID}>{t("channels.createChannelTitle")}</h2>
           </div>
           <button type="button" className="channel-create-close-btn" onClick={onClose} aria-label={t("common.close")}>
             <X size={18} />
           </button>
         </div>
 
-        {/* Form Body */}
         <div className="channel-create-body">
-          {/* Channel Name */}
           <div className="channel-create-field">
             <label htmlFor="channel-name-input">{t("channels.channelNameLabel")}</label>
             <input
@@ -103,11 +108,9 @@ export function CreateChannelModal({
             />
           </div>
 
-          {/* Country Selection & Language Grid */}
           <div className="channel-create-row-2">
             <CountrySelectDropdown selectedCountry={form.country} onSelectCountry={handleCountrySelect} />
 
-            {/* Target Language */}
             <div className="channel-create-field">
               <label htmlFor="channel-language-input">{t("channels.languageFieldLabel")}</label>
               <div className="input-with-icon">
@@ -124,7 +127,6 @@ export function CreateChannelModal({
             </div>
           </div>
 
-          {/* Target Audience */}
           <div className="channel-create-field">
             <label htmlFor="channel-audience-input">{t("channels.targetAudienceLabel")}</label>
             <input
@@ -136,7 +138,6 @@ export function CreateChannelModal({
             />
           </div>
 
-          {/* Description */}
           <div className="channel-create-field">
             <label htmlFor="channel-description-input">{t("channels.descriptionLabel")}</label>
             <textarea
@@ -149,7 +150,6 @@ export function CreateChannelModal({
           </div>
         </div>
 
-        {/* Footer */}
         <div className="channel-create-footer">
           <button type="button" className="quiet-button" onClick={onClose} disabled={busy}>
             {t("common.cancel")}

@@ -19,6 +19,13 @@ function renderModal(onCreated = vi.fn().mockResolvedValue(undefined)) {
 }
 
 describe("CreateChannelModal", () => {
+  it("exposes the creation form as a labeled modal dialog", () => {
+    renderModal();
+
+    const dialog = screen.getByRole("dialog", { name: "Create new channel" });
+    expect(dialog.getAttribute("aria-modal")).toBe("true");
+  });
+
   it("shows one creation flow and submits no channel-type field", async () => {
     const create = vi.spyOn(api, "createChannel").mockResolvedValue({
       channel: { channel_id: "ch_quiz" } as never,
