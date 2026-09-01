@@ -4,3 +4,4 @@ export * from "./channel.js";
 export * from "./quiz.js";
 export * from "./episode.js";
 export * from "./config.js";
+export * from "./thumbnail.js";
