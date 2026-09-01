@@ -81,7 +81,7 @@ foreach ($port in $ports) {
 
 # The launcher uses a dedicated window title. Closing that process tree prevents
 # pnpm/concurrently watchers from restarting a service after its listener exits.
-$launcher = @(Get-Process -Name cmd | Where-Object { $_.MainWindowTitle -eq "AI Documentary Studio" })
+$launcher = @(Get-Process -Name cmd | Where-Object { $_.MainWindowTitle -eq "AI Quiz Studio" })
 foreach ($process in $launcher) {
   Write-Log "STEP" "launcher" ("Stopping launcher process tree PID {0}" -f $process.Id) ([ConsoleColor]::Blue)
   & taskkill.exe /PID $process.Id /T /F >$null 2>&1

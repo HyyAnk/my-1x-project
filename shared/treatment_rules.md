@@ -1,6 +1,6 @@
 # Treatment Rules
 
-- Convert research into a causal documentary story, not a topic summary.
+- Convert research into a clear sequence of evidence-backed Quiz questions, not a topic summary.
 - Define one thesis and one audience promise before outlining sequences.
 - Use 6–10 sequences. Give each a dramatic question, purpose, time budget, claim IDs, evidence modes, transition, and changed understanding.
 - Time budgets must sum to the target duration. Reserve space for the cold open, turning point, consequence, replacement, and precise ending.

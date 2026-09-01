@@ -191,7 +191,7 @@ set "SERVER_READY=0"
 set "WEB_READY=0"
 powershell -NoProfile -ExecutionPolicy Bypass -Command "try { $config = Invoke-RestMethod -UseBasicParsing -Uri 'http://127.0.0.1:4310/api/config' -TimeoutSec 2; if ($null -ne $config.audio_generation) { exit 0 }; exit 2 } catch { exit 1 }" >nul 2>nul
 if not errorlevel 1 set "SERVER_READY=1"
-powershell -NoProfile -ExecutionPolicy Bypass -Command "try { $page = Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:!DASHBOARD_WEB_PORT!/' -TimeoutSec 2; if ($page.Content -match '<title>AI Documentary Studio</title>') { exit 0 }; exit 2 } catch { exit 1 }" >nul 2>nul
+powershell -NoProfile -ExecutionPolicy Bypass -Command "try { $page = Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:!DASHBOARD_WEB_PORT!/' -TimeoutSec 2; if ($page.Content -match '<title>AI Quiz Studio</title>') { exit 0 }; exit 2 } catch { exit 1 }" >nul 2>nul
 if not errorlevel 1 set "WEB_READY=1"
 
 if "!SERVER_READY!"=="1" if "!WEB_READY!"=="1" (
@@ -202,10 +202,10 @@ if "!SERVER_READY!"=="1" if "!WEB_READY!"=="1" (
 if "!SERVER_READY!"=="0" (
   call :log STEP T:setup launch "Stopping stale local server before starting the current version"
   powershell -NoProfile -ExecutionPolicy Bypass -Command "$connections = Get-NetTCPConnection -LocalPort 4310 -State Listen -ErrorAction SilentlyContinue; foreach ($connection in $connections) { Stop-Process -Id $connection.OwningProcess -Force -ErrorAction SilentlyContinue }" >nul 2>nul
-  start "AI Documentary Studio" /D "%ROOT%" cmd /k "pnpm dev"
+  start "AI Quiz Studio" /D "%ROOT%" cmd /k "pnpm dev"
 ) else if "!WEB_READY!"=="0" (
   call :log STEP T:setup launch "Local server is running; starting the web app"
-  start "AI Documentary Studio Web" /D "%ROOT%" cmd /k "pnpm --filter @studio/web dev"
+  start "AI Quiz Studio Web" /D "%ROOT%" cmd /k "pnpm --filter @studio/web dev"
 )
 
 :wait_for_dashboard

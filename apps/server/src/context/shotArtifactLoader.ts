@@ -2,6 +2,7 @@ import type { Channel, Episode, TaskType } from "@studio/shared";
 import type { RepositoryService } from "../repository.js";
 import type { StudioLogger } from "../logger.js";
 import { continuityBundleId } from "../visualBundles.js";
+import { STUDIO_RUNTIME_DIRECTORY } from "../runtimePaths.js";
 import {
   excerptForScene,
   selectMarkdownSection,
@@ -76,7 +77,11 @@ export async function loadShotArtifacts(input: EpisodeContextInput, ctx: Artifac
       ),
     });
     await readSharedRules(repository, ["prompt_rules.md"], sharedFiles);
-    add({ path: ".documentary-studio/config.json", reason: "shot duration and narration pace", content: JSON.stringify(runtimeConfig) });
+    add({
+      path: `${STUDIO_RUNTIME_DIRECTORY}/config.json`,
+      reason: "shot duration and narration pace",
+      content: JSON.stringify(runtimeConfig),
+    });
   } else if (taskType === "GENERATE_SCENES") {
     await artifact("research.md", "research claim and source ledger", true);
     await artifact("treatment.md", "sequence plan and time budget", true);
@@ -89,7 +94,7 @@ export async function loadShotArtifacts(input: EpisodeContextInput, ctx: Artifac
     });
     await readSharedRules(repository, ["prompt_rules.md"], sharedFiles);
     add({
-      path: ".documentary-studio/config.json",
+      path: `${STUDIO_RUNTIME_DIRECTORY}/config.json`,
       reason: "shot duration, narration pace, and aspect ratio",
       content: JSON.stringify(runtimeConfig),
     });

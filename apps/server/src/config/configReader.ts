@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { AppConfigSchema, type AppConfig } from "@studio/shared";
+import { studioRuntimePath } from "../runtimePaths.js";
 import {
   DEFAULT_CONFIG,
   antigravitySettingsFilename,
@@ -19,15 +20,15 @@ export async function readJsonFile(filePath: string): Promise<Record<string, unk
 }
 
 export async function loadConfig(rootDirectory: string): Promise<AppConfig> {
-  const configPath = path.join(rootDirectory, ".documentary-studio", "config.json");
-  const localConfigPath = path.join(rootDirectory, ".documentary-studio", codexSettingsFilename);
-  const localAgyConfigPath = path.join(rootDirectory, ".documentary-studio", antigravitySettingsFilename);
+  const configPath = studioRuntimePath(rootDirectory, "config.json");
+  const localConfigPath = studioRuntimePath(rootDirectory, codexSettingsFilename);
+  const localAgyConfigPath = studioRuntimePath(rootDirectory, antigravitySettingsFilename);
   try {
     const raw = await readJsonFile(configPath);
     const local = await readJsonFile(localConfigPath);
     const localAgy = await readJsonFile(localAgyConfigPath);
-    const localAudio = await readJsonFile(path.join(rootDirectory, ".documentary-studio", audioSettingsFilename));
-    const localImage = await readJsonFile(path.join(rootDirectory, ".documentary-studio", imageSettingsFilename));
+    const localAudio = await readJsonFile(studioRuntimePath(rootDirectory, audioSettingsFilename));
+    const localImage = await readJsonFile(studioRuntimePath(rootDirectory, imageSettingsFilename));
     const trackedCodex = raw.codex && typeof raw.codex === "object" ? (raw.codex as Record<string, unknown>) : {};
     const localCodex = local.codex && typeof local.codex === "object" ? (local.codex as Record<string, unknown>) : {};
     const trackedAgy = raw.antigravity && typeof raw.antigravity === "object" ? (raw.antigravity as Record<string, unknown>) : {};
@@ -66,12 +67,12 @@ export async function loadConfig(rootDirectory: string): Promise<AppConfig> {
     const localAgy = await readJsonFile(localAgyConfigPath);
     const localAgySettings =
       localAgy.antigravity && typeof localAgy.antigravity === "object" ? (localAgy.antigravity as Record<string, unknown>) : {};
-    const localAudio = await readJsonFile(path.join(rootDirectory, ".documentary-studio", audioSettingsFilename));
+    const localAudio = await readJsonFile(studioRuntimePath(rootDirectory, audioSettingsFilename));
     const localAudioSettings =
       localAudio.audio_generation && typeof localAudio.audio_generation === "object"
         ? (localAudio.audio_generation as Record<string, unknown>)
         : {};
-    const localImage = await readJsonFile(path.join(rootDirectory, ".documentary-studio", imageSettingsFilename));
+    const localImage = await readJsonFile(studioRuntimePath(rootDirectory, imageSettingsFilename));
     const localImageSettings =
       localImage.image_generation && typeof localImage.image_generation === "object"
         ? (localImage.image_generation as Record<string, unknown>)

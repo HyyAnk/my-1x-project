@@ -7,16 +7,16 @@ coverage/
 test-results/
 playwright-report/
 blob-report/
-.documentary-studio/logs/
-.documentary-studio/tasks/
-.documentary-studio/codex/
-.documentary-studio/voices/
-.documentary-studio/*.local.*
-apps/*/.documentary-studio/
-**/.documentary-studio/logs/
-**/.documentary-studio/tasks/
-**/.documentary-studio/codex/
-**/.documentary-studio/voices/
+.quiz-studio/logs/
+.quiz-studio/tasks/
+.quiz-studio/codex/
+.quiz-studio/voices/
+.quiz-studio/*.local.*
+apps/*/.quiz-studio/
+**/.quiz-studio/logs/
+**/.quiz-studio/tasks/
+**/.quiz-studio/codex/
+**/.quiz-studio/voices/
 services/tts/.venv/
 services/tts/__pycache__/
 *.py[cod]
@@ -43,9 +43,9 @@ tmp/
 output/
 .context/
 
-# Machine-local Documentary Studio configuration.
-.documentary-studio/config.json
-.documentary-studio/*.json
+# Machine-local Quiz Studio configuration.
+.quiz-studio/config.json
+.quiz-studio/*.json
 
 # Heavy media assets managed via GitHub Releases
 assets/audio/bgm/tracks/*.mp3
@@ -53,5 +53,4 @@ assets/audio/bgm/tracks/*.mp3
 assets/audio/bgm/*.zip
 dist-assets/
 *.zip
-
 

@@ -49,7 +49,7 @@ describe("Multi-Tier Image Pipeline", () => {
   let episodeId = "";
 
   beforeEach(async () => {
-    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "documentary-studio-image-"));
+    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "quiz-studio-image-"));
     await mkdir(path.join(temporaryRoot, "templates"), { recursive: true });
     await writeFile(
       path.join(temporaryRoot, "templates", "example_channel_dna.md"),

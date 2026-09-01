@@ -21,7 +21,7 @@ describe("Cockpit OpenAI-compatible transport", () => {
   });
 
   it("loads visible models from the local Codex catalog", async () => {
-    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "documentary-studio-codex-"));
+    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "quiz-studio-codex-"));
     const codexHome = path.join(temporaryRoot, "codex-home");
     await mkdir(codexHome, { recursive: true });
     await writeFile(path.join(codexHome, "config.toml"), 'model = "gpt-5.6-luna"\nmodel_catalog_json = "catalog.json"\n', "utf8");
@@ -49,8 +49,8 @@ describe("Cockpit OpenAI-compatible transport", () => {
 
   it("uses a workspace-cached Codex binary when the Windows alias is not executable", async () => {
     if (process.platform !== "win32") return;
-    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "documentary-studio-codex-"));
-    const cachedPath = path.join(temporaryRoot, ".documentary-studio", "codex", "codex.exe");
+    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "quiz-studio-codex-"));
+    const cachedPath = path.join(temporaryRoot, ".quiz-studio", "codex", "codex.exe");
     await mkdir(path.dirname(cachedPath), { recursive: true });
     await copyFile(process.execPath, cachedPath);
     const logger = new StudioLogger(temporaryRoot);
@@ -93,7 +93,7 @@ describe("Cockpit OpenAI-compatible transport", () => {
     const address = server.address();
     if (!address || typeof address === "string") throw new Error("Mock server did not expose a port");
 
-    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "documentary-studio-codex-"));
+    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "quiz-studio-codex-"));
     const logger = new StudioLogger(temporaryRoot);
     await logger.init();
     const config = {

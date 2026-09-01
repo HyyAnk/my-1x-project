@@ -51,7 +51,7 @@ describe("continuity bundles", () => {
   });
 
   it("writes one image and propagates its reference to every matching scene", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-bundles-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-bundles-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");

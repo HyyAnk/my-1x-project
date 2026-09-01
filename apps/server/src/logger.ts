@@ -1,5 +1,6 @@
 import { appendFile, mkdir } from "node:fs/promises";
 import path from "node:path";
+import { studioRuntimePath } from "./runtimePaths.js";
 
 type LogLevel = "INFO" | "STEP" | "OK" | "WARN" | "ERROR" | "DEBUG";
 type LogContext = {
@@ -41,7 +42,7 @@ export class StudioLogger {
   private readonly debugEnabled: boolean;
 
   constructor(rootDirectory: string, debugEnabled = false) {
-    this.logDirectory = path.join(rootDirectory, ".documentary-studio", "logs");
+    this.logDirectory = studioRuntimePath(rootDirectory, "logs");
     this.debugEnabled = debugEnabled;
   }
 

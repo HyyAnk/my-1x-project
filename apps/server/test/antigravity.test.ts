@@ -10,7 +10,7 @@ describe("Antigravity Client", () => {
   let temporaryRoot = "";
 
   beforeEach(async () => {
-    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "documentary-studio-agy-"));
+    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "quiz-studio-agy-"));
   });
 
   afterEach(async () => {

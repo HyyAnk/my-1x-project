@@ -10,7 +10,7 @@ export default tseslint.config(
       "**/node_modules/**",
       ".codegraph/**",
       ".context/**",
-      ".documentary-studio/**",
+      ".quiz-studio/**",
       "assets/**",
       "channels/**",
       "services/**",

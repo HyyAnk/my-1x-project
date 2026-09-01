@@ -288,12 +288,16 @@
 }
 
 .assessment-build-time-badge strong {
-  font: 700 13px/1 "JetBrains Mono", monospace !important;
+  font:
+    700 13px/1 "JetBrains Mono",
+    monospace !important;
   color: var(--accent-deep, var(--ink)) !important;
 }
 
 .assessment-build-time-badge span {
-  font: 700 8px "JetBrains Mono", monospace !important;
+  font:
+    700 8px "JetBrains Mono",
+    monospace !important;
   color: var(--muted) !important;
   text-transform: uppercase;
 }

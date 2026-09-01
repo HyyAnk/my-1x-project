@@ -2,6 +2,7 @@ import { realpath } from "node:fs/promises";
 import path from "node:path";
 import { RepositoryError } from "./errors.js";
 import type { RepositoryRoots } from "./types.js";
+import { STUDIO_RUNTIME_DIRECTORY, studioRuntimePath } from "../runtimePaths.js";
 
 export function createRoots(rootDirectory: string, storageRoot: string): RepositoryRoots {
   const resolvedStorageRoot = path.resolve(storageRoot);
@@ -10,9 +11,9 @@ export function createRoots(rootDirectory: string, storageRoot: string): Reposit
     templates: path.join(rootDirectory, "templates"),
     shared: path.join(rootDirectory, "shared"),
     assets: path.join(rootDirectory, "assets"),
-    runtime: path.join(resolvedStorageRoot, ".documentary-studio"),
-    voices: path.join(resolvedStorageRoot, ".documentary-studio", "voices"),
-    mascots: path.join(resolvedStorageRoot, ".documentary-studio", "mascots"),
+    runtime: studioRuntimePath(resolvedStorageRoot),
+    voices: studioRuntimePath(resolvedStorageRoot, "voices"),
+    mascots: studioRuntimePath(resolvedStorageRoot, "mascots"),
   };
 }
 
@@ -29,7 +30,7 @@ export function resolveContextPath(roots: RepositoryRoots, relativePath: string)
     templates: roots.templates,
     shared: roots.shared,
     assets: roots.assets,
-    ".documentary-studio": roots.runtime,
+    [STUDIO_RUNTIME_DIRECTORY]: roots.runtime,
   };
   const base = contextRoots[root ?? ""];
   if (!base || segments.some((segment) => !segment || segment === "." || segment === "..")) {

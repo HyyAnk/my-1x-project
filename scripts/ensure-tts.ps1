@@ -10,7 +10,7 @@ $ttsRoot = Join-Path $project "services\tts"
 $venvRoot = Join-Path $ttsRoot ".venv"
 $ttsPython = Join-Path $venvRoot "Scripts\python.exe"
 $requirements = Join-Path $ttsRoot "requirements.txt"
-$runtimeRoot = Join-Path $project ".documentary-studio\logs"
+$runtimeRoot = Join-Path $project ".quiz-studio\logs"
 $worker = "main"
 $profile = "tts"
 $desiredModel = "turbo"
@@ -252,5 +252,5 @@ for ($attempt = 1; $attempt -le 300; $attempt++) {
   Start-Sleep -Seconds 1
 }
 
-Write-Log "ERROR" "health" "Chatterbox did not become ready within 5 minutes. Check .documentary-studio/logs/tts.stderr.log"
+Write-Log "ERROR" "health" "Chatterbox did not become ready within 5 minutes. Check .quiz-studio/logs/tts.stderr.log"
 exit 1

@@ -15,15 +15,7 @@ type QuizVideoPanelProps = {
   onOpenVideoFolder: () => void;
 };
 
-export function QuizVideoPanel({
-  channel,
-  episode,
-  episodeId,
-  episodeTasks,
-  episodeClock,
-  busy,
-  onOpenVideoFolder,
-}: QuizVideoPanelProps) {
+export function QuizVideoPanel({ channel, episode, episodeId, episodeTasks, episodeClock, busy, onOpenVideoFolder }: QuizVideoPanelProps) {
   const videoTask = latestTask(episodeTasks, ["GENERATE_VIDEO"]);
   const showProgress =
     videoTask &&

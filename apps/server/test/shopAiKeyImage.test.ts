@@ -55,7 +55,7 @@ describe("ShopAIKey image provider", () => {
   });
 
   it("posts to exactly one /v1/images/generations route and persists b64_json PNG output", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-shopaikey-image-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-shopaikey-image-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
@@ -111,7 +111,7 @@ describe("ShopAIKey image provider", () => {
   });
 
   it("retries transient provider failures before persisting the image", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-shopaikey-image-retry-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-shopaikey-image-retry-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
@@ -160,7 +160,7 @@ describe("ShopAIKey image provider", () => {
   });
 
   it("falls back to the configured model after primary model timeouts", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-shopaikey-fallback-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-shopaikey-fallback-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");

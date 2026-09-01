@@ -109,12 +109,5 @@ export function ChannelsView({
     );
   }
 
-  return (
-    <ChannelsListView
-      channels={channels}
-      onCreate={onCreate}
-      openChannel={(id) => openChannel(id)}
-      onDelete={onDelete}
-    />
-  );
+  return <ChannelsListView channels={channels} onCreate={onCreate} openChannel={(id) => openChannel(id)} onDelete={onDelete} />;
 }

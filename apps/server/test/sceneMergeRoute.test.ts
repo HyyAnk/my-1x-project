@@ -75,7 +75,7 @@ describe("scene merge route", () => {
 });
 
 async function createTestRoot(): Promise<string> {
-  const root = await mkdtemp(path.join(os.tmpdir(), "documentary-merge-route-"));
+  const root = await mkdtemp(path.join(os.tmpdir(), "quiz-merge-route-"));
   roots.push(root);
   await mkdir(path.join(root, "templates"), { recursive: true });
   await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");

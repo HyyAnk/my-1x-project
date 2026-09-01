@@ -68,20 +68,24 @@ function estimateSpeedupComparison(baselineDurationMs, optimizedDurationMs) {
   };
 }
 
-const colors = process.stdout.isTTY
-  ? {
-      header: "\x1b[1;35m",
-      title: "\x1b[1;36m",
-      ok: "\x1b[1;32m",
-      metric: "\x1b[1;33m",
-      dim: "\x1b[2m",
-      reset: "\x1b[0m",
-    }
-  : { header: "", title: "", ok: "", metric: "", dim: "", reset: "" };
+const startedAt = performance.now();
+const supportsColor = Boolean(process.stdout.isTTY && process.env.NO_COLOR === undefined);
+const colors = {
+  INFO: supportsColor ? "\u001b[36m" : "",
+  STEP: supportsColor ? "\u001b[1;34m" : "",
+  OK: supportsColor ? "\u001b[32m" : "",
+  WARN: supportsColor ? "\u001b[33m" : "",
+  ERROR: supportsColor ? "\u001b[1;31m" : "",
+  timestamp: supportsColor ? "\u001b[2m" : "",
+  reset: supportsColor ? "\u001b[0m" : "",
+};
 
-console.log(`\n${colors.header}═══════════════════════════════════════════════════════════════════${colors.reset}`);
-console.log(`${colors.title}  🎬 AI DOCUMENTARY STUDIO - VIDEO RENDER BENCHMARK & DIAGNOSTICS${colors.reset}`);
-console.log(`${colors.header}═══════════════════════════════════════════════════════════════════${colors.reset}\n`);
+function log(level, step, message) {
+  const timestamp = new Date().toISOString();
+  process.stdout.write(
+    `${colors.timestamp}${timestamp}${colors.reset} ${colors[level]}[${level}]${colors.reset} [T:main] [P:render-benchmark] [STEP:${step}] ${message}\n`,
+  );
+}
 
 // 1. Hardware Detection
 const cpuCount = os.cpus().length;
@@ -91,18 +95,19 @@ const browserPath = resolveHardwareBrowserPath() || "Built-in Chromium";
 const fastCapture = process.env.PRODUCER_EXPERIMENTAL_FAST_CAPTURE ?? "true";
 const optimalWorkers = calculateOptimalWorkers();
 
-console.log(`${colors.title}[1] Hardware & Environment Diagnostics:${colors.reset}`);
-console.log(`  • CPU Threads:          ${colors.metric}${cpuCount}${colors.reset}`);
-console.log(`  • Memory (RAM):         ${colors.metric}${freeRamGb} GB free / ${totalRamGb} GB total${colors.reset}`);
-console.log(`  • Hardware GPU Browser: ${colors.metric}${browserPath}${colors.reset}`);
-console.log(`  • Fast Capture Flag:    ${colors.metric}${fastCapture}${colors.reset}`);
-console.log(`  • Auto Workers Scaling: ${colors.metric}${optimalWorkers} parallel render workers${colors.reset}\n`);
+log(
+  "INFO",
+  "startup",
+  `Quiz Studio render benchmark | mode=projection | scenario=60s-1080p-30fps | concurrency=${optimalWorkers} | automation=read-only`,
+);
+log("STEP", "hardware", `CPU threads=${cpuCount} memory_free_gb=${freeRamGb} memory_total_gb=${totalRamGb}`);
+log("INFO", "hardware", `browser=${browserPath} fast_capture=${fastCapture} workers=${optimalWorkers}`);
 
 // 2. Scenario Projections for a 60-second 1080p 30 FPS Quiz Video (1800 frames)
 const totalFrames = 1800; // 60s at 30 FPS
 const videoFps = 30;
 
-console.log(`${colors.title}[2] Performance Profiles Comparison (60s Quiz Video, 1800 frames):${colors.reset}`);
+log("STEP", "profiles", "Calculating three render performance projections for 1800 frames");
 
 // Profile A: Legacy Unoptimized (1 Worker, Software SwiftShader, No image resize, 5 sample checks)
 // Est: ~180s (3.0 mins)
@@ -142,18 +147,23 @@ const fastPerf = calculateRenderPerformance({
 });
 const fastSpeedup = estimateSpeedupComparison(legacyDurationMs, fastDurationMs);
 
-console.log(`  ┌─────────────────────────────┬───────────┬──────────────┬───────────────┬─────────────────┐`);
-console.log(`  │ Profile                     │ Time (s)  │ Render FPS   │ Realtime X    │ Overall Speedup │`);
-console.log(`  ├─────────────────────────────┼───────────┼──────────────┼───────────────┼─────────────────┤`);
-console.log(
-  `  │ 1. Legacy Baseline          │ ${legacyPerf.totalDurationSeconds.toFixed(1).padStart(7)}s  │ ${legacyPerf.effectiveFps.toFixed(1).padStart(10)}fps │ ${legacyPerf.realtimeFactor.toFixed(2).padStart(11)}x │ ${"-".padStart(15)} │`,
+log(
+  "INFO",
+  "profile_baseline",
+  `duration=${legacyPerf.totalDurationSeconds.toFixed(1)}s fps=${legacyPerf.effectiveFps.toFixed(1)} realtime=${legacyPerf.realtimeFactor.toFixed(2)}x workers=1`,
 );
-console.log(
-  `  │ 2. Standard Optimized       │ ${standardPerf.totalDurationSeconds.toFixed(1).padStart(7)}s  │ ${standardPerf.effectiveFps.toFixed(1).padStart(10)}fps │ ${standardPerf.realtimeFactor.toFixed(2).padStart(11)}x │ ${colors.ok}${standardSpeedup.speedupMultiplier}x (${standardSpeedup.timeSavedPercent}%)${colors.reset} │`,
+log(
+  "OK",
+  "profile_standard",
+  `duration=${standardPerf.totalDurationSeconds.toFixed(1)}s fps=${standardPerf.effectiveFps.toFixed(1)} realtime=${standardPerf.realtimeFactor.toFixed(2)}x speedup=${standardSpeedup.speedupMultiplier}x saved=${standardSpeedup.timeSavedPercent}%`,
 );
-console.log(
-  `  │ 3. Ultra Fast-Path Mode     │ ${fastPerf.totalDurationSeconds.toFixed(1).padStart(7)}s  │ ${fastPerf.effectiveFps.toFixed(1).padStart(10)}fps │ ${fastPerf.realtimeFactor.toFixed(2).padStart(11)}x │ ${colors.ok}${fastSpeedup.speedupMultiplier}x (${fastSpeedup.timeSavedPercent}%)${colors.reset} │`,
+log(
+  "OK",
+  "profile_fast",
+  `duration=${fastPerf.totalDurationSeconds.toFixed(1)}s fps=${fastPerf.effectiveFps.toFixed(1)} realtime=${fastPerf.realtimeFactor.toFixed(2)}x speedup=${fastSpeedup.speedupMultiplier}x saved=${fastSpeedup.timeSavedPercent}%`,
 );
-console.log(`  └─────────────────────────────┴───────────┴──────────────┴───────────────┴─────────────────┘\n`);
-
-console.log(`${colors.ok}✔ All 6 optimization phases active & verified.${colors.reset}\n`);
+log(
+  "OK",
+  "summary",
+  `total=3 success=3 failed=0 skipped=0 retries=0 optimization_phases=6 elapsed=${((performance.now() - startedAt) / 1000).toFixed(3)}s`,
+);

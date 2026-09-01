@@ -15,7 +15,7 @@ afterEach(async () => {
 
 describe("ContextEngine", () => {
   it("builds topic context from one channel and excludes episode bodies and other channels", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-context-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-context-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -54,7 +54,7 @@ describe("ContextEngine", () => {
   });
 
   it("includes specific theme guidance when topicHint is provided for SUGGEST_TOPICS", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-topic-hint-context-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-topic-hint-context-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -87,10 +87,10 @@ describe("ContextEngine", () => {
   });
 
   it("uses the Quiz Engine DNA template for AI DNA generation", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-quiz-dna-context-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-dna-context-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
-    await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# Documentary DNA\n", "utf8");
+    await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# Example DNA\n", "utf8");
     await writeFile(
       path.join(root, "templates", "quiz_channel_dna.md"),
       "# Quiz Channel DNA\n\n## Quiz formats\n\n- Knowledge quiz\n",
@@ -113,11 +113,11 @@ describe("ContextEngine", () => {
 
     expect(context.included_files.some((file) => file.path === "templates/quiz_channel_dna.md")).toBe(true);
     expect(context.prompt).toContain("Knowledge quiz");
-    expect(context.prompt).not.toContain("# Documentary DNA");
+    expect(context.prompt).not.toContain("# Example DNA");
   });
 
   it("writes target-aware script contracts for every 3–8 minute duration", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-script-context-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-script-context-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -175,7 +175,7 @@ describe("ContextEngine", () => {
   });
 
   it("enforces strict 2-choice prompt contract when quiz format is true_false", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-quiz-tf-context-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-tf-context-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -244,8 +244,8 @@ describe("ContextEngine", () => {
   });
 
   it("uses the absolute storage path for continuity image output", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-image-context-"));
-    const storage = await mkdtemp(path.join(os.tmpdir(), "documentary-image-storage-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-image-context-"));
+    const storage = await mkdtemp(path.join(os.tmpdir(), "quiz-image-storage-"));
     roots.push(root, storage);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -301,7 +301,7 @@ describe("ContextEngine", () => {
   });
 
   it("keeps sequence shot generation recoverable when a legacy visual bible is missing a later bundle", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-sequence-context-recovery-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-sequence-context-recovery-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -379,7 +379,7 @@ describe("ContextEngine", () => {
   });
 
   it("scopes research dossier to only the requested sequence claim in long dossiers", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-scoped-research-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-scoped-research-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });

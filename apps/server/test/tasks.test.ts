@@ -334,7 +334,7 @@ afterEach(async () => {
 
 describe("TaskManager locks", () => {
   it("serializes two tasks targeting the same episode", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-tasks-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-tasks-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -384,7 +384,7 @@ describe("TaskManager locks", () => {
   });
 
   it("runs audio in its own pool without creating Codex turns", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-audio-tasks-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-audio-tasks-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -466,7 +466,7 @@ describe("TaskManager locks", () => {
   });
 
   it("retries a visual bible when continuity bundles are missing", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-visual-bible-retry-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-visual-bible-retry-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -520,7 +520,7 @@ describe("TaskManager locks", () => {
   });
 
   it("retries a Quiz visual bible when safe motion is missing", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-quiz-visual-bible-retry-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-visual-bible-policy-retry-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -580,7 +580,7 @@ describe("TaskManager locks", () => {
   });
 
   it("retries a sequence shot plan when prompt structure or continuity metadata is missing", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-shot-plan-retry-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-shot-plan-retry-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -648,7 +648,7 @@ describe("TaskManager locks", () => {
   });
 
   it("retries quiz research when a question claim is missing", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-quiz-research-retry-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-research-retry-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -696,7 +696,7 @@ describe("TaskManager locks", () => {
   });
 
   it("runs a Quiz pipeline through V2 and submits video without legacy narration", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-quiz-v2-pipeline-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-v2-pipeline-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });
@@ -922,7 +922,7 @@ describe("TaskManager locks", () => {
   });
 
   it("enforces video generation concurrency limit (default 2) and queues exceeding tasks", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-video-concurrency-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-video-concurrency-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });

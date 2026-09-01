@@ -2,11 +2,7 @@ import type { TaskManagerRuntime, ActiveRun } from "../runtime.js";
 import { extractMarkdown, extractScriptMarkdown, parseTopicCandidates } from "../parsers.js";
 import { validateQuizResearch, validateQuizScript, validateQuizTreatment, validateQuizVisualBible } from "../validators.js";
 
-export async function handleTextArtifactOutput(
-  runtime: TaskManagerRuntime,
-  active: ActiveRun,
-  output: string,
-): Promise<string[] | null> {
+export async function handleTextArtifactOutput(runtime: TaskManagerRuntime, active: ActiveRun, output: string): Promise<string[] | null> {
   const task = active.task;
 
   if (task.task_type === "GENERATE_DNA") {

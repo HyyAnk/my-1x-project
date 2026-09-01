@@ -35,10 +35,7 @@ export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfil
   return buildSandboxSnapshotComposition(parsed, mascotProfile);
 }
 
-function buildSandboxRehearsalComposition(
-  parsed: SandboxPreviewInput,
-  mascotProfile?: MascotProfile | null,
-): SandboxPreviewResponse {
+function buildSandboxRehearsalComposition(parsed: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
   const timeline = computeSandboxPhaseTimeline();
   const mascotEnabled = parsed.mascot_enabled !== false && parsed.mascot_id !== "none";
   const mascotConfig = {
@@ -52,21 +49,22 @@ function buildSandboxRehearsalComposition(
     show_in_outro: parsed.mascot_show_in_outro,
     show_in_question: parsed.mascot_show_in_question,
   };
-  const mascotHtml = mascotEnabled && mascotProfile
-    ? renderProductionMascotHtmlLayer(mascotProfile, mascotConfig, {
-        phase: "question",
-        clipStartSeconds: 0,
-        clipDurationSeconds: timeline.totalDuration,
-        timelineEvents: [
-          { type: "choices.enter", at_seconds: timeline.choicesStart },
-          { type: "countdown.start", at_seconds: timeline.thinkingStart },
-          { type: "answer.reveal", at_seconds: timeline.revealStart },
-          { type: "fact.enter", at_seconds: timeline.explainStart },
-        ],
-        revealOutcome: parsed.mascot_reveal_outcome ?? "correct",
-        aspectRatio: parsed.aspect_ratio,
-      })
-    : "";
+  const mascotHtml =
+    mascotEnabled && mascotProfile
+      ? renderProductionMascotHtmlLayer(mascotProfile, mascotConfig, {
+          phase: "question",
+          clipStartSeconds: 0,
+          clipDurationSeconds: timeline.totalDuration,
+          timelineEvents: [
+            { type: "choices.enter", at_seconds: timeline.choicesStart },
+            { type: "countdown.start", at_seconds: timeline.thinkingStart },
+            { type: "answer.reveal", at_seconds: timeline.revealStart },
+            { type: "fact.enter", at_seconds: timeline.explainStart },
+          ],
+          revealOutcome: parsed.mascot_reveal_outcome ?? "correct",
+          aspectRatio: parsed.aspect_ratio,
+        })
+      : "";
 
   const model = adaptSandboxQuizScene(parsed, Boolean(mascotHtml));
   const parts = buildQuizSceneParts(model);
@@ -97,10 +95,7 @@ function buildSandboxRehearsalComposition(
   };
 }
 
-function buildSandboxSnapshotComposition(
-  parsed: SandboxPreviewInput,
-  mascotProfile?: MascotProfile | null,
-): SandboxPreviewResponse {
+function buildSandboxSnapshotComposition(parsed: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
   const state = sandboxSceneState(parsed);
   const mascotHtml = renderSandboxMascot(parsed, mascotProfile, state.phase);
   const model = adaptSandboxQuizScene(parsed, Boolean(mascotHtml));

@@ -51,7 +51,7 @@ afterEach(async () => {
 describe("bundle image tasks", () => {
   it("materializes an image and attaches it to every scene in the bundle", async () => {
     delete process.env.SHOPAIKEY_API_KEY;
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-image-task-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-image-task-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await writeFile(
@@ -119,7 +119,7 @@ describe("bundle image tasks", () => {
 
   it("captures a PNG delivered through a media item without contaminating text output", async () => {
     delete process.env.SHOPAIKEY_API_KEY;
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-media-image-task-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-media-image-task-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await writeFile(
@@ -179,7 +179,7 @@ describe("bundle image tasks", () => {
   });
 
   it("uses ShopAIKey directly without starting a Codex image turn", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-shopaikey-direct-image-task-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-shopaikey-direct-image-task-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await writeFile(
@@ -243,7 +243,7 @@ describe("bundle image tasks", () => {
 
   it("serializes multiple bundle image generation tasks strictly to 1 concurrent task", async () => {
     delete process.env.SHOPAIKEY_API_KEY;
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-image-concurrency-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-image-concurrency-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");

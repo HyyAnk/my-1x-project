@@ -12,7 +12,7 @@ describe("Dynamic Model Fetching (Dual-Engine)", () => {
   const originalCodexHome = process.env.CODEX_HOME;
 
   beforeEach(async () => {
-    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "documentary-studio-models-"));
+    temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "quiz-studio-models-"));
   });
 
   afterEach(async () => {

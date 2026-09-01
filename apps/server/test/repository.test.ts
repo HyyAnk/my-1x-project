@@ -8,7 +8,7 @@ import { RepositoryService, parseScenes, serializeScenes } from "../src/reposito
 const roots: string[] = [];
 
 async function fixture(): Promise<RepositoryService> {
-  const root = await mkdtemp(path.join(os.tmpdir(), "documentary-studio-"));
+  const root = await mkdtemp(path.join(os.tmpdir(), "quiz-studio-"));
   roots.push(root);
   await mkdir(path.join(root, "templates"), { recursive: true });
   await writeFile(
@@ -52,8 +52,8 @@ describe("RepositoryService", () => {
   });
 
   it("keeps channel artifacts in the selected storage root", async () => {
-    const projectRoot = await mkdtemp(path.join(os.tmpdir(), "documentary-studio-project-"));
-    const storageRoot = await mkdtemp(path.join(os.tmpdir(), "documentary-studio-storage-"));
+    const projectRoot = await mkdtemp(path.join(os.tmpdir(), "quiz-studio-project-"));
+    const storageRoot = await mkdtemp(path.join(os.tmpdir(), "quiz-studio-storage-"));
     roots.push(projectRoot, storageRoot);
     await mkdir(path.join(projectRoot, "templates"), { recursive: true });
     await writeFile(path.join(projectRoot, "templates", "example_channel_dna.md"), "# Channel DNA\n", "utf8");

@@ -32,7 +32,7 @@ class StructuredFormatter(logging.Formatter):
         return f"\033[2m{timestamp}\033[0m {color}[{record.levelname}]{reset} [T:{threading.get_ident()}] [STEP:{getattr(record, 'step', 'runtime')}] {record.getMessage()}"
 
 
-logger = logging.getLogger("documentary-tts")
+logger = logging.getLogger("quiz-studio-tts")
 if not logger.handlers:
     handler = logging.StreamHandler()
     handler.setFormatter(StructuredFormatter())
@@ -68,7 +68,7 @@ except Exception as error:  # pragma: no cover - depends on local model and hard
     MODEL_ERROR = str(error)
     logger.error("Chatterbox model unavailable: %s", MODEL_ERROR, extra={"step": "load_model"})
 
-app = FastAPI(title="Documentary Studio TTS", docs_url=None, redoc_url=None)
+app = FastAPI(title="Quiz Studio TTS", docs_url=None, redoc_url=None)
 SYNTHESIS_LOCK = threading.Lock()
 
 

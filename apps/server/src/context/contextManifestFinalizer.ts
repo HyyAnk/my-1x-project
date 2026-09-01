@@ -4,6 +4,7 @@ import { ContextManifestSchema, type ContextManifest, type Episode, type TaskTyp
 import type { RepositoryService } from "../repository.js";
 import type { StudioLogger } from "../logger.js";
 import { DEFAULT_CONFIG } from "../config.js";
+import { studioRuntimePath } from "../runtimePaths.js";
 import type { ContextFile } from "./contextTypes.js";
 
 export async function readSharedRules(repository: RepositoryService, names: string[], target: ContextFile[]): Promise<void> {
@@ -23,10 +24,7 @@ export async function readRuntimeConfig(repository: RepositoryService): Promise<
   video_generation: { max_scene_duration_seconds?: number; narration_words_per_second?: number };
 }> {
   try {
-    const raw = JSON.parse(await readFile(path.join(repository.rootDirectory, ".documentary-studio", "config.json"), "utf8")) as Record<
-      string,
-      unknown
-    >;
+    const raw = JSON.parse(await readFile(studioRuntimePath(repository.rootDirectory, "config.json"), "utf8")) as Record<string, unknown>;
     return {
       ...raw,
       video_generation: {

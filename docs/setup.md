@@ -12,7 +12,7 @@ Use [`run dashboard.bat`](../run%20dashboard.bat) as the normal launcher. It che
 
 Use the Power button in the dashboard top bar to stop the local services when you are finished. The same action is available from [`stop dashboard.bat`](../stop%20dashboard.bat); it leaves the selected content storage folder and all channel files untouched.
 
-The first startup can take several minutes and uses substantial disk space because PyTorch and the Chatterbox model are downloaded. Later startups reuse the ignored virtual environment and cached model. If installation or model loading fails, the launcher stops with a readable error and points to `.documentary-studio/logs/tts.stderr.log` instead of opening a dashboard that cannot generate audio.
+The first startup can take several minutes and uses substantial disk space because PyTorch and the Chatterbox model are downloaded. Later startups reuse the ignored virtual environment and cached model. If installation or model loading fails, the launcher stops with a readable error and points to `.quiz-studio/logs/tts.stderr.log` instead of opening a dashboard that cannot generate audio.
 
 The current Chatterbox package requires Python 3.10 or newer and is tested upstream on Python 3.11. The launcher prefers Python 3.11, then 3.10, then 3.13. If no suitable Python is installed, it attempts to install Python 3.11 through winget.
 
@@ -47,8 +47,8 @@ Turbo supports `[chuckle]` and `[laugh]`; the launcher also restarts an already-
 
 Audio settings are available in Settings. The service URL, Chatterbox controls, and optional per-channel WAV voice reference are stored locally. Voice references and generated WAV files stay in the selected content storage folder, which is ignored by Git.
 
-Settings also contains a shared voice library. Adding a voice creates a reusable reference and a cached preview under `.documentary-studio/voices/`; assigning it to a channel controls the next audio generation task. Episode audio can be queued with Generate all audio and downloaded as separate scene files or one merged WAV.
+Settings also contains a shared voice library. Adding a voice creates a reusable reference and a cached preview under `.quiz-studio/voices/`; assigning it to a channel controls the next audio generation task. Episode audio can be queued with Generate all audio and downloaded as separate scene files or one merged WAV.
 
-On the first launch, the dashboard asks for a local content storage folder. It creates `channels/`, `.documentary-studio/tasks/`, `.documentary-studio/codex/`, and `.documentary-studio/logs/` inside that folder. The code, templates, and shared rules remain in the Git project.
+On the first launch, the dashboard asks for a local content storage folder. It creates `channels/`, `.quiz-studio/tasks/`, `.quiz-studio/codex/`, and `.quiz-studio/logs/` inside that folder. The code, templates, and shared rules remain in the Git project.
 
-The selected folder is saved locally in `.documentary-studio/storage.local.json`, which is ignored by Git. Change it later from Settings → Storage folder. Existing content is not moved automatically when switching folders. To use a different code project root, set `STUDIO_ROOT` before starting the server. To enable extra structured diagnostics, set `STUDIO_DEBUG=1`.
+The selected folder is saved locally in `.quiz-studio/storage.local.json`, which is ignored by Git. Change it later from Settings → Storage folder. Existing content is not moved automatically when switching folders. To use a different code project root, set `STUDIO_ROOT` before starting the server. To enable extra structured diagnostics, set `STUDIO_DEBUG=1`.

@@ -19,6 +19,7 @@ import {
   type EngineSettingsInput,
   type SaveHistorySettingsInput,
 } from "@studio/shared";
+import { studioRuntimePath } from "../runtimePaths.js";
 import {
   antigravitySettingsFilename,
   audioSettingsFilename,
@@ -42,7 +43,7 @@ export async function saveHistorySettings(rootDirectory: string, input: SaveHist
   const parsed = SaveHistorySettingsInputSchema.parse(input);
   const current = await loadConfig(rootDirectory);
   const next = { ...current.question_history, ...parsed };
-  const configPath = path.join(rootDirectory, ".documentary-studio", "config.json");
+  const configPath = studioRuntimePath(rootDirectory, "config.json");
   await mkdir(path.dirname(configPath), { recursive: true });
   const raw = await readJsonFile(configPath);
   await writeFile(configPath, `${JSON.stringify({ ...raw, question_history: next }, null, 2)}\n`, "utf8");
@@ -51,7 +52,7 @@ export async function saveHistorySettings(rootDirectory: string, input: SaveHist
 
 export async function saveCodexSettings(rootDirectory: string, input: CodexSettingsInput): Promise<AppConfig> {
   const parsed = CodexSettingsInputSchema.parse(input);
-  const settingsDirectory = path.join(rootDirectory, ".documentary-studio");
+  const settingsDirectory = studioRuntimePath(rootDirectory);
   const localPath = path.join(settingsDirectory, codexSettingsFilename);
   const currentLocal = await readJsonFile(localPath);
   const currentCodex = currentLocal.codex && typeof currentLocal.codex === "object" ? (currentLocal.codex as Record<string, unknown>) : {};
@@ -67,7 +68,7 @@ export async function saveCodexSettings(rootDirectory: string, input: CodexSetti
 
 export async function saveAntigravitySettings(rootDirectory: string, input: AntigravitySettingsInput): Promise<AppConfig> {
   const parsed = AntigravitySettingsInputSchema.parse(input);
-  const settingsDirectory = path.join(rootDirectory, ".documentary-studio");
+  const settingsDirectory = studioRuntimePath(rootDirectory);
   const localPath = path.join(settingsDirectory, antigravitySettingsFilename);
   const currentLocal = await readJsonFile(localPath);
   const currentAgy =
@@ -84,7 +85,7 @@ export async function saveAntigravitySettings(rootDirectory: string, input: Anti
 
 export async function saveEngineSettings(rootDirectory: string, input: EngineSettingsInput): Promise<AppConfig> {
   const parsed = EngineSettingsInputSchema.parse(input);
-  const configPath = path.join(rootDirectory, ".documentary-studio", "config.json");
+  const configPath = studioRuntimePath(rootDirectory, "config.json");
   await mkdir(path.dirname(configPath), { recursive: true });
   const raw = await readJsonFile(configPath);
   raw.active_engine = parsed.active_engine;
@@ -103,7 +104,7 @@ export async function saveEngineSettings(rootDirectory: string, input: EngineSet
 
 export async function saveAudioSettings(rootDirectory: string, input: AudioSettingsInput): Promise<AppConfig> {
   const parsed = AudioSettingsInputSchema.parse(input);
-  const settingsDirectory = path.join(rootDirectory, ".documentary-studio");
+  const settingsDirectory = studioRuntimePath(rootDirectory);
   const localPath = path.join(settingsDirectory, audioSettingsFilename);
   const currentLocal = await readJsonFile(localPath);
   const currentAudio =
@@ -132,7 +133,7 @@ export async function saveVideoSettings(rootDirectory: string, input: VideoSetti
   const parsed = VideoSettingsInputSchema.parse(input);
   const current = await loadConfig(rootDirectory);
   const next = { ...current.video_generation, ...parsed };
-  const configPath = path.join(rootDirectory, ".documentary-studio", "config.json");
+  const configPath = studioRuntimePath(rootDirectory, "config.json");
   await mkdir(path.dirname(configPath), { recursive: true });
   const raw = await readJsonFile(configPath);
   await writeFile(configPath, `${JSON.stringify({ ...raw, video_generation: next }, null, 2)}\n`, "utf8");
@@ -141,7 +142,7 @@ export async function saveVideoSettings(rootDirectory: string, input: VideoSetti
 
 export async function saveMascotStageSettings(rootDirectory: string, input: MascotStageSettingsInput): Promise<AppConfig> {
   const parsed = MascotStageSettingsInputSchema.parse(input);
-  const configPath = path.join(rootDirectory, ".documentary-studio", "config.json");
+  const configPath = studioRuntimePath(rootDirectory, "config.json");
   await mkdir(path.dirname(configPath), { recursive: true });
   const raw = await readJsonFile(configPath);
   await writeFile(configPath, `${JSON.stringify({ ...raw, mascot_stage: parsed }, null, 2)}\n`, "utf8");
@@ -150,7 +151,7 @@ export async function saveMascotStageSettings(rootDirectory: string, input: Masc
 
 export async function saveImageSettings(rootDirectory: string, input: ImageSettingsInput): Promise<AppConfig> {
   const parsed = ImageSettingsInputSchema.parse(input);
-  const settingsDirectory = path.join(rootDirectory, ".documentary-studio");
+  const settingsDirectory = studioRuntimePath(rootDirectory);
   const localPath = path.join(settingsDirectory, imageSettingsFilename);
   const currentLocal = await readJsonFile(localPath);
   const currentImage =
@@ -178,7 +179,7 @@ export async function saveImageSettings(rootDirectory: string, input: ImageSetti
 
 export async function loadStorageRoot(rootDirectory: string): Promise<string | null> {
   try {
-    const settingsPath = path.join(rootDirectory, ".documentary-studio", storageSettingsFilename);
+    const settingsPath = studioRuntimePath(rootDirectory, storageSettingsFilename);
     const raw = JSON.parse(await readFile(settingsPath, "utf8")) as Partial<StorageSettings>;
     return typeof raw.storage_path === "string" && raw.storage_path.trim() ? path.resolve(rootDirectory, raw.storage_path) : null;
   } catch {
@@ -187,7 +188,7 @@ export async function loadStorageRoot(rootDirectory: string): Promise<string | n
 }
 
 export async function saveStorageRoot(rootDirectory: string, storageRoot: string): Promise<void> {
-  const settingsDirectory = path.join(rootDirectory, ".documentary-studio");
+  const settingsDirectory = studioRuntimePath(rootDirectory);
   await mkdir(settingsDirectory, { recursive: true });
   await writeFile(
     path.join(settingsDirectory, storageSettingsFilename),

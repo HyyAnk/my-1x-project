@@ -13,7 +13,7 @@ import logging
 from typing import Optional
 import torch
 
-logger = logging.getLogger("documentary-tts.patches")
+logger = logging.getLogger("quiz-studio-tts.patches")
 
 
 def apply_chatterbox_patches(custom_logger: Optional[logging.Logger] = None) -> bool:

@@ -26,8 +26,7 @@ export class SandboxAudioEngine {
   getContext(): AudioContext | null {
     if (typeof window === "undefined") return null;
     if (!this.audioContext) {
-      const AudioCtx =
-        window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
         this.audioContext = new AudioCtx();
       }

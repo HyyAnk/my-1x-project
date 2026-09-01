@@ -10,6 +10,7 @@ import {
   type VoiceProfile,
 } from "@studio/shared";
 import { RepositoryError } from "./errors.js";
+import { STUDIO_RUNTIME_DIRECTORY } from "../runtimePaths.js";
 import type { RepositoryRuntime } from "./runtime.js";
 
 const BUILTIN_VOICE_ALIASES = new Set([BUILTIN_DEFAULT_VOICE_ID, "voice_733cff467b40478d", "voice_english_girl", "default"]);
@@ -70,8 +71,8 @@ export async function createVoiceProfile(
   const voiceId = makeId("voice");
   const directory = this.resolvePath("voices", voiceId);
   await mkdir(directory, { recursive: true });
-  const referencePath = `.documentary-studio/voices/${voiceId}/reference.wav`;
-  const samplePath = `.documentary-studio/voices/${voiceId}/sample.wav`;
+  const referencePath = `${STUDIO_RUNTIME_DIRECTORY}/voices/${voiceId}/reference.wav`;
+  const samplePath = `${STUDIO_RUNTIME_DIRECTORY}/voices/${voiceId}/sample.wav`;
   await this.writeBinaryAtomic(path.join(directory, "reference.wav"), referenceContent);
   await this.writeBinaryAtomic(path.join(directory, "sample.wav"), sampleContent);
   const profile = VoiceProfileSchema.parse({

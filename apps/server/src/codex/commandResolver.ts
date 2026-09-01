@@ -3,6 +3,7 @@ import { copyFile, mkdir, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import type { StudioLogger } from "../logger.js";
+import { studioRuntimePath } from "../runtimePaths.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -49,7 +50,7 @@ export async function resolveCodexCommand(configuredCommand: string, rootDirecto
     return configured;
   }
   if (process.platform === "win32" && /(^|[\\/])codex(?:\.exe)?$/i.test(configured)) {
-    const cacheDirectory = path.join(rootDirectory, ".documentary-studio", "codex");
+    const cacheDirectory = studioRuntimePath(rootDirectory, "codex");
     const cached = path.join(cacheDirectory, "codex.exe");
     const tried: string[] = [configured];
 

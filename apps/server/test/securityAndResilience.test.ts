@@ -17,7 +17,7 @@ describe("Security & Resilience Suite", () => {
     it("masks image_generation.api_key in /api/config and /api/image/settings", async () => {
       const root = await mkdtemp(path.join(os.tmpdir(), "sec-test-"));
       roots.push(root);
-      const studioDir = path.join(root, ".documentary-studio");
+      const studioDir = path.join(root, ".quiz-studio");
       await mkdir(studioDir, { recursive: true });
       await writeFile(
         path.join(studioDir, "image.local.json"),

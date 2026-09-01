@@ -8,7 +8,7 @@ The model reacts to what can be seen and measured, not mood words.
 
 - ❌ "tense scene" → ✅ "man freezes, slowly clenches his fist, light only from the side, half his face in shadow"
 - ❌ "epic shot of a car, fast and cool" → ✅ "low tracking shot alongside the car through a wet curve, headlights glowing, spray off the tyres"
-- ❌ "documentary style" → ✅ "35mm film grain, restrained period color palette, archival reconstruction texture"
+- ❌ "generic educational style" → ✅ "35mm film grain, restrained period color palette, archival reconstruction texture"
 
 Plain, concrete, instruction-style language. Fewer precise words beat many vague ones. Positive phrasing only — state the target, never what to avoid.
 
@@ -42,7 +42,7 @@ Only pack beats that genuinely belong together (same era, same location or a nat
 | WS | Wide shot (full figure + surroundings) |
 | EWS | Extreme wide (scale, location) |
 
-FOV in degrees (documentary-relevant range):
+FOV in degrees (Quiz visual range):
 
 | FOV | Purpose |
 |-----|---------|

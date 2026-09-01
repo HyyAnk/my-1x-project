@@ -1,10 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  computeSandboxPhaseTimeline,
-  getSandboxPhaseAtTime,
-  getSandboxPhaseTimestamps,
-  type SandboxPhase,
-} from "@studio/shared";
+import { computeSandboxPhaseTimeline, getSandboxPhaseAtTime, getSandboxPhaseTimestamps, type SandboxPhase } from "@studio/shared";
 import { buildSandboxRehearsalCues, SandboxAudioEngine } from "../utils/sandboxAudioEngine";
 
 export type { SandboxPhase };

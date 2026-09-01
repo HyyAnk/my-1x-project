@@ -1,6 +1,13 @@
 import { ArrowClockwise, ArrowUpRight, Clock, Hourglass, WarningCircle, X } from "@phosphor-icons/react";
 import type { Task } from "@studio/shared";
-import { calculateEpisodeBuildDuration, formatDate, formatElapsedSeconds, formatTaskElapsed, formatTaskType, isTaskActive } from "../../../lib/utils";
+import {
+  calculateEpisodeBuildDuration,
+  formatDate,
+  formatElapsedSeconds,
+  formatTaskElapsed,
+  formatTaskType,
+  isTaskActive,
+} from "../../../lib/utils";
 import type { ProductionItemSummary } from "../types";
 import { TaskStatusChip } from "./TaskStatusChip";
 import { buildHash, getNavProps } from "../../../hooks/useRouter";

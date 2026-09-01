@@ -105,7 +105,7 @@ describe("topic confirmation", () => {
 });
 
 async function createTestRoot(): Promise<string> {
-  const root = await mkdtemp(path.join(os.tmpdir(), "documentary-topic-confirm-"));
+  const root = await mkdtemp(path.join(os.tmpdir(), "quiz-topic-confirm-"));
   roots.push(root);
   await mkdir(path.join(root, "templates"), { recursive: true });
   await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");

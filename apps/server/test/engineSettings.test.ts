@@ -8,7 +8,7 @@ import { loadConfig, saveAntigravitySettings, saveCodexSettings } from "../src/c
 const roots: string[] = [];
 
 async function createStudioRoot(): Promise<string> {
-  const root = await mkdtemp(path.join(os.tmpdir(), "documentary-engine-settings-"));
+  const root = await mkdtemp(path.join(os.tmpdir(), "quiz-engine-settings-"));
   roots.push(root);
   await mkdir(path.join(root, "templates"), { recursive: true });
   await Promise.all([
@@ -50,7 +50,7 @@ describe("engine settings", () => {
 
   it("drops retired keys from local engine settings on the next save", async () => {
     const root = await createStudioRoot();
-    const settingsDirectory = path.join(root, ".documentary-studio");
+    const settingsDirectory = path.join(root, ".quiz-studio");
     const codexPath = path.join(settingsDirectory, "codex.local.json");
     const antigravityPath = path.join(settingsDirectory, "antigravity.local.json");
     await mkdir(settingsDirectory, { recursive: true });

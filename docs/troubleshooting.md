@@ -2,7 +2,7 @@
 
 ## Codex is unavailable
 
-Check that Codex is installed and authenticated, then use `Reconnect` in the top bar. The server never exposes credentials to the browser. On Windows Store installations, the server automatically copies the package binary into `.documentary-studio/codex/` when direct execution is blocked. If a different installation should be preferred, set its full path in `.documentary-studio/config.json` under `codex.command`.
+Check that Codex is installed and authenticated, then use `Reconnect` in the top bar. The server never exposes credentials to the browser. On Windows Store installations, the server automatically copies the package binary into `.quiz-studio/codex/` when direct execution is blocked. If a different installation should be preferred, set its full path in `.quiz-studio/config.json` under `codex.command`.
 
 ## App Server is unavailable
 
@@ -14,4 +14,4 @@ Open Tasks. Queued tasks wait for the same episode/channel lock or for the globa
 
 ## A file does not save
 
-The backend accepts only known Markdown artifact names and only paths beneath the selected channel or episode. Check `.documentary-studio/logs/` with `STUDIO_DEBUG=1` for the technical detail.
+The backend accepts only known Markdown artifact names and only paths beneath the selected channel or episode. Check `.quiz-studio/logs/` with `STUDIO_DEBUG=1` for the technical detail.

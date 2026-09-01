@@ -5,6 +5,7 @@ import { parseContinuityBundles } from "../../visualBundles.js";
 import { parseBeatsOutput, parseRegeneration } from "../parsers.js";
 import { normalizeQuizBeatMetadata } from "../normalizers.js";
 import { validateBeatOutput, validateNarrationCoverage } from "../validators.js";
+import { STUDIO_RUNTIME_DIRECTORY } from "../../runtimePaths.js";
 
 export async function handleBundleImageOutput(runtime: TaskManagerRuntime, active: ActiveRun, output: string): Promise<string[]> {
   const task = active.task;
@@ -41,11 +42,7 @@ export async function handleBundleImageOutput(runtime: TaskManagerRuntime, activ
   return [image.asset_path];
 }
 
-export async function handleSequenceScenesOutput(
-  runtime: TaskManagerRuntime,
-  active: ActiveRun,
-  output: string,
-): Promise<string[]> {
+export async function handleSequenceScenesOutput(runtime: TaskManagerRuntime, active: ActiveRun, output: string): Promise<string[]> {
   const task = active.task;
   const sequenceNumber = runtime.findSceneNumber(task.task_id);
   if (!sequenceNumber) throw new Error("Sequence number is required");
@@ -68,7 +65,7 @@ export async function handleSequenceScenesOutput(
     task.episode_id!,
   );
   await runtime.repository.saveSequenceDraft(task.episode_id!, sequenceNumber, scenes);
-  let outputFiles = [`.documentary-studio/shot-drafts/${task.episode_id}/sequence-${String(sequenceNumber).padStart(2, "0")}.json`];
+  let outputFiles = [`${STUDIO_RUNTIME_DIRECTORY}/shot-drafts/${task.episode_id}/sequence-${String(sequenceNumber).padStart(2, "0")}.json`];
   if (!runtime.assemblingEpisodes.has(task.episode_id!)) {
     const drafts = await runtime.repository.readSequenceDrafts(task.episode_id!);
     if (drafts.length === scriptSections.length && !runtime.assemblingEpisodes.has(task.episode_id!)) {
@@ -86,11 +83,7 @@ export async function handleSequenceScenesOutput(
   return outputFiles;
 }
 
-export async function handleAllScenesOutput(
-  runtime: TaskManagerRuntime,
-  active: ActiveRun,
-  output: string,
-): Promise<string[]> {
+export async function handleAllScenesOutput(runtime: TaskManagerRuntime, active: ActiveRun, output: string): Promise<string[]> {
   const task = active.task;
   const beats = normalizeQuizBeatMetadata(parseBeatsOutput(output));
   validateBeatOutput(beats, 5, true);

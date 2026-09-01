@@ -66,12 +66,7 @@ function resolveCategoryFromTask(type: Task["task_type"], msg: string): string |
   ) {
     return "scenes";
   }
-  if (
-    type === "GENERATE_AUDIO" ||
-    msg.includes("audio") ||
-    msg.includes("narration") ||
-    msg.includes("voice")
-  ) {
+  if (type === "GENERATE_AUDIO" || msg.includes("audio") || msg.includes("narration") || msg.includes("voice")) {
     return "narration";
   }
   if (type === "GENERATE_VIDEO" || msg.includes("video") || msg.includes("render")) return "video";

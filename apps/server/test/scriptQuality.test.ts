@@ -73,7 +73,7 @@ describe("script quality gates", () => {
 
 describe("script task output isolation and retry", () => {
   it("ignores non-agent events and retries once with the calibrated word budget", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-script-quality-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "quiz-script-quality-"));
     roots.push(root);
     await mkdir(path.join(root, "templates"), { recursive: true });
     await mkdir(path.join(root, "shared"), { recursive: true });

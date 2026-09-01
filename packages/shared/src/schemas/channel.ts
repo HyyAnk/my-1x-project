@@ -31,9 +31,7 @@ export const ChannelSchema = z
     updated_at: IsoDate,
     episode_count: z.number().int().nonnegative().default(0),
     voice_reference_path: z.string().nullable().default(null),
-    selected_styles: z
-      .array(QuizImageStyleSchema)
-      .default(["pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]),
+    selected_styles: z.array(QuizImageStyleSchema).default(["pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]),
     default_thinking_bar_style: QuizThinkingBarStyleSchema.optional().default("auto"),
     default_question_box_style: QuizQuestionBoxStyleSchema.optional().default("auto"),
     default_answer_card_style: QuizAnswerCardStyleSchema.optional().default("auto"),

@@ -43,11 +43,7 @@ export async function completeWithOutput(this: TaskManagerRuntime, active: Activ
         return;
       }
     }
-    if (
-      active.task.task_type === "GENERATE_SCRIPT" &&
-      active.scriptAttempts < 1 &&
-      message.startsWith("Quiz script quality gate failed")
-    ) {
+    if (active.task.task_type === "GENERATE_SCRIPT" && active.scriptAttempts < 1 && message.startsWith("Quiz script quality gate failed")) {
       try {
         await this.retryScript(active, message);
         return;

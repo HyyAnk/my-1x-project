@@ -10,7 +10,7 @@ const ignoreDirs = new Set([
   "dist",
   "build",
   ".codegraph",
-  ".documentary-studio",
+  ".quiz-studio",
   ".turbo",
   ".cache",
   ".context",

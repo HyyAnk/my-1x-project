@@ -14,6 +14,7 @@ import { ContextEngine } from "./context.js";
 import { loadServerEnv } from "./env.js";
 import { StudioLogger } from "./logger.js";
 import { RepositoryError, RepositoryService } from "./repository.js";
+import { studioRuntimePath } from "./runtimePaths.js";
 import { TaskManager } from "./tasks.js";
 import { registerAudioVideoRoutes } from "./routes/audioVideo.js";
 import { registerChannelsRoutes } from "./routes/channels.js";
@@ -51,7 +52,7 @@ export async function buildApp(
   const revealFile = options.revealFile ?? revealFileInSystem;
   const configuredStorageRoot = await loadStorageRoot(rootDirectory);
   const logger = new StudioLogger(rootDirectory, process.env.STUDIO_DEBUG === "1");
-  logger.setRuntimeRoot(path.join(configuredStorageRoot ?? rootDirectory, ".documentary-studio"));
+  logger.setRuntimeRoot(studioRuntimePath(configuredStorageRoot ?? rootDirectory));
   await logger.init();
   const repository = new RepositoryService(rootDirectory, configuredStorageRoot ?? rootDirectory);
   await repository.ensureBootstrap();
