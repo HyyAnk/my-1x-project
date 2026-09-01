@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CircleNotch, Plus, Translate, X } from "@phosphor-icons/react";
 import { TARGET_COUNTRY_OPTIONS, type Task } from "@studio/shared";
 import { api } from "../../../api";
-import type { ChannelGroupId } from "../../../components/ChannelList";
 import { useTranslation } from "../../../i18n";
 import { CountrySelectDropdown } from "./CountrySelectDropdown";
 
@@ -13,18 +12,15 @@ type CreateChannelForm = {
   language: string;
   country: string;
   market: string;
-  group_id: ChannelGroupId;
   dna_mode: "example" | "ai" | "upload";
   dna_content: string;
 };
 
 export function CreateChannelModal({
-  initialGroupId = "quiz",
   onClose,
   onCreated,
   onError,
 }: {
-  initialGroupId?: ChannelGroupId;
   onClose: () => void;
   onCreated: (channelId: string, message: string, task: Task | null) => Promise<void>;
   onError: (error: unknown) => void;
@@ -42,12 +38,12 @@ export function CreateChannelModal({
     language: defaultCountry.defaultLanguage,
     country: defaultCountry.code,
     market: defaultCountry.code,
-    group_id: initialGroupId,
     dna_mode: "ai",
     dna_content: "",
   });
 
   const [busy, setBusy] = useState(false);
+  const submittingRef = useRef(false);
 
   const handleCountrySelect = (code: string, defaultLanguage: string) => {
     setForm((current) => ({
@@ -60,6 +56,8 @@ export function CreateChannelModal({
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setBusy(true);
     try {
       const result = await api.createChannel({
@@ -71,6 +69,7 @@ export function CreateChannelModal({
     } catch (error) {
       onError(error);
     } finally {
+      submittingRef.current = false;
       setBusy(false);
     }
   };
@@ -102,29 +101,6 @@ export function CreateChannelModal({
               placeholder={t("channels.channelNamePlaceholder")}
               autoFocus
             />
-          </div>
-
-          {/* Group & Track Type */}
-          <div className="channel-create-field">
-            <label>{t("channels.channelTypeLabel")}</label>
-            <div className="channel-type-toggle-grid">
-              <button
-                type="button"
-                className={`channel-type-option ${form.group_id === "quiz" ? "active" : ""}`}
-                onClick={() => setForm({ ...form, group_id: "quiz" })}
-              >
-                <span className="type-title">{t("channels.channelTypeQuizTitle")}</span>
-                <span className="type-badge">{t("channels.channelTypeQuizBadge")}</span>
-              </button>
-              <button
-                type="button"
-                className={`channel-type-option ${form.group_id === "history" ? "active" : ""}`}
-                onClick={() => setForm({ ...form, group_id: "history" })}
-              >
-                <span className="type-title">{t("channels.channelTypeHistoryTitle")}</span>
-                <span className="type-badge">{t("channels.channelTypeHistoryBadge")}</span>
-              </button>
-            </div>
           </div>
 
           {/* Country Selection & Language Grid */}

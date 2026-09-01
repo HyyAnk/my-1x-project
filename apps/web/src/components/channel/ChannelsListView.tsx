@@ -7,14 +7,10 @@ import { useTranslation } from "../../i18n";
 import { api } from "../../api";
 import { ChannelCard } from "./ChannelCard";
 
-export type ChannelGroupId = "quiz" | "history";
-
 export type ChannelsListViewProps = {
   channels: Channel[];
   mascots?: MascotProfile[];
-  activeGroup?: ChannelGroupId;
-  onActiveGroupChange?: (groupId: ChannelGroupId) => void;
-  onCreate: (groupId?: ChannelGroupId) => void;
+  onCreate: () => void;
   openChannel: (id: string) => void;
   onDelete: (channel: Channel) => void;
 };
@@ -80,7 +76,7 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
           <p className="eyebrow">{t("channels.pageEyebrow")}</p>
           <h1>{t("channels.pageTitle")}</h1>
         </div>
-        <button className="primary-button hero-action" onClick={() => onCreate("quiz")}>
+        <button className="primary-button hero-action" onClick={onCreate}>
           <Plus size={16} weight="bold" />
           <span>{t("channels.newQuizChannel")}</span>
         </button>
@@ -141,7 +137,7 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
           title={t("channels.noQuizChannelsTitle")}
           copy={t("channels.noQuizChannelsCopy")}
           action={t("channels.newQuizChannel")}
-          onAction={() => onCreate("quiz")}
+          onAction={onCreate}
         />
       ) : filteredChannels.length === 0 ? (
         <div

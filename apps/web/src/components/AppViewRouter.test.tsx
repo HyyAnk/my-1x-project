@@ -74,7 +74,6 @@ function createDefaultProps(overrides: Partial<AppViewRouterProps> = {}): AppVie
     git: { branch: "main", dirty: false, changed_files: 0 },
     currentEngineStatus: "connected",
     tab: null,
-    group: null,
     simplifyMode: true,
     codex: null,
     codexStatus: "connected",
@@ -180,7 +179,6 @@ describe("AppViewRouter", () => {
     const props = createDefaultProps({
       page: "settings",
       tab: "media",
-      group: "quiz",
       selectedChannel: mockChannel,
       setQueryParam,
       openPage,

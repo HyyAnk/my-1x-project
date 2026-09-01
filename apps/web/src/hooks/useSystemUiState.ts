@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Channel, StorageInfo } from "@studio/shared";
 import { api } from "../api";
-import type { ChannelGroupId } from "../components/ChannelList";
 import type { GitInfo, Notice, Theme } from "../components/types";
 
 export function useSystemUiState() {
   const [git, setGit] = useState<GitInfo>({ branch: null, dirty: false, changed_files: 0 });
   const [storage, setStorage] = useState<StorageInfo | null>(null);
-  const [showCreate, setShowCreate] = useState<ChannelGroupId | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Channel | null>(null);
   const [notice, setNotice] = useState<Notice>(null);
   const [loading, setLoading] = useState(true);
@@ -37,7 +36,7 @@ export function useSystemUiState() {
     setNotice({ tone: "good", message });
   }, []);
   const requestDeleteChannel = useCallback((channel: Channel) => setDeleteTarget(channel), []);
-  const requestCreateChannel = useCallback((groupId: ChannelGroupId = "quiz") => setShowCreate(groupId), []);
+  const requestCreateChannel = useCallback(() => setShowCreate(true), []);
 
   const stopDashboard = useCallback(async () => {
     if (!window.confirm("Stop the dashboard and its local services? Your channel files will remain untouched.")) return;

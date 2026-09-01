@@ -1,6 +1,5 @@
 import { lazy, Suspense } from "react";
 import type { AppConfig, Channel, CodexSettingsResponse, AntigravitySettingsResponse, StorageInfo, Task } from "@studio/shared";
-import type { ChannelGroupId } from "./channel/ChannelsListView";
 import { LoadingState } from "./EmptyState";
 import type { GitInfo, Notice, Page } from "./types";
 import type { ImageBalanceInfo, VoiceMetricsInfo } from "../hooks/useGlobalMetrics";
@@ -33,7 +32,6 @@ export interface AppViewRouterProps {
   git: GitInfo;
   currentEngineStatus: string;
   tab: string | null;
-  group: string | null;
   simplifyMode: boolean;
   codex: CodexSettingsResponse | null;
   codexStatus: string;
@@ -44,7 +42,7 @@ export interface AppViewRouterProps {
   openEpisode: (channelId: string, episodeId: string, tab?: string) => void;
   setQueryParam: (key: string, value: string | null) => void;
   upsertTask: (task: Task) => void;
-  requestCreateChannel: (groupId?: ChannelGroupId) => void;
+  requestCreateChannel: () => void;
   requestDeleteChannel: (channel: Channel) => void;
   refresh: () => Promise<void>;
   refreshChannels: () => Promise<unknown>;
@@ -98,9 +96,7 @@ export function AppViewRouter(props: AppViewRouterProps) {
             channels={props.channels}
             tasks={props.tasks}
             activeTab={props.tab}
-            activeGroupQuery={props.group}
             onTabChange={(nextTab) => props.setQueryParam("tab", nextTab)}
-            onGroupChange={(nextGroup) => props.setQueryParam("group", nextGroup)}
             onNavigateHome={() => props.openPage("dashboard")}
             onTaskSubmitted={props.upsertTask}
             openChannel={props.openChannel}

@@ -1,6 +1,5 @@
 import { lazy, Suspense } from "react";
 import type { Channel, StorageInfo, Task } from "@studio/shared";
-import type { ChannelGroupId } from "./channel/ChannelsListView";
 
 const CreateChannelModal = lazy(() =>
   import("../features/channel/components/CreateChannelModal").then((m) => ({ default: m.CreateChannelModal })),
@@ -11,8 +10,8 @@ const DeleteChannelModal = lazy(() =>
 const StorageSetupModal = lazy(() => import("../features/settings/StorageSetupModal").then((m) => ({ default: m.StorageSetupModal })));
 
 export type AppModalsProps = {
-  showCreate: ChannelGroupId | null;
-  setShowCreate: (group: ChannelGroupId | null) => void;
+  showCreate: boolean;
+  setShowCreate: (show: boolean) => void;
   deleteTarget: Channel | null;
   setDeleteTarget: (channel: Channel | null) => void;
   storage: StorageInfo | null;
@@ -58,11 +57,10 @@ export function AppModals({
 
       {showCreate ? (
         <CreateChannelModal
-          initialGroupId={showCreate}
-          onClose={() => setShowCreate(null)}
+          onClose={() => setShowCreate(false)}
           onCreated={async (channelId, message, task) => {
             if (task) upsertTask(task);
-            setShowCreate(null);
+            setShowCreate(false);
             await refresh();
             openChannel(channelId);
             setNotice({ tone: "good", message });

@@ -52,7 +52,7 @@ function AppContent() {
           orch.openPage("settings");
           orch.setQueryParam("tab", "media");
         }}
-        onCreateChannel={() => orch.requestCreateChannel("quiz")}
+        onCreateChannel={orch.requestCreateChannel}
       />
       <main className="main-column">
         <Topbar
@@ -119,7 +119,6 @@ function AppContent() {
           git={orch.git}
           currentEngineStatus={orch.currentEngineStatus}
           tab={orch.tab}
-          group={orch.group}
           simplifyMode={orch.simplifyMode}
           codex={orch.codex}
           codexStatus={orch.codexStatus}

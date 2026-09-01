@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import type { Channel, Task } from "@studio/shared";
-import { ChannelsListView, type ChannelGroupId } from "./ChannelList";
+import { ChannelsListView } from "./ChannelList";
 import { EpisodeDetail } from "./EpisodeView";
 import type { Notice } from "./types";
 import { DeleteChannelModal } from "../features/channel/components/DeleteChannelModal";
@@ -32,9 +31,7 @@ export function ChannelsView({
   channels,
   tasks,
   activeTab,
-  activeGroupQuery,
   onTabChange,
-  onGroupChange,
   onNavigateHome,
   onTaskSubmitted,
   openChannel,
@@ -54,13 +51,11 @@ export function ChannelsView({
   channels: Channel[];
   tasks: Task[];
   activeTab?: string | null;
-  activeGroupQuery?: string | null;
   onTabChange?: (tab: string) => void;
-  onGroupChange?: (group: string) => void;
   onNavigateHome?: () => void;
   onTaskSubmitted: (task: Task) => void;
   openChannel: (id: string, tab?: string) => void;
-  onCreate: (groupId?: ChannelGroupId) => void;
+  onCreate: () => void;
   onRefresh: () => Promise<void>;
   onNotice: (notice: NonNullable<Notice>) => void;
   onDelete: (channel: Channel) => void;
@@ -71,22 +66,6 @@ export function ChannelsView({
   imagesPerBundle: number;
   simplifyMode?: boolean;
 }) {
-  const initialGroup: ChannelGroupId = "quiz";
-  const [activeGroup, setActiveGroup] = useState<ChannelGroupId>(initialGroup);
-
-  useEffect(() => {
-    setActiveGroup("quiz");
-  }, [activeGroupQuery]);
-
-  useEffect(() => {
-    if (selectedChannel) setActiveGroup("quiz");
-  }, [selectedChannel]);
-
-  const handleGroupChange = (group: ChannelGroupId) => {
-    setActiveGroup(group);
-    onGroupChange?.(group);
-  };
-
   if (selectedChannel && selectedEpisodeId) {
     return (
       <EpisodeDetail
@@ -133,9 +112,7 @@ export function ChannelsView({
   return (
     <ChannelsListView
       channels={channels}
-      activeGroup={activeGroup}
-      onActiveGroupChange={handleGroupChange}
-      onCreate={(groupId) => onCreate(groupId)}
+      onCreate={onCreate}
       openChannel={(id) => openChannel(id)}
       onDelete={onDelete}
     />

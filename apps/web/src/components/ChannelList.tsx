@@ -1,7 +1,6 @@
 export {
   ChannelsListView,
   ChannelsListView as ChannelList,
-  type ChannelGroupId,
   type ChannelsListViewProps,
 } from "./channel/ChannelsListView";
 export { ChannelCard, type ChannelCardProps } from "./channel/ChannelCard";
