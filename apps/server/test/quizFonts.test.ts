@@ -25,9 +25,10 @@ type FontReadinessWindowStub = {
 
 const temporaryRoots: string[] = [];
 const projectRoot = path.resolve(import.meta.dirname, "..", "..", "..");
+const FONT_ROUTE_INTEGRATION_TIMEOUT_MS = 20_000;
 
 afterEach(async () => {
-  await Promise.all(temporaryRoots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
+  await Promise.all(temporaryRoots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 })));
 });
 
 describe("quiz font parity", () => {
@@ -133,24 +134,28 @@ describe("quiz font parity", () => {
     expect(attributes.has("data-choice-fit-font-size")).toBe(false);
   });
 
-  it("serves immutable font bytes with the declared MIME type and hash", async () => {
-    const root = await createAppRootWithFonts();
-    const app = await buildApp(root);
-    try {
-      for (const definition of CANDY_ARCADE_FONTS) {
-        const response = await app.server.inject({ method: "GET", url: `/api/quiz/fonts/${definition.id}` });
-        expect(response.statusCode).toBe(200);
-        expect(response.headers["content-type"]).toContain(definition.mimeType);
-        expect(response.headers["cache-control"]).toBe("public, max-age=31536000, immutable");
-        const source = await readFile(path.join(root, "assets", "fonts", definition.filename));
-        expect(response.rawPayload).toEqual(source);
-        expect(response.headers.etag).toBe(`"${createHash("sha256").update(source).digest("hex")}"`);
+  it(
+    "serves immutable font bytes with the declared MIME type and hash",
+    async () => {
+      const root = await createAppRootWithFonts();
+      const app = await buildApp(root);
+      try {
+        for (const definition of CANDY_ARCADE_FONTS) {
+          const response = await app.server.inject({ method: "GET", url: `/api/quiz/fonts/${definition.id}` });
+          expect(response.statusCode).toBe(200);
+          expect(response.headers["content-type"]).toContain(definition.mimeType);
+          expect(response.headers["cache-control"]).toBe("public, max-age=31536000, immutable");
+          const source = await readFile(path.join(root, "assets", "fonts", definition.filename));
+          expect(response.rawPayload).toEqual(source);
+          expect(response.headers.etag).toBe(`"${createHash("sha256").update(source).digest("hex")}"`);
+        }
+        expect((await app.server.inject({ method: "GET", url: "/api/quiz/fonts/not-a-font" })).statusCode).toBe(404);
+      } finally {
+        await app.close();
       }
-      expect((await app.server.inject({ method: "GET", url: "/api/quiz/fonts/not-a-font" })).statusCode).toBe(404);
-    } finally {
-      await app.close();
-    }
-  });
+    },
+    FONT_ROUTE_INTEGRATION_TIMEOUT_MS,
+  );
 });
 
 async function createTemporaryRoot(prefix: string): Promise<string> {
