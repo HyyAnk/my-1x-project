@@ -31,7 +31,7 @@ if ($DelayMilliseconds -gt 0) {
 
 foreach ($port in $ports) {
   Write-Log "STEP" "inspect" ("Checking local service on port {0}" -f $port) ([ConsoleColor]::Blue)
-  $connections = @(Get-NetTCPConnection -LocalAddress "127.0.0.1" -LocalPort $port -State Listen)
+  $connections = @(Get-NetTCPConnection -LocalAddress "127.0.0.1" -LocalPort $port -State Listen -ErrorAction SilentlyContinue)
   $processIds = @($connections | Select-Object -ExpandProperty OwningProcess -Unique)
 
   if ($processIds.Count -eq 0) {
