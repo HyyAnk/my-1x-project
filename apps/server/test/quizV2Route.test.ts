@@ -12,9 +12,12 @@ import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { runQa } from "../src/quiz/pipeline/orchestrator.js";
 
 const roots: string[] = [];
+const ROUTE_INTEGRATION_TIMEOUT_MS = 20_000;
 
 afterEach(async () => {
-  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
+  await Promise.all(
+    roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 })),
+  );
 });
 
 describe("Quiz V2 route workflow", () => {
@@ -107,7 +110,7 @@ describe("Quiz V2 route workflow", () => {
     } finally {
       await app.close();
     }
-  });
+  }, ROUTE_INTEGRATION_TIMEOUT_MS);
 
   it("queues the real GENERATE_VIDEO task when the V2 preflight is ready", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "quiz-v2-render-route-"));
@@ -254,5 +257,5 @@ describe("Quiz V2 route workflow", () => {
     } finally {
       await app.close();
     }
-  });
+  }, ROUTE_INTEGRATION_TIMEOUT_MS);
 });

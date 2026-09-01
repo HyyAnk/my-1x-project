@@ -4,7 +4,7 @@ import { starSliderVariant } from "./variants/starSlider.js";
 import { capsuleLiquidVariant } from "./variants/capsuleLiquid.js";
 import { energyLaserVariant } from "./variants/energyLaser.js";
 import { constructionMachineVariant } from "./variants/constructionMachine.js";
-import { flameFuseVariant } from "./variants/flameFuse.js";
+import { emberTrailVariant } from "./variants/emberTrail.js";
 import { cosmicRocketVariant } from "./variants/cosmicRocket.js";
 
 export const THINKING_BAR_VARIANTS: Record<Exclude<QuizThinkingBarStyle, "auto">, ThinkingBarVariant> = {
@@ -12,7 +12,7 @@ export const THINKING_BAR_VARIANTS: Record<Exclude<QuizThinkingBarStyle, "auto">
   capsule_liquid: capsuleLiquidVariant,
   energy_laser: energyLaserVariant,
   construction_machine: constructionMachineVariant,
-  flame_fuse: flameFuseVariant,
+  flame_fuse: emberTrailVariant,
   cosmic_rocket: cosmicRocketVariant,
 };
 

@@ -310,13 +310,25 @@ ${serializeQuizPaletteCss(model.palette, "      ")}
       play: function() {
         var anims = document.getAnimations ? document.getAnimations({ subtree: true }) : [];
         for (var i = 0; i < anims.length; i++) {
-          try { anims[i].play(); } catch (e) {}
+          try {
+            var cur = anims[i].currentTime;
+            anims[i].play();
+            if (cur !== null && cur !== undefined) {
+              anims[i].currentTime = cur;
+            }
+          } catch (e) {}
         }
       },
       pause: function() {
         var anims = document.getAnimations ? document.getAnimations({ subtree: true }) : [];
         for (var i = 0; i < anims.length; i++) {
-          try { anims[i].pause(); } catch (e) {}
+          try {
+            var cur = anims[i].currentTime;
+            anims[i].pause();
+            if (cur !== null && cur !== undefined) {
+              anims[i].currentTime = cur;
+            }
+          } catch (e) {}
         }
       }
     };

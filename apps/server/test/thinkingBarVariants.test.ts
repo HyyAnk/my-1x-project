@@ -7,7 +7,7 @@ import {
   THINKING_BAR_VARIANTS,
 } from "../src/quiz/visual/elements/thinkingBar/registry.js";
 import { calculateThinkingBarTiming } from "../src/quiz/visual/elements/thinkingBar/types.js";
-import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
+import { buildCandyArcadeCompositionBundle, candyArcadeCss } from "../src/quiz/render/candyArcadeComposition.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
@@ -142,7 +142,7 @@ describe("Thinking Bar Element Suite", () => {
     expect(css).toContain("@keyframes liquidBubbleRise");
     expect(css).toContain("@keyframes laserPulseScan");
     expect(css).toContain("@keyframes dozerBeaconBlink");
-    expect(css).toContain("@keyframes flameWobble");
+    expect(css).toContain("@keyframes emberTrailCorePulse");
     expect(css).toContain("@keyframes portalSpin");
   });
 
@@ -171,5 +171,13 @@ describe("Thinking Bar Element Suite", () => {
       const fullOutput = [bundle.html, ...Object.values(bundle.files)].join("\n");
       expect(fullOutput).toContain(`thinking-bar-${style.replace(/_/g, "-")}`);
     }
+  });
+
+  it("ensures val-query question mark is hidden by default and query-hold transitions visibility cleanly", () => {
+    const css = candyArcadeCss({ aspectRatio: "16:9" });
+    expect(css).toContain(".val-query { opacity: 0; visibility: hidden;");
+    expect(css).toContain(
+      "@keyframes query-hold { 0%, 99.9% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }",
+    );
   });
 });

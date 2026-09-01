@@ -102,7 +102,7 @@ ${choiceStateStyles()}
 .timer-marker { position: absolute; top: 50%; left: 100%; display: grid; place-items: center; width: 176px; height: 176px; border: none; background: transparent; transform: translate(-50%,-50%); animation: quiz-timer-marker-slide var(--timer-duration) linear var(--clip-start) both, quizProgressMarkerPulse 2.4s ease-in-out infinite; z-index: 6; will-change: transform; }
 .marker-star-svg { position: absolute; inset: -8px; width: 192px; height: 192px; overflow: visible; pointer-events: none; z-index: 4; }
 .marker-val { position: absolute; inset: 0; display: grid; place-items: center; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 64px; font-weight: 900; line-height: 1; color: #FFFFFF; text-shadow: 0 3px 6px rgba(120,20,45,.75), 0 0 12px rgba(255,255,255,.6); opacity: 0; pointer-events: none; z-index: 7; transform: translateY(-2px); }
-.val-query { opacity: 1; animation: query-hold var(--cd-query-dur) steps(1,end) var(--clip-start) both; display: var(--cd-query-display, grid); }
+.val-query { opacity: 0; visibility: hidden; animation: query-hold var(--cd-query-dur) steps(1,end) var(--clip-start) both; display: var(--cd-query-display, grid); }
 .val-5 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd5-at)) both; display: var(--cd5-display, grid); }
 .val-4 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd4-at)) both; display: var(--cd4-display, grid); }
 .val-3 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd3-at)) both; display: var(--cd3-display, grid); }
@@ -175,7 +175,7 @@ ${choiceStateStyles()}
 @keyframes phase-hold { 0%,100% { opacity: 0; } 1%,99% { opacity: 1; } }
 @keyframes quiz-timer-drain { from { width: 100%; } to { width: 0%; } }
 @keyframes quiz-timer-marker-slide { from { left: 100%; } to { left: 0%; } }
-@keyframes query-hold { 0%, 99.9% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes query-hold { 0%, 99.9% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
 @keyframes number-countdown-tick { 0% { opacity: 0; transform: translateY(-2px) scale(1.4) rotate(-6deg); text-shadow: 0 0 16px rgba(255,255,255,1), 0 4px 0 rgba(13,35,71,.3); } 16% { opacity: 1; transform: translateY(-2px) scale(1.05) rotate(0deg); text-shadow: 0 0 10px rgba(255,230,120,.9), 0 3px 0 rgba(13,35,71,.25); } 82% { opacity: 1; transform: translateY(-2px) scale(1); } 100% { opacity: 0; transform: translateY(-2px) scale(0.75); } }
 @keyframes number-countdown-final { 0% { opacity: 0; transform: translateY(-2px) scale(1.6) rotate(-8deg); text-shadow: 0 0 24px rgba(255,50,50,1), 0 4px 0 rgba(13,35,71,.35); } 18% { opacity: 1; transform: translateY(-2px) scale(1.2) rotate(0deg); text-shadow: 0 0 16px rgba(255,40,40,1), 0 3px 0 rgba(13,35,71,.3); } 45% { transform: translateY(-2px) scale(0.96); } 70% { transform: translateY(-2px) scale(1.15); } 92% { opacity: 1; transform: translateY(-2px) scale(1); } 100% { opacity: 0; transform: translateY(-2px) scale(0.85); } }
 @keyframes quiz-timer-danger { 0%, 55% { box-shadow: inset 0 3px 0 rgba(255,255,255,.3); } 70% { box-shadow: inset 0 3px 0 rgba(255,255,255,.6), 0 0 16px rgba(255,167,38,.6); } 85% { box-shadow: inset 0 3px 0 rgba(255,255,255,.8), 0 0 24px rgba(255,87,34,.8); } 100% { box-shadow: inset 0 3px 0 rgba(255,255,255,.9), 0 0 32px rgba(244,67,54,.9); } }

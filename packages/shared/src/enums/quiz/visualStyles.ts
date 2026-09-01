@@ -41,7 +41,7 @@ export const THINKING_BAR_STYLE_LABELS: Record<Exclude<QuizThinkingBarStyle, "au
   capsule_liquid: "Neon Jelly Liquid",
   energy_laser: "Cyber Plasma Bar",
   construction_machine: "Dozer Crate Push",
-  flame_fuse: "Dynamite Fuse Spark",
+  flame_fuse: "Ember Trail",
   cosmic_rocket: "Cosmic Rocket Warp",
 };
 
@@ -51,7 +51,7 @@ export const THINKING_BAR_STYLE_DESCRIPTIONS: Record<Exclude<QuizThinkingBarStyl
   energy_laser: "Sci-Fi high-voltage plasma laser beam with pulsing electric arcs and intense charge decay.",
   construction_machine:
     "Cheerful construction bulldozer pushing a wooden countdown crate along a hazard-striped dirt trench towards the build-site target.",
-  flame_fuse: "Thrilling dynamite burning rope fuse with animated ember sparks racing towards the finale point.",
+  flame_fuse: "A glowing ember burns across a braided fuse, leaving a charred trail with a clear 5–1 countdown.",
   cosmic_rocket: "Retro-futuristic 3D space rocket boosting with fiery exhaust through a cosmic nebula warp highway.",
 };
 

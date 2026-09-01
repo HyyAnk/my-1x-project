@@ -12,6 +12,16 @@ import {
   resolveCandyArcadeFonts,
 } from "../src/quiz/render/candyArcade/candyArcadeFonts.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
+import { evaluateBrowserScript } from "./helpers/browserScript.js";
+
+type FontReadinessWindowStub = {
+  parent?: FontReadinessWindowStub;
+  __renderReady: boolean;
+  __playerReady: boolean;
+  __fontReadyPromise?: Promise<unknown>;
+  __fontStatus?: unknown;
+  __choiceFitStatus?: unknown;
+};
 
 const temporaryRoots: string[] = [];
 const projectRoot = path.resolve(import.meta.dirname, "..", "..", "..");
@@ -91,16 +101,20 @@ describe("quiz font parity", () => {
     };
     const documentStub = {
       documentElement: { dataset: {} as Record<string, string> },
-      fonts: { load: async () => [{}], check: () => true, ready: Promise.resolve() },
+      fonts: { load: () => Promise.resolve([{}]), check: () => true, ready: Promise.resolve() },
       querySelectorAll: (selector: string) => (selector.includes("choice-group") ? [group] : []),
     };
-    const windowStub = { parent: null as unknown, __renderReady: false, __playerReady: false } as Record<string, unknown>;
+    const windowStub: FontReadinessWindowStub = { __renderReady: false, __playerReady: false };
     windowStub.parent = windowStub;
-    const run = new Function("window", "document", "getComputedStyle", candyArcadeFontReadinessScript());
 
-    run(windowStub, documentStub, () => {
-      throw new Error("measurement failed");
+    evaluateBrowserScript<void>(candyArcadeFontReadinessScript(), {
+      window: windowStub,
+      document: documentStub,
+      getComputedStyle: () => {
+        throw new Error("measurement failed");
+      },
     });
+    if (!windowStub.__fontReadyPromise) throw new Error("Font readiness script did not expose its completion promise");
     await windowStub.__fontReadyPromise;
 
     expect(windowStub.__fontStatus).toEqual({ state: "ready", families: CANDY_ARCADE_FONTS.map((font) => font.family) });
