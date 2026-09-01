@@ -22,11 +22,6 @@
       "count": 1
     }
   },
-  "apps/server/src/contextContracts.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    }
-  },
   "apps/server/src/providers/antigravityImageChain.ts": {
     "no-useless-assignment": {
       "count": 1
@@ -155,11 +150,6 @@
   "apps/server/src/routes/mascots.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 1
-    }
-  },
-  "apps/server/src/tasks/audioRunner.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 2
     }
   },
   "apps/server/src/tasks/imageRunner.ts": {
@@ -323,7 +313,7 @@
       "count": 1
     },
     "@typescript-eslint/no-unsafe-member-access": {
-      "count": 5
+      "count": 4
     }
   },
   "apps/server/test/repository.test.ts": {
