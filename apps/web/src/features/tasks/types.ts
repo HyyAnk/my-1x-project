@@ -47,7 +47,6 @@ export function calculateProgress(task: Task | null, fallbackStatus: Task["statu
       return 40;
     case "GENERATE_BUNDLE_IMAGE":
       return 55;
-    case "GENERATE_NARRATION":
     case "GENERATE_AUDIO":
       return 75;
     case "GENERATE_VIDEO":

@@ -81,13 +81,9 @@ export function QuizEpisodeView({
         channel={channel}
         episode={episode}
         episodeId={episodeId}
-        isQuiz={true}
-        readiness={pipeline.readiness}
-        activeEpisodeTask={pipeline.activeEpisodeTask}
         episodeTasks={pipeline.episodeTasks}
         episodeClock={pipeline.episodeClock}
         busy={pipeline.busy}
-        onCreateTask={pipeline.createTask}
         onOpenVideoFolder={pipeline.openVideoFolder}
       />
 

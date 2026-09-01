@@ -19,7 +19,7 @@ export function OperationalDomainTable({ tasks }: OperationalDomainTableProps) {
     {
       domainKey: "domainVoiceTTS",
       domain: t("dashboard.domainVoiceTTS"),
-      filter: (t: Task) => t.task_type === "GENERATE_AUDIO" || t.task_type === "GENERATE_NARRATION",
+      filter: (t: Task) => t.task_type === "GENERATE_AUDIO",
       icon: SpeakerHigh,
     },
     {

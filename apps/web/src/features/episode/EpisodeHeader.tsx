@@ -8,19 +8,14 @@ type EpisodeHeaderProps = {
   episode: Episode;
   episodeTasks: Task[];
   totalImageCostVnd: number;
-  isQuiz: boolean;
-  durationDraft: number;
-  setDurationDraft: (dur: number) => void;
   activeEpisodeTask: Task | null;
-  pipelineTask: Task | null;
   busy: string | null;
   cancelling: boolean;
-  readiness: { narration: boolean; video: boolean };
+  readiness: { video: boolean };
   onNavigateHome?: () => void;
   onNavigateChannels?: () => void;
   onNavigateChannel?: () => void;
   onBack: () => void;
-  onSaveDuration: () => void;
   onCreateTask: (type: Task["task_type"]) => void;
   onCancelActiveTask: (task?: Task | null) => void;
 };
@@ -30,11 +25,7 @@ export function EpisodeHeader({
   episode,
   episodeTasks,
   totalImageCostVnd,
-  isQuiz,
-  durationDraft,
-  setDurationDraft,
   activeEpisodeTask,
-  pipelineTask,
   busy,
   cancelling,
   readiness,
@@ -42,7 +33,6 @@ export function EpisodeHeader({
   onNavigateChannels,
   onNavigateChannel,
   onBack,
-  onSaveDuration,
   onCreateTask,
   onCancelActiveTask,
 }: EpisodeHeaderProps) {
@@ -72,21 +62,6 @@ export function EpisodeHeader({
               💰 {totalImageCostVnd.toLocaleString("en-US")} VND
             </span>
           ) : null}
-          {!isQuiz ? (
-            <label className="duration-target">
-              Target
-              <input
-                aria-label="Target duration in minutes"
-                type="number"
-                min="3"
-                max="60"
-                value={durationDraft}
-                onChange={(event) => setDurationDraft(Number(event.target.value))}
-                onBlur={() => void onSaveDuration()}
-              />
-              min
-            </label>
-          ) : null}
           <button
             className="primary-button"
             disabled={Boolean(activeEpisodeTask) || busy === "GENERATE_PIPELINE"}
@@ -94,17 +69,11 @@ export function EpisodeHeader({
           >
             {activeEpisodeTask || busy === "GENERATE_PIPELINE" ? <CircleNotch className="spin" size={16} /> : <Play size={16} />}
             <span>
-              {activeEpisodeTask
-                ? "Working…"
-                : isQuiz && readiness.video
-                  ? "Render again"
-                  : pipelineTask?.status === "FAILED"
-                    ? "Retry pipeline"
-                    : isQuiz
-                      ? "Build video"
-                      : readiness.narration
-                        ? "Run pipeline again"
-                        : "Start production"}
+              {activeEpisodeTask || busy === "GENERATE_PIPELINE"
+                ? "Starting production…"
+                : readiness.video
+                  ? "Rebuild Quiz Video"
+                  : "Start production"}
             </span>
           </button>
           {activeEpisodeTask ? (

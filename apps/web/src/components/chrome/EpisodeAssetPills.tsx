@@ -46,7 +46,7 @@ export function EpisodeAssetPills({ episode, tasks = [], compact = false }: Epis
   const visualActive = isTaskActive(["GENERATE_VISUAL_BIBLE"]);
   const visualReady = Boolean(episode.visual_bible_path);
 
-  const audioActive = isTaskActive(["GENERATE_NARRATION", "GENERATE_AUDIO"]);
+  const audioActive = isTaskActive(["GENERATE_AUDIO"]);
   const audioReady = Boolean(episode.narration_asset_path);
   const audioSec = episode.narration_duration_seconds ? `${Math.round(episode.narration_duration_seconds)}s` : null;
 

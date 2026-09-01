@@ -48,9 +48,4 @@ export const episodeApi = {
       method: "POST",
       body: "{}",
     }),
-  assembleNarration: (channelId: string, episodeId: string) =>
-    request<{ episode: Episode; asset_path: string }>(`/api/channels/${channelId}/episodes/${episodeId}/narration/assemble`, {
-      method: "POST",
-      body: "{}",
-    }),
 };

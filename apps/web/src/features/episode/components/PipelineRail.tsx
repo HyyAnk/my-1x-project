@@ -20,7 +20,6 @@ export function resolveQuizPipelineStage(pipelineTask: Task | null, tasks: Task[
     if (child.task_type === "GENERATE_SCRIPT") return "script";
     if (child.task_type === "GENERATE_VISUAL_BIBLE" || child.task_type === "GENERATE_BUNDLE_IMAGE") return "visualBible";
     if (child.task_type === "GENERATE_SCENES" || child.task_type === "GENERATE_SEQUENCE_SCENES") return "scenes";
-    if (child.task_type === "GENERATE_NARRATION") return "narration";
     if (child.task_type === "GENERATE_VIDEO") return "video";
   }
   return null;
@@ -40,7 +39,6 @@ export function PipelineRail({
     narration: boolean;
     video: boolean;
   };
-  quiz?: boolean;
   pipelineTask?: Task | null;
   tasks?: Task[];
 }) {

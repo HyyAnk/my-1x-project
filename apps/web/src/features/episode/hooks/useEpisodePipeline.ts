@@ -53,10 +53,8 @@ export function useEpisodePipeline({
     load,
   } = state;
 
-  const isQuiz = channel.engine === "quiz" || channel.group_id === "quiz";
-
   // Sub-hooks
-  const uiState = useEpisodeUIState({ activeTab, onTabChange, simplifyMode, isQuiz });
+  const uiState = useEpisodeUIState({ activeTab, onTabChange, simplifyMode });
   const taskTracking = useEpisodeTaskTracking({ episodeId, tasks, load, onNotice });
   const actions = useEpisodeActions({
     channel,

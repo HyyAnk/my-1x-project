@@ -67,7 +67,6 @@ function resolveCategoryFromTask(type: Task["task_type"], msg: string): string |
     return "scenes";
   }
   if (
-    type === "GENERATE_NARRATION" ||
     type === "GENERATE_AUDIO" ||
     msg.includes("audio") ||
     msg.includes("narration") ||

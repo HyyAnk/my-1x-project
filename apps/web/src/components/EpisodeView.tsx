@@ -11,7 +11,6 @@ import { ImagePreviewModal } from "../features/episode/components/ImagePreviewMo
 import { EpisodeHeader } from "../features/episode/EpisodeHeader";
 import { useEpisodePipeline } from "../features/episode/hooks/useEpisodePipeline";
 import { QuizEpisodeView } from "../features/episode/components/QuizEpisodeView";
-import { DocumentaryEpisodeView } from "../features/episode/components/DocumentaryEpisodeView";
 
 export type { PreviewImageData };
 
@@ -52,7 +51,7 @@ export function EpisodeDetail({
 }) {
   const handleEpisodeError = useCallback((error: Error) => onNotice({ tone: "bad", message: error.message }), [onNotice]);
   const state = useEpisode(channel.channel_id, episodeId, handleEpisodeError);
-  const { episode, visualBible, scenes, setScenes, assessment, bundleImages, quizV2 } = state;
+  const { episode, visualBible, scenes, setScenes, bundleImages, quizV2 } = state;
 
   const pipeline = useEpisodePipeline({
     channel,
@@ -65,8 +64,6 @@ export function EpisodeDetail({
     simplifyMode,
     state,
   });
-
-  const isQuiz = channel.engine === "quiz" || channel.group_id === "quiz";
 
   if (!episode) {
     return (
@@ -83,11 +80,7 @@ export function EpisodeDetail({
         episode={episode}
         episodeTasks={pipeline.episodeTasks}
         totalImageCostVnd={pipeline.totalImageCostVnd}
-        isQuiz={isQuiz}
-        durationDraft={pipeline.durationDraft}
-        setDurationDraft={pipeline.setDurationDraft}
         activeEpisodeTask={pipeline.activeEpisodeTask}
-        pipelineTask={pipeline.pipelineTask}
         busy={pipeline.busy}
         cancelling={pipeline.cancelling}
         readiness={pipeline.readiness}
@@ -95,7 +88,6 @@ export function EpisodeDetail({
         onNavigateChannels={onNavigateChannels}
         onNavigateChannel={onNavigateChannel}
         onBack={onBack}
-        onSaveDuration={pipeline.saveDuration}
         onCreateTask={pipeline.createTask}
         onCancelActiveTask={pipeline.handleCancelActiveTask}
       />
@@ -111,43 +103,24 @@ export function EpisodeDetail({
         />
       ) : null}
 
-      {isQuiz ? (
-        <QuizEpisodeView
-          channel={channel}
-          episode={episode}
-          episodeId={episodeId}
-          simplifyMode={simplifyMode}
-          pipeline={pipeline}
-          visualBible={visualBible}
-          bundleImages={bundleImages}
-          scenes={scenes}
-          setScenes={setScenes}
-          setEpisode={state.setEpisode}
-          quizV2={quizV2}
-          maxDuration={maxDuration}
-          narrationWordsPerSecond={narrationWordsPerSecond}
-          imageGenerationEnabled={imageGenerationEnabled}
-          imagesPerBundle={imagesPerBundle}
-          onNotice={onNotice}
-        />
-      ) : (
-        <DocumentaryEpisodeView
-          channel={channel}
-          episode={episode}
-          episodeId={episodeId}
-          simplifyMode={simplifyMode}
-          pipeline={pipeline}
-          visualBible={visualBible}
-          bundleImages={bundleImages}
-          scenes={scenes}
-          setScenes={setScenes}
-          assessment={assessment}
-          maxDuration={maxDuration}
-          narrationWordsPerSecond={narrationWordsPerSecond}
-          imageGenerationEnabled={imageGenerationEnabled}
-          imagesPerBundle={imagesPerBundle}
-        />
-      )}
+      <QuizEpisodeView
+        channel={channel}
+        episode={episode}
+        episodeId={episodeId}
+        simplifyMode={simplifyMode}
+        pipeline={pipeline}
+        visualBible={visualBible}
+        bundleImages={bundleImages}
+        scenes={scenes}
+        setScenes={setScenes}
+        setEpisode={state.setEpisode}
+        quizV2={quizV2}
+        maxDuration={maxDuration}
+        narrationWordsPerSecond={narrationWordsPerSecond}
+        imageGenerationEnabled={imageGenerationEnabled}
+        imagesPerBundle={imagesPerBundle}
+        onNotice={onNotice}
+      />
 
       {pipeline.previewImage ? <ImagePreviewModal image={pipeline.previewImage} onClose={() => pipeline.setPreviewImage(null)} /> : null}
 

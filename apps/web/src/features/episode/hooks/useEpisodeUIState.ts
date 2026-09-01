@@ -6,14 +6,13 @@ type UseEpisodeUIStateProps = {
   activeTab?: string | null;
   onTabChange?: (tab: string) => void;
   simplifyMode?: boolean;
-  isQuiz?: boolean;
 };
 
-export function useEpisodeUIState({ activeTab, onTabChange, simplifyMode = true, isQuiz = false }: UseEpisodeUIStateProps) {
+export function useEpisodeUIState({ activeTab, onTabChange, simplifyMode = true }: UseEpisodeUIStateProps) {
   const initialWorkflowTab =
     activeTab === "script" || activeTab === "visual" || activeTab === "timeline" || activeTab === "remix"
       ? activeTab
-      : simplifyMode && isQuiz
+      : simplifyMode
         ? "remix"
         : "timeline";
 

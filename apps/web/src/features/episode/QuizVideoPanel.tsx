@@ -1,4 +1,4 @@
-import { CircleNotch, DownloadSimple, FilmSlate, FolderOpen } from "@phosphor-icons/react";
+import { CircleNotch, DownloadSimple, FolderOpen } from "@phosphor-icons/react";
 import type { Channel, Episode, Task } from "@studio/shared";
 import { api } from "../../api";
 import { isTaskActive, latestTask } from "../../lib/utils";
@@ -9,13 +9,9 @@ type QuizVideoPanelProps = {
   channel: Channel;
   episode: Episode;
   episodeId: string;
-  isQuiz: boolean;
-  readiness: { narration: boolean; scenes: boolean; video: boolean };
-  activeEpisodeTask: Task | null;
   episodeTasks: Task[];
   episodeClock: number;
   busy: string | null;
-  onCreateTask: (taskType: Task["task_type"]) => void;
   onOpenVideoFolder: () => void;
 };
 
@@ -23,13 +19,9 @@ export function QuizVideoPanel({
   channel,
   episode,
   episodeId,
-  isQuiz,
-  readiness,
-  activeEpisodeTask,
   episodeTasks,
   episodeClock,
   busy,
-  onCreateTask,
   onOpenVideoFolder,
 }: QuizVideoPanelProps) {
   const videoTask = latestTask(episodeTasks, ["GENERATE_VIDEO"]);
@@ -41,18 +33,8 @@ export function QuizVideoPanel({
     <section className="panel quiz-video-panel">
       <div className="panel-heading">
         <div>
-          <h2>{isQuiz ? "Quiz Video" : "Video"}</h2>
+          <h2>Quiz Video</h2>
         </div>
-        {!isQuiz ? (
-          <button
-            className="primary-button compact"
-            disabled={!readiness.narration || !readiness.scenes || Boolean(activeEpisodeTask)}
-            onClick={() => onCreateTask("GENERATE_VIDEO")}
-          >
-            {videoTask && isTaskActive(videoTask) ? <CircleNotch className="spin" size={15} /> : <FilmSlate size={15} />}
-            <span>{readiness.video ? "Render again" : "Render video"}</span>
-          </button>
-        ) : null}
       </div>
       {showProgress ? (
         <TaskProgressPanel

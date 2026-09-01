@@ -98,7 +98,7 @@ function resolveScenesProgress(readiness: Readiness, tasks: Task[], questionTota
   return sequenceTasks.length > 0 ? sequenceTaskProgress(sequenceTasks, questionTotal) : itemProgress(readiness.scenes ? 1 : 0, 1, "task");
 }
 
-const DOCUMENTARY_TASK_MAP: Partial<Record<RailStage, { types: Task["task_type"][]; readyKey: keyof Readiness }>> = {
+const QUIZ_PREPRODUCTION_TASK_MAP: Partial<Record<RailStage, { types: Task["task_type"][]; readyKey: keyof Readiness }>> = {
   research: { types: ["GENERATE_RESEARCH"], readyKey: "research" },
   treatment: { types: ["GENERATE_TREATMENT"], readyKey: "treatment" },
   script: { types: ["GENERATE_SCRIPT"], readyKey: "script" },
@@ -140,10 +140,10 @@ export function resolveProgress(
     return resolveScenesProgress(readiness, tasks, questionTotal, pipelineTask);
   }
 
-  const docMapping = DOCUMENTARY_TASK_MAP[stage];
-  if (docMapping) {
-    const task = latestTask(tasks, docMapping.types);
-    return task ? taskProgress([task], "task") : itemProgress(Number(readiness[docMapping.readyKey]), 1, "task");
+  const mapping = QUIZ_PREPRODUCTION_TASK_MAP[stage];
+  if (mapping) {
+    const task = latestTask(tasks, mapping.types);
+    return task ? taskProgress([task], "task") : itemProgress(Number(readiness[mapping.readyKey]), 1, "task");
   }
 
   return itemProgress(0, 1, "task");

@@ -27,8 +27,7 @@ export function ChannelSelector({ channel, channels, onSelectChannel }: ChannelS
         </option>
         {channels.map((ch) => (
           <option key={ch.channel_id} value={ch.channel_id}>
-            {ch.engine === "quiz" ? "🎯 " : "🎬 "}
-            {ch.display_name}
+            🎯 {ch.display_name}
           </option>
         ))}
       </select>

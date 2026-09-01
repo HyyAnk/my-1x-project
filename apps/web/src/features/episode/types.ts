@@ -50,7 +50,6 @@ export function taskLabel(type: Task["task_type"]): string {
     GENERATE_VISUAL_BIBLE: "Build",
     GENERATE_SCENES: "Generate shots",
     GENERATE_PIPELINE: "Start production",
-    GENERATE_NARRATION: "Generate narration",
     GENERATE_AUDIO: "Generate preview",
     GENERATE_VIDEO: "Render video",
   };
