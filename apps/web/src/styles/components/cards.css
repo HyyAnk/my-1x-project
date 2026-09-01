@@ -342,6 +342,30 @@
   line-height: 1.5;
 }
 
+.task-progress-measurements {
+  margin: 7px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font:
+    600 11px/1.45 "JetBrains Mono",
+    monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  .task-progress-head {
+    align-items: flex-start;
+  }
+
+  .task-progress-meta {
+    gap: 6px;
+  }
+
+  .task-progress-measurements {
+    font-size: 10px;
+  }
+}
+
 .dna-panel:not(.is-open) .panel-heading {
   border-bottom-color: transparent;
 }

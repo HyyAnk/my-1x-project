@@ -1,14 +1,12 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
-import type { AppConfig } from "@studio/shared";
+import type { AppConfig, RenderProgress } from "@studio/shared";
 import { RepositoryError } from "../../repository.js";
 import { inspectRenderedVideo } from "../../quiz/qa/postRenderQa.js";
 import { hasNonEmptyFile } from "../artifactFiles.js";
 import { readRenderCheckpoint, writeRenderCheckpoint } from "../checkpoints.js";
 import { getHyperframesInvocation } from "./videoInvocation.js";
+import { mapRenderTaskPercent } from "./hyperframesProgress.js";
 import { calculateOptimalWorkers, getHyperframesExecutionEnv } from "./videoPerformance.js";
-
-const execFileAsync = promisify(execFile);
+import { runHyperframesProcess } from "./hyperframesProcess.js";
 
 export async function executeHyperframesRender(options: {
   renderRoot: string;
@@ -18,9 +16,22 @@ export async function executeHyperframesRender(options: {
   renderCanvas: { width: number; height: number };
   videoConfig: AppConfig["video_generation"];
   repositoryRoot: string;
-  onProgress: (message: string, percent: number) => Promise<void>;
+  signal: AbortSignal;
+  logPath: string;
+  onProgress: (message: string, percent: number, renderProgress?: RenderProgress | null) => Promise<void>;
 }): Promise<{ probe: Awaited<ReturnType<typeof inspectRenderedVideo>>; duration: number }> {
-  const { renderRoot, outputPath, checkpointPath, sourceFingerprint, renderCanvas, videoConfig, repositoryRoot, onProgress } = options;
+  const {
+    renderRoot,
+    outputPath,
+    checkpointPath,
+    sourceFingerprint,
+    renderCanvas,
+    videoConfig,
+    repositoryRoot,
+    signal,
+    logPath,
+    onProgress,
+  } = options;
 
   const checkpoint = await readRenderCheckpoint(checkpointPath);
   const layoutReady = checkpoint?.source_fingerprint === sourceFingerprint && checkpoint.check.status === "passed";
@@ -35,9 +46,9 @@ export async function executeHyperframesRender(options: {
   }
 
   if (reusableRender) {
-    await onProgress("Video · reusing verified MP4", 85);
+    await onProgress("Video · reusing verified MP4", 85, null);
   } else {
-    await onProgress("Video · rendering MP4 with narration", 65);
+    await onProgress("Video · rendering MP4 with narration", 65, null);
     const browserTimeout = process.env.HYPERFRAMES_BROWSER_TIMEOUT_SECONDS || "300";
     const renderTimeoutMs = Number(process.env.HYPERFRAMES_RENDER_TIMEOUT_MS) || 120 * 60_000;
     const hyperframesEnv = getHyperframesExecutionEnv();
@@ -60,12 +71,40 @@ export async function executeHyperframesRender(options: {
       "--strict",
       "--json",
     );
-    await execFileAsync(renderInvocation.command, renderInvocation.args, {
+    let latestPercent = 65;
+    let latestFrames = 0;
+    let latestProgress: RenderProgress | null = null;
+    await runHyperframesProcess({
+      command: renderInvocation.command,
+      args: renderInvocation.args,
       cwd: repositoryRoot,
-      timeout: renderTimeoutMs,
-      windowsHide: true,
-      maxBuffer: 50 * 1024 * 1024,
       env: hyperframesEnv,
+      timeoutMs: renderTimeoutMs,
+      logPath,
+      signal,
+      onProgress: async (event) => {
+        if (event.kind === "heartbeat") {
+          await onProgress(`Video · rendering MP4 (${Math.round(event.elapsedMs / 1000)}s)`, latestPercent, latestProgress);
+          return;
+        }
+        const { sample } = event;
+        if (sample.framesCompleted < latestFrames) return;
+        latestFrames = sample.framesCompleted;
+        latestPercent = Math.max(latestPercent, mapRenderTaskPercent(sample));
+        latestProgress = {
+          phase: sample.phase,
+          frames_completed: sample.framesCompleted,
+          total_frames: sample.totalFrames,
+          worker_count: sample.workerCount,
+          elapsed_ms: sample.elapsedMs,
+          eta_seconds: sample.etaSeconds,
+        };
+        await onProgress(
+          `Video · rendering frame ${sample.framesCompleted.toLocaleString("en-US")} / ${sample.totalFrames.toLocaleString("en-US")}`,
+          latestPercent,
+          latestProgress,
+        );
+      },
     });
   }
 

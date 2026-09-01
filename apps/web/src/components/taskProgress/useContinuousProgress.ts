@@ -7,11 +7,8 @@ export function useContinuousProgress(task: Task, rawPercent: number | null): nu
   const completed = task.status === "COMPLETED";
   const failed = task.status === "FAILED";
   const cancelled = task.status === "CANCELLED";
-
-  if (rawPercent === null && !active && !completed) {
-    return null;
-  }
-
+  const measuredRender = task.render_progress !== null;
+  const hasNoProgress = rawPercent === null && !active && !completed;
   const initial = completed ? 100 : (rawPercent ?? 0);
   const [displayPercent, setDisplayPercent] = useState<number>(initial);
   const backendTargetRef = useRef<number>(initial);
@@ -28,6 +25,7 @@ export function useContinuousProgress(task: Task, rawPercent: number | null): nu
 
   useEffect(() => {
     if (failed || cancelled) return;
+    if (measuredRender) return;
 
     if (completed) {
       const timer = setInterval(() => {
@@ -76,7 +74,9 @@ export function useContinuousProgress(task: Task, rawPercent: number | null): nu
     }, 200);
 
     return () => clearInterval(interval);
-  }, [active, completed, failed, cancelled]);
+  }, [active, completed, failed, cancelled, measuredRender]);
 
+  if (hasNoProgress) return null;
+  if (measuredRender) return completed ? 100 : rawPercent;
   return displayPercent;
 }

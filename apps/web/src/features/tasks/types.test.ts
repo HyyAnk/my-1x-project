@@ -20,6 +20,7 @@ function failedItem(completedAt: string): ProductionItemSummary {
     queue_position: null,
     progress_message: "Render failed",
     progress_percent: 50,
+    render_progress: null,
     scene_number: null,
     accumulated_duration_seconds: 0,
   } satisfies Task;

@@ -62,6 +62,17 @@ export const QuizTimelineSchema = z
 
 export type QuizTimeline = z.infer<typeof QuizTimelineSchema>;
 
+export const RenderProgressSchema = z.object({
+  phase: z.string().min(1),
+  frames_completed: z.number().int().nonnegative(),
+  total_frames: z.number().int().positive(),
+  worker_count: z.number().int().positive(),
+  elapsed_ms: z.number().int().nonnegative().nullable(),
+  eta_seconds: z.number().int().nonnegative().nullable(),
+});
+
+export type RenderProgress = z.infer<typeof RenderProgressSchema>;
+
 export const TaskSchema = z.object({
   task_id: z.string().min(1),
   task_type: TaskTypeSchema,
@@ -79,6 +90,7 @@ export const TaskSchema = z.object({
   queue_position: z.number().int().nonnegative().nullable().default(null),
   progress_message: z.string().default(""),
   progress_percent: z.number().min(0).max(100).nullable().default(null),
+  render_progress: RenderProgressSchema.nullable().default(null),
   scene_number: z.number().int().positive().nullable().default(null),
   accumulated_duration_seconds: z.number().nonnegative().default(0),
 });

@@ -34,8 +34,11 @@ export async function loadTasksFromDisk(runtimeRoot: string): Promise<Task[]> {
 
 export function applyTaskPatch(current: Task, patch: Partial<Task>): Task {
   let effectivePatch = patch;
+  const terminal = ["COMPLETED", "FAILED", "CANCELLED"].includes(current.status);
 
-  if (["COMPLETED", "FAILED", "CANCELLED"].includes(current.status) && patch.status === undefined) {
+  if (terminal && patch.status !== undefined && patch.status !== current.status) return current;
+
+  if (terminal && patch.status === undefined) {
     const { progress_message, progress_percent, ...rest } = patch;
     if (progress_message !== undefined || progress_percent !== undefined) {
       if (Object.keys(rest).length === 0) return current;

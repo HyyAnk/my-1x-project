@@ -27,6 +27,7 @@ export interface TaskManagerRuntime {
   activeAudio: Set<string>;
   activeEngine: "codex" | "antigravity";
   activeImageControllers: Map<string, AbortController>;
+  activeVideoControllers: Map<string, AbortController>;
   antigravity?: AntigravityClient;
   approvalRequests: Map<number, { taskId: string; request: CodexServerRequest }>;
   assemblingEpisodes: Set<string>;

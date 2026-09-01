@@ -161,9 +161,12 @@ async function createFixture() {
 }
 
 function runtimeFor(repository: object, finish: ReturnType<typeof vi.fn>): TaskManagerRuntime {
+  const activeVideoControllers = new Map<string, AbortController>();
   return {
     repository,
     videoConfig: { aspect_ratio: "16:9", fast_render_mode: true, render_quality: "medium", fps: 30, render_workers: 1 },
+    activeVideoControllers,
+    get: () => ({ status: "RUNNING" }),
     hasValidNarrationAsset: () => Promise.resolve(true),
     update: () => Promise.resolve(undefined),
     finish,

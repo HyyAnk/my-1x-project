@@ -12,6 +12,7 @@ import { pumpTaskQueue } from "./taskQueuePump.js";
 import { applyTaskPatch, loadTasksFromDisk, persistTask } from "./taskStateStore.js";
 import { decideTaskApproval } from "./taskApprovalManager.js";
 import { cancelTask, submitTask } from "./taskSubmission.js";
+import { TaskMutationQueue } from "./taskMutationQueue.js";
 import { taskDelegates } from "./taskDelegates.js";
 import type { ActiveRun, PipelineRun, TaskManagerRuntime } from "./runtime.js";
 
@@ -24,8 +25,10 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   readonly locks = new Set<string>();
   readonly assemblingEpisodes = new Set<string>();
   readonly activeImageControllers = new Map<string, AbortController>();
+  readonly activeVideoControllers = new Map<string, AbortController>();
   readonly imageVariants = new Map<string, number>();
   readonly topicHints = new Map<string, string>();
+  private readonly taskMutations = new TaskMutationQueue();
   runningCount = 0;
   runningAudioCount = 0;
   runningImageCount = 0;
@@ -111,6 +114,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     this.imageVariants.clear();
     this.topicHints.clear();
     this.activeImageControllers.clear();
+    this.activeVideoControllers.clear();
     this.approvalRequests.clear();
     this.locks.clear();
     this.runningCount = 0;
@@ -173,6 +177,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
       this.active.size > 0 ||
       this.activeAudio.size > 0 ||
       this.activeImageControllers.size > 0 ||
+      this.activeVideoControllers.size > 0 ||
       this.pipelineRuns.size > 0 ||
       this.runningCount > 0 ||
       this.runningAudioCount > 0 ||
@@ -194,7 +199,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   ): Task {
     const task = submitTask(this, taskType, channelId, episodeId, sceneNumber, requestedImageVariant, topicHint);
     this.tasks.set(task.task_id, task);
-    void this.persist(task);
+    void this.taskMutations.enqueue(task.task_id, () => this.persist(task));
     this.emitTask(task);
     void this.pump();
     return task;
@@ -244,11 +249,14 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
 
   async update(taskId: string, patch: Partial<Task>): Promise<void> {
-    const current = this.get(taskId);
-    const next = applyTaskPatch(current, patch);
-    this.tasks.set(taskId, next);
-    await this.persist(next);
-    this.emitTask(next);
+    await this.taskMutations.enqueue(taskId, async () => {
+      const current = this.get(taskId);
+      const next = applyTaskPatch(current, patch);
+      if (next === current) return;
+      this.tasks.set(taskId, next);
+      await this.persist(next);
+      this.emitTask(next);
+    });
   }
 
   private persist(task: Task): Promise<void> {

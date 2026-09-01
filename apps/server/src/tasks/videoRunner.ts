@@ -1,3 +1,4 @@
+import path from "node:path";
 import { MASCOT_CANVAS_SIZES, nowIso, type Task } from "@studio/shared";
 import { RepositoryError } from "../repository.js";
 import type { TaskManagerRuntime } from "./runtime.js";
@@ -6,8 +7,14 @@ import { prepareVideoComposition } from "./video/videoCompositionPreparer.js";
 import { executeHyperframesRender } from "./video/videoRenderExecution.js";
 import { persistVideoRenderArtifacts } from "./video/renderManifestWriter.js";
 
+function ensureVideoTaskActive(runtime: TaskManagerRuntime, taskId: string, signal: AbortSignal): void {
+  if (signal.aborted || runtime.get(taskId).status === "CANCELLED") throw new Error("Video render cancelled");
+}
+
 export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   const context = { profileId: task.channel_id, workerId: task.task_id, step: "render_video" };
+  const controller = new AbortController();
+  this.activeVideoControllers.set(task.task_id, controller);
   try {
     const renderAspectRatio = this.videoConfig.aspect_ratio;
     const renderCanvas = MASCOT_CANVAS_SIZES[renderAspectRatio];
@@ -17,7 +24,9 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       queue_position: null,
       progress_message: "Preparing Quiz composition",
       progress_percent: 5,
+      render_progress: null,
     });
+    ensureVideoTaskActive(this, task.task_id, controller.signal);
     if (!task.episode_id) throw new RepositoryError("Episode is required", "EPISODE_REQUIRED");
     const episode = await this.repository.getEpisode(task.channel_id, task.episode_id);
     const channel = await this.repository.getChannel(task.channel_id);
@@ -38,6 +47,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
         await this.update(task.task_id, { progress_message: message, progress_percent: percent });
       },
     });
+    ensureVideoTaskActive(this, task.task_id, controller.signal);
 
     await verifyAndCheckLayout({
       renderRoot: comp.renderRoot,
@@ -49,6 +59,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
         await this.update(task.task_id, { progress_message: message, progress_percent: percent });
       },
     });
+    ensureVideoTaskActive(this, task.task_id, controller.signal);
 
     const { probe, duration } = await executeHyperframesRender({
       renderRoot: comp.renderRoot,
@@ -58,10 +69,15 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       renderCanvas,
       videoConfig: this.videoConfig,
       repositoryRoot: this.repository.rootDirectory,
-      onProgress: async (message, percent) => {
-        await this.update(task.task_id, { progress_message: message, progress_percent: percent });
+      signal: controller.signal,
+      logPath: path.join(comp.renderRoot, `render-${task.task_id}.log`),
+      onProgress: async (message, percent, renderProgress) => {
+        const progressPatch = renderProgress === undefined ? {} : { render_progress: renderProgress };
+        await this.update(task.task_id, { progress_message: message, progress_percent: percent, ...progressPatch });
       },
     });
+
+    ensureVideoTaskActive(this, task.task_id, controller.signal);
 
     const { videoPath, manifestPath } = await persistVideoRenderArtifacts({
       repository: this.repository,
@@ -82,7 +98,8 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       probe,
     });
 
-    await this.update(task.task_id, { progress_message: "Quiz video ready", progress_percent: 100 });
+    ensureVideoTaskActive(this, task.task_id, controller.signal);
+
     await this.finish(task.task_id, "COMPLETED", null, [videoPath, manifestPath]);
     const quiz = await this.repository.readQuiz(task.channel_id, task.episode_id);
     if (quiz && quiz.questions.length > 0) {
@@ -98,6 +115,12 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     this.logger.ok("Quiz video rendered", { ...context, step: "render_video" });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Video render failed";
+    const current = this.get(task.task_id);
+    if (controller.signal.aborted || current.status === "CANCELLED") {
+      if (current.status !== "CANCELLED") await this.finish(task.task_id, "CANCELLED", "Cancelled by user");
+      this.logger.warn("Video render cancelled", context);
+      return;
+    }
     if (task.episode_id) {
       await this.repository.removeQuestionHistoryEntries(task.channel_id, { renderTaskIds: [task.task_id] }).catch((historyError) => {
         this.logger.warn(`Question history rollback deferred: ${historyError instanceof Error ? historyError.message : "unknown error"}`, {
@@ -108,5 +131,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     }
     await this.finish(task.task_id, "FAILED", message);
     this.logger.error(message, context);
+  } finally {
+    if (this.activeVideoControllers.get(task.task_id) === controller) this.activeVideoControllers.delete(task.task_id);
   }
 }
