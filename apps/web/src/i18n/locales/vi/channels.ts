@@ -21,6 +21,8 @@ export const channelsVi = {
     countryFieldLabel: "Quốc gia định hướng",
     languageFieldLabel: "Ngôn ngữ định hướng",
     languageFieldPlaceholder: "Ví dụ: English, Tiếng Việt",
+    marketFieldLabel: "Thị trường (không bắt buộc)",
+    marketFieldPlaceholder: "Ví dụ: Đông Nam Á",
     noCountriesFound: "Không tìm thấy quốc gia phù hợp",
     createAndGenerateDnaButton: "Tạo kênh",
     creatingButton: "Đang khởi tạo…",

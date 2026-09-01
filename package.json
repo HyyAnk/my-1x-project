@@ -13,6 +13,7 @@
     "benchmark:render": "node scripts/benchmark-render.mjs",
     "audit:quiz-choices": "node scripts/audit-quiz-choice-count.mjs",
     "audit:quiz-only": "node scripts/audit-quiz-only.mjs",
+    "migrate:quiz-only": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/migrate-quiz-only.ps1",
     "start": "pnpm --filter @studio/server start",
     "typecheck": "pnpm --filter @studio/shared build && pnpm -r typecheck",
     "test": "pnpm --filter @studio/shared build && pnpm --filter @studio/server test && pnpm --filter @studio/web test && node scripts/audit-quiz-choice-count.mjs && node scripts/audit-quiz-only.mjs",

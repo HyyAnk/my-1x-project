@@ -1,26 +1,15 @@
-# Script Rules
+# Quiz Script Rules
 
-- Write for spoken clarity.
-- Use a clear cold open, stakes, turning points, and a precise ending.
-- Do not invent facts, quotes, or sources.
-- Write to the episode's target word count within the stated tolerance.
-- Follow the approved treatment sequence order and make each sequence change the viewer's understanding.
-- Prefer dated events, named actors, decisions, evidence, and consequences over repeated abstract explanation.
-- Keep claim IDs in HTML comments after each section so narration stays clean while the source trail remains auditable.
-- Do not include generic visual directions inside narration. Visual development happens after the script is locked.
-- Add a restrained humor layer to every suitable Quiz script: use playful observation, an unexpectedly specific analogy, or a self-aware aside to reveal a new angle on the evidence. Humor must clarify the answer, not pad the runtime.
-- Humor replaces a generic explanatory sentence; it is not an extra paragraph. Keep the final script near its calibrated word target after the humor beats are inserted.
-- Add the hidden marker `<!-- HUMOR_POLICY: v1 -->` immediately after the script title so the pipeline can distinguish scripts reviewed under this policy from legacy artifacts.
-- For a typical 6–10 minute episode, aim for roughly 2–5 humor beats, spaced across the story rather than stacked together. Keep the cold open, turning point, and ending focused unless a light line genuinely sharpens the point.
-- Never invent a quote, statistic, reaction, or anecdote for a joke. Do not mock victims, vulnerable people, tragedies, or cultures. For sensitive subjects, use gentle framing and allow zero audible laughter when that is the respectful choice.
-- Put an audio cue after a humorous spoken line using an HTML comment only: `<!-- AUDIO_CUE: chuckle -->` for a small amused beat or `<!-- AUDIO_CUE: laugh -->` for a rare audible laugh. The comment is not spoken and must not replace the joke's actual wording.
-- Use at most one audible laugh cue per three minutes of target runtime. Prefer `chuckle` and let punctuation carry the comic timing; never write `(laughs)`, `[laugh]`, or other production directions directly into the visible narration.
-- **Strict Copyright & Trademark Rules:**
-  - **PROHIBITED:** Never include Marvel superheroes (Spider-Man, Iron Man, Captain America, Thor, Hulk...), DC superheroes (Batman, Superman, Wonder Woman, Joker, Flash...), commercial Game characters (Pikachu, Pokémon, Mario, Luigi, Sonic...), or Disney icons (Mickey, Donald, Elsa...).
-  - **LION CUB ZERO-TOLERANCE:** Never use the term "sư tử con" / "lion cub" / "baby lion" / "Simba" / "The Lion King" anywhere (in questions, choices, or baby animal quizzes). "Sư tử" (adult lion / African lion / pride of lions) is completely allowed.
-  - **ALLOWED:** Anime & Manga characters and stories (Naruto, Son Goku / Dragon Ball, Doraemon, Luffy / One Piece, Conan...) are fully permitted and can be used normally.
-  - For baby animal quizzes (e.g. "Guess the Baby Animal"), use safe alternatives (Kangaroo joey, Baby Penguin, Baby Giraffe, Baby Elephant, Panda cub, Baby Seal, Fox kit, etc.).
-- **Voice-Safe Spoken Text Rules:**
-  - Never use dotted single-letter abbreviations or scientific names that break TTS rhythm (write `T-Rex` instead of `T. rex`, `E-Coli` instead of `E. coli`, `C-Elegans` instead of `C. elegans`).
-  - Spell out titles and common abbreviations in spoken narration: write `Doctor` / `Bác sĩ` instead of `Dr.`, `Mister` instead of `Mr.`, `Tiến sĩ` instead of `TS.`, `Thạc sĩ` instead of `ThS.`, `vân vân` instead of `v.v.`, `for example` instead of `e.g.`, `that is` instead of `i.e.`.
-  - Format numbers, measurements, and symbols in conversational spoken style to prevent TTS hesitation or artificial pause artifacts.
+- Write exactly the configured number of question blocks using one second-level `## Question N — Title` heading per question. Do not add standalone welcome, closing, or interstitial sections.
+- Fold the welcome into Question 1 and the closing into the final question.
+- Preserve the approved question order, evidence-linked canonical answers, configured choice count, and Claim IDs. Put Claim IDs in an HTML comment within their question block so they are auditable but not spoken.
+- Keep every spoken question and answer choice concise, direct, child-friendly, and easy to distinguish by ear.
+- Make Think/reveal timing clear in each block: ask the question, speak the choices or clue, invite a guess, leave the approved thinking beat, reveal the answer, then explain it.
+- Give every answer exactly one concise explanation. Do not add a second fact, recap paragraph, or filler after the explanation.
+- Do not invent facts, quotes, sources, reactions, statistics, or anecdotes. When the evidence is ambiguous, use the qualified answer approved by the treatment.
+- Add the hidden marker `<!-- HUMOR_POLICY: v1 -->` immediately after the script title. Humor is optional, restrained, and limited to a short observation or analogy that clarifies the answer without adding unsupported claims.
+- Put an audio cue after a humorous spoken line using only `<!-- AUDIO_CUE: chuckle -->` or, rarely, `<!-- AUDIO_CUE: laugh -->`. Never write spoken production directions such as `(laughs)` or `[laugh]`.
+- Never mock victims, vulnerable people, tragedies, or cultures. Use neutral, respectful wording for sensitive subjects.
+- Apply strict copyright and trademark safety. Do not use protected commercial characters, logos, or franchise-specific likenesses in questions, choices, examples, or narration.
+- Keep spoken text TTS-safe: avoid dotted single-letter abbreviations and scientific names; spell out titles and common abbreviations; express numbers, measurements, and symbols conversationally.
+- Keep visual or editing directions out of narration. Only the approved hidden HTML comments may carry non-spoken metadata.

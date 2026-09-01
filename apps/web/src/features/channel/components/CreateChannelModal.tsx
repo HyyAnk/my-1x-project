@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { CircleNotch, Plus, Translate, X } from "@phosphor-icons/react";
 import { TARGET_COUNTRY_OPTIONS, type Task } from "@studio/shared";
 import { api } from "../../../api";
+import { AccessibleModal } from "../../../components/AccessibleModal";
 import { useTranslation } from "../../../i18n";
 import { CountrySelectDropdown } from "./CountrySelectDropdown";
 
@@ -39,7 +40,7 @@ export function CreateChannelModal({
     target_audience: "Children and families",
     language: defaultCountry.defaultLanguage,
     country: defaultCountry.code,
-    market: defaultCountry.code,
+    market: "",
     dna_mode: "ai",
     dna_content: "",
   });
@@ -47,13 +48,8 @@ export function CreateChannelModal({
   const [busy, setBusy] = useState(false);
   const submittingRef = useRef(false);
 
-  const handleCountrySelect = (code: string, defaultLanguage: string) => {
-    setForm((current) => ({
-      ...current,
-      country: code,
-      market: code,
-      language: defaultLanguage,
-    }));
+  const handleCountrySelect = (code: string) => {
+    setForm((current) => ({ ...current, country: code }));
   };
 
   const submit = async (event: React.FormEvent) => {
@@ -77,19 +73,13 @@ export function CreateChannelModal({
   };
 
   return (
-    <div className="modal-backdrop" role="presentation">
-      <form
-        className="modal channel-create-modal"
-        onSubmit={(event) => void submit(event)}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={CREATE_CHANNEL_TITLE_ID}
-      >
+    <AccessibleModal titleId={CREATE_CHANNEL_TITLE_ID} onDismiss={onClose} dismissalAllowed={!busy}>
+      <form className="modal channel-create-modal" onSubmit={(event) => void submit(event)}>
         <div className="channel-create-header">
           <div className="channel-create-header-info">
             <h2 id={CREATE_CHANNEL_TITLE_ID}>{t("channels.createChannelTitle")}</h2>
           </div>
-          <button type="button" className="channel-create-close-btn" onClick={onClose} aria-label={t("common.close")}>
+          <button type="button" className="channel-create-close-btn" onClick={onClose} aria-label={t("common.close")} disabled={busy}>
             <X size={18} />
           </button>
         </div>
@@ -125,6 +115,17 @@ export function CreateChannelModal({
                 />
               </div>
             </div>
+          </div>
+
+          <div className="channel-create-field">
+            <label htmlFor="channel-market-input">{t("channels.marketFieldLabel")}</label>
+            <input
+              id="channel-market-input"
+              type="text"
+              value={form.market}
+              onChange={(e) => setForm({ ...form, market: e.target.value })}
+              placeholder={t("channels.marketFieldPlaceholder")}
+            />
           </div>
 
           <div className="channel-create-field">
@@ -169,6 +170,6 @@ export function CreateChannelModal({
           </button>
         </div>
       </form>
-    </div>
+    </AccessibleModal>
   );
 }

@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { CaretDown, Check, Globe, MagnifyingGlass } from "@phosphor-icons/react";
-import { TARGET_COUNTRY_OPTIONS, getCountryDefaultLanguage, getCountryOption } from "@studio/shared";
+import { TARGET_COUNTRY_OPTIONS, getCountryOption } from "@studio/shared";
 import { CountryFlag } from "../../../components/CountryFlag";
 import { useTranslation } from "../../../i18n";
 
 export interface CountrySelectDropdownProps {
   selectedCountry: string;
-  onSelectCountry: (countryCode: string, defaultLanguage: string) => void;
+  onSelectCountry: (countryCode: string) => void;
 }
 
 export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: CountrySelectDropdownProps) {
@@ -50,9 +50,7 @@ export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: Coun
   const selectedCountryOption = getCountryOption(selectedCountry) || TARGET_COUNTRY_OPTIONS[0];
 
   const handleSelect = (code: string) => {
-    const opt = getCountryOption(code);
-    const lang = opt ? opt.defaultLanguage : getCountryDefaultLanguage(code);
-    onSelectCountry(code, lang);
+    onSelectCountry(code);
     setDropdownOpen(false);
     setCountrySearch("");
   };
@@ -71,6 +69,7 @@ export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: Coun
           className="country-select-trigger"
           onClick={() => setDropdownOpen((prev) => !prev)}
           aria-expanded={dropdownOpen}
+          aria-label={t("channels.countryFieldLabel")}
         >
           <div className="country-select-trigger-content">
             <CountryFlag code={selectedCountry} size={20} className="country-flag-icon" />

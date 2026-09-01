@@ -1,8 +1,10 @@
-# Treatment Rules
+# Quiz Treatment Rules
 
-- Convert research into a clear sequence of evidence-backed Quiz questions, not a topic summary.
-- Define one thesis and one audience promise before outlining sequences.
-- Use 6–10 sequences. Give each a dramatic question, purpose, time budget, claim IDs, evidence modes, transition, and changed understanding.
-- Time budgets must sum to the target duration. Reserve space for the cold open, turning point, consequence, replacement, and precise ending.
-- Do not place a claim in a sequence unless it exists in the research ledger.
-- Vary evidence modes so the finished film is not a chain of AI reconstructions.
+- Produce exactly the configured number of question blocks. Use one second-level `## Question N — Title` heading per question and no additional question, welcome, or closing block.
+- Fold the welcome into Question 1 and the closing into the final question.
+- Build every question from the research ledger. Keep every canonical answer evidence-linked through its supporting Claim IDs and never invent facts, quotes, sources, or answer evidence.
+- Keep each question and every answer choice concise, direct, age-appropriate, and unambiguous. Preserve the configured Quiz format and choice-count limit.
+- Define Think/reveal timing inside every question block, including the invitation to guess, thinking interval, answer reveal, and a concise transition to the explanation.
+- Provide exactly one concise, child-friendly explanation for each answer. The explanation must clarify the evidence without filler or a second fact.
+- Include a practical visual clue or clean illustration opportunity only when it helps the learner answer; never expose the answer before the reveal.
+- Keep all question blocks consistent in structure, evidence depth, and time budget while allowing restrained variety in wording and visual treatment.

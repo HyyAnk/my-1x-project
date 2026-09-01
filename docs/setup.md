@@ -52,3 +52,15 @@ Settings also contains a shared voice library. Adding a voice creates a reusable
 On the first launch, the dashboard asks for a local content storage folder. It creates `channels/`, `.quiz-studio/tasks/`, `.quiz-studio/codex/`, and `.quiz-studio/logs/` inside that folder. The code, templates, and shared rules remain in the Git project.
 
 The selected folder is saved locally in `.quiz-studio/storage.local.json`, which is ignored by Git. Change it later from Settings → Storage folder. Existing content is not moved automatically when switching folders. To use a different code project root, set `STUDIO_ROOT` before starting the server. To enable extra structured diagnostics, set `STUDIO_DEBUG=1`.
+
+## One-time Quiz runtime migration
+
+The namespace migration is an explicit Windows maintenance command; normal startup and tests never run it. Stop the dashboard, TTS, and render processes first, then run:
+
+```powershell
+pnpm migrate:quiz-only -- -ProjectRoot "D:\1a Cursor Project\My 1x Project" -ContentRoot "D:\1a Cursor Project\My 1x Youtube Channel File"
+```
+
+Those paths are the deliberate production defaults, but passing both roots explicitly makes the intended scope reviewable. The command validates every resolved source and destination beneath its exact root before changing files, refuses missing sources or existing destinations, backs up every `channel.json`, removes only the retired channel-level fields, and moves both runtime directories without merging.
+
+On success, the timestamped recovery copy is stored at `.quiz-studio/migration-backups/<stamp>/channels` beneath the content root. Keep that copy until the updated dashboard and all channels have been verified.

@@ -61,7 +61,7 @@ export function buildOutputContract(input: OutputContractInput): string {
   }
 
   if (taskType === "GENERATE_TREATMENT") {
-    return `Return only a completed Markdown quiz treatment. Define the episode format, age band, ${episodeQuestionCount} question blocks, and visual/audio rhythm. Use one second-level heading per question exactly like \`## Question 1 — Title\`. Each block must include Purpose, Question (ultra-concise, under 10 words, direct single-clause phrasing), ${choiceContracts.treatment} or visual clue, Correct answer, Think time, Reveal beat, Explanation (strictly 1 punchy, child-friendly fun fact under 10 words and under 70 characters), Claim IDs, and Time budget. Never generate more than ${choiceContracts.maximum} answer choices. Keep the total runtime appropriate for ${episodeQuestionCount} questions.`;
+    return `Return only a completed Markdown quiz treatment. Define the episode format, age band, exactly ${episodeQuestionCount} question blocks, and visual/audio rhythm. Use one second-level heading per question exactly like \`## Question 1 — Title\`. Each block must include Purpose, Question (ultra-concise, under 10 words, direct single-clause phrasing), ${choiceContracts.treatment} or visual clue, Correct answer, Think time, Reveal beat, Explanation (strictly 1 punchy, child-friendly fun fact under 10 words and under 70 characters), Claim IDs, and Time budget. Never generate more than ${choiceContracts.maximum} answer choices. Keep the total runtime appropriate for ${episodeQuestionCount} questions.`;
   }
 
   if (taskType === "GENERATE_SCRIPT") {

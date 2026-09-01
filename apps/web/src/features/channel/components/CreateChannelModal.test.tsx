@@ -10,12 +10,13 @@ afterEach(() => {
 });
 
 function renderModal(onCreated = vi.fn().mockResolvedValue(undefined)) {
+  const onClose = vi.fn();
   const result = render(
     <LanguageProvider>
-      <CreateChannelModal onClose={vi.fn()} onCreated={onCreated} onError={vi.fn()} />
+      <CreateChannelModal onClose={onClose} onCreated={onCreated} onError={vi.fn()} />
     </LanguageProvider>,
   );
-  return { ...result, onCreated };
+  return { ...result, onClose, onCreated };
 }
 
 describe("CreateChannelModal", () => {
@@ -43,22 +44,45 @@ describe("CreateChannelModal", () => {
     expect(payload).not.toHaveProperty("engine");
   });
 
+  it("keeps country, market, and language independent in the create payload", async () => {
+    const create = vi.spyOn(api, "createChannel").mockResolvedValue({
+      channel: { channel_id: "ch_locale" } as never,
+      task: null,
+    });
+    renderModal();
+
+    fireEvent.change(screen.getByLabelText("Channel Name"), { target: { value: "World Quiz" } });
+    fireEvent.change(screen.getByLabelText("Market (optional)"), { target: { value: "Southeast Asia" } });
+    fireEvent.change(screen.getByLabelText("Target Language"), { target: { value: "French" } });
+    fireEvent.click(screen.getByRole("button", { name: "Target Country / Region" }));
+    fireEvent.click(screen.getByRole("button", { name: /Vietnam.*VN.*Vietnamese/i }));
+
+    expect(screen.getByLabelText<HTMLInputElement>("Market (optional)").value).toBe("Southeast Asia");
+    expect(screen.getByLabelText<HTMLInputElement>("Target Language").value).toBe("French");
+    fireEvent.click(screen.getByRole("button", { name: "Create channel" }));
+
+    await waitFor(() => expect(create).toHaveBeenCalledTimes(1));
+    expect(create.mock.calls[0][0]).toEqual(expect.objectContaining({ country: "VN", market: "Southeast Asia", language: "French" }));
+  });
+
   it("prevents duplicate submission while the request is pending", async () => {
     let resolveRequest!: (value: Awaited<ReturnType<typeof api.createChannel>>) => void;
     const pending = new Promise<Awaited<ReturnType<typeof api.createChannel>>>((resolve) => {
       resolveRequest = resolve;
     });
     const create = vi.spyOn(api, "createChannel").mockReturnValue(pending);
-    const { container } = renderModal();
+    const { onClose } = renderModal();
 
     fireEvent.change(screen.getByLabelText("Channel Name"), { target: { value: "Brain Bites" } });
-    const form = container.querySelector("form");
+    const form = screen.getByRole("dialog").querySelector("form");
     expect(form).not.toBeNull();
     fireEvent.submit(form!);
     fireEvent.submit(form!);
 
     expect(create).toHaveBeenCalledTimes(1);
     expect(await screen.findByText("Creating channel…")).toBeTruthy();
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+    expect(onClose).not.toHaveBeenCalled();
     resolveRequest({ channel: { channel_id: "ch_quiz" } as never, task: null });
   });
 });

@@ -21,6 +21,8 @@ export const channelsEn = {
     countryFieldLabel: "Target Country / Region",
     languageFieldLabel: "Target Language",
     languageFieldPlaceholder: "e.g. English, Tiếng Việt",
+    marketFieldLabel: "Market (optional)",
+    marketFieldPlaceholder: "e.g. Southeast Asia",
     noCountriesFound: "No matching countries found",
     createAndGenerateDnaButton: "Create channel",
     creatingButton: "Creating channel…",
