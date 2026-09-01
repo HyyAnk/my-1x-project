@@ -18,7 +18,7 @@ export const glassMorphismVariant: QuestionBoxVariant = {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 56px;
+  padding: 16px 48px;
   box-sizing: border-box;
   border: 4px solid rgba(255, 255, 255, 0.95);
   border-radius: 40px;

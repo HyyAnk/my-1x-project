@@ -1,4 +1,4 @@
-import { Pause, Play } from "@phosphor-icons/react";
+import { Pause, Play, SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
 import { computeSandboxPhaseTimeline, getSandboxPhaseAtTime, getSandboxPhaseTimestamps } from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 
@@ -9,8 +9,12 @@ export type SandboxTimelineControlsProps = {
   handlePhaseChange: (phase: "question" | "choices" | "thinking" | "reveal" | "explain") => void;
   isPlaying: boolean;
   setIsPlaying: (updater: (prev: boolean) => boolean) => void;
+  handleTogglePlay?: () => void;
   setUseScrubber: (use: boolean) => void;
   handleScrubberChange: (value: number) => void;
+  isMuted?: boolean;
+  onToggleMute?: () => void;
+  totalDuration?: number;
 };
 
 export function SandboxTimelineControls({
@@ -20,13 +24,27 @@ export function SandboxTimelineControls({
   handlePhaseChange,
   isPlaying,
   setIsPlaying,
+  handleTogglePlay,
   setUseScrubber,
   handleScrubberChange,
+  isMuted = false,
+  onToggleMute,
+  totalDuration: customTotalDuration,
 }: SandboxTimelineControlsProps) {
   const { t } = useTranslation();
   const timeline = computeSandboxPhaseTimeline();
+  const totalDuration = customTotalDuration ?? timeline.totalDuration;
   const timestamps = getSandboxPhaseTimestamps();
   const currentScrubberPhase = getSandboxPhaseAtTime(timelineSeconds);
+
+  const onPlayButtonClick = () => {
+    setUseScrubber(true);
+    if (handleTogglePlay) {
+      handleTogglePlay();
+    } else {
+      setIsPlaying((p) => !p);
+    }
+  };
 
   return (
     <div
@@ -42,7 +60,7 @@ export function SandboxTimelineControls({
         flexShrink: 0,
       }}
     >
-      {/* Top row of Timeline: Phase buttons + Play/Scrub */}
+      {/* Top row of Timeline: Phase buttons + Play/Scrub + Mute Toggle */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", marginRight: "2px" }}>
@@ -77,8 +95,26 @@ export function SandboxTimelineControls({
           })}
         </div>
 
-        {/* Play / Pause Toggle & Live Timecode */}
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {/* Play / Pause Toggle, Mute Button & Live Timecode */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {onToggleMute && (
+            <button
+              type="button"
+              className={isMuted ? "quiet-button compact" : "primary-button compact"}
+              style={{
+                padding: "5px 8px",
+                borderRadius: "8px",
+                display: "inline-flex",
+                alignItems: "center",
+                fontSize: "12px",
+              }}
+              onClick={onToggleMute}
+              title={isMuted ? "Unmute rehearsal SFX" : "Mute rehearsal SFX"}
+            >
+              {isMuted ? <SpeakerSlash size={14} weight="bold" /> : <SpeakerHigh size={14} weight="fill" />}
+            </button>
+          )}
+
           <button
             type="button"
             className={isPlaying ? "primary-button compact" : "quiet-button compact"}
@@ -91,10 +127,7 @@ export function SandboxTimelineControls({
               fontSize: "11.5px",
               fontWeight: 600,
             }}
-            onClick={() => {
-              setUseScrubber(true);
-              setIsPlaying((p) => !p);
-            }}
+            onClick={onPlayButtonClick}
           >
             {isPlaying ? <Pause size={13} weight="fill" /> : <Play size={13} weight="fill" />}
             <span>{isPlaying ? t("visualSandbox.pauseBtn") : t("visualSandbox.playRehearsal")}</span>
@@ -112,7 +145,7 @@ export function SandboxTimelineControls({
               border: "1px solid var(--line)",
             }}
           >
-            {timelineSeconds.toFixed(1)}s / {timeline.totalDuration.toFixed(1)}s
+            {timelineSeconds.toFixed(1)}s / {totalDuration.toFixed(1)}s
           </span>
         </div>
       </div>
@@ -123,7 +156,7 @@ export function SandboxTimelineControls({
           <input
             type="range"
             min="0"
-            max={timeline.totalDuration}
+            max={totalDuration}
             step="0.05"
             value={timelineSeconds}
             onChange={(e) => handleScrubberChange(parseFloat(e.target.value))}

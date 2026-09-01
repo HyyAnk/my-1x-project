@@ -228,15 +228,21 @@ export type TextLayoutOptions = {
   layoutId?: QuizLayoutId | "baseline";
 };
 
+type ChoiceTextTier = Exclude<TextTier, "ultra_short">;
+
+export function textTier(value: string, role: "question", options?: TextLayoutOptions | boolean): TextTier;
+export function textTier(value: string, role: "choice", options?: TextLayoutOptions | boolean): ChoiceTextTier;
+export function textTier(value: string, role: "question" | "choice", options?: TextLayoutOptions | boolean): TextTier;
 export function textTier(value: string, role: "question" | "choice", options?: TextLayoutOptions | boolean): TextTier {
   const hasMascot = typeof options === "boolean" ? options : Boolean(options?.hasMascot);
   const length = [...value.trim()].length;
   if (role === "question") {
-    const limits = [42, 78, 128, 176];
-    if (length <= limits[0]) return "short";
-    if (length <= limits[1]) return "medium";
-    if (length <= limits[2]) return "long";
-    if (length <= limits[3]) return "very_long";
+    const limits = hasMascot ? [22, 44, 76, 125, 165] : [28, 50, 85, 135, 176];
+    if (length <= limits[0]) return "ultra_short";
+    if (length <= limits[1]) return "short";
+    if (length <= limits[2]) return "medium";
+    if (length <= limits[3]) return "long";
+    if (length <= limits[4]) return "very_long";
     return "overflow";
   }
   const limits = hasMascot ? [10, 22, 40, 60] : [18, 34, 58, 82];
@@ -249,18 +255,29 @@ export function textTier(value: string, role: "question" | "choice", options?: T
 
 export function textLayout(value: string, role: "question" | "choice", options?: TextLayoutOptions | boolean): TextLayout {
   const hasMascot = typeof options === "boolean" ? options : Boolean(options?.hasMascot);
-  const tier = textTier(value, role, options);
   if (role === "question") {
-    const questionOptions = {
-      short: [56, 1.18, 2],
-      medium: [48, 1.2, 2],
-      long: [42, 1.22, 2],
-      very_long: [36, 1.24, 2],
-      overflow: [32, 1.25, 2],
-    } as const;
+    const tier = textTier(value, role, options);
+    const questionOptions = hasMascot
+      ? ({
+          ultra_short: [70, 1.12, 1],
+          short: [60, 1.15, 2],
+          medium: [50, 1.18, 2],
+          long: [42, 1.2, 2],
+          very_long: [35, 1.22, 2],
+          overflow: [30, 1.24, 2],
+        } as const)
+      : ({
+          ultra_short: [74, 1.12, 1],
+          short: [64, 1.15, 2],
+          medium: [54, 1.18, 2],
+          long: [45, 1.2, 2],
+          very_long: [38, 1.22, 2],
+          overflow: [32, 1.24, 2],
+        } as const);
     const [fontSize, lineHeight, maxLines] = questionOptions[tier];
     return { tier, fontSize, lineHeight, maxLines, fits: tier !== "overflow" };
   }
+  const tier = textTier(value, role, options);
   const choiceOptions = hasMascot
     ? {
         short: [28, 1.1, 2],

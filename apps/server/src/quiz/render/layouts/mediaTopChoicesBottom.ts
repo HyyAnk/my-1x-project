@@ -25,6 +25,11 @@ export const mediaTopChoicesBottomLayout = {
   --choice-font-size-long: 24px;
   --choice-font-size-very_long: 20px;
   --choice-font-size-overflow: 20px;
+  --choice-fit-min: 18px;
+  --choice-fit-max: 48px;
+  --choice-fit-max-lines: 2;
+  --choice-fit-leading: 1.08;
+  --choice-fit-multiline-gain: 6px;
 }
 
 .has-mascot.layout-media_top_choices_bottom .answer-grid { max-width: 1360px; gap: 24px; }
@@ -51,6 +56,7 @@ ${
   --choice-badge-margin-left: -60px;
   --choice-badge-font-size: 58px;
   --choice-font-size-base: 36px;
+  --choice-fit-max: 68px;
 }
 `
     : ""

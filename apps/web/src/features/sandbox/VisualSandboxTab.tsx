@@ -198,8 +198,13 @@ export function VisualSandboxTab({
           handlePhaseChange={timeline.handlePhaseChange}
           isPlaying={timeline.isPlaying}
           setIsPlaying={timeline.setIsPlaying}
+          handleTogglePlay={timeline.handleTogglePlay}
           setUseScrubber={timeline.setUseScrubber}
           handleScrubberChange={timeline.handleScrubberChange}
+          iframeRef={timeline.iframeRef}
+          isMuted={timeline.isMuted}
+          onToggleMute={timeline.toggleMute}
+          totalDuration={timeline.totalDuration}
         />
       </div>
 

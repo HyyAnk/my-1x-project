@@ -51,11 +51,11 @@ export function calculateOptimalWorkers(configuredWorkers?: number): number {
   const freeMemGb = os.freemem() / (1024 * 1024 * 1024);
 
   // Each Chromium worker instance typically consumes 350MB - 500MB RAM
-  const memorySafeWorkers = Math.max(2, Math.floor(freeMemGb / 0.5));
-  const cpuTargetWorkers = Math.max(2, Math.floor(totalCpus * 0.5));
+  const memorySafeWorkers = Math.max(2, Math.floor(freeMemGb / 0.75));
+  const cpuTargetWorkers = Math.max(2, Math.floor(totalCpus * 0.35));
 
-  // Cap between 2 and 12 for stable parallelism without overwhelming I/O
-  return Math.min(12, Math.max(2, Math.min(cpuTargetWorkers, memorySafeWorkers)));
+  // Sweet spot for automatic streaming frame capture on Windows (4-6 workers)
+  return Math.min(6, Math.max(2, Math.min(cpuTargetWorkers, memorySafeWorkers)));
 }
 
 /**
@@ -70,6 +70,9 @@ export function getHyperframesExecutionEnv(): Record<string, string> {
     PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS: process.env.PRODUCER_PUPPETEER_PROTOCOL_TIMEOUT_MS || "300000",
     PRODUCER_PLAYER_READY_TIMEOUT_MS: process.env.PRODUCER_PLAYER_READY_TIMEOUT_MS || "60000",
     PRODUCER_EXPERIMENTAL_FAST_CAPTURE: process.env.PRODUCER_EXPERIMENTAL_FAST_CAPTURE || "true",
+    PRODUCER_ENABLE_STREAMING_ENCODE: process.env.PRODUCER_ENABLE_STREAMING_ENCODE || "true",
+    HF_DE_PARALLEL_STREAM: process.env.HF_DE_PARALLEL_STREAM || "true",
+    HF_FAST_CAPTURE_CSSFX: process.env.HF_FAST_CAPTURE_CSSFX || "true",
     ...(browserPath ? { HYPERFRAMES_BROWSER_PATH: browserPath } : {}),
   };
 }

@@ -1,5 +1,7 @@
+import { useMemo } from "react";
 import type { Task } from "@studio/shared";
 import type { QuizV2State } from "../api";
+import { calculateEpisodeBuildDuration } from "../lib/utils";
 import { STAGES, pipelineStage, resolveProgress, resolveStatus, type Readiness } from "../features/episode/utils/quizRailCalculations";
 import { QuizV2Assessment, QuizV2PendingAssessment } from "../features/episode/components/quiz/QuizV2Assessment";
 import { QuizV2StageItem } from "../features/episode/components/quiz/QuizV2StageItem";
@@ -15,6 +17,10 @@ type QuizV2PanelProps = {
 };
 
 export function QuizV2Panel({ state, readiness, pipelineTask, tasks, questionCount = 0 }: QuizV2PanelProps) {
+  const buildDurationSeconds = useMemo(() => {
+    return calculateEpisodeBuildDuration(tasks, pipelineTask);
+  }, [tasks, pipelineTask]);
+
   if (!state) {
     return (
       <section className="panel quiz-v2-panel">
@@ -56,7 +62,11 @@ export function QuizV2Panel({ state, readiness, pipelineTask, tasks, questionCou
           );
         })}
       </ol>
-      {state.assessment ? <QuizV2Assessment assessment={state.assessment} /> : <QuizV2PendingAssessment />}
+      {state.assessment ? (
+        <QuizV2Assessment assessment={state.assessment} buildDurationSeconds={buildDurationSeconds} />
+      ) : (
+        <QuizV2PendingAssessment buildDurationSeconds={buildDurationSeconds} />
+      )}
     </section>
   );
 }

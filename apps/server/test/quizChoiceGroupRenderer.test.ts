@@ -94,6 +94,14 @@ describe("Phase 4 semantic choice-group renderer", () => {
     expect(threeText.match(/class="choice-card /g)).toHaveLength(3);
     expect(threeVisual.match(/class="choice-media /g)).toHaveLength(3);
   });
+
+  it("initializes every answer group for one shared browser-measured fit", () => {
+    const html = renderChoiceGroup(choiceInput());
+    const group = html.match(/^<div class="choice-group[^>]+>/)?.[0];
+
+    expect(group).toContain('data-choice-fit-status="pending"');
+    expect(group).toContain('data-choice-fit-lines="1"');
+  });
 });
 
 describe("Phase 4 Answer Card skin contract", () => {

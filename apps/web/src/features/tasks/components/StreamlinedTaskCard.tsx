@@ -1,6 +1,6 @@
 import { ArrowClockwise, ArrowUpRight, Clock, Hourglass, WarningCircle, X } from "@phosphor-icons/react";
 import type { Task } from "@studio/shared";
-import { formatDate, formatTaskElapsed, formatTaskType, isTaskActive } from "../../../lib/utils";
+import { calculateEpisodeBuildDuration, formatDate, formatElapsedSeconds, formatTaskElapsed, formatTaskType, isTaskActive } from "../../../lib/utils";
 import type { ProductionItemSummary } from "../types";
 import { TaskStatusChip } from "./TaskStatusChip";
 import { buildHash, getNavProps } from "../../../hooks/useRouter";
@@ -28,6 +28,8 @@ export function StreamlinedTaskCard({
   const isCancelled = item.status === "CANCELLED";
 
   const targetTask = item.activeTask || item.latestTask;
+  const pipelineTask = item.tasks.find((t) => t.task_type === "GENERATE_PIPELINE") || null;
+  const buildDurationSeconds = calculateEpisodeBuildDuration(item.tasks, pipelineTask, now);
   const episodeUrl =
     item.channelId && item.episodeId ? buildHash({ page: "channels", channelId: item.channelId, episodeId: item.episodeId }) : null;
 
@@ -56,6 +58,10 @@ export function StreamlinedTaskCard({
 
         <div className="task-card-status-badges">
           {item.queuePosition !== null && isQueued && <span className="queue-position-pill">Queue #{item.queuePosition + 1}</span>}
+          <span className="task-card-time-pill" title={isCompleted ? "Total build time" : "Elapsed time"}>
+            <Clock size={11} weight="bold" />
+            <span>{formatElapsedSeconds(buildDurationSeconds)}</span>
+          </span>
           <TaskStatusChip status={item.status} />
         </div>
       </div>
@@ -112,7 +118,7 @@ export function StreamlinedTaskCard({
       <div className="task-card-footer">
         <div className="task-card-meta">
           <Clock size={13} className="meta-icon" />
-          <span>{formatTaskElapsed(targetTask, now)}</span>
+          <span>{isCompleted ? `Build time: ${formatElapsedSeconds(buildDurationSeconds)}` : formatTaskElapsed(targetTask, now)}</span>
           {targetTask.completed_at ? <span className="task-card-meta-date">· {formatDate(targetTask.completed_at)}</span> : null}
         </div>
 

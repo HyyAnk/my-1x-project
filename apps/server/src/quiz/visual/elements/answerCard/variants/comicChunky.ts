@@ -28,7 +28,7 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .choice-card:nth-child(1).ac-comic-chunky,
 .ac-comic-chunky:nth-child(1) {
   --comic-base-rot: -1.2deg;
-  transform: rotate(var(--comic-base-rot)) translate3d(0,0,0);
+  transform: rotate(var(--comic-base-rot));
   background: var(--comic-card-bg-0, linear-gradient(135deg, #FFFFEE 0%, #FFF8D6 100%));
 }
 .ac-comic-chunky.comic-card-1,
@@ -36,7 +36,7 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .choice-card:nth-child(2).ac-comic-chunky,
 .ac-comic-chunky:nth-child(2) {
   --comic-base-rot: 1.4deg;
-  transform: rotate(var(--comic-base-rot)) translate3d(0,0,0);
+  transform: rotate(var(--comic-base-rot));
   background: var(--comic-card-bg-1, linear-gradient(135deg, #FFF5F8 0%, #FFE3EC 100%));
 }
 .ac-comic-chunky.comic-card-2,
@@ -44,7 +44,7 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .choice-card:nth-child(3).ac-comic-chunky,
 .ac-comic-chunky:nth-child(3) {
   --comic-base-rot: -0.9deg;
-  transform: rotate(var(--comic-base-rot)) translate3d(0,0,0);
+  transform: rotate(var(--comic-base-rot));
   background: var(--comic-card-bg-2, linear-gradient(135deg, #F0FBFF 0%, #DCF3FC 100%));
 }
 .ac-comic-chunky.comic-card-3,
@@ -52,7 +52,7 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .choice-card:nth-child(4).ac-comic-chunky,
 .ac-comic-chunky:nth-child(4) {
   --comic-base-rot: 1deg;
-  transform: rotate(var(--comic-base-rot)) translate3d(0,0,0);
+  transform: rotate(var(--comic-base-rot));
   background: var(--comic-card-bg-3, linear-gradient(135deg, #F4FFF7 0%, #E2FBEA 100%));
 }
 
@@ -235,9 +235,9 @@ export const comicChunkyVariant: AnswerCardSkin = {
 
 @keyframes comic-dud-settle {
   0% { transform: rotate(var(--comic-base-rot, 0deg)) scale(1); }
-  25% { transform: rotate(calc(var(--comic-base-rot, 0deg) - 2deg)) translate3d(0, 4px, 0); }
-  60% { transform: rotate(calc(var(--comic-base-rot, 0deg) + 1.5deg)) translate3d(0, 6px, 0); }
-  100% { transform: rotate(var(--comic-base-rot, 0deg)) translate3d(0, 6px, 0) scale(0.96); }
+  25% { transform: rotate(calc(var(--comic-base-rot, 0deg) - 2deg)) translateY(4px); }
+  60% { transform: rotate(calc(var(--comic-base-rot, 0deg) + 1.5deg)) translateY(6px); }
+  100% { transform: rotate(var(--comic-base-rot, 0deg)) translateY(6px) scale(0.96); }
 }
 
 @keyframes comic-sparkle-pulse {

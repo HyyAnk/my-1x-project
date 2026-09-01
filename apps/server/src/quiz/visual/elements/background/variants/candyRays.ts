@@ -30,10 +30,10 @@ export function renderCandyRaysHtml(context: BackgroundRenderContext): string {
 
 export function renderCandyRaysCss(): string {
   return `
-.bg-candy-rays { position: absolute; inset: 0; contain: layout paint; transform: translate3d(0,0,0); }
-.bg-gradient { position: absolute; z-index: 0; inset: 0; background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary)); transform: translate3d(0,0,0); }
+.bg-candy-rays { position: absolute; inset: 0; contain: layout paint; }
+.bg-gradient { position: absolute; z-index: 0; inset: 0; background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary)); }
 .bg-gradient::after { position: absolute; z-index: 0; top: 3%; left: 9%; width: 460px; height: 250px; border-radius: 50%; background: rgba(255,255,255,.16); content: ""; transform: rotate(-15deg); }
-.bg-rays { position: absolute; z-index: 1; inset: -30%; opacity: .065; background: repeating-conic-gradient(from 8deg, rgba(255,255,255,.9) 0 7deg, transparent 7deg 18deg); animation: ray-spin 150s linear var(--clip-start) infinite both; will-change: transform; transform: translate3d(0,0,0); }
+.bg-rays { position: absolute; z-index: 1; inset: -30%; opacity: .065; background: repeating-conic-gradient(from 8deg, rgba(255,255,255,.9) 0 7deg, transparent 7deg 18deg); animation: ray-spin 150s linear var(--clip-start) infinite both; will-change: transform; }
 .bg-pattern { position: absolute; z-index: 1; opacity: .085; pointer-events: none; }
 .pattern-circles { inset: 0; background-image: repeating-linear-gradient(45deg, transparent 0 23px, rgba(255,255,255,.9) 24px 27px, transparent 28px 52px); background-size: 82px 82px; animation: drift var(--scene-duration) linear var(--clip-start) 1 both; will-change: transform; }
 .pattern-sprinkles { right: -110px; bottom: -135px; width: 620px; height: 620px; border: 35px dotted rgba(255,255,255,.7); border-radius: 50%; transform: rotate(-14deg); }

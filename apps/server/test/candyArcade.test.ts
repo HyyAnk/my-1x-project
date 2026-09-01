@@ -4,6 +4,7 @@ import { compileQuizAssetPrompt } from "../src/quiz/assets/promptCompiler.js";
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
+import { assessQuiz } from "../src/quiz/qa/quizAssessment.js";
 import { assessQuizVisualLayout } from "../src/quiz/qa/visualQa.js";
 import {
   buildCandyArcadeComposition,
@@ -153,20 +154,47 @@ describe("Candy Arcade visual template", () => {
     expect(resolvedLayout("illustrated_multiple_choice", "multiple_choice")).toBe("media_left_choices_right");
     expect(resolvedLayout("illustrated_multiple_choice", "image_guess")).toBe("media_left_choices_right");
     expect(resolvedLayout("visual_multiple_choice", "odd_one_out")).toBe("visual_choices_three");
-    expect(textLayout("Which ocean is the largest on Earth?", "question").fits).toBe(true);
-    expect(textLayout("x".repeat(190), "question").fits).toBe(false);
+    // Question text layout - Mascot OFF: [28, 50, 85, 135, 176]
+    const ultraShortQOff = textLayout("Ai là người đầu tiên?", "question", { hasMascot: false });
+    expect(ultraShortQOff.tier).toBe("ultra_short");
+    expect(ultraShortQOff.fontSize).toBe(74);
+    expect(ultraShortQOff.maxLines).toBe(1);
 
-    // Mascot OFF mode: standard limits [18, 34, 58, 82]
+    const shortQOff = textLayout("Which ocean is the largest on Earth?", "question", { hasMascot: false });
+    expect(shortQOff.tier).toBe("short");
+    expect(shortQOff.fontSize).toBe(64);
+    expect(shortQOff.fits).toBe(true);
+
+    const overflowQOff = textLayout("x".repeat(190), "question", { hasMascot: false });
+    expect(overflowQOff.tier).toBe("overflow");
+    expect(overflowQOff.fits).toBe(false);
+
+    // Question text layout - Mascot ON: [22, 44, 76, 125, 165]
+    const ultraShortQOn = textLayout("Paris là gì?", "question", { hasMascot: true });
+    expect(ultraShortQOn.tier).toBe("ultra_short");
+    expect(ultraShortQOn.fontSize).toBe(70);
+    expect(ultraShortQOn.maxLines).toBe(1);
+
+    const shortQOn = textLayout("Which ocean is the largest on Earth?", "question", { hasMascot: true });
+    expect(shortQOn.tier).toBe("short");
+    expect(shortQOn.fontSize).toBe(60);
+    expect(shortQOn.fits).toBe(true);
+
+    const overflowQOn = textLayout("x".repeat(170), "question", { hasMascot: true });
+    expect(overflowQOn.tier).toBe("overflow");
+    expect(overflowQOn.fits).toBe(false);
+
+    // Mascot OFF mode for choices: standard limits [18, 34, 58, 82]
     const offLayout = textLayout("Thái Bình Dương", "choice", { hasMascot: false });
     expect(offLayout.tier).toBe("short");
     expect(offLayout.fontSize).toBe(34);
 
-    // Mascot ON mode: narrower limits [10, 22, 40, 60] -> 15-char string shifts to medium tier to avoid clipping
+    // Mascot ON mode for choices: narrower limits [10, 22, 40, 60] -> 15-char string shifts to medium tier to avoid clipping
     const onLayout = textLayout("Thái Bình Dương", "choice", { hasMascot: true });
     expect(onLayout.tier).toBe("medium");
     expect(onLayout.fontSize).toBe(24);
 
-    // Ultra short text remains short tier in Mascot ON mode
+    // Ultra short choice text remains short tier in Mascot ON mode
     const shortOnLayout = textLayout("Paris", "choice", { hasMascot: true });
     expect(shortOnLayout.tier).toBe("short");
     expect(shortOnLayout.fontSize).toBe(28);
@@ -246,6 +274,42 @@ describe("Candy Arcade visual template", () => {
     const fairnessIssues = assessQuizVisualLayout({ quiz, director, assetPlan });
     expect(fairnessIssues.filter((issue) => issue.severity === "blocker")).toEqual([]);
     expect(fairnessIssues.some((issue) => issue.code === "needs_visual_review")).toBe(true);
+  });
+
+  it("accounts for question-phase Mascot occupancy in fallback text QA", () => {
+    const longChoiceQuiz = QuizV2Schema.parse({
+      ...quiz,
+      episode_id: "candy-mascot-choice-capacity",
+      questions: [
+        {
+          ...quiz.questions[0],
+          choices: [{ ...quiz.questions[0].choices[0], text: "x".repeat(61) }, ...quiz.questions[0].choices.slice(1)],
+        },
+      ],
+    });
+    const director = createDefaultDirectorPlan(longChoiceQuiz);
+    const hasChoiceOverflow = (issues: ReturnType<typeof assessQuizVisualLayout>) =>
+      issues.some((issue) => issue.code === "layout_choice_overflow");
+
+    expect(hasChoiceOverflow(assessQuizVisualLayout({ quiz: longChoiceQuiz, director, hasMascot: false }))).toBe(false);
+    expect(hasChoiceOverflow(assessQuizVisualLayout({ quiz: longChoiceQuiz, director, hasMascot: true }))).toBe(true);
+
+    const assessWithQuestionMascot = (showInQuestion: boolean) =>
+      assessQuiz({
+        quiz: longChoiceQuiz,
+        director,
+        mascot: dummyMascot,
+        mascotConfig: {
+          mascot_id: dummyMascot.id,
+          enabled: true,
+          position: "bottom_left",
+          scale: 1,
+          show_in_question: showInQuestion,
+        },
+      }).issues;
+
+    expect(hasChoiceOverflow(assessWithQuestionMascot(false))).toBe(false);
+    expect(hasChoiceOverflow(assessWithQuestionMascot(true))).toBe(true);
   });
 
   it("keeps the reveal focused on the canonical answer card and drives the Thinking Bar from timeline ranges", () => {

@@ -8,6 +8,7 @@ export function assessQuizVisualLayout(input: {
   director?: DirectorPlan | null;
   assetPlan?: QuizAssetPlan | null;
   timeline?: QuizTimeline | null;
+  hasMascot?: boolean;
 }): QuizIssue[] {
   const issues: QuizIssue[] = [];
   if (!input.director) return issues;
@@ -42,7 +43,7 @@ export function assessQuizVisualLayout(input: {
         ),
       );
     previousPaletteId = visual.palette.id;
-    if (!textLayout(question.question, "question", { layoutId: layoutResolution.layoutId }).fits)
+    if (!textLayout(question.question, "question", { hasMascot: input.hasMascot, layoutId: layoutResolution.layoutId }).fits)
       issues.push(
         issue(
           question.id,
@@ -53,7 +54,7 @@ export function assessQuizVisualLayout(input: {
         ),
       );
     for (const choice of question.choices)
-      if (!textLayout(choice.text, "choice", { layoutId: layoutResolution.layoutId }).fits)
+      if (!textLayout(choice.text, "choice", { hasMascot: input.hasMascot, layoutId: layoutResolution.layoutId }).fits)
         issues.push(
           issue(
             question.id,

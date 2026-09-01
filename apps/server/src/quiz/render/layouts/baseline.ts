@@ -17,6 +17,11 @@ export const baselineLayout = {
   --choice-font-size-long: 32px;
   --choice-font-size-very_long: 26px;
   --choice-font-size-overflow: 26px;
+  --choice-fit-min: 24px;
+  --choice-fit-max: 64px;
+  --choice-fit-max-lines: 2;
+  --choice-fit-leading: 1.08;
+  --choice-fit-multiline-gain: 6px;
 }
 `,
 } satisfies QuizLayoutRenderDefinition;

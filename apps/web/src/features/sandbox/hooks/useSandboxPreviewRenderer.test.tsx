@@ -111,12 +111,21 @@ describe("useSandboxPreviewRenderer", () => {
       setPhase: vi.fn(),
       isPlaying: false,
       setIsPlaying: vi.fn(),
+      handleTogglePlay: vi.fn(),
       useScrubber: false,
       setUseScrubber: vi.fn(),
       timelineSeconds: 0,
       setTimelineSeconds: vi.fn(),
       handlePhaseChange: vi.fn(),
       handleScrubberChange: vi.fn(),
+      totalDuration: 11.8,
+      isMuted: false,
+      toggleMute: vi.fn(),
+      setMuted: vi.fn(),
+      iframeRef: { current: null },
+      seekIframe: vi.fn(),
+      playIframe: vi.fn(),
+      pauseIframe: vi.fn(),
     };
   });
 

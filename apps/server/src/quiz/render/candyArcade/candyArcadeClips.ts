@@ -195,7 +195,6 @@ export function questionClip(input: {
   channelBrandName?: string | null;
 }): string {
   const { question, visual } = input;
-  const questionLayout = textLayout(question.question, "question");
   const timing: QuizSceneTiming = {
     start: input.start,
     choicesStart: input.choicesStart,
@@ -204,16 +203,6 @@ export function questionClip(input: {
     rewardStart: input.rewardStart,
     end: input.end,
   };
-  const config = styleAttributes(
-    visual,
-    questionLayout,
-    input.start,
-    input.choicesStart,
-    input.thinkingStart,
-    input.revealStart,
-    input.rewardStart,
-    input.end,
-  );
   const mascotHtml = mascotElement(input.mascot, input.mascotConfig, "question", {
     clipStartSeconds: input.start,
     clipDurationSeconds: Math.max(0.04, input.end - input.start),
@@ -251,6 +240,16 @@ export function questionClip(input: {
     isFinal: input.isFinal,
   });
   const parts = buildQuizSceneParts(model);
+  const config = styleAttributes(
+    visual,
+    parts.question.layout,
+    input.start,
+    input.choicesStart,
+    input.thinkingStart,
+    input.revealStart,
+    input.rewardStart,
+    input.end,
+  );
   const stableParts = renderStableQuizSceneParts(parts);
   const choicesHtml = renderQuizSceneChoicePart(parts);
   const mascotClass = model.mascot.occupied ? "has-mascot" : "";

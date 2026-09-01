@@ -32,8 +32,13 @@ export interface SandboxPreviewCanvasProps {
   handlePhaseChange: (phase: "question" | "choices" | "thinking" | "reveal" | "explain") => void;
   isPlaying: boolean;
   setIsPlaying: (updater: (prev: boolean) => boolean) => void;
+  handleTogglePlay?: () => void;
   setUseScrubber: (use: boolean) => void;
   handleScrubberChange: (value: number) => void;
+  iframeRef?: React.RefObject<HTMLIFrameElement | null>;
+  isMuted?: boolean;
+  onToggleMute?: () => void;
+  totalDuration?: number;
 }
 
 export function SandboxPreviewCanvas({
@@ -63,8 +68,13 @@ export function SandboxPreviewCanvas({
   handlePhaseChange,
   isPlaying,
   setIsPlaying,
+  handleTogglePlay,
   setUseScrubber,
   handleScrubberChange,
+  iframeRef,
+  isMuted = false,
+  onToggleMute,
+  totalDuration,
 }: SandboxPreviewCanvasProps) {
   return (
     <div
@@ -126,6 +136,7 @@ export function SandboxPreviewCanvas({
         >
           <SandboxVerifiedPreview
             iframeKey={iframeKey}
+            iframeRef={iframeRef}
             previewHtml={previewHtml}
             pendingPreviewHtml={pendingPreviewHtml}
             loading={loading}
@@ -148,8 +159,12 @@ export function SandboxPreviewCanvas({
         handlePhaseChange={handlePhaseChange}
         isPlaying={isPlaying}
         setIsPlaying={setIsPlaying}
+        handleTogglePlay={handleTogglePlay}
         setUseScrubber={setUseScrubber}
         handleScrubberChange={handleScrubberChange}
+        isMuted={isMuted}
+        onToggleMute={onToggleMute}
+        totalDuration={totalDuration}
       />
     </div>
   );

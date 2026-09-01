@@ -3,6 +3,7 @@ import { useTranslation } from "../../../i18n";
 
 type SandboxVerifiedPreviewProps = {
   iframeKey: number;
+  iframeRef?: React.Ref<HTMLIFrameElement>;
   previewHtml: string;
   pendingPreviewHtml: string;
   loading: boolean;

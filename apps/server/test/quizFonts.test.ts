@@ -28,7 +28,7 @@ describe("quiz font parity", () => {
     for (const font of CANDY_ARCADE_FONTS) {
       expect(previewCss).toContain(`font-family: "${font.family}"`);
       expect(previewCss).toContain(`/api/quiz/fonts/${font.id}?v=`);
-      expect(renderCss).toContain(encodeURIComponent(font.filename));
+      expect(renderCss).toContain(font.filename);
     }
     expect(previewCss).not.toContain("local(");
     expect(renderCss).not.toContain("local(");
@@ -58,6 +58,65 @@ describe("quiz font parity", () => {
     expect(script).toContain("window.__renderReady=false");
     expect(script).toContain("window.__renderReady=true");
     expect(buildSandboxComposition({}).html).toContain("__fontReadyPromise");
+  });
+
+  it("fits answer groups after fonts settle and before render readiness is released", () => {
+    const script = candyArcadeFontReadinessScript();
+    const fontsReadyIndex = script.indexOf("await document.fonts.ready");
+    const fitIndex = script.indexOf("window.__choiceFitStatus=fitChoiceGroups()", fontsReadyIndex);
+    const renderReadyIndex = script.indexOf("window.__renderReady=true", fitIndex);
+
+    expect(script).toContain("function fitChoiceGroups()");
+    expect(fontsReadyIndex).toBeGreaterThan(-1);
+    expect(fitIndex).toBeGreaterThan(fontsReadyIndex);
+    expect(renderReadyIndex).toBeGreaterThan(fitIndex);
+  });
+
+  it("falls back to tier CSS and still releases readiness when DOM fitting fails", async () => {
+    const properties = new Map([
+      ["--choice-fitted-font-size", "51px"],
+      ["--choice-fitted-line-height", "1.08"],
+    ]);
+    const attributes = new Map([
+      ["data-choice-fit-lines", "2"],
+      ["data-choice-fit-font-size", "51"],
+    ]);
+    const group = {
+      style: {
+        setProperty: (name: string, value: string) => properties.set(name, value),
+        removeProperty: (name: string) => properties.delete(name),
+      },
+      setAttribute: (name: string, value: string) => attributes.set(name, value),
+      removeAttribute: (name: string) => attributes.delete(name),
+    };
+    const documentStub = {
+      documentElement: { dataset: {} as Record<string, string> },
+      fonts: { load: async () => [{}], check: () => true, ready: Promise.resolve() },
+      querySelectorAll: (selector: string) => (selector.includes("choice-group") ? [group] : []),
+    };
+    const windowStub = { parent: null as unknown, __renderReady: false, __playerReady: false } as Record<string, unknown>;
+    windowStub.parent = windowStub;
+    const run = new Function("window", "document", "getComputedStyle", candyArcadeFontReadinessScript());
+
+    run(windowStub, documentStub, () => {
+      throw new Error("measurement failed");
+    });
+    await windowStub.__fontReadyPromise;
+
+    expect(windowStub.__fontStatus).toEqual({ state: "ready", families: CANDY_ARCADE_FONTS.map((font) => font.family) });
+    expect(windowStub.__choiceFitStatus).toEqual({
+      groups: 1,
+      overflowGroups: 0,
+      fallback: true,
+      message: "measurement failed",
+    });
+    expect(windowStub.__playerReady).toBe(true);
+    expect(windowStub.__renderReady).toBe(true);
+    expect(documentStub.documentElement.dataset.fontsReady).toBe("true");
+    expect(properties.size).toBe(0);
+    expect(attributes.get("data-choice-fit-lines")).toBe("1");
+    expect(attributes.get("data-choice-fit-status")).toBe("fallback");
+    expect(attributes.has("data-choice-fit-font-size")).toBe(false);
   });
 
   it("serves immutable font bytes with the declared MIME type and hash", async () => {

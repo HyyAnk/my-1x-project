@@ -20,7 +20,9 @@ import { candyArcadeCss } from "../src/quiz/render/candyArcadeComposition.js";
 import { baseChoiceStyles } from "../src/quiz/render/choices/baseChoiceStyles.js";
 import { choiceTypographyStyles } from "../src/quiz/render/choices/choiceTypographyStyles.js";
 import { choiceStateStyles } from "../src/quiz/render/choices/choiceStateStyles.js";
+import { fullStackListLayout } from "../src/quiz/render/layouts/fullStackList.js";
 import { mediaLeftChoicesRightLayout } from "../src/quiz/render/layouts/mediaLeftChoicesRight.js";
+import { mediaTopChoicesBottomLayout } from "../src/quiz/render/layouts/mediaTopChoicesBottom.js";
 import { visualChoicesThreeLayout } from "../src/quiz/render/layouts/visualChoicesThree.js";
 import { baselineLayout } from "../src/quiz/render/layouts/baseline.js";
 import { glossyArcadeVariant } from "../src/quiz/visual/elements/answerCard/variants/glossyArcade.js";
@@ -133,6 +135,16 @@ describe("Phase 5: CSS Ownership, Boundaries, Tokens & Style Resolution Matrix",
       expect(base).toContain("var(--choice-card-min-height");
       expect(base).toContain("var(--choice-badge-size");
       expect(base).toContain("var(--choice-media-height");
+      expect(base).toContain('.choice-group[data-choice-fit-lines="2"] .choice-text');
+      expect(base).toContain("-webkit-line-clamp: 2");
+    });
+
+    it("keeps visual answer tracks and cards inside their allocated grid width", () => {
+      const base = baseChoiceStyles();
+
+      expect(base).toContain("grid-template-columns: var(--choice-grid-columns, repeat(3, minmax(0, 1fr)));");
+      expect(base).toMatch(/\.choice-card-visual,[\s\S]*?\.visual-answer-card \{[\s\S]*?min-width: 0;/);
+      expect(base).toMatch(/\.visual-answer-label \{[\s\S]*?min-width: 0;/);
     });
 
     it("P5-CSS-03: State CSS owns correct/incorrect/pending/reveal semantics shared across skins without status icon bloat", () => {
@@ -162,6 +174,8 @@ describe("Phase 5: CSS Ownership, Boundaries, Tokens & Style Resolution Matrix",
       expect(typo).toContain("var(--choice-font-size-very_long");
       expect(typo).toContain("var(--choice-label-font-size-base");
       expect(typo).toContain("var(--choice-label-font-size-medium");
+      expect(typo).toContain("var(--choice-fitted-font-size, var(--choice-font-size-base");
+      expect(typo).toContain("var(--choice-fitted-font-size, var(--choice-label-font-size-base");
     });
 
     it("P5-CSS-05: Skin CSS owns decoration without outer layout placement", () => {
@@ -319,10 +333,40 @@ describe("Phase 5: CSS Ownership, Boundaries, Tokens & Style Resolution Matrix",
     it("P5-TOK-06: Text tier rules consume layout capacity tokens", () => {
       const typo = choiceTypographyStyles();
 
-      expect(typo).toContain(".choice-card-text .choice-text,\n.answer-card span {\n  font-size: var(--choice-font-size-base, 44px);\n}");
-      expect(typo).toContain("var(--choice-font-size-medium, 38px)");
-      expect(typo).toContain("var(--choice-font-size-long, 32px)");
-      expect(typo).toContain("var(--choice-font-size-very_long, 26px)");
+      expect(typo).toContain(
+        ".choice-card-text .choice-text,\n.answer-card span {\n  font-size: var(--choice-fitted-font-size, var(--choice-font-size-base, 44px));\n}",
+      );
+      expect(typo).toContain("var(--choice-fitted-font-size, var(--choice-font-size-medium, 38px))");
+      expect(typo).toContain("var(--choice-fitted-font-size, var(--choice-font-size-long, 32px))");
+      expect(typo).toContain("var(--choice-fitted-font-size, var(--choice-font-size-very_long, 26px))");
+    });
+
+    it("publishes Answer Card auto-fit capacity for every layout and aspect ratio", () => {
+      const baseline = baselineLayout.css("16:9");
+      const mediaLeft = mediaLeftChoicesRightLayout.css("16:9");
+      const mediaLeftPortrait = mediaLeftChoicesRightLayout.css("9:16");
+      const mediaTop = mediaTopChoicesBottomLayout.css("16:9");
+      const mediaTopPortrait = mediaTopChoicesBottomLayout.css("9:16");
+      const fullStack = fullStackListLayout.css("16:9");
+      const fullStackPortrait = fullStackListLayout.css("9:16");
+      const visual = visualChoicesThreeLayout.css("16:9");
+      const visualPortrait = visualChoicesThreeLayout.css("9:16");
+
+      expect(baseline).toContain("--choice-fit-max: 64px;");
+      expect(mediaLeft).toContain("--choice-fit-max: 64px;");
+      expect(mediaLeftPortrait).toContain("--choice-fit-max: 72px;");
+      expect(mediaTop).toContain("--choice-fit-max: 48px;");
+      expect(mediaTopPortrait).toContain("--choice-fit-max: 68px;");
+      expect(fullStack).toContain("--choice-fit-max: 64px;");
+      expect(fullStackPortrait).toContain("--choice-fit-max: 72px;");
+      expect(visual).toContain("--choice-fit-max: 38px;");
+      expect(visualPortrait).toContain("--choice-fit-max: 42px;");
+      for (const css of [baseline, mediaLeft, mediaTop, fullStack, visual]) {
+        expect(css).toContain("--choice-fit-min:");
+        expect(css).toContain("--choice-fit-max-lines: 2;");
+        expect(css).toContain("--choice-fit-leading: 1.08;");
+        expect(css).toContain("--choice-fit-multiline-gain: 6px;");
+      }
     });
   });
 

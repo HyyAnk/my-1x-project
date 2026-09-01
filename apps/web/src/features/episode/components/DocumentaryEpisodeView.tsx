@@ -1,5 +1,7 @@
 import type React from "react";
+import { useMemo } from "react";
 import type { Channel, Episode, ProductionAssessment, Scene } from "@studio/shared";
+import { calculateEpisodeBuildDuration } from "../../../lib/utils";
 import type { BundleImage } from "../../../api";
 import type { useEpisodePipeline } from "../hooks/useEpisodePipeline";
 import { PipelineRail } from "./PipelineRail";
@@ -41,11 +43,15 @@ export function DocumentaryEpisodeView({
   imageGenerationEnabled,
   imagesPerBundle,
 }: DocumentaryEpisodeViewProps) {
+  const buildDurationSeconds = useMemo(() => {
+    return calculateEpisodeBuildDuration(pipeline.episodeTasks, pipeline.pipelineTask, pipeline.episodeClock);
+  }, [pipeline.episodeTasks, pipeline.pipelineTask, pipeline.episodeClock]);
+
   return (
     <>
       <PipelineRail readiness={pipeline.readiness} quiz={false} pipelineTask={pipeline.pipelineTask} tasks={pipeline.episodeTasks} />
 
-      {assessment ? <AssessmentPanel assessment={assessment} /> : null}
+      {assessment ? <AssessmentPanel assessment={assessment} buildDurationSeconds={buildDurationSeconds} /> : null}
 
       <QuizVideoPanel
         channel={channel}

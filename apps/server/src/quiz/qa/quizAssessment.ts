@@ -44,6 +44,9 @@ export type QuizAssessmentInput = {
 
 export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
   const issues: QuizIssue[] = [];
+  const hasQuestionMascot = Boolean(
+    input.mascot && input.mascotConfig?.enabled !== false && input.mascotConfig?.show_in_question !== false,
+  );
 
   // 1. Semantic & Fact Checking Stage
   assessSemanticQa(input.quiz).forEach((issue) => issues.push(issue));
@@ -59,6 +62,7 @@ export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
     director: input.director,
     assetPlan: input.assetPlan,
     timeline: input.timeline,
+    hasMascot: hasQuestionMascot,
   }).forEach((issue) => issues.push(issue));
 
   // 4. Assets & Mascot Studio Stage

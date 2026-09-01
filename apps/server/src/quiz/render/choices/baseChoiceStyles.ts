@@ -37,8 +37,6 @@ export function baseChoiceStyles(): string {
   z-index: 3;
   contain: layout style;
   will-change: transform;
-  transform: translate3d(0,0,0);
-  backface-visibility: hidden;
 }
 
 .choice-card-text,
@@ -59,8 +57,6 @@ export function baseChoiceStyles(): string {
   font-weight: 900;
   contain: layout style;
   will-change: transform;
-  transform: translate3d(0,0,0);
-  backface-visibility: hidden;
 }
 
 .choice-label,
@@ -85,7 +81,6 @@ export function baseChoiceStyles(): string {
   letter-spacing: -0.5px;
   contain: layout style;
   will-change: transform;
-  transform: translate3d(0,0,0);
 }
 
 .choice-text,
@@ -96,11 +91,19 @@ export function baseChoiceStyles(): string {
   flex: 1 1 auto;
   min-width: 0;
   padding-right: var(--choice-text-padding-right, 48px);
-  line-height: 1.15;
+  line-height: var(--choice-fitted-line-height, 1.15);
   font-weight: 900;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.choice-group[data-choice-fit-lines="2"] .choice-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .choice-group-visual,
@@ -108,17 +111,16 @@ export function baseChoiceStyles(): string {
   gap: var(--choice-grid-gap, 28px);
   width: var(--choice-grid-width, 1560px);
   margin-top: 28px;
-  grid-template-columns: var(--choice-grid-columns, repeat(3, 1fr));
+  grid-template-columns: var(--choice-grid-columns, repeat(3, minmax(0, 1fr)));
 }
 
 .choice-card-visual,
 .visual-answer-card {
   position: relative;
   z-index: 3;
+  min-width: 0;
   contain: layout style;
   will-change: transform;
-  transform: translate3d(0,0,0);
-  backface-visibility: hidden;
 }
 
 .choice-media,
@@ -132,9 +134,7 @@ export function baseChoiceStyles(): string {
   width: 100%;
   height: var(--choice-media-height, 500px);
   contain: layout paint;
-  transform: translate3d(0,0,0);
   will-change: transform;
-  backface-visibility: hidden;
   animation: visual-choice-float 3.8s ease-in-out calc(var(--clip-start, 0s) + var(--item-phase, 0s)) infinite alternate both;
 }
 
@@ -169,6 +169,7 @@ export function baseChoiceStyles(): string {
   z-index: 4;
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: var(--choice-label-gap, 16px);
   min-height: 76px;
   min-height: var(--choice-label-min-height, 76px);
@@ -179,7 +180,6 @@ export function baseChoiceStyles(): string {
   font-weight: 900;
   contain: layout style;
   will-change: transform;
-  transform: translate3d(0,0,0);
 }
 
 .visual-answer-card .visual-answer-label > b {

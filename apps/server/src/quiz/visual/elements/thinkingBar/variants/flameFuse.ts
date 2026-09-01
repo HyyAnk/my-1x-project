@@ -32,10 +32,10 @@ export const flameFuseVariant: ThinkingBarVariant = {
 .thinking-bar-flame-fuse .spark-bits i:nth-child(4) { top: 22px; right: 18%; animation-delay: 0.55s; }
 .thinking-bar-flame-fuse .spark-bits i:nth-child(5) { bottom: 26px; right: 22%; animation-delay: 0.7s; font-size: 14px; }
 .thinking-bar-flame-fuse .marker-val { text-shadow: 0 0 14px #FF5500, 0 0 28px #FF1100, 0 3px 6px rgba(0,0,0,0.95); }
-@keyframes bombThrob { 0% { transform: translate3d(0, -50%, 0) scale(1); } 100% { transform: translate3d(0, -50%, 0) scale(1.14); filter: drop-shadow(0 0 18px rgba(255,69,0,0.75)); } }
+@keyframes bombThrob { 0% { transform: translateY(-50%) scale(1); } 100% { transform: translateY(-50%) scale(1.14); filter: drop-shadow(0 0 18px rgba(255,69,0,0.75)); } }
 @keyframes flameWobble { 0% { transform: translate(-50%,-52%) rotate(-3.5deg); } 100% { transform: translate(-50%,-48%) rotate(3.5deg); } }
 @keyframes flameAuraPulse { 0% { transform: scale(0.94); opacity: 0.88; } 100% { transform: scale(1.08); opacity: 1; } }
-@keyframes sparkBitFly { 0% { transform: translate3d(0, 0, 0) scale(1); opacity: 1; } 100% { transform: translate3d(0, -32px, 0) scale(0.2); opacity: 0; } }
+@keyframes sparkBitFly { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-32px) scale(0.2); opacity: 0; } }
 `;
   },
 };

@@ -56,6 +56,7 @@ export function useSandboxPreviewRenderer({
       try {
         const input: SandboxPreviewRequest = {
           aspect_ratio: aspectRatio,
+          mode: "rehearsal",
           theme: design.theme,
           palette_id: design.paletteId,
           layout_id: design.layoutId,
@@ -71,7 +72,7 @@ export function useSandboxPreviewRenderer({
           correct_choice_index: question.correctChoiceIndex,
           question_number: question.questionNumber,
           total_questions: question.totalQuestions,
-          countdown_progress: Math.max(0, Math.min(1, (timeline.timelineSeconds - 2.5) / 5)),
+          countdown_progress: 0.5,
           fact_card_title: question.factCardTitle,
           fact_card_text: question.factCardText,
           channel_brand_name: channelBrandName ?? "Tino",
@@ -110,9 +111,6 @@ export function useSandboxPreviewRenderer({
       design.answerCardStyle,
       design.counterStyle,
       design.backgroundStyle,
-      timeline.phase,
-      timeline.useScrubber,
-      timeline.timelineSeconds,
       question.questionText,
       question.choices,
       question.correctChoiceIndex,
@@ -128,11 +126,9 @@ export function useSandboxPreviewRenderer({
       mascot.mascotOffsetX,
       mascot.mascotOffsetY,
       mascot.mascotFlipX,
-      timeline.isPlaying,
       aspectRatio,
       channelBrandName,
       onNotice,
-      t,
     ],
   );
 
@@ -149,6 +145,17 @@ export function useSandboxPreviewRenderer({
         setIframeKey((key) => key + 1);
         setPreviewError(null);
         setLoading(false);
+
+        // After mount, seek to current timeline seconds and pause if not playing
+        setTimeout(() => {
+          timeline.seekIframe(timeline.timelineSeconds);
+          if (!timeline.isPlaying) {
+            timeline.pauseIframe();
+          } else {
+            timeline.playIframe();
+          }
+        }, 50);
+
         if (pendingPreview.manualNotice && onNotice) {
           onNotice({ tone: "good", message: t("visualSandbox.noticeRerendered", { time: renderedAt }) });
         }
@@ -161,7 +168,7 @@ export function useSandboxPreviewRenderer({
         onNotice?.({ tone: "bad", message });
       }
     },
-    [onNotice, pendingPreview, t],
+    [onNotice, pendingPreview, t, timeline],
   );
 
   useEffect(() => {

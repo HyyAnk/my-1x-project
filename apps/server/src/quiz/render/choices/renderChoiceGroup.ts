@@ -15,7 +15,7 @@ export function renderChoiceGroup(input: ChoiceGroupRenderInput): string {
     .join("");
   const presentationClass = input.presentation === "visual" ? "visual-answer-grid" : "answer-grid";
   const visibility = input.visible ? "visible" : "hidden";
-  return `<div class="choice-group choice-group-${input.presentation} ${presentationClass} answer-count-${input.items.length}" role="list" aria-label="Answer choices" data-choice-presentation="${input.presentation}" data-choice-visibility="${visibility}" data-choice-phase="${input.phase}"${input.visible ? "" : ' aria-hidden="true"'}>${choicesHtml}</div>`;
+  return `<div class="choice-group choice-group-${input.presentation} ${presentationClass} answer-count-${input.items.length}" role="list" aria-label="Answer choices" data-choice-presentation="${input.presentation}" data-choice-visibility="${visibility}" data-choice-phase="${input.phase}" data-choice-fit-status="pending" data-choice-fit-lines="1"${input.visible ? "" : ' aria-hidden="true"'}>${choicesHtml}</div>`;
 }
 
 function orderedChoices(items: readonly QuizSceneChoice[]): QuizSceneChoice[] {

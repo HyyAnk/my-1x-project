@@ -23,6 +23,11 @@ export const fullStackListLayout = {
   --choice-font-size-long: 30px;
   --choice-font-size-very_long: 24px;
   --choice-font-size-overflow: 24px;
+  --choice-fit-min: 22px;
+  --choice-fit-max: 64px;
+  --choice-fit-max-lines: 2;
+  --choice-fit-leading: 1.08;
+  --choice-fit-multiline-gain: 6px;
 }
 
 .has-mascot.layout-full_stack_list .answer-grid { max-width: 1280px; }
@@ -48,6 +53,7 @@ ${
   --choice-badge-margin-left: -70px;
   --choice-badge-font-size: 68px;
   --choice-font-size-base: 40px;
+  --choice-fit-max: 72px;
 }
 `
     : ""

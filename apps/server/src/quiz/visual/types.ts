@@ -87,6 +87,6 @@ export type QuizVisualTemplate = {
   resolveScene(context: QuizTemplateContext): QuizTemplateScene;
 };
 
-export type TextTier = "short" | "medium" | "long" | "very_long" | "overflow";
+export type TextTier = "ultra_short" | "short" | "medium" | "long" | "very_long" | "overflow";
 
 export type TextLayout = { tier: TextTier; fontSize: number; lineHeight: number; maxLines: number; fits: boolean };

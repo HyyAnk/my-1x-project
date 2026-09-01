@@ -36,6 +36,39 @@ describe("Phase 2 Sandbox layout API boundary", () => {
       expect(compatible.statusCode).toBe(200);
       const compatibleBody = SandboxPreviewResponseSchema.parse(JSON.parse(compatible.body) as unknown);
       expect(compatibleBody.html).toContain("layout-visual_choices_three");
+
+      const rehearsal = await app.server.inject({
+        method: "POST",
+        url: "/api/quiz/preview-composition",
+        payload: { mode: "rehearsal", layout_id: "media_left_choices_right" },
+      });
+      expect(rehearsal.statusCode).toBe(200);
+      const rehearsalBody = SandboxPreviewResponseSchema.parse(JSON.parse(rehearsal.body) as unknown);
+      expect(rehearsalBody.html).toContain("__hyperframesRehearsal");
+      expect(rehearsalBody.html).toContain("--choices-at");
+      expect(rehearsalBody.html).toContain("--reveal-at");
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("serves static SFX assets with proper headers and handles missing files", async () => {
+    const root = await createStudioRoot();
+    const app = await buildApp(root);
+    try {
+      const sfxRes = await app.server.inject({
+        method: "GET",
+        url: "/api/quiz/sfx/ui_pop.wav",
+      });
+      expect(sfxRes.statusCode).toBe(200);
+      expect(sfxRes.headers["content-type"]).toBe("audio/wav");
+      expect(sfxRes.headers["cache-control"]).toContain("public");
+
+      const notFoundRes = await app.server.inject({
+        method: "GET",
+        url: "/api/quiz/sfx/non_existent.wav",
+      });
+      expect(notFoundRes.statusCode).toBe(404);
     } finally {
       await app.close();
     }

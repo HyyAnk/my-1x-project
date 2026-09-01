@@ -46,7 +46,7 @@ ${candyArcadeFontFaceCss(options.fontMode ?? "render")}
 }
 * { box-sizing: border-box; }
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #16285c; }
-#stage { position: relative; width: ${canvas.width}px; height: ${canvas.height}px; overflow: hidden; transform: translate3d(0,0,0); backface-visibility: hidden; }
+#stage { position: relative; width: ${canvas.width}px; height: ${canvas.height}px; overflow: hidden; }
 .clip { position: absolute; inset: 0; }
 .candy-scene { --depth-edge: rgba(13,35,71,.16); --depth-shadow: rgba(13,35,71,.22); isolation: isolate; overflow: hidden; padding: 33px 80px 16px; background: var(--bg-primary); color: var(--ink); contain: layout paint; }
 .game-header { position: absolute; z-index: 6; top: 0; left: 40px; contain: layout style; }
@@ -62,9 +62,9 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .wood-sign-star { position: absolute; pointer-events: none; }
 .wood-sign-star.star-tl { top: -10px; left: -10px; color: #FFD43F; font-size: 26px; text-shadow: 0 0 12px rgba(255,212,63,.85); transform: rotate(-15deg); }
 .wood-sign-star.star-br { bottom: -10px; right: -10px; color: #FFB703; font-size: 28px; text-shadow: 0 3px 0 #331505; transform: rotate(15deg); }
-.game-stage { position: relative; z-index: 3; display: grid; justify-items: center; align-content: start; width: 1580px; min-height: 945px; margin: 12px 40px 0 auto; contain: layout style; transform: translate3d(0,0,0); backface-visibility: hidden; }
+.game-stage { position: relative; z-index: 3; display: grid; justify-items: center; align-content: start; width: 1580px; min-height: 945px; margin: 12px 40px 0 auto; contain: layout style; }
 .question-title { position: relative; z-index: 3; max-width: 1440px; width: 100%; height: 168px; min-height: 168px; justify-self: end; margin-left: auto; text-align: center; display: flex; align-items: center; justify-content: center; contain: layout style; }
-.question-card-inner { position: relative; width: 100%; height: 100%; min-height: 168px; display: flex; align-items: center; justify-content: center; padding: 18px 64px; box-sizing: border-box; border: 7px solid #FFC938; border-radius: 42px; background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF7 28%, #FFF8EA 100%); box-shadow: inset 0 4px 0 rgba(255,255,255,0.95), inset 0 8px 0 rgba(56,189,248,0.25), inset 0 -5px 0 rgba(245,166,35,0.22), 0 16px 0 var(--depth-shadow), 0 26px 42px rgba(10,25,60,0.16); }
+.question-card-inner { position: relative; width: 100%; height: 100%; min-height: 168px; display: flex; align-items: center; justify-content: center; padding: 16px 52px; box-sizing: border-box; border: 7px solid #FFC938; border-radius: 42px; background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF7 28%, #FFF8EA 100%); box-shadow: inset 0 4px 0 rgba(255,255,255,0.95), inset 0 8px 0 rgba(56,189,248,0.25), inset 0 -5px 0 rgba(245,166,35,0.22), 0 16px 0 var(--depth-shadow), 0 26px 42px rgba(10,25,60,0.16); }
 .question-title h1 { margin: 0; color: #342245; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: var(--question-size); font-weight: 800; line-height: var(--question-leading); letter-spacing: -0.5px; text-wrap: balance; text-shadow: 0 2px 0 rgba(255,255,255,0.8), 0 3px 0 rgba(10,35,75,0.08); width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .keyword-highlight { color: #047857; text-shadow: 0 1px 0 rgba(255,255,255,0.8); }
 .q-badge-star { position: absolute; top: -26px; left: -18px; z-index: 5; display: grid; place-items: center; width: 68px; height: 68px; border: 4.5px solid #fff; border-radius: 22px; background: linear-gradient(145deg, #FFDD44 0%, #FFA826 100%); color: #fff; box-shadow: 0 8px 0 rgba(13,35,71,0.22), 0 12px 20px rgba(13,35,71,0.18); transform: rotate(-10deg); animation: star-wobble 3.6s ease-in-out infinite alternate; will-change: transform; }
@@ -75,21 +75,21 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .q-decor-corner { position: absolute; z-index: 4; pointer-events: none; }
 .q-decor-top-right { top: -12px; right: 18px; color: #FFD43F; font-size: 28px; text-shadow: 0 0 10px rgba(255,212,63,0.7); animation: sparkle-blink 2.4s ease-in-out infinite 0.3s; }
 .q-decor-bottom-right { bottom: -14px; right: 14px; color: #C084FC; font-size: 30px; text-shadow: 0 3px 0 rgba(13,35,71,0.14); transform: rotate(12deg); }
-.image-card { position: relative; z-index: 3; display: block; margin: 0; overflow: hidden; border: 12px solid #fff; border-radius: 42px; background: #fff; box-shadow: 0 20px 0 rgba(13,35,71,.2), 0 29px 44px rgba(13,35,71,.18); contain: layout paint; transform: translate3d(0,0,0); will-change: transform; backface-visibility: hidden; }
+.image-card { position: relative; z-index: 3; display: block; margin: 0; overflow: hidden; border: 12px solid #fff; border-radius: 42px; background: #fff; box-shadow: 0 20px 0 rgba(13,35,71,.2), 0 29px 44px rgba(13,35,71,.18); contain: layout paint; }
 .image-card img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .image-shine { position: absolute; z-index: 4; inset: 0; background: linear-gradient(125deg, rgba(255,255,255,.35), transparent 31%); pointer-events: none; }
 .game-stage > .hero-image { width: ${baselineRenderMetrics.width}px; height: ${baselineRenderMetrics.height}px; margin-top: 39px; }
 .hero-image img { transform-origin: center; animation: hero-ken-burn var(--scene-duration) ease-in-out var(--clip-start) 1 alternate both; will-change: transform; }
-.phase-region { position: absolute; z-index: 5; left: 50%; bottom: 10px; width: 100%; height: 110px; transform: translate3d(-50%,0,0); contain: layout style; pointer-events: none; }
-.phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: -15px; left: 50%; margin-top: 0; transform: translate3d(-50%,0,0); width: min(82vw, 1540px); min-height: 84px; }
-.phase-region > .fact-card { position: absolute; z-index: 5; bottom: -45px; left: 50%; margin-top: 0; transform: translate3d(-50%,0,0); width: min(1220px, 100%); }
+.phase-region { position: absolute; z-index: 5; left: 50%; bottom: 10px; width: 100%; height: 110px; transform: translateX(-50%); contain: layout style; pointer-events: none; }
+.phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: -15px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(82vw, 1540px); min-height: 84px; }
+.phase-region > .fact-card { position: absolute; z-index: 5; bottom: -45px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(1220px, 100%); }
 
 /* === Choice Components & State Styles (ADR-003) === */
 ${baseChoiceStyles()}
 ${choiceTypographyStyles()}
 ${choiceStateStyles()}
 
-.thinking-bar { position: relative; z-index: 5; isolation: isolate; display: flex; align-items: center; justify-content: center; width: min(82vw, 1540px); min-height: 84px; margin: 0 auto; padding: 6px 0; border: 0; border-radius: 9999px; background: transparent; box-shadow: none; opacity: 0; animation: phase-hold var(--timer-duration) steps(1,end) var(--clip-start) both, timer-exit-fade .28s cubic-bezier(.22,.8,.3,1) calc(var(--clip-start) + var(--timer-duration) - .28s) both; contain: layout style; will-change: transform, opacity; transform: translate3d(0,0,0); }
+.thinking-bar { position: relative; z-index: 5; isolation: isolate; display: flex; align-items: center; justify-content: center; width: min(82vw, 1540px); min-height: 84px; margin: 0 auto; padding: 6px 0; border: 0; border-radius: 9999px; background: transparent; box-shadow: none; opacity: 0; animation: phase-hold var(--timer-duration) steps(1,end) var(--clip-start) both, timer-exit-fade .28s cubic-bezier(.22,.8,.3,1) calc(var(--clip-start) + var(--timer-duration) - .28s) both; contain: layout style; will-change: transform, opacity; }
 .thinking-track { position: relative; z-index: 0; width: 100%; height: 58px; overflow: visible; border: 6px solid rgba(255,255,255,.98); border-radius: 9999px; background: rgba(18,38,80,.62); box-shadow: inset 0 3px 6px rgba(255,255,255,.35), inset 0 -4px 8px rgba(0,0,0,.22), 0 8px 22px rgba(13,35,71,.35), 0 0 20px rgba(255,255,255,.25); }
 .timer-milestones { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
 .milestone-star { position: absolute; top: 50%; font-size: 24px; line-height: 1; color: #FFE66D; text-shadow: 0 0 10px rgba(255,230,109,.95), 0 2px 4px rgba(0,0,0,.4); transform: translate(-50%,-50%); animation: quizProgressStarTwinkle 2.4s ease-in-out infinite; }
@@ -113,7 +113,7 @@ ${choiceStateStyles()}
 .timer-sparkles i:nth-child(1) { right: 6%; top: -18px; }
 .timer-sparkles i:nth-child(2) { right: 1%; bottom: -16px; color: #5CE1E6; font-size: 22px; animation-delay: calc(var(--clip-start) + .55s); }
 .timer-sparkles i:nth-child(3) { left: 4%; top: -16px; color: #fff; animation-delay: calc(var(--clip-start) + 1.05s); }
-.fact-card { position: relative; z-index: 5; max-width: 1220px; margin-top: 14px; padding: 24px 48px; border: 6px solid rgba(255,255,255,.85); border-radius: 38px; background: var(--surface); box-shadow: 0 16px 0 rgba(13,35,71,.18), 0 22px 36px rgba(10,25,60,.14); text-align: center; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--reward-at)) both; contain: layout style; will-change: transform, opacity; transform: translate3d(0,0,0); backface-visibility: hidden; }
+.fact-card { position: relative; z-index: 5; max-width: 1220px; margin-top: 14px; padding: 24px 48px; border: 6px solid rgba(255,255,255,.85); border-radius: 38px; background: var(--surface); box-shadow: 0 16px 0 rgba(13,35,71,.18), 0 22px 36px rgba(10,25,60,.14); text-align: center; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--reward-at)) both; contain: layout style; will-change: transform, opacity; }
 .fact-card span { color: var(--surface-accent); font-size: 24px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; }
 .fact-card p { margin: 0; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 38px; font-weight: 900; line-height: 1.25; letter-spacing: -0.3px; }
 

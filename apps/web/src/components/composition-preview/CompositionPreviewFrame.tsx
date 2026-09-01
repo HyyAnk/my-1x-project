@@ -4,6 +4,7 @@ type CompositionPreviewFrameProps = {
   width: number;
   height: number;
   iframeKey: number;
+  iframeRef?: React.Ref<HTMLIFrameElement>;
   previewHtml: string;
   pendingPreviewHtml: string;
   loading: boolean;
@@ -20,6 +21,7 @@ export function CompositionPreviewFrame({
   width,
   height,
   iframeKey,
+  iframeRef,
   previewHtml,
   pendingPreviewHtml,
   loading,
@@ -35,6 +37,7 @@ export function CompositionPreviewFrame({
     <>
       {previewHtml ? (
         <iframe
+          ref={iframeRef}
           key={iframeKey}
           title={title}
           srcDoc={previewHtml}

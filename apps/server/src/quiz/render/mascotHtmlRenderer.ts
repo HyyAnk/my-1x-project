@@ -174,7 +174,7 @@ function phaseTransition(bundle: MascotRenderBundleV2, phase: MascotRenderPhase,
 }
 
 function toTransform(transform: MascotMotionTransform): string {
-  return `translate3d(${px(transform.translate_x)},${px(transform.translate_y)},0) rotate(${numberValue(transform.rotate_deg)}deg) scale(${numberValue(transform.scale_x)},${numberValue(transform.scale_y)})`;
+  return `translate(${px(transform.translate_x)},${px(transform.translate_y)}) rotate(${numberValue(transform.rotate_deg)}deg) scale(${numberValue(transform.scale_x)},${numberValue(transform.scale_y)})`;
 }
 
 function formatBounds(x: number, y: number, width: number, height: number): string {

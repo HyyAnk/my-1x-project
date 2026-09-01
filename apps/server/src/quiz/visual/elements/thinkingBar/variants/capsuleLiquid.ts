@@ -39,7 +39,7 @@ export const capsuleLiquidVariant: ThinkingBarVariant = {
 .thinking-bar-capsule-liquid .mana-sparkles-fx i:nth-child(2) { bottom: 12px; left: 20px; font-size: 18px; color: #00FF9D; }
 .thinking-bar-capsule-liquid .mana-sparkles-fx i:nth-child(3) { top: 22px; left: 18px; font-size: 14px; }
 .thinking-bar-capsule-liquid .marker-val { text-shadow: 0 0 14px #00F0FF, 0 0 28px #00D5FF, 0 3px 6px rgba(0,0,0,0.95); }
-@keyframes liquidBubbleRise { 0% { transform: translate3d(0, 0, 0) scale(0.8); opacity: 0; } 50% { opacity: 0.9; } 100% { transform: translate3d(0, -42px, 0) scale(1.25); opacity: 0; } }
+@keyframes liquidBubbleRise { 0% { transform: translateY(0) scale(0.8); opacity: 0; } 50% { opacity: 0.9; } 100% { transform: translateY(-42px) scale(1.25); opacity: 0; } }
 `;
   },
 };

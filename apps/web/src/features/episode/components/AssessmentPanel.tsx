@@ -1,7 +1,14 @@
 import { CheckCircle, WarningCircle } from "@phosphor-icons/react";
 import type { ProductionAssessment } from "@studio/shared";
+import { formatElapsedSeconds } from "../../../lib/utils";
 
-export function AssessmentPanel({ assessment }: { assessment: ProductionAssessment }) {
+export function AssessmentPanel({
+  assessment,
+  buildDurationSeconds,
+}: {
+  assessment: ProductionAssessment;
+  buildDurationSeconds?: number | null;
+}) {
   const blockers = assessment.issues.filter((issue) => issue.severity === "blocker");
   const targetWords = assessment.metrics.calibrated_word_target_count || assessment.metrics.target_word_count;
   return (
@@ -9,6 +16,12 @@ export function AssessmentPanel({ assessment }: { assessment: ProductionAssessme
       <div className="assessment-score">
         <strong>{assessment.score}</strong>
         <span>Production score</span>
+        {buildDurationSeconds && buildDurationSeconds > 0 ? (
+          <div className="assessment-build-time-badge" title="Total video build duration">
+            <strong>{formatElapsedSeconds(buildDurationSeconds)}</strong>
+            <span>Build time</span>
+          </div>
+        ) : null}
       </div>
       <div className="assessment-summary">
         <div>

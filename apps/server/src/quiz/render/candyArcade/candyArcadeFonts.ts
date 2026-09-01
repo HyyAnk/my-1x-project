@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import { copyFile, mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
+import { choiceTextFitScript } from "../choices/choiceTextFitScript.js";
 import { channelBrandMarkFitScript } from "./channelBrandMark.js";
 
 export type CandyArcadeFontMode = "preview" | "render";
@@ -83,8 +84,7 @@ export function resolveCandyArcadeFonts(rootDirectory = process.cwd()): Resolved
 export function candyArcadeFontFaceCss(mode: CandyArcadeFontMode, rootDirectory = process.cwd()): string {
   return resolveCandyArcadeFonts(rootDirectory)
     .map((font) => {
-      const source =
-        mode === "preview" ? `/api/quiz/fonts/${font.id}?v=${font.sha256.slice(0, 16)}` : `./fonts/${encodeURIComponent(font.filename)}`;
+      const source = mode === "preview" ? `/api/quiz/fonts/${font.id}?v=${font.sha256.slice(0, 16)}` : `./fonts/${font.filename}`;
       return `@font-face {
   font-family: "${font.family}";
   src: url("${source}") format("${font.format}");
@@ -115,6 +115,7 @@ export function candyArcadeFontReadinessScript(): string {
   const checks = CANDY_ARCADE_FONTS.map(({ family, testWeight }) => ({ family, testWeight }));
   return `(function(){
     ${channelBrandMarkFitScript()}
+    ${choiceTextFitScript()}
     const checks=${JSON.stringify(checks)};
     const sample="BẠN CÓ BIẾT? Hành tinh kỳ thú 0123456789";
     window.__playerReady=false;
@@ -129,6 +130,11 @@ export function candyArcadeFontReadinessScript(): string {
         }
         await document.fonts.ready;
         fitChannelBrandMarks();
+        try {
+          window.__choiceFitStatus=fitChoiceGroups();
+        } catch (fitError) {
+          window.__choiceFitStatus=resetChoiceGroupsToFallback(fitError);
+        }
         document.documentElement.dataset.fontsReady="true";
         window.__fontStatus={state:"ready",families:checks.map((item)=>item.family)};
         window.__playerReady=true;

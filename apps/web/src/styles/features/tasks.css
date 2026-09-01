@@ -476,6 +476,21 @@
   white-space: nowrap;
 }
 
+.task-card-time-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  color: var(--ink-secondary);
+  background: color-mix(in srgb, var(--line) 30%, var(--surface));
+  border: 1px solid var(--line);
+  padding: 1px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
 .task-status-chip {
   display: inline-flex;
   align-items: center;

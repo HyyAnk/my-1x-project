@@ -20,6 +20,11 @@ export const visualChoicesThreeLayout = {
   --choice-label-font-size-long: 24px;
   --choice-label-font-size-very_long: 24px;
   --choice-label-font-size-overflow: 24px;
+  --choice-fit-min: 17px;
+  --choice-fit-max: 38px;
+  --choice-fit-max-lines: 2;
+  --choice-fit-leading: 1.08;
+  --choice-fit-multiline-gain: 6px;
 }
 
 .has-mascot.layout-visual_choices_three .visual-answer-grid { width: 100%; gap: 24px; }
@@ -46,6 +51,7 @@ ${
   --choice-badge-size: 104px;
   --choice-badge-margin-left: -54px;
   --choice-badge-font-size: 52px;
+  --choice-fit-max: 42px;
 }
 #stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .option-image { height: 320px; }
 `

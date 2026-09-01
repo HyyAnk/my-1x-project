@@ -31,8 +31,8 @@ export const energyLaserVariant: ThinkingBarVariant = {
 .thinking-bar-energy-laser .gyro-ring-outer { animation: gyroRingSpin 14s linear infinite; }
 .thinking-bar-energy-laser .gyro-ring-inner { animation: gyroRingSpinReverse 9s linear infinite; }
 .thinking-bar-energy-laser .marker-val { text-shadow: 0 0 14px #00F0FF, 0 0 28px #0080FF, 0 3px 6px rgba(0,0,0,0.95); }
-@keyframes laserPulseScan { 0% { transform: translate3d(-100%, 0, 0); } 100% { transform: translate3d(200%, 0, 0); } }
-@keyframes laserFlarePulse { 0% { opacity: 0.8; transform: translate3d(0, -50%, 0) scale(0.9); } 100% { opacity: 1; transform: translate3d(0, -50%, 0) scale(1.15); } }
+@keyframes laserPulseScan { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
+@keyframes laserFlarePulse { 0% { opacity: 0.8; transform: translateY(-50%) scale(0.9); } 100% { opacity: 1; transform: translateY(-50%) scale(1.15); } }
 @keyframes gyroRingSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes gyroRingSpinReverse { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
 @keyframes ledBlink { 0% { opacity: 0.4; transform: scale(0.85); } 100% { opacity: 1; transform: scale(1.2); } }

@@ -50,7 +50,10 @@ export type QuizSceneParts = {
 };
 
 export function buildQuizSceneParts(model: QuizSceneRenderModel): QuizSceneParts {
-  const questionLayout = textLayout(model.question.text, "question");
+  const questionLayout = textLayout(model.question.text, "question", {
+    hasMascot: model.mascot.occupied,
+    layoutId: model.layout.id,
+  });
   return {
     question: {
       text: model.question.text,

@@ -1,10 +1,12 @@
 import type { FastifyPluginCallback } from "fastify";
 import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { RemixQuestionsInputSchema, SandboxPreviewInputBaseSchema, sandboxPreviewLayoutIssues } from "@studio/shared";
 import type { AntigravityClient } from "../antigravity.js";
 import type { CodexAppServerClient } from "../codex.js";
 import { buildSandboxComposition } from "../quiz/render/sandboxComposition.js";
 import { resolveCandyArcadeFont } from "../quiz/render/candyArcade/candyArcadeFonts.js";
+import { defaultSfxCandidateDirectories, resolveSfxCandidatePath } from "../quiz/audio/soundtrackSfxPlanner.js";
 import {
   assertQuizRenderReady,
   compileTimeline,
@@ -171,6 +173,26 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
         .header("ETag", `"${font.sha256}"`)
         .header("X-Content-Type-Options", "nosniff")
         .send(content);
+    });
+    server.get("/api/quiz/sfx/:filename", async (request, reply) => {
+      const { filename } = request.params as { filename: string };
+      const sanitized = path.basename(filename);
+      const candidateDirs = [path.resolve(repository.rootDirectory, "assets", "audio", "sfx"), ...defaultSfxCandidateDirectories()];
+      const sfxPath = resolveSfxCandidatePath(sanitized, candidateDirs);
+      if (!sfxPath) {
+        throw new RepositoryError("Quiz SFX audio not found", "QUIZ_SFX_NOT_FOUND");
+      }
+      try {
+        const content = await readFile(sfxPath);
+        return reply
+          .type(sanitized.endsWith(".mp3") ? "audio/mpeg" : "audio/wav")
+          .header("Cache-Control", "public, max-age=31536000, immutable")
+          .header("Content-Disposition", `inline; filename="${sanitized}"`)
+          .header("X-Content-Type-Options", "nosniff")
+          .send(content);
+      } catch {
+        throw new RepositoryError("Quiz SFX audio not found", "QUIZ_SFX_NOT_FOUND");
+      }
     });
     server.get("/api/channels/:channelId/episodes/:episodeId/quiz-v2/soundtrack", async (request, reply) => {
       const params = request.params as { channelId: string; episodeId: string };
