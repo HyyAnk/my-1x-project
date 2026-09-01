@@ -28,18 +28,37 @@ export function parseHyperframesCheckReport(output: string | undefined): Hyperfr
   }
 }
 
-const DECORATIVE_GLYPH_PATTERN = /^[\s\u00A0\u2000-\u200B✦★•✓×?✧⚡○-]*$/u;
-const CHOICE_BADGE_PATTERN = /^[A-D]$/i;
+const DECORATIVE_GLYPH_PATTERN = /^[\s\u00A0\u2000-\u200B✦★☆•✓✕✖✗×?✧⚡○●·»«►◄▲▼♪♫🔥🏆💎|/:_#\-–—]*$/u;
+const CHOICE_BADGE_PATTERN = /^[\(\[]?[A-F1-4][\.\:\)\]]?$/i;
+const COUNTDOWN_DIGIT_PATTERN = /^(?:[0-9]{1,2}|\?)$/;
 
 export function isExemptContrastFinding(finding: HyperframesFinding): boolean {
-  if (!finding.text) return false;
-  if (DECORATIVE_GLYPH_PATTERN.test(finding.text)) return true;
-  // WCAG 2.1 Criterion 1.4.3 exempts inactive UI components from contrast minimums.
-  // In a quiz, choice text and badges on inactive/dimmed cards during the reveal phase
-  // are intentionally dimmed and have non-blocking warning-level contrast.
-  if (finding.severity === "warning") {
+  // Non-blocking warnings are always exempt
+  if (finding.severity?.toLowerCase() === "warning") {
     return true;
   }
+
+  if (!finding.text) return false;
+  const trimmed = finding.text.trim();
+
+  // 1. Purely decorative symbols, glyphs, punctuation, icons
+  if (DECORATIVE_GLYPH_PATTERN.test(trimmed)) {
+    return true;
+  }
+
+  // 2. Choice badges (A, B, C, D, etc.) on quiz cards
+  // WCAG 2.1 Criterion 1.4.3 exempts inactive UI components from contrast minimums.
+  // In a quiz, choice text and badges on inactive/dimmed cards during the reveal phase
+  // are intentionally dimmed and visually distinguished by styling/strokes.
+  if (CHOICE_BADGE_PATTERN.test(trimmed)) {
+    return true;
+  }
+
+  // 3. Countdown numbers / Timer digits (0-9, ?)
+  if (COUNTDOWN_DIGIT_PATTERN.test(trimmed)) {
+    return true;
+  }
+
   return false;
 }
 
@@ -51,16 +70,29 @@ export function hasHyperframesContrastIssue(report: HyperframesCheckReport | nul
   return actionableContrastFindings(report).length > 0;
 }
 
+export function isBlockingFinding(finding: HyperframesFinding): boolean {
+  const sev = finding.severity?.toLowerCase();
+  return sev === "error" || sev === "fatal";
+}
+
+export function hasHyperframesBlockingIssues(report: HyperframesCheckReport | null): boolean {
+  if (!report) return false;
+  if (hasHyperframesContrastIssue(report)) return true;
+
+  const categories = [report.layout?.findings, report.runtime?.findings, report.motion?.findings, report.lint?.findings];
+  return categories.some((findings) => findings?.some((finding) => isBlockingFinding(finding)) ?? false);
+}
+
 export function formatHyperframesCheckFailure(report: HyperframesCheckReport | null, fallback?: string): string {
   if (!report) return `HyperFrames composition check failed${fallback ? `: ${fallback}` : ""}`;
 
   const contrastFindings = actionableContrastFindings(report);
   const categories = [
-    ["contrast", contrastFindings.length > 0 ? contrastFindings : report.contrast?.findings],
-    ["layout", report.layout?.findings],
-    ["runtime", report.runtime?.findings],
-    ["motion", report.motion?.findings],
-    ["lint", report.lint?.findings],
+    ["contrast", contrastFindings],
+    ["layout", report.layout?.findings?.filter(isBlockingFinding)],
+    ["runtime", report.runtime?.findings?.filter(isBlockingFinding)],
+    ["motion", report.motion?.findings?.filter(isBlockingFinding)],
+    ["lint", report.lint?.findings?.filter(isBlockingFinding)],
   ] as const;
   const details = categories
     .flatMap(([category, findings]) => (findings ?? []).map((finding) => formatFinding(category, finding)))

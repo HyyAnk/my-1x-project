@@ -44,7 +44,7 @@ describe("EditChannelModal", () => {
     fireEvent.change(screen.getByLabelText("Market (optional)"), { target: { value: "European Union" } });
     fireEvent.change(screen.getByLabelText("Content Language"), { target: { value: "German" } });
     fireEvent.click(screen.getByRole("button", { name: "Target Country / Region" }));
-    fireEvent.click(screen.getByRole("button", { name: /Vietnam.*VN.*Vietnamese/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Germany.*DE.*German/i }));
 
     expect(screen.getByLabelText<HTMLInputElement>("Market (optional)").value).toBe("European Union");
     expect(screen.getByLabelText<HTMLInputElement>("Content Language").value).toBe("German");
@@ -53,7 +53,7 @@ describe("EditChannelModal", () => {
     await waitFor(() => expect(update).toHaveBeenCalledTimes(1));
     expect(update.mock.calls[0]).toEqual([
       "ch_locale",
-      expect.objectContaining({ country: "VN", market: "European Union", language: "German" }),
+      expect.objectContaining({ country: "DE", market: "European Union", language: "German" }),
     ]);
   });
 });

@@ -27,7 +27,7 @@ describe("CreateChannelModal", () => {
     expect(dialog.getAttribute("aria-modal")).toBe("true");
   });
 
-  it("shows one creation flow and submits no channel-type field", async () => {
+  it("shows one creation flow and submits no channel-type or market field", async () => {
     const create = vi.spyOn(api, "createChannel").mockResolvedValue({
       channel: { channel_id: "ch_quiz" } as never,
       task: null,
@@ -35,6 +35,7 @@ describe("CreateChannelModal", () => {
     renderModal();
 
     expect(screen.queryByText("Channel Track / Type")).toBeNull();
+    expect(screen.queryByLabelText("Market (optional)")).toBeNull();
     fireEvent.change(screen.getByLabelText("Channel Name"), { target: { value: "Brain Bites" } });
     fireEvent.click(screen.getByRole("button", { name: "Create channel" }));
 
@@ -42,9 +43,15 @@ describe("CreateChannelModal", () => {
     const payload = create.mock.calls[0][0] as Record<string, unknown>;
     expect(payload).not.toHaveProperty("group_id");
     expect(payload).not.toHaveProperty("engine");
+    expect(payload).toEqual(
+      expect.objectContaining({
+        name: "Brain Bites",
+        dna_mode: "ai",
+      }),
+    );
   });
 
-  it("keeps country, market, and language independent in the create payload", async () => {
+  it("automatically synchronizes language when choosing from the top 20 CPM countries", async () => {
     const create = vi.spyOn(api, "createChannel").mockResolvedValue({
       channel: { channel_id: "ch_locale" } as never,
       task: null,
@@ -52,17 +59,17 @@ describe("CreateChannelModal", () => {
     renderModal();
 
     fireEvent.change(screen.getByLabelText("Channel Name"), { target: { value: "World Quiz" } });
-    fireEvent.change(screen.getByLabelText("Market (optional)"), { target: { value: "Southeast Asia" } });
-    fireEvent.change(screen.getByLabelText("Target Language"), { target: { value: "French" } });
     fireEvent.click(screen.getByRole("button", { name: "Target Country / Region" }));
-    fireEvent.click(screen.getByRole("button", { name: /Vietnam.*VN.*Vietnamese/i }));
+    // Choose Germany (DE) which should automatically set German
+    fireEvent.click(screen.getByRole("button", { name: /Germany.*DE.*German/i }));
 
-    expect(screen.getByLabelText<HTMLInputElement>("Market (optional)").value).toBe("Southeast Asia");
-    expect(screen.getByLabelText<HTMLInputElement>("Target Language").value).toBe("French");
+    expect(screen.getByLabelText<HTMLInputElement>("Target Language").value).toBe("German");
     fireEvent.click(screen.getByRole("button", { name: "Create channel" }));
 
     await waitFor(() => expect(create).toHaveBeenCalledTimes(1));
-    expect(create.mock.calls[0][0]).toEqual(expect.objectContaining({ country: "VN", market: "Southeast Asia", language: "French" }));
+    expect(create.mock.calls[0][0]).toEqual(
+      expect.objectContaining({ country: "DE", language: "German", dna_mode: "ai" }),
+    );
   });
 
   it("prevents duplicate submission while the request is pending", async () => {

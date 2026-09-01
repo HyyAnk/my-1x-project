@@ -1,4 +1,4 @@
-import type { Episode, ProductionAssessment, Scene, Task } from "@studio/shared";
+import type { Episode, ProductionAssessment, Scene, Task, ThumbnailManifest, ThumbnailLayoutType, ThumbnailAspectRatio } from "@studio/shared";
 import { request, type BundleImage } from "./client";
 
 export const episodeApi = {
@@ -48,4 +48,18 @@ export const episodeApi = {
       method: "POST",
       body: "{}",
     }),
+  getThumbnail: (channelId: string, episodeId: string) =>
+    request<{ manifest: ThumbnailManifest | null }>(`/api/channels/${channelId}/episodes/${episodeId}/thumbnail`),
+  generateThumbnail: (
+    channelId: string,
+    episodeId: string,
+    body?: { layout_override?: ThumbnailLayoutType; aspect_ratio?: ThumbnailAspectRatio | "both"; custom_hook_text?: string },
+  ) =>
+    request<{ ok: true; manifest: ThumbnailManifest }>(`/api/channels/${channelId}/episodes/${episodeId}/thumbnail/generate`, {
+      method: "POST",
+      body: JSON.stringify(body || {}),
+    }),
+  thumbnailFileUrl: (channelId: string, episodeId: string, ratio: "16:9" | "9:16", timestamp?: string | null) =>
+    `/api/channels/${channelId}/episodes/${episodeId}/thumbnail/file/${ratio === "9:16" ? "9_16" : "16_9"}${timestamp ? `?t=${encodeURIComponent(timestamp)}` : ""}`,
 };
+

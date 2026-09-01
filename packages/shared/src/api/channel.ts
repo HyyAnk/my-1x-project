@@ -88,6 +88,7 @@ export const EpisodeSettingsInputSchema = z.object({
   palette_id: QuizPaletteIdSchema.optional(),
   style_preset_id: z.string().optional(),
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).optional(),
+  thumbnail_aspect_ratio: z.enum(["auto", "16:9", "9:16", "both"]).optional(),
 });
 
 export type EpisodeSettingsInput = z.infer<typeof EpisodeSettingsInputSchema>;

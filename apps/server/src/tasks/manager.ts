@@ -335,8 +335,8 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   isShotPlanFresh(channelId: string, episodeId: string): Promise<boolean> {
     return taskDelegates.isShotPlanFresh.call(this, channelId, episodeId);
   }
-  waitForTaskTerminal(taskId: string, run: PipelineRun): Promise<Task> {
-    return taskDelegates.waitForTaskTerminal.call(this, taskId, run);
+  waitForTaskTerminal(taskId: string, run: PipelineRun, onProgress?: (task: Task) => Promise<void> | void): Promise<Task> {
+    return taskDelegates.waitForTaskTerminal.call(this, taskId, run, onProgress);
   }
   runAudioTask(task: Task): Promise<void> {
     return taskDelegates.runAudioTask.call(this, task);

@@ -50,13 +50,13 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
     );
     const scriptChanged = await step(
       "Narration script · writing the argument",
-      12,
+      10,
       "GENERATE_SCRIPT",
       async () => !(await hasReadyScript.call(this, task.channel_id, episodeId)),
     );
     const visualBibleChanged = await step(
       "Visual bible · locking continuity",
-      18,
+      14,
       "GENERATE_VISUAL_BIBLE",
       async () => !(await hasReadyArtifact.call(this, task.channel_id, episodeId, "visual_bible.md")),
     );
@@ -68,7 +68,7 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
     const regenerateShots = scenes.length === 0 || upstreamChanged || !shotPlanFresh;
     await this.update(task.task_id, {
       progress_message: regenerateShots ? "Shot plan · generating sequences" : "Shot plan · already ready",
-      progress_percent: 25,
+      progress_percent: 18,
     });
     if (regenerateShots) {
       const script = await this.repository.getEpisodeFile(task.channel_id, episodeId, "script.md");
@@ -82,7 +82,7 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
         progress_message: resumePlan.reusedSequenceNumbers.length
           ? `Shot plan · resuming ${resumePlan.reusedSequenceNumbers.length}/${sections.length} completed sequences`
           : "Shot plan · generating sequences",
-        progress_percent: 25,
+        progress_percent: 18,
       });
       if (resumePlan.pendingSequenceNumbers.length === 0) {
         const committed = await this.repository.commitSequenceDrafts(task.channel_id, episodeId, sections.length);
@@ -115,11 +115,28 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
     await runQuizV2Pipeline.call(this, task);
 
     if (run.cancelled) throw new Error("Pipeline cancelled");
-    await this.update(task.task_id, { progress_message: "Video · linting Quiz composition", progress_percent: 92 });
+    await this.update(task.task_id, { progress_message: "Video · linting Quiz composition", progress_percent: 55 });
     const videoChild = this.submit("GENERATE_VIDEO", task.channel_id, episodeId);
     run.children.add(videoChild.task_id);
     try {
-      const completed = await waitForTaskTerminal.call(this, videoChild.task_id, run);
+      const completed = await waitForTaskTerminal.call(this, videoChild.task_id, run, async (childTask) => {
+        if (childTask.render_progress) {
+          const { frames_completed, total_frames } = childTask.render_progress;
+          const captureRatio = total_frames > 0 ? frames_completed / total_frames : 0;
+          const pipelinePercent = Math.min(98, Math.max(55, Math.round((55 + captureRatio * 43) * 100) / 100));
+          await this.update(task.task_id, {
+            progress_message:
+              childTask.progress_message ??
+              `Video · rendering frame ${frames_completed.toLocaleString("en-US")} / ${total_frames.toLocaleString("en-US")}`,
+            progress_percent: pipelinePercent,
+            render_progress: childTask.render_progress,
+          });
+        } else if (childTask.progress_message) {
+          await this.update(task.task_id, {
+            progress_message: childTask.progress_message,
+          });
+        }
+      });
       if (completed.status !== "COMPLETED") throw new Error(`Video render failed: ${completed.error ?? completed.status}`);
     } finally {
       run.children.delete(videoChild.task_id);

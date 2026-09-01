@@ -6,6 +6,7 @@ import type { useEpisodePipeline } from "../hooks/useEpisodePipeline";
 import { EpisodeQuizCustomizationBar } from "./EpisodeQuizCustomizationBar";
 import { QuizV2Panel } from "../../../components/QuizV2Panel";
 import { QuizVideoPanel } from "../QuizVideoPanel";
+import { ThumbnailPreviewCard } from "./ThumbnailPreviewCard";
 import { EpisodeWorkspaceTabs } from "./EpisodeWorkspaceTabs";
 
 type QuizEpisodeViewProps = {
@@ -64,10 +65,12 @@ export function QuizEpisodeView({
         onSaveCounterStyle={pipeline.saveCounterStyle}
         onSaveBackgroundStyle={pipeline.saveBackgroundStyle}
         onSavePaletteId={pipeline.savePaletteId}
+        onSaveThumbnailRatio={pipeline.saveThumbnailRatio}
         onApplyStylePreset={pipeline.applyStylePreset}
         setEpisode={setEpisode}
         onNotice={onNotice}
       />
+
 
       <QuizV2Panel
         state={quizV2}
@@ -85,6 +88,13 @@ export function QuizEpisodeView({
         episodeClock={pipeline.episodeClock}
         busy={pipeline.busy}
         onOpenVideoFolder={pipeline.openVideoFolder}
+      />
+
+      <ThumbnailPreviewCard
+        channel={channel}
+        episode={episode}
+        episodeId={episodeId}
+        onNotice={onNotice}
       />
 
       <EpisodeWorkspaceTabs

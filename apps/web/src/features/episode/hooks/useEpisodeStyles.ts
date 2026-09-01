@@ -12,7 +12,9 @@ import {
   type QuizQuestionCounterStyle,
   type QuizThinkingBarStyle,
   type VisualPresetItem,
+  type ThumbnailRatioMode,
 } from "@studio/shared";
+
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 
@@ -135,6 +137,17 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     );
   };
 
+  const saveThumbnailRatio = async (ratio: ThumbnailRatioMode) => {
+    if (!episode || ratio === (episode.quiz_config?.thumbnail_aspect_ratio ?? "auto")) return;
+    const labelMap: Record<ThumbnailRatioMode, string> = {
+      auto: "Auto (Match Video)",
+      "16:9": "16:9 Landscape",
+      "9:16": "9:16 Portrait",
+      both: "Both (16:9 & 9:16)",
+    };
+    await saveQuizStyles("thumbnailRatio", { thumbnail_aspect_ratio: ratio }, `Thumbnail mode set to: ${labelMap[ratio]}`);
+  };
+
   const saveDuration = async () => {
     if (!episode || durationDraft === episode.target_duration_minutes) return;
     setBusy("duration");
@@ -163,7 +176,9 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     saveCounterStyle,
     saveBackgroundStyle,
     savePaletteId,
+    saveThumbnailRatio,
     applyStylePreset,
     saveDuration,
   };
 }
+

@@ -86,6 +86,7 @@ export const QuizConfigSchema = z.object({
   palette_id: QuizPaletteIdSchema.default("auto"),
   style_preset_id: z.string().optional().default("auto"),
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).default(""),
+  thumbnail_aspect_ratio: z.enum(["auto", "16:9", "9:16", "both"]).default("auto"),
 });
 
 export type QuizConfig = z.infer<typeof QuizConfigSchema>;

@@ -17,6 +17,7 @@ import type { CodexAppServerClient } from "../../codex.js";
 import { readQuizArtifacts, generateQuiz, generateDirector } from "./stages/quizGenerationStage.js";
 import { planAssets, resolveAssets, planVoice, generateVoice } from "./stages/assetsVoiceStages.js";
 import { compileTimeline, runQa, assertQuizRenderReady } from "./stages/timelineAssessmentStages.js";
+import { generateEpisodeThumbnail } from "../thumbnail/index.js";
 
 export { remixQuizQuestions } from "./remixQuestions.js";
 export {
@@ -69,7 +70,27 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
 
   const qaResult = await runQa(input);
 
+  try {
+    await generateEpisodeThumbnail(input.repository, {
+      channelId: input.channelId,
+      episodeId: input.episodeId,
+      activeEngine: input.activeEngine,
+      antigravityClient: input.antigravityClient,
+      imageConfig: input.config.image_generation
+        ? {
+            api_key: input.config.image_generation.api_key,
+            model: input.config.image_generation.model,
+            provider: input.config.image_generation.provider,
+            base_url: input.config.image_generation.base_url,
+          }
+        : undefined,
+    });
+  } catch {
+    // Non-blocking
+  }
+
   return {
+
     quiz: generatedQuiz.quiz,
     history_check: generatedQuiz.history_check,
     director_plan: director.director_plan,

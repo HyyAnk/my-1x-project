@@ -62,7 +62,10 @@ export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: Coun
 
   return (
     <div className="channel-create-field" ref={dropdownRef}>
-      <label>{t("channels.countryFieldLabel")}</label>
+      <label className="channel-field-label">
+        <Globe size={14} className="field-label-icon" />
+        <span>{t("channels.countryFieldLabel")}</span>
+      </label>
       <div className="country-select-wrapper">
         <button
           type="button"
@@ -72,7 +75,10 @@ export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: Coun
           aria-label={t("channels.countryFieldLabel")}
         >
           <div className="country-select-trigger-content">
-            <CountryFlag code={selectedCountry} size={20} className="country-flag-icon" />
+            {selectedCountryOption?.rank ? (
+              <span className="country-rank-pill">#{selectedCountryOption.rank}</span>
+            ) : null}
+            <CountryFlag code={selectedCountry} size={22} className="country-flag-icon" />
             <div className="country-select-trigger-info">
               <span className="country-name">{selectedCountryName}</span>
               <span className="country-sub">
@@ -109,7 +115,8 @@ export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: Coun
                     onClick={() => handleSelect(c.code)}
                   >
                     <div className="country-option-content">
-                      <CountryFlag code={c.code} size={18} className="country-flag-icon" />
+                      <span className="country-item-rank-tag">#{c.rank}</span>
+                      <CountryFlag code={c.code} size={20} className="country-flag-icon" />
                       <div className="country-option-text">
                         <span className="country-option-name">{cName}</span>
                         <span className="country-option-sub">

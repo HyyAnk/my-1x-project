@@ -16,16 +16,21 @@ export const ThumbnailAspectRatioSchema = z.enum(["16:9", "9:16"]);
 
 export type ThumbnailAspectRatio = z.infer<typeof ThumbnailAspectRatioSchema>;
 
+export const ThumbnailRatioModeSchema = z.enum(["auto", "16:9", "9:16", "both"]).default("auto");
+
+export type ThumbnailRatioMode = z.infer<typeof ThumbnailRatioModeSchema>;
+
 export const ThumbnailGenerationRequestSchema = z.object({
   episode_id: z.string().min(1),
   channel_id: z.string().optional(),
   layout_override: ThumbnailLayoutTypeSchema.optional(),
-  aspect_ratio: z.union([ThumbnailAspectRatioSchema, z.literal("both")]).default("both"),
+  aspect_ratio: z.union([ThumbnailAspectRatioSchema, z.literal("both"), z.literal("auto")]).default("auto"),
   custom_hook_text: z.string().optional(),
   cancellation_signal: z.any().optional(),
 });
 
 export type ThumbnailGenerationRequest = z.infer<typeof ThumbnailGenerationRequestSchema>;
+
 
 export const ThumbnailManifestSchema = z.object({
   episode_id: z.string().min(1),

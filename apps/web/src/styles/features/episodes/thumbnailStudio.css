@@ -1,0 +1,403 @@
+/* ==========================================================================
+   Thumbnail Studio Component Styles
+   ========================================================================== */
+
+.quiz-thumbnail-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-top: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quiz-thumbnail-panel:hover {
+  border-color: var(--line-dark);
+}
+
+.thumbnail-studio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.thumbnail-studio-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.thumbnail-studio-title-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--soft-accent);
+  color: var(--accent);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+/* Ratio Toggle Segmented Control */
+.ratio-segmented-control {
+  display: inline-flex;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.ratio-segmented-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.ratio-segmented-btn:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ratio-segmented-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+/* Studio Layout Grid */
+.thumbnail-studio-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.2fr) minmax(300px, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .thumbnail-studio-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Visual Stage Column */
+.thumbnail-stage-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+  min-height: 280px;
+  overflow: hidden;
+}
+
+.thumbnail-frame-container {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--line-dark);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.thumbnail-frame-container.portrait-mode {
+  max-width: 220px;
+}
+
+.thumbnail-frame-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+}
+
+.thumbnail-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.thumbnail-spec-pill {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-deep);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.04em;
+}
+
+.thumbnail-floating-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 6px;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.thumbnail-frame-container:hover .thumbnail-floating-actions {
+  opacity: 1;
+}
+
+.floating-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  color: var(--ink);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.floating-action-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  transform: scale(1.05);
+}
+
+/* Empty State / Generating Skeleton */
+.thumbnail-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--muted);
+  text-align: center;
+  gap: 10px;
+}
+
+.thumbnail-generating-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  gap: 12px;
+  color: var(--accent);
+}
+
+.thumbnail-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Controls Column */
+.thumbnail-controls-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.control-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.control-field-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/* Layout Grid Chips */
+.layout-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.layout-chip-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  color: var(--ink-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  gap: 4px;
+}
+
+.layout-chip-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.layout-chip-btn.active {
+  background: var(--soft-accent);
+  border-color: var(--accent);
+  color: var(--accent-deep);
+}
+
+.layout-chip-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.layout-chip-sub {
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+/* Mascot & Psychology Info Card */
+.thumbnail-meta-summary-card {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.82rem;
+}
+
+.meta-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.meta-summary-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.mascot-persona-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--yellow);
+  font-size: 0.78rem;
+  background: var(--soft-yellow);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* Custom Hook Input */
+.hook-text-input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hook-text-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* Primary Action Button */
+.thumbnail-generate-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), #0284c7);
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px var(--accent-glow);
+  transition: all 0.18s ease;
+}
+
+.thumbnail-generate-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(6, 182, 212, 0.5);
+}
+
+.thumbnail-generate-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.thumbnail-generate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Tooltip Popover Support */
+.tooltip-trigger {
+  cursor: help;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.15s ease;
+}
+
+.tooltip-trigger:hover {
+  color: var(--accent);
+}

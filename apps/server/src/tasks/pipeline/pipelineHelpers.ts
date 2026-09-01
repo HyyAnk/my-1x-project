@@ -112,10 +112,39 @@ export async function isShotPlanFresh(this: TaskManagerRuntime, channelId: strin
   return Date.parse(scenePlan.modified_at) >= Date.parse(script.modified_at);
 }
 
-export async function waitForTaskTerminal(this: TaskManagerRuntime, taskId: string, run: PipelineRun): Promise<Task> {
+export async function waitForTaskTerminal(
+  this: TaskManagerRuntime,
+  taskId: string,
+  run: PipelineRun,
+  onProgress?: (task: Task) => Promise<void> | void,
+): Promise<Task> {
+  let lastStatus: Task["status"] | "" = "";
+  let lastProgressMessage = "";
+  let lastPercent: number | null = null;
+  let lastFramesCompleted: number | null = null;
+  let lastElapsedMs: number | null = null;
+
   while (true) {
     if (run.cancelled) throw new Error("Pipeline cancelled");
     const task = this.get(taskId);
+    if (onProgress) {
+      const framesCompleted = task.render_progress?.frames_completed ?? null;
+      const elapsedMs = task.render_progress?.elapsed_ms ?? null;
+      if (
+        task.status !== lastStatus ||
+        task.progress_message !== lastProgressMessage ||
+        task.progress_percent !== lastPercent ||
+        framesCompleted !== lastFramesCompleted ||
+        elapsedMs !== lastElapsedMs
+      ) {
+        lastStatus = task.status;
+        lastProgressMessage = task.progress_message ?? "";
+        lastPercent = task.progress_percent;
+        lastFramesCompleted = framesCompleted;
+        lastElapsedMs = elapsedMs;
+        await onProgress(task);
+      }
+    }
     if (["COMPLETED", "FAILED", "CANCELLED"].includes(task.status)) return task;
     await new Promise((resolve) => setTimeout(resolve, 30));
   }

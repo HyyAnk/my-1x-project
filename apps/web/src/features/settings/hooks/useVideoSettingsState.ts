@@ -13,7 +13,7 @@ export function useVideoSettingsState({ appConfig, onVideoSaved, onNotice }: Use
   const [maxSceneDuration, setMaxSceneDuration] = useState(appConfig?.video_generation.max_scene_duration_seconds ?? 8);
   const [narrationWordsPerSecond, setNarrationWordsPerSecond] = useState(appConfig?.video_generation.narration_words_per_second ?? 2.3);
   const [aspectRatio, setAspectRatio] = useState<MascotRenderAspectRatio>(appConfig?.video_generation.aspect_ratio ?? "16:9");
-  const [maxConcurrentVideoTasks, setMaxConcurrentVideoTasks] = useState(appConfig?.video_generation.max_concurrent_tasks ?? 2);
+  const [maxConcurrentVideoTasks, setMaxConcurrentVideoTasks] = useState(appConfig?.video_generation.max_concurrent_tasks ?? 1);
   const [renderWorkers, setRenderWorkers] = useState<number | undefined>(appConfig?.video_generation.render_workers);
   const [renderQuality, setRenderQuality] = useState<"draft" | "standard" | "high">(appConfig?.video_generation.render_quality ?? "draft");
   const [fps, setFps] = useState<number>(appConfig?.video_generation.fps ?? 30);
@@ -25,7 +25,7 @@ export function useVideoSettingsState({ appConfig, onVideoSaved, onNotice }: Use
       setMaxSceneDuration(video.max_scene_duration_seconds ?? 8);
       setNarrationWordsPerSecond(video.narration_words_per_second ?? 2.3);
       setAspectRatio(video.aspect_ratio ?? "16:9");
-      setMaxConcurrentVideoTasks(video.max_concurrent_tasks ?? 2);
+      setMaxConcurrentVideoTasks(video.max_concurrent_tasks ?? 1);
       setRenderWorkers(video.render_workers);
       setRenderQuality(video.render_quality ?? "draft");
       setFps(video.fps ?? 30);

@@ -143,6 +143,41 @@ describe("quizRailCalculations", () => {
       expect(progress.percent).toBe(20);
       expect(progress.unit).toBe("questions");
     });
+
+    it("resolves render progress correctly when task has render_progress", () => {
+      const videoTask = {
+        task_id: "task_v1",
+        task_type: "GENERATE_VIDEO",
+        channel_id: "ch_1",
+        status: "RUNNING",
+        progress_percent: 75,
+        render_progress: {
+          phase: "capture_streaming",
+          frames_completed: 1200,
+          total_frames: 3840,
+          worker_count: 6,
+          elapsed_ms: 12000,
+          eta_seconds: 24,
+        },
+        created_at: "2026-08-31T00:00:00Z",
+        updated_at: "2026-08-31T00:00:00Z",
+      } as unknown as Task;
+
+      const progress = resolveProgress("render", defaultReadiness, mockState, [videoTask], 5);
+      expect(progress.completed).toBe(1200);
+      expect(progress.total).toBe(3840);
+      expect(progress.percent).toBe(31);
+      expect(progress.unit).toBe("frames");
+    });
+
+    it("resolves render progress when video is completed", () => {
+      const readyReadiness = { ...defaultReadiness, video: true };
+      const progress = resolveProgress("render", readyReadiness, mockState, [], 5);
+      expect(progress.completed).toBe(1);
+      expect(progress.total).toBe(1);
+      expect(progress.percent).toBe(100);
+      expect(progress.unit).toBe("task");
+    });
   });
 
   describe("pipelineStage", () => {

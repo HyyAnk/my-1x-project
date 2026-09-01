@@ -4,6 +4,7 @@ import { promisify } from "node:util";
 import { RepositoryError } from "../../repository.js";
 import {
   formatHyperframesCheckFailure,
+  hasHyperframesBlockingIssues,
   hasHyperframesContrastIssue,
   parseHyperframesCheckReport,
 } from "../../quiz/qa/hyperframesQuality.js";
@@ -101,6 +102,10 @@ export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise
         await healCompositionContrast(renderRoot, errorReport);
         continue;
       }
+      if (errorReport && !hasHyperframesBlockingIssues(errorReport)) {
+        checkOutput = failure.stdout || "{}";
+        break;
+      }
       throw new RepositoryError(formatHyperframesCheckFailure(errorReport, failure.message), "QUIZ_COMPOSITION_CHECK_FAILED");
     }
 
@@ -114,6 +119,10 @@ export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise
         continue;
       }
       throw new RepositoryError(formatHyperframesCheckFailure(checkReport), "QUIZ_COMPOSITION_CONTRAST_FAILED");
+    }
+
+    if (hasHyperframesBlockingIssues(checkReport)) {
+      throw new RepositoryError(formatHyperframesCheckFailure(checkReport), "QUIZ_COMPOSITION_CHECK_FAILED");
     }
 
     break;

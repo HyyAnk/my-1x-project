@@ -10,6 +10,8 @@ import { compileQuizTimeline } from "../../timeline/compileTimeline.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
 import type { QuizOrchestratorInput } from "../orchestrator.js";
 
+
+
 export async function planAssets(
   input: QuizOrchestratorInput,
 ): Promise<{ asset_plan: QuizAssetPlan; artifact_path: string; invalidated: string[] }> {
@@ -59,8 +61,11 @@ export async function resolveAssets(
     input.episodeId,
     invalidateQuizArtifacts("asset_resolution"),
   );
+
   return { asset_resolution: result.resolution, issues: result.issues, invalidated };
 }
+
+
 
 export async function planVoice(
   input: QuizOrchestratorInput,

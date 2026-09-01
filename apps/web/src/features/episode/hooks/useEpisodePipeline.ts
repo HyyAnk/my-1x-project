@@ -131,8 +131,10 @@ export function useEpisodePipeline({
     saveCounterStyle: styles.saveCounterStyle,
     saveBackgroundStyle: styles.saveBackgroundStyle,
     savePaletteId: styles.savePaletteId,
+    saveThumbnailRatio: styles.saveThumbnailRatio,
     applyStylePreset: styles.applyStylePreset,
     saveDuration: styles.saveDuration,
+
     // From useEpisodeRemix
     historyCheck: remix.historyCheck,
     isRemixing: remix.isRemixing,

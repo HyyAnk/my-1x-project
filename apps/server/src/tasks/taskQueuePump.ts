@@ -24,7 +24,7 @@ export async function pumpTaskQueue(
     runningPipelineCount: number;
   },
 ): Promise<void> {
-  const maxVideoConcurrent = runtime.videoConfig.max_concurrent_tasks ?? 2;
+  const maxVideoConcurrent = runtime.videoConfig.max_concurrent_tasks ?? 1;
 
   // 1. Video Queue Lane
   while (runtime.runningVideoCount < maxVideoConcurrent) {

@@ -26,6 +26,7 @@ import { registerSettingsRoutes } from "./routes/settings.js";
 import type { AppState } from "./routes/state.js";
 import { registerSystemRoutes } from "./routes/system.js";
 import { registerTasksRoutes } from "./routes/tasks.js";
+import { registerThumbnailsRoutes } from "./routes/thumbnails.js";
 import { registerVisualBibleRoutes } from "./routes/visualBible.js";
 import { registerVoicesRoutes } from "./routes/voices.js";
 
@@ -146,6 +147,7 @@ export async function buildApp(
   await server.register(registerVisualBibleRoutes({ repository, tasks, state }));
   await server.register(registerAudioVideoRoutes({ repository, tasks, state, revealFile }));
   await server.register(registerTasksRoutes({ tasks, codex }));
+  await server.register(registerThumbnailsRoutes({ repository, state, antigravity }));
   await server.register(registerEventsRoutes({ tasks, clients }));
 
   return {

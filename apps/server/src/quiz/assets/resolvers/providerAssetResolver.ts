@@ -3,7 +3,9 @@ import type { RepositoryService } from "../../../repository.js";
 import { StudioLogger } from "../../../logger.js";
 import { Gpti2QuizImageProvider } from "../../../providers/gpti2Image.js";
 import { ShopAiKeyQuizImageProvider } from "../../../providers/shopAiKeyImage.js";
+import { GoogleImagenProvider } from "../../../providers/googleImagen.js";
 import { AntigravityImageChainProvider } from "../../../providers/antigravityImageChain.js";
+
 import { isContentFilterError, extractFilterReason, sanitizeImagePromptWithLLM } from "../../../utils/promptSanitizer.js";
 import type { AntigravityClient } from "../../../antigravity.js";
 
@@ -20,7 +22,8 @@ type ProviderAssetInput = {
   imageConfig?: {
     api_key?: string;
     model?: string;
-    provider?: "gpti2" | "shopaikey" | "custom";
+    provider?: "gpti2" | "shopaikey" | "custom" | "google";
+
     base_url?: string;
     quality?: string;
   };
@@ -158,6 +161,29 @@ async function generateAntigravityAsset(input: ProviderAssetInput): Promise<Prov
   };
 }
 
+async function generateGoogleAsset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
+  const { repository, channelId, episodeId, request, fingerprint, compiledPrompt, imageConfig } = input;
+  const provider = new GoogleImagenProvider(
+    repository,
+    { channelId, episodeId, assetId: request.asset_id, fingerprint },
+    imageConfig?.api_key || process.env.GEMINI_API_KEY || "",
+    imageConfig?.model || "gemini-3.1-flash-image",
+    imageConfig?.base_url,
+  );
+  const result = await provider.generateReference(compiledPrompt);
+  return {
+    entry: {
+      ...request,
+      fingerprint,
+      path: result.asset_path,
+      source: "provider",
+      fallback_tier: result.fallback_tier,
+      degraded: result.degraded,
+    },
+    tier3Fallback: false,
+  };
+}
+
 export async function generateAssetWithProvider(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
   const { configuredProvider, activeEngine, imageConfig } = input;
 
@@ -167,6 +193,10 @@ export async function generateAssetWithProvider(input: ProviderAssetInput): Prom
 
   if ((configuredProvider === "shopaikey" || configuredProvider === "custom") && (imageConfig?.api_key || ShopAiKeyQuizImageProvider.isConfigured())) {
     return generateShopAiKeyAsset(input);
+  }
+
+  if (configuredProvider === "google" && (imageConfig?.api_key || process.env.GEMINI_API_KEY)) {
+    return generateGoogleAsset(input);
   }
 
   if (activeEngine === "antigravity") {
@@ -179,3 +209,4 @@ export async function generateAssetWithProvider(input: ProviderAssetInput): Prom
 
   throw new Error("PROVIDER_UNAVAILABLE");
 }
+

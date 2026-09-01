@@ -98,12 +98,36 @@ function resolveScenesProgress(readiness: Readiness, tasks: Task[], questionTota
   return sequenceTasks.length > 0 ? sequenceTaskProgress(sequenceTasks, questionTotal) : itemProgress(readiness.scenes ? 1 : 0, 1, "task");
 }
 
+function resolveRenderProgress(state: QuizV2State, tasks: Task[], readiness: Readiness, pipelineTask?: Task | null): StageProgress {
+  const videoTask = latestRelevantTask("render", tasks);
+  const renderProgress = videoTask?.render_progress ?? pipelineTask?.render_progress;
+  if (renderProgress && renderProgress.total_frames > 0) {
+    return itemProgress(renderProgress.frames_completed, renderProgress.total_frames, "frames");
+  }
+  if (videoTask) {
+    if (videoTask.status === "COMPLETED" || readiness.video || state.stages.render === "ready") {
+      return itemProgress(1, 1, "task");
+    }
+    if (isTaskActive(videoTask) && typeof videoTask.progress_percent === "number") {
+      return {
+        completed: 0,
+        total: 1,
+        percent: Math.max(0, Math.min(100, Math.round(videoTask.progress_percent))),
+        unit: "task",
+      };
+    }
+  }
+  if (readiness.video || state.stages.render === "ready") {
+    return itemProgress(1, 1, "task");
+  }
+  return itemProgress(0, 1, "task");
+}
+
 const QUIZ_PREPRODUCTION_TASK_MAP: Partial<Record<RailStage, { types: Task["task_type"][]; readyKey: keyof Readiness }>> = {
   research: { types: ["GENERATE_RESEARCH"], readyKey: "research" },
   treatment: { types: ["GENERATE_TREATMENT"], readyKey: "treatment" },
   script: { types: ["GENERATE_SCRIPT"], readyKey: "script" },
   visualBible: { types: ["GENERATE_VISUAL_BIBLE"], readyKey: "visualBible" },
-  render: { types: ["GENERATE_VIDEO"], readyKey: "video" },
 };
 
 export function resolveProgress(
@@ -138,6 +162,9 @@ export function resolveProgress(
   }
   if (stage === "scenes") {
     return resolveScenesProgress(readiness, tasks, questionTotal, pipelineTask);
+  }
+  if (stage === "render") {
+    return resolveRenderProgress(state, tasks, readiness, pipelineTask);
   }
 
   const mapping = QUIZ_PREPRODUCTION_TASK_MAP[stage];

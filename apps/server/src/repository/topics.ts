@@ -167,6 +167,7 @@ export async function updateEpisodeSettings(
     ...(input.palette_id === undefined ? {} : { palette_id: input.palette_id }),
     ...(input.style_preset_id === undefined ? {} : { style_preset_id: input.style_preset_id }),
     ...(input.channel_brand_name === undefined ? {} : { channel_brand_name: input.channel_brand_name }),
+    ...(input.thumbnail_aspect_ratio === undefined ? {} : { thumbnail_aspect_ratio: input.thumbnail_aspect_ratio }),
     visual_style: nextStyle,
     resolved_visual_style: nextResolvedStyle,
   };

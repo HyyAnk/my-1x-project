@@ -29,9 +29,21 @@ import { CounterBadgeDropdown } from "./customization/CounterBadgeDropdown";
 import { BackgroundDropdown } from "./customization/BackgroundDropdown";
 import { ThinkingBarDropdown } from "./customization/ThinkingBarDropdown";
 import { PaletteDropdown } from "./customization/PaletteDropdown";
+import { ThumbnailRatioDropdown } from "./customization/ThumbnailRatioDropdown";
+import type { ThumbnailRatioMode } from "@studio/shared";
 
 export type EpisodeCustomizationDropdownName =
-  "preset" | "questions" | "visualStyle" | "questionBox" | "answerCard" | "counterBadge" | "background" | "thinkingBar" | "palette" | null;
+  | "preset"
+  | "questions"
+  | "visualStyle"
+  | "questionBox"
+  | "answerCard"
+  | "counterBadge"
+  | "background"
+  | "thinkingBar"
+  | "palette"
+  | "thumbnailRatio"
+  | null;
 
 type Props = {
   channel: Channel;
@@ -50,10 +62,12 @@ type Props = {
   onSaveCounterStyle: (style: QuizQuestionCounterStyle) => void;
   onSaveBackgroundStyle: (style: QuizBackgroundStyle) => void;
   onSavePaletteId: (palette: QuizPaletteId) => void;
+  onSaveThumbnailRatio?: (ratio: ThumbnailRatioMode) => void;
   onApplyStylePreset: (preset: VisualPresetItem) => void;
   setEpisode?: (episode: Episode | null) => void;
   onNotice?: (notice: NonNullable<Notice>) => void;
 };
+
 
 export function EpisodeQuizCustomizationBar({
   channel,
@@ -72,8 +86,10 @@ export function EpisodeQuizCustomizationBar({
   onSaveCounterStyle,
   onSaveBackgroundStyle,
   onSavePaletteId,
+  onSaveThumbnailRatio,
   onApplyStylePreset,
   setEpisode,
+
   onNotice,
 }: Props) {
   const { t } = useTranslation();
@@ -257,9 +273,21 @@ export function EpisodeQuizCustomizationBar({
               }}
               onPreview={setCandidate}
             />
+            <ThumbnailRatioDropdown
+              episode={episode}
+              disabled={isPipelineRunning}
+              saving={isSaving("thumbnailRatio")}
+              isOpen={openDropdown === "thumbnailRatio"}
+              onToggle={() => toggleDropdown("thumbnailRatio")}
+              onSelectRatio={(ratio) => {
+                onSaveThumbnailRatio?.(ratio);
+                setOpenDropdown(null);
+              }}
+            />
           </div>
         </div>
       </div>
+
 
       <EpisodeStylePreview
         channel={channel}

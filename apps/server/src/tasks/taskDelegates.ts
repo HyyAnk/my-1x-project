@@ -104,8 +104,8 @@ export const taskDelegates = {
   isShotPlanFresh(this: TaskManagerRuntime, channelId: string, episodeId: string): Promise<boolean> {
     return isShotPlanFreshImplementation.call(this, channelId, episodeId);
   },
-  waitForTaskTerminal(this: TaskManagerRuntime, taskId: string, run: PipelineRun): Promise<Task> {
-    return waitForTaskTerminalImplementation.call(this, taskId, run);
+  waitForTaskTerminal(this: TaskManagerRuntime, taskId: string, run: PipelineRun, onProgress?: (task: Task) => Promise<void> | void): Promise<Task> {
+    return waitForTaskTerminalImplementation.call(this, taskId, run, onProgress);
   },
   runAudioTask(this: TaskManagerRuntime, task: Task): Promise<void> {
     return runAudioTaskImplementation.call(this, task);

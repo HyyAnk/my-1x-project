@@ -40,14 +40,23 @@ export function getLanguageDisplayVi(codeOrName: string | null | undefined): str
 export function getCountryFlag(code: string | null | undefined): string {
   if (!code || code === "GLOBAL") return "🌐";
   const opt = getCountryOption(code);
-  return opt ? opt.flag : "🌐";
+  if (opt) return opt.flag;
+  if (code.length === 2) {
+    const chars = [...code.toUpperCase()].map((c) => c.charCodeAt(0));
+    if (chars[0] >= 65 && chars[0] <= 90 && chars[1] >= 65 && chars[1] <= 90) {
+      return String.fromCodePoint(0x1f1e6 + chars[0] - 65, 0x1f1e6 + chars[1] - 65);
+    }
+  }
+  return "🌐";
 }
 
 export function getCountryName(code: string | null | undefined): string {
   if (!code) return "Unknown";
   if (code === "GLOBAL") return "Global";
   const opt = getCountryOption(code);
-  return opt ? opt.nameEn || opt.name : code;
+  if (opt) return opt.nameEn || opt.name;
+  if (code.toUpperCase() === "VN") return "Vietnam";
+  return code;
 }
 
 export function getCountryRank(code: string | null | undefined): number {

@@ -17,7 +17,7 @@ export const AppConfigSchema = z.object({
     default_scene_duration_seconds: z.number().positive().default(6),
     narration_words_per_second: z.number().positive().default(2.3),
     aspect_ratio: MascotRenderAspectRatioSchema.default("16:9"),
-    max_concurrent_tasks: z.number().int().min(1).max(10).default(2),
+    max_concurrent_tasks: z.number().int().min(1).max(10).default(1),
     render_workers: z.number().int().min(1).max(16).optional(),
     fast_render_mode: z.boolean().default(false),
   }),

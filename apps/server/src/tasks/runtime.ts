@@ -99,5 +99,5 @@ export interface TaskManagerRuntime {
     topicHint?: string,
   ): Task;
   update(taskId: string, patch: Partial<Task>): Promise<void>;
-  waitForTaskTerminal(taskId: string, run: PipelineRun): Promise<Task>;
+  waitForTaskTerminal(taskId: string, run: PipelineRun, onProgress?: (task: Task) => Promise<void> | void): Promise<Task>;
 }

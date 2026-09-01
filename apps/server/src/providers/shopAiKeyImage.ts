@@ -5,8 +5,8 @@ import { compactImagePrompt } from "../utils/promptSanitizer.js";
 type ShopAiKeyImageTarget = {
   channelId: string;
   episodeId: string;
-  bundleNumber: number;
-  variant: number;
+  bundleNumber?: number;
+  variant?: number;
 };
 
 type ImageResponse = {
@@ -146,9 +146,9 @@ export class ShopAiKeyImageProvider implements ImageProvider {
       asset_path: await this.repository.writeBundleImage(
         this.target.channelId,
         this.target.episodeId,
-        this.target.bundleNumber,
+        this.target.bundleNumber ?? 1,
         await generateShopAiKeyImageBytes(prompt, cancellationSignal, this.options),
-        this.target.variant,
+        this.target.variant ?? 0,
       ),
     };
   }
