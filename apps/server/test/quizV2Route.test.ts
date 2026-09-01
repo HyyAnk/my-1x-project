@@ -90,13 +90,12 @@ describe("Quiz V2 route workflow", () => {
       const blockedRender = await app.server.inject({ method: "POST", url: base + "/render", payload: {} });
       expect(blockedRender.statusCode).toBe(400);
       expect(blockedRender.json().error).toContain("preflight blocked");
-      const legacyNarration = await app.server.inject({
+      const retiredNarrationRoute = await app.server.inject({
         method: "POST",
         url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/narration/assemble`,
         payload: {},
       });
-      expect(legacyNarration.statusCode).toBe(400);
-      expect(legacyNarration.json().error).toContain("Quiz V2 voice generation");
+      expect(retiredNarrationRoute.statusCode).toBe(404);
       const state = await app.server.inject({ method: "GET", url: base });
       expect(state.statusCode).toBe(200);
       expect(state.json().stages).toMatchObject({

@@ -341,12 +341,6 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   runAudioTask(task: Task): Promise<void> {
     return taskDelegates.runAudioTask.call(this, task);
   }
-  runNarrationTask(task: Task): Promise<void> {
-    return taskDelegates.runNarrationTask.call(this, task);
-  }
-  mergeNarrationSegments(paths: string[], targetDurationSeconds?: number): Promise<Uint8Array> {
-    return taskDelegates.mergeNarrationSegments.call(this, paths, targetDurationSeconds);
-  }
   handleNotification(method: string, params: Record<string, unknown>): void {
     return taskDelegates.handleNotification.call(this, method, params);
   }

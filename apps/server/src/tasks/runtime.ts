@@ -76,7 +76,6 @@ export interface TaskManagerRuntime {
   hasValidNarrationAsset(channelId: string, episodeId: string, assetPath: string | null): Promise<boolean>;
   isShotPlanFresh(channelId: string, episodeId: string): Promise<boolean>;
   list(): Task[];
-  mergeNarrationSegments(paths: string[], targetDurationSeconds?: number): Promise<Uint8Array>;
   retryQuizResearch(active: ActiveRun, reason: string): Promise<void>;
   retryScript(active: ActiveRun, reason: string): Promise<void>;
   retrySequenceScenes(active: ActiveRun, reason: string): Promise<void>;
@@ -86,7 +85,6 @@ export interface TaskManagerRuntime {
   runAntigravityBundleImageTask(task: Task): Promise<void>;
   runAudioTask(task: Task): Promise<void>;
   runGpti2BundleImageTask(task: Task): Promise<void>;
-  runNarrationTask(task: Task): Promise<void>;
   runPipelineTask(task: Task): Promise<void>;
   runQuizV2Pipeline(task: Task): Promise<void>;
   runShopAiKeyImageTask(task: Task): Promise<void>;

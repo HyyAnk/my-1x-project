@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { QuizAssessmentSchema, QuizAssetPlanSchema, QuizAssetResolutionSchema } from "@studio/shared";
+import { QuizAssessmentSchema, QuizAssetPlanSchema, QuizAssetResolutionSchema, TaskTypeSchema } from "@studio/shared";
 import { ContextEngine } from "../src/context.js";
 import { DEFAULT_CONFIG } from "../src/config.js";
 import { StudioLogger } from "../src/logger.js";
@@ -23,6 +23,13 @@ import { deriveQuizV2FromScenes } from "../src/quiz/domain/quiz.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 
 const roots: string[] = [];
+
+describe("Quiz-only task contracts", () => {
+  it("rejects the retired master narration task type", () => {
+    const retiredTaskType = ["GENERATE_", "NARRATION"].join("");
+    expect(TaskTypeSchema.safeParse(retiredTaskType).success).toBe(false);
+  });
+});
 
 describe("markdown extraction", () => {
   it("preserves full document content when internal code blocks are present", () => {
@@ -326,48 +333,6 @@ afterEach(async () => {
 });
 
 describe("TaskManager locks", () => {
-  it("rejects legacy narration tasks for Quiz channels", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "documentary-quiz-v2-narration-guard-"));
-    roots.push(root);
-    await mkdir(path.join(root, "templates"), { recursive: true });
-    await mkdir(path.join(root, "shared"), { recursive: true });
-    await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# DNA\n", "utf8");
-    await writeFile(path.join(root, "templates", "quiz_channel_dna.md"), "# Quiz DNA\n", "utf8");
-    await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style\n", "utf8");
-    const repository = new RepositoryService(root);
-    const channel = await repository.createChannel({
-      name: "Quiz Narration Guard",
-      description: "",
-      target_audience: "",
-      language: "English",
-      market: "Global",
-      group_id: "quiz",
-      dna_mode: "example",
-    });
-    const topics = Array.from({ length: 5 }, (_, index) => ({
-      topic_id: `guard_topic_${index}`,
-      channel_id: channel.channel_id,
-      title: `Guard Topic ${index}`,
-      premise: "Premise",
-      why_it_fits: "Fits",
-      hook: "Hook",
-      estimated_potential: "High",
-      generated_at: new Date().toISOString(),
-      selected: false,
-      quiz_format: "multiple_choice" as const,
-      question_count: 3,
-      age_band: "7-9" as const,
-    }));
-    await repository.saveTopicRun(channel.channel_id, topics);
-    const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
-    const logger = new StudioLogger(root);
-    await logger.init();
-    const manager = new TaskManager(repository, new ContextEngine(repository, logger), new FakeCodex() as never, 1, 8, logger);
-    await manager.load();
-    const task = manager.submit("GENERATE_NARRATION", channel.channel_id, episode.episode_id);
-    await waitFor(() => manager.get(task.task_id).status === "FAILED");
-  });
-
   it("serializes two tasks targeting the same episode", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "documentary-tasks-"));
     roots.push(root);
@@ -899,7 +864,7 @@ describe("TaskManager locks", () => {
       .filter((task) => task.episode_id === episode.episode_id)
       .map((task) => task.task_type);
     expect(taskTypes).toContain("GENERATE_VIDEO");
-    expect(taskTypes).not.toContain("GENERATE_NARRATION");
+    expect(taskTypes).not.toContain(["GENERATE_", "NARRATION"].join(""));
   });
 
   it("accumulates elapsed time when retrying a pipeline or task", async () => {

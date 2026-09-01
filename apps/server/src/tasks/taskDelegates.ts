@@ -2,11 +2,7 @@ import type { Task } from "@studio/shared";
 import type { CodexServerRequest } from "../codex.js";
 import type { ImageProvider } from "../providers/index.js";
 import type { TaskManagerRuntime, PipelineRun, ActiveRun } from "./runtime.js";
-import {
-  runAudioTask as runAudioTaskImplementation,
-  runNarrationTask as runNarrationTaskImplementation,
-  mergeNarrationSegments as mergeNarrationSegmentsImplementation,
-} from "./audioRunner.js";
+import { runAudioTask as runAudioTaskImplementation } from "./audioRunner.js";
 import {
   run as runImplementation,
   handleNotification as handleNotificationImplementation,
@@ -113,12 +109,6 @@ export const taskDelegates = {
   },
   runAudioTask(this: TaskManagerRuntime, task: Task): Promise<void> {
     return runAudioTaskImplementation.call(this, task);
-  },
-  runNarrationTask(this: TaskManagerRuntime, task: Task): Promise<void> {
-    return runNarrationTaskImplementation.call(this, task);
-  },
-  mergeNarrationSegments(this: TaskManagerRuntime, paths: string[], targetDurationSeconds?: number): Promise<Uint8Array> {
-    return mergeNarrationSegmentsImplementation.call(this, paths, targetDurationSeconds);
   },
   handleNotification(this: TaskManagerRuntime, method: string, params: Record<string, unknown>): void {
     return handleNotificationImplementation.call(this, method, params);

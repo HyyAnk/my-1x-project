@@ -3,12 +3,10 @@ import { createReadStream } from "node:fs";
 import { readFile } from "node:fs/promises";
 import type { FastifyInstance, FastifyPluginCallback, FastifyReply } from "fastify";
 import { GenerateAllAudioInputSchema, SceneSchema } from "@studio/shared";
-import { countWords, extractNarration, extractNarrationChunks } from "../production.js";
 import { RepositoryError, type RepositoryService } from "../repository.js";
 import { composeMergedVisualPrompt, mergeEditorialOverlays } from "../sceneTiming.js";
 import type { TaskManager } from "../tasks.js";
 import { createStoredZip } from "../zip.js";
-import { wavDurationSeconds } from "../utils/binary.js";
 import type { AppState } from "./state.js";
 
 export type AudioVideoRouteDeps = {
@@ -21,57 +19,6 @@ export type AudioVideoRouteDeps = {
 export function registerAudioVideoRoutes(deps: AudioVideoRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
     const { repository, tasks, state, revealFile } = deps;
-    server.post("/api/channels/:channelId/episodes/:episodeId/narration/assemble", async (request) => {
-      const params = request.params as { channelId: string; episodeId: string };
-      const channel = await repository.getChannel(params.channelId);
-      if (channel.engine === "quiz") throw new RepositoryError("Quiz channels use Quiz V2 voice generation", "QUIZ_V2_REQUIRED");
-      const [episode, script] = await Promise.all([
-        repository.getEpisode(params.channelId, params.episodeId),
-        repository.getEpisodeFile(params.channelId, params.episodeId, "script.md"),
-      ]);
-      const chunks = extractNarrationChunks(script.content, 60, true).filter((chunk) => countWords(chunk.text) >= 3);
-      const paths: string[] = [];
-      for (let index = 0; index < chunks.length; index += 1) {
-        paths.push(
-          (await repository.getEpisodeAudioFile(params.channelId, params.episodeId, `narration-${String(index + 1).padStart(2, "0")}.wav`))
-            .absolutePath,
-        );
-      }
-      let response: Response;
-      try {
-        response = await fetch(`${state.config.audio_generation.service_url.replace(/\/$/, "")}/merge`, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            paths,
-            gap_ms: state.config.audio_generation.merge_gap_ms,
-            ...(state.config.audio_generation.match_target_duration
-              ? { target_duration_seconds: episode.target_duration_minutes * 60 }
-              : {}),
-          }),
-          signal: AbortSignal.timeout(3 * 60 * 1000),
-        });
-      } catch (err) {
-        if (err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError")) {
-          throw new RepositoryError("Audio merge timed out after 3 minutes", "AUDIO_MERGE_TIMEOUT");
-        }
-        throw new RepositoryError("Audio service unavailable", "AUDIO_SERVICE_UNAVAILABLE");
-      }
-      if (!response.ok)
-        throw new RepositoryError(`Narration assembly failed: ${(await response.text()).slice(0, 240)}`, "AUDIO_MERGE_FAILED");
-      const audio = new Uint8Array(await response.arrayBuffer());
-      const assetPath = await repository.writeNarrationAudio(params.channelId, params.episodeId, audio);
-      const duration = wavDurationSeconds(audio);
-      const updated = await repository.saveNarrationMetadata(
-        params.channelId,
-        params.episodeId,
-        assetPath,
-        duration,
-        chunks.length,
-        countWords(extractNarration(script.content)),
-      );
-      return { episode: updated, asset_path: assetPath };
-    });
     server.post("/api/channels/:channelId/episodes/:episodeId/scenes/:sceneNumber/audio", async (request, reply) => {
       const params = request.params as { channelId: string; episodeId: string; sceneNumber: string };
       const sceneNumber = Number(params.sceneNumber);

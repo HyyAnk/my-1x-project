@@ -2,7 +2,7 @@ import type { Task, TaskType } from "@studio/shared";
 import type { TaskManagerRuntime } from "./runtime.js";
 
 export const channelTaskTypes = new Set<TaskType>(["GENERATE_DNA", "SUGGEST_TOPICS"]);
-export const audioTaskTypes = new Set<TaskType>(["GENERATE_AUDIO", "GENERATE_NARRATION"]);
+export const audioTaskTypes = new Set<TaskType>(["GENERATE_AUDIO"]);
 export const imageTaskTypes = new Set<TaskType>(["GENERATE_BUNDLE_IMAGE"]);
 export const videoTaskTypes = new Set<TaskType>(["GENERATE_VIDEO"]);
 export const pipelineTaskTypes = new Set<TaskType>(["GENERATE_PIPELINE"]);
@@ -99,7 +99,7 @@ export async function pumpTaskQueue(
     });
   }
 
-  // 5. Audio / Narration Lane
+  // 5. Scene Audio Lane
   while (runtime.runningAudioCount < runtime.audioConfig.max_concurrent_tasks) {
     const next = runtime
       .list()
