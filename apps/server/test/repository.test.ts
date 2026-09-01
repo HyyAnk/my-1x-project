@@ -41,6 +41,11 @@ describe("RepositoryService", () => {
     expect(first.slug).toBe("doi-song-may-moc");
     expect(second.slug).toBe("doi-song-may-moc-2");
     expect((await repository.listChannels()).length).toBe(2);
+    const persisted = JSON.parse(
+      await readFile(path.join(repository.storageRoot, "channels", first.slug, "channel.json"), "utf8"),
+    ) as Record<string, unknown>;
+    expect(persisted).not.toHaveProperty("group_id");
+    expect(persisted).not.toHaveProperty("engine");
     expect((await repository.getChannelDna(first.channel_id)).content).toContain("Channel DNA");
     await repository.saveChannelDna(first.channel_id, "# Updated DNA\n");
     expect(await readFile(path.join(repository.rootDirectory, "channels", first.slug, "channel_dna.md"), "utf8")).toBe("# Updated DNA\n");

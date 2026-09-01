@@ -108,8 +108,6 @@ test("channel library exposes channels and the primary create action", async ({ 
     created_at: "2026-08-16T00:00:00.000Z",
     updated_at: "2026-08-16T00:00:00.000Z",
     episode_count: 0,
-    group_id: "quiz",
-    engine: "quiz",
   };
   const nature = {
     ...quiz,
@@ -117,8 +115,6 @@ test("channel library exposes channels and the primary create action", async ({ 
     slug: "group-nature",
     display_name: "Group nature",
     description: "Nature quiz",
-    group_id: "quiz",
-    engine: "quiz",
   };
   await page.route("**/api/channels", (route) =>
     route.fulfill({ contentType: "application/json", body: JSON.stringify({ channels: [quiz, nature] }) }),
@@ -146,8 +142,6 @@ test("channel deletion requires an explicit Yes and typed confirmation", async (
     created_at: "2026-08-16T00:00:00.000Z",
     updated_at: "2026-08-16T00:00:00.000Z",
     episode_count: 0,
-    group_id: "quiz",
-    engine: "quiz",
   };
   let deleted = false;
   let deleteContentType: string | null = null;
@@ -203,8 +197,6 @@ test("failed tasks expose a retry path with the original task scope", async ({ p
     created_at: "2026-08-16T00:00:00.000Z",
     updated_at: "2026-08-16T00:00:00.000Z",
     episode_count: 1,
-    group_id: "quiz",
-    engine: "quiz",
   };
   const failedTask = {
     task_id: "task_retry_failed",
@@ -274,8 +266,6 @@ test("episode deletion uses a direct Yes or No confirmation", async ({ page }) =
     created_at: "2026-08-16T00:00:00.000Z",
     updated_at: "2026-08-16T00:00:00.000Z",
     episode_count: 1,
-    group_id: "quiz",
-    engine: "quiz",
   };
   const episode = {
     episode_id: "ep_delete",
@@ -432,8 +422,6 @@ test("topic confirmation sends the selected question count before episode genera
     created_at: "2026-08-16T00:00:00.000Z",
     updated_at: "2026-08-16T00:00:00.000Z",
     episode_count: 0,
-    group_id: "quiz",
-    engine: "quiz",
   };
   const topic = {
     topic_id: "topic_count_1",

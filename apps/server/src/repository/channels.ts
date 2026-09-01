@@ -93,8 +93,6 @@ export async function createChannel(this: RepositoryRuntime, input: CreateChanne
     created_at: timestamp,
     updated_at: timestamp,
     episode_count: 0,
-    group_id: "quiz",
-    engine: "quiz",
   });
   await this.writeJsonAtomic(path.join(directory, "channel.json"), channel);
   return channel;

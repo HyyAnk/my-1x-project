@@ -104,7 +104,6 @@ describe("ContextEngine", () => {
       target_audience: "Children",
       language: "English",
       market: "Global",
-      group_id: "quiz",
       dna_mode: "ai",
     });
     const logger = new StudioLogger(root, true);

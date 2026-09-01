@@ -32,7 +32,6 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         language: "English",
         market: "US",
         dna_mode: "quiz",
-        group_id: "quiz",
       });
 
       // 2. Create a new Mascot

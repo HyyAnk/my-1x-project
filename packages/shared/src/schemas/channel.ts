@@ -14,34 +14,36 @@ import { IsoDate, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "./com
 import { ChannelMascotConfigSchema } from "./mascot.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 
-export const ChannelSchema = z.object({
-  channel_id: z.string().min(1),
-  slug: z.string().min(1),
-  display_name: z.string().min(1),
-  description: z.string().default(""),
-  target_audience: z.string().default(""),
-  language: z.string().default("English"),
-  country: z.string().default("GLOBAL"),
-  market: z.string().default(""),
-  channel_dna_path: z.string().min(1),
-  style_guide_path: z.string().nullable().default(null),
-  status: ChannelStatusSchema,
-  created_at: IsoDate,
-  updated_at: IsoDate,
-  episode_count: z.number().int().nonnegative().default(0),
-  voice_reference_path: z.string().nullable().default(null),
-  group_id: z.string().default("quiz"),
-  engine: z.string().default("quiz"),
-  selected_styles: z.array(QuizImageStyleSchema).default(["pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]),
-  default_thinking_bar_style: QuizThinkingBarStyleSchema.optional().default("auto"),
-  default_question_box_style: QuizQuestionBoxStyleSchema.optional().default("auto"),
-  default_answer_card_style: QuizAnswerCardStyleSchema.optional().default("auto"),
-  default_counter_style: QuizQuestionCounterStyleSchema.optional().default("auto"),
-  default_background_style: QuizBackgroundStyleSchema.optional().default("auto"),
-  default_palette_id: z.string().optional().default("auto"),
-  mascot_id: z.string().nullable().default(null),
-  mascot_config: ChannelMascotConfigSchema.default({ enabled: true, position: "bottom_left", scale: 1.0 }),
-});
+export const ChannelSchema = z
+  .object({
+    channel_id: z.string().min(1),
+    slug: z.string().min(1),
+    display_name: z.string().min(1),
+    description: z.string().default(""),
+    target_audience: z.string().default(""),
+    language: z.string().default("English"),
+    country: z.string().default("GLOBAL"),
+    market: z.string().default(""),
+    channel_dna_path: z.string().min(1),
+    style_guide_path: z.string().nullable().default(null),
+    status: ChannelStatusSchema,
+    created_at: IsoDate,
+    updated_at: IsoDate,
+    episode_count: z.number().int().nonnegative().default(0),
+    voice_reference_path: z.string().nullable().default(null),
+    selected_styles: z
+      .array(QuizImageStyleSchema)
+      .default(["pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]),
+    default_thinking_bar_style: QuizThinkingBarStyleSchema.optional().default("auto"),
+    default_question_box_style: QuizQuestionBoxStyleSchema.optional().default("auto"),
+    default_answer_card_style: QuizAnswerCardStyleSchema.optional().default("auto"),
+    default_counter_style: QuizQuestionCounterStyleSchema.optional().default("auto"),
+    default_background_style: QuizBackgroundStyleSchema.optional().default("auto"),
+    default_palette_id: z.string().optional().default("auto"),
+    mascot_id: z.string().nullable().default(null),
+    mascot_config: ChannelMascotConfigSchema.default({ enabled: true, position: "bottom_left", scale: 1.0 }),
+  })
+  .strict();
 
 export type Channel = z.infer<typeof ChannelSchema>;
 

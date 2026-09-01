@@ -29,17 +29,18 @@ export type RemixQuestionsInput = z.infer<typeof RemixQuestionsInputSchema>;
 export const SaveHistorySettingsInputSchema = QuestionHistorySettingsSchema.partial();
 export type SaveHistorySettingsInput = z.infer<typeof SaveHistorySettingsInputSchema>;
 
-export const CreateChannelInputSchema = z.object({
-  name: z.string().trim().min(1).max(120),
-  description: z.string().trim().max(1000).default(""),
-  target_audience: z.string().trim().max(240).default(""),
-  language: z.string().trim().max(80).default("English"),
-  country: z.string().trim().max(80).default("GLOBAL"),
-  market: z.string().trim().max(120).default(""),
-  dna_mode: z.enum(["example", "ai", "upload"]).default("example"),
-  dna_content: z.string().optional(),
-  group_id: z.string().default("quiz"),
-});
+export const CreateChannelInputSchema = z
+  .object({
+    name: z.string().trim().min(1).max(120),
+    description: z.string().trim().max(1000).default(""),
+    target_audience: z.string().trim().max(240).default(""),
+    language: z.string().trim().max(80).default("English"),
+    country: z.string().trim().max(80).default("GLOBAL"),
+    market: z.string().trim().max(120).default(""),
+    dna_mode: z.enum(["example", "ai", "upload"]).default("example"),
+    dna_content: z.string().optional(),
+  })
+  .strict();
 
 export type CreateChannelInput = z.infer<typeof CreateChannelInputSchema>;
 

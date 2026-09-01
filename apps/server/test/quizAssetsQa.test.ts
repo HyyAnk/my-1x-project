@@ -178,7 +178,6 @@ describe("Quiz V2 assets and QA", () => {
       language: "English",
       market: "",
       dna_mode: "example",
-      group_id: "quiz",
     });
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: "topic-" + index,
@@ -260,7 +259,6 @@ describe("Quiz V2 assets and QA", () => {
       language: "English",
       market: "",
       dna_mode: "example",
-      group_id: "quiz",
     });
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: "topic-" + index,

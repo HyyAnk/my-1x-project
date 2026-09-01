@@ -47,8 +47,6 @@ test("Quiz Engine V2 rail is status-only and Build video is the single productio
     created_at: "2026-08-16T00:00:00.000Z",
     updated_at: "2026-08-16T00:00:00.000Z",
     episode_count: 1,
-    group_id: "quiz",
-    engine: "quiz",
   };
   const episode = {
     episode_id: "ep_quiz_v2",

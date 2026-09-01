@@ -17,8 +17,6 @@ const mockChannel: Channel = {
   description: "Quiz channel",
   status: "ACTIVE",
   target_audience: "kids",
-  engine: "quiz",
-  group_id: "quiz",
   default_palette_id: "sunny",
   default_thinking_bar_style: "star_slider",
   default_question_box_style: "candy_pop",

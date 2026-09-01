@@ -69,7 +69,6 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
       language: "English",
       market: "Global",
       dna_mode: "example",
-      group_id: "quiz",
     });
 
     const topics = Array.from({ length: 5 }, (_, index) => ({
@@ -294,7 +293,6 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
       language: "English",
       market: "Global",
       dna_mode: "example",
-      group_id: "quiz",
     });
 
     const topics = Array.from({ length: 5 }, (_, index) => ({
@@ -449,7 +447,6 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
       language: "English",
       market: "Global",
       dna_mode: "example",
-      group_id: "quiz",
     });
 
     const topics = Array.from({ length: 5 }, (_, index) => ({

@@ -18,7 +18,6 @@ const channel = {
   language: "Vietnamese",
   country: "Vietnam",
   timezone: "Asia/Ho_Chi_Minh",
-  engine: "quiz",
   status: "ACTIVE",
   created_at: "2026-08-30T00:00:00.000Z",
   updated_at: "2026-08-30T00:00:00.000Z",

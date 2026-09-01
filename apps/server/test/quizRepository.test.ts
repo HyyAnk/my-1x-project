@@ -22,7 +22,6 @@ async function fixture(): Promise<{ repository: RepositoryService; channelId: st
     language: "English",
     market: "",
     dna_mode: "example",
-    group_id: "quiz",
   });
   const topics = Array.from({ length: 5 }, (_, index) => ({
     topic_id: "topic-" + index,
@@ -159,7 +158,6 @@ describe("Quiz V2 repository artifacts", () => {
     expect((await repository.getEpisode(channelId, episodeId)).video_asset_path).toBeNull();
     await expect(repository.getEpisodeVideoFile(channelId, episodeId)).rejects.toThrow("not found");
 
-    const channel = await repository.getChannel(channelId);
     const topics = await repository.listTopics(channelId);
     const legacyEpisode = await repository.confirmTopic(channelId, topics[1].topic_id);
     const legacyVideo = await repository.writeVideoArtifact(channelId, legacyEpisode.episode_id, new Uint8Array([4, 5, 6]));
@@ -167,7 +165,6 @@ describe("Quiz V2 repository artifacts", () => {
     await repository.saveVideoMetadata(channelId, legacyEpisode.episode_id, legacyVideo, 10, legacyManifest);
     await repository.invalidateQuizArtifacts(channelId, legacyEpisode.episode_id, ["render"]);
     expect((await repository.getEpisode(channelId, legacyEpisode.episode_id)).video_asset_path).toBe(legacyVideo);
-    expect(channel.engine).toBe("quiz");
   });
 
   it("updates and persists episode visual customization settings (answer_card, palette, preset)", async () => {

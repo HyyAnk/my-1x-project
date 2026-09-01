@@ -105,7 +105,6 @@ function createChannel(app: StudioApp) {
     language: "English",
     market: "",
     dna_mode: "example",
-    group_id: "quiz",
   });
 }
 

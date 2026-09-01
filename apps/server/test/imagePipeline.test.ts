@@ -68,7 +68,6 @@ describe("Multi-Tier Image Pipeline", () => {
 
     const channel = await repository.createChannel({
       name: "Test Quiz Channel",
-      group_id: "quiz",
       language: "English",
       target_audience: "family",
       market: "US",

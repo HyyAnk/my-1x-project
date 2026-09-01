@@ -534,7 +534,6 @@ describe("TaskManager locks", () => {
       target_audience: "Children",
       language: "English",
       market: "Global",
-      group_id: "quiz",
       dna_mode: "example",
     });
     const topics = Array.from({ length: 5 }, (_, index) => ({
@@ -664,7 +663,6 @@ describe("TaskManager locks", () => {
       target_audience: "Children",
       language: "English",
       market: "Global",
-      group_id: "quiz",
       dna_mode: "example",
     });
     const topics = Array.from({ length: 5 }, (_, index) => ({
@@ -712,7 +710,6 @@ describe("TaskManager locks", () => {
       target_audience: "",
       language: "English",
       market: "Global",
-      group_id: "quiz",
       dna_mode: "example",
     });
     const topics = Array.from({ length: 5 }, (_, index) => ({

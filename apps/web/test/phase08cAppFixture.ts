@@ -94,8 +94,6 @@ function phase08cChannel() {
     updated_at: "2026-08-31T00:00:00.000Z",
     episode_count: 0,
     voice_reference_path: null,
-    group_id: "quiz",
-    engine: "quiz",
     selected_styles: ["pixar_3d"],
     default_thinking_bar_style: "star_slider",
     default_question_box_style: "candy_pop",

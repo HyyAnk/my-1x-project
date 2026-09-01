@@ -63,7 +63,6 @@ describe("Mascot Stage default placement preset", () => {
         language: "English",
         market: "",
         dna_mode: "example",
-        group_id: "quiz",
       });
       const firstMascot = await app.repository.saveMascot({ name: "First Mascot" });
       const secondMascot = await app.repository.saveMascot({ name: "Second Mascot" });

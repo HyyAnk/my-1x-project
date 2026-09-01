@@ -12,8 +12,6 @@ const mockChannel: Channel = {
   slug: "trivia-channel",
   display_name: "Trivia Channel",
   description: "Trivia test description",
-  engine: "quiz",
-  group_id: "quiz",
   target_audience: "General",
   language: "en",
   country: "US",

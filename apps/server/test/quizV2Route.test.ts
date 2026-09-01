@@ -37,7 +37,6 @@ describe("Quiz V2 route workflow", () => {
         language: "English",
         market: "",
         dna_mode: "example",
-        group_id: "quiz",
       });
       const topics = Array.from({ length: 5 }, (_, index) => ({
         topic_id: "topic-" + index,
@@ -127,7 +126,6 @@ describe("Quiz V2 route workflow", () => {
         language: "English",
         market: "Global",
         dna_mode: "example",
-        group_id: "quiz",
       });
       const topics = Array.from({ length: 5 }, (_, index) => ({
         topic_id: "render-topic-" + index,

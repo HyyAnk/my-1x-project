@@ -234,7 +234,6 @@ describe("BGM Registry and Audio Pipeline", () => {
         language: "English",
         market: "",
         dna_mode: "example",
-        group_id: "quiz",
       });
 
       // Initially empty

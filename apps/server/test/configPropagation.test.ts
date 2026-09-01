@@ -29,7 +29,6 @@ describe("route config propagation", () => {
         language: "English",
         market: "",
         dna_mode: "example",
-        group_id: "quiz",
       });
       const topics = Array.from({ length: 5 }, (_, index) => ({
         topic_id: `config-topic-${index}`,
