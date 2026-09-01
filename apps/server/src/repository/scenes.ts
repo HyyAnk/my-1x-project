@@ -11,8 +11,7 @@ function clearSceneAudio(scene: Scene): Scene {
   return { ...scene, audio_asset_path: null, audio_generated_at: null, audio_duration_seconds: null };
 }
 
-function assertQuizSceneChoicePolicy(scenes: Scene[], episode: Episode, isQuizChannel: boolean): void {
-  if (!isQuizChannel) return;
+function assertQuizSceneChoicePolicy(scenes: Scene[], episode: Episode): void {
   const normalizedFormat = episode.quiz_config.quiz_format === "knowledge" ? "multiple_choice" : episode.quiz_config.quiz_format;
   const requiredChoiceCount = quizChoiceCountForFormat(normalizedFormat);
   for (const scene of scenes) {
@@ -28,13 +27,12 @@ function assertQuizSceneChoicePolicy(scenes: Scene[], episode: Episode, isQuizCh
 import type { RepositoryRuntime } from "./runtime.js";
 
 export async function readScenes(this: RepositoryRuntime, channelId: string, episodeId: string): Promise<Scene[]> {
-  const [file, episode, channel] = await Promise.all([
+  const [file, episode] = await Promise.all([
     this.getEpisodeFile(channelId, episodeId, "scene_plan.md"),
     this.getEpisode(channelId, episodeId),
-    this.getChannel(channelId),
   ]);
   const scenes = parseScenes(file.content, episodeId);
-  assertQuizSceneChoicePolicy(scenes, episode, channel.engine === "quiz");
+  assertQuizSceneChoicePolicy(scenes, episode);
   return scenes;
 }
 
@@ -219,7 +217,7 @@ export async function saveScenes(this: RepositoryRuntime, channelId: string, epi
   const channel = await this.getChannel(channelId);
   const previousScenes = await this.readScenes(channelId, episodeId);
   const normalized = scenes.map((scene, index) => SceneSchema.parse({ ...scene, scene_number: index + 1, episode_id: episodeId }));
-  assertQuizSceneChoicePolicy(normalized, episode, channel.engine === "quiz");
+  assertQuizSceneChoicePolicy(normalized, episode);
   const withFreshAudio = normalized.map((scene) => {
     const previous = previousScenes.find((item) => item.scene_number === scene.scene_number);
     if (previous && previous.dialogue !== scene.dialogue) return clearSceneAudio(scene);
@@ -238,7 +236,5 @@ export async function saveScenes(this: RepositoryRuntime, channelId: string, epi
 }
 
 export async function invalidateQuizSourceArtifacts(this: RepositoryRuntime, channelId: string, episodeId: string): Promise<void> {
-  const channel = await this.getChannel(channelId);
-  if (channel.engine !== "quiz") return;
   await this.invalidateQuizArtifacts(channelId, episodeId, quizInvalidationStages("research"));
 }

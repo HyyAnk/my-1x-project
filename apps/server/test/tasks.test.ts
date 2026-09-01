@@ -771,19 +771,37 @@ describe("TaskManager locks", () => {
       channel.channel_id,
       episode.episode_id,
       "treatment.md",
-      "# Treatment\n\n## Sequence 1\nA short quiz sequence.",
+      "# Treatment\n\n## Question 1\nTiger question.\n\n## Question 2\nDolphin question.\n\n## Question 3\nElephant question.",
     );
     await repository.saveEpisodeFile(
       channel.channel_id,
       episode.episode_id,
       "script.md",
-      "# V2 Pipeline Topic 0\n\n<!-- HUMOR_POLICY: v1 -->\n\n## Question 1\nWhich animal has stripes?\n\nTiger is the answer.",
+      "# V2 Pipeline Topic 0\n\n<!-- HUMOR_POLICY: v1 -->\n\n## Question 1\nGuess which animal has stripes. Tiger is the answer.\n\n## Question 2\nGuess which animal swims. Dolphin is the answer.\n\n## Question 3\nGuess which animal has a trunk. Elephant is the answer.",
     );
     await repository.saveEpisodeFile(
       channel.channel_id,
       episode.episode_id,
       "visual_bible.md",
-      "# Episode Visual Bible\n\nReady visual system.",
+      [
+        "# Episode Visual Bible",
+        "",
+        "## Safe motion",
+        "",
+        "Gentle fades with a static reduced-motion fallback.",
+        "",
+        "## Continuity bundle CB-01 — Tiger",
+        "",
+        "Anchor-frame prompt: A friendly tiger. Reference asset slots: tiger.",
+        "",
+        "## Continuity bundle CB-02 — Dolphin",
+        "",
+        "Anchor-frame prompt: A friendly dolphin. Reference asset slots: dolphin.",
+        "",
+        "## Continuity bundle CB-03 — Elephant",
+        "",
+        "Anchor-frame prompt: A friendly elephant. Reference asset slots: elephant.",
+      ].join("\n"),
     );
     await repository.saveScenes(channel.channel_id, episode.episode_id, [
       {
@@ -874,7 +892,8 @@ describe("TaskManager locks", () => {
     };
     internals.runVideoTask = async (task) => internals.finish(task.task_id, "COMPLETED", null, []);
     const pipeline = manager.submit("GENERATE_PIPELINE", channel.channel_id, episode.episode_id);
-    await waitFor(() => manager.get(pipeline.task_id).status === "COMPLETED");
+    await waitFor(() => ["COMPLETED", "FAILED", "CANCELLED"].includes(manager.get(pipeline.task_id).status));
+    expect(manager.get(pipeline.task_id)).toMatchObject({ status: "COMPLETED", error: null });
     const taskTypes = manager
       .list()
       .filter((task) => task.episode_id === episode.episode_id)

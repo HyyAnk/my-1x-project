@@ -10,7 +10,6 @@ export type ArtifactContext = {
   dna: string;
   dnaPath: string;
   stylePath: string;
-  isQuiz: boolean;
   runtimeConfig: { video_generation: { max_scene_duration_seconds?: number; narration_words_per_second?: number } };
   add: (file: ContextFile) => void;
   loadArtifact: (filename: string, required?: boolean) => Promise<{ path: string; content: string }>;

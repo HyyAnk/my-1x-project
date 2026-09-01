@@ -142,9 +142,6 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
     });
     server.post("/api/channels/:channelId/episodes/:episodeId/quiz-v2/render", async (request, reply) => {
       const params = request.params as { channelId: string; episodeId: string };
-      const channel = await repository.getChannel(params.channelId);
-      if (channel.engine !== "quiz")
-        throw new RepositoryError("Quiz V2 rendering is only available for Quiz channels", "QUIZ_CHANNEL_REQUIRED");
       await assertQuizRenderReady(pipelineDeps(params.channelId, params.episodeId));
       const task = tasks.submit("GENERATE_VIDEO", params.channelId, params.episodeId);
       return reply.code(202).send({ task });

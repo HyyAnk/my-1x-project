@@ -12,18 +12,17 @@ export async function completeWithOutput(this: TaskManagerRuntime, active: Activ
   try {
     const output = active.output.trim();
     const task = active.task;
-    const channel = await this.repository.getChannel(task.channel_id);
     let outputFiles: string[] = [];
 
-    const textOutputFiles = await handleTextArtifactOutput(this, active, channel, output);
+    const textOutputFiles = await handleTextArtifactOutput(this, active, output);
     if (textOutputFiles !== null) {
       outputFiles = textOutputFiles;
     } else if (task.task_type === "GENERATE_BUNDLE_IMAGE") {
       outputFiles = await handleBundleImageOutput(this, active, output);
     } else if (task.task_type === "GENERATE_SEQUENCE_SCENES") {
-      outputFiles = await handleSequenceScenesOutput(this, active, channel, output);
+      outputFiles = await handleSequenceScenesOutput(this, active, output);
     } else if (task.task_type === "GENERATE_SCENES") {
-      outputFiles = await handleAllScenesOutput(this, active, channel, output);
+      outputFiles = await handleAllScenesOutput(this, active, output);
     } else {
       outputFiles = await handleRegenerateSceneOutput(this, active, output);
     }
@@ -47,7 +46,7 @@ export async function completeWithOutput(this: TaskManagerRuntime, active: Activ
     if (
       active.task.task_type === "GENERATE_SCRIPT" &&
       active.scriptAttempts < 1 &&
-      (message.startsWith("Script quality gate failed") || message.startsWith("Quiz script quality gate failed"))
+      message.startsWith("Quiz script quality gate failed")
     ) {
       try {
         await this.retryScript(active, message);
@@ -60,7 +59,7 @@ export async function completeWithOutput(this: TaskManagerRuntime, active: Activ
     if (
       active.task.task_type === "GENERATE_VISUAL_BIBLE" &&
       active.visualBibleAttempts < 1 &&
-      (message.startsWith("Visual bible quality gate failed") || message.startsWith("Quiz visual bible quality gate failed"))
+      message.startsWith("Quiz visual bible quality gate failed")
     ) {
       try {
         await this.retryVisualBible(active, message);

@@ -1,9 +1,7 @@
 import { readFile } from "node:fs/promises";
 import type { ContextManifest } from "@studio/shared";
-import { calibratedScriptTargetWords, scriptWordBounds } from "../production.js";
-import { extractArtifactSectionNumbers } from "../artifactSections.js";
 import { isPlaceholderArtifact } from "../tasks/validators.js";
-import { buildOutputContract, humorGuidanceForDuration, sequenceGuidanceForDuration } from "../contextContracts.js";
+import { buildOutputContract } from "../contextContracts.js";
 import type { ContextFile } from "./contextTypes.js";
 import { composeContextPrompt, finalizeContextManifest, readRuntimeConfig } from "./contextManifestFinalizer.js";
 import { loadPipelineArtifacts, type ArtifactContext } from "./pipelineArtifactLoader.js";
@@ -13,7 +11,6 @@ export { type EpisodeContextInput } from "./shotArtifactLoader.js";
 
 export async function buildEpisodeContext(input: EpisodeContextInput): Promise<ContextManifest> {
   const { repository, logger, channel, episode, taskType, channelId, episodeId, sceneNumber } = input;
-  const isQuiz = channel.engine === "quiz" || channel.group_id === "quiz";
   const files: ContextFile[] = [];
   const sharedFiles: ContextFile[] = [];
   const excluded = ["other channels", "full unrelated episodes", "raw task history", "secrets and credentials"];
@@ -50,18 +47,6 @@ export async function buildEpisodeContext(input: EpisodeContextInput): Promise<C
   };
 
   const runtimeConfig = await readRuntimeConfig(repository);
-  const narrationWordsPerSecond = runtimeConfig.video_generation?.narration_words_per_second ?? 2.3;
-  const calibratedTargetWords = calibratedScriptTargetWords(episode, narrationWordsPerSecond);
-  const scriptBounds = scriptWordBounds(calibratedTargetWords);
-  const maxBeatWords = Math.max(
-    1,
-    Math.floor(
-      (runtimeConfig.video_generation?.max_scene_duration_seconds ?? 8) *
-        (episode.measured_narration_words_per_second ?? runtimeConfig.video_generation?.narration_words_per_second ?? 2.3),
-    ),
-  );
-  const humorGuidance = humorGuidanceForDuration(episode.target_duration_minutes);
-  const sequenceGuidance = sequenceGuidanceForDuration(episode.target_duration_minutes);
   const quizQuestionCount = episode.quiz_config.question_count;
   const quizLastClaimId = `C${String(quizQuestionCount).padStart(2, "0")}`;
   const quizSourceMinimum = Math.max(3, Math.ceil(quizQuestionCount / 2));
@@ -72,7 +57,6 @@ export async function buildEpisodeContext(input: EpisodeContextInput): Promise<C
     dna,
     dnaPath,
     stylePath,
-    isQuiz,
     runtimeConfig,
     add,
     loadArtifact,
@@ -90,28 +74,13 @@ export async function buildEpisodeContext(input: EpisodeContextInput): Promise<C
     await loadShotArtifacts(input, ctx);
   }
 
-  const treatmentForPrompt = files.find((file) => file.path.endsWith("/treatment.md"))?.content ?? "";
-  const treatmentKind = isQuiz ? "question" : "sequence";
-  const requiredBundleNumbers = extractArtifactSectionNumbers(treatmentForPrompt, treatmentKind);
-  const requiredBundleInstruction = requiredBundleNumbers.length
-    ? `Create exactly ${requiredBundleNumbers.length} continuity bundles with IDs ${requiredBundleNumbers.map((number) => `CB-${String(number).padStart(2, "0")}`).join(", ")}, one bundle for every upstream ${isQuiz ? "question" : "sequence"}.`
-    : "Create one continuity bundle for every upstream sequence in order.";
-
   const outputContract = buildOutputContract({
     taskType,
-    isQuiz,
     episode,
     sceneNumber,
     quizQuestionCount,
     quizLastClaimId,
     quizSourceMinimum,
-    calibratedTargetWords,
-    narrationWordsPerSecond,
-    scriptBounds,
-    humorGuidance,
-    sequenceGuidance,
-    requiredBundleInstruction,
-    maxBeatWords,
   });
 
   const prompt = composeContextPrompt(taskType, channel, episode, [...files, ...sharedFiles], {

@@ -1,4 +1,4 @@
-export { runPipelineTask } from "./pipeline/documentaryPipelineRunner.js";
+export { runPipelineTask } from "./pipeline/quizProductionPipelineRunner.js";
 export { runQuizV2Pipeline } from "./pipeline/quizV2PipelineRunner.js";
 export {
   hasReadyArtifact,

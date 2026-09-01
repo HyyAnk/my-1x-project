@@ -4,22 +4,14 @@ import { continuityBundleId } from "../visualBundles.js";
 
 export interface OutputContractInput {
   taskType: TaskType;
-  isQuiz: boolean;
   episode: Episode | null;
   sceneNumber?: number;
   quizQuestionCount: number;
   quizLastClaimId: string;
   quizSourceMinimum: number;
-  calibratedTargetWords: number;
-  narrationWordsPerSecond: number;
-  scriptBounds: { lower: number; upper: number };
-  humorGuidance: string;
-  sequenceGuidance: string;
-  requiredBundleInstruction: string;
-  maxBeatWords: number;
 }
 
-function buildQuizOutputContract(input: OutputContractInput): string | null {
+export function buildOutputContract(input: OutputContractInput): string {
   const { taskType, episode, sceneNumber, quizQuestionCount, quizLastClaimId, quizSourceMinimum } = input;
   const isTrueFalse = episode?.quiz_config?.quiz_format === "true_false";
   const treatmentChoicesContract = isTrueFalse
@@ -62,61 +54,11 @@ function buildQuizOutputContract(input: OutputContractInput): string | null {
     return `Return a JSON array of quiz scene beats covering the script in exact order. Create one or more beats for the welcome, each of the ${episode?.quiz_config.question_count} questions, and the closing. Every beat must include dialogue, sequence_id, sequence_title, shot_id, visual_prompt with CAMERA/ACTION/LIGHTING/ATMOSPHERE/CONTINUITY sections, asset_type, continuity_key, continuity_bundle_id, reference_asset_ids, source_ids (e.g. ['C01'] matching each question's Claim ID), reconstruction, sound_cue, transition_note, continuity_note, editorial_overlay, and quiz: { phase: intro|question|reveal|explanation|outro, question_number, question, choices: string[], answer, explanation, image_prompt }. ${sceneBeatChoicesContract} Questions must be ultra-concise (under 10 words) and explanations strictly 1 punchy fun fact (under 10 words, under 70 characters, crisp single clause). The quiz.image_prompt is strictly MANDATORY for every question beat: describe a clear, child-friendly semantic visual subject matching the question (e.g. 'A friendly cartoon cheetah sprinting across a sunny savanna'); never leave image_prompt empty. Use safe, high-contrast, child-friendly quiz visuals. Never place source IDs or production labels inside visual_prompt.`;
   }
 
-  return null;
-}
-
-function buildStandardOutputContract(input: OutputContractInput): string {
-  const {
-    taskType,
-    isQuiz,
-    episode,
-    sceneNumber,
-    calibratedTargetWords,
-    narrationWordsPerSecond,
-    scriptBounds,
-    humorGuidance,
-    sequenceGuidance,
-    requiredBundleInstruction,
-    maxBeatWords,
-  } = input;
-
-  if (taskType === "GENERATE_RESEARCH") {
-    return "Return only a completed Markdown research dossier. Include: research question, chronological evidence, verified claim ledger with stable IDs C01..., failure factors, what replaced the idea, open uncertainties, and a visual evidence inventory. Every material claim must cite a direct primary or authoritative URL. Use at least 8 independent sources and distinguish fact, inference, and uncertainty.";
-  }
-
-  if (taskType === "GENERATE_TREATMENT") {
-    return `Return only a completed Markdown treatment. Define the thesis, audience promise, target duration and word count, then ${sequenceGuidance} numbered sequences. Format every sequence as a second-level heading exactly like \`## Sequence 1 — Title\`. Every sequence must include labeled Purpose, Time budget, Dramatic question, Claim IDs, Evidence/visual modes, Transition, and Changed understanding fields. Time budgets must sum to the target duration.`;
-  }
-
-  if (taskType === "GENERATE_SCRIPT") {
-    return `Return only one completed Markdown narration script for the confirmed episode. Do not return planning notes, reasoning, research, treatment, tool output, JSON, file excerpts, or an explanation. The final answer must be only the script. Target approximately ${calibratedTargetWords} spoken words for ${episode?.target_duration_minutes} minutes at ${narrationWordsPerSecond.toFixed(2)} words per second; the hard acceptable range is ${scriptBounds.lower}–${scriptBounds.upper} spoken words. Aim near ${Math.round(calibratedTargetWords * 1.05)} words and never add padding to reach the number. Humor must replace generic explanation, not add new paragraphs or extend the runtime. The legacy ${episode?.target_word_count}-word metadata target is only a planning hint. Add this exact hidden marker immediately after the title: <!-- HUMOR_POLICY: v1 -->. Follow the treatment sequence order. Build the argument from dated events, named programs/people/organizations, measurable facts, decisions, and consequences from research. Add a restrained humor layer: ${humorGuidance}. Never invent a quote, statistic, anecdote, or reaction for a joke; never mock victims or sensitive subjects. After a humorous spoken line, add only an HTML comment of the form <!-- AUDIO_CUE: chuckle --> or, rarely, <!-- AUDIO_CUE: laugh -->. Use at most one laugh cue per three minutes and prefer chuckle. Do not write (laughs), [laugh], or visual directions in the visible narration. Before returning, silently verify that the marker exists, humor beats are spaced across the argument, every joke is grounded in the scoped research, and the spoken word count is between ${scriptBounds.lower} and ${scriptBounds.upper}.`;
-  }
-
-  if (taskType === "GENERATE_VISUAL_BIBLE") {
-    return `Return only a completed Markdown Episode Visual Bible. Define fixed channel constants, episode palette, typography/graphic language, editorial overlay system, recurring hero objects, evidence treatment, and asset mix. Provenance is tracked in production metadata; do not require a visible AI or reconstruction label inside footage prompts. ${requiredBundleInstruction} Format every bundle as a second-level heading exactly like \`## Continuity bundle CB-01 — Title\`, using the exact numeric IDs from the upstream artifact. Each bundle needs labeled Era, Location, Subjects, Wardrobe/objects, Palette, Lighting, Texture, Anchor-frame prompt, Reference asset slots, and Allowed shot variation fields.`;
-  }
-
   if (taskType === "GENERATE_BUNDLE_IMAGE") {
     const resolvedStyle = episode?.quiz_config?.resolved_visual_style ?? "pixar_3d";
     const styleContract = QUIZ_STYLE_CONTRACTS[resolvedStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
-    return `Generate exactly one reference image for continuity bundle ${continuityBundleId(sceneNumber ?? 0)}. Follow the bundle's Anchor-frame prompt and the locked visual style (${isQuiz ? styleContract.continuityPromptBrief : "channel Visual Style/Visual Language locks"}). Depict only the described environment, subjects, era, palette, lighting, and texture. No text, captions, logos, UI, split panels, charts, watermarks, or labels. Save the final PNG exactly to the requested image output path in the task instructions. If the connected image capability returns bytes instead of writing a file, return a data:image/png;base64 payload or report the saved PNG path.`;
+    return `Generate exactly one reference image for continuity bundle ${continuityBundleId(sceneNumber ?? 0)}. Follow the bundle's Anchor-frame prompt and the locked Quiz visual style (${styleContract.continuityPromptBrief}). Depict only the described environment, subjects, era, palette, lighting, and texture. No text, captions, logos, UI, split panels, charts, watermarks, or labels. Save the final PNG exactly to the requested image output path in the task instructions. If the connected image capability returns bytes instead of writing a file, return a data:image/png;base64 payload or report the saved PNG path.`;
   }
 
-  if (taskType === "GENERATE_SEQUENCE_SCENES") {
-    return `Return a JSON array of shot beats covering only the provided script sequence in exact order without paraphrasing or omission. Every beat must use no more than ${maxBeatWords} words and should end at a sentence or natural clause boundary. Use sequence_id "sequence-${sceneNumber}", the provided sequence title, and continuity_bundle_id "CB-${String(sceneNumber ?? 0).padStart(2, "0")}". Fields: { dialogue, sequence_id, sequence_title, shot_id, visual_prompt, asset_type: archive|document|map|diagram|ai_reconstruction|contemporary|transition, continuity_key, continuity_bundle_id, reference_asset_ids: string[], source_ids: ['C${String(sceneNumber ?? 0).padStart(2, "0")}'] or claim IDs from research, reconstruction: boolean, sound_cue, transition_note, continuity_note, editorial_overlay: { kind: none|caption|stat_card|timeline|bar_chart|line_chart|map_callout|comparison|quote, text, motion: none|fade_up|slide_in|draw_on|count_up|highlight, placement: lower_third|upper_left|upper_right|center|side_panel, duration_seconds, data: [{ label, value, unit }], source_ids: string[] } }. Every beat except transitions must carry source_ids. Every prompt must be distinct and include CAMERA/ACTION/LIGHTING/ATMOSPHERE/CONTINUITY sections. The visual_prompt describes only the visible footage: never put captions, labels, logos, UI, charts, source IDs, or 'AI VISUALIZATION' text inside it. Use editorial_overlay.kind 'none' for most beats; across the complete episode target 25–30% of shots with an overlay. Use overlays only when they clarify a date, number, geography, comparison, named program, or quote. Charts require at least two sourced data points; never invent data. Repeat the bundle identity locks, link evidence IDs, and do not add durations, SHOT PLAN, or timecodes.`;
-  }
-
-  if (taskType === "GENERATE_SCENES") {
-    return `Return a JSON array of shot beats covering the script narration in exact order without paraphrasing or omission. Copy every spoken word from the provided script section verbatim and in order into one or more dialogue fields; split only at natural boundaries and never paraphrase, shorten, add, or omit words. Each beat must use no more than ${maxBeatWords} words and should end at a sentence or natural clause boundary. Fields: { dialogue, sequence_id, sequence_title, shot_id, visual_prompt, asset_type: archive|document|map|diagram|ai_reconstruction|contemporary|transition, continuity_key, continuity_bundle_id, reference_asset_ids: string[], source_ids: claim/source IDs[], reconstruction: boolean, sound_cue, transition_note, continuity_note, editorial_overlay: { kind: none|caption|stat_card|timeline|bar_chart|line_chart|map_callout|comparison|quote, text, motion: none|fade_up|slide_in|draw_on|count_up|highlight, placement: lower_third|upper_left|upper_right|center|side_panel, duration_seconds, data: [{ label, value, unit }], source_ids: string[] } }. Every beat must have non-empty source_ids (except transitions), a non-empty continuity_bundle_id, a non-empty continuity_note, and a distinct visual_prompt containing the exact uppercase sections CAMERA, ACTION, LIGHTING, ATMOSPHERE, and CONTINUITY, with concrete content under every section. The visual_prompt must describe only image, camera, action, lighting, and atmosphere. Never put captions, labels, logos, UI, charts, source IDs, or 'AI VISUALIZATION' text inside the visual_prompt. Archive/document/map shots must name visible evidence; AI reconstructions must be physically specific. Use editorial_overlay.kind 'none' for most beats and target 25–30% overlay coverage across the complete episode. Charts require sourced data points and overlays must never invent data. Do not repeat a prompt. Do not add durations, SHOT PLAN, or timecodes.`;
-  }
-
-  return "Return one JSON object for the requested scene regeneration. Include only the fields being regenerated and preserve sequence, sources, references, continuity bundle, and editorial_overlay. The visual_prompt must describe only footage and use CAMERA/ACTION/LIGHTING/ATMOSPHERE/CONTINUITY sections. Never put captions, labels, logos, UI, charts, source IDs, or AI disclosure text inside the visual_prompt. Do not write files.";
-}
-
-export function buildOutputContract(input: OutputContractInput): string {
-  if (input.isQuiz) {
-    const quizContract = buildQuizOutputContract(input);
-    if (quizContract) return quizContract;
-  }
-  return buildStandardOutputContract(input);
+  return "Return one JSON object for the requested Quiz scene regeneration. Include only the fields being regenerated and preserve question, choices, answer, explanation, sequence, sources, references, continuity bundle, and editorial_overlay. The visual_prompt must describe only footage and use CAMERA/ACTION/LIGHTING/ATMOSPHERE/CONTINUITY sections. Never put captions, labels, logos, UI, charts, source IDs, or AI disclosure text inside the visual_prompt. Do not write files.";
 }

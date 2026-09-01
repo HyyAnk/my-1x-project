@@ -1,17 +1,5 @@
 import { parseArtifactSectionNumber, type ArtifactSectionKind } from "./artifactSections.js";
 
-export function humorGuidanceForDuration(minutes: number): string {
-  if (minutes <= 3) return "weave 1–2 dry, evidence-grounded humor beats across the story";
-  if (minutes <= 5) return "weave 2–3 dry, evidence-grounded humor beats across the story";
-  return "weave 2–4 dry, evidence-grounded humor beats across the story";
-}
-
-export function sequenceGuidanceForDuration(minutes: number): string {
-  if (minutes <= 3) return "5–6";
-  if (minutes <= 5) return "6–8";
-  return "7–10";
-}
-
 export function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -72,13 +60,13 @@ export function selectMarkdownSectionOrFallback(
   }
 }
 
-export function selectResearchForSequence(researchMarkdown: string, sequenceNumber: number, isQuiz: boolean): string {
-  const claimId = `C${String(sequenceNumber).padStart(2, "0")}`;
-  const shortClaimId = `C${sequenceNumber}`;
+export function selectResearchForQuestion(researchMarkdown: string, questionNumber: number): string {
+  const claimId = `C${String(questionNumber).padStart(2, "0")}`;
+  const shortClaimId = `C${questionNumber}`;
   const lines = researchMarkdown.split(/\r?\n/);
 
   const claimHeaderIndex = lines.findIndex((line) =>
-    new RegExp(`^###?\\s+(?:${claimId}|${shortClaimId}|Question\\s+${sequenceNumber}\\b)`, "i").test(line),
+    new RegExp(`^###?\\s+(?:${claimId}|${shortClaimId}|Question\\s+${questionNumber}\\b)`, "i").test(line),
   );
 
   if (claimHeaderIndex !== -1) {
@@ -98,8 +86,8 @@ export function selectResearchForSequence(researchMarkdown: string, sequenceNumb
           .slice(tableStartIndex + 2)
           .find(
             (line) =>
-              line.includes(`Q${sequenceNumber}`) ||
-              line.includes(`Q0${sequenceNumber}`) ||
+              line.includes(`Q${questionNumber}`) ||
+              line.includes(`Q0${questionNumber}`) ||
               line.includes(`| ${claimId}`) ||
               line.includes(`| ${shortClaimId}`),
           ) || "";
@@ -108,7 +96,7 @@ export function selectResearchForSequence(researchMarkdown: string, sequenceNumb
       }
     }
 
-    return `${ledgerRow}### Scoped Research Evidence for Sequence ${sequenceNumber} (${claimId})\n\n${claimSection}`;
+    return `${ledgerRow}### Scoped Research Evidence for Question ${questionNumber} (${claimId})\n\n${claimSection}`;
   }
 
   return researchMarkdown;

@@ -6,28 +6,17 @@ import { hasHumorPolicyMarker } from "../../production.js";
 import { parseContinuityBundles } from "../../visualBundles.js";
 import { isValidPngFile } from "../artifactFiles.js";
 import { parseWavDuration } from "../parsers.js";
-import { isPlaceholderArtifact, validateQuizVisualBible, validateVisualBible } from "../validators.js";
+import { isPlaceholderArtifact, validateQuizVisualBible } from "../validators.js";
 import type { PipelineRun, TaskManagerRuntime } from "../runtime.js";
 
 export async function hasReadyArtifact(this: TaskManagerRuntime, channelId: string, episodeId: string, filename: string): Promise<boolean> {
   const file = await this.repository.getEpisodeFile(channelId, episodeId, filename);
   if (isPlaceholderArtifact(file.content)) return false;
   if (filename !== "visual_bible.md") return true;
-  const channel = await this.repository.getChannel(channelId);
-  const treatment = await this.repository.getEpisodeFile(channelId, episodeId, "treatment.md");
-  const requiredBundles =
-    channel.engine === "quiz"
-      ? extractArtifactSectionNumbers(treatment.content, "question").length > 0
-        ? Array.from(
-            { length: (await this.repository.getEpisode(channelId, episodeId)).quiz_config.question_count },
-            (_, index) => index + 1,
-          )
-        : []
-      : extractArtifactSectionNumbers(treatment.content, "sequence");
-  if (requiredBundles.length === 0) return true;
+  const episode = await this.repository.getEpisode(channelId, episodeId);
+  const requiredBundles = Array.from({ length: episode.quiz_config.question_count }, (_, index) => index + 1);
   try {
-    if (channel.engine === "quiz") validateQuizVisualBible(file.content, requiredBundles);
-    else validateVisualBible(file.content, requiredBundles);
+    validateQuizVisualBible(file.content, requiredBundles);
     return true;
   } catch {
     return false;
@@ -90,12 +79,12 @@ export async function hasReadyScript(this: TaskManagerRuntime, channelId: string
   const file = await this.repository.getEpisodeFile(channelId, episodeId, "script.md");
   if (isPlaceholderArtifact(file.content) || !hasHumorPolicyMarker(file.content)) return false;
   const treatment = await this.repository.getEpisodeFile(channelId, episodeId, "treatment.md");
-  const expectedSequences = extractArtifactSectionNumbers(treatment.content, "sequence");
-  const actualSequences = extractArtifactSectionNumbers(file.content, "sequence");
+  const expectedSequences = extractArtifactSectionNumbers(treatment.content, "question");
+  const actualSequences = extractArtifactSectionNumbers(file.content, "question");
   return (
     expectedSequences.length === 0 ||
     actualSequences.length === 0 ||
-    missingArtifactSectionNumbers(file.content, expectedSequences, "sequence").length === 0
+    missingArtifactSectionNumbers(file.content, expectedSequences, "question").length === 0
   );
 }
 

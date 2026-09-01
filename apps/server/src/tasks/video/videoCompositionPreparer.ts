@@ -63,7 +63,7 @@ export async function prepareVideoComposition(options: {
       ? { quiz: quizV2, director: directorPlan, assetPlan, voicePlan, timeline }
       : null;
 
-  if (channel.engine === "quiz" && !completeQuizV2 && !episode.video_asset_path) {
+  if (!completeQuizV2 && !episode.video_asset_path) {
     throw new RepositoryError("Quiz V2 artifacts are required before rendering a new Quiz video", "QUIZ_V2_REQUIRED");
   }
 

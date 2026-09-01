@@ -6,7 +6,7 @@ import {
   excerptForScene,
   selectMarkdownSection,
   selectMarkdownSectionOrFallback,
-  selectResearchForSequence,
+  selectResearchForQuestion,
   selectSections,
 } from "../contextContracts.js";
 import { readSharedRules } from "./contextManifestFinalizer.js";
@@ -26,7 +26,7 @@ export type EpisodeContextInput = {
 
 export async function loadShotArtifacts(input: EpisodeContextInput, ctx: ArtifactContext): Promise<void> {
   const { repository, taskType, channelId, episodeId, sceneNumber, imageVariant } = input;
-  const { isQuiz, sharedFiles, dna, dnaPath, add, loadArtifact, artifact, runtimeConfig } = ctx;
+  const { sharedFiles, dna, dnaPath, add, loadArtifact, artifact, runtimeConfig } = ctx;
 
   if (taskType === "GENERATE_BUNDLE_IMAGE") {
     const bundleNumber = sceneNumber ?? 0;
@@ -43,46 +43,39 @@ export async function loadShotArtifacts(input: EpisodeContextInput, ctx: Artifac
     const target = await repository.getBundleImagePath(channelId, episodeId, bundleNumber, imageVariant);
     add({ path: target.absolutePath, reason: "requested image output path", content: "" });
   } else if (taskType === "GENERATE_SEQUENCE_SCENES") {
-    const sequenceNumber = sceneNumber ?? 0;
-    if (sequenceNumber < 1) throw new Error("Sequence number is required for shot generation");
+    const questionNumber = sceneNumber ?? 0;
+    if (questionNumber < 1) throw new Error("Question number is required for shot generation");
     const research = await loadArtifact("research.md", true);
     const treatment = await loadArtifact("treatment.md", true);
     const script = await loadArtifact("script.md", true);
     const visualBible = await loadArtifact("visual_bible.md", true);
     add({
-      path: `${research.path}#sequence-${sequenceNumber}`,
-      reason: `research claim for sequence ${sequenceNumber}`,
-      content: selectResearchForSequence(research.content, sequenceNumber, isQuiz),
+      path: `${research.path}#question-${questionNumber}`,
+      reason: `research claim for question ${questionNumber}`,
+      content: selectResearchForQuestion(research.content, questionNumber),
     });
     add({
-      path: `${treatment.path}#sequence-${sequenceNumber}`,
-      reason: `treatment sequence ${sequenceNumber}`,
-      content: selectMarkdownSectionOrFallback(
-        treatment.content,
-        sequenceNumber,
-        isQuiz ? /^##\s+Question\s+\d+/i : /^##\s+Sequence\s+\d+/i,
-        isQuiz ? "question" : "sequence",
-        "treatment",
-      ),
+      path: `${treatment.path}#question-${questionNumber}`,
+      reason: `treatment question ${questionNumber}`,
+      content: selectMarkdownSectionOrFallback(treatment.content, questionNumber, /^##\s+Question\s+\d+/i, "question", "treatment"),
     });
     add({
-      path: `${script.path}#sequence-${sequenceNumber}`,
-      reason: `script sequence ${sequenceNumber}`,
-      content: selectMarkdownSectionOrFallback(script.content, sequenceNumber, /^##\s+/i, isQuiz ? "question" : "sequence", "script"),
+      path: `${script.path}#question-${questionNumber}`,
+      reason: `script question ${questionNumber}`,
+      content: selectMarkdownSectionOrFallback(script.content, questionNumber, /^##\s+/i, "question", "script"),
     });
     add({
-      path: `${visualBible.path}#CB-${String(sequenceNumber).padStart(2, "0")}`,
-      reason: `continuity bundle ${sequenceNumber}`,
+      path: `${visualBible.path}#CB-${String(questionNumber).padStart(2, "0")}`,
+      reason: `continuity bundle ${questionNumber}`,
       content: selectMarkdownSectionOrFallback(
         visualBible.content,
-        sequenceNumber,
+        questionNumber,
         /^##\s+Continuity bundle/i,
         "continuity_bundle",
         "visual bible",
       ),
     });
-    const sequenceRules = isQuiz ? ["prompt_rules.md"] : ["visual_rules.md", "prompt_rules.md", "cinematic_prompt_reference.md"];
-    await readSharedRules(repository, sequenceRules, sharedFiles);
+    await readSharedRules(repository, ["prompt_rules.md"], sharedFiles);
     add({ path: ".documentary-studio/config.json", reason: "shot duration and narration pace", content: JSON.stringify(runtimeConfig) });
   } else if (taskType === "GENERATE_SCENES") {
     await artifact("research.md", "research claim and source ledger", true);
@@ -94,16 +87,14 @@ export async function loadShotArtifacts(input: EpisodeContextInput, ctx: Artifac
       reason: "visual language and reconstruction rules",
       content: selectSections(dna, ["Visual Style", "Visual Language", "Scene Rules", "AI Reconstruction Rules"]),
     });
-    const sceneRules = isQuiz ? ["prompt_rules.md"] : ["visual_rules.md", "prompt_rules.md", "cinematic_prompt_reference.md"];
-    await readSharedRules(repository, sceneRules, sharedFiles);
+    await readSharedRules(repository, ["prompt_rules.md"], sharedFiles);
     add({
       path: ".documentary-studio/config.json",
       reason: "shot duration, narration pace, and aspect ratio",
       content: JSON.stringify(runtimeConfig),
     });
   } else {
-    const regenRules = isQuiz ? ["prompt_rules.md"] : ["visual_rules.md", "prompt_rules.md", "cinematic_prompt_reference.md"];
-    await readSharedRules(repository, regenRules, sharedFiles);
+    await readSharedRules(repository, ["prompt_rules.md"], sharedFiles);
     const scenes = await repository.readScenes(channelId, episodeId);
     const current = scenes.find((scene) => scene.scene_number === sceneNumber);
     if (!current) throw new Error("Scene is required for regeneration");

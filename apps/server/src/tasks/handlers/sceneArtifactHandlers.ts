@@ -1,4 +1,3 @@
-import type { Channel } from "@studio/shared";
 import type { TaskManagerRuntime, ActiveRun } from "../runtime.js";
 import { extractNarrationSections } from "../../production.js";
 import { optimizeShortScenes, packBeatsIntoScenes } from "../../sceneTiming.js";
@@ -45,23 +44,13 @@ export async function handleBundleImageOutput(runtime: TaskManagerRuntime, activ
 export async function handleSequenceScenesOutput(
   runtime: TaskManagerRuntime,
   active: ActiveRun,
-  channel: Channel,
   output: string,
 ): Promise<string[]> {
   const task = active.task;
-  const isQuiz = channel.engine === "quiz";
   const sequenceNumber = runtime.findSceneNumber(task.task_id);
   if (!sequenceNumber) throw new Error("Sequence number is required");
-  const parsedBeats = parseBeatsOutput(output);
-  const beats = isQuiz
-    ? normalizeQuizBeatMetadata(parsedBeats)
-    : parsedBeats.map((beat) => {
-        if (beat.source_ids.length === 0 && beat.asset_type !== "transition") {
-          return { ...beat, source_ids: [`C${String(sequenceNumber).padStart(2, "0")}`] };
-        }
-        return beat;
-      });
-  validateBeatOutput(beats, 1, isQuiz);
+  const beats = normalizeQuizBeatMetadata(parseBeatsOutput(output));
+  validateBeatOutput(beats, 1, true);
   const episode = await runtime.repository.getEpisode(task.channel_id, task.episode_id!);
   const script = await runtime.repository.getEpisodeFile(task.channel_id, task.episode_id!, "script.md");
   const scriptSections = extractNarrationSections(script.content);
@@ -100,23 +89,11 @@ export async function handleSequenceScenesOutput(
 export async function handleAllScenesOutput(
   runtime: TaskManagerRuntime,
   active: ActiveRun,
-  channel: Channel,
   output: string,
 ): Promise<string[]> {
   const task = active.task;
-  const isQuiz = channel.engine === "quiz";
-  const parsedBeats = parseBeatsOutput(output);
-  const beats = isQuiz
-    ? normalizeQuizBeatMetadata(parsedBeats)
-    : parsedBeats.map((beat, idx) => {
-        if (beat.source_ids.length === 0 && beat.asset_type !== "transition") {
-          const seqMatch = beat.sequence_id.match(/\d+/);
-          const seqNum = seqMatch ? Number(seqMatch[0]) : idx + 1;
-          return { ...beat, source_ids: [`C${String(seqNum).padStart(2, "0")}`] };
-        }
-        return beat;
-      });
-  validateBeatOutput(beats, 5, isQuiz);
+  const beats = normalizeQuizBeatMetadata(parseBeatsOutput(output));
+  validateBeatOutput(beats, 5, true);
   const episode = await runtime.repository.getEpisode(task.channel_id, task.episode_id!);
   const script = await runtime.repository.getEpisodeFile(task.channel_id, task.episode_id!, "script.md");
   validateNarrationCoverage(script.content, beats, 0.975);

@@ -33,7 +33,7 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
       status: "RUNNING",
       started_at: nowIso(),
       queue_position: null,
-      progress_message: "Starting production pipeline",
+      progress_message: "Starting Quiz production pipeline",
       progress_percent: 0,
     });
     const researchChanged = await step(
