@@ -61,3 +61,21 @@ You are an expert software architect and senior engineer. When generating or ref
   - **Do not bloat existing files further.**
   - Proactively extract new sub-components, services, or helpers into separate files.
   - Ensure all refactored parts remain backward-compatible and well-structured.
+
+---
+
+## 6. Agent Coordination Protocol & Main-Direct Operating Rules
+
+When working in this repository across multiple agents, chats, or tasks, all agents MUST strictly follow the Agent Coordination Protocol (`docs/agent-coordination/`):
+
+- **Source of Truth:** Read `AGENTS.md`, `docs/agent-coordination/README.md`, `docs/agent-coordination/master-spec.md`, `docs/agent-coordination/phase-roadmap.md`, and the latest handoff summary in `docs/agent-coordination/handoffs/` before performing work. Repo artifacts are the source of truth, not chat history.
+- **Main-Direct Working Mode:** Work directly on the current `main` checkout. Do NOT create git branches or worktrees unless explicitly instructed by the user.
+- **Dirty Workspace Baseline (Mandatory):** Capture the pre-existing workspace baseline (`git status --porcelain`) before making any edits. Never touch, commit, or revert pre-existing dirty files outside your assigned scope.
+- **Zone Ownership & High-Risk Boundaries:** High-risk shared areas (`shared-contracts`, `server-pipeline`, `task-status-progress`, `api-contracts`, `artifact-contracts`, `render-inputs`) require exclusive ownership. Do NOT edit outside your declared zone or phase scope; if unexpected changes are required, stop and request claim expansion.
+- **Phase Handoff Deliverables:** Every task or phase MUST complete by generating a handoff summary in `docs/agent-coordination/handoffs/` following `docs/agent-coordination/templates/phase-handoff-summary.md`.
+- **Authenticated Lifecycle:** Before editing, run `node scripts/agent-status.mjs --json`, then create a claim with `node scripts/agent-claim.mjs ... --planned-files <concrete-paths> --json`. Capture the one-time `leaseToken` only in session memory. Wildcards are forbidden in planned files; an empty list claims the whole zone.
+- **Mutations Require The Token:** Pass `--token <lease-token>` to expand, heartbeat, verify, and release. If scope grows, run `agent-expand` and wait for success before editing the added paths.
+- **Verified Release Gate:** Run required checks, then `node scripts/agent-verify-claim.mjs --claim <id> --token <lease-token> --evidence "<checks and results>" --json`. Do not edit after successful verification. Release with `node scripts/agent-release.mjs --claim <id> --token <lease-token> --json`.
+- **Commit Gate:** Do not commit while any implementation claim is active. Release the verified claim first, confirm `agent-status --integrator --json`, then stage only files owned by the completed task.
+- **Coverage Gate:** Run `node scripts/agent-validate-zones.mjs --json` when product paths or zone definitions change. Integration must reject unmapped paths, overlaps, active unverified claims, or stale verification.
+- **Enforcement Limit:** This protocol cannot prevent an unrestricted process from bypassing the CLI and writing files. Repository instructions, review, and the verification/release/integration gates are the enforcement boundary.

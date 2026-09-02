@@ -1,0 +1,408 @@
+version: "2.0.0"
+updatedAt: "2026-09-02T14:00:00+07:00"
+description: "Unambiguous ownership zones for direct-on-main agent coordination."
+
+zones:
+  - id: "shared-contracts"
+    name: "Shared Contracts"
+    risk: "high"
+    lockPolicy: "exclusive"
+    description: "Schemas, types, and contracts shared across applications."
+    globs:
+      - "packages/shared/**"
+    readStableDependencies: []
+    verification:
+      commands:
+        - "pnpm --filter @studio/shared build"
+        - "pnpm --filter @studio/shared test"
+        - "pnpm typecheck"
+      notes: "Verify all consumers after contract changes."
+
+  - id: "project-configuration"
+    name: "Project Configuration"
+    risk: "high"
+    lockPolicy: "exclusive"
+    description: "Application package manifests, TypeScript settings, and build/test entry configuration."
+    globs:
+      - "apps/*/package.json"
+      - "apps/*/tsconfig*.json"
+      - "apps/web/index.html"
+      - "apps/web/*config.ts"
+    readStableDependencies: []
+    verification:
+      commands:
+        - "pnpm typecheck"
+      notes: "Review dependency and build impact before release."
+
+  - id: "api-contracts"
+    name: "API Contracts And Routes"
+    risk: "high"
+    lockPolicy: "exclusive"
+    description: "HTTP routes, request contexts, provider-facing API adapters, and environment contracts."
+    globs:
+      - "apps/server/src/routes/**"
+      - "apps/server/src/app.ts"
+      - "apps/server/src/contextContracts.ts"
+      - "apps/server/src/context/**"
+      - "apps/server/src/antigravity/**"
+      - "apps/server/src/codex/**"
+      - "apps/server/src/config/**"
+      - "apps/server/src/env.ts"
+    readStableDependencies:
+      - "shared-contracts"
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test"
+        - "pnpm typecheck"
+      notes: "Verify web API clients remain compatible."
+
+  - id: "task-status-progress"
+    name: "Task Status And Progress"
+    risk: "high"
+    lockPolicy: "exclusive"
+    description: "Task lifecycle, runners, progress events, and their dedicated web presentation."
+    globs:
+      - "apps/server/src/tasks/**"
+      - "apps/web/src/components/TaskProgressPanel.tsx"
+      - "apps/web/src/components/TaskProgressPanel.test.tsx"
+      - "apps/web/src/components/taskProgress/**"
+    readStableDependencies:
+      - "shared-contracts"
+      - "api-contracts"
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test -- test/tasks.test.ts test/hyperframesProgress.test.ts"
+        - "pnpm --filter @studio/web test -- src/components/TaskProgressPanel.test.tsx"
+      notes: "Check event ordering and UI synchronization."
+
+  - id: "artifact-contracts"
+    name: "Artifact Contracts And Storage"
+    risk: "high"
+    lockPolicy: "exclusive"
+    description: "Artifact repositories, bindings, filesystem naming, and invalidation."
+    globs:
+      - "apps/server/src/repository/**"
+      - "apps/server/src/artifactSections.ts"
+      - "apps/server/src/quiz/pipeline/invalidation.ts"
+    readStableDependencies:
+      - "shared-contracts"
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test -- test/quizInvalidation.test.ts test/repository.test.ts"
+      notes: "Verify persisted paths and invalidation behavior."
+
+  - id: "server-pipeline"
+    name: "Server Quiz Pipeline"
+    risk: "high"
+    lockPolicy: "exclusive"
+    description: "Quiz application workflows, pipeline stages, domain rules, directors, and descriptions."
+    globs:
+      - "apps/server/src/quiz/pipeline/**"
+      - "!apps/server/src/quiz/pipeline/invalidation.ts"
+      - "apps/server/src/quiz/domain/**"
+      - "apps/server/src/quiz/director/**"
+      - "apps/server/src/quiz/description/**"
+    readStableDependencies:
+      - "shared-contracts"
+      - "artifact-contracts"
+      - "render-inputs"
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test -- test/quizPipeline.test.ts test/quizScenePipeline.test.ts"
+      notes: "Verify transitions, failure handling, and outputs."
+
+  - id: "render-inputs"
+    name: "Render Inputs And Scene Models"
+    risk: "high"
+    lockPolicy: "exclusive"
+    description: "Render model contracts, timing inputs, layout compatibility, and style context boundaries."
+    globs:
+      - "apps/server/src/quiz/render/choices/choiceGroup.types.ts"
+      - "apps/server/src/quiz/render/choices/choiceStateStyles.ts"
+      - "apps/server/src/quiz/render/scene/quizScene.types.ts"
+      - "apps/server/src/quiz/render/scene/buildQuizSceneRenderModel.ts"
+      - "apps/server/src/quiz/render/scene/productionSceneAdapter.ts"
+      - "apps/server/src/quiz/render/scene/sandboxSceneAdapter.ts"
+      - "apps/server/src/quiz/render/layoutCompatibility.ts"
+      - "apps/server/src/quiz/layoutCompatibility.ts"
+      - "apps/server/src/sceneTiming.ts"
+      - "apps/server/src/visualBundles.ts"
+      - "apps/server/src/visualPrompt.ts"
+      - "apps/server/src/quiz/mascotPromptContract.ts"
+    readStableDependencies:
+      - "shared-contracts"
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test -- test/quizRenderStyleContract.test.ts test/quizSceneModel.test.ts"
+      notes: "Verify both preview and production render consumers."
+
+  - id: "render-implementation"
+    name: "Render Implementation"
+    risk: "medium"
+    lockPolicy: "shared-disjoint"
+    description: "Renderers, layouts, scene assembly, visual variants, and effects."
+    globs:
+      - "apps/server/src/quiz/render/**"
+      - "!apps/server/src/quiz/render/choices/choiceGroup.types.ts"
+      - "!apps/server/src/quiz/render/choices/choiceStateStyles.ts"
+      - "!apps/server/src/quiz/render/scene/quizScene.types.ts"
+      - "!apps/server/src/quiz/render/scene/buildQuizSceneRenderModel.ts"
+      - "!apps/server/src/quiz/render/scene/productionSceneAdapter.ts"
+      - "!apps/server/src/quiz/render/scene/sandboxSceneAdapter.ts"
+      - "!apps/server/src/quiz/render/layoutCompatibility.ts"
+      - "apps/server/src/quiz/visual/**"
+    readStableDependencies:
+      - "shared-contracts"
+      - "render-inputs"
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test -- test/candyArcade.test.ts test/quizChoiceGroupRenderer.test.ts"
+      notes: "Use concrete planned files for parallel work."
+
+  - id: "image-thumbnail-prompt"
+    name: "Image Thumbnail And Prompt Generation"
+    risk: "medium"
+    lockPolicy: "shared-disjoint"
+    description: "Thumbnail planning, media prompts, assets, audio, and mascot generation."
+    globs:
+      - "apps/server/src/quiz/thumbnail/**"
+      - "apps/server/src/quiz/assets/**"
+      - "apps/server/src/quiz/audio/**"
+      - "apps/server/src/quiz/mascot/**"
+      - "apps/server/src/quiz/mascotService.ts"
+    readStableDependencies:
+      - "shared-contracts"
+      - "render-inputs"
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test -- test/thumbnailPromptEngine.test.ts test/thumbnailService.test.ts"
+      notes: "Use concrete planned files for parallel work."
+
+  - id: "media-providers"
+    name: "Media Providers"
+    risk: "medium"
+    lockPolicy: "shared-disjoint"
+    description: "External media and image provider implementations."
+    globs:
+      - "apps/server/src/providers/**"
+    readStableDependencies:
+      - "api-contracts"
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test"
+      notes: "Verify provider errors, timeouts, and retries."
+
+  - id: "quality-timeline"
+    name: "Quality And Timeline"
+    risk: "medium"
+    lockPolicy: "shared-disjoint"
+    description: "Quality assessment, QA stages, production policies, and timeline compilers."
+    globs:
+      - "apps/server/src/quiz/qa/**"
+      - "apps/server/src/quiz/timeline/**"
+      - "apps/server/src/timeline/**"
+      - "apps/server/src/production/**"
+      - "apps/server/src/production.ts"
+    readStableDependencies:
+      - "shared-contracts"
+      - "render-inputs"
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test"
+      notes: "Verify timing and quality gates together."
+
+  - id: "server-core"
+    name: "Server Core"
+    risk: "medium"
+    lockPolicy: "shared-disjoint"
+    description: "Remaining cohesive server entry points, utilities, and core services."
+    globs:
+      - "apps/server/src/**"
+      - "!apps/server/src/routes/**"
+      - "!apps/server/src/app.ts"
+      - "!apps/server/src/contextContracts.ts"
+      - "!apps/server/src/context/**"
+      - "!apps/server/src/antigravity/**"
+      - "!apps/server/src/codex/**"
+      - "!apps/server/src/config/**"
+      - "!apps/server/src/env.ts"
+      - "!apps/server/src/tasks/**"
+      - "!apps/server/src/repository/**"
+      - "!apps/server/src/artifactSections.ts"
+      - "!apps/server/src/quiz/pipeline/**"
+      - "!apps/server/src/quiz/domain/**"
+      - "!apps/server/src/quiz/director/**"
+      - "!apps/server/src/quiz/description/**"
+      - "!apps/server/src/quiz/render/**"
+      - "!apps/server/src/quiz/visual/**"
+      - "!apps/server/src/quiz/thumbnail/**"
+      - "!apps/server/src/quiz/assets/**"
+      - "!apps/server/src/quiz/audio/**"
+      - "!apps/server/src/quiz/mascot/**"
+      - "!apps/server/src/quiz/mascotService.ts"
+      - "!apps/server/src/providers/**"
+      - "!apps/server/src/quiz/qa/**"
+      - "!apps/server/src/quiz/timeline/**"
+      - "!apps/server/src/timeline/**"
+      - "!apps/server/src/production/**"
+      - "!apps/server/src/production.ts"
+      - "!apps/server/src/quiz/layoutCompatibility.ts"
+      - "!apps/server/src/sceneTiming.ts"
+      - "!apps/server/src/visualBundles.ts"
+      - "!apps/server/src/visualPrompt.ts"
+      - "!apps/server/src/quiz/mascotPromptContract.ts"
+      - "!apps/server/src/runtimePaths.ts"
+      - "!apps/server/src/logger.ts"
+      - "!apps/server/src/zip.ts"
+      - "!apps/server/src/quiz/zipHelper.ts"
+    readStableDependencies:
+      - "shared-contracts"
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test"
+      notes: "Use concrete planned files for parallel work."
+
+  - id: "server-tests"
+    name: "Server Tests"
+    risk: "medium"
+    lockPolicy: "shared-disjoint"
+    description: "Server test fixtures and executable behavioral tests."
+    globs:
+      - "apps/server/test/**"
+    readStableDependencies: []
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test"
+      notes: "Claim the implementation zone and test zone together when both change."
+
+  - id: "web-api-state"
+    name: "Web API Clients And State"
+    risk: "medium"
+    lockPolicy: "shared-disjoint"
+    description: "Web API clients, state hooks, feature services, types, and calculations."
+    globs:
+      - "apps/web/src/api/**"
+      - "apps/web/src/api.ts"
+      - "apps/web/src/hooks/**"
+      - "apps/web/src/lib/**"
+      - "apps/web/src/features/**/hooks/**"
+      - "apps/web/src/features/**/utils/**"
+      - "apps/web/src/features/**/services/**"
+      - "apps/web/src/features/**/types/**"
+      - "apps/web/src/features/**/types.ts"
+      - "apps/web/test/**"
+    readStableDependencies:
+      - "shared-contracts"
+      - "api-contracts"
+    verification:
+      commands:
+        - "pnpm --filter @studio/web test"
+        - "pnpm typecheck"
+      notes: "Use concrete planned files for parallel work."
+
+  - id: "web-layout-style"
+    name: "Web Layout And Presentation"
+    risk: "low"
+    lockPolicy: "shared-disjoint"
+    description: "Remaining web components, feature surfaces, styles, translations, assets, and tests."
+    globs:
+      - "apps/web/**"
+      - "!apps/web/package.json"
+      - "!apps/web/tsconfig*.json"
+      - "!apps/web/index.html"
+      - "!apps/web/*config.ts"
+      - "!apps/web/src/api/**"
+      - "!apps/web/src/api.ts"
+      - "!apps/web/src/hooks/**"
+      - "!apps/web/src/lib/**"
+      - "!apps/web/src/features/**/hooks/**"
+      - "!apps/web/src/features/**/utils/**"
+      - "!apps/web/src/features/**/services/**"
+      - "!apps/web/src/features/**/types/**"
+      - "!apps/web/src/features/**/types.ts"
+      - "!apps/web/test/**"
+      - "!apps/web/src/components/TaskProgressPanel.tsx"
+      - "!apps/web/src/components/TaskProgressPanel.test.tsx"
+      - "!apps/web/src/components/taskProgress/**"
+    readStableDependencies:
+      - "web-api-state"
+    verification:
+      commands:
+        - "pnpm --filter @studio/web build"
+      notes: "Use concrete planned files and verify desktop/mobile behavior."
+
+  - id: "tts-service"
+    name: "TTS Service"
+    risk: "medium"
+    lockPolicy: "shared-disjoint"
+    description: "Python text-to-speech service code and dependencies."
+    globs:
+      - "services/tts/**"
+    readStableDependencies: []
+    verification:
+      commands:
+        - "python -m compileall services/tts"
+      notes: "Verify service startup and audio workflow after changes."
+
+  - id: "generated-artifacts"
+    name: "Generated Artifacts"
+    risk: "high"
+    lockPolicy: "runtime"
+    description: "Generated media, channel data, caches, and render outputs."
+    globs:
+      - "channels/**"
+      - "assets/ai-art/**"
+      - "assets/audio/**"
+      - ".quiz-studio/**"
+    readStableDependencies:
+      - "artifact-contracts"
+    verification:
+      commands:
+        - "node scripts/audit-quiz-only.mjs"
+      notes: "Do not run concurrent writers against the same outputs."
+
+  - id: "runtime-resources"
+    name: "Runtime Resources"
+    risk: "high"
+    lockPolicy: "runtime"
+    description: "Environment files, launchers, operational scripts, logger, and runtime paths."
+    globs:
+      - ".env"
+      - ".env.example"
+      - "*.bat"
+      - "apps/server/src/runtimePaths.ts"
+      - "apps/server/src/logger.ts"
+      - "apps/server/src/zip.ts"
+      - "apps/server/src/quiz/zipHelper.ts"
+      - "scripts/**"
+      - "!scripts/agent-*.mjs"
+      - "!scripts/agent-*.cmd"
+      - "!scripts/coordination/**"
+      - "!scripts/test-agent-coordination.mjs"
+    readStableDependencies: []
+    verification:
+      commands:
+        - "node scripts/check-format.mjs"
+      notes: "Coordinate shared processes and ports explicitly."
+
+  - id: "agent-coordination"
+    name: "Agent Coordination Protocol"
+    risk: "high"
+    lockPolicy: "exclusive"
+    description: "Coordination metadata, commands, tests, durable docs, and agent instructions."
+    globs:
+      - ".agent-orchestrator/**"
+      - "scripts/agent-*.mjs"
+      - "scripts/agent-*.cmd"
+      - "scripts/coordination/**"
+      - "scripts/test-agent-coordination.mjs"
+      - "docs/agent-coordination/**"
+      - "docs/superpowers/plans/*agent-coordination*.md"
+      - "AGENTS.md"
+      - "GEMINI.md"
+    readStableDependencies: []
+    verification:
+      commands:
+        - "node --test scripts/test-agent-coordination.mjs scripts/coordination/test/*.test.mjs"
+        - "node scripts/agent-validate-zones.mjs --json"
+      notes: "Only the protocol integrator should change this zone."
