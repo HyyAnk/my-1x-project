@@ -1,4 +1,5 @@
-import { YoutubeLogo } from "@phosphor-icons/react";
+import { useState } from "react";
+import { CaretDown, CaretUp, DeviceMobile, Television, YoutubeLogo } from "@phosphor-icons/react";
 import type { VideoDescription } from "@studio/shared";
 
 interface DescriptionYouTubePreviewProps {
@@ -7,14 +8,27 @@ interface DescriptionYouTubePreviewProps {
 }
 
 export function DescriptionYouTubePreview({ description, fullText }: DescriptionYouTubePreviewProps) {
+  const [viewportMode, setViewportMode] = useState<"desktop" | "mobile">("desktop");
+  const [isFolded, setIsFolded] = useState(false);
+
   const content = fullText || description?.full_description_text || "";
 
-  const renderHashtagsFormatted = (text: string) => {
-    const parts = text.split(/(#[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+)/g);
+  const renderRichYouTubeContent = (text: string) => {
+    // Split by hashtags or timestamp patterns (e.g., #quiz, 00:15, 01:30)
+    const regex = /(#[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+|\b\d{1,2}:\d{2}(?::\d{2})?\b)/g;
+    const parts = text.split(regex);
+
     return parts.map((part, idx) => {
       if (part.startsWith("#")) {
         return (
-          <span key={idx} style={{ color: "var(--accent-light, #38bdf8)", fontWeight: 500 }}>
+          <span key={idx} className="youtube-hashtag-highlight">
+            {part}
+          </span>
+        );
+      }
+      if (/^\d{1,2}:\d{2}(?::\d{2})?$/.test(part)) {
+        return (
+          <span key={idx} className="youtube-timestamp-highlight" title="YouTube Chapter Timestamp">
             {part}
           </span>
         );
@@ -24,41 +38,68 @@ export function DescriptionYouTubePreview({ description, fullText }: Description
   };
 
   return (
-    <div
-      style={{
-        background: "rgba(15, 23, 42, 0.6)",
-        borderRadius: "10px",
-        padding: "16px",
-        border: "1px solid rgba(255, 255, 255, 0.1)",
-        boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.3)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "12px", color: "var(--text-muted, #94a3b8)", fontSize: "12px" }}>
-        <YoutubeLogo size={18} color="#ef4444" weight="fill" />
-        <span style={{ fontWeight: 600, color: "var(--text, #f8fafc)" }}>YouTube Description Preview</span>
-        <span>• (Full View)</span>
+    <div className="youtube-preview-card">
+      <div className="youtube-preview-header">
+        <div className="youtube-preview-badge">
+          <YoutubeLogo size={22} weight="fill" color="#ff0000" />
+          <span>YouTube Description Simulator</span>
+        </div>
+
+        <div className="youtube-preview-controls">
+          <button
+            type="button"
+            className={`youtube-viewport-btn ${viewportMode === "desktop" ? "active" : ""}`}
+            onClick={() => setViewportMode("desktop")}
+            title="Desktop Video Description View"
+          >
+            <Television size={14} />
+            <span>Desktop</span>
+          </button>
+          <button
+            type="button"
+            className={`youtube-viewport-btn ${viewportMode === "mobile" ? "active" : ""}`}
+            onClick={() => setViewportMode("mobile")}
+            title="Mobile / Shorts Description View"
+          >
+            <DeviceMobile size={14} />
+            <span>Mobile</span>
+          </button>
+        </div>
       </div>
 
-      <div
-        style={{
-          background: "rgba(0, 0, 0, 0.4)",
-          borderRadius: "8px",
-          padding: "14px 16px",
-          fontSize: "13.5px",
-          lineHeight: "1.65",
-          color: "var(--text, #f1f5f9)",
-          fontFamily: "system-ui, -apple-system, sans-serif",
-          whiteSpace: "pre-wrap",
-          maxHeight: "450px",
-          overflowY: "auto",
-        }}
-      >
+      <div className={`youtube-preview-content mode-${viewportMode} ${isFolded ? "is-folded" : ""}`}>
         {content ? (
-          renderHashtagsFormatted(content)
+          <>
+            {renderRichYouTubeContent(content)}
+            {isFolded && <div className="youtube-fold-fade" />}
+          </>
         ) : (
-          <span style={{ color: "var(--text-muted, #64748b)" }}>No description content generated yet</span>
+          <span style={{ color: "var(--muted)" }}>No description content generated yet.</span>
         )}
       </div>
+
+      {content && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "8px" }}>
+          <button
+            type="button"
+            className="youtube-fold-toggle"
+            onClick={() => setIsFolded((prev) => !prev)}
+            title="Simulate YouTube ...more folding mechanism"
+          >
+            {isFolded ? (
+              <>
+                <span>...Show more (Expand View)</span>
+                <CaretDown size={14} weight="bold" />
+              </>
+            ) : (
+              <>
+                <span>Show less (Fold View)</span>
+                <CaretUp size={14} weight="bold" />
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

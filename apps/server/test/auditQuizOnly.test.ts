@@ -41,4 +41,13 @@ describe("Quiz-only tracked-source audit summary", () => {
     expect(error).toHaveProperty("code", 1);
     expect(error.stderr).toMatch(/total=1 success=0 failed=1 skipped=0 retries=0 elapsed=\d+ms/i);
   });
+
+  it("ignores tracked files deleted from the working tree", async () => {
+    const root = await trackedFixture("Quiz-only source\n");
+    await rm(path.join(root, "tracked.txt"));
+
+    const result = await execFileAsync(process.execPath, [script], { cwd: root, windowsHide: true });
+
+    expect(result.stderr).toMatch(/total=0 success=0 failed=0 skipped=0 retries=0 elapsed=\d+ms/i);
+  });
 });

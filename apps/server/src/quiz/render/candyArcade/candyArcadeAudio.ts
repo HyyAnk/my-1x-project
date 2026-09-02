@@ -135,10 +135,18 @@ export function buildSfxClips(events: QuizTimeline["events"], assets?: Record<st
         src,
       });
     } else if (event.type === "countdown.tick") {
-      const isFinalTick = event.payload?.value === 1;
-      const filename = isFinalTick ? "countdown_final.wav" : "countdown_tick.wav";
-      const dur = isFinalTick ? 0.35 : 0.08;
-      const vol = isFinalTick ? "0.60" : "0.45";
+      const val = event.payload?.value;
+      const isFinalTick = val === 1;
+      const filename =
+        typeof val === "number" && val >= 1 && val <= 5
+          ? val === 1
+            ? "countdown_1.wav"
+            : `countdown_${val}.wav`
+          : isFinalTick
+            ? "countdown_final.wav"
+            : "countdown_tick.wav";
+      const dur = val === 1 || isFinalTick ? 0.35 : val === 2 ? 0.09 : 0.08;
+      const vol = val === 1 || isFinalTick ? "0.60" : val === 2 ? "0.50" : val === 3 ? "0.48" : "0.45";
       const src = sfxSource(filename, assets);
       rawClips.push({
         id,

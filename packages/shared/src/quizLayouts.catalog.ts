@@ -38,19 +38,6 @@ export const QUIZ_LAYOUT_CATALOG = {
       assets: { choice: QUIZ_DEFAULT_CHOICE_ASSET_METRICS },
     },
   },
-  media_top_choices_bottom: {
-    id: "media_top_choices_bottom",
-    supportedPresentations: ["text"],
-    supportedChoiceCounts: [2, 3],
-    supportedFormats: ["multiple_choice", "image_guess", "true_false"],
-    recommendedFormats: ["image_guess", "multiple_choice"],
-    media: { supported: ["question"], required: [] },
-    supportedAspectRatios,
-    metrics: {
-      render: { width: 840, height: 360, itemCount: 1 },
-      assets: { question: { maxWidth: 1080, maxHeight: 608 } },
-    },
-  },
   full_stack_list: {
     id: "full_stack_list",
     supportedPresentations: ["text"],

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { CaretDown, Check, ListDashes, ListNumbers, Rows, SquareSplitHorizontal, type IconProps } from "@phosphor-icons/react";
+import { CaretDown, Check, ListDashes, ListNumbers, SquareSplitHorizontal, type IconProps } from "@phosphor-icons/react";
 import type { QuizPreviewLayoutId } from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import {
@@ -20,8 +20,6 @@ function LayoutIcon({ icon, size = 18, ...props }: { icon: QuizLayoutUiDefinitio
       return <SquareSplitHorizontal size={size} {...props} />;
     case "visual":
       return <ListNumbers size={size} {...props} />;
-    case "top":
-      return <Rows size={size} {...props} />;
     case "stack":
       return <ListDashes size={size} {...props} />;
     default:

@@ -80,35 +80,20 @@ const sampleQuiz: QuizV2 = QuizV2Schema.parse({
 
 describe("Phase 6 Test Matrix: Shared catalog and compatibility", () => {
   it("P6-CAT-01: Layout schema IDs parse exhaustively", () => {
-    const expectedIds = ["auto", "media_left_choices_right", "visual_choices_three", "media_top_choices_bottom", "full_stack_list"];
+    const expectedIds = ["auto", "media_left_choices_right", "visual_choices_three", "full_stack_list"];
     expect(QuizLayoutIdSchema.options.sort()).toEqual(expectedIds.sort());
     for (const id of expectedIds) {
       expect(QuizLayoutIdSchema.parse(id)).toBe(id);
     }
   });
 
-  it("P6-CAT-02: Catalog and renderer parity for all four production layouts", () => {
+  it("P6-CAT-02: Catalog and renderer parity for all production layouts", () => {
     const resolvedIds = ResolvedQuizLayoutIdSchema.options;
-    expect(resolvedIds.length).toBe(4);
+    expect(resolvedIds.length).toBe(3);
     for (const id of resolvedIds) {
       expect(QUIZ_LAYOUT_CATALOG[id]).toBeDefined();
       expect(QUIZ_LAYOUT_RENDERERS[id]).toBeDefined();
     }
-  });
-
-  it("P6-CAT-03: media_top_choices_bottom capabilities match declared contract", () => {
-    const capability = getQuizLayoutCapability("media_top_choices_bottom");
-    expect(capability.id).toBe("media_top_choices_bottom");
-    expect(capability.supportedPresentations).toEqual(["text"]);
-    expect(capability.supportedChoiceCounts).toEqual([2, 3]);
-    expect(capability.supportedFormats).toEqual(["multiple_choice", "image_guess", "true_false"]);
-    expect(capability.supportedAspectRatios).toEqual(["16:9", "9:16"]);
-    expect(capability.media.supported).toEqual(["question"]);
-    expect(capability.media.required).toEqual([]);
-    expect(capability.metrics.render.width).toBe(840);
-    expect(capability.metrics.render.height).toBe(360);
-    const questionAsset = capability.metrics.assets.question;
-    expect(questionAsset?.maxWidth).toBe(1080);
   });
 
   it("P6-CAT-04: full_stack_list capabilities match declared contract", () => {
@@ -142,16 +127,7 @@ describe("Phase 6 Test Matrix: Shared catalog and compatibility", () => {
     expect(visualAuto).toMatchObject({ ok: true, layoutId: "visual_choices_three", source: "auto" });
   });
 
-  it("P6-CAT-06: Explicit new compatible request is preserved and resolved", () => {
-    const topMedia = resolveQuizLayout({
-      requestedLayout: "media_top_choices_bottom",
-      archetype: "text_multiple_choice",
-      questionFormat: "multiple_choice",
-      choiceCount: 3,
-      media: ["question"],
-    });
-    expect(topMedia).toMatchObject({ ok: true, layoutId: "media_top_choices_bottom", source: "explicit" });
-
+  it("P6-CAT-06: Explicit compatible request is preserved and resolved", () => {
     const fullStack = resolveQuizLayout({
       requestedLayout: "full_stack_list",
       archetype: "text_multiple_choice",
@@ -198,12 +174,12 @@ describe("Phase 6 Test Matrix: Shared catalog and compatibility", () => {
     expect(parseResult.success).toBe(false);
   });
 
-  it("P6-CAT-09: Director plan round-trips explicit new IDs", () => {
+  it("P6-CAT-09: Director plan round-trips explicit layout IDs", () => {
     const defaultPlan = createDefaultDirectorPlan(sampleQuiz);
     const directorPlan: DirectorPlan = {
       ...defaultPlan,
       beats: [
-        { ...defaultPlan.beats[0], layout_id: "media_top_choices_bottom" },
+        { ...defaultPlan.beats[0], layout_id: "media_left_choices_right" },
         { ...defaultPlan.beats[1], layout_id: "full_stack_list", asset_intents: [] },
       ],
     };
@@ -219,26 +195,21 @@ describe("Phase 6 Test Matrix: Shared catalog and compatibility", () => {
 });
 
 describe("Phase 6 Test Matrix: Layout rendering and capacity", () => {
-  it("P6-LAY-01: Media-top unified slots arrange title, hero, choices, and phase", () => {
-    const html = renderQuizLayoutBody("media_top_choices_bottom", slots);
-    expect(html).toBe('<question-box /><hero /><choices /><div class="phase-region"><phase /></div>');
-  });
-
   it("P6-LAY-02: Full-stack unified slots arrange title, choices, and phase without hero slot", () => {
     const html = renderQuizLayoutBody("full_stack_list", slots);
     expect(html).toBe('<question-box /><choices /><div class="phase-region"><phase /></div>');
   });
 
-  it("P6-LAY-03: Two and three choices render cleanly in both new layouts", () => {
-    const top2 = buildSandboxComposition({
-      layout_id: "media_top_choices_bottom",
+  it("P6-LAY-03: Two and three choices render cleanly in text layouts", () => {
+    const split2 = buildSandboxComposition({
+      layout_id: "media_left_choices_right",
       choices: ["Choice 1", "Choice 2"],
       correct_choice_index: 0,
       phase: "choices",
     });
-    expect(top2.html).toContain("answer-count-2");
-    expect(top2.html).toContain('data-choice-id="sandbox-choice-1"');
-    expect(top2.html).toContain('data-choice-id="sandbox-choice-2"');
+    expect(split2.html).toContain("answer-count-2");
+    expect(split2.html).toContain('data-choice-id="sandbox-choice-1"');
+    expect(split2.html).toContain('data-choice-id="sandbox-choice-2"');
 
     const stack3 = buildSandboxComposition({
       layout_id: "full_stack_list",
@@ -250,9 +221,9 @@ describe("Phase 6 Test Matrix: Layout rendering and capacity", () => {
     expect(stack3.html).toContain('data-choice-id="sandbox-choice-3"');
   });
 
-  it("P6-LAY-04: Missing optional hero in media_top_choices_bottom falls back safely", () => {
+  it("P6-LAY-04: Missing question hero source falls back safely", () => {
     const comp = buildSandboxComposition({
-      layout_id: "media_top_choices_bottom",
+      layout_id: "media_left_choices_right",
       choices: ["Yes", "No"],
       phase: "question",
     });
@@ -261,9 +232,9 @@ describe("Phase 6 Test Matrix: Layout rendering and capacity", () => {
   });
 
   it("P6-LAY-05: Capability metrics are consumed by image optimizer and QA", () => {
-    const dimsTop = getOptimalAssetDimensions("hero", "media_top_choices_bottom");
-    expect(dimsTop.maxWidth).toBe(1080);
-    expect(dimsTop.maxHeight).toBe(608);
+    const dimsSplit = getOptimalAssetDimensions("hero", "media_left_choices_right");
+    expect(dimsSplit.maxWidth).toBe(1080);
+    expect(dimsSplit.maxHeight).toBe(810);
 
     const dimsStack = getOptimalAssetDimensions("hero", "full_stack_list");
     expect(dimsStack).toBeDefined();
@@ -279,7 +250,7 @@ describe("Phase 6 Test Matrix: Layout rendering and capacity", () => {
           {
             question_id: "q1",
             archetype: "text_multiple_choice",
-            layout_id: "media_top_choices_bottom",
+            layout_id: "media_left_choices_right",
             palette_id: "lime",
             thinking_bar_style: "star_slider",
             question_box_style: "candy_pop",
@@ -300,11 +271,11 @@ describe("Phase 6 Test Matrix: Layout rendering and capacity", () => {
     expect(blockers).toEqual([]);
   });
 
-  it("P6-LAY-06: New layout CSS uses Phase 5 capacity tokens without selecting skin classes", () => {
-    const topCss = getQuizLayoutRenderer("media_top_choices_bottom").css("16:9");
-    expect(topCss).toContain("--choice-card-min-height");
-    expect(topCss).toContain("--choice-font-size-base");
-    expect(topCss).not.toMatch(/\.ac-/);
+  it("P6-LAY-06: Layout CSS uses Phase 5 capacity tokens without selecting skin classes", () => {
+    const splitCss = getQuizLayoutRenderer("media_left_choices_right").css("16:9");
+    expect(splitCss).toContain("--choice-card-min-height");
+    expect(splitCss).toContain("--choice-font-size-base");
+    expect(splitCss).not.toMatch(/\.ac-/);
 
     const stackCss = getQuizLayoutRenderer("full_stack_list").css("16:9");
     expect(stackCss).toContain("--choice-card-min-height");
@@ -314,21 +285,21 @@ describe("Phase 6 Test Matrix: Layout rendering and capacity", () => {
 });
 
 describe("Phase 6 Test Matrix: Visual, aspect ratio, and skin coverage", () => {
-  it("P6-VIS-01: Media-top renders for 16:9 and 9:16 portrait", () => {
+  it("P6-VIS-01: Split layout renders for 16:9 and 9:16 portrait", () => {
     const comp169 = buildSandboxComposition({
-      layout_id: "media_top_choices_bottom",
+      layout_id: "media_left_choices_right",
       aspect_ratio: "16:9",
       choices: ["Choice 1", "Choice 2", "Choice 3"],
     });
-    expect(comp169.html).toContain("layout-media_top_choices_bottom");
+    expect(comp169.html).toContain("layout-media_left_choices_right");
 
     const comp916 = buildSandboxComposition({
-      layout_id: "media_top_choices_bottom",
+      layout_id: "media_left_choices_right",
       aspect_ratio: "9:16",
       choices: ["Choice 1", "Choice 2", "Choice 3"],
     });
     expect(comp916.html).toContain('data-aspect-ratio="9:16"');
-    expect(comp916.html).toContain("layout-media_top_choices_bottom");
+    expect(comp916.html).toContain("layout-media_left_choices_right");
   });
 
   it("P6-VIS-02: Full-stack renders for 16:9 and 9:16 portrait", () => {
@@ -360,9 +331,9 @@ describe("Phase 6 Test Matrix: Visual, aspect ratio, and skin coverage", () => {
     expect(longComp.html).toContain("choice-tier-");
   });
 
-  it("P6-VIS-04: All four Answer Card skins render cleanly in both new layouts", () => {
+  it("P6-VIS-04: All Answer Card skins render cleanly in text layouts", () => {
     const skins = ALL_ANSWER_CARD_STYLES.filter((s) => s !== "auto");
-    const layouts: QuizPreviewLayoutId[] = ["media_top_choices_bottom", "full_stack_list"];
+    const layouts: QuizPreviewLayoutId[] = ["media_left_choices_right", "full_stack_list"];
 
     for (const layout of layouts) {
       for (const skin of skins) {
@@ -378,7 +349,7 @@ describe("Phase 6 Test Matrix: Visual, aspect ratio, and skin coverage", () => {
 
   it("P6-VIS-05: Mascot occupancy modifies capacity without collision", () => {
     const withMascot = buildSandboxComposition({
-      layout_id: "media_top_choices_bottom",
+      layout_id: "media_left_choices_right",
       mascot_enabled: true,
       mascot_position: "bottom_left",
       choices: ["Choice A", "Choice B", "Choice C"],
@@ -407,18 +378,18 @@ describe("Phase 6 Test Matrix: Visual, aspect ratio, and skin coverage", () => {
   it("P6-VIS-07: Reduced motion CSS rule is present and valid", () => {
     const css = quizLayoutCss("16:9");
     expect(css).toBeDefined();
-    const fullCss = buildSandboxComposition({ layout_id: "media_top_choices_bottom" }).html;
+    const fullCss = buildSandboxComposition({ layout_id: "full_stack_list" }).html;
     expect(fullCss).toContain("@media (prefers-reduced-motion: reduce)");
   });
 });
 
 describe("Phase 6 Test Matrix: Production composition integration", () => {
-  it("P6-PROD-01: buildCandyArcadeCompositionBundle renders media_top_choices_bottom scenes", () => {
+  it("P6-PROD-01: buildCandyArcadeCompositionBundle renders production layout scenes", () => {
     const defaultPlan = createDefaultDirectorPlan(sampleQuiz);
     const directorPlan: DirectorPlan = {
       ...defaultPlan,
       beats: [
-        { ...defaultPlan.beats[0], layout_id: "media_top_choices_bottom" },
+        { ...defaultPlan.beats[0], layout_id: "media_left_choices_right" },
         { ...defaultPlan.beats[1], layout_id: "full_stack_list", asset_intents: [] },
       ],
     };
@@ -435,7 +406,7 @@ describe("Phase 6 Test Matrix: Production composition integration", () => {
     });
     expect(bundle.html).toContain("candy-intro.html");
     const sceneFiles = Object.values(bundle.files).join("\n");
-    expect(sceneFiles).toContain("layout-media_top_choices_bottom");
+    expect(sceneFiles).toContain("layout-media_left_choices_right");
     expect(sceneFiles).toContain("layout-full_stack_list");
   });
 });

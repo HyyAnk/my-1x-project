@@ -77,6 +77,11 @@ export async function enforceQuizVoicePace(
   segmentNumber: number,
   onPacingClamp?: (details: QuizVoicePacingClamp) => Promise<void> | void,
 ): Promise<Uint8Array> {
+  // Short energetic hook and closing segments should preserve natural punchy delivery
+  // without atempo stretch degradation.
+  if (segment.role === "intro" || segment.role === "outro") {
+    return audio;
+  }
   const actual = segmentPace(segment, wavDurationSeconds(audio));
   if (actual <= pacingLimit) return audio;
   const requestedTempo = pacingLimit / actual;

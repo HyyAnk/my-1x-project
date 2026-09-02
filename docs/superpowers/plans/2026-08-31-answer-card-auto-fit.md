@@ -237,7 +237,6 @@ Expected: 6 tests PASS.
 - Modify: `apps/server/src/quiz/render/choices/choiceTypographyStyles.ts`
 - Modify: `apps/server/src/quiz/render/layouts/baseline.ts`
 - Modify: `apps/server/src/quiz/render/layouts/mediaLeftChoicesRight.ts`
-- Modify: `apps/server/src/quiz/render/layouts/mediaTopChoicesBottom.ts`
 - Modify: `apps/server/src/quiz/render/layouts/fullStackList.ts`
 - Modify: `apps/server/src/quiz/render/layouts/visualChoicesThree.ts`
 - Modify: `apps/server/test/quizChoiceGroupRenderer.test.ts`
@@ -253,7 +252,6 @@ Expected: 6 tests PASS.
 Add assertions that rendered groups start with `data-choice-fit-status="pending"`, `data-choice-fit-lines="1"`, and that typography rules consume `--choice-fitted-font-size` before tier fallback tokens. Add literal capacity assertions for:
 
 - `media_left_choices_right` 16:9 text max `64px`, portrait max `72px`.
-- `media_top_choices_bottom` 16:9 text max `48px`, portrait max `68px`.
 - `full_stack_list` text max `64px`, portrait max `72px`.
 - `visual_choices_three` label max `38px`, portrait max `42px`.
 - baseline text max `64px`.

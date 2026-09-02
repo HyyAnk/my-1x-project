@@ -29,6 +29,11 @@ export const episodesVi = {
   },
   episodeCustomization: {
     barTitle: "Tùy chỉnh sản xuất",
+    groupContent: "Nội dung & Kênh",
+    groupTheme: "Phong cách chủ đạo",
+    groupElements: "Chi tiết thành phần",
+    decrementQuestions: "Giảm số câu",
+    incrementQuestions: "Tăng số câu",
     pillPreset: "Gói style",
     pillQuestions: "Số câu hỏi",
     pillArtStyle: "Phong cách ảnh",

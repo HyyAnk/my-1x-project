@@ -144,146 +144,164 @@ export function EpisodeQuizCustomizationBar({
         </div>
 
         <div className="customization-button-group">
-          <div className="customization-group">
-            <PresetPickerDropdown
-              episode={episode}
-              disabled={isPipelineRunning}
-              saving={isSaving("style-preset")}
-              isOpen={openDropdown === "preset"}
-              onToggle={() => toggleDropdown("preset")}
-              onSelectPreset={(preset) => {
-                onApplyStylePreset(preset);
-                setOpenDropdown(null);
-              }}
-              onPreview={setCandidate}
-            />
-            <QuestionCountDropdown
-              disabled={isPipelineRunning}
-              saving={isSaving("question-count")}
-              isOpen={openDropdown === "questions"}
-              onToggle={() => toggleDropdown("questions")}
-              questionCountDraft={questionCountDraft}
-              setQuestionCountDraft={setQuestionCountDraft}
-              onSaveQuestionCount={onSaveQuestionCount}
-              onPreview={setCandidate}
-            />
-            <ChannelBrandNameControl
-              value={brandNameControl.draft}
-              onChange={brandNameControl.setDraft}
-              onSave={brandNameControl.save}
-              onRevert={brandNameControl.revert}
-              onRetry={brandNameControl.retry}
-              saving={brandNameControl.saving}
-              error={brandNameControl.error}
-              disabled={isPipelineRunning}
-            />
+          {/* Section 1: Content & Channel Setup */}
+          <div className="customization-section">
+            <div className="customization-section-header">
+              <span className="customization-section-title">{t("episodeCustomization.groupContent")}</span>
+            </div>
+            <div className="customization-controls-row">
+              <QuestionCountDropdown
+                disabled={isPipelineRunning}
+                saving={isSaving("question-count")}
+                isOpen={openDropdown === "questions"}
+                onToggle={() => toggleDropdown("questions")}
+                questionCountDraft={questionCountDraft}
+                setQuestionCountDraft={setQuestionCountDraft}
+                onSaveQuestionCount={onSaveQuestionCount}
+                onPreview={setCandidate}
+              />
+              <ChannelBrandNameControl
+                value={brandNameControl.draft}
+                onChange={brandNameControl.setDraft}
+                onSave={brandNameControl.save}
+                onRevert={brandNameControl.revert}
+                onRetry={brandNameControl.retry}
+                saving={brandNameControl.saving}
+                error={brandNameControl.error}
+                disabled={isPipelineRunning}
+              />
+              <ThumbnailRatioDropdown
+                episode={episode}
+                disabled={isPipelineRunning}
+                saving={isSaving("thumbnailRatio")}
+                isOpen={openDropdown === "thumbnailRatio"}
+                onToggle={() => toggleDropdown("thumbnailRatio")}
+                onSelectRatio={(ratio) => {
+                  onSaveThumbnailRatio?.(ratio);
+                  setOpenDropdown(null);
+                }}
+              />
+            </div>
           </div>
 
-          <div className="customization-group">
-            <ArtStyleDropdown
-              channel={channel}
-              episode={episode}
-              disabled={isPipelineRunning}
-              saving={isSaving("visual-style")}
-              isOpen={openDropdown === "visualStyle"}
-              onToggle={() => toggleDropdown("visualStyle")}
-              onSelectStyle={(style) => {
-                onSaveVisualStyle(style);
-                setOpenDropdown(null);
-              }}
-            />
-            <PaletteDropdown
-              channel={channel}
-              episode={episode}
-              disabled={isPipelineRunning}
-              saving={isSaving("palette-id")}
-              isOpen={openDropdown === "palette"}
-              onToggle={() => toggleDropdown("palette")}
-              onSelectPalette={(palette) => {
-                onSavePaletteId(palette);
-                setOpenDropdown(null);
-              }}
-              onPreview={setCandidate}
-            />
+          {/* Section 2: Main Theme & Presets */}
+          <div className="customization-section">
+            <div className="customization-section-header">
+              <span className="customization-section-title">{t("episodeCustomization.groupTheme")}</span>
+            </div>
+            <div className="customization-controls-row">
+              <PresetPickerDropdown
+                episode={episode}
+                disabled={isPipelineRunning}
+                saving={isSaving("style-preset")}
+                isOpen={openDropdown === "preset"}
+                onToggle={() => toggleDropdown("preset")}
+                onSelectPreset={(preset) => {
+                  onApplyStylePreset(preset);
+                  setOpenDropdown(null);
+                }}
+                onPreview={setCandidate}
+              />
+              <ArtStyleDropdown
+                channel={channel}
+                episode={episode}
+                disabled={isPipelineRunning}
+                saving={isSaving("visual-style")}
+                isOpen={openDropdown === "visualStyle"}
+                onToggle={() => toggleDropdown("visualStyle")}
+                onSelectStyle={(style) => {
+                  onSaveVisualStyle(style);
+                  setOpenDropdown(null);
+                }}
+              />
+              <PaletteDropdown
+                channel={channel}
+                episode={episode}
+                disabled={isPipelineRunning}
+                saving={isSaving("palette-id")}
+                isOpen={openDropdown === "palette"}
+                onToggle={() => toggleDropdown("palette")}
+                onSelectPalette={(palette) => {
+                  onSavePaletteId(palette);
+                  setOpenDropdown(null);
+                }}
+                onPreview={setCandidate}
+              />
+            </div>
           </div>
 
-          <div className="customization-group">
-            <QuestionBoxDropdown
-              channel={channel}
-              episode={episode}
-              disabled={isPipelineRunning}
-              saving={isSaving("question-box-style")}
-              isOpen={openDropdown === "questionBox"}
-              onToggle={() => toggleDropdown("questionBox")}
-              onSelectStyle={(style) => {
-                onSaveQuestionBoxStyle(style);
-                setOpenDropdown(null);
-              }}
-              onPreview={setCandidate}
-            />
-            <AnswerCardDropdown
-              channel={channel}
-              episode={episode}
-              disabled={isPipelineRunning}
-              saving={isSaving("answer-card-style")}
-              isOpen={openDropdown === "answerCard"}
-              onToggle={() => toggleDropdown("answerCard")}
-              onSelectStyle={(style) => {
-                onSaveAnswerCardStyle(style);
-                setOpenDropdown(null);
-              }}
-              onPreview={setCandidate}
-            />
-            <CounterBadgeDropdown
-              channel={channel}
-              episode={episode}
-              disabled={isPipelineRunning}
-              saving={isSaving("counter-style")}
-              isOpen={openDropdown === "counterBadge"}
-              onToggle={() => toggleDropdown("counterBadge")}
-              onSelectStyle={(style) => {
-                onSaveCounterStyle(style);
-                setOpenDropdown(null);
-              }}
-              onPreview={setCandidate}
-            />
-            <BackgroundDropdown
-              channel={channel}
-              episode={episode}
-              disabled={isPipelineRunning}
-              saving={isSaving("background-style")}
-              isOpen={openDropdown === "background"}
-              onToggle={() => toggleDropdown("background")}
-              onSelectStyle={(style) => {
-                onSaveBackgroundStyle(style);
-                setOpenDropdown(null);
-              }}
-              onPreview={setCandidate}
-            />
-            <ThinkingBarDropdown
-              channel={channel}
-              episode={episode}
-              disabled={isPipelineRunning}
-              saving={isSaving("thinking-bar-style")}
-              isOpen={openDropdown === "thinkingBar"}
-              onToggle={() => toggleDropdown("thinkingBar")}
-              onSelectStyle={(style) => {
-                onSaveThinkingBarStyle(style);
-                setOpenDropdown(null);
-              }}
-              onPreview={setCandidate}
-            />
-            <ThumbnailRatioDropdown
-              episode={episode}
-              disabled={isPipelineRunning}
-              saving={isSaving("thumbnailRatio")}
-              isOpen={openDropdown === "thumbnailRatio"}
-              onToggle={() => toggleDropdown("thumbnailRatio")}
-              onSelectRatio={(ratio) => {
-                onSaveThumbnailRatio?.(ratio);
-                setOpenDropdown(null);
-              }}
-            />
+          {/* Section 3: Fine-tuning Component Elements */}
+          <div className="customization-section">
+            <div className="customization-section-header">
+              <span className="customization-section-title">{t("episodeCustomization.groupElements")}</span>
+            </div>
+            <div className="customization-controls-row customization-elements-grid">
+              <QuestionBoxDropdown
+                channel={channel}
+                episode={episode}
+                disabled={isPipelineRunning}
+                saving={isSaving("question-box-style")}
+                isOpen={openDropdown === "questionBox"}
+                onToggle={() => toggleDropdown("questionBox")}
+                onSelectStyle={(style) => {
+                  onSaveQuestionBoxStyle(style);
+                  setOpenDropdown(null);
+                }}
+                onPreview={setCandidate}
+              />
+              <AnswerCardDropdown
+                channel={channel}
+                episode={episode}
+                disabled={isPipelineRunning}
+                saving={isSaving("answer-card-style")}
+                isOpen={openDropdown === "answerCard"}
+                onToggle={() => toggleDropdown("answerCard")}
+                onSelectStyle={(style) => {
+                  onSaveAnswerCardStyle(style);
+                  setOpenDropdown(null);
+                }}
+                onPreview={setCandidate}
+              />
+              <CounterBadgeDropdown
+                channel={channel}
+                episode={episode}
+                disabled={isPipelineRunning}
+                saving={isSaving("counter-style")}
+                isOpen={openDropdown === "counterBadge"}
+                onToggle={() => toggleDropdown("counterBadge")}
+                onSelectStyle={(style) => {
+                  onSaveCounterStyle(style);
+                  setOpenDropdown(null);
+                }}
+                onPreview={setCandidate}
+              />
+              <ThinkingBarDropdown
+                channel={channel}
+                episode={episode}
+                disabled={isPipelineRunning}
+                saving={isSaving("thinking-bar-style")}
+                isOpen={openDropdown === "thinkingBar"}
+                onToggle={() => toggleDropdown("thinkingBar")}
+                onSelectStyle={(style) => {
+                  onSaveThinkingBarStyle(style);
+                  setOpenDropdown(null);
+                }}
+                onPreview={setCandidate}
+              />
+              <BackgroundDropdown
+                channel={channel}
+                episode={episode}
+                disabled={isPipelineRunning}
+                saving={isSaving("background-style")}
+                isOpen={openDropdown === "background"}
+                onToggle={() => toggleDropdown("background")}
+                onSelectStyle={(style) => {
+                  onSaveBackgroundStyle(style);
+                  setOpenDropdown(null);
+                }}
+                onPreview={setCandidate}
+              />
+            </div>
           </div>
         </div>
       </div>

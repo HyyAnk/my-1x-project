@@ -29,6 +29,11 @@ export const episodesEn = {
   },
   episodeCustomization: {
     barTitle: "Production Customization",
+    groupContent: "Content & Channel",
+    groupTheme: "Visual Theme",
+    groupElements: "Component Details",
+    decrementQuestions: "Decrease questions",
+    incrementQuestions: "Increase questions",
     pillPreset: "Style Preset",
     pillQuestions: "Questions",
     pillArtStyle: "Art Style",

@@ -12,7 +12,7 @@ describe("SandboxLayoutSelector (P6-UI-01..09)", () => {
     cleanup();
   });
 
-  it("P6-UI-01 & P6-UI-08: Renders a single compact combobox control with all four production layouts", () => {
+  it("P6-UI-01 & P6-UI-08: Renders a single compact combobox control with all production layouts", () => {
     const setLayoutId = vi.fn();
     const { getByRole, getAllByRole } = renderWithLanguage(
       <SandboxLayoutSelector layoutId="media_left_choices_right" setLayoutId={setLayoutId} />,
@@ -27,8 +27,8 @@ describe("SandboxLayoutSelector (P6-UI-01..09)", () => {
     expect(combobox.getAttribute("aria-expanded")).toBe("true");
 
     const options = getAllByRole("option");
-    expect(options).toHaveLength(4);
-    expect(QUIZ_LAYOUT_UI_DEFINITIONS).toHaveLength(4);
+    expect(options).toHaveLength(3);
+    expect(QUIZ_LAYOUT_UI_DEFINITIONS).toHaveLength(3);
   });
 
   it("P6-UI-02: Supports keyboard navigation (Enter, Space, ArrowDown, ArrowUp, Escape)", () => {
@@ -52,14 +52,14 @@ describe("SandboxLayoutSelector (P6-UI-01..09)", () => {
 
   it("P6-UI-03: Selecting a new layout immediately calls setLayoutId and closes listbox", () => {
     const setLayoutId = vi.fn();
-    const { getByRole, getAllByRole, queryByRole } = renderWithLanguage(
+    const { getByRole, queryByRole } = renderWithLanguage(
       <SandboxLayoutSelector layoutId="media_left_choices_right" setLayoutId={setLayoutId} />,
     );
 
     const combobox = getByRole("combobox");
     fireEvent.click(combobox);
 
-    const fullStackOption = getAllByRole("option")[3];
+    const fullStackOption = getByRole("option", { name: /Full Stack List/ });
     fireEvent.click(fullStackOption);
 
     expect(setLayoutId).toHaveBeenCalledWith("full_stack_list");

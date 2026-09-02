@@ -357,5 +357,46 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       expect(fallback.scoring_cta.beginner).toContain("Mới bắt đầu");
       expect(fallback.full_description_text).toContain("Kỳ Quan Thế Giới Cổ Đại");
     });
+
+    it("strictly adheres to English when channel language is English during fallback", async () => {
+      const englishChannel: Channel = {
+        ...sampleChannel,
+        language: "English",
+        country: "US",
+      };
+      const englishEpisode: Episode = {
+        ...sampleEpisode,
+        topic: {
+          title: "Super Inventions",
+          premise: "Test your invention knowledge",
+          hook: "Can you spot the odd machine?",
+        },
+      };
+
+      const failingClient: LLMClient = {
+        connect: async () => {},
+        startThread: async () => {
+          throw new Error("LLM offline");
+        },
+      } as unknown as LLMClient;
+
+      const fallback = await generateVideoDescription({
+        client: failingClient,
+        channel: englishChannel,
+        episode: englishEpisode,
+        quiz: sampleQuiz,
+      });
+
+      expect(fallback.language).toBe("English");
+      expect(fallback.hook_lines).toContain("Super Inventions - 2 Question Challenge!");
+      expect(fallback.hook_lines).toContain("Test your knowledge");
+      expect(fallback.semantic_paragraph).toContain("Can you spot the odd machine?");
+      expect(fallback.semantic_paragraph).not.toContain("Hãy cùng khám phá");
+      expect(fallback.scoring_cta.beginner).toContain("Beginner");
+      expect(fallback.scoring_cta.cta_text).toContain("How many did you get right? Comment below!");
+      expect(fallback.full_description_text).toContain("🏆 SCORING TIERS:");
+      expect(fallback.full_description_text).toContain("📂 Playlist Category: Super Inventions");
+      expect(fallback.full_description_text).not.toMatch(/[\u00C0-\u024F\u1E00-\u1EFF]/); // No Vietnamese diacritics
+    });
   });
 });

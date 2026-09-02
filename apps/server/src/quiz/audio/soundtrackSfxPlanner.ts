@@ -72,11 +72,18 @@ export function resolveSfxSchedule(
       dur = 0.12;
       vol = 0.55;
     } else if (event.type === "countdown.tick") {
-      const isFinalTick = event.payload?.value === 1;
+      const val = event.payload?.value;
+      const isFinalTick = val === 1;
       intent = isFinalTick ? "countdown_final" : "countdown_tick";
-      filename = isFinalTick ? "countdown_final.wav" : "countdown_tick.wav";
-      dur = isFinalTick ? 0.35 : 0.08;
-      vol = isFinalTick ? 0.6 : 0.45;
+      if (typeof val === "number" && val >= 1 && val <= 5) {
+        filename = val === 1 ? "countdown_1.wav" : `countdown_${val}.wav`;
+        dur = val === 1 ? 0.35 : val === 2 ? 0.09 : 0.08;
+        vol = val === 1 ? 0.6 : val === 2 ? 0.5 : val === 3 ? 0.48 : 0.45;
+      } else {
+        filename = isFinalTick ? "countdown_final.wav" : "countdown_tick.wav";
+        dur = isFinalTick ? 0.35 : 0.08;
+        vol = isFinalTick ? 0.6 : 0.45;
+      }
     } else if (event.type === "reward.play") {
       const isBig = event.payload?.intensity === "big";
       intent = isBig ? "correct_big" : "correct_small";

@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 const supportsColor = Boolean(process.stderr.isTTY && process.env.NO_COLOR === undefined);
 const startedAt = Date.now();
@@ -29,7 +29,9 @@ const forbidden = [
   ["generate_", "narration"].join(""),
 ].map((value) => value.toLowerCase());
 
-const files = execFileSync("git", ["ls-files", "-z"], { encoding: "utf8" }).split("\0").filter(Boolean);
+const files = execFileSync("git", ["ls-files", "-z"], { encoding: "utf8" })
+  .split("\0")
+  .filter((file) => file && existsSync(file));
 const failures = [];
 const failedFiles = new Set();
 let skipped = 0;

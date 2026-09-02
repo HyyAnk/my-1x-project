@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ 3D Neural Agent Coordination Dashboard</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script>
+    window.addEventListener('error', function(e) {
+      console.error("Dashboard error:", e);
+      if (e.message && (e.message.includes('three') || e.message.includes('importmap') || e.message.includes('dynamically imported module') || e.message.includes('Failed to fetch'))) {
+        const errBanner = document.createElement('div');
+        errBanner.style = 'position:fixed;bottom:20px;left:20px;right:20px;background:rgba(239,68,68,0.95);color:#fff;padding:12px 18px;border-radius:8px;z-index:9999;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,0.6);';
+        errBanner.innerHTML = '<b>⚠️ Network Alert:</b> Unable to connect to Three.js CDN. Please verify internet connectivity for 3D neural visualization.';
+        document.body.appendChild(errBanner);
+      }
+    });
+  </script>
+</head>
+<body>
+  <!-- Stale Heartbeat Banner -->
+  <div id="stale-alert-banner" class="hidden">
+    <span>⚠️</span>
+    <span id="stale-alert-message">Stale claim detected: Agent heartbeat timed out. Release or reclaim recommended.</span>
+  </div>
+
+  <!-- 3D Canvas Viewport -->
+  <div id="canvas-container"></div>
+
+  <!-- Glassmorphism Top HUD -->
+  <header id="hud-header">
+    <div class="brand">
+      <span class="brand-icon">⚡</span>
+      <div>
+        <div class="brand-title">NEURAL AGENT COORDINATOR</div>
+        <div class="brand-subtitle">Realtime Codebase Synapse Visualizer</div>
+      </div>
+    </div>
+
+    <div class="metrics-row">
+      <div class="metric-item">
+        <span class="metric-label">Active Claims</span>
+        <span id="val-active-claims" class="metric-value magenta">0</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">Active Agents</span>
+        <span id="val-active-agents" class="metric-value cyan">None</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">Available Zones</span>
+        <span id="val-idle-zones" class="metric-value green">19/19</span>
+      </div>
+      <div class="live-badge">
+        <div class="pulse-dot"></div>
+        <span>LIVE SSE</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Floating Controls -->
+  <div id="floating-controls">
+    <button id="btn-reset-view" class="btn-cyber">🎯 Reset View</button>
+    <button id="btn-auto-rotate" class="btn-cyber">🔄 Auto-Rotate</button>
+    <button id="btn-open-matrix" class="btn-cyber btn-primary">📊 Work Matrix</button>
+  </div>
+
+  <!-- Legend Panel -->
+  <div id="legend-panel">
+    <div class="legend-item">
+      <div class="legend-indicator indicator-idle"></div>
+      <span>Available (Idle)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-indicator indicator-active"></div>
+      <span>Active Claim (Locked)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-indicator indicator-read"></div>
+      <span>Read-Stable Protected</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-indicator indicator-safe"></div>
+      <span>Safe to Parallelize</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-indicator indicator-hub"></div>
+      <span>Core High-Risk Hub</span>
+    </div>
+  </div>
+
+  <!-- Zone Detail Slide-out Drawer -->
+  <aside id="detail-drawer">
+    <div class="drawer-header">
+      <div>
+        <div id="drawer-title" class="drawer-title">Zone Inspector</div>
+      </div>
+      <button id="drawer-close" class="drawer-close">&times;</button>
+    </div>
+
+    <div id="drawer-tags" class="tag-list"></div>
+
+    <div class="drawer-actions">
+      <button id="btn-find-safe-zones" class="btn-cyber btn-primary">🎯 Find Safe Zones</button>
+      <button id="btn-copy-claim" class="btn-cyber">📋 Copy Claim CLI</button>
+    </div>
+
+    <div id="safe-zone-results"></div>
+
+    <div class="drawer-section">
+      <div class="drawer-section-title">Description</div>
+      <div id="drawer-desc" class="drawer-desc">Click any neural node to inspect zone properties, active claims, and dependencies.</div>
+    </div>
+
+    <div id="drawer-claims" class="drawer-section"></div>
+  </aside>
+
+  <!-- Work Matrix Modal -->
+  <div id="matrix-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">⚡ Codebase Work Allocation Matrix</div>
+        <button id="modal-close" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-hint">Click any zone row to fly the 3D camera directly to that neuron. Zones in cyan/green are ready for immediate agent assignment.</p>
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Zone Name</th>
+              <th>Layer</th>
+              <th>Risk Level</th>
+              <th>Lock Policy</th>
+              <th>Current Status</th>
+              <th>Active Agent</th>
+            </tr>
+          </thead>
+          <tbody id="matrix-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Application Entrypoint -->
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

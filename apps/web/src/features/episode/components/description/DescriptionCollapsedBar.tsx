@@ -24,63 +24,67 @@ export function DescriptionCollapsedBar({
   onCopy,
   onGenerate,
 }: DescriptionCollapsedBarProps) {
+  const percentUsed = Math.min(100, Math.max(0, Math.round((charCount / VIDEO_DESCRIPTION_MAX_CHARS) * 100)));
+  const meterStatusClass = isOverLimit
+    ? "is-overflow"
+    : charCount > 4200
+      ? "is-warning"
+      : "is-safe";
+
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", gap: "12px", flexWrap: "wrap" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-        <Article size={20} weight="duotone" />
-        <h2 style={{ margin: 0, fontSize: "15px" }}>Video Description & SEO</h2>
+    <div className="video-description-header">
+      <div className="video-description-title-group">
+        <h2 className="video-description-title">
+          <Article size={22} weight="duotone" color="var(--accent)" />
+          <span>Video Description & SEO</span>
+        </h2>
+
+        <span className="video-description-badge">
+          <Sparkle size={12} weight="fill" /> AI SEO Studio
+        </span>
+
         <span
           className="info-tooltip-trigger"
-          title="Automatically extracts primary keywords, quiz questions, score tiers, and hashtags optimized for YouTube SEO."
+          title="Extracts high-retention hook, chapter timestamps, scoring tiers, keywords, and hashtags optimized for YouTube SEO."
+          style={{ display: "inline-flex", color: "var(--muted)", cursor: "help" }}
         >
           <Info size={15} />
         </span>
 
         {description?.topic_category && (
-          <span className="badge-tag" style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11px", padding: "2px 8px" }}>
-            <Trophy size={12} /> {description.topic_category}
+          <span className="video-description-badge badge-topic">
+            <Trophy size={12} weight="bold" /> {description.topic_category}
           </span>
         )}
 
         {description?.hashtags && description.hashtags.length > 0 && (
-          <span className="badge-tag" style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11px", padding: "2px 8px" }}>
-            <Tag size={12} /> {description.hashtags.length} tags
+          <span className="video-description-badge badge-tags">
+            <Tag size={12} weight="bold" /> {description.hashtags.length} tags
           </span>
         )}
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <div className="video-description-actions">
         {hasQuiz ? (
-          <span
-            className={`tab-badge ${isOverLimit ? "badge-warning" : "badge-neutral"}`}
-            style={{
-              padding: "3px 8px",
-              borderRadius: "4px",
-              fontSize: "11.5px",
-              fontWeight: 600,
-              backgroundColor: isOverLimit ? "rgba(239, 68, 68, 0.2)" : "rgba(255, 255, 255, 0.08)",
-              color: isOverLimit ? "var(--red, #ef4444)" : "var(--text-muted, #94a3b8)",
-            }}
+          <div
+            className={`seo-char-meter ${meterStatusClass}`}
+            title={`Character usage: ${charCount} / ${VIDEO_DESCRIPTION_MAX_CHARS} characters`}
           >
-            {charCount} / {VIDEO_DESCRIPTION_MAX_CHARS} chars
-          </span>
+            <div className="seo-char-meter-bar-track">
+              <div
+                className="seo-char-meter-bar-fill"
+                style={{ width: `${percentUsed}%` }}
+              />
+            </div>
+            <span>
+              {charCount.toLocaleString()} / {VIDEO_DESCRIPTION_MAX_CHARS.toLocaleString()} chars
+            </span>
+          </div>
         ) : (
-          <span
-            className="tab-badge badge-neutral"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "4px",
-              padding: "3px 8px",
-              borderRadius: "4px",
-              fontSize: "11.5px",
-              fontWeight: 500,
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-              color: "var(--text-muted, #64748b)",
-            }}
-          >
-            <LockSimple size={12} /> Awaiting Questions
-          </span>
+          <div className="seo-char-meter" style={{ color: "var(--muted)", opacity: 0.8 }}>
+            <LockSimple size={13} />
+            <span>Awaiting Questions</span>
+          </div>
         )}
 
         {description && (
@@ -88,11 +92,20 @@ export function DescriptionCollapsedBar({
             type="button"
             className="secondary-button compact"
             onClick={onCopy}
-            title="Copy full description to clipboard"
-            style={{ display: "inline-flex", alignItems: "center", gap: "5px", padding: "4px 10px", fontSize: "12px" }}
+            title="Copy full video description to clipboard"
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
           >
-            {copied ? <Check size={14} weight="bold" color="var(--green, #22c55e)" /> : <Copy size={14} />}
-            <span>{copied ? "Copied!" : "Copy Description"}</span>
+            {copied ? (
+              <>
+                <Check size={14} weight="bold" color="var(--green, #10b981)" />
+                <span style={{ color: "var(--green, #10b981)", fontWeight: 600 }}>Copied!</span>
+              </>
+            ) : (
+              <>
+                <Copy size={14} />
+                <span>Copy Description</span>
+              </>
+            )}
           </button>
         )}
 
@@ -102,9 +115,9 @@ export function DescriptionCollapsedBar({
           disabled={!canGenerate}
           title={!hasQuiz ? "Generate quiz questions first before creating video description" : undefined}
           onClick={onGenerate}
-          style={{ display: "inline-flex", alignItems: "center", gap: "5px", padding: "4px 10px", fontSize: "12px" }}
+          style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
         >
-          {generating ? <CircleNotch className="spin" size={14} /> : <Sparkle size={14} weight="fill" />}
+          {generating ? <CircleNotch className="spin" size={15} /> : <Sparkle size={15} weight="fill" />}
           <span>{generating ? "Generating..." : description ? "Regenerate" : "Generate Description"}</span>
         </button>
       </div>

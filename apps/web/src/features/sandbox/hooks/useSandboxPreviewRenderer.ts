@@ -147,14 +147,17 @@ export function useSandboxPreviewRenderer({
         setLoading(false);
 
         // After mount, seek to current timeline seconds and pause if not playing
-        setTimeout(() => {
+        const syncIframe = () => {
           timeline.seekIframe(timeline.timelineSeconds);
           if (!timeline.isPlaying) {
             timeline.pauseIframe();
           } else {
-            timeline.playIframe();
+            timeline.playIframe(timeline.timelineSeconds);
           }
-        }, 50);
+        };
+        setTimeout(syncIframe, 20);
+        setTimeout(syncIframe, 80);
+        setTimeout(syncIframe, 200);
 
         if (pendingPreview.manualNotice && onNotice) {
           onNotice({ tone: "good", message: t("visualSandbox.noticeRerendered", { time: renderedAt }) });

@@ -28,13 +28,21 @@ export type ThinkingBarTiming = {
   styleAttr: string;
 };
 
+/**
+ * STRICT TIMING RULE FOR THINKING BAR:
+ * The Thinking Bar MUST always start running from the moment the question appears on screen (`clipStart`).
+ * It must NEVER depend on question narration start (`questionNarrationStart`) or thinking audio start (`thinkingStart`).
+ * This strict invariant guarantees that no future style, theme, or layout changes will cause the Thinking Bar
+ * to desync from the question appearance.
+ */
 export function calculateThinkingBarTiming(input: {
   clipStart: number;
   questionNarrationStart?: number;
   revealStart: number;
   thinkingStart?: number;
 }): ThinkingBarTiming {
-  const timerStart = input.questionNarrationStart ?? input.clipStart;
+  // STRICT INVARIANT: Always anchor timer origin to question appearance (clipStart)
+  const timerStart = input.clipStart;
   const duration = Math.max(0.05, input.revealStart - timerStart);
   const cd5Raw = duration - 5;
   const cd4Raw = duration - 4;

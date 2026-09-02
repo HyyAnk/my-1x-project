@@ -44,16 +44,13 @@ describe("Phase 1 layout and resolver characterization", () => {
     ).toMatchObject({ ok: false, requestedLayout: "visual_choices_three", source: "explicit" });
   });
 
-  it("L-02 through L-05 preserve registered slots", () => {
+  it("L-02 through L-04 preserve registered slots", () => {
     expect(renderQuizLayoutBody("baseline", slots)).toBe('<question-box /><hero /><choices /><div class="phase-region"><phase /></div>');
     expect(renderQuizLayoutBody("media_left_choices_right", slots)).toBe(
       '<question-box /><hero /><choices /><div class="phase-region"><phase /></div>',
     );
     expect(renderQuizLayoutBody("visual_choices_three", slots)).toBe(
       '<question-box /><choices /><div class="phase-region"><phase /></div>',
-    );
-    expect(renderQuizLayoutBody("media_top_choices_bottom", slots)).toBe(
-      '<question-box /><hero /><choices /><div class="phase-region"><phase /></div>',
     );
     expect(renderQuizLayoutBody("full_stack_list", slots)).toBe('<question-box /><choices /><div class="phase-region"><phase /></div>');
   });

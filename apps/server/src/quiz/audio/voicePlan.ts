@@ -2,7 +2,7 @@ import { VoicePlanSchema, type QuizV2, type VoicePhrase, type VoiceSegmentRole, 
 import { sanitizeTextForSpeech, splitSmartPunctuationPhrases, canSplitBetweenWords } from "../../utils/speechSanitizer.js";
 
 export function buildQuizVoicePlan(quiz: QuizV2): VoicePlan {
-  const copy = voiceCopy(quiz.language);
+  const copy = voiceCopy(quiz.language, quiz.episode_id);
   const segments: VoicePlan["segments"] = [
     {
       segment_id: "intro",
@@ -79,7 +79,9 @@ export function performancePhrases(text: string, role: VoiceSegmentRole): VoiceP
       ? splitQuestionPhrases(normalized)
       : role === "choice"
         ? splitChoicePhrases(normalized)
-        : splitPunctuationPhrases(normalized);
+        : role === "intro"
+          ? [normalized]
+          : splitPunctuationPhrases(normalized);
   return chunks.map((phrase, index) => ({
     text: phrase,
     delivery:
@@ -165,10 +167,30 @@ export function splitPunctuationPhrases(text: string): string[] {
   return splitSmartPunctuationPhrases(text);
 }
 
-function voiceCopy(language: string) {
+export const ENGLISH_OUTRO_CLOSING_VARIANTS = [
+  "See you next time for even more fun! Bye bye!",
+  "Catch you on the next challenge! Bye bye!",
+  "See you next time, everybody! Bye bye!",
+  "We'll see you on the next adventure! Bye bye!",
+] as const;
+
+export function resolveOutroClosing(language: string, seed?: string): string {
+  if (/^(vi|vietnamese|tiếng việt)/i.test(language.trim())) {
+    return "Hẹn gặp lại các bạn!";
+  }
+  if (!seed) return ENGLISH_OUTRO_CLOSING_VARIANTS[0];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  return ENGLISH_OUTRO_CLOSING_VARIANTS[hash % ENGLISH_OUTRO_CLOSING_VARIANTS.length];
+}
+
+function voiceCopy(language: string, seed?: string) {
+  const closing = resolveOutroClosing(language, seed);
   if (/^(vi|vietnamese|tiếng việt)/i.test(language.trim())) {
     return {
-      intro: "Sẵn sàng chưa? Xem bạn trả lời đúng được bao nhiêu câu nhé!",
+      intro: "Chào các bạn! Sẵn sàng chưa nào? Cùng thử tài xem bạn trả lời đúng được bao nhiêu câu nhé!",
       question: (_number: number, text: string) => text,
       choices: (choices: string[]) => (choices.length < 2 ? choices[0] : `${choices.slice(0, -1).join(", ")} hay ${choices.at(-1)}?`),
       thinking: ["Chọn nhanh nào!", "Đáp án là gì nhỉ?", "Nhanh tay nào!", "Bạn chọn cái nào?"],
@@ -177,11 +199,11 @@ function voiceCopy(language: string) {
       fact: (text: string) => text,
       midpoint: "",
       outro:
-        "Bạn đúng được mấy câu? Hãy bình luận số điểm của bạn bên dưới nhé! Nhớ nhấn Thích và Đăng ký kênh để đón xem những thử thách tiếp theo. Hẹn gặp lại các bạn!",
+        `Bạn đúng được mấy câu? Hãy bình luận số điểm của bạn bên dưới nhé! Nhớ nhấn Thích và Đăng ký kênh để đón xem những thử thách tiếp theo. ${closing}`,
     };
   }
   return {
-    intro: "Ready to test your brain? Let's jump right in!",
+    intro: "Hey friends! Ready to test your brain? Let's jump right in!",
     question: (_number: number, text: string) => text,
     choices: (choices: string[]) => (choices.length < 2 ? choices[0] : `${choices.slice(0, -1).join(", ")}, or ${choices.at(-1)}?`),
     thinking: ["Pick fast!", "Which one?", "What's your guess?", "Choose now!"],
@@ -190,6 +212,6 @@ function voiceCopy(language: string) {
     fact: (text: string) => text,
     midpoint: "",
     outro:
-      "How many did you get right? Leave your score in the comments below! Remember to like and subscribe for more fun quizzes. See you next time!",
+      `How many did you get right? Leave your score in the comments below! Remember to like and subscribe for more fun quizzes. ${closing}`,
   };
 }

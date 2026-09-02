@@ -3,11 +3,11 @@
    ========================================================================== */
 .episode-customization-bar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(280px, 30%, 400px);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) clamp(280px, 32%, 420px);
+  gap: 16px;
   align-items: start;
   margin: 14px 0 16px;
-  padding: 14px 18px;
+  padding: 16px;
   background: var(--surface-subtle, rgba(255, 255, 255, 0.03));
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -24,13 +24,13 @@
 .episode-customization-controls {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
 .customization-bar-header h2 {
   margin: 0;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -43,31 +43,124 @@
   gap: 10px;
 }
 
-.customization-group {
+.customization-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line-subtle, rgba(255, 255, 255, 0.05));
+  border-radius: 8px;
+}
+
+.customization-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.customization-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.customization-controls-row {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding-bottom: 10px;
-  border-bottom: 1px dashed var(--line);
+  align-items: center;
 }
 
-.customization-group:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+.customization-elements-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .customization-dropdown-item {
   position: relative;
 }
 
+/* Stepper Control (Inline - / + with Pill) */
+.customization-stepper-control {
+  display: inline-flex;
+}
+
+.customization-stepper-wrapper {
+  display: inline-flex;
+  align-items: stretch;
+  height: 34px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.customization-stepper-wrapper:hover {
+  border-color: var(--accent);
+}
+
+.customization-stepper-wrapper:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.customization-stepper-wrapper .customization-pill-btn {
+  height: 100%;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 0 8px;
+  box-shadow: none;
+}
+
+.stepper-step-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 100%;
+  background: var(--surface-subtle, rgba(255, 255, 255, 0.04));
+  border: none;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  user-select: none;
+}
+
+.stepper-step-btn:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--ink);
+}
+
+.stepper-step-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.stepper-step-dec {
+  border-right: 1px solid var(--line);
+}
+
+.stepper-step-inc {
+  border-left: 1px solid var(--line);
+}
+
 .customization-pill-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
+  height: 34px;
+  padding: 0 11px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 8px;
   color: var(--ink);
   cursor: pointer;
   transition:
@@ -84,7 +177,7 @@
 .customization-pill-btn.is-active {
   border-color: var(--accent);
   background: var(--soft-accent);
-  box-shadow: 0 0 0 3px var(--accent-glow);
+  box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
 .customization-pill-btn.is-saving {
@@ -99,35 +192,31 @@
 .customization-brand-name-control {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 170px;
-  max-width: 260px;
+  gap: 2px;
+  min-width: 160px;
+  max-width: 220px;
 }
 
 .customization-brand-name-control .brand-name-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--muted);
-  user-select: none;
+  display: none;
 }
 
 .customization-brand-name-control .brand-name-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+  height: 34px;
 }
 
 .customization-brand-name-control .brand-name-input {
   width: 100%;
-  height: 32px;
-  padding: 4px 10px;
+  height: 34px;
+  padding: 0 10px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 8px;
   color: var(--ink);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   outline: none;
   transition:
@@ -143,7 +232,7 @@
 .customization-brand-name-control .brand-name-input:focus:not(:disabled) {
   border-color: var(--accent);
   background: var(--surface-hover);
-  box-shadow: 0 0 0 3px var(--accent-glow);
+  box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
 .customization-brand-name-control .brand-name-input:disabled {
@@ -213,7 +302,7 @@
 }
 
 .pill-label {
-  font-size: 10px;
+  font-size: 9.5px;
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.4px;
@@ -221,8 +310,8 @@
 }
 
 .pill-value {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11.5px;
+  font-weight: 600;
   color: var(--ink);
   white-space: nowrap;
 }
@@ -488,13 +577,12 @@ button.episode-style-preview-status.is-error {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 8px 4px;
+  padding: 6px 4px;
   background: var(--surface-subtle);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--ink);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -522,8 +610,9 @@ button.episode-style-preview-status.is-error {
 }
 
 .custom-count-input {
-  width: 60px;
-  padding: 6px 8px;
+  width: 54px;
+  height: 28px;
+  padding: 2px 6px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: var(--surface);
@@ -531,6 +620,11 @@ button.episode-style-preview-status.is-error {
   font-weight: 700;
   font-size: 12px;
   text-align: center;
+}
+
+.custom-count-apply-btn {
+  font-size: 11px;
+  padding: 4px 8px;
 }
 
 /* ==========================================================================

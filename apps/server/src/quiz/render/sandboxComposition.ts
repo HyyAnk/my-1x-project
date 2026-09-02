@@ -302,7 +302,10 @@ ${serializeQuizPaletteCss(model.palette, "      ")}
           try { anims[i].currentTime = timeMs; } catch (e) {}
         }
       },
-      play: function() {
+      play: function(timeSec) {
+        if (typeof timeSec === "number") {
+          window.__hyperframesRehearsal.seek(timeSec);
+        }
         var anims = document.getAnimations ? document.getAnimations({ subtree: true }) : [];
         for (var i = 0; i < anims.length; i++) {
           try {
@@ -327,12 +330,15 @@ ${serializeQuizPaletteCss(model.palette, "      ")}
         }
       }
     };
+    // Immediately pause on initialization so animations never run ahead of user interaction
+    window.__hyperframesRehearsal.seek(0);
+    window.__hyperframesRehearsal.pause();
     window.addEventListener("message", function(event) {
       if (!event.data || typeof event.data !== "object") return;
       if (event.data.type === "REHEARSAL_SEEK") {
         window.__hyperframesRehearsal.seek(event.data.time);
       } else if (event.data.type === "REHEARSAL_PLAY") {
-        window.__hyperframesRehearsal.play();
+        window.__hyperframesRehearsal.play(event.data.time);
       } else if (event.data.type === "REHEARSAL_PAUSE") {
         window.__hyperframesRehearsal.pause();
       }

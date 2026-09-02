@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { AssetConsistencyGroupSchema, QuizV2Schema, resolveQuizLayout, type MascotProfile } from "@studio/shared";
 import { compileQuizAssetPrompt } from "../src/quiz/assets/promptCompiler.js";
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
-import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
+import { buildQuizVoicePlan, ENGLISH_OUTRO_CLOSING_VARIANTS } from "../src/quiz/audio/voicePlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { assessQuiz } from "../src/quiz/qa/quizAssessment.js";
 import { assessQuizVisualLayout } from "../src/quiz/qa/visualQa.js";
@@ -506,6 +506,27 @@ describe("Candy Arcade visual template", () => {
     // Outro hold test (5s hold after voice segment)
     const outroEvent = viTimeline.events.find((e) => e.segment_id === "outro")!;
     expect(viTimeline.duration_seconds - (outroEvent.at_seconds + outroEvent.duration_seconds)).toBeGreaterThanOrEqual(4.9);
+  });
+
+  it("generates dynamic high-energy outro closings across different episodes", () => {
+    const closings = new Set<string>();
+    const sampleEpisodeIds = ["episode-alpha", "episode-beta", "episode-gamma", "episode-delta", "episode-epsilon"];
+    for (const epId of sampleEpisodeIds) {
+      const epQuiz = { ...quiz, episode_id: epId };
+      const plan = buildQuizVoicePlan(epQuiz);
+      const outro = plan.segments.find((s) => s.role === "outro")!;
+      const lastPhrase = outro.phrases.at(-1)?.text ?? "";
+      expect(lastPhrase).toBe("Bye bye!");
+      closings.add(outro.text);
+    }
+    // Multiple distinct closings are assigned across diverse episodes
+    expect(closings.size).toBeGreaterThan(1);
+
+    // All English closing variants are high-energy and conclude with Bye bye!
+    expect(ENGLISH_OUTRO_CLOSING_VARIANTS.length).toBeGreaterThanOrEqual(4);
+    for (const variant of ENGLISH_OUTRO_CLOSING_VARIANTS) {
+      expect(variant).toContain("Bye bye!");
+    }
   });
 
   it("keeps the production Mascot-on content layout independent of the mascot anchor", () => {

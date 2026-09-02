@@ -2,24 +2,14 @@ import { QUIZ_LAYOUTS, type ResolvedQuizLayoutId } from "@studio/shared";
 
 export type QuizLayoutUiDefinition = {
   id: ResolvedQuizLayoutId;
-  labelKey: "stageStudio.layoutMediaLeft" | "stageStudio.layoutVisualThree" | "stageStudio.layoutMediaTop" | "stageStudio.layoutFullStack";
-  descriptionKey:
-    | "stageStudio.layoutMediaLeftDesc"
-    | "stageStudio.layoutVisualThreeDesc"
-    | "stageStudio.layoutMediaTopDesc"
-    | "stageStudio.layoutFullStackDesc";
+  labelKey: "stageStudio.layoutMediaLeft" | "stageStudio.layoutVisualThree" | "stageStudio.layoutFullStack";
+  descriptionKey: "stageStudio.layoutMediaLeftDesc" | "stageStudio.layoutVisualThreeDesc" | "stageStudio.layoutFullStackDesc";
   sandboxLabelKey:
-    | "visualSandbox.layoutMediaLeftChoicesRight"
-    | "visualSandbox.layoutVisualChoicesThree"
-    | "visualSandbox.layoutMediaTopChoicesBottom"
-    | "visualSandbox.layoutFullStackList";
+    "visualSandbox.layoutMediaLeftChoicesRight" | "visualSandbox.layoutVisualChoicesThree" | "visualSandbox.layoutFullStackList";
   sandboxDescriptionKey:
-    | "visualSandbox.layoutMediaLeftChoicesRightSub"
-    | "visualSandbox.layoutVisualChoicesThreeSub"
-    | "visualSandbox.layoutMediaTopChoicesBottomSub"
-    | "visualSandbox.layoutFullStackListSub";
-  preview: "media-left" | "visual-three" | "media-top" | "full-stack";
-  icon: "split" | "visual" | "top" | "stack";
+    "visualSandbox.layoutMediaLeftChoicesRightSub" | "visualSandbox.layoutVisualChoicesThreeSub" | "visualSandbox.layoutFullStackListSub";
+  preview: "media-left" | "visual-three" | "full-stack";
+  icon: "split" | "visual" | "stack";
 };
 
 const QUIZ_LAYOUT_UI_BY_ID = {
@@ -40,15 +30,6 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     sandboxDescriptionKey: "visualSandbox.layoutVisualChoicesThreeSub",
     preview: "visual-three",
     icon: "visual",
-  },
-  media_top_choices_bottom: {
-    id: "media_top_choices_bottom",
-    labelKey: "stageStudio.layoutMediaTop",
-    descriptionKey: "stageStudio.layoutMediaTopDesc",
-    sandboxLabelKey: "visualSandbox.layoutMediaTopChoicesBottom",
-    sandboxDescriptionKey: "visualSandbox.layoutMediaTopChoicesBottomSub",
-    preview: "media-top",
-    icon: "top",
   },
   full_stack_list: {
     id: "full_stack_list",

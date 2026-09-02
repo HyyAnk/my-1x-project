@@ -1,4 +1,4 @@
-import { Check, Copy, Hash, Sparkle, Trophy } from "@phosphor-icons/react";
+import { Check, Copy, Hash, Sparkle, Trophy, YoutubeLogo } from "@phosphor-icons/react";
 import type { VideoDescription } from "@studio/shared";
 
 interface DescriptionBlockEditorProps {
@@ -14,128 +14,143 @@ export function DescriptionBlockEditor({
 }: DescriptionBlockEditorProps) {
   if (!description) return null;
 
-  const scoringText = `🏆 SCORING TIERS:\n• ${description.scoring_cta.beginner}\n• ${description.scoring_cta.intermediate}\n• ${description.scoring_cta.expert}\n${description.scoring_cta.cta_text}`;
+  const scoringText = `🏆 SCORING TIERS:\n• ${description.scoring_cta.beginner}\n• ${description.scoring_cta.intermediate}\n• ${description.scoring_cta.expert}\n\n${description.scoring_cta.cta_text}`;
   const hashtagsText = description.hashtags.join(" ");
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
-      {/* Block 1: Hook & Context */}
-      <div
-        style={{
-          background: "rgba(0, 0, 0, 0.3)",
-          borderRadius: "8px",
-          padding: "14px",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
+    <div className="description-bento-grid">
+      {/* Block 1: Hook & Context (Above The Fold) */}
+      <div className="description-bento-card">
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontWeight: 600, fontSize: "12.5px" }}>
-              <Sparkle size={14} color="var(--accent-light, #a5b4fc)" /> Hook & SEO Context
+          <div className="bento-card-header">
+            <span className="bento-card-title">
+              <Sparkle size={16} weight="duotone" color="var(--accent)" />
+              <span>Hook & SEO Context</span>
             </span>
+
             <button
               type="button"
-              className="quiet-button compact"
+              className="secondary-button compact"
               onClick={() => onCopyBlock(`${description.hook_lines}\n\n${description.semantic_paragraph}`, "Hook")}
-              style={{ fontSize: "11px", padding: "2px 6px" }}
+              style={{ fontSize: "0.74rem", padding: "3px 8px", display: "inline-flex", alignItems: "center", gap: "4px" }}
+              title="Copy Hook and Intro"
             >
-              {copiedBlock === "Hook" ? <Check size={13} color="var(--green, #22c55e)" /> : <Copy size={13} />}
-              <span>{copiedBlock === "Hook" ? "Copied" : "Copy"}</span>
+              {copiedBlock === "Hook" ? (
+                <>
+                  <Check size={12} weight="bold" color="var(--green, #10b981)" />
+                  <span style={{ color: "var(--green, #10b981)" }}>Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy size={12} />
+                  <span>Copy</span>
+                </>
+              )}
             </button>
           </div>
-          <p style={{ margin: "0 0 6px", fontSize: "13px", fontWeight: 600, color: "var(--text, #f8fafc)", whiteSpace: "pre-wrap" }}>
-            {description.hook_lines}
-          </p>
-          <p style={{ margin: 0, fontSize: "12.5px", color: "var(--text-muted, #94a3b8)", lineHeight: "1.5" }}>
-            {description.semantic_paragraph}
-          </p>
+
+          <div className="bento-card-body">
+            <p className="bento-hook-headline">
+              {description.hook_lines}
+            </p>
+            <p className="bento-hook-body">
+              {description.semantic_paragraph}
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Block 2: Scoring Tiers */}
-      <div
-        style={{
-          background: "rgba(0, 0, 0, 0.3)",
-          borderRadius: "8px",
-          padding: "14px",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
+      {/* Block 2: Gamified Scoring Leaderboard */}
+      <div className="description-bento-card">
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontWeight: 600, fontSize: "12.5px" }}>
-              <Trophy size={14} color="var(--yellow, #eab308)" /> Scoring Leaderboard
+          <div className="bento-card-header">
+            <span className="bento-card-title">
+              <Trophy size={16} weight="duotone" color="var(--yellow)" />
+              <span>Scoring Leaderboard</span>
             </span>
+
             <button
               type="button"
-              className="quiet-button compact"
+              className="secondary-button compact"
               onClick={() => onCopyBlock(scoringText, "Scoring")}
-              style={{ fontSize: "11px", padding: "2px 6px" }}
+              style={{ fontSize: "0.74rem", padding: "3px 8px", display: "inline-flex", alignItems: "center", gap: "4px" }}
+              title="Copy Scoring Leaderboard & CTA"
             >
-              {copiedBlock === "Scoring" ? <Check size={13} color="var(--green, #22c55e)" /> : <Copy size={13} />}
-              <span>{copiedBlock === "Scoring" ? "Copied" : "Copy"}</span>
+              {copiedBlock === "Scoring" ? (
+                <>
+                  <Check size={12} weight="bold" color="var(--green, #10b981)" />
+                  <span style={{ color: "var(--green, #10b981)" }}>Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy size={12} />
+                  <span>Copy</span>
+                </>
+              )}
             </button>
           </div>
-          <ul style={{ margin: "0 0 8px", paddingLeft: "16px", fontSize: "12.5px", color: "var(--text, #f1f5f9)", lineHeight: "1.6" }}>
-            <li>{description.scoring_cta.beginner}</li>
-            <li>{description.scoring_cta.intermediate}</li>
-            <li>{description.scoring_cta.expert}</li>
-          </ul>
-          <small style={{ color: "var(--accent-light, #a5b4fc)", fontSize: "11.5px" }}>{description.scoring_cta.cta_text}</small>
+
+          <div className="bento-card-body">
+            <ul className="bento-tiers-list">
+              <li>{description.scoring_cta.beginner}</li>
+              <li>{description.scoring_cta.intermediate}</li>
+              <li>{description.scoring_cta.expert}</li>
+            </ul>
+            <div className="bento-cta-text">{description.scoring_cta.cta_text}</div>
+          </div>
         </div>
       </div>
 
-      {/* Block 3: Hashtags & Playlist */}
-      <div
-        style={{
-          background: "rgba(0, 0, 0, 0.3)",
-          borderRadius: "8px",
-          padding: "14px",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
+      {/* Block 3: Hashtags & Playlist Taxonomy */}
+      <div className="description-bento-card">
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", fontWeight: 600, fontSize: "12.5px" }}>
-              <Hash size={14} color="var(--cyan, #06b6d4)" /> Hashtags & Playlist
+          <div className="bento-card-header">
+            <span className="bento-card-title">
+              <Hash size={16} weight="bold" color="var(--cyan)" />
+              <span>Hashtags & Playlist</span>
             </span>
+
             <button
               type="button"
-              className="quiet-button compact"
+              className="secondary-button compact"
               onClick={() => onCopyBlock(hashtagsText, "Hashtags")}
-              style={{ fontSize: "11px", padding: "2px 6px" }}
+              style={{ fontSize: "0.74rem", padding: "3px 8px", display: "inline-flex", alignItems: "center", gap: "4px" }}
+              title="Copy all hashtags"
             >
-              {copiedBlock === "Hashtags" ? <Check size={13} color="var(--green, #22c55e)" /> : <Copy size={13} />}
-              <span>{copiedBlock === "Hashtags" ? "Copied" : "Copy"}</span>
+              {copiedBlock === "Hashtags" ? (
+                <>
+                  <Check size={12} weight="bold" color="var(--green, #10b981)" />
+                  <span style={{ color: "var(--green, #10b981)" }}>Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy size={12} />
+                  <span>Copy All</span>
+                </>
+              )}
             </button>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "10px" }}>
-            {description.hashtags.map((tag) => (
-              <span
-                key={tag}
-                style={{
-                  fontSize: "12px",
-                  padding: "2px 8px",
-                  borderRadius: "4px",
-                  backgroundColor: "rgba(6, 182, 212, 0.15)",
-                  color: "var(--cyan, #38bdf8)",
-                }}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          <div style={{ fontSize: "12px", color: "var(--text-muted, #94a3b8)" }}>
-            📺 Suggested Playlist: <strong style={{ color: "var(--text, #f8fafc)" }}>{description.suggested_playlist_category}</strong>
+
+          <div className="bento-card-body">
+            <div className="bento-tags-cloud">
+              {description.hashtags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  className="bento-tag-pill"
+                  onClick={() => onCopyBlock(tag, tag)}
+                  title={`Click to copy "${tag}"`}
+                >
+                  {copiedBlock === tag ? `✓ ${tag}` : tag}
+                </button>
+              ))}
+            </div>
+
+            <div className="bento-playlist-meta">
+              <YoutubeLogo size={15} color="#ff0000" weight="fill" />
+              <span>Suggested Playlist:</span>
+              <strong style={{ color: "var(--ink)" }}>{description.suggested_playlist_category}</strong>
+            </div>
           </div>
         </div>
       </div>

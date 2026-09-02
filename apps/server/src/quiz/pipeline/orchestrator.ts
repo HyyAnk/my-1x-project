@@ -85,7 +85,7 @@ export async function generateEpisodeDescription(
     throw new RepositoryError("No active LLM client available for generating description", "LLM_CLIENT_UNAVAILABLE");
   }
 
-  const timeoutMs = input.timeoutMs ?? (process.env.NODE_ENV === "test" || process.env.VITEST ? 1500 : 10_000);
+  const timeoutMs = input.timeoutMs ?? (process.env.NODE_ENV === "test" || process.env.VITEST ? 1500 : 45_000);
 
   const description = await generateVideoDescription({
     client,

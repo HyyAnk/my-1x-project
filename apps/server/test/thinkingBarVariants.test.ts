@@ -65,7 +65,7 @@ describe("Thinking Bar Element Suite", () => {
     expect(unknownVar.id).toBe("star_slider");
   });
 
-  it("runs every timer variant from question narration start and keeps the pre-countdown query marker inside the moving marker", () => {
+  it("runs every timer variant from question appearance (clipStart) and keeps the pre-countdown query marker inside the moving marker", () => {
     const input = {
       clipStart: 8,
       questionNarrationStart: 10,
@@ -83,17 +83,35 @@ describe("Thinking Bar Element Suite", () => {
 
       expect(html).toContain('class="thinking-bar');
       expect(html).toContain(`thinking-bar-${style.replace(/_/g, "-")}`);
-      expect(html).toContain("--timer-start:10.000s");
-      expect(html).toContain("--timer-duration:8.000s");
-      expect(html).toContain("--cd5-at:3.000s");
-      expect(html).toContain("--cd1-at:7.000s");
-      expect(html).toContain("--query-hold-duration:3.000s");
+      expect(html).toContain("--timer-start:8.000s");
+      expect(html).toContain("--timer-duration:10.000s");
+      expect(html).toContain("--cd5-at:5.000s");
+      expect(html).toContain("--cd1-at:9.000s");
+      expect(html).toContain("--query-hold-duration:5.000s");
       expect(html).toContain("val-query");
       expect(html).toContain("val-5");
       expect(html).toContain("val-1");
       expect(countMatches(html, /class="marker-val val-query"/g)).toBe(1);
       expect(countMatches(html, />\?</g)).toBe(1);
     }
+  });
+
+  it("strictly enforces that timer starts from question appearance even if narration or thinking start are delayed", () => {
+    const timing = calculateThinkingBarTiming({
+      clipStart: 4.5,
+      questionNarrationStart: 7.0,
+      thinkingStart: 12.0,
+      revealStart: 15.5,
+    });
+    expect(timing.timerStart).toBe(4.5);
+    expect(timing.duration).toBe(11.0);
+    expect(timing.styleAttr).toContain("--timer-start:4.500s");
+    expect(timing.styleAttr).toContain("--timer-duration:11.000s");
+    // Countdown ticks must finish at revealStart:
+    // tick 5 is at 4.5 + (11.0 - 5) = 10.5 (which is 15.5 - 5)
+    // tick 1 is at 4.5 + (11.0 - 1) = 14.5 (which is 15.5 - 1)
+    expect(timing.cd5).toBe(6.0);
+    expect(timing.cd1).toBe(10.0);
   });
 
   it("calculates accurate countdown timing and dynamic visibility flags for short durations", () => {
@@ -127,13 +145,13 @@ describe("Thinking Bar Element Suite", () => {
       thinkingStart: 10.95,
       revealStart: 18.27,
     });
-    expect(windowedTiming.duration).toBeCloseTo(13.01, 5);
-    expect(windowedTiming.queryHoldDuration).toBeCloseTo(8.01, 5);
-    expect(windowedTiming.styleAttr).toContain("--timer-start:5.260s");
-    expect(windowedTiming.styleAttr).toContain("--timer-duration:13.010s");
-    expect(windowedTiming.styleAttr).toContain("--cd5-at:8.010s");
-    expect(windowedTiming.styleAttr).toContain("--cd1-at:12.010s");
-    expect(windowedTiming.styleAttr).toContain("--query-hold-duration:8.010s");
+    expect(windowedTiming.duration).toBeCloseTo(15.01, 5);
+    expect(windowedTiming.queryHoldDuration).toBeCloseTo(10.01, 5);
+    expect(windowedTiming.styleAttr).toContain("--timer-start:3.260s");
+    expect(windowedTiming.styleAttr).toContain("--timer-duration:15.010s");
+    expect(windowedTiming.styleAttr).toContain("--cd5-at:10.010s");
+    expect(windowedTiming.styleAttr).toContain("--cd1-at:14.010s");
+    expect(windowedTiming.styleAttr).toContain("--query-hold-duration:10.010s");
   });
 
   it("aggregates CSS for all variants containing keyframe animations", () => {
@@ -165,9 +183,9 @@ describe("Thinking Bar Element Suite", () => {
       const director = createDefaultDirectorPlan(sampleQuiz);
       director.beats[0].thinking_bar_style = style;
       const timeline = compileQuizTimeline({ quiz: sampleQuiz, director, voicePlan: buildQuizVoicePlan(sampleQuiz) });
-      const questionNarrationStart = timeline.events.find(
-        (event) => event.type === "narration.segment" && event.segment_id === "tb-q1:question",
-      )?.at_seconds;
+      const questionEnter = timeline.events.find(
+        (event) => event.type === "question.enter" && event.question_id === "tb-q1",
+      )?.at_seconds ?? 0;
       const bundle = buildCandyArcadeCompositionBundle({
         quiz: sampleQuiz,
         director,
@@ -179,8 +197,8 @@ describe("Thinking Bar Element Suite", () => {
 
       const fullOutput = [bundle.html, ...Object.values(bundle.files)].join("\n");
       expect(fullOutput).toContain(`thinking-bar-${style.replace(/_/g, "-")}`);
-      expect(questionNarrationStart).toBeTypeOf("number");
-      expect(fullOutput).toContain(`--timer-start:${questionNarrationStart?.toFixed(3)}s`);
+      expect(questionEnter).toBeTypeOf("number");
+      expect(fullOutput).toContain(`--timer-start:${questionEnter.toFixed(3)}s`);
     }
   });
 

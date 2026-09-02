@@ -1,3 +1,4 @@
+import { Clock, PencilSimpleLine, SquaresFour, YoutubeLogo, Sparkle } from "@phosphor-icons/react";
 import type { Channel, Episode, VideoDescription } from "@studio/shared";
 import type { Notice } from "../../../components/types";
 import { useVideoDescription } from "../hooks/useVideoDescription";
@@ -53,15 +54,7 @@ export function VideoDescriptionCard({
   });
 
   return (
-    <section
-      className="panel video-description-card"
-      style={{
-        padding: "16px 20px 20px",
-        borderRadius: "10px",
-        border: "1px solid rgba(255, 255, 255, 0.1)",
-        background: "var(--bg-panel, rgba(30, 41, 59, 0.5))",
-      }}
-    >
+    <section className="video-description-panel">
       <DescriptionCollapsedBar
         description={description}
         hasQuiz={hasQuiz}
@@ -74,88 +67,96 @@ export function VideoDescriptionCard({
         onGenerate={() => void generate()}
       />
 
-      <div style={{ marginTop: "14px", paddingTop: "12px", borderTop: "1px solid rgba(255, 255, 255, 0.08)" }}>
-        <DescriptionToneChips
-          toneHint={toneHint}
-          disabled={!canGenerate}
-          onSelectTone={(val) => {
-            setToneHint(val);
-            void generate(val);
-          }}
-          onCustomToneChange={setToneHint}
-          onSubmit={() => void generate()}
-        />
+      <DescriptionToneChips
+        toneHint={toneHint}
+        disabled={!canGenerate}
+        onSelectTone={(val) => {
+          setToneHint(val);
+          void generate(val);
+        }}
+        onCustomToneChange={setToneHint}
+        onSubmit={() => void generate()}
+      />
 
-        {hasDescription ? (
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "8px" }}>
-              <div className="mini-tab-group" style={{ display: "flex", gap: "4px" }}>
-                <button
-                  type="button"
-                  className={`quiet-button compact ${activeTab === "preview" ? "is-selected" : ""}`}
-                  onClick={() => setActiveTab("preview")}
-                  style={{ fontWeight: activeTab === "preview" ? 600 : 400 }}
-                >
-                  📱 YouTube Preview
-                </button>
-                <button
-                  type="button"
-                  className={`quiet-button compact ${activeTab === "blocks" ? "is-selected" : ""}`}
-                  onClick={() => setActiveTab("blocks")}
-                  style={{ fontWeight: activeTab === "blocks" ? 600 : 400 }}
-                >
-                  🧩 Content Blocks
-                </button>
-                <button
-                  type="button"
-                  className={`quiet-button compact ${activeTab === "edit" ? "is-selected" : ""}`}
-                  onClick={() => setActiveTab("edit")}
-                  style={{ fontWeight: activeTab === "edit" ? 600 : 400 }}
-                >
-                  📝 Raw Editor
-                </button>
-              </div>
-
-              {description?.generated_at && (
-                <small style={{ color: "var(--text-muted, #64748b)", fontSize: "11.5px" }}>
-                  Generated at: {new Date(description.generated_at).toLocaleTimeString()}
-                </small>
-              )}
+      {hasDescription ? (
+        <div>
+          <div className="video-description-nav-row">
+            <div className="description-segmented-tabs" role="tablist" aria-label="Description View Modes">
+              <button
+                type="button"
+                className={`description-segmented-btn ${activeTab === "preview" ? "active" : ""}`}
+                onClick={() => setActiveTab("preview")}
+                role="tab"
+                aria-selected={activeTab === "preview"}
+              >
+                <YoutubeLogo size={16} weight="fill" />
+                <span>📱 YouTube Preview</span>
+              </button>
+              <button
+                type="button"
+                className={`description-segmented-btn ${activeTab === "blocks" ? "active" : ""}`}
+                onClick={() => setActiveTab("blocks")}
+                role="tab"
+                aria-selected={activeTab === "blocks"}
+              >
+                <SquaresFour size={16} weight="bold" />
+                <span>🧩 Content Blocks</span>
+              </button>
+              <button
+                type="button"
+                className={`description-segmented-btn ${activeTab === "edit" ? "active" : ""}`}
+                onClick={() => setActiveTab("edit")}
+                role="tab"
+                aria-selected={activeTab === "edit"}
+              >
+                <PencilSimpleLine size={16} weight="bold" />
+                <span>📝 Raw Editor</span>
+              </button>
             </div>
 
-            {activeTab === "preview" && (
-              <DescriptionYouTubePreview description={description} fullText={draftText} />
-            )}
-
-            {activeTab === "blocks" && (
-              <DescriptionBlockEditor
-                description={description}
-                copiedBlock={copiedBlock}
-                onCopyBlock={(text, key) => void copyToClipboard(text, key)}
-              />
-            )}
-
-            {activeTab === "edit" && (
-              <DescriptionRawEditor
-                draftText={draftText}
-                isModified={isModified}
-                isOverLimit={isOverLimit}
-                saving={saving}
-                onDraftChange={setDraftText}
-                onSave={() => void save()}
-              />
+            {description?.generated_at && (
+              <div className="description-meta-time">
+                <Clock size={13} />
+                <span>Generated at {new Date(description.generated_at).toLocaleTimeString()}</span>
+              </div>
             )}
           </div>
-        ) : (
-          <div className="artifact-empty" style={{ padding: "24px 16px", textAlign: "center" }}>
-            <p style={{ margin: "0", color: "var(--text-muted, #94a3b8)", fontSize: "13px" }}>
-              {!hasQuiz
-                ? "Quiz questions have not been generated yet. Video description will be automatically analyzed and generated once questions are ready."
-                : "No video description generated yet. Click Generate Description above to create one."}
-            </p>
+
+          {activeTab === "preview" && (
+            <DescriptionYouTubePreview description={description} fullText={draftText} />
+          )}
+
+          {activeTab === "blocks" && (
+            <DescriptionBlockEditor
+              description={description}
+              copiedBlock={copiedBlock}
+              onCopyBlock={(text, key) => void copyToClipboard(text, key)}
+            />
+          )}
+
+          {activeTab === "edit" && (
+            <DescriptionRawEditor
+              draftText={draftText}
+              isModified={isModified}
+              isOverLimit={isOverLimit}
+              saving={saving}
+              onDraftChange={setDraftText}
+              onSave={() => void save()}
+            />
+          )}
+        </div>
+      ) : (
+        <div className="video-description-empty">
+          <div className="video-description-empty-icon">
+            <Sparkle size={32} weight="duotone" color="var(--accent)" />
           </div>
-        )}
-      </div>
+          <p className="video-description-empty-text">
+            {!hasQuiz
+              ? "Quiz questions have not been generated yet. Video description and SEO keywords will be automatically analyzed and generated once question scripts are ready."
+              : "No video description generated yet. Choose an AI Strategy tone above and click Generate Description to craft high-retention YouTube SEO metadata."}
+          </p>
+        </div>
+      )}
     </section>
   );
 }

@@ -1,3 +1,5 @@
+import { PaperPlaneTilt, Sparkle } from "@phosphor-icons/react";
+
 const PRESET_TONES = [
   { label: "⚡ Witty & Fun", value: "Witty and fun, humorous engaging tone" },
   { label: "🧠 Brain Challenge", value: "High intellect challenge, fast reflex trivia" },
@@ -22,55 +24,57 @@ export function DescriptionToneChips({
   onSubmit,
 }: DescriptionToneChipsProps) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "8px", margin: "10px 0 16px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
-        <span style={{ fontSize: "12px", color: "var(--text-muted, #94a3b8)", fontWeight: 500 }}>
-          Style & Tone Hints:
-        </span>
+    <div className="video-description-tone-bar">
+      <div className="tone-chips-row">
+        <span className="tone-chips-label">AI Strategy / Tone:</span>
         {PRESET_TONES.map((preset) => {
           const isSelected = toneHint === preset.value;
           return (
             <button
               key={preset.label}
               type="button"
-              className={`quiet-button compact ${isSelected ? "is-selected" : ""}`}
+              className={`tone-preset-pill ${isSelected ? "active" : ""}`}
               disabled={disabled}
               onClick={() => onSelectTone(preset.value)}
-              style={{
-                fontSize: "11.5px",
-                padding: "3px 8px",
-                borderRadius: "14px",
-                border: isSelected ? "1px solid var(--accent, #6366f1)" : "1px solid rgba(255, 255, 255, 0.1)",
-                backgroundColor: isSelected ? "rgba(99, 102, 241, 0.18)" : "rgba(0, 0, 0, 0.2)",
-                color: isSelected ? "var(--accent-light, #a5b4fc)" : "var(--text-muted, #cbd5e1)",
-              }}
+              title={preset.value}
             >
-              {preset.label}
+              <span>{preset.label}</span>
             </button>
           );
         })}
       </div>
 
-      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-        <input
-          type="text"
-          placeholder="Enter custom perspective or hook angle (or pick a preset above)..."
-          value={toneHint}
-          onChange={(e) => onCustomToneChange(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !disabled) onSubmit();
-          }}
-          disabled={disabled}
-          style={{
-            flex: 1,
-            padding: "7px 12px",
-            fontSize: "13px",
-            background: "rgba(0, 0, 0, 0.25)",
-            border: "1px solid rgba(255, 255, 255, 0.12)",
-            borderRadius: "6px",
-            color: "var(--text, #f8fafc)",
-          }}
-        />
+      <div className="tone-input-row">
+        <div className="tone-input-wrapper">
+          <Sparkle size={15} weight="duotone" className="tone-input-icon" />
+          <input
+            type="text"
+            className="tone-custom-input"
+            placeholder="Customize hook angle, target audience, or specific SEO instructions (press Enter to generate)..."
+            value={toneHint}
+            onChange={(e) => onCustomToneChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !disabled) {
+                e.preventDefault();
+                onSubmit();
+              }
+            }}
+            disabled={disabled}
+          />
+        </div>
+
+        {toneHint && !disabled && (
+          <button
+            type="button"
+            className="secondary-button compact"
+            onClick={onSubmit}
+            title="Generate description using custom prompt"
+            style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "6px 10px" }}
+          >
+            <PaperPlaneTilt size={13} weight="bold" />
+            <span style={{ fontSize: "0.78rem" }}>Apply</span>
+          </button>
+        )}
       </div>
     </div>
   );

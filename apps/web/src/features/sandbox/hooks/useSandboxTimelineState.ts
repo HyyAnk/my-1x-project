@@ -21,6 +21,11 @@ export function useSandboxTimelineState() {
     audioEngineRef.current = new SandboxAudioEngine();
     void audioEngineRef.current.preloadSfx([
       "ui_pop.wav",
+      "countdown_5.wav",
+      "countdown_4.wav",
+      "countdown_3.wav",
+      "countdown_2.wav",
+      "countdown_1.wav",
       "countdown_tick.wav",
       "countdown_final.wav",
       "correct_triumph.wav",
@@ -44,15 +49,15 @@ export function useSandboxTimelineState() {
     }
   }, []);
 
-  const playIframe = useCallback(() => {
+  const playIframe = useCallback((time?: number) => {
     const frame = iframeRef.current;
     if (!frame?.contentWindow) return;
     try {
-      frame.contentWindow.postMessage({ type: "REHEARSAL_PLAY" }, "*");
+      frame.contentWindow.postMessage({ type: "REHEARSAL_PLAY", time }, "*");
       const win = frame.contentWindow as unknown as {
-        __hyperframesRehearsal?: { play: () => void };
+        __hyperframesRehearsal?: { play: (t?: number) => void };
       };
-      win.__hyperframesRehearsal?.play();
+      win.__hyperframesRehearsal?.play(time);
     } catch {
       // Ignored
     }
@@ -80,7 +85,7 @@ export function useSandboxTimelineState() {
       return;
     }
 
-    playIframe();
+    playIframe(timelineSeconds);
 
     let animationFrameId: number | null = null;
     let lastStamp = performance.now();
@@ -121,7 +126,7 @@ export function useSandboxTimelineState() {
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [isPlaying, pauseIframe, playIframe, seekIframe, sfxCues, timeline.totalDuration]);
+  }, [isPlaying, pauseIframe, playIframe, seekIframe, sfxCues, timeline.totalDuration, timelineSeconds]);
 
   const handlePhaseChange = useCallback(
     (newPhase: SandboxPhase) => {
@@ -130,7 +135,10 @@ export function useSandboxTimelineState() {
       setPhase(newPhase);
 
       const timestamps = getSandboxPhaseTimestamps();
-      const targetTime = timestamps.find((t) => t.id === newPhase)?.time ?? 0;
+      let targetTime = timestamps.find((t) => t.id === newPhase)?.time ?? 0;
+      if (newPhase === "thinking") {
+        targetTime = timeline.thinkingStart;
+      }
       setTimelineSeconds(targetTime);
       seekIframe(targetTime);
       pauseIframe();
@@ -144,7 +152,7 @@ export function useSandboxTimelineState() {
         }
       }
     },
-    [pauseIframe, seekIframe, sfxCues],
+    [pauseIframe, seekIframe, sfxCues, timeline.thinkingStart],
   );
 
   const handleScrubberChange = useCallback(
@@ -171,17 +179,31 @@ export function useSandboxTimelineState() {
     setIsPlaying((prev) => {
       const next = !prev;
       if (next) {
-        if (timelineSeconds >= timeline.totalDuration - 0.1) {
+        let startTime = timelineSeconds;
+        if (startTime >= timeline.totalDuration - 0.1) {
+          startTime = 0;
           setTimelineSeconds(0);
           seekIframe(0);
           firedCuesRef.current.clear();
         } else {
-          seekIframe(timelineSeconds);
+          // If starting around thinking snapshot time, snap to thinkingStart so tick 5 is guaranteed to play
+          if (phase === "thinking" && Math.abs(startTime - 3.5) < 0.25) {
+            startTime = timeline.thinkingStart;
+            setTimelineSeconds(timeline.thinkingStart);
+          }
+          seekIframe(startTime);
+          for (const cue of sfxCues) {
+            if (cue.timeSeconds >= startTime) {
+              firedCuesRef.current.delete(cue.id);
+            } else {
+              firedCuesRef.current.add(cue.id);
+            }
+          }
         }
       }
       return next;
     });
-  }, [seekIframe, timeline.totalDuration, timelineSeconds]);
+  }, [phase, seekIframe, sfxCues, timeline.thinkingStart, timeline.totalDuration, timelineSeconds]);
 
   const toggleMute = useCallback(() => {
     setIsMuted((prev) => {

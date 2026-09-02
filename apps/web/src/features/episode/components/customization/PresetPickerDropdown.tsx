@@ -68,7 +68,6 @@ export function PresetPickerDropdown({ episode, disabled, saving, isOpen, onTogg
               checked={activePreset?.id === preset.id}
               onSelect={() => onSelectPreset(preset)}
               onHover={() => onPreview?.(previewCandidateFor(preset))}
-              leading={<span className="style-option-emoji">{preset.icon}</span>}
             />
           ))}
         </CustomizationPopover>

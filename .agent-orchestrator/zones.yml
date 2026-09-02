@@ -370,6 +370,8 @@ zones:
       - ".env"
       - ".env.example"
       - "*.bat"
+      - "!run-agent-monitor.bat"
+      - "!stop-agent-monitor.bat"
       - "apps/server/src/runtimePaths.ts"
       - "apps/server/src/logger.ts"
       - "apps/server/src/zip.ts"
@@ -397,9 +399,11 @@ zones:
       - "scripts/coordination/**"
       - "scripts/test-agent-coordination.mjs"
       - "docs/agent-coordination/**"
-      - "docs/superpowers/plans/*agent-coordination*.md"
+      - "docs/superpowers/plans/**"
       - "AGENTS.md"
       - "GEMINI.md"
+      - "run-agent-monitor.bat"
+      - "stop-agent-monitor.bat"
     readStableDependencies: []
     verification:
       commands:

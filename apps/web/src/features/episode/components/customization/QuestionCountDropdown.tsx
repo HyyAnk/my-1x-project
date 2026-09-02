@@ -1,4 +1,3 @@
-import { Check } from "@phosphor-icons/react";
 import { QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import type { EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview";
@@ -35,22 +34,60 @@ export function QuestionCountDropdown({
     onSaveQuestionCount(count);
   };
 
+  const handleStep = (delta: number) => {
+    const current = Number(questionCountDraft) || QUIZ_MIN_QUESTION_COUNT;
+    const next = Math.max(QUIZ_MIN_QUESTION_COUNT, Math.min(QUIZ_MAX_QUESTION_COUNT, current + delta));
+    if (next !== current) {
+      setQuestionCountDraft(next);
+      onSaveQuestionCount(next);
+    }
+  };
+
   const handleCustomSubmit = () => {
-    const count = Number(questionCountDraft);
+    const count = Math.max(
+      QUIZ_MIN_QUESTION_COUNT,
+      Math.min(QUIZ_MAX_QUESTION_COUNT, Number(questionCountDraft) || QUIZ_MIN_QUESTION_COUNT),
+    );
     setQuestionCountDraft(count);
     onSaveQuestionCount(count);
   };
 
+  const isAtMin = questionCountDraft <= QUIZ_MIN_QUESTION_COUNT;
+  const isAtMax = questionCountDraft >= QUIZ_MAX_QUESTION_COUNT;
+
   return (
-    <div className="customization-dropdown-item">
-      <CustomizationPill
-        label={t("episodeCustomization.pillQuestions")}
-        value={t("episodeCustomization.valueQuestionCount", { count: questionCountDraft })}
-        isOpen={isOpen}
-        disabled={disabled}
-        saving={saving}
-        onToggle={onToggle}
-      />
+    <div className="customization-dropdown-item customization-stepper-control">
+      <div className="customization-stepper-wrapper">
+        <button
+          type="button"
+          className="stepper-step-btn stepper-step-dec"
+          onClick={() => handleStep(-1)}
+          disabled={disabled || saving || isAtMin}
+          aria-label={t("episodeCustomization.decrementQuestions")}
+          title={t("episodeCustomization.decrementQuestions")}
+        >
+          −
+        </button>
+        <CustomizationPill
+          label={t("episodeCustomization.pillQuestions")}
+          value={t("episodeCustomization.valueQuestionCount", { count: questionCountDraft })}
+          isOpen={isOpen}
+          disabled={disabled}
+          saving={saving}
+          onToggle={onToggle}
+        />
+        <button
+          type="button"
+          className="stepper-step-btn stepper-step-inc"
+          onClick={() => handleStep(1)}
+          disabled={disabled || saving || isAtMax}
+          aria-label={t("episodeCustomization.incrementQuestions")}
+          title={t("episodeCustomization.incrementQuestions")}
+        >
+          +
+        </button>
+      </div>
+
       {isOpen ? (
         <CustomizationPopover title={t("episodeCustomization.pillQuestions")}>
           <div className="preset-count-grid">
@@ -63,7 +100,6 @@ export function QuestionCountDropdown({
                 onClick={() => handleSelectPresetCount(preset)}
               >
                 <span>{preset}</span>
-                {questionCountDraft === preset ? <Check size={12} weight="bold" /> : null}
               </button>
             ))}
           </div>
@@ -75,12 +111,13 @@ export function QuestionCountDropdown({
               max={QUIZ_MAX_QUESTION_COUNT}
               value={questionCountDraft}
               onChange={(e) => setQuestionCountDraft(Number(e.target.value))}
+              onBlur={handleCustomSubmit}
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleCustomSubmit();
               }}
               className="custom-count-input"
             />
-            <button type="button" className="primary-button compact" onClick={handleCustomSubmit}>
+            <button type="button" className="primary-button compact custom-count-apply-btn" onClick={handleCustomSubmit}>
               {t("episodeCustomization.applyCount")}
             </button>
           </div>

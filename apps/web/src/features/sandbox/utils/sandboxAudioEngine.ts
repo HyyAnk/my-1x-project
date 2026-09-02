@@ -45,7 +45,7 @@ export class SandboxAudioEngine {
       filenames.map(async (filename) => {
         if (this.bufferCache.has(filename)) return;
         try {
-          const response = await fetch(`/api/quiz/sfx/${encodeURIComponent(filename)}`);
+          const response = await fetch(`/api/quiz/sfx/${encodeURIComponent(filename)}?v=pure-ting`);
           if (!response.ok) return;
           const arrayBuffer = await response.arrayBuffer();
           const decoded = await ctx.decodeAudioData(arrayBuffer);
@@ -148,12 +148,12 @@ export function buildSandboxRehearsalCues(
     // 1. Choices entrance
     { id: "choices-enter", timeSeconds: timeline.choicesStart, filename: "ui_pop.wav", volume: 0.55 },
 
-    // 2. Countdown 5-4-3-2-1 ticks
-    { id: "cd-5", timeSeconds: timeline.thinkingStart + 0.0, filename: "countdown_tick.wav", volume: 0.45 },
-    { id: "cd-4", timeSeconds: timeline.thinkingStart + 1.0, filename: "countdown_tick.wav", volume: 0.45 },
-    { id: "cd-3", timeSeconds: timeline.thinkingStart + 2.0, filename: "countdown_tick.wav", volume: 0.45 },
-    { id: "cd-2", timeSeconds: timeline.thinkingStart + 3.0, filename: "countdown_tick.wav", volume: 0.45 },
-    { id: "cd-1", timeSeconds: timeline.thinkingStart + 4.0, filename: "countdown_final.wav", volume: 0.6 },
+    // 2. Countdown 5-4-3-2-1 ticks (escalating pitch & urgency)
+    { id: "cd-5", timeSeconds: timeline.thinkingStart + 0.0, filename: "countdown_5.wav", volume: 0.45 },
+    { id: "cd-4", timeSeconds: timeline.thinkingStart + 1.0, filename: "countdown_4.wav", volume: 0.45 },
+    { id: "cd-3", timeSeconds: timeline.thinkingStart + 2.0, filename: "countdown_3.wav", volume: 0.48 },
+    { id: "cd-2", timeSeconds: timeline.thinkingStart + 3.0, filename: "countdown_2.wav", volume: 0.5 },
+    { id: "cd-1", timeSeconds: timeline.thinkingStart + 4.0, filename: "countdown_1.wav", volume: 0.6 },
 
     // 3. Answer Reveal
     { id: "answer-reveal", timeSeconds: timeline.revealStart, filename: revealSfx, volume: 0.75 },

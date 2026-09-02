@@ -11,10 +11,10 @@ describe("SandboxAudioEngine", () => {
     expect(choicesCue?.filename).toBe("ui_pop.wav");
 
     const cd5Cue = cues.find((c) => c.id === "cd-5");
-    expect(cd5Cue?.filename).toBe("countdown_tick.wav");
+    expect(cd5Cue?.filename).toBe("countdown_5.wav");
 
     const cd1Cue = cues.find((c) => c.id === "cd-1");
-    expect(cd1Cue?.filename).toBe("countdown_final.wav");
+    expect(cd1Cue?.filename).toBe("countdown_1.wav");
 
     const revealCue = cues.find((c) => c.id === "answer-reveal");
     expect(revealCue?.filename).toBe("correct_triumph.wav");

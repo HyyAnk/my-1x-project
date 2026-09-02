@@ -66,7 +66,7 @@ export function compileVideoDescriptionPrompt(input: CompileVideoDescriptionProm
     `8. DIVERSITY & ANTI-DUPLICATION: Use fresh, engaging phrasing instead of generic template cliches.`,
     `9. AUDIENCE COMPLIANCE: ${isPreschool ? "Preschool/young child audience allowed." : "Do NOT use sensitive keywords like 'for kids', 'toddler', 'preschool', 'cho bé học' unless strictly applicable."}`,
     `10. ZERO HALLUCINATION: Ground 100% of facts in the provided question list.`,
-    `11. LENGTH & LANGUAGE: Write strictly in ${language}. Keep the full main description under 800 characters.`,
+    `11. ABSOLUTE LANGUAGE INTEGRITY: Write 100% strictly in ${language}. Never mix any other languages. All hook lines, paragraph sentences, rank titles, and comment prompts MUST be written exclusively in ${language}. Keep the full main description under 800 characters.`,
     ``,
     `Return ONLY a valid JSON object matching this exact schema:`,
     `{`,
