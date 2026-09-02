@@ -15,6 +15,8 @@ export {
   writeVoicePlan,
   readHistoryCheck,
   writeHistoryCheck,
+  readVideoDescription,
+  writeVideoDescription,
 } from "./quiz/quizPlanArtifacts.js";
 
 export { writeQuizImageAsset, resolveQuizAssetPath, getRenderedVoiceMetrics } from "./quiz/quizMediaArtifacts.js";
@@ -26,5 +28,12 @@ export {
   readBgmHistory,
   appendBgmHistory,
 } from "./quiz/quizHistoryArtifacts.js";
+
+export {
+  readUsageLedger,
+  reconcileUsageLedgerFromDisk,
+  recordVoiceUsage,
+  recordImageUsage,
+} from "./quiz/quizAnalyticsArtifacts.js";
 
 export { invalidateQuizArtifacts } from "./quiz/quizArtifactsInvalidation.js";

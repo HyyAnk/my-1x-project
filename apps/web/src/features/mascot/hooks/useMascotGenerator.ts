@@ -36,6 +36,13 @@ export function useMascotGenerator({ onNotice, onRefreshChannels, onMascotsChang
     onMascotsChanged,
     setBusyAction: progress.setBusyAction,
     setGeneratorStep,
+    getIdentitySnapshot: () => ({
+      name: conceptForm.genName.trim(),
+      description: conceptForm.genDescription.trim(),
+      visual_style: conceptForm.genStyle,
+      color_theme: conceptForm.genColor,
+      master_prompt: conceptForm.genPrompt.trim(),
+    }),
   });
 
   const spriteGen = useMascotSpriteGenerator({

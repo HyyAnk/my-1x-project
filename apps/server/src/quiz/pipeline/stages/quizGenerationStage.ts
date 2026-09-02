@@ -7,17 +7,19 @@ import { invalidateQuizArtifacts } from "../invalidation.js";
 import type { QuizArtifacts, QuizOrchestratorInput } from "../orchestrator.js";
 
 export async function readQuizArtifacts(input: QuizOrchestratorInput): Promise<QuizArtifacts> {
-  const [quiz, history_check, director_plan, asset_plan, asset_resolution, voice_plan, timeline, assessment] = await Promise.all([
-    input.repository.readQuiz(input.channelId, input.episodeId),
-    input.repository.readHistoryCheck(input.channelId, input.episodeId),
-    input.repository.readDirectorPlan(input.channelId, input.episodeId),
-    input.repository.readAssetPlan(input.channelId, input.episodeId),
-    input.repository.readQuizAssetResolution(input.channelId, input.episodeId),
-    input.repository.readVoicePlan(input.channelId, input.episodeId),
-    input.repository.readQuizTimeline(input.channelId, input.episodeId),
-    input.repository.readQuizAssessment(input.channelId, input.episodeId),
-  ]);
-  return { quiz, history_check, director_plan, asset_plan, asset_resolution, voice_plan, timeline, assessment };
+  const [quiz, history_check, director_plan, asset_plan, asset_resolution, voice_plan, timeline, assessment, description] =
+    await Promise.all([
+      input.repository.readQuiz(input.channelId, input.episodeId),
+      input.repository.readHistoryCheck(input.channelId, input.episodeId),
+      input.repository.readDirectorPlan(input.channelId, input.episodeId),
+      input.repository.readAssetPlan(input.channelId, input.episodeId),
+      input.repository.readQuizAssetResolution(input.channelId, input.episodeId),
+      input.repository.readVoicePlan(input.channelId, input.episodeId),
+      input.repository.readQuizTimeline(input.channelId, input.episodeId),
+      input.repository.readQuizAssessment(input.channelId, input.episodeId),
+      input.repository.readVideoDescription(input.channelId, input.episodeId),
+    ]);
+  return { quiz, history_check, director_plan, asset_plan, asset_resolution, voice_plan, timeline, assessment, description };
 }
 
 export async function generateQuiz(

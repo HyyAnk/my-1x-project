@@ -16,11 +16,12 @@ describe("Phase 3 cross-surface scene pipeline", () => {
       correct_choice_index: 1,
       layout_id: "media_left_choices_right",
     }).html;
-    for (const html of [production, sandbox]) {
-      expect(html).toContain("layout-media_left_choices_right");
-      expect(html).toContain("answer-correct");
-      expect(html).toContain("Beta");
-    }
+    expect(production).toContain("layout-media_left_choices_right");
+    expect(production).toContain("answer-reveal-correct");
+    expect(production).toContain("Beta");
+    expect(sandbox).toContain("layout-media_left_choices_right");
+    expect(sandbox).toContain("answer-correct");
+    expect(sandbox).toContain("Beta");
   });
 
   it("P3-PAR-02 preserves visual-scene answer identity through both public entry points", () => {
@@ -32,12 +33,15 @@ describe("Phase 3 cross-surface scene pipeline", () => {
       correct_choice_index: 1,
       layout_id: "visual_choices_three",
     }).html;
-    for (const html of [production, sandbox]) {
-      expect(html).toContain("layout-visual_choices_three");
-      expect(html).toContain("visual-answer-card");
-      expect(html).toContain('data-answer-state="correct"');
-      expect(html).toContain("Beta");
-    }
+    expect(production).toContain("layout-visual_choices_three");
+    expect(production).toContain("visual-answer-card");
+    expect(production).toContain("answer-reveal-correct");
+    expect(production).not.toContain('data-answer-state="correct"');
+    expect(production).toContain("Beta");
+    expect(sandbox).toContain("layout-visual_choices_three");
+    expect(sandbox).toContain("visual-answer-card");
+    expect(sandbox).toContain('data-answer-state="correct"');
+    expect(sandbox).toContain("Beta");
   });
 
   it("P4-SUR-01 and P4-SKIN-03 apply every registered skin through production text and visual compositions", () => {
@@ -58,7 +62,12 @@ describe("Phase 3 cross-surface scene pipeline", () => {
       correct_choice_index: 1,
       layout_id: "visual_choices_three",
     }).html;
-    expect(choiceSemantics(production)).toEqual(choiceSemantics(sandbox));
+    expect(choiceSemantics(production)).toEqual([
+      { label: "A", state: "pending" },
+      { label: "B", state: "pending" },
+      { label: "C", state: "pending" },
+    ]);
+    expect(choiceRevealTargets(production)).toEqual(choiceSemantics(sandbox));
   });
 
   it("P3-PAR-04 propagates 16:9 and 9:16 through production and Sandbox", () => {
@@ -152,6 +161,17 @@ function choiceSemantics(html: string) {
   return [...html.matchAll(/data-choice-label="([A-Z])" data-answer-state="(pending|correct|incorrect)"/g)].map((match) => ({
     label: match[1],
     state: match[2],
+  }));
+}
+
+function choiceRevealTargets(html: string) {
+  return [...html.matchAll(/<div class="([^"]*)"[^>]*data-choice-label="([A-Z])"/g)].map((match) => ({
+    label: match[2],
+    state: match[1].includes("answer-reveal-correct")
+      ? "correct"
+      : match[1].includes("answer-reveal-incorrect")
+        ? "incorrect"
+        : "pending",
   }));
 }
 

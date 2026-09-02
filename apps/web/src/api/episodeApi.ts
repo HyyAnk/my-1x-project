@@ -53,13 +53,40 @@ export const episodeApi = {
   generateThumbnail: (
     channelId: string,
     episodeId: string,
-    body?: { layout_override?: ThumbnailLayoutType; aspect_ratio?: ThumbnailAspectRatio | "both"; custom_hook_text?: string },
+    body?: {
+      layout_override?: ThumbnailLayoutType;
+      aspect_ratio?: ThumbnailAspectRatio | "both";
+      custom_hook_text?: string;
+      badge_override?: string;
+    },
   ) =>
     request<{ ok: true; manifest: ThumbnailManifest }>(`/api/channels/${channelId}/episodes/${episodeId}/thumbnail/generate`, {
       method: "POST",
       body: JSON.stringify(body || {}),
     }),
-  thumbnailFileUrl: (channelId: string, episodeId: string, ratio: "16:9" | "9:16", timestamp?: string | null) =>
-    `/api/channels/${channelId}/episodes/${episodeId}/thumbnail/file/${ratio === "9:16" ? "9_16" : "16_9"}${timestamp ? `?t=${encodeURIComponent(timestamp)}` : ""}`,
+
+  setActiveThumbnail: (channelId: string, episodeId: string, versionId: string) =>
+    request<{ ok: true; manifest: ThumbnailManifest }>(`/api/channels/${channelId}/episodes/${episodeId}/thumbnail/active`, {
+      method: "POST",
+      body: JSON.stringify({ version_id: versionId }),
+    }),
+  deleteThumbnailVariant: (channelId: string, episodeId: string, variantId: string) =>
+    request<{ ok: true; manifest: ThumbnailManifest }>(`/api/channels/${channelId}/episodes/${episodeId}/thumbnail/variants/${variantId}`, {
+      method: "DELETE",
+    }),
+  thumbnailFileUrl: (
+    channelId: string,
+    episodeId: string,
+    ratio: "16:9" | "9:16",
+    timestamp?: string | null,
+    variantId?: string | null,
+  ) => {
+    const params = new URLSearchParams();
+    if (timestamp) params.set("t", timestamp);
+    if (variantId) params.set("variant_id", variantId);
+    const qs = params.toString();
+    return `/api/channels/${channelId}/episodes/${episodeId}/thumbnail/file/${ratio === "9:16" ? "9_16" : "16_9"}${qs ? `?${qs}` : ""}`;
+  },
 };
+
 

@@ -28,12 +28,15 @@ function orderedChoices(items: readonly QuizSceneChoice[]): QuizSceneChoice[] {
 function renderChoice(input: ChoiceGroupRenderInput, choice: QuizSceneChoice, displayIndex: number): string {
   const label = String.fromCharCode(65 + displayIndex);
   const state = answerState(input, choice.id);
+  const revealClass = revealTargetClass(input, choice.id);
   const hookInput: AnswerCardSkinHookInput = { order: displayIndex, presentation: input.presentation, state };
   const decorations = input.skin.renderDecorations?.(hookInput) ?? {};
   const layout = textLayout(choice.text, "choice", { hasMascot: input.hasMascot, layoutId: input.layoutId });
   const itemPhase = ambientPhaseSeconds("float", displayIndex, input.questionId);
   const skinClasses = [input.skin.className, input.skin.cardClassName?.(hookInput)].filter(Boolean).join(" ");
-  const stateClasses = state === "pending" ? "answer-normal answer-pending" : `answer-${state}`;
+  const stateClasses = [state === "pending" ? "answer-normal answer-pending" : `answer-${state}`, revealClass]
+    .filter(Boolean)
+    .join(" ");
   const semanticAttributes = choiceAttributes(input, choice, label, state);
   const content = choiceSurfaceContent(choice, label, decorations);
 
@@ -55,8 +58,14 @@ function renderChoiceMedia(choice: QuizSceneChoice): string {
 }
 
 function answerState(input: ChoiceGroupRenderInput, choiceId: string): AnswerCardSemanticState {
+  if (input.revealMode === "scheduled") return "pending";
   if (input.phase !== "reveal" && input.phase !== "explain") return "pending";
   return choiceId === input.correctChoiceId ? "correct" : "incorrect";
+}
+
+function revealTargetClass(input: ChoiceGroupRenderInput, choiceId: string): string {
+  if (input.revealMode !== "scheduled") return "";
+  return choiceId === input.correctChoiceId ? "answer-reveal-correct" : "answer-reveal-incorrect";
 }
 
 function choiceAttributes(input: ChoiceGroupRenderInput, choice: QuizSceneChoice, label: string, state: AnswerCardSemanticState): string {

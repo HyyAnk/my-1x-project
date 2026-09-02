@@ -1,69 +1,49 @@
-import React, { useState, useEffect, useCallback } from "react";
-import {
-  Sparkle,
-  DownloadSimple,
-  ArrowsClockwise,
-  Image as ImageIcon,
-  Television,
-  DeviceMobile,
-  CheckCircle,
-  Eye,
-  Info,
-  Lightning,
-  MagnifyingGlass,
-  MaskHappy,
-  Fire,
-  CheckSquare,
-  SquaresFour,
-} from "@phosphor-icons/react";
-import {
-  THUMBNAIL_LAYOUT_CATALOG,
-  type Channel,
-  type Episode,
-  type ThumbnailAspectRatio,
-  type ThumbnailLayoutType,
-  type ThumbnailManifest,
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Sparkle, Television, DeviceMobile } from "@phosphor-icons/react";
+import type {
+  Channel,
+  CuriosityBadgeId,
+  Episode,
+  Task,
+  ThumbnailAspectRatio,
+  ThumbnailLayoutType,
+  ThumbnailManifest,
 } from "@studio/shared";
 import { episodeApi } from "../../../api/episodeApi";
 import type { Notice } from "../../../components/types";
+import { ThumbnailCarouselStage } from "./ThumbnailCarouselStage";
+import { ThumbnailControlsDeck } from "./ThumbnailControlsDeck";
 
 type ThumbnailPreviewCardProps = {
   channel: Channel;
   episode: Episode;
   episodeId: string;
+  activeEpisodeTask?: Task | null;
   onNotice?: (notice: NonNullable<Notice>) => void;
 };
 
-const LAYOUT_OPTIONS: Array<{
-  id: ThumbnailLayoutType | "auto";
-  name: string;
-  icon: React.ReactNode;
-  subtitle: string;
-}> = [
-  { id: "auto", name: "Auto Detect", icon: <Sparkle size={16} />, subtitle: "Based on script" },
-  { id: "mega_grid", name: "Mega Grid", icon: <SquaresFour size={16} />, subtitle: "100 Questions / 2x2" },
-  { id: "split_vs", name: "Split Screen VS", icon: <Lightning size={16} />, subtitle: "Would You Rather" },
-  { id: "mystery_silhouette", name: "Mystery Clue", icon: <MagnifyingGlass size={16} />, subtitle: "Guess Who / Shadow" },
-  { id: "odd_one_out", name: "Odd One Out", icon: <Eye size={16} />, subtitle: "Spot Difference" },
-  { id: "difficulty_tier", name: "Difficulty Tier", icon: <Fire size={16} />, subtitle: "IQ 4 Levels" },
-  { id: "true_false", name: "True or False", icon: <CheckSquare size={16} />, subtitle: "Fact vs Myth" },
-];
-
-export function ThumbnailPreviewCard({ channel, episode, episodeId, onNotice }: ThumbnailPreviewCardProps) {
+export function ThumbnailPreviewCard({
+  channel,
+  episode,
+  episodeId,
+  activeEpisodeTask,
+  onNotice,
+}: ThumbnailPreviewCardProps) {
   const initialRatio =
     episode.quiz_config?.thumbnail_aspect_ratio === "9:16" ||
     (episode.quiz_config?.thumbnail_aspect_ratio === "auto" && episode.topic?.title?.toLowerCase().includes("shorts"))
       ? "9:16"
       : "16:9";
 
-
   const [activeRatio, setActiveRatio] = useState<ThumbnailAspectRatio>(initialRatio);
   const [selectedLayout, setSelectedLayout] = useState<ThumbnailLayoutType | "auto">("auto");
+  const [selectedBadge, setSelectedBadge] = useState<CuriosityBadgeId>("auto");
   const [customHook, setCustomHook] = useState<string>("");
   const [manifest, setManifest] = useState<ThumbnailManifest | null>(null);
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [imageTimestamp, setImageTimestamp] = useState<string | null>(episode.updated_at);
+  const [carouselIndex, setCarouselIndex] = useState<number>(0);
 
   // Sync active ratio tab if episode configuration changes
   useEffect(() => {
@@ -74,26 +54,76 @@ export function ThumbnailPreviewCard({ channel, episode, episodeId, onNotice }: 
     }
   }, [episode.quiz_config?.thumbnail_aspect_ratio]);
 
-  const fetchManifest = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await episodeApi.getThumbnail(channel.channel_id, episodeId);
-      if (res.manifest) {
-        setManifest(res.manifest);
-        if (res.manifest.hook_text) {
-          setCustomHook(res.manifest.hook_text);
+  const fetchManifest = useCallback(
+    async (silent = false) => {
+      if (!silent) setLoading(true);
+      try {
+        const res = await episodeApi.getThumbnail(channel.channel_id, episodeId);
+        if (res.manifest) {
+          setManifest((prev) => {
+            if (!prev || prev.updated_at !== res.manifest?.updated_at || !imageTimestamp) {
+              setImageTimestamp(String(Date.now()));
+            }
+            return res.manifest;
+          });
+          if (res.manifest.hook_text) {
+            setCustomHook((prev) => (prev ? prev : res.manifest?.hook_text ?? ""));
+          }
         }
+      } catch {
+        // Manifest not created yet
+      } finally {
+        if (!silent) setLoading(false);
       }
-    } catch {
-      // Manifest not created yet
-    } finally {
-      setLoading(false);
-    }
-  }, [channel.channel_id, episodeId]);
+    },
+    [channel.channel_id, episodeId, imageTimestamp],
+  );
 
   useEffect(() => {
     void fetchManifest();
-  }, [fetchManifest]);
+    setImageTimestamp(episode.updated_at);
+  }, [fetchManifest, episode.updated_at, episode.thumbnail_asset_path_16_9, episode.thumbnail_asset_path_9_16]);
+
+  // Live Auto-Poll while task is active or if thumbnail is not yet loaded
+  useEffect(() => {
+    const isTaskRunning = Boolean(
+      activeEpisodeTask && (activeEpisodeTask.status === "RUNNING" || activeEpisodeTask.status === "QUEUED"),
+    );
+    const hasAny = Boolean(
+      manifest?.asset_path_16_9 ||
+      manifest?.asset_path_9_16 ||
+      episode.thumbnail_asset_path_16_9 ||
+      episode.thumbnail_asset_path_9_16,
+    );
+
+    if (!isTaskRunning && hasAny) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      void fetchManifest(true);
+    }, 2500);
+
+    return () => window.clearInterval(interval);
+  }, [activeEpisodeTask, manifest, episode.thumbnail_asset_path_16_9, episode.thumbnail_asset_path_9_16, fetchManifest]);
+
+  // Filter history for current aspect ratio
+  const historyList = useMemo(() => {
+    if (!manifest?.history || manifest.history.length === 0) return [];
+    return manifest.history.filter((h) => h.aspect_ratio === activeRatio);
+  }, [manifest?.history, activeRatio]);
+
+  // Sync carousel index with active variant on ratio switch or manifest change
+  useEffect(() => {
+    if (historyList.length > 0) {
+      const activeIdx = historyList.findIndex((h) => h.is_active);
+      setCarouselIndex(activeIdx >= 0 ? activeIdx : 0);
+    } else {
+      setCarouselIndex(0);
+    }
+  }, [activeRatio, historyList.length, manifest?.active_16_9_id, manifest?.active_9_16_id]);
+
+  const currentVariant = historyList[carouselIndex] || null;
 
   const handleGenerateThumbnail = async () => {
     setGenerating(true);
@@ -102,11 +132,13 @@ export function ThumbnailPreviewCard({ channel, episode, episodeId, onNotice }: 
       const res = await episodeApi.generateThumbnail(channel.channel_id, episodeId, {
         layout_override: selectedLayout === "auto" ? undefined : selectedLayout,
         custom_hook_text: customHook.trim() || undefined,
-        aspect_ratio: targetMode === "both" ? "both" : "auto",
+        badge_override: selectedBadge === "auto" ? undefined : selectedBadge,
+        aspect_ratio: targetMode === "both" ? "both" : targetMode === "16:9" || targetMode === "9:16" ? targetMode : undefined,
       });
       if (res.ok && res.manifest) {
         setManifest(res.manifest);
-        setImageTimestamp(new Date().toISOString());
+        setImageTimestamp(String(Date.now()));
+        setCarouselIndex(0);
         onNotice?.({
           tone: "good",
           message:
@@ -122,14 +154,63 @@ export function ThumbnailPreviewCard({ channel, episode, episodeId, onNotice }: 
     }
   };
 
+  const handleResetDefaults = () => {
+    setSelectedLayout("auto");
+    setSelectedBadge("auto");
+    setCustomHook("");
+    onNotice?.({
+      tone: "good",
+      message: "Reset thumbnail controls to automatic script intelligence!",
+    });
+  };
 
-  const hasImage = activeRatio === "16:9"
-    ? Boolean(manifest?.asset_path_16_9 || episode.thumbnail_asset_path_16_9)
-    : Boolean(manifest?.asset_path_9_16 || episode.thumbnail_asset_path_9_16);
+  const handleSetActive = async (versionId: string) => {
+    try {
+      const res = await episodeApi.setActiveThumbnail(channel.channel_id, episodeId, versionId);
+      if (res.ok && res.manifest) {
+        setManifest(res.manifest);
+        setImageTimestamp(String(Date.now()));
+        onNotice?.({ tone: "good", message: `Version activated as main thumbnail for ${activeRatio}!` });
+      }
+    } catch (err) {
+      onNotice?.({ tone: "bad", message: `Failed to activate thumbnail version: ${(err as Error).message}` });
+    }
+  };
 
-  const imageUrl = episodeApi.thumbnailFileUrl(channel.channel_id, episodeId, activeRatio, imageTimestamp);
-  const activeLayoutId = manifest?.layout || "mega_grid";
-  const activeLayoutInfo = THUMBNAIL_LAYOUT_CATALOG[activeLayoutId];
+
+  const handleDeleteVariant = async (variantId: string) => {
+    try {
+      const res = await episodeApi.deleteThumbnailVariant(channel.channel_id, episodeId, variantId);
+      if (res.ok && res.manifest) {
+        setManifest(res.manifest);
+        setImageTimestamp(String(Date.now()));
+        setCarouselIndex((prev) => Math.max(0, prev - 1));
+        onNotice?.({ tone: "good", message: "Thumbnail version deleted." });
+      }
+    } catch (err) {
+      onNotice?.({ tone: "bad", message: `Failed to delete thumbnail version: ${(err as Error).message}` });
+    }
+  };
+
+  const hasAnyThumbnail = Boolean(
+    manifest?.asset_path_16_9 ||
+    manifest?.asset_path_9_16 ||
+    episode.thumbnail_asset_path_16_9 ||
+    episode.thumbnail_asset_path_9_16,
+  );
+
+  const hasImage =
+    activeRatio === "16:9"
+      ? Boolean(manifest?.asset_path_16_9 || episode.thumbnail_asset_path_16_9)
+      : Boolean(manifest?.asset_path_9_16 || episode.thumbnail_asset_path_9_16);
+
+  const imageUrl = episodeApi.thumbnailFileUrl(
+    channel.channel_id,
+    episodeId,
+    activeRatio,
+    imageTimestamp,
+    currentVariant ? currentVariant.id : undefined,
+  );
 
   return (
     <section className="quiz-thumbnail-panel">
@@ -168,155 +249,45 @@ export function ThumbnailPreviewCard({ channel, episode, episodeId, onNotice }: 
 
       {/* Main Studio Workspace Grid */}
       <div className="thumbnail-studio-grid">
-        
-        {/* Left / Center: Visual Stage */}
-        <div className="thumbnail-stage-card">
-          {generating ? (
-            <div className="thumbnail-generating-overlay">
-              <ArrowsClockwise size={32} className="thumbnail-spinner" />
-              <span style={{ fontWeight: 600, fontSize: "0.9rem" }}>Synthesizing {activeRatio} high-CTR thumbnail...</span>
-            </div>
-          ) : hasImage ? (
-            <div className={`thumbnail-frame-container ${activeRatio === "9:16" ? "portrait-mode" : ""}`}>
-              <img
-                src={imageUrl}
-                alt={`YouTube Thumbnail ${activeRatio}`}
-                className="thumbnail-image"
-                style={{ aspectRatio: activeRatio === "16:9" ? "16/9" : "9/16" }}
-              />
-              <span className="thumbnail-spec-pill">
-                {activeRatio === "16:9" ? "1280×720 HD" : "1080×1920 SHORTS"}
-              </span>
-
-              {/* Floating Action Toolbar */}
-              <div className="thumbnail-floating-actions">
-                <a
-                  href={imageUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="floating-action-btn"
-                  title="View Fullscreen in new tab"
-                >
-                  <Eye size={16} />
-                </a>
-                <a
-                  href={imageUrl}
-                  download={`${episode.slug}_thumbnail_${activeRatio === "16:9" ? "16x9" : "9x16"}.jpg`}
-                  className="floating-action-btn"
-                  title="Download HD Image"
-                >
-                  <DownloadSimple size={16} />
-                </a>
-              </div>
-            </div>
-          ) : (
-            <div className="thumbnail-empty-state">
-              <ImageIcon size={44} opacity={0.35} />
-              <span style={{ fontSize: "0.88rem" }}>No {activeRatio} thumbnail rendered yet</span>
-            </div>
-          )}
-        </div>
+        {/* Left / Center: Visual Carousel Stage */}
+        <ThumbnailCarouselStage
+          channelId={channel.channel_id}
+          episodeId={episodeId}
+          episodeSlug={episode.slug}
+          activeRatio={activeRatio}
+          generating={generating}
+          hasImage={hasImage}
+          hasAnyThumbnail={hasAnyThumbnail}
+          imageUrl={imageUrl}
+          historyList={historyList}
+          carouselIndex={carouselIndex}
+          imageTimestamp={imageTimestamp}
+          onPrev={() => setCarouselIndex((prev) => Math.max(0, prev - 1))}
+          onNext={() => setCarouselIndex((prev) => Math.min(historyList.length - 1, prev + 1))}
+          onSelectIndex={(idx) => setCarouselIndex(idx)}
+          onSetActive={handleSetActive}
+          onDeleteVariant={handleDeleteVariant}
+        />
 
         {/* Right: Studio Control Deck */}
-        <div className="thumbnail-controls-deck">
-          
-          {/* Layout Archetype Selector */}
-          <div className="control-field-group">
-            <div className="control-field-header">
-              <span className="control-field-label">Layout Archetype</span>
-              <span className="tooltip-trigger" title="Different question types convert better with specific visual structures (Split VS for 1v1, Mystery for Guess Who, Mega Grid for 100 Qs)">
-                <Info size={14} />
-              </span>
-            </div>
-
-            <div className="layout-chips-grid">
-              {LAYOUT_OPTIONS.map((opt) => {
-                const isSelected = selectedLayout === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    className={`layout-chip-btn ${isSelected ? "active" : ""}`}
-                    onClick={() => setSelectedLayout(opt.id)}
-                    disabled={generating}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                      {opt.icon}
-                      <span className="layout-chip-name">{opt.name}</span>
-                    </div>
-                    <span className="layout-chip-sub">{opt.subtitle}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Active Layout Metadata & Mascot Persona Badge */}
-          {activeLayoutInfo && (
-            <div className="thumbnail-meta-summary-card">
-              <div className="meta-summary-header">
-                <span className="meta-summary-badge">
-                  <CheckCircle size={14} />
-                  <span>{activeLayoutInfo.name}</span>
-                </span>
-                <span style={{ fontSize: "0.72rem", color: "var(--muted)" }}>
-                  High-CTR Psychology
-                </span>
-              </div>
-              <div style={{ color: "var(--ink-secondary)", fontSize: "0.78rem" }}>
-                {activeLayoutInfo.psychologicalTrigger}
-              </div>
-
-              {manifest?.mascot_persona && (
-                <div className="mascot-persona-row">
-                  <MaskHappy size={16} style={{ flexShrink: 0, marginTop: "1px" }} />
-                  <div>
-                    <strong>Mascot Cosplay: </strong>
-                    <span>{manifest.mascot_persona}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Custom Hook Headline Input */}
-          <div className="control-field-group">
-            <div className="control-field-header">
-              <span className="control-field-label">Hook Headline</span>
-              <span className="tooltip-trigger" title="The big bold 3D text rendered on the thumbnail banner">
-                <Info size={14} />
-              </span>
-            </div>
-            <input
-              type="text"
-              className="hook-text-input"
-              value={customHook}
-              onChange={(e) => setCustomHook(e.target.value)}
-              placeholder={activeLayoutInfo?.hookTextTemplate || "e.g. GENERAL KNOWLEDGE"}
-              disabled={generating}
-            />
-          </div>
-
-          {/* Primary Generation Button */}
-          <button
-            type="button"
-            className="thumbnail-generate-btn"
-            onClick={handleGenerateThumbnail}
-            disabled={generating || loading}
-          >
-            <ArrowsClockwise size={18} className={generating ? "thumbnail-spinner" : ""} />
-            <span>
-              {generating
-                ? "Generating Dual Thumbnails (16:9 & 9:16)..."
-                : hasImage
-                  ? "Re-roll / Generate New Thumbnail"
-                  : "Generate AI Thumbnails (Dual Size)"}
-            </span>
-          </button>
-
-        </div>
-
+        <ThumbnailControlsDeck
+          selectedLayout={selectedLayout}
+          setSelectedLayout={setSelectedLayout}
+          selectedBadge={selectedBadge}
+          setSelectedBadge={setSelectedBadge}
+          customHook={customHook}
+          setCustomHook={setCustomHook}
+          manifest={manifest}
+          hasAnyThumbnail={hasAnyThumbnail}
+          generating={generating}
+          loading={loading}
+          onGenerateThumbnail={handleGenerateThumbnail}
+          onResetDefaults={handleResetDefaults}
+        />
       </div>
     </section>
   );
 }
+
+
+

@@ -143,4 +143,329 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(dual.prompt_9_16).toContain("9:16");
     expect(dual.plan.layout).toBe("split_vs");
   });
+
+  it("strictly uses English '15 QUESTIONS' for English channels and '15 CÂU HỎI' for Vietnamese channels", () => {
+    const englishPlan = resolveThumbnailLayout({
+      topicTitle: "General Knowledge Trivia Secrets",
+      questionCount: 15,
+      language: "English",
+      mascotProfile: sampleMascot,
+    });
+    expect(englishPlan.badgeText).toBe("15 QUESTIONS");
+    expect(englishPlan.hookText).toBe("GENERAL KNOWLEDGE");
+
+
+    const vietnamesePlan = resolveThumbnailLayout({
+      topicTitle: "Đố Vui Kiến Thức Tổng Hợp 15 Câu",
+      questionCount: 15,
+      language: "Vietnamese",
+      mascotProfile: sampleMascot,
+    });
+    expect(vietnamesePlan.badgeText).toBe("15 CÂU HỎI");
+    expect(vietnamesePlan.hookText).toBe("KIẾN THỨC CHUNG");
+
+  });
+
+  it("extracts clean visual choice objects and enforces strict zero question text rule in prompts", () => {
+    const plan = resolveThumbnailLayout({
+      topicTitle: "Space Trivia",
+      questionCount: 15,
+      language: "English",
+      questions: [
+        {
+          question: "Which planet could float in water?",
+          choices: ["Neptune", "Jupiter", "Saturn", "Mars"],
+          answer: "Saturn",
+        },
+      ],
+      mascotProfile: sampleMascot,
+    });
+
+    expect(plan.subjectAnchors[0].visualPrompt).toContain("Neptune");
+    expect(plan.subjectAnchors[0].visualPrompt).not.toContain("Which planet could float in water?");
+    expect(plan.subjectAnchors[2].visualPrompt).toContain("Saturn");
+    expect(plan.subjectAnchors[2].badge).toBe("✓");
+
+    const prompt = compileThumbnailPrompt(plan, "16:9", sampleMascot);
+    expect(prompt).toContain("STRICT NO QUESTION TEXT & NO NUMBER LABELS");
+    expect(prompt).toContain("ZERO number badges");
+  });
+
+
+  it("strictly generates authentic Japanese YouTube thumbnail text for Japanese channels", () => {
+    // 1. Japanese Mega Grid
+    const jaGrid = resolveThumbnailLayout({
+      topicTitle: "一般常識クイズ 15問",
+      questionCount: 15,
+      language: "Japanese",
+      mascotProfile: sampleMascot,
+    });
+    expect(jaGrid.layout).toBe("mega_grid");
+    expect(jaGrid.hookText).toBe("一般常識クイズ");
+    expect(jaGrid.badgeText).toBe("全15問");
+
+    // 2. Japanese Split VS
+    const jaVs = resolveThumbnailLayout({
+      topicTitle: "究極の２択！どっちを選ぶ？",
+      questionFormat: "versus",
+      language: "Japanese",
+      mascotProfile: sampleMascot,
+    });
+    expect(jaVs.layout).toBe("split_vs");
+    expect(jaVs.hookText).toBe("どっちを選ぶ？");
+    expect(jaVs.badgeText).toContain("究極の２択");
+
+    // 3. Japanese Mystery Silhouette
+    const jaMystery = resolveThumbnailLayout({
+      topicTitle: "影から当てる！この人は誰？",
+      questionFormat: "guess_image",
+      language: "ja",
+      mascotProfile: sampleMascot,
+    });
+    expect(jaMystery.layout).toBe("mystery_silhouette");
+    expect(jaMystery.hookText).toBe("この人は誰？");
+    expect(jaMystery.badgeText).toContain("正解率1%");
+
+    // 4. Japanese Compiled Prompt verification
+    const jaPrompt = compileThumbnailPrompt(jaGrid, "16:9", sampleMascot);
+    expect(jaPrompt).toContain("一般常識クイズ");
+    expect(jaPrompt).toContain("全15問");
+  });
+
+  it("strictly generates authentic German and French thumbnail text for German and French channels", () => {
+    // 1. German Mega Grid
+    const deGrid = resolveThumbnailLayout({
+      topicTitle: "Allgemeinwissen Quiz 15 Fragen",
+      questionCount: 15,
+      language: "German",
+      mascotProfile: sampleMascot,
+    });
+    expect(deGrid.layout).toBe("mega_grid");
+    expect(deGrid.hookText).toBe("ALLGEMEINWISSEN");
+    expect(deGrid.badgeText).toBe("15 FRAGEN");
+
+    // 2. German Split VS
+    const deVs = resolveThumbnailLayout({
+      topicTitle: "Was würdest du wählen?",
+      questionFormat: "versus",
+      language: "German",
+      mascotProfile: sampleMascot,
+    });
+    expect(deVs.hookText).toBe("WAS WÜRDEST DU WÄHLEN?");
+    expect(deVs.badgeText).toBe("WÄHLE EINS! ⚡");
+
+    // 3. French Mega Grid
+    const frGrid = resolveThumbnailLayout({
+      topicTitle: "Culture Générale Quiz 15 Questions",
+      questionCount: 15,
+      language: "French",
+      mascotProfile: sampleMascot,
+    });
+    expect(frGrid.layout).toBe("mega_grid");
+    expect(frGrid.hookText).toBe("CULTURE GÉNÉRALE");
+    expect(frGrid.badgeText).toBe("15 QUESTIONS");
+
+    // 4. French True or False
+    const frTf = resolveThumbnailLayout({
+      topicTitle: "Vrai ou Faux : 10 Mythes Scientifiques",
+      questionFormat: "true_false",
+      language: "French",
+      mascotProfile: sampleMascot,
+    });
+    expect(frTf.hookText).toBe("VRAI OU FAUX ?");
+    expect(frTf.badgeText).toBe("MYTHE OU RÉALITÉ ? ⚡");
+  });
+
+  it("strictly generates authentic Nordic and Dutch thumbnail texts for all 10 core languages", () => {
+    // 1. Dutch (Tiếng Hà Lan)
+    const nlPlan = resolveThumbnailLayout({
+      topicTitle: "Algemene Kennis Quiz",
+      questionCount: 15,
+      language: "Dutch",
+      mascotProfile: sampleMascot,
+    });
+    expect(nlPlan.hookText).toBe("ALGEMENE KENNIS");
+    expect(nlPlan.badgeText).toBe("15 VRAGEN");
+
+    // 2. Norwegian (Tiếng Na Uy)
+    const noPlan = resolveThumbnailLayout({
+      topicTitle: "Generell Kunnskap Quiz",
+      questionCount: 15,
+      language: "Norwegian",
+      mascotProfile: sampleMascot,
+    });
+    expect(noPlan.hookText).toBe("GENERELL KUNNSKAP");
+    expect(noPlan.badgeText).toBe("15 SPØRSMÅL");
+
+    // 3. Swedish (Tiếng Thụy Điển)
+    const svPlan = resolveThumbnailLayout({
+      topicTitle: "Allmänbildning Quiz",
+      questionCount: 15,
+      language: "Swedish",
+      mascotProfile: sampleMascot,
+    });
+    expect(svPlan.hookText).toBe("ALLMÄNBILDNING");
+    expect(svPlan.badgeText).toBe("15 FRÅGOR");
+
+    // 4. Danish (Tiếng Đan Mạch)
+    const daPlan = resolveThumbnailLayout({
+      topicTitle: "Almen Viden Quiz",
+      questionCount: 15,
+      language: "Danish",
+      mascotProfile: sampleMascot,
+    });
+    expect(daPlan.hookText).toBe("ALMEN VIDEN");
+    expect(daPlan.badgeText).toBe("15 SPØRGSMÅL");
+
+    // 5. Finnish (Tiếng Phần Lan)
+    const fiPlan = resolveThumbnailLayout({
+      topicTitle: "Yleistieto Tietovisa",
+      questionCount: 15,
+      language: "Finnish",
+      mascotProfile: sampleMascot,
+    });
+    expect(fiPlan.hookText).toBe("YLEISTIETO");
+    expect(fiPlan.badgeText).toBe("15 KYSYMYSTÄ");
+  });
+
+  it("resolves curiosity trigger badges in multiple languages", () => {
+    const enPlan = resolveThumbnailLayout({
+      topicTitle: "Space Planets",
+      questionCount: 15,
+      language: "English",
+      badgeOverride: "99_percent_fail",
+      mascotProfile: sampleMascot,
+    });
+    expect(enPlan.hookText).toBe("SOLAR SYSTEM QUIZ");
+    expect(enPlan.badgeText).toBe("99% FAIL! 🔥");
+
+    const jaPlan = resolveThumbnailLayout({
+      topicTitle: "太陽系の惑星クイズ",
+      questionCount: 15,
+      language: "Japanese",
+      badgeOverride: "genius_only",
+      mascotProfile: sampleMascot,
+    });
+    expect(jaPlan.hookText).toBe("宇宙クイズ");
+    expect(jaPlan.badgeText).toBe("天才専用 🧠");
+
+    const viPlan = resolveThumbnailLayout({
+      topicTitle: "Đố Vui Các Hành Tinh Hệ Mặt Trời",
+      questionCount: 15,
+      language: "Vietnamese",
+      badgeOverride: "iq_test",
+      mascotProfile: sampleMascot,
+    });
+    expect(viPlan.hookText).toBe("ĐỐ VUI VŨ TRỤ");
+    expect(viPlan.badgeText).toBe("THỬ THÁCH IQ 140+ ⚡");
+  });
+
+  it("compiles high-contrast prompts with rim lighting and dynamic pointing pose", () => {
+    const plan = resolveThumbnailLayout({
+      topicTitle: "Solar System Planets Quiz",
+      questionCount: 15,
+      language: "English",
+      badgeOverride: "99_percent_fail",
+      mascotProfile: sampleMascot,
+    });
+
+    const prompt169 = compileThumbnailPrompt(plan, "16:9", sampleMascot);
+    expect(prompt169).toContain("SOLAR SYSTEM QUIZ");
+    expect(prompt169).toContain("99% FAIL! 🔥");
+    expect(prompt169).toContain("pointing");
+    expect(prompt169).toContain("rim light");
+    expect(prompt169).toContain("STRICT NO thick outer border");
+  });
+
+  it("contextualizes food & cookie quiz topics and resolves Pastry Chef mascot persona", () => {
+    const plan = resolveThumbnailLayout({
+      topicTitle: "Bakes Around the Globe: World Cookie Tour",
+      topicSummary: "Journey across world cultures to discover famous national biscuits, celebration cookies, and sweet bakery traditions",
+      questionCount: 11,
+      language: "English",
+      questions: [
+        {
+          question: "Which country is famous for delicate pastel Macaron cookies?",
+          choices: ["France", "England", "Germany", "Netherlands"],
+          answer: "France",
+        },
+      ],
+      mascotProfile: sampleMascot,
+    });
+
+    expect(plan.hookText).toBe("WORLD COOKIE TOUR!");
+    expect(plan.mascotPersona.role).toBe("Master Pastry Chef");
+    expect(plan.mascotPersona.costume).toContain("chef hat");
+    expect(plan.subjectAnchors[0].visualPrompt).toContain("specialty cookie or pastry representing France");
+  });
+
+
+  it("uses Antigravity AI Planner to synthesize high-CTR semantic thumbnail plans", async () => {
+    const { planThumbnailWithAI } = await import("../src/quiz/thumbnail/thumbnailAiPlanner.js");
+
+    const mockLlmClient = {
+      connect: async () => {},
+      startThread: async () => "thread_thumb_test",
+      startTurn: async () => "turn_thumb_test",
+      interruptTurn: async () => {},
+      on: (event: string, cb: Function) => {
+        if (event === "notification") {
+          setTimeout(() => {
+            cb({
+              method: "turn/completed",
+              params: {
+                turn: {
+                  status: "completed",
+                },
+              },
+            });
+          }, 10);
+          setTimeout(() => {
+            cb({
+              method: "item/agentMessage/delta",
+              params: {
+                delta: JSON.stringify({
+                  hook_text: "LEGENDARY WEAPONS!",
+                  badge_text: "99% FAIL! 🔥",
+                  layout: "split_vs",
+                  mascot_persona: {
+                    role: "Mythic Warrior",
+                    costume: "Golden knight armor with glowing runic cape",
+                    prop: "Excalibur glowing sacred sword",
+                    expression: "Heroic, fearless, confident smile",
+                    poseDescription: "Holding the sacred blade upright ready for battle",
+                  },
+                  subject_anchors: [
+                    { label: "Option A", visualPrompt: "3D legendary Excalibur golden sword" },
+                    { label: "Option B", visualPrompt: "3D Norse Mjolnir thunder warhammer" },
+                  ],
+                }),
+              },
+            });
+          }, 5);
+        }
+      },
+      off: () => {},
+    };
+
+    const aiPlan = await planThumbnailWithAI({
+      topicTitle: "Mythology: Weapons of Ancient Gods",
+      questionCount: 10,
+      language: "English",
+      llmClient: mockLlmClient as any,
+      mascotProfile: sampleMascot,
+    });
+
+    expect(aiPlan.hookText).toBe("LEGENDARY WEAPONS!");
+    expect(aiPlan.badgeText).toBe("99% FAIL! 🔥");
+    expect(aiPlan.layout).toBe("split_vs");
+    expect(aiPlan.mascotPersona.role).toBe("Mythic Warrior");
+    expect(aiPlan.subjectAnchors[0].visualPrompt).toContain("Excalibur");
+  });
 });
+
+
+
+
+
+

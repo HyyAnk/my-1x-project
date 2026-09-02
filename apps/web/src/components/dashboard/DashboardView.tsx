@@ -1,4 +1,4 @@
-import type { AppConfig, Channel, StorageInfo, Task } from "@studio/shared";
+import type { AppConfig, Channel, StorageInfo, Task, UsageLedger } from "@studio/shared";
 import type { GitInfo, Page } from "../types";
 import { useTranslation } from "../../i18n";
 import { Metric } from "./Metric";
@@ -21,6 +21,7 @@ export type DashboardViewProps = {
     rendered_segments_count: number;
     rendered_episodes_count: number;
   } | null;
+  usageLedger?: UsageLedger | null;
   storage?: StorageInfo | null;
   git?: GitInfo;
   engineStatus?: string;
@@ -39,6 +40,7 @@ export function DashboardView({
   currentImageModel: _currentImageModel = "gpt-image-2",
   imageBalance = null,
   voiceMetrics = null,
+  usageLedger = null,
   storage: _storage = null,
   git: _git = { branch: null, dirty: false, changed_files: 0 },
   engineStatus: _engineStatus = "ready",
@@ -120,7 +122,7 @@ export function DashboardView({
 
       <div className="dashboard-grid" style={{ marginTop: "24px" }}>
         {/* Cost Savings & ROI Section */}
-        <CostSavingsSection voiceMetrics={voiceMetrics} />
+        <CostSavingsSection voiceMetrics={voiceMetrics} usageLedger={usageLedger} />
 
         {/* Pipeline Progress & Telemetry */}
         <div className="dashboard-section">

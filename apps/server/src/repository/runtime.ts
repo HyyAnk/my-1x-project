@@ -20,8 +20,10 @@ import type {
   QuizV2,
   Scene,
   TopicCandidate,
+  VideoDescription,
   VoicePlan,
   VoiceProfile,
+  UsageLedger,
 } from "@studio/shared";
 import type { BundleImageAsset, BundleImageMeta, RepositoryRoots } from "./types.js";
 
@@ -33,13 +35,15 @@ export type QuizArtifactFilename =
   | "voice-plan.json"
   | "timeline.json"
   | "qa.json"
-  | "history-check.json";
+  | "history-check.json"
+  | "video-description.json";
 
 export interface RepositoryRuntime {
   readonly rootDirectory: string;
   readonly storageRoot: string;
   roots: RepositoryRoots;
   questionHistoryWrites: Map<string, Promise<void>>;
+  usageLedgerWrites: Map<string, Promise<void>>;
 
   // Infrastructure & Path safety
   resolvePath(root: keyof RepositoryRoots, ...segments: string[]): string;
@@ -147,8 +151,30 @@ export interface RepositoryRuntime {
     rendered_segments_count: number;
     rendered_episodes_count: number;
   }>;
+  readUsageLedger(): Promise<UsageLedger>;
+  reconcileUsageLedgerFromDisk(): Promise<UsageLedger>;
+  recordVoiceUsage(input: {
+    channelId?: string;
+    episodeId?: string;
+    characters: number;
+    durationSeconds: number;
+    segmentsCount?: number;
+    note?: string;
+  }): Promise<UsageLedger>;
+  recordImageUsage(input: {
+    channelId?: string;
+    episodeId?: string;
+    provider: string;
+    model?: string;
+    count?: number;
+    costVnd?: number;
+    costUsd?: number;
+    note?: string;
+  }): Promise<UsageLedger>;
   readHistoryCheck(channelId: string, episodeId: string): Promise<QuestionHistoryCheckResult | null>;
   writeHistoryCheck(channelId: string, episodeId: string, result: QuestionHistoryCheckResult): Promise<string>;
+  readVideoDescription(channelId: string, episodeId: string): Promise<VideoDescription | null>;
+  writeVideoDescription(channelId: string, episodeId: string, description: VideoDescription): Promise<string>;
   readQuestionHistory(channelId: string): Promise<QuestionHistoryEntry[]>;
   appendQuestionHistory(
     channelId: string,

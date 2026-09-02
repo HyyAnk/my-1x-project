@@ -29,6 +29,7 @@ export interface RepositoryService extends RepositoryRuntime {}
 export class RepositoryService {
   roots: RepositoryRoots;
   readonly questionHistoryWrites = new Map<string, Promise<void>>();
+  readonly usageLedgerWrites = new Map<string, Promise<void>>();
 
   constructor(
     readonly rootDirectory: string,
@@ -55,6 +56,7 @@ export class RepositoryService {
       mkdir(path.join(this.roots.runtime, "tasks"), { recursive: true }),
       mkdir(path.join(this.roots.runtime, "codex"), { recursive: true }),
       mkdir(path.join(this.roots.runtime, "logs"), { recursive: true }),
+      mkdir(path.join(this.roots.runtime, "analytics"), { recursive: true }),
       mkdir(this.roots.voices, { recursive: true }),
       mkdir(this.roots.mascots, { recursive: true }),
     ]);

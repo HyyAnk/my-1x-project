@@ -1,4 +1,13 @@
-import type { DirectorPlan, QuizAssessment, QuizAssetPlan, QuizTimeline, QuizV2, TaskEvent, VoicePlan } from "@studio/shared";
+import type {
+  DirectorPlan,
+  QuizAssessment,
+  QuizAssetPlan,
+  QuizTimeline,
+  QuizV2,
+  TaskEvent,
+  VideoDescription,
+  VoicePlan,
+} from "@studio/shared";
 
 export type BundleImage = {
   bundle_id: string;
@@ -27,6 +36,7 @@ export type QuizV2State = {
   voice_plan: VoicePlan | null;
   timeline: QuizTimeline | null;
   assessment: QuizAssessment | null;
+  description?: VideoDescription | null;
   stages: QuizV2Stages;
 };
 

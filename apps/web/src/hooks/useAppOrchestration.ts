@@ -17,7 +17,7 @@ export function useAppOrchestration() {
   const systemUi = useSystemUiState();
   const { showGood, showError, setNotice, setGit, setStorage, setLoading, setDeleteTarget } = systemUi;
 
-  const { imageBalance, voiceMetrics, loadingBalance, balanceError, fetchBalance, setVoiceMetrics } = useGlobalMetrics();
+  const { imageBalance, voiceMetrics, usageLedger, loadingBalance, balanceError, fetchBalance, setVoiceMetrics } = useGlobalMetrics();
   const { channels, setChannels, refresh: refreshChannels } = useChannels();
 
   const handleTerminalTask = useCallback(
@@ -127,6 +127,7 @@ export function useAppOrchestration() {
     ...systemUi,
     imageBalance,
     voiceMetrics,
+    usageLedger,
     loadingBalance,
     balanceError,
     fetchBalance,

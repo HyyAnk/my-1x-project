@@ -95,26 +95,33 @@ export function parseAgentApiModels(payload: {
 export async function getAgentApiModels(session: ActiveSessionInfo, logger: StudioLogger): Promise<AntigravityModel[] | null> {
   if (!session.address || !session.csrfToken) return null;
 
-  try {
-    const port = session.address.replace(/^localhost:/, "").replace(/^127\.0\.0\.1:/, "");
-    const response = await fetch(`http://127.0.0.1:${port}/exa.language_server_pb.LanguageServerService/GetAvailableModels`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-codeium-csrf-token": session.csrfToken },
-      body: JSON.stringify({ metadata: { ideName: "antigravity", ideVersion: "2.9.1", extensionVersion: "2.9.1" } }),
-      signal: AbortSignal.timeout(3000),
-    });
-    if (!response.ok) return null;
-    const payload = (await response.json()) as {
-      response?: {
-        models?: Record<string, { displayName?: string; model?: string }>;
-        agentModelSorts?: Array<{ groups?: Array<{ modelIds?: string[] }> }>;
+  const rawPort = session.address.replace(/^localhost:/, "").replace(/^127\.0\.0\.1:/, "");
+  const basePort = parseInt(rawPort, 10);
+  const portsToTry = !isNaN(basePort) ? [basePort, basePort + 1] : [rawPort];
+
+  for (const p of portsToTry) {
+    try {
+      const response = await fetch(`http://127.0.0.1:${p}/exa.language_server_pb.LanguageServerService/GetAvailableModels`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-codeium-csrf-token": session.csrfToken },
+        body: JSON.stringify({ metadata: { ideName: "antigravity", ideVersion: "2.9.1", extensionVersion: "2.9.1" } }),
+        signal: AbortSignal.timeout(2000),
+      });
+      if (!response.ok) continue;
+      const payload = (await response.json()) as {
+        response?: {
+          models?: Record<string, { displayName?: string; model?: string }>;
+          agentModelSorts?: Array<{ groups?: Array<{ modelIds?: string[] }> }>;
+        };
       };
-    };
-    return parseAgentApiModels(payload);
-  } catch (error) {
-    logger.debug(`Language server GetAvailableModels query failed: ${describeError(error)}`, { step: "antigravity_models" });
-    return null;
+      const parsed = parseAgentApiModels(payload);
+      if (parsed) return parsed;
+    } catch {
+      // Try next port candidate
+    }
   }
+
+  return null;
 }
 
 export async function getGoogleApiModels(config: AppConfig, logger: StudioLogger): Promise<AntigravityModel[] | null> {

@@ -30,7 +30,10 @@ export type QuizThumbnailPlan = {
   subjectAnchors: QuizSubjectAnchor[];
   topicTitle: string;
   questionCount: number;
+  environmentAtmosphere?: string;
+  lightingPalette?: string;
 };
+
 
 export type ResolveThumbnailInput = {
   topicTitle: string;
@@ -46,8 +49,12 @@ export type ResolveThumbnailInput = {
   colorTheme?: string;
   layoutOverride?: ThumbnailLayoutType;
   customHookText?: string;
+  badgeOverride?: string;
+  language?: string;
   mascotProfile?: MascotProfile | null;
 };
+
+
 
 export type CompiledThumbnailPrompts = {
   plan: QuizThumbnailPlan;

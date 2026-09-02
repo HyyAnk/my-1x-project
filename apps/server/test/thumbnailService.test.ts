@@ -217,5 +217,147 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
     expect(manifest.asset_path_9_16).toBeDefined();
     expect(manifest.asset_path_16_9).toBeNull(); // Auto detected 9:16 Shorts
   });
+
+  it("accumulates version history on repeated generation and allows activating older versions", async () => {
+    const { setActiveThumbnailVersion, deleteThumbnailVersion } = await import("../src/quiz/thumbnail/index.js");
+
+    const channel = await repository.createChannel({ name: "History Channel" });
+    const episode = await createTestEpisode(repository, channel.channel_id, "World History Quiz", "History facts");
+
+    let counter = 1;
+    const mockImageProvider: ImageProvider = {
+      generateReference: async () => {
+        const dummyPath = path.join(tempDir, `mock_v${counter}.jpg`);
+        await writeFile(dummyPath, Buffer.from(`MOCK_VERSION_${counter++}_DATA`));
+        return { asset_path: dummyPath, fallback_tier: 0, degraded: false };
+      },
+    };
+
+    // 1. Generate version 1
+    const v1Manifest = await generateEpisodeThumbnail(repository, {
+      channelId: channel.channel_id,
+      episodeId: episode.episode_id,
+      aspectRatio: "16:9",
+      customHookText: "VERSION ONE HOOK",
+      imageProvider: mockImageProvider,
+    });
+
+    expect(v1Manifest.history.length).toBe(1);
+    expect(v1Manifest.history[0].is_active).toBe(true);
+    expect(v1Manifest.history[0].hook_text).toBe("VERSION ONE HOOK");
+
+    const v1Id = v1Manifest.history[0].id;
+
+    // Small delay to ensure distinct timestamp
+    await new Promise((r) => setTimeout(r, 10));
+
+    // 2. Generate version 2
+    const v2Manifest = await generateEpisodeThumbnail(repository, {
+      channelId: channel.channel_id,
+      episodeId: episode.episode_id,
+      aspectRatio: "16:9",
+      customHookText: "VERSION TWO HOOK",
+      imageProvider: mockImageProvider,
+    });
+
+    expect(v2Manifest.history.length).toBe(2);
+    expect(v2Manifest.history[0].is_active).toBe(true); // v2 is active
+    expect(v2Manifest.history[0].hook_text).toBe("VERSION TWO HOOK");
+    expect(v2Manifest.history[1].is_active).toBe(false); // v1 is now archived
+    expect(v2Manifest.history[1].id).toBe(v1Id);
+
+    // 3. Set Version 1 as Active
+    const activatedManifest = await setActiveThumbnailVersion(
+      repository,
+      channel.channel_id,
+      episode.episode_id,
+      v1Id,
+    );
+
+    expect(activatedManifest.active_16_9_id).toBe(v1Id);
+    expect(activatedManifest.hook_text).toBe("VERSION ONE HOOK");
+    const v1Item = activatedManifest.history.find((h) => h.id === v1Id);
+    const v2Item = activatedManifest.history.find((h) => h.id !== v1Id);
+    expect(v1Item?.is_active).toBe(true);
+    expect(v2Item?.is_active).toBe(false);
+
+    // 4. Delete Version 2
+    if (v2Item) {
+      const postDeleteManifest = await deleteThumbnailVersion(
+        repository,
+        channel.channel_id,
+        episode.episode_id,
+        v2Item.id,
+      );
+      expect(postDeleteManifest.history.length).toBe(1);
+      expect(postDeleteManifest.history[0].id).toBe(v1Id);
+    }
+  });
+
+  it("serves variant thumbnail files via HTTP route without unsafe path errors", async () => {
+    const Fastify = (await import("fastify")).default;
+    const { registerThumbnailsRoutes } = await import("../src/routes/thumbnails.js");
+
+    const channel = await repository.createChannel({ name: "Route Test Channel" });
+    const episode = await createTestEpisode(repository, channel.channel_id, "Route Test Ep", "Desc");
+
+    const mockImageProvider: ImageProvider = {
+      generateReference: async () => {
+        const dummyPath = path.join(tempDir, `mock_route.jpg`);
+        await writeFile(dummyPath, Buffer.from("MOCK_IMAGE_BYTES"));
+        return { asset_path: dummyPath, fallback_tier: 0, degraded: false };
+      },
+    };
+
+    const manifest = await generateEpisodeThumbnail(repository, {
+      channelId: channel.channel_id,
+      episodeId: episode.episode_id,
+      aspectRatio: "16:9",
+      imageProvider: mockImageProvider,
+    });
+
+    const variantId = manifest.history[0].id;
+
+    const server = Fastify();
+    await server.register(
+      registerThumbnailsRoutes({
+        repository,
+        state: {
+          config: {
+            active_engine: "codex",
+            codex: {} as any,
+            antigravity: {} as any,
+            audio_generation: {} as any,
+            image_generation: {} as any,
+            video_generation: {} as any,
+            mascot_stage: {} as any,
+            question_history: {} as any,
+          },
+          storageConfigured: true,
+        },
+      }),
+    );
+
+    // Request active file
+    const resActive = await server.inject({
+      method: "GET",
+      url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/thumbnail/file/16_9`,
+    });
+    expect(resActive.statusCode).toBe(200);
+    expect(resActive.headers["content-type"]).toBe("image/jpeg");
+
+    // Request variant file with ?variant_id=
+    const resVariant = await server.inject({
+      method: "GET",
+      url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/thumbnail/file/16_9?variant_id=${variantId}`,
+    });
+    expect(resVariant.statusCode).toBe(200);
+    expect(resVariant.headers["content-type"]).toBe("image/jpeg");
+    expect(resVariant.body).toBe("MOCK_IMAGE_BYTES");
+
+    await server.close();
+  });
 });
+
+
 

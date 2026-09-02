@@ -5,6 +5,7 @@ import { promisify } from "node:util";
 import type { AppConfig } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
 import { watchTranscriptStream } from "./transcriptWatcher.js";
+import { discoverActiveSession } from "./discovery.js";
 import type { ActiveSessionInfo, ResolvedAntigravityTarget } from "./types.js";
 
 const execFileAsync = promisify(execFile);
@@ -82,12 +83,12 @@ async function runAgentApiTurn(
   controller: AbortController,
   ctx: TurnRunnerContext,
 ): Promise<void> {
-  const env = {
+  const getEnv = (session: ActiveSessionInfo) => ({
     ...process.env,
-    ...(ctx.session.address ? { ANTIGRAVITY_LS_ADDRESS: ctx.session.address } : {}),
-    ...(ctx.session.csrfToken ? { ANTIGRAVITY_CSRF_TOKEN: ctx.session.csrfToken } : {}),
-    ...(ctx.session.projectId ? { ANTIGRAVITY_PROJECT_ID: ctx.session.projectId } : {}),
-  };
+    ...(session.address ? { ANTIGRAVITY_LS_ADDRESS: session.address } : {}),
+    ...(session.csrfToken ? { ANTIGRAVITY_CSRF_TOKEN: session.csrfToken } : {}),
+    ...(session.projectId ? { ANTIGRAVITY_PROJECT_ID: session.projectId } : {}),
+  });
 
   const modelArg = selectedModel.includes("lite") ? "flash_lite" : selectedModel.includes("pro") ? "pro" : "flash";
   const args = [...ctx.target.argsPrefix, "new-conversation", `--model=${modelArg}`, effectivePrompt];
@@ -96,7 +97,7 @@ async function runAgentApiTurn(
   try {
     result = await execFileAsync(ctx.target.command, args, {
       cwd: ctx.rootDirectory,
-      env,
+      env: getEnv(ctx.session),
       timeout: 180_000,
       windowsHide: true,
       maxBuffer: 10 * 1024 * 1024,
@@ -105,7 +106,29 @@ async function runAgentApiTurn(
   } catch (execErr: unknown) {
     const errObj = execErr as { message?: string; stdout?: string; stderr?: string };
     const details = errObj.stderr?.trim() || errObj.stdout?.trim() || errObj.message || "Unknown error";
-    throw new Error(`Antigravity AgentAPI execution failed: ${details}`);
+    
+    // Auto-heal: If language_server was restarted or port changed, refresh active session and retry once
+    const isConnErr = /(?:connectex|connection error|actively refused|Unavailable desc = connection error|dial tcp)/i.test(details);
+    if (isConnErr) {
+      try {
+        const refreshedSession = await discoverActiveSession(ctx.logger, true);
+        ctx.session = refreshedSession;
+        result = await execFileAsync(ctx.target.command, args, {
+          cwd: ctx.rootDirectory,
+          env: getEnv(refreshedSession),
+          timeout: 180_000,
+          windowsHide: true,
+          maxBuffer: 10 * 1024 * 1024,
+          shell: process.platform === "win32" && /\.(cmd|bat)$/i.test(ctx.target.command),
+        });
+      } catch (retryErr: unknown) {
+        const retryErrObj = retryErr as { message?: string; stdout?: string; stderr?: string };
+        const retryDetails = retryErrObj.stderr?.trim() || retryErrObj.stdout?.trim() || retryErrObj.message || details;
+        throw new Error(`Antigravity AgentAPI execution failed: ${retryDetails}`);
+      }
+    } else {
+      throw new Error(`Antigravity AgentAPI execution failed: ${details}`);
+    }
   }
 
   let conversationId = "";

@@ -8,7 +8,10 @@ import { quizVoiceTargetWordsPerSecond } from "../../audio/voicePolicy.js";
 import { assertDirectorPlanValid } from "../../director/validateDirectorPlan.js";
 import { compileQuizTimeline } from "../../timeline/compileTimeline.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
+import { generateEpisodeThumbnail } from "../../thumbnail/index.js";
+import { StudioLogger } from "../../../logger.js";
 import type { QuizOrchestratorInput } from "../orchestrator.js";
+
 
 
 
@@ -62,8 +65,34 @@ export async function resolveAssets(
     invalidateQuizArtifacts("asset_resolution"),
   );
 
+  // Auto-generate Thumbnail immediately upon completing Visual Assets resolution
+  try {
+    await generateEpisodeThumbnail(input.repository, {
+      channelId: input.channelId,
+      episodeId: input.episodeId,
+      activeEngine: input.activeEngine,
+      antigravityClient: input.antigravityClient,
+      imageConfig: input.config.image_generation
+        ? {
+            api_key: input.config.image_generation.api_key,
+            model: input.config.image_generation.model,
+            provider: input.config.image_generation.provider,
+            base_url: input.config.image_generation.base_url,
+            quality: input.config.image_generation.quality,
+          }
+        : undefined,
+    });
+  } catch (error) {
+    const logger = new StudioLogger(input.repository.rootDirectory);
+    logger.warn(`Auto thumbnail generation during asset resolution encountered an issue: ${(error as Error).message}`, {
+      profileId: input.channelId,
+      workerId: input.episodeId,
+    });
+  }
+
   return { asset_resolution: result.resolution, issues: result.issues, invalidated };
 }
+
 
 
 
@@ -126,6 +155,18 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
     input.repository.writeVoicePlan(input.channelId, input.episodeId, measured.voicePlan),
     input.repository.writeQuizTimeline(input.channelId, input.episodeId, timeline),
   ]);
+
+  const renderedCharacters = measured.voicePlan.segments.reduce((acc, s) => acc + (s.text || "").length, 0);
+  const renderedSeconds = measured.voicePlan.segments.reduce((acc, s) => acc + (s.duration_seconds || 0), 0);
+  await input.repository.recordVoiceUsage({
+    channelId: input.channelId,
+    episodeId: input.episodeId,
+    characters: renderedCharacters,
+    durationSeconds: renderedSeconds,
+    segmentsCount: measured.voicePlan.segments.length,
+    note: "Quiz TTS Narration Render",
+  }).catch(() => undefined);
+
   return {
     voice_plan: measured.voicePlan,
     timeline,

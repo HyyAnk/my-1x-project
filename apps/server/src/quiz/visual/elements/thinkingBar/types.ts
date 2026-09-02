@@ -3,6 +3,7 @@ import type { ElementRenderContext, VisualElementVariant } from "../types.js";
 
 export type ThinkingBarRenderInput = {
   clipStart: number;
+  questionNarrationStart?: number;
   revealStart: number;
   thinkingStart?: number;
   duration?: number;
@@ -11,13 +12,14 @@ export type ThinkingBarRenderInput = {
 };
 
 export type ThinkingBarTiming = {
+  timerStart: number;
   duration: number;
   cd5: number;
   cd4: number;
   cd3: number;
   cd2: number;
   cd1: number;
-  queryDuration: number;
+  queryHoldDuration: number;
   cd5Show: boolean;
   cd4Show: boolean;
   cd3Show: boolean;
@@ -26,8 +28,14 @@ export type ThinkingBarTiming = {
   styleAttr: string;
 };
 
-export function calculateThinkingBarTiming(input: { clipStart: number; revealStart: number; thinkingStart?: number }): ThinkingBarTiming {
-  const duration = Math.max(0.05, input.revealStart - input.clipStart);
+export function calculateThinkingBarTiming(input: {
+  clipStart: number;
+  questionNarrationStart?: number;
+  revealStart: number;
+  thinkingStart?: number;
+}): ThinkingBarTiming {
+  const timerStart = input.questionNarrationStart ?? input.clipStart;
+  const duration = Math.max(0.05, input.revealStart - timerStart);
   const cd5Raw = duration - 5;
   const cd4Raw = duration - 4;
   const cd3Raw = duration - 3;
@@ -45,12 +53,12 @@ export function calculateThinkingBarTiming(input: { clipStart: number; revealSta
   const cd3 = Math.max(0, cd3Raw);
   const cd2 = Math.max(0, cd2Raw);
   const cd1 = Math.max(0, cd1Raw);
-  const queryDuration = cd5Show ? cd5 : 0;
-
+  const queryHoldDuration = cd5Show ? cd5 : 0;
   const cssVars = [
+    `--timer-start:${timerStart.toFixed(3)}s`,
     `--timer-duration:${duration.toFixed(3)}s`,
-    `--cd-query-dur:${queryDuration.toFixed(3)}s`,
-    `--cd-query-display:${queryDuration > 0.05 ? "grid" : "none"}`,
+    `--query-hold-duration:${queryHoldDuration.toFixed(3)}s`,
+    `--query-display:${queryHoldDuration > 0 ? "grid" : "none"}`,
     `--cd5-at:${cd5.toFixed(3)}s`,
     `--cd5-display:${cd5Show ? "grid" : "none"}`,
     `--cd4-at:${cd4.toFixed(3)}s`,
@@ -65,13 +73,14 @@ export function calculateThinkingBarTiming(input: { clipStart: number; revealSta
 
   const styleAttr = `style="${cssVars.join(";")}"`;
   return {
+    timerStart,
     duration,
     cd5,
     cd4,
     cd3,
     cd2,
     cd1,
-    queryDuration,
+    queryHoldDuration,
     cd5Show,
     cd4Show,
     cd3Show,

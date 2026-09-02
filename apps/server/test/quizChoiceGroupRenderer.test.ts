@@ -38,6 +38,22 @@ describe("Phase 4 semantic choice-group renderer", () => {
     }
   });
 
+  it("keeps scheduled reveal choices pending until the CSS reveal boundary", () => {
+    const html = renderChoiceGroup({
+      ...choiceInput({ phase: "reveal" }),
+      revealMode: "scheduled",
+    });
+
+    expect(html.match(/data-answer-state="pending"/g) ?? []).toHaveLength(3);
+    expect(html.match(/answer-reveal-correct/g) ?? []).toHaveLength(1);
+    expect(html.match(/answer-reveal-incorrect/g) ?? []).toHaveLength(2);
+    expect(html).not.toMatch(/data-answer-state="(?:correct|incorrect)"/);
+    expect(html).not.toMatch(/class="[^"]*answer-correct/);
+    expect(html).not.toMatch(/class="[^"]*answer-incorrect/);
+    expect(html).not.toContain("correct answer");
+    expect(html).not.toContain("incorrect answer");
+  });
+
   it("P4-SEM-05 escapes untrusted text, IDs, media sources, and accessible labels", () => {
     const unsafe = '<script data-x="1">alert(1)</script>';
     const html = renderChoiceGroup(

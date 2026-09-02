@@ -67,6 +67,16 @@ export async function generateBundleImageWithSafetyRetry(
     try {
       const provider = this.createImageProvider(imageTarget, output);
       const image = await provider.generateReference(currentPrompt, signal);
+      await this.repository
+        .recordImageUsage({
+          channelId: imageTarget.channelId,
+          episodeId: imageTarget.episodeId,
+          provider: this.imageConfig.provider ?? "gpti2",
+          model: this.imageConfig.model,
+          count: 1,
+          note: `Continuity bundle image CB-${String(imageTarget.bundleNumber).padStart(2, "0")}`,
+        })
+        .catch(() => undefined);
       return { image, updatedPrompt: currentPrompt !== initialPrompt ? currentPrompt : undefined };
     } catch (err) {
       lastError = err;

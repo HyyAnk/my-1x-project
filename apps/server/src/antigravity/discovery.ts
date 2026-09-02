@@ -146,29 +146,12 @@ export async function resolveAntigravityTarget(config: AppConfig, rootDirectory:
   );
 }
 
-export async function discoverActiveSession(logger: StudioLogger): Promise<ActiveSessionInfo> {
-  let address = process.env.ANTIGRAVITY_LS_ADDRESS?.trim() || null;
-  let csrfToken = process.env.ANTIGRAVITY_CSRF_TOKEN?.trim() || null;
+export async function discoverActiveSession(logger: StudioLogger, forceRefresh = false): Promise<ActiveSessionInfo> {
+  let address = !forceRefresh ? (process.env.ANTIGRAVITY_LS_ADDRESS?.trim() || null) : null;
+  let csrfToken = !forceRefresh ? (process.env.ANTIGRAVITY_CSRF_TOKEN?.trim() || null) : null;
   let projectId = process.env.ANTIGRAVITY_PROJECT_ID?.trim() || null;
 
-  if (!projectId) {
-    try {
-      const appStoragePath = path.join(homedir(), "AppData", "Roaming", "Antigravity", "app_storage.json");
-      const raw = await readFile(appStoragePath, "utf8");
-      const parsed = JSON.parse(raw) as Record<string, unknown>;
-      if (typeof parsed.lastCreatedProjectId === "string") {
-        projectId = parsed.lastCreatedProjectId.trim() || null;
-      }
-      if (!projectId && typeof parsed["new-convo-selected-environments"] === "string") {
-        const envs = JSON.parse(parsed["new-convo-selected-environments"]) as Record<string, unknown>;
-        projectId = Object.keys(envs)[0] || null;
-      }
-    } catch {
-      // App storage might not exist
-    }
-  }
-
-  if (process.platform === "win32" && (!address || !csrfToken)) {
+  if (process.platform === "win32" && (forceRefresh || !address || !csrfToken)) {
     try {
       const psScript = `
         $proc = Get-CimInstance Win32_Process -Filter "Name = 'language_server.exe'" | Select-Object -First 1 ProcessId, CommandLine
@@ -191,12 +174,29 @@ export async function discoverActiveSession(logger: StudioLogger): Promise<Activ
 
       const line = stdout.trim();
       const [port, discoveredCsrf] = line.split("|");
-      if (port && !address) address = `localhost:${port}`;
-      if (discoveredCsrf && !csrfToken) csrfToken = discoveredCsrf.trim();
+      if (port) address = `127.0.0.1:${port}`;
+      if (discoveredCsrf) csrfToken = discoveredCsrf.trim();
     } catch (err) {
       logger.debug(`Language server session discovery failed: ${err instanceof Error ? err.message : "unknown"}`, {
         step: "antigravity_discovery",
       });
+    }
+  }
+
+  if (!projectId) {
+    try {
+      const appStoragePath = path.join(homedir(), "AppData", "Roaming", "Antigravity", "app_storage.json");
+      const raw = await readFile(appStoragePath, "utf8");
+      const parsed = JSON.parse(raw) as Record<string, unknown>;
+      if (typeof parsed.lastCreatedProjectId === "string") {
+        projectId = parsed.lastCreatedProjectId.trim() || null;
+      }
+      if (!projectId && typeof parsed["new-convo-selected-environments"] === "string") {
+        const envs = JSON.parse(parsed["new-convo-selected-environments"]) as Record<string, unknown>;
+        projectId = Object.keys(envs)[0] || null;
+      }
+    } catch {
+      // App storage might not exist
     }
   }
 

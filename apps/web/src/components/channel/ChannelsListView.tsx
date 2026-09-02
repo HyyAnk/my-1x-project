@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import { Broadcast, Globe, Plus, X } from "@phosphor-icons/react";
+import { ArrowsDownUp, Broadcast, Globe, Plus, X } from "@phosphor-icons/react";
 import { TARGET_COUNTRY_LANGUAGES, matchChannelLanguage, type Channel, type MascotProfile } from "@studio/shared";
 import { EmptyState } from "../EmptyState";
 import { CountryFlag } from "../CountryFlag";
 import { useTranslation } from "../../i18n";
 import { api } from "../../api";
 import { ChannelCard } from "./ChannelCard";
+import { ChannelReorderBanner } from "./ChannelReorderBanner";
+import { useChannelOrder } from "../../features/channel/hooks/useChannelOrder";
+import { useChannelDragAndDrop } from "../../features/channel/hooks/useChannelDragAndDrop";
 
 export type ChannelsListViewProps = {
   channels: Channel[];
@@ -15,11 +18,22 @@ export type ChannelsListViewProps = {
   onDelete: (channel: Channel) => void;
 };
 
+export type ChannelSortOption = "custom" | "latest" | "episodes" | "name";
+
 export function ChannelsListView({ channels, mascots: initialMascots, onCreate, openChannel, onDelete }: ChannelsListViewProps) {
   const { t, language: uiLang } = useTranslation();
   const [mascots, setMascots] = useState<MascotProfile[]>(initialMascots || []);
   const [languageFilter, setLanguageFilter] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<"latest" | "episodes" | "name">("latest");
+  const [isReordering, setIsReordering] = useState<boolean>(false);
+
+  const { orderedChannels, hasCustomOrder, reorderChannel, pinToTop, resetOrder } = useChannelOrder(channels);
+
+  const [sortBy, setSortBy] = useState<ChannelSortOption>(() => (hasCustomOrder ? "custom" : "latest"));
+
+  const { getDraggableProps } = useChannelDragAndDrop({
+    onReorder: reorderChannel,
+    enabled: isReordering,
+  });
 
   useEffect(() => {
     if (!initialMascots || initialMascots.length === 0) {
@@ -30,7 +44,7 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
     }
   }, [initialMascots]);
 
-  // Compute channel counts for each synchronized target language (10 languages from 20 countries)
+  // Compute channel counts for each synchronized target language
   const languageCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const lang of TARGET_COUNTRY_LANGUAGES) {
@@ -46,15 +60,28 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
     return counts;
   }, [channels]);
 
+  // Create an index map for fast custom sorting
+  const orderIndexMap = useMemo(() => {
+    const map = new Map<string, number>();
+    orderedChannels.forEach((c, idx) => map.set(c.channel_id, idx));
+    return map;
+  }, [orderedChannels]);
+
   const filteredChannels = useMemo(() => {
-    return channels
+    const baseList = isReordering ? orderedChannels : channels;
+
+    return [...baseList]
       .filter((c) => {
+        if (isReordering) return true; // Show all channels during reordering
         if (languageFilter !== "all" && !matchChannelLanguage(c, languageFilter)) {
           return false;
         }
         return true;
       })
       .sort((a, b) => {
+        if (isReordering || sortBy === "custom") {
+          return (orderIndexMap.get(a.channel_id) ?? 0) - (orderIndexMap.get(b.channel_id) ?? 0);
+        }
         if (sortBy === "episodes") {
           return (b.episode_count || 0) - (a.episode_count || 0);
         }
@@ -63,10 +90,22 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
         }
         return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
       });
-  }, [channels, languageFilter, sortBy]);
+  }, [channels, orderedChannels, orderIndexMap, isReordering, languageFilter, sortBy]);
 
-  const clearFilters = () => {
+  const handleStartReordering = () => {
     setLanguageFilter("all");
+    setSortBy("custom");
+    setIsReordering(true);
+  };
+
+  const handleDoneReordering = () => {
+    setIsReordering(false);
+  };
+
+  const handleResetOrder = () => {
+    resetOrder();
+    setSortBy("latest");
+    setIsReordering(false);
   };
 
   return (
@@ -89,7 +128,10 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
             <button
               type="button"
               className={`channel-filter-btn ${languageFilter === "all" ? "is-active" : ""}`}
-              onClick={() => setLanguageFilter("all")}
+              onClick={() => {
+                if (!isReordering) setLanguageFilter("all");
+              }}
+              disabled={isReordering}
             >
               <CountryFlag code="GLOBAL" size={13} />
               <span>{t("channels.filterAll")}</span>
@@ -104,7 +146,10 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
                   type="button"
                   key={lang.key}
                   className={`channel-filter-btn ${isActive ? "is-active" : ""}`}
-                  onClick={() => setLanguageFilter(lang.key)}
+                  onClick={() => {
+                    if (!isReordering) setLanguageFilter(lang.key);
+                  }}
+                  disabled={isReordering}
                   title={`${lang.name} (${lang.nameVi})`}
                 >
                   <CountryFlag code={lang.primaryCountryCode || lang.countryCodes[0]} size={13} />
@@ -117,18 +162,43 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
         </div>
 
         <div className="channel-toolbar-right">
+          {!isReordering ? (
+            <button
+              type="button"
+              className="quiet-button is-compact channel-reorder-toggle-btn"
+              onClick={handleStartReordering}
+              title={t("channels.reorderChannels")}
+            >
+              <ArrowsDownUp size={14} />
+              <span>{t("channels.reorderChannels")}</span>
+            </button>
+          ) : null}
+
           <select
             className="channel-sort-select"
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as "latest" | "episodes" | "name")}
+            onChange={(e) => setSortBy(e.target.value as ChannelSortOption)}
             aria-label={t("channels.sortBy")}
+            disabled={isReordering}
           >
+            {hasCustomOrder || isReordering ? (
+              <option value="custom">{t("channels.sortCustom")}</option>
+            ) : null}
             <option value="latest">{t("channels.sortLatest")}</option>
             <option value="episodes">{t("channels.sortEpisodes")}</option>
             <option value="name">{t("channels.sortName")}</option>
           </select>
         </div>
       </div>
+
+      {/* Active Reordering Banner */}
+      {isReordering ? (
+        <ChannelReorderBanner
+          onDone={handleDoneReordering}
+          onReset={handleResetOrder}
+          hasCustomOrder={hasCustomOrder}
+        />
+      ) : null}
 
       {/* Grid or Empty state */}
       {channels.length === 0 ? (
@@ -152,19 +222,22 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
           <Globe size={36} style={{ color: "var(--muted)", margin: "0 auto 12px" }} />
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 6px" }}>{t("channels.noResultsTitle")}</h3>
           <p style={{ fontSize: "13px", color: "var(--muted)", margin: "0 0 16px" }}>{t("channels.noResultsCopy")}</p>
-          <button type="button" className="quiet-button" onClick={clearFilters} style={{ margin: "0 auto" }}>
+          <button type="button" className="quiet-button" onClick={() => setLanguageFilter("all")} style={{ margin: "0 auto" }}>
             <X size={14} />
             <span>{t("channels.clearFilters")}</span>
           </button>
         </div>
       ) : (
-        <div className="channel-grid">
+        <div className={`channel-grid ${isReordering ? "is-reordering-grid" : ""}`}>
           {filteredChannels.map((channel, index) => (
             <ChannelCard
               key={channel.channel_id}
               index={index + 1}
               channel={channel}
               mascots={mascots}
+              isReordering={isReordering}
+              draggableProps={isReordering ? getDraggableProps(index, channel.channel_id) : undefined}
+              onPinToTop={pinToTop}
               onOpen={() => openChannel(channel.channel_id)}
               onDelete={onDelete}
             />

@@ -143,13 +143,64 @@
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--ink);
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
 }
 
 .task-progress-panel.is-compact {
   margin: 0;
   border-width: 0 0 1px;
   border-radius: 0;
+  box-shadow: none;
   background: color-mix(in srgb, var(--accent) 3%, transparent);
+}
+
+.task-progress-panel.is-hero {
+  padding: 18px 22px;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line-dark));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 4%, var(--surface)) 0%,
+    var(--surface) 100%
+  );
+  box-shadow: var(--shadow-md);
+}
+
+.task-progress-panel.is-hero.running {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line-dark));
+  animation: hero-panel-pulse 3.2s ease-in-out infinite;
+}
+
+:root .task-progress-panel.is-hero {
+  box-shadow:
+    0 10px 28px -6px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+:root[data-theme="light"] .task-progress-panel.is-hero {
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--line-dark));
+  box-shadow:
+    0 6px 20px -3px rgba(15, 23, 42, 0.07),
+    0 2px 6px rgba(15, 23, 42, 0.03);
+}
+
+@keyframes hero-panel-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 6px 20px -3px rgba(0, 0, 0, 0.3),
+      0 0 12px -2px var(--accent-glow);
+  }
+  50% {
+    box-shadow:
+      0 8px 26px -3px rgba(0, 0, 0, 0.35),
+      0 0 24px 2px var(--accent-glow);
+  }
 }
 
 .task-progress-head {
@@ -168,22 +219,64 @@
 
 .task-progress-title {
   display: grid;
-  gap: 5px;
+  gap: 6px;
   min-width: 0;
 }
 
-.task-progress-title strong {
-  font-size: 13px;
-  min-height: 20px;
+.task-progress-title-row {
   display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+.task-progress-title .eyebrow {
+  color: var(--muted);
+  font: 700 11px/1 "Plus Jakarta Sans", sans-serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.task-hero-live-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
+  animation: live-indicator-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+  flex-shrink: 0;
+}
+
+@keyframes live-indicator-ping {
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+    box-shadow: 0 0 12px var(--accent);
+  }
+}
+
+.task-progress-title strong {
+  font-size: 13.5px;
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .task-thinking-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   max-width: 100%;
+  padding: 2px 10px 2px 6px;
+  border-radius: 999px;
+  background: var(--soft-accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
 }
 
 .task-thinking-icon {
@@ -196,7 +289,7 @@
   0%,
   100% {
     transform: scale(0.92) rotate(0deg);
-    opacity: 0.8;
+    opacity: 0.85;
   }
   50% {
     transform: scale(1.15) rotate(180deg);
@@ -211,6 +304,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 600;
+  font-size: 12.5px;
   color: var(--ink);
 }
 
@@ -237,9 +331,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 7px;
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--soft-accent);
   border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
   color: var(--accent);
   font:
@@ -253,16 +347,32 @@
     color 0.2s ease;
 }
 
+:root[data-theme="light"] .task-progress-percent-badge {
+  color: var(--accent-deep);
+  background: color-mix(in srgb, var(--accent) 12%, #ffffff);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+}
+
 .task-progress-panel.completed .task-progress-percent-badge {
-  background: color-mix(in srgb, var(--green) 14%, var(--surface));
+  background: var(--soft-green);
   border-color: color-mix(in srgb, var(--green) 35%, var(--line));
   color: var(--green);
 }
 
+:root[data-theme="light"] .task-progress-panel.completed .task-progress-percent-badge {
+  color: #047857;
+  background: color-mix(in srgb, var(--green) 12%, #ffffff);
+}
+
 .task-progress-panel.failed .task-progress-percent-badge {
-  background: color-mix(in srgb, var(--notice-error) 14%, var(--surface));
+  background: var(--danger-surface);
   border-color: color-mix(in srgb, var(--notice-error) 35%, var(--line));
   color: var(--notice-error);
+}
+
+:root[data-theme="light"] .task-progress-panel.failed .task-progress-percent-badge {
+  color: #b91c1c;
+  background: #fef2f2;
 }
 
 .task-progress-panel.cancelled .task-progress-percent-badge {
@@ -274,6 +384,13 @@
 .stop-icon-btn {
   border-color: color-mix(in srgb, var(--notice-error) 30%, transparent);
   background: color-mix(in srgb, var(--notice-error) 10%, transparent);
+  color: var(--notice-error);
+}
+
+:root[data-theme="light"] .stop-icon-btn {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.25);
+  color: #dc2626;
 }
 
 .stop-icon-btn-micro {
@@ -299,53 +416,126 @@
 }
 
 .task-progress-track {
-  height: 6px;
-  margin-top: 12px;
+  position: relative;
+  height: 7px;
+  margin-top: 14px;
   overflow: hidden;
   border-radius: 999px;
-  background: var(--soft-muted);
+  background: color-mix(in srgb, var(--ink) 8%, var(--surface));
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.task-progress-panel.is-hero .task-progress-track {
+  height: 9px;
+  margin-top: 16px;
+  background: color-mix(in srgb, var(--ink) 9%, var(--surface));
+  border: 1px solid var(--line-dark);
 }
 
 .task-progress-fill {
+  position: relative;
   display: block;
   height: 100%;
-  width: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-deep) 100%);
-  transform-origin: left;
-  transition: transform 0.24s ease;
+  background: linear-gradient(90deg, #0284c7 0%, #06b6d4 50%, #22d3ee 100%);
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+:root[data-theme="light"] .task-progress-fill {
+  background: linear-gradient(90deg, #0284c7 0%, #0891b2 50%, #06b6d4 100%);
 }
 
 .task-progress-panel.completed .task-progress-fill {
-  background: linear-gradient(90deg, var(--green) 0%, color-mix(in srgb, var(--green) 80%, #34d399) 100%);
+  background: linear-gradient(90deg, #059669 0%, #10b981 60%, #34d399 100%);
+  box-shadow: 0 0 12px var(--green-glow);
 }
 
-.task-progress-track.is-indeterminate .task-progress-fill {
-  width: 38%;
-  background: var(--accent);
-  animation: task-progress-slide 1.4s ease-in-out infinite;
+:root[data-theme="light"] .task-progress-panel.completed .task-progress-fill {
+  background: linear-gradient(90deg, #047857 0%, #059669 60%, #10b981 100%);
 }
 
 .task-progress-panel.failed .task-progress-fill,
 .inline-task-state.failed .task-status-dot {
-  background: var(--notice-error);
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.35);
 }
 
 .task-progress-panel.cancelled .task-progress-fill {
   background: var(--muted);
 }
 
+.task-progress-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 30%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0.15) 70%,
+    transparent 100%
+  );
+  animation: progress-shimmer-sweep 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes progress-shimmer-sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+.task-progress-glow-head {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  border-radius: 999px;
+  background: radial-gradient(circle at center, #ffffff 15%, rgba(34, 211, 238, 0.9) 60%, transparent 100%);
+  filter: drop-shadow(0 0 5px var(--accent-deep));
+  animation: progress-glow-head-pulse 1.6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+:root[data-theme="light"] .task-progress-glow-head {
+  background: radial-gradient(circle at center, #ffffff 25%, rgba(8, 145, 178, 0.9) 70%, transparent 100%);
+  filter: drop-shadow(0 0 4px #0891b2);
+}
+
+@keyframes progress-glow-head-pulse {
+  0% {
+    opacity: 0.75;
+    transform: scaleX(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1.15);
+  }
+}
+
+.task-progress-track.is-indeterminate .task-progress-fill {
+  width: 40% !important;
+  background: linear-gradient(90deg, #0284c7 0%, #06b6d4 50%, #22d3ee 100%);
+  animation: task-progress-slide 1.4s ease-in-out infinite;
+}
+
 .task-progress-copy {
   margin: 8px 0 0;
-  color: var(--muted);
-  font-size: 11px;
+  color: var(--ink-secondary);
+  font-size: 11.5px;
   line-height: 1.5;
 }
 
 .task-progress-measurements {
-  margin: 7px 0 0;
+  margin: 8px 0 0;
   overflow-wrap: anywhere;
-  color: var(--muted);
+  color: var(--ink-secondary);
   font:
     600 11px/1.45 "JetBrains Mono",
     monospace;

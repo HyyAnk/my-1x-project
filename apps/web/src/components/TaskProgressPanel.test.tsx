@@ -39,10 +39,51 @@ describe("TaskProgressPanel measured render", () => {
     );
 
     expect(screen.getByText("Video · rendering frame 2,130 / 3,840")).toBeTruthy();
-    expect(screen.getByText("2,130 / 3,840 frames · 6 workers · 42s left")).toBeTruthy();
+    expect(screen.getByText("2,130 / 3,840 frames · 35.5 fps · 6 workers · 42s left")).toBeTruthy();
     expect(screen.getByText("81.65%")).toBeTruthy();
     const progressbar = screen.getByRole("progressbar");
     expect(progressbar.getAttribute("aria-valuenow")).toBe("81.65");
     expect(progressbar.getAttribute("aria-valuetext")).toContain("2,130 / 3,840 frames");
+  });
+
+  it("renders hero variant with live indicator and calls onCancel when stop button clicked", () => {
+    let cancelled = false;
+    const task = TaskSchema.parse({
+      task_id: "task-pipe-1",
+      task_type: "GENERATE_PIPELINE",
+      channel_id: "channel-1",
+      episode_id: "episode-1",
+      status: "RUNNING",
+      created_at: "2026-09-01T00:00:00.000Z",
+      started_at: "2026-09-01T00:00:01.000Z",
+      lock_key: "episode-1",
+      progress_message: "Generating scene 3/8",
+      progress_percent: 37.5,
+    });
+
+    const { container } = render(
+      <TaskProgressPanel
+        task={task}
+        title="Production pipeline"
+        activeLabel="Running pipeline"
+        completionLabel="Production pipeline complete"
+        now={Date.parse("2026-09-01T00:01:01.000Z")}
+        variant="hero"
+        onCancel={() => {
+          cancelled = true;
+        }}
+      />,
+    );
+
+    const panel = container.querySelector(".task-progress-panel.is-hero");
+    expect(panel).toBeTruthy();
+    expect(container.querySelector(".task-hero-live-indicator")).toBeTruthy();
+    expect(container.querySelector(".task-progress-glow-head")).toBeTruthy();
+    expect(container.querySelector(".task-progress-shimmer")).toBeTruthy();
+
+    const stopButton = screen.getByRole("button", { name: /Stop Production pipeline/i });
+    expect(stopButton).toBeTruthy();
+    stopButton.click();
+    expect(cancelled).toBe(true);
   });
 });

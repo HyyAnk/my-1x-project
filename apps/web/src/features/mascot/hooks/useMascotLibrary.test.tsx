@@ -1,6 +1,6 @@
-﻿import type React from "react";
+import type React from "react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import type { MascotProfile } from "@studio/shared";
 import { LanguageProvider } from "../../../i18n";
 import { useMascotLibrary } from "./useMascotLibrary";
@@ -9,6 +9,7 @@ import { api } from "../../../api";
 vi.mock("../../../api", () => ({
   api: {
     mascots: vi.fn(),
+    updateMascot: vi.fn(),
     deleteMascot: vi.fn(),
     importMascotZip: vi.fn(),
   },
@@ -66,5 +67,33 @@ describe("useMascotLibrary", () => {
     expect(result.current.filteredMascots[0].name).toBe("Old Mascot");
     expect(result.current.filteredMascots[1].id).toBe("mascot_new");
     expect(result.current.filteredMascots[1].name).toBe("New Mascot");
+  });
+
+  it("handles renaming a mascot and refreshes library and channels", async () => {
+    const onNotice = vi.fn();
+    const onRefreshChannels = vi.fn().mockResolvedValue(undefined);
+    vi.mocked(api.updateMascot).mockResolvedValue({
+      mascot: { ...mockMascots[0], name: "Renamed Mascot" },
+    });
+
+    const { result } = renderHook(() => useMascotLibrary({ onNotice, onRefreshChannels }), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    act(() => {
+      result.current.setRenameTarget(mockMascots[0]);
+    });
+    expect(result.current.renameTarget?.id).toBe(mockMascots[0].id);
+
+    await act(async () => {
+      await result.current.handleRenameConfirm("Renamed Mascot");
+    });
+
+    expect(api.updateMascot).toHaveBeenCalledWith("mascot_new", { name: "Renamed Mascot" });
+    expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "good" }));
+    expect(onRefreshChannels).toHaveBeenCalled();
+    expect(result.current.renameTarget).toBeNull();
   });
 });

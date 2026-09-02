@@ -5,6 +5,7 @@ import { MascotAssignModal } from "../../components/MascotAssignModal";
 import type { Notice } from "../../components/types";
 import { useTranslation } from "../../i18n";
 import { MascotCard } from "./components/MascotCard";
+import { MascotRenameModal } from "./components/MascotRenameModal";
 import { useMascotLibrary } from "./hooks/useMascotLibrary";
 
 type MascotLibraryTabProps = {
@@ -28,8 +29,12 @@ export function MascotLibraryTab({ channels, onNotice, onRefreshChannels, onStar
     setQuickAssignMascot,
     deleteTarget,
     setDeleteTarget,
+    renameTarget,
+    setRenameTarget,
+    renaming,
     deleting,
     loadMascots,
+    handleRenameConfirm,
     handleDeleteConfirm,
   } = libraryState;
 
@@ -78,12 +83,22 @@ export function MascotLibraryTab({ channels, onNotice, onRefreshChannels, onStar
               mascot={mascot}
               channels={channels}
               onEdit={onEditMascot}
+              onRenameRequest={setRenameTarget}
               onQuickAssign={setQuickAssignMascot}
               onDeleteRequest={setDeleteTarget}
             />
           ))}
         </div>
       )}
+
+      {/* Quick Rename Mascot Modal */}
+      <MascotRenameModal
+        isOpen={Boolean(renameTarget)}
+        mascot={renameTarget}
+        onClose={() => setRenameTarget(null)}
+        onRename={handleRenameConfirm}
+        renaming={renaming}
+      />
 
       {/* Quick Channel Assignment Modal */}
       <MascotAssignModal

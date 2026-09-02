@@ -203,9 +203,9 @@ export class AntigravityClient extends EventEmitter {
     return this.resolvedTarget;
   }
 
-  async getActiveSession(): Promise<ActiveSessionInfo> {
-    if (this.discoveredSession) return this.discoveredSession;
-    this.discoveredSession = await discoverActiveSession(this.logger);
+  async getActiveSession(forceRefresh = false): Promise<ActiveSessionInfo> {
+    if (this.discoveredSession && !forceRefresh) return this.discoveredSession;
+    this.discoveredSession = await discoverActiveSession(this.logger, forceRefresh);
     return this.discoveredSession;
   }
 }

@@ -45,6 +45,7 @@ export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) 
     setLightboxImage,
     isPromptModalOpen,
     setIsPromptModalOpen,
+    savingIdentity,
     dragOverAction,
     setDragOverAction,
     promptEditAction,
@@ -67,6 +68,7 @@ export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) 
     handleApplyTemplate,
     handleCopyPrompt,
     handleGenerateConcept,
+    handleSaveIdentity,
     handleGenerateSprite,
     handleBatchGenerateSprites,
     handleBatchGenerateCoreSprites,
@@ -191,10 +193,12 @@ export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) 
           setLightboxImage={setLightboxImage}
           isPromptModalOpen={isPromptModalOpen}
           setIsPromptModalOpen={setIsPromptModalOpen}
+          savingIdentity={savingIdentity}
           onInjectTag={handleInjectTag}
           onApplyTemplate={handleApplyTemplate}
           onCopyPrompt={handleCopyPrompt}
           onGenerateConcept={handleGenerateConcept}
+          onSaveIdentity={handleSaveIdentity}
           onRemoveBackground={handleRemoveBackground}
           onNextStep={() => setGeneratorStep(2)}
         />

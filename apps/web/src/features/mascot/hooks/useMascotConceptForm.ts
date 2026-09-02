@@ -109,6 +109,33 @@ export function useMascotConceptForm({
     }
   };
 
+  const [savingIdentity, setSavingIdentity] = useState(false);
+
+  const handleSaveIdentity = async () => {
+    if (!editingMascot) return;
+    if (!genName.trim()) {
+      onNotice({ tone: "bad", message: t("notices.mascotNameRequired") });
+      return;
+    }
+    setSavingIdentity(true);
+    try {
+      const updated = await api.updateMascot(editingMascot.id, {
+        name: genName.trim(),
+        description: genDescription.trim(),
+        visual_style: genStyle,
+        master_prompt: genPrompt.trim(),
+        color_theme: genColor,
+      });
+      setEditingMascot(updated.mascot);
+      onNotice({ tone: "good", message: t("notices.mascotSaved", { name: updated.mascot.name }) });
+      await onMascotsChanged();
+    } catch (err) {
+      onNotice({ tone: "bad", message: err instanceof Error ? err.message : "Failed to save mascot details" });
+    } finally {
+      setSavingIdentity(false);
+    }
+  };
+
   return {
     genName,
     setGenName,
@@ -128,9 +155,11 @@ export function useMascotConceptForm({
     setLightboxImage,
     isPromptModalOpen,
     setIsPromptModalOpen,
+    savingIdentity,
     handleInjectTag,
     handleApplyTemplate,
     handleCopyPrompt,
     handleGenerateConcept,
+    handleSaveIdentity,
   };
 }

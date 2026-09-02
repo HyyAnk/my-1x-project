@@ -13,6 +13,13 @@ export type UseMascotMotionStudioProps = {
   onMascotsChanged: () => Promise<void>;
   setBusyAction: (action: string | null) => void;
   setGeneratorStep: (step: 1 | 2 | 3) => void;
+  getIdentitySnapshot?: () => {
+    name?: string;
+    description?: string;
+    visual_style?: MascotProfile["visual_style"];
+    color_theme?: string;
+    master_prompt?: string;
+  };
 };
 
 export function useMascotMotionStudio({
@@ -23,6 +30,7 @@ export function useMascotMotionStudio({
   onMascotsChanged,
   setBusyAction,
   setGeneratorStep,
+  getIdentitySnapshot,
 }: UseMascotMotionStudioProps) {
   const { t } = useTranslation();
 
@@ -47,6 +55,7 @@ export function useMascotMotionStudio({
     setBusyAction,
     setGeneratorStep,
     t,
+    getIdentitySnapshot,
   });
 
   return {

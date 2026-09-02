@@ -7,12 +7,14 @@ import {
   type QuizAssetResolution,
   type QuizTimeline,
   type QuizV2,
+  type VideoDescription,
   type VoicePlan,
 } from "@studio/shared";
-import type { RepositoryService } from "../../repository.js";
+import { RepositoryError, type RepositoryService } from "../../repository.js";
 import type { QuizVoicePacingClamp } from "../audio/voiceSynthesis.js";
 import type { AntigravityClient } from "../../antigravity.js";
 import type { CodexAppServerClient } from "../../codex.js";
+import { generateVideoDescription } from "../description/index.js";
 
 import { readQuizArtifacts, generateQuiz, generateDirector } from "./stages/quizGenerationStage.js";
 import { planAssets, resolveAssets, planVoice, generateVoice } from "./stages/assetsVoiceStages.js";
@@ -58,7 +60,45 @@ export type QuizArtifacts = {
   voice_plan: VoicePlan | null;
   timeline: QuizTimeline | null;
   assessment: QuizAssessment | null;
+  description: VideoDescription | null;
 };
+
+export async function generateEpisodeDescription(
+  input: QuizOrchestratorInput & { toneHint?: string; force?: boolean; timeoutMs?: number },
+): Promise<{ description: VideoDescription; artifact_path: string }> {
+  const [episode, channel, quiz] = await Promise.all([
+    input.repository.getEpisode(input.channelId, input.episodeId),
+    input.repository.getChannel(input.channelId),
+    input.repository.readQuiz(input.channelId, input.episodeId),
+  ]);
+
+  if (!quiz || quiz.questions.length === 0) {
+    throw new RepositoryError("Quiz questions must be generated before video description", "QUIZ_REQUIRED");
+  }
+
+  const client =
+    input.activeEngine === "antigravity" && input.antigravityClient
+      ? input.antigravityClient
+      : input.codexClient;
+
+  if (!client) {
+    throw new RepositoryError("No active LLM client available for generating description", "LLM_CLIENT_UNAVAILABLE");
+  }
+
+  const timeoutMs = input.timeoutMs ?? (process.env.NODE_ENV === "test" || process.env.VITEST ? 1500 : 10_000);
+
+  const description = await generateVideoDescription({
+    client,
+    channel,
+    episode,
+    quiz,
+    toneHint: input.toneHint,
+    timeoutMs,
+  });
+
+  const artifact_path = await input.repository.writeVideoDescription(input.channelId, input.episodeId, description);
+  return { description, artifact_path };
+}
 
 export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<QuizArtifacts> {
   const generatedQuiz = await generateQuiz(input);
@@ -89,8 +129,15 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
     // Non-blocking
   }
 
-  return {
+  let description: VideoDescription | null = null;
+  try {
+    const descResult = await generateEpisodeDescription(input);
+    description = descResult.description;
+  } catch {
+    description = await input.repository.readVideoDescription(input.channelId, input.episodeId);
+  }
 
+  return {
     quiz: generatedQuiz.quiz,
     history_check: generatedQuiz.history_check,
     director_plan: director.director_plan,
@@ -99,5 +146,6 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
     voice_plan: voicePlan.voice_plan,
     timeline: voiceResult.timeline,
     assessment: qaResult.assessment,
+    description,
   };
 }

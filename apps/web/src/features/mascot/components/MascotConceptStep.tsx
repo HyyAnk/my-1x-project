@@ -1,4 +1,4 @@
-import { ArrowRight, Check, CircleNotch, MagicWand, X } from "@phosphor-icons/react";
+import { ArrowRight, Check, CircleNotch, FloppyDisk, MagicWand, X } from "@phosphor-icons/react";
 import type { MascotProfile, QuizImageStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import { PROMPT_TEMPLATES, QUICK_PROMPT_TAGS } from "../constants";
@@ -29,10 +29,12 @@ export interface MascotConceptStepProps {
   setLightboxImage: (img: string | null) => void;
   isPromptModalOpen: boolean;
   setIsPromptModalOpen: (open: boolean) => void;
+  savingIdentity?: boolean;
   onInjectTag: (tag: string) => void;
   onApplyTemplate: (tpl: (typeof PROMPT_TEMPLATES)[0]) => void;
   onCopyPrompt: () => void;
   onGenerateConcept: () => void;
+  onSaveIdentity?: () => void;
   onRemoveBackground: (target: "master" | "all") => void;
   onNextStep: () => void;
 }
@@ -60,10 +62,12 @@ export function MascotConceptStep({
   setLightboxImage,
   isPromptModalOpen,
   setIsPromptModalOpen,
+  savingIdentity = false,
   onInjectTag,
   onApplyTemplate,
   onCopyPrompt,
   onGenerateConcept,
+  onSaveIdentity,
   onRemoveBackground,
   onNextStep,
 }: MascotConceptStepProps) {
@@ -106,21 +110,36 @@ export function MascotConceptStep({
 
           {/* Wizard Action CTA Row */}
           <div className="wizard-action-row" style={{ marginTop: "24px", paddingTop: "16px", borderTop: "1px solid var(--line)" }}>
-            <button
-              type="button"
-              className="primary-button ai-magic-btn"
-              style={{
-                background: `linear-gradient(135deg, ${genColor} 0%, #0284c7 100%)`,
-                boxShadow: `0 4px 16px ${genColor}35`,
-              }}
-              disabled={busyAction !== null || !genName.trim()}
-              onClick={onGenerateConcept}
-            >
-              {busyAction === "concept" ? <CircleNotch className="spin" size={18} /> : <MagicWand size={18} weight="bold" />}
-              <span>
-                {busyAction === "concept" ? `${t("mascots.generatingConceptBtn")} (${itemProgress}%)` : t("mascots.generateConceptBtn")}
-              </span>
-            </button>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+              <button
+                type="button"
+                className="primary-button ai-magic-btn"
+                style={{
+                  background: `linear-gradient(135deg, ${genColor} 0%, #0284c7 100%)`,
+                  boxShadow: `0 4px 16px ${genColor}35`,
+                }}
+                disabled={busyAction !== null || savingIdentity || !genName.trim()}
+                onClick={onGenerateConcept}
+              >
+                {busyAction === "concept" ? <CircleNotch className="spin" size={18} /> : <MagicWand size={18} weight="bold" />}
+                <span>
+                  {busyAction === "concept" ? `${t("mascots.generatingConceptBtn")} (${itemProgress}%)` : t("mascots.generateConceptBtn")}
+                </span>
+              </button>
+
+              {editingMascot && onSaveIdentity ? (
+                <button
+                  type="button"
+                  className="quiet-button"
+                  onClick={onSaveIdentity}
+                  disabled={busyAction !== null || savingIdentity || !genName.trim()}
+                  title={t("mascots.saveIdentityBtn")}
+                >
+                  {savingIdentity ? <CircleNotch className="spin" size={16} /> : <FloppyDisk size={16} />}
+                  <span>{savingIdentity ? t("mascots.savingIdentityBtn") : t("mascots.saveIdentityBtn")}</span>
+                </button>
+              ) : null}
+            </div>
 
             <button
               type="button"

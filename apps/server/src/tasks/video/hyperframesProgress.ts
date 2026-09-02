@@ -1,6 +1,6 @@
 const ANSI_ESCAPE_PATTERN = new RegExp(`${String.fromCharCode(27)}\\[[0-?]*[ -/]*[@-~]`, "g");
 const TRACE_PREFIX = "[Render:trace]";
-const FALLBACK_FRAME_PATTERN = /Streaming frame\s+(\d+)\s*\/\s*(\d+)\s*\((\d+)\s+workers?\)/i;
+const FALLBACK_FRAME_PATTERN = /(?:Streaming|Rendering|Render)?\s*frames?\s+(\d+)\s*(?:\/|of)\s*(\d+)(?:\s*\((\d+)\s+workers?\))?/i;
 
 export type HyperframesProgressSample = {
   phase: "capture_streaming";
@@ -56,11 +56,14 @@ function parseTrace(line: string): HyperframesProgressSample | null {
 function parseFallback(line: string): HyperframesProgressSample | null {
   const match = FALLBACK_FRAME_PATTERN.exec(line);
   if (!match) return null;
+  const framesCompleted = Number(match[1]);
+  const totalFrames = Number(match[2]);
+  const workerCount = match[3] ? Number(match[3]) : 1;
   return createSample({
     phase: "capture_streaming",
-    framesCompleted: Number(match[1]),
-    totalFrames: Number(match[2]),
-    workerCount: Number(match[3]),
+    framesCompleted,
+    totalFrames,
+    workerCount,
   });
 }
 

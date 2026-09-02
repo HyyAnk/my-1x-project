@@ -95,7 +95,7 @@ export function timingPolicyForAgeBand(ageBand: QuizAgeBand): QuizTimingPolicy {
     post_prompt_thinking_seconds: 1.0,
     reveal_delay_seconds: 0.05,
     reveal_seconds: 0.58,
-    reveal_voice_lead_seconds: 0.12,
+    reveal_voice_lead_seconds: 0,
     reveal_hold_seconds: 0.24,
     reward_seconds: { small: 0.42, medium: 0.58, big: 0.86 },
     explanation_lead_seconds: 0.08,

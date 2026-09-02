@@ -24,6 +24,13 @@ export function useMascotMotionCalibration(options: {
   setBusyAction: (action: string | null) => void;
   setGeneratorStep: (step: 1 | 2 | 3) => void;
   t: (key: string, values?: Record<string, string | number>) => string;
+  getIdentitySnapshot?: () => {
+    name?: string;
+    description?: string;
+    visual_style?: MascotProfile["visual_style"];
+    color_theme?: string;
+    master_prompt?: string;
+  };
 }) {
   const {
     editingMascot,
@@ -38,6 +45,7 @@ export function useMascotMotionCalibration(options: {
     setBusyAction,
     setGeneratorStep,
     t,
+    getIdentitySnapshot,
   } = options;
 
   const [calibrating, setCalibrating] = useState(false);
@@ -97,12 +105,16 @@ export function useMascotMotionCalibration(options: {
             };
       }
 
-      const res = await api.updateMascot(editingMascot.id, { actions: updatedActions });
+      const identity = getIdentitySnapshot ? getIdentitySnapshot() : {};
+      const res = await api.updateMascot(editingMascot.id, {
+        ...identity,
+        actions: updatedActions,
+      });
       setEditingMascot(res.mascot);
 
       onNotice({
         tone: "good",
-        message: `Mascot "${editingMascot.name}" has been saved successfully!`,
+        message: `Mascot "${res.mascot.name || editingMascot.name}" has been saved successfully!`,
       });
       await onRefreshChannels();
       await onMascotsChanged();

@@ -74,6 +74,17 @@ describe("deterministic Quiz timeline compiler", () => {
     expect(compileQuizTimeline(input)).toEqual(compileQuizTimeline(input));
   });
 
+  it("starts default reveal narration at the answer reveal boundary", () => {
+    const value = quiz(3);
+    const timeline = compileQuizTimeline({ quiz: value, director: createDefaultDirectorPlan(value), voicePlan: buildQuizVoicePlan(value) });
+
+    for (const question of value.questions) {
+      const reveal = timeline.events.find((event) => event.type === "answer.reveal" && event.question_id === question.id);
+      const revealNarration = timeline.events.find((event) => event.segment_id === question.id + ":reveal");
+      expect(revealNarration?.at_seconds).toBe(reveal?.at_seconds);
+    }
+  });
+
   it("keeps compact child-friendly question cycles and schedules every voice segment", () => {
     const value = quiz(10);
     const voice = buildQuizVoicePlan(value);

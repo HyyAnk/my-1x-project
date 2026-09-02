@@ -57,53 +57,11 @@ export async function getRenderedVoiceMetrics(this: RepositoryRuntime): Promise<
   rendered_segments_count: number;
   rendered_episodes_count: number;
 }> {
-  const channels = await this.listChannels(true);
-  let totalCharacters = 0;
-  let totalDurationSeconds = 0;
-  let totalSegments = 0;
-  let totalRenderedEpisodes = 0;
-
-  for (const channel of channels) {
-    const episodes = await this.listEpisodes(channel.channel_id).catch(() => []);
-    for (const episode of episodes) {
-      let episodeHasRenderedVoice = false;
-
-      // Check Quiz voice plan
-      const voicePlan = await this.readVoicePlan(channel.channel_id, episode.episode_id).catch(() => null);
-      if (voicePlan && voicePlan.segments?.length) {
-        for (const segment of voicePlan.segments) {
-          if (segment.duration_seconds && segment.duration_seconds > 0) {
-            totalCharacters += (segment.text || "").length;
-            totalDurationSeconds += segment.duration_seconds;
-            totalSegments += 1;
-            episodeHasRenderedVoice = true;
-          }
-        }
-      }
-
-      // Check legacy scenes
-      const scenes = await this.readScenes(channel.channel_id, episode.episode_id).catch(() => []);
-      if (scenes && scenes.length) {
-        for (const scene of scenes) {
-          if (scene.audio_asset_path && scene.audio_duration_seconds && scene.audio_duration_seconds > 0) {
-            totalCharacters += (scene.dialogue || "").length;
-            totalDurationSeconds += scene.audio_duration_seconds;
-            totalSegments += 1;
-            episodeHasRenderedVoice = true;
-          }
-        }
-      }
-
-      if (episodeHasRenderedVoice) {
-        totalRenderedEpisodes += 1;
-      }
-    }
-  }
-
+  const ledger = await this.readUsageLedger();
   return {
-    rendered_characters: totalCharacters,
-    rendered_duration_seconds: totalDurationSeconds,
-    rendered_segments_count: totalSegments,
-    rendered_episodes_count: totalRenderedEpisodes,
+    rendered_characters: ledger.voice.rendered_characters,
+    rendered_duration_seconds: ledger.voice.rendered_duration_seconds,
+    rendered_segments_count: ledger.voice.rendered_segments_count,
+    rendered_episodes_count: ledger.voice.rendered_episodes_count,
   };
 }

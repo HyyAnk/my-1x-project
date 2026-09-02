@@ -1,4 +1,10 @@
 import { THUMBNAIL_LAYOUT_CATALOG, type ThumbnailLayoutType, type QuizImageStyle } from "@studio/shared";
+import {
+  getCuriosityBadgeText,
+  getThumbnailLocalizedTexts,
+  resolveThumbnailLanguage,
+  resolveTopicSpecificHook,
+} from "./thumbnailLocale.js";
 import type {
   MascotThemedPersona,
   QuizSubjectAnchor,
@@ -25,6 +31,8 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
     topicLower.includes(" vs ") ||
     topicLower.includes("pick one") ||
     topicLower.includes("chọn 1 trong 2") ||
+    topicLower.includes("どっち") ||
+    topicLower.includes("2択") ||
     topicLower.includes("đối kháng")
   ) {
     layout = "split_vs";
@@ -36,6 +44,8 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
     topicLower.includes("đoán hình") ||
     topicLower.includes("bóng đen") ||
     topicLower.includes("bí ẩn") ||
+    topicLower.includes("誰") ||
+    topicLower.includes("シルエット") ||
     topicLower.includes("mystery")
   ) {
     layout = "mystery_silhouette";
@@ -46,6 +56,8 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
     topicLower.includes("spot the difference") ||
     topicLower.includes("tìm điểm khác") ||
     topicLower.includes("kẻ mạo danh") ||
+    topicLower.includes("間違い探し") ||
+    topicLower.includes("仲間外れ") ||
     topicLower.includes("imposter")
   ) {
     layout = "odd_one_out";
@@ -56,6 +68,8 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
     topicLower.includes("level 1") ||
     topicLower.includes("cấp độ") ||
     topicLower.includes("từ dễ đến khó") ||
+    topicLower.includes("難易度") ||
+    topicLower.includes("iqテスト") ||
     topicLower.includes("thử thách iq")
   ) {
     layout = "difficulty_tier";
@@ -64,6 +78,9 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
     topicLower.includes("true or false") ||
     topicLower.includes("đúng hay sai") ||
     topicLower.includes("sự thật hay") ||
+    topicLower.includes("ウソ") ||
+    topicLower.includes("ホント") ||
+    topicLower.includes("○✕") ||
     topicLower.includes("myths") ||
     topicLower.includes("lầm tưởng")
   ) {
@@ -74,22 +91,26 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
 
   const catalogEntry = THUMBNAIL_LAYOUT_CATALOG[layout];
 
-  // 2. Resolve Hook & Badge Text
-  const hookText = input.customHookText || (layout === "mega_grid" ? "GENERAL KNOWLEDGE" : catalogEntry.hookTextTemplate);
-  let badgeText = catalogEntry.badgeTemplate;
-  if (layout === "mega_grid") {
-    const formattedCount = count > 0 ? (count >= 50 ? `${count} QUESTIONS` : `${count} CÂU HỎI`) : "100 QUESTIONS";
-    badgeText = formattedCount;
-  }
+  // 2. Resolve Localized Hook & Badge Text
+  const language = resolveThumbnailLanguage(input);
+  const localized = getThumbnailLocalizedTexts(layout, count, language);
+
+  const topicSpecificHook = resolveTopicSpecificHook(topicLower, language);
+  const hookText = input.customHookText || topicSpecificHook || localized.hookText;
+  const badgeText = getCuriosityBadgeText(input.badgeOverride, count, language, localized.badgeText);
+
 
   // 3. Resolve Contextual Mascot Persona based on Topic & Layout
   const mascotPersona = resolveMascotThemedPersona(topicLower, layout, catalogEntry.mascotPersona);
 
-  // 4. Resolve Subject Anchors
+  // 4. Resolve Subject Anchors (Visual objects only, zero raw question text)
   const subjectAnchors = resolveSubjectAnchors(input, layout);
 
   const visualStyle: QuizImageStyle = input.visualStyle || "pixar_3d";
   const colorTheme = input.colorTheme || input.mascotProfile?.color_theme || "#06b6d4";
+
+  // 5. Resolve Fallback Environment & Lighting Atmosphere
+  const { environmentAtmosphere, lightingPalette } = resolveFallbackEnvironment(topicLower, input.topicTitle);
 
   return {
     layout,
@@ -101,8 +122,63 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
     colorTheme,
     mascotPersona,
     subjectAnchors,
+    environmentAtmosphere,
+    lightingPalette,
   };
 }
+
+/**
+ * Resolves fallback vibrant environment and lighting palette for family/kids Pixar aesthetic.
+ */
+function resolveFallbackEnvironment(
+  topicLower: string,
+  topicTitle: string,
+): { environmentAtmosphere: string; lightingPalette: string } {
+  if (
+    topicLower.includes("bake") ||
+    topicLower.includes("cookie") ||
+    topicLower.includes("biscuit") ||
+    topicLower.includes("pastry") ||
+    topicLower.includes("dessert") ||
+    topicLower.includes("bánh")
+  ) {
+    return {
+      environmentAtmosphere:
+        "Warm cozy bakery kitchen with soft warm golden oven glow and gentle flour dust sparkles in soft depth of field",
+      lightingPalette:
+        "Warm amber and golden honey glow, bright luminous rim light on characters and pastries, soft natural contact shadows",
+    };
+  }
+  if (
+    topicLower.includes("supercar") ||
+    topicLower.includes("hypercar") ||
+    topicLower.includes("racing") ||
+    topicLower.includes("siêu xe")
+  ) {
+    return {
+      environmentAtmosphere:
+        "Vibrant high-tech racing paddock and sunny speedway stadium with celebratory confetti and soft depth of field",
+      lightingPalette:
+        "Bright daylight sunbeams, dramatic metallic highlights, and vibrant neon track rim lights",
+    };
+  }
+  if (topicLower.includes("space") || topicLower.includes("vũ trụ") || topicLower.includes("hành tinh")) {
+    return {
+      environmentAtmosphere:
+        "Magical deep cerulean and indigo cosmic nebula with glowing stardust particles and colorful crescent moons in soft depth of field",
+      lightingPalette:
+        "Luminous cyan and magenta rim lighting, soft glowing ambient starlight, zero muddy darkness",
+    };
+  }
+  return {
+    environmentAtmosphere: `Vibrant, colorful, family-friendly Pixar 3D studio environment tailored to ${topicTitle} with soft atmospheric depth of field and cheerful bright colors`,
+    lightingPalette:
+      "Soft warm three-point cinematic studio lighting, bright luminous rim lighting on subjects, soft natural contact shadows, zero muddy darkness",
+  };
+}
+
+
+
 
 /**
  * Maps topic keywords to themed mascot costume, props, and actions.
@@ -162,6 +238,34 @@ function resolveMascotThemedPersona(
     };
   }
 
+  if (
+    topicLower.includes("bake") ||
+    topicLower.includes("cookie") ||
+    topicLower.includes("biscuit") ||
+    topicLower.includes("pastry") ||
+    topicLower.includes("bánh") ||
+    topicLower.includes("culinary") ||
+    topicLower.includes("dessert")
+  ) {
+    return {
+      role: "Master Pastry Chef",
+      costume: "White chef hat and baker apron with flour dusted pockets",
+      prop: "Wooden rolling pin or tray of golden warm freshly baked cookies",
+      expression: "Delighted, proud, mouth-watering happy smile",
+      poseDescription: "Enthusiastically presenting the delicious world bakery challenge",
+    };
+  }
+
+  if (topicLower.includes("supercar") || topicLower.includes("hypercar") || topicLower.includes("racing") || topicLower.includes("siêu xe")) {
+    return {
+      role: "Pro Racing Driver",
+      costume: "High-speed aerodynamic racing driver jumpsuit and racing helmet",
+      prop: "Black-and-white checkered finish flag or golden championship trophy",
+      expression: "Adrenaline pumped, confident smirk, eyes shining",
+      poseDescription: "Giving a triumphant thumbs up beside the track challenge",
+    };
+  }
+
   if (topicLower.includes("ocean") || topicLower.includes("biển") || topicLower.includes("cá") || topicLower.includes("shark")) {
     return {
       role: "Deep Sea Diver",
@@ -182,23 +286,75 @@ function resolveMascotThemedPersona(
   };
 }
 
+/**
+ * Enriches choice text with topic domain context (e.g. "France" in a Cookie quiz -> "authentic specialty cookie representing France").
+ */
+function contextualizeChoiceSubject(choice: string, topicLower: string): string {
+  const trimmed = choice.trim();
+  if (
+    topicLower.includes("bake") ||
+    topicLower.includes("cookie") ||
+    topicLower.includes("biscuit") ||
+    topicLower.includes("pastry") ||
+    topicLower.includes("bánh")
+  ) {
+    return `delicious authentic specialty cookie or pastry representing ${trimmed}`;
+  }
+  if (
+    topicLower.includes("supercar") ||
+    topicLower.includes("hypercar") ||
+    topicLower.includes("siêu xe") ||
+    topicLower.includes("racing")
+  ) {
+    return `luxury high-speed exotic sports car from ${trimmed}`;
+  }
+  if (topicLower.includes("weapon") || topicLower.includes("sword") || topicLower.includes("vũ khí")) {
+    return `legendary iconic artifact weapon representing ${trimmed}`;
+  }
+  return trimmed;
+}
 
 /**
  * Extracts 2 to 4 visual subject anchors for grid/versus layouts.
+ * Ensures anchors only describe visual 3D objects, NEVER question sentences.
  */
 function resolveSubjectAnchors(input: ResolveThumbnailInput, layout: ThumbnailLayoutType): QuizSubjectAnchor[] {
   const anchors: QuizSubjectAnchor[] = [];
+  const topicLower = `${input.topicTitle} ${input.topicSummary || ""}`.toLowerCase();
 
   if (input.questions && input.questions.length > 0) {
-    for (let i = 0; i < Math.min(input.questions.length, 4); i++) {
-      const q = input.questions[i];
-      anchors.push({
-        label: `Question ${i + 1}`,
-        visualPrompt: q.question,
-        badge: i === 0 ? "✓" : undefined,
-      });
+    const firstQ = input.questions[0];
+
+    // Priority 1: If first question has multiple visual choices (e.g. 4 choices for a 2x2 grid or 2 choices for VS)
+    if (firstQ.choices && firstQ.choices.length >= 2 && (layout === "mega_grid" || layout === "split_vs")) {
+      const limit = layout === "split_vs" ? 2 : Math.min(firstQ.choices.length, 4);
+      for (let i = 0; i < limit; i++) {
+        const choice = firstQ.choices[i];
+        const isAnswer = firstQ.answer
+          ? choice.toLowerCase().includes(firstQ.answer.toLowerCase()) || firstQ.answer.toLowerCase().includes(choice.toLowerCase())
+          : i === 0;
+        const enrichedVisual = contextualizeChoiceSubject(choice, topicLower);
+        anchors.push({
+          label: `Option ${i + 1}`,
+          visualPrompt: `3D visual icon of ${enrichedVisual}`,
+          badge: isAnswer ? "✓" : undefined,
+        });
+      }
+    } else {
+      // Priority 2: Distinct subjects from multiple questions (clean noun phrases)
+      for (let i = 0; i < Math.min(input.questions.length, 4); i++) {
+        const q = input.questions[i];
+        const subject = cleanSubjectFromQuestion(q.question, q.answer);
+        const enrichedVisual = contextualizeChoiceSubject(subject, topicLower);
+        anchors.push({
+          label: `Subject ${i + 1}`,
+          visualPrompt: `3D visual icon of ${enrichedVisual}`,
+          badge: i === 0 ? "✓" : undefined,
+        });
+      }
     }
   }
+
 
   // Fallback default anchors if no specific question prompts provided
   if (anchors.length === 0) {
@@ -242,3 +398,23 @@ function resolveSubjectAnchors(input: ResolveThumbnailInput, layout: ThumbnailLa
 
   return anchors;
 }
+
+/**
+ * Strips question words, auxiliary verbs, and punctuation to extract pure visual noun subjects.
+ */
+function cleanSubjectFromQuestion(question: string, answer?: string): string {
+  if (answer && answer.trim().length > 0 && answer.trim().length < 40) {
+    return answer.trim();
+  }
+  let cleaned = question
+    .replace(/^(which|what|where|who|how|why|when|is|are|can|do|does|did|find|spot|guess|choose)\s+(is|are|the|a|an|of)?\s*/i, "")
+    .replace(/\b(could|can|would|should)\s+(float in water|fly|survive|live|happen|win|be|exist)\b/gi, "")
+    .replace(/[?!.:,;]+$/g, "")
+    .trim();
+
+  if (!cleaned || cleaned.length < 3) {
+    cleaned = "mystery trivia subject";
+  }
+  return cleaned;
+}
+

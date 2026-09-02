@@ -12,13 +12,18 @@ function resolveProgressLabel(options: {
   thinkingLabel: string;
   renderMetrics: string | null;
 }): string {
-  const { task, title, completionLabel, thinkingLabel, renderMetrics } = options;
+  const { task, title, completionLabel, thinkingLabel } = options;
   if (task.status === "COMPLETED") return completionLabel.replace(new RegExp(`^${title}\\s*`, "i"), "") || "Ready";
   if (task.status === "FAILED") return "Failed";
   if (task.status === "CANCELLED") return "Cancelled";
   if (task.status === "WAITING_APPROVAL") return "Waiting for approval";
-  return renderMetrics && task.progress_message ? task.progress_message : thinkingLabel;
+  if (task.progress_message && task.progress_message.trim()) {
+    return task.progress_message;
+  }
+  return thinkingLabel;
 }
+
+export type TaskProgressVariant = "default" | "hero";
 
 export function TaskProgressPanel({
   task,
@@ -27,6 +32,7 @@ export function TaskProgressPanel({
   completionLabel,
   now,
   compact = false,
+  variant = "default",
   progressLabel = `${title} progress`,
   onCancel,
 }: {
@@ -36,9 +42,11 @@ export function TaskProgressPanel({
   completionLabel: string;
   now: number;
   compact?: boolean;
+  variant?: TaskProgressVariant;
   progressLabel?: string;
   onCancel?: (task: Task) => void;
 }) {
+  const isHero = variant === "hero";
   const active = isTaskActive(task);
   const completed = task.status === "COMPLETED";
   const failed = task.status === "FAILED";
@@ -54,10 +62,16 @@ export function TaskProgressPanel({
   const percentLabel = percent === null ? null : task.render_progress ? `${Number(percent.toFixed(2))}%` : `${Math.round(percent)}%`;
 
   return (
-    <div className={`task-progress-panel ${task.status.toLowerCase()} ${compact ? "is-compact" : ""}`} role="status">
+    <div
+      className={`task-progress-panel ${task.status.toLowerCase()} ${compact ? "is-compact" : ""} ${isHero ? "is-hero" : ""}`}
+      role="status"
+    >
       <div className="task-progress-head">
         <div className="task-progress-title">
-          <span className="eyebrow">{title}</span>
+          <div className="task-progress-title-row">
+            {isHero && active ? <span className="task-hero-live-indicator" aria-hidden="true" /> : null}
+            <span className="eyebrow">{title}</span>
+          </div>
           <strong className={active ? "task-progress-thinking" : ""}>
             {active ? (
               <span className="task-thinking-pill">
@@ -99,8 +113,13 @@ export function TaskProgressPanel({
       >
         <span
           className="task-progress-fill"
-          style={percent === null ? undefined : { transform: `scaleX(${Math.max(0, Math.min(100, percent)) / 100})` }}
-        />
+          style={percent === null ? undefined : { width: `${Math.max(0, Math.min(100, percent))}%` }}
+        >
+          {active && percent !== null && percent > 0 ? (
+            <span className="task-progress-glow-head" aria-hidden="true" />
+          ) : null}
+          {active ? <span className="task-progress-shimmer" aria-hidden="true" /> : null}
+        </span>
       </div>
       {renderMetrics ? <p className="task-progress-measurements">{renderMetrics}</p> : null}
       {!completed && (failed || cancelled || Boolean(task.error)) && progressMessage ? (

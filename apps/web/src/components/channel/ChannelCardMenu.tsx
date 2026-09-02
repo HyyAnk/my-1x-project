@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Copy, DotsThreeVertical, Trash } from "@phosphor-icons/react";
+import { ArrowUpRight, Copy, DotsThreeVertical, PushPin, Trash } from "@phosphor-icons/react";
 import type { Channel } from "@studio/shared";
 import { useTranslation } from "../../i18n";
 import { getNavProps } from "../../hooks/useRouter";
@@ -9,9 +9,10 @@ export type ChannelCardMenuProps = {
   channelUrl: string;
   onOpen: () => void;
   onDelete: (channel: Channel) => void;
+  onPinToTop?: () => void;
 };
 
-export function ChannelCardMenu({ channel, channelUrl, onOpen, onDelete }: ChannelCardMenuProps) {
+export function ChannelCardMenu({ channel, channelUrl, onOpen, onDelete, onPinToTop }: ChannelCardMenuProps) {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -70,6 +71,22 @@ export function ChannelCardMenu({ channel, channelUrl, onOpen, onDelete }: Chann
             <ArrowUpRight size={15} />
             <span>{t("channels.openChannel")}</span>
           </a>
+
+          {onPinToTop ? (
+            <button
+              type="button"
+              className="channel-menu-item"
+              role="menuitem"
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuOpen(false);
+                onPinToTop();
+              }}
+            >
+              <PushPin size={15} />
+              <span>{t("channels.pinToTop")}</span>
+            </button>
+          ) : null}
 
           <button type="button" className="channel-menu-item" role="menuitem" onClick={handleCopyId}>
             <Copy size={15} />

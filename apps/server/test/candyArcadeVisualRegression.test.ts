@@ -62,24 +62,26 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).toContain(
       '<div class="timer-progress"></div><span class="timer-marker" data-layout-allow-occlusion data-layout-allow-overlap>',
     );
-    expect(html).toContain(
-      '<b class="marker-val val-query" data-layout-allow-overlap>?</b><b class="marker-val val-5" data-layout-allow-overlap>5</b>',
-    );
+    expect([...html.matchAll(/class="marker-val val-query"/g)]).toHaveLength(1);
+    expect([...html.matchAll(/>\?</g)]).toHaveLength(1);
     expect(html).not.toContain('<div class="timer-progress"><span class="timer-marker');
     expect(html).toContain(
-      ".val-5 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd5-at)) both; display: var(--cd5-display, grid); }",
+      ".val-query { animation: query-hold var(--query-hold-duration) linear var(--timer-start) both; display: var(--query-display, grid); }",
     );
     expect(html).toContain(
-      ".val-4 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd4-at)) both; display: var(--cd4-display, grid); }",
+      ".val-5 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--timer-start) + var(--cd5-at)) both; display: var(--cd5-display, grid); }",
     );
     expect(html).toContain(
-      ".val-3 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd3-at)) both; display: var(--cd3-display, grid); }",
+      ".val-4 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--timer-start) + var(--cd4-at)) both; display: var(--cd4-display, grid); }",
     );
     expect(html).toContain(
-      ".val-2 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd2-at)) both; display: var(--cd2-display, grid); }",
+      ".val-3 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--timer-start) + var(--cd3-at)) both; display: var(--cd3-display, grid); }",
     );
     expect(html).toContain(
-      ".val-1 { animation: number-countdown-final 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd1-at)) both; display: var(--cd1-display, grid); }",
+      ".val-2 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--timer-start) + var(--cd2-at)) both; display: var(--cd2-display, grid); }",
+    );
+    expect(html).toContain(
+      ".val-1 { animation: number-countdown-final 1s cubic-bezier(.18,1.42,.34,1) calc(var(--timer-start) + var(--cd1-at)) both; display: var(--cd1-display, grid); }",
     );
 
     for (const progress of [0, 0.25, 0.5, 0.75, 1]) {
@@ -114,6 +116,14 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).toContain("hero-ken-burn");
     expect(html).not.toContain(".option-image img { animation");
     expect(html).toContain("scale(1.12)");
+  });
+
+  it("keeps phase-gated reveal elements hidden before their scheduled boundary", () => {
+    const html = renderHtml();
+    expect(html).toContain("@keyframes phase-enter { from { opacity: 0; } to { opacity: 1; } }");
+    expect(html).toContain(
+      ".fact-card { position: relative; z-index: 5; max-width: 1220px; margin-top: 14px; padding: 24px 48px; border: 6px solid rgba(255,255,255,.85); border-radius: 38px; background: var(--surface); box-shadow: 0 16px 0 rgba(13,35,71,.18), 0 22px 36px rgba(10,25,60,.14); text-align: center; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--reward-at)) both; contain: layout style; will-change: transform, opacity; }",
+    );
   });
 
   it("keeps the progress bar fixed, colorful, caption-free, and edge-safe", () => {

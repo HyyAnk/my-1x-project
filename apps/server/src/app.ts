@@ -28,6 +28,7 @@ import { registerSystemRoutes } from "./routes/system.js";
 import { registerTasksRoutes } from "./routes/tasks.js";
 import { registerThumbnailsRoutes } from "./routes/thumbnails.js";
 import { registerVisualBibleRoutes } from "./routes/visualBible.js";
+import { registerAnalyticsRoutes } from "./routes/analytics.js";
 import { registerVoicesRoutes } from "./routes/voices.js";
 
 export type StudioApp = {
@@ -148,6 +149,7 @@ export async function buildApp(
   await server.register(registerAudioVideoRoutes({ repository, tasks, state, revealFile }));
   await server.register(registerTasksRoutes({ tasks, codex }));
   await server.register(registerThumbnailsRoutes({ repository, state, antigravity }));
+  await server.register(registerAnalyticsRoutes({ repository }));
   await server.register(registerEventsRoutes({ tasks, clients }));
 
   return {

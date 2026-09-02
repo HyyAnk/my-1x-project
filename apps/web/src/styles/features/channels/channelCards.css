@@ -780,3 +780,137 @@
     600 10.5px "JetBrains Mono",
     monospace;
 }
+
+/* ==========================================================================
+   Channel Reordering & Drag-and-Drop States
+   ========================================================================== */
+
+.channel-reorder-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-secondary);
+  transition: all 0.18s ease;
+  cursor: pointer;
+}
+
+.channel-reorder-toggle-btn:hover {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+  color: var(--accent);
+  background: var(--surface-hover);
+}
+
+.channel-reorder-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+  box-shadow: var(--shadow-sm);
+  animation: bannerSlideDown 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  flex-wrap: wrap;
+}
+
+@keyframes bannerSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.channel-reorder-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.channel-reorder-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.channel-reorder-hint {
+  font-size: 12.5px;
+  color: var(--ink-secondary);
+}
+
+.channel-reorder-banner-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.channel-drag-handle {
+  display: inline-grid;
+  place-items: center;
+  padding: 2px 4px;
+  border-radius: 4px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  cursor: grab;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.channel-drag-handle:hover {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.channel-card.is-reordering {
+  cursor: grab;
+  border: 1px dashed color-mix(in srgb, var(--accent) 40%, var(--line));
+}
+
+.channel-card.is-reordering:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 20px -4px rgba(0, 0, 0, 0.28),
+    0 0 14px -4px var(--accent-glow);
+}
+
+.channel-card.is-reordering:active,
+.channel-card[data-dragging="true"],
+.channel-card.is-dragging {
+  cursor: grabbing;
+  opacity: 0.4;
+  transform: scale(0.98);
+  border: 1.5px dashed var(--accent);
+  box-shadow: none;
+}
+
+.channel-card[data-drag-over="true"],
+.channel-card.is-drag-over {
+  border: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  transform: translateY(-4px) scale(1.02);
+  box-shadow:
+    0 12px 28px -4px rgba(0, 0, 0, 0.35),
+    0 0 20px -2px var(--accent-glow);
+  z-index: 10;
+}
+

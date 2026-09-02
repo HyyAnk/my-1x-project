@@ -1,5 +1,13 @@
 import { lazy, Suspense } from "react";
-import type { AppConfig, Channel, CodexSettingsResponse, AntigravitySettingsResponse, StorageInfo, Task } from "@studio/shared";
+import type {
+  AppConfig,
+  Channel,
+  CodexSettingsResponse,
+  AntigravitySettingsResponse,
+  StorageInfo,
+  Task,
+  UsageLedger,
+} from "@studio/shared";
 import { LoadingState } from "./EmptyState";
 import type { GitInfo, Notice, Page } from "./types";
 import type { ImageBalanceInfo, VoiceMetricsInfo } from "../hooks/useGlobalMetrics";
@@ -28,6 +36,7 @@ export interface AppViewRouterProps {
   currentImageModel: string;
   imageBalance: ImageBalanceInfo | null;
   voiceMetrics: VoiceMetricsInfo | null;
+  usageLedger?: UsageLedger | null;
   storage: StorageInfo | null;
   git: GitInfo;
   currentEngineStatus: string;
@@ -76,6 +85,7 @@ export function AppViewRouter(props: AppViewRouterProps) {
             currentImageModel={props.currentImageModel}
             imageBalance={props.imageBalance}
             voiceMetrics={props.voiceMetrics}
+            usageLedger={props.usageLedger}
             storage={props.storage}
             git={props.git}
             engineStatus={props.currentEngineStatus}

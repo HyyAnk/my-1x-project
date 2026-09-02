@@ -104,6 +104,17 @@ function resolveRenderProgress(state: QuizV2State, tasks: Task[], readiness: Rea
   if (renderProgress && renderProgress.total_frames > 0) {
     return itemProgress(renderProgress.frames_completed, renderProgress.total_frames, "frames");
   }
+  const message = videoTask?.progress_message || pipelineTask?.progress_message;
+  if (message) {
+    const match = /(?:rendering|streaming|render)?\s*frames?\s*(\d[\d,]*)\s*(?:\/|of)\s*(\d[\d,]*)/i.exec(message);
+    if (match) {
+      const completed = Number(match[1].replace(/,/g, ""));
+      const total = Number(match[2].replace(/,/g, ""));
+      if (total > 0) {
+        return itemProgress(completed, total, "frames");
+      }
+    }
+  }
   if (videoTask) {
     if (videoTask.status === "COMPLETED" || readiness.video || state.stages.render === "ready") {
       return itemProgress(1, 1, "task");

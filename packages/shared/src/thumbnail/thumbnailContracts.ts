@@ -141,3 +141,23 @@ export const THUMBNAIL_LAYOUT_CATALOG: Record<ThumbnailLayoutType, ThumbnailLayo
     badgeTemplate: "10 BIGGEST MYTHS ❌",
   },
 };
+
+export type CuriosityBadgeId =
+  | "auto"
+  | "99_percent_fail"
+  | "genius_only"
+  | "iq_test"
+  | "can_you_pass"
+  | "only_1_percent"
+  | "question_count";
+
+export const CURIOSITY_BADGE_PRESETS: Array<{ id: CuriosityBadgeId; label: string; icon: string }> = [
+  { id: "auto", label: "Auto (Based on Quiz)", icon: "✨" },
+  { id: "99_percent_fail", label: "99% FAIL!", icon: "🔥" },
+  { id: "genius_only", label: "GENIUS ONLY", icon: "🧠" },
+  { id: "iq_test", label: "IQ 140+ TEST", icon: "⚡" },
+  { id: "can_you_pass", label: "CAN YOU PASS?", icon: "🎯" },
+  { id: "only_1_percent", label: "ONLY 1% KNOW!", icon: "🏆" },
+  { id: "question_count", label: "Question Count", icon: "🔢" },
+];
+

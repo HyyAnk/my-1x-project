@@ -21,7 +21,7 @@ describe("Ember Trail thinking bar", () => {
     expect(THINKING_BAR_STYLE_DESCRIPTIONS.flame_fuse).toContain("charred trail");
   });
 
-  it("renders a readable ember trail without the dynamite target or question mark", () => {
+  it("renders a readable ember trail with one in-marker query prompt before countdown", () => {
     const html = emberTrailVariant.renderHtml(renderInput);
 
     expect(html).toContain('class="thinking-bar thinking-bar-flame-fuse"');
@@ -32,8 +32,9 @@ describe("Ember Trail thinking bar", () => {
     expect(html).toContain('class="ember-core"');
     expect(html).toContain('class="ember-particles"');
     expect(html).toContain('role="img" aria-label="Quiz countdown from 5 to 1"');
+    expect(html).toContain('class="marker-val val-query"');
+    expect([...html.matchAll(/>\?</g)]).toHaveLength(1);
     expect(html).not.toContain("fuse-bomb-target");
-    expect(html).not.toContain("?");
     expect(html).not.toContain("<svg");
     expect(html).not.toMatch(/[✦★•]/u);
   });

@@ -1,4 +1,4 @@
-import { DownloadSimple, Trash } from "@phosphor-icons/react";
+import { DownloadSimple, PencilSimple, Trash } from "@phosphor-icons/react";
 import { QUIZ_IMAGE_STYLE_LABELS, type Channel, type MascotProfile } from "@studio/shared";
 import { api } from "../../../api";
 import { useTranslation } from "../../../i18n";
@@ -7,11 +7,12 @@ type MascotCardProps = {
   mascot: MascotProfile;
   channels: Channel[];
   onEdit: (mascot: MascotProfile) => void;
+  onRenameRequest: (mascot: MascotProfile) => void;
   onQuickAssign: (mascot: MascotProfile) => void;
   onDeleteRequest: (mascot: MascotProfile) => void;
 };
 
-export function MascotCard({ mascot, channels, onEdit, onQuickAssign, onDeleteRequest }: MascotCardProps) {
+export function MascotCard({ mascot, channels, onEdit, onRenameRequest, onQuickAssign, onDeleteRequest }: MascotCardProps) {
   const { t } = useTranslation();
   const assignedCount = mascot.assigned_channel_ids?.length || 0;
   const assignedNames =
@@ -43,6 +44,15 @@ export function MascotCard({ mascot, channels, onEdit, onQuickAssign, onDeleteRe
           <span className="mascot-style-pill">{QUIZ_IMAGE_STYLE_LABELS[mascot.visual_style] || mascot.visual_style}</span>
 
           <div className="mascot-card-quick-actions" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="mascot-quick-action-btn"
+              aria-label={t("mascots.renameMascotAria", { name: mascot.name })}
+              onClick={() => onRenameRequest(mascot)}
+              title={t("mascots.renameMascotTooltip")}
+            >
+              <PencilSimple size={14} />
+            </button>
             <a
               href={api.exportMascotUrl(mascot.id)}
               download={`mascot_${mascot.id}.zip`}

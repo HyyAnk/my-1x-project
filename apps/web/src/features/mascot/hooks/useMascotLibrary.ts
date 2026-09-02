@@ -18,6 +18,8 @@ export function useMascotLibrary({
 
   const [quickAssignMascot, setQuickAssignMascot] = useState<MascotProfile | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<MascotProfile | null>(null);
+  const [renameTarget, setRenameTarget] = useState<MascotProfile | null>(null);
+  const [renaming, setRenaming] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [importingZip, setImportingZip] = useState(false);
 
@@ -51,6 +53,22 @@ export function useMascotLibrary({
       })
       .sort((a, b) => (a.created_at || "").localeCompare(b.created_at || "") || (a.id || "").localeCompare(b.id || ""));
   }, [mascots, searchQuery]);
+
+  const handleRenameConfirm = async (newName: string) => {
+    if (!renameTarget) return;
+    setRenaming(true);
+    try {
+      await api.updateMascot(renameTarget.id, { name: newName });
+      onNotice({ tone: "good", message: t("notices.mascotRenamed", { name: newName }) });
+      setRenameTarget(null);
+      await loadMascots();
+      await onRefreshChannels();
+    } catch (err) {
+      onNotice({ tone: "bad", message: err instanceof Error ? err.message : t("notices.mascotRenameFailed") });
+    } finally {
+      setRenaming(false);
+    }
+  };
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
@@ -103,8 +121,12 @@ export function useMascotLibrary({
     deleteTarget,
     setDeleteTarget,
     deleting,
+    renameTarget,
+    setRenameTarget,
+    renaming,
     importingZip,
     loadMascots,
+    handleRenameConfirm,
     handleDeleteConfirm,
     handleImportZip,
   };

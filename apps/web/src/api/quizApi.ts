@@ -8,6 +8,8 @@ import type {
   SandboxPreviewRequest,
   SandboxPreviewResponse,
   Task,
+  VideoDescription,
+  VideoDescriptionInput,
   VoicePlan,
 } from "@studio/shared";
 import { request, type QuizV2State } from "./client";
@@ -65,4 +67,16 @@ export const quizApi = {
     request<{ task: Task }>(`/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/render`, { method: "POST", body: "{}" }),
   previewSandboxComposition: (body: SandboxPreviewRequest) =>
     request<SandboxPreviewResponse>("/api/quiz/preview-composition", { method: "POST", body: JSON.stringify(body) }),
+  getVideoDescription: (channelId: string, episodeId: string) =>
+    request<{ description: VideoDescription | null }>(`/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/description`),
+  generateVideoDescription: (channelId: string, episodeId: string, toneHint?: string, force?: boolean) =>
+    request<{ description: VideoDescription; artifact_path: string }>(
+      `/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/description/generate`,
+      { method: "POST", body: JSON.stringify({ tone_hint: toneHint, force }) },
+    ),
+  saveVideoDescription: (channelId: string, episodeId: string, input: VideoDescriptionInput) =>
+    request<{ description: VideoDescription; artifact_path: string }>(
+      `/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/description`,
+      { method: "PUT", body: JSON.stringify(input) },
+    ),
 };

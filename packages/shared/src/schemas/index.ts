@@ -5,3 +5,5 @@ export * from "./quiz.js";
 export * from "./episode.js";
 export * from "./config.js";
 export * from "./thumbnail.js";
+export * from "./videoDescription.js";
+export * from "./analytics/index.js";

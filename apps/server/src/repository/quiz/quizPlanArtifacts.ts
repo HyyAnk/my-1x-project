@@ -6,6 +6,7 @@ import {
   QuizTimelineSchema,
   QuizV2Schema,
   QuestionHistoryCheckResultSchema,
+  VideoDescriptionSchema,
   VoicePlanSchema,
   type DirectorPlan,
   type QuizAssessment,
@@ -14,6 +15,7 @@ import {
   type QuizTimeline,
   type QuizV2,
   type QuestionHistoryCheckResult,
+  type VideoDescription,
   type VoicePlan,
 } from "@studio/shared";
 import type { RepositoryRuntime } from "../runtime.js";
@@ -113,4 +115,31 @@ export async function writeHistoryCheck(
   result: QuestionHistoryCheckResult,
 ): Promise<string> {
   return this.writeQuizArtifact(channelId, episodeId, "history-check.json", QuestionHistoryCheckResultSchema.parse(result));
+}
+
+export async function readVideoDescription(
+  this: RepositoryRuntime,
+  channelId: string,
+  episodeId: string,
+): Promise<VideoDescription | null> {
+  return this.readQuizArtifact(channelId, episodeId, "video-description.json", VideoDescriptionSchema);
+}
+
+export async function writeVideoDescription(
+  this: RepositoryRuntime,
+  channelId: string,
+  episodeId: string,
+  description: VideoDescription,
+): Promise<string> {
+  const parsed = VideoDescriptionSchema.parse(description);
+  const artifactPath = await this.writeQuizArtifact(channelId, episodeId, "video-description.json", parsed);
+  try {
+    const episode = await this.getEpisode(channelId, episodeId);
+    const channel = await this.getChannel(channelId);
+    const textPath = this.resolvePath("channels", channel.slug, "episodes", episode.slug, "description.md");
+    await this.writeTextAtomic(textPath, `${parsed.full_description_text}\n`);
+  } catch {
+    // Non-critical fallback if episode directory lookup fails
+  }
+  return artifactPath;
 }

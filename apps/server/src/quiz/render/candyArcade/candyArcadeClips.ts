@@ -169,6 +169,7 @@ export function outroClip(
 
 export function questionClip(input: {
   start: number;
+  questionNarrationStart?: number;
   choicesStart: number;
   thinkingStart: number;
   revealStart: number;
@@ -197,6 +198,7 @@ export function questionClip(input: {
   const { question, visual } = input;
   const timing: QuizSceneTiming = {
     start: input.start,
+    questionNarrationStart: input.questionNarrationStart,
     choicesStart: input.choicesStart,
     thinkingStart: input.thinkingStart,
     revealStart: input.revealStart,
@@ -224,7 +226,7 @@ export function questionClip(input: {
     layoutResolution: input.layoutResolution,
     visual,
     timing,
-    atSeconds: input.revealStart,
+    atSeconds: input.start,
     assets: input.assets,
     aspectRatio: input.aspectRatio ?? "16:9",
     mascot,
@@ -251,7 +253,7 @@ export function questionClip(input: {
     input.end,
   );
   const stableParts = renderStableQuizSceneParts(parts);
-  const choicesHtml = renderQuizSceneChoicePart(parts);
+  const choicesHtml = renderQuizSceneChoicePart(parts, { revealMode: "scheduled" });
   const mascotClass = model.mascot.occupied ? "has-mascot" : "";
   const classNames = [
     "clip",
@@ -317,6 +319,6 @@ export function styleAttributes(
   clipEnd: number,
 ): string {
   const paletteInline = serializeQuizPaletteInlineStyle(visual.palette);
-  const timerDuration = Math.max(0.04, revealStart - clipStart);
+  const timerDuration = Math.max(0.04, revealStart - thinkingStart);
   return `style="${paletteInline}--question-size:${layout.fontSize}px;--question-leading:${layout.lineHeight};--clip-start:${clipStart.toFixed(3)}s;--scene-duration:${Math.max(0.04, clipEnd - clipStart).toFixed(3)}s;--choices-at:${Math.max(0, choicesStart - clipStart).toFixed(3)}s;--thinking-at:${Math.max(0, thinkingStart - clipStart).toFixed(3)}s;--reveal-at:${Math.max(0, revealStart - clipStart).toFixed(3)}s;--reward-at:${Math.max(0, rewardStart - clipStart).toFixed(3)}s;--choices-duration:${Math.max(0.04, revealStart - choicesStart).toFixed(3)}s;--timer-duration:${timerDuration.toFixed(3)}s;--reveal-duration:${Math.max(0.04, rewardStart - revealStart).toFixed(3)}s;--ambient-phase:${ambientPhaseSeconds("drift", 0, String(clipStart))}s"`;
 }

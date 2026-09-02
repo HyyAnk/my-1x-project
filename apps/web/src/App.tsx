@@ -115,6 +115,7 @@ function AppContent() {
           currentImageModel={orch.currentImageModel}
           imageBalance={orch.imageBalance}
           voiceMetrics={orch.voiceMetrics}
+          usageLedger={orch.usageLedger}
           storage={orch.storage}
           git={orch.git}
           currentEngineStatus={orch.currentEngineStatus}

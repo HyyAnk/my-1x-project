@@ -89,7 +89,7 @@ ${baseChoiceStyles()}
 ${choiceTypographyStyles()}
 ${choiceStateStyles()}
 
-.thinking-bar { position: relative; z-index: 5; isolation: isolate; display: flex; align-items: center; justify-content: center; width: min(82vw, 1540px); min-height: 84px; margin: 0 auto; padding: 6px 0; border: 0; border-radius: 9999px; background: transparent; box-shadow: none; opacity: 0; animation: phase-hold var(--timer-duration) steps(1,end) var(--clip-start) both, timer-exit-fade .28s cubic-bezier(.22,.8,.3,1) calc(var(--clip-start) + var(--timer-duration) - .28s) both; contain: layout style; will-change: transform, opacity; }
+.thinking-bar { position: relative; z-index: 5; isolation: isolate; display: flex; align-items: center; justify-content: center; width: min(82vw, 1540px); min-height: 84px; margin: 0 auto; padding: 6px 0; border: 0; border-radius: 9999px; background: transparent; box-shadow: none; opacity: 0; animation: phase-hold var(--timer-duration) steps(1,end) var(--timer-start) both, timer-exit-fade .28s cubic-bezier(.22,.8,.3,1) calc(var(--timer-start) + var(--timer-duration) - .28s) both; contain: layout style; will-change: transform, opacity; }
 .thinking-track { position: relative; z-index: 0; width: 100%; height: 58px; overflow: visible; border: 6px solid rgba(255,255,255,.98); border-radius: 9999px; background: rgba(18,38,80,.62); box-shadow: inset 0 3px 6px rgba(255,255,255,.35), inset 0 -4px 8px rgba(0,0,0,.22), 0 8px 22px rgba(13,35,71,.35), 0 0 20px rgba(255,255,255,.25); }
 .timer-milestones { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
 .milestone-star { position: absolute; top: 50%; font-size: 24px; line-height: 1; color: #FFE66D; text-shadow: 0 0 10px rgba(255,230,109,.95), 0 2px 4px rgba(0,0,0,.4); transform: translate(-50%,-50%); animation: quizProgressStarTwinkle 2.4s ease-in-out infinite; }
@@ -97,22 +97,22 @@ ${choiceStateStyles()}
 .milestone-star.star-2 { left: 40%; animation-delay: .6s; }
 .milestone-star.star-3 { left: 60%; animation-delay: 1.2s; }
 .milestone-star.star-4 { left: 80%; animation-delay: 1.8s; }
-.timer-progress { position: absolute; top: 0; left: 0; bottom: 0; width: 100%; border-radius: 9999px; overflow: hidden; background: linear-gradient(90deg, #ff4f5e 0%, #ff7a45 20%, #ffc83d 42%, #6fa9ff 70%, #28d5d0 100%); background-size: 1540px 100%; background-position: left center; z-index: 1; animation: quiz-timer-drain var(--timer-duration) linear var(--clip-start) both; will-change: transform; }
+.timer-progress { position: absolute; top: 0; left: 0; bottom: 0; width: 100%; border-radius: 9999px; overflow: hidden; background: linear-gradient(90deg, #ff4f5e 0%, #ff7a45 20%, #ffc83d 42%, #6fa9ff 70%, #28d5d0 100%); background-size: 1540px 100%; background-position: left center; z-index: 1; animation: quiz-timer-drain var(--timer-duration) linear var(--timer-start) both; will-change: transform; }
 .timer-progress::after { position: absolute; top: 0; left: 0; right: 0; height: 50%; border-radius: 9999px 9999px 0 0; background: linear-gradient(to bottom, rgba(255,255,255,.38) 0%, rgba(255,255,255,.1) 40%, rgba(255,255,255,0) 70%); content: ""; pointer-events: none; z-index: 2; }
-.timer-marker { position: absolute; top: 50%; left: 100%; display: grid; place-items: center; width: 176px; height: 176px; border: none; background: transparent; transform: translate(-50%,-50%); animation: quiz-timer-marker-slide var(--timer-duration) linear var(--clip-start) both, quizProgressMarkerPulse 2.4s ease-in-out infinite; z-index: 6; will-change: transform; }
+.timer-marker { position: absolute; top: 50%; left: 100%; display: grid; place-items: center; width: 176px; height: 176px; border: none; background: transparent; transform: translate(-50%,-50%); animation: quiz-timer-marker-slide var(--timer-duration) linear var(--timer-start) both, quizProgressMarkerPulse 2.4s ease-in-out infinite; z-index: 6; will-change: transform; }
 .marker-star-svg { position: absolute; inset: -8px; width: 192px; height: 192px; overflow: visible; pointer-events: none; z-index: 4; }
 .marker-val { position: absolute; inset: 0; display: grid; place-items: center; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 64px; font-weight: 900; line-height: 1; color: #FFFFFF; text-shadow: 0 3px 6px rgba(120,20,45,.75), 0 0 12px rgba(255,255,255,.6); opacity: 0; pointer-events: none; z-index: 7; transform: translateY(-2px); }
-.val-query { opacity: 0; visibility: hidden; animation: query-hold var(--cd-query-dur) steps(1,end) var(--clip-start) both; display: var(--cd-query-display, grid); }
-.val-5 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd5-at)) both; display: var(--cd5-display, grid); }
-.val-4 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd4-at)) both; display: var(--cd4-display, grid); }
-.val-3 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd3-at)) both; display: var(--cd3-display, grid); }
-.val-2 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd2-at)) both; display: var(--cd2-display, grid); }
-.val-1 { animation: number-countdown-final 1s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--cd1-at)) both; display: var(--cd1-display, grid); }
+.val-query { animation: query-hold var(--query-hold-duration) linear var(--timer-start) both; display: var(--query-display, grid); }
+.val-5 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--timer-start) + var(--cd5-at)) both; display: var(--cd5-display, grid); }
+.val-4 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--timer-start) + var(--cd4-at)) both; display: var(--cd4-display, grid); }
+.val-3 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--timer-start) + var(--cd3-at)) both; display: var(--cd3-display, grid); }
+.val-2 { animation: number-countdown-tick 1s cubic-bezier(.18,1.42,.34,1) calc(var(--timer-start) + var(--cd2-at)) both; display: var(--cd2-display, grid); }
+.val-1 { animation: number-countdown-final 1s cubic-bezier(.18,1.42,.34,1) calc(var(--timer-start) + var(--cd1-at)) both; display: var(--cd1-display, grid); }
 .timer-sparkles { position: absolute; inset: -20px -14px; pointer-events: none; z-index: 8; }
-.timer-sparkles i { position: absolute; color: #FFE66D; font-size: 26px; font-style: normal; text-shadow: 0 0 10px rgba(255,230,109,.95); animation: timer-sparkle var(--timer-duration) ease-in-out calc(var(--clip-start) + var(--ambient-phase)) 1 both; will-change: transform, opacity; }
+.timer-sparkles i { position: absolute; color: #FFE66D; font-size: 26px; font-style: normal; text-shadow: 0 0 10px rgba(255,230,109,.95); animation: timer-sparkle var(--timer-duration) ease-in-out calc(var(--timer-start) + var(--ambient-phase)) 1 both; will-change: transform, opacity; }
 .timer-sparkles i:nth-child(1) { right: 6%; top: -18px; }
-.timer-sparkles i:nth-child(2) { right: 1%; bottom: -16px; color: #5CE1E6; font-size: 22px; animation-delay: calc(var(--clip-start) + .55s); }
-.timer-sparkles i:nth-child(3) { left: 4%; top: -16px; color: #fff; animation-delay: calc(var(--clip-start) + 1.05s); }
+.timer-sparkles i:nth-child(2) { right: 1%; bottom: -16px; color: #5CE1E6; font-size: 22px; animation-delay: calc(var(--timer-start) + .55s); }
+.timer-sparkles i:nth-child(3) { left: 4%; top: -16px; color: #fff; animation-delay: calc(var(--timer-start) + 1.05s); }
 .fact-card { position: relative; z-index: 5; max-width: 1220px; margin-top: 14px; padding: 24px 48px; border: 6px solid rgba(255,255,255,.85); border-radius: 38px; background: var(--surface); box-shadow: 0 16px 0 rgba(13,35,71,.18), 0 22px 36px rgba(10,25,60,.14); text-align: center; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--reward-at)) both; contain: layout style; will-change: transform, opacity; }
 .fact-card span { color: var(--surface-accent); font-size: 24px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; }
 .fact-card p { margin: 0; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: 38px; font-weight: 900; line-height: 1.25; letter-spacing: -0.3px; }
@@ -171,11 +171,11 @@ ${choiceStateStyles()}
 @keyframes answer-enter { from { opacity: 0; transform: translateY(32px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes enter-from-left { from { opacity: 0; transform: translateX(-60px) scale(.94); } to { opacity: 1; transform: translateX(0) scale(1); } }
 @keyframes enter-from-right { from { opacity: 0; transform: translateX(60px) scale(.94); } to { opacity: 1; transform: translateX(0) scale(1); } }
-@keyframes phase-enter { to { opacity: 1; } }
+@keyframes phase-enter { from { opacity: 0; } to { opacity: 1; } }
 @keyframes phase-hold { 0%,100% { opacity: 0; } 1%,99% { opacity: 1; } }
 @keyframes quiz-timer-drain { from { width: 100%; } to { width: 0%; } }
 @keyframes quiz-timer-marker-slide { from { left: 100%; } to { left: 0%; } }
-@keyframes query-hold { 0%, 99.9% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
+@keyframes query-hold { 0%, 92% { opacity: 1; transform: translateY(-2px) scale(1); } 100% { opacity: 0; transform: translateY(-2px) scale(.85); } }
 @keyframes number-countdown-tick { 0% { opacity: 0; transform: translateY(-2px) scale(1.4) rotate(-6deg); text-shadow: 0 0 16px rgba(255,255,255,1), 0 4px 0 rgba(13,35,71,.3); } 16% { opacity: 1; transform: translateY(-2px) scale(1.05) rotate(0deg); text-shadow: 0 0 10px rgba(255,230,120,.9), 0 3px 0 rgba(13,35,71,.25); } 82% { opacity: 1; transform: translateY(-2px) scale(1); } 100% { opacity: 0; transform: translateY(-2px) scale(0.75); } }
 @keyframes number-countdown-final { 0% { opacity: 0; transform: translateY(-2px) scale(1.6) rotate(-8deg); text-shadow: 0 0 24px rgba(255,50,50,1), 0 4px 0 rgba(13,35,71,.35); } 18% { opacity: 1; transform: translateY(-2px) scale(1.2) rotate(0deg); text-shadow: 0 0 16px rgba(255,40,40,1), 0 3px 0 rgba(13,35,71,.3); } 45% { transform: translateY(-2px) scale(0.96); } 70% { transform: translateY(-2px) scale(1.15); } 92% { opacity: 1; transform: translateY(-2px) scale(1); } 100% { opacity: 0; transform: translateY(-2px) scale(0.85); } }
 @keyframes quiz-timer-danger { 0%, 55% { box-shadow: inset 0 3px 0 rgba(255,255,255,.3); } 70% { box-shadow: inset 0 3px 0 rgba(255,255,255,.6), 0 0 16px rgba(255,167,38,.6); } 85% { box-shadow: inset 0 3px 0 rgba(255,255,255,.8), 0 0 24px rgba(255,87,34,.8); } 100% { box-shadow: inset 0 3px 0 rgba(255,255,255,.9), 0 0 32px rgba(244,67,54,.9); } }

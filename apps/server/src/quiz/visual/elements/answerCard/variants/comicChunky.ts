@@ -195,8 +195,14 @@ export const comicChunkyVariant: AnswerCardSkin = {
   background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%);
   border-color: #0F5132;
   box-shadow: 12px 14px 0 #0F5132, 0 0 26px rgba(0, 230, 118, 0.45), inset 0 3px 0 rgba(255,255,255,1);
-  animation: comic-pop-win 0.64s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s) + 0.14s) forwards;
+  animation: comic-pop-win 0.64s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
   z-index: 6;
+}
+.ac-comic-chunky.answer-reveal-correct,
+.choice-card.answer-reveal-correct .ac-comic-chunky,
+.visual-answer-card.answer-reveal-correct .ac-comic-chunky {
+  animation: comic-pop-win 0.64s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: transform;
 }
 .ac-comic-chunky.answer-correct > b,
 .ac-comic-chunky.answer-correct .choice-label,
@@ -207,7 +213,16 @@ export const comicChunkyVariant: AnswerCardSkin = {
   background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%);
   border-color: #0F5132;
   box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95);
-  animation: comic-badge-bounce 0.64s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s) + 0.14s) forwards;
+  animation: comic-badge-bounce 0.64s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+}
+.ac-comic-chunky.answer-reveal-correct > b,
+.ac-comic-chunky.answer-reveal-correct .choice-label,
+.choice-card.answer-reveal-correct .ac-comic-chunky > b,
+.choice-card.answer-reveal-correct .ac-comic-chunky .choice-label,
+.visual-answer-card.answer-reveal-correct .ac-comic-chunky > b,
+.visual-answer-card.answer-reveal-correct .ac-comic-chunky .choice-label {
+  animation: comic-badge-bounce 0.64s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: transform;
 }
 
 /* Reveal State: Incorrect Answer */
@@ -216,28 +231,34 @@ export const comicChunkyVariant: AnswerCardSkin = {
 .visual-answer-card.answer-incorrect .ac-comic-chunky {
   opacity: 0.65;
   filter: grayscale(40%);
-  animation: comic-dud-settle 0.45s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) forwards;
+  animation: comic-dud-settle 0.45s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+}
+.ac-comic-chunky.answer-reveal-incorrect,
+.choice-card.answer-reveal-incorrect .ac-comic-chunky,
+.visual-answer-card.answer-reveal-incorrect .ac-comic-chunky {
+  animation: comic-dud-settle 0.45s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  will-change: transform, opacity, filter;
 }
 
 /* Comic Keyframe Animations */
 @keyframes comic-pop-win {
   0% { transform: rotate(var(--comic-base-rot, 0deg)) scale(1); }
-  45% { transform: rotate(0deg) scale(1.08); }
-  70% { transform: rotate(-1deg) scale(1.03); }
-  100% { transform: rotate(0deg) scale(1.05); }
+  45% { transform: rotate(0deg) scale(1.08); background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%); border-color: #0F5132; box-shadow: 12px 14px 0 #0F5132, 0 0 26px rgba(0, 230, 118, 0.45), inset 0 3px 0 rgba(255,255,255,1); }
+  70% { transform: rotate(-1deg) scale(1.03); background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%); border-color: #0F5132; box-shadow: 12px 14px 0 #0F5132, 0 0 26px rgba(0, 230, 118, 0.45), inset 0 3px 0 rgba(255,255,255,1); }
+  100% { transform: rotate(0deg) scale(1.05); background: linear-gradient(135deg, #E6FFFA 0%, #B2F5EA 60%, #81E6D9 100%); border-color: #0F5132; box-shadow: 12px 14px 0 #0F5132, 0 0 26px rgba(0, 230, 118, 0.45), inset 0 3px 0 rgba(255,255,255,1); }
 }
 
 @keyframes comic-badge-bounce {
   0% { transform: scale(1) rotate(-5deg); }
-  50% { transform: scale(1.22) rotate(8deg); }
-  100% { transform: scale(1.1) rotate(0deg); }
+  50% { transform: scale(1.22) rotate(8deg); background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%); border-color: #0F5132; box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95); }
+  100% { transform: scale(1.1) rotate(0deg); background: linear-gradient(180deg, #00FF87 0%, #60EFFF 100%); border-color: #0F5132; box-shadow: 6px 8px 0 #0F5132, inset 0 3px 0 rgba(255,255,255,0.95); }
 }
 
 @keyframes comic-dud-settle {
-  0% { transform: rotate(var(--comic-base-rot, 0deg)) scale(1); }
+  0% { opacity: 1; filter: grayscale(0%); transform: rotate(var(--comic-base-rot, 0deg)) scale(1); }
   25% { transform: rotate(calc(var(--comic-base-rot, 0deg) - 2deg)) translateY(4px); }
   60% { transform: rotate(calc(var(--comic-base-rot, 0deg) + 1.5deg)) translateY(6px); }
-  100% { transform: rotate(var(--comic-base-rot, 0deg)) translateY(6px) scale(0.96); }
+  100% { opacity: 0.65; filter: grayscale(40%); transform: rotate(var(--comic-base-rot, 0deg)) translateY(6px) scale(0.96); }
 }
 
 @keyframes comic-sparkle-pulse {

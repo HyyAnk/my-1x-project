@@ -188,9 +188,79 @@
   box-shadow: var(--shadow-md);
 }
 
+.economics-dual-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .economics-dual-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.economics-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.economics-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  padding-bottom: 8px;
+}
+
+.economics-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.economics-card-title h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+
+.economics-card-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm, 4px);
+  letter-spacing: 0.04em;
+}
+
+.economics-card-badge.positive {
+  background: color-mix(in srgb, var(--green) 15%, transparent);
+  color: var(--green);
+}
+
+.savings-card.voice-card {
+  border-color: color-mix(in srgb, var(--green) 30%, var(--line));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--green) 4%, var(--surface)) 0%, var(--surface) 100%);
+}
+
+.savings-card.voice-card:hover {
+  border-color: var(--green);
+}
+
+.savings-card.image-card {
+  border-color: color-mix(in srgb, var(--blue, #3b82f6) 30%, var(--line));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--blue, #3b82f6) 4%, var(--surface)) 0%, var(--surface) 100%);
+}
+
+.savings-card.image-card:hover {
+  border-color: var(--blue, #3b82f6);
+}
+
 .savings-metrics-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 16px;
 }
 

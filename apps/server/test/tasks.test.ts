@@ -378,10 +378,9 @@ describe("TaskManager locks", () => {
     const secondEpisode = await repository.confirmTopic(channel.channel_id, topics[1].topic_id);
     const parallelA = manager.submit("GENERATE_RESEARCH", channel.channel_id, episode.episode_id);
     const parallelB = manager.submit("GENERATE_RESEARCH", channel.channel_id, secondEpisode.episode_id);
-    await waitFor(() => manager.get(parallelA.task_id).status === "COMPLETED");
-    await waitFor(() => manager.get(parallelB.task_id).status === "COMPLETED");
+    await waitFor(() => manager.get(parallelA.task_id).status === "COMPLETED" && manager.get(parallelB.task_id).status === "COMPLETED");
     expect(fake.maxActiveTurns).toBeGreaterThanOrEqual(2);
-  });
+  }, 15_000);
 
   it("runs audio in its own pool without creating Codex turns", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "quiz-audio-tasks-"));

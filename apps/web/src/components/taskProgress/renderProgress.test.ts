@@ -3,7 +3,7 @@ import { TaskSchema } from "@studio/shared";
 import { formatRenderProgress } from "./renderProgress";
 
 describe("formatRenderProgress", () => {
-  it("formats measured frames, workers, and ETA concisely", () => {
+  it("formats measured frames, fps, workers, and ETA concisely", () => {
     const task = TaskSchema.parse({
       task_id: "task-1",
       task_type: "GENERATE_VIDEO",
@@ -22,10 +22,10 @@ describe("formatRenderProgress", () => {
       },
     });
 
-    expect(formatRenderProgress(task)).toBe("2,130 / 3,840 frames · 6 workers · 42s left");
+    expect(formatRenderProgress(task)).toBe("2,130 / 3,840 frames · 35.5 fps · 6 workers · 42s left");
   });
 
-  it("omits unavailable ETA and returns null for non-render tasks", () => {
+  it("omits unavailable ETA and returns fallback frames from message when render_progress is null", () => {
     const measured = TaskSchema.parse({
       task_id: "task-2",
       task_type: "GENERATE_VIDEO",
@@ -43,9 +43,16 @@ describe("formatRenderProgress", () => {
         eta_seconds: null,
       },
     });
-    const legacy = TaskSchema.parse({ ...measured, task_id: "task-3", render_progress: null });
+    const fallbackMsg = TaskSchema.parse({
+      ...measured,
+      task_id: "task-3",
+      render_progress: null,
+      progress_message: "Video · rendering frame 1,200 / 3,840",
+    });
+    const legacy = TaskSchema.parse({ ...measured, task_id: "task-4", render_progress: null, progress_message: "Preparing" });
 
     expect(formatRenderProgress(measured)).toBe("100 / 400 frames · 1 worker");
+    expect(formatRenderProgress(fallbackMsg)).toBe("1,200 / 3,840 frames");
     expect(formatRenderProgress(legacy)).toBeNull();
   });
 });

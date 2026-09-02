@@ -6,6 +6,7 @@ import {
   resolveThinkingBarVariant,
 } from "../../visual/elements/index.js";
 import { renderChoiceGroup } from "../choices/renderChoiceGroup.js";
+import type { ChoiceRevealMode } from "../choices/choiceGroup.types.js";
 import { renderChannelBrandMark } from "../candyArcade/channelBrandMark.js";
 import { escAttr, illustrationDataUri } from "../candyArcade/candyArcadeSvg.js";
 import type { QuizSceneParts } from "./buildQuizSceneParts.js";
@@ -37,6 +38,7 @@ export function renderStableQuizSceneParts(parts: QuizSceneParts) {
 export function renderQuizSceneThinkingPart(parts: QuizSceneParts, timing: QuizSceneTiming): string {
   return resolveThinkingBarVariant(parts.phase.thinkingStyle).renderHtml({
     clipStart: timing.start,
+    questionNarrationStart: timing.questionNarrationStart,
     revealStart: timing.revealStart,
     thinkingStart: timing.thinkingStart,
     duration: timing.end - timing.start,
@@ -45,9 +47,10 @@ export function renderQuizSceneThinkingPart(parts: QuizSceneParts, timing: QuizS
   });
 }
 
-export function renderQuizSceneChoicePart(parts: QuizSceneParts): string {
+export function renderQuizSceneChoicePart(parts: QuizSceneParts, options: { revealMode?: ChoiceRevealMode } = {}): string {
   return renderChoiceGroup({
     ...parts.choices,
+    revealMode: options.revealMode,
     skin: resolveAnswerCardSkin(parts.choices.style),
   });
 }

@@ -30,6 +30,16 @@ describe("hyperframesProgress", () => {
       etaSeconds: null,
     });
     expect(mapRenderTaskPercent(sample!)).toBe(81.65);
+
+    const noWorkersSample = parseHyperframesProgress("Rendering frame 1200 / 3840");
+    expect(noWorkersSample).toEqual({
+      phase: "capture_streaming",
+      framesCompleted: 1200,
+      totalFrames: 3840,
+      workerCount: 1,
+      elapsedMs: null,
+      etaSeconds: null,
+    });
   });
 
   it("clamps inconsistent frame counters before mapping progress", () => {

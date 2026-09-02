@@ -7,6 +7,7 @@ import { EpisodeQuizCustomizationBar } from "./EpisodeQuizCustomizationBar";
 import { QuizV2Panel } from "../../../components/QuizV2Panel";
 import { QuizVideoPanel } from "../QuizVideoPanel";
 import { ThumbnailPreviewCard } from "./ThumbnailPreviewCard";
+import { VideoDescriptionCard } from "./VideoDescriptionCard";
 import { EpisodeWorkspaceTabs } from "./EpisodeWorkspaceTabs";
 
 type QuizEpisodeViewProps = {
@@ -94,6 +95,16 @@ export function QuizEpisodeView({
         channel={channel}
         episode={episode}
         episodeId={episodeId}
+        activeEpisodeTask={pipeline.activeEpisodeTask}
+        onNotice={onNotice}
+      />
+
+      <VideoDescriptionCard
+        channel={channel}
+        episode={episode}
+        episodeId={episodeId}
+        hasQuiz={Boolean(quizV2?.quiz?.questions && quizV2.quiz.questions.length > 0)}
+        initialDescription={quizV2?.description}
         onNotice={onNotice}
       />
 

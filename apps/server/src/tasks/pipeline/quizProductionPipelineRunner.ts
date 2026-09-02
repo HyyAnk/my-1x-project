@@ -44,19 +44,19 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
     );
     const treatmentChanged = await step(
       "Treatment · structuring the story",
-      6,
+      5,
       "GENERATE_TREATMENT",
       async () => !(await hasReadyArtifact.call(this, task.channel_id, episodeId, "treatment.md")),
     );
     const scriptChanged = await step(
       "Narration script · writing the argument",
-      10,
+      8,
       "GENERATE_SCRIPT",
       async () => !(await hasReadyScript.call(this, task.channel_id, episodeId)),
     );
     const visualBibleChanged = await step(
       "Visual bible · locking continuity",
-      14,
+      10,
       "GENERATE_VISUAL_BIBLE",
       async () => !(await hasReadyArtifact.call(this, task.channel_id, episodeId, "visual_bible.md")),
     );
@@ -68,7 +68,7 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
     const regenerateShots = scenes.length === 0 || upstreamChanged || !shotPlanFresh;
     await this.update(task.task_id, {
       progress_message: regenerateShots ? "Shot plan · generating sequences" : "Shot plan · already ready",
-      progress_percent: 18,
+      progress_percent: 10,
     });
     if (regenerateShots) {
       const script = await this.repository.getEpisodeFile(task.channel_id, episodeId, "script.md");
@@ -78,11 +78,14 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
       const existingDrafts = await this.repository.readSequenceDrafts(episodeId);
       const resumePlan = planSequenceResume(sections.length, existingDrafts, script.modified_at, upstreamChanged);
       if (resumePlan.shouldClearDrafts) await this.repository.clearSequenceDrafts(episodeId);
+      const totalCount = Math.max(1, sections.length);
+      let completedCount = resumePlan.reusedSequenceNumbers.length;
+      const initialPercent = Math.min(25, Math.max(10, 10 + Math.round((completedCount / totalCount) * 15)));
       await this.update(task.task_id, {
-        progress_message: resumePlan.reusedSequenceNumbers.length
-          ? `Shot plan · resuming ${resumePlan.reusedSequenceNumbers.length}/${sections.length} completed sequences`
+        progress_message: completedCount
+          ? `Shot plan · resuming ${completedCount}/${totalCount} completed sequences`
           : "Shot plan · generating sequences",
-        progress_percent: 18,
+        progress_percent: initialPercent,
       });
       if (resumePlan.pendingSequenceNumbers.length === 0) {
         const committed = await this.repository.commitSequenceDrafts(task.channel_id, episodeId, sections.length);
@@ -97,6 +100,12 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
           children.map(async (child) => {
             const result = await waitForTaskTerminal.call(this, child.task_id, run);
             if (result.status !== "COMPLETED") throw new Error(`Shot plan failed: ${result.error ?? result.status}`);
+            completedCount++;
+            const seqPercent = Math.min(25, Math.max(10, 10 + Math.round((completedCount / totalCount) * 15)));
+            await this.update(task.task_id, {
+              progress_message: `Shot plan · sequence ${completedCount}/${totalCount} ready`,
+              progress_percent: seqPercent,
+            });
             return result;
           }),
         );
@@ -115,7 +124,7 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
     await runQuizV2Pipeline.call(this, task);
 
     if (run.cancelled) throw new Error("Pipeline cancelled");
-    await this.update(task.task_id, { progress_message: "Video · linting Quiz composition", progress_percent: 55 });
+    await this.update(task.task_id, { progress_message: "Video · linting Quiz composition", progress_percent: 60 });
     const videoChild = this.submit("GENERATE_VIDEO", task.channel_id, episodeId);
     run.children.add(videoChild.task_id);
     try {
@@ -123,7 +132,7 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
         if (childTask.render_progress) {
           const { frames_completed, total_frames } = childTask.render_progress;
           const captureRatio = total_frames > 0 ? frames_completed / total_frames : 0;
-          const pipelinePercent = Math.min(98, Math.max(55, Math.round((55 + captureRatio * 43) * 100) / 100));
+          const pipelinePercent = Math.min(98, Math.max(60, Math.round((60 + captureRatio * 38) * 100) / 100));
           await this.update(task.task_id, {
             progress_message:
               childTask.progress_message ??

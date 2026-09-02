@@ -2,7 +2,7 @@ import { calculateThinkingBarTiming, type ThinkingBarRenderInput, type ThinkingB
 
 const EMBER_PARTICLES_HTML = `<span class="ember-particles" data-layout-ignore><i></i><i></i><i></i></span>`;
 
-const COUNTDOWN_HTML = `<b class="marker-val val-query" data-layout-allow-overlap></b><b class="marker-val val-5" data-layout-allow-overlap>5</b><b class="marker-val val-4" data-layout-allow-overlap>4</b><b class="marker-val val-3" data-layout-allow-overlap>3</b><b class="marker-val val-2" data-layout-allow-overlap>2</b><b class="marker-val val-1" data-layout-allow-overlap>1</b>`;
+const COUNTDOWN_HTML = `<b class="marker-val val-query" data-layout-allow-overlap>?</b><b class="marker-val val-5" data-layout-allow-overlap>5</b><b class="marker-val val-4" data-layout-allow-overlap>4</b><b class="marker-val val-3" data-layout-allow-overlap>3</b><b class="marker-val val-2" data-layout-allow-overlap>2</b><b class="marker-val val-1" data-layout-allow-overlap>1</b>`;
 
 export const emberTrailVariant: ThinkingBarVariant = {
   id: "flame_fuse",
@@ -51,7 +51,7 @@ export const emberTrailVariant: ThinkingBarVariant = {
     linear-gradient(180deg, rgba(255, 238, 204, 0.48), transparent 42%, rgba(70, 28, 12, 0.3)),
     repeating-linear-gradient(112deg, #e0aa72 0 8px, #b86f3e 8px 15px, #854426 15px 19px);
   box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.3), inset 0 -3px 4px rgba(73, 28, 10, 0.38);
-  animation: quiz-timer-drain var(--timer-duration) linear var(--clip-start) both;
+  animation: quiz-timer-drain var(--timer-duration) linear var(--timer-start) both;
 }
 .thinking-bar-flame-fuse .ember-trail-rope::after {
   position: absolute;
@@ -73,7 +73,7 @@ export const emberTrailVariant: ThinkingBarVariant = {
   height: clamp(88px, 7.2vw, 108px);
   place-items: center;
   transform: translate(-50%, -50%);
-  animation: quiz-timer-marker-slide var(--timer-duration) linear var(--clip-start) both;
+  animation: quiz-timer-marker-slide var(--timer-duration) linear var(--timer-start) both;
   will-change: left;
   z-index: 5;
 }

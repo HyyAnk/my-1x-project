@@ -54,3 +54,7 @@ assets/audio/bgm/*.zip
 dist-assets/
 *.zip
 
+# Agent coordination local runtime state
+.agent-orchestrator/state/
+
+

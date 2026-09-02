@@ -341,9 +341,9 @@ describe("Candy Arcade visual template", () => {
     expect(html).toContain(
       '<div class="timer-progress"></div><span class="timer-marker" data-layout-allow-occlusion data-layout-allow-overlap>',
     );
-    expect(html).toContain(
-      '<b class="marker-val val-query" data-layout-allow-overlap>?</b><b class="marker-val val-5" data-layout-allow-overlap>5</b>',
-    );
+    const thinkingBarCount = [...html.matchAll(/<div class="thinking-bar thinking-bar-/g)].length;
+    expect([...html.matchAll(/class="marker-val val-query"/g)]).toHaveLength(thinkingBarCount);
+    expect([...html.matchAll(/>\?</g)]).toHaveLength(thinkingBarCount);
     expect(html).not.toContain('<div class="timer-progress"><span class="timer-marker');
     expect(html).toContain("@keyframes quiz-timer-marker-slide");
     expect(html).toContain("layout-media_left_choices_right .game-stage");
@@ -368,6 +368,35 @@ describe("Candy Arcade visual template", () => {
     expect(html).toContain("wood-sign-plank");
     expect(html).toContain("question-number-val");
     expect(html).toContain("@keyframes hanging-sign-sway");
+  });
+
+  it("starts production question files with pending answers and scheduled reveal targets", () => {
+    const director = createDefaultDirectorPlan(quiz);
+    const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
+    const questionFiles = questionCompositionFiles(bundle.files);
+
+    expect(questionFiles).toHaveLength(quiz.questions.length);
+
+    for (const [index, html] of questionFiles.entries()) {
+      const question = quiz.questions[index];
+      expect(html.match(/data-answer-state="pending"/g) ?? []).toHaveLength(question.choices.length);
+      expect(html.match(/answer-reveal-correct/g) ?? []).toHaveLength(1);
+      expect(html.match(/answer-reveal-incorrect/g) ?? []).toHaveLength(question.choices.length - 1);
+      expect(html).not.toMatch(/class="[^"]*answer-correct/);
+      expect(html).not.toMatch(/class="[^"]*answer-incorrect/);
+      expect(choiceCardTag(html, question.correct_choice_id)).toContain("answer-reveal-correct");
+    }
+
+    expect(bundle.html).not.toContain("var(--reveal-at, 0s) + .14s");
+    expect(bundle.html).not.toContain("var(--reveal-at, 0s) + 0.14s");
   });
 
   it("keeps the 50-question maximum to one scene and one hero image per question", () => {
@@ -629,4 +658,14 @@ function contrastRatio(foreground: string, background: string): number {
 function compositionSources(input: Parameters<typeof buildCandyArcadeComposition>[0]): string {
   const bundle = buildCandyArcadeCompositionBundle(input);
   return [bundle.html, ...Object.values(bundle.files)].join("\n");
+}
+
+function questionCompositionFiles(files: Record<string, string>): string[] {
+  return Object.entries(files)
+    .filter(([path]) => path.startsWith("compositions/quiz-q"))
+    .map(([, html]) => html);
+}
+
+function choiceCardTag(html: string, choiceId: string): string {
+  return html.match(new RegExp(`<div[^>]*data-choice-id="${choiceId}"[^>]*>`))?.[0] ?? "";
 }

@@ -70,4 +70,35 @@ describe("videoLayoutChecker", () => {
       await rm(tempDir, { recursive: true, force: true });
     }
   });
+
+  it("bypasses layout check when FAST_RENDER_MODE environment variable is set to true", async () => {
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), "layout-checker-env-"));
+    const originalEnv = process.env.FAST_RENDER_MODE;
+    process.env.FAST_RENDER_MODE = "true";
+    try {
+      const sourceFingerprint = "fingerprint_env_xyz";
+      const checkpointPath = path.join(tempDir, "render-checkpoint.json");
+
+      const result = await verifyAndCheckLayout({
+        renderRoot: tempDir,
+        rootDir: tempDir,
+        sourceFingerprint,
+      });
+
+      expect(result.status).toBe("passed");
+      expect(result.bypassed).toBe(true);
+
+      const checkpoint = await readRenderCheckpoint(checkpointPath);
+      expect(checkpoint?.source_fingerprint).toBe(sourceFingerprint);
+      expect(checkpoint?.check.status).toBe("passed");
+    } finally {
+      if (originalEnv !== undefined) {
+        process.env.FAST_RENDER_MODE = originalEnv;
+      } else {
+        delete process.env.FAST_RENDER_MODE;
+      }
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
 });
+
