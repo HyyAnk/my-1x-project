@@ -49,6 +49,7 @@ export function adaptSandboxQuizScene(input: SandboxPreviewInput, mascotOccupied
       counter: input.counter_style,
       background: input.background_style,
     }),
+    styleCatalogRevision: input.style_catalog_revision,
     visual: { motionId: "enter.pop", transitionId: "bubble_splash" },
     channelBrandName: input.channel_brand_name,
     brandVisible: mascotOccupied,

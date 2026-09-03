@@ -1,6 +1,6 @@
 import { copyFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { Channel, Episode, MascotProfile, QuizAssetResolution, Scene } from "@studio/shared";
+import { EpisodeSchema, type Channel, type Episode, type MascotProfile, type QuizAssetResolution, type Scene } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../repository.js";
 import { buildQuizComposition } from "../../quiz/render/buildComposition.js";
 import { preflightQuizRender } from "../../quiz/qa/preflight.js";
@@ -11,6 +11,7 @@ import { prepareQuizVideoRender } from "./quizVideoRenderPreparation.js";
 import { syncStaticMediaAssets } from "./videoStaticAssets.js";
 import { renderSourceFingerprint } from "../fingerprints.js";
 import type { TaskManagerRuntime } from "../runtime.js";
+import { getActiveStyleSnapshot } from "../../quiz/visual/styleModules/activation.js";
 
 export type VideoCompositionContext = {
   renderRoot: string;
@@ -36,7 +37,8 @@ export async function prepareVideoComposition(options: {
   renderAspectRatio: "16:9" | "9:16" | "1:1";
   onProgress: (message: string, percent: number) => Promise<void>;
 }): Promise<VideoCompositionContext> {
-  const { runtime, repository, channel, episode, scenes, renderAspectRatio, onProgress } = options;
+  const { runtime, repository, channel, scenes, renderAspectRatio, onProgress } = options;
+  const episode = await pinEpisodeStyleRevision(repository, channel, options.episode);
 
   const narration = await repository.getEpisodeAudioFile(
     channel.channel_id,
@@ -189,4 +191,17 @@ export async function prepareVideoComposition(options: {
     completeQuizV2: Boolean(completeQuizV2),
     preflightAssessment,
   };
+}
+
+export async function pinEpisodeStyleRevision(repository: RepositoryService, channel: Channel, episode: Episode): Promise<Episode> {
+  if (episode.quiz_config.style_catalog_revision) return episode;
+  const next = EpisodeSchema.parse({
+    ...episode,
+    quiz_config: { ...episode.quiz_config, style_catalog_revision: getActiveStyleSnapshot().revision },
+  });
+  const writer = (repository as unknown as { writeJsonAtomic?: (target: string, value: unknown) => Promise<void> }).writeJsonAtomic;
+  if (typeof writer === "function") {
+    await writer.call(repository, repository.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
+  }
+  return next;
 }

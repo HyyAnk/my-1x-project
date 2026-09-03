@@ -5,6 +5,7 @@ import type { EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview
 import { CustomizationPill } from "./CustomizationPill";
 import { CustomizationPopover } from "./CustomizationPopover";
 import { StyleOptionRow } from "./StyleOptionRow";
+import { useStyleCatalogOptions } from "./useStyleCatalogOptions";
 
 type Props = {
   channel: Channel;
@@ -22,6 +23,7 @@ export function ThinkingBarDropdown({ channel, episode, disabled, saving, isOpen
   const currentThinkingBar = episode.quiz_config?.thinking_bar_style || "auto";
   const resolvedThinkingBar = resolveThinkingBarStyle(channel, episode.quiz_config);
   const activeStyle = currentThinkingBar === "auto" ? resolvedThinkingBar : currentThinkingBar;
+  const styleOptions = useStyleCatalogOptions("thinking-bar", ALL_THINKING_BAR_STYLES);
 
   return (
     <div className="customization-dropdown-item">
@@ -35,16 +37,21 @@ export function ThinkingBarDropdown({ channel, episode, disabled, saving, isOpen
       />
       {isOpen ? (
         <CustomizationPopover title={t("episodeCustomization.pillThinkingBar")}>
-          {ALL_THINKING_BAR_STYLES.map((style) => {
+          {["auto", ...styleOptions].map((style) => {
             if (style === "auto") return null;
             return (
               <StyleOptionRow
                 key={style}
                 name="timer_choice"
-                label={THINKING_BAR_STYLE_LABELS[style]}
+                label={THINKING_BAR_STYLE_LABELS[style as keyof typeof THINKING_BAR_STYLE_LABELS] ?? style}
                 checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
-                onHover={() => onPreview?.({ override: { thinkingBarStyle: style }, label: THINKING_BAR_STYLE_LABELS[style] })}
+                onHover={() =>
+                  onPreview?.({
+                    override: { thinkingBarStyle: style },
+                    label: THINKING_BAR_STYLE_LABELS[style as keyof typeof THINKING_BAR_STYLE_LABELS] ?? style,
+                  })
+                }
               />
             );
           })}

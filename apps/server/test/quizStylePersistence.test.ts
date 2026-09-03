@@ -14,6 +14,7 @@ import { buildApp, type StudioApp } from "../src/app.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
+import { pinEpisodeStyleRevision } from "../src/tasks/video/videoCompositionPreparer.js";
 
 const roots: string[] = [];
 
@@ -64,6 +65,11 @@ describe("Quiz style persistence contracts", () => {
       expect(confirmed.statusCode).toBe(201);
       const episode = confirmed.json<{ episode: Episode }>().episode;
       expect(episode.quiz_config).toMatchObject({ answer_card_style: "glass_neon", background_style: "aurora_glow" });
+      const pinned = await pinEpisodeStyleRevision(app.repository, channel, episode);
+      expect(pinned.quiz_config.style_catalog_revision).toMatch(/^catalog-/);
+      expect((await app.repository.getEpisode(channel.channel_id, episode.episode_id)).quiz_config.style_catalog_revision).toBe(
+        pinned.quiz_config.style_catalog_revision,
+      );
       await seedQuizArtifacts(app, channel, episode);
 
       const updated = await app.server.inject({

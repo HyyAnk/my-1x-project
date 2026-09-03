@@ -5,6 +5,7 @@ import type { EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview
 import { CustomizationPill } from "./CustomizationPill";
 import { CustomizationPopover } from "./CustomizationPopover";
 import { StyleOptionRow } from "./StyleOptionRow";
+import { useStyleCatalogOptions } from "./useStyleCatalogOptions";
 
 type Props = {
   channel: Channel;
@@ -22,6 +23,7 @@ export function BackgroundDropdown({ channel, episode, disabled, saving, isOpen,
   const currentBg = episode.quiz_config?.background_style || "auto";
   const resolvedBg = resolveBackgroundStyle(channel, episode.quiz_config);
   const activeStyle = currentBg === "auto" ? resolvedBg : currentBg;
+  const styleOptions = useStyleCatalogOptions("background", ALL_BACKGROUND_STYLES);
 
   return (
     <div className="customization-dropdown-item">
@@ -35,16 +37,21 @@ export function BackgroundDropdown({ channel, episode, disabled, saving, isOpen,
       />
       {isOpen ? (
         <CustomizationPopover title={t("episodeCustomization.pillBackground")}>
-          {ALL_BACKGROUND_STYLES.map((style) => {
+          {["auto", ...styleOptions].map((style) => {
             if (style === "auto") return null;
             return (
               <StyleOptionRow
                 key={style}
                 name="background_choice"
-                label={BACKGROUND_STYLE_LABELS[style]}
+                label={BACKGROUND_STYLE_LABELS[style as keyof typeof BACKGROUND_STYLE_LABELS] ?? style}
                 checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
-                onHover={() => onPreview?.({ override: { backgroundStyle: style }, label: BACKGROUND_STYLE_LABELS[style] })}
+                onHover={() =>
+                  onPreview?.({
+                    override: { backgroundStyle: style },
+                    label: BACKGROUND_STYLE_LABELS[style as keyof typeof BACKGROUND_STYLE_LABELS] ?? style,
+                  })
+                }
               />
             );
           })}

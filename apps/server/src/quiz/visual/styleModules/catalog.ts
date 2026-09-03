@@ -3,6 +3,7 @@ import type { StyleCatalogEntry, StyleCatalogSnapshot, StyleSlot } from "@studio
 import { StyleModuleManifestSchema } from "./manifestSchema.js";
 import { BUILT_IN_STYLE_MODULES } from "./builtins.js";
 import type { SlotScopedStyleModule } from "./types.js";
+import { renderPortableHtml } from "./exportPackage.js";
 
 export type StyleCatalog = {
   getStyleCatalogSnapshot: () => StyleCatalogSnapshot;
@@ -64,12 +65,7 @@ function createCatalogRevision(modules: readonly SlotScopedStyleModule[]): strin
 }
 
 function renderModuleHtml(module: SlotScopedStyleModule): string {
-  const renderer = module.renderer as unknown as { renderHtml?: (context: never) => string };
-  try {
-    return renderer.renderHtml ? renderer.renderHtml({} as never) : "";
-  } catch {
-    return "";
-  }
+  return renderPortableHtml(module, { requireTemplate: false });
 }
 
 const builtInCatalog = createStyleCatalog(BUILT_IN_STYLE_MODULES);

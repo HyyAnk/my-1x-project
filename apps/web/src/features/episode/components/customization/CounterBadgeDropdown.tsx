@@ -11,6 +11,7 @@ import type { EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview
 import { CustomizationPill } from "./CustomizationPill";
 import { CustomizationPopover } from "./CustomizationPopover";
 import { StyleOptionRow } from "./StyleOptionRow";
+import { useStyleCatalogOptions } from "./useStyleCatalogOptions";
 
 type Props = {
   channel: Channel;
@@ -28,6 +29,7 @@ export function CounterBadgeDropdown({ channel, episode, disabled, saving, isOpe
   const currentCounter = episode.quiz_config?.question_counter_style || "auto";
   const resolvedCounter = resolveCounterStyle(channel, episode.quiz_config);
   const activeStyle = currentCounter === "auto" ? resolvedCounter : currentCounter;
+  const styleOptions = useStyleCatalogOptions("counter", ALL_QUESTION_COUNTER_STYLES);
 
   return (
     <div className="customization-dropdown-item">
@@ -41,16 +43,21 @@ export function CounterBadgeDropdown({ channel, episode, disabled, saving, isOpe
       />
       {isOpen ? (
         <CustomizationPopover title={t("episodeCustomization.pillCounterBadge")}>
-          {ALL_QUESTION_COUNTER_STYLES.map((style) => {
+          {["auto", ...styleOptions].map((style) => {
             if (style === "auto") return null;
             return (
               <StyleOptionRow
                 key={style}
                 name="counter_choice"
-                label={QUESTION_COUNTER_STYLE_LABELS[style]}
+                label={QUESTION_COUNTER_STYLE_LABELS[style as keyof typeof QUESTION_COUNTER_STYLE_LABELS] ?? style}
                 checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
-                onHover={() => onPreview?.({ override: { counterStyle: style }, label: QUESTION_COUNTER_STYLE_LABELS[style] })}
+                onHover={() =>
+                  onPreview?.({
+                    override: { counterStyle: style },
+                    label: QUESTION_COUNTER_STYLE_LABELS[style as keyof typeof QUESTION_COUNTER_STYLE_LABELS] ?? style,
+                  })
+                }
               />
             );
           })}

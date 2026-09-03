@@ -7,6 +7,7 @@ type BuildEpisodePreviewRequestInput = {
   override: EpisodeStyleOverride;
   resolved: ResolvedEpisodePreviewStyle;
   question?: EpisodePreviewQuestion | null;
+  styleCatalogRevision?: string;
 };
 
 export function buildEpisodePreviewRequest(input: BuildEpisodePreviewRequestInput): SandboxPreviewRequest {
@@ -14,6 +15,7 @@ export function buildEpisodePreviewRequest(input: BuildEpisodePreviewRequestInpu
     ...buildStyleRequest(input),
     ...buildQuestionRequest(input),
     ...buildMascotRequest(input.channel),
+    style_catalog_revision: input.styleCatalogRevision,
   };
 }
 

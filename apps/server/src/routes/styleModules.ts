@@ -43,6 +43,19 @@ export function registerStyleModulesRoutes(deps?: { repository: RepositoryServic
       if (!body?.data) return reply.code(400).send({ error: "Missing base64 package data" });
       try {
         const input = importStylePresetPackage(Buffer.from(body.data.replace(/^data:.*?;base64,/i, ""), "base64"));
+        const catalog = styleActivationManager.getActiveSnapshot().catalog;
+        const references: Array<[StyleSlot, string | undefined]> = [
+          ["thinking-bar", input.thinking_bar_style],
+          ["question-box", input.question_box_style],
+          ["answer-card", input.answer_card_style],
+          ["counter", input.counter_style],
+          ["background", input.background_style],
+        ];
+        for (const [slot, id] of references) {
+          if (id && !catalog.entries.some((entry) => entry.slot === slot && entry.id === id)) {
+            throw new Error(`Style preset references unavailable ${slot} style: ${id}`);
+          }
+        }
         const preset = await deps.repository.createStylePreset(input);
         return reply.code(201).send({ preset });
       } catch (error) {

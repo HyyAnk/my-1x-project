@@ -7,6 +7,7 @@ import { StyleModuleManifestSchema } from "./manifestSchema.js";
 import { renderValidatedModuleCss } from "./namespaceCss.js";
 import { BUILT_IN_STYLE_MODULES } from "./builtins.js";
 import type { SlotScopedStyleModule } from "./types.js";
+import { renderHtmlTemplate, renderPortableHtml } from "./exportPackage.js";
 
 export type StyleActivationState = "draft" | "validated" | "active";
 
@@ -51,16 +52,17 @@ function key(module: SlotScopedStyleModule): string {
 }
 
 function revisionFor(module: SlotScopedStyleModule): string {
-  return `style-${createHash("sha256").update(JSON.stringify(module.manifest)).update(module.renderer.renderCss()).update(renderHtml(module)).update(JSON.stringify(sortedAssets(module))).digest("hex").slice(0, 16)}`;
+  return `style-${createHash("sha256")
+    .update(JSON.stringify(module.manifest))
+    .update(module.renderer.renderCss())
+    .update(renderHtml(module))
+    .update(JSON.stringify(sortedAssets(module)))
+    .digest("hex")
+    .slice(0, 16)}`;
 }
 
 function renderHtml(module: SlotScopedStyleModule): string {
-  const renderer = module.renderer as unknown as { renderHtml?: (context: never) => string };
-  try {
-    return renderer.renderHtml ? renderer.renderHtml({} as never) : "";
-  } catch {
-    return "";
-  }
+  return renderPortableHtml(module, { requireTemplate: false });
 }
 
 function sortedAssets(module: SlotScopedStyleModule): Record<string, string> {
@@ -76,11 +78,20 @@ function isBuiltIn(module: SlotScopedStyleModule): boolean {
 }
 
 function serializeModule(module: SlotScopedStyleModule): SerializedModule {
-  return { manifest: module.manifest, css: module.renderer.renderCss(), html: renderHtml(module), assets: sortedAssets(module) };
+  const renderer = module.renderer as unknown as { renderTemplate?: string };
+  return {
+    manifest: module.manifest,
+    css: module.renderer.renderCss(),
+    html: renderer.renderTemplate ?? renderHtml(module),
+    assets: sortedAssets(module),
+  };
 }
 
 function deserializeModule(serialized: SerializedModule): SlotScopedStyleModule {
-  const assets = Object.fromEntries(Object.entries(serialized.assets).map(([assetPath, value]) => [assetPath, Buffer.from(value, "base64")]));
+  const assets = Object.fromEntries(
+    Object.entries(serialized.assets).map(([assetPath, value]) => [assetPath, Buffer.from(value, "base64")]),
+  );
+  const template = serialized.html.includes("{{") ? serialized.html : undefined;
   const renderer =
     serialized.manifest.slot === "answer-card"
       ? {
@@ -94,10 +105,15 @@ function deserializeModule(serialized: SerializedModule): SlotScopedStyleModule 
           id: serialized.manifest.id as never,
           displayName: serialized.manifest.displayName,
           description: serialized.manifest.description,
-          renderHtml: () => serialized.html,
+          renderHtml: (context: unknown) => (template ? renderTemplate(template, context) : serialized.html),
           renderCss: () => serialized.css,
+          ...(template ? { renderTemplate: template } : {}),
         };
   return { manifest: serialized.manifest, renderer, assets } as SlotScopedStyleModule;
+}
+
+function renderTemplate(template: string, context: unknown): string {
+  return renderHtmlTemplate(template, context);
 }
 
 function validateModule(module: SlotScopedStyleModule): StyleActivationValidation {
@@ -111,6 +127,11 @@ function validateModule(module: SlotScopedStyleModule): StyleActivationValidatio
     renderValidatedModuleCss(module);
   } catch (error) {
     issues.push(error instanceof Error ? error.message : "Invalid style module CSS");
+  }
+  try {
+    renderPortableHtml(module);
+  } catch (error) {
+    issues.push(error instanceof Error ? error.message : "Invalid style module HTML renderer");
   }
   const declaredAssets = module.manifest.assetPaths ?? [];
   const providedAssets = (module as SlotScopedStyleModule & { assets?: Record<string, Uint8Array> }).assets ?? {};
@@ -130,7 +151,10 @@ export class StyleActivationManager {
   private activeRevision = "";
   private persistencePath?: string;
 
-  constructor(private readonly publishRuntime = false, persistencePath?: string) {
+  constructor(
+    private readonly publishRuntime = false,
+    persistencePath?: string,
+  ) {
     this.persistencePath = persistencePath;
     if (persistencePath) this.loadPersistedState();
     this.recordSnapshot();
@@ -190,12 +214,23 @@ export class StyleActivationManager {
   activateDraft(slot: StyleSlot, id: string): ActiveStyleSnapshot {
     const draft = this.validateDraft(slot, id);
     if (draft.state !== "validated") throw new Error(draft.issues.join("; ") || "Style module validation failed");
+    const previousModules = this.activeModules;
+    const previousRevision = this.activeRevision;
     const nextModules = new Map(this.activeModules);
     nextModules.set(`${slot}:${id}`, draft.module);
     const catalog = createStyleCatalog([...nextModules.values()]);
     this.activeModules = nextModules;
-    const snapshot = this.recordSnapshot(catalog);
-    this.persist();
+    const snapshot = this.recordSnapshot(catalog, false);
+    try {
+      this.persist();
+    } catch (error) {
+      this.activeModules = previousModules;
+      this.activeRevision = previousRevision;
+      this.snapshots.delete(snapshot.revision);
+      this.modulesByRevision.delete(snapshot.revision);
+      throw error;
+    }
+    if (this.publishRuntime) setRuntimeStyleCatalog(catalog);
     return snapshot;
   }
 
@@ -205,7 +240,10 @@ export class StyleActivationManager {
   }
 
   resolveModule(slot: StyleSlot, id: string, revision?: string): SlotScopedStyleModule | undefined {
-    if (revision) return this.snapshots.get(revision)?.catalog.entries.some((entry) => entry.slot === slot && entry.id === id) ? this.moduleForRevision(revision, slot, id) : undefined;
+    if (revision)
+      return this.snapshots.get(revision)?.catalog.entries.some((entry) => entry.slot === slot && entry.id === id)
+        ? this.moduleForRevision(revision, slot, id)
+        : undefined;
     return this.activeModules.get(`${slot}:${id}`);
   }
 
@@ -213,7 +251,10 @@ export class StyleActivationManager {
     return this.modulesByRevision.get(revision)?.get(`${slot}:${id}`);
   }
 
-  private recordSnapshot(catalog = createStyleCatalog([...this.activeModules.values()])): ActiveStyleSnapshot {
+  private recordSnapshot(
+    catalog = createStyleCatalog([...this.activeModules.values()]),
+    publish = this.publishRuntime,
+  ): ActiveStyleSnapshot {
     const snapshot: ActiveStyleSnapshot = Object.freeze({
       revision: catalog.getStyleCatalogSnapshot().revision,
       generatedAt: catalog.getStyleCatalogSnapshot().generatedAt,
@@ -222,7 +263,7 @@ export class StyleActivationManager {
     this.snapshots.set(snapshot.revision, snapshot);
     this.modulesByRevision.set(snapshot.revision, new Map(this.activeModules));
     this.activeRevision = snapshot.revision;
-    if (this.publishRuntime) setRuntimeStyleCatalog(catalog);
+    if (publish) setRuntimeStyleCatalog(catalog);
     return snapshot;
   }
 
@@ -243,7 +284,9 @@ export class StyleActivationManager {
       activeRevision: this.activeRevision,
       activeKeys: [...this.activeModules.keys()],
       modules,
-      drafts: Object.fromEntries([...this.drafts.entries()].map(([draftKey, draft]) => [draftKey, { ...draft, module: serializeModule(draft.module) }])),
+      drafts: Object.fromEntries(
+        [...this.drafts.entries()].map(([draftKey, draft]) => [draftKey, { ...draft, module: serializeModule(draft.module) }]),
+      ),
       snapshots,
     };
     mkdirSync(path.dirname(this.persistencePath), { recursive: true });
@@ -256,7 +299,9 @@ export class StyleActivationManager {
     if (!this.persistencePath) return;
     try {
       const state = JSON.parse(readFileSync(this.persistencePath, "utf8")) as PersistedState;
-      const persistedModules = new Map(Object.entries(state.modules ?? {}).map(([recordKey, serialized]) => [recordKey, deserializeModule(serialized)]));
+      const persistedModules = new Map(
+        Object.entries(state.modules ?? {}).map(([recordKey, serialized]) => [recordKey, deserializeModule(serialized)]),
+      );
       const resolveRecord = (moduleKey: string, recordKey: string): SlotScopedStyleModule | undefined => {
         if (recordKey.startsWith("builtin:")) return BUILT_IN_STYLE_MODULES.find((module) => key(module) === moduleKey);
         return persistedModules.get(recordKey);
@@ -274,7 +319,8 @@ export class StyleActivationManager {
       }
       const activeModules = new Map<string, SlotScopedStyleModule>();
       for (const moduleKey of state.activeKeys ?? []) {
-        const module = revisions.get(state.activeRevision)?.get(moduleKey) ?? BUILT_IN_STYLE_MODULES.find((candidate) => key(candidate) === moduleKey);
+        const module =
+          revisions.get(state.activeRevision)?.get(moduleKey) ?? BUILT_IN_STYLE_MODULES.find((candidate) => key(candidate) === moduleKey);
         if (module) activeModules.set(moduleKey, module);
       }
       if (activeModules.size > 0 && snapshots.has(state.activeRevision)) {
@@ -297,6 +343,9 @@ export class StyleActivationManager {
 
 export const styleActivationManager = new StyleActivationManager(true);
 export const getActiveStyleSnapshot = (): ActiveStyleSnapshot => styleActivationManager.getActiveSnapshot();
+export const getStyleSnapshotAtRevision = (revision: string): ActiveStyleSnapshot | undefined =>
+  styleActivationManager.getSnapshot(revision);
 export const getActiveStyleCatalog = () => styleActivationManager.getActiveCatalog();
-export const getStyleModuleAtRevision = (slot: StyleSlot, id: string, revision?: string) => styleActivationManager.resolveModule(slot, id, revision);
+export const getStyleModuleAtRevision = (slot: StyleSlot, id: string, revision?: string) =>
+  styleActivationManager.resolveModule(slot, id, revision);
 export { validateModule as validateStyleModule };

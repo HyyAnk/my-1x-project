@@ -2,7 +2,7 @@ import type { QuizQuestionBoxStyle } from "@studio/shared";
 import type { QuestionBoxVariant } from "./types.js";
 import { BUILT_IN_QUESTION_BOX_MODULES } from "../../styleModules/builtins.js";
 import { renderValidatedModuleCss } from "../../styleModules/namespaceCss.js";
-import { getActiveStyleSnapshot, getStyleModuleAtRevision } from "../../styleModules/activation.js";
+import { getActiveStyleSnapshot, getStyleModuleAtRevision, getStyleSnapshotAtRevision } from "../../styleModules/activation.js";
 
 export const QUESTION_BOX_VARIANTS: Record<Exclude<QuizQuestionBoxStyle, "auto">, QuestionBoxVariant> = {
   candy_pop: BUILT_IN_QUESTION_BOX_MODULES[0].renderer,
@@ -28,12 +28,14 @@ export function resolveQuestionBoxVariant(
   return (getStyleModuleAtRevision("question-box", requested, revision)?.renderer as QuestionBoxVariant | undefined) ?? QUESTION_BOX_VARIANTS[requested] ?? QUESTION_BOX_VARIANTS[fallback] ?? QUESTION_BOX_VARIANTS[DEFAULT_QUESTION_BOX_STYLE];
 }
 
-export function getQuestionBoxesCss(): string {
+export function getQuestionBoxesCss(revision?: string): string {
   const builtIn = BUILT_IN_QUESTION_BOX_MODULES.map(renderValidatedModuleCss).filter(Boolean);
-  const snapshot = getActiveStyleSnapshot();
+  const snapshot = revision ? getStyleSnapshotAtRevision(revision) : getActiveStyleSnapshot();
+  if (!snapshot) return builtIn.join("\n");
+  const activeRevision = snapshot.revision;
   const custom = snapshot.catalog.entries
     .filter((entry) => entry.slot === "question-box" && !BUILT_IN_QUESTION_BOX_MODULES.some((module) => module.manifest.id === entry.id))
-    .map((entry) => getStyleModuleAtRevision("question-box", entry.id, snapshot.revision))
+    .map((entry) => getStyleModuleAtRevision("question-box", entry.id, activeRevision))
     .filter((module): module is NonNullable<typeof module> => Boolean(module))
     .map(renderValidatedModuleCss);
   return [...builtIn, ...custom].join("\n");

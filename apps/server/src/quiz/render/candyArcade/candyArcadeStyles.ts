@@ -31,6 +31,7 @@ export function candyArcadeCss(
     fontMode?: CandyArcadeFontMode;
     aspectRatio?: MascotRenderAspectRatio;
     backgroundStyles?: Iterable<QuizBackgroundStyle | null | undefined>;
+    styleCatalogRevision?: string;
   } = {},
 ): string {
   const aspectRatio = options.aspectRatio ?? "16:9";
@@ -310,12 +311,12 @@ ${
 ${quizLayoutCss(aspectRatio)}
 ${productionMascotCss()}
 ${channelBrandMarkCss()}
-${getThinkingBarsCss()}
-${getQuestionBoxesCss()}
-${getCounterBadgesCss()}
-${getAnswerCardSkinsCss()}
+${getThinkingBarsCss(options.styleCatalogRevision)}
+${getQuestionBoxesCss(options.styleCatalogRevision)}
+${getCounterBadgesCss(options.styleCatalogRevision)}
+${getAnswerCardSkinsCss(options.styleCatalogRevision)}
 ${semanticBackgroundLayerCss()}
-${getSelectedBackgroundStylesCss(options.backgroundStyles ?? ["candy_rays", "aurora_glow"])}
+${getSelectedBackgroundStylesCss(options.backgroundStyles ?? ["candy_rays", "aurora_glow"], options.styleCatalogRevision)}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
   .candy-mascot-container.mascot-v2-container .mascot-v2-state {

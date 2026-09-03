@@ -65,7 +65,13 @@ export function useEpisodeStylePreview({ channel, episode, candidate, channelBra
       const override = candidate?.override ?? {};
 
       try {
-        const request = buildEpisodePreviewRequest({ channel, override, resolved, question: previewQuestion });
+        const request = buildEpisodePreviewRequest({
+          channel,
+          override,
+          resolved,
+          question: previewQuestion,
+          styleCatalogRevision: episode?.quiz_config?.style_catalog_revision ?? undefined,
+        });
         const response = await api.previewSandboxComposition(request);
         if (requestId !== latestRequestId.current) return;
         setPendingPreview({ html: response.html, requestId });
@@ -75,7 +81,7 @@ export function useEpisodeStylePreview({ channel, episode, candidate, channelBra
         setLoading(false);
       }
     },
-    [candidate, channel.mascot_config, channel.mascot_id, previewQuestion, resolved],
+    [candidate, channel.mascot_config, channel.mascot_id, episode?.quiz_config?.style_catalog_revision, previewQuestion, resolved],
   );
 
   const commitPendingPreview = useCallback(

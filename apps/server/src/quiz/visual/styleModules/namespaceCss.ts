@@ -8,10 +8,30 @@ export function renderValidatedModuleCss(module: SlotScopedStyleModule): string 
   const isBuiltIn = BUILT_IN_STYLE_MODULES.some((candidate) => candidate === module);
 
   if (!isBuiltIn) {
+    validateCssAtRules(css, manifest.namespace, manifest.id);
     validateCssSelectors(css, manifest.namespace);
     validateNamespacedKeyframes(css, manifest.namespace, manifest.id);
   }
   return css;
+}
+
+function validateCssAtRules(css: string, namespace: string, moduleId: string): void {
+  // These at-rules can introduce document-global state and bypass the module
+  // selector boundary. Keep portable modules self-contained.
+  const globalRule = stripCssComments(css).match(/@(import|font-face|property|namespace|charset)\b/i);
+  if (globalRule) {
+    throw new Error(`Style module CSS cannot declare global @${globalRule[1]} (${moduleId})`);
+  }
+  walkCssBlocks(css, (prelude) => {
+    const normalized = stripCssComments(prelude).trim();
+    const keyframes = normalized.match(/^@(?:-webkit-)?keyframes\s+([^\s{]+)/i);
+    if (keyframes) {
+      const name = keyframes[1];
+      if (name !== namespace && !name.startsWith(`${namespace}-`) && !name.startsWith(`${namespace}__`)) {
+        throw new Error(`Style module CSS keyframes must be scoped beneath .${namespace}: ${name} (${moduleId})`);
+      }
+    }
+  });
 }
 
 type CssBlockVisitor = (prelude: string) => void;

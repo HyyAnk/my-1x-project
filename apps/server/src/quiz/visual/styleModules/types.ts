@@ -8,6 +8,7 @@ import type { StyleModuleManifest } from "./manifestSchema.js";
 
 export interface StyleModuleRenderer<TContext> {
   renderHtml(context: TContext): string;
+  renderTemplate?: string;
   renderCss(): string;
 }
 

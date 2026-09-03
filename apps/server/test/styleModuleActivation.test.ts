@@ -5,6 +5,7 @@ import path from "node:path";
 import { StyleActivationManager, styleActivationManager } from "../src/quiz/visual/styleModules/activation.js";
 import type { SlotScopedStyleModule } from "../src/quiz/visual/styleModules/types.js";
 import { resolveQuizSceneElementStyles } from "../src/quiz/render/scene/quizSceneStyles.js";
+import { getThinkingBarsCss } from "../src/quiz/visual/elements/thinkingBar/registry.js";
 
 function module(id: string, css = ".fixture-thinking-bar__root { color: red; }"): SlotScopedStyleModule {
   const namespace = `fixture-${id.split(".").at(-1)}-thinking-bar`;
@@ -97,5 +98,27 @@ describe("style activation", () => {
     styleActivationManager.stageAndActivate(custom);
     const resolved = resolveQuizSceneElementStyles({ thinkingBar: custom.manifest.id as never });
     expect(resolved.thinkingBar).toBe(custom.manifest.id);
+  });
+
+  it("keeps CSS aggregation pinned to the requested catalog revision", () => {
+    const first = styleActivationManager.stageAndActivate(module("fixture.thinking-bar.css-pin", ".fixture-thinking-bar__root { color: red; }"));
+    const second = styleActivationManager.stageAndActivate(module("fixture.thinking-bar.css-pin", ".fixture-thinking-bar__root { color: blue; }"));
+    expect(getThinkingBarsCss(first.revision)).toContain("color: red");
+    expect(getThinkingBarsCss(first.revision)).not.toContain("color: blue");
+    expect(getThinkingBarsCss(second.revision)).toContain("color: blue");
+  });
+
+  it("does not fall back to active custom CSS for an unknown historical revision", () => {
+    const active = styleActivationManager.stageAndActivate(module("fixture.thinking-bar.missing-revision", ".fixture-thinking-bar__root { color: purple; }"));
+    expect(getThinkingBarsCss("catalog-does-not-exist")).not.toContain("color: purple");
+    expect(active.revision).not.toBe("catalog-does-not-exist");
+  });
+
+  it("propagates renderer failures instead of hashing an empty HTML value", () => {
+    const broken = module("fixture.thinking-bar.renderer-error");
+    broken.renderer.renderHtml = () => {
+      throw new Error("context unavailable");
+    };
+    expect(() => new StyleActivationManager().stageAndActivate(broken)).toThrow(/context unavailable|renderer/i);
   });
 });

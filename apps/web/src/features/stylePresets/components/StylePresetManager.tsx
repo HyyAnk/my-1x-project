@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { BUILT_IN_PRESETS, type CreateStylePresetInput, type StylePreset } from "@studio/shared";
 import { useStylePresets } from "../hooks/useStylePresets";
 import { StylePresetEditor } from "./StylePresetEditor";
+import { StyleModuleImportDialog } from "./StyleModuleImportDialog";
+import { api } from "../../../api";
 
 const defaultValues: CreateStylePresetInput = {
   name: "New Preset",
@@ -26,6 +28,9 @@ export function StylePresetManager() {
   const [editing, setEditing] = useState<StylePreset | null>(null);
   const [creating, setCreating] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
   const builtIns = useMemo(() => BUILT_IN_PRESETS.length, []);
   const styleOptions = useMemo(() => {
     const entries = state.catalog?.entries ?? [];
@@ -56,6 +61,16 @@ export function StylePresetManager() {
           disabled={state.mutation !== null}
         >
           New preset
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setImportError(null);
+            setImportOpen(true);
+          }}
+          disabled={state.mutation !== null}
+        >
+          Import style
         </button>
       </header>
       {state.loading ? <p>Loading</p> : null}
@@ -125,6 +140,26 @@ export function StylePresetManager() {
           }}
         />
       ) : null}
+      <StyleModuleImportDialog
+        open={importOpen}
+        pending={importing}
+        error={importError ?? state.error}
+        onCancel={() => setImportOpen(false)}
+        onImport={async (data, activate) => {
+          setImporting(true);
+          setImportError(null);
+          try {
+            await api.importStyleModule(data, activate);
+            setStatus(activate ? "Style imported and activated" : "Style imported as draft");
+            setImportOpen(false);
+            await state.refresh();
+          } catch (cause) {
+            setImportError(cause instanceof Error ? cause.message : "Style import failed");
+          } finally {
+            setImporting(false);
+          }
+        }}
+      />
     </section>
   );
 }

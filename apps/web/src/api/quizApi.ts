@@ -18,6 +18,11 @@ import { request, type QuizV2State } from "./client";
 export const quizApi = {
   stylePresets: () => request<{ presets: StylePreset[] }>("/api/style-presets"),
   styleCatalog: () => request<StyleCatalogSnapshot>("/api/style-catalog"),
+  importStyleModule: (data: string, activate = true) =>
+    request<{ module: unknown; state: string; revision?: string }>("/api/style-modules/import", {
+      method: "POST",
+      body: JSON.stringify({ data, activate }),
+    }),
   createStylePreset: (body: CreateStylePresetInput) =>
     request<{ preset: StylePreset }>("/api/style-presets", { method: "POST", body: JSON.stringify(body) }),
   updateStylePreset: (id: string, body: UpdateStylePresetInput) =>

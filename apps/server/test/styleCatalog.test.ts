@@ -218,6 +218,26 @@ describe("runtime visual style catalog", () => {
     expect(() => renderValidatedModuleCss(fixture)).not.toThrow();
   });
 
+  it("rejects global CSS at-rules in imported modules", () => {
+    const fixture: SlotScopedStyleModule = {
+      manifest: {
+        id: "fixture.thinking-bar.at-rule",
+        slot: "thinking-bar",
+        version: "1.0.0",
+        displayName: "At Rule Timer",
+        description: "A test-only timer module",
+        namespace: "fixture-thinking-bar-at-rule",
+        assetPaths: [],
+        cssSelectors: [".fixture-thinking-bar-at-rule__root"],
+      },
+      renderer: {
+        renderHtml: () => '<div class="fixture-thinking-bar-at-rule__root"></div>',
+        renderCss: () => "@font-face { font-family: Unsafe; src: url(x); } .fixture-thinking-bar-at-rule__root { color: red; }",
+      },
+    };
+    expect(() => renderValidatedModuleCss(fixture)).toThrow(/global @font-face/i);
+  });
+
   it("keeps built-in legacy CSS renderable while validating its module manifest", () => {
     const glossyArcade = BUILT_IN_STYLE_MODULES.find((module) => module.manifest.id === "glossy_arcade");
     const candyRays = BUILT_IN_STYLE_MODULES.find((module) => module.manifest.id === "candy_rays");

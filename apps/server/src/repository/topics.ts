@@ -186,6 +186,11 @@ export async function updateEpisodeSettings(
     nextQuizConfig.background_style !== episode.quiz_config.background_style ||
     nextQuizConfig.palette_id !== episode.quiz_config.palette_id ||
     nextQuizConfig.style_preset_id !== episode.quiz_config.style_preset_id;
+  if (renderStyleSettingsChanged) {
+    // A manual style choice opts the episode into the current catalog. The
+    // previous pinned revision may not contain an imported style ID.
+    nextQuizConfig.style_catalog_revision = undefined;
+  }
   const targetDurationMinutes = input.target_duration_minutes ?? estimateQuizTargetDurationMinutes(nextQuizConfig.question_count);
   const targetWordCount = estimateQuizTargetWordCount(targetDurationMinutes, episode.measured_narration_words_per_second ?? wordsPerSecond);
   const next = EpisodeSchema.parse({

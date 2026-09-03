@@ -20,6 +20,7 @@ export function renderStableQuizSceneParts(parts: QuizSceneParts) {
     questionNumber: parts.question.number,
     paletteAccent: parts.question.paletteAccent,
     highlightedHtml: parts.question.highlightedHtml,
+    visualOpportunity: parts.question.visualOpportunity,
   });
   const counterBadgeHtml = resolveCounterBadgeVariant(parts.counter.style, undefined, parts.styleCatalogRevision).renderHtml({
     questionNumber: parts.counter.questionNumber,
@@ -63,6 +64,7 @@ export function renderQuizSceneBackground(
   return resolveBackgroundVariant(parts.background.style, parts.styleCatalogRevision).renderHtml({
     surface,
     questionIndex: parts.background.questionIndex,
+    palette: parts.background.palette,
     ...context,
   });
 }

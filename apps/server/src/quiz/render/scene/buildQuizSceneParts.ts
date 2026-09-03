@@ -6,6 +6,7 @@ export type QuizSceneParts = {
   styleCatalogRevision?: string;
   question: {
     text: string;
+    visualOpportunity: string;
     highlightedHtml: string;
     layout: ReturnType<typeof textLayout>;
     number: number;
@@ -47,6 +48,7 @@ export type QuizSceneParts = {
   background: {
     style: QuizSceneRenderModel["styles"]["background"];
     questionIndex: number;
+    palette: QuizSceneRenderModel["palette"];
   };
 };
 
@@ -59,6 +61,7 @@ export function buildQuizSceneParts(model: QuizSceneRenderModel): QuizSceneParts
     styleCatalogRevision: model.styleCatalogRevision,
     question: {
       text: model.question.text,
+      visualOpportunity: model.question.visualOpportunity,
       highlightedHtml: highlightQuestionMarkup(model.question.text, model.question.visualOpportunity),
       layout: questionLayout,
       number: model.question.number,
@@ -100,6 +103,7 @@ export function buildQuizSceneParts(model: QuizSceneRenderModel): QuizSceneParts
     background: {
       style: model.styles.background,
       questionIndex: model.question.number - 1,
+      palette: model.palette,
     },
   };
 }

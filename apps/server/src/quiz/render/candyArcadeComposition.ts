@@ -180,7 +180,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
       ].join("\n");
 
   return {
-    html: `<!doctype html><html><head><meta charset="utf-8"><title>Candy Arcade Quiz</title>${mascotPreloads ? `\n${mascotPreloads}` : ""}<style>${candyArcadeCss({ aspectRatio, backgroundStyles: usedBackgroundStyles })}</style></head><body><main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="${canvas.width}" data-height="${canvas.height}" data-aspect-ratio="${aspectRatio}" data-duration="${duration.toFixed(3)}" data-fps="30">${scenes.map(subCompositionMount).join("\n")}\n${audioTags}</main><script>${candyArcadeFontReadinessScript()}</script></body></html>`,
+    html: `<!doctype html><html><head><meta charset="utf-8"><title>Candy Arcade Quiz</title>${mascotPreloads ? `\n${mascotPreloads}` : ""}<style>${candyArcadeCss({ aspectRatio, backgroundStyles: usedBackgroundStyles, styleCatalogRevision: input.styleContext.styleCatalogRevision ?? undefined })}</style></head><body><main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="${canvas.width}" data-height="${canvas.height}" data-aspect-ratio="${aspectRatio}" data-duration="${duration.toFixed(3)}" data-fps="30">${scenes.map(subCompositionMount).join("\n")}\n${audioTags}</main><script>${candyArcadeFontReadinessScript()}</script></body></html>`,
     files: Object.fromEntries(scenes.map((scene) => [`compositions/${scene.id}.html`, scene.html])),
   };
 }
