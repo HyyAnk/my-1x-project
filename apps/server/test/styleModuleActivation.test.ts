@@ -1,8 +1,13 @@
 import { describe, expect, it } from "vitest";
+import { mkdtempSync, rmSync } from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { StyleActivationManager } from "../src/quiz/visual/styleModules/activation.js";
 import type { SlotScopedStyleModule } from "../src/quiz/visual/styleModules/types.js";
 
 function module(id: string, css = ".fixture-thinking-bar__root { color: red; }"): SlotScopedStyleModule {
+  const namespace = `fixture-${id.split(".").at(-1)}-thinking-bar`;
+  const scopedCss = css.replaceAll(".fixture-thinking-bar", `.${namespace}`);
   return {
     manifest: {
       id,
@@ -10,11 +15,11 @@ function module(id: string, css = ".fixture-thinking-bar__root { color: red; }")
       version: "1.0.0",
       displayName: id,
       description: "Fixture module",
-      namespace: "fixture-thinking-bar",
+      namespace,
       assetPaths: [],
-      cssSelectors: [".fixture-thinking-bar__root"],
+      cssSelectors: [`.${namespace}__root`],
     },
-    renderer: { renderHtml: () => '<div class="fixture-thinking-bar__root"></div>', renderCss: () => css },
+    renderer: { renderHtml: () => `<div class="${namespace}__root"></div>`, renderCss: () => scopedCss },
   };
 }
 
@@ -43,5 +48,40 @@ describe("style activation", () => {
     const restored = manager.stageAndActivate(module("fixture.thinking-bar.restore", ".fixture-thinking-bar__root { color: red; }"));
     expect(restored.revision).toBe(first.revision);
     expect(manager.getActiveSnapshot().revision).toBe(first.revision);
+  });
+
+  it("persists active modules and historical revisions across manager restarts", () => {
+    const directory = mkdtempSync(path.join(os.tmpdir(), "style-manager-"));
+    const statePath = path.join(directory, "state.json");
+    try {
+      const firstManager = new StyleActivationManager(false, statePath);
+      const first = firstManager.stageAndActivate(module("fixture.thinking-bar.persist", ".fixture-thinking-bar__root { color: red; }"));
+      firstManager.stageAndActivate(module("fixture.thinking-bar.persist", ".fixture-thinking-bar__root { color: blue; }"));
+
+      const restarted = new StyleActivationManager(false, statePath);
+      expect(restarted.resolveModule("thinking-bar", "fixture.thinking-bar.persist")?.renderer.renderCss()).toContain("blue");
+      expect(restarted.resolveModule("thinking-bar", "fixture.thinking-bar.persist", first.revision)?.renderer.renderCss()).toContain("red");
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
+  it("stages a validated draft without activating it", () => {
+    const manager = new StyleActivationManager();
+    const before = manager.getActiveSnapshot().revision;
+    const draft = manager.stageDraft(module("fixture.thinking-bar.staged"));
+    expect(draft.state).toBe("validated");
+    expect(manager.getActiveSnapshot().revision).toBe(before);
+    expect(() => manager.activateDraft("thinking-bar", "fixture.thinking-bar.staged")).not.toThrow();
+  });
+
+  it("changes revision when HTML or assets change", () => {
+    const manager = new StyleActivationManager();
+    const base = manager.stageAndActivate(module("fixture.thinking-bar.payload"));
+    const htmlChanged = manager.stageAndActivate({
+      ...module("fixture.thinking-bar.payload"),
+      renderer: { renderHtml: () => '<div class="fixture-payload-thinking-bar__root">changed</div>', renderCss: () => ".fixture-payload-thinking-bar__root { color: red; }" },
+    });
+    expect(htmlChanged.revision).not.toBe(base.revision);
   });
 });

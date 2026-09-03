@@ -23,6 +23,7 @@ export function buildQuizSceneRenderModel(input: BuildQuizSceneRenderModelInput)
     assets: { hero: input.hero },
     palette: input.palette,
     styles: input.styles,
+    styleCatalogRevision: input.styleCatalogRevision,
     visual: input.visual,
     channelBrandName: input.channelBrandName?.trim() || null,
     brandVisible: input.brandVisible,

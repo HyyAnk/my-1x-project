@@ -2,6 +2,7 @@ import type { QuizThinkingBarStyle } from "@studio/shared";
 import type { ThinkingBarVariant } from "./types.js";
 import { BUILT_IN_THINKING_BAR_MODULES } from "../../styleModules/builtins.js";
 import { renderValidatedModuleCss } from "../../styleModules/namespaceCss.js";
+import { getActiveStyleSnapshot, getStyleModuleAtRevision } from "../../styleModules/activation.js";
 
 export const THINKING_BAR_VARIANTS: Record<Exclude<QuizThinkingBarStyle, "auto">, ThinkingBarVariant> = {
   star_slider: BUILT_IN_THINKING_BAR_MODULES[0].renderer,
@@ -21,13 +22,21 @@ export function getThinkingBarVariant(style: Exclude<QuizThinkingBarStyle, "auto
 export function resolveThinkingBarVariant(
   requested?: QuizThinkingBarStyle | null,
   fallback: Exclude<QuizThinkingBarStyle, "auto"> = DEFAULT_THINKING_BAR_STYLE,
+  revision?: string,
 ): ThinkingBarVariant {
   if (!requested || requested === "auto") {
     return THINKING_BAR_VARIANTS[fallback] ?? THINKING_BAR_VARIANTS[DEFAULT_THINKING_BAR_STYLE];
   }
-  return THINKING_BAR_VARIANTS[requested] ?? THINKING_BAR_VARIANTS[fallback] ?? THINKING_BAR_VARIANTS[DEFAULT_THINKING_BAR_STYLE];
+  return (getStyleModuleAtRevision("thinking-bar", requested, revision)?.renderer as ThinkingBarVariant | undefined) ?? THINKING_BAR_VARIANTS[requested] ?? THINKING_BAR_VARIANTS[fallback] ?? THINKING_BAR_VARIANTS[DEFAULT_THINKING_BAR_STYLE];
 }
 
 export function getThinkingBarsCss(): string {
-  return BUILT_IN_THINKING_BAR_MODULES.map(renderValidatedModuleCss).filter(Boolean).join("\n");
+  const builtIn = BUILT_IN_THINKING_BAR_MODULES.map(renderValidatedModuleCss).filter(Boolean);
+  const revision = getActiveStyleSnapshot().revision;
+  const custom = getActiveStyleSnapshot().catalog.entries
+    .filter((entry) => entry.slot === "thinking-bar" && !BUILT_IN_THINKING_BAR_MODULES.some((module) => module.manifest.id === entry.id))
+    .map((entry) => getStyleModuleAtRevision("thinking-bar", entry.id, revision))
+    .filter((module): module is NonNullable<typeof module> => Boolean(module))
+    .map(renderValidatedModuleCss);
+  return [...builtIn, ...custom].join("\n");
 }

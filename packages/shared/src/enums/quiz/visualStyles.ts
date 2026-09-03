@@ -16,7 +16,7 @@ export const QUIZ_IMAGE_STYLE_LABELS: Record<QuizImageStyle, string> = {
 export const QuizVisualThemeSchema = z.enum(["candy_arcade", "candy_pop", "space_lab", "jungle_jamboree", "ocean_explorer"]);
 export type QuizVisualTheme = z.infer<typeof QuizVisualThemeSchema>;
 
-export const QuizThinkingBarStyleSchema = z.enum([
+const thinkingBarBuiltInSchema = z.enum([
   "auto",
   "star_slider",
   "capsule_liquid",
@@ -25,6 +25,7 @@ export const QuizThinkingBarStyleSchema = z.enum([
   "flame_fuse",
   "cosmic_rocket",
 ]);
+export const QuizThinkingBarStyleSchema = z.union([thinkingBarBuiltInSchema, z.string().regex(/^[a-z][a-z0-9-]*\.thinking-bar\.[a-z][a-z0-9-]*$/)]);
 export type QuizThinkingBarStyle = z.infer<typeof QuizThinkingBarStyleSchema>;
 export type QuizThinkingBarStyleId = Exclude<QuizThinkingBarStyle, "auto">;
 
@@ -56,7 +57,8 @@ export const THINKING_BAR_STYLE_DESCRIPTIONS: Record<Exclude<QuizThinkingBarStyl
   cosmic_rocket: "Retro-futuristic 3D space rocket boosting with fiery exhaust through a cosmic nebula warp highway.",
 };
 
-export const QuizQuestionCounterStyleSchema = z.enum(["auto", "hanging_woodsign", "neon_badge", "floating_balloon", "golden_shield"]);
+const counterBuiltInSchema = z.enum(["auto", "hanging_woodsign", "neon_badge", "floating_balloon", "golden_shield"]);
+export const QuizQuestionCounterStyleSchema = z.union([counterBuiltInSchema, z.string().regex(/^[a-z][a-z0-9-]*\.counter\.[a-z][a-z0-9-]*$/)]);
 export type QuizQuestionCounterStyle = z.infer<typeof QuizQuestionCounterStyleSchema>;
 export type QuizQuestionCounterStyleId = Exclude<QuizQuestionCounterStyle, "auto">;
 
@@ -81,7 +83,8 @@ export const QUESTION_COUNTER_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionCou
   golden_shield: "Arcade metallic gold shield with glistening highlight.",
 };
 
-export const QuizQuestionBoxStyleSchema = z.enum(["auto", "candy_pop", "comic_bubble", "glass_morphism", "parchment_scroll"]);
+const questionBoxBuiltInSchema = z.enum(["auto", "candy_pop", "comic_bubble", "glass_morphism", "parchment_scroll"]);
+export const QuizQuestionBoxStyleSchema = z.union([questionBoxBuiltInSchema, z.string().regex(/^[a-z][a-z0-9-]*\.question-box\.[a-z][a-z0-9-]*$/)]);
 export type QuizQuestionBoxStyle = z.infer<typeof QuizQuestionBoxStyleSchema>;
 export type QuizQuestionBoxStyleId = Exclude<QuizQuestionBoxStyle, "auto">;
 
@@ -101,7 +104,8 @@ export const QUESTION_BOX_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionBoxStyl
   parchment_scroll: "Classic rolled parchment banner with ancient adventurous aesthetics.",
 };
 
-export const QuizAnswerCardStyleSchema = z.enum(["auto", "glossy_arcade", "comic_chunky", "glass_neon", "minimal_soft"]);
+const answerCardBuiltInSchema = z.enum(["auto", "glossy_arcade", "comic_chunky", "glass_neon", "minimal_soft"]);
+export const QuizAnswerCardStyleSchema = z.union([answerCardBuiltInSchema, z.string().regex(/^[a-z][a-z0-9-]*\.answer-card\.[a-z][a-z0-9-]*$/)]);
 export type QuizAnswerCardStyle = z.infer<typeof QuizAnswerCardStyleSchema>;
 export type QuizAnswerCardStyleId = Exclude<QuizAnswerCardStyle, "auto">;
 
@@ -121,7 +125,8 @@ export const ANSWER_CARD_STYLE_DESCRIPTIONS: Record<Exclude<QuizAnswerCardStyle,
   minimal_soft: "Ultra-clean modern card with subtle shadows, rounded pill badge & soft elegance.",
 };
 
-export const QuizBackgroundStyleSchema = z.enum(["auto", "candy_rays", "aurora_glow"]);
+const backgroundBuiltInSchema = z.enum(["auto", "candy_rays", "aurora_glow"]);
+export const QuizBackgroundStyleSchema = z.union([backgroundBuiltInSchema, z.string().regex(/^[a-z][a-z0-9-]*\.background\.[a-z][a-z0-9-]*$/)]);
 export type QuizBackgroundStyle = z.infer<typeof QuizBackgroundStyleSchema>;
 export type QuizBackgroundStyleId = Exclude<QuizBackgroundStyle, "auto">;
 

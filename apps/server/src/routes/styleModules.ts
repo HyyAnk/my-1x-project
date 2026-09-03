@@ -56,11 +56,13 @@ export function registerStyleModulesRoutes(deps?: { repository: RepositoryServic
         const zip = Buffer.from(body.data.replace(/^data:.*?;base64,/i, ""), "base64");
         const existingIds = styleActivationManager.getActiveSnapshot().catalog.entries.map((entry) => entry.id);
         const module = importStyleModulePackage(zip, { existingIds, allowRevision: body.allow_revision });
-        const snapshot = body.activate === false ? undefined : styleActivationManager.stageAndActivate(module);
+        const staged = body.activate === false ? styleActivationManager.stageDraft(module) : undefined;
+        const snapshot = staged ? undefined : styleActivationManager.stageAndActivate(module);
+        if (snapshot && deps?.repository) await invalidateStyleArtifacts(deps.repository);
         return reply.code(201).send({
           module: module.manifest,
-          state: snapshot ? "active" : "validated",
-          revision: snapshot?.revision ?? module.manifest.version,
+          state: snapshot ? "active" : staged?.state,
+          revision: snapshot?.revision ?? staged?.revision,
           catalog: snapshot?.catalog,
         });
       } catch (error) {
@@ -69,7 +71,12 @@ export function registerStyleModulesRoutes(deps?: { repository: RepositoryServic
     });
     server.post("/api/style-modules/activate", async (request, reply) => {
       try {
-        const body = request.body as { module?: SlotScopedStyleModule; data?: string };
+        const body = request.body as { module?: SlotScopedStyleModule; data?: string; slot?: StyleSlot; styleId?: string };
+        if (!body.module && !body.data && body.slot && body.styleId) {
+          const snapshot = styleActivationManager.activateDraft(body.slot, body.styleId);
+          if (deps?.repository) await invalidateStyleArtifacts(deps.repository);
+          return reply.send({ state: "active", revision: snapshot.revision, catalog: snapshot.catalog });
+        }
         const module = body.data
           ? importStyleModulePackage(Buffer.from(body.data.replace(/^data:.*?;base64,/i, ""), "base64"), {
               existingIds: styleActivationManager.getActiveSnapshot().catalog.entries.map((entry) => entry.id),
@@ -78,6 +85,7 @@ export function registerStyleModulesRoutes(deps?: { repository: RepositoryServic
           : body.module;
         if (!module) return reply.code(400).send({ error: "Missing style module" });
         const snapshot = styleActivationManager.stageAndActivate(module);
+        if (deps?.repository) await invalidateStyleArtifacts(deps.repository);
         return reply.send({ state: "active", revision: snapshot.revision, catalog: snapshot.catalog });
       } catch (error) {
         return reply.code(400).send({ error: error instanceof Error ? error.message : "Style activation failed" });
@@ -85,4 +93,14 @@ export function registerStyleModulesRoutes(deps?: { repository: RepositoryServic
     });
     done();
   };
+}
+
+async function invalidateStyleArtifacts(repository: RepositoryService): Promise<void> {
+  const channels = await repository.listChannels(true);
+  for (const channel of channels) {
+    const episodes = await repository.listEpisodes(channel.channel_id);
+    for (const episode of episodes) {
+      await repository.invalidateQuizArtifacts(channel.channel_id, episode.episode_id, ["style"]);
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { exportStyleModulePackage, exportStylePresetPackage, importStyleModulePackage, importStylePresetPackage } from "../src/quiz/visual/styleModules/exportPackage.js";
+import { createZipArchive } from "../src/quiz/zipHelper.js";
 import type { SlotScopedStyleModule } from "../src/quiz/visual/styleModules/types.js";
 
 const fixture = (assetPaths: string[] = []): SlotScopedStyleModule => ({
@@ -56,5 +57,22 @@ describe("style module packages", () => {
     const imported = importStylePresetPackage(exported.zipBuffer);
     expect(imported).toMatchObject({ name: "Fixture Preset", thinking_bar_style: "energy_laser" });
     expect(imported).not.toHaveProperty("revision");
+  });
+
+  it("rejects duplicate and unsafe preset package entries", () => {
+    const packageJson = JSON.stringify({ packageVersion: 1, kind: "preset" });
+    const presetJson = JSON.stringify({ name: "Fixture", palette_id: "aqua", theme: "candy_arcade", thinking_bar_style: "energy_laser", question_box_style: "glass_morphism", answer_card_style: "glass_neon", counter_style: "neon_badge", background_style: "aurora_glow" });
+    const duplicate = createZipArchive([
+      { filename: "package.json", data: Buffer.from(packageJson) },
+      { filename: "preset.json", data: Buffer.from(presetJson) },
+      { filename: "preset.json", data: Buffer.from(presetJson) },
+    ]);
+    expect(() => importStylePresetPackage(duplicate)).toThrow(/Duplicate/);
+
+    const unsafe = createZipArchive([
+      { filename: "package.json", data: Buffer.from(packageJson) },
+      { filename: "../preset.json", data: Buffer.from(presetJson) },
+    ]);
+    expect(() => importStylePresetPackage(unsafe)).toThrow(/Unsafe/);
   });
 });

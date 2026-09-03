@@ -25,10 +25,13 @@ function toCatalogEntry(module: SlotScopedStyleModule): StyleCatalogEntry {
 export function createStyleCatalog(modules: readonly SlotScopedStyleModule[]): StyleCatalog {
   const entries = Object.freeze(modules.map(toCatalogEntry).map((entry) => Object.freeze(entry)));
   const keys = new Set<string>();
+  const namespaces = new Set<string>();
   for (const entry of entries) {
     const key = `${entry.slot}:${entry.id}`;
     if (keys.has(key)) throw new Error(`Duplicate style catalog entry: ${key}`);
     keys.add(key);
+    if (namespaces.has(entry.namespace)) throw new Error(`Duplicate style namespace: ${entry.namespace}`);
+    namespaces.add(entry.namespace);
   }
   const snapshot: StyleCatalogSnapshot = {
     revision: createCatalogRevision(modules),
@@ -49,9 +52,24 @@ function createCatalogRevision(modules: readonly SlotScopedStyleModule[]): strin
   const content = modules.map((module) => ({
     manifest: module.manifest,
     css: module.renderer.renderCss(),
+    html: renderModuleHtml(module),
+    assets: Object.fromEntries(
+      Object.entries((module as SlotScopedStyleModule & { assets?: Record<string, Uint8Array> }).assets ?? {})
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([assetPath, data]) => [assetPath, Buffer.from(data).toString("base64")]),
+    ),
   }));
   const digest = createHash("sha256").update(JSON.stringify(content)).digest("hex").slice(0, 16);
   return `catalog-${digest}`;
+}
+
+function renderModuleHtml(module: SlotScopedStyleModule): string {
+  const renderer = module.renderer as unknown as { renderHtml?: (context: never) => string };
+  try {
+    return renderer.renderHtml ? renderer.renderHtml({} as never) : "";
+  } catch {
+    return "";
+  }
 }
 
 const builtInCatalog = createStyleCatalog(BUILT_IN_STYLE_MODULES);

@@ -14,14 +14,14 @@ import type { QuizSceneTiming } from "./quizScene.types.js";
 import type { BackgroundRenderContext } from "../../visual/elements/background/types.js";
 
 export function renderStableQuizSceneParts(parts: QuizSceneParts) {
-  const questionBoxHtml = resolveQuestionBoxVariant(parts.question.style).renderHtml({
+  const questionBoxHtml = resolveQuestionBoxVariant(parts.question.style, undefined, parts.styleCatalogRevision).renderHtml({
     question: parts.question.text,
     tier: parts.question.layout.tier,
     questionNumber: parts.question.number,
     paletteAccent: parts.question.paletteAccent,
     highlightedHtml: parts.question.highlightedHtml,
   });
-  const counterBadgeHtml = resolveCounterBadgeVariant(parts.counter.style).renderHtml({
+  const counterBadgeHtml = resolveCounterBadgeVariant(parts.counter.style, undefined, parts.styleCatalogRevision).renderHtml({
     questionNumber: parts.counter.questionNumber,
     totalQuestions: parts.counter.totalQuestions,
     paletteAccent: parts.counter.paletteAccent,
@@ -36,7 +36,7 @@ export function renderStableQuizSceneParts(parts: QuizSceneParts) {
 }
 
 export function renderQuizSceneThinkingPart(parts: QuizSceneParts, timing: QuizSceneTiming): string {
-  return resolveThinkingBarVariant(parts.phase.thinkingStyle).renderHtml({
+  return resolveThinkingBarVariant(parts.phase.thinkingStyle, undefined, parts.styleCatalogRevision).renderHtml({
     clipStart: timing.start,
     questionNarrationStart: timing.questionNarrationStart,
     revealStart: timing.revealStart,
@@ -51,7 +51,7 @@ export function renderQuizSceneChoicePart(parts: QuizSceneParts, options: { reve
   return renderChoiceGroup({
     ...parts.choices,
     revealMode: options.revealMode,
-    skin: resolveAnswerCardSkin(parts.choices.style),
+    skin: resolveAnswerCardSkin(parts.choices.style, parts.styleCatalogRevision),
   });
 }
 
@@ -60,7 +60,7 @@ export function renderQuizSceneBackground(
   surface: "production" | "sandbox",
   context?: Partial<BackgroundRenderContext>,
 ): string {
-  return resolveBackgroundVariant(parts.background.style).renderHtml({
+  return resolveBackgroundVariant(parts.background.style, parts.styleCatalogRevision).renderHtml({
     surface,
     questionIndex: parts.background.questionIndex,
     ...context,

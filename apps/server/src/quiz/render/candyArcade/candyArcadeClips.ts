@@ -194,6 +194,7 @@ export function questionClip(input: {
   backgroundStyle?: QuizBackgroundStyle | null;
   aspectRatio?: MascotRenderAspectRatio;
   channelBrandName?: string | null;
+  styleCatalogRevision?: string;
 }): string {
   const { question, visual } = input;
   const timing: QuizSceneTiming = {
@@ -237,6 +238,7 @@ export function questionClip(input: {
       counter: input.counterStyle,
       background: input.backgroundStyle,
     },
+    styleCatalogRevision: input.styleCatalogRevision,
     channelBrandName: input.channelBrandName,
     brandVisible: Boolean(mascotHtml),
     isFinal: input.isFinal,

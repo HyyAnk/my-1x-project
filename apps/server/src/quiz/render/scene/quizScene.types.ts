@@ -95,6 +95,7 @@ export type QuizSceneRenderModel = {
   assets: { hero: QuizSceneMedia };
   palette: QuizPalette;
   styles: QuizSceneElementStyles;
+  styleCatalogRevision?: string;
   visual: Pick<QuizTemplateScene, "motionId" | "transitionId">;
   channelBrandName: string | null;
   brandVisible: boolean;
@@ -112,6 +113,7 @@ export type BuildQuizSceneRenderModelInput = {
   choiceMedia: Readonly<Record<string, QuizSceneMedia>>;
   palette: QuizPalette;
   styles: QuizSceneElementStyles;
+  styleCatalogRevision?: string;
   visual: Pick<QuizTemplateScene, "motionId" | "transitionId">;
   channelBrandName?: string | null;
   brandVisible: boolean;

@@ -29,23 +29,23 @@ export function isValidPalette(val: unknown): val is Exclude<QuizPaletteId, "aut
 }
 
 export function isValidThinkingBar(val: unknown): val is QuizThinkingBarStyleId {
-  return typeof val === "string" && val !== "auto" && ALL_THINKING_BAR_STYLES.includes(val as QuizThinkingBarStyle);
+  return typeof val === "string" && val !== "auto" && (ALL_THINKING_BAR_STYLES.includes(val as QuizThinkingBarStyle) || /^[a-z][a-z0-9-]*\.thinking-bar\.[a-z][a-z0-9-]*$/.test(val));
 }
 
 export function isValidQuestionBox(val: unknown): val is QuizQuestionBoxStyleId {
-  return typeof val === "string" && val !== "auto" && ALL_QUESTION_BOX_STYLES.includes(val as QuizQuestionBoxStyle);
+  return typeof val === "string" && val !== "auto" && (ALL_QUESTION_BOX_STYLES.includes(val as QuizQuestionBoxStyle) || /^[a-z][a-z0-9-]*\.question-box\.[a-z][a-z0-9-]*$/.test(val));
 }
 
 export function isValidAnswerCard(val: unknown): val is QuizAnswerCardStyleId {
-  return typeof val === "string" && val !== "auto" && ALL_ANSWER_CARD_STYLES.includes(val as QuizAnswerCardStyle);
+  return typeof val === "string" && val !== "auto" && (ALL_ANSWER_CARD_STYLES.includes(val as QuizAnswerCardStyle) || /^[a-z][a-z0-9-]*\.answer-card\.[a-z][a-z0-9-]*$/.test(val));
 }
 
 export function isValidCounter(val: unknown): val is QuizQuestionCounterStyleId {
-  return typeof val === "string" && val !== "auto" && ALL_QUESTION_COUNTER_STYLES.includes(val as QuizQuestionCounterStyle);
+  return typeof val === "string" && val !== "auto" && (ALL_QUESTION_COUNTER_STYLES.includes(val as QuizQuestionCounterStyle) || /^[a-z][a-z0-9-]*\.counter\.[a-z][a-z0-9-]*$/.test(val));
 }
 
 export function isValidBackground(val: unknown): val is QuizBackgroundStyleId {
-  return typeof val === "string" && val !== "auto" && ALL_BACKGROUND_STYLES.includes(val as QuizBackgroundStyle);
+  return typeof val === "string" && val !== "auto" && (ALL_BACKGROUND_STYLES.includes(val as QuizBackgroundStyle) || /^[a-z][a-z0-9-]*\.background\.[a-z][a-z0-9-]*$/.test(val));
 }
 
 export function resolvePaletteField(

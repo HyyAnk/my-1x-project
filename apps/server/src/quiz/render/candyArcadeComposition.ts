@@ -143,6 +143,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
           counterStyle: style.counterStyle,
           backgroundStyle: style.backgroundStyle,
           channelBrandName: style.channelBrandName,
+          styleCatalogRevision: input.styleContext.styleCatalogRevision ?? undefined,
         }),
       );
     if (transition)

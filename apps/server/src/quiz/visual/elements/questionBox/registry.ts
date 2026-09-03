@@ -2,6 +2,7 @@ import type { QuizQuestionBoxStyle } from "@studio/shared";
 import type { QuestionBoxVariant } from "./types.js";
 import { BUILT_IN_QUESTION_BOX_MODULES } from "../../styleModules/builtins.js";
 import { renderValidatedModuleCss } from "../../styleModules/namespaceCss.js";
+import { getActiveStyleSnapshot, getStyleModuleAtRevision } from "../../styleModules/activation.js";
 
 export const QUESTION_BOX_VARIANTS: Record<Exclude<QuizQuestionBoxStyle, "auto">, QuestionBoxVariant> = {
   candy_pop: BUILT_IN_QUESTION_BOX_MODULES[0].renderer,
@@ -19,13 +20,21 @@ export function getQuestionBoxVariant(style: Exclude<QuizQuestionBoxStyle, "auto
 export function resolveQuestionBoxVariant(
   requested?: QuizQuestionBoxStyle | null,
   fallback: Exclude<QuizQuestionBoxStyle, "auto"> = DEFAULT_QUESTION_BOX_STYLE,
+  revision?: string,
 ): QuestionBoxVariant {
   if (!requested || requested === "auto") {
     return QUESTION_BOX_VARIANTS[fallback] ?? QUESTION_BOX_VARIANTS[DEFAULT_QUESTION_BOX_STYLE];
   }
-  return QUESTION_BOX_VARIANTS[requested] ?? QUESTION_BOX_VARIANTS[fallback] ?? QUESTION_BOX_VARIANTS[DEFAULT_QUESTION_BOX_STYLE];
+  return (getStyleModuleAtRevision("question-box", requested, revision)?.renderer as QuestionBoxVariant | undefined) ?? QUESTION_BOX_VARIANTS[requested] ?? QUESTION_BOX_VARIANTS[fallback] ?? QUESTION_BOX_VARIANTS[DEFAULT_QUESTION_BOX_STYLE];
 }
 
 export function getQuestionBoxesCss(): string {
-  return BUILT_IN_QUESTION_BOX_MODULES.map(renderValidatedModuleCss).filter(Boolean).join("\n");
+  const builtIn = BUILT_IN_QUESTION_BOX_MODULES.map(renderValidatedModuleCss).filter(Boolean);
+  const snapshot = getActiveStyleSnapshot();
+  const custom = snapshot.catalog.entries
+    .filter((entry) => entry.slot === "question-box" && !BUILT_IN_QUESTION_BOX_MODULES.some((module) => module.manifest.id === entry.id))
+    .map((entry) => getStyleModuleAtRevision("question-box", entry.id, snapshot.revision))
+    .filter((module): module is NonNullable<typeof module> => Boolean(module))
+    .map(renderValidatedModuleCss);
+  return [...builtIn, ...custom].join("\n");
 }

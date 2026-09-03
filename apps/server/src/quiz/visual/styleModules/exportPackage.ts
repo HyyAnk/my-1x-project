@@ -31,7 +31,7 @@ export function exportStylePresetPackage(preset: StylePreset): { zipBuffer: Buff
 
 export function importStylePresetPackage(zipBuffer: Buffer): CreateStylePresetInput {
   const entries = parseZipArchive(zipBuffer);
-  const byName = new Map(entries.map((entry) => [entry.filename, entry.data]));
+  const byName = indexPackageEntries(entries);
   const packageData = byName.get("package.json");
   const presetData = byName.get("preset.json");
   if (!packageData || !presetData) throw new Error("Invalid style preset package: missing package.json or preset.json");
@@ -45,7 +45,7 @@ export function exportStyleModulePackage(module: SlotScopedStyleModule): { zipBu
   const files = [
     {
       filename: "package.json",
-      data: Buffer.from(JSON.stringify({ packageVersion: PACKAGE_VERSION, manifest, requiredAssets: manifest.assetPaths }, null, 2)),
+      data: Buffer.from(JSON.stringify({ packageVersion: PACKAGE_VERSION, kind: "module", manifest, requiredAssets: manifest.assetPaths }, null, 2)),
     },
     { filename: "manifest.json", data: Buffer.from(JSON.stringify(manifest, null, 2)) },
     { filename: "style.css", data: Buffer.from(renderValidatedModuleCss(module)) },
@@ -76,7 +76,7 @@ export function importStyleModulePackage(
   const manifestEntry = byName.get("manifest.json");
   if (!packageEntry || !manifestEntry) throw new Error("Invalid style module package: missing package.json or manifest.json");
   const parsedPackage = JSON.parse(Buffer.from(packageEntry).toString("utf8")) as PackageManifest;
-  if (parsedPackage.packageVersion !== PACKAGE_VERSION) throw new Error(`Unsupported style package version: ${String(parsedPackage.packageVersion)}`);
+  if (parsedPackage.packageVersion !== PACKAGE_VERSION || parsedPackage.kind !== "module") throw new Error(`Unsupported style module package`);
   const manifest = StyleModuleManifestSchema.parse(JSON.parse(Buffer.from(manifestEntry).toString("utf8")));
   const existingIds = new Set(options.existingIds ?? []);
   if (existingIds.has(manifest.id) && !options.allowRevision) throw new Error(`Duplicate style module ID: ${manifest.id}`);
@@ -119,9 +119,19 @@ function renderHtml(module: SlotScopedStyleModule): string {
 }
 
 function assertSafeEntry(entry: string): void {
-  if (!entry || entry.startsWith("/") || entry.includes("\\") || entry.split("/").includes("..") || !SAFE_ENTRY.test(entry)) {
+  if (!entry || entry.startsWith("/") || entry.includes("\\") || entry.split("/").some((segment) => !segment || segment === "." || segment === "..") || !SAFE_ENTRY.test(entry)) {
     throw new Error(`Unsafe package path: ${entry}`);
   }
+}
+
+function indexPackageEntries(entries: readonly { filename: string; data: Uint8Array }[]): Map<string, Uint8Array> {
+  const byName = new Map<string, Uint8Array>();
+  for (const entry of entries) {
+    assertSafeEntry(entry.filename);
+    if (byName.has(entry.filename)) throw new Error(`Duplicate package entry: ${entry.filename}`);
+    byName.set(entry.filename, entry.data);
+  }
+  return byName;
 }
 
 export { PACKAGE_VERSION as STYLE_MODULE_PACKAGE_VERSION };

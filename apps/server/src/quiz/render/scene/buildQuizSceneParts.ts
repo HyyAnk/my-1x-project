@@ -3,6 +3,7 @@ import { highlightQuestionMarkup } from "../candyArcade/candyArcadeSvg.js";
 import type { QuizSceneChoice, QuizSceneMedia, QuizSceneRenderModel } from "./quizScene.types.js";
 
 export type QuizSceneParts = {
+  styleCatalogRevision?: string;
   question: {
     text: string;
     highlightedHtml: string;
@@ -55,6 +56,7 @@ export function buildQuizSceneParts(model: QuizSceneRenderModel): QuizSceneParts
     layoutId: model.layout.id,
   });
   return {
+    styleCatalogRevision: model.styleCatalogRevision,
     question: {
       text: model.question.text,
       highlightedHtml: highlightQuestionMarkup(model.question.text, model.question.visualOpportunity),

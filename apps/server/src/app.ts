@@ -32,6 +32,7 @@ import { registerAnalyticsRoutes } from "./routes/analytics.js";
 import { registerVoicesRoutes } from "./routes/voices.js";
 import { registerStylePresetsRoutes } from "./routes/stylePresets.js";
 import { registerStyleModulesRoutes } from "./routes/styleModules.js";
+import { styleActivationManager } from "./quiz/visual/styleModules/activation.js";
 
 export type StudioApp = {
   server: FastifyInstance;
@@ -60,6 +61,7 @@ export async function buildApp(
   await logger.init();
   const repository = new RepositoryService(rootDirectory, configuredStorageRoot ?? rootDirectory);
   await repository.ensureBootstrap();
+  styleActivationManager.configurePersistence(repository.resolvePath("runtime", "style-modules", "state.json"));
   const state: AppState = {
     config: await loadConfig(rootDirectory),
     storageConfigured: Boolean(configuredStorageRoot),

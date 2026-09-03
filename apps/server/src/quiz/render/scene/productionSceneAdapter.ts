@@ -27,6 +27,7 @@ export type ProductionSceneAdapterInput = {
   aspectRatio: MascotRenderAspectRatio;
   mascot: QuizSceneMascotOccupancy;
   styles: Parameters<typeof resolveQuizSceneElementStyles>[0];
+  styleCatalogRevision?: string;
   channelBrandName?: string | null;
   brandVisible: boolean;
   isFinal: boolean;
@@ -59,6 +60,7 @@ export function adaptProductionQuizScene(input: ProductionSceneAdapterInput): Qu
     choiceMedia: productionChoiceMedia(input),
     palette: input.visual.palette,
     styles: resolveQuizSceneElementStyles(input.styles),
+    styleCatalogRevision: input.styleCatalogRevision,
     visual: input.visual,
     channelBrandName: input.channelBrandName,
     brandVisible: input.brandVisible,
