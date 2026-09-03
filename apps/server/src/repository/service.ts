@@ -21,6 +21,7 @@ import { quizArtifactBindings } from "./bindings/quizArtifactBindings.js";
 import { sceneBindings } from "./bindings/sceneBindings.js";
 import { mediaBindings } from "./bindings/mediaBindings.js";
 import { miscBindings } from "./bindings/miscBindings.js";
+import { listStylePresets, createStylePreset, updateStylePreset, deleteStylePreset } from "./stylePresets.js";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-unsafe-declaration-merging
 export interface RepositoryService extends RepositoryRuntime {}
@@ -144,4 +145,5 @@ Object.assign(
   sceneBindings,
   mediaBindings,
   miscBindings,
+  { listStylePresets, createStylePreset, updateStylePreset, deleteStylePreset },
 );

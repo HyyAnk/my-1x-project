@@ -12,9 +12,16 @@ import type {
   VideoDescriptionInput,
   VoicePlan,
 } from "@studio/shared";
+import type { CreateStylePresetInput, StylePreset, UpdateStylePresetInput } from "@studio/shared";
 import { request, type QuizV2State } from "./client";
 
 export const quizApi = {
+  stylePresets: () => request<{ presets: StylePreset[] }>("/api/style-presets"),
+  createStylePreset: (body: CreateStylePresetInput) =>
+    request<{ preset: StylePreset }>("/api/style-presets", { method: "POST", body: JSON.stringify(body) }),
+  updateStylePreset: (id: string, body: UpdateStylePresetInput) =>
+    request<{ preset: StylePreset }>(`/api/style-presets/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteStylePreset: (id: string) => request<{ ok: true }>(`/api/style-presets/${encodeURIComponent(id)}`, { method: "DELETE" }),
   quizV2: (channelId: string, episodeId: string) => request<QuizV2State>(`/api/channels/${channelId}/episodes/${episodeId}/quiz-v2`),
   quizHistoryCheck: (channelId: string, episodeId: string) =>
     request<{ history_check: QuestionHistoryCheckResult | null }>(`/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/history-check`),

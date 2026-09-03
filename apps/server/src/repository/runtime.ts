@@ -25,6 +25,7 @@ import type {
   VoiceProfile,
   UsageLedger,
 } from "@studio/shared";
+import type { CreateStylePresetInput, StylePreset, UpdateStylePresetInput } from "@studio/shared";
 import type { BundleImageAsset, BundleImageMeta, RepositoryRoots } from "./types.js";
 
 export type QuizArtifactFilename =
@@ -289,4 +290,10 @@ export interface RepositoryRuntime {
 
   // Git Info
   getGitInfo(): Promise<{ branch: string | null; dirty: boolean; changed_files: number }>;
+
+  // Dashboard-managed style presets
+  listStylePresets(): Promise<StylePreset[]>;
+  createStylePreset(input: CreateStylePresetInput): Promise<StylePreset>;
+  updateStylePreset(presetId: string, input: UpdateStylePresetInput): Promise<StylePreset>;
+  deleteStylePreset(presetId: string): Promise<void>;
 }

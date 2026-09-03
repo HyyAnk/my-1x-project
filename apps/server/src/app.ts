@@ -30,6 +30,7 @@ import { registerThumbnailsRoutes } from "./routes/thumbnails.js";
 import { registerVisualBibleRoutes } from "./routes/visualBible.js";
 import { registerAnalyticsRoutes } from "./routes/analytics.js";
 import { registerVoicesRoutes } from "./routes/voices.js";
+import { registerStylePresetsRoutes } from "./routes/stylePresets.js";
 
 export type StudioApp = {
   server: FastifyInstance;
@@ -151,6 +152,7 @@ export async function buildApp(
   await server.register(registerThumbnailsRoutes({ repository, state, antigravity }));
   await server.register(registerAnalyticsRoutes({ repository }));
   await server.register(registerEventsRoutes({ tasks, clients }));
+  await server.register(registerStylePresetsRoutes({ repository }));
 
   return {
     server,

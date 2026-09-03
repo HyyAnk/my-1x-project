@@ -4,6 +4,7 @@ import { useTranslation } from "../../i18n";
 import { Metric } from "./Metric";
 import { CostSavingsSection } from "./CostSavingsSection";
 import { OperationalDomainTable } from "./OperationalDomainTable";
+import { StylePresetManager } from "../../features/stylePresets/components/StylePresetManager";
 
 export type DashboardViewProps = {
   channels: Channel[];
@@ -128,6 +129,9 @@ export function DashboardView({
         <div className="dashboard-section">
           <OperationalDomainTable tasks={tasks} />
         </div>
+      </div>
+      <div className="dashboard-section" style={{ marginTop: "24px" }}>
+        <StylePresetManager />
       </div>
     </section>
   );

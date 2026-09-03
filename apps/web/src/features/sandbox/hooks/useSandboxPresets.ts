@@ -6,6 +6,8 @@ import type { SandboxMascotState } from "./useSandboxMascotState";
 import type { SandboxBrandNameState } from "./useSandboxBrandNameState";
 
 import { BUILT_IN_PRESETS, QuizPaletteIdSchema, type VisualPresetItem } from "@studio/shared";
+import { useStylePresets } from "../../stylePresets/hooks/useStylePresets";
+import { api } from "../../../api";
 export type { VisualPresetItem };
 
 const STORAGE_KEY = "studio-visual-custom-presets";
@@ -19,7 +21,8 @@ type UseSandboxPresetsInput = {
 
 export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSandboxPresetsInput) {
   const { t } = useTranslation();
-  const [customPresets, setCustomPresets] = useState<VisualPresetItem[]>(() => {
+  const stylePresetApi = useStylePresets();
+  const [localDraftPresets, setLocalDraftPresets] = useState<VisualPresetItem[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       return saved ? (JSON.parse(saved) as VisualPresetItem[]) : [];
@@ -27,6 +30,12 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
       return [];
     }
   });
+  const apiAvailable = typeof api.stylePresets === "function";
+  const customPresets = apiAvailable
+    ? stylePresetApi.loading
+      ? localDraftPresets
+      : (stylePresetApi.presets as VisualPresetItem[])
+    : localDraftPresets;
   const [presetModalOpen, setPresetModalOpen] = useState(false);
   const [newPresetName, setNewPresetName] = useState("");
 
@@ -71,7 +80,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
   );
 
   const persistPresets = (presets: VisualPresetItem[]) => {
-    setCustomPresets(presets);
+    setLocalDraftPresets(presets);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(presets));
     } catch {
@@ -133,6 +142,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
       isBuiltIn: false,
     };
     persistPresets([newPreset, ...customPresets]);
+    void stylePresetApi.create({ ...newPreset, background_style: resolvedBg }).catch(() => undefined);
     setNewPresetName("");
     setPresetModalOpen(false);
     if (onNotice) onNotice({ tone: "good", message: t("visualSandbox.noticeSavedPreset", { name }) });
@@ -141,6 +151,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
   const handleDeleteCustomPreset = (id: string, event?: MouseEvent) => {
     event?.stopPropagation();
     persistPresets(customPresets.filter((preset) => preset.id !== id));
+    if (stylePresetApi.presets.some((preset) => preset.id === id)) void stylePresetApi.remove(id).catch(() => undefined);
     if (onNotice) onNotice({ tone: "neutral", message: t("visualSandbox.noticeDeletedPreset") });
   };
 
