@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { CreateStylePresetInput, StylePreset, UpdateStylePresetInput } from "@studio/shared";
+import type { CreateStylePresetInput, StyleCatalogSnapshot, StylePreset, UpdateStylePresetInput } from "@studio/shared";
 import { api } from "../../../api";
 
 export type StylePresetMutation = "create" | "update" | "delete" | "duplicate" | null;
@@ -10,15 +10,18 @@ export function useStylePresets() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mutation, setMutation] = useState<StylePresetMutation>(null);
+  const [catalog, setCatalog] = useState<StyleCatalogSnapshot | null>(null);
   const requestVersion = useRef(0);
 
   const refresh = useCallback(async () => {
     const version = ++requestVersion.current;
     setLoading(true);
     try {
-      const response = await api.stylePresets();
+      const catalogRequest = typeof api.styleCatalog === "function" ? api.styleCatalog() : Promise.resolve(null);
+      const [response, catalogResponse] = await Promise.all([api.stylePresets(), catalogRequest]);
       if (version !== requestVersion.current) return response.presets;
       setPresets(response.presets);
+      if (catalogResponse) setCatalog(catalogResponse);
       setError(null);
       return response.presets;
     } catch (cause) {
@@ -69,5 +72,5 @@ export function useStylePresets() {
     [runMutation],
   );
 
-  return { presets, loading, error, mutation, refresh, create, update, remove, duplicate };
+  return { presets, catalog, loading, error, mutation, refresh, create, update, remove, duplicate };
 }

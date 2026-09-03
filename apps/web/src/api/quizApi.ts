@@ -12,11 +12,12 @@ import type {
   VideoDescriptionInput,
   VoicePlan,
 } from "@studio/shared";
-import type { CreateStylePresetInput, StylePreset, UpdateStylePresetInput } from "@studio/shared";
+import type { CreateStylePresetInput, StyleCatalogSnapshot, StylePreset, UpdateStylePresetInput } from "@studio/shared";
 import { request, type QuizV2State } from "./client";
 
 export const quizApi = {
   stylePresets: () => request<{ presets: StylePreset[] }>("/api/style-presets"),
+  styleCatalog: () => request<StyleCatalogSnapshot>("/api/style-catalog"),
   createStylePreset: (body: CreateStylePresetInput) =>
     request<{ preset: StylePreset }>("/api/style-presets", { method: "POST", body: JSON.stringify(body) }),
   updateStylePreset: (id: string, body: UpdateStylePresetInput) =>

@@ -34,7 +34,9 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
   const customPresets = apiAvailable
     ? stylePresetApi.loading
       ? localDraftPresets
-      : (stylePresetApi.presets as VisualPresetItem[])
+      : stylePresetApi.error
+        ? localDraftPresets
+        : (stylePresetApi.presets as VisualPresetItem[])
     : localDraftPresets;
   const [presetModalOpen, setPresetModalOpen] = useState(false);
   const [newPresetName, setNewPresetName] = useState("");

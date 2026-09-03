@@ -1,6 +1,6 @@
 import type { FastifyPluginCallback } from "fastify";
 import { CreateStylePresetInputSchema, StylePresetSlotsSchema, UpdateStylePresetInputSchema, type StyleSlot } from "@studio/shared";
-import { getStyleCatalogEntry } from "../quiz/visual/styleModules/catalog.js";
+import { getStyleCatalogEntry, getStyleCatalogSnapshot } from "../quiz/visual/styleModules/catalog.js";
 import type { RepositoryService } from "../repository.js";
 
 export type StylePresetsRouteDeps = { repository: RepositoryService };
@@ -27,6 +27,7 @@ function validateStyleSlots(input: Record<string, unknown>): { code: string; mes
 export function registerStylePresetsRoutes(deps: StylePresetsRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
     server.get("/api/style-presets", async () => ({ presets: await deps.repository.listStylePresets() }));
+    server.get("/api/style-catalog", async () => getStyleCatalogSnapshot());
     server.post("/api/style-presets", async (request, reply) => {
       const parsed = CreateStylePresetInputSchema.safeParse(request.body);
       if (!parsed.success)

@@ -27,16 +27,22 @@ export function StylePresetManager() {
   const [creating, setCreating] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const builtIns = useMemo(() => BUILT_IN_PRESETS.length, []);
-  const styleOptions = useMemo(
-    () => ({
-      thinking_bar_style: [...new Set(BUILT_IN_PRESETS.map((preset) => preset.thinking_bar_style))],
-      question_box_style: [...new Set(BUILT_IN_PRESETS.map((preset) => preset.question_box_style))],
-      answer_card_style: [...new Set(BUILT_IN_PRESETS.map((preset) => preset.answer_card_style))],
-      counter_style: [...new Set(BUILT_IN_PRESETS.map((preset) => preset.counter_style))],
-      background_style: [...new Set(BUILT_IN_PRESETS.map((preset) => preset.background_style).filter(Boolean))] as string[],
-    }),
-    [],
-  );
+  const styleOptions = useMemo(() => {
+    const entries = state.catalog?.entries ?? [];
+    const fromCatalog = (slot: string, fallback: string[]) => {
+      const ids = entries.filter((entry) => entry.slot === slot).map((entry) => entry.id);
+      return ids.length > 0 ? ids : fallback;
+    };
+    return {
+      thinking_bar_style: fromCatalog("thinking-bar", [...new Set(BUILT_IN_PRESETS.map((preset) => preset.thinking_bar_style))]),
+      question_box_style: fromCatalog("question-box", [...new Set(BUILT_IN_PRESETS.map((preset) => preset.question_box_style))]),
+      answer_card_style: fromCatalog("answer-card", [...new Set(BUILT_IN_PRESETS.map((preset) => preset.answer_card_style))]),
+      counter_style: fromCatalog("counter", [...new Set(BUILT_IN_PRESETS.map((preset) => preset.counter_style))]),
+      background_style: fromCatalog("background", [
+        ...new Set(BUILT_IN_PRESETS.map((preset) => preset.background_style).filter(Boolean)),
+      ] as string[]),
+    };
+  }, [state.catalog]);
   return (
     <section aria-label="Style presets">
       <header>
