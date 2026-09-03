@@ -29,7 +29,7 @@ export function QuestionBoxDropdown({ channel, episode, disabled, saving, isOpen
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillQuestionCard")}
-        value={QUESTION_BOX_STYLE_LABELS[activeStyle]}
+        value={QUESTION_BOX_STYLE_LABELS[activeStyle as keyof typeof QUESTION_BOX_STYLE_LABELS] ?? activeStyle}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}

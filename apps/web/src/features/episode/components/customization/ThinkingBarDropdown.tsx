@@ -29,7 +29,7 @@ export function ThinkingBarDropdown({ channel, episode, disabled, saving, isOpen
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillThinkingBar")}
-        value={THINKING_BAR_STYLE_LABELS[activeStyle]}
+        value={THINKING_BAR_STYLE_LABELS[activeStyle as keyof typeof THINKING_BAR_STYLE_LABELS] ?? activeStyle}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}

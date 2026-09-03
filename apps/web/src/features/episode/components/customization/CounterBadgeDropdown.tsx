@@ -35,7 +35,7 @@ export function CounterBadgeDropdown({ channel, episode, disabled, saving, isOpe
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillCounterBadge")}
-        value={QUESTION_COUNTER_STYLE_LABELS[activeStyle]}
+        value={QUESTION_COUNTER_STYLE_LABELS[activeStyle as keyof typeof QUESTION_COUNTER_STYLE_LABELS] ?? activeStyle}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}

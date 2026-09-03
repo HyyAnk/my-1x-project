@@ -29,7 +29,7 @@ export function BackgroundDropdown({ channel, episode, disabled, saving, isOpen,
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillBackground")}
-        value={BACKGROUND_STYLE_LABELS[activeStyle]}
+        value={BACKGROUND_STYLE_LABELS[activeStyle as keyof typeof BACKGROUND_STYLE_LABELS] ?? activeStyle}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
