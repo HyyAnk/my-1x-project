@@ -22,7 +22,8 @@ export async function invalidateQuizArtifacts(
     qa: "qa.json",
   };
   const removed: string[] = [];
-  const shouldInvalidateRender = stages.includes("render");
+  // Style activation invalidates generated video outputs, but leaves source artifacts intact.
+  const shouldInvalidateRender = stages.includes("render") || stages.includes("style");
   const hasQuizV2Artifact = shouldInvalidateRender ? Boolean(await this.readQuiz(channelId, episodeId)) : false;
 
   for (const stage of stages) {

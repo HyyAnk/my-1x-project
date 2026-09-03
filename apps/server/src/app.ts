@@ -31,6 +31,7 @@ import { registerVisualBibleRoutes } from "./routes/visualBible.js";
 import { registerAnalyticsRoutes } from "./routes/analytics.js";
 import { registerVoicesRoutes } from "./routes/voices.js";
 import { registerStylePresetsRoutes } from "./routes/stylePresets.js";
+import { registerStyleModulesRoutes } from "./routes/styleModules.js";
 
 export type StudioApp = {
   server: FastifyInstance;
@@ -153,6 +154,7 @@ export async function buildApp(
   await server.register(registerAnalyticsRoutes({ repository }));
   await server.register(registerEventsRoutes({ tasks, clients }));
   await server.register(registerStylePresetsRoutes({ repository }));
+  await server.register(registerStyleModulesRoutes());
 
   return {
     server,

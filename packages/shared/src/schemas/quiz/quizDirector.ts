@@ -52,6 +52,7 @@ export const DirectorPlanSchema = z
   .object({
     schema_version: z.literal(2),
     episode_id: z.string().min(1),
+    style_catalog_revision: z.string().trim().min(1).optional(),
     archetype_family: z.string().min(1).max(80),
     beats: DirectorBeatSchema.array().min(1).max(QUIZ_MAX_QUESTION_COUNT),
     midpoint_question_id: z.string().nullable().default(null),

@@ -27,7 +27,14 @@ export type QuizRenderInput = {
   premixedAudio?: boolean;
 };
 
-export type PreparedQuizRender = { html: string; compositionFiles: Record<string, string>; durationSeconds: number; questionCount: number };
+export type PreparedQuizRender = {
+  html: string;
+  compositionFiles: Record<string, string>;
+  durationSeconds: number;
+  questionCount: number;
+  styleCatalogRevision?: string;
+  stylePresetRevision?: number;
+};
 export type QuizRenderResult = { composition: string; durationSeconds: number };
 
 export interface QuizRenderer {

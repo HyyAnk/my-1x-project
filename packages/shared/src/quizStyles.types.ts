@@ -40,6 +40,8 @@ export type ResolvedQuizStyleWithProvenance = ResolvedQuizStyle & {
 };
 
 export type QuizStyleResolutionContext = {
+  styleCatalogRevision?: string | null;
+  stylePresetRevision?: number | null;
   theme?: string | null;
   channel?: {
     default_palette_id?: string | null;
@@ -61,6 +63,8 @@ export type QuizStyleResolutionContext = {
     question_counter_style?: string | null;
     counter_style?: string | null;
     background_style?: string | null;
+    style_catalog_revision?: string | null;
+    style_preset_revision?: number | null;
     channel_brand_name?: string | null;
   } | null;
   override?: {

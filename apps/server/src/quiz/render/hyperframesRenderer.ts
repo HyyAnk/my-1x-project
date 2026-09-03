@@ -1,5 +1,6 @@
 import type { PreparedQuizRender, QuizRenderInput, QuizRenderResult, QuizRenderer } from "./renderer.js";
 import { buildQuizV2CompositionBundle } from "./buildComposition.js";
+import { getActiveStyleSnapshot } from "../visual/styleModules/activation.js";
 
 export class HyperframesRenderer implements QuizRenderer {
   async prepare(input: QuizRenderInput): Promise<PreparedQuizRender> {
@@ -22,6 +23,8 @@ export class HyperframesRenderer implements QuizRenderer {
       compositionFiles: composition.files,
       durationSeconds: input.narrationDurationSeconds ?? input.timeline.duration_seconds,
       questionCount: input.quiz.questions.length,
+      styleCatalogRevision: input.styleContext.styleCatalogRevision ?? getActiveStyleSnapshot().revision,
+      stylePresetRevision: input.styleContext.stylePresetRevision ?? undefined,
     };
   }
 

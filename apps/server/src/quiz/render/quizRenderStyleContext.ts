@@ -27,6 +27,10 @@ export function buildQuizRenderStyleContext(channel: Channel, episode: QuizConfi
       question_counter_style: episode.question_counter_style,
       background_style: episode.background_style,
       channel_brand_name: episode.channel_brand_name,
+      style_catalog_revision: episode.style_catalog_revision,
+      style_preset_revision: episode.style_preset_revision,
     },
+    styleCatalogRevision: episode.style_catalog_revision,
+    stylePresetRevision: episode.style_preset_revision,
   };
 }

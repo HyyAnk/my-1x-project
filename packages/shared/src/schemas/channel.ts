@@ -85,6 +85,8 @@ export const QuizConfigSchema = z.object({
   background_style: QuizBackgroundStyleSchema.default("auto"),
   palette_id: QuizPaletteIdSchema.default("auto"),
   style_preset_id: z.string().optional().default("auto"),
+  style_catalog_revision: z.string().trim().min(1).optional(),
+  style_preset_revision: z.number().int().positive().optional(),
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).default(""),
   thumbnail_aspect_ratio: z.enum(["auto", "16:9", "9:16", "both"]).default("auto"),
 });
