@@ -9,6 +9,7 @@ export type StyleCatalogEntry = {
   namespace: string;
   previewAsset?: string;
   assetPaths: readonly string[];
+  available?: boolean;
 };
 
 export type StyleCatalogSnapshot = {

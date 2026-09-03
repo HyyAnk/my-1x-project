@@ -5,6 +5,11 @@ import {
   ALL_QUESTION_COUNTER_STYLES,
   ALL_QUIZ_PALETTES,
   ALL_THINKING_BAR_STYLES,
+  type QuizAnswerCardStyleId,
+  type QuizBackgroundStyleId,
+  type QuizQuestionBoxStyleId,
+  type QuizQuestionCounterStyleId,
+  type QuizThinkingBarStyleId,
   type QuizAnswerCardStyle,
   type QuizBackgroundStyle,
   type QuizPaletteId,
@@ -23,23 +28,23 @@ export function isValidPalette(val: unknown): val is Exclude<QuizPaletteId, "aut
   return typeof val === "string" && val !== "auto" && ALL_QUIZ_PALETTES.includes(val as QuizPaletteId);
 }
 
-export function isValidThinkingBar(val: unknown): val is Exclude<QuizThinkingBarStyle, "auto"> {
+export function isValidThinkingBar(val: unknown): val is QuizThinkingBarStyleId {
   return typeof val === "string" && val !== "auto" && ALL_THINKING_BAR_STYLES.includes(val as QuizThinkingBarStyle);
 }
 
-export function isValidQuestionBox(val: unknown): val is Exclude<QuizQuestionBoxStyle, "auto"> {
+export function isValidQuestionBox(val: unknown): val is QuizQuestionBoxStyleId {
   return typeof val === "string" && val !== "auto" && ALL_QUESTION_BOX_STYLES.includes(val as QuizQuestionBoxStyle);
 }
 
-export function isValidAnswerCard(val: unknown): val is Exclude<QuizAnswerCardStyle, "auto"> {
+export function isValidAnswerCard(val: unknown): val is QuizAnswerCardStyleId {
   return typeof val === "string" && val !== "auto" && ALL_ANSWER_CARD_STYLES.includes(val as QuizAnswerCardStyle);
 }
 
-export function isValidCounter(val: unknown): val is Exclude<QuizQuestionCounterStyle, "auto"> {
+export function isValidCounter(val: unknown): val is QuizQuestionCounterStyleId {
   return typeof val === "string" && val !== "auto" && ALL_QUESTION_COUNTER_STYLES.includes(val as QuizQuestionCounterStyle);
 }
 
-export function isValidBackground(val: unknown): val is Exclude<QuizBackgroundStyle, "auto"> {
+export function isValidBackground(val: unknown): val is QuizBackgroundStyleId {
   return typeof val === "string" && val !== "auto" && ALL_BACKGROUND_STYLES.includes(val as QuizBackgroundStyle);
 }
 

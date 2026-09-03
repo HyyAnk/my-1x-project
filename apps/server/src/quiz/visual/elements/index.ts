@@ -4,3 +4,7 @@ export * from "./questionBox/index.js";
 export * from "./counterBadge/index.js";
 export * from "./answerCard/index.js";
 export * from "./background/index.js";
+export { createStyleCatalog, getStyleCatalogEntry, getStyleCatalogSnapshot, getStyleModule } from "../styleModules/catalog.js";
+export { BUILT_IN_STYLE_MODULES } from "../styleModules/builtins.js";
+export type { StyleCatalog } from "../styleModules/catalog.js";
+export type { SlotScopedStyleModule, StyleModule, StyleModuleRenderer } from "../styleModules/types.js";

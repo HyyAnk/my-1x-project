@@ -26,6 +26,7 @@ export const QuizThinkingBarStyleSchema = z.enum([
   "cosmic_rocket",
 ]);
 export type QuizThinkingBarStyle = z.infer<typeof QuizThinkingBarStyleSchema>;
+export type QuizThinkingBarStyleId = Exclude<QuizThinkingBarStyle, "auto">;
 
 export const ALL_THINKING_BAR_STYLES: QuizThinkingBarStyle[] = [
   "star_slider",
@@ -57,6 +58,7 @@ export const THINKING_BAR_STYLE_DESCRIPTIONS: Record<Exclude<QuizThinkingBarStyl
 
 export const QuizQuestionCounterStyleSchema = z.enum(["auto", "hanging_woodsign", "neon_badge", "floating_balloon", "golden_shield"]);
 export type QuizQuestionCounterStyle = z.infer<typeof QuizQuestionCounterStyleSchema>;
+export type QuizQuestionCounterStyleId = Exclude<QuizQuestionCounterStyle, "auto">;
 
 export const ALL_QUESTION_COUNTER_STYLES: QuizQuestionCounterStyle[] = [
   "hanging_woodsign",
@@ -81,6 +83,7 @@ export const QUESTION_COUNTER_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionCou
 
 export const QuizQuestionBoxStyleSchema = z.enum(["auto", "candy_pop", "comic_bubble", "glass_morphism", "parchment_scroll"]);
 export type QuizQuestionBoxStyle = z.infer<typeof QuizQuestionBoxStyleSchema>;
+export type QuizQuestionBoxStyleId = Exclude<QuizQuestionBoxStyle, "auto">;
 
 export const ALL_QUESTION_BOX_STYLES: QuizQuestionBoxStyle[] = ["candy_pop", "comic_bubble", "glass_morphism", "parchment_scroll"];
 
@@ -100,6 +103,7 @@ export const QUESTION_BOX_STYLE_DESCRIPTIONS: Record<Exclude<QuizQuestionBoxStyl
 
 export const QuizAnswerCardStyleSchema = z.enum(["auto", "glossy_arcade", "comic_chunky", "glass_neon", "minimal_soft"]);
 export type QuizAnswerCardStyle = z.infer<typeof QuizAnswerCardStyleSchema>;
+export type QuizAnswerCardStyleId = Exclude<QuizAnswerCardStyle, "auto">;
 
 export const ALL_ANSWER_CARD_STYLES: QuizAnswerCardStyle[] = ["glossy_arcade", "comic_chunky", "glass_neon", "minimal_soft"];
 
@@ -119,6 +123,7 @@ export const ANSWER_CARD_STYLE_DESCRIPTIONS: Record<Exclude<QuizAnswerCardStyle,
 
 export const QuizBackgroundStyleSchema = z.enum(["auto", "candy_rays", "aurora_glow"]);
 export type QuizBackgroundStyle = z.infer<typeof QuizBackgroundStyleSchema>;
+export type QuizBackgroundStyleId = Exclude<QuizBackgroundStyle, "auto">;
 
 export const ALL_BACKGROUND_STYLES: QuizBackgroundStyle[] = ["candy_rays", "aurora_glow"];
 
