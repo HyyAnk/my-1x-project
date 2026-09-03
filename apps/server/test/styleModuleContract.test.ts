@@ -53,6 +53,11 @@ describe("StyleModuleManifestSchema", () => {
     });
     expect(result.success).toBe(false);
   });
+
+  it("accepts a valid namespaced manifest and legacy built-in ID", () => {
+    expect(StyleModuleManifestSchema.safeParse(validManifest).success).toBe(true);
+    expect(StyleModuleManifestSchema.safeParse({ ...validManifest, id: "energy_laser" }).success).toBe(true);
+  });
 });
 
 describe("slot-scoped renderer contracts", () => {

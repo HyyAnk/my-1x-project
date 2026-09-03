@@ -9,6 +9,8 @@ import type {
 } from "./enums.js";
 import type { VisualPresetItem } from "./presets.js";
 
+export type { StyleCatalogEntry, StyleCatalogSnapshot, StyleSlot } from "./quizStyles/styleCatalog.types.js";
+
 export type QuizStyleProvenanceSource = "beat" | "override" | "preset" | "episode" | "channel" | "theme" | "theme_default";
 
 export type ResolvedQuizStyle = {
