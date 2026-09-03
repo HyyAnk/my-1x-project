@@ -90,7 +90,13 @@ function deserializeModule(serialized: SerializedModule): SlotScopedStyleModule 
           className: serialized.manifest.namespace,
           renderCss: () => serialized.css,
         }
-      : { renderHtml: () => serialized.html, renderCss: () => serialized.css };
+      : {
+          id: serialized.manifest.id as never,
+          displayName: serialized.manifest.displayName,
+          description: serialized.manifest.description,
+          renderHtml: () => serialized.html,
+          renderCss: () => serialized.css,
+        };
   return { manifest: serialized.manifest, renderer, assets } as SlotScopedStyleModule;
 }
 

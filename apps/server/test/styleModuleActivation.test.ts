@@ -2,8 +2,9 @@ import { describe, expect, it } from "vitest";
 import { mkdtempSync, rmSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { StyleActivationManager } from "../src/quiz/visual/styleModules/activation.js";
+import { StyleActivationManager, styleActivationManager } from "../src/quiz/visual/styleModules/activation.js";
 import type { SlotScopedStyleModule } from "../src/quiz/visual/styleModules/types.js";
+import { resolveQuizSceneElementStyles } from "../src/quiz/render/scene/quizSceneStyles.js";
 
 function module(id: string, css = ".fixture-thinking-bar__root { color: red; }"): SlotScopedStyleModule {
   const namespace = `fixture-${id.split(".").at(-1)}-thinking-bar`;
@@ -19,7 +20,13 @@ function module(id: string, css = ".fixture-thinking-bar__root { color: red; }")
       assetPaths: [],
       cssSelectors: [`.${namespace}__root`],
     },
-    renderer: { renderHtml: () => `<div class="${namespace}__root"></div>`, renderCss: () => scopedCss },
+    renderer: {
+      id: id as never,
+      displayName: id,
+      description: "Fixture module",
+      renderHtml: () => `<div class="${namespace}__root"></div>`,
+      renderCss: () => scopedCss,
+    },
   };
 }
 
@@ -83,5 +90,12 @@ describe("style activation", () => {
       renderer: { renderHtml: () => '<div class="fixture-payload-thinking-bar__root">changed</div>', renderCss: () => ".fixture-payload-thinking-bar__root { color: red; }" },
     });
     expect(htmlChanged.revision).not.toBe(base.revision);
+  });
+
+  it("resolves a namespaced custom module through the scene style resolver", () => {
+    const custom = module("fixture.thinking-bar.scene");
+    styleActivationManager.stageAndActivate(custom);
+    const resolved = resolveQuizSceneElementStyles({ thinkingBar: custom.manifest.id as never });
+    expect(resolved.thinkingBar).toBe(custom.manifest.id);
   });
 });
