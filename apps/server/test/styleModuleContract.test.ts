@@ -54,7 +54,23 @@ describe("StyleModuleManifestSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("accepts a valid namespaced manifest and legacy built-in ID", () => {
+  it.each([".studio-thinking-bar-countdown body", ".studio-thinking-bar-countdown .answer-card", ".studio-thinking-bar-countdown__root .answer-card"])(
+    "rejects CSS selectors with an unscoped descendant compound: %s",
+    (selector) => {
+      const result = StyleModuleManifestSchema.safeParse({
+        ...validManifest,
+        cssSelectors: [selector],
+      });
+      expect(result.success).toBe(false);
+    },
+  );
+
+  it.each(["auto", "not_a_builtin", "foo_bar"])("rejects arbitrary legacy style ID: %s", (id) => {
+    const result = StyleModuleManifestSchema.safeParse({ ...validManifest, id });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts a valid namespaced manifest and known legacy built-in ID", () => {
     expect(StyleModuleManifestSchema.safeParse(validManifest).success).toBe(true);
     expect(StyleModuleManifestSchema.safeParse({ ...validManifest, id: "energy_laser" }).success).toBe(true);
   });

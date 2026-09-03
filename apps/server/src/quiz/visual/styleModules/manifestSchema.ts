@@ -1,9 +1,23 @@
 import { z } from "zod";
-import type { StyleCatalogEntry, StyleSlot } from "@studio/shared";
+import {
+  ALL_ANSWER_CARD_STYLES,
+  ALL_BACKGROUND_STYLES,
+  ALL_QUESTION_BOX_STYLES,
+  ALL_QUESTION_COUNTER_STYLES,
+  ALL_THINKING_BAR_STYLES,
+  type StyleCatalogEntry,
+  type StyleSlot,
+} from "@studio/shared";
 
 const NAMESPACED_STYLE_ID_PATTERN =
   /^[a-z][a-z0-9-]*\.(thinking-bar|question-box|answer-card|counter|background)\.[a-z][a-z0-9-]*$/;
-const LEGACY_STYLE_ID_PATTERN = /^[a-z][a-z0-9_]*$/;
+const LEGACY_BUILT_IN_STYLE_IDS = new Set<string>([
+  ...ALL_THINKING_BAR_STYLES,
+  ...ALL_QUESTION_BOX_STYLES,
+  ...ALL_ANSWER_CARD_STYLES,
+  ...ALL_QUESTION_COUNTER_STYLES,
+  ...ALL_BACKGROUND_STYLES,
+]);
 const NAMESPACE_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 const VERSION_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
 
@@ -65,6 +79,7 @@ function isNamespacedSelector(selector: string, namespace: string): boolean {
     .map((part) => part.trim())
     .every((part) => {
       if (!part.startsWith(`.${namespace}`)) return false;
+      if (/[\s>+~]/.test(part)) return false;
       const nextCharacter = part[namespace.length + 1];
       return nextCharacter === undefined || nextCharacter === ":" || nextCharacter === " " || part.startsWith(`.${namespace}__`);
     });
@@ -75,5 +90,5 @@ function isNamespacedStyleId(id: string): boolean {
 }
 
 export function isStyleModuleId(id: string): boolean {
-  return isNamespacedStyleId(id) || LEGACY_STYLE_ID_PATTERN.test(id);
+  return isNamespacedStyleId(id) || LEGACY_BUILT_IN_STYLE_IDS.has(id);
 }
