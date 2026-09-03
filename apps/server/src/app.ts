@@ -154,7 +154,7 @@ export async function buildApp(
   await server.register(registerAnalyticsRoutes({ repository }));
   await server.register(registerEventsRoutes({ tasks, clients }));
   await server.register(registerStylePresetsRoutes({ repository }));
-  await server.register(registerStyleModulesRoutes());
+  await server.register(registerStyleModulesRoutes({ repository }));
 
   return {
     server,
