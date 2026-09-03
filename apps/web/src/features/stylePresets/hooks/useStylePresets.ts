@@ -3,6 +3,7 @@ import type { CreateStylePresetInput, StylePreset, UpdateStylePresetInput } from
 import { api } from "../../../api";
 
 export type StylePresetMutation = "create" | "update" | "delete" | "duplicate" | null;
+const STYLE_PRESETS_UPDATED = "studio:style-presets-updated";
 
 export function useStylePresets() {
   const [presets, setPresets] = useState<StylePreset[]>([]);
@@ -30,6 +31,9 @@ export function useStylePresets() {
 
   useEffect(() => {
     void refresh().catch(() => undefined);
+    const onUpdated = () => void refresh().catch(() => undefined);
+    window.addEventListener(STYLE_PRESETS_UPDATED, onUpdated);
+    return () => window.removeEventListener(STYLE_PRESETS_UPDATED, onUpdated);
   }, [refresh]);
 
   const runMutation = useCallback(
@@ -39,6 +43,7 @@ export function useStylePresets() {
       try {
         const result = await operation();
         await refresh();
+        window.dispatchEvent(new Event(STYLE_PRESETS_UPDATED));
         return result;
       } catch (cause) {
         setError(cause instanceof Error ? cause.message : "Style preset update failed");
