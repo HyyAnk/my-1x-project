@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { exportStyleModulePackage, importStyleModulePackage } from "../src/quiz/visual/styleModules/exportPackage.js";
+import { exportStyleModulePackage, exportStylePresetPackage, importStyleModulePackage, importStylePresetPackage } from "../src/quiz/visual/styleModules/exportPackage.js";
 import type { SlotScopedStyleModule } from "../src/quiz/visual/styleModules/types.js";
 
 const fixture = (assetPaths: string[] = []): SlotScopedStyleModule => ({
@@ -34,5 +34,27 @@ describe("style module packages", () => {
     } as SlotScopedStyleModule & { assets: Record<string, Uint8Array> });
     const imported = importStyleModulePackage(exported.zipBuffer);
     expect(imported.assets?.["preview.png"]).toBeDefined();
+  });
+
+  it("round-trips a selected preset configuration without internal revision metadata", () => {
+    const exported = exportStylePresetPackage({
+      id: "preset_fixture",
+      name: "Fixture Preset",
+      description: "Export fixture",
+      icon: "🎨",
+      palette_id: "aqua",
+      theme: "candy_arcade",
+      thinking_bar_style: "energy_laser",
+      question_box_style: "glass_morphism",
+      answer_card_style: "glass_neon",
+      counter_style: "neon_badge",
+      background_style: "aurora_glow",
+      revision: 4,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+    const imported = importStylePresetPackage(exported.zipBuffer);
+    expect(imported).toMatchObject({ name: "Fixture Preset", thinking_bar_style: "energy_laser" });
+    expect(imported).not.toHaveProperty("revision");
   });
 });

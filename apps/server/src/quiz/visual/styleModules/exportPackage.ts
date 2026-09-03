@@ -1,4 +1,5 @@
 import { createZipArchive, parseZipArchive } from "../../zipHelper.js";
+import { CreateStylePresetInputSchema, StylePresetSchema, type CreateStylePresetInput, type StylePreset } from "@studio/shared";
 import { StyleModuleManifestSchema } from "./manifestSchema.js";
 import { renderValidatedModuleCss } from "./namespaceCss.js";
 import type { SlotScopedStyleModule } from "./types.js";
@@ -8,11 +9,36 @@ const SAFE_ENTRY = /^[a-z0-9][a-z0-9._/-]*$/i;
 
 type PackageManifest = {
   packageVersion: number;
+  kind?: "module" | "preset";
   manifest: unknown;
   requiredAssets?: string[];
 };
 
 export type ImportedStyleModule = SlotScopedStyleModule & { assets?: Record<string, Uint8Array> };
+
+export function exportStylePresetPackage(preset: StylePreset): { zipBuffer: Buffer; filename: string } {
+  const parsed = StylePresetSchema.parse(preset);
+  const { id: _id, revision: _revision, created_at: _created, updated_at: _updated, ...config } = parsed;
+  const files = [
+    {
+      filename: "package.json",
+      data: Buffer.from(JSON.stringify({ packageVersion: PACKAGE_VERSION, kind: "preset" }, null, 2)),
+    },
+    { filename: "preset.json", data: Buffer.from(JSON.stringify(config, null, 2)) },
+  ];
+  return { zipBuffer: createZipArchive(files), filename: `style-preset_${parsed.id}.zip` };
+}
+
+export function importStylePresetPackage(zipBuffer: Buffer): CreateStylePresetInput {
+  const entries = parseZipArchive(zipBuffer);
+  const byName = new Map(entries.map((entry) => [entry.filename, entry.data]));
+  const packageData = byName.get("package.json");
+  const presetData = byName.get("preset.json");
+  if (!packageData || !presetData) throw new Error("Invalid style preset package: missing package.json or preset.json");
+  const metadata = JSON.parse(Buffer.from(packageData).toString("utf8")) as PackageManifest;
+  if (metadata.packageVersion !== PACKAGE_VERSION || metadata.kind !== "preset") throw new Error("Unsupported style preset package");
+  return CreateStylePresetInputSchema.parse(JSON.parse(Buffer.from(presetData).toString("utf8")));
+}
 
 export function exportStyleModulePackage(module: SlotScopedStyleModule): { zipBuffer: Buffer; filename: string } {
   const manifest = StyleModuleManifestSchema.parse(module.manifest);
