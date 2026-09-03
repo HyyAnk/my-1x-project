@@ -90,19 +90,18 @@ export function DescriptionCollapsedBar({
         {description && (
           <button
             type="button"
-            className="secondary-button compact"
+            className={`btn-copy-hero ${copied ? "is-copied" : ""}`}
             onClick={onCopy}
             title="Copy full video description to clipboard"
-            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
           >
             {copied ? (
               <>
-                <Check size={14} weight="bold" color="var(--green, #10b981)" />
-                <span style={{ color: "var(--green, #10b981)", fontWeight: 600 }}>Copied!</span>
+                <Check size={16} weight="bold" />
+                <span>Copied!</span>
               </>
             ) : (
               <>
-                <Copy size={14} />
+                <Copy size={16} weight="duotone" color="var(--accent)" />
                 <span>Copy Description</span>
               </>
             )}
@@ -115,7 +114,7 @@ export function DescriptionCollapsedBar({
           disabled={!canGenerate}
           title={!hasQuiz ? "Generate quiz questions first before creating video description" : undefined}
           onClick={onGenerate}
-          style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+          style={{ display: "inline-flex", alignItems: "center", gap: "6px", height: "34px", padding: "0 14px", borderRadius: "8px" }}
         >
           {generating ? <CircleNotch className="spin" size={15} /> : <Sparkle size={15} weight="fill" />}
           <span>{generating ? "Generating..." : description ? "Regenerate" : "Generate Description"}</span>

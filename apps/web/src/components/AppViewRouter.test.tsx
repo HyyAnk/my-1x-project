@@ -159,7 +159,7 @@ describe("AppViewRouter", () => {
     const props = createDefaultProps({ page: "tasks" });
     renderWithProviders(<AppViewRouter {...props} />);
 
-    const el = await screen.findByText(/Waiting in queue/i, {}, { timeout: 4000 });
+    const el = await screen.findByText("Queue #—", {}, { timeout: 4000 });
     expect(el).toBeTruthy();
   });
 

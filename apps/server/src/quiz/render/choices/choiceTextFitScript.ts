@@ -93,7 +93,16 @@ function measureChoiceText(choice,fontSize,lines,leading) {
   const lineHeight=Number.isFinite(computedLineHeight)?computedLineHeight:fontSize*leading;
   const glyphOverflowAllowance=Math.max(1,Math.ceil(fontSize*.08));
   const heightLimit=Math.min(surfaceInnerHeight+1,lineHeight*lines+glyphOverflowAllowance);
-  return choice.scrollWidth<=choice.clientWidth+1 && choice.scrollHeight<=heightLimit;
+  const paddingLeft=Number.parseFloat(textStyles.paddingLeft)||0;
+  const paddingRight=Number.parseFloat(textStyles.paddingRight)||0;
+  const choiceBounds=choice.getBoundingClientRect();
+  const textRange=choice.ownerDocument.createRange();
+  textRange.selectNodeContents(choice);
+  const textBounds=textRange.getBoundingClientRect();
+  const contentLeft=choiceBounds.left+paddingLeft;
+  const contentRight=choiceBounds.right-paddingRight;
+  const textFitsHorizontally=textBounds.left>=contentLeft && textBounds.right<=contentRight;
+  return textFitsHorizontally && choice.scrollWidth<=choice.clientWidth && choice.scrollHeight<=heightLimit;
 }
 
 function applyChoiceFitResult(group,result,leading) {

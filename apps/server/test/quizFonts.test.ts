@@ -83,7 +83,7 @@ describe("quiz font parity", () => {
     expect(renderReadyIndex).toBeGreaterThan(fitIndex);
   });
 
-  it("falls back to tier CSS and still releases readiness when DOM fitting fails", async () => {
+  it("fails closed instead of releasing render readiness when DOM fitting fails", async () => {
     const properties = new Map([
       ["--choice-fitted-font-size", "51px"],
       ["--choice-fitted-line-height", "1.08"],
@@ -116,18 +116,23 @@ describe("quiz font parity", () => {
       },
     });
     if (!windowStub.__fontReadyPromise) throw new Error("Font readiness script did not expose its completion promise");
-    await windowStub.__fontReadyPromise;
+    await expect(windowStub.__fontReadyPromise).rejects.toThrow("measurement failed");
 
-    expect(windowStub.__fontStatus).toEqual({ state: "ready", families: CANDY_ARCADE_FONTS.map((font) => font.family) });
+    expect(windowStub.__fontStatus).toEqual({
+      state: "error",
+      message: "measurement failed",
+      families: CANDY_ARCADE_FONTS.map((font) => font.family),
+    });
     expect(windowStub.__choiceFitStatus).toEqual({
       groups: 1,
       overflowGroups: 0,
       fallback: true,
       message: "measurement failed",
     });
-    expect(windowStub.__playerReady).toBe(true);
-    expect(windowStub.__renderReady).toBe(true);
-    expect(documentStub.documentElement.dataset.fontsReady).toBe("true");
+    expect(windowStub.__playerReady).toBe(false);
+    expect(windowStub.__renderReady).toBe(false);
+    expect(documentStub.documentElement.dataset.fontsError).toBe("true");
+    expect(documentStub.documentElement.dataset.fontsReady).toBeUndefined();
     expect(properties.size).toBe(0);
     expect(attributes.get("data-choice-fit-lines")).toBe("1");
     expect(attributes.get("data-choice-fit-status")).toBe("fallback");

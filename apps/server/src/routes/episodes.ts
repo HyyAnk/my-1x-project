@@ -1,16 +1,18 @@
 import type { FastifyPluginCallback } from "fastify";
 import { EpisodeSettingsInputSchema, SaveTextInputSchema } from "@studio/shared";
-import type { RepositoryService } from "../repository.js";
+import { RepositoryError, type RepositoryService } from "../repository.js";
+import type { TaskManager } from "../tasks.js";
 import type { AppState } from "./state.js";
 
 export type EpisodesRouteDeps = {
   repository: RepositoryService;
   state: AppState;
+  tasks: TaskManager;
 };
 
 export function registerEpisodesRoutes(deps: EpisodesRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
-    const { repository, state } = deps;
+    const { repository, state, tasks } = deps;
     server.get("/api/channels/:channelId/episodes", async (request) => ({
       episodes: await repository.listEpisodes((request.params as { channelId: string }).channelId),
     }));
@@ -20,7 +22,11 @@ export function registerEpisodesRoutes(deps: EpisodesRouteDeps): FastifyPluginCa
     server.delete("/api/channels/:channelId/episodes/:episodeId", async (request) => {
       const params = request.params as { channelId: string; episodeId: string };
       const query = request.query as { confirm?: string };
+      if (tasks.hasActiveEpisodeTasks(params.episodeId)) {
+        throw new RepositoryError("Episode has active tasks. Cancel them before deleting the episode", "EPISODE_TASK_ACTIVE");
+      }
       await repository.deleteEpisode(params.channelId, params.episodeId, query.confirm === "true");
+      await tasks.pruneEpisodeTasks(params.episodeId);
       return { ok: true };
     });
     server.patch("/api/channels/:channelId/episodes/:episodeId", async (request) => {

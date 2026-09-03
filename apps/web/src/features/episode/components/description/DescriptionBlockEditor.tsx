@@ -30,19 +30,18 @@ export function DescriptionBlockEditor({
 
             <button
               type="button"
-              className="secondary-button compact"
+              className={`bento-copy-pill ${copiedBlock === "Hook" ? "is-copied" : ""}`}
               onClick={() => onCopyBlock(`${description.hook_lines}\n\n${description.semantic_paragraph}`, "Hook")}
-              style={{ fontSize: "0.74rem", padding: "3px 8px", display: "inline-flex", alignItems: "center", gap: "4px" }}
-              title="Copy Hook and Intro"
+              title="Copy Hook and Intro text"
             >
               {copiedBlock === "Hook" ? (
                 <>
-                  <Check size={12} weight="bold" color="var(--green, #10b981)" />
-                  <span style={{ color: "var(--green, #10b981)" }}>Copied</span>
+                  <Check size={12} weight="bold" />
+                  <span>Copied</span>
                 </>
               ) : (
                 <>
-                  <Copy size={12} />
+                  <Copy size={12} weight="duotone" />
                   <span>Copy</span>
                 </>
               )}
@@ -71,19 +70,18 @@ export function DescriptionBlockEditor({
 
             <button
               type="button"
-              className="secondary-button compact"
+              className={`bento-copy-pill ${copiedBlock === "Scoring" ? "is-copied" : ""}`}
               onClick={() => onCopyBlock(scoringText, "Scoring")}
-              style={{ fontSize: "0.74rem", padding: "3px 8px", display: "inline-flex", alignItems: "center", gap: "4px" }}
               title="Copy Scoring Leaderboard & CTA"
             >
               {copiedBlock === "Scoring" ? (
                 <>
-                  <Check size={12} weight="bold" color="var(--green, #10b981)" />
-                  <span style={{ color: "var(--green, #10b981)" }}>Copied</span>
+                  <Check size={12} weight="bold" />
+                  <span>Copied</span>
                 </>
               ) : (
                 <>
-                  <Copy size={12} />
+                  <Copy size={12} weight="duotone" />
                   <span>Copy</span>
                 </>
               )}
@@ -112,19 +110,18 @@ export function DescriptionBlockEditor({
 
             <button
               type="button"
-              className="secondary-button compact"
+              className={`bento-copy-pill ${copiedBlock === "Hashtags" ? "is-copied" : ""}`}
               onClick={() => onCopyBlock(hashtagsText, "Hashtags")}
-              style={{ fontSize: "0.74rem", padding: "3px 8px", display: "inline-flex", alignItems: "center", gap: "4px" }}
               title="Copy all hashtags"
             >
               {copiedBlock === "Hashtags" ? (
                 <>
-                  <Check size={12} weight="bold" color="var(--green, #10b981)" />
-                  <span style={{ color: "var(--green, #10b981)" }}>Copied</span>
+                  <Check size={12} weight="bold" />
+                  <span>Copied</span>
                 </>
               ) : (
                 <>
-                  <Copy size={12} />
+                  <Copy size={12} weight="duotone" />
                   <span>Copy All</span>
                 </>
               )}
@@ -133,17 +130,27 @@ export function DescriptionBlockEditor({
 
           <div className="bento-card-body">
             <div className="bento-tags-cloud">
-              {description.hashtags.map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  className="bento-tag-pill"
-                  onClick={() => onCopyBlock(tag, tag)}
-                  title={`Click to copy "${tag}"`}
-                >
-                  {copiedBlock === tag ? `✓ ${tag}` : tag}
-                </button>
-              ))}
+              {description.hashtags.map((tag) => {
+                const isTagCopied = copiedBlock === tag;
+                return (
+                  <button
+                    key={tag}
+                    type="button"
+                    className={`bento-tag-pill ${isTagCopied ? "is-copied" : ""}`}
+                    onClick={() => onCopyBlock(tag, tag)}
+                    title={`Click to copy "${tag}"`}
+                  >
+                    {isTagCopied ? (
+                      <>
+                        <Check size={11} weight="bold" />
+                        <span>{tag}</span>
+                      </>
+                    ) : (
+                      <span>{tag}</span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="bento-playlist-meta">

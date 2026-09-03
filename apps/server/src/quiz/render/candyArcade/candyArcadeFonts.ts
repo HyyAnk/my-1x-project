@@ -132,8 +132,14 @@ export function candyArcadeFontReadinessScript(): string {
         fitChannelBrandMarks();
         try {
           window.__choiceFitStatus=fitChoiceGroups();
+          const overflowGroups=window.__choiceFitStatus.overflowGroups;
+          if (overflowGroups>0) {
+            const label=overflowGroups===1?'answer group':'answer groups';
+            throw new Error('QUIZ_CHOICE_TEXT_OVERFLOW: '+overflowGroups+' '+label+' could not fit');
+          }
         } catch (fitError) {
           window.__choiceFitStatus=resetChoiceGroupsToFallback(fitError);
+          throw fitError;
         }
         document.documentElement.dataset.fontsReady="true";
         window.__fontStatus={state:"ready",families:checks.map((item)=>item.family)};
@@ -142,7 +148,7 @@ export function candyArcadeFontReadinessScript(): string {
         if (window.parent!==window) window.parent.postMessage({type:"quiz-fonts-ready",families:checks.map((item)=>item.family)},"*");
         return window.__fontStatus;
       } catch (error) {
-        const message=error instanceof Error?error.message:String(error);
+        const message=error && typeof error.message==='string'?error.message:String(error);
         window.__fontStatus={state:"error",message,families:checks.map((item)=>item.family)};
         document.documentElement.dataset.fontsError="true";
         if (window.parent!==window) window.parent.postMessage({type:"quiz-fonts-error",message},"*");

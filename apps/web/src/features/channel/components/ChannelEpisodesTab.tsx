@@ -37,18 +37,15 @@ export function ChannelEpisodesTab({ channel, episodes, tasks, onOpenEpisode, on
 
   return (
     <div>
-      <div className="section-heading" style={{ marginTop: "12px" }}>
-        <div>
-          <p className="eyebrow">Production Library</p>
-          <h2>Confirmed Episodes</h2>
-        </div>
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+      <div className="section-heading episode-section-heading">
+        <h2>Confirmed Episodes</h2>
+        <div className="episode-section-actions">
           <span className="count-note">
             {episodes.length} {episodes.length === 1 ? "episode" : "episodes"}
           </span>
           <a className="primary-button compact" {...getNavProps(topicsUrl, onGoToTopics)}>
             <Plus size={15} />
-            <span>New Episode from Topics</span>
+            <span>New Episode</span>
           </a>
         </div>
       </div>
@@ -127,10 +124,9 @@ export function ChannelEpisodesTab({ channel, episodes, tasks, onOpenEpisode, on
             </div>
           ) : (
             <div className="episode-card-grid">
-              {filteredEpisodes.map((episode, index) => (
+              {filteredEpisodes.map((episode) => (
                 <EpisodeCard
                   key={episode.episode_id}
-                  index={index + 1}
                   episode={episode}
                   tasks={tasks}
                   onOpen={() => onOpenEpisode(channel.channel_id, episode.episode_id)}

@@ -127,6 +127,128 @@
   color: var(--notice-error);
 }
 
+/* ==========================================================================
+   Tactile & High-Aesthetic Copy Buttons System
+   ========================================================================== */
+
+/* 1. Hero Copy Button (Header Action) */
+.btn-copy-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.32);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.btn-copy-hero:hover {
+  background: rgba(6, 182, 212, 0.18);
+  border-color: var(--accent);
+  box-shadow: 0 0 16px var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+.btn-copy-hero:active {
+  transform: scale(0.96);
+}
+
+.btn-copy-hero.is-copied {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.35);
+  animation: copySuccessPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 2. Bento Card Copy Pill Button */
+.bento-copy-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.bento-copy-pill:hover {
+  color: var(--ink);
+  background: var(--surface-hover);
+  border-color: var(--line-dark);
+  transform: translateY(-1px);
+}
+
+.bento-copy-pill:active {
+  transform: scale(0.95);
+}
+
+.bento-copy-pill.is-copied {
+  color: var(--green);
+  border-color: rgba(16, 185, 129, 0.6);
+  background: rgba(16, 185, 129, 0.14);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+  animation: copySuccessPop 0.3s ease;
+}
+
+/* 3. YouTube Simulator Copy Button */
+.youtube-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #f1f1f1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.youtube-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.youtube-copy-btn:active {
+  transform: scale(0.96);
+}
+
+.youtube-copy-btn.is-copied {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: #10b981;
+  color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+  animation: copySuccessPop 0.3s ease;
+}
+
+/* Copy Animation Micro-Interaction */
+@keyframes copySuccessPop {
+  0% { transform: scale(0.92); }
+  50% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
 /* Prompt Strategy & Tone Bar */
 .video-description-tone-bar {
   margin: 14px 0 16px;
@@ -499,20 +621,38 @@
 
 .bento-tag-pill {
   font-size: 0.78rem;
-  font-weight: 500;
-  padding: 3px 8px;
-  border-radius: 4px;
-  background: var(--soft-cyan);
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: rgba(6, 182, 212, 0.1);
   color: var(--cyan);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(6, 182, 212, 0.25);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
 }
 
 .bento-tag-pill:hover {
-  background: var(--cyan);
-  color: #000000;
-  font-weight: 600;
+  background: var(--soft-accent);
+  border-color: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 0 10px var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+.bento-tag-pill:active {
+  transform: scale(0.96);
+}
+
+.bento-tag-pill.is-copied {
+  background: rgba(16, 185, 129, 0.18);
+  color: var(--green);
+  border-color: var(--green);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  animation: copySuccessPop 0.3s ease;
 }
 
 .bento-playlist-meta {

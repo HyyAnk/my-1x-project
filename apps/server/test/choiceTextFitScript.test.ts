@@ -96,6 +96,14 @@ describe("choice text fit browser script", () => {
     expect(fixture.attributes.get("data-choice-fit-font-size")).toBe("43");
   });
 
+  it("shrinks when rounded scroll metrics hide subpixel text overflow", () => {
+    const fixture = createMeasurementFixture({ oneLineMax: 42, twoLineMax: 41, subpixelOverflowAt: 42 });
+
+    expect(runFitChoiceGroups(fixture)).toEqual({ groups: 1, overflowGroups: 0 });
+    expect(fixture.attributes.get("data-choice-fit-lines")).toBe("1");
+    expect(fixture.attributes.get("data-choice-fit-font-size")).toBe("41");
+  });
+
   it("clears partial measurements when reverting to tier CSS fallback", () => {
     const fixture = createMeasurementFixture({ oneLineMax: 64, twoLineMax: 64 });
     fixture.properties.set("--choice-fitted-font-size", "51px");
@@ -133,6 +141,7 @@ function createMeasurementFixture(options: {
   groupPaintScale?: number;
   cardPaintScale?: number;
   offsetParentAvailable?: boolean;
+  subpixelOverflowAt?: number;
 }) {
   const properties = new Map<string, string>();
   const attributes = new Map<string, string>([
@@ -144,6 +153,14 @@ function createMeasurementFixture(options: {
   const currentLines = () => Number(attributes.get("data-choice-fit-lines") ?? "1");
   const text = {
     clientWidth: 300,
+    getBoundingClientRect: () => rectangle(0, 0, 300, currentSize() * 1.08),
+    ownerDocument: {
+      createRange: () => ({
+        selectNodeContents: () => undefined,
+        getBoundingClientRect: () =>
+          rectangle(0, 0, options.subpixelOverflowAt && currentSize() >= options.subpixelOverflowAt ? 276.4 : 250, currentSize() * 1.08),
+      }),
+    },
     closest: () => surface,
     get scrollWidth() {
       const max = currentLines() === 1 ? options.oneLineMax : options.twoLineMax;
@@ -206,7 +223,7 @@ function createMeasurementFixture(options: {
     getComputedStyle: (element: unknown) => {
       if (element === group) return { getPropertyValue: (name: string) => tokens[name] ?? "" };
       if (element === surface) return { paddingTop: "10px", paddingBottom: "10px" };
-      return { lineHeight: `${currentSize() * 1.08}px` };
+      return { lineHeight: `${currentSize() * 1.08}px`, paddingLeft: "0px", paddingRight: "24px" };
     },
   };
 }

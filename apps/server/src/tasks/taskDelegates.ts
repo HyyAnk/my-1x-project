@@ -33,6 +33,8 @@ import {
 } from "./pipelineRunner.js";
 import {
   cleanupExpiredFailedBuilds as cleanupExpiredFailedBuildsImplementation,
+  hasActiveEpisodeTasks as hasActiveEpisodeTasksImplementation,
+  pruneEpisodeTasks as pruneEpisodeTasksImplementation,
   reconcileQuestionHistory as reconcileQuestionHistoryImplementation,
   startFailedBuildCleanupTimer as startFailedBuildCleanupTimerImplementation,
 } from "./taskLifecycle.js";
@@ -104,7 +106,12 @@ export const taskDelegates = {
   isShotPlanFresh(this: TaskManagerRuntime, channelId: string, episodeId: string): Promise<boolean> {
     return isShotPlanFreshImplementation.call(this, channelId, episodeId);
   },
-  waitForTaskTerminal(this: TaskManagerRuntime, taskId: string, run: PipelineRun, onProgress?: (task: Task) => Promise<void> | void): Promise<Task> {
+  waitForTaskTerminal(
+    this: TaskManagerRuntime,
+    taskId: string,
+    run: PipelineRun,
+    onProgress?: (task: Task) => Promise<void> | void,
+  ): Promise<Task> {
     return waitForTaskTerminalImplementation.call(this, taskId, run, onProgress);
   },
   runAudioTask(this: TaskManagerRuntime, task: Task): Promise<void> {
@@ -138,6 +145,12 @@ export const taskDelegates = {
     return cleanup.finally(() => {
       if (this.failedBuildCleanupPromise === cleanup) this.failedBuildCleanupPromise = null;
     });
+  },
+  hasActiveEpisodeTasks(this: TaskManagerRuntime, episodeId: string): boolean {
+    return hasActiveEpisodeTasksImplementation.call(this, episodeId);
+  },
+  pruneEpisodeTasks(this: TaskManagerRuntime, episodeId: string): Promise<string[]> {
+    return pruneEpisodeTasksImplementation.call(this, episodeId);
   },
   reconcileQuestionHistory(this: TaskManagerRuntime): Promise<void> {
     return reconcileQuestionHistoryImplementation.call(this);

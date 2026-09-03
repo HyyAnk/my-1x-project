@@ -414,81 +414,12 @@
   gap: 8px;
 }
 
-.task-card-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  min-width: 0;
-  font-size: 11px;
-  font-weight: 600;
-}
-
 .task-card-channel-name {
   color: var(--ink-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 140px;
-}
-
-.task-card-separator {
-  color: var(--muted);
-  opacity: 0.6;
-}
-
-.task-card-ep-pill {
-  font-size: 10px;
-  font-weight: 700;
-  font-family: "JetBrains Mono", monospace;
-  color: var(--accent-deep);
-  background: var(--soft-accent);
-  padding: 1px 6px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-
-.task-card-channel-level-pill {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--muted);
-  background: var(--soft-muted);
-  padding: 1px 6px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-
-.task-card-status-badges {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.queue-position-pill {
-  font-size: 10px;
-  font-weight: 700;
-  font-family: "JetBrains Mono", monospace;
-  color: var(--yellow);
-  background: color-mix(in srgb, var(--yellow) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--yellow) 30%, transparent);
-  padding: 1px 6px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-
-.task-card-time-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  font-weight: 700;
-  font-family: "JetBrains Mono", monospace;
-  color: var(--ink-secondary);
-  background: color-mix(in srgb, var(--line) 30%, var(--surface));
-  border: 1px solid var(--line);
-  padding: 1px 7px;
-  border-radius: 4px;
-  white-space: nowrap;
 }
 
 .task-status-chip {
@@ -570,66 +501,6 @@
   font-weight: 500;
 }
 
-/* Card Queue & Waiting Notices */
-.task-card-queue-notice,
-.task-card-waiting-notice {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 11.5px;
-  font-weight: 500;
-  color: var(--yellow);
-  background: color-mix(in srgb, var(--yellow) 8%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--yellow) 20%, transparent);
-  border-radius: 6px;
-  padding: 6px 9px;
-}
-
-.task-card-done-info {
-  display: flex;
-  align-items: center;
-  font-size: 11.5px;
-  color: var(--muted);
-  padding: 2px 0;
-}
-
-.task-card-done-msg {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Card Progress Section */
-.task-card-progress-section {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.task-card-progress-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.task-card-progress-msg {
-  font-size: 11.5px;
-  color: var(--ink-secondary);
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.task-card-progress-pct {
-  font-size: 12px;
-  font-weight: 700;
-  font-family: "JetBrains Mono", monospace;
-  color: var(--accent);
-  flex-shrink: 0;
-}
-
 .task-card-progress-track {
   height: 5px;
   background: var(--soft-muted);
@@ -645,57 +516,6 @@
   transition: width 0.3s ease;
 }
 
-.task-card-progress-fill.is-running {
-  background: linear-gradient(90deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 75%, #60a5fa) 100%);
-}
-
-/* Error Callout Box */
-.task-card-error-callout {
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  background: color-mix(in srgb, var(--coral) 8%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--coral) 25%, transparent);
-  border-radius: 6px;
-  padding: 7px 9px;
-  font-size: 11px;
-  transition: all 0.15s ease;
-}
-
-.task-card-error-callout:hover {
-  background: color-mix(in srgb, var(--coral) 12%, var(--surface));
-  border-color: var(--coral);
-}
-
-.task-card-error-text {
-  margin: 0;
-  color: var(--coral);
-  font-weight: 500;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  flex: 1;
-}
-
-.task-card-view-log-link {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--coral);
-  white-space: nowrap;
-}
-
-/* Card Footer */
-.task-card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 6px;
-  border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
-}
-
 .task-card-meta {
   display: flex;
   align-items: center;
@@ -705,15 +525,286 @@
   color: var(--muted);
 }
 
-.task-card-meta-date {
-  font-size: 10px;
-  color: var(--muted);
+/* Compact date-grouped task layout */
+.task-date-groups,
+.task-date-group {
+  display: flex;
+  flex-direction: column;
 }
 
-.task-card-actions {
+.task-date-groups {
+  gap: 12px;
+}
+
+.task-date-group {
+  gap: 7px;
+}
+
+.task-date-heading {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 7px;
+  min-height: 20px;
+}
+
+.task-date-heading h3 {
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.task-date-heading > span {
+  color: var(--muted);
+  font:
+    700 10px/1 "JetBrains Mono",
+    monospace;
+}
+
+.streamlined-task-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.streamlined-task-card {
+  min-width: 0;
+  min-height: 126px;
+  padding: 0;
+  gap: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: default;
+  box-shadow: inset 0 2px 0 var(--line-strong);
+}
+
+.streamlined-task-card.is-running {
+  border-left-color: var(--line);
+  box-shadow: inset 0 2px 0 var(--accent);
+}
+
+.streamlined-task-card.is-queued,
+.streamlined-task-card.is-waiting_approval {
+  border-left-color: var(--line);
+  box-shadow: inset 0 2px 0 var(--yellow);
+}
+
+.streamlined-task-card.is-failed {
+  border-left-color: var(--line);
+  box-shadow: inset 0 2px 0 var(--coral);
+}
+
+.streamlined-task-card.is-completed {
+  border-left-color: var(--line);
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--green) 70%, var(--line));
+}
+
+.streamlined-task-card.is-cancelled {
+  border-left-color: var(--line);
+  box-shadow: inset 0 2px 0 var(--muted);
+  opacity: 0.78;
+}
+
+.task-card-open {
+  width: 100%;
+  min-height: 124px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.task-card-open:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+  border-radius: 7px;
+}
+
+.task-card-header {
+  min-width: 0;
+}
+
+.task-card-channel-name {
+  max-width: 58%;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.task-status-chip.compact {
+  gap: 3px;
+  padding: 1px 5px;
+  font-size: 9.5px;
+}
+
+.task-card-title-row {
+  gap: 1px;
+}
+
+.task-card-content-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 8px;
+  min-width: 0;
+  align-items: start;
+}
+
+.task-card-thumbnail {
+  width: 64px;
+  aspect-ratio: 16 / 9;
+  min-height: 36px;
+  background: #050505;
+  border: 1px solid color-mix(in srgb, var(--line) 70%, #050505);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.task-card-thumbnail img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.task-card-content {
+  min-width: 0;
+}
+
+.task-card-topic-title {
+  min-height: 32px;
+  font-size: 12.5px;
+  line-height: 1.28;
+}
+
+.task-card-type-subtext {
+  font-size: 10px;
+}
+
+.task-card-detail {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  color: var(--ink-secondary);
+  font-size: 10px;
+}
+
+.task-card-detail > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-card-detail > strong {
+  color: var(--accent);
+  font:
+    700 10px/1 "JetBrains Mono",
+    monospace;
+}
+
+.task-card-detail.is-failed {
+  color: var(--coral);
+}
+
+.task-card-detail.is-queued,
+.task-card-detail.is-waiting_approval {
+  color: var(--yellow);
+}
+
+.task-card-progress-track {
+  height: 3px;
+}
+
+.task-card-progress-fill {
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 68%, #60a5fa));
+}
+
+.task-card-meta {
+  margin-top: auto;
+  gap: 3px;
+  font-size: 9.5px;
+}
+
+.streamlined-task-card.has-action .task-card-meta {
+  padding-right: 62px;
+}
+
+.task-card-action {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  min-height: 28px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-strong);
+  color: var(--ink-secondary);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.task-card-action:hover,
+.task-card-action:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.task-card-action.is-danger:hover,
+.task-card-action.is-danger:focus-visible {
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+.task-card-action:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+@media (max-width: 1500px) {
+  .streamlined-task-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1180px) {
+  .streamlined-task-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .streamlined-task-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .streamlined-task-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .task-toolbar-controls,
+  .task-search-box {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .streamlined-task-card,
+  .task-card-progress-fill {
+    transition: none;
+  }
 }
 
 /* ==========================================================================

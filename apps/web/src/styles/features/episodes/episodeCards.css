@@ -1,6 +1,20 @@
 /* ==========================================================================
    Episodes Production Card Grid & Toolbar (Style B)
    ========================================================================== */
+.episode-section-heading {
+  margin-top: 12px;
+}
+
+.episode-section-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.episode-section-actions .count-note {
+  white-space: nowrap;
+}
+
 .episode-toolbar {
   display: flex;
   align-items: center;
@@ -120,268 +134,235 @@
 
 .episode-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 248px), 1fr));
+  gap: 12px;
 }
 
 .episode-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
   border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, var(--surface) 0%, color-mix(in srgb, var(--surface) 92%, var(--paper)) 100%);
+  border-radius: 12px;
+  background: var(--surface);
   color: var(--ink);
   box-shadow: var(--shadow-sm);
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 0;
   overflow: hidden;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
 }
 
 .episode-card:hover {
   border-color: rgba(6, 182, 212, 0.45);
-  transform: translateY(-4px);
-  box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.45),
-    0 0 18px rgba(6, 182, 212, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 9px 24px rgba(0, 0, 0, 0.3);
 }
 
 .episode-card:active {
-  transform: translateY(-1px) scale(0.995);
+  transform: translateY(0);
 }
 
 .episode-card.is-video-ready {
-  border-color: rgba(16, 185, 129, 0.25);
+  border-color: rgba(16, 185, 129, 0.28);
 }
 
 .episode-card.is-video-ready:hover {
   border-color: rgba(16, 185, 129, 0.5);
-  box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.45),
-    0 0 18px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 9px 24px rgba(0, 0, 0, 0.3);
 }
 
-.episode-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 14px 16px 6px;
-  position: relative;
-  z-index: 2;
-}
-
-.episode-card-badges {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  min-width: 0;
-}
-
-.episode-card-index {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--accent-deep);
-  background: var(--soft-accent);
-  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-  padding: 2px 7px;
-  border-radius: 6px;
-  flex-shrink: 0;
-}
-
-.episode-badge {
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--line);
-  color: var(--muted);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 140px;
-}
-
-.episode-badge.format-badge {
-  color: #38bdf8;
-  background: rgba(56, 189, 248, 0.08);
-  border-color: rgba(56, 189, 248, 0.25);
-}
-
-.episode-badge.style-badge {
-  color: #f472b6;
-  background: rgba(244, 114, 182, 0.08);
-  border-color: rgba(244, 114, 182, 0.25);
-}
-
-.episode-card-delete {
-  flex-shrink: 0;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: all 0.16s ease;
-}
-
-.episode-card:hover .episode-card-delete,
-.episode-card:focus-within .episode-card-delete {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.episode-card-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 6px 16px 16px;
-  cursor: pointer;
+.episode-card-link {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  min-height: 124px;
+  color: inherit;
+  text-decoration: none;
   outline: none;
-  text-align: left;
+}
+
+.episode-card-link:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.episode-card-thumbnail {
+  display: grid;
+  min-width: 0;
+  place-items: center;
+  background: #000;
+  overflow: hidden;
+}
+
+.episode-card-thumbnail img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.episode-card-content {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+  padding: 11px 32px 10px 11px;
 }
 
 .episode-card-title {
-  margin: 0 0 6px 0;
-  font-size: 14.5px;
-  font-weight: 700;
-  color: var(--ink);
-  line-height: 1.35;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   overflow: hidden;
+  margin: 0;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.25;
   text-overflow: ellipsis;
-  transition: color 0.18s ease;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 .episode-card:hover .episode-card-title {
   color: var(--accent-deep);
 }
 
-.episode-card-premise {
-  margin: 0 0 12px 0;
-  font-size: 12px;
-  line-height: 1.45;
+.episode-card-layout {
+  overflow: hidden;
   color: var(--muted);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  font-size: 10px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.episode-card-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.episode-card-status > span:last-child {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.episode-video-ready-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 6px 10px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.35);
+.episode-card-status-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.episode-card.is-video-ready .episode-card-status {
   color: var(--green);
-  font-size: 11px;
 }
 
-.video-ready-left {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.episode-card.is-video-ready .episode-card-status-dot {
+  background: var(--green);
 }
 
-.video-ready-left strong {
-  font-weight: 700;
-  font-size: 11px;
+.episode-card.is-active-task .episode-card-status {
+  color: var(--accent-deep);
 }
 
-.video-ready-icon {
-  color: var(--green);
-  flex-shrink: 0;
-}
-
-.video-ready-time {
-  font-family: "JetBrains Mono", monospace;
-  font-weight: 700;
-  font-size: 10.5px;
-  background: rgba(16, 185, 129, 0.2);
-  padding: 1px 5px;
-  border-radius: 4px;
-}
-
-.episode-card-status-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: auto;
-  padding-top: 10px;
-  border-top: 1px solid var(--line);
-}
-
-.episode-card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--line);
+.episode-card.is-active-task .episode-card-status-dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--soft-accent);
 }
 
 .episode-card-meta {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.episode-card-meta .meta-item {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted);
-}
-
-.episode-card-meta .meta-date {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  color: var(--muted);
-  opacity: 0.75;
-}
-
-.episode-card-action {
-  display: flex;
-  align-items: center;
+  justify-content: space-between;
   gap: 6px;
+  margin-top: 1px;
+  overflow: hidden;
+  color: var(--muted);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  white-space: nowrap;
 }
 
-.episode-card-action .action-label {
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--accent-deep);
-  transition: all 0.18s ease;
+.episode-card-meta time {
+  opacity: 0.68;
 }
 
-.episode-card-action .action-icon-circle {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--soft-accent);
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  color: var(--accent-deep);
+.episode-card-delete {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  z-index: 2;
   display: grid;
+  width: 27px;
+  height: 27px;
+  padding: 0;
   place-items: center;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.14s ease,
+    color 0.14s ease,
+    background 0.14s ease;
 }
 
-.episode-card:hover .episode-card-action .action-icon-circle {
-  background: var(--accent);
-  color: #ffffff;
-  transform: translateX(2px) scale(1.08);
-  box-shadow: 0 0 10px var(--accent-glow);
+.episode-card:hover .episode-card-delete,
+.episode-card:focus-within .episode-card-delete,
+.episode-card-delete:focus-visible {
+  opacity: 1;
+}
+
+.episode-card-delete:hover,
+.episode-card-delete:focus-visible {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.13);
+  color: var(--red, #ef4444);
+  outline: none;
+}
+
+@media (hover: none) {
+  .episode-card-delete {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .episode-card,
+  .episode-card-delete {
+    transition: none;
+  }
+
+  .episode-card:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .episode-section-heading {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .episode-section-actions {
+    justify-content: space-between;
+  }
+
+  .episode-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .episode-card-link {
+    grid-template-columns: 112px minmax(0, 1fr);
+  }
 }
 
 /* ==========================================================================

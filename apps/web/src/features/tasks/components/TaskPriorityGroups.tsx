@@ -1,7 +1,9 @@
 import { Trash, X } from "@phosphor-icons/react";
 import type { Task } from "@studio/shared";
 import type { ProductionItemSummary } from "../types";
-import { StreamlinedTaskCard } from "./StreamlinedTaskCard";
+import { TaskDateGroups } from "./TaskDateGroups";
+
+const DONE_PREVIEW_LIMIT = 10;
 
 export type TaskPriorityGroupsProps = {
   attentionItems: ProductionItemSummary[];
@@ -11,7 +13,6 @@ export type TaskPriorityGroupsProps = {
   showAllDone: boolean;
   setShowAllDone: (updater: (prev: boolean) => boolean) => void;
   now: number;
-  onOpenEpisode?: (channelId: string, episodeId: string) => void;
   onCancel: (task: Task) => Promise<void>;
   onRetry: (task: Task) => Promise<void>;
   onInspect: (item: ProductionItemSummary) => void;
@@ -27,7 +28,6 @@ export function TaskPriorityGroups({
   showAllDone,
   setShowAllDone,
   now,
-  onOpenEpisode,
   onCancel,
   onRetry,
   onInspect,
@@ -45,19 +45,14 @@ export function TaskPriorityGroups({
               <span className="task-group-count">{attentionItems.length}</span>
             </div>
           </div>
-          <div className="streamlined-task-grid">
-            {attentionItems.map((item) => (
-              <StreamlinedTaskCard
-                key={item.id}
-                item={item}
-                now={now}
-                onOpenEpisode={onOpenEpisode}
-                onCancel={onCancel}
-                onRetry={onRetry}
-                onInspect={onInspect}
-              />
-            ))}
-          </div>
+          <TaskDateGroups
+            items={attentionItems}
+            now={now}
+            onCancel={onCancel}
+            onRetry={onRetry}
+            onInspect={onInspect}
+            sectionId="attention"
+          />
         </section>
       )}
 
@@ -76,19 +71,14 @@ export function TaskPriorityGroups({
               </button>
             )}
           </div>
-          <div className="streamlined-task-grid">
-            {inProgressItems.map((item) => (
-              <StreamlinedTaskCard
-                key={item.id}
-                item={item}
-                now={now}
-                onOpenEpisode={onOpenEpisode}
-                onCancel={onCancel}
-                onRetry={onRetry}
-                onInspect={onInspect}
-              />
-            ))}
-          </div>
+          <TaskDateGroups
+            items={inProgressItems}
+            now={now}
+            onCancel={onCancel}
+            onRetry={onRetry}
+            onInspect={onInspect}
+            sectionId="progress"
+          />
         </section>
       )}
 
@@ -105,23 +95,18 @@ export function TaskPriorityGroups({
               <span>Clear List</span>
             </button>
           </div>
-          <div className="streamlined-task-grid">
-            {(showAllDone ? doneItems : doneItems.slice(0, 6)).map((item) => (
-              <StreamlinedTaskCard
-                key={item.id}
-                item={item}
-                now={now}
-                onOpenEpisode={onOpenEpisode}
-                onCancel={onCancel}
-                onRetry={onRetry}
-                onInspect={onInspect}
-              />
-            ))}
-          </div>
-          {doneItems.length > 6 && (
+          <TaskDateGroups
+            items={showAllDone ? doneItems : doneItems.slice(0, DONE_PREVIEW_LIMIT)}
+            now={now}
+            onCancel={onCancel}
+            onRetry={onRetry}
+            onInspect={onInspect}
+            sectionId="done"
+          />
+          {doneItems.length > DONE_PREVIEW_LIMIT && (
             <div className="task-group-expand-row">
               <button type="button" className="quiet-button compact" onClick={() => setShowAllDone((prev) => !prev)}>
-                <span>{showAllDone ? "Show Less" : `Show All ${doneItems.length} Finished Tasks`}</span>
+                <span>{showAllDone ? "Show fewer" : `Show all ${doneItems.length}`}</span>
               </button>
             </div>
           )}

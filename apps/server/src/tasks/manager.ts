@@ -365,6 +365,12 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   cleanupExpiredFailedBuilds(nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }> {
     return taskDelegates.cleanupExpiredFailedBuilds.call(this, nowMs);
   }
+  hasActiveEpisodeTasks(episodeId: string): boolean {
+    return taskDelegates.hasActiveEpisodeTasks.call(this, episodeId);
+  }
+  pruneEpisodeTasks(episodeId: string): Promise<string[]> {
+    return taskDelegates.pruneEpisodeTasks.call(this, episodeId);
+  }
   reconcileQuestionHistory(): Promise<void> {
     return taskDelegates.reconcileQuestionHistory.call(this);
   }

@@ -37,6 +37,10 @@ class App {
     this.modalClose = document.getElementById("modal-close");
     this.matrixTableBody = document.getElementById("matrix-table-body");
     this.toastContainer = document.getElementById("toast-container");
+    this.btnZenMode = document.getElementById("btn-zen-mode");
+    this.zenRestoreBar = document.getElementById("zen-restore-bar");
+    this.btnZenExit = document.getElementById("btn-zen-exit");
+    this.isZenMode = false;
   }
 
   initGraph() {
@@ -60,6 +64,25 @@ class App {
     this.btnOpenMatrix.addEventListener("click", () => this.openMatrixModal());
     this.modalClose.addEventListener("click", () => this.closeMatrixModal());
     this.drawerClose.addEventListener("click", () => this.closeDrawer());
+
+    this.btnZenMode?.addEventListener("click", () => this.toggleZenMode());
+    this.btnZenExit?.addEventListener("click", () => this.toggleZenMode(false));
+
+    // Global Keyboard Shortcuts (Press 'H' for Zen Mode, 'Escape' to restore or close modals)
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.key === "h" || e.key === "H") {
+        this.toggleZenMode();
+      } else if (e.key === "Escape") {
+        if (this.isZenMode) {
+          this.toggleZenMode(false);
+        } else if (this.matrixModal && !this.matrixModal.classList.contains("hidden")) {
+          this.closeMatrixModal();
+        } else if (this.drawer && this.drawer.classList.contains("open")) {
+          this.closeDrawer();
+        }
+      }
+    });
 
     this.btnFindSafeZones.addEventListener("click", () => {
       if (this.isSafeZoneModeActive) {
@@ -307,6 +330,29 @@ class App {
 
   closeMatrixModal() {
     this.matrixModal.classList.add("hidden");
+  }
+
+  toggleZenMode(forceState) {
+    this.isZenMode = typeof forceState === "boolean" ? forceState : !this.isZenMode;
+    document.body.classList.toggle("zen-mode", this.isZenMode);
+    if (this.zenRestoreBar) {
+      this.zenRestoreBar.classList.toggle("hidden", !this.isZenMode);
+    }
+    if (this.btnZenMode) {
+      this.btnZenMode.classList.toggle("active", this.isZenMode);
+    }
+
+    if (this.isZenMode) {
+      if (this.matrixModal && !this.matrixModal.classList.contains("hidden")) {
+        this.closeMatrixModal();
+      }
+      if (this.drawer && this.drawer.classList.contains("open")) {
+        this.closeDrawer();
+      }
+      this.showToast("🌌 Zen Panorama View (Press 'H' or 'Esc' to restore)");
+    } else {
+      this.showToast("⚡ Standard HUD Restored");
+    }
   }
 
   showToast(message) {

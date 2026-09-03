@@ -208,6 +208,60 @@ describe("UsageLedger Analytics & Persistence", () => {
     expect(ledger.recent_events.length).toBe(2);
   });
 
+  it("auto-bootstraps image metrics from on-disk quiz-images, meta.json, and thumbnails", async () => {
+    const repository = await fixture();
+    await repository.ensureBootstrap();
+
+    const channel = await repository.createChannel({
+      name: "Image History Channel",
+      description: "Testing image bootstrap",
+      target_audience: "Everyone",
+      language: "Vietnamese",
+      market: "Global",
+      dna_mode: "example",
+    });
+
+    const topics = Array.from({ length: 5 }, (_, index) => ({
+      topic_id: `topic-img-${index}`,
+      channel_id: channel.channel_id,
+      title: `Images Topic ${index}`,
+      premise: "Image quiz",
+      why_it_fits: "Fits",
+      hook: "Hook",
+      estimated_potential: "High",
+      generated_at: new Date().toISOString(),
+      selected: false,
+    }));
+    await repository.saveTopicRun(channel.channel_id, topics);
+    const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
+
+    // Write a dummy PNG asset with meta.json
+    // Valid 1x1 PNG bytes
+    const pngBytes = new Uint8Array([
+      137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82,
+      0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196,
+      137, 0, 0, 0, 10, 73, 68, 65, 84, 120, 156, 99, 0, 1, 0, 0,
+      5, 0, 1, 13, 10, 45, 180, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130
+    ]);
+    const fingerprint = "a".repeat(64);
+    await repository.writeQuizImageAsset(
+      channel.channel_id,
+      episode.episode_id,
+      "asset-question-01-hero",
+      fingerprint,
+      pngBytes,
+      { price_vnd: 100, model: "nano-banana" },
+    );
+
+    // Reconcile ledger from disk
+    const ledger = await repository.reconcileUsageLedgerFromDisk();
+    expect(ledger.image.total_images_generated).toBe(1);
+    expect(ledger.image.estimated_cost_vnd).toBe(100);
+    expect(ledger.image.estimated_cost_usd).toBeCloseTo(100 / 25500, 4);
+    expect(ledger.image.by_provider.gpti2).toBe(1);
+    expect(ledger.image.by_model["nano-banana"]).toBe(1);
+  });
+
   it("safely handles concurrent writes without data loss or corruption", async () => {
     const repository = await fixture();
     await repository.ensureBootstrap();

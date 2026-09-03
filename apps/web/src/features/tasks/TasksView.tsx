@@ -6,7 +6,7 @@ import { PageTitle } from "../../components/AppChrome";
 import type { Notice } from "../../components/types";
 import { useTranslation } from "../../i18n";
 import { TaskDetailDrawer } from "./components/TaskDetailDrawer";
-import { StreamlinedTaskCard } from "./components/StreamlinedTaskCard";
+import { TaskDateGroups } from "./components/TaskDateGroups";
 import { TaskToolbar } from "./components/TaskToolbar";
 import { TaskPriorityGroups } from "./components/TaskPriorityGroups";
 import { useTasksViewData } from "./hooks/useTasksViewData";
@@ -164,7 +164,6 @@ export function TasksView({
           showAllDone={showAllDone}
           setShowAllDone={setShowAllDone}
           now={now}
-          onOpenEpisode={onOpenEpisode}
           onCancel={cancel}
           onRetry={retry}
           onInspect={setSelectedInspectItem}
@@ -173,19 +172,14 @@ export function TasksView({
         />
       ) : (
         /* Flat Filtered List View */
-        <div className="streamlined-task-grid">
-          {filteredItems.map((item) => (
-            <StreamlinedTaskCard
-              key={item.id}
-              item={item}
-              now={now}
-              onOpenEpisode={onOpenEpisode}
-              onCancel={cancel}
-              onRetry={retry}
-              onInspect={setSelectedInspectItem}
-            />
-          ))}
-        </div>
+        <TaskDateGroups
+          items={filteredItems}
+          now={now}
+          onCancel={cancel}
+          onRetry={retry}
+          onInspect={setSelectedInspectItem}
+          sectionId="filtered"
+        />
       )}
 
       {/* Slide-over Task Detail & Error Drawer */}

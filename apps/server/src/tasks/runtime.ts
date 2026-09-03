@@ -72,6 +72,7 @@ export interface TaskManagerRuntime {
   handleNotification(method: string, params: Record<string, unknown>): void;
   handleServerRequest(request: CodexServerRequest): void;
   hasReadyArtifact(channelId: string, episodeId: string, filename: string): Promise<boolean>;
+  hasActiveEpisodeTasks(episodeId: string): boolean;
   hasReadyScript(channelId: string, episodeId: string): Promise<boolean>;
   hasValidNarrationAsset(channelId: string, episodeId: string, assetPath: string | null): Promise<boolean>;
   isShotPlanFresh(channelId: string, episodeId: string): Promise<boolean>;
@@ -81,6 +82,7 @@ export interface TaskManagerRuntime {
   retrySequenceScenes(active: ActiveRun, reason: string): Promise<void>;
   retryVisualBible(active: ActiveRun, reason: string): Promise<void>;
   reconcileQuestionHistory(): Promise<void>;
+  pruneEpisodeTasks(episodeId: string): Promise<string[]>;
   run(task: Task): Promise<void>;
   runAntigravityBundleImageTask(task: Task): Promise<void>;
   runAudioTask(task: Task): Promise<void>;

@@ -79,6 +79,21 @@ async function generateGpti2Asset(input: ProviderAssetInput): Promise<ProviderAs
     }
   }
   if (!generated) throw new Error(`Failed to generate asset ${request.asset_id}`);
+  const gpti2PriceVnd = (generated as { price_vnd?: number }).price_vnd ?? 50;
+  const gpti2PriceUsd = Number((gpti2PriceVnd / 25500).toFixed(4));
+  await repository
+    .recordImageUsage({
+      channelId,
+      episodeId,
+      provider: "gpti2",
+      model: imageConfig?.model || (generated as { model?: string }).model || "gpt-image-2",
+      count: 1,
+      costVnd: gpti2PriceVnd,
+      costUsd: gpti2PriceUsd,
+      note: `Quiz asset ${request.asset_id} (${request.purpose})`,
+    })
+    .catch(() => undefined);
+
   return {
     entry: { ...request, fingerprint, path: generated.path, source: "provider" },
     tier3Fallback: false,
@@ -114,6 +129,19 @@ async function generateShopAiKeyAsset(input: ProviderAssetInput): Promise<Provid
     }
   }
   if (!generated) throw new Error(`Failed to generate ${configuredProvider} asset ${request.asset_id}`);
+  await repository
+    .recordImageUsage({
+      channelId,
+      episodeId,
+      provider: configuredProvider || "shopaikey",
+      model: imageConfig?.model || "gpt-image-2",
+      count: 1,
+      costVnd: 500,
+      costUsd: 0.02,
+      note: `Quiz asset ${request.asset_id} (${request.purpose})`,
+    })
+    .catch(() => undefined);
+
   return {
     entry: { ...request, fingerprint, path: generated.path, source: "provider" },
     tier3Fallback: false,
@@ -148,6 +176,21 @@ async function generateAntigravityAsset(input: ProviderAssetInput): Promise<Prov
   }
   if (!result) throw new Error(`Failed to generate Antigravity asset ${request.asset_id}`);
   const isTier3 = Boolean(result.degraded || result.fallback_tier === 3);
+  if (!isTier3) {
+    await repository
+      .recordImageUsage({
+        channelId,
+        episodeId,
+        provider: "antigravity",
+        model: "antigravity-native-chain",
+        count: 1,
+        costVnd: 0,
+        costUsd: 0,
+        note: `Quiz asset ${request.asset_id} (${request.purpose})`,
+      })
+      .catch(() => undefined);
+  }
+
   return {
     entry: {
       ...request,
@@ -171,6 +214,19 @@ async function generateGoogleAsset(input: ProviderAssetInput): Promise<ProviderA
     imageConfig?.base_url,
   );
   const result = await provider.generateReference(compiledPrompt);
+  await repository
+    .recordImageUsage({
+      channelId,
+      episodeId,
+      provider: "google",
+      model: imageConfig?.model || "gemini-3.1-flash-image",
+      count: 1,
+      costVnd: 750,
+      costUsd: 0.03,
+      note: `Quiz asset ${request.asset_id} (${request.purpose})`,
+    })
+    .catch(() => undefined);
+
   return {
     entry: {
       ...request,

@@ -12,6 +12,36 @@ export type FailedBuildCandidate = {
   failedAt: string;
 };
 
+export function hasActiveEpisodeTasks(this: TaskManagerRuntime, episodeId: string): boolean {
+  return this.list().some((task) => task.episode_id === episodeId && activeStatuses.has(task.status));
+}
+
+export async function pruneEpisodeTasks(this: TaskManagerRuntime, episodeId: string): Promise<string[]> {
+  if (hasActiveEpisodeTasks.call(this, episodeId)) {
+    throw new RepositoryError("Episode has active tasks. Cancel them before deleting the episode", "EPISODE_TASK_ACTIVE");
+  }
+
+  const taskIds = await removeEpisodeTaskRecords.call(this, episodeId);
+  if (taskIds.length > 0) {
+    this.emitEvent({ type: "tasks.pruned", task_ids: taskIds, episode_ids: [episodeId] });
+  }
+  return taskIds;
+}
+
+async function removeEpisodeTaskRecords(this: TaskManagerRuntime, episodeId: string): Promise<string[]> {
+  const relatedTasks = this.list().filter((task) => task.episode_id === episodeId);
+  const taskIds = relatedTasks.map((task) => task.task_id);
+  await Promise.all(taskIds.map((taskId) => rm(this.repository.resolvePath("runtime", "tasks", `${taskId}.json`), { force: true })));
+
+  for (const task of relatedTasks) {
+    this.tasks.delete(task.task_id);
+    this.imageVariants.delete(task.task_id);
+    this.topicHints.delete(task.task_id);
+  }
+
+  return taskIds;
+}
+
 export function startFailedBuildCleanupTimer(this: TaskManagerRuntime): void {
   if (this.failedBuildCleanupTimer) return;
   this.failedBuildCleanupTimer = setInterval(
@@ -134,14 +164,8 @@ export async function cleanupExpiredFailedBuilds(
       }
     }
 
-    const relatedTasks = this.list().filter((task) => task.episode_id === candidate.episodeId);
-    await Promise.all(
-      relatedTasks.map((task) => rm(this.repository.resolvePath("runtime", "tasks", `${task.task_id}.json`), { force: true })),
-    );
-    for (const task of relatedTasks) {
-      this.tasks.delete(task.task_id);
-      removedTaskIds.push(task.task_id);
-    }
+    const relatedTaskIds = await removeEpisodeTaskRecords.call(this, candidate.episodeId);
+    removedTaskIds.push(...relatedTaskIds);
     removedEpisodeIds.push(candidate.episodeId);
     this.logger.ok("Expired failed build and generated assets removed", {
       profileId: candidate.channelId,

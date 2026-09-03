@@ -169,6 +169,18 @@ export async function generateEpisodeThumbnail(
         const fileData = await readFile(sourceAbsolute);
         await writeFile(variantAbsolute, fileData);
         await writeFile(activeAbsolute, fileData);
+        await repository
+          .recordImageUsage({
+            channelId,
+            episodeId,
+            provider: options.imageConfig?.provider ?? (options.activeEngine === "antigravity" ? "antigravity" : "gpti2"),
+            model: options.imageConfig?.model || "gpt-image-2",
+            count: 1,
+            costVnd: 50,
+            costUsd: 0.002,
+            note: `Thumbnail 16:9 for ${episode.slug}`,
+          })
+          .catch(() => undefined);
       } else {
         const fingerprint169 = createHash("sha256").update(prompt169).digest("hex");
         const generated = await generateAssetWithProvider({
@@ -255,6 +267,18 @@ export async function generateEpisodeThumbnail(
         const fileData = await readFile(sourceAbsolute);
         await writeFile(variantAbsolute, fileData);
         await writeFile(activeAbsolute, fileData);
+        await repository
+          .recordImageUsage({
+            channelId,
+            episodeId,
+            provider: options.imageConfig?.provider ?? (options.activeEngine === "antigravity" ? "antigravity" : "gpti2"),
+            model: options.imageConfig?.model || "gpt-image-2",
+            count: 1,
+            costVnd: 50,
+            costUsd: 0.002,
+            note: `Thumbnail 9:16 for ${episode.slug}`,
+          })
+          .catch(() => undefined);
       } else {
         const fingerprint916 = createHash("sha256").update(prompt916).digest("hex");
         const generated = await generateAssetWithProvider({

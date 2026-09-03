@@ -143,7 +143,7 @@ export async function buildApp(
   await server.register(registerVoicesRoutes({ repository, logger, state }));
   await server.register(registerChannelsRoutes({ repository, tasks, logger, state }));
   await server.register(registerMascotsRoutes({ repository, logger, state }));
-  await server.register(registerEpisodesRoutes({ repository, state }));
+  await server.register(registerEpisodesRoutes({ repository, state, tasks }));
   await server.register(registerQuizV2Routes({ repository, tasks, codex, antigravity, state }));
   await server.register(registerVisualBibleRoutes({ repository, tasks, state }));
   await server.register(registerAudioVideoRoutes({ repository, tasks, state, revealFile }));

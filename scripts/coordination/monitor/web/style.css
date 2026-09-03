@@ -82,7 +82,7 @@ body {
   padding: 0.75rem 1.5rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   pointer-events: auto;
-  transition: top 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, top 0.3s ease;
 }
 
 body.has-stale-banner #hud-header {
@@ -181,6 +181,7 @@ body.has-stale-banner #hud-header {
   z-index: 10;
   display: flex;
   gap: 0.75rem;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
 }
 
 .btn-cyber {
@@ -235,6 +236,7 @@ body.has-stale-banner #hud-header {
   border-radius: 10px;
   padding: 0.75rem 1rem;
   font-size: 0.75rem;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
 }
 
 .legend-item {
@@ -246,6 +248,84 @@ body.has-stale-banner #hud-header {
 
 .legend-item:last-child {
   margin-bottom: 0;
+}
+
+/* Zen / Cinema Panorama Mode */
+body.zen-mode #hud-header {
+  transform: translateY(-160%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.zen-mode #stale-alert-banner {
+  transform: translateY(-160%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.zen-mode #floating-controls {
+  transform: translateY(160%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.zen-mode #legend-panel {
+  transform: translateY(160%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.zen-mode #detail-drawer {
+  transform: translateX(450px) !important;
+  pointer-events: none;
+}
+
+/* Zen Mode Floating Restore Bar */
+#zen-restore-bar {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  z-index: 30;
+  transition: all 0.3s ease;
+  opacity: 0.85;
+}
+
+#zen-restore-bar:hover {
+  opacity: 1;
+}
+
+#zen-restore-bar.hidden {
+  display: none;
+}
+
+.btn-zen-pill {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  padding: 0.45rem 0.95rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 20px rgba(0, 240, 255, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-zen-pill:hover {
+  background: rgba(0, 240, 255, 0.2);
+  transform: scale(1.04);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.5);
+}
+
+.btn-zen-pill b {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 1px 5px;
+  border-radius: 4px;
 }
 
 .legend-indicator {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CaretDown, CaretUp, DeviceMobile, Television, YoutubeLogo } from "@phosphor-icons/react";
+import { CaretDown, CaretUp, Check, Copy, DeviceMobile, Television, YoutubeLogo } from "@phosphor-icons/react";
 import type { VideoDescription } from "@studio/shared";
 
 interface DescriptionYouTubePreviewProps {
@@ -10,8 +10,20 @@ interface DescriptionYouTubePreviewProps {
 export function DescriptionYouTubePreview({ description, fullText }: DescriptionYouTubePreviewProps) {
   const [viewportMode, setViewportMode] = useState<"desktop" | "mobile">("desktop");
   const [isFolded, setIsFolded] = useState(false);
+  const [copiedPreview, setCopiedPreview] = useState(false);
 
   const content = fullText || description?.full_description_text || "";
+
+  const handleCopyPreview = async () => {
+    if (!content) return;
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedPreview(true);
+      setTimeout(() => setCopiedPreview(false), 2500);
+    } catch {
+      // fallback
+    }
+  };
 
   const renderRichYouTubeContent = (text: string) => {
     // Split by hashtags or timestamp patterns (e.g., #quiz, 00:15, 01:30)
@@ -46,6 +58,27 @@ export function DescriptionYouTubePreview({ description, fullText }: Description
         </div>
 
         <div className="youtube-preview-controls">
+          {content && (
+            <button
+              type="button"
+              className={`youtube-copy-btn ${copiedPreview ? "is-copied" : ""}`}
+              onClick={handleCopyPreview}
+              title="Copy formatted YouTube description"
+            >
+              {copiedPreview ? (
+                <>
+                  <Check size={12} weight="bold" />
+                  <span>Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy size={12} weight="duotone" />
+                  <span>Copy Text</span>
+                </>
+              )}
+            </button>
+          )}
+
           <button
             type="button"
             className={`youtube-viewport-btn ${viewportMode === "desktop" ? "active" : ""}`}
