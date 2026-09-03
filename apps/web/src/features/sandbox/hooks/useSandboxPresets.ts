@@ -38,6 +38,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
     : localDraftPresets;
   const [presetModalOpen, setPresetModalOpen] = useState(false);
   const [newPresetName, setNewPresetName] = useState("");
+  const [presetError, setPresetError] = useState<string | null>(null);
 
   const builtInPresets = useMemo<VisualPresetItem[]>(
     () =>
@@ -107,9 +108,10 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
     if (onNotice) onNotice({ tone: "good", message: t("visualSandbox.noticeLoadedPreset", { name: preset.name }) });
   };
 
-  const handleSaveCustomPreset = () => {
+  const handleSaveCustomPreset = async () => {
     const name = newPresetName.trim();
     if (!name) return;
+    setPresetError(null);
     const parsedPalette = QuizPaletteIdSchema.safeParse(design.paletteId);
     const resolvedPalette: VisualPresetItem["palette_id"] =
       parsedPalette.success && parsedPalette.data !== "auto" ? parsedPalette.data : "lime";
@@ -142,17 +144,34 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
       isBuiltIn: false,
     };
     persistPresets([newPreset, ...customPresets]);
-    void stylePresetApi.create({ ...newPreset, background_style: resolvedBg }).catch(() => undefined);
-    setNewPresetName("");
-    setPresetModalOpen(false);
-    if (onNotice) onNotice({ tone: "good", message: t("visualSandbox.noticeSavedPreset", { name }) });
+    try {
+      await stylePresetApi.create({ ...newPreset, background_style: resolvedBg });
+      setNewPresetName("");
+      setPresetModalOpen(false);
+      onNotice?.({ tone: "good", message: t("visualSandbox.noticeSavedPreset", { name }) });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to save preset";
+      setPresetError(message);
+      onNotice?.({ tone: "bad", message });
+    }
   };
 
-  const handleDeleteCustomPreset = (id: string, event?: MouseEvent) => {
+  const handleDeleteCustomPreset = async (id: string, event?: MouseEvent) => {
     event?.stopPropagation();
+    setPresetError(null);
     persistPresets(customPresets.filter((preset) => preset.id !== id));
-    if (stylePresetApi.presets.some((preset) => preset.id === id)) void stylePresetApi.remove(id).catch(() => undefined);
-    if (onNotice) onNotice({ tone: "neutral", message: t("visualSandbox.noticeDeletedPreset") });
+    if (stylePresetApi.presets.some((preset) => preset.id === id)) {
+      try {
+        await stylePresetApi.remove(id);
+      } catch (error) {
+        persistPresets(customPresets);
+        const message = error instanceof Error ? error.message : "Failed to delete preset";
+        setPresetError(message);
+        onNotice?.({ tone: "bad", message });
+        return;
+      }
+    }
+    onNotice?.({ tone: "neutral", message: t("visualSandbox.noticeDeletedPreset") });
   };
 
   return {
@@ -168,6 +187,8 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
     handleLoadPreset,
     handleSaveCustomPreset,
     handleDeleteCustomPreset,
+    presetError,
+    presetMutation: stylePresetApi.mutation,
   };
 }
 

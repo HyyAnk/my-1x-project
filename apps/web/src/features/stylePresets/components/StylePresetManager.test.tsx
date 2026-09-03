@@ -21,5 +21,6 @@ describe("StylePresetManager", () => {
     render(<StylePresetManager />);
     fireEvent.click(screen.getByRole("button", { name: "New preset" }));
     expect(screen.getByRole("form", { name: "Create style preset" })).toBeTruthy();
+    expect(screen.getAllByRole("combobox")).toHaveLength(5);
   });
 });

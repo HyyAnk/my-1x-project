@@ -64,4 +64,16 @@ describe("style preset routes", () => {
       await app.close();
     }
   });
+
+  it("surfaces corrupt storage instead of treating it as empty", async () => {
+    const app = await createApp();
+    try {
+      await writeFile(app.repository.resolvePath("runtime", "style-presets.json"), "not-json", "utf8");
+      const response = await app.server.inject({ method: "GET", url: "/api/style-presets" });
+      expect(response.statusCode).toBe(400);
+      expect(response.json().error).toContain("invalid");
+    } finally {
+      await app.close();
+    }
+  });
 });

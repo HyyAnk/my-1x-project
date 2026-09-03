@@ -25,8 +25,9 @@ async function readPresets(repository: RepositoryRuntime): Promise<StylePreset[]
     const parsed = JSON.parse(raw) as unknown;
     return StylePresetSchema.array().parse(parsed);
   } catch (error) {
+    if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") return [];
     if (error instanceof SyntaxError) throw new RepositoryError("Style preset storage is invalid", "INVALID_STYLE_PRESET_STORAGE");
-    return [];
+    throw error;
   }
 }
 
