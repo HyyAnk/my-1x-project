@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type { StyleCatalogEntry, StyleCatalogSnapshot, StyleSlot } from "@studio/shared";
 import { StyleModuleManifestSchema } from "./manifestSchema.js";
 import { BUILT_IN_STYLE_MODULES } from "./builtins.js";
@@ -15,7 +16,7 @@ function toCatalogEntry(module: SlotScopedStyleModule): StyleCatalogEntry {
 }
 
 export function createStyleCatalog(modules: readonly SlotScopedStyleModule[]): StyleCatalog {
-  const entries = modules.map(toCatalogEntry);
+  const entries = Object.freeze(modules.map(toCatalogEntry).map((entry) => Object.freeze(entry)));
   const keys = new Set<string>();
   for (const entry of entries) {
     const key = `${entry.slot}:${entry.id}`;
@@ -23,17 +24,27 @@ export function createStyleCatalog(modules: readonly SlotScopedStyleModule[]): S
     keys.add(key);
   }
   const snapshot: StyleCatalogSnapshot = {
-    revision: "builtins-v1",
+    revision: createCatalogRevision(modules),
     generatedAt: new Date().toISOString(),
-    entries,
+    entries: Object.freeze(entries),
   };
+  const frozenSnapshot = Object.freeze(snapshot);
   const moduleByKey = new Map(modules.map((module) => [`${module.manifest.slot}:${module.manifest.id}`, module]));
 
   return {
-    getStyleCatalogSnapshot: () => snapshot,
-    getStyleCatalogEntry: (slot, id) => snapshot.entries.find((entry) => entry.slot === slot && entry.id === id),
+    getStyleCatalogSnapshot: () => frozenSnapshot,
+    getStyleCatalogEntry: (slot, id) => frozenSnapshot.entries.find((entry) => entry.slot === slot && entry.id === id),
     getStyleModule: (slot, id) => moduleByKey.get(`${slot}:${id}`),
   };
+}
+
+function createCatalogRevision(modules: readonly SlotScopedStyleModule[]): string {
+  const content = modules.map((module) => ({
+    manifest: module.manifest,
+    css: module.renderer.renderCss(),
+  }));
+  const digest = createHash("sha256").update(JSON.stringify(content)).digest("hex").slice(0, 16);
+  return `catalog-${digest}`;
 }
 
 const builtInCatalog = createStyleCatalog(BUILT_IN_STYLE_MODULES);
