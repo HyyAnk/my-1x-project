@@ -12,7 +12,14 @@ export type StyleCatalog = {
 
 function toCatalogEntry(module: SlotScopedStyleModule): StyleCatalogEntry {
   const manifest = StyleModuleManifestSchema.parse(module.manifest);
-  return { ...manifest, available: true };
+  const assetPaths = Object.freeze([...manifest.assetPaths]);
+  const cssSelectors = manifest.cssSelectors ? Object.freeze([...manifest.cssSelectors]) : undefined;
+  return {
+    ...manifest,
+    assetPaths,
+    ...(cssSelectors ? { cssSelectors } : {}),
+    available: true,
+  };
 }
 
 export function createStyleCatalog(modules: readonly SlotScopedStyleModule[]): StyleCatalog {

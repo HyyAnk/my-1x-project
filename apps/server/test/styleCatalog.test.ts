@@ -111,6 +111,65 @@ describe("runtime visual style catalog", () => {
     expect(() => renderValidatedModuleCss(fixture)).toThrow(/scoped beneath/i);
   });
 
+  it("rejects selectors with unscoped ancestors or descendants", () => {
+    const selectors = [
+      ".fixture-thinking-bar-scope body",
+      "body .fixture-thinking-bar-scope",
+      ":root .fixture-thinking-bar-scope",
+      ".fixture-thinking-bar-scope .answer-card",
+    ];
+
+    for (const selector of selectors) {
+      const fixture: SlotScopedStyleModule = {
+        manifest: {
+          id: "fixture.thinking-bar.scope",
+          slot: "thinking-bar",
+          version: "1.0.0",
+          displayName: "Scoped Timer",
+          description: "A test-only timer module",
+          namespace: "fixture-thinking-bar-scope",
+          assetPaths: [],
+          cssSelectors: [".fixture-thinking-bar-scope__root"],
+        },
+        renderer: {
+          renderHtml: () => '<div class="fixture-thinking-bar-scope__root"></div>',
+          renderCss: () => `${selector} { color: red; }`,
+        },
+      };
+
+      expect(() => renderValidatedModuleCss(fixture), selector).toThrow(/scoped beneath/i);
+    }
+  });
+
+  it("allows namespaced roots, pseudo selectors, and namespaced child selectors", () => {
+    const selectors = [
+      ".fixture-thinking-bar-scope__root",
+      ".fixture-thinking-bar-scope:hover",
+      ".fixture-thinking-bar-scope > .fixture-thinking-bar-scope__child",
+    ];
+
+    for (const selector of selectors) {
+      const fixture: SlotScopedStyleModule = {
+        manifest: {
+          id: "fixture.thinking-bar.scope-valid",
+          slot: "thinking-bar",
+          version: "1.0.0",
+          displayName: "Scoped Timer",
+          description: "A test-only timer module",
+          namespace: "fixture-thinking-bar-scope",
+          assetPaths: [],
+          cssSelectors: [".fixture-thinking-bar-scope__root"],
+        },
+        renderer: {
+          renderHtml: () => '<div class="fixture-thinking-bar-scope__root"></div>',
+          renderCss: () => `${selector} { color: red; }`,
+        },
+      };
+
+      expect(() => renderValidatedModuleCss(fixture), selector).not.toThrow();
+    }
+  });
+
   it("rejects emitted global keyframes from custom modules", () => {
     const fixture: SlotScopedStyleModule = {
       manifest: {
@@ -133,6 +192,30 @@ describe("runtime visual style catalog", () => {
     };
 
     expect(() => renderValidatedModuleCss(fixture)).toThrow(/keyframe/i);
+  });
+
+  it("allows custom keyframes when the animation name is namespace-prefixed", () => {
+    const fixture: SlotScopedStyleModule = {
+      manifest: {
+        id: "fixture.thinking-bar.keyframes-scoped",
+        slot: "thinking-bar",
+        version: "1.0.0",
+        displayName: "Scoped Keyframe Timer",
+        description: "A test-only timer module",
+        namespace: "fixture-thinking-bar-keyframes",
+        assetPaths: [],
+        cssSelectors: [".fixture-thinking-bar-keyframes__root"],
+      },
+      renderer: {
+        renderHtml: () => '<div class="fixture-thinking-bar-keyframes__root"></div>',
+        renderCss: () => `
+          .fixture-thinking-bar-keyframes__root { animation: fixture-thinking-bar-keyframes-pulse 1s; }
+          @keyframes fixture-thinking-bar-keyframes-pulse { from { opacity: 0; } to { opacity: 1; } }
+        `,
+      },
+    };
+
+    expect(() => renderValidatedModuleCss(fixture)).not.toThrow();
   });
 
   it("keeps built-in legacy CSS renderable while validating its module manifest", () => {
@@ -180,9 +263,13 @@ describe("runtime visual style catalog", () => {
     expect(Object.isFrozen(snapshot)).toBe(true);
     expect(Object.isFrozen(snapshot.entries)).toBe(true);
     expect(Object.isFrozen(entry)).toBe(true);
+    expect(Object.isFrozen(entry?.assetPaths)).toBe(true);
+    expect(Object.isFrozen(entry?.cssSelectors)).toBe(true);
 
     expect(Reflect.set(snapshot.entries[0] as object, "id", "mutated")).toBe(false);
     expect(Reflect.set(entry as object, "id", "mutated")).toBe(false);
+    expect(() => (entry?.assetPaths as string[]).push("mutated.css")).toThrow(TypeError);
+    expect(() => (entry?.cssSelectors as string[]).push(".global")).toThrow(TypeError);
 
     expect(catalog.getStyleCatalogEntry("thinking-bar", "energy_laser")?.id).toBe("energy_laser");
   });

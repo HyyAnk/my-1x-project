@@ -9,9 +9,7 @@ export function renderValidatedModuleCss(module: SlotScopedStyleModule): string 
 
   if (!isBuiltIn) {
     validateCssSelectors(css, manifest.namespace);
-    if (/@(?:-webkit-)?keyframes\b/i.test(css)) {
-      throw new Error(`Style module CSS must not declare global keyframes: ${manifest.id}`);
-    }
+    validateNamespacedKeyframes(css, manifest.namespace, manifest.id);
   }
   return css;
 }
@@ -23,11 +21,28 @@ function validateCssSelectors(css: string, namespace: string): void {
     const selector = stripCssComments(prelude).trim();
     if (!selector || selector.startsWith("@")) return;
 
-    const selectors = selector.split(",");
+    const selectors = splitTopLevel(selector, ",");
     for (const candidate of selectors) {
-      if (!containsNamespaceSelector(candidate.trim(), namespace)) {
+      if (!isNamespacedSelector(candidate.trim(), namespace)) {
         throw new Error(`Style module CSS selector must be scoped beneath .${namespace}: ${candidate.trim()}`);
       }
+    }
+  });
+}
+
+function validateNamespacedKeyframes(css: string, namespace: string, moduleId: string): void {
+  walkCssBlocks(css, (prelude) => {
+    const normalizedPrelude = stripCssComments(prelude).trim();
+    const match = normalizedPrelude.match(/^@(?:-webkit-)?keyframes\s+([^\s{]+)/i);
+    if (!match) return;
+
+    const animationName = match[1];
+    if (
+      animationName !== namespace &&
+      !animationName.startsWith(`${namespace}-`) &&
+      !animationName.startsWith(`${namespace}__`)
+    ) {
+      throw new Error(`Style module CSS keyframes must be scoped beneath .${namespace}: ${animationName} (${moduleId})`);
     }
   });
 }
@@ -98,12 +113,96 @@ function findMatchingBrace(css: string, openingBrace: number): number {
   return -1;
 }
 
-function containsNamespaceSelector(selector: string, namespace: string): boolean {
-  return new RegExp(`(?:^|[\\s>+~,(])\\.${escapeRegExp(namespace)}(?=$|[\\s.:#[>+~])`).test(selector);
+function isNamespacedSelector(selector: string, namespace: string): boolean {
+  const compounds = splitSelectorCompounds(selector);
+  return compounds.length > 0 && compounds.every((compound) => isNamespacedCompound(compound, namespace));
 }
 
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function isNamespacedCompound(compound: string, namespace: string): boolean {
+  const prefix = `.${namespace}`;
+  if (!compound.startsWith(prefix)) return false;
+
+  const suffix = compound.slice(prefix.length);
+  return (
+    suffix.length === 0 ||
+    suffix.startsWith("__") ||
+    /^[.:#[>+~]/.test(suffix)
+  );
+}
+
+function splitSelectorCompounds(selector: string): string[] {
+  const compounds: string[] = [];
+  let current = "";
+  let bracketDepth = 0;
+  let parenthesisDepth = 0;
+  let quote: string | null = null;
+
+  const pushCurrent = () => {
+    const trimmed = current.trim();
+    if (trimmed) compounds.push(trimmed);
+    current = "";
+  };
+
+  for (let index = 0; index < selector.length; index += 1) {
+    const character = selector[index];
+    if (quote) {
+      current += character;
+      if (character === quote && selector[index - 1] !== "\\") quote = null;
+      continue;
+    }
+    if (character === "'" || character === '"') {
+      quote = character;
+      current += character;
+      continue;
+    }
+    if (character === "[") bracketDepth += 1;
+    if (character === "]") bracketDepth = Math.max(0, bracketDepth - 1);
+    if (character === "(") parenthesisDepth += 1;
+    if (character === ")") parenthesisDepth = Math.max(0, parenthesisDepth - 1);
+
+    if (bracketDepth === 0 && parenthesisDepth === 0 && /[\s>+~]/.test(character)) {
+      pushCurrent();
+      continue;
+    }
+    current += character;
+  }
+  pushCurrent();
+  return compounds;
+}
+
+function splitTopLevel(value: string, delimiter: string): string[] {
+  const parts: string[] = [];
+  let current = "";
+  let bracketDepth = 0;
+  let parenthesisDepth = 0;
+  let quote: string | null = null;
+
+  for (let index = 0; index < value.length; index += 1) {
+    const character = value[index];
+    if (quote) {
+      current += character;
+      if (character === quote && value[index - 1] !== "\\") quote = null;
+      continue;
+    }
+    if (character === "'" || character === '"') {
+      quote = character;
+      current += character;
+      continue;
+    }
+    if (character === "[") bracketDepth += 1;
+    if (character === "]") bracketDepth = Math.max(0, bracketDepth - 1);
+    if (character === "(") parenthesisDepth += 1;
+    if (character === ")") parenthesisDepth = Math.max(0, parenthesisDepth - 1);
+
+    if (character === delimiter && bracketDepth === 0 && parenthesisDepth === 0) {
+      parts.push(current);
+      current = "";
+      continue;
+    }
+    current += character;
+  }
+  parts.push(current);
+  return parts;
 }
 
 function stripCssComments(value: string): string {
