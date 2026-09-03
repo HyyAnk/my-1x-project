@@ -25,6 +25,8 @@ describe("style module packages", () => {
     const exported = exportStyleModulePackage(fixture());
     const imported = importStyleModulePackage(exported.zipBuffer);
     expect(imported.manifest.id).toBe("fixture.thinking-bar.package");
+    expect(imported.renderer.id).toBe(imported.manifest.id);
+    expect(imported.renderer.displayName).toBe(imported.manifest.displayName);
     expect(() => importStyleModulePackage(exported.zipBuffer, { existingIds: [imported.manifest.id] })).toThrow(/Duplicate/);
   });
 

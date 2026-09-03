@@ -105,7 +105,13 @@ function createCssModule(manifest: ReturnType<typeof StyleModuleManifestSchema.p
           className: manifest.namespace,
           renderCss: () => css,
         }
-      : { renderHtml: () => html, renderCss: () => css };
+      : {
+          id: manifest.id as never,
+          displayName: manifest.displayName,
+          description: manifest.description,
+          renderHtml: () => html,
+          renderCss: () => css,
+        };
   return { manifest, renderer, assets } as ImportedStyleModule;
 }
 
