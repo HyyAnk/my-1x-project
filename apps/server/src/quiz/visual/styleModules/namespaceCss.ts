@@ -37,11 +37,7 @@ function validateNamespacedKeyframes(css: string, namespace: string, moduleId: s
     if (!match) return;
 
     const animationName = match[1];
-    if (
-      animationName !== namespace &&
-      !animationName.startsWith(`${namespace}-`) &&
-      !animationName.startsWith(`${namespace}__`)
-    ) {
+    if (animationName !== namespace && !animationName.startsWith(`${namespace}-`) && !animationName.startsWith(`${namespace}__`)) {
       throw new Error(`Style module CSS keyframes must be scoped beneath .${namespace}: ${animationName} (${moduleId})`);
     }
   });
@@ -123,11 +119,7 @@ function isNamespacedCompound(compound: string, namespace: string): boolean {
   if (!compound.startsWith(prefix)) return false;
 
   const suffix = compound.slice(prefix.length);
-  return (
-    suffix.length === 0 ||
-    suffix.startsWith("__") ||
-    /^[.:#[>+~]/.test(suffix)
-  );
+  return suffix.length === 0 || suffix.startsWith("__") || /^[.:#[>+~]/.test(suffix);
 }
 
 function splitSelectorCompounds(selector: string): string[] {
