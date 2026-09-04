@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { ALL_QUESTION_BOX_STYLES, ALL_QUESTION_COUNTER_STYLES, ALL_THINKING_BAR_STYLES } from "@studio/shared";
+import {
+  ALL_QUESTION_BOX_STYLES,
+  ALL_QUESTION_COUNTER_STYLES,
+  ALL_THINKING_BAR_STYLES,
+  BUILT_IN_PRESETS,
+  QUIZ_LAYOUTS,
+  type QuizPreviewLayoutId,
+} from "@studio/shared";
 import { getQuestionBoxVariant, resolveQuestionBoxVariant } from "../src/quiz/visual/elements/questionBox/registry.js";
 import { getCounterBadgeVariant, resolveCounterBadgeVariant } from "../src/quiz/visual/elements/counterBadge/registry.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
@@ -310,4 +317,68 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(res.html).not.toContain('<div class="channel-brand-mark"');
     });
   });
+
+  describe("Built-In Presets & Layout Compatibility Matrix", () => {
+    const layoutConfigs: Array<{
+      layoutId: QuizPreviewLayoutId;
+      choices: string[];
+      question_format?: "multiple_choice" | "true_false" | "odd_one_out";
+    }> = [
+      { layoutId: "media_left_choices_right", choices: ["A", "B", "C"] },
+      { layoutId: "media_left_choices_right", choices: ["A", "B"], question_format: "true_false" },
+      { layoutId: "verdict_true_false", choices: ["True", "False"], question_format: "true_false" },
+      { layoutId: "split_versus_two", choices: ["Alpha", "Beta"], question_format: "multiple_choice" },
+      { layoutId: "visual_choices_three", choices: ["A", "B", "C"] },
+      { layoutId: "visual_choices_three_pure", choices: ["A", "B", "C"], question_format: "odd_one_out" },
+      { layoutId: "full_stack_list", choices: ["A", "B", "C"] },
+    ];
+
+    for (const preset of BUILT_IN_PRESETS) {
+      for (const lc of layoutConfigs) {
+        it(`renders preset ${preset.name} (${preset.id}) on layout ${lc.layoutId} (${lc.choices.length} choices)`, () => {
+          for (const aspectRatio of ["16:9", "9:16"] as const) {
+            const res = buildSandboxComposition({
+              aspect_ratio: aspectRatio,
+              mode: "rehearsal",
+              theme: preset.theme,
+              palette_id: preset.palette_id,
+              layout_id: lc.layoutId,
+              thinking_bar_style: preset.thinking_bar_style,
+              question_box_style: preset.question_box_style,
+              answer_card_style: preset.answer_card_style,
+              counter_style: preset.counter_style,
+              background_style: preset.background_style,
+              choices: lc.choices,
+              question_format: lc.question_format,
+              question_text: `Testing ${preset.name} on ${lc.layoutId}?`,
+            });
+
+            expect(res.html).toBeTruthy();
+            expect(res.html).toContain(`layout-${lc.layoutId}`);
+            expect(res.css).toBeTruthy();
+            expect(res.contrast_report.ok).toBe(true);
+          }
+        });
+      }
+    }
+
+    it("includes font readiness contract across all 6 layouts including pure visual", () => {
+      for (const layout of QUIZ_LAYOUTS) {
+        const is2Choice = layout.id === "verdict_true_false" || layout.id === "split_versus_two";
+        const choices = is2Choice ? ["Option A", "Option B"] : ["Option A", "Option B", "Option C"];
+        const questionFormat = layout.id === "verdict_true_false" ? "true_false" : layout.id === "visual_choices_three_pure" ? "odd_one_out" : "multiple_choice";
+
+        const res = buildSandboxComposition({
+          layout_id: layout.id,
+          choices,
+          question_format: questionFormat,
+          aspect_ratio: "16:9",
+        });
+
+        expect(res.html).toContain("window.__fontReadyPromise");
+        expect(res.html).toContain("fitChoiceGroups()");
+      }
+    });
+  });
 });
+

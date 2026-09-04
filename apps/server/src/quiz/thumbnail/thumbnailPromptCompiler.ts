@@ -25,7 +25,23 @@ export function compileThumbnailPrompt(
     mascotProfile?.master_prompt || "an adorable clever fluffy robotic fox with cyan accents and big expressive sparkling eyes";
   const mascotColor = mascotProfile?.color_theme || plan.colorTheme || "#06b6d4";
 
-  const mascotDescription = `Mascot character ${mascotName}: ${mascotBasePrompt} (theme color: ${mascotColor}), wearing a stylish ${plan.mascotPersona.costume}. Pose: naturally leaning forward and simply pointing with one hand toward the quiz subjects with an expressive, curious, and excited open-mouthed smile. Clean bright luminous rim lighting accentuating the character silhouette against the environment. No cluttered extra handheld items.`;
+  const costumeText = plan.mascotPersona.costume
+    ? `wearing a stylish ${plan.mascotPersona.costume}`
+    : "wearing a stylish themed costume";
+  const expressionText = plan.mascotPersona.expression
+    ? `Expression: ${plan.mascotPersona.expression}.`
+    : "Expression: expressive, curious, and excited.";
+  const poseText = plan.mascotPersona.poseDescription
+    ? `Pose & Action: ${plan.mascotPersona.poseDescription}.`
+    : "Pose & Action: dynamic, natural posture engaging with the quiz challenge.";
+  const propText =
+    plan.mascotPersona.prop &&
+    !plan.mascotPersona.prop.toLowerCase().includes("none") &&
+    plan.mascotPersona.prop.trim().length > 0
+      ? `Thematic Prop: interacting with ${plan.mascotPersona.prop}.`
+      : "";
+
+  const mascotDescription = `Mascot character ${mascotName}: ${mascotBasePrompt} (theme color: ${mascotColor}), ${costumeText}. ${expressionText} ${poseText} ${propText} Clean bright luminous rim lighting accentuating the character silhouette against the environment. Clean composition without cluttered extra handheld items.`;
 
   // 3. Clean Modern Typography & Capsule Badge
   const typographySection = `Typography & Text Hierarchy:

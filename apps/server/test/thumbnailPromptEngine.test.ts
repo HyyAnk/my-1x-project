@@ -360,7 +360,7 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(viPlan.badgeText).toBe("THỬ THÁCH IQ 140+ ⚡");
   });
 
-  it("compiles high-contrast prompts with rim lighting and dynamic pointing pose", () => {
+  it("compiles high-contrast prompts with rim lighting and dynamic mascot action pose", () => {
     const plan = resolveThumbnailLayout({
       topicTitle: "Solar System Planets Quiz",
       questionCount: 15,
@@ -372,7 +372,7 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     const prompt169 = compileThumbnailPrompt(plan, "16:9", sampleMascot);
     expect(prompt169).toContain("SOLAR SYSTEM QUIZ");
     expect(prompt169).toContain("99% FAIL! 🔥");
-    expect(prompt169).toContain("pointing");
+    expect(prompt169).toContain(plan.mascotPersona.poseDescription);
     expect(prompt169).toContain("rim light");
     expect(prompt169).toContain("STRICT NO thick outer border");
   });

@@ -47,6 +47,43 @@ describe("Phase 2 Sandbox layout API boundary", () => {
       expect(rehearsalBody.html).toContain("__hyperframesRehearsal");
       expect(rehearsalBody.html).toContain("--choices-at");
       expect(rehearsalBody.html).toContain("--reveal-at");
+
+      // Test Comic Action Boom preset payload across all 6 layouts
+      const layoutTests = [
+        { layout_id: "media_left_choices_right", choices: ["Option A", "Option B", "Option C"] },
+        { layout_id: "media_left_choices_right", choices: ["Option A", "Option B"] },
+        { layout_id: "verdict_true_false", choices: ["True", "False"], question_format: "true_false" },
+        { layout_id: "split_versus_two", choices: ["Cheetah", "Falcon"], question_format: "multiple_choice" },
+        { layout_id: "visual_choices_three", choices: ["A", "B", "C"] },
+        { layout_id: "visual_choices_three_pure", choices: ["A", "B", "C"], question_format: "odd_one_out" },
+        { layout_id: "full_stack_list", choices: ["A", "B", "C"] },
+      ];
+
+      for (const lt of layoutTests) {
+        const comicBoomRes = await app.server.inject({
+          method: "POST",
+          url: "/api/quiz/preview-composition",
+          payload: {
+            aspect_ratio: "16:9",
+            mode: "rehearsal",
+            theme: "candy_arcade",
+            palette_id: "sunny",
+            layout_id: lt.layout_id,
+            thinking_bar_style: "flame_fuse",
+            question_box_style: "comic_bubble",
+            answer_card_style: "comic_chunky",
+            counter_style: "floating_balloon",
+            background_style: "candy_rays",
+            choices: lt.choices,
+            question_format: lt.question_format,
+            question_text: "Sample Question?",
+          },
+        });
+        if (comicBoomRes.statusCode !== 200) {
+          console.error("Comic Boom failed for", lt.layout_id, comicBoomRes.statusCode, comicBoomRes.body);
+        }
+        expect(comicBoomRes.statusCode).toBe(200);
+      }
     } finally {
       await app.close();
     }

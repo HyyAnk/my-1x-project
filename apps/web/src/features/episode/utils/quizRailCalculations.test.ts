@@ -200,6 +200,22 @@ describe("quizRailCalculations", () => {
       expect(stage).not.toBeNull();
       expect(stage?.key).toBe("assets");
     });
+
+    it("identifies direct quiz generation progress as questions stage", () => {
+      const activePipelineTask = {
+        task_id: "t_pipe",
+        task_type: "GENERATE_PIPELINE",
+        channel_id: "ch_1",
+        status: "RUNNING",
+        progress_message: "Quiz · generating structured questions",
+        created_at: "2026-08-31T00:00:00Z",
+        updated_at: "2026-08-31T00:00:00Z",
+      } as unknown as Task;
+
+      const stage = pipelineStage(activePipelineTask);
+      expect(stage).not.toBeNull();
+      expect(stage?.key).toBe("questions");
+    });
   });
 
   describe("baseStatus and resolveStatus", () => {

@@ -58,6 +58,10 @@
         <span class="metric-label">Available Zones</span>
         <span id="val-idle-zones" class="metric-value green">19/19</span>
       </div>
+      <div class="metric-item">
+        <span class="metric-label">File Neurons</span>
+        <span id="val-file-neurons" class="metric-value cyan">--</span>
+      </div>
       <div class="live-badge">
         <div class="pulse-dot"></div>
         <span>LIVE SSE</span>
@@ -70,7 +74,18 @@
     <button id="btn-reset-view" class="btn-cyber">🎯 Reset View</button>
     <button id="btn-auto-rotate" class="btn-cyber">🔄 Auto-Rotate</button>
     <button id="btn-open-matrix" class="btn-cyber btn-primary">📊 Work Matrix</button>
+    <button id="btn-toggle-pulses" class="btn-cyber active" title="Toggle Realtime Synaptic File Pulses (Shortcut: P)">⚡ Synapse Pulses</button>
     <button id="btn-zen-mode" class="btn-cyber" title="Toggle Clean Panorama View (Shortcut: H)">👁️ Zen Mode</button>
+  </div>
+
+  <!-- Live Synaptic File Activity Ticker -->
+  <div id="activity-ticker" class="hidden">
+    <div class="ticker-dot"></div>
+    <div id="ticker-content" class="ticker-content">
+      <span id="ticker-icon" class="ticker-icon">⚡</span>
+      <span id="ticker-zone" class="ticker-zone">api-contracts</span>
+      <span id="ticker-file" class="ticker-file">episodes.ts</span>
+    </div>
   </div>
 
   <!-- Zen Mode Floating Restore Bar -->
@@ -154,6 +169,18 @@
           <tbody id="matrix-table-body"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- File Micro-Neuron Hover Tooltip -->
+  <div id="file-tooltip" class="hidden">
+    <div class="file-tooltip-header">
+      <span class="file-tooltip-icon">📄</span>
+      <span id="file-tooltip-name" class="file-tooltip-name">filename.ts</span>
+    </div>
+    <div id="file-tooltip-path" class="file-tooltip-path">apps/server/src/filename.ts</div>
+    <div class="file-tooltip-footer">
+      <span id="file-tooltip-zone" class="file-tooltip-zone">api-contracts</span>
     </div>
   </div>
 

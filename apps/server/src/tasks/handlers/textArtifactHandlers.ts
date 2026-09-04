@@ -1,6 +1,7 @@
 import type { TaskManagerRuntime, ActiveRun } from "../runtime.js";
 import { extractMarkdown, extractScriptMarkdown, parseTopicCandidates } from "../parsers.js";
 import { validateQuizResearch, validateQuizScript, validateQuizTreatment, validateQuizVisualBible } from "../validators.js";
+import { handleDirectQuizOutput } from "./directQuizHandler.js";
 
 export async function handleTextArtifactOutput(runtime: TaskManagerRuntime, active: ActiveRun, output: string): Promise<string[] | null> {
   const task = active.task;
@@ -58,6 +59,10 @@ export async function handleTextArtifactOutput(runtime: TaskManagerRuntime, acti
     await runtime.repository.updateEpisodeStage(task.channel_id, task.episode_id!, "VISUAL_BIBLE_READY");
     const file = await runtime.repository.getEpisodeFile(task.channel_id, task.episode_id!, "visual_bible.md");
     return [file.path];
+  }
+
+  if (task.task_type === "GENERATE_QUIZ") {
+    return handleDirectQuizOutput(runtime, active, output);
   }
 
   return null;

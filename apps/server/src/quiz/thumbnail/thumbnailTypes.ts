@@ -13,6 +13,17 @@ export type MascotThemedPersona = {
   poseDescription: string;
 };
 
+export type MascotPersonaVariation = {
+  id: number;
+  archetypeId: number;
+  archetypeName: string;
+  role: string;
+  costume: string;
+  prop: string;
+  expression: string;
+  poseDescription: string;
+};
+
 export type QuizSubjectAnchor = {
   label: string;
   visualPrompt: string;
@@ -27,6 +38,8 @@ export type QuizThumbnailPlan = {
   visualStyle: QuizImageStyle;
   colorTheme: string;
   mascotPersona: MascotThemedPersona;
+  mascotVariations?: MascotPersonaVariation[];
+  selectedVariationId?: number;
   subjectAnchors: QuizSubjectAnchor[];
   topicTitle: string;
   questionCount: number;

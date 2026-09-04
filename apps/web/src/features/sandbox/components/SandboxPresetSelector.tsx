@@ -1,6 +1,8 @@
-import { FloppyDisk, Trash } from "@phosphor-icons/react";
+import { useState } from "react";
+import { FloppyDisk, SlidersHorizontal, Trash } from "@phosphor-icons/react";
 import { useTranslation } from "../../../i18n";
 import type { VisualPresetItem } from "../hooks/useSandboxPresets";
+import { SandboxPresetManagerModal } from "./SandboxPresetManagerModal";
 
 export interface SandboxPresetSelectorProps {
   allPresets: VisualPresetItem[];
@@ -8,9 +10,16 @@ export interface SandboxPresetSelectorProps {
   customPresets: VisualPresetItem[];
   matchedPreset?: VisualPresetItem | null;
   activeCustomPreset?: VisualPresetItem | null;
+  loadedPresetId?: string | null;
+  loadedPreset?: VisualPresetItem | null;
+  canUpdateActivePreset?: boolean;
   onLoadPreset: (preset: VisualPresetItem) => void;
   onOpenSaveModal: () => void;
   onDeleteCustomPreset: (id: string) => void;
+  onUpdateActivePreset?: (targetId?: string) => Promise<void> | void;
+  onDuplicatePreset?: (preset: VisualPresetItem) => Promise<void> | void;
+  onUpdateMetadata?: (id: string, name: string, description?: string) => Promise<void> | void;
+  onRefreshPresets?: () => Promise<unknown> | void;
 }
 
 export function SandboxPresetSelector({
@@ -19,11 +28,19 @@ export function SandboxPresetSelector({
   customPresets,
   matchedPreset,
   activeCustomPreset,
+  loadedPresetId,
+  loadedPreset,
+  canUpdateActivePreset = false,
   onLoadPreset,
   onOpenSaveModal,
   onDeleteCustomPreset,
+  onUpdateActivePreset,
+  onDuplicatePreset,
+  onUpdateMetadata,
+  onRefreshPresets,
 }: SandboxPresetSelectorProps) {
   const { t } = useTranslation();
+  const [managerOpen, setManagerOpen] = useState(false);
 
   return (
     <div
@@ -97,6 +114,26 @@ export function SandboxPresetSelector({
           )}
         </select>
 
+        {canUpdateActivePreset && (
+          <button
+            type="button"
+            className="quiet-button compact"
+            onClick={() => void onUpdateActivePreset?.()}
+            title={t("visualSandbox.overwritePresetTooltip")}
+            style={{
+              height: "36px",
+              padding: "0 10px",
+              borderRadius: "8px",
+              whiteSpace: "nowrap",
+              color: "var(--accent, #6366f1)",
+              borderColor: "var(--accent, #6366f1)",
+            }}
+          >
+            <FloppyDisk size={14} weight="fill" />
+            <span>{t("visualSandbox.overwritePresetBtn")}</span>
+          </button>
+        )}
+
         <button
           type="button"
           className="quiet-button compact"
@@ -106,6 +143,17 @@ export function SandboxPresetSelector({
         >
           <FloppyDisk size={14} weight="bold" />
           <span>{t("visualSandbox.savePresetBtn")}</span>
+        </button>
+
+        <button
+          type="button"
+          className="quiet-button compact"
+          onClick={() => setManagerOpen(true)}
+          title={t("visualSandbox.managePresetsTooltip")}
+          style={{ height: "36px", padding: "0 8px", borderRadius: "8px", whiteSpace: "nowrap" }}
+        >
+          <SlidersHorizontal size={15} weight="bold" />
+          <span>{t("visualSandbox.managePresetsBtn")}</span>
         </button>
 
         {activeCustomPreset && (
@@ -142,6 +190,22 @@ export function SandboxPresetSelector({
           {t("visualSandbox.presetModifiedBadge")}
         </div>
       )}
+
+      {/* Sandbox Preset Manager & Import Modal */}
+      <SandboxPresetManagerModal
+        isOpen={managerOpen}
+        onClose={() => setManagerOpen(false)}
+        allPresets={allPresets}
+        builtInPresets={builtInPresets}
+        customPresets={customPresets}
+        loadedPresetId={loadedPresetId}
+        onLoadPreset={onLoadPreset}
+        onUpdateActivePreset={(id) => onUpdateActivePreset?.(id)}
+        onDuplicatePreset={(preset) => onDuplicatePreset?.(preset)}
+        onUpdateMetadata={(id, name, desc) => onUpdateMetadata?.(id, name, desc)}
+        onDeletePreset={onDeleteCustomPreset}
+        onRefreshPresets={onRefreshPresets}
+      />
     </div>
   );
 }

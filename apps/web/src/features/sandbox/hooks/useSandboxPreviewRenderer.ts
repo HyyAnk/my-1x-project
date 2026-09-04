@@ -54,6 +54,17 @@ export function useSandboxPreviewRenderer({
       setPreviewError(null);
       setPendingPreview(null);
       try {
+        const questionFormat =
+          design.layoutId === "verdict_true_false"
+            ? "true_false"
+            : design.layoutId === "visual_choices_three_pure"
+              ? "odd_one_out"
+              : design.layoutId === "split_versus_two"
+                ? "multiple_choice"
+                : question.choices.length === 2
+                  ? "true_false"
+                  : "multiple_choice";
+
         const input: SandboxPreviewRequest = {
           aspect_ratio: aspectRatio,
           mode: "rehearsal",
@@ -67,6 +78,7 @@ export function useSandboxPreviewRenderer({
           background_style: design.backgroundStyle,
           phase: timeline.phase,
           timeline_time_seconds: timeline.useScrubber ? timeline.timelineSeconds : undefined,
+          question_format: questionFormat,
           question_text: question.questionText,
           choices: question.choices,
           correct_choice_index: question.correctChoiceIndex,

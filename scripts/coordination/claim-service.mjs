@@ -187,7 +187,7 @@ export function releaseActiveClaim({ claimId, leaseToken, releasedBy, workspaceR
         throw new Error(`Claim "${claimId}" has no successful verification record and cannot be released.`);
       }
 
-      const inspection = inspectClaimScopeForClaim({ claim, root });
+      const inspection = inspectClaimScopeForClaim({ claim, root, db });
       if (!inspection.valid) {
         const reasons = inspection.violations.map((violation) => violation.reason).join(", ");
         throw new Error(`Claim scope verification failed during release: ${reasons}.`);

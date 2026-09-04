@@ -1,4 +1,5 @@
 import {
+  getQuizLayoutCapability,
   resolveQuizLayout,
   type DirectorBeat,
   type MascotRenderAspectRatio,
@@ -14,7 +15,7 @@ export function resolveQuestionLayout(
   beat: DirectorBeat,
   aspectRatio: MascotRenderAspectRatio = "16:9",
 ): QuizLayoutResolutionResult<ResolvedQuizLayoutId> {
-  const media: readonly QuizLayoutMediaKind[] = Array.isArray(beat.asset_intents)
+  const rawMedia: readonly QuizLayoutMediaKind[] = Array.isArray(beat.asset_intents)
     ? beat.asset_intents.includes("choice_illustration")
       ? ["choice"]
       : beat.asset_intents.includes("question_illustration")
@@ -24,8 +25,14 @@ export function resolveQuestionLayout(
       ? ["choice"]
       : ["question"];
 
+  const requestedLayout = beat.layout_id;
+  const media =
+    requestedLayout !== "auto"
+      ? rawMedia.filter((m) => getQuizLayoutCapability(requestedLayout).media.supported.includes(m))
+      : rawMedia;
+
   return resolveQuizLayout({
-    requestedLayout: beat.layout_id,
+    requestedLayout,
     archetype: beat.archetype,
     questionFormat: question.format,
     choiceCount: question.choices.length,

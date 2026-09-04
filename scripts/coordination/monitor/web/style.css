@@ -269,6 +269,12 @@ body.zen-mode #floating-controls {
   pointer-events: none;
 }
 
+body.zen-mode #activity-ticker {
+  transform: translateY(160%);
+  opacity: 0;
+  pointer-events: none;
+}
+
 body.zen-mode #legend-panel {
   transform: translateY(160%);
   opacity: 0;
@@ -278,6 +284,61 @@ body.zen-mode #legend-panel {
 body.zen-mode #detail-drawer {
   transform: translateX(450px) !important;
   pointer-events: none;
+}
+
+/* Live Synaptic File Activity Ticker */
+#activity-ticker {
+  position: absolute;
+  bottom: 4.85rem;
+  left: 1.5rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: var(--bg-surface);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-glow);
+  border-radius: 9999px;
+  padding: 0.35rem 0.95rem;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+}
+
+#activity-ticker.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+}
+
+.ticker-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 8px var(--accent-cyan);
+  animation: pulse 1.2s infinite;
+}
+
+.ticker-content {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.ticker-icon {
+  font-size: 0.85rem;
+}
+
+.ticker-zone {
+  color: var(--accent-cyan);
+  font-weight: 700;
+}
+
+.ticker-file {
+  color: var(--text-secondary);
 }
 
 /* Zen Mode Floating Restore Bar */
@@ -636,4 +697,59 @@ body.zen-mode #detail-drawer {
   15% { opacity: 1; transform: translate(-50%, 0); }
   80% { opacity: 1; transform: translate(-50%, 0); }
   100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+
+/* File Micro-Neuron Hologram Tooltip */
+#file-tooltip {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65), 0 0 16px rgba(0, 240, 255, 0.25);
+  border-radius: 8px;
+  padding: 0.65rem 0.95rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  max-width: 380px;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  transform: translate(16px, 16px);
+}
+
+#file-tooltip.hidden {
+  opacity: 0;
+  transform: translate(16px, 24px);
+}
+
+.file-tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.file-tooltip-name {
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 0.82rem;
+}
+
+.file-tooltip-path {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  word-break: break-all;
+  margin-bottom: 0.35rem;
+}
+
+.file-tooltip-zone {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(0, 240, 255, 0.12);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(0, 240, 255, 0.3);
 }

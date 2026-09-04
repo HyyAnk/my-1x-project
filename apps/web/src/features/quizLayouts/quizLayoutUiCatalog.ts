@@ -2,12 +2,10 @@ import { QUIZ_LAYOUTS, type ResolvedQuizLayoutId } from "@studio/shared";
 
 export type QuizLayoutUiDefinition = {
   id: ResolvedQuizLayoutId;
-  labelKey: "stageStudio.layoutMediaLeft" | "stageStudio.layoutVisualThree" | "stageStudio.layoutFullStack";
-  descriptionKey: "stageStudio.layoutMediaLeftDesc" | "stageStudio.layoutVisualThreeDesc" | "stageStudio.layoutFullStackDesc";
-  sandboxLabelKey:
-    "visualSandbox.layoutMediaLeftChoicesRight" | "visualSandbox.layoutVisualChoicesThree" | "visualSandbox.layoutFullStackList";
-  sandboxDescriptionKey:
-    "visualSandbox.layoutMediaLeftChoicesRightSub" | "visualSandbox.layoutVisualChoicesThreeSub" | "visualSandbox.layoutFullStackListSub";
+  labelKey: string;
+  descriptionKey: string;
+  sandboxLabelKey: string;
+  sandboxDescriptionKey: string;
   preview: "media-left" | "visual-three" | "full-stack";
   icon: "split" | "visual" | "stack";
 };
@@ -30,6 +28,33 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     sandboxDescriptionKey: "visualSandbox.layoutVisualChoicesThreeSub",
     preview: "visual-three",
     icon: "visual",
+  },
+  visual_choices_three_pure: {
+    id: "visual_choices_three_pure",
+    labelKey: "stageStudio.layoutVisualThree",
+    descriptionKey: "stageStudio.layoutVisualThreeDesc",
+    sandboxLabelKey: "visualSandbox.layoutVisualChoicesThreePure",
+    sandboxDescriptionKey: "visualSandbox.layoutVisualChoicesThreePureSub",
+    preview: "visual-three",
+    icon: "visual",
+  },
+  split_versus_two: {
+    id: "split_versus_two",
+    labelKey: "stageStudio.layoutMediaLeft",
+    descriptionKey: "stageStudio.layoutMediaLeftDesc",
+    sandboxLabelKey: "visualSandbox.layoutSplitVersusTwo",
+    sandboxDescriptionKey: "visualSandbox.layoutSplitVersusTwoSub",
+    preview: "media-left",
+    icon: "split",
+  },
+  verdict_true_false: {
+    id: "verdict_true_false",
+    labelKey: "stageStudio.layoutMediaLeft",
+    descriptionKey: "stageStudio.layoutMediaLeftDesc",
+    sandboxLabelKey: "visualSandbox.layoutVerdictTrueFalse",
+    sandboxDescriptionKey: "visualSandbox.layoutVerdictTrueFalseSub",
+    preview: "media-left",
+    icon: "split",
   },
   full_stack_list: {
     id: "full_stack_list",

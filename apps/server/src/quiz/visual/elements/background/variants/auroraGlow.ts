@@ -12,12 +12,12 @@ const AURORA_GLOW_PERFORMANCE: BackgroundPerformanceMetadata = {
 
 export function renderAuroraStardust(questionIndex: number): string {
   const sparkles = [
-    { symbol: "✧", top: "14%", left: "8%", size: "26px", color: "var(--accent)" },
-    { symbol: "✦", top: "28%", right: "12%", size: "22px", color: "#FFFDF0" },
-    { symbol: "★", top: "68%", left: "12%", size: "28px", color: "var(--surface-accent)" },
-    { symbol: "•", top: "82%", right: "16%", size: "18px", color: "#FFD34D" },
-    { symbol: "✧", top: "42%", left: "22%", size: "20px", color: "#FFFDF0" },
-    { symbol: "✦", top: "18%", right: "32%", size: "24px", color: "var(--accent)" },
+    { symbol: "✧", top: "14%", left: "8%", size: "14px", color: "var(--accent)" },
+    { symbol: "✦", top: "26%", right: "14%", size: "13px", color: "#FFFDF0" },
+    { symbol: "✧", top: "64%", left: "10%", size: "16px", color: "var(--surface-accent)" },
+    { symbol: "•", top: "80%", right: "16%", size: "10px", color: "#FFD34D" },
+    { symbol: "✧", top: "40%", left: "20%", size: "12px", color: "#FFFDF0" },
+    { symbol: "✦", top: "16%", right: "30%", size: "15px", color: "var(--accent)" },
   ];
   return sparkles
     .map(
@@ -42,33 +42,34 @@ export function renderAuroraGlowHtml(context: BackgroundRenderContext): string {
 
 export function renderAuroraGlowCss(): string {
   return `
-.bg-aurora-glow { position: absolute; inset: 0; contain: layout paint; }
-.aurora-gradient-base { position: absolute; z-index: 0; inset: 0; background: radial-gradient(120% 120% at 50% 10%, var(--bg-primary) 0%, var(--bg-secondary) 100%); }
-.aurora-mesh-curtain { position: absolute; z-index: 1; inset: -20%; background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255,255,255,0.18) 0%, transparent 60%); pointer-events: none; }
-.aurora-orb { position: absolute; border-radius: 50%; filter: blur(55px); opacity: 0.42; will-change: transform; pointer-events: none; }
-.aurora-orb-1 { z-index: 1; top: -12%; left: 8%; width: 680px; height: 440px; background: radial-gradient(circle, var(--accent) 0%, transparent 70%); animation: aurora-float-1 22s ease-in-out var(--aurora-phase, 0s) infinite alternate both; }
-.aurora-orb-2 { z-index: 1; bottom: -8%; right: 6%; width: 720px; height: 480px; background: radial-gradient(circle, var(--surface-accent) 0%, transparent 70%); animation: aurora-float-2 26s ease-in-out var(--aurora-phase, 0s) infinite alternate both; }
-.aurora-orb-3 { z-index: 1; top: 32%; left: 38%; width: 560px; height: 380px; background: radial-gradient(circle, rgba(255,255,255,0.32) 0%, transparent 70%); animation: aurora-float-3 19s ease-in-out var(--aurora-phase, 0s) infinite alternate both; }
-.aurora-stardust { position: absolute; z-index: 2; inset: 0; pointer-events: none; color: rgba(255,255,255,0.7); }
-.aurora-stardust i { position: absolute; display: block; font-style: normal; animation: aurora-shimmer 4.2s ease-in-out var(--stardust-phase, 0s) infinite alternate both; will-change: transform, opacity; }
+.bg-aurora-glow { position: absolute; inset: 0; contain: layout paint; overflow: hidden; }
+.aurora-gradient-base { position: absolute; z-index: 0; inset: 0; background: radial-gradient(120% 120% at 50% 0%, var(--bg-primary) 0%, var(--bg-secondary) 100%); }
+.aurora-gradient-base::after { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,255,255,0.12) 0%, transparent 70%); content: ""; pointer-events: none; }
+.aurora-mesh-curtain { position: absolute; z-index: 1; inset: -20%; background: repeating-linear-gradient(105deg, transparent 0%, transparent 6%, rgba(255,255,255,0.06) 8%, transparent 11%, transparent 17%, rgba(255,255,255,0.08) 20%, transparent 24%), radial-gradient(ellipse 85% 55% at 50% -10%, rgba(255,255,255,0.22) 0%, transparent 65%); mix-blend-mode: screen; filter: blur(14px); opacity: 0.8; pointer-events: none; }
+.aurora-orb { position: absolute; border-radius: 45% 55% 62% 38% / 48% 52% 48% 52%; filter: blur(95px); mix-blend-mode: screen; opacity: 0.58; will-change: transform; pointer-events: none; }
+.aurora-orb-1 { z-index: 1; top: -16%; left: 4%; width: 840px; height: 500px; background: radial-gradient(ellipse at 45% 50%, var(--accent) 0%, rgba(255,255,255,0.3) 25%, transparent 70%); animation: aurora-float-1 22s ease-in-out var(--aurora-phase, 0s) infinite alternate both; }
+.aurora-orb-2 { z-index: 1; bottom: -14%; right: 2%; width: 880px; height: 520px; background: radial-gradient(ellipse at 55% 50%, var(--surface-accent) 0%, rgba(255,255,255,0.25) 30%, transparent 70%); animation: aurora-float-2 26s ease-in-out var(--aurora-phase, 0s) infinite alternate both; }
+.aurora-orb-3 { z-index: 1; top: 24%; left: 32%; width: 660px; height: 440px; background: radial-gradient(circle, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.12) 35%, transparent 68%); animation: aurora-float-3 19s ease-in-out var(--aurora-phase, 0s) infinite alternate both; }
+.aurora-stardust { position: absolute; z-index: 2; inset: 0; pointer-events: none; color: rgba(255,255,255,0.85); }
+.aurora-stardust i { position: absolute; display: block; font-style: normal; line-height: 1; filter: drop-shadow(0 0 5px rgba(255,255,255,0.85)); animation: aurora-shimmer 3.8s ease-in-out var(--stardust-phase, 0s) infinite alternate both; will-change: transform, opacity; }
 @keyframes aurora-float-1 {
-  0% { transform: translate(0,0) scale(1); }
-  50% { transform: translate(48px, 28px) scale(1.08); }
-  100% { transform: translate(75px, 45px) scale(1.14); }
+  0% { transform: translate(0,0) rotate(0deg) scale(1); }
+  50% { transform: translate(45px, 25px) rotate(4deg) scale(1.06); }
+  100% { transform: translate(75px, 45px) rotate(-2deg) scale(1.12); }
 }
 @keyframes aurora-float-2 {
   0% { transform: translate(0,0) scale(1); }
-  50% { transform: translate(-35px, -24px) scale(1.06); }
-  100% { transform: translate(-60px, -40px) scale(1.1); }
+  50% { transform: translate(-35px, -20px) rotate(-3deg) scale(1.05); }
+  100% { transform: translate(-60px, -40px) rotate(3deg) scale(1.1); }
 }
 @keyframes aurora-float-3 {
   0% { transform: translate(0,0) scale(1); }
-  50% { transform: translate(-20px, 30px) scale(0.95); }
-  100% { transform: translate(-40px, 50px) scale(0.9); }
+  50% { transform: translate(-20px, 25px) scale(1.08); }
+  100% { transform: translate(-40px, 50px) scale(0.94); }
 }
 @keyframes aurora-shimmer {
-  0%, 100% { opacity: 0.35; transform: scale(0.85); }
-  50% { opacity: 0.95; transform: scale(1.18); }
+  0%, 100% { opacity: 0.25; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); filter: drop-shadow(0 0 8px #ffffff); }
 }
 @media (prefers-reduced-motion: reduce) {
   .aurora-orb, .aurora-stardust i { animation: none !important; }

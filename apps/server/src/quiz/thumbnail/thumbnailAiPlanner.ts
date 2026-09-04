@@ -1,11 +1,24 @@
 import type { MascotProfile, ThumbnailAspectRatio, ThumbnailLayoutType } from "@studio/shared";
 import { executeSinglePromptText, type LLMClient } from "../../utils/promptSanitizer.js";
+import {
+  MASCOT_ARCHETYPES_CATALOG,
+  selectRandomArchetypes,
+  selectRandomVariation,
+  type MascotArchetypeDefinition,
+} from "./thumbnailArchetypes.js";
 import { resolveThumbnailLayout } from "./thumbnailLayoutResolver.js";
-import type { MascotThemedPersona, QuizSubjectAnchor, QuizThumbnailPlan, ResolveThumbnailInput } from "./thumbnailTypes.js";
+import type {
+  MascotPersonaVariation,
+  MascotThemedPersona,
+  QuizSubjectAnchor,
+  QuizThumbnailPlan,
+  ResolveThumbnailInput,
+} from "./thumbnailTypes.js";
 
 export type PlanThumbnailWithAiInput = ResolveThumbnailInput & {
   llmClient?: LLMClient | null;
   signal?: AbortSignal;
+  archetypesOverride?: MascotArchetypeDefinition[];
 };
 
 interface AiThumbnailPlanOutput {
@@ -15,16 +28,38 @@ interface AiThumbnailPlanOutput {
   environment_atmosphere?: string;
   lighting_palette?: string;
   mascot_persona?: Partial<MascotThemedPersona>;
+  mascot_persona_variations?: Array<{
+    id?: number;
+    archetypeId?: number;
+    archetypeName?: string;
+    role?: string;
+    costume?: string;
+    prop?: string;
+    expression?: string;
+    poseDescription?: string;
+  }>;
   subject_anchors?: Array<{ label?: string; visualPrompt?: string; badge?: string }>;
 }
 
-function buildAiPlannerPrompt(input: PlanThumbnailWithAiInput): string {
+export function buildAiPlannerPrompt(
+  input: PlanThumbnailWithAiInput,
+  directedArchetypes?: MascotArchetypeDefinition[],
+): string {
   const sampleQuestions = (input.questions || []).slice(0, 4).map((q, i) => ({
     number: i + 1,
     question: q.question,
     choices: q.choices,
     answer: q.answer,
   }));
+
+  const archetypes = directedArchetypes || input.archetypesOverride || selectRandomArchetypes(MASCOT_ARCHETYPES_CATALOG, 5);
+
+  const archetypesSection = archetypes
+    .map(
+      (a, index) =>
+        `  Variation ${index + 1} (Archetype ID ${a.id}: "${a.name}"):\n  - Core Psychological/Behavioral Direction: ${a.guideline}`,
+    )
+    .join("\n\n");
 
   return [
     "You are an elite YouTube Creative Director & Thumbnail Visual Strategist for high-CTR family & kids edutainment videos.",
@@ -39,34 +74,46 @@ function buildAiPlannerPrompt(input: PlanThumbnailWithAiInput): string {
     JSON.stringify(sampleQuestions, null, 2),
     "",
     "[CRITICAL INSTRUCTIONS]:",
-    `1. hook_text: Catchy headline (2-4 words MAX in ${input.language || "English"}). Specifically about the episode's subject (e.g. if topic is Cookies/Baking -> "WORLD COOKIE TOUR!" or "BAKES OF THE WORLD!"). NEVER output generic "GENERAL KNOWLEDGE".`,
+    `1. hook_text: Catchy headline (2-4 words MAX in ${input.language || "English"}). Specifically about the episode's subject. NEVER output generic "GENERAL KNOWLEDGE".`,
     `2. badge_text: High-CTR curiosity badge (e.g. "99% FAIL! 🔥", "10 SECONDS! ⏱️", "${input.questionCount || 10} QUESTIONS").`,
     "3. layout: Select best layout: [\"mega_grid\", \"split_vs\", \"mystery_silhouette\", \"odd_one_out\", \"difficulty_tier\", \"true_false\"].",
-    "4. environment_atmosphere: A clean minimalist, soft-focus Pixar 3D studio background specifically tailored to this episode's topic with heavy depth of field, smooth warm gradients, and ZERO busy landscape clutter (NO dense bushes, NO distracting weeds/rocks, NO messy background particles).",
+    "4. environment_atmosphere: A clean minimalist, soft-focus Pixar 3D studio background specifically tailored to this episode's topic with heavy depth of field, smooth warm gradients, and ZERO busy landscape clutter.",
     "5. lighting_palette: Rich saturated warm studio lighting with luminous rim lighting on foreground characters.",
-    "6. mascot_persona: Tailor mascot's role, costume, prop, expression, and pose specifically to the topic with joyful Pixar expressions.",
+    "6. mascot_persona_variations: Generate exactly 5 completely distinct, topic-tailored mascot variations corresponding to the 5 randomly selected emotional/behavioral archetypes below.",
+    "   STRICT ZERO-COPY & ANTI-BIAS RULES:",
+    "   - DO NOT repeat postures across variations.",
+    "   - DO NOT rely on generic pointing poses.",
+    "   - DO NOT copy archetype descriptions verbatim; invent authentic, topic-specific costumes, expressions, props, and actions.",
+    "",
+    "[SELECTED MASCOT ARCHETYPES FOR THIS EPISODE]:",
+    archetypesSection,
+    "",
     "7. subject_anchors: 2 to 4 concrete 3D visual objects. STRICT: Objects must float cleanly with ZERO numbers (NO 1, 2, 3, 4), ZERO card boxes, ZERO white frames.",
     "",
     "Respond with ONLY valid JSON matching this schema:",
     "{",
-    "  \"hook_text\": \"WORLD COOKIE TOUR!\",",
-    "  \"badge_text\": \"11 QUESTIONS\",",
-    "  \"layout\": \"mega_grid\",",
-    "  \"environment_atmosphere\": \"Clean minimalist bakery studio with soft warm golden oven glow in heavy soft depth of field\",",
-    "  \"lighting_palette\": \"Warm amber, golden apricot, soft luminous rim lighting on characters and pastries\",",
-    "  \"mascot_persona\": {",
-    "    \"role\": \"Pastry Chef\",",
-    "    \"costume\": \"White chef toque and baker apron with flour dusted pockets\",",
-    "    \"prop\": \"Wooden rolling pin and tray of golden baked cookies\",",
-    "    \"expression\": \"Delighted, proud, mouth-watering excited smile\",",
-    "    \"poseDescription\": \"Enthusiastically pointing toward the delicious cookie challenge\"",
-    "  },",
-    "  \"subject_anchors\": [",
-    "    { \"label\": \"Option 1\", \"visualPrompt\": \"3D delicious pastel French Macaron cookie tower\" },",
-    "    { \"label\": \"Option 2\", \"visualPrompt\": \"3D golden British Shortbread biscuit with butter glaze\" }",
+    '  "hook_text": "<Catchy 2-4 word headline in target language>",',
+    '  "badge_text": "<High-CTR curiosity badge>",',
+    '  "layout": "mega_grid",',
+    '  "environment_atmosphere": "<Topic-tailored soft-focus 3D environment description>",',
+    '  "lighting_palette": "<Warm studio lighting palette with rim light>",',
+    '  "mascot_persona_variations": [',
+    "    {",
+    '      "id": 1,',
+    '      "archetypeId": 1,',
+    '      "archetypeName": "<Archetype Name>",',
+    '      "role": "<Contextual role tailored to topic>",',
+    '      "costume": "<Specific costume tailored to topic>",',
+    '      "prop": "<Contextual prop or none>",',
+    '      "expression": "<Specific expressive facial emotion embodying the archetype>",',
+    '      "poseDescription": "<Dynamic full-body posture/action embodying the archetype without generic pointing>"',
+    "    }",
+    "  ],",
+    '  "subject_anchors": [',
+    '    { "label": "Option 1", "visualPrompt": "<Clean standalone 3D visual object>" },',
+    '    { "label": "Option 2", "visualPrompt": "<Clean standalone 3D visual object>" }',
     "  ]",
     "}",
-
   ].join("\n");
 }
 
@@ -88,7 +135,8 @@ export async function planThumbnailWithAI(input: PlanThumbnailWithAiInput): Prom
   }
 
   try {
-    const plannerPrompt = buildAiPlannerPrompt(input);
+    const directedArchetypes = input.archetypesOverride || selectRandomArchetypes(MASCOT_ARCHETYPES_CATALOG, 5);
+    const plannerPrompt = buildAiPlannerPrompt(input, directedArchetypes);
     const rawResponse = await executeSinglePromptText(input.llmClient, plannerPrompt, {
       signal: input.signal,
       timeoutMs: 30000,
@@ -106,13 +154,45 @@ export async function planThumbnailWithAI(input: PlanThumbnailWithAiInput): Prom
     const environmentAtmosphere = parsed.environment_atmosphere || fallbackPlan.environmentAtmosphere;
     const lightingPalette = parsed.lighting_palette || fallbackPlan.lightingPalette;
 
-    const mascotPersona: MascotThemedPersona = {
-      role: parsed.mascot_persona?.role || fallbackPlan.mascotPersona.role,
-      costume: parsed.mascot_persona?.costume || fallbackPlan.mascotPersona.costume,
-      prop: parsed.mascot_persona?.prop || fallbackPlan.mascotPersona.prop,
-      expression: parsed.mascot_persona?.expression || fallbackPlan.mascotPersona.expression,
-      poseDescription: parsed.mascot_persona?.poseDescription || fallbackPlan.mascotPersona.poseDescription,
-    };
+    // Process 5 persona variations and select 1 with true randomness
+    const rawVariations = parsed.mascot_persona_variations || [];
+    const variations: MascotPersonaVariation[] = rawVariations
+      .filter((v) => v && (v.poseDescription || v.role || v.expression))
+      .map((v, idx) => ({
+        id: v.id || idx + 1,
+        archetypeId: v.archetypeId || directedArchetypes[idx]?.id || idx + 1,
+        archetypeName: v.archetypeName || directedArchetypes[idx]?.name || `Archetype ${idx + 1}`,
+        role: v.role || fallbackPlan.mascotPersona.role,
+        costume: v.costume || fallbackPlan.mascotPersona.costume,
+        prop: v.prop || fallbackPlan.mascotPersona.prop,
+        expression: v.expression || fallbackPlan.mascotPersona.expression,
+        poseDescription: v.poseDescription || fallbackPlan.mascotPersona.poseDescription,
+      }));
+
+    let mascotPersona: MascotThemedPersona = fallbackPlan.mascotPersona;
+    let selectedVariationId: number | undefined;
+
+    if (variations.length > 0) {
+      const picked = selectRandomVariation(variations);
+      if (picked) {
+        mascotPersona = {
+          role: picked.selected.role,
+          costume: picked.selected.costume,
+          prop: picked.selected.prop,
+          expression: picked.selected.expression,
+          poseDescription: picked.selected.poseDescription,
+        };
+        selectedVariationId = picked.selected.id;
+      }
+    } else if (parsed.mascot_persona) {
+      mascotPersona = {
+        role: parsed.mascot_persona.role || fallbackPlan.mascotPersona.role,
+        costume: parsed.mascot_persona.costume || fallbackPlan.mascotPersona.costume,
+        prop: parsed.mascot_persona.prop || fallbackPlan.mascotPersona.prop,
+        expression: parsed.mascot_persona.expression || fallbackPlan.mascotPersona.expression,
+        poseDescription: parsed.mascot_persona.poseDescription || fallbackPlan.mascotPersona.poseDescription,
+      };
+    }
 
     const subjectAnchors: QuizSubjectAnchor[] =
       parsed.subject_anchors && parsed.subject_anchors.length >= 2
@@ -131,6 +211,8 @@ export async function planThumbnailWithAI(input: PlanThumbnailWithAiInput): Prom
       environmentAtmosphere,
       lightingPalette,
       mascotPersona,
+      mascotVariations: variations.length > 0 ? variations : undefined,
+      selectedVariationId,
       subjectAnchors,
     };
   } catch {

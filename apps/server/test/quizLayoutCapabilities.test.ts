@@ -13,6 +13,7 @@ import {
 } from "@studio/shared";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { validateDirectorPlan } from "../src/quiz/director/validateDirectorPlan.js";
+import { resolveQuestionLayout } from "../src/quiz/layoutCompatibility.js";
 import { assessQuizVisualLayout } from "../src/quiz/qa/visualQa.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
@@ -54,12 +55,12 @@ describe("Phase 2 layout resolution policy", () => {
       ok: true,
       layoutId: "media_left_choices_right",
     });
-    expect(resolveAuto("true_false", "true_false", 2)).toMatchObject({ ok: true, layoutId: "media_left_choices_right" });
+    expect(resolveAuto("true_false", "true_false", 2)).toMatchObject({ ok: true, layoutId: "verdict_true_false" });
   });
 
   it("P2-RES-02 preserves visual and odd-one-out auto resolution", () => {
     expect(resolveAuto("visual_multiple_choice", "multiple_choice", 3)).toMatchObject({ ok: true, layoutId: "visual_choices_three" });
-    expect(resolveAuto("text_multiple_choice", "odd_one_out", 3)).toMatchObject({ ok: true, layoutId: "visual_choices_three" });
+    expect(resolveAuto("text_multiple_choice", "odd_one_out", 3)).toMatchObject({ ok: true, layoutId: "visual_choices_three_pure" });
   });
 
   it("P2-RES-03 treats supported-but-not-recommended explicit formats as valid", () => {
@@ -80,10 +81,58 @@ describe("Phase 2 layout resolution policy", () => {
       questionFormat: "true_false",
       choiceCount: 2,
     });
-    expect(result.ok).toBe(false);
-    if (result.ok) return;
     expect(result.requestedLayout).toBe("visual_choices_three");
-    expect(result.issues.map((issue) => issue.code)).toContain("layout_choice_count_unsupported");
+    expect(result.issues.map((issue) => issue.message)).toContain(
+      "Layout capability does not support choice count 2.",
+    );
+  });
+
+  it("resolves full_stack_list safely even when beat has question_illustration asset intent", () => {
+    const question = {
+      id: "q-1",
+      number: 1,
+      format: "multiple_choice" as const,
+      difficulty: 1,
+      question: "Quick question?",
+      choices: [
+        { id: "c-1", text: "A" },
+        { id: "c-2", text: "B" },
+        { id: "c-3", text: "C" },
+      ],
+      correct_choice_id: "c-1",
+      explanation: "Expl",
+      fun_fact: "",
+      source_ids: ["test"],
+      visual_opportunity: "",
+      validation: { semantic_status: "validated" as const, source_coverage: true, fact_locked: true },
+    };
+    const beat = {
+      question_id: "q-1",
+      archetype: "text_multiple_choice" as const,
+      layout_id: "full_stack_list" as const,
+      asset_intents: ["question_illustration" as const],
+      energy: "curious" as const,
+      visual_density: "focused" as const,
+      palette_id: "lime" as const,
+      motion_id: "enter.pop" as const,
+      transition_id: "bubble_splash" as const,
+      thinking_bar_style: "auto" as const,
+      question_counter_style: "auto" as const,
+      question_box_style: "auto" as const,
+      answer_card_style: "auto" as const,
+      background_style: "auto" as const,
+      thinking_seconds: 7,
+      beat_intents: ["question_enter" as const, "answer_reveal" as const],
+      mascot_state: "celebrate" as const,
+      sfx_intents: ["countdown_tick" as const],
+      transition_intent: "cut" as const,
+      reward_intensity: "small" as const,
+    };
+    const res = resolveQuestionLayout(question, beat);
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.layoutId).toBe("full_stack_list");
+    }
   });
 
   it("P2-RES-05 identifies format and presentation capabilities independently", () => {

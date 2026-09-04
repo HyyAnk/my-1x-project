@@ -27,7 +27,9 @@ export function sandboxPreviewLayoutIssues(input: SandboxPreviewLayoutContext): 
   const defaultPresentation = capability.supportedPresentations[0];
   const archetype = resolveSandboxArchetype(input.archetype, questionFormat, defaultPresentation);
   const choicePresentation = hasSemanticContext ? quizChoicePresentationFor(archetype, questionFormat) : defaultPresentation;
-  const media = hasSemanticContext ? quizMediaForPresentation(choicePresentation) : capability.media.required;
+  const media = hasSemanticContext
+    ? quizMediaForPresentation(choicePresentation).filter((m) => capability.media.supported.includes(m))
+    : capability.media.required;
   const result = evaluateQuizLayoutCompatibility({
     layoutId: input.layout_id,
     choicePresentation,

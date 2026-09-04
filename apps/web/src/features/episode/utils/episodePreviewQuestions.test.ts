@@ -94,7 +94,7 @@ describe("episode preview questions", () => {
     expect(questions).toHaveLength(1);
     expect(questions[0]).toEqual(
       expect.objectContaining({
-        layoutId: "visual_choices_three",
+        layoutId: "visual_choices_three_pure",
         layoutSource: "topic_template",
         choices: ["Option A", "Option B", "Option C"],
       }),
@@ -115,7 +115,7 @@ describe("episode preview questions", () => {
     expect(questions).toHaveLength(1);
     expect(questions[0]).toEqual(
       expect.objectContaining({
-        layoutId: "media_left_choices_right",
+        layoutId: "verdict_true_false",
         layoutSource: "topic_template",
         choices: ["True", "False"],
         correctChoiceIndex: 0,

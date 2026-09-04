@@ -103,6 +103,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     for (const task of loaded) {
       this.tasks.set(task.task_id, task);
     }
+    await this.reconcileOrphanedTasks();
     await this.reconcileQuestionHistory();
     await this.cleanupExpiredFailedBuilds();
     this.startFailedBuildCleanupTimer();
@@ -368,11 +369,20 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   hasActiveEpisodeTasks(episodeId: string): boolean {
     return taskDelegates.hasActiveEpisodeTasks.call(this, episodeId);
   }
+  hasActiveChannelTasks(channelId: string): boolean {
+    return taskDelegates.hasActiveChannelTasks.call(this, channelId);
+  }
   pruneEpisodeTasks(episodeId: string): Promise<string[]> {
     return taskDelegates.pruneEpisodeTasks.call(this, episodeId);
   }
+  pruneChannelTasks(channelId: string): Promise<string[]> {
+    return taskDelegates.pruneChannelTasks.call(this, channelId);
+  }
   reconcileQuestionHistory(): Promise<void> {
     return taskDelegates.reconcileQuestionHistory.call(this);
+  }
+  reconcileOrphanedTasks(): Promise<{ removedEpisodes: number; removedTasks: number }> {
+    return taskDelegates.reconcileOrphanedTasks.call(this);
   }
   startFailedBuildCleanupTimer(): void {
     return taskDelegates.startFailedBuildCleanupTimer.call(this);

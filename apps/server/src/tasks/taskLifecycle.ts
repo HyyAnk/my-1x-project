@@ -1,5 +1,5 @@
 import { rm } from "node:fs/promises";
-import { FAILED_BUILD_RETENTION_MS, type Task } from "@studio/shared";
+import { FAILED_BUILD_RETENTION_MS, type Channel, type Task } from "@studio/shared";
 import { RepositoryError } from "../repository.js";
 import type { TaskManagerRuntime } from "./runtime.js";
 
@@ -16,6 +16,10 @@ export function hasActiveEpisodeTasks(this: TaskManagerRuntime, episodeId: strin
   return this.list().some((task) => task.episode_id === episodeId && activeStatuses.has(task.status));
 }
 
+export function hasActiveChannelTasks(this: TaskManagerRuntime, channelId: string): boolean {
+  return this.list().some((task) => task.channel_id === channelId && activeStatuses.has(task.status));
+}
+
 export async function pruneEpisodeTasks(this: TaskManagerRuntime, episodeId: string): Promise<string[]> {
   if (hasActiveEpisodeTasks.call(this, episodeId)) {
     throw new RepositoryError("Episode has active tasks. Cancel them before deleting the episode", "EPISODE_TASK_ACTIVE");
@@ -26,6 +30,121 @@ export async function pruneEpisodeTasks(this: TaskManagerRuntime, episodeId: str
     this.emitEvent({ type: "tasks.pruned", task_ids: taskIds, episode_ids: [episodeId] });
   }
   return taskIds;
+}
+
+export async function pruneChannelTasks(this: TaskManagerRuntime, channelId: string): Promise<string[]> {
+  if (hasActiveChannelTasks.call(this, channelId)) {
+    throw new RepositoryError("Channel has active tasks. Cancel them before deleting the channel", "CHANNEL_TASK_ACTIVE");
+  }
+
+  const relatedTasks = this.list().filter((task) => task.channel_id === channelId);
+  const taskIds = relatedTasks.map((task) => task.task_id);
+  await Promise.all(taskIds.map((taskId) => rm(this.repository.resolvePath("runtime", "tasks", `${taskId}.json`), { force: true })));
+
+  for (const task of relatedTasks) {
+    const imgCtrl = this.activeImageControllers.get(task.task_id);
+    if (imgCtrl) {
+      imgCtrl.abort();
+      this.activeImageControllers.delete(task.task_id);
+    }
+    const vidCtrl = this.activeVideoControllers.get(task.task_id);
+    if (vidCtrl) {
+      vidCtrl.abort();
+      this.activeVideoControllers.delete(task.task_id);
+    }
+    this.tasks.delete(task.task_id);
+    this.imageVariants.delete(task.task_id);
+    this.topicHints.delete(task.task_id);
+  }
+
+  if (taskIds.length > 0) {
+    const episodeIds = [...new Set(relatedTasks.map((t) => t.episode_id).filter(Boolean) as string[])];
+    this.emitEvent({ type: "tasks.pruned", task_ids: taskIds, episode_ids: episodeIds });
+  }
+  return taskIds;
+}
+
+export async function reconcileOrphanedTasks(
+  this: TaskManagerRuntime,
+): Promise<{ removedEpisodes: number; removedTasks: number }> {
+  let channels: Channel[];
+  try {
+    channels = await this.repository.listChannels(true);
+  } catch (error) {
+    this.logger.warn(
+      `Failed to list channels for task orphan reconciliation: ${error instanceof Error ? error.message : "unknown error"}`,
+    );
+    return { removedEpisodes: 0, removedTasks: 0 };
+  }
+
+  const validChannelIds = new Set(channels.map((c) => c.channel_id));
+  const validEpisodeIds = new Set<string>();
+
+  for (const channel of channels) {
+    try {
+      const episodes = await this.repository.listEpisodes(channel.channel_id);
+      for (const episode of episodes) {
+        validEpisodeIds.add(episode.episode_id);
+      }
+    } catch {
+      // Ignore individual channel listing errors
+    }
+  }
+
+  const orphanedTasks = this.list().filter((task) => {
+    if (task.channel_id && !validChannelIds.has(task.channel_id)) {
+      return true;
+    }
+    if (task.episode_id && !validEpisodeIds.has(task.episode_id)) {
+      return true;
+    }
+    return false;
+  });
+
+  if (orphanedTasks.length === 0) {
+    return { removedEpisodes: 0, removedTasks: 0 };
+  }
+
+  const removedTaskIds = orphanedTasks.map((task) => task.task_id);
+  const removedEpisodeIds = [...new Set(orphanedTasks.map((t) => t.episode_id).filter(Boolean) as string[])];
+
+  await Promise.all(
+    removedTaskIds.map((taskId) =>
+      rm(this.repository.resolvePath("runtime", "tasks", `${taskId}.json`), { force: true }),
+    ),
+  );
+
+  for (const task of orphanedTasks) {
+    const imgCtrl = this.activeImageControllers.get(task.task_id);
+    if (imgCtrl) {
+      imgCtrl.abort();
+      this.activeImageControllers.delete(task.task_id);
+    }
+    const vidCtrl = this.activeVideoControllers.get(task.task_id);
+    if (vidCtrl) {
+      vidCtrl.abort();
+      this.activeVideoControllers.delete(task.task_id);
+    }
+    this.tasks.delete(task.task_id);
+    this.imageVariants.delete(task.task_id);
+    this.topicHints.delete(task.task_id);
+  }
+
+  this.logger.info(
+    `Reconciled orphaned tasks: removed ${removedTaskIds.length} tasks across ${removedEpisodeIds.length} missing episodes`,
+    { step: "task_reconciliation" },
+  );
+
+  this.emitEvent({
+    type: "tasks.pruned",
+    task_ids: removedTaskIds,
+    episode_ids: removedEpisodeIds,
+  });
+
+  return {
+    removedEpisodes: removedEpisodeIds.length,
+    removedTasks: removedTaskIds.length,
+  };
 }
 
 async function removeEpisodeTaskRecords(this: TaskManagerRuntime, episodeId: string): Promise<string[]> {

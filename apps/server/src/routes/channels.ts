@@ -75,7 +75,11 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
     server.delete("/api/channels/:channelId", async (request) => {
       const params = request.params as { channelId: string };
       const query = request.query as { confirm?: string };
+      if (tasks.hasActiveChannelTasks(params.channelId)) {
+        throw new RepositoryError("Channel has active tasks. Cancel them before deleting the channel", "CHANNEL_TASK_ACTIVE");
+      }
       await repository.deleteChannel(params.channelId, query.confirm === "true");
+      await tasks.pruneChannelTasks(params.channelId);
       return { ok: true };
     });
     server.get("/api/channels/:channelId/dna", async (request) =>

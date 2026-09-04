@@ -34,8 +34,11 @@ import {
 import {
   cleanupExpiredFailedBuilds as cleanupExpiredFailedBuildsImplementation,
   hasActiveEpisodeTasks as hasActiveEpisodeTasksImplementation,
+  hasActiveChannelTasks as hasActiveChannelTasksImplementation,
   pruneEpisodeTasks as pruneEpisodeTasksImplementation,
+  pruneChannelTasks as pruneChannelTasksImplementation,
   reconcileQuestionHistory as reconcileQuestionHistoryImplementation,
+  reconcileOrphanedTasks as reconcileOrphanedTasksImplementation,
   startFailedBuildCleanupTimer as startFailedBuildCleanupTimerImplementation,
 } from "./taskLifecycle.js";
 import { runVideoTask as runVideoTaskImplementation } from "./videoRunner.js";
@@ -149,11 +152,20 @@ export const taskDelegates = {
   hasActiveEpisodeTasks(this: TaskManagerRuntime, episodeId: string): boolean {
     return hasActiveEpisodeTasksImplementation.call(this, episodeId);
   },
+  hasActiveChannelTasks(this: TaskManagerRuntime, channelId: string): boolean {
+    return hasActiveChannelTasksImplementation.call(this, channelId);
+  },
   pruneEpisodeTasks(this: TaskManagerRuntime, episodeId: string): Promise<string[]> {
     return pruneEpisodeTasksImplementation.call(this, episodeId);
   },
+  pruneChannelTasks(this: TaskManagerRuntime, channelId: string): Promise<string[]> {
+    return pruneChannelTasksImplementation.call(this, channelId);
+  },
   reconcileQuestionHistory(this: TaskManagerRuntime): Promise<void> {
     return reconcileQuestionHistoryImplementation.call(this);
+  },
+  reconcileOrphanedTasks(this: TaskManagerRuntime): Promise<{ removedEpisodes: number; removedTasks: number }> {
+    return reconcileOrphanedTasksImplementation.call(this);
   },
   startFailedBuildCleanupTimer(this: TaskManagerRuntime): void {
     return startFailedBuildCleanupTimerImplementation.call(this);

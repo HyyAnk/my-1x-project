@@ -5,7 +5,7 @@ import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
 import type { SandboxBrandNameState } from "./useSandboxBrandNameState";
 
-import { BUILT_IN_PRESETS, QuizPaletteIdSchema, type VisualPresetItem } from "@studio/shared";
+import { BUILT_IN_PRESETS, QuizPaletteIdSchema, type QuizPreviewLayoutId, type VisualPresetItem } from "@studio/shared";
 import { useStylePresets } from "../../stylePresets/hooks/useStylePresets";
 import { api } from "../../../api";
 export type { VisualPresetItem };
@@ -17,9 +17,10 @@ type UseSandboxPresetsInput = {
   mascot: SandboxMascotState;
   brandName?: SandboxBrandNameState;
   onNotice?: (notice: NonNullable<Notice>) => void;
+  onLayoutChange?: (layout: QuizPreviewLayoutId) => void;
 };
 
-export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSandboxPresetsInput) {
+export function useSandboxPresets({ design, mascot, brandName, onNotice, onLayoutChange }: UseSandboxPresetsInput) {
   const { t } = useTranslation();
   const stylePresetApi = useStylePresets();
   const [localDraftPresets, setLocalDraftPresets] = useState<VisualPresetItem[]>(() => {
@@ -91,13 +92,24 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
     }
   };
 
+  const [loadedPresetId, setLoadedPresetId] = useState<string | null>(null);
+
   const handleLoadPreset = (preset: VisualPresetItem) => {
+    setLoadedPresetId(preset.id);
     design.setPaletteId(preset.palette_id);
     design.setThinkingBarStyle(preset.thinking_bar_style);
     design.setQuestionBoxStyle(preset.question_box_style);
     design.setAnswerCardStyle(preset.answer_card_style || "glossy_arcade");
     design.setCounterStyle(preset.counter_style);
     design.setBackgroundStyle(preset.background_style || "candy_rays");
+    const targetLayout = (preset.preview_layout_id ?? preset.layout_id) as QuizPreviewLayoutId | undefined;
+    if (targetLayout && targetLayout !== "baseline") {
+      if (onLayoutChange) {
+        onLayoutChange(targetLayout);
+      } else {
+        design.setLayoutId(targetLayout);
+      }
+    }
     if (preset.mascot_id !== undefined) mascot.setMascotId(preset.mascot_id || "none");
     if (preset.mascot_position) mascot.setMascotPosition(preset.mascot_position);
     if (preset.mascot_scale !== undefined) mascot.setMascotScale(preset.mascot_scale);
@@ -145,6 +157,7 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
       channel_brand_name: brandName?.channelBrandName,
       isBuiltIn: false,
     };
+    setLoadedPresetId(newPreset.id);
     persistPresets([newPreset, ...customPresets]);
     try {
       await stylePresetApi.create({ ...newPreset, background_style: resolvedBg });
@@ -158,9 +171,124 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
     }
   };
 
+  const handleUpdateActivePreset = async (targetId?: string) => {
+    const idToUpdate = targetId || loadedPresetId;
+    if (!idToUpdate) return;
+    const presetToUpdate = customPresets.find((p) => p.id === idToUpdate);
+    if (!presetToUpdate) return;
+
+    setPresetError(null);
+    const parsedPalette = QuizPaletteIdSchema.safeParse(design.paletteId);
+    const resolvedPalette: VisualPresetItem["palette_id"] =
+      parsedPalette.success && parsedPalette.data !== "auto" ? parsedPalette.data : "lime";
+    const resolvedTb = design.thinkingBarStyle === "auto" ? "star_slider" : design.thinkingBarStyle;
+    const resolvedQb = design.questionBoxStyle === "auto" ? "candy_pop" : design.questionBoxStyle;
+    const resolvedAc = design.answerCardStyle === "auto" ? "glossy_arcade" : design.answerCardStyle;
+    const resolvedCb = design.counterStyle === "auto" ? "hanging_woodsign" : design.counterStyle;
+    const resolvedBg = design.backgroundStyle === "auto" ? "candy_rays" : design.backgroundStyle;
+
+    const updatedPreset: VisualPresetItem = {
+      ...presetToUpdate,
+      theme: design.theme,
+      palette_id: resolvedPalette,
+      preview_layout_id: design.layoutId,
+      thinking_bar_style: resolvedTb,
+      question_box_style: resolvedQb,
+      answer_card_style: resolvedAc,
+      counter_style: resolvedCb,
+      background_style: resolvedBg,
+      mascot_id: mascot.mascotId,
+      mascot_position: mascot.mascotPosition,
+      mascot_scale: mascot.mascotScale,
+      mascot_offset_x: mascot.mascotOffsetX,
+      mascot_offset_y: mascot.mascotOffsetY,
+      mascot_flip_x: mascot.mascotFlipX,
+      channel_brand_name: brandName?.channelBrandName,
+    };
+
+    const nextPresets = customPresets.map((p) => (p.id === idToUpdate ? updatedPreset : p));
+    persistPresets(nextPresets);
+
+    if (stylePresetApi.presets.some((p) => p.id === idToUpdate)) {
+      try {
+        await stylePresetApi.update(idToUpdate, {
+          theme: updatedPreset.theme,
+          palette_id: updatedPreset.palette_id,
+          thinking_bar_style: updatedPreset.thinking_bar_style,
+          question_box_style: updatedPreset.question_box_style,
+          answer_card_style: updatedPreset.answer_card_style,
+          counter_style: updatedPreset.counter_style,
+          background_style: updatedPreset.background_style,
+        });
+        onNotice?.({
+          tone: "good",
+          message: t("visualSandbox.noticeUpdatedPreset", { name: presetToUpdate.name }),
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Failed to update preset";
+        setPresetError(message);
+        onNotice?.({ tone: "bad", message });
+      }
+    } else {
+      onNotice?.({
+        tone: "good",
+        message: t("visualSandbox.noticeUpdatedPreset", { name: presetToUpdate.name }),
+      });
+    }
+  };
+
+  const handleDuplicateCustomPreset = async (preset: VisualPresetItem) => {
+    setPresetError(null);
+    const suffix = t("visualSandbox.copySuffix") || "Copy";
+    const newName = `${preset.name} (${suffix})`;
+    const newId = `custom_${Date.now()}`;
+    const duplicatedPreset: VisualPresetItem = {
+      ...preset,
+      id: newId,
+      name: newName,
+      isBuiltIn: false,
+    };
+    persistPresets([duplicatedPreset, ...customPresets]);
+    try {
+      await stylePresetApi.create({
+        ...duplicatedPreset,
+        name: newName,
+        background_style: duplicatedPreset.background_style || "candy_rays",
+      });
+      onNotice?.({ tone: "good", message: t("visualSandbox.noticeSavedPreset", { name: newName }) });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to duplicate preset";
+      setPresetError(message);
+      onNotice?.({ tone: "bad", message });
+    }
+  };
+
+  const handleUpdatePresetMetadata = async (id: string, name: string, description?: string) => {
+    setPresetError(null);
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const nextPresets = customPresets.map((p) =>
+      p.id === id ? { ...p, name: trimmed, description: description !== undefined ? description : p.description } : p,
+    );
+    persistPresets(nextPresets);
+    if (stylePresetApi.presets.some((p) => p.id === id)) {
+      try {
+        await stylePresetApi.update(id, { name: trimmed, description });
+        onNotice?.({ tone: "good", message: t("visualSandbox.noticeUpdatedPreset", { name: trimmed }) });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Failed to update preset metadata";
+        setPresetError(message);
+        onNotice?.({ tone: "bad", message });
+      }
+    }
+  };
+
   const handleDeleteCustomPreset = async (id: string, event?: MouseEvent) => {
     event?.stopPropagation();
     setPresetError(null);
+    if (loadedPresetId === id) {
+      setLoadedPresetId(null);
+    }
     persistPresets(customPresets.filter((preset) => preset.id !== id));
     if (stylePresetApi.presets.some((preset) => preset.id === id)) {
       try {
@@ -176,6 +304,10 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
     onNotice?.({ tone: "neutral", message: t("visualSandbox.noticeDeletedPreset") });
   };
 
+  const isLoadedPresetCustom = Boolean(loadedPresetId && customPresets.some((p) => p.id === loadedPresetId));
+  const loadedPreset = allPresets.find((p) => p.id === loadedPresetId) || null;
+  const canUpdateActivePreset = isLoadedPresetCustom && (!matchedPreset || matchedPreset.id !== loadedPresetId);
+
   return {
     customPresets,
     presetModalOpen,
@@ -186,11 +318,19 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice }: UseSa
     allPresets,
     matchedPreset,
     activeCustomPreset,
+    loadedPresetId,
+    loadedPreset,
+    isLoadedPresetCustom,
+    canUpdateActivePreset,
     handleLoadPreset,
     handleSaveCustomPreset,
+    handleUpdateActivePreset,
+    handleDuplicateCustomPreset,
+    handleUpdatePresetMetadata,
     handleDeleteCustomPreset,
     presetError,
     presetMutation: stylePresetApi.mutation,
+    refreshPresets: stylePresetApi.refresh,
   };
 }
 

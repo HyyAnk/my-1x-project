@@ -20,6 +20,8 @@ test("buildTopologyPayload extracts zones and dependency links", () => {
 
   assert.equal(topology.zones.length, 19, "Expected 19 zones");
   assert.ok(topology.links.length > 0, "Expected at least one dependency link");
+  assert.ok(Array.isArray(topology.files), "Expected topology.files array");
+  assert.ok(topology.files.length > 500, "Expected hundreds of mapped file micro-nodes");
 
   // Check an expected dependency link: api-contracts depends on shared-contracts
   const apiDep = topology.links.find(
@@ -90,6 +92,8 @@ test("createMonitorServer responds to HTTP endpoints, static files, and SSE stre
     assert.equal(healthRes.status, 200);
     const healthData = await healthRes.json();
     assert.equal(healthData.status, "ok");
+    assert.ok(healthData.fileWatcher, "Health must report fileWatcher stats");
+    assert.equal(typeof healthData.fileWatcher.activeWatchers, "number");
 
     // 2. Test /api/topology
     const topoRes = await fetch(`${baseUrl}/api/topology`);
@@ -128,8 +132,8 @@ test("createMonitorServer responds to HTTP endpoints, static files, and SSE stre
     assert.equal(graphJsRes.status, 200);
     assert.match(graphJsRes.headers.get("content-type") || "", /javascript/);
 
-    // 6. Test /api/stream SSE
-    const sseChunk = await new Promise((resolve, reject) => {
+    // 6. Test /api/stream SSE for state and file_activity events
+    const sseEvents = await new Promise((resolve, reject) => {
       const req = http.get(`${baseUrl}/api/stream`, (res) => {
         assert.equal(res.statusCode, 200);
         assert.equal(res.headers["content-type"], "text/event-stream");
@@ -137,20 +141,38 @@ test("createMonitorServer responds to HTTP endpoints, static files, and SSE stre
         let buffer = "";
         res.on("data", (chunk) => {
           buffer += chunk.toString();
-          if (buffer.includes("event: state")) {
+          if (buffer.includes("event: state") && buffer.includes("event: file_activity")) {
             req.destroy();
             resolve(buffer);
           }
         });
         res.on("error", reject);
       });
+
+      // Simulate a file activity broadcast shortly after connect
+      setTimeout(() => {
+        server.broadcast("file_activity", {
+          file: "apps/server/src/routes/episodes.ts",
+          fileName: "episodes.ts",
+          eventType: "change",
+          zoneId: "api-contracts",
+          zoneName: "API Contracts And Routes",
+          dependentZones: ["shared-contracts"],
+          timestamp: Date.now(),
+        });
+      }, 50);
+
       req.on("error", (err) => {
         if (err.code === "ECONNRESET") resolve("reset-ok");
         else reject(err);
       });
     });
 
-    assert.ok(sseChunk.includes("event: state") || sseChunk === "reset-ok");
+    assert.ok(sseEvents.includes("event: state") || sseEvents === "reset-ok");
+    if (sseEvents !== "reset-ok") {
+      assert.ok(sseEvents.includes("event: file_activity"));
+      assert.ok(sseEvents.includes("api-contracts"));
+    }
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }

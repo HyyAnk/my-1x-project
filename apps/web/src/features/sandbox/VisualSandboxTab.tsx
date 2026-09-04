@@ -1,5 +1,5 @@
-import { useState } from "react";
-import type { Channel } from "@studio/shared";
+import { useCallback, useState } from "react";
+import type { Channel, QuizPreviewLayoutId } from "@studio/shared";
 import type { Notice } from "../../components/types";
 import { useTranslation } from "../../i18n";
 import { useSandboxChannelSync } from "./hooks/useSandboxChannelSync";
@@ -8,7 +8,7 @@ import { useSandboxMascotState } from "./hooks/useSandboxMascotState";
 import { useSandboxBrandNameState } from "./hooks/useSandboxBrandNameState";
 import { useSandboxPresets } from "./hooks/useSandboxPresets";
 import { useSandboxPreviewRenderer } from "./hooks/useSandboxPreviewRenderer";
-import { useSandboxQuestionState } from "./hooks/useSandboxQuestionState";
+import { useSandboxQuestionState, type PresetSampleQuestion } from "./hooks/useSandboxQuestionState";
 import { useSandboxTimelineState } from "./hooks/useSandboxTimelineState";
 import { useSandboxViewportState } from "./hooks/useSandboxViewportState";
 import {
@@ -43,6 +43,67 @@ export function VisualSandboxTab({
   const timeline = useSandboxTimelineState();
   const question = useSandboxQuestionState(language);
   const viewport = useSandboxViewportState();
+
+  const handleLayoutChange = useCallback(
+    (newLayoutId: QuizPreviewLayoutId) => {
+      design.setLayoutId(newLayoutId);
+      const isTfChoices =
+        question.choices.length === 2 &&
+        ((question.choices[0] === "Đúng" && question.choices[1] === "Sai") ||
+          (question.choices[0] === "True" && question.choices[1] === "False"));
+
+      if (newLayoutId === "verdict_true_false") {
+        if (question.choices.length !== 2 || !isTfChoices) {
+          question.setChoices(language === "vi" ? ["Đúng", "Sai"] : ["True", "False"]);
+          if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
+        }
+      } else if (newLayoutId === "split_versus_two") {
+        if (question.choices.length !== 2 || isTfChoices) {
+          question.setChoices(
+            question.choices.length > 2 && !isTfChoices
+              ? question.choices.slice(0, 2)
+              : language === "vi"
+                ? ["Lựa chọn A", "Lựa chọn B"]
+                : ["Option A", "Option B"],
+          );
+          if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
+        }
+      } else if (
+        newLayoutId === "visual_choices_three" ||
+        newLayoutId === "visual_choices_three_pure" ||
+        newLayoutId === "media_left_choices_right" ||
+        newLayoutId === "full_stack_list"
+      ) {
+        if (question.choices.length < 3) {
+          if (isTfChoices) {
+            question.setChoices(
+              language === "vi"
+                ? ["Lựa chọn A", "Lựa chọn B", "Lựa chọn C"]
+                : ["Option A", "Option B", "Option C"],
+            );
+          } else {
+            question.setChoices([...question.choices, language === "vi" ? "Lựa chọn C" : "Option C"]);
+          }
+        }
+      }
+    },
+    [design, language, question],
+  );
+
+  const handleApplyPresetQuestion = useCallback(
+    (sample: PresetSampleQuestion) => {
+      question.handleApplyPresetQuestion(sample);
+      if (sample.type === "true_false") {
+        design.setLayoutId("verdict_true_false");
+      } else if (sample.type === "versus") {
+        design.setLayoutId("split_versus_two");
+      } else if (design.layoutId === "verdict_true_false" || design.layoutId === "split_versus_two") {
+        design.setLayoutId("media_left_choices_right");
+      }
+    },
+    [design, question],
+  );
+
   const preview = useSandboxPreviewRenderer({
     design,
     mascot,
@@ -52,7 +113,7 @@ export function VisualSandboxTab({
     aspectRatio: viewport.aspectRatio,
     onNotice,
   });
-  const presets = useSandboxPresets({ design, mascot, brandName, onNotice });
+  const presets = useSandboxPresets({ design, mascot, brandName, onNotice, onLayoutChange: handleLayoutChange });
   const channelSync = useSandboxChannelSync({ channels, design, mascot, onNotice, onRefreshChannels });
 
   return (
@@ -79,7 +140,7 @@ export function VisualSandboxTab({
             padding: "16px",
             background: "var(--surface)",
             borderRadius: "16px",
-            border: "1px solid var(--line)",
+            borderRight: "1px solid var(--line)",
           }}
         >
           {/* Style Presets Dropdown & Quick Actions */}
@@ -89,9 +150,16 @@ export function VisualSandboxTab({
             customPresets={presets.customPresets}
             matchedPreset={presets.matchedPreset}
             activeCustomPreset={presets.activeCustomPreset}
+            loadedPresetId={presets.loadedPresetId}
+            loadedPreset={presets.loadedPreset}
+            canUpdateActivePreset={presets.canUpdateActivePreset}
             onLoadPreset={presets.handleLoadPreset}
             onOpenSaveModal={() => presets.setPresetModalOpen(true)}
             onDeleteCustomPreset={presets.handleDeleteCustomPreset}
+            onUpdateActivePreset={presets.handleUpdateActivePreset}
+            onDuplicatePreset={presets.handleDuplicateCustomPreset}
+            onUpdateMetadata={presets.handleUpdatePresetMetadata}
+            onRefreshPresets={presets.refreshPresets}
           />
 
           {/* 3-Tab Inspector Switcher */}
@@ -106,7 +174,7 @@ export function VisualSandboxTab({
           {activeInspectorTab === "design" && (
             <SandboxDesignTab
               layoutId={design.layoutId}
-              setLayoutId={design.setLayoutId}
+              setLayoutId={handleLayoutChange}
               paletteId={design.paletteId}
               setPaletteId={design.setPaletteId}
               thinkingBarStyle={design.thinkingBarStyle}
@@ -165,7 +233,9 @@ export function VisualSandboxTab({
               phase={timeline.phase}
               setPhase={timeline.setPhase}
               setUseScrubber={timeline.setUseScrubber}
-              handleApplyPresetQuestion={question.handleApplyPresetQuestion}
+              handleApplyPresetQuestion={handleApplyPresetQuestion}
+              layoutId={design.layoutId}
+              onLayoutChange={handleLayoutChange}
             />
           )}
         </div>

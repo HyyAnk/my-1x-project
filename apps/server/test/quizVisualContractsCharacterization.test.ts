@@ -30,7 +30,7 @@ describe("Phase 1 layout and resolver characterization", () => {
     ).toMatchObject({ ok: true, layoutId: "visual_choices_three" });
     expect(
       resolveQuizLayout({ requestedLayout: "auto", archetype: "text_multiple_choice", questionFormat: "odd_one_out", choiceCount: 3 }),
-    ).toMatchObject({ ok: true, layoutId: "visual_choices_three" });
+    ).toMatchObject({ ok: true, layoutId: "visual_choices_three_pure" });
   });
 
   it("R-04 now rejects an incompatible explicit layout without fallback", () => {

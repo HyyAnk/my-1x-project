@@ -218,6 +218,7 @@ export function latestRelevantTask(stage: RailStage, tasks: Task[]): Task | null
     script: ["GENERATE_SCRIPT"],
     visualBible: ["GENERATE_VISUAL_BIBLE"],
     scenes: ["GENERATE_SCENES", "GENERATE_SEQUENCE_SCENES"],
+    questions: ["GENERATE_QUIZ"],
     render: ["GENERATE_VIDEO"],
   };
   const stageTypes = types[stage];
@@ -238,7 +239,7 @@ const STAGE_KEYWORD_PATTERNS: Array<{ pattern: RegExp; stageKey: RailStage }> = 
   { pattern: /narration script|script/, stageKey: "script" },
   { pattern: /visual bible|style anchor/, stageKey: "visualBible" },
   { pattern: /shot plan|sequence/, stageKey: "scenes" },
-  { pattern: /question facts|quiz · locking/, stageKey: "questions" },
+  { pattern: /question facts|quiz · locking|generating structured questions|quiz · questions/, stageKey: "questions" },
   { pattern: /directing|director/, stageKey: "director" },
   { pattern: /semantic assets|resolving|assets/, stageKey: "assets" },
   { pattern: /voice|narration/, stageKey: "voice" },

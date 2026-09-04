@@ -26,6 +26,7 @@ const stageLabels: Record<Episode["stage"], string> = {
   SCENE_READY: "Scenes ready",
   NARRATION_READY: "Audio ready",
   READY_FOR_GENERATION: "Ready to render",
+  QUIZ_READY: "Quiz ready",
   VIDEO_RENDERING: "Rendering video",
   VIDEO_READY: "Video ready",
 };
@@ -46,6 +47,7 @@ const taskLabels: Record<Task["task_type"], string> = {
   GENERATE_AUDIO: "Generating audio",
   GENERATE_BUNDLE_IMAGE: "Generating visuals",
   GENERATE_VIDEO: "Rendering video",
+  GENERATE_QUIZ: "Drafting quiz",
 };
 
 function resolveLayoutLabel(format: Episode["quiz_config"]["quiz_format"]): string {

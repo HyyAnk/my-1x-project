@@ -36,89 +36,115 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
       progress_message: "Starting Quiz production pipeline",
       progress_percent: 0,
     });
-    const researchChanged = await step(
-      "Research · verifying sources",
-      3,
-      "GENERATE_RESEARCH",
-      async () => !(await hasReadyArtifact.call(this, task.channel_id, episodeId, "research.md")),
-    );
-    const treatmentChanged = await step(
-      "Treatment · structuring the story",
-      5,
-      "GENERATE_TREATMENT",
-      async () => !(await hasReadyArtifact.call(this, task.channel_id, episodeId, "treatment.md")),
-    );
-    const scriptChanged = await step(
-      "Narration script · writing the argument",
-      8,
-      "GENERATE_SCRIPT",
-      async () => !(await hasReadyScript.call(this, task.channel_id, episodeId)),
-    );
-    const visualBibleChanged = await step(
-      "Visual bible · locking continuity",
-      10,
-      "GENERATE_VISUAL_BIBLE",
-      async () => !(await hasReadyArtifact.call(this, task.channel_id, episodeId, "visual_bible.md")),
-    );
-    const upstreamChanged = researchChanged || treatmentChanged || scriptChanged || visualBibleChanged;
+    const useLegacyPipeline = process.env.USE_LEGACY_QUIZ_PIPELINE === "true";
 
-    const scenes = await this.repository.readScenes(task.channel_id, episodeId);
-    if (run.cancelled) throw new Error("Pipeline cancelled");
-    const shotPlanFresh = await isShotPlanFresh.call(this, task.channel_id, episodeId);
-    const regenerateShots = scenes.length === 0 || upstreamChanged || !shotPlanFresh;
-    await this.update(task.task_id, {
-      progress_message: regenerateShots ? "Shot plan · generating sequences" : "Shot plan · already ready",
-      progress_percent: 10,
-    });
-    if (regenerateShots) {
-      const script = await this.repository.getEpisodeFile(task.channel_id, episodeId, "script.md");
-      const sections = extractNarrationSections(script.content);
-      if (sections.length === 0) throw new Error("Shot plan failed: a completed script is required");
-      await this.repository.backupEpisodeFile(task.channel_id, episodeId, "scene_plan.md");
-      const existingDrafts = await this.repository.readSequenceDrafts(episodeId);
-      const resumePlan = planSequenceResume(sections.length, existingDrafts, script.modified_at, upstreamChanged);
-      if (resumePlan.shouldClearDrafts) await this.repository.clearSequenceDrafts(episodeId);
-      const totalCount = Math.max(1, sections.length);
-      let completedCount = resumePlan.reusedSequenceNumbers.length;
-      const initialPercent = Math.min(25, Math.max(10, 10 + Math.round((completedCount / totalCount) * 15)));
-      await this.update(task.task_id, {
-        progress_message: completedCount
-          ? `Shot plan · resuming ${completedCount}/${totalCount} completed sequences`
-          : "Shot plan · generating sequences",
-        progress_percent: initialPercent,
-      });
-      if (resumePlan.pendingSequenceNumbers.length === 0) {
-        const committed = await this.repository.commitSequenceDrafts(task.channel_id, episodeId, sections.length);
-        if (!committed) throw new Error("Shot plan failed: completed sequence drafts could not be committed");
-      }
-      const children = resumePlan.pendingSequenceNumbers.map((sequenceNumber) =>
-        this.submit("GENERATE_SEQUENCE_SCENES", task.channel_id, episodeId, sequenceNumber),
+    if (useLegacyPipeline) {
+      const researchChanged = await step(
+        "Research · verifying sources",
+        3,
+        "GENERATE_RESEARCH",
+        async () => !(await hasReadyArtifact.call(this, task.channel_id, episodeId, "research.md")),
       );
-      children.forEach((child) => run.children.add(child.task_id));
-      try {
-        await Promise.all(
-          children.map(async (child) => {
-            const result = await waitForTaskTerminal.call(this, child.task_id, run);
-            if (result.status !== "COMPLETED") throw new Error(`Shot plan failed: ${result.error ?? result.status}`);
-            completedCount++;
-            const seqPercent = Math.min(25, Math.max(10, 10 + Math.round((completedCount / totalCount) * 15)));
-            await this.update(task.task_id, {
-              progress_message: `Shot plan · sequence ${completedCount}/${totalCount} ready`,
-              progress_percent: seqPercent,
-            });
-            return result;
-          }),
+      const treatmentChanged = await step(
+        "Treatment · structuring the story",
+        5,
+        "GENERATE_TREATMENT",
+        async () => !(await hasReadyArtifact.call(this, task.channel_id, episodeId, "treatment.md")),
+      );
+      const scriptChanged = await step(
+        "Narration script · writing the argument",
+        8,
+        "GENERATE_SCRIPT",
+        async () => !(await hasReadyScript.call(this, task.channel_id, episodeId)),
+      );
+      const visualBibleChanged = await step(
+        "Visual bible · locking continuity",
+        10,
+        "GENERATE_VISUAL_BIBLE",
+        async () => !(await hasReadyArtifact.call(this, task.channel_id, episodeId, "visual_bible.md")),
+      );
+      const upstreamChanged = researchChanged || treatmentChanged || scriptChanged || visualBibleChanged;
+
+      const scenes = await this.repository.readScenes(task.channel_id, episodeId);
+      if (run.cancelled) throw new Error("Pipeline cancelled");
+      const shotPlanFresh = await isShotPlanFresh.call(this, task.channel_id, episodeId);
+      const regenerateShots = scenes.length === 0 || upstreamChanged || !shotPlanFresh;
+      await this.update(task.task_id, {
+        progress_message: regenerateShots ? "Shot plan · generating sequences" : "Shot plan · already ready",
+        progress_percent: 10,
+      });
+      if (regenerateShots) {
+        const script = await this.repository.getEpisodeFile(task.channel_id, episodeId, "script.md");
+        const sections = extractNarrationSections(script.content);
+        if (sections.length === 0) throw new Error("Shot plan failed: a completed script is required");
+        await this.repository.backupEpisodeFile(task.channel_id, episodeId, "scene_plan.md");
+        const existingDrafts = await this.repository.readSequenceDrafts(episodeId);
+        const resumePlan = planSequenceResume(sections.length, existingDrafts, script.modified_at, upstreamChanged);
+        if (resumePlan.shouldClearDrafts) await this.repository.clearSequenceDrafts(episodeId);
+        const totalCount = Math.max(1, sections.length);
+        let completedCount = resumePlan.reusedSequenceNumbers.length;
+        const initialPercent = Math.min(25, Math.max(10, 10 + Math.round((completedCount / totalCount) * 15)));
+        await this.update(task.task_id, {
+          progress_message: completedCount
+            ? `Shot plan · resuming ${completedCount}/${totalCount} completed sequences`
+            : "Shot plan · generating sequences",
+          progress_percent: initialPercent,
+        });
+        if (resumePlan.pendingSequenceNumbers.length === 0) {
+          const committed = await this.repository.commitSequenceDrafts(task.channel_id, episodeId, sections.length);
+          if (!committed) throw new Error("Shot plan failed: completed sequence drafts could not be committed");
+        }
+        const children = resumePlan.pendingSequenceNumbers.map((sequenceNumber) =>
+          this.submit("GENERATE_SEQUENCE_SCENES", task.channel_id, episodeId, sequenceNumber),
         );
-      } catch (error) {
-        await Promise.all(children.map((child) => this.cancel(child.task_id).catch(() => undefined)));
-        throw error;
-      } finally {
-        children.forEach((child) => run.children.delete(child.task_id));
+        children.forEach((child) => run.children.add(child.task_id));
+        try {
+          await Promise.all(
+            children.map(async (child) => {
+              const result = await waitForTaskTerminal.call(this, child.task_id, run);
+              if (result.status !== "COMPLETED") throw new Error(`Shot plan failed: ${result.error ?? result.status}`);
+              completedCount++;
+              const seqPercent = Math.min(25, Math.max(10, 10 + Math.round((completedCount / totalCount) * 15)));
+              await this.update(task.task_id, {
+                progress_message: `Shot plan · sequence ${completedCount}/${totalCount} ready`,
+                progress_percent: seqPercent,
+              });
+              return result;
+            }),
+          );
+        } catch (error) {
+          await Promise.all(children.map((child) => this.cancel(child.task_id).catch(() => undefined)));
+          throw error;
+        } finally {
+          children.forEach((child) => run.children.delete(child.task_id));
+        }
+      }
+
+      const balancedScenes = rebalanceEditorialOverlays(await this.repository.readScenes(task.channel_id, episodeId));
+      await this.repository.saveScenes(task.channel_id, episodeId, balancedScenes);
+    } else {
+      // Quiz-Native Fast Path: Generate quiz.json directly (auto-synthesizing script.md, visual_bible.md, scenes.json)
+      const existingQuiz = await this.repository.readQuiz(task.channel_id, episodeId);
+      if (!existingQuiz) {
+        await step(
+          "Quiz · generating structured questions",
+          10,
+          "GENERATE_QUIZ",
+          async () => !(await this.repository.readQuiz(task.channel_id, episodeId)),
+        );
+      } else {
+        await this.update(task.task_id, {
+          progress_message: "Quiz · questions already ready",
+          progress_percent: 10,
+        });
+      }
+
+      const scenes = await this.repository.readScenes(task.channel_id, episodeId);
+      if (scenes.length > 0) {
+        const balancedScenes = rebalanceEditorialOverlays(scenes);
+        await this.repository.saveScenes(task.channel_id, episodeId, balancedScenes);
       }
     }
-
-    const balancedScenes = rebalanceEditorialOverlays(await this.repository.readScenes(task.channel_id, episodeId));
-    await this.repository.saveScenes(task.channel_id, episodeId, balancedScenes);
 
     if (run.cancelled) throw new Error("Pipeline cancelled");
     await runQuizV2Pipeline.call(this, task);

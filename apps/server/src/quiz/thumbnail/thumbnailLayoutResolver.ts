@@ -214,7 +214,7 @@ function resolveMascotThemedPersona(
       costume: "Cute transparent mini astronaut space helmet and futuristic cosmic scout suit",
       prop: "Glowing miniature crescent moon or glowing cosmic star",
       expression: "Amazed, wide sparkling eyes, curious open smile",
-      poseDescription: "Floating gently in space, pointing excitedly at the mystery subject",
+      poseDescription: "Floating weightlessly in cosmic awe, reaching out toward the mystery planets with wonder",
     };
   }
 

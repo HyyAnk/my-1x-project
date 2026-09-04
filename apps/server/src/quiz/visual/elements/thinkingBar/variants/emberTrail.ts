@@ -18,7 +18,8 @@ export const emberTrailVariant: ThinkingBarVariant = {
   --ember-edge-gap: clamp(44px, 3.6vw, 54px);
   position: relative;
   z-index: 0;
-  width: 100%;
+  box-sizing: border-box;
+  width: calc(100% - (var(--ember-edge-gap) * 2));
   height: 72px;
   margin-inline: var(--ember-edge-gap);
 }

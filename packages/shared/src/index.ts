@@ -12,5 +12,6 @@ export * from "./branding.js";
 export * from "./quizLayouts.js";
 export * from "./quizStyles.js";
 export * from "./quizStyles/styleCatalog.types.js";
+export * from "./quizArchetypes.js";
 export * from "./mascot/index.js";
 export * from "./thumbnail/index.js";

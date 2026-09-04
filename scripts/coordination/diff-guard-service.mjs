@@ -14,7 +14,7 @@ export function inspectClaimScope({ claimId, workspaceRoot, customDbPath, change
   try {
     const claim = resolveClaim(db, claimId);
     assertClaimIsActive(claim);
-    return inspectClaimScopeForClaim({ claim, root, changedFilesOverride });
+    return inspectClaimScopeForClaim({ claim, root, changedFilesOverride, db });
   } finally {
     db.close();
   }
@@ -35,7 +35,7 @@ export function verifyClaimScope({ claimId, leaseToken, evidenceSummary, workspa
       const evidence = String(evidenceSummary || "").trim();
       if (!evidence) throw new Error("A non-empty verification evidence summary is required.");
 
-      const inspection = inspectClaimScopeForClaim({ claim, root, changedFilesOverride });
+      const inspection = inspectClaimScopeForClaim({ claim, root, changedFilesOverride, db });
       if (!inspection.valid) return inspection;
 
       const verification = {
@@ -61,7 +61,7 @@ export function verifyClaimScope({ claimId, leaseToken, evidenceSummary, workspa
 /**
  * Pure scope evaluation used by verification and transactional release.
  */
-export function inspectClaimScopeForClaim({ claim, root, changedFilesOverride }) {
+export function inspectClaimScopeForClaim({ claim, root, changedFilesOverride, db }) {
   const zoneList = loadZoneMap(root);
   const writeZones = new Set(claim.writeZones || []);
   const current = captureGitBaseline(root);
@@ -72,6 +72,7 @@ export function inspectClaimScopeForClaim({ claim, root, changedFilesOverride })
     changedFilesOverride,
     zoneList,
     writeZones,
+    db,
   });
   const authorizedFiles = [];
   const violations = [];
@@ -150,10 +151,27 @@ function assertClaimIsActive(claim) {
   }
 }
 
-function selectFilesToVerify({ claim, comparison, changedFilesOverride, zoneList, writeZones }) {
+function selectFilesToVerify({ claim, comparison, changedFilesOverride, zoneList, writeZones, db }) {
   if (!changedFilesOverride) {
+    let files = comparison.changedSinceBaseline.map(normalizePath);
+    if (db) {
+      const otherActive = getActiveClaims(db).filter((c) => c.id !== claim.id);
+      if (otherActive.length > 0) {
+        const otherZones = new Set(otherActive.flatMap((c) => c.writeZones || []));
+        const otherPlannedFiles = new Set(otherActive.flatMap((c) => c.plannedFiles || []).map(normalizePath));
+        files = files.filter((f) => {
+          const matching = findZonesForFile(f, zoneList);
+          // If the file is in our own claimed write zones, we must verify it
+          if (matching.some((z) => writeZones.has(z.id))) return true;
+          // If it matches another active claim's planned files or write zones, ignore it
+          if (otherPlannedFiles.has(f)) return false;
+          if (matching.some((z) => otherZones.has(z.id))) return false;
+          return true;
+        });
+      }
+    }
     return {
-      filesToVerify: comparison.changedSinceBaseline.map(normalizePath),
+      filesToVerify: files,
       ignoredBaselineFiles: comparison.unchangedBaselineFiles,
     };
   }

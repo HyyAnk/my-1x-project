@@ -153,7 +153,7 @@ describe("Candy Arcade visual template", () => {
   it("selects semantic layouts and deterministic readable text tiers", () => {
     expect(resolvedLayout("illustrated_multiple_choice", "multiple_choice")).toBe("media_left_choices_right");
     expect(resolvedLayout("illustrated_multiple_choice", "image_guess")).toBe("media_left_choices_right");
-    expect(resolvedLayout("visual_multiple_choice", "odd_one_out")).toBe("visual_choices_three");
+    expect(resolvedLayout("visual_multiple_choice", "odd_one_out")).toBe("visual_choices_three_pure");
     // Question text layout - Mascot OFF: [28, 50, 85, 135, 176]
     const ultraShortQOff = textLayout("Ai là người đầu tiên?", "question", { hasMascot: false });
     expect(ultraShortQOff.tier).toBe("ultra_short");
@@ -233,7 +233,7 @@ describe("Candy Arcade visual template", () => {
   it("compiles purpose-specific image prompts and checks visual layout semantically", () => {
     const director = createDefaultDirectorPlan(quiz);
     const visualBeat = director.beats[1];
-    expect(visualBeat.layout_id).toBe("visual_choices_three");
+    expect(visualBeat.layout_id).toBe("visual_choices_three_pure");
     const assetPlan = planQuizAssets(quiz, director);
     const option = assetPlan.assets.find((asset) => asset.asset_id === "asset-question-02-choice-a")!;
     const group = assetPlan.consistency_groups.find((candidate) => candidate.group_id === option.consistency_group_id)!;

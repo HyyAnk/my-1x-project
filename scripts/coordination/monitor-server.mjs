@@ -3,18 +3,24 @@ import path from "node:path";
 import fs from "node:fs";
 import { parseArgs } from "node:util";
 import { fileURLToPath } from "node:url";
+import { execFileSync } from "node:child_process";
 import { openClaimsDb, getActiveClaims } from "./db.mjs";
 import { loadZoneMap } from "./zone-loader.mjs";
 import { findWorkspaceRoot } from "./workspace-root.mjs";
 import { validateAndCheckConflicts } from "./conflict-checker.mjs";
 import { isClaimDead } from "./heartbeat-service.mjs";
+import { CodebaseFileWatcher, FastZoneMatcher } from "./file-watcher.mjs";
+import { normalizePath } from "./glob-matcher.mjs";
 
 /**
- * Transforms the raw zone list into graph topology nodes and links.
+ * Transforms the raw zone list into graph topology nodes, links, and file micro-nodes.
  * @param {Array<object>} zoneList
- * @returns {{ zones: Array<object>, links: Array<{ source: string, target: string, type: string }> }}
+ * @param {string} [rootDir]
+ * @returns {{ zones: Array<object>, links: Array<{ source: string, target: string, type: string }>, files: Array<{ path: string, name: string, zoneId: string }> }}
  */
-export function buildTopologyPayload(zoneList) {
+export function buildTopologyPayload(zoneList, rootDir) {
+  const root = rootDir || findWorkspaceRoot();
+  const matcher = new FastZoneMatcher(zoneList);
   const links = [];
   const zones = zoneList.map((z) => {
     const dependencies = Array.isArray(z.readStableDependencies) ? [...z.readStableDependencies] : [];
@@ -36,7 +42,30 @@ export function buildTopologyPayload(zoneList) {
     };
   });
 
-  return { zones, links };
+  const files = [];
+  try {
+    const out = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "-z"], {
+      cwd: root,
+      encoding: "utf8",
+      windowsHide: true,
+    });
+    const rawFiles = out.split("\0").filter(Boolean);
+    for (const f of rawFiles) {
+      const norm = normalizePath(f);
+      const matched = matcher.match(norm);
+      if (matched) {
+        files.push({
+          path: norm,
+          name: norm.split("/").pop(),
+          zoneId: matched.zoneId,
+        });
+      }
+    }
+  } catch (_) {
+    // Fallback gracefully if git fails
+  }
+
+  return { zones, links, files };
 }
 
 /**
@@ -202,7 +231,7 @@ export function createMonitorServer(options = {}) {
   const customDbPath = options.customDbPath;
   const pollIntervalMs = options.pollIntervalMs || 1000;
   const zoneList = loadZoneMap(root);
-  const topology = buildTopologyPayload(zoneList);
+  const topology = buildTopologyPayload(zoneList, root);
 
   const sseClients = new Set();
   let lastSerializedState = "";
@@ -217,6 +246,24 @@ export function createMonitorServer(options = {}) {
         sseClients.delete(client);
       }
     }
+  }
+
+  // Realtime Kernel File Watcher for Synaptic Activity
+  const fileWatcher =
+    options.enableFileWatcher !== false
+      ? new CodebaseFileWatcher({
+          rootDir: root,
+          debounceMs: options.fileWatcherDebounceMs || 50,
+          onActivity: (activities) => {
+            for (const activity of activities) {
+              broadcast("file_activity", activity);
+            }
+          },
+        })
+      : null;
+
+  if (fileWatcher) {
+    fileWatcher.start();
   }
 
   function tick() {
@@ -255,7 +302,14 @@ export function createMonitorServer(options = {}) {
 
     if (pathname === "/api/health") {
       res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ status: "ok", uptime: process.uptime(), timestamp: new Date().toISOString() }));
+      res.end(
+        JSON.stringify({
+          status: "ok",
+          uptime: process.uptime(),
+          timestamp: new Date().toISOString(),
+          fileWatcher: fileWatcher ? fileWatcher.getStats() : null,
+        })
+      );
       return;
     }
 
@@ -342,6 +396,11 @@ export function createMonitorServer(options = {}) {
 
   server.on("close", () => {
     if (pollTimer) clearInterval(pollTimer);
+    if (fileWatcher) {
+      try {
+        fileWatcher.stop();
+      } catch (_) {}
+    }
     for (const client of sseClients) {
       try {
         client.end();
@@ -349,6 +408,9 @@ export function createMonitorServer(options = {}) {
     }
     sseClients.clear();
   });
+
+  server.fileWatcher = fileWatcher;
+  server.broadcast = broadcast;
 
   return server;
 }

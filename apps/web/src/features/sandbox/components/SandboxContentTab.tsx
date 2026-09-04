@@ -1,3 +1,4 @@
+import type { QuizPreviewLayoutId } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { PresetSampleQuestion } from "../hooks/useSandboxQuestionState";
 
@@ -19,6 +20,8 @@ export interface SandboxContentTabProps {
   setPhase: (phase: "question" | "choices" | "thinking" | "reveal" | "explain") => void;
   setUseScrubber: (use: boolean) => void;
   handleApplyPresetQuestion: (sq: PresetSampleQuestion) => void;
+  layoutId?: QuizPreviewLayoutId;
+  onLayoutChange?: (layoutId: QuizPreviewLayoutId) => void;
 }
 
 export function SandboxContentTab({
@@ -39,6 +42,8 @@ export function SandboxContentTab({
   setPhase,
   setUseScrubber,
   handleApplyPresetQuestion,
+  layoutId,
+  onLayoutChange,
 }: SandboxContentTabProps) {
   const { t } = useTranslation();
 
@@ -58,14 +63,18 @@ export function SandboxContentTab({
         >
           {t("visualSandbox.sampleQuestionsLabel")}
         </label>
-        <div style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
+        <div style={{ display: "flex", gap: "6px", marginBottom: "8px", flexWrap: "wrap" }}>
           {sampleQuestions.map((sq, i) => {
             const label =
               sq.type === "standard"
                 ? t("visualSandbox.sampleStandard")
                 : sq.type === "short"
                   ? t("visualSandbox.sampleShort")
-                  : t("visualSandbox.sampleLong");
+                  : sq.type === "long"
+                    ? t("visualSandbox.sampleLong")
+                    : sq.type === "true_false"
+                      ? t("visualSandbox.sampleTrueFalse")
+                      : t("visualSandbox.sampleVersus");
             return (
               <button
                 key={i}
@@ -96,19 +105,53 @@ export function SandboxContentTab({
       <div style={{ height: "1px", background: "var(--line)" }} />
 
       <div>
-        <label
-          style={{
-            display: "block",
-            fontSize: "11px",
-            fontWeight: 700,
-            color: "var(--muted)",
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            marginBottom: "6px",
-          }}
-        >
-          {t("visualSandbox.choicesLabel")}
-        </label>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+          <label
+            style={{
+              display: "block",
+              fontSize: "11px",
+              fontWeight: 700,
+              color: "var(--muted)",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
+          >
+            {t("visualSandbox.choicesLabel")} ({choices.length})
+          </label>
+          <div style={{ display: "flex", gap: "4px" }}>
+            {choices.length < 3 && (
+              <button
+                type="button"
+                className="quiet-button compact"
+                style={{ fontSize: "10px", padding: "2px 6px" }}
+                onClick={() => {
+                  setChoices([...choices, `Option ${String.fromCharCode(65 + choices.length)}`]);
+                  if (layoutId === "verdict_true_false" || layoutId === "split_versus_two") {
+                    onLayoutChange?.("media_left_choices_right");
+                  }
+                }}
+              >
+                + 3 choices
+              </button>
+            )}
+            {choices.length > 2 && (
+              <button
+                type="button"
+                className="quiet-button compact"
+                style={{ fontSize: "10px", padding: "2px 6px" }}
+                onClick={() => {
+                  setChoices(choices.slice(0, 2));
+                  if (correctChoiceIndex >= 2) setCorrectChoiceIndex(0);
+                  if (layoutId === "visual_choices_three" || layoutId === "visual_choices_three_pure") {
+                    onLayoutChange?.("split_versus_two");
+                  }
+                }}
+              >
+                - 2 choices
+              </button>
+            )}
+          </div>
+        </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "12px" }}>
           {choices.map((choice, idx) => {
             const isCorrect = idx === correctChoiceIndex;

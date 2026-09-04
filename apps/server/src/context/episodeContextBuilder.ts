@@ -64,6 +64,7 @@ export async function buildEpisodeContext(input: EpisodeContextInput): Promise<C
   };
 
   if (
+    taskType === "GENERATE_QUIZ" ||
     taskType === "GENERATE_RESEARCH" ||
     taskType === "GENERATE_TREATMENT" ||
     taskType === "GENERATE_SCRIPT" ||

@@ -1,6 +1,6 @@
 import type React from "react";
-import { describe, expect, it, vi, beforeEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { renderHook, act, cleanup } from "@testing-library/react";
 import { LanguageProvider } from "../../../i18n";
 import { api } from "../../../api";
 import * as previewFontVerification from "../../previewFonts/verifyPreviewFonts";
@@ -33,6 +33,11 @@ describe("useSandboxPreviewRenderer", () => {
   let mockMascot: SandboxMascotState;
   let mockQuestion: SandboxQuestionState;
   let mockTimeline: SandboxTimelineState;
+
+  afterEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+  });
 
   beforeEach(() => {
     vi.restoreAllMocks();
@@ -228,6 +233,49 @@ describe("useSandboxPreviewRenderer", () => {
     await vi.waitFor(() =>
       expect(previewSpy).toHaveBeenLastCalledWith(
         expect.objectContaining({ layout_id: "visual_choices_three", question_text: "Newest question" }),
+      ),
+    );
+  });
+
+  it("infers question_format accurately across verdict_true_false, visual_choices_three_pure, and split_versus_two", async () => {
+    const previewSpy = vi.spyOn(api, "previewSandboxComposition").mockResolvedValue({
+      html: "<section>Sandbox Preview</section>",
+      css: "",
+      contrast_report: { ok: true, ratio: 5, message: "OK" },
+    });
+
+    const { rerender } = renderHook(
+      ({ layoutId, choices }: { layoutId: SandboxDesignState["layoutId"]; choices: string[] }) =>
+        useSandboxPreviewRenderer({
+          design: { ...mockDesign, layoutId },
+          mascot: mockMascot,
+          question: { ...mockQuestion, choices },
+          timeline: mockTimeline,
+          aspectRatio: "16:9",
+        }),
+      {
+        initialProps: { layoutId: "split_versus_two" as SandboxDesignState["layoutId"], choices: ["Lion", "Tiger"] },
+        wrapper,
+      },
+    );
+
+    await vi.waitFor(() =>
+      expect(previewSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ layout_id: "split_versus_two", question_format: "multiple_choice" }),
+      ),
+    );
+
+    rerender({ layoutId: "verdict_true_false", choices: ["True", "False"] });
+    await vi.waitFor(() =>
+      expect(previewSpy).toHaveBeenLastCalledWith(
+        expect.objectContaining({ layout_id: "verdict_true_false", question_format: "true_false" }),
+      ),
+    );
+
+    rerender({ layoutId: "visual_choices_three_pure", choices: ["A", "B", "C"] });
+    await vi.waitFor(() =>
+      expect(previewSpy).toHaveBeenLastCalledWith(
+        expect.objectContaining({ layout_id: "visual_choices_three_pure", question_format: "odd_one_out" }),
       ),
     );
   });

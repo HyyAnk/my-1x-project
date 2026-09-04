@@ -48,8 +48,15 @@ function resolveVisualStyleContract(episode: Episode | null) {
   return QUIZ_STYLE_CONTRACTS[resolvedStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
 }
 
+import { buildDirectQuizOutputContract } from "./quizDirectPromptBuilder.js";
+
 export function buildOutputContract(input: OutputContractInput): string {
   const { taskType, episode, sceneNumber, quizQuestionCount, quizLastClaimId, quizSourceMinimum } = input;
+
+  if (taskType === "GENERATE_QUIZ") {
+    return buildDirectQuizOutputContract(input);
+  }
+
   const quizConfig = episode?.quiz_config;
   const episodeQuestionCount = quizConfig?.question_count;
   const resolvedSceneNumber = sceneNumber ?? 0;

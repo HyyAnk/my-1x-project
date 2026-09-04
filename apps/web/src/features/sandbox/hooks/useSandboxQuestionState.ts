@@ -25,6 +25,22 @@ const SAMPLE_QUESTIONS_EN = [
     fact_title: "DID YOU KNOW?",
     fact_text: "The Great Pyramid of Giza was the tallest man-made structure for more than 3,800 years!",
   },
+  {
+    type: "true_false" as const,
+    text: "Is the Great Wall of China visible from the Moon with the naked eye?",
+    choices: ["True", "False"],
+    correct: 1,
+    fact_title: "DID YOU KNOW?",
+    fact_text: "It is an urban myth! The Great Wall is not visible from the Moon without magnification.",
+  },
+  {
+    type: "versus" as const,
+    text: "Which apex predator is heavier in average adult body weight?",
+    choices: ["African Lion", "Siberian Tiger"],
+    correct: 1,
+    fact_title: "DID YOU KNOW?",
+    fact_text: "The Siberian Tiger can weigh over 300 kg, making it noticeably larger than a lion!",
+  },
 ];
 
 const SAMPLE_QUESTIONS_VI = [
@@ -51,6 +67,22 @@ const SAMPLE_QUESTIONS_VI = [
     correct: 1,
     fact_title: "BẠN CÓ BIẾT?",
     fact_text: "Đại kim tự tháp Giza từng là công trình nhân tạo cao nhất thế giới trong hơn 3.800 năm!",
+  },
+  {
+    type: "true_false" as const,
+    text: "Vạn Lý Trường Thành có thể nhìn thấy từ Mặt Trăng bằng mắt thường?",
+    choices: ["Đúng", "Sai"],
+    correct: 1,
+    fact_title: "BẠN CÓ BIẾT?",
+    fact_text: "Đây là một hiểu lầm phổ biến! Không thể nhìn thấy Vạn Lý Trường Thành từ Mặt Trăng bằng mắt thường.",
+  },
+  {
+    type: "versus" as const,
+    text: "Loài thú họ mèo nào có trọng lượng và kích thước trung bình lớn hơn?",
+    choices: ["Sư tử châu Phi", "Hổ Siberia"],
+    correct: 1,
+    fact_title: "BẠN CÓ BIẾT?",
+    fact_text: "Hổ Siberia có thể nặng trên 300 kg, lớn hơn đáng kể so với sư tử châu Phi!",
   },
 ];
 

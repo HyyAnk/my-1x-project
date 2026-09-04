@@ -18,7 +18,7 @@ export type ArtifactContext = {
 
 export async function loadPipelineArtifacts(taskType: TaskType, repository: RepositoryService, ctx: ArtifactContext): Promise<void> {
   const { stylePath, sharedFiles, artifact } = ctx;
-  if (taskType === "GENERATE_RESEARCH") {
+  if (taskType === "GENERATE_QUIZ" || taskType === "GENERATE_RESEARCH") {
     const absolute = repository.resolveContextPath(stylePath);
     try {
       const content = await readFile(absolute, "utf8");
@@ -26,7 +26,9 @@ export async function loadPipelineArtifacts(taskType: TaskType, repository: Repo
     } catch {
       // optional
     }
-    await readSharedRules(repository, ["research_rules.md"], sharedFiles);
+    if (taskType === "GENERATE_RESEARCH") {
+      await readSharedRules(repository, ["research_rules.md"], sharedFiles);
+    }
   } else if (taskType === "GENERATE_TREATMENT") {
     const absolute = repository.resolveContextPath(stylePath);
     try {

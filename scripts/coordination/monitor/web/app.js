@@ -40,14 +40,34 @@ class App {
     this.btnZenMode = document.getElementById("btn-zen-mode");
     this.zenRestoreBar = document.getElementById("zen-restore-bar");
     this.btnZenExit = document.getElementById("btn-zen-exit");
+    this.btnTogglePulses = document.getElementById("btn-toggle-pulses");
+    this.activityTicker = document.getElementById("activity-ticker");
+    this.tickerIcon = document.getElementById("ticker-icon");
+    this.tickerZone = document.getElementById("ticker-zone");
+    this.tickerFile = document.getElementById("ticker-file");
+    this.valFileNeurons = document.getElementById("val-file-neurons");
+    this.fileTooltip = document.getElementById("file-tooltip");
+    this.fileTooltipName = document.getElementById("file-tooltip-name");
+    this.fileTooltipPath = document.getElementById("file-tooltip-path");
+    this.fileTooltipZone = document.getElementById("file-tooltip-zone");
+    this.tickerTimeout = null;
     this.isZenMode = false;
   }
 
   initGraph() {
-    this.graph = new NeuralGraph(this.container, (zoneData) => {
-      this.openDrawer(zoneData);
-      this.graph.flyToNode(zoneData.id);
-    });
+    this.graph = new NeuralGraph(
+      this.container,
+      (zoneData) => {
+        this.openDrawer(zoneData);
+        this.graph.flyToNode(zoneData.id);
+      },
+      (fileData) => {
+        this.handleFileSelect(fileData);
+      },
+      (fileData, screenPos) => {
+        this.handleFileHover(fileData, screenPos);
+      }
+    );
   }
 
   initEvents() {
@@ -67,12 +87,15 @@ class App {
 
     this.btnZenMode?.addEventListener("click", () => this.toggleZenMode());
     this.btnZenExit?.addEventListener("click", () => this.toggleZenMode(false));
+    this.btnTogglePulses?.addEventListener("click", () => this.togglePulses());
 
-    // Global Keyboard Shortcuts (Press 'H' for Zen Mode, 'Escape' to restore or close modals)
+    // Global Keyboard Shortcuts (Press 'H' for Zen Mode, 'P' for Pulses, 'Escape' to restore or close modals)
     window.addEventListener("keydown", (e) => {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
       if (e.key === "h" || e.key === "H") {
         this.toggleZenMode();
+      } else if (e.key === "p" || e.key === "P") {
+        this.togglePulses();
       } else if (e.key === "Escape") {
         if (this.isZenMode) {
           this.toggleZenMode(false);
@@ -102,6 +125,10 @@ class App {
       const topology = await res.json();
       this.graph.loadTopology(topology);
 
+      if (this.valFileNeurons && topology.files) {
+        this.valFileNeurons.textContent = topology.files.length.toLocaleString();
+      }
+
       this.connectSSE();
     } catch (err) {
       console.error("Topology init error:", err);
@@ -127,6 +154,18 @@ class App {
         }
       } catch (err) {
         console.error("Failed to parse state stream:", err);
+      }
+    });
+
+    this.evtSource.addEventListener("file_activity", (e) => {
+      try {
+        const activity = JSON.parse(e.data);
+        if (this.graph) {
+          this.graph.triggerFileActivity(activity);
+        }
+        this.handleFileActivityHUD(activity);
+      } catch (err) {
+        console.error("Failed to parse file_activity event:", err);
       }
     });
 
@@ -353,6 +392,60 @@ class App {
     } else {
       this.showToast("⚡ Standard HUD Restored");
     }
+  }
+
+  togglePulses(forceState) {
+    if (!this.graph) return;
+    const enabled = this.graph.togglePulses(forceState);
+    if (this.btnTogglePulses) {
+      this.btnTogglePulses.classList.toggle("active", enabled);
+    }
+    this.showToast(enabled ? "⚡ Synapse Pulses: ACTIVE" : "⏸️ Synapse Pulses: PAUSED");
+  }
+
+  handleFileActivityHUD(activity) {
+    if (!this.activityTicker || !activity) return;
+
+    const prefix = activity.eventType === "add" ? "+" : activity.eventType === "unlink" ? "✕" : "⚡";
+    if (this.tickerIcon) this.tickerIcon.textContent = prefix;
+    if (this.tickerZone) this.tickerZone.textContent = activity.zoneId || "";
+    const shortFile = activity.fileName || (activity.file ? activity.file.split("/").pop() : "file");
+    if (this.tickerFile) this.tickerFile.textContent = shortFile;
+
+    this.activityTicker.classList.remove("hidden");
+
+    if (this.tickerTimeout) clearTimeout(this.tickerTimeout);
+    this.tickerTimeout = setTimeout(() => {
+      if (this.activityTicker) {
+        this.activityTicker.classList.add("hidden");
+      }
+    }, 4200);
+  }
+
+  handleFileHover(fileData, screenPos) {
+    if (!this.fileTooltip) return;
+    if (!fileData) {
+      this.fileTooltip.classList.add("hidden");
+      return;
+    }
+    if (this.fileTooltipName) this.fileTooltipName.textContent = fileData.name;
+    if (this.fileTooltipPath) this.fileTooltipPath.textContent = fileData.path;
+    if (this.fileTooltipZone) this.fileTooltipZone.textContent = fileData.zoneId;
+
+    if (screenPos) {
+      this.fileTooltip.style.left = `${screenPos.clientX}px`;
+      this.fileTooltip.style.top = `${screenPos.clientY}px`;
+    }
+    this.fileTooltip.classList.remove("hidden");
+  }
+
+  handleFileSelect(fileData) {
+    if (!fileData) return;
+    const zoneData = this.latestState?.zones?.find((z) => z.id === fileData.zoneId);
+    if (zoneData) {
+      this.openDrawer(zoneData);
+    }
+    this.showToast(`📄 ${fileData.name} (${fileData.zoneId})`);
   }
 
   showToast(message) {

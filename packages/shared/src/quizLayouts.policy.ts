@@ -95,8 +95,15 @@ export function resolveQuizLayout(input: QuizLayoutResolutionInput): QuizLayoutR
       : { ok: false, requestedLayout: input.requestedLayout, source: "explicit", issues: compatibility.issues };
   }
 
+  const autoCandidates: readonly ResolvedQuizLayoutId[] = [
+    "media_left_choices_right",
+    "visual_choices_three",
+    "visual_choices_three_pure",
+    "split_versus_two",
+    "verdict_true_false",
+    "full_stack_list",
+  ];
   const preferred = preferredAutoLayout(input.archetype, input.questionFormat);
-  const autoCandidates: readonly ResolvedQuizLayoutId[] = ["media_left_choices_right", "visual_choices_three"];
   const candidates = [preferred, ...autoCandidates.filter((layoutId) => layoutId !== preferred)];
   for (const layoutId of candidates) {
     const compatibility = evaluateQuizLayoutCompatibility({ ...compatibilityInput, layoutId });
@@ -121,7 +128,16 @@ export function resolveQuizLayout(input: QuizLayoutResolutionInput): QuizLayoutR
 }
 
 function preferredAutoLayout(archetype: DirectorArchetype, questionFormat: QuizQuestionFormat): ResolvedQuizLayoutId {
-  return archetype === "visual_multiple_choice" || questionFormat === "odd_one_out" ? "visual_choices_three" : "media_left_choices_right";
+  if (questionFormat === "true_false" || archetype === "true_false") {
+    return "verdict_true_false";
+  }
+  if (questionFormat === "odd_one_out") {
+    return "visual_choices_three_pure";
+  }
+  if (archetype === "visual_multiple_choice") {
+    return "visual_choices_three";
+  }
+  return "media_left_choices_right";
 }
 
 function addUnsupportedIssue<T extends string | number>(

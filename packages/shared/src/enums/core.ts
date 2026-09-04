@@ -18,6 +18,7 @@ export const EpisodeStageSchema = z.enum([
   "SCENE_READY",
   "NARRATION_READY",
   "READY_FOR_GENERATION",
+  "QUIZ_READY",
   "VIDEO_RENDERING",
   "VIDEO_READY",
 ]);
@@ -42,6 +43,7 @@ export const TaskTypeSchema = z.enum([
   "GENERATE_AUDIO",
   "GENERATE_BUNDLE_IMAGE",
   "GENERATE_VIDEO",
+  "GENERATE_QUIZ",
 ]);
 export type TaskType = z.infer<typeof TaskTypeSchema>;
 

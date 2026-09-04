@@ -84,6 +84,9 @@ describe("ContextEngine", () => {
     expect(context.prompt).toContain("Các loại nghề nghiệp");
     expect(context.prompt).toContain("Exactly 2 candidates MUST be directly inspired by");
     expect(context.prompt).toContain("The remaining 3 candidates should be diverse");
+    expect(context.prompt).toContain("GAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY");
+    expect(context.prompt).toContain("Slot 1 (Deep Trivia)");
+    expect(context.prompt).toContain("Slot 3 (Fact or Myth)");
   });
 
   it("uses the Quiz Engine DNA template for AI DNA generation", async () => {

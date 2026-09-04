@@ -86,6 +86,7 @@ function measureChoiceText(choice,fontSize,lines,leading) {
   if (!surface) return false;
   const surfaceStyles=getComputedStyle(surface);
   const textStyles=getComputedStyle(choice);
+  if (surfaceStyles.display==='none' || textStyles.display==='none' || surface.offsetParent===null || choice.offsetParent===null) return true;
   const paddingTop=Number.parseFloat(surfaceStyles.paddingTop)||0;
   const paddingBottom=Number.parseFloat(surfaceStyles.paddingBottom)||0;
   const surfaceInnerHeight=Math.max(0,surface.clientHeight-paddingTop-paddingBottom);

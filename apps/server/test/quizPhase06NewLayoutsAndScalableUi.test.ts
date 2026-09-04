@@ -80,7 +80,15 @@ const sampleQuiz: QuizV2 = QuizV2Schema.parse({
 
 describe("Phase 6 Test Matrix: Shared catalog and compatibility", () => {
   it("P6-CAT-01: Layout schema IDs parse exhaustively", () => {
-    const expectedIds = ["auto", "media_left_choices_right", "visual_choices_three", "full_stack_list"];
+    const expectedIds = [
+      "auto",
+      "media_left_choices_right",
+      "visual_choices_three",
+      "visual_choices_three_pure",
+      "split_versus_two",
+      "verdict_true_false",
+      "full_stack_list",
+    ];
     expect(QuizLayoutIdSchema.options.sort()).toEqual(expectedIds.sort());
     for (const id of expectedIds) {
       expect(QuizLayoutIdSchema.parse(id)).toBe(id);
@@ -89,7 +97,7 @@ describe("Phase 6 Test Matrix: Shared catalog and compatibility", () => {
 
   it("P6-CAT-02: Catalog and renderer parity for all production layouts", () => {
     const resolvedIds = ResolvedQuizLayoutIdSchema.options;
-    expect(resolvedIds.length).toBe(3);
+    expect(resolvedIds.length).toBe(6);
     for (const id of resolvedIds) {
       expect(QUIZ_LAYOUT_CATALOG[id]).toBeDefined();
       expect(QUIZ_LAYOUT_RENDERERS[id]).toBeDefined();
@@ -124,7 +132,7 @@ describe("Phase 6 Test Matrix: Shared catalog and compatibility", () => {
       questionFormat: "odd_one_out",
       choiceCount: 3,
     });
-    expect(visualAuto).toMatchObject({ ok: true, layoutId: "visual_choices_three", source: "auto" });
+    expect(visualAuto).toMatchObject({ ok: true, layoutId: "visual_choices_three_pure", source: "auto" });
   });
 
   it("P6-CAT-06: Explicit compatible request is preserved and resolved", () => {

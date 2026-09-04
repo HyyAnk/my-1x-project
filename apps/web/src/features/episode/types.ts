@@ -52,6 +52,7 @@ export function taskLabel(type: Task["task_type"]): string {
     GENERATE_PIPELINE: "Start production",
     GENERATE_AUDIO: "Generate preview",
     GENERATE_VIDEO: "Render video",
+    GENERATE_QUIZ: "Generate quiz",
   };
   return labels[type] ?? "Generate";
 }

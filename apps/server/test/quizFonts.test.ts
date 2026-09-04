@@ -139,6 +139,107 @@ describe("quiz font parity", () => {
     expect(attributes.has("data-choice-fit-font-size")).toBe(false);
   });
 
+  it("passes font readiness and choice fitting when choices are pure visual or labels are display: none", async () => {
+    const properties = new Map<string, string>();
+    const attributes = new Map<string, string>();
+    const cardElement = {
+      offsetLeft: 0,
+      offsetTop: 0,
+      offsetWidth: 500,
+      offsetHeight: 580,
+      parentElement: null as unknown,
+    };
+    const surfaceElement = {
+      clientHeight: 0,
+      clientWidth: 0,
+      offsetParent: null,
+    };
+    const choiceText = {
+      closest: () => surfaceElement,
+      ownerDocument: {
+        createRange: () => ({
+          selectNodeContents: () => {},
+          getBoundingClientRect: () => ({ left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 }),
+        }),
+      },
+      getBoundingClientRect: () => ({ left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 }),
+      scrollWidth: 0,
+      scrollHeight: 0,
+      clientWidth: 0,
+      clientHeight: 0,
+      offsetParent: null,
+    };
+    const groupElement = {
+      offsetLeft: 10,
+      offsetTop: 200,
+      offsetWidth: 1560,
+      offsetHeight: 580,
+      clientWidth: 1560,
+      clientHeight: 580,
+      parentElement: null as unknown,
+      style: {
+        setProperty: (name: string, value: string) => properties.set(name, value),
+        removeProperty: (name: string) => properties.delete(name),
+      },
+      setAttribute: (name: string, value: string) => attributes.set(name, value),
+      removeAttribute: (name: string) => attributes.delete(name),
+      querySelectorAll: (selector: string) => {
+        if (selector.includes("choice-text")) return [choiceText, choiceText, choiceText];
+        if (selector.includes("choice-card")) return [cardElement, cardElement, cardElement];
+        return [];
+      },
+    };
+    const parentContainer = {
+      clientWidth: 1580,
+      clientHeight: 945,
+    };
+    cardElement.parentElement = groupElement;
+    groupElement.parentElement = parentContainer;
+
+    const documentStub = {
+      documentElement: { dataset: {} as Record<string, string> },
+      fonts: { load: () => Promise.resolve([{}]), check: () => true, ready: Promise.resolve() },
+      querySelectorAll: (selector: string) => {
+        if (selector.includes("choice-group")) return [groupElement];
+        return [];
+      },
+    };
+    const windowStub: FontReadinessWindowStub = { __renderReady: false, __playerReady: false };
+    windowStub.parent = windowStub;
+
+    evaluateBrowserScript<void>(candyArcadeFontReadinessScript(), {
+      window: windowStub,
+      document: documentStub,
+      getComputedStyle: (elem: unknown) => {
+        if (elem === surfaceElement || elem === choiceText) {
+          return {
+            display: "none",
+            paddingTop: "14px",
+            paddingBottom: "14px",
+            paddingLeft: "0px",
+            paddingRight: "48px",
+            lineHeight: "36px",
+            getPropertyValue: () => "",
+          };
+        }
+        return {
+          getPropertyValue: () => "",
+        };
+      },
+    });
+
+    if (!windowStub.__fontReadyPromise) throw new Error("Font readiness script did not expose its completion promise");
+    const status = await windowStub.__fontReadyPromise;
+    expect(status).toEqual({
+      state: "ready",
+      families: CANDY_ARCADE_FONTS.map((font) => font.family),
+    });
+    expect(windowStub.__playerReady).toBe(true);
+    expect(windowStub.__renderReady).toBe(true);
+    expect(documentStub.documentElement.dataset.fontsReady).toBe("true");
+    expect(attributes.get("data-choice-fit-status")).toBe("fit");
+  });
+
   it(
     "serves immutable font bytes with the declared MIME type and hash",
     async () => {

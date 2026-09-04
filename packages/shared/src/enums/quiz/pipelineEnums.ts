@@ -24,7 +24,15 @@ export const DirectorEnergySchema = z.enum(["gentle", "curious", "playful", "exc
 
 export const DirectorVisualDensitySchema = z.enum(["calm", "focused", "lively", "burst"]);
 
-export const QuizLayoutIdSchema = z.enum(["auto", "media_left_choices_right", "visual_choices_three", "full_stack_list"]);
+export const QuizLayoutIdSchema = z.enum([
+  "auto",
+  "media_left_choices_right",
+  "visual_choices_three",
+  "visual_choices_three_pure",
+  "split_versus_two",
+  "verdict_true_false",
+  "full_stack_list",
+]);
 export type QuizLayoutId = z.infer<typeof QuizLayoutIdSchema>;
 
 export const QuizMotionIdSchema = z.enum([
