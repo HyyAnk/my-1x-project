@@ -395,17 +395,57 @@ export const CURIOSITY_BADGE_LOCALIZATIONS: Record<string, Record<SupportedLangu
   },
 };
 
+export const AUTO_CURIOSITY_BADGE_PRESETS = [
+  "layout_default",
+  "99_percent_fail",
+  "genius_only",
+  "iq_test",
+  "can_you_pass",
+  "only_1_percent",
+  "question_count",
+] as const;
+
 /**
- * Resolves curiosity-triggering badge text based on preset ID or fallback.
+ * Randomly picks from available curiosity badge presets (or layout default) in the target language.
+ */
+export function getRandomCuriosityBadge(
+  count: number,
+  language: SupportedLanguage,
+  defaultBadge: string,
+  rng: () => number = Math.random,
+): string {
+  const idx = Math.floor(rng() * AUTO_CURIOSITY_BADGE_PRESETS.length);
+  const picked = AUTO_CURIOSITY_BADGE_PRESETS[idx];
+
+  if (picked === "layout_default") {
+    return defaultBadge;
+  }
+  if (picked === "question_count") {
+    const locale = THUMBNAIL_LOCALIZATIONS[language] || THUMBNAIL_LOCALIZATIONS.en;
+    return locale.badgeTemplate.mega_grid(count);
+  }
+  const preset = CURIOSITY_BADGE_LOCALIZATIONS[picked];
+  if (preset) {
+    return preset[language] || preset.en;
+  }
+  return defaultBadge;
+}
+
+/**
+ * Resolves curiosity-triggering badge text based on preset ID, stochastic auto mode, or fallback.
  */
 export function getCuriosityBadgeText(
   badgeType: string | undefined,
   count: number,
   language: SupportedLanguage,
   defaultBadge: string,
+  rng: () => number = Math.random,
 ): string {
-  if (!badgeType || badgeType === "auto") {
+  if (!badgeType) {
     return defaultBadge;
+  }
+  if (badgeType === "auto") {
+    return getRandomCuriosityBadge(count, language, defaultBadge, rng);
   }
   if (badgeType === "question_count") {
     const locale = THUMBNAIL_LOCALIZATIONS[language] || THUMBNAIL_LOCALIZATIONS.en;

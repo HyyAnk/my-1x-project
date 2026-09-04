@@ -15,7 +15,7 @@ export function adaptSandboxQuizScene(input: SandboxPreviewInput, mascotOccupied
       : capability.supportedPresentations[0];
   const questionId = `sandbox-question-${questionNumber}`;
   const choices = input.choices.map((text, index) => ({ id: `sandbox-choice-${index + 1}`, text }));
-  const correctChoiceId = choices[input.correct_choice_index]?.id ?? choices[0].id;
+  const correctChoiceId = input.choices.length > 0 ? (choices[input.correct_choice_index]?.id ?? choices[0]?.id ?? "") : "";
   const palette = candyArcadePalettes.find((candidate) => candidate.id === input.palette_id) ?? candyArcadePalettes[0];
   return buildQuizSceneRenderModel({
     question: {

@@ -46,7 +46,10 @@ function normalizeChoice(
 
 function assertSceneInput(input: BuildQuizSceneRenderModelInput): void {
   if (input.layout.id !== input.layout.capability.id) throw new Error("QUIZ_SCENE_LAYOUT_CAPABILITY_MISMATCH");
-  if (!input.question.choices.some((choice) => choice.id === input.question.correctChoiceId)) {
+  if (
+    input.question.choices.length > 0 &&
+    !input.question.choices.some((choice) => choice.id === input.question.correctChoiceId)
+  ) {
     throw new Error("QUIZ_SCENE_CORRECT_CHOICE_MISSING");
   }
 }

@@ -68,6 +68,8 @@ export const sandboxVi = {
     layoutVerdictTrueFalseSub: "1 ảnh Hero lớn 60% + 2 nút phán xét ĐÚNG - SAI khổng lồ",
     layoutFullStackList: "Danh sách Dọc Toàn màn hình",
     layoutFullStackListSub: "Xếp dọc toàn màn hình cho câu đố chữ & phản xạ nhanh",
+    layoutMysteryReveal: "Đoán Mở Bí Ẩn (Bóng Đen & Manh Mối)",
+    layoutMysteryRevealSub: "Hero bí ẩn điện ảnh chuyển đổi hiệu ứng lật mở & 1 đáp án duy nhất",
     paletteSection: "2. Bảng màu nền",
     thinkingBarSection: "3. Thanh đếm ngược",
     questionBoxSection: "4. Hộp câu hỏi",

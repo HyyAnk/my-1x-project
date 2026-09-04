@@ -7,7 +7,8 @@ export type QuizGameplayArchetypeId =
   | "verdict_fact_myth"
   | "versus_faceoff"
   | "visual_identification"
-  | "speed_blitz";
+  | "speed_blitz"
+  | "mystery_reveal";
 
 export interface QuizGameplayArchetypeBlueprint {
   id: QuizGameplayArchetypeId;
@@ -66,6 +67,20 @@ export const QUIZ_GAMEPLAY_ARCHETYPES: readonly QuizGameplayArchetypeBlueprint[]
     defaultFormat: "multiple_choice",
     targetLayout: "full_stack_list",
     creativeAngles: ["Câu đố mẹo dân gian", "Toán đố logic nhanh", "Tìm từ đồng nghĩa / chơi chữ", "Thử tài tính nhẩm"],
+  },
+  {
+    id: "mystery_reveal",
+    name: "Mystery Reveal (Đoán Mở & Lật Mở Kết Quả)",
+    description: "Câu đố bí ẩn thị giác (nhìn bóng đoán vật, manh mối tìm thủ phạm, dụng cụ đoán nghề) với Hero Stage khổng lồ chuyển đổi trạng thái khi reveal.",
+    defaultFormat: "image_guess",
+    targetLayout: "mystery_reveal",
+    creativeAngles: [
+      "Who's that character / Silhouette bóng đen",
+      "Chiếc hang này của con gì / Manh mối dấu vết",
+      "Dụng cụ này của nghề nghiệp nào",
+      "Soi kính hiển vi / Cận cảnh đoán vật",
+      "Biến đổi thời gian / Quá khứ vs Hiện tại",
+    ],
   },
 ] as const;
 

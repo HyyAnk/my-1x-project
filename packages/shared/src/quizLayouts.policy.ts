@@ -102,6 +102,7 @@ export function resolveQuizLayout(input: QuizLayoutResolutionInput): QuizLayoutR
     "split_versus_two",
     "verdict_true_false",
     "full_stack_list",
+    "mystery_reveal",
   ];
   const preferred = preferredAutoLayout(input.archetype, input.questionFormat);
   const candidates = [preferred, ...autoCandidates.filter((layoutId) => layoutId !== preferred)];
@@ -136,6 +137,9 @@ function preferredAutoLayout(archetype: DirectorArchetype, questionFormat: QuizQ
   }
   if (archetype === "visual_multiple_choice") {
     return "visual_choices_three";
+  }
+  if (archetype === "visual_reveal" || archetype === "image_guess") {
+    return "mystery_reveal";
   }
   return "media_left_choices_right";
 }

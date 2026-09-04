@@ -61,6 +61,7 @@ describe("Phase 2 layout resolution policy", () => {
   it("P2-RES-02 preserves visual and odd-one-out auto resolution", () => {
     expect(resolveAuto("visual_multiple_choice", "multiple_choice", 3)).toMatchObject({ ok: true, layoutId: "visual_choices_three" });
     expect(resolveAuto("text_multiple_choice", "odd_one_out", 3)).toMatchObject({ ok: true, layoutId: "visual_choices_three_pure" });
+    expect(resolveAuto("visual_reveal", "image_guess", 1)).toMatchObject({ ok: true, layoutId: "mystery_reveal" });
   });
 
   it("P2-RES-03 treats supported-but-not-recommended explicit formats as valid", () => {
@@ -221,7 +222,7 @@ describe("Phase 2 validation consumers", () => {
 
 function resolveAuto(
   archetype: Parameters<typeof resolveQuizLayout>[0]["archetype"],
-  questionFormat: "multiple_choice" | "true_false" | "odd_one_out",
+  questionFormat: "multiple_choice" | "true_false" | "odd_one_out" | "image_guess",
   choiceCount: number,
 ) {
   return resolveQuizLayout({ requestedLayout: "auto", archetype, questionFormat, choiceCount });

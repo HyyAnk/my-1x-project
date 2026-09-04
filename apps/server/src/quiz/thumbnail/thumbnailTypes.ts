@@ -65,6 +65,7 @@ export type ResolveThumbnailInput = {
   badgeOverride?: string;
   language?: string;
   mascotProfile?: MascotProfile | null;
+  rng?: () => number;
 };
 
 

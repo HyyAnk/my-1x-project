@@ -54,6 +54,6 @@ describe("Ember Trail thinking bar", () => {
     const css = emberTrailVariant.renderCss();
     const trackRule = css.match(/\.thinking-bar-flame-fuse \.ember-trail-track \{(?<declarations>[^}]*)\}/)?.groups?.declarations;
 
-    expect(trackRule).toContain("width: 100%");
+    expect(trackRule).toContain("width: calc(100% - (var(--ember-edge-gap) * 2));");
   });
 });

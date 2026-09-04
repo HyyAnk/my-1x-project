@@ -1,4 +1,4 @@
-import type { Channel, SandboxPreviewRequest } from "@studio/shared";
+import { resolveChannelMascotPlacement, type Channel, type SandboxPreviewRequest } from "@studio/shared";
 import type { EpisodePreviewQuestion } from "../types/episodePreview.types";
 import type { EpisodeStyleOverride, ResolvedEpisodePreviewStyle } from "../types/episodeStylePreview.types";
 
@@ -12,11 +12,12 @@ type BuildEpisodePreviewRequestInput = {
 };
 
 export function buildEpisodePreviewRequest(input: BuildEpisodePreviewRequestInput): SandboxPreviewRequest {
+  const aspectRatio = input.aspectRatio ?? "16:9";
   return {
     ...buildStyleRequest(input),
     ...buildQuestionRequest(input),
-    ...buildMascotRequest(input.channel),
-    aspect_ratio: input.aspectRatio ?? "16:9",
+    ...buildMascotRequest(input.channel, aspectRatio),
+    aspect_ratio: aspectRatio,
     style_catalog_revision: input.styleCatalogRevision,
   };
 }
@@ -49,16 +50,17 @@ function buildQuestionRequest({ override, question, resolved }: BuildEpisodePrev
   };
 }
 
-function buildMascotRequest(channel: Channel): SandboxPreviewRequest {
+function buildMascotRequest(channel: Channel, aspectRatio: "16:9" | "9:16" = "16:9"): SandboxPreviewRequest {
   const config = channel.mascot_config;
+  const placement = resolveChannelMascotPlacement(config, aspectRatio);
   return {
     mascot_id: channel.mascot_id && channel.mascot_id !== "none" ? channel.mascot_id : undefined,
     mascot_enabled: config?.enabled ?? false,
-    mascot_position: config?.position,
-    mascot_scale: config?.scale,
-    mascot_offset_x: config?.offset_x,
-    mascot_offset_y: config?.offset_y,
-    mascot_flip_x: config?.flip_x,
+    mascot_position: placement.position,
+    mascot_scale: placement.scale,
+    mascot_offset_x: placement.offset_x,
+    mascot_offset_y: placement.offset_y,
+    mascot_flip_x: placement.flip_x,
     mascot_show_in_intro: config?.show_in_intro,
     mascot_show_in_outro: config?.show_in_outro,
     mascot_show_in_question: config?.show_in_question,

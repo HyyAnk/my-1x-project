@@ -10,6 +10,7 @@ import type { ChoiceGroupRenderInput } from "./choiceGroup.types.js";
 
 export function renderChoiceGroup(input: ChoiceGroupRenderInput): string {
   assertCanonicalChoice(input);
+  if (input.items.length === 0) return "";
   const choicesHtml = orderedChoices(input.items)
     .map((choice, index) => renderChoice(input, choice, index))
     .join("");
@@ -74,7 +75,7 @@ function choiceAttributes(input: ChoiceGroupRenderInput, choice: QuizSceneChoice
 }
 
 function assertCanonicalChoice(input: ChoiceGroupRenderInput): void {
-  if (!input.items.some((choice) => choice.id === input.correctChoiceId)) {
+  if (input.items.length > 0 && !input.items.some((choice) => choice.id === input.correctChoiceId)) {
     throw new Error("QUIZ_CHOICE_GROUP_CORRECT_CHOICE_MISSING");
   }
 }

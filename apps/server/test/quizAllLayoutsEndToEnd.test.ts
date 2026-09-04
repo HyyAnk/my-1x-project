@@ -43,8 +43,8 @@ function createTestQuiz(layoutId: string, format: QuizQuestionFormat, choices: s
 
 describe("Quiz All 6 Layouts End-to-End Integration", () => {
   describe("1. Topic Suggestion & Archetype Blueprint Registry", () => {
-    it("exports 6 production gameplay archetypes with concrete format and layout mappings", () => {
-      expect(QUIZ_GAMEPLAY_ARCHETYPES).toHaveLength(6);
+    it("exports 7 production gameplay archetypes with concrete format and layout mappings", () => {
+      expect(QUIZ_GAMEPLAY_ARCHETYPES).toHaveLength(7);
 
       const archetypesById = new Map(QUIZ_GAMEPLAY_ARCHETYPES.map((a) => [a.id, a]));
 
@@ -76,6 +76,11 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
       expect(archetypesById.get("speed_blitz")).toMatchObject({
         defaultFormat: "multiple_choice",
         targetLayout: "full_stack_list",
+      });
+
+      expect(archetypesById.get("mystery_reveal")).toMatchObject({
+        defaultFormat: "image_guess",
+        targetLayout: "mystery_reveal",
       });
     });
   });
@@ -387,8 +392,8 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
       });
     }
 
-    it("verifies QUIZ_LAYOUTS contains all 6 production layouts", () => {
-      expect(QUIZ_LAYOUTS).toHaveLength(6);
+    it("verifies QUIZ_LAYOUTS contains all 7 production layouts", () => {
+      expect(QUIZ_LAYOUTS).toHaveLength(7);
       expect(QUIZ_LAYOUTS.map((l) => l.id)).toEqual([
         "media_left_choices_right",
         "visual_choices_three",
@@ -396,6 +401,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         "split_versus_two",
         "verdict_true_false",
         "full_stack_list",
+        "mystery_reveal",
       ]);
     });
   });

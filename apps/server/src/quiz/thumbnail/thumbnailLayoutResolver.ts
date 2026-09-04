@@ -97,7 +97,7 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
 
   const topicSpecificHook = resolveTopicSpecificHook(topicLower, language);
   const hookText = input.customHookText || topicSpecificHook || localized.hookText;
-  const badgeText = getCuriosityBadgeText(input.badgeOverride, count, language, localized.badgeText);
+  const badgeText = getCuriosityBadgeText(input.badgeOverride, count, language, localized.badgeText, input.rng);
 
 
   // 3. Resolve Contextual Mascot Persona based on Topic & Layout

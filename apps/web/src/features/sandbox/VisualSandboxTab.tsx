@@ -52,7 +52,11 @@ export function VisualSandboxTab({
         ((question.choices[0] === "Đúng" && question.choices[1] === "Sai") ||
           (question.choices[0] === "True" && question.choices[1] === "False"));
 
-      if (newLayoutId === "verdict_true_false") {
+      if (newLayoutId === "mystery_reveal") {
+        const currentAnswer = question.choices[question.correctChoiceIndex] || question.choices[0] || (language === "vi" ? "Pikachu" : "Pikachu");
+        question.setChoices([currentAnswer]);
+        question.setCorrectChoiceIndex(0);
+      } else if (newLayoutId === "verdict_true_false") {
         if (question.choices.length !== 2 || !isTfChoices) {
           question.setChoices(language === "vi" ? ["Đúng", "Sai"] : ["True", "False"]);
           if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
@@ -97,7 +101,13 @@ export function VisualSandboxTab({
         design.setLayoutId("verdict_true_false");
       } else if (sample.type === "versus") {
         design.setLayoutId("split_versus_two");
-      } else if (design.layoutId === "verdict_true_false" || design.layoutId === "split_versus_two") {
+      } else if (sample.type === "mystery_reveal") {
+        design.setLayoutId("mystery_reveal");
+      } else if (
+        design.layoutId === "verdict_true_false" ||
+        design.layoutId === "split_versus_two" ||
+        design.layoutId === "mystery_reveal"
+      ) {
         design.setLayoutId("media_left_choices_right");
       }
     },

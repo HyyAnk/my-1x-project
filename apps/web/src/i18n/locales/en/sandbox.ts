@@ -68,6 +68,8 @@ export const sandboxEn = {
     layoutVerdictTrueFalseSub: "60% hero viewport + 2 oversized True/False verdict buttons",
     layoutFullStackList: "Full Stack List",
     layoutFullStackListSub: "Vertical full-width stack for fast-paced text trivia",
+    layoutMysteryReveal: "Mystery Reveal (Silhouette & Clues)",
+    layoutMysteryRevealSub: "Cinematic focal hero with dynamic reveal transformation & single answer",
     paletteSection: "2. Theme & Palette",
     thinkingBarSection: "3. Thinking Bar",
     questionBoxSection: "4. Question Card",

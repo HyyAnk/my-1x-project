@@ -41,6 +41,14 @@ const SAMPLE_QUESTIONS_EN = [
     fact_title: "DID YOU KNOW?",
     fact_text: "The Siberian Tiger can weigh over 300 kg, making it noticeably larger than a lion!",
   },
+  {
+    type: "mystery_reveal" as const,
+    text: "Who is that Pokemon?",
+    choices: ["Pikachu"],
+    correct: 0,
+    fact_title: "REVEALED!",
+    fact_text: "It's Pikachu! An Electric-type Pokemon with lightning-bolt tail.",
+  },
 ];
 
 const SAMPLE_QUESTIONS_VI = [
@@ -83,6 +91,14 @@ const SAMPLE_QUESTIONS_VI = [
     correct: 1,
     fact_title: "BẠN CÓ BIẾT?",
     fact_text: "Hổ Siberia có thể nặng trên 300 kg, lớn hơn đáng kể so với sư tử châu Phi!",
+  },
+  {
+    type: "mystery_reveal" as const,
+    text: "Sinh vật bí ẩn nào ẩn sau chiếc bóng này?",
+    choices: ["Pikachu"],
+    correct: 0,
+    fact_title: "ĐÃ GIẢI MÃ!",
+    fact_text: "Đó chính là Pikachu! Loài Pokemon hệ Điện với chiếc đuôi hình tia sét đặc trưng.",
   },
 ];
 

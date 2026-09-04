@@ -7,6 +7,7 @@ import type { QuizLayoutRenderDefinition, QuizLayoutSlots } from "./types.js";
 import { verdictTrueFalseLayout } from "./verdictTrueFalse.js";
 import { visualChoicesThreeLayout } from "./visualChoicesThree.js";
 import { visualChoicesThreePureLayout } from "./visualChoicesThreePure.js";
+import { mysteryRevealLayout } from "./mysteryReveal.js";
 
 export const QUIZ_LAYOUT_RENDERERS = {
   baseline: baselineLayout,
@@ -16,6 +17,7 @@ export const QUIZ_LAYOUT_RENDERERS = {
   split_versus_two: splitVersusTwoLayout,
   verdict_true_false: verdictTrueFalseLayout,
   full_stack_list: fullStackListLayout,
+  mystery_reveal: mysteryRevealLayout,
 } satisfies Record<QuizPreviewLayoutId, QuizLayoutRenderDefinition>;
 
 export function getQuizLayoutRenderer(layoutId: QuizPreviewLayoutId): QuizLayoutRenderDefinition {

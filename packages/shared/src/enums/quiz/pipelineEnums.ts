@@ -32,6 +32,7 @@ export const QuizLayoutIdSchema = z.enum([
   "split_versus_two",
   "verdict_true_false",
   "full_stack_list",
+  "mystery_reveal",
 ]);
 export type QuizLayoutId = z.infer<typeof QuizLayoutIdSchema>;
 

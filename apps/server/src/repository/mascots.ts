@@ -151,6 +151,19 @@ export async function assignMascotToChannel(
   config?: Partial<ChannelMascotConfig>,
 ): Promise<Channel> {
   const channel = await this.getChannel(channelId);
-  const updatedConfig = config ? { ...channel.mascot_config, ...config } : channel.mascot_config;
+  const updatedConfig = config
+    ? {
+        ...channel.mascot_config,
+        ...config,
+        ...(config.placements || channel.mascot_config?.placements
+          ? {
+              placements: {
+                ...channel.mascot_config?.placements,
+                ...config.placements,
+              },
+            }
+          : {}),
+      }
+    : channel.mascot_config;
   return this.updateChannel(channelId, { mascot_id: mascotId, mascot_config: updatedConfig });
 }

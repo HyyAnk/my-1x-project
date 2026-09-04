@@ -6,6 +6,12 @@ import {
 } from "../src/quiz/thumbnail/thumbnailArchetypes.js";
 import { buildAiPlannerPrompt, planThumbnailWithAI } from "../src/quiz/thumbnail/thumbnailAiPlanner.js";
 import { compileThumbnailPrompt } from "../src/quiz/thumbnail/thumbnailPromptCompiler.js";
+import { resolveThumbnailLayout } from "../src/quiz/thumbnail/thumbnailLayoutResolver.js";
+import {
+  AUTO_CURIOSITY_BADGE_PRESETS,
+  getCuriosityBadgeText,
+  getRandomCuriosityBadge,
+} from "../src/quiz/thumbnail/thumbnailLocale.js";
 import type { QuizThumbnailPlan } from "../src/quiz/thumbnail/thumbnailTypes.js";
 import * as promptSanitizer from "../src/utils/promptSanitizer.js";
 
@@ -212,6 +218,62 @@ describe("Thumbnail Mascot 10 Abstract Archetypes & Random Selection", () => {
       expect(prompt).toContain(matching!.poseDescription);
       expect(prompt).toContain(matching!.expression);
       expect(prompt).toContain("FLAG SECRETS REVEALED!");
+    });
+  });
+
+  describe("Curiosity Badge Stochastic Selection", () => {
+    it("has distinct presets defined in AUTO_CURIOSITY_BADGE_PRESETS", () => {
+      expect(AUTO_CURIOSITY_BADGE_PRESETS.length).toBeGreaterThanOrEqual(6);
+      expect(AUTO_CURIOSITY_BADGE_PRESETS).toContain("layout_default");
+      expect(AUTO_CURIOSITY_BADGE_PRESETS).toContain("99_percent_fail");
+      expect(AUTO_CURIOSITY_BADGE_PRESETS).toContain("genius_only");
+      expect(AUTO_CURIOSITY_BADGE_PRESETS).toContain("iq_test");
+      expect(AUTO_CURIOSITY_BADGE_PRESETS).toContain("only_1_percent");
+    });
+
+    it("resolves random curiosity badge in target language when auto is specified", () => {
+      // Mock deterministic index 1 ("99_percent_fail")
+      const mockRng1 = () => 1 / AUTO_CURIOSITY_BADGE_PRESETS.length;
+      const viBadge = getRandomCuriosityBadge(10, "vi", "10 CÂU HỎI", mockRng1);
+      expect(viBadge).toBe("99% TRẢ LỜI SAI! 🔥");
+
+      const enBadge = getRandomCuriosityBadge(10, "en", "10 QUESTIONS", mockRng1);
+      expect(enBadge).toBe("99% FAIL! 🔥");
+
+      // Mock deterministic index 2 ("genius_only")
+      const mockRng2 = () => 2 / AUTO_CURIOSITY_BADGE_PRESETS.length;
+      const jaBadge = getRandomCuriosityBadge(10, "ja", "全10問", mockRng2);
+      expect(jaBadge).toBe("天才専用 🧠");
+    });
+
+    it("preserves backwards compatibility when badgeType is undefined", () => {
+      const defaultBadge = getCuriosityBadgeText(undefined, 10, "en", "10 QUESTIONS");
+      expect(defaultBadge).toBe("10 QUESTIONS");
+    });
+
+    it("generates varied badges across stochastic runs when badgeOverride is auto", () => {
+      const badges = new Set<string>();
+      for (let i = 0; i < 50; i++) {
+        const plan = resolveThumbnailLayout({
+          topicTitle: "World Trivia Challenge",
+          questionCount: 10,
+          language: "English",
+          badgeOverride: "auto",
+        });
+        badges.add(plan.badgeText);
+      }
+      // With 7 options in the pool, 50 runs must yield multiple distinct badge texts
+      expect(badges.size).toBeGreaterThan(1);
+    });
+
+    it("verifies AI planner prompt does not contain biased few-shot examples in badge_text instruction", () => {
+      const prompt = buildAiPlannerPrompt({
+        topicTitle: "Space Odyssey",
+        language: "English",
+      });
+
+      expect(prompt).not.toContain('e.g. "99% FAIL! 🔥"');
+      expect(prompt).toContain("Dynamically pick ONE psychological hook");
     });
   });
 });

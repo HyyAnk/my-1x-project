@@ -124,7 +124,7 @@ export async function generateEpisodeThumbnail(
     colorTheme: mascotProfile?.color_theme,
     layoutOverride,
     customHookText,
-    badgeOverride,
+    badgeOverride: badgeOverride || "auto",
     mascotProfile,
     llmClient: options.antigravityClient ?? null,
   });

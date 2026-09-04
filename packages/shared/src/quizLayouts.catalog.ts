@@ -90,6 +90,19 @@ export const QUIZ_LAYOUT_CATALOG = {
       assets: {},
     },
   },
+  mystery_reveal: {
+    id: "mystery_reveal",
+    supportedPresentations: ["text"],
+    supportedChoiceCounts: [0, 1, 2, 3],
+    supportedFormats: ["multiple_choice", "image_guess", "odd_one_out", "true_false"],
+    recommendedFormats: ["image_guess"],
+    media: { supported: ["question", "choice"], required: ["question"] },
+    supportedAspectRatios,
+    metrics: {
+      render: { width: 980, height: 620, itemCount: 1 },
+      assets: { question: { maxWidth: 1080, maxHeight: 810 } },
+    },
+  },
 } as const satisfies Record<ResolvedQuizLayoutId, QuizLayoutCapability<ResolvedQuizLayoutId>>;
 
 export const QUIZ_LAYOUTS = Object.values(QUIZ_LAYOUT_CATALOG);

@@ -10,7 +10,7 @@ import {
   QuizThinkingBarStyleSchema,
   QuizVisualThemeSchema,
 } from "../enums.js";
-import { QUIZ_MAX_CHOICES_PER_QUESTION, QUIZ_MIN_CHOICES_PER_QUESTION } from "../schemas.js";
+import { QUIZ_MAX_CHOICES_PER_QUESTION } from "../schemas.js";
 import { MascotRenderAspectRatioSchema } from "../mascot/renderSchema.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 import { QuizPreviewLayoutIdSchema } from "../quizLayouts.js";
@@ -35,7 +35,6 @@ export const SandboxPreviewInputBaseSchema = z.object({
   question_text: z.string().optional().default("Which planet in our solar system has the most prominent rings?"),
   choices: z
     .array(z.string().trim().min(1))
-    .min(QUIZ_MIN_CHOICES_PER_QUESTION)
     .max(QUIZ_MAX_CHOICES_PER_QUESTION)
     .optional()
     .default(["Jupiter", "Saturn", "Uranus"]),
@@ -72,7 +71,7 @@ export const SandboxPreviewInputBaseSchema = z.object({
 });
 
 export const SandboxPreviewInputSchema = SandboxPreviewInputBaseSchema.superRefine((input, ctx) => {
-  if (input.correct_choice_index >= input.choices.length) {
+  if (input.choices.length > 0 && input.correct_choice_index >= input.choices.length) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["correct_choice_index"],

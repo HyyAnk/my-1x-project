@@ -138,7 +138,7 @@ export function ThumbnailPreviewCard({
       const res = await episodeApi.generateThumbnail(channel.channel_id, episodeId, {
         layout_override: selectedLayout === "auto" ? undefined : selectedLayout,
         custom_hook_text: customHook.trim() || undefined,
-        badge_override: selectedBadge === "auto" ? undefined : selectedBadge,
+        badge_override: selectedBadge,
         aspect_ratio: targetMode === "both" ? "both" : targetMode === "16:9" || targetMode === "9:16" ? targetMode : undefined,
       });
       if (res.ok && res.manifest) {

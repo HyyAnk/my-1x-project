@@ -31,6 +31,8 @@ describe("quiz layout registry", () => {
     expect(renderQuizLayoutBody("media_left_choices_right", slots)).toContain("Choices");
     expect(renderQuizLayoutBody("visual_choices_three", slots)).toContain("Choices");
     expect(renderQuizLayoutBody("visual_choices_three", slots)).not.toContain("Hero");
+    expect(renderQuizLayoutBody("mystery_reveal", slots)).toContain("Hero");
+    expect(renderQuizLayoutBody("mystery_reveal", slots)).toContain("Choices");
   });
 
   it("P8D-DIM-01 derives every render-dimension consumer from the capability catalog", () => {
