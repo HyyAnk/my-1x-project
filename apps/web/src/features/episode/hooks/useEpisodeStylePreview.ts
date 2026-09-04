@@ -71,6 +71,7 @@ export function useEpisodeStylePreview({ channel, episode, candidate, channelBra
           resolved,
           question: previewQuestion,
           styleCatalogRevision: episode?.quiz_config?.style_catalog_revision ?? undefined,
+          aspectRatio: episode?.quiz_config?.render_aspect_ratio ?? "16:9",
         });
         const response = await api.previewSandboxComposition(request);
         if (requestId !== latestRequestId.current) return;
@@ -81,7 +82,7 @@ export function useEpisodeStylePreview({ channel, episode, candidate, channelBra
         setLoading(false);
       }
     },
-    [candidate, channel.mascot_config, channel.mascot_id, episode?.quiz_config?.style_catalog_revision, previewQuestion, resolved],
+    [candidate, channel.mascot_config, channel.mascot_id, episode?.quiz_config?.style_catalog_revision, episode?.quiz_config?.render_aspect_ratio, previewQuestion, resolved],
   );
 
   const commitPendingPreview = useCallback(

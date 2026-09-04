@@ -12,7 +12,7 @@ import type {
   QuizThinkingBarStyle,
   ResolvedQuizLayoutId,
 } from "@studio/shared";
-import { serializeQuizPaletteInlineStyle } from "@studio/shared";
+import { resolveChannelMascotPlacement, serializeQuizPaletteInlineStyle } from "@studio/shared";
 import { ambientPhaseSeconds, motionCssClass, textLayout } from "../../visual/candyArcade.js";
 import type { QuizTemplateScene } from "../../visual/types.js";
 import { esc, escAttr, illustrationDataUri } from "./candyArcadeSvg.js";
@@ -216,8 +216,9 @@ export function questionClip(input: {
   const mascotEnabled = Boolean(
     input.mascot && (!input.mascotConfig || input.mascotConfig.enabled) && input.mascotConfig?.show_in_question !== false,
   );
+  const mascotPlacement = resolveChannelMascotPlacement(input.mascotConfig, input.aspectRatio ?? "16:9");
   const mascot = mascotEnabled
-    ? { occupied: true as const, anchor: input.mascotConfig?.position ?? "bottom_left" }
+    ? { occupied: true as const, anchor: mascotPlacement.position }
     : { occupied: false as const, anchor: null };
   const model = adaptProductionQuizScene({
     question,

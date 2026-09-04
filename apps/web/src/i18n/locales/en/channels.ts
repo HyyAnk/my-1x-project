@@ -47,6 +47,7 @@ export const channelsEn = {
     autoLanguageNotice: "Target language is automatically synchronized with the chosen publishing country.",
     contentLanguage: "Content Language",
     autoLanguageBadge: "Auto-synced",
+    autoDnaNotice: "AI automatically analyzes profile and generates tailored brand DNA.",
     searchCountryPlaceholder: "Search country by name, code…",
     noMatchingCountry: "No matching countries found",
     creatingChannel: "Creating channel…",

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { resolveChannelMascotPlacement } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { MascotStageStudioModalProps, StageAspectRatio, StageInspectorTab, StageQuestionLayout, StageViewMode } from "../types";
 import { useMascotPlacementPreset } from "./useMascotPlacementPreset";
@@ -42,8 +43,10 @@ export function useStageStudio({
   // Selected Mascot & Channels
   const [selectedMascotId, setSelectedMascotId] = useState<string | null>(null);
   const channelFilter = useStageChannelFilter();
-  const transformState = useStageTransformState();
+  const transformState = useStageTransformState(aspectRatio);
   const {
+    placements,
+    initPlacements,
     position,
     setPosition,
     scale,
@@ -99,12 +102,15 @@ export function useStageStudio({
       const assignedId = targetChannel.mascot_id || (allMascots.length > 0 ? allMascots[0].id : null);
       setSelectedMascotId(assignedId);
       if (targetChannel.mascot_id && targetChannel.mascot_config) {
-        applyPlacement(targetChannel.mascot_config);
+        initPlacements({
+          "16:9": resolveChannelMascotPlacement(targetChannel.mascot_config, "16:9"),
+          "9:16": resolveChannelMascotPlacement(targetChannel.mascot_config, "9:16"),
+        });
         setShowInIntro(targetChannel.mascot_config.show_in_intro ?? false);
         setShowInOutro(targetChannel.mascot_config.show_in_outro ?? false);
         setShowInQuestion(targetChannel.mascot_config.show_in_question ?? true);
       } else {
-        applyPlacement(defaultPlacement);
+        initPlacements({ "16:9": defaultPlacement, "9:16": defaultPlacement });
         setShowInIntro(false);
         setShowInOutro(false);
         setShowInQuestion(true);
@@ -114,12 +120,15 @@ export function useStageStudio({
       channelFilter.setSelectedChannelIds(mascot.assigned_channel_ids || []);
       const sample = channels.find((c) => c.mascot_id === mascot.id);
       if (sample?.mascot_config) {
-        applyPlacement(sample.mascot_config);
+        initPlacements({
+          "16:9": resolveChannelMascotPlacement(sample.mascot_config, "16:9"),
+          "9:16": resolveChannelMascotPlacement(sample.mascot_config, "9:16"),
+        });
         setShowInIntro(sample.mascot_config.show_in_intro ?? false);
         setShowInOutro(sample.mascot_config.show_in_outro ?? false);
         setShowInQuestion(sample.mascot_config.show_in_question ?? true);
       } else {
-        applyPlacement(defaultPlacement);
+        initPlacements({ "16:9": defaultPlacement, "9:16": defaultPlacement });
         setShowInIntro(false);
         setShowInOutro(false);
         setShowInQuestion(true);
@@ -134,7 +143,7 @@ export function useStageStudio({
     mascot,
     allMascots,
     channels,
-    applyPlacement,
+    initPlacements,
     defaultPlacement,
     channelFilter,
     setShowInIntro,
@@ -145,7 +154,7 @@ export function useStageStudio({
   const selectMascot = (mascotId: string | null) => {
     setSelectedMascotId(mascotId);
     if (isSingleChannelMode && mascotId && mascotId !== targetChannel?.mascot_id) {
-      applyDefaultPlacement();
+      initPlacements({ "16:9": defaultPlacement, "9:16": defaultPlacement });
     }
   };
 
@@ -219,6 +228,7 @@ export function useStageStudio({
     offsetX,
     offsetY,
     flipHorizontal,
+    placements,
     showInIntro,
     showInOutro,
     showInQuestion,

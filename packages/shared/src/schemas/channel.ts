@@ -12,6 +12,7 @@ import {
 } from "../enums.js";
 import { IsoDate, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "./common.js";
 import { ChannelMascotConfigSchema } from "./mascot.js";
+import { MascotRenderAspectRatioSchema } from "../mascot/renderSchema.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 
 export const ChannelSchema = z
@@ -88,6 +89,7 @@ export const QuizConfigSchema = z.object({
   style_catalog_revision: z.string().trim().min(1).optional(),
   style_preset_revision: z.number().int().positive().optional(),
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).default(""),
+  render_aspect_ratio: MascotRenderAspectRatioSchema.default("16:9"),
   thumbnail_aspect_ratio: z.enum(["auto", "16:9", "9:16", "both"]).default("auto"),
 });
 

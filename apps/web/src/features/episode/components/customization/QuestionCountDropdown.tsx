@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import type { EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview";
@@ -11,6 +12,7 @@ type Props = {
   saving: boolean;
   isOpen: boolean;
   onToggle: () => void;
+  onClose?: () => void;
   questionCountDraft: number;
   setQuestionCountDraft: (count: number) => void;
   onSaveQuestionCount: (count: number) => void;
@@ -22,16 +24,52 @@ export function QuestionCountDropdown({
   saving,
   isOpen,
   onToggle,
+  onClose,
   questionCountDraft,
   setQuestionCountDraft,
   onSaveQuestionCount,
   onPreview,
 }: Props) {
   const { t } = useTranslation();
+  const [inputValue, setInputValue] = useState<string>(String(questionCountDraft));
+  const prevIsOpen = useRef(isOpen);
+
+  const closeDropdown = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      onToggle();
+    }
+  };
+
+  useEffect(() => {
+    setInputValue(String(questionCountDraft));
+  }, [questionCountDraft]);
+
+  useEffect(() => {
+    if (prevIsOpen.current && !isOpen) {
+      const parsed = parseInt(inputValue, 10);
+      if (Number.isFinite(parsed)) {
+        const count = Math.max(
+          QUIZ_MIN_QUESTION_COUNT,
+          Math.min(QUIZ_MAX_QUESTION_COUNT, parsed),
+        );
+        if (count !== questionCountDraft) {
+          setQuestionCountDraft(count);
+          onSaveQuestionCount(count);
+        }
+      }
+    } else if (!prevIsOpen.current && isOpen) {
+      setInputValue(String(questionCountDraft));
+    }
+    prevIsOpen.current = isOpen;
+  }, [isOpen, inputValue, questionCountDraft, onSaveQuestionCount, setQuestionCountDraft]);
 
   const handleSelectPresetCount = (count: number) => {
     setQuestionCountDraft(count);
+    setInputValue(String(count));
     onSaveQuestionCount(count);
+    closeDropdown();
   };
 
   const handleStep = (delta: number) => {
@@ -39,17 +77,25 @@ export function QuestionCountDropdown({
     const next = Math.max(QUIZ_MIN_QUESTION_COUNT, Math.min(QUIZ_MAX_QUESTION_COUNT, current + delta));
     if (next !== current) {
       setQuestionCountDraft(next);
+      setInputValue(String(next));
       onSaveQuestionCount(next);
     }
   };
 
-  const handleCustomSubmit = () => {
-    const count = Math.max(
-      QUIZ_MIN_QUESTION_COUNT,
-      Math.min(QUIZ_MAX_QUESTION_COUNT, Number(questionCountDraft) || QUIZ_MIN_QUESTION_COUNT),
-    );
+  const handleCustomSubmit = (shouldClose = true) => {
+    const parsed = parseInt(inputValue, 10);
+    const count = Number.isFinite(parsed)
+      ? Math.max(
+          QUIZ_MIN_QUESTION_COUNT,
+          Math.min(QUIZ_MAX_QUESTION_COUNT, parsed),
+        )
+      : questionCountDraft;
+    setInputValue(String(count));
     setQuestionCountDraft(count);
     onSaveQuestionCount(count);
+    if (shouldClose) {
+      closeDropdown();
+    }
   };
 
   const isAtMin = questionCountDraft <= QUIZ_MIN_QUESTION_COUNT;
@@ -109,15 +155,19 @@ export function QuestionCountDropdown({
               type="number"
               min={QUIZ_MIN_QUESTION_COUNT}
               max={QUIZ_MAX_QUESTION_COUNT}
-              value={questionCountDraft}
-              onChange={(e) => setQuestionCountDraft(Number(e.target.value))}
-              onBlur={handleCustomSubmit}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onBlur={() => handleCustomSubmit(false)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleCustomSubmit();
+                if (e.key === "Enter") handleCustomSubmit(true);
               }}
               className="custom-count-input"
             />
-            <button type="button" className="primary-button compact custom-count-apply-btn" onClick={handleCustomSubmit}>
+            <button
+              type="button"
+              className="primary-button compact custom-count-apply-btn"
+              onClick={() => handleCustomSubmit(true)}
+            >
               {t("episodeCustomization.applyCount")}
             </button>
           </div>

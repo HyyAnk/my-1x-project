@@ -11,6 +11,7 @@ import {
   QuizVisualThemeSchema,
 } from "../enums.js";
 import { ChannelMascotConfigSchema, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT, QuestionHistorySettingsSchema } from "../schemas.js";
+import { MascotRenderAspectRatioSchema } from "../mascot/renderSchema.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 
 export const SuggestTopicsInputSchema = z.object({
@@ -90,6 +91,7 @@ export const EpisodeSettingsInputSchema = z.object({
   style_catalog_revision: z.string().trim().min(1).optional(),
   style_preset_revision: z.number().int().positive().optional(),
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).optional(),
+  render_aspect_ratio: MascotRenderAspectRatioSchema.optional(),
   thumbnail_aspect_ratio: z.enum(["auto", "16:9", "9:16", "both"]).optional(),
 });
 

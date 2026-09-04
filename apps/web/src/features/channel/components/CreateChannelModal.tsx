@@ -16,7 +16,7 @@ export interface CreateChannelModalProps {
 }
 
 export function CreateChannelModal({ onClose, onCreated, onError }: CreateChannelModalProps) {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const {
     form,
     setForm,
@@ -71,11 +71,7 @@ export function CreateChannelModal({ onClose, onCreated, onError }: CreateChanne
         <div className="channel-create-footer">
           <div className="channel-create-footer-hint">
             <Info size={15} className="footer-hint-icon" />
-            <span>
-              {language === "vi"
-                ? "AI tự động phân tích hồ sơ và tạo DNA chuẩn kèm giọng đọc phù hợp thị trường."
-                : "AI automatically analyzes profile and generates tailored brand DNA."}
-            </span>
+            <span>{t("channels.autoDnaNotice")}</span>
           </div>
 
           <div className="channel-create-footer-actions">

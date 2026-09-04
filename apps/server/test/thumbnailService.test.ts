@@ -7,6 +7,7 @@ import { RepositoryService } from "../src/repository.js";
 import {
   generateEpisodeThumbnail,
   getEpisodeThumbnailManifest,
+  resolveTargetThumbnailRatio,
 } from "../src/quiz/thumbnail/index.js";
 import type { ImageProvider } from "../src/providers/index.js";
 import type { TopicCandidate } from "@studio/shared";
@@ -356,6 +357,41 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
     expect(resVariant.body).toBe("MOCK_IMAGE_BYTES");
 
     await server.close();
+  });
+
+  describe("resolveTargetThumbnailRatio", () => {
+    it("resolves to 9:16 when render_aspect_ratio is 9:16 and thumbnail mode is auto", () => {
+      const episode = {
+        topic: { title: "Dinosaur Facts" },
+        quiz_config: {
+          render_aspect_ratio: "9:16",
+          thumbnail_aspect_ratio: "auto",
+        },
+      } as any;
+      expect(resolveTargetThumbnailRatio(episode)).toBe("9:16");
+    });
+
+    it("resolves to 16:9 when render_aspect_ratio is 16:9 and thumbnail mode is auto", () => {
+      const episode = {
+        topic: { title: "Space Exploration" },
+        quiz_config: {
+          render_aspect_ratio: "16:9",
+          thumbnail_aspect_ratio: "auto",
+        },
+      } as any;
+      expect(resolveTargetThumbnailRatio(episode)).toBe("16:9");
+    });
+
+    it("respects explicit requested ratio over episode render_aspect_ratio", () => {
+      const episode = {
+        topic: { title: "Ocean Mysteries" },
+        quiz_config: {
+          render_aspect_ratio: "9:16",
+        },
+      } as any;
+      expect(resolveTargetThumbnailRatio(episode, "both")).toBe("both");
+      expect(resolveTargetThumbnailRatio(episode, "16:9")).toBe("16:9");
+    });
   });
 });
 

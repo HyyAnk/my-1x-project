@@ -31,7 +31,8 @@ export function ThumbnailPreviewCard({
 }: ThumbnailPreviewCardProps) {
   const initialRatio =
     episode.quiz_config?.thumbnail_aspect_ratio === "9:16" ||
-    (episode.quiz_config?.thumbnail_aspect_ratio === "auto" && episode.topic?.title?.toLowerCase().includes("shorts"))
+    (episode.quiz_config?.thumbnail_aspect_ratio === "auto" &&
+      (episode.quiz_config?.render_aspect_ratio === "9:16" || episode.topic?.title?.toLowerCase().includes("shorts")))
       ? "9:16"
       : "16:9";
 
@@ -51,8 +52,13 @@ export function ThumbnailPreviewCard({
       setActiveRatio("9:16");
     } else if (episode.quiz_config?.thumbnail_aspect_ratio === "16:9") {
       setActiveRatio("16:9");
+    } else if (episode.quiz_config?.thumbnail_aspect_ratio === "auto") {
+      const isShorts =
+        episode.quiz_config?.render_aspect_ratio === "9:16" ||
+        Boolean(episode.topic?.title?.toLowerCase().includes("shorts"));
+      setActiveRatio(isShorts ? "9:16" : "16:9");
     }
-  }, [episode.quiz_config?.thumbnail_aspect_ratio]);
+  }, [episode.quiz_config?.thumbnail_aspect_ratio, episode.quiz_config?.render_aspect_ratio, episode.topic?.title]);
 
   const fetchManifest = useCallback(
     async (silent = false) => {

@@ -66,6 +66,7 @@ export function QuizEpisodeView({
         onSaveCounterStyle={pipeline.saveCounterStyle}
         onSaveBackgroundStyle={pipeline.saveBackgroundStyle}
         onSavePaletteId={pipeline.savePaletteId}
+        onSaveAspectRatio={pipeline.saveAspectRatio}
         onSaveThumbnailRatio={pipeline.saveThumbnailRatio}
         onApplyStylePreset={pipeline.applyStylePreset}
         setEpisode={setEpisode}
@@ -79,6 +80,7 @@ export function QuizEpisodeView({
         pipelineTask={pipeline.pipelineTask}
         tasks={pipeline.episodeTasks}
         questionCount={episode.quiz_config?.question_count ?? 0}
+        episode={episode}
       />
 
       <QuizVideoPanel

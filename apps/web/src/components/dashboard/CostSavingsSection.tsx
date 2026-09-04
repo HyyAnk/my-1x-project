@@ -13,9 +13,10 @@ export type CostSavingsSectionProps = {
 };
 
 export function CostSavingsSection({ voiceMetrics, usageLedger }: CostSavingsSectionProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const elevenLabsRatePer1k = 0.1; // $0.10 per 1,000 characters
   const usdToVnd = 25500;
+  const numberLocale = language === "vi" ? "vi-VN" : "en-US";
 
   // Voice metrics
   const renderedChars = voiceMetrics?.rendered_characters ?? usageLedger?.voice?.rendered_characters ?? 0;
@@ -64,18 +65,22 @@ export function CostSavingsSection({ voiceMetrics, usageLedger }: CostSavingsSec
               <strong className="submetric-val" style={{ color: "var(--green)" }}>
                 +${savedUsd.toFixed(2)} USD{" "}
                 <span style={{ fontSize: "12px", color: "var(--muted)", fontWeight: 500 }}>
-                  ({Math.round(savedVnd).toLocaleString("vi-VN")} ₫)
+                  ({Math.round(savedVnd).toLocaleString(numberLocale)} ₫)
                 </span>
               </strong>
             </div>
             <div className="savings-submetric">
               <span className="submetric-label">{t("dashboard.renderedCharacters")}</span>
-              <strong className="submetric-val">{renderedChars.toLocaleString("vi-VN")} chars</strong>
+              <strong className="submetric-val">
+                {renderedChars.toLocaleString(numberLocale)} {t("dashboard.unitChars")}
+              </strong>
             </div>
             <div className="savings-submetric">
               <span className="submetric-label">{t("dashboard.audioProduced")}</span>
               <strong className="submetric-val">
-                {renderedSeconds > 0 ? `${(renderedSeconds / 60).toFixed(1)} mins` : "0 mins"}
+                {renderedSeconds > 0
+                  ? `${(renderedSeconds / 60).toFixed(1)} ${t("dashboard.unitMins")}`
+                  : `0 ${t("dashboard.unitMins")}`}
               </strong>
             </div>
           </div>
@@ -100,7 +105,7 @@ export function CostSavingsSection({ voiceMetrics, usageLedger }: CostSavingsSec
             <div className="savings-submetric">
               <span className="submetric-label">{t("dashboard.totalImageSpend")}</span>
               <strong className="submetric-val" style={{ color: "var(--blue, #3b82f6)" }}>
-                {Math.round(imageSpendVnd).toLocaleString("vi-VN")} ₫{" "}
+                {Math.round(imageSpendVnd).toLocaleString(numberLocale)} ₫{" "}
                 <span style={{ fontSize: "12px", color: "var(--muted)", fontWeight: 500 }}>
                   (${imageSpendUsd.toFixed(2)} USD)
                 </span>
@@ -108,7 +113,10 @@ export function CostSavingsSection({ voiceMetrics, usageLedger }: CostSavingsSec
             </div>
             <div className="savings-submetric">
               <span className="submetric-label">{t("dashboard.aiImagesProduced")}</span>
-              <strong className="submetric-val">{totalImages.toLocaleString("vi-VN")} ảnh</strong>
+              <strong className="submetric-val">
+                {totalImages.toLocaleString(numberLocale)}{" "}
+                {totalImages === 1 ? t("dashboard.unitImagesSingular") : t("dashboard.unitImages")}
+              </strong>
             </div>
             <div className="savings-submetric">
               <span className="submetric-label">{t("dashboard.primaryProvider")}</span>

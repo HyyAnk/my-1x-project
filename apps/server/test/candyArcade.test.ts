@@ -618,6 +618,59 @@ describe("Candy Arcade visual template", () => {
     }
   });
 
+  it("resolves decoupled mascot placements for 16:9 and 9:16 aspect ratios independently", () => {
+    const director = createDefaultDirectorPlan(quiz);
+    const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
+    const mascotConfig: ChannelMascotConfig = {
+      enabled: true,
+      position: "bottom_left",
+      scale: 1.84,
+      offset_x: 67,
+      offset_y: 90,
+      flip_x: false,
+      show_in_question: true,
+      placements: {
+        "16:9": { position: "bottom_left", scale: 1.84, offset_x: 67, offset_y: 90, flip_x: false },
+        "9:16": { position: "bottom_right", scale: 1.2, offset_x: -20, offset_y: 50, flip_x: true },
+      },
+    };
+
+    const bundle16_9 = buildCandyArcadeCompositionBundle({
+      quiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      mascot: { ...dummyMascot, master_image_url: "/assets/mascot.png" },
+      mascotConfig,
+      aspectRatio: "16:9",
+    });
+
+    const bundle9_16 = buildCandyArcadeCompositionBundle({
+      quiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      mascot: { ...dummyMascot, master_image_url: "/assets/mascot.png" },
+      mascotConfig,
+      aspectRatio: "9:16",
+    });
+
+    const source16_9 = [bundle16_9.html, ...Object.values(bundle16_9.files)].join("\n");
+    const source9_16 = [bundle9_16.html, ...Object.values(bundle9_16.files)].join("\n");
+
+    expect(source16_9).toContain("anchor-bottom_left");
+    expect(source16_9).toContain('data-mascot-scale="1.84"');
+    expect(source16_9).toContain('data-mascot-canvas="1920x1080"');
+
+    expect(source9_16).toContain("anchor-bottom_right");
+    expect(source9_16).toContain('data-mascot-scale="1.2"');
+    expect(source9_16).toContain('data-mascot-canvas="1080x1920"');
+  });
+
   it("renders dynamic QuestionBox, CounterBadge, and AnswerCard element variants in video composition", () => {
     const timeline = compileQuizTimeline({
       quiz,

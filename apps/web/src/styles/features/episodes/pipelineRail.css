@@ -93,6 +93,28 @@
   margin: 12px 0 0;
 }
 
+.quiz-v2-rail.is-streamlined {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+@media (max-width: 1280px) {
+  .quiz-v2-rail.is-streamlined {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 840px) {
+  .quiz-v2-rail.is-streamlined {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 500px) {
+  .quiz-v2-rail.is-streamlined {
+    grid-template-columns: 1fr;
+  }
+}
+
 .quiz-v2-stage {
   min-width: 0;
   display: grid;

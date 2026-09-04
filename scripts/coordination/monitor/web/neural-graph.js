@@ -631,6 +631,8 @@ export class NeuralGraph {
       baseZ: pos.z,
       startY,
       sideSign,
+      repulsionU: 0,
+      repulsionV: 0,
       startTime: performance.now(),
       durationMs: 7200, // Doubled duration: 7.2s!
     });
@@ -1092,51 +1094,118 @@ export class NeuralGraph {
       photon.mesh.quaternion.setFromUnitVectors(upVector, tangent);
     }
 
-    // Animate floating hologram badges: Enlarges up to 3x, rises 3x higher (25.5 units), and alternates left/right
+    // Animate floating hologram badges: Enlarges up to 3x, rises 3x higher (25.5 units) with dynamic screen-space repulsion physics
     const now = performance.now();
-    // Compute camera right vector projected onto horizontal plane for consistent screen-relative left/right drift
-    const camRight = new THREE.Vector3(1, 0, 0).applyQuaternion(this.camera.quaternion);
-    camRight.y = 0;
-    if (camRight.lengthSq() > 0.001) {
-      camRight.normalize();
-    } else {
-      camRight.set(1, 0, 0);
-    }
 
+    // 1. Clean up expired badges
     for (let i = this.hologramBadges.length - 1; i >= 0; i--) {
       const badge = this.hologramBadges[i];
-      const elapsed = now - badge.startTime;
-      const progress = elapsed / badge.durationMs;
-
-      if (progress >= 1.0) {
+      if (now - badge.startTime >= badge.durationMs) {
         this.scene.remove(badge.sprite);
         badge.sprite.material.map.dispose();
         badge.sprite.material.dispose();
         this.hologramBadges.splice(i, 1);
-        continue;
       }
+    }
 
-      // Vertical rise: increased 3x from 8.5 to 25.5 units
-      badge.sprite.position.y = badge.startY + Math.pow(progress, 0.75) * 25.5;
+    // 2. Camera-plane basis vectors (camRight and camUp) for 2D screen-space projection
+    const camRight = new THREE.Vector3(1, 0, 0).applyQuaternion(this.camera.quaternion);
+    const camUp = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camera.quaternion);
 
-      // Alternating left/right horizontal drift to prevent overlapping
-      // badge.sideSign is -1 for left, +1 for right
+    // Compute ideal base positions and coordinates in camera plane (u: horizontal, v: vertical)
+    const badgePhysics = [];
+    for (let i = 0; i < this.hologramBadges.length; i++) {
+      const badge = this.hologramBadges[i];
+      const elapsed = now - badge.startTime;
+      const progress = elapsed / badge.durationMs;
+
+      const verticalRise = Math.pow(progress, 0.75) * 25.5;
       const horizontalDrift = Math.pow(progress, 0.8) * 14.0 * (badge.sideSign || 1);
-      badge.sprite.position.x = badge.baseX + camRight.x * horizontalDrift;
-      badge.sprite.position.z = badge.baseZ + camRight.z * horizontalDrift;
+
+      const baseX = badge.baseX + camRight.x * horizontalDrift;
+      const baseY = badge.startY + verticalRise;
+      const baseZ = badge.baseZ + camRight.z * horizontalDrift;
+
+      // Project 3D position onto camera screen coordinates (u, v)
+      const u = baseX * camRight.x + baseY * camRight.y + baseZ * camRight.z;
+      const v = baseX * camUp.x + baseY * camUp.y + baseZ * camUp.z;
+
+      badgePhysics.push({ baseX, baseY, baseZ, u, v, progress });
+    }
+
+    // 3. Dynamic Repulsion Physics in Camera Plane (Anti-Collision Force Field)
+    const Ru = 19.0; // Half-width collision threshold (sprite width at 3x is 36)
+    const Rv = 5.5;  // Half-height collision threshold (sprite height at 3x is 9)
+    const forces = this.hologramBadges.map(() => ({ u: 0, v: 0 }));
+
+    for (let i = 0; i < this.hologramBadges.length; i++) {
+      for (let j = i + 1; j < this.hologramBadges.length; j++) {
+        const pA = badgePhysics[i];
+        const pB = badgePhysics[j];
+
+        // Effective positions in camera plane including current smoothed repulsion
+        const curAu = pA.u + (this.hologramBadges[i].repulsionU || 0);
+        const curAv = pA.v + (this.hologramBadges[i].repulsionV || 0);
+        const curBu = pB.u + (this.hologramBadges[j].repulsionU || 0);
+        const curBv = pB.v + (this.hologramBadges[j].repulsionV || 0);
+
+        const du = curAu - curBu;
+        const dv = curAv - curBv;
+
+        // Elliptical normalized distance in camera coordinates
+        const normU = du / (Ru * 2);
+        const normV = dv / (Rv * 2);
+        const distSq = normU * normU + normV * normV;
+
+        if (distSq < 1.0) {
+          const dist = Math.max(0.001, Math.sqrt(distSq));
+          const overlap = 1.0 - dist;
+
+          let nu = normU / dist;
+          let nv = normV / dist;
+
+          if (dist < 0.02) {
+            // Break symmetry if almost identical coordinates
+            nu = (this.hologramBadges[i].sideSign || 1) * 0.8;
+            nv = (i > j ? 1 : -1) * 0.6;
+          }
+
+          const pushMag = overlap * 2.2;
+          const pushU = nu * pushMag * Ru;
+          const pushV = nv * pushMag * Rv;
+
+          forces[i].u += pushU;
+          forces[i].v += pushV;
+          forces[j].u -= pushU;
+          forces[j].v -= pushV;
+        }
+      }
+    }
+
+    // 4. Update badge positions with smoothed spring damping and apply scale/opacity
+    for (let i = 0; i < this.hologramBadges.length; i++) {
+      const badge = this.hologramBadges[i];
+      const phys = badgePhysics[i];
+      const progress = phys.progress;
+
+      // Smooth spring damping towards target repulsion offset
+      badge.repulsionU = (badge.repulsionU || 0) * 0.86 + forces[i].u * 0.14;
+      badge.repulsionV = (badge.repulsionV || 0) * 0.86 + forces[i].v * 0.14;
+
+      // Final position displaced in camera viewing plane
+      badge.sprite.position.x = phys.baseX + camRight.x * badge.repulsionU + camUp.x * badge.repulsionV;
+      badge.sprite.position.y = phys.baseY + camRight.y * badge.repulsionU + camUp.y * badge.repulsionV;
+      badge.sprite.position.z = phys.baseZ + camRight.z * badge.repulsionU + camUp.z * badge.repulsionV;
 
       // Phóng lớn gấp 3 lần (Expands up to 3.0x scale)
       let scaleMult;
       if (progress < 0.25) {
-        // Expand from 1.0x to 3.0x in first 1.8s
         const inProg = progress / 0.25;
         scaleMult = 1.0 + Math.pow(inProg, 0.6) * 2.0;
       } else if (progress < 0.75) {
-        // Sustained 3x scale with subtle majestic pulse
         const badgePulse = Math.sin(t * 6.0) * 0.18;
         scaleMult = 3.0 + badgePulse;
       } else {
-        // Final surge before exit (3.0x -> 3.35x)
         const exitProg = (progress - 0.75) / 0.25;
         scaleMult = 3.0 + exitProg * 0.35;
       }

@@ -34,7 +34,10 @@ export function EpisodeStylePreview({ channel, episode, quiz, directorPlan, cand
     previewQuestion: questionSelection.selectedQuestion,
   });
 
-  const scale = width > 0 ? width / COMPOSITION_WIDTH : 0;
+  const isPortrait = episode?.quiz_config?.render_aspect_ratio === "9:16";
+  const compositionWidth = isPortrait ? 1080 : 1920;
+  const compositionHeight = isPortrait ? 1920 : 1080;
+  const scale = width > 0 ? width / compositionWidth : 0;
   const status = getPreviewStatus({ loading, pending: Boolean(pendingPreviewHtml), error: previewError, candidate });
 
   return (
@@ -50,15 +53,23 @@ export function EpisodeStylePreview({ channel, episode, quiz, directorPlan, cand
           <EpisodePreviewStatusPill status={status} onRetry={retryPreview} />
         </div>
       </div>
-      <div ref={ref} className="episode-style-preview-canvas">
+      <div
+        ref={ref}
+        className="episode-style-preview-canvas"
+        style={{
+          aspectRatio: isPortrait ? "9 / 16" : "16 / 9",
+          maxWidth: isPortrait ? "260px" : "100%",
+          margin: isPortrait ? "0 auto" : undefined,
+        }}
+      >
         {scale > 0 ? (
           <div
             className="episode-style-preview-frame"
-            style={{ width: COMPOSITION_WIDTH, height: COMPOSITION_HEIGHT, transform: `scale(${scale})` }}
+            style={{ width: compositionWidth, height: compositionHeight, transform: `scale(${scale})` }}
           >
             <CompositionPreviewFrame
-              width={COMPOSITION_WIDTH}
-              height={COMPOSITION_HEIGHT}
+              width={compositionWidth}
+              height={compositionHeight}
               iframeKey={iframeKey}
               previewHtml={previewHtml}
               pendingPreviewHtml={pendingPreviewHtml}

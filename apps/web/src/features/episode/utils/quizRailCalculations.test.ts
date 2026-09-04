@@ -3,11 +3,15 @@ import type { Task } from "@studio/shared";
 import type { QuizV2State } from "../../../api";
 import {
   STAGES,
+  STREAMLINED_STAGES,
   baseStatus,
   itemProgress,
   pipelineStage,
+  pipelineStreamlinedStage,
   resolveProgress,
+  resolveStreamlinedProgress,
   resolveStatus,
+  resolveStreamlinedStatus,
   statusLabel,
   taskProgress,
 } from "./quizRailCalculations";
@@ -87,6 +91,131 @@ describe("quizRailCalculations", () => {
       "qa",
       "render",
     ]);
+  });
+
+  it("defines all 7 streamlined stages in order", () => {
+    expect(STREAMLINED_STAGES).toHaveLength(7);
+    expect(STREAMLINED_STAGES.map((s) => s.key)).toEqual([
+      "quizContent",
+      "assets",
+      "voice",
+      "thumbnail",
+      "description",
+      "qaGates",
+      "render",
+    ]);
+  });
+
+  describe("resolveStreamlinedStatus and progress", () => {
+    it("resolves quizContent as ready when quiz exists or questions stage is ready", () => {
+      const stateWithQuiz: QuizV2State = {
+        ...mockState,
+        stages: {
+          ...mockState.stages,
+          questions: "ready",
+        },
+      };
+      const status = resolveStreamlinedStatus("quizContent", 0, defaultReadiness, stateWithQuiz, null, [], null);
+      expect(status).toBe("ready");
+
+      const prog = resolveStreamlinedProgress("quizContent", defaultReadiness, stateWithQuiz, [], 1);
+      expect(prog.completed).toBe(1);
+      expect(prog.total).toBe(1);
+      expect(prog.percent).toBe(100);
+    });
+
+    it("identifies active running streamlined stage from progress message", () => {
+      const activeTask = {
+        task_id: "task-1",
+        channel_id: "ch-1",
+        episode_id: "ep-1",
+        task_type: "GENERATE_QUIZ",
+        status: "RUNNING",
+        progress_message: "Generating structured questions with facts",
+        progress_percent: 45,
+        created_at: new Date().toISOString(),
+        started_at: new Date().toISOString(),
+        completed_at: null,
+        error: null,
+      } as unknown as Task;
+
+      const stage = pipelineStreamlinedStage(activeTask);
+      expect(stage?.key).toBe("quizContent");
+      expect(stage?.label).toBe("Quiz Content");
+
+      const status = resolveStreamlinedStatus("quizContent", 0, defaultReadiness, mockState, activeTask, [], stage);
+      expect(status).toBe("running");
+    });
+
+    it("supports parallel assets and voice tracking from pipeline progress message", () => {
+      const parallelPipelineTask = {
+        task_id: "task-pipe",
+        channel_id: "ch-1",
+        episode_id: "ep-1",
+        task_type: "GENERATE_PIPELINE",
+        status: "RUNNING",
+        progress_message: "Quiz · assets 5/10 | voice 8/10",
+        progress_percent: 65,
+        created_at: new Date().toISOString(),
+        started_at: new Date().toISOString(),
+        completed_at: null,
+        error: null,
+      } as unknown as Task;
+
+      const assetStatus = resolveStreamlinedStatus("assets", 1, defaultReadiness, mockState, parallelPipelineTask, [], null);
+      const voiceStatus = resolveStreamlinedStatus("voice", 2, defaultReadiness, mockState, parallelPipelineTask, [], null);
+
+      expect(assetStatus).toBe("running");
+      expect(voiceStatus).toBe("running");
+
+      const assetProg = resolveStreamlinedProgress("assets", defaultReadiness, mockState, [], 10, parallelPipelineTask);
+      expect(assetProg.completed).toBe(5);
+      expect(assetProg.total).toBe(10);
+      expect(assetProg.percent).toBe(50);
+      expect(assetProg.unit).toBe("assets");
+
+      const voiceProg = resolveStreamlinedProgress("voice", defaultReadiness, mockState, [], 10, parallelPipelineTask);
+      expect(voiceProg.completed).toBe(8);
+      expect(voiceProg.total).toBe(10);
+      expect(voiceProg.percent).toBe(80);
+      expect(voiceProg.unit).toBe("segments");
+    });
+
+    it("resolves thumbnail and description readiness and progress independently", () => {
+      const readinessWithThumbnail = {
+        ...defaultReadiness,
+        thumbnail: true,
+        description: false,
+      };
+
+      expect(resolveStreamlinedStatus("thumbnail", 3, readinessWithThumbnail, mockState, null, [], null)).toBe("ready");
+      expect(resolveStreamlinedProgress("thumbnail", readinessWithThumbnail, mockState, [], 1)).toEqual({
+        completed: 1,
+        total: 1,
+        percent: 100,
+        unit: "cover",
+      });
+
+      expect(resolveStreamlinedStatus("description", 4, readinessWithThumbnail, mockState, null, [], null)).toBe("not_started");
+      expect(resolveStreamlinedProgress("description", readinessWithThumbnail, mockState, [], 1)).toEqual({
+        completed: 0,
+        total: 1,
+        percent: 0,
+        unit: "meta",
+      });
+
+      const readinessWithBoth = {
+        ...readinessWithThumbnail,
+        description: true,
+      };
+      expect(resolveStreamlinedStatus("description", 4, readinessWithBoth, mockState, null, [], null)).toBe("ready");
+      expect(resolveStreamlinedProgress("description", readinessWithBoth, mockState, [], 1)).toEqual({
+        completed: 1,
+        total: 1,
+        percent: 100,
+        unit: "meta",
+      });
+    });
   });
 
   describe("statusLabel", () => {

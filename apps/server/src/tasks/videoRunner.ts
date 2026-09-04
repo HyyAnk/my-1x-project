@@ -16,8 +16,6 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
   const controller = new AbortController();
   this.activeVideoControllers.set(task.task_id, controller);
   try {
-    const renderAspectRatio = this.videoConfig.aspect_ratio;
-    const renderCanvas = MASCOT_CANVAS_SIZES[renderAspectRatio];
     await this.update(task.task_id, {
       status: "RUNNING",
       started_at: nowIso(),
@@ -34,6 +32,9 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     if (!(await this.hasValidNarrationAsset(task.channel_id, task.episode_id, episode.narration_asset_path)))
       throw new RepositoryError("Generate the Chatterbox narration before rendering video", "NARRATION_REQUIRED");
     if (scenes.length === 0) throw new RepositoryError("Generate Quiz scenes before rendering video", "SCENES_REQUIRED");
+
+    const renderAspectRatio = episode.quiz_config?.render_aspect_ratio ?? this.videoConfig.aspect_ratio;
+    const renderCanvas = MASCOT_CANVAS_SIZES[renderAspectRatio];
 
     const comp = await prepareVideoComposition({
       runtime: this,

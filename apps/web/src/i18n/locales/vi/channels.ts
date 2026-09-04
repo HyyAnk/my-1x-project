@@ -47,6 +47,7 @@ export const channelsVi = {
     autoLanguageNotice: "Ngôn ngữ định hướng được tự động đồng bộ theo quốc gia phát hành đã chọn.",
     contentLanguage: "Ngôn ngữ nội dung",
     autoLanguageBadge: "Đồng bộ tự động",
+    autoDnaNotice: "AI tự động phân tích hồ sơ và tạo DNA chuẩn kèm giọng đọc phù hợp thị trường.",
     searchCountryPlaceholder: "Tìm quốc gia theo tên, mã…",
     noMatchingCountry: "Không tìm thấy quốc gia phù hợp",
     creatingChannel: "Đang khởi tạo…",

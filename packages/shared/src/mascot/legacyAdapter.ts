@@ -1,5 +1,5 @@
 import { MASCOT_ACTION_META, type MascotActionType } from "../enums.js";
-import { ChannelMascotConfigSchema, type ChannelMascotConfig, type MascotProfile } from "../schemas.js";
+import { ChannelMascotConfigSchema, resolveChannelMascotPlacement, type ChannelMascotConfig, type MascotProfile } from "../schemas.js";
 import {
   DEFAULT_MASCOT_REVEAL_OUTCOME_ACTIONS,
   MASCOT_OFFSET_MAX,
@@ -55,13 +55,20 @@ export function adaptMascotV1ToV2(mascot: MascotProfile | null | undefined, conf
 
 export function adaptMascotConfigV1ToV2(config?: LegacyMascotConfigInput): MascotRenderConfigV2 {
   const legacy = ChannelMascotConfigSchema.parse(config ?? {});
-  const placement: MascotPlacementV2 = {
-    anchor: legacy.position,
-    scale: clampFinite(legacy.scale, 1, MASCOT_SCALE_MIN, MASCOT_SCALE_MAX),
-    offset_x: clampFinite(legacy.offset_x, 0, MASCOT_OFFSET_MIN, MASCOT_OFFSET_MAX),
-    offset_y: clampFinite(legacy.offset_y, 0, MASCOT_OFFSET_MIN, MASCOT_OFFSET_MAX),
-    flip_x: legacy.flip_x,
-  };
+  const placements = Object.fromEntries(
+    MASCOT_RENDER_ASPECT_RATIOS.map((aspect) => {
+      const p = resolveChannelMascotPlacement(legacy, aspect);
+      const placement: MascotPlacementV2 = {
+        anchor: p.position,
+        scale: clampFinite(p.scale, 1, MASCOT_SCALE_MIN, MASCOT_SCALE_MAX),
+        offset_x: clampFinite(p.offset_x, 0, MASCOT_OFFSET_MIN, MASCOT_OFFSET_MAX),
+        offset_y: clampFinite(p.offset_y, 0, MASCOT_OFFSET_MIN, MASCOT_OFFSET_MAX),
+        flip_x: p.flip_x,
+      };
+      return [aspect, placement];
+    }),
+  ) as MascotRenderConfigV2["placements"];
+
   const phase_rules = Object.fromEntries(MASCOT_RENDER_PHASES.map((phase) => [phase, phaseRuleWithVisibility(phase, legacy)])) as Record<
     MascotRenderPhase,
     MascotPhaseRuleV2
@@ -69,9 +76,7 @@ export function adaptMascotConfigV1ToV2(config?: LegacyMascotConfigInput): Masco
 
   return {
     version: 2,
-    placements: Object.fromEntries(
-      MASCOT_RENDER_ASPECT_RATIOS.map((aspect) => [aspect, { ...placement }]),
-    ) as MascotRenderConfigV2["placements"],
+    placements,
     visibility: {
       enabled: legacy.enabled,
       phase_rules,

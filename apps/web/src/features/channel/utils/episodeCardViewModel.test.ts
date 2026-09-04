@@ -78,4 +78,16 @@ describe("buildEpisodeCardViewModel", () => {
   it("marks a selected episode without active work as not started", () => {
     expect(buildEpisodeCardViewModel(createEpisode(), []).statusLabel).toBe("Not started");
   });
+
+  it("prioritizes 9:16 thumbnail when render_aspect_ratio is 9:16", () => {
+    const episode = createEpisode({
+      stage: "VIDEO_READY",
+      video_asset_path: "video/master.mp4",
+      thumbnail_asset_path_16_9: "assets/thumbnail_16_9.jpg",
+      thumbnail_asset_path_9_16: "assets/thumbnail_9_16.jpg",
+      quiz_config: { question_count: 8, quiz_format: "odd_one_out", render_aspect_ratio: "9:16" },
+    });
+
+    expect(buildEpisodeCardViewModel(episode, []).thumbnailRatio).toBe("9:16");
+  });
 });

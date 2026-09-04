@@ -13,6 +13,7 @@ import {
   type QuizThinkingBarStyle,
   type VisualPresetItem,
   type ThumbnailRatioMode,
+  type MascotRenderAspectRatio,
 } from "@studio/shared";
 
 import { api } from "../../../api";
@@ -148,6 +149,15 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     await saveQuizStyles("thumbnailRatio", { thumbnail_aspect_ratio: ratio }, `Thumbnail mode set to: ${labelMap[ratio]}`);
   };
 
+  const saveAspectRatio = async (ratio: MascotRenderAspectRatio) => {
+    if (!episode || ratio === (episode.quiz_config?.render_aspect_ratio ?? "16:9")) return;
+    const labelMap: Record<MascotRenderAspectRatio, string> = {
+      "16:9": "16:9 Landscape",
+      "9:16": "9:16 Shorts",
+    };
+    await saveQuizStyles("aspectRatio", { render_aspect_ratio: ratio }, `Video format set to: ${labelMap[ratio]}`);
+  };
+
   const saveDuration = async () => {
     if (!episode || durationDraft === episode.target_duration_minutes) return;
     setBusy("duration");
@@ -177,6 +187,7 @@ export function useEpisodeStyles({ channel, episodeId, episode, setEpisode, load
     saveBackgroundStyle,
     savePaletteId,
     saveThumbnailRatio,
+    saveAspectRatio,
     applyStylePreset,
     saveDuration,
   };

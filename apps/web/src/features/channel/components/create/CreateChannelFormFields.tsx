@@ -68,7 +68,7 @@ export function CreateChannelFormFields({
               </label>
               <span className="synced-badge">
                 <Sparkle size={11} weight="fill" />
-                {t("channels.autoLanguageBadge") || "Tự động"}
+                {t("channels.autoLanguageBadge")}
               </span>
             </div>
             <div className="input-with-icon">

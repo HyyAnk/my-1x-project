@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import type { Task } from "@studio/shared";
+import type { Episode, Task } from "@studio/shared";
 import type { QuizV2State } from "../api";
 import { calculateEpisodeBuildDuration } from "../lib/utils";
-import { STAGES, pipelineStage, resolveProgress, resolveStatus, type Readiness } from "../features/episode/utils/quizRailCalculations";
+import { STAGES, STREAMLINED_STAGES, pipelineStage, pipelineStreamlinedStage, resolveProgress, resolveStreamlinedProgress, resolveStatus, resolveStreamlinedStatus, type Readiness } from "../features/episode/utils/quizRailCalculations";
 import { QuizV2Assessment, QuizV2PendingAssessment } from "../features/episode/components/quiz/QuizV2Assessment";
 import { QuizV2StageItem } from "../features/episode/components/quiz/QuizV2StageItem";
 
@@ -14,12 +14,23 @@ type QuizV2PanelProps = {
   pipelineTask: Task | null;
   tasks: Task[];
   questionCount?: number;
+  streamlined?: boolean;
+  episode?: Episode | null;
 };
 
-export function QuizV2Panel({ state, readiness, pipelineTask, tasks, questionCount = 0 }: QuizV2PanelProps) {
+export function QuizV2Panel({ state, readiness, pipelineTask, tasks, questionCount = 0, streamlined = true, episode = null }: QuizV2PanelProps) {
   const buildDurationSeconds = useMemo(() => {
     return calculateEpisodeBuildDuration(tasks, pipelineTask);
   }, [tasks, pipelineTask]);
+
+  const effectiveReadiness: Readiness = useMemo(
+    () => ({
+      ...readiness,
+      thumbnail: readiness.thumbnail ?? Boolean(episode?.thumbnail_asset_path_16_9 || episode?.thumbnail_asset_path_9_16),
+      description: readiness.description ?? Boolean(state?.description),
+    }),
+    [readiness, episode?.thumbnail_asset_path_16_9, episode?.thumbnail_asset_path_9_16, state?.description],
+  );
 
   if (!state) {
     return (
@@ -29,7 +40,9 @@ export function QuizV2Panel({ state, readiness, pipelineTask, tasks, questionCou
     );
   }
 
-  const currentStage = pipelineStage(pipelineTask);
+  const currentStreamlinedStage = pipelineStreamlinedStage(pipelineTask);
+  const currentLegacyStage = pipelineStage(pipelineTask);
+  const currentStage = streamlined ? currentStreamlinedStage : currentLegacyStage;
 
   return (
     <section className="panel quiz-v2-panel" aria-label="Quiz production stages">
@@ -53,14 +66,22 @@ export function QuizV2Panel({ state, readiness, pipelineTask, tasks, questionCou
           {pipelineTask?.progress_message && pipelineTask.status !== "FAILED" ? ` · ${pipelineTask.progress_message}` : ""}
         </p>
       ) : null}
-      <ol className="quiz-v2-rail" aria-label="Quiz production stages">
-        {STAGES.map((stage, index) => {
-          const status = resolveStatus(stage.key, index, readiness, state, pipelineTask, tasks, currentStage);
-          const progress = resolveProgress(stage.key, readiness, state, tasks, questionCount, pipelineTask);
-          return (
-            <QuizV2StageItem key={stage.key} stageKey={stage.key} label={stage.label} index={index} status={status} progress={progress} />
-          );
-        })}
+      <ol className={`quiz-v2-rail${streamlined ? " is-streamlined" : ""}`} aria-label="Quiz production stages">
+        {streamlined
+          ? STREAMLINED_STAGES.map((stage, index) => {
+              const status = resolveStreamlinedStatus(stage.key, index, effectiveReadiness, state, pipelineTask, tasks, currentStreamlinedStage);
+              const progress = resolveStreamlinedProgress(stage.key, effectiveReadiness, state, tasks, questionCount, pipelineTask);
+              return (
+                <QuizV2StageItem key={stage.key} stageKey={stage.key} label={stage.label} index={index} status={status} progress={progress} />
+              );
+            })
+          : STAGES.map((stage, index) => {
+              const status = resolveStatus(stage.key, index, readiness, state, pipelineTask, tasks, currentLegacyStage);
+              const progress = resolveProgress(stage.key, readiness, state, tasks, questionCount, pipelineTask);
+              return (
+                <QuizV2StageItem key={stage.key} stageKey={stage.key} label={stage.label} index={index} status={status} progress={progress} />
+              );
+            })}
       </ol>
       {state.assessment ? (
         <QuizV2Assessment assessment={state.assessment} buildDurationSeconds={buildDurationSeconds} />

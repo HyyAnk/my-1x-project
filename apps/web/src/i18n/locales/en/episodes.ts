@@ -43,6 +43,7 @@ export const episodesEn = {
     pillCounterBadge: "Counter Badge",
     pillBackground: "Background",
     pillThinkingBar: "Thinking Bar",
+    pillAspectRatio: "Video Format",
     valueMixed: "Mixed (Random)",
     valueCustomKit: "Custom Kit",
     valueChannelKit: "Default",

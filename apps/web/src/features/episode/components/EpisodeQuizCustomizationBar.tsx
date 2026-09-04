@@ -30,11 +30,13 @@ import { BackgroundDropdown } from "./customization/BackgroundDropdown";
 import { ThinkingBarDropdown } from "./customization/ThinkingBarDropdown";
 import { PaletteDropdown } from "./customization/PaletteDropdown";
 import { ThumbnailRatioDropdown } from "./customization/ThumbnailRatioDropdown";
-import type { ThumbnailRatioMode } from "@studio/shared";
+import { AspectRatioDropdown } from "./customization/AspectRatioDropdown";
+import type { ThumbnailRatioMode, MascotRenderAspectRatio } from "@studio/shared";
 
 export type EpisodeCustomizationDropdownName =
   | "preset"
   | "questions"
+  | "aspectRatio"
   | "visualStyle"
   | "questionBox"
   | "answerCard"
@@ -62,6 +64,7 @@ type Props = {
   onSaveCounterStyle: (style: QuizQuestionCounterStyle) => void;
   onSaveBackgroundStyle: (style: QuizBackgroundStyle) => void;
   onSavePaletteId: (palette: QuizPaletteId) => void;
+  onSaveAspectRatio?: (ratio: MascotRenderAspectRatio) => void;
   onSaveThumbnailRatio?: (ratio: ThumbnailRatioMode) => void;
   onApplyStylePreset: (preset: VisualPresetItem) => void;
   setEpisode?: (episode: Episode | null) => void;
@@ -86,6 +89,7 @@ export function EpisodeQuizCustomizationBar({
   onSaveCounterStyle,
   onSaveBackgroundStyle,
   onSavePaletteId,
+  onSaveAspectRatio,
   onSaveThumbnailRatio,
   onApplyStylePreset,
   setEpisode,
@@ -111,20 +115,34 @@ export function EpisodeQuizCustomizationBar({
   }, [openDropdown]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+
+      const openPopover = containerRef.current?.querySelector(".customization-popover");
+      if (!openPopover) {
         setOpenDropdown(null);
+        return;
       }
+
+      const activeDropdownContainer = openPopover.closest(".customization-dropdown-item");
+      if (activeDropdownContainer && activeDropdownContainer.contains(target)) {
+        return;
+      }
+
+      setOpenDropdown(null);
     };
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpenDropdown(null);
     };
     if (openDropdown) {
       document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
       document.addEventListener("keydown", handleEscape);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
     };
   }, [openDropdown]);
@@ -155,6 +173,7 @@ export function EpisodeQuizCustomizationBar({
                 saving={isSaving("question-count")}
                 isOpen={openDropdown === "questions"}
                 onToggle={() => toggleDropdown("questions")}
+                onClose={() => setOpenDropdown(null)}
                 questionCountDraft={questionCountDraft}
                 setQuestionCountDraft={setQuestionCountDraft}
                 onSaveQuestionCount={onSaveQuestionCount}
@@ -169,6 +188,17 @@ export function EpisodeQuizCustomizationBar({
                 saving={brandNameControl.saving}
                 error={brandNameControl.error}
                 disabled={isPipelineRunning}
+              />
+              <AspectRatioDropdown
+                episode={episode}
+                disabled={isPipelineRunning}
+                saving={isSaving("aspectRatio")}
+                isOpen={openDropdown === "aspectRatio"}
+                onToggle={() => toggleDropdown("aspectRatio")}
+                onSelectRatio={(ratio) => {
+                  onSaveAspectRatio?.(ratio);
+                  setOpenDropdown(null);
+                }}
               />
               <ThumbnailRatioDropdown
                 episode={episode}

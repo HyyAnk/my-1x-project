@@ -40,20 +40,6 @@ export const MascotProfileSchema = z.object({
 
 export type MascotProfile = z.infer<typeof MascotProfileSchema>;
 
-export const ChannelMascotConfigSchema = z.object({
-  enabled: z.boolean().default(true),
-  position: z.enum(["bottom_left", "bottom_right"]).default("bottom_left"),
-  scale: z.number().default(1.0),
-  offset_x: z.number().default(0),
-  offset_y: z.number().default(0),
-  flip_x: z.boolean().default(false),
-  show_in_intro: z.boolean().default(false),
-  show_in_outro: z.boolean().default(false),
-  show_in_question: z.boolean().default(true),
-});
-
-export type ChannelMascotConfig = z.infer<typeof ChannelMascotConfigSchema>;
-
 export const RECOMMENDED_MASCOT_PLACEMENT_PRESET = {
   position: "bottom_left",
   scale: 1.84,
@@ -61,6 +47,9 @@ export const RECOMMENDED_MASCOT_PLACEMENT_PRESET = {
   offset_y: 90,
   flip_x: false,
 } as const;
+
+export const RECOMMENDED_MASCOT_PLACEMENT_PRESET_16_9 = { ...RECOMMENDED_MASCOT_PLACEMENT_PRESET };
+export const RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16 = { ...RECOMMENDED_MASCOT_PLACEMENT_PRESET };
 
 export const MascotPlacementPresetSchema = z.object({
   position: z.enum(["bottom_left", "bottom_right"]).default(RECOMMENDED_MASCOT_PLACEMENT_PRESET.position),
@@ -71,6 +60,50 @@ export const MascotPlacementPresetSchema = z.object({
 });
 
 export type MascotPlacementPreset = z.infer<typeof MascotPlacementPresetSchema>;
+
+export const RECOMMENDED_MASCOT_PLACEMENT_PRESETS: Record<"16:9" | "9:16", MascotPlacementPreset> = {
+  "16:9": RECOMMENDED_MASCOT_PLACEMENT_PRESET_16_9,
+  "9:16": RECOMMENDED_MASCOT_PLACEMENT_PRESET_9_16,
+};
+
+export const ChannelMascotConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  position: z.enum(["bottom_left", "bottom_right"]).default("bottom_left"),
+  scale: z.number().default(1.0),
+  offset_x: z.number().default(0),
+  offset_y: z.number().default(0),
+  flip_x: z.boolean().default(false),
+  show_in_intro: z.boolean().default(false),
+  show_in_outro: z.boolean().default(false),
+  show_in_question: z.boolean().default(true),
+  placements: z.record(z.enum(["16:9", "9:16"]), MascotPlacementPresetSchema).optional(),
+});
+
+export type ChannelMascotConfig = z.infer<typeof ChannelMascotConfigSchema>;
+
+export function resolveChannelMascotPlacement(
+  config: Partial<ChannelMascotConfig> | ChannelMascotConfig | null | undefined,
+  aspectRatio: "16:9" | "9:16",
+): MascotPlacementPreset {
+  const explicit = config?.placements?.[aspectRatio];
+  if (explicit) {
+    return {
+      position: explicit.position,
+      scale: explicit.scale,
+      offset_x: explicit.offset_x,
+      offset_y: explicit.offset_y,
+      flip_x: explicit.flip_x,
+    };
+  }
+
+  return {
+    position: config?.position ?? "bottom_left",
+    scale: config?.scale ?? 1.0,
+    offset_x: config?.offset_x ?? 0,
+    offset_y: config?.offset_y ?? 0,
+    flip_x: config?.flip_x ?? false,
+  };
+}
 
 export const MascotStageSettingsSchema = z.object({
   default_placement: MascotPlacementPresetSchema.default(RECOMMENDED_MASCOT_PLACEMENT_PRESET),

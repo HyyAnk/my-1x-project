@@ -2,10 +2,49 @@ import type { Task } from "@studio/shared";
 import type { QuizV2Stages, QuizV2State } from "../../../api";
 import { isTaskActive, latestTask } from "../../../lib/utils";
 
-export type RailStage = "research" | "treatment" | "script" | "visualBible" | "scenes" | keyof QuizV2Stages;
+export type StreamlinedRailStage =
+  | "quizContent"
+  | "assets"
+  | "voice"
+  | "thumbnail"
+  | "description"
+  | "qaGates"
+  | "render";
+
+export type RailStage =
+  | "research"
+  | "treatment"
+  | "script"
+  | "visualBible"
+  | "scenes"
+  | "quizContent"
+  | "voiceAndAssets"
+  | "thumbnail"
+  | "description"
+  | "qaGates"
+  | keyof QuizV2Stages;
 export type RailStatus = QuizV2Stages["research"] | "queued";
 export type StageProgress = { completed: number; total: number; percent: number; unit: string };
-export type Readiness = { research: boolean; treatment: boolean; script: boolean; visualBible: boolean; scenes: boolean; video: boolean };
+export type Readiness = {
+  research: boolean;
+  treatment: boolean;
+  script: boolean;
+  visualBible: boolean;
+  scenes: boolean;
+  video: boolean;
+  thumbnail?: boolean;
+  description?: boolean;
+};
+
+export const STREAMLINED_STAGES: Array<{ key: StreamlinedRailStage; label: string }> = [
+  { key: "quizContent", label: "Quiz Content" },
+  { key: "assets", label: "Visual Assets" },
+  { key: "voice", label: "Voice (TTS)" },
+  { key: "thumbnail", label: "Thumbnail" },
+  { key: "description", label: "Description" },
+  { key: "qaGates", label: "QA Gates" },
+  { key: "render", label: "Video Render" },
+];
 
 export const STAGES: Array<{ key: RailStage; label: string }> = [
   { key: "research", label: "Research" },
@@ -58,6 +97,15 @@ export function baseStatus(stage: RailStage, readiness: Readiness, state: QuizV2
   if (stage === "visualBible") return readiness.visualBible ? "ready" : "not_started";
   if (stage === "scenes") return readiness.scenes ? "ready" : "not_started";
   if (stage === "render") return readiness.video ? "ready" : state.stages.render;
+  if (
+    stage === "quizContent" ||
+    stage === "voiceAndAssets" ||
+    stage === "thumbnail" ||
+    stage === "description" ||
+    stage === "qaGates"
+  ) {
+    return baseStreamlinedStatus(stage as StreamlinedRailStage, readiness, state);
+  }
   return state.stages[stage];
 }
 
@@ -269,3 +317,199 @@ export function statusLabel(status: RailStatus): string {
   if (status === "failed") return "Failed";
   return status.replaceAll("_", " ");
 }
+
+export function baseStreamlinedStatus(stage: StreamlinedRailStage, readiness: Readiness, state: QuizV2State): RailStatus {
+  if (stage === "quizContent") {
+    if (state.stages.questions === "failed") return "failed";
+    if (state.stages.questions === "running") return "running";
+    if (state.stages.questions === "ready" || state.quiz !== null || readiness.script) return "ready";
+    return state.stages.questions ?? "not_started";
+  }
+  if (stage === "assets") {
+    if (state.stages.assets === "failed") return "failed";
+    if (state.stages.assets === "running") return "running";
+    if (state.stages.assets === "ready") return "ready";
+    const total = state.asset_plan?.assets.length ?? 0;
+    const resolved = state.asset_resolution?.assets.length ?? 0;
+    if (total > 0 && resolved >= total) return "ready";
+    return state.stages.assets ?? "not_started";
+  }
+  if (stage === "voice") {
+    if (state.stages.voice === "failed") return "failed";
+    if (state.stages.voice === "running") return "running";
+    if (state.stages.voice === "ready") return "ready";
+    const segments = state.voice_plan?.segments ?? [];
+    if (segments.length > 0 && segments.every((s) => s.duration_seconds !== null)) return "ready";
+    return state.stages.voice ?? "not_started";
+  }
+  if (stage === "thumbnail") {
+    if (readiness.thumbnail) return "ready";
+    return "not_started";
+  }
+  if (stage === "description") {
+    if (readiness.description || state.description) return "ready";
+    return "not_started";
+  }
+  if (stage === "qaGates") {
+    if (state.stages.qa === "failed" || state.stages.timeline === "failed") return "failed";
+    if (state.stages.qa === "running" || state.stages.timeline === "running") return "running";
+    if (state.assessment !== null || state.stages.qa === "ready") return "ready";
+    if (state.stages.timeline === "ready") return "running";
+    return "not_started";
+  }
+  if (stage === "render") {
+    if (state.stages.render === "failed") return "failed";
+    if (state.stages.render === "running") return "running";
+    if (readiness.video || state.stages.render === "ready") return "ready";
+    return state.stages.render ?? "not_started";
+  }
+  return "not_started";
+}
+
+export function latestStreamlinedChildTask(stage: StreamlinedRailStage, tasks: Task[]): Task | null {
+  const types: Partial<Record<StreamlinedRailStage, Task["task_type"][]>> = {
+    quizContent: ["GENERATE_QUIZ", "GENERATE_SCRIPT", "GENERATE_TREATMENT", "GENERATE_RESEARCH"],
+    assets: ["GENERATE_BUNDLE_IMAGE", "GENERATE_VISUAL_BIBLE"],
+    voice: ["GENERATE_AUDIO"],
+    qaGates: ["GENERATE_SCENES", "GENERATE_SEQUENCE_SCENES"],
+    render: ["GENERATE_VIDEO"],
+  };
+  const stageTypes = types[stage];
+  if (!stageTypes || stageTypes.length === 0) return null;
+  return latestTask(tasks, stageTypes);
+}
+
+export function isStreamlinedStageActive(stage: StreamlinedRailStage, pipelineTask: Task | null): boolean {
+  if (!pipelineTask || (!isTaskActive(pipelineTask) && pipelineTask.status !== "FAILED")) return false;
+  const text = `${pipelineTask.error ?? ""} ${pipelineTask.progress_message ?? ""}`.toLowerCase();
+
+  if (stage === "quizContent") {
+    return /quiz · locking|generating structured questions|quiz · generating|question facts|quiz · questions/.test(text);
+  }
+  if (stage === "assets") {
+    return /assets|planning semantic assets|resolving assets|semantic assets/.test(text);
+  }
+  if (stage === "voice") {
+    return /voice|generating per-question voice|reusing voice|voice pacing/.test(text);
+  }
+  if (stage === "thumbnail") {
+    return /thumbnail/.test(text);
+  }
+  if (stage === "description") {
+    return /description/.test(text);
+  }
+  if (stage === "qaGates") {
+    return /timeline|deterministic timeline|qa|quality|assessment/.test(text);
+  }
+  if (stage === "render") {
+    return /video|rendering frame|render|linting quiz composition/.test(text);
+  }
+  return false;
+}
+
+export function resolveStreamlinedStatus(
+  stage: StreamlinedRailStage,
+  index: number,
+  readiness: Readiness,
+  state: QuizV2State,
+  pipelineTask: Task | null,
+  tasks: Task[],
+  currentStage: { key: StreamlinedRailStage; label: string } | null,
+): RailStatus {
+  const base = baseStreamlinedStatus(stage, readiness, state);
+
+  const failedStage = pipelineTask?.status === "FAILED" ? currentStage?.key : null;
+  if (failedStage === stage) return "failed";
+
+  if (pipelineTask && isTaskActive(pipelineTask) && isStreamlinedStageActive(stage, pipelineTask)) {
+    return "running";
+  }
+
+  const childTask = latestStreamlinedChildTask(stage, tasks);
+  if ((childTask?.status === "FAILED" || childTask?.status === "CANCELLED") && base !== "ready") return "failed";
+  if (childTask && isTaskActive(childTask)) return "running";
+
+  const currentIndex = currentStage ? STREAMLINED_STAGES.findIndex((candidate) => candidate.key === currentStage.key) : -1;
+  if (pipelineTask && isTaskActive(pipelineTask) && currentIndex >= 0) {
+    if (index < currentIndex) return "ready";
+    if (index === currentIndex) return "running";
+    if (base !== "ready") return "queued";
+  }
+
+  return base;
+}
+
+export function resolveStreamlinedProgress(
+  stage: StreamlinedRailStage,
+  readiness: Readiness,
+  state: QuizV2State,
+  tasks: Task[],
+  questionCount: number,
+  pipelineTask?: Task | null,
+): StageProgress {
+  const questionTotal = Math.max(0, questionCount || state.quiz?.questions.length || 0);
+
+  if (stage === "quizContent") {
+    const completed = state.quiz?.questions.length ?? (readiness.script ? questionTotal || 1 : 0);
+    const total = Math.max(1, questionTotal || completed);
+    return itemProgress(completed, total, "questions");
+  }
+
+  if (stage === "assets") {
+    return resolveAssetsProgress(state, pipelineTask);
+  }
+
+  if (stage === "voice") {
+    return resolveVoiceProgress(state, pipelineTask);
+  }
+
+  if (stage === "thumbnail") {
+    const ready = Boolean(readiness.thumbnail);
+    return itemProgress(ready ? 1 : 0, 1, "cover");
+  }
+
+  if (stage === "description") {
+    const ready = Boolean(readiness.description || state.description);
+    return itemProgress(ready ? 1 : 0, 1, "meta");
+  }
+
+  if (stage === "qaGates") {
+    if (state.assessment) {
+      return itemProgress(1, 1, "qa pass");
+    }
+    if (state.timeline) {
+      return itemProgress(1, 2, "timeline");
+    }
+    return itemProgress(0, 1, "qa");
+  }
+
+  if (stage === "render") {
+    return resolveRenderProgress(state, tasks, readiness, pipelineTask);
+  }
+
+  return itemProgress(0, 1, "task");
+}
+
+const STREAMLINED_KEYWORD_PATTERNS: Array<{ pattern: RegExp; stageKey: StreamlinedRailStage }> = [
+  { pattern: /question facts|quiz · locking|generating structured questions|quiz · questions|questions|research|treatment|script/, stageKey: "quizContent" },
+  { pattern: /thumbnail/, stageKey: "thumbnail" },
+  { pattern: /description/, stageKey: "description" },
+  { pattern: /voice|narration/, stageKey: "voice" },
+  { pattern: /asset|visual/, stageKey: "assets" },
+  { pattern: /qa|quality|timeline|assessment/, stageKey: "qaGates" },
+  { pattern: /video|render|composition|frame/, stageKey: "render" },
+];
+
+export function pipelineStreamlinedStage(task: Task | null): { key: StreamlinedRailStage; label: string } | null {
+  if (!task || (!isTaskActive(task) && task.status !== "FAILED")) return null;
+  const text = `${task.error ?? ""} ${task.progress_message ?? ""}`.toLowerCase();
+
+  for (const { pattern, stageKey } of STREAMLINED_KEYWORD_PATTERNS) {
+    if (pattern.test(text)) {
+      return STREAMLINED_STAGES.find((stage) => stage.key === stageKey) ?? null;
+    }
+  }
+
+  return null;
+}
+

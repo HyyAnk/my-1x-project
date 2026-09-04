@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { Channel, MascotProfile } from "@studio/shared";
+import type { Channel, ChannelMascotConfig, MascotPlacementPreset, MascotProfile } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
-import type { StagePosition } from "../types";
+import type { StageAspectRatio, StagePosition } from "../types";
 
 export function useStageSaveAction(options: {
   isSingleChannelMode: boolean;
@@ -16,6 +16,7 @@ export function useStageSaveAction(options: {
   offsetX: number;
   offsetY: number;
   flipHorizontal: boolean;
+  placements?: Record<StageAspectRatio, MascotPlacementPreset>;
   showInIntro: boolean;
   showInOutro: boolean;
   showInQuestion: boolean;
@@ -36,6 +37,7 @@ export function useStageSaveAction(options: {
     offsetX,
     offsetY,
     flipHorizontal,
+    placements,
     showInIntro,
     showInOutro,
     showInQuestion,
@@ -50,16 +52,30 @@ export function useStageSaveAction(options: {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const mascotConfig = {
-        enabled: true,
+      const currentPlacement: MascotPlacementPreset = {
         position,
         scale,
         offset_x: offsetX,
         offset_y: offsetY,
         flip_x: flipHorizontal,
+      };
+
+      const resolvedPlacements: Record<StageAspectRatio, MascotPlacementPreset> = {
+        "16:9": placements?.["16:9"] ?? currentPlacement,
+        "9:16": placements?.["9:16"] ?? currentPlacement,
+      };
+
+      const mascotConfig: ChannelMascotConfig = {
+        enabled: true,
+        position: resolvedPlacements["16:9"].position,
+        scale: resolvedPlacements["16:9"].scale,
+        offset_x: resolvedPlacements["16:9"].offset_x,
+        offset_y: resolvedPlacements["16:9"].offset_y,
+        flip_x: resolvedPlacements["16:9"].flip_x,
         show_in_intro: showInIntro,
         show_in_outro: showInOutro,
         show_in_question: showInQuestion,
+        placements: resolvedPlacements,
       };
 
       if (isSingleChannelMode && targetChannel) {

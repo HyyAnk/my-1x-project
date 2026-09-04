@@ -84,8 +84,13 @@ function resolveDurationLabel(episode: Episode): string {
 
 function resolveThumbnailRatio(episode: Episode): EpisodeThumbnailRatio | null {
   if (!episode.video_asset_path) return null;
-  if (episode.thumbnail_asset_path_16_9) return "16:9";
-  if (episode.thumbnail_asset_path_9_16) return "9:16";
+  if (episode.quiz_config?.render_aspect_ratio === "9:16") {
+    if (episode.thumbnail_asset_path_9_16) return "9:16";
+    if (episode.thumbnail_asset_path_16_9) return "16:9";
+  } else {
+    if (episode.thumbnail_asset_path_16_9) return "16:9";
+    if (episode.thumbnail_asset_path_9_16) return "9:16";
+  }
   return null;
 }
 

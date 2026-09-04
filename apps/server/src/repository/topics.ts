@@ -104,6 +104,7 @@ export async function confirmTopic(
       palette_id: channelPalette.success ? channelPalette.data : "auto",
       style_preset_id: "auto",
       channel_brand_name: "",
+      render_aspect_ratio: candidate.title.toLowerCase().includes("shorts") ? "9:16" : "16:9",
     },
     created_at: timestamp,
     updated_at: timestamp,
@@ -167,6 +168,7 @@ export async function updateEpisodeSettings(
     ...(input.palette_id === undefined ? {} : { palette_id: input.palette_id }),
     ...(input.style_preset_id === undefined ? {} : { style_preset_id: input.style_preset_id }),
     ...(input.channel_brand_name === undefined ? {} : { channel_brand_name: input.channel_brand_name }),
+    ...(input.render_aspect_ratio === undefined ? {} : { render_aspect_ratio: input.render_aspect_ratio }),
     ...(input.thumbnail_aspect_ratio === undefined ? {} : { thumbnail_aspect_ratio: input.thumbnail_aspect_ratio }),
     visual_style: nextStyle,
     resolved_visual_style: nextResolvedStyle,
@@ -185,7 +187,8 @@ export async function updateEpisodeSettings(
     nextQuizConfig.answer_card_style !== episode.quiz_config.answer_card_style ||
     nextQuizConfig.background_style !== episode.quiz_config.background_style ||
     nextQuizConfig.palette_id !== episode.quiz_config.palette_id ||
-    nextQuizConfig.style_preset_id !== episode.quiz_config.style_preset_id;
+    nextQuizConfig.style_preset_id !== episode.quiz_config.style_preset_id ||
+    nextQuizConfig.render_aspect_ratio !== episode.quiz_config.render_aspect_ratio;
   if (renderStyleSettingsChanged) {
     // A manual style choice opts the episode into the current catalog. The
     // previous pinned revision may not contain an imported style ID.

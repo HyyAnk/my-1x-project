@@ -79,8 +79,21 @@ export function useEpisodePipeline({
       scenes: scenes.length > 0,
       narration: Boolean(episode?.narration_asset_path),
       video: Boolean(episode?.video_asset_path),
+      thumbnail: Boolean(episode?.thumbnail_asset_path_16_9 || episode?.thumbnail_asset_path_9_16),
+      description: Boolean(quizV2?.description),
     }),
-    [research, treatment, script, visualBible, scenes.length, episode?.narration_asset_path, episode?.video_asset_path],
+    [
+      research,
+      treatment,
+      script,
+      visualBible,
+      scenes.length,
+      episode?.narration_asset_path,
+      episode?.video_asset_path,
+      episode?.thumbnail_asset_path_16_9,
+      episode?.thumbnail_asset_path_9_16,
+      quizV2?.description,
+    ],
   );
 
   const totalImageCostVnd = useMemo(() => bundleImages.reduce((sum, img) => sum + (img.price_vnd ?? 50), 0), [bundleImages]);
@@ -132,6 +145,7 @@ export function useEpisodePipeline({
     saveBackgroundStyle: styles.saveBackgroundStyle,
     savePaletteId: styles.savePaletteId,
     saveThumbnailRatio: styles.saveThumbnailRatio,
+    saveAspectRatio: styles.saveAspectRatio,
     applyStylePreset: styles.applyStylePreset,
     saveDuration: styles.saveDuration,
 

@@ -62,7 +62,7 @@ export function resolveTargetThumbnailRatio(
   }
 
   const isShortsVideo =
-    (episode.quiz_config as any)?.render_aspect_ratio === "9:16" ||
+    episode.quiz_config?.render_aspect_ratio === "9:16" ||
     (episode.topic?.title && episode.topic.title.toLowerCase().includes("shorts"));
 
   return isShortsVideo ? "9:16" : "16:9";

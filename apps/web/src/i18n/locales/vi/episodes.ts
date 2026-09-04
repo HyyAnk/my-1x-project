@@ -43,6 +43,7 @@ export const episodesVi = {
     pillCounterBadge: "Số câu",
     pillBackground: "Hình nền",
     pillThinkingBar: "Thanh đếm giờ",
+    pillAspectRatio: "Tỉ lệ video",
     valueMixed: "Ngẫu nhiên",
     valueCustomKit: "Tự chọn",
     valueChannelKit: "Mặc định",

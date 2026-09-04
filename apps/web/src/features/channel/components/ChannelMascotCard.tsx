@@ -73,13 +73,23 @@ export function ChannelMascotCard({ channel, mascotsList, changingMascot, onMasc
               <div className="stage-spec-item">
                 <span className="stage-spec-label">{t("channelDetail.stageAnchorLabel")}</span>
                 <strong className="stage-spec-value">
-                  {cfg.position === "bottom_left" ? t("channelDetail.bottomLeftLabel") : t("channelDetail.bottomRightLabel")}
+                  {cfg.placements ? (
+                    `16:9 ${cfg.placements["16:9"]?.position === "bottom_left" ? "BL" : "BR"} · 9:16 ${cfg.placements["9:16"]?.position === "bottom_left" ? "BL" : "BR"}`
+                  ) : cfg.position === "bottom_left" ? (
+                    t("channelDetail.bottomLeftLabel")
+                  ) : (
+                    t("channelDetail.bottomRightLabel")
+                  )}
                 </strong>
               </div>
 
               <div className="stage-spec-item">
                 <span className="stage-spec-label">{t("channelDetail.scaleLabel", { scale: (cfg.scale || 1.0).toFixed(2) })}</span>
-                <strong className="stage-spec-value">{Math.round((cfg.scale || 1.0) * 100)}%</strong>
+                <strong className="stage-spec-value">
+                  {cfg.placements
+                    ? `16:9 ${Math.round((cfg.placements["16:9"]?.scale || cfg.scale || 1.0) * 100)}% · 9:16 ${Math.round((cfg.placements["9:16"]?.scale || cfg.scale || 1.0) * 100)}%`
+                    : `${Math.round((cfg.scale || 1.0) * 100)}%`}
+                </strong>
               </div>
 
               <div className="stage-spec-item">

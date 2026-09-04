@@ -8,6 +8,7 @@ type BuildEpisodePreviewRequestInput = {
   resolved: ResolvedEpisodePreviewStyle;
   question?: EpisodePreviewQuestion | null;
   styleCatalogRevision?: string;
+  aspectRatio?: "16:9" | "9:16";
 };
 
 export function buildEpisodePreviewRequest(input: BuildEpisodePreviewRequestInput): SandboxPreviewRequest {
@@ -15,6 +16,7 @@ export function buildEpisodePreviewRequest(input: BuildEpisodePreviewRequestInpu
     ...buildStyleRequest(input),
     ...buildQuestionRequest(input),
     ...buildMascotRequest(input.channel),
+    aspect_ratio: input.aspectRatio ?? "16:9",
     style_catalog_revision: input.styleCatalogRevision,
   };
 }
