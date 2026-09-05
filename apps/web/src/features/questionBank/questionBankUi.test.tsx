@@ -25,7 +25,7 @@ afterEach(() => {
 
 const mockStats: BankIndex = {
   schema_version: 2,
-  target_total: 10000,
+  target_total: 20000,
   current_total: 250,
   by_archetype: {
     speed_blitz: 100,
@@ -89,9 +89,11 @@ describe("Question Bank Studio UI Components", () => {
     );
 
     expect(screen.getByText("Question Bank Studio")).toBeDefined();
+    expect(screen.getAllByText(/Starter Seed/).length).toBeGreaterThan(0);
     expect(screen.getByText(/250/)).toBeDefined();
-    expect(screen.getAllByText(/10,000/).length).toBeGreaterThan(0);
-    expect(screen.getByText("2.5%")).toBeDefined();
+    expect(screen.getAllByText(/2,000/).length).toBeGreaterThan(0);
+    expect(screen.getByText("12.5%")).toBeDefined();
+    expect(screen.getByText("20K")).toBeDefined();
 
     const recalcBtn = screen.getByTitle("Scan storage and synchronize index");
     fireEvent.click(recalcBtn);
@@ -123,9 +125,9 @@ describe("Question Bank Studio UI Components", () => {
 
     renderWithLanguage(
       <QuestionBankToolbar
-        channels={[{ channel_id: "ch_test", display_name: "Test Channel", slug: "test" } as any]}
         taxonomy={mockTaxonomy}
         filters={filters}
+        totalQuestions={25}
         onUpdateFilter={onUpdateFilter}
         onResetFilters={onResetFilters}
         onOpenCreateModal={onOpenCreateModal}
@@ -133,19 +135,29 @@ describe("Question Bank Studio UI Components", () => {
       "en",
     );
 
-    expect(screen.getByLabelText("Channel Cooldown:")).toBeDefined();
-    expect(screen.getByLabelText("Archetype:")).toBeDefined();
+    expect(screen.getByPlaceholderText(/Search by question prompt/)).toBeDefined();
+    expect(screen.getByText(/25 questions found/)).toBeDefined();
     expect(screen.getByLabelText("Domain:")).toBeDefined();
-    expect(screen.getByLabelText("Source Language:")).toBeDefined();
-    expect(screen.getByLabelText("Translations:")).toBeDefined();
+    expect(screen.getByLabelText("Filter by Language")).toBeDefined();
 
-    const langSelect = screen.getByLabelText("Source Language:");
-    fireEvent.change(langSelect, { target: { value: "en" } });
-    expect(onUpdateFilter).toHaveBeenCalledWith("languageFilter", "en");
+    const searchInput = screen.getByPlaceholderText(/Search by question prompt/);
+    fireEvent.change(searchInput, { target: { value: "space" } });
+    expect(onUpdateFilter).toHaveBeenCalledWith("search", "space");
 
-    const transSelect = screen.getByLabelText("Translations:");
-    fireEvent.change(transSelect, { target: { value: "has_translation" } });
-    expect(onUpdateFilter).toHaveBeenCalledWith("translationFilter", "has_translation");
+    const domainSelect = screen.getByLabelText("Domain:");
+    fireEvent.change(domainSelect, { target: { value: "logic_puzzles" } });
+    expect(onUpdateFilter).toHaveBeenCalledWith("domainId", "logic_puzzles");
+
+    const langSelect = screen.getByLabelText("Filter by Language") as HTMLSelectElement;
+    expect(langSelect.options.length).toBe(11); // ALL + 10 canonical channel languages
+    const optionValues = Array.from(langSelect.options).map((o) => o.value);
+    expect(optionValues).toContain("en");
+    expect(optionValues).toContain("de");
+    expect(optionValues).toContain("ja");
+    expect(optionValues).not.toContain("vi");
+
+    fireEvent.change(langSelect, { target: { value: "de" } });
+    expect(onUpdateFilter).toHaveBeenCalledWith("languageFilter", "de");
 
     const addBtn = screen.getByText("Add Question");
     fireEvent.click(addBtn);
@@ -325,39 +337,127 @@ describe("Question Bank Studio UI Components", () => {
 
     // Header stats in English
     expect(screen.getByText("Question Bank Studio")).toBeDefined();
-    expect(screen.getByText(/Repository of 10,000 standardized questions/)).toBeDefined();
+    expect(screen.getAllByText(/Starter Seed/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/2,000/).length).toBeGreaterThan(0);
+    expect(screen.getByText("12.5%")).toBeDefined();
     expect(screen.getByText("AI Batch Generate")).toBeDefined();
     expect(screen.getByTitle("Scan storage and synchronize index")).toBeDefined();
 
     // Toolbar in English
-    expect(screen.getByLabelText("Channel Cooldown:")).toBeDefined();
-    expect(screen.getByLabelText("Archetype:")).toBeDefined();
+    expect(screen.getByPlaceholderText(/Search by question prompt/)).toBeDefined();
+    expect(screen.getByLabelText("Domain:")).toBeDefined();
+    expect(screen.getByLabelText("Filter by Language")).toBeDefined();
     expect(screen.getByText("Add Question")).toBeDefined();
   });
 
-  it("QuestionBankAiGenerateModal renders in English", () => {
+  it("QuestionBankHeaderStats renders matrix coverage stats and progress bar", () => {
+    const onRecalculate = vi.fn();
+    const onOpenAiModal = vi.fn();
+
+    const mockMatrixCoverage = {
+      total_combos: 20000,
+      covered_combos: 320,
+      total_variants: 320,
+      coverage_percent: 1.6,
+      by_archetype: {},
+      by_domain: {},
+    };
+
+    renderWithLanguage(
+      <QuestionBankHeaderStats
+        stats={mockStats}
+        matrixCoverage={mockMatrixCoverage}
+        recalculating={false}
+        onRecalculate={onRecalculate}
+        onOpenAiModal={onOpenAiModal}
+      />,
+      "en",
+    );
+
+    expect(screen.getByText(/320 \/ 20,000 Combos/)).toBeDefined();
+    expect(screen.getByTitle(/19,680 combos unfilled/i)).toBeDefined();
+  });
+
+  it("QuestionBankAiGenerateModal supports Auto Coverage and Manual Diversity modes", async () => {
     const onGenerate = vi.fn().mockResolvedValue({
       success: true,
-      generatedCount: 5,
-      approvedCount: 4,
-      rejectedCount: 1,
+      mode: "auto",
+      requestedCount: 40,
+      generatedCount: 40,
+      approvedCount: 38,
+      rejectedCount: 2,
+      qaSummary: { copyrightRejections: 1, duplicateRejections: 1, schemaRejections: 0, qualityRejections: 0 },
+      savedQuestions: [],
       rejectedQuestions: [
         {
           question: { question: "Disqualified question" },
-          issues: [{ code: "COPYRIGHT_VIOLATION", message: "Contains Spider-Man" }],
+          issues: [{ type: "COPYRIGHT_VIOLATION", message: "Contains trademark" }],
         },
       ],
+      matrixCoverage: {
+        total_combos: 20000,
+        covered_combos: 358,
+        total_variants: 358,
+        coverage_percent: 1.8,
+        by_archetype: {},
+        by_domain: {},
+      },
     });
     const onClose = vi.fn();
 
     renderWithLanguage(
-      <QuestionBankAiGenerateModal taxonomy={mockTaxonomy} generating={false} onGenerate={onGenerate} onClose={onClose} />,
+      <QuestionBankAiGenerateModal
+        taxonomy={mockTaxonomy}
+        matrixCoverage={{
+          total_combos: 20000,
+          covered_combos: 320,
+          total_variants: 320,
+          coverage_percent: 1.6,
+          by_archetype: {},
+          by_domain: {},
+        }}
+        generating={false}
+        onGenerate={onGenerate}
+        onClose={onClose}
+      />,
       "en",
     );
 
+    // 1. Initial view is Auto Coverage Mode
     expect(screen.getByText("Generate Question Batch with AI (With Auto-QA)")).toBeDefined();
+    expect(screen.getByText("Auto Coverage Mode")).toBeDefined();
+    expect(screen.getByText("Manual Diversity Mode")).toBeDefined();
+    expect(screen.getByText(/Auto-Fill Matrix \(20 questions\)/)).toBeDefined();
+
+    // 2. Verify all volume chips including 200 and 500 presets
+    expect(screen.getByText(/200 Questions \(10 chunks\)/)).toBeDefined();
+    expect(screen.getByText(/500 Questions \(25 chunks\)/)).toBeDefined();
+
+    const chip40 = screen.getByText(/40 Questions/);
+    fireEvent.click(chip40);
+    expect(screen.getByText(/Auto-Fill Matrix \(40 questions\)/)).toBeDefined();
+
+    // 3. Switch to Manual Diversity Mode
+    const manualTab = screen.getByText("Manual Diversity Mode");
+    fireEvent.click(manualTab);
     expect(screen.getByText("Target Archetype:")).toBeDefined();
-    expect(screen.getByText("Auto-QA Assurance:")).toBeDefined();
-    expect(screen.getByText("Start generating 5 questions")).toBeDefined();
+    expect(screen.getByText("Domain:")).toBeDefined();
+    expect(screen.getByText(/Least-Variant-First Active/)).toBeDefined();
+    expect(screen.getByText(/Generate Filtered Batch \(40 questions\)/)).toBeDefined();
+
+    // 4. Switch back to Auto Coverage Mode and submit
+    const autoTab = screen.getByText("Auto Coverage Mode");
+    fireEvent.click(autoTab);
+
+    const submitBtn = screen.getByText(/Auto-Fill Matrix \(40 questions\)/);
+    fireEvent.click(submitBtn);
+
+    expect(onGenerate).toHaveBeenCalledWith({
+      mode: "auto",
+      count: 40,
+      target_count: 40,
+      difficulty: 2,
+      persist: true,
+    });
   });
 });
