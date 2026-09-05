@@ -1,8 +1,8 @@
-import { CircleNotch, FloppyDisk, Globe, HardDrives } from "@phosphor-icons/react";
+import { CircleNotch, FloppyDisk, HardDrives } from "@phosphor-icons/react";
 import type { StorageInfo } from "@studio/shared";
 import { StatusLine } from "../../components/AppChrome";
 import type { Notice } from "../../components/types";
-import { en, useTranslation } from "../../i18n";
+import { useTranslation } from "../../i18n";
 import { SimplifyToggle } from "./components/SimplifyToggle";
 import { useSystemSettings } from "./hooks/useSystemSettings";
 
@@ -15,7 +15,7 @@ type SystemSettingsTabProps = {
 };
 
 export function SystemSettingsTab({ storage, onStorageSaved, simplifyMode = true, onSimplifyChange, onNotice }: SystemSettingsTabProps) {
-  const { t, language, setLanguage } = useTranslation();
+  const { t } = useTranslation();
   const { storagePath, setStoragePath, savingStorage, saveStorage } = useSystemSettings({
     storage,
     onStorageSaved,
@@ -24,31 +24,6 @@ export function SystemSettingsTab({ storage, onStorageSaved, simplifyMode = true
 
   return (
     <div className="settings-grid">
-      {/* Language Selector Section */}
-      <section className="panel language-panel">
-        <div className="panel-heading">
-          <div>
-            <p className="eyebrow">{t("settings.languageTitle")}</p>
-            <h2>{t("settings.languageSubtitle")}</h2>
-          </div>
-          <Globe size={22} />
-        </div>
-        <p className="storage-hint">{t("settings.languageHint")}</p>
-        <div className="language-toggle-group" role="group" aria-label={t("settings.languageTitle")}>
-          <button
-            type="button"
-            className="language-toggle-btn is-active"
-            onClick={() => {
-              setLanguage("en");
-              onNotice({ tone: "good", message: en.notices.languageChanged });
-            }}
-          >
-            <span className="lang-flag">🇬🇧</span>
-            <span className="lang-label">{t("settings.languageSelectEn")}</span>
-          </button>
-        </div>
-      </section>
-
       <section className="panel workspace-panel">
         <div className="panel-heading">
           <div>

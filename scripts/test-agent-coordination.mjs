@@ -16,6 +16,7 @@ import {
   pulseHeartbeat,
   isClaimDead,
   getIntegratorReport,
+  openClaimsDb,
 } from "./agent-coordination-registry.mjs";
 
 const root = findWorkspaceRoot();
@@ -326,24 +327,35 @@ test("Diff guard ignores pre-existing baseline files that were not modified afte
     customDbPath: testDbPath,
   });
 
-  // Include a file that is in the claim's baseline snapshot but not in web-layout-style
-  const baselineSample = claim.baseline.changedFiles[0] || ".env.example";
+  try {
+    const baselineSample = "packages/shared/src/index.ts";
+    const db = openClaimsDb(root, testDbPath);
+    try {
+      const baseline = claim.baseline || { baseRevision: "test", changedFiles: [] };
+      if (!baseline.changedFiles.includes(baselineSample)) {
+        baseline.changedFiles.push(baselineSample);
+        db.prepare("UPDATE claims SET baseline_files = ? WHERE id = ?").run(JSON.stringify(baseline.changedFiles), claim.id);
+      }
+    } finally {
+      db.close();
+    }
 
-  const result = inspectClaimScope({
-    claimId: claim.id,
-    workspaceRoot: root,
-    customDbPath: testDbPath,
-    changedFilesOverride: [
-      baselineSample, // In baseline, not modified after claim -> should be ignored!
-      "apps/web/src/components/channel/ChannelCard.tsx", // In claimed write zone
-    ],
-  });
+    const result = inspectClaimScope({
+      claimId: claim.id,
+      workspaceRoot: root,
+      customDbPath: testDbPath,
+      changedFilesOverride: [
+        baselineSample, // In baseline, not modified after claim -> should be ignored!
+        "apps/web/src/components/channel/ChannelCard.tsx", // In claimed write zone
+      ],
+    });
 
-  assert.equal(result.valid, true);
-  assert.equal(result.violations.length, 0);
-  assert.ok(result.ignoredBaselineFilesCount >= 1);
-
-  releaseClaim(claim);
+    assert.equal(result.valid, true);
+    assert.equal(result.violations.length, 0);
+    assert.ok(result.ignoredBaselineFilesCount >= 1);
+  } finally {
+    releaseClaim(claim);
+  }
 });
 
 test("Diff guard fails with clear message when file matches no zone", () => {
@@ -355,19 +367,21 @@ test("Diff guard fails with clear message when file matches no zone", () => {
     customDbPath: testDbPath,
   });
 
-  const result = inspectClaimScope({
-    claimId: claim.id,
-    workspaceRoot: root,
-    customDbPath: testDbPath,
-    changedFilesOverride: ["unknown-directory/unknown-file.txt"],
-  });
+  try {
+    const result = inspectClaimScope({
+      claimId: claim.id,
+      workspaceRoot: root,
+      customDbPath: testDbPath,
+      changedFilesOverride: ["unknown-directory/unknown-file.txt"],
+    });
 
-  assert.equal(result.valid, false);
-  assert.equal(result.violations.length, 1);
-  assert.equal(result.violations[0].reason, "no_matching_zone");
-  assert.match(result.violations[0].message, /does not match any zone/);
-
-  releaseClaim(claim);
+    assert.equal(result.valid, false);
+    assert.equal(result.violations.length, 1);
+    assert.equal(result.violations[0].reason, "no_matching_zone");
+    assert.match(result.violations[0].message, /does not match any zone/);
+  } finally {
+    releaseClaim(claim);
+  }
 });
 
 test("Released claims cannot authorize new modifications", () => {
