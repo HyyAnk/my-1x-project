@@ -7,6 +7,8 @@ import type { AntigravityClient } from "../antigravity.js";
 import type { CodexAppServerClient } from "../codex.js";
 import type { AppState } from "./state.js";
 import { generateQuestionBankBatch } from "../quiz/bank/questionBankBatchService.js";
+import { questionBankJobManager } from "../quiz/bank/questionBankJobManager.js";
+import { clearKnowledgeBaseCache } from "../quiz/bank/knowledgeBaseLoader.js";
 import { createEpisodeFromQuestionBank } from "../quiz/bank/questionBankToQuizBridge.js";
 import { transcreateBankQuestion } from "../quiz/bank/transcreation/transcreationEngine.js";
 
@@ -34,8 +36,15 @@ export function registerQuestionBankRoutes(deps: QuestionBankRouteDeps): Fastify
     });
 
     server.post("/api/question-bank/stats/recalculate", async () => {
+      clearKnowledgeBaseCache();
       const stats = await deps.repository.recalculateQuestionBankIndex();
       return { stats };
+    });
+
+    // 2.1 Matrix Coverage Stats
+    server.get("/api/question-bank/matrix-coverage", async () => {
+      const coverage = await deps.repository.getQuestionBankMatrixCoverage();
+      return { coverage };
     });
 
     // 3. Query questions with Channel-scoped Cooldown
@@ -170,14 +179,23 @@ export function registerQuestionBankRoutes(deps: QuestionBankRouteDeps): Fastify
     server.post("/api/question-bank/generate-batch", async (request, reply) => {
       const body = (request.body || {}) as Record<string, unknown>;
 
-      if (!body.archetype_id || typeof body.archetype_id !== "string") {
-        return reply.code(400).send({ error: "Missing or invalid archetype_id", code: "INVALID_PARAM" });
-      }
-      if (!body.domain_id || typeof body.domain_id !== "string") {
-        return reply.code(400).send({ error: "Missing or invalid domain_id", code: "INVALID_PARAM" });
-      }
-      if (!body.subtopic_id || typeof body.subtopic_id !== "string") {
-        return reply.code(400).send({ error: "Missing or invalid subtopic_id", code: "INVALID_PARAM" });
+      const mode: "auto" | "manual" =
+        body.mode === "auto" || body.mode === "manual"
+          ? body.mode
+          : body.domain_id || body.archetype_id
+            ? "manual"
+            : "auto";
+
+      if (mode === "manual" && (!Array.isArray(body.candidates) || body.candidates.length === 0)) {
+        if (body.archetype_id !== undefined && typeof body.archetype_id !== "string") {
+          return reply.code(400).send({ error: "Missing or invalid archetype_id", code: "INVALID_PARAM" });
+        }
+        if (body.domain_id !== undefined && typeof body.domain_id !== "string") {
+          return reply.code(400).send({ error: "Missing or invalid domain_id", code: "INVALID_PARAM" });
+        }
+        if (body.subtopic_id !== undefined && typeof body.subtopic_id !== "string") {
+          return reply.code(400).send({ error: "Missing or invalid subtopic_id", code: "INVALID_PARAM" });
+        }
       }
 
       const llmClient = resolveLlmClient();
@@ -188,21 +206,70 @@ export function registerQuestionBankRoutes(deps: QuestionBankRouteDeps): Fastify
         });
       }
 
-      const result = await generateQuestionBankBatch(deps.repository, {
-        archetypeId: body.archetype_id as any,
-        domainId: body.domain_id,
-        subtopicId: body.subtopic_id,
+      const count =
+        typeof body.count === "number"
+          ? body.count
+          : typeof body.target_count === "number"
+            ? body.target_count
+            : 20;
+
+      const inputPayload = {
+        mode,
+        archetypeId: typeof body.archetype_id === "string" ? (body.archetype_id as any) : undefined,
+        domainId: typeof body.domain_id === "string" ? body.domain_id : undefined,
+        subtopicId: typeof body.subtopic_id === "string" ? body.subtopic_id : undefined,
         subtopicTitle: typeof body.subtopic_title === "string" ? body.subtopic_title : undefined,
-        count: typeof body.count === "number" ? body.count : undefined,
+        count,
         language: typeof body.language === "string" ? body.language : undefined,
         difficulty: typeof body.difficulty === "number" ? body.difficulty : undefined,
         ageBand: typeof body.age_band === "string" ? (body.age_band as any) : undefined,
         persist: body.persist !== false,
         llmClient,
         rawCandidatesOverride: Array.isArray(body.candidates) ? (body.candidates as any) : undefined,
-      });
+      };
 
+      // Support background execution (for AI generation when candidates are not explicitly overridden)
+      const hasCandidates = Array.isArray(body.candidates) && body.candidates.length > 0;
+      const runInBackground = body.background === true || (body.wait !== true && !hasCandidates);
+
+      if (runInBackground) {
+        const jobLaunch = questionBankJobManager.startJob(deps.repository, inputPayload);
+        if (!jobLaunch.started) {
+          return reply.code(409).send({
+            error: jobLaunch.error || "A batch generation job is already running",
+            code: "JOB_ALREADY_RUNNING",
+            job: jobLaunch.job,
+          });
+        }
+        return reply.code(202).send({
+          success: true,
+          job: jobLaunch.job,
+        });
+      }
+
+      // Synchronous path (for tests or explicit callers requesting wait: true)
+      const result = await generateQuestionBankBatch(deps.repository, inputPayload);
       return reply.code(200).send(result);
+    });
+
+    // 9.1 Status of active or latest Question Bank background generation job
+    server.get("/api/question-bank/generate-batch/status", async () => {
+      const job = questionBankJobManager.getStatus();
+      return { job };
+    });
+
+    // 9.2 Cancel active Question Bank background generation job
+    server.post("/api/question-bank/generate-batch/cancel", async () => {
+      const cancelled = questionBankJobManager.cancelJob();
+      const job = questionBankJobManager.getStatus();
+      return { success: cancelled, job };
+    });
+
+    // 9.3 Dismiss Question Bank background generation job notification
+    server.post("/api/question-bank/generate-batch/dismiss", async () => {
+      const dismissed = questionBankJobManager.dismissJob();
+      const job = questionBankJobManager.getStatus();
+      return { success: dismissed, job };
     });
 
     // 10. 1-Click Video Shorts Episode Creation

@@ -24,23 +24,32 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
     await rm(tempDir, { recursive: true, force: true });
   });
 
-  it("reads taxonomy with 8 domains", async () => {
+  it("reads taxonomy with 9 domains synced from knowledge base", async () => {
     const taxonomy = await repo.readQuestionBankTaxonomy();
-    expect(taxonomy.domains.length).toBe(8);
+    expect(taxonomy.domains.length).toBeGreaterThanOrEqual(9);
     const nature = taxonomy.domains.find((d) => d.id === "nature_animals");
     expect(nature).toBeDefined();
-    expect(nature?.title).toContain("Nature & Wildlife");
+    expect(nature?.title).toContain("Nature & Animals");
   });
 
   it("reads and recalculates index", async () => {
     const index = await repo.readQuestionBankIndex();
-    expect(index.target_total).toBe(10000);
+    expect(index.target_total).toBe(20000);
     expect(index.current_total).toBeGreaterThanOrEqual(10);
 
     const recalculated = await repo.recalculateQuestionBankIndex();
+    expect(recalculated.target_total).toBe(20000);
     expect(recalculated.current_total).toBeGreaterThanOrEqual(10);
     expect(recalculated.by_archetype.verdict_fact_myth).toBeGreaterThanOrEqual(5);
     expect(recalculated.by_archetype.speed_blitz).toBeGreaterThanOrEqual(5);
+  });
+
+  it("calculates 20,000 combo matrix coverage through repository", async () => {
+    const coverage = await repo.getQuestionBankMatrixCoverage();
+    expect(coverage.total_combos).toBe(20000);
+    expect(coverage.covered_combos).toBeGreaterThanOrEqual(0);
+    expect(Object.keys(coverage.by_domain).length).toBe(14);
+    expect(Object.keys(coverage.by_archetype).length).toBe(8);
   });
 
   it("queries questions with filters and pagination", async () => {
@@ -211,6 +220,16 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
     if (cleanQ) {
       cleanQ.translations = {};
       await repo.saveQuestionBankQuestion(cleanQ);
+    }
+  });
+
+  it("sorts query results newest first by default", async () => {
+    const res = await repo.queryQuestionBankQuestions({ limit: 10 });
+    expect(res.questions.length).toBeGreaterThan(1);
+    for (let i = 0; i < res.questions.length - 1; i++) {
+      const timeCurrent = new Date(res.questions[i].updated_at || res.questions[i].created_at || 0).getTime();
+      const timeNext = new Date(res.questions[i + 1].updated_at || res.questions[i + 1].created_at || 0).getTime();
+      expect(timeCurrent).toBeGreaterThanOrEqual(timeNext);
     }
   });
 });

@@ -116,7 +116,14 @@ export function VisualSandboxTab({
     onNotice,
   });
   const presets = useSandboxPresets({ design, mascot, brandName, onNotice, onLayoutChange: handleLayoutChange });
-  const channelSync = useSandboxChannelSync({ channels, design, mascot, onNotice, onRefreshChannels });
+  const channelSync = useSandboxChannelSync({
+    channels,
+    design,
+    mascot,
+    aspectRatio: viewport.aspectRatio,
+    onNotice,
+    onRefreshChannels,
+  });
 
   return (
     <section className="page-wrap visual-sandbox-page">

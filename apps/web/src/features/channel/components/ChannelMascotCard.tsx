@@ -1,5 +1,5 @@
 import { CircleNotch, MonitorPlay, Smiley, Sparkle } from "@phosphor-icons/react";
-import type { Channel, MascotProfile } from "@studio/shared";
+import { resolveChannelMascotPlacement, type Channel, type MascotProfile } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 
 type ChannelMascotCardProps = {
@@ -21,6 +21,8 @@ export function ChannelMascotCard({ channel, mascotsList, changingMascot, onMasc
   ].filter(Boolean);
 
   const readyPosesCount = Object.values(assignedMascot?.actions || {}).filter((a) => a?.sprite_url).length;
+  const p169 = resolveChannelMascotPlacement(cfg, "16:9");
+  const p916 = resolveChannelMascotPlacement(cfg, "9:16");
 
   return (
     <div className="panel channel-mascot-card">
@@ -73,22 +75,14 @@ export function ChannelMascotCard({ channel, mascotsList, changingMascot, onMasc
               <div className="stage-spec-item">
                 <span className="stage-spec-label">{t("channelDetail.stageAnchorLabel")}</span>
                 <strong className="stage-spec-value">
-                  {cfg.placements ? (
-                    `16:9 ${cfg.placements["16:9"]?.position === "bottom_left" ? "BL" : "BR"} · 9:16 ${cfg.placements["9:16"]?.position === "bottom_left" ? "BL" : "BR"}`
-                  ) : cfg.position === "bottom_left" ? (
-                    t("channelDetail.bottomLeftLabel")
-                  ) : (
-                    t("channelDetail.bottomRightLabel")
-                  )}
+                  {`16:9 ${p169.position === "bottom_left" ? "BL" : "BR"} · 9:16 ${p916.position === "bottom_left" ? "BL" : "BR"}`}
                 </strong>
               </div>
 
               <div className="stage-spec-item">
-                <span className="stage-spec-label">{t("channelDetail.scaleLabel", { scale: (cfg.scale || 1.0).toFixed(2) })}</span>
+                <span className="stage-spec-label">{t("channelDetail.scaleLabel", { scale: (p169.scale || 1.0).toFixed(2) })}</span>
                 <strong className="stage-spec-value">
-                  {cfg.placements
-                    ? `16:9 ${Math.round((cfg.placements["16:9"]?.scale || cfg.scale || 1.0) * 100)}% · 9:16 ${Math.round((cfg.placements["9:16"]?.scale || cfg.scale || 1.0) * 100)}%`
-                    : `${Math.round((cfg.scale || 1.0) * 100)}%`}
+                  {`16:9 ${Math.round(p169.scale * 100)}% · 9:16 ${Math.round(p916.scale * 100)}%`}
                 </strong>
               </div>
 

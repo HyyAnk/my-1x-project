@@ -8,14 +8,17 @@ import {
   BankTaxonomySchema,
   BankTranslationContentSchema,
   normalizeLanguageCode,
+  type BankDomainMeta,
   type BankIndex,
   type BankQuestion,
   type BankQuestionWithCooldown,
   type BankSubtopicBatch,
   type BankTaxonomy,
   type BankTranslationContent,
+  type MatrixCoverageStats,
 } from "@studio/shared";
 import { calculateQuestionSimilarity, normalizeQuestionText } from "../../quiz/qa/questionHistory.js";
+import { calculateMatrixCoverageStats } from "../../quiz/bank/matrixCoverageService.js";
 import type { RepositoryRuntime } from "../runtime.js";
 
 const QUESTION_BANK_DIR = "question_bank";
@@ -37,18 +40,200 @@ export function getQuestionBankWritePath(this: RepositoryRuntime, ...segments: s
   return path.join(runtimeBank, ...segments);
 }
 
+export const CANONICAL_DOMAIN_META: Record<string, { title: string; description: string; icon: string }> = {
+  careers_occupations: {
+    title: "Careers & Occupations",
+    description: "Professions, skilled trades, emergency services, and extreme careers.",
+    icon: "Briefcase",
+  },
+  countries_nations: {
+    title: "Countries & Nations",
+    description: "World geography, iconic landmarks, flags, and cultural heritage.",
+    icon: "Globe",
+  },
+  food_gastronomy: {
+    title: "Food & Gastronomy",
+    description: "Culinary traditions, global cuisine, pastries, ingredients, and street food.",
+    icon: "Utensils",
+  },
+  human_body: {
+    title: "Human Body & Biology",
+    description: "Anatomy, biological systems, senses, organs, and physiology.",
+    icon: "Heart",
+  },
+  mythology_creatures: {
+    title: "Mythology & Creatures",
+    description: "Mythological pantheons, legendary beasts, folklore, and epic lore.",
+    icon: "Flame",
+  },
+  nature_animals: {
+    title: "Nature & Animals",
+    description: "Wildlife, animal superpowers, marine ecosystems, and biodiversity.",
+    icon: "PawPrint",
+  },
+  pop_culture_classics: {
+    title: "Pop Culture & Classics",
+    description: "Cinema legends, animation, gaming icons, classic literature, and art.",
+    icon: "Film",
+  },
+  space_earth: {
+    title: "Space & Earth",
+    description: "Cosmic wonders, astronomy, planetary science, and natural phenomena.",
+    icon: "Compass",
+  },
+  vehicles_technology: {
+    title: "Vehicles & Technology",
+    description: "Aviation, automotive, robotics, computing breakthroughs, and transport.",
+    icon: "Cpu",
+  },
+};
+
+function formatTitleFromId(id: string): string {
+  return id
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+}
+
+export async function syncTaxonomyFromKnowledgeBase(runtime: RepositoryRuntime): Promise<BankDomainMeta[]> {
+  const candidateDirs = [
+    path.join(runtime.rootDirectory, ".quiz-studio", "knowledge_base", "entities"),
+    path.join(runtime.roots.runtime, "knowledge_base", "entities"),
+  ];
+
+  let entitiesDir = candidateDirs[0];
+  for (const dir of candidateDirs) {
+    if (existsSync(dir)) {
+      entitiesDir = dir;
+      break;
+    }
+  }
+
+  if (!existsSync(entitiesDir)) {
+    return [];
+  }
+
+  let files: string[] = [];
+  try {
+    files = (await readdir(entitiesDir, { withFileTypes: true }))
+      .filter((f) => f.isFile() && f.name.endsWith(".json"))
+      .map((f) => f.name);
+  } catch {
+    return [];
+  }
+
+  const domainMap = new Map<
+    string,
+    {
+      id: string;
+      title: string;
+      description: string;
+      icon: string;
+      subtopicsMap: Map<string, { id: string; title: string; description: string }>;
+    }
+  >();
+
+  for (const file of files) {
+    const defaultDomainId = path.basename(file, ".json");
+    const filePath = path.join(entitiesDir, file);
+    try {
+      const content = JSON.parse(await readFile(filePath, "utf8"));
+      if (!Array.isArray(content)) continue;
+
+      for (const ent of content) {
+        const domainId = (typeof ent.domain_id === "string" && ent.domain_id.trim()) || defaultDomainId;
+        if (!domainMap.has(domainId)) {
+          const canonical = CANONICAL_DOMAIN_META[domainId];
+          domainMap.set(domainId, {
+            id: domainId,
+            title: canonical?.title || formatTitleFromId(domainId),
+            description: canonical?.description || `Questions and concepts covering ${formatTitleFromId(domainId)}.`,
+            icon: canonical?.icon || "Sparkle",
+            subtopicsMap: new Map(),
+          });
+        }
+
+        const domainEntry = domainMap.get(domainId)!;
+        if (typeof ent.subtopic_id === "string" && ent.subtopic_id.trim()) {
+          const subId = ent.subtopic_id.trim();
+          if (!domainEntry.subtopicsMap.has(subId)) {
+            domainEntry.subtopicsMap.set(subId, {
+              id: subId,
+              title: formatTitleFromId(subId),
+              description: "",
+            });
+          }
+        }
+      }
+    } catch {
+      // Ignore unparseable or inaccessible files
+    }
+  }
+
+  return Array.from(domainMap.values()).map((d) => ({
+    id: d.id,
+    title: d.title,
+    description: d.description,
+    icon: d.icon,
+    subtopics: Array.from(d.subtopicsMap.values()),
+  }));
+}
+
 export async function readQuestionBankTaxonomy(this: RepositoryRuntime): Promise<BankTaxonomy> {
+  const dynamicDomains = await syncTaxonomyFromKnowledgeBase(this);
+
   const taxonomyPath = getQuestionBankPath.call(this, "taxonomy.json");
+  let fileTaxonomy: BankTaxonomy | null = null;
   try {
     const raw = JSON.parse(await readFile(taxonomyPath, "utf8")) as unknown;
-    return BankTaxonomySchema.parse(raw);
+    fileTaxonomy = BankTaxonomySchema.parse(raw);
   } catch {
-    return {
-      schema_version: 2,
-      updated_at: new Date().toISOString(),
-      domains: [],
-    };
+    fileTaxonomy = null;
   }
+
+  const mergedDomainsMap = new Map<string, BankDomainMeta>();
+
+  for (const dom of dynamicDomains) {
+    mergedDomainsMap.set(dom.id, { ...dom });
+  }
+
+  if (fileTaxonomy) {
+    for (const fileDom of fileTaxonomy.domains) {
+      if (mergedDomainsMap.has(fileDom.id)) {
+        const existing = mergedDomainsMap.get(fileDom.id)!;
+        const subMap = new Map(existing.subtopics.map((s) => [s.id, s]));
+        for (const s of fileDom.subtopics) {
+          if (!subMap.has(s.id)) {
+            subMap.set(s.id, s);
+          } else {
+            const currSub = subMap.get(s.id)!;
+            subMap.set(s.id, {
+              id: s.id,
+              title: currSub.title || s.title,
+              description: s.description || currSub.description,
+            });
+          }
+        }
+        mergedDomainsMap.set(fileDom.id, {
+          id: fileDom.id,
+          title: fileDom.title || existing.title,
+          description: fileDom.description || existing.description,
+          icon: fileDom.icon || existing.icon,
+          subtopics: Array.from(subMap.values()),
+        });
+      } else if (dynamicDomains.length === 0) {
+        mergedDomainsMap.set(fileDom.id, fileDom);
+      }
+    }
+  }
+
+  const domains = Array.from(mergedDomainsMap.values());
+
+  return {
+    schema_version: 2,
+    updated_at: new Date().toISOString(),
+    domains,
+  };
 }
 
 export async function readQuestionBankIndex(this: RepositoryRuntime): Promise<BankIndex> {
@@ -57,7 +242,10 @@ export async function readQuestionBankIndex(this: RepositoryRuntime): Promise<Ba
     const raw = JSON.parse(await readFile(indexPath, "utf8")) as unknown;
     const parsed = BankIndexSchema.parse(raw);
     if (parsed.current_total > 0) {
-      return parsed;
+      return {
+        ...parsed,
+        target_total: parsed.target_total >= 20000 ? parsed.target_total : 20000,
+      };
     }
   } catch {
     // Missing or invalid
@@ -68,7 +256,7 @@ export async function readQuestionBankIndex(this: RepositoryRuntime): Promise<Ba
   } catch {
     return {
       schema_version: 2,
-      target_total: 10000,
+      target_total: 20000,
       current_total: 0,
       by_archetype: {},
       by_domain: {},
@@ -158,15 +346,15 @@ export async function recalculateQuestionBankIndex(this: RepositoryRuntime): Pro
     by_domain[batch.domain_id] = (by_domain[batch.domain_id] || 0) + qCount;
   }
 
-  let target_total = 10000;
+  let target_total = 20000;
   try {
     const prevPath = getQuestionBankPath.call(this, "index.json");
     const raw = JSON.parse(await readFile(prevPath, "utf8")) as Record<string, unknown>;
-    if (typeof raw?.target_total === "number" && raw.target_total > 0) {
+    if (typeof raw?.target_total === "number" && raw.target_total >= 20000) {
       target_total = raw.target_total;
     }
   } catch {
-    // Default to 10000
+    // Default to 20000
   }
 
   const updatedIndex: BankIndex = {
@@ -325,6 +513,13 @@ export async function queryQuestionBankQuestions(
     filtered = filtered.filter((q) => !q.channel_cooldown?.is_cooldown);
   }
 
+  // Sort questions: newest first by default
+  filtered.sort((a, b) => {
+    const timeA = new Date(a.updated_at || a.created_at || 0).getTime();
+    const timeB = new Date(b.updated_at || b.created_at || 0).getTime();
+    return timeB - timeA;
+  });
+
   const total = filtered.length;
   const offset = params.offset || 0;
   const limit = params.limit || 50;
@@ -453,21 +648,44 @@ export async function deleteQuestionBankQuestion(
   questionId: string,
 ): Promise<boolean> {
   const batches = await listQuestionBankBatches.call(this);
+  let foundAndDeleted = false;
+
   for (const batch of batches) {
     const idx = batch.questions.findIndex((q) => q.id === questionId);
     if (idx >= 0) {
       batch.questions.splice(idx, 1);
       batch.updated_at = new Date().toISOString();
-      const batchFilePath = getQuestionBankPath.call(
-        this,
-        batch.archetype_id,
-        batch.domain_id,
-        `${batch.subtopic_id}.json`,
-      );
-      await this.writeJsonAtomic(batchFilePath, batch);
-      await recalculateQuestionBankIndex.call(this);
-      return true;
+
+      const candidatePaths = [
+        path.join(this.roots.runtime, QUESTION_BANK_DIR, batch.archetype_id, batch.domain_id, `${batch.subtopic_id}.json`),
+        path.join(this.rootDirectory, ".quiz-studio", QUESTION_BANK_DIR, batch.archetype_id, batch.domain_id, `${batch.subtopic_id}.json`),
+      ];
+
+      for (const filePath of candidatePaths) {
+        if (existsSync(filePath)) {
+          await this.writeJsonAtomic(filePath, batch);
+        }
+      }
+
+      foundAndDeleted = true;
     }
   }
+
+  if (foundAndDeleted) {
+    await recalculateQuestionBankIndex.call(this);
+    return true;
+  }
+
   return false;
+}
+
+export async function getQuestionBankMatrixCoverage(
+  this: RepositoryRuntime,
+): Promise<MatrixCoverageStats> {
+  const batches = await listQuestionBankBatches.call(this);
+  const questions: BankQuestion[] = [];
+  for (const batch of batches) {
+    questions.push(...batch.questions);
+  }
+  return calculateMatrixCoverageStats(questions);
 }

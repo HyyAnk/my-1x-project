@@ -1,11 +1,26 @@
-import type { BankIndex, BankQuestion, BankQuestionWithCooldown, BankTaxonomy, BankTranslationContent, Episode, Task } from "@studio/shared";
+import type {
+  BankIndex,
+  BankQuestion,
+  BankQuestionWithCooldown,
+  BankTaxonomy,
+  BankTranslationContent,
+  Episode,
+  MatrixCoverageStats,
+  Task,
+} from "@studio/shared";
 import { request } from "./client";
-import type { QuestionBankBatchGenPayload, QuestionBankBatchGenResponse } from "../features/questionBank/types/questionBankUi.types";
+import type {
+  QuestionBankBatchGenPayload,
+  QuestionBankBatchGenResponse,
+  QuestionBankJobState,
+} from "../features/questionBank/types/questionBankUi.types";
 
 export const questionBankApi = {
   getQuestionBankTaxonomy: () => request<{ taxonomy: BankTaxonomy }>("/api/question-bank/taxonomy"),
 
   getQuestionBankStats: () => request<{ stats: BankIndex }>("/api/question-bank/stats"),
+
+  getMatrixCoverageStats: () => request<{ coverage: MatrixCoverageStats }>("/api/question-bank/matrix-coverage"),
 
   recalculateQuestionBankStats: () =>
     request<{ stats: BankIndex }>("/api/question-bank/stats/recalculate", {
@@ -61,6 +76,19 @@ export const questionBankApi = {
     request<QuestionBankBatchGenResponse>("/api/question-bank/generate-batch", {
       method: "POST",
       body: JSON.stringify(payload),
+    }),
+
+  getBatchGenerationStatus: () =>
+    request<{ job: QuestionBankJobState }>("/api/question-bank/generate-batch/status"),
+
+  cancelBatchGeneration: () =>
+    request<{ success: boolean; job: QuestionBankJobState }>("/api/question-bank/generate-batch/cancel", {
+      method: "POST",
+    }),
+
+  dismissBatchGeneration: () =>
+    request<{ success: boolean; job: QuestionBankJobState }>("/api/question-bank/generate-batch/dismiss", {
+      method: "POST",
     }),
 
   createOneClickVideo: (

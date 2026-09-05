@@ -3,6 +3,7 @@ import {
   AssignMascotInputSchema,
   AssignVoiceInputSchema,
   CreateChannelInputSchema,
+  resolveMascotStageDefaultPlacement,
   SaveTextInputSchema,
   SuggestTopicsInputSchema,
   TopicConfirmInputSchema,
@@ -68,7 +69,25 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
       const { mascot_id: mascotId, config: mascotConfig } = AssignMascotInputSchema.parse(request.body);
       const channel = await repository.getChannel(channelId);
       const isNewAssignment = Boolean(mascotId && mascotId !== channel.mascot_id);
-      const config = mascotConfig ?? (isNewAssignment ? state.config.mascot_stage.default_placement : undefined);
+      let initialConfig = undefined;
+      if (isNewAssignment && !mascotConfig) {
+        const default169 = resolveMascotStageDefaultPlacement(state.config.mascot_stage, "16:9");
+        const default916 = resolveMascotStageDefaultPlacement(state.config.mascot_stage, "9:16");
+        initialConfig = {
+          enabled: true,
+          position: default169.position,
+          scale: default169.scale,
+          offset_x: default169.offset_x,
+          offset_y: default169.offset_y,
+          flip_x: default169.flip_x,
+          show_in_question: true,
+          placements: {
+            "16:9": default169,
+            "9:16": default916,
+          },
+        };
+      }
+      const config = mascotConfig ?? initialConfig;
       const updatedChannel = await repository.assignMascotToChannel(channelId, mascotId, config);
       return { channel: updatedChannel };
     });

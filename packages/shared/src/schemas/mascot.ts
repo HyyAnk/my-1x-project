@@ -107,6 +107,35 @@ export function resolveChannelMascotPlacement(
 
 export const MascotStageSettingsSchema = z.object({
   default_placement: MascotPlacementPresetSchema.default(RECOMMENDED_MASCOT_PLACEMENT_PRESET),
+  default_placements: z.record(z.enum(["16:9", "9:16"]), MascotPlacementPresetSchema).optional(),
 });
 
 export type MascotStageSettings = z.infer<typeof MascotStageSettingsSchema>;
+
+export function resolveMascotStageDefaultPlacement(
+  settings: Partial<MascotStageSettings> | MascotStageSettings | null | undefined,
+  aspectRatio: "16:9" | "9:16",
+): MascotPlacementPreset {
+  const explicit = settings?.default_placements?.[aspectRatio];
+  if (explicit) {
+    return {
+      position: explicit.position,
+      scale: explicit.scale,
+      offset_x: explicit.offset_x,
+      offset_y: explicit.offset_y,
+      flip_x: explicit.flip_x,
+    };
+  }
+
+  if (settings?.default_placement && aspectRatio === "16:9") {
+    return {
+      position: settings.default_placement.position,
+      scale: settings.default_placement.scale,
+      offset_x: settings.default_placement.offset_x,
+      offset_y: settings.default_placement.offset_y,
+      flip_x: settings.default_placement.flip_x,
+    };
+  }
+
+  return { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS[aspectRatio] };
+}

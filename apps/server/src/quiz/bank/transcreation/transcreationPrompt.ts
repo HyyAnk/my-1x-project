@@ -16,7 +16,7 @@ export interface BuildQuestionTranscreationPromptParams {
 
 const ARCHETYPE_TRANSCREATION_NUANCE: Record<BankGameplayArchetypeId, string> = {
   verdict_fact_myth:
-    "Archetype: 'Fact vs Myth'. The question must assert a bold statement that sparks curiosity and challenges intuition. Choice translations (True/False, Fact/Myth) must be decisive and clear. Explanations must convincingly clarify the scientific or factual reasoning.",
+    "Archetype: 'True or False' (Verdict Fact vs Myth). The question asserts a bold statement that sparks curiosity and challenges intuition, ending in 'True or False?' (or localized equivalent). Choice translations must strictly be True and False (e.g. 'True' / 'False', 'Đúng' / 'Sai', 'Verdadero' / 'Falso'). Explanations must convincingly clarify the scientific or factual reasoning.",
   speed_blitz:
     "Archetype: 'Speed Blitz'. Phrasing must be ultra-concise with a rapid, driving rhythm (3-5 second read). Preserve wit, humor, and intuitive twist of the riddle without cluttered words.",
   deep_trivia:

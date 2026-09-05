@@ -1,4 +1,4 @@
-import { CaretLeft, CaretRight, CheckCircle, Clock, PencilSimple, Trash } from "@phosphor-icons/react";
+import { CaretLeft, CaretRight, CheckCircle, Clock, PencilSimple, Trash, VideoCamera } from "@phosphor-icons/react";
 import type { BankQuestionWithCooldown } from "../types/questionBankUi.types";
 import { useTranslation } from "../../../i18n";
 
@@ -10,11 +10,24 @@ export interface QuestionBankTableProps {
   pageSize: number;
   selectedId: string | null;
   hasChannelSelected: boolean;
+  activeLanguage?: string;
   onSelectQuestion: (q: BankQuestionWithCooldown) => void;
   onEditQuestion: (q: BankQuestionWithCooldown) => void;
   onDeleteQuestion: (id: string) => void;
+  onQuickBuildVideo?: (q: BankQuestionWithCooldown) => void;
   onPageChange: (newPage: number) => void;
 }
+
+const ARCHETYPE_META: Record<string, { label: string; icon: string }> = {
+  verdict_fact_myth: { label: "Fact vs Myth", icon: "⚖️" },
+  speed_blitz: { label: "Speed Blitz", icon: "⚡" },
+  deep_trivia: { label: "Deep Trivia", icon: "🧠" },
+  versus_faceoff: { label: "1v1 Faceoff", icon: "⚔️" },
+  visual_spotting: { label: "Visual Spotting", icon: "👁️" },
+  visual_identification: { label: "Visual ID", icon: "🔍" },
+  mystery_reveal: { label: "Mystery Reveal", icon: "🎭" },
+  clue_deduction: { label: "Clue Deduction", icon: "🕵️" },
+};
 
 export function QuestionBankTable({
   questions,
@@ -24,9 +37,11 @@ export function QuestionBankTable({
   pageSize,
   selectedId,
   hasChannelSelected,
+  activeLanguage,
   onSelectQuestion,
   onEditQuestion,
   onDeleteQuestion,
+  onQuickBuildVideo,
   onPageChange,
 }: QuestionBankTableProps) {
   const { t } = useTranslation();
@@ -34,18 +49,22 @@ export function QuestionBankTable({
 
   if (loading) {
     return (
-      <div className="qb-table-loading">
-        <div className="qb-spinner" />
-        <span>{t("questionBank.table.loading")}</span>
+      <div className="qb-table-container">
+        <div className="qb-table-loading">
+          <div className="qb-spinner" />
+          <span>{t("questionBank.table.loading")}</span>
+        </div>
       </div>
     );
   }
 
   if (questions.length === 0) {
     return (
-      <div className="qb-table-empty">
-        <p className="qb-empty-title">{t("questionBank.table.emptyTitle")}</p>
-        <p className="qb-empty-desc">{t("questionBank.table.emptyDesc")}</p>
+      <div className="qb-table-container">
+        <div className="qb-table-empty">
+          <p className="qb-empty-title">{t("questionBank.table.emptyTitle")}</p>
+          <p className="qb-empty-desc">{t("questionBank.table.emptyDesc")}</p>
+        </div>
       </div>
     );
   }
@@ -56,39 +75,55 @@ export function QuestionBankTable({
         <table className="qb-table">
           <thead>
             <tr>
-              <th style={{ width: "130px" }}>{t("questionBank.table.colIdArchetype")}</th>
+              <th style={{ width: "150px" }}>Archetype & ID</th>
               <th>{t("questionBank.table.colQuestion")}</th>
               {hasChannelSelected && <th style={{ width: "140px" }}>{t("questionBank.table.colCooldown")}</th>}
-              <th style={{ width: "80px" }}>{t("questionBank.table.colDifficulty")}</th>
-              <th style={{ width: "100px", textAlign: "right" }}>{t("questionBank.table.colActions")}</th>
+              <th style={{ width: "90px" }}>{t("questionBank.table.colDifficulty")}</th>
+              <th style={{ width: "110px", textAlign: "right" }}>{t("questionBank.table.colActions")}</th>
             </tr>
           </thead>
           <tbody>
             {questions.map((q) => {
               const isSelected = q.id === selectedId;
               const cooldown = q.channel_cooldown;
+              const meta = ARCHETYPE_META[q.archetype_id] || {
+                label: q.archetype_id.replaceAll("_", " "),
+                icon: "✨",
+              };
+              const hasTranslations = q.translations && Object.keys(q.translations).filter((l) => l !== (q.language || "en")).length > 0;
+              const targetLang = activeLanguage && activeLanguage !== "en" ? activeLanguage.toLowerCase() : null;
+              const translation = targetLang ? q.translations?.[targetLang] : null;
+              const displayQuestion = translation ? translation.question : q.question;
+              const displayLang = (targetLang || q.language || "EN").toUpperCase();
 
               return (
                 <tr key={q.id} className={`qb-row ${isSelected ? "is-selected" : ""}`} onClick={() => onSelectQuestion(q)}>
                   <td>
                     <div className="qb-cell-id">
+                      <span className="qb-archetype-badge-pill">
+                        <span>{meta.icon}</span>
+                        <span>{meta.label}</span>
+                      </span>
                       <span className="qb-q-id">{q.id}</span>
-                      <span className="qb-q-archetype">{q.archetype_id}</span>
                     </div>
                   </td>
                   <td>
                     <div className="qb-cell-question">
                       <div className="qb-q-title-row">
-                        <span className="qb-lang-pill">{(q.language || "EN").toUpperCase()}</span>
-                        <span className="qb-q-text">{q.question}</span>
-                        {q.translations && Object.keys(q.translations).filter((l) => l !== (q.language || "en")).length > 0 && (
+                        <span className="qb-lang-pill">{displayLang}</span>
+                        <span className="qb-q-text">{displayQuestion}</span>
+                        {translation ? (
+                          <span className="qb-trans-badge qb-trans-ready" title={`Translated into ${displayLang}`}>
+                            {displayLang} TRANSLATED
+                          </span>
+                        ) : hasTranslations ? (
                           <span className="qb-trans-badge qb-trans-ready" title={t("questionBank.table.transReadyTitle")}>
                             {t("questionBank.table.transReady")}
                           </span>
-                        )}
+                        ) : null}
                       </div>
                       <span className="qb-q-sub">
-                        {q.subtopic_id} • {t("questionBank.table.choicesCount", { count: q.choices?.length ?? 0 })} •{" "}
+                        {q.subtopic_id.replaceAll("_", " ")} • {t("questionBank.table.choicesCount", { count: q.choices?.length ?? 0 })} •{" "}
                         {t("questionBank.table.correctChoice", { id: q.correct_choice_id })}
                       </span>
                     </div>
@@ -99,10 +134,16 @@ export function QuestionBankTable({
                         cooldown.is_cooldown ? (
                           <span
                             className="qb-badge qb-badge-cooldown"
-                            title={t("questionBank.table.cooldownLastUsed", { episode: cooldown.episode_title || "recent" })}
+                            title={t("questionBank.table.cooldownLastUsed", {
+                              episode: cooldown.episode_title || "recent",
+                            })}
                           >
                             <Clock size={13} weight="bold" />
-                            <span>{t("questionBank.table.cooldownDaysRemaining", { days: cooldown.days_remaining })}</span>
+                            <span>
+                              {t("questionBank.table.cooldownDaysRemaining", {
+                                days: cooldown.days_remaining,
+                              })}
+                            </span>
                           </span>
                         ) : (
                           <span className="qb-badge qb-badge-ready" title={t("questionBank.table.readyTitle")}>
@@ -120,6 +161,16 @@ export function QuestionBankTable({
                   </td>
                   <td>
                     <div className="qb-actions-cell" onClick={(e) => e.stopPropagation()}>
+                      {onQuickBuildVideo && (
+                        <button
+                          type="button"
+                          className="qb-icon-btn qb-icon-btn-accent"
+                          onClick={() => onQuickBuildVideo(q)}
+                          title="Quick Build Video"
+                        >
+                          <VideoCamera size={15} weight="fill" />
+                        </button>
+                      )}
                       <button
                         type="button"
                         className="qb-icon-btn"

@@ -1,0 +1,3288 @@
+[
+  {
+    "id": "ENT-SCH-001",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Graphite Pencil",
+    "language": "en",
+    "aliases": [
+      "Lead Pencil",
+      "Wooden Pencil",
+      "Number 2 Pencil",
+      "HB Pencil"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A classic yellow wooden pencil with a freshly sharpened graphite tip resting on warm notebook paper in soft classroom sunlight, 9:16 macro shot.",
+    "core_traits": [
+      "Traditional writing instrument made of graphite and clay encased in wood",
+      "Features an attached rubber eraser secured with a brass ferrule",
+      "Graded by hardness and blackness such as HB or 2B",
+      "Marks can be cleanly rubbed out with an eraser"
+    ],
+    "distractor_pool": [
+      "Ballpoint Pen",
+      "Charcoal Stick",
+      "Mechanical Pencil",
+      "Crayon",
+      "Fountain Pen"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pencils contain toxic lead in their writing core.",
+        "verdict": "myth",
+        "explanation": "Pencils have always used non-toxic graphite combined with clay binder since discovery in 1564; the name lead arose from early confusion with plumbago.",
+        "fun_fact": "An average cedar pencil can draw a continuous line approximately 35 miles long."
+      },
+      {
+        "claim": "Graphite conducts electricity.",
+        "verdict": "fact",
+        "explanation": "Graphite is an allotrope of carbon with free-flowing delocalized electrons between layers, making pencil marks electrically conductive.",
+        "fun_fact": "You can complete a low-voltage battery circuit simply by drawing a heavy pencil line on paper."
+      }
+    ],
+    "versus_candidates": [
+      "Ballpoint Pen",
+      "Eraser",
+      "Mechanical Pencil"
+    ]
+  },
+  {
+    "id": "ENT-SCH-002",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Ballpoint Pen",
+    "language": "en",
+    "aliases": [
+      "Biro",
+      "Ballpen",
+      "Roller Pen"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Extreme macro 9:16 vertical view of a miniature tungsten carbide ball bearing rotating inside a brass socket, dispensing deep blue oil-based ink.",
+    "core_traits": [
+      "Writing instrument that dispenses viscous oil-based ink across an internal rolling sphere",
+      "Standard everyday pen invented by Laszlo Biro for smudge-free fast writing",
+      "Usually housed in clear hexagonal or cylindrical plastic barrels",
+      "Does not require frequent refilling unlike traditional fountain pens"
+    ],
+    "distractor_pool": [
+      "Graphite Pencil",
+      "Fountain Pen",
+      "Gel Pen",
+      "Permanent Marker",
+      "Calligraphy Brush"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The tiny hole in the side of a ballpoint pen barrel is a manufacturing flaw.",
+        "verdict": "myth",
+        "explanation": "The breather hole equalizes atmospheric pressure inside the reservoir with the outside air so ink flows smoothly without creating a vacuum.",
+        "fun_fact": "The hole on the pen cap is designed to prevent suffocation if accidentally inhaled by a student."
+      },
+      {
+        "claim": "Standard ballpoint pens were adopted by RAF pilots because they did not leak at high altitudes.",
+        "verdict": "fact",
+        "explanation": "Unlike fountain pens that exploded under cockpit air pressure drops, ballpoint pens relied on viscous capillary paste and functioned reliably.",
+        "fun_fact": "A single standard ballpoint cartridge can write up to 2 to 3 kilometers of continuous text."
+      }
+    ],
+    "versus_candidates": [
+      "Graphite Pencil",
+      "Fountain Pen",
+      "Gel Pen"
+    ]
+  },
+  {
+    "id": "ENT-SCH-003",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Fountain Pen",
+    "language": "en",
+    "aliases": [
+      "Nib Pen",
+      "Cartridge Pen",
+      "Calligraphy Pen"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A polished metallic split nib with intricate filigree engraving drawing deep royal blue ink onto parchment paper, vertical 9:16 cinematic lighting.",
+    "core_traits": [
+      "Classic writing tool utilizing liquid water-based ink drawn by capillary action",
+      "Equipped with a metallic split nib that flexes with hand pressure to vary line width",
+      "Refilled via disposable cartridges, piston converters, or eye-dropper reservoirs",
+      "Favored for cursive penmanship, calligraphy, and signature ceremonies"
+    ],
+    "distractor_pool": [
+      "Ballpoint Pen",
+      "Dip Pen",
+      "Rollerball Pen",
+      "Drafting Pen",
+      "Marker"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pressing harder on a fountain pen nib makes it write faster and last longer.",
+        "verdict": "myth",
+        "explanation": "Fountain pens require zero downward pressure to write; pushing hard will splay or permanently bend the delicate metal tines.",
+        "fun_fact": "The tip of quality fountain pen nibs is tipped with hard osmium or iridium alloy to resist friction wear."
+      },
+      {
+        "claim": "Capillary action draws ink from the feed to the tip of the nib.",
+        "verdict": "fact",
+        "explanation": "Surface tension and adhesive forces inside the microscopic slit channel ink downward as paper fibers absorb the wet fluid.",
+        "fun_fact": "Air bubbles travel upward through the same feed breather channel in the opposite direction."
+      }
+    ],
+    "versus_candidates": [
+      "Ballpoint Pen",
+      "Graphite Pencil",
+      "Gel Pen"
+    ]
+  },
+  {
+    "id": "ENT-SCH-004",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Pencil Eraser",
+    "language": "en",
+    "aliases": [
+      "Rubber",
+      "Gum Eraser",
+      "Vinyl Eraser",
+      "Kneaded Eraser"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A dual-toned pink and blue rectangular rubber block rolling away fine graphite shavings on a desk, dramatic cinematic 9:16 framing.",
+    "core_traits": [
+      "Stationery item designed to lift and wipe away graphite marks from paper",
+      "Constructed from synthetic rubber, plasticized vinyl, or vulcanized gum",
+      "Operates through friction and electrostatic adhesion to trap graphite particles",
+      "Produces rollable crumbs or residue to carry away the lifted pigment"
+    ],
+    "distractor_pool": [
+      "Correction Tape",
+      "Correction Fluid",
+      "Graphite Pencil",
+      "Sandpaper",
+      "Sharpening Stone"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The blue side of a classic eraser was designed to erase permanent ink.",
+        "verdict": "myth",
+        "explanation": "The gritty blue half was formulated with fine pumice abrasive to erase heavy pencil marks on coarse artist paper, not pen ink.",
+        "fun_fact": "Before rubber erasers were commercialized in 1770, students and clerks used rolled balls of moist white bread."
+      },
+      {
+        "claim": "Erasers work by being stickier to graphite than paper fibers are.",
+        "verdict": "fact",
+        "explanation": "Friction warms the rubber polymer, making it mechanically tacky so graphite flakes adhere to the eraser shavings rather than cellulose.",
+        "fun_fact": "Modern plastic erasers produce long ribbon crumbs that cling together for neat disposal."
+      }
+    ],
+    "versus_candidates": [
+      "Graphite Pencil",
+      "Correction Tape",
+      "Correction Fluid"
+    ]
+  },
+  {
+    "id": "ENT-SCH-005",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Wooden Ruler",
+    "language": "en",
+    "aliases": [
+      "Straightedge",
+      "Measuring Stick",
+      "Classroom Ruler",
+      "Twelve-Inch Ruler"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A warm varnished hardwood ruler with a brass metal edge resting along technical pencil grid lines on an oak school desk, vertical 9:16 layout.",
+    "core_traits": [
+      "Handheld measurement tool marked with calibrated metric and imperial graduation units",
+      "Provides a rigid straight edge for guiding technical pencil lines and drafting",
+      "Standard school length is twelve inches or thirty centimeters",
+      "Often embedded with a beveled brass strip to prevent gouging by pencil points"
+    ],
+    "distractor_pool": [
+      "Plastic Protractor",
+      "Set Square",
+      "Tape Measure",
+      "Caliper",
+      "T-Square"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "All straightedges are technically classified as measuring rulers.",
+        "verdict": "myth",
+        "explanation": "A straightedge is an unmarked guide used solely to draw straight lines; a ruler must possess graduated measurement markings.",
+        "fun_fact": "The earliest known preserved measuring rods date back to copper-alloy bars in Ancient Sumer from 2650 BCE."
+      },
+      {
+        "claim": "Wooden rulers can slightly change length depending on ambient classroom humidity.",
+        "verdict": "fact",
+        "explanation": "Wood is hygroscopic and expands or contracts with moisture fluctuations, which is why precision metrology uses invar steel or glass.",
+        "fun_fact": "Classroom wooden rulers are commonly crafted from maple, beech, or basswood for grain stability."
+      }
+    ],
+    "versus_candidates": [
+      "Tape Measure",
+      "Plastic Protractor",
+      "Set Square"
+    ]
+  },
+  {
+    "id": "ENT-SCH-006",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Drawing Compass",
+    "language": "en",
+    "aliases": [
+      "Geometry Compass",
+      "Pair of Compasses",
+      "Drafting Compass",
+      "Divider"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A gleaming metallic two-legged geometry compass pivoting on a sharp needle point to scribe a perfect pencil circle, 9:16 vertical viewpoint.",
+    "core_traits": [
+      "Two-legged drafting instrument joined by a movable hinge joint",
+      "One leg features a sharp pivot needle while the other holds a graphite pencil or lead",
+      "Used in geometry classes to draw circles, circular arcs, and bisect line segments",
+      "Radius is adjusted by widening or narrowing the angle between legs or rotating a center wheel"
+    ],
+    "distractor_pool": [
+      "Magnetic Navigation Compass",
+      "Plastic Protractor",
+      "Dividers",
+      "Set Square",
+      "Caliper"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A drawing compass and a navigational compass operate on the same scientific principle.",
+        "verdict": "myth",
+        "explanation": "A navigational compass senses Earth's geomagnetic field using a magnetized needle, whereas a geometry compass is purely a mechanical angle divider.",
+        "fun_fact": "Both tools share their English name from the Latin 'compassare', meaning to pace out or measure equally."
+      },
+      {
+        "claim": "With only an unmarked straightedge and a compass, you can construct a perfect regular pentagon.",
+        "verdict": "fact",
+        "explanation": "Classical Euclidean geometry proves that circles and straight lines are sufficient to construct equilateral triangles, squares, and regular pentagons.",
+        "fun_fact": "Carl Friedrich Gauss proved at age 19 that a 17-sided regular polygon can also be constructed with just ruler and compass."
+      }
+    ],
+    "versus_candidates": [
+      "Plastic Protractor",
+      "Wooden Ruler",
+      "Set Square"
+    ]
+  },
+  {
+    "id": "ENT-SCH-007",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Blackboard",
+    "language": "en",
+    "aliases": [
+      "Chalkboard",
+      "Slate Board",
+      "Classroom Board"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A wide dark matte green chalkboard displaying crisp white chalk math equations with dusty wooden eraser trays beneath, 9:16 cinematic lighting.",
+    "core_traits": [
+      "Reusable writing surface covered with dark matte slate or porcelain enamel coating",
+      "Written upon using sticks of calcium carbonate or calcium sulfate chalk",
+      "Wiped clean with felt erasers, microfiber dusters, or damp sponges",
+      "Central presentation focal point of traditional classrooms for centuries"
+    ],
+    "distractor_pool": [
+      "Whiteboard",
+      "Smart Interactive Board",
+      "Bulletin Board",
+      "Corkboard",
+      "Flip Chart"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Blackboards have always been painted dark green throughout history.",
+        "verdict": "myth",
+        "explanation": "Original 19th-century boards were sliced natural black slate rock; green porcelain enamel boards only became standard in the 1960s to reduce glare.",
+        "fun_fact": "Before giant wall blackboards were introduced in 1801, students carried individual small hand-held slate tablets."
+      },
+      {
+        "claim": "School chalk is made primarily from gypsum rather than pure natural rock chalk.",
+        "verdict": "fact",
+        "explanation": "Most modern classroom chalk is manufactured from mineral gypsum (calcium sulfate) rather than biological ocean chalk (calcium carbonate).",
+        "fun_fact": "Japanese Hagoromo chalk achieved legendary status among mathematicians for its buttery smooth glide and zero-dust formula."
+      }
+    ],
+    "versus_candidates": [
+      "Whiteboard",
+      "Smart Interactive Board",
+      "Lined Notebook"
+    ]
+  },
+  {
+    "id": "ENT-SCH-008",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Whiteboard",
+    "language": "en",
+    "aliases": [
+      "Dry-Erase Board",
+      "Marker Board",
+      "White Markerboard",
+      "Porcelain Whiteboard"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A glossy white magnetic board filled with vibrant blue and red diagrams under bright school lecture hall lights, 9:16 vertical composition.",
+    "core_traits": [
+      "Glossy non-porous white writing surface made from enameled steel, melamine, or tempered glass",
+      "Written upon using volatile dry-erase solvent markers that wipe off without water",
+      "Leaves zero chalk dust, making it ideal for computer labs and allergy-free classrooms",
+      "Magnetic backing frequently allows attachment of visual aid magnets and organizers"
+    ],
+    "distractor_pool": [
+      "Blackboard",
+      "Corkboard",
+      "Interactive Touchscreen",
+      "Easel Pad",
+      "Projection Screen"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Permanent marker stains on a whiteboard can never be removed without scratching the board.",
+        "verdict": "myth",
+        "explanation": "Tracing directly over permanent marker marks with an ordinary dry-erase marker re-dissolves the permanent polymer binder so both wipe off cleanly.",
+        "fun_fact": "Whiteboards were invented in the mid-1960s by Martin Heit and Jerry Woolf but exploded in school popularity during the 1990s."
+      },
+      {
+        "claim": "Dry-erase ink wipes away cleanly because it contains a slippery silicone release polymer.",
+        "verdict": "fact",
+        "explanation": "The ink formulation blends pigment with an oily releasing agent that prevents pigment resins from bonding directly to the glossy surface.",
+        "fun_fact": "Writing on a cold whiteboard causes the solvent to evaporate more slowly, making wiping require slightly more friction."
+      }
+    ],
+    "versus_candidates": [
+      "Blackboard",
+      "Dry Erase Marker",
+      "Smart Interactive Board"
+    ]
+  },
+  {
+    "id": "ENT-SCH-009",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Dry Erase Marker",
+    "language": "en",
+    "aliases": [
+      "Whiteboard Marker",
+      "Dry-Wipe Pen",
+      "Board Marker"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A chisel-tip black dry-erase pen uncapped with bold glossy ink flowing smoothly on a reflective whiteboard surface, 9:16 vertical perspective.",
+    "core_traits": [
+      "Felt-tip writing marker filled with fast-drying, non-porous erasable ink",
+      "Features a release polymer agent that allows marks to wipe away into dry dust",
+      "Available with bullet or chisel tips for variable calligraphy and bold lettering",
+      "Emits an alcohol or low-odor ketone solvent vapor when uncapped"
+    ],
+    "distractor_pool": [
+      "Permanent Marker",
+      "Highlighter Pen",
+      "Paint Marker",
+      "Chalk Stick",
+      "Felt Pen"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Storing dry-erase markers vertically tip-up will make them last longer.",
+        "verdict": "myth",
+        "explanation": "Storing them vertically tip-up allows gravity to pull ink away from the nib down into the reservoir, causing dry writing tip failure.",
+        "fun_fact": "Stationery manufacturers recommend storing dry-erase markers horizontally to maintain even ink distribution."
+      },
+      {
+        "claim": "Dry-erase ink can float intact on water.",
+        "verdict": "fact",
+        "explanation": "Because the ink is insoluble in water and less dense than water, doodling a figure on a smooth ceramic plate and pouring water lifts the doodle afloat.",
+        "fun_fact": "This water float trick is a favorite elementary science demonstration for showing surface tension and hydrophobic polymers."
+      }
+    ],
+    "versus_candidates": [
+      "Permanent Marker",
+      "Highlighter Pen",
+      "Whiteboard"
+    ]
+  },
+  {
+    "id": "ENT-SCH-010",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "School Backpack",
+    "language": "en",
+    "aliases": [
+      "Bookbag",
+      "Schoolbag",
+      "Rucksack",
+      "Knapsack"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A rugged nylon school backpack with reflective safety stripes resting beside an open school hallway locker, 9:16 vertical portrait.",
+    "core_traits": [
+      "Fabric load-bearing sack carried on the back with two padded shoulder straps",
+      "Designed with specialized compartments for textbooks, notebooks, pencil cases, and laptops",
+      "Equipped with elasticized side pockets to hold reusable water bottles",
+      "Distributes the heavy weight of academic supplies evenly across the wearer's torso"
+    ],
+    "distractor_pool": [
+      "Briefcase",
+      "Tote Bag",
+      "Duffel Bag",
+      "Messenger Bag",
+      "Lunch Box"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Wearing a backpack on a single shoulder is harmless if the bag is light.",
+        "verdict": "myth",
+        "explanation": "One-shoulder carrying consistently twists the spine, elevates one shoulder blade, and causes chronic muscular strain and posture imbalance.",
+        "fun_fact": "Pediatricians advise that a child's school backpack should never exceed 10 to 15 percent of their total body weight."
+      },
+      {
+        "claim": "Zippered nylon backpacks for students were first popularized in the late 1960s.",
+        "verdict": "fact",
+        "explanation": "Before companies like JanSport and Gerry introduced lightweight nylon packs, students bound their textbooks together with leather straps.",
+        "fun_fact": "The term 'backpack' was coined in the United States in the 1910s; before then it was known primarily as a knapsack."
+      }
+    ],
+    "versus_candidates": [
+      "Tote Bag",
+      "Messenger Bag",
+      "Pencil Case"
+    ]
+  },
+  {
+    "id": "ENT-SCH-011",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Classroom Desk Globe",
+    "language": "en",
+    "aliases": [
+      "Terrestrial Globe",
+      "Geographic Globe",
+      "World Globe"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A detailed spherical political globe mounted on an inclined brass semi-meridian axis spinning gently on a wooden classroom stand, 9:16 vertical view.",
+    "core_traits": [
+      "Three-dimensional spherical scale model of planet Earth",
+      "Depicts true relative landmass shapes, ocean distances, and national borders without flat map projection distortion",
+      "Mounted at an axial tilt of 23.5 degrees to replicate Earth's rotational orientation",
+      "Spins freely on its polar axis to demonstrate night and day cycles"
+    ],
+    "distractor_pool": [
+      "Wall Map",
+      "Atlas Book",
+      "Compass Rose",
+      "Solar System Mobile",
+      "Armillary Sphere"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Flat wall maps like the Mercator projection show landmass sizes just as accurately as a spherical globe.",
+        "verdict": "myth",
+        "explanation": "Flat projections severely distort landmass areas near the poles; a desk globe preserves true spherical area proportions, showing Africa is 14 times larger than Greenland.",
+        "fun_fact": "On Mercator wall maps Greenland looks the same size as Africa, which is one of geography's greatest projection illusions."
+      },
+      {
+        "claim": "The oldest surviving terrestrial globe dates back to 1492.",
+        "verdict": "fact",
+        "explanation": "The Erdapfel ('Earth Apple') was constructed in Nuremberg by Martin Behaim just before Christopher Columbus returned from the Americas.",
+        "fun_fact": "Because it was built before Columbus returned, the Americas do not appear anywhere on Behaim's globe."
+      }
+    ],
+    "versus_candidates": [
+      "Solar System Desk Mobile",
+      "Wooden Ruler",
+      "Drawing Compass"
+    ]
+  },
+  {
+    "id": "ENT-SCH-012",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Lined Notebook",
+    "language": "en",
+    "aliases": [
+      "Exercise Book",
+      "Composition Notebook",
+      "Spiral Notebook",
+      "Ruled Journal"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An open spiral-bound notebook with crisp horizontal blue lines and a vertical pink margin rule bathed in morning library light, 9:16 vertical view.",
+    "core_traits": [
+      "Bound stack of paper sheets printed with light horizontal guidelines to keep handwriting straight",
+      "Features a standardized vertical red or pink margin line running down the left side",
+      "Bound by spiral wire coils, thread stitching, or flexible staple folds",
+      "Standard student companion for taking lecture notes and completing homework assignments"
+    ],
+    "distractor_pool": [
+      "Sketchbook",
+      "Index Cards",
+      "Binder",
+      "Loose-Leaf Paper",
+      "Clipboard"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The red margin line on notebook paper was created simply to give teachers space to write grades.",
+        "verdict": "myth",
+        "explanation": "Margins were originally added to protect written notes from being eaten away by household mice and rats chewing on paper edges.",
+        "fun_fact": "The classic marbled black-and-white composition notebook pattern was originally inspired by Chinese paper marbling techniques."
+      },
+      {
+        "claim": "Wide-ruled and college-ruled notebook papers have standardized line spacings.",
+        "verdict": "fact",
+        "explanation": "Wide ruled paper has 8.7 mm spacing designed for younger children, while college ruled paper has tighter 7.1 mm spacing for denser text.",
+        "fun_fact": "Legal pads are traditionally dyed yellow because early manufacturers could not afford to bleach scrap wood pulp white."
+      }
+    ],
+    "versus_candidates": [
+      "Paper Index Cards",
+      "Three-Ring Binder",
+      "Graphite Pencil"
+    ]
+  },
+  {
+    "id": "ENT-SCH-013",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Desktop Stapler",
+    "language": "en",
+    "aliases": [
+      "Paper Stapler",
+      "Spring Fastener",
+      "Office Stapler"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A sleek black steel desktop stapler pressing down firmly to crimp a galvanized wire staple through a stack of test papers, 9:16 vertical close-up.",
+    "core_traits": [
+      "Mechanical spring-loaded device that binds sheets of paper together with thin wire staples",
+      "Contains an anvil plate with metal grooves that crimps staple prongs inward or outward",
+      "Houses a spring-fed magazine that advances rows of joined U-shaped wire fasteners",
+      "Essential desktop stationery tool for collating essays, reports, and worksheets"
+    ],
+    "distractor_pool": [
+      "Steel Paperclip",
+      "Hole Punch",
+      "Binder Clip",
+      "Solid Glue Stick",
+      "Tape Dispenser"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The rotating metal anvil plate under a stapler only exists to stabilize the base.",
+        "verdict": "myth",
+        "explanation": "Rotating the anvil switches the machine from permanent stapling (curling prongs inward) to temporary pinning (splaying prongs outward for easy removal).",
+        "fun_fact": "King Louis XV of France owned an ornate custom stapler in the 18th century where each staple bore the royal crest."
+      },
+      {
+        "claim": "Staples can be driven through more than 20 pages using a standard handheld desktop model.",
+        "verdict": "fact",
+        "explanation": "A standard 26/6 gauge staple has a 6 mm leg length designed to bind up to 20 to 25 sheets of standard 80 gsm copy paper.",
+        "fun_fact": "Specialty heavy-duty lever staplers can pierce and fasten upwards of 200 sheets at once."
+      }
+    ],
+    "versus_candidates": [
+      "Steel Paperclip",
+      "Solid Glue Stick",
+      "Three-Ring Binder"
+    ]
+  },
+  {
+    "id": "ENT-SCH-014",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Steel Paperclip",
+    "language": "en",
+    "aliases": [
+      "Wire Clip",
+      "Gem Clip",
+      "Page Fastener",
+      "Paper Clamp"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A shiny curved silver Gem paperclip holding a corner bundle of printed school examination papers, 9:16 vertical macro shot.",
+    "core_traits": [
+      "Bent loop of galvanized spring steel wire used to hold paper sheets temporarily",
+      "Fastens pages using mechanical tension without piercing or damaging the paper fibers",
+      "The classic design features two nested concentric loops known as the Gem pattern",
+      "Easily slipped on and removed for quick reorganization of documents"
+    ],
+    "distractor_pool": [
+      "Desktop Stapler",
+      "Binder Clip",
+      "Push Pin",
+      "Safety Pin",
+      "Rubber Band"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Norwegian inventor Johan Vaaler invented the modern double-oval Gem paperclip.",
+        "verdict": "myth",
+        "explanation": "Vaaler patented a rectangular wire clip, but the iconic looped Gem paperclip was developed anonymously by the Gem Manufacturing Company in Britain.",
+        "fun_fact": "During World War II, Norwegians wore paperclips on their lapels as a secret symbol of solidarity and resistance against Nazi occupation."
+      },
+      {
+        "claim": "Paperclips rely entirely on the elastic modulus of bent spring steel.",
+        "verdict": "fact",
+        "explanation": "The metal wire behaves like a torsion spring; sliding paper between the loops spreads them apart, generating clamping friction.",
+        "fun_fact": "Millions of paperclips are bent each year into makeshift lockpicks, reset pins for electronic devices, and phone SIM tray openers."
+      }
+    ],
+    "versus_candidates": [
+      "Desktop Stapler",
+      "Self-Adhesive Sticky Notes",
+      "Three-Ring Binder"
+    ]
+  },
+  {
+    "id": "ENT-SCH-015",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Pocket Calculator",
+    "language": "en",
+    "aliases": [
+      "Electronic Calculator",
+      "Arithmetic Calculator",
+      "School Calculator",
+      "Scientific Calculator"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A compact solar-powered pocket calculator displaying green LCD digits on a high school mathematics desk, vertical 9:16 lighting.",
+    "core_traits": [
+      "Handheld electronic device used to perform basic arithmetic and advanced algebraic calculations",
+      "Equipped with a push-button silicone keypad and a liquid crystal display (LCD)",
+      "Powered by small coin batteries or an integrated photovoltaic solar panel strip",
+      "Permitted in math and science exams to speed up numerical problem solving"
+    ],
+    "distractor_pool": [
+      "Abacus",
+      "Slide Rule",
+      "Smart Phone",
+      "Mechanical Adding Machine",
+      "Digital Watch"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Solar-powered classroom calculators cannot function indoors under artificial fluorescent lighting.",
+        "verdict": "myth",
+        "explanation": "Their amorphous silicon photovoltaic cells are engineered specifically to absorb ambient indoor indoor lamp wavelengths and run on microamperes.",
+        "fun_fact": "Many basic calculators do not even have an off switch because their idle circuit draws negligible parasitic current."
+      },
+      {
+        "claim": "Entering 0.7734 and flipping the calculator upside down spells 'hELLO'.",
+        "verdict": "fact",
+        "explanation": "Seven-segment LCD numerals inverted display letter-like shapes, creating beloved school calculator spelling games like 'BOOBIES' (5318008) and 'hELLO'.",
+        "fun_fact": "The first handheld electronic calculator was developed by a team at Texas Instruments in 1967."
+      }
+    ],
+    "versus_candidates": [
+      "Wooden Ruler",
+      "Plastic Protractor",
+      "Drawing Compass"
+    ]
+  },
+  {
+    "id": "ENT-SCH-016",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Fluorescent Highlighter",
+    "language": "en",
+    "aliases": [
+      "Text Marker",
+      "Highlighter Pen",
+      "Neon Marker",
+      "Study Marker"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A vibrant neon yellow translucent line sweeping across printed textbook paragraphs, leaving glowing fluorescent highlights, 9:16 vertical view.",
+    "core_traits": [
+      "Felt-tip marker loaded with vivid translucent fluorescent ink",
+      "Features a beveled chisel nib designed to underline words or cover entire lines of text",
+      "Highlights key phrases in printed books without obscuring the underlying black type",
+      "Standard study aid for exam revision, active reading, and color-coded note indexing"
+    ],
+    "distractor_pool": [
+      "Dry Erase Marker",
+      "Permanent Marker",
+      "Ballpoint Pen",
+      "Crayon",
+      "Watercolor Brush"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Highlighters produce light on their own like glow-in-the-dark glowsticks.",
+        "verdict": "myth",
+        "explanation": "Highlighters do not produce phosphorescence; their pyranine fluorescent dye absorbs invisible ultraviolet light and re-emits it instantly as visible yellow light.",
+        "fun_fact": "This UV absorption and emission makes the highlighted text appear brighter than the white paper surrounding it."
+      },
+      {
+        "claim": "Yellow is the most popular highlighter color because it photocopies without creating dark shadows.",
+        "verdict": "fact",
+        "explanation": "Yellow wavelengths pass through black-and-white photocopy scan sensors cleanly without triggering black toner deposition over the text.",
+        "fun_fact": "Fluorescent highlighters were first introduced by the German company Schwan-Stabilo in 1971."
+      }
+    ],
+    "versus_candidates": [
+      "Graphite Pencil",
+      "Dry Erase Marker",
+      "Self-Adhesive Sticky Notes"
+    ]
+  },
+  {
+    "id": "ENT-SCH-017",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Manual Pencil Sharpener",
+    "language": "en",
+    "aliases": [
+      "Pencil Sharpener",
+      "Prism Sharpener",
+      "Hand Sharpener",
+      "Rotary Sharpener"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A small clear plastic handheld sharpener shaving curling curls of cedar wood and graphite dust into its miniature reservoir, 9:16 vertical macro.",
+    "core_traits": [
+      "Device with an angled razor blade mounted inside a conical guiding hole",
+      "Rotates around the tip of a wooden pencil to shave away wood casing and restore a sharp graphite point",
+      "Available as handheld prism blocks or crank-operated classroom wall rotary units",
+      "Features a shavings collector compartment to keep school desks tidy"
+    ],
+    "distractor_pool": [
+      "Utility Knife",
+      "Sandpaper Block",
+      "Pencil Eraser",
+      "Pencil Case",
+      "Hole Punch"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Before pencil sharpeners were invented, people sharpened pencils with pocketknives.",
+        "verdict": "fact",
+        "explanation": "Whittling pencils by hand with a penknife was universal until French mathematician Bernard Lassimonne patented the first mechanical sharpener in 1828.",
+        "fun_fact": "John Lee Love, an African-American inventor, patented the popular portable handheld 'Love Sharpener' in 1897."
+      },
+      {
+        "claim": "Sharpening colored pencils dulls the steel blade faster than graphite pencils.",
+        "verdict": "myth",
+        "explanation": "Colored pencil cores are made of soft waxes and clays that actually lubricate the blade, whereas abrasive graphite and silicate clay cause more blade wear.",
+        "fun_fact": "Rotary sharpeners use dual cylindrical milling burrs rather than flat single razor blades."
+      }
+    ],
+    "versus_candidates": [
+      "Graphite Pencil",
+      "Pencil Eraser",
+      "School Safety Scissors"
+    ]
+  },
+  {
+    "id": "ENT-SCH-018",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Solid Glue Stick",
+    "language": "en",
+    "aliases": [
+      "Paste Stick",
+      "Craft Glue Stick",
+      "School Glue",
+      "PVA Glue Stick"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A twist-up white glue stick gliding across construction paper, leaving a smooth purple layer that dries invisible, 9:16 vertical view.",
+    "core_traits": [
+      "Cylindrical twist-up plastic tube containing a solid adhesive paste",
+      "Formulated with non-toxic, washable polyvinylpyrrolidone (PVP) or PVA compounds",
+      "Applies cleanly to paper and cardboard without wrinkling or spilling like liquid glue",
+      "Essential craft supply for primary school paper collages and art projects"
+    ],
+    "distractor_pool": [
+      "Liquid White Glue",
+      "Clear Tape",
+      "Desktop Stapler",
+      "Hot Glue Gun",
+      "Rubber Cement"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "School glue sticks are made from boiled animal hooves.",
+        "verdict": "myth",
+        "explanation": "Modern glue sticks are 100% synthetic polymers based on non-toxic petroleum derivatives and vegetable starches, containing zero animal derivatives.",
+        "fun_fact": "The twist-up tube mechanism was invented in 1969 by Henkel engineer Wolfgang Dierichs after observing women applying lipstick on an airplane."
+      },
+      {
+        "claim": "Disappearing purple glue sticks use pH indicators to signal when the glue is dry.",
+        "verdict": "fact",
+        "explanation": "The purple dye is pH-sensitive; as atmospheric carbon dioxide reacts with the drying alkaline paste, the pH drops and the color becomes clear.",
+        "fun_fact": "The color disappears completely in under one minute after application."
+      }
+    ],
+    "versus_candidates": [
+      "Desktop Stapler",
+      "Steel Paperclip",
+      "School Safety Scissors"
+    ]
+  },
+  {
+    "id": "ENT-SCH-019",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "School Safety Scissors",
+    "language": "en",
+    "aliases": [
+      "Blunt-Tip Scissors",
+      "Child Scissors",
+      "Craft Scissors",
+      "Safety Shears"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A pair of bright red plastic-handled safety scissors with rounded steel tips cutting colorful origami construction paper, 9:16 vertical view.",
+    "core_traits": [
+      "Hand-operated shearing tool with rounded, blunt tips to prevent accidental puncture injuries",
+      "Consists of two pivoted stainless steel blades operated by ergonomic finger and thumb loops",
+      "Blades are ground at safe angles to slice through paper cleanly while resisting flesh cuts",
+      "Found in elementary classroom art kits and pencil cases"
+    ],
+    "distractor_pool": [
+      "Utility Knife",
+      "Tailor Shears",
+      "Paper Guillotine",
+      "Pencil Sharpener",
+      "Pliers"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Left-handed students can use standard right-handed scissors just as effectively by flipping them over.",
+        "verdict": "myth",
+        "explanation": "Flipping right-handed scissors does not reverse the blade alignment; natural left-hand squeeze pushes the cutting blades apart rather than shearing them together.",
+        "fun_fact": "True left-handed scissors reverse the overlapping top blade so lefties have an unobstructed sightline of the cut."
+      },
+      {
+        "claim": "Scissors cut materials through a physical process known as mechanical shear stress.",
+        "verdict": "fact",
+        "explanation": "As the two opposing blades slide past each other with minimal clearance, they apply intense localized shear stress exceeding the material's shear strength.",
+        "fun_fact": "Pivoted bronze scissors were invented in ancient Rome around 100 CE."
+      }
+    ],
+    "versus_candidates": [
+      "Solid Glue Stick",
+      "Wooden Ruler",
+      "Manual Pencil Sharpener"
+    ]
+  },
+  {
+    "id": "ENT-SCH-020",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Self-Adhesive Sticky Notes",
+    "language": "en",
+    "aliases": [
+      "Post-it Note",
+      "Sticky Memo",
+      "Adhesive Notepad",
+      "Repositionable Note"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A bright canary-yellow square sticky note stuck to the corner of an open textbook with handwritten study reminders, 9:16 vertical perspective.",
+    "core_traits": [
+      "Small pad of colored paper sheets backed with a strip of low-tack repositionable pressure-sensitive adhesive",
+      "Can be temporarily attached to papers, books, whiteboards, and computer monitors without leaving sticky residue",
+      "Easily peeled off and re-stuck multiple times",
+      "Iconic square design traditionally rendered in signature canary yellow"
+    ],
+    "distractor_pool": [
+      "Paper Index Cards",
+      "Bookmark",
+      "Steel Paperclip",
+      "Lined Notebook",
+      "Correction Tape Dispenser"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Sticky notes were invented deliberately during a military adhesives research program.",
+        "verdict": "myth",
+        "explanation": "Dr. Spencer Silver at 3M was trying to invent a super-strong aerospace adhesive, but accidentally created a weak, non-destructive microsphere adhesive instead.",
+        "fun_fact": "His colleague Art Fry realized its potential years later when his paper bookmarks kept falling out of his church hymnal."
+      },
+      {
+        "claim": "Peeling a sticky note from the bottom up causes it to curl outward.",
+        "verdict": "fact",
+        "explanation": "Peeling from bottom-to-top bends the paper grain and adhesive strip; peeling sideways along the adhesive edge keeps the note flat against surfaces.",
+        "fun_fact": "The original canary yellow color was chosen purely because the lab next door had scrap yellow paper."
+      }
+    ],
+    "versus_candidates": [
+      "Paper Index Cards",
+      "Steel Paperclip",
+      "Fluorescent Highlighter"
+    ]
+  },
+  {
+    "id": "ENT-SCH-021",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Paper Index Cards",
+    "language": "en",
+    "aliases": [
+      "Flashcards",
+      "Revision Cards",
+      "Record Cards",
+      "Study Cards"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A tidy stack of three-by-five inch ruled white index cards bound by a metal ring, showing vocabulary questions and answers, 9:16 vertical shot.",
+    "core_traits": [
+      "Heavy cardstock paper cut into standard rectangular sizes such as 3 by 5 inches",
+      "Features printed ruling on one side and a blank surface on the reverse",
+      "Widely utilized by students to craft flashcards for active recall and spaced repetition learning",
+      "Commonly organized in recipe boxes, speech card bundles, or filing drawers"
+    ],
+    "distractor_pool": [
+      "Self-Adhesive Sticky Notes",
+      "Lined Notebook",
+      "Three-Ring Binder",
+      "Playing Cards",
+      "Business Cards"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Index cards were invented in the 20th century for computer punch card programming.",
+        "verdict": "myth",
+        "explanation": "Index cards were invented in the 18th century by Swedish botanist Carl Linnaeus to organize taxonomic information on flora and fauna.",
+        "fun_fact": "Linnaeus needed a system that allowed infinite re-sorting without rewriting bound notebook pages."
+      },
+      {
+        "claim": "Studying with physical index flashcards leverages the scientific 'testing effect'.",
+        "verdict": "fact",
+        "explanation": "Active retrieval practice forced by self-testing with flashcards strengthens neural pathways and memory consolidation far better than passive re-reading.",
+        "fun_fact": "The Leitner box system uses index cards divided into compartments based on how well each card is memorized."
+      }
+    ],
+    "versus_candidates": [
+      "Self-Adhesive Sticky Notes",
+      "Lined Notebook",
+      "Three-Ring Binder"
+    ]
+  },
+  {
+    "id": "ENT-SCH-022",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Three-Ring Binder",
+    "language": "en",
+    "aliases": [
+      "Ring Binder",
+      "File Folder",
+      "Lever Arch File",
+      "Loose-Leaf Binder"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A heavy-duty vinyl three-ring binder opened flat on a study desk, revealing hole-punched loose-leaf lecture notes and tab dividers, 9:16 vertical angle.",
+    "core_traits": [
+      "Stiff plastic or vinyl folder containing three spring-operated circular metal rings",
+      "Opens and locks via dual end levers or manual ring pulling",
+      "Holds punched loose-leaf paper sheets, tabbed subject dividers, and plastic document sleeves",
+      "Enables students to customize, reorganize, and insert handouts into subject files"
+    ],
+    "distractor_pool": [
+      "Lined Notebook",
+      "Clipboard",
+      "Paper Folder",
+      "Document Box",
+      "School Backpack"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Three-ring binders are the universal international standard across all countries.",
+        "verdict": "myth",
+        "explanation": "Three-ring binders are primarily a North American standard; Europe, Asia, and Latin America use two-ring or four-ring ISO 838 binder systems.",
+        "fun_fact": "The ring binder was patented in Germany by Friedrich Soennecken in 1886 alongside the hole punch."
+      },
+      {
+        "claim": "D-ring binders hold significantly more paper than round O-ring binders of the same spine width.",
+        "verdict": "fact",
+        "explanation": "D-rings mount to the back cover rather than the spine, allowing paper sheets to stack perpendicular and flat without bunching up.",
+        "fun_fact": "A 2-inch D-ring binder can hold approximately 25% more pages than a 2-inch round-ring binder."
+      }
+    ],
+    "versus_candidates": [
+      "Lined Notebook",
+      "School Backpack",
+      "Paper Index Cards"
+    ]
+  },
+  {
+    "id": "ENT-SCH-023",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Correction Tape Dispenser",
+    "language": "en",
+    "aliases": [
+      "Tipp-Ex Tape",
+      "White-Out Tape",
+      "Correction Roller",
+      "Erasable Tape"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A handheld ergonomic transparent tape dispenser rolling a clean white opaque film strip over handwritten ink errors, 9:16 vertical view.",
+    "core_traits": [
+      "Handheld applicator housing a spool of white opaque polyester masking tape",
+      "Applies dry white coverage instantly across pen ink errors with a gliding tip press",
+      "Can be written over immediately without waiting for chemical drying or blowing",
+      "Eliminates solvent fumes, clumping, and spills associated with liquid correction fluid"
+    ],
+    "distractor_pool": [
+      "Liquid Correction Fluid",
+      "Pencil Eraser",
+      "Clear Scotch Tape",
+      "Ballpoint Pen",
+      "Highlighter Pen"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Correction tape requires at least 30 seconds of air drying before you can write on it.",
+        "verdict": "myth",
+        "explanation": "Correction tape is completely dry upon application because it transfers a pre-cured titanium dioxide film under pressure, requiring zero drying time.",
+        "fun_fact": "Liquid correction fluid, by contrast, was invented in 1956 by Bette Nesmith Graham in her kitchen using a blender."
+      },
+      {
+        "claim": "The applicator contains two gear-linked spools inside its casing.",
+        "verdict": "fact",
+        "explanation": "One spool dispenses the coated white tape while an interconnected take-up spool automatically winds up the clear waste plastic carrier film.",
+        "fun_fact": "Correction tape dispensers were first commercialized in Japan by the Seed company in 1989."
+      }
+    ],
+    "versus_candidates": [
+      "Pencil Eraser",
+      "Ballpoint Pen",
+      "Fountain Pen"
+    ]
+  },
+  {
+    "id": "ENT-SCH-024",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Zippered Pencil Case",
+    "language": "en",
+    "aliases": [
+      "Pencil Pouch",
+      "Stationery Bag",
+      "Pen Case",
+      "Pencil Box"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A durable canvas zipper pouch unzipped on a wooden desk, overflowing with colorful highlighters, pencils, erasers, and markers, 9:16 vertical framing.",
+    "core_traits": [
+      "Portable container made of fabric, plastic, or tin with a zipper closure",
+      "Designed to organize, protect, and carry pens, pencils, erasers, and small stationery items",
+      "Fits compactly inside a student backpack or school desk cubby",
+      "Prevents pencil lead points from breaking and ink pens from staining bag interiors"
+    ],
+    "distractor_pool": [
+      "School Backpack",
+      "Lunch Box",
+      "Tote Bag",
+      "Three-Ring Binder",
+      "Toolbox"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pencil cases have always been zippered cloth pouches.",
+        "verdict": "myth",
+        "explanation": "Historically, students used carved wooden sliding-lid pencil boxes or stamped metal tin cases before nylon zippers were cheap enough for school supplies.",
+        "fun_fact": "In Victorian times, ornate silver and ivory pencil cases were status symbols among scholars."
+      },
+      {
+        "claim": "Multi-compartment pencil cases help prevent graphite dust from smudging other stationery.",
+        "verdict": "fact",
+        "explanation": "Dedicated elastic slots and separate zippered mesh pockets isolate sharp pencil tips from erasers, highlighters, and correction tapes.",
+        "fun_fact": "In Japan, multi-functional transformer pencil cases with pop-out buttons and built-in sharpeners became a massive school craze."
+      }
+    ],
+    "versus_candidates": [
+      "School Backpack",
+      "Lined Notebook",
+      "Graphite Pencil"
+    ]
+  },
+  {
+    "id": "ENT-SCH-025",
+    "domain_id": "school_learning",
+    "subtopic_id": "stationery_supplies",
+    "name": "Plastic Protractor",
+    "language": "en",
+    "aliases": [
+      "Angle Ruler",
+      "Half-Circle Protractor",
+      "Semicircular Protractor",
+      "Degree Gauge"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A transparent acrylic semicircular protractor positioned over intersecting pencil lines on geometric graph paper, measuring an acute angle, 9:16 vertical view.",
+    "core_traits": [
+      "Flat transparent plastic measuring tool shaped like a semicircle or full circle",
+      "Engraved with angular degree marks running from 0 to 180 degrees in both directions",
+      "Features a central origin notch or crosshair to align over an angle's vertex",
+      "Indispensable tool in middle and high school trigonometry and geometry classes"
+    ],
+    "distractor_pool": [
+      "Drawing Compass",
+      "Wooden Ruler",
+      "Set Square",
+      "Goniometer",
+      "Clinometer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Protractors only have one scale running clockwise from zero to 180 degrees.",
+        "verdict": "myth",
+        "explanation": "Standard school protractors have dual concentric scales running in opposite directions so students can measure angles opening to the left or right without flipping.",
+        "fun_fact": "A full circular 360-degree protractor was invented by cartographer Thomas Blundeville in 1589 for marine navigation."
+      },
+      {
+        "claim": "Angles are measured in degrees because ancient Babylonians used a base-60 sexagesimal system.",
+        "verdict": "fact",
+        "explanation": "Babylonian astronomers divided the celestial circle into 360 units based on their 360-day calendar year approximation and equilateral triangle divisions.",
+        "fun_fact": "A straight line forms a 180-degree angle, exactly the span of a standard school semicircular protractor."
+      }
+    ],
+    "versus_candidates": [
+      "Drawing Compass",
+      "Wooden Ruler",
+      "Set Square"
+    ]
+  },
+  {
+    "id": "ENT-SCH-026",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Compound Optical Microscope",
+    "language": "en",
+    "aliases": [
+      "Light Microscope",
+      "Student Microscope",
+      "Biological Microscope",
+      "Laboratory Microscope"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A brass and enameled student compound optical microscope illuminating a glass onion skin specimen slide with radiant green light, 9:16 vertical cinematic shot.",
+    "core_traits": [
+      "Precision scientific instrument that magnifies microscopic biological specimens using visible light",
+      "Combines an objective lens mounted on a rotating nosepiece with an eyepiece ocular lens",
+      "Features coarse and fine focus knobs, a mechanical stage, and a sub-stage condenser iris",
+      "Enables students to observe plant cells, protozoa, and microscopic tissue structures"
+    ],
+    "distractor_pool": [
+      "Telescope",
+      "Magnifying Glass",
+      "Spectrophotometer",
+      "Centrifuge",
+      "Optical Glass Prism"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Optical light microscopes can magnify objects up to a million times.",
+        "verdict": "myth",
+        "explanation": "Optical microscopes are fundamentally limited by the diffraction limit of visible light wavelengths, maxing out at roughly 1,000x to 2,000x magnification.",
+        "fun_fact": "To magnify objects millions of times, scientists use electron microscopes that shoot beams of high-energy electrons instead of photons."
+      },
+      {
+        "claim": "Total magnification is calculated by multiplying eyepiece magnification by objective lens magnification.",
+        "verdict": "fact",
+        "explanation": "A standard 10x ocular eyepiece paired with a 40x high-power objective lens yields a total magnification of 400x.",
+        "fun_fact": "Antonie van Leeuwenhoek first discovered bacteria and living protozoa in pond water using tiny single-lens bead microscopes he ground by hand."
+      }
+    ],
+    "versus_candidates": [
+      "Glass Petri Dish",
+      "Glass Test Tube",
+      "Optical Glass Prism"
+    ]
+  },
+  {
+    "id": "ENT-SCH-027",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Glass Test Tube",
+    "language": "en",
+    "aliases": [
+      "Culture Tube",
+      "Boiling Tube",
+      "Sample Tube",
+      "Chemical Test Tube"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A row of cylindrical clear glass test tubes filled with glowing vibrant blue and amber chemical solutions in a wooden laboratory rack, 9:16 vertical framing.",
+    "core_traits": [
+      "Slender clear glass tube with a rounded U-shaped hemispherical bottom and open lip",
+      "Crafted from heat-resistant borosilicate glass like Pyrex to survive direct Bunsen flame heating",
+      "Standard laboratory vessel for qualitative chemical reactions, mixing, and heating small liquid samples",
+      "Held during experiments using wooden test tube clamps and stored in wire or wooden racks"
+    ],
+    "distractor_pool": [
+      "Borosilicate Chemistry Beaker",
+      "Erlenmeyer Flask",
+      "Graduated Cylinder",
+      "Pipette",
+      "Petri Dish"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A test tube can be heated directly at its base while pointing the open mouth straight at your face.",
+        "verdict": "myth",
+        "explanation": "Pointing a heating tube at anyone is extremely dangerous; boiling liquid can superheat and violently erupt in a phenomenon known as bumping.",
+        "fun_fact": "Safety protocols mandate pointing test tubes at a 45-degree angle away from all laboratory partners."
+      },
+      {
+        "claim": "Borosilicate glass test tubes resist thermal shock because of their low coefficient of thermal expansion.",
+        "verdict": "fact",
+        "explanation": "Adding boron trioxide to molten silica creates a glass that expands very little when heated, preventing stress fractures from rapid temperature swings.",
+        "fun_fact": "The phrase 'test tube baby' entered common vernacular in 1978 with the birth of Louise Brown, although fertilization occurred in a petri dish."
+      }
+    ],
+    "versus_candidates": [
+      "Borosilicate Chemistry Beaker",
+      "Erlenmeyer Flask",
+      "Graduated Cylinder"
+    ]
+  },
+  {
+    "id": "ENT-SCH-028",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Horseshoe Magnet",
+    "language": "en",
+    "aliases": [
+      "U-Magnet",
+      "Permanent Magnet",
+      "Alnico Magnet",
+      "School Magnet"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A classic red-painted U-shaped horseshoe magnet with silver magnetic poles attracting shimmering iron filings in magnetic field arches, 9:16 vertical macro.",
+    "core_traits": [
+      "U-shaped permanent ferromagnetic bar bringing north and south magnetic poles into the same plane",
+      "Painted with distinct red and silver/blue colors to identify opposite magnetic poles",
+      "Produces a concentrated magnetic field between its two adjacent poles",
+      "Classic physics classroom teaching tool for demonstrating magnetic attraction, repulsion, and flux lines"
+    ],
+    "distractor_pool": [
+      "Electromagnet",
+      "Iron Filings Kit",
+      "Bar Magnet",
+      "Tuning Fork",
+      "Spring Dynamometer Scale"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Cutting a horseshoe magnet in half separates the north pole completely from the south pole.",
+        "verdict": "myth",
+        "explanation": "Magnetic monopoles do not exist in nature; cutting a magnet in half immediately creates two new, smaller dipoles, each with its own north and south pole.",
+        "fun_fact": "No matter how many times you slice a magnet down to microscopic crystals, each piece retains both poles."
+      },
+      {
+        "claim": "The horseshoe shape was engineered specifically to increase lifting strength.",
+        "verdict": "fact",
+        "explanation": "Bending a bar magnet into a U-shape brings both opposite magnetic poles into contact with an object simultaneously, doubling magnetic tractive force.",
+        "fun_fact": "Permanent horseshoe magnets are often stored with a soft iron bar across the poles called a 'keeper' to prevent demagnetization."
+      }
+    ],
+    "versus_candidates": [
+      "Iron Filings Kit",
+      "Acoustic Stethoscope",
+      "Tuning Fork"
+    ]
+  },
+  {
+    "id": "ENT-SCH-029",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Optical Glass Prism",
+    "language": "en",
+    "aliases": [
+      "Triangular Glass Prism",
+      "Refracting Prism",
+      "Dispersive Prism",
+      "Spectrum Prism"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A crystal clear triangular glass prism refracting a sharp shaft of white sunlight into a brilliant rainbow spectrum of red, green, and violet, 9:16 vertical view.",
+    "core_traits": [
+      "Transparent optical element with polished flat triangular faces that refract light",
+      "Separates polychromatic white light into its constituent rainbow colors via chromatic dispersion",
+      "Slowing of light wavelengths varies by frequency, bending violet light more sharply than red light",
+      "Fundamental apparatus for physics optics experiments on refraction, reflection, and light spectra"
+    ],
+    "distractor_pool": [
+      "Convex Lens",
+      "Plane Mirror",
+      "Diffraction Grating",
+      "Compound Optical Microscope",
+      "Concave Mirror"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The glass prism adds colored pigments directly to white light to create a rainbow.",
+        "verdict": "myth",
+        "explanation": "White light already contains all spectral colors combined; the prism merely splits them apart because different wavelengths travel at different speeds through glass.",
+        "fun_fact": "Sir Isaac Newton proved this in 1666 by passing the separated spectrum through a second inverted prism, recombining them back into pure white light."
+      },
+      {
+        "claim": "Prisms can produce total internal reflection without silvered mirror coatings.",
+        "verdict": "fact",
+        "explanation": "When light strikes the inner glass boundary at an angle steeper than the critical angle (around 42 degrees for crown glass), 100% of light reflects internally.",
+        "fun_fact": "Porro prisms in binoculars use total internal reflection to flip inverted images right-side up."
+      }
+    ],
+    "versus_candidates": [
+      "Compound Optical Microscope",
+      "Triangular Prism",
+      "Mechanical Balance Scale"
+    ]
+  },
+  {
+    "id": "ENT-SCH-030",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Borosilicate Chemistry Beaker",
+    "language": "en",
+    "aliases": [
+      "Griffin Beaker",
+      "Glass Beaker",
+      "Laboratory Beaker",
+      "Measuring Beaker"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A heavy-walled borosilicate glass beaker containing bubbling turquoise copper sulfate solution over a wire gauze, 9:16 vertical composition.",
+    "core_traits": [
+      "Cylindrical glass container with a flat base and a small pouring spout or beak",
+      "Constructed from low-expansion borosilicate glass capable of withstanding flame and thermal shock",
+      "Marked with graduated volumetric lines for approximate liquid volume estimation",
+      "Standard laboratory vessel for stirring, mixing, boiling, and decanting chemical reagents"
+    ],
+    "distractor_pool": [
+      "Erlenmeyer Flask",
+      "Graduated Cylinder",
+      "Glass Test Tube",
+      "Volumetric Flask",
+      "Petri Dish"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Volume markings printed on a beaker are suitable for precision analytical chemistry measurements.",
+        "verdict": "myth",
+        "explanation": "Beaker graduation markings have a wide 5% to 10% tolerance error; precise volume measurements require graduated cylinders or volumetric pipettes.",
+        "fun_fact": "The classic short and wide beaker proportions were designed in the 19th century by English chemist John Joseph Griffin."
+      },
+      {
+        "claim": "The small pouring spout on a beaker is technically termed a 'beak'.",
+        "verdict": "fact",
+        "explanation": "The distinctive pouring spout gives the vessel its name and also serves as a vent when a watch glass covers the beaker top.",
+        "fun_fact": "Beakers can be stacked inside one another if their diameters vary, saving valuable shelf space in school prep rooms."
+      }
+    ],
+    "versus_candidates": [
+      "Erlenmeyer Flask",
+      "Graduated Cylinder",
+      "Glass Test Tube"
+    ]
+  },
+  {
+    "id": "ENT-SCH-031",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Erlenmeyer Flask",
+    "language": "en",
+    "aliases": [
+      "Conical Flask",
+      "Titration Flask",
+      "Reaction Flask",
+      "Laboratory Flask"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An Erlenmeyer flask with a broad flat base and tapered narrow neck swirling with magenta phenolphthalein indicator solution, 9:16 vertical view.",
+    "core_traits": [
+      "Glass laboratory vessel featuring a wide conical body, flat base, and narrow cylindrical neck",
+      "Tapered shape allows energetic swirling and shaking of solutions without splashing liquid over the rim",
+      "Can be sealed with a rubber stopper or inverted watch glass during chemical reactions",
+      "Standard reaction container for acid-base titrations and microbiological cell culture growth"
+    ],
+    "distractor_pool": [
+      "Borosilicate Chemistry Beaker",
+      "Graduated Cylinder",
+      "Glass Test Tube",
+      "Round-Bottom Flask",
+      "Separatory Funnel"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Erlenmeyer flasks are named after a famous European city where glassblowing was founded.",
+        "verdict": "myth",
+        "explanation": "The conical flask was invented and named in 1860 by German chemist Emil Erlenmeyer.",
+        "fun_fact": "Before Erlenmeyer's design, chemists used straight beakers and frequently spilled corrosive solutions while hand-swirling them."
+      },
+      {
+        "claim": "The narrow neck of an Erlenmeyer flask significantly slows down evaporative liquid loss.",
+        "verdict": "fact",
+        "explanation": "The constricted opening reduces vapor exchange with surrounding air, which prevents solvent loss during boiling or prolonged heating.",
+        "fun_fact": "Condensation forms along the cooler tapered walls and drips back down into the solution."
+      }
+    ],
+    "versus_candidates": [
+      "Borosilicate Chemistry Beaker",
+      "Graduated Cylinder",
+      "Glass Test Tube"
+    ]
+  },
+  {
+    "id": "ENT-SCH-032",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Graduated Cylinder",
+    "language": "en",
+    "aliases": [
+      "Measuring Cylinder",
+      "Volume Cylinder",
+      "Graduated Tube",
+      "Chemistry Cylinder"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A tall glass graduated cylinder showing precise meniscus curvature of clear water against red calibrated milliliter measurement lines, 9:16 vertical shot.",
+    "core_traits": [
+      "Tall, narrow cylindrical container marked with precise graduated measurement divisions along its height",
+      "Provides significantly greater volumetric accuracy than beakers or flasks for measuring liquid volume",
+      "Features a stable hexagonal or circular plastic foot and a pouring lip at the top rim",
+      "Equipped with a plastic bumper ring near the top collar to protect against glass breakage if tipped over"
+    ],
+    "distractor_pool": [
+      "Borosilicate Chemistry Beaker",
+      "Erlenmeyer Flask",
+      "Burette",
+      "Pipette",
+      "Glass Test Tube"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "When reading liquid volume in a graduated cylinder, you should measure from the top outer edges of the liquid curve.",
+        "verdict": "myth",
+        "explanation": "Liquid volume must always be read at eye level from the center bottom of the concave meniscus for water and aqueous solutions.",
+        "fun_fact": "Mercury forms a convex inverted meniscus, meaning it must be read at the very top of its curve instead."
+      },
+      {
+        "claim": "Graduated cylinders are used in water displacement experiments to measure the volume of irregular solid objects.",
+        "verdict": "fact",
+        "explanation": "Submerging an irregular object like a rock or metal bolt causes the water level to rise by an amount exactly equal to the object's volume.",
+        "fun_fact": "This water displacement principle is the famous insight attributed to Archimedes during his bath in Syracuse."
+      }
+    ],
+    "versus_candidates": [
+      "Borosilicate Chemistry Beaker",
+      "Mechanical Balance Scale",
+      "Glass Test Tube"
+    ]
+  },
+  {
+    "id": "ENT-SCH-033",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Aneroid Barometer",
+    "language": "en",
+    "aliases": [
+      "Weather Barometer",
+      "Atmospheric Pressure Gauge",
+      "Classroom Barometer",
+      "Dial Barometer"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A vintage brass dial aneroid barometer mounted on mahogany wood, with a delicate needle indicating changing atmospheric millibars, 9:16 vertical composition.",
+    "core_traits": [
+      "Meteorological instrument that measures atmospheric air pressure without liquid mercury",
+      "Operates using a flexible sealed metallic capsule containing an internal vacuum",
+      "Atmospheric pressure changes compress or expand the capsule, mechanically moving an indicator pointer dial",
+      "Crucial classroom instrument for teaching barometric weather patterns, stormy low pressure, and fair high pressure"
+    ],
+    "distractor_pool": [
+      "Mercury Clinical Thermometer",
+      "Hygrometer",
+      "Anemometer",
+      "Spring Dynamometer Scale",
+      "Acoustic Stethoscope"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The word 'aneroid' refers to an ancient Greek scientist who discovered barometric air pressure.",
+        "verdict": "myth",
+        "explanation": "The word 'aneroid' is derived from the Greek 'a-neros', meaning 'without fluid or liquid', distinguishing it from toxic liquid mercury barometers.",
+        "fun_fact": "French engineer Lucien Vidi invented the aneroid barometer in 1844."
+      },
+      {
+        "claim": "Rapidly dropping air pressure on a barometer reliably predicts approaching stormy weather.",
+        "verdict": "fact",
+        "explanation": "Low pressure systems feature rising warm air that draws in converging moist winds, triggering condensation, cloud formation, and rainfall.",
+        "fun_fact": "Altimeters used in airplanes and hiking watches are essentially specialized aneroid barometers calibrated to measure altitude above sea level."
+      }
+    ],
+    "versus_candidates": [
+      "Mercury Clinical Thermometer",
+      "Sand Hourglass",
+      "Mechanical Balance Scale"
+    ]
+  },
+  {
+    "id": "ENT-SCH-034",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Sand Hourglass",
+    "language": "en",
+    "aliases": [
+      "Sandglass",
+      "Sand Timer",
+      "Egg Timer",
+      "Glass Clepsydra"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A wooden framed glass hourglass with fine golden sand trickling continuously through a narrow glass waist, glowing in dramatic 9:16 vertical light.",
+    "core_traits": [
+      "Time-measuring apparatus consisting of two vertical glass bulbs connected by a narrow constriction neck",
+      "Regulated by the steady gravitational flow of calibrated uniform sand granules from the upper bulb to the lower",
+      "Measures a fixed predetermined duration of time such as one minute, three minutes, or one hour",
+      "Used in classrooms and board games for timing speeches, quizzes, and turn limits"
+    ],
+    "distractor_pool": [
+      "Sundial",
+      "Digital Stopwatch",
+      "Pendulum Clock",
+      "Water Clock",
+      "Pocket Calculator"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The sand inside an hourglass flows faster when the top bulb is fuller due to higher weight pressure.",
+        "verdict": "myth",
+        "explanation": "Unlike liquids whose flow rate depends on hydrostatic head pressure, granular materials flow at a constant rate independent of pile height.",
+        "fun_fact": "Granular flow through a constriction is governed by the Beverloo equation, making hourglass timing remarkably steady throughout."
+      },
+      {
+        "claim": "Many precision hourglasses use powdered marble or spherical glass beads rather than beach sand.",
+        "verdict": "fact",
+        "explanation": "Natural beach sand contains jagged irregular grains and moisture that can clump; polished glass beads or powdered marble ensure uniform flow.",
+        "fun_fact": "Ferdinand Magellan kept 18 hourglasses on each ship to maintain accurate dead-reckoning navigation logs during his circumnavigation."
+      }
+    ],
+    "versus_candidates": [
+      "Aneroid Barometer",
+      "Mechanical Balance Scale",
+      "Classroom Desk Globe"
+    ]
+  },
+  {
+    "id": "ENT-SCH-035",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Laboratory Bunsen Burner",
+    "language": "en",
+    "aliases": [
+      "Gas Burner",
+      "Teclu Burner",
+      "Science Burner",
+      "Laboratory Gas Burner"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A cast-iron Bunsen burner connected to a rubber gas tube roaring with an intense, clean, roaring blue conical flame in a dark chemistry lab, 9:16 vertical view.",
+    "core_traits": [
+      "Metal laboratory device that produces a single open gas flame for heating, sterilization, and combustion tests",
+      "Connected via flexible rubber hose to natural gas or liquefied petroleum gas fuel sources",
+      "Features an adjustable rotating air collar at the base of the barrel to regulate oxygen pre-mixing",
+      "Produces a luminous orange safety flame when air holes are closed, and an intense non-luminous blue flame when opened"
+    ],
+    "distractor_pool": [
+      "Alcohol Lamp",
+      "Hot Plate",
+      "Electric Heating Mantle",
+      "Butane Torch",
+      "Matches"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Robert Bunsen completely invented the gas burner alone from scratch.",
+        "verdict": "myth",
+        "explanation": "Bunsen refined and popularized an earlier design created by Michael Faraday, with German instrument maker Peter Desaga engineering the actual burner mechanics.",
+        "fun_fact": "Bunsen never patented the burner because he believed scientific apparatus should be freely accessible to all researchers."
+      },
+      {
+        "claim": "The hottest part of a Bunsen flame is just above the tip of the inner blue cone.",
+        "verdict": "fact",
+        "explanation": "At the tip of the inner luminous cone, stoichiometric combustion is complete, reaching peak temperatures exceeding 1,500 degrees Celsius.",
+        "fun_fact": "The yellow safety flame is cooler and deposits sooty unburned carbon on glassware if used for heating."
+      }
+    ],
+    "versus_candidates": [
+      "Glass Test Tube",
+      "Borosilicate Chemistry Beaker",
+      "Erlenmeyer Flask"
+    ]
+  },
+  {
+    "id": "ENT-SCH-036",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Anatomical Skeleton Model",
+    "language": "en",
+    "aliases": [
+      "Plastic Skeleton",
+      "Classroom Skeleton",
+      "Osteology Model",
+      "Life-Size Skeleton"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A full-size articulate plastic human skeleton standing suspended from a wheeled metal stand in a high school biology lab, 9:16 vertical composition.",
+    "core_traits": [
+      "Life-size educational anatomical replica representing the 206 bones of the adult human body",
+      "Constructed from durable PVC plastic casts with articulating wire and spring joints",
+      "Features removable calvarium skull cap, spring-loaded jaw, and flexible spinal column",
+      "Used in biology and health classrooms to teach bone names, joint mobility, and skeletal posture"
+    ],
+    "distractor_pool": [
+      "Anatomical Human Eye Model",
+      "Torso Anatomy Model",
+      "Human Brain Model",
+      "CPR Mannequin",
+      "Dental Model"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Human skeleton models in old schools were always made of plastic.",
+        "verdict": "myth",
+        "explanation": "Until ethical laws and plastic molding took over in the late 20th century, school osteology models were routinely real human bones sourced from overseas.",
+        "fun_fact": "India was the primary global exporter of real human osteological skeletons to universities and high schools until 1985."
+      },
+      {
+        "claim": "An adult human skeleton has 206 distinct bones, whereas babies are born with around 270.",
+        "verdict": "fact",
+        "explanation": "Infants are born with many cartilaginous bone segments that gradually fuse together during childhood, such as the cranial plates and sacral vertebrae.",
+        "fun_fact": "The femur (thigh bone) is the longest, heaviest, and strongest bone represented on the classroom skeleton."
+      }
+    ],
+    "versus_candidates": [
+      "Anatomical Human Eye Model",
+      "Compound Optical Microscope",
+      "School First Aid Kit Box"
+    ]
+  },
+  {
+    "id": "ENT-SCH-037",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Solar System Desk Mobile",
+    "language": "en",
+    "aliases": [
+      "Orrery",
+      "Planetary Model",
+      "Orbit Mobile",
+      "Astronomy Model"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A mechanical brass orrery with painted planetary spheres revolving at proportional speeds around a glowing sun bulb, 9:16 vertical lighting.",
+    "core_traits": [
+      "Mechanical or hanging model depicting the planets revolving around the central Sun",
+      "Shows relative orbital order: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune",
+      "Mounted on geared brass arms or lightweight ceiling balance wire mobiles",
+      "Classroom demonstration tool for explaining planetary revolution, retrograde motion, and seasons"
+    ],
+    "distractor_pool": [
+      "Classroom Desk Globe",
+      "Telescope",
+      "Armillary Sphere",
+      "Planisphere Star Chart",
+      "Geometric Cube"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Classroom solar system models accurately portray both planetary sizes and orbital distances to true scale.",
+        "verdict": "myth",
+        "explanation": "If planetary sizes and distances were kept to true scale, the model would require miles of empty space between pinhead planets.",
+        "fun_fact": "If Earth were the size of a marble, Neptune would have to be placed over two miles away."
+      },
+      {
+        "claim": "Mechanical planetary clockwork models are formally known as orreries.",
+        "verdict": "fact",
+        "explanation": "In 1704, clockmakers George Graham and John Rowley created a mechanical solar model for Charles Boyle, the 4th Earl of Orrery, naming the device after him.",
+        "fun_fact": "Traditional orreries used intricate gear train ratios to model exact astronomical ephemeris periods."
+      }
+    ],
+    "versus_candidates": [
+      "Classroom Desk Globe",
+      "Compound Optical Microscope",
+      "Optical Glass Prism"
+    ]
+  },
+  {
+    "id": "ENT-SCH-038",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Anatomical Human Eye Model",
+    "language": "en",
+    "aliases": [
+      "Eyeball Model",
+      "Vision Model",
+      "Ocular Teaching Aid",
+      "Dissectible Eye Model"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A brightly painted enlarged anatomical model of the human eyeball resting on a white stand with detachable cornea and vitreous body, 9:16 vertical view.",
+    "core_traits": [
+      "Enlarged physical teaching model replicating the structures of the human eye",
+      "Disassembles into component parts including cornea, iris, crystalline lens, retina, and optic nerve",
+      "Shows external extraocular muscles and internal vascular choroid layers",
+      "Used in sensory biology units to demonstrate how lenses focus inverted images onto photoreceptor rods and cones"
+    ],
+    "distractor_pool": [
+      "Anatomical Skeleton Model",
+      "Compound Optical Microscope",
+      "Optical Glass Prism",
+      "Ear Model",
+      "Brain Model"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The human eye lens focuses images upright directly onto the brain.",
+        "verdict": "myth",
+        "explanation": "The eye's convex lens projects an upside-down, reversed image onto the retina; the brain's visual cortex flips the perception right-side up.",
+        "fun_fact": "Experiments with inverted prism goggles prove the human brain can adapt and flip upside-down vision upright in about a week."
+      },
+      {
+        "claim": "The human eye possesses a natural blind spot where the optic nerve exits the retina.",
+        "verdict": "fact",
+        "explanation": "The optic disc contains no light-detecting rod or cone photoreceptor cells, creating a physiological blind spot mapped in eye model lessons.",
+        "fun_fact": "Our visual cortex seamlessly fills in the blind spot gap using visual information from the surrounding retina and the opposite eye."
+      }
+    ],
+    "versus_candidates": [
+      "Anatomical Skeleton Model",
+      "Compound Optical Microscope",
+      "Optical Glass Prism"
+    ]
+  },
+  {
+    "id": "ENT-SCH-039",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Mechanical Balance Scale",
+    "language": "en",
+    "aliases": [
+      "Two-Pan Balance",
+      "Beam Balance",
+      "Laboratory Scale",
+      "Equal-Arm Balance"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A polished brass double-pan beam balance scale with brass gram weights in one pan balancing an apple in the other, 9:16 vertical framing.",
+    "core_traits": [
+      "Weighing apparatus operating on the lever principle with a central fulcrum and two equal-length arms",
+      "Features two suspended pans for comparing an unknown mass against calibrated reference brass weights",
+      "A vertical center needle pointer indicates equilibrium balance when centered at zero",
+      "Teaches students fundamental physics concepts of mass, weight, equilibrium, and torque balance"
+    ],
+    "distractor_pool": [
+      "Spring Dynamometer Scale",
+      "Digital Lab Balance",
+      "Pocket Calculator",
+      "Graduated Cylinder",
+      "Tuning Fork"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A beam balance measures weight rather than true mass.",
+        "verdict": "myth",
+        "explanation": "A beam balance compares gravitational forces equally on both pans; because gravity affects both pans identically, it measures invariant mass, not variable weight.",
+        "fun_fact": "An equal-arm balance would measure the exact same mass for an object on the Moon as it does on Earth."
+      },
+      {
+        "claim": "The mechanical principle of the balance scale relies on Archimedes' law of the lever.",
+        "verdict": "fact",
+        "explanation": "Torque is force multiplied by distance from the pivot; equal distances ensure equilibrium occurs when opposing gravitational forces match.",
+        "fun_fact": "Ancient Egyptian papyri depicted the heart of the deceased being weighed on a balance scale against the feather of Ma'at."
+      }
+    ],
+    "versus_candidates": [
+      "Spring Dynamometer Scale",
+      "Graduated Cylinder",
+      "Sand Hourglass"
+    ]
+  },
+  {
+    "id": "ENT-SCH-040",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Spring Dynamometer Scale",
+    "language": "en",
+    "aliases": [
+      "Spring Balance",
+      "Newton Meter",
+      "Force Gauge",
+      "Tension Scale"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A transparent cylindrical spring dynamometer hanging vertically with an extended internal coil spring measuring tension in Newtons, 9:16 vertical view.",
+    "core_traits": [
+      "Handheld force-measuring instrument consisting of a coiled steel spring enclosed in a clear calibrated sleeve",
+      "Features a top suspension ring and a bottom hook to hang masses or pull objects",
+      "Calibrated in Newtons (N) for force and grams (g) for mass equivalence",
+      "Used in science labs to demonstrate Hooke's Law and measure kinetic friction forces"
+    ],
+    "distractor_pool": [
+      "Mechanical Balance Scale",
+      "Horseshoe Magnet",
+      "Wooden Ruler",
+      "Tuning Fork",
+      "Aneroid Barometer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A spring balance measures the exact same weight anywhere in the universe.",
+        "verdict": "myth",
+        "explanation": "A spring balance measures gravitational pulling force; on the Moon, where gravity is one-sixth of Earth, the spring extends only one-sixth as far.",
+        "fun_fact": "Unlike a two-pan beam balance, a spring balance reads different values on different planets."
+      },
+      {
+        "claim": "The extension of the spring is directly proportional to the applied load within its elastic limit.",
+        "verdict": "fact",
+        "explanation": "This is Hooke's Law (F = k * x), stating that spring displacement is linear until the material exceeds its permanent deformation threshold.",
+        "fun_fact": "Robert Hooke first published his law as an anagram 'ceiiinosssttuv' in 1676 to protect his intellectual priority."
+      }
+    ],
+    "versus_candidates": [
+      "Mechanical Balance Scale",
+      "Wooden Ruler",
+      "Horseshoe Magnet"
+    ]
+  },
+  {
+    "id": "ENT-SCH-041",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Glass Petri Dish",
+    "language": "en",
+    "aliases": [
+      "Culture Dish",
+      "Cell Culture Plate",
+      "Agar Plate",
+      "Bacterial Culture Dish"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A round glass petri dish layered with red nutrient agar, showing colorful microbial colonies growing in streak patterns, 9:16 vertical macro shot.",
+    "core_traits": [
+      "Shallow cylindrical transparent glass or polystyrene dish with an overlapping flat lid",
+      "Filled with nutrient agar jelly to culture bacteria, yeasts, and microscopic fungi",
+      "Transparent design enables microscopic observation without lifting the sterile lid",
+      "Essential microbiological supply for school biology swab and hygiene experiments"
+    ],
+    "distractor_pool": [
+      "Glass Test Tube",
+      "Borosilicate Chemistry Beaker",
+      "Optical Glass Prism",
+      "Microscope Slide",
+      "Watch Glass"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Petri dishes were named after the Latin word for stone, 'petra'.",
+        "verdict": "myth",
+        "explanation": "The dish was named after German bacteriologist Julius Richard Petri, who invented it in 1887 while working as an assistant to Robert Koch.",
+        "fun_fact": "Before Petri's invention, microbiologists grew bacterial cultures on cumbersome glass bell jars and flat potato slices."
+      },
+      {
+        "claim": "Alexander Fleming discovered penicillin by accident in a contaminated petri dish.",
+        "verdict": "fact",
+        "explanation": "In 1928, Fleming returned from vacation to find mold spore contamination in a Staphylococcus petri dish that had dissolved bacteria around it.",
+        "fun_fact": "Petri dishes are stored and incubated upside-down to prevent condensation droplets from falling onto growing bacterial colonies."
+      }
+    ],
+    "versus_candidates": [
+      "Compound Optical Microscope",
+      "Glass Test Tube",
+      "Sterile Cotton Swab"
+    ]
+  },
+  {
+    "id": "ENT-SCH-042",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Tuning Fork",
+    "language": "en",
+    "aliases": [
+      "Acoustic Resonator",
+      "Pitch Fork",
+      "Sound Wave Resonator",
+      "Acoustic Tuning Fork"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A polished steel two-pronged tuning fork vibrating rapidly, sending circular water ripples splashing from a beaker, 9:16 vertical view.",
+    "core_traits": [
+      "Two-pronged metal fork forged from steel or aluminum with a handle stem",
+      "Emits a pure sinusoidal acoustic tone when struck against a rubber mallet or pad",
+      "Vibrates at a specific fixed pitch frequency stamped on the base, such as A440 or C512",
+      "Classic physics classroom apparatus for teaching resonance, sound frequency, and Doppler effects"
+    ],
+    "distractor_pool": [
+      "Tuning Whistle",
+      "Metronome",
+      "Spring Dynamometer Scale",
+      "Horseshoe Magnet",
+      "Acoustic Stethoscope"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Striking a tuning fork harder increases the musical pitch frequency it produces.",
+        "verdict": "myth",
+        "explanation": "Striking harder increases the amplitude (loudness/volume), but the fundamental pitch frequency remains constant as determined by prong length and stiffness.",
+        "fun_fact": "The tuning fork was invented in 1711 by British royal trumpeter and lutenist John Shore."
+      },
+      {
+        "claim": "Pressing the base of a vibrating tuning fork against a wooden tabletop amplifies its sound dramatically.",
+        "verdict": "fact",
+        "explanation": "The stem transmits vibrations into the large wooden surface, forcing the table to resonate as a soundboard and move vastly more air molecules.",
+        "fun_fact": "Medical tuning forks are used by doctors in the Rinne and Weber tests to diagnose conductive hearing loss."
+      }
+    ],
+    "versus_candidates": [
+      "Acoustic Stethoscope",
+      "Horseshoe Magnet",
+      "Optical Glass Prism"
+    ]
+  },
+  {
+    "id": "ENT-SCH-043",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_science",
+    "name": "Iron Filings Kit",
+    "language": "en",
+    "aliases": [
+      "Magnetic Field Filings",
+      "Iron Powder",
+      "Magnetism Demonstrator",
+      "Iron Shavings"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Dark metallic iron filings aligning into curved 3D magnetic field arches on paper above a concealed permanent magnet, 9:16 vertical macro view.",
+    "core_traits": [
+      "Jar or sealed clear plastic case filled with tiny ferromagnetic iron metal shavings",
+      "Aligns instantly along magnetic flux vectors when placed near a permanent or electromagnet",
+      "Visually reveals invisible magnetic lines of force connecting north and south poles",
+      "Standard elementary and middle school demonstration aid for physical science units"
+    ],
+    "distractor_pool": [
+      "Horseshoe Magnet",
+      "Sand Hourglass",
+      "Steel Paperclip",
+      "Spring Dynamometer Scale",
+      "Optical Glass Prism"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Iron filings are permanently magnetized on their own before touching a magnet.",
+        "verdict": "myth",
+        "explanation": "Iron filings are soft ferromagnetic material; their internal magnetic domains align temporarily only in the presence of an external magnetic field.",
+        "fun_fact": "Once the external magnet is pulled away, thermal agitation scrambles the filings' domains and they lose their magnetism."
+      },
+      {
+        "claim": "Magnetic field lines revealed by iron filings never cross or intersect one another.",
+        "verdict": "fact",
+        "explanation": "At any point in space, the net magnetic field has only one single resultant direction vector, meaning field lines can never cross.",
+        "fun_fact": "Sealed sensory bubble cases containing iron filings suspended in mineral oil prevent rusty messes in elementary science classrooms."
+      }
+    ],
+    "versus_candidates": [
+      "Horseshoe Magnet",
+      "Drawing Compass",
+      "Steel Paperclip"
+    ]
+  },
+  {
+    "id": "ENT-SCH-044",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Geometric Cube",
+    "language": "en",
+    "aliases": [
+      "Regular Hexahedron",
+      "Solid Cube",
+      "Square Block",
+      "Equilateral Prism"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A polished wooden geometric cube casting crisp shadows on grid paper, displaying six identical square faces, 9:16 vertical isometric perspective.",
+    "core_traits": [
+      "Three-dimensional Platonic solid bounded by six congruent square faces",
+      "Possesses exactly 6 faces, 12 equal-length edges, and 8 vertices",
+      "All adjacent edges meet at perpendicular right angles of 90 degrees",
+      "Fundamental classroom geometric shape used for calculating volume (edge cubed) and surface area"
+    ],
+    "distractor_pool": [
+      "Solid Sphere",
+      "Circular Cylinder",
+      "Square Pyramid",
+      "Rectangular Prism",
+      "Triangular Prism"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A cube has more faces than it has vertices.",
+        "verdict": "myth",
+        "explanation": "A cube has 6 faces and 8 vertices, meaning it has fewer faces than vertices; according to Euler's formula, F + V - E = 6 + 8 - 12 = 2.",
+        "fun_fact": "The cube is the only regular hexahedron among the five classical Platonic solids."
+      },
+      {
+        "claim": "Standard game dice are cubes whose opposite faces always sum to seven.",
+        "verdict": "fact",
+        "explanation": "On standard six-sided cubic dice, 1 is opposite 6, 2 is opposite 5, and 3 is opposite 4, consistently summing to 7.",
+        "fun_fact": "Cube-shaped salt crystals (halite) naturally grow with 90-degree cubic cleavage due to their alternating sodium and chloride ionic lattice."
+      }
+    ],
+    "versus_candidates": [
+      "Solid Sphere",
+      "Square Pyramid",
+      "Circular Cylinder"
+    ]
+  },
+  {
+    "id": "ENT-SCH-045",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Solid Sphere",
+    "language": "en",
+    "aliases": [
+      "Round Ball",
+      "Perfect Sphere",
+      "3D Circle",
+      "Geometric Sphere"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A pristine glossy blue geometric sphere reflecting a studio spotlight, perfectly round from every angle, 9:16 vertical composition.",
+    "core_traits": [
+      "Perfectly symmetrical three-dimensional geometric body",
+      "Set of all points in three-dimensional space equidistant from a central core point",
+      "Possesses exactly 1 continuous curved surface, 0 edges, and 0 vertices",
+      "Has the minimal surface area possible for any given internal volume"
+    ],
+    "distractor_pool": [
+      "Geometric Cube",
+      "Circular Cylinder",
+      "Conical Cone",
+      "Torus",
+      "Solid Hemisphere"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A sphere has an infinite number of edges and vertices.",
+        "verdict": "myth",
+        "explanation": "In formal Euclidean solid geometry, a sphere is defined with exactly zero edges and zero vertices because it is bounded by a single continuous smooth manifold.",
+        "fun_fact": "Water droplets and soap bubbles naturally pull themselves into spheres because surface tension minimizes surface area."
+      },
+      {
+        "claim": "The volume of a sphere is exactly two-thirds the volume of its circumscribed cylinder.",
+        "verdict": "fact",
+        "explanation": "Archimedes proved that a sphere has 2/3 the volume and 2/3 the surface area of a cylinder enclosing it, considering this his greatest discovery.",
+        "fun_fact": "Archimedes requested that a sphere carved inside a cylinder be engraved upon his tombstone."
+      }
+    ],
+    "versus_candidates": [
+      "Geometric Cube",
+      "Circular Cylinder",
+      "Conical Cone"
+    ]
+  },
+  {
+    "id": "ENT-SCH-046",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Circular Cylinder",
+    "language": "en",
+    "aliases": [
+      "Right Cylinder",
+      "Cylindrical Column",
+      "Round Cylinder",
+      "Circular Prism"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A sleek wooden geometric cylinder standing upright, showing circular parallel top and bottom faces and a curved lateral surface, 9:16 vertical view.",
+    "core_traits": [
+      "Three-dimensional geometric solid formed by two parallel congruent circular bases joined by a curved surface",
+      "Possesses 3 faces (2 flat circular bases and 1 curved lateral face), 2 curved edges, and 0 vertices",
+      "Unfolding the curved lateral surface creates a flat rectangle whose width equals the base circumference",
+      "Universal shape found in pipes, drinking glasses, batteries, and school chalk sticks"
+    ],
+    "distractor_pool": [
+      "Conical Cone",
+      "Solid Sphere",
+      "Geometric Cube",
+      "Triangular Prism",
+      "Torus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Unrolling the lateral curved side of a right cylinder produces a circle.",
+        "verdict": "myth",
+        "explanation": "Unrolling the curved lateral surface produces a flat rectangle with height h and length equal to 2 * pi * r.",
+        "fun_fact": "The surface area formula (2 * pi * r * h + 2 * pi * r^2) directly reflects this combination of rectangle and two circles."
+      },
+      {
+        "claim": "Cylindrical columns are widely used in architecture because their curves distribute compressive weight evenly.",
+        "verdict": "fact",
+        "explanation": "Without sharp corners to concentrate stress, cylinders carry heavy vertical compressive loads with remarkable structural efficiency.",
+        "fun_fact": "Drink cans are shaped as cylinders because they hold more volume per metal surface than rectangular boxes while resisting internal carbonation pressure."
+      }
+    ],
+    "versus_candidates": [
+      "Conical Cone",
+      "Geometric Cube",
+      "Solid Sphere"
+    ]
+  },
+  {
+    "id": "ENT-SCH-047",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Conical Cone",
+    "language": "en",
+    "aliases": [
+      "Circular Cone",
+      "Right Cone",
+      "Geometric Cone",
+      "Funnel Solid"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A smooth wooden right circular cone standing on its circular base, tapering gracefully to an apex point, 9:16 vertical studio framing.",
+    "core_traits": [
+      "Three-dimensional solid that tapers smoothly from a flat circular base to an apex vertex point",
+      "Possesses 2 faces (1 flat circular base and 1 curved lateral side), 1 circular edge, and 1 vertex",
+      "Slicing a cone at various angles produces the four classic conic sections: circle, ellipse, parabola, hyperbola",
+      "Familiar shape in everyday life such as ice cream cones, traffic pylons, and party hats"
+    ],
+    "distractor_pool": [
+      "Square Pyramid",
+      "Circular Cylinder",
+      "Solid Sphere",
+      "Triangular Prism",
+      "Geometric Cube"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A cone has the same volume as a cylinder with the same base radius and height.",
+        "verdict": "myth",
+        "explanation": "The volume of a cone is exactly one-third (1/3) the volume of a cylinder having identical base radius and vertical height.",
+        "fun_fact": "You can pour exactly three full cones of water into a cylinder of matching height and diameter."
+      },
+      {
+        "claim": "All four fundamental orbital trajectory curves are generated by cross-sections of a cone.",
+        "verdict": "fact",
+        "explanation": "Conic sections discovered by Apollonius of Perga—circles, ellipses, parabolas, and hyperbolas—describe planetary and spacecraft orbital paths.",
+        "fun_fact": "An ellipse is simply a cone sliced at an angle steeper than the base but shallower than the side."
+      }
+    ],
+    "versus_candidates": [
+      "Square Pyramid",
+      "Circular Cylinder",
+      "Solid Sphere"
+    ]
+  },
+  {
+    "id": "ENT-SCH-048",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Square Pyramid",
+    "language": "en",
+    "aliases": [
+      "Regular Pyramid",
+      "Four-Sided Pyramid",
+      "Pentahedron",
+      "Egyptian Pyramid Model"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A sand-colored square pyramid geometry model showing four sloping triangular faces converging to an apex under warm lighting, 9:16 vertical view.",
+    "core_traits": [
+      "Three-dimensional polyhedron with a square base and four congruent triangular lateral faces",
+      "Possesses exactly 5 faces (1 square base, 4 triangles), 8 straight edges, and 5 vertices",
+      "Triangular side faces converge at a single upper apex point directly over the base center",
+      "Iconic architectural geometry of the Great Pyramids of Giza"
+    ],
+    "distractor_pool": [
+      "Conical Cone",
+      "Triangular Prism",
+      "Geometric Cube",
+      "Regular Tetrahedron",
+      "Regular Hexagon"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "All pyramids must have a triangular base.",
+        "verdict": "myth",
+        "explanation": "A pyramid can have any polygon as its base (triangle, square, pentagon, hexagon); the classic Egyptian pyramid is specifically a square pyramid.",
+        "fun_fact": "A pyramid with a triangular base is called a tetrahedron, which has 4 faces instead of 5."
+      },
+      {
+        "claim": "The volume of a square pyramid is exactly one-third of the area of the base times its perpendicular height.",
+        "verdict": "fact",
+        "explanation": "Like a cone, a pyramid's volume formula is V = (1/3) * Base Area * height, occupying one-third of a corresponding square prism.",
+        "fun_fact": "The Great Pyramid of Giza stood as the tallest man-made structure on Earth for more than 3,800 years."
+      }
+    ],
+    "versus_candidates": [
+      "Conical Cone",
+      "Geometric Cube",
+      "Triangular Prism"
+    ]
+  },
+  {
+    "id": "ENT-SCH-049",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Triangular Prism",
+    "language": "en",
+    "aliases": [
+      "Three-Sided Prism",
+      "Wedge Polyhedron",
+      "Triangular Cylinder",
+      "Pentahedron Prism"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A clear acrylic triangular prism resting on its rectangular side, refracting light through its parallel triangular end faces, 9:16 vertical view.",
+    "core_traits": [
+      "Three-dimensional polyhedron bounded by two congruent triangular bases and three rectangular lateral faces",
+      "Possesses exactly 5 faces (2 triangles, 3 rectangles), 9 straight edges, and 6 vertices",
+      "The triangular ends are parallel and identical in shape and size",
+      "Classic geometric profile seen in traditional house roof trusses, camping tents, and Toblerone chocolate bars"
+    ],
+    "distractor_pool": [
+      "Square Pyramid",
+      "Regular Tetrahedron",
+      "Geometric Cube",
+      "Circular Cylinder",
+      "Conical Cone"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A triangular prism and a triangular pyramid are identical geometric shapes.",
+        "verdict": "myth",
+        "explanation": "A triangular prism has 5 faces with two parallel triangular bases joined by rectangles; a triangular pyramid (tetrahedron) has 4 triangular faces meeting at a single apex.",
+        "fun_fact": "A triangular prism has 6 vertices and 9 edges, whereas a tetrahedron has 4 vertices and 6 edges."
+      },
+      {
+        "claim": "The volume of a triangular prism is calculated by multiplying the area of one triangular base by the length of the prism.",
+        "verdict": "fact",
+        "explanation": "Because cross-sections parallel to the bases are identical, volume equals the base triangle's area (1/2 * b * h) multiplied by the prism's height/length.",
+        "fun_fact": "Triangular trusses are the most rigid structural shape because triangles cannot deform without changing edge lengths."
+      }
+    ],
+    "versus_candidates": [
+      "Square Pyramid",
+      "Optical Glass Prism",
+      "Geometric Cube"
+    ]
+  },
+  {
+    "id": "ENT-SCH-050",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Regular Hexagon",
+    "language": "en",
+    "aliases": [
+      "Six-Sided Polygon",
+      "Honeycomb Shape",
+      "Hexagonal Ring",
+      "Equilateral Hexagon"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A geometric regular hexagon drawn in crisp golden ratio lines, tiling seamlessly into a natural honeybee honeycomb grid, 9:16 vertical composition.",
+    "core_traits": [
+      "Two-dimensional regular polygon with six equal sides and six equal interior angles",
+      "Each interior angle measures exactly 120 degrees, summing to 720 degrees total",
+      "Tiles a two-dimensional Euclidean plane perfectly without gaps or overlaps (tessellation)",
+      "Universal natural shape seen in honeycombs, basalt columns, snowflakes, and benzene chemical rings"
+    ],
+    "distractor_pool": [
+      "Octagon",
+      "Equilateral Triangle",
+      "Regular Pentagon",
+      "Diamond Shape",
+      "Geometric Cube"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Honeybees deliberately carve hexagonal beeswax cells with tiny circular compass motions.",
+        "verdict": "myth",
+        "explanation": "Bees initially construct circular wax tubes; surface tension and thermodynamic heat from their bodies pull the soft wax into optimal hexagonal junctions.",
+        "fun_fact": "The honeycomb conjecture proved that hexagons provide the most perimeter-efficient way to divide a plane into equal areas."
+      },
+      {
+        "claim": "A regular hexagon can be decomposed into six congruent equilateral triangles.",
+        "verdict": "fact",
+        "explanation": "Connecting all opposite vertices through the center creates six identical equilateral triangles, each having 60-degree angles.",
+        "fun_fact": "Every water snowflake crystal naturally grows with six-fold hexagonal symmetry due to the 104.5-degree hydrogen bond angle of water molecules."
+      }
+    ],
+    "versus_candidates": [
+      "Octagon",
+      "Equilateral Triangle",
+      "Geometric Cube"
+    ]
+  },
+  {
+    "id": "ENT-SCH-051",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Logarithmic Spiral",
+    "language": "en",
+    "aliases": [
+      "Golden Spiral",
+      "Equiangular Spiral",
+      "Growth Spiral",
+      "Spira Mirabilis"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A glowing mathematical logarithmic spiral tracing through a cross-section of a nautilus shell against dark slate, 9:16 vertical golden ratio view.",
+    "core_traits": [
+      "Self-similar geometric spiral curve whose radius grows exponentially with angle",
+      "Maintains a constant angle between the tangent line and the radial line at every point",
+      "Closely approximates the golden spiral derived from Fibonacci numbers and the golden ratio (phi)",
+      "Observed universally in nautilus shells, sunflower seed heads, spiral galaxies, and hurricane storm bands"
+    ],
+    "distractor_pool": [
+      "Archimedean Spiral",
+      "Conical Cone",
+      "Solid Sphere",
+      "Circular Cylinder",
+      "Geometric Torus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "An Archimedean spiral and a logarithmic spiral are mathematically the same curve.",
+        "verdict": "myth",
+        "explanation": "In an Archimedean spiral (like a coiled rope or vinyl record groove), distance between coils is constant; in a logarithmic spiral, distance expands exponentially.",
+        "fun_fact": "Swiss mathematician Jacob Bernoulli was so enchanted by the curve that he dubbed it 'spira mirabilis' (the miraculous spiral)."
+      },
+      {
+        "claim": "Flying insects often fly in logarithmic spirals when approaching an artificial light source at night.",
+        "verdict": "fact",
+        "explanation": "Moths navigate by keeping celestial light at a constant visual angle; near a close light bulb, maintaining a fixed angle forces a inward spiral path.",
+        "fun_fact": "Peregrine falcons dive toward prey in logarithmic spiral paths to maintain optimal binocular vision while plummeting."
+      }
+    ],
+    "versus_candidates": [
+      "Regular Hexagon",
+      "Five-Pointed Star",
+      "Conical Cone"
+    ]
+  },
+  {
+    "id": "ENT-SCH-052",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Crescent Moon Shape",
+    "language": "en",
+    "aliases": [
+      "Lune",
+      "Meniscus Shape",
+      "Sickle Curve",
+      "Crescent"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A delicate silver crescent moon shape glowing against deep indigo sky, showing crisp convex outer curve and concave inner cusp, 9:16 vertical view.",
+    "core_traits": [
+      "Two-dimensional concave geometric figure bounded by two circular arcs of different radii",
+      "Possesses one convex outer boundary arc and one concave inner boundary arc meeting at two sharp points or cusps",
+      "Formally known in Euclidean geometry as a lune",
+      "Universal astronomical symbol representing lunar waxing and waning phases"
+    ],
+    "distractor_pool": [
+      "Five-Pointed Star",
+      "Heart Shape",
+      "Solid Sphere",
+      "Diamond Shape",
+      "Regular Hexagon"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Moon takes on a crescent shape because Earth casts a curved shadow on it.",
+        "verdict": "myth",
+        "explanation": "Earth's shadow causes lunar eclipses, not regular moon phases; a crescent phase occurs because we view the day/night terminator line at an oblique angle.",
+        "fun_fact": "The Greek mathematician Hippocrates of Chios proved in 440 BCE that certain lunes bounded by circular arcs can be exactly squared."
+      },
+      {
+        "claim": "The word 'crescent' is derived from the Latin term for growing or waxing.",
+        "verdict": "fact",
+        "explanation": "It comes from the Latin verb 'crescere', originally referring specifically to the growing young waxing moon following the new moon.",
+        "fun_fact": "The crescent and star symbol became widely associated with the Ottoman Empire and features on many national flags today."
+      }
+    ],
+    "versus_candidates": [
+      "Five-Pointed Star",
+      "Solid Sphere",
+      "Heart Shape"
+    ]
+  },
+  {
+    "id": "ENT-SCH-053",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Five-Pointed Star",
+    "language": "en",
+    "aliases": [
+      "Pentagram",
+      "Star Polygon",
+      "Five-Arm Star",
+      "Pentalpha"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A shimmering golden five-pointed star embossed on a blue school achievement award certificate, illuminated under 9:16 vertical lighting.",
+    "core_traits": [
+      "Self-intersecting regular star polygon with five triangular points radiating from a central core",
+      "Possesses 10 sides and 10 vertices (5 outer acute points and 5 inner reflex vertices)",
+      "Inner connecting chords naturally enclose a central regular pentagon",
+      "Universal grading symbol used by schoolteachers on student tests to reward excellence"
+    ],
+    "distractor_pool": [
+      "Regular Hexagon",
+      "Crescent Moon Shape",
+      "Diamond Shape",
+      "Heart Shape",
+      "Equilateral Triangle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The lines in a regular five-pointed star intersect at arbitrary, random mathematical ratios.",
+        "verdict": "myth",
+        "explanation": "Every intersecting segment in a regular pentagram divides the longer line in exact golden ratio proportions (phi = 1.618033...).",
+        "fun_fact": "Pythagoreans adopted the five-pointed star as the secret symbol of their philosophical brotherhood because of its golden ratio perfection."
+      },
+      {
+        "claim": "A regular five-pointed star can be drawn continuously with one stroke without lifting the pencil.",
+        "verdict": "fact",
+        "explanation": "Connecting every second vertex of a regular pentagon traces all five outer points in a continuous unicursal loop.",
+        "fun_fact": "More than 60 national flags across the world feature one or more five-pointed stars."
+      }
+    ],
+    "versus_candidates": [
+      "Crescent Moon Shape",
+      "Regular Hexagon",
+      "Equilateral Triangle"
+    ]
+  },
+  {
+    "id": "ENT-SCH-054",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Heart Shape",
+    "language": "en",
+    "aliases": [
+      "Cardioid",
+      "Valentine Heart",
+      "Heart Symbol",
+      "Heart Glyph"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A vibrant crimson stylized heart shape cut from felt resting on ruled notebook paper beside a handwritten valentine poem, 9:16 vertical macro view.",
+    "core_traits": [
+      "Two-dimensional symmetrical ideograph featuring two rounded lobes at the top and a sharp pointed cusp at the bottom",
+      "Closely related mathematically to the cardioid curve traced by a point on the perimeter of a rolling circle",
+      "Universal cultural visual symbol signifying romantic love, affection, kindness, and emotional warmth",
+      "Prominent in school Valentine's Day paper card crafts and digital emoji reactions"
+    ],
+    "distractor_pool": [
+      "Diamond Shape",
+      "Crescent Moon Shape",
+      "Five-Pointed Star",
+      "Solid Sphere",
+      "Equilateral Triangle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The traditional heart symbol accurately mimics the anatomical shape of the human organ.",
+        "verdict": "myth",
+        "explanation": "The human biological heart is an asymmetrical, fist-sized muscular pump without upper lobes or a sharp bottom point.",
+        "fun_fact": "Historians believe the symbol was inspired by the seed pod of the ancient giant fennel silphium, used as an herb in ancient Cyrene."
+      },
+      {
+        "claim": "A heart shape can be generated by a precise algebraic equation.",
+        "verdict": "fact",
+        "explanation": "Equations such as (x^2 + y^2 - 1)^3 - x^2 * y^3 = 0 plot an exact three-dimensional or two-dimensional symmetrical heart curve on Cartesian graph paper.",
+        "fun_fact": "Graphing heart equations on graphing calculators is a classic Valentine math tradition."
+      }
+    ],
+    "versus_candidates": [
+      "Diamond Shape",
+      "Five-Pointed Star",
+      "Anatomical Skeleton Model"
+    ]
+  },
+  {
+    "id": "ENT-SCH-055",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Diamond Shape",
+    "language": "en",
+    "aliases": [
+      "Rhombus",
+      "Lozenge",
+      "Skew Square",
+      "Equilateral Parallelogram"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A glossy red diamond shape printed on a playing card suit resting on green felt, showing four equal sides and acute vertical vertices, 9:16 vertical view.",
+    "core_traits": [
+      "Two-dimensional quadrilateral having all four sides of equal length",
+      "Opposite sides are parallel and opposite angles are equal (an equilateral parallelogram)",
+      "Diagonals bisect each other perpendicularly at 90-degree angles",
+      "Standard suit symbol in traditional playing cards and common traffic warning diamond signs"
+    ],
+    "distractor_pool": [
+      "Regular Hexagon",
+      "Square Pyramid",
+      "Equilateral Triangle",
+      "Octagon",
+      "Geometric Cube"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Every diamond shape is technically a square.",
+        "verdict": "myth",
+        "explanation": "Every square is a rhombus (diamond) because all four sides are equal, but a rhombus is only a square if its interior angles are all 90 degrees.",
+        "fun_fact": "In heraldry and geometry, a diamond shape with non-right angles is formally known as a lozenge."
+      },
+      {
+        "claim": "The area of any rhombus equals half the product of its two diagonals.",
+        "verdict": "fact",
+        "explanation": "Because the perpendicular diagonals divide the diamond into four identical right triangles, Area = (d1 * d2) / 2.",
+        "fun_fact": "Yellow diamond road signs are standardized internationally because human peripheral vision detects tilted diamond silhouettes faster than horizontal rectangles."
+      }
+    ],
+    "versus_candidates": [
+      "Geometric Cube",
+      "Regular Hexagon",
+      "Equilateral Triangle"
+    ]
+  },
+  {
+    "id": "ENT-SCH-056",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Equilateral Triangle",
+    "language": "en",
+    "aliases": [
+      "Regular Triangle",
+      "Trigon",
+      "Equiangular Triangle",
+      "Regular Trigon"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A bold neon green equilateral triangle drawn on graph paper with three identical 60-degree corner arc annotations, 9:16 vertical perspective.",
+    "core_traits": [
+      "Two-dimensional regular polygon with three sides of equal length and three equal interior angles",
+      "Every interior angle measures exactly 60 degrees, summing to 180 degrees",
+      "Possesses three lines of reflectional symmetry and rotational symmetry of order three",
+      "Fundamental geometric building block of geodesic domes, trusses, and regular tetrahedrons"
+    ],
+    "distractor_pool": [
+      "Regular Hexagon",
+      "Square Pyramid",
+      "Diamond Shape",
+      "Conical Cone",
+      "Triangular Prism"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "An equilateral triangle can have one right angle.",
+        "verdict": "myth",
+        "explanation": "By definition, all three interior angles must be equal; since triangle angles sum to 180 degrees, each must be 60 degrees, making a right angle impossible.",
+        "fun_fact": "A triangle with a right angle can be isosceles or scalene, but never equilateral."
+      },
+      {
+        "claim": "The triangle is the only geometric polygon that is inherently rigid and cannot deform without bending its sides.",
+        "verdict": "fact",
+        "explanation": "A polygon with four or more pinned vertices can wobble into a parallelogram, but three pinned sides lock fixed angles, giving triangles supreme structural stiffness.",
+        "fun_fact": "This structural rigidity is why architectural bridges and cranes are built from triangular trusses."
+      }
+    ],
+    "versus_candidates": [
+      "Regular Hexagon",
+      "Triangular Prism",
+      "Square Pyramid"
+    ]
+  },
+  {
+    "id": "ENT-SCH-057",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Regular Octagon",
+    "language": "en",
+    "aliases": [
+      "Eight-Sided Polygon",
+      "Stop Sign Shape",
+      "Octagonal Ring",
+      "Equilateral Octagon"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A vivid red reflective octagonal street sign displaying crisp white geometry angles, captured at dusk under 9:16 vertical framing.",
+    "core_traits": [
+      "Two-dimensional regular polygon having eight sides of equal length and eight congruent angles",
+      "Each interior angle measures exactly 135 degrees, summing to 1,080 degrees total",
+      "Possesses eight axes of reflectional symmetry",
+      "Internationally recognized shape of road traffic 'STOP' signs worldwide"
+    ],
+    "distractor_pool": [
+      "Regular Hexagon",
+      "Diamond Shape",
+      "Equilateral Triangle",
+      "Geometric Cube",
+      "Five-Pointed Star"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Regular octagons can tile a flat floor completely on their own without any gaps.",
+        "verdict": "myth",
+        "explanation": "Regular octagons have 135-degree interior angles, which do not divide evenly into 360 degrees; tiling with octagons leaves square gaps between them.",
+        "fun_fact": "The classic bathroom octagon-and-dot tile pattern fills those gaps with small contrasting square tiles."
+      },
+      {
+        "claim": "The stop sign was chosen as an octagon so drivers could identify it from the back.",
+        "verdict": "fact",
+        "explanation": "In 1923, the Mississippi Valley Highway Association assigned unique shapes to signs so drivers could recognize warnings even if dirt or snow obscured the front text.",
+        "fun_fact": "The octagon was chosen because its eight sides symbolized higher danger than circular or rectangular signs."
+      }
+    ],
+    "versus_candidates": [
+      "Regular Hexagon",
+      "Diamond Shape",
+      "Equilateral Triangle"
+    ]
+  },
+  {
+    "id": "ENT-SCH-058",
+    "domain_id": "school_learning",
+    "subtopic_id": "shapes_geometry",
+    "name": "Geometric Torus",
+    "language": "en",
+    "aliases": [
+      "Donut Solid",
+      "Toroid",
+      "Anchor Ring",
+      "Ring Shape"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A translucent glass geometric torus floating in space, showing light curving through its continuous central hole and curved tube, 9:16 vertical studio shot.",
+    "core_traits": [
+      "Three-dimensional surface of revolution generated by revolving a circle around a coplanar axis outside the circle",
+      "Shaped like a doughnut, inner tube, or round lifebuoy with a central hole",
+      "Topologically distinct from a sphere because it has exactly one central hole (genus 1)",
+      "Used in topology to demonstrate continuous deformations without cutting or gluing"
+    ],
+    "distractor_pool": [
+      "Solid Sphere",
+      "Circular Cylinder",
+      "Conical Cone",
+      "Geometric Cube",
+      "Logarithmic Spiral"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A topologist considers a coffee mug and a torus to be fundamentally different shapes.",
+        "verdict": "myth",
+        "explanation": "In topology, a ceramic coffee mug with a handle can be continuously deformed into a donut-shaped torus without puncturing or tearing, making them homeomorphic.",
+        "fun_fact": "This equivalence gave birth to the famous joke that a topologist cannot tell the difference between a coffee mug and a donut."
+      },
+      {
+        "claim": "The four-color map theorem requires up to seven colors to color maps drawn on the surface of a torus.",
+        "verdict": "fact",
+        "explanation": "While flat planes and spheres require at most four colors, the interconnected hole of a torus allows up to seven mutually adjacent regions.",
+        "fun_fact": "Tokamak fusion reactors are shaped like a torus to trap charged hydrogen plasma in an endless magnetic loop."
+      }
+    ],
+    "versus_candidates": [
+      "Solid Sphere",
+      "Circular Cylinder",
+      "Logarithmic Spiral"
+    ]
+  },
+  {
+    "id": "ENT-SCH-059",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "Adhesive Bandage",
+    "language": "en",
+    "aliases": [
+      "Plaster",
+      "Band-Aid",
+      "Sticking Plaster",
+      "Adhesive Strip",
+      "Medical Bandage"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A beige flexible adhesive strip with sterile absorbent cotton pad being applied gently across a child's scraped knee, 9:16 vertical close-up.",
+    "core_traits": [
+      "Small medical dressing consisting of a sterile absorbent pad backed by a sticky adhesive tape strip",
+      "Protects minor paper cuts, skin abrasions, and scrapes from dirt and bacterial infection",
+      "Allows the skin wound to heal in a moist, protected microenvironment",
+      "Standard first-line supply found in every school nurse's clinic and home medicine cabinet"
+    ],
+    "distractor_pool": [
+      "Sterile Cotton Swab",
+      "Elastic Compression Bandage",
+      "Antiseptic Wound Wipes",
+      "Surgical Face Mask",
+      "Mercury Clinical Thermometer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Letting a cut 'air out' and form a hard dry scab heals wounds faster than keeping it covered with a bandage.",
+        "verdict": "myth",
+        "explanation": "Clinical studies prove wounds heal up to 50% faster with less scarring under a clean adhesive bandage because cells regenerate best in a moist environment.",
+        "fun_fact": "Scabs force new skin cells to burrow underneath the dry crust, slowing closure and increasing scar formation."
+      },
+      {
+        "claim": "The adhesive bandage was invented by a husband whose wife repeatedly cut herself cooking.",
+        "verdict": "fact",
+        "explanation": "Earle Dickson, a cotton buyer at Johnson & Johnson, invented the ready-to-use Band-Aid in 1920 so his wife Josephine could dress her kitchen burns and cuts independently.",
+        "fun_fact": "Johnson & Johnson gave Dickson a vice presidency in honor of his worldwide breakthrough invention."
+      }
+    ],
+    "versus_candidates": [
+      "Elastic Compression Bandage",
+      "Sterile Cotton Swab",
+      "Antiseptic Wound Wipes"
+    ]
+  },
+  {
+    "id": "ENT-SCH-060",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "Mercury Clinical Thermometer",
+    "language": "en",
+    "aliases": [
+      "Fever Thermometer",
+      "Glass Thermometer",
+      "Medical Thermometer",
+      "Clinical Glass Thermometer"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A slender triangular glass clinical thermometer showing a silver thread of mercury resting at 37 degrees Celsius against black graduation lines, 9:16 vertical macro.",
+    "core_traits": [
+      "Glass capillary instrument used to measure human body temperature orally or under the armpit",
+      "Contains liquid mercury or non-toxic gallium alloy that expands uniformly up a narrow calibrated stem",
+      "Features a microscopic constriction above the bulb that prevents the liquid column from dropping until shaken down",
+      "Calibrated across the clinical human fever range from roughly 35 to 42 degrees Celsius"
+    ],
+    "distractor_pool": [
+      "Aneroid Barometer",
+      "Digital Infrared Thermometer",
+      "Acoustic Stethoscope",
+      "Sand Hourglass",
+      "Medical Syringe"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Normal human body temperature is strictly 37.0 degrees Celsius (98.6 degrees Fahrenheit) for every healthy individual at all times.",
+        "verdict": "myth",
+        "explanation": "Healthy body temperature fluctuates between 36.1 and 37.2 degrees throughout the day due to circadian rhythms, physical activity, and hormonal shifts.",
+        "fun_fact": "German physician Carl Wunderlich established the 37-degree standard in 1868 after analyzing 25,000 patients."
+      },
+      {
+        "claim": "A clinical glass thermometer must be vigorously shaken downward to reset the liquid column.",
+        "verdict": "fact",
+        "explanation": "The narrow constriction traps the mercury at maximum recorded temperature; centrifugal force from shaking overcomes capillary tension to return liquid to the bulb.",
+        "fun_fact": "Due to toxic mercury spill hazards, many schools and hospitals have replaced mercury thermometers with alcohol or digital thermistors."
+      }
+    ],
+    "versus_candidates": [
+      "Aneroid Barometer",
+      "Acoustic Stethoscope",
+      "Instant Chemical Cold Pack"
+    ]
+  },
+  {
+    "id": "ENT-SCH-061",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "Medical Syringe",
+    "language": "en",
+    "aliases": [
+      "Hypodermic Syringe",
+      "Injection Syringe",
+      "Plastic Syringe",
+      "Disposable Syringe"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A clear plastic medical syringe with precise milliliter markings and a rubber plunger head, reflecting clean clinic light, 9:16 vertical view.",
+    "core_traits": [
+      "Simple reciprocating pump consisting of a tight-fitting plunger sliding inside a calibrated cylindrical barrel",
+      "Draws in or expels liquids through an orifice or attached hollow hypodermic needle",
+      "Constructed from sterile polypropylene plastic for single-use medical hygiene",
+      "Used by school nurses for administering pediatric oral medications, insulin, or emergency allergy shots"
+    ],
+    "distractor_pool": [
+      "Glass Test Tube",
+      "Sterile Eye Drops",
+      "Sterile Cotton Swab",
+      "Graduated Cylinder",
+      "Acoustic Stethoscope"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "All medical syringes must use sharp metal needles to dispense medicine.",
+        "verdict": "myth",
+        "explanation": "Many pediatric school syringes are needleless oral dispensers designed to deliver liquid antibiotics or fever reducers smoothly into a child's mouth.",
+        "fun_fact": "Needleless jet injectors can deliver vaccines through the skin using high-pressure micro-jets of fluid without needles."
+      },
+      {
+        "claim": "Syringes operate on atmospheric pressure and the creation of an internal vacuum.",
+        "verdict": "fact",
+        "explanation": "Pulling back the plunger increases barrel volume, lowering internal air pressure so ambient atmospheric pressure forces liquid up into the chamber.",
+        "fun_fact": "Scottish physician Alexander Wood invented the modern hypodermic syringe and needle in 1853 to alleviate his wife's neuralgic pain."
+      }
+    ],
+    "versus_candidates": [
+      "Sterile Saline Eye Drops",
+      "Glass Test Tube",
+      "Mercury Clinical Thermometer"
+    ]
+  },
+  {
+    "id": "ENT-SCH-062",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "Sterile Saline Eye Drops",
+    "language": "en",
+    "aliases": [
+      "Artificial Tears",
+      "Eye Wash Solution",
+      "Saline Solution",
+      "Ocular Drops"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A small squeeze dropper bottle dispensing a single crystal-clear sterile saline droplet poised above an eyewash cup, 9:16 vertical macro view.",
+    "core_traits": [
+      "Sterile isotonic saline liquid formulated to match the salt concentration and pH of natural human tears",
+      "Packaged in small squeeze dropper bottles or single-use plastic ampoules",
+      "Rinses out dust particles, chalk dust, and chemical splashes from irritated eyes",
+      "Provides rapid hydration for dry eyes after long hours of textbook reading or computer screen strain"
+    ],
+    "distractor_pool": [
+      "Sterile Cotton Swab",
+      "Medical Syringe",
+      "Adhesive Bandage",
+      "Antiseptic Wound Wipes",
+      "Surgical Face Mask"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Tap water is just as safe and effective as sterile saline for rinsing out an irritated eye.",
+        "verdict": "myth",
+        "explanation": "Unsterile tap water contains microscopic amoebae such as Acanthamoeba and lacks balanced osmolarity, risking severe corneal infections and tissue swelling.",
+        "fun_fact": "Isotonic 0.9% saline matches human blood and tear osmolarity, preventing osmotic shock to sensitive corneal cells."
+      },
+      {
+        "claim": "Human tears contain a natural antimicrobial enzyme that destroys bacterial cell walls.",
+        "verdict": "fact",
+        "explanation": "Tears contain lysozyme, discovered by Alexander Fleming, which breaks down peptidoglycan bonds in bacterial cell walls within minutes.",
+        "fun_fact": "Single-dose preservative-free eye drop vials avoid chemical irritants like benzalkonium chloride."
+      }
+    ],
+    "versus_candidates": [
+      "Sterile Cotton Swab",
+      "Medical Syringe",
+      "Adhesive Bandage"
+    ]
+  },
+  {
+    "id": "ENT-SCH-063",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "Surgical Face Mask",
+    "language": "en",
+    "aliases": [
+      "Medical Mask",
+      "Procedure Mask",
+      "Hygiene Mask",
+      "Disposable Face Mask"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A three-ply pleated light-blue surgical face mask with white elastic ear loops and moldable nose bridge wire, 9:16 vertical view on a clinic tray.",
+    "core_traits": [
+      "Loose-fitting disposable face covering that covers the mouth and nose",
+      "Constructed from three layers of non-woven fabric including a melt-blown polymer electrostatic filter",
+      "Secured by soft elastic ear loops and an adjustable bendable metallic nose clip wire",
+      "Catches large respiratory droplets emitted by the wearer during coughing, sneezing, or speaking"
+    ],
+    "distractor_pool": [
+      "Adhesive Bandage",
+      "Elastic Compression Bandage",
+      "Sterile Cotton Swab",
+      "Wooden Underarm Crutches",
+      "Acoustic Stethoscope"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Surgical masks provide airtight hermetic seals that block all airborne viral aerosols equally.",
+        "verdict": "myth",
+        "explanation": "Surgical masks are loose-fitting barrier devices designed for source control against large fluid droplets, unlike tightly sealed N95/FFP2 respirators.",
+        "fun_fact": "Dr. Wu Lien-teh designed the modern multi-layer cloth plague mask during the Great Manchurian Plague of 1910-1911."
+      },
+      {
+        "claim": "The middle layer of a surgical mask uses electrostatic attraction to trap fine particles.",
+        "verdict": "fact",
+        "explanation": "The melt-blown polypropylene layer is given a semi-permanent electric charge (electret) that acts like a microscopic magnet, pulling in airborne particles.",
+        "fun_fact": "The colored blue or green outer side is hydrophobic to repel splashes, while the soft white inner layer absorbs exhaled moisture."
+      }
+    ],
+    "versus_candidates": [
+      "Adhesive Bandage",
+      "Elastic Compression Bandage",
+      "School First Aid Kit Box"
+    ]
+  },
+  {
+    "id": "ENT-SCH-064",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "Wooden Underarm Crutches",
+    "language": "en",
+    "aliases": [
+      "Axillary Crutches",
+      "Walking Crutches",
+      "Medical Crutches",
+      "Mobility Crutches"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A pair of polished blonde wooden axillary crutches with padded rubber underarm cushions leaning against a school nurse's desk, 9:16 vertical perspective.",
+    "core_traits": [
+      "Mobility walking aid featuring a bow-shaped wooden frame with underarm pads and handgrips",
+      "Transfers body weight from an injured leg, ankle, or foot directly to the arms and torso",
+      "Equipped with non-slip grooved rubber suction tips at the base for hallway floor traction",
+      "Height and handgrip position are adjustable using butterfly wing nuts and pre-drilled holes"
+    ],
+    "distractor_pool": [
+      "Walking Cane",
+      "Wheelchair",
+      "Forearm Crutches",
+      "Walker",
+      "Elastic Compression Bandage"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "You should rest your entire body weight firmly on the padded underarm tops of the crutches when standing.",
+        "verdict": "myth",
+        "explanation": "Leaning heavily on underarm pads compresses the brachial plexus nerves in the axilla, causing dangerous temporary crutch paralysis in the hands.",
+        "fun_fact": "Physical therapists teach that all body weight must be supported strictly by the hands and extended arms, leaving 2 inches of clearance under the armpit."
+      },
+      {
+        "claim": "Crutches have been used as medical mobility devices for over four thousand years.",
+        "verdict": "fact",
+        "explanation": "An ancient Egyptian carving on the tomb of Kirkor from 2830 BCE depicts a man using a wooden walking crutch with an underarm crossbar.",
+        "fun_fact": "Modern school crutches are crafted from sturdy laminated birch or hardwood to absorb walking vibrations."
+      }
+    ],
+    "versus_candidates": [
+      "Elastic Compression Bandage",
+      "School First Aid Kit Box",
+      "Instant Chemical Cold Pack"
+    ]
+  },
+  {
+    "id": "ENT-SCH-065",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "Sterile Cotton Swab",
+    "language": "en",
+    "aliases": [
+      "Q-tip",
+      "Cotton Bud",
+      "Swab Stick",
+      "Applicator Swab"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A long wooden applicator stick tipped with a puffy white sterile cotton bud, dipping into antiseptic betadine solution, 9:16 vertical close-up.",
+    "core_traits": [
+      "Slender stick made of wood, rolled paper, or plastic with a tight wad of absorbent cotton spun at one or both ends",
+      "Used in school clinics for precise antiseptic application, cleaning wounds, and sampling throat swabs",
+      "Absorbs and delivers topical ointments, alcohol, and iodine without touching skin directly",
+      "Common tool in science classrooms for cheek cell cheek scraping in microscope labs"
+    ],
+    "distractor_pool": [
+      "Adhesive Bandage",
+      "Sterile Saline Eye Drops",
+      "Medical Syringe",
+      "Antiseptic Wound Wipes",
+      "Glass Test Tube"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Doctors recommend using cotton swabs to clean earwax deep out of ear canals.",
+        "verdict": "myth",
+        "explanation": "Inserting cotton swabs into the ear canal pushes earwax deeper against the eardrum, risking impaction, infection, and ruptured tympanic membranes.",
+        "fun_fact": "Packaging for major cotton swab brands explicitly prints a warning: 'Do not insert inside the ear canal'."
+      },
+      {
+        "claim": "Cotton swabs were invented by a father who wrapped cotton around a toothpick to clean his baby.",
+        "verdict": "fact",
+        "explanation": "In 1923, Leo Gerstenzang watched his wife paste cotton to a toothpick to clean their infant and founded the company that created Q-tips.",
+        "fun_fact": "The 'Q' in Q-tips originally stood for 'Quality'."
+      }
+    ],
+    "versus_candidates": [
+      "Antiseptic Wound Wipes",
+      "Adhesive Bandage",
+      "Glass Petri Dish"
+    ]
+  },
+  {
+    "id": "ENT-SCH-066",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "Instant Chemical Cold Pack",
+    "language": "en",
+    "aliases": [
+      "Cold Ice Pack",
+      "Chemical Cold Compress",
+      "First Aid Ice Pack",
+      "Instant Cold Compress"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A flexible white plastic pouch being squeezed firmly to rupture an internal water bag, frosting over with condensation, 9:16 vertical framing.",
+    "core_traits": [
+      "Disposable plastic pouch containing dry ammonium nitrate or urea pellets and an inner fragile bag of water",
+      "Activated by squeezing or hitting the pack to rupture the inner water pouch",
+      "Triggers an immediate endothermic dissolution reaction that drops temperature to near freezing within seconds",
+      "Applied to athletic sprains, bruises, and schoolyard bumps to reduce pain and swelling"
+    ],
+    "distractor_pool": [
+      "Elastic Compression Bandage",
+      "Adhesive Bandage",
+      "Mercury Clinical Thermometer",
+      "School First Aid Kit Box",
+      "Wooden Underarm Crutches"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "An instant cold pack gets cold because it releases stored liquid nitrogen gas.",
+        "verdict": "myth",
+        "explanation": "It gets cold through chemical thermodynamics; the dissolution of ammonium nitrate in water is endothermic, absorbing heat directly from the environment.",
+        "fun_fact": "No refrigeration is required before activation, making them ideal emergency kits for school sports fields."
+      },
+      {
+        "claim": "Applying an ice pack directly to bare skin for an hour without a cloth barrier accelerates tissue recovery.",
+        "verdict": "myth",
+        "explanation": "Applying ice directly to bare skin for prolonged periods can freeze epidermal cells and cause frostbite or tissue necrosis; 15-20 minutes wrapped in cloth is the clinical limit.",
+        "fun_fact": "Cold causes local vasoconstriction, which limits internal bleeding and edema following a blunt impact injury."
+      }
+    ],
+    "versus_candidates": [
+      "Elastic Compression Bandage",
+      "Mercury Clinical Thermometer",
+      "School First Aid Kit Box"
+    ]
+  },
+  {
+    "id": "ENT-SCH-067",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "School First Aid Kit Box",
+    "language": "en",
+    "aliases": [
+      "First Aid Cabinet",
+      "Emergency Medical Kit",
+      "First Aid Box",
+      "Trauma Kit"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A bold white metal wall cabinet emblazoned with an emergency green and white cross, opened to reveal organized bandages, antiseptic bottles, and shears, 9:16 vertical view.",
+    "core_traits": [
+      "Durable wall-mounted metal cabinet or portable plastic toolbox with prominent cross insignia",
+      "Houses organized emergency medical supplies for treating playground injuries, burns, and sudden illness",
+      "Stocked with adhesive bandages, sterile gauze pads, medical tape, antiseptics, scissors, and tweezers",
+      "Mandatory safety installation in school classrooms, science laboratories, and gymnasium offices"
+    ],
+    "distractor_pool": [
+      "Toolbox",
+      "School Backpack",
+      "Zippered Pencil Case",
+      "Three-Ring Binder",
+      "Fire Extinguisher"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "First aid kits were originally standardized for civilian school classrooms.",
+        "verdict": "myth",
+        "explanation": "First aid kits were developed in 1888 by Johnson & Johnson after railway surgeons needed portable sterile equipment to treat railroad workers injured on remote tracks.",
+        "fun_fact": "The concept quickly expanded to factories, schools, and homes worldwide."
+      },
+      {
+        "claim": "The universal symbol for first aid according to ISO standards is a white cross on a green background.",
+        "verdict": "fact",
+        "explanation": "ISO 7010 designates a white cross on green for medical safety equipment, while the red cross on white is the protected Geneva Convention emblem reserved for wartime military relief.",
+        "fun_fact": "Commercial companies use green cross or white cross on blue to avoid violating the Red Cross trademark treaty."
+      }
+    ],
+    "versus_candidates": [
+      "Adhesive Bandage",
+      "Acoustic Stethoscope",
+      "Instant Chemical Cold Pack"
+    ]
+  },
+  {
+    "id": "ENT-SCH-068",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "Acoustic Stethoscope",
+    "language": "en",
+    "aliases": [
+      "Binaural Stethoscope",
+      "Medical Stethoscope",
+      "Phonendoscope",
+      "Nurse Stethoscope"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A brushed stainless steel dual-head stethoscope chestpiece resting on a white clinic examination desk with flexible navy rubber tubing, 9:16 vertical view.",
+    "core_traits": [
+      "Acoustic medical device for auscultation, or listening to internal sounds of the human body",
+      "Features a disc-shaped chestpiece with a flat plastic diaphragm for high frequencies and an open bell for low frequencies",
+      "Transmits sound waves through twin flexible rubber air tubes to sealed angled earpieces",
+      "Used by school nurses to assess student heartbeats, lung respiratory wheezes, and blood pressure sounds"
+    ],
+    "distractor_pool": [
+      "Mercury Clinical Thermometer",
+      "Tuning Fork",
+      "Medical Syringe",
+      "Aneroid Barometer",
+      "Microscope"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Stethoscopes use electronic microphones to amplify heartbeat sounds.",
+        "verdict": "myth",
+        "explanation": "Acoustic stethoscopes operate entirely on mechanical physics, transmitting pressure sound waves sealed inside hollow air tubes without electronic amplification.",
+        "fun_fact": "Electronic digital stethoscopes do exist, but traditional acoustic models remain the most widely used by healthcare professionals."
+      },
+      {
+        "claim": "The stethoscope was invented by a French doctor who felt uncomfortable placing his ear directly on female patients' chests.",
+        "verdict": "fact",
+        "explanation": "In 1816, Dr. Rene Laennec rolled up a tube of paper to listen to a young woman's heart, discovering that acoustic acoustics transmitted sound louder and clearer.",
+        "fun_fact": "Laennec carved the first wooden cylindrical stethoscope by hand in Paris."
+      }
+    ],
+    "versus_candidates": [
+      "Tuning Fork",
+      "Mercury Clinical Thermometer",
+      "Aneroid Barometer"
+    ]
+  },
+  {
+    "id": "ENT-SCH-069",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "Elastic Compression Bandage",
+    "language": "en",
+    "aliases": [
+      "Ace Bandage",
+      "Crepe Bandage",
+      "Elastic Wrap",
+      "Compression Wrap"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A tan woven elastic bandage being smoothly wrapped in a figure-eight pattern around a student's sprained ankle, secured with metal clips, 9:16 vertical view.",
+    "core_traits": [
+      "Stretchable woven fabric bandage made of cotton interwoven with elastic rubber or spandex threads",
+      "Applies consistent therapeutic compression to support sprained joints and minimize internal swelling",
+      "Secured in place using small aluminum teeth clips, safety pins, or self-adhering cohesive coatings",
+      "Core component of the standard R.I.C.E. protocol (Rest, Ice, Compression, Elevation) for athletic injuries"
+    ],
+    "distractor_pool": [
+      "Adhesive Bandage",
+      "Sterile Cotton Swab",
+      "Surgical Face Mask",
+      "Instant Chemical Cold Pack",
+      "Wooden Underarm Crutches"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Wrapping an elastic bandage as tightly as possible guarantees the fastest joint healing.",
+        "verdict": "myth",
+        "explanation": "Wrapping too tightly acts like a tourniquet, cutting off arterial blood flow and causing numbness, tingling, cyanosis, and tissue damage.",
+        "fun_fact": "If toes or fingers turn pale, cold, or tingle, the elastic bandage must be unwrapped and loosened immediately."
+      },
+      {
+        "claim": "The original ACE bandage brand name stands for 'All Cotton Elastic'.",
+        "verdict": "fact",
+        "explanation": "Invented in 1918 by Becton, Dickinson and Company (BD), the acronym ACE stood for 'All Cotton Elastic', highlighting its breathability and washability.",
+        "fun_fact": "Washing the bandage in warm soapy water restores the elasticity of the rubber threads after stretching."
+      }
+    ],
+    "versus_candidates": [
+      "Adhesive Bandage",
+      "Instant Chemical Cold Pack",
+      "Wooden Underarm Crutches"
+    ]
+  },
+  {
+    "id": "ENT-SCH-070",
+    "domain_id": "school_learning",
+    "subtopic_id": "school_first_aid",
+    "name": "Antiseptic Wound Wipes",
+    "language": "en",
+    "aliases": [
+      "Alcohol Prep Pad",
+      "Disinfectant Wipe",
+      "Sanitizing Swab",
+      "Antiseptic Towelette",
+      "First Aid Wipe"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A foil packet torn open to reveal a folded white non-woven antiseptic wipe moist with alcohol, gleaming under 9:16 clinic lighting.",
+    "core_traits": [
+      "Pre-moistened non-woven towelette saturated with antiseptic solutions like isopropyl alcohol or benzalkonium chloride",
+      "Individually sealed in sterile, airtight foil packets to prevent evaporation",
+      "Gently cleans dirt, bacteria, and debris from intact skin surrounding cuts before dressing",
+      "Compact, spill-proof sanitizing essential for field trip travel first aid kits"
+    ],
+    "distractor_pool": [
+      "Adhesive Bandage",
+      "Sterile Cotton Swab",
+      "Sterile Saline Eye Drops",
+      "Surgical Face Mask",
+      "Instant Chemical Cold Pack"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pouring 70% rubbing alcohol directly into an open bleeding wound is the healthiest way to clean it.",
+        "verdict": "myth",
+        "explanation": "Alcohol and hydrogen peroxide damage healthy living skin cells and slow down healing; antiseptic wipes should clean surrounding skin, while clean water flushes the wound.",
+        "fun_fact": "Modern school first aid protocols emphasize benzalkonium chloride sting-free wipes over pure alcohol pads for children's scrapes."
+      },
+      {
+        "claim": "Alcohol wipes kill bacteria by dissolving their lipid membranes and denaturing proteins.",
+        "verdict": "fact",
+        "explanation": "70% isopropyl alcohol penetrates bacterial cell walls more effectively than 100% alcohol because water slows evaporation and assists protein denaturation.",
+        "fun_fact": "Pure 100% alcohol coagulates the outer cell wall too quickly, trapping bacteria in a dormant protective shell."
+      }
+    ],
+    "versus_candidates": [
+      "Sterile Cotton Swab",
+      "Adhesive Bandage",
+      "Sterile Saline Eye Drops"
+    ]
+  }
+]

@@ -1,6 +1,7 @@
 import { api } from "./api";
 import { Sidebar, Topbar, NoticeBanner } from "./components/AppChrome";
 import { TaskActivityBar } from "./features/tasks/components/TaskActivityBar";
+import { QuestionBankActivityBar } from "./features/questionBank/components/QuestionBankActivityBar";
 import { AppModals } from "./components/AppModals";
 import { AppViewRouter } from "./components/AppViewRouter";
 import { useAppOrchestration } from "./hooks/useAppOrchestration";
@@ -100,6 +101,9 @@ function AppContent() {
             onOpenEpisode={orch.openEpisode}
           />
         )}
+        <QuestionBankActivityBar
+          onOpenQuestionBank={() => orch.openPage("question_bank")}
+        />
         <AppViewRouter
           loading={orch.loading}
           page={orch.page}

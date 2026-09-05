@@ -10,15 +10,15 @@ export interface QuestionBankFormModalProps {
   onClose: () => void;
 }
 
-const ARCHETYPE_OPTIONS: Array<{ id: string; defaultLabel: string }> = [
-  { id: "verdict_fact_myth", defaultLabel: "Verdict: Fact vs Myth" },
-  { id: "speed_blitz", defaultLabel: "Speed Blitz (Fast Reflex)" },
-  { id: "deep_trivia", defaultLabel: "Deep Trivia (Intellectual)" },
-  { id: "versus_faceoff", defaultLabel: "Versus Faceoff (1v1)" },
-  { id: "visual_spotting", defaultLabel: "Spot the Oddity (Visual Spotting)" },
-  { id: "visual_identification", defaultLabel: "Visual Identification (Photo ID)" },
-  { id: "mystery_reveal", defaultLabel: "Mystery Silhouette Reveal" },
-  { id: "clue_deduction", defaultLabel: "Detective Clue Deduction" },
+const ARCHETYPE_OPTIONS: Array<{ id: string; defaultLabel: string; icon: string }> = [
+  { id: "verdict_fact_myth", defaultLabel: "Fact vs Myth", icon: "⚖️" },
+  { id: "speed_blitz", defaultLabel: "Speed Blitz", icon: "⚡" },
+  { id: "deep_trivia", defaultLabel: "Deep Trivia", icon: "🧠" },
+  { id: "versus_faceoff", defaultLabel: "1v1 Faceoff", icon: "⚔️" },
+  { id: "visual_spotting", defaultLabel: "Visual Spotting", icon: "👁️" },
+  { id: "visual_identification", defaultLabel: "Visual ID", icon: "🔍" },
+  { id: "mystery_reveal", defaultLabel: "Mystery Reveal", icon: "🎭" },
+  { id: "clue_deduction", defaultLabel: "Clue Deduction", icon: "🕵️" },
 ];
 
 export function QuestionBankFormModal({ initialQuestion, taxonomy, onSave, onClose }: QuestionBankFormModalProps) {
@@ -150,7 +150,7 @@ export function QuestionBankFormModal({ initialQuestion, taxonomy, onSave, onClo
               <select className="qb-select" value={archetypeId} onChange={(e) => setArchetypeId(e.target.value as BankGameplayArchetypeId)}>
                 {ARCHETYPE_OPTIONS.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {t(`questionBank.archetypes.${a.id}` as any)}
+                    {a.icon} {t(`questionBank.archetypes.${a.id}` as any) || a.defaultLabel}
                   </option>
                 ))}
               </select>

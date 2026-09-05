@@ -25,6 +25,7 @@ export function StageDefaultPresetControls({ studio }: StageDefaultPresetControl
       </div>
 
       <div className="stage-preset-readout" aria-live="polite">
+        <span className="stage-preset-aspect-tag">{studio.aspectRatio}</span>
         <span>{defaultPlacement.position === "bottom_left" ? t("stageStudio.leftBadge") : t("stageStudio.rightBadge")}</span>
         <strong>{Math.round(defaultPlacement.scale * 100)}%</strong>
         <span>X {signed(defaultPlacement.offset_x)}</span>

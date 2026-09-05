@@ -84,7 +84,9 @@ export const AssignMascotInputSchema = z.object({
 export type AssignMascotInput = z.infer<typeof AssignMascotInputSchema>;
 
 export const MascotStageSettingsInputSchema = z.object({
-  default_placement: MascotPlacementPresetSchema,
+  default_placement: MascotPlacementPresetSchema.optional(),
+  default_placements: z.record(z.enum(["16:9", "9:16"]), MascotPlacementPresetSchema).optional(),
 });
 
 export type MascotStageSettingsInput = z.infer<typeof MascotStageSettingsInputSchema>;
+

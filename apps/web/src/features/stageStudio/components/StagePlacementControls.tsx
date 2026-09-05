@@ -18,13 +18,23 @@ export function StagePlacementControls({ studio }: StagePlacementControlsProps) 
       <div className="inspector-section-header">
         <h3 className="inspector-section-title">{t("stageStudio.anchorAndFlipTitle")}</h3>
         <div style={{ display: "flex", gap: "4px" }}>
-          {studio.aspectRatio === "9:16" && (
+          {studio.aspectRatio === "9:16" ? (
             <button
               type="button"
               className="inspector-icon-action"
               onClick={() => studio.copyPlacementFrom("16:9", "9:16")}
               title="Copy from 16:9"
               aria-label="Copy from 16:9"
+            >
+              <Copy size={13} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="inspector-icon-action"
+              onClick={() => studio.copyPlacementFrom("9:16", "16:9")}
+              title="Copy from 9:16"
+              aria-label="Copy from 9:16"
             >
               <Copy size={13} />
             </button>

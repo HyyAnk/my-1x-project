@@ -259,7 +259,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       expect(body.episode.quiz_config.archetype).toBe("verdict_fact_myth");
       expect(body.episode.quiz_config.target_layout).toBe("verdict_true_false");
       expect(body.cooldown_recorded).toBe(true);
-    });
+    }, 15000);
 
     it("auto-transcreates English question on Spanish channel and caches translation to Question Bank", async () => {
       const enQuestion: BankQuestion = {

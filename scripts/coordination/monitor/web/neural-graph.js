@@ -620,19 +620,45 @@ export class NeuralGraph {
     const startY = pos.y + 2.5;
     sprite.position.set(pos.x, startY, pos.z);
 
-    this.badgeSideToggle = (this.badgeSideToggle || 0) + 1;
-    const sideSign = (this.badgeSideToggle % 2 === 1) ? -1 : 1; // Alternating left (-1) and right (+1)
+    // Find the lowest unoccupied slot index (0, 1, 2, 3...)
+    const occupiedSlots = new Set(this.hologramBadges.map((b) => b.slotIndex));
+    let slotIndex = 0;
+    while (occupiedSlots.has(slotIndex)) {
+      slotIndex++;
+    }
+
+    const col = slotIndex % 2; // 0 = Left, 1 = Right
+    const tier = Math.floor(slotIndex / 2);
+    const sideSign = col === 0 ? -1 : 1;
+    const horizontalOffset = sideSign * 22.0; // 44 units separation between Left and Right
+    const targetHeight = 22.0 + tier * 15.0; // 15 units vertical gap between tiers
+
+    // Glowing neon leader line connecting file micro-neuron to the rising badge
+    const lineGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(pos.x, pos.y, pos.z),
+      new THREE.Vector3(pos.x, startY, pos.z),
+    ]);
+    const lineMat = new THREE.LineBasicMaterial({
+      color: 0xbf00ff,
+      transparent: true,
+      opacity: 0.6,
+      blending: THREE.AdditiveBlending,
+    });
+    const leaderLine = new THREE.Line(lineGeo, lineMat);
+    this.scene.add(leaderLine);
 
     this.scene.add(sprite);
     this.hologramBadges.push({
       sprite,
       texture,
+      leaderLine,
       baseX: pos.x,
+      baseY: pos.y,
       baseZ: pos.z,
       startY,
-      sideSign,
-      repulsionU: 0,
-      repulsionV: 0,
+      slotIndex,
+      horizontalOffset,
+      targetHeight,
       startTime: performance.now(),
       durationMs: 7200, // Doubled duration: 7.2s!
     });
@@ -1094,7 +1120,7 @@ export class NeuralGraph {
       photon.mesh.quaternion.setFromUnitVectors(upVector, tangent);
     }
 
-    // Animate floating hologram badges: Enlarges up to 3x, rises 3x higher (25.5 units) with dynamic screen-space repulsion physics
+    // Animate floating hologram badges: Deterministic tiered non-overlapping slots with horizontal drift & neon leader lines
     const now = performance.now();
 
     // 1. Clean up expired badges
@@ -1104,98 +1130,41 @@ export class NeuralGraph {
         this.scene.remove(badge.sprite);
         badge.sprite.material.map.dispose();
         badge.sprite.material.dispose();
+        if (badge.leaderLine) {
+          this.scene.remove(badge.leaderLine);
+          badge.leaderLine.geometry.dispose();
+          badge.leaderLine.material.dispose();
+        }
         this.hologramBadges.splice(i, 1);
       }
     }
 
-    // 2. Camera-plane basis vectors (camRight and camUp) for 2D screen-space projection
+    // 2. Purely horizontal camera-right vector (orthogonal to view direction, strictly in XZ plane with Y = 0)
     const camRight = new THREE.Vector3(1, 0, 0).applyQuaternion(this.camera.quaternion);
-    const camUp = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camera.quaternion);
+    const camRightFlat = new THREE.Vector3(camRight.x, 0, camRight.z);
+    if (camRightFlat.lengthSq() > 0.001) {
+      camRightFlat.normalize();
+    } else {
+      camRightFlat.set(1, 0, 0);
+    }
 
-    // Compute ideal base positions and coordinates in camera plane (u: horizontal, v: vertical)
-    const badgePhysics = [];
+    // 3. Update each badge along its dedicated, non-overlapping slot trajectory
     for (let i = 0; i < this.hologramBadges.length; i++) {
       const badge = this.hologramBadges[i];
       const elapsed = now - badge.startTime;
       const progress = elapsed / badge.durationMs;
 
-      const verticalRise = Math.pow(progress, 0.75) * 25.5;
-      const horizontalDrift = Math.pow(progress, 0.8) * 14.0 * (badge.sideSign || 1);
+      // Vertical rise: strictly world Y, rising up to its allocated tier height (Tier 0: 22, Tier 1: 37, Tier 2: 52...)
+      const verticalRise = Math.pow(progress, 0.75) * badge.targetHeight;
 
-      const baseX = badge.baseX + camRight.x * horizontalDrift;
-      const baseY = badge.startY + verticalRise;
-      const baseZ = badge.baseZ + camRight.z * horizontalDrift;
+      // Horizontal drift: strictly along camRightFlat (Left: -22, Right: +22), ZERO depth distortion!
+      const horizontalDrift = Math.pow(progress, 0.8) * badge.horizontalOffset;
 
-      // Project 3D position onto camera screen coordinates (u, v)
-      const u = baseX * camRight.x + baseY * camRight.y + baseZ * camRight.z;
-      const v = baseX * camUp.x + baseY * camUp.y + baseZ * camUp.z;
+      const curX = badge.baseX + camRightFlat.x * horizontalDrift;
+      const curY = badge.startY + verticalRise;
+      const curZ = badge.baseZ + camRightFlat.z * horizontalDrift;
 
-      badgePhysics.push({ baseX, baseY, baseZ, u, v, progress });
-    }
-
-    // 3. Dynamic Repulsion Physics in Camera Plane (Anti-Collision Force Field)
-    const Ru = 19.0; // Half-width collision threshold (sprite width at 3x is 36)
-    const Rv = 5.5;  // Half-height collision threshold (sprite height at 3x is 9)
-    const forces = this.hologramBadges.map(() => ({ u: 0, v: 0 }));
-
-    for (let i = 0; i < this.hologramBadges.length; i++) {
-      for (let j = i + 1; j < this.hologramBadges.length; j++) {
-        const pA = badgePhysics[i];
-        const pB = badgePhysics[j];
-
-        // Effective positions in camera plane including current smoothed repulsion
-        const curAu = pA.u + (this.hologramBadges[i].repulsionU || 0);
-        const curAv = pA.v + (this.hologramBadges[i].repulsionV || 0);
-        const curBu = pB.u + (this.hologramBadges[j].repulsionU || 0);
-        const curBv = pB.v + (this.hologramBadges[j].repulsionV || 0);
-
-        const du = curAu - curBu;
-        const dv = curAv - curBv;
-
-        // Elliptical normalized distance in camera coordinates
-        const normU = du / (Ru * 2);
-        const normV = dv / (Rv * 2);
-        const distSq = normU * normU + normV * normV;
-
-        if (distSq < 1.0) {
-          const dist = Math.max(0.001, Math.sqrt(distSq));
-          const overlap = 1.0 - dist;
-
-          let nu = normU / dist;
-          let nv = normV / dist;
-
-          if (dist < 0.02) {
-            // Break symmetry if almost identical coordinates
-            nu = (this.hologramBadges[i].sideSign || 1) * 0.8;
-            nv = (i > j ? 1 : -1) * 0.6;
-          }
-
-          const pushMag = overlap * 2.2;
-          const pushU = nu * pushMag * Ru;
-          const pushV = nv * pushMag * Rv;
-
-          forces[i].u += pushU;
-          forces[i].v += pushV;
-          forces[j].u -= pushU;
-          forces[j].v -= pushV;
-        }
-      }
-    }
-
-    // 4. Update badge positions with smoothed spring damping and apply scale/opacity
-    for (let i = 0; i < this.hologramBadges.length; i++) {
-      const badge = this.hologramBadges[i];
-      const phys = badgePhysics[i];
-      const progress = phys.progress;
-
-      // Smooth spring damping towards target repulsion offset
-      badge.repulsionU = (badge.repulsionU || 0) * 0.86 + forces[i].u * 0.14;
-      badge.repulsionV = (badge.repulsionV || 0) * 0.86 + forces[i].v * 0.14;
-
-      // Final position displaced in camera viewing plane
-      badge.sprite.position.x = phys.baseX + camRight.x * badge.repulsionU + camUp.x * badge.repulsionV;
-      badge.sprite.position.y = phys.baseY + camRight.y * badge.repulsionU + camUp.y * badge.repulsionV;
-      badge.sprite.position.z = phys.baseZ + camRight.z * badge.repulsionU + camUp.z * badge.repulsionV;
+      badge.sprite.position.set(curX, curY, curZ);
 
       // Phóng lớn gấp 3 lần (Expands up to 3.0x scale)
       let scaleMult;
@@ -1212,11 +1181,24 @@ export class NeuralGraph {
 
       badge.sprite.scale.set(12 * scaleMult, 3.0 * scaleMult, 1);
 
-      // Opacity stays solid until the final exit stretch (last ~1.5s)
+      // Smooth fade out in the last 20%
+      let opacity = 1.0;
       if (progress > 0.80) {
-        badge.sprite.material.opacity = (1.0 - progress) / 0.20;
-      } else {
-        badge.sprite.material.opacity = 1.0;
+        opacity = (1.0 - progress) / 0.20;
+      }
+      badge.sprite.material.opacity = opacity;
+
+      // Update glowing neon leader line from micro-neuron to badge bottom
+      if (badge.leaderLine) {
+        const linePos = badge.leaderLine.geometry.attributes.position.array;
+        linePos[0] = badge.baseX;
+        linePos[1] = badge.baseY;
+        linePos[2] = badge.baseZ;
+        linePos[3] = curX;
+        linePos[4] = curY - 1.5 * scaleMult;
+        linePos[5] = curZ;
+        badge.leaderLine.geometry.attributes.position.needsUpdate = true;
+        badge.leaderLine.material.opacity = opacity * 0.55;
       }
     }
 

@@ -13,6 +13,7 @@ import {
   type AudioSettingsInput,
   type CodexSettingsInput,
   type ImageSettingsInput,
+  type MascotPlacementPreset,
   type MascotStageSettingsInput,
   type VideoSettingsInput,
   type AntigravitySettingsInput,
@@ -145,7 +146,34 @@ export async function saveMascotStageSettings(rootDirectory: string, input: Masc
   const configPath = studioRuntimePath(rootDirectory, "config.json");
   await mkdir(path.dirname(configPath), { recursive: true });
   const raw = await readJsonFile(configPath);
-  await writeFile(configPath, `${JSON.stringify({ ...raw, mascot_stage: parsed }, null, 2)}\n`, "utf8");
+  const currentMascotStage =
+    raw.mascot_stage && typeof raw.mascot_stage === "object"
+      ? (raw.mascot_stage as Record<string, unknown>)
+      : {};
+
+  const currentDefaultPlacements =
+    currentMascotStage.default_placements && typeof currentMascotStage.default_placements === "object"
+      ? (currentMascotStage.default_placements as Record<string, unknown>)
+      : {};
+
+  const mergedDefaultPlacements = {
+    ...currentDefaultPlacements,
+    ...(parsed.default_placements ?? {}),
+  };
+
+  const nextMascotStage = {
+    ...currentMascotStage,
+    ...parsed,
+    ...(Object.keys(mergedDefaultPlacements).length > 0
+      ? { default_placements: mergedDefaultPlacements }
+      : {}),
+    default_placement:
+      parsed.default_placement ??
+      (mergedDefaultPlacements["16:9"] as MascotPlacementPreset | undefined) ??
+      currentMascotStage.default_placement,
+  };
+
+  await writeFile(configPath, `${JSON.stringify({ ...raw, mascot_stage: nextMascotStage }, null, 2)}\n`, "utf8");
   return loadConfig(rootDirectory);
 }
 

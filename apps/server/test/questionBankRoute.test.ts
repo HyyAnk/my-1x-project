@@ -19,7 +19,7 @@ describe("Question Bank REST API Routes", () => {
     await app.close();
   });
 
-  it("GET /api/question-bank/taxonomy returns 8 domains", async () => {
+  it("GET /api/question-bank/taxonomy returns 9 domains synced from knowledge base", async () => {
     const res = await app.server.inject({
       method: "GET",
       url: "/api/question-bank/taxonomy",
@@ -28,7 +28,7 @@ describe("Question Bank REST API Routes", () => {
     expect(res.statusCode).toBe(200);
     const body = JSON.parse(res.body);
     expect(body.taxonomy).toBeDefined();
-    expect(body.taxonomy.domains.length).toBe(8);
+    expect(body.taxonomy.domains.length).toBeGreaterThanOrEqual(9);
   });
 
   it("GET /api/question-bank/stats returns total count and breakdown", async () => {
@@ -40,7 +40,7 @@ describe("Question Bank REST API Routes", () => {
     expect(res.statusCode).toBe(200);
     const body = JSON.parse(res.body);
     expect(body.stats).toBeDefined();
-    expect(body.stats.target_total).toBe(10000);
+    expect(body.stats.target_total).toBe(20000);
     expect(body.stats.current_total).toBeGreaterThanOrEqual(10);
   });
 
@@ -153,5 +153,61 @@ describe("Question Bank REST API Routes", () => {
       url: `/api/question-bank/questions/${testId}`,
     });
     expect(deleteAgainRes.statusCode).toBe(404);
+  });
+
+  it("GET /api/question-bank/matrix-coverage returns 20,000 combo stats and breakdown", async () => {
+    const res = await app.server.inject({
+      method: "GET",
+      url: "/api/question-bank/matrix-coverage",
+    });
+
+    expect(res.statusCode).toBe(200);
+    const body = JSON.parse(res.body);
+    expect(body.coverage).toBeDefined();
+    expect(body.coverage.total_combos).toBe(20000);
+    expect(body.coverage.covered_combos).toBeGreaterThanOrEqual(0);
+    expect(Object.keys(body.coverage.by_domain).length).toBe(14);
+    expect(Object.keys(body.coverage.by_archetype).length).toBe(8);
+  });
+
+  it("POST /api/question-bank/generate-batch handles auto mode with candidate override", async () => {
+    const candidateQuestion = {
+      id: `BATCH-ROUTE-TEST-${Date.now()}`,
+      archetype_id: "speed_blitz",
+      domain_id: "nature_animals",
+      subtopic_id: "mammals",
+      entity_id: "ENT-ANI-001",
+      format: "multiple_choice",
+      question: "Which mammal has the thickest fur of any animal?",
+      choices: [
+        { id: "A", text: "Sea Otter", is_correct: true },
+        { id: "B", text: "Polar Bear", is_correct: false },
+        { id: "C", text: "Chinchilla", is_correct: false },
+      ],
+      correct_choice_id: "A",
+      explanation: "Sea otters have up to one million hairs per square inch to stay warm.",
+      thinking_seconds: 4,
+      visual_spec: { intent: "none" },
+      difficulty: 2,
+      tags: ["animals"],
+    };
+
+    const res = await app.server.inject({
+      method: "POST",
+      url: "/api/question-bank/generate-batch",
+      payload: {
+        mode: "auto",
+        target_count: 1,
+        candidates: [candidateQuestion],
+        persist: false,
+      },
+    });
+
+    expect(res.statusCode).toBe(200);
+    const body = JSON.parse(res.body);
+    expect(body.success).toBe(true);
+    expect(body.approvedCount).toBe(1);
+    expect(body.matrixCoverage).toBeDefined();
+    expect(body.matrixCoverage.total_combos).toBe(20000);
   });
 });

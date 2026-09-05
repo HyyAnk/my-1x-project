@@ -3,16 +3,20 @@ export const questionBankEn = {
     // Header Stats
     badge: "AI Quiz Studio",
     title: "Question Bank Studio",
-    subtitle: "Repository of 10,000 standardized questions across 8 Gameplay Archetypes, integrated with 30-day channel cooldown.",
+    subtitle: "Standardized repository across Gameplay Archetypes and Knowledge Base domains.",
     syncIndex: "Sync Index",
     syncing: "Syncing...",
     syncTooltip: "Scan storage and synchronize index",
     aiGenerateBatch: "AI Batch Generate",
     targetProgress: "Target progress: {current} / {target} questions",
+    matrixProgress: "Matrix Combos: {covered} / {total} ({pct}%)",
+    collapseStats: "Collapse KPI section",
+    expandStats: "Expand KPI section",
 
     // Archetypes
     archetypes: {
-      verdict_fact_myth: "Verdict Fact / Myth",
+      all: "All Archetypes",
+      verdict_fact_myth: "True or False",
       speed_blitz: "Speed Blitz",
       deep_trivia: "Deep Trivia",
       versus_faceoff: "Versus Faceoff",
@@ -24,6 +28,8 @@ export const questionBankEn = {
 
     // Toolbar Filters
     filters: {
+      searchPlaceholder: "Search by question prompt, clue, explanation, tags or ID...",
+      questionsFound: "{count} questions found",
       channelCompare: "Channel Cooldown:",
       channelGlobal: "Global (No cooldown)",
       archetype: "Archetype:",
@@ -32,9 +38,10 @@ export const questionBankEn = {
       allDomains: "All Domains",
       subtopic: "Subtopic:",
       allSubtopics: "All Subtopics",
-      sourceLanguage: "Source Language:",
+      language: "Language:",
+      filterByLanguage: "Filter by Language",
+      languagePill: "Language:",
       allLanguages: "All Languages",
-      langEn: "🇬🇧 English",
       translationStatus: "Translations:",
       allTranslations: "All Translation Statuses",
       hasTranslation: "Has Translation",
@@ -43,7 +50,8 @@ export const questionBankEn = {
       cooldownAll: "All",
       cooldownReady: "Ready",
       cooldownActive: "Cooldown (30d)",
-      searchPlaceholder: "Search questions, keywords, tags...",
+      readyOnly: "Ready Only",
+      readyOnlyTitle: "Filter to questions with cooldown expired or not used",
       reset: "Reset",
       resetTitle: "Reset all filters",
       addQuestion: "Add Question",
@@ -53,7 +61,7 @@ export const questionBankEn = {
     table: {
       loading: "Loading questions...",
       emptyTitle: "No questions found",
-      emptyDesc: "Try adjusting your filters or click \"AI Batch Generate\" to add questions.",
+      emptyDesc: 'Try adjusting your filters or click "AI Batch Generate" to add questions.',
       colIdArchetype: "ID & Archetype",
       colQuestion: "Question Content",
       colCooldown: "Channel Cooldown",
@@ -80,7 +88,12 @@ export const questionBankEn = {
     // Live Preview
     preview: {
       emptyPrompt: "Select a question from the list to view real-time layout preview.",
+      emptySub: "Or click AI Batch Generate to produce new questions for your channels.",
       liveTag: "Live Preview",
+      tabs: {
+        arcade: "Arcade Mockup",
+        details: "Transcreation & Info",
+      },
       aspectLandscape: "Switch to 16:9 (Landscape)",
       aspectShorts: "Switch to 9:16 (Shorts)",
       hideAnswer: "Hide Answer",
@@ -97,7 +110,10 @@ export const questionBankEn = {
       funFact: "💡 Did you know?",
       noExplanation: "No explanation provided.",
       quickBuildBtn: "🎬 Create Video Shorts Now (1-Click Build)",
-      quickBuilding: "Initializing Shorts video...",
+      quickBuilding: "Initializing Video...",
+      metadataTitle: "Question Metadata & Audio Spec",
+      thinkingSeconds: "Thinking Duration",
+      difficulty: "Difficulty Rating",
     },
 
     // Form Modal
@@ -142,22 +158,41 @@ export const questionBankEn = {
     // AI Batch Modal
     aiModal: {
       title: "Generate Question Batch with AI (With Auto-QA)",
-      intro: "The system will generate high-quality questions for the chosen Archetype, filtered through 3 layers: Copyright filter, Semantic deduplication (>=75%), and Zod schema validation.",
+      intro:
+        "The system generates questions connecting Archetypes with 2,500 Knowledge Base entities, filtered through 3 layers: Copyright filter, Semantic deduplication (>=75%), and Zod schema validation.",
+      modeAuto: "Auto Coverage Mode",
+      modeManual: "Manual Diversity Mode",
+      modeAutoTag: "Recommended",
+      modeAutoDesc:
+        "Automatically detects unfilled Archetype + Entity combinations (20,000 core matrix cells) and populates them using fair round-robin distribution.",
+      modeManualDesc:
+        "Target specific domains, subtopics, or archetypes using Least-Variant-First prioritization to balance variety.",
+      matrixStatsTitle: "Matrix Coverage Status",
+      matrixStatsCoverage: "Covered: {covered} / {total} combos ({pct}%) • {unfilled} unfilled remaining",
       archetypeLabel: "Target Archetype:",
+      allArchetypesOption: "All Archetypes (Spread Evenly)",
       domainLabel: "Domain:",
       subtopicIdLabel: "Subtopic ID (slug):",
+      allSubtopicsOption: "All Subtopics in Domain",
       subtopicTitleLabel: "Subtopic Display Title:",
       countLabel: "Number of Questions (1-20):",
+      targetCountLabel: "Questions to Generate (in chunks of <= 20):",
       countVal: "Number of questions to generate: {count}",
       difficultyLabel: "Target Difficulty:",
       difficultyVal: "Target Difficulty (1: Easy, 5: Master): ⭐ {difficulty}/5",
       qaAssuranceTitle: "Auto-QA Assurance:",
-      qaAssuranceDesc: "Automatically rejects questions with copyrighted brands (Marvel, Disney, Pokémon...) or semantic similarity >= 75% with existing questions in bank.",
+      qaAssuranceDesc:
+        "Automatically rejects questions with copyrighted brands (Marvel, Disney, Pokémon...) or semantic similarity >= 75% with existing questions in bank.",
+      chunkNotice: "Chunking Engine: Large batches are split into <= 20 questions with real-time Auto-QA verification and instant persistence.",
+      leastVariantNotice: "Least-Variant-First Active: Unfilled combos are prioritized, followed by entities with the fewest existing variants.",
       cancelBtn: "Cancel",
       generatingBtn: "Generating AI Batch & Running Auto-QA...",
       generatingProgress: "Generating & moderating questions...",
+      generatingChunk: "Processing chunk {current} of {total} ({completed} / {target} questions)...",
       startBtn: "Start AI Batch Generation",
       startBtnCount: "Start generating {count} questions",
+      autoFillBtn: "Auto-Fill Matrix ({count} questions)",
+      manualFillBtn: "Generate Filtered Batch ({count} questions)",
       successTitle: "Batch Generated & Saved Successfully!",
       successTitleComplete: "Question batch generation complete!",
       successSummary: "Generated {count} questions for {subtopic}.",
@@ -166,15 +201,21 @@ export const questionBankEn = {
       rejectionReport: "Auto-QA rejection report:",
       generateAnotherBtn: "Generate Another Batch",
       viewInBankBtn: "View in Question Bank",
-      doneBtn: "Done & Refresh",
       failedTitle: "AI Generation Failed",
       failedDefault: "Batch generation failed.",
+      backgroundStartedTitle: "Generation Running in Background",
+      backgroundStartedDesc:
+        "The batch of {count} questions is generating in the background. You can track real-time progress below the top menu and continue working freely.",
+      closeAndTrackBtn: "Close & Track Progress in Activity Bar",
+      activeJobNotice: "Batch Generation in Progress: {completed} / {target} questions generated.",
+      viewInActivityBarBtn: "Track in Activity Bar",
     },
 
     // Alerts & Confirmations
     alerts: {
       chooseChannelRequired: "Please select or create at least one channel to generate a video.",
-      cooldownConfirm: "This question is currently in Cooldown ({days} days remaining) on this channel. Are you sure you want to reuse it now?",
+      cooldownConfirm:
+        "This question is currently in Cooldown ({days} days remaining) on this channel. Are you sure you want to reuse it now?",
     },
   },
 };

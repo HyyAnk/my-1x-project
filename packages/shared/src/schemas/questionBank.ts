@@ -51,6 +51,7 @@ export type BankQuestionStatus = z.infer<typeof BankQuestionStatusSchema>;
 export const BankQuestionSchema = z
   .object({
     id: z.string().trim().min(1).max(80),
+    entity_id: z.string().trim().max(80).optional(),
     archetype_id: BankGameplayArchetypeIdSchema,
     domain_id: z.string().trim().min(1).max(80),
     subtopic_id: z.string().trim().min(1).max(80),
@@ -119,7 +120,7 @@ export type BankTaxonomy = z.infer<typeof BankTaxonomySchema>;
 
 export const BankIndexSchema = z.object({
   schema_version: z.literal(2).default(2),
-  target_total: z.number().int().positive().default(10000),
+  target_total: z.number().int().positive().default(20000),
   current_total: z.number().int().nonnegative().default(0),
   by_archetype: z.record(z.string(), z.number().int().nonnegative()).default({}),
   by_domain: z.record(z.string(), z.number().int().nonnegative()).default({}),
@@ -136,3 +137,49 @@ export interface BankQuestionWithCooldown extends BankQuestion {
     episode_title?: string;
   };
 }
+
+export const MatrixCoverageStatsSchema = z.object({
+  total_combos: z.number().int().nonnegative().default(20000),
+  covered_combos: z.number().int().nonnegative().default(0),
+  total_variants: z.number().int().nonnegative().default(0),
+  coverage_percent: z.number().nonnegative().default(0),
+  by_domain: z
+    .record(
+      z.string(),
+      z.object({
+        total_entities: z.number().int().nonnegative(),
+        total_combos: z.number().int().nonnegative(),
+        covered_combos: z.number().int().nonnegative(),
+        total_variants: z.number().int().nonnegative(),
+        coverage_percent: z.number().nonnegative(),
+      }),
+    )
+    .default({}),
+  by_archetype: z
+    .record(
+      z.string(),
+      z.object({
+        total_combos: z.number().int().nonnegative(),
+        covered_combos: z.number().int().nonnegative(),
+        total_variants: z.number().int().nonnegative(),
+        coverage_percent: z.number().nonnegative(),
+      }),
+    )
+    .default({}),
+  updated_at: z.string().datetime().optional(),
+});
+export type MatrixCoverageStats = z.infer<typeof MatrixCoverageStatsSchema>;
+
+export const MatrixComboCandidateSchema = z.object({
+  entity_id: z.string().trim(),
+  archetype_id: BankGameplayArchetypeIdSchema,
+  domain_id: z.string().trim(),
+  subtopic_id: z.string().trim(),
+  entity_name: z.string().trim(),
+  current_variants: z.number().int().nonnegative().default(0),
+});
+export type MatrixComboCandidate = z.infer<typeof MatrixComboCandidateSchema>;
+
+export const BatchGenerationModeSchema = z.enum(["auto", "manual"]).default("auto");
+export type BatchGenerationMode = z.infer<typeof BatchGenerationModeSchema>;
+

@@ -2,7 +2,16 @@ import { EventEmitter } from "node:events";
 import type { AntigravityClient } from "../antigravity.js";
 import type { CodexAppServerClient } from "../codex.js";
 
-export type LLMClient = AntigravityClient | CodexAppServerClient;
+export type LLMClient =
+  | AntigravityClient
+  | CodexAppServerClient
+  | {
+      connect(): Promise<void>;
+      generateContent?(prompt: string, options?: unknown): Promise<{ text?: string } | string>;
+      startThread?(): Promise<string>;
+      startTurn?(threadId: string, prompt: string, modelOverride?: string): Promise<string>;
+      interruptTurn?(threadId: string, turnId: string): Promise<void>;
+    };
 
 /**
  * Checks if an error from an image generation API is caused by a safety or content moderation filter.
@@ -74,9 +83,19 @@ export async function executeSinglePromptText(
     timeoutMs?: number;
   } = {},
 ): Promise<string> {
-  const timeoutMs = options.timeoutMs ?? 60_000;
+  const timeoutMs = options.timeoutMs ?? 180_000;
   await client.connect();
-  const threadId = await client.startThread();
+
+  if (typeof (client as { generateContent?: unknown }).generateContent === "function") {
+    const res = await (client as { generateContent: (p: string, o?: unknown) => Promise<{ text?: string } | string> }).generateContent(
+      prompt,
+      options,
+    );
+    return typeof res === "string" ? res : (res?.text ?? "");
+  }
+
+  const threadClient = client as unknown as { startThread(): Promise<string> };
+  const threadId = await threadClient.startThread();
 
   return new Promise<string>((resolve, reject) => {
     let output = "";
@@ -101,7 +120,9 @@ export async function executeSinglePromptText(
 
     const onAbort = () => {
       cleanup();
-      if (turnId) void client.interruptTurn(threadId, turnId).catch(() => undefined);
+      if (turnId && typeof client.interruptTurn === "function") {
+        void client.interruptTurn(threadId, turnId).catch(() => undefined);
+      }
       reject(new Error("LLM single prompt turn aborted"));
     };
 

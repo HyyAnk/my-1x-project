@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { Channel } from "@studio/shared";
 import { useTranslation } from "../../i18n";
 import { useQuestionBank } from "./hooks/useQuestionBank";
@@ -19,9 +19,12 @@ export interface QuestionBankViewProps {
 
 export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo }: QuestionBankViewProps) {
   const { t } = useTranslation();
+  const [isStatsCollapsed, setIsStatsCollapsed] = useState(false);
+
   const {
     taxonomy,
     stats,
+    matrixCoverage,
     questions,
     totalQuestions,
     loading,
@@ -43,6 +46,7 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
     saveQuestion,
     deleteQuestion,
     generateBatch,
+    batchJob,
     createOneClickVideo,
     transcreateQuestion,
   } = useQuestionBank(selectedChannel?.channel_id);
@@ -54,9 +58,7 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
       return;
     }
     if (q.channel_cooldown?.is_cooldown) {
-      const confirmBuild = window.confirm(
-        t("questionBank.alerts.cooldownConfirm", { days: q.channel_cooldown.days_remaining }),
-      );
+      const confirmBuild = window.confirm(t("questionBank.alerts.cooldownConfirm", { days: q.channel_cooldown.days_remaining }));
       if (!confirmBuild) return;
     }
     try {
@@ -76,10 +78,15 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
 
   return (
     <div className="qb-container">
-      {/* 1. Header Stats & Progress */}
+      {/* 1. Interactive Header Stats & Archetype Chip Bar */}
       <QuestionBankHeaderStats
         stats={stats}
+        matrixCoverage={matrixCoverage}
         recalculating={recalculating}
+        selectedArchetype={filters.archetypeId}
+        isCollapsed={isStatsCollapsed}
+        onToggleCollapse={() => setIsStatsCollapsed((prev) => !prev)}
+        onSelectArchetype={(id) => updateFilter("archetypeId", id)}
         onRecalculate={recalculateStats}
         onOpenAiModal={() => setModalState({ type: "ai_generate" })}
       />
@@ -91,17 +98,18 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
         </div>
       )}
 
-      {/* 2. Filter & Search Toolbar */}
+      {/* 2. Unified Search & Filter Command Bar */}
       <QuestionBankToolbar
         channels={channels}
         taxonomy={taxonomy}
         filters={filters}
+        totalQuestions={totalQuestions}
         onUpdateFilter={updateFilter}
         onResetFilters={resetFilters}
         onOpenCreateModal={() => setModalState({ type: "create" })}
       />
 
-      {/* 3. Main Content: Split View (Table Left + Live Preview Right) */}
+      {/* 3. Main Split View: Scannable Table + Live Inspector */}
       <div className="qb-main-layout">
         <QuestionBankTable
           questions={questions}
@@ -111,9 +119,11 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
           pageSize={filters.pageSize}
           selectedId={selectedQuestion?.id || null}
           hasChannelSelected={Boolean(filters.channelId)}
+          activeLanguage={filters.languageFilter}
           onSelectQuestion={setSelectedQuestion}
           onEditQuestion={(q) => setModalState({ type: "edit", question: q })}
           onDeleteQuestion={deleteQuestion}
+          onQuickBuildVideo={(q) => handleQuickBuildVideo(q, previewAspect)}
           onPageChange={(p) => updateFilter("page", p)}
         />
 
@@ -141,7 +151,9 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
       {modalState.type === "ai_generate" && (
         <QuestionBankAiGenerateModal
           taxonomy={taxonomy}
+          matrixCoverage={matrixCoverage}
           generating={generating}
+          batchJob={batchJob}
           onGenerate={generateBatch}
           onClose={() => setModalState({ type: null })}
         />

@@ -31,6 +31,7 @@ import type {
   BankQuestion,
   BankQuestionWithCooldown,
   BankTranslationContent,
+  MatrixCoverageStats,
 } from "@studio/shared";
 import type { CreateStylePresetInput, StylePreset, UpdateStylePresetInput } from "@studio/shared";
 import type { QueryQuestionBankParams } from "./quiz/questionBankRepository.js";
@@ -319,5 +320,6 @@ export interface RepositoryRuntime {
   saveQuestionBankQuestion(question: BankQuestion): Promise<BankQuestion>;
   saveQuestionBankTranslation(questionId: string, translation: BankTranslationContent): Promise<BankQuestion | null>;
   deleteQuestionBankQuestion(questionId: string): Promise<boolean>;
+  getQuestionBankMatrixCoverage(): Promise<MatrixCoverageStats>;
 }
 

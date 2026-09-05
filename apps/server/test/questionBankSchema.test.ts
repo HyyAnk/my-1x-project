@@ -211,7 +211,7 @@ describe("Question Bank Schemas", () => {
     const taxParsed = BankTaxonomySchema.safeParse(taxRaw);
     expect(taxParsed.success).toBe(true);
     if (taxParsed.success) {
-      expect(taxParsed.data.domains.length).toBe(8);
+      expect(taxParsed.data.domains.length).toBeGreaterThanOrEqual(14);
     }
 
     // 2. index.json

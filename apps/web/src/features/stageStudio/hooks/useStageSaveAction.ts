@@ -1,10 +1,69 @@
 import { useState } from "react";
-import type { Channel, ChannelMascotConfig, MascotPlacementPreset, MascotProfile } from "@studio/shared";
+import {
+  type Channel,
+  type ChannelMascotConfig,
+  type MascotPlacementPreset,
+  type MascotProfile,
+  RECOMMENDED_MASCOT_PLACEMENT_PRESETS,
+  resolveChannelMascotPlacement,
+} from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import type { StageAspectRatio, StagePosition } from "../types";
 
+export interface BuildDecoupledChannelMascotConfigParams {
+  aspectRatio: StageAspectRatio;
+  activePlacement: MascotPlacementPreset;
+  placements?: Partial<Record<StageAspectRatio, MascotPlacementPreset>> | null;
+  channel?: Channel | null;
+  showInIntro?: boolean;
+  showInOutro?: boolean;
+  showInQuestion?: boolean;
+}
+
+/**
+ * Builds a ChannelMascotConfig ensuring active and other aspect ratio placements
+ * remain strictly isolated without fallbacks crossing between 16:9 and 9:16.
+ */
+export function buildDecoupledChannelMascotConfig({
+  aspectRatio,
+  activePlacement,
+  placements,
+  channel,
+  showInIntro = false,
+  showInOutro = false,
+  showInQuestion = true,
+}: BuildDecoupledChannelMascotConfigParams): ChannelMascotConfig {
+  const activeAspect = aspectRatio ?? "16:9";
+  const otherAspect: StageAspectRatio = activeAspect === "16:9" ? "9:16" : "16:9";
+
+  const otherPlacement =
+    placements?.[otherAspect] ??
+    (channel?.mascot_config
+      ? resolveChannelMascotPlacement(channel.mascot_config, otherAspect)
+      : RECOMMENDED_MASCOT_PLACEMENT_PRESETS[otherAspect]);
+
+  const resolvedPlacements: Record<StageAspectRatio, MascotPlacementPreset> = {
+    [activeAspect]: { ...activePlacement },
+    [otherAspect]: { ...otherPlacement },
+  } as Record<StageAspectRatio, MascotPlacementPreset>;
+
+  return {
+    enabled: true,
+    position: resolvedPlacements["16:9"].position,
+    scale: resolvedPlacements["16:9"].scale,
+    offset_x: resolvedPlacements["16:9"].offset_x,
+    offset_y: resolvedPlacements["16:9"].offset_y,
+    flip_x: resolvedPlacements["16:9"].flip_x,
+    show_in_intro: showInIntro,
+    show_in_outro: showInOutro,
+    show_in_question: showInQuestion,
+    placements: resolvedPlacements,
+  };
+}
+
 export function useStageSaveAction(options: {
+  aspectRatio?: StageAspectRatio;
   isSingleChannelMode: boolean;
   targetChannel: Channel | null;
   selectedMascotId: string | null;
@@ -26,6 +85,7 @@ export function useStageSaveAction(options: {
   t: (key: string, values?: Record<string, string | number>) => string;
 }) {
   const {
+    aspectRatio = "16:9",
     isSingleChannelMode,
     targetChannel,
     selectedMascotId,
@@ -52,7 +112,7 @@ export function useStageSaveAction(options: {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const currentPlacement: MascotPlacementPreset = {
+      const activePlacement: MascotPlacementPreset = {
         position,
         scale,
         offset_x: offsetX,
@@ -60,28 +120,21 @@ export function useStageSaveAction(options: {
         flip_x: flipHorizontal,
       };
 
-      const resolvedPlacements: Record<StageAspectRatio, MascotPlacementPreset> = {
-        "16:9": placements?.["16:9"] ?? currentPlacement,
-        "9:16": placements?.["9:16"] ?? currentPlacement,
-      };
-
-      const mascotConfig: ChannelMascotConfig = {
-        enabled: true,
-        position: resolvedPlacements["16:9"].position,
-        scale: resolvedPlacements["16:9"].scale,
-        offset_x: resolvedPlacements["16:9"].offset_x,
-        offset_y: resolvedPlacements["16:9"].offset_y,
-        flip_x: resolvedPlacements["16:9"].flip_x,
-        show_in_intro: showInIntro,
-        show_in_outro: showInOutro,
-        show_in_question: showInQuestion,
-        placements: resolvedPlacements,
-      };
+      const createConfig = (ch: Channel | null) =>
+        buildDecoupledChannelMascotConfig({
+          aspectRatio,
+          activePlacement,
+          placements,
+          channel: ch,
+          showInIntro,
+          showInOutro,
+          showInQuestion,
+        });
 
       if (isSingleChannelMode && targetChannel) {
         await api.assignMascotToChannel(targetChannel.channel_id, {
           mascot_id: selectedMascotId,
-          config: mascotConfig,
+          config: createConfig(targetChannel),
         });
         onNotice({
           tone: "good",
@@ -98,7 +151,7 @@ export function useStageSaveAction(options: {
             if (isAssigned) {
               return api.assignMascotToChannel(ch.channel_id, {
                 mascot_id: activeMascot.id,
-                config: mascotConfig,
+                config: createConfig(ch),
               });
             } else if (!isAssigned && ch.mascot_id === activeMascot.id) {
               return api.assignMascotToChannel(ch.channel_id, {
