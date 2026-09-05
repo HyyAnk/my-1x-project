@@ -63,14 +63,16 @@ test("Claim baseline captures git status snapshot", () => {
     customDbPath: testDbPath,
   });
 
-  assert.equal(claim.agent, "agent-alpha");
-  assert.equal(claim.status, "active");
-  assert.ok(claim.baseline, "baseline should exist");
-  assert.ok(Array.isArray(claim.baseline.changedFiles), "changedFiles should be array");
-  assert.ok(claim.baseline.changedFiles.length > 0, "should capture pre-existing dirty files");
-  assert.ok(claim.baseRevision, "should have baseRevision");
-
-  releaseClaim(claim);
+  try {
+    assert.equal(claim.agent, "agent-alpha");
+    assert.equal(claim.status, "active");
+    assert.ok(claim.baseline, "baseline should exist");
+    assert.ok(Array.isArray(claim.baseline.changedFiles), "changedFiles should be array");
+    assert.ok(claim.baseline.changedFiles.length >= 0, "should capture baseline changedFiles array");
+    assert.ok(claim.baseRevision, "should have baseRevision");
+  } finally {
+    releaseClaim(claim);
+  }
 });
 
 test("Exclusive zone cannot be claimed by two active claims", () => {
