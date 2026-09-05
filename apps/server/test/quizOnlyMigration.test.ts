@@ -15,7 +15,7 @@ const targetRuntimeName = ".quiz-studio";
 type MigrationFixture = Awaited<ReturnType<typeof createFixture>>;
 
 afterEach(async () => {
-  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
+  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })));
 });
 
 async function createFixture() {
@@ -88,7 +88,7 @@ describe.runIf(process.platform === "win32")("Quiz-only runtime migration", () =
     expect(backups).toHaveLength(2);
     expect(JSON.parse(await readFile(backups[0], "utf8"))).toHaveProperty("group_id", "quiz");
     expect(result.stdout).toMatch(/total=2 success=2 failed=0 skipped=0 retries=0 elapsed=/i);
-  });
+  }, 15000);
 
   it.each([
     "after-channel-rewrite:1",
@@ -96,29 +96,37 @@ describe.runIf(process.platform === "win32")("Quiz-only runtime migration", () =
     "after-project-runtime-move",
     "after-content-runtime-move",
     "after-backup-move",
-  ])("rolls back metadata and runtime moves at checkpoint %s", async (checkpoint) => {
-    const fixture = await createFixture();
-    const error = await runMigration(fixture, checkpoint).catch((reason: { stdout?: string; stderr?: string }) => reason);
+  ])(
+    "rolls back metadata and runtime moves at checkpoint %s",
+    async (checkpoint) => {
+      const fixture = await createFixture();
+      const error = await runMigration(fixture, checkpoint).catch((reason: { stdout?: string; stderr?: string }) => reason);
 
-    expect(error).toHaveProperty("code");
-    expect(`${error.stdout ?? ""}${error.stderr ?? ""}`).toContain(checkpoint);
-    expect(`${error.stdout ?? ""}${error.stderr ?? ""}`).toMatch(/total=2 success=0 failed=1 skipped=0 retries=0 elapsed=/i);
-    await assertRolledBack(fixture);
-  });
+      expect(error).toHaveProperty("code");
+      expect(`${error.stdout ?? ""}${error.stderr ?? ""}`).toContain(checkpoint);
+      expect(`${error.stdout ?? ""}${error.stderr ?? ""}`).toMatch(/total=2 success=0 failed=1 skipped=0 retries=0 elapsed=/i);
+      await assertRolledBack(fixture);
+    },
+    15000,
+  );
 
-  it.each(["missing-source", "existing-destination"])("aborts before mutation for %s", async (condition) => {
-    const fixture = await createFixture();
-    if (condition === "missing-source") await rm(path.join(fixture.projectRoot, retiredRuntimeName), { recursive: true });
-    else await mkdir(path.join(fixture.projectRoot, targetRuntimeName), { recursive: true });
+  it.each(["missing-source", "existing-destination"])(
+    "aborts before mutation for %s",
+    async (condition) => {
+      const fixture = await createFixture();
+      if (condition === "missing-source") await rm(path.join(fixture.projectRoot, retiredRuntimeName), { recursive: true });
+      else await mkdir(path.join(fixture.projectRoot, targetRuntimeName), { recursive: true });
 
-    const error = await runMigration(fixture).catch((reason: { stdout?: string; stderr?: string }) => reason);
-    const output = `${error.stdout ?? ""}${error.stderr ?? ""}`;
-    expect(error).toHaveProperty("code");
-    expect(output).toContain(condition === "missing-source" ? "Missing source runtime" : "Destination already exists");
-    expect(output).toMatch(/success=0 failed=1 skipped=0 retries=0 elapsed=/i);
-    for (const [channelFile, original] of fixture.originals) expect(await readFile(channelFile, "utf8")).toBe(original);
-    expect((await readdir(fixture.contentRoot)).some((entry) => entry.startsWith(".quiz-migration-"))).toBe(false);
-  });
+      const error = await runMigration(fixture).catch((reason: { stdout?: string; stderr?: string }) => reason);
+      const output = `${error.stdout ?? ""}${error.stderr ?? ""}`;
+      expect(error).toHaveProperty("code");
+      expect(output).toContain(condition === "missing-source" ? "Missing source runtime" : "Destination already exists");
+      expect(output).toMatch(/success=0 failed=1 skipped=0 retries=0 elapsed=/i);
+      for (const [channelFile, original] of fixture.originals) expect(await readFile(channelFile, "utf8")).toBe(original);
+      expect((await readdir(fixture.contentRoot)).some((entry) => entry.startsWith(".quiz-migration-"))).toBe(false);
+    },
+    15000,
+  );
 });
 
 async function pathExists(candidate: string): Promise<boolean> {

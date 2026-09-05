@@ -6,7 +6,7 @@ import { DEFAULT_CONFIG } from "../config.js";
 import type { ContextEngine } from "../context.js";
 import type { StudioLogger } from "../logger.js";
 import { ChatterboxProvider, type ChatterboxTarget } from "../providers/chatterbox.js";
-import type { AudioProvider, ImageProvider } from "../providers/index.js";
+import type { AudioProvider } from "../providers/index.js";
 import { RepositoryError, RepositoryService } from "../repository.js";
 import { pumpTaskQueue } from "./taskQueuePump.js";
 import { applyTaskPatch, loadTasksFromDisk, persistTask } from "./taskStateStore.js";
@@ -15,8 +15,43 @@ import { cancelTask, submitTask } from "./taskSubmission.js";
 import { TaskMutationQueue } from "./taskMutationQueue.js";
 import { taskDelegates } from "./taskDelegates.js";
 import type { ActiveRun, PipelineRun, TaskManagerRuntime } from "./runtime.js";
+import { attachTaskManagerClientEvents, type ConnectionStatus } from "./taskClientEvents.js";
+import { runFailedBuildCleanup, scheduleFailedBuildCleanup } from "./taskFailedBuildCleaner.js";
 
 export class TaskManager extends EventEmitter implements TaskManagerRuntime {
+  declare run: TaskManagerRuntime["run"];
+  declare createImageProvider: TaskManagerRuntime["createImageProvider"];
+  declare generateBundleImageWithSafetyRetry: TaskManagerRuntime["generateBundleImageWithSafetyRetry"];
+  declare runGpti2BundleImageTask: TaskManagerRuntime["runGpti2BundleImageTask"];
+  declare runAntigravityBundleImageTask: TaskManagerRuntime["runAntigravityBundleImageTask"];
+  declare runShopAiKeyImageTask: TaskManagerRuntime["runShopAiKeyImageTask"];
+  declare runPipelineTask: TaskManagerRuntime["runPipelineTask"];
+  declare runVideoTask: TaskManagerRuntime["runVideoTask"];
+  declare hasReadyArtifact: TaskManagerRuntime["hasReadyArtifact"];
+  declare generatePipelineBundleImages: TaskManagerRuntime["generatePipelineBundleImages"];
+  declare runQuizV2Pipeline: TaskManagerRuntime["runQuizV2Pipeline"];
+  declare attachPipelineBundleImages: TaskManagerRuntime["attachPipelineBundleImages"];
+  declare hasReadyScript: TaskManagerRuntime["hasReadyScript"];
+  declare hasValidNarrationAsset: TaskManagerRuntime["hasValidNarrationAsset"];
+  declare isShotPlanFresh: TaskManagerRuntime["isShotPlanFresh"];
+  declare waitForTaskTerminal: TaskManagerRuntime["waitForTaskTerminal"];
+  declare runAudioTask: TaskManagerRuntime["runAudioTask"];
+  declare handleNotification: TaskManagerRuntime["handleNotification"];
+  declare handleServerRequest: TaskManagerRuntime["handleServerRequest"];
+  declare completeWithOutput: TaskManagerRuntime["completeWithOutput"];
+  declare retryQuizResearch: TaskManagerRuntime["retryQuizResearch"];
+  declare retryScript: TaskManagerRuntime["retryScript"];
+  declare retryVisualBible: TaskManagerRuntime["retryVisualBible"];
+  declare retrySequenceScenes: TaskManagerRuntime["retrySequenceScenes"];
+  declare cleanupExpiredFailedBuilds: TaskManagerRuntime["cleanupExpiredFailedBuilds"];
+  declare hasActiveEpisodeTasks: TaskManagerRuntime["hasActiveEpisodeTasks"];
+  declare hasActiveChannelTasks: TaskManagerRuntime["hasActiveChannelTasks"];
+  declare pruneEpisodeTasks: TaskManagerRuntime["pruneEpisodeTasks"];
+  declare pruneChannelTasks: TaskManagerRuntime["pruneChannelTasks"];
+  declare reconcileQuestionHistory: TaskManagerRuntime["reconcileQuestionHistory"];
+  declare reconcileOrphanedTasks: TaskManagerRuntime["reconcileOrphanedTasks"];
+  declare startFailedBuildCleanupTimer: TaskManagerRuntime["startFailedBuildCleanupTimer"];
+
   readonly tasks = new Map<string, Task>();
   readonly active = new Map<string, ActiveRun>();
   readonly approvalRequests = new Map<number, { taskId: string; request: CodexServerRequest }>();
@@ -41,8 +76,8 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   readonly audioProviderFactory: (target: ChatterboxTarget, config: AppConfig["audio_generation"]) => AudioProvider;
   failedBuildCleanupPromise: Promise<{ removedEpisodes: number; removedTasks: number }> | null = null;
   failedBuildCleanupTimer: NodeJS.Timeout | null = null;
-  private connectionStatus: "connected" | "disconnected" | "unavailable" | "connecting" = "disconnected";
-  private antigravityStatus: "connected" | "disconnected" | "unavailable" | "connecting" = "disconnected";
+  connectionStatus: ConnectionStatus = "disconnected";
+  antigravityStatus: ConnectionStatus = "disconnected";
   activeEngine: "codex" | "antigravity" = "codex";
 
   constructor(
@@ -75,34 +110,12 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     this.audioConfig = audioConfig;
     this.imageConfig = imageConfig;
     this.audioProviderFactory = audioProviderFactory ?? ((target, config) => new ChatterboxProvider(repository, config, target));
-    codex.on("status", (status: typeof this.connectionStatus) => {
-      this.connectionStatus = status;
-      this.emitEvent({ type: "codex.status", status });
-    });
-    codex.on("notification", (event: { method: string; params: Record<string, unknown> }) =>
-      this.handleNotification(event.method, event.params),
-    );
-    codex.on("serverRequest", (request: CodexServerRequest) => this.handleServerRequest(request));
-    codex.on("exit", () => {
-      this.connectionStatus = "unavailable";
-      this.emitEvent({ type: "codex.status", status: "unavailable", message: "Codex App Server unavailable" });
-    });
-    if (antigravity) {
-      antigravity.on("status", (status: typeof this.antigravityStatus) => {
-        this.antigravityStatus = status;
-        this.emitEvent({ type: "antigravity.status", status });
-      });
-      antigravity.on("notification", (event: { method: string; params: Record<string, unknown> }) =>
-        this.handleNotification(event.method, event.params),
-      );
-    }
+    attachTaskManagerClientEvents(this, codex, antigravity);
   }
 
   async load(): Promise<void> {
     const loaded = await loadTasksFromDisk(this.repository.roots.runtime);
-    for (const task of loaded) {
-      this.tasks.set(task.task_id, task);
-    }
+    for (const task of loaded) this.tasks.set(task.task_id, task);
     await this.reconcileOrphanedTasks();
     await this.reconcileQuestionHistory();
     await this.cleanupExpiredFailedBuilds();
@@ -118,11 +131,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     this.activeVideoControllers.clear();
     this.approvalRequests.clear();
     this.locks.clear();
-    this.runningCount = 0;
-    this.runningAudioCount = 0;
-    this.runningImageCount = 0;
-    this.runningVideoCount = 0;
-    this.runningPipelineCount = 0;
+    this.runningCount = this.runningAudioCount = this.runningImageCount = this.runningVideoCount = this.runningPipelineCount = 0;
     this.connectionStatus = this.codex.isConnected ? "connected" : "disconnected";
     await this.load();
   }
@@ -131,42 +140,33 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     this.audioConfig = config;
     void this.pump();
   }
-
   updateVideoConfig(config: AppConfig["video_generation"]): void {
     this.videoConfig = config;
     void this.pump();
   }
-
   updateImageConfig(config: AppConfig["image_generation"]): void {
     this.imageConfig = config;
     void this.pump();
   }
-
   setActiveEngine(engine: "codex" | "antigravity"): void {
     this.activeEngine = engine;
     this.emitEvent({ type: "engine.status", engine, status: this.getStatus() });
   }
-
   getActiveEngine(): "codex" | "antigravity" {
     return this.activeEngine;
   }
-
-  getStatus(): typeof this.connectionStatus {
+  getStatus(): ConnectionStatus {
     return this.activeEngine === "antigravity" ? this.antigravityStatus : this.connectionStatus;
   }
-
-  getCodexStatus(): typeof this.connectionStatus {
+  getCodexStatus(): ConnectionStatus {
     return this.connectionStatus;
   }
-
-  getAntigravityStatus(): typeof this.antigravityStatus {
+  getAntigravityStatus(): ConnectionStatus {
     return this.antigravityStatus;
   }
-
   list(): Task[] {
     return [...this.tasks.values()].sort((a, b) => b.created_at.localeCompare(a.created_at));
   }
-
   get(taskId: string): Task {
     const task = this.tasks.get(taskId);
     if (!task) throw new RepositoryError("Task not found", "TASK_NOT_FOUND");
@@ -228,7 +228,6 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   private pump(): Promise<void> {
     return pumpTaskQueue(this);
   }
-
   findSceneNumber(taskId: string): number | undefined {
     return this.tasks.get(taskId)?.scene_number ?? undefined;
   }
@@ -263,128 +262,19 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   private persist(task: Task): Promise<void> {
     return persistTask(this.repository.roots.runtime, task);
   }
-
   private emitTask(task: Task): void {
     this.emitEvent({ type: "task.updated", task });
   }
-
   emitEvent(event: TaskEvent): void {
     this.emit("event", event);
   }
-
-  // --- Runner & Lifecycle Delegate Forwarders ---
-  run(task: Task): Promise<void> {
-    return taskDelegates.run.call(this, task);
-  }
-  createImageProvider(
-    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
-    output?: string,
-  ): ImageProvider {
-    return taskDelegates.createImageProvider.call(this, imageTarget, output);
-  }
-  generateBundleImageWithSafetyRetry(
-    task: Task,
-    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
-    initialPrompt: string,
-    signal?: AbortSignal,
-    output?: string,
-    visualBibleContent?: string,
-  ): Promise<{ image: { asset_path: string }; updatedPrompt?: string }> {
-    return taskDelegates.generateBundleImageWithSafetyRetry.call(
-      this,
-      task,
-      imageTarget,
-      initialPrompt,
-      signal,
-      output,
-      visualBibleContent,
-    );
-  }
-  runGpti2BundleImageTask(task: Task): Promise<void> {
-    return taskDelegates.runGpti2BundleImageTask.call(this, task);
-  }
-  runAntigravityBundleImageTask(task: Task): Promise<void> {
-    return taskDelegates.runAntigravityBundleImageTask.call(this, task);
-  }
-  runShopAiKeyImageTask(task: Task): Promise<void> {
-    return taskDelegates.runShopAiKeyImageTask.call(this, task);
-  }
-  runPipelineTask(task: Task): Promise<void> {
-    return taskDelegates.runPipelineTask.call(this, task);
-  }
-  runVideoTask(task: Task): Promise<void> {
-    return taskDelegates.runVideoTask.call(this, task);
-  }
-  hasReadyArtifact(channelId: string, episodeId: string, filename: string): Promise<boolean> {
-    return taskDelegates.hasReadyArtifact.call(this, channelId, episodeId, filename);
-  }
-  generatePipelineBundleImages(task: Task, run: PipelineRun): Promise<void> {
-    return taskDelegates.generatePipelineBundleImages.call(this, task, run);
-  }
-  runQuizV2Pipeline(task: Task): Promise<void> {
-    return taskDelegates.runQuizV2Pipeline.call(this, task);
-  }
-  attachPipelineBundleImages(channelId: string, episodeId: string): Promise<void> {
-    return taskDelegates.attachPipelineBundleImages.call(this, channelId, episodeId);
-  }
-  hasReadyScript(channelId: string, episodeId: string): Promise<boolean> {
-    return taskDelegates.hasReadyScript.call(this, channelId, episodeId);
-  }
-  hasValidNarrationAsset(channelId: string, episodeId: string, assetPath: string | null): Promise<boolean> {
-    return taskDelegates.hasValidNarrationAsset.call(this, channelId, episodeId, assetPath);
-  }
-  isShotPlanFresh(channelId: string, episodeId: string): Promise<boolean> {
-    return taskDelegates.isShotPlanFresh.call(this, channelId, episodeId);
-  }
-  waitForTaskTerminal(taskId: string, run: PipelineRun, onProgress?: (task: Task) => Promise<void> | void): Promise<Task> {
-    return taskDelegates.waitForTaskTerminal.call(this, taskId, run, onProgress);
-  }
-  runAudioTask(task: Task): Promise<void> {
-    return taskDelegates.runAudioTask.call(this, task);
-  }
-  handleNotification(method: string, params: Record<string, unknown>): void {
-    return taskDelegates.handleNotification.call(this, method, params);
-  }
-  handleServerRequest(request: CodexServerRequest): void {
-    return taskDelegates.handleServerRequest.call(this, request);
-  }
-  completeWithOutput(active: ActiveRun): Promise<void> {
-    return taskDelegates.completeWithOutput.call(this, active);
-  }
-  retryQuizResearch(active: ActiveRun, reason: string): Promise<void> {
-    return taskDelegates.retryQuizResearch.call(this, active, reason);
-  }
-  retryScript(active: ActiveRun, reason: string): Promise<void> {
-    return taskDelegates.retryScript.call(this, active, reason);
-  }
-  retryVisualBible(active: ActiveRun, reason: string): Promise<void> {
-    return taskDelegates.retryVisualBible.call(this, active, reason);
-  }
-  retrySequenceScenes(active: ActiveRun, reason: string): Promise<void> {
-    return taskDelegates.retrySequenceScenes.call(this, active, reason);
-  }
-  cleanupExpiredFailedBuilds(nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }> {
-    return taskDelegates.cleanupExpiredFailedBuilds.call(this, nowMs);
-  }
-  hasActiveEpisodeTasks(episodeId: string): boolean {
-    return taskDelegates.hasActiveEpisodeTasks.call(this, episodeId);
-  }
-  hasActiveChannelTasks(channelId: string): boolean {
-    return taskDelegates.hasActiveChannelTasks.call(this, channelId);
-  }
-  pruneEpisodeTasks(episodeId: string): Promise<string[]> {
-    return taskDelegates.pruneEpisodeTasks.call(this, episodeId);
-  }
-  pruneChannelTasks(channelId: string): Promise<string[]> {
-    return taskDelegates.pruneChannelTasks.call(this, channelId);
-  }
-  reconcileQuestionHistory(): Promise<void> {
-    return taskDelegates.reconcileQuestionHistory.call(this);
-  }
-  reconcileOrphanedTasks(): Promise<{ removedEpisodes: number; removedTasks: number }> {
-    return taskDelegates.reconcileOrphanedTasks.call(this);
-  }
-  startFailedBuildCleanupTimer(): void {
-    return taskDelegates.startFailedBuildCleanupTimer.call(this);
-  }
 }
+
+Object.assign(TaskManager.prototype, taskDelegates, {
+  cleanupExpiredFailedBuilds(this: TaskManager, nowMs?: number) {
+    return runFailedBuildCleanup(this, nowMs);
+  },
+  startFailedBuildCleanupTimer(this: TaskManager) {
+    scheduleFailedBuildCleanup(this);
+  },
+});

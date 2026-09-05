@@ -19,7 +19,7 @@ import { pinEpisodeStyleRevision } from "../src/tasks/video/videoCompositionPrep
 const roots: string[] = [];
 
 afterEach(async () => {
-  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
+  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })));
 });
 
 describe("Quiz style persistence contracts", () => {
@@ -60,7 +60,7 @@ describe("Quiz style persistence contracts", () => {
       const confirmed = await app.server.inject({
         method: "POST",
         url: `/api/channels/${channel.channel_id}/topics/style-topic-0/confirm`,
-        payload: {},
+        payload: { auto_start_pipeline: false },
       });
       expect(confirmed.statusCode).toBe(201);
       const episode = confirmed.json<{ episode: Episode }>().episode;

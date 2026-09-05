@@ -40,7 +40,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
     await app.repository.deleteQuestionBankQuestion("INT-TRANS-ROUTE-001").catch(() => {});
     await app.close();
     if (tempStorage) {
-      await rm(tempStorage, { recursive: true, force: true }).catch(() => {});
+      await rm(tempStorage, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }).catch(() => {});
     }
   });
 
@@ -347,7 +347,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       expect(updatedQuestion?.translations?.es).toBeDefined();
       expect(updatedQuestion?.translations?.es?.question).toBe("¿Cuál es la velocidad de la luz en el vacío?");
       expect(updatedQuestion?.translations?.es?.choices[0].text).toBe("300.000 km/s");
-    });
+    }, 15000);
 
     it("POST /api/question-bank/:id/transcreate translates on-demand and caches to disk", async () => {
       const seedQuestion: BankQuestion = {

@@ -21,6 +21,10 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     app = await buildApp(curr);
     tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-pipeline-e2e-"));
     app.repository.setStorageRoot(tempStorage);
+    app.tasks.runPipelineTask = async (task) => {
+      await (app.tasks as any).update(task.task_id, { status: "RUNNING" });
+      await (app.tasks as any).finish(task.task_id, "COMPLETED");
+    };
 
     const channel1 = await app.repository.createChannel({
       name: "History Mysteries Channel",
@@ -38,7 +42,7 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
   afterAll(async () => {
     await app.close();
     if (tempStorage) {
-      await rm(tempStorage, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }).catch(() => {});
+      await rm(tempStorage, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }).catch(() => {});
     }
   });
 
@@ -275,7 +279,14 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     expect(body.task.task_type).toBe("GENERATE_PIPELINE");
     expect(body.task.channel_id).toBe(testChannelId);
     expect(body.task.episode_id).toBe(body.episode.episode_id);
-  });
+
+    const taskId = body.task.task_id;
+    const deadline = Date.now() + 5000;
+    while (app.tasks.get(taskId).status !== "COMPLETED" && Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+    expect(app.tasks.get(taskId).status).toBe("COMPLETED");
+  }, 15000);
 
   it("handles JIT fallback when Question Bank has no pre-existing candidates", async () => {
     const topic: TopicCandidate = {

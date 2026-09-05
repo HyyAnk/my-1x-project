@@ -33,7 +33,8 @@ export const QUIZ_GAMEPLAY_ARCHETYPES: readonly QuizGameplayArchetypeBlueprint[]
   {
     id: "visual_spotting",
     name: "Visual Spotting",
-    description: "Visual spotting challenge finding anomalies, differences, or synthetic impostors across 3 full-bleed images without text.",
+    description:
+      "Visual spotting challenge finding anomalies, differences, or synthetic impostors across 3 full-bleed images without text.",
     defaultFormat: "odd_one_out",
     targetLayout: "visual_choices_three_pure",
     creativeAngles: ["Find the Anomaly", "Real vs AI Generated", "Spot the Flaw", "Identify the Impostor"],
@@ -41,10 +42,16 @@ export const QUIZ_GAMEPLAY_ARCHETYPES: readonly QuizGameplayArchetypeBlueprint[]
   {
     id: "verdict_true_false",
     name: "True or False",
-    description: "Verdict evaluation question testing True vs False with a cinematic background visual and 2 prominent TRUE / FALSE buttons.",
+    description:
+      "Verdict evaluation question testing True vs False with a cinematic background visual and 2 prominent TRUE / FALSE buttons.",
     defaultFormat: "true_false",
     targetLayout: "verdict_true_false",
-    creativeAngles: ["Surprising Realities & Misconceptions", "Human Body Surprises", "Counter-Intuitive Truths", "Strange Laws Around the World"],
+    creativeAngles: [
+      "Surprising Realities & Misconceptions",
+      "Human Body Surprises",
+      "Counter-Intuitive Truths",
+      "Strange Laws Around the World",
+    ],
   },
   {
     id: "versus_faceoff",
@@ -98,7 +105,7 @@ export const QUIZ_GAMEPLAY_ARCHETYPES: readonly QuizGameplayArchetypeBlueprint[]
   },
 ] as const;
 
-export function getQuizGameplayArchetype(id: QuizGameplayArchetypeId | string): QuizGameplayArchetypeBlueprint | undefined {
+export function getQuizGameplayArchetype(id: string): QuizGameplayArchetypeBlueprint | undefined {
   const targetId = id === "verdict_fact_myth" ? "verdict_true_false" : id;
   return QUIZ_GAMEPLAY_ARCHETYPES.find((archetype) => archetype.id === targetId);
 }

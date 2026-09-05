@@ -406,6 +406,10 @@ zones:
       - "GEMINI.md"
       - "run-agent-monitor.bat"
       - "stop-agent-monitor.bat"
+      - "eslint.config.mjs"
+      - "package.json"
+      - ".prettier-baseline.json"
+      - "eslint-suppressions.json"
     readStableDependencies: []
     verification:
       commands:

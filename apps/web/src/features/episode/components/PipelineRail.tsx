@@ -18,65 +18,82 @@ export type PipelineRailReadiness = {
   finalVideo?: boolean;
 };
 
-export function resolveQuizPipelineStage(
-  pipelineTask: Task | null,
-  tasks: Task[],
-  streamlined: boolean = true,
-): string | null {
-  if (pipelineTask && isTaskActive(pipelineTask)) {
-    const text = `${pipelineTask.error ?? ""} ${pipelineTask.progress_message ?? ""}`.toLowerCase();
-    if (streamlined) {
-      if (
-        text.includes("quiz") ||
-        text.includes("research") ||
-        text.includes("treatment") ||
-        text.includes("facts") ||
-        text.includes("director") ||
-        text.includes("script")
-      )
-        return "quizContent";
-      if (text.includes("asset") || text.includes("voice") || text.includes("audio") || text.includes("visual"))
-        return "voiceAndAssets";
-      if (text.includes("qa") || text.includes("timeline") || text.includes("quality") || text.includes("scene") || text.includes("sequence") || text.includes("shot"))
-        return "qaGates";
-      if (text.includes("video") || text.includes("render") || text.includes("composition"))
-        return "finalVideo";
-    } else {
-      if (text.includes("research")) return "research";
-      if (text.includes("treatment") || text.includes("facts") || text.includes("director")) return "treatment";
-      if (text.includes("script")) return "script";
-      if (text.includes("visual bible") || text.includes("asset")) return "visualBible";
-      if (text.includes("scene") || text.includes("sequence") || text.includes("shot")) return "scenes";
-      if (text.includes("voice") || text.includes("audio") || text.includes("narration")) return "narration";
-      if (text.includes("video") || text.includes("render")) return "video";
+interface KeywordStageRule {
+  readonly keywords: readonly string[];
+  readonly stage: string;
+}
+
+const STREAMLINED_KEYWORD_RULES: readonly KeywordStageRule[] = [
+  { keywords: ["quiz", "research", "treatment", "facts", "director", "script"], stage: "quizContent" },
+  { keywords: ["asset", "voice", "audio", "visual"], stage: "voiceAndAssets" },
+  { keywords: ["qa", "timeline", "quality", "scene", "sequence", "shot"], stage: "qaGates" },
+  { keywords: ["video", "render", "composition"], stage: "finalVideo" },
+];
+
+const LEGACY_KEYWORD_RULES: readonly KeywordStageRule[] = [
+  { keywords: ["research"], stage: "research" },
+  { keywords: ["treatment", "facts", "director"], stage: "treatment" },
+  { keywords: ["script"], stage: "script" },
+  { keywords: ["visual bible", "asset"], stage: "visualBible" },
+  { keywords: ["scene", "sequence", "shot"], stage: "scenes" },
+  { keywords: ["voice", "audio", "narration"], stage: "narration" },
+  { keywords: ["video", "render"], stage: "video" },
+];
+
+const STREAMLINED_TASK_TYPE_MAP: Partial<Record<Task["task_type"], string>> = {
+  GENERATE_QUIZ: "quizContent",
+  GENERATE_RESEARCH: "quizContent",
+  GENERATE_TREATMENT: "quizContent",
+  GENERATE_SCRIPT: "quizContent",
+  GENERATE_VISUAL_BIBLE: "voiceAndAssets",
+  GENERATE_BUNDLE_IMAGE: "voiceAndAssets",
+  GENERATE_SCENES: "qaGates",
+  GENERATE_SEQUENCE_SCENES: "qaGates",
+  GENERATE_VIDEO: "finalVideo",
+};
+
+const LEGACY_TASK_TYPE_MAP: Partial<Record<Task["task_type"], string>> = {
+  GENERATE_RESEARCH: "research",
+  GENERATE_TREATMENT: "treatment",
+  GENERATE_SCRIPT: "script",
+  GENERATE_VISUAL_BIBLE: "visualBible",
+  GENERATE_BUNDLE_IMAGE: "visualBible",
+  GENERATE_SCENES: "scenes",
+  GENERATE_SEQUENCE_SCENES: "scenes",
+  GENERATE_VIDEO: "video",
+};
+
+function matchStageFromText(text: string, rules: readonly KeywordStageRule[]): string | null {
+  for (const { keywords, stage } of rules) {
+    if (keywords.some((keyword) => text.includes(keyword))) {
+      return stage;
     }
+  }
+  return null;
+}
+
+function resolveActivePipelineStage(task: Task, streamlined: boolean): string | null {
+  const text = `${task.error ?? ""} ${task.progress_message ?? ""}`.toLowerCase();
+  const rules = streamlined ? STREAMLINED_KEYWORD_RULES : LEGACY_KEYWORD_RULES;
+  return matchStageFromText(text, rules);
+}
+
+function resolveActiveChildStage(child: Task, streamlined: boolean): string | null {
+  const mapping = streamlined ? STREAMLINED_TASK_TYPE_MAP : LEGACY_TASK_TYPE_MAP;
+  return mapping[child.task_type] ?? null;
+}
+
+export function resolveQuizPipelineStage(pipelineTask: Task | null, tasks: Task[], streamlined: boolean = true): string | null {
+  if (pipelineTask && isTaskActive(pipelineTask)) {
+    const stage = resolveActivePipelineStage(pipelineTask, streamlined);
+    if (stage) return stage;
   }
 
   const child = tasks.find((task) => isTaskActive(task));
   if (child) {
-    if (streamlined) {
-      if (
-        child.task_type === "GENERATE_QUIZ" ||
-        child.task_type === "GENERATE_RESEARCH" ||
-        child.task_type === "GENERATE_TREATMENT" ||
-        child.task_type === "GENERATE_SCRIPT"
-      )
-        return "quizContent";
-      if (child.task_type === "GENERATE_VISUAL_BIBLE" || child.task_type === "GENERATE_BUNDLE_IMAGE")
-        return "voiceAndAssets";
-      if (child.task_type === "GENERATE_SCENES" || child.task_type === "GENERATE_SEQUENCE_SCENES")
-        return "qaGates";
-      if (child.task_type === "GENERATE_VIDEO")
-        return "finalVideo";
-    } else {
-      if (child.task_type === "GENERATE_RESEARCH") return "research";
-      if (child.task_type === "GENERATE_TREATMENT") return "treatment";
-      if (child.task_type === "GENERATE_SCRIPT") return "script";
-      if (child.task_type === "GENERATE_VISUAL_BIBLE" || child.task_type === "GENERATE_BUNDLE_IMAGE") return "visualBible";
-      if (child.task_type === "GENERATE_SCENES" || child.task_type === "GENERATE_SEQUENCE_SCENES") return "scenes";
-      if (child.task_type === "GENERATE_VIDEO") return "video";
-    }
+    return resolveActiveChildStage(child, streamlined);
   }
+
   return null;
 }
 

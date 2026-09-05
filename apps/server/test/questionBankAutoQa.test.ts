@@ -5,7 +5,7 @@ import path from "node:path";
 import Fastify from "fastify";
 import type { BankQuestion } from "@studio/shared";
 import { buildApp, type StudioApp } from "../src/app.js";
-import { runAutoQaOnQuestion, runBatchAutoQa } from "../src/quiz/bank/questionBankAutoQa.js";
+import { detectSyntacticRepetition, runAutoQaOnQuestion, runBatchAutoQa } from "../src/quiz/bank/questionBankAutoQa.js";
 import { buildBatchGenerationPrompt, parseBatchGenerationOutput } from "../src/quiz/bank/batchGeneratorPrompt.js";
 import { generateQuestionBankBatch } from "../src/quiz/bank/questionBankBatchService.js";
 import { registerQuestionBankRoutes } from "../src/routes/questionBank.js";
@@ -359,5 +359,87 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     const body = JSON.parse(res.body);
     expect(body.code).toBe("AI_CLIENT_UNAVAILABLE");
     await isolatedServer.close();
+  });
+
+  it("Auto-QA: detects and flags redundant choice suffixes in Versus Faceoff", () => {
+    const redundantVersusQ: BankQuestion = {
+      ...sampleValidQuestion,
+      id: "VERSUS-RED-1",
+      archetype_id: "versus_faceoff",
+      format: "multiple_choice",
+      question: "Which game flicks discs into pockets: Billiards or Carrom?",
+      choices: [
+        { id: "A", text: "Billiards", is_correct: false },
+        { id: "B", text: "Carrom", is_correct: true },
+      ],
+      correct_choice_id: "B",
+    };
+
+    const res = runAutoQaOnQuestion(redundantVersusQ);
+    expect(res.passed).toBe(false);
+    expect(res.issues.some((i) => i.type === "quality" && i.message.includes("Versus Faceoff question"))).toBe(true);
+
+    const cleanVersusQ: BankQuestion = {
+      ...redundantVersusQ,
+      id: "VERSUS-CLEAN-1",
+      question: "Which tabletop game flicks wooden discs into corner pockets?",
+    };
+    const resClean = runAutoQaOnQuestion(cleanVersusQ);
+    expect(resClean.passed).toBe(true);
+  });
+
+  it("Auto-QA: detectSyntacticRepetition catches repetitive formulaic suffixes across batch", () => {
+    const makeSpotting = (id: string, q: string): BankQuestion => ({
+      ...sampleValidQuestion,
+      id,
+      archetype_id: "visual_spotting",
+      format: "odd_one_out",
+      question: q,
+      choices: [
+        { id: "A", text: "Option A", is_correct: true },
+        { id: "B", text: "Option B", is_correct: false },
+        { id: "C", text: "Option C", is_correct: false },
+      ],
+      correct_choice_id: "A",
+    });
+
+    const q1 = makeSpotting("S1", "Which ancient queen goddess is the odd one out?");
+    const q2 = makeSpotting("S2", "Which radiant Norse goddess is the odd one out?");
+    const q3 = makeSpotting("S3", "Which tragic Greek king is the odd one out?");
+
+    // First two pass
+    expect(detectSyntacticRepetition(q1, [])).toBeNull();
+    expect(detectSyntacticRepetition(q2, [q1])).toBeNull();
+
+    // Third repetitive suffix in batch is flagged
+    const issue = detectSyntacticRepetition(q3, [q1, q2]);
+    expect(issue).not.toBeNull();
+    expect(issue?.type).toBe("quality");
+    expect(issue?.message).toContain("odd one out");
+
+    // Varied hooks pass without issue
+    const variedQ = makeSpotting("S-VAR", "Spot the impostor: Which Greek voyager does not belong?");
+    expect(detectSyntacticRepetition(variedQ, [q1, q2])).toBeNull();
+  });
+
+  it("Auto-QA: detectSyntacticRepetition catches 3 consecutive identical 2-word opening prefixes", () => {
+    const makeQ = (id: string, q: string): BankQuestion => ({
+      ...sampleValidQuestion,
+      id,
+      question: q,
+    });
+
+    const q1 = makeQ("P1", "Which game drops discs vertically into slots?");
+    const q2 = makeQ("P2", "Which game uses a colored floor mat?");
+    const q3 = makeQ("P3", "Which game glides a puck on air?");
+
+    expect(detectSyntacticRepetition(q1, [])).toBeNull();
+    expect(detectSyntacticRepetition(q2, [q1])).toBeNull();
+
+    const issue = detectSyntacticRepetition(q3, [q1, q2]);
+    expect(issue).not.toBeNull();
+    expect(issue?.type).toBe("quality");
+    expect(issue?.message).toContain("Monotonous opening repetition");
+    expect(issue?.message).toContain("which game");
   });
 });

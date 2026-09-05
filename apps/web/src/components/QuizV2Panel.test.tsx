@@ -65,13 +65,7 @@ const defaultReadiness = {
 describe("QuizV2Panel Component", () => {
   it("renders 7 streamlined stages by default and omits legacy stages", () => {
     const { container } = render(
-      <QuizV2Panel
-        state={mockState}
-        readiness={defaultReadiness}
-        pipelineTask={null}
-        tasks={[]}
-        questionCount={1}
-      />,
+      <QuizV2Panel state={mockState} readiness={defaultReadiness} pipelineTask={null} tasks={[]} questionCount={1} />,
     );
 
     const rail = container.querySelector(".quiz-v2-rail");
@@ -86,7 +80,7 @@ describe("QuizV2Panel Component", () => {
     expect(screen.getByText("QA Gates")).toBeDefined();
     expect(screen.getByText("Video Render")).toBeDefined();
 
-    // Must NOT show documentary legacy stages
+    // Must NOT show retired legacy stages
     expect(screen.queryByText("Research")).toBeNull();
     expect(screen.queryByText("Treatment")).toBeNull();
     expect(screen.queryByText("Visual bible")).toBeNull();
@@ -94,14 +88,7 @@ describe("QuizV2Panel Component", () => {
 
   it("renders 12 legacy stages when streamlined is explicitly false", () => {
     const { container } = render(
-      <QuizV2Panel
-        streamlined={false}
-        state={mockState}
-        readiness={defaultReadiness}
-        pipelineTask={null}
-        tasks={[]}
-        questionCount={1}
-      />,
+      <QuizV2Panel streamlined={false} state={mockState} readiness={defaultReadiness} pipelineTask={null} tasks={[]} questionCount={1} />,
     );
 
     const rail = container.querySelector(".quiz-v2-rail");
@@ -134,19 +121,9 @@ describe("QuizV2Panel Component", () => {
       error: null,
     } as unknown as Task;
 
-    render(
-      <QuizV2Panel
-        state={mockState}
-        readiness={defaultReadiness}
-        pipelineTask={activeTask}
-        tasks={[activeTask]}
-        questionCount={1}
-      />,
-    );
+    render(<QuizV2Panel state={mockState} readiness={defaultReadiness} pipelineTask={activeTask} tasks={[activeTask]} questionCount={1} />);
 
-    expect(
-      screen.getByText(/Current: Quiz Content · Generating structured questions with facts/),
-    ).toBeDefined();
+    expect(screen.getByText(/Current: Quiz Content · Generating structured questions with facts/)).toBeDefined();
   });
 
   it("renders stage durations and parallel execution summary", () => {
@@ -180,15 +157,7 @@ describe("QuizV2Panel Component", () => {
       },
     };
 
-    render(
-      <QuizV2Panel
-        state={stateWithTimings}
-        readiness={defaultReadiness}
-        pipelineTask={null}
-        tasks={[]}
-        questionCount={1}
-      />,
-    );
+    render(<QuizV2Panel state={stateWithTimings} readiness={defaultReadiness} pipelineTask={null} tasks={[]} questionCount={1} />);
 
     // Parallel summary tag
     expect(screen.getByText(/Parallel \(Visual Assets & Voice\):/)).toBeDefined();

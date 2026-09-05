@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  compileDualThumbnailPrompts,
-  compileThumbnailPrompt,
-  resolveThumbnailLayout,
-} from "../src/quiz/thumbnail/index.js";
+import { compileDualThumbnailPrompts, compileThumbnailPrompt, resolveThumbnailLayout } from "../src/quiz/thumbnail/index.js";
 import type { MascotProfile } from "@studio/shared";
 
 describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
@@ -189,7 +185,6 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(prompt).toContain("ZERO number badges");
   });
 
-
   it("strictly generates authentic Japanese YouTube thumbnail text for Japanese channels", () => {
     // 1. Japanese Mega Grid
     const jaGrid = resolveThumbnailLayout({
@@ -271,7 +266,7 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
       mascotProfile: sampleMascot,
     });
     expect(frTf.hookText).toBe("VRAI OU FAUX ?");
-    expect(frTf.badgeText).toBe("MYTHE OU RÉALITÉ ? ⚡");
+    expect(frTf.badgeText).toBe("VRAI OU FAUX ? ⚡");
   });
 
   it("strictly generates authentic Nordic and Dutch thumbnail texts for all 10 core languages", () => {
@@ -397,7 +392,6 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(plan.subjectAnchors[0].visualPrompt).toContain("specialty cookie or pastry representing France");
   });
 
-
   it("uses Antigravity AI Planner to synthesize high-CTR semantic thumbnail plans", async () => {
     const { planThumbnailWithAI } = await import("../src/quiz/thumbnail/thumbnailAiPlanner.js");
 
@@ -461,9 +455,3 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(aiPlan.subjectAnchors[0].visualPrompt).toContain("Excalibur");
   });
 });
-
-
-
-
-
-

@@ -1,5 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { AssetConsistencyGroupSchema, QuizV2Schema, resolveQuizLayout, type MascotProfile } from "@studio/shared";
+import {
+  AssetConsistencyGroupSchema,
+  DEFAULT_QUIZ_PALETTE_FALLBACK,
+  QuizV2Schema,
+  resolveQuizLayout,
+  serializeQuizPaletteCss,
+  serializeQuizPaletteCssVariables,
+  serializeQuizPaletteInlineStyle,
+  type MascotProfile,
+  type QuizBackgroundStyle,
+} from "@studio/shared";
 import { compileQuizAssetPrompt } from "../src/quiz/assets/promptCompiler.js";
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { buildQuizVoicePlan, ENGLISH_OUTRO_CLOSING_VARIANTS } from "../src/quiz/audio/voicePlan.js";
@@ -11,6 +21,20 @@ import {
   buildCandyArcadeCompositionBundle,
   candyArcadeHeroAreaRatio,
 } from "../src/quiz/render/candyArcadeComposition.js";
+import { candyArcadeCss } from "../src/quiz/render/candyArcade/candyArcadeStyles.js";
+import { baseChoiceStyles } from "../src/quiz/render/choices/baseChoiceStyles.js";
+import { choiceTypographyStyles } from "../src/quiz/render/choices/choiceTypographyStyles.js";
+import { choiceStateStyles } from "../src/quiz/render/choices/choiceStateStyles.js";
+import { fullStackListLayout } from "../src/quiz/render/layouts/fullStackList.js";
+import { mediaLeftChoicesRightLayout } from "../src/quiz/render/layouts/mediaLeftChoicesRight.js";
+import { visualChoicesThreeLayout } from "../src/quiz/render/layouts/visualChoicesThree.js";
+import { baselineLayout } from "../src/quiz/render/layouts/baseline.js";
+import { glossyArcadeVariant } from "../src/quiz/visual/elements/answerCard/variants/glossyArcade.js";
+import { comicChunkyVariant } from "../src/quiz/visual/elements/answerCard/variants/comicChunky.js";
+import { glassNeonVariant } from "../src/quiz/visual/elements/answerCard/variants/glassNeon.js";
+import { minimalSoftVariant } from "../src/quiz/visual/elements/answerCard/variants/minimalSoft.js";
+import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
+import { resolveBackgroundVariant } from "../src/quiz/visual/elements/background/index.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import {
   ambientPhaseSeconds,
@@ -22,6 +46,7 @@ import {
   timelineProgress,
   visualAnswerState,
 } from "../src/quiz/visual/candyArcade.js";
+import { styleBoundaryQuiz } from "./quizStyleBoundaryFixtures.js";
 
 const quiz = QuizV2Schema.parse({
   schema_version: 2,
@@ -743,3 +768,336 @@ function questionCompositionFiles(files: Record<string, string>): string[] {
 function choiceCardTag(html: string, choiceId: string): string {
   return html.match(new RegExp(`<div[^>]*data-choice-id="${choiceId}"[^>]*>`))?.[0] ?? "";
 }
+
+type BackgroundId = Exclude<QuizBackgroundStyle, "auto">;
+
+function parityProductionBundle(backgrounds: [BackgroundId, BackgroundId]) {
+  const boundaryQuiz = { ...styleBoundaryQuiz, episode_id: "phase-08c-parity" };
+  const director = createDefaultDirectorPlan(boundaryQuiz);
+  director.beats.forEach((beat, index) => {
+    beat.background_style = backgrounds[index];
+  });
+  const voicePlan = buildQuizVoicePlan(boundaryQuiz);
+  const timeline = compileQuizTimeline({ quiz: boundaryQuiz, director, voicePlan, targetDurationSeconds: 30 });
+  return buildCandyArcadeCompositionBundle({
+    quiz: boundaryQuiz,
+    director,
+    timeline,
+    styleContext: { theme: "candy_arcade" },
+    audioPath: "./narration.wav",
+    narrationDurationSeconds: 30,
+  });
+}
+
+function paritySandboxComposition(background: BackgroundId) {
+  return buildSandboxComposition({
+    background_style: background,
+    theme: "candy_arcade",
+    palette_id: "lime",
+    question_number: 1,
+    total_questions: 2,
+  });
+}
+
+describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
+  it("owns placement, dimensions, and capacity tokens in layout CSS without selecting private skin classes", () => {
+    const mlcrCss = mediaLeftChoicesRightLayout.css("16:9");
+    const vc3Css = visualChoicesThreeLayout.css("16:9");
+    const baseCss = baselineLayout.css("16:9");
+
+    expect(mlcrCss).toContain("--choice-card-min-height");
+    expect(mlcrCss).toContain("--choice-badge-size");
+    expect(mlcrCss).toContain("--choice-font-size-base");
+    expect(vc3Css).toContain("--choice-media-height");
+    expect(vc3Css).toContain("--choice-label-font-size-base");
+    expect(baseCss).toContain("--choice-card-min-height");
+
+    expect(mlcrCss).not.toContain(".ac-glossy-arcade");
+    expect(mlcrCss).not.toContain(".ac-comic-chunky");
+    expect(mlcrCss).not.toContain(".ac-glass-neon");
+    expect(mlcrCss).not.toContain(".ac-minimal-soft");
+    expect(vc3Css).not.toContain(".ac-glossy-arcade");
+    expect(vc3Css).not.toContain(".ac-comic-chunky");
+
+    expect(mlcrCss).not.toContain("border: 8px solid");
+    expect(mlcrCss).not.toContain("border: 7px solid");
+    expect(mlcrCss).not.toContain("border: 4px solid");
+  });
+
+  it("owns stable internal structure in base choice CSS independent of skin and layout", () => {
+    const base = baseChoiceStyles();
+
+    expect(base).toContain(".choice-group");
+    expect(base).toContain(".choice-card");
+    expect(base).toContain(".choice-card-text");
+    expect(base).toContain(".choice-card-visual");
+    expect(base).toContain(".choice-label");
+    expect(base).toContain(".choice-text");
+    expect(base).toContain(".choice-media");
+
+    expect(base).toContain("var(--choice-card-min-height");
+    expect(base).toContain("var(--choice-badge-size");
+    expect(base).toContain("var(--choice-media-height");
+    expect(base).toContain('.choice-group[data-choice-fit-lines="2"] .choice-text');
+    expect(base).toContain("-webkit-line-clamp: 2");
+  });
+
+  it("keeps visual answer tracks and cards inside allocated grid width", () => {
+    const base = baseChoiceStyles();
+
+    expect(base).toContain("grid-template-columns: var(--choice-grid-columns, repeat(3, minmax(0, 1fr)));");
+    expect(base).toMatch(/\.choice-card-visual,[\s\S]*?\.visual-answer-card \{[\s\S]*?min-width: 0;/);
+    expect(base).toMatch(/\.visual-answer-label \{[\s\S]*?min-width: 0;/);
+  });
+
+  it("owns shared answer outcome states without icon bloat", () => {
+    const state = choiceStateStyles();
+
+    expect(state).toContain(".answer-correct");
+    expect(state).toContain(".answer-incorrect");
+    expect(state).toContain("correct-card-reveal");
+    expect(state).toContain("incorrect-card-settle");
+    expect(state).not.toContain(".answer-check");
+    expect(state).not.toContain(".answer-cross");
+  });
+
+  it("provides typography tier system consuming layout capacity tokens", () => {
+    const typo = choiceTypographyStyles();
+
+    expect(typo).toContain(".choice-card-text .choice-text");
+    expect(typo).toContain(".choice-tier-medium");
+    expect(typo).toContain(".choice-tier-long");
+    expect(typo).toContain(".choice-tier-very_long");
+    expect(typo).toContain(".choice-tier-overflow");
+
+    expect(typo).toContain("var(--choice-font-size-base");
+    expect(typo).toContain("var(--choice-font-size-medium");
+    expect(typo).toContain("var(--choice-font-size-long");
+    expect(typo).toContain("var(--choice-font-size-very_long");
+    expect(typo).toContain("var(--choice-label-font-size-base");
+    expect(typo).toContain("var(--choice-label-font-size-medium");
+    expect(typo).toContain("var(--choice-fitted-font-size, var(--choice-font-size-base");
+    expect(typo).toContain("var(--choice-fitted-font-size, var(--choice-label-font-size-base");
+  });
+
+  it("owns decoration in skin CSS without outer layout placement", () => {
+    const skins = [glossyArcadeVariant, comicChunkyVariant, glassNeonVariant, minimalSoftVariant];
+
+    for (const skin of skins) {
+      const css = skin.renderCss();
+      expect(css).toContain(skin.className);
+
+      expect(css).not.toContain("grid-template-columns");
+      expect(css).not.toContain("grid-template-areas");
+      expect(css).not.toContain("grid-area: hero");
+      expect(css).not.toContain("grid-area: answers");
+    }
+  });
+
+  it("maintains normal cascade with no !important cross-layer dependencies", () => {
+    const base = baseChoiceStyles();
+    const typo = choiceTypographyStyles();
+    const state = choiceStateStyles();
+    const mlcr = mediaLeftChoicesRightLayout.css("16:9");
+    const vc3 = visualChoicesThreeLayout.css("16:9");
+    const glossy = glossyArcadeVariant.renderCss();
+    const comic = comicChunkyVariant.renderCss();
+    const glass = glassNeonVariant.renderCss();
+    const minimal = minimalSoftVariant.renderCss();
+
+    expect(base).not.toContain("!important");
+    expect(typo).not.toContain("!important");
+    expect(state).not.toContain("!important");
+    expect(mlcr).not.toContain("!important");
+    expect(vc3).not.toContain("!important");
+    expect(glossy).not.toContain("!important");
+    expect(comic).not.toContain("!important");
+    expect(glass).not.toContain("!important");
+    expect(minimal).not.toContain("!important");
+  });
+
+  it("serializes identical semantic palette variables for production and sandbox", () => {
+    for (const palette of candyArcadePalettes) {
+      const vars = serializeQuizPaletteCssVariables(palette);
+      const css = serializeQuizPaletteCss(palette);
+      const inline = serializeQuizPaletteInlineStyle(palette);
+
+      expect(vars["--bg-primary"]).toBe(palette.backgroundPrimary);
+      expect(vars["--bg-secondary"]).toBe(palette.backgroundSecondary);
+      expect(vars["--accent"]).toBe(palette.accent);
+      expect(vars["--surface-accent"]).toBe(palette.surfaceAccent);
+      expect(vars["--on-accent"]).toBe(palette.onAccent);
+      expect(vars["--answer-badge"]).toBe(palette.answerBadge);
+      expect(vars["--badge"]).toBe(palette.answerBadge);
+      expect(vars["--correct"]).toBe(palette.correct);
+      expect(vars["--incorrect"]).toBe(palette.incorrect);
+      expect(vars["--surface"]).toBe(palette.surface);
+      expect(vars["--text"]).toBe(palette.text);
+      expect(vars["--ink"]).toBe(palette.text);
+      expect(vars["--muted"]).toBe(palette.muted);
+
+      expect(css).toContain(`--bg-primary: ${palette.backgroundPrimary};`);
+      expect(css).toContain(`--text: ${palette.text};`);
+      expect(inline).toContain(`--bg-primary:${palette.backgroundPrimary};`);
+      expect(inline).toContain(`--ink:${palette.text};`);
+    }
+  });
+
+  it("falls back safely for null or empty palette without emitting invalid CSS", () => {
+    const nullVars = serializeQuizPaletteCssVariables(null);
+    const emptyVars = serializeQuizPaletteCssVariables({});
+
+    expect(nullVars["--bg-primary"]).toBe(DEFAULT_QUIZ_PALETTE_FALLBACK.backgroundPrimary);
+    expect(nullVars["--text"]).toBe(DEFAULT_QUIZ_PALETTE_FALLBACK.text);
+    expect(emptyVars["--correct"]).toBe(DEFAULT_QUIZ_PALETTE_FALLBACK.correct);
+    expect(emptyVars["--incorrect"]).toBe(DEFAULT_QUIZ_PALETTE_FALLBACK.incorrect);
+  });
+
+  it("publishes complete capacity custom properties for 16:9 and 9:16 aspect ratios", () => {
+    const mlcr = mediaLeftChoicesRightLayout.css("16:9");
+    const vc3 = visualChoicesThreeLayout.css("16:9");
+
+    expect(mlcr).toContain("--choice-card-min-height: 116px;");
+    expect(mlcr).toContain("--choice-badge-size: 138px;");
+    expect(mlcr).toContain("--choice-font-size-base: 48px;");
+    expect(mlcr).toContain("--choice-font-size-medium: 40px;");
+    expect(mlcr).toContain("--choice-font-size-long: 32px;");
+    expect(mlcr).toContain("--choice-font-size-very_long: 26px;");
+
+    expect(vc3).toContain("--choice-media-height: 500px;");
+    expect(vc3).toContain("--choice-badge-size: 108px;");
+    expect(vc3).toContain("--choice-label-min-height: 76px;");
+    expect(vc3).toContain("--choice-label-font-size-base: 32px;");
+
+    const mlcr916 = mediaLeftChoicesRightLayout.css("9:16");
+    const vc3916 = visualChoicesThreeLayout.css("9:16");
+
+    expect(mlcr916).toContain('#stage[data-aspect-ratio="9:16"]');
+    expect(mlcr916).toContain("--choice-badge-size: 124px;");
+    expect(mlcr916).toContain("--choice-font-size-base: 40px;");
+
+    expect(vc3916).toContain('#stage[data-aspect-ratio="9:16"]');
+    expect(vc3916).toContain("--choice-media-height: 360px;");
+    expect(vc3916).toContain("--choice-badge-size: 104px;");
+    expect(vc3916).toContain("--choice-label-min-height: 74px;");
+  });
+
+  it("publishes answer card auto-fit tokens for all layouts and aspect ratios", () => {
+    const baseline = baselineLayout.css("16:9");
+    const mediaLeft = mediaLeftChoicesRightLayout.css("16:9");
+    const mediaLeftPortrait = mediaLeftChoicesRightLayout.css("9:16");
+    const fullStack = fullStackListLayout.css("16:9");
+    const fullStackPortrait = fullStackListLayout.css("9:16");
+    const visual = visualChoicesThreeLayout.css("16:9");
+    const visualPortrait = visualChoicesThreeLayout.css("9:16");
+
+    expect(baseline).toContain("--choice-fit-max: 64px;");
+    expect(mediaLeft).toContain("--choice-fit-max: 64px;");
+    expect(mediaLeftPortrait).toContain("--choice-fit-max: 72px;");
+    expect(fullStack).toContain("--choice-fit-max: 64px;");
+    expect(fullStackPortrait).toContain("--choice-fit-max: 72px;");
+    expect(visual).toContain("--choice-fit-max: 38px;");
+    expect(visualPortrait).toContain("--choice-fit-max: 42px;");
+
+    for (const css of [baseline, mediaLeft, fullStack, visual]) {
+      expect(css).toContain("--choice-fit-min:");
+      expect(css).toContain("--choice-fit-max-lines: 2;");
+      expect(css).toContain("--choice-fit-leading: 1.08;");
+      expect(css).toContain("--choice-fit-multiline-gain: 6px;");
+    }
+  });
+});
+
+describe("Candy Arcade background parity and composition integration", () => {
+  it.each<BackgroundId>(["candy_rays", "aurora_glow"])("emits canonical %s layer through both public composition entries", (background) => {
+    const production = parityProductionBundle([background, background]);
+    const sandbox = paritySandboxComposition(background);
+    const variant = resolveBackgroundVariant(background);
+    const canonicalProduction = variant.renderHtml({ surface: "production", questionIndex: 0 });
+    const canonicalSandbox = variant.renderHtml({ surface: "sandbox", questionIndex: 0 });
+
+    expect(canonicalSandbox).toBe(canonicalProduction);
+    expect(canonicalProduction).toContain('class="quiz-scene-background"');
+    expect(canonicalProduction).toContain(`data-background-style="${background}"`);
+    expect(Object.values(production.files).join("\n")).toContain(canonicalProduction);
+    expect(sandbox.html).toContain(canonicalProduction);
+  });
+
+  it("bundles each used background and scopes CSS properly without comment counting", () => {
+    const candyOnly = candyArcadeCss({ backgroundStyles: ["candy_rays", "candy_rays"] });
+    expect(candyOnly).toContain(".bg-rays");
+    expect(candyOnly).not.toContain(".bg-aurora-glow");
+    expect(candyOnly).toContain(".quiz-scene-background");
+
+    const auroraOnly = paritySandboxComposition("aurora_glow").css;
+    expect(auroraOnly).not.toContain(".bg-rays");
+    expect(auroraOnly).toContain(".bg-aurora-glow");
+
+    const mixed = parityProductionBundle(["aurora_glow", "candy_rays"]).html;
+    expect(mixed).toContain(".bg-rays");
+    expect(mixed).toContain(".bg-aurora-glow");
+    expect(mixed).toContain(".quiz-scene-background");
+  });
+
+  it("exposes the browser font-readiness contract as executable script", () => {
+    const sandbox = paritySandboxComposition("candy_rays");
+    expect(sandbox.html).toContain("<script>(function(){");
+    expect(sandbox.html).toContain("window.__fontReadyPromise=(async()=>");
+  });
+
+  it.each<BackgroundId>(["candy_rays", "aurora_glow"])("keeps %s deterministic with a reduced-motion fallback", (background) => {
+    const firstProduction = parityProductionBundle([background, background]);
+    const secondProduction = parityProductionBundle([background, background]);
+    const firstSandbox = paritySandboxComposition(background);
+    const secondSandbox = paritySandboxComposition(background);
+
+    expect(secondProduction).toEqual(firstProduction);
+    expect(secondSandbox).toEqual(firstSandbox);
+    expect(firstProduction.html).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(firstSandbox.css).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(firstSandbox.css).toContain("animation-duration: var(--mascot-state-span, .04s) !important");
+  });
+});
+
+describe("Candy Arcade visual and workflow regression", () => {
+  it("renders all four skins cleanly across text layouts without geometry collision", () => {
+    const skins = ["glossy_arcade", "comic_chunky", "glass_neon", "minimal_soft"] as const;
+
+    for (const skin of skins) {
+      const res = buildSandboxComposition({
+        answer_card_style: skin,
+        layout_id: "media_left_choices_right",
+      });
+
+      expect(res.html).toContain(`skin-${skin}`);
+      expect(res.html).toContain("layout-media_left_choices_right");
+      expect(res.html).toContain("choice-card");
+    }
+  });
+
+  it("renders 16:9 and 9:16 compositions cleanly with correct aspect markers", () => {
+    const res169 = buildSandboxComposition({ aspect_ratio: "16:9" });
+    const res916 = buildSandboxComposition({ aspect_ratio: "9:16" });
+
+    expect(res169.html).toContain('data-aspect-ratio="16:9"');
+    expect(res916.html).toContain('data-aspect-ratio="9:16"');
+    expect(res916.html).toContain('#stage[data-aspect-ratio="9:16"]');
+  });
+
+  it("suppresses decorative animation under reduced motion while preserving status visibility", () => {
+    const css = candyArcadeCss({ aspectRatio: "16:9" });
+
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(css).toContain("animation-duration: .001ms !important;");
+    expect(css).toContain("animation-iteration-count: 1 !important;");
+  });
+
+  it("keeps phase states strictly sequenced without premature answer reveal", () => {
+    const resChoices = buildSandboxComposition({ phase: "choices" });
+    const resReveal = buildSandboxComposition({ phase: "reveal" });
+
+    expect(resChoices.html).toContain("--choices-at: 0s");
+    expect(resChoices.html).toContain("--reveal-at: 999s");
+    expect(resReveal.html).toContain("--reveal-at: 0s");
+  });
+});

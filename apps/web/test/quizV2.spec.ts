@@ -239,7 +239,7 @@ test("Quiz Engine V2 rail is status-only and Build video is the single productio
 
   await page.goto("/#/channels");
   await page.getByRole("button", { name: /Quiz V2 channel/ }).click();
-  await page.getByRole("button", { name: /Quiz Story/ }).click();
+  await page.getByRole("link", { name: /Quiz Story/ }).click();
   await expect(page.getByRole("heading", { name: "Production rail", exact: true })).toBeVisible();
   await expect(page.getByText("Production score", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Quiz QA score", { exact: true })).toBeVisible();
@@ -250,15 +250,17 @@ test("Quiz Engine V2 rail is status-only and Build video is the single productio
   await expect(page.getByRole("button", { name: "Generate Questions", exact: true })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Generate Director", exact: true })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Render", exact: true })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Render again", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Download MP4", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Open folder", exact: true }).click();
   await expect.poll(() => folderOpened).toBe(true);
   await expect(page.locator(".notice-banner.good")).toContainText("Video folder opened");
   const rail = page.getByRole("list", { name: "Quiz production stages" });
-  await expect(rail.getByText("Scenes", { exact: true })).toBeVisible();
-  await expect(rail.getByText("Questions", { exact: true })).toBeVisible();
-  await expect(rail.getByText("Timeline", { exact: true })).toBeVisible();
-  await expect(rail.getByLabel(/Questions: 0 of 3 questions complete, 0%/).getByText("0/3 questions · 0%", { exact: true })).toBeVisible();
+  await expect(rail.getByText("Quiz Content", { exact: true })).toBeVisible();
+  await expect(rail.getByText("Visual Assets", { exact: true })).toBeVisible();
+  await expect(rail.getByText("Video Render", { exact: true })).toBeVisible();
+  await expect(
+    rail.getByLabel(/Quiz Content: Ready, 0 of 3 questions complete, 0%/).getByText("0/3 questions · 0%", { exact: true }),
+  ).toBeVisible();
 
   await page.setViewportSize({ width: 390, height: 844 });
   const mobileWidth = await page.evaluate(() => ({

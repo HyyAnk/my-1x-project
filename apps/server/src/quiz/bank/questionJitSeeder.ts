@@ -19,6 +19,8 @@ import {
   type ScoredBankQuestion,
 } from "./questionCurationEngine.js";
 
+let jitSequence = 0;
+
 export interface EnsureTopicQuestionsWithJitDeps {
   repository: RepositoryService;
   channelId: string;
@@ -87,11 +89,7 @@ function makeJitFallbackQuestion(
 ): BankQuestion {
   const isVerdict = archetypeId === "verdict_true_false" || archetypeId === "verdict_fact_myth";
   const isVersus = archetypeId === "versus_faceoff";
-  const format: QuizQuestionFormat = isVerdict
-    ? "true_false"
-    : archetypeId === "visual_spotting"
-      ? "odd_one_out"
-      : "multiple_choice";
+  const format: QuizQuestionFormat = isVerdict ? "true_false" : archetypeId === "visual_spotting" ? "odd_one_out" : "multiple_choice";
   const count = bankRequiredChoiceCountForArchetype(archetypeId);
   const now = new Date().toISOString();
 
@@ -124,7 +122,7 @@ function makeJitFallbackQuestion(
 
   const visualIntent = archetypeId === "speed_blitz" ? "none" : "question_illustration";
   const candidate: BankQuestion = {
-    id: `JIT-${archetypeId.slice(0, 3).toUpperCase()}-${domainId.slice(0, 3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+    id: `JIT-${archetypeId.slice(0, 3).toUpperCase()}-${domainId.slice(0, 3).toUpperCase()}-${Date.now().toString(36)}-${(++jitSequence).toString(36)}-${Math.floor(1000 + Math.random() * 9000)}`,
     archetype_id: archetypeId,
     domain_id: domainId,
     subtopic_id: subtopicId,
@@ -160,9 +158,7 @@ export function generateJitQuestionsFallback(
   targetDifficulties: number[],
   lang?: string,
 ): BankQuestion[] {
-  return targetDifficulties.map((diff, idx) =>
-    makeJitFallbackQuestion(topic, archetypeId, domainId, subtopicId, diff, idx, lang),
-  );
+  return targetDifficulties.map((diff, idx) => makeJitFallbackQuestion(topic, archetypeId, domainId, subtopicId, diff, idx, lang));
 }
 
 export async function generateJitQuestionsWithLLM(
@@ -224,23 +220,14 @@ async function resolveMissingQuestions(
 
   if (generated.length < missingDiffs.length) {
     const neededDiffs = missingDiffs.slice(generated.length);
-    const fallback = generateJitQuestionsFallback(
-      deps.topic,
-      archetypeId,
-      domainId,
-      subtopicId,
-      neededDiffs,
-      deps.targetLanguage,
-    );
+    const fallback = generateJitQuestionsFallback(deps.topic, archetypeId, domainId, subtopicId, neededDiffs, deps.targetLanguage);
     generated = [...generated, ...fallback];
   }
 
   return generated;
 }
 
-export async function ensureTopicQuestionsWithJitFallback(
-  deps: EnsureTopicQuestionsWithJitDeps,
-): Promise<EnsureTopicQuestionsResult> {
+export async function ensureTopicQuestionsWithJitFallback(deps: EnsureTopicQuestionsWithJitDeps): Promise<EnsureTopicQuestionsResult> {
   const targetCount = deps.questionCount ?? 3;
   const curated = await curateQuestionsForTopic({
     repository: deps.repository,
@@ -266,7 +253,11 @@ export async function ensureTopicQuestionsWithJitFallback(
   const domainId = deps.topic.domain_id?.trim() || "nature_animals";
   const subtopicId =
     deps.topic.subtopic_id?.trim() ||
-    deps.topic.title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 40) ||
+    deps.topic.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "")
+      .slice(0, 40) ||
     "general";
 
   const missingDiffs = determineMissingDifficulties(existingQuestions, targetCount);

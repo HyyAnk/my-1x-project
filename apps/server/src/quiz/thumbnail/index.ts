@@ -1,6 +1,10 @@
 export * from "./thumbnailTypes.js";
 export * from "./thumbnailLayoutResolver.js";
+export * from "./thumbnailPersonaResolver.js";
+export * from "./thumbnailSubjectAnchorResolver.js";
+export * from "./thumbnailEnvironmentResolver.js";
 export * from "./thumbnailAiPlanner.js";
 export * from "./thumbnailPromptCompiler.js";
+export * from "./thumbnailManifestManager.js";
 export * from "./thumbnailService.js";
-
+export * from "./thumbnailLocale.js";

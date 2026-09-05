@@ -58,7 +58,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         targetLayout: "visual_choices_three_pure",
       });
 
-      expect(archetypesById.get("verdict_fact_myth")).toMatchObject({
+      expect(archetypesById.get("verdict_true_false")).toMatchObject({
         defaultFormat: "true_false",
         targetLayout: "verdict_true_false",
       });

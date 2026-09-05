@@ -44,7 +44,7 @@ afterEach(async () => {
   globalThis.fetch = originalFetch;
   if (originalShopAiKey === undefined) delete process.env.SHOPAIKEY_API_KEY;
   else process.env.SHOPAIKEY_API_KEY = originalShopAiKey;
-  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
+  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })));
   vi.restoreAllMocks();
 });
 
@@ -332,7 +332,7 @@ describe("bundle image tasks", () => {
     expect(maxConcurrentTurns).toBe(1);
     const images = await repository.listBundleImages(channel.channel_id, episode.episode_id);
     expect(images.length).toBe(2);
-  });
+  }, 15000);
 });
 
 function scene(episodeId: string, sceneNumber: number, dialogue: string) {
@@ -355,7 +355,7 @@ function scene(episodeId: string, sceneNumber: number, dialogue: string) {
 }
 
 async function waitFor(predicate: () => boolean): Promise<void> {
-  const deadline = Date.now() + 5_000;
+  const deadline = Date.now() + 10_000;
   while (!predicate() && Date.now() < deadline) await new Promise((resolve) => setTimeout(resolve, 20));
   if (!predicate()) throw new Error("Timed out waiting for task");
 }

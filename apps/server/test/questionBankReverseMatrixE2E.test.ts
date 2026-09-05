@@ -20,6 +20,7 @@ import {
   buildBatchGenerationPrompt,
   buildReverseGenerationPrompt,
   parseReverseBatchGenerationOutput,
+  sanitizeBankQuestionText,
   type TargetEntityForGeneration,
 } from "../src/quiz/bank/batchGeneratorPrompt.js";
 import {
@@ -405,6 +406,110 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
       expect(prompt).toContain("A family has 6 sons, each with 1 sister. How many kids total?");
       expect(prompt).toContain("A man walks in the rain with no umbrella, yet no hair gets wet. Why?");
       expect(prompt).toContain("You pass the person in second place in a race. What place are you?");
+    });
+
+    it("buildBatchGenerationPrompt includes specialized golden paradigms for all 5 diverse archetypes", () => {
+      const promptVersus = buildBatchGenerationPrompt({
+        archetypeId: "versus_faceoff",
+        domainId: "sports",
+        subtopicId: "board_games",
+        count: 3,
+      });
+      expect(promptVersus).toContain("GOLDEN VERSUS FACEOFF PARADIGMS");
+      expect(promptVersus).toContain("NO redundant choice suffixes");
+      expect(promptVersus).toContain("Cheetah vs Falcon: Which reaches higher top speed?");
+
+      const promptSpotting = buildBatchGenerationPrompt({
+        archetypeId: "visual_spotting",
+        domainId: "mythology",
+        subtopicId: "norse",
+        count: 3,
+      });
+      expect(promptSpotting).toContain("GOLDEN VISUAL SPOTTING PARADIGMS");
+      expect(promptSpotting).toContain('NEVER repeat "is the odd one out"');
+      expect(promptSpotting).toContain("Spot the impostor: Which Norse goddess does not belong?");
+
+      const promptClue = buildBatchGenerationPrompt({
+        archetypeId: "clue_deduction",
+        domainId: "pop_culture",
+        subtopicId: "fairy_tales",
+        count: 3,
+      });
+      expect(promptClue).toContain("GOLDEN CLUE DEDUCTION PARADIGMS");
+      expect(promptClue).toContain("DO NOT use dry");
+      expect(promptClue).toContain("Who is famous for wielding a nine-toothed iron rake?");
+
+      const promptMystery = buildBatchGenerationPrompt({
+        archetypeId: "mystery_reveal",
+        domainId: "vehicles",
+        subtopicId: "spacecraft",
+        count: 3,
+      });
+      expect(promptMystery).toContain("GOLDEN MYSTERY REVEAL PARADIGMS");
+      expect(promptMystery).toContain("Sees 16 sunrises every day — what orbiting lab is this?");
+
+      const promptVisualId = buildBatchGenerationPrompt({
+        archetypeId: "visual_identification",
+        domainId: "space",
+        subtopicId: "deep_space",
+        count: 3,
+      });
+      expect(promptVisualId).toContain("GOLDEN VISUAL IDENTIFICATION PARADIGMS");
+      expect(promptVisualId).toContain("What do astronomers call the point of no return around a black hole?");
+    });
+
+    it("buildReverseGenerationPrompt injects specialized directives across all 5 archetypes", () => {
+      const lion = getEntityById("ENT-ANI-001")!;
+      const target: TargetEntityForGeneration = {
+        entity_id: lion.id,
+        name: lion.name,
+        domain_id: lion.domain_id,
+        subtopic_id: lion.subtopic_id,
+        visual_anchor: lion.visual_anchor,
+        core_traits: lion.core_traits,
+        distractor_pool: lion.distractor_pool,
+        facts_and_myths: lion.facts_and_myths,
+        versus_candidates: lion.versus_candidates,
+      };
+
+      const promptVersus = buildReverseGenerationPrompt({ archetypeId: "versus_faceoff", targets: [target] });
+      expect(promptVersus).toContain("SPECIALIZED VERSUS FACEOFF COMPARATIVE DIRECTIVE");
+      expect(promptVersus).toContain("NO REDUNDANT CHOICE TEXT");
+
+      const promptSpotting = buildReverseGenerationPrompt({ archetypeId: "visual_spotting", targets: [target] });
+      expect(promptSpotting).toContain("SPECIALIZED VISUAL SPOTTING OUTLIER DIRECTIVE");
+      expect(promptSpotting).toContain("ANTI-MONOTONY MANDATE");
+
+      const promptClue = buildReverseGenerationPrompt({ archetypeId: "clue_deduction", targets: [target] });
+      expect(promptClue).toContain("SPECIALIZED CLUE DEDUCTION DIRECTIVE");
+      expect(promptClue).toContain("DEDUCTIVE REASONING OVER DRY FACTS");
+
+      const promptMystery = buildReverseGenerationPrompt({ archetypeId: "mystery_reveal", targets: [target] });
+      expect(promptMystery).toContain("SPECIALIZED MYSTERY REVEAL DIRECTIVE");
+      expect(promptMystery).toContain("SUSPENSE & SILHOUETTE FRAMING");
+
+      const promptVisualId = buildReverseGenerationPrompt({ archetypeId: "visual_identification", targets: [target] });
+      expect(promptVisualId).toContain("SPECIALIZED VISUAL IDENTIFICATION DIRECTIVE");
+      expect(promptVisualId).toContain("SYNTACTIC DIVERSITY");
+    });
+
+    it("sanitizeBankQuestionText cleanly strips redundant choice suffixes from Versus Faceoff questions", () => {
+      const choices = [
+        { text: "Billiards" },
+        { text: "Carrom" },
+      ];
+
+      const dirtyQ1 = "Which game flicks discs into pockets: Billiards or Carrom?";
+      expect(sanitizeBankQuestionText(dirtyQ1, "versus_faceoff", choices)).toBe("Which game flicks discs into pockets?");
+
+      const dirtyQ2 = "Which table sport flicks discs into pockets - Carrom vs Billiards?";
+      expect(sanitizeBankQuestionText(dirtyQ2, "versus_faceoff", choices)).toBe("Which table sport flicks discs into pockets?");
+
+      const cleanQ = "Which game features a doubling cube?";
+      expect(sanitizeBankQuestionText(cleanQ, "versus_faceoff", choices)).toBe("Which game features a doubling cube?");
+
+      // Other archetypes are preserved
+      expect(sanitizeBankQuestionText(dirtyQ1, "deep_trivia", choices)).toBe(dirtyQ1);
     });
 
     it("parseReverseBatchGenerationOutput pairs questions to candidates and binds entity_id", () => {

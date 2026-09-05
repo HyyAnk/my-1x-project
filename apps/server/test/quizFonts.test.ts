@@ -148,6 +148,7 @@ describe("quiz font parity", () => {
       offsetWidth: 500,
       offsetHeight: 580,
       parentElement: null as unknown,
+      getBoundingClientRect: () => ({ left: 10, right: 510, top: 200, bottom: 780, width: 500, height: 580 }),
     };
     const surfaceElement = {
       clientHeight: 0,
@@ -177,6 +178,7 @@ describe("quiz font parity", () => {
       clientWidth: 1560,
       clientHeight: 580,
       parentElement: null as unknown,
+      getBoundingClientRect: () => ({ left: 10, right: 1570, top: 200, bottom: 780, width: 1560, height: 580 }),
       style: {
         setProperty: (name: string, value: string) => properties.set(name, value),
         removeProperty: (name: string) => properties.delete(name),
@@ -192,6 +194,7 @@ describe("quiz font parity", () => {
     const parentContainer = {
       clientWidth: 1580,
       clientHeight: 945,
+      getBoundingClientRect: () => ({ left: 0, right: 1580, top: 0, bottom: 945, width: 1580, height: 945 }),
     };
     cardElement.parentElement = groupElement;
     groupElement.parentElement = parentContainer;

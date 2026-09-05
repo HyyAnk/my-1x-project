@@ -1,10 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { existsSync } from "node:fs";
+import { mkdtemp, rm } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { buildApp, type StudioApp } from "../src/app.js";
+import { seedQuestionBankFixtures } from "./questionBankRepository.test.js";
 
 describe("Question Bank REST API Routes", () => {
   let app: StudioApp;
+  let tempStorage: string;
 
   beforeAll(async () => {
     let curr = process.cwd();
@@ -13,10 +17,14 @@ describe("Question Bank REST API Routes", () => {
       curr = path.dirname(curr);
     }
     app = await buildApp(curr);
+    tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-route-test-"));
+    app.repository.setStorageRoot(tempStorage);
+    await seedQuestionBankFixtures(app.repository);
   });
 
   afterAll(async () => {
     await app.close();
+    await rm(tempStorage, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   });
 
   it("GET /api/question-bank/taxonomy returns 9 domains synced from knowledge base", async () => {
@@ -101,6 +109,7 @@ describe("Question Bank REST API Routes", () => {
       choices: [
         { id: "A", text: "Option 1", is_correct: true },
         { id: "B", text: "Option 2", is_correct: false },
+        { id: "C", text: "Option 3", is_correct: false },
       ],
       correct_choice_id: "A",
       explanation: "Test explanation for REST API question",

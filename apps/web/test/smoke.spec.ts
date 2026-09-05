@@ -244,7 +244,7 @@ test("failed tasks expose a retry path with the original task scope", async ({ p
   await page.getByRole("link", { name: /Tasks/, exact: false }).click();
   await page.getByRole("link", { name: /Failed 1/ }).click();
   await expect(page.getByText("Codex App Server unavailable", { exact: true })).toBeVisible();
-  await page.locator(".task-card-actions").getByRole("button", { name: "Retry task" }).click();
+  await page.getByRole("button", { name: "Retry task" }).click();
   await expect
     .poll(() => retryBody)
     .toEqual({ task_type: "GENERATE_SCRIPT", channel_id: channel.channel_id, episode_id: "ep_retry_123", scene_number: null });
@@ -475,6 +475,37 @@ test("topic confirmation sends the selected question count before episode genera
   let releaseConfirmation: (() => void) | undefined;
   let episodes: Array<typeof episode> = [];
 
+  await page.route("**/api/config", (route) =>
+    route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        video_generation: {
+          provider: "none",
+          model: "",
+          max_scene_duration_seconds: 8,
+          default_scene_duration_seconds: 6,
+          aspect_ratio: "16:9",
+        },
+        codex: {
+          max_concurrent_tasks: 3,
+          transport: "app_server",
+          app_server_endpoint: "stdio://",
+          command: "codex",
+          model: "",
+          experimental_api: false,
+          api_base_url: "",
+          api_key: "",
+        },
+        audio_generation: {
+          provider: "chatterbox",
+          service_url: "http://127.0.0.1:8890",
+          exaggeration: 0.5,
+          cfg_weight: 0.5,
+          max_concurrent_tasks: 2,
+        },
+      }),
+    }),
+  );
   await page.route("**/api/channels", (route) =>
     route.fulfill({ contentType: "application/json", body: JSON.stringify({ channels: [channel] }) }),
   );
@@ -501,6 +532,42 @@ test("topic confirmation sends the selected question count before episode genera
     episodes = [episode];
     await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ episode }) });
   });
+  await page.route(`**/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/file/*`, (route) =>
+    route.fulfill({ contentType: "application/json", body: JSON.stringify({ content: "", path: "", modified_at: null }) }),
+  );
+  await page.route(`**/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/scenes`, (route) =>
+    route.fulfill({ contentType: "application/json", body: JSON.stringify({ scenes: [] }) }),
+  );
+  await page.route(`**/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/production-assessment`, (route) =>
+    route.fulfill({ contentType: "application/json", body: JSON.stringify({ assessment: null }) }),
+  );
+  await page.route(`**/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/visual-bible/images`, (route) =>
+    route.fulfill({ contentType: "application/json", body: JSON.stringify({ images: [] }) }),
+  );
+  const mockQuizState = {
+    quiz: null,
+    director_plan: null,
+    asset_plan: null,
+    voice_plan: null,
+    timeline: null,
+    assessment: null,
+    stages: {
+      research: "not_started",
+      questions: "not_started",
+      director: "not_started",
+      assets: "not_started",
+      voice: "not_started",
+      timeline: "not_started",
+      qa: "not_started",
+      render: "not_started",
+    },
+  };
+  await page.route(`**/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/quiz-v2/history-check`, (route) =>
+    route.fulfill({ contentType: "application/json", body: JSON.stringify({ history_check: null }) }),
+  );
+  await page.route(`**/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/quiz-v2`, (route) =>
+    route.fulfill({ contentType: "application/json", body: JSON.stringify(mockQuizState) }),
+  );
 
   await page.goto("/#/channels");
   await page.getByRole("button", { name: /Topic count/ }).click();
@@ -510,18 +577,21 @@ test("topic confirmation sends the selected question count before episode genera
   await expect(questionPicker).toHaveAttribute("min", "3");
   await expect(questionPicker).toHaveAttribute("max", "50");
   await questionPicker.fill("51");
-  await expect(topicCard.getByRole("button", { name: "Use this topic", exact: true })).toBeDisabled();
+  await expect(topicCard.getByRole("button", { name: "Build Video (1-Click)", exact: true })).toBeDisabled();
   await expect(topicCard.getByText("Choose 3-50", { exact: true })).toBeVisible();
   await questionPicker.fill("12");
   await expect(questionPicker).toHaveValue("12");
   await expect(topicCard.getByText("About 7 min", { exact: true })).toBeVisible();
 
-  const confirmButton = topicCard.getByRole("button", { name: "Use this topic", exact: true });
+  const confirmButton = topicCard.getByRole("button", { name: "Build Video (1-Click)", exact: true });
   await confirmButton.click();
-  await expect(topicCard.getByRole("button", { name: "Creating…", exact: true })).toBeDisabled();
-  await expect.poll(() => confirmedPayload).toEqual({ topic_id: topic.topic_id, question_count: 12, visual_style: "mixed" });
+  await expect(topicCard.getByRole("button", { name: "Building Video…", exact: true })).toBeDisabled();
+  await expect
+    .poll(() => confirmedPayload)
+    .toEqual({ topic_id: topic.topic_id, question_count: 12, visual_style: "mixed", auto_start_pipeline: true });
   releaseConfirmation?.();
   await expect(page.getByRole("status")).toContainText("with 12 questions");
+  await page.locator(".breadcrumbs-nav").getByRole("link", { name: channel.display_name }).click();
   await expect(page.locator(".episode-card").filter({ hasText: topic.title })).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   const mobileWidth = await page.evaluate(() => ({
@@ -693,10 +763,10 @@ test("confirmed episode runs script to scene to render without F5", async ({ pag
 
   await page.goto("/#/channels");
   await page.getByRole("button", { name: /Episode demo/ }).click();
-  await page.getByRole("button", { name: /The Demo Story/ }).click();
+  await page.getByRole("link", { name: /The Demo Story/ }).click();
   await page.getByRole("tab", { name: "1. Script & Plan", exact: true }).click();
 
-  await expect(page.getByRole("button", { name: "Working…", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Starting production…", exact: true })).toBeDisabled();
   await expect(page.getByRole("progressbar", { name: "Narration script progress" })).toBeVisible();
   await expect(page.getByText("Old script", { exact: true })).toBeVisible();
 
@@ -727,7 +797,7 @@ test("confirmed episode runs script to scene to render without F5", async ({ pag
       channel_id: channel.channel_id,
       episode_id: episode.episode_id,
     });
-  await expect(page.getByRole("button", { name: "Working…", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Starting production…", exact: true })).toBeDisabled();
 
   visualBibleContent = "# Visual Bible\n\n## CB-01 — Archive room\nKeep the same warm studio lighting.";
   scenes = [
@@ -1021,7 +1091,7 @@ test("scene audio updates inline and exposes the duration match action", async (
 
   await page.goto("/#/channels");
   await page.getByRole("button", { name: /Audio demo/ }).click();
-  await page.getByRole("button", { name: /The Audio Story/ }).click();
+  await page.getByRole("link", { name: /The Audio Story/ }).click();
   await expect(page.getByRole("button", { name: "Preview audio", exact: true })).toBeVisible();
   await expect(page.getByText("6s · 2 cuts", { exact: true })).toBeVisible();
 

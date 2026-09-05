@@ -27,6 +27,7 @@ services/tts/__pycache__/
 Thumbs.db
 .idea/
 .vscode/
+.zcode/
 *.tmp
 *.bak
 *.pem

@@ -17,11 +17,12 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
       if (existsSync(path.join(curr, "pnpm-workspace.yaml"))) break;
       curr = path.dirname(curr);
     }
-    repo = new RepositoryService(curr);
+    repo = new RepositoryService(curr, tempDir);
+    await seedQuestionBankFixtures(repo);
   });
 
   afterEach(async () => {
-    await rm(tempDir, { recursive: true, force: true });
+    await rm(tempDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   });
 
   it("reads taxonomy with 9 domains synced from knowledge base", async () => {
@@ -140,6 +141,7 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
       choices: [
         { id: "A", text: "Option 1", is_correct: true },
         { id: "B", text: "Option 2", is_correct: false },
+        { id: "C", text: "Option 3", is_correct: false },
       ],
       correct_choice_id: "A",
       explanation: "Explanation for CRUD test question",
@@ -201,6 +203,18 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
   });
 
   it("filters questions by hasTranslationFor and supports multilingual keyword search", async () => {
+    await repo.saveQuestionBankTranslation("VFM-NAT-OCN-0001", {
+      language: "es",
+      question: "¿Es la ballena azul el animal más grande del planeta?",
+      choices: [
+        { id: "A", text: "VERDADERO" },
+        { id: "B", text: "FALSO" },
+      ],
+      explanation: "La ballena azul puede medir más de 30 metros y pesar 200 toneladas.",
+      fun_fact: "El corazón de una ballena azul pesa como un auto compacto.",
+      verified: true,
+    });
+
     // 1. Query questions that have translation for "es"
     const esQuestions = await repo.queryQuestionBankQuestions({ hasTranslationFor: "es" });
     expect(esQuestions.total).toBeGreaterThanOrEqual(1);
@@ -233,3 +247,210 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
     }
   });
 });
+
+export async function seedQuestionBankFixtures(repo: RepositoryService): Promise<void> {
+  const vfmQuestions: BankQuestion[] = [
+    {
+      id: "VFM-NAT-OCN-0001",
+      archetype_id: "verdict_fact_myth",
+      domain_id: "nature_animals",
+      subtopic_id: "marine_life",
+      question: "Blue whales are the largest animals ever known to have lived on Earth, larger than any dinosaur. Fact or Myth?",
+      format: "multiple_choice",
+      choices: [
+        { id: "A", text: "Fact", is_correct: true },
+        { id: "B", text: "Myth", is_correct: false },
+      ],
+      correct_choice_id: "A",
+      explanation: "Blue whales can reach lengths of up to 30 meters and weigh as much as 200 tons.",
+      age_band: "family",
+      difficulty: 1,
+      tags: ["nature", "ocean"],
+      status: "approved",
+      language: "en",
+    },
+    {
+      id: "VFM-NAT-OCN-0002",
+      archetype_id: "verdict_fact_myth",
+      domain_id: "nature_animals",
+      subtopic_id: "marine_life",
+      question: "Sharks are mammals. Fact or Myth?",
+      format: "multiple_choice",
+      choices: [
+        { id: "A", text: "Fact", is_correct: false },
+        { id: "B", text: "Myth", is_correct: true },
+      ],
+      correct_choice_id: "B",
+      explanation: "Sharks are cartilaginous fish, not mammals.",
+      age_band: "family",
+      difficulty: 1,
+      tags: ["nature", "sharks"],
+      status: "approved",
+      language: "en",
+    },
+    {
+      id: "VFM-NAT-OCN-0003",
+      archetype_id: "verdict_fact_myth",
+      domain_id: "nature_animals",
+      subtopic_id: "marine_life",
+      question: "Coral reefs are made of animals, not plants. Fact or Myth?",
+      format: "multiple_choice",
+      choices: [
+        { id: "A", text: "Fact", is_correct: true },
+        { id: "B", text: "Myth", is_correct: false },
+      ],
+      correct_choice_id: "A",
+      explanation: "Corals are colonies of tiny animals called polyps.",
+      age_band: "family",
+      difficulty: 1,
+      tags: ["nature", "coral"],
+      status: "approved",
+      language: "en",
+    },
+    {
+      id: "VFM-NAT-OCN-0004",
+      archetype_id: "verdict_fact_myth",
+      domain_id: "nature_animals",
+      subtopic_id: "marine_life",
+      question: "Goldfish have a memory span of only three seconds. Fact or Myth?",
+      format: "multiple_choice",
+      choices: [
+        { id: "A", text: "Fact", is_correct: false },
+        { id: "B", text: "Myth", is_correct: true },
+      ],
+      correct_choice_id: "B",
+      explanation: "Scientific research shows goldfish can remember things for months.",
+      age_band: "family",
+      difficulty: 1,
+      tags: ["nature", "fish"],
+      status: "approved",
+      language: "en",
+    },
+    {
+      id: "VFM-NAT-OCN-0005",
+      archetype_id: "verdict_fact_myth",
+      domain_id: "nature_animals",
+      subtopic_id: "marine_life",
+      question: "Sea otters hold hands while sleeping so they do not drift apart. Fact or Myth?",
+      format: "multiple_choice",
+      choices: [
+        { id: "A", text: "Fact", is_correct: true },
+        { id: "B", text: "Myth", is_correct: false },
+      ],
+      correct_choice_id: "A",
+      explanation: "Sea otters often hold hands or wrap in kelp while sleeping.",
+      age_band: "family",
+      difficulty: 1,
+      tags: ["nature", "otters"],
+      status: "approved",
+      language: "en",
+    },
+  ];
+
+  const spbQuestions: BankQuestion[] = [
+    {
+      id: "SPB-NAT-OCN-0001",
+      archetype_id: "speed_blitz",
+      domain_id: "nature_animals",
+      subtopic_id: "marine_life",
+      question: "How many hearts does an octopus have?",
+      format: "multiple_choice",
+      choices: [
+        { id: "A", text: "3", is_correct: true },
+        { id: "B", text: "1", is_correct: false },
+        { id: "C", text: "2", is_correct: false },
+      ],
+      correct_choice_id: "A",
+      explanation: "An octopus has three hearts: two pump blood to gills, one to body.",
+      age_band: "family",
+      difficulty: 1,
+      tags: ["nature", "octopus"],
+      status: "approved",
+      language: "en",
+    },
+    {
+      id: "SPB-NAT-OCN-0002",
+      archetype_id: "speed_blitz",
+      domain_id: "nature_animals",
+      subtopic_id: "nature_wonders",
+      question: "Which insect resembles a wooden stick?",
+      format: "multiple_choice",
+      choices: [
+        { id: "A", text: "Stick insect", is_correct: true },
+        { id: "B", text: "Beetle", is_correct: false },
+        { id: "C", text: "Ant", is_correct: false },
+      ],
+      correct_choice_id: "A",
+      explanation: "Stick insects use camouflage to look like twigs and sticks.",
+      age_band: "family",
+      difficulty: 1,
+      tags: ["nature", "insects"],
+      status: "approved",
+      language: "en",
+    },
+    {
+      id: "SPB-NAT-OCN-0003",
+      archetype_id: "speed_blitz",
+      domain_id: "nature_animals",
+      subtopic_id: "marine_life",
+      question: "What is the fastest marine creature?",
+      format: "multiple_choice",
+      choices: [
+        { id: "A", text: "Sailfish", is_correct: true },
+        { id: "B", text: "Tuna", is_correct: false },
+        { id: "C", text: "Dolphin", is_correct: false },
+      ],
+      correct_choice_id: "A",
+      explanation: "Sailfish can reach speeds exceeding 68 mph.",
+      age_band: "family",
+      difficulty: 1,
+      tags: ["nature", "fish"],
+      status: "approved",
+      language: "en",
+    },
+    {
+      id: "SPB-NAT-OCN-0004",
+      archetype_id: "speed_blitz",
+      domain_id: "nature_animals",
+      subtopic_id: "marine_life",
+      question: "Which sea creature has no brain and no heart?",
+      format: "multiple_choice",
+      choices: [
+        { id: "A", text: "Jellyfish", is_correct: true },
+        { id: "B", text: "Starfish", is_correct: false },
+        { id: "C", text: "Crab", is_correct: false },
+      ],
+      correct_choice_id: "A",
+      explanation: "Jellyfish lack a brain, heart, and bones.",
+      age_band: "family",
+      difficulty: 1,
+      tags: ["nature", "jellyfish"],
+      status: "approved",
+      language: "en",
+    },
+    {
+      id: "SPB-NAT-OCN-0005",
+      archetype_id: "speed_blitz",
+      domain_id: "nature_animals",
+      subtopic_id: "marine_life",
+      question: "What is the largest species of shark?",
+      format: "multiple_choice",
+      choices: [
+        { id: "A", text: "Whale shark", is_correct: true },
+        { id: "B", text: "Great white shark", is_correct: false },
+        { id: "C", text: "Tiger shark", is_correct: false },
+      ],
+      correct_choice_id: "A",
+      explanation: "Whale sharks can grow over 40 feet long.",
+      age_band: "family",
+      difficulty: 1,
+      tags: ["nature", "shark"],
+      status: "approved",
+      language: "en",
+    },
+  ];
+
+  for (const q of [...vfmQuestions, ...spbQuestions]) {
+    await repo.saveQuestionBankQuestion(q);
+  }
+}

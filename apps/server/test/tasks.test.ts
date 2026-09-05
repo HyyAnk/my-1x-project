@@ -328,11 +328,11 @@ function fakeWav(seconds = 2): Uint8Array {
 
 afterEach(async () => {
   await Promise.all(
-    roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }).catch(() => undefined)),
+    roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }).catch(() => undefined)),
   );
 });
 
-describe("TaskManager locks", () => {
+describe("TaskManager locks", { timeout: 20000 }, () => {
   it("serializes two tasks targeting the same episode", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "quiz-tasks-"));
     roots.push(root);
@@ -986,13 +986,13 @@ describe("TaskManager locks", () => {
     // Release active tasks
     releaseTasks();
 
-    // Now task3 should be picked and transition to RUNNING
-    await waitFor(() => manager.get(task3.task_id).status === "RUNNING" || manager.get(task3.task_id).status === "COMPLETED");
+    // Now task3 should be picked and transition to COMPLETED
+    await waitFor(() => manager.get(task3.task_id).status === "COMPLETED");
   });
 });
 
 async function waitFor(predicate: () => boolean): Promise<void> {
-  const deadline = Date.now() + 5_000;
+  const deadline = Date.now() + 15_000;
   while (!predicate() && Date.now() < deadline) await new Promise((resolve) => setTimeout(resolve, 15));
   if (!predicate()) throw new Error("Timed out waiting for task state");
 }

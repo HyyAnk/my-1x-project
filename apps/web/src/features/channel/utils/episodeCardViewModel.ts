@@ -50,7 +50,7 @@ const taskLabels: Record<Task["task_type"], string> = {
   GENERATE_QUIZ: "Drafting quiz",
 };
 
-function resolveLayoutLabel(format: Episode["quiz_config"]["quiz_format"]): string {
+function resolveLayoutLabel(format?: Episode["quiz_config"]["quiz_format"]): string {
   if (format === "odd_one_out") return "Visual choices";
   if (format === "image_guess") return "Image + choices";
   if (format === "true_false") return "True / false";
@@ -74,7 +74,7 @@ function formatVideoDuration(seconds: number): string {
 }
 
 function resolveDurationLabel(episode: Episode): string {
-  const questionCount = episode.quiz_config.question_count;
+  const questionCount = episode.quiz_config?.question_count ?? 8;
   if (episode.video_asset_path && episode.video_duration_seconds) {
     return `${questionCount} Q · ${formatVideoDuration(episode.video_duration_seconds)}`;
   }
@@ -96,7 +96,7 @@ function resolveThumbnailRatio(episode: Episode): EpisodeThumbnailRatio | null {
 
 export function buildEpisodeCardViewModel(episode: Episode, tasks: Task[]): EpisodeCardViewModel {
   return {
-    layoutLabel: resolveLayoutLabel(episode.quiz_config.quiz_format),
+    layoutLabel: resolveLayoutLabel(episode.quiz_config?.quiz_format),
     statusLabel: resolveStatusLabel(episode, tasks),
     durationLabel: resolveDurationLabel(episode),
     thumbnailRatio: resolveThumbnailRatio(episode),

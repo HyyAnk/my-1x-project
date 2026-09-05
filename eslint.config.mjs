@@ -26,6 +26,14 @@ export default tseslint.config(
     },
   },
   {
+    files: ["scripts/coordination/monitor/web/**/*.{js,mjs}"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+    },
+  },
+  {
     files: ["apps/**/*.{ts,tsx}", "packages/**/*.ts"],
     extends: [js.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
     languageOptions: {

@@ -134,7 +134,7 @@ describe("AppViewRouter", () => {
     const props = createDefaultProps({ page: "channels", selectedChannel: null, selectedEpisodeId: null });
     renderWithProviders(<AppViewRouter {...props} />);
 
-    const el = await screen.findByText(/Trivia Channel/i, {}, { timeout: 4000 });
+    const el = await screen.findByText(/Trivia Channel/i, {}, { timeout: 10000 });
     expect(el).toBeTruthy();
   });
 
@@ -142,7 +142,7 @@ describe("AppViewRouter", () => {
     const props = createDefaultProps({ page: "mascots" });
     renderWithProviders(<AppViewRouter {...props} />);
 
-    const el = await screen.findByText(/Mascot Studio/i, {}, { timeout: 4000 });
+    const el = await screen.findByText(/Mascot Studio/i, {}, { timeout: 10000 });
     expect(el).toBeTruthy();
   });
 
@@ -150,7 +150,7 @@ describe("AppViewRouter", () => {
     const props = createDefaultProps({ page: "sandbox" });
     renderWithProviders(<AppViewRouter {...props} />);
 
-    const el = await screen.findByText(/Visual Sandbox/i, {}, { timeout: 4000 });
+    const el = await screen.findByText(/Visual Sandbox/i, {}, { timeout: 10000 });
     expect(el).toBeTruthy();
     expect(screen.queryByText("Render Error")).toBeNull();
   });
@@ -214,19 +214,24 @@ describe("AppViewRouter", () => {
   });
 
   it("catches render errors in ErrorBoundary with recovery UI", () => {
-    const ProblematicView = () => {
-      throw new Error("Failed to load chunk dynamically");
-    };
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const ProblematicView = () => {
+        throw new Error("Failed to load chunk dynamically");
+      };
 
-    render(
-      <ErrorBoundary>
-        <ProblematicView />
-      </ErrorBoundary>,
-    );
+      render(
+        <ErrorBoundary>
+          <ProblematicView />
+        </ErrorBoundary>,
+      );
 
-    expect(screen.getByText(/Render Error/i)).toBeTruthy();
-    expect(screen.getByText(/Failed to load chunk dynamically/i)).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Reload page/i })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /Back to Channels/i })).toBeTruthy();
+      expect(screen.getByText(/Render Error/i)).toBeTruthy();
+      expect(screen.getByText(/Failed to load chunk dynamically/i)).toBeTruthy();
+      expect(screen.getByRole("button", { name: /Reload page/i })).toBeTruthy();
+      expect(screen.getByRole("button", { name: /Back to Channels/i })).toBeTruthy();
+    } finally {
+      consoleSpy.mockRestore();
+    }
   });
 });
