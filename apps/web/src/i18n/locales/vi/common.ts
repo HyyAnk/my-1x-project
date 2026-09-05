@@ -63,6 +63,7 @@ export const commonVi = {
     brandSubtitle: "AI Video Engine",
     dashboard: "Tổng quan",
     channels: "Kênh sản xuất",
+    questionBank: "Ngân hàng câu hỏi",
     mascotStudio: "Mascot Studio",
     sandbox: "Tab Test (Sandbox)",
     tasks: "Hàng đợi tác vụ",

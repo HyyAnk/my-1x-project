@@ -46,7 +46,7 @@ describe("Mystery Reveal layout & archetype", () => {
     });
   });
 
-  it("renders layout body slots correctly", () => {
+  it("renders layout body slots correctly with backdrop, dual layers, and scanner bar", () => {
     const slots = {
       questionBoxHtml: "<header class=\"question-title\">Who's that Pokemon?</header>",
       heroHtml: "<figure class=\"hero-image\"><img src=\"pokemon.png\" /></figure>",
@@ -56,7 +56,10 @@ describe("Mystery Reveal layout & archetype", () => {
 
     const rendered = renderQuizLayoutBody("mystery_reveal", slots);
     expect(rendered).toContain("question-title");
-    expect(rendered).toContain("hero-image");
+    expect(rendered).toContain("mystery-stage-backdrop");
+    expect(rendered).toContain("mystery-mosaic-layer");
+    expect(rendered).toContain("mystery-revealed-layer");
+    expect(rendered).toContain("mystery-scanner-bar");
     expect(rendered).toContain("answer-grid");
     expect(rendered).toContain("phase-region");
   });
@@ -68,7 +71,9 @@ describe("Mystery Reveal layout & archetype", () => {
     const css16x9 = renderer.css("16:9");
     expect(css16x9).toContain(".layout-mystery_reveal .game-stage");
     expect(css16x9).toContain(".mystery-stage-wrapper");
-    expect(css16x9).toContain("silhouette-burst");
+    expect(css16x9).toContain(".mystery-stage-backdrop");
+    expect(css16x9).toContain("mystery-scanner-sweep");
+    expect(css16x9).toContain("mystery-reveal-wipe");
     expect(css16x9).toContain("mystery-answer-dock");
     expect(css16x9).toContain("bottom: 28px;");
 

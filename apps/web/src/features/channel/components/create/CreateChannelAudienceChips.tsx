@@ -44,14 +44,12 @@ export function CreateChannelAudienceChips({
   onSelectAudience,
   disabled = false,
 }: CreateChannelAudienceChipsProps) {
-  const { language } = useTranslation();
-
   return (
     <div className="channel-preset-chips-row" role="group" aria-label="Audience Presets">
       {AUDIENCE_PRESETS.map((preset) => {
         const isSelected = selectedAudience.toLowerCase().includes(preset.value.toLowerCase()) ||
           selectedAudience.toLowerCase().includes(preset.id);
-        const label = language === "vi" ? preset.labelVi : preset.labelEn;
+        const label = preset.labelEn;
 
         return (
           <button

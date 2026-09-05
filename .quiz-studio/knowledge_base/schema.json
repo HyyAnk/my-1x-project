@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KnowledgeEntity",
+  "description": "Strict English-only General Knowledge Entity schema for reverse quiz and question generation. All attributes, names, clues, claims, and explanations must be exclusively in English to guarantee linguistic consistency across generation pipelines.",
+  "type": "object",
+  "required": [
+    "id",
+    "domain_id",
+    "subtopic_id",
+    "name",
+    "language",
+    "visual_anchor",
+    "core_traits",
+    "facts_and_myths"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ENT-[A-Z]{3}-[0-9]{3,}$"
+    },
+    "domain_id": {
+      "type": "string"
+    },
+    "subtopic_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "description": "Canonical English entity name"
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en"
+      ],
+      "default": "en",
+      "description": "Strictly 'en' (English) to maintain unified linguistic baseline"
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Alternative English names, acronyms, or nicknames"
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "default": 2
+    },
+    "visual_anchor": {
+      "type": "string",
+      "description": "English cinematic description suited for 9:16 vertical video prompt generation"
+    },
+    "core_traits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 2,
+      "maxItems": 6,
+      "description": "English clues/traits for deduction and mystery quiz layouts"
+    },
+    "distractor_pool": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Category-matched wrong answer choices in English"
+    },
+    "facts_and_myths": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "claim",
+          "verdict",
+          "explanation"
+        ],
+        "properties": {
+          "claim": {
+            "type": "string",
+            "description": "English factual claim or popular misconception"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "fact",
+              "myth",
+              "true",
+              "false"
+            ]
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Educational explanation in English"
+          },
+          "fun_fact": {
+            "type": "string",
+            "default": "",
+            "description": "Bonus fun fact in English"
+          }
+        }
+      }
+    },
+    "versus_candidates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Suggested rival entity names in English for 1v1 faceoffs"
+    }
+  }
+}

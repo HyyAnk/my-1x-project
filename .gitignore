@@ -43,9 +43,11 @@ tmp/
 output/
 .context/
 
-# Machine-local Quiz Studio configuration.
+# Machine-local Quiz Studio configuration and dynamic question bank operational data.
 .quiz-studio/config.json
 .quiz-studio/*.json
+.quiz-studio/question_bank/
+
 
 # Heavy media assets managed via GitHub Releases
 assets/audio/bgm/tracks/*.mp3

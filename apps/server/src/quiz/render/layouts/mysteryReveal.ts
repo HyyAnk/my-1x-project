@@ -3,9 +3,12 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
 export const mysteryRevealLayout = {
   id: "mystery_reveal",
   renderBody: (slots) =>
-    `${slots.questionBoxHtml}<div class="mystery-stage-wrapper" data-layout-allow-overflow>${slots.heroHtml}${slots.choicesHtml}</div><div class="phase-region">${slots.phaseHtml}</div>`,
+    `${slots.questionBoxHtml}<div class="mystery-stage-wrapper" data-layout-allow-overflow><div class="mystery-stage-backdrop"></div><div class="mystery-hero-stage"><div class="mystery-layer mystery-mosaic-layer">${slots.heroHtml}</div><div class="mystery-layer mystery-revealed-layer"><div class="mystery-revealed-inner">${slots.heroHtml}</div></div><div class="mystery-scanner-bar" data-layout-ignore aria-hidden="true"><div class="scanner-beam"></div><div class="scanner-flare"></div></div></div>${slots.choicesHtml}<svg class="mystery-svg-filters" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" aria-hidden="true"><defs><filter id="mystery-mosaic-filter" x="0%" y="0%" width="100%" height="100%"><feFlood x="2" y="2" height="2" width="2"/><feComposite width="22" height="22"/><feTile result="tile"/><feComposite in="SourceGraphic" in2="tile" operator="in"/><feMorphology operator="dilate" radius="11"/></filter></defs></svg></div><div class="phase-region">${slots.phaseHtml}</div>`,
   css: (aspectRatio) => `
-/* === Mystery Reveal: Giant Focal Hero with Docked Foot Answer Overlay === */
+/* === Mystery Reveal: Studio Stage with Dual-State Mosaic & Scanner Reveal === */
+.layout-mystery_reveal {
+  --mystery-stage-width: 1240px;
+}
 .layout-mystery_reveal .game-stage {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas: "title" "stage";
@@ -25,14 +28,51 @@ export const mysteryRevealLayout = {
   grid-area: stage;
   position: relative;
   width: 100%;
-  max-width: 1240px;
+  max-width: var(--mystery-stage-width, 1240px);
   height: 650px;
   border-radius: 32px;
   overflow: hidden;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
-  background: rgba(0, 0, 0, 0.22);
+  background: #0f172a;
 }
-.layout-mystery_reveal .mystery-stage-wrapper > .hero-image {
+
+/* Studio Clean White / Soft Pedestal Backdrop */
+.layout-mystery_reveal .mystery-stage-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: radial-gradient(circle at 50% 42%, #ffffff 0%, #f8fafc 52%, #e2e8f0 100%);
+  box-shadow: inset 0 -48px 72px rgba(15, 23, 42, 0.12);
+}
+
+/* Dual-State Hero Container */
+.layout-mystery_reveal .mystery-hero-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layout-mystery_reveal .mystery-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layout-mystery_reveal .mystery-layer .hero-image {
   position: absolute;
   top: 0;
   left: 0;
@@ -44,28 +84,110 @@ export const mysteryRevealLayout = {
   align-items: center;
   justify-content: center;
 }
-.layout-mystery_reveal .mystery-stage-wrapper > .hero-image img {
+
+.layout-mystery_reveal .mystery-layer .hero-image img {
   width: 100%;
   height: 100%;
+  max-width: 86%;
+  max-height: 86%;
   object-fit: contain;
-  transition: filter 0.6s ease, transform 0.6s cubic-bezier(0.22, 0.8, 0.3, 1);
+  transition: transform 0.6s cubic-bezier(0.22, 0.8, 0.3, 1);
 }
 
-/* Question & Thinking Phase: Silhouette Shadow Mode */
-.layout-mystery_reveal.is-silhouette .hero-image img,
-.layout-mystery_reveal[data-choice-phase="choices"] .hero-image img,
-.layout-mystery_reveal[data-choice-phase="thinking"] .hero-image img {
-  filter: brightness(0) drop-shadow(0 16px 36px rgba(0, 0, 0, 0.75));
+/* State A: Pixelate Mosaic / Silhouette Layer (Visible in Question & Thinking) */
+.layout-mystery_reveal .mystery-mosaic-layer {
+  z-index: 2;
+  opacity: 1;
+  transition: opacity 0.4s ease;
 }
 
-/* Reveal Phase: Transition A -> B with Radiant Burst */
-.layout-mystery_reveal.is-revealed .hero-image img,
-.layout-mystery_reveal[data-choice-phase="reveal"] .hero-image img,
-.layout-mystery_reveal[data-choice-phase="explain"] .hero-image img {
-  animation: silhouette-burst 0.85s cubic-bezier(0.22, 0.8, 0.3, 1) both;
+.layout-mystery_reveal .mystery-mosaic-layer img {
+  filter: url(#mystery-mosaic-filter) brightness(0.92) contrast(1.2) saturate(1.15) drop-shadow(0 20px 32px rgba(15, 23, 42, 0.3));
 }
 
-/* Reveal Answer Banner Docked Over the Foot of the Image */
+/* Fallback if SVG filter is unsupported or purely silhouette style */
+.layout-mystery_reveal.is-silhouette .mystery-mosaic-layer img {
+  filter: brightness(0) drop-shadow(0 16px 36px rgba(15, 23, 42, 0.45));
+}
+
+/* State B: Pristine Revealed Layer (Wiped open from left to right via overflow: hidden) */
+.layout-mystery_reveal .mystery-revealed-layer {
+  z-index: 3;
+  width: 0%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.layout-mystery_reveal .mystery-revealed-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--mystery-stage-width, 1240px);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layout-mystery_reveal .mystery-revealed-layer img {
+  filter: drop-shadow(0 24px 44px rgba(15, 23, 42, 0.28));
+}
+
+/* Scanner Bar: Glowing Neon Laser Line */
+.layout-mystery_reveal .mystery-scanner-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 6px;
+  z-index: 6;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.layout-mystery_reveal .scanner-beam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0) 0%, #38bdf8 20%, #ffffff 50%, #38bdf8 80%, rgba(56, 189, 248, 0) 100%);
+  box-shadow: 0 0 16px #38bdf8, 0 0 36px #0284c7, 0 0 60px rgba(56, 189, 248, 0.6);
+}
+
+.layout-mystery_reveal .scanner-flare {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 220px;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(56, 189, 248, 0.65) 45%, transparent 75%);
+  filter: blur(4px);
+}
+
+/* === Reveal Phase Actions === */
+.layout-mystery_reveal[data-choice-phase="reveal"] .mystery-scanner-bar,
+.layout-mystery_reveal[data-choice-phase="explain"] .mystery-scanner-bar,
+.layout-mystery_reveal.is-revealed .mystery-scanner-bar {
+  animation: mystery-scanner-sweep 0.85s cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
+}
+
+.layout-mystery_reveal[data-choice-phase="reveal"] .mystery-revealed-layer,
+.layout-mystery_reveal[data-choice-phase="explain"] .mystery-revealed-layer,
+.layout-mystery_reveal.is-revealed .mystery-revealed-layer {
+  pointer-events: auto;
+  animation: mystery-reveal-wipe 0.85s cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
+}
+
+.layout-mystery_reveal[data-choice-phase="reveal"] .mystery-mosaic-layer,
+.layout-mystery_reveal[data-choice-phase="explain"] .mystery-mosaic-layer,
+.layout-mystery_reveal.is-revealed .mystery-mosaic-layer {
+  animation: mystery-mosaic-vanish 0.85s cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
+}
+
+/* Reveal Answer Banner Docked Over the Foot of the Stage */
 .layout-mystery_reveal .mystery-stage-wrapper > .answer-grid {
   position: absolute;
   bottom: 28px;
@@ -141,18 +263,42 @@ export const mysteryRevealLayout = {
   animation: mystery-answer-dock 0.65s cubic-bezier(0.18, 1.4, 0.3, 1) both;
 }
 
-@keyframes silhouette-burst {
+/* === Scanner and Reveal Animations === */
+@keyframes mystery-scanner-sweep {
   0% {
-    filter: brightness(0);
-    transform: scale(0.97);
+    left: 0%;
+    opacity: 0;
   }
-  45% {
-    filter: brightness(2.6) contrast(1.6);
-    transform: scale(1.03);
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
   }
   100% {
-    filter: brightness(1);
-    transform: scale(1);
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes mystery-reveal-wipe {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes mystery-mosaic-vanish {
+  0% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
   }
 }
 

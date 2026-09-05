@@ -59,6 +59,7 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
         assessment,
         description,
       } = await readQuizArtifacts(pipelineDeps(params.channelId, params.episodeId));
+      const timings = await repository.readQuizStageTimings(params.channelId, params.episodeId);
       const active = tasks
         .list()
         .find((task) => task.episode_id === params.episodeId && ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(task.status));
@@ -71,6 +72,7 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
         timeline,
         assessment,
         description,
+        timings,
         stages: {
           research: [
             "RESEARCH_READY",
@@ -218,7 +220,7 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
         hashtags: input.hashtags ?? existing?.hashtags ?? ["#quiz", "#trivia"],
         full_description_text: input.full_description_text,
         char_count: input.full_description_text.length,
-        language: existing?.language ?? channel.language ?? "Vietnamese",
+        language: existing?.language ?? channel.language ?? "English",
         generated_at: existing?.generated_at ?? nowIso(),
         updated_at: nowIso(),
       };

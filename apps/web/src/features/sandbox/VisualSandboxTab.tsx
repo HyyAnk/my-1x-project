@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 import type { Channel, QuizPreviewLayoutId } from "@studio/shared";
 import type { Notice } from "../../components/types";
-import { useTranslation } from "../../i18n";
 import { useSandboxChannelSync } from "./hooks/useSandboxChannelSync";
 import { useSandboxDesignState } from "./hooks/useSandboxDesignState";
 import { useSandboxMascotState } from "./hooks/useSandboxMascotState";
@@ -34,14 +33,13 @@ export function VisualSandboxTab({
   onNotice?: (notice: NonNullable<Notice>) => void;
   onRefreshChannels?: () => Promise<void>;
 }) {
-  const { language } = useTranslation();
   const [activeInspectorTab, setActiveInspectorTab] = useState<"design" | "mascot" | "content">("design");
 
   const design = useSandboxDesignState();
   const mascot = useSandboxMascotState();
   const brandName = useSandboxBrandNameState();
   const timeline = useSandboxTimelineState();
-  const question = useSandboxQuestionState(language);
+  const question = useSandboxQuestionState();
   const viewport = useSandboxViewportState();
 
   const handleLayoutChange = useCallback(
@@ -49,16 +47,16 @@ export function VisualSandboxTab({
       design.setLayoutId(newLayoutId);
       const isTfChoices =
         question.choices.length === 2 &&
-        ((question.choices[0] === "Đúng" && question.choices[1] === "Sai") ||
-          (question.choices[0] === "True" && question.choices[1] === "False"));
+        question.choices[0] === "True" &&
+        question.choices[1] === "False";
 
       if (newLayoutId === "mystery_reveal") {
-        const currentAnswer = question.choices[question.correctChoiceIndex] || question.choices[0] || (language === "vi" ? "Pikachu" : "Pikachu");
+        const currentAnswer = question.choices[question.correctChoiceIndex] || question.choices[0] || "Pikachu";
         question.setChoices([currentAnswer]);
         question.setCorrectChoiceIndex(0);
       } else if (newLayoutId === "verdict_true_false") {
         if (question.choices.length !== 2 || !isTfChoices) {
-          question.setChoices(language === "vi" ? ["Đúng", "Sai"] : ["True", "False"]);
+          question.setChoices(["True", "False"]);
           if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
         }
       } else if (newLayoutId === "split_versus_two") {
@@ -66,9 +64,7 @@ export function VisualSandboxTab({
           question.setChoices(
             question.choices.length > 2 && !isTfChoices
               ? question.choices.slice(0, 2)
-              : language === "vi"
-                ? ["Lựa chọn A", "Lựa chọn B"]
-                : ["Option A", "Option B"],
+              : ["Option A", "Option B"],
           );
           if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
         }
@@ -80,18 +76,14 @@ export function VisualSandboxTab({
       ) {
         if (question.choices.length < 3) {
           if (isTfChoices) {
-            question.setChoices(
-              language === "vi"
-                ? ["Lựa chọn A", "Lựa chọn B", "Lựa chọn C"]
-                : ["Option A", "Option B", "Option C"],
-            );
+            question.setChoices(["Option A", "Option B", "Option C"]);
           } else {
-            question.setChoices([...question.choices, language === "vi" ? "Lựa chọn C" : "Option C"]);
+            question.setChoices([...question.choices, "Option C"]);
           }
         }
       }
     },
-    [design, language, question],
+    [design, question],
   );
 
   const handleApplyPresetQuestion = useCallback(

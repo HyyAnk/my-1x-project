@@ -8,6 +8,7 @@ import { verdictTrueFalseLayout } from "./verdictTrueFalse.js";
 import { visualChoicesThreeLayout } from "./visualChoicesThree.js";
 import { visualChoicesThreePureLayout } from "./visualChoicesThreePure.js";
 import { mysteryRevealLayout } from "./mysteryReveal.js";
+import { clueDeductionLayout } from "./clueDeduction.js";
 
 export const QUIZ_LAYOUT_RENDERERS = {
   baseline: baselineLayout,
@@ -18,6 +19,7 @@ export const QUIZ_LAYOUT_RENDERERS = {
   verdict_true_false: verdictTrueFalseLayout,
   full_stack_list: fullStackListLayout,
   mystery_reveal: mysteryRevealLayout,
+  clue_deduction: clueDeductionLayout,
 } satisfies Record<QuizPreviewLayoutId, QuizLayoutRenderDefinition>;
 
 export function getQuizLayoutRenderer(layoutId: QuizPreviewLayoutId): QuizLayoutRenderDefinition {

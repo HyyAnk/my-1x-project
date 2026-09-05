@@ -74,6 +74,15 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     preview: "media-left",
     icon: "visual",
   },
+  clue_deduction: {
+    id: "clue_deduction",
+    labelKey: "stageStudio.layoutMediaLeft",
+    descriptionKey: "stageStudio.layoutMediaLeftDesc",
+    sandboxLabelKey: "visualSandbox.layoutClueDeduction",
+    sandboxDescriptionKey: "visualSandbox.layoutClueDeductionSub",
+    preview: "media-left",
+    icon: "visual",
+  },
 } as const satisfies Record<ResolvedQuizLayoutId, QuizLayoutUiDefinition>;
 
 export const QUIZ_LAYOUT_UI_DEFINITIONS = QUIZ_LAYOUTS.map((layout) => QUIZ_LAYOUT_UI_BY_ID[layout.id]);

@@ -17,6 +17,8 @@ export {
   writeHistoryCheck,
   readVideoDescription,
   writeVideoDescription,
+  readQuizStageTimings,
+  writeQuizStageTimings,
 } from "./quiz/quizPlanArtifacts.js";
 
 export { writeQuizImageAsset, resolveQuizAssetPath, getRenderedVoiceMetrics } from "./quiz/quizMediaArtifacts.js";

@@ -20,8 +20,8 @@ type ChoiceContracts = {
 };
 
 const TRUE_FALSE_CHOICE_CONTRACTS: ChoiceContracts = {
-  treatment: "Answer choices (strictly exactly 2 choices: True or False / Đúng hoặc Sai — never add a 3rd option)",
-  script: "choices (strictly exactly 2 choices: True or False / Đúng hoặc Sai)",
+  treatment: "Answer choices (strictly exactly 2 choices: True or False — never add a 3rd option)",
+  script: "choices (strictly exactly 2 choices: True or False)",
   maximum: "2",
   sequenceBeat: "Choices array must contain exactly 2 choices (True and False only; never add a 3rd option).",
   sceneBeat: "Choices must have exactly 2 options (True and False only; never exceed 2 choices).",

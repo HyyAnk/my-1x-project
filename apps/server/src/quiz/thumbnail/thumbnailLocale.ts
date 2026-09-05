@@ -3,7 +3,6 @@ import type { ThumbnailLayoutType } from "@studio/shared";
 export type SupportedLanguage =
   | "en"
   | "ja"
-  | "vi"
   | "ko"
   | "es"
   | "de"
@@ -164,24 +163,6 @@ export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocaliz
       true_false: () => "○か✕か！？✅",
     },
   },
-  vi: {
-    hookText: {
-      mega_grid: "KIẾN THỨC CHUNG",
-      split_vs: "BẠN SẼ CHỌN GÌ?",
-      mystery_silhouette: "ĐÂY LÀ AI?",
-      odd_one_out: "TÌM ĐIỂM KHÁC BIỆT!",
-      difficulty_tier: "VƯỢT QUA LEVEL 4?",
-      true_false: "ĐÚNG HAY SAI?",
-    },
-    badgeTemplate: {
-      mega_grid: (count) => `${count > 0 ? count : 100} CÂU HỎI`,
-      split_vs: () => "CHỌN 1 TRONG 2! ⚡",
-      mystery_silhouette: () => "CHỈ 1% BIẾT! 🔥",
-      odd_one_out: () => "10 GIÂY! ⏱️",
-      difficulty_tier: () => "CHỈ DÀNH CHO IQ 140+ 🔥",
-      true_false: () => "SỰ THẬT HAY LẦM TƯỞNG? ⚡",
-    },
-  },
   ko: {
     hookText: {
       mega_grid: "상식 퀴즈",
@@ -249,37 +230,34 @@ export function resolveThumbnailLanguage(input: {
   const lang = (input.language || "").toLowerCase().trim();
 
   // 1. Direct language code / name matching
-  if (lang.includes("nl") || lang.includes("dutch") || lang.includes("nederland") || lang.includes("hà lan")) {
+  if (lang === "nl" || lang.startsWith("nl-") || lang.includes("dutch") || lang.includes("nederland")) {
     return "nl";
   }
-  if (lang.includes("no") || lang.includes("norw") || lang.includes("norsk") || lang.includes("na uy")) {
+  if (lang === "no" || lang.startsWith("no-") || lang.includes("norw") || lang.includes("norsk")) {
     return "no";
   }
-  if (lang.includes("sv") || lang.includes("swed") || lang.includes("svensk") || lang.includes("thụy điển")) {
+  if (lang === "sv" || lang.startsWith("sv-") || lang.includes("swed") || lang.includes("svensk")) {
     return "sv";
   }
-  if (lang.includes("da") || lang.includes("dan") || lang.includes("dansk") || lang.includes("đan mạch")) {
+  if (lang === "da" || lang.startsWith("da-") || lang.includes("dan") || lang.includes("dansk")) {
     return "da";
   }
-  if (lang.includes("fi") || lang.includes("finn") || lang.includes("suom") || lang.includes("phần lan")) {
+  if (lang === "fi" || lang.startsWith("fi-") || lang.includes("finn") || lang.includes("suom")) {
     return "fi";
   }
-  if (lang.includes("de") || lang.includes("german") || lang.includes("deutsch") || lang.includes("tiếng đức")) {
+  if (lang === "de" || lang.startsWith("de-") || lang.includes("german") || lang.includes("deutsch")) {
     return "de";
   }
-  if (lang.includes("fr") || lang.includes("french") || lang.includes("français") || lang.includes("francais") || lang.includes("tiếng pháp")) {
+  if (lang === "fr" || lang.startsWith("fr-") || lang.includes("french") || lang.includes("français") || lang.includes("francais")) {
     return "fr";
   }
-  if (lang.includes("ja") || lang.includes("japan") || lang.includes("nihon") || lang.includes("tiếng nhật")) {
+  if (lang === "ja" || lang.startsWith("ja-") || lang.includes("japan") || lang.includes("nihon")) {
     return "ja";
   }
-  if (lang.includes("vi") || lang.includes("viet") || lang.includes("tiếng việt")) {
-    return "vi";
-  }
-  if (lang.includes("ko") || lang.includes("korea") || lang.includes("hangul") || lang.includes("tiếng hàn")) {
+  if (lang === "ko" || lang.startsWith("ko-") || lang.includes("korea") || lang.includes("hangul")) {
     return "ko";
   }
-  if (lang.includes("es") || lang.includes("span") || lang.includes("tiếng tây ban nha")) {
+  if (lang === "es" || lang.startsWith("es-") || lang.includes("span") || lang.includes("español")) {
     return "es";
   }
 
@@ -294,14 +272,6 @@ export function resolveThumbnailLanguage(input: {
   // Korean Hangul check
   if (/[\uac00-\ud7af\u1100-\u11ff]/.test(combinedText)) {
     return "ko";
-  }
-
-  // Vietnamese accent check
-  if (
-    /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(combinedText) &&
-    !lang.includes("eng")
-  ) {
-    return "vi";
   }
 
   return "en";
@@ -325,7 +295,6 @@ export function getThumbnailLocalizedTexts(
 export const CURIOSITY_BADGE_LOCALIZATIONS: Record<string, Record<SupportedLanguage, string>> = {
   "99_percent_fail": {
     en: "99% FAIL! 🔥",
-    vi: "99% TRẢ LỜI SAI! 🔥",
     ja: "99%が間違える! 🔥",
     ko: "99%가 틀리는 퀴즈! 🔥",
     de: "99% SCHEITERN! 🔥",
@@ -339,7 +308,6 @@ export const CURIOSITY_BADGE_LOCALIZATIONS: Record<string, Record<SupportedLangu
   },
   genius_only: {
     en: "GENIUS ONLY 🧠",
-    vi: "CHỈ DÀNH CHO THIÊN TÀI 🧠",
     ja: "天才専用 🧠",
     ko: "천재 전용 🧠",
     de: "NUR FÜR GENIES 🧠",
@@ -353,7 +321,6 @@ export const CURIOSITY_BADGE_LOCALIZATIONS: Record<string, Record<SupportedLangu
   },
   iq_test: {
     en: "IQ 140+ TEST ⚡",
-    vi: "THỬ THÁCH IQ 140+ ⚡",
     ja: "IQ140+ 診断 ⚡",
     ko: "IQ 140+ 테스트 ⚡",
     de: "IQ 140+ TEST ⚡",
@@ -367,7 +334,6 @@ export const CURIOSITY_BADGE_LOCALIZATIONS: Record<string, Record<SupportedLangu
   },
   can_you_pass: {
     en: "CAN YOU PASS? 🎯",
-    vi: "BẠN VƯỢT QUA ĐƯỢC KHÔNG? 🎯",
     ja: "全問正解できる？ 🎯",
     ko: "만점 가능할까? 🎯",
     de: "SCHAFFST DU ES? 🎯",
@@ -381,7 +347,6 @@ export const CURIOSITY_BADGE_LOCALIZATIONS: Record<string, Record<SupportedLangu
   },
   only_1_percent: {
     en: "ONLY 1% KNOW! 🏆",
-    vi: "CHỈ 1% BIẾT ĐÁP ÁN! 🏆",
     ja: "正解率1% 🏆",
     ko: "정답률 1% 🏆",
     de: "NUR 1% WEISS ES! 🏆",
@@ -473,14 +438,11 @@ export function resolveTopicSpecificHook(topicText: string, language: SupportedL
     lower.includes("mars") ||
     lower.includes("jupiter") ||
     lower.includes("saturn") ||
-    lower.includes("hành tinh") ||
-    lower.includes("vũ trụ") ||
     lower.includes("宇宙") ||
     lower.includes("惑星")
   ) {
     const spaceHooks: Record<SupportedLanguage, string> = {
       en: "SOLAR SYSTEM QUIZ",
-      vi: "ĐỐ VUI VŨ TRỤ",
       ja: "宇宙クイズ",
       ko: "우주 퀴즈",
       de: "PLANETEN QUIZ",
@@ -500,13 +462,10 @@ export function resolveTopicSpecificHook(topicText: string, language: SupportedL
     lower.includes("animal") ||
     lower.includes("wildlife") ||
     lower.includes("creature") ||
-    lower.includes("động vật") ||
-    lower.includes("thú cưng") ||
     lower.includes("動物")
   ) {
     const animalHooks: Record<SupportedLanguage, string> = {
       en: "ANIMAL QUIZ",
-      vi: "ĐỐ VUI ĐỘNG VẬT",
       ja: "動物クイズ",
       ko: "동물 퀴즈",
       de: "TIER QUIZ",
@@ -526,13 +485,10 @@ export function resolveTopicSpecificHook(topicText: string, language: SupportedL
     lower.includes("flag") ||
     lower.includes("country") ||
     lower.includes("geography") ||
-    lower.includes("quốc kỳ") ||
-    lower.includes("địa lý") ||
     lower.includes("国旗")
   ) {
     const flagHooks: Record<SupportedLanguage, string> = {
       en: "WORLD FLAG QUIZ",
-      vi: "ĐỐ VUI QUỐC KỲ",
       ja: "国旗クイズ",
       ko: "국기 퀴즈",
       de: "FLAGGEN QUIZ",
@@ -556,14 +512,11 @@ export function resolveTopicSpecificHook(topicText: string, language: SupportedL
     lower.includes("dessert") ||
     lower.includes("cake") ||
     lower.includes("culinary") ||
-    lower.includes("ẩm thực") ||
-    lower.includes("bánh") ||
     lower.includes("スイーツ") ||
     lower.includes("お菓子")
   ) {
     const cookieHooks: Record<SupportedLanguage, string> = {
       en: "WORLD COOKIE TOUR!",
-      vi: "ĐỐ VUI BÁNH NGỌT!",
       ja: "世界のお菓子クイズ！",
       ko: "세계 쿠키 퀴즈!",
       de: "WELT KEKS QUIZ!",
@@ -582,13 +535,10 @@ export function resolveTopicSpecificHook(topicText: string, language: SupportedL
   if (
     lower.includes("supercar") ||
     lower.includes("hypercar") ||
-    lower.includes("racing") ||
-    lower.includes("siêu xe") ||
-    lower.includes("đua xe")
+    lower.includes("racing")
   ) {
     const carHooks: Record<SupportedLanguage, string> = {
       en: "SUPERCARS SPEED QUIZ!",
-      vi: "ĐỐ VUI SIÊU XE TỐC ĐỘ!",
       ja: "スーパーカークイズ！",
       ko: "슈퍼카 스피드 퀴즈!",
       de: "SUPERCARS QUIZ!",

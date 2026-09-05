@@ -13,12 +13,12 @@ describe("useSandboxQuestionState", () => {
     expect(result.current.totalQuestions).toBe(10);
   });
 
-  it("initializes with Vietnamese sample questions when language is vi", () => {
-    const { result } = renderHook(() => useSandboxQuestionState("vi"));
-    expect(result.current.questionText).toContain("Hành tinh nào trong hệ Mặt Trời");
-    expect(result.current.choices).toEqual(["Sao Mộc", "Sao Thổ", "Sao Thiên Vương"]);
+  it("initializes with English sample questions even if legacy vi language is passed", () => {
+    const { result } = renderHook(() => useSandboxQuestionState("vi" as any));
+    expect(result.current.questionText).toContain("Which planet in our solar system");
+    expect(result.current.choices).toEqual(["Jupiter", "Saturn", "Uranus"]);
     expect(result.current.correctChoiceIndex).toBe(1);
-    expect(result.current.factCardTitle).toBe("BẠN CÓ BIẾT?");
+    expect(result.current.factCardTitle).toBe("DID YOU KNOW?");
   });
 
   it("updates question text, choices, and correct choice index", () => {

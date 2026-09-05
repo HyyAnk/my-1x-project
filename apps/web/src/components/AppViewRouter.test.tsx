@@ -171,6 +171,14 @@ describe("AppViewRouter", () => {
     expect(el).toBeTruthy();
   });
 
+  it("lazy-loads and renders QuestionBankView when page is question_bank", async () => {
+    const props = createDefaultProps({ page: "question_bank" });
+    renderWithProviders(<AppViewRouter {...props} />);
+
+    const el = await screen.findByText(/Question Bank Studio/i, {}, { timeout: 4000 });
+    expect(el).toBeTruthy();
+  });
+
   it("preserves selected channel, tab, and query parameters when switching views", async () => {
     const setQueryParam = vi.fn();
     const openPage = vi.fn();

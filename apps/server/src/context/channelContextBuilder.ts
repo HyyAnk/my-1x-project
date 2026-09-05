@@ -69,13 +69,13 @@ export async function buildChannelContext(input: {
       ? `\nIMPORTANT TOPIC THEME REQUIREMENT: The user specifically requested ideas relating to "${topicHint.trim()}". Exactly 2 candidates MUST be directly inspired by, focused on, or explore specific creative angles of "${topicHint.trim()}" (include "theme_hint": "${topicHint.trim()}" in those 2 JSON objects). The remaining 3 candidates should be diverse, creative topics aligned with the overall channel DNA.`
       : "";
     const blueprintGuidance = `\nGAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY:
-- Slot 1 (Deep Trivia): Knowledge/story quiz with a single hero subject scene (quiz_format: "knowledge" or "multiple_choice").
-- Slot 2 (Visual Spotting / Identification): Visual challenge or odd-one-out spotting (quiz_format: "odd_one_out" or "image_guess").
-- Slot 3 (Fact or Myth): Surprising truths vs myths with True/False verdict (quiz_format: "true_false").
-- Slot 4 (Versus / Face-off / Fast Trivia): Head-to-head comparison or rapid-fire reflection (quiz_format: "multiple_choice").
-- Slot 5 (Wildcard Discovery): High-curiosity creative format aligned with channel DNA.`;
+- Slot 1 (Deep Trivia): Knowledge/story quiz with a single hero subject scene (quiz_format: "multiple_choice", archetype: "deep_trivia", suggested_layout: "media_left_choices_right").
+- Slot 2 (Silhouette / Mystery Reveal): Guess animal/object/food through shadow/silhouette or pixelated mosaic, revealed with laser scanner wipe (quiz_format: "image_guess", archetype: "mystery_reveal", suggested_layout: "mystery_reveal").
+- Slot 3 (Fact or Myth): Surprising truths vs myths with True/False verdict (quiz_format: "true_false", archetype: "verdict_fact_myth", suggested_layout: "verdict_true_false").
+- Slot 4 (Clue Deduction A -> B): Guess profession from tool, country from dish/landmark, animal from habitat with 100% crisp clue image A (quiz_format: "image_guess", archetype: "clue_deduction", suggested_layout: "clue_deduction").
+- Slot 5 (Wildcard Discovery): 1v1 Face-off, odd-one-out visual spotting, or fast text trivia (quiz_format: "multiple_choice" or "odd_one_out", archetype: "versus_faceoff" | "visual_spotting" | "speed_blitz", suggested_layout: "split_versus_two" | "visual_choices_three_pure" | "full_stack_list").`;
     const prompt = composeContextPrompt(taskType, channel, null, [...files, ...sharedFiles], {
-      output_contract: `Return exactly 5 JSON candidates with title, premise, why_it_fits, hook, estimated_potential, quiz_format (knowledge|image_guess|multiple_choice|true_false|odd_one_out), question_count (${QUIZ_MIN_QUESTION_COUNT}-${QUIZ_MAX_QUESTION_COUNT}), and age_band (4-6|7-9|10-12|family). Use five different formats where possible.${blueprintGuidance}${hintGuidance} Do not research or develop them further.`,
+      output_contract: `Return exactly 5 JSON candidates with title, premise, why_it_fits, hook, estimated_potential, quiz_format (knowledge|image_guess|multiple_choice|true_false|odd_one_out), archetype (deep_trivia|mystery_reveal|verdict_fact_myth|clue_deduction|versus_faceoff|visual_spotting|speed_blitz), suggested_layout (media_left_choices_right|mystery_reveal|verdict_true_false|clue_deduction|split_versus_two|visual_choices_three_pure|full_stack_list), question_count (${QUIZ_MIN_QUESTION_COUNT}-${QUIZ_MAX_QUESTION_COUNT}), and age_band (4-6|7-9|10-12|family). Use five different formats where possible.${blueprintGuidance}${hintGuidance} Do not research or develop them further.`,
     });
     return finalizeContextManifest(
       repository,

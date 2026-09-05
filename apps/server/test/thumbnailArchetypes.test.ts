@@ -234,8 +234,8 @@ describe("Thumbnail Mascot 10 Abstract Archetypes & Random Selection", () => {
     it("resolves random curiosity badge in target language when auto is specified", () => {
       // Mock deterministic index 1 ("99_percent_fail")
       const mockRng1 = () => 1 / AUTO_CURIOSITY_BADGE_PRESETS.length;
-      const viBadge = getRandomCuriosityBadge(10, "vi", "10 CÂU HỎI", mockRng1);
-      expect(viBadge).toBe("99% TRẢ LỜI SAI! 🔥");
+      const esBadge = getRandomCuriosityBadge(10, "es", "10 PREGUNTAS", mockRng1);
+      expect(esBadge).toBe("¡99% FALLA! 🔥");
 
       const enBadge = getRandomCuriosityBadge(10, "en", "10 QUESTIONS", mockRng1);
       expect(enBadge).toBe("99% FAIL! 🔥");

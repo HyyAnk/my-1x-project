@@ -32,6 +32,7 @@ import { registerAnalyticsRoutes } from "./routes/analytics.js";
 import { registerVoicesRoutes } from "./routes/voices.js";
 import { registerStylePresetsRoutes } from "./routes/stylePresets.js";
 import { registerStyleModulesRoutes } from "./routes/styleModules.js";
+import { registerQuestionBankRoutes } from "./routes/questionBank.js";
 import { styleActivationManager } from "./quiz/visual/styleModules/activation.js";
 
 export type StudioApp = {
@@ -157,6 +158,7 @@ export async function buildApp(
   await server.register(registerEventsRoutes({ tasks, clients }));
   await server.register(registerStylePresetsRoutes({ repository }));
   await server.register(registerStyleModulesRoutes({ repository }));
+  await server.register(registerQuestionBankRoutes({ repository, tasks, codex, antigravity, state }));
 
   return {
     server,

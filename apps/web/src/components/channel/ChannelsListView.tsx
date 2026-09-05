@@ -140,7 +140,7 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
             {TARGET_COUNTRY_LANGUAGES.map((lang) => {
               const count = languageCounts[lang.key] || 0;
               const isActive = languageFilter === lang.key;
-              const label = uiLang === "vi" ? lang.nameVi : lang.name;
+              const label = lang.name;
               return (
                 <button
                   type="button"
@@ -150,7 +150,7 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
                     if (!isReordering) setLanguageFilter(lang.key);
                   }}
                   disabled={isReordering}
-                  title={`${lang.name} (${lang.nameVi})`}
+                  title={lang.name}
                 >
                   <CountryFlag code={lang.primaryCountryCode || lang.countryCodes[0]} size={13} />
                   <span>{label}</span>

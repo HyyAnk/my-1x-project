@@ -44,7 +44,11 @@ export function TopicCard({
             </span>
           ) : null}
         </div>
-        <TopicLayoutPreviewButton quizFormat={topic.quiz_format} />
+        <TopicLayoutPreviewButton
+          quizFormat={topic.quiz_format}
+          archetype={topic.archetype}
+          layoutId={topic.suggested_layout}
+        />
       </div>
       <h3>{topic.title}</h3>
       <p className="topic-premise">{topic.premise}</p>

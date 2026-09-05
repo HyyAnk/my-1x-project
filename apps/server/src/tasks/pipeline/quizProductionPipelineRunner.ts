@@ -151,6 +151,7 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
 
     if (run.cancelled) throw new Error("Pipeline cancelled");
     await this.update(task.task_id, { progress_message: "Video · linting Quiz composition", progress_percent: 60 });
+    const renderStartMs = Date.now();
     const videoChild = this.submit("GENERATE_VIDEO", task.channel_id, episodeId);
     run.children.add(videoChild.task_id);
     try {
@@ -173,6 +174,21 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
         }
       });
       if (completed.status !== "COMPLETED") throw new Error(`Video render failed: ${completed.error ?? completed.status}`);
+      const renderDuration = Math.max(0, Math.round((Date.now() - renderStartMs) / 1000));
+      const existingTimings = (await this.repository.readQuizStageTimings?.(task.channel_id, episodeId)) ?? {
+        schema_version: 1,
+        episode_id: episodeId,
+        stages: {},
+        parallel_groups: {},
+      };
+      if (!existingTimings.stages) existingTimings.stages = {};
+      existingTimings.stages.render = {
+        started_at: new Date(renderStartMs).toISOString(),
+        completed_at: new Date().toISOString(),
+        duration_seconds: renderDuration,
+      };
+      existingTimings.updated_at = new Date().toISOString();
+      await this.repository.writeQuizStageTimings?.(task.channel_id, episodeId, existingTimings)?.catch?.(() => {});
     } finally {
       run.children.delete(videoChild.task_id);
     }

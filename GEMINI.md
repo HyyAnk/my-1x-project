@@ -79,3 +79,12 @@ When working in this repository across multiple agents, chats, or tasks, all age
 - **Commit Gate:** Do not commit while any implementation claim is active. Release the verified claim first, confirm `agent-status --integrator --json`, then stage only files owned by the completed task.
 - **Coverage Gate:** Run `node scripts/agent-validate-zones.mjs --json` when product paths or zone definitions change. Integration must reject unmapped paths, overlaps, active unverified claims, or stale verification.
 - **Enforcement Limit:** This protocol cannot prevent an unrestricted process from bypassing the CLI and writing files. Repository instructions, review, and the verification/release/integration gates are the enforcement boundary.
+
+---
+
+## 7. Strict English-Only Codebase & System Specification
+
+- **Absolute Prohibition of Vietnamese in Code & Files:** All code, file contents, file and folder names, comments, docstrings, variable/type/function names, test cases, mock data, commit messages, and documentation within the project MUST be in English. Under no circumstances should Vietnamese (accented or unaccented) be written into any file or filename.
+- **System & UI Language:** The entire system interface, including all UI labels, buttons, dialogs, tooltips, error messages, notifications, and placeholders across the web and server applications, MUST be strictly in English.
+- **Agent Chat Language Distinction:** The user may converse, ask questions, and give instructions in Vietnamese (or any preferred language) within the AI conversation/chat. Antigravity/agents will reply in the user's chosen language in the chat. However, all generated code, modified files, created files, and repository artifacts MUST strictly remain 100% English.
+

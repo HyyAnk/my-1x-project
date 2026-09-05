@@ -1,4 +1,4 @@
-import { ArrowClockwise, Broadcast, Gear, House, ListChecks, Palette, Plus, Smiley, Sparkle, Wallet } from "@phosphor-icons/react";
+import { ArrowClockwise, Broadcast, Database, Gear, House, ListChecks, Palette, Plus, Smiley, Sparkle, Wallet } from "@phosphor-icons/react";
 import type { Channel, Task } from "@studio/shared";
 import type { Page } from "../types";
 import { useTranslation } from "../../i18n";
@@ -40,6 +40,7 @@ export function Sidebar({
   const items: Array<{ page: Page; label: string; icon: typeof House }> = [
     { page: "dashboard", label: t("sidebar.dashboard"), icon: House },
     { page: "channels", label: t("sidebar.channels"), icon: Broadcast },
+    { page: "question_bank", label: t("sidebar.questionBank"), icon: Database },
     { page: "mascots", label: t("sidebar.mascotStudio"), icon: Smiley },
     { page: "sandbox", label: t("sidebar.sandbox"), icon: Palette },
     { page: "tasks", label: t("sidebar.tasks"), icon: ListChecks },

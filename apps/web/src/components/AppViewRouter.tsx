@@ -20,6 +20,9 @@ const VisualSandboxTab = lazy(() =>
 );
 const TasksView = lazy(() => import("../features/tasks/TasksView").then((module) => ({ default: module.TasksView })));
 const SettingsView = lazy(() => import("./SettingsPanel").then((module) => ({ default: module.SettingsView })));
+const QuestionBankView = lazy(() =>
+  import("../features/questionBank/QuestionBankView").then((module) => ({ default: module.QuestionBankView })),
+);
 
 export interface AppViewRouterProps {
   loading: boolean;
@@ -129,6 +132,16 @@ export function AppViewRouter(props: AppViewRouterProps) {
             onNotice={props.setNotice}
             onRefreshChannels={async () => {
               await props.refreshChannels();
+            }}
+          />
+        );
+      case "question_bank":
+        return (
+          <QuestionBankView
+            channels={props.channels}
+            selectedChannel={props.selectedChannel}
+            onQuickBuildVideo={(channelId, episodeId) => {
+              props.openEpisode(channelId, episodeId);
             }}
           />
         );

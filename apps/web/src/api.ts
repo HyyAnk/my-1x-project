@@ -7,6 +7,7 @@ import { voiceApi } from "./api/voiceApi";
 import { mascotApi } from "./api/mascotApi";
 import { settingsApi } from "./api/settingsApi";
 import { analyticsApi } from "./api/analyticsApi";
+import { questionBankApi } from "./api/questionBankApi";
 
 export * from "./api/client";
 export * from "./api/channelApi";
@@ -18,6 +19,7 @@ export * from "./api/voiceApi";
 export * from "./api/mascotApi";
 export * from "./api/settingsApi";
 export * from "./api/analyticsApi";
+export * from "./api/questionBankApi";
 
 /**
  * Unified API Client Facade
@@ -33,4 +35,5 @@ export const api = {
   ...mascotApi,
   ...settingsApi,
   ...analyticsApi,
+  ...questionBankApi,
 };

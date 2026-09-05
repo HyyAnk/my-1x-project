@@ -90,7 +90,7 @@ describe("CostSavingsSection i18n & unit localization", () => {
     expect(screen.queryByText(/1 ảnh/i)).toBeNull();
   });
 
-  it("renders Vietnamese units and correct locale when language is 'vi'", () => {
+  it("coerces legacy 'vi' setting to English and renders pure English economics", () => {
     window.localStorage.setItem("studio-language", "vi");
 
     render(
@@ -107,17 +107,20 @@ describe("CostSavingsSection i18n & unit localization", () => {
       </LanguageProvider>,
     );
 
-    // AI Images Produced should display 'ảnh' in Vietnamese
-    expect(screen.getByText(/42 ảnh/i)).toBeDefined();
+    // AI Images Produced should display 'images' in English
+    expect(screen.getAllByText(/42 images/i).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/ảnh/i)).toBeNull();
 
-    // Rendered characters should display 'ký tự'
-    expect(screen.getByText(/25\.000 ký tự/i)).toBeDefined();
+    // Rendered characters should display 'chars'
+    expect(screen.getAllByText(/25,000 chars/i).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/ký tự/i)).toBeNull();
 
-    // Audio produced should display 'phút'
-    expect(screen.getByText(/3\.0 phút/i)).toBeDefined();
+    // Audio produced should display 'mins'
+    expect(screen.getAllByText(/3\.0 mins/i).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/phút/i)).toBeNull();
 
-    // Card titles should be localized in Vietnamese
-    expect(screen.getByText("Tiết kiệm Voice TTS")).toBeDefined();
-    expect(screen.getByText("Chi phí tạo ảnh AI")).toBeDefined();
+    // Card titles should be localized in English
+    expect(screen.getAllByText("Voice TTS Savings").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("AI Image Spend").length).toBeGreaterThan(0);
   });
 });

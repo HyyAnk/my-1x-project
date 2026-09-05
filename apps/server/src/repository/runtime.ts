@@ -24,8 +24,16 @@ import type {
   VoicePlan,
   VoiceProfile,
   UsageLedger,
+  QuizStageTimings,
+  BankTaxonomy,
+  BankIndex,
+  BankSubtopicBatch,
+  BankQuestion,
+  BankQuestionWithCooldown,
+  BankTranslationContent,
 } from "@studio/shared";
 import type { CreateStylePresetInput, StylePreset, UpdateStylePresetInput } from "@studio/shared";
+import type { QueryQuestionBankParams } from "./quiz/questionBankRepository.js";
 import type { BundleImageAsset, BundleImageMeta, RepositoryRoots } from "./types.js";
 
 export type QuizArtifactFilename =
@@ -37,7 +45,8 @@ export type QuizArtifactFilename =
   | "timeline.json"
   | "qa.json"
   | "history-check.json"
-  | "video-description.json";
+  | "video-description.json"
+  | "stage-timings.json";
 
 export interface RepositoryRuntime {
   readonly rootDirectory: string;
@@ -176,6 +185,8 @@ export interface RepositoryRuntime {
   writeHistoryCheck(channelId: string, episodeId: string, result: QuestionHistoryCheckResult): Promise<string>;
   readVideoDescription(channelId: string, episodeId: string): Promise<VideoDescription | null>;
   writeVideoDescription(channelId: string, episodeId: string, description: VideoDescription): Promise<string>;
+  readQuizStageTimings(channelId: string, episodeId: string): Promise<QuizStageTimings | null>;
+  writeQuizStageTimings(channelId: string, episodeId: string, timings: QuizStageTimings): Promise<string>;
   readQuestionHistory(channelId: string): Promise<QuestionHistoryEntry[]>;
   appendQuestionHistory(
     channelId: string,
@@ -296,4 +307,17 @@ export interface RepositoryRuntime {
   createStylePreset(input: CreateStylePresetInput): Promise<StylePreset>;
   updateStylePreset(presetId: string, input: UpdateStylePresetInput): Promise<StylePreset>;
   deleteStylePreset(presetId: string): Promise<void>;
+
+  // Question Bank
+  getQuestionBankPath(...segments: string[]): string;
+  readQuestionBankTaxonomy(): Promise<BankTaxonomy>;
+  readQuestionBankIndex(): Promise<BankIndex>;
+  listQuestionBankBatches(filter?: { archetypeId?: string; domainId?: string }): Promise<BankSubtopicBatch[]>;
+  recalculateQuestionBankIndex(): Promise<BankIndex>;
+  queryQuestionBankQuestions(params?: QueryQuestionBankParams): Promise<{ questions: BankQuestionWithCooldown[]; total: number }>;
+  getQuestionBankQuestion(questionId: string, channelId?: string): Promise<BankQuestionWithCooldown | null>;
+  saveQuestionBankQuestion(question: BankQuestion): Promise<BankQuestion>;
+  saveQuestionBankTranslation(questionId: string, translation: BankTranslationContent): Promise<BankQuestion | null>;
+  deleteQuestionBankQuestion(questionId: string): Promise<boolean>;
 }
+

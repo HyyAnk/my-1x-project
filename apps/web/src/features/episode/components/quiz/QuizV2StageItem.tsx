@@ -1,5 +1,5 @@
 import { CheckCircle, CircleNotch, WarningCircle } from "@phosphor-icons/react";
-import type { RailStage, RailStatus, StageProgress } from "../../utils/quizRailCalculations";
+import type { RailStage, RailStatus, StageProgress, StageTimingInfo } from "../../utils/quizRailCalculations";
 import { statusLabel } from "../../utils/quizRailCalculations";
 
 type QuizV2StageItemProps = {
@@ -8,14 +8,15 @@ type QuizV2StageItemProps = {
   index: number;
   status: RailStatus;
   progress: StageProgress;
+  timing?: StageTimingInfo | null;
 };
 
-export function QuizV2StageItem({ stageKey, label, index, status, progress }: QuizV2StageItemProps) {
+export function QuizV2StageItem({ stageKey, label, index, status, progress, timing }: QuizV2StageItemProps) {
   return (
     <li
       key={stageKey}
       className={"quiz-v2-stage is-" + status}
-      aria-label={`${label}: ${progress.completed} of ${progress.total} ${progress.unit} complete, ${progress.percent}%`}
+      aria-label={`${label}: ${statusLabel(status)}, ${progress.completed} of ${progress.total} ${progress.unit} complete, ${progress.percent}%${timing ? `, ${timing.tooltip}` : ""}`}
     >
       <span className="quiz-v2-stage-icon">
         {status === "ready" ? (
@@ -30,7 +31,22 @@ export function QuizV2StageItem({ stageKey, label, index, status, progress }: Qu
       </span>
       <div>
         <strong>{label}</strong>
-        <span>{statusLabel(status)}</span>
+        <div className="quiz-v2-stage-meta">
+          <span>{statusLabel(status)}</span>
+          {timing ? (
+            <span
+              className={`quiz-v2-stage-timing${timing.isRunning ? " is-running" : ""}${timing.isParallel ? " is-parallel" : ""}`}
+              title={timing.tooltip}
+            >
+              ⏱ {timing.formattedDuration}
+              {timing.isParallel && timing.parallelTotalSeconds ? (
+                <span className="quiz-v2-stage-parallel-badge" title={`Thời gian song song: ${timing.parallelTotalSeconds}s`}>
+                  //{timing.parallelTotalSeconds}s
+                </span>
+              ) : null}
+            </span>
+          ) : null}
+        </div>
         <span className="quiz-v2-stage-progress">
           {progress.completed}/{progress.total} {progress.unit} · {progress.percent}%
         </span>

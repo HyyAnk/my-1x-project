@@ -7,6 +7,7 @@ import type {
   TaskEvent,
   VideoDescription,
   VoicePlan,
+  QuizStageTimings,
 } from "@studio/shared";
 
 export type BundleImage = {
@@ -37,6 +38,7 @@ export type QuizV2State = {
   timeline: QuizTimeline | null;
   assessment: QuizAssessment | null;
   description?: VideoDescription | null;
+  timings?: QuizStageTimings | null;
   stages: QuizV2Stages;
 };
 

@@ -89,6 +89,7 @@ describe("Phase 6 Test Matrix: Shared catalog and compatibility", () => {
       "verdict_true_false",
       "full_stack_list",
       "mystery_reveal",
+      "clue_deduction",
     ];
     expect(QuizLayoutIdSchema.options.sort()).toEqual(expectedIds.sort());
     for (const id of expectedIds) {
@@ -98,7 +99,7 @@ describe("Phase 6 Test Matrix: Shared catalog and compatibility", () => {
 
   it("P6-CAT-02: Catalog and renderer parity for all production layouts", () => {
     const resolvedIds = ResolvedQuizLayoutIdSchema.options;
-    expect(resolvedIds.length).toBe(7);
+    expect(resolvedIds.length).toBe(8);
     for (const id of resolvedIds) {
       expect(QUIZ_LAYOUT_CATALOG[id]).toBeDefined();
       expect(QUIZ_LAYOUT_RENDERERS[id]).toBeDefined();

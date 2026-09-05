@@ -123,7 +123,7 @@ function splitQuestionPhrases(text: string): string[] {
     if (!canSplitBetweenWords(words[i - 1], words[i])) continue;
     const word = words[i].replace(/^[^A-Za-zÀ-ỹ]+/, "").toLowerCase();
     const isConjunction =
-      /^(and|or|but|because|although|when|while|which|that|who|whom|where|if|as|và|nhưng|hoặc|bởi|vì|khi|nếu|mà)$/i.test(word);
+      /^(and|or|but|because|although|when|while|which|that|who|whom|where|if|as)$/i.test(word);
     const score = (isConjunction ? 0 : 5) + Math.abs(i - midpoint);
     if (score < bestScore) {
       bestScore = score;
@@ -175,9 +175,6 @@ export const ENGLISH_OUTRO_CLOSING_VARIANTS = [
 ] as const;
 
 export function resolveOutroClosing(language: string, seed?: string): string {
-  if (/^(vi|vietnamese|tiếng việt)/i.test(language.trim())) {
-    return "Hẹn gặp lại các bạn!";
-  }
   if (!seed) return ENGLISH_OUTRO_CLOSING_VARIANTS[0];
   let hash = 0;
   for (let i = 0; i < seed.length; i++) {
@@ -188,20 +185,6 @@ export function resolveOutroClosing(language: string, seed?: string): string {
 
 function voiceCopy(language: string, seed?: string) {
   const closing = resolveOutroClosing(language, seed);
-  if (/^(vi|vietnamese|tiếng việt)/i.test(language.trim())) {
-    return {
-      intro: "Chào các bạn! Sẵn sàng chưa nào? Cùng thử tài xem bạn trả lời đúng được bao nhiêu câu nhé!",
-      question: (_number: number, text: string) => text,
-      choices: (choices: string[]) => (choices.length < 2 ? choices[0] : `${choices.slice(0, -1).join(", ")} hay ${choices.at(-1)}?`),
-      thinking: ["Chọn nhanh nào!", "Đáp án là gì nhỉ?", "Nhanh tay nào!", "Bạn chọn cái nào?"],
-      reveal: (answer: string) => `Đúng rồi! Chính là ${answer}!`,
-      explanation: (text: string) => text,
-      fact: (text: string) => text,
-      midpoint: "",
-      outro:
-        `Bạn đúng được mấy câu? Hãy bình luận số điểm của bạn bên dưới nhé! Nhớ nhấn Thích và Đăng ký kênh để đón xem những thử thách tiếp theo. ${closing}`,
-    };
-  }
   return {
     intro: "Hey friends! Ready to test your brain? Let's jump right in!",
     question: (_number: number, text: string) => text,

@@ -48,8 +48,8 @@ export const SandboxPreviewInputBaseSchema = z.object({
   question_number: z.number().int().min(1).optional().default(1),
   total_questions: z.number().int().min(1).optional().default(10),
   countdown_progress: z.number().min(0).max(1).optional().default(0.5), // 0 to 1
-  fact_card_title: z.string().optional().default("BẠN CÓ BIẾT?"),
-  fact_card_text: z.string().optional().default("Hành tinh này có các đặc điểm kỳ thú và hệ thống vành đai ấn tượng nhất trong vũ trụ!"),
+  fact_card_title: z.string().optional().default("DID YOU KNOW?"),
+  fact_card_text: z.string().optional().default("This planet features remarkable atmospheric conditions and the most stunning ring system in the solar system!"),
   mascot_id: z.string().nullable().optional(),
   mascot_enabled: z.boolean().optional().default(true),
   mascot_action: MascotActionTypeSchema.optional().default("thinking"),

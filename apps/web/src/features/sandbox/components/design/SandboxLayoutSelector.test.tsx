@@ -27,8 +27,8 @@ describe("SandboxLayoutSelector (P6-UI-01..09)", () => {
     expect(combobox.getAttribute("aria-expanded")).toBe("true");
 
     const options = getAllByRole("option");
-    expect(options).toHaveLength(7);
-    expect(QUIZ_LAYOUT_UI_DEFINITIONS).toHaveLength(7);
+    expect(options).toHaveLength(8);
+    expect(QUIZ_LAYOUT_UI_DEFINITIONS).toHaveLength(8);
   });
 
   it("P6-UI-02: Supports keyboard navigation (Enter, Space, ArrowDown, ArrowUp, Escape)", () => {

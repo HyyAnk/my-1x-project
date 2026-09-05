@@ -38,12 +38,11 @@ export function assembleFullDescription(input: AssembleDescriptionInput): {
   charCount: number;
   hashtags: string[];
 } {
-  const { hookLines, semanticParagraph, scoringCta, suggestedPlaylistCategory, language = "Vietnamese" } = input;
-  const isVi = /vietnamese|vi\b/i.test(language);
+  const { hookLines, semanticParagraph, scoringCta, suggestedPlaylistCategory, language = "English" } = input;
   const normalizedTags = normalizeHashtags(input.hashtags);
 
-  const scoringHeader = isVi ? "🏆 BẢNG XẾP HẠNG ĐIỂM SỐ:" : "🏆 SCORING TIERS:";
-  const playlistHeader = isVi ? "📂 Chủ đề Playlist:" : "📂 Playlist Category:";
+  const scoringHeader = "🏆 SCORING TIERS:";
+  const playlistHeader = "📂 Playlist Category:";
 
   const sections: string[] = [
     hookLines.trim(),

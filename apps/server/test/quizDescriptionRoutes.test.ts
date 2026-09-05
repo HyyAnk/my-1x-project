@@ -151,7 +151,7 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
         // Verify description.md file was automatically written to disk
         const descMdPath = path.join(root, "channels", channel.slug, "episodes", episode.slug, "description.md");
         const mdContent = await readFile(descMdPath, "utf8");
-        expect(mdContent).toContain("🏆 BẢNG XẾP HẠNG ĐIỂM SỐ:");
+        expect(mdContent).toContain("🏆 SCORING TIERS:");
 
         // 3. GET description returns the automatically generated artifact
         const getAfter = await app.server.inject({

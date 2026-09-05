@@ -44,7 +44,7 @@ export function parseDescriptionJsonResponse(rawText: string): Record<string, un
 export async function generateVideoDescription(deps: GenerateVideoDescriptionDeps): Promise<VideoDescription> {
   const { client, channel, episode, quiz, toneHint, modelOverride, timeoutMs, signal } = deps;
   const questionCount = quiz.questions.length;
-  const language = channel.language || "Vietnamese";
+  const language = channel.language || "English";
   const tiers = calculateScoringTiers(questionCount);
 
   const prompt = compileVideoDescriptionPrompt({
@@ -68,15 +68,9 @@ export async function generateVideoDescription(deps: GenerateVideoDescriptionDep
     const tier1Range = formatScoringRange(tiers.tier1.min, tiers.tier1.max, language);
     const tier2Range = formatScoringRange(tiers.tier2.min, tiers.tier2.max, language);
     const tier3Range = formatScoringRange(tiers.tier3.min, tiers.tier3.max, language);
-    const isVi = /vietnamese|vi\b/i.test(language);
 
-    const fallbackHook = isVi
-      ? `${episode.topic.title} - Thử thách ${questionCount} câu hỏi!\nCùng kiểm tra độ hiểu biết của bạn ngay sau đây.`
-      : `${episode.topic.title} - ${questionCount} Question Challenge!\nTest your knowledge and see how many you can answer correctly.`;
-
-    const fallbackSemantic = isVi
-      ? `${episode.topic.hook} Hãy cùng khám phá các câu đố thú vị và bất ngờ trong video này.`
-      : `${episode.topic.hook} Discover exciting trivia questions and fascinating facts in this video challenge.`;
+    const fallbackHook = `${episode.topic.title} - ${questionCount} Question Challenge!\nTest your knowledge and see how many you can answer correctly.`;
+    const fallbackSemantic = `${episode.topic.hook} Discover exciting trivia questions and fascinating facts in this video challenge.`;
 
     rawJson = {
       topic_category: episode.topic.title,
@@ -85,33 +79,28 @@ export async function generateVideoDescription(deps: GenerateVideoDescriptionDep
       hook_lines: fallbackHook,
       semantic_paragraph: fallbackSemantic,
       scoring_cta: {
-        beginner: `${tier1Range}: ${isVi ? "Mới bắt đầu" : "Beginner"}`,
-        intermediate: `${tier2Range}: ${isVi ? "Hiểu biết" : "Intermediate"}`,
-        expert: `${tier3Range}: ${isVi ? "Bậc thầy" : "Master"}`,
-        cta_text: isVi ? "Bạn đúng được bao nhiêu câu? Hãy bình luận bên dưới nhé!" : "How many did you get right? Comment below!",
+        beginner: `${tier1Range}: Beginner`,
+        intermediate: `${tier2Range}: Intermediate`,
+        expert: `${tier3Range}: Master`,
+        cta_text: "How many did you get right? Comment below!",
       },
       suggested_playlist_category: episode.topic.title,
-      hashtags: isVi ? ["#quiz", "#dovui", "#kienthuc", "#trivia"] : ["#quiz", "#trivia", "#knowledge", "#test"],
+      hashtags: ["#quiz", "#trivia", "#knowledge", "#test"],
     };
   }
 
-  const isVi = /vietnamese|vi\b/i.test(language);
   const topicCategory = typeof rawJson.topic_category === "string" ? rawJson.topic_category.trim() : episode.topic.title;
   const primaryKeyword = typeof rawJson.primary_keyword === "string" ? rawJson.primary_keyword.trim() : episode.topic.title;
   const keywordVariations = Array.isArray(rawJson.keyword_variations)
     ? (rawJson.keyword_variations as string[]).map((k) => String(k).trim()).filter(Boolean)
     : [];
 
-  const defaultHookLines = isVi
-    ? `${episode.topic.title}\nCùng thử thách trí nhớ ngay!`
-    : `${episode.topic.title}\nTest your memory and knowledge now!`;
+  const defaultHookLines = `${episode.topic.title}\nTest your memory and knowledge now!`;
   const hookLines = typeof rawJson.hook_lines === "string" && rawJson.hook_lines.trim()
     ? rawJson.hook_lines.trim()
     : defaultHookLines;
 
-  const defaultSemantic = isVi
-    ? `${episode.topic.hook} Thử thách trí tuệ với những câu hỏi hấp dẫn!`
-    : `${episode.topic.hook} Challenge your mind with engaging questions!`;
+  const defaultSemantic = `${episode.topic.hook} Challenge your mind with engaging questions!`;
   const semanticParagraph = typeof rawJson.semantic_paragraph === "string" && rawJson.semantic_paragraph.trim()
     ? rawJson.semantic_paragraph.trim()
     : defaultSemantic;
@@ -124,16 +113,16 @@ export async function generateVideoDescription(deps: GenerateVideoDescriptionDep
   const scoringCta = {
     beginner: typeof rawScoring.beginner === "string" && rawScoring.beginner.trim()
       ? rawScoring.beginner.trim()
-      : `${tier1Range}: ${isVi ? "Tập sự" : "Beginner"}`,
+      : `${tier1Range}: Beginner`,
     intermediate: typeof rawScoring.intermediate === "string" && rawScoring.intermediate.trim()
       ? rawScoring.intermediate.trim()
-      : `${tier2Range}: ${isVi ? "Tinh anh" : "Intermediate"}`,
+      : `${tier2Range}: Intermediate`,
     expert: typeof rawScoring.expert === "string" && rawScoring.expert.trim()
       ? rawScoring.expert.trim()
-      : `${tier3Range}: ${isVi ? "Bậc thầy" : "Master"}`,
+      : `${tier3Range}: Master`,
     cta_text: typeof rawScoring.cta_text === "string" && rawScoring.cta_text.trim()
       ? rawScoring.cta_text.trim()
-      : (isVi ? "Bạn đạt được bao nhiêu điểm? Hãy bình luận nhé!" : "How many did you get right? Comment below!"),
+      : "How many did you get right? Comment below!",
   };
 
   const suggestedPlaylistCategory =

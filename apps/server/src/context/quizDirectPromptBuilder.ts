@@ -13,7 +13,7 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
   const isTrueFalse = quizConfig?.quiz_format === "true_false";
   const styleContract = resolveVisualStyleContract(episode);
   const choiceCountDesc = isTrueFalse
-    ? "exactly 2 choices with ids 'choice-true' and 'choice-false' (texts: 'True' / 'False' or 'Đúng' / 'Sai')"
+    ? "exactly 2 choices with ids 'choice-true' and 'choice-false' (texts: 'True' / 'False')"
     : "strictly exactly 3 choices with ids 'choice-a', 'choice-b', and 'choice-c'";
 
   return [
@@ -22,7 +22,7 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
     `- "schema_version": 2`,
     `- "episode_id": "${episode?.episode_id ?? "episode"}"`,
     `- "age_band": "${quizConfig?.age_band ?? "7-9"}"`,
-    `- "language": "${episode?.topic?.title ? "auto" : "vi"}"`,
+    `- "language": "${episode?.topic?.title ? "auto" : "en"}"`,
     `- "questions": array of exactly ${quizQuestionCount} question objects numbered sequentially 1 to ${quizQuestionCount}.`,
     ``,
     `Each question in the "questions" array MUST follow this exact schema:`,

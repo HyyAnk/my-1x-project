@@ -144,7 +144,7 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(dual.plan.layout).toBe("split_vs");
   });
 
-  it("strictly uses English '15 QUESTIONS' for English channels and '15 CÂU HỎI' for Vietnamese channels", () => {
+  it("strictly uses English '15 QUESTIONS' for English channels and '15 PREGUNTAS' for Spanish channels", () => {
     const englishPlan = resolveThumbnailLayout({
       topicTitle: "General Knowledge Trivia Secrets",
       questionCount: 15,
@@ -154,16 +154,14 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(englishPlan.badgeText).toBe("15 QUESTIONS");
     expect(englishPlan.hookText).toBe("GENERAL KNOWLEDGE");
 
-
-    const vietnamesePlan = resolveThumbnailLayout({
-      topicTitle: "Đố Vui Kiến Thức Tổng Hợp 15 Câu",
+    const spanishPlan = resolveThumbnailLayout({
+      topicTitle: "Cultura General y Curiosidades",
       questionCount: 15,
-      language: "Vietnamese",
+      language: "Spanish",
       mascotProfile: sampleMascot,
     });
-    expect(vietnamesePlan.badgeText).toBe("15 CÂU HỎI");
-    expect(vietnamesePlan.hookText).toBe("KIẾN THỨC CHUNG");
-
+    expect(spanishPlan.badgeText).toBe("15 PREGUNTAS");
+    expect(spanishPlan.hookText).toBe("CULTURA GENERAL");
   });
 
   it("extracts clean visual choice objects and enforces strict zero question text rule in prompts", () => {
@@ -349,15 +347,15 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(jaPlan.hookText).toBe("宇宙クイズ");
     expect(jaPlan.badgeText).toBe("天才専用 🧠");
 
-    const viPlan = resolveThumbnailLayout({
-      topicTitle: "Đố Vui Các Hành Tinh Hệ Mặt Trời",
+    const esPlan = resolveThumbnailLayout({
+      topicTitle: "Quiz del Sistema Solar y Planetas",
       questionCount: 15,
-      language: "Vietnamese",
+      language: "Spanish",
       badgeOverride: "iq_test",
       mascotProfile: sampleMascot,
     });
-    expect(viPlan.hookText).toBe("ĐỐ VUI VŨ TRỤ");
-    expect(viPlan.badgeText).toBe("THỬ THÁCH IQ 140+ ⚡");
+    expect(esPlan.hookText).toBe("QUIZ DEL ESPACIO");
+    expect(esPlan.badgeText).toBe("TEST DE CI 140+ ⚡");
   });
 
   it("compiles high-contrast prompts with rim lighting and dynamic mascot action pose", () => {

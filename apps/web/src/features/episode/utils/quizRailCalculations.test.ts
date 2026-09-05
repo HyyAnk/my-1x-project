@@ -14,6 +14,8 @@ import {
   resolveStreamlinedStatus,
   statusLabel,
   taskProgress,
+  resolveStageTiming,
+  resolveParallelSummary,
 } from "./quizRailCalculations";
 
 const defaultReadiness = {
@@ -379,6 +381,132 @@ describe("quizRailCalculations", () => {
       // Stage after script (timeline at index 9) should be queued
       const timelineStatus = resolveStatus("timeline", 9, defaultReadiness, mockState, runningPipelineTask, [], currentStage);
       expect(timelineStatus).toBe("queued");
+    });
+  });
+
+  describe("resolveStageTiming & resolveParallelSummary", () => {
+    it("resolves recorded timings for sequential and parallel stages", () => {
+      const stateWithTimings: QuizV2State = {
+        ...mockState,
+        timings: {
+          schema_version: 1,
+          stages: {
+            quizContent: {
+              duration_seconds: 12,
+              started_at: "2026-09-04T06:00:00.000Z",
+              completed_at: "2026-09-04T06:00:12.000Z",
+            },
+            assets: {
+              duration_seconds: 15,
+              parallel_group: "assets_voice",
+              parallel_total_seconds: 23,
+            },
+            voice: {
+              duration_seconds: 23,
+              parallel_group: "assets_voice",
+              parallel_total_seconds: 23,
+            },
+          },
+          parallel_groups: {
+            assets_voice: {
+              stages: ["assets", "voice"],
+              duration_seconds: 23,
+            },
+          },
+        },
+      };
+
+      const quizContentTiming = resolveStageTiming("quizContent", "ready", stateWithTimings, []);
+      expect(quizContentTiming).toEqual({
+        durationSeconds: 12,
+        isRunning: false,
+        parallelTotalSeconds: null,
+        isParallel: false,
+        formattedDuration: "12s",
+        tooltip: "Duration: 12s",
+      });
+
+      const assetsTiming = resolveStageTiming("assets", "ready", stateWithTimings, []);
+      expect(assetsTiming).toEqual({
+        durationSeconds: 15,
+        isRunning: false,
+        parallelTotalSeconds: 23,
+        isParallel: true,
+        formattedDuration: "15s",
+        tooltip: "Individual: 15s · Parallel total: 23s",
+      });
+
+      const voiceTiming = resolveStageTiming("voice", "ready", stateWithTimings, []);
+      expect(voiceTiming).toEqual({
+        durationSeconds: 23,
+        isRunning: false,
+        parallelTotalSeconds: 23,
+        isParallel: true,
+        formattedDuration: "23s",
+        tooltip: "Individual: 23s · Parallel total: 23s",
+      });
+
+      const summaries = resolveParallelSummary(stateWithTimings);
+      expect(summaries).toHaveLength(1);
+      expect(summaries[0].groupKey).toBe("assets_voice");
+      expect(summaries[0].totalDurationSeconds).toBe(23);
+      expect(summaries[0].stages).toEqual([
+        { key: "assets", label: "Visual Assets", durationSeconds: 15 },
+        { key: "voice", label: "Voice (TTS)", durationSeconds: 23 },
+      ]);
+    });
+
+    it("falls back to child task timestamps when no recorded timings exist", () => {
+      const completedVideoTask: Task = {
+        task_id: "render-task-1",
+        task_type: "GENERATE_VIDEO",
+        channel_id: "ch-1",
+        episode_id: "ep-1",
+        status: "COMPLETED",
+        created_at: "2026-09-04T06:00:00.000Z",
+        started_at: "2026-09-04T06:00:00.000Z",
+        completed_at: "2026-09-04T06:00:45.000Z",
+        lock_key: "lock-render",
+        progress_message: "Complete",
+        accumulated_duration_seconds: 0,
+        output_files: [],
+        progress_percent: 100,
+        queue_position: null,
+        render_progress: null,
+        scene_number: null,
+        error: null,
+        codex_thread_id: null,
+        codex_turn_id: null,
+      };
+
+      const renderTiming = resolveStageTiming("render", "ready", mockState, [completedVideoTask]);
+      expect(renderTiming).toBeDefined();
+      expect(renderTiming?.durationSeconds).toBe(45);
+      expect(renderTiming?.formattedDuration).toBe("45s");
+      expect(renderTiming?.isParallel).toBe(false);
+    });
+
+    it("calculates live elapsed time for running stage", () => {
+      const now = new Date("2026-09-04T06:00:18.000Z").getTime();
+      const stateWithRunningStage: QuizV2State = {
+        ...mockState,
+        timings: {
+          schema_version: 1,
+          stages: {
+            assets: {
+              duration_seconds: 0,
+              started_at: "2026-09-04T06:00:00.000Z",
+              completed_at: null,
+            },
+          },
+        },
+      };
+
+      const timing = resolveStageTiming("assets", "running", stateWithRunningStage, [], null, now);
+      expect(timing).toBeDefined();
+      expect(timing?.isRunning).toBe(true);
+      expect(timing?.durationSeconds).toBe(18);
+      expect(timing?.formattedDuration).toBe("18s...");
     });
   });
 });

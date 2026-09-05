@@ -21,6 +21,7 @@ import { quizArtifactBindings } from "./bindings/quizArtifactBindings.js";
 import { sceneBindings } from "./bindings/sceneBindings.js";
 import { mediaBindings } from "./bindings/mediaBindings.js";
 import { miscBindings } from "./bindings/miscBindings.js";
+import { questionBankBindings } from "./bindings/questionBankBindings.js";
 import { listStylePresets, createStylePreset, updateStylePreset, deleteStylePreset } from "./stylePresets.js";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-unsafe-declaration-merging
@@ -145,5 +146,6 @@ Object.assign(
   sceneBindings,
   mediaBindings,
   miscBindings,
+  questionBankBindings,
   { listStylePresets, createStylePreset, updateStylePreset, deleteStylePreset },
 );

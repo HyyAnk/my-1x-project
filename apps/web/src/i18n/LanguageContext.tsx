@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { Language, TranslationSchema } from "./types";
 import { en } from "./en";
-import { vi } from "./vi";
 
 interface LanguageContextType {
   language: Language;
@@ -12,7 +11,6 @@ interface LanguageContextType {
 
 const dictionaries: Record<Language, TranslationSchema> = {
   en,
-  vi,
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
@@ -22,10 +20,15 @@ const DEFAULT_LANGUAGE: Language = "en";
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {
-    if (typeof window === "undefined") return DEFAULT_LANGUAGE;
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (saved === "vi" || saved === "en") {
-      return saved;
+    if (typeof window !== "undefined") {
+      const saved = window.localStorage.getItem(STORAGE_KEY);
+      if (saved && saved !== "en") {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, "en");
+        } catch {
+          // ignore
+        }
+      }
     }
     return DEFAULT_LANGUAGE;
   });

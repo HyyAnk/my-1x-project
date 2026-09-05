@@ -25,7 +25,7 @@ export const VideoDescriptionSchema = z.object({
   hashtags: z.array(z.string().trim()).min(1).max(10).default([]),
   full_description_text: z.string().trim().min(1),
   char_count: z.number().int().nonnegative().default(0),
-  language: z.string().trim().default("Vietnamese"),
+  language: z.string().trim().default("English"),
   generated_at: IsoDate,
   updated_at: IsoDate.optional(),
 });

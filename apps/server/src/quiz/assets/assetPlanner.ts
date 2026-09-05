@@ -18,7 +18,11 @@ export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle
         purpose: "hero_question_image",
         style: "cute_illustration",
         aspect_ratio: "16:9",
-        transparent_background: false,
+        transparent_background:
+          beat.layout_id === "mystery_reveal" ||
+          beat.archetype === "mystery_reveal" ||
+          beat.archetype === "visual_reveal" ||
+          beat.archetype === "image_guess",
         required: true,
         semantic_key: question.id + ":hero_question_image",
         consistency_group_id: null,

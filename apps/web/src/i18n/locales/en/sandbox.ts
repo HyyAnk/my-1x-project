@@ -70,6 +70,8 @@ export const sandboxEn = {
     layoutFullStackListSub: "Vertical full-width stack for fast-paced text trivia",
     layoutMysteryReveal: "Mystery Reveal (Silhouette & Clues)",
     layoutMysteryRevealSub: "Cinematic focal hero with dynamic reveal transformation & single answer",
+    layoutClueDeduction: "Clue Deduction (Manh Mối A → B)",
+    layoutClueDeductionSub: "Pristine clue image A with celebratory radiant answer reveal B",
     paletteSection: "2. Theme & Palette",
     thinkingBarSection: "3. Thinking Bar",
     questionBoxSection: "4. Question Card",

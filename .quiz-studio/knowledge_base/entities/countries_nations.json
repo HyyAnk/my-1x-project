@@ -1,0 +1,4541 @@
+[
+  {
+    "id": "ENT-COU-001",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Vietnam",
+    "language": "en",
+    "aliases": [
+      "VN",
+      "Socialist Republic of Vietnam"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Cinematic vertical 9:16 view of Ha Long Bay emerald waters with limestone karsts shrouded in morning mist.",
+    "core_traits": [
+      "S-shaped coastline along Indochinese peninsula",
+      "Capital city is Hanoi, largest city is Ho Chi Minh City",
+      "World-renowned for Pho and Banh Mi",
+      "Traditional conical hat (Non La) and Ao Dai"
+    ],
+    "distractor_pool": [
+      "Thailand",
+      "Japan",
+      "South Korea",
+      "Indonesia",
+      "Philippines"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Vietnam is the world's largest exporter of Robusta coffee.",
+        "verdict": "fact",
+        "explanation": "Vietnam produces and exports more Robusta coffee beans than any other country in the world.",
+        "fun_fact": "Egg coffee (Ca phe trung) originated in Hanoi in the 1940s."
+      },
+      {
+        "claim": "Son Doong in Vietnam is the largest natural cave in the world.",
+        "verdict": "fact",
+        "explanation": "Discovered by a local farmer and explored by BCRA, it has cavern sections large enough to house a 40-story skyscraper.",
+        "fun_fact": "It even possesses its own localized weather and cloud system."
+      },
+      {
+        "claim": "Pho was originally an ancient dish eaten during the Hung Kings era.",
+        "verdict": "myth",
+        "explanation": "Pho actually originated in the late 19th or early 20th century in northern Vietnam, heavily influenced by French-era culinary trade.",
+        "fun_fact": "Nam Dinh and Hanoi are widely celebrated as the dual cradles of authentic Pho."
+      }
+    ],
+    "versus_candidates": [
+      "Thailand",
+      "Japan",
+      "Indonesia"
+    ]
+  },
+  {
+    "id": "ENT-COU-002",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Japan",
+    "language": "en",
+    "aliases": [
+      "Nippon",
+      "Nihon",
+      "Land of the Rising Sun"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Mount Fuji capped with snow framed by blooming pink sakura cherry blossoms and a red pagoda.",
+    "core_traits": [
+      "Island nation shaped like an archipelago in East Asia",
+      "Capital is Tokyo, the world's most populous metropolitan area",
+      "Birthplace of Anime, Manga, and Shinkansen bullet trains",
+      "Famous culinary culture centered on Sushi and Ramen"
+    ],
+    "distractor_pool": [
+      "South Korea",
+      "China",
+      "Vietnam",
+      "Taiwan",
+      "Singapore"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Mount Fuji is an active volcano.",
+        "verdict": "fact",
+        "explanation": "Mount Fuji is classified as an active stratovolcano, though its last major eruption was in 1707.",
+        "fun_fact": "It stands at 3,776 meters tall."
+      },
+      {
+        "claim": "Fortune cookies were invented in ancient Japan.",
+        "verdict": "myth",
+        "explanation": "While a similar sesame cracker existed in Kyoto, the modern sweet fortune cookie was created by Japanese immigrants in California in the early 20th century.",
+        "fun_fact": "In China, fortune cookies are virtually unknown except as American novelties."
+      }
+    ],
+    "versus_candidates": [
+      "South Korea",
+      "China",
+      "United Kingdom"
+    ]
+  },
+  {
+    "id": "ENT-COU-003",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "France",
+    "language": "en",
+    "aliases": [
+      "French Republic",
+      "Hexagon"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Glowing Eiffel Tower towering over the Seine River in Paris at twilight with vintage cobblestone streets.",
+    "core_traits": [
+      "Hexagonal territory located in Western Europe",
+      "Capital is Paris, known as the City of Light",
+      "Global epicenter of haute cuisine, wine, cheese, and fashion",
+      "Home to the Louvre Museum and Mona Lisa"
+    ],
+    "distractor_pool": [
+      "Italy",
+      "Spain",
+      "Germany",
+      "United Kingdom",
+      "Switzerland"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "France is the most visited country by international tourists in the world.",
+        "verdict": "fact",
+        "explanation": "France routinely welcomes over 85 to 90 million international tourist arrivals annually.",
+        "fun_fact": "There are over 1,200 distinct varieties of French cheese produced nationwide."
+      },
+      {
+        "claim": "Croissants were originally invented by French bakers in Paris.",
+        "verdict": "myth",
+        "explanation": "The precursor to the croissant is the Austrian Kipferl, which originated in Vienna and was later popularized in France.",
+        "fun_fact": "Marie Antoinette is often said to have popularized Austrian pastries in Versailles."
+      }
+    ],
+    "versus_candidates": [
+      "Italy",
+      "United Kingdom",
+      "Germany"
+    ]
+  },
+  {
+    "id": "ENT-COU-004",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "United States",
+    "language": "en",
+    "aliases": [
+      "USA",
+      "America",
+      "United States of America"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Majestic Statue of Liberty against the Manhattan skyscraper skyline under fiery sunset clouds.",
+    "core_traits": [
+      "Spans 50 states across North America from Atlantic to Pacific",
+      "Federal capital is Washington D.C., financial hub is New York City",
+      "Birthplace of Hollywood, NASA Apollo missions, and the internet",
+      "Famous symbols include the Bald Eagle and Stars & Stripes flag"
+    ],
+    "distractor_pool": [
+      "Canada",
+      "United Kingdom",
+      "Australia",
+      "Germany",
+      "Brazil"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The United States has no official federal language declared by law.",
+        "verdict": "fact",
+        "explanation": "While English is the de facto national language, the US federal government has never codified an official language by federal statute.",
+        "fun_fact": "Dozens of individual states have designated English as their official state language."
+      },
+      {
+        "claim": "George Washington had dentures made of wood.",
+        "verdict": "myth",
+        "explanation": "Washington's dentures were actually crafted from hippopotamus ivory, gold, brass screws, and human teeth, not wood.",
+        "fun_fact": "Over time, wine and tea stained the ivory to look like wood grain."
+      }
+    ],
+    "versus_candidates": [
+      "China",
+      "United Kingdom",
+      "Canada"
+    ]
+  },
+  {
+    "id": "ENT-COU-005",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "United Kingdom",
+    "language": "en",
+    "aliases": [
+      "UK",
+      "Britain",
+      "Great Britain"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Big Ben clock tower and the Houses of Parliament beside a red double-decker bus on Westminster Bridge.",
+    "core_traits": [
+      "Island nation consisting of England, Scotland, Wales, and Northern Ireland",
+      "Capital is London, divided by the River Thames",
+      "Famous for afternoon tea, the Monarchy, and William Shakespeare",
+      "Iconic red telephone booths and double-decker buses"
+    ],
+    "distractor_pool": [
+      "France",
+      "Ireland",
+      "Germany",
+      "Australia",
+      "United States"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Big Ben is the name of the clock tower itself.",
+        "verdict": "myth",
+        "explanation": "The tower is officially named Elizabeth Tower; Big Ben is the nickname of the giant 13-ton bell inside.",
+        "fun_fact": "The tower was formerly known simply as the Clock Tower before 2012."
+      },
+      {
+        "claim": "Buckingham Palace is the official London residence of the reigning monarch.",
+        "verdict": "fact",
+        "explanation": "It has served as the official administrative headquarters of the British monarch since 1837.",
+        "fun_fact": "The palace contains 775 rooms, including 78 bathrooms."
+      }
+    ],
+    "versus_candidates": [
+      "France",
+      "United States",
+      "Ireland"
+    ]
+  },
+  {
+    "id": "ENT-COU-006",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Italy",
+    "language": "en",
+    "aliases": [
+      "Italia",
+      "Italian Republic"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Ancient Colosseum in Rome bathed in warm afternoon sunlight with Italian cypress trees.",
+    "core_traits": [
+      "Distinctive boot-shaped peninsula jutting into the Mediterranean",
+      "Capital is Rome, cradling the Vatican City enclave",
+      "Cradle of the Roman Empire and the Renaissance",
+      "Famous gastronomy includes Pasta, Pizza, and Gelato"
+    ],
+    "distractor_pool": [
+      "Greece",
+      "France",
+      "Spain",
+      "Portugal",
+      "Turkey"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Tomatoes have been an integral part of Italian cuisine since ancient Roman times.",
+        "verdict": "myth",
+        "explanation": "Tomatoes are native to the Americas and did not reach Italy until the 16th century following the Columbian Exchange.",
+        "fun_fact": "Italians initially regarded tomatoes with suspicion, suspecting them to be poisonous."
+      },
+      {
+        "claim": "Italy contains more UNESCO World Heritage sites than any other nation.",
+        "verdict": "fact",
+        "explanation": "With 59 official World Heritage sites, Italy ties with or leads the global ranking.",
+        "fun_fact": "Venice and its lagoon are listed as an entire collective heritage site."
+      }
+    ],
+    "versus_candidates": [
+      "France",
+      "Greece",
+      "Spain"
+    ]
+  },
+  {
+    "id": "ENT-COU-007",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "China",
+    "language": "en",
+    "aliases": [
+      "PRC",
+      "People's Republic of China",
+      "Middle Kingdom"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "The Great Wall of China snaking endlessly over steep mist-covered green mountain ridges.",
+    "core_traits": [
+      "Vast territory in East Asia with thousands of years of dynastic history",
+      "Capital is Beijing, economic megalopolis is Shanghai",
+      "Inventions include paper, printing, gunpowder, and the compass",
+      "Native habitat of the Giant Panda"
+    ],
+    "distractor_pool": [
+      "Japan",
+      "South Korea",
+      "India",
+      "Vietnam",
+      "Mongolia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Great Wall of China is visible from low Earth orbit with the naked eye.",
+        "verdict": "myth",
+        "explanation": "Astronauts confirm the wall is too narrow and blends into the surrounding landscape, making it invisible without magnification.",
+        "fun_fact": "Highways and airport runways are far more visible from orbit than the Great Wall."
+      },
+      {
+        "claim": "Giant Pandas are strictly native to central and southwestern China.",
+        "verdict": "fact",
+        "explanation": "Wild giant pandas live exclusively in a few mountain ranges in Sichuan, Shaanxi, and Gansu provinces.",
+        "fun_fact": "All pandas lent to foreign zoos remain the diplomatic property of China."
+      }
+    ],
+    "versus_candidates": [
+      "India",
+      "Japan",
+      "United States"
+    ]
+  },
+  {
+    "id": "ENT-COU-008",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "South Korea",
+    "language": "en",
+    "aliases": [
+      "Republic of Korea",
+      "ROK"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Futuristic Seoul skyline featuring N Seoul Tower overlooking illuminated ancient Gyeongbokgung Palace at dusk.",
+    "core_traits": [
+      "Peninsular nation in East Asia bordered to the north by the DMZ",
+      "Capital is Seoul, one of the world's most high-tech smart cities",
+      "Global cultural wave known as Hallyu (K-Pop, K-Dramas)",
+      "Signature culinary staple is Kimchi"
+    ],
+    "distractor_pool": [
+      "Japan",
+      "China",
+      "Taiwan",
+      "Vietnam",
+      "Singapore"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "South Korea is the global pioneer in commercial 5G network rollout.",
+        "verdict": "fact",
+        "explanation": "In April 2019, South Korea became the first country in the world to launch nationwide commercial 5G services.",
+        "fun_fact": "In South Korea, infants were traditionally considered one year old on the day of their birth."
+      },
+      {
+        "claim": "Sleeping in an enclosed room with an electric fan running will cause fatal suffocation.",
+        "verdict": "myth",
+        "explanation": "This is a widespread Korean urban legend known as 'fan death'; electric fans cannot consume oxygen or induce hypothermia in normal rooms.",
+        "fun_fact": "Many fans sold in Korea still come equipped with auto-shutoff timers."
+      }
+    ],
+    "versus_candidates": [
+      "Japan",
+      "China",
+      "Taiwan"
+    ]
+  },
+  {
+    "id": "ENT-COU-009",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Germany",
+    "language": "en",
+    "aliases": [
+      "Deutschland",
+      "Federal Republic of Germany"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Fairy-tale Neuschwanstein Castle nestled in Bavarian alpine pine forests under morning sun.",
+    "core_traits": [
+      "Economic powerhouse located in Central Europe",
+      "Capital is Berlin, known for the Brandenburg Gate and historic wall",
+      "Famous for precision engineering, Autobahn highways, and automotive brands",
+      "Host of the world-renowned annual Oktoberfest beer festival"
+    ],
+    "distractor_pool": [
+      "Austria",
+      "Switzerland",
+      "France",
+      "Netherlands",
+      "Poland"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Parts of the German Autobahn highway system have no federal speed limit.",
+        "verdict": "fact",
+        "explanation": "Over half of the Autobahn network operates with an advisory speed recommendation (130 km/h) rather than a strict legal speed limit.",
+        "fun_fact": "Running out of fuel on the Autobahn is considered illegal negligence."
+      },
+      {
+        "claim": "Oktoberfest takes place entirely during the month of October.",
+        "verdict": "myth",
+        "explanation": "Most of Oktoberfest occurs during the final two weeks of September and concludes on the first weekend of October.",
+        "fun_fact": "It was founded in 1810 to celebrate a royal Bavarian wedding."
+      }
+    ],
+    "versus_candidates": [
+      "France",
+      "United Kingdom",
+      "Japan"
+    ]
+  },
+  {
+    "id": "ENT-COU-010",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Egypt",
+    "language": "en",
+    "aliases": [
+      "Arab Republic of Egypt",
+      "Land of the Pharaohs"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Great Pyramid of Giza and the Sphinx standing timelessly amidst golden desert sands under glowing desert sun.",
+    "core_traits": [
+      "Transcontinental country linking northeast Africa with the Middle East",
+      "Capital is Cairo, sliced through by the historic River Nile",
+      "Ancient civilization famous for Pharaohs, Mummies, and Hieroglyphs",
+      "Vital maritime chokepoint Suez Canal"
+    ],
+    "distractor_pool": [
+      "Greece",
+      "Turkey",
+      "Saudi Arabia",
+      "Morocco",
+      "Jordan"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Cleopatra was of native Egyptian ethnic heritage.",
+        "verdict": "myth",
+        "explanation": "Cleopatra VII was of Macedonian Greek ancestry, descending from Ptolemy I Soter, one of Alexander the Great's generals.",
+        "fun_fact": "She was, however, the first Ptolemaic ruler to learn to speak Egyptian."
+      },
+      {
+        "claim": "The Nile River is historically recognized as the longest river on Earth.",
+        "verdict": "fact",
+        "explanation": "Stretching roughly 6,650 kilometers northward into the Mediterranean, it is widely considered the longest river system.",
+        "fun_fact": "The Nile flows south to north, opposite to most major world rivers."
+      }
+    ],
+    "versus_candidates": [
+      "Greece",
+      "Turkey",
+      "Italy"
+    ]
+  },
+  {
+    "id": "ENT-COU-011",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Brazil",
+    "language": "en",
+    "aliases": [
+      "Brasil",
+      "Federative Republic of Brazil"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Christ the Redeemer statue with open arms overlooking Guanabara Bay and Sugarloaf Mountain in Rio de Janeiro.",
+    "core_traits": [
+      "Largest country in South America by both land and population",
+      "Capital is Brasilia, most famous cultural city is Rio de Janeiro",
+      "Home to the vast majority of the Amazon Rainforest and River",
+      "Celebrated for Samba, Rio Carnival, and five FIFA World Cup trophies"
+    ],
+    "distractor_pool": [
+      "Argentina",
+      "Colombia",
+      "Mexico",
+      "Peru",
+      "Chile"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Rio de Janeiro is the official political capital of Brazil.",
+        "verdict": "myth",
+        "explanation": "Brasilia has been the planned federal capital since 1960; Rio de Janeiro was the capital before that.",
+        "fun_fact": "Brasilia's master urban layout is shaped like an airplane from above."
+      },
+      {
+        "claim": "Brazil has won more men's FIFA World Cup championships than any other nation.",
+        "verdict": "fact",
+        "explanation": "Brazil holds five titles (1958, 1962, 1970, 1994, and 2002).",
+        "fun_fact": "Pele is the only player to have won three World Cups."
+      }
+    ],
+    "versus_candidates": [
+      "Argentina",
+      "Mexico",
+      "Portugal"
+    ]
+  },
+  {
+    "id": "ENT-COU-012",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Australia",
+    "language": "en",
+    "aliases": [
+      "Commonwealth of Australia",
+      "Land Down Under"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Sydney Opera House iconic shell sails glowing in Sydney Harbour with the Harbour Bridge in the backdrop.",
+    "core_traits": [
+      "Both a continent and an island nation surrounded by oceans",
+      "Capital is Canberra, while Sydney and Melbourne are largest",
+      "Home to the Great Barrier Reef and the Outback red monolith Uluru",
+      "Unique endemic marsupials like Kangaroos and Koalas"
+    ],
+    "distractor_pool": [
+      "New Zealand",
+      "United Kingdom",
+      "Canada",
+      "South Africa",
+      "United States"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Sydney is the capital city of Australia.",
+        "verdict": "myth",
+        "explanation": "Canberra was chosen as a compromise compromise capital in 1908 to resolve the fierce rivalry between Sydney and Melbourne.",
+        "fun_fact": "Canberra means 'meeting place' in the local Ngunnawal language."
+      },
+      {
+        "claim": "The Great Barrier Reef is the largest living organism structure on Earth.",
+        "verdict": "fact",
+        "explanation": "Composed of billions of tiny coral polyps, it covers over 344,000 square kilometers and is visible from space.",
+        "fun_fact": "It hosts more than 1,500 species of fish."
+      }
+    ],
+    "versus_candidates": [
+      "New Zealand",
+      "Canada",
+      "United Kingdom"
+    ]
+  },
+  {
+    "id": "ENT-COU-013",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "India",
+    "language": "en",
+    "aliases": [
+      "Bharat",
+      "Republic of India"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Taj Mahal white marble dome reflecting symmetrically in the tranquil reflecting pool at sunrise.",
+    "core_traits": [
+      "Giant subcontinent in South Asia bounded by the Indian Ocean",
+      "Capital is New Delhi, financial center is Mumbai",
+      "Birthplace of Hinduism, Buddhism, Yoga, and Ayurvedic medicine",
+      "Famous for rich aromatic curries, spices, and Bollywood cinema"
+    ],
+    "distractor_pool": [
+      "China",
+      "Pakistan",
+      "Nepal",
+      "Thailand",
+      "Egypt"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "India is officially the most populous country in the world.",
+        "verdict": "fact",
+        "explanation": "UN population demographic data confirmed India surpassed China in total population in 2023.",
+        "fun_fact": "India has over 22 officially recognized languages."
+      },
+      {
+        "claim": "Chess was originally invented in ancient Europe.",
+        "verdict": "myth",
+        "explanation": "Chess originated in northern India around the 6th century CE as a strategy game named Chaturanga.",
+        "fun_fact": "Chaturanga modeled four military divisions: infantry, cavalry, elephants, and chariots."
+      }
+    ],
+    "versus_candidates": [
+      "China",
+      "Pakistan",
+      "United Kingdom"
+    ]
+  },
+  {
+    "id": "ENT-COU-014",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Russia",
+    "language": "en",
+    "aliases": [
+      "Russian Federation"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Saint Basil's Cathedral vibrant candy-colored onion domes in Red Square Moscow under swirling snowflakes.",
+    "core_traits": [
+      "Largest country in the world by landmass spanning 11 time zones",
+      "Capital is Moscow, cultural window to Europe is Saint Petersburg",
+      "Famous for the Trans-Siberian Railway, Ballet, and Matryoshka nesting dolls",
+      "Spans across both Eastern Europe and northern Asia (Siberia)"
+    ],
+    "distractor_pool": [
+      "Canada",
+      "China",
+      "Germany",
+      "Poland",
+      "Finland"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Lake Baikal in Russia contains about 20% of the world's unfrozen freshwater.",
+        "verdict": "fact",
+        "explanation": "It is both the deepest and oldest freshwater lake on Earth, holding more water than all North American Great Lakes combined.",
+        "fun_fact": "The lake is home to the world's only exclusively freshwater seal, the Nerpa."
+      },
+      {
+        "claim": "Russia sold Alaska to the United States for billions of dollars.",
+        "verdict": "myth",
+        "explanation": "In 1867, Russia sold Alaska for just 7.2 million US dollars (about 2 cents per acre at the time).",
+        "fun_fact": "Critics initially mocked the deal as 'Seward's Folly' before gold and oil were found."
+      }
+    ],
+    "versus_candidates": [
+      "United States",
+      "Canada",
+      "China"
+    ]
+  },
+  {
+    "id": "ENT-COU-015",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Canada",
+    "language": "en",
+    "aliases": [
+      "Dominion of Canada",
+      "Great White North"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Turquoise waters of Lake Louise in Banff surrounded by snow-dusted Canadian Rockies and lush evergreen trees.",
+    "core_traits": [
+      "Second largest country by land area, occupying northern North America",
+      "Capital is Ottawa, largest metropolis is Toronto, French-speaking hub is Montreal",
+      "National symbols include the red Maple Leaf and the Beaver",
+      "Renowned for Ice Hockey, Maple Syrup, and immense boreal forests"
+    ],
+    "distractor_pool": [
+      "United States",
+      "Australia",
+      "Norway",
+      "Russia",
+      "United Kingdom"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Canada has the longest national coastline in the world.",
+        "verdict": "fact",
+        "explanation": "Canada's coastline measures over 202,080 kilometers bordering three oceans: Atlantic, Pacific, and Arctic.",
+        "fun_fact": "Canada also contains more than 60% of all natural lakes on planet Earth."
+      },
+      {
+        "claim": "The Mounties (RCMP) conduct all daily police patrols on horseback.",
+        "verdict": "myth",
+        "explanation": "Modern Royal Canadian Mounted Police use standard police cruisers and utility vehicles; horses are reserved for ceremonies.",
+        "fun_fact": "The famous Musical Ride is their signature equestrian ceremony."
+      }
+    ],
+    "versus_candidates": [
+      "United States",
+      "Australia",
+      "Norway"
+    ]
+  },
+  {
+    "id": "ENT-COU-016",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Spain",
+    "language": "en",
+    "aliases": [
+      "Kingdom of Spain",
+      "Espana"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Soaring organic towers of Sagrada Familia in Barcelona bathed in golden Catalan sunlight.",
+    "core_traits": [
+      "Occupies the majority of the Iberian Peninsula in southwestern Europe",
+      "Capital is Madrid, Catalan jewel is Barcelona",
+      "Birthplace of Flamenco dancing, Paella, and Tapas culture",
+      "World-famous football giants Real Madrid and FC Barcelona"
+    ],
+    "distractor_pool": [
+      "Portugal",
+      "Italy",
+      "France",
+      "Mexico",
+      "Greece"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Sagrada Familia basilica has taken longer to construct than the Egyptian pyramids.",
+        "verdict": "fact",
+        "explanation": "Construction began in 1882 under Antoni Gaudi and is still ongoing over 140 years later.",
+        "fun_fact": "The project relies entirely on private donations and ticket revenues."
+      },
+      {
+        "claim": "Bulls become enraged specifically by the color red.",
+        "verdict": "myth",
+        "explanation": "Bulls are dichromatic and cannot distinguish red; they react aggressively to the rapid waving motion of the matador's cape.",
+        "fun_fact": "A blue or white cape waved aggressively evokes the exact same charging reaction."
+      }
+    ],
+    "versus_candidates": [
+      "Portugal",
+      "Italy",
+      "Mexico"
+    ]
+  },
+  {
+    "id": "ENT-COU-017",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Mexico",
+    "language": "en",
+    "aliases": [
+      "United Mexican States",
+      "Mexico"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "El Castillo pyramid at Chichen Itza standing boldly against a sapphire tropical sky.",
+    "core_traits": [
+      "Located in southern North America bordering the US to the north",
+      "Capital is Mexico City, built on the historic ruins of Aztec Tenochtitlan",
+      "Famous for Tacos, Guacamole, Tequila, and Mariachi music",
+      "Celebrates the colorful Day of the Dead (Dia de los Muertos)"
+    ],
+    "distractor_pool": [
+      "Spain",
+      "Brazil",
+      "Colombia",
+      "Peru",
+      "Argentina"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Cinco de Mayo is Mexico's official Independence Day.",
+        "verdict": "myth",
+        "explanation": "Cinco de Mayo commemorates the 1862 Battle of Puebla against the French; Mexico's actual Independence Day is September 16.",
+        "fun_fact": "Cinco de Mayo is celebrated much more widely in the United States than in Mexico."
+      },
+      {
+        "claim": "Chocolate originated from ancient Mesoamerican civilizations in Mexico.",
+        "verdict": "fact",
+        "explanation": "The Olmecs, Mayans, and Aztecs brewed ground cacao beans into a sacred bitter frothy beverage.",
+        "fun_fact": "Aztecs used cacao beans as official currency."
+      }
+    ],
+    "versus_candidates": [
+      "Spain",
+      "Brazil",
+      "United States"
+    ]
+  },
+  {
+    "id": "ENT-COU-018",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Thailand",
+    "language": "en",
+    "aliases": [
+      "Siam",
+      "Kingdom of Thailand",
+      "Land of Smiles"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Gilded spires of the Grand Palace and Wat Arun temple reflecting on the Chao Phraya River in Bangkok.",
+    "core_traits": [
+      "Located at the center of the Indochinese peninsula in Southeast Asia",
+      "Capital is Bangkok (Krung Thep), famous for vibrant floating markets",
+      "Famed for Tom Yum soup, Pad Thai, and Mango Sticky Rice",
+      "National combat martial art is Muay Thai"
+    ],
+    "distractor_pool": [
+      "Vietnam",
+      "Indonesia",
+      "Malaysia",
+      "Philippines",
+      "Cambodia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Thailand is the only Southeast Asian nation never colonized by a European power.",
+        "verdict": "fact",
+        "explanation": "Through skilled diplomacy and modernization by King Chulalongkorn, Siam remained an independent buffer state.",
+        "fun_fact": "Bangkok's ceremonial name is recognized as the longest place name in the world (168 letters)."
+      },
+      {
+        "claim": "Red Bull energy drink was originally invented in Austria.",
+        "verdict": "myth",
+        "explanation": "It originated in Thailand as 'Krating Daeng' before Austrian entrepreneur Dietrich Mateschitz partnered to market it globally.",
+        "fun_fact": "Krating Daeng literally translates to 'Red Gaur' (a wild Asian bovine)."
+      }
+    ],
+    "versus_candidates": [
+      "Vietnam",
+      "Indonesia",
+      "Malaysia"
+    ]
+  },
+  {
+    "id": "ENT-COU-019",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Greece",
+    "language": "en",
+    "aliases": [
+      "Hellas",
+      "Hellenic Republic"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Parthenon temple on the rocky Acropolis hill overlooking Athens under golden Mediterranean daylight.",
+    "core_traits": [
+      "Southern European nation comprising thousands of Aegean and Ionian islands",
+      "Capital is Athens, one of the oldest continuously inhabited cities",
+      "Cradle of Western civilization, Democracy, and the Olympic Games",
+      "Famous for Greek salad, Feta cheese, and Olive groves"
+    ],
+    "distractor_pool": [
+      "Italy",
+      "Turkey",
+      "Egypt",
+      "Spain",
+      "Cyprus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The first modern Olympic Games were revived in Athens in 1896.",
+        "verdict": "fact",
+        "explanation": "Honoring its ancient roots dating back to 776 BC in Olympia, Athens hosted the inaugural modern Olympiad.",
+        "fun_fact": "Winners in 1896 received silver medals and olive branches, not gold."
+      },
+      {
+        "claim": "Ancient Greek marble statues and temples were always pristine gleaming white.",
+        "verdict": "myth",
+        "explanation": "Original classical Greek statues and friezes were vividly painted with bright, gaudy colors that wore off over millennia.",
+        "fun_fact": "Ultraviolet light analysis reveals traces of vibrant red, gold, and blue pigments on relics."
+      }
+    ],
+    "versus_candidates": [
+      "Italy",
+      "Egypt",
+      "Turkey"
+    ]
+  },
+  {
+    "id": "ENT-COU-020",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Switzerland",
+    "language": "en",
+    "aliases": [
+      "Swiss Confederation",
+      "Helvetia"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Sharp pyramid summit of the Matterhorn mountain looming over alpine meadows and wooden chalets.",
+    "core_traits": [
+      "Landlocked mountainous country in Central Europe dominated by the Alps",
+      "Federal city is Bern, banking and international hubs are Zurich and Geneva",
+      "Renowned for Swiss watches, pocket knives, and luxury chocolate",
+      "Longstanding international armed neutrality"
+    ],
+    "distractor_pool": [
+      "Austria",
+      "Germany",
+      "Sweden",
+      "Norway",
+      "France"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Geneva is the political capital city of Switzerland.",
+        "verdict": "myth",
+        "explanation": "Bern is the de facto federal seat of government (Federal City); Switzerland technically has no single de jure constitutional capital.",
+        "fun_fact": "Switzerland possesses four official languages: German, French, Italian, and Romansh."
+      },
+      {
+        "claim": "Switzerland has enough nuclear bomb fallout shelter space for its entire population.",
+        "verdict": "fact",
+        "explanation": "Swiss federal law requires every citizen to have a designated shelter space in their building or community bunker.",
+        "fun_fact": "The Sonnenberg Tunnel was once equipped to shelter 20,000 people."
+      }
+    ],
+    "versus_candidates": [
+      "Austria",
+      "Sweden",
+      "Germany"
+    ]
+  },
+  {
+    "id": "ENT-COU-021",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Netherlands",
+    "language": "en",
+    "aliases": [
+      "Holland",
+      "Kingdom of the Netherlands"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Traditional wooden windmills alongside a vibrant striped tulip field and quiet canal.",
+    "core_traits": [
+      "Low-lying country in Western Europe where much land sits below sea level",
+      "Constitutional capital is Amsterdam, seat of government is The Hague",
+      "Famed for bicycles, canals, tulips, and Gouda cheese",
+      "Engineering masters of dikes, dams, and land reclamation (polders)"
+    ],
+    "distractor_pool": [
+      "Belgium",
+      "Denmark",
+      "Germany",
+      "United Kingdom",
+      "Sweden"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Holland is the official country name for the entire Netherlands nation.",
+        "verdict": "myth",
+        "explanation": "North and South Holland are merely two of the country's twelve administrative provinces.",
+        "fun_fact": "The Dutch government officially dropped the brand name 'Holland' in 2020."
+      },
+      {
+        "claim": "There are more bicycles in the Netherlands than human residents.",
+        "verdict": "fact",
+        "explanation": "With around 18 million people, there are an estimated 23 million bicycles in active circulation.",
+        "fun_fact": "Utrecht houses the world's largest underground bike parking garage for 12,500 bikes."
+      }
+    ],
+    "versus_candidates": [
+      "Belgium",
+      "Denmark",
+      "Germany"
+    ]
+  },
+  {
+    "id": "ENT-COU-022",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Singapore",
+    "language": "en",
+    "aliases": [
+      "Lion City",
+      "Republic of Singapore"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Futuristic Supertree Grove at Gardens by the Bay with Marina Bay Sands glowing against the night sky.",
+    "core_traits": [
+      "Island city-state located at the southern tip of the Malay Peninsula",
+      "Capital and nation are the same single global metropolitan city",
+      "Iconic national symbol is the Merlion (half lion, half fish)",
+      "World-leading financial hub with world's busiest container transshipment port"
+    ],
+    "distractor_pool": [
+      "Malaysia",
+      "Hong Kong",
+      "Japan",
+      "South Korea",
+      "Thailand"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Singapore is one of only three surviving sovereign city-states in the modern world.",
+        "verdict": "fact",
+        "explanation": "The other two sovereign city-states are Monaco and Vatican City.",
+        "fun_fact": "Singapore has expanded its physical land area by over 25% through land reclamation."
+      },
+      {
+        "claim": "Chewing gum is completely banned in Singapore under all circumstances.",
+        "verdict": "myth",
+        "explanation": "While the sale and import of standard chewing gum is prohibited, therapeutic and dental gum prescribed by doctors is legal.",
+        "fun_fact": "The ban was introduced in 1992 to stop vandals from jamming MRT train doors."
+      }
+    ],
+    "versus_candidates": [
+      "Malaysia",
+      "Japan",
+      "United Arab Emirates"
+    ]
+  },
+  {
+    "id": "ENT-COU-023",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Argentina",
+    "language": "en",
+    "aliases": [
+      "Argentine Republic"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Thunderous cascading curtain of Iguazu Falls surrounded by lush subtropical rainforest mist.",
+    "core_traits": [
+      "Stretches along southern South America between the Andes and the Atlantic",
+      "Capital is Buenos Aires, nicknamed the Paris of South America",
+      "Birthplace of the Tango dance and football icons Maradona and Messi",
+      "Renowned for premium beef, Asado barbecues, and Patagonia glaciers"
+    ],
+    "distractor_pool": [
+      "Brazil",
+      "Chile",
+      "Uruguay",
+      "Spain",
+      "Colombia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Argentina is named after the precious metal silver.",
+        "verdict": "fact",
+        "explanation": "The name derives from the Latin 'argentum' (silver), linked to the legend of the Sierra de la Plata mountains.",
+        "fun_fact": "Spanish explorers named the Rio de la Plata 'River of Silver'."
+      },
+      {
+        "claim": "Tango dance originated in upscale European ballrooms.",
+        "verdict": "myth",
+        "explanation": "Tango originated in the working-class port brothels and tenements of Buenos Aires and Montevideo in the late 19th century.",
+        "fun_fact": "It blended African rhythms, Cuban habanera, and European polkas."
+      }
+    ],
+    "versus_candidates": [
+      "Brazil",
+      "Chile",
+      "Uruguay"
+    ]
+  },
+  {
+    "id": "ENT-COU-024",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Turkey",
+    "language": "en",
+    "aliases": [
+      "Turkiye",
+      "Republic of Turkiye"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Hundreds of colorful hot air balloons floating over the fairy chimneys of Cappadocia at dawn.",
+    "core_traits": [
+      "Transcontinental bridge connecting Southeastern Europe and Western Asia",
+      "Capital is Ankara, largest historic metropolis is Istanbul",
+      "Home to the historic Hagia Sophia and Grand Bazaar",
+      "Famous for Turkish coffee, Baklava, and Turkish delight"
+    ],
+    "distractor_pool": [
+      "Greece",
+      "Egypt",
+      "Italy",
+      "Saudi Arabia",
+      "Iran"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Istanbul is the political capital of Turkey.",
+        "verdict": "myth",
+        "explanation": "Mustafa Kemal Ataturk moved the capital to Ankara in central Anatolia in 1923.",
+        "fun_fact": "Istanbul was formerly known as Byzantium and Constantinople."
+      },
+      {
+        "claim": "Istanbul is the only metropolis in the world situated across two continents.",
+        "verdict": "fact",
+        "explanation": "The Bosphorus Strait bisects Istanbul into European and Asian halves.",
+        "fun_fact": "Commuters cross continents daily in 15 minutes by ferry or undersea metro."
+      }
+    ],
+    "versus_candidates": [
+      "Greece",
+      "Egypt",
+      "Italy"
+    ]
+  },
+  {
+    "id": "ENT-COU-025",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "South Africa",
+    "language": "en",
+    "aliases": [
+      "Republic of South Africa",
+      "Rainbow Nation"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Flat-topped Table Mountain rising dramatically behind the coastal harbor of Cape Town.",
+    "core_traits": [
+      "Located at the southernmost tip of the African continent",
+      "Has three separate capital cities: Pretoria, Cape Town, and Bloemfontein",
+      "Homeland of Nelson Mandela and host of the 2010 FIFA World Cup",
+      "Famous for Kruger National Park and the Big Five safari animals"
+    ],
+    "distractor_pool": [
+      "Kenya",
+      "Egypt",
+      "Australia",
+      "Brazil",
+      "Nigeria"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "South Africa has three distinct official capital cities.",
+        "verdict": "fact",
+        "explanation": "Pretoria is executive, Cape Town is legislative, and Bloemfontein is judicial.",
+        "fun_fact": "The country recognizes 12 official languages including South African Sign Language."
+      },
+      {
+        "claim": "Johannesburg was founded as an ancient tribal citadel.",
+        "verdict": "myth",
+        "explanation": "Johannesburg was founded as a wild gold rush boomtown in 1886 following the discovery of the Witwatersrand gold reef.",
+        "fun_fact": "It is one of the very few major global cities not built on a coast, lake, or major river."
+      }
+    ],
+    "versus_candidates": [
+      "Kenya",
+      "Australia",
+      "Brazil"
+    ]
+  },
+  {
+    "id": "ENT-COU-026",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Saudi Arabia",
+    "language": "en",
+    "aliases": [
+      "KSA",
+      "Kingdom of Saudi Arabia"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Endless golden dunes of the Rub' al Khali Empty Quarter desert stretching to the glowing horizon.",
+    "core_traits": [
+      "Dominates the vast majority of the Arabian Peninsula in the Middle East",
+      "Capital is Riyadh, historic Red Sea port is Jeddah",
+      "Cradle of Islam containing Mecca and Medina, the two holiest cities",
+      "World's leading petroleum exporter possessing massive oil reserves"
+    ],
+    "distractor_pool": [
+      "United Arab Emirates",
+      "Egypt",
+      "Turkey",
+      "Qatar",
+      "Iran"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Saudi Arabia has no permanent natural rivers flowing through its borders.",
+        "verdict": "fact",
+        "explanation": "It is the largest country in the world by area without a single permanent flowing river.",
+        "fun_fact": "Water needs are supplied by deep groundwater aquifers and colossal seawater desalination plants."
+      },
+      {
+        "claim": "Camels are native exclusively to the Arabian desert.",
+        "verdict": "myth",
+        "explanation": "Early camel ancestors actually evolved in North America before migrating across the Bering land bridge to Asia and Africa.",
+        "fun_fact": "Saudi Arabia today actually imports camels from Australia for meat and racing."
+      }
+    ],
+    "versus_candidates": [
+      "United Arab Emirates",
+      "Egypt",
+      "Turkey"
+    ]
+  },
+  {
+    "id": "ENT-COU-027",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Norway",
+    "language": "en",
+    "aliases": [
+      "Kingdom of Norway",
+      "Land of the Midnight Sun"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Deep blue waters of Geirangerfjord framed by towering vertical cliffs and cascading waterfalls.",
+    "core_traits": [
+      "Scandinavian nation occupying the western portion of the Scandinavian Peninsula",
+      "Capital is Oslo, gateway to Arctic Svalbard archipelago",
+      "Famous for dramatic glacial fjords and dancing Northern Lights (Aurora)",
+      "Viking heritage and world leader in electric vehicle adoption"
+    ],
+    "distractor_pool": [
+      "Sweden",
+      "Finland",
+      "Denmark",
+      "Iceland",
+      "Canada"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The sun does not set for months during summer in northern Norway.",
+        "verdict": "fact",
+        "explanation": "North of the Arctic Circle, the midnight sun shines continuously from late May to late July.",
+        "fun_fact": "The Svalbard town of Longyearbyen experiences four months without sunset."
+      },
+      {
+        "claim": "Vikings wore helmets adorned with large animal horns into battle.",
+        "verdict": "myth",
+        "explanation": "19th-century romantic opera costume designers invented the horned helmet myth; real Viking helmets were smooth conical iron caps.",
+        "fun_fact": "Horns would have been dangerous in combat because enemy swords and axes could hook onto them."
+      }
+    ],
+    "versus_candidates": [
+      "Sweden",
+      "Finland",
+      "Iceland"
+    ]
+  },
+  {
+    "id": "ENT-COU-028",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Sweden",
+    "language": "en",
+    "aliases": [
+      "Kingdom of Sweden",
+      "Sverige"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Gamla Stan historic pastel buildings clustered on Stockholm's waterfront canals under clear northern sky.",
+    "core_traits": [
+      "Largest Scandinavian country by area and population",
+      "Capital is Stockholm, built across 14 islands connected by 57 bridges",
+      "Birthplace of the Nobel Prize, IKEA, Spotify, and pop legends ABBA",
+      "Famous for Fika coffee break culture and meatballs with lingonberry"
+    ],
+    "distractor_pool": [
+      "Norway",
+      "Denmark",
+      "Finland",
+      "Switzerland",
+      "Germany"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Nobel Peace Prize is presented in Stockholm along with all other Nobel Prizes.",
+        "verdict": "myth",
+        "explanation": "Alfred Nobel's will designated that the Peace Prize be awarded in Oslo, Norway, while the other prizes are awarded in Stockholm.",
+        "fun_fact": "Alfred Nobel made his massive fortune by inventing dynamite."
+      },
+      {
+        "claim": "Sweden imports garbage from other countries to power its recycling energy plants.",
+        "verdict": "fact",
+        "explanation": "Sweden's waste-to-energy incineration system is so efficient that it imports over 2 million tons of waste annually from neighbors.",
+        "fun_fact": "Less than 1% of Swedish household waste ends up in landfills."
+      }
+    ],
+    "versus_candidates": [
+      "Norway",
+      "Denmark",
+      "Finland"
+    ]
+  },
+  {
+    "id": "ENT-COU-029",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "New Zealand",
+    "language": "en",
+    "aliases": [
+      "Aotearoa",
+      "Land of the Long White Cloud"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Snowy Southern Alps reflecting in crystal Lake Wakatipu near Queenstown.",
+    "core_traits": [
+      "Island country in the southwestern Pacific consisting of North and South Islands",
+      "Capital is Wellington, largest commercial center is Auckland",
+      "Indigenous Maori culture and the famous Haka ceremonial dance",
+      "Filming location of the legendary 'Lord of the Rings' cinematic trilogies"
+    ],
+    "distractor_pool": [
+      "Australia",
+      "United Kingdom",
+      "Canada",
+      "Ireland",
+      "Iceland"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "New Zealand has more sheep than human beings.",
+        "verdict": "fact",
+        "explanation": "With a human population of 5 million, New Zealand is home to approximately 25 million sheep (about 5 sheep per person).",
+        "fun_fact": "In the 1980s, the ratio was over 20 sheep per person."
+      },
+      {
+        "claim": "Auckland is the constitutional capital of New Zealand.",
+        "verdict": "myth",
+        "explanation": "Wellington replaced Auckland as the capital in 1865 due to its central geographical position.",
+        "fun_fact": "Wellington is the world's southernmost sovereign capital city."
+      }
+    ],
+    "versus_candidates": [
+      "Australia",
+      "United Kingdom",
+      "Ireland"
+    ]
+  },
+  {
+    "id": "ENT-COU-030",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Indonesia",
+    "language": "en",
+    "aliases": [
+      "Republic of Indonesia",
+      "Nusantara"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Ancient stone stupas of Borobudur temple silhouetted against sunrise with Mount Merapi in the background.",
+    "core_traits": [
+      "World's largest archipelagic state spanning over 17,000 tropical islands",
+      "Capital is Jakarta (transitioning to planned forest capital Nusantara)",
+      "Home to Komodo dragons and lush tropical volcanic landscapes like Bali",
+      "Most populous Muslim-majority nation on Earth"
+    ],
+    "distractor_pool": [
+      "Malaysia",
+      "Philippines",
+      "Thailand",
+      "Vietnam",
+      "Singapore"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Komodo dragon is the largest living lizard on Earth.",
+        "verdict": "fact",
+        "explanation": "Native to five Indonesian islands, these predatory monitor lizards can exceed 3 meters in length and 70 kilograms in weight.",
+        "fun_fact": "Their saliva delivers toxic proteins that prevent prey's blood from clotting."
+      },
+      {
+        "claim": "Bali is an independent sovereign island country.",
+        "verdict": "myth",
+        "explanation": "Bali is one of the 38 provinces of the Republic of Indonesia.",
+        "fun_fact": "Bali maintains a unique Balinese Hindu culture distinct from the Muslim-majority rest of the nation."
+      }
+    ],
+    "versus_candidates": [
+      "Malaysia",
+      "Philippines",
+      "Thailand"
+    ]
+  },
+  {
+    "id": "ENT-COU-031",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Cuba",
+    "language": "en",
+    "aliases": [
+      "Republic of Cuba",
+      "Pearl of the Antilles"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Vintage 1950s colorful classic American cars cruising past colonial pastel facades along Havana's Malecon sea drive.",
+    "core_traits": [
+      "Largest island nation in the Caribbean Sea located south of Florida",
+      "Capital is Havana, famous for historic colonial plazas and fortresses",
+      "Famed for Cuban cigars, Havana Club rum, and lively Salsa rhythm",
+      "Signature historical figures include Che Guevara and Fidel Castro"
+    ],
+    "distractor_pool": [
+      "Mexico",
+      "Jamaica",
+      "Puerto Rico",
+      "Brazil",
+      "Colombia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Cuba has one of the highest doctor-to-patient ratios in the world.",
+        "verdict": "fact",
+        "explanation": "Cuba's comprehensive medical system trains vast numbers of physicians and dispatches medical brigades globally.",
+        "fun_fact": "Cuba developed its own homegrown COVID-19 vaccines (Abdala and Soberana)."
+      },
+      {
+        "claim": "The Cuba Libre cocktail was created to celebrate the Cuban socialist revolution of 1959.",
+        "verdict": "myth",
+        "explanation": "It originated around 1900 during the Spanish-American War when US soldiers mixed Coca-Cola with local rum and lime.",
+        "fun_fact": "The toast 'Por Cuba Libre' meant 'To a Free Cuba' from Spanish colonial rule."
+      }
+    ],
+    "versus_candidates": [
+      "Jamaica",
+      "Mexico",
+      "United States"
+    ]
+  },
+  {
+    "id": "ENT-COU-032",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Peru",
+    "language": "en",
+    "aliases": [
+      "Republic of Peru"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Spectacular stone citadel ruins of Machu Picchu perched high on a lush Andean ridge enveloped in mist.",
+    "core_traits": [
+      "Western South American country facing the South Pacific Ocean",
+      "Capital is Lima, historic Inca imperial capital is Cusco",
+      "Heartland of the ancient Inca Empire and enigmatic Nazca Lines",
+      "Culinary capital celebrated for Ceviche and over 3,000 potato varieties"
+    ],
+    "distractor_pool": [
+      "Chile",
+      "Bolivia",
+      "Colombia",
+      "Mexico",
+      "Brazil"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Potatoes were first cultivated in the Andean highlands of Peru.",
+        "verdict": "fact",
+        "explanation": "Indigenous Andean peoples domesticated wild potatoes near Lake Titicaca over 7,000 years ago.",
+        "fun_fact": "Peru preserves over 3,000 native varieties in every color and texture."
+      },
+      {
+        "claim": "Machu Picchu was lost because the Spanish conquistadors razed it to the ground.",
+        "verdict": "myth",
+        "explanation": "The Spanish conquistadors never found Machu Picchu; it was abandoned and preserved intact until Hiram Bingham brought it to global attention in 1911.",
+        "fun_fact": "The stone blocks fit together so precisely without mortar that a knife blade cannot slip between them."
+      }
+    ],
+    "versus_candidates": [
+      "Chile",
+      "Mexico",
+      "Brazil"
+    ]
+  },
+  {
+    "id": "ENT-COU-033",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Portugal",
+    "language": "en",
+    "aliases": [
+      "Portuguese Republic"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Vintage yellow Tram 28 climbing the steep narrow cobblestone hills of Alfama in Lisbon.",
+    "core_traits": [
+      "Located on the Atlantic coast of the Iberian Peninsula next to Spain",
+      "Capital is Lisbon, northern historic wine city is Porto",
+      "Pioneered the Age of Discovery with navigators like Vasco da Gama",
+      "Famous for Pastel de Nata custard tarts and Port wine"
+    ],
+    "distractor_pool": [
+      "Spain",
+      "Italy",
+      "France",
+      "Brazil",
+      "Greece"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Lisbon is older than Rome.",
+        "verdict": "fact",
+        "explanation": "Lisbon was settled by the Phoenicians around 1200 BC, making it four centuries older than Rome.",
+        "fun_fact": "Half of the world's commercial cork production originates from Portuguese cork oak forests."
+      },
+      {
+        "claim": "Portugal and Spain share the exact same official language.",
+        "verdict": "myth",
+        "explanation": "Portuguese is a distinct Romance language with unique phonology, grammar, and vocabulary.",
+        "fun_fact": "Portuguese is spoken by over 250 million people worldwide across four continents."
+      }
+    ],
+    "versus_candidates": [
+      "Spain",
+      "Brazil",
+      "Italy"
+    ]
+  },
+  {
+    "id": "ENT-COU-034",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Belgium",
+    "language": "en",
+    "aliases": [
+      "Kingdom of Belgium"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Gilded baroque guildhalls lining the cobblestone Grand Place square in Brussels at dusk.",
+    "core_traits": [
+      "Western European nation bordered by France, Germany, and the Netherlands",
+      "Capital is Brussels, headquarters of both the European Union and NATO",
+      "Famous for Belgian waffles, luxury pralines chocolate, and Trappist beers",
+      "Home to classic comic heroes Tintin and The Smurfs"
+    ],
+    "distractor_pool": [
+      "Netherlands",
+      "France",
+      "Germany",
+      "Switzerland",
+      "Austria"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "French fries were originally invented in Belgium, not France.",
+        "verdict": "fact",
+        "explanation": "River villagers in the Meuse Valley fried potatoes when winter froze rivers; American soldiers misnamed them 'French fries' because the Belgian army spoke French.",
+        "fun_fact": "Belgium has dedicated French fry museums (Frietmuseum)."
+      },
+      {
+        "claim": "Belgium has only one unified national language.",
+        "verdict": "myth",
+        "explanation": "Belgium has three official languages: Dutch (Flemish), French, and German.",
+        "fun_fact": "The country is divided into distinct linguistic and political communities."
+      }
+    ],
+    "versus_candidates": [
+      "Netherlands",
+      "France",
+      "Switzerland"
+    ]
+  },
+  {
+    "id": "ENT-COU-035",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Ireland",
+    "language": "en",
+    "aliases": [
+      "Republic of Ireland",
+      "Emerald Isle",
+      "Eire"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Sheer vertical drop of the Cliffs of Moher plunging into the wild frothy Atlantic Ocean.",
+    "core_traits": [
+      "Island nation in the North Atlantic known for lush green countryside",
+      "Capital is Dublin, birthplace of Guinness stout and James Joyce",
+      "Famous cultural symbols include the Shamrock clover, Celtic harp, and Leprechauns",
+      "Celebrates Saint Patrick's Day worldwide every March 17"
+    ],
+    "distractor_pool": [
+      "United Kingdom",
+      "Scotland",
+      "Iceland",
+      "Australia",
+      "New Zealand"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Saint Patrick banished all snakes from the island of Ireland.",
+        "verdict": "myth",
+        "explanation": "Ireland never had native snakes post-Ice Age; 'snakes' was a religious metaphor for pagan practices.",
+        "fun_fact": "The Celtic harp is Ireland's official national emblem, making it the only nation with a musical instrument as its state symbol."
+      },
+      {
+        "claim": "Halloween originated from an ancient Celtic festival in Ireland.",
+        "verdict": "fact",
+        "explanation": "The modern holiday evolved directly from Samhain, an ancient Gaelic harvest festival marking the start of winter.",
+        "fun_fact": "Original jack-o'-lanterns were carved from turnips, not pumpkins."
+      }
+    ],
+    "versus_candidates": [
+      "United Kingdom",
+      "Scotland",
+      "Iceland"
+    ]
+  },
+  {
+    "id": "ENT-COU-036",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Iceland",
+    "language": "en",
+    "aliases": [
+      "Republic of Iceland",
+      "Land of Fire and Ice"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Steamy milky-blue thermal waters of the Blue Lagoon surrounded by black volcanic lava rocks.",
+    "core_traits": [
+      "Nordic island nation situated in the North Atlantic on the Mid-Atlantic Ridge",
+      "Capital is Reykjavik, the northernmost sovereign capital in the world",
+      "Known for active volcanoes, massive glaciers, geysers, and geothermal spas",
+      "100% powered by renewable geothermal and hydroelectric energy"
+    ],
+    "distractor_pool": [
+      "Norway",
+      "Greenland",
+      "Finland",
+      "Ireland",
+      "New Zealand"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Iceland has no native wild mosquitoes anywhere in the country.",
+        "verdict": "fact",
+        "explanation": "Due to unpredictable temperature swings that interrupt mosquito life cycles, Iceland is virtually mosquito-free.",
+        "fun_fact": "Iceland also has no operational public railway system."
+      },
+      {
+        "claim": "Iceland is completely covered in ice while Greenland is lush green.",
+        "verdict": "myth",
+        "explanation": "Only about 11% of Iceland is covered by glaciers; Greenland is over 80% covered by a permanent ice sheet.",
+        "fun_fact": "Viking legend says Erik the Red named Greenland to attract gullible settlers."
+      }
+    ],
+    "versus_candidates": [
+      "Norway",
+      "Greenland",
+      "New Zealand"
+    ]
+  },
+  {
+    "id": "ENT-COU-037",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Denmark",
+    "language": "en",
+    "aliases": [
+      "Kingdom of Denmark"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Colorful 17th-century merchant townhouses lining the vibrant canal harbor of Nyhavn in Copenhagen.",
+    "core_traits": [
+      "Scandinavian nation comprising the Jutland peninsula and hundreds of Baltic islands",
+      "Capital is Copenhagen, home to the Little Mermaid statue and Tivoli Gardens",
+      "Birthplace of Lego building bricks and fairy tale writer Hans Christian Andersen",
+      "Famous for the cozy cultural philosophy of Hygge"
+    ],
+    "distractor_pool": [
+      "Sweden",
+      "Norway",
+      "Netherlands",
+      "Germany",
+      "Finland"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Lego bricks were invented and first manufactured in Denmark.",
+        "verdict": "fact",
+        "explanation": "Carpenter Ole Kirk Christiansen created Lego in the Danish town of Billund in 1932.",
+        "fun_fact": "The name Lego comes from the Danish words 'leg godt', meaning 'play well'."
+      },
+      {
+        "claim": "Denmark has rugged high alpine mountain ranges.",
+        "verdict": "myth",
+        "explanation": "Denmark is extremely flat; its highest natural elevation point, Mollehoj, is only 171 meters above sea level.",
+        "fun_fact": "Greenland is an autonomous territory within the Realm of Denmark."
+      }
+    ],
+    "versus_candidates": [
+      "Sweden",
+      "Netherlands",
+      "Norway"
+    ]
+  },
+  {
+    "id": "ENT-COU-038",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Finland",
+    "language": "en",
+    "aliases": [
+      "Suomi",
+      "Republic of Finland",
+      "Land of a Thousand Lakes"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Snowy pine forest in Lapland with wooden sauna cabin glowing warmly under green Aurora lights.",
+    "core_traits": [
+      "Northern European Nordic country bordered by Sweden, Norway, and Russia",
+      "Capital is Helsinki on the Gulf of Finland",
+      "Known for traditional wood-fired saunas, Nokia telecommunications, and Angry Birds",
+      "Official mythical home of Santa Claus in Rovaniemi, Lapland"
+    ],
+    "distractor_pool": [
+      "Sweden",
+      "Norway",
+      "Iceland",
+      "Denmark",
+      "Estonia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "There are more saunas in Finland than passenger cars.",
+        "verdict": "fact",
+        "explanation": "With 5.5 million people, Finland boasts over 3 million saunas (even in parliament and apartment buildings).",
+        "fun_fact": "Sauna is the only Finnish word adopted into standard English."
+      },
+      {
+        "claim": "The Finnish language belongs to the Scandinavian Germanic language family.",
+        "verdict": "myth",
+        "explanation": "Finnish is Finno-Ugric, closely related to Estonian and Hungarian, completely distinct from Swedish or Norwegian.",
+        "fun_fact": "Finland consistently ranks #1 as the happiest country in the world in UN reports."
+      }
+    ],
+    "versus_candidates": [
+      "Sweden",
+      "Norway",
+      "Estonia"
+    ]
+  },
+  {
+    "id": "ENT-COU-039",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Austria",
+    "language": "en",
+    "aliases": [
+      "Republic of Austria",
+      "Osterreich"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Grand Schonbrunn Palace imperial gardens in Vienna glowing in warm baroque splendor.",
+    "core_traits": [
+      "Landlocked mountainous nation in Central Europe dominated by the Eastern Alps",
+      "Capital is Vienna, famed for classical music, imperial palaces, and grand cafes",
+      "Homeland of classical composers Mozart, Haydn, and Schubert",
+      "Famous for Wiener Schnitzel, Sachertorte chocolate cake, and alpine skiing"
+    ],
+    "distractor_pool": [
+      "Germany",
+      "Switzerland",
+      "Czech Republic",
+      "Hungary",
+      "Italy"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Wolfgang Amadeus Mozart was born in Vienna.",
+        "verdict": "myth",
+        "explanation": "Mozart was born in the city of Salzburg (which was then part of the Prince-Archbishopric of Salzburg).",
+        "fun_fact": "Vienna is where Mozart lived, composed his greatest operas, and died."
+      },
+      {
+        "claim": "Vienna has the oldest operating public zoo in the world.",
+        "verdict": "fact",
+        "explanation": "Tiergarten Schonbrunn was founded as an imperial menagerie in 1752 and remains open today.",
+        "fun_fact": "It was one of the few European zoos to naturally breed giant pandas."
+      }
+    ],
+    "versus_candidates": [
+      "Germany",
+      "Switzerland",
+      "Hungary"
+    ]
+  },
+  {
+    "id": "ENT-COU-040",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Poland",
+    "language": "en",
+    "aliases": [
+      "Republic of Poland",
+      "Polska"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Restored brick gothic Royal Castle and pastel Old Town marketplace square in Warsaw.",
+    "core_traits": [
+      "Central European country along the Baltic Sea with a resilient historic heritage",
+      "Capital is Warsaw, historic royal cultural capital is Krakow",
+      "Homeland of astronomer Nicolaus Copernicus, Marie Curie, and composer Chopin",
+      "Traditional dishes include Pierogi dumplings and Kielbasa sausage"
+    ],
+    "distractor_pool": [
+      "Germany",
+      "Czech Republic",
+      "Ukraine",
+      "Russia",
+      "Hungary"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Marie Curie was born and raised in France.",
+        "verdict": "myth",
+        "explanation": "She was born Maria Sklodowska in Warsaw, Poland; she later moved to Paris to pursue university education.",
+        "fun_fact": "She named the chemical element Polonium in honor of her native homeland Poland."
+      },
+      {
+        "claim": "Poland is home to the world's largest brick castle by land area.",
+        "verdict": "fact",
+        "explanation": "Malbork Castle, built by Teutonic Knights in the 13th century, is the largest brick castle complex on Earth.",
+        "fun_fact": "Bialowieza Forest in Poland is home to the largest wild European bison population."
+      }
+    ],
+    "versus_candidates": [
+      "Germany",
+      "Czech Republic",
+      "Ukraine"
+    ]
+  },
+  {
+    "id": "ENT-COU-041",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Philippines",
+    "language": "en",
+    "aliases": [
+      "Republic of the Philippines"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Lush green conical formations of the Chocolate Hills in Bohol under tropical sunshine.",
+    "core_traits": [
+      "Archipelago of over 7,000 tropical islands in Southeast Asia",
+      "Capital is Manila, famous for colorful Jeepneys and bustling harbors",
+      "Famous for natural wonders like Boracay white beaches and Chocolate Hills",
+      "Passion for basketball, singing karaoke, and national dish Adobo"
+    ],
+    "distractor_pool": [
+      "Indonesia",
+      "Vietnam",
+      "Thailand",
+      "Malaysia",
+      "Japan"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Chocolate Hills in Bohol are made of chocolate-colored cocoa soil.",
+        "verdict": "myth",
+        "explanation": "They are grass-covered limestone karst hills that turn chocolate-brown during the dry season.",
+        "fun_fact": "There are at least 1,260 individual hills in the formation."
+      },
+      {
+        "claim": "The Philippines is named after a Spanish monarch.",
+        "verdict": "fact",
+        "explanation": "Spanish explorer Ruy Lopez de Villalobos named the islands Las Islas Filipinas in honor of King Philip II of Spain.",
+        "fun_fact": "The Philippines was under Spanish colonial rule for over 300 years."
+      }
+    ],
+    "versus_candidates": [
+      "Indonesia",
+      "Vietnam",
+      "Thailand"
+    ]
+  },
+  {
+    "id": "ENT-COU-042",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Malaysia",
+    "language": "en",
+    "aliases": [
+      "Federation of Malaysia"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Illuminated metallic twin spires of the Petronas Towers soaring into the night sky of Kuala Lumpur.",
+    "core_traits": [
+      "Southeast Asian nation split into Peninsular Malaysia and Malaysian Borneo",
+      "Federal capital is Kuala Lumpur, administrative hub is Putrajaya",
+      "Iconic landmarks include the Petronas Twin Towers and Batu Caves",
+      "Multicultural melting pot famous for Nasi Lemak and Roti Canai"
+    ],
+    "distractor_pool": [
+      "Singapore",
+      "Indonesia",
+      "Thailand",
+      "Philippines",
+      "Brunei"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Petronas Towers were once the tallest buildings in the world.",
+        "verdict": "fact",
+        "explanation": "From 1998 to 2004, they held the official title of the world's tallest buildings and remain the tallest twin towers.",
+        "fun_fact": "Tower 1 was built by a Japanese consortium while Tower 2 was built by a South Korean team in a race."
+      },
+      {
+        "claim": "Borneo island belongs entirely to Malaysia.",
+        "verdict": "myth",
+        "explanation": "Borneo is shared among three nations: Indonesia (73%), Malaysia (26%), and Brunei (1%).",
+        "fun_fact": "Borneo's rainforest is estimated to be 130 million years old, twice as old as the Amazon."
+      }
+    ],
+    "versus_candidates": [
+      "Singapore",
+      "Indonesia",
+      "Thailand"
+    ]
+  },
+  {
+    "id": "ENT-COU-043",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Morocco",
+    "language": "en",
+    "aliases": [
+      "Kingdom of Morocco",
+      "Al-Maghrib"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Vibrant blue painted walls and narrow cobbled alleys of Chefchaouen nestled against the Rif mountains.",
+    "core_traits": [
+      "North African country bordering both the Atlantic Ocean and Mediterranean Sea",
+      "Capital is Rabat, largest economic metropolis is Casablanca, tourist gem is Marrakech",
+      "Famous for labyrinthine Medina bazaars, Tagine stews, and mint tea",
+      "Iconic blue pearl town of Chefchaouen"
+    ],
+    "distractor_pool": [
+      "Egypt",
+      "Turkey",
+      "Spain",
+      "Saudi Arabia",
+      "Algeria"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Casablanca was primarily filmed on location on the streets of Morocco.",
+        "verdict": "myth",
+        "explanation": "Almost the entire Hollywood film 'Casablanca' was shot inside Warner Bros. soundstages in Burbank, California.",
+        "fun_fact": "Rick's Cafe was later constructed in real-life Casablanca to satisfy visiting movie tourists."
+      },
+      {
+        "claim": "Morocco is home to the oldest existing, continually operating university in the world.",
+        "verdict": "fact",
+        "explanation": "The University of al-Qarawiyyin in Fez was founded by Fatima al-Fihri in 859 CE.",
+        "fun_fact": "UNESCO and Guinness World Records both recognize it as the oldest university."
+      }
+    ],
+    "versus_candidates": [
+      "Egypt",
+      "Turkey",
+      "Spain"
+    ]
+  },
+  {
+    "id": "ENT-COU-044",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Kenya",
+    "language": "en",
+    "aliases": [
+      "Republic of Kenya"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Silhouetted acacia tree on the golden Maasai Mara savannah with Mount Kilimanjaro in the far haze.",
+    "core_traits": [
+      "East African nation straddling the equator along the Indian Ocean",
+      "Capital is Nairobi, known as the Safari Capital of the World",
+      "Famed for the Maasai Mara Great Migration of millions of wildebeests",
+      "Global athletic powerhouse in middle and long-distance marathon running"
+    ],
+    "distractor_pool": [
+      "South Africa",
+      "Tanzania",
+      "Egypt",
+      "Ethiopia",
+      "Nigeria"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Mount Kilimanjaro is located inside Kenya.",
+        "verdict": "myth",
+        "explanation": "Kilimanjaro is located in neighboring Tanzania, though the best panoramic views of its snow peaks are from Kenya's Amboseli Park.",
+        "fun_fact": "Kenya's own Mount Kenya is the second-highest peak in Africa at 5,199 meters."
+      },
+      {
+        "claim": "Kenyan runners from the Kalenjin tribe dominate global marathon records.",
+        "verdict": "fact",
+        "explanation": "Athletes from this region, such as Eliud Kipchoge, hold dozens of Olympic and world distance records.",
+        "fun_fact": "High altitude training in the Great Rift Valley enhances red blood cell oxygen capacity."
+      }
+    ],
+    "versus_candidates": [
+      "South Africa",
+      "Tanzania",
+      "Ethiopia"
+    ]
+  },
+  {
+    "id": "ENT-COU-045",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Chile",
+    "language": "en",
+    "aliases": [
+      "Republic of Chile"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Dramatic granite horn peaks of Torres del Paine rising above turquoise glacial lakes in Patagonia.",
+    "core_traits": [
+      "Unusually long and narrow country squeezed between the Andes mountains and Pacific Ocean",
+      "Capital is Santiago, backed by snow-capped Andean ridges",
+      "Home to the driest non-polar desert on Earth, the Atacama Desert",
+      "Administers remote Easter Island (Rapa Nui) and its Moai statues"
+    ],
+    "distractor_pool": [
+      "Argentina",
+      "Peru",
+      "Brazil",
+      "Colombia",
+      "Bolivia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Atacama Desert in Chile has spots where rain has never been recorded in history.",
+        "verdict": "fact",
+        "explanation": "Parts of the central Atacama have zero recorded rainfall across centuries, making it the driest place outside Antarctica.",
+        "fun_fact": "NASA uses the Atacama to test Mars rover exploration equipment."
+      },
+      {
+        "claim": "Easter Island is located just a few miles off the coast of mainland Chile.",
+        "verdict": "myth",
+        "explanation": "Easter Island lies over 3,700 kilometers west of the Chilean coast in the middle of the Pacific Ocean.",
+        "fun_fact": "It is one of the most geographically isolated inhabited islands on Earth."
+      }
+    ],
+    "versus_candidates": [
+      "Argentina",
+      "Peru",
+      "Brazil"
+    ]
+  },
+  {
+    "id": "ENT-COU-046",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Colombia",
+    "language": "en",
+    "aliases": [
+      "Republic of Colombia"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Verdant Cocora Valley dotted with towering wax palm trees reaching into the highland clouds.",
+    "core_traits": [
+      "Located in northwestern South America connecting Central and South America",
+      "Capital is Bogota, located high in the Andes plateau",
+      "World-renowned for premium Arabica coffee beans and fine emeralds",
+      "Second most biodiverse country on Earth behind Brazil"
+    ],
+    "distractor_pool": [
+      "Brazil",
+      "Mexico",
+      "Peru",
+      "Venezuela",
+      "Argentina"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Colombia produces over 70% of the world's highest quality emeralds.",
+        "verdict": "fact",
+        "explanation": "The Muzo and Chivor mines in Colombia are renowned for pure deep-green emerald gemstones.",
+        "fun_fact": "Colombia's Quindio wax palms are the tallest palm trees in the world, reaching 60 meters."
+      },
+      {
+        "claim": "The country's name is spelled Columbia in English.",
+        "verdict": "myth",
+        "explanation": "The correct name of the South American nation is Colombia (with an 'o'); Columbia (with a 'u') refers to US cities, rivers, or the university.",
+        "fun_fact": "The national campaign 'It\\'s Colombia, NOT Columbia' gained international fame."
+      }
+    ],
+    "versus_candidates": [
+      "Brazil",
+      "Peru",
+      "Mexico"
+    ]
+  },
+  {
+    "id": "ENT-COU-047",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Mongolia",
+    "language": "en",
+    "aliases": [
+      "State of Mongolia",
+      "Land of the Eternal Blue Sky"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Nomadic white felt yurt (Ger) standing on the boundless golden steppe beneath a vast azure sky.",
+    "core_traits": [
+      "Vast landlocked country between Russia and China with low population density",
+      "Capital is Ulaanbaatar, the coldest sovereign capital city by average temperature",
+      "Homeland of Genghis Khan and the historic Mongol Empire",
+      "Nomadic horse-riding culture and the vast Gobi Desert"
+    ],
+    "distractor_pool": [
+      "Kazakhstan",
+      "China",
+      "Russia",
+      "Nepal",
+      "Tibet"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Mongolia is the most sparsely populated sovereign country in the world.",
+        "verdict": "fact",
+        "explanation": "With a territory three times the size of France and only 3.4 million people, it has roughly 2 people per square kilometer.",
+        "fun_fact": "Horses outnumber humans in Mongolia."
+      },
+      {
+        "claim": "The Gobi Desert in Mongolia is covered completely in giant towering sand dunes.",
+        "verdict": "myth",
+        "explanation": "Only about 3% of the Gobi consists of classic sand dunes; most of it is flat gravel plains, rocky ridges, and semi-arid steppe.",
+        "fun_fact": "The world's first dinosaur egg fossils were discovered in the Gobi Desert in 1923."
+      }
+    ],
+    "versus_candidates": [
+      "Kazakhstan",
+      "China",
+      "Russia"
+    ]
+  },
+  {
+    "id": "ENT-COU-048",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Nepal",
+    "language": "en",
+    "aliases": [
+      "Federal Democratic Republic of Nepal"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Prayer flags fluttering in the icy mountain wind with the towering summit of Mount Everest behind them.",
+    "core_traits": [
+      "Landlocked Himalayan nation nestled between India and China",
+      "Capital is Kathmandu, famous for historic Hindu and Buddhist temples",
+      "Home to 8 of the world's 10 tallest mountain peaks, including Everest",
+      "Only country in the world with a non-quadrilateral national flag"
+    ],
+    "distractor_pool": [
+      "India",
+      "Bhutan",
+      "Tibet",
+      "China",
+      "Mongolia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Nepal's national flag is the only national flag in the world that is not a four-sided rectangle.",
+        "verdict": "fact",
+        "explanation": "It consists of two stacked pennants representing the Himalayas and the two main religions, Hinduism and Buddhism.",
+        "fun_fact": "The geometric mathematical construction of the flag is codified in Nepal's constitution."
+      },
+      {
+        "claim": "Mount Everest is entirely located inside the territory of Nepal.",
+        "verdict": "myth",
+        "explanation": "The international border between Nepal and China (Tibet) runs directly across the highest summit point.",
+        "fun_fact": "Everest is known as Sagarmatha in Nepali and Chomolungma in Tibetan."
+      }
+    ],
+    "versus_candidates": [
+      "India",
+      "Bhutan",
+      "China"
+    ]
+  },
+  {
+    "id": "ENT-COU-049",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Jamaica",
+    "language": "en",
+    "aliases": [
+      "Island of Jamaica"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Turquoise Caribbean waters breaking onto white sand beach with lush green Blue Mountains in the distance.",
+    "core_traits": [
+      "Caribbean island nation situated south of Cuba and west of Hispaniola",
+      "Capital is Kingston, situated on a large natural harbor",
+      "Birthplace of Reggae music and cultural icon Bob Marley",
+      "Dominant powerhouse in Olympic sprint athletics led by Usain Bolt"
+    ],
+    "distractor_pool": [
+      "Cuba",
+      "Bahamas",
+      "Haiti",
+      "Dominican Republic",
+      "Trinidad and Tobago"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Jamaica was the first Caribbean nation to gain independence in the 20th century.",
+        "verdict": "fact",
+        "explanation": "Jamaica gained full independence from the United Kingdom in August 1962.",
+        "fun_fact": "Jamaica's flag is the only national flag that does not contain red, white, or blue."
+      },
+      {
+        "claim": "Reggae music has existed in Jamaican culture for many centuries.",
+        "verdict": "myth",
+        "explanation": "Reggae emerged recently in the late 1960s, evolving from earlier Jamaican styles like Ska and Rocksteady.",
+        "fun_fact": "Bob Marley's 'One Love' was named song of the millennium by the BBC."
+      }
+    ],
+    "versus_candidates": [
+      "Cuba",
+      "Bahamas",
+      "United Kingdom"
+    ]
+  },
+  {
+    "id": "ENT-COU-050",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_geography",
+    "name": "Vatican City",
+    "language": "en",
+    "aliases": [
+      "Holy See",
+      "Vatican City State"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Grand dome of Saint Peter's Basilica rising majestically over the elliptical colonnade of Saint Peter's Square.",
+    "core_traits": [
+      "Completely landlocked microstate enclaved within the city of Rome, Italy",
+      "Smallest independent state in the world by both area and population",
+      "Spiritual and administrative headquarters of the Roman Catholic Church, ruled by the Pope",
+      "Contains Saint Peter's Basilica and the Sistine Chapel painted by Michelangelo"
+    ],
+    "distractor_pool": [
+      "Italy",
+      "Monaco",
+      "San Marino",
+      "Liechtenstein",
+      "Malta"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Vatican City is the smallest sovereign nation on Earth in both land area and population.",
+        "verdict": "fact",
+        "explanation": "It covers just 0.49 square kilometers (121 acres) and has a resident population under 800 people.",
+        "fun_fact": "It has its own post office, telephone system, radio station, and euro coins."
+      },
+      {
+        "claim": "The Pope is guarded by an elite division of the Italian National Army.",
+        "verdict": "myth",
+        "explanation": "Security is provided exclusively by the Pontifical Swiss Guard, founded in 1506.",
+        "fun_fact": "Swiss Guards must be unmarried Swiss Catholic males who have completed Swiss military training."
+      }
+    ],
+    "versus_candidates": [
+      "Italy",
+      "Monaco",
+      "San Marino"
+    ]
+  },
+  {
+    "id": "ENT-COU-051",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Eiffel Tower",
+    "language": "en",
+    "aliases": [
+      "Tour Eiffel",
+      "The Iron Lady",
+      "La Dame de Fer"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Cinematic vertical 9:16 view of the illuminated wrought-iron lattice Eiffel Tower sparkling against the deep blue Parisian twilight sky above the Champ de Mars.",
+    "core_traits": [
+      "Wrought-iron lattice tower located on the Champ de Mars in Paris, France",
+      "Engineered by Gustave Eiffel's company as the centerpiece of the 1889 World's Fair",
+      "Affectionately nicknamed 'The Iron Lady' (La Dame de Fer)",
+      "Stands approximately 330 meters tall and was the world's tallest man-made structure until 1930"
+    ],
+    "distractor_pool": [
+      "Big Ben",
+      "Statue of Liberty",
+      "Leaning Tower of Pisa",
+      "Arc de Triomphe",
+      "Colosseum"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Eiffel Tower grows taller during the hot summer months.",
+        "verdict": "fact",
+        "explanation": "Thermal expansion of the puddle iron causes the tower to expand and rise up to 15 centimeters (6 inches) in summer heat.",
+        "fun_fact": "It was originally slated for demolition after 20 years, but was preserved because it served as an invaluable telecommunications antenna."
+      },
+      {
+        "claim": "Gustave Eiffel was the original designer who drafted the tower's blueprints.",
+        "verdict": "myth",
+        "explanation": "Senior structural engineers Maurice Koechlin and Emile Nouguier drafted the original plans, which Eiffel subsequently bought and championed.",
+        "fun_fact": "Eiffel built a private rooftop apartment inside the tower where he famously entertained inventor Thomas Edison."
+      }
+    ],
+    "versus_candidates": [
+      "Big Ben",
+      "Statue of Liberty",
+      "Empire State Building"
+    ]
+  },
+  {
+    "id": "ENT-COU-052",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Great Wall of China",
+    "language": "en",
+    "aliases": [
+      "The Great Wall",
+      "Wanli Changcheng",
+      "Ten-Thousand-Li Long Wall"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Dramatic vertical 9:16 aerial shot of the serpentine stone fortifications of the Great Wall winding across misty mountain ridges under golden sunset light.",
+    "core_traits": [
+      "Massive ancient fortification network snaking thousands of kilometers across northern China",
+      "Constructed and reinforced across multiple imperial dynasties, most prominently the Ming Dynasty",
+      "Features fortified watchtowers, beacon towers, garrison barracks, and battlements",
+      "Built to guard imperial borders against military incursions and nomadic invasions"
+    ],
+    "distractor_pool": [
+      "Taj Mahal",
+      "Pyramids of Giza",
+      "Machu Picchu",
+      "Petra",
+      "Angkor Wat"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Great Wall of China is easily visible from the Moon with the naked eye.",
+        "verdict": "myth",
+        "explanation": "Astronauts and space agencies have repeatedly debunked this myth; the wall is too narrow and blends into natural rock formations to be seen unaided.",
+        "fun_fact": "Sticky rice flour was incorporated into the mortar during the Ming Dynasty to give the brickwork astonishing seismic resilience."
+      },
+      {
+        "claim": "The Great Wall is one continuous, uninterrupted wall from end to end.",
+        "verdict": "myth",
+        "explanation": "It comprises an extensive patchwork of walls, watchtowers, defensive trenches, and natural geographical ramparts like cliffs and rivers.",
+        "fun_fact": "When including all historical branches and trenches, the total network spans over 21,000 kilometers (13,000 miles)."
+      }
+    ],
+    "versus_candidates": [
+      "Pyramids of Giza",
+      "Machu Picchu",
+      "Colosseum"
+    ]
+  },
+  {
+    "id": "ENT-COU-053",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Pyramids of Giza",
+    "language": "en",
+    "aliases": [
+      "Giza Necropolis",
+      "Great Pyramid of Khufu",
+      "Pyramids of Egypt"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Sun-drenched vertical 9:16 cinematic panorama of the monumental limestone Giza Pyramids rising above golden desert dunes under a radiant azure sky.",
+    "core_traits": [
+      "Monumental ancient burial complex located on the Giza Plateau on the western edge of Cairo, Egypt",
+      "Includes the Great Pyramid of Khufu, Khafre, and Menkaure alongside the Great Sphinx",
+      "Oldest of the Seven Wonders of the Ancient World and the only one still largely intact",
+      "Constructed over 4,500 years ago during the Fourth Dynasty of the Old Kingdom"
+    ],
+    "distractor_pool": [
+      "Chichen Itza",
+      "Taj Mahal",
+      "Colosseum",
+      "Petra",
+      "Stonehenge"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Pyramids of Giza were built entirely by hundreds of thousands of enslaved laborers.",
+        "verdict": "myth",
+        "explanation": "Modern archaeological digs of the workers' village have proven that the builders were respected, well-fed Egyptian permanent and seasonal paid workers.",
+        "fun_fact": "The Great Pyramid of Khufu consists of approximately 2.3 million stone blocks weighing an average of 2.5 tons each."
+      },
+      {
+        "claim": "The pyramids originally gleamed brilliant white across the desert landscape.",
+        "verdict": "fact",
+        "explanation": "They were originally encased in smooth, highly polished white Tura limestone that reflected the desert sunlight like mirrors before eroding over centuries.",
+        "fun_fact": "The Great Pyramid remained the tallest artificial structure on Earth for over 3,800 years until Lincoln Cathedral was built."
+      }
+    ],
+    "versus_candidates": [
+      "Great Wall of China",
+      "Colosseum",
+      "Chichen Itza"
+    ]
+  },
+  {
+    "id": "ENT-COU-054",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Colosseum",
+    "language": "en",
+    "aliases": [
+      "Flavian Amphitheatre",
+      "Colosseo",
+      "Amphitheatrum Flavium"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Dramatic low-angle vertical 9:16 shot of the monumental multi-tiered travertine arches of the Roman Colosseum bathed in warm amber twilight.",
+    "core_traits": [
+      "Massive freestanding oval amphitheater situated in the heart of Rome, Italy",
+      "Commissioned by Emperor Vespasian and completed under Titus around 80 AD",
+      "Famous for hosting gladiatorial combats, wild beast hunts, and public spectacles",
+      "Largest amphitheater ever constructed in antiquity, seating an estimated 50,000 to 80,000 spectators"
+    ],
+    "distractor_pool": [
+      "Parthenon",
+      "Acropolis of Athens",
+      "Eiffel Tower",
+      "Leaning Tower of Pisa",
+      "Pantheon"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Romans could flood the arena floor of the Colosseum to stage mock naval battles.",
+        "verdict": "fact",
+        "explanation": "Historical chronicles record that water was channeled into the arena during inaugural games to stage realistic naval battles called naumachiae.",
+        "fun_fact": "The Colosseum featured a massive retractable canvas awning system called the velarium to shade spectators from blistering summer sun."
+      },
+      {
+        "claim": "Gladiatorial bouts always culminated in the ritual execution of the defeated fighter.",
+        "verdict": "myth",
+        "explanation": "Gladiators were highly prized, expensive athletic investments; most fights ended upon submission or injury, with survival rates estimated at over 80%.",
+        "fun_fact": "The name Colosseum derives from a colossal bronze statue of Emperor Nero that once stood just outside the amphitheater."
+      }
+    ],
+    "versus_candidates": [
+      "Acropolis of Athens",
+      "Pyramids of Giza",
+      "Taj Mahal"
+    ]
+  },
+  {
+    "id": "ENT-COU-055",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Taj Mahal",
+    "language": "en",
+    "aliases": [
+      "The Taj",
+      "Crown of the Palace",
+      "Tomb of Mumtaz Mahal"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Crisp symmetrical vertical 9:16 reflection of the ivory-white marble Taj Mahal mausoleum and four minarets in the glassy reflecting pool at misty sunrise.",
+    "core_traits": [
+      "Monumental ivory-white marble mausoleum on the south bank of the Yamuna River in Agra, India",
+      "Commissioned in 1632 by Mughal Emperor Shah Jahan to honor his favorite empress Mumtaz Mahal",
+      "Regarded as the pinnacle of Mughal architecture, blending Islamic, Persian, and Indian traditions",
+      "Adorned with intricate calligraphy, relief carvings, and pietra dura semi-precious stone inlay"
+    ],
+    "distractor_pool": [
+      "Angkor Wat",
+      "Pyramids of Giza",
+      "Hagia Sophia",
+      "Burj Khalifa",
+      "Petra"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Shah Jahan ordered the hands of the master craftsmen amputated so they could never duplicate its beauty.",
+        "verdict": "myth",
+        "explanation": "This gruesome story is a popular urban folklore myth without any contemporary historical backing; the chief architect went on to build Delhi's Red Fort.",
+        "fun_fact": "The four flanking minarets were deliberately tilted slightly outward so that in the event of an earthquake, they would fall away from the central tomb."
+      },
+      {
+        "claim": "The marble exterior changes appearance and color throughout the day.",
+        "verdict": "fact",
+        "explanation": "The high-grade Makrana marble naturally absorbs and reflects ambient daylight, appearing pinkish at dawn, pristine white at noon, and golden under the moon.",
+        "fun_fact": "Over 1,000 elephants were used to transport rare construction materials from across India and Central Asia."
+      }
+    ],
+    "versus_candidates": [
+      "Pyramids of Giza",
+      "Angkor Wat",
+      "Colosseum"
+    ]
+  },
+  {
+    "id": "ENT-COU-056",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Statue of Liberty",
+    "language": "en",
+    "aliases": [
+      "Liberty Enlightening the World",
+      "Lady Liberty",
+      "Miss Liberty"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Heroic vertical 9:16 low-angle view of Lady Liberty lifting her gilded torch against the backdrop of the lower Manhattan skyline at golden hour.",
+    "core_traits": [
+      "Colossal neoclassical copper sculpture on Liberty Island in New York Harbor, United States",
+      "Designed by French sculptor Frederic-Auguste Bartholdi with internal framework by Gustave Eiffel",
+      "Gift of friendship from the people of France to the United States dedicated in 1886",
+      "Holds a torch in her right hand and a tabula ansata inscribed with July 4, 1776 in Roman numerals"
+    ],
+    "distractor_pool": [
+      "Christ the Redeemer",
+      "Eiffel Tower",
+      "Empire State Building",
+      "Big Ben",
+      "Mount Rushmore"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Statue of Liberty was originally constructed in its present green color.",
+        "verdict": "myth",
+        "explanation": "She was originally the shiny reddish-brown color of a newly minted copper penny before natural oxidation created a protective green patina called verdigris.",
+        "fun_fact": "The broken shackle and chain at her feet symbolize the abolition of slavery and liberation from oppression."
+      },
+      {
+        "claim": "Wind causes the Statue of Liberty to sway several inches during major storms.",
+        "verdict": "fact",
+        "explanation": "Gustave Eiffel's flexible interior skeletal framework allows the statue to sway up to 3 inches and the torch up to 5 inches in high winds.",
+        "fun_fact": "Her crown features seven spikes representing the seven seas and seven continents of the globe."
+      }
+    ],
+    "versus_candidates": [
+      "Christ the Redeemer",
+      "Eiffel Tower",
+      "Empire State Building"
+    ]
+  },
+  {
+    "id": "ENT-COU-057",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Machu Picchu",
+    "language": "en",
+    "aliases": [
+      "Lost City of the Incas",
+      "Old Mountain",
+      "Inca Citadel"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Spectacular vertical 9:16 view of the stone agricultural terraces and granite ruins of Machu Picchu nestled beneath the iconic green peak of Huayna Picchu.",
+    "core_traits": [
+      "15th-century Inca citadel perched on an Andean mountain ridge 2,430 meters above sea level in Peru",
+      "Built as an imperial royal estate for Inca Emperor Pachacuti around 1450",
+      "Renowned for its dry-stone masonry where precision-cut blocks fit snugly without any mortar",
+      "Brought to global academic attention in 1911 by American explorer Hiram Bingham"
+    ],
+    "distractor_pool": [
+      "Chichen Itza",
+      "Petra",
+      "Great Wall of China",
+      "Angkor Wat",
+      "Pyramids of Giza"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Machu Picchu was destroyed and sacked by Spanish conquistadors in the 16th century.",
+        "verdict": "myth",
+        "explanation": "Spanish invaders never discovered Machu Picchu; it was gradually abandoned by the Incas and overgrown by cloud forest vegetation.",
+        "fun_fact": "The site was engineered so skillfully that its sophisticated subterranean drainage systems prevent tropical landslides and erosion."
+      },
+      {
+        "claim": "Inca stonemasons fitted stones together so tightly that not even a knife blade can pass between them.",
+        "verdict": "fact",
+        "explanation": "Using the technique called ashlar masonry, granite stones were carved and polished to interlock perfectly without mortar, allowing them to bounce and reset during earthquakes.",
+        "fun_fact": "More than 60 percent of Machu Picchu's total construction lies underground in structural foundations and terraced drainage channels."
+      }
+    ],
+    "versus_candidates": [
+      "Chichen Itza",
+      "Petra",
+      "Angkor Wat"
+    ]
+  },
+  {
+    "id": "ENT-COU-058",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Sydney Opera House",
+    "language": "en",
+    "aliases": [
+      "The Opera House",
+      "Bennelong Point Opera House"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Gleaming vertical 9:16 view of the interlocking sail-like concrete shells of the Sydney Opera House jutting into Sydney Harbour waters at sunset.",
+    "core_traits": [
+      "Multi-venue performing arts center situated at Bennelong Point in Sydney Harbour, Australia",
+      "Designed by Danish architect Jorn Utzon and formally opened by Queen Elizabeth II in 1973",
+      "World-famous for its dramatic vaulted white sail-like roof shells",
+      "One of the 20th century's most acclaimed architectural masterpieces and a UNESCO World Heritage site"
+    ],
+    "distractor_pool": [
+      "Sydney Harbour Bridge",
+      "Burj Khalifa",
+      "Eiffel Tower",
+      "Taj Mahal",
+      "Colosseum"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The iconic roof shells of the Sydney Opera House are completely pure white.",
+        "verdict": "myth",
+        "explanation": "The roof is clad in over 1 million ceramic tiles in two distinct colors: glossy white and matte cream, creating an anti-glare textured finish.",
+        "fun_fact": "Jorn Utzon solved the structural geometry problem of the roof by designing all the shells as segments cut from a single imaginary sphere."
+      },
+      {
+        "claim": "The construction of the Sydney Opera House finished years behind schedule and massively over budget.",
+        "verdict": "fact",
+        "explanation": "Initially budgeted at 7 million Australian dollars and due in 1963, it ultimately cost 102 million dollars and opened a decade late in 1973.",
+        "fun_fact": "Its air conditioning system cools the concert halls by drawing seawater directly from Sydney Harbour."
+      }
+    ],
+    "versus_candidates": [
+      "Sydney Harbour Bridge",
+      "Eiffel Tower",
+      "Louvre Museum"
+    ]
+  },
+  {
+    "id": "ENT-COU-059",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Big Ben",
+    "language": "en",
+    "aliases": [
+      "Elizabeth Tower",
+      "Clock Tower of Westminster",
+      "Great Bell of Westminster"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Towering vertical 9:16 street perspective of the neo-Gothic Elizabeth Tower and illuminated clock face beside the Palace of Westminster along the River Thames.",
+    "core_traits": [
+      "Iconic neo-Gothic clock tower situated at the north end of the Palace of Westminster in London, England",
+      "Commonly refers to the entire tower, though technically the nickname of the 13.7-ton Great Bell inside",
+      "Officially renamed the Elizabeth Tower in 2012 to commemorate the Diamond Jubilee of Queen Elizabeth II",
+      "Celebrated for its legendary punctuality and distinctive four-faced chiming mechanism"
+    ],
+    "distractor_pool": [
+      "Tower of London",
+      "Tower Bridge",
+      "Eiffel Tower",
+      "Statue of Liberty",
+      "Empire State Building"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Big Ben is the official legal name of the historic London clock tower.",
+        "verdict": "myth",
+        "explanation": "The tower was originally called the Clock Tower before being renamed Elizabeth Tower in 2012; Big Ben is solely the nickname of the Great Bell inside.",
+        "fun_fact": "Old British penny coins are placed onto the giant pendulum to fine-tune the clock's speed by fractions of a second."
+      },
+      {
+        "claim": "Big Ben kept chiming accurately even after being bombed during World War II.",
+        "verdict": "fact",
+        "explanation": "Despite German Luftwaffe bombs damaging two clock faces and the palace roof during the Blitz, the clockwork mechanism continued chiming on time.",
+        "fun_fact": "The minute hands on the four clock faces are each 4.2 meters (14 feet) long and made of copper sheet."
+      }
+    ],
+    "versus_candidates": [
+      "Eiffel Tower",
+      "Tower Bridge",
+      "Statue of Liberty"
+    ]
+  },
+  {
+    "id": "ENT-COU-060",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Christ the Redeemer",
+    "language": "en",
+    "aliases": [
+      "Cristo Redentor",
+      "Corcovado Statue",
+      "The Redeemer"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Majestic vertical 9:16 drone shot of the colossal open-armed art deco statue atop Mount Corcovado overlooking Rio de Janeiro and Guanabara Bay.",
+    "core_traits": [
+      "Colossal Art Deco statue of Jesus Christ crowning the summit of Mount Corcovado in Rio de Janeiro, Brazil",
+      "Designed by French-Polish sculptor Paul Landowski and engineered by Heitor da Silva Costa",
+      "Depicts Christ with outstretched arms spanning 28 meters wide as a symbol of universal peace",
+      "Stands 30 meters tall atop an 8-meter pedestal, constructed of reinforced concrete faced with soapstone tiles"
+    ],
+    "distractor_pool": [
+      "Statue of Liberty",
+      "Machu Picchu",
+      "Chichen Itza",
+      "Eiffel Tower",
+      "Colosseum"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Christ the Redeemer is repeatedly struck by lightning several times every year.",
+        "verdict": "fact",
+        "explanation": "Due to its prominent mountain-peak position 700 meters above sea level, the statue is struck by lightning an average of three to six times annually.",
+        "fun_fact": "In 2014, a violent lightning bolt chipped the fingertip of the statue's right hand just before the World Cup."
+      },
+      {
+        "claim": "The statue was transported and assembled in a single complete piece up the mountain.",
+        "verdict": "myth",
+        "explanation": "It was shipped in individual modular sections and hauled up Mount Corcovado via a dedicated cog railway before being assembled on site.",
+        "fun_fact": "Thousands of volunteers glued triangular soapstone tiles onto the statue, with many women writing personal prayers and names on the backs."
+      }
+    ],
+    "versus_candidates": [
+      "Statue of Liberty",
+      "Machu Picchu",
+      "Sugarloaf Mountain"
+    ]
+  },
+  {
+    "id": "ENT-COU-061",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Petra",
+    "language": "en",
+    "aliases": [
+      "The Rose City",
+      "Al-Batra",
+      "Raqmu",
+      "The Treasury City"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Atmospheric vertical 9:16 view peeking through the narrow, towering rock cleft of the Siq canyon to reveal the sunlit rose-red facade of Al-Khazneh (The Treasury).",
+    "core_traits": [
+      "Ancient archaeological city carved directly into vibrant pink sandstone cliff faces in southwestern Jordan",
+      "Flourishing capital of the Nabataean Kingdom dating back to the 4th century BC",
+      "Famous for its monumental rock-cut facade Al-Khazneh (The Treasury) and sophisticated water conduit systems",
+      "Nicknamed 'The Rose City' due to the distinctive red, pink, and ochre hues of its sandstone geology"
+    ],
+    "distractor_pool": [
+      "Pyramids of Giza",
+      "Angkor Wat",
+      "Machu Picchu",
+      "Colosseum",
+      "Stonehenge"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The monumental Treasury building in Petra actually housed vast hoards of royal gold.",
+        "verdict": "myth",
+        "explanation": "Local Bedouin legends claimed Egyptian pharaohs hid treasure in the upper urn, but Al-Khazneh was actually a royal tomb and ceremonial mausoleum.",
+        "fun_fact": "The giant urn at the top of the Treasury facade is pitted with bullet holes from Bedouin hunters attempting to crack it open."
+      },
+      {
+        "claim": "The Nabataeans built an ingenious desert hydraulic water system that supported 30,000 residents.",
+        "verdict": "fact",
+        "explanation": "They engineered terra cotta piping, cisterns, dams, and aqueducts that harnessed seasonal flash floods into an artificial oasis.",
+        "fun_fact": "Archaeologists estimate that over 80 percent of ancient Petra still lies buried unexcavated beneath desert sands."
+      }
+    ],
+    "versus_candidates": [
+      "Pyramids of Giza",
+      "Machu Picchu",
+      "Angkor Wat"
+    ]
+  },
+  {
+    "id": "ENT-COU-062",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Angkor Wat",
+    "language": "en",
+    "aliases": [
+      "Temple City",
+      "Nokor Wat",
+      "Capital Temple"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Vertical 9:16 silhouette of Angkor Wat's five lotus-bud sandstone towers rising above the lily-padded reflective moat under a vivid magenta and violet dawn.",
+    "core_traits": [
+      "Vast sandstone temple complex situated in Siem Reap, Cambodia, surrounded by an expansive 190-meter-wide moat",
+      "Constructed in the early 12th century by Khmer King Suryavarman II as his state temple and eventual mausoleum",
+      "Originally dedicated to the Hindu deity Vishnu before gradually transitioning into a Theravada Buddhist site",
+      "Largest religious monument in the world by land area, covering over 162 hectares"
+    ],
+    "distractor_pool": [
+      "Taj Mahal",
+      "Borobudur",
+      "Machu Picchu",
+      "Chichen Itza",
+      "Petra"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Angkor Wat was completely abandoned, forgotten, and swallowed by jungle vines until Western explorers stumbled upon it.",
+        "verdict": "myth",
+        "explanation": "Cambodians never abandoned or forgot Angkor Wat; local Buddhist monks continuously inhabited and cared for the temple for centuries before French traveler Henri Mouhot visited.",
+        "fun_fact": "Angkor Wat is prominently featured on the national flag of Cambodia, making it the only country flag centered on a specific religious building."
+      },
+      {
+        "claim": "Angkor Wat faces west, whereas most other Khmer temples face east towards the rising sun.",
+        "verdict": "fact",
+        "explanation": "Facing west—the direction associated with death and the setting sun—strongly indicates that King Suryavarman II conceived it as a funerary monument.",
+        "fun_fact": "Over 5 million tons of sandstone blocks were floated down the Siem Reap River on wooden rafts from Mount Kulen 40 kilometers away."
+      }
+    ],
+    "versus_candidates": [
+      "Taj Mahal",
+      "Borobudur",
+      "Machu Picchu"
+    ]
+  },
+  {
+    "id": "ENT-COU-063",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Chichen Itza",
+    "language": "en",
+    "aliases": [
+      "El Castillo",
+      "Temple of Kukulcan",
+      "Piramide de Kukulcan"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Striking vertical 9:16 view of the step-pyramid El Castillo rising above the tropical Yucatan savanna under a brilliant blue sky.",
+    "core_traits": [
+      "Major pre-Columbian Maya city and ceremonial center located on the Yucatan Peninsula in Mexico",
+      "Dominated by the 30-meter-tall step-pyramid known as El Castillo or the Temple of Kukulcan",
+      "Engineered with astonishing astronomical alignment honoring the feathered serpent god Kukulcan",
+      "Features Mesoamerica's largest ancient ball court, the Temple of the Warriors, and the Sacred Cenote"
+    ],
+    "distractor_pool": [
+      "Machu Picchu",
+      "Pyramids of Giza",
+      "Petra",
+      "Colosseum",
+      "Teotihuacan"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "During the spring and autumn equinoxes, shadows create the illusion of a giant slithering serpent.",
+        "verdict": "fact",
+        "explanation": "The setting sun casts a series of triangular shadows along the north staircase that merge with a carved stone serpent head, mimicking a descending snake.",
+        "fun_fact": "Clapping your hands at the base of El Castillo produces an echo that mimics the chirping call of the sacred quetzal bird."
+      },
+      {
+        "claim": "The entire ancient city of Chichen Itza was devoted strictly to human sacrifice and ritual warfare.",
+        "verdict": "myth",
+        "explanation": "While religious rituals took place, Chichen Itza was primarily a thriving cosmopolitan trade metropolis, political capital, and hub for astronomy and mathematics.",
+        "fun_fact": "Beneath El Castillo lies a massive subterranean water sinkhole called a cenote, which the Maya considered an entrance to the underworld."
+      }
+    ],
+    "versus_candidates": [
+      "Machu Picchu",
+      "Pyramids of Giza",
+      "Teotihuacan"
+    ]
+  },
+  {
+    "id": "ENT-COU-064",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Acropolis of Athens",
+    "language": "en",
+    "aliases": [
+      "The Acropolis",
+      "The Sacred Rock",
+      "Parthenon Citadel"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Dramatic vertical 9:16 golden-hour view of the marble columns of the Parthenon perched atop the limestone citadel overlooking the sprawling city of Athens.",
+    "core_traits": [
+      "Ancient fortified citadel perched on a high rocky outcrop above the city of Athens, Greece",
+      "Contains the iconic Parthenon, the Erechtheion, the Propylaea, and the Temple of Athena Nike",
+      "Constructed during the Golden Age of Athens in the 5th century BC under the leadership of Pericles",
+      "Universal symbol of classical Greek civilization, philosophy, democracy, and Western architecture"
+    ],
+    "distractor_pool": [
+      "Colosseum",
+      "Pyramids of Giza",
+      "Petra",
+      "Stonehenge",
+      "Eiffel Tower"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The columns of the Parthenon are perfectly straight and parallel vertical cylinders.",
+        "verdict": "myth",
+        "explanation": "Architects Ictinus and Callicrates used optical illusions (entasis), curving horizontal beams and tapering columns slightly inward to appear straight from below.",
+        "fun_fact": "The word 'Acropolis' comes from the Greek words 'akron' meaning highest point and 'polis' meaning city."
+      },
+      {
+        "claim": "The Parthenon was severely damaged in 1687 when a Venetian cannonball ignited stored Ottoman gunpowder.",
+        "verdict": "fact",
+        "explanation": "The Ottoman Turks used the ancient marble temple as an ammunition dump, which suffered a catastrophic explosion when besieged by Venetian forces.",
+        "fun_fact": "Originally, the marble friezes and statues of the Acropolis were vividly painted in bright shades of blue, red, and gold."
+      }
+    ],
+    "versus_candidates": [
+      "Colosseum",
+      "Pyramids of Giza",
+      "Pantheon"
+    ]
+  },
+  {
+    "id": "ENT-COU-065",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Stonehenge",
+    "language": "en",
+    "aliases": [
+      "The Standing Stones",
+      "Salisbury Monoliths"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Ethereal vertical 9:16 sunrise view of the massive sarsen trilithons and bluestones of Stonehenge standing in misty green Salisbury Plain fields.",
+    "core_traits": [
+      "Prehistoric megalithic stone monument situated on Salisbury Plain in Wiltshire, England",
+      "Constructed in multiple distinct stages between roughly 3000 BC and 2000 BC",
+      "Consists of an outer ring of vertical sarsen standing stones topped by horizontal lintel stones",
+      "Aligned precisely with the direction of the sunrise on the summer solstice and sunset on the winter solstice"
+    ],
+    "distractor_pool": [
+      "Pyramids of Giza",
+      "Colosseum",
+      "Easter Island Moai",
+      "Acropolis of Athens",
+      "Petra"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Stonehenge was built by Celtic Druids as a pagan sacrificial altar.",
+        "verdict": "myth",
+        "explanation": "Archaeological dating proves Stonehenge was built over a millennium before Celtic Druids ever existed in the British Isles.",
+        "fun_fact": "The smaller volcanic 'bluestones' weighing up to 4 tons were transported over 150 miles (240 km) from the Preseli Hills in Wales."
+      },
+      {
+        "claim": "The stones are held together by sophisticated wooden-style woodworking joints.",
+        "verdict": "fact",
+        "explanation": "Megalithic builders shaped the stone using ball-and-socket mortise-and-tenon joints and tongue-and-groove joints to lock horizontal lintels atop standing pillars.",
+        "fun_fact": "Thousands of modern celebrants and tourists still gather at the stones each June to watch the summer solstice dawn align through the Heel Stone."
+      }
+    ],
+    "versus_candidates": [
+      "Pyramids of Giza",
+      "Easter Island Moai",
+      "Colosseum"
+    ]
+  },
+  {
+    "id": "ENT-COU-066",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Leaning Tower of Pisa",
+    "language": "en",
+    "aliases": [
+      "Torre di Pisa",
+      "Tower of Pisa",
+      "Campanile of Pisa"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Playful vertical 9:16 perspective of the white marble freestanding bell tower tilting conspicuously on the emerald lawn of the Piazza dei Miracoli in Pisa.",
+    "core_traits": [
+      "Freestanding Romanesque white marble bell tower situated in the Piazza dei Miracoli in Pisa, Italy",
+      "Began construction in 1173 and took nearly two centuries to finish due to frequent wars",
+      "Internationally famous for its unintended tilt caused by an unstable soft clay and sand foundation",
+      "Contains eight tiers of open marble arcades and houses seven functional bronze bells"
+    ],
+    "distractor_pool": [
+      "Colosseum",
+      "Eiffel Tower",
+      "Big Ben",
+      "Arc de Triomphe",
+      "Duomo di Milano"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Galileo Galilei dropped two cannonballs of different masses from the top to disprove Aristotle's gravity theory.",
+        "verdict": "myth",
+        "explanation": "While popularized by his biographer Vincenzo Viviani, most historians consider this an illustrative thought experiment rather than an actual physical event at the tower.",
+        "fun_fact": "The tower began tilting as early as the construction of its third story in 1178, so builders made later floors curved slightly higher on one side."
+      },
+      {
+        "claim": "Engineering interventions in the late 1990s stopped the tower from collapsing and reduced its tilt.",
+        "verdict": "fact",
+        "explanation": "Soil extraction beneath the higher north side successfully stabilized the foundation and reduced the lean by about 4 degrees, securing it for centuries.",
+        "fun_fact": "Due to curved adjustments during historical construction, the tower is technically slightly curved like a banana rather than purely straight."
+      }
+    ],
+    "versus_candidates": [
+      "Colosseum",
+      "Eiffel Tower",
+      "Big Ben"
+    ]
+  },
+  {
+    "id": "ENT-COU-067",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Mount Fuji",
+    "language": "en",
+    "aliases": [
+      "Fuji-san",
+      "Fujiyama",
+      "Mount Fuji Volcano"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Serene vertical 9:16 portrait of snow-capped Mount Fuji mirrored across Lake Kawaguchi, framed by blooming pink cherry blossom branches.",
+    "core_traits": [
+      "Active stratovolcano and the highest mountain peak in Japan, standing 3,776 meters tall",
+      "Celebrated worldwide for its exceptionally symmetrical snow-capped volcanic cone",
+      "One of Japan's 'Three Holy Mountains' (Sanreizan) and a sacred pilgrimage site for Shinto and Buddhism",
+      "Immortalized in global art through Katsushika Hokusai's woodblock print series 'Thirty-Six Views of Mount Fuji'"
+    ],
+    "distractor_pool": [
+      "Mount Everest",
+      "Mount Kilimanjaro",
+      "Matterhorn",
+      "Grand Canyon",
+      "Mount Rushmore"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Mount Fuji is an extinct volcano that will never erupt again.",
+        "verdict": "myth",
+        "explanation": "Geologists classify Mount Fuji as an active volcano with a low eruption risk; its last confirmed major eruption occurred in 1707 (the Hoei eruption).",
+        "fun_fact": "Mount Fuji is actually composed of three distinct overlapping volcanoes: Komitake, Ko-Fuji, and Shin-Fuji."
+      },
+      {
+        "claim": "Mount Fuji's summit is privately owned rather than state public land.",
+        "verdict": "fact",
+        "explanation": "The peak above the eighth station belongs to Fujisan Hongu Seng Taisha, an ancient Shinto shrine that received formal ownership title centuries ago.",
+        "fun_fact": "Over 300,000 people climb to the summit of Mount Fuji every year during the official summer climbing season."
+      }
+    ],
+    "versus_candidates": [
+      "Mount Everest",
+      "Mount Kilimanjaro",
+      "Matterhorn"
+    ]
+  },
+  {
+    "id": "ENT-COU-068",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Grand Canyon",
+    "language": "en",
+    "aliases": [
+      "The Grand Canyon",
+      "Grand Canyon of the Colorado"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Breathtaking vertical 9:16 cliffside vista over the immense red, ochre, and purple stratified rock canyon walls carved by the Colorado River far below.",
+    "core_traits": [
+      "Vast steep-sided river gorge carved by the Colorado River in northwestern Arizona, United States",
+      "Measures 446 kilometers (277 miles) long, up to 29 kilometers (18 miles) wide, and over a mile (1,800 meters) deep",
+      "Exposes nearly two billion years of Earth's geological history across colorful sedimentary rock strata",
+      "Designated a US National Park in 1919 and recognized as one of the Natural Wonders of the World"
+    ],
+    "distractor_pool": [
+      "Niagara Falls",
+      "Mount Everest",
+      "Victoria Falls",
+      "Yellowstone",
+      "Yosemite Valley"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Grand Canyon is the deepest canyon in the entire world.",
+        "verdict": "myth",
+        "explanation": "While among the most famous and scenic, deeper canyons exist, such as the Yarlung Tsangpo Grand Canyon in Tibet and Cotahuasi Canyon in Peru.",
+        "fun_fact": "The Colorado River has taken an estimated 5 to 6 million years of continuous water flow to carve the gorge."
+      },
+      {
+        "claim": "The Grand Canyon creates its own localized microclimates and weather systems.",
+        "verdict": "fact",
+        "explanation": "Due to extreme elevation differences between the high rim and low canyon floor, temperatures at the river can be 25 degrees Fahrenheit warmer than the rim.",
+        "fun_fact": "The Havasupai Native American tribe has lived inside the canyon for over 800 years and still receives mail delivered by mule train."
+      }
+    ],
+    "versus_candidates": [
+      "Niagara Falls",
+      "Victoria Falls",
+      "Mount Everest"
+    ]
+  },
+  {
+    "id": "ENT-COU-069",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Niagara Falls",
+    "language": "en",
+    "aliases": [
+      "Horseshoe Falls",
+      "American Falls",
+      "Niagara"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Thundering vertical 9:16 shot of the massive curved curtain of turquoise water plunging into frothing white mist at Horseshoe Falls with a vibrant rainbow arc.",
+    "core_traits": [
+      "Trio of massive waterfalls straddling the international border between Ontario, Canada, and New York, United States",
+      "Composed of Horseshoe Falls (the largest), American Falls, and the smaller Bridal Veil Falls",
+      "Drains Lake Erie into Lake Ontario along the Niagara River with the highest flow rate of any waterfall in North America",
+      "Major global tourist honeymoon attraction and premier source of hydroelectric power generation"
+    ],
+    "distractor_pool": [
+      "Victoria Falls",
+      "Iguazu Falls",
+      "Grand Canyon",
+      "Mount Everest",
+      "Angel Falls"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The flow of water over Niagara Falls completely froze solid into a stationary wall of ice.",
+        "verdict": "myth",
+        "explanation": "While ice bridges and heavy surface freezing occur in sub-zero winters, the tremendous rushing water beneath the ice crust has never stopped flowing entirely.",
+        "fun_fact": "In 1969, the US Army Corps of Engineers completely diverted the American Falls dry for five months to clean the riverbed and study rock erosion."
+      },
+      {
+        "claim": "Niagara Falls produces enough renewable hydroelectric energy to power millions of homes across two countries.",
+        "verdict": "fact",
+        "explanation": "Massive underground tunnels divert up to 75% of river flow to hydroelectric plants on both Canadian and American sides.",
+        "fun_fact": "Annie Edson Taylor became the first person to survive going over the falls in a wooden pickle barrel in 1901 at age 63."
+      }
+    ],
+    "versus_candidates": [
+      "Victoria Falls",
+      "Iguazu Falls",
+      "Grand Canyon"
+    ]
+  },
+  {
+    "id": "ENT-COU-070",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Victoria Falls",
+    "language": "en",
+    "aliases": [
+      "Mosi-oa-Tunya",
+      "The Smoke That Thunders"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Spectacular vertical 9:16 aerial perspective of the Zambezi River plunging into a deep basalt gorge, creating a massive rising cloud of shimmering mist.",
+    "core_traits": [
+      "Colossal waterfall situated on the Zambezi River on the international border between Zambia and Zimbabwe",
+      "Known locally as 'Mosi-oa-Tunya' which translates to 'The Smoke That Thunders'",
+      "Forms the largest sheet of falling water on Earth based on its combined width (1,708 meters) and height (108 meters)",
+      "First documented by a Western explorer when Scottish missionary David Livingstone visited in 1855"
+    ],
+    "distractor_pool": [
+      "Niagara Falls",
+      "Iguazu Falls",
+      "Grand Canyon",
+      "Mount Kilimanjaro",
+      "Mount Everest"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Victoria Falls is the highest single-drop waterfall in the world.",
+        "verdict": "myth",
+        "explanation": "Angel Falls in Venezuela is the highest waterfall at 979 meters; Victoria Falls is celebrated instead for forming the widest unbroken curtain of falling water.",
+        "fun_fact": "The mist spray from the cataract can shoot over 400 meters into the sky and is visible from up to 50 kilometers (30 miles) away."
+      },
+      {
+        "claim": "Swimmers can safely sit on the very precipice of the waterfall during low water seasons.",
+        "verdict": "fact",
+        "explanation": "A natural rock depression called 'Devil's Pool' allows adventurous swimmers to lounge right at the cliff's edge without being carried over between August and January.",
+        "fun_fact": "On nights with a full moon, the spray from Victoria Falls creates an ethereal 'lunar rainbow' or moonbow."
+      }
+    ],
+    "versus_candidates": [
+      "Niagara Falls",
+      "Iguazu Falls",
+      "Grand Canyon"
+    ]
+  },
+  {
+    "id": "ENT-COU-071",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Mount Everest",
+    "language": "en",
+    "aliases": [
+      "Sagarmatha",
+      "Chomolungma",
+      "Peak XV"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Imposing vertical 9:16 telephoto shot of the windswept snow plume trailing off the razor-sharp pyramid summit of Mount Everest under an icy cobalt sky.",
+    "core_traits": [
+      "Earth's highest mountain above sea level, reaching an official elevation of 8,848.86 meters (29,031.7 feet)",
+      "Located in the Mahalangur Himal sub-range of the Himalayas along the border of Nepal and Tibet, China",
+      "Known natively as Sagarmatha in Nepali ('Goddess of the Sky') and Chomolungma in Tibetan ('Mother Goddess of the World')",
+      "First officially summitted on May 29, 1953, by Sir Edmund Hillary of New Zealand and Tenzing Norgay Sherpa of Nepal"
+    ],
+    "distractor_pool": [
+      "Mount Fuji",
+      "Mount Kilimanjaro",
+      "Matterhorn",
+      "K2",
+      "Mont Blanc"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Mount Everest is the furthest point on Earth's surface from the planet's center.",
+        "verdict": "myth",
+        "explanation": "Because the Earth bulges around the equator, Mount Chimborazo in Ecuador is actually 2,168 meters further from Earth's center than Everest.",
+        "fun_fact": "Tectonic plate collisions continue to push Mount Everest upward by approximately 4 millimeters each year."
+      },
+      {
+        "claim": "Marine limestone and fossils from ancient seafloors are found near the summit of Mount Everest.",
+        "verdict": "fact",
+        "explanation": "The upper pyramid is composed of Ordovician limestone formed beneath the ancient Tethys Ocean hundreds of millions of years before plate tectonics raised the Himalayas.",
+        "fun_fact": "Above 8,000 meters lies the notorious 'Death Zone' where atmospheric oxygen levels are insufficient to sustain human life long term."
+      }
+    ],
+    "versus_candidates": [
+      "K2",
+      "Mount Kilimanjaro",
+      "Mount Fuji"
+    ]
+  },
+  {
+    "id": "ENT-COU-072",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Burj Khalifa",
+    "language": "en",
+    "aliases": [
+      "Burj Dubai",
+      "Khalifa Tower",
+      "Dubai Tower"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Gleaming vertical 9:16 view looking straight up the neo-futuristic stepped spire of the Burj Khalifa piercing the desert clouds above downtown Dubai.",
+    "core_traits": [
+      "Neo-futuristic megatall skyscraper located in Downtown Dubai, United Arab Emirates",
+      "World's tallest building and freestanding artificial structure since its topping out in 2009, standing 828 meters (2,717 feet) tall",
+      "Designed by Adrian Smith at Skidmore, Owings & Merrill (SOM) featuring a Y-shaped floor plan inspired by the Hymenocallis desert flower",
+      "Contains 163 floors including luxury residences, corporate suites, the Armani Hotel, and observation decks"
+    ],
+    "distractor_pool": [
+      "Empire State Building",
+      "Eiffel Tower",
+      "Petronas Towers",
+      "Shanghai Tower",
+      "Taipei 101"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "People on the top floors of the Burj Khalifa can watch the sunset twice in one evening.",
+        "verdict": "fact",
+        "explanation": "Due to the tower's extreme height, you can watch the sun disappear at ground level, take the elevator to the top observation deck, and watch the sun set a second time.",
+        "fun_fact": "The temperature at the top of the tower is approximately 6 degrees Celsius (11 degrees Fahrenheit) cooler than at ground level."
+      },
+      {
+        "claim": "The building sways by over 10 meters in severe desert windstorms.",
+        "verdict": "myth",
+        "explanation": "The structural aerodynamics were tested extensively in wind tunnels; the tower deflects by only about 1.5 to 2 meters at its tip in heavy winds.",
+        "fun_fact": "Over 26,000 individually hand-cut glass panels make up the exterior curtain wall of the skyscraper."
+      }
+    ],
+    "versus_candidates": [
+      "Empire State Building",
+      "Shanghai Tower",
+      "Eiffel Tower"
+    ]
+  },
+  {
+    "id": "ENT-COU-073",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Golden Gate Bridge",
+    "language": "en",
+    "aliases": [
+      "The Golden Gate",
+      "San Francisco Suspension Bridge"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Atmospheric vertical 9:16 perspective of the International Orange suspension towers of the Golden Gate Bridge rising above swirling low-lying Pacific fog.",
+    "core_traits": [
+      "Iconic suspension bridge spanning the one-mile-wide Golden Gate strait connecting San Francisco to Marin County, California",
+      "Designed by engineers Joseph Strauss, Leon Moisseiff, and Charles Ellis, opening in 1937",
+      "Instantly recognized by its vibrant signature color known officially as 'International Orange'",
+      "Acclaimed as one of the Wonders of the Modern World by the American Society of Civil Engineers"
+    ],
+    "distractor_pool": [
+      "Brooklyn Bridge",
+      "Sydney Harbour Bridge",
+      "Tower Bridge",
+      "Empire State Building",
+      "Statue of Liberty"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Golden Gate Bridge is painted continuously from one end to the other all year round.",
+        "verdict": "myth",
+        "explanation": "Bridge painters do not paint it continuously in a cycle; they perform localized touch-ups and targeted corrosion repairs where coastal salt air causes rust.",
+        "fun_fact": "Its signature International Orange hue was originally just an anti-corrosive primer coat, but architect Irving Morrow loved it so much he made it permanent."
+      },
+      {
+        "claim": "The US Navy originally lobbied to paint the bridge in black and yellow stripes.",
+        "verdict": "fact",
+        "explanation": "The Navy feared heavy San Francisco fog would obscure the bridge and proposed yellow and black stripes for marine navigation visibility.",
+        "fun_fact": "Over 80,000 miles of steel wire make up the two giant main suspension cables."
+      }
+    ],
+    "versus_candidates": [
+      "Brooklyn Bridge",
+      "Sydney Harbour Bridge",
+      "Tower Bridge"
+    ]
+  },
+  {
+    "id": "ENT-COU-074",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Empire State Building",
+    "language": "en",
+    "aliases": [
+      "The Empire State",
+      "ESB",
+      "King Kong Building"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Classic vertical 9:16 shot of the Art Deco limestone spire of the Empire State Building piercing the misty Manhattan clouds, lit with vibrant night LED colors.",
+    "core_traits": [
+      "102-story Art Deco skyscraper situated in Midtown Manhattan, New York City, United States",
+      "Designed by Shreve, Lamb & Harmon and completed in 1931 during the Great Depression",
+      "Held the title of the world's tallest building for nearly 40 years until the World Trade Center opened in 1970",
+      "Immortalized in popular culture, most famously as the climbing tower for King Kong in 1933"
+    ],
+    "distractor_pool": [
+      "Chrysler Building",
+      "Burj Khalifa",
+      "Statue of Liberty",
+      "Eiffel Tower",
+      "One World Trade Center"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Dropping a penny from the observation deck of the Empire State Building can kill a pedestrian on the sidewalk.",
+        "verdict": "myth",
+        "explanation": "Because of air resistance and terminal velocity (around 30-50 mph), a falling penny flutters like a leaf and would at worst feel like a minor sting.",
+        "fun_fact": "The skyscraper was constructed at breakneck speed, taking only 1 year and 45 days (410 days total) to complete."
+      },
+      {
+        "claim": "The mooring mast spire at the top was originally designed as a docking station for passenger airships (dirigibles).",
+        "verdict": "fact",
+        "explanation": "Designers built the upper spire to moor transatlantic zeppelins, but treacherous thermal wind drafts over Manhattan made the idea too dangerous after one brief trial.",
+        "fun_fact": "The building is struck by lightning an estimated 25 to 100 times every year."
+      }
+    ],
+    "versus_candidates": [
+      "Chrysler Building",
+      "Burj Khalifa",
+      "Statue of Liberty"
+    ]
+  },
+  {
+    "id": "ENT-COU-075",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Sagrada Familia",
+    "language": "en",
+    "aliases": [
+      "Basilica of the Sagrada Familia",
+      "Holy Family Basilica",
+      "Gaudi's Masterpiece"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Awe-inspiring vertical 9:16 interior shot of the Sagrada Familia with tree-like stone columns branching into the vaulted ceiling, flooded with kaleidoscopic stained-glass light.",
+    "core_traits": [
+      "Monumental unfinished Roman Catholic minor basilica located in the Eixample district of Barcelona, Spain",
+      "Designed by renowned Catalan modernist architect Antoni Gaudi, who devoted his final decades to the project",
+      "Combines Catalan Modernism, Art Nouveau, and organic Gothic architectural styles",
+      "Under construction since 1882, making it one of the longest continuous architectural construction projects in modern history"
+    ],
+    "distractor_pool": [
+      "Notre-Dame Cathedral",
+      "Saint Basil's Cathedral",
+      "Colosseum",
+      "Eiffel Tower",
+      "Taj Mahal"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Antoni Gaudi is buried inside the crypt of the Sagrada Familia.",
+        "verdict": "fact",
+        "explanation": "After being fatally struck by a tram in 1926, Gaudi was honored with a tomb placed directly within the chapel of El Carmen inside the basilica's crypt.",
+        "fun_fact": "When completed with its 172.5-meter central Jesus Christ tower, it will be the tallest religious church building in the world."
+      },
+      {
+        "claim": "The construction of the church has been heavily funded by the Spanish federal government.",
+        "verdict": "myth",
+        "explanation": "As an expiatory temple, its construction has been financed entirely by private donations and ticket sales from millions of visiting tourists.",
+        "fun_fact": "Gaudi deliberately set the height of the tallest spire at 172.5 meters so that man's creation would not surpass God's creation (Montjuic hill at 173 meters)."
+      }
+    ],
+    "versus_candidates": [
+      "Notre-Dame Cathedral",
+      "Saint Basil's Cathedral",
+      "Alhambra"
+    ]
+  },
+  {
+    "id": "ENT-COU-076",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Louvre Museum",
+    "language": "en",
+    "aliases": [
+      "The Louvre",
+      "Louvre Palace",
+      "Louvre Museum Paris"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Gleaming vertical 9:16 twilight view of I. M. Pei's illuminated glass and metal pyramid in the courtyard of the historic Renaissance Louvre Palace in Paris.",
+    "core_traits": [
+      "World's most visited art museum and historic royal palace situated along the right bank of the Seine in Paris, France",
+      "Houses thousands of priceless masterpieces including Leonardo da Vinci's Mona Lisa, Venus de Milo, and Winged Victory of Samothrace",
+      "Originally built as a medieval fortress under King Philip II in the 12th century before becoming a royal palace and museum in 1793",
+      "Features the famous modern glass entrance pyramid designed by Chinese-American architect I. M. Pei in 1989"
+    ],
+    "distractor_pool": [
+      "Eiffel Tower",
+      "Arc de Triomphe",
+      "Notre-Dame Cathedral",
+      "British Museum",
+      "Vatican Museums"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The glass pyramid of the Louvre was built with exactly 666 panes of glass to symbolize the devil.",
+        "verdict": "myth",
+        "explanation": "This sensational conspiracy rumor was popularized by fictional thrillers; official museum documentation confirms there are exactly 673 glass panes (603 rhombi and 70 triangles).",
+        "fun_fact": "If you spent 30 seconds viewing every single artwork in the Louvre, it would take you about 100 continuous days without sleeping."
+      },
+      {
+        "claim": "The Mona Lisa was once stolen from the Louvre by an Italian museum employee.",
+        "verdict": "fact",
+        "explanation": "In 1911, handyman Vincenzo Peruggia hid inside a broom closet and walked out with the Mona Lisa under his coat, believing the painting belonged back in Italy.",
+        "fun_fact": "During World War II, museum curators evacuated and hid over 3,000 priceless artworks in the French countryside to protect them from Nazi looting."
+      }
+    ],
+    "versus_candidates": [
+      "Eiffel Tower",
+      "British Museum",
+      "Metropolitan Museum of Art"
+    ]
+  },
+  {
+    "id": "ENT-COU-077",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Saint Basil's Cathedral",
+    "language": "en",
+    "aliases": [
+      "Pokrovsky Cathedral",
+      "Cathedral of the Intercession",
+      "Saint Basil's"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Vibrant vertical 9:16 view of the fairytale multicolored swirl onion domes of Saint Basil's Cathedral standing proudly on Red Square in Moscow under dusting snow.",
+    "core_traits": [
+      "Distinctive Orthodox church situated at the southern end of Red Square in Moscow, Russia",
+      "Commissioned by Tsar Ivan the Terrible in the 1550s to commemorate the capture of Kazan and Astrakhan",
+      "World-famous for its nine brightly colored, geometrically patterned onion-shaped domes",
+      "Designed by architects Barma and Postnik Yakovlev as a visual earthly symbol of the Heavenly City of Jerusalem"
+    ],
+    "distractor_pool": [
+      "Kremlin",
+      "Hagia Sophia",
+      "Notre-Dame Cathedral",
+      "Taj Mahal",
+      "Sagrada Familia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ivan the Terrible ordered the architects blinded so they could never duplicate its astonishing beauty.",
+        "verdict": "myth",
+        "explanation": "This is a popular folkloric legend without historical support; records show architect Postnik Yakovlev later designed walls for the Kazan Kremlin.",
+        "fun_fact": "The cathedral is actually a cluster of nine independent small churches built around a central tenth core church."
+      },
+      {
+        "claim": "The cathedral was once slated for demolition by Joseph Stalin's urban planners.",
+        "verdict": "fact",
+        "explanation": "Soviet planners wanted to raze the church to widen Red Square for military parades, but architect Pyotr Baranovsky heroically threatened suicide to save it.",
+        "fun_fact": "The iconic multicolored candy-cane patterns were added over a century after original construction, which was originally plain white and gold."
+      }
+    ],
+    "versus_candidates": [
+      "Hagia Sophia",
+      "Sagrada Familia",
+      "Notre-Dame Cathedral"
+    ]
+  },
+  {
+    "id": "ENT-COU-078",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Great Sphinx of Giza",
+    "language": "en",
+    "aliases": [
+      "The Great Sphinx",
+      "Sphinx of Giza",
+      "Abu al-Hol"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Majestic vertical 9:16 profile shot of the colossal limestone lion body and pharaoh head of the Great Sphinx guarding the sandy horizon before the Giza Pyramids.",
+    "core_traits": [
+      "Monolithic limestone statue of a reclining mythical sphinx with the body of a lion and the head of a human pharaoh",
+      "Situated on the Giza Plateau on the west bank of the Nile River in Egypt, directly facing east",
+      "Carved from a single massive outcrop of natural limestone bed during the reign of Pharaoh Khafre around 2500 BC",
+      "Oldest known monumental sculpture in Egypt and one of the most recognizable statues in world history"
+    ],
+    "distractor_pool": [
+      "Pyramids of Giza",
+      "Abu Simbel",
+      "Colosseum",
+      "Petra",
+      "Easter Island Moai"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Napoleon Bonaparte's soldiers blew off the Sphinx's nose with a cannonball.",
+        "verdict": "myth",
+        "explanation": "Drawings by Danish traveler Frederic Louis Norden made in 1737 prove the nose was already missing decades before Napoleon was even born.",
+        "fun_fact": "For centuries, shifting desert sands buried the Sphinx up to its shoulders until full modern excavation in the 1930s."
+      },
+      {
+        "claim": "Traces of original red and yellow paint still survive on the face and body of the Sphinx.",
+        "verdict": "fact",
+        "explanation": "Chemical analysis of microscopic pigment residue confirms the Sphinx's face was originally painted vibrant red and the nemes headdress striped with blue and yellow.",
+        "fun_fact": "The statue measures an impressive 73 meters (240 feet) long from paw to tail and 20 meters (66 feet) high."
+      }
+    ],
+    "versus_candidates": [
+      "Pyramids of Giza",
+      "Easter Island Moai",
+      "Mount Rushmore"
+    ]
+  },
+  {
+    "id": "ENT-COU-079",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Mount Rushmore",
+    "language": "en",
+    "aliases": [
+      "Mount Rushmore National Memorial",
+      "The Presidents Mountain"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Imposing vertical 9:16 low-angle view of the colossal 60-foot granite carved faces of four US presidents set against pine-forested Black Hills and a crisp blue sky.",
+    "core_traits": [
+      "Colossal monumental sculpture carved into the granite face of Mount Rushmore in the Black Hills of South Dakota, United States",
+      "Depicts 60-foot-tall faces of four iconic US presidents: George Washington, Thomas Jefferson, Theodore Roosevelt, and Abraham Lincoln",
+      "Sculpted between 1927 and 1941 by Gutzon Borglum along with 400 skilled miners and stonecutters",
+      "Conceived to represent the birth, growth, preservation, and development of the United States"
+    ],
+    "distractor_pool": [
+      "Statue of Liberty",
+      "Crazy Horse Memorial",
+      "Lincoln Memorial",
+      "Grand Canyon",
+      "Empire State Building"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Several workers died from falls and dynamite blasts during the 14 years of carving.",
+        "verdict": "myth",
+        "explanation": "Despite precarious cliff scaffolding and explosive dynamite removal of 450,000 tons of rock, zero fatalities occurred during the entire project.",
+        "fun_fact": "About 90 percent of the rock removal was accomplished using precision dynamite charges detonated by skilled blasters."
+      },
+      {
+        "claim": "There is a hidden secret vault room carved into the mountain behind the presidential faces.",
+        "verdict": "fact",
+        "explanation": "Gutzon Borglum created the 'Hall of Records', a secure granite canyon vault storing porcelain enamel panels inscribed with the US Constitution and Declaration of Independence.",
+        "fun_fact": "Thomas Jefferson's face was originally started on Washington's right side, but flawed granite forced sculptors to dynamite it off and restart on the left."
+      }
+    ],
+    "versus_candidates": [
+      "Statue of Liberty",
+      "Crazy Horse Memorial",
+      "Lincoln Memorial"
+    ]
+  },
+  {
+    "id": "ENT-COU-080",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Easter Island Moai",
+    "language": "en",
+    "aliases": [
+      "Moai Statues",
+      "Rapa Nui Moai",
+      "Easter Island Heads"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Mysterious vertical 9:16 silhouette of giant stone Moai statues with long chiseled profiles standing in row along an ocean Ahu platform at sunset.",
+    "core_traits": [
+      "Monolithic volcanic human figures carved by the indigenous Rapa Nui people on Easter Island in eastern Polynesia (Chile)",
+      "Carved between 1250 and 1500 AD to represent deified ancestral chiefs and protect their communities",
+      "Nearly 1,000 statues were produced, mostly quarried from compressed volcanic ash at Rano Raraku",
+      "Prominently featured oversized heads, prominent noses, deep eye sockets, and elongated earlobes"
+    ],
+    "distractor_pool": [
+      "Stonehenge",
+      "Pyramids of Giza",
+      "Machu Picchu",
+      "Chichen Itza",
+      "Great Sphinx of Giza"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Moai are solely giant disembodied stone heads sitting on the ground.",
+        "verdict": "myth",
+        "explanation": "Excavations have revealed that all Moai heads have complete torsos and bodies buried underground beneath centuries of sediment and topsoil.",
+        "fun_fact": "Many Moai were fitted with inlaid white coral eyes and pupil discs made of black obsidian or red scoria."
+      },
+      {
+        "claim": "Oral traditions recount that the massive statues 'walked' to their coastal platforms.",
+        "verdict": "fact",
+        "explanation": "Experimental archaeology demonstrated that teams of people rocking the statues from side to side with ropes can move upright Moai forward in a walking motion.",
+        "fun_fact": "The largest completed Moai, nicknamed 'Paro', stands nearly 10 meters (33 feet) tall and weighs around 82 metric tons."
+      }
+    ],
+    "versus_candidates": [
+      "Stonehenge",
+      "Great Sphinx of Giza",
+      "Pyramids of Giza"
+    ]
+  },
+  {
+    "id": "ENT-COU-081",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Alhambra",
+    "language": "en",
+    "aliases": [
+      "The Red Castle",
+      "Qalat al-Hamra",
+      "Palacio de la Alhambra"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Enchanting vertical 9:16 view through horseshoe arches into the Court of the Lions, with slender marble columns reflected in tranquil fountains.",
+    "core_traits": [
+      "Stunning fortified palace and citadel complex perched on the Sabika hill overlooking Granada in Andalusia, Spain",
+      "Constructed primarily by the Nasrid Dynasty sultans in the 13th and 14th centuries as their royal court",
+      "Renowned as one of the finest surviving examples of Islamic Nasrid architecture and Moorish craftsmanship in Europe",
+      "Features the famous Court of the Lions, intricately carved stucco muqarnas, and lush Generalife gardens"
+    ],
+    "distractor_pool": [
+      "Taj Mahal",
+      "Sagrada Familia",
+      "Hagia Sophia",
+      "Mezquita of Cordoba",
+      "Alcazar of Seville"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Alhambra was completely leveled and rebuilt from scratch following the Christian Reconquista of 1492.",
+        "verdict": "myth",
+        "explanation": "King Ferdinand and Queen Isabella preserved and maintained the palace because they were enchanted by its exquisite beauty, choosing it as their royal residence.",
+        "fun_fact": "The name 'Alhambra' derives from the Arabic 'al-Hamra', meaning 'the red one', referring to the reddish clay of its outer fortress walls."
+      },
+      {
+        "claim": "The complex features poetic Arabic verses and geometric calligraphy carved across nearly every wall surface.",
+        "verdict": "fact",
+        "explanation": "The walls feature thousands of inscriptions, including praise poems, Quranic verses, and the Nasrid motto: 'There is no conqueror but God'.",
+        "fun_fact": "Its sophisticated mountain hydraulic systems have channeled fresh melting Sierra Nevada snow water through its courtyards for over 700 years."
+      }
+    ],
+    "versus_candidates": [
+      "Mezquita of Cordoba",
+      "Taj Mahal",
+      "Alcazar of Seville"
+    ]
+  },
+  {
+    "id": "ENT-COU-082",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Neuschwanstein Castle",
+    "language": "en",
+    "aliases": [
+      "Schloss Neuschwanstein",
+      "New Swanstone Castle",
+      "Fairytale Castle"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Fairytale vertical 9:16 aerial view of the white limestone spires and round turrets of Neuschwanstein Castle rising against the snowy Bavarian Alps and autumn forests.",
+    "core_traits": [
+      "19th-century historicist palace perched atop a rugged cliff above the village of Hohenschwangau in Bavaria, Germany",
+      "Commissioned by King Ludwig II of Bavaria as a theatrical romantic retreat dedicated to the operas of Richard Wagner",
+      "Iconic archetype of fairytale castle architecture that directly inspired Walt Disney's Cinderella and Sleeping Beauty Castle",
+      "Features Romanesque Revival styling with soaring turrets, gabled roofs, and a two-story Throne Hall"
+    ],
+    "distractor_pool": [
+      "Bran Castle",
+      "Windsor Castle",
+      "Versailles Palace",
+      "Edinburgh Castle",
+      "Chateau de Chambord"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Neuschwanstein Castle was constructed as a functional medieval military fortress.",
+        "verdict": "myth",
+        "explanation": "It was built entirely as a romantic theatrical fantasy and private royal sanctuary in the late 1800s, lacking defensive military moats or fortifications.",
+        "fun_fact": "Despite its medieval outward appearance, it featured revolutionary modern technology including central heating, telephone lines, and flush toilets."
+      },
+      {
+        "claim": "King Ludwig II was declared insane and deposed before the castle was even completed.",
+        "verdict": "fact",
+        "explanation": "In 1886, Bavarian ministers declared Ludwig mentally unfit to rule due to his massive personal construction debts; he died mysteriously in Lake Starnberg days later.",
+        "fun_fact": "The castle was opened to paying visitors just seven weeks after King Ludwig's death to pay off his accumulated debts."
+      }
+    ],
+    "versus_candidates": [
+      "Bran Castle",
+      "Versailles Palace",
+      "Windsor Castle"
+    ]
+  },
+  {
+    "id": "ENT-COU-083",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Forbidden City",
+    "language": "en",
+    "aliases": [
+      "Palace Museum",
+      "Zijincheng",
+      "Imperial Palace"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Grand vertical 9:16 view across the marble terraces and crimson walls to the golden-tiled sweeping curved eaves of the Hall of Supreme Harmony in Beijing.",
+    "core_traits": [
+      "Immense imperial palace complex located in the geographical center of Beijing, China",
+      "Served as the political ceremonial center and home of 24 Chinese emperors across the Ming and Qing dynasties from 1420 to 1912",
+      "Largest palace complex in the world, encompassing 980 surviving buildings and nearly 9,000 rooms over 72 hectares",
+      "Exemplifies traditional Chinese palace architecture with yellow glazed roof tiles, red walls, and strict south-north axial symmetry"
+    ],
+    "distractor_pool": [
+      "Great Wall of China",
+      "Summer Palace",
+      "Temple of Heaven",
+      "Terracotta Army",
+      "Angkor Wat"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Common citizens were legally forbidden from entering the palace complex on pain of death.",
+        "verdict": "fact",
+        "explanation": "Because it was the sacred residence of the Son of Heaven, unauthorized ordinary subjects caught trespassing were subject to immediate execution.",
+        "fun_fact": "Yellow was the exclusive imperial color of the Emperor, which is why nearly all roof tiles in the palace are glazed bright yellow."
+      },
+      {
+        "claim": "The palace buildings were built using massive quantities of iron nails to withstand earthquakes.",
+        "verdict": "myth",
+        "explanation": "The timber structures were engineered entirely using intricate interlocking wooden mortise-and-tenon joints (dougong) without a single metal nail, allowing flexibility in quakes.",
+        "fun_fact": "Over one million laborers and 100,000 master artisans worked for 14 years to construct the imperial citadel."
+      }
+    ],
+    "versus_candidates": [
+      "Great Wall of China",
+      "Versailles Palace",
+      "Taj Mahal"
+    ]
+  },
+  {
+    "id": "ENT-COU-084",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Hollywood Sign",
+    "language": "en",
+    "aliases": [
+      "The Hollywood Hills Sign",
+      "Hollywoodland Sign",
+      "Mount Lee Sign"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Iconic vertical 9:16 view of the 45-foot-tall white sheet-metal letters spelling HOLLYWOOD across the chaparral scrub slope of Mount Lee overlooking Los Angeles.",
+    "core_traits": [
+      "World-famous cultural icon and landmark spelling the word 'HOLLYWOOD' on Mount Lee in the Santa Monica Mountains, California",
+      "Originally erected in 1923 as a temporary illuminated outdoor billboard advertising an upscale real estate subdivision called 'HOLLYWOODLAND'",
+      "Features 45-foot-tall (13.7-meter) white steel capital letters spanning 350 feet across the hillside",
+      "Internationally recognized as the quintessential global symbol of the American cinema and entertainment industry"
+    ],
+    "distractor_pool": [
+      "Walk of Fame",
+      "Times Square",
+      "Golden Gate Bridge",
+      "Empire State Building",
+      "Statue of Liberty"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The sign was originally intended to stand permanently as a monument to cinema.",
+        "verdict": "myth",
+        "explanation": "It was built in 1923 as a temporary 18-month real estate advertisement for 'Hollywoodland'; the final 'LAND' was removed during a 1949 restoration.",
+        "fun_fact": "Rock star Alice Cooper spearheaded a public 1978 campaign to rebuild the decaying sign, with Hugh Hefner and other celebrities funding individual letters."
+      },
+      {
+        "claim": "British actress Peg Entwistle tragically leaped to her death from atop the letter 'H' in 1932.",
+        "verdict": "fact",
+        "explanation": "Devastated by career disappointments, the 24-year-old Broadway actress climbed a maintenance ladder to the top of the letter 'H' and jumped.",
+        "fun_fact": "The sign is protected by 24/7 infrared security cameras, motion sensors, and razor-wire fencing to deter hikers and pranksters."
+      }
+    ],
+    "versus_candidates": [
+      "Times Square",
+      "Golden Gate Bridge",
+      "Walk of Fame"
+    ]
+  },
+  {
+    "id": "ENT-COU-085",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Times Square",
+    "language": "en",
+    "aliases": [
+      "The Crossroads of the World",
+      "The Great White Way",
+      "One Times Square"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Dazzling vertical 9:16 night perspective of colossal animated LED billboards blazing light down upon bustling pedestrian plazas and yellow taxis at Times Square.",
+    "core_traits": [
+      "Major commercial intersection, tourist destination, and entertainment hub in Midtown Manhattan, New York City",
+      "Located at the junction of Broadway and Seventh Avenue, stretching between West 42nd and West 47th Streets",
+      "Affectionately dubbed 'The Crossroads of the World', 'The Center of the Universe', and 'The Great White Way'",
+      "World-famous for its gigantic illuminated digital billboards, Broadway theaters, and annual New Year's Eve ball drop"
+    ],
+    "distractor_pool": [
+      "Hollywood Sign",
+      "Empire State Building",
+      "Statue of Liberty",
+      "Central Park",
+      "Piccadilly Circus"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Times Square was originally named Longacre Square before being renamed in 1904.",
+        "verdict": "fact",
+        "explanation": "It was renamed Times Square in April 1904 after The New York Times moved its headquarters to the newly constructed One Times Square skyscraper.",
+        "fun_fact": "Billboards in Times Square consume an estimated 161 megawatts of electricity, enough to power 160,000 average homes."
+      },
+      {
+        "claim": "The giant New Year's Eve Waterford Crystal ball stays inside a hidden basement during the rest of the year.",
+        "verdict": "myth",
+        "explanation": "The 12-foot, six-ton crystal ball remains perched atop the flagpole on the roof of One Times Square throughout the entire 365 days of the year.",
+        "fun_fact": "Approximately 330,000 people pass through Times Square every single day, making it the most visited tourist attraction on Earth."
+      }
+    ],
+    "versus_candidates": [
+      "Piccadilly Circus",
+      "Hollywood Sign",
+      "Empire State Building"
+    ]
+  },
+  {
+    "id": "ENT-COU-086",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Tower of London",
+    "language": "en",
+    "aliases": [
+      "His Majesty's Royal Palace and Fortress of the Tower of London",
+      "The White Tower"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Imposing vertical 9:16 view of the medieval stone White Tower and fortified curtain walls on the north bank of the River Thames in central London.",
+    "core_traits": [
+      "Historic fortified castle situated on the north bank of the River Thames in London, England",
+      "Founded in 1066 as part of the Norman Conquest by William the Conqueror, who built the central White Tower in 1078",
+      "Served historically as a royal residence, notorious prison, execution site, armory, and Royal Mint",
+      "Home to the British Crown Jewels, the Yeoman Warders (Beefeaters), and the ceremonial Ravens"
+    ],
+    "distractor_pool": [
+      "Tower Bridge",
+      "Big Ben",
+      "Buckingham Palace",
+      "Windsor Castle",
+      "Edinburgh Castle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Hundreds of high-profile historical prisoners were publicly beheaded on the grassy green inside the Tower.",
+        "verdict": "myth",
+        "explanation": "Only ten elite prisoners were executed on private Tower Green (including Anne Boleyn and Lady Jane Grey); most were executed outside on Tower Hill.",
+        "fun_fact": "Legend holds that if the six resident ravens ever leave the Tower of London, the fortress and the kingdom will fall."
+      },
+      {
+        "claim": "The King's Guard and Yeoman Warders have guarded the fortress and Crown Jewels for centuries.",
+        "verdict": "fact",
+        "explanation": "The Yeoman Warders have safeguarded the Tower since 1485 and still perform the nightly 700-year-old 'Ceremony of the Keys' lockdown.",
+        "fun_fact": "In medieval times, the Tower housed the Royal Menagerie, including lions, polar bears, and an elephant given as royal diplomatic gifts."
+      }
+    ],
+    "versus_candidates": [
+      "Tower Bridge",
+      "Big Ben",
+      "Windsor Castle"
+    ]
+  },
+  {
+    "id": "ENT-COU-087",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Tower Bridge",
+    "language": "en",
+    "aliases": [
+      "London Tower Bridge",
+      "The Twin Towers Bridge"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Iconic vertical 9:16 low-angle shot of the neo-Gothic twin stone towers and blue suspension cables of Tower Bridge as its twin bascules lift for a ship on the Thames.",
+    "core_traits": [
+      "Iconic combined bascule and suspension bridge crossing the River Thames close to the Tower of London in London, England",
+      "Engineered by Sir Horace Jones and Sir John Wolfe Barry, opening to traffic in 1894",
+      "Characterized by two towering neo-Gothic stone towers linked at the upper level by two horizontal high-level walkways",
+      "Features hydraulically powered bascules that open upward to let tall maritime ships navigate through"
+    ],
+    "distractor_pool": [
+      "London Bridge",
+      "Big Ben",
+      "Golden Gate Bridge",
+      "Brooklyn Bridge",
+      "Tower of London"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "American entrepreneur Robert McCulloch mistakenly bought London Bridge thinking he was buying Tower Bridge.",
+        "verdict": "myth",
+        "explanation": "Both McCulloch and London officials repeatedly denied this urban legend, confirming he knew full well he was purchasing the 1831 granite London Bridge.",
+        "fun_fact": "In 1952, a London double-decker bus driver had to accelerate and jump across a 3-foot opening gap when the bridge began lifting under his wheels."
+      },
+      {
+        "claim": "The bridge's original lifting mechanism was powered by pressurized steam hydraulics.",
+        "verdict": "fact",
+        "explanation": "Massive steam engines pumped water into giant accumulators to raise the bascules within a minute, operating until converted to electro-hydraulics in 1976.",
+        "fun_fact": "Over 40,000 pedestrians and vehicles cross Tower Bridge every day."
+      }
+    ],
+    "versus_candidates": [
+      "Golden Gate Bridge",
+      "Brooklyn Bridge",
+      "Big Ben"
+    ]
+  },
+  {
+    "id": "ENT-COU-088",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Notre-Dame Cathedral",
+    "language": "en",
+    "aliases": [
+      "Notre-Dame de Paris",
+      "Our Lady of Paris",
+      "Notre Dame"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Majestic vertical 9:16 view of the twin west facade towers and iconic round rose window of Notre-Dame Cathedral on the Ile de la Cite in Paris.",
+    "core_traits": [
+      "Masterpiece of French Gothic architecture situated on the Ile de la Cite island in the River Seine in Paris, France",
+      "Began construction in 1163 under Bishop Maurice de Sully and largely completed by 1260",
+      "Famous for its revolutionary flying buttresses, ribbed vaulting, gargoyles, and stained-glass rose windows",
+      "Celebrated backdrop of Victor Hugo's famous 1831 novel 'The Hunchback of Notre-Dame'"
+    ],
+    "distractor_pool": [
+      "Sagrada Familia",
+      "Saint Basil's Cathedral",
+      "Louvre Museum",
+      "Eiffel Tower",
+      "Arc de Triomphe"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Victor Hugo wrote his famous novel specifically to help save the crumbling cathedral from demolition.",
+        "verdict": "fact",
+        "explanation": "Hugo wrote 'The Hunchback of Notre-Dame' to raise public awareness of Gothic heritage, sparking a massive national restoration campaign led by Viollet-le-Duc.",
+        "fun_fact": "A bronze star in the plaza in front of the cathedral marks Point Zero, the origin marker from which all road distances in France are measured."
+      },
+      {
+        "claim": "The devastating fire of April 2019 completely destroyed all medieval stained-glass rose windows.",
+        "verdict": "myth",
+        "explanation": "Miraculously, all three colossal 13th-century rose windows survived intact despite the collapse of the timber roof and spire.",
+        "fun_fact": "Its giant 13-ton tenor bell named 'Emmanuel' has rung for major historical events since 1681, including the liberation of Paris in 1944."
+      }
+    ],
+    "versus_candidates": [
+      "Sagrada Familia",
+      "Saint Basil's Cathedral",
+      "Eiffel Tower"
+    ]
+  },
+  {
+    "id": "ENT-COU-089",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Arc de Triomphe",
+    "language": "en",
+    "aliases": [
+      "Arc de Triomphe de l'Etoile",
+      "The Triumphal Arch of Paris"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Heroic vertical 9:16 twilight view of the monumental neoclassical Arc de Triomphe at the center of Place Charles de Gaulle, glowing against streams of car headlights.",
+    "core_traits": [
+      "Monumental neoclassical triumphal arch standing at the western end of the Champs-Elysees in Paris, France",
+      "Commissioned in 1806 by French Emperor Napoleon Bonaparte following his decisive victory at the Battle of Austerlitz",
+      "Honors those who fought and died for France in the French Revolutionary and Napoleonic Wars",
+      "Houses France's Tomb of the Unknown Soldier and an eternal memorial flame beneath its central archway"
+    ],
+    "distractor_pool": [
+      "Eiffel Tower",
+      "Louvre Museum",
+      "Brandenburg Gate",
+      "Colosseum",
+      "Notre-Dame Cathedral"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Napoleon Bonaparte marched his triumphant Grand Army through the completed arch after defeating Russia and Austria.",
+        "verdict": "myth",
+        "explanation": "Construction was delayed and completed in 1836, fifteen years after Napoleon's death in exile; his body was carried beneath it during his 1840 state funeral.",
+        "fun_fact": "In 1919, French aviator Charles Godefroy flew his Nieuport biplane straight through the arch to honor aviators killed in World War I."
+      },
+      {
+        "claim": "The eternal flame beneath the arch has burned continuously without being extinguished for over a century.",
+        "verdict": "fact",
+        "explanation": "First lit on Armistice Day in 1923 at the Tomb of the Unknown Soldier, the flame is rekindled every evening at 6:30 PM and was never put out, even during Nazi occupation.",
+        "fun_fact": "All 12 grand avenues radiating from the traffic circle create a massive star pattern, which is why the square was originally named Place de l'Etoile (Star)."
+      }
+    ],
+    "versus_candidates": [
+      "Brandenburg Gate",
+      "Eiffel Tower",
+      "Colosseum"
+    ]
+  },
+  {
+    "id": "ENT-COU-090",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Sydney Harbour Bridge",
+    "language": "en",
+    "aliases": [
+      "The Coathanger",
+      "Harbour Bridge",
+      "Sydney Bridge"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Grand vertical 9:16 view of the massive steel through-arch Sydney Harbour Bridge framing blue harbor waters, ferries, and the Sydney Opera House below.",
+    "core_traits": [
+      "Steel through-arch bridge spanning Sydney Harbour, connecting the Sydney central business district with the North Shore",
+      "Engineered by British firm Dorman Long and designed under the supervision of John Bradfield, opening in 1932",
+      "Affectionately nicknamed 'The Coathanger' by locals because of its distinctive curved arch profile",
+      "One of the tallest and widest long-span steel arch bridges in the world, standing 134 meters above water level"
+    ],
+    "distractor_pool": [
+      "Sydney Opera House",
+      "Golden Gate Bridge",
+      "Tower Bridge",
+      "Brooklyn Bridge",
+      "Story Bridge"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The four giant granite-clad concrete pylons at the ends support the primary weight of the bridge arch.",
+        "verdict": "myth",
+        "explanation": "The pylons have zero structural purpose for supporting the steel arch; they were added purely for aesthetic balance and visual reassurance for the public.",
+        "fun_fact": "During hot Australian summer days, thermal expansion can raise the summit of the bridge arch by up to 18 centimeters (7 inches)."
+      },
+      {
+        "claim": "Paul Hogan (the star of Crocodile Dundee) worked as a rigger and painter on the bridge before becoming an actor.",
+        "verdict": "fact",
+        "explanation": "Hogan was employed for years as a bridge painter and rigger before launching his comedy television career.",
+        "fun_fact": "It took 272,000 liters (72,000 gallons) of paint just to apply the bridge's initial three coats."
+      }
+    ],
+    "versus_candidates": [
+      "Sydney Opera House",
+      "Golden Gate Bridge",
+      "Tower Bridge"
+    ]
+  },
+  {
+    "id": "ENT-COU-091",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Hagia Sophia",
+    "language": "en",
+    "aliases": [
+      "Ayasofya",
+      "Church of the Holy Wisdom",
+      "Sancta Sophia"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Breathtaking vertical 9:16 interior shot of Hagia Sophia looking up into the colossal floating dome surrounded by ring of light and historic golden mosaics.",
+    "core_traits": [
+      "Monumental historic architectural marvel situated in the Sultanahmet district of Istanbul, Turkey",
+      "Built in 537 AD by Byzantine Emperor Justinian I as the imperial cathedral of Constantinople",
+      "Served as the world's largest cathedral for nearly 1,000 years before converting into an Ottoman mosque in 1453",
+      "Famed for its revolutionary massive central dome that seems to float unsupported on a ring of 40 arched windows"
+    ],
+    "distractor_pool": [
+      "Blue Mosque",
+      "Taj Mahal",
+      "Saint Basil's Cathedral",
+      "Colosseum",
+      "Acropolis of Athens"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Hagia Sophia was named in honor of a Christian female martyr named Saint Sophia.",
+        "verdict": "myth",
+        "explanation": "The Greek name 'Hagia Sophia' translates to 'Holy Wisdom', referring directly to the divine personification of wisdom in Jesus Christ, not an individual saint.",
+        "fun_fact": "Viking mercenaries serving in the Byzantine Emperor's Varangian Guard carved runic graffiti into the marble gallery parapets in the 9th century."
+      },
+      {
+        "claim": "The massive original dome collapsed during an earthquake just two decades after opening.",
+        "verdict": "fact",
+        "explanation": "An earthquake in 558 AD compromised the shallow dome, prompting Isidore the Younger to rebuild it with a steeper pitch and stronger buttressing.",
+        "fun_fact": "It has functioned successively as an Eastern Orthodox cathedral, a Roman Catholic cathedral, an Ottoman imperial mosque, a secular museum, and back to a mosque."
+      }
+    ],
+    "versus_candidates": [
+      "Blue Mosque",
+      "Saint Basil's Cathedral",
+      "Taj Mahal"
+    ]
+  },
+  {
+    "id": "ENT-COU-092",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Mount Kilimanjaro",
+    "language": "en",
+    "aliases": [
+      "Kilimanjaro",
+      "Roof of Africa",
+      "Mount Kibo"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Spectacular vertical 9:16 wildlife scene with a herd of wild elephants grazing on golden savanna beneath the snow-capped flat dome of Mount Kilimanjaro.",
+    "core_traits": [
+      "Dormant volcanic mountain located in northeastern Tanzania, near the border with Kenya",
+      "Highest mountain in Africa and the tallest single free-standing mountain above sea level in the world at 5,895 meters (19,341 feet)",
+      "Comprises three distinct volcanic cones: Kibo (the highest summit), Mawenzi, and Shira",
+      "Encompasses virtually every ecological climate zone on Earth, from tropical rainforest to arctic glaciers"
+    ],
+    "distractor_pool": [
+      "Mount Everest",
+      "Mount Fuji",
+      "Table Mountain",
+      "Matterhorn",
+      "Mount Kenya"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Mount Kilimanjaro's equatorial glaciers are expanding due to shifting Indian Ocean cloud patterns.",
+        "verdict": "myth",
+        "explanation": "Scientific measurements show that Kilimanjaro's ancient summit glaciers have shrunk by more than 85 percent over the last century and may vanish in coming decades.",
+        "fun_fact": "Because it is a non-technical walk-up climb, thousands of trekkers of varying experience attempt to reach Uhuru Peak each year."
+      },
+      {
+        "claim": "Almost every major ecological climatic zone can be experienced while hiking to the summit.",
+        "verdict": "fact",
+        "explanation": "Climbers traverse five distinct ecological zones: cultivated farmland, rainforest, heather-moorland, alpine desert, and the arctic summit ice cap.",
+        "fun_fact": "In 1889, German geographer Hans Meyer and Austrian mountaineer Ludwig Purtscheller became the first recorded people to reach the summit."
+      }
+    ],
+    "versus_candidates": [
+      "Mount Everest",
+      "Mount Fuji",
+      "Table Mountain"
+    ]
+  },
+  {
+    "id": "ENT-COU-093",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Great Barrier Reef",
+    "language": "en",
+    "aliases": [
+      "The Great Barrier",
+      "Coral Sea Reef"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Stunning vertical 9:16 underwater shot of a vibrant green sea turtle gliding through crystalline turquoise waters above kaleidoscopic coral bommies.",
+    "core_traits": [
+      "World's largest coral reef system, stretching over 2,300 kilometers (1,400 miles) along the coast of Queensland, Australia",
+      "Composed of over 2,900 individual reefs and 900 tropical islands in the Coral Sea",
+      "Largest single living structure on Earth, created by billions of tiny marine organisms called coral polyps",
+      "So colossal that it can be distinctly seen and photographed from outer space"
+    ],
+    "distractor_pool": [
+      "Great Wall of China",
+      "Grand Canyon",
+      "Niagara Falls",
+      "Galapagos Islands",
+      "Amazon Rainforest"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Great Barrier Reef is composed of a single massive solid wall of coral rock.",
+        "verdict": "myth",
+        "explanation": "It is a complex dynamic ecosystem of thousands of separate reefs, coral cays, mangrove estuaries, and deep marine channels.",
+        "fun_fact": "Once a year in late spring, the entire reef participates in a synchronized mass coral spawning event triggered by water temperature and moonlight."
+      },
+      {
+        "claim": "The reef is home to over 1,500 species of marine fish and 400 species of hard coral.",
+        "verdict": "fact",
+        "explanation": "It supports roughly 10 percent of the world's total fish species, alongside whales, dolphins, dugongs, and six species of threatened sea turtles.",
+        "fun_fact": "The Great Barrier Reef is roughly the same physical land size as Italy or Japan."
+      }
+    ],
+    "versus_candidates": [
+      "Grand Canyon",
+      "Galapagos Islands",
+      "Amazon Rainforest"
+    ]
+  },
+  {
+    "id": "ENT-COU-094",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Matterhorn",
+    "language": "en",
+    "aliases": [
+      "Monte Cervino",
+      "Mont Cervin",
+      "The Jewel of the Alps"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Breathtaking vertical 9:16 alpine sunrise view of the razor-sharp pyramid peak of the Matterhorn glowing fiery golden above the pristine Riffelsee lake.",
+    "core_traits": [
+      "Iconic pyramid-shaped mountain peak in the Pennine Alps, straddling the border between Switzerland and Italy",
+      "Stands 4,478 meters (14,692 feet) tall, overlooking the Swiss resort town of Zermatt",
+      "Famous for its steep, four-sided pyramidal horn facing the four cardinal compass directions",
+      "Universal symbol of the Swiss Alps and mountaineering, featured on Toblerone chocolate packaging for decades"
+    ],
+    "distractor_pool": [
+      "Mont Blanc",
+      "Mount Fuji",
+      "Mount Everest",
+      "Eiger",
+      "Mount Kilimanjaro"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Matterhorn is the highest mountain peak in the Alps.",
+        "verdict": "myth",
+        "explanation": "Mont Blanc is the highest peak in the Alps at 4,808 meters; the Matterhorn is famous for its dramatic isolated pyramidal shape and steep climbing ridges.",
+        "fun_fact": "Edward Whymper led the first successful ascent in 1865, which ended in tragedy when four climbers fell to their deaths on the descent."
+      },
+      {
+        "claim": "The distinctive bear hidden in the Toblerone mountain logo references the city of Bern.",
+        "verdict": "fact",
+        "explanation": "Toblerone chocolate was created in Bern, known as 'The City of Bears', which is why a subtle bear silhouette is incorporated into the Matterhorn illustration.",
+        "fun_fact": "The four distinct faces of the Matterhorn are so steep that snow cannot accumulate heavily, frequently causing massive avalanches down its flanks."
+      }
+    ],
+    "versus_candidates": [
+      "Mont Blanc",
+      "Mount Fuji",
+      "Mount Everest"
+    ]
+  },
+  {
+    "id": "ENT-COU-095",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Iguazu Falls",
+    "language": "en",
+    "aliases": [
+      "Iguassu Falls",
+      "Cataratas del Iguazu",
+      "Devil's Throat Falls"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Spectacular vertical 9:16 panoramic shot looking directly into the deafening, horseshoe-shaped Devil's Throat gorge of Iguazu Falls surrounded by lush jungle.",
+    "core_traits": [
+      "Monumental semicircular system of 275 individual waterfalls spanning the Iguazu River between Argentina and Brazil",
+      "Spans an astonishing 2.7 kilometers (1.7 miles) in width, surrounded by subtropical Atlantic rainforest",
+      "Centered on the awe-inspiring 'Devil's Throat' (Garganta del Diablo), a U-shaped chasm dropping 82 meters",
+      "Upon seeing Iguazu, US First Lady Eleanor Roosevelt famously remarked: 'Poor Niagara!'"
+    ],
+    "distractor_pool": [
+      "Niagara Falls",
+      "Victoria Falls",
+      "Angel Falls",
+      "Grand Canyon",
+      "Amazon Rainforest"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Iguazu Falls has a higher water volume and is wider than Niagara Falls.",
+        "verdict": "fact",
+        "explanation": "Iguazu is nearly four times wider than Niagara and features 275 discrete drops, making it the most extensive waterfall system on Earth.",
+        "fun_fact": "Depending on the rainy season, the number of individual cascades can range between 150 and nearly 300 waterfalls."
+      },
+      {
+        "claim": "The waterfalls are located entirely within Brazilian sovereign territory.",
+        "verdict": "myth",
+        "explanation": "Approximately 80 percent of the waterfall falls within Argentina's national park, while Brazil offers the most expansive panoramic vistas across the river gorge.",
+        "fun_fact": "The falls are home to thousands of great dusky swifts, small birds that fly straight through the crushing waterfalls to roost safely on the wet rock face behind."
+      }
+    ],
+    "versus_candidates": [
+      "Niagara Falls",
+      "Victoria Falls",
+      "Angel Falls"
+    ]
+  },
+  {
+    "id": "ENT-COU-096",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Terracotta Army",
+    "language": "en",
+    "aliases": [
+      "Terracotta Warriors",
+      "Emperor Qin's Army",
+      "Bingmayong"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Atmospheric vertical 9:16 perspective looking down the excavated underground trench pits at hundreds of life-sized terracotta soldiers standing in formation.",
+    "core_traits": [
+      "Vast subterranean army of thousands of life-sized terracotta warrior sculptures buried near Xi'an in Shaanxi province, China",
+      "Created in the late 3rd century BC to guard the tomb of Qin Shi Huang, the first Emperor of a unified China, in the afterlife",
+      "Unearthed accidentally in 1974 by local farmers digging a water well",
+      "Comprises over 8,000 soldiers, 130 chariots with 520 horses, and 150 cavalry horses, each with unique facial features"
+    ],
+    "distractor_pool": [
+      "Great Wall of China",
+      "Forbidden City",
+      "Pyramids of Giza",
+      "Easter Island Moai",
+      "Angkor Wat"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Every single terracotta warrior was mass-produced using identical uniform facial molds.",
+        "verdict": "myth",
+        "explanation": "Master craftsmen individually sculpted each soldier's face, ears, hairstyle, and armor by hand, giving every warrior an entirely unique personality and expression.",
+        "fun_fact": "The figures were originally painted with vibrant colored lacquers including pink, purple, blue, and red, which flaked away upon modern exposure to air."
+      },
+      {
+        "claim": "The actual burial mound of Emperor Qin Shi Huang has never been opened or excavated by archaeologists.",
+        "verdict": "fact",
+        "explanation": "Fearing damage to unexcavated artifacts and respecting ancient accounts of toxic underground rivers of mercury, China has left the main tomb unsealed.",
+        "fun_fact": "Soil samples taken around the imperial tumulus mound indeed revealed unusually high concentrations of toxic mercury."
+      }
+    ],
+    "versus_candidates": [
+      "Great Wall of China",
+      "Pyramids of Giza",
+      "Easter Island Moai"
+    ]
+  },
+  {
+    "id": "ENT-COU-097",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Panama Canal",
+    "language": "en",
+    "aliases": [
+      "The Big Ditch",
+      "Canal de Panama"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Impressive vertical 9:16 view of a massive container ship squeezing through the Miraflores locks of the Panama Canal, flanked by lush tropical rainforest.",
+    "core_traits": [
+      "82-kilometer (51-mile) artificial waterway in Panama connecting the Atlantic Ocean to the Pacific Ocean across the Isthmus of Panama",
+      "Constructed initially by France and finished by the United States, officially opening for maritime trade in 1914",
+      "Uses a stepped gravity-fed lock system that lifts cargo ships 26 meters (85 feet) up to artificial Gatun Lake and down again",
+      "One of the greatest and most difficult engineering feats of the 20th century, shaving 8,000 nautical miles off voyages around Cape Horn"
+    ],
+    "distractor_pool": [
+      "Suez Canal",
+      "Golden Gate Bridge",
+      "Hoover Dam",
+      "Eiffel Tower",
+      "Empire State Building"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The Atlantic Ocean end of the canal is west of the Pacific Ocean end due to the S-shaped curvature of Panama.",
+        "verdict": "fact",
+        "explanation": "Because of the winding geography of the Isthmus of Panama, ships traveling from the Atlantic to the Pacific travel from northwest to southeast.",
+        "fun_fact": "Over 25,000 workers died from yellow fever, malaria, and landslides during the French and early American construction eras."
+      },
+      {
+        "claim": "Saltwater from the Atlantic and Pacific oceans mixes directly together inside the canal locks.",
+        "verdict": "myth",
+        "explanation": "The canal relies entirely on fresh rainwater stored in artificial Gatun Lake to operate the gravity-fed locks, meaning fresh water flushes outward to both oceans.",
+        "fun_fact": "The lowest toll ever paid was 36 cents by American adventurer Richard Halliburton, who swam the entire length of the canal in 1928."
+      }
+    ],
+    "versus_candidates": [
+      "Suez Canal",
+      "Golden Gate Bridge",
+      "Hoover Dam"
+    ]
+  },
+  {
+    "id": "ENT-COU-098",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Mont-Saint-Michel",
+    "language": "en",
+    "aliases": [
+      "The Wonder of the West",
+      "Le Mont-Saint-Michel",
+      "Saint Michael's Mount"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "Magical vertical 9:16 view of the fairytale tidal island abbey of Mont-Saint-Michel rising above shimmering sandbanks and incoming Atlantic tides at sunset.",
+    "core_traits": [
+      "Medieval abbey and fortified island commune situated in a vast tidal bay in Normandy, France",
+      "Perched dramatically atop a rocky granite outcrop topped by a Romanesque and Gothic abbey dedicated to Archangel Michael",
+      "Famous for experiencing some of the most extreme and rapid tidal variations in continental Europe",
+      "Surrounded entirely by treacherous tidal waters at high tide and exposed quicksand mudflats at low tide"
+    ],
+    "distractor_pool": [
+      "Neuschwanstein Castle",
+      "Notre-Dame Cathedral",
+      "Eiffel Tower",
+      "Chambord Castle",
+      "Windsor Castle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The ocean tide in Mont-Saint-Michel bay rushes in as fast as a galloping horse.",
+        "verdict": "myth",
+        "explanation": "While popularized by author Victor Hugo, the tide actually advances at about 3 to 4 miles per hour (walking speed), though its rapid rise across flat sand quickly traps unwary walkers.",
+        "fun_fact": "During the French Revolution, the historic abbey was turned into a high-security prison nicknamed the 'Bastille of the Sea'."
+      },
+      {
+        "claim": "The fortress island successfully resisted English sieges for over 30 years during the Hundred Years' War.",
+        "verdict": "fact",
+        "explanation": "Protected by its massive defensive walls, treacherous tides, and quicksand, a small garrison of French knights repelled repeated English military assaults.",
+        "fun_fact": "A golden statue of Saint Michael slaying a dragon crowns the soaring 91-meter-high abbey spire."
+      }
+    ],
+    "versus_candidates": [
+      "Neuschwanstein Castle",
+      "Notre-Dame Cathedral",
+      "Alhambra"
+    ]
+  },
+  {
+    "id": "ENT-COU-099",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Table Mountain",
+    "language": "en",
+    "aliases": [
+      "Hoerikwaggo",
+      "Tafelberg",
+      "Table Bay Mountain"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Majestic vertical 9:16 wide-angle view of the dramatic flat-topped sandstone cliff of Table Mountain draped in its white cloud 'tablecloth' above Cape Town.",
+    "core_traits": [
+      "Prominent flat-topped mountain forming a dramatic landmark overlooking the city of Cape Town in South Africa",
+      "Features an expansive level plateau approximately 3 kilometers (2 miles) from side to side, rising 1,086 meters above sea level",
+      "One of the oldest mountains on Earth, with sandstone base rocks estimated at over 300 million years old",
+      "Known for the spectacular orographic white cloud cascade that blankets its summit, famously called the 'tablecloth'"
+    ],
+    "distractor_pool": [
+      "Mount Kilimanjaro",
+      "Mount Fuji",
+      "Matterhorn",
+      "Mount Everest",
+      "Sugarloaf Mountain"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Table Mountain is among the most biologically diverse floral hotspots on the planet.",
+        "verdict": "fact",
+        "explanation": "It is home to over 2,200 plant species in the Cape Floral Region, containing more plant diversity than the entire United Kingdom.",
+        "fun_fact": "Local folklore attributes the cascading cloud 'tablecloth' to a pipe-smoking contest between a pirate named Van Hunks and the devil."
+      },
+      {
+        "claim": "The flat top of Table Mountain was created by ancient volcanic lava plateau eruptions.",
+        "verdict": "myth",
+        "explanation": "Table Mountain is not volcanic; its flat plateau was sculpted over hundreds of millions of years by wind and water erosion of hard horizontal sandstone layers.",
+        "fun_fact": "The modern cable car to the summit features a rotating floor that offers passengers a 360-degree panoramic view during the ascent."
+      }
+    ],
+    "versus_candidates": [
+      "Mount Kilimanjaro",
+      "Sugarloaf Mountain",
+      "Mount Fuji"
+    ]
+  },
+  {
+    "id": "ENT-COU-100",
+    "domain_id": "countries_nations",
+    "subtopic_id": "world_landmarks",
+    "name": "Brandenburg Gate",
+    "language": "en",
+    "aliases": [
+      "Brandenburger Tor",
+      "Berlin Peace Gate"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Solemn vertical 9:16 view of the neoclassical sandstone columns of the Brandenburg Gate crowned by the bronze Quadriga chariot at dusk in Berlin.",
+    "core_traits": [
+      "18th-century neoclassical sandstone triumphal monument located in Mitte, Berlin, Germany",
+      "Commissioned by Prussian King Frederick William II and designed by Carl Gotthard Langhans, completed in 1791",
+      "Crowned by the iconic bronze sculpture of the Quadriga, a chariot drawn by four horses driven by the goddess of peace (later victory)",
+      "Historic symbol of German division during the Cold War (standing inside the Berlin Wall buffer) and the ultimate emblem of German reunification"
+    ],
+    "distractor_pool": [
+      "Arc de Triomphe",
+      "Colosseum",
+      "Eiffel Tower",
+      "Reichstag Building",
+      "Neuschwanstein Castle"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Napoleon Bonaparte stole the bronze Quadriga chariot from the top of the gate and hauled it back to Paris.",
+        "verdict": "fact",
+        "explanation": "After conquering Prussia in 1806, Napoleon took the Quadriga to Paris as a war trophy, where it remained until Prussian troops reclaimed it in 1814 after Waterloo.",
+        "fun_fact": "US President Ronald Reagan delivered his famous 1987 speech in front of the gate, declaring: 'Mr. Gorbachev, tear down this wall!'"
+      },
+      {
+        "claim": "The Brandenburg Gate was completely demolished by Allied bombing in World War II and rebuilt from scratch.",
+        "verdict": "myth",
+        "explanation": "Although heavily damaged and pockmarked by artillery and bullets, the gate's columns survived the war and were carefully restored by East and West Berlin authorities.",
+        "fun_fact": "During the Cold War, the gate stood in no-man's land directly behind the Berlin Wall, inaccessible to citizens of both sides."
+      }
+    ],
+    "versus_candidates": [
+      "Arc de Triomphe",
+      "Eiffel Tower",
+      "Colosseum"
+    ]
+  }
+]

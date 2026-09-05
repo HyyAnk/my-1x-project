@@ -18,8 +18,6 @@ export function sanitizeTextForSpeech(text: string): string {
   // 1. Specific multi-letter or multi-dot abbreviations (MUST run before generic single-letter rule)
   // Note: Avoid trailing \b after a period '.' because '.' is not a word character.
   spoken = spoken
-    .replace(/\bv\.v\.(\.)?(?=\s|[.,!?;:]|$)/gi, "vân vân")
-    .replace(/\bv\.\.\.v\.\.\.(?=\s|[.,!?;:]|$)/gi, "vân vân")
     .replace(/\be\.g\.,?\s*/gi, "for example, ")
     .replace(/\bi\.e\.,?\s*/gi, "that is, ")
     .replace(/\betc\.(?=\s|[.,!?;:]|$)/gi, "et cetera")
@@ -37,17 +35,6 @@ export function sanitizeTextForSpeech(text: string): string {
     .replace(/\bMs\.\s*/gi, "Miss ")
     .replace(/\bProf\.\s*/gi, "Professor ")
     .replace(/\bSt\.\s+/gi, "Saint ");
-
-  // 3. Vietnamese titles, degrees, and abbreviations
-  spoken = spoken
-    .replace(/\bTS\.\s*/g, "Tiến sĩ ")
-    .replace(/\bThS\.\s*/g, "Thạc sĩ ")
-    .replace(/\bPGS\.\s*/g, "Phó Giáo sư ")
-    .replace(/\bGS\.\s*/g, "Giáo sư ")
-    .replace(/\bBS\.\s*/g, "Bác sĩ ")
-    .replace(/\bTP\.\s*HCM(?=\s|[.,!?;:]|$)/gi, "Thành phố Hồ Chí Minh")
-    .replace(/\bTP\.\s*Hà Nội(?=\s|[.,!?;:]|$)/gi, "Thành phố Hà Nội")
-    .replace(/\bTP\.\s*/g, "Thành phố ");
 
   // 4. Scientific & single-letter abbreviations (e.g. "T. rex" -> "T-rex", "E. coli" -> "E-coli", "C. elegans" -> "C-elegans")
   spoken = spoken.replace(/(?:^|(?<=[\s"'(]))([A-Za-z])\.\s*([a-zA-Z]+)\b/g, "$1-$2");
@@ -98,18 +85,6 @@ export const NO_SPLIT_AFTER_WORDS = new Set([
   "much",
   "way",
   "far",
-  // Vietnamese intensifiers & degree modifiers (MUST stay attached to adjective/adverb)
-  "quá",
-  "rất",
-  "cực",
-  "vô",
-  "hết",
-  "khá",
-  "hơi",
-  "thật",
-  "càng",
-  "quá_đỗi",
-  "thêm",
   // English determiners & articles (MUST stay attached to noun/modifier)
   "the",
   "a",
@@ -136,29 +111,6 @@ export const NO_SPLIT_AFTER_WORDS = new Set([
   "either",
   "another",
   "such",
-  // Vietnamese determiners & classifiers (MUST stay attached to noun/modifier)
-  "những",
-  "các",
-  "mỗi",
-  "từng",
-  "mọi",
-  "một",
-  "hai",
-  "ba",
-  "bốn",
-  "năm",
-  "con",
-  "cái",
-  "chiếc",
-  "loài",
-  "loại",
-  "người",
-  "vật",
-  "tấm",
-  "bức",
-  "cây",
-  "quả",
-  "trái",
   // English prepositions (MUST stay attached to complement noun phrase)
   "in",
   "on",
@@ -189,28 +141,6 @@ export const NO_SPLIT_AFTER_WORDS = new Set([
   "upon",
   "within",
   "towards",
-  // Vietnamese prepositions (MUST stay attached to complement noun phrase)
-  "ở",
-  "tại",
-  "trên",
-  "trong",
-  "dưới",
-  "cho",
-  "với",
-  "của",
-  "bởi",
-  "từ",
-  "đến",
-  "vào",
-  "qua",
-  "giữa",
-  "như",
-  "về",
-  "cùng",
-  "bằng",
-  "trước",
-  "sau",
-  "theo",
   // Auxiliaries & modal / tense markers
   "can",
   "could",
@@ -232,36 +162,9 @@ export const NO_SPLIT_AFTER_WORDS = new Set([
   "have",
   "has",
   "had",
-  "đã",
-  "sẽ",
-  "đang",
-  "vừa",
-  "mới",
-  "sắp",
-  "cần",
-  "phải",
-  "được",
-  "bị",
-  "hãy",
-  "chớ",
-  "đừng",
-  "nên",
 ]);
 
 export const NO_SPLIT_BEFORE_WORDS = new Set([
-  // Vietnamese post-modifiers & question/exclamation particles
-  "nhất",
-  "hơn",
-  "quá",
-  "lắm",
-  "nào",
-  "gì",
-  "sao",
-  "nhỉ",
-  "nhé",
-  "hả",
-  "chăng",
-  "thay",
   // English post-modifiers & particles
   "enough",
   "ago",
@@ -274,8 +177,8 @@ export const NO_SPLIT_BEFORE_WORDS = new Set([
  * Returns false if left word is an intensifier/article/preposition or right word is a bound particle.
  */
 export function canSplitBetweenWords(left: string, right: string): boolean {
-  const cleanLeft = left.replace(/^[^A-Za-zÀ-ỹ0-9]+|[^A-Za-zÀ-ỹ0-9]+$/g, "").toLowerCase();
-  const cleanRight = right.replace(/^[^A-Za-zÀ-ỹ0-9]+|[^A-Za-zÀ-ỹ0-9]+$/g, "").toLowerCase();
+  const cleanLeft = left.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, "").toLowerCase();
+  const cleanRight = right.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, "").toLowerCase();
   if (!cleanLeft || !cleanRight) return true;
   if (NO_SPLIT_AFTER_WORDS.has(cleanLeft)) return false;
   if (NO_SPLIT_BEFORE_WORDS.has(cleanRight)) return false;

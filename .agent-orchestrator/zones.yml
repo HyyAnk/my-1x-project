@@ -347,7 +347,7 @@ zones:
   - id: "generated-artifacts"
     name: "Generated Artifacts"
     risk: "high"
-    lockPolicy: "runtime"
+    lockPolicy: "shared-disjoint"
     description: "Generated media, channel data, caches, and render outputs."
     globs:
       - "channels/**"
@@ -369,6 +369,7 @@ zones:
     globs:
       - ".env"
       - ".env.example"
+      - ".gitignore"
       - "*.bat"
       - "!run-agent-monitor.bat"
       - "!stop-agent-monitor.bat"
@@ -394,6 +395,7 @@ zones:
     description: "Coordination metadata, commands, tests, durable docs, and agent instructions."
     globs:
       - ".agent-orchestrator/**"
+      - ".agents/**"
       - "scripts/agent-*.mjs"
       - "scripts/agent-*.cmd"
       - "scripts/coordination/**"

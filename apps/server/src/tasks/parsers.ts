@@ -63,6 +63,38 @@ export function parseTopicCandidates(output: string, channelId: string, topicHin
     const candidate = item as Record<string, unknown>;
     const rawThemeHint = candidate.theme_hint ? String(candidate.theme_hint).trim() : undefined;
     const themeHint = rawThemeHint || (topicHint && index < 2 ? topicHint : undefined);
+    const archetypes = [
+      "deep_trivia",
+      "visual_spotting",
+      "verdict_fact_myth",
+      "versus_faceoff",
+      "visual_identification",
+      "speed_blitz",
+      "mystery_reveal",
+      "clue_deduction",
+    ] as const;
+    const rawArchetype = candidate.archetype ? String(candidate.archetype).trim().toLowerCase() : undefined;
+    const archetype = rawArchetype && archetypes.includes(rawArchetype as (typeof archetypes)[number])
+      ? (rawArchetype as (typeof archetypes)[number])
+      : undefined;
+
+    const layouts = [
+      "media_left_choices_right",
+      "visual_choices_three",
+      "visual_choices_three_pure",
+      "split_versus_two",
+      "verdict_true_false",
+      "full_stack_list",
+      "mystery_reveal",
+      "clue_deduction",
+    ] as const;
+    const rawLayout = candidate.suggested_layout || candidate.target_layout
+      ? String(candidate.suggested_layout || candidate.target_layout).trim().toLowerCase()
+      : undefined;
+    const suggestedLayout = rawLayout && layouts.includes(rawLayout as (typeof layouts)[number])
+      ? (rawLayout as (typeof layouts)[number])
+      : undefined;
+
     return {
       topic_id: makeId(`topic${index + 1}`),
       channel_id: channelId,
@@ -81,6 +113,8 @@ export function parseTopicCandidates(output: string, channelId: string, topicHin
         ? (String(candidate.age_band) as (typeof ages)[number])
         : "7-9",
       visual_style: "mixed" as const,
+      ...(archetype ? { archetype } : {}),
+      ...(suggestedLayout ? { suggested_layout: suggestedLayout } : {}),
       ...(themeHint ? { theme_hint: themeHint } : {}),
     };
   });

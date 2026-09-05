@@ -15,6 +15,7 @@ describe("stage question layouts", () => {
       "verdict_true_false",
       "full_stack_list",
       "mystery_reveal",
+      "clue_deduction",
     ]);
     expect(ids.sort()).toEqual(QUIZ_LAYOUTS.map((layout) => layout.id).sort());
   });
@@ -27,5 +28,6 @@ describe("stage question layouts", () => {
     expect(getStageQuestionLayoutDefinition("verdict_true_false").preview).toBe("media-left");
     expect(getStageQuestionLayoutDefinition("full_stack_list").preview).toBe("full-stack");
     expect(getStageQuestionLayoutDefinition("mystery_reveal").preview).toBe("media-left");
+    expect(getStageQuestionLayoutDefinition("clue_deduction").preview).toBe("media-left");
   });
 });

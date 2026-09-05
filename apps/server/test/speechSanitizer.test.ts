@@ -6,9 +6,9 @@ import { splitAtNarrativeBoundaries } from "../src/production.js";
 describe("Speech Sanitizer & Text Normalization", () => {
   describe("sanitizeTextForSpeech", () => {
     it("normalizes single-letter scientific abbreviations like T. rex and E. coli into hyphenated spoken words", () => {
-      expect(sanitizeTextForSpeech("Khủng long T. rex là loài săn mồi đỉnh cao.")).toBe("Khủng long T-rex là loài săn mồi đỉnh cao.");
+      expect(sanitizeTextForSpeech("The dinosaur T. rex was a top predator.")).toBe("The dinosaur T-rex was a top predator.");
       expect(sanitizeTextForSpeech("T. Rex and E. coli and C. elegans are studied.")).toBe("T-Rex and E-coli and C-elegans are studied.");
-      expect(sanitizeTextForSpeech("Loài T. rex có lực cắn rất mạnh.")).toBe("Loài T-rex có lực cắn rất mạnh.");
+      expect(sanitizeTextForSpeech("The species T. rex had a powerful bite.")).toBe("The species T-rex had a powerful bite.");
     });
 
     it("normalizes English titles, honorifics, and abbreviations", () => {
@@ -22,32 +22,24 @@ describe("Speech Sanitizer & Text Normalization", () => {
       expect(sanitizeTextForSpeech("Episode No. 1 is in the U.S. and U.K. today.")).toBe("Episode Number 1 is in the US and UK today.");
     });
 
-    it("normalizes Vietnamese academic titles, degrees, and abbreviations", () => {
-      expect(sanitizeTextForSpeech("Báo cáo của TS. Hùng và ThS. Lan.")).toBe("Báo cáo của Tiến sĩ Hùng và Thạc sĩ Lan.");
-      expect(sanitizeTextForSpeech("Kính gửi PGS. TS. Nguyễn Văn A và GS. Lê.")).toBe(
-        "Kính gửi Phó Giáo sư Tiến sĩ Nguyễn Văn A và Giáo sư Lê.",
-      );
-      expect(sanitizeTextForSpeech("BS. Minh công tác tại TP. HCM.")).toBe("Bác sĩ Minh công tác tại Thành phố Hồ Chí Minh.");
-      expect(sanitizeTextForSpeech("Nhiều loại quả như cam, quýt, bưởi v.v.")).toBe("Nhiều loại quả như cam, quýt, bưởi vân vân");
-      expect(sanitizeTextForSpeech("Danh sách gồm A, B, C v...v...")).toBe("Danh sách gồm A, B, C vân vân");
-    });
-
     it("preserves numerical decimals without breaking numbers", () => {
-      expect(sanitizeTextForSpeech("Số Pi xấp xỉ 3.14 và tốc độ tăng 2.5%")).toBe("Số Pi xấp xỉ 3.14 và tốc độ tăng 2.5%");
+      expect(sanitizeTextForSpeech("Pi is approximately 3.14 with a growth rate of 2.5%")).toBe(
+        "Pi is approximately 3.14 with a growth rate of 2.5%",
+      );
     });
   });
 
   describe("splitSmartPunctuationPhrases", () => {
     it("does not split phrases at single-letter abbreviations or dinosaur names", () => {
-      const input = "Khủng long T. rex rất to lớn. Chúng sống ở thời kỳ Phấn trắng.";
+      const input = "The dinosaur T. rex was massive. It lived in the Cretaceous period.";
       const phrases = splitSmartPunctuationPhrases(input);
       expect(phrases).toHaveLength(2);
-      expect(phrases[0]).toBe("Khủng long T-rex rất to lớn.");
-      expect(phrases[1]).toBe("Chúng sống ở thời kỳ Phấn trắng.");
+      expect(phrases[0]).toBe("The dinosaur T-rex was massive.");
+      expect(phrases[1]).toBe("It lived in the Cretaceous period.");
     });
 
     it("does not split on titles like Dr. or decimal numbers", () => {
-      const input = "Hôm nay Dr. Strange có bài giảng lúc 3.14 giờ. Bạn có tham gia không?";
+      const input = "Today Dr. Strange has a lecture at 3.14 pm. Will you attend?";
       const phrases = splitSmartPunctuationPhrases(input);
       expect(phrases).toHaveLength(2);
       expect(phrases[0]).toContain("Doctor Strange");
@@ -57,16 +49,16 @@ describe("Speech Sanitizer & Text Normalization", () => {
 
   describe("voicePlan integration", () => {
     it("generates performance phrases without fragmenting T. rex into isolated single letter segments", () => {
-      const phrases = performancePhrases("T. rex là loài khủng long bạo chúa, đúng không?", "question");
+      const phrases = performancePhrases("T. rex was a tyrant lizard, right?", "question");
       const phraseTexts = phrases.map((p) => p.text);
       expect(phraseTexts.some((t) => t.includes("T-rex"))).toBe(true);
       expect(phraseTexts.every((t) => t !== "T.")).toBe(true);
     });
 
     it("splitPunctuationPhrases safely handles multiple abbreviations", () => {
-      const result = splitPunctuationPhrases("Xem TS. Nam và Dr. Jane phân tích hóa thạch T. rex! Thật kỳ diệu!");
+      const result = splitPunctuationPhrases("Watch Dr. Watson and Dr. Jane examine the T. rex fossil! Absolutely fascinating!");
       expect(result).toHaveLength(2);
-      expect(result[0]).toContain("Tiến sĩ Nam");
+      expect(result[0]).toContain("Doctor Watson");
       expect(result[0]).toContain("Doctor Jane");
       expect(result[0]).toContain("T-rex");
     });
@@ -74,7 +66,7 @@ describe("Speech Sanitizer & Text Normalization", () => {
 
   describe("production narration splitting integration", () => {
     it("splitAtNarrativeBoundaries does not break on T. rex", () => {
-      const text = "Khủng long T. rex là một trong những kẻ săn mồi đáng sợ nhất lịch sử Trái Đất.";
+      const text = "The dinosaur T. rex was one of the most formidable predators in Earth history.";
       const chunks = splitAtNarrativeBoundaries(text, 50);
       expect(chunks).toHaveLength(1);
       expect(chunks[0]).toContain("T-rex");
@@ -82,21 +74,17 @@ describe("Speech Sanitizer & Text Normalization", () => {
   });
 
   describe("canSplitBetweenWords & Collocation Protection", () => {
-    it("disallows splitting after intensifiers like too, very, so, quá, rất", () => {
+    it("disallows splitting after intensifiers like too, very, so", () => {
       expect(canSplitBetweenWords("too", "high")).toBe(false);
       expect(canSplitBetweenWords("very", "fast")).toBe(false);
       expect(canSplitBetweenWords("so", "loud")).toBe(false);
-      expect(canSplitBetweenWords("quá", "cao")).toBe(false);
-      expect(canSplitBetweenWords("rất", "nhanh")).toBe(false);
     });
 
     it("disallows splitting after articles, determiners and prepositions", () => {
       expect(canSplitBetweenWords("the", "moon")).toBe(false);
       expect(canSplitBetweenWords("a", "tiger")).toBe(false);
-      expect(canSplitBetweenWords("những", "ngôi")).toBe(false);
       expect(canSplitBetweenWords("for", "humans")).toBe(false);
       expect(canSplitBetweenWords("in", "the")).toBe(false);
-      expect(canSplitBetweenWords("trong", "rừng")).toBe(false);
     });
 
     it("keeps short questions with too high intact without mid-clause splitting", () => {
@@ -105,10 +93,10 @@ describe("Speech Sanitizer & Text Normalization", () => {
       expect(phrases[0]?.text).toBe("Dogs hear sounds too high for humans.");
     });
 
-    it("keeps short Vietnamese and English questions intact without breaking collocations", () => {
-      const viPhrases = performancePhrases("Loài báo săn chạy rất nhanh trên đồng cỏ.", "question");
-      expect(viPhrases).toHaveLength(1);
-      expect(viPhrases[0]?.text).toBe("Loài báo săn chạy rất nhanh trên đồng cỏ.");
+    it("keeps short questions intact without breaking collocations", () => {
+      const phrases = performancePhrases("Cheetahs run very fast across open grasslands.", "question");
+      expect(phrases).toHaveLength(1);
+      expect(phrases[0]?.text).toBe("Cheetahs run very fast across open grasslands.");
     });
   });
 });

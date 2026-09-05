@@ -7,3 +7,4 @@ export * from "./config.js";
 export * from "./thumbnail.js";
 export * from "./videoDescription.js";
 export * from "./analytics/index.js";
+export * from "./questionBank.js";

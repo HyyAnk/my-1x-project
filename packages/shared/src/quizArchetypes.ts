@@ -8,7 +8,8 @@ export type QuizGameplayArchetypeId =
   | "versus_faceoff"
   | "visual_identification"
   | "speed_blitz"
-  | "mystery_reveal";
+  | "mystery_reveal"
+  | "clue_deduction";
 
 export interface QuizGameplayArchetypeBlueprint {
   id: QuizGameplayArchetypeId;
@@ -23,63 +24,75 @@ export const QUIZ_GAMEPLAY_ARCHETYPES: readonly QuizGameplayArchetypeBlueprint[]
   {
     id: "deep_trivia",
     name: "Deep Trivia",
-    description: "Câu đố kiến thức hoặc câu chuyện chiều sâu với 1 hình ảnh chủ thể nổi bật bên trái và 3 phương án lựa chọn bên phải.",
+    description: "In-depth knowledge challenge featuring a prominent subject illustration on the left and 3 answer choices on the right.",
     defaultFormat: "multiple_choice",
     targetLayout: "media_left_choices_right",
-    creativeAngles: ["Bí mật lịch sử", "Hiện tượng tự nhiên kỳ thú", "Khám phá thế giới", "Hồ sơ nhân vật & địa danh"],
+    creativeAngles: ["Historical Secrets", "Natural Phenomena", "World Exploration", "Famous Figures & Landmarks"],
   },
   {
     id: "visual_spotting",
-    name: "Visual Spotting (Soi Tranh)",
-    description: "Câu đố thử thách thị giác, tìm hình khác biệt hoặc nhận diện chi tiết giả lập với 3 ảnh phóng to không chữ.",
+    name: "Visual Spotting",
+    description: "Visual spotting challenge finding anomalies, differences, or synthetic impostors across 3 full-bleed images without text.",
     defaultFormat: "odd_one_out",
     targetLayout: "visual_choices_three_pure",
-    creativeAngles: ["Tìm điểm bất thường", "Thật vs AI Generator", "Soi tranh tìm chi tiết sai", "Ai là hung thủ qua hình ảnh"],
+    creativeAngles: ["Find the Anomaly", "Real vs AI Generated", "Spot the Flaw", "Identify the Impostor"],
   },
   {
     id: "verdict_fact_myth",
-    name: "Fact or Myth (Thật hay Giả)",
-    description: "Câu đố phán xét Đúng/Sai với 1 hình ảnh minh họa chủ đề lớn và 2 nút phán xét ĐÚNG - SAI khổng lồ.",
+    name: "Fact or Myth",
+    description: "Verdict evaluation question testing True vs False with a cinematic background visual and 2 prominent TRUE / FALSE buttons.",
     defaultFormat: "true_false",
     targetLayout: "verdict_true_false",
-    creativeAngles: ["Kiểm chứng tin đồn & lầm tưởng", "Sự thật bất ngờ về cơ thể người", "Huyền thoại vs Thực tế", "Luật lệ kỳ lạ thế giới"],
+    creativeAngles: ["Common Myths & Debunking", "Human Body Surprises", "Myth vs Reality", "Strange Laws Around the World"],
   },
   {
     id: "versus_faceoff",
-    name: "Versus Face-off (Đối Đầu 1v1)",
-    description: "So kèo đối đầu giữa 2 thực thể hoặc nhân vật với 2 cột so sánh cân bằng A vs B.",
+    name: "Versus Face-off (1v1)",
+    description: "Head-to-head comparison between two entities or characters across a balanced split-screen layout.",
     defaultFormat: "multiple_choice",
     targetLayout: "split_versus_two",
-    creativeAngles: ["Ai mạnh hơn / Ai nhanh hơn", "So sánh kích thước & sức mạnh", "Chọn phe / Bạn thuộc team nào", "Đối đầu lịch sử"],
+    creativeAngles: ["Who is Faster / Stronger", "Scale & Power Comparison", "Pick Your Side", "Historic Showdowns"],
   },
   {
     id: "visual_identification",
-    name: "Visual Identification (Nhận Diện Hình Ảnh)",
-    description: "Nhận diện sự vật, đồ vật hoặc sinh vật thông qua 3 thẻ ảnh có nhãn định danh cụ thể.",
+    name: "Visual Identification",
+    description: "Identification challenge recognizing objects, creatures, or landmarks across 3 labeled visual cards.",
     defaultFormat: "multiple_choice",
     targetLayout: "visual_choices_three",
-    creativeAngles: ["Nhìn bóng đoán vật", "Đoán tên loài vật qua bộ phận", "Nhận diện cờ quốc gia / biểu tượng", "Ai là người sở hữu món đồ"],
+    creativeAngles: ["Silhouette Identification", "Macro Zoom Guessing", "Country Flags & Symbols", "Item Ownership"],
   },
   {
     id: "speed_blitz",
-    name: "Speed Blitz (Phản Xạ Nhanh)",
-    description: "Câu đố mẹo, toán tư duy hoặc phản xạ ngôn ngữ dạng text thuần tập trung, tối đa tốc độ.",
+    name: "Speed Blitz (Rapid Reflex)",
+    description: "Fast-paced rapid reflex riddles, mental math, or wordplay formatted in a clean text-focused layout.",
     defaultFormat: "multiple_choice",
     targetLayout: "full_stack_list",
-    creativeAngles: ["Câu đố mẹo dân gian", "Toán đố logic nhanh", "Tìm từ đồng nghĩa / chơi chữ", "Thử tài tính nhẩm"],
+    creativeAngles: ["Tricky Brainteasers", "Rapid Logic Math", "Wordplay & Puns", "Mental Math Blitz"],
   },
   {
     id: "mystery_reveal",
-    name: "Mystery Reveal (Đoán Mở & Lật Mở Kết Quả)",
-    description: "Câu đố bí ẩn thị giác (nhìn bóng đoán vật, manh mối tìm thủ phạm, dụng cụ đoán nghề) với Hero Stage khổng lồ chuyển đổi trạng thái khi reveal.",
+    name: "Mystery Reveal (Silhouette)",
+    description: "Visual mystery challenge obscured by dark silhouette or pixelation, revealed via laser scanner animation.",
     defaultFormat: "image_guess",
     targetLayout: "mystery_reveal",
     creativeAngles: [
-      "Who's that character / Silhouette bóng đen",
-      "Chiếc hang này của con gì / Manh mối dấu vết",
-      "Dụng cụ này của nghề nghiệp nào",
-      "Soi kính hiển vi / Cận cảnh đoán vật",
-      "Biến đổi thời gian / Quá khứ vs Hiện tại",
+      "Who's That Character / Silhouette",
+      "Animal Silhouette Guess",
+      "Macro / Microscopic Guessing",
+      "Hidden Shape Identification",
+    ],
+  },
+  {
+    id: "clue_deduction",
+    name: "Clue Deduction (Detective)",
+    description: "Detective deduction challenge connecting clue image A to surprise reveal answer B.",
+    defaultFormat: "image_guess",
+    targetLayout: "clue_deduction",
+    creativeAngles: [
+      "Identify Profession by Tool",
+      "Identify Country by Dish or Landmark",
+      "Identify Creature by Track or Habitat",
+      "Identify Historical Figure by Artifact",
     ],
   },
 ] as const;

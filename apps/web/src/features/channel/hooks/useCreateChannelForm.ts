@@ -61,7 +61,7 @@ export function useCreateChannelForm({ onCreated, onError }: UseCreateChannelFor
         description: form.description.trim(),
         target_audience: form.target_audience.trim(),
         language: form.language.trim() || "English",
-        country: form.country || "AU",
+        country: form.country || "US",
         market: "",
         dna_mode: "ai",
         dna_content: "",

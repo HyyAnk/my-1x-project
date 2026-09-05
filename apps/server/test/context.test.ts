@@ -86,7 +86,11 @@ describe("ContextEngine", () => {
     expect(context.prompt).toContain("The remaining 3 candidates should be diverse");
     expect(context.prompt).toContain("GAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY");
     expect(context.prompt).toContain("Slot 1 (Deep Trivia)");
+    expect(context.prompt).toContain("Slot 2 (Silhouette / Mystery Reveal)");
     expect(context.prompt).toContain("Slot 3 (Fact or Myth)");
+    expect(context.prompt).toContain("Slot 4 (Clue Deduction A -> B)");
+    expect(context.prompt).toContain("mystery_reveal");
+    expect(context.prompt).toContain("clue_deduction");
   });
 
   it("uses the Quiz Engine DNA template for AI DNA generation", async () => {

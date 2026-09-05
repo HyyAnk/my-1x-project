@@ -8,6 +8,7 @@ import {
   QuestionHistoryCheckResultSchema,
   VideoDescriptionSchema,
   VoicePlanSchema,
+  QuizStageTimingsSchema,
   type DirectorPlan,
   type QuizAssessment,
   type QuizAssetPlan,
@@ -17,6 +18,7 @@ import {
   type QuestionHistoryCheckResult,
   type VideoDescription,
   type VoicePlan,
+  type QuizStageTimings,
 } from "@studio/shared";
 import type { RepositoryRuntime } from "../runtime.js";
 
@@ -142,4 +144,21 @@ export async function writeVideoDescription(
     // Non-critical fallback if episode directory lookup fails
   }
   return artifactPath;
+}
+
+export async function readQuizStageTimings(
+  this: RepositoryRuntime,
+  channelId: string,
+  episodeId: string,
+): Promise<QuizStageTimings | null> {
+  return this.readQuizArtifact(channelId, episodeId, "stage-timings.json", QuizStageTimingsSchema);
+}
+
+export async function writeQuizStageTimings(
+  this: RepositoryRuntime,
+  channelId: string,
+  episodeId: string,
+  timings: QuizStageTimings,
+): Promise<string> {
+  return this.writeQuizArtifact(channelId, episodeId, "stage-timings.json", QuizStageTimingsSchema.parse(timings));
 }

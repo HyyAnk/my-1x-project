@@ -186,8 +186,8 @@ describe("Quiz Video Description Engine (Step 2)", () => {
     });
 
     it("formats scoring range strings properly", () => {
-      expect(formatScoringRange(1, 3, "Vietnamese")).toBe("1–3 câu");
-      expect(formatScoringRange(5, 5, "Vietnamese")).toBe("5 câu");
+      expect(formatScoringRange(1, 3)).toBe("1–3 pts");
+      expect(formatScoringRange(5, 5)).toBe("5 pts");
       expect(formatScoringRange(1, 3, "English")).toBe("1–3 pts");
       expect(formatScoringRange(5, 5, "English")).toBe("5 pts");
     });
@@ -264,11 +264,11 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       });
 
       expect(result.fullText).toContain("Khám phá 8 kỳ quan thế giới cổ đại!");
-      expect(result.fullText).toContain("🏆 BẢNG XẾP HẠNG ĐIỂM SỐ:");
+      expect(result.fullText).toContain("🏆 SCORING TIERS:");
       expect(result.fullText).toContain("• 1–2 câu: Mới nhập môn");
       expect(result.fullText).toContain("• 6–8 câu: Bậc thầy kỳ quan");
       expect(result.fullText).toContain("👉 Bạn trả lời đúng bao nhiêu câu? Hãy bình luận kết quả nhé!");
-      expect(result.fullText).toContain("📂 Chủ đề Playlist: Kỳ Quan & Lịch Sử");
+      expect(result.fullText).toContain("📂 Playlist Category: Kỳ Quan & Lịch Sử");
       expect(result.fullText).toContain("#quiz #kyquan #lichsu #trivia");
       expect(result.charCount).toBeGreaterThan(100);
       expect(result.charCount).toBeLessThan(900);
@@ -333,7 +333,7 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       expect(description.question_count).toBe(2);
       expect(description.scoring_cta.expert).toContain("Bậc thầy kiến thức");
       expect(description.hashtags).toContain("#quiz");
-      expect(description.full_description_text).toContain("🏆 BẢNG XẾP HẠNG ĐIỂM SỐ:");
+      expect(description.full_description_text).toContain("🏆 SCORING TIERS:");
       expect(description.char_count).toBeGreaterThan(50);
     });
 
@@ -354,7 +354,7 @@ describe("Quiz Video Description Engine (Step 2)", () => {
 
       expect(fallback.topic_category).toBe("Kỳ Quan Thế Giới Cổ Đại");
       expect(fallback.question_count).toBe(2);
-      expect(fallback.scoring_cta.beginner).toContain("Mới bắt đầu");
+      expect(fallback.scoring_cta.beginner).toContain("Beginner");
       expect(fallback.full_description_text).toContain("Kỳ Quan Thế Giới Cổ Đại");
     });
 

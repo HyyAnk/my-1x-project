@@ -148,4 +148,59 @@ describe("QuizV2Panel Component", () => {
       screen.getByText(/Current: Quiz Content · Generating structured questions with facts/),
     ).toBeDefined();
   });
+
+  it("renders stage durations and parallel execution summary", () => {
+    const stateWithTimings: QuizV2State = {
+      ...mockState,
+      timings: {
+        schema_version: 1,
+        stages: {
+          quizContent: {
+            duration_seconds: 12,
+            started_at: "2026-09-04T06:00:00.000Z",
+            completed_at: "2026-09-04T06:00:12.000Z",
+          },
+          assets: {
+            duration_seconds: 14,
+            parallel_group: "assets_voice",
+            parallel_total_seconds: 23,
+          },
+          voice: {
+            duration_seconds: 23,
+            parallel_group: "assets_voice",
+            parallel_total_seconds: 23,
+          },
+        },
+        parallel_groups: {
+          assets_voice: {
+            stages: ["assets", "voice"],
+            duration_seconds: 23,
+          },
+        },
+      },
+    };
+
+    render(
+      <QuizV2Panel
+        state={stateWithTimings}
+        readiness={defaultReadiness}
+        pipelineTask={null}
+        tasks={[]}
+        questionCount={1}
+      />,
+    );
+
+    // Parallel summary tag
+    expect(screen.getByText(/Parallel \(Visual Assets & Voice\):/)).toBeDefined();
+    expect(screen.getByText(/23s total/)).toBeDefined();
+
+    // Stage duration badges
+    expect(screen.getByText(/⏱ 12s/)).toBeDefined();
+    expect(screen.getByText(/⏱ 14s/)).toBeDefined();
+    expect(screen.getByText(/⏱ 23s/)).toBeDefined();
+
+    // Parallel badges inside parallel stage items
+    const parallelBadges = screen.getAllByText("//23s");
+    expect(parallelBadges.length).toBeGreaterThanOrEqual(2);
+  });
 });

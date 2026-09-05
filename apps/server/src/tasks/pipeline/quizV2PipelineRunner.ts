@@ -78,15 +78,66 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
   };
   let artifacts = await readQuizArtifacts(input);
   const episode = await this.repository.getEpisode(task.channel_id, task.episode_id!);
-  if (!artifacts.quiz) {
-    await this.update(task.task_id, { progress_message: "Quiz · locking question facts", progress_percent: 26 });
-    await generateQuiz(input);
-    artifacts = await readQuizArtifacts(input);
-  }
-  if (!artifacts.director_plan) {
-    await this.update(task.task_id, { progress_message: "Quiz · directing question presentation", progress_percent: 28 });
-    await generateDirector(input);
-    artifacts = await readQuizArtifacts(input);
+
+  const timings = (await this.repository.readQuizStageTimings?.(task.channel_id, task.episode_id!)) ?? {
+    schema_version: 1,
+    episode_id: task.episode_id!,
+    stages: {},
+    parallel_groups: {},
+  };
+  if (!timings.stages) timings.stages = {};
+  if (!timings.parallel_groups) timings.parallel_groups = {};
+
+  const recordStageTiming = async (stageKey: string, startMs: number, completed: boolean = true) => {
+    const durationSeconds = Math.max(0, Math.round((Date.now() - startMs) / 1000));
+    timings.stages![stageKey] = {
+      started_at: new Date(startMs).toISOString(),
+      completed_at: completed ? new Date().toISOString() : null,
+      duration_seconds: durationSeconds,
+    };
+    timings.updated_at = new Date().toISOString();
+    await this.repository.writeQuizStageTimings?.(task.channel_id, task.episode_id!, timings)?.catch?.(() => {});
+  };
+
+  const recordParallelTiming = async (
+    groupKey: string,
+    parallelStartMs: number,
+    stages: Array<{ key: string; startMs: number; endMs: number }>,
+  ) => {
+    const parallelEndMs = Date.now();
+    const parallelTotalSeconds = Math.max(0, Math.round((parallelEndMs - parallelStartMs) / 1000));
+    for (const item of stages) {
+      if (!timings.stages) timings.stages = {};
+      timings.stages[item.key] = {
+        started_at: new Date(item.startMs).toISOString(),
+        completed_at: new Date(item.endMs).toISOString(),
+        duration_seconds: Math.max(0, Math.round((item.endMs - item.startMs) / 1000)),
+        parallel_group: groupKey,
+        parallel_total_seconds: parallelTotalSeconds,
+      };
+    }
+    if (!timings.parallel_groups) timings.parallel_groups = {};
+    timings.parallel_groups[groupKey] = {
+      stages: stages.map((s) => s.key),
+      duration_seconds: parallelTotalSeconds,
+    };
+    timings.updated_at = new Date().toISOString();
+    await this.repository.writeQuizStageTimings(task.channel_id, task.episode_id!, timings).catch(() => {});
+  };
+
+  if (!artifacts.quiz || !artifacts.director_plan) {
+    const quizContentStart = Date.now();
+    if (!artifacts.quiz) {
+      await this.update(task.task_id, { progress_message: "Quiz · locking question facts", progress_percent: 26 });
+      await generateQuiz(input);
+      artifacts = await readQuizArtifacts(input);
+    }
+    if (!artifacts.director_plan) {
+      await this.update(task.task_id, { progress_message: "Quiz · directing question presentation", progress_percent: 28 });
+      await generateDirector(input);
+      artifacts = await readQuizArtifacts(input);
+    }
+    await recordStageTiming("quizContent", quizContentStart);
   }
   if (!artifacts.asset_plan) {
     await this.update(task.task_id, { progress_message: "Quiz · planning semantic assets", progress_percent: 30 });
@@ -95,8 +146,10 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
   }
 
   if (!artifacts.description) {
+    const descStart = Date.now();
     try {
       await generateEpisodeDescription(input);
+      await recordStageTiming("description", descStart);
     } catch (error) {
       this.logger.warn(`Auto video description generation non-blocking skip: ${(error as Error).message}`, {
         profileId: task.channel_id,
@@ -137,19 +190,45 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
       progress_message: "Quiz · resolving assets and voice in parallel",
       progress_percent: 30,
     });
-    await Promise.all([resolveAssets(input), generateVoice(input)]);
+    const parallelStart = Date.now();
+    let assetsStart = parallelStart;
+    let assetsEnd = parallelStart;
+    let voiceStart = parallelStart;
+    let voiceEnd = parallelStart;
+
+    await Promise.all([
+      (async () => {
+        assetsStart = Date.now();
+        await resolveAssets(input);
+        assetsEnd = Date.now();
+      })(),
+      (async () => {
+        voiceStart = Date.now();
+        await generateVoice(input);
+        voiceEnd = Date.now();
+      })(),
+    ]);
     isParallelMode = false;
+    await recordParallelTiming("assets_voice", parallelStart, [
+      { key: "assets", startMs: assetsStart, endMs: assetsEnd },
+      { key: "voice", startMs: voiceStart, endMs: voiceEnd },
+    ]);
     artifacts = await readQuizArtifacts(input);
   } else if (needsAssets) {
+    const assetsStart = Date.now();
     await this.update(task.task_id, { progress_message: "Quiz · resolving semantic assets", progress_percent: 30 });
     await resolveAssets(input);
+    await recordStageTiming("assets", assetsStart);
     artifacts = await readQuizArtifacts(input);
   } else if (needsVoice) {
+    const voiceStart = Date.now();
     await this.update(task.task_id, { progress_message: "Quiz · generating per-question voice", progress_percent: 44 });
     await generateVoice(input);
+    await recordStageTiming("voice", voiceStart);
     artifacts = await readQuizArtifacts(input);
   }
 
+  const qaGatesStart = Date.now();
   if (!artifacts.timeline) {
     await this.update(task.task_id, { progress_message: "Quiz · compiling deterministic timeline", progress_percent: 56 });
     await compileTimeline(input);
@@ -275,8 +354,11 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
     throw new RepositoryError(`Quiz V2 QA blocked production: ${blocker.message}`, "QUIZ_QA_BLOCKED");
   }
 
+  await recordStageTiming("qaGates", qaGatesStart);
+
   // Auto-generate Thumbnail once all pipeline artifacts (assets, voice, timeline, QA) are ready
   try {
+    const thumbStart = Date.now();
     await this.update(task.task_id, { progress_message: "Quiz · generating high-CTR thumbnail", progress_percent: 54 });
     await generateEpisodeThumbnail(this.repository, {
       channelId: task.channel_id,
@@ -292,6 +374,7 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
           }
         : undefined,
     });
+    await recordStageTiming("thumbnail", thumbStart);
   } catch (error) {
     this.logger.warn(`Auto thumbnail generation had an issue: ${(error as Error).message}`, {
       profileId: task.channel_id,

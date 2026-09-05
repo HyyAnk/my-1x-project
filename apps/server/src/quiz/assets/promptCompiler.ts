@@ -90,9 +90,11 @@ export function compileQuizAssetPrompt(
   const contract = QUIZ_STYLE_CONTRACTS[visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
   const rules = purposeRules(request.purpose);
 
-  const backgroundGuidance = request.purpose === "hero_question_image" || request.purpose === "question_illustration"
-    ? `Background: ${contract.heroBackground}.`
-    : `Background: ${contract.optionBackground}.`;
+  const backgroundGuidance = request.transparent_background
+    ? "Background: isolated centered subject on a pure solid white studio backdrop, crystal clear silhouette boundaries, high edge contrast, zero background clutter, zero shadows on backdrop, perfectly suited for clean background matting."
+    : request.purpose === "hero_question_image" || request.purpose === "question_illustration"
+      ? `Background: ${contract.heroBackground}.`
+      : `Background: ${contract.optionBackground}.`;
 
   const soloHeroContract = !consistencyGroup && (request.purpose === "hero_question_image" || request.purpose === "question_illustration") ? [
     `Solo hero art contract: ${contract.renderingMedium} with ${contract.edgeTreatment} and one clear focal subject.`,

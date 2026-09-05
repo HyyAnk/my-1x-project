@@ -6,6 +6,7 @@ import { mascotsEn } from "./locales/en/mascots";
 import { tasksEn } from "./locales/en/tasks";
 import { settingsEn } from "./locales/en/settings";
 import { sandboxEn } from "./locales/en/sandbox";
+import { questionBankEn } from "./locales/en/questionBank";
 
 export const en = {
   ...commonEn,
@@ -16,4 +17,5 @@ export const en = {
   ...tasksEn,
   ...settingsEn,
   ...sandboxEn,
+  ...questionBankEn,
 };

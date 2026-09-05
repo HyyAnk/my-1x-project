@@ -26,10 +26,9 @@ function getAvatarGradient(name: string): string {
 }
 
 export function CreateChannelLivePreview({ form }: CreateChannelLivePreviewProps) {
-  const { language } = useTranslation();
   const countryOpt = getCountryOption(form.country);
   const countryName = getCountryName(form.country);
-  const displayName = form.name.trim() || (language === "vi" ? "Tên Kênh Mới" : "New Channel");
+  const displayName = form.name.trim() || "New Channel";
   const initial = form.name.trim() ? form.name.trim().charAt(0).toUpperCase() : null;
   const avatarBg = getAvatarGradient(form.name);
 
@@ -38,7 +37,7 @@ export function CreateChannelLivePreview({ form }: CreateChannelLivePreviewProps
       <div className="channel-preview-header">
         <span className="preview-label-badge">
           <Sparkle size={13} weight="fill" />
-          <span>{language === "vi" ? "Xem trước Nhận diện" : "Live Preview"}</span>
+          <span>Live Preview</span>
         </span>
         {countryOpt?.rank ? (
           <span className="preview-cpm-rank-badge">
@@ -63,8 +62,8 @@ export function CreateChannelLivePreview({ form }: CreateChannelLivePreviewProps
             </h4>
             <div className="channel-preview-meta-chips">
               <span className="channel-preview-chip">
-                <CountryFlag code={form.country || "AU"} size={14} />
-                <span>{countryName || form.country || "AU"}</span>
+                <CountryFlag code={form.country || "US"} size={14} />
+                <span>{countryName || form.country || "US"}</span>
               </span>
               <span className="channel-preview-chip lang">
                 {form.language || countryOpt?.defaultLanguage || "English"}
@@ -89,11 +88,7 @@ export function CreateChannelLivePreview({ form }: CreateChannelLivePreviewProps
         <div className="channel-preview-footer">
           <div className="channel-preview-status-pill">
             <span className="status-indicator-dot" />
-            <span>
-              {language === "vi"
-                ? "AI Blueprint & Giọng đọc: Sẵn sàng"
-                : "AI Blueprint & Voice: Ready"}
-            </span>
+            <span>AI Blueprint & Voice: Ready</span>
           </div>
         </div>
       </div>
@@ -103,19 +98,19 @@ export function CreateChannelLivePreview({ form }: CreateChannelLivePreviewProps
           <div className="checklist-check">
             <Check size={11} weight="bold" />
           </div>
-          <span>{language === "vi" ? "Tự động sinh DNA thương hiệu với AI" : "Auto-generate Brand DNA with AI"}</span>
+          <span>Auto-generate Brand DNA with AI</span>
         </div>
         <div className="checklist-item">
           <div className="checklist-check">
             <Check size={11} weight="bold" />
           </div>
-          <span>{language === "vi" ? "Đồng bộ ngôn ngữ & giọng đọc bản địa" : "Localized language & native voice"}</span>
+          <span>Localized language & native voice</span>
         </div>
         <div className="checklist-item">
           <div className="checklist-check">
             <Check size={11} weight="bold" />
           </div>
-          <span>{language === "vi" ? "Sẵn sàng sản xuất video YouTube Quiz" : "Ready for YouTube Quiz production"}</span>
+          <span>Ready for YouTube Quiz production</span>
         </div>
       </div>
     </div>

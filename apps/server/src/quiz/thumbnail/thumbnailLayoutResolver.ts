@@ -30,10 +30,8 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
     topicLower.includes("would you rather") ||
     topicLower.includes(" vs ") ||
     topicLower.includes("pick one") ||
-    topicLower.includes("chọn 1 trong 2") ||
     topicLower.includes("どっち") ||
-    topicLower.includes("2択") ||
-    topicLower.includes("đối kháng")
+    topicLower.includes("2択")
   ) {
     layout = "split_vs";
   } else if (
@@ -41,9 +39,6 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
     formatLower.includes("silhouette") ||
     topicLower.includes("who is") ||
     topicLower.includes("guess the") ||
-    topicLower.includes("đoán hình") ||
-    topicLower.includes("bóng đen") ||
-    topicLower.includes("bí ẩn") ||
     topicLower.includes("誰") ||
     topicLower.includes("シルエット") ||
     topicLower.includes("mystery")
@@ -54,8 +49,6 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
     formatLower.includes("spot") ||
     topicLower.includes("odd one") ||
     topicLower.includes("spot the difference") ||
-    topicLower.includes("tìm điểm khác") ||
-    topicLower.includes("kẻ mạo danh") ||
     topicLower.includes("間違い探し") ||
     topicLower.includes("仲間外れ") ||
     topicLower.includes("imposter")
@@ -66,23 +59,17 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
     formatLower.includes("level") ||
     topicLower.includes("iq test") ||
     topicLower.includes("level 1") ||
-    topicLower.includes("cấp độ") ||
-    topicLower.includes("từ dễ đến khó") ||
     topicLower.includes("難易度") ||
-    topicLower.includes("iqテスト") ||
-    topicLower.includes("thử thách iq")
+    topicLower.includes("iqテスト")
   ) {
     layout = "difficulty_tier";
   } else if (
     formatLower.includes("true_false") ||
     topicLower.includes("true or false") ||
-    topicLower.includes("đúng hay sai") ||
-    topicLower.includes("sự thật hay") ||
     topicLower.includes("ウソ") ||
     topicLower.includes("ホント") ||
     topicLower.includes("○✕") ||
-    topicLower.includes("myths") ||
-    topicLower.includes("lầm tưởng")
+    topicLower.includes("myths")
   ) {
     layout = "true_false";
   } else {

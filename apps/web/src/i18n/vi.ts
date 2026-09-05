@@ -6,6 +6,7 @@ import { mascotsVi } from "./locales/vi/mascots";
 import { tasksVi } from "./locales/vi/tasks";
 import { settingsVi } from "./locales/vi/settings";
 import { sandboxVi } from "./locales/vi/sandbox";
+import { questionBankVi } from "./locales/vi/questionBank";
 
 export const vi = {
   ...commonVi,
@@ -16,4 +17,5 @@ export const vi = {
   ...tasksVi,
   ...settingsVi,
   ...sandboxVi,
+  ...questionBankVi,
 };

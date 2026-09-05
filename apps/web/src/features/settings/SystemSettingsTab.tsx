@@ -2,7 +2,7 @@ import { CircleNotch, FloppyDisk, Globe, HardDrives } from "@phosphor-icons/reac
 import type { StorageInfo } from "@studio/shared";
 import { StatusLine } from "../../components/AppChrome";
 import type { Notice } from "../../components/types";
-import { en, useTranslation, vi } from "../../i18n";
+import { en, useTranslation } from "../../i18n";
 import { SimplifyToggle } from "./components/SimplifyToggle";
 import { useSystemSettings } from "./hooks/useSystemSettings";
 
@@ -37,7 +37,7 @@ export function SystemSettingsTab({ storage, onStorageSaved, simplifyMode = true
         <div className="language-toggle-group" role="group" aria-label={t("settings.languageTitle")}>
           <button
             type="button"
-            className={`language-toggle-btn ${language === "en" ? "is-active" : ""}`}
+            className="language-toggle-btn is-active"
             onClick={() => {
               setLanguage("en");
               onNotice({ tone: "good", message: en.notices.languageChanged });
@@ -45,17 +45,6 @@ export function SystemSettingsTab({ storage, onStorageSaved, simplifyMode = true
           >
             <span className="lang-flag">🇬🇧</span>
             <span className="lang-label">{t("settings.languageSelectEn")}</span>
-          </button>
-          <button
-            type="button"
-            className={`language-toggle-btn ${language === "vi" ? "is-active" : ""}`}
-            onClick={() => {
-              setLanguage("vi");
-              onNotice({ tone: "good", message: vi.notices.languageChanged });
-            }}
-          >
-            <span className="lang-flag">🇻🇳</span>
-            <span className="lang-label">{t("settings.languageSelectVi")}</span>
           </button>
         </div>
       </section>

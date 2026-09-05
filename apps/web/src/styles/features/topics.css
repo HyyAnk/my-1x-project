@@ -142,6 +142,54 @@
   transform: translateY(-1px);
 }
 
+.topic-layout-badge-btn.is-clue-deduction {
+  background: rgba(14, 165, 233, 0.08);
+  border-color: rgba(14, 165, 233, 0.25);
+  color: #0ea5e9;
+}
+
+.topic-layout-badge-btn.is-clue-deduction:hover {
+  background: rgba(14, 165, 233, 0.16);
+  border-color: rgba(14, 165, 233, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-mystery-reveal {
+  background: rgba(168, 85, 247, 0.08);
+  border-color: rgba(168, 85, 247, 0.25);
+  color: #a855f7;
+}
+
+.topic-layout-badge-btn.is-mystery-reveal:hover {
+  background: rgba(168, 85, 247, 0.16);
+  border-color: rgba(168, 85, 247, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-split-versus {
+  background: rgba(249, 115, 22, 0.08);
+  border-color: rgba(249, 115, 22, 0.25);
+  color: #f97316;
+}
+
+.topic-layout-badge-btn.is-split-versus:hover {
+  background: rgba(249, 115, 22, 0.16);
+  border-color: rgba(249, 115, 22, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-full-stack {
+  background: rgba(234, 179, 8, 0.08);
+  border-color: rgba(234, 179, 8, 0.25);
+  color: #eab308;
+}
+
+.topic-layout-badge-btn.is-full-stack:hover {
+  background: rgba(234, 179, 8, 0.16);
+  border-color: rgba(234, 179, 8, 0.4);
+  transform: translateY(-1px);
+}
+
 .topic-layout-badge-icon {
   font-size: 11px;
 }
@@ -226,6 +274,26 @@
 .popover-tag.tag-tf {
   background: rgba(16, 185, 129, 0.15);
   color: #10b981;
+}
+
+.popover-tag.tag-deduction {
+  background: rgba(14, 165, 233, 0.15);
+  color: #0ea5e9;
+}
+
+.popover-tag.tag-mystery {
+  background: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+}
+
+.popover-tag.tag-versus {
+  background: rgba(249, 115, 22, 0.15);
+  color: #f97316;
+}
+
+.popover-tag.tag-stack {
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
 }
 
 .popover-code {
@@ -454,6 +522,208 @@
   align-items: center;
   padding-left: 5px;
   white-space: nowrap;
+}
+
+/* Clue Deduction wireframe */
+.wf-deduction-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 72px;
+}
+
+.wf-clue-box,
+.wf-reveal-box {
+  flex: 1;
+  height: 100%;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.wf-clue-box {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.25), rgba(3, 105, 161, 0.45));
+  border: 1.5px solid #0ea5e9;
+}
+
+.wf-reveal-box {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(202, 138, 4, 0.45));
+  border: 1.5px solid #eab308;
+}
+
+.wf-clue-badge,
+.wf-reveal-badge {
+  font: 800 7px "JetBrains Mono", monospace;
+  padding: 1px 4px;
+  border-radius: 3px;
+  letter-spacing: 0.2px;
+  margin-bottom: 2px;
+}
+
+.wf-clue-badge {
+  background: #0284c7;
+  color: #fff;
+}
+
+.wf-reveal-badge {
+  background: #ca8a04;
+  color: #fff;
+}
+
+.wf-clue-icon,
+.wf-reveal-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.wf-clue-lbl,
+.wf-reveal-lbl {
+  font-size: 7.5px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.wf-arrow-divider {
+  font-size: 14px;
+  color: #f59e0b;
+  font-weight: 900;
+}
+
+/* Mystery Reveal wireframe */
+.wf-mystery-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 72px;
+}
+
+.wf-stage-backdrop {
+  flex: 1;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 1.5px solid #a855f7;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wf-silhouette-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.wf-mosaic-pattern {
+  font-size: 8px;
+  color: #a855f7;
+  letter-spacing: 2px;
+}
+
+.wf-silhouette-icon {
+  font-size: 16px;
+  filter: drop-shadow(0 0 4px #00ffff);
+}
+
+.wf-scanner-beam-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 45%;
+  width: 2px;
+  background: #00ffff;
+  box-shadow: 0 0 8px #00ffff;
+}
+
+.wf-answer-dock-pill {
+  height: 16px;
+  background: rgba(168, 85, 247, 0.2);
+  border: 1px solid #a855f7;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #e9d5ff;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+/* Versus wireframe */
+.wf-versus-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 72px;
+  position: relative;
+}
+
+.wf-versus-card {
+  flex: 1;
+  height: 100%;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.wf-versus-a {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(185, 28, 28, 0.45));
+  border: 1.5px solid #ef4444;
+}
+
+.wf-versus-b {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(29, 78, 216, 0.45));
+  border: 1.5px solid #3b82f6;
+}
+
+.wf-versus-icon {
+  font-size: 14px;
+}
+
+.wf-versus-lbl {
+  font: 800 8px "JetBrains Mono", monospace;
+  color: #fff;
+  margin-top: 2px;
+}
+
+.wf-versus-vs-badge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #f97316;
+  border: 2px solid #fff;
+  color: #fff;
+  font: 900 8px sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  z-index: 2;
+}
+
+/* Stack list wireframe */
+.wf-stack-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  height: 72px;
+  justify-content: space-between;
 }
 
 .popover-meta-footer {

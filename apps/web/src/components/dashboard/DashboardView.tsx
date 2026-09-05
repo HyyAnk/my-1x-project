@@ -47,8 +47,8 @@ export function DashboardView({
   openTaskList: _openTaskList,
   onNavigate,
 }: DashboardViewProps) {
-  const { t, language } = useTranslation();
-  const numberLocale = language === "vi" ? "vi-VN" : "en-US";
+  const { t } = useTranslation();
+  const numberLocale = "en-US";
 
   // Channel & Episode metrics
   const activeChannelsCount = channels.filter((c) => c.status === "ACTIVE").length;
@@ -64,7 +64,7 @@ export function DashboardView({
   const successRate = terminalCount > 0 ? ((completedCount / terminalCount) * 100).toFixed(1) : "100";
 
   // Balance formatting
-  const formattedBalance = imageBalance ? `${imageBalance.balance_vnd.toLocaleString(numberLocale)} ₫` : "N/A";
+  const formattedBalance = imageBalance ? `$${(imageBalance.balance_vnd / 25000).toFixed(2)}` : "N/A";
   const balanceRateNote = imageBalance?.rpm ? t("dashboard.kpiNoteRateLimit", { rpm: imageBalance.rpm }) : t("dashboard.kpiNoteImageQuota");
 
   return (

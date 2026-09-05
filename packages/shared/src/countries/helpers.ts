@@ -14,7 +14,7 @@ export function getCountryDefaultLanguage(code: string | null | undefined): stri
 
 export function getCountryDefaultLanguageVi(code: string | null | undefined): string {
   const opt = getCountryOption(code);
-  return opt ? opt.languageNameVi : "Tiếng Anh";
+  return opt ? opt.languageNameVi || opt.defaultLanguage : "English";
 }
 
 export function getLanguageOption(codeOrName: string | null | undefined): TargetLanguageOption | undefined {
@@ -32,9 +32,9 @@ export function getLanguageDisplay(codeOrName: string | null | undefined): strin
 
 export function getLanguageDisplayVi(codeOrName: string | null | undefined): string {
   const opt = getLanguageOption(codeOrName);
-  if (!opt) return codeOrName || "Tiếng Anh";
+  if (!opt) return codeOrName || "English";
   const country = TARGET_COUNTRY_OPTIONS.find((c) => c.defaultLanguage === opt.name);
-  return country ? country.languageNameVi : opt.name;
+  return country ? country.languageNameVi || opt.name : opt.name;
 }
 
 export function getCountryFlag(code: string | null | undefined): string {

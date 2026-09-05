@@ -10,7 +10,7 @@ export interface CountrySelectDropdownProps {
 }
 
 export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: CountrySelectDropdownProps) {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -38,11 +38,9 @@ export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: Coun
     if (!q) return true;
     return (
       c.name.toLowerCase().includes(q) ||
-      c.nameVi.toLowerCase().includes(q) ||
       c.nameEn.toLowerCase().includes(q) ||
       c.code.toLowerCase().includes(q) ||
       c.defaultLanguage.toLowerCase().includes(q) ||
-      c.languageNameVi.toLowerCase().includes(q) ||
       String(c.rank).includes(q)
     );
   });
@@ -56,9 +54,7 @@ export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: Coun
   };
 
   const selectedCountryName =
-    language === "vi"
-      ? selectedCountryOption?.nameVi || selectedCountryOption?.name || selectedCountry
-      : selectedCountryOption?.nameEn || selectedCountryOption?.name || selectedCountry;
+    selectedCountryOption?.nameEn || selectedCountryOption?.name || selectedCountry;
 
   return (
     <div className="channel-create-field" ref={dropdownRef}>
@@ -82,7 +78,7 @@ export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: Coun
             <div className="country-select-trigger-info">
               <span className="country-name">{selectedCountryName}</span>
               <span className="country-sub">
-                {selectedCountry} · {language === "vi" ? selectedCountryOption?.languageNameVi : selectedCountryOption?.defaultLanguage}
+                {selectedCountry} · {selectedCountryOption?.defaultLanguage}
               </span>
             </div>
           </div>
@@ -105,8 +101,8 @@ export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: Coun
             <div className="country-options-list">
               {filteredCountries.map((c) => {
                 const isSelected = c.code === selectedCountry;
-                const cName = language === "vi" ? c.nameVi : c.nameEn;
-                const cLang = language === "vi" ? c.languageNameVi : c.defaultLanguage;
+                const cName = c.nameEn;
+                const cLang = c.defaultLanguage;
                 return (
                   <button
                     key={c.code}

@@ -105,6 +105,8 @@ export async function confirmTopic(
       style_preset_id: "auto",
       channel_brand_name: "",
       render_aspect_ratio: candidate.title.toLowerCase().includes("shorts") ? "9:16" : "16:9",
+      archetype: candidate.archetype,
+      target_layout: candidate.suggested_layout,
     },
     created_at: timestamp,
     updated_at: timestamp,

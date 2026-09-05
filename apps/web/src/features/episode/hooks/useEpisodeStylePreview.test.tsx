@@ -15,9 +15,9 @@ const channel = {
   display_name: "Quiz Channel",
   description: "Quiz",
   target_audience: "Families",
-  language: "Vietnamese",
-  country: "Vietnam",
-  timezone: "Asia/Ho_Chi_Minh",
+  language: "English",
+  country: "United States",
+  timezone: "America/New_York",
   status: "ACTIVE",
   created_at: "2026-08-30T00:00:00.000Z",
   updated_at: "2026-08-30T00:00:00.000Z",
@@ -73,10 +73,10 @@ describe("useEpisodeStylePreview", () => {
           previewQuestion: {
             id: "q2",
             number: 2,
-            text: "Đâu là Sao Thổ?",
-            choices: ["Ảnh A", "Ảnh B", "Ảnh C"],
+            text: "Which planet is Saturn?",
+            choices: ["Photo A", "Photo B", "Photo C"],
             correctChoiceIndex: 1,
-            factText: "Sao Thổ có hệ vành đai nổi bật.",
+            factText: "Saturn has prominent rings.",
             totalQuestions: 8,
             layoutId: "visual_choices_three",
             questionFormat: "multiple_choice",
@@ -94,8 +94,8 @@ describe("useEpisodeStylePreview", () => {
         question_format: "multiple_choice",
         archetype: "visual_multiple_choice",
         question_number: 2,
-        question_text: "Đâu là Sao Thổ?",
-        choices: ["Ảnh A", "Ảnh B", "Ảnh C"],
+        question_text: "Which planet is Saturn?",
+        choices: ["Photo A", "Photo B", "Photo C"],
         correct_choice_index: 1,
       }),
     );
@@ -106,9 +106,9 @@ describe("useEpisodeStylePreview", () => {
     const second = createDeferredPreview();
     const previewSpy = vi
       .spyOn(api, "previewSandboxComposition")
-      .mockImplementation((request) => (request.question_text === "Câu một" ? first.promise : second.promise));
-    const firstQuestion = buildPreviewQuestion("q1", 1, "Câu một");
-    const secondQuestion = buildPreviewQuestion("q2", 2, "Câu hai");
+      .mockImplementation((request) => (request.question_text === "Question One" ? first.promise : second.promise));
+    const firstQuestion = buildPreviewQuestion("q1", 1, "Question One");
+    const secondQuestion = buildPreviewQuestion("q2", 2, "Question Two");
 
     const { result, rerender } = renderHook(
       ({ previewQuestion }) => useEpisodeStylePreview({ channel, episode, candidate: null, previewQuestion }),
@@ -116,7 +116,7 @@ describe("useEpisodeStylePreview", () => {
     );
 
     expect(result.current.loading).toBe(true);
-    await vi.waitFor(() => expect(previewSpy).toHaveBeenCalledWith(expect.objectContaining({ question_text: "Câu một" })));
+    await vi.waitFor(() => expect(previewSpy).toHaveBeenCalledWith(expect.objectContaining({ question_text: "Question One" })));
 
     rerender({ previewQuestion: secondQuestion });
     expect(result.current.loading).toBe(true);
@@ -126,7 +126,7 @@ describe("useEpisodeStylePreview", () => {
     });
     expect(result.current.pendingPreviewHtml).toBe("");
 
-    await vi.waitFor(() => expect(previewSpy).toHaveBeenCalledWith(expect.objectContaining({ question_text: "Câu hai" })));
+    await vi.waitFor(() => expect(previewSpy).toHaveBeenCalledWith(expect.objectContaining({ question_text: "Question Two" })));
     await act(async () => {
       second.resolve(previewResponse("current"));
       await second.promise;

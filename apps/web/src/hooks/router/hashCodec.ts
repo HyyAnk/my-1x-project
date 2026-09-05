@@ -36,9 +36,9 @@ export function parseHash(hash: string): RouteState {
     };
   }
 
-  if (root === "tasks" || root === "settings" || root === "mascots" || root === "sandbox") {
+  if (root === "tasks" || root === "settings" || root === "mascots" || root === "sandbox" || root === "question_bank" || root === "question-bank") {
     return {
-      page: root,
+      page: root === "question-bank" ? "question_bank" : (root as Page),
       channelId: null,
       episodeId: null,
       tab,

@@ -10,13 +10,10 @@ type ChannelProfileCardProps = {
 };
 
 export function ChannelProfileCard({ channel, onOpenEditModal }: ChannelProfileCardProps) {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const countryCode = channel.country || channel.market || "GLOBAL";
   const countryOption = getCountryOption(countryCode);
-  const countryDisplayName =
-    language === "vi"
-      ? countryOption?.nameVi || countryOption?.name || getCountryName(countryCode)
-      : countryOption?.nameEn || countryOption?.name || getCountryName(countryCode);
+  const countryDisplayName = countryOption?.nameEn || countryOption?.name || getCountryName(countryCode);
 
   return (
     <div className="panel channel-identity-card">

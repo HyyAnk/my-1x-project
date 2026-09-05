@@ -13,20 +13,17 @@ export type CostSavingsSectionProps = {
 };
 
 export function CostSavingsSection({ voiceMetrics, usageLedger }: CostSavingsSectionProps) {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const elevenLabsRatePer1k = 0.1; // $0.10 per 1,000 characters
-  const usdToVnd = 25500;
-  const numberLocale = language === "vi" ? "vi-VN" : "en-US";
+  const numberLocale = "en-US";
 
   // Voice metrics
   const renderedChars = voiceMetrics?.rendered_characters ?? usageLedger?.voice?.rendered_characters ?? 0;
   const renderedSeconds = voiceMetrics?.rendered_duration_seconds ?? usageLedger?.voice?.rendered_duration_seconds ?? 0;
   const savedUsd = (renderedChars / 1000) * elevenLabsRatePer1k;
-  const savedVnd = savedUsd * usdToVnd;
 
   // Image metrics
   const totalImages = usageLedger?.image?.total_images_generated ?? 0;
-  const imageSpendVnd = usageLedger?.image?.estimated_cost_vnd ?? totalImages * 500;
   const imageSpendUsd = usageLedger?.image?.estimated_cost_usd ?? totalImages * 0.02;
 
   const providers = Object.keys(usageLedger?.image?.by_provider ?? {});
@@ -63,10 +60,7 @@ export function CostSavingsSection({ voiceMetrics, usageLedger }: CostSavingsSec
             <div className="savings-submetric">
               <span className="submetric-label">{t("dashboard.estimatedSavings")}</span>
               <strong className="submetric-val" style={{ color: "var(--green)" }}>
-                +${savedUsd.toFixed(2)} USD{" "}
-                <span style={{ fontSize: "12px", color: "var(--muted)", fontWeight: 500 }}>
-                  ({Math.round(savedVnd).toLocaleString(numberLocale)} ₫)
-                </span>
+                +${savedUsd.toFixed(2)} USD
               </strong>
             </div>
             <div className="savings-submetric">
@@ -105,10 +99,7 @@ export function CostSavingsSection({ voiceMetrics, usageLedger }: CostSavingsSec
             <div className="savings-submetric">
               <span className="submetric-label">{t("dashboard.totalImageSpend")}</span>
               <strong className="submetric-val" style={{ color: "var(--blue, #3b82f6)" }}>
-                {Math.round(imageSpendVnd).toLocaleString(numberLocale)} ₫{" "}
-                <span style={{ fontSize: "12px", color: "var(--muted)", fontWeight: 500 }}>
-                  (${imageSpendUsd.toFixed(2)} USD)
-                </span>
+                ${imageSpendUsd.toFixed(2)} USD
               </strong>
             </div>
             <div className="savings-submetric">

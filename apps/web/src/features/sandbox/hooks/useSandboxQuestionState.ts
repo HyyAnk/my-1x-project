@@ -51,61 +51,10 @@ const SAMPLE_QUESTIONS_EN = [
   },
 ];
 
-const SAMPLE_QUESTIONS_VI = [
-  {
-    type: "standard" as const,
-    text: "Hành tinh nào trong hệ Mặt Trời có hệ thống vành đai nổi bật nhất?",
-    choices: ["Sao Mộc", "Sao Thổ", "Sao Thiên Vương"],
-    correct: 1,
-    fact_title: "BẠN CÓ BIẾT?",
-    fact_text: "Vành đai của Sao Thổ chủ yếu cấu tạo từ hàng tỷ hạt băng, bụi và đá vụn!",
-  },
-  {
-    type: "short" as const,
-    text: "Thủ đô của nước Pháp là gì?",
-    choices: ["Rome", "Berlin", "Paris"],
-    correct: 2,
-    fact_title: "BẠN CÓ BIẾT?",
-    fact_text: "Tháp Eiffel tại Paris từng là công trình nhân tạo cao nhất thế giới trong hơn 40 năm!",
-  },
-  {
-    type: "long" as const,
-    text: "Nền văn minh cổ đại nào đã xây dựng các công trình kim tự tháp Giza khổng lồ dọc theo dòng sông Nile?",
-    choices: ["Lưỡng Hà cổ đại", "Ai Cập cổ đại", "Văn minh Maya"],
-    correct: 1,
-    fact_title: "BẠN CÓ BIẾT?",
-    fact_text: "Đại kim tự tháp Giza từng là công trình nhân tạo cao nhất thế giới trong hơn 3.800 năm!",
-  },
-  {
-    type: "true_false" as const,
-    text: "Vạn Lý Trường Thành có thể nhìn thấy từ Mặt Trăng bằng mắt thường?",
-    choices: ["Đúng", "Sai"],
-    correct: 1,
-    fact_title: "BẠN CÓ BIẾT?",
-    fact_text: "Đây là một hiểu lầm phổ biến! Không thể nhìn thấy Vạn Lý Trường Thành từ Mặt Trăng bằng mắt thường.",
-  },
-  {
-    type: "versus" as const,
-    text: "Loài thú họ mèo nào có trọng lượng và kích thước trung bình lớn hơn?",
-    choices: ["Sư tử châu Phi", "Hổ Siberia"],
-    correct: 1,
-    fact_title: "BẠN CÓ BIẾT?",
-    fact_text: "Hổ Siberia có thể nặng trên 300 kg, lớn hơn đáng kể so với sư tử châu Phi!",
-  },
-  {
-    type: "mystery_reveal" as const,
-    text: "Sinh vật bí ẩn nào ẩn sau chiếc bóng này?",
-    choices: ["Pikachu"],
-    correct: 0,
-    fact_title: "ĐÃ GIẢI MÃ!",
-    fact_text: "Đó chính là Pikachu! Loài Pokemon hệ Điện với chiếc đuôi hình tia sét đặc trưng.",
-  },
-];
-
 export type PresetSampleQuestion = (typeof SAMPLE_QUESTIONS_EN)[number];
 
-export function useSandboxQuestionState(language: string) {
-  const sampleQuestions = language === "vi" ? SAMPLE_QUESTIONS_VI : SAMPLE_QUESTIONS_EN;
+export function useSandboxQuestionState(_language?: string) {
+  const sampleQuestions = SAMPLE_QUESTIONS_EN;
   const [questionText, setQuestionText] = useState(sampleQuestions[0].text);
   const [choices, setChoices] = useState<string[]>(sampleQuestions[0].choices);
   const [correctChoiceIndex, setCorrectChoiceIndex] = useState(sampleQuestions[0].correct);

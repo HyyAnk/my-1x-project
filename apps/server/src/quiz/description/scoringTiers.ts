@@ -47,11 +47,10 @@ export function calculateScoringTiers(questionCount: number): CalculatedScoringT
 }
 
 /**
- * Formats scoring tier string ranges (e.g. "1–3 câu", "4–7 câu", "8–10 câu" or "1–3", "4–7", "8–10").
+ * Formats scoring tier string ranges (e.g. "1–3 pts", "4–7 pts", "8–10 pts").
  */
-export function formatScoringRange(min: number, max: number, language = "Vietnamese"): string {
-  const isVi = /vietnamese|vi\b/i.test(language);
-  const unit = isVi ? "câu" : "pts";
+export function formatScoringRange(min: number, max: number, language = "English"): string {
+  const unit = "pts";
   if (min === max) {
     return `${min} ${unit}`;
   }

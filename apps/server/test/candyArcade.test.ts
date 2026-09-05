@@ -483,11 +483,11 @@ describe("Candy Arcade visual template", () => {
     expect(bundle.files["compositions/candy-outro.html"]).toContain("Many more questions to explore");
     expect(bundle.files["compositions/candy-outro.html"]).not.toContain("2 questions to explore");
 
-    // Vietnamese outro copy check
+    // Vietnamese legacy input fallback to English outro copy check
     const vietnameseQuiz = { ...quiz, language: "Vietnamese" };
     const viVoice = buildQuizVoicePlan(vietnameseQuiz);
     const viOutro = viVoice.segments.find((s) => s.role === "outro")!;
-    expect(viOutro.phrases[0]?.text).toBe("Bạn đúng được mấy câu?");
+    expect(viOutro.phrases[0]?.text).toBe("How many did you get right?");
     expect(viOutro.phrases[0]?.pause_after).toBe("long");
     const viTimeline = compileQuizTimeline({ quiz: vietnameseQuiz, director, voicePlan: viVoice });
     const viBundle = buildCandyArcadeCompositionBundle({
@@ -498,10 +498,10 @@ describe("Candy Arcade visual template", () => {
       audioPath: "./narration.wav",
       narrationDurationSeconds: viTimeline.duration_seconds,
     });
-    expect(viBundle.files["compositions/candy-outro.html"]).toContain("Còn nhiều câu hỏi thú vị phía trước");
+    expect(viBundle.files["compositions/candy-outro.html"]).toContain("Many more questions to explore");
     expect(viBundle.files["compositions/candy-outro.html"]).toContain("badge-cta");
-    expect(viBundle.files["compositions/candy-outro.html"]).toContain("Đăng ký");
-    expect(viBundle.files["compositions/candy-outro.html"]).toContain("Bình luận");
+    expect(viBundle.files["compositions/candy-outro.html"]).toContain("Subscribe");
+    expect(viBundle.files["compositions/candy-outro.html"]).toContain("Comment");
 
     // Outro hold test (5s hold after voice segment)
     const outroEvent = viTimeline.events.find((e) => e.segment_id === "outro")!;

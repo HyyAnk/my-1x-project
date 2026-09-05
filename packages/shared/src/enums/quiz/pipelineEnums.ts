@@ -15,6 +15,8 @@ export const DirectorArchetypeSchema = z.enum([
   "true_false",
   "odd_one_out",
   "visual_reveal",
+  "mystery_reveal",
+  "clue_deduction",
   "speed_round",
   "final_challenge",
 ]);
@@ -33,6 +35,7 @@ export const QuizLayoutIdSchema = z.enum([
   "verdict_true_false",
   "full_stack_list",
   "mystery_reveal",
+  "clue_deduction",
 ]);
 export type QuizLayoutId = z.infer<typeof QuizLayoutIdSchema>;
 
