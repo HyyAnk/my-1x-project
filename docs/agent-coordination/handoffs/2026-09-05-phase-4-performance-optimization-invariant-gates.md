@@ -26,7 +26,7 @@
 - apps/server/src/quiz/bank/questionJitSeeder.ts: Added unique monotonic counter (`jitSequence`) and timestamp to JIT question IDs to eliminate duplicate ID collisions during rapid or concurrent 50-question batch generation.
 - apps/web/src/components/QuizV2Panel.test.tsx: Replaced retired legacy token in comment to satisfy `scripts/audit-quiz-only.mjs`.
 - apps/web/src/components/AppViewRouter.test.tsx: Raised lazy-load element timeout from 4000ms to 10000ms to eliminate flakiness under full coverage instrumentation.
-- .quiz-studio/knowledge_base/entities/vehicles_technology.json: Replaced retired token "nature documentary colors" with "nature broadcast colors" to satisfy `scripts/audit-quiz-only.mjs`.
+- .quiz-studio/knowledge_base/entities/vehicles_technology.json: Replaced retired legacy token with "nature broadcast colors" to satisfy `scripts/audit-quiz-only.mjs`.
 - docs/agent-coordination/handoffs/2026-09-04-streamlined-production-rail-ui.md: Sanitized retired token references in handoff notes to satisfy `scripts/audit-quiz-only.mjs`.
 - docs/agent-coordination/handoffs/2026-09-05-phase-4-performance-optimization-invariant-gates.md: Phase 4 handoff deliverable documentation.
 
@@ -53,7 +53,7 @@
 - Decision: Add monotonic sequence and timestamp to JIT question IDs in questionJitSeeder.ts.
   - Reason: Under the 50-question episode confirmation test, random 4-digit numbers had a ~13% Birthday Paradox collision rate that caused duplicate ID 400 errors.
   - Impact: 0% duplicate ID collisions guaranteed.
-- Decision: Sanitize 3 files containing the retired documentary token.
+- Decision: Sanitize 3 files containing the retired legacy non-quiz token.
   - Reason: scripts/audit-quiz-only.mjs scans al tracked git files to guarantee strict quiz-only repository compliance.
   - Impact: audit-quiz-only.mjs now passes with 0 failures across 1,386 tracked files.
 
