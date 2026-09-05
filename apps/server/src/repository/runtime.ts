@@ -320,6 +320,7 @@ export interface RepositoryRuntime {
   saveQuestionBankQuestion(question: BankQuestion): Promise<BankQuestion>;
   saveQuestionBankTranslation(questionId: string, translation: BankTranslationContent): Promise<BankQuestion | null>;
   deleteQuestionBankQuestion(questionId: string): Promise<boolean>;
+  clearQuestionBank(): Promise<{ cleared_batches_count: number }>;
   getQuestionBankMatrixCoverage(): Promise<MatrixCoverageStats>;
 }
 

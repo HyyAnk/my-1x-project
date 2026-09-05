@@ -19,9 +19,25 @@ export const channelApi = {
       method: "POST",
       body: JSON.stringify({ topic_hint: topicHint?.trim() || undefined }),
     }),
-  confirmTopic: (channelId: string, topicId: string, questionCount: number, visualStyle?: QuizImageStyle | "mixed") =>
-    request<{ episode: Episode }>(`/api/channels/${channelId}/topics/${topicId}/confirm`, {
-      method: "POST",
-      body: JSON.stringify({ topic_id: topicId, question_count: questionCount, visual_style: visualStyle }),
-    }),
+  confirmTopic: (
+    channelId: string,
+    topicId: string,
+    questionCount?: number,
+    visualStyle?: QuizImageStyle | "mixed",
+    autoStartPipeline: boolean = true,
+    renderAspectRatio?: "9:16" | "16:9",
+  ) =>
+    request<{ episode: Episode; task?: Task | null; quiz?: any; director_plan?: any }>(
+      `/api/channels/${channelId}/topics/${topicId}/confirm`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          topic_id: topicId,
+          question_count: questionCount,
+          visual_style: visualStyle,
+          auto_start_pipeline: autoStartPipeline,
+          render_aspect_ratio: renderAspectRatio,
+        }),
+      },
+    ),
 };

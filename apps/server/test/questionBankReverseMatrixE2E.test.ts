@@ -1,5 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { existsSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { mkdtemp, rm } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import Fastify from "fastify";
 import { buildApp, type StudioApp } from "../src/app.js";
@@ -29,6 +31,7 @@ import type { BankQuestion } from "@studio/shared";
 describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
   let app: StudioApp;
   let workspaceRoot: string;
+  let tempStorage: string;
 
   beforeAll(async () => {
     let curr = process.cwd();
@@ -38,10 +41,15 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
     }
     workspaceRoot = curr;
     app = await buildApp(curr);
+    tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-reverse-matrix-e2e-"));
+    app.repository.setStorageRoot(tempStorage);
   });
 
   afterAll(async () => {
     await app.close();
+    if (tempStorage) {
+      await rm(tempStorage, { recursive: true, force: true }).catch(() => {});
+    }
   });
 
   // ============================================================================
@@ -347,7 +355,7 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
       expect(prompt).toContain(lion.name);
       expect(prompt).toContain("Core Traits / Clues");
       expect(prompt).toContain("Distractor Pool");
-      expect(prompt).toContain("Facts & Myths");
+      expect(prompt).toContain("True / False Claims");
       expect(prompt).toContain("verdict_fact_myth");
     });
 

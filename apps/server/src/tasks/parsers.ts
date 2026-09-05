@@ -66,6 +66,7 @@ export function parseTopicCandidates(output: string, channelId: string, topicHin
     const archetypes = [
       "deep_trivia",
       "visual_spotting",
+      "verdict_true_false",
       "verdict_fact_myth",
       "versus_faceoff",
       "visual_identification",
@@ -74,8 +75,9 @@ export function parseTopicCandidates(output: string, channelId: string, topicHin
       "clue_deduction",
     ] as const;
     const rawArchetype = candidate.archetype ? String(candidate.archetype).trim().toLowerCase() : undefined;
-    const archetype = rawArchetype && archetypes.includes(rawArchetype as (typeof archetypes)[number])
-      ? (rawArchetype as (typeof archetypes)[number])
+    const normalizedArchetype = rawArchetype === "verdict_fact_myth" ? "verdict_true_false" : rawArchetype;
+    const archetype = normalizedArchetype && archetypes.includes(normalizedArchetype as (typeof archetypes)[number])
+      ? (normalizedArchetype as (typeof archetypes)[number])
       : undefined;
 
     const layouts = [
@@ -93,6 +95,13 @@ export function parseTopicCandidates(output: string, channelId: string, topicHin
       : undefined;
     const suggestedLayout = rawLayout && layouts.includes(rawLayout as (typeof layouts)[number])
       ? (rawLayout as (typeof layouts)[number])
+      : undefined;
+
+    const rawDomainId = candidate.domain_id || candidate.domainId
+      ? String(candidate.domain_id || candidate.domainId).trim()
+      : undefined;
+    const rawSubtopicId = candidate.subtopic_id || candidate.subtopicId
+      ? String(candidate.subtopic_id || candidate.subtopicId).trim()
       : undefined;
 
     return {
@@ -116,6 +125,8 @@ export function parseTopicCandidates(output: string, channelId: string, topicHin
       ...(archetype ? { archetype } : {}),
       ...(suggestedLayout ? { suggested_layout: suggestedLayout } : {}),
       ...(themeHint ? { theme_hint: themeHint } : {}),
+      ...(rawDomainId ? { domain_id: rawDomainId } : {}),
+      ...(rawSubtopicId ? { subtopic_id: rawSubtopicId } : {}),
     };
   });
 }

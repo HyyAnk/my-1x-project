@@ -12,14 +12,15 @@ export const questionBankVi = {
 
     // Archetypes
     archetypes: {
-      verdict_fact_myth: "Thật hay Giả",
-      speed_blitz: "Phản xạ nhanh",
-      deep_trivia: "Tri thức sâu",
-      versus_faceoff: "1v1 Đối đầu",
-      visual_spotting: "Tìm dị thường",
-      visual_identification: "Nhận diện ảnh",
-      mystery_reveal: "Bóng đen bí ẩn",
-      clue_deduction: "Thám tử suy luận",
+      verdict_true_false: "True or False",
+      verdict_fact_myth: "True or False",
+      speed_blitz: "Speed Blitz",
+      deep_trivia: "Deep Trivia",
+      versus_faceoff: "1v1 Faceoff",
+      visual_spotting: "Visual Spotting",
+      visual_identification: "Visual ID",
+      mystery_reveal: "Mystery Reveal",
+      clue_deduction: "Clue Deduction",
     },
 
     // Toolbar Filters

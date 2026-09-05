@@ -4,6 +4,7 @@ import type { ResolvedQuizLayoutId } from "./quizLayouts.catalog.js";
 export type QuizGameplayArchetypeId =
   | "deep_trivia"
   | "visual_spotting"
+  | "verdict_true_false"
   | "verdict_fact_myth"
   | "versus_faceoff"
   | "visual_identification"
@@ -38,12 +39,12 @@ export const QUIZ_GAMEPLAY_ARCHETYPES: readonly QuizGameplayArchetypeBlueprint[]
     creativeAngles: ["Find the Anomaly", "Real vs AI Generated", "Spot the Flaw", "Identify the Impostor"],
   },
   {
-    id: "verdict_fact_myth",
-    name: "Fact or Myth",
+    id: "verdict_true_false",
+    name: "True or False",
     description: "Verdict evaluation question testing True vs False with a cinematic background visual and 2 prominent TRUE / FALSE buttons.",
     defaultFormat: "true_false",
     targetLayout: "verdict_true_false",
-    creativeAngles: ["Common Myths & Debunking", "Human Body Surprises", "Myth vs Reality", "Strange Laws Around the World"],
+    creativeAngles: ["Surprising Realities & Misconceptions", "Human Body Surprises", "Counter-Intuitive Truths", "Strange Laws Around the World"],
   },
   {
     id: "versus_faceoff",
@@ -97,6 +98,7 @@ export const QUIZ_GAMEPLAY_ARCHETYPES: readonly QuizGameplayArchetypeBlueprint[]
   },
 ] as const;
 
-export function getQuizGameplayArchetype(id: QuizGameplayArchetypeId): QuizGameplayArchetypeBlueprint | undefined {
-  return QUIZ_GAMEPLAY_ARCHETYPES.find((archetype) => archetype.id === id);
+export function getQuizGameplayArchetype(id: QuizGameplayArchetypeId | string): QuizGameplayArchetypeBlueprint | undefined {
+  const targetId = id === "verdict_fact_myth" ? "verdict_true_false" : id;
+  return QUIZ_GAMEPLAY_ARCHETYPES.find((archetype) => archetype.id === targetId);
 }

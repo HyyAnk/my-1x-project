@@ -33,7 +33,7 @@ describe("TopicLayoutPreviewButton", () => {
     expect(getByText(/clue_deduction/)).toBeDefined();
     expect(getByText(/CLUE 100% CLEAR/)).toBeDefined();
     expect(getByText(/REVEAL DOCK/)).toBeDefined();
-    expect(getByText(/1 ảnh manh mối A \+ 1 ảnh đáp án B/)).toBeDefined();
+    expect(getByText(/1 clue image A \+ 1 answer image B/)).toBeDefined();
   });
 
   it("resolves and renders Mystery Reveal layout when archetype is mystery_reveal", () => {
@@ -47,7 +47,7 @@ describe("TopicLayoutPreviewButton", () => {
     fireEvent.click(button);
     expect(getByText(/mystery_reveal/)).toBeDefined();
     expect(getByText(/Answer Reveal Bar/)).toBeDefined();
-    expect(getByText(/1 ảnh chủ thể nền trắng \(tự động pixelate\)/)).toBeDefined();
+    expect(getByText(/1 subject image on clean background \(auto-pixelated\)/)).toBeDefined();
   });
 
   it("resolves layout directly when layoutId is specified", () => {
@@ -91,17 +91,17 @@ describe("TopicLayoutPreviewButton", () => {
     expect(getByText(/Visual A/)).toBeDefined();
   });
 
-  it("resolves Fact or Myth / verdict_true_false when quizFormat is true_false", () => {
-    const { getByRole, getByText } = render(
+  it("resolves True or False / verdict_true_false when quizFormat is true_false", () => {
+    const { getByRole, getByText, getAllByText } = render(
       <TopicLayoutPreviewButton quizFormat="true_false" />,
     );
 
-    const button = getByRole("button", { name: /Layout: Fact or Myth/i });
+    const button = getByRole("button", { name: /Layout: True or False/i });
     expect(button).toBeDefined();
 
     fireEvent.click(button);
     expect(getByText(/verdict_true_false/)).toBeDefined();
-    expect(getByText(/TRUE/)).toBeDefined();
-    expect(getByText(/FALSE/)).toBeDefined();
+    expect(getAllByText(/TRUE/).length).toBeGreaterThanOrEqual(1);
+    expect(getAllByText(/FALSE/).length).toBeGreaterThanOrEqual(1);
   });
 });

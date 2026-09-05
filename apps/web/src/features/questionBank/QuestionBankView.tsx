@@ -8,6 +8,7 @@ import { QuestionBankTable } from "./components/QuestionBankTable";
 import { QuestionBankLivePreview } from "./components/QuestionBankLivePreview";
 import { QuestionBankFormModal } from "./components/QuestionBankFormModal";
 import { QuestionBankAiGenerateModal } from "./components/QuestionBankAiGenerateModal";
+import { QuestionBankClearAllModal } from "./components/QuestionBankClearAllModal";
 import type { BankQuestionWithCooldown } from "./types/questionBankUi.types";
 import "../../styles/features/questionBank.css";
 
@@ -45,6 +46,8 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
     recalculateStats,
     saveQuestion,
     deleteQuestion,
+    clearing,
+    clearAllQuestions,
     generateBatch,
     batchJob,
     createOneClickVideo,
@@ -107,6 +110,7 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
         onUpdateFilter={updateFilter}
         onResetFilters={resetFilters}
         onOpenCreateModal={() => setModalState({ type: "create" })}
+        onOpenClearAllModal={() => setModalState({ type: "clear_all" })}
       />
 
       {/* 3. Main Split View: Scannable Table + Live Inspector */}
@@ -155,6 +159,18 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
           generating={generating}
           batchJob={batchJob}
           onGenerate={generateBatch}
+          onClose={() => setModalState({ type: null })}
+        />
+      )}
+
+      {modalState.type === "clear_all" && (
+        <QuestionBankClearAllModal
+          clearing={clearing}
+          totalCount={totalQuestions}
+          onConfirm={async () => {
+            await clearAllQuestions();
+            setModalState({ type: null });
+          }}
           onClose={() => setModalState({ type: null })}
         />
       )}

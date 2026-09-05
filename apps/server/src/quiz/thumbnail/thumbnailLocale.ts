@@ -34,7 +34,7 @@ export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocaliz
       mystery_silhouette: () => "SLECHTS 1% WEET HET! 🔥",
       odd_one_out: () => "10 SECONDEN! ⏱️",
       difficulty_tier: () => "ALLEEN IQ 140+ 🔥",
-      true_false: () => "FEIT OF FABEL? ⚡",
+      true_false: () => "WAAR OF NIET WAAR? ⚡",
     },
   },
   no: {
@@ -52,7 +52,7 @@ export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocaliz
       mystery_silhouette: () => "KUN 1% VET DET! 🔥",
       odd_one_out: () => "10 SEKUNDER! ⏱️",
       difficulty_tier: () => "KUN FOR IQ 140+ 🔥",
-      true_false: () => "FAKTA ELLER MYTE? ⚡",
+      true_false: () => "SANT ELLER USANT? ⚡",
     },
   },
   sv: {
@@ -70,7 +70,7 @@ export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocaliz
       mystery_silhouette: () => "BARA 1% VET! 🔥",
       odd_one_out: () => "10 SEKUNDER! ⏱️",
       difficulty_tier: () => "ENDAST FÖR IQ 140+ 🔥",
-      true_false: () => "FAKTA ELLER MYT? ⚡",
+      true_false: () => "SANT ELLER FALSKT? ⚡",
     },
   },
   da: {
@@ -88,7 +88,7 @@ export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocaliz
       mystery_silhouette: () => "KUN 1% VED DET! 🔥",
       odd_one_out: () => "10 SEKUNDER! ⏱️",
       difficulty_tier: () => "KUN FOR IQ 140+ 🔥",
-      true_false: () => "FAKTA ELLER MYTE? ⚡",
+      true_false: () => "SANDT ELLER FALSKT? ⚡",
     },
   },
   fi: {
@@ -106,7 +106,7 @@ export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocaliz
       mystery_silhouette: () => "VAIN 1% TIETÄÄ! 🔥",
       odd_one_out: () => "10 SEKUNTIA! ⏱️",
       difficulty_tier: () => "VAIN IQ 140+ 🔥",
-      true_false: () => "FAKTA VAI MYYTTI? ⚡",
+      true_false: () => "TOTTA VAI TARUA? ⚡",
     },
   },
   de: {
@@ -124,7 +124,7 @@ export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocaliz
       mystery_silhouette: () => "NUR 1% WEISS ES! 🔥",
       odd_one_out: () => "10 SEKUNDEN! ⏱️",
       difficulty_tier: () => "NUR FÜR IQ 140+ 🔥",
-      true_false: () => "FAKT ODER MYTHOS? ⚡",
+      true_false: () => "WAHR ODER FALSCH? ⚡",
     },
   },
   fr: {
@@ -142,7 +142,7 @@ export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocaliz
       mystery_silhouette: () => "SEULEMENT 1% SAIT ! 🔥",
       odd_one_out: () => "10 SECONDES ! ⏱️",
       difficulty_tier: () => "SEULEMENT IQ 140+ 🔥",
-      true_false: () => "MYTHE OU RÉALITÉ ? ⚡",
+      true_false: () => "VRAI OU FAUX ? ⚡",
     },
   },
   ja: {
@@ -196,7 +196,7 @@ export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocaliz
       mystery_silhouette: () => "¡SOLO EL 1% SABE! 🔥",
       odd_one_out: () => "¡10 SEGUNDOS! ⏱️",
       difficulty_tier: () => "SOLO IQ 140+ 🔥",
-      true_false: () => "¿MITO O REALIDAD? ⚡",
+      true_false: () => "¿VERDADERO O FALSO? ⚡",
     },
   },
   en: {
@@ -214,7 +214,7 @@ export const THUMBNAIL_LOCALIZATIONS: Record<SupportedLanguage, ThumbnailLocaliz
       mystery_silhouette: () => "ONLY 1% KNOW! 🔥",
       odd_one_out: () => "10 SECONDS! ⏱️",
       difficulty_tier: () => "IQ 140+ ONLY 🔥",
-      true_false: () => "FACT OR MYTH? ⚡",
+      true_false: () => "TRUE OR FALSE? ⚡",
     },
   },
 };

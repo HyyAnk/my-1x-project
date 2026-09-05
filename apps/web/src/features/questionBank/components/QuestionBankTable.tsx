@@ -19,7 +19,8 @@ export interface QuestionBankTableProps {
 }
 
 const ARCHETYPE_META: Record<string, { label: string; icon: string }> = {
-  verdict_fact_myth: { label: "Fact vs Myth", icon: "⚖️" },
+  verdict_true_false: { label: "True or False", icon: "⚖️" },
+  verdict_fact_myth: { label: "True or False", icon: "⚖️" },
   speed_blitz: { label: "Speed Blitz", icon: "⚡" },
   deep_trivia: { label: "Deep Trivia", icon: "🧠" },
   versus_faceoff: { label: "1v1 Faceoff", icon: "⚔️" },
@@ -90,6 +91,8 @@ export function QuestionBankTable({
                 label: q.archetype_id.replaceAll("_", " "),
                 icon: "✨",
               };
+              const archetypeLabel =
+                t(`questionBank.archetypes.${q.archetype_id}` as any) || meta.label;
               const hasTranslations = q.translations && Object.keys(q.translations).filter((l) => l !== (q.language || "en")).length > 0;
               const targetLang = activeLanguage && activeLanguage !== "en" ? activeLanguage.toLowerCase() : null;
               const translation = targetLang ? q.translations?.[targetLang] : null;
@@ -102,7 +105,7 @@ export function QuestionBankTable({
                     <div className="qb-cell-id">
                       <span className="qb-archetype-badge-pill">
                         <span>{meta.icon}</span>
-                        <span>{meta.label}</span>
+                        <span>{archetypeLabel}</span>
                       </span>
                       <span className="qb-q-id">{q.id}</span>
                     </div>

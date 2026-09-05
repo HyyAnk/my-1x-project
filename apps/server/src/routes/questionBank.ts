@@ -167,6 +167,12 @@ export function registerQuestionBankRoutes(deps: QuestionBankRouteDeps): Fastify
       return { ok: true, deleted_id: id };
     });
 
+    // 8b. Clear all questions from Question Bank
+    server.post("/api/question-bank/clear", async () => {
+      const result = await deps.repository.clearQuestionBank();
+      return { ok: true, ...result };
+    });
+
     const resolveLlmClient = (): LLMClient | undefined => {
       if (deps.llmClient) return deps.llmClient;
       if (deps.state) {

@@ -11,7 +11,7 @@ export interface QuestionBankFormModalProps {
 }
 
 const ARCHETYPE_OPTIONS: Array<{ id: string; defaultLabel: string; icon: string }> = [
-  { id: "verdict_fact_myth", defaultLabel: "Fact vs Myth", icon: "⚖️" },
+  { id: "verdict_true_false", defaultLabel: "True or False", icon: "⚖️" },
   { id: "speed_blitz", defaultLabel: "Speed Blitz", icon: "⚡" },
   { id: "deep_trivia", defaultLabel: "Deep Trivia", icon: "🧠" },
   { id: "versus_faceoff", defaultLabel: "1v1 Faceoff", icon: "⚔️" },
@@ -25,7 +25,10 @@ export function QuestionBankFormModal({ initialQuestion, taxonomy, onSave, onClo
   const { t } = useTranslation();
   const isEditing = Boolean(initialQuestion?.id);
 
-  const [archetypeId, setArchetypeId] = useState<BankGameplayArchetypeId>(initialQuestion?.archetype_id || "speed_blitz");
+  const rawArch = initialQuestion?.archetype_id;
+  const normalizedArch: BankGameplayArchetypeId =
+    rawArch === "verdict_fact_myth" ? "verdict_true_false" : rawArch || "speed_blitz";
+  const [archetypeId, setArchetypeId] = useState<BankGameplayArchetypeId>(normalizedArch);
   const [domainId, setDomainId] = useState(initialQuestion?.domain_id || "logic_puzzles");
   const [subtopicId, setSubtopicId] = useState(initialQuestion?.subtopic_id || "tricky_riddles");
   const [questionText, setQuestionText] = useState(initialQuestion?.question || "");

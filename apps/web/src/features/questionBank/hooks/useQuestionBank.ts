@@ -39,6 +39,7 @@ export function useQuestionBank(initialChannelId?: string) {
   const [generating, setGenerating] = useState(false);
   const [buildingVideo, setBuildingVideo] = useState(false);
   const [transcreating, setTranscreating] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [filters, setFilters] = useState<QuestionBankFilters>({
@@ -233,6 +234,23 @@ export function useQuestionBank(initialChannelId?: string) {
     },
     [selectedQuestion, fetchStats, fetchMatrixCoverage, fetchQuestions],
   );
+
+  const clearAllQuestions = useCallback(async () => {
+    setClearing(true);
+    setError(null);
+    try {
+      await api.clearQuestionBank();
+      setSelectedQuestion(null);
+      await fetchStats();
+      await fetchMatrixCoverage();
+      await fetchQuestions();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to clear Question Bank");
+      throw err;
+    } finally {
+      setClearing(false);
+    }
+  }, [fetchStats, fetchMatrixCoverage, fetchQuestions]);
 
   // 7. Generate AI Batch (Asynchronous Background Job Support)
   const generateBatch = useCallback(
@@ -497,6 +515,8 @@ export function useQuestionBank(initialChannelId?: string) {
     fetchMatrixCoverage,
     saveQuestion,
     deleteQuestion,
+    clearing,
+    clearAllQuestions,
     generateBatch,
     batchJob,
     cancelBatchJob,

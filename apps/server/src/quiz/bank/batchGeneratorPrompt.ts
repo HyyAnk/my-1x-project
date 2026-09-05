@@ -9,6 +9,21 @@ export interface ArchetypePromptGuideline {
 }
 
 export const ARCHETYPE_GUIDELINES: Record<BankGameplayArchetypeId, ArchetypePromptGuideline> = {
+  verdict_true_false: {
+    format: "true_false",
+    choiceCount: 2,
+    visualIntent: "question_illustration",
+    defaultThinkingSeconds: 5,
+    instructions: [
+      "True or False format. Must be a punchy, single-clause statement or question strictly under 65 characters.",
+      "Format: Direct factual or counter-factual statement ending in 'True or False?' (e.g. 'Blue whales are bigger than any dinosaur. True or False?').",
+      "Do NOT cram numbers, secondary clauses, or explanations into the question text.",
+      "Exactly 2 choices: 'True' and 'False'.",
+      "Truth Balance: Maintain a strict ~50/50 balance between True and False as the correct choice across the generated questions to keep viewer suspense.",
+      "Provide a clear explanation of why it is True or False along with a scientific/real-world fun fact.",
+      "Visual prompt describes a realistic, cinematic background scene illustrating the statement.",
+    ],
+  },
   verdict_fact_myth: {
     format: "true_false",
     choiceCount: 2,
@@ -18,7 +33,7 @@ export const ARCHETYPE_GUIDELINES: Record<BankGameplayArchetypeId, ArchetypeProm
       "True or False format. Must be a punchy, single-clause statement or question strictly under 65 characters.",
       "Format: Direct factual or counter-factual statement ending in 'True or False?' (e.g. 'Blue whales are bigger than any dinosaur. True or False?').",
       "Do NOT cram numbers, secondary clauses, or explanations into the question text.",
-      "Exactly 2 choices: 'True' and 'False' (NEVER use 'Fact' or 'Myth').",
+      "Exactly 2 choices: 'True' and 'False'.",
       "Truth Balance: Maintain a strict ~50/50 balance between True and False as the correct choice across the generated questions to keep viewer suspense.",
       "Provide a clear explanation of why it is True or False along with a scientific/real-world fun fact.",
       "Visual prompt describes a realistic, cinematic background scene illustrating the statement.",
@@ -40,12 +55,12 @@ export const ARCHETYPE_GUIDELINES: Record<BankGameplayArchetypeId, ArchetypeProm
   },
   deep_trivia: {
     format: "multiple_choice",
-    choiceCount: 4,
+    choiceCount: 3,
     visualIntent: "question_illustration",
     defaultThinkingSeconds: 6,
     instructions: [
       "Deep knowledge trivia question under 75 characters (history, cosmos, rare animals, breakthrough science).",
-      "4 choices (A, B, C, D) with high plausibility to stimulate curiosity.",
+      "Exactly 3 choices (A, B, C) with high plausibility to stimulate curiosity.",
       "Engaging, educational explanation revealing an angle that 95% of viewers don't know.",
       "Visual prompt describes a breathtaking cinematic environment or subject.",
     ],
@@ -64,12 +79,12 @@ export const ARCHETYPE_GUIDELINES: Record<BankGameplayArchetypeId, ArchetypeProm
   },
   visual_spotting: {
     format: "odd_one_out",
-    choiceCount: 4,
+    choiceCount: 3,
     visualIntent: "question_illustration",
     defaultThinkingSeconds: 6,
     instructions: [
       "Visual spotting challenge finding anomalies, differences, or synthetic impostors in the frame.",
-      "4 choices corresponding to 4 positions or distinctive traits.",
+      "Exactly 3 choices (A, B, C) corresponding to 3 full-bleed visual cards without text.",
       "Visual spec describes the visual challenge in detail (camouflaged animal, AI impostor, etc.).",
     ],
   },
@@ -271,7 +286,7 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
         `- Core Traits / Clues: ${traits}`,
         `- Distractor Pool: ${distractors}`,
         `- Versus Rivals: ${rivals}`,
-        `- Facts & Myths:`,
+        `- True / False Claims:`,
         facts || "  (None)",
       ].join("\n");
     })
@@ -303,12 +318,12 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
     `=== ARCHETYPE RULES FOR "${options.archetypeId}" ===`,
     ...guideline.instructions.map((ins) => `* ${ins}`),
     ``,
-    ...(options.archetypeId === "verdict_fact_myth"
+    ...(options.archetypeId === "verdict_true_false" || options.archetypeId === "verdict_fact_myth"
       ? [
           `=== SPECIALIZED TRUE / FALSE ARCHETYPE DIRECTIVE ===`,
           `CRITICAL RULE: Standardized exclusively to "True" and "False" format.`,
           `1. QUESTION HOOK: Formulate a punchy factual statement or question ending with "... True or False?".`,
-          `2. CHOICES: Exactly 2 choices with text strictly "True" and "False" (NEVER use "Fact" or "Myth").`,
+          `2. CHOICES: Exactly 2 choices with text strictly "True" and "False".`,
           `3. TRUTH BALANCE: Enforce a strict ~50/50 distribution across questions (roughly half True, half False as correct choice).`,
           `4. ANCHORING: Map [TRUE] claims from the target entity to correct choice "True", and [FALSE] claims to correct choice "False".`,
           ``,
@@ -335,7 +350,7 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
     `2. ENTITY ANCHOR: For each question, set "entity_id" to the corresponding Entity ID.`,
     options.archetypeId === "speed_blitz"
       ? `3. TRICK / RIDDLE ANCHOR: Craft a fast-reflex brainteaser or cognitive trap situated around the entity (its traits, behavior, or physical nature).`
-      : `3. TRUTH & ACCURACY: Base the question directly on the provided Core Traits, Facts & Myths, or Versus Rivals. Do NOT hallucinate facts.`,
+      : `3. TRUTH & ACCURACY: Base the question directly on the provided Core Traits, True / False Claims, or Versus Rivals. Do NOT hallucinate facts.`,
     `4. DISTRACTORS: Draw plausible wrong choices from the provided Distractor Pool or Versus Rivals whenever possible.`,
     `5. CONCISE HOOK: Question text must be strictly 6 to 12 words (40-75 characters max) suited for fast mobile reading.`,
     existingSamplesBlock,
@@ -452,6 +467,16 @@ export function parseBatchGenerationOutput(
       candidate.visual_spec = vs;
     }
 
+    const expectedCount = ARCHETYPE_GUIDELINES[meta.archetypeId]?.choiceCount ?? 3;
+    if (Array.isArray(candidate.choices) && candidate.choices.length > expectedCount) {
+      const correctChoice = (candidate.choices as any[]).find(
+        (c) => c && typeof c === "object" && (c.id === candidate.correct_choice_id || c.is_correct === true),
+      );
+      const distractors = (candidate.choices as any[]).filter((c) => c !== correctChoice);
+      const neededDistractors = distractors.slice(0, expectedCount - 1);
+      candidate.choices = correctChoice ? [correctChoice, ...neededDistractors] : candidate.choices.slice(0, expectedCount);
+    }
+
     const parsed = BankQuestionSchema.safeParse(candidate);
     if (parsed.success) {
       result.push(parsed.data);
@@ -551,6 +576,16 @@ export function parseReverseBatchGenerationOutput(
         vs.intent = "question_illustration";
       }
       candidate.visual_spec = vs;
+    }
+
+    const expectedCount = ARCHETYPE_GUIDELINES[meta.archetypeId]?.choiceCount ?? 3;
+    if (Array.isArray(candidate.choices) && candidate.choices.length > expectedCount) {
+      const correctChoice = (candidate.choices as any[]).find(
+        (c) => c && typeof c === "object" && (c.id === candidate.correct_choice_id || c.is_correct === true),
+      );
+      const distractors = (candidate.choices as any[]).filter((c) => c !== correctChoice);
+      const neededDistractors = distractors.slice(0, expectedCount - 1);
+      candidate.choices = correctChoice ? [correctChoice, ...neededDistractors] : candidate.choices.slice(0, expectedCount);
     }
 
     const parsed = BankQuestionSchema.safeParse(candidate);

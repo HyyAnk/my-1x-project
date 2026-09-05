@@ -60,7 +60,7 @@ const sampleSpeedBlitzQuestion: BankQuestion = {
 
 describe("Multilingual Transcreation Module", () => {
   describe("buildQuestionTranscreationPrompt", () => {
-    it("builds a culturally nuanced transcreation prompt for verdict_fact_myth in Spanish", () => {
+    it("builds a culturally nuanced transcreation prompt for verdict_true_false in Spanish", () => {
       const prompt = buildQuestionTranscreationPrompt({
         question: sampleQuestion,
         targetLanguage: "es",
@@ -68,7 +68,7 @@ describe("Multilingual Transcreation Module", () => {
       });
 
       expect(prompt).toContain('target language: **🇪🇸 Español (code: "es")**');
-      expect(prompt).toContain("Fact vs Myth");
+      expect(prompt).toContain("True or False");
       expect(prompt).toContain('ID: "A"');
       expect(prompt).toContain('ID: "B"');
       expect(prompt).toContain('Correct Choice ID: "A"');

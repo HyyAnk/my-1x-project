@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CircleNotch, Play } from "@phosphor-icons/react";
+import { CircleNotch, Lightning } from "@phosphor-icons/react";
 import {
   ALL_QUIZ_IMAGE_STYLES,
   QUIZ_IMAGE_STYLE_LABELS,
@@ -10,6 +10,10 @@ import {
   type TopicCandidate,
 } from "@studio/shared";
 import { TopicLayoutPreviewButton } from "./TopicLayoutPreviewButton";
+
+function formatDomain(domainId: string): string {
+  return domainId.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
 export function TopicCard({
   topic,
@@ -38,6 +42,11 @@ export function TopicCard({
       <div className="topic-card-top-bar">
         <div style={{ display: "flex", gap: "6px", alignItems: "center", flexWrap: "wrap" }}>
           <div className="topic-number">Topic candidate</div>
+          {topic.domain_id ? (
+            <span className="topic-domain-badge" title={`Domain: ${formatDomain(topic.domain_id)}`}>
+              🏛️ {formatDomain(topic.domain_id)}
+            </span>
+          ) : null}
           {topic.theme_hint ? (
             <span className="topic-theme-badge" title={`Suggested by topic: ${topic.theme_hint}`}>
               🎯 {topic.theme_hint}
@@ -102,12 +111,12 @@ export function TopicCard({
       <div className="topic-footer">
         <span>{topic.estimated_potential}</span>
         <button
-          className="text-button"
+          className="primary-button topic-build-btn"
           disabled={disabled || !isQuestionCountValid}
           onClick={() => onConfirm(questionCount, selectedStyle)}
         >
-          {busy ? <CircleNotch className="spin" size={15} /> : <Play size={14} />}
-          {busy ? "Creating…" : "Use this topic"}
+          {busy ? <CircleNotch className="spin" size={15} /> : <Lightning size={14} weight="fill" />}
+          {busy ? "Building Video…" : "Build Video (1-Click)"}
         </button>
       </div>
     </article>

@@ -50,6 +50,7 @@ export type Channel = z.infer<typeof ChannelSchema>;
 export const TopicGameplayArchetypeSchema = z.enum([
   "deep_trivia",
   "visual_spotting",
+  "verdict_true_false",
   "verdict_fact_myth",
   "versus_faceoff",
   "visual_identification",
@@ -77,6 +78,8 @@ export const TopicCandidateSchema = z.object({
   theme_hint: z.string().optional(),
   archetype: TopicGameplayArchetypeSchema.optional(),
   suggested_layout: QuizLayoutIdSchema.optional(),
+  domain_id: z.string().optional(),
+  subtopic_id: z.string().optional(),
 });
 
 export type TopicCandidate = z.infer<typeof TopicCandidateSchema>;

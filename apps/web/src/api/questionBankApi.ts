@@ -72,6 +72,11 @@ export const questionBankApi = {
       method: "DELETE",
     }),
 
+  clearQuestionBank: () =>
+    request<{ ok: boolean; cleared_batches_count: number }>("/api/question-bank/clear", {
+      method: "POST",
+    }),
+
   generateQuestionBankBatch: (payload: QuestionBankBatchGenPayload) =>
     request<QuestionBankBatchGenResponse>("/api/question-bank/generate-batch", {
       method: "POST",

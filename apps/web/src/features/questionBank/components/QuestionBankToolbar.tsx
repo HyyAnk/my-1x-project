@@ -1,4 +1,4 @@
-import { Funnel, Globe, MagnifyingGlass, Plus, X } from "@phosphor-icons/react";
+import { Funnel, Globe, MagnifyingGlass, Plus, Trash, X } from "@phosphor-icons/react";
 import { TARGET_LANGUAGE_OPTIONS, type Channel } from "@studio/shared";
 import type { BankTaxonomy, QuestionBankFilters } from "../types/questionBankUi.types";
 import { useTranslation } from "../../../i18n";
@@ -11,6 +11,7 @@ export interface QuestionBankToolbarProps {
   onUpdateFilter: <K extends keyof QuestionBankFilters>(key: K, value: QuestionBankFilters[K]) => void;
   onResetFilters: () => void;
   onOpenCreateModal: () => void;
+  onOpenClearAllModal?: () => void;
 }
 
 export function QuestionBankToolbar({
@@ -20,6 +21,7 @@ export function QuestionBankToolbar({
   onUpdateFilter,
   onResetFilters,
   onOpenCreateModal,
+  onOpenClearAllModal,
 }: QuestionBankToolbarProps) {
   const { t } = useTranslation();
   const activeDomain = taxonomy?.domains.find((d) => d.id === filters.domainId);
@@ -137,7 +139,32 @@ export function QuestionBankToolbar({
           </div>
         </div>
 
-        <div className="qb-filters-row-right">
+        <div className="qb-filters-row-right" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {onOpenClearAllModal && (
+            <button
+              type="button"
+              className="qb-btn qb-clear-all-btn"
+              onClick={onOpenClearAllModal}
+              title={t("questionBank.filters.clearAllTitle")}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 12px",
+                fontSize: "13px",
+                fontWeight: 500,
+                color: "#f87171",
+                background: "rgba(239, 68, 68, 0.08)",
+                border: "1px solid rgba(239, 68, 68, 0.25)",
+                borderRadius: "6px",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <Trash size={15} />
+              <span>{t("questionBank.filters.clearAll")}</span>
+            </button>
+          )}
           <button
             type="button"
             className="qb-btn qb-btn-primary qb-add-question-btn"

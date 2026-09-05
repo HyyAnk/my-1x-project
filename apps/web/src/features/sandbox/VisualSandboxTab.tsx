@@ -77,6 +77,9 @@ export function VisualSandboxTab({
         if (question.choices.length < 3) {
           if (isTfChoices) {
             question.setChoices(["Option A", "Option B", "Option C"]);
+          } else if (question.choices.length <= 1) {
+            const firstChoice = question.choices[0] || "Option A";
+            question.setChoices([firstChoice, "Option B", "Option C"]);
           } else {
             question.setChoices([...question.choices, "Option C"]);
           }

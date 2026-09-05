@@ -4,6 +4,7 @@ import { QuizAgeBandSchema, QuizQuestionFormatSchema } from "../enums.js";
 export const BankGameplayArchetypeIdSchema = z.enum([
   "deep_trivia",
   "visual_spotting",
+  "verdict_true_false",
   "verdict_fact_myth",
   "versus_faceoff",
   "visual_identification",
@@ -34,10 +35,18 @@ export const BankTranslationChoiceSchema = z.object({
 });
 export type BankTranslationChoice = z.infer<typeof BankTranslationChoiceSchema>;
 
+export function bankRequiredChoiceCountForArchetype(archetypeId: BankGameplayArchetypeId): number {
+  return archetypeId === "verdict_true_false" ||
+    archetypeId === "verdict_fact_myth" ||
+    archetypeId === "versus_faceoff"
+    ? 2
+    : 3;
+}
+
 export const BankTranslationContentSchema = z.object({
   language: z.string().trim().min(1).max(40),
   question: z.string().trim().min(1).max(400),
-  choices: BankTranslationChoiceSchema.array().min(2).max(4),
+  choices: BankTranslationChoiceSchema.array().min(2).max(3),
   explanation: z.string().trim().min(1).max(900),
   fun_fact: z.string().trim().max(700).default(""),
   translated_at: z.string().datetime().optional(),
@@ -58,7 +67,7 @@ export const BankQuestionSchema = z
     language: z.string().trim().min(1).max(40).optional(),
     question: z.string().trim().min(1).max(350),
     format: QuizQuestionFormatSchema,
-    choices: BankChoiceSchema.array().min(2).max(4),
+    choices: BankChoiceSchema.array().min(2).max(3),
     correct_choice_id: z.string().trim().min(1),
     explanation: z.string().trim().min(1).max(800),
     fun_fact: z.string().trim().max(600).default(""),
@@ -79,6 +88,15 @@ export const BankQuestionSchema = z
         code: z.ZodIssueCode.custom,
         path: ["correct_choice_id"],
         message: `correct_choice_id "${data.correct_choice_id}" must exist in choices`,
+      });
+    }
+
+    const expectedChoiceCount = bankRequiredChoiceCountForArchetype(data.archetype_id);
+    if (data.choices.length !== expectedChoiceCount) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["choices"],
+        message: `Archetype "${data.archetype_id}" requires exactly ${expectedChoiceCount} choices, received ${data.choices.length}`,
       });
     }
   });

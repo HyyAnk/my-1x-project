@@ -224,7 +224,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
     it("POST /api/channels/:channelId/question-bank/create-episode creates episode via REST API", async () => {
       const seedQuestion: BankQuestion = {
         id: "INT-TEST-002",
-        archetype_id: "verdict_fact_myth",
+        archetype_id: "verdict_true_false",
         domain_id: "nature_animals",
         subtopic_id: "ocean_giants",
         question: "Do sharks ever get cancer?",
@@ -256,7 +256,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       expect(res.statusCode).toBe(201);
       const body = JSON.parse(res.body);
       expect(body.episode).toBeDefined();
-      expect(body.episode.quiz_config.archetype).toBe("verdict_fact_myth");
+      expect(body.episode.quiz_config.archetype).toBe("verdict_true_false");
       expect(body.episode.quiz_config.target_layout).toBe("verdict_true_false");
       expect(body.cooldown_recorded).toBe(true);
     }, 15000);

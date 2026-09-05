@@ -15,12 +15,15 @@ import { RepositoryError, type RepositoryService } from "../repository.js";
 import type { TaskManager } from "../tasks.js";
 import type { AppState } from "./state.js";
 import { createVoiceWithPreview } from "./voiceHelpers.js";
+import { createEpisodeFromTopicWithBank } from "../quiz/bank/questionBankToQuizBridge.js";
+import type { LLMClient } from "../utils/promptSanitizer.js";
 
 export type ChannelsRouteDeps = {
   repository: RepositoryService;
   tasks: TaskManager;
   logger: StudioLogger;
   state: AppState;
+  llmClient?: LLMClient | null;
 };
 
 export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCallback {
@@ -131,9 +134,20 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
       const params = request.params as { channelId: string; topicId: string };
       const payload = request.body && typeof request.body === "object" && !Array.isArray(request.body) ? request.body : {};
       const input = TopicConfirmInputSchema.parse({ ...payload, topic_id: params.topicId });
-      return reply
-        .code(201)
-        .send({ episode: await repository.confirmTopic(params.channelId, input.topic_id, input.question_count, input.visual_style) });
+      const result = await createEpisodeFromTopicWithBank({
+        repository,
+        tasks,
+        channelId: params.channelId,
+        llmClient: deps.llmClient,
+        input: {
+          topic_id: input.topic_id,
+          question_count: input.question_count,
+          visual_style: input.visual_style,
+          auto_start_pipeline: input.auto_start_pipeline ?? true,
+          render_aspect_ratio: input.render_aspect_ratio,
+        },
+      });
+      return reply.code(201).send(result);
     });
     done();
   };

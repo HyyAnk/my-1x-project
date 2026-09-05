@@ -52,6 +52,7 @@ export function ChannelDetail({
     onRefresh,
     onNotice,
     onTaskSubmitted,
+    onSelectEpisode: (episodeId) => openEpisode(channel.channel_id, episodeId),
     simplifyMode,
   });
 

@@ -9,6 +9,7 @@ import {
   saveQuestionBankQuestion,
   saveQuestionBankTranslation,
   deleteQuestionBankQuestion,
+  clearQuestionBank,
   getQuestionBankMatrixCoverage,
 } from "../quiz/questionBankRepository.js";
 
@@ -23,5 +24,6 @@ export const questionBankBindings = {
   saveQuestionBankQuestion,
   saveQuestionBankTranslation,
   deleteQuestionBankQuestion,
+  clearQuestionBank,
   getQuestionBankMatrixCoverage,
 };

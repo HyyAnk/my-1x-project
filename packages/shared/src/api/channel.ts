@@ -70,7 +70,11 @@ export const TopicConfirmInputSchema = z.object({
   topic_id: z.string().min(1),
   question_count: z.number().int().min(QUIZ_MIN_QUESTION_COUNT).max(QUIZ_MAX_QUESTION_COUNT).optional(),
   visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]).optional(),
+  auto_start_pipeline: z.boolean().optional(),
+  render_aspect_ratio: z.enum(["9:16", "16:9"]).optional(),
 });
+
+export type TopicConfirmInput = z.infer<typeof TopicConfirmInputSchema>;
 
 export const EpisodeSettingsInputSchema = z.object({
   target_duration_minutes: z.number().min(3).max(60).optional(),

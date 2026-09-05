@@ -63,7 +63,7 @@ export const MASCOT_ARCHETYPES_CATALOG: readonly MascotArchetypeDefinition[] = [
   {
     id: 8,
     code: "skeptical_buster",
-    name: "The Skeptical / Myth Buster",
+    name: "The Skeptical / Truth Verifier",
     guideline:
       "Clever doubt or spotting suspicious inconsistencies; raised skeptical eyebrow, quizzical side-eye, challenging an absurd premise.",
   },

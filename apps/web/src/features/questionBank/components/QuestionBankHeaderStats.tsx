@@ -16,7 +16,7 @@ export interface QuestionBankHeaderStatsProps {
 }
 
 const ARCHETYPE_CHIPS: Array<{ id: string; defaultLabel: string; icon: string }> = [
-  { id: "verdict_fact_myth", defaultLabel: "Fact vs Myth", icon: "⚖️" },
+  { id: "verdict_true_false", defaultLabel: "True or False", icon: "⚖️" },
   { id: "speed_blitz", defaultLabel: "Speed Blitz", icon: "⚡" },
   { id: "deep_trivia", defaultLabel: "Deep Trivia", icon: "🧠" },
   { id: "versus_faceoff", defaultLabel: "1v1 Faceoff", icon: "⚔️" },
@@ -179,8 +179,14 @@ export function QuestionBankHeaderStats({
           {/* Interactive Archetype Filter Chip Bar */}
           <div className="qb-archetypes-chip-bar" role="tablist" aria-label="Archetype Filters">
             {ARCHETYPE_CHIPS.map(({ id: archId, defaultLabel, icon }) => {
-              const isActive = selectedArchetype === archId;
-              const count = stats?.by_archetype?.[archId] ?? 0;
+              const isActive =
+                selectedArchetype === archId ||
+                (archId === "verdict_true_false" && selectedArchetype === "verdict_fact_myth");
+              const count =
+                archId === "verdict_true_false"
+                  ? (stats?.by_archetype?.["verdict_true_false"] ?? 0) +
+                    (stats?.by_archetype?.["verdict_fact_myth"] ?? 0)
+                  : (stats?.by_archetype?.[archId] ?? 0);
               const label = t(`questionBank.archetypes.${archId}` as any) || defaultLabel;
 
               return (

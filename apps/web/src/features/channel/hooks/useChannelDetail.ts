@@ -14,6 +14,7 @@ export type UseChannelDetailProps = {
   onRefresh: () => Promise<void>;
   onNotice: (notice: NonNullable<Notice>) => void;
   onTaskSubmitted: (task: Task) => void;
+  onSelectEpisode?: (episodeId: string) => void;
   simplifyMode?: boolean;
 };
 
@@ -25,6 +26,7 @@ export function useChannelDetail({
   onRefresh,
   onNotice,
   onTaskSubmitted,
+  onSelectEpisode,
   simplifyMode = true,
 }: UseChannelDetailProps) {
   const [topics, setTopics] = useState<TopicCandidate[]>([]);
@@ -153,14 +155,26 @@ export function useChannelDetail({
     if (confirmingTopicId) return;
     setConfirmingTopicId(topic.topic_id);
     try {
-      const result = await api.confirmTopic(channel.channel_id, topic.topic_id, questionCount, visualStyle);
-      onNotice({
-        tone: "good",
-        message: `Episode created: ${result.episode.topic.title} with ${questionCount} questions`,
-      });
+      const result = await api.confirmTopic(channel.channel_id, topic.topic_id, questionCount, visualStyle, true);
+      if (result.task) {
+        onTaskSubmitted(result.task);
+        onNotice({
+          tone: "good",
+          message: "Video generation started with curated questions!",
+        });
+      } else {
+        onNotice({
+          tone: "good",
+          message: `Episode created: ${result.episode.topic.title} with ${questionCount} questions`,
+        });
+      }
       await load();
       await onRefresh();
-      switchTab("episodes");
+      if (onSelectEpisode) {
+        onSelectEpisode(result.episode.episode_id);
+      } else {
+        switchTab("episodes");
+      }
     } catch (error) {
       onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not create episode" });
     } finally {

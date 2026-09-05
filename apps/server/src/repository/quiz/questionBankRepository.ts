@@ -1,4 +1,4 @@
-import { mkdir, readdir, readFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import {
@@ -27,15 +27,33 @@ const COOLDOWN_DAYS_DEFAULT = 30;
 export function getQuestionBankPath(this: RepositoryRuntime, ...segments: string[]): string {
   const runtimePath = path.join(this.roots.runtime, QUESTION_BANK_DIR, ...segments);
   if (existsSync(runtimePath)) return runtimePath;
-  const projectPath = path.join(this.rootDirectory, ".quiz-studio", QUESTION_BANK_DIR, ...segments);
+
+  const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
+  const isRedirectedRuntime = path.resolve(this.roots.runtime) !== path.resolve(defaultProjectRuntime);
+
+  if (isRedirectedRuntime) {
+    if (segments[0] === "taxonomy.json") {
+      const projectPath = path.join(defaultProjectRuntime, QUESTION_BANK_DIR, ...segments);
+      if (existsSync(projectPath)) return projectPath;
+    }
+    return runtimePath;
+  }
+
+  const projectPath = path.join(defaultProjectRuntime, QUESTION_BANK_DIR, ...segments);
   if (existsSync(projectPath)) return projectPath;
   return runtimePath;
 }
 
 export function getQuestionBankWritePath(this: RepositoryRuntime, ...segments: string[]): string {
   const runtimeBank = path.join(this.roots.runtime, QUESTION_BANK_DIR);
-  const projectBank = path.join(this.rootDirectory, ".quiz-studio", QUESTION_BANK_DIR);
-  if (existsSync(runtimeBank)) return path.join(runtimeBank, ...segments);
+  const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
+  const isRedirectedRuntime = path.resolve(this.roots.runtime) !== path.resolve(defaultProjectRuntime);
+
+  if (isRedirectedRuntime) {
+    return path.join(runtimeBank, ...segments);
+  }
+
+  const projectBank = path.join(defaultProjectRuntime, QUESTION_BANK_DIR);
   if (existsSync(projectBank)) return path.join(projectBank, ...segments);
   return path.join(runtimeBank, ...segments);
 }
@@ -265,17 +283,38 @@ export async function readQuestionBankIndex(this: RepositoryRuntime): Promise<Ba
   }
 }
 
+function matchesArchetypeFilter(dirArchetype: string, filterArchetype?: string): boolean {
+  if (!filterArchetype) return true;
+  if (dirArchetype === filterArchetype) return true;
+  if (
+    (filterArchetype === "verdict_true_false" || filterArchetype === "verdict_fact_myth") &&
+    (dirArchetype === "verdict_true_false" || dirArchetype === "verdict_fact_myth")
+  ) {
+    return true;
+  }
+  return false;
+}
+
 export async function listQuestionBankBatches(
   this: RepositoryRuntime,
   filter?: { archetypeId?: string; domainId?: string },
 ): Promise<BankSubtopicBatch[]> {
-  const candidateRoots = new Set<string>();
-  candidateRoots.add(path.join(this.roots.runtime, QUESTION_BANK_DIR));
-  candidateRoots.add(path.join(this.rootDirectory, ".quiz-studio", QUESTION_BANK_DIR));
+  const runtimeBankRoot = path.join(this.roots.runtime, QUESTION_BANK_DIR);
+  const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
+  const isRedirectedRuntime = path.resolve(this.roots.runtime) !== path.resolve(defaultProjectRuntime);
 
-  const batchesMap = new Map<string, BankSubtopicBatch>();
+  const candidateRoots: string[] = [runtimeBankRoot];
+  if (!isRedirectedRuntime) {
+    const projectBankRoot = path.join(defaultProjectRuntime, QUESTION_BANK_DIR);
+    if (projectBankRoot !== runtimeBankRoot && existsSync(projectBankRoot)) {
+      candidateRoots.push(projectBankRoot);
+    }
+  }
+
+  const batchesMap = new Map<string, { data: BankSubtopicBatch; isRuntime: boolean; archDir: string }>();
 
   for (const bankRoot of candidateRoots) {
+    const isRuntime = bankRoot === runtimeBankRoot;
     let archetypeDirs: string[] = [];
     try {
       archetypeDirs = (await readdir(bankRoot, { withFileTypes: true }))
@@ -286,7 +325,7 @@ export async function listQuestionBankBatches(
     }
 
     for (const archDir of archetypeDirs) {
-      if (filter?.archetypeId && archDir !== filter.archetypeId) continue;
+      if (!matchesArchetypeFilter(archDir, filter?.archetypeId)) continue;
       const archPath = path.join(bankRoot, archDir);
 
       let domainDirs: string[] = [];
@@ -317,9 +356,24 @@ export async function listQuestionBankBatches(
             const content = JSON.parse(await readFile(filePath, "utf8")) as unknown;
             const parsed = BankSubtopicBatchSchema.safeParse(content);
             if (parsed.success) {
-              const key = `${parsed.data.archetype_id}:${parsed.data.domain_id}:${parsed.data.subtopic_id}`;
-              if (!batchesMap.has(key)) {
-                batchesMap.set(key, parsed.data);
+              const data = parsed.data;
+              if (data.archetype_id === "verdict_fact_myth") {
+                data.archetype_id = "verdict_true_false";
+              }
+              data.questions = data.questions.map((q) => {
+                if (q.archetype_id === "verdict_fact_myth") {
+                  return { ...q, archetype_id: "verdict_true_false" };
+                }
+                return q;
+              });
+              const key = `${data.archetype_id}:${data.domain_id}:${data.subtopic_id}`;
+              const existing = batchesMap.get(key);
+              if (!existing) {
+                batchesMap.set(key, { data, isRuntime, archDir });
+              } else if (isRuntime && !existing.isRuntime) {
+                batchesMap.set(key, { data, isRuntime, archDir });
+              } else if (isRuntime === existing.isRuntime && archDir === "verdict_true_false" && existing.archDir !== "verdict_true_false") {
+                batchesMap.set(key, { data, isRuntime, archDir });
               }
             }
           } catch {
@@ -330,7 +384,7 @@ export async function listQuestionBankBatches(
     }
   }
 
-  return Array.from(batchesMap.values());
+  return Array.from(batchesMap.values()).map((v) => v.data);
 }
 
 export async function recalculateQuestionBankIndex(this: RepositoryRuntime): Promise<BankIndex> {
@@ -343,6 +397,9 @@ export async function recalculateQuestionBankIndex(this: RepositoryRuntime): Pro
     const qCount = batch.questions.length;
     current_total += qCount;
     by_archetype[batch.archetype_id] = (by_archetype[batch.archetype_id] || 0) + qCount;
+    if (batch.archetype_id === "verdict_true_false") {
+      by_archetype.verdict_fact_myth = (by_archetype.verdict_fact_myth || 0) + qCount;
+    }
     by_domain[batch.domain_id] = (by_domain[batch.domain_id] || 0) + qCount;
   }
 
@@ -401,6 +458,15 @@ export async function queryQuestionBankQuestions(
   for (const batch of batches) {
     if (params.subtopicId && batch.subtopic_id !== params.subtopicId) continue;
     allQuestions.push(...batch.questions);
+  }
+
+  if (params.archetypeId === "verdict_fact_myth") {
+    allQuestions = allQuestions.map((q) => {
+      if (q.archetype_id === "verdict_true_false") {
+        return { ...q, archetype_id: "verdict_fact_myth" as any };
+      }
+      return q;
+    });
   }
 
   // Filter by status
@@ -542,7 +608,11 @@ export async function saveQuestionBankQuestion(
   this: RepositoryRuntime,
   question: BankQuestion,
 ): Promise<BankQuestion> {
-  const validated = BankQuestionSchema.parse(question);
+  const normalizedQuestion = {
+    ...question,
+    archetype_id: question.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : question.archetype_id,
+  };
+  const validated = BankQuestionSchema.parse(normalizedQuestion);
   const batchFilePath = getQuestionBankWritePath.call(
     this,
     validated.archetype_id,
@@ -550,7 +620,16 @@ export async function saveQuestionBankQuestion(
     `${validated.subtopic_id}.json`,
   );
 
-  let batch: BankSubtopicBatch;
+  let batch: BankSubtopicBatch = {
+    schema_version: 2,
+    archetype_id: validated.archetype_id,
+    domain_id: validated.domain_id,
+    subtopic_id: validated.subtopic_id,
+    subtopic_title: validated.subtopic_id.replaceAll("_", " "),
+    updated_at: new Date().toISOString(),
+    questions: [],
+  };
+
   try {
     const existingReadPath = getQuestionBankPath.call(
       this,
@@ -560,16 +639,25 @@ export async function saveQuestionBankQuestion(
     );
     const raw = JSON.parse(await readFile(existingReadPath, "utf8")) as unknown;
     batch = BankSubtopicBatchSchema.parse(raw);
+    if (batch.archetype_id === "verdict_fact_myth") {
+      batch.archetype_id = "verdict_true_false";
+    }
   } catch {
-    batch = {
-      schema_version: 2,
-      archetype_id: validated.archetype_id,
-      domain_id: validated.domain_id,
-      subtopic_id: validated.subtopic_id,
-      subtopic_title: validated.subtopic_id.replaceAll("_", " "),
-      updated_at: new Date().toISOString(),
-      questions: [],
-    };
+    if (validated.archetype_id === "verdict_true_false") {
+      try {
+        const legacyReadPath = getQuestionBankPath.call(
+          this,
+          "verdict_fact_myth",
+          validated.domain_id,
+          `${validated.subtopic_id}.json`,
+        );
+        const rawLegacy = JSON.parse(await readFile(legacyReadPath, "utf8")) as unknown;
+        batch = BankSubtopicBatchSchema.parse(rawLegacy);
+        batch.archetype_id = "verdict_true_false";
+      } catch {
+        // Fall back to default batch
+      }
+    }
   }
 
   const existingIndex = batch.questions.findIndex((q) => q.id === validated.id);
@@ -589,6 +677,18 @@ export async function saveQuestionBankQuestion(
   batch.updated_at = now;
   await mkdir(path.dirname(batchFilePath), { recursive: true });
   await this.writeJsonAtomic(batchFilePath, batch);
+
+  if (validated.archetype_id === "verdict_true_false") {
+    const legacyPath = getQuestionBankWritePath.call(
+      this,
+      "verdict_fact_myth",
+      validated.domain_id,
+      `${validated.subtopic_id}.json`,
+    );
+    if (existsSync(legacyPath)) {
+      await this.writeJsonAtomic(legacyPath, batch);
+    }
+  }
 
   // Recalculate index
   await recalculateQuestionBankIndex.call(this);
@@ -636,6 +736,18 @@ export async function saveQuestionBankTranslation(
       await mkdir(path.dirname(batchFilePath), { recursive: true });
       await this.writeJsonAtomic(batchFilePath, batch);
 
+      if (batch.archetype_id === "verdict_true_false") {
+        const legacyPath = getQuestionBankWritePath.call(
+          this,
+          "verdict_fact_myth",
+          batch.domain_id,
+          `${batch.subtopic_id}.json`,
+        );
+        if (existsSync(legacyPath)) {
+          await this.writeJsonAtomic(legacyPath, batch);
+        }
+      }
+
       return updatedQuestion;
     }
   }
@@ -660,6 +772,12 @@ export async function deleteQuestionBankQuestion(
         path.join(this.roots.runtime, QUESTION_BANK_DIR, batch.archetype_id, batch.domain_id, `${batch.subtopic_id}.json`),
         path.join(this.rootDirectory, ".quiz-studio", QUESTION_BANK_DIR, batch.archetype_id, batch.domain_id, `${batch.subtopic_id}.json`),
       ];
+      if (batch.archetype_id === "verdict_true_false") {
+        candidatePaths.push(
+          path.join(this.roots.runtime, QUESTION_BANK_DIR, "verdict_fact_myth", batch.domain_id, `${batch.subtopic_id}.json`),
+          path.join(this.rootDirectory, ".quiz-studio", QUESTION_BANK_DIR, "verdict_fact_myth", batch.domain_id, `${batch.subtopic_id}.json`),
+        );
+      }
 
       for (const filePath of candidatePaths) {
         if (existsSync(filePath)) {
@@ -677,6 +795,63 @@ export async function deleteQuestionBankQuestion(
   }
 
   return false;
+}
+
+export async function clearQuestionBank(
+  this: RepositoryRuntime,
+): Promise<{ cleared_batches_count: number }> {
+  const runtimeBankRoot = path.join(this.roots.runtime, QUESTION_BANK_DIR);
+  const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
+  const isRedirectedRuntime = path.resolve(this.roots.runtime) !== path.resolve(defaultProjectRuntime);
+
+  const candidateRoots: string[] = [runtimeBankRoot];
+  if (!isRedirectedRuntime) {
+    const projectBankRoot = path.join(defaultProjectRuntime, QUESTION_BANK_DIR);
+    if (projectBankRoot !== runtimeBankRoot && existsSync(projectBankRoot)) {
+      candidateRoots.push(projectBankRoot);
+    }
+  }
+
+  let clearedBatchesCount = 0;
+
+  for (const bankRoot of candidateRoots) {
+    if (!existsSync(bankRoot)) continue;
+    let entries: string[] = [];
+    try {
+      entries = (await readdir(bankRoot, { withFileTypes: true }))
+        .filter((d) => d.isDirectory())
+        .map((d) => d.name);
+    } catch {
+      continue;
+    }
+
+    for (const entry of entries) {
+      const subDir = path.join(bankRoot, entry);
+      try {
+        await rm(subDir, { recursive: true, force: true });
+        clearedBatchesCount++;
+      } catch {
+        // Ignored
+      }
+    }
+
+    const indexPath = path.join(bankRoot, "index.json");
+    const emptyIndex: BankIndex = {
+      schema_version: 2,
+      target_total: 20000,
+      current_total: 0,
+      by_archetype: {},
+      by_domain: {},
+      updated_at: new Date().toISOString(),
+    };
+    try {
+      await this.writeJsonAtomic(indexPath, emptyIndex);
+    } catch {
+      // Ignored
+    }
+  }
+
+  return { cleared_batches_count: clearedBatchesCount };
 }
 
 export async function getQuestionBankMatrixCoverage(

@@ -10,7 +10,7 @@ import {
 } from "./knowledgeBaseLoader.js";
 
 export const ALL_MATRIX_ARCHETYPES: readonly BankGameplayArchetypeId[] = [
-  "verdict_fact_myth",
+  "verdict_true_false",
   "speed_blitz",
   "deep_trivia",
   "versus_faceoff",
@@ -46,7 +46,8 @@ export function buildMatrixCoverageMap(questions: BankQuestion[]): Map<string, n
   const map = new Map<string, number>();
   for (const q of questions) {
     if (q.entity_id && q.archetype_id) {
-      const key = `${q.archetype_id}:${q.entity_id}`;
+      const archId = q.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : q.archetype_id;
+      const key = `${archId}:${q.entity_id}`;
       map.set(key, (map.get(key) || 0) + 1);
     }
   }

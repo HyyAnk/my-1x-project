@@ -74,12 +74,12 @@ describe("Matrix Coverage Service", () => {
   const mockSampleQuestions: BankQuestion[] = [
     {
       id: "VFM-ANI-0001",
-      archetype_id: "verdict_fact_myth",
+      archetype_id: "verdict_true_false",
       domain_id: "nature_animals",
       subtopic_id: "marine_life",
       entity_id: "ENT-ANI-001",
       format: "true_false",
-      question: "Blue whales are bigger than any known dinosaur. Fact or Myth?",
+      question: "Blue whales are bigger than any known dinosaur. True or False?",
       choices: [
         { id: "A", text: "Fact", is_correct: true },
         { id: "B", text: "Myth", is_correct: false },
@@ -151,7 +151,7 @@ describe("Matrix Coverage Service", () => {
 
   it("builds matrix coverage map correctly ignoring legacy questions without entity_id", () => {
     const map = buildMatrixCoverageMap(mockSampleQuestions);
-    expect(map.get("verdict_fact_myth:ENT-ANI-001")).toBe(1);
+    expect(map.get("verdict_true_false:ENT-ANI-001")).toBe(1);
     expect(map.get("deep_trivia:ENT-ANI-001")).toBe(1);
     expect(map.get("speed_blitz:ENT-ANI-001")).toBeUndefined();
     expect(map.size).toBe(2);
@@ -172,7 +172,7 @@ describe("Matrix Coverage Service", () => {
     expect(stats.by_domain.nature_animals.covered_combos).toBe(2);
 
     // Check archetype breakdown
-    expect(stats.by_archetype.verdict_fact_myth.covered_combos).toBe(1);
+    expect(stats.by_archetype.verdict_true_false.covered_combos).toBe(1);
     expect(stats.by_archetype.deep_trivia.covered_combos).toBe(1);
     expect(stats.by_archetype.versus_faceoff.covered_combos).toBe(0);
     expect(stats.by_archetype.versus_faceoff.total_combos).toBe(2500);

@@ -278,10 +278,10 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
         question: `Test question for archetype ${archetypeMeta.name}?`,
         format: archetypeMeta.defaultFormat,
         choices:
-          archetypeMeta.defaultFormat === "true_false"
+          archetypeMeta.defaultFormat === "true_false" || archetypeMeta.id === "versus_faceoff"
             ? [
-                { id: "1", text: "True", is_correct: true },
-                { id: "2", text: "False", is_correct: false },
+                { id: "1", text: "Option 1", is_correct: true },
+                { id: "2", text: "Option 2", is_correct: false },
               ]
             : [
                 { id: "1", text: "Option 1", is_correct: true },

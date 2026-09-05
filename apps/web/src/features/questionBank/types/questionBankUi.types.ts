@@ -26,7 +26,7 @@ export interface QuestionBankFilters {
 }
 
 export interface QuestionBankModalState {
-  type: "create" | "edit" | "ai_generate" | null;
+  type: "create" | "edit" | "ai_generate" | "clear_all" | null;
   question?: BankQuestionWithCooldown | null;
 }
 

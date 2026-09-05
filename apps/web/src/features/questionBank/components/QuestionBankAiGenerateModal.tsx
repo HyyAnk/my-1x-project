@@ -11,7 +11,7 @@ import type {
 } from "../types/questionBankUi.types";
 
 const ARCHETYPE_OPTIONS: Array<{ id: BankGameplayArchetypeId; label: string; icon: string }> = [
-  { id: "verdict_fact_myth", label: "True or False", icon: "⚖️" },
+  { id: "verdict_true_false", label: "True or False", icon: "⚖️" },
   { id: "speed_blitz", label: "Speed Blitz", icon: "⚡" },
   { id: "deep_trivia", label: "Deep Trivia", icon: "🧠" },
   { id: "versus_faceoff", label: "1v1 Faceoff", icon: "⚔️" },

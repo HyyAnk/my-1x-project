@@ -128,9 +128,9 @@ export const THUMBNAIL_LAYOUT_CATALOG: Record<ThumbnailLayoutType, ThumbnailLayo
   },
   true_false: {
     id: "true_false",
-    name: "True or False (Fact vs Myth)",
+    name: "True or False",
     description: "Controversial claim with tactile 3D True and False arcade buttons.",
-    psychologicalTrigger: "Belief challenge and myth-busting urge.",
+    psychologicalTrigger: "Belief challenge and rapid intuition test.",
     mascotPersona: {
       role: "Truth Checker / Quizmaster",
       defaultCostume: "Show host bowtie and glowing cybernetic earpiece",
@@ -138,7 +138,7 @@ export const THUMBNAIL_LAYOUT_CATALOG: Record<ThumbnailLayoutType, ThumbnailLayo
       defaultExpression: "Winking with raised eyebrow, challenging the viewer",
     },
     hookTextTemplate: "TRUE OR FALSE?",
-    badgeTemplate: "10 BIGGEST MYTHS ❌",
+    badgeTemplate: "TRUE OR FALSE? ⚡",
   },
 };
 

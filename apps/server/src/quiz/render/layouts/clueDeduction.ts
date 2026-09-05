@@ -130,12 +130,13 @@ export const clueDeductionLayout = {
 .layout-clue_deduction .clue-deduction-stage-wrapper > .answer-grid {
   position: absolute;
   bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
   width: calc(100% - 64px);
   max-width: 860px;
   z-index: 10;
-  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -174,7 +175,7 @@ export const clueDeductionLayout = {
 }
 
 .layout-clue_deduction .choice-text {
-  font-size: var(--choice-fit-size, 50px);
+  font-size: var(--choice-fitted-font-size, var(--choice-font-size-base, 50px));
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -297,7 +298,7 @@ ${
   border-radius: 20px;
 }
 #stage[data-aspect-ratio="9:16"] .layout-clue_deduction .choice-text {
-  font-size: var(--choice-fit-size, 46px);
+  font-size: var(--choice-fitted-font-size, var(--choice-font-size-base, 46px));
 }
 `
     : ""

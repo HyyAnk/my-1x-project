@@ -16,6 +16,7 @@ export const questionBankEn = {
     // Archetypes
     archetypes: {
       all: "All Archetypes",
+      verdict_true_false: "True or False",
       verdict_fact_myth: "True or False",
       speed_blitz: "Speed Blitz",
       deep_trivia: "Deep Trivia",
@@ -55,6 +56,19 @@ export const questionBankEn = {
       reset: "Reset",
       resetTitle: "Reset all filters",
       addQuestion: "Add Question",
+      clearAll: "Clear All",
+      clearAllTitle: "Delete all questions from Question Bank",
+    },
+
+    // Clear All Confirmation Modal
+    clearModal: {
+      title: "Clear Question Bank",
+      warning: "This will permanently delete all questions and batches across all archetypes and domains from your Question Bank storage. This action cannot be undone.",
+      confirmPrompt: 'To confirm deletion, please type "Yes" below:',
+      placeholder: 'Type "Yes" to confirm',
+      confirmBtn: "Confirm & Clear All",
+      clearingBtn: "Clearing Question Bank...",
+      cancelBtn: "Cancel",
     },
 
     // Table

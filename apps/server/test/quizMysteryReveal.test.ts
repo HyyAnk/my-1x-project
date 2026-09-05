@@ -136,4 +136,19 @@ describe("Mystery Reveal layout & archetype", () => {
       });
     }).toThrow();
   });
+
+  it("renders sandbox preview composition in rehearsal mode with standard block centering", () => {
+    const composition = buildSandboxComposition({
+      layout_id: "mystery_reveal",
+      choices: ["Pikachu"],
+      correct_choice_index: 0,
+      mode: "rehearsal",
+    });
+    expect(composition.html).toContain("layout-mystery_reveal");
+    expect(composition.html).toContain("mystery-stage-wrapper");
+    expect(composition.html).toContain("window.__fontReadyPromise");
+    expect(composition.html).toContain("margin-left: auto");
+    expect(composition.html).toContain("margin-right: auto");
+  });
 });
+

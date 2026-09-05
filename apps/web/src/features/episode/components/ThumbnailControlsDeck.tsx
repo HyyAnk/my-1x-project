@@ -33,7 +33,7 @@ const LAYOUT_OPTIONS: Array<{
   { id: "mystery_silhouette", name: "Mystery Clue", icon: <MagnifyingGlass size={16} />, subtitle: "Guess Who / Shadow" },
   { id: "odd_one_out", name: "Odd One Out", icon: <Eye size={16} />, subtitle: "Spot Difference" },
   { id: "difficulty_tier", name: "Difficulty Tier", icon: <Fire size={16} />, subtitle: "IQ 4 Levels" },
-  { id: "true_false", name: "True or False", icon: <CheckSquare size={16} />, subtitle: "Fact vs Myth" },
+  { id: "true_false", name: "True or False", icon: <CheckSquare size={16} />, subtitle: "True vs False" },
 ];
 
 type ThumbnailControlsDeckProps = {

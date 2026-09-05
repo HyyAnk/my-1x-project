@@ -72,14 +72,23 @@ function measureChoiceGroup(group,fontSize,lines,leading) {
 
 function measureElementWithin(element,container) {
   if (!container || element.parentElement!==container) return true;
+  const elBounds=element.getBoundingClientRect();
+  const parentBounds=container.getBoundingClientRect();
+  const tolerance=1;
+  if ([elBounds.left,elBounds.right,parentBounds.left,parentBounds.right].every(Number.isFinite)) {
+    return elBounds.left>=parentBounds.left-tolerance
+      && elBounds.right<=parentBounds.right+tolerance
+      && elBounds.top>=parentBounds.top-tolerance
+      && elBounds.bottom<=parentBounds.bottom+tolerance;
+  }
   const metrics=[element.offsetLeft,element.offsetTop,element.offsetWidth,element.offsetHeight,container.clientWidth,container.clientHeight];
   if (!metrics.every(Number.isFinite)) return true;
-  const tolerance=1;
   return element.offsetLeft>=-tolerance
     && element.offsetLeft+element.offsetWidth<=container.clientWidth+tolerance
     && element.offsetTop>=-tolerance
     && element.offsetTop+element.offsetHeight<=container.clientHeight+tolerance;
 }
+
 
 function measureChoiceText(choice,fontSize,lines,leading) {
   const surface=choice.closest('.choice-card-surface');

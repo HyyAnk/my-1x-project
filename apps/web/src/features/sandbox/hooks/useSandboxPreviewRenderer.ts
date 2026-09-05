@@ -59,11 +59,13 @@ export function useSandboxPreviewRenderer({
             ? "true_false"
             : design.layoutId === "visual_choices_three_pure"
               ? "odd_one_out"
-              : design.layoutId === "split_versus_two"
-                ? "multiple_choice"
-                : question.choices.length === 2
-                  ? "true_false"
-                  : "multiple_choice";
+              : design.layoutId === "mystery_reveal" || design.layoutId === "clue_deduction"
+                ? "image_guess"
+                : design.layoutId === "split_versus_two"
+                  ? "multiple_choice"
+                  : question.choices.length === 2
+                    ? "true_false"
+                    : "multiple_choice";
 
         const input: SandboxPreviewRequest = {
           aspect_ratio: aspectRatio,
