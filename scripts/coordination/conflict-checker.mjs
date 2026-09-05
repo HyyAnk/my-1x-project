@@ -39,14 +39,15 @@ export function validateAndCheckConflicts(zoneList, activeClaims, candidate, exc
     }
   }
 
-  const now = new Date().toISOString();
+  const nowDate = new Date();
+  const now = nowDate.toISOString();
   const writeSet = new Set(candidate.writeZones || []);
   const readSet = resolvedReadStable;
 
   for (const active of activeClaims) {
     if (excludeClaimId && active.id === excludeClaimId) continue;
-    // Skip expired claims
-    if (active.expiresAt && active.expiresAt < now) continue;
+    // Skip dead claims (expired TTL or missed heartbeat) so they no longer block new claims
+    if (isClaimDead(active, nowDate).isDead) continue;
 
     const activeWrites = new Set(active.writeZones || []);
     const activeReads = new Set(active.readStableZones || []);
@@ -102,3 +103,4 @@ export function validateAndCheckConflicts(zoneList, activeClaims, candidate, exc
   };
 }
 import { findPlannedFileOverlap } from "./path-ownership.mjs";
+import { isClaimDead } from "./heartbeat-service.mjs";

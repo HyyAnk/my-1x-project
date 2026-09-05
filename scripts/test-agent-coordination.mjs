@@ -431,6 +431,36 @@ test("Stale heartbeat is detected as dead claim", () => {
   releaseClaim(claim);
 });
 
+test("Heartbeat-dead claim does not block new claims of the same exclusive zone", () => {
+  const stale = claimZone({
+    agent: "agent-stale",
+    task: "Abandoned task with dead heartbeat",
+    writeZones: ["shared-contracts"],
+    workspaceRoot: root,
+    customDbPath: testDbPath,
+  });
+
+  // Backdate the heartbeat beyond the timeout so the claim is dead but its TTL is still valid.
+  const db = openClaimsDb(root, testDbPath);
+  try {
+    db.prepare("UPDATE claims SET last_heartbeat_at = ? WHERE id = ?").run(new Date(Date.now() - 30 * 60 * 1000).toISOString(), stale.id);
+  } finally {
+    db.close();
+  }
+
+  const takeover = claimZone({
+    agent: "agent-takeover",
+    task: "Takes over the abandoned exclusive zone",
+    writeZones: ["shared-contracts"],
+    workspaceRoot: root,
+    customDbPath: testDbPath,
+  });
+  assert.ok(takeover.id);
+
+  releaseClaim(stale);
+  releaseClaim(takeover);
+});
+
 test("Live heartbeat refreshes timestamp and prevents accidental cleanup", () => {
   const claim = claimZone({
     agent: "agent-lively",

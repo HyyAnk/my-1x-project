@@ -1,5 +1,5 @@
-version: "2.0.0"
-updatedAt: "2026-09-02T14:00:00+07:00"
+version: "2.1.0"
+updatedAt: "2026-09-05T23:55:00+07:00"
 description: "Unambiguous ownership zones for direct-on-main agent coordination."
 
 zones:
@@ -28,6 +28,11 @@ zones:
       - "apps/*/tsconfig*.json"
       - "apps/web/index.html"
       - "apps/web/*config.ts"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "tsconfig.json"
+      - ".npmrc"
     readStableDependencies: []
     verification:
       commands:
@@ -401,13 +406,13 @@ zones:
       - "scripts/coordination/**"
       - "scripts/test-agent-coordination.mjs"
       - "docs/agent-coordination/**"
+      - "!docs/agent-coordination/handoffs/**"
       - "docs/superpowers/plans/**"
       - "AGENTS.md"
       - "GEMINI.md"
       - "run-agent-monitor.bat"
       - "stop-agent-monitor.bat"
       - "eslint.config.mjs"
-      - "package.json"
       - ".prettier-baseline.json"
       - "eslint-suppressions.json"
     readStableDependencies: []
@@ -416,3 +421,16 @@ zones:
         - "node --test scripts/test-agent-coordination.mjs scripts/coordination/test/*.test.mjs"
         - "node scripts/agent-validate-zones.mjs --json"
       notes: "Only the protocol integrator should change this zone."
+
+  - id: "coordination-handoffs"
+    name: "Coordination Handoffs"
+    risk: "low"
+    lockPolicy: "shared-disjoint"
+    description: "Per-agent phase handoff summaries written at task completion."
+    globs:
+      - "docs/agent-coordination/handoffs/**"
+    readStableDependencies: []
+    verification:
+      commands:
+        - "node scripts/agent-validate-zones.mjs --json"
+      notes: "Plan only your own handoff file; never edit another agent's handoff."

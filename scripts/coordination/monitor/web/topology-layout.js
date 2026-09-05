@@ -35,11 +35,12 @@ export const ZONE_POSITIONS = {
 
   // META & INFRASTRUCTURE (Top Apex)
   "agent-coordination": { x: 0, y: 75, z: 0, layer: "infra", radius: 5.0, label: "Agent Coordination" },
+  "coordination-handoffs": { x: -18, y: 82, z: 8, layer: "infra", radius: 3.4, label: "Coordination Handoffs" },
 };
 
 export const COLOR_MAP = {
-  idle: 0x00f0ff,        // Neon Cyan
-  active: 0xff0055,      // Neon Magenta/Red
+  idle: 0x00f0ff, // Neon Cyan
+  active: 0xff0055, // Neon Magenta/Red
   read_stable: 0xf59e0b, // Amber
-  high_risk_hub: 0xa855f7 // Royal Purple
+  high_risk_hub: 0xa855f7, // Royal Purple
 };

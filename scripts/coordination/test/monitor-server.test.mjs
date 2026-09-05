@@ -3,12 +3,7 @@ import test from "node:test";
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
-import {
-  buildTopologyPayload,
-  buildCoordinationState,
-  calculateSafeZones,
-  createMonitorServer,
-} from "../monitor-server.mjs";
+import { buildTopologyPayload, buildCoordinationState, calculateSafeZones, createMonitorServer } from "../monitor-server.mjs";
 import { ZONE_POSITIONS } from "../monitor/web/topology-layout.js";
 import { loadZoneMap } from "../zone-loader.mjs";
 import { findWorkspaceRoot } from "../workspace-root.mjs";
@@ -18,19 +13,17 @@ test("buildTopologyPayload extracts zones and dependency links", () => {
   const zoneList = loadZoneMap(root);
   const topology = buildTopologyPayload(zoneList);
 
-  assert.equal(topology.zones.length, 19, "Expected 19 zones");
+  assert.equal(topology.zones.length, 20, "Expected 20 zones");
   assert.ok(topology.links.length > 0, "Expected at least one dependency link");
   assert.ok(Array.isArray(topology.files), "Expected topology.files array");
   assert.ok(topology.files.length > 500, "Expected hundreds of mapped file micro-nodes");
 
   // Check an expected dependency link: api-contracts depends on shared-contracts
-  const apiDep = topology.links.find(
-    (link) => link.source === "api-contracts" && link.target === "shared-contracts"
-  );
+  const apiDep = topology.links.find((link) => link.source === "api-contracts" && link.target === "shared-contracts");
   assert.ok(apiDep, "Expected api-contracts -> shared-contracts link");
 });
 
-test("ZONE_POSITIONS covers all 19 repository zones with valid 3D coordinates", () => {
+test("ZONE_POSITIONS covers all 20 repository zones with valid 3D coordinates", () => {
   const root = findWorkspaceRoot();
   const zoneList = loadZoneMap(root);
 
@@ -48,7 +41,7 @@ test("buildCoordinationState maps active claims to zone statuses", () => {
   const root = findWorkspaceRoot();
   const state = buildCoordinationState({ workspaceRoot: root });
 
-  assert.equal(state.zones.length, 19);
+  assert.equal(state.zones.length, 20);
   assert.ok(typeof state.summary.totalZones === "number");
   assert.ok(typeof state.summary.idleZones === "number");
   assert.ok(typeof state.summary.activeZones === "number");
@@ -99,13 +92,13 @@ test("createMonitorServer responds to HTTP endpoints, static files, and SSE stre
     const topoRes = await fetch(`${baseUrl}/api/topology`);
     assert.equal(topoRes.status, 200);
     const topoData = await topoRes.json();
-    assert.equal(topoData.zones.length, 19);
+    assert.equal(topoData.zones.length, 20);
 
     // 3. Test /api/state
     const stateRes = await fetch(`${baseUrl}/api/state`);
     assert.equal(stateRes.status, 200);
     const stateData = await stateRes.json();
-    assert.equal(stateData.summary.totalZones, 19);
+    assert.equal(stateData.summary.totalZones, 20);
 
     // 4. Test /api/safe-zones
     const safeRes = await fetch(`${baseUrl}/api/safe-zones?zone=agent-coordination`);
@@ -192,4 +185,3 @@ test("launchers exist, are valid, and target monitor-server", () => {
     assert.ok(content.length > 10, `Launcher is too small: ${p}`);
   }
 });
-
