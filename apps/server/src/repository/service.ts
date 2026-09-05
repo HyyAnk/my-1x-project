@@ -32,6 +32,7 @@ export class RepositoryService {
   roots: RepositoryRoots;
   readonly questionHistoryWrites = new Map<string, Promise<void>>();
   readonly usageLedgerWrites = new Map<string, Promise<void>>();
+  readonly artifactMutationQueues = new Map<string, Promise<void>>();
 
   constructor(
     readonly rootDirectory: string,
@@ -112,6 +113,22 @@ export class RepositoryService {
 
   writeJsonAtomic(target: string, value: unknown): Promise<void> {
     return writeJsonAtomic(target, value);
+  }
+
+  /**
+   * Serializes quiz artifact mutations (writes + invalidations) per episode so
+   * concurrent pipeline stages (e.g. assets + voice) cannot interleave
+   * invalidate/write cycles on the same episode directory.
+   */
+  queueEpisodeArtifactMutation<T>(channelId: string, episodeId: string, operation: () => Promise<T>): Promise<T> {
+    const key = `${channelId}/${episodeId}`;
+    const previous = this.artifactMutationQueues.get(key) ?? Promise.resolve();
+    const current = previous.catch(() => undefined).then(operation);
+    const tail: Promise<void> = current.then(() => undefined);
+    this.artifactMutationQueues.set(key, tail);
+    return current.finally(() => {
+      if (this.artifactMutationQueues.get(key) === tail) this.artifactMutationQueues.delete(key);
+    });
   }
 
   writeTextAtomic(target: string, content: string): Promise<void> {

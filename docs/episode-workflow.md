@@ -1,14 +1,11 @@
 # Episode workflow
 
-The supported flow is:
+An episode is created in one of two ways:
 
-```text
-candidate topics → confirm one → brief.md → script.md → scene_plan.md
-```
+1. **Topic confirmation** — a `SUGGEST_TOPICS` task returns exactly five candidates. Suggestion is preview-only. Confirming one creates the episode directory, copies the selected topic into `episode.json` and `brief.md`, and sets the episode stage to `SELECTED`. Unselected candidates remain in topic history so future suggestions can avoid repeats.
+2. **Question bank bridge** — a one-click topic→episode action creates the episode from curated question-bank entries (see `apps/server/src/quiz/bank/`).
 
-Suggestion is preview-only and always returns exactly five candidates. Confirming one creates the episode directory and copies the selected topic into `episode.json` and `brief.md`. Unselected candidates remain in topic history so future suggestions can avoid repeats.
-
-Scenes are stored in readable Markdown plus derived dialogue and prompt files. Manual edits write files directly. Regeneration backs up the scene plan before replacing the selected scene.
+Production then runs the Quiz V2 pipeline end to end (quiz → director → assets + voice → timeline → QA → render); see [quiz-engine-v2.md](quiz-engine-v2.md). The Quiz fast path synthesizes `script.md`, `visual_bible.md`, and `scenes.json` for backward compatibility with tooling that reads those files.
 
 ## Scene audio
 

@@ -47,7 +47,7 @@ Turbo supports `[chuckle]` and `[laugh]`; the launcher also restarts an already-
 
 Audio settings are available in Settings. The service URL, Chatterbox controls, and optional per-channel WAV voice reference are stored locally. Voice references and generated WAV files stay in the selected content storage folder, which is ignored by Git.
 
-Settings also contains a shared voice library. Adding a voice creates a reusable reference and a cached preview under `.quiz-studio/voices/`; assigning it to a channel controls the next audio generation task. Episode audio can be queued with Generate all audio and downloaded as separate scene files or one merged WAV.
+Settings also contains a shared voice library. Adding a voice creates a reusable reference and a cached preview under `.quiz-studio/voices/`; assigning it to a channel controls the next audio generation task. Quiz episodes get their narration as one batched Quiz V2 voice stage that assembles an episode-wide `narration.wav`; scene-level audio can be queued per scene with `Generate audio` inside that scene's Dialogue / Narration block.
 
 On the first launch, the dashboard asks for a local content storage folder. It creates `channels/`, `.quiz-studio/tasks/`, `.quiz-studio/codex/`, and `.quiz-studio/logs/` inside that folder. The code, templates, and shared rules remain in the Git project.
 

@@ -43,6 +43,6 @@ export async function writeQuizArtifact<T>(
   value: T,
 ): Promise<string> {
   const target = await this.quizArtifactTarget(channelId, episodeId, filename);
-  await this.writeJsonAtomic(target.absolutePath, value);
+  await this.queueEpisodeArtifactMutation(channelId, episodeId, () => this.writeJsonAtomic(target.absolutePath, value));
   return target.relativePath;
 }

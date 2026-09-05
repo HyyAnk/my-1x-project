@@ -1,11 +1,12 @@
-import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { TaskSchema, nowIso, type Task } from "@studio/shared";
+import { writeJsonAtomic } from "../utils/fs.js";
 
 export async function persistTask(runtimeRoot: string, task: Task): Promise<void> {
   const directory = path.join(runtimeRoot, "tasks");
   await mkdir(directory, { recursive: true });
-  await writeFile(path.join(directory, `${task.task_id}.json`), `${JSON.stringify(task, null, 2)}\n`, "utf8");
+  await writeJsonAtomic(path.join(directory, `${task.task_id}.json`), task);
 }
 
 export async function loadTasksFromDisk(runtimeRoot: string): Promise<Task[]> {
@@ -24,8 +25,9 @@ export async function loadTasksFromDisk(runtimeRoot: string): Promise<Task[]> {
         await persistTask(runtimeRoot, task);
       }
       tasks.push(task);
-    } catch {
-      // Ignore a single corrupt operational record; repository artifacts remain safe.
+    } catch (error) {
+      // A single corrupt operational record is skipped; repository artifacts remain safe.
+      console.warn(`[taskStateStore] Skipping unreadable task record "${entry.name}": ${(error as Error).message}`);
     }
   }
 

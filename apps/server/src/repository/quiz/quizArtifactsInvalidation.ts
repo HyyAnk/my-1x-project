@@ -9,6 +9,19 @@ export async function invalidateQuizArtifacts(
   episodeId: string,
   stages: string[],
 ): Promise<string[]> {
+  // Serialized per episode so concurrent pipeline stages (e.g. assets + voice) cannot
+  // interleave artifact removals or the episode.json read-modify-write below.
+  return this.queueEpisodeArtifactMutation(channelId, episodeId, () =>
+    invalidateQuizArtifactsLocked.call(this, channelId, episodeId, stages),
+  );
+}
+
+async function invalidateQuizArtifactsLocked(
+  this: RepositoryRuntime,
+  channelId: string,
+  episodeId: string,
+  stages: string[],
+): Promise<string[]> {
   const filenames: Record<
     string,
     "quiz-v2.json" | "director-plan.json" | "asset-plan.json" | "asset-resolution.json" | "voice-plan.json" | "timeline.json" | "qa.json"
