@@ -126,6 +126,34 @@ describe("mascotPromptContract", () => {
       expect(prompt).toContain(`Pose and Action: ${customAction}.`);
       expect(validateMascotPromptContract(prompt, true)).toBe(true);
     });
+
+    it("generates 10 distinct, unique action prompts for Thinking slots 1 through 10 when prompt is omitted", () => {
+      const prompts = new Set<string>();
+      for (let slot = 1; slot <= 10; slot++) {
+        const prompt = buildMascotActionPrompt(testMascot, "thinking", {
+          hasReferenceImage: true,
+          slotIndex: slot,
+        });
+        expect(prompt).toContain("@1");
+        expect(validateMascotPromptContract(prompt, true)).toBe(true);
+        prompts.add(prompt);
+      }
+      expect(prompts.size).toBe(10);
+    });
+
+    it("generates 10 distinct, unique action prompts for Celebrate slots 1 through 10 when prompt is omitted", () => {
+      const prompts = new Set<string>();
+      for (let slot = 1; slot <= 10; slot++) {
+        const prompt = buildMascotActionPrompt(testMascot, "celebrate", {
+          hasReferenceImage: true,
+          slotIndex: slot,
+        });
+        expect(prompt).toContain("@1");
+        expect(validateMascotPromptContract(prompt, true)).toBe(true);
+        prompts.add(prompt);
+      }
+      expect(prompts.size).toBe(10);
+    });
   });
 
   describe("validateMascotPromptContract", () => {

@@ -39,6 +39,7 @@ export async function generateMascotAiImageBytes(
     referenceImageBase64?: string;
     background?: "transparent" | "opaque" | "auto";
     cancellationSignal?: AbortSignal;
+    idempotencyKey?: string;
   } = {},
   logger?: StudioLogger,
 ): Promise<Uint8Array> {
@@ -79,6 +80,7 @@ export async function generateMascotAiImageBytes(
     referenceStrength: 0.75,
     background: options.background || "transparent",
     cancellationSignal: options.cancellationSignal || AbortSignal.timeout(90_000),
+    idempotencyKey: options.idempotencyKey,
   });
   return result.bytes;
 }
@@ -320,12 +322,14 @@ export async function generateMascotStyleSlot(
     prompt: input.prompt_modifier,
     keyword: style.keyword,
     hasReferenceImage: Boolean(referenceImageBase64),
+    slotIndex: input.slot_index,
   });
   assertMascotPromptContract(fullPrompt, Boolean(referenceImageBase64));
 
   let imageBytes: Uint8Array;
   let placeholder = false;
   const filename = `style_${styleId}_${input.state}_slot${input.slot_index}_${Date.now()}.png`;
+  const slotIdempotencyKey = `mascot_${mascot.id}_${styleId}_${input.state}_s${input.slot_index}_${Date.now()}`;
   const hasApiKey = Boolean(
     imageConfig.api_key || process.env.SHOPAIKEY_API_KEY || process.env.GPTI2_API_KEY || process.env.CUSTOM_IMAGE_API_KEY,
   );
@@ -345,6 +349,7 @@ export async function generateMascotStyleSlot(
           referenceImageBase64,
           background: "opaque",
           cancellationSignal: options.signal ?? AbortSignal.timeout(90_000),
+          idempotencyKey: slotIdempotencyKey,
         },
         logger,
       ));

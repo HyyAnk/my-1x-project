@@ -1,4 +1,10 @@
-import { MASCOT_ACTION_META, type MascotActionType, type MascotProfile, type QuizImageStyle } from "@studio/shared";
+import {
+  MASCOT_ACTION_META,
+  type MascotActionType,
+  type MascotProfile,
+  type QuizImageStyle,
+  getMascotSlotDefaultPreset,
+} from "@studio/shared";
 
 export const MASCOT_STYLE_PROMPTS: Record<QuizImageStyle, string> = {
   pixar_3d:
@@ -69,13 +75,18 @@ export function buildMascotActionPrompt(
     prompt?: string;
     keyword?: string;
     hasReferenceImage?: boolean;
+    slotIndex?: number;
   } = {},
 ): string {
   const meta = MASCOT_ACTION_META[action] || MASCOT_ACTION_META.idle;
   const styleDesc = MASCOT_STYLE_PROMPTS[mascot.visual_style] || MASCOT_STYLE_PROMPTS.pixar_3d;
   const baseDesc = mascot.master_prompt?.trim() || mascot.description?.trim() || `${mascot.name} cute friendly companion`;
 
-  const rawAction = options.prompt?.trim() || meta.description;
+  const fallbackPose =
+    options.slotIndex !== undefined && (action === "thinking" || action === "celebrate")
+      ? getMascotSlotDefaultPreset(action, options.slotIndex)
+      : meta.description;
+  const rawAction = options.prompt?.trim() || fallbackPose;
   const actionText = rawAction.endsWith(".") ? rawAction.slice(0, -1) : rawAction;
   const actionDirective = `Pose and Action: ${actionText}.`;
 

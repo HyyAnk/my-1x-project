@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, PencilSimple, Check, CircleNotch, Info } from "@phosphor-icons/react";
+import { getMascotSlotDefaultPreset } from "@studio/shared";
 
 export interface SlotPromptModalProps {
   isOpen: boolean;
@@ -35,10 +36,8 @@ export function SlotPromptModal({
   if (!isOpen) return null;
 
   const stateLabel = state === "thinking" ? "Thinking" : "Celebrate";
-  const defaultPlaceholder =
-    state === "thinking"
-      ? "e.g., resting chin on hand with thoughtful expression, deep pondering pose, inquisitive gaze"
-      : "e.g., joyful jump with arms raised high in victory, triumphant celebration pose, big radiant smile";
+  const slotDefaultPreset = getMascotSlotDefaultPreset(state, slotIndex);
+  const defaultPlaceholder = `Default Slot ${slotIndex} Pose: "${slotDefaultPreset}"`;
 
   const handleSave = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -114,7 +113,7 @@ export function SlotPromptModal({
                 autoFocus
               />
               <span className="form-field-hint">
-                Leave empty to use the standard default {stateLabel.toLowerCase()} pose generator.
+                Leave empty to use the default Slot {slotIndex} pose preset ({slotDefaultPreset.toLowerCase()}).
               </span>
             </div>
           </div>
