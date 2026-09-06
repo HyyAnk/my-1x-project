@@ -13,7 +13,7 @@ test("buildTopologyPayload extracts zones and dependency links", () => {
   const zoneList = loadZoneMap(root);
   const topology = buildTopologyPayload(zoneList);
 
-  assert.equal(topology.zones.length, 20, "Expected 20 zones");
+  assert.equal(topology.zones.length, 21, "Expected 21 zones");
   assert.ok(topology.links.length > 0, "Expected at least one dependency link");
   assert.ok(Array.isArray(topology.files), "Expected topology.files array");
   assert.ok(topology.files.length > 500, "Expected hundreds of mapped file micro-nodes");
@@ -23,7 +23,7 @@ test("buildTopologyPayload extracts zones and dependency links", () => {
   assert.ok(apiDep, "Expected api-contracts -> shared-contracts link");
 });
 
-test("ZONE_POSITIONS covers all 20 repository zones with valid 3D coordinates", () => {
+test("ZONE_POSITIONS covers all 21 repository zones with valid 3D coordinates", () => {
   const root = findWorkspaceRoot();
   const zoneList = loadZoneMap(root);
 
@@ -41,7 +41,7 @@ test("buildCoordinationState maps active claims to zone statuses", () => {
   const root = findWorkspaceRoot();
   const state = buildCoordinationState({ workspaceRoot: root });
 
-  assert.equal(state.zones.length, 20);
+  assert.equal(state.zones.length, 21);
   assert.ok(typeof state.summary.totalZones === "number");
   assert.ok(typeof state.summary.idleZones === "number");
   assert.ok(typeof state.summary.activeZones === "number");
@@ -92,13 +92,13 @@ test("createMonitorServer responds to HTTP endpoints, static files, and SSE stre
     const topoRes = await fetch(`${baseUrl}/api/topology`);
     assert.equal(topoRes.status, 200);
     const topoData = await topoRes.json();
-    assert.equal(topoData.zones.length, 20);
+    assert.equal(topoData.zones.length, 21);
 
     // 3. Test /api/state
     const stateRes = await fetch(`${baseUrl}/api/state`);
     assert.equal(stateRes.status, 200);
     const stateData = await stateRes.json();
-    assert.equal(stateData.summary.totalZones, 20);
+    assert.equal(stateData.summary.totalZones, 21);
 
     // 4. Test /api/safe-zones
     const safeRes = await fetch(`${baseUrl}/api/safe-zones?zone=agent-coordination`);

@@ -4,7 +4,7 @@ import path from "node:path";
 /**
  * Parses .agent-orchestrator/zones.yml without external dependencies.
  * @param {string} yamlContent
- * @returns {Array<{ id: string, name: string, risk: string, lockPolicy: string, description: string, globs: string[], readStableDependencies: string[], verification: { commands: string[], notes: string } }>}
+ * @returns {Array<{ id: string, name: string, risk: string, lockPolicy: string, description: string, globs: string[], readStableDependencies: string[], coClaimWith: string[], verification: { commands: string[], notes: string } }>}
  */
 export function parseZonesYaml(yamlContent) {
   const lines = yamlContent.split(/\r?\n/);
@@ -27,6 +27,7 @@ export function parseZonesYaml(yamlContent) {
         description: "",
         globs: [],
         readStableDependencies: [],
+        coClaimWith: [],
         verification: { commands: [], notes: "" },
       };
       zones.push(currentZone);
@@ -44,6 +45,8 @@ export function parseZonesYaml(yamlContent) {
         currentZone.globs.push(val);
       } else if (currentArrayKey === "readStableDependencies") {
         currentZone.readStableDependencies.push(val);
+      } else if (currentArrayKey === "coClaimWith") {
+        currentZone.coClaimWith.push(val);
       } else if (currentArrayKey === "commands") {
         currentZone.verification.commands.push(val);
       }
@@ -59,7 +62,7 @@ export function parseZonesYaml(yamlContent) {
         val = val.slice(1, -1);
       }
 
-      if (key === "globs" || key === "readStableDependencies" || key === "commands") {
+      if (key === "globs" || key === "readStableDependencies" || key === "coClaimWith" || key === "commands") {
         currentArrayKey = key;
         if (val === "[]") {
           currentArrayKey = null;

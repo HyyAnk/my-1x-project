@@ -97,7 +97,11 @@ export function claimZone({
 
       insertClaimRecord(db, storedClaim);
       const { leaseTokenHash: _secret, ...publicClaim } = storedClaim;
-      return { ...publicClaim, leaseToken: lease.token };
+      return {
+        ...publicClaim,
+        leaseToken: lease.token,
+        advisories: collectCoClaimAdvisories(zoneList, writeZones),
+      };
     });
   } finally {
     db.close();
@@ -164,6 +168,61 @@ export function expandActiveClaim({
       `,
       ).run(JSON.stringify(claim.writeZones), JSON.stringify(claim.readStableZones), JSON.stringify(claim.plannedFiles), now, claimId);
 
+      return { ...withoutLeaseSecret(claim), advisories: collectCoClaimAdvisories(zoneList, combinedWrites) };
+    });
+  } finally {
+    db.close();
+  }
+}
+
+/**
+ * Refreshes an active claim's git baseline without recreating the claim.
+ * Use when concurrent released work changed the repository after the claim
+ * started. Stored verification is cleared because its repository fingerprint
+ * no longer applies; the claim must be verified again before release.
+ */
+export function rebaselineClaim({ claimId, leaseToken, workspaceRoot, customDbPath }) {
+  const root = workspaceRoot || findWorkspaceRoot();
+  const db = openClaimsDb(root, customDbPath);
+  try {
+    return withImmediateTransaction(db, () => {
+      const claim = getClaimById(db, claimId, { includeSecrets: true });
+      if (!claim) throw new Error(`Claim not found: "${claimId}"`);
+      if (claim.status !== "active") throw new Error(`Claim "${claimId}" is not active (current status: ${claim.status}).`);
+      assertLeaseToken(claim, leaseToken);
+
+      const baseline = captureGitBaseline(root);
+      const now = new Date().toISOString();
+      claim.baseRevision = baseline.baseRevision;
+      claim.baseline = baseline;
+      claim.lastHeartbeatAt = now;
+      claim.updatedAt = now;
+      claim.verification = null;
+
+      db.prepare(
+        `
+        UPDATE claims SET
+          base_revision = ?,
+          baseline_status = ?,
+          baseline_files = ?,
+          baseline_fingerprints = ?,
+          baseline_repository_fingerprint = ?,
+          last_heartbeat_at = ?,
+          verification_data = NULL,
+          updated_at = ?
+        WHERE id = ?
+      `,
+      ).run(
+        baseline.baseRevision,
+        JSON.stringify(baseline.gitStatusShort || []),
+        JSON.stringify(baseline.changedFiles || []),
+        JSON.stringify(baseline.fileFingerprints || {}),
+        baseline.repositoryFingerprint || null,
+        now,
+        now,
+        claimId,
+      );
+
       return withoutLeaseSecret(claim);
     });
   } finally {
@@ -171,6 +230,24 @@ export function expandActiveClaim({
   }
 }
 
+/**
+ * Non-blocking co-claim hints: some zones recommend claiming a companion zone
+ * (e.g. an implementation zone together with the test zone) when both change.
+ */
+function collectCoClaimAdvisories(zoneList, writeZones) {
+  const zoneMap = new Map(zoneList.map((zone) => [zone.id, zone]));
+  const writeSet = new Set(writeZones);
+  const advisories = [];
+  for (const zoneId of writeZones) {
+    const definition = zoneMap.get(zoneId);
+    for (const companion of definition?.coClaimWith || []) {
+      if (!writeSet.has(companion)) {
+        advisories.push(`Zone "${zoneId}" recommends co-claiming "${companion}" when both areas change.`);
+      }
+    }
+  }
+  return advisories;
+}
 /**
  * Releases an active claim.
  */

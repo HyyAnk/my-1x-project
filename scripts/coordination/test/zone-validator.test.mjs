@@ -34,6 +34,28 @@ test("zone validation rejects duplicate IDs, invalid policies, missing dependenc
   assert.ok(result.definitionErrors.some((error) => error.code === "negative_only_globs"));
 });
 
+test("zone validation rejects malformed globs and missing co-claim references", () => {
+  const result = validateZoneDefinitions([
+    zone("bad-globs", ["apps/**", "apps/**", "a**b", "", "has space", "back\\slash"]),
+    zone("bad-coclaim", ["packages/**"], { coClaimWith: ["missing-zone"] }),
+  ]);
+
+  assert.equal(result.valid, false);
+  assert.ok(result.definitionErrors.some((error) => error.code === "duplicate_glob"));
+  assert.ok(result.definitionErrors.filter((error) => error.code === "invalid_glob").length >= 3);
+  assert.ok(result.definitionErrors.some((error) => error.code === "missing_coclaim"));
+});
+
+test("zone validation accepts well-formed co-claim references", () => {
+  const result = validateZoneDefinitions([
+    zone("impl", ["apps/server/src/quiz/**"], { coClaimWith: ["server-tests"] }),
+    zone("server-tests", ["apps/server/test/**"]),
+  ]);
+
+  assert.equal(result.valid, true);
+  assert.deepEqual(result.definitionErrors, []);
+});
+
 test("zone coverage reports unmapped files and unexpected overlaps", () => {
   const root = createGitFixture("zone-coverage-errors");
   try {
@@ -44,7 +66,7 @@ test("zone coverage reports unmapped files and unexpected overlaps", () => {
       zoneList: [zone("first", ["apps/web/src/components/**"]), zone("second", ["apps/web/src/components/Fixture.tsx"])],
     });
 
-    assert.deepEqual(result.unmappedFiles, ["apps/web/src/unmapped.ts"]);
+    assert.deepEqual(result.unmappedFiles, [".agent-orchestrator/zones.yml", "apps/web/src/unmapped.ts"]);
     assert.deepEqual(result.overlappingFiles, [{ file: "apps/web/src/components/Fixture.tsx", zones: ["first", "second"] }]);
     assert.equal(result.valid, false);
   } finally {

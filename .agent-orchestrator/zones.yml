@@ -1,5 +1,5 @@
-version: "2.1.0"
-updatedAt: "2026-09-05T23:55:00+07:00"
+version: "2.2.0"
+updatedAt: "2026-09-05T23:59:00+07:00"
 description: "Unambiguous ownership zones for direct-on-main agent coordination."
 
 zones:
@@ -22,7 +22,7 @@ zones:
     name: "Project Configuration"
     risk: "high"
     lockPolicy: "exclusive"
-    description: "Application package manifests, TypeScript settings, and build/test entry configuration."
+    description: "Application package manifests, TypeScript settings, build/test entry configuration, and CI workflows."
     globs:
       - "apps/*/package.json"
       - "apps/*/tsconfig*.json"
@@ -33,6 +33,9 @@ zones:
       - "pnpm-workspace.yaml"
       - "tsconfig.json"
       - ".npmrc"
+      - ".prettierrc.json"
+      - ".prettierignore"
+      - ".github/**"
     readStableDependencies: []
     verification:
       commands:
@@ -111,6 +114,8 @@ zones:
       - "shared-contracts"
       - "artifact-contracts"
       - "render-inputs"
+    coClaimWith:
+      - "server-tests"
     verification:
       commands:
         - "pnpm --filter @studio/server test -- test/quizPipeline.test.ts test/quizScenePipeline.test.ts"
@@ -159,6 +164,8 @@ zones:
     readStableDependencies:
       - "shared-contracts"
       - "render-inputs"
+    coClaimWith:
+      - "server-tests"
     verification:
       commands:
         - "pnpm --filter @studio/server test -- test/candyArcade.test.ts test/quizChoiceGroupRenderer.test.ts"
@@ -178,6 +185,8 @@ zones:
     readStableDependencies:
       - "shared-contracts"
       - "render-inputs"
+    coClaimWith:
+      - "server-tests"
     verification:
       commands:
         - "pnpm --filter @studio/server test -- test/thumbnailPromptEngine.test.ts test/thumbnailService.test.ts"
@@ -211,6 +220,8 @@ zones:
     readStableDependencies:
       - "shared-contracts"
       - "render-inputs"
+    coClaimWith:
+      - "server-tests"
     verification:
       commands:
         - "pnpm --filter @studio/server test"
@@ -220,48 +231,21 @@ zones:
     name: "Server Core"
     risk: "medium"
     lockPolicy: "shared-disjoint"
-    description: "Remaining cohesive server entry points, utilities, and core services."
+    description: "Server barrel files, quiz bank generation, and shared utilities."
     globs:
-      - "apps/server/src/**"
-      - "!apps/server/src/routes/**"
-      - "!apps/server/src/app.ts"
-      - "!apps/server/src/contextContracts.ts"
-      - "!apps/server/src/context/**"
-      - "!apps/server/src/antigravity/**"
-      - "!apps/server/src/codex/**"
-      - "!apps/server/src/config/**"
-      - "!apps/server/src/env.ts"
-      - "!apps/server/src/tasks/**"
-      - "!apps/server/src/repository/**"
-      - "!apps/server/src/artifactSections.ts"
-      - "!apps/server/src/quiz/pipeline/**"
-      - "!apps/server/src/quiz/domain/**"
-      - "!apps/server/src/quiz/director/**"
-      - "!apps/server/src/quiz/description/**"
-      - "!apps/server/src/quiz/render/**"
-      - "!apps/server/src/quiz/visual/**"
-      - "!apps/server/src/quiz/thumbnail/**"
-      - "!apps/server/src/quiz/assets/**"
-      - "!apps/server/src/quiz/audio/**"
-      - "!apps/server/src/quiz/mascot/**"
-      - "!apps/server/src/quiz/mascotService.ts"
-      - "!apps/server/src/providers/**"
-      - "!apps/server/src/quiz/qa/**"
-      - "!apps/server/src/quiz/timeline/**"
-      - "!apps/server/src/timeline/**"
-      - "!apps/server/src/production/**"
-      - "!apps/server/src/production.ts"
-      - "!apps/server/src/quiz/layoutCompatibility.ts"
-      - "!apps/server/src/sceneTiming.ts"
-      - "!apps/server/src/visualBundles.ts"
-      - "!apps/server/src/visualPrompt.ts"
-      - "!apps/server/src/quiz/mascotPromptContract.ts"
-      - "!apps/server/src/runtimePaths.ts"
-      - "!apps/server/src/logger.ts"
-      - "!apps/server/src/zip.ts"
-      - "!apps/server/src/quiz/zipHelper.ts"
+      - "apps/server/src/index.ts"
+      - "apps/server/src/config.ts"
+      - "apps/server/src/context.ts"
+      - "apps/server/src/repository.ts"
+      - "apps/server/src/tasks.ts"
+      - "apps/server/src/antigravity.ts"
+      - "apps/server/src/codex.ts"
+      - "apps/server/src/quiz/bank/**"
+      - "apps/server/src/utils/**"
     readStableDependencies:
       - "shared-contracts"
+    coClaimWith:
+      - "server-tests"
     verification:
       commands:
         - "pnpm --filter @studio/server test"
@@ -296,6 +280,7 @@ zones:
       - "apps/web/src/features/**/types/**"
       - "apps/web/src/features/**/types.ts"
       - "apps/web/test/**"
+      - "apps/web/src/test/**"
     readStableDependencies:
       - "shared-contracts"
       - "api-contracts"
@@ -309,26 +294,24 @@ zones:
     name: "Web Layout And Presentation"
     risk: "low"
     lockPolicy: "shared-disjoint"
-    description: "Remaining web components, feature surfaces, styles, translations, assets, and tests."
+    description: "Web components, feature surfaces, styles, translations, public assets, and tests."
     globs:
-      - "apps/web/**"
-      - "!apps/web/package.json"
-      - "!apps/web/tsconfig*.json"
-      - "!apps/web/index.html"
-      - "!apps/web/*config.ts"
-      - "!apps/web/src/api/**"
-      - "!apps/web/src/api.ts"
-      - "!apps/web/src/hooks/**"
-      - "!apps/web/src/lib/**"
+      - "apps/web/src/App.tsx"
+      - "apps/web/src/main.tsx"
+      - "apps/web/src/styles.css"
+      - "apps/web/src/components/**"
+      - "!apps/web/src/components/TaskProgressPanel.tsx"
+      - "!apps/web/src/components/TaskProgressPanel.test.tsx"
+      - "!apps/web/src/components/taskProgress/**"
+      - "apps/web/src/features/**"
       - "!apps/web/src/features/**/hooks/**"
       - "!apps/web/src/features/**/utils/**"
       - "!apps/web/src/features/**/services/**"
       - "!apps/web/src/features/**/types/**"
       - "!apps/web/src/features/**/types.ts"
-      - "!apps/web/test/**"
-      - "!apps/web/src/components/TaskProgressPanel.tsx"
-      - "!apps/web/src/components/TaskProgressPanel.test.tsx"
-      - "!apps/web/src/components/taskProgress/**"
+      - "apps/web/src/i18n/**"
+      - "apps/web/src/styles/**"
+      - "apps/web/public/**"
     readStableDependencies:
       - "web-api-state"
     verification:
@@ -356,8 +339,7 @@ zones:
     description: "Generated media, channel data, caches, and render outputs."
     globs:
       - "channels/**"
-      - "assets/ai-art/**"
-      - "assets/audio/**"
+      - "assets/**"
       - ".quiz-studio/**"
     readStableDependencies:
       - "artifact-contracts"
@@ -378,6 +360,7 @@ zones:
       - "*.bat"
       - "!run-agent-monitor.bat"
       - "!stop-agent-monitor.bat"
+      - ".codegraph/**"
       - "apps/server/src/runtimePaths.ts"
       - "apps/server/src/logger.ts"
       - "apps/server/src/zip.ts"
@@ -405,6 +388,7 @@ zones:
       - "scripts/agent-*.cmd"
       - "scripts/coordination/**"
       - "scripts/test-agent-coordination.mjs"
+      - ".githooks/**"
       - "docs/agent-coordination/**"
       - "!docs/agent-coordination/handoffs/**"
       - "docs/superpowers/plans/**"
@@ -434,3 +418,22 @@ zones:
       commands:
         - "node scripts/agent-validate-zones.mjs --json"
       notes: "Plan only your own handoff file; never edit another agent's handoff."
+
+  - id: "repository-docs"
+    name: "Repository Documentation"
+    risk: "low"
+    lockPolicy: "shared-disjoint"
+    description: "Product documentation, repository readme, license, and git attributes."
+    globs:
+      - "README.md"
+      - "LICENSE"
+      - ".gitattributes"
+      - "docs/**"
+      - "!docs/agent-coordination/**"
+      - "!docs/superpowers/plans/**"
+      - "shared/**"
+      - "templates/**"
+    readStableDependencies: []
+    verification:
+      commands: []
+      notes: "Use concrete planned files; keep documentation in English."

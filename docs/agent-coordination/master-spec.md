@@ -54,7 +54,7 @@ The protocol has three layers:
 - If an agent discovers it must edit outside its scope, it must stop and request claim expansion before changing files.
 - A clean Git merge is not enough. Contract compatibility and runtime behavior still need verification.
 - Main-direct mode has no Git isolation, so zone ownership, baseline snapshots, and diff verification are the safety boundary.
-- Every tracked or non-ignored product file below `apps/`, `packages/`, and `services/` must map to exactly one zone.
+- Every tracked or non-ignored repository file must map to exactly one zone (since `zones.yml` 2.2.0 this covers the whole repository, not only the `apps/`, `packages/`, and `services/` product roots).
 
 ## Claim Types
 

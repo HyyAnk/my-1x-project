@@ -36,6 +36,7 @@ export const ZONE_POSITIONS = {
   // META & INFRASTRUCTURE (Top Apex)
   "agent-coordination": { x: 0, y: 75, z: 0, layer: "infra", radius: 5.0, label: "Agent Coordination" },
   "coordination-handoffs": { x: -18, y: 82, z: 8, layer: "infra", radius: 3.4, label: "Coordination Handoffs" },
+  "repository-docs": { x: 18, y: 82, z: -8, layer: "infra", radius: 3.2, label: "Repository Docs" },
 };
 
 export const COLOR_MAP = {

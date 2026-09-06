@@ -6,6 +6,7 @@ import {
   claimZone,
   expandActiveClaim,
   releaseActiveClaim,
+  rebaselineClaim,
   cleanupStaleActiveClaims,
   getStatus,
   findWorkspaceRoot,
@@ -70,7 +71,26 @@ test("Claim baseline captures git status snapshot", () => {
     assert.ok(claim.baseline, "baseline should exist");
     assert.ok(Array.isArray(claim.baseline.changedFiles), "changedFiles should be array");
     assert.ok(claim.baseline.changedFiles.length >= 0, "should capture baseline changedFiles array");
-    assert.ok(claim.baseRevision, "should have baseRevision");
+    assert.ok(claim.baseRevision, "should capture baseRevision");
+  } finally {
+    releaseClaim(claim);
+  }
+});
+
+test("Co-claim advisory recommends companion zones", () => {
+  const claim = claimZone({
+    agent: "agent-coclaim",
+    task: "Pipeline work without the tests claim",
+    writeZones: ["server-pipeline"],
+    workspaceRoot: root,
+    customDbPath: testDbPath,
+  });
+
+  try {
+    assert.ok(
+      claim.advisories.some((advisory) => advisory.includes("server-tests")),
+      "claiming server-pipeline should advise co-claiming server-tests",
+    );
   } finally {
     releaseClaim(claim);
   }
@@ -459,6 +479,54 @@ test("Heartbeat-dead claim does not block new claims of the same exclusive zone"
 
   releaseClaim(stale);
   releaseClaim(takeover);
+});
+
+test("Rebaseline refreshes the baseline and clears verification", () => {
+  const claim = claimZone({
+    agent: "agent-rebase",
+    task: "Claim that needs a fresh baseline",
+    writeZones: ["shared-contracts"],
+    workspaceRoot: root,
+    customDbPath: testDbPath,
+  });
+
+  // Simulate concurrent released work: a foreign untracked file appears after the claim baseline.
+  const foreignFile = path.join(root, "apps", "server", "test", `rebaseline-fixture-${Date.now()}.txt`);
+  fs.writeFileSync(foreignFile, "concurrent work\n");
+
+  try {
+    const before = verifyClaimScope({
+      claimId: claim.id,
+      leaseToken: claim.leaseToken,
+      evidenceSummary: "verification that should be invalidated by the foreign change",
+      workspaceRoot: root,
+      customDbPath: testDbPath,
+    });
+    assert.equal(before.valid, false, "foreign post-baseline change must fail verification before rebaseline");
+
+    const rebaselined = rebaselineClaim({
+      claimId: claim.id,
+      leaseToken: claim.leaseToken,
+      workspaceRoot: root,
+      customDbPath: testDbPath,
+    });
+    assert.ok(rebaselined.baseline.changedFiles.length > 0, "fresh baseline must capture the foreign dirty file");
+    assert.equal(rebaselined.verification, null, "rebaseline must clear stored verification");
+    assert.ok(rebaselined.lastHeartbeatAt);
+
+    const after = verifyClaimScope({
+      claimId: claim.id,
+      leaseToken: claim.leaseToken,
+      evidenceSummary: "verification passes after rebaseline scoping",
+      workspaceRoot: root,
+      customDbPath: testDbPath,
+    });
+    assert.equal(after.valid, true, "verification must pass once the foreign change is part of the baseline");
+
+    releaseClaim(claim);
+  } finally {
+    if (fs.existsSync(foreignFile)) fs.unlinkSync(foreignFile);
+  }
 });
 
 test("Live heartbeat refreshes timestamp and prevents accidental cleanup", () => {

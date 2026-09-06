@@ -74,11 +74,9 @@ export function inspectClaimScopeForClaim({ claim, root, changedFilesOverride, d
     writeZones,
     db,
   });
-  const authorizedFiles = [];
-  const violations = [];
-
+  const headViolations = [];
   if (comparison.headChanged) {
-    violations.push({
+    headViolations.push({
       file: ".git/HEAD",
       reason: "head_changed",
       message: `Git HEAD changed from ${claim.baseline?.baseRevision || claim.baseRevision} to ${current.baseRevision}.`,
@@ -86,8 +84,44 @@ export function inspectClaimScopeForClaim({ claim, root, changedFilesOverride, d
     });
   }
 
-  for (const file of filesToVerify) {
+  const { authorizedFiles, violations } = buildScopeViolations(filesToVerify, zoneList, writeZones);
+
+  return {
+    valid: headViolations.length + violations.length === 0,
+    claimId: claim.id,
+    agent: claim.agent,
+    claimedWriteZones: Array.from(writeZones),
+    authorizedFiles,
+    violations: [...headViolations, ...violations],
+    ignoredBaselineFilesCount: ignoredBaselineFiles.length,
+    repositoryFingerprint: current.repositoryFingerprint,
+    baseRevision: current.baseRevision,
+  };
+}
+
+/**
+ * Pure per-file zone classification used by scope verification and tests.
+ * Files matching multiple zones are rejected as ambiguous so a zones.yml
+ * overlap can never silently authorize a file under the wrong zone.
+ */
+export function buildScopeViolations(files, zoneList, writeZones) {
+  const authorizedFiles = [];
+  const violations = [];
+
+  for (const file of files) {
     const matchingZones = findZonesForFile(file, zoneList);
+    if (matchingZones.length > 1) {
+      const zoneIds = matchingZones.map((zone) => zone.id);
+      violations.push({
+        file,
+        reason: "ambiguous_zone",
+        matchingZones: zoneIds,
+        message: `File matches multiple zones [${zoneIds.join(", ")}]; the zone map must be unambiguous.`,
+        action: "Fix the .agent-orchestrator/zones.yml exclusions and run node scripts/agent-validate-zones.mjs --json.",
+      });
+      continue;
+    }
+
     const coveredZone = matchingZones.find((zone) => writeZones.has(zone.id));
     if (coveredZone) {
       authorizedFiles.push({ file, zone: coveredZone.id });
@@ -109,21 +143,11 @@ export function inspectClaimScopeForClaim({ claim, root, changedFilesOverride, d
       reason: "unclaimed_zone",
       matchingZones: requiredZoneIds,
       message: `Requires zone: [${requiredZoneIds.join(", ")}], but active claim only authorizes [${Array.from(writeZones).join(", ")}].`,
-      action: `Run \`scripts/agent-expand.cmd --claim ${claim.id} --token <lease-token> --add-write ${requiredZoneIds.join(",")}\` before continuing.`,
+      action: `Run \`scripts/agent-expand.cmd --claim <claim-id> --token <lease-token> --add-write ${requiredZoneIds.join(",")}\` before continuing.`,
     });
   }
 
-  return {
-    valid: violations.length === 0,
-    claimId: claim.id,
-    agent: claim.agent,
-    claimedWriteZones: Array.from(writeZones),
-    authorizedFiles,
-    violations,
-    ignoredBaselineFilesCount: ignoredBaselineFiles.length,
-    repositoryFingerprint: current.repositoryFingerprint,
-    baseRevision: current.baseRevision,
-  };
+  return { authorizedFiles, violations };
 }
 
 function resolveClaim(db, claimId, options) {

@@ -68,6 +68,7 @@ node scripts/agent-status.mjs --json
 node scripts/agent-claim.mjs --agent codex --task "Describe the task" --write web-layout-style --planned-files apps/web/src/components/Example.tsx --json
 node scripts/agent-heartbeat.mjs --claim <claim-id> --token <lease-token> --json
 node scripts/agent-expand.mjs --claim <claim-id> --token <lease-token> --add-write web-api-state --add-planned-files apps/web/src/api/exampleApi.ts --json
+node scripts/agent-rebaseline.mjs --claim <claim-id> --token <lease-token> --json
 node scripts/agent-verify-claim.mjs --claim <claim-id> --token <lease-token> --evidence "pnpm test: passed; pnpm typecheck: passed" --json
 node scripts/agent-release.mjs --claim <claim-id> --token <lease-token> --json
 node scripts/agent-status.mjs --integrator --json
@@ -77,6 +78,8 @@ node scripts/agent-status.mjs --integrator --json
 - Keep the raw lease token only in the current process or agent session. SQLite stores only its SHA-256 hash, and status/history/queue output never returns it.
 - Every mutation requires the token. Verification requires non-empty evidence, and any later repository change makes that evidence stale.
 - Do not edit after verification and do not commit while the claim is active. Release first, then stage only the task-owned files.
+- `agent-rebaseline` refreshes an active claim's baseline when concurrent released work changed the repository; it clears stored verification, so verify again before release.
+- The `.githooks/pre-commit` commit gate (active via `git config core.hooksPath .githooks`) is cooperative: it blocks staged files owned by unreleased active claims and warns on files matching no zone.
 - Run `node scripts/agent-validate-zones.mjs --json` when product paths or zone definitions change.
 
 ## Canonical Rule

@@ -1,6 +1,6 @@
 # Agent Orchestrator Zone Architecture
 
-`zones.yml` is the ownership map used by the Agent Coordination Protocol. It defines one unambiguous owner zone for every product file under `apps/`, `packages/`, and `services/`, plus operational zones for coordination and generated resources.
+`zones.yml` is the ownership map used by the Agent Coordination Protocol. It defines one unambiguous owner zone for every tracked or non-ignored repository file, plus operational zones for coordination and generated resources.
 
 ## Lock Policies
 
@@ -17,13 +17,14 @@ node scripts/agent-status.mjs --json
 node scripts/agent-claim.mjs --agent <agent> --task "<task>" --write <zones> --planned-files <concrete-paths> --json
 node scripts/agent-heartbeat.mjs --claim <claim-id> --token <lease-token> --json
 node scripts/agent-expand.mjs --claim <claim-id> --token <lease-token> --add-write <zones> --add-planned-files <concrete-paths> --json
+node scripts/agent-rebaseline.mjs --claim <claim-id> --token <lease-token> --json
 node scripts/agent-verify-claim.mjs --claim <claim-id> --token <lease-token> --evidence "<commands and results>" --json
 node scripts/agent-release.mjs --claim <claim-id> --token <lease-token> --json
 ```
 
 The raw lease token appears only in the claim response. Keep it in the current agent session; SQLite stores only its SHA-256 hash. Status, history, and queue output are secret-free.
 
-Do not edit beyond the claim. Expand first and proceed only after expansion succeeds. Do not edit after successful verification, and do not commit while the claim is active. Release requires fresh successful evidence and rechecks the repository fingerprint transactionally.
+Do not edit beyond the claim. Expand first and proceed only after expansion succeeds. Do not edit after successful verification, and do not commit while the claim is active. Release requires fresh successful evidence and rechecks the repository fingerprint transactionally. When concurrent released work changed the repository after a claim started, `agent-rebaseline` refreshes the baseline (and clears stored verification) without recreating the claim.
 
 ## Inspection And Recovery
 
