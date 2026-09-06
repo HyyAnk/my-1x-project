@@ -6,7 +6,11 @@ import {
   Plus,
   MagnifyingGlassPlus,
 } from "@phosphor-icons/react";
-import type { MascotStateVariant } from "@studio/shared";
+import {
+  type MascotStateVariant,
+  findPoseByPrompt,
+  getMascotSlotDefaultPreset,
+} from "@studio/shared";
 
 export interface VariantSlotCardProps {
   state: "thinking" | "celebrate";
@@ -32,24 +36,41 @@ export function VariantSlotCard({
   onOpenLightbox,
 }: VariantSlotCardProps) {
   const isFilled = Boolean(variant?.image_url);
-  const hasCustomPrompt = Boolean(variant?.prompt_modifier && variant.prompt_modifier.trim());
+  const promptModifier = variant?.prompt_modifier?.trim() || "";
+  const hasCustomPrompt = Boolean(promptModifier);
+
+  // Look up pose preset details from the 20-pose library
+  const knownPose = promptModifier ? findPoseByPrompt(state, promptModifier) : undefined;
+  const defaultSlotPreset = getMascotSlotDefaultPreset(state, slotIndex);
+  const defaultPose = findPoseByPrompt(state, defaultSlotPreset);
+
+  const poseBadgeLabel = knownPose
+    ? knownPose.label
+    : (promptModifier
+        ? "Customized"
+        : (isFilled && defaultPose ? defaultPose.label : null));
+
+  const poseTooltip = promptModifier
+    ? (knownPose ? `${knownPose.label}: "${promptModifier}"` : `Custom Prompt: "${promptModifier}"`)
+    : `Default Slot ${slotIndex}: "${defaultSlotPreset}"`;
 
   return (
     <div
       className={`variant-slot-card ${isFilled ? "is-filled" : "is-empty"} ${isBusy ? "is-busy" : ""}`}
       data-slot-index={slotIndex}
       data-slot-state={state}
+      title={poseTooltip}
     >
       {/* Slot Header */}
       <div className="variant-slot-header">
         <span className="slot-number-badge">Slot {slotIndex}</span>
         <div className="slot-header-tags">
-          {hasCustomPrompt ? (
+          {poseBadgeLabel ? (
             <span
               className="slot-custom-tag"
-              title={`Prompt: ${variant?.prompt_modifier}`}
+              title={poseTooltip}
             >
-              Customized
+              {poseBadgeLabel}
             </span>
           ) : null}
         </div>
@@ -104,7 +125,7 @@ export function VariantSlotCard({
               className="slot-action-btn is-regen"
               onClick={() => onRegenerate(slotIndex)}
               disabled={isBusy}
-              title="Regenerate this variant"
+              title="Regenerate with an unused pose from library"
             >
               <ArrowCounterClockwise size={13} weight="bold" />
               <span>Regenerate</span>

@@ -200,9 +200,12 @@ export function useMascotStyles({
           prompt_modifier: promptModifier,
         });
         onMascotUpdated(result.mascot);
+        const successMessage = result.prompt_used
+          ? `Slot ${slotIndex} (${state}) generated: "${result.prompt_used}"`
+          : `Slot ${slotIndex} (${state}) generated successfully`;
         onNotice({
           tone: "good",
-          message: `Slot ${slotIndex} (${state}) generated successfully`,
+          message: successMessage,
         });
       } catch (err: unknown) {
         const error = err as Error;

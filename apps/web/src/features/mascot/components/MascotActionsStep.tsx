@@ -413,7 +413,7 @@ export function MascotActionsStep({
                     isBusy={isBusy}
                     statusText={getSlotStatusText("thinking", slotIndex)}
                     onGenerate={(slot) => handleGenerateSlot("thinking", slot)}
-                    onRegenerate={(slot) => handleGenerateSlot("thinking", slot, variant?.prompt_modifier)}
+                    onRegenerate={(slot) => handleGenerateSlot("thinking", slot, undefined)}
                     onEditPrompt={(slot) => handleOpenSlotPromptModal("thinking", slot)}
                     onOpenLightbox={onOpenLightbox}
                   />
@@ -463,7 +463,7 @@ export function MascotActionsStep({
                     isBusy={isBusy}
                     statusText={getSlotStatusText("celebrate", slotIndex)}
                     onGenerate={(slot) => handleGenerateSlot("celebrate", slot)}
-                    onRegenerate={(slot) => handleGenerateSlot("celebrate", slot, variant?.prompt_modifier)}
+                    onRegenerate={(slot) => handleGenerateSlot("celebrate", slot, undefined)}
                     onEditPrompt={(slot) => handleOpenSlotPromptModal("celebrate", slot)}
                     onOpenLightbox={onOpenLightbox}
                   />

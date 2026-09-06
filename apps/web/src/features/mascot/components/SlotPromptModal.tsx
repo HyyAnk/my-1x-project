@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { X, PencilSimple, Check, CircleNotch, Info } from "@phosphor-icons/react";
-import { getMascotSlotDefaultPreset } from "@studio/shared";
+import { getMascotPoses, getMascotSlotDefaultPreset, type MascotPosePreset } from "@studio/shared";
 
 export interface SlotPromptModalProps {
   isOpen: boolean;
@@ -33,11 +33,52 @@ export function SlotPromptModal({
     }
   }, [isOpen, initialPrompt]);
 
+  const poses = useMemo<MascotPosePreset[]>(() => getMascotPoses(state), [state]);
+
+  const categories = useMemo(() => {
+    const cats: Record<string, MascotPosePreset[]> = {};
+    for (const p of poses) {
+      if (!cats[p.category]) {
+        cats[p.category] = [];
+      }
+      cats[p.category].push(p);
+    }
+    return cats;
+  }, [poses]);
+
+  // Determine which preset matches the current prompt, if any
+  const matchingPose = useMemo(() => {
+    if (!prompt.trim()) return undefined;
+    const trimmed = prompt.trim().toLowerCase();
+    return poses.find((p) => p.prompt.trim().toLowerCase() === trimmed);
+  }, [poses, prompt]);
+
+  const selectedPresetValue = matchingPose
+    ? matchingPose.id
+    : prompt.trim()
+    ? "custom"
+    : "";
+
+  const handlePresetSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    if (!val) {
+      setPrompt("");
+      return;
+    }
+    if (val === "custom") {
+      return;
+    }
+    const found = poses.find((p) => p.id === val);
+    if (found) {
+      setPrompt(found.prompt);
+    }
+  };
+
   if (!isOpen) return null;
 
   const stateLabel = state === "thinking" ? "Thinking" : "Celebrate";
   const slotDefaultPreset = getMascotSlotDefaultPreset(state, slotIndex);
-  const defaultPlaceholder = `Default Slot ${slotIndex} Pose: "${slotDefaultPreset}"`;
+  const defaultPlaceholder = `Leave empty to let the server automatically assign an unused pose from the 20-pose library (default slot preset: "${slotDefaultPreset}")`;
 
   const handleSave = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -97,6 +138,44 @@ export function SlotPromptModal({
               </p>
             </div>
 
+            {/* Pose Preset Selector Dropdown */}
+            <div className="form-group">
+              <label htmlFor="slot-preset-selector">
+                Pose Preset Library ({stateLabel} &mdash; 20 Curated Poses)
+              </label>
+              <select
+                id="slot-preset-selector"
+                className="slot-preset-dropdown"
+                value={selectedPresetValue}
+                onChange={handlePresetSelectChange}
+                disabled={isSubmitting}
+                style={{
+                  width: "100%",
+                  padding: "8px 10px",
+                  borderRadius: "6px",
+                  fontSize: "13px",
+                  background: "var(--input-bg, #1a1a1a)",
+                  color: "var(--text, #fff)",
+                  border: "1px solid var(--line, #333)",
+                }}
+              >
+                <option value="">Select a preset pose...</option>
+                {Object.entries(categories).map(([category, items]) => (
+                  <optgroup key={category} label={category}>
+                    {items.map((pose) => (
+                      <option key={pose.id} value={pose.id}>
+                        {pose.label}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+                <option value="custom">Custom / Freeform Prompt</option>
+              </select>
+              <span className="form-field-hint">
+                Select a curated pose from the library or choose &ldquo;Custom / Freeform Prompt&rdquo; to define your own.
+              </span>
+            </div>
+
             <div className="form-group">
               <label htmlFor="slot-prompt-modifier-input">
                 Slot Action / Pose Modifier
@@ -110,10 +189,9 @@ export function SlotPromptModal({
                 placeholder={defaultPlaceholder}
                 disabled={isSubmitting}
                 style={{ width: "100%", fontSize: "13px", resize: "vertical" }}
-                autoFocus
               />
               <span className="form-field-hint">
-                Leave empty to use the default Slot {slotIndex} pose preset ({slotDefaultPreset.toLowerCase()}).
+                Leave empty to have the server automatically assign a random unused pose from the 20-pose library.
               </span>
             </div>
           </div>
