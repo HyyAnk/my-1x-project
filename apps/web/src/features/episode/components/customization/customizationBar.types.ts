@@ -14,6 +14,7 @@ import type {
   VisualPresetItem,
   ThumbnailRatioMode,
   MascotRenderAspectRatio,
+  MascotStyle,
 } from "@studio/shared";
 import type { Notice } from "../../../../components/types";
 
@@ -39,4 +40,7 @@ export type EpisodeQuizCustomizationBarProps = {
   onApplyStylePreset: (preset: VisualPresetItem) => void;
   setEpisode?: (episode: Episode | null) => void;
   onNotice?: (notice: NonNullable<Notice>) => void;
+  mascotStyleId?: string | null;
+  onSaveMascotStyle?: (styleId: string | null) => void;
+  availableMascotStyles?: MascotStyle[];
 };

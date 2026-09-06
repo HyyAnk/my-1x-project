@@ -4,11 +4,15 @@ import type {
   Channel,
   ChannelMascotConfig,
   CreateChannelInput,
+  CreateMascotStyleInput,
   DirectorPlan,
   Episode,
   EpisodeSettingsInput,
   MascotActionType,
   MascotProfile,
+  MascotStyle,
+  UpdateMascotSlotInput,
+  UpdateMascotStyleInput,
   QuestionHistoryCheckResult,
   QuestionHistoryEntry,
   QuizAssessment,
@@ -114,6 +118,11 @@ export interface RepositoryRuntime {
   listMascotAssets(mascotId: string): Promise<string[]>;
   deleteMascotAssetFile(mascotId: string, filename: string): Promise<void>;
   assignMascotToChannel(channelId: string, mascotId: string | null, config?: Partial<ChannelMascotConfig>): Promise<Channel>;
+  createMascotStyle(mascotId: string, input: CreateMascotStyleInput): Promise<{ mascot: MascotProfile; style: MascotStyle }>;
+  updateMascotStyle(mascotId: string, styleId: string, input: UpdateMascotStyleInput): Promise<MascotProfile>;
+  deleteMascotStyle(mascotId: string, styleId: string): Promise<MascotProfile>;
+  updateMascotSlot(mascotId: string, input: UpdateMascotSlotInput): Promise<MascotProfile>;
+  setActiveMascotStyle(mascotId: string, styleId: string): Promise<MascotProfile>;
 
   // Voice Operations
   saveVoiceReference(channelId: string, content: Uint8Array): Promise<{ path: string; modified_at: string }>;

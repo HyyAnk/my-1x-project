@@ -190,6 +190,12 @@ export function convertBankQuestionToQuizQuestion(
 }
 
 /**
+ * Bounded concurrency for parallel transcreation so a 1-click topic confirm
+ * does not serialize one LLM round-trip per question inside the HTTP request.
+ */
+const TRANSCREATION_CONCURRENCY = 3;
+
+/**
  * Transcreates and converts a batch of BankQuestions into validated QuizQuestions.
  */
 export async function transcreateAndConvertTopicQuestions(
@@ -199,25 +205,32 @@ export async function transcreateAndConvertTopicQuestions(
   repository: RepositoryService,
   llmClient?: LLMClient | null,
 ): Promise<QuizQuestion[]> {
-  const quizQuestions: QuizQuestion[] = [];
+  const results = new Array<QuizQuestion | null>(selectedQuestions.length).fill(null);
+  let cursor = 0;
 
-  for (let i = 0; i < selectedQuestions.length; i++) {
-    const bankQuestion = selectedQuestions[i];
-    const activeTranslation = await resolveBankQuestionTranslation(
-      bankQuestion,
-      targetLanguage,
-      channel,
-      repository,
-      llmClient,
-    );
+  const runWorker = async (): Promise<void> => {
+    while (cursor < selectedQuestions.length) {
+      const index = cursor++;
+      const bankQuestion = selectedQuestions[index]!;
+      const activeTranslation = await resolveBankQuestionTranslation(
+        bankQuestion,
+        targetLanguage,
+        channel,
+        repository,
+        llmClient,
+      );
 
-    const quizQuestion = convertBankQuestionToQuizQuestion(bankQuestion, {
-      language: targetLanguage,
-      translation: activeTranslation,
-    });
-    quizQuestion.number = i + 1;
-    quizQuestions.push(quizQuestion);
-  }
+      const quizQuestion = convertBankQuestionToQuizQuestion(bankQuestion, {
+        language: targetLanguage,
+        translation: activeTranslation,
+      });
+      quizQuestion.number = index + 1;
+      results[index] = quizQuestion;
+    }
+  };
 
-  return quizQuestions;
+  const workerCount = Math.min(TRANSCREATION_CONCURRENCY, selectedQuestions.length);
+  await Promise.all(Array.from({ length: workerCount }, () => runWorker()));
+
+  return results.filter((question): question is QuizQuestion => question !== null);
 }

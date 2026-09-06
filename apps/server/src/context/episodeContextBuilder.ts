@@ -82,6 +82,7 @@ export async function buildEpisodeContext(input: EpisodeContextInput): Promise<C
     quizQuestionCount,
     quizLastClaimId,
     quizSourceMinimum,
+    channelLanguage: channel.language,
   });
 
   const prompt = composeContextPrompt(taskType, channel, episode, [...files, ...sharedFiles], {

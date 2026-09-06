@@ -7,6 +7,7 @@ import {
   type VideoDescription,
 } from "@studio/shared";
 import { executeSinglePromptText, type LLMClient } from "../../utils/promptSanitizer.js";
+import { retryWithBackoff } from "../../utils/retryWithBackoff.js";
 import { compileVideoDescriptionPrompt } from "./descriptionPromptCompiler.js";
 import { assembleFullDescription, normalizeHashtags } from "./descriptionFormatter.js";
 import { calculateScoringTiers, formatScoringRange } from "./scoringTiers.js";
@@ -57,13 +58,21 @@ export async function generateVideoDescription(deps: GenerateVideoDescriptionDep
   let rawJson: Record<string, unknown> = {};
 
   try {
-    const rawOutput = await executeSinglePromptText(client, prompt, {
-      modelOverride: modelOverride || "flash",
-      signal,
-      timeoutMs: timeoutMs ?? 10_000,
-    });
+    const rawOutput = await retryWithBackoff(
+      () =>
+        executeSinglePromptText(client, prompt, {
+          modelOverride: modelOverride || "flash",
+          signal,
+          timeoutMs: timeoutMs ?? 10_000,
+        }),
+      { attempts: 3, baseDelayMs: 1500 },
+    );
     rawJson = parseDescriptionJsonResponse(rawOutput);
   } catch (error) {
+    console.warn(
+      `[descriptionGenerator] LLM description failed, using grounded fallback template for episode "${episode.episode_id}":`,
+      error instanceof Error ? error.message : error,
+    );
     // If LLM fails or returns unparseable text, create a structured fallback grounded in the quiz topic
     const tier1Range = formatScoringRange(tiers.tier1.min, tiers.tier1.max, language);
     const tier2Range = formatScoringRange(tiers.tier2.min, tiers.tier2.max, language);

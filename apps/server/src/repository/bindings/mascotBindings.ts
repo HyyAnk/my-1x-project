@@ -9,6 +9,11 @@ import {
   listMascotAssets,
   deleteMascotAssetFile,
   assignMascotToChannel,
+  createMascotStyle,
+  updateMascotStyle,
+  deleteMascotStyle,
+  updateMascotSlot,
+  setActiveMascotStyle,
 } from "../mascots.js";
 
 export const mascotBindings = {
@@ -22,4 +27,9 @@ export const mascotBindings = {
   listMascotAssets,
   deleteMascotAssetFile,
   assignMascotToChannel,
+  createMascotStyle,
+  updateMascotStyle,
+  deleteMascotStyle,
+  updateMascotSlot,
+  setActiveMascotStyle,
 };

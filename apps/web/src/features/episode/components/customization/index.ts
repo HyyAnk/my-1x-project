@@ -6,6 +6,7 @@ export * from "./ChannelBrandNameControl";
 export * from "./CounterBadgeDropdown";
 export * from "./CustomizationPill";
 export * from "./CustomizationPopover";
+export * from "./MascotStyleDropdown";
 export * from "./PaletteDropdown";
 export * from "./PresetPickerDropdown";
 export * from "./QuestionBoxDropdown";

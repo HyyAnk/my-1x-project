@@ -2,16 +2,22 @@ import path from "node:path";
 import { createReadStream } from "node:fs";
 import { readFile } from "node:fs/promises";
 import type { FastifyPluginCallback } from "fastify";
+import { z } from "zod";
 import {
+  BatchGenerateStyleSlotsInputSchema,
   CalibrateMascotActionInputSchema,
   CreateMascotInputSchema,
+  CreateMascotStyleInputSchema,
   GenerateMascotConceptInputSchema,
+  GenerateMascotSlotInputSchema,
   GenerateMascotSpriteInputSchema,
   MascotActionTypeSchema,
   MascotMigrationInputSchema,
   MASCOT_ACTION_META,
   RemoveMascotBackgroundInputSchema,
   UpdateMascotInputSchema,
+  UpdateMascotSlotInputSchema,
+  UpdateMascotStyleInputSchema,
   UploadMascotSpriteInputSchema,
   type MascotActionType,
 } from "@studio/shared";
@@ -20,6 +26,8 @@ import {
   exportMascotPackage,
   generateMascotActionSprite,
   generateMascotConceptArt,
+  generateMascotStyleBatch,
+  generateMascotStyleSlot,
   importMascotPackage,
   removeMascotAssetBackground,
 } from "../quiz/mascotService.js";
@@ -72,6 +80,72 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
       const mascotId = (request.params as { mascotId: string }).mascotId;
       await repository.deleteMascot(mascotId);
       return { ok: true };
+    });
+    server.post("/api/mascots/:mascotId/styles", async (request, reply) => {
+      const mascotId = (request.params as { mascotId: string }).mascotId;
+      const input = CreateMascotStyleInputSchema.parse(request.body);
+      const result = await repository.createMascotStyle(mascotId, input);
+      return reply.code(201).send(result);
+    });
+    server.patch("/api/mascots/:mascotId/styles/:styleId", async (request) => {
+      const { mascotId, styleId } = request.params as { mascotId: string; styleId: string };
+      const input = UpdateMascotStyleInputSchema.parse(request.body);
+      const mascot = await repository.updateMascotStyle(mascotId, styleId, input);
+      return { mascot };
+    });
+    server.delete("/api/mascots/:mascotId/styles/:styleId", async (request) => {
+      const { mascotId, styleId } = request.params as { mascotId: string; styleId: string };
+      const mascot = await repository.deleteMascotStyle(mascotId, styleId);
+      return { ok: true, mascot };
+    });
+    server.patch("/api/mascots/:mascotId/styles/:styleId/slots", async (request) => {
+      const { mascotId, styleId } = request.params as { mascotId: string; styleId: string };
+      const rawBody = typeof request.body === "object" && request.body !== null ? request.body : {};
+      const input = UpdateMascotSlotInputSchema.parse({ style_id: styleId, ...rawBody });
+      const mascot = await repository.updateMascotSlot(mascotId, input);
+      return { mascot };
+    });
+    server.post("/api/mascots/:mascotId/styles/:styleId/generate-slot", async (request) => {
+      const { mascotId, styleId } = request.params as { mascotId: string; styleId: string };
+      const rawBody = typeof request.body === "object" && request.body !== null ? request.body : {};
+      const input = GenerateMascotSlotInputSchema.parse({ style_id: styleId, ...rawBody });
+      const mascot = await repository.getMascot(mascotId);
+      const result = await generateMascotStyleSlot(
+        repository,
+        mascot,
+        styleId,
+        input,
+        state.config.image_generation,
+        logger,
+      );
+      return result;
+    });
+    server.post("/api/mascots/:mascotId/styles/:styleId/generate-batch", async (request, reply) => {
+      const { mascotId, styleId } = request.params as { mascotId: string; styleId: string };
+      const rawBody = typeof request.body === "object" && request.body !== null ? request.body : {};
+      const input = BatchGenerateStyleSlotsInputSchema.parse({ style_id: styleId, ...rawBody });
+      const mascot = await repository.getMascot(mascotId);
+      // Aborting the HTTP request cancels the remaining queued slot generations.
+      const abortController = new AbortController();
+      request.raw.once("close", () => {
+        if (!reply.sent) abortController.abort();
+      });
+      const result = await generateMascotStyleBatch(
+        repository,
+        mascot,
+        styleId,
+        input,
+        state.config.image_generation,
+        logger,
+        { signal: abortController.signal },
+      );
+      return result;
+    });
+    server.post("/api/mascots/:mascotId/active-style", async (request) => {
+      const mascotId = (request.params as { mascotId: string }).mascotId;
+      const { style_id } = z.object({ style_id: z.string().min(1) }).parse(request.body);
+      const mascot = await repository.setActiveMascotStyle(mascotId, style_id);
+      return { mascot };
     });
     server.get("/api/mascots/:mascotId/assets/:filename", async (request, reply) => {
       const params = request.params as { mascotId: string; filename: string };

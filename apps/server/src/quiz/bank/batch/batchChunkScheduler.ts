@@ -5,6 +5,7 @@ import type {
 } from "@studio/shared";
 import type { RepositoryService } from "../../../repository/service.js";
 import { executeSinglePromptText, type LLMClient } from "../../../utils/promptSanitizer.js";
+import { retryWithBackoff } from "../../../utils/retryWithBackoff.js";
 import {
   buildBatchGenerationPrompt,
   buildReverseGenerationPrompt,
@@ -109,23 +110,14 @@ export async function executePromptWithRetry(
   prompt: string,
   signal?: AbortSignal,
 ): Promise<string> {
-  try {
-    return await executeSinglePromptText(llmClient, prompt, {
-      signal,
-      timeoutMs: 180_000,
-    });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    const isRateLimit = /(?:429|resource[_\s]?exhausted|rate[_\s]?limit|too many requests)/i.test(message);
-    if (isRateLimit && !signal?.aborted) {
-      await new Promise((res) => setTimeout(res, 2000 + Math.random() * 1500));
-      return await executeSinglePromptText(llmClient, prompt, {
+  return retryWithBackoff(
+    () =>
+      executeSinglePromptText(llmClient, prompt, {
         signal,
         timeoutMs: 180_000,
-      });
-    }
-    throw err;
-  }
+      }),
+    { attempts: 2, baseDelayMs: 2000, jitterMs: 1500 },
+  );
 }
 
 /**

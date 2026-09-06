@@ -86,9 +86,8 @@ describe("Quiz V2 route workflow", () => {
         const qa = await app.server.inject({ method: "POST", url: base + "/qa", payload: {} });
         expect(qa.statusCode).toBe(200);
         expect(qa.json().assessment.issues.some((issue: { code: string }) => issue.code === "voice_measurement_missing")).toBe(true);
-        const blockedRender = await app.server.inject({ method: "POST", url: base + "/render", payload: {} });
-        expect(blockedRender.statusCode).toBe(400);
-        expect(blockedRender.json().error).toContain("preflight blocked");
+        const retiredRenderRoute = await app.server.inject({ method: "POST", url: base + "/render", payload: {} });
+        expect(retiredRenderRoute.statusCode).toBe(404);
         const retiredNarrationRoute = await app.server.inject({
           method: "POST",
           url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/narration/assemble`,
@@ -222,31 +221,14 @@ describe("Quiz V2 route workflow", () => {
           20,
         );
 
-        vi.spyOn(app.tasks, "submit").mockReturnValue({
-          task_id: "render-task",
-          task_type: "GENERATE_VIDEO",
-          channel_id: channel.channel_id,
-          episode_id: episode.episode_id,
-          status: "QUEUED",
-          created_at: new Date().toISOString(),
-          started_at: null,
-          completed_at: null,
-          codex_thread_id: null,
-          codex_turn_id: null,
-          error: null,
-          output_files: [],
-          lock_key: episode.episode_id,
-          queue_position: 1,
-          progress_message: "Queued",
-          scene_number: null,
-        } as never);
-        const response = await app.server.inject({
+        // The dedicated render endpoint was removed; rendering goes through the
+        // GENERATE_PIPELINE fast-path task pipeline instead.
+        const removedRouteResponse = await app.server.inject({
           method: "POST",
           url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/quiz-v2/render`,
           payload: {},
         });
-        expect(response.statusCode).toBe(202);
-        expect(response.json().task.task_type).toBe("GENERATE_VIDEO");
+        expect(removedRouteResponse.statusCode).toBe(404);
 
         // Test soundtrack streaming endpoint
         const soundtrackDir = app.repository.resolvePath("runtime", "hyperframes", episode.episode_id);

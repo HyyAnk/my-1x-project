@@ -11,6 +11,7 @@ import {
   type Episode,
 } from "@studio/shared";
 import { buildApp, type StudioApp } from "../src/app.js";
+import { createStubQuizLlmClient } from "./helpers/stubQuizLlmClient.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
@@ -100,7 +101,7 @@ async function createApp(): Promise<StudioApp> {
     writeFile(path.join(root, "templates", "quiz_channel_dna.md"), "# Quiz Channel DNA\n", "utf8"),
     writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style Guide\n", "utf8"),
   ]);
-  return buildApp(root);
+  return buildApp(root, { llmClient: createStubQuizLlmClient() });
 }
 
 function createChannel(app: StudioApp) {

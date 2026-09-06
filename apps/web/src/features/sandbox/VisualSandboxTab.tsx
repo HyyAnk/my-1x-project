@@ -207,6 +207,12 @@ export function VisualSandboxTab({
               mascots={mascot.mascots}
               mascotId={mascot.mascotId}
               setMascotId={mascot.setMascotId}
+              mascotStyleId={mascot.mascotStyleId}
+              setMascotStyleId={mascot.setMascotStyleId}
+              availableStyles={mascot.availableStyles}
+              activeStyle={mascot.activeStyle}
+              selectedVariantIndex={mascot.selectedVariantIndex}
+              setSelectedVariantIndex={mascot.setSelectedVariantIndex}
               mascotEnabled={mascot.mascotEnabled}
               setMascotEnabled={mascot.setMascotEnabled}
               channelBrandName={brandName.channelBrandName}

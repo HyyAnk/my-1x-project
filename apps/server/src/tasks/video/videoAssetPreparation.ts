@@ -70,7 +70,11 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
           layout,
         });
         return [asset.asset_id, `./quiz-images/${renderFilename}`] as const;
-      } catch {
+      } catch (error) {
+        console.warn(
+          `[videoAssetPreparation] Failed to prepare render asset "${asset.asset_id}" for episode ${episodeId}; it will be missing from the render:`,
+          error instanceof Error ? error.message : error,
+        );
         return null;
       }
     }),

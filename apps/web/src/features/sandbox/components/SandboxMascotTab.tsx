@@ -1,4 +1,4 @@
-import type { MascotActionType, MascotProfile } from "@studio/shared";
+import type { MascotActionType, MascotProfile, MascotStyle } from "@studio/shared";
 import { MascotPicker } from "./MascotPicker";
 import { SandboxChannelBrandControl } from "./SandboxChannelBrandControl";
 import { MascotActionSelector } from "./MascotActionSelector";
@@ -8,6 +8,12 @@ export interface SandboxMascotTabProps {
   mascots: MascotProfile[];
   mascotId: string;
   setMascotId: (id: string) => void;
+  mascotStyleId?: string | null;
+  setMascotStyleId?: (id: string | null) => void;
+  availableStyles?: MascotStyle[];
+  activeStyle?: MascotStyle | null;
+  selectedVariantIndex?: number | null;
+  setSelectedVariantIndex?: (index: number | null) => void;
   mascotEnabled: boolean;
   setMascotEnabled: (enabled: boolean | ((prev: boolean) => boolean)) => void;
   channelBrandName: string;
@@ -31,6 +37,12 @@ export function SandboxMascotTab({
   mascots,
   mascotId,
   setMascotId,
+  mascotStyleId,
+  setMascotStyleId,
+  availableStyles,
+  activeStyle,
+  selectedVariantIndex,
+  setSelectedVariantIndex,
   mascotEnabled,
   setMascotEnabled,
   channelBrandName,
@@ -65,7 +77,16 @@ export function SandboxMascotTab({
 
       <div style={{ height: "1px", background: "var(--line)" }} />
 
-      <MascotActionSelector mascotAction={mascotAction} setMascotAction={setMascotAction} />
+      <MascotActionSelector
+        mascotAction={mascotAction}
+        setMascotAction={setMascotAction}
+        mascotStyleId={mascotStyleId}
+        setMascotStyleId={setMascotStyleId}
+        availableStyles={availableStyles}
+        activeStyle={activeStyle}
+        selectedVariantIndex={selectedVariantIndex}
+        setSelectedVariantIndex={setSelectedVariantIndex}
+      />
 
       <div style={{ height: "1px", background: "var(--line)" }} />
 

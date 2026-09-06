@@ -446,3 +446,139 @@
   justify-content: space-between;
   gap: 12px;
 }
+
+/* Motion Studio Panes */
+.motion-left-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.motion-right-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Style & Slot Indicator (above the preview canvas) */
+.motion-style-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+.motion-style-indicator-name {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.motion-style-indicator-slot {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* Variant Panel */
+.motion-editing-target {
+  white-space: nowrap;
+}
+
+.motion-style-select {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  cursor: pointer;
+}
+
+.motion-variant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+}
+
+.motion-variant-card-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 4px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.motion-variant-card-btn:hover {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+}
+
+.motion-variant-card-btn.is-selected {
+  border-color: var(--accent);
+  background: rgba(6, 182, 212, 0.1);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.2);
+}
+
+.motion-variant-thumb {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.motion-variant-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.motion-variant-slot {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.motion-variant-motion {
+  font-size: 9px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.motion-variant-empty {
+  font-size: 11.5px;
+  color: var(--muted);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Quick pose variant count badge */
+.pose-variant-count {
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

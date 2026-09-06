@@ -56,11 +56,20 @@ export function parseJson(output: string, context = "Codex"): unknown {
 export function parseTopicCandidates(output: string, channelId: string, topicHint?: string) {
   const raw = parseJson(output);
   const list = Array.isArray(raw) ? raw : (raw as { candidates?: unknown[] }).candidates;
-  if (!Array.isArray(list) || list.length !== 5) throw new Error("Codex topic output must contain exactly 5 candidates");
+  // Accept a small tolerance around the requested 5 candidates: an LLM response
+  // with 4-6 usable ideas is worth keeping instead of failing the whole task.
+  if (!Array.isArray(list) || list.length < 3 || list.length > 7) {
+    throw new Error(`Codex topic output must contain 3-7 candidates (got ${Array.isArray(list) ? list.length : "none"})`);
+  }
   const formats = ["knowledge", "image_guess", "multiple_choice", "true_false", "odd_one_out"] as const;
   const ages = ["4-6", "7-9", "10-12", "family"] as const;
-  return list.map((item, index) => {
+  return list.flatMap((item, index) => {
     const candidate = item as Record<string, unknown>;
+    const title = String(candidate.title ?? "").trim();
+    if (!title) {
+      console.warn(`[parsers] Dropped topic candidate #${index + 1} with empty title from SUGGEST_TOPICS output`);
+      return [];
+    }
     const rawThemeHint = candidate.theme_hint ? String(candidate.theme_hint).trim() : undefined;
     const themeHint = rawThemeHint || (topicHint && index < 2 ? topicHint : undefined);
     const archetypes = [
@@ -107,7 +116,7 @@ export function parseTopicCandidates(output: string, channelId: string, topicHin
     return {
       topic_id: makeId(`topic${index + 1}`),
       channel_id: channelId,
-      title: String(candidate.title ?? "").trim(),
+      title,
       premise: String(candidate.premise ?? "").trim(),
       why_it_fits: String(candidate.why_it_fits ?? candidate.whyItFits ?? "").trim(),
       hook: String(candidate.hook ?? "").trim(),

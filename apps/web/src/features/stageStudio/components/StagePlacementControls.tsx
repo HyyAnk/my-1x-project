@@ -23,8 +23,8 @@ export function StagePlacementControls({ studio }: StagePlacementControlsProps) 
               type="button"
               className="inspector-icon-action"
               onClick={() => studio.copyPlacementFrom("16:9", "9:16")}
-              title="Copy from 16:9"
-              aria-label="Copy from 16:9"
+              title={t("stageStudio.copyFrom169")}
+              aria-label={t("stageStudio.copyFrom169")}
             >
               <Copy size={13} />
             </button>
@@ -33,8 +33,8 @@ export function StagePlacementControls({ studio }: StagePlacementControlsProps) 
               type="button"
               className="inspector-icon-action"
               onClick={() => studio.copyPlacementFrom("9:16", "16:9")}
-              title="Copy from 9:16"
-              aria-label="Copy from 9:16"
+              title={t("stageStudio.copyFrom916")}
+              aria-label={t("stageStudio.copyFrom916")}
             >
               <Copy size={13} />
             </button>

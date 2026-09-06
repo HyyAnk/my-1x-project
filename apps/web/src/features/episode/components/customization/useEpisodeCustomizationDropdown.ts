@@ -6,6 +6,7 @@ export type EpisodeCustomizationDropdownName =
   | "questions"
   | "aspectRatio"
   | "visualStyle"
+  | "mascotStyle"
   | "questionBox"
   | "answerCard"
   | "counterBadge"

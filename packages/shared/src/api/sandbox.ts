@@ -51,6 +51,7 @@ export const SandboxPreviewInputBaseSchema = z.object({
   fact_card_title: z.string().optional().default("DID YOU KNOW?"),
   fact_card_text: z.string().optional().default("This planet features remarkable atmospheric conditions and the most stunning ring system in the solar system!"),
   mascot_id: z.string().nullable().optional(),
+  mascot_style_id: z.string().nullable().optional(),
   mascot_enabled: z.boolean().optional().default(true),
   mascot_action: MascotActionTypeSchema.optional().default("thinking"),
   mascot_position: z.enum(["bottom_left", "bottom_right"]).optional().default("bottom_left"),

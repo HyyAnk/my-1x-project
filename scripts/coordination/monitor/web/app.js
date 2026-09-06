@@ -41,6 +41,9 @@ class App {
     this.zenRestoreBar = document.getElementById("zen-restore-bar");
     this.btnZenExit = document.getElementById("btn-zen-exit");
     this.btnTogglePulses = document.getElementById("btn-toggle-pulses");
+    this.btnToggleBloom = document.getElementById("btn-toggle-bloom");
+    this.btnToggleHeatmap = document.getElementById("btn-toggle-heatmap");
+    this.btnCamDirector = document.getElementById("btn-cam-director");
     this.activityTicker = document.getElementById("activity-ticker");
     this.tickerIcon = document.getElementById("ticker-icon");
     this.tickerZone = document.getElementById("ticker-zone");
@@ -88,14 +91,23 @@ class App {
     this.btnZenMode?.addEventListener("click", () => this.toggleZenMode());
     this.btnZenExit?.addEventListener("click", () => this.toggleZenMode(false));
     this.btnTogglePulses?.addEventListener("click", () => this.togglePulses());
+    this.btnToggleBloom?.addEventListener("click", () => this.toggleBloom());
+    this.btnToggleHeatmap?.addEventListener("click", () => this.toggleHeatmap());
+    this.btnCamDirector?.addEventListener("click", () => this.cycleCameraDirector());
 
-    // Global Keyboard Shortcuts (Press 'H' for Zen Mode, 'P' for Pulses, 'Escape' to restore or close modals)
+    // Global Keyboard Shortcuts (Press 'H' for Zen, 'P' for Pulses, 'B' for Bloom, 'M' for Heatmap, 'C' for Cam Director, 'Escape' to restore or close)
     window.addEventListener("keydown", (e) => {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
       if (e.key === "h" || e.key === "H") {
         this.toggleZenMode();
       } else if (e.key === "p" || e.key === "P") {
         this.togglePulses();
+      } else if (e.key === "b" || e.key === "B") {
+        this.toggleBloom();
+      } else if (e.key === "m" || e.key === "M") {
+        this.toggleHeatmap();
+      } else if (e.key === "c" || e.key === "C") {
+        this.cycleCameraDirector();
       } else if (e.key === "Escape") {
         if (this.isZenMode) {
           this.toggleZenMode(false);
@@ -403,14 +415,42 @@ class App {
     this.showToast(enabled ? "⚡ Synapse Pulses: ACTIVE" : "⏸️ Synapse Pulses: PAUSED");
   }
 
+  toggleBloom(forceState) {
+    if (!this.graph) return;
+    const isBloom = this.graph.toggleBloom(forceState);
+    if (this.btnToggleBloom) {
+      this.btnToggleBloom.classList.toggle("active", isBloom);
+    }
+    this.showToast(isBloom ? "🌟 Bloom FX: ACTIVE" : "🌑 Bloom FX: OFF");
+  }
+
+  toggleHeatmap(forceState) {
+    if (!this.graph) return;
+    const isHeatmap = this.graph.toggleHeatmap(forceState);
+    if (this.btnToggleHeatmap) {
+      this.btnToggleHeatmap.classList.toggle("active", isHeatmap);
+    }
+    this.showToast(isHeatmap ? "🔥 Synaptic Heatmap: ACTIVE" : "❄️ Standard Neural View");
+  }
+
+  cycleCameraDirector() {
+    if (!this.graph) return;
+    const modeName = this.graph.cycleCameraMode();
+    if (this.btnCamDirector) {
+      this.btnCamDirector.textContent = `🎥 ${modeName}`;
+    }
+    this.showToast(`Camera: ${modeName}`);
+  }
+
   handleFileActivityHUD(activity) {
     if (!this.activityTicker || !activity) return;
 
     const prefix = activity.eventType === "add" ? "+" : activity.eventType === "unlink" ? "✕" : "⚡";
+    const agentPrefix = activity.agent ? `[${activity.agent}] ` : "";
     if (this.tickerIcon) this.tickerIcon.textContent = prefix;
     if (this.tickerZone) this.tickerZone.textContent = activity.zoneId || "";
     const shortFile = activity.fileName || (activity.file ? activity.file.split("/").pop() : "file");
-    if (this.tickerFile) this.tickerFile.textContent = shortFile;
+    if (this.tickerFile) this.tickerFile.textContent = `${agentPrefix}${shortFile}`;
 
     this.activityTicker.classList.remove("hidden");
 

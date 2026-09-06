@@ -1,10 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { RECOMMENDED_MASCOT_PLACEMENT_PRESET, type MascotActionType, type MascotProfile } from "@studio/shared";
+import {
+  RECOMMENDED_MASCOT_PLACEMENT_PRESET,
+  resolveMascotStyle,
+  type MascotActionType,
+  type MascotProfile,
+  type MascotStyle,
+  type MascotStateVariant,
+} from "@studio/shared";
 import { api } from "../../../api";
 
 export function useSandboxMascotState() {
   const [mascots, setMascots] = useState<MascotProfile[]>([]);
   const [mascotId, setMascotId] = useState("none");
+  const [mascotStyleId, setMascotStyleId] = useState<string | null>(null);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState<number | null>(null);
   const [mascotEnabled, setMascotEnabled] = useState(false);
   const [mascotAction, setMascotAction] = useState<MascotActionType>("thinking");
   const [mascotPosition, setMascotPosition] = useState<"bottom_left" | "bottom_right">(RECOMMENDED_MASCOT_PLACEMENT_PRESET.position);
@@ -20,8 +29,11 @@ export function useSandboxMascotState() {
         if (res?.mascots) {
           setMascots(res.mascots);
           if (res.mascots.length > 0) {
-            setMascotId(res.mascots[0].id);
+            const first = res.mascots[0];
+            setMascotId(first.id);
             setMascotEnabled(true);
+            const defaultStyle = first.styles?.find((s) => s.is_default) || first.styles?.[0];
+            setMascotStyleId(first.active_style_id || defaultStyle?.id || null);
           }
         }
       })
@@ -43,10 +55,68 @@ export function useSandboxMascotState() {
     return mascots.find((mascot) => mascot.id === mascotId) || null;
   }, [mascots, mascotId]);
 
+  const availableStyles: MascotStyle[] = useMemo(() => {
+    return activeMascot?.styles || [];
+  }, [activeMascot]);
+
+  useEffect(() => {
+    if (!activeMascot) {
+      setMascotStyleId(null);
+      return;
+    }
+    const defaultStyle = activeMascot.styles?.find((s) => s.is_default) || activeMascot.styles?.[0];
+    setMascotStyleId(activeMascot.active_style_id || defaultStyle?.id || null);
+  }, [activeMascot?.id, activeMascot?.active_style_id]);
+
+  const activeStyle: MascotStyle | null = useMemo(() => {
+    if (!activeMascot) return null;
+    return resolveMascotStyle(activeMascot, mascotStyleId);
+  }, [activeMascot, mascotStyleId]);
+
+  const thinkingVariants: MascotStateVariant[] = useMemo(() => {
+    return (activeStyle?.states?.thinking || []).filter((v) => Boolean(v.image_url?.trim()));
+  }, [activeStyle]);
+
+  const celebrateVariants: MascotStateVariant[] = useMemo(() => {
+    return (activeStyle?.states?.celebrate || []).filter((v) => Boolean(v.image_url?.trim()));
+  }, [activeStyle]);
+
+  // When style changes, if the current action is thinking/celebrate, preserve or resolve appropriate variant.
+  useEffect(() => {
+    if (mascotAction === "thinking") {
+      if (thinkingVariants.length === 0) {
+        setSelectedVariantIndex(null);
+      } else if (selectedVariantIndex !== null && selectedVariantIndex < thinkingVariants.length) {
+        // preserve current variant index
+      } else {
+        setSelectedVariantIndex(0);
+      }
+    } else if (mascotAction === "celebrate") {
+      if (celebrateVariants.length === 0) {
+        setSelectedVariantIndex(null);
+      } else if (selectedVariantIndex !== null && selectedVariantIndex < celebrateVariants.length) {
+        // preserve current variant index
+      } else {
+        setSelectedVariantIndex(0);
+      }
+    } else {
+      setSelectedVariantIndex(null);
+    }
+  }, [mascotStyleId, mascotAction, thinkingVariants.length, celebrateVariants.length]);
+
   return {
     mascots,
     mascotId,
     setMascotId,
+    mascotStyleId,
+    setMascotStyleId,
+    mascot_style_id: mascotStyleId || undefined,
+    availableStyles,
+    activeStyle,
+    thinkingVariants,
+    celebrateVariants,
+    selectedVariantIndex,
+    setSelectedVariantIndex,
     mascotEnabled,
     setMascotEnabled,
     mascotAction,

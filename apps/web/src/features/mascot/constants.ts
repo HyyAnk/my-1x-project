@@ -88,8 +88,6 @@ export function getLocalizedActionMeta(
 }
 
 export const CORE_GAMEPLAY_ACTIONS: MascotActionType[] = ["thinking", "celebrate"];
-export const BRAND_IDENTITY_ACTIONS: MascotActionType[] = ["wave", "outro"];
-export const AUXILIARY_ACTIONS: MascotActionType[] = ["idle", "point", "oops"];
 
 export type MascotMotionPreset = "breathe" | "sway" | "jump" | "shake" | "wave" | "point" | "pulse" | "float" | "none";
 

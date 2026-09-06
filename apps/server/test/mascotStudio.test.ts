@@ -476,10 +476,10 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
     // 2. Action prompt with reference image must enforce @1 character continuity and studio isolation
     const actionWithRef = buildMascotActionPrompt(mascot, "thinking", {
       hasReferenceImage: true,
-      prompt: "Đang gãi đầu suy nghĩ",
+      prompt: "Scratching head while thinking",
     });
     expect(actionWithRef).toContain("@1");
-    expect(actionWithRef).toContain("Giữ nguyên nhân vật Guardian Dragon trong @1");
+    expect(actionWithRef).toContain('Strictly preserve character identity from @1 for "Guardian Dragon"');
     expect(actionWithRef).toContain("floating character");
     expect(actionWithRef).toContain("no ground shadow");
     expect(actionWithRef).toContain("solid neutral light gray background (#E8E8E8)");

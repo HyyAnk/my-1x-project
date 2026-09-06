@@ -155,7 +155,18 @@ function selectFilesToVerify({ claim, comparison, changedFilesOverride, zoneList
   if (!changedFilesOverride) {
     let files = comparison.changedSinceBaseline.map(normalizePath);
     if (db) {
-      const otherActive = getActiveClaims(db).filter((c) => c.id !== claim.id);
+      let otherActive = getActiveClaims(db).filter((c) => c.id !== claim.id);
+      try {
+        const root = findWorkspaceRoot();
+        const rootDb = openClaimsDb(root);
+        try {
+          const rootClaims = getActiveClaims(rootDb).filter((c) => c.id !== claim.id);
+          otherActive = [...otherActive, ...rootClaims];
+        } finally {
+          rootDb.close();
+        }
+      } catch (_) {}
+
       if (otherActive.length > 0) {
         const otherZones = new Set(otherActive.flatMap((c) => c.writeZones || []));
         const otherPlannedFiles = new Set(otherActive.flatMap((c) => c.plannedFiles || []).map(normalizePath));

@@ -31,6 +31,11 @@ export interface LayoutCheckResult {
   samplesCount: number;
 }
 
+/** Both statuses allow fingerprint-keyed reuse; only "passed" carries QA evidence. */
+function isCheckStatusReady(status: string | undefined): boolean {
+  return status === "passed" || status === "skipped_fast_mode";
+}
+
 export function getOptimalSampleCount(renderQuality?: "draft" | "standard" | "high"): number {
   if (renderQuality === "draft") return 1;
   if (renderQuality === "standard") return 2;
@@ -42,7 +47,7 @@ export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise
   const checkpointPath = path.join(renderRoot, "render-checkpoint.json");
   const checkpoint = await readRenderCheckpoint(checkpointPath);
 
-  const layoutReady = checkpoint?.source_fingerprint === sourceFingerprint && checkpoint.check.status === "passed";
+  const layoutReady = checkpoint?.source_fingerprint === sourceFingerprint && isCheckStatusReady(checkpoint.check.status);
   if (layoutReady) {
     if (onProgress) {
       await onProgress("Video · layout and media checks already passed", 58);
@@ -53,12 +58,12 @@ export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise
   const isFastMode = Boolean(fastRenderMode || process.env.FAST_RENDER_MODE === "true");
   if (isFastMode) {
     if (onProgress) {
-      await onProgress("Video · fast render mode: layout pre-verified", 58);
+      await onProgress("Video · fast render mode: layout check skipped", 58);
     }
     await writeRenderCheckpoint(checkpointPath, {
       schema_version: 2,
       source_fingerprint: sourceFingerprint,
-      check: { status: "passed" },
+      check: { status: "skipped_fast_mode" },
     });
     return { status: "passed", reused: false, bypassed: true, samplesCount: 0 };
   }

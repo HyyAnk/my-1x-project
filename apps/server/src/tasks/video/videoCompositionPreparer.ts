@@ -134,6 +134,7 @@ export async function prepareVideoComposition(options: {
   }
 
   const mascotAspectRatio = renderAspectRatio === "9:16" ? "9:16" : "16:9";
+  const renderFps = runtime.videoConfig?.fps ?? 30;
   const preparedQuizRender = completeQuizV2
     ? await prepareQuizVideoRender({
         channel,
@@ -153,6 +154,7 @@ export async function prepareVideoComposition(options: {
         },
         mascot: mascotProfile,
         mascotConfig: channel.mascot_config,
+        fps: renderFps,
       })
     : null;
 
@@ -160,6 +162,7 @@ export async function prepareVideoComposition(options: {
     preparedQuizRender?.html ??
     buildQuizComposition(episode.quiz_config, scenes, "./narration.wav", episode.narration_duration_seconds ?? undefined, {
       aspectRatio: mascotAspectRatio,
+      fps: renderFps,
     });
   await writeFile(compositionPath, html, "utf8");
   for (const [relativePath, content] of Object.entries(preparedQuizRender?.compositionFiles ?? {})) {
@@ -175,6 +178,7 @@ export async function prepareVideoComposition(options: {
     narration.size,
     assetResolution?.assets ?? [],
     fontFingerprints,
+    preparedQuizRender?.compositionFiles ?? {},
   );
   const checkpointPath = path.join(renderRoot, "render-checkpoint.json");
 

@@ -61,11 +61,11 @@ describe("videoLayoutChecker", () => {
       expect(result.bypassed).toBe(true);
       expect(result.reused).toBe(false);
       expect(result.samplesCount).toBe(0);
-      expect(progressMessages).toContain("Video · fast render mode: layout pre-verified");
+      expect(progressMessages).toContain("Video · fast render mode: layout check skipped");
 
       const checkpoint = await readRenderCheckpoint(checkpointPath);
       expect(checkpoint?.source_fingerprint).toBe(sourceFingerprint);
-      expect(checkpoint?.check.status).toBe("passed");
+      expect(checkpoint?.check.status).toBe("skipped_fast_mode");
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }
@@ -90,7 +90,7 @@ describe("videoLayoutChecker", () => {
 
       const checkpoint = await readRenderCheckpoint(checkpointPath);
       expect(checkpoint?.source_fingerprint).toBe(sourceFingerprint);
-      expect(checkpoint?.check.status).toBe("passed");
+      expect(checkpoint?.check.status).toBe("skipped_fast_mode");
     } finally {
       if (originalEnv !== undefined) {
         process.env.FAST_RENDER_MODE = originalEnv;

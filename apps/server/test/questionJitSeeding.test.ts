@@ -12,7 +12,6 @@ import type { LLMClient } from "../src/utils/promptSanitizer.js";
 import {
   determineMissingDifficulties,
   ensureTopicQuestionsWithJitFallback,
-  generateJitQuestionsFallback,
 } from "../src/quiz/bank/questionCurationEngine.js";
 
 function makeQuestion(overrides: Partial<BankQuestionWithCooldown> = {}): BankQuestionWithCooldown {
@@ -75,8 +74,37 @@ function makeTopic(overrides: Partial<TopicCandidate> = {}): TopicCandidate {
   };
 }
 
-function createMockRepository(initialQuestions: BankQuestionWithCooldown[] = []) {
-  let questions = [...initialQuestions];
+function makeLlmClient(questionCount: number, difficulties?: number[]): LLMClient {
+  const questions = Array.from({ length: questionCount }, (_, i) => ({
+    archetype_id: "deep_trivia",
+    domain_id: "nature_animals",
+    subtopic_id: "ocean_giants",
+    question: `LLM generated ocean question number ${i + 1}?`,
+    format: "multiple_choice",
+    choices: [
+      { id: "A", text: "Colossal Squid", is_correct: true },
+      { id: "B", text: "Giant Octopus", is_correct: false },
+      { id: "C", text: "Vampire Squid", is_correct: false },
+    ],
+    correct_choice_id: "A",
+    explanation: "The colossal squid has eyes measuring up to 27 cm across.",
+    fun_fact: "Their eyes allow them to detect bioluminescent sperm whales in the dark.",
+    visual_spec: {
+      intent: "question_illustration",
+      prompt: "Gigantic colossal squid with glowing eyes in dark abyss",
+      aspect_ratio: "16:9",
+    },
+    difficulty: difficulties?.[i] ?? i + 1,
+    thinking_seconds: 6,
+    tags: ["ocean_giants", "deep_trivia"],
+  }));
+  return {
+    connect: vi.fn(async () => undefined),
+    generateContent: vi.fn(async () => ({ text: JSON.stringify(questions) })),
+  };
+}
+
+function createMockRepository(initialQuestions: BankQuestionWithCooldown[] = []) {  let questions = [...initialQuestions];
   const savedQuestions: BankQuestion[] = [];
 
   const queryQuestionBankQuestions = vi.fn(async (params?: QueryQuestionBankParams) => {
@@ -168,87 +196,6 @@ describe("questionJitSeeder", () => {
     });
   });
 
-  describe("generateJitQuestionsFallback", () => {
-    it("generates fully schema-compliant multiple choice questions", () => {
-      const topic = makeTopic();
-      const generated = generateJitQuestionsFallback(
-        topic,
-        "deep_trivia",
-        "nature_animals",
-        "ocean_giants",
-        [1, 3, 4],
-      );
-
-      expect(generated).toHaveLength(3);
-      for (const q of generated) {
-        expect(() => BankQuestionSchema.parse(q)).not.toThrow();
-        expect(q.archetype_id).toBe("deep_trivia");
-        expect(q.domain_id).toBe("nature_animals");
-        expect(q.subtopic_id).toBe("ocean_giants");
-        expect(q.choices).toHaveLength(3);
-        expect(q.choices.some((c) => c.id === q.correct_choice_id)).toBe(true);
-        expect(q.status).toBe("approved");
-      }
-      expect(generated[0].difficulty).toBe(1);
-      expect(generated[1].difficulty).toBe(3);
-      expect(generated[2].difficulty).toBe(4);
-    });
-
-    it("generates compliant 2-choice true_false questions for verdict archetype", () => {
-      const topic = makeTopic({ archetype: "verdict_true_false", quiz_format: "true_false" });
-      const generated = generateJitQuestionsFallback(
-        topic,
-        "verdict_true_false",
-        "nature_animals",
-        "ocean_giants",
-        [2, 4],
-      );
-
-      expect(generated).toHaveLength(2);
-      for (const q of generated) {
-        expect(() => BankQuestionSchema.parse(q)).not.toThrow();
-        expect(q.archetype_id).toBe("verdict_true_false");
-        expect(q.format).toBe("true_false");
-        expect(q.choices).toHaveLength(2);
-        expect(q.choices.map((c) => c.text)).toEqual(["True", "False"]);
-        expect(q.question.toLowerCase()).toContain("true or false");
-      }
-    });
-
-    it("generates compliant 2-choice versus questions for versus_faceoff archetype", () => {
-      const topic = makeTopic({ archetype: "versus_faceoff" });
-      const generated = generateJitQuestionsFallback(
-        topic,
-        "versus_faceoff",
-        "nature_animals",
-        "ocean_giants",
-        [3],
-      );
-
-      expect(generated).toHaveLength(1);
-      const q = generated[0];
-      expect(() => BankQuestionSchema.parse(q)).not.toThrow();
-      expect(q.archetype_id).toBe("versus_faceoff");
-      expect(q.choices).toHaveLength(2);
-    });
-
-    it("generates visual_spotting with odd_one_out format", () => {
-      const topic = makeTopic({ archetype: "visual_spotting" });
-      const generated = generateJitQuestionsFallback(
-        topic,
-        "visual_spotting",
-        "nature_animals",
-        "ocean_giants",
-        [2],
-      );
-
-      expect(generated).toHaveLength(1);
-      const q = generated[0];
-      expect(q.format).toBe("odd_one_out");
-      expect(q.choices).toHaveLength(3);
-    });
-  });
-
   describe("ensureTopicQuestionsWithJitFallback", () => {
     it("returns bank_only when Question Bank already has sufficient matching questions", async () => {
       const q1 = makeQuestion({ id: "Q-1", difficulty: 1 });
@@ -271,7 +218,7 @@ describe("questionJitSeeder", () => {
       expect(repo.savedQuestions).toHaveLength(0);
     });
 
-    it("generates 3 questions and auto-enriches bank when Question Bank has 0 matches", async () => {
+    it("generates 3 questions via LLM and auto-enriches bank when Question Bank has 0 matches", async () => {
       const repo = createMockRepository([]);
       const topic = makeTopic();
 
@@ -279,6 +226,7 @@ describe("questionJitSeeder", () => {
         repository: repo,
         channelId: "ch_test_001",
         topic,
+        llmClient: makeLlmClient(3),
       });
 
       expect(result.source).toBe("jit_only");
@@ -300,7 +248,7 @@ describe("questionJitSeeder", () => {
       expect(result.questions[2].difficulty).toBeGreaterThanOrEqual(3);
     });
 
-    it("generates 2 questions to complete hybrid arc when Question Bank has 1 match", async () => {
+    it("generates 2 questions via LLM to complete hybrid arc when Question Bank has 1 match", async () => {
       const existing = makeQuestion({
         id: "Q-EXISTING-1",
         difficulty: 1,
@@ -313,6 +261,7 @@ describe("questionJitSeeder", () => {
         repository: repo,
         channelId: "ch_test_001",
         topic,
+        llmClient: makeLlmClient(2, [3, 4]),
       });
 
       expect(result.source).toBe("hybrid");
@@ -332,25 +281,22 @@ describe("questionJitSeeder", () => {
       expect(result.questions[2].difficulty).toBeGreaterThanOrEqual(3);
     });
 
-    it("provides offline resilience when llmClient is null", async () => {
+    it("fails with a clear error when offline (llmClient is null) and the bank cannot cover the topic", async () => {
       const repo = createMockRepository([]);
       const topic = makeTopic();
 
-      const result = await ensureTopicQuestionsWithJitFallback({
-        repository: repo,
-        channelId: "ch_test_001",
-        topic,
-        llmClient: null,
-      });
-
-      expect(result.source).toBe("jit_only");
-      expect(result.questions).toHaveLength(3);
-      for (const q of result.questions) {
-        expect(() => BankQuestionSchema.parse(q)).not.toThrow();
-      }
+      await expect(
+        ensureTopicQuestionsWithJitFallback({
+          repository: repo,
+          channelId: "ch_test_001",
+          topic,
+          llmClient: null,
+        }),
+      ).rejects.toMatchObject({ code: "INSUFFICIENT_QUESTIONS" });
+      expect(repo.savedQuestions).toHaveLength(0);
     });
 
-    it("handles cooldown exhaustion by generating fresh JIT questions to avoid blocking", async () => {
+    it("fails with a clear error when only cooldown questions exist and no LLM client is available", async () => {
       // All 3 bank questions are in active channel cooldown
       const q1 = makeQuestion({ id: "QC-1", channel_cooldown: { is_cooldown: true, days_remaining: 15 } });
       const q2 = makeQuestion({ id: "QC-2", channel_cooldown: { is_cooldown: true, days_remaining: 20 } });
@@ -358,28 +304,18 @@ describe("questionJitSeeder", () => {
       const repo = createMockRepository([q1, q2, q3]);
       const topic = makeTopic();
 
-      const result = await ensureTopicQuestionsWithJitFallback({
-        repository: repo,
-        channelId: "ch_test_001",
-        topic,
-        forceIncludeCooldown: false,
-      });
-
-      // Cooldown questions were excluded, JIT immediately produced fresh candidates
-      expect(result.source).toBe("jit_only");
-      expect(result.existingCount).toBe(0);
-      expect(result.jitGeneratedCount).toBe(3);
-      expect(result.questions).toHaveLength(3);
-      expect(repo.savedQuestions).toHaveLength(3);
-
-      // None of the cooldown question IDs should be selected
-      const ids = new Set(result.questions.map((q) => q.id));
-      expect(ids.has("QC-1")).toBe(false);
-      expect(ids.has("QC-2")).toBe(false);
-      expect(ids.has("QC-3")).toBe(false);
+      await expect(
+        ensureTopicQuestionsWithJitFallback({
+          repository: repo,
+          channelId: "ch_test_001",
+          topic,
+          forceIncludeCooldown: false,
+        }),
+      ).rejects.toMatchObject({ code: "INSUFFICIENT_QUESTIONS" });
+      expect(repo.savedQuestions).toHaveLength(0);
     });
 
-    it("utilizes LLM client when available and falls back gracefully if LLM returns partial output", async () => {
+    it("fails with a clear error when the LLM returns partial output instead of shipping placeholder questions", async () => {
       const repo = createMockRepository([]);
       const topic = makeTopic();
 
@@ -414,22 +350,19 @@ describe("questionJitSeeder", () => {
         })),
       };
 
-      const result = await ensureTopicQuestionsWithJitFallback({
-        repository: repo,
-        channelId: "ch_test_001",
-        topic,
-        llmClient: mockLlmClient,
-      });
-
-      expect(result.source).toBe("jit_only");
-      expect(result.questions).toHaveLength(3);
-      // First question is from LLM
-      expect(result.questions.some((q) => q.question.includes("abyssal squid possesses"))).toBe(true);
-      // The remaining 2 were filled by the fallback generator
-      expect(repo.savedQuestions).toHaveLength(3);
+      await expect(
+        ensureTopicQuestionsWithJitFallback({
+          repository: repo,
+          channelId: "ch_test_001",
+          topic,
+          llmClient: mockLlmClient,
+        }),
+      ).rejects.toMatchObject({ code: "INSUFFICIENT_QUESTIONS" });
+      // Nothing is banked when the confirm flow cannot reach the target count
+      expect(repo.savedQuestions).toHaveLength(0);
     });
 
-    it("falls back to deterministic generator if LLM client throws an unexpected error", async () => {
+    it("fails with a clear error when the LLM client throws an unexpected error", async () => {
       const repo = createMockRepository([]);
       const topic = makeTopic();
 
@@ -440,19 +373,15 @@ describe("questionJitSeeder", () => {
         }),
       };
 
-      const result = await ensureTopicQuestionsWithJitFallback({
-        repository: repo,
-        channelId: "ch_test_001",
-        topic,
-        llmClient: failingLlmClient,
-      });
-
-      expect(result.source).toBe("jit_only");
-      expect(result.questions).toHaveLength(3);
-      expect(result.retentionArcApplied).toBe(true);
-      for (const q of result.questions) {
-        expect(() => BankQuestionSchema.parse(q)).not.toThrow();
-      }
+      await expect(
+        ensureTopicQuestionsWithJitFallback({
+          repository: repo,
+          channelId: "ch_test_001",
+          topic,
+          llmClient: failingLlmClient,
+        }),
+      ).rejects.toMatchObject({ code: "INSUFFICIENT_QUESTIONS" });
+      expect(repo.savedQuestions).toHaveLength(0);
     });
   });
 });

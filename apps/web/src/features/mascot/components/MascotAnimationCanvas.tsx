@@ -19,6 +19,7 @@ export type MascotAnimationCanvasProps = {
   motionSpeed: number;
   motionIntensity: "subtle" | "normal" | "dynamic";
   genColor: string;
+  variantCounts?: Partial<Record<MascotActionType, number>>;
 };
 
 export function MascotAnimationCanvas({
@@ -37,6 +38,7 @@ export function MascotAnimationCanvas({
   motionSpeed,
   motionIntensity,
   genColor,
+  variantCounts,
 }: MascotAnimationCanvasProps) {
   const { t } = useTranslation();
   const currentActionSprite = editingMascot?.actions[activePreviewAction];
@@ -148,6 +150,7 @@ export function MascotAnimationCanvas({
             const meta = getLocalizedActionMeta(action, t);
             const isReady = Boolean(editingMascot?.actions[action]?.sprite_url);
             const isSelected = activePreviewAction === action;
+            const variantCount = variantCounts?.[action];
 
             return (
               <button
@@ -158,6 +161,7 @@ export function MascotAnimationCanvas({
               >
                 <span>{meta.icon}</span>
                 <span>{meta.label.split(" ")[0]}</span>
+                {typeof variantCount === "number" && variantCount > 0 && <span className="pose-variant-count">{variantCount}</span>}
                 <span className={`pose-status-dot ${isReady ? "ready" : ""}`} />
               </button>
             );

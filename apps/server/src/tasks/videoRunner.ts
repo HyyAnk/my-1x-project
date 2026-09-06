@@ -35,6 +35,12 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
 
     const renderAspectRatio = episode.quiz_config?.render_aspect_ratio ?? this.videoConfig.aspect_ratio;
     const renderCanvas = MASCOT_CANVAS_SIZES[renderAspectRatio];
+    if (!renderCanvas || !renderCanvas.width || !renderCanvas.height) {
+      throw new RepositoryError(
+        `Unsupported render aspect ratio "${renderAspectRatio}". Expected one of: ${Object.keys(MASCOT_CANVAS_SIZES).join(", ")}.`,
+        "UNSUPPORTED_ASPECT_RATIO",
+      );
+    }
 
     const comp = await prepareVideoComposition({
       runtime: this,
@@ -50,7 +56,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     });
     ensureVideoTaskActive(this, task.task_id, controller.signal);
 
-    await verifyAndCheckLayout({
+    const layoutResult = await verifyAndCheckLayout({
       renderRoot: comp.renderRoot,
       rootDir: this.repository.rootDirectory,
       sourceFingerprint: comp.sourceFingerprint,
@@ -87,6 +93,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       episode,
       outputPath: comp.outputPath,
       html: comp.html,
+      sourceFingerprint: comp.sourceFingerprint,
       duration,
       renderAspectRatio,
       renderCanvas,
@@ -96,6 +103,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       assetResolution: comp.assetResolution,
       completeQuizV2: comp.completeQuizV2,
       preflightAssessment: comp.preflightAssessment,
+      checkStatus: layoutResult.bypassed ? "skipped_fast_mode" : "passed",
       probe,
     });
 

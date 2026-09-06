@@ -34,7 +34,9 @@ export async function executeHyperframesRender(options: {
   } = options;
 
   const checkpoint = await readRenderCheckpoint(checkpointPath);
-  const layoutReady = checkpoint?.source_fingerprint === sourceFingerprint && checkpoint.check.status === "passed";
+  const checkStatus = checkpoint?.check?.status;
+  const layoutReady =
+    checkpoint?.source_fingerprint === sourceFingerprint && (checkStatus === "passed" || checkStatus === "skipped_fast_mode");
   let reusableRender = layoutReady && checkpoint?.render?.status === "passed" && (await hasNonEmptyFile(outputPath));
   if (reusableRender) {
     const existingProbe = await inspectRenderedVideo(outputPath, {
@@ -117,15 +119,17 @@ export async function executeHyperframesRender(options: {
   const renderBlocker = probe.issues.find((issue) => issue.severity === "blocker");
   if (renderBlocker) throw new RepositoryError(renderBlocker.message, "QUIZ_RENDER_QA_FAILED");
 
+  // Validate duration before recording a passed render checkpoint, otherwise a
+  // failed QA follow-up would leave a checkpoint claiming a verified render.
+  const duration = Number.parseFloat(probe.probe.format?.duration ?? "");
+  if (!Number.isFinite(duration) || duration <= 0) throw new Error("Rendered MP4 has no readable duration");
+
   await writeRenderCheckpoint(checkpointPath, {
     schema_version: 2,
     source_fingerprint: sourceFingerprint,
-    check: { status: "passed" },
+    check: { status: checkStatus === "skipped_fast_mode" ? "skipped_fast_mode" : "passed" },
     render: { status: "passed" },
   });
-
-  const duration = Number.parseFloat(probe.probe.format?.duration ?? "");
-  if (!Number.isFinite(duration) || duration <= 0) throw new Error("Rendered MP4 has no readable duration");
 
   return { probe, duration };
 }

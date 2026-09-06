@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildApp } from "../src/app.js";
+import { createStubQuizLlmClient } from "./helpers/stubQuizLlmClient.js";
 
 const roots: string[] = [];
 
@@ -13,7 +14,7 @@ afterEach(async () => {
 describe("topic confirmation", () => {
   it("uses the selected question count for the new episode and selected topic record", async () => {
     const root = await createTestRoot();
-    const app = await buildApp(root);
+    const app = await buildApp(root, { llmClient: createStubQuizLlmClient() });
     try {
       const channel = await app.repository.createChannel({
         name: "Question count",
@@ -60,7 +61,7 @@ describe("topic confirmation", () => {
 
   it("accepts 50 questions and rejects values above the product limit", async () => {
     const root = await createTestRoot();
-    const app = await buildApp(root);
+    const app = await buildApp(root, { llmClient: createStubQuizLlmClient() });
     try {
       const channel = await app.repository.createChannel({
         name: "Question limit",

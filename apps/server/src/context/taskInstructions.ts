@@ -9,6 +9,7 @@ export interface OutputContractInput {
   quizQuestionCount: number;
   quizLastClaimId: string;
   quizSourceMinimum: number;
+  channelLanguage?: string;
 }
 
 type ChoiceContracts = {

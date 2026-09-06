@@ -6,16 +6,20 @@ export function renderSourceFingerprint(
   narrationSize: number,
   assets: Array<{ asset_id: string; fingerprint: string; path: string }>,
   dependencies: string[] = [],
+  compositionFiles: Record<string, string> = {},
 ): string {
   return createHash("sha256")
     .update(
       JSON.stringify({
-        version: "quiz-render-v4",
+        version: "quiz-render-v5",
         html,
         narrationModifiedAt,
         narrationSize,
         assets: assets.map((asset) => ({ asset_id: asset.asset_id, fingerprint: asset.fingerprint, path: asset.path })),
         dependencies,
+        compositionFiles: Object.keys(compositionFiles)
+          .sort()
+          .map((relativePath) => ({ path: relativePath, content: compositionFiles[relativePath] })),
       }),
     )
     .digest("hex");

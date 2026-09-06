@@ -33,6 +33,8 @@ export function StageCanvasViewport({ studio }: StageCanvasViewportProps) {
     stageScale,
     scenarioPhase,
     isMascotVisibleInCurrentPhase,
+    activeMascot,
+    flipHorizontal,
     handleMascotMouseDown,
     handleResizeHandleMouseDown,
   } = studio;
@@ -95,6 +97,32 @@ export function StageCanvasViewport({ studio }: StageCanvasViewportProps) {
               onMouseDown={handleMascotMouseDown}
             >
               <div className="stage-mascot-bounding-box">
+                {/* Visual Mascot Representation in Grid Mode */}
+                {stageViewMode === "grid" && activeMascot ? (
+                  activeMascot.master_image_url ? (
+                    <div
+                      className="stage-mascot-sprite"
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundImage: `url(${activeMascot.master_image_url})`,
+                        backgroundPosition: "bottom center",
+                        backgroundSize: "contain",
+                        backgroundRepeat: "no-repeat",
+                        transform: flipHorizontal ? "scaleX(-1)" : undefined,
+                        opacity: 0.9,
+                        pointerEvents: "none",
+                      }}
+                    />
+                  ) : (
+                    <div className="stage-mascot-placeholder-box" style={{ width: "100%", height: "100%", pointerEvents: "none" }}>
+                      <span>{activeMascot.name}</span>
+                    </div>
+                  )
+                ) : null}
+
                 {/* Corner Resize Handles */}
                 <div
                   className="transform-handle handle-tl"

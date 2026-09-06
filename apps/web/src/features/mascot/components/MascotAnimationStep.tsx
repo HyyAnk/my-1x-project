@@ -1,10 +1,12 @@
-import type { MascotActionType, MascotProfile } from "@studio/shared";
+import type { MascotActionType, MascotProfile, MascotStateVariant, MascotStyle } from "@studio/shared";
 import { MascotAnimationCanvas } from "./MascotAnimationCanvas";
 import { MascotMotionControls } from "./MascotMotionControls";
+import { MascotVariantPanel } from "./MascotVariantPanel";
+import { getActionVariants, isVariantAction } from "../utils/motionVariantPreview";
 import type { MascotMotionPreset, MascotMotionIntensity } from "../constants";
 
 export type MascotAnimationStepProps = {
-  editingMascot: MascotProfile | null;
+  effectiveMascot: MascotProfile | null;
   genColor: string;
   busyAction: string | null;
   activePreviewAction: MascotActionType;
@@ -28,10 +30,17 @@ export type MascotAnimationStepProps = {
   onSaveMotion: (action?: MascotActionType) => void;
   onFinishMascot: () => void;
   onBackStep: () => void;
+  activeStyle: MascotStyle | null;
+  previewStyleId: string | null;
+  onPreviewStyleChange: (styleId: string | null) => void;
+  activeVariants: MascotStateVariant[];
+  selectedVariant: MascotStateVariant | null;
+  activeVariantIndex: number;
+  onSelectVariantIndex: (index: number) => void;
 };
 
 export function MascotAnimationStep({
-  editingMascot,
+  effectiveMascot,
   genColor,
   busyAction,
   activePreviewAction,
@@ -55,49 +64,94 @@ export function MascotAnimationStep({
   onSaveMotion,
   onFinishMascot,
   onBackStep,
+  activeStyle,
+  previewStyleId,
+  onPreviewStyleChange,
+  activeVariants,
+  selectedVariant,
+  activeVariantIndex,
+  onSelectVariantIndex,
 }: MascotAnimationStepProps) {
   const currentPreset = actionMotions[activePreviewAction] || "breathe";
   const currentSpeed = actionSpeeds[activePreviewAction] || 1.0;
   const currentIntensity = actionIntensities[activePreviewAction] || "normal";
+  const isVariant = isVariantAction(activePreviewAction);
+
+  const variantCounts = activeStyle
+    ? {
+        thinking: getActionVariants(activeStyle, "thinking").length,
+        celebrate: getActionVariants(activeStyle, "celebrate").length,
+      }
+    : {};
 
   return (
     <div className="mascot-motion-studio-layout">
       {/* Left Pane: Animation Preview Canvas */}
-      <MascotAnimationCanvas
-        editingMascot={editingMascot}
-        activePreviewAction={activePreviewAction}
-        setActivePreviewAction={setActivePreviewAction}
-        isPlaying={isPlaying}
-        setIsPlaying={setIsPlaying}
-        canvasBackground={canvasBackground}
-        setCanvasBackground={setCanvasBackground}
-        canvasZoom={canvasZoom}
-        setCanvasZoom={setCanvasZoom}
-        flipHorizontal={flipHorizontal}
-        setFlipHorizontal={setFlipHorizontal}
-        motionPreset={currentPreset}
-        motionSpeed={currentSpeed}
-        motionIntensity={currentIntensity}
-        genColor={genColor}
-      />
+      <div className="motion-left-pane">
+        {isVariant && activeStyle && (
+          <div className="motion-style-indicator">
+            <span className="motion-style-indicator-name">{activeStyle.name}</span>
+            {selectedVariant && (
+              <span className="motion-style-indicator-slot">
+                Slot {selectedVariant.slot_index}/{activeVariants.length}
+              </span>
+            )}
+          </div>
+        )}
 
-      {/* Right Pane: Motion Controls Panel */}
-      <MascotMotionControls
-        editingMascot={editingMascot}
-        activePreviewAction={activePreviewAction}
-        actionMotions={actionMotions}
-        actionSpeeds={actionSpeeds}
-        actionIntensities={actionIntensities}
-        onChangeMotionPreset={onChangeMotionPreset}
-        onChangeMotionSpeed={onChangeMotionSpeed}
-        onChangeMotionIntensity={onChangeMotionIntensity}
-        onResetDefaultMotions={onResetDefaultMotions}
-        onSaveMotion={onSaveMotion}
-        onFinishMascot={onFinishMascot}
-        onBackStep={onBackStep}
-        calibrating={calibrating}
-        busyAction={busyAction}
-      />
+        <MascotAnimationCanvas
+          editingMascot={effectiveMascot}
+          activePreviewAction={activePreviewAction}
+          setActivePreviewAction={setActivePreviewAction}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+          canvasBackground={canvasBackground}
+          setCanvasBackground={setCanvasBackground}
+          canvasZoom={canvasZoom}
+          setCanvasZoom={setCanvasZoom}
+          flipHorizontal={flipHorizontal}
+          setFlipHorizontal={setFlipHorizontal}
+          motionPreset={currentPreset}
+          motionSpeed={currentSpeed}
+          motionIntensity={currentIntensity}
+          genColor={genColor}
+          variantCounts={variantCounts}
+        />
+      </div>
+
+      {/* Right Pane: Variant Panel + Motion Controls */}
+      <div className="motion-right-pane">
+        {isVariant && (
+          <MascotVariantPanel
+            editingMascot={effectiveMascot}
+            activeStyle={activeStyle}
+            previewStyleId={previewStyleId}
+            onPreviewStyleChange={onPreviewStyleChange}
+            activePreviewAction={activePreviewAction}
+            variants={activeVariants}
+            activeVariantIndex={activeVariantIndex}
+            onSelectVariantIndex={onSelectVariantIndex}
+          />
+        )}
+
+        <MascotMotionControls
+          editingMascot={effectiveMascot}
+          activePreviewAction={activePreviewAction}
+          actionMotions={actionMotions}
+          actionSpeeds={actionSpeeds}
+          actionIntensities={actionIntensities}
+          onChangeMotionPreset={onChangeMotionPreset}
+          onChangeMotionSpeed={onChangeMotionSpeed}
+          onChangeMotionIntensity={onChangeMotionIntensity}
+          onResetDefaultMotions={onResetDefaultMotions}
+          onSaveMotion={onSaveMotion}
+          onFinishMascot={onFinishMascot}
+          onBackStep={onBackStep}
+          calibrating={calibrating}
+          busyAction={busyAction}
+          selectedVariant={isVariant ? selectedVariant : null}
+        />
+      </div>
     </div>
   );
 }

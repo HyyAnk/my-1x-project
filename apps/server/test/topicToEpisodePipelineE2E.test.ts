@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { createStubQuizLlmClient } from "./helpers/stubQuizLlmClient.js";
 import { buildApp, type StudioApp } from "../src/app.js";
 import type { BankQuestion, TopicCandidate } from "@studio/shared";
 
@@ -18,7 +19,7 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
       if (existsSync(path.join(curr, "pnpm-workspace.yaml"))) break;
       curr = path.dirname(curr);
     }
-    app = await buildApp(curr);
+    app = await buildApp(curr, { llmClient: createStubQuizLlmClient() });
     tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-pipeline-e2e-"));
     app.repository.setStorageRoot(tempStorage);
     app.tasks.runPipelineTask = async (task) => {

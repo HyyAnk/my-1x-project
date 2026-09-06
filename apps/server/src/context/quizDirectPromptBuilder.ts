@@ -12,6 +12,7 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
   const quizConfig = episode?.quiz_config;
   const isTrueFalse = quizConfig?.quiz_format === "true_false";
   const styleContract = resolveVisualStyleContract(episode);
+  const targetLanguage = input.channelLanguage?.trim() || "en";
   const choiceCountDesc = isTrueFalse
     ? "exactly 2 choices with ids 'choice-true' and 'choice-false' (texts: 'True' / 'False')"
     : "strictly exactly 3 choices with ids 'choice-a', 'choice-b', and 'choice-c'";
@@ -22,7 +23,7 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
     `- "schema_version": 2`,
     `- "episode_id": "${episode?.episode_id ?? "episode"}"`,
     `- "age_band": "${quizConfig?.age_band ?? "7-9"}"`,
-    `- "language": "${episode?.topic?.title ? "auto" : "en"}"`,
+    `- "language": "${targetLanguage}"`,
     `- "questions": array of exactly ${quizQuestionCount} question objects numbered sequentially 1 to ${quizQuestionCount}.`,
     ``,
     `Each question in the "questions" array MUST follow this exact schema:`,
@@ -50,5 +51,6 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
     `2. Answer distribution: Vary and balance the correct_choice_id across questions (never place the correct answer in the same letter position for two consecutive questions).`,
     `3. Age appropriateness: Tailor question vocabulary and concepts strictly for age band "${quizConfig?.age_band ?? "7-9"}".`,
     `4. Visual prompt purity: The "visual_opportunity" field is used by the AI image generator to illustrate this specific question. Focus purely on vibrant character/animal/subject illustration.`,
+    `5. ABSOLUTE LANGUAGE INTEGRITY: Write every question, choice text, explanation, and fun_fact 100% in "${targetLanguage}". Never mix any other language into the content.`,
   ].join("\n");
 }

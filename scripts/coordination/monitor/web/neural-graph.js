@@ -1,5 +1,9 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { ZONE_POSITIONS, COLOR_MAP } from "./topology-layout.js";
 
 export { ZONE_POSITIONS, COLOR_MAP };
@@ -31,8 +35,18 @@ export class NeuralGraph {
     this.microHalos = [];
     this.badgeSideToggle = 0;
     this.enablePulses = true;
+    this.enableBloom = true;
+    this.heatmapMode = false;
+    this.cameraMode = 0; // 0: orbit, 1: agent_follow, 2: top_down, 3: cockpit
+    this.agentDrones = new Map(); // claimId -> droneObject
+    this.blastShockwaves = [];
+    this.fileHeatMap = new Map(); // path -> heatNumber (0.0 - 3.0)
+    this.zoneHeatMap = new Map(); // zoneId -> heatNumber (0.0 - 5.0)
+    this.batchEventQueue = new Map(); // zoneId -> array of events
+    this.batchFlushTimers = new Map();
 
     this.initScene();
+    this.initPostProcessing();
     this.initLights();
     this.initStarfield();
     this.initControls();
@@ -60,6 +74,34 @@ export class NeuralGraph {
 
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2(-9999, -9999);
+  }
+
+  initPostProcessing() {
+    const width = this.container.clientWidth || window.innerWidth || 800;
+    const height = this.container.clientHeight || window.innerHeight || 600;
+
+    try {
+      this.composer = new EffectComposer(this.renderer);
+      const renderPass = new RenderPass(this.scene, this.camera);
+      this.composer.addPass(renderPass);
+
+      const bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(width, height),
+        0.85, // bloom strength
+        0.42, // radius
+        0.2   // threshold (selective bloom: deep space stays crisp)
+      );
+      this.bloomPass = bloomPass;
+      this.composer.addPass(bloomPass);
+
+      const outputPass = new OutputPass();
+      this.composer.addPass(outputPass);
+      this.enableBloom = true;
+    } catch (err) {
+      console.warn("Post-processing initialization fallback:", err);
+      this.composer = null;
+      this.enableBloom = false;
+    }
   }
 
   initLights() {
@@ -129,6 +171,9 @@ export class NeuralGraph {
       this.camera.aspect = width / height;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(width, height);
+      if (this.composer) {
+        this.composer.setSize(width, height);
+      }
     });
 
     this.renderer.domElement.addEventListener("mousemove", (e) => {
@@ -573,38 +618,59 @@ export class NeuralGraph {
     });
   }
 
-  spawnHologramBadgeAtPos(pos, fileName, eventType) {
+  spawnHologramBadgeAtPos(pos, fileName, eventType, agentName = null, isBatch = false) {
     const canvas = document.createElement("canvas");
-    canvas.width = 384;
-    canvas.height = 96;
+    canvas.width = 440;
+    canvas.height = 104;
     const ctx = canvas.getContext("2d");
 
-    const prefix = eventType === "add" ? "+ " : eventType === "unlink" ? "✕ " : "⚡ ";
-    // Cyber Neon Purple / Ultraviolet Theme
-    const neonPurple = "#bf00ff";
-    const lightPurple = "#f0abfc";
+    let strokeColor = "#bf00ff";
+    let textColor = "#f0abfc";
+    let prefix = "⚡ ";
+    let bgColor = "rgba(24, 8, 42, 0.94)";
 
-    ctx.fillStyle = "rgba(24, 8, 42, 0.94)";
-    ctx.strokeStyle = neonPurple;
+    if (isBatch) {
+      strokeColor = "#00f0ff";
+      textColor = "#a5f3fc";
+      prefix = "📦 ";
+      bgColor = "rgba(6, 26, 44, 0.94)";
+    } else if (eventType === "add") {
+      strokeColor = "#10b981";
+      textColor = "#a7f3d0";
+      prefix = "+ ";
+      bgColor = "rgba(6, 32, 22, 0.94)";
+    } else if (eventType === "unlink") {
+      strokeColor = "#ef4444";
+      textColor = "#fca5a5";
+      prefix = "✕ ";
+      bgColor = "rgba(36, 10, 16, 0.94)";
+    }
+
+    ctx.fillStyle = bgColor;
+    ctx.strokeStyle = strokeColor;
     ctx.lineWidth = 4.0;
-    ctx.shadowColor = neonPurple;
+    ctx.shadowColor = strokeColor;
     ctx.shadowBlur = 18;
     ctx.beginPath();
     if (typeof ctx.roundRect === "function") {
-      ctx.roundRect(8, 8, 368, 80, 24);
+      ctx.roundRect(8, 8, 424, 88, 24);
     } else {
-      ctx.rect(8, 8, 368, 80);
+      ctx.rect(8, 8, 424, 88);
     }
     ctx.fill();
     ctx.stroke();
 
     ctx.shadowBlur = 0;
-    ctx.font = "bold 30px 'JetBrains Mono', monospace";
-    ctx.fillStyle = lightPurple;
+    ctx.font = "bold 26px 'JetBrains Mono', monospace";
+    ctx.fillStyle = textColor;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    const displayName = fileName.length > 20 ? fileName.slice(0, 18) + "…" : fileName;
-    ctx.fillText(`${prefix}${displayName}`, 192, 48);
+
+    const agentTag = agentName ? `[${agentName}] ` : "";
+    const cleanFileName = fileName.length > 20 ? fileName.slice(0, 18) + "…" : fileName;
+    const fullText = `${agentTag}${prefix}${cleanFileName}`;
+
+    ctx.fillText(fullText, 220, 52);
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
@@ -616,7 +682,7 @@ export class NeuralGraph {
     });
 
     const sprite = new THREE.Sprite(spriteMaterial);
-    sprite.scale.set(12, 3.0, 1);
+    sprite.scale.set(13.5, 3.2, 1);
     const startY = pos.y + 2.5;
     sprite.position.set(pos.x, startY, pos.z);
 
@@ -633,15 +699,15 @@ export class NeuralGraph {
     const horizontalOffset = sideSign * 22.0; // 44 units separation between Left and Right
     const targetHeight = 22.0 + tier * 15.0; // 15 units vertical gap between tiers
 
-    // Glowing neon leader line connecting file micro-neuron to the rising badge
+    // Glowing neon leader line connecting source to the rising badge
     const lineGeo = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(pos.x, pos.y, pos.z),
       new THREE.Vector3(pos.x, startY, pos.z),
     ]);
     const lineMat = new THREE.LineBasicMaterial({
-      color: 0xbf00ff,
+      color: new THREE.Color(strokeColor),
       transparent: true,
-      opacity: 0.6,
+      opacity: 0.65,
       blending: THREE.AdditiveBlending,
     });
     const leaderLine = new THREE.Line(lineGeo, lineMat);
@@ -660,7 +726,7 @@ export class NeuralGraph {
       horizontalOffset,
       targetHeight,
       startTime: performance.now(),
-      durationMs: 7200, // Doubled duration: 7.2s!
+      durationMs: 7200, // 7.2s lifetime
     });
   }
 
@@ -793,6 +859,9 @@ export class NeuralGraph {
         p.speed = pSpeed + Math.random() * 0.001;
       }
     }
+
+    // Synchronize 3D Agent Quantum Drones
+    this.updateAgentDrones(state.claims || []);
   }
 
   highlightSafeZones(targetZoneId, safeZoneIds, conflictingZones) {
@@ -919,12 +988,386 @@ export class NeuralGraph {
     return this.enablePulses;
   }
 
-  triggerFileActivity(activity) {
-    if (!this.enablePulses) return;
-    if (!activity || !activity.zoneId) return;
-    const { zoneId, file, fileName, eventType, dependentZones } = activity;
+  toggleBloom(forceState) {
+    this.enableBloom = typeof forceState === "boolean" ? forceState : !this.enableBloom;
+    return this.enableBloom;
+  }
 
-    // 1. Locate specific File Micro-Neuron
+  toggleHeatmap(forceState) {
+    this.heatmapMode = typeof forceState === "boolean" ? forceState : !this.heatmapMode;
+    return this.heatmapMode;
+  }
+
+  cycleCameraMode() {
+    this.cameraMode = (this.cameraMode + 1) % 4;
+    return this.applyCameraMode();
+  }
+
+  setCameraMode(modeIndex) {
+    this.cameraMode = modeIndex % 4;
+    return this.applyCameraMode();
+  }
+
+  applyCameraMode() {
+    if (this.cameraMode === 0) {
+      this.controls.target.set(0, 5, 0);
+      this.cameraAnimation = {
+        targetPos: this.defaultCameraPos.clone(),
+        targetLookAt: new THREE.Vector3(0, 5, 0),
+      };
+      return "Cam: Orbit";
+    } else if (this.cameraMode === 1) {
+      const activeDrones = Array.from(this.agentDrones.values()).filter((d) => !d.isWarpingOut);
+      if (activeDrones.length > 0) {
+        const drone = activeDrones[0];
+        const dPos = drone.group.position;
+        this.cameraAnimation = {
+          targetPos: new THREE.Vector3(dPos.x + 22, dPos.y + 14, dPos.z + 32),
+          targetLookAt: dPos.clone(),
+        };
+        return `Cam: ${drone.agentName}`;
+      } else {
+        this.cameraAnimation = {
+          targetPos: new THREE.Vector3(0, 55, 120),
+          targetLookAt: new THREE.Vector3(0, 30, 0),
+        };
+        return "Cam: Agent (Idle)";
+      }
+    } else if (this.cameraMode === 2) {
+      this.cameraAnimation = {
+        targetPos: new THREE.Vector3(0, 210, 5),
+        targetLookAt: new THREE.Vector3(0, 0, 0),
+      };
+      return "Cam: Top-Down";
+    } else if (this.cameraMode === 3) {
+      const corePos = ZONE_POSITIONS["shared-contracts"] || { x: 0, y: 0, z: 0 };
+      this.cameraAnimation = {
+        targetPos: new THREE.Vector3(corePos.x, corePos.y + 2, corePos.z + 4),
+        targetLookAt: new THREE.Vector3(corePos.x + 60, corePos.y + 20, corePos.z - 30),
+      };
+      return "Cam: Cockpit";
+    }
+    return "Cam: Orbit";
+  }
+
+  triggerBlastRadius(zoneId, dependentZones = []) {
+    const zonePos = ZONE_POSITIONS[zoneId];
+    if (!zonePos) return;
+
+    // Expanding shockwave ring centered at zone soma
+    const ringGeo = new THREE.RingGeometry(0.6, 2.2, 48);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0xff0055,
+      transparent: true,
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+    ringMesh.position.set(zonePos.x, zonePos.y, zonePos.z);
+    ringMesh.rotation.x = Math.PI / 2;
+    this.scene.add(ringMesh);
+
+    this.blastShockwaves.push({
+      mesh: ringMesh,
+      startTime: performance.now(),
+      durationMs: 1800,
+      maxScale: 26.0,
+    });
+
+    // Secondary vertical billboard shockwave
+    const ringGeo2 = new THREE.RingGeometry(0.5, 1.8, 36);
+    const ringMat2 = new THREE.MeshBasicMaterial({
+      color: 0xf59e0b,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const ringMesh2 = new THREE.Mesh(ringGeo2, ringMat2);
+    ringMesh2.position.set(zonePos.x, zonePos.y, zonePos.z);
+    ringMesh2.quaternion.copy(this.camera.quaternion);
+    this.scene.add(ringMesh2);
+
+    this.blastShockwaves.push({
+      mesh: ringMesh2,
+      startTime: performance.now(),
+      durationMs: 1400,
+      maxScale: 20.0,
+    });
+
+    // Cascade resonance to dependent zones
+    for (const depId of dependentZones) {
+      const depNode = this.nodeMeshes.get(depId);
+      if (depNode) {
+        depNode.resonance = 1.0;
+      }
+    }
+  }
+
+  updateAgentDrones(claims = []) {
+    const activeClaimIds = new Set();
+
+    for (const claim of claims) {
+      if (claim.isDead) continue;
+      activeClaimIds.add(claim.id);
+
+      let drone = this.agentDrones.get(claim.id);
+      if (!drone) {
+        drone = this.createAgentDrone(claim);
+        this.agentDrones.set(claim.id, drone);
+      } else {
+        drone.plannedFiles = claim.plannedFiles || [];
+        const targetZoneId = (claim.writeZones && claim.writeZones[0]) || drone.targetZoneId;
+        if (targetZoneId !== drone.targetZoneId) {
+          drone.targetZoneId = targetZoneId;
+          const newPos = ZONE_POSITIONS[targetZoneId] || { x: 0, y: 0, z: 0 };
+          drone.zonePos = newPos;
+        }
+      }
+    }
+
+    for (const [claimId, drone] of this.agentDrones.entries()) {
+      if (!activeClaimIds.has(claimId) && !drone.isWarpingOut) {
+        drone.isWarpingOut = true;
+        drone.warpStartTime = performance.now();
+      }
+    }
+  }
+
+  createAgentDrone(claim) {
+    const droneGroup = new THREE.Group();
+    const targetZoneId = (claim.writeZones && claim.writeZones[0]) || "agent-coordination";
+    const zonePos = ZONE_POSITIONS[targetZoneId] || { x: 0, y: 0, z: 0, radius: 4 };
+
+    droneGroup.position.set(zonePos.x, zonePos.y + 10, zonePos.z);
+    droneGroup.scale.set(0.01, 0.01, 0.01);
+
+    // 1. Quantum Core (Dual Octahedron)
+    const coreGeo = new THREE.OctahedronGeometry(1.6, 1);
+    const coreMat = new THREE.MeshStandardMaterial({
+      color: 0x00f0ff,
+      emissive: 0x00f0ff,
+      emissiveIntensity: 1.25,
+      roughness: 0.15,
+      metalness: 0.85,
+    });
+    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    droneGroup.add(coreMesh);
+
+    // 2. Kinetic Gyro Rings / Shield
+    const shieldGeo = new THREE.IcosahedronGeometry(2.5, 1);
+    const shieldMat = new THREE.MeshBasicMaterial({
+      color: 0x38bdf8,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.6,
+    });
+    const shieldMesh = new THREE.Mesh(shieldGeo, shieldMat);
+    droneGroup.add(shieldMesh);
+
+    // 3. Drone PointLight
+    const droneLight = new THREE.PointLight(0x00f0ff, 1.8, 30);
+    droneGroup.add(droneLight);
+
+    // 4. Drone Agent Hologram Tag
+    const tagSprite = this.createAgentLabelSprite(claim.agent || "agent");
+    tagSprite.position.set(0, 3.8, 0);
+    droneGroup.add(tagSprite);
+
+    // 5. Dynamic Laser Scanner Beam
+    const scannerGeo = new THREE.BufferGeometry();
+    const scannerPos = new Float32Array(6);
+    scannerGeo.setAttribute("position", new THREE.BufferAttribute(scannerPos, 3));
+    const scannerMat = new THREE.LineBasicMaterial({
+      color: 0x00f0ff,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending,
+    });
+    const scannerLine = new THREE.Line(scannerGeo, scannerMat);
+    this.scene.add(scannerLine);
+
+    this.scene.add(droneGroup);
+
+    return {
+      claimId: claim.id,
+      agentName: claim.agent,
+      targetZoneId,
+      zonePos,
+      group: droneGroup,
+      coreMesh,
+      shieldMesh,
+      droneLight,
+      tagSprite,
+      scannerLine,
+      plannedFiles: claim.plannedFiles || [],
+      orbitAngle: Math.random() * Math.PI * 2,
+      orbitSpeed: 0.03,
+      orbitRadius: (zonePos.radius || 4) * 2.2 + 6.0,
+      scale: 0.01,
+      targetScale: 1.0,
+      isWarpingOut: false,
+      warpStartTime: 0,
+      targetPos: new THREE.Vector3(zonePos.x, zonePos.y, zonePos.z),
+      isTargetingFile: false,
+      targetTimer: 0,
+    };
+  }
+
+  createAgentLabelSprite(agentName) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 256;
+    canvas.height = 64;
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "rgba(10, 16, 30, 0.92)";
+    ctx.strokeStyle = "#00f0ff";
+    ctx.lineWidth = 3.0;
+    ctx.shadowColor = "#00f0ff";
+    ctx.shadowBlur = 12;
+    if (typeof ctx.roundRect === "function") {
+      ctx.roundRect(4, 4, 248, 56, 14);
+    } else {
+      ctx.rect(4, 4, 248, 56);
+    }
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
+    ctx.font = "bold 22px 'JetBrains Mono', monospace";
+    ctx.fillStyle = "#38bdf8";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const displayName = agentName.length > 14 ? agentName.slice(0, 12) + "…" : agentName;
+    ctx.fillText(`🤖 ${displayName}`, 128, 32);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false });
+    const sprite = new THREE.Sprite(spriteMat);
+    sprite.scale.set(8.0, 2.0, 1);
+    return sprite;
+  }
+
+  disposeDrone(drone) {
+    if (!drone) return;
+    this.scene.remove(drone.group);
+    drone.coreMesh.geometry.dispose();
+    drone.coreMesh.material.dispose();
+    drone.shieldMesh.geometry.dispose();
+    drone.shieldMesh.material.dispose();
+    drone.tagSprite.material.map.dispose();
+    drone.tagSprite.material.dispose();
+    if (drone.scannerLine) {
+      this.scene.remove(drone.scannerLine);
+      drone.scannerLine.geometry.dispose();
+      drone.scannerLine.material.dispose();
+    }
+  }
+
+  triggerFileActivity(activity) {
+    if (!this.enablePulses || !activity || !activity.zoneId) return;
+
+    // Buffer by zoneId with 200ms debounce window
+    const { zoneId } = activity;
+    if (!this.batchEventQueue.has(zoneId)) {
+      this.batchEventQueue.set(zoneId, []);
+    }
+    this.batchEventQueue.get(zoneId).push(activity);
+
+    if (this.batchFlushTimers.has(zoneId)) {
+      clearTimeout(this.batchFlushTimers.get(zoneId));
+    }
+
+    const timer = setTimeout(() => {
+      this.flushBatchActivity(zoneId);
+    }, 200);
+    this.batchFlushTimers.set(zoneId, timer);
+  }
+
+  flushBatchActivity(zoneId) {
+    this.batchFlushTimers.delete(zoneId);
+    const activities = this.batchEventQueue.get(zoneId) || [];
+    this.batchEventQueue.delete(zoneId);
+    if (activities.length === 0) return;
+
+    // If batch has >= 4 files, spawn a single consolidated cluster badge!
+    if (activities.length >= 4) {
+      const firstAct = activities[0];
+      const agentName = firstAct.agent || null;
+      const zoneNode = this.nodeMeshes.get(zoneId);
+      const zonePos = zoneNode ? zoneNode.group.position : (ZONE_POSITIONS[zoneId] || { x: 0, y: 0, z: 0 });
+      const zoneName = zoneNode?.zone?.name || zoneId;
+
+      this.spawnHologramBadgeAtPos(
+        zonePos,
+        `${activities.length} files in ${zoneName}`,
+        "change",
+        agentName,
+        true
+      );
+
+      // Trigger zone excitation & blast radius for the batch
+      if (zoneNode) {
+        zoneNode.excitation = 1.0;
+        zoneNode.lastSpikeTime = performance.now();
+        this.fireSynapticPhotons(zoneId, firstAct.dependentZones || []);
+        if (zoneNode.zone?.risk === "high" || zoneId === "shared-contracts" || (firstAct.dependentZones && firstAct.dependentZones.length > 0)) {
+          this.triggerBlastRadius(zoneId, firstAct.dependentZones || []);
+        }
+      }
+
+      // Visually excite individual micro-neurons without separate badges
+      for (const act of activities) {
+        this.exciteMicroNeuron(act, false);
+      }
+    } else {
+      // Normal activity for 1-3 files
+      for (const act of activities) {
+        this.processSingleFileActivity(act);
+      }
+    }
+  }
+
+  processSingleFileActivity(activity) {
+    const { zoneId, file, fileName, eventType, dependentZones, agent } = activity;
+
+    // Accumulate heat
+    if (file) {
+      const curFileHeat = (this.fileHeatMap.get(file) || 0) + 1.2;
+      this.fileHeatMap.set(file, Math.min(3.0, curFileHeat));
+    }
+    const curZoneHeat = (this.zoneHeatMap.get(zoneId) || 0) + 0.8;
+    this.zoneHeatMap.set(zoneId, Math.min(5.0, curZoneHeat));
+
+    // Excite micro neuron
+    const fileNode = this.exciteMicroNeuron(activity, true);
+
+    // Cascade into zone macro-neuron
+    const zoneNode = this.nodeMeshes.get(zoneId);
+    if (zoneNode) {
+      setTimeout(() => {
+        zoneNode.excitation = 1.0;
+        zoneNode.lastSpikeTime = performance.now();
+        this.fireSynapticPhotons(zoneId, dependentZones || []);
+
+        // Trigger Risk Blast Radius shockwave if high risk or has dependencies
+        if (zoneNode.zone?.risk === "high" || zoneId === "shared-contracts" || (dependentZones && dependentZones.length > 0)) {
+          this.triggerBlastRadius(zoneId, dependentZones || []);
+        }
+      }, fileNode ? 180 : 0);
+
+      if (!fileNode) {
+        this.spawnHologramBadgeAtPos(zoneNode.group.position, fileName || "file", eventType || "change", agent, false);
+      }
+    }
+  }
+
+  exciteMicroNeuron(activity, spawnBadge = true) {
+    const { zoneId, file, fileName, eventType, agent } = activity;
     const fileKey = file ? file.replace(/\\/g, "/") : null;
     let fileNode = fileKey ? this.fileNodes.get(fileKey) : null;
     if (!fileNode && fileName) {
@@ -932,37 +1375,31 @@ export class NeuralGraph {
     }
 
     if (fileNode) {
-      // Excite the specific file micro-neuron (120 FPS multi-stage animation)
       fileNode.excitation = 1.0;
       fileNode.lastSpikeTime = performance.now();
       fileNode.eventType = eventType || "change";
-      fileNode.orbitalSurge = 1.0; // Kinetic speed surge in orbit
-      fileNode.dendriteSurge = 1.0; // High-voltage dendrite conduit illumination
+      fileNode.orbitalSurge = 1.0;
+      fileNode.dendriteSurge = 1.0;
 
-      // 1. Localized Micro-Halo Ripple at file micro-neuron
       this.spawnMicroHalo(fileNode.worldPos, eventType || "change");
-
-      // 2. Spawn hologram badge directly above this micro-neuron in 3D space
-      this.spawnHologramBadgeAtPos(fileNode.worldPos, fileName || fileNode.name, eventType || "change");
-
-      // 3. Fire a high-speed photon laser packet along the filament straight into the zone center
+      if (spawnBadge) {
+        this.spawnHologramBadgeAtPos(fileNode.worldPos, fileName || fileNode.name, eventType || "change", agent, false);
+      }
       this.fireDendritePhoton(fileNode);
-    }
 
-    // 2. Cascade gently into Zone Macro-Neuron (emissive light surge only, NO particles, NO shockwaves)
-    const zoneNode = this.nodeMeshes.get(zoneId);
-    if (zoneNode) {
-      setTimeout(() => {
-        zoneNode.excitation = 1.0;
-        zoneNode.lastSpikeTime = performance.now();
-        this.fireSynapticPhotons(zoneId, dependentZones || []);
-      }, fileNode ? 180 : 0);
-
-      // If file micro-neuron was not found, fallback to spawn badge at zone position
-      if (!fileNode) {
-        this.spawnHologramBadgeAtPos(zoneNode.group.position, fileName || "file", eventType || "change");
+      // Direct drone laser scanner toward this micro-neuron if drone exists for this agent
+      if (agent) {
+        for (const [_, drone] of this.agentDrones) {
+          if (drone.agentName === agent) {
+            drone.targetPos = fileNode.worldPos.clone();
+            drone.isTargetingFile = true;
+            drone.targetTimer = performance.now() + 3000;
+          }
+        }
       }
     }
+
+    return fileNode;
   }
 
   fireSynapticPhotons(sourceZoneId, dependentZones = []) {
@@ -1351,10 +1788,37 @@ export class NeuralGraph {
             this.fileInstancedMesh.setColorAt(fileNode.index, curColor);
             scale = 1.0 + (4.0 + pulse * 0.5) * exitRatio;
           }
-        } else if (fileNode.excitation > 0) {
-          fileNode.excitation = 0;
-          this.fileInstancedMesh.setColorAt(fileNode.index, fileNode.baseColor);
-          needsColorUpdate = true;
+        } else {
+          // Check Synaptic Heatmap
+          const fileHeat = this.fileHeatMap.get(fileNode.path) || 0;
+          if (this.heatmapMode || fileHeat > 0) {
+            needsColorUpdate = true;
+            fileNode.wasHeatMapped = true;
+            if (this.heatmapMode && fileHeat <= 0.05) {
+              // Dormant node in heatmap view
+              this.fileInstancedMesh.setColorAt(fileNode.index, new THREE.Color(0x1e293b));
+            } else {
+              // Thermodynamic heat gradient: baseColor -> magenta (1.0) -> gold (2.0) -> white plasma (3.0)
+              const heatProg = Math.min(3.0, fileHeat);
+              let heatCol = fileNode.baseColor.clone();
+              if (heatProg <= 1.0) {
+                heatCol.lerp(new THREE.Color(0xd946ef), heatProg);
+              } else if (heatProg <= 2.0) {
+                heatCol = new THREE.Color(0xd946ef).lerp(new THREE.Color(0xfbbf24), heatProg - 1.0);
+              } else {
+                heatCol = new THREE.Color(0xfbbf24).lerp(new THREE.Color(0xffffff), heatProg - 2.0);
+              }
+              this.fileInstancedMesh.setColorAt(fileNode.index, heatCol);
+              if (heatProg > 1.0) {
+                scale = 1.0 + (heatProg - 1.0) * 0.4;
+              }
+            }
+          } else if (fileNode.wasHeatMapped || fileNode.excitation > 0) {
+            fileNode.excitation = 0;
+            fileNode.wasHeatMapped = false;
+            this.fileInstancedMesh.setColorAt(fileNode.index, fileNode.baseColor);
+            needsColorUpdate = true;
+          }
         }
 
         dummy.position.set(worldX, worldY, worldZ);
@@ -1444,7 +1908,118 @@ export class NeuralGraph {
       }
     }
 
+    // Animate 3D Agent Quantum Drones
+    for (const [claimId, drone] of this.agentDrones.entries()) {
+      if (drone.isWarpingOut) {
+        drone.scale = Math.max(0, drone.scale - 0.04);
+        drone.group.scale.set(drone.scale, drone.scale, drone.scale);
+        drone.group.position.y += 0.4;
+        if (drone.scannerLine) drone.scannerLine.material.opacity = drone.scale * 0.8;
+        if (drone.scale <= 0.01) {
+          this.disposeDrone(drone);
+          this.agentDrones.delete(claimId);
+        }
+      } else {
+        drone.scale = Math.min(1.0, drone.scale + 0.04);
+        drone.group.scale.set(drone.scale, drone.scale, drone.scale);
+
+        // Kinetic orbit around zone center
+        drone.orbitAngle += drone.orbitSpeed;
+        const dX = drone.zonePos.x + Math.cos(drone.orbitAngle) * drone.orbitRadius;
+        const dZ = drone.zonePos.z + Math.sin(drone.orbitAngle) * drone.orbitRadius;
+        const dY = drone.zonePos.y + 10 + Math.sin(t * 3.5) * 1.6;
+        drone.group.position.set(dX, dY, dZ);
+
+        // Core and shield rotations
+        drone.coreMesh.rotation.y += 0.035;
+        drone.coreMesh.rotation.x += 0.02;
+        drone.shieldMesh.rotation.y -= 0.045;
+        drone.shieldMesh.rotation.z += 0.025;
+        drone.droneLight.intensity = 1.4 + Math.sin(t * 8.0) * 0.5;
+
+        // Dynamic laser scanner line
+        if (drone.scannerLine) {
+          const scanArr = drone.scannerLine.geometry.attributes.position.array;
+          scanArr[0] = dX;
+          scanArr[1] = dY;
+          scanArr[2] = dZ;
+
+          if (drone.isTargetingFile && drone.targetPos) {
+            if (now > drone.targetTimer) {
+              drone.isTargetingFile = false;
+            } else {
+              scanArr[3] = drone.targetPos.x;
+              scanArr[4] = drone.targetPos.y;
+              scanArr[5] = drone.targetPos.z;
+              drone.scannerLine.geometry.attributes.position.needsUpdate = true;
+              drone.scannerLine.material.opacity = 0.85 + Math.sin(t * 14.0) * 0.15;
+              drone.scannerLine.visible = true;
+            }
+          }
+
+          if (!drone.isTargetingFile) {
+            // Sweeping scan cone over the zone soma
+            const sweepX = drone.zonePos.x + Math.sin(t * 3.0) * 4.0;
+            const sweepZ = drone.zonePos.z + Math.cos(t * 3.0) * 4.0;
+            scanArr[3] = sweepX;
+            scanArr[4] = drone.zonePos.y;
+            scanArr[5] = sweepZ;
+            drone.scannerLine.geometry.attributes.position.needsUpdate = true;
+            drone.scannerLine.material.opacity = 0.45 + Math.sin(t * 5.0) * 0.2;
+            drone.scannerLine.visible = true;
+          }
+        }
+      }
+    }
+
+    // Animate expanding Risk Blast Radius shockwaves
+    for (let i = this.blastShockwaves.length - 1; i >= 0; i--) {
+      const sw = this.blastShockwaves[i];
+      const elapsed = now - sw.startTime;
+      const progress = elapsed / sw.durationMs;
+
+      if (progress >= 1.0) {
+        this.scene.remove(sw.mesh);
+        sw.mesh.geometry.dispose();
+        sw.mesh.material.dispose();
+        this.blastShockwaves.splice(i, 1);
+        continue;
+      }
+
+      const scale = 1.0 + Math.pow(progress, 0.45) * sw.maxScale;
+      sw.mesh.scale.set(scale, scale, scale);
+      sw.mesh.material.opacity = Math.pow(1.0 - progress, 1.2) * 0.85;
+    }
+
+    // Gradual thermodynamic heat decay
+    for (const [k, v] of this.fileHeatMap.entries()) {
+      const nv = v - 0.0008;
+      if (nv <= 0.02) this.fileHeatMap.delete(k);
+      else this.fileHeatMap.set(k, nv);
+    }
+    for (const [k, v] of this.zoneHeatMap.entries()) {
+      const nv = v - 0.0015;
+      if (nv <= 0.02) this.zoneHeatMap.delete(k);
+      else this.zoneHeatMap.set(k, nv);
+    }
+
+    // Agent Follow Camera tracking
+    if (!this.cameraAnimation && this.cameraMode === 1) {
+      const activeDrones = Array.from(this.agentDrones.values()).filter((d) => !d.isWarpingOut);
+      if (activeDrones.length > 0) {
+        const drone = activeDrones[0];
+        const dPos = drone.group.position;
+        const desiredPos = new THREE.Vector3(dPos.x + 22, dPos.y + 14, dPos.z + 32);
+        this.camera.position.lerp(desiredPos, 0.035);
+        this.controls.target.lerp(dPos, 0.045);
+      }
+    }
+
     this.controls.update();
-    this.renderer.render(this.scene, this.camera);
+    if (this.enableBloom && this.composer) {
+      this.composer.render();
+    } else {
+      this.renderer.render(this.scene, this.camera);
+    }
   }
 }

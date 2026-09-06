@@ -115,4 +115,100 @@ describe("useSandboxMascotState", () => {
     expect(result.current.mascotOffsetY).toBe(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_y);
     expect(result.current.mascotFlipX).toBe(RECOMMENDED_MASCOT_PLACEMENT_PRESET.flip_x);
   });
+
+  it("handles mascotStyleId updates, provides availableStyles, and forwards mascot_style_id", async () => {
+    vi.mocked(api.mascots).mockResolvedValueOnce({
+      mascots: [
+        {
+          id: "mascot_styles_test",
+          name: "Styled Pup",
+          description: "Mascot with styles",
+          visual_style: "pixar_3d",
+          master_prompt: "",
+          master_image_url: null,
+          color_theme: "#06b6d4",
+          actions: {},
+          styles: [
+            {
+              id: "style_casual",
+              name: "Casual Wear",
+              keyword: "hoodie",
+              is_default: true,
+              states: {
+                thinking: [
+                  { id: "v1", slot_index: 1, image_url: "/casual_think_1.png" },
+                  { id: "v2", slot_index: 2, image_url: "/casual_think_2.png" },
+                ],
+                celebrate: [{ id: "c1", slot_index: 1, image_url: "/casual_celeb_1.png" }],
+              },
+              created_at: "2026-01-01T00:00:00Z",
+              updated_at: "2026-01-01T00:00:00Z",
+            },
+            {
+              id: "style_cyber",
+              name: "Cyber Suit",
+              keyword: "cyberpunk",
+              is_default: false,
+              states: {
+                thinking: [{ id: "v3", slot_index: 1, image_url: "/cyber_think_1.png" }],
+                celebrate: [],
+              },
+              created_at: "2026-01-01T00:00:00Z",
+              updated_at: "2026-01-01T00:00:00Z",
+            },
+          ],
+          active_style_id: "style_casual",
+          assigned_channel_ids: [],
+          created_at: "2026-01-01T00:00:00Z",
+          updated_at: "2026-01-01T00:00:00Z",
+        },
+      ],
+    });
+
+    const { result } = renderHook(() => useSandboxMascotState());
+
+    await waitFor(() => {
+      expect(result.current.mascotId).toBe("mascot_styles_test");
+    });
+
+    // Auto-selects default/active style
+    expect(result.current.mascotStyleId).toBe("style_casual");
+    expect(result.current.mascot_style_id).toBe("style_casual");
+    expect(result.current.availableStyles).toHaveLength(2);
+    expect(result.current.activeStyle?.id).toBe("style_casual");
+    expect(result.current.thinkingVariants).toHaveLength(2);
+    expect(result.current.selectedVariantIndex).toBe(0);
+
+    // Switch variant slot
+    act(() => {
+      result.current.setSelectedVariantIndex(1);
+    });
+    expect(result.current.selectedVariantIndex).toBe(1);
+
+    // Switch style to style_cyber which has only 1 thinking variant
+    act(() => {
+      result.current.setMascotStyleId("style_cyber");
+    });
+
+    expect(result.current.mascotStyleId).toBe("style_cyber");
+    expect(result.current.mascot_style_id).toBe("style_cyber");
+    expect(result.current.activeStyle?.id).toBe("style_cyber");
+    expect(result.current.thinkingVariants).toHaveLength(1);
+    // Index was preserved because 0 < 1
+    expect(result.current.selectedVariantIndex).toBe(0);
+
+    // Switch action to celebrate, which has 0 variants in cyber
+    act(() => {
+      result.current.setMascotAction("celebrate");
+    });
+    expect(result.current.celebrateVariants).toHaveLength(0);
+    expect(result.current.selectedVariantIndex).toBeNull();
+
+    // Switch back to style_casual with celebrate
+    act(() => {
+      result.current.setMascotStyleId("style_casual");
+    });
+    expect(result.current.celebrateVariants).toHaveLength(1);
+    expect(result.current.selectedVariantIndex).toBe(0);
+  });
 });

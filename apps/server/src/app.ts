@@ -18,6 +18,7 @@ import { studioRuntimePath } from "./runtimePaths.js";
 import { TaskManager } from "./tasks.js";
 import { registerAudioVideoRoutes } from "./routes/audioVideo.js";
 import { registerChannelsRoutes } from "./routes/channels.js";
+import type { LLMClient } from "./utils/promptSanitizer.js";
 import { registerEpisodesRoutes } from "./routes/episodes.js";
 import { registerEventsRoutes, type EventClient } from "./routes/events.js";
 import { registerMascotsRoutes } from "./routes/mascots.js";
@@ -46,6 +47,8 @@ export type StudioApp = {
 export type BuildAppOptions = {
   /** Keep credentials outside isolated episode/demo storage roots. */
   environmentRoot?: string;
+  /** Optional LLM client used by synchronous channel content flows (topic confirm). */
+  llmClient?: LLMClient | null;
   /** Allows test hosts to replace the local file explorer integration. */
   revealFile?: (filePath: string) => Promise<void>;
 };
@@ -146,7 +149,7 @@ export async function buildApp(
   await server.register(registerSystemRoutes({ rootDirectory, repository, tasks, codex, antigravity, logger, state }));
   await server.register(registerSettingsRoutes({ rootDirectory, tasks, codex, antigravity, state }));
   await server.register(registerVoicesRoutes({ repository, logger, state }));
-  await server.register(registerChannelsRoutes({ repository, tasks, logger, state }));
+  await server.register(registerChannelsRoutes({ repository, tasks, logger, state, llmClient: options.llmClient }));
   await server.register(registerMascotsRoutes({ repository, logger, state }));
   await server.register(registerEpisodesRoutes({ repository, state, tasks }));
   await server.register(registerQuizV2Routes({ repository, tasks, codex, antigravity, state }));

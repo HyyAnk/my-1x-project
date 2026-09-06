@@ -1,9 +1,10 @@
-import { resolveChannelMascotPlacement, type Channel, type SandboxPreviewRequest } from "@studio/shared";
+import { resolveChannelMascotPlacement, type Channel, type Episode, type SandboxPreviewRequest } from "@studio/shared";
 import type { EpisodePreviewQuestion } from "../types/episodePreview.types";
 import type { EpisodeStyleOverride, ResolvedEpisodePreviewStyle } from "../types/episodeStylePreview.types";
 
 type BuildEpisodePreviewRequestInput = {
   channel: Channel;
+  episode?: Episode | null;
   override: EpisodeStyleOverride;
   resolved: ResolvedEpisodePreviewStyle;
   question?: EpisodePreviewQuestion | null;
@@ -16,7 +17,7 @@ export function buildEpisodePreviewRequest(input: BuildEpisodePreviewRequestInpu
   return {
     ...buildStyleRequest(input),
     ...buildQuestionRequest(input),
-    ...buildMascotRequest(input.channel, aspectRatio),
+    ...buildMascotRequest(input.channel, aspectRatio, input.episode),
     aspect_ratio: aspectRatio,
     style_catalog_revision: input.styleCatalogRevision,
   };
@@ -50,11 +51,16 @@ function buildQuestionRequest({ override, question, resolved }: BuildEpisodePrev
   };
 }
 
-function buildMascotRequest(channel: Channel, aspectRatio: "16:9" | "9:16" = "16:9"): SandboxPreviewRequest {
+function buildMascotRequest(
+  channel: Channel,
+  aspectRatio: "16:9" | "9:16" = "16:9",
+  episode?: Episode | null,
+): SandboxPreviewRequest {
   const config = channel.mascot_config;
   const placement = resolveChannelMascotPlacement(config, aspectRatio);
   return {
     mascot_id: channel.mascot_id && channel.mascot_id !== "none" ? channel.mascot_id : undefined,
+    mascot_style_id: episode?.quiz_config?.mascot_style_id || undefined,
     mascot_enabled: config?.enabled ?? false,
     mascot_position: placement.position,
     mascot_scale: placement.scale,

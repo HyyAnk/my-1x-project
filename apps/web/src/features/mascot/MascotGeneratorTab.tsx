@@ -5,6 +5,8 @@ import { getLocalizedActionMeta } from "./constants";
 import { MascotConceptStep } from "./components/MascotConceptStep";
 import { MascotActionsStep } from "./components/MascotActionsStep";
 import { useMascotGenerator } from "./hooks/useMascotGenerator";
+import { useMascotStyles } from "./hooks/useMascotStyles";
+import type { Notice } from "../../components/types";
 
 const MascotAnimationStep = lazy(() =>
   import("./components/MascotAnimationStep").then((module) => ({ default: module.MascotAnimationStep })),
@@ -12,9 +14,10 @@ const MascotAnimationStep = lazy(() =>
 
 type MascotGeneratorTabProps = {
   generatorState: ReturnType<typeof useMascotGenerator>;
+  onNotice?: (notice: Notice) => void;
 };
 
-export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) {
+export function MascotGeneratorTab({ generatorState, onNotice }: MascotGeneratorTabProps) {
   const { t } = useTranslation();
   const {
     generatorStep,
@@ -30,8 +33,6 @@ export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) 
     setGenColor,
     genPrompt,
     setGenPrompt,
-    actionPrompts,
-    setActionPrompts,
     busyAction,
     generationElapsed,
     batchState,
@@ -46,10 +47,6 @@ export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) 
     isPromptModalOpen,
     setIsPromptModalOpen,
     savingIdentity,
-    dragOverAction,
-    setDragOverAction,
-    promptEditAction,
-    setPromptEditAction,
     activePreviewAction,
     setActivePreviewAction,
     isPlaying,
@@ -60,6 +57,14 @@ export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) 
     setCanvasZoom,
     flipHorizontal,
     setFlipHorizontal,
+    effectiveMascot,
+    activeStyle,
+    previewStyleId,
+    setPreviewStyleId,
+    activeVariantIndex,
+    setActiveVariantIndex,
+    activeVariants,
+    selectedVariant,
     actionMotions,
     actionSpeeds,
     actionIntensities,
@@ -69,11 +74,6 @@ export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) 
     handleCopyPrompt,
     handleGenerateConcept,
     handleSaveIdentity,
-    handleGenerateSprite,
-    handleBatchGenerateSprites,
-    handleBatchGenerateCoreSprites,
-    handleUploadSprite,
-    handleDropSprite,
     handleRemoveBackground,
     handleChangeMotionPreset,
     handleChangeMotionSpeed,
@@ -82,6 +82,18 @@ export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) 
     handleSaveMotion,
     handleFinishMascot,
   } = generatorState;
+
+  const mascotStylesState = useMascotStyles({
+    mascot: editingMascot,
+    onMascotUpdated: (updatedMascot) => {
+      generatorState.setEditingMascot(updatedMascot);
+    },
+    onNotice: (notice) => {
+      if (onNotice) {
+        onNotice(notice);
+      }
+    },
+  });
 
   return (
     <div className="mascot-generator-container">
@@ -208,28 +220,7 @@ export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) 
       {generatorStep === 2 ? (
         <MascotActionsStep
           editingMascot={editingMascot}
-          genName={genName}
-          genStyle={genStyle}
-          genColor={genColor}
-          busyAction={busyAction}
-          generationElapsed={generationElapsed}
-          batchState={batchState}
-          itemProgress={itemProgress}
-          overallProgress={overallProgress}
-          currentStageMessage={currentStageMessage}
-          dragOverAction={dragOverAction}
-          setDragOverAction={setDragOverAction}
-          promptEditAction={promptEditAction}
-          setPromptEditAction={setPromptEditAction}
-          actionPrompts={actionPrompts}
-          setActionPrompts={setActionPrompts}
-          onGenerateSprite={handleGenerateSprite}
-          onBatchGenerateSprites={handleBatchGenerateSprites}
-          onBatchGenerateCoreSprites={handleBatchGenerateCoreSprites}
-          onUploadSprite={handleUploadSprite}
-          onDropSprite={handleDropSprite}
-          onRemoveBackground={handleRemoveBackground}
-          onSelectPreviewAction={setActivePreviewAction}
+          stylesState={mascotStylesState}
           onBackStep={() => setGeneratorStep(1)}
           onNextStep={() => setGeneratorStep(3)}
           onOpenLightbox={setLightboxImage}
@@ -247,7 +238,7 @@ export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) 
           }
         >
           <MascotAnimationStep
-            editingMascot={editingMascot}
+            effectiveMascot={effectiveMascot}
             genColor={genColor}
             busyAction={busyAction}
             activePreviewAction={activePreviewAction}
@@ -271,6 +262,13 @@ export function MascotGeneratorTab({ generatorState }: MascotGeneratorTabProps) 
             onSaveMotion={handleSaveMotion}
             onFinishMascot={handleFinishMascot}
             onBackStep={() => setGeneratorStep(2)}
+            activeStyle={activeStyle}
+            previewStyleId={previewStyleId}
+            onPreviewStyleChange={setPreviewStyleId}
+            activeVariants={activeVariants}
+            selectedVariant={selectedVariant}
+            activeVariantIndex={activeVariantIndex}
+            onSelectVariantIndex={setActiveVariantIndex}
           />
         </Suspense>
       ) : null}

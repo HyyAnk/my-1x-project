@@ -7,7 +7,6 @@ import type {
   QuizV2,
   SandboxPreviewRequest,
   SandboxPreviewResponse,
-  Task,
   VideoDescription,
   VideoDescriptionInput,
   VoicePlan,
@@ -76,8 +75,6 @@ export const quizApi = {
       method: "POST",
       body: "{}",
     }),
-  renderQuizVideo: (channelId: string, episodeId: string) =>
-    request<{ task: Task }>(`/api/channels/${channelId}/episodes/${episodeId}/quiz-v2/render`, { method: "POST", body: "{}" }),
   previewSandboxComposition: (body: SandboxPreviewRequest) =>
     request<SandboxPreviewResponse>("/api/quiz/preview-composition", { method: "POST", body: JSON.stringify(body) }),
   getVideoDescription: (channelId: string, episodeId: string) =>

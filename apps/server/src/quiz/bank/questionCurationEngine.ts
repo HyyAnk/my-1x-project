@@ -139,6 +139,9 @@ export function isValidBankQuestion(question: BankQuestionWithCooldown): boolean
   if (status === "archived" || status === "rejected") {
     return false;
   }
+  if (isLegacyPlaceholderBankQuestion(question)) {
+    return false;
+  }
   if (status === "approved") {
     return true;
   }
@@ -147,6 +150,28 @@ export function isValidBankQuestion(question: BankQuestionWithCooldown): boolean
     return true;
   }
   return status !== "rejected";
+}
+
+const LEGACY_PLACEHOLDER_EXPLANATION_SUFFIX = " is verified through scientific and historical evidence.";
+const LEGACY_PLACEHOLDER_QUESTION_PATTERN = /: (key question #\d+|core fact|challenge fact|climax fact)\?$/;
+const LEGACY_PLACEHOLDER_CHOICE_PATTERN = /^(.+ )?(Choice|Contender) [A-Z]$/;
+
+/**
+ * Detects questions produced by the retired deterministic JIT fallback, which
+ * shipped template text ("Topic: key question #2?") into persisted banks.
+ * Scoped to the legacy "JIT-" id prefix so real curated questions are unaffected.
+ */
+export function isLegacyPlaceholderBankQuestion(question: BankQuestionWithCooldown): boolean {
+  if (!question.id.startsWith("JIT-")) {
+    return false;
+  }
+  if (question.explanation.endsWith(LEGACY_PLACEHOLDER_EXPLANATION_SUFFIX)) {
+    return true;
+  }
+  if (LEGACY_PLACEHOLDER_QUESTION_PATTERN.test(question.question)) {
+    return true;
+  }
+  return question.choices.some((choice) => LEGACY_PLACEHOLDER_CHOICE_PATTERN.test(choice.text));
 }
 
 function assembleThreeActArc(scored: ScoredBankQuestion[]): BankQuestionWithCooldown[] {
@@ -269,7 +294,6 @@ export async function curateQuestionsForTopic(
 export {
   ensureTopicQuestionsWithJitFallback,
   determineMissingDifficulties,
-  generateJitQuestionsFallback,
   generateJitQuestionsWithLLM,
   type EnsureTopicQuestionsWithJitDeps,
   type EnsureTopicQuestionsResult,

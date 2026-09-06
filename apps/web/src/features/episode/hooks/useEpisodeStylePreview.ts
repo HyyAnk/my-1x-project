@@ -67,6 +67,7 @@ export function useEpisodeStylePreview({ channel, episode, candidate, channelBra
       try {
         const request = buildEpisodePreviewRequest({
           channel,
+          episode,
           override,
           resolved,
           question: previewQuestion,

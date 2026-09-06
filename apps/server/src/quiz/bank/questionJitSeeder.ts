@@ -1,14 +1,11 @@
 import {
-  BankQuestionSchema,
-  bankRequiredChoiceCountForArchetype,
   type BankGameplayArchetypeId,
   type BankQuestion,
-  type QuizAgeBand,
-  type QuizQuestionFormat,
   type TopicCandidate,
 } from "@studio/shared";
-import type { RepositoryService } from "../../repository.js";
+import { RepositoryError, type RepositoryService } from "../../repository.js";
 import { executeSinglePromptText, type LLMClient } from "../../utils/promptSanitizer.js";
+import { retryWithBackoff } from "../../utils/retryWithBackoff.js";
 import { ARCHETYPE_GUIDELINES, parseBatchGenerationOutput } from "./batchGeneratorPrompt.js";
 import {
   assembleRetentionArc,
@@ -18,8 +15,6 @@ import {
   resolveTargetArchetype,
   type ScoredBankQuestion,
 } from "./questionCurationEngine.js";
-
-let jitSequence = 0;
 
 export interface EnsureTopicQuestionsWithJitDeps {
   repository: RepositoryService;
@@ -70,97 +65,6 @@ export function determineMissingDifficulties(existingQuestions: BankQuestion[], 
   return remaining.slice(0, needed);
 }
 
-export function normalizeAgeBand(band?: string): QuizAgeBand {
-  if (band === "4-6" || band === "7-9" || band === "10-12" || band === "family") {
-    return band;
-  }
-  if (band === "kids") return "7-9";
-  return "family";
-}
-
-function makeJitFallbackQuestion(
-  topic: TopicCandidate,
-  archetypeId: BankGameplayArchetypeId,
-  domainId: string,
-  subtopicId: string,
-  difficulty: number,
-  index: number,
-  lang?: string,
-): BankQuestion {
-  const isVerdict = archetypeId === "verdict_true_false" || archetypeId === "verdict_fact_myth";
-  const isVersus = archetypeId === "versus_faceoff";
-  const format: QuizQuestionFormat = isVerdict ? "true_false" : archetypeId === "visual_spotting" ? "odd_one_out" : "multiple_choice";
-  const count = bankRequiredChoiceCountForArchetype(archetypeId);
-  const now = new Date().toISOString();
-
-  let questionText = `${topic.title}: key question #${index + 1}?`;
-  if (index === 0 && topic.hook) {
-    questionText = topic.hook.length > 75 ? `${topic.hook.slice(0, 72)}...` : topic.hook;
-  } else if (topic.premise) {
-    const descriptor = difficulty <= 2 ? "core fact" : difficulty <= 3 ? "challenge fact" : "climax fact";
-    questionText = `${topic.title}: ${descriptor}?`;
-  }
-  if (isVerdict && !questionText.toLowerCase().includes("true or false")) {
-    questionText = `${questionText.replace(/\?*$/, "")}. True or False?`;
-  }
-
-  const choices = isVerdict
-    ? [
-        { id: "A", text: "True", is_correct: index % 2 === 0 },
-        { id: "B", text: "False", is_correct: index % 2 !== 0 },
-      ]
-    : isVersus
-      ? [
-          { id: "A", text: `${topic.title} Contender A`, is_correct: true },
-          { id: "B", text: `${topic.title} Contender B`, is_correct: false },
-        ]
-      : [
-          { id: "A", text: `${topic.title} Choice A`, is_correct: true },
-          { id: "B", text: `${topic.title} Choice B`, is_correct: false },
-          { id: "C", text: `${topic.title} Choice C`, is_correct: false },
-        ];
-
-  const visualIntent = archetypeId === "speed_blitz" ? "none" : "question_illustration";
-  const candidate: BankQuestion = {
-    id: `JIT-${archetypeId.slice(0, 3).toUpperCase()}-${domainId.slice(0, 3).toUpperCase()}-${Date.now().toString(36)}-${(++jitSequence).toString(36)}-${Math.floor(1000 + Math.random() * 9000)}`,
-    archetype_id: archetypeId,
-    domain_id: domainId,
-    subtopic_id: subtopicId,
-    language: lang || "en",
-    question: questionText,
-    format,
-    choices: choices.slice(0, count),
-    correct_choice_id: choices.find((c) => c.is_correct)?.id ?? "A",
-    explanation: `${topic.title} is verified through scientific and historical evidence.`,
-    fun_fact: `Surprising bonus insight regarding ${topic.title} in ${domainId}.`,
-    visual_spec: {
-      intent: visualIntent,
-      prompt: `Cinematic 8k photograph illustrating ${topic.title}, dramatic lighting`,
-      aspect_ratio: "16:9",
-    },
-    age_band: normalizeAgeBand(topic.age_band),
-    difficulty,
-    thinking_seconds: ARCHETYPE_GUIDELINES[archetypeId]?.defaultThinkingSeconds ?? 5,
-    tags: [subtopicId, archetypeId, domainId],
-    status: "approved",
-    created_at: now,
-    updated_at: now,
-  };
-
-  return BankQuestionSchema.parse(candidate);
-}
-
-export function generateJitQuestionsFallback(
-  topic: TopicCandidate,
-  archetypeId: BankGameplayArchetypeId,
-  domainId: string,
-  subtopicId: string,
-  targetDifficulties: number[],
-  lang?: string,
-): BankQuestion[] {
-  return targetDifficulties.map((diff, idx) => makeJitFallbackQuestion(topic, archetypeId, domainId, subtopicId, diff, idx, lang));
-}
-
 export async function generateJitQuestionsWithLLM(
   llmClient: LLMClient,
   topic: TopicCandidate,
@@ -184,7 +88,10 @@ export async function generateJitQuestionsWithLLM(
     `archetype_id, domain_id, subtopic_id, question, format, choices, correct_choice_id, explanation, fun_fact, visual_spec, difficulty, thinking_seconds, tags.`,
   ].join("\n");
 
-  const raw = await executeSinglePromptText(llmClient, prompt, { timeoutMs: 30_000 });
+  const raw = await retryWithBackoff(() => executeSinglePromptText(llmClient, prompt, { timeoutMs: 30_000 }), {
+    attempts: 3,
+    baseDelayMs: 1500,
+  });
   const parsed = parseBatchGenerationOutput(raw, {
     archetypeId,
     domainId,
@@ -201,30 +108,33 @@ async function resolveMissingQuestions(
   subtopicId: string,
   missingDiffs: number[],
 ): Promise<BankQuestion[]> {
-  let generated: BankQuestion[] = [];
-  if (deps.llmClient) {
-    try {
-      generated = await generateJitQuestionsWithLLM(
-        deps.llmClient,
-        deps.topic,
-        archetypeId,
-        domainId,
-        subtopicId,
-        missingDiffs,
-        deps.targetLanguage,
+  if (!deps.llmClient) {
+    return [];
+  }
+
+  try {
+    const generated = await generateJitQuestionsWithLLM(
+      deps.llmClient,
+      deps.topic,
+      archetypeId,
+      domainId,
+      subtopicId,
+      missingDiffs,
+      deps.targetLanguage,
+    );
+    if (generated.length < missingDiffs.length) {
+      console.warn(
+        `[questionJitSeeder] LLM returned ${generated.length}/${missingDiffs.length} questions for topic "${deps.topic.title}".`,
       );
-    } catch {
-      generated = [];
     }
+    return generated;
+  } catch (error) {
+    console.warn(
+      `[questionJitSeeder] JIT question generation failed for topic "${deps.topic.title}":`,
+      error instanceof Error ? error.message : error,
+    );
+    return [];
   }
-
-  if (generated.length < missingDiffs.length) {
-    const neededDiffs = missingDiffs.slice(generated.length);
-    const fallback = generateJitQuestionsFallback(deps.topic, archetypeId, domainId, subtopicId, neededDiffs, deps.targetLanguage);
-    generated = [...generated, ...fallback];
-  }
-
-  return generated;
 }
 
 export async function ensureTopicQuestionsWithJitFallback(deps: EnsureTopicQuestionsWithJitDeps): Promise<EnsureTopicQuestionsResult> {
@@ -263,6 +173,17 @@ export async function ensureTopicQuestionsWithJitFallback(deps: EnsureTopicQuest
   const missingDiffs = determineMissingDifficulties(existingQuestions, targetCount);
   const jitQuestions = await resolveMissingQuestions(deps, archetypeId, domainId, subtopicId, missingDiffs);
 
+  const combined = [...existingQuestions, ...jitQuestions];
+
+  if (combined.length < targetCount) {
+    throw new RepositoryError(
+      `Only ${combined.length}/${targetCount} questions could be resolved for topic "${deps.topic.title}". ` +
+        "The question bank has insufficient matches and JIT generation is unavailable or returned too few questions. " +
+        "Retry once the LLM engine is reachable, or curate more questions into the bank.",
+      "INSUFFICIENT_QUESTIONS",
+    );
+  }
+
   if (deps.repository && typeof deps.repository.saveQuestionBankQuestion === "function") {
     for (const q of jitQuestions) {
       try {
@@ -273,7 +194,6 @@ export async function ensureTopicQuestionsWithJitFallback(deps: EnsureTopicQuest
     }
   }
 
-  const combined = [...existingQuestions, ...jitQuestions];
   const scoredCombined: ScoredBankQuestion[] = combined.map((q) => ({
     question: q,
     relevanceScore: calculateRelevanceScore(q, deps.topic),

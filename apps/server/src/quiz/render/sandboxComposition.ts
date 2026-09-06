@@ -14,7 +14,11 @@ import { candyArcadeFontReadinessScript } from "./candyArcade/candyArcadeFonts.j
 import { esc } from "./candyArcade/candyArcadeSvg.js";
 import { renderQuizLayoutBody } from "./layouts/registry.js";
 import { renderPreviewMascotHtmlLayer } from "./previewMascotRenderer.js";
-import { renderProductionMascotHtmlLayer } from "./productionMascotRenderer.js";
+import {
+  adaptMascotForPhase,
+  adaptMascotForQuestion,
+  renderProductionMascotHtmlLayer,
+} from "./productionMascotRenderer.js";
 import { adaptSandboxQuizScene } from "./scene/sandboxSceneAdapter.js";
 import { sandboxPreviewTimeForPhase, sandboxSceneState } from "./scene/sandboxSceneStateAdapter.js";
 import { buildQuizSceneParts } from "./scene/buildQuizSceneParts.js";
@@ -49,12 +53,15 @@ function buildSandboxRehearsalComposition(parsed: SandboxPreviewInput, mascotPro
     show_in_outro: parsed.mascot_show_in_outro,
     show_in_question: parsed.mascot_show_in_question,
   };
+  const questionIndex = Math.max(0, (parsed.question_number ?? 1) - 1);
+  const adaptedMascot = adaptMascotForQuestion(mascotProfile, parsed.mascot_style_id, questionIndex);
   const mascotHtml =
-    mascotEnabled && mascotProfile
-      ? renderProductionMascotHtmlLayer(mascotProfile, mascotConfig, {
+    mascotEnabled && adaptedMascot
+      ? renderProductionMascotHtmlLayer(adaptedMascot, mascotConfig, {
           phase: "question",
           clipStartSeconds: 0,
           clipDurationSeconds: timeline.totalDuration,
+          styleId: parsed.mascot_style_id,
           timelineEvents: [
             { type: "choices.enter", at_seconds: timeline.choicesStart },
             { type: "countdown.start", at_seconds: timeline.thinkingStart },
@@ -133,10 +140,15 @@ function renderSandboxMascot(
   const enabled = input.mascot_enabled !== false && input.mascot_id !== "none";
   if (!enabled || !mascotProfile) return "";
   const phase = input.mascot_phase ?? scenePhase;
+  const questionIndex = Math.max(0, (input.question_number ?? 1) - 1);
+  let adaptedMascot = adaptMascotForQuestion(mascotProfile, input.mascot_style_id, questionIndex);
+  if (phase === "intro" || phase === "outro") {
+    adaptedMascot = adaptMascotForPhase(adaptedMascot, phase, input.mascot_style_id);
+  }
   const action = input.mascot_action || (phase === "reveal" ? "celebrate" : phase === "explain" ? "point" : "thinking");
   const timelineTime = input.mascot_timeline_time_seconds ?? input.timeline_time_seconds ?? sandboxPreviewTimeForPhase(phase);
   return renderPreviewMascotHtmlLayer(
-    mascotProfile,
+    adaptedMascot,
     {
       enabled: input.mascot_enabled,
       position: input.mascot_position,

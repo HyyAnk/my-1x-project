@@ -35,6 +35,9 @@ export function EpisodeQuizCustomizationBar({
   onApplyStylePreset,
   setEpisode,
   onNotice,
+  mascotStyleId,
+  onSaveMascotStyle,
+  availableMascotStyles,
 }: EpisodeQuizCustomizationBarProps) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -87,6 +90,9 @@ export function EpisodeQuizCustomizationBar({
             onSaveVisualStyle={onSaveVisualStyle}
             onSavePaletteId={onSavePaletteId}
             onPreview={dropdown.setCandidate}
+            mascotStyleId={mascotStyleId}
+            onSaveMascotStyle={onSaveMascotStyle}
+            availableMascotStyles={availableMascotStyles}
           />
 
           <EpisodeCustomizationElementsSection

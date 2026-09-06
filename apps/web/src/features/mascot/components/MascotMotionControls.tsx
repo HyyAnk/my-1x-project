@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, CheckCircle, CircleNotch, Sparkle, ArrowCounterClockwise, FloppyDisk } from "@phosphor-icons/react";
-import type { MascotActionType, MascotProfile } from "@studio/shared";
+import { ALL_MASCOT_ACTIONS, type MascotActionType, type MascotProfile, type MascotStateVariant } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import { getLocalizedActionMeta, MOTION_PRESETS, type MascotMotionPreset, type MascotMotionIntensity } from "../constants";
 
@@ -19,6 +19,7 @@ export type MascotMotionControlsProps = {
   onBackStep: () => void;
   calibrating: boolean;
   busyAction: string | null;
+  selectedVariant?: MascotStateVariant | null;
 };
 
 export function MascotMotionControls({
@@ -36,6 +37,7 @@ export function MascotMotionControls({
   onBackStep,
   calibrating,
   busyAction,
+  selectedVariant,
 }: MascotMotionControlsProps) {
   const { t } = useTranslation();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -44,6 +46,10 @@ export function MascotMotionControls({
   const currentSpeed = actionSpeeds[activePreviewAction] || 1.0;
   const currentIntensity = actionIntensities[activePreviewAction] || "normal";
   const hasSprite = Boolean(editingMascot?.actions[activePreviewAction]?.sprite_url);
+  const readyCount = Object.values(editingMascot?.actions || {}).filter((a) => a?.sprite_url).length;
+  const editingTargetBadge = selectedVariant
+    ? t("mascots.editingSlotBadge", { slot: selectedVariant.slot_index })
+    : t("mascots.editingBaseBadge");
 
   return (
     <div className="motion-controls-card">
@@ -55,12 +61,13 @@ export function MascotMotionControls({
             <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700 }}>{t("mascots.motionStudioTitle")}</h3>
           </div>
           <p style={{ margin: "2px 0 0", fontSize: "11.5px", color: "var(--muted)" }}>
-            {activeActionMeta.label.split(" ")[0]} · {hasSprite ? t("mascots.motionReadyBadge") : t("mascots.motionMissingBadge")}
+            {activeActionMeta.label.split(" ")[0]} · {hasSprite ? t("mascots.motionReadyBadge") : t("mascots.motionMissingBadge")} ·{" "}
+            {t("mascots.motionReadyCount", { ready: readyCount, total: ALL_MASCOT_ACTIONS.length })}
           </p>
         </div>
 
-        <span className="action-ready-badge" style={{ fontSize: "11px" }}>
-          {Object.values(editingMascot?.actions || {}).filter((a) => a?.sprite_url).length}/7 Ready
+        <span className="action-ready-badge motion-editing-target" style={{ fontSize: "11px" }}>
+          {editingTargetBadge}
         </span>
       </div>
 

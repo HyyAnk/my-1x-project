@@ -11,6 +11,7 @@ export async function persistVideoRenderArtifacts(options: {
   episode: Episode;
   outputPath: string;
   html: string;
+  sourceFingerprint: string;
   duration: number;
   renderAspectRatio: "16:9" | "9:16" | "1:1";
   renderCanvas: { width: number; height: number };
@@ -20,6 +21,7 @@ export async function persistVideoRenderArtifacts(options: {
   assetResolution: QuizAssetResolution | null;
   completeQuizV2: boolean;
   preflightAssessment: ReturnType<typeof preflightQuizRender>["assessment"] | null;
+  checkStatus: "passed" | "skipped_fast_mode";
   probe: Awaited<ReturnType<typeof inspectRenderedVideo>>;
 }): Promise<{ videoPath: string; manifestPath: string }> {
   const {
@@ -29,6 +31,7 @@ export async function persistVideoRenderArtifacts(options: {
     episode,
     outputPath,
     html,
+    sourceFingerprint,
     duration,
     renderAspectRatio,
     renderCanvas,
@@ -36,6 +39,7 @@ export async function persistVideoRenderArtifacts(options: {
     assetResolution,
     completeQuizV2,
     preflightAssessment,
+    checkStatus,
     probe,
   } = options;
 
@@ -59,7 +63,7 @@ export async function persistVideoRenderArtifacts(options: {
       quiz_engine_version: completeQuizV2 ? 2 : 1,
       schema_version: completeQuizV2 ? 2 : 1,
       composition: "runtime/hyperframes/" + episode.episode_id + "/index.html",
-      source_fingerprints: {},
+      source_fingerprints: { composition: sourceFingerprint },
       question_count: episode.quiz_config.question_count,
       format: episode.quiz_config.quiz_format,
       duration_seconds: Number(duration.toFixed(3)),
@@ -78,10 +82,10 @@ export async function persistVideoRenderArtifacts(options: {
             blockers: preflightAssessment.issues.filter((issue) => issue.severity === "blocker").length,
           }
         : { status: "legacy_skipped" },
-      check: { status: "passed" },
+      check: { status: checkStatus },
       render: { status: "passed", output: "quiz-video.mp4" },
       post_render: {
-        status: "passed",
+        status: probe.issues.some((issue) => issue.severity === "blocker") ? "failed" : "passed",
         issues: probe.issues.length,
         streams:
           probe.probe.streams?.map((stream) => ({

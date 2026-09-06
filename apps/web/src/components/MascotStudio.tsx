@@ -4,13 +4,10 @@ import type { Channel, MascotProfile } from "@studio/shared";
 import type { Notice } from "./types";
 import { useTranslation } from "../i18n";
 import { getNavProps } from "../hooks/useRouter";
-import { AUXILIARY_ACTIONS, BRAND_IDENTITY_ACTIONS, CORE_GAMEPLAY_ACTIONS } from "../features/mascot/constants";
 import { useMascotLibrary } from "../features/mascot/hooks/useMascotLibrary";
 import { useMascotGenerator } from "../features/mascot/hooks/useMascotGenerator";
 import { MascotLibraryTab } from "../features/mascot/MascotLibraryTab";
 import { MascotGeneratorTab } from "../features/mascot/MascotGeneratorTab";
-
-export { CORE_GAMEPLAY_ACTIONS, BRAND_IDENTITY_ACTIONS, AUXILIARY_ACTIONS };
 
 export function MascotStudioView({
   channels,

@@ -51,6 +51,7 @@ vi.mock("../src/tasks/video/videoLayoutChecker.js", () => ({
         "utf8",
       ),
     ]);
+    return { status: "passed" as const, reused: false, bypassed: false, samplesCount: 0 };
   },
 }));
 

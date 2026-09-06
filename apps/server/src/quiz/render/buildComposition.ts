@@ -32,6 +32,7 @@ export function buildQuizComposition(
     aspectRatio?: MascotRenderAspectRatio;
     mascot?: MascotProfile | null;
     mascotConfig?: ChannelMascotConfig | null;
+    fps?: number;
   },
 ): string {
   const normalizedFormat = (config.quiz_format === "knowledge" ? "multiple_choice" : config.quiz_format) as QuizQuestionFormat;
@@ -118,7 +119,9 @@ export function buildQuizComposition(
     aspectRatio +
     '" data-duration="' +
     totalDuration.toFixed(3) +
-    '" data-fps="30">' +
+    '" data-fps="' +
+    (options?.fps ?? 30) +
+    '">' +
     clips +
     '<audio id="quiz-narration" class="clip" data-start="0" data-duration="' +
     totalDuration.toFixed(3) +
@@ -147,6 +150,7 @@ export type QuizV2CompositionInput = {
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
   premixedAudio?: boolean;
+  fps?: number;
 };
 
 /**

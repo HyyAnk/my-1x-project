@@ -27,8 +27,8 @@ export function StageStudioFooter({ studio, onClose }: StageStudioFooterProps) {
       </div>
 
       <div className="stage-studio-credit" aria-label="Development and design credit">
-        <span className="stage-studio-credit-full">Develop - Design - Deliver by HyyAnk | Dư Ngọc Minh Hoàng</span>
-        <span className="stage-studio-credit-mobile">HyyAnk | Dư Ngọc Minh Hoàng</span>
+        <span className="stage-studio-credit-full">Develop - Design - Deliver by HyyAnk | Du Ngoc Minh Hoang</span>
+        <span className="stage-studio-credit-mobile">HyyAnk | Du Ngoc Minh Hoang</span>
       </div>
 
       {/* Action Buttons */}

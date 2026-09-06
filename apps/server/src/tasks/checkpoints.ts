@@ -4,14 +4,15 @@ import { writeJsonAtomic } from "../utils/fs.js";
 export type RenderCheckpoint = {
   schema_version: 2;
   source_fingerprint: string;
-  check: { status: "passed" };
+  check: { status: "passed" | "skipped_fast_mode" };
   render?: { status: "passed" };
 };
 
 export async function readRenderCheckpoint(filePath: string): Promise<RenderCheckpoint | null> {
   try {
     const parsed = JSON.parse(await readFile(filePath, "utf8")) as RenderCheckpoint;
-    if (parsed.schema_version !== 2 || typeof parsed.source_fingerprint !== "string" || parsed.check?.status !== "passed") return null;
+    if (parsed.schema_version !== 2 || typeof parsed.source_fingerprint !== "string") return null;
+    if (parsed.check?.status !== "passed" && parsed.check?.status !== "skipped_fast_mode") return null;
     return parsed;
   } catch {
     return null;

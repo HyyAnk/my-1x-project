@@ -3,6 +3,7 @@ import {
   MascotSpriteActionSchema,
   adaptMascotAssetsV1ToV2,
   adaptMascotConfigV1ToV2,
+  synthesizeLegacyCoreStyle,
   type MascotActionType,
   type MascotProfile,
 } from "@studio/shared";
@@ -27,7 +28,7 @@ export function buildPersistedMascotProfile(
 }
 
 function buildLegacySnapshot(input: MascotSaveInput, existing: MascotProfile | null, id: string, timestamp: string): MascotProfile {
-  return {
+  const snapshot: MascotProfile = {
     id,
     name: input.name,
     description: firstPresent(input.description, existing?.description, ""),
@@ -36,10 +37,21 @@ function buildLegacySnapshot(input: MascotSaveInput, existing: MascotProfile | n
     master_image_url: firstPresent(input.master_image_url, existing?.master_image_url, null),
     color_theme: firstPresent(input.color_theme, existing?.color_theme, "#06b6d4"),
     actions: firstPresent(input.actions, existing?.actions, {}),
+    styles: firstPresent(input.styles, existing?.styles, []),
+    active_style_id: firstPresent(input.active_style_id, existing?.active_style_id, undefined),
     assigned_channel_ids: firstPresent(input.assigned_channel_ids, existing?.assigned_channel_ids, []),
     created_at: firstPresent(existing?.created_at, undefined, timestamp),
     updated_at: timestamp,
   };
+
+  if (!snapshot.styles || snapshot.styles.length === 0) {
+    snapshot.styles = [synthesizeLegacyCoreStyle(snapshot)];
+    snapshot.active_style_id = snapshot.active_style_id || "core";
+  } else if (!snapshot.active_style_id) {
+    snapshot.active_style_id = snapshot.styles.find((s) => s.is_default)?.id || snapshot.styles[0]?.id || "core";
+  }
+
+  return snapshot;
 }
 
 function shouldPersistV2(input: MascotSaveInput, existing: MascotProfile | null): boolean {

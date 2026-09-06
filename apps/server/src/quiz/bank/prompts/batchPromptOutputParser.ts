@@ -11,6 +11,14 @@ function makeUniqueBankId(archetypeId: string, domainId: string, subtopicId: str
 }
 
 /**
+ * Logs the raw output tail when LLM output cannot be parsed, so silent
+ * question loss is observable in server logs.
+ */
+function warnUnparseableOutput(context: string, rawOutput: string): void {
+  console.warn(`[batchPromptOutputParser] Unparseable LLM output (${context}). Output tail: ${rawOutput.slice(-400)}`);
+}
+
+/**
  * Cleans formulaic redundancies from generated question text.
  * Specifically removes trailing ': Option A or Option B?' from versus_faceoff
  * where options match choice texts.
@@ -69,9 +77,11 @@ export function parseBatchGenerationOutput(
       try {
         items = JSON.parse(arrayMatch[0]);
       } catch {
+        warnUnparseableOutput(meta.archetypeId, rawOutput);
         return [];
       }
     } else {
+      warnUnparseableOutput(meta.archetypeId, rawOutput);
       return [];
     }
   }
@@ -80,6 +90,7 @@ export function parseBatchGenerationOutput(
     if (items && typeof items === "object" && Array.isArray((items as { questions?: unknown[] }).questions)) {
       items = (items as { questions: unknown[] }).questions;
     } else {
+      warnUnparseableOutput(meta.archetypeId, rawOutput);
       return [];
     }
   }
@@ -144,6 +155,10 @@ export function parseBatchGenerationOutput(
     const parsed = BankQuestionSchema.safeParse(candidate);
     if (parsed.success) {
       result.push(parsed.data);
+    } else {
+      console.warn(
+        `[batchPromptOutputParser] Dropped question failing schema validation: ${String(candidate.question).slice(0, 80)} — ${parsed.error.issues[0]?.message ?? "unknown issue"}`,
+      );
     }
   }
 
@@ -178,9 +193,11 @@ export function parseReverseBatchGenerationOutput(
       try {
         items = JSON.parse(arrayMatch[0]);
       } catch {
+        warnUnparseableOutput(`reverse/${meta.archetypeId}`, rawOutput);
         return [];
       }
     } else {
+      warnUnparseableOutput(`reverse/${meta.archetypeId}`, rawOutput);
       return [];
     }
   }
@@ -189,6 +206,7 @@ export function parseReverseBatchGenerationOutput(
     if (items && typeof items === "object" && Array.isArray((items as { questions?: unknown[] }).questions)) {
       items = (items as { questions: unknown[] }).questions;
     } else {
+      warnUnparseableOutput(`reverse/${meta.archetypeId}`, rawOutput);
       return [];
     }
   }
@@ -274,6 +292,10 @@ export function parseReverseBatchGenerationOutput(
     const parsed = BankQuestionSchema.safeParse(candidate);
     if (parsed.success) {
       result.push(parsed.data);
+    } else {
+      console.warn(
+        `[batchPromptOutputParser] Dropped question failing schema validation: ${String(candidate.question).slice(0, 80)} — ${parsed.error.issues[0]?.message ?? "unknown issue"}`,
+      );
     }
   }
 

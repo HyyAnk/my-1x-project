@@ -30,4 +30,12 @@ describe("stage question layouts", () => {
     expect(getStageQuestionLayoutDefinition("mystery_reveal").preview).toBe("media-left");
     expect(getStageQuestionLayoutDefinition("clue_deduction").preview).toBe("media-left");
   });
+
+  it("ensures each layout definition has unique labelKey and descriptionKey", () => {
+    const labelKeys = STAGE_QUESTION_LAYOUTS.map((layout) => layout.labelKey);
+    const descriptionKeys = STAGE_QUESTION_LAYOUTS.map((layout) => layout.descriptionKey);
+
+    expect(new Set(labelKeys).size).toBe(labelKeys.length);
+    expect(new Set(descriptionKeys).size).toBe(descriptionKeys.length);
+  });
 });

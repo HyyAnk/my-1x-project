@@ -25,6 +25,8 @@ export type QuizRenderInput = {
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
   premixedAudio?: boolean;
+  /** Must match the renderer CLI --fps so markup and encoder stay in sync. */
+  fps?: number;
 };
 
 export type PreparedQuizRender = {

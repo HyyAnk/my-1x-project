@@ -255,7 +255,29 @@ export function createMonitorServer(options = {}) {
           rootDir: root,
           debounceMs: options.fileWatcherDebounceMs || 50,
           onActivity: (activities) => {
+            let activeClaims = [];
+            try {
+              const db = openClaimsDb(root, customDbPath);
+              try {
+                activeClaims = getActiveClaims(db);
+              } finally {
+                db.close();
+              }
+            } catch (_) {}
+
             for (const activity of activities) {
+              const normFile = normalizePath(activity.file);
+              const matchedClaim = activeClaims.find((c) => {
+                const hasFile = (c.plannedFiles || []).some((pf) => normalizePath(pf) === normFile);
+                if (hasFile) return true;
+                return (c.writeZones || []).includes(activity.zoneId);
+              });
+
+              if (matchedClaim) {
+                activity.agent = matchedClaim.agent;
+                activity.task = matchedClaim.task;
+              }
+
               broadcast("file_activity", activity);
             }
           },

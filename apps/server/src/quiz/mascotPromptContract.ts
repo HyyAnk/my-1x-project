@@ -67,35 +67,51 @@ export function buildMascotActionPrompt(
   action: MascotActionType,
   options: {
     prompt?: string;
-    framesCount?: number;
+    keyword?: string;
     hasReferenceImage?: boolean;
   } = {},
 ): string {
   const meta = MASCOT_ACTION_META[action] || MASCOT_ACTION_META.idle;
   const styleDesc = MASCOT_STYLE_PROMPTS[mascot.visual_style] || MASCOT_STYLE_PROMPTS.pixar_3d;
   const baseDesc = mascot.master_prompt?.trim() || mascot.description?.trim() || `${mascot.name} cute friendly companion`;
-  const actionSpecific = options.prompt?.trim() || meta.description;
+
+  const rawAction = options.prompt?.trim() || meta.description;
+  const actionText = rawAction.endsWith(".") ? rawAction.slice(0, -1) : rawAction;
+  const actionDirective = `Pose and Action: ${actionText}.`;
+
+  const rawKeyword = options.keyword?.trim();
+  const cleanKeyword = rawKeyword ? (rawKeyword.endsWith(".") ? rawKeyword.slice(0, -1) : rawKeyword) : undefined;
+  const costumeDirective = cleanKeyword
+    ? `Theme & Costume: Styled in authentic ${cleanKeyword} attire and accessories.`
+    : undefined;
+
+  if (options.hasReferenceImage) {
+    const continuityDirective = `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image.`;
+
+    const parts = [
+      continuityDirective,
+      ...(costumeDirective ? [costumeDirective] : []),
+      actionDirective,
+      MASCOT_STUDIO_ISOLATION_TAGS,
+    ];
+
+    return parts.join(" ");
+  }
 
   const characterDna = [
     `Character: "${mascot.name}"`,
     `Visual Appearance: ${baseDesc}`,
     `Color Palette: Primary theme ${mascot.color_theme || "#06b6d4"}`,
     `Style & Proportions: Chibi 1:2 head-to-body proportion, large expressive sparkling eyes, ${styleDesc}`,
-    `STRICT CHARACTER CONTINUITY: Identical face, eyes, head shape, costume, accessories, and colors matching master reference image. Keep the same exact character identity.`,
+    costumeDirective
+      ? `${costumeDirective} STRICT CHARACTER CONTINUITY: Identical face, eyes, head shape, and colors matching master reference image; only the costume and accessories reflect the ${cleanKeyword} theme.`
+      : `STRICT CHARACTER CONTINUITY: Identical face, eyes, head shape, costume, accessories, and colors matching master reference image. Keep the same exact character identity.`,
   ].join(". ");
-
-  if (options.hasReferenceImage) {
-    return [
-      `Giữ nguyên nhân vật ${mascot.name} trong @1 (màu lông/da, đặc điểm khuôn mặt, kính mắt, trang phục, tỷ lệ chibi 1:2).`,
-      `Tư thế và hành động hiện tại: ${actionSpecific}.`,
-      `Single centered full-body character standing facing camera, dynamic posture, sharp clean silhouette, solid neutral light gray background (#E8E8E8), high contrast studio rim lighting, floating character, no ground shadow, no floor, no contact shadow, no pedestal, pure uniform backdrop, single standalone character only, no character sheet, no sprite sheet, no sprite strip, no spritesheet, no multiple angles, no multiple views, no turnaround, no collage, no split screen.`,
-    ].join(" ");
-  }
 
   return [
     `Full-body single character pose of "${mascot.name}".`,
     `${characterDna}.`,
-    `Current pose and expression: ${actionSpecific}.`,
+    actionDirective,
     `${MASCOT_STUDIO_ISOLATION_TAGS}.`,
     `Strictly one single standalone mascot character in full-body view from head to toe. Single viewpoint, centered in canvas. No multiple views, no character sheet, no sprite sheet, no sprite strip, no spritesheet, no turnaround, no collage.`,
   ].join(" ");

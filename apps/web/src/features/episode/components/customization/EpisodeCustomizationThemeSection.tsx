@@ -1,6 +1,7 @@
 import type {
   Channel,
   Episode,
+  MascotStyle,
   QuizImageStyle,
   QuizPaletteId,
   VisualPresetItem,
@@ -10,6 +11,7 @@ import type { EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview
 import { PresetPickerDropdown } from "./PresetPickerDropdown";
 import { ArtStyleDropdown } from "./ArtStyleDropdown";
 import { PaletteDropdown } from "./PaletteDropdown";
+import { MascotStyleDropdown } from "./MascotStyleDropdown";
 import type { EpisodeCustomizationDropdownName } from "./useEpisodeCustomizationDropdown";
 
 export interface EpisodeCustomizationThemeSectionProps {
@@ -24,6 +26,9 @@ export interface EpisodeCustomizationThemeSectionProps {
   onSaveVisualStyle: (style: QuizImageStyle | "mixed") => void;
   onSavePaletteId: (palette: QuizPaletteId) => void;
   onPreview: (candidate: EpisodePreviewCandidate | null) => void;
+  mascotStyleId?: string | null;
+  onSaveMascotStyle?: (styleId: string | null) => void;
+  availableMascotStyles?: MascotStyle[];
 }
 
 export function EpisodeCustomizationThemeSection({
@@ -38,6 +43,9 @@ export function EpisodeCustomizationThemeSection({
   onSaveVisualStyle,
   onSavePaletteId,
   onPreview,
+  mascotStyleId,
+  onSaveMascotStyle,
+  availableMascotStyles,
 }: EpisodeCustomizationThemeSectionProps) {
   const { t } = useTranslation();
 
@@ -83,6 +91,20 @@ export function EpisodeCustomizationThemeSection({
             closeDropdown();
           }}
           onPreview={onPreview}
+        />
+        <MascotStyleDropdown
+          channel={channel}
+          episode={episode}
+          disabled={isPipelineRunning}
+          saving={isSaving("mascot-style")}
+          isOpen={openDropdown === "mascotStyle"}
+          onToggle={() => toggleDropdown("mascotStyle")}
+          mascotStyleId={mascotStyleId}
+          availableMascotStyles={availableMascotStyles}
+          onSaveMascotStyle={(styleId) => {
+            onSaveMascotStyle?.(styleId);
+            closeDropdown();
+          }}
         />
       </div>
     </div>

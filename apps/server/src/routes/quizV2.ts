@@ -16,7 +16,6 @@ import { buildSandboxComposition } from "../quiz/render/sandboxComposition.js";
 import { resolveCandyArcadeFont } from "../quiz/render/candyArcade/candyArcadeFonts.js";
 import { defaultSfxCandidateDirectories, resolveSfxCandidatePath } from "../quiz/audio/soundtrackSfxPlanner.js";
 import {
-  assertQuizRenderReady,
   compileTimeline,
   generateDirector,
   generateEpisodeDescription,
@@ -227,12 +226,6 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
 
       const artifact_path = await repository.writeVideoDescription(params.channelId, params.episodeId, updatedDescription);
       return { description: updatedDescription, artifact_path };
-    });
-    server.post("/api/channels/:channelId/episodes/:episodeId/quiz-v2/render", async (request, reply) => {
-      const params = request.params as { channelId: string; episodeId: string };
-      await assertQuizRenderReady(pipelineDeps(params.channelId, params.episodeId));
-      const task = tasks.submit("GENERATE_VIDEO", params.channelId, params.episodeId);
-      return reply.code(202).send({ task });
     });
     server.post("/api/quiz/preview-composition", async (request, reply) => {
       const input = SandboxPreviewInputBaseSchema.parse(request.body ?? {});

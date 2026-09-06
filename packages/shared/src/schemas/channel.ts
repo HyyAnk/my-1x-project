@@ -112,6 +112,7 @@ export const QuizConfigSchema = z.object({
   thumbnail_aspect_ratio: z.enum(["auto", "16:9", "9:16", "both"]).default("auto"),
   archetype: TopicGameplayArchetypeSchema.optional(),
   target_layout: QuizLayoutIdSchema.optional(),
+  mascot_style_id: z.string().optional(),
 });
 
 export type QuizConfig = z.infer<typeof QuizConfigSchema>;

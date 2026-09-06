@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { MascotActionTypeSchema, QuizImageStyleSchema } from "../enums.js";
+import {
+  MascotActionTypeSchema,
+  MascotMotionIntensitySchema,
+  MascotMotionPresetSchema,
+  QuizImageStyleSchema,
+} from "../enums.js";
 import { ChannelMascotConfigSchema, MascotPlacementPresetSchema, MascotProfileSchema } from "../schemas.js";
 
 export const CalibrateMascotActionInputSchema = z.object({
@@ -89,4 +94,47 @@ export const MascotStageSettingsInputSchema = z.object({
 });
 
 export type MascotStageSettingsInput = z.infer<typeof MascotStageSettingsInputSchema>;
+
+export const CreateMascotStyleInputSchema = z.object({
+  name: z.string().min(1),
+  keyword: z.string().default(""),
+});
+
+export type CreateMascotStyleInput = z.infer<typeof CreateMascotStyleInputSchema>;
+
+export const UpdateMascotStyleInputSchema = z.object({
+  name: z.string().optional(),
+  keyword: z.string().optional(),
+});
+
+export type UpdateMascotStyleInput = z.infer<typeof UpdateMascotStyleInputSchema>;
+
+export const GenerateMascotSlotInputSchema = z.object({
+  style_id: z.string().min(1),
+  state: z.enum(["thinking", "celebrate"]),
+  slot_index: z.number().int().min(1).max(10),
+  prompt_modifier: z.string().optional(),
+});
+
+export type GenerateMascotSlotInput = z.infer<typeof GenerateMascotSlotInputSchema>;
+
+export const BatchGenerateStyleSlotsInputSchema = z.object({
+  style_id: z.string().min(1),
+  state: z.enum(["thinking", "celebrate", "all"]).default("all"),
+});
+
+export type BatchGenerateStyleSlotsInput = z.infer<typeof BatchGenerateStyleSlotsInputSchema>;
+
+export const UpdateMascotSlotInputSchema = z.object({
+  style_id: z.string().min(1),
+  state: z.enum(["thinking", "celebrate"]),
+  slot_index: z.number().int().min(1).max(10),
+  image_url: z.string().optional(),
+  prompt_modifier: z.string().optional(),
+  motion_preset: MascotMotionPresetSchema.optional(),
+  motion_speed: z.number().optional(),
+  motion_intensity: MascotMotionIntensitySchema.optional(),
+});
+
+export type UpdateMascotSlotInput = z.infer<typeof UpdateMascotSlotInputSchema>;
 
