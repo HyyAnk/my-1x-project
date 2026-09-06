@@ -4,7 +4,18 @@ import {
   type MascotProfile,
   type QuizImageStyle,
   getMascotSlotDefaultPreset,
+  getMascotPoses,
+  getUnusedMascotPoses,
+  pickRandomUnusedPose,
+  pickShuffledUnusedPoses,
 } from "@studio/shared";
+
+export {
+  getMascotPoses,
+  getUnusedMascotPoses,
+  pickRandomUnusedPose,
+  pickShuffledUnusedPoses,
+};
 
 export const MASCOT_STYLE_PROMPTS: Record<QuizImageStyle, string> = {
   pixar_3d:

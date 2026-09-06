@@ -6,6 +6,10 @@ import {
   validateMascotPromptContract,
   MASCOT_STUDIO_ISOLATION_TAGS,
   MASCOT_STYLE_PROMPTS,
+  getMascotPoses,
+  getUnusedMascotPoses,
+  pickRandomUnusedPose,
+  pickShuffledUnusedPoses,
 } from "../src/quiz/mascotPromptContract.js";
 
 describe("mascotPromptContract", () => {
@@ -208,6 +212,53 @@ describe("mascotPromptContract", () => {
 
       expect(prompt).toContain(`Full-body single character concept illustration of ${override}.`);
       expect(validateMascotPromptContract(prompt, false)).toBe(true);
+    });
+  });
+
+  describe("20-pose library contract & selection helpers", () => {
+    it("returns 20 unique pose presets for thinking and celebrate states", () => {
+      const thinkingPoses = getMascotPoses("thinking");
+      const celebratePoses = getMascotPoses("celebrate");
+
+      expect(thinkingPoses.length).toBe(20);
+      expect(celebratePoses.length).toBe(20);
+
+      const thinkingPrompts = new Set(thinkingPoses.map((p) => p.prompt));
+      const celebratePrompts = new Set(celebratePoses.map((p) => p.prompt));
+
+      expect(thinkingPrompts.size).toBe(20);
+      expect(celebratePrompts.size).toBe(20);
+    });
+
+    it("excludes already used prompts and ids cleanly", () => {
+      const allThinking = getMascotPoses("thinking");
+      const usedPrompts = [allThinking[0]!.prompt, allThinking[1]!.id];
+
+      const unused = getUnusedMascotPoses("thinking", usedPrompts);
+      expect(unused.length).toBe(18);
+      expect(unused.find((p) => p.id === allThinking[0]!.id)).toBeUndefined();
+      expect(unused.find((p) => p.id === allThinking[1]!.id)).toBeUndefined();
+    });
+
+    it("shuffles and picks distinct non-overlapping unused poses", () => {
+      const allCelebrate = getMascotPoses("celebrate");
+      const usedPrompts = [allCelebrate[0]!.prompt, allCelebrate[1]!.prompt];
+
+      const picked = pickShuffledUnusedPoses("celebrate", usedPrompts, 10);
+      expect(picked.length).toBe(10);
+      const pickedSet = new Set(picked.map((p) => p.id));
+      expect(pickedSet.size).toBe(10);
+      expect(pickedSet.has(allCelebrate[0]!.id)).toBe(false);
+      expect(pickedSet.has(allCelebrate[1]!.id)).toBe(false);
+    });
+
+    it("picks a single random unused pose excluding used poses", () => {
+      const allThinking = getMascotPoses("thinking");
+      // Use 19 out of 20 poses
+      const usedPrompts = allThinking.slice(0, 19).map((p) => p.prompt);
+      const chosen = pickRandomUnusedPose("thinking", usedPrompts);
+      expect(chosen.id).toBe(allThinking[19]!.id);
+      expect(chosen.prompt).toBe(allThinking[19]!.prompt);
     });
   });
 });

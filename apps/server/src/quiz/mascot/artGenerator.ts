@@ -8,6 +8,11 @@ import {
   type MascotProfile,
   type MascotSpriteAction,
   type MascotStateVariant,
+  getMascotPoses,
+  getMascotSlotDefaultPreset,
+  getUnusedMascotPoses,
+  pickRandomUnusedPose,
+  pickShuffledUnusedPoses,
 } from "@studio/shared";
 import { generateGpti2ImageBytes } from "../../providers/gpti2Image.js";
 import { generateShopAiKeyImageBytes } from "../../providers/shopAiKeyImage.js";
@@ -316,10 +321,28 @@ export async function generateMascotStyleSlot(
     throw new Error(`Style ${styleId} not found`);
   }
 
+  const otherSlots = (style.states[input.state] || []).filter((s) => s.slot_index !== input.slot_index);
+  const otherUsedPrompts: string[] = [];
+  for (const s of otherSlots) {
+    if (s.prompt_modifier?.trim()) {
+      otherUsedPrompts.push(s.prompt_modifier.trim());
+    } else if (s.image_url && s.image_url.trim() !== "") {
+      otherUsedPrompts.push(getMascotSlotDefaultPreset(input.state, s.slot_index));
+    }
+  }
+
+  let effectivePromptModifier = input.prompt_modifier?.trim();
+  if (!effectivePromptModifier) {
+    if (input.state === "thinking" || input.state === "celebrate") {
+      const chosenPose = pickRandomUnusedPose(input.state, otherUsedPrompts);
+      effectivePromptModifier = chosenPose.prompt;
+    }
+  }
+
   const referenceImageBase64 = await loadMasterReferenceImageBase64(repository, mascot, logger);
 
   const fullPrompt = buildMascotActionPrompt(mascot, input.state, {
-    prompt: input.prompt_modifier,
+    prompt: effectivePromptModifier,
     keyword: style.keyword,
     hasReferenceImage: Boolean(referenceImageBase64),
     slotIndex: input.slot_index,
@@ -389,7 +412,7 @@ export async function generateMascotStyleSlot(
     state: input.state,
     slot_index: input.slot_index,
     image_url: assetUrl,
-    prompt_modifier: input.prompt_modifier,
+    prompt_modifier: effectivePromptModifier,
   });
 
   const updatedStyle = updatedMascot.styles?.find((s) => s.id === styleId);
@@ -423,13 +446,46 @@ export async function generateMascotStyleBatch(
 
   for (const state of statesToProcess) {
     const slots = style.states[state] || [];
+    const filledPrompts: string[] = [];
+    const emptySlotsForState: Array<{ slot_index: number; existingPrompt?: string }> = [];
+
     for (let i = 1; i <= 10; i++) {
       const slot = slots.find((s) => s.slot_index === i);
-      if (!slot || !slot.image_url || slot.image_url.trim() === "") {
+      if (slot && slot.image_url && slot.image_url.trim() !== "") {
+        if (slot.prompt_modifier?.trim()) {
+          filledPrompts.push(slot.prompt_modifier.trim());
+        } else {
+          filledPrompts.push(getMascotSlotDefaultPreset(state, i));
+        }
+      } else {
+        emptySlotsForState.push({
+          slot_index: i,
+          existingPrompt: slot?.prompt_modifier?.trim() || undefined,
+        });
+      }
+    }
+
+    if (emptySlotsForState.length > 0) {
+      const preassignedPrompts = emptySlotsForState
+        .map((s) => s.existingPrompt)
+        .filter((p): p is string => Boolean(p));
+
+      const alreadyUsedPrompts = [...filledPrompts, ...preassignedPrompts];
+      const slotsNeedingPose = emptySlotsForState.filter((s) => !s.existingPrompt);
+
+      const assignedPoses = pickShuffledUnusedPoses(
+        state,
+        alreadyUsedPrompts,
+        slotsNeedingPose.length,
+      );
+
+      let poseIdx = 0;
+      for (const item of emptySlotsForState) {
+        const promptModifier = item.existingPrompt || assignedPoses[poseIdx++]?.prompt;
         emptySlots.push({
           state,
-          slot_index: i,
-          prompt_modifier: slot?.prompt_modifier,
+          slot_index: item.slot_index,
+          prompt_modifier: promptModifier,
         });
       }
     }
