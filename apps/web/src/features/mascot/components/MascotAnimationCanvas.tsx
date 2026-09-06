@@ -1,7 +1,7 @@
-import { ALL_MASCOT_ACTIONS, type MascotActionType, type MascotProfile } from "@studio/shared";
+import { type MascotActionType, type MascotProfile } from "@studio/shared";
 import { Play, Pause, ArrowsOutSimple, Smiley } from "@phosphor-icons/react";
 import { useTranslation } from "../../../i18n";
-import { getLocalizedActionMeta, type MascotMotionPreset } from "../constants";
+import { CORE_GAMEPLAY_ACTIONS, getLocalizedActionMeta, type MascotMotionPreset } from "../constants";
 
 export type MascotAnimationCanvasProps = {
   editingMascot: MascotProfile | null;
@@ -146,7 +146,7 @@ export function MascotAnimationCanvas({
 
         {/* Quick Pose Switcher */}
         <div className="motion-quick-pose-strip">
-          {ALL_MASCOT_ACTIONS.map((action) => {
+          {CORE_GAMEPLAY_ACTIONS.map((action) => {
             const meta = getLocalizedActionMeta(action, t);
             const isReady = Boolean(editingMascot?.actions[action]?.sprite_url);
             const isSelected = activePreviewAction === action;

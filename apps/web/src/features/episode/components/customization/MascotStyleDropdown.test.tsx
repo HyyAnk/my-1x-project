@@ -262,6 +262,71 @@ describe("MascotStyleDropdown", () => {
     fireEvent.click(screen.getByText("Cycle All Styles"));
     expect(onSave).toHaveBeenCalledWith("cycle");
   });
+
+  it("renders style thumbnail avatars and readiness chips when anchor_image_url and poses are present", () => {
+    const stylesWithAnchors: MascotStyle[] = [
+      {
+        id: "core",
+        name: "Core Style",
+        keyword: "",
+        anchor_image_url: "https://example.com/core-anchor.png",
+        is_default: true,
+        states: {
+          thinking: Array.from({ length: 10 }, (_, i) => ({
+            id: `t_${i}`,
+            slot_index: i + 1,
+            image_url: `https://example.com/think_${i}.png`,
+          })),
+          celebrate: Array.from({ length: 10 }, (_, i) => ({
+            id: `c_${i}`,
+            slot_index: i + 1,
+            image_url: `https://example.com/celeb_${i}.png`,
+          })),
+        },
+        created_at: "2026-01-01T00:00:00.000Z",
+        updated_at: "2026-01-01T00:00:00.000Z",
+      },
+      {
+        id: "style-concept",
+        name: "Steampunk Explorer",
+        keyword: "steampunk",
+        anchor_image_url: "https://example.com/steampunk-anchor.png",
+        is_default: false,
+        states: {
+          thinking: [],
+          celebrate: [],
+        },
+        created_at: "2026-01-01T00:00:00.000Z",
+        updated_at: "2026-01-01T00:00:00.000Z",
+      },
+    ];
+
+    render(
+      <MascotStyleDropdown
+        channel={mockChannelWithMascot}
+        episode={mockEpisode}
+        isOpen={true}
+        onToggle={vi.fn()}
+        availableMascotStyles={stylesWithAnchors}
+      />,
+      { wrapper },
+    );
+
+    // Verify thumbnail images
+    const coreImg = screen.getByAltText("Core Style") as HTMLImageElement;
+    expect(coreImg).toBeDefined();
+    expect(coreImg.src).toBe("https://example.com/core-anchor.png");
+
+    const steampunkImg = screen.getByAltText("Steampunk Explorer") as HTMLImageElement;
+    expect(steampunkImg).toBeDefined();
+    expect(steampunkImg.src).toBe("https://example.com/steampunk-anchor.png");
+
+    // Verify readiness chips
+    // Core has 20 poses => "20 Poses"
+    expect(screen.getByText("20 Poses")).toBeDefined();
+    // Steampunk has anchor but 0 poses => "Concept Locked"
+    expect(screen.getByText("Concept Locked")).toBeDefined();
+  });
 });
 
 describe("buildEpisodePreviewRequest Mascot Style Forwarding", () => {

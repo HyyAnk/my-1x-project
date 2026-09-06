@@ -5,7 +5,7 @@ import {
   MascotMotionPresetSchema,
   QuizImageStyleSchema,
 } from "../enums.js";
-import { ChannelMascotConfigSchema, MascotPlacementPresetSchema, MascotProfileSchema } from "../schemas.js";
+import { ChannelMascotConfigSchema, MascotPlacementPresetSchema, MascotProfileSchema, MascotStyleSchema } from "../schemas.js";
 
 export const CalibrateMascotActionInputSchema = z.object({
   offset_x: z.number().min(-5000).max(5000).optional().default(0),
@@ -138,3 +138,16 @@ export const UpdateMascotSlotInputSchema = z.object({
 
 export type UpdateMascotSlotInput = z.infer<typeof UpdateMascotSlotInputSchema>;
 
+export const GenerateMascotStyleConceptRequestSchema = z.object({
+  prompt: z.string().optional(),
+  options: z.record(z.unknown()).optional(),
+});
+
+export type GenerateMascotStyleConceptRequest = z.infer<typeof GenerateMascotStyleConceptRequestSchema>;
+
+export const GenerateMascotStyleConceptResponseSchema = z.object({
+  style: MascotStyleSchema,
+  mascot: MascotProfileSchema,
+});
+
+export type GenerateMascotStyleConceptResponse = z.infer<typeof GenerateMascotStyleConceptResponseSchema>;

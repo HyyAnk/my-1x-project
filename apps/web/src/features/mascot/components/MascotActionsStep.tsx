@@ -14,6 +14,7 @@ import {
 import {
   type MascotProfile,
   type MascotStyle,
+  getMascotStyleReadiness,
   synthesizeLegacyCoreStyle,
 } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
@@ -21,6 +22,7 @@ import type { useMascotStyles } from "../hooks/useMascotStyles";
 import { VariantSlotCard } from "./VariantSlotCard";
 import { StyleCreateModal } from "./StyleCreateModal";
 import { SlotPromptModal } from "./SlotPromptModal";
+import { StyleAnchorReferencePin } from "./StyleAnchorReferencePin";
 
 export type MascotActionsStepProps = {
   editingMascot: MascotProfile | null;
@@ -170,6 +172,9 @@ export function MascotActionsStep({
               const count =
                 (style.states?.thinking?.filter((v) => Boolean(v.image_url)).length || 0) +
                 (style.states?.celebrate?.filter((v) => Boolean(v.image_url)).length || 0);
+              const isCore = style.id === "core" || Boolean(style.is_default);
+              const effectiveAnchor = style.anchor_image_url || (isCore ? editingMascot?.master_image_url : null);
+              const readiness = getMascotStyleReadiness({ ...style, anchor_image_url: effectiveAnchor || undefined });
 
               return (
                 <button
@@ -177,14 +182,14 @@ export function MascotActionsStep({
                   type="button"
                   role="tab"
                   aria-selected={isSelected}
-                  className={`mascot-style-tab ${isSelected ? "is-active" : ""}`}
+                  className={`mascot-style-tab ${isSelected ? "is-active" : ""} is-readiness-${readiness}`}
                   onClick={() => setActiveStyleId(style.id)}
                 >
                   <PaintBrush size={14} weight={isSelected ? "fill" : "regular"} />
                   <span className="style-tab-title">
                     {style.is_default || style.id === "core" ? "Core Style (Default)" : style.name}
                   </span>
-                  <span className="style-tab-count-pill">{count}/20</span>
+                  <span className={`style-tab-count-pill is-readiness-${readiness}`}>{count}/20</span>
                 </button>
               );
             })}
@@ -298,6 +303,14 @@ export function MascotActionsStep({
             </button>
           </div>
         </div>
+
+        {/* Style Visual Anchor Reference Pin */}
+        <StyleAnchorReferencePin
+          style={resolvedActiveStyle}
+          editingMascot={editingMascot}
+          stylesState={stylesState}
+          onOpenLightbox={onOpenLightbox}
+        />
 
         {/* LIVE BATCH GENERATION PROGRESS DECK (3 CONCURRENT STREAMS) */}
         {batchProgress ? (

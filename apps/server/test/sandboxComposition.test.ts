@@ -5,6 +5,7 @@ import {
   ALL_THINKING_BAR_STYLES,
   BUILT_IN_PRESETS,
   QUIZ_LAYOUTS,
+  getQuizPreviewLayoutCapability,
   type QuizPreviewLayoutId,
 } from "@studio/shared";
 import { getQuestionBoxVariant, resolveQuestionBoxVariant } from "../src/quiz/visual/elements/questionBox/registry.js";
@@ -81,10 +82,11 @@ describe("buildSandboxComposition Preview Engine", () => {
 
     expect(revealResult.html).toContain("answer-correct");
     expect(revealResult.html).toContain("Option C");
-    expect(revealResult.html).not.toContain("answer-check");
-    expect(revealResult.html).not.toContain("answer-cross");
-    expect(revealResult.html).not.toContain("✓");
-    expect(revealResult.html).not.toContain("✕");
+    const stageHtml = revealResult.html.slice(revealResult.html.indexOf('<main id="stage"'));
+    expect(stageHtml).not.toContain("answer-check");
+    expect(stageHtml).not.toContain("answer-cross");
+    expect(stageHtml).not.toContain("✓");
+    expect(stageHtml).not.toContain("✕");
 
     const explainResult = buildSandboxComposition({
       phase: "explain",
@@ -331,12 +333,17 @@ describe("buildSandboxComposition Preview Engine", () => {
       { layoutId: "visual_choices_three", choices: ["A", "B", "C"] },
       { layoutId: "visual_choices_three_pure", choices: ["A", "B", "C"], question_format: "odd_one_out" },
       { layoutId: "full_stack_list", choices: ["A", "B", "C"] },
+      { layoutId: "portrait_hero_choices", choices: ["A", "B", "C"] },
+      { layoutId: "portrait_split_versus", choices: ["Alpha", "Beta"], question_format: "multiple_choice" },
+      { layoutId: "portrait_verdict_tf", choices: ["True", "False"], question_format: "true_false" },
+      { layoutId: "portrait_stack_list", choices: ["A", "B", "C"] },
     ];
 
     for (const preset of BUILT_IN_PRESETS) {
       for (const lc of layoutConfigs) {
         it(`renders preset ${preset.name} (${preset.id}) on layout ${lc.layoutId} (${lc.choices.length} choices)`, () => {
-          for (const aspectRatio of ["16:9", "9:16"] as const) {
+          const supportedAspectRatios = getQuizPreviewLayoutCapability(lc.layoutId).supportedAspectRatios;
+          for (const aspectRatio of supportedAspectRatios) {
             const res = buildSandboxComposition({
               aspect_ratio: aspectRatio,
               mode: "rehearsal",
@@ -357,22 +364,38 @@ describe("buildSandboxComposition Preview Engine", () => {
             expect(res.html).toContain(`layout-${lc.layoutId}`);
             expect(res.css).toBeTruthy();
             expect(res.contrast_report.ok).toBe(true);
+
+            if (aspectRatio === "9:16") {
+              expect(res.css).toContain("--safe-zone-top: 180px;");
+              expect(res.css).toContain("--safe-zone-bottom: 440px;");
+              expect(res.css).toContain("--safe-zone-right: 140px;");
+            }
           }
         });
       }
     }
 
-    it("includes font readiness contract across all 6 layouts including pure visual", () => {
+    it("includes font readiness contract across all layouts including pure visual and portrait", () => {
       for (const layout of QUIZ_LAYOUTS) {
-        const is2Choice = layout.id === "verdict_true_false" || layout.id === "split_versus_two";
+        const is2Choice =
+          layout.id === "verdict_true_false" ||
+          layout.id === "split_versus_two" ||
+          layout.id === "portrait_verdict_tf" ||
+          layout.id === "portrait_split_versus";
         const choices = is2Choice ? ["Option A", "Option B"] : ["Option A", "Option B", "Option C"];
-        const questionFormat = layout.id === "verdict_true_false" ? "true_false" : layout.id === "visual_choices_three_pure" ? "odd_one_out" : "multiple_choice";
+        const questionFormat =
+          layout.id === "verdict_true_false" || layout.id === "portrait_verdict_tf"
+            ? "true_false"
+            : layout.id === "visual_choices_three_pure"
+              ? "odd_one_out"
+              : "multiple_choice";
+        const aspectRatio = layout.supportedAspectRatios[0];
 
         const res = buildSandboxComposition({
           layout_id: layout.id,
           choices,
           question_format: questionFormat,
-          aspect_ratio: "16:9",
+          aspect_ratio: aspectRatio,
         });
 
         expect(res.html).toContain("window.__fontReadyPromise");

@@ -36,6 +36,7 @@ export interface SandboxDesignTabProps {
   setCounterStyle: (style: QuizQuestionCounterStyle) => void;
   backgroundStyle: QuizBackgroundStyle;
   setBackgroundStyle: (style: QuizBackgroundStyle) => void;
+  aspectRatio?: "16:9" | "9:16";
 }
 
 export function SandboxDesignTab({
@@ -53,6 +54,7 @@ export function SandboxDesignTab({
   setCounterStyle,
   backgroundStyle,
   setBackgroundStyle,
+  aspectRatio,
 }: SandboxDesignTabProps) {
   const { t } = useTranslation();
 
@@ -84,7 +86,11 @@ export function SandboxDesignTab({
   return (
     <>
       {/* 1. Layout Mode Selector */}
-      <SandboxLayoutSelector layoutId={layoutId} setLayoutId={setLayoutId} />
+      <SandboxLayoutSelector
+        layoutId={layoutId}
+        setLayoutId={setLayoutId}
+        aspectRatio={aspectRatio}
+      />
 
       <div style={{ height: "1px", background: "var(--line)" }} />
 

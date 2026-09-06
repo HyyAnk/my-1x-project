@@ -21,7 +21,12 @@ import type { StudioLogger } from "../../logger.js";
 import { removeImageBackground } from "../../utils/imageMatting.js";
 import { retryWithBackoff } from "../../utils/retryWithBackoff.js";
 import { withMascotWriteLock } from "../../repository/mascots.js";
-import { buildMascotActionPrompt, buildMascotConceptPrompt, validateMascotPromptContract } from "../mascotPromptContract.js";
+import {
+  buildMascotActionPrompt,
+  buildMascotConceptPrompt,
+  buildMascotStyleConceptPrompt,
+  validateMascotPromptContract,
+} from "../mascotPromptContract.js";
 import { generateProceduralMascotArt, generateProceduralStateArt } from "./proceduralArt.js";
 
 /**
@@ -166,30 +171,39 @@ export async function generateMascotConceptArt(
   return { master_image_url: assetUrl, prompt_used: promptUsed, placeholder };
 }
 
+export async function loadMascotAssetBase64ByUrl(
+  repository: RepositoryService,
+  mascotId: string,
+  assetUrl?: string | null,
+  logger?: StudioLogger,
+): Promise<string | undefined> {
+  if (!assetUrl) {
+    return undefined;
+  }
+  const filename = assetUrl.split("/").pop();
+  if (!filename) {
+    return undefined;
+  }
+  try {
+    const fileInfo = await repository.getMascotAssetFile(mascotId, filename);
+    const rawBytes = await readFile(fileInfo.absolutePath);
+    if (rawBytes && rawBytes.length > 0) {
+      return `data:image/png;base64,${Buffer.from(rawBytes).toString("base64")}`;
+    }
+  } catch (err) {
+    logger?.warn(`Could not load mascot asset image for reference (${assetUrl}): ${err instanceof Error ? err.message : String(err)}`, {
+      profileId: mascotId,
+    });
+  }
+  return undefined;
+}
+
 async function loadMasterReferenceImageBase64(
   repository: RepositoryService,
   mascot: MascotProfile,
   logger?: StudioLogger,
 ): Promise<string | undefined> {
-  if (!mascot.master_image_url) {
-    return undefined;
-  }
-  const masterFilename = mascot.master_image_url.split("/").pop();
-  if (!masterFilename) {
-    return undefined;
-  }
-  try {
-    const fileInfo = await repository.getMascotAssetFile(mascot.id, masterFilename);
-    const rawMasterBytes = await readFile(fileInfo.absolutePath);
-    if (rawMasterBytes && rawMasterBytes.length > 0) {
-      return `data:image/png;base64,${Buffer.from(rawMasterBytes).toString("base64")}`;
-    }
-  } catch (err) {
-    logger?.warn(`Could not load master concept image for reference: ${err instanceof Error ? err.message : String(err)}`, {
-      profileId: mascot.id,
-    });
-  }
-  return undefined;
+  return loadMascotAssetBase64ByUrl(repository, mascot.id, mascot.master_image_url, logger);
 }
 
 /**
@@ -339,12 +353,25 @@ export async function generateMascotStyleSlot(
     }
   }
 
-  const referenceImageBase64 = await loadMasterReferenceImageBase64(repository, mascot, logger);
+  let referenceImageBase64: string | undefined;
+  let hasStyleAnchor = false;
+
+  if (style.anchor_image_url) {
+    referenceImageBase64 = await loadMascotAssetBase64ByUrl(repository, mascot.id, style.anchor_image_url, logger);
+    if (referenceImageBase64) {
+      hasStyleAnchor = true;
+    }
+  }
+
+  if (!referenceImageBase64) {
+    referenceImageBase64 = await loadMasterReferenceImageBase64(repository, mascot, logger);
+  }
 
   const fullPrompt = buildMascotActionPrompt(mascot, input.state, {
     prompt: effectivePromptModifier,
     keyword: style.keyword,
     hasReferenceImage: Boolean(referenceImageBase64),
+    hasStyleAnchor,
     slotIndex: input.slot_index,
   });
   assertMascotPromptContract(fullPrompt, Boolean(referenceImageBase64));
@@ -526,5 +553,131 @@ export async function generateMascotStyleBatch(
 
   const finalMascot = await repository.getMascot(mascot.id);
   return { mascot: finalMascot, generated_count: generatedCount, cancelled: Boolean(options.signal?.aborted) };
+}
+
+export async function generateMascotStyleConcept(
+  repository: RepositoryService,
+  mascot: MascotProfile,
+  styleId: string,
+  imageConfig: AppConfig["image_generation"],
+  options: { prompt?: string; signal?: AbortSignal } = {},
+  logger?: StudioLogger,
+): Promise<{
+  anchor_image_url: string;
+  raw_image_url: string;
+  prompt_used: string;
+  placeholder: boolean;
+}> {
+  const style = mascot.styles?.find((s) => s.id === styleId);
+  if (!style) {
+    throw new Error(`Style ${styleId} not found`);
+  }
+
+  const referenceImageBase64 = await loadMasterReferenceImageBase64(repository, mascot, logger);
+  const fullPrompt = buildMascotStyleConceptPrompt(mascot, style, options.prompt);
+  assertMascotPromptContract(fullPrompt, Boolean(referenceImageBase64));
+
+  let mattedBytes: Uint8Array;
+  let rawBytes: Uint8Array;
+  let placeholder = false;
+  const timestamp = Date.now();
+  const mattedFilename = `style_${styleId}_anchor_${timestamp}.png`;
+  const rawFilename = `style_${styleId}_anchor_raw_${timestamp}.png`;
+  const idempotencyKey = `mascot_${mascot.id}_${styleId}_anchor_${timestamp}`;
+  const hasApiKey = Boolean(
+    imageConfig.api_key || process.env.SHOPAIKEY_API_KEY || process.env.GPTI2_API_KEY || process.env.CUSTOM_IMAGE_API_KEY,
+  );
+
+  if (imageConfig.enabled && hasApiKey) {
+    try {
+      logger?.info(
+        `Generating mascot style concept for ${mascot.name} style ${style.name} (${styleId})`,
+        { profileId: mascot.id, styleId, hasRefImage: Boolean(referenceImageBase64) },
+      );
+      const generatedRawBytes = await retryWithBackoff(() =>
+        generateMascotAiImageBytes(
+          fullPrompt,
+          imageConfig,
+          {
+            aspectRatio: "1:1",
+            size: "1024x1024",
+            referenceImageBase64,
+            background: "opaque",
+            cancellationSignal: options.signal ?? AbortSignal.timeout(90_000),
+            idempotencyKey,
+          },
+          logger,
+        ),
+      );
+      rawBytes = generatedRawBytes;
+      try {
+        mattedBytes = await removeImageBackground(generatedRawBytes);
+      } catch (mattingErr) {
+        logger?.warn(
+          `Mascot style concept background removal failed, using raw AI image: ${mattingErr instanceof Error ? mattingErr.message : String(mattingErr)}`,
+          { profileId: mascot.id, styleId },
+        );
+        mattedBytes = generatedRawBytes;
+      }
+    } catch (err) {
+      logger?.warn(
+        `Mascot style concept AI generation failed, using procedural fallback: ${err instanceof Error ? err.message : String(err)}`,
+        { profileId: mascot.id, styleId },
+      );
+      const fallbackBytes = generateProceduralMascotArt(mascot.name, mascot.color_theme, `style_${styleId}`);
+      mattedBytes = fallbackBytes;
+      rawBytes = fallbackBytes;
+      placeholder = true;
+    }
+  } else {
+    const fallbackBytes = generateProceduralMascotArt(mascot.name, mascot.color_theme, `style_${styleId}`);
+    mattedBytes = fallbackBytes;
+    rawBytes = fallbackBytes;
+    placeholder = true;
+  }
+
+  const { anchor_image_url, raw_image_url } = await withMascotWriteLock(mascot.id, async () => {
+    if (style.anchor_image_url && typeof repository.deleteMascotAssetFile === "function") {
+      const prevFilename = style.anchor_image_url.split("/").pop();
+      if (prevFilename && prevFilename !== mattedFilename) {
+        void repository.deleteMascotAssetFile(mascot.id, prevFilename);
+        const prevRawFilename = prevFilename.replace("_anchor_", "_anchor_raw_");
+        if (prevRawFilename !== prevFilename) {
+          void repository.deleteMascotAssetFile(mascot.id, prevRawFilename);
+        }
+      }
+    }
+
+    const savedAnchorUrl = await repository.saveMascotAsset(mascot.id, mattedFilename, mattedBytes);
+    const savedRawUrl = await repository.saveMascotAsset(mascot.id, rawFilename, rawBytes);
+
+    if (typeof repository.getMascot === "function" && typeof repository.saveMascot === "function") {
+      const latest = await repository.getMascot(mascot.id).catch(() => mascot);
+      const updatedStyles = (latest.styles || []).map((s) =>
+        s.id === styleId
+          ? {
+              ...s,
+              anchor_image_url: savedAnchorUrl,
+              updated_at: new Date().toISOString(),
+            }
+          : s,
+      );
+
+      await repository.saveMascot({
+        ...latest,
+        styles: updatedStyles,
+        updated_at: new Date().toISOString(),
+      });
+    }
+
+    return { anchor_image_url: savedAnchorUrl, raw_image_url: savedRawUrl };
+  });
+
+  return {
+    anchor_image_url,
+    raw_image_url,
+    prompt_used: fullPrompt,
+    placeholder,
+  };
 }
 

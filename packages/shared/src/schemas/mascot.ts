@@ -45,6 +45,7 @@ export const MascotStyleSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   keyword: z.string().default(""),
+  anchor_image_url: z.string().nullable().default(null),
   is_default: z.boolean().default(false),
   states: z.object({
     thinking: z.array(MascotStateVariantSchema).default([]),
@@ -54,7 +55,9 @@ export const MascotStyleSchema = z.object({
   updated_at: z.string(),
 });
 
-export type MascotStyle = z.infer<typeof MascotStyleSchema>;
+export type MascotStyle = Omit<z.infer<typeof MascotStyleSchema>, "anchor_image_url"> & {
+  anchor_image_url?: string | null;
+};
 
 export const MascotProfileSchema = z.object({
   id: z.string().min(1),
@@ -116,6 +119,7 @@ export function synthesizeLegacyCoreStyle(profile: Partial<MascotProfile> | Masc
     id: "core",
     name: "Core Style",
     keyword: "",
+    anchor_image_url: profile.master_image_url || null,
     is_default: true,
     states: {
       thinking: thinkingVariants,

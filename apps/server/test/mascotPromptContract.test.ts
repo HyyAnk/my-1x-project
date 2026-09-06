@@ -3,6 +3,7 @@ import type { MascotProfile } from "@studio/shared";
 import {
   buildMascotActionPrompt,
   buildMascotConceptPrompt,
+  buildMascotStyleConceptPrompt,
   validateMascotPromptContract,
   MASCOT_STUDIO_ISOLATION_TAGS,
   MASCOT_STYLE_PROMPTS,
@@ -131,6 +132,25 @@ describe("mascotPromptContract", () => {
       expect(validateMascotPromptContract(prompt, true)).toBe(true);
     });
 
+    it("builds style-anchored action prompt with outfit continuity lock and no duplicated costume directive", () => {
+      const prompt = buildMascotActionPrompt(testMascot, "thinking", {
+        hasReferenceImage: true,
+        hasStyleAnchor: true,
+        keyword: "stealth cyber armor katana holographic visor",
+        prompt: "pondering over encrypted datapad",
+      });
+
+      expect(prompt).toContain("@1");
+      expect(prompt).toContain(
+        `Strictly preserve character identity, outfit, costume details, colors, and accessories from @1 for "${testMascot.name}". The character must wear the exact same costume shown in @1; only modify the pose, action, and facial expression.`,
+      );
+      expect(prompt).toContain("Pose and Action: pondering over encrypted datapad.");
+      expect(prompt).toContain("floating character");
+      expect(prompt).toContain("no ground shadow");
+      expect(prompt).not.toContain("Theme & Costume:");
+      expect(validateMascotPromptContract(prompt, true)).toBe(true);
+    });
+
     it("generates 10 distinct, unique action prompts for Thinking slots 1 through 10 when prompt is omitted", () => {
       const prompts = new Set<string>();
       for (let slot = 1; slot <= 10; slot++) {
@@ -212,6 +232,56 @@ describe("mascotPromptContract", () => {
 
       expect(prompt).toContain(`Full-body single character concept illustration of ${override}.`);
       expect(validateMascotPromptContract(prompt, false)).toBe(true);
+    });
+  });
+
+  describe("buildMascotStyleConceptPrompt", () => {
+    const testStyle = {
+      name: "Cyber Ninja",
+      keyword: "stealth cyber armor katana holographic visor",
+    };
+
+    it("builds canonical style concept prompt without overridePrompt (@1 continuity, costume directive, concept pose, studio isolation)", () => {
+      const prompt = buildMascotStyleConceptPrompt(testMascot, testStyle);
+
+      expect(prompt).toContain("@1");
+      expect(prompt).toContain('Strictly preserve character identity from @1 for "Pip the Penguin"');
+      expect(prompt).toContain("face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image");
+      expect(prompt).toContain("Theme & Costume: Styled in authentic stealth cyber armor katana holographic visor attire, costume, and accessories.");
+      expect(prompt).toContain('Full-body single character concept illustration of "Pip the Penguin" dressed in Cyber Ninja style.');
+      expect(prompt).toContain("Single centered subject standing proudly facing camera, cute chibi proportions (1:2 head-to-body), large expressive sparkling eyes, friendly and joyful expression.");
+      expect(prompt).toContain("floating character");
+      expect(prompt).toContain("no ground shadow");
+      expect(prompt).toContain("high contrast studio rim lighting");
+      expect(prompt).toContain("solid neutral light gray background (#E8E8E8)");
+      expect(prompt).toContain("single standalone character only");
+      expect(prompt).toContain("no character sheet");
+      expect(prompt).toContain("no sprite sheet");
+      expect(prompt).toContain("no turnaround");
+      expect(prompt).toContain("no spritesheet");
+      expect(validateMascotPromptContract(prompt, true)).toBe(true);
+    });
+
+    it("uses style.name as fallback costume when keyword is empty", () => {
+      const prompt = buildMascotStyleConceptPrompt(testMascot, { name: "Victorian Detective" });
+
+      expect(prompt).toContain("@1");
+      expect(prompt).toContain("Theme & Costume: Styled in authentic Victorian Detective attire, costume, and accessories.");
+      expect(prompt).toContain('Full-body single character concept illustration of "Pip the Penguin" dressed in Victorian Detective style.');
+      expect(validateMascotPromptContract(prompt, true)).toBe(true);
+    });
+
+    it("incorporates overridePrompt into concept pose when provided", () => {
+      const override = "Holding a gleaming golden katana with glowing blue runes";
+      const prompt = buildMascotStyleConceptPrompt(testMascot, testStyle, override);
+
+      expect(prompt).toContain("@1");
+      expect(prompt).toContain(override);
+      expect(prompt).toContain('Full-body single character concept illustration of "Pip the Penguin" dressed in Cyber Ninja style.');
+      expect(prompt).toContain("Theme & Costume: Styled in authentic stealth cyber armor katana holographic visor attire, costume, and accessories.");
+      expect(prompt).toContain("floating character");
+      expect(prompt).toContain("no ground shadow");
+      expect(validateMascotPromptContract(prompt, true)).toBe(true);
     });
   });
 

@@ -8,13 +8,13 @@ export type StageTimelineState = {
   pose: MascotActionType;
 };
 
-export function resolveStageTimelineState(timeSeconds: number, reaction: StageReactionStyle): StageTimelineState {
-  if (timeSeconds < 2) return { phase: "intro", pose: "wave" };
+export function resolveStageTimelineState(timeSeconds: number, _reaction?: StageReactionStyle): StageTimelineState {
+  if (timeSeconds < 2) return { phase: "intro", pose: "thinking" };
   if (timeSeconds < 4) return { phase: "question", pose: "thinking" };
   if (timeSeconds < 9) return { phase: "thinking", pose: "thinking" };
-  if (timeSeconds < 12) return { phase: "reveal", pose: reaction === "celebrate" ? "celebrate" : "oops" };
-  if (timeSeconds < 14) return { phase: "explain", pose: "point" };
-  return { phase: "outro", pose: "outro" };
+  if (timeSeconds < 12) return { phase: "reveal", pose: "celebrate" };
+  if (timeSeconds < 14) return { phase: "explain", pose: "celebrate" };
+  return { phase: "outro", pose: "celebrate" };
 }
 
 export function stageBackgroundPhase(phase: StageScenarioPhase): "question" | "choices" | "thinking" | "reveal" | "explain" {

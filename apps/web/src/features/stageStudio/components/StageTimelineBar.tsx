@@ -75,7 +75,7 @@ export function StageTimelineBar({ studio }: StageTimelineBarProps) {
               className={`stage-rx-btn ${reactionStyle === "oops" ? "is-active is-oops" : ""}`}
               onClick={() => {
                 setReactionStyle("oops");
-                if (scenarioPhase === "reveal") setActivePose("oops");
+                if (scenarioPhase === "reveal") setActivePose("celebrate");
               }}
               title={t("stageStudio.oopsReactionTooltip")}
             >

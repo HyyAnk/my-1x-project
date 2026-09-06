@@ -21,6 +21,7 @@ import {
   SandboxPresetSelector,
   SandboxPreviewCanvas,
 } from "./components";
+import { getCompatibleLayoutForAspectRatio } from "./components/design/SandboxLayoutSelector";
 
 export type { VisualPresetItem } from "./hooks/useSandboxPresets";
 
@@ -54,12 +55,12 @@ export function VisualSandboxTab({
         const currentAnswer = question.choices[question.correctChoiceIndex] || question.choices[0] || "Pikachu";
         question.setChoices([currentAnswer]);
         question.setCorrectChoiceIndex(0);
-      } else if (newLayoutId === "verdict_true_false") {
+      } else if (newLayoutId === "verdict_true_false" || newLayoutId === "portrait_verdict_tf") {
         if (question.choices.length !== 2 || !isTfChoices) {
           question.setChoices(["True", "False"]);
           if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
         }
-      } else if (newLayoutId === "split_versus_two") {
+      } else if (newLayoutId === "split_versus_two" || newLayoutId === "portrait_split_versus") {
         if (question.choices.length !== 2 || isTfChoices) {
           question.setChoices(
             question.choices.length > 2 && !isTfChoices
@@ -72,7 +73,9 @@ export function VisualSandboxTab({
         newLayoutId === "visual_choices_three" ||
         newLayoutId === "visual_choices_three_pure" ||
         newLayoutId === "media_left_choices_right" ||
-        newLayoutId === "full_stack_list"
+        newLayoutId === "full_stack_list" ||
+        newLayoutId === "portrait_hero_choices" ||
+        newLayoutId === "portrait_stack_list"
       ) {
         if (question.choices.length < 3) {
           if (isTfChoices) {
@@ -87,6 +90,17 @@ export function VisualSandboxTab({
       }
     },
     [design, question],
+  );
+
+  const handleAspectRatioChange = useCallback(
+    (newRatio: "16:9" | "9:16") => {
+      viewport.setAspectRatio(newRatio);
+      const compatibleLayout = getCompatibleLayoutForAspectRatio(design.layoutId, newRatio);
+      if (compatibleLayout !== design.layoutId) {
+        handleLayoutChange(compatibleLayout);
+      }
+    },
+    [viewport, design.layoutId, handleLayoutChange],
   );
 
   const handleApplyPresetQuestion = useCallback(
@@ -185,6 +199,7 @@ export function VisualSandboxTab({
           {/* Tab Content Panels */}
           {activeInspectorTab === "design" && (
             <SandboxDesignTab
+              aspectRatio={viewport.aspectRatio}
               layoutId={design.layoutId}
               setLayoutId={handleLayoutChange}
               paletteId={design.paletteId}
@@ -268,7 +283,7 @@ export function VisualSandboxTab({
           showShortsGuide={viewport.showShortsGuide}
           setShowShortsGuide={viewport.setShowShortsGuide}
           aspectRatio={viewport.aspectRatio}
-          setAspectRatio={viewport.setAspectRatio}
+          setAspectRatio={handleAspectRatioChange}
           iframeKey={preview.iframeKey}
           setIframeKey={preview.setIframeKey}
           zoom={viewport.zoom}

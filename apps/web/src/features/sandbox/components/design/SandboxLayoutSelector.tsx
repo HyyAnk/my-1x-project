@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { CaretDown, Check, ListDashes, ListNumbers, SquareSplitHorizontal, type IconProps } from "@phosphor-icons/react";
-import type { QuizPreviewLayoutId } from "@studio/shared";
+import { QUIZ_PORTRAIT_LAYOUT_IDS, type QuizPreviewLayoutId, type ResolvedQuizLayoutId } from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import {
   QUIZ_LAYOUT_UI_DEFINITIONS,
@@ -8,10 +8,59 @@ import {
   type QuizLayoutUiDefinition,
 } from "../../../quizLayouts/quizLayoutUiCatalog";
 
+export const PORTRAIT_LAYOUT_IDS: readonly QuizPreviewLayoutId[] = QUIZ_PORTRAIT_LAYOUT_IDS;
+
+export const LANDSCAPE_LAYOUT_IDS: readonly QuizPreviewLayoutId[] = [
+  "media_left_choices_right",
+  "visual_choices_three",
+  "visual_choices_three_pure",
+  "split_versus_two",
+  "verdict_true_false",
+  "full_stack_list",
+  "mystery_reveal",
+  "clue_deduction",
+];
+
+export function getCompatibleLayoutForAspectRatio(
+  currentLayoutId: QuizPreviewLayoutId,
+  targetAspectRatio: "16:9" | "9:16",
+): QuizPreviewLayoutId {
+  if (targetAspectRatio === "9:16") {
+    if (PORTRAIT_LAYOUT_IDS.includes(currentLayoutId)) {
+      return currentLayoutId;
+    }
+    switch (currentLayoutId) {
+      case "split_versus_two":
+        return "portrait_split_versus";
+      case "verdict_true_false":
+        return "portrait_verdict_tf";
+      case "full_stack_list":
+        return "portrait_stack_list";
+      default:
+        return "portrait_hero_choices";
+    }
+  } else {
+    if (LANDSCAPE_LAYOUT_IDS.includes(currentLayoutId)) {
+      return currentLayoutId;
+    }
+    switch (currentLayoutId) {
+      case "portrait_split_versus":
+        return "split_versus_two";
+      case "portrait_verdict_tf":
+        return "verdict_true_false";
+      case "portrait_stack_list":
+        return "full_stack_list";
+      default:
+        return "media_left_choices_right";
+    }
+  }
+}
+
 export interface SandboxLayoutSelectorProps {
   layoutId: QuizPreviewLayoutId;
   setLayoutId: (layout: QuizPreviewLayoutId) => void;
   disabled?: boolean;
+  aspectRatio?: "16:9" | "9:16";
 }
 
 function LayoutIcon({ icon, size = 18, ...props }: { icon: QuizLayoutUiDefinition["icon"]; size?: number } & IconProps) {
@@ -27,14 +76,42 @@ function LayoutIcon({ icon, size = 18, ...props }: { icon: QuizLayoutUiDefinitio
   }
 }
 
-export function SandboxLayoutSelector({ layoutId, setLayoutId, disabled = false }: SandboxLayoutSelectorProps) {
+export function SandboxLayoutSelector({
+  layoutId,
+  setLayoutId,
+  disabled = false,
+  aspectRatio = "16:9",
+}: SandboxLayoutSelectorProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const listboxId = useId();
   const labelId = useId();
 
-  const selectedLayout = layoutId !== "baseline" ? getQuizLayoutUiDefinition(layoutId) : QUIZ_LAYOUT_UI_DEFINITIONS[0];
+  const availableLayouts = useMemo(() => {
+    if (aspectRatio === "9:16") {
+      return QUIZ_LAYOUT_UI_DEFINITIONS.filter((layout) =>
+        PORTRAIT_LAYOUT_IDS.includes(layout.id),
+      );
+    }
+    return QUIZ_LAYOUT_UI_DEFINITIONS.filter((layout) =>
+      LANDSCAPE_LAYOUT_IDS.includes(layout.id),
+    );
+  }, [aspectRatio]);
+
+  useEffect(() => {
+    if (!aspectRatio) return;
+    const compatible = getCompatibleLayoutForAspectRatio(layoutId, aspectRatio);
+    if (compatible !== layoutId) {
+      setLayoutId(compatible);
+    }
+  }, [aspectRatio, layoutId, setLayoutId]);
+
+  const selectedLayout =
+    availableLayouts.find((l) => l.id === layoutId) ??
+    (layoutId !== "baseline" ? getQuizLayoutUiDefinition(layoutId as ResolvedQuizLayoutId) : null) ??
+    availableLayouts[0] ??
+    QUIZ_LAYOUT_UI_DEFINITIONS[0];
 
   const handleSelect = useCallback(
     (id: QuizPreviewLayoutId) => {
@@ -54,19 +131,20 @@ export function SandboxLayoutSelector({ layoutId, setLayoutId, disabled = false 
         if (!isOpen) {
           setIsOpen(true);
         } else {
-          const currentIndex = QUIZ_LAYOUT_UI_DEFINITIONS.findIndex((l) => l.id === layoutId);
+          const currentIndex = availableLayouts.findIndex((l) => l.id === selectedLayout.id);
+          const activeIndex = currentIndex >= 0 ? currentIndex : 0;
           const nextIndex =
             e.key === "ArrowDown"
-              ? (currentIndex + 1) % QUIZ_LAYOUT_UI_DEFINITIONS.length
-              : (currentIndex - 1 + QUIZ_LAYOUT_UI_DEFINITIONS.length) % QUIZ_LAYOUT_UI_DEFINITIONS.length;
-          handleSelect(QUIZ_LAYOUT_UI_DEFINITIONS[nextIndex].id);
+              ? (activeIndex + 1) % availableLayouts.length
+              : (activeIndex - 1 + availableLayouts.length) % availableLayouts.length;
+          handleSelect(availableLayouts[nextIndex].id);
         }
       } else if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         setIsOpen((prev) => !prev);
       }
     },
-    [disabled, handleSelect, isOpen, layoutId],
+    [availableLayouts, disabled, handleSelect, isOpen, selectedLayout.id],
   );
 
   useEffect(() => {
@@ -176,7 +254,7 @@ export function SandboxLayoutSelector({ layoutId, setLayoutId, disabled = false 
             overflowY: "auto",
           }}
         >
-          {QUIZ_LAYOUT_UI_DEFINITIONS.map((layout) => {
+          {availableLayouts.map((layout) => {
             const isSelected = layoutId === layout.id;
             return (
               <li

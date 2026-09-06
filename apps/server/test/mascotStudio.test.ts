@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildApp } from "../src/app.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 import { assessQuiz } from "../src/quiz/qa/quizAssessment.js";
-import { type Channel, type MascotProfile, type MascotSpriteAction, QuizV2Schema } from "@studio/shared";
+import { type Channel, type MascotProfile, type MascotSpriteAction, type MascotStyle, QuizV2Schema } from "@studio/shared";
 
 const roots: string[] = [];
 
@@ -551,6 +551,111 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
       expect(list[0]?.name).toBe("Alpha Mascot (Old)");
       expect(list[1]?.id).toBe(mascot2.id);
       expect(list[1]?.name).toBe("Beta Mascot (New)");
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("generates mascot style concept anchor image and persists via concept endpoint and style PUT", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "mascot-style-concept-test-"));
+    roots.push(root);
+
+    const app = await buildApp(root);
+    try {
+      // 1. Create mascot
+      const createRes = await app.server.inject({
+        method: "POST",
+        url: "/api/mascots",
+        payload: {
+          name: "Captain Oliver",
+          description: "An adventurous pirate parrot",
+          visual_style: "pixar_3d",
+          master_prompt: "Cute colorful pirate parrot with eyepatch",
+          color_theme: "#e11d48",
+        },
+      });
+      expect(createRes.statusCode).toBe(201);
+      const mascot = createRes.json<{ mascot: MascotProfile }>().mascot;
+
+      // 2. Create style
+      const styleRes = await app.server.inject({
+        method: "POST",
+        url: `/api/mascots/${mascot.id}/styles`,
+        payload: {
+          name: "Cyberpunk Ninja",
+          keyword: "neon visor cyber katana",
+        },
+      });
+      expect(styleRes.statusCode).toBe(201);
+      const { style } = styleRes.json<{ mascot: MascotProfile; style: MascotStyle }>();
+      expect(style.anchor_image_url ?? null).toBeNull();
+
+      // 3. Test 404 cases
+      // 3a. Non-existent mascot ID
+      const missingMascotRes = await app.server.inject({
+        method: "POST",
+        url: `/api/mascots/non_existent_mascot/styles/${style.id}/concept`,
+        payload: { prompt: "Cyberpunk ninja pose" },
+      });
+      expect(missingMascotRes.statusCode).toBe(404);
+      expect(missingMascotRes.json<{ error: string }>().error).toBe("Mascot not found");
+
+      // 3b. Non-existent style ID
+      const missingStyleRes = await app.server.inject({
+        method: "POST",
+        url: `/api/mascots/${mascot.id}/styles/non_existent_style/concept`,
+        payload: { prompt: "Cyberpunk ninja pose" },
+      });
+      expect(missingStyleRes.statusCode).toBe(404);
+      expect(missingStyleRes.json<{ error: string }>().error).toBe("Style not found");
+
+      // 4. Success case: POST /api/mascots/:id/styles/:styleId/concept
+      const conceptRes = await app.server.inject({
+        method: "POST",
+        url: `/api/mascots/${mascot.id}/styles/${style.id}/concept`,
+        payload: { prompt: "Epic neon glowing cyberpunk stance" },
+      });
+      expect(conceptRes.statusCode).toBe(200);
+      const conceptBody = conceptRes.json<{
+        success: boolean;
+        style: MascotStyle;
+        mascot: MascotProfile;
+        anchor_image_url: string;
+        placeholder: boolean;
+        prompt_used: string;
+      }>();
+      expect(conceptBody.success).toBe(true);
+      expect(conceptBody.anchor_image_url).toBeDefined();
+      expect(conceptBody.anchor_image_url).toContain(`/api/mascots/${mascot.id}/assets/style_${style.id}_anchor_`);
+      expect(conceptBody.style.anchor_image_url).toBe(conceptBody.anchor_image_url);
+      expect(conceptBody.placeholder).toBe(true);
+      expect(conceptBody.prompt_used).toContain("Cyberpunk Ninja");
+
+      // Verify persistence in repository
+      const refreshedMascot = await app.repository.getMascot(mascot.id);
+      const refreshedStyle = refreshedMascot.styles?.find((s) => s.id === style.id);
+      expect(refreshedStyle?.anchor_image_url).toBe(conceptBody.anchor_image_url);
+
+      // 5. Style update case: Direct update of anchor_image_url via PUT /api/mascots/:id/styles/:styleId
+      const customAnchorUrl = `/api/mascots/${mascot.id}/assets/custom_anchor_manual.png`;
+      const putRes = await app.server.inject({
+        method: "PUT",
+        url: `/api/mascots/${mascot.id}/styles/${style.id}`,
+        payload: {
+          name: "Cyberpunk Ninja Redux",
+          anchor_image_url: customAnchorUrl,
+        },
+      });
+      expect(putRes.statusCode).toBe(200);
+      const putBody = putRes.json<{ mascot: MascotProfile; style?: MascotStyle }>();
+      const putStyle = putBody.mascot.styles?.find((s) => s.id === style.id);
+      expect(putStyle?.name).toBe("Cyberpunk Ninja Redux");
+      expect(putStyle?.anchor_image_url).toBe(customAnchorUrl);
+
+      // Verify repository persistence after PUT
+      const persistedAfterPut = await app.repository.getMascot(mascot.id);
+      const styleAfterPut = persistedAfterPut.styles?.find((s) => s.id === style.id);
+      expect(styleAfterPut?.anchor_image_url).toBe(customAnchorUrl);
     } finally {
       await app.close();
     }

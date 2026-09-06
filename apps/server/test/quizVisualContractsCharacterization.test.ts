@@ -99,11 +99,10 @@ describe("Phase 1 typography and aspect-ratio characterization", () => {
 
   it("A-02 and B-03 preserve portrait selectors and reduced-motion CSS", () => {
     const css = candyArcadeCss({ fontMode: "preview", aspectRatio: "9:16" });
-    expect(css).toContain(
-      '#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .game-stage { grid-template-columns: minmax(0, 1fr);',
-    );
-    expect(css).toContain('#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .visual-answer-grid');
-    expect(css).toContain('#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .option-image { height: 320px; }');
+    expect(css).toContain("--safe-zone-top: 180px;");
+    expect(css).toContain("--safe-zone-bottom: 440px;");
+    expect(css).toContain("--safe-zone-right: 140px;");
+    expect(css).toContain('#stage[data-aspect-ratio="9:16"] .game-stage');
     expect(css).toContain("padding-bottom: 160px; box-sizing: border-box;");
     expect(css).toContain("@media (prefers-reduced-motion: reduce)");
     expect(css).toContain("animation-duration: .001ms !important");

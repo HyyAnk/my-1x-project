@@ -5,6 +5,8 @@ import { PROMPT_TEMPLATES, QUICK_PROMPT_TAGS } from "../constants";
 import { MascotIdentityForm } from "./MascotIdentityForm";
 import { MascotPromptStudio } from "./MascotPromptStudio";
 import { MascotConceptPreviewCard } from "./MascotConceptPreviewCard";
+import { MascotStyleConceptManager } from "./MascotStyleConceptManager";
+import type { useMascotStyles } from "../hooks/useMascotStyles";
 
 export interface MascotConceptStepProps {
   genName: string;
@@ -30,6 +32,7 @@ export interface MascotConceptStepProps {
   isPromptModalOpen: boolean;
   setIsPromptModalOpen: (open: boolean) => void;
   savingIdentity?: boolean;
+  stylesState?: ReturnType<typeof useMascotStyles>;
   onInjectTag: (tag: string) => void;
   onApplyTemplate: (tpl: (typeof PROMPT_TEMPLATES)[0]) => void;
   onCopyPrompt: () => void;
@@ -63,6 +66,7 @@ export function MascotConceptStep({
   isPromptModalOpen,
   setIsPromptModalOpen,
   savingIdentity = false,
+  stylesState,
   onInjectTag,
   onApplyTemplate,
   onCopyPrompt,
@@ -167,6 +171,14 @@ export function MascotConceptStep({
           onZoomPreview={(url) => setLightboxImage(url)}
           onRemoveBackground={onRemoveBackground}
         />
+
+        {editingMascot?.master_image_url ? (
+          <MascotStyleConceptManager
+            editingMascot={editingMascot}
+            stylesState={stylesState}
+            onOpenLightbox={setLightboxImage}
+          />
+        ) : null}
       </div>
 
       {/* Fullscreen Prompt Focus Modal */}

@@ -1107,6 +1107,113 @@
   top: 28px;
 }
 
+.stage-layout-miniature.is-portrait-hero .layout-mini-media {
+  top: 4px;
+  left: 18px;
+  right: 6px;
+  height: 18px;
+  background: #56627a;
+}
+
+.stage-layout-miniature.is-portrait-hero .layout-mini-choice {
+  left: 18px;
+  right: 6px;
+  height: 5px;
+  background: #c08a36;
+}
+
+.stage-layout-miniature.is-portrait-hero .choice-a {
+  top: 25px;
+}
+
+.stage-layout-miniature.is-portrait-hero .choice-b {
+  top: 33px;
+}
+
+.stage-layout-miniature.is-portrait-hero .choice-c {
+  display: none;
+}
+
+.stage-layout-miniature.is-portrait-versus .layout-mini-media {
+  top: 20px;
+  left: 18px;
+  right: 6px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.stage-layout-miniature.is-portrait-versus .layout-mini-choice {
+  left: 18px;
+  right: 6px;
+  height: 13px;
+  background: #c08a36;
+}
+
+.stage-layout-miniature.is-portrait-versus .choice-a {
+  top: 5px;
+  background: #56627a;
+}
+
+.stage-layout-miniature.is-portrait-versus .choice-b {
+  top: 24px;
+  background: #c08a36;
+}
+
+.stage-layout-miniature.is-portrait-versus .choice-c {
+  display: none;
+}
+
+.stage-layout-miniature.is-portrait-verdict .layout-mini-media {
+  top: 4px;
+  left: 18px;
+  right: 6px;
+  height: 21px;
+  background: #56627a;
+}
+
+.stage-layout-miniature.is-portrait-verdict .layout-mini-choice {
+  top: 28px;
+  height: 9px;
+  background: #c08a36;
+}
+
+.stage-layout-miniature.is-portrait-verdict .choice-a {
+  left: 18px;
+  width: 25px;
+}
+
+.stage-layout-miniature.is-portrait-verdict .choice-b {
+  right: 6px;
+  width: 25px;
+}
+
+.stage-layout-miniature.is-portrait-verdict .choice-c {
+  display: none;
+}
+
+.stage-layout-miniature.is-portrait-stack .layout-mini-media {
+  display: none;
+}
+
+.stage-layout-miniature.is-portrait-stack .layout-mini-choice {
+  left: 18px;
+  right: 6px;
+  height: 7px;
+  background: #c08a36;
+}
+
+.stage-layout-miniature.is-portrait-stack .choice-a {
+  top: 6px;
+}
+
+.stage-layout-miniature.is-portrait-stack .choice-b {
+  top: 17px;
+}
+
+.stage-layout-miniature.is-portrait-stack .choice-c {
+  top: 28px;
+}
+
 .inspector-icon-action,
 .stage-icon-toggle {
   display: grid;

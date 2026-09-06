@@ -17,7 +17,7 @@ export function compileThumbnailPrompt(
   // 1. Framing & Strict Anti-Clutter Directives
   const framingSection = isLandscape
     ? "Composition: 16:9 widescreen modern YouTube thumbnail format. Clean minimalist composition with generous negative space and clear visual focus. STRICT CLUTTER RESTRICTIONS: Full-bleed borderless art (STRICT NO thick outer border or framing stroke around the image perimeter). NO heavy metallic frames, NO lightning bolts, NO explosive fireworks/sparks, NO checkmark stickers (NO ✅/❌), NO casino/arcade neon overload. Keep the bottom-right corner clean with zero text (YouTube timestamp safe zone)."
-    : "Composition: 9:16 vertical portrait modern YouTube Shorts cover format. Clean minimalist stacked composition. STRICT CLUTTER RESTRICTIONS: Full-bleed borderless art (STRICT NO thick outer border). NO heavy metallic frames, NO lightning bolts, NO checkmark stickers (NO ✅/❌). Center all crucial subjects, text hooks, and mascot within the middle 60% vertical safe zone. Keep the bottom 25% clear of text to avoid Shorts UI overlay obstruction.";
+    : "Composition: 9:16 vertical portrait modern YouTube Shorts cover format. Clean minimalist stacked composition. STRICT CLUTTER RESTRICTIONS: Full-bleed borderless art (STRICT NO thick outer border). NO heavy metallic frames, NO lightning bolts, NO checkmark stickers (NO ✅/❌). STRICT SAFE ZONE: Enforce 440px bottom buffer / clear bottom 25% safe zone area free of text, crucial visual focal points, or mascot details to avoid vertical TikTok/Shorts UI overlays (captions, sounds, creator handle). Center all crucial subjects, text hooks, and mascot within the middle 60% vertical safe zone. Compose subjects cleanly with clear vertical stacking and zero cluttered 3-card or 3-subject matrices.";
 
   // 2. Mascot Definition (Clean, Expressive, Uncluttered)
   const mascotName = mascotProfile?.name ? `named ${mascotProfile.name}` : "";
@@ -64,31 +64,31 @@ export function compileThumbnailPrompt(
     case "split_vs":
       layoutSection = isLandscape
         ? `Layout: Clean horizontal side-by-side comparison in a clean minimalist environment. Left side shows clean isolated 3D artwork of ${plan.subjectAnchors[0]?.visualPrompt || "Option A"}. Right side shows clean isolated 3D artwork of ${plan.subjectAnchors[1]?.visualPrompt || "Option B"}. Centered in the middle is a sleek bold 3D 'VS' emblem with ${mascotDescription} in the foreground. Clean, spacious, floating without cards or numbers.`
-        : `Layout: Clean vertical top-and-bottom comparison. Top shows clean 3D artwork of ${plan.subjectAnchors[0]?.visualPrompt || "Option A"}. Bottom shows clean 3D artwork of ${plan.subjectAnchors[1]?.visualPrompt || "Option B"}. Centered between them is a sleek 3D 'VS' badge with ${mascotDescription}.`;
+        : `Layout: Clean vertical top-and-bottom comparison. Top shows clean 3D artwork of ${plan.subjectAnchors[0]?.visualPrompt || "Option A"}. Bottom shows clean 3D artwork of ${plan.subjectAnchors[1]?.visualPrompt || "Option B"}. Centered between them is a sleek 3D 'VS' badge with ${mascotDescription}. Clearly vertically stacked with zero cluttered 3-card or 3-subject matrices, maintaining the 440px bottom buffer.`;
       break;
 
     case "mystery_silhouette":
       layoutSection = isLandscape
         ? `Layout: Minimalist mystery reveal in a clean soft-focus environment. In the center, a clean dark silhouette of ${plan.subjectAnchors[0]?.visualPrompt || "a mystery subject"} with ONE single sleek glowing cyan question mark '?' (STRICT: only one question mark, NO multiple floating question marks in background). On the left side, ${mascotDescription}. Below/beside are the clean floating 3D candidate objects without any card boxes or numbers. Clean background with heavy soft bokeh.`
-        : `Layout: Vertical mystery composition. Center displays a clean dark silhouette of ${plan.subjectAnchors[0]?.visualPrompt || "a mystery subject"} with ONE single glowing cyan question mark '?'. Lower safe zone features ${mascotDescription} and clean floating 3D candidate models without cards or numbers.`;
+        : `Layout: Vertical mystery composition. Center displays a clean dark silhouette of ${plan.subjectAnchors[0]?.visualPrompt || "a mystery subject"} with ONE single glowing cyan question mark '?'. Lower safe zone features ${mascotDescription} and clean floating 3D candidate models without cards or numbers. Clearly vertically stacked with zero cluttered 3-card or 3-subject matrices, keeping the 440px bottom buffer clear.`;
       break;
 
     case "odd_one_out":
       layoutSection = isLandscape
         ? `Layout: On the right side, a clean floating 3x3 matrix of matching 3D objects with one subtle odd item. On the left side, ${mascotDescription} observing with a clever curious expression. Zero distracting lines, zero card borders, zero numbers.`
-        : `Layout: Center safe zone features a clean floating matrix of matching 3D objects with one odd item. Directly below, ${mascotDescription}.`;
+        : `Layout: Center safe zone features a clean floating vertical presentation of matching 3D objects with one subtle odd item. Directly below, ${mascotDescription}. Clearly vertically stacked with zero cluttered 3-card or 3-subject matrices, keeping the 440px bottom buffer clear.`;
       break;
 
     case "difficulty_tier":
       layoutSection = isLandscape
         ? `Layout: 4 clean vertical progression columns (Level 1 Easy to Level 4 Impossible). Beside Level 4, ${mascotDescription} with a mind-blown expression. Minimalist, sleek, and uncluttered without distracting boxes.`
-        : `Layout: 4 clean stacked horizontal tier cards (Level 1 to Level 4). Placed cleanly in the lower safe area, ${mascotDescription}.`;
+        : `Layout: 4 clean stacked horizontal tier cards (Level 1 to Level 4) arranged in vertical succession. Placed cleanly in the lower safe area above the 440px bottom buffer, ${mascotDescription}. Clearly vertically stacked with zero cluttered 3-card or 3-subject matrices.`;
       break;
 
     case "true_false":
       layoutSection = isLandscape
         ? `Layout: Upper center showcases clean 3D artwork of ${plan.subjectAnchors[0]?.visualPrompt || "a trivia paradox visual"}. Below are two clean modern tactile buttons: green 'TRUE' and red 'FALSE'. Beside them, ${mascotDescription}. Clean spacious composition.`
-        : `Layout: Upper safe zone shows clean 3D visual of ${plan.subjectAnchors[0]?.visualPrompt || "a trivia paradox visual"}. Middle displays tactile 'TRUE' and 'FALSE' buttons with ${mascotDescription}.`;
+        : `Layout: Upper safe zone shows clean 3D visual of ${plan.subjectAnchors[0]?.visualPrompt || "a trivia paradox visual"}. Middle displays tactile 'TRUE' and 'FALSE' buttons cleanly stacked with ${mascotDescription}. Clearly vertically stacked with zero cluttered 3-card or 3-subject matrices, maintaining the 440px bottom buffer.`;
       break;
 
     case "mega_grid":
@@ -98,7 +98,7 @@ export function compileThumbnailPrompt(
         .join("; ");
       layoutSection = isLandscape
         ? `Layout: On the left side, seamlessly integrated into the clean soft-focus 3D environment, ${mascotDescription}. On the right side, a clean 2x2 floating presentation of four isolated 3D objects (${gridItems}). Objects float cleanly and naturally in 3D space with soft contact shadows. STRICT: ZERO number badges (NO 1, 2, 3, 4 numbers), ZERO card boxes, ZERO white frames, ZERO borders.`
-        : `Layout: In the center safe zone, a clean 2x2 floating arrangement of four isolated 3D objects (${gridItems}) with zero numbers and zero card frames. Anchoring the bottom safe zone against the cheerful soft-focus backdrop, ${mascotDescription}.`;
+        : `Layout: In the center safe zone, a clean 2x2 floating arrangement of four isolated 3D objects (${gridItems}) with zero numbers and zero card frames. Anchoring the safe zone against the cheerful soft-focus backdrop above the 440px bottom buffer, ${mascotDescription}. Clearly vertically stacked with zero cluttered 3-card or 3-subject matrices.`;
       break;
     }
   }

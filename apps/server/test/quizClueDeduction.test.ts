@@ -15,7 +15,7 @@ describe("Clue Deduction layout & archetype", () => {
     const capability = QUIZ_LAYOUT_CATALOG.clue_deduction;
     expect(capability).toBeDefined();
     expect(capability.id).toBe("clue_deduction");
-    expect(capability.supportedAspectRatios).toEqual(["16:9", "9:16"]);
+    expect(capability.supportedAspectRatios).toEqual(["16:9"]);
     expect(capability.supportedChoiceCounts).toEqual([0, 1, 2, 3]);
     expect(capability.recommendedFormats).toContain("image_guess");
     expect(capability.recommendedFormats).toContain("multiple_choice");

@@ -56,14 +56,70 @@ export const ARCHETYPE_SLOT_DEFINITIONS = [
   },
 ] as const;
 
+export const PORTRAIT_ARCHETYPE_SLOT_DEFINITIONS = [
+  {
+    slot: 1,
+    name: "Deep Trivia",
+    archetype: "deep_trivia" as const,
+    suggestedLayout: "portrait_hero_choices" as const,
+    quizFormat: "multiple_choice" as const,
+    description: "Knowledge/story quiz with a single hero subject scene",
+  },
+  {
+    slot: 2,
+    name: "Silhouette / Mystery Reveal",
+    archetype: "mystery_reveal" as const,
+    suggestedLayout: "portrait_hero_choices" as const,
+    quizFormat: "image_guess" as const,
+    description: "Guess animal/object/food through shadow/silhouette or pixelated mosaic, revealed with laser scanner wipe",
+  },
+  {
+    slot: 3,
+    name: "True or False",
+    archetype: "verdict_true_false" as const,
+    suggestedLayout: "portrait_verdict_tf" as const,
+    quizFormat: "true_false" as const,
+    description: "Surprising truths and misconceptions with True/False verdict",
+  },
+  {
+    slot: 4,
+    name: "Clue Deduction A -> B",
+    archetype: "clue_deduction" as const,
+    suggestedLayout: "portrait_hero_choices" as const,
+    quizFormat: "image_guess" as const,
+    description: "Guess profession from tool, country from dish/landmark, animal from habitat with 100% crisp clue image A",
+  },
+  {
+    slot: 5,
+    name: "Wildcard Discovery / Face-off",
+    archetype: "versus_faceoff" as const,
+    suggestedLayout: "portrait_split_versus" as const,
+    quizFormat: "multiple_choice" as const,
+    description: "1v1 Face-off or fast text trivia",
+  },
+] as const;
+
+export type TopicMatrixSlotArchetype =
+  | (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]["archetype"]
+  | (typeof PORTRAIT_ARCHETYPE_SLOT_DEFINITIONS)[number]["archetype"];
+
+export type TopicMatrixSuggestedLayout =
+  | (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]["suggestedLayout"]
+  | (typeof PORTRAIT_ARCHETYPE_SLOT_DEFINITIONS)[number]["suggestedLayout"]
+  | "portrait_stack_list";
+
+export type TopicMatrixQuizFormat =
+  | (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]["quizFormat"]
+  | (typeof PORTRAIT_ARCHETYPE_SLOT_DEFINITIONS)[number]["quizFormat"];
+
 export interface TopicMatrixSlotPlan {
   slot: number;
   name: string;
   domainId: string;
   domainTitle: string;
-  archetype: (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]["archetype"];
-  suggestedLayout: (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]["suggestedLayout"];
-  quizFormat: (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]["quizFormat"];
+  archetype: TopicMatrixSlotArchetype;
+  suggestedLayout: TopicMatrixSuggestedLayout;
+  quizFormat: TopicMatrixQuizFormat;
   description: string;
   isKeySteered: boolean;
 }
@@ -71,6 +127,7 @@ export interface TopicMatrixSlotPlan {
 export interface TopicMatrixPlan {
   slots: TopicMatrixSlotPlan[];
   steeredKeyword?: string;
+  aspectRatio?: "16:9" | "9:16";
 }
 
 const KEYWORD_SYNONYMS: Record<string, string[]> = {
@@ -153,8 +210,11 @@ export function planTopicSuggestionMatrix(options: {
   taxonomy?: BankTaxonomy | null;
   index?: BankIndex | null;
   topicHint?: string;
+  aspectRatio?: "16:9" | "9:16";
 }): TopicMatrixPlan {
-  const { taxonomy, index, topicHint } = options;
+  const { taxonomy, index, topicHint, aspectRatio } = options;
+  const isPortrait = aspectRatio === "9:16";
+  const slotDefinitions = isPortrait ? PORTRAIT_ARCHETYPE_SLOT_DEFINITIONS : ARCHETYPE_SLOT_DEFINITIONS;
   const availableDomains = extractNormalizedDomains(taxonomy, index);
   const trimmedHint = topicHint?.trim();
 
@@ -191,7 +251,7 @@ export function planTopicSuggestionMatrix(options: {
     remainingDomains[2],
   ];
 
-  const slots: TopicMatrixSlotPlan[] = ARCHETYPE_SLOT_DEFINITIONS.map((def, idx) => {
+  const slots: TopicMatrixSlotPlan[] = slotDefinitions.map((def, idx) => {
     const assignedDomain = selectedFive[idx] || CANONICAL_FALLBACK_DOMAINS[idx];
     return {
       slot: def.slot,
@@ -209,14 +269,20 @@ export function planTopicSuggestionMatrix(options: {
   return {
     slots,
     steeredKeyword: trimmedHint || undefined,
+    aspectRatio: isPortrait ? "9:16" : "16:9",
   };
 }
 
-export function formatTopicMatrixPrompt(plan: TopicMatrixPlan, topicHint?: string): {
+export function formatTopicMatrixPrompt(
+  plan: TopicMatrixPlan,
+  topicHint?: string,
+  aspectRatio?: "16:9" | "9:16",
+): {
   hintGuidance: string;
   blueprintGuidance: string;
   outputContract: string;
 } {
+  const isPortrait = (aspectRatio ?? plan.aspectRatio) === "9:16";
   const trimmedHint = topicHint?.trim();
   const [slot1, slot2, slot3, slot4, slot5] = plan.slots;
 
@@ -225,14 +291,23 @@ export function formatTopicMatrixPrompt(plan: TopicMatrixPlan, topicHint?: strin
     hintGuidance = `\nIMPORTANT TOPIC THEME REQUIREMENT: The user specifically requested ideas relating to "${trimmedHint}". Exactly 2 candidates MUST be directly inspired by, focused on, or explore specific creative angles of "${trimmedHint}" (include "theme_hint": "${trimmedHint}" in those 2 JSON objects). Slot 1 is steered to domain "${slot1.domainId}" (${slot1.domainTitle}) and Slot 2 is steered to domain "${slot2.domainId}" (${slot2.domainTitle}). The remaining 3 candidates should be diverse, creative topics aligned with the overall channel DNA, sourced from 3 different domains ("${slot3.domainId}", "${slot4.domainId}", "${slot5.domainId}"), and MUST NOT reuse the keyword.`;
   }
 
-  const blueprintGuidance = `\nGAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY:
+  const blueprintGuidance = isPortrait
+    ? `\nGAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY:
+- Slot 1 (Deep Trivia): ${slot1.description} (domain_id: "${slot1.domainId}", quiz_format: "multiple_choice", archetype: "deep_trivia", suggested_layout: "portrait_hero_choices").
+- Slot 2 (Silhouette / Mystery Reveal): ${slot2.description} (domain_id: "${slot2.domainId}", quiz_format: "image_guess", archetype: "mystery_reveal", suggested_layout: "portrait_hero_choices").
+- Slot 3 (True or False): ${slot3.description} (domain_id: "${slot3.domainId}", quiz_format: "true_false", archetype: "verdict_true_false", suggested_layout: "portrait_verdict_tf").
+- Slot 4 (Clue Deduction A -> B): ${slot4.description} (domain_id: "${slot4.domainId}", quiz_format: "image_guess", archetype: "clue_deduction", suggested_layout: "portrait_hero_choices").
+- Slot 5 (Wildcard Discovery): ${slot5.description} (domain_id: "${slot5.domainId}", quiz_format: "multiple_choice", archetype: "versus_faceoff" | "speed_blitz", suggested_layout: "portrait_split_versus" | "portrait_stack_list").`
+    : `\nGAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY:
 - Slot 1 (Deep Trivia): ${slot1.description} (domain_id: "${slot1.domainId}", quiz_format: "multiple_choice", archetype: "deep_trivia", suggested_layout: "media_left_choices_right").
 - Slot 2 (Silhouette / Mystery Reveal): ${slot2.description} (domain_id: "${slot2.domainId}", quiz_format: "image_guess", archetype: "mystery_reveal", suggested_layout: "mystery_reveal").
 - Slot 3 (True or False): ${slot3.description} (domain_id: "${slot3.domainId}", quiz_format: "true_false", archetype: "verdict_true_false", suggested_layout: "verdict_true_false").
 - Slot 4 (Clue Deduction A -> B): ${slot4.description} (domain_id: "${slot4.domainId}", quiz_format: "image_guess", archetype: "clue_deduction", suggested_layout: "clue_deduction").
 - Slot 5 (Wildcard Discovery): ${slot5.description} (domain_id: "${slot5.domainId}", quiz_format: "multiple_choice" or "odd_one_out", archetype: "versus_faceoff" | "visual_spotting" | "speed_blitz", suggested_layout: "split_versus_two" | "visual_choices_three_pure" | "full_stack_list").`;
 
-  const outputContract = `Return exactly 5 JSON candidates with title, premise, why_it_fits, hook, estimated_potential, domain_id, quiz_format (knowledge|image_guess|multiple_choice|true_false|odd_one_out), archetype (deep_trivia|mystery_reveal|verdict_true_false|clue_deduction|versus_faceoff|visual_spotting|speed_blitz), suggested_layout (media_left_choices_right|mystery_reveal|verdict_true_false|clue_deduction|split_versus_two|visual_choices_three_pure|full_stack_list), question_count (${QUIZ_MIN_QUESTION_COUNT}-${QUIZ_MAX_QUESTION_COUNT}), and age_band (4-6|7-9|10-12|family). Use five different formats where possible.${blueprintGuidance}${hintGuidance} Do not research or develop them further.`;
+  const outputContract = isPortrait
+    ? `Return exactly 5 JSON candidates with title, premise, why_it_fits, hook, estimated_potential, domain_id, quiz_format (knowledge|image_guess|multiple_choice|true_false), archetype (deep_trivia|mystery_reveal|verdict_true_false|clue_deduction|versus_faceoff|speed_blitz), suggested_layout (portrait_hero_choices|portrait_split_versus|portrait_verdict_tf|portrait_stack_list), question_count (${QUIZ_MIN_QUESTION_COUNT}-${QUIZ_MAX_QUESTION_COUNT}), and age_band (4-6|7-9|10-12|family). Use diverse formats where possible.${blueprintGuidance}${hintGuidance} Do not research or develop them further.`
+    : `Return exactly 5 JSON candidates with title, premise, why_it_fits, hook, estimated_potential, domain_id, quiz_format (knowledge|image_guess|multiple_choice|true_false|odd_one_out), archetype (deep_trivia|mystery_reveal|verdict_true_false|clue_deduction|versus_faceoff|visual_spotting|speed_blitz), suggested_layout (media_left_choices_right|mystery_reveal|verdict_true_false|clue_deduction|split_versus_two|visual_choices_three_pure|full_stack_list), question_count (${QUIZ_MIN_QUESTION_COUNT}-${QUIZ_MAX_QUESTION_COUNT}), and age_band (4-6|7-9|10-12|family). Use five different formats where possible.${blueprintGuidance}${hintGuidance} Do not research or develop them further.`;
 
   return {
     hintGuidance,

@@ -206,6 +206,7 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
           isPromptModalOpen={isPromptModalOpen}
           setIsPromptModalOpen={setIsPromptModalOpen}
           savingIdentity={savingIdentity}
+          stylesState={mascotStylesState}
           onInjectTag={handleInjectTag}
           onApplyTemplate={handleApplyTemplate}
           onCopyPrompt={handleCopyPrompt}

@@ -187,27 +187,7 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
       });
   const sfxClips = isPremixed ? [] : buildSfxClips(events, input.assets);
 
-  const preloadUrls = new Set<string>();
-  if (input.mascot) {
-    if (input.mascot.master_image_url?.trim()) preloadUrls.add(input.mascot.master_image_url.trim());
-    for (const act of Object.values(input.mascot.actions || {})) {
-      if (act?.sprite_url?.trim()) preloadUrls.add(act.sprite_url.trim());
-    }
-    for (const s of input.mascot.styles || []) {
-      for (const v of s.states?.thinking || []) {
-        if (v.image_url?.trim()) preloadUrls.add(v.image_url.trim());
-      }
-      for (const v of s.states?.celebrate || []) {
-        if (v.image_url?.trim()) preloadUrls.add(v.image_url.trim());
-      }
-    }
-  }
-  const mascotPreloads =
-    preloadUrls.size > 0
-      ? Array.from(preloadUrls)
-          .map((url) => `<link rel="preload" href="${escAttr(source(url))}" as="image">`)
-          .join("\n")
-      : getMascotPreloadTags(input.mascot, source);
+  const mascotPreloads = getMascotPreloadTags(input.mascot, source);
 
   const audioTags = isPremixed
     ? `<audio id="master-soundtrack" class="clip" data-start="0" data-duration="${duration.toFixed(3)}" data-track-index="1" data-volume="1" src="${audioSrc}"></audio>`

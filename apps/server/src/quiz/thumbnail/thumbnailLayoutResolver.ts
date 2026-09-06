@@ -1,4 +1,9 @@
-import { THUMBNAIL_LAYOUT_CATALOG, type QuizImageStyle, type ThumbnailLayoutType } from "@studio/shared";
+import {
+  THUMBNAIL_LAYOUT_CATALOG,
+  type QuizImageStyle,
+  type ThumbnailAspectRatio,
+  type ThumbnailLayoutType,
+} from "@studio/shared";
 import {
   getCuriosityBadgeText,
   getThumbnailLocalizedTexts,
@@ -50,24 +55,52 @@ const LAYOUT_MATCH_RULES: readonly LayoutMatchRule[] = [
   },
 ];
 
-function determineThumbnailLayout(formatLower: string, topicLower: string, layoutOverride?: ThumbnailLayoutType): ThumbnailLayoutType {
+export function determineThumbnailLayout(
+  formatLower: string,
+  topicLower: string,
+  layoutOverride?: ThumbnailLayoutType,
+  aspectRatio?: ThumbnailAspectRatio,
+): ThumbnailLayoutType {
+  let layout: ThumbnailLayoutType | undefined;
+
   if (layoutOverride && THUMBNAIL_LAYOUT_CATALOG[layoutOverride]) {
-    return layoutOverride;
+    layout = layoutOverride;
+  } else {
+    for (const rule of LAYOUT_MATCH_RULES) {
+      if (rule.formatExact?.some((f) => formatLower === f)) {
+        layout = rule.layout;
+        break;
+      }
+      if (rule.formatSubstrings?.some((f) => formatLower.includes(f))) {
+        layout = rule.layout;
+        break;
+      }
+      if (rule.topicSubstrings?.some((t) => topicLower.includes(t))) {
+        layout = rule.layout;
+        break;
+      }
+    }
   }
 
-  for (const rule of LAYOUT_MATCH_RULES) {
-    if (rule.formatExact?.some((f) => formatLower === f)) {
-      return rule.layout;
-    }
-    if (rule.formatSubstrings?.some((f) => formatLower.includes(f))) {
-      return rule.layout;
-    }
-    if (rule.topicSubstrings?.some((t) => topicLower.includes(t))) {
-      return rule.layout;
-    }
+  if (!layout) {
+    layout = "mega_grid";
   }
 
-  return "mega_grid";
+  // Strictly disallow odd_one_out in 9:16 portrait format
+  if (aspectRatio === "9:16" && layout === "odd_one_out") {
+    const isComparison =
+      formatLower.includes("vs") ||
+      formatLower === "versus" ||
+      topicLower.includes(" vs ") ||
+      topicLower.includes("would you rather") ||
+      topicLower.includes("pick one") ||
+      topicLower.includes("どっち") ||
+      topicLower.includes("2択");
+
+    layout = isComparison ? "split_vs" : "mystery_silhouette";
+  }
+
+  return layout;
 }
 
 /**
@@ -79,7 +112,7 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
   const count = input.questionCount || (input.questions?.length ?? 10);
 
   // 1. Determine Layout
-  const layout = determineThumbnailLayout(formatLower, topicLower, input.layoutOverride);
+  const layout = determineThumbnailLayout(formatLower, topicLower, input.layoutOverride, input.aspectRatio);
   const catalogEntry = THUMBNAIL_LAYOUT_CATALOG[layout];
 
   // 2. Resolve Localized Hook & Badge Text

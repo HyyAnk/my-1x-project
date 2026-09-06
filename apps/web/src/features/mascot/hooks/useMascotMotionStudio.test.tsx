@@ -25,6 +25,20 @@ const mockMascot: MascotProfile = {
   master_image_url: "https://example.com/master.png",
   color_theme: "#06b6d4",
   actions: {
+    thinking: {
+      action: "thinking",
+      sprite_url: "https://example.com/thinking.png",
+      frames_count: 1,
+      fps: 6,
+      loop: true,
+      frame_width: 512,
+      frame_height: 512,
+      offset_x: 0,
+      offset_y: 0,
+      motion_preset: "breathe",
+      motion_speed: 1.0,
+      motion_intensity: "normal",
+    },
     idle: {
       action: "idle",
       sprite_url: "https://example.com/idle.png",
@@ -60,8 +74,8 @@ describe("useMascotMotionStudio", () => {
     vi.mocked(api.calibrateMascotAction).mockResolvedValue({
       mascot: { ...mockMascot },
       action: {
-        action: "idle",
-        sprite_url: "https://example.com/idle.png",
+        action: "thinking",
+        sprite_url: "https://example.com/thinking.png",
         frames_count: 1,
         fps: 6,
         loop: true,
@@ -96,10 +110,10 @@ describe("useMascotMotionStudio", () => {
       await result.current.handleSaveMotion(mockClickEvent);
     });
 
-    // Ensure api.calibrateMascotAction was called with "idle" (activePreviewAction) and NOT "[object Object]"
+    // Ensure api.calibrateMascotAction was called with "thinking" (activePreviewAction) and NOT "[object Object]"
     expect(api.calibrateMascotAction).toHaveBeenCalledWith(
       "mascot_123",
-      "idle",
+      "thinking",
       expect.objectContaining({
         motion_preset: "breathe",
       }),

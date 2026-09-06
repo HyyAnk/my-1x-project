@@ -43,7 +43,7 @@ export function useMascotMotionStudio({
 }: UseMascotMotionStudioProps) {
   const { t } = useTranslation();
 
-  const [activePreviewAction, setActivePreviewAction] = useState<MascotActionType>("idle");
+  const [activePreviewAction, setActivePreviewAction] = useState<MascotActionType>("thinking");
   const [isPlaying, setIsPlaying] = useState(true);
   const [canvasBackground, setCanvasBackground] = useState<"dark" | "light" | "grid" | "clean">("dark");
   const [canvasZoom, setCanvasZoom] = useState<number>(1.0);
@@ -123,7 +123,7 @@ export function useMascotMotionStudio({
     const targetAction: MascotActionType =
       typeof action === "string" && (ALL_MASCOT_ACTIONS as readonly string[]).includes(action)
         ? (action as MascotActionType)
-        : activePreviewAction;
+        : (activePreviewAction || "thinking");
 
     // For thinking/celebrate, persist motion to the selected filled variant slot first
     if (editingMascot?.id && activeStyle?.id && isVariantAction(targetAction)) {
@@ -151,7 +151,7 @@ export function useMascotMotionStudio({
       }
     }
 
-    return calibration.handleSaveMotion(action);
+    return calibration.handleSaveMotion(targetAction);
   };
 
   return {

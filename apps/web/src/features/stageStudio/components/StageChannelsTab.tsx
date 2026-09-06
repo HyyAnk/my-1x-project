@@ -79,7 +79,14 @@ export function StageChannelsTab({ studio, channels, allMascots }: StageChannels
             {/* Mascot Options */}
             {allMascots.map((m) => {
               const isSelected = selectedMascotId === m.id;
-              const readyPoses = Object.values(m.actions).filter((a) => a?.sprite_url).length;
+              const activeStyle = m.styles?.find((s) => s.id === m.active_style_id) || m.styles?.find((s) => s.is_default) || m.styles?.[0];
+              const styleVariantsCount = activeStyle?.states
+                ? (activeStyle.states.thinking?.filter((v) => Boolean(v?.image_url)).length || 0) +
+                  (activeStyle.states.celebrate?.filter((v) => Boolean(v?.image_url)).length || 0)
+                : 0;
+              const legacyActionsCount = Object.values(m.actions || {}).filter((a) => Boolean(a?.sprite_url)).length;
+              const readyPoses = styleVariantsCount > 0 ? styleVariantsCount : legacyActionsCount;
+              const avatarThumbnail = activeStyle?.anchor_image_url || m.master_image_url;
 
               return (
                 <button
@@ -89,8 +96,8 @@ export function StageChannelsTab({ studio, channels, allMascots }: StageChannels
                   onClick={() => setSelectedMascotId(m.id)}
                 >
                   <div className="mascot-picker-avatar">
-                    {m.master_image_url ? (
-                      <img src={m.master_image_url} alt={m.name} />
+                    {avatarThumbnail ? (
+                      <img src={avatarThumbnail} alt={m.name} />
                     ) : (
                       <Smiley size={22} style={{ color: m.color_theme || "var(--accent)" }} />
                     )}

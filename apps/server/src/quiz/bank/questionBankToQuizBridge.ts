@@ -104,9 +104,9 @@ export async function createEpisodeFromTopicWithBank(deps: {
   const selectedQuestions = jitResult.questions;
 
   const quizQuestions = await transcreateAndConvertTopicQuestions(selectedQuestions, targetLanguage, channel, repository, deps.llmClient);
-  const targetLayout = resolveTargetLayoutForTopic(topic);
-  const blueprint = topic.archetype ? getQuizGameplayArchetype(topic.archetype as any) : undefined;
   const renderAspect = input.render_aspect_ratio ?? (topic.title.toLowerCase().includes("shorts") || Boolean(topic.archetype) ? "9:16" : "16:9");
+  const targetLayout = resolveTargetLayoutForTopic(topic, renderAspect);
+  const blueprint = topic.archetype ? getQuizGameplayArchetype(topic.archetype as any) : undefined;
   const { requestedStyle, resolvedStyle } = resolveEpisodeVisualStyles(channel, input.visual_style ?? topic.visual_style);
 
   const { episode, quiz, timestamp } = await bootstrapTopicEpisode({
@@ -115,7 +115,7 @@ export async function createEpisodeFromTopicWithBank(deps: {
     selectedAgeBand: selectedQuestions[0]?.age_band,
   });
 
-  const directorPlan = buildTopicDirectorPlan(quiz, topic, channel, targetLayout);
+  const directorPlan = buildTopicDirectorPlan(quiz, topic, channel, targetLayout, renderAspect);
   await repository.writeDirectorPlan(channelId, episode.episode_id, directorPlan);
 
   const questionIds = selectedQuestions.map((q) => q.id);

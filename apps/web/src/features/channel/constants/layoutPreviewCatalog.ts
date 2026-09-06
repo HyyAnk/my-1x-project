@@ -111,16 +111,94 @@ export const LAYOUT_CATALOG: Record<string, LayoutMeta> = {
     desc: "Classic broadcast layout: 1 high-quality hero subject illustration on the left, 3 stacked choice cards on the right.",
     assets: "1 large hero subject image",
   },
+  portrait_hero_choices: {
+    id: "portrait_hero_choices",
+    name: "Portrait Hero Choices (860×500 Hero + Indented Choices)",
+    badge: "📱 Portrait Hero",
+    tagClass: "tag-portrait",
+    btnClass: "is-portrait-hero",
+    icon: "📱",
+    format: "Multiple Choice / Knowledge (9:16)",
+    desc: "Mobile-first 9:16 vertical layout: prominent 860×500 hero image, indented choice pills clearing TikTok/Reels right action rail, and 440px bottom caption safe zone.",
+    assets: "1 large hero question image (860×520)",
+  },
+  portrait_split_versus: {
+    id: "portrait_split_versus",
+    name: "Portrait Split Versus (Stacked 1v1 Face-off)",
+    badge: "⚔️ Portrait Versus",
+    tagClass: "tag-versus",
+    btnClass: "is-portrait-versus",
+    icon: "⚔️",
+    format: "Versus Face-off (9:16)",
+    desc: "Mobile 9:16 vertical split face-off: 2 vertically stacked contender cards with a central VS emblem, right rail clearance, and 440px bottom safe zone.",
+    assets: "2 contender images (Card A top + Card B bottom)",
+  },
+  portrait_verdict_tf: {
+    id: "portrait_verdict_tf",
+    name: "Portrait True or False (Hero + High-Contrast Verdict)",
+    badge: "⚖️ Portrait Verdict",
+    tagClass: "tag-tf",
+    btnClass: "is-portrait-verdict",
+    icon: "⚖️",
+    format: "True / False (9:16)",
+    desc: "Mobile 9:16 vertical verdict: statement header, 860×540 hero visual, and 2 oversized TRUE (Emerald) / FALSE (Rose) buttons with 440px bottom buffer.",
+    assets: "1 main hero question image (860×540)",
+  },
+  portrait_stack_list: {
+    id: "portrait_stack_list",
+    name: "Portrait Stack List (Full-Width High-Legibility Choices)",
+    badge: "⚡ Portrait Stack",
+    tagClass: "tag-stack",
+    btnClass: "is-portrait-stack",
+    icon: "⚡",
+    format: "Fast Trivia / Text Quiz (9:16)",
+    desc: "Mobile 9:16 vertical stack: high-legibility full-width choice pills, safe mascot anchor above 440px bottom buffer, clearing right action rail.",
+    assets: "Question prompt & 3-4 text choices",
+  },
 };
 
 export function resolveLayoutMeta(
   quizFormat: string,
   archetype?: string,
   layoutId?: string,
+  aspectRatio?: "16:9" | "9:16",
 ): { id: string; meta: LayoutMeta } {
-  let resolvedId = layoutId;
+  let resolvedId = layoutId && LAYOUT_CATALOG[layoutId] ? layoutId : undefined;
 
-  if (!resolvedId && archetype) {
+  // In 9:16, 3-image layouts are strictly disallowed
+  if (
+    aspectRatio === "9:16" &&
+    (resolvedId === "visual_choices_three" || resolvedId === "visual_choices_three_pure")
+  ) {
+    resolvedId = undefined;
+  }
+
+  if (resolvedId) {
+    const meta = LAYOUT_CATALOG[resolvedId] ?? LAYOUT_CATALOG.media_left_choices_right;
+    return { id: meta.id, meta };
+  }
+
+  if (aspectRatio === "9:16") {
+    if (
+      quizFormat === "true_false" ||
+      archetype === "verdict_true_false" ||
+      archetype === "verdict_fact_myth"
+    ) {
+      resolvedId = "portrait_verdict_tf";
+    } else if (archetype === "versus_faceoff") {
+      resolvedId = "portrait_split_versus";
+    } else if (archetype === "speed_blitz") {
+      resolvedId = "portrait_stack_list";
+    } else {
+      resolvedId = "portrait_hero_choices";
+    }
+
+    const meta = LAYOUT_CATALOG[resolvedId] ?? LAYOUT_CATALOG.portrait_hero_choices;
+    return { id: meta.id, meta };
+  }
+
+  // Landscape / default (aspectRatio !== "9:16")
+  if (archetype) {
     resolvedId = ARCHETYPE_LAYOUT_MAP[archetype];
   }
 

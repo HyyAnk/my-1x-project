@@ -1,4 +1,4 @@
-import { type MascotRenderAspectRatio, type QuizPreviewLayoutId } from "@studio/shared";
+import { getQuizPreviewLayoutCapability, type MascotRenderAspectRatio, type QuizPreviewLayoutId } from "@studio/shared";
 import { baselineLayout } from "./baseline.js";
 import { fullStackListLayout } from "./fullStackList.js";
 import { mediaLeftChoicesRightLayout } from "./mediaLeftChoicesRight.js";
@@ -9,6 +9,10 @@ import { visualChoicesThreeLayout } from "./visualChoicesThree.js";
 import { visualChoicesThreePureLayout } from "./visualChoicesThreePure.js";
 import { mysteryRevealLayout } from "./mysteryReveal.js";
 import { clueDeductionLayout } from "./clueDeduction.js";
+import { portraitHeroChoicesLayout } from "./portrait/portraitHeroChoices.js";
+import { portraitSplitVersusLayout } from "./portrait/portraitSplitVersus.js";
+import { portraitVerdictTfLayout } from "./portrait/portraitVerdictTf.js";
+import { portraitStackListLayout } from "./portrait/portraitStackList.js";
 
 export const QUIZ_LAYOUT_RENDERERS = {
   baseline: baselineLayout,
@@ -20,7 +24,13 @@ export const QUIZ_LAYOUT_RENDERERS = {
   full_stack_list: fullStackListLayout,
   mystery_reveal: mysteryRevealLayout,
   clue_deduction: clueDeductionLayout,
+  portrait_hero_choices: portraitHeroChoicesLayout,
+  portrait_split_versus: portraitSplitVersusLayout,
+  portrait_verdict_tf: portraitVerdictTfLayout,
+  portrait_stack_list: portraitStackListLayout,
 } satisfies Record<QuizPreviewLayoutId, QuizLayoutRenderDefinition>;
+
+export const QUIZ_LAYOUT_REGISTRY = QUIZ_LAYOUT_RENDERERS;
 
 export function getQuizLayoutRenderer(layoutId: QuizPreviewLayoutId): QuizLayoutRenderDefinition {
   return QUIZ_LAYOUT_RENDERERS[layoutId];
@@ -32,6 +42,7 @@ export function renderQuizLayoutBody(layoutId: QuizPreviewLayoutId, slots: QuizL
 
 export function quizLayoutCss(aspectRatio: MascotRenderAspectRatio): string {
   return Object.values(QUIZ_LAYOUT_RENDERERS)
+    .filter((layout) => getQuizPreviewLayoutCapability(layout.id).supportedAspectRatios.includes(aspectRatio))
     .map((layout) => layout.css(aspectRatio))
     .join("\n");
 }

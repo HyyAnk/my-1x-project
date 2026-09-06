@@ -1,4 +1,4 @@
-import { resolveQuizLayout, type DirectorArchetype, type DirectorPlan, type QuizQuestion, type QuizV2 } from "@studio/shared";
+import { resolveQuizLayout, type DirectorArchetype, type DirectorPlan, type MascotRenderAspectRatio, type QuizQuestion, type QuizV2 } from "@studio/shared";
 import { assertDirectorPlanValid } from "./validateDirectorPlan.js";
 
 export function parseDirectorPlanOutput(output: string, quiz: QuizV2): DirectorPlan {
@@ -11,7 +11,12 @@ export function parseDirectorPlanOutput(output: string, quiz: QuizV2): DirectorP
   return assertDirectorPlanValid(quiz, parsed);
 }
 
-export function createDefaultDirectorPlan(quiz: QuizV2): DirectorPlan {
+export function createDefaultDirectorPlan(
+  quiz: QuizV2,
+  aspectRatioOrTheme?: MascotRenderAspectRatio | string,
+  paletteId?: string,
+): DirectorPlan {
+  const aspectRatio: MascotRenderAspectRatio = aspectRatioOrTheme === "9:16" ? "9:16" : "16:9";
   const minimumThinking: Record<QuizV2["age_band"], number> = { "4-6": 7.5, "7-9": 7, "10-12": 6.8, family: 7 };
   const beats: DirectorPlan["beats"] = quiz.questions.map((question, index): DirectorPlan["beats"][number] => {
     const archetype =
@@ -44,7 +49,7 @@ export function createDefaultDirectorPlan(quiz: QuizV2): DirectorPlan {
       energy: isFinal ? "triumphant" : isMidpoint ? "excited" : index % 2 ? "playful" : "curious",
       visual_density: isFinal ? "burst" : index % 2 ? "lively" : "focused",
       palette_id: (["lime", "aqua", "sunny", "purple", "pink", "orange", "red", "blue"] as const)[index % 8],
-      layout_id: resolveDefaultLayout(question, directorArchetype),
+      layout_id: resolveDefaultLayout(question, directorArchetype, aspectRatio),
       motion_id: (["enter.pop", "enter.slideUp", "enter.scale"] as const)[index % 3],
       transition_id: isFinal ? "lightning_brush" : "bubble_splash",
       thinking_bar_style: "auto",
@@ -73,12 +78,13 @@ export function createDefaultDirectorPlan(quiz: QuizV2): DirectorPlan {
   };
 }
 
-function resolveDefaultLayout(question: QuizQuestion, archetype: DirectorArchetype) {
+function resolveDefaultLayout(question: QuizQuestion, archetype: DirectorArchetype, aspectRatio: MascotRenderAspectRatio = "16:9") {
   const resolution = resolveQuizLayout({
     requestedLayout: "auto",
     archetype,
     questionFormat: question.format,
     choiceCount: question.choices.length,
+    aspectRatio,
   });
   if (resolution.ok) return resolution.layoutId;
   throw new Error(resolution.issues.map((issue) => issue.message).join(" "));

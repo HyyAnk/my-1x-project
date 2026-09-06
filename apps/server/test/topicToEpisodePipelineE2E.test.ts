@@ -175,7 +175,7 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     const ep = body.episode;
     expect(ep.quiz_config.question_count).toBe(3);
     expect(ep.quiz_config.archetype).toBe("deep_trivia");
-    expect(ep.quiz_config.target_layout).toBe("media_left_choices_right");
+    expect(ep.quiz_config.target_layout).toBe("portrait_hero_choices");
     expect(ep.quiz_config.render_aspect_ratio).toBe("9:16");
 
     // 4. Verify quiz.json on disk contains 3 questions in retention arc order
@@ -202,7 +202,7 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     const storedDirector = await app.repository.readDirectorPlan(testChannelId, ep.episode_id);
     expect(storedDirector).toBeDefined();
     expect(storedDirector!.beats).toHaveLength(3);
-    expect(storedDirector!.beats[0].layout_id).toBe("media_left_choices_right");
+    expect(storedDirector!.beats[0].layout_id).toBe("portrait_hero_choices");
     expect(storedDirector!.beats[0].question_id).toBe(storedQuiz!.questions[0].id);
     expect(storedDirector!.beats[1].question_id).toBe(storedQuiz!.questions[1].id);
     expect(storedDirector!.beats[2].question_id).toBe(storedQuiz!.questions[2].id);
@@ -330,7 +330,7 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     // Sourced via JIT fallback
     expect(body.curated_source).toBe("jit_only");
     expect(body.quiz.questions).toHaveLength(3);
-    expect(body.director_plan.beats[0].layout_id).toBe("mystery_reveal");
+    expect(body.director_plan.beats[0].layout_id).toBe("portrait_hero_choices");
     expect(body.director_plan.beats[0].archetype).toBe("mystery_reveal");
     expect(body.director_plan.beats[0].asset_intents).toContain("answer_reveal");
   });

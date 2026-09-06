@@ -18,7 +18,7 @@ describe("Mystery Reveal layout & archetype", () => {
     const capability = QUIZ_LAYOUT_CATALOG.mystery_reveal;
     expect(capability).toBeDefined();
     expect(capability.id).toBe("mystery_reveal");
-    expect(capability.supportedAspectRatios).toEqual(["16:9", "9:16"]);
+    expect(capability.supportedAspectRatios).toEqual(["16:9"]);
     expect(capability.supportedChoiceCounts).toEqual([0, 1, 2, 3]);
     expect(capability.recommendedFormats).toContain("image_guess");
     expect(capability.media.required).toContain("question");

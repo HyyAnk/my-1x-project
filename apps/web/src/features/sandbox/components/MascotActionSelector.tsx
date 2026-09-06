@@ -24,10 +24,8 @@ export function MascotActionSelector({
 }: MascotActionSelectorProps) {
   const { t } = useTranslation();
 
-  const isVariantEligible = mascotAction === "thinking" || mascotAction === "celebrate";
-  const stateVariants = isVariantEligible
-    ? (mascotAction === "thinking" ? activeStyle?.states?.thinking : activeStyle?.states?.celebrate) || []
-    : [];
+  const activeCoreAction: "thinking" | "celebrate" = mascotAction === "celebrate" ? "celebrate" : "thinking";
+  const stateVariants = (activeCoreAction === "celebrate" ? activeStyle?.states?.celebrate : activeStyle?.states?.thinking) || [];
   const filledVariants = stateVariants.filter((v) => Boolean(v.image_url?.trim()));
 
   return (
@@ -74,7 +72,7 @@ export function MascotActionSelector({
         </div>
       )}
 
-      {/* Mascot Pose / Action */}
+      {/* Mascot Pose / Action: 2-state segmented control */}
       <div>
         <label
           style={{
@@ -89,107 +87,167 @@ export function MascotActionSelector({
         >
           {t("visualSandbox.mascotPoseSection")}
         </label>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "6px" }}>
+        <div
+          role="group"
+          aria-label={t("visualSandbox.mascotPoseSection")}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, 1fr)",
+            gap: "8px",
+            background: "var(--surface-sunken, rgba(0, 0, 0, 0.04))",
+            padding: "4px",
+            borderRadius: "var(--radius-md, 8px)",
+            border: "1px solid var(--line)",
+          }}
+        >
           {(
             [
-              { id: "thinking", label: t("visualSandbox.poseThinking") },
-              { id: "celebrate", label: t("visualSandbox.poseCelebrate") },
-              { id: "point", label: t("visualSandbox.posePoint") },
-              { id: "oops", label: t("visualSandbox.poseOops") },
-              { id: "idle", label: t("visualSandbox.poseIdle") },
-              { id: "wave", label: t("visualSandbox.poseWave") },
+              { id: "thinking" as const, label: t("visualSandbox.poseThinking"), icon: "🤔" },
+              { id: "celebrate" as const, label: t("visualSandbox.poseCelebrate"), icon: "🎉" },
             ] as const
           ).map((act) => {
-            const isSelected = mascotAction === act.id;
+            const isSelected = activeCoreAction === act.id;
             return (
               <button
                 key={act.id}
                 type="button"
                 className={isSelected ? "primary-button compact" : "quiet-button compact"}
-                style={{ fontSize: "10.5px", padding: "6px 4px", justifyContent: "center" }}
+                style={{
+                  fontSize: "11.5px",
+                  fontWeight: isSelected ? 700 : 500,
+                  padding: "8px 12px",
+                  justifyContent: "center",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                }}
                 onClick={() => setMascotAction(act.id)}
               >
-                {act.label}
+                <span aria-hidden="true">{act.icon}</span>
+                <span>{act.label}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* State Variants Selector for Thinking and Celebrate */}
-      {isVariantEligible && (
-        <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--radius-sm)", padding: "10px" }}>
-          <div
+      {/* State Variants Selector (slots 1..10) */}
+      <div
+        style={{
+          background: "var(--surface)",
+          border: "1px solid var(--line)",
+          borderRadius: "var(--radius-sm)",
+          padding: "10px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "8px",
+          }}
+        >
+          <span
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: "8px",
+              fontSize: "10.5px",
+              fontWeight: 700,
+              color: "var(--muted)",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
             }}
           >
-            <span
-              style={{
-                fontSize: "10.5px",
-                fontWeight: 700,
-                color: "var(--muted)",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}
-            >
-              {mascotAction === "thinking" ? "Thinking Variants" : "Celebrate Variants"}
-            </span>
-            <span style={{ fontSize: "10px", color: "var(--ink-secondary)" }}>
-              {filledVariants.length} available
-            </span>
-          </div>
-
-          {filledVariants.length > 0 ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(60px, 1fr))", gap: "6px" }}>
-              {filledVariants.map((variant, idx) => {
-                const isSelected = selectedVariantIndex === idx;
-                return (
-                  <button
-                    key={variant.id || `variant-${idx}`}
-                    type="button"
-                    className={isSelected ? "primary-button compact" : "quiet-button compact"}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      padding: "4px 2px",
-                      fontSize: "10px",
-                      borderRadius: "6px",
-                      border: isSelected ? "2px solid var(--accent)" : "1px solid var(--line)",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => setSelectedVariantIndex?.(idx)}
-                    title={`Slot ${variant.slot_index}${variant.prompt_modifier ? `: ${variant.prompt_modifier}` : ""}`}
-                  >
-                    {variant.image_url ? (
-                      <img
-                        src={variant.image_url}
-                        alt={`Slot ${variant.slot_index}`}
-                        style={{
-                          width: "32px",
-                          height: "32px",
-                          objectFit: "contain",
-                          borderRadius: "4px",
-                          marginBottom: "2px",
-                        }}
-                      />
-                    ) : null}
-                    <span style={{ fontWeight: 600 }}>Slot {variant.slot_index}</span>
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
-            <p style={{ fontSize: "11px", color: "var(--muted)", fontStyle: "italic", margin: 0 }}>
-              No {mascotAction} variants generated for this style yet.
-            </p>
-          )}
+            {activeCoreAction === "thinking" ? "Thinking Variants" : "Celebrate Variants"}
+          </span>
+          <span style={{ fontSize: "10px", color: "var(--ink-secondary)" }}>
+            {filledVariants.length} available
+          </span>
         </div>
-      )}
+
+        {filledVariants.length > 0 ? (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(64px, 1fr))",
+              gap: "8px",
+            }}
+          >
+            {filledVariants.map((variant, idx) => {
+              const isSelected = selectedVariantIndex === idx;
+              return (
+                <button
+                  key={variant.id || `variant-${idx}`}
+                  type="button"
+                  className={isSelected ? "primary-button compact" : "quiet-button compact"}
+                  style={{
+                    position: "relative",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "6px 4px",
+                    minHeight: "68px",
+                    borderRadius: "8px",
+                    border: isSelected ? "2px solid var(--accent)" : "1px solid var(--line)",
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                    boxShadow: isSelected ? "0 2px 8px var(--accent-glow, rgba(99, 102, 241, 0.25))" : "none",
+                  }}
+                  onClick={() => setSelectedVariantIndex?.(idx)}
+                  title={`Slot ${variant.slot_index}${variant.prompt_modifier ? `: ${variant.prompt_modifier}` : ""}`}
+                >
+                  {isSelected && (
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: "2px",
+                        right: "2px",
+                        width: "14px",
+                        height: "14px",
+                        borderRadius: "50%",
+                        background: "var(--accent, #6366f1)",
+                        color: "#ffffff",
+                        fontSize: "9px",
+                        fontWeight: 700,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0 1px 2px rgba(0,0,0,0.3)",
+                      }}
+                      aria-label="Active slot selection"
+                    >
+                      ✓
+                    </span>
+                  )}
+                  {variant.image_url ? (
+                    <img
+                      src={variant.image_url}
+                      alt={`Slot ${variant.slot_index}`}
+                      style={{
+                        width: "36px",
+                        height: "36px",
+                        objectFit: "contain",
+                        borderRadius: "4px",
+                        marginBottom: "4px",
+                      }}
+                    />
+                  ) : null}
+                  <span style={{ fontWeight: 600, fontSize: "10.5px" }}>
+                    Slot {variant.slot_index}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <p style={{ fontSize: "11px", color: "var(--muted)", fontStyle: "italic", margin: 0 }}>
+            No {activeCoreAction} variants generated for this style yet.
+          </p>
+        )}
+      </div>
     </div>
   );
 }

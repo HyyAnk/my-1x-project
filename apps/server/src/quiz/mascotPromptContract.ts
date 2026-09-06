@@ -2,6 +2,7 @@ import {
   MASCOT_ACTION_META,
   type MascotActionType,
   type MascotProfile,
+  type MascotStyle,
   type QuizImageStyle,
   getMascotSlotDefaultPreset,
   getMascotPoses,
@@ -77,6 +78,43 @@ export function buildMascotConceptPrompt(
 }
 
 /**
+ * Builds the canonical concept art prompt for a themed Mascot Style, preserving
+ * the master character identity (@1 reference) while applying the style costume.
+ */
+export function buildMascotStyleConceptPrompt(
+  mascot: Pick<MascotProfile, "name" | "description" | "visual_style" | "master_prompt" | "color_theme">,
+  style: Pick<MascotStyle, "name" | "keyword">,
+  overridePrompt?: string,
+): string {
+  const continuityDirective = `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image.`;
+
+  const costumeTarget = style.keyword?.trim() || style.name;
+  const costumeDirective = `Theme & Costume: Styled in authentic ${costumeTarget} attire, costume, and accessories.`;
+
+  const customDirective = overridePrompt?.trim()
+    ? (overridePrompt.trim().endsWith(".") ? overridePrompt.trim() : `${overridePrompt.trim()}.`)
+    : "";
+
+  const conceptPose = [
+    `Full-body single character concept illustration of "${mascot.name}" dressed in ${style.name} style.`,
+    ...(customDirective ? [customDirective] : []),
+    `Single centered subject standing proudly facing camera, cute chibi proportions (1:2 head-to-body), large expressive sparkling eyes, friendly and joyful expression.`,
+  ].join(" ");
+
+  const isolationConstraints = [
+    MASCOT_STUDIO_ISOLATION_TAGS,
+    `Strictly one single standalone mascot character in full-body view from head to toe. Single viewpoint, centered in canvas. No multiple views, no character sheet, no sprite sheet, no sprite strip, no spritesheet, no model sheet, no turnaround, no front-and-back poses, no multiple angles, no side-by-side poses, no duplicate characters, no grid, no split screen, no collage, no text, no watermark.`,
+  ].join(" ");
+
+  return [
+    continuityDirective,
+    costumeDirective,
+    conceptPose,
+    isolationConstraints,
+  ].join(" ");
+}
+
+/**
  * Builds the canonical action state prompt for Step 2 (Expressive Studio)
  */
 export function buildMascotActionPrompt(
@@ -86,6 +124,7 @@ export function buildMascotActionPrompt(
     prompt?: string;
     keyword?: string;
     hasReferenceImage?: boolean;
+    hasStyleAnchor?: boolean;
     slotIndex?: number;
   } = {},
 ): string {
@@ -108,6 +147,18 @@ export function buildMascotActionPrompt(
     : undefined;
 
   if (options.hasReferenceImage) {
+    if (options.hasStyleAnchor) {
+      const continuityDirective = `Strictly preserve character identity, outfit, costume details, colors, and accessories from @1 for "${mascot.name}". The character must wear the exact same costume shown in @1; only modify the pose, action, and facial expression.`;
+
+      const parts = [
+        continuityDirective,
+        actionDirective,
+        MASCOT_STUDIO_ISOLATION_TAGS,
+      ];
+
+      return parts.join(" ");
+    }
+
     const continuityDirective = `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image.`;
 
     const parts = [

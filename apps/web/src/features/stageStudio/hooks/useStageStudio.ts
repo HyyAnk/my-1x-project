@@ -9,6 +9,7 @@ import { useStageTimelineDirector } from "./useStageTimelineDirector";
 import { useStageTransformState } from "./useStageTransformState";
 import { useStageChannelFilter } from "./useStageChannelFilter";
 import { useStageSaveAction } from "./useStageSaveAction";
+import { getCompatibleStageQuestionLayout, resolveInitialStageQuestionLayout } from "../questionLayouts";
 
 export function useStageStudio({
   isOpen,
@@ -30,15 +31,38 @@ export function useStageStudio({
 
   // Inspector & Viewport Modes
   const [activeInspectorTab, setActiveInspectorTab] = useState<StageInspectorTab>("transform");
-  const [aspectRatio, setAspectRatio] = useState<StageAspectRatio>("16:9");
+  const rawTargetChannel = targetChannel as unknown as {
+    layout_id?: string;
+    render_aspect_ratio?: string;
+    aspect_ratio?: string;
+  } | null;
+  const channelAspectRatio: StageAspectRatio =
+    rawTargetChannel?.render_aspect_ratio === "9:16" || rawTargetChannel?.aspect_ratio === "9:16"
+      ? "9:16"
+      : "16:9";
+  const [aspectRatio, setAspectRatioState] = useState<StageAspectRatio>(() => {
+    return isSingleChannelMode && targetChannel ? channelAspectRatio : "16:9";
+  });
   const [stageViewMode, setStageViewMode] = useState<StageViewMode>("video_stage");
-  const [questionLayoutId, setQuestionLayoutId] = useState<StageQuestionLayout>(
-    (targetChannel as unknown as { layout_id?: StageQuestionLayout })?.layout_id === "visual_choices_three"
-      ? "visual_choices_three"
-      : "media_left_choices_right",
-  );
+  const [questionLayoutId, setQuestionLayoutId] = useState<StageQuestionLayout>(() => {
+    const initialAspect = isSingleChannelMode && targetChannel ? channelAspectRatio : "16:9";
+    const rawLayoutId = rawTargetChannel?.layout_id;
+    return resolveInitialStageQuestionLayout(rawLayoutId, initialAspect);
+  });
   const [showGuides, setShowGuides] = useState(true);
   const [showSafeMargins, setShowSafeMargins] = useState(false);
+
+  const setAspectRatio = (action: React.SetStateAction<StageAspectRatio>) => {
+    setAspectRatioState((prevAspect) => {
+      const nextAspect = typeof action === "function" ? action(prevAspect) : action;
+      if (nextAspect !== prevAspect) {
+        setQuestionLayoutId((currentLayoutId) =>
+          getCompatibleStageQuestionLayout(currentLayoutId, nextAspect),
+        );
+      }
+      return nextAspect;
+    });
+  };
 
   // Selected Mascot & Channels
   const [selectedMascotId, setSelectedMascotId] = useState<string | null>(null);
@@ -94,11 +118,13 @@ export function useStageStudio({
     }
     if (!presetReady || initializedForOpenRef.current) return;
 
-    setQuestionLayoutId(
-      (targetChannel as unknown as { layout_id?: StageQuestionLayout })?.layout_id === "visual_choices_three"
-        ? "visual_choices_three"
-        : "media_left_choices_right",
-    );
+    const rawLayoutId = rawTargetChannel?.layout_id;
+    if (isSingleChannelMode && targetChannel) {
+      setAspectRatioState(channelAspectRatio);
+      setQuestionLayoutId(resolveInitialStageQuestionLayout(rawLayoutId, channelAspectRatio));
+    } else {
+      setQuestionLayoutId(resolveInitialStageQuestionLayout(rawLayoutId, aspectRatio));
+    }
 
     if (isSingleChannelMode && targetChannel) {
       const assignedId = targetChannel.mascot_id || (allMascots.length > 0 ? allMascots[0].id : null);
@@ -151,6 +177,7 @@ export function useStageStudio({
     setShowInIntro,
     setShowInOutro,
     setShowInQuestion,
+    aspectRatio,
   ]);
 
   const selectMascot = (mascotId: string | null) => {

@@ -73,7 +73,8 @@ describe("Phase 3 cross-surface scene pipeline", () => {
   it("P3-PAR-04 propagates 16:9 and 9:16 through production and Sandbox", () => {
     for (const aspectRatio of ["16:9", "9:16"] as const) {
       expect(productionSource("text", aspectRatio)).toContain(`data-aspect-ratio="${aspectRatio}"`);
-      expect(buildSandboxComposition({ aspect_ratio: aspectRatio }).html).toContain(`data-aspect-ratio="${aspectRatio}"`);
+      const layoutId = aspectRatio === "9:16" ? "portrait_stack_list" : "media_left_choices_right";
+      expect(buildSandboxComposition({ aspect_ratio: aspectRatio, layout_id: layoutId }).html).toContain(`data-aspect-ratio="${aspectRatio}"`);
     }
   });
 
@@ -134,12 +135,12 @@ function productionSource(
   answerCardStyle?: QuizAnswerCardStyle,
 ): string {
   const quiz = QuizV2Schema.parse(quizInput(questionText, firstChoice, 3));
-  const director = createDefaultDirectorPlan(quiz);
+  const director = createDefaultDirectorPlan(quiz, aspectRatio);
   if (presentation === "visual") {
     director.beats[0] = {
       ...director.beats[0],
       archetype: "visual_multiple_choice",
-      layout_id: "visual_choices_three",
+      layout_id: aspectRatio === "9:16" ? "portrait_hero_choices" : "visual_choices_three",
       asset_intents: ["choice_illustration"],
     };
   }

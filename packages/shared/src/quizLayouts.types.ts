@@ -1,5 +1,8 @@
-import type { DirectorArchetype, QuizLayoutId, QuizQuestionFormat } from "./enums.js";
+import type { DirectorArchetype, QuizLayoutId, QuizPortraitLayoutId, QuizQuestionFormat } from "./enums.js";
+import type { QuizGameplayArchetypeId } from "./quizArchetypes.js";
 import type { MascotRenderAspectRatio } from "./mascot/renderTypes.js";
+
+export type { QuizPortraitLayoutId };
 
 export type QuizChoicePresentation = "text" | "visual";
 export type QuizLayoutMediaKind = "question" | "choice";
@@ -39,7 +42,7 @@ export type QuizLayoutCapability<LayoutId extends string> = {
 
 export type QuizLayoutResolutionInput = {
   requestedLayout: QuizLayoutId;
-  archetype: DirectorArchetype;
+  archetype: DirectorArchetype | QuizGameplayArchetypeId | (string & {});
   questionFormat: QuizQuestionFormat;
   choiceCount: number;
   aspectRatio?: MascotRenderAspectRatio;

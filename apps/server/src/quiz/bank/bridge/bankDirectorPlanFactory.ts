@@ -6,6 +6,7 @@ import {
   type DirectorArchetype,
   type DirectorBeat,
   type DirectorPlan,
+  type MascotRenderAspectRatio,
   type QuizLayoutId,
   type QuizQuestion,
   type QuizV2,
@@ -41,11 +42,81 @@ export function mapToDirectorArchetype(
 }
 
 /**
- * Resolves the appropriate quiz layout ID for a given topic candidate.
+ * Resolves the appropriate quiz layout ID for a given topic candidate and render aspect ratio.
+ * For 9:16 portrait renders, routes to one of the 4 dedicated portrait layouts:
+ * - portrait_hero_choices
+ * - portrait_split_versus
+ * - portrait_verdict_tf
+ * - portrait_stack_list
+ * For 16:9 landscape renders (default), preserves legacy landscape layouts.
  */
-export function resolveTargetLayoutForTopic(topic: TopicCandidate): QuizLayoutId {
+export function resolveTargetLayoutForTopic(
+  topic: TopicCandidate,
+  aspectRatio: MascotRenderAspectRatio = "16:9",
+): QuizLayoutId {
+  if (aspectRatio === "9:16") {
+    if (topic.archetype === "visual_spotting" || topic.quiz_format === "odd_one_out") {
+      throw new Error(
+        "Archetype 'visual_spotting' and format 'odd_one_out' (3-image visual choices) are strictly unsupported for 9:16 vertical video. Use 16:9 landscape aspect ratio instead.",
+      );
+    }
+
+    if (topic.suggested_layout) {
+      switch (topic.suggested_layout) {
+        case "portrait_hero_choices":
+        case "portrait_split_versus":
+        case "portrait_verdict_tf":
+        case "portrait_stack_list":
+          return topic.suggested_layout as QuizLayoutId;
+        case "split_versus_two":
+          return "portrait_split_versus";
+        case "verdict_true_false":
+          return "portrait_verdict_tf";
+        case "full_stack_list":
+          return "portrait_stack_list";
+        default:
+          return "portrait_hero_choices";
+      }
+    }
+
+    if (topic.archetype) {
+      switch (topic.archetype) {
+        case "verdict_true_false":
+        case "verdict_fact_myth":
+          return "portrait_verdict_tf";
+        case "versus_faceoff":
+          return "portrait_split_versus";
+        case "speed_blitz":
+          return "portrait_stack_list";
+        case "mystery_reveal":
+        case "clue_deduction":
+        case "visual_identification":
+        case "deep_trivia":
+        default:
+          return "portrait_hero_choices";
+      }
+    }
+
+    if (topic.quiz_format === "true_false") {
+      return "portrait_verdict_tf";
+    }
+    return "portrait_hero_choices";
+  }
+
+  // 16:9 (or default landscape)
   if (topic.suggested_layout) {
-    return topic.suggested_layout as QuizLayoutId;
+    switch (topic.suggested_layout) {
+      case "portrait_split_versus":
+        return "split_versus_two";
+      case "portrait_verdict_tf":
+        return "verdict_true_false";
+      case "portrait_stack_list":
+        return "full_stack_list";
+      case "portrait_hero_choices":
+        return "media_left_choices_right";
+      default:
+        return topic.suggested_layout as QuizLayoutId;
+    }
   }
   if (topic.archetype) {
     const bp = getQuizGameplayArchetype(topic.archetype as any);
@@ -152,8 +223,9 @@ export function buildTopicDirectorPlan(
   topic: TopicCandidate,
   channel: Channel,
   targetLayout: QuizLayoutId,
+  aspectRatio: MascotRenderAspectRatio = "16:9",
 ): DirectorPlan {
-  const basePlan = createDefaultDirectorPlan(quiz);
+  const basePlan = createDefaultDirectorPlan(quiz, aspectRatio);
   const channelPalette = QuizPaletteIdSchema.safeParse(channel.default_palette_id);
   const isReveal = topic.archetype === "mystery_reveal" || topic.archetype === "clue_deduction";
 

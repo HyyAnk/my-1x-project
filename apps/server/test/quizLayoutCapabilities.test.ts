@@ -31,7 +31,9 @@ describe("Phase 2 layout capability catalog", () => {
       expect(layout.supportedFormats.length).toBeGreaterThan(0);
       expect(layout.recommendedFormats.every((format) => layout.supportedFormats.includes(format))).toBe(true);
       expect(layout.media.required.every((media) => layout.media.supported.includes(media))).toBe(true);
-      expect(layout.supportedAspectRatios).toEqual(["16:9", "9:16"]);
+      expect(layout.supportedAspectRatios).toEqual(
+        layout.id.startsWith("portrait_") ? ["9:16"] : ["16:9"],
+      );
       expect(layout.metrics.render.width).toBeGreaterThan(0);
       expect(layout.metrics.render.height).toBeGreaterThan(0);
       expect(layout.metrics.render.itemCount).toBeGreaterThan(0);
@@ -165,12 +167,25 @@ describe("Phase 2 layout resolution policy", () => {
       choicePresentation: "text",
       choiceCount: 3,
       questionFormat: "multiple_choice",
-      aspectRatio: "9:16",
+      aspectRatio: "16:9",
       media: ["choice"],
     });
     expect(result.compatible).toBe(false);
     if (result.compatible) return;
     expect(result.issues.map((issue) => issue.code)).toEqual(["layout_media_unsupported", "layout_required_media_missing"]);
+
+    const aspectResult = evaluateQuizLayoutCompatibility({
+      layoutId: "media_left_choices_right",
+      choicePresentation: "text",
+      choiceCount: 3,
+      questionFormat: "multiple_choice",
+      aspectRatio: "9:16",
+      media: ["question"],
+    });
+    expect(aspectResult.compatible).toBe(false);
+    if (!aspectResult.compatible) {
+      expect(aspectResult.issues.map((issue) => issue.code)).toEqual(["layout_aspect_ratio_unsupported"]);
+    }
   });
 
   it("P2-RES-07 and P2-MIG-04 return no candidate for four choices while the domain still rejects them", () => {

@@ -26,6 +26,30 @@ export function productionMascotCss(): string {
 .candy-mascot-container.mascot-v2-container.anchor-bottom_right { right: 0; bottom: 0; }
 .candy-mascot-container.mascot-v2-container.mascot-intro,
 .candy-mascot-container.mascot-v2-container.mascot-outro { bottom: 0; }
+
+/* 9:16 portrait viewport safe-zone integration */
+#stage[data-aspect-ratio="9:16"] .quiz-question-clip .candy-mascot-container.mascot-v2-container,
+#stage[data-aspect-ratio="9:16"] .candy-scene:not(.candy-intro):not(.candy-outro) .candy-mascot-container.mascot-v2-container {
+  bottom: var(--safe-zone-bottom, 440px);
+}
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.anchor-bottom_left {
+  left: 36px;
+}
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.anchor-bottom_right {
+  right: var(--safe-zone-right, 140px);
+}
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-intro,
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-outro {
+  bottom: 24px;
+}
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-intro.anchor-bottom_left,
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-outro.anchor-bottom_left {
+  left: 24px;
+}
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-intro.anchor-bottom_right,
+#stage[data-aspect-ratio="9:16"] .candy-mascot-container.mascot-v2-container.mascot-outro.anchor-bottom_right {
+  right: 24px;
+}
 .candy-mascot-container.mascot-v2-container .mascot-v2-state {
   position: absolute;
   inset: 0;

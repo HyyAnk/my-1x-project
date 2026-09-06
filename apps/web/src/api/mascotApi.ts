@@ -8,6 +8,7 @@ import type {
   GenerateMascotConceptInput,
   GenerateMascotSlotInput,
   GenerateMascotSpriteInput,
+  GenerateMascotStyleConceptResponse,
   MascotActionType,
   MascotProfile,
   MascotSpriteAction,
@@ -20,6 +21,10 @@ import type {
   UploadMascotSpriteInput,
 } from "@studio/shared";
 import { request } from "./client";
+
+export type UpdateMascotStylePayload = UpdateMascotStyleInput & {
+  anchor_image_url?: string | null;
+};
 
 export const mascotApi = {
   mascots: () => request<{ mascots: MascotProfile[] }>("/api/mascots"),
@@ -61,11 +66,24 @@ export const mascotApi = {
       method: "POST",
       body: JSON.stringify(input),
     }),
-  updateMascotStyle: (mascotId: string, styleId: string, input: UpdateMascotStyleInput) =>
+  updateMascotStyle: (mascotId: string, styleId: string, input: UpdateMascotStylePayload) =>
     request<{ mascot: MascotProfile }>(`/api/mascots/${mascotId}/styles/${styleId}`, {
       method: "PATCH",
       body: JSON.stringify(input),
     }),
+  generateStyleConcept: async (
+    mascotId: string,
+    styleId: string,
+    options?: { prompt?: string },
+  ): Promise<GenerateMascotStyleConceptResponse> => {
+    return request<GenerateMascotStyleConceptResponse>(
+      `/api/mascots/${encodeURIComponent(mascotId)}/styles/${encodeURIComponent(styleId)}/concept`,
+      {
+        method: "POST",
+        body: JSON.stringify(options || {}),
+      },
+    );
+  },
   deleteMascotStyle: (mascotId: string, styleId: string) =>
     request<{ ok: boolean; mascot: MascotProfile }>(`/api/mascots/${mascotId}/styles/${styleId}`, {
       method: "DELETE",

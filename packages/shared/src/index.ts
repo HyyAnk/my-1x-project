@@ -14,5 +14,6 @@ export * from "./quizStyles.js";
 export * from "./quizStyles/styleCatalog.types.js";
 export * from "./quizArchetypes.js";
 export * from "./mascot/index.js";
+export * from "./mascot/styleReadiness.js";
 export * from "./thumbnail/index.js";
 export * from "./utils/languageNormalize.js";

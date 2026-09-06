@@ -454,4 +454,71 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(aiPlan.mascotPersona.role).toBe("Mythic Warrior");
     expect(aiPlan.subjectAnchors[0].visualPrompt).toContain("Excalibur");
   });
+
+  it("strictly disallows 'odd_one_out' for 9:16 portrait format and falls back to 'mystery_silhouette'", () => {
+    // 1. Topic and format matching spot the difference with 9:16 aspect ratio
+    const plan916 = resolveThumbnailLayout({
+      topicTitle: "Spot The Difference: Find The Odd Imposter Duck",
+      questionFormat: "spot_difference",
+      aspectRatio: "9:16",
+      mascotProfile: sampleMascot,
+    });
+
+    expect(plan916.layout).not.toBe("odd_one_out");
+    expect(plan916.layout).toBe("mystery_silhouette");
+
+    // 2. Explicit layoutOverride of 'odd_one_out' with 9:16 aspect ratio
+    const overridePlan916 = resolveThumbnailLayout({
+      topicTitle: "Find the Odd Emoji",
+      layoutOverride: "odd_one_out",
+      aspectRatio: "9:16",
+      mascotProfile: sampleMascot,
+    });
+
+    expect(overridePlan916.layout).not.toBe("odd_one_out");
+    expect(overridePlan916.layout).toBe("mystery_silhouette");
+
+    // 3. Explicit layoutOverride of 'odd_one_out' with comparison topic falls back to 'split_vs'
+    const comparisonPlan916 = resolveThumbnailLayout({
+      topicTitle: "Cat vs Dog: Which is the odd one out?",
+      questionFormat: "versus",
+      layoutOverride: "odd_one_out",
+      aspectRatio: "9:16",
+      mascotProfile: sampleMascot,
+    });
+
+    expect(comparisonPlan916.layout).not.toBe("odd_one_out");
+    expect(comparisonPlan916.layout).toBe("split_vs");
+
+    // 4. In 16:9 widescreen, 'odd_one_out' is still allowed
+    const plan169 = resolveThumbnailLayout({
+      topicTitle: "Spot The Difference: Find The Odd Imposter Duck",
+      questionFormat: "spot_difference",
+      aspectRatio: "16:9",
+      mascotProfile: sampleMascot,
+    });
+
+    expect(plan169.layout).toBe("odd_one_out");
+  });
+
+  it("compiles 9:16 thumbnail prompt enforcing 440px bottom buffer and bottom 25% clear area", () => {
+    const plan = resolveThumbnailLayout({
+      topicTitle: "Space Mystery Quiz",
+      aspectRatio: "9:16",
+      mascotProfile: sampleMascot,
+    });
+
+    const prompt916 = compileThumbnailPrompt(plan, "9:16", sampleMascot);
+
+    // Verify safe-zone directives
+    expect(prompt916).toContain("440px bottom buffer");
+    expect(prompt916).toContain("bottom 25%");
+    expect(prompt916).toContain("TikTok/Shorts");
+    expect(prompt916).toContain("captions, sounds, creator handle");
+    expect(prompt916).toContain("middle 60% vertical safe zone");
+
+    // Verify vertical composition directives
+    expect(prompt916).toContain("zero cluttered 3-card or 3-subject matrices");
+    expect(prompt916).toContain("clear vertical stacking");
+  });
 });

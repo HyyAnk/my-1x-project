@@ -115,6 +115,13 @@ describe("questionCurationEngine", () => {
       const topicOdd = makeTopic({ archetype: undefined, suggested_layout: undefined, quiz_format: "odd_one_out" });
       expect(resolveTargetArchetype(topicOdd)).toBe("visual_spotting");
     });
+
+    it("maps each of the 4 dedicated 9:16 portrait layouts to their expected archetypes", () => {
+      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_hero_choices" }))).toBe("deep_trivia");
+      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_split_versus" }))).toBe("versus_faceoff");
+      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_verdict_tf" }))).toBe("verdict_true_false");
+      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_stack_list" }))).toBe("speed_blitz");
+    });
   });
 
   describe("scoring & filtering helpers", () => {
@@ -481,6 +488,110 @@ describe("questionCurationEngine", () => {
       expect(repo.queryQuestionBankQuestions).toHaveBeenCalledWith(
         expect.objectContaining({
           hasTranslationFor: "es",
+        }),
+      );
+    });
+
+    it("filters out questions with archetype visual_spotting or format odd_one_out when aspectRatio is 9:16", async () => {
+      const qValid1 = makeQuestion({
+        id: "Q-VALID-1",
+        archetype_id: "deep_trivia",
+        format: "multiple_choice",
+        question: "What is the deepest trench in the ocean?",
+      });
+      const qValid2 = makeQuestion({
+        id: "Q-VALID-2",
+        archetype_id: "deep_trivia",
+        format: "multiple_choice",
+        question: "How long can sperm whales stay submerged?",
+      });
+      const qValid3 = makeQuestion({
+        id: "Q-VALID-3",
+        archetype_id: "deep_trivia",
+        format: "multiple_choice",
+        question: "Which fish produces deep red bioluminescence?",
+      });
+      const qVisualSpotting = makeQuestion({
+        id: "Q-SPOT-1",
+        archetype_id: "visual_spotting",
+        format: "odd_one_out",
+        question: "Which of these ocean creatures is the odd one out?",
+      });
+      const qOddFormat = makeQuestion({
+        id: "Q-ODD-1",
+        archetype_id: "deep_trivia",
+        format: "odd_one_out",
+        question: "Spot the odd one out among marine mammals.",
+      });
+
+      const repo = createMockRepository([qValid1, qVisualSpotting, qValid2, qOddFormat, qValid3]);
+      const topic = makeTopic({ question_count: 3, suggested_layout: "portrait_hero_choices" });
+
+      const result = await curateQuestionsForTopic({
+        repository: repo,
+        channelId: "ch_test_001",
+        topic,
+        questionCount: 3,
+        aspectRatio: "9:16",
+      });
+
+      expect(result.selectedQuestions).toHaveLength(3);
+      const selectedIds = result.selectedQuestions.map((q) => q.id);
+      expect(selectedIds).not.toContain("Q-SPOT-1");
+      expect(selectedIds).not.toContain("Q-ODD-1");
+      expect(selectedIds).toEqual(expect.arrayContaining(["Q-VALID-1", "Q-VALID-2", "Q-VALID-3"]));
+      for (const q of result.selectedQuestions) {
+        expect(q.archetype_id).not.toBe("visual_spotting");
+        expect(q.format).not.toBe("odd_one_out");
+      }
+    });
+
+    it("falls back visual_spotting and visual_identification archetypes to deep_trivia when aspectRatio is 9:16", async () => {
+      const qDeep1 = makeQuestion({
+        id: "Q-DEEP-1",
+        archetype_id: "deep_trivia",
+        format: "multiple_choice",
+        question: "What is the largest living mammal?",
+      });
+      const repo = createMockRepository([qDeep1]);
+
+      const topicSpotting = makeTopic({
+        archetype: "visual_spotting",
+        question_count: 1,
+      });
+
+      const result = await curateQuestionsForTopic({
+        repository: repo,
+        channelId: "ch_test_001",
+        topic: topicSpotting,
+        questionCount: 1,
+        aspectRatio: "9:16",
+      });
+
+      expect(repo.queryQuestionBankQuestions).toHaveBeenCalledWith(
+        expect.objectContaining({
+          archetypeId: "deep_trivia",
+        }),
+      );
+      expect(result.selectedQuestions).toHaveLength(1);
+      expect(result.selectedQuestions[0].id).toBe("Q-DEEP-1");
+
+      const topicVisualId = makeTopic({
+        archetype: "visual_identification",
+        question_count: 1,
+      });
+
+      await curateQuestionsForTopic({
+        repository: repo,
+        channelId: "ch_test_001",
+        topic: topicVisualId,
+        questionCount: 1,
+        aspectRatio: "9:16",
+      });
+
+      expect(repo.queryQuestionBankQuestions).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          archetypeId: "deep_trivia",
         }),
       );
     });

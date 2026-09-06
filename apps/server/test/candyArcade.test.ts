@@ -672,9 +672,26 @@ describe("Candy Arcade visual template", () => {
       aspectRatio: "16:9",
     });
 
+    const quiz9_16: QuizV2 = {
+      ...quiz,
+      questions: quiz.questions.map((q) => ({
+        ...q,
+        format: "multiple_choice",
+      })),
+    };
+    const director9_16 = {
+      ...director,
+      beats: director.beats.map((b) => ({
+        ...b,
+        archetype: "illustrated_multiple_choice" as const,
+        layout_id: "portrait_hero_choices" as const,
+        asset_intents: ["question_illustration" as const],
+      })),
+    };
+
     const bundle9_16 = buildCandyArcadeCompositionBundle({
-      quiz,
-      director,
+      quiz: quiz9_16,
+      director: director9_16,
       timeline,
       styleContext: { theme: "candy_arcade" },
       audioPath: "./narration.wav",
@@ -1077,11 +1094,16 @@ describe("Candy Arcade visual and workflow regression", () => {
 
   it("renders 16:9 and 9:16 compositions cleanly with correct aspect markers", () => {
     const res169 = buildSandboxComposition({ aspect_ratio: "16:9" });
-    const res916 = buildSandboxComposition({ aspect_ratio: "9:16" });
+    const res916 = buildSandboxComposition({ aspect_ratio: "9:16", layout_id: "portrait_hero_choices" });
 
     expect(res169.html).toContain('data-aspect-ratio="16:9"');
     expect(res916.html).toContain('data-aspect-ratio="9:16"');
     expect(res916.html).toContain('#stage[data-aspect-ratio="9:16"]');
+    expect(res916.css).toContain("--safe-zone-top: 180px;");
+    expect(res916.css).toContain("--safe-zone-bottom: 440px;");
+    expect(res916.css).toContain("--safe-zone-right: 140px;");
+    expect(res916.css).toContain('#stage[data-aspect-ratio="9:16"] .phase-region { left: 36px; right: var(--safe-zone-right, 140px); bottom: var(--safe-zone-bottom, 440px);');
+    expect(res916.css).not.toContain('#stage[data-aspect-ratio="9:16"] .phase-region { left: 36px; right: 36px; bottom: 18px;');
   });
 
   it("suppresses decorative animation under reduced motion while preserving status visibility", () => {

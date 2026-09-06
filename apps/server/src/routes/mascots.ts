@@ -1,7 +1,7 @@
 import path from "node:path";
 import { createReadStream } from "node:fs";
 import { readFile } from "node:fs/promises";
-import type { FastifyPluginCallback } from "fastify";
+import type { FastifyPluginCallback, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 import {
   BatchGenerateStyleSlotsInputSchema,
@@ -11,6 +11,7 @@ import {
   GenerateMascotConceptInputSchema,
   GenerateMascotSlotInputSchema,
   GenerateMascotSpriteInputSchema,
+  GenerateMascotStyleConceptRequestSchema,
   MascotActionTypeSchema,
   MascotMigrationInputSchema,
   MASCOT_ACTION_META,
@@ -20,6 +21,7 @@ import {
   UpdateMascotStyleInputSchema,
   UploadMascotSpriteInputSchema,
   type MascotActionType,
+  type MascotProfile,
 } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
 import {
@@ -27,6 +29,7 @@ import {
   generateMascotActionSprite,
   generateMascotConceptArt,
   generateMascotStyleBatch,
+  generateMascotStyleConcept,
   generateMascotStyleSlot,
   importMascotPackage,
   removeMascotAssetBackground,
@@ -87,11 +90,76 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
       const result = await repository.createMascotStyle(mascotId, input);
       return reply.code(201).send(result);
     });
-    server.patch("/api/mascots/:mascotId/styles/:styleId", async (request) => {
+    const updateStyleHandler = async (request: FastifyRequest, reply: FastifyReply) => {
       const { mascotId, styleId } = request.params as { mascotId: string; styleId: string };
-      const input = UpdateMascotStyleInputSchema.parse(request.body);
-      const mascot = await repository.updateMascotStyle(mascotId, styleId, input);
-      return { mascot };
+      const rawBody = typeof request.body === "object" && request.body !== null ? request.body : {};
+      const schema = UpdateMascotStyleInputSchema.extend({
+        anchor_image_url: z.string().nullable().optional(),
+      });
+      const input = schema.parse(rawBody);
+      try {
+        const mascot = await repository.updateMascotStyle(mascotId, styleId, input);
+        const style = (mascot.styles || []).find((s) => s.id === styleId);
+        return { mascot, style };
+      } catch (err: unknown) {
+        const anyErr = err as { code?: string; message?: string };
+        if (anyErr?.code === "MASCOT_NOT_FOUND" || anyErr?.message?.includes("Mascot not found")) {
+          return reply.code(404).send({ error: "Mascot not found" });
+        }
+        if (anyErr?.code === "STYLE_NOT_FOUND" || anyErr?.message?.includes("not found")) {
+          return reply.code(404).send({ error: "Style not found" });
+        }
+        throw err;
+      }
+    };
+    server.patch("/api/mascots/:mascotId/styles/:styleId", updateStyleHandler);
+    server.put("/api/mascots/:mascotId/styles/:styleId", updateStyleHandler);
+    server.post("/api/mascots/:mascotId/styles/:styleId/concept", async (request, reply) => {
+      const { mascotId, styleId } = request.params as { mascotId: string; styleId: string };
+      try {
+        const rawBody = typeof request.body === "object" && request.body !== null ? request.body : {};
+        const parsedBody = GenerateMascotStyleConceptRequestSchema.safeParse(rawBody);
+        const prompt = parsedBody.success ? parsedBody.data.prompt : undefined;
+
+        let mascot: MascotProfile;
+        try {
+          mascot = await repository.getMascot(mascotId);
+        } catch {
+          return reply.code(404).send({ error: "Mascot not found" });
+        }
+
+        const style = (mascot.styles || []).find((s) => s.id === styleId);
+        if (!style) {
+          return reply.code(404).send({ error: "Style not found" });
+        }
+
+        const result = await generateMascotStyleConcept(
+          repository,
+          mascot,
+          styleId,
+          state.config.image_generation,
+          { prompt },
+          logger,
+        );
+
+        const updatedMascot = await repository.getMascot(mascotId);
+        const updatedStyle = (updatedMascot.styles || []).find((s) => s.id === styleId) || style;
+
+        return reply.code(200).send({
+          success: true,
+          style: updatedStyle,
+          mascot: updatedMascot,
+          anchor_image_url: result.anchor_image_url,
+          placeholder: result.placeholder,
+          prompt_used: result.prompt_used,
+        });
+      } catch (err) {
+        logger?.error(`Failed to generate mascot style concept: ${err instanceof Error ? err.message : String(err)}`, {
+          mascotId,
+          styleId,
+        });
+        return reply.code(500).send({ error: err instanceof Error ? err.message : "Internal Server Error" });
+      }
     });
     server.delete("/api/mascots/:mascotId/styles/:styleId", async (request) => {
       const { mascotId, styleId } = request.params as { mascotId: string; styleId: string };

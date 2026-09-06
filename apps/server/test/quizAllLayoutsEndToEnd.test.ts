@@ -235,7 +235,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
     });
   });
 
-  describe("3. Scene Pipeline HTML/CSS Rendering for All 6 Layouts (16:9 & 9:16)", () => {
+  describe("3. Scene Pipeline HTML/CSS Rendering for All Layouts (16:9 & 9:16)", () => {
     const layoutScenarios: Array<{
       layoutId: QuizPreviewLayoutId;
       archetype: DirectorArchetype;
@@ -250,7 +250,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         format: "multiple_choice",
         choices: ["Mars", "Saturn", "Jupiter"],
         assetIntents: ["question_illustration"],
-        aspectRatios: ["16:9", "9:16"],
+        aspectRatios: ["16:9"],
       },
       {
         layoutId: "visual_choices_three",
@@ -258,7 +258,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         format: "multiple_choice",
         choices: ["Cardinal", "Blue Jay", "Sparrow"],
         assetIntents: ["choice_illustration"],
-        aspectRatios: ["16:9", "9:16"],
+        aspectRatios: ["16:9"],
       },
       {
         layoutId: "visual_choices_three_pure",
@@ -266,7 +266,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         format: "odd_one_out",
         choices: ["Real Cat", "AI Fake Cat", "Real Dog"],
         assetIntents: ["choice_illustration"],
-        aspectRatios: ["16:9", "9:16"],
+        aspectRatios: ["16:9"],
       },
       {
         layoutId: "split_versus_two",
@@ -274,7 +274,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         format: "true_false",
         choices: ["Cheetah", "Falcon"],
         assetIntents: ["question_illustration"],
-        aspectRatios: ["16:9", "9:16"],
+        aspectRatios: ["16:9"],
       },
       {
         layoutId: "verdict_true_false",
@@ -282,7 +282,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         format: "true_false",
         choices: ["True", "False"],
         assetIntents: ["question_illustration"],
-        aspectRatios: ["16:9", "9:16"],
+        aspectRatios: ["16:9"],
       },
       {
         layoutId: "full_stack_list",
@@ -290,14 +290,49 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         format: "multiple_choice",
         choices: ["Piano", "Map", "Clock"],
         assetIntents: [],
-        aspectRatios: ["16:9", "9:16"],
+        aspectRatios: ["16:9"],
+      },
+      {
+        layoutId: "portrait_hero_choices",
+        archetype: "text_multiple_choice",
+        format: "multiple_choice",
+        choices: ["Mars", "Saturn", "Jupiter"],
+        assetIntents: ["question_illustration"],
+        aspectRatios: ["9:16"],
+      },
+      {
+        layoutId: "portrait_split_versus",
+        archetype: "text_multiple_choice",
+        format: "multiple_choice",
+        choices: ["Cheetah", "Falcon"],
+        assetIntents: ["choice_illustration"],
+        aspectRatios: ["9:16"],
+      },
+      {
+        layoutId: "portrait_verdict_tf",
+        archetype: "true_false",
+        format: "true_false",
+        choices: ["True", "False"],
+        assetIntents: ["question_illustration"],
+        aspectRatios: ["9:16"],
+      },
+      {
+        layoutId: "portrait_stack_list",
+        archetype: "text_multiple_choice",
+        format: "multiple_choice",
+        choices: ["Piano", "Map", "Clock", "Guitar"],
+        assetIntents: [],
+        aspectRatios: ["9:16"],
       },
     ];
 
     for (const scenario of layoutScenarios) {
       for (const ar of scenario.aspectRatios) {
         it(`renders production composition bundle for ${scenario.layoutId} in ${ar}`, () => {
-          const quiz = createTestQuiz(scenario.layoutId, scenario.format, scenario.choices);
+          // QuizV2Schema requires 2 choices for true_false and exactly 3 choices for standard questions
+          const effectiveChoices = scenario.choices.length > 3 ? scenario.choices.slice(0, 3) : scenario.choices;
+          const quizFormat = effectiveChoices.length === 2 ? "true_false" : scenario.format;
+          const quiz = createTestQuiz(scenario.layoutId, quizFormat, effectiveChoices);
 
           const director = createDefaultDirectorPlan(quiz, "candy_arcade", "sunny");
           director.beats[0].archetype = scenario.archetype;
@@ -324,16 +359,33 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
           expect(fullHtml).toContain(`layout-${scenario.layoutId}`);
           expect(fullHtml).toContain(`Test question for ${scenario.layoutId}?`);
           expect(bundle.html).toContain("<style>");
+
+          if (ar === "9:16") {
+            expect(bundle.html).toContain('data-aspect-ratio="9:16"');
+            expect(bundle.html).toContain('data-width="1080"');
+            expect(bundle.html).toContain('data-height="1920"');
+            expect(fullHtml).toContain('data-aspect-ratio="9:16"');
+            expect(fullHtml).toContain('data-width="1080"');
+            expect(fullHtml).toContain('data-height="1920"');
+            expect(fullHtml).toContain("data-reveal-at=");
+            expect(bundle.html).toMatch(/<audio\s+id="quiz-narration"/);
+            expect(bundle.html).toContain('data-composition-src="compositions/candy-intro.html"');
+          } else {
+            expect(bundle.html).toContain('data-aspect-ratio="16:9"');
+            expect(bundle.html).toContain('data-width="1920"');
+            expect(bundle.html).toContain('data-height="1080"');
+          }
         });
       }
     }
   });
 
-  describe("4. Sandbox Preview Composition for All 6 Layouts", () => {
+  describe("4. Sandbox Preview Composition for All Layouts", () => {
     const sandboxCases: Array<{
       layoutId: QuizPreviewLayoutId;
       choices: string[];
       question_format: "multiple_choice" | "odd_one_out" | "true_false";
+      aspect_ratio?: MascotRenderAspectRatio;
     }> = [
       {
         layoutId: "media_left_choices_right",
@@ -365,13 +417,39 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         choices: ["Answer A", "Answer B", "Answer C"],
         question_format: "multiple_choice",
       },
+      {
+        layoutId: "portrait_hero_choices",
+        choices: ["Mars", "Saturn", "Jupiter"],
+        question_format: "multiple_choice",
+        aspect_ratio: "9:16",
+      },
+      {
+        layoutId: "portrait_split_versus",
+        choices: ["Cheetah", "Falcon"],
+        question_format: "multiple_choice",
+        aspect_ratio: "9:16",
+      },
+      {
+        layoutId: "portrait_verdict_tf",
+        choices: ["True", "False"],
+        question_format: "true_false",
+        aspect_ratio: "9:16",
+      },
+      {
+        layoutId: "portrait_stack_list",
+        choices: ["Piano", "Map", "Clock"],
+        question_format: "multiple_choice",
+        aspect_ratio: "9:16",
+      },
     ];
 
     for (const sc of sandboxCases) {
-      it(`builds valid sandbox preview for ${sc.layoutId} across all phases`, () => {
+      const ar = sc.aspect_ratio ?? "16:9";
+      it(`builds valid sandbox preview for ${sc.layoutId} (${ar}) across all phases`, () => {
         for (const phase of ["question", "thinking", "reveal", "explain"] as const) {
           const res = buildSandboxComposition({
             layout_id: sc.layoutId,
+            aspect_ratio: ar,
             phase,
             choices: sc.choices,
             correct_choice_index: 0,
@@ -386,6 +464,13 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
           expect(res.css).toBeTruthy();
           expect(res.contrast_report.ok).toBe(true);
 
+          if (ar === "9:16") {
+            expect(res.html).toContain('data-aspect-ratio="9:16"');
+            expect(res.html).toContain('data-width="1080"');
+            expect(res.html).toContain('data-height="1920"');
+            expect(res.html).toContain("data-reveal-at=");
+          }
+
           if (phase === "reveal") {
             expect(res.html).toContain("answer-correct");
           }
@@ -397,8 +482,8 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
       });
     }
 
-    it("verifies QUIZ_LAYOUTS contains all 8 production layouts", () => {
-      expect(QUIZ_LAYOUTS).toHaveLength(8);
+    it("verifies QUIZ_LAYOUTS contains all 12 production layouts", () => {
+      expect(QUIZ_LAYOUTS).toHaveLength(12);
       expect(QUIZ_LAYOUTS.map((l) => l.id)).toEqual([
         "media_left_choices_right",
         "visual_choices_three",
@@ -408,7 +493,121 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         "full_stack_list",
         "mystery_reveal",
         "clue_deduction",
+        "portrait_hero_choices",
+        "portrait_split_versus",
+        "portrait_verdict_tf",
+        "portrait_stack_list",
       ]);
     });
+  });
+
+  describe("5. 9:16 Portrait Dedicated Layout Composition Bundle Verification", () => {
+    const portraitLayouts: Array<{
+      layoutId: QuizPreviewLayoutId;
+      format: QuizQuestionFormat;
+      choices: string[];
+      assetIntents: ("choice_illustration" | "question_illustration")[];
+    }> = [
+      {
+        layoutId: "portrait_hero_choices",
+        format: "multiple_choice",
+        choices: ["Mars", "Saturn", "Jupiter"],
+        assetIntents: ["question_illustration"],
+      },
+      {
+        layoutId: "portrait_split_versus",
+        format: "multiple_choice",
+        choices: ["Cheetah", "Falcon"],
+        assetIntents: ["choice_illustration"],
+      },
+      {
+        layoutId: "portrait_verdict_tf",
+        format: "true_false",
+        choices: ["True", "False"],
+        assetIntents: ["question_illustration"],
+      },
+      {
+        layoutId: "portrait_stack_list",
+        format: "multiple_choice",
+        choices: ["Piano", "Map", "Clock", "Guitar"],
+        assetIntents: [],
+      },
+    ];
+
+    for (const item of portraitLayouts) {
+      it(`verifies buildCandyArcadeCompositionBundle and buildSandboxComposition for ${item.layoutId} with 1080x1920 canvas setup and phase timing`, () => {
+        const effectiveChoices = item.choices.length > 3 ? item.choices.slice(0, 3) : item.choices;
+        const quizFormat = effectiveChoices.length === 2 ? "true_false" : item.format;
+        const quiz = createTestQuiz(item.layoutId, quizFormat, effectiveChoices);
+        const director = createDefaultDirectorPlan(quiz, "candy_arcade", "sunny");
+        director.beats[0].layout_id = item.layoutId;
+        director.beats[0].asset_intents = item.assetIntents;
+        director.beats[0].archetype = item.format === "true_false" ? "true_false" : "text_multiple_choice";
+
+        const timeline = compileQuizTimeline({
+          quiz,
+          director,
+          voicePlan: buildQuizVoicePlan(quiz),
+        });
+
+        const bundle = buildCandyArcadeCompositionBundle({
+          quiz,
+          director,
+          timeline,
+          styleContext: { theme: "candy_arcade" },
+          audioPath: "./narration.wav",
+          narrationDurationSeconds: timeline.duration_seconds,
+          aspectRatio: "9:16",
+        });
+
+        // 1080x1920 canvas setup on main stage
+        expect(bundle.html).toContain('data-aspect-ratio="9:16"');
+        expect(bundle.html).toContain('data-width="1080"');
+        expect(bundle.html).toContain('data-height="1920"');
+
+        // Scene mount markup
+        expect(bundle.html).toContain('data-composition-src="compositions/candy-intro.html"');
+        expect(bundle.html).toContain(`data-composition-src="compositions/quiz-q1-`);
+
+        // Audio tag inclusion
+        expect(bundle.html).toMatch(/<audio\s+id="quiz-narration"[^>]*data-start="0"/);
+
+        // Subcomposition files setup
+        const subFiles = Object.values(bundle.files);
+        expect(subFiles.length).toBeGreaterThan(0);
+        for (const file of subFiles) {
+          expect(file).toContain('data-aspect-ratio="9:16"');
+          expect(file).toContain('data-width="1080"');
+          expect(file).toContain('data-height="1920"');
+        }
+
+        // Embedded phase region timing in question file
+        const questionSubFile = Object.entries(bundle.files).find(([k]) => k.includes("quiz-q1"))?.[1];
+        expect(questionSubFile).toBeDefined();
+        expect(questionSubFile).toContain("data-reveal-at=");
+        expect(questionSubFile).toContain("--reveal-at:");
+
+        // Sandbox composition validation (SandboxPreviewInput schema allows up to 3 choices)
+        const sandboxChoices = item.choices.length > 3 ? item.choices.slice(0, 3) : item.choices;
+        const sandboxRes = buildSandboxComposition({
+          layout_id: item.layoutId,
+          aspect_ratio: "9:16",
+          phase: "thinking",
+          choices: sandboxChoices,
+          correct_choice_index: 0,
+          question_format: item.format,
+          question_text: `Sandbox question for ${item.layoutId}?`,
+          fact_card_title: "DID YOU KNOW?",
+          fact_card_text: "Portrait sandbox explanation.",
+        });
+
+        expect(sandboxRes.html).toContain('data-aspect-ratio="9:16"');
+        expect(sandboxRes.html).toContain('data-width="1080"');
+        expect(sandboxRes.html).toContain('data-height="1920"');
+        expect(sandboxRes.html).toContain("data-reveal-at=");
+        expect(sandboxRes.html).toContain(`layout-${item.layoutId}`);
+        expect(sandboxRes.contrast_report.ok).toBe(true);
+      });
+    }
   });
 });

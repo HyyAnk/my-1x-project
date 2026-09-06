@@ -3,6 +3,7 @@ import {
   type MascotProfile,
   type MascotStyle,
   type UpdateMascotStyleInput,
+  getMascotStyleReadiness,
   resolveMascotStyle,
 } from "@studio/shared";
 import { api } from "../../../api";
@@ -38,6 +39,7 @@ export function useMascotStyles({
   const [activeStyleId, setActiveStyleId] = useState<string>(
     () => mascot?.active_style_id || "core",
   );
+  const [generatingConceptStyleId, setGeneratingConceptStyleId] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const [newStyleName, setNewStyleName] = useState<string>("");
   const [newStyleKeyword, setNewStyleKeyword] = useState<string>("");
@@ -63,6 +65,11 @@ export function useMascotStyles({
     if (!mascot) return null;
     return resolveMascotStyle(mascot, activeStyleId);
   }, [mascot, activeStyleId]);
+
+  const activeStyleReadiness = useMemo(
+    () => getMascotStyleReadiness(activeStyle),
+    [activeStyle],
+  );
 
   const handleCreateStyle = useCallback(
     async (name?: string, keyword?: string) => {
@@ -135,6 +142,49 @@ export function useMascotStyles({
           tone: "bad",
           message: error?.message || "Failed to update style",
         });
+      }
+    },
+    [mascot, onMascotUpdated, onNotice],
+  );
+
+  const handleUpdateStyleAnchor = useCallback(
+    async (styleId: string, anchorImageUrl: string | null) => {
+      if (!mascot) return;
+      try {
+        const result = await api.updateMascotStyle(mascot.id, styleId, {
+          anchor_image_url: anchorImageUrl,
+        });
+        onMascotUpdated(result.mascot);
+      } catch (err: unknown) {
+        const error = err as Error;
+        onNotice({
+          tone: "bad",
+          message: error?.message || "Failed to update style anchor",
+        });
+      }
+    },
+    [mascot, onMascotUpdated, onNotice],
+  );
+
+  const handleGenerateStyleConcept = useCallback(
+    async (styleId: string, prompt?: string) => {
+      if (!mascot) return;
+      setGeneratingConceptStyleId(styleId);
+      try {
+        const result = await api.generateStyleConcept(mascot.id, styleId, { prompt });
+        onMascotUpdated(result.mascot);
+        onNotice({
+          tone: "good",
+          message: `Concept for style "${result.style.name}" generated successfully`,
+        });
+      } catch (err: unknown) {
+        const error = err as Error;
+        onNotice({
+          tone: "bad",
+          message: error?.message || "Failed to generate style concept",
+        });
+      } finally {
+        setGeneratingConceptStyleId(null);
       }
     },
     [mascot, onMascotUpdated, onNotice],
@@ -348,6 +398,8 @@ export function useMascotStyles({
     activeStyleId,
     setActiveStyleId,
     activeStyle,
+    activeStyleReadiness,
+    generatingConceptStyleId,
     isCreateModalOpen,
     setIsCreateModalOpen,
     newStyleName,
@@ -357,6 +409,8 @@ export function useMascotStyles({
     handleCreateStyle,
     handleUpdateStyleKeyword,
     handleUpdateStyle,
+    handleUpdateStyleAnchor,
+    handleGenerateStyleConcept,
     handleDeleteStyle,
     handleSetActiveStyle,
     busySlotKey,

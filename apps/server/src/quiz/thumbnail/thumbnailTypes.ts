@@ -61,6 +61,7 @@ export type ResolveThumbnailInput = {
   visualStyle?: QuizImageStyle;
   colorTheme?: string;
   layoutOverride?: ThumbnailLayoutType;
+  aspectRatio?: ThumbnailAspectRatio;
   customHookText?: string;
   badgeOverride?: string;
   language?: string;

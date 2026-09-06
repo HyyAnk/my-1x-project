@@ -39,6 +39,7 @@ export type SubComposition = {
   start: string;
   duration: string;
   trackIndex: string;
+  revealAt?: string;
   html: string;
 };
 
@@ -72,6 +73,7 @@ export function toSubComposition(clip: string, aspectRatio: MascotRenderAspectRa
   const start = requiredAttribute(openingTag, "data-start");
   const duration = requiredAttribute(openingTag, "data-duration");
   const trackIndex = requiredAttribute(openingTag, "data-track-index");
+  const revealAt = openingTag.match(/\sdata-reveal-at="([^"]+)"/)?.[1];
   const sceneRoot = openingTag
     .replace(/\sdata-start="[^"]*"/g, "")
     .replace(/\sdata-duration="[^"]*"/g, "")
@@ -81,7 +83,7 @@ export function toSubComposition(clip: string, aspectRatio: MascotRenderAspectRa
       ` data-composition-id="${id}" data-no-timeline data-width="${aspectRatio === "9:16" ? 1080 : 1920}" data-height="${aspectRatio === "9:16" ? 1920 : 1080}" data-aspect-ratio="${aspectRatio}">`,
     );
   const body = rootRelativeSubCompositionAssets(clip.replace(openingTag, sceneRoot));
-  return { id, start, duration, trackIndex, html: `<template id="${id}-template">${body}</template>` };
+  return { id, start, duration, trackIndex, revealAt, html: `<template id="${id}-template">${body}</template>` };
 }
 
 export function requiredAttribute(tag: string, name: string): string {
@@ -95,7 +97,8 @@ export function rootRelativeSubCompositionAssets(html: string): string {
 }
 
 export function subCompositionMount(scene: SubComposition): string {
-  return `<div id="${scene.id}-mount" data-composition-id="${scene.id}" data-composition-src="compositions/${scene.id}.html" data-start="${scene.start}" data-duration="${scene.duration}" data-track-index="${scene.trackIndex}" data-no-timeline></div>`;
+  const revealAttr = scene.revealAt ? ` data-reveal-at="${scene.revealAt}"` : "";
+  return `<div id="${scene.id}-mount" data-composition-id="${scene.id}" data-composition-src="compositions/${scene.id}.html" data-start="${scene.start}" data-duration="${scene.duration}" data-track-index="${scene.trackIndex}"${revealAttr} data-no-timeline></div>`;
 }
 
 export function mascotElement(
@@ -257,7 +260,8 @@ export function questionClip(input: {
     phaseHtml: `${renderQuizSceneThinkingPart(parts, timing)}<div class="fact-card" data-layout-allow-occlusion><p>${esc(parts.phase.factText)}</p></div>`,
   });
   const body = `<div class="game-stage" data-layout-allow-overflow>${layoutBody}</div>`;
-  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0">${renderQuizSceneBackground(parts, "production", { questionIndex: input.questionIndex, clipStart: input.start, duration: input.end - input.start })}<header class="game-header" data-layout-allow-occlusion>${stableParts.counterBadgeHtml}</header>${body}${stableParts.brandMarkHtml}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
+  const revealAtSeconds = Math.max(0, input.revealStart - input.start).toFixed(3);
+  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0" data-reveal-at="${revealAtSeconds}">${renderQuizSceneBackground(parts, "production", { questionIndex: input.questionIndex, clipStart: input.start, duration: input.end - input.start })}<header class="game-header" data-layout-allow-occlusion>${stableParts.counterBadgeHtml}</header>${body}${stableParts.brandMarkHtml}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
 }
 
 export function transitionClip(input: {

@@ -220,7 +220,7 @@ ${serializeQuizPaletteCss(model.palette, "      ")}
 </head>
 <body>
   <main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="${canvas.width}" data-height="${canvas.height}" data-aspect-ratio="${model.aspectRatio}" data-duration="10" data-fps="30">
-    <section class="clip candy-scene quiz-question-clip layout-${model.layout.id} ${mascotClass} sandbox-preview-stage ${model.isFinal ? "is-final-scene" : ""}">
+    <section class="clip candy-scene quiz-question-clip layout-${model.layout.id} ${mascotClass} sandbox-preview-stage ${model.isFinal ? "is-final-scene" : ""}" data-reveal-at="${revealAt}">
       ${renderQuizSceneBackground(parts, "sandbox", { questionIndex: model.question.number - 1 })}
 
       <header class="game-header" data-layout-allow-occlusion>
@@ -287,7 +287,7 @@ ${serializeQuizPaletteCss(model.palette, "      ")}
 </head>
 <body>
   <main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="${canvas.width}" data-height="${canvas.height}" data-aspect-ratio="${model.aspectRatio}" data-duration="${timeline.totalDuration.toFixed(3)}" data-fps="30">
-    <section class="clip candy-scene quiz-question-clip layout-${model.layout.id} ${mascotClass} sandbox-preview-stage ${model.isFinal ? "is-final-scene" : ""}">
+    <section class="clip candy-scene quiz-question-clip layout-${model.layout.id} ${mascotClass} sandbox-preview-stage ${model.isFinal ? "is-final-scene" : ""}" data-reveal-at="${timeline.revealStart.toFixed(3)}">
       ${renderQuizSceneBackground(parts, "production", { questionIndex: model.question.number - 1, clipStart: 0, duration: timeline.totalDuration })}
 
       <header class="game-header" data-layout-allow-occlusion>

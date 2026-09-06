@@ -6,7 +6,7 @@ export type QuizLayoutUiDefinition = {
   descriptionKey: string;
   sandboxLabelKey: string;
   sandboxDescriptionKey: string;
-  preview: "media-left" | "visual-three" | "full-stack";
+  preview: "media-left" | "visual-three" | "full-stack" | "portrait-hero" | "portrait-versus" | "portrait-verdict" | "portrait-stack";
   icon: "split" | "visual" | "stack";
 };
 
@@ -82,6 +82,42 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     sandboxDescriptionKey: "visualSandbox.layoutClueDeductionSub",
     preview: "media-left",
     icon: "visual",
+  },
+  portrait_hero_choices: {
+    id: "portrait_hero_choices",
+    labelKey: "stageStudio.layoutPortraitHeroChoices",
+    descriptionKey: "stageStudio.layoutPortraitHeroChoicesDesc",
+    sandboxLabelKey: "visualSandbox.layoutPortraitHeroChoices",
+    sandboxDescriptionKey: "visualSandbox.layoutPortraitHeroChoicesSub",
+    preview: "portrait-hero",
+    icon: "split",
+  },
+  portrait_split_versus: {
+    id: "portrait_split_versus",
+    labelKey: "stageStudio.layoutPortraitSplitVersus",
+    descriptionKey: "stageStudio.layoutPortraitSplitVersusDesc",
+    sandboxLabelKey: "visualSandbox.layoutPortraitSplitVersus",
+    sandboxDescriptionKey: "visualSandbox.layoutPortraitSplitVersusSub",
+    preview: "portrait-versus",
+    icon: "split",
+  },
+  portrait_verdict_tf: {
+    id: "portrait_verdict_tf",
+    labelKey: "stageStudio.layoutPortraitVerdictTf",
+    descriptionKey: "stageStudio.layoutPortraitVerdictTfDesc",
+    sandboxLabelKey: "visualSandbox.layoutPortraitVerdictTf",
+    sandboxDescriptionKey: "visualSandbox.layoutPortraitVerdictTfSub",
+    preview: "portrait-verdict",
+    icon: "split",
+  },
+  portrait_stack_list: {
+    id: "portrait_stack_list",
+    labelKey: "stageStudio.layoutPortraitStackList",
+    descriptionKey: "stageStudio.layoutPortraitStackListDesc",
+    sandboxLabelKey: "visualSandbox.layoutPortraitStackList",
+    sandboxDescriptionKey: "visualSandbox.layoutPortraitStackListSub",
+    preview: "portrait-stack",
+    icon: "stack",
   },
 } as const satisfies Record<ResolvedQuizLayoutId, QuizLayoutUiDefinition>;
 

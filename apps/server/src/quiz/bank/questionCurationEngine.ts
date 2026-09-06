@@ -14,6 +14,7 @@ export interface CurateQuestionsForTopicDeps {
   questionCount?: number;
   targetLanguage?: string;
   forceIncludeCooldown?: boolean;
+  aspectRatio?: "16:9" | "9:16";
 }
 
 export interface CuratedTopicQuestionsResult {
@@ -59,6 +60,14 @@ export function resolveTargetArchetype(topic: TopicCandidate): BankGameplayArche
         return "mystery_reveal";
       case "clue_deduction":
         return "clue_deduction";
+      case "portrait_hero_choices":
+        return "deep_trivia";
+      case "portrait_split_versus":
+        return "versus_faceoff";
+      case "portrait_verdict_tf":
+        return "verdict_true_false";
+      case "portrait_stack_list":
+        return "speed_blitz";
     }
   }
   if (topic.quiz_format === "true_false") {
@@ -242,7 +251,13 @@ export async function curateQuestionsForTopic(
   deps: CurateQuestionsForTopicDeps,
 ): Promise<CuratedTopicQuestionsResult> {
   const targetCount = deps.questionCount ?? 3;
-  const targetArchetype = resolveTargetArchetype(deps.topic);
+  let targetArchetype = resolveTargetArchetype(deps.topic);
+
+  if (deps.aspectRatio === "9:16") {
+    if (targetArchetype === "visual_spotting" || targetArchetype === "visual_identification") {
+      targetArchetype = "deep_trivia";
+    }
+  }
 
   const queryParams = {
     channelId: deps.channelId,
@@ -257,6 +272,12 @@ export async function curateQuestionsForTopic(
 
   let cooldownFilteredCount = 0;
   let candidates = queryResult.questions;
+
+  if (deps.aspectRatio === "9:16") {
+    candidates = candidates.filter(
+      (q) => q.format !== "odd_one_out" && q.archetype_id !== "visual_spotting",
+    );
+  }
 
   if (!deps.forceIncludeCooldown) {
     const nonCooldown = candidates.filter((q) => !q.channel_cooldown?.is_cooldown);

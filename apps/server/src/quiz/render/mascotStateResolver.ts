@@ -115,9 +115,20 @@ export function resolveMascotLayout(config: ChannelMascotConfig | null | undefin
 export function getMascotPreloadUrls(mascot: MascotProfile | null | undefined): string[] {
   if (!mascot) return [];
   const urls = new Set<string>();
-  if (mascot.master_image_url) urls.add(mascot.master_image_url);
+  if (mascot.master_image_url?.trim()) urls.add(mascot.master_image_url.trim());
   for (const act of Object.values(mascot.actions || {})) {
-    if (act?.sprite_url) urls.add(act.sprite_url);
+    if (act?.sprite_url?.trim()) urls.add(act.sprite_url.trim());
+  }
+  for (const style of mascot.styles || []) {
+    if (style.anchor_image_url?.trim()) {
+      urls.add(style.anchor_image_url.trim());
+    }
+    for (const variant of style.states?.thinking || []) {
+      if (variant.image_url?.trim()) urls.add(variant.image_url.trim());
+    }
+    for (const variant of style.states?.celebrate || []) {
+      if (variant.image_url?.trim()) urls.add(variant.image_url.trim());
+    }
   }
   return Array.from(urls);
 }

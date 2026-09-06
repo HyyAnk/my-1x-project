@@ -84,8 +84,10 @@ export async function buildChannelContext(input: {
       index = null;
     }
 
-    const matrixPlan = planTopicSuggestionMatrix({ taxonomy, index, topicHint });
-    const { outputContract } = formatTopicMatrixPrompt(matrixPlan, topicHint);
+    const channelWithAspect = channel as Channel & { render_aspect_ratio?: "16:9" | "9:16" };
+    const aspectRatio: "16:9" | "9:16" = channelWithAspect?.render_aspect_ratio === "9:16" ? "9:16" : "16:9";
+    const matrixPlan = planTopicSuggestionMatrix({ taxonomy, index, topicHint, aspectRatio });
+    const { outputContract } = formatTopicMatrixPrompt(matrixPlan, topicHint, aspectRatio);
 
     const prompt = composeContextPrompt(taskType, channel, null, [...files, ...sharedFiles], {
       output_contract: outputContract,

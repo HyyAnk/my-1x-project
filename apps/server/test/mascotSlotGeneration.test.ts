@@ -99,6 +99,127 @@ describe("Mascot Style Slot Generation Pipeline", () => {
     expect(fileInfo.size).toBeGreaterThan(0);
   });
 
+  it("prioritizes loading style.anchor_image_url when present for outfit continuity lock", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "mascot-slot-anchor-"));
+    roots.push(root);
+    const app = await buildApp(root);
+
+    // 1. Create mascot with master image
+    const mascot = await app.repository.saveMascot({
+      name: "Captain Cyber",
+      description: "A futuristic robotic fox companion",
+      visual_style: "pixar_3d",
+      master_prompt: "Futuristic chrome cyber fox with glowing blue optics",
+      color_theme: "#06b6d4",
+    });
+    const masterUrl = await app.repository.saveMascotAsset(
+      mascot.id,
+      "master_concept_1.png",
+      Buffer.from("<svg>master</svg>", "utf8"),
+    );
+    const mascotWithMaster = await app.repository.saveMascot({
+      ...mascot,
+      master_image_url: masterUrl,
+    });
+
+    // 2. Create style
+    const { mascot: mascotWithStyle, style } = await app.repository.createMascotStyle(mascotWithMaster.id, {
+      name: "Cyber Ninja",
+      keyword: "stealth cyber armor katana holographic visor",
+    });
+
+    // 3. Save anchor image and update style.anchor_image_url
+    const anchorUrl = await app.repository.saveMascotAsset(
+      mascot.id,
+      "style_ninja_anchor.png",
+      Buffer.from("<svg>ninja anchor</svg>", "utf8"),
+    );
+    const updatedMascot = await app.repository.saveMascot({
+      ...mascotWithStyle,
+      styles: (mascotWithStyle.styles || []).map((s) =>
+        s.id === style.id ? { ...s, anchor_image_url: anchorUrl } : s,
+      ),
+    });
+
+    // 4. Generate slot 1
+    const result = await generateMascotStyleSlot(
+      app.repository,
+      updatedMascot,
+      style.id,
+      {
+        style_id: style.id,
+        state: "thinking",
+        slot_index: 1,
+        prompt_modifier: "crouched on rooftop observing data stream",
+      },
+      testImageConfig,
+    );
+
+    // Verify outfit continuity directive is locked and costume directive is NOT duplicated
+    expect(result.prompt_used).toContain("@1");
+    expect(result.prompt_used).toContain(
+      'Strictly preserve character identity, outfit, costume details, colors, and accessories from @1 for "Captain Cyber". The character must wear the exact same costume shown in @1; only modify the pose, action, and facial expression.',
+    );
+    expect(result.prompt_used).not.toContain("Theme & Costume:");
+    expect(result.prompt_used).toContain("Pose and Action: crouched on rooftop observing data stream.");
+    expect(validateMascotPromptContract(result.prompt_used, true)).toBe(true);
+  });
+
+  it("falls back to mascot.master_image_url when style.anchor_image_url is null or absent", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "mascot-slot-fallback-"));
+    roots.push(root);
+    const app = await buildApp(root);
+
+    // 1. Create mascot with master image
+    const mascot = await app.repository.saveMascot({
+      name: "Captain Cyber",
+      description: "A futuristic robotic fox companion",
+      visual_style: "pixar_3d",
+      master_prompt: "Futuristic chrome cyber fox with glowing blue optics",
+      color_theme: "#06b6d4",
+    });
+    const masterUrl = await app.repository.saveMascotAsset(
+      mascot.id,
+      "master_concept_1.png",
+      Buffer.from("<svg>master</svg>", "utf8"),
+    );
+    const mascotWithMaster = await app.repository.saveMascot({
+      ...mascot,
+      master_image_url: masterUrl,
+    });
+
+    // 2. Create style where anchor_image_url is absent
+    const { mascot: mascotWithStyle, style } = await app.repository.createMascotStyle(mascotWithMaster.id, {
+      name: "Cyber Ninja",
+      keyword: "stealth cyber armor katana holographic visor",
+    });
+    expect(style.anchor_image_url).toBeFalsy();
+
+    // 3. Generate slot 1
+    const result = await generateMascotStyleSlot(
+      app.repository,
+      mascotWithStyle,
+      style.id,
+      {
+        style_id: style.id,
+        state: "thinking",
+        slot_index: 1,
+        prompt_modifier: "pondering data streams",
+      },
+      testImageConfig,
+    );
+
+    // Falls back to master identity continuity + costume directive
+    expect(result.prompt_used).toContain("@1");
+    expect(result.prompt_used).toContain('Strictly preserve character identity from @1 for "Captain Cyber"');
+    expect(result.prompt_used).toContain("face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions");
+    expect(result.prompt_used).toContain(
+      "Theme & Costume: Styled in authentic stealth cyber armor katana holographic visor attire and accessories.",
+    );
+    expect(result.prompt_used).not.toContain("The character must wear the exact same costume shown in @1");
+    expect(validateMascotPromptContract(result.prompt_used, true)).toBe(true);
+  });
+
   it("throws an error when styleId is not found", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "mascot-slot-gen-"));
     roots.push(root);

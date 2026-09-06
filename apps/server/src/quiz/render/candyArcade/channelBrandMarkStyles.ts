@@ -81,33 +81,37 @@ export function channelBrandMarkCss(): string {
 
 /* 9:16 Portrait Canvas */
 #stage[data-aspect-ratio="9:16"] .channel-brand-mark {
-  left: 40px;
-  top: auto;
-  bottom: 150px;
+  left: auto;
+  right: 36px;
+  top: 42px;
+  bottom: auto;
   transform: none;
-  width: 350px;
-  max-width: 350px;
-  align-items: flex-start;
-  text-align: left;
+  width: auto;
+  max-width: 660px;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 8px;
+  text-align: right;
 }
 
 #stage[data-aspect-ratio="9:16"] .channel-brand-mark .brand-mark-icon {
-  margin-bottom: 8px;
-}
-
-#stage[data-aspect-ratio="9:16"] .channel-brand-mark .brand-mark-icon svg {
-  width: 108px;
-  height: 74px;
+  display: none !important;
 }
 
 #stage[data-aspect-ratio="9:16"] .channel-brand-mark .brand-mark-channel-name {
-  font-size: 68px;
-  padding: 0 10px;
+  font-size: 42px;
+  padding: 0;
+  margin: 0;
+  opacity: 0.28;
 }
 
 #stage[data-aspect-ratio="9:16"] .channel-brand-mark .brand-mark-sub {
-  font-size: 34px;
-  letter-spacing: 6px;
+  font-size: 26px;
+  letter-spacing: 3px;
+  margin-top: 0;
+  opacity: 0.22;
+  flex-shrink: 0;
 }
 `;
 }

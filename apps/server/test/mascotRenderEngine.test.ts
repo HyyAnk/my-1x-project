@@ -16,7 +16,11 @@ import {
 import { RepositoryService } from "../src/repository.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
-import { renderProductionMascotHtmlLayer } from "../src/quiz/render/productionMascotRenderer.js";
+import {
+  adaptMascotForQuestion,
+  renderProductionMascotHtmlLayer,
+} from "../src/quiz/render/productionMascotRenderer.js";
+import { getMascotPreloadUrls } from "../src/quiz/render/mascotStateResolver.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
@@ -246,6 +250,7 @@ describe("Mascot portrait canvas and storage migration", () => {
     const preview = buildSandboxComposition(
       {
         aspect_ratio: "9:16",
+        layout_id: "portrait_hero_choices",
         mascot_id: batchMascot.id,
         mascot_enabled: true,
         mascot_phase: "thinking",
@@ -256,7 +261,7 @@ describe("Mascot portrait canvas and storage migration", () => {
     ).html;
     expect(preview).toContain('data-width="1080" data-height="1920" data-aspect-ratio="9:16"');
     expect(preview).toContain('data-mascot-canvas="1080x1920"');
-    expect(preview).toContain('#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .game-stage');
+    expect(preview).toContain('#stage[data-aspect-ratio="9:16"] .game-stage');
 
     const production = renderProductionMascotHtmlLayer(
       batchMascot,
@@ -306,7 +311,7 @@ describe("Mascot portrait canvas and storage migration", () => {
         },
       ],
     });
-    const director = createDefaultDirectorPlan(quiz);
+    const director = createDefaultDirectorPlan(quiz, "9:16");
     const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
     const bundle = buildCandyArcadeCompositionBundle({
       quiz,
@@ -319,6 +324,58 @@ describe("Mascot portrait canvas and storage migration", () => {
     });
     expect(bundle.html).toContain('data-width="1080" data-height="1920" data-aspect-ratio="9:16"');
     expect(Object.values(bundle.files).every((file) => file.includes('data-width="1080" data-height="1920"'))).toBe(true);
+  });
+
+  it("anchors question-clip mascot containers above safe-zone-bottom and respects safe-zone-right in 9:16 portrait composition CSS", () => {
+    const quiz = QuizV2Schema.parse({
+      schema_version: 2,
+      episode_id: "batch-e-safe-zone-quiz",
+      age_band: "7-9",
+      language: "English",
+      questions: [
+        {
+          id: "question-01",
+          number: 1,
+          format: "multiple_choice",
+          difficulty: 1,
+          question: "Which ocean is the largest?",
+          choices: [
+            { id: "choice-a", text: "Pacific" },
+            { id: "choice-b", text: "Atlantic" },
+            { id: "choice-c", text: "Arctic" },
+          ],
+          correct_choice_id: "choice-a",
+          explanation: "The Pacific is the largest ocean.",
+          fun_fact: "",
+          source_ids: ["source-1"],
+          visual_opportunity: "A bright globe",
+          validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
+        },
+      ],
+    });
+    const director = createDefaultDirectorPlan(quiz, "9:16");
+    const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      aspectRatio: "9:16",
+    });
+
+    expect(bundle.html).toContain("var(--safe-zone-bottom, 440px)");
+    expect(bundle.html).toContain("var(--safe-zone-right, 140px)");
+    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .quiz-question-clip .candy-mascot-container.mascot-v2-container");
+    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-scene:not(.candy-intro):not(.candy-outro) .candy-mascot-container.mascot-v2-container");
+    expect(bundle.html).toContain("bottom: var(--safe-zone-bottom, 440px);");
+    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-mascot-container.mascot-v2-container.anchor-bottom_right");
+    expect(bundle.html).toContain("right: var(--safe-zone-right, 140px);");
+    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-mascot-container.mascot-v2-container.anchor-bottom_left");
+    expect(bundle.html).toContain("left: 36px;");
+    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-mascot-container.mascot-v2-container.mascot-intro");
+    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-mascot-container.mascot-v2-container.mascot-outro");
   });
 
   it("migrates V1 mascot manifests idempotently with a backup and restores the exact original on rollback", async () => {
@@ -413,5 +470,244 @@ describe("Mascot portrait canvas and storage migration", () => {
       { mascot_id: batchMascot.id, status: "conflict", message: "Current V2 manifest changed after migration" },
     ]);
     expect(JSON.parse(await readFile(migratedPath, "utf8"))).toMatchObject({ description: "Changed after migration", schema_version: 2 });
+  });
+});
+
+describe("Mascot Style Anchor Graceful Fallback (Step 5)", () => {
+  it("adapts thinking and celebrate actions to style.anchor_image_url when style has 0 slot variants", () => {
+    const mascotWithAnchor: MascotProfile = {
+      id: "anchor-mascot",
+      name: "Anchor Mascot",
+      description: "Anchor fallback fixture",
+      visual_style: "pixar_3d",
+      master_prompt: "Core mascot",
+      master_image_url: "/assets/master.png",
+      color_theme: "#06b6d4",
+      actions: {
+        thinking: action("thinking", "/assets/core-thinking.png"),
+        celebrate: action("celebrate", "/assets/core-celebrate.png"),
+      },
+      styles: [
+        {
+          id: "cyberpunk-anchor",
+          name: "Cyberpunk Anchor",
+          keyword: "cyberpunk",
+          anchor_image_url: "/assets/cyberpunk-anchor.png",
+          is_default: false,
+          states: {
+            thinking: [],
+            celebrate: [],
+          },
+          created_at: "2026-09-06T00:00:00.000Z",
+          updated_at: "2026-09-06T00:00:00.000Z",
+        },
+      ],
+      assigned_channel_ids: [],
+      created_at: "2026-09-06T00:00:00.000Z",
+      updated_at: "2026-09-06T00:00:00.000Z",
+    };
+
+    const adapted = adaptMascotForQuestion(mascotWithAnchor, "cyberpunk-anchor", 0);
+    expect(adapted).toBeDefined();
+    expect(adapted?.actions.thinking?.sprite_url).toBe("/assets/cyberpunk-anchor.png");
+    expect(adapted?.actions.thinking?.motion_preset).toBe("sway");
+    expect(adapted?.actions.thinking?.motion_speed).toBe(1.0);
+    expect(adapted?.actions.thinking?.motion_intensity).toBe("normal");
+
+    expect(adapted?.actions.celebrate?.sprite_url).toBe("/assets/cyberpunk-anchor.png");
+    expect(adapted?.actions.celebrate?.motion_preset).toBe("jump");
+    expect(adapted?.actions.celebrate?.motion_speed).toBe(1.0);
+    expect(adapted?.actions.celebrate?.motion_intensity).toBe("normal");
+
+    // Also verify render_bundle adaptation when render_bundle is present
+    const bundleMascot: MascotProfile = {
+      ...mascotWithAnchor,
+      render_bundle: adaptMascotV1ToV2(mascotWithAnchor, { enabled: true })!,
+    };
+    const adaptedBundle = adaptMascotForQuestion(bundleMascot, "cyberpunk-anchor", 0);
+    expect(adaptedBundle?.render_bundle?.assets.actions.thinking?.image_url).toBe("/assets/cyberpunk-anchor.png");
+    expect(adaptedBundle?.render_bundle?.assets.actions.thinking?.motion?.preset).toBe("sway");
+    expect(adaptedBundle?.render_bundle?.assets.actions.celebrate?.image_url).toBe("/assets/cyberpunk-anchor.png");
+    expect(adaptedBundle?.render_bundle?.assets.actions.celebrate?.motion?.preset).toBe("jump");
+  });
+
+  it("prioritizes slot variants over anchor_image_url when both are present", () => {
+    const mascotWithBoth: MascotProfile = {
+      id: "both-mascot",
+      name: "Both Mascot",
+      description: "Precedence fixture",
+      visual_style: "pixar_3d",
+      master_prompt: "Core mascot",
+      master_image_url: "/assets/master.png",
+      color_theme: "#06b6d4",
+      actions: {},
+      styles: [
+        {
+          id: "style-with-both",
+          name: "Detailed Style",
+          keyword: "detailed",
+          anchor_image_url: "/assets/anchor-should-be-ignored.png",
+          is_default: false,
+          states: {
+            thinking: [
+              { id: "t0", slot_index: 1, image_url: "/assets/slot-thinking.png", motion_preset: "sway" },
+            ],
+            celebrate: [
+              { id: "c0", slot_index: 1, image_url: "/assets/slot-celebrate.png", motion_preset: "jump" },
+            ],
+          },
+          created_at: "2026-09-06T00:00:00.000Z",
+          updated_at: "2026-09-06T00:00:00.000Z",
+        },
+      ],
+      assigned_channel_ids: [],
+      created_at: "2026-09-06T00:00:00.000Z",
+      updated_at: "2026-09-06T00:00:00.000Z",
+    };
+
+    const adapted = adaptMascotForQuestion(mascotWithBoth, "style-with-both", 0);
+    expect(adapted?.actions.thinking?.sprite_url).toBe("/assets/slot-thinking.png");
+    expect(adapted?.actions.celebrate?.sprite_url).toBe("/assets/slot-celebrate.png");
+  });
+
+  it("includes all style anchor URLs in getMascotPreloadUrls", () => {
+    const mascotWithStyles: MascotProfile = {
+      id: "preload-mascot",
+      name: "Preload Mascot",
+      description: "Preload test",
+      visual_style: "pixar_3d",
+      master_prompt: "Core",
+      master_image_url: "/assets/master.png",
+      color_theme: "#06b6d4",
+      actions: {
+        thinking: action("thinking", "/assets/core-thinking.png"),
+      },
+      styles: [
+        {
+          id: "style-1",
+          name: "Style 1",
+          keyword: "s1",
+          anchor_image_url: "/assets/style-1-anchor.png",
+          is_default: false,
+          states: { thinking: [], celebrate: [] },
+          created_at: "2026-09-06T00:00:00.000Z",
+          updated_at: "2026-09-06T00:00:00.000Z",
+        },
+        {
+          id: "style-2",
+          name: "Style 2",
+          keyword: "s2",
+          anchor_image_url: "/assets/style-2-anchor.png",
+          is_default: false,
+          states: {
+            thinking: [{ id: "t0", slot_index: 1, image_url: "/assets/style-2-thinking.png" }],
+            celebrate: [],
+          },
+          created_at: "2026-09-06T00:00:00.000Z",
+          updated_at: "2026-09-06T00:00:00.000Z",
+        },
+        {
+          id: "style-3",
+          name: "Style 3 Without Anchor",
+          keyword: "s3",
+          anchor_image_url: null,
+          is_default: false,
+          states: { thinking: [], celebrate: [] },
+          created_at: "2026-09-06T00:00:00.000Z",
+          updated_at: "2026-09-06T00:00:00.000Z",
+        },
+      ],
+      assigned_channel_ids: [],
+      created_at: "2026-09-06T00:00:00.000Z",
+      updated_at: "2026-09-06T00:00:00.000Z",
+    };
+
+    const urls = getMascotPreloadUrls(mascotWithStyles);
+    expect(urls).toContain("/assets/master.png");
+    expect(urls).toContain("/assets/core-thinking.png");
+    expect(urls).toContain("/assets/style-1-anchor.png");
+    expect(urls).toContain("/assets/style-2-anchor.png");
+    expect(urls).toContain("/assets/style-2-thinking.png");
+  });
+
+  it("renders style anchor fallback in candy arcade composition when mascot_style_id has 0 slot variants", () => {
+    const quiz = QuizV2Schema.parse({
+      schema_version: 2,
+      episode_id: "anchor-composition-quiz",
+      age_band: "7-9",
+      language: "English",
+      quiz_config: {
+        mascot_style_id: "cyberpunk-anchor",
+      },
+      questions: [
+        {
+          id: "q-01",
+          number: 1,
+          format: "multiple_choice",
+          difficulty: 1,
+          question: "First test question?",
+          choices: [
+            { id: "c1", text: "Answer 1" },
+            { id: "c2", text: "Answer 2" },
+            { id: "c3", text: "Answer 3" },
+          ],
+          correct_choice_id: "c1",
+          explanation: "Explanation 1",
+          fun_fact: "",
+          source_ids: ["S1"],
+          visual_opportunity: "Scene 1",
+          validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
+        },
+      ],
+    });
+
+    const mascotWithAnchor: MascotProfile = {
+      id: "anchor-quiz-mascot",
+      name: "Anchor Quiz Mascot",
+      description: "Test",
+      visual_style: "pixar_3d",
+      master_prompt: "Core",
+      master_image_url: "/assets/master.png",
+      color_theme: "#06b6d4",
+      actions: {},
+      styles: [
+        {
+          id: "cyberpunk-anchor",
+          name: "Cyberpunk Anchor",
+          keyword: "cyberpunk",
+          anchor_image_url: "/assets/cyberpunk-anchor.png",
+          is_default: false,
+          states: { thinking: [], celebrate: [] },
+          created_at: "2026-09-06T00:00:00.000Z",
+          updated_at: "2026-09-06T00:00:00.000Z",
+        },
+      ],
+      assigned_channel_ids: [],
+      created_at: "2026-09-06T00:00:00.000Z",
+      updated_at: "2026-09-06T00:00:00.000Z",
+    };
+
+    const director = createDefaultDirectorPlan(quiz);
+    const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      mascot: mascotWithAnchor,
+      mascotConfig: { enabled: true, show_in_question: true, show_in_intro: true, show_in_outro: true },
+    });
+
+    expect(bundle.html).toContain("cyberpunk-anchor.png");
+    expect(bundle.html).toContain('rel="preload"');
+
+    const introScene = bundle.files["compositions/candy-intro.html"];
+    expect(introScene).toContain("/assets/cyberpunk-anchor.png");
+
+    const questionClipEntry = Object.entries(bundle.files).find(([k]) => k.includes("quiz-q1-"));
+    expect(questionClipEntry).toBeDefined();
+    expect(questionClipEntry![1]).toContain("/assets/cyberpunk-anchor.png");
   });
 });

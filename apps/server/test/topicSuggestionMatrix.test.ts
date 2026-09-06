@@ -4,6 +4,7 @@ import {
   planTopicSuggestionMatrix,
   formatTopicMatrixPrompt,
   ARCHETYPE_SLOT_DEFINITIONS,
+  PORTRAIT_ARCHETYPE_SLOT_DEFINITIONS,
 } from "../src/context/topicMatrixPlanner.js";
 import { parseTopicCandidates } from "../src/tasks/parsers.js";
 
@@ -280,5 +281,101 @@ describe("topicSuggestionMatrix", () => {
     expect(parsed[4].domain_id).toBe("nature_animals");
     expect(parsed[4].archetype).toBe("versus_faceoff");
     expect(parsed[4].suggested_layout).toBe("split_versus_two");
+  });
+
+  it("generates slots using portrait layouts when aspectRatio is 9:16", () => {
+    const plan = planTopicSuggestionMatrix({
+      taxonomy: mockTaxonomy,
+      index: mockIndex,
+      aspectRatio: "9:16",
+    });
+
+    expect(plan.aspectRatio).toBe("9:16");
+    expect(plan.slots).toHaveLength(5);
+
+    expect(plan.slots[0].suggestedLayout).toBe("portrait_hero_choices");
+    expect(plan.slots[1].suggestedLayout).toBe("portrait_hero_choices");
+    expect(plan.slots[2].suggestedLayout).toBe("portrait_verdict_tf");
+    expect(plan.slots[3].suggestedLayout).toBe("portrait_hero_choices");
+    expect(plan.slots[4].suggestedLayout).toBe("portrait_split_versus");
+
+    // Strictly forbid visual_spotting, odd_one_out, visual_choices_three, and visual_choices_three_pure in 9:16
+    const layouts = plan.slots.map((s) => s.suggestedLayout);
+    expect(layouts).not.toContain("visual_choices_three");
+    expect(layouts).not.toContain("visual_choices_three_pure");
+    expect(layouts).not.toContain("media_left_choices_right");
+    expect(layouts).not.toContain("split_versus_two");
+
+    const archetypes = plan.slots.map((s) => s.archetype);
+    expect(archetypes).not.toContain("visual_spotting");
+
+    const formats = plan.slots.map((s) => s.quizFormat);
+    expect(formats).not.toContain("odd_one_out");
+  });
+
+  it("formats prompt instructions with portrait layouts and strictly excludes visual_spotting and odd_one_out for 9:16", () => {
+    const plan = planTopicSuggestionMatrix({
+      taxonomy: mockTaxonomy,
+      index: mockIndex,
+      topicHint: "Emergency doctor jobs",
+      aspectRatio: "9:16",
+    });
+
+    const { blueprintGuidance, outputContract } = formatTopicMatrixPrompt(
+      plan,
+      "Emergency doctor jobs",
+      "9:16",
+    );
+
+    // Verify portrait blueprint guidance
+    expect(blueprintGuidance).toContain("Slot 1 (Deep Trivia):");
+    expect(blueprintGuidance).toContain('suggested_layout: "portrait_hero_choices"');
+    expect(blueprintGuidance).toContain("Slot 2 (Silhouette / Mystery Reveal):");
+    expect(blueprintGuidance).toContain("Slot 3 (True or False):");
+    expect(blueprintGuidance).toContain('suggested_layout: "portrait_verdict_tf"');
+    expect(blueprintGuidance).toContain("Slot 4 (Clue Deduction A -> B):");
+    expect(blueprintGuidance).toContain("Slot 5 (Wildcard Discovery):");
+    expect(blueprintGuidance).toContain('suggested_layout: "portrait_split_versus" | "portrait_stack_list"');
+    expect(blueprintGuidance).toContain('archetype: "versus_faceoff" | "speed_blitz"');
+
+    // Strictly excluded from 9:16
+    expect(blueprintGuidance).not.toContain("visual_spotting");
+    expect(blueprintGuidance).not.toContain("odd_one_out");
+    expect(blueprintGuidance).not.toContain("visual_choices_three");
+    expect(blueprintGuidance).not.toContain("visual_choices_three_pure");
+    expect(blueprintGuidance).not.toContain("media_left_choices_right");
+    expect(blueprintGuidance).not.toContain("split_versus_two");
+
+    // Verify output contract
+    expect(outputContract).toContain(
+      "suggested_layout (portrait_hero_choices|portrait_split_versus|portrait_verdict_tf|portrait_stack_list)",
+    );
+    expect(outputContract).toContain("quiz_format (knowledge|image_guess|multiple_choice|true_false)");
+    expect(outputContract).toContain(
+      "archetype (deep_trivia|mystery_reveal|verdict_true_false|clue_deduction|versus_faceoff|speed_blitz)",
+    );
+
+    expect(outputContract).not.toContain("odd_one_out");
+    expect(outputContract).not.toContain("visual_spotting");
+    expect(outputContract).not.toContain("visual_choices_three");
+    expect(outputContract).not.toContain("visual_choices_three_pure");
+    expect(outputContract).not.toContain("media_left_choices_right");
+    expect(outputContract).not.toContain("split_versus_two");
+    expect(outputContract).not.toContain("full_stack_list");
+  });
+
+  it("infers 9:16 portrait formatting directly from plan.aspectRatio if not explicitly passed", () => {
+    const plan = planTopicSuggestionMatrix({
+      taxonomy: mockTaxonomy,
+      index: mockIndex,
+      aspectRatio: "9:16",
+    });
+
+    const { blueprintGuidance, outputContract } = formatTopicMatrixPrompt(plan);
+
+    expect(blueprintGuidance).toContain('suggested_layout: "portrait_hero_choices"');
+    expect(outputContract).toContain(
+      "suggested_layout (portrait_hero_choices|portrait_split_versus|portrait_verdict_tf|portrait_stack_list)",
+    );
   });
 });

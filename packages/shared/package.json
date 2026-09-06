@@ -14,7 +14,8 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "typecheck": "tsc --project tsconfig.json --noEmit"
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "test": "node --import tsx --test test/quizLayouts.policy.test.ts"
   },
   "dependencies": {
     "zod": "^3.24.1"

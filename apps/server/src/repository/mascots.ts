@@ -239,6 +239,7 @@ export async function createMascotStyle(
       name: input.name,
       keyword: input.keyword || "",
       is_default: false,
+      anchor_image_url: null,
       states: {
         thinking: Array.from({ length: 10 }, (_, i) => ({
           id: `slot_${i + 1}`,
@@ -266,11 +267,15 @@ export async function createMascotStyle(
   });
 }
 
+export type UpdateMascotStylePayload = UpdateMascotStyleInput & {
+  anchor_image_url?: string | null;
+};
+
 export async function updateMascotStyle(
   this: RepositoryRuntime,
   mascotId: string,
   styleId: string,
-  input: UpdateMascotStyleInput,
+  input: UpdateMascotStylePayload,
 ): Promise<MascotProfile> {
   return withMascotWriteLock(mascotId, async () => {
     const mascot = await this.getMascot(mascotId);
@@ -286,6 +291,42 @@ export async function updateMascotStyle(
       ...existingStyle,
       ...(input.name !== undefined ? { name: input.name } : {}),
       ...(input.keyword !== undefined ? { keyword: input.keyword } : {}),
+      ...(input.anchor_image_url !== undefined ? { anchor_image_url: input.anchor_image_url } : {}),
+      updated_at: now,
+    };
+
+    const updatedStyles = [...styles];
+    updatedStyles[styleIndex] = updatedStyle;
+
+    const updatedMascot: MascotProfile = {
+      ...mascot,
+      styles: updatedStyles,
+      updated_at: now,
+    };
+
+    return this.saveMascot(updatedMascot);
+  });
+}
+
+export async function saveMascotStyleConcept(
+  this: RepositoryRuntime,
+  mascotId: string,
+  styleId: string,
+  anchorImageUrl: string | null,
+): Promise<MascotProfile> {
+  return withMascotWriteLock(mascotId, async () => {
+    const mascot = await this.getMascot(mascotId);
+    const styles = mascot.styles || [];
+    const styleIndex = styles.findIndex((s) => s.id === styleId);
+    if (styleIndex === -1) {
+      throw new RepositoryError(`Style ${styleId} not found`, "STYLE_NOT_FOUND");
+    }
+
+    const existingStyle = styles[styleIndex]!;
+    const now = nowIso();
+    const updatedStyle: MascotStyle = {
+      ...existingStyle,
+      anchor_image_url: anchorImageUrl,
       updated_at: now,
     };
 

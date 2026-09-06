@@ -93,6 +93,18 @@ describe("Channel Brand Mark Unit & HTML Renderer", () => {
     expect(html).toContain("QUIZ");
   });
 
+  it("renders 9:16 mark without YouTube SVG icon in single-row header structure", () => {
+    const html = renderChannelBrandMark("Tino", true, "9:16");
+    expect(html).toContain('class="channel-brand-mark"');
+    expect(html).toContain('data-aspect-ratio="9:16"');
+    expect(html).not.toContain("<svg");
+    expect(html).not.toContain('class="brand-mark-icon"');
+    expect(html).toContain('class="brand-mark-channel-name"');
+    expect(html).toContain("Tino");
+    expect(html).toContain('class="brand-mark-sub"');
+    expect(html).toContain("QUIZ");
+  });
+
   it("escapes raw HTML and special characters in brand name safely", () => {
     const dangerous = `<script>alert('xss')</script> & "Tino"`;
     const html = renderChannelBrandMark(dangerous, true);
@@ -131,9 +143,14 @@ describe("Channel Brand Mark Layer Contract & CSS", () => {
   it("provides specific styling rules for 9:16 aspect ratio", () => {
     const css = channelBrandMarkCss();
     expect(css).toContain('#stage[data-aspect-ratio="9:16"] .channel-brand-mark');
-    expect(css).toContain("bottom: 150px;");
-    expect(css).toContain("width: 350px;");
-    expect(css).toContain("font-size: 68px;");
+    expect(css).toContain("right: 36px;");
+    expect(css).toContain("top: 42px;");
+    expect(css).toContain("max-width: 660px;");
+    expect(css).toContain("flex-direction: row;");
+    expect(css).toContain("font-size: 42px;");
+    expect(css).toContain("opacity: 0.28;");
+    expect(css).toContain('#stage[data-aspect-ratio="9:16"] .channel-brand-mark .brand-mark-icon');
+    expect(css).toContain("display: none !important;");
   });
 });
 

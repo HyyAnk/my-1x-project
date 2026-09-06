@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ALL_MASCOT_ACTIONS, type MascotProfile } from "@studio/shared";
 import type { Notice } from "../../../components/types";
-import { DEFAULT_ACTION_INTENSITIES, DEFAULT_ACTION_MOTIONS, DEFAULT_ACTION_SPEEDS } from "../constants";
+import { CORE_GAMEPLAY_ACTIONS, DEFAULT_ACTION_INTENSITIES, DEFAULT_ACTION_MOTIONS, DEFAULT_ACTION_SPEEDS } from "../constants";
 import { useMascotProgress } from "./useMascotProgress";
 import { useMascotConceptForm } from "./useMascotConceptForm";
 import { useMascotSpriteGenerator } from "./useMascotSpriteGenerator";
@@ -68,6 +68,7 @@ export function useMascotGenerator({ onNotice, onRefreshChannels, onMascotsChang
     motionStudio.setActionMotions({ ...DEFAULT_ACTION_MOTIONS });
     motionStudio.setActionSpeeds({ ...DEFAULT_ACTION_SPEEDS });
     motionStudio.setActionIntensities({ ...DEFAULT_ACTION_INTENSITIES });
+    motionStudio.setActivePreviewAction("thinking");
     setGeneratorStep(1);
   };
 
@@ -93,7 +94,7 @@ export function useMascotGenerator({ onNotice, onRefreshChannels, onMascotsChang
     motionStudio.setActionSpeeds(initialSpeeds);
     motionStudio.setActionIntensities(initialIntensities);
 
-    const availableAction = ALL_MASCOT_ACTIONS.find((act) => mascot.actions[act]?.sprite_url) || "wave";
+    const availableAction = CORE_GAMEPLAY_ACTIONS.find((act) => mascot.actions[act]?.sprite_url) || "thinking";
     motionStudio.setActivePreviewAction(availableAction);
     setGeneratorStep(1);
   };

@@ -1,10 +1,12 @@
 import {
+  isResolvedQuizLayoutId,
   resolveQuizLayout,
   type DirectorArchetype,
   type DirectorPlan,
   type Episode,
   type QuizQuestionFormat,
   type QuizV2,
+  type ResolvedQuizLayoutId,
 } from "@studio/shared";
 import type { EpisodePreviewQuestion } from "../types/episodePreview.types";
 
@@ -93,10 +95,10 @@ function resolvePreviewLayout(
   archetype: DirectorArchetype,
   questionFormat: QuizQuestionFormat,
   choiceCount: number,
-) {
+): ResolvedQuizLayoutId {
   const resolution = resolveQuizLayout({ requestedLayout, archetype, questionFormat, choiceCount });
   if (resolution.ok) return resolution.layoutId;
-  if (requestedLayout !== "auto") return requestedLayout;
+  if (requestedLayout !== "auto" && isResolvedQuizLayoutId(requestedLayout)) return requestedLayout;
   throw new Error(resolution.issues.map((issue) => issue.message).join(" "));
 }
 

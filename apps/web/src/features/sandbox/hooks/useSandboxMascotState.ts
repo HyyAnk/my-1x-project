@@ -9,18 +9,29 @@ import {
 } from "@studio/shared";
 import { api } from "../../../api";
 
+export type SandboxMascotAction = "thinking" | "celebrate";
+
 export function useSandboxMascotState() {
   const [mascots, setMascots] = useState<MascotProfile[]>([]);
   const [mascotId, setMascotId] = useState("none");
   const [mascotStyleId, setMascotStyleId] = useState<string | null>(null);
   const [selectedVariantIndex, setSelectedVariantIndex] = useState<number | null>(null);
   const [mascotEnabled, setMascotEnabled] = useState(false);
-  const [mascotAction, setMascotAction] = useState<MascotActionType>("thinking");
+  const [mascotAction, setMascotActionState] = useState<SandboxMascotAction>("thinking");
   const [mascotPosition, setMascotPosition] = useState<"bottom_left" | "bottom_right">(RECOMMENDED_MASCOT_PLACEMENT_PRESET.position);
   const [mascotScale, setMascotScale] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale);
   const [mascotOffsetX, setMascotOffsetX] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_x);
   const [mascotOffsetY, setMascotOffsetY] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_y);
   const [mascotFlipX, setMascotFlipX] = useState<boolean>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.flip_x);
+
+  const setMascotAction = useCallback((action: MascotActionType | SandboxMascotAction) => {
+    if (action === "celebrate") {
+      setMascotActionState("celebrate");
+    } else {
+      // Normalize any non-variant or legacy action to "thinking"
+      setMascotActionState("thinking");
+    }
+  }, []);
 
   useEffect(() => {
     api
@@ -74,11 +85,45 @@ export function useSandboxMascotState() {
   }, [activeMascot, mascotStyleId]);
 
   const thinkingVariants: MascotStateVariant[] = useMemo(() => {
-    return (activeStyle?.states?.thinking || []).filter((v) => Boolean(v.image_url?.trim()));
+    const filled = (activeStyle?.states?.thinking || []).filter((v) => Boolean(v.image_url?.trim()));
+    if (filled.length > 0) {
+      return filled;
+    }
+    const anchorUrl = activeStyle?.anchor_image_url?.trim();
+    if (anchorUrl) {
+      return [
+        {
+          id: `${activeStyle?.id || "style"}_anchor_thinking`,
+          slot_index: 1,
+          image_url: anchorUrl,
+          motion_preset: "sway",
+          motion_speed: 1.0,
+          motion_intensity: "normal",
+        },
+      ];
+    }
+    return [];
   }, [activeStyle]);
 
   const celebrateVariants: MascotStateVariant[] = useMemo(() => {
-    return (activeStyle?.states?.celebrate || []).filter((v) => Boolean(v.image_url?.trim()));
+    const filled = (activeStyle?.states?.celebrate || []).filter((v) => Boolean(v.image_url?.trim()));
+    if (filled.length > 0) {
+      return filled;
+    }
+    const anchorUrl = activeStyle?.anchor_image_url?.trim();
+    if (anchorUrl) {
+      return [
+        {
+          id: `${activeStyle?.id || "style"}_anchor_celebrate`,
+          slot_index: 1,
+          image_url: anchorUrl,
+          motion_preset: "jump",
+          motion_speed: 1.0,
+          motion_intensity: "normal",
+        },
+      ];
+    }
+    return [];
   }, [activeStyle]);
 
   // When style changes, if the current action is thinking/celebrate, preserve or resolve appropriate variant.
