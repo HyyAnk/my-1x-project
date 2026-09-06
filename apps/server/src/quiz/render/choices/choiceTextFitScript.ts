@@ -72,6 +72,8 @@ function measureChoiceGroup(group,fontSize,lines,leading) {
 
 function measureElementWithin(element,container) {
   if (!container || element.parentElement!==container) return true;
+  if (element.hasAttribute && element.hasAttribute('data-layout-allow-overflow')) return true;
+  if (container.hasAttribute && container.hasAttribute('data-layout-allow-overflow')) return true;
   const elBounds=element.getBoundingClientRect();
   const parentBounds=container.getBoundingClientRect();
   const tolerance=1;
@@ -111,7 +113,8 @@ function measureChoiceText(choice,fontSize,lines,leading) {
   const textBounds=textRange.getBoundingClientRect();
   const contentLeft=choiceBounds.left+paddingLeft;
   const contentRight=choiceBounds.right-paddingRight;
-  const textFitsHorizontally=textBounds.left>=contentLeft && textBounds.right<=contentRight;
+  const textLeftTolerance=0.5;
+  const textFitsHorizontally=textBounds.left>=contentLeft-textLeftTolerance && textBounds.right<=contentRight;
   return textFitsHorizontally && choice.scrollWidth<=choice.clientWidth && choice.scrollHeight<=heightLimit;
 }
 

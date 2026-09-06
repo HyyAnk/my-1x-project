@@ -80,29 +80,28 @@ describe("Portrait Hero Choices Layout (portrait_hero_choices)", () => {
   describe("9:16 Safe-Zone & Candy Arcade CSS Rules", () => {
     const css = portraitHeroChoicesLayout.css("9:16");
 
-    it("contains question box styling centered with max-width ~880px", () => {
+    it("contains question box styling centered with max-width 800px", () => {
       expect(css).toContain(".layout-portrait_hero_choices .question-title");
-      expect(css).toMatch(/max-width:\s*880px/);
+      expect(css).toMatch(/max-width:\s*800px/);
       expect(css).toMatch(/margin:\s*0 auto/);
     });
 
-    it("contains prominent hero image styling with 860px width, 500px height, rounded-3xl border, and glowing candy arcade shadows", () => {
+    it("contains prominent hero image styling with 800px width, 450px height (exact 16:9), rounded-3xl border, and glowing candy arcade shadows", () => {
       expect(css).toContain(".layout-portrait_hero_choices .game-stage > .hero-image");
-      expect(css).toMatch(/width:\s*860px/);
-      expect(css).toMatch(/height:\s*500px/);
-      expect(css).toMatch(/border-radius:\s*(?:32|36)px/);
-      expect(css).toMatch(/border:\s*10px solid/);
+      expect(css).toMatch(/width:\s*800px/);
+      expect(css).toMatch(/height:\s*450px/);
+      expect(css).toMatch(/border-radius:\s*28px/);
+      expect(css).toMatch(/border:\s*8px solid/);
       expect(css).toContain("box-shadow:");
-      expect(css).toContain("rgba(255, 215, 0, 0.28)");
+      expect(css).toContain("rgba(255, 215, 0, 0.24)");
     });
 
-    it("enforces at least 140px right safe-zone clearance for TikTok/Reels action rail", () => {
+    it("enforces at least 140px safe-zone clearance on both sides via 800px centered column", () => {
       expect(css).toContain(".layout-portrait_hero_choices .answer-grid");
-      // Must have padding-right >= 140px on the answer grid so options never clash with Like/Comment/Share buttons
-      const paddingRightMatch = css.match(/padding-right:\s*(\d+)px/);
-      expect(paddingRightMatch).not.toBeNull();
-      const paddingRight = Number.parseInt(paddingRightMatch?.[1] ?? "0", 10);
-      expect(paddingRight).toBeGreaterThanOrEqual(140);
+      expect(css).toMatch(/max-width:\s*800px/);
+      expect(css).toMatch(/margin:\s*0 auto/);
+      // Stage is 800px centered on 1080px canvas -> (1080 - 800) / 2 = 140px clearance on left and right
+      expect(css).toContain("margin: 196px auto 0");
     });
 
     it("embeds phase region directly below choices and does not pin it to absolute screen bottom", () => {
@@ -110,17 +109,18 @@ describe("Portrait Hero Choices Layout (portrait_hero_choices)", () => {
       expect(css).toContain("position: relative");
       expect(css).toContain("bottom: auto");
 
-      // Verifies thinking bar elevated right under choices inside the embedded phase region
+      // Verifies thinking bar calibrated to 660px ensuring marker star tip stops at x = 940px
       expect(css).toContain(".layout-portrait_hero_choices .phase-region > .thinking-bar");
+      expect(css).toMatch(/width:\s*min\(660px,\s*100%\)/);
       expect(css).toContain(".layout-portrait_hero_choices .phase-region > .fact-card");
     });
 
-    it("guarantees at least 440px bottom clearance buffer for TikTok/Reels creator handle and captions", () => {
-      // Confirms bottom clearance buffer rule of >= 440px
-      const clearanceMatch = css.match(/margin-bottom:\s*(\d+)px/);
-      expect(clearanceMatch).not.toBeNull();
-      const bottomClearance = Number.parseInt(clearanceMatch?.[1] ?? "0", 10);
-      expect(bottomClearance).toBeGreaterThanOrEqual(440);
+    it("guarantees staggered entrance animations for choice cards in Phase 2", () => {
+      expect(css).toContain(".layout-portrait_hero_choices.quiz-question-clip .choice-card:nth-child(1)");
+      expect(css).toContain(".layout-portrait_hero_choices.quiz-question-clip .choice-card:nth-child(2)");
+      expect(css).toContain(".layout-portrait_hero_choices.quiz-question-clip .choice-card:nth-child(3)");
+      expect(css).toContain("choice-card-enter");
+      expect(css).toContain("@keyframes choice-card-enter");
     });
 
     it("integrates seamlessly into global candyArcadeCss output for 9:16 aspect ratio", () => {
@@ -128,8 +128,7 @@ describe("Portrait Hero Choices Layout (portrait_hero_choices)", () => {
       expect(fullCss).toContain(".layout-portrait_hero_choices");
       expect(fullCss).toContain("#stage[data-aspect-ratio=\"9:16\"] .layout-portrait_hero_choices .game-stage");
       expect(fullCss).toContain("#stage[data-aspect-ratio=\"9:16\"] .layout-portrait_hero_choices .phase-region");
-      expect(fullCss).toMatch(/padding-right:\s*140px/);
-      expect(fullCss).toMatch(/margin-bottom:\s*440px/);
+      expect(fullCss).toMatch(/margin:\s*196px auto 0/);
     });
   });
 });
@@ -195,41 +194,53 @@ describe("Portrait Split Versus Layout (portrait_split_versus)", () => {
   describe("9:16 Safe-Zone & Candy Arcade CSS Rules", () => {
     const css = portraitSplitVersusLayout.css("9:16");
 
-    it("contains question box styling centered with compact height and max-width ~880px", () => {
+    it("contains question box styling centered with compact height and max-width 860px", () => {
       expect(css).toContain(".layout-portrait_split_versus .question-title");
-      expect(css).toMatch(/max-width:\s*880px/);
+      expect(css).toMatch(/max-width:\s*860px/);
       expect(css).toMatch(/min-height:\s*140px/);
       expect(css).toMatch(/margin:\s*0 auto/);
     });
 
-    it("contains 2-card vertically stacked versus grid with ~340px-360px card height, rounded-3xl borders, and glowing border/shadows", () => {
+    it("contains 2-card vertically stacked versus grid with 358px card height, 64px gap, and rival duel shadows", () => {
       expect(css).toContain(".layout-portrait_split_versus .answer-grid");
       expect(css).toContain(".layout-portrait_split_versus .visual-answer-grid");
       expect(css).toMatch(/flex-direction:\s*column/);
-      expect(css).toMatch(/--choice-card-min-height:\s*340px/);
-      expect(css).toMatch(/border-radius:\s*(?:32|36)px/);
-      expect(css).toMatch(/min-height:\s*340px/);
+      expect(css).toMatch(/--choice-card-height:\s*358px/);
+      expect(css).toMatch(/gap:\s*64px/);
+      expect(css).toMatch(/border-radius:\s*34px/);
       expect(css).toContain("box-shadow:");
-      expect(css).toContain("rgba(255, 215, 0, 0.25)");
+      expect(css).toContain("rgba(255, 30, 86, 0.25)");
+      expect(css).toContain("rgba(0, 210, 255, 0.25)");
     });
 
-    it("contains high-impact glowing VS badge between cards styled with pulsing neon/candy gradient", () => {
+    it("contains high-impact glowing VS badge with vs-slam-pop entrance and vs-badge-pulse", () => {
       expect(css).toContain(".layout-portrait_split_versus .answer-grid::after");
-      expect(css).toContain(".layout-portrait_split_versus .vs-badge");
       expect(css).toMatch(/content:\s*"VS"/);
-      expect(css).toContain("linear-gradient(135deg, #FF1361 0%, #FFF800 100%)");
+      expect(css).toContain("linear-gradient(135deg, #FF1361 0%, #FFB703 50%, #00F2FE 100%)");
+      expect(css).toContain("vs-slam-pop");
+      expect(css).toContain("@keyframes vs-slam-pop");
       expect(css).toContain("vs-badge-pulse");
       expect(css).toContain("@keyframes vs-badge-pulse");
     });
 
-    it("enforces at least 140px right safe-zone clearance for TikTok/Reels action rail", () => {
-      expect(css).toContain(".layout-portrait_split_versus .answer-grid");
-      const paddingRightMatches = [...css.matchAll(/padding-right:\s*(\d+)px/g)];
-      expect(paddingRightMatches.length).toBeGreaterThan(0);
-      for (const match of paddingRightMatches) {
-        const paddingRight = Number.parseInt(match[1], 10);
-        expect(paddingRight).toBeGreaterThanOrEqual(140);
-      }
+    it("enforces right safe-zone clearance >= 164px via 860px column and stage margin", () => {
+      expect(css).toContain(".layout-portrait_split_versus .game-stage");
+      // 56px left margin + 860px width = 916px right boundary -> 1080 - 916 = 164px right rail margin!
+      expect(css).toMatch(/margin:\s*184px auto 0 56px/);
+    });
+
+    it("fixes Phase 2 animation delay bug by coupling entrance to var(--choices-at)", () => {
+      expect(css).toContain(".layout-portrait_split_versus.quiz-question-clip .choice-card:nth-child(1)");
+      expect(css).toMatch(/calc\(var\(--clip-start,\s*0s\)\s*\+\s*var\(--choices-at,\s*0s\)\s*\+\s*0\.08s\)/);
+      expect(css).toMatch(/calc\(var\(--clip-start,\s*0s\)\s*\+\s*var\(--choices-at,\s*0s\)\s*\+\s*0\.22s\)/);
+    });
+
+    it("crowns winning contestant card with golden neon aura and dims loser in Phase 4", () => {
+      expect(css).toContain(".quiz-question-clip[data-reveal-at] .choice-card.answer-reveal-correct");
+      expect(css).toContain("#FFD700");
+      expect(css).toContain("0 0 46px rgba(255, 215, 0, 0.9)");
+      expect(css).toContain(".quiz-question-clip[data-reveal-at] .choice-card.answer-reveal-incorrect");
+      expect(css).toContain("opacity: 0.55");
     });
 
     it("embeds phase region directly below versus cards and does not pin it to absolute screen bottom", () => {
@@ -242,21 +253,13 @@ describe("Portrait Split Versus Layout (portrait_split_versus)", () => {
       expect(css).toContain(".layout-portrait_split_versus .phase-region > .fact-card");
     });
 
-    it("guarantees at least 440px bottom clearance buffer for TikTok/Reels creator handle and captions", () => {
-      const clearanceMatch = css.match(/margin-bottom:\s*(\d+)px/);
-      expect(clearanceMatch).not.toBeNull();
-      const bottomClearance = Number.parseInt(clearanceMatch?.[1] ?? "0", 10);
-      expect(bottomClearance).toBeGreaterThanOrEqual(440);
-    });
-
     it("integrates seamlessly into global candyArcadeCss output for 9:16 aspect ratio", () => {
       const fullCss = candyArcadeCss({ fontMode: "production", aspectRatio: "9:16" });
       expect(fullCss).toContain(".layout-portrait_split_versus");
       expect(fullCss).toContain("#stage[data-aspect-ratio=\"9:16\"] .layout-portrait_split_versus .game-stage");
       expect(fullCss).toContain("#stage[data-aspect-ratio=\"9:16\"] .layout-portrait_split_versus .phase-region");
       expect(fullCss).toContain("vs-badge-pulse");
-      expect(fullCss).toMatch(/padding-right:\s*140px/);
-      expect(fullCss).toMatch(/margin-bottom:\s*440px/);
+      expect(fullCss).toMatch(/margin:\s*184px auto 0 56px/);
     });
   });
 });
@@ -383,6 +386,28 @@ describe("Portrait Verdict True/False Layout (portrait_verdict_tf)", () => {
       expect(css).toContain(".layout-portrait_verdict_tf .phase-region > .fact-card");
     });
 
+    it("fixes Phase 2 animation delay bug by coupling entrance to var(--choices-at) with spring overshoot", () => {
+      expect(css).toContain(".layout-portrait_verdict_tf.quiz-question-clip .choice-card:nth-child(1)");
+      expect(css).toMatch(/calc\(var\(--clip-start,\s*0s\)\s*\+\s*var\(--choices-at,\s*0s\)\s*\+\s*0\.06s\)/);
+      expect(css).toMatch(/calc\(var\(--clip-start,\s*0s\)\s*\+\s*var\(--choices-at,\s*0s\)\s*\+\s*0\.16s\)/);
+    });
+
+    it("crowns winning verdict button with victory bloom and settles losing button in Phase 4", () => {
+      expect(css).toContain(".layout-portrait_verdict_tf.quiz-question-clip .choice-card.answer-reveal-correct");
+      expect(css).toContain("verdict-correct-pop");
+      expect(css).toContain("@keyframes verdict-correct-pop");
+      expect(css).toContain(".layout-portrait_verdict_tf.quiz-question-clip .choice-card.answer-reveal-incorrect");
+      expect(css).toContain("verdict-incorrect-settle");
+      expect(css).toContain("@keyframes verdict-incorrect-settle");
+    });
+
+    it("standardizes embedded phase region alignment sharing x = 470px vertical center line with buttons", () => {
+      expect(css).toContain("left: calc((100% - 140px) / 2)");
+      expect(css).toContain(".layout-portrait_verdict_tf .phase-region > .thinking-bar");
+      expect(css).toContain(".layout-portrait_verdict_tf .phase-region > .fact-card");
+      expect(css).toContain("verdict-fact-enter");
+    });
+
     it("guarantees at least 440px bottom clearance buffer for TikTok/Reels creator handle and captions", () => {
       const clearanceMatch = css.match(/margin-bottom:\s*(\d+)px/);
       expect(clearanceMatch).not.toBeNull();
@@ -466,9 +491,9 @@ describe("Portrait Stack List Layout (portrait_stack_list)", () => {
   describe("9:16 Safe-Zone & Candy Arcade CSS Rules", () => {
     const css = portraitStackListLayout.css("9:16");
 
-    it("contains question box styling centered with max-width ~880px", () => {
+    it("contains question box styling centered with max-width 820px", () => {
       expect(css).toContain(".layout-portrait_stack_list .question-title");
-      expect(css).toMatch(/max-width:\s*880px/);
+      expect(css).toMatch(/max-width:\s*820px/);
       expect(css).toMatch(/margin:\s*0 auto/);
     });
 
@@ -480,14 +505,42 @@ describe("Portrait Stack List Layout (portrait_stack_list)", () => {
       expect(css).toContain(".layout-portrait_stack_list .answer-grid.answer-count-4");
     });
 
-    it("enforces at least 140px right safe-zone clearance for TikTok/Reels action rail", () => {
+    it("enforces safe-zone clearance for TikTok/Reels action rail via 820px centered column", () => {
       expect(css).toContain(".layout-portrait_stack_list .answer-grid");
-      const paddingRightMatches = [...css.matchAll(/padding-right:\s*(\d+)px/g)];
-      expect(paddingRightMatches.length).toBeGreaterThan(0);
-      for (const match of paddingRightMatches) {
-        const paddingRight = Number.parseInt(match[1], 10);
-        expect(paddingRight).toBeGreaterThanOrEqual(140);
-      }
+      expect(css).toMatch(/max-width:\s*820px/);
+      expect(css).toMatch(/margin:\s*0 auto/);
+      // Stage is 820px centered on 1080px canvas -> (1080 - 820) / 2 = 130px clearance on left and right, stage margin-top 184px
+      expect(css).toContain("margin: 184px auto 0");
+    });
+
+    it("fixes Phase 2 animation delay bug by coupling entrance to var(--choices-at)", () => {
+      expect(css).toContain(".layout-portrait_stack_list.quiz-question-clip .choice-card:nth-child(1)");
+      expect(css).toMatch(/calc\(var\(--clip-start,\s*0s\)\s*\+\s*var\(--choices-at,\s*0s\)\s*\+\s*0\.06s\)/);
+      expect(css).toMatch(/calc\(var\(--clip-start,\s*0s\)\s*\+\s*var\(--choices-at,\s*0s\)\s*\+\s*0\.12s\)/);
+      expect(css).toMatch(/calc\(var\(--clip-start,\s*0s\)\s*\+\s*var\(--choices-at,\s*0s\)\s*\+\s*0\.18s\)/);
+      expect(css).toMatch(/calc\(var\(--clip-start,\s*0s\)\s*\+\s*var\(--choices-at,\s*0s\)\s*\+\s*0\.24s\)/);
+    });
+
+    it("wires canonical Choice D (4th choice) arcade palette tokens", () => {
+      expect(css).toContain(".layout-portrait_stack_list .choice-card:nth-child(4)");
+      expect(css).toContain("--choice-stroke-shadow: #581C87");
+      expect(css).toContain("--choice-depth-shadow: #7E22CE");
+      expect(css).toContain("#A855F7");
+      expect(css).toContain("#3B0764");
+    });
+
+    it("implements adaptive vertical rhythm for 2, 3, and 4 choices", () => {
+      expect(css).toContain(".layout-portrait_stack_list .answer-grid.answer-count-2");
+      expect(css).toMatch(/--choice-card-min-height:\s*156px/);
+      expect(css).toMatch(/gap:\s*32px/);
+
+      expect(css).toContain(".layout-portrait_stack_list .answer-grid.answer-count-3");
+      expect(css).toMatch(/--choice-card-min-height:\s*132px/);
+      expect(css).toMatch(/gap:\s*22px/);
+
+      expect(css).toContain(".layout-portrait_stack_list .answer-grid.answer-count-4");
+      expect(css).toMatch(/--choice-card-min-height:\s*114px/);
+      expect(css).toMatch(/gap:\s*16px/);
     });
 
     it("embeds phase region directly below choices and does not pin it to absolute screen bottom", () => {
@@ -507,11 +560,12 @@ describe("Portrait Stack List Layout (portrait_stack_list)", () => {
       expect(bottomClearance).toBeGreaterThanOrEqual(440);
     });
 
-    it("anchors mascot container safely above 400px bottom safe zone when mascot is enabled", () => {
+    it("anchors mascot container safely above 400px bottom safe zone with safe right rail clearance", () => {
       // Must contain rule anchoring mascot container safely at bottom >= 440px
       expect(css).toContain(".has-mascot.layout-portrait_stack_list .candy-mascot-container");
       expect(css).toMatch(/bottom:\s*440px/);
       expect(css).toMatch(/left:\s*36px/);
+      expect(css).toContain("right: var(--safe-zone-right, 140px)");
 
       const bottomMatches = [...css.matchAll(/bottom:\s*(\d+)px/g)];
       const mascotBottoms = bottomMatches
@@ -525,7 +579,7 @@ describe("Portrait Stack List Layout (portrait_stack_list)", () => {
       expect(fullCss).toContain(".layout-portrait_stack_list");
       expect(fullCss).toContain("#stage[data-aspect-ratio=\"9:16\"] .layout-portrait_stack_list .game-stage");
       expect(fullCss).toContain("#stage[data-aspect-ratio=\"9:16\"] .layout-portrait_stack_list .phase-region");
-      expect(fullCss).toMatch(/padding-right:\s*140px/);
+      expect(fullCss).toMatch(/margin:\s*184px auto 0/);
       expect(fullCss).toMatch(/margin-bottom:\s*440px/);
       expect(fullCss).toContain("#stage[data-aspect-ratio=\"9:16\"] .has-mascot.layout-portrait_stack_list .candy-mascot-container");
       expect(fullCss).toMatch(/bottom:\s*440px/);

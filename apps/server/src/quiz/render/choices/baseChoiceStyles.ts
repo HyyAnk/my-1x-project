@@ -229,5 +229,17 @@ export function baseChoiceStyles(): string {
   --choice-text-color: #0C4A6E;
   --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75);
 }
+
+.choice-card:nth-child(4), .answer-card:nth-child(4), .visual-answer-card:nth-child(4) {
+  --choice-stroke: #FFFFFF;
+  --choice-stroke-shadow: #4C1D95;
+  --choice-depth-shadow: #7C3AED;
+  --choice-badge-grad: linear-gradient(180deg, #C4B5FD 0%, #7C3AED 100%);
+  --choice-badge-border: #A78BFA;
+  --choice-bg-tint: linear-gradient(180deg, #8B5CF6 0%, #6D28D9 100%);
+  --choice-pattern: repeating-linear-gradient(45deg, transparent, transparent 16px, rgba(255,255,255,0.09) 16px, rgba(255,255,255,0.09) 32px);
+  --choice-text-color: #3B0764;
+  --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75);
+}
 `;
 }

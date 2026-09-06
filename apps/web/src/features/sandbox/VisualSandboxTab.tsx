@@ -74,6 +74,7 @@ export function VisualSandboxTab({
         newLayoutId === "visual_choices_three_pure" ||
         newLayoutId === "media_left_choices_right" ||
         newLayoutId === "full_stack_list" ||
+        newLayoutId === "clue_deduction" ||
         newLayoutId === "portrait_hero_choices" ||
         newLayoutId === "portrait_stack_list"
       ) {
@@ -106,21 +107,28 @@ export function VisualSandboxTab({
   const handleApplyPresetQuestion = useCallback(
     (sample: PresetSampleQuestion) => {
       question.handleApplyPresetQuestion(sample);
+      let targetLayout: QuizPreviewLayoutId = "media_left_choices_right";
       if (sample.type === "true_false") {
-        design.setLayoutId("verdict_true_false");
+        targetLayout = "verdict_true_false";
       } else if (sample.type === "versus") {
-        design.setLayoutId("split_versus_two");
+        targetLayout = "split_versus_two";
       } else if (sample.type === "mystery_reveal") {
-        design.setLayoutId("mystery_reveal");
+        targetLayout = "mystery_reveal";
       } else if (
         design.layoutId === "verdict_true_false" ||
         design.layoutId === "split_versus_two" ||
-        design.layoutId === "mystery_reveal"
+        design.layoutId === "mystery_reveal" ||
+        design.layoutId === "portrait_verdict_tf" ||
+        design.layoutId === "portrait_split_versus"
       ) {
-        design.setLayoutId("media_left_choices_right");
+        targetLayout = "media_left_choices_right";
+      } else {
+        targetLayout = design.layoutId;
       }
+      const compatibleLayout = getCompatibleLayoutForAspectRatio(targetLayout, viewport.aspectRatio);
+      design.setLayoutId(compatibleLayout);
     },
-    [design, question],
+    [design, question, viewport.aspectRatio],
   );
 
   const preview = useSandboxPreviewRenderer({

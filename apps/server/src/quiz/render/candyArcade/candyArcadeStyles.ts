@@ -82,7 +82,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .game-stage > .hero-image { width: ${baselineRenderMetrics.width}px; height: ${baselineRenderMetrics.height}px; margin-top: 39px; }
 .hero-image img { transform-origin: center; animation: hero-ken-burn var(--scene-duration) ease-in-out var(--clip-start) 1 alternate both; will-change: transform; }
 .phase-region { position: absolute; z-index: 5; left: 50%; bottom: 10px; width: 100%; height: 110px; transform: translateX(-50%); contain: layout style; pointer-events: none; }
-.phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: -15px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(82vw, 1540px); min-height: 84px; }
+.phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: -15px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(82vw, 1360px); min-height: 84px; }
 .phase-region > .fact-card { position: absolute; z-index: 5; bottom: -45px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(1220px, 100%); }
 
 /* === Choice Components & State Styles (ADR-003) === */
@@ -90,7 +90,20 @@ ${baseChoiceStyles()}
 ${choiceTypographyStyles()}
 ${choiceStateStyles()}
 
-.thinking-bar { position: relative; z-index: 5; isolation: isolate; display: flex; align-items: center; justify-content: center; width: min(82vw, 1540px); min-height: 84px; margin: 0 auto; padding: 6px 0; border: 0; border-radius: 9999px; background: transparent; box-shadow: none; opacity: 0; animation: phase-hold var(--timer-duration) steps(1,end) var(--timer-start) both, timer-exit-fade .28s cubic-bezier(.22,.8,.3,1) calc(var(--timer-start) + var(--timer-duration) - .28s) both; contain: layout style; will-change: transform, opacity; }
+/* Canonical 4th Choice (Choice D) Neon Arcade Tokens */
+.choice-card:nth-child(4), .answer-card:nth-child(4), .visual-answer-card:nth-child(4) {
+  --choice-stroke: #FFFFFF;
+  --choice-stroke-shadow: #4C1D95;
+  --choice-depth-shadow: #7C3AED;
+  --choice-badge-grad: linear-gradient(180deg, #C4B5FD 0%, #7C3AED 100%);
+  --choice-badge-border: #A78BFA;
+  --choice-bg-tint: linear-gradient(180deg, #8B5CF6 0%, #6D28D9 100%);
+  --choice-pattern: repeating-linear-gradient(45deg, transparent, transparent 16px, rgba(255,255,255,0.09) 16px, rgba(255,255,255,0.09) 32px);
+  --choice-text-color: #3B0764;
+  --choice-text-shadow: 0 1px 0 rgba(255,255,255,0.75);
+}
+
+.thinking-bar { position: relative; z-index: 5; isolation: isolate; display: flex; align-items: center; justify-content: center; width: min(82vw, 1360px); min-height: 84px; margin: 0 auto; padding: 6px 0; border: 0; border-radius: 9999px; background: transparent; box-shadow: none; opacity: 0; animation: phase-hold var(--timer-duration) steps(1,end) var(--timer-start) both, timer-exit-fade .28s cubic-bezier(.22,.8,.3,1) calc(var(--timer-start) + var(--timer-duration) - .28s) both; contain: layout style; will-change: transform, opacity; }
 .thinking-track { position: relative; z-index: 0; width: 100%; height: 58px; overflow: visible; border: 6px solid rgba(255,255,255,.98); border-radius: 9999px; background: rgba(18,38,80,.62); box-shadow: inset 0 3px 6px rgba(255,255,255,.35), inset 0 -4px 8px rgba(0,0,0,.22), 0 8px 22px rgba(13,35,71,.35), 0 0 20px rgba(255,255,255,.25); }
 .timer-milestones { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
 .milestone-star { position: absolute; top: 50%; font-size: 24px; line-height: 1; color: #FFE66D; text-shadow: 0 0 10px rgba(255,230,109,.95), 0 2px 4px rgba(0,0,0,.4); transform: translate(-50%,-50%); animation: quizProgressStarTwinkle 2.4s ease-in-out infinite; }
@@ -98,7 +111,7 @@ ${choiceStateStyles()}
 .milestone-star.star-2 { left: 40%; animation-delay: .6s; }
 .milestone-star.star-3 { left: 60%; animation-delay: 1.2s; }
 .milestone-star.star-4 { left: 80%; animation-delay: 1.8s; }
-.timer-progress { position: absolute; top: 0; left: 0; bottom: 0; width: 100%; border-radius: 9999px; overflow: hidden; background: linear-gradient(90deg, #ff4f5e 0%, #ff7a45 20%, #ffc83d 42%, #6fa9ff 70%, #28d5d0 100%); background-size: 1540px 100%; background-position: left center; z-index: 1; animation: quiz-timer-drain var(--timer-duration) linear var(--timer-start) both; will-change: transform; }
+.timer-progress { position: absolute; top: 0; left: 0; bottom: 0; width: 100%; border-radius: 9999px; overflow: hidden; background: linear-gradient(90deg, #ff4f5e 0%, #ff7a45 20%, #ffc83d 42%, #6fa9ff 70%, #28d5d0 100%); background-size: 1360px 100%; background-position: left center; z-index: 1; animation: quiz-timer-drain var(--timer-duration) linear var(--timer-start) both; will-change: transform; }
 .timer-progress::after { position: absolute; top: 0; left: 0; right: 0; height: 50%; border-radius: 9999px 9999px 0 0; background: linear-gradient(to bottom, rgba(255,255,255,.38) 0%, rgba(255,255,255,.1) 40%, rgba(255,255,255,0) 70%); content: ""; pointer-events: none; z-index: 2; }
 .timer-marker { position: absolute; top: 50%; left: 100%; display: grid; place-items: center; width: 176px; height: 176px; border: none; background: transparent; transform: translate(-50%,-50%); animation: quiz-timer-marker-slide var(--timer-duration) linear var(--timer-start) both, quizProgressMarkerPulse 2.4s ease-in-out infinite; z-index: 6; will-change: transform; }
 .marker-star-svg { position: absolute; inset: -8px; width: 192px; height: 192px; overflow: visible; pointer-events: none; z-index: 4; }

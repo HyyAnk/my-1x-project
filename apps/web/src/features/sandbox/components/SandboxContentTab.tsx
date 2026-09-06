@@ -133,7 +133,9 @@ export function SandboxContentTab({
                   style={{ fontSize: "10px", padding: "2px 6px" }}
                   onClick={() => {
                     setChoices([...choices, `Option ${String.fromCharCode(65 + choices.length)}`]);
-                    if (layoutId === "verdict_true_false" || layoutId === "split_versus_two") {
+                    if (layoutId === "portrait_verdict_tf" || layoutId === "portrait_split_versus") {
+                      onLayoutChange?.("portrait_hero_choices");
+                    } else if (layoutId === "verdict_true_false" || layoutId === "split_versus_two") {
                       onLayoutChange?.("media_left_choices_right");
                     }
                   }}

@@ -46,6 +46,15 @@ jobs:
       - name: Unit and integration tests
         run: pnpm test
 
+      - name: Upload visual regression diffs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-regression-diffs
+          path: apps/server/node_modules/.cache/quiz-visual-diffs/
+          retention-days: 14
+          if-no-files-found: ignore
+
       - name: Production build
         run: pnpm build
 

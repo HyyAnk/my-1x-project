@@ -55,13 +55,13 @@ export function useSandboxPreviewRenderer({
       setPendingPreview(null);
       try {
         const questionFormat =
-          design.layoutId === "verdict_true_false"
+          design.layoutId === "verdict_true_false" || design.layoutId === "portrait_verdict_tf"
             ? "true_false"
             : design.layoutId === "visual_choices_three_pure"
               ? "odd_one_out"
               : design.layoutId === "mystery_reveal" || design.layoutId === "clue_deduction"
                 ? "image_guess"
-                : design.layoutId === "split_versus_two"
+                : design.layoutId === "split_versus_two" || design.layoutId === "portrait_split_versus"
                   ? "multiple_choice"
                   : question.choices.length === 2
                     ? "true_false"

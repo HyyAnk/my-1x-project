@@ -18,12 +18,15 @@
     "typecheck": "pnpm --filter @studio/shared build && pnpm -r typecheck",
     "test": "pnpm --filter @studio/shared build && pnpm --filter @studio/server test && pnpm --filter @studio/web test && node scripts/audit-quiz-choice-count.mjs && node scripts/audit-quiz-only.mjs",
     "test:coverage": "pnpm --filter @studio/shared build && pnpm --filter @studio/server test:coverage && pnpm --filter @studio/web test:coverage",
-    "test:e2e": "pnpm --filter @studio/web test:e2e"
+    "test:e2e": "pnpm --filter @studio/web test:e2e",
+    "test:visual": "pnpm --filter @studio/shared build && pnpm --filter @studio/server test -- test/quizPixelVisualRegression.test.ts",
+    "test:visual:update": "cross-env UPDATE_VISUAL_SNAPSHOTS=1 pnpm --filter @studio/server test -- test/quizPixelVisualRegression.test.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.52.0",
     "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
     "eslint": "^10.9.1",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.11.0",

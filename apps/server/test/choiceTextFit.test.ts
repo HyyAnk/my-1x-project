@@ -172,6 +172,22 @@ describe("Choice text fit policy & browser measurement", () => {
       expect(fixture.attributes.get("data-choice-fit-font-size")).toBe("41");
     });
 
+    it("allows subpixel horizontal text tolerance for glyph antialiasing and subpixel kerning", () => {
+      const fixture = createMeasurementFixture({ oneLineMax: 64, twoLineMax: 64, subpixelKerningDelta: 0.05 });
+
+      expect(runFitChoiceGroups(fixture)).toEqual({ groups: 1, overflowGroups: 0 });
+      expect(fixture.attributes.get("data-choice-fit-lines")).toBe("1");
+      expect(fixture.attributes.get("data-choice-fit-font-size")).toBe("64");
+    });
+
+    it("respects data-layout-allow-overflow when a card or container allows layout overflow", () => {
+      const fixture = createMeasurementFixture({ oneLineMax: 64, twoLineMax: 64, allowCardOverflow: true, cardDisplacement: 80 });
+
+      expect(runFitChoiceGroups(fixture)).toEqual({ groups: 1, overflowGroups: 0 });
+      expect(fixture.attributes.get("data-choice-fit-lines")).toBe("1");
+      expect(fixture.attributes.get("data-choice-fit-font-size")).toBe("64");
+    });
+
     it("clears partial measurements when reverting to tier CSS fallback", () => {
       const fixture = createMeasurementFixture({ oneLineMax: 64, twoLineMax: 64 });
       fixture.properties.set("--choice-fitted-font-size", "51px");
@@ -299,6 +315,9 @@ function createMeasurementFixture(options: {
   cardPaintScale?: number;
   offsetParentAvailable?: boolean;
   subpixelOverflowAt?: number;
+  subpixelKerningDelta?: number;
+  allowCardOverflow?: boolean;
+  cardDisplacement?: number;
 }) {
   const properties = new Map<string, string>();
   const attributes = new Map<string, string>([
@@ -315,7 +334,12 @@ function createMeasurementFixture(options: {
       createRange: () => ({
         selectNodeContents: () => undefined,
         getBoundingClientRect: () =>
-          rectangle(0, 0, options.subpixelOverflowAt && currentSize() >= options.subpixelOverflowAt ? 276.4 : 250, currentSize() * 1.08),
+          rectangle(
+            options.subpixelKerningDelta ? -options.subpixelKerningDelta : 0,
+            0,
+            options.subpixelOverflowAt && currentSize() >= options.subpixelOverflowAt ? 276.4 : 250,
+            currentSize() * 1.08,
+          ),
       }),
     },
     closest: () => surface,
@@ -354,16 +378,22 @@ function createMeasurementFixture(options: {
     querySelectorAll: (selector: string) => (selector === ".choice-text" ? [text, text] : selector === ".choice-card" ? [card, card] : []),
   };
   const cardLogicalWidth = () => (currentSize() <= (options.cardFitMax ?? Number.POSITIVE_INFINITY) ? 300 : 330);
+  const cardAttributes = new Set<string>();
+  if (options.allowCardOverflow) {
+    cardAttributes.add("data-layout-allow-overflow");
+  }
   const card = {
     parentElement: group,
     offsetParent: options.offsetParentAvailable === false ? null : group,
-    offsetLeft: 0,
+    offsetLeft: options.cardDisplacement ?? 0,
     offsetTop: 0,
+    hasAttribute: (name: string) => cardAttributes.has(name),
     get offsetWidth() {
       return cardLogicalWidth();
     },
     offsetHeight: 200,
-    getBoundingClientRect: () => rectangle(0, 0, cardLogicalWidth(), 200),
+    getBoundingClientRect: () =>
+      rectangle(options.cardDisplacement ?? 0, 0, (options.cardDisplacement ?? 0) + cardLogicalWidth(), 200),
   };
   const tokens: Record<string, string> = {
     "--choice-fit-min": "24px",
