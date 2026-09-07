@@ -1,0 +1,167 @@
+/* ==========================================================================
+   Topic Layout Trigger & Badge Button Variants
+   /* ========================================================================== */
+
+.topic-layout-trigger-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.topic-layout-badge-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+}
+
+.topic-layout-badge-btn.is-media-left {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: #3b82f6;
+}
+
+.topic-layout-badge-btn.is-media-left:hover {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: rgba(59, 130, 246, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-visual-choices {
+  background: rgba(236, 72, 153, 0.08);
+  border-color: rgba(236, 72, 153, 0.25);
+  color: #ec4899;
+}
+
+.topic-layout-badge-btn.is-visual-choices:hover {
+  background: rgba(236, 72, 153, 0.16);
+  border-color: rgba(236, 72, 153, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-true-false {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: #10b981;
+}
+
+.topic-layout-badge-btn.is-true-false:hover {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(16, 185, 129, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-clue-deduction {
+  background: rgba(14, 165, 233, 0.08);
+  border-color: rgba(14, 165, 233, 0.25);
+  color: #0ea5e9;
+}
+
+.topic-layout-badge-btn.is-clue-deduction:hover {
+  background: rgba(14, 165, 233, 0.16);
+  border-color: rgba(14, 165, 233, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-mystery-reveal {
+  background: rgba(168, 85, 247, 0.08);
+  border-color: rgba(168, 85, 247, 0.25);
+  color: #a855f7;
+}
+
+.topic-layout-badge-btn.is-mystery-reveal:hover {
+  background: rgba(168, 85, 247, 0.16);
+  border-color: rgba(168, 85, 247, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-split-versus {
+  background: rgba(249, 115, 22, 0.08);
+  border-color: rgba(249, 115, 22, 0.25);
+  color: #f97316;
+}
+
+.topic-layout-badge-btn.is-split-versus:hover {
+  background: rgba(249, 115, 22, 0.16);
+  border-color: rgba(249, 115, 22, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-full-stack {
+  background: rgba(234, 179, 8, 0.08);
+  border-color: rgba(234, 179, 8, 0.25);
+  color: #eab308;
+}
+
+.topic-layout-badge-btn.is-full-stack:hover {
+  background: rgba(234, 179, 8, 0.16);
+  border-color: rgba(234, 179, 8, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-portrait-hero {
+  background: rgba(139, 92, 246, 0.08);
+  border-color: rgba(139, 92, 246, 0.25);
+  color: #a78bfa;
+}
+
+.topic-layout-badge-btn.is-portrait-hero:hover {
+  background: rgba(139, 92, 246, 0.16);
+  border-color: rgba(139, 92, 246, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-portrait-versus {
+  background: rgba(249, 115, 22, 0.08);
+  border-color: rgba(249, 115, 22, 0.25);
+  color: #f97316;
+}
+
+.topic-layout-badge-btn.is-portrait-versus:hover {
+  background: rgba(249, 115, 22, 0.16);
+  border-color: rgba(249, 115, 22, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-portrait-verdict {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: #10b981;
+}
+
+.topic-layout-badge-btn.is-portrait-verdict:hover {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(16, 185, 129, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-btn.is-portrait-stack {
+  background: rgba(234, 179, 8, 0.08);
+  border-color: rgba(234, 179, 8, 0.25);
+  color: #eab308;
+}
+
+.topic-layout-badge-btn.is-portrait-stack:hover {
+  background: rgba(234, 179, 8, 0.16);
+  border-color: rgba(234, 179, 8, 0.4);
+  transform: translateY(-1px);
+}
+
+.topic-layout-badge-icon {
+  font-size: 11px;
+}
+
+.topic-layout-badge-text {
+  letter-spacing: -0.2px;
+}
+
+.topic-layout-eye {
+  opacity: 0.65;
+  margin-left: 1px;
+}

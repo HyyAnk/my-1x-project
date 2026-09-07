@@ -1,0 +1,155 @@
+/* ==========================================================================
+   Topic Card Details, Premise & Question Pickers
+   /* ========================================================================== */
+
+.popover-meta-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.popover-meta-footer strong {
+  color: var(--ink);
+}
+
+.topic-card h3 {
+  margin-top: 14px;
+  min-height: 44px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.topic-premise {
+  margin: 10px 0 16px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.topic-detail {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.topic-detail + .topic-detail {
+  margin-top: 10px;
+}
+
+.topic-detail span {
+  color: var(--accent-deep);
+  font:
+    700 9.5px "JetBrains Mono",
+    monospace;
+  text-transform: uppercase;
+}
+
+.topic-detail p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.topic-pickers-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  align-items: start;
+}
+
+.topic-question-picker {
+  display: grid;
+  gap: 6px;
+}
+
+.topic-question-picker label,
+.topic-style-picker label {
+  color: var(--ink);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.topic-question-picker input {
+  width: 100%;
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--paper);
+  color: var(--ink);
+  font:
+    700 12px "JetBrains Mono",
+    monospace;
+  text-align: center;
+}
+
+.topic-question-picker span {
+  color: var(--muted);
+  font:
+    600 9.5px "JetBrains Mono",
+    monospace;
+}
+
+.topic-style-picker select {
+  width: 100%;
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--paper);
+  color: var(--ink);
+  font:
+    600 11px system-ui,
+    sans-serif;
+  cursor: pointer;
+}
+
+.topic-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.topic-footer > span {
+  max-width: 48%;
+  color: var(--muted);
+  font:
+    500 9.5px "JetBrains Mono",
+    monospace;
+}
+
+.topic-build-btn {
+  min-height: 34px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 8px;
+  gap: 6px;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.topic-build-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+.topic-build-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
