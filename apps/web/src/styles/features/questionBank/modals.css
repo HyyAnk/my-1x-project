@@ -1,0 +1,251 @@
+/* ==========================================================================
+   5. Modals (Create, Edit & AI Generation)
+   ========================================================================== */
+.qb-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.qb-modal-card {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.qb-modal-card-large {
+  max-width: 720px;
+}
+
+.qb-modal-header {
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-strong);
+  border-bottom: 1px solid var(--line);
+}
+
+.qb-modal-header-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+}
+
+.qb-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--ink);
+}
+
+.qb-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.qb-modal-close:hover {
+  background: var(--surface-hover);
+  color: var(--ink);
+}
+
+.qb-modal-body {
+  padding: 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.qb-modal-intro {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.qb-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.qb-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.qb-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-secondary);
+}
+
+.qb-input,
+.qb-textarea {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  padding: 8px 10px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease;
+  font-family: inherit;
+}
+
+.qb-input:focus,
+.qb-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--soft-accent);
+}
+
+.qb-range {
+  accent-color: var(--accent);
+}
+
+.qb-modal-error {
+  background: var(--danger-surface);
+  border: 1px solid var(--notice-error);
+  color: var(--notice-error);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.qb-choices-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qb-btn-text {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.qb-choices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qb-choice-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qb-choice-btn-mark {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+.qb-choice-btn-mark.is-active {
+  background: var(--soft-green);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.qb-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.qb-qa-assurance-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--soft-green);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  color: var(--green);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.qb-rejection-box {
+  background: var(--soft-yellow);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-size: 12px;
+}
+
+.qb-rejection-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--yellow);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.qb-rejection-list {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--ink-secondary);
+}
+
+.qb-gen-result-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.qb-result-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--ink);
+}
+
+.qb-result-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}

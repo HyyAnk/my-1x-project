@@ -1,0 +1,170 @@
+/* ==========================================================================
+   Transcreation & Info Tab Inside Live Preview Inspector
+   /* ========================================================================== */
+
+/* Transcreation & Info Tab */
+.qb-preview-lang-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--surface-strong);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+
+.qb-lang-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.qb-lang-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.qb-lang-tab-btn:hover {
+  color: var(--ink);
+  background: var(--surface-hover);
+}
+
+.qb-lang-tab-btn.is-active {
+  background: var(--soft-accent);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.qb-tab-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.qb-tab-dot.is-cached {
+  background: var(--green);
+  box-shadow: 0 0 4px var(--green);
+}
+
+.qb-tab-dot.is-missing {
+  background: var(--yellow);
+}
+
+.qb-btn-retranscreate {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.qb-btn-retranscreate:hover {
+  background: var(--surface-hover);
+  color: var(--ink);
+}
+
+.qb-preview-info-box {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qb-preview-info-box p {
+  margin: 4px 0 0 0;
+  color: var(--ink-secondary);
+  line-height: 1.45;
+}
+
+.qb-info-funfact {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+
+.qb-metadata-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+}
+
+.qb-metadata-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.qb-metadata-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.qb-metadata-val {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Empty Preview State */
+.qb-preview-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  gap: 12px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.qb-preview-empty-icon {
+  font-size: 32px;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+.qb-preview-empty-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.qb-preview-empty-text {
+  font-size: 12px;
+  color: var(--muted);
+  max-width: 280px;
+  line-height: 1.4;
+  margin: 0;
+}

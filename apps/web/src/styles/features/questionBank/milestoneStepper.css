@@ -1,0 +1,234 @@
+/* ==========================================================================
+   Milestone Collapsible Section, Shimmer Sweep & Archetype Chip Bar
+   /* ========================================================================== */
+
+/* Collapsible Progress Section */
+.qb-progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.qb-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.qb-progress-pct {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.qb-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.qb-progress-track.qb-milestone-track {
+  height: 8px;
+  border-radius: 4px;
+}
+
+.qb-progress-fill {
+  position: relative;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--green) 100%);
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.qb-progress-fill.qb-milestone-fill {
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Shimmer Light Sweep Effect */
+.qb-shimmer-sweep {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: qb-progress-shimmer 2.4s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes qb-progress-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 6-Tier Milestone Stepper */
+.qb-milestone-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 4px 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  overflow-x: auto;
+}
+
+.qb-milestone-node {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.qb-milestone-node.qb-node-achieved {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.qb-milestone-node.qb-node-active {
+  background: var(--surface-strong);
+  border: 1px solid var(--accent);
+  color: var(--ink);
+  box-shadow: 0 0 8px var(--soft-accent);
+  font-weight: 700;
+}
+
+.qb-milestone-node.qb-node-upcoming {
+  opacity: 0.45;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+}
+
+.qb-node-indicator {
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qb-node-target {
+  font-size: 11px;
+  letter-spacing: 0.2px;
+}
+
+.qb-node-pulse {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: qb-pulse-dot 1.5s infinite ease-in-out;
+}
+
+@keyframes qb-pulse-dot {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+}
+
+.qb-progress-tier-label {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.qb-progress-next-tag {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 11px;
+}
+
+/* Interactive Archetype Chip Bar */
+.qb-archetypes-chip-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding-top: 2px;
+}
+
+.qb-archetype-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.qb-archetype-chip:hover {
+  background: var(--surface-hover);
+  color: var(--ink);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+
+.qb-archetype-chip.is-active {
+  background: var(--soft-accent);
+  color: var(--ink);
+  border-color: var(--accent);
+  font-weight: 700;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.qb-chip-icon {
+  font-size: 14px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.qb-chip-label {
+  letter-spacing: -0.01em;
+}
+
+.qb-chip-count {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--muted);
+}
+
+.qb-archetype-chip.is-active .qb-chip-count {
+  background: var(--accent);
+  color: #ffffff;
+}

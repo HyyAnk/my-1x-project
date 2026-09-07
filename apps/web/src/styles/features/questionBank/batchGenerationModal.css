@@ -1,0 +1,135 @@
+/* ==========================================================================
+   Dual-Mode Batch Generation & Matrix Coverage Modal Styles
+   ========================================================================== */
+.qb-mode-tabs {
+  display: flex;
+  background: var(--surface-strong);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 4px;
+  border: 1px solid var(--line);
+}
+
+.qb-mode-tab-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--radius-sm) - 2px);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.qb-mode-tab-btn:hover {
+  color: var(--ink);
+}
+
+.qb-mode-tab-btn.is-active {
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.qb-badge-auto {
+  background: var(--soft-accent);
+  color: var(--accent);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.qb-matrix-preview-card {
+  background: linear-gradient(135deg, rgba(8, 145, 178, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+  border: 1px solid rgba(8, 145, 178, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qb-matrix-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.qb-matrix-preview-stats {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.qb-volume-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.qb-volume-chip {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.qb-volume-chip:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  background: var(--surface-hover);
+}
+
+.qb-volume-chip.is-selected {
+  background: var(--soft-accent);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.qb-volume-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.qb-chunk-progress-box {
+  background: var(--surface-strong);
+  border: 1px solid var(--line-dark);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qb-chunk-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.qb-chunk-progress-note {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+}

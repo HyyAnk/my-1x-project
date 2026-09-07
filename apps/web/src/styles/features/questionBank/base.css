@@ -1,0 +1,13 @@
+/* ==========================================================================
+   Question Bank Container & Page Shell
+   /* ========================================================================== */
+
+.qb-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 20px;
+  max-width: 1720px;
+  margin: 0 auto;
+  width: 100%;
+}
