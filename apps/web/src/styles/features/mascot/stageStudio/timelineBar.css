@@ -1,0 +1,164 @@
+/* ==========================================================================
+   Minimalist Timeline Bar
+   /* ========================================================================== */
+
+.stage-timeline-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #0a0e17;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+}
+
+.stage-timeline-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.stage-timeline-actions-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.stage-timeline-play-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+  border: none;
+  background: var(--accent, #6366f1);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.stage-timeline-play-btn:hover {
+  background: #4f46e5;
+}
+
+.stage-timeline-play-btn.is-playing {
+  background: #ef4444;
+}
+
+.stage-phase-pills-row {
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.stage-phase-pills-row::-webkit-scrollbar {
+  display: none;
+}
+
+.stage-phase-pill-btn {
+  padding: 3px 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #0e1320;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.stage-phase-pill-btn:hover {
+  background: #151c2e;
+  color: #f1f5f9;
+}
+
+.stage-phase-pill-btn.is-active {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: var(--accent, #6366f1);
+  color: #a5b4fc;
+}
+
+.stage-timeline-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stage-reaction-pill-group {
+  display: flex;
+  gap: 3px;
+}
+
+.stage-rx-btn {
+  padding: 3px 7px;
+  font-size: 10.5px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0e1320;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.stage-rx-btn:hover {
+  color: #f1f5f9;
+  background: #151c2e;
+}
+
+.stage-rx-btn.is-active.is-celebrate {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: #10b981;
+  color: #34d399;
+}
+
+.stage-rx-btn.is-active.is-oops {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: #f59e0b;
+  color: #fbbf24;
+}
+
+.stage-timecode-pill {
+  font-size: 11px;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  background: #060910;
+  padding: 3px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  display: inline-flex;
+  gap: 4px;
+}
+
+.stage-timecode-pill .current-time {
+  color: var(--accent, #6366f1);
+}
+
+.stage-timecode-pill .total-time {
+  color: #64748b;
+}
+
+.stage-timeline-slider-row {
+  display: flex;
+  width: 100%;
+}
+
+.stage-timeline-scrubber {
+  width: 100%;
+  accent-color: var(--accent, #6366f1);
+  cursor: pointer;
+  height: 4px;
+}

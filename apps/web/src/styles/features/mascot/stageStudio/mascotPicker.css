@@ -1,0 +1,122 @@
+/* ==========================================================================
+   Mascot Picker (Single Mode)
+   /* ========================================================================== */
+
+.channel-blueprint-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 11.5px;
+}
+
+.blueprint-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.blueprint-label {
+  color: #64748b;
+}
+
+.blueprint-val {
+  color: #f1f5f9;
+}
+
+.blueprint-val.flag-val {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mascot-cards-picker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.mascot-picker-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #060910;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  position: relative;
+}
+
+.mascot-picker-card:hover {
+  background: #111728;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.mascot-picker-card.is-selected {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: var(--accent, #6366f1);
+}
+
+.mascot-picker-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #111728;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.mascot-picker-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mascot-picker-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.mascot-picker-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mascot-picker-name-row strong {
+  font-size: 12px;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.style-chip {
+  font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #94a3b8;
+}
+
+.mascot-picker-details small {
+  display: block;
+  font-size: 10.5px;
+  color: #64748b;
+  margin-top: 1px;
+}
+
+.selected-check-icon {
+  color: var(--accent, #6366f1);
+  flex-shrink: 0;
+}

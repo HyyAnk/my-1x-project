@@ -1,0 +1,147 @@
+/* ==========================================================================
+   Mascot On Stage
+   /* ========================================================================== */
+
+.stage-mascot-container {
+  position: absolute;
+  bottom: 0;
+  width: 220px;
+  height: 220px;
+  user-select: none;
+  cursor: grab;
+  transform-origin: bottom center;
+}
+
+.stage-mascot-container.anchor-bottom_left {
+  left: 0;
+}
+
+.stage-mascot-container.anchor-bottom_right {
+  right: 0;
+}
+
+.stage-mascot-container.is-dragging {
+  cursor: grabbing;
+}
+
+.stage-mascot-bounding-box {
+  position: absolute;
+  inset: 0;
+  width: 220px;
+  height: 220px;
+  border: 1.5px dashed rgba(99, 102, 241, 0.75);
+  border-radius: 6px;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.stage-mascot-container:hover .stage-mascot-bounding-box,
+.stage-mascot-container.is-dragging .stage-mascot-bounding-box {
+  border-color: #818cf8;
+  background: rgba(99, 102, 241, 0.06);
+}
+
+.transform-handle {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: #ffffff;
+  border: 2px solid var(--accent, #6366f1);
+  border-radius: 2px;
+  pointer-events: auto;
+  cursor: nwse-resize;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+
+.transform-handle.handle-tl {
+  top: -5px;
+  left: -5px;
+}
+.transform-handle.handle-tr {
+  top: -5px;
+  right: -5px;
+  cursor: nesw-resize;
+}
+.transform-handle.handle-bl {
+  bottom: -5px;
+  left: -5px;
+  cursor: nesw-resize;
+}
+.transform-handle.handle-br {
+  bottom: -5px;
+  right: -5px;
+  cursor: nwse-resize;
+}
+
+.stage-mascot-hud {
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  background: rgba(8, 12, 20, 0.92);
+  border: 1px solid rgba(99, 102, 241, 0.45);
+  border-radius: 12px;
+  color: #e0e7ff;
+  font-size: 10.5px;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.stage-mascot-sprite {
+  width: 250px;
+  height: 250px;
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: contain;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.55));
+}
+
+.stage-mascot-placeholder-box {
+  width: 180px;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: #94a3b8;
+  font-size: 11.5px;
+}
+
+.stage-mascot-hidden-indicator {
+  position: absolute;
+  bottom: 0;
+  user-select: none;
+  pointer-events: none;
+}
+
+.stage-mascot-hidden-indicator.anchor-bottom_left {
+  left: 0;
+}
+
+.stage-mascot-hidden-indicator.anchor-bottom_right {
+  right: 0;
+}
+
+.hidden-indicator-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+  font-size: 10.5px;
+  font-weight: 600;
+}

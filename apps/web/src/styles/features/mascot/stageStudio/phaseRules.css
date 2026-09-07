@@ -1,0 +1,106 @@
+/* ==========================================================================
+   Dual Axis Controls & Phase Rules
+   /* ========================================================================== */
+
+.stage-dual-axis-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stage-axis-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #050811;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+  padding: 3px 6px;
+}
+
+.stage-axis-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  font-size: 9.5px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.stage-axis-badge.axis-x {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.stage-axis-badge.axis-y {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.axis-x-slider {
+  accent-color: #38bdf8;
+}
+
+.axis-y-slider {
+  accent-color: #34d399;
+}
+
+/* Phase Rules */
+.stage-phase-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stage-rule-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  background: #050811;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.stage-rule-item:hover {
+  background: #0e1424;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.stage-checkbox {
+  accent-color: var(--accent, #6366f1);
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+}
+
+.stage-rule-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.stage-phase-rules.compact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stage-phase-rules.compact .stage-rule-item {
+  justify-content: flex-start;
+  min-height: 28px;
+  padding: 5px 8px;
+}
+
+.stage-phase-rules.compact .stage-rule-text {
+  overflow: visible;
+  font-size: 11px;
+  white-space: normal;
+}
