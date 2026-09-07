@@ -1,0 +1,86 @@
+/* ==========================================================================
+   Channel Deployment Hub (Tab 2)
+   /* ========================================================================== */
+
+.channel-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.channel-search-box .search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.channel-search-box input {
+  width: 100%;
+  padding-left: 32px;
+  padding-right: 30px;
+  font-size: 12.5px;
+  border-radius: var(--radius-sm);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 6px;
+}
+
+.channel-filter-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.channel-filter-tab {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  color: var(--ink-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.channel-filter-tab:hover {
+  background: var(--surface-active);
+  color: var(--ink);
+}
+
+.channel-filter-tab.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.channel-batch-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.channel-count-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.batch-actions-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.studio-footer-actions {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 10px;
+}

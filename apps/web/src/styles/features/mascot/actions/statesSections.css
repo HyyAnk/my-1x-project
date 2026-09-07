@@ -1,0 +1,84 @@
+/* ==========================================================================
+   Right Content: Grouped States Sections
+   /* ========================================================================== */
+
+.states-groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+
+.states-group-section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.states-group-section.is-core-group {
+  border-color: rgba(6, 182, 212, 0.35);
+  background: linear-gradient(180deg, rgba(6, 182, 212, 0.04) 0%, var(--surface) 100%);
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.06);
+}
+
+.states-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.states-group-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.states-group-title-wrap h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.states-group-title-wrap p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.states-group-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.states-group-badge.is-core {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(6, 182, 212, 0.16));
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #f59e0b;
+}
+
+.states-group-badge.is-brand {
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: #a78bfa;
+}
+
+.states-group-badge.is-aux {
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: var(--muted);
+}

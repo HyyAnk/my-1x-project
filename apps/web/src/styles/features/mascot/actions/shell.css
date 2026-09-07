@@ -1,0 +1,17 @@
+/* ==========================================================================
+   STREAMLINED STEP 2: EXPRESSIVE STATES STUDIO (ARTISTIC & MINIMALIST)
+   ========================================================================== */
+
+.states-studio-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 14px;
+}
+
+@media (max-width: 1024px) {
+  .states-studio-layout {
+    grid-template-columns: 1fr;
+  }
+}

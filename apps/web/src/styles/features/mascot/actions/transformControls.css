@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Precision Nudge Stepper, Scale Presets & Flip Toggle
+   /* ========================================================================== */
+
+.nudge-box {
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  gap: 10px;
+}
+
+.nudge-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nudge-axis-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nudge-axis-tag {
+  font-size: 11px;
+  font-weight: 800;
+  font-family: monospace;
+  min-width: 62px;
+  color: var(--accent);
+}
+
+.nudge-stepper-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.stepper-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.stepper-btn:hover {
+  background: var(--surface-active);
+  border-color: var(--accent);
+}
+
+.nudge-slider {
+  flex: 1;
+  accent-color: var(--accent);
+}
+
+/* Scale Presets & Flip Toggle */
+.scale-presets-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.scale-preset-chip {
+  padding: 5px 8px;
+  border-radius: 4px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.scale-preset-chip:hover {
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+
+.scale-preset-chip.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.flip-toggle-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.custom-checkbox-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.custom-checkbox-row input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+}
+
+.visual-aids-box {
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+
+.visual-aids-toggles {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

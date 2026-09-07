@@ -1,0 +1,234 @@
+/* ==========================================================================
+   Artistic Pose Grid, Card Header, 1:1 Canvas & Hover Action Bar
+   /* ========================================================================== */
+
+.artistic-states-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.artistic-state-card {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.artistic-state-card.is-core-card {
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.08);
+}
+
+.artistic-state-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.25),
+    0 0 14px rgba(6, 182, 212, 0.15);
+}
+
+.artistic-state-card.is-dragover {
+  border-color: var(--green) !important;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.35) !important;
+  transform: scale(1.02);
+}
+
+.artistic-state-card.is-ready {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+/* Card Header */
+.artistic-card-header {
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.artistic-header-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.artistic-header-title span.pose-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.artistic-header-title h4 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artistic-motion-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  color: var(--ink-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.artistic-motion-pill.is-active {
+  color: var(--accent);
+  border-color: rgba(6, 182, 212, 0.3);
+  background: rgba(6, 182, 212, 0.08);
+}
+
+/* 1:1 Aspect Canvas */
+.artistic-card-canvas {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #0f172a;
+  background-image:
+    radial-gradient(circle at center, #1e293b 0%, #090d16 100%), linear-gradient(45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%);
+  background-size:
+    100% 100%,
+    14px 14px,
+    14px 14px,
+    14px 14px,
+    14px 14px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.artistic-mascot-img {
+  max-width: 84%;
+  max-height: 84%;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+  transition: transform 0.2s ease;
+  user-select: none;
+}
+
+/* Minimalist Empty Canvas Dropzone */
+.artistic-empty-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+  border: 1.5px dashed var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  transition: all 0.2s ease;
+  text-align: center;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.artistic-empty-dropzone:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+  background: rgba(6, 182, 212, 0.04);
+}
+
+.artistic-empty-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-hover);
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  color: var(--accent);
+  transition: transform 0.2s ease;
+}
+
+.artistic-empty-dropzone:hover .artistic-empty-icon {
+  transform: scale(1.1);
+  background: var(--accent);
+  color: #fff;
+}
+
+.artistic-empty-text {
+  font-size: 11px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--ink-secondary);
+}
+
+/* Floating Glassmorphism Action Bar on Hover */
+.artistic-hover-actions {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  padding: 8px;
+  z-index: 10;
+}
+
+.artistic-state-card:hover .artistic-hover-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.artistic-action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.artistic-action-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.artistic-action-btn.is-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.artistic-action-btn.is-primary:hover {
+  background: #0891b2;
+  transform: translateY(-2px) scale(1.06);
+}
+
+.artistic-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
