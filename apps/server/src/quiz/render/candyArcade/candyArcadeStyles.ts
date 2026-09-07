@@ -43,6 +43,28 @@ ${candyArcadeFontFaceCss(options.fontMode ?? "render")}
   --candy-layer-brand: 9;
   --candy-layer-transition: 10;
   --candy-layer-mascot: 11;
+  --mascot-content-width: 1420px;
+  --question-card-width: 1440px;
+  --question-card-left-edge: 360px;
+  --choice-grid-width: 100%;
+  --choice-card-min-height: 114px;
+  --choice-card-margin-left: 64px;
+  --choice-card-padding: 12px 24px 12px 28px;
+  --choice-card-gap: 14px;
+  --choice-badge-size: 136px;
+  --choice-badge-margin-left: -72px;
+  --choice-badge-font-size: 70px;
+  --choice-font-size-base: 36px;
+  --choice-text-padding-right: 24px;
+  --choice-font-size-medium: 28px;
+  --choice-font-size-long: 23px;
+  --choice-font-size-very_long: 19px;
+  --choice-font-size-overflow: 19px;
+  --choice-label-font-size-base: 26px;
+  --choice-label-font-size-medium: 22px;
+  --choice-label-font-size-long: 19px;
+  --choice-label-font-size-very_long: 17px;
+  --choice-label-font-size-overflow: 17px;
   font-family: "Fredoka", "Nunito", "Trebuchet MS", sans-serif;
 }
 * { box-sizing: border-box; }
@@ -50,7 +72,7 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 #stage { position: relative; width: ${canvas.width}px; height: ${canvas.height}px; overflow: hidden; }
 .clip { position: absolute; inset: 0; }
 .candy-scene { --depth-edge: rgba(13,35,71,.16); --depth-shadow: rgba(13,35,71,.22); isolation: isolate; overflow: hidden; padding: 33px 80px 16px; background: var(--bg-primary); color: var(--ink); contain: layout paint; }
-.game-header { position: absolute; z-index: 6; top: 0; left: 40px; contain: layout style; }
+.game-header { position: absolute; z-index: 6; top: 0; left: 180px; transform: translateX(-50%); contain: layout style; }
 .hanging-wood-sign { position: relative; z-index: 6; display: flex; flex-direction: column; align-items: center; width: 250px; transform-origin: 50% 0; animation: hanging-sign-enter .64s cubic-bezier(.18,1.42,.34,1) var(--clip-start) both, hanging-sign-sway 4.8s ease-in-out calc(var(--clip-start) + .64s) infinite alternate both; will-change: transform; }
 .hanging-ropes { position: relative; display: flex; justify-content: space-between; width: 170px; height: 44px; pointer-events: none; }
 .wood-rope { width: 9px; height: 100%; border-radius: 4px; background: repeating-linear-gradient(135deg, #D4A373 0px, #D4A373 5px, #A75C1C 5px, #A75C1C 10px); box-shadow: 2px 2px 5px rgba(13,35,71,.28); }
@@ -63,8 +85,8 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .wood-sign-star { position: absolute; pointer-events: none; }
 .wood-sign-star.star-tl { top: -10px; left: -10px; color: #FFD43F; font-size: 26px; text-shadow: 0 0 12px rgba(255,212,63,.85); transform: rotate(-15deg); }
 .wood-sign-star.star-br { bottom: -10px; right: -10px; color: #FFB703; font-size: 28px; text-shadow: 0 3px 0 #331505; transform: rotate(15deg); }
-.game-stage { position: relative; z-index: 3; display: grid; justify-items: center; align-content: start; width: 1580px; min-height: 945px; margin: 12px 40px 0 auto; contain: layout style; }
-.question-title { position: relative; z-index: 3; max-width: 1440px; width: 100%; height: 168px; min-height: 168px; justify-self: end; margin-left: auto; text-align: center; display: flex; align-items: center; justify-content: center; contain: layout style; }
+.game-stage { position: relative; z-index: 3; display: grid; justify-items: center; align-content: start; width: 1420px; min-height: 945px; margin: 12px 40px 0 auto; contain: layout style; }
+.question-title { position: relative; z-index: 3; width: var(--question-card-width, 1440px); max-width: var(--question-card-width, 1440px); height: 168px; min-height: 168px; justify-self: center; margin-left: auto; margin-right: auto; text-align: center; display: flex; align-items: center; justify-content: center; contain: layout style; }
 .question-card-inner { position: relative; width: 100%; height: 100%; min-height: 168px; display: flex; align-items: center; justify-content: center; padding: 16px 52px; box-sizing: border-box; border: 7px solid #FFC938; border-radius: 42px; background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF7 28%, #FFF8EA 100%); box-shadow: inset 0 4px 0 rgba(255,255,255,0.95), inset 0 8px 0 rgba(56,189,248,0.25), inset 0 -5px 0 rgba(245,166,35,0.22), 0 16px 0 var(--depth-shadow), 0 26px 42px rgba(10,25,60,0.16); }
 .question-title h1 { margin: 0; color: #342245; font-family: "Fredoka", "SVN-Hello Headline", "Baloo 2", "Nunito", sans-serif; font-size: var(--question-size); font-weight: 800; line-height: var(--question-leading); letter-spacing: -0.5px; text-wrap: balance; text-shadow: 0 2px 0 rgba(255,255,255,0.8), 0 3px 0 rgba(10,35,75,0.08); width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .keyword-highlight { color: #047857; text-shadow: 0 1px 0 rgba(255,255,255,0.8); }
@@ -81,9 +103,9 @@ html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background:
 .image-shine { position: absolute; z-index: 4; inset: 0; background: linear-gradient(125deg, rgba(255,255,255,.35), transparent 31%); pointer-events: none; }
 .game-stage > .hero-image { width: ${baselineRenderMetrics.width}px; height: ${baselineRenderMetrics.height}px; margin-top: 39px; }
 .hero-image img { transform-origin: center; animation: hero-ken-burn var(--scene-duration) ease-in-out var(--clip-start) 1 alternate both; will-change: transform; }
-.phase-region { position: absolute; z-index: 5; left: 50%; bottom: 10px; width: 100%; height: 110px; transform: translateX(-50%); contain: layout style; pointer-events: none; }
-.phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: -15px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(82vw, 1360px); min-height: 84px; }
-.phase-region > .fact-card { position: absolute; z-index: 5; bottom: -45px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(1220px, 100%); }
+.phase-region { position: absolute; z-index: 5; left: 0; bottom: 10px; width: var(--question-card-width, 1440px); height: 110px; transform: none; contain: layout style; pointer-events: none; }
+.phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: -15px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(70vw, 1300px); min-height: 84px; }
+.phase-region > .fact-card { position: absolute; z-index: 5; bottom: -45px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(70vw, 1300px); }
 
 /* === Choice Components & State Styles (ADR-003) === */
 ${baseChoiceStyles()}
@@ -224,9 +246,9 @@ ${choiceStateStyles()}
 @keyframes splash-particle { 0% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 0; transform: translate(0,0) scale(.4); } }
 @keyframes splash-release { 0%, 55% { opacity: 0; transform: scale(1.08); } 72% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(.98); } }
 @keyframes phase-exit { to { opacity: 0; } }
-.candy-mascot-container { position: absolute; width: 220px; height: 220px; z-index: var(--candy-layer-mascot); pointer-events: none; transform-origin: bottom center; transform: scale(var(--mascot-scale, 1)); }
+.candy-mascot-container { position: absolute; width: 220px; height: 220px; z-index: var(--candy-layer-mascot); bottom: 18px; left: 32px; pointer-events: none; transform-origin: bottom center; transform: scale(var(--mascot-scale, 1)); }
 .candy-mascot-container.anchor-bottom_left { bottom: 18px; left: 32px; }
-.candy-mascot-container.anchor-bottom_right { bottom: 18px; right: 32px; }
+.candy-mascot-container.anchor-bottom_right { bottom: 18px; left: 32px; }
 
 /* Mascot Occupancy Capacity Tokens (ADR-003) */
 .has-mascot { --mascot-content-width: 1420px; --question-card-width: 1440px; --question-card-left-edge: 360px; }
@@ -252,6 +274,13 @@ ${choiceStateStyles()}
   --choice-label-font-size-overflow: 17px;
 }
 .has-mascot .answer-count-2 {
+  --choice-font-size-base: 40px;
+  --choice-font-size-medium: 32px;
+  --choice-font-size-long: 26px;
+  --choice-font-size-very_long: 21px;
+  --choice-font-size-overflow: 21px;
+}
+.answer-count-2 {
   --choice-font-size-base: 40px;
   --choice-font-size-medium: 32px;
   --choice-font-size-long: 26px;

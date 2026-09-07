@@ -4,22 +4,23 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  * Split Versus Two Layout (16:9 Landscape Video, 1920×1080).
  *
  * Tailored specifically for head-to-head 1v1 faceoffs, rivalry comparisons, and versus battles.
+ * Standardized directly to the canonical 1420px Mascot-Ready grid.
  * Architectural highlights:
- * 1. 2-Column Grid Arena: 1560px width with calibrated 64px central collision gap.
- * 2. High-Impact Central "VS" Emblem: 124px 3D candy medallion with comic typography, neon glow,
+ * 1. 2-Column Grid Arena: 1360px width with calibrated 56px central collision gap on 1420px Mascot-Ready stage.
+ * 2. High-Impact Central "VS" Emblem: 112px 3D candy medallion with comic typography, neon glow,
  *    and dynamic entrance slamming down from above.
  * 3. Multi-Phase Stagger Protection: Card 1 (Challenger) charges from left, Card 2 (Defender) charges from right,
  *    strictly keyed to calc(var(--clip-start, 0s) + var(--choices-at, 0s)).
  * 4. Dual Mode Support:
- *    - Visual Mode: 430px media container with calibrated 124px badge and zero overlap clash.
+ *    - Visual Mode: 410px media container with calibrated 116px badge and zero overlap clash.
  *    - Text Mode: Heroic Challenger Cards with vertical flex orientation, centered crest badge,
- *      and colossal 52px typography.
+ *      and calibrated typography.
  * 5. Player 1 (Crimson) vs Player 2 (Azure) combat rivalry depth shadows and badge gradients.
  * 6. Phase 4 Battle Climax: Winner receives golden neon coronation aura; loser dims and sinks;
  *    VS badge bursts toward champion.
- * 7. Thinking Bar Containment: Width constrained to min(82vw, 1360px), guaranteeing the 192px star marker
- *    stops at x <= 1866px with 54px safe canvas buffer. Fact card width min(1280px, 100%).
- * 8. Mascot Coexistence: Harmonious 1360px grid width reduction with scaled typography tokens.
+ * 7. Thinking Bar Containment: Width constrained to min(82vw, 1280px), guaranteeing the 192px star marker
+ *    stops safely. Fact card width min(1280px, 100%).
+ * 8. Mascot Coexistence: Unified 1420px grid natively accommodating mascot coexistence without override bloat.
  */
 export const splitVersusTwoLayout = {
   id: "split_versus_two",
@@ -38,14 +39,18 @@ export const splitVersusTwoLayout = {
     "phase";
   align-items: start;
   justify-items: center;
-  row-gap: 32px;
+  row-gap: 24px;
+  width: 1420px;
+  max-width: 1420px;
+  margin: 12px 40px 0 auto;
 }
 
 .layout-split_versus_two .question-title {
   grid-area: title;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1380px;
   margin: 0 auto;
+  justify-self: center;
 }
 
 /* --- Versus Combat Arena: 2-Column Grid --- */
@@ -54,31 +59,31 @@ export const splitVersusTwoLayout = {
   grid-area: answers;
   position: relative;
   width: 100%;
-  max-width: 1560px;
+  max-width: 1360px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 64px;
+  gap: 56px;
   box-sizing: border-box;
   align-items: stretch;
 }
 
 /* Layout Dimensional Tokens */
 .layout-split_versus_two {
-  --choice-card-min-height: 510px;
-  --choice-card-height: 510px;
+  --choice-card-min-height: 500px;
+  --choice-card-height: 500px;
   --choice-card-margin-left: 0;
-  --choice-media-height: 430px;
-  --choice-badge-size: 124px;
-  --choice-badge-margin-left: -62px;
-  --choice-badge-font-size: 66px;
-  --choice-font-size-base: 44px;
-  --choice-font-size-medium: 36px;
-  --choice-font-size-long: 28px;
-  --choice-font-size-very_long: 22px;
+  --choice-media-height: 410px;
+  --choice-badge-size: 116px;
+  --choice-badge-margin-left: -58px;
+  --choice-badge-font-size: 60px;
+  --choice-font-size-base: 40px;
+  --choice-font-size-medium: 32px;
+  --choice-font-size-long: 25px;
+  --choice-font-size-very_long: 21px;
   --choice-font-size-overflow: 20px;
-  --choice-fit-min: 22px;
-  --choice-fit-max: 60px;
+  --choice-fit-min: 20px;
+  --choice-fit-max: 56px;
   --choice-fit-max-lines: 2;
   --choice-fit-leading: 1.1;
 }
@@ -99,14 +104,14 @@ export const splitVersusTwoLayout = {
 /* --- Visual Mode Formatting --- */
 .layout-split_versus_two .choice-card-visual,
 .layout-split_versus_two .visual-answer-card {
-  min-height: 510px;
+  min-height: 500px;
   border-radius: 42px;
   box-sizing: border-box;
 }
 
 .layout-split_versus_two .choice-media,
 .layout-split_versus_two .option-image {
-  height: 430px;
+  height: 410px;
   border-radius: 38px 38px 0 0;
 }
 
@@ -168,14 +173,14 @@ export const splitVersusTwoLayout = {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-4deg);
-  width: 124px;
-  height: 124px;
+  width: 112px;
+  height: 112px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display, "Titan One", "Fredoka", cursive, sans-serif);
-  font-size: 54px;
+  font-size: 48px;
   font-weight: 900;
   color: #FFFFFF;
   letter-spacing: 2px;
@@ -303,7 +308,7 @@ export const splitVersusTwoLayout = {
   bottom: auto;
   transform: none;
   width: 100%;
-  max-width: 1560px;
+  max-width: 1360px;
   height: 90px;
   margin: 0 auto;
 }
@@ -314,7 +319,7 @@ export const splitVersusTwoLayout = {
   bottom: auto;
   left: 50%;
   transform: translateX(-50%);
-  width: min(82vw, 1360px);
+  width: min(82vw, 1280px);
   min-height: 84px;
 }
 
@@ -325,39 +330,6 @@ export const splitVersusTwoLayout = {
   left: 50%;
   transform: translateX(-50%);
   width: min(1280px, 100%);
-}
-
-/* --- Mascot Coexistence (Reduced 1360px Arena) --- */
-.has-mascot.layout-split_versus_two .answer-grid,
-.has-mascot.layout-split_versus_two .visual-answer-grid {
-  max-width: 1360px;
-  gap: 56px;
-}
-
-.has-mascot.layout-split_versus_two .answer-grid::after,
-.has-mascot.layout-split_versus_two .visual-answer-grid::after,
-.has-mascot.layout-split_versus_two .vs-badge {
-  width: 112px;
-  height: 112px;
-  font-size: 48px;
-}
-
-.has-mascot.layout-split_versus_two {
-  --choice-media-height: 410px;
-  --choice-badge-size: 116px;
-  --choice-badge-margin-left: -58px;
-  --choice-badge-font-size: 60px;
-  --choice-font-size-base: 40px;
-  --choice-font-size-medium: 32px;
-  --choice-font-size-long: 25px;
-}
-
-.has-mascot.layout-split_versus_two .phase-region {
-  max-width: 1360px;
-}
-
-.has-mascot.layout-split_versus_two .phase-region > .thinking-bar {
-  width: min(82vw, 1280px);
 }
 `,
 } satisfies QuizLayoutRenderDefinition;

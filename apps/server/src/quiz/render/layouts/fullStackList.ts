@@ -15,7 +15,7 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  *    strictly to var(--choices-at) with smooth spring curve and 0.14s staggered offsets.
  * 4. Flexible Card Height / Text Auto-Fit Unchoke (BUG-FSL-04): Sets --choice-card-height: auto,
  *    preventing binary search choke down to 24px on 2-line text. Enhanced 2-choice mode.
- * 5. Mascot Step-In Elimination (BUG-FSL-05): Unifies title, choices, and phase region to
+ * 5. Mascot Step-In Elimination (BUG-FSL-05): Standardized title, choices, and phase region to
  *    max-width: 1360px with >208px safe clearance to bottom-left mascot host.
  * 6. Phase 4 Answer Reveal Polish & Contrast Retention (BUG-FSL-07):
  *    Winning card lifts with glowing emerald halo; non-selected cards settle to 0.45 opacity
@@ -45,7 +45,8 @@ export const fullStackListLayout = {
   align-items: center;
   justify-items: center;
   row-gap: 20px;
-  width: 1580px;
+  width: var(--mascot-content-width, 1420px);
+  max-width: 1420px;
   min-height: 945px;
   margin: 16px 40px 0 auto;
 }
@@ -54,7 +55,7 @@ export const fullStackListLayout = {
 .layout-full_stack_list .question-title {
   grid-area: title;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1360px;
   margin: 0 auto;
 }
 
@@ -62,7 +63,7 @@ export const fullStackListLayout = {
 .layout-full_stack_list .answer-grid {
   grid-area: answers;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1360px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -98,9 +99,9 @@ export const fullStackListLayout = {
   --choice-badge-size: 140px;
   --choice-badge-margin-left: -76px;
   --choice-badge-font-size: 74px;
-  --choice-font-size-base: 46px;
-  --choice-font-size-medium: 38px;
-  --choice-font-size-long: 30px;
+  --choice-font-size-base: 44px;
+  --choice-font-size-medium: 36px;
+  --choice-font-size-long: 28px;
   --choice-font-size-very_long: 24px;
   --choice-font-size-overflow: 24px;
   --choice-fit-min: 22px;
@@ -118,7 +119,7 @@ export const fullStackListLayout = {
   bottom: auto;
   transform: none;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1360px;
   min-height: 96px;
   display: flex;
   align-items: center;
@@ -133,7 +134,7 @@ export const fullStackListLayout = {
   left: auto;
   bottom: auto;
   transform: none;
-  width: 1380px;
+  width: min(80vw, 1220px);
   max-width: 100%;
   min-height: 84px;
   margin: 0 auto;
@@ -144,7 +145,7 @@ export const fullStackListLayout = {
   left: auto;
   bottom: auto;
   transform: none;
-  width: 1380px;
+  width: min(1220px, 100%);
   max-width: 100%;
   margin: 0 auto;
 }
@@ -225,34 +226,6 @@ export const fullStackListLayout = {
   }
 }
 
-/* --- Mascot Coexistence Integration (.has-mascot) --- */
-.has-mascot.layout-full_stack_list .game-stage {
-  width: var(--mascot-content-width, 1420px);
-  margin-right: 40px;
-}
-
-.has-mascot.layout-full_stack_list .question-title,
-.has-mascot.layout-full_stack_list .answer-grid,
-.has-mascot.layout-full_stack_list .phase-region {
-  max-width: 1360px;
-  width: 100%;
-}
-
-.has-mascot.layout-full_stack_list .phase-region > .thinking-bar {
-  width: min(80vw, 1220px);
-}
-
-.has-mascot.layout-full_stack_list .phase-region > .fact-card {
-  width: min(1220px, 100%);
-}
-
-.has-mascot.layout-full_stack_list {
-  --choice-font-size-base: 44px;
-  --choice-font-size-medium: 36px;
-  --choice-font-size-long: 28px;
-  --choice-font-size-very_long: 24px;
-  --choice-font-size-overflow: 24px;
-}
 
 ${
   aspectRatio === "9:16"

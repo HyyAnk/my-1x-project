@@ -224,7 +224,9 @@ export function questionClip(input: {
     },
     styleCatalogRevision: input.styleCatalogRevision,
     channelBrandName: input.channelBrandName,
-    brandVisible: Boolean(mascotHtml),
+    brandVisible:
+      Boolean(mascotHtml) ||
+      ((input.aspectRatio ?? "16:9") !== "9:16" && Boolean(input.channelBrandName?.trim())),
     isFinal: input.isFinal,
   });
   const parts = buildQuizSceneParts(model);

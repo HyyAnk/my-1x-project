@@ -16,7 +16,7 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  *    - Thinking Bar: Width min(82vw, 1340px), ensuring marker star never exceeds x = 1856px (64px canvas margin).
  *    - Fact Card: Width min(1200px, 100%), y in [776, 886]px, 100% collision-free.
  * 6. Settle Contrast Hardening (Phase 4): 0.42 opacity, 65% grayscale for WCAG AA compliance.
- * 7. Mascot Integration: Automatic stage compression (1580px -> 1420px) with >208px clearance.
+ * 7. Mascot Integration: Standardized 1420px Mascot-Ready grid with >208px clearance.
  * 8. Backward Compatibility: Preserves 9:16 fallback token branch for test suite contracts.
  */
 export const mediaLeftChoicesRightLayout = {
@@ -27,17 +27,17 @@ export const mediaLeftChoicesRightLayout = {
 /* === Media Left Choices Right Layout (16:9 Landscape 1920x1080) === */
 .layout-media_left_choices_right .game-stage {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(520px, 0.92fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(480px, 0.95fr);
   grid-template-rows: 168px 540px 110px;
   grid-template-areas:
     "title title"
     "hero answers"
     "phase phase";
   align-items: start;
-  column-gap: 42px;
+  column-gap: 34px;
   row-gap: 24px;
-  width: 1580px;
-  max-width: 1580px;
+  width: 1420px;
+  max-width: 1420px;
   min-height: 0;
   margin: 20px 40px 0 auto;
   padding: 0;
@@ -100,8 +100,8 @@ export const mediaLeftChoicesRightLayout = {
   --choice-badge-margin-left: -80px;
   --choice-card-margin-left: 80px;
   --choice-badge-font-size: 78px;
-  --choice-font-size-base: 52px;
-  --choice-font-size-medium: 42px;
+  --choice-font-size-base: 44px;
+  --choice-font-size-medium: 34px;
 }
 .layout-media_left_choices_right .answer-grid.answer-count-3 {
   gap: 24px;
@@ -144,11 +144,11 @@ export const mediaLeftChoicesRightLayout = {
   --choice-badge-size: 138px;
   --choice-badge-margin-left: -74px;
   --choice-badge-font-size: 72px;
-  --choice-font-size-base: 48px;
-  --choice-font-size-medium: 40px;
-  --choice-font-size-long: 32px;
-  --choice-font-size-very_long: 26px;
-  --choice-font-size-overflow: 26px;
+  --choice-font-size-base: 38px;
+  --choice-font-size-medium: 30px;
+  --choice-font-size-long: 24px;
+  --choice-font-size-very_long: 20px;
+  --choice-font-size-overflow: 20px;
   --choice-fit-min: 24px;
   --choice-fit-max: 64px;
   --choice-fit-max-lines: 2;
@@ -191,7 +191,7 @@ export const mediaLeftChoicesRightLayout = {
   right: auto;
   transform: none;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1420px;
   height: 110px;
   margin: 0 auto;
   padding: 0;
@@ -199,57 +199,30 @@ export const mediaLeftChoicesRightLayout = {
   box-sizing: border-box;
 }
 
-/* Thinking Bar: Width min(82vw, 1340px), Marker Star Stays <= 1856px (64px Canvas Margin) */
+/* Thinking Bar: Width min(65vw, 1240px), Marker Star Stays <= 1856px (64px Canvas Margin) */
 .layout-media_left_choices_right .phase-region > .thinking-bar {
   position: absolute;
   top: 50%;
   left: 50%;
   bottom: auto;
   transform: translate(-50%, -50%);
-  width: min(82vw, 1340px);
+  width: min(65vw, 1240px);
   min-height: 84px;
 }
 
-/* Fact Card: Width min(1200px, 100%), Sits Safely in Row 3 (y: 776-886px) */
+/* Fact Card: Width min(1140px, 100%), Sits Safely in Row 3 (y: 776-886px) */
 .layout-media_left_choices_right .phase-region > .fact-card {
   position: absolute;
   top: 50%;
   left: 50%;
   bottom: auto;
   transform: translate(-50%, -50%);
-  width: min(1200px, 100%);
+  width: min(1140px, 100%);
   max-height: 110px;
   margin: 0;
   padding: 18px 42px;
   border-radius: 36px;
   box-sizing: border-box;
-}
-
-/* Mascot Occupancy Adaptation */
-.has-mascot.layout-media_left_choices_right .game-stage {
-  width: 1420px;
-  max-width: 1420px;
-  column-gap: 34px;
-}
-.has-mascot.layout-media_left_choices_right {
-  --choice-font-size-base: 38px;
-  --choice-font-size-medium: 30px;
-  --choice-font-size-long: 24px;
-  --choice-font-size-very_long: 20px;
-  --choice-font-size-overflow: 20px;
-}
-.has-mascot.layout-media_left_choices_right .answer-count-2 {
-  --choice-font-size-base: 44px;
-  --choice-font-size-medium: 34px;
-}
-.has-mascot.layout-media_left_choices_right .phase-region {
-  max-width: 1420px;
-}
-.has-mascot.layout-media_left_choices_right .phase-region > .thinking-bar {
-  width: min(65vw, 1240px);
-}
-.has-mascot.layout-media_left_choices_right .phase-region > .fact-card {
-  width: min(1140px, 100%);
 }
 
 ${

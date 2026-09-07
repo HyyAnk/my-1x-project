@@ -44,7 +44,7 @@ export const clueDeductionLayout = {
    ========================================================================== */
 
 .layout-clue_deduction {
-  --clue-stage-width: 1240px;
+  --clue-stage-width: 1180px;
   --clue-stage-height: 560px;
   --choice-card-min-height: 76px;
   --choice-card-height: 76px;
@@ -77,7 +77,8 @@ export const clueDeductionLayout = {
   align-items: center;
   justify-items: center;
   row-gap: 20px;
-  width: 1580px;
+  width: var(--mascot-content-width, 1420px);
+  max-width: 1420px;
   margin: 16px 40px 0 auto;
   min-height: 0;
 }
@@ -86,9 +87,9 @@ export const clueDeductionLayout = {
 .layout-clue_deduction .question-title {
   grid-area: title;
   width: 100%;
-  max-width: 1440px;
-  justify-self: end;
-  margin-left: auto;
+  max-width: 1380px;
+  margin: 0 auto;
+  justify-self: center;
   text-align: center;
 }
 
@@ -97,8 +98,9 @@ export const clueDeductionLayout = {
   grid-area: stage;
   position: relative;
   width: 100%;
-  max-width: var(--clue-stage-width, 1240px);
+  max-width: 1180px;
   height: var(--clue-stage-height, 560px);
+  margin: 0 auto;
   border-radius: 32px;
   overflow: hidden;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 0 3.5px rgba(56, 189, 248, 0.28), inset 0 2px 4px rgba(255, 255, 255, 0.15);
@@ -540,7 +542,7 @@ export const clueDeductionLayout = {
   bottom: auto;
   transform: none;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1360px;
   min-height: 96px;
   height: 100px;
   display: flex;
@@ -549,13 +551,13 @@ export const clueDeductionLayout = {
   margin: 0 auto;
 }
 
-/* Thinking Bar: Sized to 1340px to eliminate Star Marker Overflow (BUG-CD-04 Fix) */
+/* Thinking Bar: Sized to 1180px to eliminate Star Marker Overflow (BUG-CD-04 Fix) */
 .layout-clue_deduction .phase-region > .thinking-bar {
   position: relative;
   left: auto;
   bottom: auto;
   transform: none;
-  width: min(82vw, 1340px);
+  width: min(72vw, 1180px);
   min-height: 84px;
   margin: 0 auto;
 }
@@ -566,8 +568,8 @@ export const clueDeductionLayout = {
   left: auto;
   bottom: auto;
   transform: none;
-  width: min(1200px, 100%);
-  max-width: 1200px;
+  max-width: 1180px;
+  width: min(1180px, 100%);
   margin: 0 auto;
 }
 
@@ -760,25 +762,6 @@ export const clueDeductionLayout = {
   100% {
     transform: translateY(-4px) scale(1.025);
   }
-}
-
-/* --- Mascot Coexistence Adjustments (BUG-CD-09 Fix) --- */
-.has-mascot.layout-clue_deduction .game-stage {
-  width: var(--mascot-content-width, 1420px);
-  margin-right: 40px;
-}
-
-.has-mascot.layout-clue_deduction .clue-deduction-stage-wrapper {
-  max-width: 1180px;
-}
-
-.has-mascot.layout-clue_deduction .phase-region > .thinking-bar {
-  width: min(72vw, 1180px);
-  margin: 0 auto;
-}
-
-.has-mascot.layout-clue_deduction .phase-region > .fact-card {
-  max-width: 1180px;
 }
 
 /* --- Portrait 9:16 Fallback Guardrail (BUG-CD-10) --- */

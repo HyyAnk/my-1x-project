@@ -38,7 +38,7 @@ export const mysteryRevealLayout = {
    ========================================================================== */
 
 .layout-mystery_reveal {
-  --mystery-stage-width: 1240px;
+  --mystery-stage-width: 1100px;
   --mystery-stage-height: 590px;
   --choice-card-min-height: 84px;
   --choice-card-height: auto;
@@ -71,20 +71,16 @@ export const mysteryRevealLayout = {
   align-items: center;
   justify-items: center;
   row-gap: 16px;
-  width: 1580px;
+  width: 1420px;
+  max-width: 1420px;
   min-height: 945px;
   margin: 12px 40px 0 auto;
-}
-
-.has-mascot.layout-mystery_reveal .game-stage {
-  width: 1420px;
-  margin-right: 40px;
 }
 
 .layout-mystery_reveal .question-title {
   grid-area: title;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1380px;
   text-align: center;
   margin: 0 auto;
 }
@@ -94,8 +90,9 @@ export const mysteryRevealLayout = {
   grid-area: stage;
   position: relative;
   width: 100%;
-  max-width: var(--mystery-stage-width, 1240px);
+  max-width: var(--mystery-stage-width, 1100px);
   height: var(--mystery-stage-height, 590px);
+  margin: 0 auto;
   border-radius: 32px;
   overflow: hidden;
   border: 5px solid rgba(251, 191, 36, 0.4);
@@ -207,7 +204,7 @@ export const mysteryRevealLayout = {
   position: absolute;
   top: 0;
   left: 0;
-  width: var(--mystery-stage-width, 1240px);
+  width: var(--mystery-stage-width, 1100px);
   height: 100%;
   display: flex;
   align-items: center;
@@ -457,7 +454,7 @@ export const mysteryRevealLayout = {
   left: auto;
   bottom: auto;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1360px;
   min-height: 96px;
   height: 110px;
   transform: none;
@@ -472,13 +469,9 @@ export const mysteryRevealLayout = {
   bottom: auto;
   left: auto;
   transform: none;
-  width: min(82vw, 1320px);
+  width: min(75vw, 1100px);
   min-height: 84px;
   margin: 0 auto;
-}
-
-.has-mascot.layout-mystery_reveal .phase-region > .thinking-bar {
-  width: min(75vw, 1100px);
 }
 
 .layout-mystery_reveal .phase-region > .fact-card {
@@ -486,26 +479,8 @@ export const mysteryRevealLayout = {
   bottom: auto;
   left: auto;
   transform: none;
-  width: min(1200px, 100%);
-  margin: 0 auto;
-}
-
-.has-mascot.layout-mystery_reveal .phase-region > .fact-card {
   width: min(1080px, 100%);
-}
-
-/* === Mascot Adaptive Width Tokens (BUG-MR-04 70px Image Wipe Fix) === */
-.has-mascot.layout-mystery_reveal {
-  --mystery-stage-width: 1100px;
-}
-
-.has-mascot.layout-mystery_reveal .mystery-stage-wrapper {
-  max-width: var(--mystery-stage-width, 1100px);
-  width: 100%;
-}
-
-.has-mascot.layout-mystery_reveal .mystery-revealed-inner {
-  width: var(--mystery-stage-width, 1100px);
+  margin: 0 auto;
 }
 
 /* === Keyframe Animations === */

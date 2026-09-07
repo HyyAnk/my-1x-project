@@ -37,17 +37,18 @@ export const visualChoicesThreePureLayout = {
   grid-template-rows: 168px auto 110px;
   align-items: start;
   justify-items: center;
-  width: 1580px;
+  width: 1420px;
+  max-width: 1420px;
   min-height: 945px;
   margin: 12px 40px 0 auto;
-  row-gap: 24px;
+  row-gap: 20px;
 }
 
 /* 2. Question Title Box: Perfectly centered above the 3 visual cards */
 .layout-visual_choices_three_pure .question-title {
   grid-area: title;
   width: 100%;
-  max-width: 1560px;
+  max-width: 1380px;
   height: 168px;
   min-height: 168px;
   margin: 0 auto;
@@ -57,15 +58,15 @@ export const visualChoicesThreePureLayout = {
 /* 3. 3-Column Pure Visual Answer Grid */
 .layout-visual_choices_three_pure .visual-answer-grid {
   grid-area: answers;
-  width: 1560px;
-  max-width: 1560px;
+  width: 1420px;
+  max-width: 1420px;
   margin: 0 auto;
-  gap: 28px;
+  gap: 24px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-/* 4. Choice Cards & Media Framing (520px height, near 1:1 aspect ratio) */
+/* 4. Choice Cards & Media Framing (500px height) */
 .layout-visual_choices_three_pure .choice-card-visual,
 .layout-visual_choices_three_pure .visual-answer-card {
   position: relative;
@@ -77,7 +78,7 @@ export const visualChoicesThreePureLayout = {
 
 .layout-visual_choices_three_pure .choice-media,
 .layout-visual_choices_three_pure .option-image {
-  height: var(--choice-media-height, 520px);
+  height: 500px;
   border: 10px solid #FFFFFF;
   border-radius: 36px;
   overflow: hidden;
@@ -99,9 +100,9 @@ export const visualChoicesThreePureLayout = {
 
 /* 5. Capacity Tokens */
 .layout-visual_choices_three_pure {
-  --choice-media-height: 520px;
-  --choice-badge-size: 88px;
-  --choice-badge-font-size: 52px;
+  --choice-media-height: 500px;
+  --choice-badge-size: 82px;
+  --choice-badge-font-size: 48px;
 }
 
 /* ==========================================================================
@@ -110,10 +111,10 @@ export const visualChoicesThreePureLayout = {
 .layout-visual_choices_three_pure .visual-answer-label {
   display: block;
   position: absolute;
-  top: 16px;
-  left: 16px;
-  width: var(--choice-badge-size, 88px);
-  height: var(--choice-badge-size, 88px);
+  top: 14px;
+  left: 14px;
+  width: 82px;
+  height: 82px;
   min-height: 0;
   margin: 0;
   padding: 0;
@@ -136,13 +137,13 @@ export const visualChoicesThreePureLayout = {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--choice-badge-size, 88px);
-  height: var(--choice-badge-size, 88px);
+  width: 82px;
+  height: 82px;
   border-radius: 50%;
   border: 4.5px solid #FFFFFF;
   margin: 0;
   font-family: var(--font-display, "Fredoka", "SVN-Hello Headline", "Baloo 2", sans-serif);
-  font-size: var(--choice-badge-font-size, 52px);
+  font-size: 48px;
   font-weight: 900;
   line-height: 1;
   color: #FFFFFF;
@@ -214,7 +215,7 @@ export const visualChoicesThreePureLayout = {
   right: auto;
   transform: none;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1360px;
   height: 110px;
   margin: 0 auto;
   padding: 0;
@@ -228,7 +229,7 @@ export const visualChoicesThreePureLayout = {
   left: 50%;
   bottom: auto;
   transform: translate(-50%, -50%);
-  width: min(82vw, 1360px);
+  width: min(80vw, 1240px);
   min-height: 84px;
 }
 
@@ -238,9 +239,8 @@ export const visualChoicesThreePureLayout = {
   left: 50%;
   bottom: auto;
   transform: translate(-50%, -50%);
-  width: min(1220px, 100%);
-  max-width: 1440px;
-  max-height: 170px;
+  width: min(1140px, 100%);
+  max-width: 1140px;
   margin: 0 auto;
 }
 
@@ -299,63 +299,6 @@ export const visualChoicesThreePureLayout = {
     transform: scale(0.96);
     filter: grayscale(75%) contrast(0.95);
   }
-}
-
-/* ==========================================================================
-   MASCOT COEXISTENCE (.has-mascot)
-   ========================================================================== */
-.has-mascot.layout-visual_choices_three_pure .game-stage {
-  width: 1420px;
-  margin-right: 40px;
-  row-gap: 20px;
-}
-
-.has-mascot.layout-visual_choices_three_pure .question-title {
-  max-width: 1380px;
-}
-
-.has-mascot.layout-visual_choices_three_pure .visual-answer-grid {
-  width: 1420px;
-  max-width: 1420px;
-  gap: 24px;
-}
-
-.has-mascot.layout-visual_choices_three_pure .choice-media,
-.has-mascot.layout-visual_choices_three_pure .option-image {
-  height: 500px;
-}
-
-.has-mascot.layout-visual_choices_three_pure {
-  --choice-media-height: 500px;
-  --choice-badge-size: 82px;
-  --choice-badge-font-size: 48px;
-}
-
-.has-mascot.layout-visual_choices_three_pure .visual-answer-label {
-  top: 14px;
-  left: 14px;
-  width: 82px;
-  height: 82px;
-}
-
-.has-mascot.layout-visual_choices_three_pure .visual-answer-card .visual-answer-label > b,
-.has-mascot.layout-visual_choices_three_pure .visual-answer-label .choice-label {
-  width: 82px;
-  height: 82px;
-  font-size: 48px;
-}
-
-.has-mascot.layout-visual_choices_three_pure .phase-region {
-  max-width: 1360px;
-}
-
-.has-mascot.layout-visual_choices_three_pure .phase-region > .thinking-bar {
-  width: min(80vw, 1240px);
-}
-
-.has-mascot.layout-visual_choices_three_pure .phase-region > .fact-card {
-  width: min(1140px, 100%);
-  max-width: 1140px;
 }
 `,
 } satisfies QuizLayoutRenderDefinition;

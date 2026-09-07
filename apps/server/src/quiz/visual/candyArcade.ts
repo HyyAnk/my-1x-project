@@ -230,11 +230,18 @@ export type TextLayoutOptions = {
 
 type ChoiceTextTier = Exclude<TextTier, "ultra_short">;
 
+/**
+ * Resolves the typography tier for question or choice text.
+ * The canonical default geometry is the Mascot-Ready 1420px grid, where `hasMascot` defaults
+ * to `true` when `options` or `options.hasMascot` is omitted or undefined.
+ * Explicit `hasMascot: false` or `hasMascot: true` is preserved for backward compatibility
+ * and dual-boundary characterization testing.
+ */
 export function textTier(value: string, role: "question", options?: TextLayoutOptions | boolean): TextTier;
 export function textTier(value: string, role: "choice", options?: TextLayoutOptions | boolean): ChoiceTextTier;
 export function textTier(value: string, role: "question" | "choice", options?: TextLayoutOptions | boolean): TextTier;
 export function textTier(value: string, role: "question" | "choice", options?: TextLayoutOptions | boolean): TextTier {
-  const hasMascot = typeof options === "boolean" ? options : Boolean(options?.hasMascot);
+  const hasMascot = typeof options === "boolean" ? options : (options?.hasMascot ?? true);
   const length = [...value.trim()].length;
   if (role === "question") {
     const limits = hasMascot ? [22, 44, 76, 125, 165] : [28, 50, 85, 135, 176];
@@ -253,8 +260,15 @@ export function textTier(value: string, role: "question" | "choice", options?: T
   return "overflow";
 }
 
+/**
+ * Calculates typography layout, font sizing, line height, and line clamping for question or choice text.
+ * The canonical default geometry is the Mascot-Ready 1420px grid, where `hasMascot` defaults
+ * to `true` when `options` or `options.hasMascot` is omitted or undefined.
+ * Explicit `hasMascot: false` or `hasMascot: true` is preserved for backward compatibility
+ * and dual-boundary characterization testing.
+ */
 export function textLayout(value: string, role: "question" | "choice", options?: TextLayoutOptions | boolean): TextLayout {
-  const hasMascot = typeof options === "boolean" ? options : Boolean(options?.hasMascot);
+  const hasMascot = typeof options === "boolean" ? options : (options?.hasMascot ?? true);
   if (role === "question") {
     const tier = textTier(value, role, options);
     const questionOptions = hasMascot

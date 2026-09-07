@@ -306,12 +306,12 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(res.html).toContain("QUIZ");
     });
 
-    it("does not render Channel Brand Mark in sandbox when mascot is disabled", () => {
+    it("does not render Channel Brand Mark in sandbox when mascot is disabled and channel brand name is empty", () => {
       const res = buildSandboxComposition(
         {
           mascot_id: "mascot_test_123",
           mascot_enabled: false,
-          channel_brand_name: "Robot World",
+          channel_brand_name: "",
         },
         mockMascotProfile,
       );

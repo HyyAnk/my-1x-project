@@ -13,6 +13,7 @@ export function assessQuizVisualLayout(input: {
   const issues: QuizIssue[] = [];
   if (!input.director) return issues;
   const template = getQuizVisualTemplate("candy_arcade");
+  const hasMascot = input.hasMascot ?? true;
   let previousPaletteId: string | undefined;
   for (const [index, question] of input.quiz.questions.entries()) {
     const beat = input.director.beats.find((candidate) => candidate.question_id === question.id);
@@ -43,7 +44,7 @@ export function assessQuizVisualLayout(input: {
         ),
       );
     previousPaletteId = visual.palette.id;
-    if (!textLayout(question.question, "question", { hasMascot: input.hasMascot, layoutId: layoutResolution.layoutId }).fits)
+    if (!textLayout(question.question, "question", { hasMascot, layoutId: layoutResolution.layoutId }).fits)
       issues.push(
         issue(
           question.id,
@@ -54,7 +55,7 @@ export function assessQuizVisualLayout(input: {
         ),
       );
     for (const choice of question.choices)
-      if (!textLayout(choice.text, "choice", { hasMascot: input.hasMascot, layoutId: layoutResolution.layoutId }).fits)
+      if (!textLayout(choice.text, "choice", { hasMascot, layoutId: layoutResolution.layoutId }).fits)
         issues.push(
           issue(
             question.id,

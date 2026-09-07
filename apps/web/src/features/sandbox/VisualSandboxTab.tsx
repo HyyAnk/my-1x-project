@@ -40,12 +40,12 @@ export function VisualSandboxTab({
 }) {
   const [activeInspectorTab, setActiveInspectorTab] = useState<"design" | "mascot" | "content">("design");
 
+  const viewport = useSandboxViewportState();
   const design = useSandboxDesignState();
-  const mascot = useSandboxMascotState();
+  const mascot = useSandboxMascotState(viewport.aspectRatio);
   const brandName = useSandboxBrandNameState();
   const timeline = useSandboxTimelineState();
   const question = useSandboxQuestionState();
-  const viewport = useSandboxViewportState();
 
   const handleLayoutChange = useCallback(
     (newLayoutId: QuizPreviewLayoutId) => {
@@ -100,13 +100,16 @@ export function VisualSandboxTab({
   const handleAspectRatioChange = useCallback(
     (newRatio: "16:9" | "9:16") => {
       viewport.setAspectRatio(newRatio);
+      if (newRatio === "16:9" && mascot.mascotPosition !== "bottom_left") {
+        mascot.setMascotPosition("bottom_left");
+      }
       const currentResolved = design.layoutId === "baseline" ? "media_left_choices_right" : design.layoutId;
       const compatibleLayout = getCompatibleQuizLayout(currentResolved, newRatio);
       if (compatibleLayout !== design.layoutId) {
         handleLayoutChange(compatibleLayout);
       }
     },
-    [viewport, design.layoutId, handleLayoutChange],
+    [viewport, design.layoutId, handleLayoutChange, mascot],
   );
 
   const handleApplyPresetQuestion = useCallback(
@@ -232,6 +235,7 @@ export function VisualSandboxTab({
 
           {activeInspectorTab === "mascot" && (
             <SandboxMascotTab
+              aspectRatio={viewport.aspectRatio}
               mascots={mascot.mascots}
               mascotId={mascot.mascotId}
               setMascotId={mascot.setMascotId}

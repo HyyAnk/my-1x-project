@@ -1,10 +1,11 @@
-import type { MascotActionType, MascotProfile, MascotStyle } from "@studio/shared";
+import type { MascotActionType, MascotProfile, MascotRenderAspectRatio, MascotStyle } from "@studio/shared";
 import { MascotPicker } from "./MascotPicker";
 import { SandboxChannelBrandControl } from "./SandboxChannelBrandControl";
 import { MascotActionSelector } from "./MascotActionSelector";
 import { MascotTransformControls } from "./MascotTransformControls";
 
 export interface SandboxMascotTabProps {
+  aspectRatio?: MascotRenderAspectRatio;
   mascots: MascotProfile[];
   mascotId: string;
   setMascotId: (id: string) => void;
@@ -34,6 +35,7 @@ export interface SandboxMascotTabProps {
 }
 
 export function SandboxMascotTab({
+  aspectRatio,
   mascots,
   mascotId,
   setMascotId,
@@ -91,6 +93,7 @@ export function SandboxMascotTab({
       <div style={{ height: "1px", background: "var(--line)" }} />
 
       <MascotTransformControls
+        aspectRatio={aspectRatio}
         mascotPosition={mascotPosition}
         setMascotPosition={setMascotPosition}
         mascotScale={mascotScale}

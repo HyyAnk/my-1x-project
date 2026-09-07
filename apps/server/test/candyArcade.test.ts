@@ -28,6 +28,10 @@ import { choiceStateStyles } from "../src/quiz/render/choices/choiceStateStyles.
 import { fullStackListLayout } from "../src/quiz/render/layouts/fullStackList.js";
 import { mediaLeftChoicesRightLayout } from "../src/quiz/render/layouts/mediaLeftChoicesRight.js";
 import { visualChoicesThreeLayout } from "../src/quiz/render/layouts/visualChoicesThree.js";
+import { splitVersusTwoLayout } from "../src/quiz/render/layouts/splitVersusTwo.js";
+import { verdictTrueFalseLayout } from "../src/quiz/render/layouts/verdictTrueFalse.js";
+import { mysteryRevealLayout } from "../src/quiz/render/layouts/mysteryReveal.js";
+import { clueDeductionLayout } from "../src/quiz/render/layouts/clueDeduction.js";
 import { baselineLayout } from "../src/quiz/render/layouts/baseline.js";
 import { glossyArcadeVariant } from "../src/quiz/visual/elements/answerCard/variants/glossyArcade.js";
 import { comicChunkyVariant } from "../src/quiz/visual/elements/answerCard/variants/comicChunky.js";
@@ -43,6 +47,7 @@ import {
   quizTimerState,
   resolvePalette,
   textLayout,
+  textTier,
   timelineProgress,
   visualAnswerState,
 } from "../src/quiz/visual/candyArcade.js";
@@ -180,7 +185,7 @@ describe("Candy Arcade visual template", () => {
     expect(resolvedLayout("illustrated_multiple_choice", "image_guess")).toBe("media_left_choices_right");
     expect(resolvedLayout("visual_multiple_choice", "odd_one_out")).toBe("visual_choices_three_pure");
     // Question text layout - Mascot OFF: [28, 50, 85, 135, 176]
-    const ultraShortQOff = textLayout("Ai là người đầu tiên?", "question", { hasMascot: false });
+    const ultraShortQOff = textLayout("Who was the first?", "question", { hasMascot: false });
     expect(ultraShortQOff.tier).toBe("ultra_short");
     expect(ultraShortQOff.fontSize).toBe(74);
     expect(ultraShortQOff.maxLines).toBe(1);
@@ -195,7 +200,7 @@ describe("Candy Arcade visual template", () => {
     expect(overflowQOff.fits).toBe(false);
 
     // Question text layout - Mascot ON: [22, 44, 76, 125, 165]
-    const ultraShortQOn = textLayout("Paris là gì?", "question", { hasMascot: true });
+    const ultraShortQOn = textLayout("What is Paris?", "question", { hasMascot: true });
     expect(ultraShortQOn.tier).toBe("ultra_short");
     expect(ultraShortQOn.fontSize).toBe(70);
     expect(ultraShortQOn.maxLines).toBe(1);
@@ -210,12 +215,12 @@ describe("Candy Arcade visual template", () => {
     expect(overflowQOn.fits).toBe(false);
 
     // Mascot OFF mode for choices: standard limits [18, 34, 58, 82]
-    const offLayout = textLayout("Thái Bình Dương", "choice", { hasMascot: false });
+    const offLayout = textLayout("Pacific Oceanic", "choice", { hasMascot: false });
     expect(offLayout.tier).toBe("short");
     expect(offLayout.fontSize).toBe(34);
 
     // Mascot ON mode for choices: narrower limits [10, 22, 40, 60] -> 15-char string shifts to medium tier to avoid clipping
-    const onLayout = textLayout("Thái Bình Dương", "choice", { hasMascot: true });
+    const onLayout = textLayout("Pacific Oceanic", "choice", { hasMascot: true });
     expect(onLayout.tier).toBe("medium");
     expect(onLayout.fontSize).toBe(24);
 
@@ -223,6 +228,104 @@ describe("Candy Arcade visual template", () => {
     const shortOnLayout = textLayout("Paris", "choice", { hasMascot: true });
     expect(shortOnLayout.tier).toBe("short");
     expect(shortOnLayout.fontSize).toBe(28);
+  });
+
+  it("defaults textLayout and textTier to canonical Mascot-Ready 1420px grid when options or hasMascot is omitted", () => {
+    // Question limits: [22, 44, 76, 125, 165]
+    // ultra_short: <= 22 -> 70px
+    // short: <= 44 -> 60px
+    // medium: <= 76 -> 50px
+    // long: <= 125 -> 42px
+    // very_long: <= 165 -> 35px
+    // overflow: > 165 -> 30px, fits: false
+    const qUltraShort = textLayout("x".repeat(22), "question");
+    expect(qUltraShort.tier).toBe("ultra_short");
+    expect(qUltraShort.fontSize).toBe(70);
+    expect(qUltraShort.lineHeight).toBe(1.12);
+    expect(qUltraShort.maxLines).toBe(1);
+    expect(qUltraShort.fits).toBe(true);
+
+    const qShort = textLayout("x".repeat(44), "question");
+    expect(qShort.tier).toBe("short");
+    expect(qShort.fontSize).toBe(60);
+    expect(qShort.lineHeight).toBe(1.15);
+    expect(qShort.maxLines).toBe(2);
+    expect(qShort.fits).toBe(true);
+
+    const qMedium = textLayout("x".repeat(76), "question", {});
+    expect(qMedium.tier).toBe("medium");
+    expect(qMedium.fontSize).toBe(50);
+    expect(qMedium.lineHeight).toBe(1.18);
+    expect(qMedium.maxLines).toBe(2);
+    expect(qMedium.fits).toBe(true);
+
+    const qLong = textLayout("x".repeat(125), "question", { layoutId: "media_left_choices_right" });
+    expect(qLong.tier).toBe("long");
+    expect(qLong.fontSize).toBe(42);
+    expect(qLong.lineHeight).toBe(1.2);
+    expect(qLong.maxLines).toBe(2);
+    expect(qLong.fits).toBe(true);
+
+    const qVeryLong = textLayout("x".repeat(165), "question");
+    expect(qVeryLong.tier).toBe("very_long");
+    expect(qVeryLong.fontSize).toBe(35);
+    expect(qVeryLong.lineHeight).toBe(1.22);
+    expect(qVeryLong.maxLines).toBe(2);
+    expect(qVeryLong.fits).toBe(true);
+
+    const qOverflow = textLayout("x".repeat(166), "question");
+    expect(qOverflow.tier).toBe("overflow");
+    expect(qOverflow.fontSize).toBe(30);
+    expect(qOverflow.lineHeight).toBe(1.24);
+    expect(qOverflow.maxLines).toBe(2);
+    expect(qOverflow.fits).toBe(false);
+
+    // Choice limits: [10, 22, 40, 60]
+    // short: <= 10 -> 28px
+    // medium: <= 22 -> 24px
+    // long: <= 40 -> 21px
+    // very_long: <= 60 -> 18px
+    // overflow: > 60 -> 18px, fits: false
+    const cShort = textLayout("x".repeat(10), "choice");
+    expect(cShort.tier).toBe("short");
+    expect(cShort.fontSize).toBe(28);
+    expect(cShort.lineHeight).toBe(1.1);
+    expect(cShort.maxLines).toBe(2);
+    expect(cShort.fits).toBe(true);
+
+    const cMedium = textLayout("x".repeat(22), "choice", {});
+    expect(cMedium.tier).toBe("medium");
+    expect(cMedium.fontSize).toBe(24);
+    expect(cMedium.lineHeight).toBe(1.12);
+    expect(cMedium.maxLines).toBe(2);
+    expect(cMedium.fits).toBe(true);
+
+    const cLong = textLayout("x".repeat(40), "choice", { layoutId: "baseline" });
+    expect(cLong.tier).toBe("long");
+    expect(cLong.fontSize).toBe(21);
+    expect(cLong.lineHeight).toBe(1.15);
+    expect(cLong.maxLines).toBe(3);
+    expect(cLong.fits).toBe(true);
+
+    const cVeryLong = textLayout("x".repeat(60), "choice");
+    expect(cVeryLong.tier).toBe("very_long");
+    expect(cVeryLong.fontSize).toBe(18);
+    expect(cVeryLong.lineHeight).toBe(1.16);
+    expect(cVeryLong.maxLines).toBe(3);
+    expect(cVeryLong.fits).toBe(true);
+
+    const cOverflow = textLayout("x".repeat(61), "choice");
+    expect(cOverflow.tier).toBe("overflow");
+    expect(cOverflow.fontSize).toBe(18);
+    expect(cOverflow.lineHeight).toBe(1.16);
+    expect(cOverflow.maxLines).toBe(3);
+    expect(cOverflow.fits).toBe(false);
+
+    // Direct textTier calls verify omission of options defaults to Mascot-Ready thresholds
+    expect(textTier("x".repeat(22), "question")).toBe("ultra_short");
+    expect(textTier("x".repeat(23), "question")).toBe("short");
+    expect(textTier("x".repeat(10), "choice")).toBe("short");
+    expect(textTier("x".repeat(11), "choice")).toBe("medium");
   });
 
   it("maps answer state only from the canonical QuizV2 choice", () => {
@@ -318,6 +421,8 @@ describe("Candy Arcade visual template", () => {
 
     expect(hasChoiceOverflow(assessQuizVisualLayout({ quiz: longChoiceQuiz, director, hasMascot: false }))).toBe(false);
     expect(hasChoiceOverflow(assessQuizVisualLayout({ quiz: longChoiceQuiz, director, hasMascot: true }))).toBe(true);
+    // Omitting hasMascot defaults to canonical Mascot-Ready 1420px grid
+    expect(hasChoiceOverflow(assessQuizVisualLayout({ quiz: longChoiceQuiz, director }))).toBe(true);
 
     const assessWithQuestionMascot = (showInQuestion: boolean) =>
       assessQuiz({
@@ -335,6 +440,8 @@ describe("Candy Arcade visual template", () => {
 
     expect(hasChoiceOverflow(assessWithQuestionMascot(false))).toBe(false);
     expect(hasChoiceOverflow(assessWithQuestionMascot(true))).toBe(true);
+    // Omitting mascot configuration in assessQuiz defaults hasQuestionMascot to true for 16:9 validation
+    expect(hasChoiceOverflow(assessQuiz({ quiz: longChoiceQuiz, director }).issues)).toBe(true);
   });
 
   it("keeps the reveal focused on the canonical answer card and drives the Thinking Bar from timeline ranges", () => {
@@ -976,15 +1083,15 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
 
     expect(mlcr).toContain("--choice-card-min-height: 116px;");
     expect(mlcr).toContain("--choice-badge-size: 138px;");
-    expect(mlcr).toContain("--choice-font-size-base: 48px;");
-    expect(mlcr).toContain("--choice-font-size-medium: 40px;");
-    expect(mlcr).toContain("--choice-font-size-long: 32px;");
-    expect(mlcr).toContain("--choice-font-size-very_long: 26px;");
+    expect(mlcr).toContain("--choice-font-size-base: 38px;");
+    expect(mlcr).toContain("--choice-font-size-medium: 30px;");
+    expect(mlcr).toContain("--choice-font-size-long: 24px;");
+    expect(mlcr).toContain("--choice-font-size-very_long: 20px;");
 
-    expect(vc3).toContain("--choice-media-height: 500px;");
-    expect(vc3).toContain("--choice-badge-size: 108px;");
-    expect(vc3).toContain("--choice-label-min-height: 76px;");
-    expect(vc3).toContain("--choice-label-font-size-base: 32px;");
+    expect(vc3).toContain("--choice-media-height: 320px;");
+    expect(vc3).toContain("--choice-badge-size: 72px;");
+    expect(vc3).toContain("--choice-label-min-height: 70px;");
+    expect(vc3).toContain("--choice-label-font-size-base: 26px;");
 
     const mlcr916 = mediaLeftChoicesRightLayout.css("9:16");
     const vc3916 = visualChoicesThreeLayout.css("9:16");
@@ -997,6 +1104,68 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     expect(vc3916).toContain("--choice-media-height: 360px;");
     expect(vc3916).toContain("--choice-badge-size: 104px;");
     expect(vc3916).toContain("--choice-label-min-height: 74px;");
+
+    const sv2 = splitVersusTwoLayout.css("16:9");
+    const vtf = verdictTrueFalseLayout.css("16:9");
+
+    expect(sv2).toContain("--choice-card-min-height: 500px;");
+    expect(sv2).toContain("--choice-card-height: 500px;");
+    expect(sv2).toContain("--choice-media-height: 410px;");
+    expect(sv2).toContain("--choice-badge-size: 116px;");
+    expect(sv2).toContain("--choice-badge-font-size: 60px;");
+    expect(sv2).toContain("--choice-font-size-base: 40px;");
+    expect(sv2).toContain("--choice-font-size-medium: 32px;");
+    expect(sv2).toContain("--choice-font-size-long: 25px;");
+    expect(sv2).toContain("--choice-font-size-very_long: 21px;");
+    expect(sv2).toContain("--choice-font-size-overflow: 20px;");
+    expect(sv2).toContain("--choice-fit-min: 20px;");
+    expect(sv2).toContain("--choice-fit-max: 56px;");
+    expect(sv2).toContain("width: 1420px;");
+    expect(sv2).toContain("max-width: 1360px;");
+    expect(sv2).not.toContain(".has-mascot");
+
+    expect(vtf).toContain("--choice-card-min-height: 140px;");
+    expect(vtf).toContain("--choice-card-height: 140px;");
+    expect(vtf).toContain("--choice-badge-size: 148px;");
+    expect(vtf).toContain("--choice-badge-font-size: 80px;");
+    expect(vtf).toContain("--choice-font-size-base: 46px;");
+    expect(vtf).toContain("--choice-font-size-medium: 38px;");
+    expect(vtf).toContain("--choice-font-size-long: 30px;");
+    expect(vtf).toContain("--choice-font-size-very_long: 24px;");
+    expect(vtf).toContain("--choice-font-size-overflow: 22px;");
+    expect(vtf).toContain("--choice-fit-min: 24px;");
+    expect(vtf).toContain("--choice-fit-max: 68px;");
+    expect(vtf).toContain("width: 1420px;");
+    expect(vtf).toContain("max-width: 1420px;");
+    expect(vtf).toContain("width: min(1260px, 100%);");
+    expect(vtf).toContain("width: min(1220px, 100%);");
+    expect(vtf).not.toContain(".has-mascot");
+
+    const mr = mysteryRevealLayout.css("16:9");
+    const cd = clueDeductionLayout.css("16:9");
+
+    expect(mr).toContain("--mystery-stage-width: 1100px;");
+    expect(mr).toContain("--mystery-stage-height: 590px;");
+    expect(mr).toContain("width: 1420px;");
+    expect(mr).toContain("max-width: 1420px;");
+    expect(mr).toContain("max-width: 1380px;");
+    expect(mr).toContain("max-width: var(--mystery-stage-width, 1100px);");
+    expect(mr).toContain("width: var(--mystery-stage-width, 1100px);");
+    expect(mr).toContain("max-width: 1360px;");
+    expect(mr).toContain("width: min(75vw, 1100px);");
+    expect(mr).toContain("width: min(1080px, 100%);");
+    expect(mr).not.toContain(".has-mascot");
+
+    expect(cd).toContain("--clue-stage-width: 1180px;");
+    expect(cd).toContain("--clue-stage-height: 560px;");
+    expect(cd).toContain("width: var(--mascot-content-width, 1420px);");
+    expect(cd).toContain("max-width: 1420px;");
+    expect(cd).toContain("max-width: 1380px;");
+    expect(cd).toContain("max-width: 1180px;");
+    expect(cd).toContain("max-width: 1360px;");
+    expect(cd).toContain("width: min(72vw, 1180px);");
+    expect(cd).toContain("width: min(1180px, 100%);");
+    expect(cd).not.toContain(".has-mascot");
   });
 
   it("publishes answer card auto-fit tokens for all layouts and aspect ratios", () => {
@@ -1013,7 +1182,7 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     expect(mediaLeftPortrait).toContain("--choice-fit-max: 72px;");
     expect(fullStack).toContain("--choice-fit-max: 64px;");
     expect(fullStackPortrait).toContain("--choice-fit-max: 72px;");
-    expect(visual).toContain("--choice-fit-max: 38px;");
+    expect(visual).toContain("--choice-fit-max: 30px;");
     expect(visualPortrait).toContain("--choice-fit-max: 42px;");
 
     for (const css of [baseline, mediaLeft, fullStack, visual]) {
@@ -1121,5 +1290,29 @@ describe("Candy Arcade visual and workflow regression", () => {
     expect(resChoices.html).toContain("--choices-at: 0s");
     expect(resChoices.html).toContain("--reveal-at: 999s");
     expect(resReveal.html).toContain("--reveal-at: 0s");
+  });
+
+  it("standardizes 16:9 base layout geometry directly to canonical Mascot-Ready Standard Grid", () => {
+    const css = candyArcadeCss({ aspectRatio: "16:9" });
+
+    // Root tokens default to 1420px mascot-ready capacity
+    expect(css).toContain("--mascot-content-width: 1420px;");
+    expect(css).toContain("--question-card-width: 1440px;");
+    expect(css).toContain("--question-card-left-edge: 360px;");
+
+    // Game stage defaults directly to 1420px width
+    expect(css).toContain(".game-stage { position: relative; z-index: 3; display: grid; justify-items: center; align-content: start; width: 1420px; min-height: 945px; margin: 12px 40px 0 auto; contain: layout style; }");
+
+    // Game header defaults directly to x = 180px (centered in 0..360px pillar)
+    expect(css).toContain(".game-header { position: absolute; z-index: 6; top: 0; left: 180px; transform: translateX(-50%); contain: layout style; }");
+
+    // Question title and phase region centered/aligned to 1420px stage
+    expect(css).toContain(".question-title { position: relative; z-index: 3; width: var(--question-card-width, 1440px); max-width: var(--question-card-width, 1440px);");
+    expect(css).toContain(".phase-region { position: absolute; z-index: 5; left: 0; bottom: 10px; width: var(--question-card-width, 1440px);");
+    expect(css).toContain(".phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: -15px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(70vw, 1300px);");
+
+    // Mascot container locked to bottom-left pillar in 16:9
+    expect(css).toContain(".candy-mascot-container.anchor-bottom_left { bottom: 18px; left: 32px; }");
+    expect(css).toContain(".candy-mascot-container.anchor-bottom_right { bottom: 18px; left: 32px; }");
   });
 });

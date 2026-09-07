@@ -15,6 +15,7 @@ export class NeuralGraph {
     this.layerTendrils = [];
     this.fileNodes = new Map(); // path -> fileNode
     this.fileNodesByIndex = []; // index -> fileNode
+    this.fileNodesByZone = new Map(); // zoneId -> array of fileNodes
     this.zoneOrbitalData = new Map(); // zoneId -> { speed, phase }
     this.fileInstancedMesh = null;
     this.dendriteLineSegments = null;
@@ -358,6 +359,7 @@ export class NeuralGraph {
 
     this.fileNodes.clear();
     this.fileNodesByIndex = [];
+    this.fileNodesByZone.clear();
 
     // Group files by zone
     const filesByZone = new Map();
@@ -466,6 +468,10 @@ export class NeuralGraph {
 
         this.fileNodes.set(file.path, fileNode);
         this.fileNodesByIndex[globalIdx] = fileNode;
+        if (!this.fileNodesByZone.has(zoneId)) {
+          this.fileNodesByZone.set(zoneId, []);
+        }
+        this.fileNodesByZone.get(zoneId).push(fileNode);
 
         globalIdx++;
       }
@@ -1124,22 +1130,57 @@ export class NeuralGraph {
     const activeTargets = [];
     const activeKeys = new Set();
 
-    // 1. Identify real active claims from claims list (multi-zone support per claim)
+    // 1. Identify real active claims from claims list (1 drone per claim with multi-sphere waypoints)
     if (claims && claims.length > 0) {
       for (const claim of claims) {
+        if (claim.status && claim.status !== "active") continue;
         const writeZones = claim.writeZones && claim.writeZones.length > 0 ? claim.writeZones : ["shared-contracts"];
+        const readZones = claim.readStableZones || [];
+
+        // Build ordered list of duty waypoints for this claim: active write zones first, then read-stable dependencies
+        const dutyWaypoints = [];
+        const seenZones = new Set();
+
         for (const zoneId of writeZones) {
-          const droneKey = `${claim.id}:${zoneId}`;
-          if (!activeKeys.has(droneKey)) {
-            activeKeys.add(droneKey);
-            activeTargets.push({
-              id: droneKey,
-              claimId: claim.id,
-              agentName: claim.agent || "Agent",
-              targetZoneId: zoneId,
-              plannedFiles: claim.plannedFiles || [],
+          if (!seenZones.has(zoneId) && ZONE_POSITIONS[zoneId]) {
+            seenZones.add(zoneId);
+            dutyWaypoints.push({
+              zoneId,
+              pos: ZONE_POSITIONS[zoneId],
+              type: "active",
             });
           }
+        }
+
+        for (const zoneId of readZones) {
+          if (!seenZones.has(zoneId) && ZONE_POSITIONS[zoneId]) {
+            seenZones.add(zoneId);
+            dutyWaypoints.push({
+              zoneId,
+              pos: ZONE_POSITIONS[zoneId],
+              type: "read_stable",
+            });
+          }
+        }
+
+        if (dutyWaypoints.length === 0) {
+          dutyWaypoints.push({
+            zoneId: "shared-contracts",
+            pos: ZONE_POSITIONS["shared-contracts"] || { x: 0, y: 0, z: 0, radius: 4 },
+            type: "active",
+          });
+        }
+
+        const droneKey = claim.id;
+        if (!activeKeys.has(droneKey)) {
+          activeKeys.add(droneKey);
+          activeTargets.push({
+            id: droneKey,
+            claimId: claim.id,
+            agentName: claim.agent || "Agent",
+            dutyWaypoints,
+            plannedFiles: claim.plannedFiles || [],
+          });
         }
       }
     }
@@ -1150,14 +1191,21 @@ export class NeuralGraph {
         if (z.status === "active") {
           if (z.writers && z.writers.length > 0) {
             for (const w of z.writers) {
-              const droneKey = `${w.id}:${z.id}`;
+              const droneKey = w.id;
               if (!activeKeys.has(droneKey)) {
                 activeKeys.add(droneKey);
+                const wp = [
+                  {
+                    zoneId: z.id,
+                    pos: ZONE_POSITIONS[z.id] || { x: 0, y: 0, z: 0, radius: 4 },
+                    type: "active",
+                  },
+                ];
                 activeTargets.push({
                   id: droneKey,
                   claimId: w.id,
                   agentName: w.agent || "Agent",
-                  targetZoneId: z.id,
+                  dutyWaypoints: wp,
                   plannedFiles: w.plannedFiles || [],
                 });
               }
@@ -1167,11 +1215,18 @@ export class NeuralGraph {
             const droneKey = `zone-active:${z.id}`;
             if (!activeKeys.has(droneKey)) {
               activeKeys.add(droneKey);
+              const wp = [
+                {
+                  zoneId: z.id,
+                  pos: ZONE_POSITIONS[z.id] || { x: 0, y: 0, z: 0, radius: 4 },
+                  type: "active",
+                },
+              ];
               activeTargets.push({
                 id: droneKey,
                 claimId: `claim-${z.id}`,
                 agentName: "Agent",
-                targetZoneId: z.id,
+                dutyWaypoints: wp,
                 plannedFiles: [],
               });
             }
@@ -1188,10 +1243,14 @@ export class NeuralGraph {
         this.agentDrones.set(target.id, drone);
       } else {
         drone.plannedFiles = target.plannedFiles || [];
-        if (target.targetZoneId !== drone.targetZoneId) {
-          drone.targetZoneId = target.targetZoneId;
-          const newPos = ZONE_POSITIONS[target.targetZoneId] || { x: 0, y: 0, z: 0 };
-          drone.zonePos = newPos;
+        if (target.dutyWaypoints && target.dutyWaypoints.length > 0) {
+          drone.dutyWaypoints = target.dutyWaypoints;
+          if (!drone.dutyWaypoints.some((wp) => wp.zoneId === drone.currentZoneId)) {
+            drone.waypointIndex = 0;
+            drone.currentWaypoint = drone.dutyWaypoints[0];
+            drone.currentZoneId = drone.currentWaypoint.zoneId;
+            drone.zonePos = drone.currentWaypoint.pos;
+          }
         }
         if (drone.isWarpingOut) {
           drone.isWarpingOut = false;
@@ -1210,13 +1269,26 @@ export class NeuralGraph {
 
   createAgentDrone(info) {
     const droneGroup = new THREE.Group();
-    const targetZoneId = info.targetZoneId || (info.writeZones && info.writeZones[0]) || "agent-coordination";
-    const zonePos = ZONE_POSITIONS[targetZoneId] || { x: 0, y: 0, z: 0, radius: 4 };
+    const dutyWaypoints =
+      info.dutyWaypoints && info.dutyWaypoints.length > 0
+        ? info.dutyWaypoints
+        : [
+            {
+              zoneId: info.targetZoneId || "agent-coordination",
+              pos: ZONE_POSITIONS[info.targetZoneId || "agent-coordination"] || { x: 0, y: 0, z: 0, radius: 4 },
+              type: "active",
+            },
+          ];
+    const initialWaypoint = dutyWaypoints[0];
+    const zonePos = initialWaypoint.pos;
+    const targetZoneId = initialWaypoint.zoneId;
     const agentName = info.agentName || info.agent || "Agent";
     const claimId = info.claimId || info.id || `claim-${targetZoneId}`;
     const droneKey = info.id || `${claimId}:${targetZoneId}`;
 
-    droneGroup.position.set(zonePos.x, zonePos.y + 10, zonePos.z);
+    const initAngle = Math.random() * Math.PI * 2;
+    const initRadius = (zonePos.radius || 4) * 2.2 + 6.0;
+    droneGroup.position.set(zonePos.x + Math.cos(initAngle) * initRadius, zonePos.y + 8.0, zonePos.z + Math.sin(initAngle) * initRadius);
     droneGroup.scale.set(0.01, 0.01, 0.01);
 
     // Subgroup containing all articulating drone body meshes
@@ -1418,7 +1490,10 @@ export class NeuralGraph {
       claimId,
       droneKey,
       agentName,
-      targetZoneId,
+      dutyWaypoints,
+      waypointIndex: 0,
+      currentWaypoint: initialWaypoint,
+      currentZoneId: targetZoneId,
       zonePos,
       group: droneGroup,
       modelGroup,
@@ -1438,23 +1513,40 @@ export class NeuralGraph {
       isWarpingOut: false,
       warpStartTime: 0,
 
-      // Organic 3D Free-Patrol Kinematics
-      wanderAngle: Math.random() * Math.PI * 2,
-      wanderSpeed: 0.018 + Math.random() * 0.008,
-      orbitRadius: (zonePos.radius || 4) * 2.2 + 6.0,
+      // Organic 3D Free-Patrol Kinematics (50% Speed Reduction, Bidirectional CW/CCW)
+      wanderAngle: initAngle,
+      baseWanderSpeed: 0.009 + Math.random() * 0.004,
+      orbitDirection: Math.random() > 0.5 ? 1 : -1,
+      orbitRadius: initRadius,
       seedR: Math.random() * Math.PI * 2,
       seedY: Math.random() * Math.PI * 2,
       seedPhase: Math.random() * 100,
 
-      // 2-Phase State Machine: 0: PATROL (~2600ms), 1: LASER_FIRE (~1500ms)
+      // Patrol cycle counters (3 to 5 full patrol + laser cycles per sphere before transit)
+      patrolCyclesAtSphere: 0,
+      maxPatrolCyclesAtSphere: 3 + Math.floor(Math.random() * 3), // 3, 4, or 5 cycles
+
+      // 3-Phase State Machine: 0: PATROL (~4000-5500ms), 1: LASER_FIRE (~1800ms), 2: TRANSIT (~5000-8500ms)
       droneState: 0,
       stateStartTime: performance.now(),
-      patrolDuration: 2600 + Math.random() * 600,
-      laserDuration: 1500,
-      hoverPos: new THREE.Vector3(zonePos.x, zonePos.y + 10, zonePos.z),
+      patrolDuration: 4000 + Math.random() * 1500,
+      laserDuration: 1800,
+      hoverPos: new THREE.Vector3(
+        zonePos.x + Math.cos(initAngle) * initRadius,
+        zonePos.y + 8.0,
+        zonePos.z + Math.sin(initAngle) * initRadius,
+      ),
 
-      // Target Coordinates
+      // Inter-sphere transit kinematics (50% speed = ~4800-9000ms duration)
+      transitStartTime: 0,
+      transitDuration: 5500,
+      transitStartPos: new THREE.Vector3(),
+      transitTargetPos: new THREE.Vector3(),
+      nextWaypoint: null,
+
+      // Target Coordinates (Strictly scoped within current zone)
       targetPos: new THREE.Vector3(zonePos.x, zonePos.y, zonePos.z),
+      targetZoneId: targetZoneId,
       isTargetingFile: false,
       targetTimer: 0,
     };
@@ -1534,6 +1626,16 @@ export class NeuralGraph {
       drone.flareMesh.geometry.dispose();
       drone.flareMesh.material.dispose();
     }
+  }
+
+  syncDroneOrbitFromCurrentPos(drone) {
+    if (!drone || !drone.zonePos) return;
+    const dx = drone.group.position.x - drone.zonePos.x;
+    const dz = drone.group.position.z - drone.zonePos.z;
+    drone.wanderAngle = Math.atan2(dz, dx);
+    const curR = Math.hypot(dx, dz);
+    const minR = (drone.zonePos.radius || 4) * 2.2 + 5.0;
+    drone.orbitRadius = Math.max(minR, curR);
   }
 
   triggerFileActivity(activity) {
@@ -1642,12 +1744,14 @@ export class NeuralGraph {
       }
 
       // Direct drone laser scanner toward this micro-neuron if drone exists for this agent
+      // STRICTLY scoped to drone's current zone to eliminate cross-zone laser fire
       if (agent) {
         for (const [_, drone] of this.agentDrones) {
-          if (drone.agentName === agent) {
+          if (drone.agentName === agent && drone.currentZoneId === fileNode.zoneId) {
             drone.targetPos = fileNode.worldPos.clone();
+            drone.targetZoneId = fileNode.zoneId;
             drone.isTargetingFile = true;
-            drone.targetTimer = performance.now() + 3000;
+            drone.targetTimer = performance.now() + 12000;
           }
         }
       }
@@ -2085,20 +2189,54 @@ export class NeuralGraph {
       drone.scale = Math.min(1.0, drone.scale + 0.04);
       drone.group.scale.set(drone.scale, drone.scale, drone.scale);
 
-      // Resolve current target coordinates
-      // If agent declared planned files, prioritize cycling through those file micro-neurons
+      // Resolve current target coordinates STRICTLY within drone.currentZoneId
       const targetCoord = new THREE.Vector3(drone.zonePos.x, drone.zonePos.y, drone.zonePos.z);
-      if (drone.isTargetingFile && drone.targetPos) {
+      let hasSpecificTarget = false;
+
+      // 1. Actively targeting a recently excited file strictly in THIS zone
+      if (drone.isTargetingFile && drone.targetPos && drone.targetZoneId === drone.currentZoneId) {
         if (now > drone.targetTimer) {
           drone.isTargetingFile = false;
         } else {
           targetCoord.copy(drone.targetPos);
+          hasSpecificTarget = true;
         }
-      } else if (drone.plannedFiles && drone.plannedFiles.length > 0) {
-        const fileKey = drone.plannedFiles[drone.plannedFileIndex % drone.plannedFiles.length];
-        const fileNode = this.fileNodes.get(fileKey) || this.findFileNodeByName(fileKey);
-        if (fileNode && fileNode.worldPos) {
-          targetCoord.copy(fileNode.worldPos);
+      }
+
+      // 2. Cycle through planned files belonging to THIS zone
+      if (!hasSpecificTarget && drone.plannedFiles && drone.plannedFiles.length > 0) {
+        const filesInThisZone = drone.plannedFiles.filter((f) => {
+          const fn = this.fileNodes.get(f) || this.findFileNodeByName(f);
+          return fn && fn.zoneId === drone.currentZoneId;
+        });
+        if (filesInThisZone.length > 0) {
+          const fileKey = filesInThisZone[drone.plannedFileIndex % filesInThisZone.length];
+          const fileNode = this.fileNodes.get(fileKey) || this.findFileNodeByName(fileKey);
+          if (fileNode && fileNode.worldPos) {
+            targetCoord.copy(fileNode.worldPos);
+            hasSpecificTarget = true;
+          }
+        }
+      }
+
+      // 3. Fallback: inspect existing micro-neuron in this zone or surface diagnostic point
+      if (!hasSpecificTarget) {
+        const zoneFileNodes = this.fileNodesByZone ? this.fileNodesByZone.get(drone.currentZoneId) : null;
+        if (zoneFileNodes && zoneFileNodes.length > 0) {
+          const fn = zoneFileNodes[drone.plannedFileIndex % zoneFileNodes.length];
+          if (fn && fn.worldPos) {
+            targetCoord.copy(fn.worldPos);
+            hasSpecificTarget = true;
+          }
+        }
+        if (!hasSpecificTarget) {
+          const sphereR = drone.zonePos.radius || 4.0;
+          const angle = drone.wanderAngle || 0;
+          targetCoord.set(
+            drone.zonePos.x + Math.cos(angle) * (sphereR * 0.9),
+            drone.zonePos.y + Math.sin(angle * 1.5) * (sphereR * 0.4),
+            drone.zonePos.z + Math.sin(angle) * (sphereR * 0.9),
+          );
         }
       }
 
@@ -2111,36 +2249,60 @@ export class NeuralGraph {
       }
 
       // -------------------------------------------------------------
-      // STATE 0: PATROL (Smooth Organic 3D Wander)
+      // STATE 0: PATROL (Smooth Organic 3D Wander, 50% Speed, Helicopter Altitude Maneuvers)
       // -------------------------------------------------------------
       if (drone.droneState === 0) {
-        drone.wanderAngle += drone.wanderSpeed;
+        // Variable speed modulation ("lúc nhanh lúc chậm khác nhau 1 chút")
+        const speedWave = 0.72 + Math.sin(t * 0.85 + drone.seedR) * 0.32 + Math.cos(t * 1.5) * 0.12;
+        const currentSpeed = (drone.baseWanderSpeed || 0.011) * speedWave;
+
+        // Bidirectional orbit advance (CW vs CCW)
+        drone.wanderAngle += currentSpeed * (drone.orbitDirection || 1);
         const wAngle = drone.wanderAngle;
-        const rMod = drone.orbitRadius + Math.sin(wAngle * 1.5 + drone.seedR) * 2.5;
-        const nextX = drone.zonePos.x + Math.cos(wAngle) * rMod + Math.sin(wAngle * 2.3) * 2.0;
-        const nextZ = drone.zonePos.z + Math.sin(wAngle) * rMod + Math.cos(wAngle * 1.9) * 2.0;
-        const nextY = drone.zonePos.y + 8.5 + Math.sin(wAngle * 1.8 + drone.seedY) * 3.2;
+
+        // Dynamic orbit radius with organic breathing
+        const rMod = drone.orbitRadius + Math.sin(wAngle * 1.4 + drone.seedR) * 2.2;
+
+        // Helicopter-style vertical altitude reconnaissance sweeps ("lên xuống theo dọc thẳng đứng như kiểu trực thăng tuần tra")
+        const verticalSweep = Math.sin(t * 0.65 + drone.seedY) * 5.2 + Math.sin(t * 1.35 + drone.seedPhase) * 1.8;
+
+        const targetX = drone.zonePos.x + Math.cos(wAngle) * rMod + Math.sin(wAngle * 2.1) * 1.6;
+        const targetZ = drone.zonePos.z + Math.sin(wAngle) * rMod + Math.cos(wAngle * 1.7) * 1.6;
+        const targetY = drone.zonePos.y + 7.5 + verticalSweep;
 
         const curPos = drone.group.position;
-        const vx = nextX - curPos.x;
-        const vz = nextZ - curPos.z;
+        const prevX = curPos.x;
+        const prevY = curPos.y;
+        const prevZ = curPos.z;
 
-        // Smooth translation
-        curPos.set(nextX, nextY, nextZ);
+        // Smooth position integration (eliminates any discontinuous jumps / pops)
+        curPos.x = THREE.MathUtils.lerp(curPos.x, targetX, 0.08);
+        curPos.y = THREE.MathUtils.lerp(curPos.y, targetY, 0.08);
+        curPos.z = THREE.MathUtils.lerp(curPos.z, targetZ, 0.08);
 
-        // Heading: face movement direction
-        if (Math.hypot(vx, vz) > 0.01) {
+        // Velocity & flight attitude
+        const vx = curPos.x - prevX;
+        const vy = curPos.y - prevY;
+        const vz = curPos.z - prevZ;
+        const horizSpeed = Math.hypot(vx, vz);
+
+        // Heading: face instantaneous movement direction
+        if (horizSpeed > 0.003) {
           const targetYaw = Math.atan2(vx, vz);
           drone.modelGroup.rotation.y = targetYaw;
-          // Banking into turn
-          drone.modelGroup.rotation.z = -Math.sin(wAngle * 1.8) * 0.3;
-          // Pitch slightly down
-          drone.modelGroup.rotation.x = 0.1 + Math.sin(t * 3.0) * 0.04;
+
+          // Banking into turn (accounts for CW vs CCW direction)
+          const bankAngle = THREE.MathUtils.clamp(-Math.sin(wAngle * 1.6) * 0.28 * (drone.orbitDirection || 1), -0.35, 0.35);
+          drone.modelGroup.rotation.z = bankAngle;
+
+          // Pitch follows vertical climb/descent
+          const flightPitch = -Math.atan2(vy, horizSpeed);
+          drone.modelGroup.rotation.x = THREE.MathUtils.clamp(flightPitch, -0.28, 0.28);
         }
 
         // Thruster plumes energetic pulse
         if (drone.leftPlume && drone.rightPlume) {
-          const pScale = 1.0 + Math.sin(t * 22.0) * 0.35;
+          const pScale = 0.9 + Math.sin(t * 18.0) * 0.28;
           drone.leftPlume.scale.set(1, 1, pScale);
           drone.rightPlume.scale.set(1, 1, pScale);
         }
@@ -2151,8 +2313,9 @@ export class NeuralGraph {
         if (drone.flareMesh) drone.flareMesh.visible = false;
         drone.droneLight.intensity = 1.6 + Math.sin(t * 5.0) * 0.3;
 
-        // State transition check
-        if (stateElapsed >= drone.patrolDuration) {
+        // State transition check (responsive file edit or patrol cycle duration reached)
+        const canTriggerTarget = drone.isTargetingFile && stateElapsed >= 2000;
+        if (stateElapsed >= drone.patrolDuration || canTriggerTarget) {
           drone.droneState = 1; // Transition directly to LASER_FIRE
           drone.stateStartTime = now;
           drone.hoverPos = drone.group.position.clone();
@@ -2229,9 +2392,132 @@ export class NeuralGraph {
           if (drone.flareMesh) drone.flareMesh.visible = false;
 
           drone.plannedFileIndex++; // Advance to next claimed file if multi-file
-          drone.droneState = 0; // Return to PATROL
+          drone.patrolCyclesAtSphere = (drone.patrolCyclesAtSphere || 0) + 1;
+
+          // Check if drone has completed 3-5 patrol & scan cycles at this sphere before transiting
+          const targetCycles = drone.maxPatrolCyclesAtSphere || 3;
+          if (drone.patrolCyclesAtSphere >= targetCycles && drone.dutyWaypoints && drone.dutyWaypoints.length > 1) {
+            // Completed 3-5 cycles at current sphere! Prepare inter-sphere transit
+            drone.patrolCyclesAtSphere = 0;
+            drone.maxPatrolCyclesAtSphere = 3 + Math.floor(Math.random() * 3); // 3, 4, or 5 cycles for next sphere
+
+            drone.droneState = 2; // Transition to TRANSIT
+            drone.transitStartTime = now;
+            drone.transitStartPos.copy(drone.group.position);
+
+            // Cycle to next duty waypoint
+            drone.waypointIndex = (drone.waypointIndex + 1) % drone.dutyWaypoints.length;
+            const nextWp = drone.dutyWaypoints[drone.waypointIndex];
+            drone.nextWaypoint = nextWp;
+
+            // Target arrival position (patrol orbit entry point above next sphere)
+            const nextPos = nextWp.pos;
+            const entryAngle = Math.random() * Math.PI * 2;
+            const entryRadius = (nextPos.radius || 4) * 2.2 + 5.5;
+            drone.transitTargetPos.set(
+              nextPos.x + Math.cos(entryAngle) * entryRadius,
+              nextPos.y + 8.0,
+              nextPos.z + Math.sin(entryAngle) * entryRadius,
+            );
+
+            // 50% reduced transit speed (duration doubled: ~4800ms - 9000ms)
+            const dist = drone.transitStartPos.distanceTo(drone.transitTargetPos);
+            drone.transitDuration = Math.max(4800, Math.min(9000, 3200 + dist * 35));
+          } else {
+            // Still within 3-5 patrol cycles at current sphere!
+            // Seamlessly sync orbit angle from exact current position to prevent any pop
+            this.syncDroneOrbitFromCurrentPos(drone);
+            // Dynamic reversal: occasionally reverse orbit direction (CW vs CCW)
+            if (Math.random() < 0.5) {
+              drone.orbitDirection = -(drone.orbitDirection || 1);
+            }
+            drone.droneState = 0; // Return to PATROL for next cycle
+            drone.stateStartTime = now;
+            drone.patrolDuration = 4000 + Math.random() * 1500;
+          }
+        }
+      }
+
+      // -------------------------------------------------------------
+      // STATE 2: TRANSIT (Dynamic Inter-Sphere Flight between Duty Spheres)
+      // -------------------------------------------------------------
+      else if (drone.droneState === 2) {
+        const transitElapsed = now - drone.transitStartTime;
+        const progress = Math.min(1.0, transitElapsed / drone.transitDuration);
+
+        // Smooth cubic Hermite ease
+        const ease = progress * progress * (3.0 - 2.0 * progress);
+
+        // Interpolate horizontal position
+        const curX = THREE.MathUtils.lerp(drone.transitStartPos.x, drone.transitTargetPos.x, ease);
+        const curZ = THREE.MathUtils.lerp(drone.transitStartPos.z, drone.transitTargetPos.z, ease);
+        // Upward parabolic clearance arc to soar cleanly over conduits
+        const arcHeight = Math.sin(progress * Math.PI) * 7.5;
+        const curY = THREE.MathUtils.lerp(drone.transitStartPos.y, drone.transitTargetPos.y, ease) + arcHeight;
+
+        const prevPos = drone.group.position.clone();
+        drone.group.position.set(curX, curY, curZ);
+
+        // Flight attitude calculation
+        const vx = curX - prevPos.x;
+        const vy = curY - prevPos.y;
+        const vz = curZ - prevPos.z;
+        const horizSpeed = Math.hypot(vx, vz);
+
+        if (horizSpeed > 0.005) {
+          const flightYaw = Math.atan2(vx, vz);
+          drone.modelGroup.rotation.y = flightYaw;
+
+          // Pitch follows vertical trajectory
+          const flightPitch = -Math.atan2(vy, horizSpeed);
+          drone.modelGroup.rotation.x = THREE.MathUtils.clamp(flightPitch, -0.35, 0.35);
+
+          // Dynamic banking roll
+          const targetDx = drone.transitTargetPos.x - curX;
+          const targetDz = drone.transitTargetPos.z - curZ;
+          const headingToTarget = Math.atan2(targetDx, targetDz);
+          let angleDiff = headingToTarget - flightYaw;
+          while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+          while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+          drone.modelGroup.rotation.z = THREE.MathUtils.clamp(-angleDiff * 0.8, -0.45, 0.45);
+        }
+
+        // Powerful thruster plumes during inter-sphere burn
+        if (drone.leftPlume && drone.rightPlume) {
+          const thrusterBurn = 1.9 + Math.sin(t * 35.0) * 0.45;
+          drone.leftPlume.scale.set(1.35, 1.35, thrusterBurn);
+          drone.rightPlume.scale.set(1.35, 1.35, thrusterBurn);
+        }
+
+        // Rapid flashing strobe beacon during transit
+        drone.droneLight.intensity = 2.4 + Math.sin(t * 12.0) * 0.6;
+
+        if (drone.laserLine) drone.laserLine.visible = false;
+        if (drone.coreLaserLine) drone.coreLaserLine.visible = false;
+        if (drone.flareMesh) drone.flareMesh.visible = false;
+
+        // Waypoint arrival
+        if (progress >= 1.0) {
+          drone.currentWaypoint = drone.nextWaypoint;
+          drone.currentZoneId = drone.currentWaypoint.zoneId;
+          drone.zonePos = drone.currentWaypoint.pos;
+
+          // SEAMLESS SYNCHRONIZATION: calculate wanderAngle directly from drone's current arrival position!
+          this.syncDroneOrbitFromCurrentPos(drone);
+
+          // Randomize initial orbit direction (CW vs CCW) for the new sphere
+          drone.orbitDirection = Math.random() > 0.5 ? 1 : -1;
+          drone.patrolCyclesAtSphere = 0;
+          drone.maxPatrolCyclesAtSphere = 3 + Math.floor(Math.random() * 3); // 3, 4, or 5 cycles
+
+          if (drone.leftPlume && drone.rightPlume) {
+            drone.leftPlume.scale.set(1, 1, 1);
+            drone.rightPlume.scale.set(1, 1, 1);
+          }
+
+          drone.droneState = 0; // Resume PATROL around new sphere
           drone.stateStartTime = now;
-          drone.patrolDuration = 2600 + Math.random() * 600;
+          drone.patrolDuration = 4000 + Math.random() * 1500;
         }
       }
     }

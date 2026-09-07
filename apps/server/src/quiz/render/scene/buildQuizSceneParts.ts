@@ -53,8 +53,9 @@ export type QuizSceneParts = {
 };
 
 export function buildQuizSceneParts(model: QuizSceneRenderModel): QuizSceneParts {
+  const is16x9 = model.aspectRatio !== "9:16";
   const questionLayout = textLayout(model.question.text, "question", {
-    hasMascot: model.mascot.occupied,
+    hasMascot: is16x9 ? true : model.mascot.occupied,
     layoutId: model.layout.id,
   });
   return {
@@ -85,7 +86,7 @@ export function buildQuizSceneParts(model: QuizSceneRenderModel): QuizSceneParts
       visible: model.state.choices === "visible",
       style: model.styles.answerCard,
       layoutId: model.layout.id,
-      hasMascot: model.mascot.occupied,
+      hasMascot: is16x9 ? true : model.mascot.occupied,
     },
     phase: {
       thinkingVisible: model.state.thinking === "visible",
@@ -96,7 +97,10 @@ export function buildQuizSceneParts(model: QuizSceneRenderModel): QuizSceneParts
     },
     brand: {
       name: model.channelBrandName,
-      visible: model.brandVisible,
+      visible:
+        model.aspectRatio !== "9:16"
+          ? Boolean(model.channelBrandName?.trim()) || model.brandVisible
+          : model.brandVisible,
       aspectRatio: model.aspectRatio,
     },
     mascot: model.mascot,

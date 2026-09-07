@@ -4,18 +4,20 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  * Verdict True or False Layout (16:9 Landscape Video, 1920×1080).
  *
  * Dedicated widescreen layout for dramatic binary verdict statements (True / False, Fact vs Myth).
+ * Standardized directly to the canonical 1420px Mascot-Ready grid.
  * Key architectural features:
  * 1. 3-Row Native CSS Grid: "title title" / "hero answers" / "phase phase" eliminating Phase 5 Fact Card overlap.
- * 2. 60% Hero Evidence Viewport: 852px width x 520px height, 1.64:1 aspect ratio minimizing cropping.
+ * 2. Hero Evidence Viewport: 1.08fr : 0.92fr ratio with 520px height minimizing cropping.
  * 3. 2 Oversized 3D Arcade Push Buttons:
  *    - TRUE: Emerald Green gradient (#10B981 -> #059669) with 14px 3D lip (#047857) and checkmark (✓).
  *    - FALSE: Coral/Rose Red gradient (#F43F5E -> #E11D48) with 14px 3D lip (#9F1239) and cross (✕).
- * 4. Star Marker Canvas Guard: Constrains Thinking Bar to 1340px width, guaranteeing 64px clearance from right canvas edge.
+ * 4. Star Marker Canvas Guard: Constrains Thinking Bar to 1260px width, guaranteeing clearance from right canvas edge.
  * 5. Synchronized Multi-Phase Timeline:
  *    - Phase 2: Staggered entrance animations tied to var(--choices-at) preventing static popping.
  *    - Phase 4: High-specificity verdict pop keyframes delivering dramatic winning bloom vs losing settle.
  *    - Phase 5: Smooth fact card entrance with zero occlusion of hero visual or verdict buttons.
  * 6. Inviolable Anchors: 100% preservation of counter badge and brand mark coordinates.
+ * 7. Mascot Coexistence: Unified 1420px grid natively accommodating mascot coexistence without override bloat.
  */
 export const verdictTrueFalseLayout = {
   id: "verdict_true_false",
@@ -25,15 +27,16 @@ export const verdictTrueFalseLayout = {
 /* === Verdict True/False Layout (16:9 Landscape Video, 1920x1080) === */
 .layout-verdict_true_false .game-stage {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(480px, 0.85fr);
+  grid-template-columns: minmax(0, 1.08fr) minmax(460px, 0.92fr);
   grid-template-areas:
     "title title"
     "hero answers"
     "phase phase";
   align-items: start;
-  column-gap: 48px;
+  column-gap: 36px;
   row-gap: 22px;
-  width: 1580px;
+  width: 1420px;
+  max-width: 1420px;
   min-height: 0;
   margin: 20px 40px 0 auto;
 }
@@ -42,11 +45,11 @@ export const verdictTrueFalseLayout = {
 .layout-verdict_true_false .question-title {
   grid-area: title;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1380px;
   height: 168px;
   min-height: 168px;
-  justify-self: end;
-  margin-left: auto;
+  justify-self: center;
+  margin: 0 auto;
 }
 
 /* Hero Evidence Viewport: 852px x 520px (ratio 1.64:1) */
@@ -95,18 +98,18 @@ export const verdictTrueFalseLayout = {
 }
 
 .layout-verdict_true_false {
-  --choice-card-min-height: 160px;
-  --choice-card-height: 160px;
+  --choice-card-min-height: 140px;
+  --choice-card-height: 140px;
   --choice-card-margin-left: 80px;
   --choice-card-padding: 16px 42px 16px 48px;
   --choice-badge-size: 148px;
   --choice-badge-margin-left: -80px;
   --choice-badge-font-size: 80px;
-  --choice-font-size-base: 54px;
-  --choice-font-size-medium: 44px;
-  --choice-font-size-long: 36px;
-  --choice-font-size-very_long: 28px;
-  --choice-font-size-overflow: 26px;
+  --choice-font-size-base: 46px;
+  --choice-font-size-medium: 38px;
+  --choice-font-size-long: 30px;
+  --choice-font-size-very_long: 24px;
+  --choice-font-size-overflow: 22px;
   --choice-fit-min: 24px;
   --choice-fit-max: 68px;
   --choice-fit-max-lines: 2;
@@ -272,30 +275,32 @@ export const verdictTrueFalseLayout = {
   top: auto;
   transform: none;
   width: 100%;
+  max-width: 1420px;
   height: 96px;
+  margin: 0 auto;
   margin-top: 0;
   box-sizing: border-box;
 }
 
-/* Phase 3 Thinking Bar: Constrained to 1340px Width Guarding Star Marker From Canvas Edge */
+/* Phase 3 Thinking Bar: Constrained to 1260px Width Guarding Star Marker From Canvas Edge */
 .layout-verdict_true_false .phase-region > .thinking-bar {
   position: absolute;
   top: 0;
   bottom: auto;
   left: 50%;
   transform: translateX(-50%);
-  width: min(1340px, 100%);
+  width: min(1260px, 100%);
   min-height: 84px;
 }
 
-/* Phase 5 Fact Card: Constrained to 1200px Width, Zero Overlap With Hero/Choices */
+/* Phase 5 Fact Card: Constrained to 1220px Width, Zero Overlap With Hero/Choices */
 .layout-verdict_true_false .phase-region > .fact-card {
   position: absolute;
   top: 0;
   bottom: auto;
   left: 50%;
   transform: translateX(-50%);
-  width: min(1200px, 100%);
+  width: min(1220px, 100%);
   margin-top: 0;
   padding: 18px 44px;
   border-radius: 36px;
@@ -306,21 +311,6 @@ export const verdictTrueFalseLayout = {
 @keyframes verdict-fact-enter {
   0% { opacity: 0; transform: translate(-50%, 18px) scale(0.92); }
   100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-}
-
-/* Mascot Coexistence Modifications */
-.has-mascot.layout-verdict_true_false .game-stage {
-  column-gap: 36px;
-}
-.has-mascot.layout-verdict_true_false {
-  --choice-card-min-height: 140px;
-  --choice-card-height: 140px;
-  --choice-font-size-base: 46px;
-  --choice-font-size-medium: 38px;
-  --choice-font-size-long: 30px;
-}
-.has-mascot.layout-verdict_true_false .phase-region > .thinking-bar {
-  width: min(1260px, 100%);
 }
 `,
 } satisfies QuizLayoutRenderDefinition;

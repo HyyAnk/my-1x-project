@@ -40,13 +40,17 @@ export type QuizAssessmentInput = {
   staticIntervalThresholdSeconds?: number;
   mascot?: MascotProfile | null;
   mascotConfig?: ChannelMascotConfig | null;
+  hasMascot?: boolean;
 };
 
 export function assessQuiz(input: QuizAssessmentInput): QuizAssessment {
   const issues: QuizIssue[] = [];
-  const hasQuestionMascot = Boolean(
-    input.mascot && input.mascotConfig?.enabled !== false && input.mascotConfig?.show_in_question !== false,
-  );
+  const hasQuestionMascot =
+    input.hasMascot !== undefined
+      ? input.hasMascot
+      : input.mascotConfig?.enabled === false || input.mascotConfig?.show_in_question === false
+        ? false
+        : true;
 
   // 1. Semantic & Fact Checking Stage
   assessSemanticQa(input.quiz).forEach((issue) => issues.push(issue));

@@ -76,9 +76,26 @@ const mascotConfig: ChannelMascotConfig = {
 };
 
 describe("Channel Brand Mark Unit & HTML Renderer", () => {
-  it("renders empty string when hasMascot is false", () => {
-    expect(renderChannelBrandMark("Tino", false)).toBe("");
-    expect(renderChannelBrandMark("Robot World", false)).toBe("");
+  it("renders empty string when hasMascot is false and no brand name is provided", () => {
+    expect(renderChannelBrandMark(null, false)).toBe("");
+    expect(renderChannelBrandMark("", false)).toBe("");
+    expect(renderChannelBrandMark("   ", false)).toBe("");
+  });
+
+  it("renders channel brand mark in 16:9 whenever brand name is provided even if hasMascot is false", () => {
+    const tinoMark = renderChannelBrandMark("Tino", false);
+    expect(tinoMark).toContain('class="channel-brand-mark"');
+    expect(tinoMark).toContain("Tino");
+    expect(tinoMark).toContain("<svg");
+    expect(tinoMark).toContain("QUIZ");
+
+    const robotMark = renderChannelBrandMark("Robot World", false);
+    expect(robotMark).toContain("Robot World");
+  });
+
+  it("renders empty string in 9:16 portrait when hasMascot is false even if brand name is provided", () => {
+    expect(renderChannelBrandMark("Tino", false, "9:16")).toBe("");
+    expect(renderChannelBrandMark("Robot World", false, "9:16")).toBe("");
   });
 
   it("renders 3-line mark with YouTube SVG icon, brand name, and QUIZ when hasMascot is true", () => {
@@ -179,7 +196,7 @@ describe("Channel Brand Mark Integration - Sandbox Composition", () => {
     expect(markIdx).toBeLessThan(mascotIdx);
   });
 
-  it("does NOT render channel brand mark in sandbox when mascot is disabled or none", () => {
+  it("renders channel brand mark in 16:9 sandbox even when mascot is disabled", () => {
     const disabledResult = buildSandboxComposition(
       {
         channel_brand_name: "Tino",
@@ -188,17 +205,34 @@ describe("Channel Brand Mark Integration - Sandbox Composition", () => {
       },
       sampleMascot,
     );
-    expect(disabledResult.html).not.toContain('class="channel-brand-mark"');
+    expect(disabledResult.html).toContain('class="channel-brand-mark"');
+    expect(disabledResult.html).toContain("Tino");
+  });
 
+  it("does NOT render channel brand mark in sandbox when brand name is empty and mascot is disabled or none", () => {
     const noneResult = buildSandboxComposition(
       {
-        channel_brand_name: "Tino",
+        channel_brand_name: "",
         mascot_id: "none",
         mascot_enabled: true,
       },
       sampleMascot,
     );
     expect(noneResult.html).not.toContain('class="channel-brand-mark"');
+  });
+
+  it("does NOT render channel brand mark in 9:16 portrait sandbox when mascot is disabled", () => {
+    const portraitDisabledResult = buildSandboxComposition(
+      {
+        aspect_ratio: "9:16",
+        layout_id: "portrait_stack_list",
+        channel_brand_name: "Tino",
+        mascot_id: sampleMascot.id,
+        mascot_enabled: false,
+      },
+      sampleMascot,
+    );
+    expect(portraitDisabledResult.html).not.toContain('class="channel-brand-mark"');
   });
 });
 
@@ -231,7 +265,7 @@ describe("Channel Brand Mark Integration - Production Composition Bundle", () =>
     }
   });
 
-  it("does NOT render channel brand mark in question clips when mascot is absent", () => {
+  it("renders channel brand mark in 16:9 question clips when channelBrandName is provided even when mascot is absent", () => {
     const director = createDefaultDirectorPlan(sampleQuiz);
     const timeline = compileQuizTimeline({ quiz: sampleQuiz, director, voicePlan: buildQuizVoicePlan(sampleQuiz) });
 
@@ -243,6 +277,47 @@ describe("Channel Brand Mark Integration - Production Composition Bundle", () =>
       audioPath: "./soundtrack.wav",
       narrationDurationSeconds: 30,
       mascot: null,
+    });
+
+    const questionSubComp = Object.entries(bundle.files).find(([k]) => k.startsWith("compositions/quiz-q1-"))?.[1];
+    expect(questionSubComp).toBeDefined();
+    expect(questionSubComp).toContain('class="channel-brand-mark"');
+    expect(questionSubComp).toContain("Robot World");
+  });
+
+  it("does NOT render channel brand mark in 16:9 question clips when both channelBrandName and mascot are absent", () => {
+    const director = createDefaultDirectorPlan(sampleQuiz);
+    const timeline = compileQuizTimeline({ quiz: sampleQuiz, director, voicePlan: buildQuizVoicePlan(sampleQuiz) });
+
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz: sampleQuiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./soundtrack.wav",
+      narrationDurationSeconds: 30,
+      mascot: null,
+    });
+
+    const questionSubComp = Object.entries(bundle.files).find(([k]) => k.startsWith("compositions/quiz-q1-"))?.[1];
+    expect(questionSubComp).toBeDefined();
+    expect(questionSubComp).not.toContain('class="channel-brand-mark"');
+  });
+
+  it("does NOT render channel brand mark in 9:16 question clips when mascot is absent", () => {
+    const director = createDefaultDirectorPlan(sampleQuiz);
+    director.beats[0].layout_id = "portrait_stack_list";
+    const timeline = compileQuizTimeline({ quiz: sampleQuiz, director, voicePlan: buildQuizVoicePlan(sampleQuiz) });
+
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz: sampleQuiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade", override: { channelBrandName: "Robot World" } },
+      audioPath: "./soundtrack.wav",
+      narrationDurationSeconds: 30,
+      mascot: null,
+      aspectRatio: "9:16",
     });
 
     const questionSubComp = Object.entries(bundle.files).find(([k]) => k.startsWith("compositions/quiz-q1-"))?.[1];

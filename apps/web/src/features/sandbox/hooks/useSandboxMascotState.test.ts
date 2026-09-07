@@ -528,4 +528,43 @@ describe("MascotActionSelector", () => {
     fireEvent.click(screen.getByRole("button", { name: /Slot 2/i }));
     expect(setSelectedVariantIndex).toHaveBeenCalledWith(1);
   });
+
+  describe("16:9 widescreen mascot position standardization", () => {
+    it("locks mascot position to bottom_left and guards against bottom_right in 16:9 widescreen", () => {
+      const { result } = renderHook(() => useSandboxMascotState("16:9"));
+
+      expect(result.current.mascotPosition).toBe("bottom_left");
+
+      act(() => {
+        result.current.setMascotPosition("bottom_right");
+      });
+
+      expect(result.current.mascotPosition).toBe("bottom_left");
+    });
+
+    it("normalizes mascot position to bottom_left when switching from 9:16 to 16:9", () => {
+      let currentRatio: "16:9" | "9:16" = "9:16";
+      const { result, rerender } = renderHook(() => useSandboxMascotState(currentRatio));
+
+      act(() => {
+        result.current.setMascotPosition("bottom_right");
+      });
+      expect(result.current.mascotPosition).toBe("bottom_right");
+
+      currentRatio = "16:9";
+      rerender();
+
+      expect(result.current.mascotPosition).toBe("bottom_left");
+    });
+
+    it("allows bottom_right placement when in 9:16 portrait mode", () => {
+      const { result } = renderHook(() => useSandboxMascotState("9:16"));
+
+      act(() => {
+        result.current.setMascotPosition("bottom_right");
+      });
+
+      expect(result.current.mascotPosition).toBe("bottom_right");
+    });
+  });
 });

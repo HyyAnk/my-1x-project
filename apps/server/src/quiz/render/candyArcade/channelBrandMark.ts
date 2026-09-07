@@ -5,11 +5,13 @@ import { esc, escAttr } from "./candyArcadeSvg.js";
  * Renders the Channel Brand Mark HTML component.
  *
  * Visibility Contract:
- * - Only renders when mascot HTML is actually present (hasMascot === true).
- * - If mascot is off, none, missing, or invalid, returns empty string.
+ * - In 16:9: Renders whenever brandName is provided (non-empty trimmed string), even if hasMascot is false
+ *   (reserving negative space between Question Counter and Mascot in the left Brand Pillar),
+ *   or when hasMascot is true.
+ * - In 9:16: Only renders when mascot HTML is actually present (hasMascot === true).
  *
  * Structure Contract:
- * - Line 1: Monochrome white YouTube/play SVG icon.
+ * - Line 1: Monochrome white YouTube/play SVG icon (omitted in 9:16).
  * - Line 2: Escaped channel brand name (single line, no wrap).
  * - Line 3: QUIZ subtitle.
  */
@@ -18,7 +20,15 @@ export function renderChannelBrandMark(
   hasMascot = false,
   aspectRatio: MascotRenderAspectRatio = "16:9",
 ): string {
-  if (!hasMascot) return "";
+  const isPortrait = aspectRatio === "9:16";
+  const trimmedName = brandName?.trim();
+  const hasProvidedBrandName = Boolean(trimmedName && trimmedName.length > 0);
+
+  if (isPortrait) {
+    if (!hasMascot) return "";
+  } else {
+    if (!hasProvidedBrandName && !hasMascot) return "";
+  }
 
   const resolvedName = resolveChannelBrandName(brandName);
   const safeName = esc(resolvedName);
