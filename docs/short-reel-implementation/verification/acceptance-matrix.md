@@ -1,0 +1,34 @@
+# Acceptance Matrix
+
+All implementation evidence starts as not_run. Phase authors replace that status with actual links/results; planned case IDs are not proof. Every requirement must remain represented through revisions.
+
+| Requirement | Owner Phase | Automated / Inspection Cases                                      | Human Check                             | Actual Evidence |
+| ----------- | ----------- | ----------------------------------------------------------------- | --------------------------------------- | --------------- |
+| SR-01       | 02, 03, 07  | RP-01, TP-03, RT-01                                               | Distinct workflows                      | not_run         |
+| SR-02       | 03          | TP-01, TP-02                                                      | Keyword relevance and discovery variety | not_run         |
+| SR-03       | 02, 03, 04  | SC-04, SC-05, TP-04, TP-05                                        | Source meaning retained                 | not_run         |
+| SR-04       | 02, 04      | SC-01, SC-02, SC-03, SG-03                                        | Actual Flow duration                    | not_run         |
+| SR-05       | 04          | SC-05, SG-03                                                      | Legible correct in-video text/timing    | not_run         |
+| SR-06       | 06, 08      | UI-04, source review for no Flow client                           | User-operated Flow                      | not_run         |
+| SR-07       | 05, 06      | PK-01 through PK-06, UI-07                                        | Cover/reference/story consistency       | not_run         |
+| SR-08       | 04, 08      | SC-06, SG-03                                                      | Actual segment continuity               | not_run         |
+| SR-09       | 04, 05, 06  | SG-04, PK-03, UI-02, UI-05                                        | Editing/retry ergonomics                | not_run         |
+| SR-10       | 02, 04, 06  | RP-02 through RP-06, SG-05 through SG-07, HTTP-01 through HTTP-05 | No stuck/false state                    | not_run         |
+| SR-11       | 01, 07      | Source manifest, RT-01, RT-02, RT-05                              | Stage/Sandbox landscape only            | not_run         |
+| SR-12       | 01, 07      | Data manifest, RT-04                                              | Protected assets still usable           | not_run         |
+| SR-13       | 07, 08      | RT-03, IN-01                                                      | Landscape visual regression review      | not_run         |
+| SR-14       | 06, 08      | UI-07, IN-03 evidence status                                      | Explicit final user acceptance          | not_run         |
+| SR-15       | 06, 08      | UI-06, string/focus audit                                         | Desktop/mobile accessibility            | not_run         |
+| SR-16       | all         | Claims, release, handoffs, IN-02                                  | User retains folder control             | not_run         |
+
+## Global Gates
+
+- Static: formatter, lint, typecheck and build on final code.
+- Behavioral: focused phase tests, full server/web tests and explicitly executed new shared tests.
+- Integration: actual updated workflows after process rebuild/restart, not solely mocked unit success.
+- Safety: zones valid, scope verified, claims released, protected data preserved, no unsafe deletion.
+- Review: fresh diff/contract verification; no unresolved blocking findings. Same-session self-review labeled honestly.
+- Manual: both archetypes reviewed in Flow by the user; actual model/duration observations recorded without claims of independent verification.
+- Final: explicit user acceptance; no automatic folder deletion regardless of status.
+
+A skipped, unavailable or pre-existing failing check remains visible. It is not a pass and cannot be erased by reducing the test suite. Ask the user to resolve a material blocked gate or explicitly adjust scope.

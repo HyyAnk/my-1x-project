@@ -5,3 +5,6 @@ export * from "./legacyAdapter.js";
 export * from "./renderResolver.js";
 export * from "./renderGeometry.js";
 export * from "./renderMotion.js";
+export * from "./constants/mascotPoses.js";
+export * from "./constants/mascotActionMeta.js";
+export * from "./utils/mascotPoseSelector.js";

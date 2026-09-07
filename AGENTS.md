@@ -66,6 +66,8 @@ You are an expert software architect and senior engineer. When generating or ref
 
 ## 6. Agent Coordination Protocol & Main-Direct Operating Rules
 
+**Parallel-First Execution:** For every task, assess safe parallel decomposition and default to multiple subagents when it improves end-to-end completion time without reducing quality. Follow [the mandatory provider-neutral policy](docs/agent-coordination/parallel-execution-policy.md) for delegation, ownership, fallback, and integration. Do not wait for the user to request subagents again when the conditions are met.
+
 When working in this repository across multiple agents, chats, or tasks, all agents MUST strictly follow the Agent Coordination Protocol (`docs/agent-coordination/`):
 
 - **Source of Truth:** Read `AGENTS.md`, `docs/agent-coordination/README.md`, `docs/agent-coordination/master-spec.md`, `docs/agent-coordination/phase-roadmap.md`, and the latest handoff summary in `docs/agent-coordination/handoffs/` before performing work. Repo artifacts are the source of truth, not chat history.

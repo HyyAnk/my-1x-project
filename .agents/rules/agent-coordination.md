@@ -12,6 +12,10 @@ This repository uses a mandatory cooperative zone-ownership and authenticated le
 
 Repository artifacts are the source of truth. Chat history is not the source of truth.
 
+## Parallel-first execution
+
+For every task, assess safe parallel decomposition and default to multiple subagents when it improves end-to-end completion time without reducing quality. Read and follow [the mandatory provider-neutral policy](../../docs/agent-coordination/parallel-execution-policy.md). Do not wait for another user request to delegate when the policy conditions are met. All existing ownership and authenticated lifecycle rules below remain mandatory.
+
 ## Mandatory startup
 
 1. Work from the repository root and directly on the current main checkout.

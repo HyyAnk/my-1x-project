@@ -10,6 +10,8 @@ The project has several shared contracts and orchestration points. Render work, 
 
 This repository uses **main-direct mode** for this protocol: agents edit the current main checkout directly and must not create new branches or worktrees unless the user explicitly changes that rule.
 
+All agents must follow the [parallel-first execution policy](parallel-execution-policy.md): assess every task for safe parallel work and use available subagents by default when the expected end-to-end benefit justifies coordination and verification costs. This policy supplements, and never bypasses, the ownership protocol below.
+
 This protocol reduces risk in main-direct mode by requiring each agent to:
 
 - Declare the zone it intends to modify.

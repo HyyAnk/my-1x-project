@@ -1,16 +1,12 @@
 import {
   computeSandboxPhaseTimeline,
-  MASCOT_CANVAS_SIZES,
   SandboxPreviewInputSchema,
-  serializeQuizPaletteCss,
   type MascotProfile,
-  type SandboxPhaseTimeline,
   type SandboxPreviewInput,
   type SandboxPreviewResponse,
 } from "@studio/shared";
 import { evaluateContrast } from "../visual/contrastCalculator.js";
 import { candyArcadeCss } from "./candyArcadeComposition.js";
-import { candyArcadeFontReadinessScript } from "./candyArcade/candyArcadeFonts.js";
 import { esc } from "./candyArcade/candyArcadeSvg.js";
 import { renderQuizLayoutBody } from "./layouts/registry.js";
 import { renderPreviewMascotHtmlLayer } from "./previewMascotRenderer.js";
@@ -23,13 +19,23 @@ import { adaptSandboxQuizScene } from "./scene/sandboxSceneAdapter.js";
 import { sandboxPreviewTimeForPhase, sandboxSceneState } from "./scene/sandboxSceneStateAdapter.js";
 import { buildQuizSceneParts } from "./scene/buildQuizSceneParts.js";
 import {
-  renderQuizSceneBackground,
   renderQuizSceneChoicePart,
   renderQuizSceneThinkingPart,
   renderStableQuizSceneParts,
 } from "./scene/renderQuizSceneParts.js";
 import { rewardFx } from "./candyArcade/candyArcadeClips.js";
 import type { QuizScenePhase } from "./scene/quizScene.types.js";
+import {
+  sandboxRehearsalDocument,
+  sandboxRewardFx,
+  sandboxSnapshotDocument,
+} from "./sandbox/sandboxDocumentTemplates.js";
+
+export {
+  sandboxSnapshotDocument,
+  sandboxRehearsalDocument,
+  sandboxRewardFx,
+};
 
 export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
   const parsed = SandboxPreviewInputSchema.parse(input);
@@ -169,209 +175,4 @@ function renderSandboxMascot(
       playing: input.mascot_playing,
     },
   );
-}
-
-function sandboxSnapshotDocument(
-  model: ReturnType<typeof adaptSandboxQuizScene>,
-  parts: ReturnType<typeof buildQuizSceneParts>,
-  stableParts: ReturnType<typeof renderStableQuizSceneParts>,
-  stageContent: string,
-  mascotHtml: string,
-): string {
-  const canvas = MASCOT_CANVAS_SIZES[model.aspectRatio];
-  const choicesAt = model.state.choices === "hidden" ? 999 : 0;
-  const revealAt = model.state.answers === "revealed" ? 0 : 999;
-  const rewardAt = model.state.fact === "visible" ? 0 : 999;
-  const mascotClass = model.mascot.occupied ? "has-mascot" : "";
-  const rewardHtml = model.state.reward === "visible" ? sandboxRewardFx() : "";
-  return `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <base href="/">
-  <title>HyperFrames Sandbox Live Preview</title>
-  <style>
-    ${candyArcadeCss({ fontMode: "preview", aspectRatio: model.aspectRatio, backgroundStyles: [parts.background.style] })}
-
-    /* Live Sandbox Phase Styling Overrides */
-    .sandbox-preview-stage {
-      --clip-start: 0s;
-      --scene-duration: 10s;
-      --choices-at: ${choicesAt}s;
-      --reveal-at: ${revealAt}s;
-      --reward-at: ${rewardAt}s;
-      --timer-duration: 10s;
-${serializeQuizPaletteCss(model.palette, "      ")}
-      --question-size: ${parts.question.layout.fontSize}px;
-      --question-leading: ${parts.question.layout.lineHeight};
-      position: absolute;
-      inset: 0;
-      width: ${canvas.width}px;
-      height: ${canvas.height}px;
-      overflow: hidden;
-    }
-
-    .sandbox-preview-stage .thinking-bar {
-      opacity: 1;
-      animation: none;
-    }
-
-  </style>
-</head>
-<body>
-  <main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="${canvas.width}" data-height="${canvas.height}" data-aspect-ratio="${model.aspectRatio}" data-duration="10" data-fps="30">
-    <section class="clip candy-scene quiz-question-clip layout-${model.layout.id} ${mascotClass} sandbox-preview-stage ${model.isFinal ? "is-final-scene" : ""}" data-reveal-at="${revealAt}">
-      ${renderQuizSceneBackground(parts, "sandbox", { questionIndex: model.question.number - 1 })}
-
-      <header class="game-header" data-layout-allow-occlusion>
-        ${stableParts.counterBadgeHtml}
-      </header>
-
-      <div class="game-stage" data-layout-allow-overflow>
-        ${stageContent}
-      </div>
-
-      ${stableParts.brandMarkHtml}
-      ${mascotHtml}
-      ${rewardHtml}
-    </section>
-  </main>
-  <script>${candyArcadeFontReadinessScript()}</script>
-</body>
-</html>`;
-}
-
-function sandboxRehearsalDocument(
-  model: ReturnType<typeof adaptSandboxQuizScene>,
-  parts: ReturnType<typeof buildQuizSceneParts>,
-  stableParts: ReturnType<typeof renderStableQuizSceneParts>,
-  stageContent: string,
-  mascotHtml: string,
-  rewardHtml: string,
-  timeline: SandboxPhaseTimeline,
-): string {
-  const canvas = MASCOT_CANVAS_SIZES[model.aspectRatio];
-  const mascotClass = model.mascot.occupied ? "has-mascot" : "";
-  const timerDuration = Math.max(0.04, timeline.revealStart - timeline.thinkingStart);
-  return `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <base href="/">
-  <title>HyperFrames Sandbox Rehearsal Preview</title>
-  <style>
-    ${candyArcadeCss({ fontMode: "preview", aspectRatio: model.aspectRatio, backgroundStyles: [parts.background.style] })}
-
-    /* Rehearsal Stage Dynamic Animation Pacing */
-    .sandbox-preview-stage {
-      --clip-start: 0s;
-      --scene-duration: ${timeline.totalDuration.toFixed(3)}s;
-      --choices-at: ${timeline.choicesStart.toFixed(3)}s;
-      --thinking-at: ${timeline.thinkingStart.toFixed(3)}s;
-      --reveal-at: ${timeline.revealStart.toFixed(3)}s;
-      --reward-at: ${timeline.explainStart.toFixed(3)}s;
-      --choices-duration: ${(timeline.revealStart - timeline.choicesStart).toFixed(3)}s;
-      --timer-duration: ${timerDuration.toFixed(3)}s;
-      --reveal-duration: ${(timeline.explainStart - timeline.revealStart).toFixed(3)}s;
-      --ambient-phase: 0s;
-${serializeQuizPaletteCss(model.palette, "      ")}
-      --question-size: ${parts.question.layout.fontSize}px;
-      --question-leading: ${parts.question.layout.lineHeight};
-      position: absolute;
-      inset: 0;
-      width: ${canvas.width}px;
-      height: ${canvas.height}px;
-      overflow: hidden;
-    }
-  </style>
-</head>
-<body>
-  <main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="${canvas.width}" data-height="${canvas.height}" data-aspect-ratio="${model.aspectRatio}" data-duration="${timeline.totalDuration.toFixed(3)}" data-fps="30">
-    <section class="clip candy-scene quiz-question-clip layout-${model.layout.id} ${mascotClass} sandbox-preview-stage ${model.isFinal ? "is-final-scene" : ""}" data-reveal-at="${timeline.revealStart.toFixed(3)}">
-      ${renderQuizSceneBackground(parts, "production", { questionIndex: model.question.number - 1, clipStart: 0, duration: timeline.totalDuration })}
-
-      <header class="game-header" data-layout-allow-occlusion>
-        ${stableParts.counterBadgeHtml}
-      </header>
-
-      <div class="game-stage" data-layout-allow-overflow>
-        ${stageContent}
-      </div>
-
-      ${stableParts.brandMarkHtml}
-      ${mascotHtml}
-      ${rewardHtml}
-    </section>
-  </main>
-  <script>
-    ${candyArcadeFontReadinessScript()}
-    window.__hyperframesRehearsal = {
-      duration: ${timeline.totalDuration.toFixed(3)},
-      seek: function(timeSec) {
-        var timeMs = Math.max(0, timeSec * 1000);
-        var anims = document.getAnimations ? document.getAnimations({ subtree: true }) : [];
-        for (var i = 0; i < anims.length; i++) {
-          try { anims[i].currentTime = timeMs; } catch (e) {}
-        }
-      },
-      play: function(timeSec) {
-        if (typeof timeSec === "number") {
-          window.__hyperframesRehearsal.seek(timeSec);
-        }
-        var anims = document.getAnimations ? document.getAnimations({ subtree: true }) : [];
-        for (var i = 0; i < anims.length; i++) {
-          try {
-            var cur = anims[i].currentTime;
-            anims[i].play();
-            if (cur !== null && cur !== undefined) {
-              anims[i].currentTime = cur;
-            }
-          } catch (e) {}
-        }
-      },
-      pause: function() {
-        var anims = document.getAnimations ? document.getAnimations({ subtree: true }) : [];
-        for (var i = 0; i < anims.length; i++) {
-          try {
-            var cur = anims[i].currentTime;
-            anims[i].pause();
-            if (cur !== null && cur !== undefined) {
-              anims[i].currentTime = cur;
-            }
-          } catch (e) {}
-        }
-      }
-    };
-    // Immediately pause on initialization so animations never run ahead of user interaction
-    window.__hyperframesRehearsal.seek(0);
-    window.__hyperframesRehearsal.pause();
-    window.addEventListener("message", function(event) {
-      if (!event.data || typeof event.data !== "object") return;
-      if (event.data.type === "REHEARSAL_SEEK") {
-        window.__hyperframesRehearsal.seek(event.data.time);
-      } else if (event.data.type === "REHEARSAL_PLAY") {
-        window.__hyperframesRehearsal.play(event.data.time);
-      } else if (event.data.type === "REHEARSAL_PAUSE") {
-        window.__hyperframesRehearsal.pause();
-      }
-    });
-  </script>
-</body>
-</html>`;
-}
-
-function sandboxRewardFx(): string {
-  return `
-    <div class="reward-fx reward-big" style="opacity: 1; animation: none;">
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-    </div>
-  `;
 }
