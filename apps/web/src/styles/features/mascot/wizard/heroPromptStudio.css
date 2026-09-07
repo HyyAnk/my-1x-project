@@ -1,0 +1,121 @@
+/* ==========================================================================
+   Hero Prompt Studio Box, Chips & Quick Tags
+   /* ========================================================================== */
+
+.hero-prompt-studio-box {
+  margin-top: 18px;
+  background: linear-gradient(180deg, var(--surface-strong) 0%, var(--surface) 100%);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.25s ease;
+}
+
+.hero-prompt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-prompt-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-prompt-label {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 0;
+}
+
+.hero-prompt-subtag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+.hero-prompt-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hero-prompt-actions .icon-only {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+}
+
+/* Chips & Quick Tags */
+.prompt-template-chips-bar,
+.quick-tags-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.prompt-chips-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.prompt-chips-list,
+.quick-tags-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.prompt-template-chip {
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 999px;
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  color: var(--ink-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.prompt-template-chip:hover {
+  background: var(--soft-accent);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.quick-tag-chip {
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed var(--line);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-tag-chip:hover {
+  background: var(--soft-green);
+  border-color: var(--green);
+  color: var(--green);
+}

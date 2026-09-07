@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Textarea, Notes Accordion & AI Magic Primary Button
+   /* ========================================================================== */
+
+.hero-prompt-textarea-wrap {
+  width: 100%;
+}
+
+.hero-prompt-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  resize: vertical;
+  min-height: 110px;
+  transition: all 0.2s ease;
+}
+
+.hero-prompt-textarea:focus {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+  box-shadow: 0 0 0 3px var(--soft-accent);
+  outline: none;
+}
+
+.hero-prompt-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.hero-prompt-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: monospace;
+}
+
+.prompt-copied-notice {
+  color: var(--green);
+  font-weight: 700;
+}
+
+/* Notes / Lore Accordion */
+.notes-accordion-section {
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-strong);
+  overflow: hidden;
+}
+
+.notes-accordion-toggle {
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  color: var(--ink-secondary);
+  font-size: 12.5px;
+  font-weight: 700;
+  transition: background 0.2s ease;
+}
+
+.notes-accordion-toggle:hover {
+  background: var(--surface-hover);
+}
+
+.accordion-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notes-accordion-toggle small {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.notes-accordion-body {
+  padding: 0 14px 12px;
+}
+
+.notes-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  resize: vertical;
+}
+
+/* AI Magic Primary Button */
+.ai-magic-btn {
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 800;
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ai-magic-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+}
+
+.is-ready-forward {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  font-weight: 700;
+}

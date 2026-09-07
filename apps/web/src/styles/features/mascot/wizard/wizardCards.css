@@ -1,0 +1,150 @@
+/* ==========================================================================
+   Batch Generation Sidebar, Wizard Cards & Forms
+   /* ========================================================================== */
+
+.states-batch-active-box {
+  background: linear-gradient(135deg, rgba(6, 78, 99, 0.35) 0%, rgba(15, 23, 42, 0.75) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.45);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.15);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.states-batch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.states-batch-active-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #38bdf8;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border-left: 3px solid #06b6d4;
+}
+
+.states-batch-sub-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+/* Wizard Cards & Forms */
+.wizard-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.wizard-card h3 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.wizard-card-sub {
+  margin: 0 0 20px;
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.wizard-card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.step-identity-grid,
+.concept-tier-identity-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .step-identity-grid,
+  .concept-tier-identity-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mascot-concept-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.concept-tier-styles-deck {
+  width: 100%;
+  animation: fadeInDeck 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInDeck {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-identity-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.identity-top-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: end;
+}
+
+@media (max-width: 768px) {
+  .identity-top-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.identity-name-input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  transition: all 0.2s ease;
+}
+
+.identity-name-input:focus {
+  border-color: var(--accent);
+  background: var(--surface-strong);
+  box-shadow: 0 0 0 3px var(--soft-accent);
+}

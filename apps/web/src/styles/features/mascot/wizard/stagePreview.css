@@ -1,0 +1,179 @@
+/* ==========================================================================
+   Studio Stage Preview Frame & Lightbox Modal
+   /* ========================================================================== */
+
+.studio-preview-card {
+  position: sticky;
+  top: 20px;
+}
+
+.studio-stage-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--line);
+  background-color: #0b1320;
+  background-image:
+    linear-gradient(45deg, #131f33 25%, transparent 25%), linear-gradient(-45deg, #131f33 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #131f33 75%), linear-gradient(-45deg, transparent 75%, #131f33 75%);
+  background-size: 20px 20px;
+  background-position:
+    0 0,
+    0 10px,
+    10px -10px,
+    -10px 0px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.concept-preview-img-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.concept-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 16px;
+  transition: transform 0.25s ease;
+}
+
+.concept-preview-img-container:hover .concept-preview-img {
+  transform: scale(1.03);
+}
+
+.preview-hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(2px);
+}
+
+.concept-preview-img-container:hover .preview-hover-overlay {
+  opacity: 1;
+}
+
+.studio-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 30px 20px;
+  gap: 10px;
+}
+
+.placeholder-aura-glow {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+  animation: pulse-glow 3s infinite alternate ease-in-out;
+}
+
+@keyframes pulse-glow {
+  from {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+.studio-placeholder h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.studio-placeholder p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+  max-width: 260px;
+}
+
+.modern-meta-box {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Lightbox Modal */
+.lightbox-backdrop {
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-img {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  background: #0f172a;
+}
+
+.lightbox-close-btn {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.lightbox-close-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+}

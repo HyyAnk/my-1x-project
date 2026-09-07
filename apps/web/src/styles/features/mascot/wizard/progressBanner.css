@@ -1,0 +1,159 @@
+/* ==========================================================================
+   Global Generator Progress Banner & Shimmer Track
+   /* ========================================================================== */
+
+.mascot-gen-progress-banner {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(6, 78, 99, 0.5) 50%, rgba(15, 23, 42, 0.96) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.45);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    0 0 16px rgba(6, 182, 212, 0.2);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.mascot-gen-banner-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.mascot-gen-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mascot-gen-icon-glow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.35);
+}
+
+.mascot-gen-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mascot-gen-banner-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mascot-gen-banner-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.mascot-gen-badge-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #4ade80;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.mascot-gen-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  animation: gen-live-dot 1.2s infinite ease-in-out;
+}
+
+.mascot-gen-banner-sub {
+  font-size: 11.5px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.mascot-gen-banner-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.mascot-gen-timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: #38bdf8;
+  font-size: 11.5px;
+  font-family: monospace;
+  font-weight: 700;
+}
+
+.mascot-gen-percent-text {
+  font-size: 16px;
+  font-weight: 900;
+  color: #ffffff;
+  min-width: 48px;
+  text-align: right;
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+}
+
+/* Master Progress Bar Track with Moving Striped Shimmer */
+.mascot-gen-bar-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.mascot-gen-bar-fill {
+  height: 100%;
+  background-color: #06b6d4;
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.22) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0.22) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 18px 18px;
+  border-radius: 999px;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: progress-bar-stripes 0.8s linear infinite;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.65);
+}
