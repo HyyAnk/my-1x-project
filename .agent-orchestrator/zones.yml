@@ -1,5 +1,5 @@
-version: "2.3.0"
-updatedAt: "2026-09-06T23:30:00+07:00"
+version: "2.4.0"
+updatedAt: "2026-09-07T10:15:00+07:00"
 description: "Unambiguous ownership zones for direct-on-main agent coordination."
 
 zones:
@@ -20,7 +20,7 @@ zones:
       - "!packages/shared/src/presets.ts"
       - "!packages/shared/src/schemas/mascot.ts"
       - "!packages/shared/src/schemas/thumbnail.ts"
-      - "!packages/shared/src/enums/mascot.ts"
+      - "!packages/shared/src/enums/mascot*.ts"
       - "!packages/shared/test/quizLayouts.policy.test.ts"
       - "!packages/shared/test/mascotStyleSchema.test.ts"
     readStableDependencies: []
@@ -63,7 +63,7 @@ zones:
       - "packages/shared/src/presets.ts"
       - "packages/shared/src/schemas/mascot.ts"
       - "packages/shared/src/schemas/thumbnail.ts"
-      - "packages/shared/src/enums/mascot.ts"
+      - "packages/shared/src/enums/mascot*.ts"
       - "packages/shared/test/mascotStyleSchema.test.ts"
     readStableDependencies:
       - "shared-contracts"
