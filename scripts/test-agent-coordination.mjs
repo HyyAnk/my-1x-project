@@ -633,3 +633,58 @@ test("Integrator report organizes claims and integration queue order", () => {
   releaseClaim(claimLowPri);
   releaseClaim(claimHighPri);
 });
+
+test("Concurrent multi-agent claims on shared-disjoint contract zones succeed on disjoint files", () => {
+  const claimLayout1 = claimZone({
+    agent: "agent-layout-1",
+    task: "Update layout catalog",
+    writeZones: ["shared-layout-contracts"],
+    plannedFiles: ["packages/shared/src/quizLayouts.catalog.ts"],
+    workspaceRoot: root,
+    customDbPath: testDbPath,
+  });
+
+  const claimLayout2 = claimZone({
+    agent: "agent-layout-2",
+    task: "Update layout styles css variables",
+    writeZones: ["shared-layout-contracts"],
+    plannedFiles: ["packages/shared/src/quizStyles/cssVariables.ts"],
+    workspaceRoot: root,
+    customDbPath: testDbPath,
+  });
+
+  const claimMascot1 = claimZone({
+    agent: "agent-mascot-1",
+    task: "Add mascot pose preset",
+    writeZones: ["shared-mascot-contracts"],
+    plannedFiles: ["packages/shared/src/enums/mascot.ts"],
+    workspaceRoot: root,
+    customDbPath: testDbPath,
+  });
+
+  assert.ok(claimLayout1.id);
+  assert.ok(claimLayout2.id);
+  assert.ok(claimMascot1.id);
+
+  // Overlapping claim on same planned file must be rejected
+  assert.throws(
+    () => {
+      claimZone({
+        agent: "agent-layout-3",
+        task: "Conflicting update to layout catalog",
+        writeZones: ["shared-layout-contracts"],
+        plannedFiles: ["packages/shared/src/quizLayouts.catalog.ts"],
+        workspaceRoot: root,
+        customDbPath: testDbPath,
+      });
+    },
+    (err) => {
+      assert.match(err.message, /overlapping planned files/);
+      return true;
+    },
+  );
+
+  releaseClaim(claimLayout1);
+  releaseClaim(claimLayout2);
+  releaseClaim(claimMascot1);
+});

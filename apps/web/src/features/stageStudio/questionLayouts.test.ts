@@ -1,10 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { QUIZ_LAYOUTS } from "@studio/shared";
+import {
+  QUIZ_LANDSCAPE_LAYOUT_IDS,
+  QUIZ_LAYOUTS,
+  QUIZ_PORTRAIT_LAYOUT_IDS,
+  getCompatibleQuizLayout,
+} from "@studio/shared";
+import { getQuizLayoutUiDefinitions } from "../quizLayouts/quizLayoutUiCatalog";
 import {
   getCompatibleStageQuestionLayout,
   getStageQuestionLayoutDefinition,
   getStageQuestionLayouts,
   resolveInitialStageQuestionLayout,
+  STAGE_LANDSCAPE_LAYOUT_IDS,
+  STAGE_PORTRAIT_LAYOUT_IDS,
   STAGE_QUESTION_LAYOUTS,
 } from "./questionLayouts";
 
@@ -28,6 +36,16 @@ describe("stage question layouts", () => {
       "portrait_stack_list",
     ]);
     expect(ids.sort()).toEqual(QUIZ_LAYOUTS.map((layout) => layout.id).sort());
+    expect(STAGE_LANDSCAPE_LAYOUT_IDS).toEqual(QUIZ_LANDSCAPE_LAYOUT_IDS);
+    expect(STAGE_PORTRAIT_LAYOUT_IDS).toEqual(QUIZ_PORTRAIT_LAYOUT_IDS);
+  });
+
+  it("delegates layout queries to SSOT catalog and policy", () => {
+    expect(getStageQuestionLayouts("16:9")).toEqual(getQuizLayoutUiDefinitions("16:9"));
+    expect(getStageQuestionLayouts("9:16")).toEqual(getQuizLayoutUiDefinitions("9:16"));
+    expect(getCompatibleStageQuestionLayout("media_left_choices_right", "9:16")).toBe(
+      getCompatibleQuizLayout("media_left_choices_right", "9:16"),
+    );
   });
 
   it("resolves the selected layout metadata with dedicated portrait previews", () => {

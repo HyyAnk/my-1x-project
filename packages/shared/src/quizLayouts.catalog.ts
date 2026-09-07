@@ -15,6 +15,18 @@ export type ResolvedQuizPortraitLayoutId = z.infer<typeof ResolvedQuizPortraitLa
 
 export { QUIZ_PORTRAIT_LAYOUT_IDS, QuizPortraitLayoutIdSchema, type QuizPortraitLayoutId };
 
+export const QUIZ_LANDSCAPE_LAYOUT_IDS = [
+  "media_left_choices_right",
+  "visual_choices_three",
+  "visual_choices_three_pure",
+  "split_versus_two",
+  "verdict_true_false",
+  "full_stack_list",
+  "mystery_reveal",
+  "clue_deduction",
+] as const;
+export type QuizLandscapeLayoutId = (typeof QUIZ_LANDSCAPE_LAYOUT_IDS)[number];
+
 export const QuizPreviewLayoutIdSchema = z.union([ResolvedQuizLayoutIdSchema, z.literal("baseline")]);
 export type QuizPreviewLayoutId = z.infer<typeof QuizPreviewLayoutIdSchema>;
 

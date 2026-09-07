@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Sparkle, Plus, CircleNotch } from "@phosphor-icons/react";
+import { useTranslation } from "../../../i18n";
 
 export interface StyleCreateModalProps {
   isOpen: boolean;
@@ -14,15 +15,20 @@ export function StyleCreateModal({
   onCreate,
   isSubmitting = false,
 }: StyleCreateModalProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [keyword, setKeyword] = useState("");
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [isLocalSubmitting, setIsLocalSubmitting] = useState(false);
+
+  const effectiveSubmitting = isSubmitting || isLocalSubmitting;
 
   useEffect(() => {
     if (isOpen) {
       setName("");
       setKeyword("");
       setValidationError(null);
+      setIsLocalSubmitting(false);
     }
   }, [isOpen]);
 
@@ -30,13 +36,20 @@ export function StyleCreateModal({
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (effectiveSubmitting) return;
+
     const trimmedName = name.trim();
     if (!trimmedName) {
-      setValidationError("Style name is required");
+      setValidationError(t("mascots.createStyleNameRequired") || "Style name is required");
       return;
     }
     setValidationError(null);
-    await onCreate(trimmedName, keyword.trim());
+    setIsLocalSubmitting(true);
+    try {
+      await onCreate(trimmedName, keyword.trim());
+    } finally {
+      setIsLocalSubmitting(false);
+    }
   };
 
   return (
@@ -53,16 +66,16 @@ export function StyleCreateModal({
           <div className="style-modal-title-group">
             <span className="style-modal-eyebrow">
               <Sparkle size={14} weight="fill" />
-              <span>Multi-Style Mascot Studio</span>
+              <span>{t("mascots.createStyleModalEyebrow")}</span>
             </span>
-            <h2 id="style-modal-title">Create New Mascot Style</h2>
+            <h2 id="style-modal-title">{t("mascots.createStyleModalTitle")}</h2>
           </div>
           <button
             type="button"
             className="icon-button"
-            aria-label="Close"
+            aria-label={t("common.close")}
             onClick={onClose}
-            disabled={isSubmitting}
+            disabled={effectiveSubmitting}
           >
             <X size={18} />
           </button>
@@ -71,25 +84,24 @@ export function StyleCreateModal({
         <form onSubmit={handleSubmit}>
           <div className="modal-body" style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "16px" }}>
             <p className="style-modal-intro">
-              Add an alternative theme or wardrobe style for this mascot (e.g., Tactical Military, Cyberpunk Detective, Festive Holiday).
-              Creating a style unlocks <strong>20 customizable slots</strong> (10 Thinking, 10 Celebrate) without generating them immediately.
+              {t("mascots.createStyleModalIntro")}
             </p>
 
             <div className="form-group">
               <label htmlFor="style-name-input">
-                Style Name <span className="required-star">*</span>
+                {t("mascots.createStyleNameLabel")} <span className="required-star">*</span>
               </label>
               <input
                 id="style-name-input"
                 type="text"
                 className="full-prompt-input"
-                placeholder="e.g., Military Squad, Detective, Summer Beach"
+                placeholder={t("mascots.createStyleNamePlaceholder")}
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);
                   if (validationError) setValidationError(null);
                 }}
-                disabled={isSubmitting}
+                disabled={effectiveSubmitting}
                 autoFocus
               />
               {validationError ? <span className="form-field-error">{validationError}</span> : null}
@@ -97,20 +109,20 @@ export function StyleCreateModal({
 
             <div className="form-group">
               <label htmlFor="style-keyword-input">
-                Style Theme Keyword / Wardrobe Description
+                {t("mascots.createStyleKeywordLabel")}
               </label>
               <textarea
                 id="style-keyword-input"
                 className="full-prompt-textarea"
                 rows={3}
-                placeholder="e.g., tactical military camouflage uniform, beret, tactical gear"
+                placeholder={t("mascots.createStyleKeywordPlaceholder")}
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                disabled={isSubmitting}
+                disabled={effectiveSubmitting}
                 style={{ width: "100%", fontSize: "13px", resize: "vertical" }}
               />
               <span className="form-field-hint">
-                This keyword will be merged with your mascot&apos;s master prompt across all generated state variants.
+                {t("mascots.createStyleKeywordHint")}
               </span>
             </div>
           </div>
@@ -123,24 +135,24 @@ export function StyleCreateModal({
               type="button"
               className="quiet-button"
               onClick={onClose}
-              disabled={isSubmitting}
+              disabled={effectiveSubmitting}
             >
-              Cancel
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
               className="primary-button"
-              disabled={isSubmitting || !name.trim()}
+              disabled={effectiveSubmitting || !name.trim()}
             >
-              {isSubmitting ? (
+              {effectiveSubmitting ? (
                 <>
                   <CircleNotch size={16} className="spin" />
-                  <span>Creating Style...</span>
+                  <span>{t("mascots.createStyleCreatingBtn")}</span>
                 </>
               ) : (
                 <>
                   <Plus size={16} weight="bold" />
-                  <span>Create Style</span>
+                  <span>{t("mascots.createStyleSubmitBtn")}</span>
                 </>
               )}
             </button>

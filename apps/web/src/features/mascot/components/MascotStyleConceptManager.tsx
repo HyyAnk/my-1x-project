@@ -69,6 +69,23 @@ export function MascotStyleConceptManager({
             onOpenLightbox={onOpenLightbox}
           />
         ))}
+
+        {stylesState ? (
+          <button
+            type="button"
+            className="style-anchor-card style-anchor-card-add-new"
+            onClick={() => stylesState.setIsCreateModalOpen(true)}
+            title={t("mascots.addStyleBtn")}
+          >
+            <div className="style-anchor-add-new-inner">
+              <div className="style-anchor-add-icon-circle">
+                <Plus size={22} weight="bold" />
+              </div>
+              <span className="style-anchor-add-title">{t("mascots.addStyleBtn")}</span>
+              <span className="style-anchor-add-desc">{t("mascots.addStyleCardDesc")}</span>
+            </div>
+          </button>
+        ) : null}
       </div>
 
       {stylesState ? (

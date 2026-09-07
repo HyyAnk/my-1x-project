@@ -157,5 +157,10 @@ describe("SandboxLayoutSelector (P6-UI-01..09)", () => {
       expect(getCompatibleLayoutForAspectRatio("portrait_hero_choices", "16:9")).toBe("media_left_choices_right");
       expect(getCompatibleLayoutForAspectRatio("media_left_choices_right", "16:9")).toBe("media_left_choices_right");
     });
+
+    it("handles baseline preview layout gracefully", () => {
+      expect(getCompatibleLayoutForAspectRatio("baseline", "9:16")).toBe("portrait_hero_choices");
+      expect(getCompatibleLayoutForAspectRatio("baseline", "16:9")).toBe("media_left_choices_right");
+    });
   });
 });

@@ -1,10 +1,12 @@
 /**
- * Curated spatial 3D layout coordinates for all 19 codebase zones.
+ * Curated spatial 3D layout coordinates for all 23 codebase zones.
  * Pure data module with zero external imports - compatible with both browser and Node.js.
  */
 export const ZONE_POSITIONS = {
   // CORE HUB (Center)
   "shared-contracts": { x: 0, y: 0, z: 0, layer: "core", radius: 5.5, label: "Shared Contracts" },
+  "shared-layout-contracts": { x: -22, y: -10, z: 12, layer: "core", radius: 4.2, label: "Shared Layouts" },
+  "shared-mascot-contracts": { x: -10, y: -26, z: 16, layer: "core", radius: 4.2, label: "Shared Mascot" },
   "project-configuration": { x: 20, y: 15, z: -10, layer: "core", radius: 3.8, label: "Project Config" },
   "artifact-contracts": { x: -15, y: -15, z: 25, layer: "core", radius: 3.8, label: "Artifact Contracts" },
 

@@ -213,6 +213,302 @@
   }
 }
 
+/* ==========================================================================
+   Segmented Milestone Bar & Target Progress
+   ========================================================================== */
+.qb-segmented-progress-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md, 10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.qb-progress-hero-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.qb-progress-hero-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.qb-hero-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.qb-hero-tier-icon {
+  font-size: 13px;
+}
+
+.qb-hero-tier-name {
+  font-weight: 700;
+}
+
+.qb-hero-tier-lvl {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+}
+
+.qb-hero-count-group {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.qb-hero-current-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.qb-hero-target-slash {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.qb-hero-target-num {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.qb-hero-unit-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 2px;
+}
+
+.qb-hero-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--soft-accent);
+  color: var(--accent);
+  border: 1px solid var(--line-dark);
+}
+
+.qb-hero-status-pill.is-max {
+  background: rgba(234, 179, 8, 0.12);
+  color: #eab308;
+  border-color: rgba(234, 179, 8, 0.3);
+}
+
+.qb-progress-hero-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.qb-hero-matrix-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-secondary);
+}
+
+.qb-matrix-icon {
+  font-size: 12px;
+}
+
+.qb-matrix-text {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.qb-hero-percent-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.qb-percent-val {
+  font-weight: 800;
+}
+
+/* 6-Segment Progression Rail */
+.qb-segmented-rail {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  height: 10px;
+  background: transparent;
+  margin: 2px 0 6px;
+}
+
+.qb-rail-segment {
+  flex: 1;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.qb-rail-segment.qb-segment-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 8px var(--soft-accent);
+}
+
+.qb-rail-segment.qb-segment-achieved {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.qb-rail-segment.qb-segment-upcoming {
+  opacity: 0.4;
+  border-style: dashed;
+}
+
+.qb-segment-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Milestone Checkpoints & Markers Row */
+.qb-segmented-markers-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  overflow-x: auto;
+  padding-top: 2px;
+}
+
+.qb-milestone-marker {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 3px 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+}
+
+.qb-marker-pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.qb-marker-check {
+  color: #10b981;
+}
+
+.qb-marker-emoji {
+  font-size: 12px;
+}
+
+.qb-marker-label {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.qb-marker-name {
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--ink-secondary);
+}
+
+.qb-marker-target {
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--ink);
+  opacity: 0.9;
+}
+
+.qb-milestone-marker.qb-marker-active {
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 8px var(--soft-accent);
+}
+
+.qb-milestone-marker.qb-marker-active .qb-marker-name {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.qb-milestone-marker.qb-marker-achieved {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.qb-milestone-marker.qb-marker-achieved .qb-marker-name {
+  color: #10b981;
+}
+
+.qb-milestone-marker.qb-marker-upcoming {
+  opacity: 0.45;
+  border: 1px dashed var(--line);
+}
+
+.qb-milestone-marker.qb-marker-upcoming .qb-marker-name {
+  color: var(--muted);
+}
+
+.qb-marker-active-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: qb-pulse-dot 1.5s infinite ease-in-out;
+}
+
 /* Collapsible Progress Section */
 .qb-progress-section {
   display: flex;

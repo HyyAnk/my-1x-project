@@ -46,7 +46,9 @@ export function StyleAnchorReferencePin({
   const celebrateCount = (style?.states?.celebrate || []).filter((v) => Boolean(v.image_url?.trim())).length;
   const totalPoses = thinkingCount + celebrateCount;
 
-  const isGenerating = Boolean(style?.id && stylesState?.generatingConceptStyleId === style.id);
+  const isThisGenerating = Boolean(style?.id && stylesState?.generatingConceptStyleId === style.id);
+  const isAnyConceptGenerating = Boolean(stylesState?.generatingConceptStyleId);
+  const isBusy = isAnyConceptGenerating || (stylesState?.busySlotKey !== null && stylesState?.busySlotKey !== undefined);
   const hasAnchorImage = Boolean(effectiveAnchorImage);
 
   if (!style) return null;
@@ -112,7 +114,7 @@ export function StyleAnchorReferencePin({
           </span>
           <span className="style-anchor-pin-badge badge-warning">{t("mascots.styleAnchorMissingBadge") || "Anchor Missing"}</span>
         </div>
-        <p className="style-anchor-pin-desc">{t("mascots.styleAnchorPinMissingDesc")}</p>
+        <p className="style-anchor-pin-desc">{t("mascots.styleAnchorPinDesc")}</p>
       </div>
 
       <div className="style-anchor-pin-actions">
@@ -120,10 +122,10 @@ export function StyleAnchorReferencePin({
           type="button"
           className="primary-button is-generate-anchor"
           onClick={() => stylesState?.handleGenerateStyleConcept(style.id)}
-          disabled={isGenerating}
+          disabled={isBusy}
           title={t("mascots.styleAnchorPinGenerateBtn")}
         >
-          {isGenerating ? (
+          {isThisGenerating ? (
             <>
               <CircleNotch size={14} className="spin" />
               <span>{t("mascots.styleAnchorPinGeneratingBtn")}</span>

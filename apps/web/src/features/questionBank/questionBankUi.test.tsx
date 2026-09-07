@@ -7,6 +7,8 @@ import { QuestionBankToolbar } from "./components/QuestionBankToolbar";
 import { QuestionBankTable } from "./components/QuestionBankTable";
 import { QuestionBankLivePreview } from "./components/QuestionBankLivePreview";
 import { QuestionBankAiGenerateModal } from "./components/QuestionBankAiGenerateModal";
+import { QuestionBankTargetProgressBar } from "./components/QuestionBankTargetProgressBar";
+import { getMilestoneProgress } from "./utils/questionBankMilestones";
 import type { QuestionBankFilters } from "./types/questionBankUi.types";
 
 function renderWithLanguage(ui: React.ReactElement, lang: string = "en") {
@@ -460,4 +462,41 @@ describe("Question Bank Studio UI Components", () => {
       persist: true,
     });
   });
+
+  it("QuestionBankTargetProgressBar renders segmented rail, milestone nodes, and active tier metrics", () => {
+    const progress = getMilestoneProgress(250);
+    renderWithLanguage(
+      <QuestionBankTargetProgressBar currentTotal={250} milestoneProgress={progress} />,
+      "en",
+    );
+
+    const progressBar = screen.getByRole("progressbar");
+    expect(progressBar).toBeDefined();
+    expect(progressBar.getAttribute("aria-valuenow")).toBe("250");
+    expect(progressBar.getAttribute("aria-valuemax")).toBe("2000");
+
+    expect(screen.getAllByText("Starter Seed").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("1,750 questions to Foundation")).toBeDefined();
+    expect(screen.getByText("12.5%")).toBeDefined();
+
+    // Verify milestone checkpoints
+    expect(screen.getByText("2K")).toBeDefined();
+    expect(screen.getByText("5K")).toBeDefined();
+    expect(screen.getByText("10K")).toBeDefined();
+    expect(screen.getByText("20K")).toBeDefined();
+    expect(screen.getByText("50K")).toBeDefined();
+    expect(screen.getByText("100K")).toBeDefined();
+  });
+
+  it("QuestionBankTargetProgressBar displays max tier achieved state cleanly", () => {
+    const maxProgress = getMilestoneProgress(120000);
+    renderWithLanguage(
+      <QuestionBankTargetProgressBar currentTotal={120000} milestoneProgress={maxProgress} />,
+      "en",
+    );
+
+    expect(screen.getByText("Max Tier Achieved")).toBeDefined();
+    expect(screen.getByText("100%")).toBeDefined();
+  });
 });
+

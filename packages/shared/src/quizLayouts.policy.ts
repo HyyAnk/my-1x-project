@@ -1,7 +1,14 @@
 import type { DirectorArchetype, QuizQuestionFormat } from "./enums.js";
 import type { QuizGameplayArchetypeId } from "./quizArchetypes.js";
 import type { MascotRenderAspectRatio } from "./mascot/renderTypes.js";
-import { QUIZ_LAYOUT_CATALOG, QUIZ_LAYOUTS, isResolvedQuizLayoutId, type ResolvedQuizLayoutId } from "./quizLayouts.catalog.js";
+import {
+  QUIZ_LAYOUT_CATALOG,
+  QUIZ_LAYOUTS,
+  QUIZ_LANDSCAPE_LAYOUT_IDS,
+  QUIZ_PORTRAIT_LAYOUT_IDS,
+  isResolvedQuizLayoutId,
+  type ResolvedQuizLayoutId,
+} from "./quizLayouts.catalog.js";
 import type {
   QuizChoicePresentation,
   QuizLayoutCompatibilityInput,
@@ -82,23 +89,53 @@ export function evaluateQuizLayoutCompatibility(
   return issues.length ? { compatible: false, layout, issues } : { compatible: true, layout };
 }
 
-export const PORTRAIT_QUIZ_AUTO_CANDIDATES: readonly ResolvedQuizLayoutId[] = [
-  "portrait_hero_choices",
-  "portrait_split_versus",
-  "portrait_verdict_tf",
-  "portrait_stack_list",
-];
+export const PORTRAIT_QUIZ_AUTO_CANDIDATES: readonly ResolvedQuizLayoutId[] = QUIZ_PORTRAIT_LAYOUT_IDS;
 
-export const LANDSCAPE_QUIZ_AUTO_CANDIDATES: readonly ResolvedQuizLayoutId[] = [
-  "media_left_choices_right",
-  "visual_choices_three",
-  "visual_choices_three_pure",
-  "split_versus_two",
-  "verdict_true_false",
-  "full_stack_list",
-  "mystery_reveal",
-  "clue_deduction",
-];
+export const LANDSCAPE_QUIZ_AUTO_CANDIDATES: readonly ResolvedQuizLayoutId[] = QUIZ_LANDSCAPE_LAYOUT_IDS;
+
+export function getCompatibleQuizLayout(
+  currentLayoutId: ResolvedQuizLayoutId,
+  targetAspectRatio: "16:9" | "9:16",
+): ResolvedQuizLayoutId {
+  if (targetAspectRatio === "9:16") {
+    if ((QUIZ_PORTRAIT_LAYOUT_IDS as readonly string[]).includes(currentLayoutId)) {
+      return currentLayoutId;
+    }
+    switch (currentLayoutId) {
+      case "split_versus_two":
+        return "portrait_split_versus";
+      case "verdict_true_false":
+        return "portrait_verdict_tf";
+      case "full_stack_list":
+        return "portrait_stack_list";
+      default:
+        return "portrait_hero_choices";
+    }
+  }
+
+  if ((QUIZ_LANDSCAPE_LAYOUT_IDS as readonly string[]).includes(currentLayoutId)) {
+    return currentLayoutId;
+  }
+  switch (currentLayoutId) {
+    case "portrait_split_versus":
+      return "split_versus_two";
+    case "portrait_verdict_tf":
+      return "verdict_true_false";
+    case "portrait_stack_list":
+      return "full_stack_list";
+    default:
+      return "media_left_choices_right";
+  }
+}
+
+export function filterQuizLayoutsByAspectRatio(
+  aspectRatio?: "16:9" | "9:16",
+): readonly ResolvedQuizLayoutId[] {
+  if (aspectRatio === "9:16") {
+    return QUIZ_PORTRAIT_LAYOUT_IDS;
+  }
+  return QUIZ_LANDSCAPE_LAYOUT_IDS;
+}
 
 export function resolveQuizLayout(input: QuizLayoutResolutionInput): QuizLayoutResolutionResult<ResolvedQuizLayoutId> {
   const choicePresentation = input.choicePresentation ?? quizChoicePresentationFor(input.archetype, input.questionFormat);

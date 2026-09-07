@@ -1,5 +1,10 @@
 import { useCallback, useState } from "react";
-import type { Channel, QuizPreviewLayoutId } from "@studio/shared";
+import {
+  getCompatibleQuizLayout,
+  type Channel,
+  type QuizPreviewLayoutId,
+  type ResolvedQuizLayoutId,
+} from "@studio/shared";
 import type { Notice } from "../../components/types";
 import { useSandboxChannelSync } from "./hooks/useSandboxChannelSync";
 import { useSandboxDesignState } from "./hooks/useSandboxDesignState";
@@ -21,7 +26,6 @@ import {
   SandboxPresetSelector,
   SandboxPreviewCanvas,
 } from "./components";
-import { getCompatibleLayoutForAspectRatio } from "./components/design/SandboxLayoutSelector";
 
 export type { VisualPresetItem } from "./hooks/useSandboxPresets";
 
@@ -96,7 +100,8 @@ export function VisualSandboxTab({
   const handleAspectRatioChange = useCallback(
     (newRatio: "16:9" | "9:16") => {
       viewport.setAspectRatio(newRatio);
-      const compatibleLayout = getCompatibleLayoutForAspectRatio(design.layoutId, newRatio);
+      const currentResolved = design.layoutId === "baseline" ? "media_left_choices_right" : design.layoutId;
+      const compatibleLayout = getCompatibleQuizLayout(currentResolved, newRatio);
       if (compatibleLayout !== design.layoutId) {
         handleLayoutChange(compatibleLayout);
       }
@@ -107,7 +112,7 @@ export function VisualSandboxTab({
   const handleApplyPresetQuestion = useCallback(
     (sample: PresetSampleQuestion) => {
       question.handleApplyPresetQuestion(sample);
-      let targetLayout: QuizPreviewLayoutId = "media_left_choices_right";
+      let targetLayout: ResolvedQuizLayoutId = "media_left_choices_right";
       if (sample.type === "true_false") {
         targetLayout = "verdict_true_false";
       } else if (sample.type === "versus") {
@@ -122,10 +127,10 @@ export function VisualSandboxTab({
         design.layoutId === "portrait_split_versus"
       ) {
         targetLayout = "media_left_choices_right";
-      } else {
+      } else if (design.layoutId !== "baseline") {
         targetLayout = design.layoutId;
       }
-      const compatibleLayout = getCompatibleLayoutForAspectRatio(targetLayout, viewport.aspectRatio);
+      const compatibleLayout = getCompatibleQuizLayout(targetLayout, viewport.aspectRatio);
       design.setLayoutId(compatibleLayout);
     },
     [design, question, viewport.aspectRatio],

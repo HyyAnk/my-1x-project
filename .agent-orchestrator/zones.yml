@@ -1,22 +1,78 @@
-version: "2.2.0"
-updatedAt: "2026-09-05T23:59:00+07:00"
+version: "2.3.0"
+updatedAt: "2026-09-06T23:30:00+07:00"
 description: "Unambiguous ownership zones for direct-on-main agent coordination."
 
 zones:
   - id: "shared-contracts"
-    name: "Shared Contracts"
+    name: "Shared Core Contracts"
     risk: "high"
     lockPolicy: "exclusive"
-    description: "Schemas, types, and contracts shared across applications."
+    description: "Base schemas, core enums, API models, events, timing, and contracts shared across applications."
     globs:
       - "packages/shared/**"
+      - "!packages/shared/src/quizLayouts*"
+      - "!packages/shared/src/quizStyles/**"
+      - "!packages/shared/src/quizStyles*"
+      - "!packages/shared/src/quizArchetypes.ts"
+      - "!packages/shared/src/sandboxPreviewLayoutPolicy.ts"
+      - "!packages/shared/src/mascot/**"
+      - "!packages/shared/src/thumbnail/**"
+      - "!packages/shared/src/presets.ts"
+      - "!packages/shared/src/schemas/mascot.ts"
+      - "!packages/shared/src/schemas/thumbnail.ts"
+      - "!packages/shared/src/enums/mascot.ts"
+      - "!packages/shared/test/quizLayouts.policy.test.ts"
+      - "!packages/shared/test/mascotStyleSchema.test.ts"
     readStableDependencies: []
     verification:
       commands:
         - "pnpm --filter @studio/shared build"
         - "pnpm --filter @studio/shared test"
         - "pnpm typecheck"
-      notes: "Verify all consumers after contract changes."
+      notes: "Verify core consumers after contract changes."
+
+  - id: "shared-layout-contracts"
+    name: "Shared Quiz Layout And Style Contracts"
+    risk: "high"
+    lockPolicy: "shared-disjoint"
+    description: "Quiz layouts, style catalogs, policies, archetypes, and preview contracts."
+    globs:
+      - "packages/shared/src/quizLayouts*"
+      - "packages/shared/src/quizStyles/**"
+      - "packages/shared/src/quizStyles*"
+      - "packages/shared/src/quizArchetypes.ts"
+      - "packages/shared/src/sandboxPreviewLayoutPolicy.ts"
+      - "packages/shared/test/quizLayouts.policy.test.ts"
+    readStableDependencies:
+      - "shared-contracts"
+    verification:
+      commands:
+        - "pnpm --filter @studio/shared build"
+        - "pnpm --filter @studio/shared test -- test/quizLayouts.policy.test.ts"
+        - "pnpm typecheck"
+      notes: "Use concrete planned files for parallel layout and style contract work."
+
+  - id: "shared-mascot-contracts"
+    name: "Shared Mascot And Creative Contracts"
+    risk: "high"
+    lockPolicy: "shared-disjoint"
+    description: "Mascot poses, render schemas, motion presets, style contracts, and thumbnail definitions."
+    globs:
+      - "packages/shared/src/mascot/**"
+      - "packages/shared/src/thumbnail/**"
+      - "packages/shared/src/presets.ts"
+      - "packages/shared/src/schemas/mascot.ts"
+      - "packages/shared/src/schemas/thumbnail.ts"
+      - "packages/shared/src/enums/mascot.ts"
+      - "packages/shared/test/mascotStyleSchema.test.ts"
+    readStableDependencies:
+      - "shared-contracts"
+    verification:
+      commands:
+        - "pnpm --filter @studio/shared build"
+        - "pnpm --filter @studio/shared test -- test/mascotStyleSchema.test.ts"
+        - "pnpm typecheck"
+      notes: "Use concrete planned files for parallel mascot and creative contract work."
 
   - id: "project-configuration"
     name: "Project Configuration"
@@ -141,6 +197,7 @@ zones:
       - "apps/server/src/quiz/mascotPromptContract.ts"
     readStableDependencies:
       - "shared-contracts"
+      - "shared-layout-contracts"
     verification:
       commands:
         - "pnpm --filter @studio/server test -- test/quizRenderStyleContract.test.ts test/quizSceneModel.test.ts"
@@ -162,7 +219,7 @@ zones:
       - "!apps/server/src/quiz/render/layoutCompatibility.ts"
       - "apps/server/src/quiz/visual/**"
     readStableDependencies:
-      - "shared-contracts"
+      - "shared-layout-contracts"
       - "render-inputs"
     coClaimWith:
       - "server-tests"
@@ -183,7 +240,7 @@ zones:
       - "apps/server/src/quiz/mascot/**"
       - "apps/server/src/quiz/mascotService.ts"
     readStableDependencies:
-      - "shared-contracts"
+      - "shared-mascot-contracts"
       - "render-inputs"
     coClaimWith:
       - "server-tests"

@@ -97,3 +97,55 @@ test("Live shared-disjoint claims still conflict on overlapping planned files", 
   });
   assert.equal(disjoint.valid, true);
 });
+
+test("shared-layout-contracts allows concurrent writers on disjoint files and rejects overlaps", () => {
+  const layoutContracts = zone("shared-layout-contracts", "shared-disjoint");
+  const activeLayoutClaim = activeClaim("claim-layout-agent-1", {
+    writeZones: ["shared-layout-contracts"],
+    plannedFiles: ["packages/shared/src/quizLayouts.catalog.ts"],
+  });
+
+  // Candidate with disjoint file should succeed
+  const disjoint = validateAndCheckConflicts([layoutContracts], [activeLayoutClaim], {
+    writeZones: ["shared-layout-contracts"],
+    readStableZones: [],
+    plannedFiles: ["packages/shared/src/quizStyles/cssVariables.ts"],
+  });
+  assert.equal(disjoint.valid, true);
+  assert.deepEqual(disjoint.conflicts, []);
+
+  // Candidate with overlapping file should fail
+  const overlapping = validateAndCheckConflicts([layoutContracts], [activeLayoutClaim], {
+    writeZones: ["shared-layout-contracts"],
+    readStableZones: [],
+    plannedFiles: ["packages/shared/src/quizLayouts.catalog.ts"],
+  });
+  assert.equal(overlapping.valid, false);
+  assert.ok(overlapping.conflicts.some((c) => c.includes("overlapping planned files")));
+});
+
+test("shared-mascot-contracts allows concurrent writers on disjoint files and rejects overlaps", () => {
+  const mascotContracts = zone("shared-mascot-contracts", "shared-disjoint");
+  const activeMascotClaim = activeClaim("claim-mascot-agent-1", {
+    writeZones: ["shared-mascot-contracts"],
+    plannedFiles: ["packages/shared/src/enums/mascot.ts"],
+  });
+
+  // Candidate with disjoint file should succeed
+  const disjoint = validateAndCheckConflicts([mascotContracts], [activeMascotClaim], {
+    writeZones: ["shared-mascot-contracts"],
+    readStableZones: [],
+    plannedFiles: ["packages/shared/src/presets.ts"],
+  });
+  assert.equal(disjoint.valid, true);
+  assert.deepEqual(disjoint.conflicts, []);
+
+  // Candidate with overlapping file should fail
+  const overlapping = validateAndCheckConflicts([mascotContracts], [activeMascotClaim], {
+    writeZones: ["shared-mascot-contracts"],
+    readStableZones: [],
+    plannedFiles: ["packages/shared/src/enums/mascot.ts"],
+  });
+  assert.equal(overlapping.valid, false);
+  assert.ok(overlapping.conflicts.some((c) => c.includes("overlapping planned files")));
+});

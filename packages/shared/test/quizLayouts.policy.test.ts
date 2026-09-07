@@ -2,12 +2,16 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   evaluateQuizLayoutCompatibility,
+  filterQuizLayoutsByAspectRatio,
+  getCompatibleQuizLayout,
   preferredAutoLayout,
   resolveQuizLayout,
   LANDSCAPE_QUIZ_AUTO_CANDIDATES,
   PORTRAIT_QUIZ_AUTO_CANDIDATES,
   QUIZ_LAYOUT_CATALOG,
+  QUIZ_LANDSCAPE_LAYOUT_IDS,
   QUIZ_PORTRAIT_LAYOUT_IDS,
+  type QuizLandscapeLayoutId,
   type QuizPortraitLayoutId,
   type ResolvedQuizLayoutId,
 } from "../src/index.js";
@@ -398,5 +402,65 @@ describe("preferredAutoLayout helper function", () => {
     for (const layoutId of LANDSCAPE_QUIZ_AUTO_CANDIDATES) {
       assert.deepEqual(QUIZ_LAYOUT_CATALOG[layoutId].supportedAspectRatios, ["16:9"]);
     }
+  });
+});
+
+describe("getCompatibleQuizLayout helper function", () => {
+  it("preserves layout when target aspect ratio matches current layout aspect ratio (idempotent)", () => {
+    for (const layoutId of QUIZ_PORTRAIT_LAYOUT_IDS) {
+      assert.equal(getCompatibleQuizLayout(layoutId, "9:16"), layoutId);
+    }
+    for (const layoutId of QUIZ_LANDSCAPE_LAYOUT_IDS) {
+      assert.equal(getCompatibleQuizLayout(layoutId, "16:9"), layoutId);
+    }
+  });
+
+  it("handles bidirectional mappings between landscape and portrait", () => {
+    // split_versus_two <-> portrait_split_versus
+    assert.equal(getCompatibleQuizLayout("split_versus_two", "9:16"), "portrait_split_versus");
+    assert.equal(getCompatibleQuizLayout("portrait_split_versus", "16:9"), "split_versus_two");
+
+    // verdict_true_false <-> portrait_verdict_tf
+    assert.equal(getCompatibleQuizLayout("verdict_true_false", "9:16"), "portrait_verdict_tf");
+    assert.equal(getCompatibleQuizLayout("portrait_verdict_tf", "16:9"), "verdict_true_false");
+
+    // full_stack_list <-> portrait_stack_list
+    assert.equal(getCompatibleQuizLayout("full_stack_list", "9:16"), "portrait_stack_list");
+    assert.equal(getCompatibleQuizLayout("portrait_stack_list", "16:9"), "full_stack_list");
+  });
+
+  it("falls back to portrait_hero_choices for 16:9 layouts without dedicated portrait equivalent", () => {
+    const fallbackLayouts: ResolvedQuizLayoutId[] = [
+      "media_left_choices_right",
+      "visual_choices_three",
+      "visual_choices_three_pure",
+      "mystery_reveal",
+      "clue_deduction",
+    ];
+
+    for (const layoutId of fallbackLayouts) {
+      assert.equal(getCompatibleQuizLayout(layoutId, "9:16"), "portrait_hero_choices");
+    }
+  });
+
+  it("falls back to media_left_choices_right when mapping portrait_hero_choices to 16:9", () => {
+    assert.equal(getCompatibleQuizLayout("portrait_hero_choices", "16:9"), "media_left_choices_right");
+  });
+});
+
+describe("filterQuizLayoutsByAspectRatio helper function", () => {
+  it("returns portrait layouts for 9:16", () => {
+    const result = filterQuizLayoutsByAspectRatio("9:16");
+    assert.deepEqual(result, QUIZ_PORTRAIT_LAYOUT_IDS);
+  });
+
+  it("returns landscape layouts for 16:9", () => {
+    const result = filterQuizLayoutsByAspectRatio("16:9");
+    assert.deepEqual(result, QUIZ_LANDSCAPE_LAYOUT_IDS);
+  });
+
+  it("returns landscape layouts as default when aspect ratio is undefined", () => {
+    const result = filterQuizLayoutsByAspectRatio(undefined);
+    assert.deepEqual(result, QUIZ_LANDSCAPE_LAYOUT_IDS);
   });
 });

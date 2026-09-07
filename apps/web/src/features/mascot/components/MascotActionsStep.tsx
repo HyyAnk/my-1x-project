@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from "react";
 import {
   ArrowLeft,
   ArrowRight,
-  Plus,
   Trash,
   Lightning,
   Check,
@@ -20,7 +19,6 @@ import {
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 import { VariantSlotCard } from "./VariantSlotCard";
-import { StyleCreateModal } from "./StyleCreateModal";
 import { SlotPromptModal } from "./SlotPromptModal";
 import { StyleAnchorReferencePin } from "./StyleAnchorReferencePin";
 
@@ -47,9 +45,6 @@ export function MascotActionsStep({
     activeStyleId,
     setActiveStyleId,
     activeStyle,
-    isCreateModalOpen,
-    setIsCreateModalOpen,
-    handleCreateStyle,
     handleUpdateStyleKeyword,
     handleDeleteStyle,
     busySlotKey,
@@ -114,9 +109,7 @@ export function MascotActionsStep({
 
   const handleDeleteActiveStyle = async () => {
     if (isCoreStyle || !resolvedActiveStyle) return;
-    const confirmed = window.confirm(
-      `Are you sure you want to delete the style "${resolvedActiveStyle.name}"? This action cannot be undone.`,
-    );
+    const confirmed = window.confirm(t("mascots.deleteStyleConfirm"));
     if (confirmed) {
       await handleDeleteStyle(resolvedActiveStyle.id);
     }
@@ -196,12 +189,13 @@ export function MascotActionsStep({
 
             <button
               type="button"
-              className="mascot-style-tab-add"
-              onClick={() => setIsCreateModalOpen(true)}
-              title="Create new style theme"
+              className="mascot-style-tab-manage"
+              onClick={onBackStep}
+              disabled={isBatchBusy || busySlotKey !== null}
+              title={t("mascots.manageStylesInConceptTooltip")}
             >
-              <Plus size={14} weight="bold" />
-              <span>New Style</span>
+              <Sparkle size={13} weight="fill" />
+              <span>{t("mascots.manageStylesInConcept")}</span>
             </button>
           </div>
         </div>
@@ -499,12 +493,6 @@ export function MascotActionsStep({
         </div>
       </div>
 
-      {/* Modals */}
-      <StyleCreateModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onCreate={handleCreateStyle}
-      />
 
       <SlotPromptModal
         isOpen={Boolean(editingSlot)}

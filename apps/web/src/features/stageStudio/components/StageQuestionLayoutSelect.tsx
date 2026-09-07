@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { QuizLayoutWireframe } from "../../quizLayouts";
 import type { useStageStudio } from "../hooks/useStageStudio";
 import { getStageQuestionLayoutDefinition, getStageQuestionLayouts } from "../questionLayouts";
 import type { StageQuestionLayout } from "../types";
@@ -43,13 +44,11 @@ export function StageQuestionLayoutSelect({ studio }: StageQuestionLayoutSelectP
       </label>
 
       <div id="stage-layout-description" className="stage-layout-summary" aria-live="polite">
-        <div className={`stage-layout-miniature is-${selectedLayout.preview}`} aria-hidden="true">
-          <i className="layout-mini-media" />
-          <i className="layout-mini-choice choice-a" />
-          <i className="layout-mini-choice choice-b" />
-          <i className="layout-mini-choice choice-c" />
-          <i className="layout-mini-mascot" />
-        </div>
+        <QuizLayoutWireframe
+          preview={selectedLayout.preview}
+          layoutId={selectedLayout.id}
+          aspectRatio={aspectRatio}
+        />
         <span>{t(selectedLayout.descriptionKey)}</span>
       </div>
     </section>

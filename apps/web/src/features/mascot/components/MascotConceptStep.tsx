@@ -78,108 +78,114 @@ export function MascotConceptStep({
   const { t } = useTranslation();
 
   return (
-    <div className="wizard-step-content step-identity-grid">
-      {/* Left Column: Form & Hero Prompt Studio */}
-      <div className="wizard-form-col">
-        <div className="wizard-card step-identity-card">
-          <div className="wizard-card-header-flex" style={{ marginBottom: "16px" }}>
-            <div>
-              <h3>{t("mascots.conceptTitle")}</h3>
+    <div className="wizard-step-content mascot-concept-step-content">
+      {/* TIER 1: CHARACTER CORE DNA & MASTER PREVIEW STAGE */}
+      <div className="concept-tier-identity-grid">
+        {/* Left Column: Form & Hero Prompt Studio */}
+        <div className="wizard-form-col">
+          <div className="wizard-card step-identity-card">
+            <div className="wizard-card-header-flex" style={{ marginBottom: "16px" }}>
+              <div>
+                <h3>{t("mascots.conceptTitle")}</h3>
+              </div>
             </div>
-          </div>
 
-          <MascotIdentityForm
-            genName={genName}
-            setGenName={setGenName}
-            genColor={genColor}
-            setGenColor={setGenColor}
-            genStyle={genStyle}
-            setGenStyle={setGenStyle}
-          />
+            <MascotIdentityForm
+              genName={genName}
+              setGenName={setGenName}
+              genColor={genColor}
+              setGenColor={setGenColor}
+              genStyle={genStyle}
+              setGenStyle={setGenStyle}
+            />
 
-          <MascotPromptStudio
-            genColor={genColor}
-            genPrompt={genPrompt}
-            setGenPrompt={setGenPrompt}
-            genDescription={genDescription}
-            setGenDescription={setGenDescription}
-            promptCopied={promptCopied}
-            showNotesAccordion={showNotesAccordion}
-            setShowNotesAccordion={setShowNotesAccordion}
-            onCopyPrompt={onCopyPrompt}
-            onInjectTag={onInjectTag}
-            onApplyTemplate={onApplyTemplate}
-            onOpenPromptModal={() => setIsPromptModalOpen(true)}
-          />
+            <MascotPromptStudio
+              genColor={genColor}
+              genPrompt={genPrompt}
+              setGenPrompt={setGenPrompt}
+              genDescription={genDescription}
+              setGenDescription={setGenDescription}
+              promptCopied={promptCopied}
+              showNotesAccordion={showNotesAccordion}
+              setShowNotesAccordion={setShowNotesAccordion}
+              onCopyPrompt={onCopyPrompt}
+              onInjectTag={onInjectTag}
+              onApplyTemplate={onApplyTemplate}
+              onOpenPromptModal={() => setIsPromptModalOpen(true)}
+            />
 
-          {/* Wizard Action CTA Row */}
-          <div className="wizard-action-row" style={{ marginTop: "24px", paddingTop: "16px", borderTop: "1px solid var(--line)" }}>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
-              <button
-                type="button"
-                className="primary-button ai-magic-btn"
-                style={{
-                  background: `linear-gradient(135deg, ${genColor} 0%, #0284c7 100%)`,
-                  boxShadow: `0 4px 16px ${genColor}35`,
-                }}
-                disabled={busyAction !== null || savingIdentity || !genName.trim()}
-                onClick={onGenerateConcept}
-              >
-                {busyAction === "concept" ? <CircleNotch className="spin" size={18} /> : <MagicWand size={18} weight="bold" />}
-                <span>
-                  {busyAction === "concept" ? `${t("mascots.generatingConceptBtn")} (${itemProgress}%)` : t("mascots.generateConceptBtn")}
-                </span>
-              </button>
-
-              {editingMascot && onSaveIdentity ? (
+            {/* Wizard Action CTA Row */}
+            <div className="wizard-action-row" style={{ marginTop: "24px", paddingTop: "16px", borderTop: "1px solid var(--line)" }}>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
                 <button
                   type="button"
-                  className="quiet-button"
-                  onClick={onSaveIdentity}
+                  className="primary-button ai-magic-btn"
+                  style={{
+                    background: `linear-gradient(135deg, ${genColor} 0%, #0284c7 100%)`,
+                    boxShadow: `0 4px 16px ${genColor}35`,
+                  }}
                   disabled={busyAction !== null || savingIdentity || !genName.trim()}
-                  title={t("mascots.saveIdentityBtn")}
+                  onClick={onGenerateConcept}
                 >
-                  {savingIdentity ? <CircleNotch className="spin" size={16} /> : <FloppyDisk size={16} />}
-                  <span>{savingIdentity ? t("mascots.savingIdentityBtn") : t("mascots.saveIdentityBtn")}</span>
+                  {busyAction === "concept" ? <CircleNotch className="spin" size={18} /> : <MagicWand size={18} weight="bold" />}
+                  <span>
+                    {busyAction === "concept" ? `${t("mascots.generatingConceptBtn")} (${itemProgress}%)` : t("mascots.generateConceptBtn")}
+                  </span>
                 </button>
-              ) : null}
-            </div>
 
-            <button
-              type="button"
-              className={`quiet-button ${editingMascot?.master_image_url ? "is-ready-forward" : ""}`}
-              onClick={onNextStep}
-              disabled={!editingMascot?.master_image_url || busyAction !== null}
-            >
-              <span>{t("mascots.nextStatesBtn")}</span>
-              <ArrowRight size={15} />
-            </button>
+                {editingMascot && onSaveIdentity ? (
+                  <button
+                    type="button"
+                    className="quiet-button"
+                    onClick={onSaveIdentity}
+                    disabled={busyAction !== null || savingIdentity || !genName.trim()}
+                    title={t("mascots.saveIdentityBtn")}
+                  >
+                    {savingIdentity ? <CircleNotch className="spin" size={16} /> : <FloppyDisk size={16} />}
+                    <span>{savingIdentity ? t("mascots.savingIdentityBtn") : t("mascots.saveIdentityBtn")}</span>
+                  </button>
+                ) : null}
+              </div>
+
+              <button
+                type="button"
+                className={`quiet-button ${editingMascot?.master_image_url ? "is-ready-forward" : ""}`}
+                onClick={onNextStep}
+                disabled={!editingMascot?.master_image_url || busyAction !== null}
+              >
+                <span>{t("mascots.nextStatesBtn")}</span>
+                <ArrowRight size={15} />
+              </button>
+            </div>
           </div>
+        </div>
+
+        {/* Right Column: Master Preview Stage Box */}
+        <div className="wizard-preview-col">
+          <MascotConceptPreviewCard
+            editingMascot={editingMascot}
+            genColor={genColor}
+            genStyle={genStyle}
+            busyAction={busyAction}
+            itemProgress={itemProgress}
+            currentStageMessage={currentStageMessage}
+            generationElapsed={generationElapsed}
+            onZoomPreview={(url) => setLightboxImage(url)}
+            onRemoveBackground={onRemoveBackground}
+          />
         </div>
       </div>
 
-      {/* Master Preview Stage Box */}
-      <div className="wizard-preview-col">
-        <MascotConceptPreviewCard
-          editingMascot={editingMascot}
-          genColor={genColor}
-          genStyle={genStyle}
-          busyAction={busyAction}
-          itemProgress={itemProgress}
-          currentStageMessage={currentStageMessage}
-          generationElapsed={generationElapsed}
-          onZoomPreview={(url) => setLightboxImage(url)}
-          onRemoveBackground={onRemoveBackground}
-        />
-
-        {editingMascot?.master_image_url ? (
+      {/* TIER 2: STYLE THEMES & WARDROBE DECK (FULL-WIDTH HORIZONTAL SHOWCASE) */}
+      {editingMascot?.master_image_url ? (
+        <div className="concept-tier-styles-deck">
           <MascotStyleConceptManager
             editingMascot={editingMascot}
             stylesState={stylesState}
             onOpenLightbox={setLightboxImage}
           />
-        ) : null}
-      </div>
+        </div>
+      ) : null}
 
       {/* Fullscreen Prompt Focus Modal */}
       {isPromptModalOpen ? (

@@ -40,8 +40,6 @@ class App {
     this.btnZenMode = document.getElementById("btn-zen-mode");
     this.zenRestoreBar = document.getElementById("zen-restore-bar");
     this.btnZenExit = document.getElementById("btn-zen-exit");
-    this.btnTogglePulses = document.getElementById("btn-toggle-pulses");
-    this.btnToggleBloom = document.getElementById("btn-toggle-bloom");
     this.btnToggleHeatmap = document.getElementById("btn-toggle-heatmap");
     this.btnCamDirector = document.getElementById("btn-cam-director");
     this.activityTicker = document.getElementById("activity-ticker");
@@ -69,7 +67,7 @@ class App {
       },
       (fileData, screenPos) => {
         this.handleFileHover(fileData, screenPos);
-      }
+      },
     );
   }
 
@@ -90,20 +88,14 @@ class App {
 
     this.btnZenMode?.addEventListener("click", () => this.toggleZenMode());
     this.btnZenExit?.addEventListener("click", () => this.toggleZenMode(false));
-    this.btnTogglePulses?.addEventListener("click", () => this.togglePulses());
-    this.btnToggleBloom?.addEventListener("click", () => this.toggleBloom());
     this.btnToggleHeatmap?.addEventListener("click", () => this.toggleHeatmap());
     this.btnCamDirector?.addEventListener("click", () => this.cycleCameraDirector());
 
-    // Global Keyboard Shortcuts (Press 'H' for Zen, 'P' for Pulses, 'B' for Bloom, 'M' for Heatmap, 'C' for Cam Director, 'Escape' to restore or close)
+    // Global Keyboard Shortcuts (Press 'H' for Zen, 'M' for Heatmap, 'C' for Cam Director, 'Escape' to restore or close)
     window.addEventListener("keydown", (e) => {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
       if (e.key === "h" || e.key === "H") {
         this.toggleZenMode();
-      } else if (e.key === "p" || e.key === "P") {
-        this.togglePulses();
-      } else if (e.key === "b" || e.key === "B") {
-        this.toggleBloom();
       } else if (e.key === "m" || e.key === "M") {
         this.toggleHeatmap();
       } else if (e.key === "c" || e.key === "C") {
@@ -140,6 +132,18 @@ class App {
       if (this.valFileNeurons && topology.files) {
         this.valFileNeurons.textContent = topology.files.length.toLocaleString();
       }
+
+      // Fetch immediate active state so UI and drones appear immediately without waiting for SSE stream event
+      try {
+        const stateRes = await fetch("/api/state");
+        if (stateRes.ok) {
+          const state = await stateRes.json();
+          this.latestState = state;
+          this.updateHUD(state);
+          this.checkStaleClaims(state);
+          this.graph.updateState(state);
+        }
+      } catch (_) {}
 
       this.connectSSE();
     } catch (err) {
@@ -224,9 +228,10 @@ class App {
     this.drawerTitle.textContent = zone.name || zone.id;
 
     // Tags
+    const lockClass = zone.lockPolicy === "shared-disjoint" ? "disjoint" : zone.lockPolicy === "exclusive" ? "exclusive" : "";
     this.drawerTags.innerHTML = `
       <span class="tag ${zone.risk === "high" ? "high-risk" : ""}">${zone.risk.toUpperCase()} RISK</span>
-      <span class="tag">${zone.lockPolicy.toUpperCase()}</span>
+      <span class="tag ${lockClass}">${zone.lockPolicy.toUpperCase()}</span>
       <span class="tag ${zone.status === "active" ? "high-risk" : ""}">${zone.status.toUpperCase()}</span>
       ${zone.hasStaleHeartbeat ? `<span class="tag high-risk">⚠️ STALE HEARTBEAT</span>` : ""}
     `;
@@ -253,7 +258,7 @@ class App {
               : `<div class="claim-task"><i>Whole zone lock (no individual file restriction)</i></div>`
           }
         </div>
-      `
+      `,
         )
         .join("");
       this.drawerClaims.innerHTML = `
@@ -268,7 +273,7 @@ class App {
           <div><span class="claim-agent" style="color: var(--accent-amber);">${r.agent}</span> (Read-Stable)</div>
           <div class="claim-task">Task: ${r.task}</div>
         </div>
-      `
+      `,
         )
         .join("");
       this.drawerClaims.innerHTML = `
@@ -347,15 +352,28 @@ class App {
 
     this.matrixTableBody.innerHTML = this.latestState.zones
       .map((z) => {
-        const writers = z.writers && z.writers.length > 0 ? z.writers.map((w) => w.agent).join(", ") : "-";
+        const writers =
+          z.writers && z.writers.length > 0
+            ? z.writers
+                .map((w) => {
+                  const fileInfo =
+                    w.plannedFiles && w.plannedFiles.length > 0 ? ` (${w.plannedFiles.length} files)` : w.task ? ` (${w.task})` : "";
+                  return `${w.agent}${fileInfo}`;
+                })
+                .join(", ")
+            : "-";
         const statusColor =
           z.status === "active" ? "var(--accent-magenta)" : z.status === "read_stable" ? "var(--accent-amber)" : "var(--accent-green)";
+        const lockTag =
+          z.lockPolicy === "shared-disjoint"
+            ? `<span class="tag disjoint">SHARED-DISJOINT</span>`
+            : `<span class="tag exclusive">${z.lockPolicy.toUpperCase()}</span>`;
         return `
         <tr data-zone="${z.id}">
           <td style="font-weight: 600; color: var(--text-primary);">${z.name || z.id}</td>
           <td><code>${z.id}</code></td>
           <td><span class="tag ${z.risk === "high" ? "high-risk" : ""}">${z.risk}</span></td>
-          <td>${z.lockPolicy}</td>
+          <td>${lockTag}</td>
           <td><span style="color: ${statusColor}; font-weight: 700;">● ${z.status.toUpperCase()}</span></td>
           <td>${writers}</td>
         </tr>
@@ -406,24 +424,6 @@ class App {
     }
   }
 
-  togglePulses(forceState) {
-    if (!this.graph) return;
-    const enabled = this.graph.togglePulses(forceState);
-    if (this.btnTogglePulses) {
-      this.btnTogglePulses.classList.toggle("active", enabled);
-    }
-    this.showToast(enabled ? "⚡ Synapse Pulses: ACTIVE" : "⏸️ Synapse Pulses: PAUSED");
-  }
-
-  toggleBloom(forceState) {
-    if (!this.graph) return;
-    const isBloom = this.graph.toggleBloom(forceState);
-    if (this.btnToggleBloom) {
-      this.btnToggleBloom.classList.toggle("active", isBloom);
-    }
-    this.showToast(isBloom ? "🌟 Bloom FX: ACTIVE" : "🌑 Bloom FX: OFF");
-  }
-
   toggleHeatmap(forceState) {
     if (!this.graph) return;
     const isHeatmap = this.graph.toggleHeatmap(forceState);
@@ -440,6 +440,23 @@ class App {
       this.btnCamDirector.textContent = `🎥 ${modeName}`;
     }
     this.showToast(`Camera: ${modeName}`);
+  }
+
+  toggleDemoDrone() {
+    if (!this.graph) return;
+    const isActive = this.graph.toggleDemoDrone();
+    if (this.btnDemoDrone) {
+      this.btnDemoDrone.classList.toggle("active", isActive);
+    }
+    this.showToast(isActive ? "🤖 Demo Cyber Drone: ACTIVE (Focusing shared-contracts)" : "🤖 Demo Cyber Drone: DEACTIVATED");
+    if (isActive) {
+      this.handleFileActivityHUD({
+        zoneId: "shared-contracts",
+        fileName: "Cyber-Scout Inspection & Repair Active (Shortcut: D)",
+        eventType: "add",
+        agent: "Cyber-Scout",
+      });
+    }
   }
 
   handleFileActivityHUD(activity) {

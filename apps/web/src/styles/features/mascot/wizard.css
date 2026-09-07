@@ -610,16 +610,41 @@
   margin-bottom: 20px;
 }
 
-.step-identity-grid {
+.step-identity-grid,
+.concept-tier-identity-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr);
   gap: 24px;
   align-items: start;
 }
 
 @media (max-width: 1024px) {
-  .step-identity-grid {
+  .step-identity-grid,
+  .concept-tier-identity-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+.mascot-concept-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.concept-tier-styles-deck {
+  width: 100%;
+  animation: fadeInDeck 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInDeck {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

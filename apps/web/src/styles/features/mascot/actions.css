@@ -1109,26 +1109,27 @@
   color: var(--accent);
 }
 
-.mascot-style-tab-add {
+.mascot-style-tab-manage {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
   border-radius: var(--radius-sm);
-  background: transparent;
+  background: var(--surface-hover);
   border: 1px dashed var(--line);
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
+  margin-left: auto;
 }
 
-.mascot-style-tab-add:hover {
+.mascot-style-tab-manage:hover {
   border-color: var(--accent);
   color: var(--accent);
-  background: rgba(6, 182, 212, 0.05);
+  background: rgba(6, 182, 212, 0.08);
 }
 
 /* 2. Active Style Banner */

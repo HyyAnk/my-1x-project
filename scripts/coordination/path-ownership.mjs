@@ -40,7 +40,14 @@ export function validatePlannedFiles(zoneList, writeZones, plannedFiles) {
   for (const file of plannedFiles || []) {
     const matching = findZonesForFile(file, zoneList);
     if (!matching.some((zone) => writeSet.has(zone.id))) {
-      errors.push(`Planned file "${file}" does not belong to a claimed write zone.`);
+      if (matching.length > 0) {
+        const actualZones = matching.map((z) => `"${z.id}"`).join(", ");
+        errors.push(
+          `Planned file "${file}" does not belong to a claimed write zone (it belongs to zone ${actualZones}). Did you mean to claim ${actualZones}?`,
+        );
+      } else {
+        errors.push(`Planned file "${file}" does not belong to a claimed write zone.`);
+      }
     }
   }
 

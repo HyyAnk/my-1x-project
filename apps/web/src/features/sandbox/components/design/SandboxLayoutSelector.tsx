@@ -1,59 +1,29 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { CaretDown, Check, ListDashes, ListNumbers, SquareSplitHorizontal, type IconProps } from "@phosphor-icons/react";
-import { QUIZ_PORTRAIT_LAYOUT_IDS, type QuizPreviewLayoutId, type ResolvedQuizLayoutId } from "@studio/shared";
+import {
+  QUIZ_LANDSCAPE_LAYOUT_IDS,
+  QUIZ_PORTRAIT_LAYOUT_IDS,
+  getCompatibleQuizLayout,
+  type QuizPreviewLayoutId,
+  type ResolvedQuizLayoutId,
+} from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import {
   QUIZ_LAYOUT_UI_DEFINITIONS,
   getQuizLayoutUiDefinition,
+  getQuizLayoutUiDefinitions,
   type QuizLayoutUiDefinition,
 } from "../../../quizLayouts/quizLayoutUiCatalog";
 
 export const PORTRAIT_LAYOUT_IDS: readonly QuizPreviewLayoutId[] = QUIZ_PORTRAIT_LAYOUT_IDS;
-
-export const LANDSCAPE_LAYOUT_IDS: readonly QuizPreviewLayoutId[] = [
-  "media_left_choices_right",
-  "visual_choices_three",
-  "visual_choices_three_pure",
-  "split_versus_two",
-  "verdict_true_false",
-  "full_stack_list",
-  "mystery_reveal",
-  "clue_deduction",
-];
+export const LANDSCAPE_LAYOUT_IDS: readonly QuizPreviewLayoutId[] = QUIZ_LANDSCAPE_LAYOUT_IDS;
 
 export function getCompatibleLayoutForAspectRatio(
   currentLayoutId: QuizPreviewLayoutId,
   targetAspectRatio: "16:9" | "9:16",
 ): QuizPreviewLayoutId {
-  if (targetAspectRatio === "9:16") {
-    if (PORTRAIT_LAYOUT_IDS.includes(currentLayoutId)) {
-      return currentLayoutId;
-    }
-    switch (currentLayoutId) {
-      case "split_versus_two":
-        return "portrait_split_versus";
-      case "verdict_true_false":
-        return "portrait_verdict_tf";
-      case "full_stack_list":
-        return "portrait_stack_list";
-      default:
-        return "portrait_hero_choices";
-    }
-  } else {
-    if (LANDSCAPE_LAYOUT_IDS.includes(currentLayoutId)) {
-      return currentLayoutId;
-    }
-    switch (currentLayoutId) {
-      case "portrait_split_versus":
-        return "split_versus_two";
-      case "portrait_verdict_tf":
-        return "verdict_true_false";
-      case "portrait_stack_list":
-        return "full_stack_list";
-      default:
-        return "media_left_choices_right";
-    }
-  }
+  const resolved = currentLayoutId === "baseline" ? "media_left_choices_right" : currentLayoutId;
+  return getCompatibleQuizLayout(resolved, targetAspectRatio);
 }
 
 export interface SandboxLayoutSelectorProps {
@@ -89,14 +59,7 @@ export function SandboxLayoutSelector({
   const labelId = useId();
 
   const availableLayouts = useMemo(() => {
-    if (aspectRatio === "9:16") {
-      return QUIZ_LAYOUT_UI_DEFINITIONS.filter((layout) =>
-        PORTRAIT_LAYOUT_IDS.includes(layout.id),
-      );
-    }
-    return QUIZ_LAYOUT_UI_DEFINITIONS.filter((layout) =>
-      LANDSCAPE_LAYOUT_IDS.includes(layout.id),
-    );
+    return getQuizLayoutUiDefinitions(aspectRatio);
   }, [aspectRatio]);
 
   useEffect(() => {
@@ -215,7 +178,7 @@ export function SandboxLayoutSelector({
               textOverflow: "ellipsis",
             }}
           >
-            {t(selectedLayout.sandboxLabelKey)}
+            {t(selectedLayout.labelKey)}
           </span>
         </div>
         <CaretDown
@@ -281,7 +244,7 @@ export function SandboxLayoutSelector({
                       size={16}
                       style={{ color: isSelected ? "var(--accent)" : "var(--muted)", flexShrink: 0 }}
                     />
-                    <span style={{ fontSize: "12px", fontWeight: isSelected ? 700 : 500 }}>{t(layout.sandboxLabelKey)}</span>
+                    <span style={{ fontSize: "12px", fontWeight: isSelected ? 700 : 500 }}>{t(layout.labelKey)}</span>
                   </div>
                   <span
                     style={{
@@ -291,7 +254,7 @@ export function SandboxLayoutSelector({
                       lineHeight: 1.2,
                     }}
                   >
-                    {t(layout.sandboxDescriptionKey)}
+                    {t(layout.descriptionKey)}
                   </span>
                 </div>
                 {isSelected && <Check size={16} style={{ color: "var(--accent)", flexShrink: 0 }} />}
@@ -309,7 +272,7 @@ export function SandboxLayoutSelector({
           lineHeight: 1.3,
         }}
       >
-        {t(selectedLayout.sandboxDescriptionKey)}
+        {t(selectedLayout.descriptionKey)}
       </div>
     </div>
   );

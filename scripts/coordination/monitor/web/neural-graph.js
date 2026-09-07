@@ -1,9 +1,5 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { ZONE_POSITIONS, COLOR_MAP } from "./topology-layout.js";
 
 export { ZONE_POSITIONS, COLOR_MAP };
@@ -30,27 +26,25 @@ export class NeuralGraph {
     this.autoRotate = false;
     this.safeZoneMode = null;
     this.cameraAnimation = null;
-    this.synapticPhotons = [];
     this.hologramBadges = [];
     this.microHalos = [];
     this.badgeSideToggle = 0;
-    this.enablePulses = true;
-    this.enableBloom = true;
     this.heatmapMode = false;
     this.cameraMode = 0; // 0: orbit, 1: agent_follow, 2: top_down, 3: cockpit
-    this.agentDrones = new Map(); // claimId -> droneObject
-    this.blastShockwaves = [];
+    this.agentDrones = new Map(); // claimId/droneKey -> droneObject
     this.fileHeatMap = new Map(); // path -> heatNumber (0.0 - 3.0)
     this.zoneHeatMap = new Map(); // zoneId -> heatNumber (0.0 - 5.0)
     this.batchEventQueue = new Map(); // zoneId -> array of events
     this.batchFlushTimers = new Map();
+    this.ambientBeams = [];
+    this.nextAmbientWaveTime = 0;
 
     this.initScene();
-    this.initPostProcessing();
     this.initLights();
     this.initStarfield();
     this.initControls();
     this.initEvents();
+    this.initAmbientBeams();
     this.animate = this.animate.bind(this);
     requestAnimationFrame(this.animate);
   }
@@ -74,34 +68,6 @@ export class NeuralGraph {
 
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2(-9999, -9999);
-  }
-
-  initPostProcessing() {
-    const width = this.container.clientWidth || window.innerWidth || 800;
-    const height = this.container.clientHeight || window.innerHeight || 600;
-
-    try {
-      this.composer = new EffectComposer(this.renderer);
-      const renderPass = new RenderPass(this.scene, this.camera);
-      this.composer.addPass(renderPass);
-
-      const bloomPass = new UnrealBloomPass(
-        new THREE.Vector2(width, height),
-        0.85, // bloom strength
-        0.42, // radius
-        0.2   // threshold (selective bloom: deep space stays crisp)
-      );
-      this.bloomPass = bloomPass;
-      this.composer.addPass(bloomPass);
-
-      const outputPass = new OutputPass();
-      this.composer.addPass(outputPass);
-      this.enableBloom = true;
-    } catch (err) {
-      console.warn("Post-processing initialization fallback:", err);
-      this.composer = null;
-      this.enableBloom = false;
-    }
   }
 
   initLights() {
@@ -171,9 +137,6 @@ export class NeuralGraph {
       this.camera.aspect = width / height;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(width, height);
-      if (this.composer) {
-        this.composer.setSize(width, height);
-      }
     });
 
     this.renderer.domElement.addEventListener("mousemove", (e) => {
@@ -334,50 +297,12 @@ export class NeuralGraph {
       const line = new THREE.Line(curveGeo, curveMat);
       this.scene.add(line);
 
-      // 2c. Streamlined Photonic Light Beams (Laser Pulses)
-      const packetCount = 2;
-      const particles = [];
-      for (let i = 0; i < packetCount; i++) {
-        // Outer glowing beam capsule with additive neon halo
-        const haloGeo = new THREE.CapsuleGeometry(0.46, 4.0, 6, 8);
-        const haloMat = new THREE.MeshBasicMaterial({
-          color: 0x00f0ff,
-          transparent: true,
-          opacity: 0.75,
-          blending: THREE.AdditiveBlending,
-          depthWrite: false,
-        });
-        const haloMesh = new THREE.Mesh(haloGeo, haloMat);
-
-        // White-hot plasma core filament
-        const coreGeo = new THREE.CapsuleGeometry(0.18, 3.6, 4, 8);
-        const coreMat = new THREE.MeshBasicMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.95,
-          blending: THREE.AdditiveBlending,
-          depthWrite: false,
-        });
-        const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-        haloMesh.add(coreMesh);
-
-        this.scene.add(haloMesh);
-
-        particles.push({
-          mesh: haloMesh,
-          coreMesh,
-          progress: i / packetCount,
-          speed: 0.0035 + Math.random() * 0.002,
-        });
-      }
-
       this.axonLines.push({
         source: link.source,
         target: link.target,
         conduit,
         line,
         curve,
-        particles,
         phase: Math.random() * Math.PI * 2,
         isHovered: false,
         isActive: false,
@@ -442,7 +367,8 @@ export class NeuralGraph {
     }
 
     const totalFiles = files.length;
-    const sphereGeo = new THREE.SphereGeometry(0.38, 8, 6);
+    // Scaled down to 30% of original 0.38 radius for delicate, non-crowded particle points
+    const sphereGeo = new THREE.SphereGeometry(0.114, 8, 6);
     const sphereMat = new THREE.MeshStandardMaterial({
       roughness: 0.25,
       metalness: 0.65,
@@ -556,12 +482,18 @@ export class NeuralGraph {
     const dendriteMat = new THREE.LineBasicMaterial({
       vertexColors: true,
       transparent: true,
-      opacity: 0.16,
+      opacity: 0.08,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
     this.dendriteLineSegments = new THREE.LineSegments(dendriteGeo, dendriteMat);
     this.scene.add(this.dendriteLineSegments);
+
+    // Initialize active Cyber Drone fleet immediately so drones fly from the very first frame
+    this.updateAgentDrones();
+
+    // Schedule initial wave of ambient synaptic light beams
+    this.nextAmbientWaveTime = performance.now() + 1000;
   }
 
   findFileNodeByName(fileName) {
@@ -572,32 +504,9 @@ export class NeuralGraph {
     return null;
   }
 
-  fireDendritePhoton(fileNode) {
-    const curve = new THREE.LineCurve3(fileNode.worldPos, fileNode.zonePos);
-    const mesh = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.24, 1.2, 4, 8),
-      new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        blending: THREE.AdditiveBlending,
-        transparent: true,
-        opacity: 1.0,
-      })
-    );
-    this.scene.add(mesh);
-    this.synapticPhotons.push({
-      mesh,
-      curve,
-      forward: true,
-      progress: 0.0,
-      speed: 0.045, // fast laser dash into zone center
-      targetZoneId: fileNode.zoneId,
-      startTime: performance.now(),
-    });
-  }
-
   spawnMicroHalo(pos, eventType) {
-    const haloColor = 0xbf00ff; // Neon Purple / Electric Violet
-    const ringGeo = new THREE.RingGeometry(0.55, 0.82, 32);
+    const haloColor = 0xff2244; // Radiant Cyber Red
+    const ringGeo = new THREE.RingGeometry(0.165, 0.246, 32);
     const ringMat = new THREE.MeshBasicMaterial({
       color: haloColor,
       side: THREE.DoubleSide,
@@ -624,10 +533,10 @@ export class NeuralGraph {
     canvas.height = 104;
     const ctx = canvas.getContext("2d");
 
-    let strokeColor = "#bf00ff";
-    let textColor = "#f0abfc";
+    let strokeColor = "#ff2244";
+    let textColor = "#fca5a5";
     let prefix = "⚡ ";
-    let bgColor = "rgba(24, 8, 42, 0.94)";
+    let bgColor = "rgba(36, 8, 14, 0.94)";
 
     if (isBatch) {
       strokeColor = "#00f0ff";
@@ -682,8 +591,9 @@ export class NeuralGraph {
     });
 
     const sprite = new THREE.Sprite(spriteMaterial);
-    sprite.scale.set(13.5, 3.2, 1);
-    const startY = pos.y + 2.5;
+    // Scaled down to 30% of previous dimensions for compact, high signal-to-noise display
+    sprite.scale.set(2.0, 0.48, 1);
+    const startY = pos.y + 0.8;
     sprite.position.set(pos.x, startY, pos.z);
 
     // Find the lowest unoccupied slot index (0, 1, 2, 3...)
@@ -696,8 +606,8 @@ export class NeuralGraph {
     const col = slotIndex % 2; // 0 = Left, 1 = Right
     const tier = Math.floor(slotIndex / 2);
     const sideSign = col === 0 ? -1 : 1;
-    const horizontalOffset = sideSign * 22.0; // 44 units separation between Left and Right
-    const targetHeight = 22.0 + tier * 15.0; // 15 units vertical gap between tiers
+    const horizontalOffset = sideSign * 6.0; // Compact 12 units separation between Left and Right
+    const targetHeight = 6.0 + tier * 4.0; // Compact 4 units vertical gap between tiers
 
     // Glowing neon leader line connecting source to the rising badge
     const lineGeo = new THREE.BufferGeometry().setFromPoints([
@@ -793,12 +703,11 @@ export class NeuralGraph {
 
     if (this.safeZoneMode) {
       this.applySafeZoneHighlights();
+      this.updateAgentDrones(state.claims || [], state.zones || []);
       return;
     }
 
-    const activeZoneIds = new Set(
-      state.zones.filter((z) => z.status === "active").map((z) => z.id)
-    );
+    const activeZoneIds = new Set(state.zones.filter((z) => z.status === "active").map((z) => z.id));
 
     for (const zState of state.zones) {
       const node = this.nodeMeshes.get(zState.id);
@@ -853,15 +762,17 @@ export class NeuralGraph {
         axon.conduit.material.opacity = isConnectedToActive ? 0.55 : 0.14;
       }
 
-      for (const p of axon.particles) {
-        p.mesh.material.color.setHex(pColor);
-        p.mesh.scale.set(pScale, pScale * 1.5, pScale);
-        p.speed = pSpeed + Math.random() * 0.001;
+      if (axon.particles) {
+        for (const p of axon.particles) {
+          p.mesh.material.color.setHex(pColor);
+          p.mesh.scale.set(pScale, pScale * 1.5, pScale);
+          p.speed = pSpeed + Math.random() * 0.001;
+        }
       }
     }
 
-    // Synchronize 3D Agent Quantum Drones
-    this.updateAgentDrones(state.claims || []);
+    // Synchronize 3D Agent Cyber Drones (always active, multi-zone per claim)
+    this.updateAgentDrones(state.claims || [], state.zones || []);
   }
 
   highlightSafeZones(targetZoneId, safeZoneIds, conflictingZones) {
@@ -888,45 +799,46 @@ export class NeuralGraph {
         node.gyroRing2.material.color.setHex(0xf59e0b);
         node.labelSprite.material.opacity = 1.0;
       } else if (safeSet.has(id)) {
-        // Safe disjoint zone: bright neon green
+        // Safe: emerald green glow
         node.coreMesh.material.color.setHex(0x10b981);
         node.coreMesh.material.emissive.setHex(0x10b981);
         node.coreMesh.material.emissiveIntensity = 1.0;
         node.coreMesh.material.transparent = false;
         node.coreMesh.material.opacity = 1.0;
         node.latticeMesh.material.color.setHex(0x10b981);
-        node.latticeMesh.material.opacity = 0.65;
+        node.latticeMesh.material.opacity = 0.5;
         node.gyroRing1.material.color.setHex(0x10b981);
         node.gyroRing2.material.color.setHex(0x10b981);
-        node.labelSprite.material.opacity = 1.0;
+        node.labelSprite.material.opacity = 0.9;
       } else {
-        // Conflicting zone: dimmed
-        node.coreMesh.material.color.setHex(0x475569);
-        node.coreMesh.material.emissive.setHex(0x1e293b);
-        node.coreMesh.material.emissiveIntensity = 0.1;
+        // Conflicting: dim red/slate
+        node.coreMesh.material.color.setHex(0x334155);
+        node.coreMesh.material.emissive.setHex(0xef4444);
+        node.coreMesh.material.emissiveIntensity = 0.2;
         node.coreMesh.material.transparent = true;
-        node.coreMesh.material.opacity = 0.2;
-        node.latticeMesh.material.opacity = 0.05;
-        node.gyroRing1.material.opacity = 0.05;
-        node.gyroRing2.material.opacity = 0.05;
-        node.labelSprite.material.opacity = 0.25;
+        node.coreMesh.material.opacity = 0.35;
+        node.latticeMesh.material.color.setHex(0x334155);
+        node.latticeMesh.material.opacity = 0.1;
+        node.gyroRing1.material.color.setHex(0x334155);
+        node.gyroRing2.material.color.setHex(0x334155);
+        node.labelSprite.material.opacity = 0.3;
       }
     }
 
-    // Axons to safe zones highlighted in green
     for (const axon of this.axonLines) {
-      const isTargetConn = axon.source === targetZoneId || axon.target === targetZoneId;
-      const isSafeConn = safeSet.has(axon.source) || safeSet.has(axon.target);
-      if (isTargetConn && isSafeConn) {
-        axon.line.material.color.setHex(0x10b981);
+      const isTargetConnected = axon.source === targetZoneId || axon.target === targetZoneId;
+      if (isTargetConnected) {
+        axon.line.material.color.setHex(0xf59e0b);
         axon.line.material.opacity = 0.85;
         if (axon.conduit) {
           axon.conduit.material.color.setHex(0x10b981);
           axon.conduit.material.opacity = 0.65;
         }
-        for (const p of axon.particles) {
-          p.mesh.material.color.setHex(0x10b981);
-          p.mesh.visible = true;
+        if (axon.particles) {
+          for (const p of axon.particles) {
+            p.mesh.material.color.setHex(0x10b981);
+            p.mesh.visible = true;
+          }
         }
       } else {
         axon.line.material.color.setHex(0x334155);
@@ -935,8 +847,10 @@ export class NeuralGraph {
           axon.conduit.material.color.setHex(0x334155);
           axon.conduit.material.opacity = 0.02;
         }
-        for (const p of axon.particles) {
-          p.mesh.visible = false;
+        if (axon.particles) {
+          for (const p of axon.particles) {
+            p.mesh.visible = false;
+          }
         }
       }
     }
@@ -953,8 +867,10 @@ export class NeuralGraph {
       node.labelSprite.material.opacity = 1.0;
     }
     for (const axon of this.axonLines) {
-      for (const p of axon.particles) {
-        p.mesh.visible = true;
+      if (axon.particles) {
+        for (const p of axon.particles) {
+          p.mesh.visible = true;
+        }
       }
     }
     this.updateState(this.coordinationState);
@@ -981,16 +897,6 @@ export class NeuralGraph {
     this.autoRotate = !this.autoRotate;
     this.controls.autoRotate = this.autoRotate;
     this.controls.autoRotateSpeed = 0.8;
-  }
-
-  togglePulses(forceState) {
-    this.enablePulses = typeof forceState === "boolean" ? forceState : !this.enablePulses;
-    return this.enablePulses;
-  }
-
-  toggleBloom(forceState) {
-    this.enableBloom = typeof forceState === "boolean" ? forceState : !this.enableBloom;
-    return this.enableBloom;
   }
 
   toggleHeatmap(forceState) {
@@ -1050,167 +956,504 @@ export class NeuralGraph {
     return "Cam: Orbit";
   }
 
-  triggerBlastRadius(zoneId, dependentZones = []) {
-    const zonePos = ZONE_POSITIONS[zoneId];
-    if (!zonePos) return;
+  initAmbientBeams() {
+    this.ambientBeams = [];
+    // Pre-allocate 5 reusable beam objects (pool for 3-5 concurrent staggered beams)
+    for (let i = 0; i < 5; i++) {
+      const headGeo = new THREE.SphereGeometry(0.42, 8, 8);
+      const headMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const headMesh = new THREE.Mesh(headGeo, headMat);
+      headMesh.visible = false;
+      this.scene.add(headMesh);
 
-    // Expanding shockwave ring centered at zone soma
-    const ringGeo = new THREE.RingGeometry(0.6, 2.2, 48);
-    const ringMat = new THREE.MeshBasicMaterial({
-      color: 0xff0055,
-      transparent: true,
-      opacity: 0.9,
-      blending: THREE.AdditiveBlending,
-      side: THREE.DoubleSide,
-      depthWrite: false,
-    });
-    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-    ringMesh.position.set(zonePos.x, zonePos.y, zonePos.z);
-    ringMesh.rotation.x = Math.PI / 2;
-    this.scene.add(ringMesh);
+      const tailSegments = 16;
+      const tailGeo = new THREE.BufferGeometry();
+      const tailPositions = new Float32Array(tailSegments * 3);
+      tailGeo.setAttribute("position", new THREE.BufferAttribute(tailPositions, 3));
+      const tailMat = new THREE.LineBasicMaterial({
+        color: 0x00f0ff,
+        transparent: true,
+        opacity: 0.0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      const tailLine = new THREE.Line(tailGeo, tailMat);
+      tailLine.visible = false;
+      this.scene.add(tailLine);
 
-    this.blastShockwaves.push({
-      mesh: ringMesh,
-      startTime: performance.now(),
-      durationMs: 1800,
-      maxScale: 26.0,
-    });
-
-    // Secondary vertical billboard shockwave
-    const ringGeo2 = new THREE.RingGeometry(0.5, 1.8, 36);
-    const ringMat2 = new THREE.MeshBasicMaterial({
-      color: 0xf59e0b,
-      transparent: true,
-      opacity: 0.8,
-      blending: THREE.AdditiveBlending,
-      side: THREE.DoubleSide,
-      depthWrite: false,
-    });
-    const ringMesh2 = new THREE.Mesh(ringGeo2, ringMat2);
-    ringMesh2.position.set(zonePos.x, zonePos.y, zonePos.z);
-    ringMesh2.quaternion.copy(this.camera.quaternion);
-    this.scene.add(ringMesh2);
-
-    this.blastShockwaves.push({
-      mesh: ringMesh2,
-      startTime: performance.now(),
-      durationMs: 1400,
-      maxScale: 20.0,
-    });
-
-    // Cascade resonance to dependent zones
-    for (const depId of dependentZones) {
-      const depNode = this.nodeMeshes.get(depId);
-      if (depNode) {
-        depNode.resonance = 1.0;
-      }
+      this.ambientBeams.push({
+        headMesh,
+        tailLine,
+        tailSegments,
+        active: false,
+        launchTime: 0,
+        duration: 1300,
+        axon: null,
+        reverse: false,
+        tailLength: 0.22,
+      });
     }
   }
 
-  updateAgentDrones(claims = []) {
-    const activeClaimIds = new Set();
+  scheduleAmbientBeamWave(now) {
+    if (!this.axonLines || this.axonLines.length === 0) return;
 
-    for (const claim of claims) {
-      if (claim.isDead) continue;
-      activeClaimIds.add(claim.id);
+    // Pick 3 to 5 random distinct connection lines (axons)
+    const count = 3 + Math.floor(Math.random() * 3); // 3, 4, or 5
+    const available = [...this.axonLines];
+    const chosenAxons = [];
 
-      let drone = this.agentDrones.get(claim.id);
-      if (!drone) {
-        drone = this.createAgentDrone(claim);
-        this.agentDrones.set(claim.id, drone);
-      } else {
-        drone.plannedFiles = claim.plannedFiles || [];
-        const targetZoneId = (claim.writeZones && claim.writeZones[0]) || drone.targetZoneId;
-        if (targetZoneId !== drone.targetZoneId) {
-          drone.targetZoneId = targetZoneId;
-          const newPos = ZONE_POSITIONS[targetZoneId] || { x: 0, y: 0, z: 0 };
-          drone.zonePos = newPos;
+    for (let i = 0; i < count && available.length > 0; i++) {
+      const idx = Math.floor(Math.random() * available.length);
+      chosenAxons.push(available.splice(idx, 1)[0]);
+    }
+
+    // Schedule each beam with non-simultaneous staggered launch (0.2s - 0.7s gap)
+    let currentLaunchTime = now;
+    for (let i = 0; i < chosenAxons.length; i++) {
+      if (i > 0) {
+        // Stagger between 0.2s (200ms) and 0.7s (700ms) strictly adhering to user requirement
+        const staggerMs = 200 + Math.random() * 500;
+        currentLaunchTime += staggerMs;
+      }
+
+      const beam = this.ambientBeams[i];
+      beam.active = true;
+      beam.axon = chosenAxons[i];
+      beam.launchTime = currentLaunchTime;
+      beam.duration = 1200 + Math.random() * 500; // 1.2s - 1.7s traversal time
+      beam.reverse = Math.random() > 0.5; // Random transmission direction
+      beam.headMesh.visible = false;
+      beam.tailLine.visible = false;
+    }
+
+    // Schedule next wave after the final beam has finished traversing + random rest interval (2.0s - 4.5s)
+    const lastBeamDuration = this.ambientBeams[chosenAxons.length - 1]?.duration || 1400;
+    const waveCompletionTime = currentLaunchTime + lastBeamDuration;
+    const waveRestMs = 2000 + Math.random() * 2500;
+    this.nextAmbientWaveTime = waveCompletionTime + waveRestMs;
+  }
+
+  animateAmbientBeams(now) {
+    if (!this.axonLines || this.axonLines.length === 0) return;
+
+    // Check if it's time to trigger the next ambient wave
+    if (now >= this.nextAmbientWaveTime) {
+      this.scheduleAmbientBeamWave(now);
+    }
+
+    for (let i = 0; i < this.ambientBeams.length; i++) {
+      const beam = this.ambientBeams[i];
+      if (!beam.active || !beam.axon || !beam.axon.curve) continue;
+
+      // Waiting for staggered launch time
+      if (now < beam.launchTime) {
+        beam.headMesh.visible = false;
+        beam.tailLine.visible = false;
+        continue;
+      }
+
+      const elapsed = now - beam.launchTime;
+      const progress = elapsed / beam.duration;
+
+      if (progress >= 1.0) {
+        // Beam reached destination
+        beam.active = false;
+        beam.headMesh.visible = false;
+        beam.tailLine.visible = false;
+
+        // Subtle synaptic energy ripple at destination zone node
+        const arrivalZoneId = beam.reverse ? beam.axon.source : beam.axon.target;
+        const node = this.nodeMeshes.get(arrivalZoneId);
+        if (node && node.excitation < 0.25) {
+          node.excitation = Math.max(node.excitation, 0.2);
+        }
+        continue;
+      }
+
+      const headT = beam.reverse ? 1.0 - progress : progress;
+      const curve = beam.axon.curve;
+      const headPos = curve.getPoint(headT);
+
+      // Smooth opacity ramp: fade in at start, fade out at end
+      let alpha = 1.0;
+      if (progress < 0.12) {
+        alpha = progress / 0.12;
+      } else if (progress > 0.88) {
+        alpha = (1.0 - progress) / 0.12;
+      }
+
+      // Update head mesh
+      beam.headMesh.position.copy(headPos);
+      beam.headMesh.material.opacity = alpha * 0.95;
+      beam.headMesh.visible = true;
+
+      // Update trailing streak line
+      beam.tailLine.visible = true;
+      beam.tailLine.material.opacity = alpha * 0.85;
+
+      const tailLength = beam.tailLength;
+      const tailPosArr = beam.tailLine.geometry.attributes.position.array;
+      const numPts = beam.tailSegments;
+
+      for (let j = 0; j < numPts; j++) {
+        const frac = j / (numPts - 1); // 0 (tail tip) to 1 (head)
+        let ptT;
+        if (beam.reverse) {
+          ptT = Math.min(1.0, Math.max(0.0, headT + (1.0 - frac) * tailLength));
+        } else {
+          ptT = Math.max(0.0, Math.min(1.0, headT - (1.0 - frac) * tailLength));
+        }
+        const pt = curve.getPoint(ptT);
+        const idx = j * 3;
+        tailPosArr[idx] = pt.x;
+        tailPosArr[idx + 1] = pt.y;
+        tailPosArr[idx + 2] = pt.z;
+      }
+      beam.tailLine.geometry.attributes.position.needsUpdate = true;
+    }
+  }
+
+  updateAgentDrones(claims = [], zones = []) {
+    const activeTargets = [];
+    const activeKeys = new Set();
+
+    // 1. Identify real active claims from claims list (multi-zone support per claim)
+    if (claims && claims.length > 0) {
+      for (const claim of claims) {
+        const writeZones = claim.writeZones && claim.writeZones.length > 0 ? claim.writeZones : ["shared-contracts"];
+        for (const zoneId of writeZones) {
+          const droneKey = `${claim.id}:${zoneId}`;
+          if (!activeKeys.has(droneKey)) {
+            activeKeys.add(droneKey);
+            activeTargets.push({
+              id: droneKey,
+              claimId: claim.id,
+              agentName: claim.agent || "Agent",
+              targetZoneId: zoneId,
+              plannedFiles: claim.plannedFiles || [],
+            });
+          }
         }
       }
     }
 
-    for (const [claimId, drone] of this.agentDrones.entries()) {
-      if (!activeClaimIds.has(claimId) && !drone.isWarpingOut) {
+    // 2. Cross-reference zones with active writers or active status
+    if (zones && zones.length > 0) {
+      for (const z of zones) {
+        if (z.status === "active") {
+          if (z.writers && z.writers.length > 0) {
+            for (const w of z.writers) {
+              const droneKey = `${w.id}:${z.id}`;
+              if (!activeKeys.has(droneKey)) {
+                activeKeys.add(droneKey);
+                activeTargets.push({
+                  id: droneKey,
+                  claimId: w.id,
+                  agentName: w.agent || "Agent",
+                  targetZoneId: z.id,
+                  plannedFiles: w.plannedFiles || [],
+                });
+              }
+            }
+          } else {
+            // Zone has active status from claim, guarantee drone presence!
+            const droneKey = `zone-active:${z.id}`;
+            if (!activeKeys.has(droneKey)) {
+              activeKeys.add(droneKey);
+              activeTargets.push({
+                id: droneKey,
+                claimId: `claim-${z.id}`,
+                agentName: "Agent",
+                targetZoneId: z.id,
+                plannedFiles: [],
+              });
+            }
+          }
+        }
+      }
+    }
+
+    // 3. Update existing drones or create new ones for each active claim
+    for (const target of activeTargets) {
+      let drone = this.agentDrones.get(target.id);
+      if (!drone) {
+        drone = this.createAgentDrone(target);
+        this.agentDrones.set(target.id, drone);
+      } else {
+        drone.plannedFiles = target.plannedFiles || [];
+        if (target.targetZoneId !== drone.targetZoneId) {
+          drone.targetZoneId = target.targetZoneId;
+          const newPos = ZONE_POSITIONS[target.targetZoneId] || { x: 0, y: 0, z: 0 };
+          drone.zonePos = newPos;
+        }
+        if (drone.isWarpingOut) {
+          drone.isWarpingOut = false;
+        }
+      }
+    }
+
+    // 5. Warp out any drones that are no longer in activeKeys
+    for (const [key, drone] of this.agentDrones.entries()) {
+      if (!activeKeys.has(key) && !drone.isWarpingOut) {
         drone.isWarpingOut = true;
         drone.warpStartTime = performance.now();
       }
     }
   }
 
-  createAgentDrone(claim) {
+  createAgentDrone(info) {
     const droneGroup = new THREE.Group();
-    const targetZoneId = (claim.writeZones && claim.writeZones[0]) || "agent-coordination";
+    const targetZoneId = info.targetZoneId || (info.writeZones && info.writeZones[0]) || "agent-coordination";
     const zonePos = ZONE_POSITIONS[targetZoneId] || { x: 0, y: 0, z: 0, radius: 4 };
+    const agentName = info.agentName || info.agent || "Agent";
+    const claimId = info.claimId || info.id || `claim-${targetZoneId}`;
+    const droneKey = info.id || `${claimId}:${targetZoneId}`;
 
     droneGroup.position.set(zonePos.x, zonePos.y + 10, zonePos.z);
     droneGroup.scale.set(0.01, 0.01, 0.01);
 
-    // 1. Quantum Core (Dual Octahedron)
-    const coreGeo = new THREE.OctahedronGeometry(1.6, 1);
-    const coreMat = new THREE.MeshStandardMaterial({
-      color: 0x00f0ff,
-      emissive: 0x00f0ff,
-      emissiveIntensity: 1.25,
-      roughness: 0.15,
+    // Subgroup containing all articulating drone body meshes
+    // Pitch/roll/yaw rotations are applied here so tagSprite stays upright and facing camera
+    const modelGroup = new THREE.Group();
+    // Scale up drone model by 1.7x so it is prominent, high-contrast and unmistakable
+    modelGroup.scale.set(1.7, 1.7, 1.7);
+    droneGroup.add(modelGroup);
+
+    const droneMeshes = [];
+
+    // 1. Sleek Aerodynamic Fuselage (Faceted Titanium Silver Hull with Cyber Red Emissive)
+    const hullGeo = new THREE.ConeGeometry(1.5, 3.2, 5);
+    hullGeo.rotateX(Math.PI / 2); // Point forward (+Z)
+    const hullMat = new THREE.MeshStandardMaterial({
+      color: 0xf8fafc, // Polished Titanium Silver / White
+      metalness: 0.94,
+      roughness: 0.16,
+      emissive: 0xff1e42, // Radiant Cyber Red backlight
+      emissiveIntensity: 0.32,
+    });
+    const hullMesh = new THREE.Mesh(hullGeo, hullMat);
+    hullMesh.scale.set(1.15, 0.52, 1.0);
+    modelGroup.add(hullMesh);
+    droneMeshes.push(hullMesh);
+
+    // Dorsal armor ridge
+    const ridgeGeo = new THREE.CylinderGeometry(0.32, 0.65, 2.2, 5);
+    ridgeGeo.rotateX(Math.PI / 2);
+    const ridgeMat = new THREE.MeshStandardMaterial({
+      color: 0x334155, // Dark slate contrast armor
+      metalness: 0.88,
+      roughness: 0.2,
+    });
+    const ridgeMesh = new THREE.Mesh(ridgeGeo, ridgeMat);
+    ridgeMesh.position.set(0, 0.32, -0.2);
+    ridgeMesh.scale.set(0.85, 0.6, 1.0);
+    modelGroup.add(ridgeMesh);
+    droneMeshes.push(ridgeMesh);
+
+    // Strobe Beacon Antenna on Dorsal Ridge (blinking navigation light)
+    const antennaGeo = new THREE.CylinderGeometry(0.04, 0.08, 0.75, 6);
+    const antennaMat = new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.9 });
+    const antennaMesh = new THREE.Mesh(antennaGeo, antennaMat);
+    antennaMesh.position.set(0, 0.75, -0.2);
+    modelGroup.add(antennaMesh);
+    droneMeshes.push(antennaMesh);
+
+    const beaconGeo = new THREE.SphereGeometry(0.18, 8, 8);
+    const beaconMat = new THREE.MeshBasicMaterial({ color: 0xff2244 });
+    const beaconMesh = new THREE.Mesh(beaconGeo, beaconMat);
+    beaconMesh.position.set(0, 1.15, -0.2);
+    modelGroup.add(beaconMesh);
+    droneMeshes.push(beaconMesh);
+
+    // 2. Cyber Visor / Sensory Eye (Radiant Cyber Red glow)
+    const visorGeo = new THREE.BoxGeometry(0.9, 0.22, 0.35);
+    const visorMat = new THREE.MeshBasicMaterial({
+      color: 0xff2244,
+    });
+    const visorMesh = new THREE.Mesh(visorGeo, visorMat);
+    visorMesh.position.set(0, 0.25, 1.15);
+    modelGroup.add(visorMesh);
+    droneMeshes.push(visorMesh);
+
+    // 3. Outrigger Thruster Wings & Pods
+    const wingGeo = new THREE.BoxGeometry(3.6, 0.12, 0.7);
+    const wingMat = new THREE.MeshStandardMaterial({
+      color: 0x475569,
       metalness: 0.85,
+      roughness: 0.22,
     });
-    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-    droneGroup.add(coreMesh);
+    const wingMesh = new THREE.Mesh(wingGeo, wingMat);
+    wingMesh.position.set(0, 0.05, -0.35);
+    modelGroup.add(wingMesh);
+    droneMeshes.push(wingMesh);
 
-    // 2. Kinetic Gyro Rings / Shield
-    const shieldGeo = new THREE.IcosahedronGeometry(2.5, 1);
-    const shieldMat = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.6,
+    // Wing Neon Accent Strips (Vivid Cyber Red leading edge)
+    const wingStripGeo = new THREE.BoxGeometry(3.7, 0.08, 0.12);
+    const wingStripMat = new THREE.MeshBasicMaterial({ color: 0xff2244 });
+    const wingStripMesh = new THREE.Mesh(wingStripGeo, wingStripMat);
+    wingStripMesh.position.set(0, 0.08, -0.05);
+    modelGroup.add(wingStripMesh);
+    droneMeshes.push(wingStripMesh);
+
+    // Dual Thruster Nacelles (Left & Right)
+    const thrusterGeo = new THREE.CylinderGeometry(0.3, 0.36, 1.4, 8);
+    thrusterGeo.rotateX(Math.PI / 2);
+    const thrusterMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      metalness: 0.9,
+      roughness: 0.18,
     });
-    const shieldMesh = new THREE.Mesh(shieldGeo, shieldMat);
-    droneGroup.add(shieldMesh);
+    const leftThruster = new THREE.Mesh(thrusterGeo, thrusterMat);
+    leftThruster.position.set(-1.75, 0.05, -0.35);
+    modelGroup.add(leftThruster);
+    droneMeshes.push(leftThruster);
 
-    // 3. Drone PointLight
-    const droneLight = new THREE.PointLight(0x00f0ff, 1.8, 30);
-    droneGroup.add(droneLight);
+    const rightThruster = new THREE.Mesh(thrusterGeo, thrusterMat);
+    rightThruster.position.set(1.75, 0.05, -0.35);
+    modelGroup.add(rightThruster);
+    droneMeshes.push(rightThruster);
 
-    // 4. Drone Agent Hologram Tag
-    const tagSprite = this.createAgentLabelSprite(claim.agent || "agent");
-    tagSprite.position.set(0, 3.8, 0);
-    droneGroup.add(tagSprite);
-
-    // 5. Dynamic Laser Scanner Beam
-    const scannerGeo = new THREE.BufferGeometry();
-    const scannerPos = new Float32Array(6);
-    scannerGeo.setAttribute("position", new THREE.BufferAttribute(scannerPos, 3));
-    const scannerMat = new THREE.LineBasicMaterial({
-      color: 0x00f0ff,
+    // Thruster Plasma Plumes (rear exhaust cones in vibrant crimson)
+    const plumeGeo = new THREE.ConeGeometry(0.28, 1.1, 8);
+    plumeGeo.rotateX(-Math.PI / 2); // Point backward (-Z)
+    const plumeMat = new THREE.MeshBasicMaterial({
+      color: 0xff3355,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.9,
       blending: THREE.AdditiveBlending,
     });
-    const scannerLine = new THREE.Line(scannerGeo, scannerMat);
-    this.scene.add(scannerLine);
+    const leftPlume = new THREE.Mesh(plumeGeo, plumeMat);
+    leftPlume.position.set(-1.75, 0.05, -1.35);
+    modelGroup.add(leftPlume);
+    droneMeshes.push(leftPlume);
+
+    const rightPlume = new THREE.Mesh(plumeGeo, plumeMat);
+    rightPlume.position.set(1.75, 0.05, -1.35);
+    modelGroup.add(rightPlume);
+    droneMeshes.push(rightPlume);
+
+    // 4. Ventral Turret / Emitter Gimbal & Barrel
+    const gimbalGeo = new THREE.SphereGeometry(0.35, 8, 8);
+    const gimbalMat = new THREE.MeshStandardMaterial({
+      color: 0x64748b,
+      metalness: 0.9,
+      roughness: 0.2,
+    });
+    const gimbalMesh = new THREE.Mesh(gimbalGeo, gimbalMat);
+    gimbalMesh.position.set(0, -0.28, 0.35);
+    modelGroup.add(gimbalMesh);
+    droneMeshes.push(gimbalMesh);
+
+    const barrelGeo = new THREE.CylinderGeometry(0.12, 0.16, 0.7, 8);
+    barrelGeo.rotateX(Math.PI / 2);
+    const barrelMat = new THREE.MeshBasicMaterial({ color: 0x00ff88 });
+    const barrelMesh = new THREE.Mesh(barrelGeo, barrelMat);
+    barrelMesh.position.set(0, -0.28, 0.8);
+    modelGroup.add(barrelMesh);
+    droneMeshes.push(barrelMesh);
+
+    // 5. Drone PointLight (Atmospheric cyber red illumination)
+    const droneLight = new THREE.PointLight(0xff2244, 2.8, 36);
+    droneLight.position.set(0, 0.6, 0.5);
+    droneGroup.add(droneLight);
+
+    // 6. Drone Agent Hologram Tag
+    const tagSprite = this.createAgentLabelSprite(agentName);
+    tagSprite.position.set(0, 2.7, 0);
+    droneGroup.add(tagSprite);
 
     this.scene.add(droneGroup);
 
+    // 7. Precision Dual-Core Laser Beam (Vivid Cyber Green Outer, Blazing White Core)
+    const laserGeo = new THREE.BufferGeometry();
+    const laserPos = new Float32Array(6);
+    laserGeo.setAttribute("position", new THREE.BufferAttribute(laserPos, 3));
+    const laserMat = new THREE.LineBasicMaterial({
+      color: 0x00ff88,
+      transparent: true,
+      opacity: 0.0,
+      blending: THREE.AdditiveBlending,
+    });
+    const laserLine = new THREE.Line(laserGeo, laserMat);
+    laserLine.visible = false;
+    this.scene.add(laserLine);
+
+    const coreLaserGeo = new THREE.BufferGeometry();
+    const coreLaserPos = new Float32Array(6);
+    coreLaserGeo.setAttribute("position", new THREE.BufferAttribute(coreLaserPos, 3));
+    const coreLaserMat = new THREE.LineBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.0,
+      blending: THREE.AdditiveBlending,
+    });
+    const coreLaserLine = new THREE.Line(coreLaserGeo, coreLaserMat);
+    coreLaserLine.visible = false;
+    this.scene.add(coreLaserLine);
+
+    // 8. Plasma Contact Ring / Repair Flare at Target Impact Point (Vivid Cyber Green)
+    const flareGeo = new THREE.RingGeometry(0.2, 2.0, 24);
+    const flareMat = new THREE.MeshBasicMaterial({
+      color: 0x00ff88,
+      transparent: true,
+      opacity: 0.0,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const flareMesh = new THREE.Mesh(flareGeo, flareMat);
+    flareMesh.rotation.x = Math.PI / 2;
+    flareMesh.visible = false;
+    this.scene.add(flareMesh);
+
+    const planned = info.plannedFiles || [];
     return {
-      claimId: claim.id,
-      agentName: claim.agent,
+      claimId,
+      droneKey,
+      agentName,
       targetZoneId,
       zonePos,
       group: droneGroup,
-      coreMesh,
-      shieldMesh,
+      modelGroup,
+      droneMeshes,
+      beaconMesh,
+      leftPlume,
+      rightPlume,
       droneLight,
       tagSprite,
-      scannerLine,
-      plannedFiles: claim.plannedFiles || [],
-      orbitAngle: Math.random() * Math.PI * 2,
-      orbitSpeed: 0.03,
-      orbitRadius: (zonePos.radius || 4) * 2.2 + 6.0,
+      laserLine,
+      coreLaserLine,
+      flareMesh,
+      plannedFiles: planned,
+      plannedFileIndex: 0,
       scale: 0.01,
       targetScale: 1.0,
       isWarpingOut: false,
       warpStartTime: 0,
+
+      // Organic 3D Free-Patrol Kinematics
+      wanderAngle: Math.random() * Math.PI * 2,
+      wanderSpeed: 0.018 + Math.random() * 0.008,
+      orbitRadius: (zonePos.radius || 4) * 2.2 + 6.0,
+      seedR: Math.random() * Math.PI * 2,
+      seedY: Math.random() * Math.PI * 2,
+      seedPhase: Math.random() * 100,
+
+      // 2-Phase State Machine: 0: PATROL (~2600ms), 1: LASER_FIRE (~1500ms)
+      droneState: 0,
+      stateStartTime: performance.now(),
+      patrolDuration: 2600 + Math.random() * 600,
+      laserDuration: 1500,
+      hoverPos: new THREE.Vector3(zonePos.x, zonePos.y + 10, zonePos.z),
+
+      // Target Coordinates
       targetPos: new THREE.Vector3(zonePos.x, zonePos.y, zonePos.z),
       isTargetingFile: false,
       targetTimer: 0,
@@ -1223,10 +1466,10 @@ export class NeuralGraph {
     canvas.height = 64;
     const ctx = canvas.getContext("2d");
 
-    ctx.fillStyle = "rgba(10, 16, 30, 0.92)";
-    ctx.strokeStyle = "#00f0ff";
+    ctx.fillStyle = "rgba(26, 8, 14, 0.94)";
+    ctx.strokeStyle = "#ff2244";
     ctx.lineWidth = 3.0;
-    ctx.shadowColor = "#00f0ff";
+    ctx.shadowColor = "#ff2244";
     ctx.shadowBlur = 12;
     if (typeof ctx.roundRect === "function") {
       ctx.roundRect(4, 4, 248, 56, 14);
@@ -1238,7 +1481,7 @@ export class NeuralGraph {
 
     ctx.shadowBlur = 0;
     ctx.font = "bold 22px 'JetBrains Mono', monospace";
-    ctx.fillStyle = "#38bdf8";
+    ctx.fillStyle = "#fca5a5";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     const displayName = agentName.length > 14 ? agentName.slice(0, 12) + "…" : agentName;
@@ -1248,28 +1491,53 @@ export class NeuralGraph {
     texture.minFilter = THREE.LinearFilter;
     const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false });
     const sprite = new THREE.Sprite(spriteMat);
-    sprite.scale.set(8.0, 2.0, 1);
+    // Compact tag size that doesn't dwarf the drone model
+    sprite.scale.set(4.5, 1.15, 1);
     return sprite;
   }
 
   disposeDrone(drone) {
     if (!drone) return;
     this.scene.remove(drone.group);
-    drone.coreMesh.geometry.dispose();
-    drone.coreMesh.material.dispose();
-    drone.shieldMesh.geometry.dispose();
-    drone.shieldMesh.material.dispose();
-    drone.tagSprite.material.map.dispose();
-    drone.tagSprite.material.dispose();
-    if (drone.scannerLine) {
-      this.scene.remove(drone.scannerLine);
-      drone.scannerLine.geometry.dispose();
-      drone.scannerLine.material.dispose();
+
+    // Dispose all procedural meshes in the drone model
+    if (drone.droneMeshes) {
+      for (const m of drone.droneMeshes) {
+        if (m.geometry) m.geometry.dispose();
+        if (m.material) {
+          if (Array.isArray(m.material)) {
+            m.material.forEach((mat) => mat.dispose());
+          } else {
+            m.material.dispose();
+          }
+        }
+      }
+    }
+
+    if (drone.tagSprite) {
+      if (drone.tagSprite.material?.map) drone.tagSprite.material.map.dispose();
+      drone.tagSprite.material?.dispose();
+    }
+
+    if (drone.laserLine) {
+      this.scene.remove(drone.laserLine);
+      drone.laserLine.geometry.dispose();
+      drone.laserLine.material.dispose();
+    }
+    if (drone.coreLaserLine) {
+      this.scene.remove(drone.coreLaserLine);
+      drone.coreLaserLine.geometry.dispose();
+      drone.coreLaserLine.material.dispose();
+    }
+    if (drone.flareMesh) {
+      this.scene.remove(drone.flareMesh);
+      drone.flareMesh.geometry.dispose();
+      drone.flareMesh.material.dispose();
     }
   }
 
   triggerFileActivity(activity) {
-    if (!this.enablePulses || !activity || !activity.zoneId) return;
+    if (!activity || !activity.zoneId) return;
 
     // Buffer by zoneId with 200ms debounce window
     const { zoneId } = activity;
@@ -1299,25 +1567,15 @@ export class NeuralGraph {
       const firstAct = activities[0];
       const agentName = firstAct.agent || null;
       const zoneNode = this.nodeMeshes.get(zoneId);
-      const zonePos = zoneNode ? zoneNode.group.position : (ZONE_POSITIONS[zoneId] || { x: 0, y: 0, z: 0 });
+      const zonePos = zoneNode ? zoneNode.group.position : ZONE_POSITIONS[zoneId] || { x: 0, y: 0, z: 0 };
       const zoneName = zoneNode?.zone?.name || zoneId;
 
-      this.spawnHologramBadgeAtPos(
-        zonePos,
-        `${activities.length} files in ${zoneName}`,
-        "change",
-        agentName,
-        true
-      );
+      this.spawnHologramBadgeAtPos(zonePos, `${activities.length} files in ${zoneName}`, "change", agentName, true);
 
-      // Trigger zone excitation & blast radius for the batch
+      // Trigger zone excitation for the batch
       if (zoneNode) {
         zoneNode.excitation = 1.0;
         zoneNode.lastSpikeTime = performance.now();
-        this.fireSynapticPhotons(zoneId, firstAct.dependentZones || []);
-        if (zoneNode.zone?.risk === "high" || zoneId === "shared-contracts" || (firstAct.dependentZones && firstAct.dependentZones.length > 0)) {
-          this.triggerBlastRadius(zoneId, firstAct.dependentZones || []);
-        }
       }
 
       // Visually excite individual micro-neurons without separate badges
@@ -1349,16 +1607,13 @@ export class NeuralGraph {
     // Cascade into zone macro-neuron
     const zoneNode = this.nodeMeshes.get(zoneId);
     if (zoneNode) {
-      setTimeout(() => {
-        zoneNode.excitation = 1.0;
-        zoneNode.lastSpikeTime = performance.now();
-        this.fireSynapticPhotons(zoneId, dependentZones || []);
-
-        // Trigger Risk Blast Radius shockwave if high risk or has dependencies
-        if (zoneNode.zone?.risk === "high" || zoneId === "shared-contracts" || (dependentZones && dependentZones.length > 0)) {
-          this.triggerBlastRadius(zoneId, dependentZones || []);
-        }
-      }, fileNode ? 180 : 0);
+      setTimeout(
+        () => {
+          zoneNode.excitation = 1.0;
+          zoneNode.lastSpikeTime = performance.now();
+        },
+        fileNode ? 180 : 0,
+      );
 
       if (!fileNode) {
         this.spawnHologramBadgeAtPos(zoneNode.group.position, fileName || "file", eventType || "change", agent, false);
@@ -1385,7 +1640,6 @@ export class NeuralGraph {
       if (spawnBadge) {
         this.spawnHologramBadgeAtPos(fileNode.worldPos, fileName || fileNode.name, eventType || "change", agent, false);
       }
-      this.fireDendritePhoton(fileNode);
 
       // Direct drone laser scanner toward this micro-neuron if drone exists for this agent
       if (agent) {
@@ -1400,40 +1654,6 @@ export class NeuralGraph {
     }
 
     return fileNode;
-  }
-
-  fireSynapticPhotons(sourceZoneId, dependentZones = []) {
-    const depSet = new Set(dependentZones);
-    const upVector = new THREE.Vector3(0, 1, 0);
-
-    for (const axon of this.axonLines) {
-      const isOutbound = axon.source === sourceZoneId;
-      const isInbound = axon.target === sourceZoneId;
-      const isConnectedDep = depSet.has(axon.source) || depSet.has(axon.target);
-
-      if (isOutbound || isInbound || isConnectedDep) {
-        const mesh = new THREE.Mesh(
-          new THREE.CapsuleGeometry(0.32, 1.8, 6, 10),
-          new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            blending: THREE.AdditiveBlending,
-            transparent: true,
-            opacity: 0.95,
-          })
-        );
-
-        this.scene.add(mesh);
-        this.synapticPhotons.push({
-          mesh,
-          curve: axon.curve,
-          forward: isOutbound,
-          progress: isOutbound ? 0.0 : 1.0,
-          speed: 0.024,
-          targetZoneId: isOutbound ? axon.target : axon.source,
-          startTime: performance.now(),
-        });
-      }
-    }
   }
 
   animate(time) {
@@ -1462,44 +1682,37 @@ export class NeuralGraph {
       const isHovered = this.hoveredZoneId === id;
 
       if (isActive) {
-        // === UNIQUE ACTIVE NODE ANIMATIONS ===
-
-        // 1. High-Frequency Double-Pulse Quantum Throbbing (Systolic/Diastolic Heartbeat)
-        const doublePulse = Math.sin(t * 7.5) * 0.12 + Math.sin(t * 15.0) * 0.06;
-        const activeScale = (isHovered ? 1.15 : 1.05) + doublePulse;
+        // === UNIQUE ACTIVE NODE ANIMATIONS (Clean & Steady) ===
+        const activeScale = isHovered ? 1.2 : 1.08;
         node.coreMesh.scale.set(activeScale, activeScale, activeScale);
 
-        // 2. Rapid Multi-Axis Crystalline Cage Tumbling with Energetic Shimmer
-        node.latticeMesh.rotation.y += 0.022;
-        node.latticeMesh.rotation.x += 0.016;
-        node.latticeMesh.rotation.z += 0.012;
-        node.latticeMesh.material.opacity = 0.5 + Math.sin(t * 12.0) * 0.25;
+        // Gentle crystalline cage rotation
+        node.latticeMesh.rotation.y += 0.015;
+        node.latticeMesh.rotation.x += 0.01;
+        node.latticeMesh.rotation.z += 0.008;
+        node.latticeMesh.material.opacity = 0.65;
 
-        // 3. Relativistic Gyroscopic Orbital Spin with Precession Wobble
-        const activeGyroSpeed = 0.055;
+        // Smooth gyroscopic orbital spin
+        const activeGyroSpeed = 0.035;
         node.gyroRing1.rotation.x += activeGyroSpeed;
-        node.gyroRing1.rotation.z += activeGyroSpeed * 0.7 + Math.sin(t * 4.0) * 0.02;
-        node.gyroRing2.rotation.y += activeGyroSpeed * 1.4;
-        node.gyroRing2.rotation.x += activeGyroSpeed * 0.8 + Math.cos(t * 4.0) * 0.02;
+        node.gyroRing1.rotation.z += activeGyroSpeed * 0.7;
+        node.gyroRing2.rotation.y += activeGyroSpeed * 1.2;
+        node.gyroRing2.rotation.x += activeGyroSpeed * 0.6;
 
-        // 4. Dynamic Real-Time PointLight Energy Flare (Illuminating environment)
-        node.pointLight.intensity = 1.6 + Math.sin(t * 9.0) * 0.8;
-
+        node.pointLight.intensity = 1.8;
       } else {
-        // === IDLE / STANDARD NODE ANIMATIONS ===
-        const pulseSpeed = isHub ? 3.5 : 1.8;
-        const pulseAmp = isHovered ? 0.12 : isHub ? 0.07 : 0.04;
-        const scale = (isHovered ? 1.1 : 1.0) + Math.sin(t * pulseSpeed) * pulseAmp;
+        // === IDLE / STANDARD NODE ANIMATIONS (Clean & Steady) ===
+        const scale = isHovered ? 1.15 : 1.0;
         node.coreMesh.scale.set(scale, scale, scale);
 
-        node.latticeMesh.rotation.y += 0.005;
-        node.latticeMesh.rotation.x += 0.003;
+        node.latticeMesh.rotation.y += 0.004;
+        node.latticeMesh.rotation.x += 0.002;
 
-        const spinSpeed = node.spinSpeed || 0.01;
+        const spinSpeed = node.spinSpeed || 0.008;
         node.gyroRing1.rotation.x += spinSpeed;
-        node.gyroRing1.rotation.z += spinSpeed * 0.5;
-        node.gyroRing2.rotation.y += spinSpeed * 1.35;
-        node.gyroRing2.rotation.x += spinSpeed * 0.6;
+        node.gyroRing1.rotation.z += spinSpeed * 0.4;
+        node.gyroRing2.rotation.y += spinSpeed * 1.1;
+        node.gyroRing2.rotation.x += spinSpeed * 0.5;
       }
 
       // Synaptic Excitation on Zone Macro-Node (Clean energy surge & gentle decay, NO particles, NO shockwaves)
@@ -1517,44 +1730,6 @@ export class NeuralGraph {
         node.coreMesh.material.emissiveIntensity = strobe;
         node.coreMesh.material.emissive.setHex(0xff0055);
       }
-    }
-
-    // Animate high-speed synaptic photon laser packets
-    const upVector = new THREE.Vector3(0, 1, 0);
-    for (let i = this.synapticPhotons.length - 1; i >= 0; i--) {
-      const photon = this.synapticPhotons[i];
-      if (photon.forward) {
-        photon.progress += photon.speed;
-        if (photon.progress >= 1.0) {
-          const targetNode = this.nodeMeshes.get(photon.targetZoneId);
-          if (targetNode) {
-            targetNode.excitation = Math.max(targetNode.excitation, 0.5);
-          }
-          this.scene.remove(photon.mesh);
-          photon.mesh.geometry.dispose();
-          photon.mesh.material.dispose();
-          this.synapticPhotons.splice(i, 1);
-          continue;
-        }
-      } else {
-        photon.progress -= photon.speed;
-        if (photon.progress <= 0.0) {
-          const targetNode = this.nodeMeshes.get(photon.targetZoneId);
-          if (targetNode) {
-            targetNode.excitation = Math.max(targetNode.excitation, 0.5);
-          }
-          this.scene.remove(photon.mesh);
-          photon.mesh.geometry.dispose();
-          photon.mesh.material.dispose();
-          this.synapticPhotons.splice(i, 1);
-          continue;
-        }
-      }
-
-      const pt = photon.curve.getPointAt(photon.progress);
-      const tangent = photon.curve.getTangentAt(photon.progress).normalize();
-      photon.mesh.position.copy(pt);
-      photon.mesh.quaternion.setFromUnitVectors(upVector, tangent);
     }
 
     // Animate floating hologram badges: Deterministic tiered non-overlapping slots with horizontal drift & neon leader lines
@@ -1603,25 +1778,24 @@ export class NeuralGraph {
 
       badge.sprite.position.set(curX, curY, curZ);
 
-      // Phóng lớn gấp 3 lần (Expands up to 3.0x scale)
+      // Scaled down to 30% of previous dimensions (3.6x * scaleMult, 0.9y * scaleMult)
       let scaleMult;
       if (progress < 0.25) {
         const inProg = progress / 0.25;
         scaleMult = 1.0 + Math.pow(inProg, 0.6) * 2.0;
       } else if (progress < 0.75) {
-        const badgePulse = Math.sin(t * 6.0) * 0.18;
-        scaleMult = 3.0 + badgePulse;
+        scaleMult = 3.0;
       } else {
         const exitProg = (progress - 0.75) / 0.25;
         scaleMult = 3.0 + exitProg * 0.35;
       }
 
-      badge.sprite.scale.set(12 * scaleMult, 3.0 * scaleMult, 1);
+      badge.sprite.scale.set(3.6 * scaleMult, 0.9 * scaleMult, 1);
 
       // Smooth fade out in the last 20%
       let opacity = 1.0;
-      if (progress > 0.80) {
-        opacity = (1.0 - progress) / 0.20;
+      if (progress > 0.8) {
+        opacity = (1.0 - progress) / 0.2;
       }
       badge.sprite.material.opacity = opacity;
 
@@ -1632,7 +1806,7 @@ export class NeuralGraph {
         linePos[1] = badge.baseY;
         linePos[2] = badge.baseZ;
         linePos[3] = curX;
-        linePos[4] = curY - 1.5 * scaleMult;
+        linePos[4] = curY - 0.45 * scaleMult;
         linePos[5] = curZ;
         badge.leaderLine.geometry.attributes.position.needsUpdate = true;
         badge.leaderLine.material.opacity = opacity * 0.55;
@@ -1661,17 +1835,16 @@ export class NeuralGraph {
       halo.mesh.quaternion.copy(this.camera.quaternion);
     }
 
-    // Animate continuous light beam pulses along axons
+    // Animate axon conduit lines based on zone activity
     for (const axon of this.axonLines) {
       const isLineConnectedToHover = this.hoveredZoneId && (axon.source === this.hoveredZoneId || axon.target === this.hoveredZoneId);
 
       if (axon.isActive) {
-        // Overdrive High-Voltage Conduit Electric Wave
         if (axon.conduit) {
-          axon.conduit.material.opacity = 0.55 + Math.sin(t * 8.0 + axon.phase) * 0.25;
+          axon.conduit.material.opacity = 0.65;
           axon.conduit.material.color.setHex(0xff0055);
         }
-        axon.line.material.opacity = 0.75 + Math.sin(t * 11.0 + axon.phase) * 0.15;
+        axon.line.material.opacity = 0.85;
         axon.line.material.color.setHex(0xff0055);
       } else if (isLineConnectedToHover) {
         axon.line.material.opacity = 0.95;
@@ -1681,26 +1854,15 @@ export class NeuralGraph {
           axon.conduit.material.color.setHex(0x00ffff);
         }
       } else if (!this.safeZoneMode) {
-        // Subtle optical conduit breathing shimmer
-        const baseOp = 0.14;
         if (axon.conduit) {
-          axon.conduit.material.opacity = baseOp + Math.sin(t * 3.0 + axon.phase) * 0.06;
+          axon.conduit.material.opacity = 0.16;
         }
-        axon.line.material.opacity = 0.22 + Math.sin(t * 2.5 + axon.phase) * 0.04;
-      }
-
-      for (const p of axon.particles) {
-        if (p.mesh.visible) {
-          const speedMultiplier = axon.isActive ? 2.8 : (isLineConnectedToHover ? 2.6 : 1.0);
-          p.progress = (p.progress + p.speed * speedMultiplier) % 1.0;
-          const pt = axon.curve.getPointAt(p.progress);
-          const tangent = axon.curve.getTangentAt(p.progress).normalize();
-          p.mesh.position.copy(pt);
-          // Streamlined orientation along curve tangent vector
-          p.mesh.quaternion.setFromUnitVectors(upVector, tangent);
-        }
+        axon.line.material.opacity = 0.24;
       }
     }
+
+    // Animate ambient staggered synaptic light beams running through random axon conduits
+    this.animateAmbientBeams(now);
 
     // Animate slow cosmic orbital rotation of file micro-neurons and dendrites around zone centers
     if (this.fileInstancedMesh && this.dendriteLineSegments) {
@@ -1713,7 +1875,7 @@ export class NeuralGraph {
       let needsColorUpdate = false;
       let needsDendriteColorUpdate = false;
 
-      // 1. Precompute orbital rotation (cos, sin) for each of the 19 zones at current time t
+      // 1. Precompute orbital rotation (cos, sin) for each of the 23 zones at current time t
       const zoneRotations = new Map();
       for (const [zoneId, orb] of this.zoneOrbitalData.entries()) {
         const angle = t * orb.speed + orb.phase;
@@ -1753,40 +1915,36 @@ export class NeuralGraph {
 
         fileNode.worldPos.set(worldX, worldY, worldZ);
 
-        // Excitation & Pulsing Animation (10.0 seconds duration, 5x scale, neon purple)
+        // Excitation Animation (10.0 seconds duration, fixed 1.0x scale, radiant cyber red)
         let scale = 1.0;
         const totalDurationMs = 10000;
-        const elapsed = fileNode.lastSpikeTime > 0 ? (now - fileNode.lastSpikeTime) : Infinity;
+        const elapsed = fileNode.lastSpikeTime > 0 ? now - fileNode.lastSpikeTime : Infinity;
 
         if (elapsed < totalDurationMs) {
           const progress = elapsed / totalDurationMs; // 0.0 to 1.0 over exactly 10 seconds
           fileNode.excitation = 1.0 - progress;
           needsColorUpdate = true;
 
-          // Electric Neon Purple & Radiant Ultraviolet
-          const neonPurple = new THREE.Color(0xbf00ff);
-          const brightPurple = new THREE.Color(0xef44ff);
-
-          // Rhythmic heartbeat pulse (~2 Hz oscillation)
-          const pulse = Math.sin(t * 10.0) * 0.75 + Math.sin(t * 20.0) * 0.35;
+          // Radiant Cyber Red & Vivid Crimson
+          const cyberRed = new THREE.Color(0xff2244);
+          const brightRed = new THREE.Color(0xef4444);
 
           if (progress < 0.12) {
-            // Stage 1: Explosive flash, quickly expanding from 1.0x to 5.0x with white-neon purple core
+            // Stage 1: Quick energetic flash with white-hot cyber red core, fixed 1.0x scale
             const inProg = progress / 0.12;
-            const curColor = neonPurple.clone().lerp(whiteColor, (1.0 - inProg) * 0.85);
+            const curColor = cyberRed.clone().lerp(whiteColor, (1.0 - inProg) * 0.75);
             this.fileInstancedMesh.setColorAt(fileNode.index, curColor);
-            scale = 1.0 + Math.pow(inProg, 0.5) * 4.0 + pulse * 0.4;
+            scale = 1.0;
           } else if (progress < 0.75) {
-            // Stage 2: Sustained giant 5.0x sphere pulsing with neon purple heartbeat
-            const curColor = neonPurple.clone().lerp(brightPurple, (pulse + 1.0) * 0.3);
-            this.fileInstancedMesh.setColorAt(fileNode.index, curColor);
-            scale = 5.0 + pulse * 0.85;
+            // Stage 2: Sustained glowing cyber red at 1.0x scale
+            this.fileInstancedMesh.setColorAt(fileNode.index, brightRed);
+            scale = 1.0;
           } else {
-            // Stage 3: Smooth energy dissipation from 5.0x back to 1.0x, fading back to zone color
+            // Stage 3: Smooth energy dissipation from cyber red back to baseColor, fixed 1.0x scale
             const exitRatio = (1.0 - progress) / 0.25; // 1 down to 0
-            const curColor = fileNode.baseColor.clone().lerp(neonPurple, exitRatio);
+            const curColor = fileNode.baseColor.clone().lerp(cyberRed, exitRatio);
             this.fileInstancedMesh.setColorAt(fileNode.index, curColor);
-            scale = 1.0 + (4.0 + pulse * 0.5) * exitRatio;
+            scale = 1.0;
           }
         } else {
           // Check Synaptic Heatmap
@@ -1832,18 +1990,18 @@ export class NeuralGraph {
         dendritePosArray[pIdx + 1] = worldY;
         dendritePosArray[pIdx + 2] = worldZ;
 
-        // High-Voltage Dendrite Surge in Neon Purple
+        // High-Voltage Dendrite Surge in Cyber Red
         if (dendriteColArray) {
           if (fileNode.excitation > 0) {
             const surge = fileNode.excitation;
-            // File end: vibrant neon purple (R:0.75, G:0.0, B:1.0)
-            dendriteColArray[pIdx] = THREE.MathUtils.lerp(fileNode.baseColor.r * 0.8, 0.75, surge);
-            dendriteColArray[pIdx + 1] = THREE.MathUtils.lerp(fileNode.baseColor.g * 0.8, 0.0, surge);
-            dendriteColArray[pIdx + 2] = THREE.MathUtils.lerp(fileNode.baseColor.b * 0.8, 1.0, surge);
-            // Zone center end: radiant violet (R:0.6, G:0.1, B:0.9)
-            dendriteColArray[pIdx + 3] = THREE.MathUtils.lerp(fileNode.baseColor.r * 0.25, 0.6, surge);
-            dendriteColArray[pIdx + 4] = THREE.MathUtils.lerp(fileNode.baseColor.g * 0.25, 0.1, surge);
-            dendriteColArray[pIdx + 5] = THREE.MathUtils.lerp(fileNode.baseColor.b * 0.25, 0.9, surge);
+            // File end: vibrant radiant red (R:1.0, G:0.13, B:0.27)
+            dendriteColArray[pIdx] = THREE.MathUtils.lerp(fileNode.baseColor.r * 0.8, 1.0, surge);
+            dendriteColArray[pIdx + 1] = THREE.MathUtils.lerp(fileNode.baseColor.g * 0.8, 0.13, surge);
+            dendriteColArray[pIdx + 2] = THREE.MathUtils.lerp(fileNode.baseColor.b * 0.8, 0.27, surge);
+            // Zone center end: deep crimson red (R:0.85, G:0.08, B:0.18)
+            dendriteColArray[pIdx + 3] = THREE.MathUtils.lerp(fileNode.baseColor.r * 0.25, 0.85, surge);
+            dendriteColArray[pIdx + 4] = THREE.MathUtils.lerp(fileNode.baseColor.g * 0.25, 0.08, surge);
+            dendriteColArray[pIdx + 5] = THREE.MathUtils.lerp(fileNode.baseColor.b * 0.25, 0.18, surge);
             needsDendriteColorUpdate = true;
             fileNode.wasDendriteSurging = true;
           } else if (fileNode.wasDendriteSurging) {
@@ -1908,87 +2066,174 @@ export class NeuralGraph {
       }
     }
 
-    // Animate 3D Agent Quantum Drones
+    // Animate 3D Agent Procedural Cyber Drones
     for (const [claimId, drone] of this.agentDrones.entries()) {
       if (drone.isWarpingOut) {
         drone.scale = Math.max(0, drone.scale - 0.04);
         drone.group.scale.set(drone.scale, drone.scale, drone.scale);
         drone.group.position.y += 0.4;
-        if (drone.scannerLine) drone.scannerLine.material.opacity = drone.scale * 0.8;
+        if (drone.laserLine) drone.laserLine.material.opacity = drone.scale * 0.9;
+        if (drone.coreLaserLine) drone.coreLaserLine.material.opacity = drone.scale * 0.95;
+        if (drone.flareMesh) drone.flareMesh.material.opacity = drone.scale * 0.8;
         if (drone.scale <= 0.01) {
           this.disposeDrone(drone);
           this.agentDrones.delete(claimId);
         }
-      } else {
-        drone.scale = Math.min(1.0, drone.scale + 0.04);
-        drone.group.scale.set(drone.scale, drone.scale, drone.scale);
-
-        // Kinetic orbit around zone center
-        drone.orbitAngle += drone.orbitSpeed;
-        const dX = drone.zonePos.x + Math.cos(drone.orbitAngle) * drone.orbitRadius;
-        const dZ = drone.zonePos.z + Math.sin(drone.orbitAngle) * drone.orbitRadius;
-        const dY = drone.zonePos.y + 10 + Math.sin(t * 3.5) * 1.6;
-        drone.group.position.set(dX, dY, dZ);
-
-        // Core and shield rotations
-        drone.coreMesh.rotation.y += 0.035;
-        drone.coreMesh.rotation.x += 0.02;
-        drone.shieldMesh.rotation.y -= 0.045;
-        drone.shieldMesh.rotation.z += 0.025;
-        drone.droneLight.intensity = 1.4 + Math.sin(t * 8.0) * 0.5;
-
-        // Dynamic laser scanner line
-        if (drone.scannerLine) {
-          const scanArr = drone.scannerLine.geometry.attributes.position.array;
-          scanArr[0] = dX;
-          scanArr[1] = dY;
-          scanArr[2] = dZ;
-
-          if (drone.isTargetingFile && drone.targetPos) {
-            if (now > drone.targetTimer) {
-              drone.isTargetingFile = false;
-            } else {
-              scanArr[3] = drone.targetPos.x;
-              scanArr[4] = drone.targetPos.y;
-              scanArr[5] = drone.targetPos.z;
-              drone.scannerLine.geometry.attributes.position.needsUpdate = true;
-              drone.scannerLine.material.opacity = 0.85 + Math.sin(t * 14.0) * 0.15;
-              drone.scannerLine.visible = true;
-            }
-          }
-
-          if (!drone.isTargetingFile) {
-            // Sweeping scan cone over the zone soma
-            const sweepX = drone.zonePos.x + Math.sin(t * 3.0) * 4.0;
-            const sweepZ = drone.zonePos.z + Math.cos(t * 3.0) * 4.0;
-            scanArr[3] = sweepX;
-            scanArr[4] = drone.zonePos.y;
-            scanArr[5] = sweepZ;
-            drone.scannerLine.geometry.attributes.position.needsUpdate = true;
-            drone.scannerLine.material.opacity = 0.45 + Math.sin(t * 5.0) * 0.2;
-            drone.scannerLine.visible = true;
-          }
-        }
-      }
-    }
-
-    // Animate expanding Risk Blast Radius shockwaves
-    for (let i = this.blastShockwaves.length - 1; i >= 0; i--) {
-      const sw = this.blastShockwaves[i];
-      const elapsed = now - sw.startTime;
-      const progress = elapsed / sw.durationMs;
-
-      if (progress >= 1.0) {
-        this.scene.remove(sw.mesh);
-        sw.mesh.geometry.dispose();
-        sw.mesh.material.dispose();
-        this.blastShockwaves.splice(i, 1);
         continue;
       }
 
-      const scale = 1.0 + Math.pow(progress, 0.45) * sw.maxScale;
-      sw.mesh.scale.set(scale, scale, scale);
-      sw.mesh.material.opacity = Math.pow(1.0 - progress, 1.2) * 0.85;
+      drone.scale = Math.min(1.0, drone.scale + 0.04);
+      drone.group.scale.set(drone.scale, drone.scale, drone.scale);
+
+      // Resolve current target coordinates
+      // If agent declared planned files, prioritize cycling through those file micro-neurons
+      const targetCoord = new THREE.Vector3(drone.zonePos.x, drone.zonePos.y, drone.zonePos.z);
+      if (drone.isTargetingFile && drone.targetPos) {
+        if (now > drone.targetTimer) {
+          drone.isTargetingFile = false;
+        } else {
+          targetCoord.copy(drone.targetPos);
+        }
+      } else if (drone.plannedFiles && drone.plannedFiles.length > 0) {
+        const fileKey = drone.plannedFiles[drone.plannedFileIndex % drone.plannedFiles.length];
+        const fileNode = this.fileNodes.get(fileKey) || this.findFileNodeByName(fileKey);
+        if (fileNode && fileNode.worldPos) {
+          targetCoord.copy(fileNode.worldPos);
+        }
+      }
+
+      const stateElapsed = now - drone.stateStartTime;
+
+      // Blink strobe navigation beacon (Cyber Red)
+      if (drone.beaconMesh) {
+        const strobe = Math.sin(t * 14.0) > 0.3;
+        drone.beaconMesh.material.color.setHex(strobe ? 0xff2244 : 0x7f1d1d);
+      }
+
+      // -------------------------------------------------------------
+      // STATE 0: PATROL (Smooth Organic 3D Wander)
+      // -------------------------------------------------------------
+      if (drone.droneState === 0) {
+        drone.wanderAngle += drone.wanderSpeed;
+        const wAngle = drone.wanderAngle;
+        const rMod = drone.orbitRadius + Math.sin(wAngle * 1.5 + drone.seedR) * 2.5;
+        const nextX = drone.zonePos.x + Math.cos(wAngle) * rMod + Math.sin(wAngle * 2.3) * 2.0;
+        const nextZ = drone.zonePos.z + Math.sin(wAngle) * rMod + Math.cos(wAngle * 1.9) * 2.0;
+        const nextY = drone.zonePos.y + 8.5 + Math.sin(wAngle * 1.8 + drone.seedY) * 3.2;
+
+        const curPos = drone.group.position;
+        const vx = nextX - curPos.x;
+        const vz = nextZ - curPos.z;
+
+        // Smooth translation
+        curPos.set(nextX, nextY, nextZ);
+
+        // Heading: face movement direction
+        if (Math.hypot(vx, vz) > 0.01) {
+          const targetYaw = Math.atan2(vx, vz);
+          drone.modelGroup.rotation.y = targetYaw;
+          // Banking into turn
+          drone.modelGroup.rotation.z = -Math.sin(wAngle * 1.8) * 0.3;
+          // Pitch slightly down
+          drone.modelGroup.rotation.x = 0.1 + Math.sin(t * 3.0) * 0.04;
+        }
+
+        // Thruster plumes energetic pulse
+        if (drone.leftPlume && drone.rightPlume) {
+          const pScale = 1.0 + Math.sin(t * 22.0) * 0.35;
+          drone.leftPlume.scale.set(1, 1, pScale);
+          drone.rightPlume.scale.set(1, 1, pScale);
+        }
+
+        // Ensure laser and flare FX are off
+        if (drone.laserLine) drone.laserLine.visible = false;
+        if (drone.coreLaserLine) drone.coreLaserLine.visible = false;
+        if (drone.flareMesh) drone.flareMesh.visible = false;
+        drone.droneLight.intensity = 1.6 + Math.sin(t * 5.0) * 0.3;
+
+        // State transition check
+        if (stateElapsed >= drone.patrolDuration) {
+          drone.droneState = 1; // Transition directly to LASER_FIRE
+          drone.stateStartTime = now;
+          drone.hoverPos = drone.group.position.clone();
+        }
+      }
+
+      // -------------------------------------------------------------
+      // STATE 1: LASER_FIRE (Stabilized Hover & Precision Green Laser)
+      // -------------------------------------------------------------
+      else if (drone.droneState === 1) {
+        // Hover with laser weapon recoil micro-jitter
+        drone.group.position.x = drone.hoverPos.x + (Math.random() - 0.5) * 0.09;
+        drone.group.position.y = drone.hoverPos.y + Math.sin(t * 6.0) * 0.2 + (Math.random() - 0.5) * 0.09;
+        drone.group.position.z = drone.hoverPos.z + (Math.random() - 0.5) * 0.09;
+
+        // Keep model oriented toward target
+        const dx = targetCoord.x - drone.group.position.x;
+        const dy = targetCoord.y - drone.group.position.y;
+        const dz = targetCoord.z - drone.group.position.z;
+        drone.modelGroup.rotation.y = Math.atan2(dx, dz);
+        const distHoriz = Math.hypot(dx, dz);
+        drone.modelGroup.rotation.x = -Math.atan2(dy, distHoriz);
+        drone.modelGroup.rotation.z = 0;
+
+        // Thrusters idle gently during precision firing
+        if (drone.leftPlume && drone.rightPlume) {
+          drone.leftPlume.scale.set(0.65, 0.65, 0.65);
+          drone.rightPlume.scale.set(0.65, 0.65, 0.65);
+        }
+
+        // Dual-Core Laser Beam
+        const emitterPos = drone.group.position.clone().add(new THREE.Vector3(0, -0.28, 0));
+        if (drone.laserLine) {
+          drone.laserLine.visible = true;
+          const lArr = drone.laserLine.geometry.attributes.position.array;
+          lArr[0] = emitterPos.x;
+          lArr[1] = emitterPos.y;
+          lArr[2] = emitterPos.z;
+          lArr[3] = targetCoord.x;
+          lArr[4] = targetCoord.y;
+          lArr[5] = targetCoord.z;
+          drone.laserLine.geometry.attributes.position.needsUpdate = true;
+          drone.laserLine.material.opacity = 0.9 + Math.sin(t * 24.0) * 0.1;
+        }
+
+        if (drone.coreLaserLine) {
+          drone.coreLaserLine.visible = true;
+          const cArr = drone.coreLaserLine.geometry.attributes.position.array;
+          cArr[0] = emitterPos.x;
+          cArr[1] = emitterPos.y;
+          cArr[2] = emitterPos.z;
+          cArr[3] = targetCoord.x;
+          cArr[4] = targetCoord.y;
+          cArr[5] = targetCoord.z;
+          drone.coreLaserLine.geometry.attributes.position.needsUpdate = true;
+          drone.coreLaserLine.material.opacity = 0.95;
+        }
+
+        // Plasma Contact Ring / Laser Impact Flare on Target
+        if (drone.flareMesh) {
+          drone.flareMesh.visible = true;
+          drone.flareMesh.position.copy(targetCoord);
+          const flarePulse = 1.0 + Math.sin(t * 30.0) * 0.35 + Math.random() * 0.15;
+          drone.flareMesh.scale.set(flarePulse, flarePulse, 1.0);
+          drone.flareMesh.material.opacity = 0.85 + Math.sin(t * 20.0) * 0.15;
+        }
+
+        drone.droneLight.intensity = 2.5 + Math.sin(t * 22.0) * 0.6;
+
+        // State transition check
+        if (stateElapsed >= drone.laserDuration) {
+          if (drone.laserLine) drone.laserLine.visible = false;
+          if (drone.coreLaserLine) drone.coreLaserLine.visible = false;
+          if (drone.flareMesh) drone.flareMesh.visible = false;
+
+          drone.plannedFileIndex++; // Advance to next claimed file if multi-file
+          drone.droneState = 0; // Return to PATROL
+          drone.stateStartTime = now;
+          drone.patrolDuration = 2600 + Math.random() * 600;
+        }
+      }
     }
 
     // Gradual thermodynamic heat decay
@@ -2016,10 +2261,6 @@ export class NeuralGraph {
     }
 
     this.controls.update();
-    if (this.enableBloom && this.composer) {
-      this.composer.render();
-    } else {
-      this.renderer.render(this.scene, this.camera);
-    }
+    this.renderer.render(this.scene, this.camera);
   }
 }

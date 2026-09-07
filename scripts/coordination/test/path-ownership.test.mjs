@@ -87,3 +87,16 @@ test("planned files must belong to a claimed write zone", () => {
     );
   });
 });
+
+test("planned files provide smart zone suggestions when misassigned", () => {
+  withTempDb("smart-suggestion", (dbPath) => {
+    assert.throws(
+      () =>
+        createWebClaim(dbPath, {
+          claimId: "misassigned-owner",
+          plannedFiles: ["packages/shared/src/quizLayouts.catalog.ts"],
+        }),
+      /does not belong to a claimed write zone \(it belongs to zone "shared-layout-contracts"\)\. Did you mean to claim "shared-layout-contracts"\?/,
+    );
+  });
+});

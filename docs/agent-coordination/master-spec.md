@@ -68,14 +68,16 @@ The protocol has three layers:
 
 ## Recommended High-Risk Zones
 
-| Zone                   | Why It Is High Risk                                                                    |
-| ---------------------- | -------------------------------------------------------------------------------------- |
-| `shared-contracts`     | Types and schemas are consumed by server, web, tasks, and tests.                       |
-| `server-pipeline`      | Pipeline changes affect generation, rendering, artifacts, invalidation, and progress.  |
-| `task-status-progress` | Task events and progress shape affect UI, task runners, and repositories.              |
-| `api-contracts`        | DTO and route behavior must stay compatible with web API clients.                      |
-| `artifact-contracts`   | Artifact names, paths, and invalidation rules can silently break generation and reuse. |
-| `render-inputs`        | Render composition inputs connect style, layout, scenes, timing, and progress.         |
+| Zone                      | Why It Is High Risk                                                                      |
+| ------------------------- | ---------------------------------------------------------------------------------------- |
+| `shared-contracts`        | Core types, base enums, and schemas consumed by server, web, tasks, and tests.           |
+| `shared-layout-contracts` | Quiz layout catalogs, style rules, and archetypes (`shared-disjoint` for parallel work). |
+| `shared-mascot-contracts` | Mascot poses, render schemas, and presets (`shared-disjoint` for parallel work).         |
+| `server-pipeline`         | Pipeline changes affect generation, rendering, artifacts, invalidation, and progress.    |
+| `task-status-progress`    | Task events and progress shape affect UI, task runners, and repositories.                |
+| `api-contracts`           | DTO and route behavior must stay compatible with web API clients.                        |
+| `artifact-contracts`      | Artifact names, paths, and invalidation rules can silently break generation and reuse.   |
+| `render-inputs`           | Render composition inputs connect style, layout, scenes, timing, and progress.           |
 
 ## Success Criteria
 

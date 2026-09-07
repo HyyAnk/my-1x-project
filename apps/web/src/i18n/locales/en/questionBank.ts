@@ -10,6 +10,8 @@ export const questionBankEn = {
     aiGenerateBatch: "AI Batch Generate",
     targetProgress: "Target progress: {current} / {target} questions",
     matrixProgress: "Matrix Combos: {covered} / {total} ({pct}%)",
+    remainingToNextTier: "{count} questions to {tier}",
+    maxTierReached: "Max Tier Achieved",
     collapseStats: "Collapse KPI section",
     expandStats: "Expand KPI section",
 

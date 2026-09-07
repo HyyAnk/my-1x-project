@@ -1011,10 +1011,13 @@
   position: relative;
   width: 78px;
   height: 42px;
+  box-sizing: border-box;
+  flex-shrink: 0;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 5px;
+  border-radius: 6px;
   background: #070a12;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .stage-layout-miniature i {
@@ -1022,6 +1025,7 @@
   display: block;
   border-radius: 2px;
   background: #44506a;
+  transition: all 0.15s ease;
 }
 
 .stage-layout-miniature .layout-mini-mascot {
@@ -1032,6 +1036,7 @@
   border-radius: 7px 7px 4px 4px;
   background: #818cf8;
   box-shadow: 0 0 0 2px #111827;
+  z-index: 2;
 }
 
 .stage-layout-miniature.is-media-left .layout-mini-media {

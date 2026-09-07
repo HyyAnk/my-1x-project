@@ -34,7 +34,7 @@ Repository artifacts are the source of truth. Chat history is not the source of 
 - Wildcards are forbidden in planned files.
 - If another active claim overlaps the required zone or files, stop without making changes and report the conflict.
 - Never touch, revert, stage, format, or commit pre-existing dirty files outside the assigned scope.
-- High-risk shared zones require exclusive ownership.
+- High-risk shared zones include exclusive Core Hub (`shared-contracts`) and exclusive subsystem zones (`server-pipeline`, `task-status-progress`, `api-contracts`, `artifact-contracts`, `render-inputs`). Granular contract zones (`shared-layout-contracts`, `shared-mascot-contracts`) allow `shared-disjoint` concurrency and require concrete planned files.
 - If additional files or zones become necessary, run the authenticated claim expansion command and wait for success before touching them.
 - If expansion is denied, stop and report the blocker.
 - Keep the claim alive with an authenticated heartbeat during long-running work.

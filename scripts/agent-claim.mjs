@@ -79,6 +79,15 @@ Optional:
     logger.info(`Write zones: ${claim.writeZones.join(", ")} | read-stable: ${claim.readStableZones.join(", ") || "none"}`, {
       step: "scope",
     });
+    if (
+      (!claim.plannedFiles || claim.plannedFiles.length === 0) &&
+      claim.writeZones.some((z) => z.startsWith("shared-") && z !== "shared-contracts")
+    ) {
+      logger.info(
+        `Advisory: Claiming shared contract sub-zone without --planned-files takes a whole-zone lock. Provide concrete --planned-files to enable parallel multi-agent work.`,
+        { step: "concurrency" },
+      );
+    }
     process.stdout.write(`LEASE_TOKEN=${claim.leaseToken}\n`);
     logger.summary({ total: 1, success: 1, failed: 0, elapsedMs: Date.now() - startedAt });
   } catch (err) {
