@@ -6,6 +6,8 @@ import type { StudioLogger } from "../logger.js";
 import type { RepositoryService } from "../repository.js";
 import type { ChatterboxTarget } from "../providers/chatterbox.js";
 import type { AudioProvider, ImageProvider } from "../providers/index.js";
+import type { TopicMatrixPlan } from "../context/topicMatrixPlanner.js";
+import type { GenerateShortReelTarget } from "@studio/shared";
 
 export type ActiveRun = {
   task: Task;
@@ -17,6 +19,8 @@ export type ActiveRun = {
   scriptAttempts: number;
   visualBibleAttempts: number;
   sequenceAttempts: number;
+  topicSuggestionAttempts: number;
+  topicMatrixPlan?: TopicMatrixPlan;
 };
 
 export type PipelineRun = { cancelled: boolean; children: Set<string> };
@@ -28,6 +32,8 @@ export interface TaskManagerRuntime {
   activeEngine: "codex" | "antigravity";
   activeImageControllers: Map<string, AbortController>;
   activeVideoControllers: Map<string, AbortController>;
+  activeShortReelControllers: Map<string, AbortController>;
+  shortReelTargets: Map<string, GenerateShortReelTarget>;
   antigravity?: AntigravityClient;
   approvalRequests: Map<number, { taskId: string; request: CodexServerRequest }>;
   assemblingEpisodes: Set<string>;
@@ -82,6 +88,7 @@ export interface TaskManagerRuntime {
   retryScript(active: ActiveRun, reason: string): Promise<void>;
   retrySequenceScenes(active: ActiveRun, reason: string): Promise<void>;
   retryVisualBible(active: ActiveRun, reason: string): Promise<void>;
+  retryTopicSuggestions(active: ActiveRun, reason: string): Promise<void>;
   reconcileQuestionHistory(): Promise<void>;
   reconcileOrphanedTasks(): Promise<{ removedEpisodes: number; removedTasks: number }>;
   pruneEpisodeTasks(episodeId: string): Promise<string[]>;

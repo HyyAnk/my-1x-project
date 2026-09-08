@@ -85,12 +85,13 @@ describe("ContextEngine", () => {
     expect(context.prompt).toContain("Exactly 2 candidates MUST be directly inspired by");
     expect(context.prompt).toContain("The remaining 3 candidates should be diverse");
     expect(context.prompt).toContain("GAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY");
-    expect(context.prompt).toContain("Slot 1 (Deep Trivia)");
-    expect(context.prompt).toContain("Slot 2 (Silhouette / Mystery Reveal)");
-    expect(context.prompt).toContain("Slot 3 (True or False)");
-    expect(context.prompt).toContain("Slot 4 (Clue Deduction A -> B)");
+    expect(context.prompt).toContain("Slot 1 (Episode - Deep Trivia)");
+    expect(context.prompt).toContain("Slot 2 (Episode - Mystery Reveal)");
+    expect(context.prompt).toContain("Slot 3 (Episode - True or False)");
+    expect(context.prompt).toContain("Slot 4 (Short-Reel - Versus Face-off)");
+    expect(context.prompt).toContain("Slot 5 (Short-Reel - Deep Trivia)");
     expect(context.prompt).toContain("mystery_reveal");
-    expect(context.prompt).toContain("clue_deduction");
+    expect(context.prompt).toContain("versus_faceoff");
   });
 
   it("uses the Quiz Engine DNA template for AI DNA generation", async () => {
@@ -142,6 +143,7 @@ describe("ContextEngine", () => {
     const topic = {
       topic_id: "target_matrix_topic",
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: "Target Matrix Topic",
       premise: "A test premise",
       why_it_fits: "A test fit",
@@ -200,6 +202,7 @@ describe("ContextEngine", () => {
     const topic = {
       topic_id: "tf_topic",
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: "TF Topic",
       premise: "A test premise",
       why_it_fits: "A test fit",
@@ -276,6 +279,7 @@ describe("ContextEngine", () => {
     const topic = {
       topic_id: "image_context_topic",
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: "Image Context Topic",
       premise: "A test premise",
       why_it_fits: "A test fit",
@@ -326,6 +330,7 @@ describe("ContextEngine", () => {
     const topic = {
       topic_id: "sequence_recovery_topic",
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: "Sequence Recovery Topic",
       premise: "A test premise",
       why_it_fits: "A test fit",
@@ -404,6 +409,7 @@ describe("ContextEngine", () => {
     const topic = {
       topic_id: "scoped_topic",
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: "Scoped Topic",
       premise: "A premise",
       why_it_fits: "A fit",

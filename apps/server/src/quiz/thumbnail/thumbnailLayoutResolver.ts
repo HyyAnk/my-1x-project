@@ -1,9 +1,4 @@
-import {
-  THUMBNAIL_LAYOUT_CATALOG,
-  type QuizImageStyle,
-  type ThumbnailAspectRatio,
-  type ThumbnailLayoutType,
-} from "@studio/shared";
+import { THUMBNAIL_LAYOUT_CATALOG, type QuizImageStyle, type ThumbnailAspectRatio, type ThumbnailLayoutType } from "@studio/shared";
 import {
   getCuriosityBadgeText,
   getThumbnailLocalizedTexts,

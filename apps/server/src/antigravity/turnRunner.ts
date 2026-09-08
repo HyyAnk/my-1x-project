@@ -106,7 +106,7 @@ async function runAgentApiTurn(
   } catch (execErr: unknown) {
     const errObj = execErr as { message?: string; stdout?: string; stderr?: string };
     const details = errObj.stderr?.trim() || errObj.stdout?.trim() || errObj.message || "Unknown error";
-    
+
     // Auto-heal: If language_server was restarted or port changed, refresh active session and retry once
     const isConnErr = /(?:connectex|connection error|actively refused|Unavailable desc = connection error|dial tcp)/i.test(details);
     if (isConnErr) {
@@ -124,10 +124,10 @@ async function runAgentApiTurn(
       } catch (retryErr: unknown) {
         const retryErrObj = retryErr as { message?: string; stdout?: string; stderr?: string };
         const retryDetails = retryErrObj.stderr?.trim() || retryErrObj.stdout?.trim() || retryErrObj.message || details;
-        throw new Error(`Antigravity AgentAPI execution failed: ${retryDetails}`);
+        throw new Error(`Antigravity AgentAPI execution failed: ${retryDetails}`, { cause: retryErr });
       }
     } else {
-      throw new Error(`Antigravity AgentAPI execution failed: ${details}`);
+      throw new Error(`Antigravity AgentAPI execution failed: ${details}`, { cause: execErr });
     }
   }
 

@@ -34,7 +34,9 @@ export function CreateChannelFormFields({
               <label htmlFor="channel-name-input" className="channel-field-label">
                 {t("channels.channelNameLabel")}
               </label>
-              <span className="required-star" aria-hidden="true">*</span>
+              <span className="required-star" aria-hidden="true">
+                *
+              </span>
             </div>
             <span className="field-counter">{form.name.length}/120</span>
           </div>
@@ -56,10 +58,7 @@ export function CreateChannelFormFields({
       {/* 2. Target Country & Auto-Synced Language */}
       <div className="channel-form-section">
         <div className="channel-create-row-2">
-          <CountrySelectDropdown
-            selectedCountry={form.country}
-            onSelectCountry={onCountrySelect}
-          />
+          <CountrySelectDropdown selectedCountry={form.country} onSelectCountry={onCountrySelect} />
 
           <div className="channel-create-field">
             <div className="field-label-row">
@@ -104,11 +103,7 @@ export function CreateChannelFormFields({
             placeholder={t("channels.targetAudiencePlaceholder")}
             disabled={disabled}
           />
-          <CreateChannelAudienceChips
-            selectedAudience={form.target_audience}
-            onSelectAudience={onAudienceSelect}
-            disabled={disabled}
-          />
+          <CreateChannelAudienceChips selectedAudience={form.target_audience} onSelectAudience={onAudienceSelect} disabled={disabled} />
         </div>
       </div>
 

@@ -1,8 +1,4 @@
-import {
-  normalizeLanguageCode,
-  type BankQuestion,
-  type BankQuestionWithCooldown,
-} from "@studio/shared";
+import { normalizeLanguageCode, type BankQuestion, type BankQuestionWithCooldown } from "@studio/shared";
 import { calculateQuestionSimilarity, normalizeQuestionText } from "../../../quiz/qa/questionHistory.js";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { listQuestionBankBatches } from "./bankBatchStorage.js";

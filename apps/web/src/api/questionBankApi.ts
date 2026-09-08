@@ -83,8 +83,7 @@ export const questionBankApi = {
       body: JSON.stringify(payload),
     }),
 
-  getBatchGenerationStatus: () =>
-    request<{ job: QuestionBankJobState }>("/api/question-bank/generate-batch/status"),
+  getBatchGenerationStatus: () => request<{ job: QuestionBankJobState }>("/api/question-bank/generate-batch/status"),
 
   cancelBatchGeneration: () =>
     request<{ success: boolean; job: QuestionBankJobState }>("/api/question-bank/generate-batch/cancel", {
@@ -100,7 +99,7 @@ export const questionBankApi = {
     channelId: string,
     payload: {
       question_id: string;
-      render_aspect_ratio?: "9:16" | "16:9";
+      render_aspect_ratio?: "16:9";
       auto_start_pipeline?: boolean;
       visual_style?: string;
       force?: boolean;

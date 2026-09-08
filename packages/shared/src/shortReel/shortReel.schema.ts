@@ -1,0 +1,443 @@
+import { z } from "zod";
+import { sha256Hex, ReelArchetypeSchema, CompleteShortReelSourceSnapshotSchema } from "./shortReelSource.schema.js";
+
+export { sha256Hex, ReelArchetypeSchema, CompleteShortReelSourceSnapshotSchema };
+
+export const SegmentIndexSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
+
+export const SegmentModeSchema = z.enum(["generate", "extend"]);
+
+export const TextCueRoleSchema = z.enum(["question", "answer", "supporting"]);
+
+export const TextCueSchema = z
+  .object({
+    role: TextCueRoleSchema,
+    text: z.string().min(1).max(500),
+    start_seconds: z.number().finite().min(0),
+    end_seconds: z.number().finite().min(0),
+  })
+  .strict()
+  .superRefine((cue, ctx) => {
+    if (cue.start_seconds >= cue.end_seconds) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "start_seconds must be strictly less than end_seconds",
+        path: ["end_seconds"],
+      });
+    }
+  });
+
+export const ContinuityStateSchema = z
+  .object({
+    character_identity: z.string().min(1).max(200),
+    position: z.string().min(1).max(300),
+    action: z.string().min(1).max(300),
+    camera: z.string().min(1).max(300),
+    environment: z.string().min(1).max(300),
+    props: z.array(z.string().min(1).max(100)),
+    visible_text: z.array(z.string().min(1).max(300)),
+    revealed_facts: z.array(z.string().min(1).max(300)),
+  })
+  .strict();
+
+export const ReelSegmentSchema = z
+  .object({
+    index: SegmentIndexSchema,
+    mode: SegmentModeSchema,
+    duration_seconds: z.number().finite().min(8).max(10),
+    narrative: z.string().min(1).max(1000),
+    text_cues: z.array(TextCueSchema),
+    audio_direction: z.string().min(1).max(500),
+    start_state: ContinuityStateSchema,
+    end_state: ContinuityStateSchema,
+  })
+  .strict()
+  .superRefine((seg, ctx) => {
+    if (seg.index === 1 && seg.mode !== "generate") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Segment 1 must use mode 'generate'",
+        path: ["mode"],
+      });
+    }
+    if (seg.index !== 1 && seg.mode !== "extend") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Segment ${seg.index} must use mode 'extend'`,
+        path: ["mode"],
+      });
+    }
+    for (let i = 0; i < seg.text_cues.length; i++) {
+      const cue = seg.text_cues[i];
+      if (cue.end_seconds > seg.duration_seconds) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Text cue end (${cue.end_seconds}s) exceeds segment duration (${seg.duration_seconds}s)`,
+          path: ["text_cues", i, "end_seconds"],
+        });
+      }
+    }
+  });
+
+type ReelSegment = z.infer<typeof ReelSegmentSchema>;
+
+export const ReelScriptSchema = z
+  .object({
+    segments: z.tuple([ReelSegmentSchema, ReelSegmentSchema, ReelSegmentSchema]),
+  })
+  .strict()
+  .superRefine((script, ctx) => {
+    const [seg1, seg2, seg3] = script.segments;
+    if (seg1.index !== 1 || seg2.index !== 2 || seg3.index !== 3) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Segments must be sequentially indexed 1, 2, 3",
+        path: ["segments"],
+      });
+    }
+    const totalDuration = seg1.duration_seconds + seg2.duration_seconds + seg3.duration_seconds;
+    if (totalDuration < 24 || totalDuration > 30) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Script total duration must be between 24 and 30 seconds (current: ${totalDuration})`,
+        path: ["segments"],
+      });
+    }
+  });
+
+type ReelScript = z.infer<typeof ReelScriptSchema>;
+
+export const ShortReelTopicSnapshotSchema = z
+  .object({
+    topic_id: z.string().min(1),
+    channel_id: z.string().min(1),
+    title: z.string().min(1),
+    premise: z.string().min(1),
+    hook: z.string().min(1),
+    origin: z.enum(["keyword", "discovery"]),
+  })
+  .strict();
+
+import { ShortReelSourceProvenanceSchema, ShortReelSourceChoiceSchema, ShortReelSourceSnapshotSchema } from "./shortReelSource.schema.js";
+
+export { ShortReelSourceProvenanceSchema, ShortReelSourceChoiceSchema, ShortReelSourceSnapshotSchema };
+
+export const ReelUnitStatusSchema = z.enum(["missing", "pending", "ready", "stale", "failed", "cancelled"]);
+
+export const ReelAttemptMetadataSchema = z
+  .object({
+    operation_id: z.string().min(1),
+    dependency_fingerprint: z.string().min(1),
+    started_at: z.string(),
+    completed_at: z.string().nullable(),
+    error: z.string().nullable(),
+  })
+  .strict();
+
+export function createReelUnitStateSchema<T extends z.ZodTypeAny>(payloadSchema: T) {
+  return z
+    .object({
+      state: ReelUnitStatusSchema,
+      last_accepted_payload: payloadSchema.nullable(),
+      current_attempt: ReelAttemptMetadataSchema.nullable(),
+    })
+    .strict();
+}
+
+export const ReelReferencesPayloadSchema = z
+  .object({
+    references: z.array(
+      z
+        .object({
+          asset_id: z.string().min(1),
+          role: z.enum(["mascot", "style"]),
+          path: z.string().min(1),
+          mime_type: z.string().min(1),
+          width: z.number().int().positive(),
+          height: z.number().int().positive(),
+          checksum: z.string().min(1),
+        })
+        .strict(),
+    ),
+  })
+  .strict();
+
+export const ReelCoverPayloadSchema = z
+  .object({
+    asset_id: z.string().min(1),
+    path: z.string().min(1),
+    mime_type: z.string().min(1),
+    width: z.literal(1080),
+    height: z.literal(1920),
+    checksum: z.string().min(1),
+  })
+  .strict();
+
+export const ReelPublishingPayloadSchema = z
+  .object({
+    hook: z.string().min(1).max(500),
+    description: z.string().min(1).max(2000),
+    cta: z.string().max(200).nullable(),
+    hashtags: z.array(z.string().min(1).max(50)),
+  })
+  .strict();
+
+export const ReelScriptPayloadSchema = z
+  .object({
+    script: ReelScriptSchema,
+    compiled_prompts: z.tuple([z.string(), z.string(), z.string()]).nullable(),
+  })
+  .strict();
+
+export const ReelDeliverableUnitsSchema = z
+  .object({
+    references: createReelUnitStateSchema(ReelReferencesPayloadSchema),
+    script: createReelUnitStateSchema(ReelScriptPayloadSchema),
+    cover: createReelUnitStateSchema(ReelCoverPayloadSchema),
+    publishing: createReelUnitStateSchema(ReelPublishingPayloadSchema),
+  })
+  .strict();
+
+export const MutationReceiptSchema = z
+  .object({
+    request_id: z.string().min(1),
+    revision: z.number().int().min(1),
+    command_kind: z.string().min(1),
+    command_hash: z.string().min(1),
+    applied_at: z.string(),
+  })
+  .strict();
+
+export const ShortReelRecordSchema = z
+  .object({
+    schema_version: z.literal(1),
+    reel_id: z.string().min(1),
+    channel_id: z.string().min(1),
+    topic_id: z.string().min(1),
+    topic: ShortReelTopicSnapshotSchema,
+    aspect_ratio: z.literal("9:16"),
+    source: ShortReelSourceSnapshotSchema,
+    revision: z.number().int().min(1),
+    model_note: z.string().max(200),
+    created_at: z.string(),
+    updated_at: z.string(),
+    script: ReelScriptSchema.nullable(),
+    stale_segments: z.array(SegmentIndexSchema).optional(),
+    units: ReelDeliverableUnitsSchema,
+    last_mutation: MutationReceiptSchema.nullable().optional(),
+    mutation_history: z.array(MutationReceiptSchema).optional(),
+  })
+  .strict();
+
+export const ShortReelEditCommandSchema = z.discriminatedUnion("kind", [
+  z
+    .object({
+      kind: z.literal("update_model_note"),
+      model_note: z.string().min(1).max(200),
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal("update_script"),
+      script: ReelScriptSchema,
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal("update_segment"),
+      segment_index: SegmentIndexSchema,
+      segment: ReelSegmentSchema,
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal("update_references"),
+      references: ReelReferencesPayloadSchema,
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal("update_publishing"),
+      publishing: ReelPublishingPayloadSchema,
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal("update_cover"),
+      cover: ReelCoverPayloadSchema,
+    })
+    .strict(),
+  z
+    .object({
+      kind: z.literal("replace_source_question"),
+      source: CompleteShortReelSourceSnapshotSchema,
+    })
+    .strict(),
+]);
+
+export function calculateScriptTotalDuration(script: ReelScript): number {
+  return script.segments[0].duration_seconds + script.segments[1].duration_seconds + script.segments[2].duration_seconds;
+}
+
+export function calculateCumulativeTimings(script: ReelScript): Array<{ segment_index: 1 | 2 | 3; start: number; end: number }> {
+  let cursor = 0;
+  return script.segments.map((segment: ReelSegment) => {
+    const start = cursor;
+    const end = cursor + segment.duration_seconds;
+    cursor = end;
+    return {
+      segment_index: segment.index,
+      start,
+      end,
+    };
+  });
+}
+
+export function validateReelScript(
+  script: ReelScript,
+  source: z.infer<typeof ShortReelSourceSnapshotSchema>,
+  staleSegments: readonly (1 | 2 | 3)[] = [],
+): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  const parsed = ReelScriptSchema.safeParse(script);
+  if (!parsed.success) {
+    for (const issue of parsed.error.issues) {
+      errors.push(`${issue.path.join(".")}: ${issue.message}`);
+    }
+    return { valid: false, errors };
+  }
+
+  let questionCueFound = false;
+  let firstQuestionTime = Number.POSITIVE_INFINITY;
+  let firstAnswerTime = Number.POSITIVE_INFINITY;
+  let answerCueFound = false;
+
+  const timings = calculateCumulativeTimings(script);
+
+  for (let s = 0; s < script.segments.length; s++) {
+    const seg = script.segments[s];
+    const segTiming = timings[s];
+
+    for (const cue of seg.text_cues) {
+      const globalStart = segTiming.start + cue.start_seconds;
+
+      if (cue.role === "question") {
+        if (s !== 0) errors.push("Canonical question cues belong in segment 1");
+        if (cue.text === source.question_text) {
+          questionCueFound = true;
+          firstQuestionTime = Math.min(firstQuestionTime, globalStart);
+        } else {
+          errors.push(`Question cue text "${cue.text}" does not match source question text "${source.question_text}"`);
+        }
+      }
+
+      if (cue.role === "answer") {
+        if (s !== 2) errors.push("Canonical answer cues belong in segment 3");
+        if (cue.text === source.selected_answer_text) {
+          answerCueFound = true;
+          firstAnswerTime = Math.min(firstAnswerTime, globalStart);
+        } else {
+          errors.push(`Answer cue text "${cue.text}" does not match source answer text "${source.selected_answer_text}"`);
+        }
+      }
+    }
+  }
+
+  if (!questionCueFound) {
+    errors.push("Script is missing canonical question cue matching source question text");
+  }
+
+  if (!answerCueFound) {
+    errors.push("Script is missing canonical answer cue matching source answer text");
+  }
+
+  if (answerCueFound && questionCueFound && firstAnswerTime <= firstQuestionTime) {
+    errors.push(`Answer cue revealed at ${firstAnswerTime}s before or at the same time as question cue at ${firstQuestionTime}s`);
+  }
+
+  for (let i = 0; i < 2; i++) {
+    if (staleSegments.includes((i + 2) as 2 | 3)) continue;
+    const currentEnd = script.segments[i].end_state;
+    const nextStart = script.segments[i + 1].start_state;
+
+    if (currentEnd.character_identity !== nextStart.character_identity) {
+      errors.push(
+        `Continuity mismatch between segment ${i + 1} and ${i + 2}: character_identity "${currentEnd.character_identity}" vs "${nextStart.character_identity}"`,
+      );
+    }
+    if (currentEnd.environment !== nextStart.environment) {
+      errors.push(
+        `Continuity mismatch between segment ${i + 1} and ${i + 2}: environment "${currentEnd.environment}" vs "${nextStart.environment}"`,
+      );
+    }
+    const currProps = [...currentEnd.props].sort();
+    const nextProps = [...nextStart.props].sort();
+    if (JSON.stringify(currProps) !== JSON.stringify(nextProps)) {
+      errors.push(`Continuity mismatch between segment ${i + 1} and ${i + 2}: props differ`);
+    }
+    const currText = [...currentEnd.visible_text].sort();
+    const nextText = [...nextStart.visible_text].sort();
+    if (JSON.stringify(currText) !== JSON.stringify(nextText)) {
+      errors.push(`Continuity mismatch between segment ${i + 1} and ${i + 2}: visible_text differs`);
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+export {
+  canonicalJsonStringify,
+  computeSourceContentHash,
+  isEnglishLanguage,
+  createEnglishSourceSnapshot,
+  createSourceSnapshot,
+} from "./shortReelSource.js";
+
+export function createInitialShortReel(params: {
+  channel_id: string;
+  topic: z.infer<typeof ShortReelTopicSnapshotSchema>;
+  source: z.infer<typeof ShortReelSourceSnapshotSchema>;
+  model_note?: string;
+  reel_id?: string;
+}): z.infer<typeof ShortReelRecordSchema> {
+  const now = new Date().toISOString();
+  const reelId = params.reel_id || `sreel_${sha256Hex(`${params.channel_id}:${params.topic.topic_id}:${now}`).slice(0, 16)}`;
+
+  return ShortReelRecordSchema.parse({
+    schema_version: 1,
+    reel_id: reelId,
+    channel_id: params.channel_id,
+    topic_id: params.topic.topic_id,
+    topic: params.topic,
+    aspect_ratio: "9:16",
+    source: CompleteShortReelSourceSnapshotSchema.parse(params.source),
+    revision: 1,
+    model_note: params.model_note || "Omni 1.1 Flash",
+    created_at: now,
+    updated_at: now,
+    script: null,
+    units: {
+      references: {
+        state: "missing",
+        last_accepted_payload: null,
+        current_attempt: null,
+      },
+      script: {
+        state: "missing",
+        last_accepted_payload: null,
+        current_attempt: null,
+      },
+      cover: {
+        state: "missing",
+        last_accepted_payload: null,
+        current_attempt: null,
+      },
+      publishing: {
+        state: "missing",
+        last_accepted_payload: null,
+        current_attempt: null,
+      },
+    },
+  });
+}

@@ -1,18 +1,12 @@
 import {
   QUIZ_LAYOUTS,
   QUIZ_LANDSCAPE_LAYOUT_IDS,
-  QUIZ_PORTRAIT_LAYOUT_IDS,
   filterQuizLayoutsByAspectRatio,
   getCompatibleQuizLayout,
   type ResolvedQuizLayoutId,
 } from "@studio/shared";
 
-export {
-  getCompatibleQuizLayout,
-  filterQuizLayoutsByAspectRatio,
-  QUIZ_LANDSCAPE_LAYOUT_IDS,
-  QUIZ_PORTRAIT_LAYOUT_IDS,
-};
+export { getCompatibleQuizLayout, filterQuizLayoutsByAspectRatio, QUIZ_LANDSCAPE_LAYOUT_IDS };
 
 export type QuizLayoutUiDefinition = {
   id: ResolvedQuizLayoutId;
@@ -20,7 +14,7 @@ export type QuizLayoutUiDefinition = {
   descriptionKey: string;
   sandboxLabelKey: string;
   sandboxDescriptionKey: string;
-  preview: "media-left" | "visual-three" | "full-stack" | "portrait-hero" | "portrait-versus" | "portrait-verdict" | "portrait-stack";
+  preview: "media-left" | "visual-three" | "full-stack";
   icon: "split" | "visual" | "stack";
 };
 
@@ -97,42 +91,6 @@ const QUIZ_LAYOUT_UI_BY_ID = {
     preview: "media-left",
     icon: "visual",
   },
-  portrait_hero_choices: {
-    id: "portrait_hero_choices",
-    labelKey: "stageStudio.layoutPortraitHeroChoices",
-    descriptionKey: "stageStudio.layoutPortraitHeroChoicesDesc",
-    sandboxLabelKey: "stageStudio.layoutPortraitHeroChoices",
-    sandboxDescriptionKey: "stageStudio.layoutPortraitHeroChoicesDesc",
-    preview: "portrait-hero",
-    icon: "split",
-  },
-  portrait_split_versus: {
-    id: "portrait_split_versus",
-    labelKey: "stageStudio.layoutPortraitSplitVersus",
-    descriptionKey: "stageStudio.layoutPortraitSplitVersusDesc",
-    sandboxLabelKey: "stageStudio.layoutPortraitSplitVersus",
-    sandboxDescriptionKey: "stageStudio.layoutPortraitSplitVersusDesc",
-    preview: "portrait-versus",
-    icon: "split",
-  },
-  portrait_verdict_tf: {
-    id: "portrait_verdict_tf",
-    labelKey: "stageStudio.layoutPortraitVerdictTf",
-    descriptionKey: "stageStudio.layoutPortraitVerdictTfDesc",
-    sandboxLabelKey: "stageStudio.layoutPortraitVerdictTf",
-    sandboxDescriptionKey: "stageStudio.layoutPortraitVerdictTfDesc",
-    preview: "portrait-verdict",
-    icon: "split",
-  },
-  portrait_stack_list: {
-    id: "portrait_stack_list",
-    labelKey: "stageStudio.layoutPortraitStackList",
-    descriptionKey: "stageStudio.layoutPortraitStackListDesc",
-    sandboxLabelKey: "stageStudio.layoutPortraitStackList",
-    sandboxDescriptionKey: "stageStudio.layoutPortraitStackListDesc",
-    preview: "portrait-stack",
-    icon: "stack",
-  },
 } as const satisfies Record<ResolvedQuizLayoutId, QuizLayoutUiDefinition>;
 
 export const QUIZ_LAYOUT_UI_DEFINITIONS = QUIZ_LAYOUTS.map((layout) => QUIZ_LAYOUT_UI_BY_ID[layout.id]);
@@ -141,11 +99,7 @@ export function getQuizLayoutUiDefinition(layoutId: ResolvedQuizLayoutId): QuizL
   return QUIZ_LAYOUT_UI_BY_ID[layoutId];
 }
 
-export function getQuizLayoutUiDefinitions(
-  aspectRatio?: "16:9" | "9:16",
-): QuizLayoutUiDefinition[] {
+export function getQuizLayoutUiDefinitions(aspectRatio?: "16:9" | "9:16"): QuizLayoutUiDefinition[] {
   const allowedIds = filterQuizLayoutsByAspectRatio(aspectRatio);
-  return QUIZ_LAYOUT_UI_DEFINITIONS.filter((layout) =>
-    (allowedIds as readonly ResolvedQuizLayoutId[]).includes(layout.id),
-  );
+  return QUIZ_LAYOUT_UI_DEFINITIONS.filter((layout) => allowedIds.includes(layout.id));
 }

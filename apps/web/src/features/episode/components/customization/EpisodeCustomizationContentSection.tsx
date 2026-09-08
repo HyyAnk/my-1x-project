@@ -1,10 +1,9 @@
-import type { Episode, MascotRenderAspectRatio, ThumbnailRatioMode } from "@studio/shared";
+import type { Episode, ThumbnailRatioMode } from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import type { EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview";
 import type { useEpisodeChannelBrandName } from "../../hooks/useEpisodeChannelBrandName";
 import { QuestionCountDropdown } from "./QuestionCountDropdown";
 import { ChannelBrandNameControl } from "./ChannelBrandNameControl";
-import { AspectRatioDropdown } from "./AspectRatioDropdown";
 import { ThumbnailRatioDropdown } from "./ThumbnailRatioDropdown";
 import type { EpisodeCustomizationDropdownName } from "./useEpisodeCustomizationDropdown";
 
@@ -20,7 +19,6 @@ export interface EpisodeCustomizationContentSectionProps {
   onSaveQuestionCount: (count: number) => void;
   onPreview: (candidate: EpisodePreviewCandidate | null) => void;
   brandNameControl: ReturnType<typeof useEpisodeChannelBrandName>;
-  onSaveAspectRatio?: (ratio: MascotRenderAspectRatio) => void;
   onSaveThumbnailRatio?: (ratio: ThumbnailRatioMode) => void;
 }
 
@@ -36,7 +34,6 @@ export function EpisodeCustomizationContentSection({
   onSaveQuestionCount,
   onPreview,
   brandNameControl,
-  onSaveAspectRatio,
   onSaveThumbnailRatio,
 }: EpisodeCustomizationContentSectionProps) {
   const { t } = useTranslation();
@@ -67,17 +64,6 @@ export function EpisodeCustomizationContentSection({
           saving={brandNameControl.saving}
           error={brandNameControl.error}
           disabled={isPipelineRunning}
-        />
-        <AspectRatioDropdown
-          episode={episode}
-          disabled={isPipelineRunning}
-          saving={isSaving("aspectRatio")}
-          isOpen={openDropdown === "aspectRatio"}
-          onToggle={() => toggleDropdown("aspectRatio")}
-          onSelectRatio={(ratio) => {
-            onSaveAspectRatio?.(ratio);
-            closeDropdown();
-          }}
         />
         <ThumbnailRatioDropdown
           episode={episode}

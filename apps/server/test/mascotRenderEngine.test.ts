@@ -16,10 +16,7 @@ import {
 import { RepositoryService } from "../src/repository.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
-import {
-  adaptMascotForQuestion,
-  renderProductionMascotHtmlLayer,
-} from "../src/quiz/render/productionMascotRenderer.js";
+import { adaptMascotForQuestion } from "../src/quiz/render/productionMascotRenderer.js";
 import { getMascotPreloadUrls } from "../src/quiz/render/mascotStateResolver.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
@@ -246,45 +243,24 @@ describe("Mascot portrait canvas and storage migration", () => {
     updated_at: "2026-08-30T00:00:00.000Z",
   };
 
-  it("uses a true 1080x1920 canvas in preview, production mascot HTML, and composition mounts", () => {
-    const preview = buildSandboxComposition(
-      {
-        aspect_ratio: "9:16",
-        layout_id: "portrait_hero_choices",
-        mascot_id: batchMascot.id,
-        mascot_enabled: true,
-        mascot_phase: "thinking",
-        mascot_action: "thinking",
-        mascot_playing: false,
-      },
-      batchMascot,
-    ).html;
-    expect(preview).toContain('data-width="1080" data-height="1920" data-aspect-ratio="9:16"');
-    expect(preview).toContain('data-mascot-canvas="1080x1920"');
-    expect(preview).toContain('#stage[data-aspect-ratio="9:16"] .game-stage');
+  it("rejects the retired portrait preview path", () => {
+    expect(() =>
+      buildSandboxComposition(
+        {
+          aspect_ratio: "9:16",
+          layout_id: "portrait_hero_choices",
+          mascot_id: batchMascot.id,
+          mascot_enabled: true,
+          mascot_phase: "thinking",
+          mascot_action: "thinking",
+          mascot_playing: false,
+        },
+        batchMascot,
+      ),
+    ).toThrow();
+  });
 
-    const production = renderProductionMascotHtmlLayer(
-      batchMascot,
-      {
-        enabled: true,
-        position: "bottom_left",
-        scale: 1,
-        offset_x: 0,
-        offset_y: 0,
-        flip_x: false,
-        show_in_intro: false,
-        show_in_outro: false,
-        show_in_question: true,
-      },
-      {
-        aspectRatio: "9:16",
-        phase: "question",
-        clipStartSeconds: 0,
-        clipDurationSeconds: 4,
-      },
-    );
-    expect(production).toContain('data-mascot-canvas="1080x1920"');
-
+  it("rejects the retired portrait production composition path", () => {
     const quiz = QuizV2Schema.parse({
       schema_version: 2,
       episode_id: "batch-e-quiz",
@@ -313,20 +289,20 @@ describe("Mascot portrait canvas and storage migration", () => {
     });
     const director = createDefaultDirectorPlan(quiz, "9:16");
     const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
-    const bundle = buildCandyArcadeCompositionBundle({
-      quiz,
-      director,
-      timeline,
-      styleContext: { theme: "candy_arcade" },
-      audioPath: "./narration.wav",
-      narrationDurationSeconds: timeline.duration_seconds,
-      aspectRatio: "9:16",
-    });
-    expect(bundle.html).toContain('data-width="1080" data-height="1920" data-aspect-ratio="9:16"');
-    expect(Object.values(bundle.files).every((file) => file.includes('data-width="1080" data-height="1920"'))).toBe(true);
+    expect(() =>
+      buildCandyArcadeCompositionBundle({
+        quiz,
+        director,
+        timeline,
+        styleContext: { theme: "candy_arcade" },
+        audioPath: "./narration.wav",
+        narrationDurationSeconds: timeline.duration_seconds,
+        aspectRatio: "9:16",
+      }),
+    ).toThrow(/layout_aspect_ratio_unsupported/);
   });
 
-  it("anchors question-clip mascot containers above safe-zone-bottom and respects safe-zone-right in 9:16 portrait composition CSS", () => {
+  it("rejects retired portrait mascot composition CSS", () => {
     const quiz = QuizV2Schema.parse({
       schema_version: 2,
       episode_id: "batch-e-safe-zone-quiz",
@@ -355,27 +331,17 @@ describe("Mascot portrait canvas and storage migration", () => {
     });
     const director = createDefaultDirectorPlan(quiz, "9:16");
     const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
-    const bundle = buildCandyArcadeCompositionBundle({
-      quiz,
-      director,
-      timeline,
-      styleContext: { theme: "candy_arcade" },
-      audioPath: "./narration.wav",
-      narrationDurationSeconds: timeline.duration_seconds,
-      aspectRatio: "9:16",
-    });
-
-    expect(bundle.html).toContain("var(--safe-zone-bottom, 440px)");
-    expect(bundle.html).toContain("var(--safe-zone-right, 140px)");
-    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .quiz-question-clip .candy-mascot-container.mascot-v2-container");
-    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-scene:not(.candy-intro):not(.candy-outro) .candy-mascot-container.mascot-v2-container");
-    expect(bundle.html).toContain("bottom: var(--safe-zone-bottom, 440px);");
-    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-mascot-container.mascot-v2-container.anchor-bottom_right");
-    expect(bundle.html).toContain("right: var(--safe-zone-right, 140px);");
-    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-mascot-container.mascot-v2-container.anchor-bottom_left");
-    expect(bundle.html).toContain("left: 36px;");
-    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-mascot-container.mascot-v2-container.mascot-intro");
-    expect(bundle.html).toContain("#stage[data-aspect-ratio=\"9:16\"] .candy-mascot-container.mascot-v2-container.mascot-outro");
+    expect(() =>
+      buildCandyArcadeCompositionBundle({
+        quiz,
+        director,
+        timeline,
+        styleContext: { theme: "candy_arcade" },
+        audioPath: "./narration.wav",
+        narrationDurationSeconds: timeline.duration_seconds,
+        aspectRatio: "9:16",
+      }),
+    ).toThrow(/layout_aspect_ratio_unsupported/);
   });
 
   it("migrates V1 mascot manifests idempotently with a backup and restores the exact original on rollback", async () => {
@@ -509,15 +475,17 @@ describe("Mascot Style Anchor Graceful Fallback (Step 5)", () => {
 
     const adapted = adaptMascotForQuestion(mascotWithAnchor, "cyberpunk-anchor", 0);
     expect(adapted).toBeDefined();
-    expect(adapted?.actions.thinking?.sprite_url).toBe("/assets/cyberpunk-anchor.png");
-    expect(adapted?.actions.thinking?.motion_preset).toBe("sway");
-    expect(adapted?.actions.thinking?.motion_speed).toBe(1.0);
-    expect(adapted?.actions.thinking?.motion_intensity).toBe("normal");
+    const thinking = adapted!.actions.thinking;
+    expect(thinking?.sprite_url).toBe("/assets/cyberpunk-anchor.png");
+    expect(thinking?.motion_preset).toBe("sway");
+    expect(thinking?.motion_speed).toBe(1.0);
+    expect(thinking?.motion_intensity).toBe("normal");
 
-    expect(adapted?.actions.celebrate?.sprite_url).toBe("/assets/cyberpunk-anchor.png");
-    expect(adapted?.actions.celebrate?.motion_preset).toBe("jump");
-    expect(adapted?.actions.celebrate?.motion_speed).toBe(1.0);
-    expect(adapted?.actions.celebrate?.motion_intensity).toBe("normal");
+    const celebrate = adapted!.actions.celebrate;
+    expect(celebrate?.sprite_url).toBe("/assets/cyberpunk-anchor.png");
+    expect(celebrate?.motion_preset).toBe("jump");
+    expect(celebrate?.motion_speed).toBe(1.0);
+    expect(celebrate?.motion_intensity).toBe("normal");
 
     // Also verify render_bundle adaptation when render_bundle is present
     const bundleMascot: MascotProfile = {
@@ -525,10 +493,11 @@ describe("Mascot Style Anchor Graceful Fallback (Step 5)", () => {
       render_bundle: adaptMascotV1ToV2(mascotWithAnchor, { enabled: true })!,
     };
     const adaptedBundle = adaptMascotForQuestion(bundleMascot, "cyberpunk-anchor", 0);
-    expect(adaptedBundle?.render_bundle?.assets.actions.thinking?.image_url).toBe("/assets/cyberpunk-anchor.png");
-    expect(adaptedBundle?.render_bundle?.assets.actions.thinking?.motion?.preset).toBe("sway");
-    expect(adaptedBundle?.render_bundle?.assets.actions.celebrate?.image_url).toBe("/assets/cyberpunk-anchor.png");
-    expect(adaptedBundle?.render_bundle?.assets.actions.celebrate?.motion?.preset).toBe("jump");
+    const bundleActions = adaptedBundle?.render_bundle?.assets.actions;
+    expect(bundleActions?.thinking?.image_url).toBe("/assets/cyberpunk-anchor.png");
+    expect(bundleActions?.thinking?.motion?.preset).toBe("sway");
+    expect(bundleActions?.celebrate?.image_url).toBe("/assets/cyberpunk-anchor.png");
+    expect(bundleActions?.celebrate?.motion?.preset).toBe("jump");
   });
 
   it("prioritizes slot variants over anchor_image_url when both are present", () => {
@@ -549,12 +518,8 @@ describe("Mascot Style Anchor Graceful Fallback (Step 5)", () => {
           anchor_image_url: "/assets/anchor-should-be-ignored.png",
           is_default: false,
           states: {
-            thinking: [
-              { id: "t0", slot_index: 1, image_url: "/assets/slot-thinking.png", motion_preset: "sway" },
-            ],
-            celebrate: [
-              { id: "c0", slot_index: 1, image_url: "/assets/slot-celebrate.png", motion_preset: "jump" },
-            ],
+            thinking: [{ id: "t0", slot_index: 1, image_url: "/assets/slot-thinking.png", motion_preset: "sway" }],
+            celebrate: [{ id: "c0", slot_index: 1, image_url: "/assets/slot-celebrate.png", motion_preset: "jump" }],
           },
           created_at: "2026-09-06T00:00:00.000Z",
           updated_at: "2026-09-06T00:00:00.000Z",

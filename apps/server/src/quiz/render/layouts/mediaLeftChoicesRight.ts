@@ -21,9 +21,8 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  */
 export const mediaLeftChoicesRightLayout = {
   id: "media_left_choices_right",
-  renderBody: (slots) =>
-    `${slots.questionBoxHtml}${slots.heroHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
-  css: (aspectRatio) => `
+  renderBody: (slots) => `${slots.questionBoxHtml}${slots.heroHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
+  css: (_aspectRatio) => `
 /* === Media Left Choices Right Layout (16:9 Landscape 1920x1080) === */
 .layout-media_left_choices_right .game-stage {
   display: grid;
@@ -225,26 +224,5 @@ export const mediaLeftChoicesRightLayout = {
   box-sizing: border-box;
 }
 
-${
-  aspectRatio === "9:16"
-    ? `
-/* Fallback 9:16 tokens preserved for backward test contract compatibility */
-#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .game-stage { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "hero" "answers"; row-gap: 24px; }
-#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .game-stage > .hero-image { width: 100%; height: 520px; margin: 0; }
-#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right .answer-grid { width: 100%; height: auto; margin: 0; padding: 0; gap: 24px; }
-#stage[data-aspect-ratio="9:16"] .layout-media_left_choices_right {
-  --choice-card-min-height: 116px;
-  --choice-card-height: auto;
-  --choice-card-margin-left: 68px;
-  --choice-card-padding: 12px 28px 12px 32px;
-  --choice-badge-size: 124px;
-  --choice-badge-margin-left: -70px;
-  --choice-badge-font-size: 68px;
-  --choice-font-size-base: 40px;
-  --choice-fit-max: 72px;
-}
-`
-    : ""
-}
 `,
 } satisfies QuizLayoutRenderDefinition;

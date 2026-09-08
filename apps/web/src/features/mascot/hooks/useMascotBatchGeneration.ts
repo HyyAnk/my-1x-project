@@ -28,14 +28,8 @@ export type UseMascotBatchGenerationResult = {
   batchProgress: BatchProgressState | null;
   setBatchProgress: React.Dispatch<React.SetStateAction<BatchProgressState | null>>;
   handleStopBatchGeneration: () => void;
-  handleGenerateSlot: (
-    state: "thinking" | "celebrate",
-    slotIndex: number,
-    promptModifier?: string,
-  ) => Promise<void>;
-  handleBatchGenerateStyle: (
-    stateFilter?: "thinking" | "celebrate" | "all",
-  ) => Promise<void>;
+  handleGenerateSlot: (state: "thinking" | "celebrate", slotIndex: number, promptModifier?: string) => Promise<void>;
+  handleBatchGenerateStyle: (stateFilter?: "thinking" | "celebrate" | "all") => Promise<void>;
 };
 
 export function useMascotBatchGeneration({
@@ -51,9 +45,7 @@ export function useMascotBatchGeneration({
 
   const handleStopBatchGeneration = useCallback(() => {
     stopBatchRef.current?.abort();
-    setBatchProgress((prev) =>
-      prev ? { ...prev, isStopping: true, statusMessage: "Cancelling remaining server slots..." } : null,
-    );
+    setBatchProgress((prev) => (prev ? { ...prev, isStopping: true, statusMessage: "Cancelling remaining server slots..." } : null));
   }, []);
 
   const handleGenerateSlot = useCallback(
@@ -97,8 +89,7 @@ export function useMascotBatchGeneration({
       const style = resolveMascotStyle(mascot, targetStyleId);
       if (!style) return;
 
-      const statesToProcess: Array<"thinking" | "celebrate"> =
-        stateFilter === "all" ? ["thinking", "celebrate"] : [stateFilter];
+      const statesToProcess: Array<"thinking" | "celebrate"> = stateFilter === "all" ? ["thinking", "celebrate"] : [stateFilter];
 
       const total = statesToProcess.reduce((count, st) => {
         const slots = style.states[st] || [];

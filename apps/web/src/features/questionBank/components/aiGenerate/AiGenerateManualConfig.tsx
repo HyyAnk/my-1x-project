@@ -44,12 +44,7 @@ export function AiGenerateManualConfig({
       <div className="qb-form-grid">
         <div className="qb-form-group">
           <label className="qb-label">{t("questionBank.aiModal.domainLabel")}</label>
-          <select
-            className="qb-select"
-            value={domainId}
-            onChange={(e) => onDomainChange(e.target.value)}
-            disabled={disabled}
-          >
+          <select className="qb-select" value={domainId} onChange={(e) => onDomainChange(e.target.value)} disabled={disabled}>
             <option value="">{t("questionBank.filters.allDomains")}</option>
             {(taxonomy?.domains || []).map((d) => (
               <option key={d.id} value={d.id}>
@@ -88,16 +83,13 @@ export function AiGenerateManualConfig({
           <option value="">{t("questionBank.aiModal.allArchetypesOption")}</option>
           {ARCHETYPE_OPTIONS.map((a) => (
             <option key={a.id} value={a.id}>
-              {a.icon} {t(`questionBank.archetypes.${a.id}` as any) || a.label}
+              {a.icon} {t(`questionBank.archetypes.${a.id}`) || a.label}
             </option>
           ))}
         </select>
       </div>
 
-      <div
-        className="qb-qa-assurance-box"
-        style={{ background: "rgba(59, 130, 246, 0.08)", borderColor: "rgba(59, 130, 246, 0.25)" }}
-      >
+      <div className="qb-qa-assurance-box" style={{ background: "rgba(59, 130, 246, 0.08)", borderColor: "rgba(59, 130, 246, 0.25)" }}>
         <ShieldCheck size={18} weight="fill" />
         <span>{t("questionBank.aiModal.leastVariantNotice")}</span>
       </div>

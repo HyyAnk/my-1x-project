@@ -51,7 +51,6 @@ describe("Thumbnail Shared Schemas & Contracts (Step 1)", () => {
     expect(request.aspect_ratio).toBe("auto");
   });
 
-
   it("validates ThumbnailManifest schema", () => {
     const manifest = ThumbnailManifestSchema.parse({
       episode_id: "ep_12345",

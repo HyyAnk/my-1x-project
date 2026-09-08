@@ -143,13 +143,7 @@ export const THUMBNAIL_LAYOUT_CATALOG: Record<ThumbnailLayoutType, ThumbnailLayo
 };
 
 export type CuriosityBadgeId =
-  | "auto"
-  | "99_percent_fail"
-  | "genius_only"
-  | "iq_test"
-  | "can_you_pass"
-  | "only_1_percent"
-  | "question_count";
+  "auto" | "99_percent_fail" | "genius_only" | "iq_test" | "can_you_pass" | "only_1_percent" | "question_count";
 
 export const CURIOSITY_BADGE_PRESETS: Array<{ id: CuriosityBadgeId; label: string; icon: string }> = [
   { id: "auto", label: "Auto (Based on Quiz)", icon: "✨" },
@@ -160,4 +154,3 @@ export const CURIOSITY_BADGE_PRESETS: Array<{ id: CuriosityBadgeId; label: strin
   { id: "only_1_percent", label: "ONLY 1% KNOW!", icon: "🏆" },
   { id: "question_count", label: "Question Count", icon: "🔢" },
 ];
-

@@ -11,7 +11,6 @@ import {
   getStatus,
   findWorkspaceRoot,
   fileMatchesZone,
-  findZonesForFile,
   inspectClaimScope,
   verifyClaimScope,
   pulseHeartbeat,
@@ -44,7 +43,9 @@ test.before(() => {
   if (fs.existsSync(testDbPath)) {
     try {
       fs.unlinkSync(testDbPath);
-    } catch {}
+    } catch {
+      // A missing test database is already clean.
+    }
   }
 });
 
@@ -52,7 +53,9 @@ test.after(() => {
   if (fs.existsSync(testDbPath)) {
     try {
       fs.unlinkSync(testDbPath);
-    } catch {}
+    } catch {
+      // A missing test database is already clean.
+    }
   }
 });
 
@@ -549,7 +552,7 @@ test("Live heartbeat refreshes timestamp and prevents accidental cleanup", () =>
   assert.equal(heartbeatResult.success, true);
   assert.ok(heartbeatResult.lastHeartbeatAt);
 
-  const cleanup = cleanupStaleActiveClaims({
+  cleanupStaleActiveClaims({
     workspaceRoot: root,
     customDbPath: testDbPath,
   });

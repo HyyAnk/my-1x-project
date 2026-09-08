@@ -25,7 +25,8 @@ const sampleQuestion: BankQuestion = {
   fun_fact: "A blue whale's heart alone is the size of a small car!",
   visual_spec: {
     intent: "question_illustration",
-    prompt: "Cinematic underwater photograph of a colossal blue whale gliding gracefully through sunlit azure deep ocean waters, 8k resolution.",
+    prompt:
+      "Cinematic underwater photograph of a colossal blue whale gliding gracefully through sunlit azure deep ocean waters, 8k resolution.",
     aspect_ratio: "16:9",
   },
   age_band: "family",
@@ -146,9 +147,7 @@ Hope this viral riddle performs well on Shorts!
     });
 
     it("throws an error if JSON is malformed", () => {
-      expect(() => parseTranscreationOutput("Not valid JSON at all", sampleQuestion)).toThrow(
-        /Failed to parse transcreation JSON output/,
-      );
+      expect(() => parseTranscreationOutput("Not valid JSON at all", sampleQuestion)).toThrow(/Failed to parse transcreation JSON output/);
     });
 
     it("throws an error if choice count mismatches source question", () => {
@@ -163,9 +162,7 @@ Hope this viral riddle performs well on Shorts!
         fun_fact: "",
       });
 
-      expect(() => parseTranscreationOutput(badChoicesJson, sampleSpeedBlitzQuestion)).toThrow(
-        /Transcreated choice count mismatch/,
-      );
+      expect(() => parseTranscreationOutput(badChoicesJson, sampleSpeedBlitzQuestion)).toThrow(/Transcreated choice count mismatch/);
     });
 
     it("throws an error if choice IDs do not match source question", () => {
@@ -180,9 +177,7 @@ Hope this viral riddle performs well on Shorts!
         fun_fact: "",
       });
 
-      expect(() => parseTranscreationOutput(wrongIdsJson, sampleQuestion)).toThrow(
-        /Transcreated choices missing source choice ID/,
-      );
+      expect(() => parseTranscreationOutput(wrongIdsJson, sampleQuestion)).toThrow(/Transcreated choices missing source choice ID/);
     });
   });
 
@@ -267,9 +262,9 @@ Hope this viral riddle performs well on Shorts!
     it("invokes mock LLMClient with prompt and parses emitted response", async () => {
       const emitter = new EventEmitter();
       const mockLlmClient = Object.assign(emitter, {
-        connect: async () => {},
-        startThread: async () => "thread-mock-123",
-        startTurn: async (threadId: string, prompt: string) => {
+        connect: () => Promise.resolve(),
+        startThread: () => Promise.resolve("thread-mock-123"),
+        startTurn: (_threadId: string, _prompt: string) => {
           setTimeout(() => {
             emitter.emit("notification", {
               method: "item/agentMessage/delta",
@@ -292,7 +287,7 @@ Hope this viral riddle performs well on Shorts!
               params: { turn: { status: "completed" } },
             });
           }, 10);
-          return "turn-mock-123";
+          return Promise.resolve("turn-mock-123");
         },
       }) as unknown as LLMClient;
 

@@ -143,7 +143,9 @@ class App {
           this.checkStaleClaims(state);
           this.graph.updateState(state);
         }
-      } catch (_) {}
+      } catch {
+        // The monitor reconnect loop handles transient state-fetch failures.
+      }
 
       this.connectSSE();
     } catch (err) {

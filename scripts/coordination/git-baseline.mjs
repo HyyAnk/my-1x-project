@@ -25,7 +25,7 @@ export function captureGitBaseline(workspaceRoot) {
     const repositoryFingerprint = fingerprintRepositoryState(baseRevision, fileFingerprints);
     return { baseRevision, gitStatusShort, changedFiles, fileFingerprints, repositoryFingerprint };
   } catch (error) {
-    throw new Error(`Could not capture Git baseline: ${error.message}`);
+    throw new Error(`Could not capture Git baseline: ${error.message}`, { cause: error });
   }
 }
 

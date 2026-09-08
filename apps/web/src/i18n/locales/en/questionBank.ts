@@ -65,7 +65,8 @@ export const questionBankEn = {
     // Clear All Confirmation Modal
     clearModal: {
       title: "Clear Question Bank",
-      warning: "This will permanently delete all questions and batches across all archetypes and domains from your Question Bank storage. This action cannot be undone.",
+      warning:
+        "This will permanently delete all questions and batches across all archetypes and domains from your Question Bank storage. This action cannot be undone.",
       confirmPrompt: 'To confirm deletion, please type "Yes" below:',
       placeholder: 'Type "Yes" to confirm',
       confirmBtn: "Confirm & Clear All",
@@ -181,8 +182,7 @@ export const questionBankEn = {
       modeAutoTag: "Recommended",
       modeAutoDesc:
         "Automatically detects unfilled Archetype + Entity combinations (20,000 core matrix cells) and populates them using fair round-robin distribution.",
-      modeManualDesc:
-        "Target specific domains, subtopics, or archetypes using Least-Variant-First prioritization to balance variety.",
+      modeManualDesc: "Target specific domains, subtopics, or archetypes using Least-Variant-First prioritization to balance variety.",
       matrixStatsTitle: "Matrix Coverage Status",
       matrixStatsCoverage: "Covered: {covered} / {total} combos ({pct}%) • {unfilled} unfilled remaining",
       archetypeLabel: "Target Archetype:",
@@ -199,8 +199,10 @@ export const questionBankEn = {
       qaAssuranceTitle: "Auto-QA Assurance:",
       qaAssuranceDesc:
         "Automatically rejects questions with copyrighted brands (Marvel, Disney, Pokémon...) or semantic similarity >= 75% with existing questions in bank.",
-      chunkNotice: "Chunking Engine: Large batches are split into <= 20 questions with real-time Auto-QA verification and instant persistence.",
-      leastVariantNotice: "Least-Variant-First Active: Unfilled combos are prioritized, followed by entities with the fewest existing variants.",
+      chunkNotice:
+        "Chunking Engine: Large batches are split into <= 20 questions with real-time Auto-QA verification and instant persistence.",
+      leastVariantNotice:
+        "Least-Variant-First Active: Unfilled combos are prioritized, followed by entities with the fewest existing variants.",
       cancelBtn: "Cancel",
       generatingBtn: "Generating AI Batch & Running Auto-QA...",
       generatingProgress: "Generating & moderating questions...",

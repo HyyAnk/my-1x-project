@@ -72,9 +72,7 @@ export function CostSavingsSection({ voiceMetrics, usageLedger }: CostSavingsSec
             <div className="savings-submetric">
               <span className="submetric-label">{t("dashboard.audioProduced")}</span>
               <strong className="submetric-val">
-                {renderedSeconds > 0
-                  ? `${(renderedSeconds / 60).toFixed(1)} ${t("dashboard.unitMins")}`
-                  : `0 ${t("dashboard.unitMins")}`}
+                {renderedSeconds > 0 ? `${(renderedSeconds / 60).toFixed(1)} ${t("dashboard.unitMins")}` : `0 ${t("dashboard.unitMins")}`}
               </strong>
             </div>
           </div>

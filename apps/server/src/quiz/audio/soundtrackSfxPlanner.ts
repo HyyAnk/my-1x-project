@@ -39,6 +39,49 @@ export function resolveSfxCandidatePath(filename: string, candidateDirs: string[
   return null;
 }
 
+function resolveCountdownSfx(val: unknown) {
+  const isFinalTick = val === 1;
+  const intent = isFinalTick ? "countdown_final" : "countdown_tick";
+  if (typeof val === "number" && val >= 1 && val <= 5) {
+    const filename = val === 1 ? "countdown_1.wav" : `countdown_${val}.wav`;
+    const dur = val === 1 ? 0.35 : val === 2 ? 0.09 : 0.08;
+    const vol = val === 1 ? 0.6 : val === 2 ? 0.5 : val === 3 ? 0.48 : 0.45;
+    return { intent, filename, dur, vol };
+  }
+  const filename = isFinalTick ? "countdown_final.wav" : "countdown_tick.wav";
+  const dur = isFinalTick ? 0.35 : 0.08;
+  const vol = isFinalTick ? 0.6 : 0.45;
+  return { intent, filename, dur, vol };
+}
+
+function resolveEventSfxConfig(event: QuizTimeline["events"][number]) {
+  if (event.type === "choices.enter") {
+    return { intent: "ui_pop", filename: "ui_pop.wav", dur: 0.12, vol: 0.55 };
+  }
+  if (event.type === "countdown.tick") {
+    return resolveCountdownSfx(event.payload?.value);
+  }
+  if (event.type === "reward.play") {
+    const isBig = event.payload?.intensity === "big";
+    return {
+      intent: isBig ? "correct_big" : "correct_small",
+      filename: isBig ? "correct_triumph.wav" : "correct_ding.wav",
+      dur: isBig ? 1.5 : 1.1,
+      vol: 0.75,
+    };
+  }
+  if (event.type === "transition.start") {
+    const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";
+    return {
+      intent: isLightning ? "transition_fast" : "transition_soft",
+      filename: isLightning ? "lightning_brush.wav" : "bubble_splash.wav",
+      dur: isLightning ? 0.7 : 0.65,
+      vol: 0.6,
+    };
+  }
+  return null;
+}
+
 export function resolveSfxSchedule(
   events: QuizTimeline["events"],
   candidateDirs: string[] = defaultSfxCandidateDirectories(),
@@ -61,54 +104,18 @@ export function resolveSfxSchedule(
     const eventSlug = event.type.replaceAll(".", "-");
     const id = `sfx-${eventSlug}-${timeMs}`;
 
-    let filename = "";
-    let dur = 0.12;
-    let vol = 0.55;
-    let intent = "";
-
-    if (event.type === "choices.enter") {
-      intent = "ui_pop";
-      filename = "ui_pop.wav";
-      dur = 0.12;
-      vol = 0.55;
-    } else if (event.type === "countdown.tick") {
-      const val = event.payload?.value;
-      const isFinalTick = val === 1;
-      intent = isFinalTick ? "countdown_final" : "countdown_tick";
-      if (typeof val === "number" && val >= 1 && val <= 5) {
-        filename = val === 1 ? "countdown_1.wav" : `countdown_${val}.wav`;
-        dur = val === 1 ? 0.35 : val === 2 ? 0.09 : 0.08;
-        vol = val === 1 ? 0.6 : val === 2 ? 0.5 : val === 3 ? 0.48 : 0.45;
-      } else {
-        filename = isFinalTick ? "countdown_final.wav" : "countdown_tick.wav";
-        dur = isFinalTick ? 0.35 : 0.08;
-        vol = isFinalTick ? 0.6 : 0.45;
-      }
-    } else if (event.type === "reward.play") {
-      const isBig = event.payload?.intensity === "big";
-      intent = isBig ? "correct_big" : "correct_small";
-      filename = isBig ? "correct_triumph.wav" : "correct_ding.wav";
-      dur = isBig ? 1.5 : 1.1;
-      vol = 0.75;
-    } else if (event.type === "transition.start") {
-      const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";
-      intent = isLightning ? "transition_fast" : "transition_soft";
-      filename = isLightning ? "lightning_brush.wav" : "bubble_splash.wav";
-      dur = isLightning ? 0.7 : 0.65;
-      vol = 0.6;
-    }
-
-    if (filename) {
-      const resolvedPath = resolveSfxCandidatePath(filename, candidateDirs, assets);
+    const config = resolveEventSfxConfig(event);
+    if (config) {
+      const resolvedPath = resolveSfxCandidatePath(config.filename, candidateDirs, assets);
       if (resolvedPath) {
         rawClips.push({
           id,
-          intent,
-          filename,
+          intent: config.intent,
+          filename: config.filename,
           filePath: resolvedPath,
           start: event.at_seconds,
-          duration: dur,
-          volume: vol,
+          duration: config.dur,
+          volume: config.vol,
         });
       }
     }

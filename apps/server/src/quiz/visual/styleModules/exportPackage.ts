@@ -253,8 +253,15 @@ function safeRender(renderer: { renderHtml: (context: never) => string }, contex
   try {
     return renderer.renderHtml(context as never);
   } catch (error) {
-    throw new Error(`Style renderer could not be exported: ${error instanceof Error ? error.message : "render failed"}`);
+    throw new Error(`Style renderer could not be exported: ${error instanceof Error ? error.message : "render failed"}`, { cause: error });
   }
+}
+
+function toPrimitiveString(val: unknown): string {
+  if (val === null || val === undefined) return "";
+  if (typeof val === "string") return val;
+  if (typeof val === "number" || typeof val === "boolean" || typeof val === "bigint") return String(val);
+  return JSON.stringify(val);
 }
 
 export function validateHtmlTemplate(template: string): void {
@@ -268,7 +275,7 @@ export function renderHtmlTemplate(template: string, context: unknown): string {
   validateHtmlTemplate(template);
   const values = context && typeof context === "object" ? (context as Record<string, unknown>) : {};
   return template.replace(TEMPLATE_FIELD, (_token, field: string) =>
-    field === "highlightedHtml" ? String(values[field] ?? "") : escapeTemplateValue(resolveTemplateValue(values, field)),
+    field === "highlightedHtml" ? toPrimitiveString(values[field]) : escapeTemplateValue(resolveTemplateValue(values, field)),
   );
 }
 
@@ -280,7 +287,7 @@ function resolveTemplateValue(values: Record<string, unknown>, field: string): u
 }
 
 function escapeTemplateValue(value: unknown): string {
-  return String(value ?? "")
+  return toPrimitiveString(value)
     .replaceAll("&", "&amp;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;")

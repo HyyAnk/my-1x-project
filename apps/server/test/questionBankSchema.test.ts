@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  BankChoiceSchema,
   BankGameplayArchetypeIdSchema,
   BankIndexSchema,
   BankQuestionSchema,
@@ -340,7 +339,7 @@ describe("Question Bank Schemas", () => {
     const bankRoot = path.resolve(curr, ".quiz-studio", "question_bank");
 
     // 1. taxonomy.json
-    const taxRaw = JSON.parse(await readFile(path.join(bankRoot, "taxonomy.json"), "utf8"));
+    const taxRaw: unknown = JSON.parse(await readFile(path.join(bankRoot, "taxonomy.json"), "utf8"));
     const taxParsed = BankTaxonomySchema.safeParse(taxRaw);
     expect(taxParsed.success).toBe(true);
     if (taxParsed.success) {
@@ -348,7 +347,7 @@ describe("Question Bank Schemas", () => {
     }
 
     // 2. index.json
-    const indexRaw = JSON.parse(await readFile(path.join(bankRoot, "index.json"), "utf8"));
+    const indexRaw: unknown = JSON.parse(await readFile(path.join(bankRoot, "index.json"), "utf8"));
     const indexParsed = BankIndexSchema.safeParse(indexRaw);
     expect(indexParsed.success).toBe(true);
     if (indexParsed.success) {

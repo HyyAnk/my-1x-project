@@ -1,12 +1,5 @@
 import { z } from "zod";
-import {
-  MascotActionTypeSchema,
-  MascotMotionIntensity,
-  MascotMotionIntensitySchema,
-  MascotMotionPreset,
-  MascotMotionPresetSchema,
-  QuizImageStyleSchema,
-} from "../enums.js";
+import { MascotActionTypeSchema, MascotMotionIntensitySchema, MascotMotionPresetSchema, QuizImageStyleSchema } from "../enums.js";
 import { MascotRenderBundleV2Schema } from "../mascot/renderSchema.js";
 import { IsoDate } from "./common.js";
 
@@ -130,10 +123,7 @@ export function synthesizeLegacyCoreStyle(profile: Partial<MascotProfile> | Masc
   };
 }
 
-export function resolveMascotStyle(
-  profile: MascotProfile,
-  styleId?: string | null,
-): MascotStyle {
+export function resolveMascotStyle(profile: MascotProfile, styleId?: string | null): MascotStyle {
   if (profile.styles && profile.styles.length > 0) {
     if (styleId) {
       const match = profile.styles.find((s) => s.id === styleId);
@@ -189,7 +179,12 @@ export const ChannelMascotConfigSchema = z.object({
   show_in_intro: z.boolean().default(false),
   show_in_outro: z.boolean().default(false),
   show_in_question: z.boolean().default(true),
-  placements: z.record(z.enum(["16:9", "9:16"]), MascotPlacementPresetSchema).optional(),
+  placements: z
+    .object({
+      "16:9": MascotPlacementPresetSchema.optional(),
+    })
+    .strict()
+    .optional(),
   mascot_style_id: z.string().optional(),
 });
 
@@ -199,7 +194,7 @@ export function resolveChannelMascotPlacement(
   config: Partial<ChannelMascotConfig> | ChannelMascotConfig | null | undefined,
   aspectRatio: "16:9" | "9:16",
 ): MascotPlacementPreset {
-  const explicit = config?.placements?.[aspectRatio];
+  const explicit = aspectRatio === "16:9" ? config?.placements?.["16:9"] : undefined;
   if (explicit) {
     return {
       position: explicit.position,
@@ -221,14 +216,14 @@ export function resolveChannelMascotPlacement(
 
 export const MascotStageSettingsSchema = z.object({
   default_placement: MascotPlacementPresetSchema.default(RECOMMENDED_MASCOT_PLACEMENT_PRESET),
-  default_placements: z.record(z.enum(["16:9", "9:16"]), MascotPlacementPresetSchema).optional(),
+  default_placements: z.object({ "16:9": MascotPlacementPresetSchema.optional() }).strict().optional(),
 });
 
 export type MascotStageSettings = z.infer<typeof MascotStageSettingsSchema>;
 
 export function resolveMascotStageDefaultPlacement(
   settings: Partial<MascotStageSettings> | MascotStageSettings | null | undefined,
-  aspectRatio: "16:9" | "9:16",
+  aspectRatio: "16:9",
 ): MascotPlacementPreset {
   const explicit = settings?.default_placements?.[aspectRatio];
   if (explicit) {

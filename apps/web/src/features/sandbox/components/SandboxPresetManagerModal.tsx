@@ -1,12 +1,7 @@
 import { useTranslation } from "../../../i18n";
 import type { VisualPresetItem } from "../hooks/useSandboxPresets";
 import { StyleModuleImportDialog } from "../../stylePresets/components/StyleModuleImportDialog";
-import {
-  PresetManagerFilterTabs,
-  PresetManagerHeader,
-  PresetManagerList,
-  usePresetManagerModal,
-} from "./presetManager";
+import { PresetManagerFilterTabs, PresetManagerHeader, PresetManagerList, usePresetManagerModal } from "./presetManager";
 
 export interface SandboxPresetManagerModalProps {
   isOpen: boolean;

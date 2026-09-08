@@ -17,10 +17,7 @@ import { createDefaultDirectorPlan } from "../../director/parseDirectorPlan.js";
 /**
  * Maps a quiz archetype identifier to a corresponding DirectorArchetype.
  */
-export function mapToDirectorArchetype(
-  archetypeId?: string,
-  fallback: DirectorArchetype = "text_multiple_choice",
-): DirectorArchetype {
+export function mapToDirectorArchetype(archetypeId?: string, fallback: DirectorArchetype = "text_multiple_choice"): DirectorArchetype {
   switch (archetypeId) {
     case "mystery_reveal":
       return "mystery_reveal";
@@ -41,86 +38,17 @@ export function mapToDirectorArchetype(
   }
 }
 
-/**
- * Resolves the appropriate quiz layout ID for a given topic candidate and render aspect ratio.
- * For 9:16 portrait renders, routes to one of the 4 dedicated portrait layouts:
- * - portrait_hero_choices
- * - portrait_split_versus
- * - portrait_verdict_tf
- * - portrait_stack_list
- * For 16:9 landscape renders (default), preserves legacy landscape layouts.
- */
-export function resolveTargetLayoutForTopic(
-  topic: TopicCandidate,
-  aspectRatio: MascotRenderAspectRatio = "16:9",
-): QuizLayoutId {
-  if (aspectRatio === "9:16") {
-    if (topic.archetype === "visual_spotting" || topic.quiz_format === "odd_one_out") {
-      throw new Error(
-        "Archetype 'visual_spotting' and format 'odd_one_out' (3-image visual choices) are strictly unsupported for 9:16 vertical video. Use 16:9 landscape aspect ratio instead.",
-      );
-    }
-
-    if (topic.suggested_layout) {
-      switch (topic.suggested_layout) {
-        case "portrait_hero_choices":
-        case "portrait_split_versus":
-        case "portrait_verdict_tf":
-        case "portrait_stack_list":
-          return topic.suggested_layout as QuizLayoutId;
-        case "split_versus_two":
-          return "portrait_split_versus";
-        case "verdict_true_false":
-          return "portrait_verdict_tf";
-        case "full_stack_list":
-          return "portrait_stack_list";
-        default:
-          return "portrait_hero_choices";
-      }
-    }
-
-    if (topic.archetype) {
-      switch (topic.archetype) {
-        case "verdict_true_false":
-        case "verdict_fact_myth":
-          return "portrait_verdict_tf";
-        case "versus_faceoff":
-          return "portrait_split_versus";
-        case "speed_blitz":
-          return "portrait_stack_list";
-        case "mystery_reveal":
-        case "clue_deduction":
-        case "visual_identification":
-        case "deep_trivia":
-        default:
-          return "portrait_hero_choices";
-      }
-    }
-
-    if (topic.quiz_format === "true_false") {
-      return "portrait_verdict_tf";
-    }
-    return "portrait_hero_choices";
+export function resolveTargetLayoutForTopic(topic: TopicCandidate, aspectRatio: MascotRenderAspectRatio = "16:9"): QuizLayoutId {
+  if (aspectRatio !== "16:9") {
+    throw new Error("Episode layouts support 16:9 landscape only");
   }
-
-  // 16:9 (or default landscape)
-  if (topic.suggested_layout) {
-    switch (topic.suggested_layout) {
-      case "portrait_split_versus":
-        return "split_versus_two";
-      case "portrait_verdict_tf":
-        return "verdict_true_false";
-      case "portrait_stack_list":
-        return "full_stack_list";
-      case "portrait_hero_choices":
-        return "media_left_choices_right";
-      default:
-        return topic.suggested_layout as QuizLayoutId;
-    }
+  const suggestedLayout = topic.content_kind === "episode" ? topic.suggested_layout : undefined;
+  if (suggestedLayout) {
+    return suggestedLayout;
   }
   if (topic.archetype) {
-    const bp = getQuizGameplayArchetype(topic.archetype as any);
-    if (bp?.targetLayout) return bp.targetLayout as QuizLayoutId;
+    const bp = getQuizGameplayArchetype(topic.archetype);
+    if (bp?.targetLayout) return bp.targetLayout;
     switch (topic.archetype) {
       case "mystery_reveal":
         return "mystery_reveal";
@@ -164,9 +92,7 @@ export interface BuildSingleQuestionDirectorPlanParams {
 /**
  * Builds an archetype-tailored DirectorPlan for a single question episode.
  */
-export function buildSingleQuestionDirectorPlan(
-  params: BuildSingleQuestionDirectorPlanParams,
-): DirectorPlan {
+export function buildSingleQuestionDirectorPlan(params: BuildSingleQuestionDirectorPlanParams): DirectorPlan {
   const { episodeId, quizQuestion, archetypeId, channel, targetLayout } = params;
   const channelPalette = QuizPaletteIdSchema.safeParse(channel.default_palette_id);
   const directorArchetype = mapToDirectorArchetype(archetypeId, "text_multiple_choice");

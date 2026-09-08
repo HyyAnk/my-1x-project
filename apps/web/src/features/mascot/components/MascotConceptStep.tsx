@@ -179,11 +179,7 @@ export function MascotConceptStep({
       {/* TIER 2: STYLE THEMES & WARDROBE DECK (FULL-WIDTH HORIZONTAL SHOWCASE) */}
       {editingMascot?.master_image_url ? (
         <div className="concept-tier-styles-deck">
-          <MascotStyleConceptManager
-            editingMascot={editingMascot}
-            stylesState={stylesState}
-            onOpenLightbox={setLightboxImage}
-          />
+          <MascotStyleConceptManager editingMascot={editingMascot} stylesState={stylesState} onOpenLightbox={setLightboxImage} />
         </div>
       ) : null}
 

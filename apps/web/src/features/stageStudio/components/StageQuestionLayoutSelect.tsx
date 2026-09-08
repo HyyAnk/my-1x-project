@@ -10,15 +10,10 @@ type StageQuestionLayoutSelectProps = {
 
 export function StageQuestionLayoutSelect({ studio }: StageQuestionLayoutSelectProps) {
   const { t, questionLayoutId, setQuestionLayoutId, aspectRatio } = studio;
-  const availableLayouts = useMemo(
-    () => getStageQuestionLayouts(aspectRatio),
-    [aspectRatio],
-  );
+  const availableLayouts = useMemo(() => getStageQuestionLayouts(aspectRatio), [aspectRatio]);
 
   const isCurrentLayoutAvailable = availableLayouts.some((layout) => layout.id === questionLayoutId);
-  const activeLayoutId = isCurrentLayoutAvailable
-    ? questionLayoutId
-    : availableLayouts[0]?.id ?? questionLayoutId;
+  const activeLayoutId = isCurrentLayoutAvailable ? questionLayoutId : (availableLayouts[0]?.id ?? questionLayoutId);
   const selectedLayout = getStageQuestionLayoutDefinition(activeLayoutId);
 
   return (
@@ -44,11 +39,7 @@ export function StageQuestionLayoutSelect({ studio }: StageQuestionLayoutSelectP
       </label>
 
       <div id="stage-layout-description" className="stage-layout-summary" aria-live="polite">
-        <QuizLayoutWireframe
-          preview={selectedLayout.preview}
-          layoutId={selectedLayout.id}
-          aspectRatio={aspectRatio}
-        />
+        <QuizLayoutWireframe preview={selectedLayout.preview} layoutId={selectedLayout.id} aspectRatio={aspectRatio} />
         <span>{t(selectedLayout.descriptionKey)}</span>
       </div>
     </section>

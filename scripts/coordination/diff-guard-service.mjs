@@ -189,7 +189,9 @@ function selectFilesToVerify({ claim, comparison, changedFilesOverride, zoneList
         } finally {
           rootDb.close();
         }
-      } catch (_) {}
+      } catch {
+        // The optional workspace-root database may be unavailable during inspection.
+      }
 
       if (otherActive.length > 0) {
         const otherZones = new Set(otherActive.flatMap((c) => c.writeZones || []));

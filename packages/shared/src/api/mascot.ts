@@ -1,10 +1,5 @@
 import { z } from "zod";
-import {
-  MascotActionTypeSchema,
-  MascotMotionIntensitySchema,
-  MascotMotionPresetSchema,
-  QuizImageStyleSchema,
-} from "../enums.js";
+import { MascotActionTypeSchema, MascotMotionIntensitySchema, MascotMotionPresetSchema, QuizImageStyleSchema } from "../enums.js";
 import { ChannelMascotConfigSchema, MascotPlacementPresetSchema, MascotProfileSchema, MascotStyleSchema } from "../schemas.js";
 
 export const CalibrateMascotActionInputSchema = z.object({
@@ -90,7 +85,7 @@ export type AssignMascotInput = z.infer<typeof AssignMascotInputSchema>;
 
 export const MascotStageSettingsInputSchema = z.object({
   default_placement: MascotPlacementPresetSchema.optional(),
-  default_placements: z.record(z.enum(["16:9", "9:16"]), MascotPlacementPresetSchema).optional(),
+  default_placements: z.object({ "16:9": MascotPlacementPresetSchema.optional() }).strict().optional(),
 });
 
 export type MascotStageSettingsInput = z.infer<typeof MascotStageSettingsInputSchema>;

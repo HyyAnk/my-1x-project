@@ -108,7 +108,6 @@ export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise
         continue;
       }
       if (errorReport && !hasHyperframesBlockingIssues(errorReport)) {
-        checkOutput = failure.stdout || "{}";
         break;
       }
       throw new RepositoryError(formatHyperframesCheckFailure(errorReport, failure.message), "QUIZ_COMPOSITION_CHECK_FAILED");

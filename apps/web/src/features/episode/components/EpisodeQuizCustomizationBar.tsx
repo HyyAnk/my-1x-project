@@ -30,7 +30,6 @@ export function EpisodeQuizCustomizationBar({
   onSaveCounterStyle,
   onSaveBackgroundStyle,
   onSavePaletteId,
-  onSaveAspectRatio,
   onSaveThumbnailRatio,
   onApplyStylePreset,
   setEpisode,
@@ -74,7 +73,6 @@ export function EpisodeQuizCustomizationBar({
             onSaveQuestionCount={onSaveQuestionCount}
             onPreview={dropdown.setCandidate}
             brandNameControl={brandNameControl}
-            onSaveAspectRatio={onSaveAspectRatio}
             onSaveThumbnailRatio={onSaveThumbnailRatio}
           />
 

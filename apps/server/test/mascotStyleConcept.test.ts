@@ -34,7 +34,7 @@ describe("Mascot Style Concept Generation", () => {
         master_image_url: "/api/mascots/mascot_mock_1/assets/master.png",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        actions: {} as any,
+        actions: {},
         styles: [
           {
             id: "style_cyber_ninja",
@@ -51,27 +51,23 @@ describe("Mascot Style Concept Generation", () => {
 
       const savedAssets: Array<{ mascotId: string; filename: string; content: Uint8Array }> = [];
       let savedMascotProfile: MascotProfile | null = null;
+      const saveMascotAsset = vi.fn((mascotId: string, filename: string, content: Uint8Array) => {
+        savedAssets.push({ mascotId, filename, content });
+        return `/api/mascots/${mascotId}/assets/${filename}`;
+      });
 
       const mockRepository = {
         getMascotAssetFile: vi.fn().mockRejectedValue(new Error("File not found")),
-        saveMascotAsset: vi.fn().mockImplementation(async (mascotId: string, filename: string, content: Uint8Array) => {
-          savedAssets.push({ mascotId, filename, content });
-          return `/api/mascots/${mascotId}/assets/${filename}`;
-        }),
+        saveMascotAsset,
         getMascot: vi.fn().mockResolvedValue(mockMascot),
-        saveMascot: vi.fn().mockImplementation(async (profile: MascotProfile) => {
+        saveMascot: vi.fn().mockImplementation((profile: MascotProfile) => {
           savedMascotProfile = profile;
           return profile;
         }),
         deleteMascotAssetFile: vi.fn().mockResolvedValue(undefined),
       } as unknown as RepositoryService;
 
-      const result = await generateMascotStyleConcept(
-        mockRepository,
-        mockMascot,
-        "style_cyber_ninja",
-        testImageConfig,
-      );
+      const result = await generateMascotStyleConcept(mockRepository, mockMascot, "style_cyber_ninja", testImageConfig);
 
       // Verify prompt construction and contract
       expect(result.prompt_used).toContain("@1");
@@ -79,9 +75,7 @@ describe("Mascot Style Concept Generation", () => {
       expect(result.prompt_used).toContain(
         "Theme & Costume: Styled in authentic sleek nano armor dual katanas neon visor attire, costume, and accessories.",
       );
-      expect(result.prompt_used).toContain(
-        'Full-body single character concept illustration of "Shadow Fox" dressed in Cyber Ninja style.',
-      );
+      expect(result.prompt_used).toContain('Full-body single character concept illustration of "Shadow Fox" dressed in Cyber Ninja style.');
       expect(result.prompt_used).toContain("floating character");
       expect(result.prompt_used).toContain("no ground shadow");
       expect(validateMascotPromptContract(result.prompt_used, false)).toBe(true);
@@ -92,7 +86,7 @@ describe("Mascot Style Concept Generation", () => {
       expect(result.raw_image_url).toMatch(/^\/api\/mascots\/mascot_mock_1\/assets\/style_style_cyber_ninja_anchor_raw_\d+\.png$/);
 
       // Verify assets were saved through repository
-      expect(mockRepository.saveMascotAsset).toHaveBeenCalledTimes(2);
+      expect(saveMascotAsset).toHaveBeenCalledTimes(2);
       expect(savedAssets.length).toBe(2);
       expect(savedAssets[0]?.filename).toContain("_anchor_");
       expect(savedAssets[1]?.filename).toContain("_anchor_raw_");
@@ -110,15 +104,15 @@ describe("Mascot Style Concept Generation", () => {
         visual_style: "flat_vector",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        actions: {} as any,
+        actions: {},
         styles: [],
       };
 
       const mockRepository = {} as RepositoryService;
 
-      await expect(
-        generateMascotStyleConcept(mockRepository, mockMascot, "missing_style", testImageConfig),
-      ).rejects.toThrow("Style missing_style not found");
+      await expect(generateMascotStyleConcept(mockRepository, mockMascot, "missing_style", testImageConfig)).rejects.toThrow(
+        "Style missing_style not found",
+      );
     });
   });
 
@@ -153,13 +147,9 @@ describe("Mascot Style Concept Generation", () => {
 
       // 4. Generate style concept with custom override prompt
       const customOverride = "Standing heroically on the deck, holding a spyglass";
-      const result = await generateMascotStyleConcept(
-        app.repository,
-        mascotWithStyle,
-        style.id,
-        testImageConfig,
-        { prompt: customOverride },
-      );
+      const result = await generateMascotStyleConcept(app.repository, mascotWithStyle, style.id, testImageConfig, {
+        prompt: customOverride,
+      });
 
       // Verify result structure
       expect(result.placeholder).toBe(true);
@@ -184,12 +174,7 @@ describe("Mascot Style Concept Generation", () => {
       expect(styleInMascot?.anchor_image_url).toBe(result.anchor_image_url);
 
       // 5. Regenerate style concept to verify previous asset cleanup
-      const result2 = await generateMascotStyleConcept(
-        app.repository,
-        reloadedMascot,
-        style.id,
-        testImageConfig,
-      );
+      const result2 = await generateMascotStyleConcept(app.repository, reloadedMascot, style.id, testImageConfig);
 
       expect(result2.anchor_image_url).not.toBe(result.anchor_image_url);
       const reloadedMascot2 = await app.repository.getMascot(mascot.id);

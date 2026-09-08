@@ -1,4 +1,4 @@
-import type { MascotProfile, ThumbnailAspectRatio, ThumbnailLayoutType } from "@studio/shared";
+import type { ThumbnailLayoutType } from "@studio/shared";
 import { executeSinglePromptText, type LLMClient } from "../../utils/promptSanitizer.js";
 import {
   MASCOT_ARCHETYPES_CATALOG,
@@ -41,10 +41,7 @@ interface AiThumbnailPlanOutput {
   subject_anchors?: Array<{ label?: string; visualPrompt?: string; badge?: string }>;
 }
 
-export function buildAiPlannerPrompt(
-  input: PlanThumbnailWithAiInput,
-  directedArchetypes?: MascotArchetypeDefinition[],
-): string {
+export function buildAiPlannerPrompt(input: PlanThumbnailWithAiInput, directedArchetypes?: MascotArchetypeDefinition[]): string {
   const sampleQuestions = (input.questions || []).slice(0, 4).map((q, i) => ({
     number: i + 1,
     question: q.question,
@@ -76,7 +73,7 @@ export function buildAiPlannerPrompt(
     "[CRITICAL INSTRUCTIONS]:",
     `1. hook_text: Catchy headline (2-4 words MAX in ${input.language || "English"}). Specifically about the episode's subject. NEVER output generic "GENERAL KNOWLEDGE".`,
     `2. badge_text: High-impact curiosity trigger badge (1-3 words + 1 relevant emoji in ${input.language || "English"}). Dynamically pick ONE psychological hook fitting this episode (such as extreme failure rate/stakes, IQ/genius tier, time pressure, or direct challenge). DO NOT always repeat "99% FAIL!". Be creative and contextually relevant.`,
-    "3. layout: Select best layout: [\"mega_grid\", \"split_vs\", \"mystery_silhouette\", \"odd_one_out\", \"difficulty_tier\", \"true_false\"].",
+    '3. layout: Select best layout: ["mega_grid", "split_vs", "mystery_silhouette", "odd_one_out", "difficulty_tier", "true_false"].',
     "4. environment_atmosphere: A clean minimalist, soft-focus Pixar 3D studio background specifically tailored to this episode's topic with heavy depth of field, smooth warm gradients, and ZERO busy landscape clutter.",
     "5. lighting_palette: Rich saturated warm studio lighting with luminous rim lighting on foreground characters.",
     "6. mascot_persona_variations: Generate exactly 5 completely distinct, topic-tailored mascot variations corresponding to the 5 randomly selected emotional/behavioral archetypes below.",
@@ -151,7 +148,7 @@ export async function planThumbnailWithAI(input: PlanThumbnailWithAiInput): Prom
     const layout = input.layoutOverride || parsed.layout || fallbackPlan.layout;
     const hookText = input.customHookText || parsed.hook_text || fallbackPlan.hookText;
     const isSpecificBadgeOverride = input.badgeOverride && input.badgeOverride !== "auto";
-    const badgeText = isSpecificBadgeOverride ? fallbackPlan.badgeText : (parsed.badge_text || fallbackPlan.badgeText);
+    const badgeText = isSpecificBadgeOverride ? fallbackPlan.badgeText : parsed.badge_text || fallbackPlan.badgeText;
     const environmentAtmosphere = parsed.environment_atmosphere || fallbackPlan.environmentAtmosphere;
     const lightingPalette = parsed.lighting_palette || fallbackPlan.lightingPalette;
 
@@ -220,4 +217,3 @@ export async function planThumbnailWithAI(input: PlanThumbnailWithAiInput): Prom
     return fallbackPlan;
   }
 }
-

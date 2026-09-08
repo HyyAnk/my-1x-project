@@ -72,6 +72,7 @@ describe("bundle image tasks", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `image_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Image Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -140,6 +141,7 @@ describe("bundle image tasks", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `media_image_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Media Image Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -200,6 +202,7 @@ describe("bundle image tasks", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `direct_image_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Direct Image Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -260,6 +263,7 @@ describe("bundle image tasks", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `seq_image_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Seq Topic ${index}`,
       premise: "P",
       why_it_fits: "W",

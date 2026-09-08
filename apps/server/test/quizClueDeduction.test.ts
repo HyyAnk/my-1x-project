@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  getQuizGameplayArchetype,
-  QUIZ_LAYOUT_CATALOG,
-  resolveQuizLayout,
-} from "@studio/shared";
-import {
-  getQuizLayoutRenderer,
-  renderQuizLayoutBody,
-} from "../src/quiz/render/layouts/registry.js";
+import { getQuizGameplayArchetype, QUIZ_LAYOUT_CATALOG, resolveQuizLayout } from "@studio/shared";
+import { getQuizLayoutRenderer, renderQuizLayoutBody } from "../src/quiz/render/layouts/registry.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
 
 describe("Clue Deduction layout & archetype", () => {
@@ -46,10 +39,10 @@ describe("Clue Deduction layout & archetype", () => {
 
   it("renders layout body slots correctly with backdrop, hero frame, and docked answer grid", () => {
     const slots = {
-      questionBoxHtml: "<header class=\"question-title\">What profession uses this tool?</header>",
-      heroHtml: "<figure class=\"hero-image\"><img src=\"stethoscope.png\" /></figure>",
-      choicesHtml: "<div class=\"answer-grid answer-count-1\"><span>Doctor</span></div>",
-      phaseHtml: "<div class=\"thinking\">3</div>",
+      questionBoxHtml: '<header class="question-title">What profession uses this tool?</header>',
+      heroHtml: '<figure class="hero-image"><img src="stethoscope.png" /></figure>',
+      choicesHtml: '<div class="answer-grid answer-count-1"><span>Doctor</span></div>',
+      phaseHtml: '<div class="thinking">3</div>',
     };
 
     const rendered = renderQuizLayoutBody("clue_deduction", slots);
@@ -74,7 +67,7 @@ describe("Clue Deduction layout & archetype", () => {
     expect(css16x9).toContain("bottom: 28px;");
 
     const css9x16 = renderer.css("9:16");
-    expect(css9x16).toContain("#stage[data-aspect-ratio=\"9:16\"] .layout-clue_deduction .game-stage");
+    expect(css9x16).toContain('#stage[data-aspect-ratio="9:16"] .layout-clue_deduction .game-stage');
     expect(css9x16).toContain("grid-template-columns: minmax(0, 1fr);");
     expect(css9x16).toContain("height: 1100px;");
   });

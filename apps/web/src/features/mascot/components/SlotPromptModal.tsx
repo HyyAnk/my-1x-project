@@ -53,11 +53,7 @@ export function SlotPromptModal({
     return poses.find((p) => p.prompt.trim().toLowerCase() === trimmed);
   }, [poses, prompt]);
 
-  const selectedPresetValue = matchingPose
-    ? matchingPose.id
-    : prompt.trim()
-    ? "custom"
-    : "";
+  const selectedPresetValue = matchingPose ? matchingPose.id : prompt.trim() ? "custom" : "";
 
   const handlePresetSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
@@ -101,17 +97,9 @@ export function SlotPromptModal({
               <PencilSimple size={14} weight="bold" />
               <span>{stateLabel} Variant Customization</span>
             </span>
-            <h2 id="slot-prompt-title">
-              Edit Action Prompt &mdash; Slot {slotIndex}
-            </h2>
+            <h2 id="slot-prompt-title">Edit Action Prompt &mdash; Slot {slotIndex}</h2>
           </div>
-          <button
-            type="button"
-            className="icon-button"
-            aria-label="Close"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
+          <button type="button" className="icon-button" aria-label="Close" onClick={onClose} disabled={isSubmitting}>
             <X size={18} />
           </button>
         </div>
@@ -132,17 +120,15 @@ export function SlotPromptModal({
                   </>
                 ) : (
                   <>Default mascot style (no additional wardrobe keyword).</>
-                )}
-                {" "}Style keyword and core character identity are <strong>automatically inherited</strong>.
-                Use this field only to specify the particular pose, expression, or action.
+                )}{" "}
+                Style keyword and core character identity are <strong>automatically inherited</strong>. Use this field only to specify the
+                particular pose, expression, or action.
               </p>
             </div>
 
             {/* Pose Preset Selector Dropdown */}
             <div className="form-group">
-              <label htmlFor="slot-preset-selector">
-                Pose Preset Library ({stateLabel} &mdash; 20 Curated Poses)
-              </label>
+              <label htmlFor="slot-preset-selector">Pose Preset Library ({stateLabel} &mdash; 20 Curated Poses)</label>
               <select
                 id="slot-preset-selector"
                 className="slot-preset-dropdown"
@@ -177,9 +163,7 @@ export function SlotPromptModal({
             </div>
 
             <div className="form-group">
-              <label htmlFor="slot-prompt-modifier-input">
-                Slot Action / Pose Modifier
-              </label>
+              <label htmlFor="slot-prompt-modifier-input">Slot Action / Pose Modifier</label>
               <textarea
                 id="slot-prompt-modifier-input"
                 className="full-prompt-textarea"
@@ -196,23 +180,11 @@ export function SlotPromptModal({
             </div>
           </div>
 
-          <div
-            className="modal-actions"
-            style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end", gap: "10px" }}
-          >
-            <button
-              type="button"
-              className="quiet-button"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
+          <div className="modal-actions" style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+            <button type="button" className="quiet-button" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </button>
-            <button
-              type="submit"
-              className="primary-button"
-              disabled={isSubmitting}
-            >
+            <button type="submit" className="primary-button" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <CircleNotch size={16} className="spin" />

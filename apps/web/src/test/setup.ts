@@ -114,7 +114,7 @@ export function getMockApiResponse(pathname: string): Response {
 
 const mockFetch: typeof fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   const urlString = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-  let pathname = urlString;
+  let pathname: string;
   try {
     if (urlString.startsWith("http://") || urlString.startsWith("https://")) {
       pathname = new URL(urlString).pathname;

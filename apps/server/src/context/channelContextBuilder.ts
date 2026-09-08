@@ -1,10 +1,16 @@
 import { readFile } from "node:fs/promises";
-import { type Channel, type ContextManifest, type TaskType, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "@studio/shared";
+import { type Channel, type ContextManifest, type TaskType } from "@studio/shared";
 import type { RepositoryService } from "../repository.js";
 import type { StudioLogger } from "../logger.js";
 import type { ContextFile } from "./contextTypes.js";
 import { composeContextPrompt, finalizeContextManifest, readSharedRules } from "./contextManifestFinalizer.js";
-import { formatTopicMatrixPrompt, planTopicSuggestionMatrix } from "./topicMatrixPlanner.js";
+import { formatTopicMatrixPrompt, planTopicSuggestionMatrix, type TopicMatrixPlan } from "./topicMatrixPlanner.js";
+
+const assignedTopicPlans = new WeakMap<ContextManifest, TopicMatrixPlan>();
+
+export function getAssignedTopicMatrixPlan(manifest: ContextManifest): TopicMatrixPlan | undefined {
+  return assignedTopicPlans.get(manifest);
+}
 
 export async function buildChannelContext(input: {
   repository: RepositoryService;
@@ -84,15 +90,14 @@ export async function buildChannelContext(input: {
       index = null;
     }
 
-    const channelWithAspect = channel as Channel & { render_aspect_ratio?: "16:9" | "9:16" };
-    const aspectRatio: "16:9" | "9:16" = channelWithAspect?.render_aspect_ratio === "9:16" ? "9:16" : "16:9";
+    const aspectRatio = "16:9" as const;
     const matrixPlan = planTopicSuggestionMatrix({ taxonomy, index, topicHint, aspectRatio });
     const { outputContract } = formatTopicMatrixPrompt(matrixPlan, topicHint, aspectRatio);
 
     const prompt = composeContextPrompt(taskType, channel, null, [...files, ...sharedFiles], {
       output_contract: outputContract,
     });
-    return finalizeContextManifest(
+    const manifest = await finalizeContextManifest(
       repository,
       logger,
       taskType,
@@ -102,6 +107,11 @@ export async function buildChannelContext(input: {
       excluded.concat("research/script/scene work for candidates"),
       prompt,
     );
+    for (const slot of matrixPlan.slots) Object.freeze(slot);
+    Object.freeze(matrixPlan.slots);
+    Object.freeze(matrixPlan);
+    assignedTopicPlans.set(manifest, matrixPlan);
+    return manifest;
   }
 
   return null;

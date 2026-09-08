@@ -36,12 +36,12 @@ export function TopicHistoryRow({
         <span className="topic-history-potential" title="Estimated Potential">
           {topic.estimated_potential || "Normal"}
         </span>
-        <TopicLayoutPreviewButton quizFormat={topic.quiz_format} />
+        {topic.content_kind === "episode" ? <TopicLayoutPreviewButton quizFormat={topic.quiz_format} /> : null}
         <button
           type="button"
           className="topic-history-use-btn"
           disabled={disabled}
-          onClick={() => onConfirm(topic.question_count, topic.visual_style ?? "mixed")}
+          onClick={() => onConfirm(topic.question_count, topic.content_kind === "episode" ? (topic.visual_style ?? "mixed") : "mixed")}
           title={`Use this topic (${topic.question_count} questions)`}
         >
           {busy ? <CircleNotch className="spin" size={13} /> : <Play size={12} weight="fill" />}

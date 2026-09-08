@@ -45,7 +45,7 @@ describe("pipeline video progress forwarding", () => {
     const run: PipelineRun = { cancelled: false, children: new Set(["task_video_1"]) };
     const progressHistory: Array<{ message: string; percent: number | null; framesCompleted: number | null }> = [];
 
-    const waitPromise = waitForTaskTerminal.call(mockRuntime, "task_video_1", run, async (childTask) => {
+    const waitPromise = waitForTaskTerminal.call(mockRuntime, "task_video_1", run, (childTask) => {
       progressHistory.push({
         message: childTask.progress_message ?? "",
         percent: childTask.progress_percent,

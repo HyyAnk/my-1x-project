@@ -29,8 +29,7 @@ export function resolveFallbackEnvironment(
     return {
       environmentAtmosphere:
         "Vibrant high-tech racing paddock and sunny speedway stadium with celebratory confetti and soft depth of field",
-      lightingPalette:
-        "Bright daylight sunbeams, dramatic metallic highlights, and vibrant neon track rim lights",
+      lightingPalette: "Bright daylight sunbeams, dramatic metallic highlights, and vibrant neon track rim lights",
     };
   }
   if (
@@ -43,8 +42,7 @@ export function resolveFallbackEnvironment(
     return {
       environmentAtmosphere:
         "Magical deep cerulean and indigo cosmic nebula with glowing stardust particles and colorful crescent moons in soft depth of field",
-      lightingPalette:
-        "Luminous cyan and magenta rim lighting, soft glowing ambient starlight, zero muddy darkness",
+      lightingPalette: "Luminous cyan and magenta rim lighting, soft glowing ambient starlight, zero muddy darkness",
     };
   }
   return {

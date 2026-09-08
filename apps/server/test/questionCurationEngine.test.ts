@@ -1,9 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { bankRequiredChoiceCountForArchetype, type BankQuestionWithCooldown, type TopicCandidate } from "@studio/shared";
+import { bankRequiredChoiceCountForArchetype, type BankQuestionWithCooldown, type EpisodeTopicCandidate } from "@studio/shared";
 import type { RepositoryService } from "../src/repository.js";
 import type { QueryQuestionBankParams } from "../src/repository/quiz/questionBankRepository.js";
 import {
-  assembleRetentionArc,
   calculateRelevanceScore,
   calculateVisualScore,
   curateQuestionsForTopic,
@@ -44,8 +43,9 @@ function makeQuestion(overrides: Partial<BankQuestionWithCooldown> = {}): BankQu
   };
 }
 
-function makeTopic(overrides: Partial<TopicCandidate> = {}): TopicCandidate {
+function makeTopic(overrides: Partial<EpisodeTopicCandidate> = {}): EpisodeTopicCandidate {
   return {
+    content_kind: "episode",
     topic_id: overrides.topic_id ?? "top_test_001",
     channel_id: overrides.channel_id ?? "ch_test_001",
     title: overrides.title ?? "Ocean Giants: Secrets of the Deep Sea",
@@ -71,7 +71,7 @@ function makeTopic(overrides: Partial<TopicCandidate> = {}): TopicCandidate {
 function createMockRepository(initialQuestions: BankQuestionWithCooldown[] = []) {
   let questions = [...initialQuestions];
 
-  const queryQuestionBankQuestions = vi.fn(async (params?: QueryQuestionBankParams) => {
+  const queryQuestionBankQuestions = vi.fn((params?: QueryQuestionBankParams) => {
     let filtered = [...questions];
     if (params?.archetypeId) {
       filtered = filtered.filter((q) => q.archetype_id === params.archetypeId);
@@ -90,10 +90,10 @@ function createMockRepository(initialQuestions: BankQuestionWithCooldown[] = [])
     setQuestions: (q: BankQuestionWithCooldown[]) => {
       questions = [...q];
     },
-  } as unknown as RepositoryService & {
+  } as unknown as {
     queryQuestionBankQuestions: ReturnType<typeof vi.fn>;
     setQuestions: (q: BankQuestionWithCooldown[]) => void;
-  };
+  } & Omit<RepositoryService, "queryQuestionBankQuestions">;
 }
 
 describe("questionCurationEngine", () => {
@@ -116,11 +116,11 @@ describe("questionCurationEngine", () => {
       expect(resolveTargetArchetype(topicOdd)).toBe("visual_spotting");
     });
 
-    it("maps each of the 4 dedicated 9:16 portrait layouts to their expected archetypes", () => {
-      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_hero_choices" }))).toBe("deep_trivia");
-      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_split_versus" }))).toBe("versus_faceoff");
-      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_verdict_tf" }))).toBe("verdict_true_false");
-      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_stack_list" }))).toBe("speed_blitz");
+    it("does not infer archetypes from retired portrait layout IDs", () => {
+      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_hero_choices" }))).toBeUndefined();
+      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_split_versus" }))).toBeUndefined();
+      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_verdict_tf" }))).toBeUndefined();
+      expect(resolveTargetArchetype(makeTopic({ archetype: undefined, suggested_layout: "portrait_stack_list" }))).toBeUndefined();
     });
   });
 
@@ -492,7 +492,7 @@ describe("questionCurationEngine", () => {
       );
     });
 
-    it("filters out questions with archetype visual_spotting or format odd_one_out when aspectRatio is 9:16", async () => {
+    it("filters out questions with archetype visual_spotting or format odd_one_out when target archetype is deep_trivia", async () => {
       const qValid1 = makeQuestion({
         id: "Q-VALID-1",
         archetype_id: "deep_trivia",
@@ -532,7 +532,6 @@ describe("questionCurationEngine", () => {
         channelId: "ch_test_001",
         topic,
         questionCount: 3,
-        aspectRatio: "9:16",
       });
 
       expect(result.selectedQuestions).toHaveLength(3);
@@ -546,7 +545,7 @@ describe("questionCurationEngine", () => {
       }
     });
 
-    it("falls back visual_spotting and visual_identification archetypes to deep_trivia when aspectRatio is 9:16", async () => {
+    it("does not rewrite Episode archetypes based on a legacy ratio hint", async () => {
       const qDeep1 = makeQuestion({
         id: "Q-DEEP-1",
         archetype_id: "deep_trivia",
@@ -565,16 +564,14 @@ describe("questionCurationEngine", () => {
         channelId: "ch_test_001",
         topic: topicSpotting,
         questionCount: 1,
-        aspectRatio: "9:16",
       });
 
       expect(repo.queryQuestionBankQuestions).toHaveBeenCalledWith(
         expect.objectContaining({
-          archetypeId: "deep_trivia",
+          archetypeId: "visual_spotting",
         }),
       );
-      expect(result.selectedQuestions).toHaveLength(1);
-      expect(result.selectedQuestions[0].id).toBe("Q-DEEP-1");
+      expect(result.selectedQuestions).toHaveLength(0);
 
       const topicVisualId = makeTopic({
         archetype: "visual_identification",
@@ -586,12 +583,11 @@ describe("questionCurationEngine", () => {
         channelId: "ch_test_001",
         topic: topicVisualId,
         questionCount: 1,
-        aspectRatio: "9:16",
       });
 
       expect(repo.queryQuestionBankQuestions).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          archetypeId: "deep_trivia",
+          archetypeId: "visual_identification",
         }),
       );
     });

@@ -27,7 +27,7 @@ function validateStyleSlots(input: Record<string, unknown>): { code: string; mes
 export function registerStylePresetsRoutes(deps: StylePresetsRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
     server.get("/api/style-presets", async () => ({ presets: await deps.repository.listStylePresets() }));
-    server.get("/api/style-catalog", async () => getStyleCatalogSnapshot());
+    server.get("/api/style-catalog", () => getStyleCatalogSnapshot());
     server.post("/api/style-presets", async (request, reply) => {
       const parsed = CreateStylePresetInputSchema.safeParse(request.body);
       if (!parsed.success)

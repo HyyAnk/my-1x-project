@@ -9,8 +9,7 @@ import {
   type StyleSlot,
 } from "@studio/shared";
 
-const NAMESPACED_STYLE_ID_PATTERN =
-  /^[a-z][a-z0-9-]*\.(thinking-bar|question-box|answer-card|counter|background)\.[a-z][a-z0-9-]*$/;
+const NAMESPACED_STYLE_ID_PATTERN = /^[a-z][a-z0-9-]*\.(thinking-bar|question-box|answer-card|counter|background)\.[a-z][a-z0-9-]*$/;
 const LEGACY_BUILT_IN_STYLE_IDS = new Set<string>([
   ...ALL_THINKING_BAR_STYLES,
   ...ALL_QUESTION_BOX_STYLES,
@@ -23,10 +22,7 @@ const VERSION_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
 
 export const StyleSlotSchema = z.enum(["thinking-bar", "question-box", "answer-card", "counter", "background"]);
 
-const SafeAssetPathSchema = z
-  .string()
-  .min(1)
-  .refine(isSafeRelativeAssetPath, "Asset paths must be safe relative paths");
+const SafeAssetPathSchema = z.string().min(1).refine(isSafeRelativeAssetPath, "Asset paths must be safe relative paths");
 
 export const StyleModuleManifestSchema = z
   .object({

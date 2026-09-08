@@ -13,8 +13,8 @@ export async function handleTextArtifactOutput(runtime: TaskManagerRuntime, acti
   }
 
   if (task.task_type === "SUGGEST_TOPICS") {
-    const topicHint = runtime.topicHints.get(task.task_id);
-    const candidates = parseTopicCandidates(output, task.channel_id, topicHint);
+    if (!active.topicMatrixPlan) throw new Error("Topic suggestion task is missing its assigned matrix plan");
+    const candidates = parseTopicCandidates(output, task.channel_id, active.topicMatrixPlan);
     await runtime.repository.saveTopicRun(task.channel_id, candidates);
     const updatedChannel = await runtime.repository.getChannel(task.channel_id);
     return [`channels/${updatedChannel.slug}/topics/`];

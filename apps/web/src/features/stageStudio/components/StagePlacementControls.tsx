@@ -1,4 +1,4 @@
-import { ArrowCounterClockwise, ArrowsLeftRight, Copy, SidebarSimple } from "@phosphor-icons/react";
+import { ArrowCounterClockwise, ArrowsLeftRight, SidebarSimple } from "@phosphor-icons/react";
 import type { useStageStudio } from "../hooks/useStageStudio";
 
 type StagePlacementControlsProps = {
@@ -18,27 +18,6 @@ export function StagePlacementControls({ studio }: StagePlacementControlsProps) 
       <div className="inspector-section-header">
         <h3 className="inspector-section-title">{t("stageStudio.anchorAndFlipTitle")}</h3>
         <div style={{ display: "flex", gap: "4px" }}>
-          {studio.aspectRatio === "9:16" ? (
-            <button
-              type="button"
-              className="inspector-icon-action"
-              onClick={() => studio.copyPlacementFrom("16:9", "9:16")}
-              title={t("stageStudio.copyFrom169")}
-              aria-label={t("stageStudio.copyFrom169")}
-            >
-              <Copy size={13} />
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="inspector-icon-action"
-              onClick={() => studio.copyPlacementFrom("9:16", "16:9")}
-              title={t("stageStudio.copyFrom916")}
-              aria-label={t("stageStudio.copyFrom916")}
-            >
-              <Copy size={13} />
-            </button>
-          )}
           <button
             type="button"
             className="inspector-icon-action"

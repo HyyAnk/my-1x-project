@@ -84,7 +84,7 @@ export async function generateMascotStyleBatch(
       if (options.signal?.aborted) break;
       const itemIndex = queueIndex++;
       if (itemIndex >= emptySlots.length) break;
-      const item = emptySlots[itemIndex]!;
+      const item = emptySlots[itemIndex];
       const latestMascot = await repository.getMascot(mascot.id);
       await generateMascotStyleSlot(
         repository,

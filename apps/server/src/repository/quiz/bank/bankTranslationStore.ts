@@ -1,12 +1,7 @@
 import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
-import {
-  BankTranslationContentSchema,
-  normalizeLanguageCode,
-  type BankQuestion,
-  type BankTranslationContent,
-} from "@studio/shared";
+import { BankTranslationContentSchema, normalizeLanguageCode, type BankQuestion, type BankTranslationContent } from "@studio/shared";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { getQuestionBankWritePath } from "./bankPathResolver.js";
 import { listQuestionBankBatches } from "./bankBatchStorage.js";
@@ -47,22 +42,12 @@ export async function saveQuestionBankTranslation(
       batch.questions[qIndex] = updatedQuestion;
       batch.updated_at = now;
 
-      const batchFilePath = getQuestionBankWritePath.call(
-        this,
-        batch.archetype_id,
-        batch.domain_id,
-        `${batch.subtopic_id}.json`,
-      );
+      const batchFilePath = getQuestionBankWritePath.call(this, batch.archetype_id, batch.domain_id, `${batch.subtopic_id}.json`);
       await mkdir(path.dirname(batchFilePath), { recursive: true });
       await this.writeJsonAtomic(batchFilePath, batch);
 
       if (batch.archetype_id === "verdict_true_false") {
-        const legacyPath = getQuestionBankWritePath.call(
-          this,
-          "verdict_fact_myth",
-          batch.domain_id,
-          `${batch.subtopic_id}.json`,
-        );
+        const legacyPath = getQuestionBankWritePath.call(this, "verdict_fact_myth", batch.domain_id, `${batch.subtopic_id}.json`);
         if (existsSync(legacyPath)) {
           await this.writeJsonAtomic(legacyPath, batch);
         }

@@ -79,6 +79,7 @@ describe("Multi-Tier Image Pipeline", () => {
     const makeCandidate = (num: number) => ({
       topic_id: `top-${num}`,
       channel_id: channelId,
+      content_kind: "episode" as const,
       title: `Retro Arcade Quiz ${num}`,
       premise: "Arcade games",
       hook: "Can you guess?",

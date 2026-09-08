@@ -64,94 +64,82 @@ export async function resolveBankQuestionTranslation(
 /**
  * Converts a BankQuestion into a fully validated QuizQuestion for QuizV2 format.
  */
-export function convertBankQuestionToQuizQuestion(
-  bankQuestion: BankQuestion,
-  options: ConvertBankQuestionOptions = {},
-): QuizQuestion {
+function buildRawChoices(bankQuestion: BankQuestion, translation?: ConvertBankQuestionOptions["translation"]) {
   const isTrueFalse = bankQuestion.format === "true_false";
-  const requiredCount = isTrueFalse ? 2 : 3;
-  const translation = options.translation;
+  if (Array.isArray(bankQuestion.choices) && bankQuestion.choices.length > 0) {
+    return bankQuestion.choices.map((c, idx) => {
+      if (!translation?.choices) return { ...c };
+      const tc = translation.choices.find((item) => item.id.trim().toLowerCase() === c.id.trim().toLowerCase()) ?? translation.choices[idx];
+      return {
+        ...c,
+        text: tc?.text || c.text,
+      };
+    });
+  }
+  if (isTrueFalse) {
+    return [
+      { id: "choice_tf_1", text: "True", is_correct: true },
+      { id: "choice_tf_2", text: "False", is_correct: false },
+    ];
+  }
+  return [
+    { id: "choice_mc_1", text: "Option A", is_correct: true },
+    { id: "choice_mc_2", text: "Option B", is_correct: false },
+    { id: "choice_mc_3", text: "Option C", is_correct: false },
+  ];
+}
 
-  // Defensive fallback: ensure bankQuestion.choices is a non-empty array
-  const rawChoices = Array.isArray(bankQuestion.choices) && bankQuestion.choices.length > 0
-    ? bankQuestion.choices.map((c, idx) => {
-        if (!translation?.choices) return { ...c };
-        const tc =
-          translation.choices.find(
-            (item) => item.id.trim().toLowerCase() === c.id.trim().toLowerCase(),
-          ) ?? translation.choices[idx];
-        return {
-          ...c,
-          text: tc?.text || c.text,
-        };
-      })
-    : isTrueFalse
-      ? [
-          { id: "choice_tf_1", text: "True", is_correct: true },
-          { id: "choice_tf_2", text: "False", is_correct: false },
-        ]
-      : [
-          { id: "choice_mc_1", text: "Option A", is_correct: true },
-          { id: "choice_mc_2", text: "Option B", is_correct: false },
-          { id: "choice_mc_3", text: "Option C", is_correct: false },
-        ];
-
-  // 1. Identify correct choice
-  const correctRaw =
-    rawChoices.find((c) => c.id === bankQuestion.correct_choice_id) ??
-    rawChoices.find((c) => c.is_correct) ??
-    rawChoices[0];
-
+function buildFinalChoices(
+  rawChoices: Array<{ id: string; text: string; is_correct?: boolean }>,
+  correctRaw: { id: string; text: string; is_correct?: boolean },
+  isTrueFalse: boolean,
+): Array<{ text: string; isCorrect: boolean }> {
   const distractersRaw = rawChoices.filter((c) => c !== correctRaw);
-
-  let finalRawChoices: Array<{ text: string; isCorrect: boolean }> = [];
 
   if (isTrueFalse) {
     if (distractersRaw.length >= 1) {
-      finalRawChoices = [
+      const choices = [
         { text: (correctRaw.text || "True").trim(), isCorrect: true },
         { text: (distractersRaw[0].text || "False").trim(), isCorrect: false },
       ];
-      // If original order had distracter first, keep that order
       if (rawChoices.indexOf(distractersRaw[0]) < rawChoices.indexOf(correctRaw)) {
-        finalRawChoices.reverse();
+        choices.reverse();
       }
-    } else {
-      const isCorrectTrue = (correctRaw.text || "").toLowerCase().includes("true");
-      finalRawChoices = [
-        { text: "True", isCorrect: isCorrectTrue },
-        { text: "False", isCorrect: !isCorrectTrue },
-      ];
+      return choices;
     }
-  } else {
-    // Requires exactly 3 choices
-    const neededDistracters = distractersRaw.slice(0, 2);
-    if (neededDistracters.length === 0) {
-      neededDistracters.push({ id: "fallback_1", text: "Other Option", is_correct: false });
-      neededDistracters.push({ id: "fallback_2", text: "None of the Above", is_correct: false });
-    } else if (neededDistracters.length === 1) {
-      neededDistracters.push({ id: "fallback_1", text: "All of the Above", is_correct: false });
-    }
-
-    // Place correct choice in natural position or middle
-    const originalCorrectIndex = rawChoices.indexOf(correctRaw);
-    const targetCorrectIndex = Math.min(Math.max(0, originalCorrectIndex), 2);
-
-    finalRawChoices = [
-      { text: (neededDistracters[0].text || "Option B").trim(), isCorrect: false },
-      { text: (neededDistracters[1].text || "Option C").trim(), isCorrect: false },
+    const isCorrectTrue = (correctRaw.text || "").toLowerCase().includes("true");
+    return [
+      { text: "True", isCorrect: isCorrectTrue },
+      { text: "False", isCorrect: !isCorrectTrue },
     ];
-    finalRawChoices.splice(targetCorrectIndex, 0, { text: (correctRaw.text || "Option A").trim(), isCorrect: true });
   }
 
-  // Letters: a, b, c
+  const neededDistracters = distractersRaw.slice(0, 2);
+  if (neededDistracters.length === 0) {
+    neededDistracters.push({ id: "fallback_1", text: "Other Option", is_correct: false });
+    neededDistracters.push({ id: "fallback_2", text: "None of the Above", is_correct: false });
+  } else if (neededDistracters.length === 1) {
+    neededDistracters.push({ id: "fallback_1", text: "All of the Above", is_correct: false });
+  }
+
+  const originalCorrectIndex = rawChoices.indexOf(correctRaw);
+  const targetCorrectIndex = Math.min(Math.max(0, originalCorrectIndex), 2);
+
+  const finalChoices = [
+    { text: (neededDistracters[0].text || "Option B").trim(), isCorrect: false },
+    { text: (neededDistracters[1].text || "Option C").trim(), isCorrect: false },
+  ];
+  finalChoices.splice(targetCorrectIndex, 0, { text: (correctRaw.text || "Option A").trim(), isCorrect: true });
+  return finalChoices;
+}
+
+function buildDeduplicatedQuizChoices(finalRawChoices: Array<{ text: string; isCorrect: boolean }>, requiredCount: number) {
   const letters = ["a", "b", "c", "d"];
   const quizChoices = finalRawChoices.slice(0, requiredCount).map((c, idx) => ({
     id: letters[idx],
     text: (c.text || "").slice(0, 180).trim() || `Option ${letters[idx].toUpperCase()}`,
   }));
 
-  // Ensure unique normalized texts
   const seenTexts = new Set<string>();
   for (let i = 0; i < quizChoices.length; i++) {
     const norm = quizChoices[i].text.normalize("NFKC").trim().toLowerCase();
@@ -161,11 +149,25 @@ export function convertBankQuestionToQuizQuestion(
     seenTexts.add(quizChoices[i].text.normalize("NFKC").trim().toLowerCase());
   }
 
+  return quizChoices;
+}
+
+export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, options: ConvertBankQuestionOptions = {}): QuizQuestion {
+  const isTrueFalse = bankQuestion.format === "true_false";
+  const requiredCount = isTrueFalse ? 2 : 3;
+  const translation = options.translation;
+
+  const rawChoices = buildRawChoices(bankQuestion, translation);
+  const correctRaw =
+    rawChoices.find((c) => c.id === bankQuestion.correct_choice_id) ?? rawChoices.find((c) => c.is_correct) ?? rawChoices[0];
+
+  const finalRawChoices = buildFinalChoices(rawChoices, correctRaw, isTrueFalse);
+  const quizChoices = buildDeduplicatedQuizChoices(finalRawChoices, requiredCount);
   const correctChoice = quizChoices.find((_, idx) => finalRawChoices[idx].isCorrect) ?? quizChoices[0];
 
   const localizedQuestion = translation?.question || bankQuestion.question || "Engaging trivia challenge question";
   const localizedExplanation = translation?.explanation || bankQuestion.explanation || "Detailed explanation for the correct answer.";
-  const localizedFunFact = translation?.fun_fact !== undefined ? translation.fun_fact : (bankQuestion.fun_fact || "");
+  const localizedFunFact = translation?.fun_fact !== undefined ? translation.fun_fact : bankQuestion.fun_fact || "";
 
   const candidateQuestion = {
     id: (bankQuestion.id || makeId("bq")).slice(0, 80),
@@ -211,14 +213,8 @@ export async function transcreateAndConvertTopicQuestions(
   const runWorker = async (): Promise<void> => {
     while (cursor < selectedQuestions.length) {
       const index = cursor++;
-      const bankQuestion = selectedQuestions[index]!;
-      const activeTranslation = await resolveBankQuestionTranslation(
-        bankQuestion,
-        targetLanguage,
-        channel,
-        repository,
-        llmClient,
-      );
+      const bankQuestion = selectedQuestions[index];
+      const activeTranslation = await resolveBankQuestionTranslation(bankQuestion, targetLanguage, channel, repository, llmClient);
 
       const quizQuestion = convertBankQuestionToQuizQuestion(bankQuestion, {
         language: targetLanguage,

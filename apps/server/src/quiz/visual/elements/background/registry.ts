@@ -13,7 +13,11 @@ export function resolveBackgroundVariant(style?: QuizBackgroundStyle | null, rev
   if (!style || style === "auto") {
     return backgroundRegistry.get("candy_rays")!;
   }
-  return (getStyleModuleAtRevision("background", style, revision)?.renderer as QuizBackgroundVariant | undefined) ?? backgroundRegistry.get(style) ?? backgroundRegistry.get("candy_rays")!;
+  return (
+    (getStyleModuleAtRevision("background", style, revision)?.renderer as QuizBackgroundVariant | undefined) ??
+    backgroundRegistry.get(style) ??
+    backgroundRegistry.get("candy_rays")!
+  );
 }
 
 export function getBackgroundStylesCss(revision?: string): string {

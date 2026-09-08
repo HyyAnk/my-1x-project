@@ -67,9 +67,7 @@ describe("CreateChannelModal", () => {
     fireEvent.click(screen.getByRole("button", { name: "Create channel" }));
 
     await waitFor(() => expect(create).toHaveBeenCalledTimes(1));
-    expect(create.mock.calls[0][0]).toEqual(
-      expect.objectContaining({ country: "DE", language: "German", dna_mode: "ai" }),
-    );
+    expect(create.mock.calls[0][0]).toEqual(expect.objectContaining({ country: "DE", language: "German", dna_mode: "ai" }));
   });
 
   it("prevents duplicate submission while the request is pending", async () => {

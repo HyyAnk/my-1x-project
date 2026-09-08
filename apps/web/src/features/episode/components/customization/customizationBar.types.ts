@@ -13,7 +13,6 @@ import type {
   Task,
   VisualPresetItem,
   ThumbnailRatioMode,
-  MascotRenderAspectRatio,
   MascotStyle,
 } from "@studio/shared";
 import type { Notice } from "../../../../components/types";
@@ -35,7 +34,6 @@ export type EpisodeQuizCustomizationBarProps = {
   onSaveCounterStyle: (style: QuizQuestionCounterStyle) => void;
   onSaveBackgroundStyle: (style: QuizBackgroundStyle) => void;
   onSavePaletteId: (palette: QuizPaletteId) => void;
-  onSaveAspectRatio?: (ratio: MascotRenderAspectRatio) => void;
   onSaveThumbnailRatio?: (ratio: ThumbnailRatioMode) => void;
   onApplyStylePreset: (preset: VisualPresetItem) => void;
   setEpisode?: (episode: Episode | null) => void;

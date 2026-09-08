@@ -22,7 +22,7 @@ describe("buildDirectQuizOutputContract", () => {
 
     expect(contract).toContain('"language": "Vietnamese"');
     expect(contract).not.toContain('"language": "auto"');
-    expect(contract).toContain("Write every question, choice text, explanation, and fun_fact 100% in \"Vietnamese\"");
+    expect(contract).toContain('Write every question, choice text, explanation, and fun_fact 100% in "Vietnamese"');
     expect(contract).toContain("Never mix any other language");
   });
 

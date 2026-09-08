@@ -1,4 +1,5 @@
 import type { FastifyInstance } from "fastify";
+import type { QuizImageStyle } from "@studio/shared";
 import { createEpisodeFromQuestionBank } from "../../quiz/bank/questionBankToQuizBridge.js";
 import { transcreateBankQuestion } from "../../quiz/bank/transcreation/transcreationEngine.js";
 import type { QuestionBankRouteDeps } from "./index.js";
@@ -26,26 +27,29 @@ export function registerBuildRoutes(server: FastifyInstance, deps: QuestionBankR
         input: {
           question_id: body.question_id,
           target_language: typeof body.target_language === "string" ? body.target_language : undefined,
-          render_aspect_ratio: (body.render_aspect_ratio as "9:16" | "16:9") || "9:16",
+          render_aspect_ratio: "16:9",
           auto_start_pipeline: body.auto_start_pipeline !== false,
-          visual_style: body.visual_style as any,
+          visual_style: typeof body.visual_style === "string" ? (body.visual_style as QuizImageStyle | "mixed") : undefined,
           force: body.force === true,
         },
       });
 
       return reply.code(201).send(result);
-    } catch (err: any) {
-      if (err?.code === "QUESTION_IN_COOLDOWN") {
-        return reply.code(409).send({
-          error: err.message,
-          code: "QUESTION_IN_COOLDOWN",
-        });
-      }
-      if (err?.code === "QUESTION_NOT_FOUND" || err?.code === "CHANNEL_NOT_FOUND") {
-        return reply.code(404).send({
-          error: err.message,
-          code: err.code,
-        });
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "code" in err) {
+        const customErr = err as { code?: string; message?: string };
+        if (customErr.code === "QUESTION_IN_COOLDOWN") {
+          return reply.code(409).send({
+            error: customErr.message,
+            code: "QUESTION_IN_COOLDOWN",
+          });
+        }
+        if (customErr.code === "QUESTION_NOT_FOUND" || customErr.code === "CHANNEL_NOT_FOUND") {
+          return reply.code(404).send({
+            error: customErr.message,
+            code: customErr.code,
+          });
+        }
       }
       throw err;
     }

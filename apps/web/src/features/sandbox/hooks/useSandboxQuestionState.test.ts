@@ -14,7 +14,7 @@ describe("useSandboxQuestionState", () => {
   });
 
   it("initializes with English sample questions even if legacy vi language is passed", () => {
-    const { result } = renderHook(() => useSandboxQuestionState("vi" as any));
+    const { result } = renderHook(() => useSandboxQuestionState("vi"));
     expect(result.current.questionText).toContain("Which planet in our solar system");
     expect(result.current.choices).toEqual(["Jupiter", "Saturn", "Uranus"]);
     expect(result.current.correctChoiceIndex).toBe(1);

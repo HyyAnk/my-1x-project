@@ -9,11 +9,11 @@ type BuildEpisodePreviewRequestInput = {
   resolved: ResolvedEpisodePreviewStyle;
   question?: EpisodePreviewQuestion | null;
   styleCatalogRevision?: string;
-  aspectRatio?: "16:9" | "9:16";
+  aspectRatio?: "16:9";
 };
 
 export function buildEpisodePreviewRequest(input: BuildEpisodePreviewRequestInput): SandboxPreviewRequest {
-  const aspectRatio = input.aspectRatio ?? "16:9";
+  const aspectRatio = "16:9" as const;
   return {
     ...buildStyleRequest(input),
     ...buildQuestionRequest(input),
@@ -53,7 +53,7 @@ function buildQuestionRequest({ override, question, resolved }: BuildEpisodePrev
 
 function buildMascotRequest(
   channel: Channel,
-  aspectRatio: "16:9" | "9:16" = "16:9",
+  aspectRatio: "16:9" = "16:9",
   episode?: Episode | null,
 ): SandboxPreviewRequest {
   const config = channel.mascot_config;

@@ -122,8 +122,7 @@ function splitQuestionPhrases(text: string): string[] {
   for (let i = 3; i <= words.length - 3; i++) {
     if (!canSplitBetweenWords(words[i - 1], words[i])) continue;
     const word = words[i].replace(/^[^A-Za-zÀ-ỹ]+/, "").toLowerCase();
-    const isConjunction =
-      /^(and|or|but|because|although|when|while|which|that|who|whom|where|if|as)$/i.test(word);
+    const isConjunction = /^(and|or|but|because|although|when|while|which|that|who|whom|where|if|as)$/i.test(word);
     const score = (isConjunction ? 0 : 5) + Math.abs(i - midpoint);
     if (score < bestScore) {
       bestScore = score;
@@ -194,7 +193,6 @@ function voiceCopy(language: string, seed?: string) {
     explanation: (text: string) => text,
     fact: (text: string) => text,
     midpoint: "",
-    outro:
-      `How many did you get right? Leave your score in the comments below! Remember to like and subscribe for more fun quizzes. ${closing}`,
+    outro: `How many did you get right? Leave your score in the comments below! Remember to like and subscribe for more fun quizzes. ${closing}`,
   };
 }

@@ -18,8 +18,7 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  */
 export const visualChoicesThreePureLayout = {
   id: "visual_choices_three_pure",
-  renderBody: (slots) =>
-    `${slots.questionBoxHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
+  renderBody: (slots) => `${slots.questionBoxHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
   css: (_aspectRatio) => `
 /* ==========================================================================
    LAYOUT: visual_choices_three_pure (16:9 Landscape Video - 1920x1080)

@@ -40,7 +40,6 @@ export function validateAndCheckConflicts(zoneList, activeClaims, candidate, exc
   }
 
   const nowDate = new Date();
-  const now = nowDate.toISOString();
   const writeSet = new Set(candidate.writeZones || []);
   const readSet = resolvedReadStable;
 

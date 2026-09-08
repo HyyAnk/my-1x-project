@@ -10,32 +10,16 @@ import { candyArcadeCss } from "./candyArcadeComposition.js";
 import { esc } from "./candyArcade/candyArcadeSvg.js";
 import { renderQuizLayoutBody } from "./layouts/registry.js";
 import { renderPreviewMascotHtmlLayer } from "./previewMascotRenderer.js";
-import {
-  adaptMascotForPhase,
-  adaptMascotForQuestion,
-  renderProductionMascotHtmlLayer,
-} from "./productionMascotRenderer.js";
+import { adaptMascotForPhase, adaptMascotForQuestion, renderProductionMascotHtmlLayer } from "./productionMascotRenderer.js";
 import { adaptSandboxQuizScene } from "./scene/sandboxSceneAdapter.js";
 import { sandboxPreviewTimeForPhase, sandboxSceneState } from "./scene/sandboxSceneStateAdapter.js";
 import { buildQuizSceneParts } from "./scene/buildQuizSceneParts.js";
-import {
-  renderQuizSceneChoicePart,
-  renderQuizSceneThinkingPart,
-  renderStableQuizSceneParts,
-} from "./scene/renderQuizSceneParts.js";
+import { renderQuizSceneChoicePart, renderQuizSceneThinkingPart, renderStableQuizSceneParts } from "./scene/renderQuizSceneParts.js";
 import { rewardFx } from "./candyArcade/candyArcadeClips.js";
 import type { QuizScenePhase } from "./scene/quizScene.types.js";
-import {
-  sandboxRehearsalDocument,
-  sandboxRewardFx,
-  sandboxSnapshotDocument,
-} from "./sandbox/sandboxDocumentTemplates.js";
+import { sandboxRehearsalDocument, sandboxRewardFx, sandboxSnapshotDocument } from "./sandbox/sandboxDocumentTemplates.js";
 
-export {
-  sandboxSnapshotDocument,
-  sandboxRehearsalDocument,
-  sandboxRewardFx,
-};
+export { sandboxSnapshotDocument, sandboxRehearsalDocument, sandboxRewardFx };
 
 export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
   const parsed = SandboxPreviewInputSchema.parse(input);

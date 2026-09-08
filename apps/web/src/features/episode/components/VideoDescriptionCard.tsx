@@ -19,7 +19,7 @@ export interface VideoDescriptionCardProps {
 
 export function VideoDescriptionCard({
   channel,
-  episode,
+  episode: _episode,
   episodeId,
   hasQuiz = true,
   initialDescription,
@@ -122,9 +122,7 @@ export function VideoDescriptionCard({
             )}
           </div>
 
-          {activeTab === "preview" && (
-            <DescriptionYouTubePreview description={description} fullText={draftText} />
-          )}
+          {activeTab === "preview" && <DescriptionYouTubePreview description={description} fullText={draftText} />}
 
           {activeTab === "blocks" && (
             <DescriptionBlockEditor

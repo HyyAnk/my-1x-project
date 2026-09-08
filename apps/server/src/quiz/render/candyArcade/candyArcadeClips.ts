@@ -200,9 +200,7 @@ export function questionClip(input: {
     input.mascot && (!input.mascotConfig || input.mascotConfig.enabled) && input.mascotConfig?.show_in_question !== false,
   );
   const mascotPlacement = resolveChannelMascotPlacement(input.mascotConfig, input.aspectRatio ?? "16:9");
-  const mascot = mascotEnabled
-    ? { occupied: true as const, anchor: mascotPlacement.position }
-    : { occupied: false as const, anchor: null };
+  const mascot = mascotEnabled ? { occupied: true as const, anchor: mascotPlacement.position } : { occupied: false as const, anchor: null };
   const model = adaptProductionQuizScene({
     question,
     questionIndex: input.questionIndex,
@@ -224,9 +222,7 @@ export function questionClip(input: {
     },
     styleCatalogRevision: input.styleCatalogRevision,
     channelBrandName: input.channelBrandName,
-    brandVisible:
-      Boolean(mascotHtml) ||
-      ((input.aspectRatio ?? "16:9") !== "9:16" && Boolean(input.channelBrandName?.trim())),
+    brandVisible: Boolean(mascotHtml) || ((input.aspectRatio ?? "16:9") !== "9:16" && Boolean(input.channelBrandName?.trim())),
     isFinal: input.isFinal,
   });
   const parts = buildQuizSceneParts(model);

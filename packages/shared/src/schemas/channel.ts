@@ -13,7 +13,6 @@ import {
 } from "../enums.js";
 import { IsoDate, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "./common.js";
 import { ChannelMascotConfigSchema } from "./mascot.js";
-import { MascotRenderAspectRatioSchema } from "../mascot/renderSchema.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 
 export const ChannelSchema = z
@@ -61,7 +60,10 @@ export const TopicGameplayArchetypeSchema = z.enum([
 
 export type TopicGameplayArchetype = z.infer<typeof TopicGameplayArchetypeSchema>;
 
-export const TopicCandidateSchema = z.object({
+export const TopicProvenanceOriginSchema = z.enum(["keyword", "discovery"]);
+export type TopicProvenanceOrigin = z.infer<typeof TopicProvenanceOriginSchema>;
+
+const TopicCandidateBaseSchema = z.object({
   topic_id: z.string().min(1),
   channel_id: z.string().min(1),
   title: z.string().min(1),
@@ -71,16 +73,34 @@ export const TopicCandidateSchema = z.object({
   estimated_potential: z.string().min(1),
   generated_at: IsoDate,
   selected: z.boolean().default(false),
+  origin: TopicProvenanceOriginSchema.default("discovery"),
+  theme_hint: z.string().optional(),
+  domain_id: z.string().optional(),
+  subtopic_id: z.string().optional(),
+});
+
+export const EpisodeTopicCandidateSchema = TopicCandidateBaseSchema.extend({
+  content_kind: z.literal("episode"),
   quiz_format: z.enum(["knowledge", "image_guess", "multiple_choice", "true_false", "odd_one_out"]).default("knowledge"),
   question_count: z.number().int().min(QUIZ_MIN_QUESTION_COUNT).max(QUIZ_MAX_QUESTION_COUNT).default(8),
   age_band: z.enum(["4-6", "7-9", "10-12", "family"]).default("7-9"),
   visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]).default("mixed"),
-  theme_hint: z.string().optional(),
   archetype: TopicGameplayArchetypeSchema.optional(),
   suggested_layout: QuizLayoutIdSchema.optional(),
-  domain_id: z.string().optional(),
-  subtopic_id: z.string().optional(),
 });
+
+export type EpisodeTopicCandidate = z.infer<typeof EpisodeTopicCandidateSchema>;
+
+export const ShortReelTopicCandidateSchema = TopicCandidateBaseSchema.extend({
+  content_kind: z.literal("short_reel"),
+  question_count: z.literal(1).default(1),
+  aspect_ratio: z.literal("9:16").default("9:16"),
+  archetype: z.enum(["versus_faceoff", "deep_trivia"]),
+});
+
+export type ShortReelTopicCandidate = z.infer<typeof ShortReelTopicCandidateSchema>;
+
+export const TopicCandidateSchema = z.discriminatedUnion("content_kind", [EpisodeTopicCandidateSchema, ShortReelTopicCandidateSchema]);
 
 export type TopicCandidate = z.infer<typeof TopicCandidateSchema>;
 
@@ -108,7 +128,7 @@ export const QuizConfigSchema = z.object({
   style_catalog_revision: z.string().trim().min(1).optional(),
   style_preset_revision: z.number().int().positive().optional(),
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).default(""),
-  render_aspect_ratio: MascotRenderAspectRatioSchema.default("16:9"),
+  render_aspect_ratio: z.literal("16:9").default("16:9"),
   thumbnail_aspect_ratio: z.enum(["auto", "16:9", "9:16", "both"]).default("auto"),
   archetype: TopicGameplayArchetypeSchema.optional(),
   target_layout: QuizLayoutIdSchema.optional(),

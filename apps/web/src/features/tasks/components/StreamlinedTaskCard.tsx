@@ -42,7 +42,11 @@ export function StreamlinedTaskCard({ item, now, onCancel, onRetry, onInspect }:
         </div>
 
         <div className="task-card-content-row">
-          <div className="task-card-thumbnail" data-testid="task-card-thumbnail" aria-hidden={viewModel.thumbnailUrl && !thumbnailFailed ? undefined : true}>
+          <div
+            className="task-card-thumbnail"
+            data-testid="task-card-thumbnail"
+            aria-hidden={viewModel.thumbnailUrl && !thumbnailFailed ? undefined : true}
+          >
             {viewModel.thumbnailUrl && !thumbnailFailed ? (
               <img
                 src={viewModel.thumbnailUrl}

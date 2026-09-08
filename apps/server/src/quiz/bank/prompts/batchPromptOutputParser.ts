@@ -49,6 +49,93 @@ export function sanitizeBankQuestionText(
   return cleaned;
 }
 
+interface RawChoice {
+  id?: string;
+  text?: string;
+  is_correct?: boolean;
+  explanation?: string;
+  [key: string]: unknown;
+}
+
+function extractJsonArray(rawOutput: string, context: string): Record<string, unknown>[] | null {
+  let cleaned = rawOutput.trim();
+  const jsonMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (jsonMatch) {
+    cleaned = jsonMatch[1].trim();
+  }
+
+  let items: unknown;
+  try {
+    items = JSON.parse(cleaned);
+  } catch {
+    const arrayMatch = cleaned.match(/\[\s*\{[\s\S]*\}\s*\]/);
+    if (arrayMatch) {
+      try {
+        items = JSON.parse(arrayMatch[0]);
+      } catch {
+        warnUnparseableOutput(context, rawOutput);
+        return null;
+      }
+    } else {
+      warnUnparseableOutput(context, rawOutput);
+      return null;
+    }
+  }
+
+  if (!Array.isArray(items)) {
+    if (items && typeof items === "object" && Array.isArray((items as { questions?: unknown[] }).questions)) {
+      items = (items as { questions: unknown[] }).questions;
+    } else {
+      warnUnparseableOutput(context, rawOutput);
+      return null;
+    }
+  }
+
+  return (items as unknown[]).filter((item): item is Record<string, unknown> => typeof item === "object" && item !== null);
+}
+
+function normalizeChoices(
+  rawChoices: unknown,
+  expectedCount: number,
+  correctChoiceId?: unknown,
+  distractorPool?: string[],
+): RawChoice[] | undefined {
+  if (!Array.isArray(rawChoices)) return undefined;
+  const choices: RawChoice[] = rawChoices.filter((c): c is RawChoice => typeof c === "object" && c !== null);
+
+  if (choices.length > expectedCount) {
+    const correctChoice = choices.find((c) => c.id === correctChoiceId || c.is_correct === true);
+    const distractors = choices.filter((c) => c !== correctChoice);
+    const neededDistractors = distractors.slice(0, expectedCount - 1);
+    return correctChoice ? [correctChoice, ...neededDistractors] : choices.slice(0, expectedCount);
+  }
+
+  if (choices.length < expectedCount) {
+    const result = [...choices];
+    while (result.length < expectedCount) {
+      const nextId = String.fromCharCode(65 + result.length);
+      const poolDistractor = distractorPool?.find((d) => !result.some((c) => c.text === d));
+      result.push({
+        id: nextId,
+        text: poolDistractor || (distractorPool ? `Option ${nextId}` : `Alternative ${nextId}`),
+        is_correct: false,
+      });
+    }
+    return result;
+  }
+
+  return choices;
+}
+
+function normalizeVisualSpec(visualSpec: unknown): Record<string, unknown> | undefined {
+  if (!visualSpec || typeof visualSpec !== "object") return undefined;
+  const vs = { ...(visualSpec as Record<string, unknown>) };
+  if (vs.intent !== "choice_illustration" && vs.intent !== "none") {
+    vs.intent = "question_illustration";
+  }
+  return vs;
+}
+
 export function parseBatchGenerationOutput(
   rawOutput: string,
   meta: {
@@ -59,59 +146,30 @@ export function parseBatchGenerationOutput(
     ageBand?: "kids" | "family" | "teen" | "mature";
   },
 ): BankQuestion[] {
-  let cleaned = rawOutput.trim();
-
-  // Strip markdown code fences if present
-  const jsonMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  if (jsonMatch) {
-    cleaned = jsonMatch[1].trim();
-  }
-
-  // Attempt JSON parsing
-  let items: unknown;
-  try {
-    items = JSON.parse(cleaned);
-  } catch {
-    const arrayMatch = cleaned.match(/\[\s*\{[\s\S]*\}\s*\]/);
-    if (arrayMatch) {
-      try {
-        items = JSON.parse(arrayMatch[0]);
-      } catch {
-        warnUnparseableOutput(meta.archetypeId, rawOutput);
-        return [];
-      }
-    } else {
-      warnUnparseableOutput(meta.archetypeId, rawOutput);
-      return [];
-    }
-  }
-
-  if (!Array.isArray(items)) {
-    if (items && typeof items === "object" && Array.isArray((items as { questions?: unknown[] }).questions)) {
-      items = (items as { questions: unknown[] }).questions;
-    } else {
-      warnUnparseableOutput(meta.archetypeId, rawOutput);
-      return [];
-    }
-  }
+  const items = extractJsonArray(rawOutput, meta.archetypeId);
+  if (!items) return [];
 
   const result: BankQuestion[] = [];
   const now = new Date().toISOString();
+  const expectedCount = ARCHETYPE_GUIDELINES[meta.archetypeId]?.choiceCount ?? 3;
 
-  for (const item of items as Record<string, unknown>[]) {
-    if (!item || typeof item !== "object") continue;
-
+  for (const item of items) {
     const rawQuestion = typeof item.question === "string" ? item.question : "";
-    const rawChoices = Array.isArray(item.choices) ? (item.choices as any[]) : [];
+    const rawChoices = Array.isArray(item.choices)
+      ? item.choices.filter(
+          (c): c is { text: string } => typeof c === "object" && c !== null && typeof (c as { text?: unknown }).text === "string",
+        )
+      : [];
     const sanitizedQuestion = sanitizeBankQuestionText(rawQuestion, meta.archetypeId, rawChoices);
+
+    const normalizedChoices = normalizeChoices(item.choices, expectedCount, item.correct_choice_id);
 
     const candidate: Record<string, unknown> = {
       ...item,
       question: sanitizedQuestion,
+      choices: normalizedChoices ?? item.choices,
       id:
-        typeof item.id === "string" && item.id.trim()
-          ? item.id.trim()
-          : makeUniqueBankId(meta.archetypeId, meta.domainId, meta.subtopicId),
+        typeof item.id === "string" && item.id.trim() ? item.id.trim() : makeUniqueBankId(meta.archetypeId, meta.domainId, meta.subtopicId),
       entity_id: typeof item.entity_id === "string" && item.entity_id.trim() ? item.entity_id.trim() : undefined,
       archetype_id: meta.archetypeId,
       domain_id: meta.domainId,
@@ -123,33 +181,9 @@ export function parseBatchGenerationOutput(
       updated_at: now,
     };
 
-    if (candidate.visual_spec && typeof candidate.visual_spec === "object") {
-      const vs = { ...(candidate.visual_spec as Record<string, unknown>) };
-      if (vs.intent !== "choice_illustration" && vs.intent !== "none") {
-        vs.intent = "question_illustration";
-      }
-      candidate.visual_spec = vs;
-    }
-
-    const expectedCount = ARCHETYPE_GUIDELINES[meta.archetypeId]?.choiceCount ?? 3;
-    if (Array.isArray(candidate.choices)) {
-      if (candidate.choices.length > expectedCount) {
-        const correctChoice = (candidate.choices as any[]).find(
-          (c) => c && typeof c === "object" && (c.id === candidate.correct_choice_id || c.is_correct === true),
-        );
-        const distractors = (candidate.choices as any[]).filter((c) => c !== correctChoice);
-        const neededDistractors = distractors.slice(0, expectedCount - 1);
-        candidate.choices = correctChoice ? [correctChoice, ...neededDistractors] : candidate.choices.slice(0, expectedCount);
-      } else if (candidate.choices.length < expectedCount) {
-        while (candidate.choices.length < expectedCount) {
-          const nextId = String.fromCharCode(65 + candidate.choices.length);
-          (candidate.choices as any[]).push({
-            id: nextId,
-            text: `Alternative ${nextId}`,
-            is_correct: false,
-          });
-        }
-      }
+    const visualSpec = normalizeVisualSpec(candidate.visual_spec);
+    if (visualSpec) {
+      candidate.visual_spec = visualSpec;
     }
 
     const parsed = BankQuestionSchema.safeParse(candidate);
@@ -177,39 +211,8 @@ export function parseReverseBatchGenerationOutput(
     ageBand?: "kids" | "family" | "teen" | "mature";
   },
 ): BankQuestion[] {
-  let cleaned = rawOutput.trim();
-
-  const jsonMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  if (jsonMatch) {
-    cleaned = jsonMatch[1].trim();
-  }
-
-  let items: unknown;
-  try {
-    items = JSON.parse(cleaned);
-  } catch {
-    const arrayMatch = cleaned.match(/\[\s*\{[\s\S]*\}\s*\]/);
-    if (arrayMatch) {
-      try {
-        items = JSON.parse(arrayMatch[0]);
-      } catch {
-        warnUnparseableOutput(`reverse/${meta.archetypeId}`, rawOutput);
-        return [];
-      }
-    } else {
-      warnUnparseableOutput(`reverse/${meta.archetypeId}`, rawOutput);
-      return [];
-    }
-  }
-
-  if (!Array.isArray(items)) {
-    if (items && typeof items === "object" && Array.isArray((items as { questions?: unknown[] }).questions)) {
-      items = (items as { questions: unknown[] }).questions;
-    } else {
-      warnUnparseableOutput(`reverse/${meta.archetypeId}`, rawOutput);
-      return [];
-    }
-  }
+  const items = extractJsonArray(rawOutput, `reverse/${meta.archetypeId}`);
+  if (!items) return [];
 
   const result: BankQuestion[] = [];
   const now = new Date().toISOString();
@@ -217,11 +220,10 @@ export function parseReverseBatchGenerationOutput(
   for (const t of targets) {
     targetMap.set(t.entity_id, t);
   }
+  const expectedCount = ARCHETYPE_GUIDELINES[meta.archetypeId]?.choiceCount ?? 3;
 
-  const rawItems = items as Record<string, unknown>[];
-  for (let i = 0; i < rawItems.length; i++) {
-    const item = rawItems[i];
-    if (!item || typeof item !== "object") continue;
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
 
     // Resolve matched target entity: by entity_id first, then by index fallback
     let entityId = typeof item.entity_id === "string" ? item.entity_id.trim() : "";
@@ -232,20 +234,24 @@ export function parseReverseBatchGenerationOutput(
       entityId = matchedTarget.entity_id;
     }
 
-    const domainId = matchedTarget ? matchedTarget.domain_id : (item.domain_id as string) || "general";
-    const subtopicId = matchedTarget ? matchedTarget.subtopic_id : (item.subtopic_id as string) || "general";
+    const domainId = matchedTarget ? matchedTarget.domain_id : typeof item.domain_id === "string" ? item.domain_id : "general";
+    const subtopicId = matchedTarget ? matchedTarget.subtopic_id : typeof item.subtopic_id === "string" ? item.subtopic_id : "general";
 
     const rawQuestion = typeof item.question === "string" ? item.question : "";
-    const rawChoices = Array.isArray(item.choices) ? (item.choices as any[]) : [];
+    const rawChoices = Array.isArray(item.choices)
+      ? item.choices.filter(
+          (c): c is { text: string } => typeof c === "object" && c !== null && typeof (c as { text?: unknown }).text === "string",
+        )
+      : [];
     const sanitizedQuestion = sanitizeBankQuestionText(rawQuestion, meta.archetypeId, rawChoices);
+
+    const normalizedChoices = normalizeChoices(item.choices, expectedCount, item.correct_choice_id, matchedTarget?.distractor_pool);
 
     const candidate: Record<string, unknown> = {
       ...item,
       question: sanitizedQuestion,
-      id:
-        typeof item.id === "string" && item.id.trim()
-          ? item.id.trim()
-          : makeUniqueBankId(meta.archetypeId, domainId, subtopicId),
+      choices: normalizedChoices ?? item.choices,
+      id: typeof item.id === "string" && item.id.trim() ? item.id.trim() : makeUniqueBankId(meta.archetypeId, domainId, subtopicId),
       entity_id: entityId || undefined,
       archetype_id: meta.archetypeId,
       domain_id: domainId,
@@ -257,36 +263,9 @@ export function parseReverseBatchGenerationOutput(
       updated_at: now,
     };
 
-    if (candidate.visual_spec && typeof candidate.visual_spec === "object") {
-      const vs = { ...(candidate.visual_spec as Record<string, unknown>) };
-      if (vs.intent !== "choice_illustration" && vs.intent !== "none") {
-        vs.intent = "question_illustration";
-      }
-      candidate.visual_spec = vs;
-    }
-
-    const expectedCount = ARCHETYPE_GUIDELINES[meta.archetypeId]?.choiceCount ?? 3;
-    if (Array.isArray(candidate.choices)) {
-      if (candidate.choices.length > expectedCount) {
-        const correctChoice = (candidate.choices as any[]).find(
-          (c) => c && typeof c === "object" && (c.id === candidate.correct_choice_id || c.is_correct === true),
-        );
-        const distractors = (candidate.choices as any[]).filter((c) => c !== correctChoice);
-        const neededDistractors = distractors.slice(0, expectedCount - 1);
-        candidate.choices = correctChoice ? [correctChoice, ...neededDistractors] : candidate.choices.slice(0, expectedCount);
-      } else if (candidate.choices.length < expectedCount) {
-        while (candidate.choices.length < expectedCount) {
-          const nextId = String.fromCharCode(65 + candidate.choices.length);
-          const poolDistractor = matchedTarget?.distractor_pool?.find(
-            (d) => !(candidate.choices as any[]).some((c) => c.text === d),
-          );
-          (candidate.choices as any[]).push({
-            id: nextId,
-            text: poolDistractor || `Option ${nextId}`,
-            is_correct: false,
-          });
-        }
-      }
+    const visualSpec = normalizeVisualSpec(candidate.visual_spec);
+    if (visualSpec) {
+      candidate.visual_spec = visualSpec;
     }
 
     const parsed = BankQuestionSchema.safeParse(candidate);

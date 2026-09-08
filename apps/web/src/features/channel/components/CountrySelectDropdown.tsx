@@ -53,8 +53,7 @@ export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: Coun
     setCountrySearch("");
   };
 
-  const selectedCountryName =
-    selectedCountryOption?.nameEn || selectedCountryOption?.name || selectedCountry;
+  const selectedCountryName = selectedCountryOption?.nameEn || selectedCountryOption?.name || selectedCountry;
 
   return (
     <div className="channel-create-field" ref={dropdownRef}>
@@ -71,9 +70,7 @@ export function CountrySelectDropdown({ selectedCountry, onSelectCountry }: Coun
           aria-label={t("channels.countryFieldLabel")}
         >
           <div className="country-select-trigger-content">
-            {selectedCountryOption?.rank ? (
-              <span className="country-rank-pill">#{selectedCountryOption.rank}</span>
-            ) : null}
+            {selectedCountryOption?.rank ? <span className="country-rank-pill">#{selectedCountryOption.rank}</span> : null}
             <CountryFlag code={selectedCountry} size={22} className="country-flag-icon" />
             <div className="country-select-trigger-info">
               <span className="country-name">{selectedCountryName}</span>

@@ -9,9 +9,6 @@ import { buildEpisodePreviewQuestions } from "../../utils/episodePreviewQuestion
 import { EpisodePreviewQuestionSelect } from "./EpisodePreviewQuestionSelect";
 import { EpisodePreviewStatusPill, type EpisodePreviewStatus } from "./EpisodePreviewStatusPill";
 
-const COMPOSITION_WIDTH = 1920;
-const COMPOSITION_HEIGHT = 1080;
-
 type EpisodeStylePreviewProps = {
   channel: Channel;
   episode: Episode | null;
@@ -34,9 +31,8 @@ export function EpisodeStylePreview({ channel, episode, quiz, directorPlan, cand
     previewQuestion: questionSelection.selectedQuestion,
   });
 
-  const isPortrait = episode?.quiz_config?.render_aspect_ratio === "9:16";
-  const compositionWidth = isPortrait ? 1080 : 1920;
-  const compositionHeight = isPortrait ? 1920 : 1080;
+  const compositionWidth = 1920;
+  const compositionHeight = 1080;
   const scale = width > 0 ? width / compositionWidth : 0;
   const status = getPreviewStatus({ loading, pending: Boolean(pendingPreviewHtml), error: previewError, candidate });
 
@@ -57,9 +53,8 @@ export function EpisodeStylePreview({ channel, episode, quiz, directorPlan, cand
         ref={ref}
         className="episode-style-preview-canvas"
         style={{
-          aspectRatio: isPortrait ? "9 / 16" : "16 / 9",
-          maxWidth: isPortrait ? "260px" : "100%",
-          margin: isPortrait ? "0 auto" : undefined,
+          aspectRatio: "16 / 9",
+          maxWidth: "100%",
         }}
       >
         {scale > 0 ? (

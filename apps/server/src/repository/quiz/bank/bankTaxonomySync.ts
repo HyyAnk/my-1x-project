@@ -1,11 +1,7 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import {
-  BankTaxonomySchema,
-  type BankDomainMeta,
-  type BankTaxonomy,
-} from "@studio/shared";
+import { BankTaxonomySchema, type BankDomainMeta, type BankTaxonomy } from "@studio/shared";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { getQuestionBankPath } from "./bankPathResolver.js";
 
@@ -88,11 +84,9 @@ export async function syncTaxonomyFromKnowledgeBase(runtime: RepositoryRuntime):
     return [];
   }
 
-  let files: string[] = [];
+  let files: string[];
   try {
-    files = (await readdir(entitiesDir, { withFileTypes: true }))
-      .filter((f) => f.isFile() && f.name.endsWith(".json"))
-      .map((f) => f.name);
+    files = (await readdir(entitiesDir, { withFileTypes: true })).filter((f) => f.isFile() && f.name.endsWith(".json")).map((f) => f.name);
   } catch {
     return [];
   }
@@ -112,11 +106,13 @@ export async function syncTaxonomyFromKnowledgeBase(runtime: RepositoryRuntime):
     const defaultDomainId = path.basename(file, ".json");
     const filePath = path.join(entitiesDir, file);
     try {
-      const content = JSON.parse(await readFile(filePath, "utf8"));
+      const content = JSON.parse(await readFile(filePath, "utf8")) as unknown;
       if (!Array.isArray(content)) continue;
 
-      for (const ent of content) {
-        const domainId = (typeof ent.domain_id === "string" && ent.domain_id.trim()) || defaultDomainId;
+      for (const rawEnt of content) {
+        if (!rawEnt || typeof rawEnt !== "object") continue;
+        const ent = rawEnt as { domain_id?: unknown; subtopic_id?: unknown };
+        const domainId = typeof ent.domain_id === "string" && ent.domain_id.trim() ? ent.domain_id.trim() : defaultDomainId;
         if (!domainMap.has(domainId)) {
           const canonical = CANONICAL_DOMAIN_META[domainId];
           domainMap.set(domainId, {
@@ -128,7 +124,9 @@ export async function syncTaxonomyFromKnowledgeBase(runtime: RepositoryRuntime):
           });
         }
 
-        const domainEntry = domainMap.get(domainId)!;
+        const domainEntry = domainMap.get(domainId);
+        if (!domainEntry) continue;
+
         if (typeof ent.subtopic_id === "string" && ent.subtopic_id.trim()) {
           const subId = ent.subtopic_id.trim();
           if (!domainEntry.subtopicsMap.has(subId)) {
@@ -161,7 +159,7 @@ export async function readQuestionBankTaxonomy(this: RepositoryRuntime): Promise
   const dynamicDomains = await syncTaxonomyFromKnowledgeBase(this);
 
   const taxonomyPath = getQuestionBankPath.call(this, "taxonomy.json");
-  let fileTaxonomy: BankTaxonomy | null = null;
+  let fileTaxonomy: BankTaxonomy | null;
   try {
     const raw = JSON.parse(await readFile(taxonomyPath, "utf8")) as unknown;
     fileTaxonomy = BankTaxonomySchema.parse(raw);

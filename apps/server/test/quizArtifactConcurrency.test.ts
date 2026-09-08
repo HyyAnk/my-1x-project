@@ -29,6 +29,7 @@ async function fixture(): Promise<{ repository: RepositoryService; channelId: st
   const topics = Array.from({ length: 5 }, (_, index) => ({
     topic_id: `topic_${index}`,
     channel_id: channel.channel_id,
+    content_kind: "episode" as const,
     title: `Concurrency Topic ${index}`,
     premise: "Premise",
     why_it_fits: "Fits",
@@ -92,9 +93,7 @@ describe("per-episode quiz artifact mutation serialization", () => {
   it("keeps episode.json consistent under concurrent render invalidations", async () => {
     const { repository, channelId, episodeId } = await fixture();
 
-    await Promise.all(
-      Array.from({ length: 8 }, () => repository.invalidateQuizArtifacts(channelId, episodeId, ["render", "qa"])),
-    );
+    await Promise.all(Array.from({ length: 8 }, () => repository.invalidateQuizArtifacts(channelId, episodeId, ["render", "qa"])));
 
     const episode = EpisodeSchema.parse(await repository.getEpisode(channelId, episodeId));
     expect(episode.video_asset_path).toBeNull();

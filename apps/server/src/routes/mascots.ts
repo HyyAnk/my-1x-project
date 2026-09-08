@@ -133,14 +133,7 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
           return reply.code(404).send({ error: "Style not found" });
         }
 
-        const result = await generateMascotStyleConcept(
-          repository,
-          mascot,
-          styleId,
-          state.config.image_generation,
-          { prompt },
-          logger,
-        );
+        const result = await generateMascotStyleConcept(repository, mascot, styleId, state.config.image_generation, { prompt }, logger);
 
         const updatedMascot = await repository.getMascot(mascotId);
         const updatedStyle = (updatedMascot.styles || []).find((s) => s.id === styleId) || style;
@@ -178,14 +171,7 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
       const rawBody = typeof request.body === "object" && request.body !== null ? request.body : {};
       const input = GenerateMascotSlotInputSchema.parse({ style_id: styleId, ...rawBody });
       const mascot = await repository.getMascot(mascotId);
-      const result = await generateMascotStyleSlot(
-        repository,
-        mascot,
-        styleId,
-        input,
-        state.config.image_generation,
-        logger,
-      );
+      const result = await generateMascotStyleSlot(repository, mascot, styleId, input, state.config.image_generation, logger);
       return result;
     });
     server.post("/api/mascots/:mascotId/styles/:styleId/generate-batch", async (request, reply) => {
@@ -198,15 +184,9 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
       request.raw.once("close", () => {
         if (!reply.sent) abortController.abort();
       });
-      const result = await generateMascotStyleBatch(
-        repository,
-        mascot,
-        styleId,
-        input,
-        state.config.image_generation,
-        logger,
-        { signal: abortController.signal },
-      );
+      const result = await generateMascotStyleBatch(repository, mascot, styleId, input, state.config.image_generation, logger, {
+        signal: abortController.signal,
+      });
       return result;
     });
     server.post("/api/mascots/:mascotId/active-style", async (request) => {

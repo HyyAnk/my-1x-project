@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  type MascotPlacementPreset,
-  RECOMMENDED_MASCOT_PLACEMENT_PRESETS,
-  resolveMascotStageDefaultPlacement,
-} from "@studio/shared";
+import { type MascotPlacementPreset, RECOMMENDED_MASCOT_PLACEMENT_PRESETS, resolveMascotStageDefaultPlacement } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import type { StageAspectRatio, StagePosition } from "../types";
@@ -31,10 +27,9 @@ export function useMascotPlacementPreset(options: PlacementPresetOptions) {
 
   const [defaultPlacements, setDefaultPlacements] = useState<Record<StageAspectRatio, MascotPlacementPreset>>({
     "16:9": { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["16:9"] },
-    "9:16": { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["9:16"] },
   });
 
-  const defaultPlacement = defaultPlacements[activeAspect] ?? RECOMMENDED_MASCOT_PLACEMENT_PRESETS[activeAspect];
+  const defaultPlacement = defaultPlacements[activeAspect] ?? RECOMMENDED_MASCOT_PLACEMENT_PRESETS["16:9"];
 
   const [presetReady, setPresetReady] = useState(false);
   const [presetLoading, setPresetLoading] = useState(false);
@@ -52,13 +47,11 @@ export function useMascotPlacementPreset(options: PlacementPresetOptions) {
       if (revision !== loadRevisionRef.current) return;
       const stageSettings = config.mascot_stage;
       const p16 = resolveMascotStageDefaultPlacement(stageSettings, "16:9");
-      const p9 = resolveMascotStageDefaultPlacement(stageSettings, "9:16");
-      setDefaultPlacements({ "16:9": p16, "9:16": p9 });
+      setDefaultPlacements({ "16:9": p16 });
     } catch {
       if (revision !== loadRevisionRef.current) return;
       setDefaultPlacements({
         "16:9": { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["16:9"] },
-        "9:16": { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["9:16"] },
       });
       setPresetLoadFailed(true);
     } finally {
@@ -116,20 +109,17 @@ export function useMascotPlacementPreset(options: PlacementPresetOptions) {
       flip_x: options.flipHorizontal,
     };
     try {
-      const next16 = activeAspect === "16:9" ? placement : defaultPlacements["16:9"];
-      const next9 = activeAspect === "9:16" ? placement : defaultPlacements["9:16"];
+      const next16 = placement;
 
       const response = await api.saveMascotStageSettings({
         default_placement: next16,
         default_placements: {
           "16:9": next16,
-          "9:16": next9,
         },
       });
       const stageSettings = response.mascot_stage;
       const p16 = resolveMascotStageDefaultPlacement(stageSettings, "16:9");
-      const p9 = resolveMascotStageDefaultPlacement(stageSettings, "9:16");
-      setDefaultPlacements({ "16:9": p16, "9:16": p9 });
+      setDefaultPlacements({ "16:9": p16 });
       options.onNotice({ tone: "good", message: options.t("stageStudio.noticeDefaultPresetSaved") });
     } catch (error) {
       options.onNotice({

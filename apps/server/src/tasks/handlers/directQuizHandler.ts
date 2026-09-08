@@ -5,11 +5,7 @@ import { checkQuestionsAgainstHistory } from "../../quiz/qa/questionHistory.js";
 import { invalidateQuizArtifacts } from "../../quiz/pipeline/invalidation.js";
 import { synthesizeAllLegacyArtifacts } from "../../quiz/domain/quizArtifactSynthesizer.js";
 
-export async function handleDirectQuizOutput(
-  runtime: TaskManagerRuntime,
-  active: ActiveRun,
-  output: string,
-): Promise<string[]> {
+export async function handleDirectQuizOutput(runtime: TaskManagerRuntime, active: ActiveRun, output: string): Promise<string[]> {
   const task = active.task;
   const raw = parseJson(output, "QuizV2");
   const episode = await runtime.repository.getEpisode(task.channel_id, task.episode_id!);

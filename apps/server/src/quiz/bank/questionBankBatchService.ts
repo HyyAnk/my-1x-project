@@ -1,13 +1,8 @@
-import type {
-  BankQuestion,
-} from "@studio/shared";
+import type { BankQuestion } from "@studio/shared";
 import type { RepositoryService } from "../../repository/service.js";
 import { runBatchAutoQa } from "./questionBankAutoQa.js";
 import { loadAllKnowledgeEntities } from "./knowledgeBaseLoader.js";
-import {
-  calculateMatrixCoverageStats,
-  planBatchChunks,
-} from "./matrixCoverageService.js";
+import { calculateMatrixCoverageStats, planBatchChunks } from "./matrixCoverageService.js";
 import {
   executeBatchChunkScheduler,
   MAX_BATCH_CHUNK_SIZE,
@@ -33,10 +28,7 @@ export {
  * - 3-layer Auto-QA verification
  * - Real-time persistence and chunk progress reporting
  */
-export async function generateQuestionBankBatch(
-  repository: RepositoryService,
-  input: GenerateBatchInput,
-): Promise<BatchGenerationResult> {
+export async function generateQuestionBankBatch(repository: RepositoryService, input: GenerateBatchInput): Promise<BatchGenerationResult> {
   const targetCount = Math.max(1, input.count || 20);
   const mode = input.mode || (input.domainId || input.archetypeId ? "manual" : "auto");
   const persist = input.persist !== false;

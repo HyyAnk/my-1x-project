@@ -76,10 +76,7 @@ export async function generateEpisodeDescription(
     throw new RepositoryError("Quiz questions must be generated before video description", "QUIZ_REQUIRED");
   }
 
-  const client =
-    input.activeEngine === "antigravity" && input.antigravityClient
-      ? input.antigravityClient
-      : input.codexClient;
+  const client = input.activeEngine === "antigravity" && input.antigravityClient ? input.antigravityClient : input.codexClient;
 
   if (!client) {
     throw new RepositoryError("No active LLM client available for generating description", "LLM_CLIENT_UNAVAILABLE");
@@ -129,7 +126,7 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
     // Non-blocking
   }
 
-  let description: VideoDescription | null = null;
+  let description: VideoDescription | null;
   try {
     const descResult = await generateEpisodeDescription(input);
     description = descResult.description;

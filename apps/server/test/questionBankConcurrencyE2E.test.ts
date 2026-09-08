@@ -162,9 +162,9 @@ describe("QuestionBank Concurrency & Background Job E2E Stress Tests", () => {
     expect(callCounter).toBeLessThan(10);
   });
 
-  it("rejects concurrent job starts while a background batch is active", async () => {
+  it("rejects concurrent job starts while a background batch is active", () => {
     const mockLlmClient: LLMClient = {
-      connect: async () => {},
+      connect: () => Promise.resolve(),
       generateContent: async () => {
         await new Promise((res) => setTimeout(res, 150));
         return { text: "[]" };

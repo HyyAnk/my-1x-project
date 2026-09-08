@@ -181,7 +181,6 @@ export function useSandboxTimelineState() {
       if (next) {
         let startTime = timelineSeconds;
         if (startTime >= timeline.totalDuration - 0.1) {
-          startTime = 0;
           setTimelineSeconds(0);
           seekIframe(0);
           firedCuesRef.current.clear();

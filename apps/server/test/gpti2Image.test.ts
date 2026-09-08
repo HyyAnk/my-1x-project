@@ -159,6 +159,7 @@ describe("gpti2.store Image Provider", () => {
     const topics = Array.from({ length: 5 }, (_, i) => ({
       topic_id: `t${i + 1}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `T${i + 1}`,
       premise: "Premise",
       why_it_fits: "Fits",

@@ -1,4 +1,4 @@
-import { describe, it } from "node:test";
+import { describe as nodeDescribe, it as nodeIt } from "node:test";
 import assert from "node:assert/strict";
 import {
   MascotStyleSchema,
@@ -9,6 +9,16 @@ import {
   type MascotStyle,
   type MascotProfile,
 } from "../src/index.js";
+
+type TestCallback = () => void | Promise<void>;
+
+const describe = (name: string, suite: TestCallback): void => {
+  void nodeDescribe(name, suite);
+};
+
+const it = (name: string, testCase: TestCallback): void => {
+  void nodeIt(name, testCase);
+};
 
 describe("MascotStyleSchema and style readiness", () => {
   describe("MascotStyleSchema parsing", () => {

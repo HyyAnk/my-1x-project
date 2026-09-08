@@ -1,16 +1,5 @@
-import {
-  Sparkle,
-  ArrowCounterClockwise,
-  PencilSimple,
-  CircleNotch,
-  Plus,
-  MagnifyingGlassPlus,
-} from "@phosphor-icons/react";
-import {
-  type MascotStateVariant,
-  findPoseByPrompt,
-  getMascotSlotDefaultPreset,
-} from "@studio/shared";
+import { Sparkle, ArrowCounterClockwise, PencilSimple, CircleNotch, Plus, MagnifyingGlassPlus } from "@phosphor-icons/react";
+import { type MascotStateVariant, findPoseByPrompt, getMascotSlotDefaultPreset } from "@studio/shared";
 
 export interface VariantSlotCardProps {
   state: "thinking" | "celebrate";
@@ -44,14 +33,12 @@ export function VariantSlotCard({
   const defaultSlotPreset = getMascotSlotDefaultPreset(state, slotIndex);
   const defaultPose = findPoseByPrompt(state, defaultSlotPreset);
 
-  const poseBadgeLabel = knownPose
-    ? knownPose.label
-    : (promptModifier
-        ? "Customized"
-        : (isFilled && defaultPose ? defaultPose.label : null));
+  const poseBadgeLabel = knownPose ? knownPose.label : promptModifier ? "Customized" : isFilled && defaultPose ? defaultPose.label : null;
 
   const poseTooltip = promptModifier
-    ? (knownPose ? `${knownPose.label}: "${promptModifier}"` : `Custom Prompt: "${promptModifier}"`)
+    ? knownPose
+      ? `${knownPose.label}: "${promptModifier}"`
+      : `Custom Prompt: "${promptModifier}"`
     : `Default Slot ${slotIndex}: "${defaultSlotPreset}"`;
 
   return (
@@ -66,10 +53,7 @@ export function VariantSlotCard({
         <span className="slot-number-badge">Slot {slotIndex}</span>
         <div className="slot-header-tags">
           {poseBadgeLabel ? (
-            <span
-              className="slot-custom-tag"
-              title={poseTooltip}
-            >
+            <span className="slot-custom-tag" title={poseTooltip}>
               {poseBadgeLabel}
             </span>
           ) : null}
@@ -80,12 +64,7 @@ export function VariantSlotCard({
       <div className="slot-canvas-container">
         {isFilled && variant?.image_url ? (
           <div className="slot-checkerboard-canvas">
-            <img
-              src={variant.image_url}
-              alt={`${state} variant slot ${slotIndex}`}
-              className="slot-variant-img"
-              loading="lazy"
-            />
+            <img src={variant.image_url} alt={`${state} variant slot ${slotIndex}`} className="slot-variant-img" loading="lazy" />
             {onOpenLightbox ? (
               <button
                 type="button"
@@ -143,12 +122,7 @@ export function VariantSlotCard({
           </>
         ) : (
           <>
-            <button
-              type="button"
-              className="slot-action-btn is-generate"
-              onClick={() => onGenerate(slotIndex)}
-              disabled={isBusy}
-            >
+            <button type="button" className="slot-action-btn is-generate" onClick={() => onGenerate(slotIndex)} disabled={isBusy}>
               <Sparkle size={13} weight="fill" />
               <span>Generate</span>
             </button>

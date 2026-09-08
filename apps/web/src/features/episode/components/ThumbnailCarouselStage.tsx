@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  CaretLeft,
-  CaretRight,
-  DownloadSimple,
-  Eye,
-  Image as ImageIcon,
-  Star,
-  Trash,
-  ArrowsClockwise,
-} from "@phosphor-icons/react";
+import { CaretLeft, CaretRight, DownloadSimple, Eye, Image as ImageIcon, Star, Trash, ArrowsClockwise } from "@phosphor-icons/react";
 import type { ThumbnailAspectRatio, ThumbnailHistoryItem } from "@studio/shared";
 import { ThumbnailFilmstrip } from "./ThumbnailFilmstrip";
 
@@ -38,7 +29,7 @@ export function ThumbnailCarouselStage({
   activeRatio,
   generating,
   hasImage,
-  hasAnyThumbnail,
+  hasAnyThumbnail: _hasAnyThumbnail,
   imageUrl,
   historyList,
   carouselIndex,
@@ -59,9 +50,7 @@ export function ThumbnailCarouselStage({
       {generating ? (
         <div className="thumbnail-generating-overlay">
           <ArrowsClockwise size={34} className="thumbnail-spinner" />
-          <span style={{ fontWeight: 600, fontSize: "0.92rem", marginTop: "12px" }}>
-            Synthesizing {activeRatio} high-CTR thumbnail...
-          </span>
+          <span style={{ fontWeight: 600, fontSize: "0.92rem", marginTop: "12px" }}>Synthesizing {activeRatio} high-CTR thumbnail...</span>
         </div>
       ) : hasImage ? (
         <div className="thumbnail-stage-content">
@@ -84,9 +73,7 @@ export function ThumbnailCarouselStage({
                   <>v{currentVersionNumber} Archived</>
                 )}
               </span>
-              <span className="thumbnail-spec-pill">
-                {activeRatio === "16:9" ? "1280×720 HD" : "1080×1920 SHORTS"}
-              </span>
+              <span className="thumbnail-spec-pill">{activeRatio === "16:9" ? "1280×720 HD" : "1080×1920 SHORTS"}</span>
             </div>
 
             {/* Carousel Navigation Chevron Arrows */}
@@ -115,13 +102,7 @@ export function ThumbnailCarouselStage({
 
             {/* Floating Action Toolbar */}
             <div className="thumbnail-floating-actions">
-              <a
-                href={imageUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="floating-action-btn"
-                title="View Fullscreen in new tab"
-              >
+              <a href={imageUrl} target="_blank" rel="noreferrer" className="floating-action-btn" title="View Fullscreen in new tab">
                 <Eye size={16} />
               </a>
               <a
@@ -147,11 +128,7 @@ export function ThumbnailCarouselStage({
             {/* Activate Banner if browsing archived thumbnail */}
             {!isViewingActive && currentVariant && (
               <div className="thumbnail-set-active-overlay">
-                <button
-                  type="button"
-                  className="thumbnail-set-active-btn"
-                  onClick={() => onSetActive(currentVariant.id)}
-                >
+                <button type="button" className="thumbnail-set-active-btn" onClick={() => onSetActive(currentVariant.id)}>
                   <Star size={15} weight="fill" />
                   <span>Set Version {currentVersionNumber} as Active Thumbnail</span>
                 </button>

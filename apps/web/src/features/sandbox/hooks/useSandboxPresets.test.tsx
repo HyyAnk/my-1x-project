@@ -74,10 +74,9 @@ describe("useSandboxPresets", () => {
   it("applies a selected preset to design, layout, and mascot state", () => {
     const onNotice = vi.fn();
     const onLayoutChange = vi.fn();
-    const { result } = renderHook(
-      () => useSandboxPresets({ design: mockDesign, mascot: mockMascot, onNotice, onLayoutChange }),
-      { wrapper },
-    );
+    const { result } = renderHook(() => useSandboxPresets({ design: mockDesign, mascot: mockMascot, onNotice, onLayoutChange }), {
+      wrapper,
+    });
     const comicPreset = result.current.builtInPresets.find((p) => p.id === "preset_comic_boom");
     expect(comicPreset).toBeDefined();
 
@@ -102,7 +101,7 @@ describe("useSandboxPresets", () => {
       result.current.setNewPresetName("My Custom Pop");
     });
     act(() => {
-      result.current.handleSaveCustomPreset();
+      void result.current.handleSaveCustomPreset();
     });
 
     expect(result.current.customPresets).toHaveLength(1);
@@ -111,7 +110,7 @@ describe("useSandboxPresets", () => {
 
     const savedId = result.current.customPresets[0].id;
     act(() => {
-      result.current.handleDeleteCustomPreset(savedId);
+      void result.current.handleDeleteCustomPreset(savedId);
     });
 
     expect(result.current.customPresets).toHaveLength(0);
@@ -129,7 +128,7 @@ describe("useSandboxPresets", () => {
       result.current.setNewPresetName("Robot Preset");
     });
     act(() => {
-      result.current.handleSaveCustomPreset();
+      void result.current.handleSaveCustomPreset();
     });
 
     expect(result.current.customPresets[0].channel_brand_name).toBe("Robot World");
@@ -195,7 +194,7 @@ describe("useSandboxPresets", () => {
       result.current.setNewPresetName("Original Preset");
     });
     act(() => {
-      result.current.handleSaveCustomPreset();
+      void result.current.handleSaveCustomPreset();
     });
 
     expect(result.current.customPresets).toHaveLength(1);
@@ -207,7 +206,7 @@ describe("useSandboxPresets", () => {
     mockDesign.theme = "space_lab";
     mockDesign.paletteId = "purple";
     act(() => {
-      result.current.handleUpdateActivePreset();
+      void result.current.handleUpdateActivePreset();
     });
 
     expect(result.current.customPresets[0].theme).toBe("space_lab");
@@ -215,14 +214,14 @@ describe("useSandboxPresets", () => {
 
     // 3. Duplicate preset
     act(() => {
-      result.current.handleDuplicateCustomPreset(result.current.customPresets[0]);
+      void result.current.handleDuplicateCustomPreset(result.current.customPresets[0]);
     });
     expect(result.current.customPresets).toHaveLength(2);
     expect(result.current.customPresets[0].name).toContain("Copy");
 
     // 4. Update metadata (name & description)
     act(() => {
-      result.current.handleUpdatePresetMetadata(savedPreset.id, "Renamed Preset", "Updated Description");
+      void result.current.handleUpdatePresetMetadata(savedPreset.id, "Renamed Preset", "Updated Description");
     });
     const renamed = result.current.customPresets.find((p) => p.id === savedPreset.id);
     expect(renamed?.name).toBe("Renamed Preset");

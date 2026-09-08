@@ -1,12 +1,5 @@
-import type {
-  BankGameplayArchetypeId,
-  BankQuestion,
-  MatrixCoverageStats,
-} from "@studio/shared";
-import {
-  loadAllKnowledgeEntities,
-  type KnowledgeEntity,
-} from "../knowledgeBaseLoader.js";
+import type { BankGameplayArchetypeId, BankQuestion, MatrixCoverageStats } from "@studio/shared";
+import { loadAllKnowledgeEntities, type KnowledgeEntity } from "../knowledgeBaseLoader.js";
 
 export const ALL_MATRIX_ARCHETYPES: readonly BankGameplayArchetypeId[] = [
   "verdict_true_false",
@@ -42,10 +35,7 @@ export function buildMatrixCoverageMap(questions: BankQuestion[]): Map<string, n
 /**
  * Calculates comprehensive coverage statistics across the knowledge entity x archetype matrix.
  */
-export function calculateMatrixCoverageStats(
-  questions: BankQuestion[],
-  options?: MatrixCoverageServiceOptions,
-): MatrixCoverageStats {
+export function calculateMatrixCoverageStats(questions: BankQuestion[], options?: MatrixCoverageServiceOptions): MatrixCoverageStats {
   const entities = options?.entities || loadAllKnowledgeEntities({ baseDir: options?.baseDir });
   const coverageMap = buildMatrixCoverageMap(questions);
 
@@ -76,10 +66,7 @@ export function calculateMatrixCoverageStats(
   }
 
   // Initialize archetype aggregators
-  const archetypeAggregators = new Map<
-    string,
-    { total_combos: number; covered_combos: number; total_variants: number }
-  >();
+  const archetypeAggregators = new Map<string, { total_combos: number; covered_combos: number; total_variants: number }>();
 
   for (const arch of ALL_MATRIX_ARCHETYPES) {
     archetypeAggregators.set(arch, {

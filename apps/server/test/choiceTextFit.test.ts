@@ -392,8 +392,7 @@ function createMeasurementFixture(options: {
       return cardLogicalWidth();
     },
     offsetHeight: 200,
-    getBoundingClientRect: () =>
-      rectangle(options.cardDisplacement ?? 0, 0, (options.cardDisplacement ?? 0) + cardLogicalWidth(), 200),
+    getBoundingClientRect: () => rectangle(options.cardDisplacement ?? 0, 0, (options.cardDisplacement ?? 0) + cardLogicalWidth(), 200),
   };
   const tokens: Record<string, string> = {
     "--choice-fit-min": "24px",

@@ -50,10 +50,7 @@ export function QuestionCountDropdown({
     if (prevIsOpen.current && !isOpen) {
       const parsed = parseInt(inputValue, 10);
       if (Number.isFinite(parsed)) {
-        const count = Math.max(
-          QUIZ_MIN_QUESTION_COUNT,
-          Math.min(QUIZ_MAX_QUESTION_COUNT, parsed),
-        );
+        const count = Math.max(QUIZ_MIN_QUESTION_COUNT, Math.min(QUIZ_MAX_QUESTION_COUNT, parsed));
         if (count !== questionCountDraft) {
           setQuestionCountDraft(count);
           onSaveQuestionCount(count);
@@ -85,10 +82,7 @@ export function QuestionCountDropdown({
   const handleCustomSubmit = (shouldClose = true) => {
     const parsed = parseInt(inputValue, 10);
     const count = Number.isFinite(parsed)
-      ? Math.max(
-          QUIZ_MIN_QUESTION_COUNT,
-          Math.min(QUIZ_MAX_QUESTION_COUNT, parsed),
-        )
+      ? Math.max(QUIZ_MIN_QUESTION_COUNT, Math.min(QUIZ_MAX_QUESTION_COUNT, parsed))
       : questionCountDraft;
     setInputValue(String(count));
     setQuestionCountDraft(count);
@@ -163,11 +157,7 @@ export function QuestionCountDropdown({
               }}
               className="custom-count-input"
             />
-            <button
-              type="button"
-              className="primary-button compact custom-count-apply-btn"
-              onClick={() => handleCustomSubmit(true)}
-            >
+            <button type="button" className="primary-button compact custom-count-apply-btn" onClick={() => handleCustomSubmit(true)}>
               {t("episodeCustomization.applyCount")}
             </button>
           </div>

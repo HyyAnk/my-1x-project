@@ -96,12 +96,7 @@ export function loadAllKnowledgeEntities(options?: KnowledgeBaseLoaderOptions): 
   const targetDir = resolveKnowledgeBaseEntitiesDir(options?.baseDir);
   const currentFp = computeEntitiesDirectoryFingerprint(targetDir);
 
-  if (
-    cachedEntities &&
-    !options?.forceReload &&
-    cachedBaseDir === targetDir &&
-    cachedFingerprint === currentFp
-  ) {
+  if (cachedEntities && !options?.forceReload && cachedBaseDir === targetDir && cachedFingerprint === currentFp) {
     return cachedEntities;
   }
 
@@ -128,11 +123,11 @@ export function loadAllKnowledgeEntities(options?: KnowledgeBaseLoaderOptions): 
     const fullPath = path.join(targetDir, filename);
     try {
       const raw = fs.readFileSync(fullPath, "utf-8");
-      const parsed = JSON.parse(raw);
+      const parsed: unknown = JSON.parse(raw);
       if (Array.isArray(parsed)) {
         for (const item of parsed) {
-          if (item && typeof item === "object" && typeof item.id === "string" && typeof item.domain_id === "string") {
-            const entity = item as KnowledgeEntity;
+          if (isKnowledgeEntityRecord(item)) {
+            const entity = item;
             entities.push(entity);
             byId.set(entity.id, entity);
 
@@ -160,6 +155,12 @@ export function loadAllKnowledgeEntities(options?: KnowledgeBaseLoaderOptions): 
   cachedFingerprint = currentFp;
 
   return entities;
+}
+
+function isKnowledgeEntityRecord(value: unknown): value is KnowledgeEntity {
+  if (typeof value !== "object" || value === null) return false;
+  const record = value as Record<string, unknown>;
+  return typeof record.id === "string" && typeof record.domain_id === "string" && typeof record.subtopic_id === "string";
 }
 
 /**

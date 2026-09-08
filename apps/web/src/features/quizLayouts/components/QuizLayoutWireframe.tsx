@@ -9,24 +9,11 @@ export type QuizLayoutWireframeProps = {
   className?: string;
 };
 
-export function QuizLayoutWireframe({
-  preview,
-  layoutId,
-  aspectRatio,
-  showMascot = true,
-  className,
-}: QuizLayoutWireframeProps) {
-  const rootClassName = className
-    ? `stage-layout-miniature is-${preview} ${className}`
-    : `stage-layout-miniature is-${preview}`;
+export function QuizLayoutWireframe({ preview, layoutId, aspectRatio, showMascot = true, className }: QuizLayoutWireframeProps) {
+  const rootClassName = className ? `stage-layout-miniature is-${preview} ${className}` : `stage-layout-miniature is-${preview}`;
 
   return (
-    <div
-      className={rootClassName}
-      data-layout-id={layoutId}
-      data-aspect-ratio={aspectRatio}
-      aria-hidden="true"
-    >
+    <div className={rootClassName} data-layout-id={layoutId} data-aspect-ratio={aspectRatio} aria-hidden="true">
       <i className="layout-mini-media" />
       <i className="layout-mini-choice choice-a" />
       <i className="layout-mini-choice choice-b" />

@@ -58,14 +58,7 @@ describe("Question Bank Clear All UI & Confirmation Gate", () => {
     const onConfirm = vi.fn().mockResolvedValue(undefined);
     const onClose = vi.fn();
 
-    renderWithLanguage(
-      <QuestionBankClearAllModal
-        clearing={false}
-        totalCount={42}
-        onConfirm={onConfirm}
-        onClose={onClose}
-      />,
-    );
+    renderWithLanguage(<QuestionBankClearAllModal clearing={false} totalCount={42} onConfirm={onConfirm} onClose={onClose} />);
 
     // Verify modal elements
     expect(screen.getByText("Clear Question Bank")).toBeDefined();
@@ -102,14 +95,7 @@ describe("Question Bank Clear All UI & Confirmation Gate", () => {
   });
 
   it("disables controls and displays clearing message when clearing is active", () => {
-    renderWithLanguage(
-      <QuestionBankClearAllModal
-        clearing={true}
-        totalCount={10}
-        onConfirm={vi.fn()}
-        onClose={vi.fn()}
-      />,
-    );
+    renderWithLanguage(<QuestionBankClearAllModal clearing={true} totalCount={10} onConfirm={vi.fn()} onClose={vi.fn()} />);
 
     expect(screen.getByText("Clearing Question Bank...")).toBeDefined();
     const input = screen.getByPlaceholderText('Type "Yes" to confirm');

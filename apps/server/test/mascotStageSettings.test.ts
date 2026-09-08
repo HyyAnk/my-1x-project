@@ -24,8 +24,8 @@ async function createStudioRoot(): Promise<string> {
   return root;
 }
 
-describe("Dual default placements persistence in mascot stage settings", () => {
-  it("saves and merges 16:9 and 9:16 default presets independently", async () => {
+describe("Landscape mascot stage settings", () => {
+  it("persists 16:9 defaults and rejects retired 9:16 calibration", async () => {
     const root = await createStudioRoot();
     const app = await buildApp(root);
 
@@ -75,13 +75,11 @@ describe("Dual default placements persistence in mascot stage settings", () => {
           },
         },
       });
-      expect(response9.statusCode).toBe(200);
+      expect(response9.statusCode).toBe(400);
 
-      // 4. Verify BOTH 16:9 and 9:16 coexist and neither overwrote the other
+      // 4. Verify rejected portrait input did not alter the landscape default
       loaded = await loadConfig(root);
       expect(loaded.mascot_stage.default_placements?.["16:9"]).toEqual(preset16_9);
-      expect(loaded.mascot_stage.default_placements?.["9:16"]).toEqual(preset9_16);
-      // Flat default_placement maintains 16:9 for legacy consumers
       expect(loaded.mascot_stage.default_placement).toEqual(preset16_9);
     } finally {
       await app.close();

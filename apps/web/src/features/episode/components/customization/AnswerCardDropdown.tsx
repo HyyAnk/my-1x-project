@@ -29,7 +29,7 @@ export function AnswerCardDropdown({ channel, episode, disabled, saving, isOpen,
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillAnswerCards")}
-        value={ANSWER_CARD_STYLE_LABELS[activeStyle as keyof typeof ANSWER_CARD_STYLE_LABELS] ?? activeStyle}
+        value={ANSWER_CARD_STYLE_LABELS[activeStyle] ?? activeStyle}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
@@ -43,13 +43,13 @@ export function AnswerCardDropdown({ channel, episode, disabled, saving, isOpen,
               <StyleOptionRow
                 key={style}
                 name="card_choice"
-                label={ANSWER_CARD_STYLE_LABELS[style as keyof typeof ANSWER_CARD_STYLE_LABELS] ?? style}
+                label={ANSWER_CARD_STYLE_LABELS[style] ?? style}
                 checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
                 onHover={() =>
                   onPreview?.({
                     override: { answerCardStyle: style },
-                    label: ANSWER_CARD_STYLE_LABELS[style as keyof typeof ANSWER_CARD_STYLE_LABELS] ?? style,
+                    label: ANSWER_CARD_STYLE_LABELS[style] ?? style,
                   })
                 }
               />

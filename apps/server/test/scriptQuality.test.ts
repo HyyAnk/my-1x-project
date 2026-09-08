@@ -92,6 +92,7 @@ describe("script task output isolation and retry", () => {
     const topic = {
       topic_id: "script_quality_topic",
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: "The Internet Before Google",
       premise: "A test premise",
       why_it_fits: "Quiz test",

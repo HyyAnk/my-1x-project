@@ -14,7 +14,7 @@ type UseSandboxPreviewRendererInput = {
   mascot: SandboxMascotState;
   question: SandboxQuestionState;
   timeline: SandboxTimelineState;
-  aspectRatio: "16:9" | "9:16";
+  aspectRatio: "16:9";
   channelBrandName?: string;
   onNotice?: (notice: NonNullable<Notice>) => void;
 };
@@ -55,20 +55,20 @@ export function useSandboxPreviewRenderer({
       setPendingPreview(null);
       try {
         const questionFormat =
-          design.layoutId === "verdict_true_false" || design.layoutId === "portrait_verdict_tf"
+          design.layoutId === "verdict_true_false"
             ? "true_false"
             : design.layoutId === "visual_choices_three_pure"
               ? "odd_one_out"
               : design.layoutId === "mystery_reveal" || design.layoutId === "clue_deduction"
                 ? "image_guess"
-                : design.layoutId === "split_versus_two" || design.layoutId === "portrait_split_versus"
+                : design.layoutId === "split_versus_two"
                   ? "multiple_choice"
                   : question.choices.length === 2
                     ? "true_false"
                     : "multiple_choice";
 
         const input: SandboxPreviewRequest = {
-          aspect_ratio: aspectRatio,
+          aspect_ratio: "16:9",
           mode: "rehearsal",
           theme: design.theme,
           palette_id: design.paletteId,

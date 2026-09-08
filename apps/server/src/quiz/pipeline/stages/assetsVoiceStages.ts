@@ -12,9 +12,6 @@ import { generateEpisodeThumbnail } from "../../thumbnail/index.js";
 import { StudioLogger } from "../../../logger.js";
 import type { QuizOrchestratorInput } from "../orchestrator.js";
 
-
-
-
 export async function planAssets(
   input: QuizOrchestratorInput,
 ): Promise<{ asset_plan: QuizAssetPlan; artifact_path: string; invalidated: string[] }> {
@@ -93,9 +90,6 @@ export async function resolveAssets(
   return { asset_resolution: result.resolution, issues: result.issues, invalidated };
 }
 
-
-
-
 export async function planVoice(
   input: QuizOrchestratorInput,
 ): Promise<{ voice_plan: VoicePlan; artifact_path: string; invalidated: string[] }> {
@@ -158,14 +152,16 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
 
   const renderedCharacters = measured.voicePlan.segments.reduce((acc, s) => acc + (s.text || "").length, 0);
   const renderedSeconds = measured.voicePlan.segments.reduce((acc, s) => acc + (s.duration_seconds || 0), 0);
-  await input.repository.recordVoiceUsage({
-    channelId: input.channelId,
-    episodeId: input.episodeId,
-    characters: renderedCharacters,
-    durationSeconds: renderedSeconds,
-    segmentsCount: measured.voicePlan.segments.length,
-    note: "Quiz TTS Narration Render",
-  }).catch(() => undefined);
+  await input.repository
+    .recordVoiceUsage({
+      channelId: input.channelId,
+      episodeId: input.episodeId,
+      characters: renderedCharacters,
+      durationSeconds: renderedSeconds,
+      segmentsCount: measured.voicePlan.segments.length,
+      note: "Quiz TTS Narration Render",
+    })
+    .catch(() => undefined);
 
   return {
     voice_plan: measured.voicePlan,

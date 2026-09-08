@@ -103,11 +103,7 @@ export function PresetManagerCard({
                   </span>
                 )}
               </div>
-              {preset.description && (
-                <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "var(--muted)" }}>
-                  {preset.description}
-                </p>
-              )}
+              {preset.description && <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "var(--muted)" }}>{preset.description}</p>}
             </div>
           )}
 
@@ -122,15 +118,25 @@ export function PresetManagerCard({
               color: "var(--muted)",
             }}
           >
-            <span><strong>Palette:</strong> {preset.palette_id}</span>
+            <span>
+              <strong>Palette:</strong> {preset.palette_id}
+            </span>
             <span>•</span>
-            <span><strong>Bar:</strong> {preset.thinking_bar_style}</span>
+            <span>
+              <strong>Bar:</strong> {preset.thinking_bar_style}
+            </span>
             <span>•</span>
-            <span><strong>Box:</strong> {preset.question_box_style}</span>
+            <span>
+              <strong>Box:</strong> {preset.question_box_style}
+            </span>
             <span>•</span>
-            <span><strong>Card:</strong> {preset.answer_card_style || "glossy"}</span>
+            <span>
+              <strong>Card:</strong> {preset.answer_card_style || "glossy"}
+            </span>
             <span>•</span>
-            <span><strong>Bg:</strong> {preset.background_style || "candy_rays"}</span>
+            <span>
+              <strong>Bg:</strong> {preset.background_style || "candy_rays"}
+            </span>
           </div>
         </div>
 
@@ -182,8 +188,8 @@ export function PresetManagerCard({
             <Copy size={14} />
           </button>
 
-          {isCustom && (
-            isConfirmingDelete ? (
+          {isCustom &&
+            (isConfirmingDelete ? (
               <div style={{ display: "flex", gap: "4px" }}>
                 <button
                   type="button"
@@ -225,8 +231,7 @@ export function PresetManagerCard({
               >
                 <Trash size={14} />
               </button>
-            )
-          )}
+            ))}
         </div>
       </div>
     </div>

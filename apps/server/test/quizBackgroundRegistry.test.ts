@@ -156,8 +156,8 @@ describe("Phase 7 — Background Variant Registry and Resolution (ADR-004)", () 
 
     it("P7-CAT-06: Registry/UI metadata: exhaustive unique mapping", () => {
       for (const style of ALL_BACKGROUND_STYLES) {
-        const label = BACKGROUND_STYLE_LABELS[style as keyof typeof BACKGROUND_STYLE_LABELS];
-        const desc = BACKGROUND_STYLE_DESCRIPTIONS[style as keyof typeof BACKGROUND_STYLE_DESCRIPTIONS];
+        const label = BACKGROUND_STYLE_LABELS[style];
+        const desc = BACKGROUND_STYLE_DESCRIPTIONS[style];
         expect(label).toBeDefined();
         expect(typeof label).toBe("string");
         expect(label.length).toBeGreaterThan(0);

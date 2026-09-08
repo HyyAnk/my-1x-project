@@ -156,27 +156,37 @@ export function useChannelDetail({
     setConfirmingTopicId(topic.topic_id);
     try {
       const result = await api.confirmTopic(channel.channel_id, topic.topic_id, questionCount, visualStyle, true);
-      if (result.task) {
-        onTaskSubmitted(result.task);
+      if (result.content_kind === "short_reel") {
         onNotice({
           tone: "good",
-          message: "Video generation started with curated questions!",
+          message: `Short-Reel draft created: ${result.short_reel.topic.title}`,
         });
+        await load();
+        await onRefresh();
+        window.location.hash = `#/channels/${encodeURIComponent(channel.channel_id)}/short-reels/${encodeURIComponent(result.short_reel.reel_id)}`;
       } else {
-        onNotice({
-          tone: "good",
-          message: `Episode created: ${result.episode.topic.title} with ${questionCount} questions`,
-        });
-      }
-      await load();
-      await onRefresh();
-      if (onSelectEpisode) {
-        onSelectEpisode(result.episode.episode_id);
-      } else {
-        switchTab("episodes");
+        if (result.task) {
+          onTaskSubmitted(result.task);
+          onNotice({
+            tone: "good",
+            message: "Video generation started with curated questions!",
+          });
+        } else {
+          onNotice({
+            tone: "good",
+            message: `Episode created: ${result.episode.topic.title} with ${questionCount} questions`,
+          });
+        }
+        await load();
+        await onRefresh();
+        if (onSelectEpisode) {
+          onSelectEpisode(result.episode.episode_id);
+        } else {
+          switchTab("episodes");
+        }
       }
     } catch (error) {
-      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not create episode" });
+      onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not confirm topic" });
     } finally {
       setConfirmingTopicId(null);
     }

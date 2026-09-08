@@ -4,15 +4,12 @@ import {
   bankRequiredChoiceCountForArchetype,
   type BankQuestion,
   type BankQuestionWithCooldown,
-  type TopicCandidate,
+  type EpisodeTopicCandidate,
 } from "@studio/shared";
 import type { RepositoryService } from "../src/repository.js";
 import type { QueryQuestionBankParams } from "../src/repository/quiz/questionBankRepository.js";
 import type { LLMClient } from "../src/utils/promptSanitizer.js";
-import {
-  determineMissingDifficulties,
-  ensureTopicQuestionsWithJitFallback,
-} from "../src/quiz/bank/questionCurationEngine.js";
+import { determineMissingDifficulties, ensureTopicQuestionsWithJitFallback } from "../src/quiz/bank/questionCurationEngine.js";
 
 function makeQuestion(overrides: Partial<BankQuestionWithCooldown> = {}): BankQuestionWithCooldown {
   const archetypeId = overrides.archetype_id ?? "deep_trivia";
@@ -50,8 +47,9 @@ function makeQuestion(overrides: Partial<BankQuestionWithCooldown> = {}): BankQu
   };
 }
 
-function makeTopic(overrides: Partial<TopicCandidate> = {}): TopicCandidate {
+function makeTopic(overrides: Partial<EpisodeTopicCandidate> = {}): EpisodeTopicCandidate {
   return {
+    content_kind: "episode",
     topic_id: overrides.topic_id ?? "top_ocean_001",
     channel_id: overrides.channel_id ?? "ch_test_001",
     title: overrides.title ?? "Ocean Giants: Secrets of the Deep Sea",
@@ -99,15 +97,16 @@ function makeLlmClient(questionCount: number, difficulties?: number[]): LLMClien
     tags: ["ocean_giants", "deep_trivia"],
   }));
   return {
-    connect: vi.fn(async () => undefined),
-    generateContent: vi.fn(async () => ({ text: JSON.stringify(questions) })),
+    connect: vi.fn(() => Promise.resolve(undefined)),
+    generateContent: vi.fn(() => Promise.resolve({ text: JSON.stringify(questions) })),
   };
 }
 
-function createMockRepository(initialQuestions: BankQuestionWithCooldown[] = []) {  let questions = [...initialQuestions];
+function createMockRepository(initialQuestions: BankQuestionWithCooldown[] = []) {
+  let questions = [...initialQuestions];
   const savedQuestions: BankQuestion[] = [];
 
-  const queryQuestionBankQuestions = vi.fn(async (params?: QueryQuestionBankParams) => {
+  const queryQuestionBankQuestions = vi.fn((params?: QueryQuestionBankParams) => {
     let filtered = [...questions];
     if (params?.archetypeId) {
       filtered = filtered.filter((q) => q.archetype_id === params.archetypeId);
@@ -121,7 +120,7 @@ function createMockRepository(initialQuestions: BankQuestionWithCooldown[] = [])
     };
   });
 
-  const saveQuestionBankQuestion = vi.fn(async (q: BankQuestion) => {
+  const saveQuestionBankQuestion = vi.fn((q: BankQuestion) => {
     savedQuestions.push(q);
     questions.push({
       ...q,
@@ -320,34 +319,36 @@ describe("questionJitSeeder", () => {
       const topic = makeTopic();
 
       const mockLlmClient: LLMClient = {
-        connect: vi.fn(async () => undefined),
-        generateContent: vi.fn(async () => ({
-          text: JSON.stringify([
-            {
-              archetype_id: "deep_trivia",
-              domain_id: "nature_animals",
-              subtopic_id: "ocean_giants",
-              question: "Which abyssal squid possesses the largest known animal eyes?",
-              format: "multiple_choice",
-              choices: [
-                { id: "A", text: "Colossal Squid", is_correct: true },
-                { id: "B", text: "Giant Octopus", is_correct: false },
-                { id: "C", text: "Vampire Squid", is_correct: false },
-              ],
-              correct_choice_id: "A",
-              explanation: "The colossal squid has eyes measuring up to 27 cm across.",
-              fun_fact: "Their eyes allow them to detect bioluminescent sperm whales in the dark.",
-              visual_spec: {
-                intent: "question_illustration",
-                prompt: "Gigantic colossal squid with glowing eyes in dark abyss",
-                aspect_ratio: "16:9",
+        connect: vi.fn(() => Promise.resolve(undefined)),
+        generateContent: vi.fn(() =>
+          Promise.resolve({
+            text: JSON.stringify([
+              {
+                archetype_id: "deep_trivia",
+                domain_id: "nature_animals",
+                subtopic_id: "ocean_giants",
+                question: "Which abyssal squid possesses the largest known animal eyes?",
+                format: "multiple_choice",
+                choices: [
+                  { id: "A", text: "Colossal Squid", is_correct: true },
+                  { id: "B", text: "Giant Octopus", is_correct: false },
+                  { id: "C", text: "Vampire Squid", is_correct: false },
+                ],
+                correct_choice_id: "A",
+                explanation: "The colossal squid has eyes measuring up to 27 cm across.",
+                fun_fact: "Their eyes allow them to detect bioluminescent sperm whales in the dark.",
+                visual_spec: {
+                  intent: "question_illustration",
+                  prompt: "Gigantic colossal squid with glowing eyes in dark abyss",
+                  aspect_ratio: "16:9",
+                },
+                difficulty: 1,
+                thinking_seconds: 6,
+                tags: ["ocean_giants", "deep_trivia"],
               },
-              difficulty: 1,
-              thinking_seconds: 6,
-              tags: ["ocean_giants", "deep_trivia"],
-            },
-          ]),
-        })),
+            ]),
+          }),
+        ),
       };
 
       await expect(
@@ -367,8 +368,8 @@ describe("questionJitSeeder", () => {
       const topic = makeTopic();
 
       const failingLlmClient: LLMClient = {
-        connect: vi.fn(async () => undefined),
-        generateContent: vi.fn(async () => {
+        connect: vi.fn(() => Promise.resolve(undefined)),
+        generateContent: vi.fn(() => {
           throw new Error("Rate limit exceeded 429");
         }),
       };

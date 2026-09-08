@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../../api";
-import type {
-  BankQuestion,
-  BankQuestionWithCooldown,
-  QuestionBankFilters,
-  QuestionBankModalState,
-} from "../types/questionBankUi.types";
+import type { BankQuestion, BankQuestionWithCooldown, QuestionBankFilters, QuestionBankModalState } from "../types/questionBankUi.types";
 
 export interface UseQuestionBankListOptions {
   filters: QuestionBankFilters;
@@ -17,14 +12,7 @@ export interface UseQuestionBankListOptions {
 }
 
 export function useQuestionBankList(options: UseQuestionBankListOptions) {
-  const {
-    filters,
-    selectedQuestion,
-    setSelectedQuestion,
-    modalState,
-    setModalState,
-    onStatsRefresh,
-  } = options;
+  const { filters, selectedQuestion, setSelectedQuestion, modalState, setModalState, onStatsRefresh } = options;
 
   const [questions, setQuestions] = useState<BankQuestionWithCooldown[]>([]);
   const [totalQuestions, setTotalQuestions] = useState(0);
@@ -46,10 +34,7 @@ export function useQuestionBankList(options: UseQuestionBankListOptions) {
         status: filters.status || undefined,
         search: filters.search || undefined,
         language: filters.languageFilter === "en" ? "en" : undefined,
-        has_translation_for:
-          filters.languageFilter && filters.languageFilter !== "en"
-            ? filters.languageFilter
-            : undefined,
+        has_translation_for: filters.languageFilter && filters.languageFilter !== "en" ? filters.languageFilter : undefined,
         limit: filters.pageSize,
         offset: (filters.page - 1) * filters.pageSize,
         cooldown_only: filters.cooldownFilter === "cooldown" ? true : undefined,
@@ -189,28 +174,24 @@ export function useQuestionBankList(options: UseQuestionBankListOptions) {
   }, [onStatsRefresh, fetchQuestions, setSelectedQuestion]);
 
   const createOneClickVideo = useCallback(
-    async (
-      channelId: string,
-      questionId: string,
-      aspect: "9:16" | "16:9" = "9:16",
-      force: boolean = false,
-    ) => {
+    async (channelId: string, questionId: string, force: boolean = false) => {
       setBuildingVideo(true);
       setError(null);
       try {
         const res = await api.createOneClickVideo(channelId, {
           question_id: questionId,
-          render_aspect_ratio: aspect,
+          render_aspect_ratio: "16:9",
           auto_start_pipeline: true,
           force,
         });
         await fetchQuestions();
         return res;
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const errorRecord = typeof err === "object" && err !== null ? (err as Record<string, unknown>) : null;
+        const errorMessage = err instanceof Error ? err.message : typeof errorRecord?.message === "string" ? errorRecord.message : "";
+        const errorCode = typeof errorRecord?.code === "string" ? errorRecord.code : "";
         const isCooldown =
-          err?.code === "QUESTION_IN_COOLDOWN" ||
-          err?.message?.includes("QUESTION_IN_COOLDOWN") ||
-          err?.message?.includes("cooldown");
+          errorCode === "QUESTION_IN_COOLDOWN" || errorMessage.includes("QUESTION_IN_COOLDOWN") || errorMessage.includes("cooldown");
 
         if (isCooldown && !force) {
           const override = window.confirm(
@@ -219,7 +200,7 @@ export function useQuestionBankList(options: UseQuestionBankListOptions) {
           if (override) {
             const retryRes = await api.createOneClickVideo(channelId, {
               question_id: questionId,
-              render_aspect_ratio: aspect,
+              render_aspect_ratio: "16:9",
               auto_start_pipeline: true,
               force: true,
             });

@@ -11,7 +11,6 @@ import {
   QuizVisualThemeSchema,
 } from "../enums.js";
 import { QUIZ_MAX_CHOICES_PER_QUESTION } from "../schemas.js";
-import { MascotRenderAspectRatioSchema } from "../mascot/renderSchema.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
 import { QuizPreviewLayoutIdSchema } from "../quizLayouts.js";
 import { sandboxPreviewLayoutIssues } from "../sandboxPreviewLayoutPolicy.js";
@@ -19,7 +18,7 @@ import { sandboxPreviewLayoutIssues } from "../sandboxPreviewLayoutPolicy.js";
 export * from "../sandboxPreviewLayoutPolicy.js";
 
 export const SandboxPreviewInputBaseSchema = z.object({
-  aspect_ratio: MascotRenderAspectRatioSchema.optional().default("16:9"),
+  aspect_ratio: z.literal("16:9").optional().default("16:9"),
   theme: QuizVisualThemeSchema.optional().default("candy_arcade"),
   palette_id: z.string().optional().default("lime"),
   layout_id: QuizPreviewLayoutIdSchema.optional().default("media_left_choices_right"),
@@ -33,11 +32,7 @@ export const SandboxPreviewInputBaseSchema = z.object({
   phase: z.enum(["question", "choices", "thinking", "reveal", "explain"]).optional().default("thinking"),
   timeline_time_seconds: z.number().min(0).max(15).optional(),
   question_text: z.string().optional().default("Which planet in our solar system has the most prominent rings?"),
-  choices: z
-    .array(z.string().trim().min(1))
-    .max(QUIZ_MAX_CHOICES_PER_QUESTION)
-    .optional()
-    .default(["Jupiter", "Saturn", "Uranus"]),
+  choices: z.array(z.string().trim().min(1)).max(QUIZ_MAX_CHOICES_PER_QUESTION).optional().default(["Jupiter", "Saturn", "Uranus"]),
   correct_choice_index: z
     .number()
     .int()
@@ -49,7 +44,10 @@ export const SandboxPreviewInputBaseSchema = z.object({
   total_questions: z.number().int().min(1).optional().default(10),
   countdown_progress: z.number().min(0).max(1).optional().default(0.5), // 0 to 1
   fact_card_title: z.string().optional().default("DID YOU KNOW?"),
-  fact_card_text: z.string().optional().default("This planet features remarkable atmospheric conditions and the most stunning ring system in the solar system!"),
+  fact_card_text: z
+    .string()
+    .optional()
+    .default("This planet features remarkable atmospheric conditions and the most stunning ring system in the solar system!"),
   mascot_id: z.string().nullable().optional(),
   mascot_style_id: z.string().nullable().optional(),
   mascot_enabled: z.boolean().optional().default(true),

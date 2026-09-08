@@ -36,7 +36,7 @@ export interface SandboxDesignTabProps {
   setCounterStyle: (style: QuizQuestionCounterStyle) => void;
   backgroundStyle: QuizBackgroundStyle;
   setBackgroundStyle: (style: QuizBackgroundStyle) => void;
-  aspectRatio?: "16:9" | "9:16";
+  aspectRatio?: "16:9";
 }
 
 export function SandboxDesignTab({
@@ -86,11 +86,7 @@ export function SandboxDesignTab({
   return (
     <>
       {/* 1. Layout Mode Selector */}
-      <SandboxLayoutSelector
-        layoutId={layoutId}
-        setLayoutId={setLayoutId}
-        aspectRatio={aspectRatio}
-      />
+      <SandboxLayoutSelector layoutId={layoutId} setLayoutId={setLayoutId} aspectRatio={aspectRatio} />
 
       <div style={{ height: "1px", background: "var(--line)" }} />
 
@@ -102,7 +98,7 @@ export function SandboxDesignTab({
       {/* 3. Thinking Bar Selector */}
       <SandboxStyleOptionSection
         sectionTitle={t("visualSandbox.thinkingBarSection")}
-        activeLabel={THINKING_BAR_STYLE_LABELS[thinkingBarStyle as Exclude<QuizThinkingBarStyle, "auto">]}
+        activeLabel={THINKING_BAR_STYLE_LABELS[thinkingBarStyle]}
         columns={3}
         options={thinkingBarOptions}
         selectedValue={thinkingBarStyle}
@@ -114,7 +110,7 @@ export function SandboxDesignTab({
       {/* 4. Question Box Selector */}
       <SandboxStyleOptionSection
         sectionTitle={t("visualSandbox.questionBoxSection")}
-        activeLabel={QUESTION_BOX_STYLE_LABELS[questionBoxStyle as Exclude<QuizQuestionBoxStyle, "auto">]}
+        activeLabel={QUESTION_BOX_STYLE_LABELS[questionBoxStyle]}
         columns={2}
         options={questionBoxOptions}
         selectedValue={questionBoxStyle}
@@ -126,7 +122,7 @@ export function SandboxDesignTab({
       {/* 5. Answer Card Selector */}
       <SandboxStyleOptionSection
         sectionTitle={t("visualSandbox.answerCardSection")}
-        activeLabel={ANSWER_CARD_STYLE_LABELS[answerCardStyle as Exclude<QuizAnswerCardStyle, "auto">]}
+        activeLabel={ANSWER_CARD_STYLE_LABELS[answerCardStyle]}
         columns={2}
         options={answerCardOptions}
         selectedValue={answerCardStyle}
@@ -138,7 +134,7 @@ export function SandboxDesignTab({
       {/* 6. Counter Badge Selector */}
       <SandboxStyleOptionSection
         sectionTitle={t("visualSandbox.counterBadgeSection")}
-        activeLabel={QUESTION_COUNTER_STYLE_LABELS[counterStyle as Exclude<QuizQuestionCounterStyle, "auto">]}
+        activeLabel={QUESTION_COUNTER_STYLE_LABELS[counterStyle]}
         columns={2}
         options={counterOptions}
         selectedValue={counterStyle}
@@ -150,7 +146,7 @@ export function SandboxDesignTab({
       {/* 7. Background Variant Selector */}
       <SandboxStyleOptionSection
         sectionTitle={t("visualSandbox.backgroundSection")}
-        activeLabel={BACKGROUND_STYLE_LABELS[backgroundStyle as Exclude<QuizBackgroundStyle, "auto">]}
+        activeLabel={BACKGROUND_STYLE_LABELS[backgroundStyle]}
         columns={2}
         options={backgroundOptions}
         selectedValue={backgroundStyle}

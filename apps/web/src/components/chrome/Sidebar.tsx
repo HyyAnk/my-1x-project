@@ -1,4 +1,16 @@
-import { ArrowClockwise, Broadcast, Database, Gear, House, ListChecks, Palette, Plus, Smiley, Sparkle, Wallet } from "@phosphor-icons/react";
+import {
+  ArrowClockwise,
+  Broadcast,
+  Database,
+  Gear,
+  House,
+  ListChecks,
+  Palette,
+  Plus,
+  Smiley,
+  Sparkle,
+  Wallet,
+} from "@phosphor-icons/react";
 import type { Channel, Task } from "@studio/shared";
 import type { Page } from "../types";
 import { useTranslation } from "../../i18n";

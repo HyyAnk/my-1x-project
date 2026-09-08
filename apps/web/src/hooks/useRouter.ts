@@ -78,6 +78,7 @@ export function useRouter() {
       page: route.page,
       channelId: route.channelId,
       episodeId: route.episodeId,
+      shortReelId: route.shortReelId,
       tab: route.tab,
       group: route.group,
       navigate,

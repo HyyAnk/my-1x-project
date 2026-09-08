@@ -126,7 +126,7 @@ describe("SandboxPresetManagerModal", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it("supports inline editing of custom preset metadata", async () => {
+  it("supports inline editing of custom preset metadata", () => {
     const onUpdateMetadata = vi.fn();
 
     render(

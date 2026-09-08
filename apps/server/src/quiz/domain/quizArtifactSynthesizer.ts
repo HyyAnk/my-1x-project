@@ -8,12 +8,7 @@ export interface SynthesizedLegacyArtifacts {
 
 export function synthesizeScriptMarkdown(quiz: QuizV2, topicTitle?: string): string {
   const title = topicTitle?.trim() || "Quiz Episode";
-  const lines: string[] = [
-    `# ${title}`,
-    "",
-    "<!-- HUMOR_POLICY: v1 -->",
-    "",
-  ];
+  const lines: string[] = [`# ${title}`, "", "<!-- HUMOR_POLICY: v1 -->", ""];
 
   quiz.questions.forEach((question, index) => {
     const questionNumber = index + 1;

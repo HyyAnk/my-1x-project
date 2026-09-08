@@ -21,35 +21,21 @@ export function findPoseByPrompt(state: "thinking" | "celebrate", prompt?: strin
   return getMascotPoses(state).find((pose) => pose.prompt.trim().toLowerCase() === normalized);
 }
 
-export function getUnusedMascotPoses(
-  state: "thinking" | "celebrate",
-  usedPromptsOrIds: string[]
-): MascotPosePreset[] {
+export function getUnusedMascotPoses(state: "thinking" | "celebrate", usedPromptsOrIds: string[]): MascotPosePreset[] {
   const usedSet = new Set(
-    usedPromptsOrIds
-      .filter((item) => typeof item === "string" && item.trim().length > 0)
-      .map((item) => item.trim().toLowerCase())
+    usedPromptsOrIds.filter((item) => typeof item === "string" && item.trim().length > 0).map((item) => item.trim().toLowerCase()),
   );
-  return getMascotPoses(state).filter(
-    (pose) => !usedSet.has(pose.id.toLowerCase()) && !usedSet.has(pose.prompt.trim().toLowerCase())
-  );
+  return getMascotPoses(state).filter((pose) => !usedSet.has(pose.id.toLowerCase()) && !usedSet.has(pose.prompt.trim().toLowerCase()));
 }
 
-export function pickRandomUnusedPose(
-  state: "thinking" | "celebrate",
-  usedPromptsOrIds: string[]
-): MascotPosePreset {
+export function pickRandomUnusedPose(state: "thinking" | "celebrate", usedPromptsOrIds: string[]): MascotPosePreset {
   const unused = getUnusedMascotPoses(state, usedPromptsOrIds);
   const pool = unused.length > 0 ? unused : getMascotPoses(state);
   const randomIndex = Math.floor(Math.random() * pool.length);
   return pool[randomIndex];
 }
 
-export function pickShuffledUnusedPoses(
-  state: "thinking" | "celebrate",
-  usedPromptsOrIds: string[],
-  count: number
-): MascotPosePreset[] {
+export function pickShuffledUnusedPoses(state: "thinking" | "celebrate", usedPromptsOrIds: string[], count: number): MascotPosePreset[] {
   if (count <= 0) return [];
   const allPoses = getMascotPoses(state);
   const unused = getUnusedMascotPoses(state, usedPromptsOrIds);

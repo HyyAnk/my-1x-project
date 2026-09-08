@@ -9,10 +9,6 @@ import { visualChoicesThreeLayout } from "./visualChoicesThree.js";
 import { visualChoicesThreePureLayout } from "./visualChoicesThreePure.js";
 import { mysteryRevealLayout } from "./mysteryReveal.js";
 import { clueDeductionLayout } from "./clueDeduction.js";
-import { portraitHeroChoicesLayout } from "./portrait/portraitHeroChoices.js";
-import { portraitSplitVersusLayout } from "./portrait/portraitSplitVersus.js";
-import { portraitVerdictTfLayout } from "./portrait/portraitVerdictTf.js";
-import { portraitStackListLayout } from "./portrait/portraitStackList.js";
 
 export const QUIZ_LAYOUT_RENDERERS = {
   baseline: baselineLayout,
@@ -24,10 +20,6 @@ export const QUIZ_LAYOUT_RENDERERS = {
   full_stack_list: fullStackListLayout,
   mystery_reveal: mysteryRevealLayout,
   clue_deduction: clueDeductionLayout,
-  portrait_hero_choices: portraitHeroChoicesLayout,
-  portrait_split_versus: portraitSplitVersusLayout,
-  portrait_verdict_tf: portraitVerdictTfLayout,
-  portrait_stack_list: portraitStackListLayout,
 } satisfies Record<QuizPreviewLayoutId, QuizLayoutRenderDefinition>;
 
 export const QUIZ_LAYOUT_REGISTRY = QUIZ_LAYOUT_RENDERERS;

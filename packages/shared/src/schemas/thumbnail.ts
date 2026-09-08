@@ -64,6 +64,4 @@ export const ThumbnailManifestSchema = z.object({
   updated_at: IsoDate,
 });
 
-
 export type ThumbnailManifest = z.infer<typeof ThumbnailManifestSchema>;
-

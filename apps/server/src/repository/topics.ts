@@ -21,6 +21,7 @@ import {
   type TopicRun,
 } from "./helpers.js";
 import type { RepositoryRuntime } from "./runtime.js";
+import { projectTopicSelected } from "./topicSelectionProjection.js";
 
 export async function listTopics(this: RepositoryRuntime, channelId: string): Promise<TopicCandidate[]> {
   const channel = await this.getChannel(channelId);
@@ -31,7 +32,14 @@ export async function listTopics(this: RepositoryRuntime, channelId: string): Pr
   for (const entry of entries.filter((item) => item.isFile() && item.name.endsWith(".json"))) {
     try {
       const run = JSON.parse(await readFile(path.join(directory, entry.name), "utf8")) as TopicRun;
-      all.push(...run.candidates.map((candidate) => TopicCandidateSchema.parse(candidate)));
+      if (Array.isArray(run?.candidates)) {
+        for (const candidate of run.candidates) {
+          const parsed = TopicCandidateSchema.safeParse(candidate);
+          if (parsed.success) {
+            all.push(parsed.data);
+          }
+        }
+      }
     } catch {
       // Preserve forward compatibility with partially written topic runs.
     }
@@ -58,6 +66,9 @@ export async function confirmTopic(
   const channel = await this.getChannel(channelId);
   const candidate = (await this.listTopics(channelId)).find((topic) => topic.topic_id === topicId);
   if (!candidate) throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
+  if (candidate.content_kind === "short_reel") {
+    throw new RepositoryError("Cannot confirm Short-Reel topic candidate as Episode", "INVALID_TOPIC_KIND");
+  }
   const parsedConfirm = TopicConfirmInputSchema.parse({ topic_id: topicId, question_count: questionCount, visual_style: visualStyle });
   const selectedQuestionCount = parsedConfirm.question_count ?? candidate.question_count;
   const requestedStyle = parsedConfirm.visual_style ?? candidate.visual_style ?? "mixed";
@@ -104,7 +115,7 @@ export async function confirmTopic(
       palette_id: channelPalette.success ? channelPalette.data : "auto",
       style_preset_id: "auto",
       channel_brand_name: "",
-      render_aspect_ratio: candidate.title.toLowerCase().includes("shorts") ? "9:16" : "16:9",
+      render_aspect_ratio: "16:9",
       archetype: candidate.archetype,
       target_layout: candidate.suggested_layout,
     },
@@ -215,22 +226,5 @@ export async function updateEpisodeSettings(
 }
 
 export async function markTopicSelected(this: RepositoryRuntime, channelId: string, topicId: string, questionCount: number): Promise<void> {
-  const channel = await this.getChannel(channelId);
-  const directory = this.resolvePath("channels", channel.slug, "topics");
-  const entries = await readdir(directory, { withFileTypes: true });
-  for (const entry of entries.filter((item) => item.isFile() && item.name.endsWith(".json"))) {
-    const filePath = path.join(directory, entry.name);
-    try {
-      const run = JSON.parse(await readFile(filePath, "utf8")) as TopicRun;
-      let changed = false;
-      run.candidates = run.candidates.map((topic) => {
-        if (topic.topic_id !== topicId) return topic;
-        changed = true;
-        return { ...topic, question_count: questionCount, selected: true };
-      });
-      if (changed) await this.writeJsonAtomic(filePath, run);
-    } catch {
-      // Ignore malformed historical runs.
-    }
-  }
+  return projectTopicSelected(this, channelId, topicId, questionCount);
 }

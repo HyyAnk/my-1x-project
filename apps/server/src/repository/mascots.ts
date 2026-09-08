@@ -19,12 +19,7 @@ import { ensureMascotStyles } from "./mascot/mascotStyles.js";
 
 // Re-export lock, asset, and style modules for 100% backward compatibility
 export { withMascotWriteLock } from "./mascot/mascotLock.js";
-export {
-  saveMascotAsset,
-  getMascotAssetFile,
-  listMascotAssets,
-  deleteMascotAssetFile,
-} from "./mascot/mascotAssets.js";
+export { saveMascotAsset, getMascotAssetFile, listMascotAssets, deleteMascotAssetFile } from "./mascot/mascotAssets.js";
 export {
   ensureMascotStyles,
   createMascotStyle,

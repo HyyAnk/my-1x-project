@@ -39,6 +39,7 @@ async function quizPromptFixture() {
   const topic = {
     topic_id: "active_rules_topic",
     channel_id: channel.channel_id,
+    content_kind: "episode" as const,
     title: "Planet Quiz",
     premise: "Evidence-backed questions",
     why_it_fits: "Clear Quiz format",

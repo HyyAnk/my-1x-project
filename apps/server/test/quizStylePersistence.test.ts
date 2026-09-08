@@ -119,6 +119,7 @@ function topics(channelId: string) {
   return Array.from({ length: 5 }, (_, index) => ({
     topic_id: `style-topic-${index}`,
     channel_id: channelId,
+    content_kind: "episode" as const,
     title: `Style topic ${index}`,
     premise: "Premise",
     why_it_fits: "Fits",

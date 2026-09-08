@@ -70,12 +70,11 @@ describe("Phase 3 cross-surface scene pipeline", () => {
     expect(choiceRevealTargets(production)).toEqual(choiceSemantics(sandbox));
   });
 
-  it("P3-PAR-04 propagates 16:9 and 9:16 through production and Sandbox", () => {
-    for (const aspectRatio of ["16:9", "9:16"] as const) {
-      expect(productionSource("text", aspectRatio)).toContain(`data-aspect-ratio="${aspectRatio}"`);
-      const layoutId = aspectRatio === "9:16" ? "portrait_stack_list" : "media_left_choices_right";
-      expect(buildSandboxComposition({ aspect_ratio: aspectRatio, layout_id: layoutId }).html).toContain(`data-aspect-ratio="${aspectRatio}"`);
-    }
+  it("P3-PAR-04 propagates 16:9 through production and Sandbox", () => {
+    expect(productionSource("text", "16:9")).toContain('data-aspect-ratio="16:9"');
+    expect(buildSandboxComposition({ aspect_ratio: "16:9", layout_id: "media_left_choices_right" }).html).toContain(
+      'data-aspect-ratio="16:9"',
+    );
   });
 
   it("P3-PAR-05 escapes untrusted question and choice text on both surfaces", () => {
@@ -168,11 +167,7 @@ function choiceSemantics(html: string) {
 function choiceRevealTargets(html: string) {
   return [...html.matchAll(/<div class="([^"]*)"[^>]*data-choice-label="([A-Z])"/g)].map((match) => ({
     label: match[2],
-    state: match[1].includes("answer-reveal-correct")
-      ? "correct"
-      : match[1].includes("answer-reveal-incorrect")
-        ? "incorrect"
-        : "pending",
+    state: match[1].includes("answer-reveal-correct") ? "correct" : match[1].includes("answer-reveal-incorrect") ? "incorrect" : "pending",
   }));
 }
 

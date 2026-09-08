@@ -34,6 +34,7 @@ import { registerVoicesRoutes } from "./routes/voices.js";
 import { registerStylePresetsRoutes } from "./routes/stylePresets.js";
 import { registerStyleModulesRoutes } from "./routes/styleModules.js";
 import { registerQuestionBankRoutes } from "./routes/questionBank.js";
+import { registerShortReelsRoutes } from "./routes/shortReels.js";
 import { styleActivationManager } from "./quiz/visual/styleModules/activation.js";
 
 export type StudioApp = {
@@ -129,7 +130,15 @@ export async function buildApp(
     const message = error instanceof Error ? error.message : "Request failed";
     let statusCode = 500;
     if (error instanceof RepositoryError) {
-      statusCode = error.code.endsWith("NOT_FOUND") ? 404 : 400;
+      if (error.code.endsWith("NOT_FOUND")) {
+        statusCode = 404;
+      } else if (error.code === "BANK_EMPTY" || error.code === "INVALID_SOURCE") {
+        statusCode = 422;
+      } else if (error.code === "STALE_REVISION" || error.code === "CONFLICT") {
+        statusCode = 409;
+      } else {
+        statusCode = 400;
+      }
     } else if (error instanceof ZodError || (error && typeof error === "object" && "issues" in error)) {
       statusCode = 400;
     } else if (error && typeof error === "object" && "statusCode" in error && typeof error.statusCode === "number") {
@@ -152,6 +161,7 @@ export async function buildApp(
   await server.register(registerChannelsRoutes({ repository, tasks, logger, state, llmClient: options.llmClient }));
   await server.register(registerMascotsRoutes({ repository, logger, state }));
   await server.register(registerEpisodesRoutes({ repository, state, tasks }));
+  await server.register(registerShortReelsRoutes({ repository, tasks, logger }));
   await server.register(registerQuizV2Routes({ repository, tasks, codex, antigravity, state }));
   await server.register(registerVisualBibleRoutes({ repository, tasks, state }));
   await server.register(registerAudioVideoRoutes({ repository, tasks, state, revealFile }));
@@ -171,6 +181,7 @@ export async function buildApp(
     close: async () => {
       await codex.close();
       await server.close();
+      await repository.close();
     },
   };
 }

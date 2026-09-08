@@ -29,10 +29,8 @@ const ARCHETYPE_TRANSCREATION_NUANCE: Record<BankGameplayArchetypeId, string> = 
     "Archetype: 'Visual Spotting'. Prompt viewers to inspect the visual closely to catch subtle differences or camouflaged details.",
   visual_identification:
     "Archetype: 'Visual Identification'. Hint at hallmark characteristics to prompt viewers to guess the subject's identity.",
-  mystery_reveal:
-    "Archetype: 'Mystery Reveal'. Build suspense and anticipation around a masked, blurred, or silhouetted image.",
-  clue_deduction:
-    "Archetype: 'Clue Deduction'. Preserve progressive step-by-step clues so viewers can trace the investigative thread.",
+  mystery_reveal: "Archetype: 'Mystery Reveal'. Build suspense and anticipation around a masked, blurred, or silhouetted image.",
+  clue_deduction: "Archetype: 'Clue Deduction'. Preserve progressive step-by-step clues so viewers can trace the investigative thread.",
 };
 
 /**
@@ -105,10 +103,7 @@ export function buildQuestionTranscreationPrompt(params: BuildQuestionTranscreat
 /**
  * Parses and verifies AI JSON output to ensure compliance with BankTranslationContentSchema.
  */
-export function parseTranscreationOutput(
-  rawOutput: string,
-  sourceQuestion?: BankQuestion,
-): BankTranslationContent {
+export function parseTranscreationOutput(rawOutput: string, sourceQuestion?: BankQuestion): BankTranslationContent {
   let cleaned = rawOutput.trim();
 
   // 1. Strip markdown code fences if wrapped
@@ -129,6 +124,7 @@ export function parseTranscreationOutput(
   } catch (err) {
     throw new Error(
       `Failed to parse transcreation JSON output: ${err instanceof Error ? err.message : String(err)}. Raw output was: ${rawOutput.slice(0, 200)}`,
+      { cause: err },
     );
   }
 
@@ -144,9 +140,7 @@ export function parseTranscreationOutput(
   // 4. Invariant checks against source question (if provided)
   if (sourceQuestion) {
     if (result.choices.length !== sourceQuestion.choices.length) {
-      throw new Error(
-        `Transcreated choice count mismatch: expected ${sourceQuestion.choices.length}, got ${result.choices.length}`,
-      );
+      throw new Error(`Transcreated choice count mismatch: expected ${sourceQuestion.choices.length}, got ${result.choices.length}`);
     }
 
     const sourceChoiceIdsLower = sourceQuestion.choices.map((c) => c.id.trim().toLowerCase());
@@ -155,17 +149,14 @@ export function parseTranscreationOutput(
 
     for (const expectedIdLower of sourceChoiceIdsLower) {
       if (!resultSet.has(expectedIdLower)) {
-        throw new Error(
-          `Transcreated choices missing source choice ID "${expectedIdLower}". Got: ${Array.from(resultSet).join(", ")}`,
-        );
+        throw new Error(`Transcreated choices missing source choice ID "${expectedIdLower}". Got: ${Array.from(resultSet).join(", ")}`);
       }
     }
 
     // Re-align choice IDs to match sourceQuestion casing precisely
     result.choices = result.choices.map((rc, idx) => {
-      const match = sourceQuestion.choices.find(
-        (sc) => sc.id.trim().toLowerCase() === rc.id.trim().toLowerCase(),
-      ) ?? sourceQuestion.choices[idx];
+      const match =
+        sourceQuestion.choices.find((sc) => sc.id.trim().toLowerCase() === rc.id.trim().toLowerCase()) ?? sourceQuestion.choices[idx];
       return {
         ...rc,
         id: match ? match.id : rc.id,

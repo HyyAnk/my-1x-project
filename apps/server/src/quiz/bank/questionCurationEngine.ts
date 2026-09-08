@@ -1,10 +1,4 @@
-import type {
-  BankGameplayArchetypeId,
-  BankQuestion,
-  BankQuestionWithCooldown,
-  TopicCandidate,
-  TopicGameplayArchetype,
-} from "@studio/shared";
+import type { BankGameplayArchetypeId, BankQuestion, BankQuestionWithCooldown, TopicCandidate } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 
 export interface CurateQuestionsForTopicDeps {
@@ -14,7 +8,6 @@ export interface CurateQuestionsForTopicDeps {
   questionCount?: number;
   targetLanguage?: string;
   forceIncludeCooldown?: boolean;
-  aspectRatio?: "16:9" | "9:16";
 }
 
 export interface CuratedTopicQuestionsResult {
@@ -33,14 +26,53 @@ export interface ScoredBankQuestion {
 }
 
 const STOP_WORDS = new Set([
-  "a", "an", "the", "in", "on", "at", "to", "for", "of", "and", "or", "is", "are", "was",
-  "were", "be", "been", "with", "this", "that", "from", "by", "about", "what", "which",
-  "who", "how", "when", "where", "why", "can", "could", "will", "would",
+  "the",
+  "a",
+  "an",
+  "and",
+  "or",
+  "in",
+  "on",
+  "at",
+  "to",
+  "for",
+  "of",
+  "with",
+  "by",
+  "from",
+  "is",
+  "are",
+  "was",
+  "were",
+  "what",
+  "which",
+  "who",
+  "where",
+  "when",
+  "how",
+  "why",
+  "this",
+  "that",
+  "these",
+  "those",
+  "it",
+  "its",
+  "as",
+  "do",
+  "does",
+  "did",
+  "have",
+  "has",
+  "had",
+  "can",
+  "could",
+  "will",
+  "would",
 ]);
 
 export function resolveTargetArchetype(topic: TopicCandidate): BankGameplayArchetypeId | undefined {
   if (topic.archetype) {
-    return topic.archetype as BankGameplayArchetypeId;
+    return topic.archetype;
   }
   if (topic.suggested_layout) {
     switch (topic.suggested_layout) {
@@ -60,14 +92,6 @@ export function resolveTargetArchetype(topic: TopicCandidate): BankGameplayArche
         return "mystery_reveal";
       case "clue_deduction":
         return "clue_deduction";
-      case "portrait_hero_choices":
-        return "deep_trivia";
-      case "portrait_split_versus":
-        return "versus_faceoff";
-      case "portrait_verdict_tf":
-        return "verdict_true_false";
-      case "portrait_stack_list":
-        return "speed_blitz";
     }
   }
   if (topic.quiz_format === "true_false") {
@@ -247,17 +271,9 @@ export function assembleRetentionArc(
   };
 }
 
-export async function curateQuestionsForTopic(
-  deps: CurateQuestionsForTopicDeps,
-): Promise<CuratedTopicQuestionsResult> {
+export async function curateQuestionsForTopic(deps: CurateQuestionsForTopicDeps): Promise<CuratedTopicQuestionsResult> {
   const targetCount = deps.questionCount ?? 3;
-  let targetArchetype = resolveTargetArchetype(deps.topic);
-
-  if (deps.aspectRatio === "9:16") {
-    if (targetArchetype === "visual_spotting" || targetArchetype === "visual_identification") {
-      targetArchetype = "deep_trivia";
-    }
-  }
+  const targetArchetype = resolveTargetArchetype(deps.topic);
 
   const queryParams = {
     channelId: deps.channelId,
@@ -272,12 +288,6 @@ export async function curateQuestionsForTopic(
 
   let cooldownFilteredCount = 0;
   let candidates = queryResult.questions;
-
-  if (deps.aspectRatio === "9:16") {
-    candidates = candidates.filter(
-      (q) => q.format !== "odd_one_out" && q.archetype_id !== "visual_spotting",
-    );
-  }
 
   if (!deps.forceIncludeCooldown) {
     const nonCooldown = candidates.filter((q) => !q.channel_cooldown?.is_cooldown);

@@ -264,7 +264,7 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     });
 
     expect(res.statusCode).toBe(200);
-    const body = JSON.parse(res.body);
+    const body = JSON.parse(res.body) as { success: boolean; approvedCount: number; rejectedCount: number };
     expect(body.success).toBe(true);
     expect(body.approvedCount).toBe(1);
     expect(body.rejectedCount).toBe(0);
@@ -303,9 +303,9 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
 
     const emitter = new EventEmitter();
     const mockLlmClient = Object.assign(emitter, {
-      connect: async () => {},
-      startThread: async () => "thread-gen-123",
-      startTurn: async () => {
+      connect: () => Promise.resolve(),
+      startThread: () => Promise.resolve("thread-gen-123"),
+      startTurn: () => {
         setTimeout(() => {
           emitter.emit("notification", {
             method: "item/agentMessage/delta",
@@ -318,7 +318,7 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
             params: { turn: { status: "completed" } },
           });
         }, 10);
-        return "turn-gen-123";
+        return Promise.resolve("turn-gen-123");
       },
     }) as unknown as LLMClient;
 
@@ -356,7 +356,7 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     });
 
     expect(res.statusCode).toBe(503);
-    const body = JSON.parse(res.body);
+    const body = JSON.parse(res.body) as { code: string };
     expect(body.code).toBe("AI_CLIENT_UNAVAILABLE");
     await isolatedServer.close();
   });

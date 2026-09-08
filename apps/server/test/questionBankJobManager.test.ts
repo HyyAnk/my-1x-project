@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { questionBankJobManager } from "../src/quiz/bank/questionBankJobManager.js";
 import type { RepositoryService } from "../src/repository/service.js";
+import type { LLMClient } from "../src/utils/promptSanitizer.js";
 
 describe("Question Bank Job Manager", () => {
   const mockRepo = {} as RepositoryService;
@@ -20,15 +21,15 @@ describe("Question Bank Job Manager", () => {
   });
 
   it("prevents launching overlapping background jobs", () => {
-    const fakeLlmClient = {
-      modelName: "test-model",
-      executePrompt: async () => "[]",
+    const fakeLlmClient: LLMClient = {
+      connect: () => Promise.resolve(),
+      generateContent: () => Promise.resolve({ text: "[]" }),
     };
 
     const first = questionBankJobManager.startJob(mockRepo, {
       mode: "auto",
       count: 20,
-      llmClient: fakeLlmClient as any,
+      llmClient: fakeLlmClient,
     });
 
     expect(first.started).toBe(true);
@@ -37,7 +38,7 @@ describe("Question Bank Job Manager", () => {
     const second = questionBankJobManager.startJob(mockRepo, {
       mode: "auto",
       count: 20,
-      llmClient: fakeLlmClient as any,
+      llmClient: fakeLlmClient,
     });
 
     expect(second.started).toBe(false);
@@ -45,15 +46,15 @@ describe("Question Bank Job Manager", () => {
   });
 
   it("allows cancelling an active running job", () => {
-    const fakeLlmClient = {
-      modelName: "test-model",
-      executePrompt: async () => new Promise(() => {}), // never resolves
+    const fakeLlmClient: LLMClient = {
+      connect: () => Promise.resolve(),
+      generateContent: () => new Promise(() => {}), // never resolves
     };
 
     const first = questionBankJobManager.startJob(mockRepo, {
       mode: "auto",
       count: 40,
-      llmClient: fakeLlmClient as any,
+      llmClient: fakeLlmClient,
     });
 
     expect(first.started).toBe(true);
@@ -74,8 +75,9 @@ describe("Question Bank Job Manager", () => {
     questionBankJobManager.cancelJob();
     const status = questionBankJobManager.getStatus();
     // Simulate an ancient completedAt timestamp
-    (status as any).completedAt = new Date(Date.now() - 60_000).toISOString();
-    (status as any).status = "completed";
+    const completedStatus = status as typeof status & { completedAt: string; status: "completed" };
+    completedStatus.completedAt = new Date(Date.now() - 60_000).toISOString();
+    completedStatus.status = "completed";
 
     // Calling getStatus should auto-expire to idle
     const refreshed = questionBankJobManager.getStatus();

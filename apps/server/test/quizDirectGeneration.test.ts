@@ -82,7 +82,7 @@ describe("directQuizHandler", () => {
   it("successfully parses, validates, balances and persists direct QuizV2 JSON", async () => {
     let savedQuiz: unknown = null;
     let savedStage: string | null = null;
-    let savedHistoryCheck: unknown = null;
+    let _savedHistoryCheck: unknown = null;
 
     const mockRepository = {
       getEpisode: vi.fn().mockResolvedValue(mockEpisode),
@@ -93,11 +93,11 @@ describe("directQuizHandler", () => {
       }),
       readQuestionHistory: vi.fn().mockResolvedValue([]),
       writeHistoryCheck: vi.fn().mockImplementation((channelId, episodeId, check) => {
-        savedHistoryCheck = check;
+        _savedHistoryCheck = check;
         return `channels/${channelId}/episodes/${episodeId}/history_check.json`;
       }),
       invalidateQuizArtifacts: vi.fn().mockResolvedValue(["director", "timeline"]),
-      updateEpisodeStage: vi.fn().mockImplementation((channelId, episodeId, stage) => {
+      updateEpisodeStage: vi.fn().mockImplementation((_channelId: string, _episodeId: string, stage: string) => {
         savedStage = stage;
       }),
       saveEpisodeFile: vi.fn().mockResolvedValue({ path: "path", modified_at: "now" }),

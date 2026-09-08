@@ -91,8 +91,7 @@ export function QuestionBankTable({
                 label: q.archetype_id.replaceAll("_", " "),
                 icon: "✨",
               };
-              const archetypeLabel =
-                t(`questionBank.archetypes.${q.archetype_id}` as any) || meta.label;
+              const archetypeLabel = t(`questionBank.archetypes.${q.archetype_id}`) || meta.label;
               const hasTranslations = q.translations && Object.keys(q.translations).filter((l) => l !== (q.language || "en")).length > 0;
               const targetLang = activeLanguage && activeLanguage !== "en" ? activeLanguage.toLowerCase() : null;
               const translation = targetLang ? q.translations?.[targetLang] : null;

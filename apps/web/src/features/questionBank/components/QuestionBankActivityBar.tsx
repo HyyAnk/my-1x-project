@@ -10,12 +10,128 @@ export interface QuestionBankActivityBarProps {
   onDismiss?: () => void;
 }
 
-export function QuestionBankActivityBar({
-  job: controlledJob,
-  onOpenQuestionBank,
-  onCancelJob,
+function getBorderBottomColor(status: QuestionBankJobState["status"]): string {
+  if (status === "failed") return "var(--red, #ef4444)";
+  if (status === "completed") return "var(--green, #22c55e)";
+  return "color-mix(in srgb, #06b6d4 40%, var(--line))";
+}
+
+function ActivityBarSignal({ status }: { status: QuestionBankJobState["status"] }) {
+  if (status === "running") {
+    return (
+      <div className="task-activity-signal" style={{ color: "#06b6d4" }}>
+        <span className="live-pulse" style={{ background: "#06b6d4" }} />
+        <span>AI BATCH</span>
+      </div>
+    );
+  }
+  if (status === "completed") {
+    return (
+      <div className="task-activity-signal" style={{ color: "#06b6d4" }}>
+        <CheckCircle size={14} weight="fill" style={{ color: "var(--green, #22c55e)" }} />
+        <span style={{ color: "var(--green, #22c55e)" }}>DONE</span>
+      </div>
+    );
+  }
+  if (status === "failed") {
+    return (
+      <div className="task-activity-signal" style={{ color: "#06b6d4" }}>
+        <WarningCircle size={14} weight="fill" style={{ color: "var(--red, #ef4444)" }} />
+        <span style={{ color: "var(--red, #ef4444)" }}>ERROR</span>
+      </div>
+    );
+  }
+  return (
+    <div className="task-activity-signal" style={{ color: "#06b6d4" }}>
+      <X size={14} weight="bold" />
+      <span>CANCELLED</span>
+    </div>
+  );
+}
+
+function ActivityBarCopy({ job, completed, target }: { job: QuestionBankJobState; completed: number; target: number }) {
+  if (job.status === "running") {
+    return (
+      <div className="task-activity-copy">
+        <strong>
+          Question Bank AI Generator ({completed}/{target} questions)
+        </strong>
+        <span>
+          Chunk {job.progress.currentChunk}/{job.progress.totalChunks} • Approved: {job.progress.approvedTotal || 0} • Rejected:{" "}
+          {job.progress.rejectedTotal || 0}
+        </span>
+      </div>
+    );
+  }
+  if (job.status === "completed") {
+    return (
+      <div className="task-activity-copy">
+        <strong>Batch Complete: {completed} questions added to Question Bank</strong>
+        <span>Click to explore newly generated questions</span>
+      </div>
+    );
+  }
+  if (job.status === "failed") {
+    return (
+      <div className="task-activity-copy">
+        <strong>Question generation failed</strong>
+        <span>{job.error || "An unexpected error occurred during generation"}</span>
+      </div>
+    );
+  }
+  return (
+    <div className="task-activity-copy">
+      <strong>Batch generation cancelled</strong>
+      <span>Progress stopped at {completed} questions</span>
+    </div>
+  );
+}
+
+function ActivityBarActions({
+  isRunning,
+  progressPercent,
+  cancelling,
+  onCancel,
   onDismiss,
-}: QuestionBankActivityBarProps) {
+}: {
+  isRunning: boolean;
+  progressPercent: number;
+  cancelling: boolean;
+  onCancel: (e: React.MouseEvent) => void;
+  onDismiss: (e: React.MouseEvent) => void;
+}) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      {isRunning ? (
+        <>
+          <span className="task-activity-percent">{progressPercent}%</span>
+          <button
+            type="button"
+            className="qb-btn qb-btn-secondary qb-btn-sm"
+            onClick={onCancel}
+            disabled={cancelling}
+            style={{ padding: "3px 8px", fontSize: "11px", height: "24px" }}
+            title="Cancel generation"
+          >
+            {cancelling ? "..." : <X size={12} weight="bold" />}
+          </button>
+        </>
+      ) : (
+        <button
+          type="button"
+          className="qb-btn qb-btn-secondary qb-btn-sm"
+          onClick={onDismiss}
+          style={{ padding: "3px 8px", fontSize: "11px", height: "24px" }}
+          title="Dismiss notification"
+        >
+          <X size={12} weight="bold" />
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function QuestionBankActivityBar({ job: controlledJob, onOpenQuestionBank, onCancelJob, onDismiss }: QuestionBankActivityBarProps) {
   const [internalJob, setInternalJob] = useState<QuestionBankJobState | null>(null);
   const [elapsed, setElapsed] = useState("0s");
   const [cancelling, setCancelling] = useState(false);
@@ -120,8 +236,7 @@ export function QuestionBankActivityBar({
     currentJob.completedAt &&
     Date.now() - new Date(currentJob.completedAt).getTime() > 15_000;
 
-  const isLocallyDismissed =
-    isDismissed || (Boolean(currentJob?.jobId) && dismissedJobIdsRef.current.has(currentJob!.jobId));
+  const isLocallyDismissed = isDismissed || (Boolean(currentJob?.jobId) && dismissedJobIdsRef.current.has(currentJob!.jobId));
 
   if (!currentJob || currentJob.status === "idle" || isLocallyDismissed || isStale) return null;
 
@@ -164,83 +279,26 @@ export function QuestionBankActivityBar({
   const completed = currentJob.progress.completedCount || 0;
   const target = Math.max(1, currentJob.targetCount || currentJob.progress.totalRequested || 20);
   const progressPercent = Math.min(100, Math.max(2, Math.round((completed / target) * 100)));
+  const isRunning = currentJob.status === "running";
 
   return (
     <div
       className="task-activity-bar"
       style={{
-        borderBottomColor:
-          currentJob.status === "failed"
-            ? "var(--red, #ef4444)"
-            : currentJob.status === "completed"
-              ? "var(--green, #22c55e)"
-              : "color-mix(in srgb, #06b6d4 40%, var(--line))",
+        borderBottomColor: getBorderBottomColor(currentJob.status),
       }}
       role="button"
       tabIndex={0}
       onClick={handleBarClick}
       title="Click to view Question Bank"
     >
-      {/* 1. Signal / Status Badge */}
-      <div className="task-activity-signal" style={{ color: "#06b6d4" }}>
-        {currentJob.status === "running" ? (
-          <>
-            <span className="live-pulse" style={{ background: "#06b6d4" }} />
-            <span>AI BATCH</span>
-          </>
-        ) : currentJob.status === "completed" ? (
-          <>
-            <CheckCircle size={14} weight="fill" style={{ color: "var(--green, #22c55e)" }} />
-            <span style={{ color: "var(--green, #22c55e)" }}>DONE</span>
-          </>
-        ) : currentJob.status === "failed" ? (
-          <>
-            <WarningCircle size={14} weight="fill" style={{ color: "var(--red, #ef4444)" }} />
-            <span style={{ color: "var(--red, #ef4444)" }}>ERROR</span>
-          </>
-        ) : (
-          <>
-            <X size={14} weight="bold" />
-            <span>CANCELLED</span>
-          </>
-        )}
-      </div>
+      <ActivityBarSignal status={currentJob.status} />
 
-      {/* 2. Copy */}
-      <div className="task-activity-copy">
-        {currentJob.status === "running" ? (
-          <>
-            <strong>
-              Question Bank AI Generator ({completed}/{target} questions)
-            </strong>
-            <span>
-              Chunk {currentJob.progress.currentChunk}/{currentJob.progress.totalChunks} • Approved:{" "}
-              {currentJob.progress.approvedTotal || 0} • Rejected: {currentJob.progress.rejectedTotal || 0}
-            </span>
-          </>
-        ) : currentJob.status === "completed" ? (
-          <>
-            <strong>Batch Complete: {completed} questions added to Question Bank</strong>
-            <span>Click to explore newly generated questions</span>
-          </>
-        ) : currentJob.status === "failed" ? (
-          <>
-            <strong>Question generation failed</strong>
-            <span>{currentJob.error || "An unexpected error occurred during generation"}</span>
-          </>
-        ) : (
-          <>
-            <strong>Batch generation cancelled</strong>
-            <span>Progress stopped at {completed} questions</span>
-          </>
-        )}
-      </div>
+      <ActivityBarCopy job={currentJob} completed={completed} target={target} />
 
-      {/* 3. Elapsed Time */}
-      <span className="task-activity-time">{currentJob.status === "running" ? elapsed : ""}</span>
+      <span className="task-activity-time">{isRunning ? elapsed : ""}</span>
 
-      {/* 4. Progress Track */}
-      {currentJob.status === "running" ? (
+      {isRunning ? (
         <div
           className="task-activity-track"
           role="progressbar"
@@ -258,34 +316,13 @@ export function QuestionBankActivityBar({
         </div>
       ) : null}
 
-      {/* 5. Percent or Actions */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        {currentJob.status === "running" ? (
-          <>
-            <span className="task-activity-percent">{progressPercent}%</span>
-            <button
-              type="button"
-              className="qb-btn qb-btn-secondary qb-btn-sm"
-              onClick={handleCancel}
-              disabled={cancelling}
-              style={{ padding: "3px 8px", fontSize: "11px", height: "24px" }}
-              title="Cancel generation"
-            >
-              {cancelling ? "..." : <X size={12} weight="bold" />}
-            </button>
-          </>
-        ) : (
-          <button
-            type="button"
-            className="qb-btn qb-btn-secondary qb-btn-sm"
-            onClick={handleDismiss}
-            style={{ padding: "3px 8px", fontSize: "11px", height: "24px" }}
-            title="Dismiss notification"
-          >
-            <X size={12} weight="bold" />
-          </button>
-        )}
-      </div>
+      <ActivityBarActions
+        isRunning={isRunning}
+        progressPercent={progressPercent}
+        cancelling={cancelling}
+        onCancel={handleCancel}
+        onDismiss={handleDismiss}
+      />
     </div>
   );
 }

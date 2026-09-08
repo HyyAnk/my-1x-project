@@ -54,7 +54,7 @@ export function VideoTimingSettingsCard({
       </div>
       <StatusLine label="Max scene duration" value={`${maxDuration}s`} />
       <StatusLine label="Estimated speaking pace" value={`~${estimatedWpm} words/min`} />
-      <StatusLine label="Output canvas" value={aspectRatio === "9:16" ? "Portrait · 1080 × 1920" : "Landscape · 1920 × 1080"} />
+      <StatusLine label="Output canvas" value="Landscape · 1920 × 1080" />
       <StatusLine label="Max concurrent episode builds" value={`${maxConcurrentVideoTasks} episodes`} />
       <StatusLine
         label="Render Workers / Quality"
@@ -63,9 +63,8 @@ export function VideoTimingSettingsCard({
       <form className="codex-form" onSubmit={(event) => void onSaveVideo(event)}>
         <label>
           Output aspect ratio
-          <select value={aspectRatio} onChange={(event) => setAspectRatio(event.target.value as "16:9" | "9:16")}>
+          <select value={aspectRatio} onChange={() => setAspectRatio("16:9")}>
             <option value="16:9">16:9 · Landscape (1920 × 1080)</option>
-            <option value="9:16">9:16 · Portrait (1080 × 1920)</option>
           </select>
           <small className="field-help">The same canvas is used by Visual Sandbox, Stage Studio, and production video renders.</small>
         </label>

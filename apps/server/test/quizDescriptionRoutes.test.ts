@@ -34,13 +34,16 @@ vi.mock("../src/utils/promptSanitizer.js", async (importOriginal) => {
 
 import { buildApp } from "../src/app.js";
 
+type DescriptionResponse = {
+  quiz?: unknown;
+  description: { question_count: number; primary_keyword?: string; full_description_text?: string };
+};
+
 const roots: string[] = [];
 const ROUTE_TIMEOUT_MS = 20_000;
 
 afterEach(async () => {
-  await Promise.all(
-    roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 })),
-  );
+  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 })));
 });
 
 describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
@@ -68,6 +71,7 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
         const topics = Array.from({ length: 5 }, (_, index) => ({
           topic_id: "topic-" + index,
           channel_id: channel.channel_id,
+          content_kind: "episode" as const,
           title: "Bí Ẩn Đại Dương " + index,
           premise: "Khám phá các loài sinh vật biển kỳ lạ",
           why_it_fits: "Phù hợp chủ đề",
@@ -143,7 +147,7 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
           url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/quiz-v2/generate`,
         });
         expect(genQuiz.statusCode).toBe(200);
-        const genResult = genQuiz.json();
+        const genResult = genQuiz.json<DescriptionResponse>();
         expect(genResult.quiz).toBeDefined();
         expect(genResult.description).toBeDefined();
         expect(genResult.description.question_count).toBe(3);
@@ -159,7 +163,7 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
           url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/quiz-v2/description`,
         });
         expect(getAfter.statusCode).toBe(200);
-        expect(getAfter.json().description.primary_keyword).toBe("đố vui sinh vật biển");
+        expect(getAfter.json<DescriptionResponse>().description.primary_keyword).toBe("đố vui sinh vật biển");
 
         // 4. Regenerate description with a custom tone hint
         const postGenerate = await app.server.inject({
@@ -168,7 +172,7 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
           payload: { tone_hint: "Hấp dẫn và tò mò" },
         });
         expect(postGenerate.statusCode).toBe(200);
-        const generated = postGenerate.json();
+        const generated = postGenerate.json<DescriptionResponse>();
         expect(generated.description).toBeDefined();
         expect(generated.description.question_count).toBe(3);
 
@@ -182,7 +186,7 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
           },
         });
         expect(putRes.statusCode).toBe(200);
-        const updated = putRes.json();
+        const updated = putRes.json<DescriptionResponse>();
         expect(updated.description.full_description_text).toBe("Mô tả đã được chỉnh sửa thủ công bởi người dùng!\n\n#quiz #ocean");
 
         // Verify description.md on disk was updated
@@ -195,7 +199,7 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
           url: `/api/channels/${channel.channel_id}/episodes/${episode.episode_id}/quiz-v2`,
         });
         expect(fullStateRes.statusCode).toBe(200);
-        expect(fullStateRes.json().description.full_description_text).toBe(
+        expect(fullStateRes.json<DescriptionResponse>().description.full_description_text).toBe(
           "Mô tả đã được chỉnh sửa thủ công bởi người dùng!\n\n#quiz #ocean",
         );
       } finally {

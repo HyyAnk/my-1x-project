@@ -49,13 +49,7 @@ export function MascotRenameModal({ isOpen, mascot, onClose, onRename, renaming 
             <p className="eyebrow">{t("mascots.renameEyebrow")}</p>
             <h2 id="rename-mascot-title">{t("mascots.renameTitle", { name: mascot.name })}</h2>
           </div>
-          <button
-            type="button"
-            className="icon-button"
-            aria-label={t("common.close")}
-            onClick={onClose}
-            disabled={renaming}
-          >
+          <button type="button" className="icon-button" aria-label={t("common.close")} onClick={onClose} disabled={renaming}>
             <X size={18} />
           </button>
         </div>
@@ -86,11 +80,7 @@ export function MascotRenameModal({ isOpen, mascot, onClose, onRename, renaming 
             <button type="button" className="quiet-button" onClick={onClose} disabled={renaming}>
               {t("common.cancel")}
             </button>
-            <button
-              type="submit"
-              className="primary-button"
-              disabled={renaming || !name.trim()}
-            >
+            <button type="submit" className="primary-button" disabled={renaming || !name.trim()}>
               {renaming ? <CircleNotch className="spin" size={16} /> : <FloppyDisk size={16} />}
               <span>{renaming ? t("mascots.renamingBtn") : t("mascots.renameConfirmBtn")}</span>
             </button>

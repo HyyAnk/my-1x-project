@@ -1,10 +1,6 @@
 import { useMemo } from "react";
 import { Plus, Sparkle } from "@phosphor-icons/react";
-import {
-  type MascotProfile,
-  type MascotStyle,
-  synthesizeLegacyCoreStyle,
-} from "@studio/shared";
+import { type MascotProfile, type MascotStyle, synthesizeLegacyCoreStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 import { MascotStyleAnchorCard } from "./MascotStyleAnchorCard";
@@ -16,18 +12,11 @@ export interface MascotStyleConceptManagerProps {
   onOpenLightbox?: (imgUrl: string) => void;
 }
 
-export function MascotStyleConceptManager({
-  editingMascot,
-  stylesState,
-  onOpenLightbox,
-}: MascotStyleConceptManagerProps) {
+export function MascotStyleConceptManager({ editingMascot, stylesState, onOpenLightbox }: MascotStyleConceptManagerProps) {
   const { t } = useTranslation();
 
   const allStyles: MascotStyle[] = useMemo(() => {
-    const rawStyles =
-      editingMascot?.styles && editingMascot.styles.length > 0
-        ? [...editingMascot.styles]
-        : [];
+    const rawStyles = editingMascot?.styles && editingMascot.styles.length > 0 ? [...editingMascot.styles] : [];
     const hasCore = rawStyles.some((s) => s.id === "core" || s.is_default);
     if (!hasCore) {
       rawStyles.unshift(synthesizeLegacyCoreStyle(editingMascot));

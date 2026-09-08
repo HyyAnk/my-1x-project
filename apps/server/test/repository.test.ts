@@ -109,6 +109,7 @@ describe("RepositoryService", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Topic ${index}`,
       premise: `Premise ${index}`,
       why_it_fits: "Fits the channel",
@@ -137,6 +138,7 @@ describe("RepositoryService", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `delete_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Delete Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -254,6 +256,7 @@ describe("scene markdown", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `audio_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Audio Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",

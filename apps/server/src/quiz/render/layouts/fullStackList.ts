@@ -26,9 +26,8 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  */
 export const fullStackListLayout = {
   id: "full_stack_list",
-  renderBody: (slots) =>
-    `${slots.questionBoxHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
-  css: (aspectRatio) => `
+  renderBody: (slots) => `${slots.questionBoxHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
+  css: (_aspectRatio) => `
 /* ==========================================================================
    Full Stack List Layout (16:9 Landscape - 1920x1080)
    Candy Arcade Quiz Engine v2
@@ -227,25 +226,5 @@ export const fullStackListLayout = {
 }
 
 
-${
-  aspectRatio === "9:16"
-    ? `
-/* Fallback 9:16 tokens preserved for backward test contract compatibility */
-#stage[data-aspect-ratio="9:16"] .layout-full_stack_list .game-stage { grid-template-columns: 1fr; grid-template-areas: "title" "answers"; row-gap: 28px; }
-#stage[data-aspect-ratio="9:16"] .layout-full_stack_list .answer-grid { width: 100%; gap: 24px; padding: 0; }
-#stage[data-aspect-ratio="9:16"] .layout-full_stack_list {
-  --choice-card-min-height: 116px;
-  --choice-card-height: auto;
-  --choice-card-margin-left: 68px;
-  --choice-card-padding: 12px 28px 12px 32px;
-  --choice-badge-size: 124px;
-  --choice-badge-margin-left: -70px;
-  --choice-badge-font-size: 68px;
-  --choice-font-size-base: 40px;
-  --choice-fit-max: 72px;
-}
-`
-    : ""
-}
 `,
 } satisfies QuizLayoutRenderDefinition;

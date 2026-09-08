@@ -101,15 +101,14 @@ function AppContent() {
             onOpenEpisode={orch.openEpisode}
           />
         )}
-        <QuestionBankActivityBar
-          onOpenQuestionBank={() => orch.openPage("question_bank")}
-        />
+        <QuestionBankActivityBar onOpenQuestionBank={() => orch.openPage("question_bank")} />
         <AppViewRouter
           loading={orch.loading}
           page={orch.page}
           channels={orch.channels}
           selectedChannel={orch.selectedChannel}
           selectedEpisodeId={orch.selectedEpisodeId}
+          selectedShortReelId={orch.selectedShortReelId}
           tasks={orch.tasks}
           activeTasks={orch.activeTasks}
           taskClock={orch.taskClock}

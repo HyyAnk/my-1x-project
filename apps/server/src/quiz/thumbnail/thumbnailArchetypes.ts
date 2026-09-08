@@ -57,8 +57,7 @@ export const MASCOT_ARCHETYPES_CATALOG: readonly MascotArchetypeDefinition[] = [
     id: 7,
     code: "euphoric_celebrator",
     name: "The Euphoric Celebrator / Victor",
-    guideline:
-      "Triumphant breakthrough or triumphant mastery; explosive celebratory leap, beaming radiant pride, dynamic victory aura.",
+    guideline: "Triumphant breakthrough or triumphant mastery; explosive celebratory leap, beaming radiant pride, dynamic victory aura.",
   },
   {
     id: 8,
@@ -108,10 +107,7 @@ export function selectRandomArchetypes(
 /**
  * Randomly selects 1 item from an array.
  */
-export function selectRandomVariation<T>(
-  items: readonly T[],
-  rng: () => number = Math.random,
-): { selected: T; index: number } | null {
+export function selectRandomVariation<T>(items: readonly T[], rng: () => number = Math.random): { selected: T; index: number } | null {
   if (!items || items.length === 0) return null;
   const index = Math.floor(rng() * items.length);
   return { selected: items[index], index };

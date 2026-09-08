@@ -64,9 +64,7 @@ export type VariantGenerationResult = {
 export function pruneVersionHistory(history: ThumbnailHistoryItem[], maxPerRatio = 20): ThumbnailHistoryItem[] {
   const items169 = history.filter((h) => h.aspect_ratio === "16:9").slice(0, maxPerRatio);
   const items916 = history.filter((h) => h.aspect_ratio === "9:16").slice(0, maxPerRatio);
-  return [...items169, ...items916].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-  );
+  return [...items169, ...items916].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 }
 
 /**
@@ -297,7 +295,7 @@ export async function generateThumbnailVariant(params: GenerateVariantParams): P
       workerId: episode.episode_id,
     });
     if (options.throwOnError) {
-      throw new Error(`Failed to generate ${ratio} thumbnail: ${(err as Error).message}`);
+      throw new Error(`Failed to generate ${ratio} thumbnail: ${(err as Error).message}`, { cause: err });
     }
     try {
       await readFile(activeAbsolute);

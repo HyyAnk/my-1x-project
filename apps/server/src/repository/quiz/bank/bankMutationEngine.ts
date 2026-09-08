@@ -1,40 +1,22 @@
 import { existsSync } from "node:fs";
 import { mkdir, readFile, readdir, rm } from "node:fs/promises";
 import path from "node:path";
-import {
-  BankQuestionSchema,
-  BankSubtopicBatchSchema,
-  type BankIndex,
-  type BankQuestion,
-  type BankSubtopicBatch,
-} from "@studio/shared";
+import { BankQuestionSchema, BankSubtopicBatchSchema, type BankIndex, type BankQuestion, type BankSubtopicBatch } from "@studio/shared";
 import type { RepositoryRuntime } from "../../runtime.js";
-import {
-  QUESTION_BANK_DIR,
-  getQuestionBankPath,
-  getQuestionBankWritePath,
-} from "./bankPathResolver.js";
+import { QUESTION_BANK_DIR, getQuestionBankPath, getQuestionBankWritePath } from "./bankPathResolver.js";
 import { listQuestionBankBatches } from "./bankBatchStorage.js";
 import { recalculateQuestionBankIndex } from "./bankIndexManager.js";
 
 /**
  * Validates, normalizes, and upserts a bank question into its corresponding subtopic batch file.
  */
-export async function saveQuestionBankQuestion(
-  this: RepositoryRuntime,
-  question: BankQuestion,
-): Promise<BankQuestion> {
+export async function saveQuestionBankQuestion(this: RepositoryRuntime, question: BankQuestion): Promise<BankQuestion> {
   const normalizedQuestion = {
     ...question,
     archetype_id: question.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : question.archetype_id,
   };
   const validated = BankQuestionSchema.parse(normalizedQuestion);
-  const batchFilePath = getQuestionBankWritePath.call(
-    this,
-    validated.archetype_id,
-    validated.domain_id,
-    `${validated.subtopic_id}.json`,
-  );
+  const batchFilePath = getQuestionBankWritePath.call(this, validated.archetype_id, validated.domain_id, `${validated.subtopic_id}.json`);
 
   let batch: BankSubtopicBatch = {
     schema_version: 2,
@@ -47,12 +29,7 @@ export async function saveQuestionBankQuestion(
   };
 
   try {
-    const existingReadPath = getQuestionBankPath.call(
-      this,
-      validated.archetype_id,
-      validated.domain_id,
-      `${validated.subtopic_id}.json`,
-    );
+    const existingReadPath = getQuestionBankPath.call(this, validated.archetype_id, validated.domain_id, `${validated.subtopic_id}.json`);
     const raw = JSON.parse(await readFile(existingReadPath, "utf8")) as unknown;
     batch = BankSubtopicBatchSchema.parse(raw);
     if (batch.archetype_id === "verdict_fact_myth") {
@@ -61,12 +38,7 @@ export async function saveQuestionBankQuestion(
   } catch {
     if (validated.archetype_id === "verdict_true_false") {
       try {
-        const legacyReadPath = getQuestionBankPath.call(
-          this,
-          "verdict_fact_myth",
-          validated.domain_id,
-          `${validated.subtopic_id}.json`,
-        );
+        const legacyReadPath = getQuestionBankPath.call(this, "verdict_fact_myth", validated.domain_id, `${validated.subtopic_id}.json`);
         const rawLegacy = JSON.parse(await readFile(legacyReadPath, "utf8")) as unknown;
         batch = BankSubtopicBatchSchema.parse(rawLegacy);
         batch.archetype_id = "verdict_true_false";
@@ -95,12 +67,7 @@ export async function saveQuestionBankQuestion(
   await this.writeJsonAtomic(batchFilePath, batch);
 
   if (validated.archetype_id === "verdict_true_false") {
-    const legacyPath = getQuestionBankWritePath.call(
-      this,
-      "verdict_fact_myth",
-      validated.domain_id,
-      `${validated.subtopic_id}.json`,
-    );
+    const legacyPath = getQuestionBankWritePath.call(this, "verdict_fact_myth", validated.domain_id, `${validated.subtopic_id}.json`);
     if (existsSync(legacyPath)) {
       await this.writeJsonAtomic(legacyPath, batch);
     }
@@ -114,10 +81,7 @@ export async function saveQuestionBankQuestion(
 /**
  * Removes a question from its batch and recalculates index statistics.
  */
-export async function deleteQuestionBankQuestion(
-  this: RepositoryRuntime,
-  questionId: string,
-): Promise<boolean> {
+export async function deleteQuestionBankQuestion(this: RepositoryRuntime, questionId: string): Promise<boolean> {
   const batches = await listQuestionBankBatches.call(this);
   let foundAndDeleted = false;
 
@@ -134,7 +98,14 @@ export async function deleteQuestionBankQuestion(
       if (batch.archetype_id === "verdict_true_false") {
         candidatePaths.push(
           path.join(this.roots.runtime, QUESTION_BANK_DIR, "verdict_fact_myth", batch.domain_id, `${batch.subtopic_id}.json`),
-          path.join(this.rootDirectory, ".quiz-studio", QUESTION_BANK_DIR, "verdict_fact_myth", batch.domain_id, `${batch.subtopic_id}.json`),
+          path.join(
+            this.rootDirectory,
+            ".quiz-studio",
+            QUESTION_BANK_DIR,
+            "verdict_fact_myth",
+            batch.domain_id,
+            `${batch.subtopic_id}.json`,
+          ),
         );
       }
 
@@ -159,9 +130,7 @@ export async function deleteQuestionBankQuestion(
 /**
  * Clears all batches from the question bank directory and resets the index.
  */
-export async function clearQuestionBank(
-  this: RepositoryRuntime,
-): Promise<{ cleared_batches_count: number }> {
+export async function clearQuestionBank(this: RepositoryRuntime): Promise<{ cleared_batches_count: number }> {
   const runtimeBankRoot = path.join(this.roots.runtime, QUESTION_BANK_DIR);
   const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
   const isRedirectedRuntime = path.resolve(this.roots.runtime) !== path.resolve(defaultProjectRuntime);
@@ -178,11 +147,9 @@ export async function clearQuestionBank(
 
   for (const bankRoot of candidateRoots) {
     if (!existsSync(bankRoot)) continue;
-    let entries: string[] = [];
+    let entries: string[];
     try {
-      entries = (await readdir(bankRoot, { withFileTypes: true }))
-        .filter((d) => d.isDirectory())
-        .map((d) => d.name);
+      entries = (await readdir(bankRoot, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name);
     } catch {
       continue;
     }

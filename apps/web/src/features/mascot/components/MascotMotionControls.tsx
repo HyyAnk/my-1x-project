@@ -2,7 +2,13 @@ import { useState } from "react";
 import { ArrowLeft, CheckCircle, CircleNotch, Sparkle, ArrowCounterClockwise, FloppyDisk } from "@phosphor-icons/react";
 import { type MascotActionType, type MascotProfile, type MascotStateVariant } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
-import { CORE_GAMEPLAY_ACTIONS, getLocalizedActionMeta, MOTION_PRESETS, type MascotMotionPreset, type MascotMotionIntensity } from "../constants";
+import {
+  CORE_GAMEPLAY_ACTIONS,
+  getLocalizedActionMeta,
+  MOTION_PRESETS,
+  type MascotMotionPreset,
+  type MascotMotionIntensity,
+} from "../constants";
 
 export type MascotMotionControlsProps = {
   editingMascot: MascotProfile | null;

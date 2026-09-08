@@ -38,10 +38,12 @@ describe("style preset routes", () => {
       expect(preset.revision).toBe(1);
       const updated = await app.server.inject({ method: "PUT", url: `/api/style-presets/${preset.id}`, payload: { name: "Renamed" } });
       expect(updated.statusCode).toBe(200);
-      expect(updated.json().preset).toMatchObject({ name: "Renamed", revision: 2 });
+      expect(updated.json<{ preset: { name: string; revision: number } }>().preset).toMatchObject({ name: "Renamed", revision: 2 });
       const duplicate = await app.server.inject({ method: "POST", url: "/api/style-presets", payload: { ...input, name: "Copy" } });
       expect(duplicate.statusCode).toBe(201);
-      expect((await app.server.inject({ method: "GET", url: "/api/style-presets" })).json().presets).toHaveLength(2);
+      expect((await app.server.inject({ method: "GET", url: "/api/style-presets" })).json<{ presets: unknown[] }>().presets).toHaveLength(
+        2,
+      );
       expect((await app.server.inject({ method: "DELETE", url: `/api/style-presets/${preset.id}` })).statusCode).toBe(200);
     } finally {
       await app.close();
@@ -71,7 +73,7 @@ describe("style preset routes", () => {
       await writeFile(app.repository.resolvePath("runtime", "style-presets.json"), "not-json", "utf8");
       const response = await app.server.inject({ method: "GET", url: "/api/style-presets" });
       expect(response.statusCode).toBe(400);
-      expect(response.json().error).toContain("invalid");
+      expect(response.json<{ error: string }>().error).toContain("invalid");
     } finally {
       await app.close();
     }

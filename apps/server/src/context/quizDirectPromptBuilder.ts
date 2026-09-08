@@ -3,7 +3,7 @@ import { QUIZ_STYLE_CONTRACTS } from "../quiz/assets/promptCompiler.js";
 import type { OutputContractInput } from "./taskInstructions.js";
 
 function resolveVisualStyleContract(episode: Episode | null) {
-  const resolvedStyle = (episode?.quiz_config?.resolved_visual_style ?? "pixar_3d") as QuizImageStyle;
+  const resolvedStyle: QuizImageStyle = episode?.quiz_config?.resolved_visual_style ?? "pixar_3d";
   return QUIZ_STYLE_CONTRACTS[resolvedStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
 }
 

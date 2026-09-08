@@ -99,7 +99,6 @@ export function ThumbnailControlsDeck({
           </span>
         </div>
 
-
         <div className="layout-chips-grid">
           {LAYOUT_OPTIONS.map((opt) => {
             const isSelected = selectedLayout === opt.id;
@@ -163,9 +162,7 @@ export function ThumbnailControlsDeck({
             </span>
             <span style={{ fontSize: "0.72rem", color: "var(--muted)" }}>High-CTR Psychology</span>
           </div>
-          <div style={{ color: "var(--ink-secondary)", fontSize: "0.78rem" }}>
-            {activeLayoutInfo.psychologicalTrigger}
-          </div>
+          <div style={{ color: "var(--ink-secondary)", fontSize: "0.78rem" }}>{activeLayoutInfo.psychologicalTrigger}</div>
 
           {manifest?.mascot_persona && (
             <div className="mascot-persona-row">
@@ -213,7 +210,6 @@ export function ThumbnailControlsDeck({
         />
       </div>
 
-
       {/* Primary Generation Button */}
       <button
         type="button"
@@ -233,4 +229,3 @@ export function ThumbnailControlsDeck({
     </div>
   );
 }
-

@@ -123,7 +123,7 @@ export function useMascotMotionStudio({
     const targetAction: MascotActionType =
       typeof action === "string" && (ALL_MASCOT_ACTIONS as readonly string[]).includes(action)
         ? (action as MascotActionType)
-        : (activePreviewAction || "thinking");
+        : activePreviewAction || "thinking";
 
     // For thinking/celebrate, persist motion to the selected filled variant slot first
     if (editingMascot?.id && activeStyle?.id && isVariantAction(targetAction)) {

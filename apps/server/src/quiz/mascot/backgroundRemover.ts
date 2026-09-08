@@ -22,8 +22,7 @@ export type MascotMattingTarget =
   | MascotStyleSlotTarget
   | `style:${string}:${"thinking" | "celebrate"}:${number}`
   | `slot:${string}:${"thinking" | "celebrate"}:${number}`
-  | `${string}:${"thinking" | "celebrate"}:${number}`
-  | string;
+  | `${string}:${"thinking" | "celebrate"}:${number}`;
 
 /**
  * Parses target into a structured style slot target if applicable
@@ -40,8 +39,7 @@ export function parseStyleSlotTarget(target: unknown): {
     const rawState = typeof obj.state === "string" ? obj.state.toLowerCase() : undefined;
     const state = rawState === "thinking" || rawState === "celebrate" ? rawState : undefined;
     const rawSlot = obj.slot_index ?? obj.slotIndex;
-    const slotIndex =
-      typeof rawSlot === "number" ? rawSlot : typeof rawSlot === "string" ? parseInt(rawSlot, 10) : undefined;
+    const slotIndex = typeof rawSlot === "number" ? rawSlot : typeof rawSlot === "string" ? parseInt(rawSlot, 10) : undefined;
     const styleId = (obj.style_id ?? obj.styleId) as string | undefined;
 
     if (state !== undefined || styleId !== undefined || (slotIndex !== undefined && !isNaN(slotIndex))) {
@@ -153,6 +151,125 @@ async function matMascotAssetUrl(
   }
 }
 
+async function matMasterImage(
+  repository: RepositoryService,
+  mascotId: string,
+  masterImageUrl?: string | null,
+  logger?: StudioLogger,
+): Promise<string | null> {
+  if (!masterImageUrl) return null;
+  return matMascotAssetUrl(repository, mascotId, masterImageUrl, `master_${Date.now()}.png`, logger, "master image");
+}
+
+async function matActionSprites(
+  repository: RepositoryService,
+  mascotId: string,
+  actions: MascotProfile["actions"],
+  target: MascotMattingTarget,
+  logger?: StudioLogger,
+): Promise<MascotProfile["actions"]> {
+  const isAll = target === "all";
+  const isMascotAction = typeof target === "string" && ALL_MASCOT_ACTIONS.includes(target as MascotActionType);
+  const actionsToProcess = isAll ? ALL_MASCOT_ACTIONS : isMascotAction ? [target as MascotActionType] : [];
+  if (actionsToProcess.length === 0) return { ...actions };
+
+  const updatedActions = { ...actions };
+  for (const action of actionsToProcess) {
+    const sprite = actions[action];
+    if (sprite?.sprite_url) {
+      const updatedSpriteUrl = await matMascotAssetUrl(
+        repository,
+        mascotId,
+        sprite.sprite_url,
+        `sprite_${action}_${Date.now()}.png`,
+        logger,
+        `sprite action ${action}`,
+      );
+      updatedActions[action] = {
+        ...sprite,
+        sprite_url: updatedSpriteUrl,
+      };
+    }
+  }
+  return updatedActions;
+}
+
+async function matAllStyleVariants(
+  repository: RepositoryService,
+  mascotId: string,
+  styles: MascotStyle[],
+  logger?: StudioLogger,
+): Promise<void> {
+  for (const style of styles) {
+    for (const state of ["thinking", "celebrate"] as const) {
+      const variants = style.states?.[state] ?? [];
+      for (const variant of variants) {
+        if (variant.image_url && variant.image_url.trim().length > 0) {
+          const updatedUrl = await matMascotAssetUrl(
+            repository,
+            mascotId,
+            variant.image_url,
+            `style_${style.id}_${state}_slot_${variant.slot_index}_${Date.now()}.png`,
+            logger,
+            `style ${style.id} ${state} slot ${variant.slot_index}`,
+          );
+          variant.image_url = updatedUrl;
+        }
+      }
+    }
+  }
+}
+
+async function matTargetedStyleSlots(
+  repository: RepositoryService,
+  mascotId: string,
+  styles: MascotStyle[],
+  slotTarget: NonNullable<ReturnType<typeof parseStyleSlotTarget>>,
+  activeStyleId?: string | null,
+  logger?: StudioLogger,
+): Promise<void> {
+  let targetStyles: MascotStyle[] = [];
+  if (slotTarget.styleId) {
+    const found = styles.find((s) => s.id === slotTarget.styleId);
+    if (found) {
+      targetStyles = [found];
+    } else {
+      logger?.warn(`Style ${slotTarget.styleId} not found on mascot ${mascotId}`, { step: "mascot" });
+    }
+  } else {
+    const active = styles.find((s) => s.id === activeStyleId) || styles.find((s) => s.is_default) || styles[0];
+    if (active) {
+      targetStyles = [active];
+    } else {
+      logger?.warn(`No active or default style found on mascot ${mascotId}`, { step: "mascot" });
+    }
+  }
+
+  for (const style of targetStyles) {
+    const statesToCheck: Array<"thinking" | "celebrate"> = slotTarget.state ? [slotTarget.state] : ["thinking", "celebrate"];
+
+    for (const state of statesToCheck) {
+      const variants = style.states?.[state] ?? [];
+      for (const variant of variants) {
+        if (slotTarget.slotIndex !== undefined && variant.slot_index !== slotTarget.slotIndex) {
+          continue;
+        }
+        if (variant.image_url && variant.image_url.trim().length > 0) {
+          const updatedUrl = await matMascotAssetUrl(
+            repository,
+            mascotId,
+            variant.image_url,
+            `style_${style.id}_${state}_slot_${variant.slot_index}_${Date.now()}.png`,
+            logger,
+            `style ${style.id} ${state} slot ${variant.slot_index}`,
+          );
+          variant.image_url = updatedUrl;
+        }
+      }
+    }
+  }
+}
+
 /**
  * Removes background from an existing mascot master image, action sprites, or style variant slots
  */
@@ -164,9 +281,8 @@ export async function removeMascotAssetBackground(
 ): Promise<MascotProfile> {
   const mascot = await repository.getMascot(mascotId);
   let updatedMaster = mascot.master_image_url;
-  const updatedActions = { ...mascot.actions };
+  let updatedActions = { ...mascot.actions };
 
-  // Clone styles deeply to ensure immutability during transformations
   const updatedStyles: MascotStyle[] = (mascot.styles ?? []).map((style) => ({
     ...style,
     states: {
@@ -179,112 +295,18 @@ export async function removeMascotAssetBackground(
   const isMaster = target === "master";
   const slotTarget = !isAll && !isMaster ? parseStyleSlotTarget(target) : null;
 
-  // 1. Process Master Concept Image
   if (isAll || isMaster) {
-    if (mascot.master_image_url) {
-      updatedMaster = await matMascotAssetUrl(
-        repository,
-        mascotId,
-        mascot.master_image_url,
-        `master_${Date.now()}.png`,
-        logger,
-        "master image",
-      );
-    }
+    updatedMaster = await matMasterImage(repository, mascotId, mascot.master_image_url, logger);
   }
 
-  // 2. Process Action Sprites
   if (isAll || (!isMaster && !slotTarget)) {
-    const isMascotAction = typeof target === "string" && ALL_MASCOT_ACTIONS.includes(target as MascotActionType);
-    const actionsToProcess = isAll ? ALL_MASCOT_ACTIONS : isMascotAction ? [target as MascotActionType] : [];
-
-    for (const action of actionsToProcess) {
-      const sprite = mascot.actions[action];
-      if (sprite?.sprite_url) {
-        const updatedSpriteUrl = await matMascotAssetUrl(
-          repository,
-          mascotId,
-          sprite.sprite_url,
-          `sprite_${action}_${Date.now()}.png`,
-          logger,
-          `sprite action ${action}`,
-        );
-        updatedActions[action] = {
-          ...sprite,
-          sprite_url: updatedSpriteUrl,
-        };
-      }
-    }
+    updatedActions = await matActionSprites(repository, mascotId, mascot.actions, target, logger);
   }
 
-  // 3. Process Style Variant Slots
   if (isAll) {
-    // When target === "all", process all filled variant images across all styles, thinking and celebrate states (slots 1..10)
-    for (const style of updatedStyles) {
-      for (const state of ["thinking", "celebrate"] as const) {
-        const variants = style.states?.[state] ?? [];
-        for (const variant of variants) {
-          if (variant.image_url && variant.image_url.trim().length > 0) {
-            const updatedUrl = await matMascotAssetUrl(
-              repository,
-              mascotId,
-              variant.image_url,
-              `style_${style.id}_${state}_slot_${variant.slot_index}_${Date.now()}.png`,
-              logger,
-              `style ${style.id} ${state} slot ${variant.slot_index}`,
-            );
-            variant.image_url = updatedUrl;
-          }
-        }
-      }
-    }
+    await matAllStyleVariants(repository, mascotId, updatedStyles, logger);
   } else if (slotTarget) {
-    // When target is a specific style slot or style target
-    let targetStyles: MascotStyle[] = [];
-    if (slotTarget.styleId) {
-      const found = updatedStyles.find((s) => s.id === slotTarget.styleId);
-      if (found) {
-        targetStyles = [found];
-      } else {
-        logger?.warn(`Style ${slotTarget.styleId} not found on mascot ${mascotId}`, { step: "mascot" });
-      }
-    } else {
-      const active =
-        updatedStyles.find((s) => s.id === mascot.active_style_id) ||
-        updatedStyles.find((s) => s.is_default) ||
-        updatedStyles[0];
-      if (active) {
-        targetStyles = [active];
-      } else {
-        logger?.warn(`No active or default style found on mascot ${mascotId}`, { step: "mascot" });
-      }
-    }
-
-    for (const style of targetStyles) {
-      const statesToCheck: Array<"thinking" | "celebrate"> = slotTarget.state
-        ? [slotTarget.state]
-        : ["thinking", "celebrate"];
-
-      for (const state of statesToCheck) {
-        const variants = style.states?.[state] ?? [];
-        for (const variant of variants) {
-          if (slotTarget.slotIndex !== undefined && variant.slot_index !== slotTarget.slotIndex) {
-            continue;
-          }
-          if (variant.image_url && variant.image_url.trim().length > 0) {
-            const updatedUrl = await matMascotAssetUrl(
-              repository,
-              mascotId,
-              variant.image_url,
-              `style_${style.id}_${state}_slot_${variant.slot_index}_${Date.now()}.png`,
-              logger,
-              `style ${style.id} ${state} slot ${variant.slot_index}`,
-            );
-            variant.image_url = updatedUrl;
-          }
-        }
-      }
-    }
+    await matTargetedStyleSlots(repository, mascotId, updatedStyles, slotTarget, mascot.active_style_id, logger);
   }
 
   return repository.saveMascot({

@@ -10,12 +10,7 @@ export interface AiGenerateResultListProps {
   onClose: () => void;
 }
 
-export function AiGenerateResultList({
-  result,
-  targetCount,
-  onReset,
-  onClose,
-}: AiGenerateResultListProps) {
+export function AiGenerateResultList({ result, targetCount, onReset, onClose }: AiGenerateResultListProps) {
   const { t } = useTranslation();
 
   return (
@@ -25,9 +20,7 @@ export function AiGenerateResultList({
           <Sparkle size={28} weight="fill" style={{ color: "#06b6d4" }} />
           <div>
             <h3 className="qb-result-title">{t("questionBank.aiModal.backgroundStartedTitle")}</h3>
-            <p className="qb-result-subtitle">
-              {t("questionBank.aiModal.backgroundStartedDesc", { count: targetCount })}
-            </p>
+            <p className="qb-result-subtitle">{t("questionBank.aiModal.backgroundStartedDesc", { count: targetCount })}</p>
           </div>
         </div>
       ) : (
@@ -47,9 +40,7 @@ export function AiGenerateResultList({
       )}
 
       {/* Updated Matrix Coverage */}
-      {result.matrixCoverage && (
-        <AiGenerateDeficitOverview matrixCoverage={result.matrixCoverage} variant="result" />
-      )}
+      {result.matrixCoverage && <AiGenerateDeficitOverview matrixCoverage={result.matrixCoverage} variant="result" />}
 
       {result.rejectedCount > 0 && (
         <div className="qb-rejection-box">
@@ -72,9 +63,7 @@ export function AiGenerateResultList({
           {t("questionBank.aiModal.generateAnotherBtn")}
         </button>
         <button type="button" className="qb-btn qb-btn-primary" onClick={onClose}>
-          {result.job
-            ? t("questionBank.aiModal.closeAndTrackBtn")
-            : t("questionBank.aiModal.viewInBankBtn")}
+          {result.job ? t("questionBank.aiModal.closeAndTrackBtn") : t("questionBank.aiModal.viewInBankBtn")}
         </button>
       </div>
     </div>

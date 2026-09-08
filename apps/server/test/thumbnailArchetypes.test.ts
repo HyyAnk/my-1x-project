@@ -1,19 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  MASCOT_ARCHETYPES_CATALOG,
-  selectRandomArchetypes,
-  selectRandomVariation,
-} from "../src/quiz/thumbnail/thumbnailArchetypes.js";
+import { MASCOT_ARCHETYPES_CATALOG, selectRandomArchetypes, selectRandomVariation } from "../src/quiz/thumbnail/thumbnailArchetypes.js";
 import { buildAiPlannerPrompt, planThumbnailWithAI } from "../src/quiz/thumbnail/thumbnailAiPlanner.js";
 import { compileThumbnailPrompt } from "../src/quiz/thumbnail/thumbnailPromptCompiler.js";
 import { resolveThumbnailLayout } from "../src/quiz/thumbnail/thumbnailLayoutResolver.js";
-import {
-  AUTO_CURIOSITY_BADGE_PRESETS,
-  getCuriosityBadgeText,
-  getRandomCuriosityBadge,
-} from "../src/quiz/thumbnail/thumbnailLocale.js";
-import type { QuizThumbnailPlan } from "../src/quiz/thumbnail/thumbnailTypes.js";
+import { AUTO_CURIOSITY_BADGE_PRESETS, getCuriosityBadgeText, getRandomCuriosityBadge } from "../src/quiz/thumbnail/thumbnailLocale.js";
 import * as promptSanitizer from "../src/utils/promptSanitizer.js";
+import type { LLMClient } from "../src/utils/promptSanitizer.js";
 
 describe("Thumbnail Mascot 10 Abstract Archetypes & Random Selection", () => {
   describe("MASCOT_ARCHETYPES_CATALOG Definition", () => {
@@ -195,7 +187,7 @@ describe("Thumbnail Mascot 10 Abstract Archetypes & Random Selection", () => {
       const plan = await planThumbnailWithAI({
         topicTitle: "World Flags Trivia",
         language: "English",
-        llmClient: dummyClient as any,
+        llmClient: dummyClient as unknown as LLMClient,
       });
 
       sanitizerSpy.mockRestore();

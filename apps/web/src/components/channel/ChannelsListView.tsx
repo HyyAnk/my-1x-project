@@ -21,7 +21,7 @@ export type ChannelsListViewProps = {
 export type ChannelSortOption = "custom" | "latest" | "episodes" | "name";
 
 export function ChannelsListView({ channels, mascots: initialMascots, onCreate, openChannel, onDelete }: ChannelsListViewProps) {
-  const { t, language: uiLang } = useTranslation();
+  const { t } = useTranslation();
   const [mascots, setMascots] = useState<MascotProfile[]>(initialMascots || []);
   const [languageFilter, setLanguageFilter] = useState<string>("all");
   const [isReordering, setIsReordering] = useState<boolean>(false);
@@ -181,9 +181,7 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
             aria-label={t("channels.sortBy")}
             disabled={isReordering}
           >
-            {hasCustomOrder || isReordering ? (
-              <option value="custom">{t("channels.sortCustom")}</option>
-            ) : null}
+            {hasCustomOrder || isReordering ? <option value="custom">{t("channels.sortCustom")}</option> : null}
             <option value="latest">{t("channels.sortLatest")}</option>
             <option value="episodes">{t("channels.sortEpisodes")}</option>
             <option value="name">{t("channels.sortName")}</option>
@@ -193,11 +191,7 @@ export function ChannelsListView({ channels, mascots: initialMascots, onCreate, 
 
       {/* Active Reordering Banner */}
       {isReordering ? (
-        <ChannelReorderBanner
-          onDone={handleDoneReordering}
-          onReset={handleResetOrder}
-          hasCustomOrder={hasCustomOrder}
-        />
+        <ChannelReorderBanner onDone={handleDoneReordering} onReset={handleResetOrder} hasCustomOrder={hasCustomOrder} />
       ) : null}
 
       {/* Grid or Empty state */}

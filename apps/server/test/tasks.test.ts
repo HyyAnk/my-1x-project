@@ -353,6 +353,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -401,6 +402,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `audio_task_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Audio Task Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -483,6 +485,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `visual_retry_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Visual Retry ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -538,6 +541,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `quiz_visual_retry_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Quiz Visual Retry ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -597,6 +601,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `shot_retry_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Shot Retry ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -667,6 +672,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `quiz_research_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Quiz Research ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -714,6 +720,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `v2_pipeline_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `V2 Pipeline Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -881,6 +888,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `timer_topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Timer Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -939,6 +947,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `topic_${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Episode ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",

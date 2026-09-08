@@ -11,11 +11,7 @@ async function fixture(): Promise<RepositoryService> {
   const root = await mkdtemp(path.join(os.tmpdir(), "quiz-studio-analytics-"));
   roots.push(root);
   await mkdir(path.join(root, "templates"), { recursive: true });
-  await writeFile(
-    path.join(root, "templates", "example_channel_dna.md"),
-    "# Channel DNA\n",
-    "utf8",
-  );
+  await writeFile(path.join(root, "templates", "example_channel_dna.md"), "# Channel DNA\n", "utf8");
   await writeFile(path.join(root, "templates", "example_style_guide.md"), "# Style Guide\n", "utf8");
   return new RepositoryService(root);
 }
@@ -54,6 +50,7 @@ describe("UsageLedger Analytics & Persistence", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `topic-solar-${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Solar System ${index}`,
       premise: "Space quiz",
       why_it_fits: "Fits",
@@ -115,6 +112,7 @@ describe("UsageLedger Analytics & Persistence", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `topic-del-${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Temporary Topic ${index}`,
       premise: "Temp quiz",
       why_it_fits: "Fits",
@@ -224,6 +222,7 @@ describe("UsageLedger Analytics & Persistence", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `topic-img-${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Images Topic ${index}`,
       premise: "Image quiz",
       why_it_fits: "Fits",
@@ -238,20 +237,14 @@ describe("UsageLedger Analytics & Persistence", () => {
     // Write a dummy PNG asset with meta.json
     // Valid 1x1 PNG bytes
     const pngBytes = new Uint8Array([
-      137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82,
-      0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196,
-      137, 0, 0, 0, 10, 73, 68, 65, 84, 120, 156, 99, 0, 1, 0, 0,
-      5, 0, 1, 13, 10, 45, 180, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130
+      137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 10,
+      73, 68, 65, 84, 120, 156, 99, 0, 1, 0, 0, 5, 0, 1, 13, 10, 45, 180, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130,
     ]);
     const fingerprint = "a".repeat(64);
-    await repository.writeQuizImageAsset(
-      channel.channel_id,
-      episode.episode_id,
-      "asset-question-01-hero",
-      fingerprint,
-      pngBytes,
-      { price_vnd: 100, model: "nano-banana" },
-    );
+    await repository.writeQuizImageAsset(channel.channel_id, episode.episode_id, "asset-question-01-hero", fingerprint, pngBytes, {
+      price_vnd: 100,
+      model: "nano-banana",
+    });
 
     // Reconcile ledger from disk
     const ledger = await repository.reconcileUsageLedgerFromDisk();

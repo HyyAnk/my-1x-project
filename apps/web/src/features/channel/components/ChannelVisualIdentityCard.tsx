@@ -129,11 +129,7 @@ export function ChannelVisualIdentityCard({ channel, onRefresh, onNotice }: Chan
           </div>
 
           <div className="timer-setting-select-wrap">
-            <select
-              value={selectedTimer}
-              className="timer-select-control"
-              onChange={(e) => void handleTimerChange(e.target.value as QuizThinkingBarStyle)}
-            >
+            <select value={selectedTimer} className="timer-select-control" onChange={(e) => void handleTimerChange(e.target.value)}>
               {ALL_THINKING_BAR_STYLES.map((style) => {
                 if (style === "auto") return null;
                 return (

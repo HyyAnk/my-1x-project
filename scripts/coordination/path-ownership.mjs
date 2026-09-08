@@ -1,7 +1,7 @@
 import path from "node:path";
 import { findZonesForFile } from "./glob-matcher.mjs";
 
-const WILDCARD_PATTERN = /[*?\[\]]/;
+const WILDCARD_PATTERN = /[*?[\]]/;
 
 export function normalizePlannedFiles(files = [], workspaceRoot = process.cwd()) {
   const normalized = [];

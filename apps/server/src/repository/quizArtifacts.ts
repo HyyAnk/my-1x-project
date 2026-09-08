@@ -31,11 +31,6 @@ export {
   appendBgmHistory,
 } from "./quiz/quizHistoryArtifacts.js";
 
-export {
-  readUsageLedger,
-  reconcileUsageLedgerFromDisk,
-  recordVoiceUsage,
-  recordImageUsage,
-} from "./quiz/quizAnalyticsArtifacts.js";
+export { readUsageLedger, reconcileUsageLedgerFromDisk, recordVoiceUsage, recordImageUsage } from "./quiz/quizAnalyticsArtifacts.js";
 
 export { invalidateQuizArtifacts } from "./quiz/quizArtifactsInvalidation.js";

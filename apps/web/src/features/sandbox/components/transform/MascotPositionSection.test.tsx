@@ -17,7 +17,6 @@ describe("MascotPositionSection (16:9 Layout Standardization)", () => {
 
     renderWithLanguage(
       <MascotPositionSection
-        aspectRatio="16:9"
         mascotPosition="bottom_left"
         setMascotPosition={setMascotPosition}
         mascotFlipX={false}
@@ -42,37 +41,12 @@ describe("MascotPositionSection (16:9 Layout Standardization)", () => {
     expect(setMascotPosition).toHaveBeenCalledWith("bottom_left");
   });
 
-  it("allows both bottom_left and bottom_right positions in 9:16 portrait mode", () => {
-    const setMascotPosition = vi.fn();
-    const setMascotFlipX = vi.fn();
-
-    renderWithLanguage(
-      <MascotPositionSection
-        aspectRatio="9:16"
-        mascotPosition="bottom_left"
-        setMascotPosition={setMascotPosition}
-        mascotFlipX={false}
-        setMascotFlipX={setMascotFlipX}
-      />,
-    );
-
-    expect(screen.queryByText("Left Pillar (16:9)")).toBeNull();
-
-    const bottomRightBtn = screen.getByRole("button", { name: /bottom right/i });
-    expect((bottomRightBtn as HTMLButtonElement).disabled).toBe(false);
-    expect(bottomRightBtn.getAttribute("aria-disabled")).toBeNull();
-
-    fireEvent.click(bottomRightBtn);
-    expect(setMascotPosition).toHaveBeenCalledWith("bottom_right");
-  });
-
   it("toggles mascotFlipX when clicking flip button", () => {
     const setMascotPosition = vi.fn();
     const setMascotFlipX = vi.fn();
 
     renderWithLanguage(
       <MascotPositionSection
-        aspectRatio="16:9"
         mascotPosition="bottom_left"
         setMascotPosition={setMascotPosition}
         mascotFlipX={false}

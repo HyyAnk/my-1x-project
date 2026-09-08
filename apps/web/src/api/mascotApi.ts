@@ -35,15 +35,21 @@ export const mascotApi = {
     request<{ mascot: MascotProfile }>(`/api/mascots/${id}`, { method: "PUT", body: JSON.stringify(body) }),
   deleteMascot: (id: string) => request<{ ok: true }>(`/api/mascots/${id}`, { method: "DELETE" }),
   generateMascotConcept: (id: string, body?: GenerateMascotConceptInput) =>
-    request<{ mascot: MascotProfile; master_image_url: string; prompt_used: string; placeholder?: boolean }>(`/api/mascots/${id}/generate-concept`, {
-      method: "POST",
-      body: JSON.stringify(body ?? {}),
-    }),
+    request<{ mascot: MascotProfile; master_image_url: string; prompt_used: string; placeholder?: boolean }>(
+      `/api/mascots/${id}/generate-concept`,
+      {
+        method: "POST",
+        body: JSON.stringify(body ?? {}),
+      },
+    ),
   generateMascotSprite: (id: string, body: GenerateMascotSpriteInput) =>
-    request<{ mascot: MascotProfile; action_sprite: MascotSpriteAction; prompt_used: string; placeholder?: boolean }>(`/api/mascots/${id}/generate-sprite`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }),
+    request<{ mascot: MascotProfile; action_sprite: MascotSpriteAction; prompt_used: string; placeholder?: boolean }>(
+      `/api/mascots/${id}/generate-sprite`,
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+      },
+    ),
   uploadMascotSprite: (id: string, body: UploadMascotSpriteInput) =>
     request<{ mascot: MascotProfile; action_sprite: MascotSpriteAction }>(`/api/mascots/${id}/upload-sprite`, {
       method: "POST",

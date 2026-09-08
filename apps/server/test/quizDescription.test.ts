@@ -278,11 +278,11 @@ describe("Quiz Video Description Engine (Step 2)", () => {
   describe("generateVideoDescription", () => {
     it("generates and validates a VideoDescription object using mock LLM client", async () => {
       const mockClient: LLMClient = {
-        connect: async () => {},
-        startThread: async () => "thread-1",
-        startTurn: async () => "turn-1",
-        interruptTurn: async () => {},
-        resumeThread: async () => "thread-1",
+        connect: () => Promise.resolve(),
+        startThread: () => Promise.resolve("thread-1"),
+        startTurn: () => Promise.resolve("turn-1"),
+        interruptTurn: () => Promise.resolve(),
+        resumeThread: () => Promise.resolve("thread-1"),
         on: (event: string, handler: (data: unknown) => void) => {
           if (event === "notification") {
             setTimeout(() => {
@@ -339,11 +339,9 @@ describe("Quiz Video Description Engine (Step 2)", () => {
 
     it("falls back gracefully when LLM client throws an error", async () => {
       const failingClient: LLMClient = {
-        connect: async () => {},
-        startThread: async () => {
-          throw new Error("LLM connection failed");
-        },
-      } as unknown as LLMClient;
+        connect: () => Promise.resolve(),
+        startThread: () => Promise.reject(new Error("LLM connection failed")),
+      };
 
       const fallback = await generateVideoDescription({
         client: failingClient,
@@ -374,11 +372,9 @@ describe("Quiz Video Description Engine (Step 2)", () => {
       };
 
       const failingClient: LLMClient = {
-        connect: async () => {},
-        startThread: async () => {
-          throw new Error("LLM offline");
-        },
-      } as unknown as LLMClient;
+        connect: () => Promise.resolve(),
+        startThread: () => Promise.reject(new Error("LLM offline")),
+      };
 
       const fallback = await generateVideoDescription({
         client: failingClient,

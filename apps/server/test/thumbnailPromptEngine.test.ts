@@ -396,11 +396,11 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     const { planThumbnailWithAI } = await import("../src/quiz/thumbnail/thumbnailAiPlanner.js");
 
     const mockLlmClient = {
-      connect: async () => {},
-      startThread: async () => "thread_thumb_test",
-      startTurn: async () => "turn_thumb_test",
-      interruptTurn: async () => {},
-      on: (event: string, cb: Function) => {
+      connect: () => Promise.resolve(),
+      startThread: () => Promise.resolve("thread_thumb_test"),
+      startTurn: () => Promise.resolve("turn_thumb_test"),
+      interruptTurn: () => Promise.resolve(),
+      on: (event: string, cb: (payload: unknown) => void) => {
         if (event === "notification") {
           setTimeout(() => {
             cb({
@@ -444,7 +444,7 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
       topicTitle: "Mythology: Weapons of Ancient Gods",
       questionCount: 10,
       language: "English",
-      llmClient: mockLlmClient as any,
+      llmClient: mockLlmClient,
       mascotProfile: sampleMascot,
     });
 

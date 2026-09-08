@@ -105,8 +105,6 @@ export function useQuestionBank(initialChannelId?: string) {
     setSelectedQuestion: modals.setSelectedQuestion,
     modalState: modals.modalState,
     setModalState: modals.setModalState,
-    previewAspect: modals.previewAspect,
-    setPreviewAspect: modals.setPreviewAspect,
 
     // Batch Generation & Polling Job
     generating: batch.generating,

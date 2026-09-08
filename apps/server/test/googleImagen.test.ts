@@ -34,6 +34,7 @@ describe("GoogleImagenProvider", () => {
     const topic = {
       topic_id: "topic_1",
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: "Topic 1",
       premise: "P",
       why_it_fits: "W",
@@ -101,6 +102,7 @@ describe("GoogleImagenProvider", () => {
     const topic = {
       topic_id: "topic_1",
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: "Topic 1",
       premise: "P",
       why_it_fits: "W",

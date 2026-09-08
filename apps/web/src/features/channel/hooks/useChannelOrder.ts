@@ -42,10 +42,9 @@ export function loadSavedOrder(): string[] | null {
   try {
     const raw = window.localStorage.getItem(CHANNEL_ORDER_STORAGE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0
-      ? (parsed.filter((id) => typeof id === "string") as string[])
-      : null;
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) return null;
+    return parsed.filter((id): id is string => typeof id === "string");
   } catch {
     return null;
   }
@@ -111,7 +110,7 @@ export function useChannelOrder(channels: Channel[]) {
       const newIds = currentList.map((c) => c.channel_id);
       updateOrder(newIds);
     },
-    [orderedChannels, updateOrder]
+    [orderedChannels, updateOrder],
   );
 
   /**
@@ -124,7 +123,7 @@ export function useChannelOrder(channels: Channel[]) {
         reorderChannel(sourceIndex, 0);
       }
     },
-    [orderedChannels, reorderChannel]
+    [orderedChannels, reorderChannel],
   );
 
   /**

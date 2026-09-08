@@ -21,8 +21,7 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  */
 export const verdictTrueFalseLayout = {
   id: "verdict_true_false",
-  renderBody: (slots) =>
-    `${slots.questionBoxHtml}${slots.heroHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
+  renderBody: (slots) => `${slots.questionBoxHtml}${slots.heroHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
   css: (_aspectRatio) => `
 /* === Verdict True/False Layout (16:9 Landscape Video, 1920x1080) === */
 .layout-verdict_true_false .game-stage {

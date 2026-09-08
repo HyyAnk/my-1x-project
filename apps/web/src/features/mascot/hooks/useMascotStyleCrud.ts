@@ -36,14 +36,8 @@ export type UseMascotStyleCrudResult = {
   handleSetActiveStyle: (styleId: string) => Promise<void>;
 };
 
-export function useMascotStyleCrud({
-  mascot,
-  onMascotUpdated,
-  onNotice,
-}: UseMascotStyleCrudProps): UseMascotStyleCrudResult {
-  const [activeStyleId, setActiveStyleId] = useState<string>(
-    () => mascot?.active_style_id || "core",
-  );
+export function useMascotStyleCrud({ mascot, onMascotUpdated, onNotice }: UseMascotStyleCrudProps): UseMascotStyleCrudResult {
+  const [activeStyleId, setActiveStyleId] = useState<string>(() => mascot?.active_style_id || "core");
   const [generatingConceptStyleId, setGeneratingConceptStyleId] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const [newStyleName, setNewStyleName] = useState<string>("");
@@ -60,10 +54,7 @@ export function useMascotStyleCrud({
     return resolveMascotStyle(mascot, activeStyleId);
   }, [mascot, activeStyleId]);
 
-  const activeStyleReadiness = useMemo(
-    () => getMascotStyleReadiness(activeStyle),
-    [activeStyle],
-  );
+  const activeStyleReadiness = useMemo(() => getMascotStyleReadiness(activeStyle), [activeStyle]);
 
   const handleCreateStyle = useCallback(
     async (name?: string, keyword?: string) => {

@@ -29,7 +29,7 @@ export function QuestionBoxDropdown({ channel, episode, disabled, saving, isOpen
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillQuestionCard")}
-        value={QUESTION_BOX_STYLE_LABELS[activeStyle as keyof typeof QUESTION_BOX_STYLE_LABELS] ?? activeStyle}
+        value={QUESTION_BOX_STYLE_LABELS[activeStyle] ?? activeStyle}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
@@ -43,13 +43,13 @@ export function QuestionBoxDropdown({ channel, episode, disabled, saving, isOpen
               <StyleOptionRow
                 key={style}
                 name="box_choice"
-                label={QUESTION_BOX_STYLE_LABELS[style as keyof typeof QUESTION_BOX_STYLE_LABELS] ?? style}
+                label={QUESTION_BOX_STYLE_LABELS[style] ?? style}
                 checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
                 onHover={() =>
                   onPreview?.({
                     override: { questionBoxStyle: style },
-                    label: QUESTION_BOX_STYLE_LABELS[style as keyof typeof QUESTION_BOX_STYLE_LABELS] ?? style,
+                    label: QUESTION_BOX_STYLE_LABELS[style] ?? style,
                   })
                 }
               />

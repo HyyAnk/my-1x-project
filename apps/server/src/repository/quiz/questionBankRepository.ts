@@ -5,11 +5,7 @@
  * for question bank storage, taxonomy, indexing, querying, and translation caches.
  */
 
-export {
-  QUESTION_BANK_DIR,
-  getQuestionBankPath,
-  getQuestionBankWritePath,
-} from "./bank/bankPathResolver.js";
+export { QUESTION_BANK_DIR, getQuestionBankPath, getQuestionBankWritePath } from "./bank/bankPathResolver.js";
 
 export {
   CANONICAL_DOMAIN_META,
@@ -18,18 +14,9 @@ export {
   readQuestionBankTaxonomy,
 } from "./bank/bankTaxonomySync.js";
 
-export {
-  matchesArchetypeFilter,
-  readSubtopicBatch,
-  writeSubtopicBatch,
-  listQuestionBankBatches,
-} from "./bank/bankBatchStorage.js";
+export { matchesArchetypeFilter, readSubtopicBatch, writeSubtopicBatch, listQuestionBankBatches } from "./bank/bankBatchStorage.js";
 
-export {
-  readQuestionBankIndex,
-  recalculateQuestionBankIndex,
-  getQuestionBankMatrixCoverage,
-} from "./bank/bankIndexManager.js";
+export { readQuestionBankIndex, recalculateQuestionBankIndex, getQuestionBankMatrixCoverage } from "./bank/bankIndexManager.js";
 
 export {
   COOLDOWN_DAYS_DEFAULT,
@@ -43,7 +30,4 @@ export {
   clearAllQuestionBankQuestions,
 } from "./bank/bankQueryEngine.js";
 
-export {
-  saveQuestionBankTranslation,
-  readQuestionBankTranslation,
-} from "./bank/bankTranslationStore.js";
+export { saveQuestionBankTranslation, readQuestionBankTranslation } from "./bank/bankTranslationStore.js";

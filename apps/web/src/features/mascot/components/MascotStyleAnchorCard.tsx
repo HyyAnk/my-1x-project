@@ -21,15 +21,10 @@ export interface MascotStyleAnchorCardProps {
   onOpenLightbox?: (url: string) => void;
 }
 
-export function MascotStyleAnchorCard({
-  style,
-  editingMascot,
-  stylesState,
-  onOpenLightbox,
-}: MascotStyleAnchorCardProps) {
+export function MascotStyleAnchorCard({ style, editingMascot, stylesState, onOpenLightbox }: MascotStyleAnchorCardProps) {
   const { t } = useTranslation();
   const isCore = style.id === "core" || Boolean(style.is_default);
-  const imageUrl = isCore ? (style.anchor_image_url || editingMascot.master_image_url) : style.anchor_image_url;
+  const imageUrl = isCore ? style.anchor_image_url || editingMascot.master_image_url : style.anchor_image_url;
   const isThisGenerating = stylesState?.generatingConceptStyleId === style.id;
   const isAnyConceptGenerating = Boolean(stylesState?.generatingConceptStyleId);
   const isBusy = isAnyConceptGenerating || (stylesState?.busySlotKey !== null && stylesState?.busySlotKey !== undefined);
@@ -95,9 +90,7 @@ export function MascotStyleAnchorCard({
                 </span>
               )}
               {filledPosesCount > 0 ? (
-                <span className="style-anchor-badge badge-poses">
-                  {t("mascots.styleAnchorPosesCount", { count: filledPosesCount })}
-                </span>
+                <span className="style-anchor-badge badge-poses">{t("mascots.styleAnchorPosesCount", { count: filledPosesCount })}</span>
               ) : null}
             </div>
           )}
@@ -125,14 +118,16 @@ export function MascotStyleAnchorCard({
             }}
           >
             <img src={imageUrl} alt={style.name} className="style-anchor-thumb" loading="lazy" />
-            <div className="style-anchor-zoom-hint"><MagnifyingGlassPlus size={16} /></div>
+            <div className="style-anchor-zoom-hint">
+              <MagnifyingGlassPlus size={16} />
+            </div>
           </div>
         ) : (
           <div
             className={`style-anchor-empty-placeholder ${!isBusy ? "is-clickable" : "is-busy"}`}
             onClick={() => {
               if (!isBusy) {
-                stylesState?.handleGenerateStyleConcept(style.id);
+                void stylesState?.handleGenerateStyleConcept(style.id);
               }
             }}
             role="button"
@@ -142,7 +137,7 @@ export function MascotStyleAnchorCard({
             onKeyDown={(e) => {
               if (!isBusy && (e.key === "Enter" || e.key === " ")) {
                 e.preventDefault();
-                stylesState?.handleGenerateStyleConcept(style.id);
+                void stylesState?.handleGenerateStyleConcept(style.id);
               }
             }}
           >
@@ -193,7 +188,7 @@ export function MascotStyleAnchorCard({
             className="quiet-button compact danger-icon-btn"
             onClick={() => {
               if (window.confirm(t("mascots.deleteStyleConfirm"))) {
-                stylesState?.handleDeleteStyle(style.id);
+                void stylesState?.handleDeleteStyle(style.id);
               }
             }}
             disabled={isBusy}

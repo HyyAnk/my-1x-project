@@ -44,8 +44,22 @@ export const TaskTypeSchema = z.enum([
   "GENERATE_BUNDLE_IMAGE",
   "GENERATE_VIDEO",
   "GENERATE_QUIZ",
+  "GENERATE_SHORT_REEL",
+  "GENERATE_SHORT_REEL_PACKAGE",
+]);
+
+export const ShortReelGenerationTargetSchema = z.enum([
+  "script",
+  "segment_1",
+  "segment_2",
+  "segment_3",
+  "references",
+  "cover",
+  "publishing",
+  "package",
 ]);
 export type TaskType = z.infer<typeof TaskTypeSchema>;
+export type ShortReelGenerationTarget = z.infer<typeof ShortReelGenerationTargetSchema>;
 
 export const EngineIdSchema = z.enum(["codex", "antigravity"]);
 export type EngineId = z.infer<typeof EngineIdSchema>;

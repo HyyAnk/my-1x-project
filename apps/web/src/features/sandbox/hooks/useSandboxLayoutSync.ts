@@ -1,9 +1,5 @@
 import { useCallback } from "react";
-import {
-  getCompatibleQuizLayout,
-  type QuizPreviewLayoutId,
-  type ResolvedQuizLayoutId,
-} from "@studio/shared";
+import { getCompatibleQuizLayout, type QuizPreviewLayoutId, type ResolvedQuizLayoutId } from "@studio/shared";
 import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
 import type { SandboxQuestionState, PresetSampleQuestion } from "./useSandboxQuestionState";
@@ -16,36 +12,24 @@ export interface UseSandboxLayoutSyncOptions {
   mascot: SandboxMascotState;
 }
 
-export function useSandboxLayoutSync({
-  design,
-  question,
-  viewport,
-  mascot,
-}: UseSandboxLayoutSyncOptions) {
+export function useSandboxLayoutSync({ design, question, viewport, mascot: _mascot }: UseSandboxLayoutSyncOptions) {
   const handleLayoutChange = useCallback(
     (newLayoutId: QuizPreviewLayoutId) => {
       design.setLayoutId(newLayoutId);
-      const isTfChoices =
-        question.choices.length === 2 &&
-        question.choices[0] === "True" &&
-        question.choices[1] === "False";
+      const isTfChoices = question.choices.length === 2 && question.choices[0] === "True" && question.choices[1] === "False";
 
       if (newLayoutId === "mystery_reveal") {
         const currentAnswer = question.choices[question.correctChoiceIndex] || question.choices[0] || "Pikachu";
         question.setChoices([currentAnswer]);
         question.setCorrectChoiceIndex(0);
-      } else if (newLayoutId === "verdict_true_false" || newLayoutId === "portrait_verdict_tf") {
+      } else if (newLayoutId === "verdict_true_false") {
         if (question.choices.length !== 2 || !isTfChoices) {
           question.setChoices(["True", "False"]);
           if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
         }
-      } else if (newLayoutId === "split_versus_two" || newLayoutId === "portrait_split_versus") {
+      } else if (newLayoutId === "split_versus_two") {
         if (question.choices.length !== 2 || isTfChoices) {
-          question.setChoices(
-            question.choices.length > 2 && !isTfChoices
-              ? question.choices.slice(0, 2)
-              : ["Option A", "Option B"],
-          );
+          question.setChoices(question.choices.length > 2 && !isTfChoices ? question.choices.slice(0, 2) : ["Option A", "Option B"]);
           if (question.correctChoiceIndex >= 2) question.setCorrectChoiceIndex(0);
         }
       } else if (
@@ -53,9 +37,7 @@ export function useSandboxLayoutSync({
         newLayoutId === "visual_choices_three_pure" ||
         newLayoutId === "media_left_choices_right" ||
         newLayoutId === "full_stack_list" ||
-        newLayoutId === "clue_deduction" ||
-        newLayoutId === "portrait_hero_choices" ||
-        newLayoutId === "portrait_stack_list"
+        newLayoutId === "clue_deduction"
       ) {
         if (question.choices.length < 3) {
           if (isTfChoices) {
@@ -72,21 +54,6 @@ export function useSandboxLayoutSync({
     [design, question],
   );
 
-  const handleAspectRatioChange = useCallback(
-    (newRatio: "16:9" | "9:16") => {
-      viewport.setAspectRatio(newRatio);
-      if (newRatio === "16:9" && mascot.mascotPosition !== "bottom_left") {
-        mascot.setMascotPosition("bottom_left");
-      }
-      const currentResolved = design.layoutId === "baseline" ? "media_left_choices_right" : design.layoutId;
-      const compatibleLayout = getCompatibleQuizLayout(currentResolved, newRatio);
-      if (compatibleLayout !== design.layoutId) {
-        handleLayoutChange(compatibleLayout);
-      }
-    },
-    [viewport, design.layoutId, handleLayoutChange, mascot],
-  );
-
   const handleApplyPresetQuestion = useCallback(
     (sample: PresetSampleQuestion) => {
       question.handleApplyPresetQuestion(sample);
@@ -100,9 +67,7 @@ export function useSandboxLayoutSync({
       } else if (
         design.layoutId === "verdict_true_false" ||
         design.layoutId === "split_versus_two" ||
-        design.layoutId === "mystery_reveal" ||
-        design.layoutId === "portrait_verdict_tf" ||
-        design.layoutId === "portrait_split_versus"
+        design.layoutId === "mystery_reveal"
       ) {
         targetLayout = "media_left_choices_right";
       } else if (design.layoutId !== "baseline") {
@@ -116,7 +81,6 @@ export function useSandboxLayoutSync({
 
   return {
     handleLayoutChange,
-    handleAspectRatioChange,
     handleApplyPresetQuestion,
   };
 }

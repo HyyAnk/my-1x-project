@@ -30,7 +30,15 @@ type QuizV2PanelProps = {
   episode?: Episode | null;
 };
 
-export function QuizV2Panel({ state, readiness, pipelineTask, tasks, questionCount = 0, streamlined = true, episode = null }: QuizV2PanelProps) {
+export function QuizV2Panel({
+  state,
+  readiness,
+  pipelineTask,
+  tasks,
+  questionCount = 0,
+  streamlined = true,
+  episode = null,
+}: QuizV2PanelProps) {
   const buildDurationSeconds = useMemo(() => {
     return calculateEpisodeBuildDuration(tasks, pipelineTask);
   }, [tasks, pipelineTask]);
@@ -86,8 +94,7 @@ export function QuizV2Panel({ state, readiness, pipelineTask, tasks, questionCou
             <span key={summary.groupKey} className="quiz-v2-parallel-tag">
               <span className="quiz-v2-parallel-icon">⚡</span>
               <strong>{summary.label}:</strong> {summary.totalDurationSeconds}s total (
-              {summary.stages.map((st) => `${st.label}: ${st.durationSeconds}s`).join(" | ")}
-              )
+              {summary.stages.map((st) => `${st.label}: ${st.durationSeconds}s`).join(" | ")})
             </span>
           ))}
         </div>
@@ -95,7 +102,15 @@ export function QuizV2Panel({ state, readiness, pipelineTask, tasks, questionCou
       <ol className={`quiz-v2-rail${streamlined ? " is-streamlined" : ""}`} aria-label="Quiz production stages">
         {streamlined
           ? STREAMLINED_STAGES.map((stage, index) => {
-              const status = resolveStreamlinedStatus(stage.key, index, effectiveReadiness, state, pipelineTask, tasks, currentStreamlinedStage);
+              const status = resolveStreamlinedStatus(
+                stage.key,
+                index,
+                effectiveReadiness,
+                state,
+                pipelineTask,
+                tasks,
+                currentStreamlinedStage,
+              );
               const progress = resolveStreamlinedProgress(stage.key, effectiveReadiness, state, tasks, questionCount, pipelineTask);
               const timing = resolveStageTiming(stage.key, status, state, tasks, pipelineTask);
               return (

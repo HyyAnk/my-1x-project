@@ -9,12 +9,7 @@ export interface QuestionBankClearAllModalProps {
   onClose: () => void;
 }
 
-export function QuestionBankClearAllModal({
-  clearing,
-  totalCount,
-  onConfirm,
-  onClose,
-}: QuestionBankClearAllModalProps) {
+export function QuestionBankClearAllModal({ clearing, totalCount, onConfirm, onClose }: QuestionBankClearAllModalProps) {
   const { t } = useTranslation();
   const [confirmationInput, setConfirmationInput] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -67,9 +62,7 @@ export function QuestionBankClearAllModal({
               marginBottom: "16px",
             }}
           >
-            <p style={{ margin: 0, fontWeight: 500 }}>
-              {t("questionBank.clearModal.warning")}
-            </p>
+            <p style={{ margin: 0, fontWeight: 500 }}>{t("questionBank.clearModal.warning")}</p>
             {totalCount > 0 && (
               <p style={{ margin: "6px 0 0", color: "#f87171", fontSize: "12px" }}>
                 Current questions in bank: <strong>{totalCount}</strong>
@@ -95,12 +88,7 @@ export function QuestionBankClearAllModal({
           </div>
 
           <div className="qb-modal-footer" style={{ marginTop: "20px" }}>
-            <button
-              type="button"
-              className="qb-btn qb-btn-secondary"
-              onClick={onClose}
-              disabled={clearing}
-            >
+            <button type="button" className="qb-btn qb-btn-secondary" onClick={onClose} disabled={clearing}>
               {t("questionBank.clearModal.cancelBtn")}
             </button>
             <button
@@ -116,11 +104,7 @@ export function QuestionBankClearAllModal({
               }}
             >
               <Trash size={15} weight="bold" />
-              <span>
-                {clearing
-                  ? t("questionBank.clearModal.clearingBtn")
-                  : t("questionBank.clearModal.confirmBtn")}
-              </span>
+              <span>{clearing ? t("questionBank.clearModal.clearingBtn") : t("questionBank.clearModal.confirmBtn")}</span>
             </button>
           </div>
         </form>

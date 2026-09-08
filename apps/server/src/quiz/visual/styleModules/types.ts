@@ -24,8 +24,4 @@ export type CounterStyleModule = StyleModule<"counter", StyleModuleRenderer<Coun
 export type BackgroundStyleModule = StyleModule<"background", StyleModuleRenderer<BackgroundRenderContext>>;
 
 export type SlotScopedStyleModule =
-  | ThinkingBarStyleModule
-  | QuestionBoxStyleModule
-  | AnswerCardStyleModule
-  | CounterStyleModule
-  | BackgroundStyleModule;
+  ThinkingBarStyleModule | QuestionBoxStyleModule | AnswerCardStyleModule | CounterStyleModule | BackgroundStyleModule;

@@ -7,8 +7,8 @@ import type { LLMClient } from "../../src/utils/promptSanitizer.js";
  */
 export function createStubQuizLlmClient(): LLMClient {
   return {
-    connect: async () => undefined,
-    generateContent: async (prompt: string) => {
+    connect: () => Promise.resolve(undefined),
+    generateContent: (prompt: string) => {
       const match = /Generate exactly (\d+) high-retention questions/.exec(prompt);
       const count = match ? Number(match[1]) : 3;
       const archetypeMatch = /Archetype: "([a-z_]+)"/.exec(prompt);
@@ -20,6 +20,7 @@ export function createStubQuizLlmClient(): LLMClient {
       const titleMatch = /for topic: "(.+)"/.exec(prompt);
       const title = titleMatch?.[1] ?? "Test Topic";
       const questions = Array.from({ length: count }, (_, index) => ({
+        id: `STUB-${archetypeId.slice(0, 3).toUpperCase()}-${index + 1}`,
         archetype_id: archetypeId,
         domain_id: domainId,
         subtopic_id: subtopicId,
@@ -42,7 +43,7 @@ export function createStubQuizLlmClient(): LLMClient {
         thinking_seconds: 5,
         tags: [subtopicId, archetypeId],
       }));
-      return { text: JSON.stringify(questions) };
+      return Promise.resolve({ text: JSON.stringify(questions) });
     },
   };
 }

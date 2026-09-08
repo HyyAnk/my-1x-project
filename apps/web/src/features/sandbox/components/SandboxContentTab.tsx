@@ -49,11 +49,7 @@ export function SandboxContentTab({
 }: SandboxContentTabProps) {
   return (
     <>
-      <SandboxPhaseScrubber
-        phase={phase}
-        setPhase={setPhase}
-        setUseScrubber={setUseScrubber}
-      />
+      <SandboxPhaseScrubber phase={phase} setPhase={setPhase} setUseScrubber={setUseScrubber} />
 
       <div style={{ height: "1px", background: "var(--line)" }} />
 

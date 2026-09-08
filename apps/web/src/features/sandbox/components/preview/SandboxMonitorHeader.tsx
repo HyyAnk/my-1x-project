@@ -1,4 +1,4 @@
-import { CheckCircle, DeviceMobile, Eye, MonitorPlay, Play } from "@phosphor-icons/react";
+import { CheckCircle, Eye, Play } from "@phosphor-icons/react";
 import { useTranslation } from "../../../../i18n";
 import type { ContrastReport } from "../../hooks/useSandboxPreviewRenderer";
 
@@ -9,8 +9,7 @@ export type SandboxMonitorHeaderProps = {
   setShowSafeArea: (updater: (prev: boolean) => boolean) => void;
   showShortsGuide: boolean;
   setShowShortsGuide: (updater: (prev: boolean) => boolean) => void;
-  aspectRatio: "16:9" | "9:16";
-  setAspectRatio: (ratio: "16:9" | "9:16") => void;
+  aspectRatio: "16:9";
   setIframeKey: (updater: (prev: number) => number) => void;
   zoom: "fit" | "50" | "75" | "100";
   setZoom: (zoom: "fit" | "50" | "75" | "100") => void;
@@ -21,10 +20,9 @@ export function SandboxMonitorHeader({
   lastRenderTime,
   showSafeArea,
   setShowSafeArea,
-  showShortsGuide,
-  setShowShortsGuide,
-  aspectRatio,
-  setAspectRatio,
+  showShortsGuide: _showShortsGuide,
+  setShowShortsGuide: _setShowShortsGuide,
+  aspectRatio: _aspectRatio,
   setIframeKey,
   zoom,
   setZoom,
@@ -72,7 +70,7 @@ export function SandboxMonitorHeader({
               boxShadow: "0 0 6px #22c55e",
             }}
           />
-          {aspectRatio === "16:9" ? "1920 × 1080" : "1080 × 1920"}
+          1920 × 1080
         </span>
 
         <div
@@ -119,42 +117,6 @@ export function SandboxMonitorHeader({
 
       {/* Right: Viewport Overlays & Zoom Actions */}
       <div className="sandbox-monitor-actions" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "2px",
-            background: "var(--surface-strong)",
-            padding: "2px",
-            borderRadius: "8px",
-            border: "1px solid var(--line)",
-          }}
-          title="Output aspect ratio"
-        >
-          <button
-            type="button"
-            className={aspectRatio === "16:9" ? "primary-button compact" : "quiet-button compact"}
-            style={{ fontSize: "10.5px", padding: "3px 7px", borderRadius: "6px", display: "inline-flex", gap: "4px" }}
-            onClick={() => setAspectRatio("16:9")}
-            aria-label="16:9"
-          >
-            <MonitorPlay size={12} />
-            <span>16:9</span>
-          </button>
-          <button
-            type="button"
-            className={aspectRatio === "9:16" ? "primary-button compact" : "quiet-button compact"}
-            style={{ fontSize: "10.5px", padding: "3px 7px", borderRadius: "6px", display: "inline-flex", gap: "4px" }}
-            onClick={() => setAspectRatio("9:16")}
-            aria-label="9:16"
-          >
-            <DeviceMobile size={12} />
-            <span>9:16</span>
-          </button>
-        </div>
-
-        <div style={{ width: "1px", height: "16px", background: "var(--line)", margin: "0 2px" }} />
-
         {/* Safe Area 16:9 Toggle */}
         <button
           type="button"
@@ -166,20 +128,6 @@ export function SandboxMonitorHeader({
           <Eye size={14} weight={showSafeArea ? "fill" : "regular"} />
           <span>{t("visualSandbox.safeArea")}</span>
         </button>
-
-        {/* Shorts 9:16 Crop Guide */}
-        <button
-          type="button"
-          className={showShortsGuide ? "primary-button compact" : "quiet-button compact"}
-          style={{ fontSize: "11px", padding: "4px 9px", display: "inline-flex", alignItems: "center", gap: "4px" }}
-          onClick={() => setShowShortsGuide((prev) => !prev)}
-          title={t("visualSandbox.shortsTooltip")}
-        >
-          <DeviceMobile size={14} weight={showShortsGuide ? "fill" : "regular"} />
-          <span>9:16</span>
-        </button>
-
-        <div style={{ width: "1px", height: "16px", background: "var(--line)", margin: "0 2px" }} />
 
         {/* Replay Button */}
         <button

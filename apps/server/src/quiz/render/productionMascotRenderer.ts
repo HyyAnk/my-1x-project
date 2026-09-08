@@ -1,8 +1,4 @@
-import {
-  adaptMascotV1ToV2,
-  type ChannelMascotConfig,
-  type MascotProfile,
-} from "@studio/shared";
+import { adaptMascotV1ToV2, type ChannelMascotConfig, type MascotProfile } from "@studio/shared";
 import { renderMascotHtmlFromBundle } from "./mascotHtmlRenderer.js";
 import {
   adaptMascotForPhase,
@@ -22,12 +18,7 @@ export type ProductionMascotRenderOptions = BaseProductionMascotRenderOptions & 
 
 export type { ProductionMascotTimelineEvent };
 
-export {
-  resolveMascotQuestionStyle,
-  hasDedicatedAction,
-  adaptMascotForQuestion,
-  adaptMascotForPhase,
-};
+export { resolveMascotQuestionStyle, hasDedicatedAction, adaptMascotForQuestion, adaptMascotForPhase };
 
 /** Production adapter for the canonical Mascot Render Contract V2 HTML layer. */
 export function renderProductionMascotHtmlLayer(

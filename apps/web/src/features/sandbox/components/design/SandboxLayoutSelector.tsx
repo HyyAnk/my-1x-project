@@ -1,12 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { CaretDown, Check, ListDashes, ListNumbers, SquareSplitHorizontal, type IconProps } from "@phosphor-icons/react";
-import {
-  QUIZ_LANDSCAPE_LAYOUT_IDS,
-  QUIZ_PORTRAIT_LAYOUT_IDS,
-  getCompatibleQuizLayout,
-  type QuizPreviewLayoutId,
-  type ResolvedQuizLayoutId,
-} from "@studio/shared";
+import { QUIZ_LANDSCAPE_LAYOUT_IDS, getCompatibleQuizLayout, type QuizPreviewLayoutId } from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import {
   QUIZ_LAYOUT_UI_DEFINITIONS,
@@ -15,22 +9,18 @@ import {
   type QuizLayoutUiDefinition,
 } from "../../../quizLayouts/quizLayoutUiCatalog";
 
-export const PORTRAIT_LAYOUT_IDS: readonly QuizPreviewLayoutId[] = QUIZ_PORTRAIT_LAYOUT_IDS;
 export const LANDSCAPE_LAYOUT_IDS: readonly QuizPreviewLayoutId[] = QUIZ_LANDSCAPE_LAYOUT_IDS;
 
-export function getCompatibleLayoutForAspectRatio(
-  currentLayoutId: QuizPreviewLayoutId,
-  targetAspectRatio: "16:9" | "9:16",
-): QuizPreviewLayoutId {
+export function getCompatibleLayoutForAspectRatio(currentLayoutId: QuizPreviewLayoutId): QuizPreviewLayoutId {
   const resolved = currentLayoutId === "baseline" ? "media_left_choices_right" : currentLayoutId;
-  return getCompatibleQuizLayout(resolved, targetAspectRatio);
+  return getCompatibleQuizLayout(resolved, "16:9");
 }
 
 export interface SandboxLayoutSelectorProps {
   layoutId: QuizPreviewLayoutId;
   setLayoutId: (layout: QuizPreviewLayoutId) => void;
   disabled?: boolean;
-  aspectRatio?: "16:9" | "9:16";
+  aspectRatio?: "16:9";
 }
 
 function LayoutIcon({ icon, size = 18, ...props }: { icon: QuizLayoutUiDefinition["icon"]; size?: number } & IconProps) {
@@ -46,12 +36,7 @@ function LayoutIcon({ icon, size = 18, ...props }: { icon: QuizLayoutUiDefinitio
   }
 }
 
-export function SandboxLayoutSelector({
-  layoutId,
-  setLayoutId,
-  disabled = false,
-  aspectRatio = "16:9",
-}: SandboxLayoutSelectorProps) {
+export function SandboxLayoutSelector({ layoutId, setLayoutId, disabled = false, aspectRatio = "16:9" }: SandboxLayoutSelectorProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -64,7 +49,7 @@ export function SandboxLayoutSelector({
 
   useEffect(() => {
     if (!aspectRatio) return;
-    const compatible = getCompatibleLayoutForAspectRatio(layoutId, aspectRatio);
+    const compatible = getCompatibleLayoutForAspectRatio(layoutId);
     if (compatible !== layoutId) {
       setLayoutId(compatible);
     }
@@ -72,7 +57,7 @@ export function SandboxLayoutSelector({
 
   const selectedLayout =
     availableLayouts.find((l) => l.id === layoutId) ??
-    (layoutId !== "baseline" ? getQuizLayoutUiDefinition(layoutId as ResolvedQuizLayoutId) : null) ??
+    (layoutId !== "baseline" ? getQuizLayoutUiDefinition(layoutId) : null) ??
     availableLayouts[0] ??
     QUIZ_LAYOUT_UI_DEFINITIONS[0];
 

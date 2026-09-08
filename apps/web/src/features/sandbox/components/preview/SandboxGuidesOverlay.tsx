@@ -3,7 +3,7 @@ import { useTranslation } from "../../../../i18n";
 export type SandboxGuidesOverlayProps = {
   showSafeArea: boolean;
   showShortsGuide: boolean;
-  aspectRatio: "16:9" | "9:16";
+  aspectRatio: "16:9";
 };
 
 export function SandboxGuidesOverlay({ showSafeArea, showShortsGuide, aspectRatio }: SandboxGuidesOverlayProps) {

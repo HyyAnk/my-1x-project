@@ -1,15 +1,9 @@
-import {
-  EditorialOverlaySchema,
-  QUIZ_MAX_CHOICES_PER_QUESTION,
-  QUIZ_MAX_QUESTION_COUNT,
-  QUIZ_MIN_QUESTION_COUNT,
-  makeId,
-  nowIso,
-  type Scene,
-} from "@studio/shared";
+import { EditorialOverlaySchema, QUIZ_MAX_CHOICES_PER_QUESTION, type Scene } from "@studio/shared";
 import type { Beat } from "../sceneTiming.js";
 import { stripEditorialOverlayInstructions } from "../visualPrompt.js";
 import { canonicalizeVisibleQuizAnswer, stripQuizChoiceLabel } from "../quiz/domain/quiz.js";
+import type { TopicMatrixPlan } from "../context/topicMatrixPlanner.js";
+import { validateTopicCandidateSlots } from "../context/topicCandidateValidator.js";
 
 export function extractMarkdown(output: string, fallbackHeading: string): string {
   let value = output.trim();
@@ -53,91 +47,8 @@ export function parseJson(output: string, context = "Codex"): unknown {
   }
 }
 
-export function parseTopicCandidates(output: string, channelId: string, topicHint?: string) {
-  const raw = parseJson(output);
-  const list = Array.isArray(raw) ? raw : (raw as { candidates?: unknown[] }).candidates;
-  // Accept a small tolerance around the requested 5 candidates: an LLM response
-  // with 4-6 usable ideas is worth keeping instead of failing the whole task.
-  if (!Array.isArray(list) || list.length < 3 || list.length > 7) {
-    throw new Error(`Codex topic output must contain 3-7 candidates (got ${Array.isArray(list) ? list.length : "none"})`);
-  }
-  const formats = ["knowledge", "image_guess", "multiple_choice", "true_false", "odd_one_out"] as const;
-  const ages = ["4-6", "7-9", "10-12", "family"] as const;
-  return list.flatMap((item, index) => {
-    const candidate = item as Record<string, unknown>;
-    const title = String(candidate.title ?? "").trim();
-    if (!title) {
-      console.warn(`[parsers] Dropped topic candidate #${index + 1} with empty title from SUGGEST_TOPICS output`);
-      return [];
-    }
-    const rawThemeHint = candidate.theme_hint ? String(candidate.theme_hint).trim() : undefined;
-    const themeHint = rawThemeHint || (topicHint && index < 2 ? topicHint : undefined);
-    const archetypes = [
-      "deep_trivia",
-      "visual_spotting",
-      "verdict_true_false",
-      "verdict_fact_myth",
-      "versus_faceoff",
-      "visual_identification",
-      "speed_blitz",
-      "mystery_reveal",
-      "clue_deduction",
-    ] as const;
-    const rawArchetype = candidate.archetype ? String(candidate.archetype).trim().toLowerCase() : undefined;
-    const normalizedArchetype = rawArchetype === "verdict_fact_myth" ? "verdict_true_false" : rawArchetype;
-    const archetype = normalizedArchetype && archetypes.includes(normalizedArchetype as (typeof archetypes)[number])
-      ? (normalizedArchetype as (typeof archetypes)[number])
-      : undefined;
-
-    const layouts = [
-      "media_left_choices_right",
-      "visual_choices_three",
-      "visual_choices_three_pure",
-      "split_versus_two",
-      "verdict_true_false",
-      "full_stack_list",
-      "mystery_reveal",
-      "clue_deduction",
-    ] as const;
-    const rawLayout = candidate.suggested_layout || candidate.target_layout
-      ? String(candidate.suggested_layout || candidate.target_layout).trim().toLowerCase()
-      : undefined;
-    const suggestedLayout = rawLayout && layouts.includes(rawLayout as (typeof layouts)[number])
-      ? (rawLayout as (typeof layouts)[number])
-      : undefined;
-
-    const rawDomainId = candidate.domain_id || candidate.domainId
-      ? String(candidate.domain_id || candidate.domainId).trim()
-      : undefined;
-    const rawSubtopicId = candidate.subtopic_id || candidate.subtopicId
-      ? String(candidate.subtopic_id || candidate.subtopicId).trim()
-      : undefined;
-
-    return {
-      topic_id: makeId(`topic${index + 1}`),
-      channel_id: channelId,
-      title,
-      premise: String(candidate.premise ?? "").trim(),
-      why_it_fits: String(candidate.why_it_fits ?? candidate.whyItFits ?? "").trim(),
-      hook: String(candidate.hook ?? "").trim(),
-      estimated_potential: String(candidate.estimated_potential ?? candidate.estimatedPotential ?? "").trim(),
-      generated_at: nowIso(),
-      selected: false,
-      quiz_format: formats.includes(String(candidate.quiz_format) as (typeof formats)[number])
-        ? (String(candidate.quiz_format) as (typeof formats)[number])
-        : "knowledge",
-      question_count: Math.max(QUIZ_MIN_QUESTION_COUNT, Math.min(QUIZ_MAX_QUESTION_COUNT, Number(candidate.question_count) || 8)),
-      age_band: ages.includes(String(candidate.age_band) as (typeof ages)[number])
-        ? (String(candidate.age_band) as (typeof ages)[number])
-        : "7-9",
-      visual_style: "mixed" as const,
-      ...(archetype ? { archetype } : {}),
-      ...(suggestedLayout ? { suggested_layout: suggestedLayout } : {}),
-      ...(themeHint ? { theme_hint: themeHint } : {}),
-      ...(rawDomainId ? { domain_id: rawDomainId } : {}),
-      ...(rawSubtopicId ? { subtopic_id: rawSubtopicId } : {}),
-    };
-  });
+export function parseTopicCandidates(output: string, channelId: string, plan: TopicMatrixPlan) {
+  return validateTopicCandidateSlots(output, plan, channelId);
 }
 
 export function parseBeatsOutput(output: string): Beat[] {

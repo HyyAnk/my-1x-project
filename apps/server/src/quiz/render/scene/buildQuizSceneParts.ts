@@ -97,10 +97,7 @@ export function buildQuizSceneParts(model: QuizSceneRenderModel): QuizSceneParts
     },
     brand: {
       name: model.channelBrandName,
-      visible:
-        model.aspectRatio !== "9:16"
-          ? Boolean(model.channelBrandName?.trim()) || model.brandVisible
-          : model.brandVisible,
+      visible: model.aspectRatio !== "9:16" ? Boolean(model.channelBrandName?.trim()) || model.brandVisible : model.brandVisible,
       aspectRatio: model.aspectRatio,
     },
     mascot: model.mascot,

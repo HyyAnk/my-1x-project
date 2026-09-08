@@ -35,9 +35,7 @@ function renderChoice(input: ChoiceGroupRenderInput, choice: QuizSceneChoice, di
   const layout = textLayout(choice.text, "choice", { hasMascot: input.hasMascot, layoutId: input.layoutId });
   const itemPhase = ambientPhaseSeconds("float", displayIndex, input.questionId);
   const skinClasses = [input.skin.className, input.skin.cardClassName?.(hookInput)].filter(Boolean).join(" ");
-  const stateClasses = [state === "pending" ? "answer-normal answer-pending" : `answer-${state}`, revealClass]
-    .filter(Boolean)
-    .join(" ");
+  const stateClasses = [state === "pending" ? "answer-normal answer-pending" : `answer-${state}`, revealClass].filter(Boolean).join(" ");
   const semanticAttributes = choiceAttributes(input, choice, label, state);
   const content = choiceSurfaceContent(choice, label, decorations);
 

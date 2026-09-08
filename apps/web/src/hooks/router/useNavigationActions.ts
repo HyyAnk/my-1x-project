@@ -79,10 +79,18 @@ export function useNavigationActions(navigate: (to: string, replace?: boolean) =
     [navigate],
   );
 
+  const openShortReel = useCallback(
+    (channelId: string, reelId: string) => {
+      navigate(`/channels/${encodeURIComponent(channelId)}/short-reels/${encodeURIComponent(reelId)}`);
+    },
+    [navigate],
+  );
+
   return {
     openPage,
     openChannel,
     openEpisode,
+    openShortReel,
     setQueryParam,
   };
 }

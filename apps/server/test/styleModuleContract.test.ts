@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  StyleModuleManifestSchema,
-  type StyleModuleManifest,
-  type StyleSlot,
-} from "../src/quiz/visual/styleModules/manifestSchema.js";
-import type {
-  StyleModuleRenderer,
-  ThinkingBarStyleModule,
-} from "../src/quiz/visual/styleModules/types.js";
+import { StyleModuleManifestSchema, type StyleModuleManifest, type StyleSlot } from "../src/quiz/visual/styleModules/manifestSchema.js";
+import type { StyleModuleRenderer, ThinkingBarStyleModule } from "../src/quiz/visual/styleModules/types.js";
 
 const validManifest: StyleModuleManifest = {
   id: "studio.thinking-bar.countdown",
@@ -54,16 +47,17 @@ describe("StyleModuleManifestSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it.each([".studio-thinking-bar-countdown body", ".studio-thinking-bar-countdown .answer-card", ".studio-thinking-bar-countdown__root .answer-card"])(
-    "rejects CSS selectors with an unscoped descendant compound: %s",
-    (selector) => {
-      const result = StyleModuleManifestSchema.safeParse({
-        ...validManifest,
-        cssSelectors: [selector],
-      });
-      expect(result.success).toBe(false);
-    },
-  );
+  it.each([
+    ".studio-thinking-bar-countdown body",
+    ".studio-thinking-bar-countdown .answer-card",
+    ".studio-thinking-bar-countdown__root .answer-card",
+  ])("rejects CSS selectors with an unscoped descendant compound: %s", (selector) => {
+    const result = StyleModuleManifestSchema.safeParse({
+      ...validManifest,
+      cssSelectors: [selector],
+    });
+    expect(result.success).toBe(false);
+  });
 
   it.each(["auto", "not_a_builtin", "foo_bar"])("rejects arbitrary legacy style ID: %s", (id) => {
     const result = StyleModuleManifestSchema.safeParse({ ...validManifest, id });

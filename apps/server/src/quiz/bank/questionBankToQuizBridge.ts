@@ -38,13 +38,16 @@ export async function createEpisodeFromQuestionBank(deps: {
   llmClient?: LLMClient | null;
 }): Promise<CreateEpisodeFromQuestionBankResult> {
   const { repository, tasks, channelId, input } = deps;
+  if (input.render_aspect_ratio && (input.render_aspect_ratio as string) !== "16:9") {
+    throw new RepositoryError("Episode creation only supports 16:9 landscape", "UNSUPPORTED_ASPECT_RATIO");
+  }
   const channel = await repository.getChannel(channelId);
   const bankQuestion = await repository.getQuestionBankQuestion(input.question_id, channelId);
   if (!bankQuestion) {
     throw new RepositoryError(`Question not found: ${input.question_id}`, "QUESTION_NOT_FOUND");
   }
 
-  const isCooldown = Boolean(bankQuestion.channel_cooldown?.is_cooldown || (bankQuestion as any).is_in_cooldown);
+  const isCooldown = Boolean(bankQuestion.channel_cooldown?.is_cooldown);
   if (isCooldown && !input.force) {
     const days = bankQuestion.channel_cooldown?.days_remaining ?? 30;
     throw new RepositoryError(
@@ -55,7 +58,7 @@ export async function createEpisodeFromQuestionBank(deps: {
 
   const blueprint = getQuizGameplayArchetype(bankQuestion.archetype_id);
   const targetLayout = blueprint?.targetLayout ?? "full_stack_list";
-  const renderAspect = input.render_aspect_ratio ?? "9:16";
+  const renderAspect = input.render_aspect_ratio ?? "16:9";
   const { requestedStyle, resolvedStyle } = resolveEpisodeVisualStyles(channel, input.visual_style);
 
   const targetLanguage = input.target_language || channel.language || "en";
@@ -63,12 +66,27 @@ export async function createEpisodeFromQuestionBank(deps: {
   const quizQuestion = convertBankQuestionToQuizQuestion(bankQuestion, { language: targetLanguage, translation: activeTranslation });
 
   const { episode, quiz, timestamp } = await bootstrapSingleQuestionEpisode({
-    repository, channel, channelId, bankQuestion, quizQuestion, targetLanguage, targetLayout, requestedStyle, resolvedStyle, renderAspect,
+    repository,
+    channel,
+    channelId,
+    bankQuestion,
+    quizQuestion,
+    targetLanguage,
+    targetLayout,
+    requestedStyle,
+    resolvedStyle,
+    renderAspect,
     localizedHook: activeTranslation?.question || bankQuestion.question,
     localizedPremise: activeTranslation?.explanation || bankQuestion.explanation,
   });
 
-  const directorPlan = buildSingleQuestionDirectorPlan({ episodeId: episode.episode_id, quizQuestion, archetypeId: bankQuestion.archetype_id, channel, targetLayout });
+  const directorPlan = buildSingleQuestionDirectorPlan({
+    episodeId: episode.episode_id,
+    quizQuestion,
+    archetypeId: bankQuestion.archetype_id,
+    channel,
+    targetLayout,
+  });
   await repository.writeDirectorPlan(channelId, episode.episode_id, directorPlan);
   await repository.appendQuestionHistory(channelId, episode.episode_id, [quizQuestion]);
 
@@ -88,6 +106,9 @@ export async function createEpisodeFromTopicWithBank(deps: {
   llmClient?: LLMClient | null;
 }): Promise<CreateEpisodeFromTopicWithBankResult> {
   const { repository, tasks, channelId, input } = deps;
+  if (input.render_aspect_ratio && (input.render_aspect_ratio as string) !== "16:9") {
+    throw new RepositoryError("Episode creation only supports 16:9 landscape", "UNSUPPORTED_ASPECT_RATIO");
+  }
   const channel = await repository.getChannel(channelId);
   const topics = await repository.listTopics(channelId);
   const topic = topics.find((t) => t.topic_id === input.topic_id);
@@ -95,22 +116,41 @@ export async function createEpisodeFromTopicWithBank(deps: {
     throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
   }
 
+  if (topic.content_kind === "short_reel") {
+    throw new RepositoryError("Cannot create episode from short-reel topic candidate", "INVALID_TOPIC_KIND");
+  }
+
   const questionCount = input.question_count ?? topic.question_count ?? 3;
   const targetLanguage = input.target_language || channel.language || "en";
 
   const jitResult = await ensureTopicQuestionsWithJitFallback({
-    repository, channelId, topic, questionCount, targetLanguage, llmClient: deps.llmClient, forceIncludeCooldown: input.force ?? false,
+    repository,
+    channelId,
+    topic,
+    questionCount,
+    targetLanguage,
+    llmClient: deps.llmClient,
+    forceIncludeCooldown: input.force ?? false,
   });
   const selectedQuestions = jitResult.questions;
 
   const quizQuestions = await transcreateAndConvertTopicQuestions(selectedQuestions, targetLanguage, channel, repository, deps.llmClient);
-  const renderAspect = input.render_aspect_ratio ?? (topic.title.toLowerCase().includes("shorts") || Boolean(topic.archetype) ? "9:16" : "16:9");
+  const renderAspect = input.render_aspect_ratio ?? "16:9";
   const targetLayout = resolveTargetLayoutForTopic(topic, renderAspect);
-  const blueprint = topic.archetype ? getQuizGameplayArchetype(topic.archetype as any) : undefined;
+  const blueprint = topic.archetype ? getQuizGameplayArchetype(topic.archetype) : undefined;
   const { requestedStyle, resolvedStyle } = resolveEpisodeVisualStyles(channel, input.visual_style ?? topic.visual_style);
 
   const { episode, quiz, timestamp } = await bootstrapTopicEpisode({
-    repository, channel, channelId, topic, quizQuestions, targetLanguage, targetLayout, requestedStyle, resolvedStyle, renderAspect,
+    repository,
+    channel,
+    channelId,
+    topic,
+    quizQuestions,
+    targetLanguage,
+    targetLayout,
+    requestedStyle,
+    resolvedStyle,
+    renderAspect,
     blueprintDefaultFormat: blueprint?.defaultFormat,
     selectedAgeBand: selectedQuestions[0]?.age_band,
   });
@@ -119,9 +159,6 @@ export async function createEpisodeFromTopicWithBank(deps: {
   await repository.writeDirectorPlan(channelId, episode.episode_id, directorPlan);
 
   const questionIds = selectedQuestions.map((q) => q.id);
-  if (typeof (repository as any).recordQuestionUsage === "function") {
-    await (repository as any).recordQuestionUsage(channelId, episode.episode_id, questionIds);
-  }
   await repository.appendQuestionHistory(channelId, episode.episode_id, quizQuestions, 30);
   await repository.markTopicSelected(channelId, topic.topic_id, quizQuestions.length);
   await repository.updateChannel(channelId, { updated_at: timestamp });

@@ -22,7 +22,7 @@ function module(id: string, css = ".fixture-thinking-bar__root { color: red; }")
       cssSelectors: [`.${namespace}__root`],
     },
     renderer: {
-      id: id as never,
+      id: id,
       displayName: id,
       description: "Fixture module",
       renderHtml: () => `<div class="${namespace}__root"></div>`,
@@ -68,7 +68,9 @@ describe("style activation", () => {
 
       const restarted = new StyleActivationManager(false, statePath);
       expect(restarted.resolveModule("thinking-bar", "fixture.thinking-bar.persist")?.renderer.renderCss()).toContain("blue");
-      expect(restarted.resolveModule("thinking-bar", "fixture.thinking-bar.persist", first.revision)?.renderer.renderCss()).toContain("red");
+      expect(restarted.resolveModule("thinking-bar", "fixture.thinking-bar.persist", first.revision)?.renderer.renderCss()).toContain(
+        "red",
+      );
     } finally {
       rmSync(directory, { recursive: true, force: true });
     }
@@ -88,7 +90,10 @@ describe("style activation", () => {
     const base = manager.stageAndActivate(module("fixture.thinking-bar.payload"));
     const htmlChanged = manager.stageAndActivate({
       ...module("fixture.thinking-bar.payload"),
-      renderer: { renderHtml: () => '<div class="fixture-payload-thinking-bar__root">changed</div>', renderCss: () => ".fixture-payload-thinking-bar__root { color: red; }" },
+      renderer: {
+        renderHtml: () => '<div class="fixture-payload-thinking-bar__root">changed</div>',
+        renderCss: () => ".fixture-payload-thinking-bar__root { color: red; }",
+      },
     });
     expect(htmlChanged.revision).not.toBe(base.revision);
   });
@@ -96,20 +101,26 @@ describe("style activation", () => {
   it("resolves a namespaced custom module through the scene style resolver", () => {
     const custom = module("fixture.thinking-bar.scene");
     styleActivationManager.stageAndActivate(custom);
-    const resolved = resolveQuizSceneElementStyles({ thinkingBar: custom.manifest.id as never });
+    const resolved = resolveQuizSceneElementStyles({ thinkingBar: custom.manifest.id });
     expect(resolved.thinkingBar).toBe(custom.manifest.id);
   });
 
   it("keeps CSS aggregation pinned to the requested catalog revision", () => {
-    const first = styleActivationManager.stageAndActivate(module("fixture.thinking-bar.css-pin", ".fixture-thinking-bar__root { color: red; }"));
-    const second = styleActivationManager.stageAndActivate(module("fixture.thinking-bar.css-pin", ".fixture-thinking-bar__root { color: blue; }"));
+    const first = styleActivationManager.stageAndActivate(
+      module("fixture.thinking-bar.css-pin", ".fixture-thinking-bar__root { color: red; }"),
+    );
+    const second = styleActivationManager.stageAndActivate(
+      module("fixture.thinking-bar.css-pin", ".fixture-thinking-bar__root { color: blue; }"),
+    );
     expect(getThinkingBarsCss(first.revision)).toContain("color: red");
     expect(getThinkingBarsCss(first.revision)).not.toContain("color: blue");
     expect(getThinkingBarsCss(second.revision)).toContain("color: blue");
   });
 
   it("does not fall back to active custom CSS for an unknown historical revision", () => {
-    const active = styleActivationManager.stageAndActivate(module("fixture.thinking-bar.missing-revision", ".fixture-thinking-bar__root { color: purple; }"));
+    const active = styleActivationManager.stageAndActivate(
+      module("fixture.thinking-bar.missing-revision", ".fixture-thinking-bar__root { color: purple; }"),
+    );
     expect(getThinkingBarsCss("catalog-does-not-exist")).not.toContain("color: purple");
     expect(active.revision).not.toBe("catalog-does-not-exist");
   });

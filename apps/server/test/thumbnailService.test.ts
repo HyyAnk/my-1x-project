@@ -4,13 +4,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { RepositoryService } from "../src/repository.js";
-import {
-  generateEpisodeThumbnail,
-  getEpisodeThumbnailManifest,
-  resolveTargetThumbnailRatio,
-} from "../src/quiz/thumbnail/index.js";
+import { generateEpisodeThumbnail, getEpisodeThumbnailManifest, resolveTargetThumbnailRatio } from "../src/quiz/thumbnail/index.js";
 import type { ImageProvider } from "../src/providers/index.js";
-import type { TopicCandidate } from "@studio/shared";
+import type { Episode, TopicCandidate } from "@studio/shared";
+import type { AppState } from "../src/routes/state.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,6 +27,7 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
       {
         topic_id: `top_${Date.now()}_1`,
         channel_id: channelId,
+        content_kind: "episode" as const,
         title,
         premise,
         why_it_fits: "Great topic",
@@ -44,6 +42,7 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
       ...[2, 3, 4, 5].map((i) => ({
         topic_id: `top_${Date.now()}_${i}`,
         channel_id: channelId,
+        content_kind: "episode" as const,
         title: `Other Topic ${i}`,
         premise: "Premise",
         why_it_fits: "Fit",
@@ -143,12 +142,7 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
       name: "History Mysteries",
     });
 
-    const episode = await createTestEpisode(
-      repository,
-      channel.channel_id,
-      "Ancient Pyramids Explained",
-      "100 historical facts",
-    );
+    const episode = await createTestEpisode(repository, channel.channel_id, "Ancient Pyramids Explained", "100 historical facts");
 
     const mockImageProvider: ImageProvider = {
       generateReference: async () => {
@@ -196,9 +190,17 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
     expect(manifest.asset_path_9_16).toBeNull(); // Auto detected standard 16:9
   });
 
-  it("auto-detects 9:16 thumbnail when video is Shorts", async () => {
+  it("auto-detects 9:16 thumbnail when thumbnail_aspect_ratio is configured as 9:16", async () => {
     const channel = await repository.createChannel({ name: "Shorts Trivia Blitz" });
-    const episode = await createTestEpisode(repository, channel.channel_id, "Crazy Animals Facts #Shorts", "Viral short facts");
+    const episode = await createTestEpisode(repository, channel.channel_id, "Crazy Animals Facts", "Viral short facts");
+    await repository.updateEpisodeSettings(
+      channel.channel_id,
+      episode.episode_id,
+      {
+        thumbnail_aspect_ratio: "9:16",
+      },
+      2.5,
+    );
 
     const mockImageProvider: ImageProvider = {
       generateReference: async () => {
@@ -216,7 +218,7 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
     });
 
     expect(manifest.asset_path_9_16).toBeDefined();
-    expect(manifest.asset_path_16_9).toBeNull(); // Auto detected 9:16 Shorts
+    expect(manifest.asset_path_16_9).toBeNull();
   });
 
   it("accumulates version history on repeated generation and allows activating older versions", async () => {
@@ -268,12 +270,7 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
     expect(v2Manifest.history[1].id).toBe(v1Id);
 
     // 3. Set Version 1 as Active
-    const activatedManifest = await setActiveThumbnailVersion(
-      repository,
-      channel.channel_id,
-      episode.episode_id,
-      v1Id,
-    );
+    const activatedManifest = await setActiveThumbnailVersion(repository, channel.channel_id, episode.episode_id, v1Id);
 
     expect(activatedManifest.active_16_9_id).toBe(v1Id);
     expect(activatedManifest.hook_text).toBe("VERSION ONE HOOK");
@@ -284,12 +281,7 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
 
     // 4. Delete Version 2
     if (v2Item) {
-      const postDeleteManifest = await deleteThumbnailVersion(
-        repository,
-        channel.channel_id,
-        episode.episode_id,
-        v2Item.id,
-      );
+      const postDeleteManifest = await deleteThumbnailVersion(repository, channel.channel_id, episode.episode_id, v2Item.id);
       expect(postDeleteManifest.history.length).toBe(1);
       expect(postDeleteManifest.history[0].id).toBe(v1Id);
     }
@@ -326,16 +318,9 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
         state: {
           config: {
             active_engine: "codex",
-            codex: {} as any,
-            antigravity: {} as any,
-            audio_generation: {} as any,
-            image_generation: {} as any,
-            video_generation: {} as any,
-            mascot_stage: {} as any,
-            question_history: {} as any,
           },
           storageConfigured: true,
-        },
+        } as unknown as AppState,
       }),
     );
 
@@ -360,15 +345,15 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
   });
 
   describe("resolveTargetThumbnailRatio", () => {
-    it("resolves to 9:16 when render_aspect_ratio is 9:16 and thumbnail mode is auto", () => {
+    it("defaults to landscape despite retired portrait render metadata", () => {
       const episode = {
         topic: { title: "Dinosaur Facts" },
         quiz_config: {
           render_aspect_ratio: "9:16",
           thumbnail_aspect_ratio: "auto",
         },
-      } as any;
-      expect(resolveTargetThumbnailRatio(episode)).toBe("9:16");
+      } as unknown as Episode;
+      expect(resolveTargetThumbnailRatio(episode)).toBe("16:9");
     });
 
     it("resolves to 16:9 when render_aspect_ratio is 16:9 and thumbnail mode is auto", () => {
@@ -378,8 +363,34 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
           render_aspect_ratio: "16:9",
           thumbnail_aspect_ratio: "auto",
         },
-      } as any;
+      } as unknown as Episode;
       expect(resolveTargetThumbnailRatio(episode)).toBe("16:9");
+    });
+
+    it("resolves to 16:9 when topic title includes 'shorts' and thumbnail mode is auto (no title inference)", () => {
+      const episode = {
+        topic: { title: "My shorts episode" },
+        quiz_config: {
+          thumbnail_aspect_ratio: "auto",
+        },
+      } as unknown as Episode;
+      expect(resolveTargetThumbnailRatio(episode)).toBe("16:9");
+    });
+
+    it("respects configMode '9:16' and 'both'", () => {
+      const episode916 = {
+        quiz_config: {
+          thumbnail_aspect_ratio: "9:16",
+        },
+      } as unknown as Episode;
+      expect(resolveTargetThumbnailRatio(episode916)).toBe("9:16");
+
+      const episodeBoth = {
+        quiz_config: {
+          thumbnail_aspect_ratio: "both",
+        },
+      } as unknown as Episode;
+      expect(resolveTargetThumbnailRatio(episodeBoth)).toBe("both");
     });
 
     it("respects explicit requested ratio over episode render_aspect_ratio", () => {
@@ -388,12 +399,10 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
         quiz_config: {
           render_aspect_ratio: "9:16",
         },
-      } as any;
+      } as unknown as Episode;
       expect(resolveTargetThumbnailRatio(episode, "both")).toBe("both");
       expect(resolveTargetThumbnailRatio(episode, "16:9")).toBe("16:9");
+      expect(resolveTargetThumbnailRatio(episode, "9:16")).toBe("9:16");
     });
   });
 });
-
-
-

@@ -1,8 +1,4 @@
-import {
-  MASCOT_CANVAS_SIZES,
-  serializeQuizPaletteCss,
-  type SandboxPhaseTimeline,
-} from "@studio/shared";
+import { MASCOT_CANVAS_SIZES, serializeQuizPaletteCss, type SandboxPhaseTimeline } from "@studio/shared";
 import { candyArcadeCss } from "../candyArcadeComposition.js";
 import { candyArcadeFontReadinessScript } from "../candyArcade/candyArcadeFonts.js";
 import { renderQuizSceneBackground, type renderStableQuizSceneParts } from "../scene/renderQuizSceneParts.js";

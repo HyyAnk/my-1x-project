@@ -1,4 +1,5 @@
 import {
+  type Channel,
   type Episode,
   type MascotProfile,
   type ThumbnailAspectRatio,
@@ -16,6 +17,7 @@ import {
   pruneVersionHistory,
   type GenerateEpisodeThumbnailOptions,
 } from "./thumbnailManifestManager.js";
+import type { QuizThumbnailPlan } from "./thumbnailTypes.js";
 
 export type { GenerateEpisodeThumbnailOptions } from "./thumbnailManifestManager.js";
 export {
@@ -41,11 +43,98 @@ export function resolveTargetThumbnailRatio(
     return configMode;
   }
 
-  const isShortsVideo =
-    episode.quiz_config?.render_aspect_ratio === "9:16" ||
-    Boolean(episode.topic?.title && episode.topic.title.toLowerCase().includes("shorts"));
+  return "16:9";
+}
 
-  return isShortsVideo ? "9:16" : "16:9";
+async function loadChannelMascot(
+  repository: RepositoryService,
+  channelId: string,
+  episodeId: string,
+  mascotId?: string | null,
+  logger?: StudioLogger,
+): Promise<MascotProfile | null> {
+  if (!mascotId) return null;
+  try {
+    return await repository.getMascot(mascotId);
+  } catch {
+    logger?.warn(`Assigned mascot ${mascotId} not found, proceeding with default persona`, {
+      profileId: channelId,
+      workerId: episodeId,
+    });
+    return null;
+  }
+}
+
+async function loadEpisodeQuestions(
+  repository: RepositoryService,
+  channelId: string,
+  episodeId: string,
+): Promise<Array<{ question: string; choices?: string[]; answer?: string }>> {
+  try {
+    const scenes = (await repository.readScenes(channelId, episodeId)) as unknown[];
+    const result: Array<{ question: string; choices?: string[]; answer?: string }> = [];
+
+    for (const s of scenes) {
+      if (!s || typeof s !== "object" || !("quiz" in s)) continue;
+      const quiz = (s as { quiz?: unknown }).quiz;
+      if (!quiz || typeof quiz !== "object" || !("question" in quiz)) continue;
+      const q = quiz as { question?: unknown; choices?: unknown; answer?: unknown };
+      if (typeof q.question === "string" && q.question.trim().length > 0) {
+        result.push({
+          question: q.question,
+          choices: Array.isArray(q.choices) ? q.choices.filter((c): c is string => typeof c === "string") : undefined,
+          answer: typeof q.answer === "string" ? q.answer : undefined,
+        });
+      }
+    }
+    return result;
+  } catch {
+    return [];
+  }
+}
+
+interface VariantGenerationState {
+  assetPath: string | null;
+  activeId: string | undefined;
+}
+
+async function processVariantGeneration(params: {
+  ratio: "16:9" | "9:16";
+  prompt: string | null;
+  shouldGenerate: boolean;
+  repository: RepositoryService;
+  channel: Channel;
+  episode: Episode;
+  plan: QuizThumbnailPlan;
+  options: GenerateEpisodeThumbnailOptions;
+  logger: StudioLogger;
+  nowTimestamp: number;
+  currentAssetPath: string | null;
+  currentActiveId: string | undefined;
+  history: ThumbnailHistoryItem[];
+}): Promise<VariantGenerationState> {
+  if (!params.shouldGenerate || !params.prompt) {
+    return { assetPath: params.currentAssetPath, activeId: params.currentActiveId };
+  }
+  const result = await generateThumbnailVariant({
+    repository: params.repository,
+    channel: params.channel,
+    episode: params.episode,
+    ratio: params.ratio,
+    prompt: params.prompt,
+    plan: params.plan,
+    options: params.options,
+    logger: params.logger,
+    nowTimestamp: params.nowTimestamp,
+  });
+  for (let i = 0; i < params.history.length; i++) {
+    const item = params.history[i];
+    if (item && item.aspect_ratio === params.ratio) {
+      params.history[i] = { ...item, is_active: false };
+    }
+  }
+  params.history.unshift(result.historyItem);
+  return { assetPath: result.assetPath, activeId: result.versionId };
 }
 
 /**
@@ -62,32 +151,8 @@ export async function generateEpisodeThumbnail(
   const channel = await repository.getChannel(channelId);
   const targetRatio = resolveTargetThumbnailRatio(episode, options.aspectRatio);
 
-  let mascotProfile: MascotProfile | null = null;
-  if (channel.mascot_id) {
-    try {
-      mascotProfile = await repository.getMascot(channel.mascot_id);
-    } catch {
-      logger.warn(`Assigned mascot ${channel.mascot_id} not found, proceeding with default persona`, {
-        profileId: channelId,
-        workerId: episodeId,
-      });
-    }
-  }
-
-  let scenes: Array<{ dialogue: string; quiz?: any }> = [];
-  try {
-    scenes = await repository.readScenes(channelId, episodeId);
-  } catch {
-    // Empty scenes fallback
-  }
-
-  const questions = scenes
-    .filter((s) => s.quiz && s.quiz.question)
-    .map((s) => ({
-      question: s.quiz.question,
-      choices: s.quiz.choices,
-      answer: s.quiz.answer,
-    }));
+  const mascotProfile = await loadChannelMascot(repository, channelId, episodeId, channel.mascot_id, logger);
+  const questions = await loadEpisodeQuestions(repository, channelId, episodeId);
 
   const plan = await planThumbnailWithAI({
     topicTitle: episode.topic?.title || "Quiz Episode",
@@ -112,65 +177,55 @@ export async function generateEpisodeThumbnail(
   const prompt916 = shouldGenerate916 ? compileThumbnailPrompt(plan, "9:16", mascotProfile) : null;
 
   const existingManifest = await getEpisodeThumbnailManifest(repository, channelId, episodeId);
-  let history: ThumbnailHistoryItem[] = existingManifest?.history ? [...existingManifest.history] : [];
-
-  let assetPath169: string | null = episode.thumbnail_asset_path_16_9;
-  let assetPath916: string | null = episode.thumbnail_asset_path_9_16;
-  let active169Id: string | undefined = existingManifest?.active_16_9_id;
-  let active916Id: string | undefined = existingManifest?.active_9_16_id;
-
+  const history: ThumbnailHistoryItem[] = existingManifest?.history ? [...existingManifest.history] : [];
   const nowTimestamp = Date.now();
 
-  if (shouldGenerate169 && prompt169) {
-    const result169 = await generateThumbnailVariant({
-      repository,
-      channel,
-      episode,
-      ratio: "16:9",
-      prompt: prompt169,
-      plan,
-      options,
-      logger,
-      nowTimestamp,
-    });
-    assetPath169 = result169.assetPath;
-    active169Id = result169.versionId;
-    history = history.map((item) => (item.aspect_ratio === "16:9" ? { ...item, is_active: false } : item));
-    history.unshift(result169.historyItem);
-  }
+  const gen169 = await processVariantGeneration({
+    ratio: "16:9",
+    prompt: prompt169,
+    shouldGenerate: shouldGenerate169,
+    repository,
+    channel,
+    episode,
+    plan,
+    options,
+    logger,
+    nowTimestamp,
+    currentAssetPath: episode.thumbnail_asset_path_16_9,
+    currentActiveId: existingManifest?.active_16_9_id,
+    history,
+  });
 
-  if (shouldGenerate916 && prompt916) {
-    const result916 = await generateThumbnailVariant({
-      repository,
-      channel,
-      episode,
-      ratio: "9:16",
-      prompt: prompt916,
-      plan,
-      options,
-      logger,
-      nowTimestamp,
-    });
-    assetPath916 = result916.assetPath;
-    active916Id = result916.versionId;
-    history = history.map((item) => (item.aspect_ratio === "9:16" ? { ...item, is_active: false } : item));
-    history.unshift(result916.historyItem);
-  }
+  const gen916 = await processVariantGeneration({
+    ratio: "9:16",
+    prompt: prompt916,
+    shouldGenerate: shouldGenerate916,
+    repository,
+    channel,
+    episode,
+    plan,
+    options,
+    logger,
+    nowTimestamp,
+    currentAssetPath: episode.thumbnail_asset_path_9_16,
+    currentActiveId: existingManifest?.active_9_16_id,
+    history,
+  });
 
-  history = pruneVersionHistory(history);
+  const prunedHistory = pruneVersionHistory(history);
 
   return persistThumbnailManifest({
     repository,
     channel,
     episode,
     plan,
-    history,
+    history: prunedHistory,
     existingManifest,
-    assetPath169,
-    assetPath916,
+    assetPath169: gen169.assetPath,
+    assetPath916: gen916.assetPath,
     prompt169,
     prompt916,
-    active169Id,
-    active916Id,
+    active169Id: gen169.activeId,
+    active916Id: gen916.activeId,
   });
 }

@@ -15,6 +15,7 @@ export const ZONE_POSITIONS = {
   "api-contracts": { x: -38, y: 18, z: 32, layer: "server", radius: 4.0, label: "API Contracts" },
   "task-status-progress": { x: -70, y: 15, z: -15, layer: "server", radius: 3.6, label: "Task Status" },
   "server-core": { x: -50, y: 55, z: 0, layer: "server", radius: 3.8, label: "Server Core" },
+  "short-reel-application": { x: -45, y: 25, z: 28, layer: "server", radius: 4.0, label: "Short Reel App" },
   "server-tests": { x: -85, y: 42, z: -25, layer: "server", radius: 3.4, label: "Server Tests" },
 
   // RENDER & VISUAL LAYER (Lower-Left Cluster)

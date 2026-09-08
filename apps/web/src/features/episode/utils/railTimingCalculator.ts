@@ -10,23 +10,10 @@ import {
   type StageTimingInfo,
   type StreamlinedRailStage,
 } from "./railStageDefinitions";
-import {
-  isStreamlinedStageActive,
-  latestRelevantTask,
-  latestStreamlinedChildTask,
-} from "./railStatusResolver";
+import { isStreamlinedStageActive, latestRelevantTask, latestStreamlinedChildTask } from "./railStatusResolver";
 
-export function resolveStageTiming(
-  stage: RailStage,
-  status: RailStatus,
-  state: QuizV2State | null,
-  tasks: Task[] = [],
-  pipelineTask?: Task | null,
-  now: number = Date.now(),
-): StageTimingInfo | null {
+function calculateRecordedTiming(stage: RailStage, state: QuizV2State | null) {
   const recorded = state?.timings?.stages?.[stage];
-  const isRunning = status === "running";
-
   let durationSeconds: number | null = null;
   let isParallel = false;
   let parallelTotalSeconds: number | null = null;
@@ -39,50 +26,104 @@ export function resolveStageTiming(
     }
   }
 
-  // Active / running timing
+  return { recorded, durationSeconds, isParallel, parallelTotalSeconds };
+}
+
+function calculateRunningDuration(
+  stage: RailStage,
+  recorded: ReturnType<typeof calculateRecordedTiming>["recorded"],
+  tasks: Task[],
+  pipelineTask: Task | null | undefined,
+  now: number,
+): number | null {
+  if (recorded?.started_at) {
+    const startMs = new Date(recorded.started_at).getTime();
+    return Math.max(0, Math.floor((now - startMs) / 1000));
+  }
+
+  const childTask = latestStreamlinedChildTask(stage as StreamlinedRailStage, tasks) ?? latestRelevantTask(stage, tasks);
+  if (childTask && isTaskActive(childTask)) {
+    const startMs = new Date(childTask.started_at || childTask.created_at).getTime();
+    return Math.max(0, Math.floor((now - startMs) / 1000) + (childTask.accumulated_duration_seconds || 0));
+  }
+
+  if (pipelineTask && isTaskActive(pipelineTask) && isStreamlinedStageActive(stage as StreamlinedRailStage, pipelineTask)) {
+    const startMs = new Date(pipelineTask.started_at || pipelineTask.created_at).getTime();
+    return Math.max(0, Math.floor((now - startMs) / 1000));
+  }
+
+  return null;
+}
+
+function calculateTaskFallbackDuration(stage: RailStage, tasks: Task[], now: number): number | null {
+  const childTask = latestStreamlinedChildTask(stage as StreamlinedRailStage, tasks) ?? latestRelevantTask(stage, tasks);
+  if (childTask && (childTask.status === "COMPLETED" || isTaskActive(childTask))) {
+    const startMs = new Date(childTask.started_at || childTask.created_at).getTime();
+    const endMs = childTask.completed_at ? new Date(childTask.completed_at).getTime() : now;
+    return Math.max(0, Math.floor((endMs - startMs) / 1000) + (childTask.accumulated_duration_seconds || 0));
+  }
+  return null;
+}
+
+function calculateScenesFallback(tasks: Task[], now: number) {
+  const seqTasks = tasks.filter((t) => t.task_type === "GENERATE_SEQUENCE_SCENES" && (t.status === "COMPLETED" || isTaskActive(t)));
+  if (seqTasks.length === 0) return null;
+
+  const starts = seqTasks.map((t) => new Date(t.started_at || t.created_at).getTime());
+  const ends = seqTasks.map((t) => (t.completed_at ? new Date(t.completed_at).getTime() : now));
+  const minStart = Math.min(...starts);
+  const maxEnd = Math.max(...ends);
+  const durationSeconds = Math.max(0, Math.floor((maxEnd - minStart) / 1000));
+
+  return {
+    durationSeconds,
+    isParallel: seqTasks.length > 1,
+    parallelTotalSeconds: seqTasks.length > 1 ? durationSeconds : null,
+  };
+}
+
+function formatTimingLabels(durationSeconds: number, isRunning: boolean, isParallel: boolean, parallelTotalSeconds: number | null) {
+  const formattedDuration = formatElapsedHuman(durationSeconds) + (isRunning ? "..." : "");
+  let tooltip = `Duration: ${formattedDuration}`;
+  if (isParallel && parallelTotalSeconds && parallelTotalSeconds > 0) {
+    const parallelFormatted = formatElapsedHuman(parallelTotalSeconds);
+    tooltip = `Individual: ${formattedDuration} · Parallel total: ${parallelFormatted}`;
+  }
+  return { formattedDuration, tooltip };
+}
+
+export function resolveStageTiming(
+  stage: RailStage,
+  status: RailStatus,
+  state: QuizV2State | null,
+  tasks: Task[] = [],
+  pipelineTask?: Task | null,
+  now: number = Date.now(),
+): StageTimingInfo | null {
+  const isRunning = status === "running";
+  const timing = calculateRecordedTiming(stage, state);
+  let durationSeconds = timing.durationSeconds;
+  let isParallel = timing.isParallel;
+  let parallelTotalSeconds = timing.parallelTotalSeconds;
+
   if (isRunning) {
-    if (recorded?.started_at) {
-      const startMs = new Date(recorded.started_at).getTime();
-      durationSeconds = Math.max(0, Math.floor((now - startMs) / 1000));
-    } else {
-      const childTask = latestStreamlinedChildTask(stage as StreamlinedRailStage, tasks) ?? latestRelevantTask(stage, tasks);
-      if (childTask && isTaskActive(childTask)) {
-        const startMs = new Date(childTask.started_at || childTask.created_at).getTime();
-        durationSeconds = Math.max(0, Math.floor((now - startMs) / 1000) + (childTask.accumulated_duration_seconds || 0));
-      } else if (
-        pipelineTask &&
-        isTaskActive(pipelineTask) &&
-        isStreamlinedStageActive(stage as StreamlinedRailStage, pipelineTask)
-      ) {
-        // Active pipeline stage fallback
-        const startMs = new Date(pipelineTask.started_at || pipelineTask.created_at).getTime();
-        durationSeconds = Math.max(0, Math.floor((now - startMs) / 1000));
-      }
+    const runningDuration = calculateRunningDuration(stage, timing.recorded, tasks, pipelineTask, now);
+    if (runningDuration !== null) {
+      durationSeconds = runningDuration;
     }
   }
 
-  // Fallback to task timestamps when no recorded timing exists
   if (durationSeconds === null || durationSeconds === 0) {
-    const childTask = latestStreamlinedChildTask(stage as StreamlinedRailStage, tasks) ?? latestRelevantTask(stage, tasks);
-    if (childTask && (childTask.status === "COMPLETED" || isTaskActive(childTask))) {
-      const startMs = new Date(childTask.started_at || childTask.created_at).getTime();
-      const endMs = childTask.completed_at ? new Date(childTask.completed_at).getTime() : now;
-      durationSeconds = Math.max(0, Math.floor((endMs - startMs) / 1000) + (childTask.accumulated_duration_seconds || 0));
-    }
+    durationSeconds = calculateTaskFallbackDuration(stage, tasks, now);
   }
 
-  // Special fallback for parallel sequence scenes in legacy mode
   if (stage === "scenes" && (durationSeconds === null || durationSeconds === 0)) {
-    const seqTasks = tasks.filter((t) => t.task_type === "GENERATE_SEQUENCE_SCENES" && (t.status === "COMPLETED" || isTaskActive(t)));
-    if (seqTasks.length > 0) {
-      const starts = seqTasks.map((t) => new Date(t.started_at || t.created_at).getTime());
-      const ends = seqTasks.map((t) => (t.completed_at ? new Date(t.completed_at).getTime() : now));
-      const minStart = Math.min(...starts);
-      const maxEnd = Math.max(...ends);
-      durationSeconds = Math.max(0, Math.floor((maxEnd - minStart) / 1000));
-      if (seqTasks.length > 1) {
+    const scenesTiming = calculateScenesFallback(tasks, now);
+    if (scenesTiming) {
+      durationSeconds = scenesTiming.durationSeconds;
+      if (scenesTiming.isParallel) {
         isParallel = true;
-        parallelTotalSeconds = durationSeconds;
+        parallelTotalSeconds = scenesTiming.parallelTotalSeconds;
       }
     }
   }
@@ -91,12 +132,7 @@ export function resolveStageTiming(
     return null;
   }
 
-  const formattedDuration = formatElapsedHuman(durationSeconds) + (isRunning ? "..." : "");
-  let tooltip = `Duration: ${formattedDuration}`;
-  if (isParallel && parallelTotalSeconds && parallelTotalSeconds > 0) {
-    const parallelFormatted = formatElapsedHuman(parallelTotalSeconds);
-    tooltip = `Individual: ${formattedDuration} · Parallel total: ${parallelFormatted}`;
-  }
+  const { formattedDuration, tooltip } = formatTimingLabels(durationSeconds, isRunning, isParallel, parallelTotalSeconds);
 
   return {
     durationSeconds,

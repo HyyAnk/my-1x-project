@@ -67,9 +67,7 @@ describe("persistTask / loadTasksFromDisk", () => {
 
   it("keeps task files parseable under concurrent persistence", async () => {
     const root = await createTempRoot();
-    const updates = Array.from({ length: 40 }, (_, index) =>
-      buildTask({ task_id: "task-1", progress_percent: index }),
-    );
+    const updates = Array.from({ length: 40 }, (_, index) => buildTask({ task_id: "task-1", progress_percent: index }));
 
     await Promise.all(updates.map((task) => persistTask(root, task)));
     const tasks = await loadTasksFromDisk(root);

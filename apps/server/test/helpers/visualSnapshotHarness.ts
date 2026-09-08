@@ -65,28 +65,6 @@ export const VISUAL_SNAPSHOT_CASES: VisualSnapshotCase[] = [
     questionFormat: "multiple_choice",
     phase: "reveal",
   },
-  {
-    layoutId: "portrait_hero_choices",
-    aspectRatio: "9:16",
-    choices: ["Mars", "Saturn", "Jupiter"],
-    questionFormat: "multiple_choice",
-    phase: "reveal",
-  },
-  {
-    layoutId: "portrait_split_versus",
-    aspectRatio: "9:16",
-    choices: ["Cheetah", "Falcon"],
-    questionFormat: "multiple_choice",
-    phase: "reveal",
-  },
-  { layoutId: "portrait_verdict_tf", aspectRatio: "9:16", choices: ["True", "False"], questionFormat: "true_false", phase: "reveal" },
-  {
-    layoutId: "portrait_stack_list",
-    aspectRatio: "9:16",
-    choices: ["Piano", "Map", "Clock"],
-    questionFormat: "multiple_choice",
-    phase: "reveal",
-  },
 ];
 
 export function visualSnapshotBaselinePath(caseItem: VisualSnapshotCase): string {

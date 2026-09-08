@@ -7,11 +7,7 @@ interface DescriptionBlockEditorProps {
   onCopyBlock: (text: string, blockKey: string) => void;
 }
 
-export function DescriptionBlockEditor({
-  description,
-  copiedBlock,
-  onCopyBlock,
-}: DescriptionBlockEditorProps) {
+export function DescriptionBlockEditor({ description, copiedBlock, onCopyBlock }: DescriptionBlockEditorProps) {
   if (!description) return null;
 
   const scoringText = `🏆 SCORING TIERS:\n• ${description.scoring_cta.beginner}\n• ${description.scoring_cta.intermediate}\n• ${description.scoring_cta.expert}\n\n${description.scoring_cta.cta_text}`;
@@ -49,12 +45,8 @@ export function DescriptionBlockEditor({
           </div>
 
           <div className="bento-card-body">
-            <p className="bento-hook-headline">
-              {description.hook_lines}
-            </p>
-            <p className="bento-hook-body">
-              {description.semantic_paragraph}
-            </p>
+            <p className="bento-hook-headline">{description.hook_lines}</p>
+            <p className="bento-hook-body">{description.semantic_paragraph}</p>
           </div>
         </div>
       </div>

@@ -6,7 +6,8 @@ import {
   resolveMascotStageDefaultPlacement,
   SaveTextInputSchema,
   SuggestTopicsInputSchema,
-  TopicConfirmInputSchema,
+  EpisodeTopicConfirmInputSchema,
+  ShortReelTopicConfirmInputSchema,
   UpdateChannelInputSchema,
   VoiceReferenceUploadSchema,
 } from "@studio/shared";
@@ -16,6 +17,7 @@ import type { TaskManager } from "../tasks.js";
 import type { AppState } from "./state.js";
 import { createVoiceWithPreview } from "./voiceHelpers.js";
 import { createEpisodeFromTopicWithBank } from "../quiz/bank/questionBankToQuizBridge.js";
+import { confirmShortReelTopic } from "../shortReel/topicConfirmation.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
 
 export type ChannelsRouteDeps = {
@@ -75,7 +77,6 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
       let initialConfig = undefined;
       if (isNewAssignment && !mascotConfig) {
         const default169 = resolveMascotStageDefaultPlacement(state.config.mascot_stage, "16:9");
-        const default916 = resolveMascotStageDefaultPlacement(state.config.mascot_stage, "9:16");
         initialConfig = {
           enabled: true,
           position: default169.position,
@@ -86,7 +87,6 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
           show_in_question: true,
           placements: {
             "16:9": default169,
-            "9:16": default916,
           },
         };
       }
@@ -133,21 +133,45 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
     server.post("/api/channels/:channelId/topics/:topicId/confirm", async (request, reply) => {
       const params = request.params as { channelId: string; topicId: string };
       const payload = request.body && typeof request.body === "object" && !Array.isArray(request.body) ? request.body : {};
-      const input = TopicConfirmInputSchema.parse({ ...payload, topic_id: params.topicId });
+
+      // Verify channel exists
+      await repository.getChannel(params.channelId);
+
+      const topics = await repository.listTopics(params.channelId);
+      const topic = topics.find((t) => t.topic_id === params.topicId);
+      if (!topic) {
+        throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
+      }
+
+      if (topic.content_kind === "short_reel") {
+        const input = ShortReelTopicConfirmInputSchema.parse({ ...payload, topic_id: params.topicId });
+        const result = await confirmShortReelTopic({
+          repository,
+          channelId: params.channelId,
+          topicId: params.topicId,
+          requestId: input.request_id,
+        });
+        return reply.code(201).send(result);
+      }
+
+      const input = EpisodeTopicConfirmInputSchema.parse({ ...payload, topic_id: params.topicId });
       const result = await createEpisodeFromTopicWithBank({
         repository,
         tasks,
         channelId: params.channelId,
         llmClient: deps.llmClient,
         input: {
-          topic_id: input.topic_id,
+          topic_id: params.topicId,
           question_count: input.question_count,
           visual_style: input.visual_style,
           auto_start_pipeline: input.auto_start_pipeline ?? true,
           render_aspect_ratio: input.render_aspect_ratio,
         },
       });
-      return reply.code(201).send(result);
+      return reply.code(201).send({
+        content_kind: "episode" as const,
+        ...result,
+      });
     });
     done();
   };

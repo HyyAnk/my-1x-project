@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -112,11 +112,7 @@ describe("Mascot Style Slot Generation Pipeline", () => {
       master_prompt: "Futuristic chrome cyber fox with glowing blue optics",
       color_theme: "#06b6d4",
     });
-    const masterUrl = await app.repository.saveMascotAsset(
-      mascot.id,
-      "master_concept_1.png",
-      Buffer.from("<svg>master</svg>", "utf8"),
-    );
+    const masterUrl = await app.repository.saveMascotAsset(mascot.id, "master_concept_1.png", Buffer.from("<svg>master</svg>", "utf8"));
     const mascotWithMaster = await app.repository.saveMascot({
       ...mascot,
       master_image_url: masterUrl,
@@ -136,9 +132,7 @@ describe("Mascot Style Slot Generation Pipeline", () => {
     );
     const updatedMascot = await app.repository.saveMascot({
       ...mascotWithStyle,
-      styles: (mascotWithStyle.styles || []).map((s) =>
-        s.id === style.id ? { ...s, anchor_image_url: anchorUrl } : s,
-      ),
+      styles: (mascotWithStyle.styles || []).map((s) => (s.id === style.id ? { ...s, anchor_image_url: anchorUrl } : s)),
     });
 
     // 4. Generate slot 1
@@ -178,11 +172,7 @@ describe("Mascot Style Slot Generation Pipeline", () => {
       master_prompt: "Futuristic chrome cyber fox with glowing blue optics",
       color_theme: "#06b6d4",
     });
-    const masterUrl = await app.repository.saveMascotAsset(
-      mascot.id,
-      "master_concept_1.png",
-      Buffer.from("<svg>master</svg>", "utf8"),
-    );
+    const masterUrl = await app.repository.saveMascotAsset(mascot.id, "master_concept_1.png", Buffer.from("<svg>master</svg>", "utf8"));
     const mascotWithMaster = await app.repository.saveMascot({
       ...mascot,
       master_image_url: masterUrl,
@@ -486,7 +476,7 @@ describe("Mascot Style Slot Generation Pipeline", () => {
         state: "celebrate",
         slot_index: i,
         image_url: `/api/mascots/assets/celeb_${i}.png`,
-        prompt_modifier: allPoses[i - 1]!.prompt,
+        prompt_modifier: allPoses[i - 1].prompt,
       });
     }
 
@@ -510,9 +500,7 @@ describe("Mascot Style Slot Generation Pipeline", () => {
 
     // Verify it is permanently saved in the repository
     const storedMascot = await app.repository.getMascot(mascot.id);
-    const storedSlot = storedMascot.styles
-      ?.find((s) => s.id === style.id)
-      ?.states.celebrate.find((s) => s.slot_index === 10);
+    const storedSlot = storedMascot.styles?.find((s) => s.id === style.id)?.states.celebrate.find((s) => s.slot_index === 10);
     expect(storedSlot?.prompt_modifier).toBe(result.slot.prompt_modifier);
   });
 
@@ -528,8 +516,8 @@ describe("Mascot Style Slot Generation Pipeline", () => {
     });
 
     // 1. In default 'core' style, fill thinking slot 1 with a known pose
-    const corePose = getMascotPoses("thinking")[0]!.prompt;
-    let currentMascot = await app.repository.updateMascotSlot(mascot.id, {
+    const corePose = getMascotPoses("thinking")[0].prompt;
+    const currentMascot = await app.repository.updateMascotSlot(mascot.id, {
       style_id: "core",
       state: "thinking",
       slot_index: 1,
@@ -538,13 +526,10 @@ describe("Mascot Style Slot Generation Pipeline", () => {
     });
 
     // 2. Create a new custom style
-    const { mascot: mascotWithCustom, style: customStyle } = await app.repository.createMascotStyle(
-      currentMascot.id,
-      {
-        name: "Cyber Punk",
-        keyword: "neon mohawk chrome leather jacket",
-      },
-    );
+    const { mascot: mascotWithCustom, style: customStyle } = await app.repository.createMascotStyle(currentMascot.id, {
+      name: "Cyber Punk",
+      keyword: "neon mohawk chrome leather jacket",
+    });
 
     // Verify the custom style has all slots empty initially
     const customThinking = customStyle.states.thinking;
@@ -583,9 +568,7 @@ describe("Mascot Style Slot Generation Pipeline", () => {
     );
 
     expect(batchCustom.generated_count).toBe(9);
-    const updatedCustomSlots = batchCustom.mascot.styles
-      ?.find((s) => s.id === customStyle.id)
-      ?.states.thinking || [];
+    const updatedCustomSlots = batchCustom.mascot.styles?.find((s) => s.id === customStyle.id)?.states.thinking || [];
 
     // All slots in custom style must be filled and non-empty
     for (const s of updatedCustomSlots) {

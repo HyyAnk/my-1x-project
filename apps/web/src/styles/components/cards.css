@@ -163,11 +163,7 @@
   padding: 18px 22px;
   border-radius: var(--radius-lg);
   border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line-dark));
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--accent) 4%, var(--surface)) 0%,
-    var(--surface) 100%
-  );
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 4%, var(--surface)) 0%, var(--surface) 100%);
   box-shadow: var(--shadow-md);
 }
 
@@ -231,7 +227,9 @@
 
 .task-progress-title .eyebrow {
   color: var(--muted);
-  font: 700 11px/1 "Plus Jakarta Sans", sans-serif;
+  font:
+    700 11px/1 "Plus Jakarta Sans",
+    sans-serif;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }

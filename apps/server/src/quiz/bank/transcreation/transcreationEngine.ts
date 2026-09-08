@@ -1,13 +1,6 @@
-import {
-  normalizeLanguageCode,
-  type BankQuestion,
-  type BankTranslationContent,
-} from "@studio/shared";
+import { normalizeLanguageCode, type BankQuestion, type BankTranslationContent } from "@studio/shared";
 import { executeSinglePromptText, type LLMClient } from "../../../utils/promptSanitizer.js";
-import {
-  buildQuestionTranscreationPrompt,
-  parseTranscreationOutput,
-} from "./transcreationPrompt.js";
+import { buildQuestionTranscreationPrompt, parseTranscreationOutput } from "./transcreationPrompt.js";
 
 export interface TranscreateQuestionOptions {
   targetLanguage: string;

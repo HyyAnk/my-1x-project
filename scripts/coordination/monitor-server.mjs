@@ -61,8 +61,8 @@ export function buildTopologyPayload(zoneList, rootDir) {
         });
       }
     }
-  } catch (_) {
-    // Fallback gracefully if git fails
+  } catch {
+    // Fallback gracefully if git fails.
   }
 
   return { zones, links, files };
@@ -79,7 +79,7 @@ export function buildCoordinationState({ workspaceRoot, customDbPath, zoneList }
   const now = new Date();
   const nowIso = now.toISOString();
 
-  let activeClaims = [];
+  let activeClaims;
   try {
     const db = openClaimsDb(root, customDbPath);
     try {
@@ -87,14 +87,15 @@ export function buildCoordinationState({ workspaceRoot, customDbPath, zoneList }
     } finally {
       db.close();
     }
-  } catch (err) {
+  } catch {
     activeClaims = [];
   }
 
   // Map active claims with dead/heartbeat detection
   const claimsWithLiveness = activeClaims.map((claim) => {
     const deadCheck = isClaimDead(claim, now);
-    const { leaseTokenHash: _secret, ...safeClaim } = claim;
+    const safeClaim = { ...claim };
+    delete safeClaim.leaseTokenHash;
     return {
       ...safeClaim,
       isDead: deadCheck.isDead,
@@ -187,7 +188,7 @@ export function calculateSafeZones({ targetZone, workspaceRoot, customDbPath }) 
     throw new Error(`Unknown target zone: "${targetZone}"`);
   }
 
-  let activeClaims = [];
+  let activeClaims;
   try {
     const db = openClaimsDb(root, customDbPath);
     try {
@@ -195,7 +196,7 @@ export function calculateSafeZones({ targetZone, workspaceRoot, customDbPath }) 
     } finally {
       db.close();
     }
-  } catch (err) {
+  } catch {
     activeClaims = [];
   }
 
@@ -242,7 +243,7 @@ export function createMonitorServer(options = {}) {
     for (const client of sseClients) {
       try {
         client.write(message);
-      } catch (err) {
+      } catch {
         sseClients.delete(client);
       }
     }
@@ -263,7 +264,9 @@ export function createMonitorServer(options = {}) {
               } finally {
                 db.close();
               }
-            } catch (_) {}
+            } catch {
+              // Activity enrichment is best effort when the coordination database is unavailable.
+            }
 
             for (const activity of activities) {
               const normFile = normalizePath(activity.file);
@@ -296,7 +299,7 @@ export function createMonitorServer(options = {}) {
         lastSerializedState = serialized;
         broadcast("state", state);
       }
-    } catch (err) {
+    } catch {
       // Keep running despite transient DB read lock
     }
   }
@@ -426,12 +429,16 @@ export function createMonitorServer(options = {}) {
     if (fileWatcher) {
       try {
         fileWatcher.stop();
-      } catch (_) {}
+      } catch {
+        // Watcher shutdown is best effort.
+      }
     }
     for (const client of sseClients) {
       try {
         client.end();
-      } catch (_) {}
+      } catch {
+        // Client shutdown is best effort.
+      }
     }
     sseClients.clear();
   });

@@ -1,6 +1,7 @@
 import { rm } from "node:fs/promises";
 import { FAILED_BUILD_RETENTION_MS, type Channel, type Task } from "@studio/shared";
 import { RepositoryError } from "../repository.js";
+import { failReelUnitAttempt } from "../shortReel/unitLifecycle.js";
 import type { TaskManagerRuntime } from "./runtime.js";
 
 const buildTaskTypes = new Set<Task["task_type"]>(["GENERATE_PIPELINE", "GENERATE_VIDEO"]);
@@ -64,16 +65,12 @@ export async function pruneChannelTasks(this: TaskManagerRuntime, channelId: str
   return taskIds;
 }
 
-export async function reconcileOrphanedTasks(
-  this: TaskManagerRuntime,
-): Promise<{ removedEpisodes: number; removedTasks: number }> {
+export async function reconcileOrphanedTasks(this: TaskManagerRuntime): Promise<{ removedEpisodes: number; removedTasks: number }> {
   let channels: Channel[];
   try {
     channels = await this.repository.listChannels(true);
   } catch (error) {
-    this.logger.warn(
-      `Failed to list channels for task orphan reconciliation: ${error instanceof Error ? error.message : "unknown error"}`,
-    );
+    this.logger.warn(`Failed to list channels for task orphan reconciliation: ${error instanceof Error ? error.message : "unknown error"}`);
     return { removedEpisodes: 0, removedTasks: 0 };
   }
 
@@ -90,6 +87,8 @@ export async function reconcileOrphanedTasks(
       // Ignore individual channel listing errors
     }
   }
+
+  await reconcileInterruptedShortReelTasks(this, channels);
 
   const orphanedTasks = this.list().filter((task) => {
     if (task.channel_id && !validChannelIds.has(task.channel_id)) {
@@ -108,11 +107,7 @@ export async function reconcileOrphanedTasks(
   const removedTaskIds = orphanedTasks.map((task) => task.task_id);
   const removedEpisodeIds = [...new Set(orphanedTasks.map((t) => t.episode_id).filter(Boolean) as string[])];
 
-  await Promise.all(
-    removedTaskIds.map((taskId) =>
-      rm(this.repository.resolvePath("runtime", "tasks", `${taskId}.json`), { force: true }),
-    ),
-  );
+  await Promise.all(removedTaskIds.map((taskId) => rm(this.repository.resolvePath("runtime", "tasks", `${taskId}.json`), { force: true })));
 
   for (const task of orphanedTasks) {
     const imgCtrl = this.activeImageControllers.get(task.task_id);
@@ -145,6 +140,42 @@ export async function reconcileOrphanedTasks(
     removedEpisodes: removedEpisodeIds.length,
     removedTasks: removedTaskIds.length,
   };
+}
+
+async function reconcileInterruptedShortReelTasks(runtime: TaskManagerRuntime, channels: Channel[]): Promise<void> {
+  for (const task of runtime.list()) {
+    if ((task.task_type === "GENERATE_SHORT_REEL" || task.task_type === "GENERATE_SHORT_REEL_PACKAGE") && activeStatuses.has(task.status)) {
+      await runtime.finish(task.task_id, "FAILED", "Task was interrupted by server restart");
+    }
+  }
+
+  for (const channel of channels) {
+    try {
+      const reels = await runtime.repository.listShortReels(channel.channel_id);
+      for (const reel of reels) {
+        const key = { channel_id: channel.channel_id, reel_id: reel.reel_id };
+        const unitKeys = ["script", "references", "cover", "publishing"] as const;
+        for (const unitKey of unitKeys) {
+          const unit = reel.units[unitKey];
+          if (unit.state === "pending" && unit.current_attempt) {
+            try {
+              await failReelUnitAttempt(runtime.repository, key, unitKey, unit.current_attempt.operation_id, "ABORTED");
+            } catch (error) {
+              runtime.logger.warn(
+                `Failed to reconcile interrupted Short-Reel unit: ${error instanceof Error ? error.message : "unknown error"}`,
+                { profileId: channel.channel_id, step: "short_reel_reconciliation" },
+              );
+            }
+          }
+        }
+      }
+    } catch (error) {
+      runtime.logger.warn(
+        `Failed to inspect Short-Reels during restart reconciliation: ${error instanceof Error ? error.message : "unknown error"}`,
+        { profileId: channel.channel_id, step: "short_reel_reconciliation" },
+      );
+    }
+  }
 }
 
 async function removeEpisodeTaskRecords(this: TaskManagerRuntime, episodeId: string): Promise<string[]> {

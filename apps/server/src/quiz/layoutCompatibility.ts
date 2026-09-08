@@ -27,9 +27,7 @@ export function resolveQuestionLayout(
 
   const requestedLayout = beat.layout_id;
   const media =
-    requestedLayout !== "auto"
-      ? rawMedia.filter((m) => getQuizLayoutCapability(requestedLayout).media.supported.includes(m))
-      : rawMedia;
+    requestedLayout !== "auto" ? rawMedia.filter((m) => getQuizLayoutCapability(requestedLayout).media.supported.includes(m)) : rawMedia;
 
   return resolveQuizLayout({
     requestedLayout,

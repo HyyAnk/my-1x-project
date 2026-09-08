@@ -37,12 +37,10 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
     filters,
     selectedQuestion,
     modalState,
-    previewAspect,
     updateFilter,
     resetFilters,
     setSelectedQuestion,
     setModalState,
-    setPreviewAspect,
     recalculateStats,
     saveQuestion,
     deleteQuestion,
@@ -54,7 +52,7 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
     transcreateQuestion,
   } = useQuestionBank(selectedChannel?.channel_id);
 
-  const handleQuickBuildVideo = async (q: BankQuestionWithCooldown, aspect: "16:9" | "9:16") => {
+  const handleQuickBuildVideo = async (q: BankQuestionWithCooldown) => {
     const targetChannelId = filters.channelId || selectedChannel?.channel_id || channels[0]?.channel_id;
     if (!targetChannelId) {
       alert(t("questionBank.alerts.chooseChannelRequired"));
@@ -65,7 +63,7 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
       if (!confirmBuild) return;
     }
     try {
-      const result = await createOneClickVideo(targetChannelId, q.id, aspect);
+      const result = await createOneClickVideo(targetChannelId, q.id);
       if (result.episode && onQuickBuildVideo) {
         onQuickBuildVideo(targetChannelId, result.episode.episode_id);
       }
@@ -127,16 +125,14 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
           onSelectQuestion={setSelectedQuestion}
           onEditQuestion={(q) => setModalState({ type: "edit", question: q })}
           onDeleteQuestion={deleteQuestion}
-          onQuickBuildVideo={(q) => handleQuickBuildVideo(q, previewAspect)}
+          onQuickBuildVideo={handleQuickBuildVideo}
           onPageChange={(p) => updateFilter("page", p)}
         />
 
         <QuestionBankLivePreview
           question={selectedQuestionWithDetails}
-          aspect={previewAspect}
           buildingVideo={buildingVideo}
           transcreating={transcreating}
-          onToggleAspect={() => setPreviewAspect(previewAspect === "16:9" ? "9:16" : "16:9")}
           onQuickBuildVideo={handleQuickBuildVideo}
           onTranscreateQuestion={transcreateQuestion}
         />

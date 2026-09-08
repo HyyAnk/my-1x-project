@@ -7,6 +7,5 @@ describe("Quiz V2 invalidation graph", () => {
     expect(invalidateQuizArtifacts("assets")).toEqual(["asset_resolution", "timeline", "render", "qa"]);
     expect(invalidateQuizArtifacts("timeline")).toEqual(["render", "qa"]);
     expect(invalidateQuizArtifacts("qa")).toEqual([]);
-
   });
 });

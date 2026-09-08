@@ -7,9 +7,7 @@ import { MascotStyleDropdown } from "./MascotStyleDropdown";
 import { buildEpisodePreviewRequest } from "../../services/buildEpisodePreviewRequest";
 import type { EpisodeStyleOverride, ResolvedEpisodePreviewStyle } from "../../types/episodeStylePreview.types";
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <LanguageProvider>{children}</LanguageProvider>
-);
+const wrapper = ({ children }: { children: React.ReactNode }) => <LanguageProvider>{children}</LanguageProvider>;
 
 const mockChannelWithMascot: Channel = {
   channel_id: "ch-test",
@@ -105,15 +103,7 @@ describe("MascotStyleDropdown", () => {
       mascot_id: null,
     } as unknown as Channel;
 
-    render(
-      <MascotStyleDropdown
-        channel={channelNoMascot}
-        episode={mockEpisode}
-        isOpen={false}
-        onToggle={vi.fn()}
-      />,
-      { wrapper },
-    );
+    render(<MascotStyleDropdown channel={channelNoMascot} episode={mockEpisode} isOpen={false} onToggle={vi.fn()} />, { wrapper });
 
     const button = screen.getByRole("button");
     expect(button.hasAttribute("disabled")).toBe(true);
@@ -124,17 +114,9 @@ describe("MascotStyleDropdown", () => {
     const channelDisabledMascot = {
       ...mockChannelWithMascot,
       mascot_config: { ...mockChannelWithMascot.mascot_config, enabled: false },
-    } as unknown as Channel;
+    };
 
-    render(
-      <MascotStyleDropdown
-        channel={channelDisabledMascot}
-        episode={mockEpisode}
-        isOpen={false}
-        onToggle={vi.fn()}
-      />,
-      { wrapper },
-    );
+    render(<MascotStyleDropdown channel={channelDisabledMascot} episode={mockEpisode} isOpen={false} onToggle={vi.fn()} />, { wrapper });
 
     const button = screen.getByRole("button");
     expect(button.hasAttribute("disabled")).toBe(true);
@@ -313,13 +295,13 @@ describe("MascotStyleDropdown", () => {
     );
 
     // Verify thumbnail images
-    const coreImg = screen.getByAltText("Core Style") as HTMLImageElement;
+    const coreImg = screen.getByAltText("Core Style");
     expect(coreImg).toBeDefined();
-    expect(coreImg.src).toBe("https://example.com/core-anchor.png");
+    expect(coreImg.getAttribute("src")).toBe("https://example.com/core-anchor.png");
 
-    const steampunkImg = screen.getByAltText("Steampunk Explorer") as HTMLImageElement;
+    const steampunkImg = screen.getByAltText("Steampunk Explorer");
     expect(steampunkImg).toBeDefined();
-    expect(steampunkImg.src).toBe("https://example.com/steampunk-anchor.png");
+    expect(steampunkImg.getAttribute("src")).toBe("https://example.com/steampunk-anchor.png");
 
     // Verify readiness chips
     // Core has 20 poses => "20 Poses"

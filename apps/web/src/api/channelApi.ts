@@ -1,4 +1,4 @@
-import type { Channel, Episode, QuizImageStyle, Task, TopicCandidate } from "@studio/shared";
+import type { Channel, ConfirmTopicResponse, QuizImageStyle, Task, TopicCandidate } from "@studio/shared";
 import { request } from "./client";
 
 export const channelApi = {
@@ -27,17 +27,14 @@ export const channelApi = {
     autoStartPipeline: boolean = true,
     renderAspectRatio?: "9:16" | "16:9",
   ) =>
-    request<{ episode: Episode; task?: Task | null; quiz?: any; director_plan?: any }>(
-      `/api/channels/${channelId}/topics/${topicId}/confirm`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          topic_id: topicId,
-          question_count: questionCount,
-          visual_style: visualStyle,
-          auto_start_pipeline: autoStartPipeline,
-          render_aspect_ratio: renderAspectRatio,
-        }),
-      },
-    ),
+    request<ConfirmTopicResponse>(`/api/channels/${channelId}/topics/${topicId}/confirm`, {
+      method: "POST",
+      body: JSON.stringify({
+        topic_id: topicId,
+        question_count: questionCount,
+        visual_style: visualStyle,
+        auto_start_pipeline: autoStartPipeline,
+        render_aspect_ratio: renderAspectRatio,
+      }),
+    }),
 };

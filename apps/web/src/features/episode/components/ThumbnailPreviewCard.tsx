@@ -22,19 +22,8 @@ type ThumbnailPreviewCardProps = {
   onNotice?: (notice: NonNullable<Notice>) => void;
 };
 
-export function ThumbnailPreviewCard({
-  channel,
-  episode,
-  episodeId,
-  activeEpisodeTask,
-  onNotice,
-}: ThumbnailPreviewCardProps) {
-  const initialRatio =
-    episode.quiz_config?.thumbnail_aspect_ratio === "9:16" ||
-    (episode.quiz_config?.thumbnail_aspect_ratio === "auto" &&
-      (episode.quiz_config?.render_aspect_ratio === "9:16" || episode.topic?.title?.toLowerCase().includes("shorts")))
-      ? "9:16"
-      : "16:9";
+export function ThumbnailPreviewCard({ channel, episode, episodeId, activeEpisodeTask, onNotice }: ThumbnailPreviewCardProps) {
+  const initialRatio = episode.quiz_config?.thumbnail_aspect_ratio === "9:16" ? "9:16" : "16:9";
 
   const [activeRatio, setActiveRatio] = useState<ThumbnailAspectRatio>(initialRatio);
   const [selectedLayout, setSelectedLayout] = useState<ThumbnailLayoutType | "auto">("auto");
@@ -50,15 +39,10 @@ export function ThumbnailPreviewCard({
   useEffect(() => {
     if (episode.quiz_config?.thumbnail_aspect_ratio === "9:16") {
       setActiveRatio("9:16");
-    } else if (episode.quiz_config?.thumbnail_aspect_ratio === "16:9") {
+    } else {
       setActiveRatio("16:9");
-    } else if (episode.quiz_config?.thumbnail_aspect_ratio === "auto") {
-      const isShorts =
-        episode.quiz_config?.render_aspect_ratio === "9:16" ||
-        Boolean(episode.topic?.title?.toLowerCase().includes("shorts"));
-      setActiveRatio(isShorts ? "9:16" : "16:9");
     }
-  }, [episode.quiz_config?.thumbnail_aspect_ratio, episode.quiz_config?.render_aspect_ratio, episode.topic?.title]);
+  }, [episode.quiz_config?.thumbnail_aspect_ratio]);
 
   const fetchManifest = useCallback(
     async (silent = false) => {
@@ -73,7 +57,7 @@ export function ThumbnailPreviewCard({
             return res.manifest;
           });
           if (res.manifest.hook_text) {
-            setCustomHook((prev) => (prev ? prev : res.manifest?.hook_text ?? ""));
+            setCustomHook((prev) => (prev ? prev : (res.manifest?.hook_text ?? "")));
           }
         }
       } catch {
@@ -92,14 +76,9 @@ export function ThumbnailPreviewCard({
 
   // Live Auto-Poll while task is active or if thumbnail is not yet loaded
   useEffect(() => {
-    const isTaskRunning = Boolean(
-      activeEpisodeTask && (activeEpisodeTask.status === "RUNNING" || activeEpisodeTask.status === "QUEUED"),
-    );
+    const isTaskRunning = Boolean(activeEpisodeTask && (activeEpisodeTask.status === "RUNNING" || activeEpisodeTask.status === "QUEUED"));
     const hasAny = Boolean(
-      manifest?.asset_path_16_9 ||
-      manifest?.asset_path_9_16 ||
-      episode.thumbnail_asset_path_16_9 ||
-      episode.thumbnail_asset_path_9_16,
+      manifest?.asset_path_16_9 || manifest?.asset_path_9_16 || episode.thumbnail_asset_path_16_9 || episode.thumbnail_asset_path_9_16,
     );
 
     if (!isTaskRunning && hasAny) {
@@ -183,7 +162,6 @@ export function ThumbnailPreviewCard({
     }
   };
 
-
   const handleDeleteVariant = async (variantId: string) => {
     try {
       const res = await episodeApi.deleteThumbnailVariant(channel.channel_id, episodeId, variantId);
@@ -199,10 +177,7 @@ export function ThumbnailPreviewCard({
   };
 
   const hasAnyThumbnail = Boolean(
-    manifest?.asset_path_16_9 ||
-    manifest?.asset_path_9_16 ||
-    episode.thumbnail_asset_path_16_9 ||
-    episode.thumbnail_asset_path_9_16,
+    manifest?.asset_path_16_9 || manifest?.asset_path_9_16 || episode.thumbnail_asset_path_16_9 || episode.thumbnail_asset_path_9_16,
   );
 
   const hasImage =
@@ -294,6 +269,3 @@ export function ThumbnailPreviewCard({
     </section>
   );
 }
-
-
-

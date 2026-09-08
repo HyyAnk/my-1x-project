@@ -10,13 +10,7 @@ export interface PresetManagerFilterTabsProps {
   builtInCount: number;
 }
 
-export function PresetManagerFilterTabs({
-  filterTab,
-  onChangeTab,
-  allCount,
-  customCount,
-  builtInCount,
-}: PresetManagerFilterTabsProps) {
+export function PresetManagerFilterTabs({ filterTab, onChangeTab, allCount, customCount, builtInCount }: PresetManagerFilterTabsProps) {
   const { t } = useTranslation();
 
   return (

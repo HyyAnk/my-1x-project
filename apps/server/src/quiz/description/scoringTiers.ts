@@ -49,7 +49,7 @@ export function calculateScoringTiers(questionCount: number): CalculatedScoringT
 /**
  * Formats scoring tier string ranges (e.g. "1–3 pts", "4–7 pts", "8–10 pts").
  */
-export function formatScoringRange(min: number, max: number, language = "English"): string {
+export function formatScoringRange(min: number, max: number, _language = "English"): string {
   const unit = "pts";
   if (min === max) {
     return `${min} ${unit}`;

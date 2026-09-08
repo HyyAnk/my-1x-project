@@ -2,6 +2,7 @@ import { access, mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { writeBinaryAtomic, writeJsonAtomic, writeTextAtomic } from "../utils/fs.js";
 import { RepositoryError } from "./errors.js";
+export { RepositoryError };
 import {
   assertRealPathInside,
   createRoots,
@@ -22,6 +23,8 @@ import { sceneBindings } from "./bindings/sceneBindings.js";
 import { mediaBindings } from "./bindings/mediaBindings.js";
 import { miscBindings } from "./bindings/miscBindings.js";
 import { questionBankBindings } from "./bindings/questionBankBindings.js";
+import { shortReelBindings } from "./bindings/shortReelBindings.js";
+import { acquireWriterAdmission, releaseWriterAdmission, isWriterAdmissionHeld } from "./shortReelStorage.js";
 import { listStylePresets, createStylePreset, updateStylePreset, deleteStylePreset } from "./stylePresets.js";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-unsafe-declaration-merging
@@ -29,15 +32,19 @@ export interface RepositoryService extends RepositoryRuntime {}
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class RepositoryService {
+  private writerState: "open" | "switching" | "closed" = "open";
+  readonly serviceId: string;
   roots: RepositoryRoots;
   readonly questionHistoryWrites = new Map<string, Promise<void>>();
   readonly usageLedgerWrites = new Map<string, Promise<void>>();
   readonly artifactMutationQueues = new Map<string, Promise<void>>();
+  readonly shortReelMutationQueues = new Map<string, Promise<void>>();
 
   constructor(
     readonly rootDirectory: string,
     storageRoot = rootDirectory,
   ) {
+    this.serviceId = `repo_${Math.random().toString(36).slice(2)}_${Date.now()}`;
     this.roots = this.createRoots(storageRoot);
   }
 
@@ -45,8 +52,38 @@ export class RepositoryService {
     return path.dirname(this.roots.channels);
   }
 
-  setStorageRoot(storageRoot: string): void {
-    this.roots = this.createRoots(storageRoot);
+  async setStorageRoot(storageRoot: string): Promise<void> {
+    this.assertWriterOpen();
+    const oldRoot = this.storageRoot;
+    this.writerState = "switching";
+    try {
+      await releaseWriterAdmission(oldRoot, this.serviceId);
+      this.roots = this.createRoots(storageRoot);
+    } finally {
+      if (this.writerState === "switching") this.writerState = "open";
+    }
+  }
+
+  acquireWriterAdmission(): void {
+    this.assertWriterOpen();
+    acquireWriterAdmission(this.storageRoot, this.serviceId);
+  }
+
+  private assertWriterOpen(): void {
+    if (this.writerState !== "open") throw new RepositoryError("Repository writer is closing or switching storage", "STORAGE_BUSY");
+  }
+
+  async releaseWriterAdmission(): Promise<void> {
+    await releaseWriterAdmission(this.storageRoot, this.serviceId);
+  }
+
+  isWriterAdmissionHeld(): boolean {
+    return isWriterAdmissionHeld(this.storageRoot, this.serviceId);
+  }
+
+  async close(): Promise<void> {
+    this.writerState = "closed";
+    await this.releaseWriterAdmission();
   }
 
   resolveContextPath(relativePath: string): string {
@@ -164,5 +201,6 @@ Object.assign(
   mediaBindings,
   miscBindings,
   questionBankBindings,
+  shortReelBindings,
   { listStylePresets, createStylePreset, updateStylePreset, deleteStylePreset },
 );

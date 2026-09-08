@@ -27,8 +27,7 @@ export function usePresetManagerModal({
   const [importError, setImportError] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
-  const filteredPresets =
-    filterTab === "builtin" ? builtInPresets : filterTab === "custom" ? customPresets : allPresets;
+  const filteredPresets = filterTab === "builtin" ? builtInPresets : filterTab === "custom" ? customPresets : allPresets;
 
   const startEdit = (preset: VisualPresetItem) => {
     setEditingId(preset.id);
@@ -55,7 +54,7 @@ export function usePresetManagerModal({
     setImportOpen(false);
   };
 
-  const handleImport = async (data: any, activate: boolean) => {
+  const handleImport = async (data: string, activate: boolean) => {
     setImporting(true);
     setImportError(null);
     try {

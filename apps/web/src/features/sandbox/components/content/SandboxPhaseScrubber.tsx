@@ -17,12 +17,7 @@ const PHASES: Array<{ id: SandboxPhase; labelKey: string; defaultLabel: string }
   { id: "explain", labelKey: "visualSandbox.phaseExplain", defaultLabel: "Explain" },
 ];
 
-export function SandboxPhaseScrubber({
-  phase,
-  setPhase,
-  setUseScrubber,
-  useScrubber = false,
-}: SandboxPhaseScrubberProps) {
+export function SandboxPhaseScrubber({ phase, setPhase, setUseScrubber, useScrubber = false }: SandboxPhaseScrubberProps) {
   const { t } = useTranslation();
 
   return (

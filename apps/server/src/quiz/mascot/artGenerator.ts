@@ -12,28 +12,16 @@ import {
 import type { RepositoryService } from "../../repository.js";
 import type { StudioLogger } from "../../logger.js";
 import { withMascotWriteLock } from "../../repository/mascots.js";
-import {
-  buildMascotActionPrompt,
-  buildMascotConceptPrompt,
-  buildMascotStyleConceptPrompt,
-} from "../mascotPromptContract.js";
+import { buildMascotActionPrompt, buildMascotConceptPrompt, buildMascotStyleConceptPrompt } from "../mascotPromptContract.js";
 import { generateProceduralMascotArt, generateProceduralStateArt } from "./proceduralArt.js";
 import { generateMascotArtWithFallback } from "./services/mascotAiImageClient.js";
-import {
-  loadMasterReferenceImageBase64,
-  loadMascotAssetBase64ByUrl,
-} from "./services/mascotAssetLoader.js";
+import { loadMasterReferenceImageBase64, loadMascotAssetBase64ByUrl } from "./services/mascotAssetLoader.js";
 
 export { generateMascotAiImageBytes } from "./services/mascotAiImageClient.js";
 export { loadMascotAssetBase64ByUrl } from "./services/mascotAssetLoader.js";
 export { generateMascotStyleBatch } from "./services/mascotBatchScheduler.js";
 
-function deletePreviousMascotAsset(
-  repository: RepositoryService,
-  mascotId: string,
-  prevUrl?: string | null,
-  newFilename?: string,
-): void {
+function deletePreviousMascotAsset(repository: RepositoryService, mascotId: string, prevUrl?: string | null, newFilename?: string): void {
   if (!prevUrl) return;
   const prevFilename = prevUrl.split("/").pop();
   if (prevFilename && prevFilename !== newFilename && typeof repository.deleteMascotAssetFile === "function") {
@@ -195,12 +183,7 @@ export async function generateMascotStyleSlot(
   if (!style) throw new Error(`Style ${styleId} not found`);
 
   const effectivePromptModifier = resolveSlotPromptModifier(style, input.state, input.slot_index, input.prompt_modifier);
-  const { referenceImageBase64, hasStyleAnchor } = await resolveSlotReferenceImage(
-    repository,
-    mascot,
-    style.anchor_image_url,
-    logger,
-  );
+  const { referenceImageBase64, hasStyleAnchor } = await resolveSlotReferenceImage(repository, mascot, style.anchor_image_url, logger);
 
   const fullPrompt = buildMascotActionPrompt(mascot, input.state, {
     prompt: effectivePromptModifier,
@@ -241,7 +224,9 @@ export async function generateMascotStyleSlot(
     prompt_modifier: effectivePromptModifier,
   });
 
-  const updatedSlot = updatedMascot.styles?.find((s) => s.id === styleId)?.states[input.state]?.find((s) => s.slot_index === input.slot_index);
+  const updatedSlot = updatedMascot.styles
+    ?.find((s) => s.id === styleId)
+    ?.states[input.state]?.find((s) => s.slot_index === input.slot_index);
   if (!updatedSlot) throw new Error(`Updated slot not found for style ${styleId}, state ${input.state}, slot ${input.slot_index}`);
 
   return { mascot: updatedMascot, slot: updatedSlot, prompt_used: fullPrompt, placeholder };

@@ -4,6 +4,7 @@ export type RouteState = {
   page: Page;
   channelId: string | null;
   episodeId: string | null;
+  shortReelId: string | null;
   tab: string | null;
   group: string | null;
   rawHash: string;
@@ -30,17 +31,26 @@ export function parseHash(hash: string): RouteState {
       page: "dashboard",
       channelId: null,
       episodeId: null,
+      shortReelId: null,
       tab,
       group,
       rawHash: hash,
     };
   }
 
-  if (root === "tasks" || root === "settings" || root === "mascots" || root === "sandbox" || root === "question_bank" || root === "question-bank") {
+  if (
+    root === "tasks" ||
+    root === "settings" ||
+    root === "mascots" ||
+    root === "sandbox" ||
+    root === "question_bank" ||
+    root === "question-bank"
+  ) {
     return {
-      page: root === "question-bank" ? "question_bank" : (root as Page),
+      page: root === "question-bank" ? "question_bank" : root,
       channelId: null,
       episodeId: null,
+      shortReelId: null,
       tab,
       group,
       rawHash: hash,
@@ -51,11 +61,14 @@ export function parseHash(hash: string): RouteState {
     const channelId = segments[1] ? decodeURIComponent(segments[1]) : null;
     const isEpisodesSegment = segments[2] === "episodes";
     const episodeId = isEpisodesSegment && segments[3] ? decodeURIComponent(segments[3]) : null;
+    const isShortReelsSegment = segments[2] === "short-reels";
+    const shortReelId = isShortReelsSegment && segments[3] ? decodeURIComponent(segments[3]) : null;
 
     return {
       page: "channels",
       channelId,
       episodeId,
+      shortReelId,
       tab,
       group,
       rawHash: hash,
@@ -67,6 +80,7 @@ export function parseHash(hash: string): RouteState {
     page: "dashboard",
     channelId: null,
     episodeId: null,
+    shortReelId: null,
     tab,
     group,
     rawHash: hash,
@@ -77,13 +91,16 @@ export function buildHash(state: {
   page: Page;
   channelId?: string | null;
   episodeId?: string | null;
+  shortReelId?: string | null;
   tab?: string | null;
   group?: string | null;
 }): string {
   let path = `/${state.page}`;
   if (state.page === "channels" && state.channelId) {
     path = `/channels/${encodeURIComponent(state.channelId)}`;
-    if (state.episodeId) {
+    if (state.shortReelId) {
+      path += `/short-reels/${encodeURIComponent(state.shortReelId)}`;
+    } else if (state.episodeId) {
       path += `/episodes/${encodeURIComponent(state.episodeId)}`;
     }
   }

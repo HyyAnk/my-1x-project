@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { renderSourceFingerprint } from "../src/tasks/fingerprints.js";
 
 const BASE_ARGS = {
-  html: "<main data-composition-id=\"quiz-v2-candy-arcade\"></main>",
+  html: '<main data-composition-id="quiz-v2-candy-arcade"></main>',
   narrationModifiedAt: "2026-09-05T00:00:00Z",
   narrationSize: 2048,
   assets: [{ asset_id: "asset-1", fingerprint: "fp-1", path: "assets/asset-1.png" }],
@@ -22,7 +22,7 @@ function fingerprint(compositionFiles: Record<string, string> = {}): string {
 
 describe("renderSourceFingerprint", () => {
   it("is stable for identical inputs", () => {
-    const files = { "compositions/scene-1.html": "<section class=\"clip\"></section>" };
+    const files = { "compositions/scene-1.html": '<section class="clip"></section>' };
     expect(fingerprint(files)).toBe(fingerprint(files));
   });
 

@@ -1,11 +1,4 @@
-import {
-  nowIso,
-  VideoDescriptionSchema,
-  type Channel,
-  type Episode,
-  type QuizV2,
-  type VideoDescription,
-} from "@studio/shared";
+import { nowIso, VideoDescriptionSchema, type Channel, type Episode, type QuizV2, type VideoDescription } from "@studio/shared";
 import { executeSinglePromptText, type LLMClient } from "../../utils/promptSanitizer.js";
 import { retryWithBackoff } from "../../utils/retryWithBackoff.js";
 import { compileVideoDescriptionPrompt } from "./descriptionPromptCompiler.js";
@@ -55,7 +48,7 @@ export async function generateVideoDescription(deps: GenerateVideoDescriptionDep
     toneHint,
   });
 
-  let rawJson: Record<string, unknown> = {};
+  let rawJson: Record<string, unknown>;
 
   try {
     const rawOutput = await retryWithBackoff(
@@ -105,14 +98,13 @@ export async function generateVideoDescription(deps: GenerateVideoDescriptionDep
     : [];
 
   const defaultHookLines = `${episode.topic.title}\nTest your memory and knowledge now!`;
-  const hookLines = typeof rawJson.hook_lines === "string" && rawJson.hook_lines.trim()
-    ? rawJson.hook_lines.trim()
-    : defaultHookLines;
+  const hookLines = typeof rawJson.hook_lines === "string" && rawJson.hook_lines.trim() ? rawJson.hook_lines.trim() : defaultHookLines;
 
   const defaultSemantic = `${episode.topic.hook} Challenge your mind with engaging questions!`;
-  const semanticParagraph = typeof rawJson.semantic_paragraph === "string" && rawJson.semantic_paragraph.trim()
-    ? rawJson.semantic_paragraph.trim()
-    : defaultSemantic;
+  const semanticParagraph =
+    typeof rawJson.semantic_paragraph === "string" && rawJson.semantic_paragraph.trim()
+      ? rawJson.semantic_paragraph.trim()
+      : defaultSemantic;
 
   const rawScoring = (rawJson.scoring_cta && typeof rawJson.scoring_cta === "object" ? rawJson.scoring_cta : {}) as Record<string, unknown>;
   const tier1Range = formatScoringRange(tiers.tier1.min, tiers.tier1.max, language);
@@ -120,18 +112,17 @@ export async function generateVideoDescription(deps: GenerateVideoDescriptionDep
   const tier3Range = formatScoringRange(tiers.tier3.min, tiers.tier3.max, language);
 
   const scoringCta = {
-    beginner: typeof rawScoring.beginner === "string" && rawScoring.beginner.trim()
-      ? rawScoring.beginner.trim()
-      : `${tier1Range}: Beginner`,
-    intermediate: typeof rawScoring.intermediate === "string" && rawScoring.intermediate.trim()
-      ? rawScoring.intermediate.trim()
-      : `${tier2Range}: Intermediate`,
-    expert: typeof rawScoring.expert === "string" && rawScoring.expert.trim()
-      ? rawScoring.expert.trim()
-      : `${tier3Range}: Master`,
-    cta_text: typeof rawScoring.cta_text === "string" && rawScoring.cta_text.trim()
-      ? rawScoring.cta_text.trim()
-      : "How many did you get right? Comment below!",
+    beginner:
+      typeof rawScoring.beginner === "string" && rawScoring.beginner.trim() ? rawScoring.beginner.trim() : `${tier1Range}: Beginner`,
+    intermediate:
+      typeof rawScoring.intermediate === "string" && rawScoring.intermediate.trim()
+        ? rawScoring.intermediate.trim()
+        : `${tier2Range}: Intermediate`,
+    expert: typeof rawScoring.expert === "string" && rawScoring.expert.trim() ? rawScoring.expert.trim() : `${tier3Range}: Master`,
+    cta_text:
+      typeof rawScoring.cta_text === "string" && rawScoring.cta_text.trim()
+        ? rawScoring.cta_text.trim()
+        : "How many did you get right? Comment below!",
   };
 
   const suggestedPlaylistCategory =

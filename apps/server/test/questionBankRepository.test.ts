@@ -76,12 +76,12 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
 
   it("accurately calculates 30-day Cooldown for specific channel without affecting other channels", async () => {
     // Mock readQuestionHistory for channel_a to simulate rendered questions
-    const originalReadQuestionHistory = repo.readQuestionHistory;
+    const originalReadQuestionHistory = repo.readQuestionHistory.bind(repo);
     const nowIso = new Date().toISOString();
 
-    repo.readQuestionHistory = async function (channelId: string) {
+    repo.readQuestionHistory = function (channelId: string) {
       if (channelId === "channel_a") {
-        return [
+        return Promise.resolve([
           {
             question_id: "VFM-NAT-OCN-0001",
             question_text: "Blue whales are the largest animals ever known to have lived on Earth, larger than any dinosaur. Fact or Myth?",
@@ -94,9 +94,9 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
             channel_id: "channel_a",
             rendered_at: nowIso,
           },
-        ];
+        ]);
       }
-      return [];
+      return Promise.resolve([]);
     };
 
     try {

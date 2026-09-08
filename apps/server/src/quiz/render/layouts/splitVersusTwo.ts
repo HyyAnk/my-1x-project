@@ -28,4 +28,3 @@ export const splitVersusTwoLayout = {
   renderBody: (slots) => `${slots.questionBoxHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
   css: (aspectRatio) => getSplitVersusTwoCss(aspectRatio),
 } satisfies QuizLayoutRenderDefinition;
-

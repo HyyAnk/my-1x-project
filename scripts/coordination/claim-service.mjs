@@ -96,7 +96,8 @@ export function claimZone({
       };
 
       insertClaimRecord(db, storedClaim);
-      const { leaseTokenHash: _secret, ...publicClaim } = storedClaim;
+      const publicClaim = { ...storedClaim };
+      delete publicClaim.leaseTokenHash;
       return {
         ...publicClaim,
         leaseToken: lease.token,
@@ -363,6 +364,7 @@ export function getStatus({ claimId, includeHistory = false, workspaceRoot, cust
 }
 
 function withoutLeaseSecret(claim) {
-  const { leaseTokenHash: _secret, ...publicClaim } = claim;
+  const publicClaim = { ...claim };
+  delete publicClaim.leaseTokenHash;
   return publicClaim;
 }

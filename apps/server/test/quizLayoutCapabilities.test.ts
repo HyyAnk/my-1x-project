@@ -31,9 +31,7 @@ describe("Phase 2 layout capability catalog", () => {
       expect(layout.supportedFormats.length).toBeGreaterThan(0);
       expect(layout.recommendedFormats.every((format) => layout.supportedFormats.includes(format))).toBe(true);
       expect(layout.media.required.every((media) => layout.media.supported.includes(media))).toBe(true);
-      expect(layout.supportedAspectRatios).toEqual(
-        layout.id.startsWith("portrait_") ? ["9:16"] : ["16:9"],
-      );
+      expect(layout.supportedAspectRatios).toEqual(layout.id.startsWith("portrait_") ? ["9:16"] : ["16:9"]);
       expect(layout.metrics.render.width).toBeGreaterThan(0);
       expect(layout.metrics.render.height).toBeGreaterThan(0);
       expect(layout.metrics.render.itemCount).toBeGreaterThan(0);
@@ -84,10 +82,11 @@ describe("Phase 2 layout resolution policy", () => {
       questionFormat: "true_false",
       choiceCount: 2,
     });
-    expect(result.requestedLayout).toBe("visual_choices_three");
-    expect(result.issues.map((issue) => issue.message)).toContain(
-      "Layout capability does not support choice count 2.",
-    );
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.requestedLayout).toBe("visual_choices_three");
+      expect(result.issues.map((issue) => issue.message)).toContain("Layout capability does not support choice count 2.");
+    }
   });
 
   it("resolves full_stack_list safely even when beat has question_illustration asset intent", () => {

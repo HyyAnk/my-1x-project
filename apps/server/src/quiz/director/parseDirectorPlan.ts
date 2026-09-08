@@ -1,4 +1,11 @@
-import { resolveQuizLayout, type DirectorArchetype, type DirectorPlan, type MascotRenderAspectRatio, type QuizQuestion, type QuizV2 } from "@studio/shared";
+import {
+  resolveQuizLayout,
+  type DirectorArchetype,
+  type DirectorPlan,
+  type MascotRenderAspectRatio,
+  type QuizQuestion,
+  type QuizV2,
+} from "@studio/shared";
 import { assertDirectorPlanValid } from "./validateDirectorPlan.js";
 
 export function parseDirectorPlanOutput(output: string, quiz: QuizV2): DirectorPlan {
@@ -11,12 +18,8 @@ export function parseDirectorPlanOutput(output: string, quiz: QuizV2): DirectorP
   return assertDirectorPlanValid(quiz, parsed);
 }
 
-export function createDefaultDirectorPlan(
-  quiz: QuizV2,
-  aspectRatioOrTheme?: MascotRenderAspectRatio | string,
-  paletteId?: string,
-): DirectorPlan {
-  const aspectRatio: MascotRenderAspectRatio = aspectRatioOrTheme === "9:16" ? "9:16" : "16:9";
+export function createDefaultDirectorPlan(quiz: QuizV2, _aspectRatioOrTheme?: string, _paletteId?: string): DirectorPlan {
+  const aspectRatio: MascotRenderAspectRatio = "16:9";
   const minimumThinking: Record<QuizV2["age_band"], number> = { "4-6": 7.5, "7-9": 7, "10-12": 6.8, family: 7 };
   const beats: DirectorPlan["beats"] = quiz.questions.map((question, index): DirectorPlan["beats"][number] => {
     const archetype =

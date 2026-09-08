@@ -12,11 +12,7 @@ export type MascotStateSlotsColumnProps = {
   busySlotKey: string | null;
   batchProgress: BatchProgressState | null;
   onBatchGenerate: (state: "thinking" | "celebrate") => void;
-  onGenerateSlot: (
-    state: "thinking" | "celebrate",
-    slotIndex: number,
-    promptModifier?: string,
-  ) => void;
+  onGenerateSlot: (state: "thinking" | "celebrate", slotIndex: number, promptModifier?: string) => void;
   onEditPrompt: (state: "thinking" | "celebrate", slotIndex: number) => void;
   onOpenLightbox?: (img: string) => void;
 };

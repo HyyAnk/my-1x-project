@@ -7,6 +7,7 @@ import {
   serializeQuizPaletteCss,
   serializeQuizPaletteCssVariables,
   serializeQuizPaletteInlineStyle,
+  type ChannelMascotConfig,
   type MascotProfile,
   type QuizBackgroundStyle,
 } from "@studio/shared";
@@ -750,7 +751,7 @@ describe("Candy Arcade visual template", () => {
     }
   });
 
-  it("resolves decoupled mascot placements for 16:9 and 9:16 aspect ratios independently", () => {
+  it("resolves the retained 16:9 mascot placement", () => {
     const director = createDefaultDirectorPlan(quiz);
     const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
     const mascotConfig: ChannelMascotConfig = {
@@ -763,7 +764,6 @@ describe("Candy Arcade visual template", () => {
       show_in_question: true,
       placements: {
         "16:9": { position: "bottom_left", scale: 1.84, offset_x: 67, offset_y: 90, flip_x: false },
-        "9:16": { position: "bottom_right", scale: 1.2, offset_x: -20, offset_y: 50, flip_x: true },
       },
     };
 
@@ -779,45 +779,11 @@ describe("Candy Arcade visual template", () => {
       aspectRatio: "16:9",
     });
 
-    const quiz9_16: QuizV2 = {
-      ...quiz,
-      questions: quiz.questions.map((q) => ({
-        ...q,
-        format: "multiple_choice",
-      })),
-    };
-    const director9_16 = {
-      ...director,
-      beats: director.beats.map((b) => ({
-        ...b,
-        archetype: "illustrated_multiple_choice" as const,
-        layout_id: "portrait_hero_choices" as const,
-        asset_intents: ["question_illustration" as const],
-      })),
-    };
-
-    const bundle9_16 = buildCandyArcadeCompositionBundle({
-      quiz: quiz9_16,
-      director: director9_16,
-      timeline,
-      styleContext: { theme: "candy_arcade" },
-      audioPath: "./narration.wav",
-      narrationDurationSeconds: timeline.duration_seconds,
-      mascot: { ...dummyMascot, master_image_url: "/assets/mascot.png" },
-      mascotConfig,
-      aspectRatio: "9:16",
-    });
-
     const source16_9 = [bundle16_9.html, ...Object.values(bundle16_9.files)].join("\n");
-    const source9_16 = [bundle9_16.html, ...Object.values(bundle9_16.files)].join("\n");
 
     expect(source16_9).toContain("anchor-bottom_left");
     expect(source16_9).toContain('data-mascot-scale="1.84"');
     expect(source16_9).toContain('data-mascot-canvas="1920x1080"');
-
-    expect(source9_16).toContain("anchor-bottom_right");
-    expect(source9_16).toContain('data-mascot-scale="1.2"');
-    expect(source9_16).toContain('data-mascot-canvas="1080x1920"');
   });
 
   it("renders dynamic QuestionBox, CounterBadge, and AnswerCard element variants in video composition", () => {
@@ -1096,9 +1062,7 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     const mlcr916 = mediaLeftChoicesRightLayout.css("9:16");
     const vc3916 = visualChoicesThreeLayout.css("9:16");
 
-    expect(mlcr916).toContain('#stage[data-aspect-ratio="9:16"]');
-    expect(mlcr916).toContain("--choice-badge-size: 124px;");
-    expect(mlcr916).toContain("--choice-font-size-base: 40px;");
+    expect(mlcr916).not.toContain('#stage[data-aspect-ratio="9:16"]');
 
     expect(vc3916).toContain('#stage[data-aspect-ratio="9:16"]');
     expect(vc3916).toContain("--choice-media-height: 360px;");
@@ -1179,9 +1143,9 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
 
     expect(baseline).toContain("--choice-fit-max: 64px;");
     expect(mediaLeft).toContain("--choice-fit-max: 64px;");
-    expect(mediaLeftPortrait).toContain("--choice-fit-max: 72px;");
+    expect(mediaLeftPortrait).toContain("--choice-fit-max: 64px;");
     expect(fullStack).toContain("--choice-fit-max: 64px;");
-    expect(fullStackPortrait).toContain("--choice-fit-max: 72px;");
+    expect(fullStackPortrait).toContain("--choice-fit-max: 64px;");
     expect(visual).toContain("--choice-fit-max: 30px;");
     expect(visualPortrait).toContain("--choice-fit-max: 42px;");
 
@@ -1261,18 +1225,11 @@ describe("Candy Arcade visual and workflow regression", () => {
     }
   });
 
-  it("renders 16:9 and 9:16 compositions cleanly with correct aspect markers", () => {
+  it("renders 16:9 and rejects retired Sandbox portrait compositions", () => {
     const res169 = buildSandboxComposition({ aspect_ratio: "16:9" });
-    const res916 = buildSandboxComposition({ aspect_ratio: "9:16", layout_id: "portrait_hero_choices" });
+    expect(() => buildSandboxComposition({ aspect_ratio: "9:16", layout_id: "portrait_hero_choices" })).toThrow();
 
     expect(res169.html).toContain('data-aspect-ratio="16:9"');
-    expect(res916.html).toContain('data-aspect-ratio="9:16"');
-    expect(res916.html).toContain('#stage[data-aspect-ratio="9:16"]');
-    expect(res916.css).toContain("--safe-zone-top: 180px;");
-    expect(res916.css).toContain("--safe-zone-bottom: 440px;");
-    expect(res916.css).toContain("--safe-zone-right: 140px;");
-    expect(res916.css).toContain('#stage[data-aspect-ratio="9:16"] .phase-region { left: 36px; right: var(--safe-zone-right, 140px); bottom: var(--safe-zone-bottom, 440px);');
-    expect(res916.css).not.toContain('#stage[data-aspect-ratio="9:16"] .phase-region { left: 36px; right: 36px; bottom: 18px;');
   });
 
   it("suppresses decorative animation under reduced motion while preserving status visibility", () => {
@@ -1301,15 +1258,25 @@ describe("Candy Arcade visual and workflow regression", () => {
     expect(css).toContain("--question-card-left-edge: 360px;");
 
     // Game stage defaults directly to 1420px width
-    expect(css).toContain(".game-stage { position: relative; z-index: 3; display: grid; justify-items: center; align-content: start; width: 1420px; min-height: 945px; margin: 12px 40px 0 auto; contain: layout style; }");
+    expect(css).toContain(
+      ".game-stage { position: relative; z-index: 3; display: grid; justify-items: center; align-content: start; width: 1420px; min-height: 945px; margin: 12px 40px 0 auto; contain: layout style; }",
+    );
 
     // Game header defaults directly to x = 180px (centered in 0..360px pillar)
-    expect(css).toContain(".game-header { position: absolute; z-index: 6; top: 0; left: 180px; transform: translateX(-50%); contain: layout style; }");
+    expect(css).toContain(
+      ".game-header { position: absolute; z-index: 6; top: 0; left: 180px; transform: translateX(-50%); contain: layout style; }",
+    );
 
     // Question title and phase region centered/aligned to 1420px stage
-    expect(css).toContain(".question-title { position: relative; z-index: 3; width: var(--question-card-width, 1440px); max-width: var(--question-card-width, 1440px);");
-    expect(css).toContain(".phase-region { position: absolute; z-index: 5; left: 0; bottom: 10px; width: var(--question-card-width, 1440px);");
-    expect(css).toContain(".phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: -15px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(70vw, 1300px);");
+    expect(css).toContain(
+      ".question-title { position: relative; z-index: 3; width: var(--question-card-width, 1440px); max-width: var(--question-card-width, 1440px);",
+    );
+    expect(css).toContain(
+      ".phase-region { position: absolute; z-index: 5; left: 0; bottom: 10px; width: var(--question-card-width, 1440px);",
+    );
+    expect(css).toContain(
+      ".phase-region > .thinking-bar { position: absolute; z-index: 5; bottom: -15px; left: 50%; margin-top: 0; transform: translateX(-50%); width: min(70vw, 1300px);",
+    );
 
     // Mascot container locked to bottom-left pillar in 16:9
     expect(css).toContain(".candy-mascot-container.anchor-bottom_left { bottom: 18px; left: 32px; }");

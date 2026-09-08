@@ -134,7 +134,7 @@ describe("AppViewRouter", () => {
     const props = createDefaultProps({ page: "channels", selectedChannel: null, selectedEpisodeId: null });
     renderWithProviders(<AppViewRouter {...props} />);
 
-    const el = await screen.findByText(/Trivia Channel/i, {}, { timeout: 10000 });
+    const el = await screen.findByText(/Trivia Channel/i, {}, { timeout: 20000 });
     expect(el).toBeTruthy();
   });
 

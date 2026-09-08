@@ -1,10 +1,8 @@
-import type { MascotRenderAspectRatio } from "@studio/shared";
 import { MascotPositionSection } from "./transform/MascotPositionSection";
 import { MascotScaleSection } from "./transform/MascotScaleSection";
 import { MascotOffsetSection } from "./transform/MascotOffsetSection";
 
 export interface MascotTransformControlsProps {
-  aspectRatio?: MascotRenderAspectRatio;
   mascotPosition: "bottom_left" | "bottom_right";
   setMascotPosition: (pos: "bottom_left" | "bottom_right") => void;
   mascotScale: number;
@@ -19,7 +17,6 @@ export interface MascotTransformControlsProps {
 }
 
 export function MascotTransformControls({
-  aspectRatio,
   mascotPosition,
   setMascotPosition,
   mascotScale,
@@ -35,7 +32,6 @@ export function MascotTransformControls({
   return (
     <>
       <MascotPositionSection
-        aspectRatio={aspectRatio}
         mascotPosition={mascotPosition}
         setMascotPosition={setMascotPosition}
         mascotFlipX={mascotFlipX}

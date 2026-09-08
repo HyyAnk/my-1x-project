@@ -52,6 +52,17 @@ export type EngineInfoResponse = {
 
 export type RealtimeStatus = "connecting" | "connected" | "reconnecting";
 
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly code?: string,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
 export async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers);
   headers.set("accept", "application/json");
@@ -69,7 +80,8 @@ export async function request<T>(url: string, init?: RequestInit): Promise<T> {
       body && typeof body === "object" && "error" in body && typeof body.error === "string"
         ? body.error
         : rawBody.trim() || `${response.status} ${response.statusText}`;
-    throw new Error(message);
+    const code = body && typeof body === "object" && "code" in body && typeof body.code === "string" ? body.code : undefined;
+    throw new ApiError(message, response.status, code);
   }
   return body as T;
 }

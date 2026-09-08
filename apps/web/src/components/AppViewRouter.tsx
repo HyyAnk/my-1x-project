@@ -30,6 +30,7 @@ export interface AppViewRouterProps {
   channels: Channel[];
   selectedChannel: Channel | null;
   selectedEpisodeId: string | null;
+  selectedShortReelId?: string | null;
   tasks: Task[];
   activeTasks: Task[];
   taskClock: number;
@@ -106,6 +107,7 @@ export function AppViewRouter(props: AppViewRouterProps) {
           <ChannelsView
             selectedChannel={props.selectedChannel}
             selectedEpisodeId={props.selectedEpisodeId}
+            selectedShortReelId={props.selectedShortReelId}
             channels={props.channels}
             tasks={props.tasks}
             activeTab={props.tab}

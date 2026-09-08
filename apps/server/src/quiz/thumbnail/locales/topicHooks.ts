@@ -70,68 +70,35 @@ const CAR_HOOKS: Record<SupportedLanguage, string> = {
   es: "¡QUIZ DE SUPERCARS!",
 };
 
+const SPACE_KEYWORDS = ["solar system", "planet", "space", "astronomy", "mars", "jupiter", "saturn", "宇宙", "惑星"];
+const ANIMAL_KEYWORDS = ["animal", "wildlife", "creature", "動物"];
+const FLAG_KEYWORDS = ["flag", "country", "geography", "国旗"];
+const COOKIE_KEYWORDS = ["bake", "cookie", "biscuit", "pastry", "dessert", "cake", "culinary", "スイーツ", "お菓子"];
+const CAR_KEYWORDS = ["supercar", "hypercar", "racing"];
+
+function matchesAny(text: string, keywords: readonly string[]): boolean {
+  return keywords.some((kw) => text.includes(kw));
+}
+
 /**
  * Resolves topic-specific high-CTR hook headline if applicable (e.g. Solar System -> SOLAR SYSTEM QUIZ).
  */
 export function resolveTopicSpecificHook(topicText: string, language: SupportedLanguage): string | null {
   const lower = topicText.toLowerCase();
 
-  // 1. Space & Solar System
-  if (
-    lower.includes("solar system") ||
-    lower.includes("planet") ||
-    lower.includes("space") ||
-    lower.includes("astronomy") ||
-    lower.includes("mars") ||
-    lower.includes("jupiter") ||
-    lower.includes("saturn") ||
-    lower.includes("宇宙") ||
-    lower.includes("惑星")
-  ) {
+  if (matchesAny(lower, SPACE_KEYWORDS)) {
     return SPACE_HOOKS[language] || SPACE_HOOKS.en;
   }
-
-  // 2. Animals
-  if (
-    lower.includes("animal") ||
-    lower.includes("wildlife") ||
-    lower.includes("creature") ||
-    lower.includes("動物")
-  ) {
+  if (matchesAny(lower, ANIMAL_KEYWORDS)) {
     return ANIMAL_HOOKS[language] || ANIMAL_HOOKS.en;
   }
-
-  // 3. Flags & Geography
-  if (
-    lower.includes("flag") ||
-    lower.includes("country") ||
-    lower.includes("geography") ||
-    lower.includes("国旗")
-  ) {
+  if (matchesAny(lower, FLAG_KEYWORDS)) {
     return FLAG_HOOKS[language] || FLAG_HOOKS.en;
   }
-
-  // 4. Food, Bakery & Cookies
-  if (
-    lower.includes("bake") ||
-    lower.includes("cookie") ||
-    lower.includes("biscuit") ||
-    lower.includes("pastry") ||
-    lower.includes("dessert") ||
-    lower.includes("cake") ||
-    lower.includes("culinary") ||
-    lower.includes("スイーツ") ||
-    lower.includes("お菓子")
-  ) {
+  if (matchesAny(lower, COOKIE_KEYWORDS)) {
     return COOKIE_HOOKS[language] || COOKIE_HOOKS.en;
   }
-
-  // 5. Supercars & Racing
-  if (
-    lower.includes("supercar") ||
-    lower.includes("hypercar") ||
-    lower.includes("racing")
-  ) {
+  if (matchesAny(lower, CAR_KEYWORDS)) {
     return CAR_HOOKS[language] || CAR_HOOKS.en;
   }
 

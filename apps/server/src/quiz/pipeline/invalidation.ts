@@ -12,7 +12,6 @@ const downstream: Record<QuizArtifactStage, QuizArtifactStage[]> = {
   qa: [],
 };
 
-
 export function invalidateQuizArtifacts(changed: QuizArtifactStage): QuizArtifactStage[] {
   return [...downstream[changed]];
 }

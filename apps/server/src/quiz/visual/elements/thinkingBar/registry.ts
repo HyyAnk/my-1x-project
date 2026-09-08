@@ -27,7 +27,12 @@ export function resolveThinkingBarVariant(
   if (!requested || requested === "auto") {
     return THINKING_BAR_VARIANTS[fallback] ?? THINKING_BAR_VARIANTS[DEFAULT_THINKING_BAR_STYLE];
   }
-  return (getStyleModuleAtRevision("thinking-bar", requested, revision)?.renderer as ThinkingBarVariant | undefined) ?? THINKING_BAR_VARIANTS[requested] ?? THINKING_BAR_VARIANTS[fallback] ?? THINKING_BAR_VARIANTS[DEFAULT_THINKING_BAR_STYLE];
+  return (
+    (getStyleModuleAtRevision("thinking-bar", requested, revision)?.renderer as ThinkingBarVariant | undefined) ??
+    THINKING_BAR_VARIANTS[requested] ??
+    THINKING_BAR_VARIANTS[fallback] ??
+    THINKING_BAR_VARIANTS[DEFAULT_THINKING_BAR_STYLE]
+  );
 }
 
 export function getThinkingBarsCss(revision?: string): string {

@@ -57,7 +57,7 @@ function main() {
 
   const zoneList = loadZoneMap(root);
   const db = openClaimsDb(root);
-  let activeClaims = [];
+  let activeClaims;
   try {
     activeClaims = getActiveClaims(db);
   } finally {

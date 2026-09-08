@@ -40,6 +40,13 @@ function createTask(overrides: Record<string, unknown> = {}) {
 }
 
 describe("buildEpisodeCardViewModel", () => {
+  it("retains a portrait-only thumbnail as a generic media fallback", () => {
+    const episode = createEpisode({
+      video_asset_path: "video/master.mp4",
+      thumbnail_asset_path_9_16: "assets/thumbnail_9_16.jpg",
+    });
+    expect(buildEpisodeCardViewModel(episode, []).thumbnailRatio).toBe("9:16");
+  });
   it("uses the completed video thumbnail and actual duration", () => {
     const episode = createEpisode({
       stage: "VIDEO_READY",
@@ -79,15 +86,21 @@ describe("buildEpisodeCardViewModel", () => {
     expect(buildEpisodeCardViewModel(createEpisode(), []).statusLabel).toBe("Not started");
   });
 
-  it("prioritizes 9:16 thumbnail when render_aspect_ratio is 9:16", () => {
-    const episode = createEpisode({
+  it("prefers the landscape thumbnail despite retired portrait render metadata", () => {
+    const baseEpisode = createEpisode({
       stage: "VIDEO_READY",
       video_asset_path: "video/master.mp4",
       thumbnail_asset_path_16_9: "assets/thumbnail_16_9.jpg",
       thumbnail_asset_path_9_16: "assets/thumbnail_9_16.jpg",
-      quiz_config: { question_count: 8, quiz_format: "odd_one_out", render_aspect_ratio: "9:16" },
     });
+    const episode = {
+      ...baseEpisode,
+      quiz_config: {
+        ...baseEpisode.quiz_config,
+        render_aspect_ratio: "9:16" as unknown as "16:9",
+      },
+    };
 
-    expect(buildEpisodeCardViewModel(episode, []).thumbnailRatio).toBe("9:16");
+    expect(buildEpisodeCardViewModel(episode, []).thumbnailRatio).toBe("16:9");
   });
 });

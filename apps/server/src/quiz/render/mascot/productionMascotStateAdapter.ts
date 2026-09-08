@@ -6,6 +6,7 @@ import {
   type MascotMotionPreset,
   type MascotProfile,
   type MascotSpriteAction,
+  type MascotStateVariant,
   type MascotStyle,
 } from "@studio/shared";
 
@@ -22,11 +23,7 @@ const DEFAULT_ACTION_REGISTRATION = {
  * Resolves the active MascotStyle for a question or scene.
  * If styleId is "cycle" or "all", cycles through available styles based on questionIndex.
  */
-export function resolveMascotQuestionStyle(
-  mascot: MascotProfile,
-  styleId?: string | null,
-  questionIndex = 0,
-): MascotStyle {
+export function resolveMascotQuestionStyle(mascot: MascotProfile, styleId?: string | null, questionIndex = 0): MascotStyle {
   if (mascot.styles && mascot.styles.length > 0) {
     if (styleId === "cycle" || styleId === "all") {
       return mascot.styles[questionIndex % mascot.styles.length];
@@ -41,11 +38,7 @@ export function resolveMascotQuestionStyle(
 export function hasDedicatedAction(mascot: MascotProfile, action: MascotActionType): boolean {
   const legacyAction = mascot.actions?.[action];
   const bundleAction = mascot.render_bundle?.assets?.actions?.[action];
-  return Boolean(
-    legacyAction?.sprite_url?.trim() ||
-      legacyAction?.preview_url?.trim() ||
-      bundleAction?.image_url?.trim(),
-  );
+  return Boolean(legacyAction?.sprite_url?.trim() || legacyAction?.preview_url?.trim() || bundleAction?.image_url?.trim());
 }
 
 function buildLegacySpriteAction(
@@ -98,6 +91,56 @@ function buildBundleActionV2(
  * Adapts a MascotProfile for a specific question clip by deterministically rotating
  * thinking and celebrate variants according to questionIndex.
  */
+function resolveQuestionAction(
+  type: "thinking" | "celebrate",
+  variant: MascotStateVariant | null,
+  anchorImageUrl: string | null | undefined,
+  existing?: MascotSpriteAction | null,
+): MascotSpriteAction | undefined {
+  const defaultPreset: MascotMotionPreset = type === "thinking" ? "sway" : "jump";
+  if (variant) {
+    return buildLegacySpriteAction(
+      type,
+      variant.image_url,
+      variant.motion_preset ?? existing?.motion_preset ?? defaultPreset,
+      variant.motion_speed ?? existing?.motion_speed ?? 1.0,
+      variant.motion_intensity ?? existing?.motion_intensity ?? "normal",
+      existing,
+    );
+  }
+  if (anchorImageUrl?.trim()) {
+    return buildLegacySpriteAction(type, anchorImageUrl.trim(), defaultPreset, 1.0, "normal", existing);
+  }
+  return existing ?? undefined;
+}
+
+function resolveQuestionBundleAction(
+  type: "thinking" | "celebrate",
+  variant: MascotStateVariant | null,
+  anchorImageUrl: string | null | undefined,
+  existing?: MascotActionAssetV2 | null,
+): MascotActionAssetV2 | undefined {
+  const defaultPreset: MascotMotionPreset = type === "thinking" ? "sway" : "jump";
+  if (variant) {
+    return buildBundleActionV2(
+      type,
+      variant.image_url,
+      variant.motion_preset ?? existing?.motion?.preset ?? defaultPreset,
+      variant.motion_speed ?? existing?.motion?.speed ?? 1.0,
+      variant.motion_intensity ?? existing?.motion?.intensity ?? "normal",
+      existing,
+    );
+  }
+  if (anchorImageUrl?.trim()) {
+    return buildBundleActionV2(type, anchorImageUrl.trim(), defaultPreset, 1.0, "normal", existing);
+  }
+  return existing ?? undefined;
+}
+
+/**
+ * Adapts a MascotProfile for a specific question clip by deterministically rotating
+ * thinking and celebrate variants according to questionIndex.
+ */
 export function adaptMascotForQuestion(
   mascot: MascotProfile | null | undefined,
   styleId?: string | null,
@@ -112,92 +155,21 @@ export function adaptMascotForQuestion(
   const thinkingVariant = thinkingVariants.length > 0 ? thinkingVariants[questionIndex % thinkingVariants.length] : null;
   const celebrateVariant = celebrateVariants.length > 0 ? celebrateVariants[questionIndex % celebrateVariants.length] : null;
 
-  const existingThinking = mascot.actions?.thinking;
-  const existingCelebrate = mascot.actions?.celebrate;
   const newActions = { ...mascot.actions };
+  const thinkingAction = resolveQuestionAction("thinking", thinkingVariant, style.anchor_image_url, mascot.actions?.thinking);
+  if (thinkingAction) newActions.thinking = thinkingAction;
 
-  if (thinkingVariant) {
-    newActions.thinking = buildLegacySpriteAction(
-      "thinking",
-      thinkingVariant.image_url,
-      thinkingVariant.motion_preset ?? existingThinking?.motion_preset ?? "sway",
-      thinkingVariant.motion_speed ?? existingThinking?.motion_speed ?? 1.0,
-      thinkingVariant.motion_intensity ?? existingThinking?.motion_intensity ?? "normal",
-      existingThinking,
-    );
-  } else if (style.anchor_image_url?.trim()) {
-    newActions.thinking = buildLegacySpriteAction(
-      "thinking",
-      style.anchor_image_url.trim(),
-      "sway",
-      1.0,
-      "normal",
-      existingThinking,
-    );
-  }
-
-  if (celebrateVariant) {
-    newActions.celebrate = buildLegacySpriteAction(
-      "celebrate",
-      celebrateVariant.image_url,
-      celebrateVariant.motion_preset ?? existingCelebrate?.motion_preset ?? "jump",
-      celebrateVariant.motion_speed ?? existingCelebrate?.motion_speed ?? 1.0,
-      celebrateVariant.motion_intensity ?? existingCelebrate?.motion_intensity ?? "normal",
-      existingCelebrate,
-    );
-  } else if (style.anchor_image_url?.trim()) {
-    newActions.celebrate = buildLegacySpriteAction(
-      "celebrate",
-      style.anchor_image_url.trim(),
-      "jump",
-      1.0,
-      "normal",
-      existingCelebrate,
-    );
-  }
+  const celebrateAction = resolveQuestionAction("celebrate", celebrateVariant, style.anchor_image_url, mascot.actions?.celebrate);
+  if (celebrateAction) newActions.celebrate = celebrateAction;
 
   let adaptedRenderBundle = mascot.render_bundle;
   if (mascot.render_bundle) {
     const actionsCopy = { ...(mascot.render_bundle.assets?.actions ?? {}) };
-    if (thinkingVariant) {
-      actionsCopy.thinking = buildBundleActionV2(
-        "thinking",
-        thinkingVariant.image_url,
-        thinkingVariant.motion_preset ?? actionsCopy.thinking?.motion?.preset ?? "sway",
-        thinkingVariant.motion_speed ?? actionsCopy.thinking?.motion?.speed ?? 1.0,
-        thinkingVariant.motion_intensity ?? actionsCopy.thinking?.motion?.intensity ?? "normal",
-        actionsCopy.thinking,
-      );
-    } else if (style.anchor_image_url?.trim()) {
-      actionsCopy.thinking = buildBundleActionV2(
-        "thinking",
-        style.anchor_image_url.trim(),
-        "sway",
-        1.0,
-        "normal",
-        actionsCopy.thinking,
-      );
-    }
+    const bundleThinking = resolveQuestionBundleAction("thinking", thinkingVariant, style.anchor_image_url, actionsCopy.thinking);
+    if (bundleThinking) actionsCopy.thinking = bundleThinking;
 
-    if (celebrateVariant) {
-      actionsCopy.celebrate = buildBundleActionV2(
-        "celebrate",
-        celebrateVariant.image_url,
-        celebrateVariant.motion_preset ?? actionsCopy.celebrate?.motion?.preset ?? "jump",
-        celebrateVariant.motion_speed ?? actionsCopy.celebrate?.motion?.speed ?? 1.0,
-        celebrateVariant.motion_intensity ?? actionsCopy.celebrate?.motion?.intensity ?? "normal",
-        actionsCopy.celebrate,
-      );
-    } else if (style.anchor_image_url?.trim()) {
-      actionsCopy.celebrate = buildBundleActionV2(
-        "celebrate",
-        style.anchor_image_url.trim(),
-        "jump",
-        1.0,
-        "normal",
-        actionsCopy.celebrate,
-      );
-    }
+    const bundleCelebrate = resolveQuestionBundleAction("celebrate", celebrateVariant, style.anchor_image_url, actionsCopy.celebrate);
+    if (bundleCelebrate) actionsCopy.celebrate = bundleCelebrate;
 
     adaptedRenderBundle = {
       ...mascot.render_bundle,
@@ -214,6 +186,93 @@ export function adaptMascotForQuestion(
     actions: newActions,
     render_bundle: adaptedRenderBundle,
   };
+}
+
+type ApplyPhaseActionFn = (
+  action: MascotActionType,
+  url: string,
+  motionPreset: MascotMotionPreset,
+  speed?: number,
+  intensity?: MascotMotionIntensity,
+) => void;
+
+function applyIntroPhaseFallback(
+  mascot: MascotProfile,
+  style: MascotStyle,
+  celebrateVariants: MascotStateVariant[],
+  thinkingVariants: MascotStateVariant[],
+  apply: ApplyPhaseActionFn,
+): void {
+  if (!hasDedicatedAction(mascot, "wave")) {
+    const fallbackVariant = celebrateVariants[0] ?? thinkingVariants[0];
+    const fallbackUrl = fallbackVariant?.image_url ?? style.anchor_image_url?.trim() ?? mascot.master_image_url?.trim() ?? "";
+    if (fallbackUrl) {
+      apply(
+        "wave",
+        fallbackUrl,
+        fallbackVariant?.motion_preset ?? "wave",
+        fallbackVariant?.motion_speed ?? 1.0,
+        fallbackVariant?.motion_intensity ?? "normal",
+      );
+    }
+  }
+}
+
+function applyOutroPhaseFallback(
+  mascot: MascotProfile,
+  style: MascotStyle,
+  celebrateVariants: MascotStateVariant[],
+  thinkingVariants: MascotStateVariant[],
+  apply: ApplyPhaseActionFn,
+): void {
+  if (!hasDedicatedAction(mascot, "outro")) {
+    const fallbackVariant = (celebrateVariants.length > 1 ? celebrateVariants[1] : celebrateVariants[0]) ?? thinkingVariants[0];
+    const fallbackUrl = fallbackVariant?.image_url ?? style.anchor_image_url?.trim() ?? mascot.master_image_url?.trim() ?? "";
+    if (fallbackUrl) {
+      apply(
+        "outro",
+        fallbackUrl,
+        fallbackVariant?.motion_preset ?? "wave",
+        fallbackVariant?.motion_speed ?? 1.0,
+        fallbackVariant?.motion_intensity ?? "normal",
+      );
+    }
+  }
+}
+
+function applyQuestionPhaseFallback(
+  mascot: MascotProfile,
+  style: MascotStyle,
+  celebrateVariants: MascotStateVariant[],
+  thinkingVariants: MascotStateVariant[],
+  apply: ApplyPhaseActionFn,
+): void {
+  if (!hasDedicatedAction(mascot, "thinking")) {
+    const fallbackVariant = thinkingVariants[0];
+    const fallbackUrl = fallbackVariant?.image_url ?? style.anchor_image_url?.trim() ?? "";
+    if (fallbackUrl) {
+      apply(
+        "thinking",
+        fallbackUrl,
+        fallbackVariant?.motion_preset ?? "sway",
+        fallbackVariant?.motion_speed ?? 1.0,
+        fallbackVariant?.motion_intensity ?? "normal",
+      );
+    }
+  }
+  if (!hasDedicatedAction(mascot, "celebrate")) {
+    const fallbackVariant = celebrateVariants[0];
+    const fallbackUrl = fallbackVariant?.image_url ?? style.anchor_image_url?.trim() ?? "";
+    if (fallbackUrl) {
+      apply(
+        "celebrate",
+        fallbackUrl,
+        fallbackVariant?.motion_preset ?? "jump",
+        fallbackVariant?.motion_speed ?? 1.0,
+        fallbackVariant?.motion_intensity ?? "normal",
+      );
+    }
+  }
 }
 
 /**
@@ -236,13 +295,7 @@ export function adaptMascotForPhase(
   const newActions = { ...mascot.actions };
   let adaptedRenderBundle = mascot.render_bundle;
 
-  const applyPhaseAction = (
-    action: MascotActionType,
-    url: string,
-    motionPreset: MascotMotionPreset,
-    speed = 1.0,
-    intensity: MascotMotionIntensity = "normal",
-  ) => {
+  const applyPhaseAction: ApplyPhaseActionFn = (action, url, motionPreset, speed = 1.0, intensity = "normal") => {
     newActions[action] = buildLegacySpriteAction(action, url, motionPreset, speed, intensity);
     if (adaptedRenderBundle) {
       adaptedRenderBundle = {
@@ -259,60 +312,11 @@ export function adaptMascotForPhase(
   };
 
   if (phase === "intro") {
-    if (!hasDedicatedAction(mascot, "wave")) {
-      const fallbackVariant = celebrateVariants[0] ?? thinkingVariants[0];
-      const fallbackUrl = fallbackVariant?.image_url ?? style.anchor_image_url?.trim() ?? mascot.master_image_url?.trim() ?? "";
-      if (fallbackUrl) {
-        applyPhaseAction(
-          "wave",
-          fallbackUrl,
-          fallbackVariant?.motion_preset ?? "wave",
-          fallbackVariant?.motion_speed ?? 1.0,
-          fallbackVariant?.motion_intensity ?? "normal",
-        );
-      }
-    }
+    applyIntroPhaseFallback(mascot, style, celebrateVariants, thinkingVariants, applyPhaseAction);
   } else if (phase === "outro") {
-    if (!hasDedicatedAction(mascot, "outro")) {
-      const fallbackVariant = (celebrateVariants.length > 1 ? celebrateVariants[1] : celebrateVariants[0]) ?? thinkingVariants[0];
-      const fallbackUrl = fallbackVariant?.image_url ?? style.anchor_image_url?.trim() ?? mascot.master_image_url?.trim() ?? "";
-      if (fallbackUrl) {
-        applyPhaseAction(
-          "outro",
-          fallbackUrl,
-          fallbackVariant?.motion_preset ?? "wave",
-          fallbackVariant?.motion_speed ?? 1.0,
-          fallbackVariant?.motion_intensity ?? "normal",
-        );
-      }
-    }
+    applyOutroPhaseFallback(mascot, style, celebrateVariants, thinkingVariants, applyPhaseAction);
   } else if (phase === "question") {
-    if (!hasDedicatedAction(mascot, "thinking")) {
-      const fallbackVariant = thinkingVariants[0];
-      const fallbackUrl = fallbackVariant?.image_url ?? style.anchor_image_url?.trim() ?? "";
-      if (fallbackUrl) {
-        applyPhaseAction(
-          "thinking",
-          fallbackUrl,
-          fallbackVariant?.motion_preset ?? "sway",
-          fallbackVariant?.motion_speed ?? 1.0,
-          fallbackVariant?.motion_intensity ?? "normal",
-        );
-      }
-    }
-    if (!hasDedicatedAction(mascot, "celebrate")) {
-      const fallbackVariant = celebrateVariants[0];
-      const fallbackUrl = fallbackVariant?.image_url ?? style.anchor_image_url?.trim() ?? "";
-      if (fallbackUrl) {
-        applyPhaseAction(
-          "celebrate",
-          fallbackUrl,
-          fallbackVariant?.motion_preset ?? "jump",
-          fallbackVariant?.motion_speed ?? 1.0,
-          fallbackVariant?.motion_intensity ?? "normal",
-        );
-      }
-    }
+    applyQuestionPhaseFallback(mascot, style, celebrateVariants, thinkingVariants, applyPhaseAction);
   }
 
   return {

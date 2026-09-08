@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createCliLogger } from "../cli-logger.mjs";
 
+const ansiPrefix = `${String.fromCharCode(0x1b)}[`;
+
 function memoryStream(isTTY = false) {
   const writes = [];
   return {
@@ -36,8 +38,8 @@ test("structured logger emits ANSI colors only for supported TTY output", () => 
     else process.env.NO_COLOR = previousNoColor;
   }
 
-  assert.match(tty.writes[0], /\u001b\[/);
-  assert.doesNotMatch(plain.writes[0], /\u001b\[/);
+  assert.equal(tty.writes[0].includes(ansiPrefix), true);
+  assert.equal(plain.writes[0].includes(ansiPrefix), false);
 });
 
 test("JSON output stays parseable and contains no ANSI escape sequences", () => {
@@ -45,7 +47,7 @@ test("JSON output stays parseable and contains no ANSI escape sequences", () => 
   const logger = createCliLogger({ json: true, stream });
   logger.writeJson({ valid: true, count: 2 });
 
-  assert.doesNotMatch(stream.writes[0], /\u001b\[/);
+  assert.equal(stream.writes[0].includes(ansiPrefix), false);
   assert.deepEqual(JSON.parse(stream.writes[0]), { valid: true, count: 2 });
 });
 

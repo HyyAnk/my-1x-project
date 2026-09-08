@@ -115,76 +115,87 @@ export function buildBgmClips(
   });
 }
 
+function resolveCountdownSfx(val: unknown): { filename: string; dur: number; vol: string } {
+  const isFinalTick = val === 1;
+  const filename =
+    typeof val === "number" && val >= 1 && val <= 5
+      ? val === 1
+        ? "countdown_1.wav"
+        : `countdown_${val}.wav`
+      : isFinalTick
+        ? "countdown_final.wav"
+        : "countdown_tick.wav";
+  const dur = val === 1 || isFinalTick ? 0.35 : val === 2 ? 0.09 : 0.08;
+  const vol = val === 1 || isFinalTick ? "0.60" : val === 2 ? "0.50" : val === 3 ? "0.48" : "0.45";
+  return { filename, dur, vol };
+}
+
+function createSfxRawClip(event: QuizTimeline["events"][number], assets?: Record<string, string>): SfxRawClip | null {
+  const timeMs = Math.round(event.at_seconds * 1000);
+  const eventSlug = event.type.replaceAll(".", "-");
+  const id = `sfx-${eventSlug}-${timeMs}`;
+
+  if (event.type === "choices.enter") {
+    return {
+      id,
+      className: "clip sfx-clip",
+      start: event.at_seconds,
+      duration: 0.12,
+      trackIndex: 3,
+      volume: "0.55",
+      src: sfxSource("ui_pop.wav", assets),
+    };
+  }
+
+  if (event.type === "countdown.tick") {
+    const { filename, dur, vol } = resolveCountdownSfx(event.payload?.value);
+    return {
+      id,
+      className: "clip sfx-clip",
+      start: event.at_seconds,
+      duration: dur,
+      trackIndex: 3,
+      volume: vol,
+      src: sfxSource(filename, assets),
+    };
+  }
+
+  if (event.type === "reward.play") {
+    const isBig = event.payload?.intensity === "big";
+    return {
+      id,
+      className: "clip sfx-clip",
+      start: event.at_seconds,
+      duration: isBig ? 1.5 : 1.1,
+      trackIndex: 3,
+      volume: "0.75",
+      src: sfxSource(isBig ? "correct_triumph.wav" : "correct_ding.wav", assets),
+    };
+  }
+
+  if (event.type === "transition.start") {
+    const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";
+    return {
+      id,
+      className: "clip sfx-clip",
+      start: event.at_seconds,
+      duration: isLightning ? 0.7 : 0.65,
+      trackIndex: 3,
+      volume: "0.60",
+      src: sfxSource(isLightning ? "lightning_brush.wav" : "bubble_splash.wav", assets),
+    };
+  }
+
+  return null;
+}
+
 export function buildSfxClips(events: QuizTimeline["events"], assets?: Record<string, string>): string[] {
   const rawClips: SfxRawClip[] = [];
 
   for (const event of events) {
-    const timeMs = Math.round(event.at_seconds * 1000);
-    const eventSlug = event.type.replaceAll(".", "-");
-    const id = `sfx-${eventSlug}-${timeMs}`;
-
-    if (event.type === "choices.enter") {
-      const src = sfxSource("ui_pop.wav", assets);
-      rawClips.push({
-        id,
-        className: "clip sfx-clip",
-        start: event.at_seconds,
-        duration: 0.12,
-        trackIndex: 3,
-        volume: "0.55",
-        src,
-      });
-    } else if (event.type === "countdown.tick") {
-      const val = event.payload?.value;
-      const isFinalTick = val === 1;
-      const filename =
-        typeof val === "number" && val >= 1 && val <= 5
-          ? val === 1
-            ? "countdown_1.wav"
-            : `countdown_${val}.wav`
-          : isFinalTick
-            ? "countdown_final.wav"
-            : "countdown_tick.wav";
-      const dur = val === 1 || isFinalTick ? 0.35 : val === 2 ? 0.09 : 0.08;
-      const vol = val === 1 || isFinalTick ? "0.60" : val === 2 ? "0.50" : val === 3 ? "0.48" : "0.45";
-      const src = sfxSource(filename, assets);
-      rawClips.push({
-        id,
-        className: "clip sfx-clip",
-        start: event.at_seconds,
-        duration: dur,
-        trackIndex: 3,
-        volume: String(vol),
-        src,
-      });
-    } else if (event.type === "reward.play") {
-      const isBig = event.payload?.intensity === "big";
-      const filename = isBig ? "correct_triumph.wav" : "correct_ding.wav";
-      const dur = isBig ? 1.5 : 1.1;
-      const src = sfxSource(filename, assets);
-      rawClips.push({
-        id,
-        className: "clip sfx-clip",
-        start: event.at_seconds,
-        duration: dur,
-        trackIndex: 3,
-        volume: "0.75",
-        src,
-      });
-    } else if (event.type === "transition.start") {
-      const isLightning = event.payload?.intent === "zoom" || event.payload?.intent === "lightning";
-      const filename = isLightning ? "lightning_brush.wav" : "bubble_splash.wav";
-      const dur = isLightning ? 0.7 : 0.65;
-      const src = sfxSource(filename, assets);
-      rawClips.push({
-        id,
-        className: "clip sfx-clip",
-        start: event.at_seconds,
-        duration: dur,
-        trackIndex: 3,
-        volume: "0.60",
-        src,
-      });
+    const clip = createSfxRawClip(event, assets);
+    if (clip) {
+      rawClips.push(clip);
     }
   }
 

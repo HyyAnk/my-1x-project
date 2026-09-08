@@ -1,4 +1,3 @@
-import type { MascotRenderAspectRatio } from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 
 export interface MascotPositionSectionProps {
@@ -6,18 +5,10 @@ export interface MascotPositionSectionProps {
   setMascotPosition: (pos: "bottom_left" | "bottom_right") => void;
   mascotFlipX: boolean;
   setMascotFlipX: (flipped: boolean | ((prev: boolean) => boolean)) => void;
-  aspectRatio?: MascotRenderAspectRatio;
 }
 
-export function MascotPositionSection({
-  mascotPosition,
-  setMascotPosition,
-  mascotFlipX,
-  setMascotFlipX,
-  aspectRatio = "16:9",
-}: MascotPositionSectionProps) {
+export function MascotPositionSection({ mascotPosition, setMascotPosition, mascotFlipX, setMascotFlipX }: MascotPositionSectionProps) {
   const { t } = useTranslation();
-  const isWidescreen = aspectRatio === "16:9";
 
   return (
     <div>
@@ -34,17 +25,15 @@ export function MascotPositionSection({
         >
           {t("visualSandbox.mascotPositionSection")}
         </label>
-        {isWidescreen && (
-          <span
-            style={{
-              fontSize: "10px",
-              color: "var(--muted)",
-              fontWeight: 500,
-            }}
-          >
-            Left Pillar (16:9)
-          </span>
-        )}
+        <span
+          style={{
+            fontSize: "10px",
+            color: "var(--muted)",
+            fontWeight: 500,
+          }}
+        >
+          Left Pillar (16:9)
+        </span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
         <button
@@ -57,21 +46,17 @@ export function MascotPositionSection({
         </button>
         <button
           type="button"
-          className={!isWidescreen && mascotPosition === "bottom_right" ? "primary-button compact" : "quiet-button compact"}
+          className="quiet-button compact"
           style={{
             fontSize: "11px",
             padding: "6px",
             justifyContent: "center",
-            ...(isWidescreen ? { opacity: 0.45, cursor: "not-allowed" } : {}),
+            opacity: 0.45,
+            cursor: "not-allowed",
           }}
-          onClick={() => {
-            if (!isWidescreen) {
-              setMascotPosition("bottom_right");
-            }
-          }}
-          disabled={isWidescreen}
-          title={isWidescreen ? "Locked to Left Brand Pillar in 16:9" : undefined}
-          aria-disabled={isWidescreen ? "true" : undefined}
+          disabled
+          title="Locked to Left Brand Pillar in 16:9"
+          aria-disabled="true"
         >
           {t("visualSandbox.posBottomRight")}
         </button>

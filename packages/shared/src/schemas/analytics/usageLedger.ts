@@ -19,12 +19,7 @@ export const ImageUsageMetricsSchema = z.object({
 });
 export type ImageUsageMetrics = z.infer<typeof ImageUsageMetricsSchema>;
 
-export const UsageLedgerEventTypeSchema = z.enum([
-  "voice_render",
-  "image_generation",
-  "legacy_reconcile",
-  "custom",
-]);
+export const UsageLedgerEventTypeSchema = z.enum(["voice_render", "image_generation", "legacy_reconcile", "custom"]);
 export type UsageLedgerEventType = z.infer<typeof UsageLedgerEventTypeSchema>;
 
 export const UsageLedgerEventSchema = z.object({

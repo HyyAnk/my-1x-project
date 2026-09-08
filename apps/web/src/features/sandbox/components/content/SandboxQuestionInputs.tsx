@@ -67,7 +67,7 @@ export function SandboxQuestionInputs({
                       : sq.type === "versus"
                         ? t("visualSandbox.sampleVersus")
                         : (sq.type as string) === "mystery_reveal"
-                          ? (t("visualSandbox.sampleMysteryReveal") || "Mystery Reveal")
+                          ? t("visualSandbox.sampleMysteryReveal") || "Mystery Reveal"
                           : (sq.type as string);
             return (
               <button
@@ -135,9 +135,7 @@ export function SandboxQuestionInputs({
             />
           </div>
           <div style={{ flex: 1 }}>
-            <span style={{ fontSize: "10.5px", color: "var(--muted)" }}>
-              {t("visualSandbox.totalQuestionsCount") || "Total Questions"}
-            </span>
+            <span style={{ fontSize: "10.5px", color: "var(--muted)" }}>{t("visualSandbox.totalQuestionsCount") || "Total Questions"}</span>
             <input
               type="number"
               min={1}

@@ -9,7 +9,9 @@
   padding: 18px 20px;
   margin-top: 18px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .quiz-thumbnail-panel:hover {
@@ -122,7 +124,9 @@
   overflow: hidden;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
   border: 1px solid var(--line-dark);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   aspect-ratio: 16 / 9;
   display: flex;
   align-items: center;
@@ -157,7 +161,6 @@
   gap: 12px;
 }
 
-
 .thumbnail-pill-group {
   position: absolute;
   bottom: 8px;
@@ -169,7 +172,9 @@
   opacity: 0;
   pointer-events: none;
   transform: translateY(4px);
-  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease;
+  transition:
+    opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.2s ease;
 }
 
 .thumbnail-frame-container:hover .thumbnail-pill-group {
@@ -234,7 +239,10 @@
   z-index: 12;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease, background 0.15s ease;
+  transition:
+    opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.2s ease,
+    background 0.15s ease;
 }
 
 .thumbnail-frame-container:hover .thumbnail-carousel-nav-btn:not(:disabled) {
@@ -273,7 +281,9 @@
   opacity: 0;
   pointer-events: none;
   transform: translateY(4px);
-  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease;
+  transition:
+    opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.2s ease;
 }
 
 .thumbnail-frame-container:hover .thumbnail-set-active-overlay {
@@ -314,7 +324,9 @@
   pointer-events: none;
   transform: translateY(-4px);
   z-index: 11;
-  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease;
+  transition:
+    opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.2s ease;
 }
 
 .thumbnail-frame-container:hover .thumbnail-floating-actions {
@@ -322,7 +334,6 @@
   pointer-events: auto;
   transform: translateY(0);
 }
-
 
 .floating-action-btn {
   display: flex;
@@ -411,7 +422,9 @@
 
 .filmstrip-card.selected {
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-glow), 0 4px 12px rgba(0, 0, 0, 0.35);
+  box-shadow:
+    0 0 0 2px var(--accent-glow),
+    0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
 .filmstrip-card.is-active {
@@ -479,7 +492,6 @@
   font-weight: 800;
 }
 
-
 /* Empty State / Generating Skeleton */
 .thumbnail-empty-state {
   display: flex;
@@ -507,8 +519,12 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Controls Column */
@@ -706,9 +722,10 @@
   color: var(--ink);
   font-size: 0.85rem;
   font-weight: 500;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
-
 
 .hook-text-input:focus {
   outline: none;

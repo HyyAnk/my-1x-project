@@ -62,11 +62,9 @@ export function QuestionBankHeaderStats({
             <span className="qb-tier-level">Lvl {activeTier.level}</span>
           </span>
           {matrixCoverage && (
-            <span
-              className="qb-header-total-pill"
-              title={`${unfilledCount.toLocaleString()} combos unfilled`}
-            >
-              🎯 {matrixCoverage.covered_combos.toLocaleString()} / {matrixCoverage.total_combos.toLocaleString()} Combos ({matrixCoverage.coverage_percent}%)
+            <span className="qb-header-total-pill" title={`${unfilledCount.toLocaleString()} combos unfilled`}>
+              🎯 {matrixCoverage.covered_combos.toLocaleString()} / {matrixCoverage.total_combos.toLocaleString()} Combos (
+              {matrixCoverage.coverage_percent}%)
             </span>
           )}
         </div>
@@ -113,14 +111,12 @@ export function QuestionBankHeaderStats({
           <div className="qb-archetypes-chip-bar" role="tablist" aria-label="Archetype Filters">
             {ARCHETYPE_CHIPS.map(({ id: archId, defaultLabel, icon }) => {
               const isActive =
-                selectedArchetype === archId ||
-                (archId === "verdict_true_false" && selectedArchetype === "verdict_fact_myth");
+                selectedArchetype === archId || (archId === "verdict_true_false" && selectedArchetype === "verdict_fact_myth");
               const count =
                 archId === "verdict_true_false"
-                  ? (stats?.by_archetype?.["verdict_true_false"] ?? 0) +
-                    (stats?.by_archetype?.["verdict_fact_myth"] ?? 0)
+                  ? (stats?.by_archetype?.["verdict_true_false"] ?? 0) + (stats?.by_archetype?.["verdict_fact_myth"] ?? 0)
                   : (stats?.by_archetype?.[archId] ?? 0);
-              const label = t(`questionBank.archetypes.${archId}` as any) || defaultLabel;
+              const label = t(`questionBank.archetypes.${archId}`) || defaultLabel;
 
               return (
                 <button

@@ -13,8 +13,7 @@ export interface SandboxPreviewCanvasProps {
   setShowSafeArea: (updater: (prev: boolean) => boolean) => void;
   showShortsGuide: boolean;
   setShowShortsGuide: (updater: (prev: boolean) => boolean) => void;
-  aspectRatio: "16:9" | "9:16";
-  setAspectRatio: (ratio: "16:9" | "9:16") => void;
+  aspectRatio: "16:9";
   iframeKey: number;
   setIframeKey: (updater: (prev: number) => number) => void;
   zoom: "fit" | "50" | "75" | "100";
@@ -50,7 +49,6 @@ export function SandboxPreviewCanvas({
   showShortsGuide,
   setShowShortsGuide,
   aspectRatio,
-  setAspectRatio,
   iframeKey,
   setIframeKey,
   zoom,
@@ -96,7 +94,6 @@ export function SandboxPreviewCanvas({
         showShortsGuide={showShortsGuide}
         setShowShortsGuide={setShowShortsGuide}
         aspectRatio={aspectRatio}
-        setAspectRatio={setAspectRatio}
         setIframeKey={setIframeKey}
         zoom={zoom}
         setZoom={setZoom}
@@ -123,8 +120,8 @@ export function SandboxPreviewCanvas({
         <div
           style={{
             position: "relative",
-            width: `${aspectRatio === "16:9" ? 1920 : 1080}px`,
-            height: `${aspectRatio === "16:9" ? 1080 : 1920}px`,
+            width: "1920px",
+            height: "1080px",
             transform: `scale(${scaleFactor})`,
             transformOrigin: "center center",
             boxShadow: "0 25px 60px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.12)",
@@ -143,8 +140,8 @@ export function SandboxPreviewCanvas({
             previewError={previewError}
             onPendingPreviewLoad={onPendingPreviewLoad}
             onRetryPreview={onRetryPreview}
-            width={aspectRatio === "16:9" ? 1920 : 1080}
-            height={aspectRatio === "16:9" ? 1080 : 1920}
+            width={1920}
+            height={1080}
           />
 
           <SandboxGuidesOverlay showSafeArea={showSafeArea} showShortsGuide={showShortsGuide} aspectRatio={aspectRatio} />

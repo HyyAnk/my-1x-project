@@ -89,7 +89,10 @@
   justify-content: space-between;
   gap: 12px;
   min-height: 250px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .style-anchor-card:hover {
@@ -358,7 +361,9 @@
 .style-anchor-empty-icon {
   color: #f59e0b;
   opacity: 0.8;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
 .style-anchor-empty-text {
@@ -437,7 +442,9 @@
   padding: 12px 16px;
   border-radius: var(--radius-md, 8px);
   margin-bottom: 20px;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .style-anchor-pin-container.has-anchor {
@@ -625,5 +632,3 @@
     justify-content: center;
   }
 }
-
-

@@ -158,7 +158,7 @@ export function applyPresetToStudio({
   design.setAnswerCardStyle(preset.answer_card_style || "glossy_arcade");
   design.setCounterStyle(preset.counter_style);
   design.setBackgroundStyle(preset.background_style || "candy_rays");
-  const targetLayout = (preset.preview_layout_id ?? preset.layout_id) as QuizPreviewLayoutId | undefined;
+  const targetLayout = preset.preview_layout_id ?? preset.layout_id;
   if (targetLayout && targetLayout !== "baseline") {
     if (onLayoutChange) {
       onLayoutChange(targetLayout);

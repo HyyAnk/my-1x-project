@@ -1,9 +1,4 @@
-import type {
-  MascotProfile,
-  QuizImageStyle,
-  ThumbnailAspectRatio,
-  ThumbnailLayoutType,
-} from "@studio/shared";
+import type { MascotProfile, QuizImageStyle, ThumbnailAspectRatio, ThumbnailLayoutType } from "@studio/shared";
 
 export type MascotThemedPersona = {
   role: string;
@@ -47,7 +42,6 @@ export type QuizThumbnailPlan = {
   lightingPalette?: string;
 };
 
-
 export type ResolveThumbnailInput = {
   topicTitle: string;
   topicSummary?: string;
@@ -68,8 +62,6 @@ export type ResolveThumbnailInput = {
   mascotProfile?: MascotProfile | null;
   rng?: () => number;
 };
-
-
 
 export type CompiledThumbnailPrompts = {
   plan: QuizThumbnailPlan;

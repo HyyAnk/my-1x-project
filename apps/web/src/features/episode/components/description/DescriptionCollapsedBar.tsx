@@ -25,11 +25,7 @@ export function DescriptionCollapsedBar({
   onGenerate,
 }: DescriptionCollapsedBarProps) {
   const percentUsed = Math.min(100, Math.max(0, Math.round((charCount / VIDEO_DESCRIPTION_MAX_CHARS) * 100)));
-  const meterStatusClass = isOverLimit
-    ? "is-overflow"
-    : charCount > 4200
-      ? "is-warning"
-      : "is-safe";
+  const meterStatusClass = isOverLimit ? "is-overflow" : charCount > 4200 ? "is-warning" : "is-safe";
 
   return (
     <div className="video-description-header">
@@ -71,10 +67,7 @@ export function DescriptionCollapsedBar({
             title={`Character usage: ${charCount} / ${VIDEO_DESCRIPTION_MAX_CHARS} characters`}
           >
             <div className="seo-char-meter-bar-track">
-              <div
-                className="seo-char-meter-bar-fill"
-                style={{ width: `${percentUsed}%` }}
-              />
+              <div className="seo-char-meter-bar-fill" style={{ width: `${percentUsed}%` }} />
             </div>
             <span>
               {charCount.toLocaleString()} / {VIDEO_DESCRIPTION_MAX_CHARS.toLocaleString()} chars

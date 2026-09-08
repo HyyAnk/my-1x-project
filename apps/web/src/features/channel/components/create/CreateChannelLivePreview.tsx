@@ -2,7 +2,6 @@ import React from "react";
 import { Check, Sparkle, TelevisionSimple, Users } from "@phosphor-icons/react";
 import { getCountryName, getCountryOption } from "@studio/shared";
 import { CountryFlag } from "../../../../components/CountryFlag";
-import { useTranslation } from "../../../../i18n";
 import type { CreateChannelFormData } from "./types";
 
 export interface CreateChannelLivePreviewProps {
@@ -39,11 +38,7 @@ export function CreateChannelLivePreview({ form }: CreateChannelLivePreviewProps
           <Sparkle size={13} weight="fill" />
           <span>Live Preview</span>
         </span>
-        {countryOpt?.rank ? (
-          <span className="preview-cpm-rank-badge">
-            Top #{countryOpt.rank} CPM
-          </span>
-        ) : null}
+        {countryOpt?.rank ? <span className="preview-cpm-rank-badge">Top #{countryOpt.rank} CPM</span> : null}
       </div>
 
       <div className="channel-preview-card">
@@ -65,9 +60,7 @@ export function CreateChannelLivePreview({ form }: CreateChannelLivePreviewProps
                 <CountryFlag code={form.country || "US"} size={14} />
                 <span>{countryName || form.country || "US"}</span>
               </span>
-              <span className="channel-preview-chip lang">
-                {form.language || countryOpt?.defaultLanguage || "English"}
-              </span>
+              <span className="channel-preview-chip lang">{form.language || countryOpt?.defaultLanguage || "English"}</span>
             </div>
           </div>
         </div>

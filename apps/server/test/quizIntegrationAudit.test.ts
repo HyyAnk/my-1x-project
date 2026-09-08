@@ -1,12 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  DirectorPlanSchema,
-  QuizConfigSchema,
-  QuizV2Schema,
-  resolveQuizLayout,
-  type DirectorPlan,
-  type QuizV2,
-} from "@studio/shared";
+import { DirectorPlanSchema, QuizConfigSchema, QuizV2Schema, resolveQuizLayout, type DirectorPlan, type QuizV2 } from "@studio/shared";
 import { validateDirectorPlan } from "../src/quiz/director/validateDirectorPlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";

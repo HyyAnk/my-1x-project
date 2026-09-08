@@ -6,16 +6,10 @@ export type MascotBatchProgressCardProps = {
   onStopBatch: () => void;
 };
 
-export function MascotBatchProgressCard({
-  batchProgress,
-  onStopBatch,
-}: MascotBatchProgressCardProps) {
+export function MascotBatchProgressCard({ batchProgress, onStopBatch }: MascotBatchProgressCardProps) {
   if (!batchProgress) return null;
 
-  const percentage = Math.min(
-    100,
-    Math.round((batchProgress.completed / batchProgress.total) * 100),
-  );
+  const percentage = Math.min(100, Math.round((batchProgress.completed / batchProgress.total) * 100));
 
   return (
     <div
@@ -30,9 +24,7 @@ export function MascotBatchProgressCard({
         <div className="batch-progress-meta">
           <div className="batch-progress-title-row">
             <Lightning size={17} weight="fill" className="batch-pulse-icon" />
-            <span className="batch-progress-title">
-              Generating Style Variants (3 Concurrent Streams)
-            </span>
+            <span className="batch-progress-title">Generating Style Variants (3 Concurrent Streams)</span>
           </div>
           <span className="batch-progress-counter">
             {batchProgress.completed} / {batchProgress.total} slots ({percentage}%)
@@ -54,10 +46,7 @@ export function MascotBatchProgressCard({
 
       {/* Progress Bar Track */}
       <div className="batch-progress-track">
-        <div
-          className="batch-progress-fill"
-          style={{ width: `${percentage}%` }}
-        />
+        <div className="batch-progress-fill" style={{ width: `${percentage}%` }} />
       </div>
 
       {/* Status Message and Active Worker Badges */}

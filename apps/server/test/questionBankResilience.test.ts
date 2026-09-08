@@ -12,6 +12,9 @@ import {
   type QuizQuestion,
 } from "@studio/shared";
 import { buildApp, type StudioApp } from "../src/app.js";
+
+type ErrorBody = { code: string; error?: string };
+type EpisodeBody = { episode: unknown; cooldown_recorded: boolean };
 import { convertBankQuestionToQuizQuestion, createEpisodeFromQuestionBank } from "../src/quiz/bank/questionBankToQuizBridge.js";
 import { runAutoQaOnQuestion } from "../src/quiz/bank/questionBankAutoQa.js";
 import { parseTranscreationOutput } from "../src/quiz/bank/transcreation/transcreationPrompt.js";
@@ -32,7 +35,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
     }
     app = await buildApp(curr);
     tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-resilience-storage-"));
-    app.repository.setStorageRoot(tempStorage);
+    await app.repository.setStorageRoot(tempStorage);
 
     const channel1 = await app.repository.createChannel({
       name: "Resilience Channel A",
@@ -368,7 +371,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
       });
 
       expect(response.statusCode).toBe(404);
-      const body = JSON.parse(response.body);
+      const body = response.json<ErrorBody>();
       expect(body.code).toBe("QUESTION_NOT_FOUND");
     });
 
@@ -382,7 +385,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
       });
 
       expect(response.statusCode).toBe(404);
-      const body = JSON.parse(response.body);
+      const body = response.json<ErrorBody>();
       expect(body.code).toBe("CHANNEL_NOT_FOUND");
     });
 
@@ -397,7 +400,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
       });
 
       expect(response.statusCode).toBe(409);
-      const body = JSON.parse(response.body);
+      const body = response.json<ErrorBody>();
       expect(body.code).toBe("QUESTION_IN_COOLDOWN");
       expect(body.error).toContain("30-day cooldown");
     });
@@ -414,7 +417,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
       });
 
       expect(response.statusCode).toBe(201);
-      const body = JSON.parse(response.body);
+      const body = response.json<EpisodeBody>();
       expect(body.episode).toBeDefined();
       expect(body.cooldown_recorded).toBe(true);
     });
@@ -422,12 +425,12 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
 
   describe("6. Auto-QA Ingestion Fault Resilience", () => {
     it("flags candidates with missing fields or corrupt choices gracefully without crashing", () => {
-      const corruptCandidate: any = {
+      const corruptCandidate = {
         id: "CORRUPT-CANDIDATE",
         format: "multiple_choice",
         choices: [{ id: "A", text: "" }], // missing choices, empty text
         correct_choice_id: "Z", // non-existent
-      };
+      } as unknown as BankQuestion;
 
       const result = runAutoQaOnQuestion(corruptCandidate);
       expect(result.passed).toBe(false);
@@ -435,7 +438,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
     });
 
     it("passes a well-formed candidate with high QA score", () => {
-      const validCandidate: any = {
+      const validCandidate = {
         id: "VALID-CANDIDATE",
         format: "multiple_choice",
         question: "How do dolphins navigate and locate objects underwater?",
@@ -448,7 +451,7 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
         explanation: "Dolphins emit clicking sound pulses and listen to the returning echoes to detect prey.",
         fun_fact: "Each dolphin has a unique signature whistle equivalent to an individual name.",
         difficulty: 2,
-      };
+      } as unknown as BankQuestion;
 
       const result = runAutoQaOnQuestion(validCandidate);
       expect(result.passed).toBe(true);

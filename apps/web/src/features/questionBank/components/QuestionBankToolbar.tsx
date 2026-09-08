@@ -55,9 +55,7 @@ export function QuestionBankToolbar({
         </div>
 
         <div className="qb-toolbar-search-actions">
-          <span className="qb-count-indicator">
-            {t("questionBank.filters.questionsFound", { count: totalQuestions.toLocaleString() })}
-          </span>
+          <span className="qb-count-indicator">{t("questionBank.filters.questionsFound", { count: totalQuestions.toLocaleString() })}</span>
 
           <button
             type="button"
@@ -165,11 +163,7 @@ export function QuestionBankToolbar({
               <span>{t("questionBank.filters.clearAll")}</span>
             </button>
           )}
-          <button
-            type="button"
-            className="qb-btn qb-btn-primary qb-add-question-btn"
-            onClick={onOpenCreateModal}
-          >
+          <button type="button" className="qb-btn qb-btn-primary qb-add-question-btn" onClick={onOpenCreateModal}>
             <Plus size={15} weight="bold" />
             <span>{t("questionBank.filters.addQuestion")}</span>
           </button>

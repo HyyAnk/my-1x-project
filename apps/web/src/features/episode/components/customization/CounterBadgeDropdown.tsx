@@ -35,7 +35,7 @@ export function CounterBadgeDropdown({ channel, episode, disabled, saving, isOpe
     <div className="customization-dropdown-item">
       <CustomizationPill
         label={t("episodeCustomization.pillCounterBadge")}
-        value={QUESTION_COUNTER_STYLE_LABELS[activeStyle as keyof typeof QUESTION_COUNTER_STYLE_LABELS] ?? activeStyle}
+        value={QUESTION_COUNTER_STYLE_LABELS[activeStyle] ?? activeStyle}
         isOpen={isOpen}
         disabled={disabled}
         saving={saving}
@@ -49,13 +49,13 @@ export function CounterBadgeDropdown({ channel, episode, disabled, saving, isOpe
               <StyleOptionRow
                 key={style}
                 name="counter_choice"
-                label={QUESTION_COUNTER_STYLE_LABELS[style as keyof typeof QUESTION_COUNTER_STYLE_LABELS] ?? style}
+                label={QUESTION_COUNTER_STYLE_LABELS[style] ?? style}
                 checked={activeStyle === style}
                 onSelect={() => onSelectStyle(style)}
                 onHover={() =>
                   onPreview?.({
                     override: { counterStyle: style },
-                    label: QUESTION_COUNTER_STYLE_LABELS[style as keyof typeof QUESTION_COUNTER_STYLE_LABELS] ?? style,
+                    label: QUESTION_COUNTER_STYLE_LABELS[style] ?? style,
                   })
                 }
               />

@@ -1,6 +1,5 @@
 export * from "./AnswerCardDropdown";
 export * from "./ArtStyleDropdown";
-export * from "./AspectRatioDropdown";
 export * from "./BackgroundDropdown";
 export * from "./ChannelBrandNameControl";
 export * from "./CounterBadgeDropdown";

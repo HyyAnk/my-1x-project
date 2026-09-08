@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, renderHook, act, waitFor, cleanup } from "@testing-library/react";
-import { RECOMMENDED_MASCOT_PLACEMENT_PRESET, type MascotActionType, type MascotStyle } from "@studio/shared";
+import { RECOMMENDED_MASCOT_PLACEMENT_PRESET, type MascotStyle } from "@studio/shared";
 import { LanguageProvider } from "../../../i18n";
 import { MascotActionSelector } from "../components/MascotActionSelector";
 import { useSandboxMascotState } from "./useSandboxMascotState";
@@ -105,7 +105,7 @@ describe("useSandboxMascotState", () => {
       result.current.setMascotFlipX(true);
     });
 
-    expect(result.current.mascotPosition).toBe("bottom_right");
+    expect(result.current.mascotPosition).toBe("bottom_left");
     expect(result.current.mascotScale).toBe(0.75);
     expect(result.current.mascotOffsetX).toBe(150);
     expect(result.current.mascotOffsetY).toBe(-40);
@@ -245,7 +245,7 @@ describe("useSandboxMascotState", () => {
 
     // Non-variant / legacy actions normalize to thinking
     act(() => {
-      result.current.setMascotAction("point" as MascotActionType);
+      result.current.setMascotAction("point");
     });
     expect(result.current.mascotAction).toBe("thinking");
 
@@ -255,7 +255,7 @@ describe("useSandboxMascotState", () => {
     expect(result.current.mascotAction).toBe("celebrate");
 
     act(() => {
-      result.current.setMascotAction("idle" as MascotActionType);
+      result.current.setMascotAction("idle");
     });
     expect(result.current.mascotAction).toBe("thinking");
 
@@ -265,7 +265,7 @@ describe("useSandboxMascotState", () => {
     expect(result.current.mascotAction).toBe("celebrate");
 
     act(() => {
-      result.current.setMascotAction("wave" as MascotActionType);
+      result.current.setMascotAction("wave");
     });
     expect(result.current.mascotAction).toBe("thinking");
 
@@ -275,7 +275,7 @@ describe("useSandboxMascotState", () => {
     expect(result.current.mascotAction).toBe("celebrate");
 
     act(() => {
-      result.current.setMascotAction("oops" as MascotActionType);
+      result.current.setMascotAction("oops");
     });
     expect(result.current.mascotAction).toBe("thinking");
   });
@@ -448,9 +448,7 @@ describe("MascotActionSelector", () => {
         { id: "t1", slot_index: 1, image_url: "/think_1.png" },
         { id: "t2", slot_index: 2, image_url: "/think_2.png" },
       ],
-      celebrate: [
-        { id: "c1", slot_index: 1, image_url: "/celeb_1.png" },
-      ],
+      celebrate: [{ id: "c1", slot_index: 1, image_url: "/celeb_1.png" }],
     },
     created_at: "2026-01-01T00:00:00Z",
     updated_at: "2026-01-01T00:00:00Z",
@@ -467,8 +465,8 @@ describe("MascotActionSelector", () => {
           setMascotAction,
           activeStyle: mockStyle,
           selectedVariantIndex: 0,
-        })
-      )
+        }),
+      ),
     );
 
     // Core actions are present
@@ -493,8 +491,8 @@ describe("MascotActionSelector", () => {
           setMascotAction,
           activeStyle: mockStyle,
           selectedVariantIndex: 0,
-        })
-      )
+        }),
+      ),
     );
 
     fireEvent.click(screen.getByRole("button", { name: /celebrate/i }));
@@ -513,8 +511,8 @@ describe("MascotActionSelector", () => {
           activeStyle: mockStyle,
           selectedVariantIndex: 0,
           setSelectedVariantIndex,
-        })
-      )
+        }),
+      ),
     );
 
     // Displays slots
@@ -529,9 +527,9 @@ describe("MascotActionSelector", () => {
     expect(setSelectedVariantIndex).toHaveBeenCalledWith(1);
   });
 
-  describe("16:9 widescreen mascot position standardization", () => {
-    it("locks mascot position to bottom_left and guards against bottom_right in 16:9 widescreen", () => {
-      const { result } = renderHook(() => useSandboxMascotState("16:9"));
+  describe("landscape mascot position standardization", () => {
+    it("locks mascot position to bottom_left without a retired aspect-ratio mode", () => {
+      const { result } = renderHook(() => useSandboxMascotState());
 
       expect(result.current.mascotPosition).toBe("bottom_left");
 
@@ -540,31 +538,6 @@ describe("MascotActionSelector", () => {
       });
 
       expect(result.current.mascotPosition).toBe("bottom_left");
-    });
-
-    it("normalizes mascot position to bottom_left when switching from 9:16 to 16:9", () => {
-      let currentRatio: "16:9" | "9:16" = "9:16";
-      const { result, rerender } = renderHook(() => useSandboxMascotState(currentRatio));
-
-      act(() => {
-        result.current.setMascotPosition("bottom_right");
-      });
-      expect(result.current.mascotPosition).toBe("bottom_right");
-
-      currentRatio = "16:9";
-      rerender();
-
-      expect(result.current.mascotPosition).toBe("bottom_left");
-    });
-
-    it("allows bottom_right placement when in 9:16 portrait mode", () => {
-      const { result } = renderHook(() => useSandboxMascotState("9:16"));
-
-      act(() => {
-        result.current.setMascotPosition("bottom_right");
-      });
-
-      expect(result.current.mascotPosition).toBe("bottom_right");
     });
   });
 });

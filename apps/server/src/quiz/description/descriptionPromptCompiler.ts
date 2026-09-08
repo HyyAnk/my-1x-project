@@ -30,9 +30,7 @@ export function compileVideoDescriptionPrompt(input: CompileVideoDescriptionProm
   const tier2Range = formatScoringRange(tiers.tier2.min, tiers.tier2.max, language);
   const tier3Range = formatScoringRange(tiers.tier3.min, tiers.tier3.max, language);
 
-  const isPreschool =
-    episode.quiz_config?.age_band === "4-6" ||
-    /preschool|toddler/i.test(channel.target_audience);
+  const isPreschool = episode.quiz_config?.age_band === "4-6" || /preschool|toddler/i.test(channel.target_audience);
 
   return [
     `You are an elite YouTube SEO strategist and copywriter for educational quiz channels.`,

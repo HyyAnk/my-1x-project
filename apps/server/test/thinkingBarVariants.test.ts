@@ -183,9 +183,8 @@ describe("Thinking Bar Element Suite", () => {
       const director = createDefaultDirectorPlan(sampleQuiz);
       director.beats[0].thinking_bar_style = style;
       const timeline = compileQuizTimeline({ quiz: sampleQuiz, director, voicePlan: buildQuizVoicePlan(sampleQuiz) });
-      const questionEnter = timeline.events.find(
-        (event) => event.type === "question.enter" && event.question_id === "tb-q1",
-      )?.at_seconds ?? 0;
+      const questionEnter =
+        timeline.events.find((event) => event.type === "question.enter" && event.question_id === "tb-q1")?.at_seconds ?? 0;
       const bundle = buildCandyArcadeCompositionBundle({
         quiz: sampleQuiz,
         director,

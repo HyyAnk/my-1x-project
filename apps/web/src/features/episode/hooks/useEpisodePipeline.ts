@@ -145,7 +145,6 @@ export function useEpisodePipeline({
     saveBackgroundStyle: styles.saveBackgroundStyle,
     savePaletteId: styles.savePaletteId,
     saveThumbnailRatio: styles.saveThumbnailRatio,
-    saveAspectRatio: styles.saveAspectRatio,
     applyStylePreset: styles.applyStylePreset,
     saveDuration: styles.saveDuration,
 

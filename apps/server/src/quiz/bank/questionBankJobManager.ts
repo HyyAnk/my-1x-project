@@ -61,9 +61,7 @@ class QuestionBankJobManager {
   getStatus(): QuestionBankJobState {
     // If a finished job was completed more than 45 seconds ago, auto-expire it to idle
     if (
-      (this.currentJob.status === "completed" ||
-        this.currentJob.status === "cancelled" ||
-        this.currentJob.status === "failed") &&
+      (this.currentJob.status === "completed" || this.currentJob.status === "cancelled" || this.currentJob.status === "failed") &&
       this.currentJob.completedAt
     ) {
       const elapsed = Date.now() - new Date(this.currentJob.completedAt).getTime();
@@ -103,10 +101,7 @@ class QuestionBankJobManager {
     return true;
   }
 
-  startJob(
-    repository: RepositoryService,
-    input: GenerateBatchInput,
-  ): { started: boolean; job: QuestionBankJobState; error?: string } {
+  startJob(repository: RepositoryService, input: GenerateBatchInput): { started: boolean; job: QuestionBankJobState; error?: string } {
     if (this.isJobRunning()) {
       return {
         started: false,
@@ -180,9 +175,9 @@ class QuestionBankJobManager {
           this.currentJob.completedAt = new Date().toISOString();
           this.currentJob.updatedAt = new Date().toISOString();
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (this.currentJob.jobId === jobId) {
-          const wasAborted = signal.aborted || err?.name === "AbortError";
+          const wasAborted = signal.aborted || (err instanceof Error && err.name === "AbortError");
           this.currentJob.status = wasAborted ? "cancelled" : "failed";
           this.currentJob.error = err instanceof Error ? err.message : String(err);
           this.currentJob.completedAt = new Date().toISOString();

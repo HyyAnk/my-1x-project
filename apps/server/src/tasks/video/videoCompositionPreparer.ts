@@ -27,6 +27,54 @@ export type VideoCompositionContext = {
   preflightAssessment: ReturnType<typeof preflightQuizRender>["assessment"] | null;
 };
 
+async function validateQuizPreflight(
+  repository: RepositoryService,
+  channelId: string,
+  episodeId: string,
+  artifacts: {
+    quiz: NonNullable<Awaited<ReturnType<RepositoryService["readQuiz"]>>>;
+    director: NonNullable<Awaited<ReturnType<RepositoryService["readDirectorPlan"]>>>;
+    assetPlan: NonNullable<Awaited<ReturnType<RepositoryService["readAssetPlan"]>>>;
+    voicePlan: NonNullable<Awaited<ReturnType<RepositoryService["readVoicePlan"]>>>;
+    timeline: NonNullable<Awaited<ReturnType<RepositoryService["readQuizTimeline"]>>>;
+  },
+  resolvedAssets: QuizAssetResolution["assets"],
+  hasMeasuredAudio: boolean,
+) {
+  const preflight = preflightQuizRender({
+    quiz: artifacts.quiz,
+    director: artifacts.director,
+    assetPlan: artifacts.assetPlan,
+    resolvedAssets,
+    voicePlan: artifacts.voicePlan,
+    timeline: artifacts.timeline,
+    measuredAudio: hasMeasuredAudio,
+  });
+  await repository.writeQuizAssessment(channelId, episodeId, preflight.assessment);
+  if (!preflight.ok) {
+    const blocker = preflight.assessment.issues.find((issue) => issue.severity === "blocker");
+    throw new RepositoryError(
+      "Quiz V2 preflight blocked render: " + (blocker?.message ?? "Resolve the reported QA blockers before rendering."),
+      "QUIZ_PREFLIGHT_BLOCKED",
+    );
+  }
+  return preflight.assessment;
+}
+
+async function writeCompositionFiles(
+  renderRoot: string,
+  compositionPath: string,
+  html: string,
+  compositionFiles: Record<string, string> = {},
+): Promise<void> {
+  await writeFile(compositionPath, html, "utf8");
+  for (const [relativePath, content] of Object.entries(compositionFiles)) {
+    const filePath = path.join(renderRoot, relativePath);
+    await mkdir(path.dirname(filePath), { recursive: true });
+    await writeFile(filePath, content, "utf8");
+  }
+}
+
 export async function prepareVideoComposition(options: {
   runtime: TaskManagerRuntime;
   repository: RepositoryService;
@@ -91,24 +139,14 @@ export async function prepareVideoComposition(options: {
 
   let preflightAssessment: ReturnType<typeof preflightQuizRender>["assessment"] | null = null;
   if (completeQuizV2) {
-    const preflight = preflightQuizRender({
-      quiz: completeQuizV2.quiz,
-      director: completeQuizV2.director,
-      assetPlan: completeQuizV2.assetPlan,
-      resolvedAssets: assetResolution?.assets ?? [],
-      voicePlan: completeQuizV2.voicePlan,
-      timeline: completeQuizV2.timeline,
-      measuredAudio: episode.narration_duration_seconds !== null,
-    });
-    preflightAssessment = preflight.assessment;
-    await repository.writeQuizAssessment(channel.channel_id, episode.episode_id, preflight.assessment);
-    if (!preflight.ok) {
-      const blocker = preflight.assessment.issues.find((issue) => issue.severity === "blocker");
-      throw new RepositoryError(
-        "Quiz V2 preflight blocked render: " + (blocker?.message ?? "Resolve the reported QA blockers before rendering."),
-        "QUIZ_PREFLIGHT_BLOCKED",
-      );
-    }
+    preflightAssessment = await validateQuizPreflight(
+      repository,
+      channel.channel_id,
+      episode.episode_id,
+      completeQuizV2,
+      assetResolution?.assets ?? [],
+      episode.narration_duration_seconds !== null,
+    );
   }
 
   const bgmHistory = await repository.readBgmHistory(channel.channel_id);
@@ -164,12 +202,7 @@ export async function prepareVideoComposition(options: {
       aspectRatio: mascotAspectRatio,
       fps: renderFps,
     });
-  await writeFile(compositionPath, html, "utf8");
-  for (const [relativePath, content] of Object.entries(preparedQuizRender?.compositionFiles ?? {})) {
-    const filePath = path.join(renderRoot, relativePath);
-    await mkdir(path.dirname(filePath), { recursive: true });
-    await writeFile(filePath, content, "utf8");
-  }
+  await writeCompositionFiles(renderRoot, compositionPath, html, preparedQuizRender?.compositionFiles);
 
   const { fontFingerprints } = await syncStaticMediaAssets(renderRoot, repository.rootDirectory);
   const sourceFingerprint = renderSourceFingerprint(

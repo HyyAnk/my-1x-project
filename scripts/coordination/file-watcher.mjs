@@ -20,14 +20,7 @@ const DEFAULT_IGNORED_PREFIXES = [
   "coordination.db",
 ];
 
-const DEFAULT_IGNORED_EXTENSIONS = [
-  ".tmp",
-  ".temp",
-  ".swp",
-  ".swo",
-  "~",
-  ".log",
-];
+const DEFAULT_IGNORED_EXTENSIONS = [".tmp", ".temp", ".swp", ".swo", "~", ".log"];
 
 export class FastZoneMatcher {
   constructor(zones) {
@@ -146,7 +139,6 @@ export class CodebaseFileWatcher {
     this.stats.startedAt = Date.now();
 
     const watchDirs = ["apps", "packages", "services", "scripts", "docs"];
-    let rootWatched = false;
 
     // Try selective directory watch first for efficiency
     for (const dir of watchDirs) {
@@ -175,7 +167,6 @@ export class CodebaseFileWatcher {
         });
         watcher.on("error", (err) => console.error("Watcher error on root:", err));
         this.watchers.push(watcher);
-        rootWatched = true;
       } catch (err) {
         console.error("Failed to start root file watcher:", err);
       }
@@ -192,7 +183,9 @@ export class CodebaseFileWatcher {
     for (const watcher of this.watchers) {
       try {
         watcher.close();
-      } catch {}
+      } catch {
+        // Closing an already-closed watcher is harmless during shutdown.
+      }
     }
     this.watchers = [];
     this.pendingEvents.clear();
@@ -208,7 +201,7 @@ export class CodebaseFileWatcher {
     }
 
     const fullPath = path.join(this.rootDir, norm);
-    let semanticType = eventType === "rename" ? "change" : "change";
+    let semanticType;
 
     // Determine add/change/unlink if file exists
     try {

@@ -20,7 +20,8 @@ const sampleDescription: VideoDescription = {
   },
   suggested_playlist_category: "World Geography",
   hashtags: ["#quiz", "#geography", "#trivia"],
-  full_description_text: "World Geography Quiz!\n5 challenging questions to test your knowledge.\n\n🏆 SCORING TIERS:\n• 1 correct: Beginner\n• 4–5 correct: Master\n\n#quiz #geography #trivia",
+  full_description_text:
+    "World Geography Quiz!\n5 challenging questions to test your knowledge.\n\n🏆 SCORING TIERS:\n• 1 correct: Beginner\n• 4–5 correct: Master\n\n#quiz #geography #trivia",
   char_count: 140,
   language: "English",
   generated_at: "2026-08-30T00:00:00.000Z",
@@ -43,7 +44,7 @@ describe("useVideoDescription and VideoDescriptionCard", () => {
     vi.restoreAllMocks();
   });
 
-  it("initializes with provided description or fetches existing artifact", async () => {
+  it("initializes with provided description or fetches existing artifact", () => {
     vi.spyOn(quizApi, "getVideoDescription").mockResolvedValue({ description: sampleDescription });
 
     const { result } = renderHook(() =>
@@ -139,12 +140,13 @@ describe("useVideoDescription and VideoDescriptionCard", () => {
     expect(onNotice).toHaveBeenCalledWith({ tone: "good", message: "Video description saved" });
   });
 
-  it("renders VideoDescriptionCard with open layout and tabs", async () => {
+  it("renders VideoDescriptionCard with open layout and tabs", () => {
     vi.spyOn(quizApi, "getVideoDescription").mockResolvedValue({ description: sampleDescription });
 
+    const writeText = vi.fn().mockResolvedValue(undefined);
     Object.assign(navigator, {
       clipboard: {
-        writeText: vi.fn().mockResolvedValue(undefined),
+        writeText,
       },
     });
 
@@ -165,7 +167,7 @@ describe("useVideoDescription and VideoDescriptionCard", () => {
 
     // 1-Click Copy
     fireEvent.click(screen.getByText("Copy Description"));
-    expect(navigator.clipboard.writeText).toHaveBeenCalled();
+    expect(writeText).toHaveBeenCalled();
 
     // Tabs are visible directly
     expect(screen.getByText("📱 YouTube Preview")).toBeDefined();

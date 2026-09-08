@@ -34,6 +34,7 @@ async function fixture() {
     Array.from({ length: 5 }, (_, index) => ({
       topic_id: `deletion-topic-${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Deletion topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",

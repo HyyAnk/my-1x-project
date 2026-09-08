@@ -1,17 +1,6 @@
-import type {
-  BankGameplayArchetypeId,
-  BankQuestion,
-  MatrixComboCandidate,
-} from "@studio/shared";
-import {
-  loadAllKnowledgeEntities,
-  type KnowledgeEntity,
-} from "../knowledgeBaseLoader.js";
-import {
-  ALL_MATRIX_ARCHETYPES,
-  buildMatrixCoverageMap,
-  type MatrixCoverageServiceOptions,
-} from "./matrixCoverageCalculator.js";
+import type { BankGameplayArchetypeId, BankQuestion, MatrixComboCandidate } from "@studio/shared";
+import { loadAllKnowledgeEntities, type KnowledgeEntity } from "../knowledgeBaseLoader.js";
+import { ALL_MATRIX_ARCHETYPES, buildMatrixCoverageMap, type MatrixCoverageServiceOptions } from "./matrixCoverageCalculator.js";
 
 export interface SelectAutoCandidatesOptions extends MatrixCoverageServiceOptions {
   count: number;
@@ -65,32 +54,7 @@ interface DomainArchEvaluation {
  * Auto Mode: Selects a cohesive chunk (batch) anchored to exactly ONE Domain and ONE Archetype,
  * picking up to `count` distinct entities within that domain.
  */
-export function selectAutoCandidates(
-  questions: BankQuestion[],
-  options: SelectAutoCandidatesOptions,
-): MatrixComboCandidate[] {
-  const targetCount = Math.max(1, options.count);
-  const entities = options.entities || loadAllKnowledgeEntities({ baseDir: options.baseDir });
-  const coverageMap = buildMatrixCoverageMap(questions);
-
-  // Group entities by domain
-  const entitiesByDomain = new Map<string, KnowledgeEntity[]>();
-  for (const e of entities) {
-    const list = entitiesByDomain.get(e.domain_id) || [];
-    list.push(e);
-    entitiesByDomain.set(e.domain_id, list);
-  }
-
-  const candidateDomains = options.domain_id
-    ? [options.domain_id]
-    : Array.from(entitiesByDomain.keys()).sort();
-
-  const candidateArchetypes =
-    options.archetype_ids && options.archetype_ids.length > 0
-      ? options.archetype_ids
-      : ALL_MATRIX_ARCHETYPES;
-
-  // Calculate totals per domain and per archetype for global balancing
+function calculateTotals(questions: BankQuestion[]) {
   const domainVariantTotals = new Map<string, number>();
   const archVariantTotals = new Map<string, number>();
   const entityVariantTotals = new Map<string, number>();
@@ -106,6 +70,27 @@ export function selectAutoCandidates(
       entityVariantTotals.set(q.entity_id, (entityVariantTotals.get(q.entity_id) || 0) + 1);
     }
   }
+
+  return { domainVariantTotals, archVariantTotals, entityVariantTotals };
+}
+
+export function selectAutoCandidates(questions: BankQuestion[], options: SelectAutoCandidatesOptions): MatrixComboCandidate[] {
+  const targetCount = Math.max(1, options.count);
+  const entities = options.entities || loadAllKnowledgeEntities({ baseDir: options.baseDir });
+  const coverageMap = buildMatrixCoverageMap(questions);
+
+  // Group entities by domain
+  const entitiesByDomain = new Map<string, KnowledgeEntity[]>();
+  for (const e of entities) {
+    const list = entitiesByDomain.get(e.domain_id) || [];
+    list.push(e);
+    entitiesByDomain.set(e.domain_id, list);
+  }
+
+  const candidateDomains = options.domain_id ? [options.domain_id] : Array.from(entitiesByDomain.keys()).sort();
+  const candidateArchetypes = options.archetype_ids && options.archetype_ids.length > 0 ? options.archetype_ids : ALL_MATRIX_ARCHETYPES;
+
+  const { domainVariantTotals, archVariantTotals, entityVariantTotals } = calculateTotals(questions);
 
   const evaluations: DomainArchEvaluation[] = [];
 
@@ -257,10 +242,7 @@ export const selectMatrixCandidatesAuto = selectAutoCandidates;
  * Manual Diversity Mode: Filters entities by user criteria and prioritizes combinations
  * with the fewest existing variants (Least-Variant-First priority queue).
  */
-export function selectManualCandidates(
-  questions: BankQuestion[],
-  options: SelectManualCandidatesOptions,
-): MatrixComboCandidate[] {
+export function selectManualCandidates(questions: BankQuestion[], options: SelectManualCandidatesOptions): MatrixComboCandidate[] {
   const targetCount = Math.max(1, options.count);
   const entities = options.entities || loadAllKnowledgeEntities({ baseDir: options.baseDir });
   const coverageMap = buildMatrixCoverageMap(questions);
@@ -276,10 +258,7 @@ export function selectManualCandidates(
     filtered = filtered.filter((e) => e.difficulty === options.difficulty);
   }
 
-  const candidateArchetypes =
-    options.archetype_ids && options.archetype_ids.length > 0
-      ? options.archetype_ids
-      : ALL_MATRIX_ARCHETYPES;
+  const candidateArchetypes = options.archetype_ids && options.archetype_ids.length > 0 ? options.archetype_ids : ALL_MATRIX_ARCHETYPES;
 
   const candidates: MatrixComboCandidate[] = [];
 
@@ -319,10 +298,7 @@ export const selectMatrixCandidatesManual = selectManualCandidates;
  * Pre-Allocation Matrix Planner: Plans and reserves multi-chunk candidate batches upfront
  * using virtual coverage tracking.
  */
-export function planBatchChunks(
-  questions: BankQuestion[],
-  options: PlanBatchChunksOptions,
-): PlannedBatchChunk[] {
+export function planBatchChunks(questions: BankQuestion[], options: PlanBatchChunksOptions): PlannedBatchChunk[] {
   const targetCount = Math.max(1, options.targetCount);
   const chunkSize = Math.max(1, options.chunkSize || 20);
   const totalChunks = Math.ceil(targetCount / chunkSize);
@@ -336,34 +312,28 @@ export function planBatchChunks(
     const thisChunkSize = Math.min(chunkSize, targetCount - chunkIdx * chunkSize);
     if (thisChunkSize <= 0) break;
 
-    let candidatesForChunk: MatrixComboCandidate[] = [];
+    const candidatesForChunk: MatrixComboCandidate[] =
+      mode === "manual"
+        ? selectManualCandidates(virtualQuestions, {
+            count: thisChunkSize,
+            domain_id: options.domainId,
+            subtopic_id: options.subtopicId,
+            archetype_ids: options.archetypeId ? [options.archetypeId] : undefined,
+            difficulty: options.difficulty,
+            entities: options.entities,
+            baseDir: options.baseDir,
+          })
+        : selectAutoCandidates(virtualQuestions, {
+            count: thisChunkSize,
+            domain_id: options.domainId,
+            archetype_ids: options.archetypeId ? [options.archetypeId] : undefined,
+            entities: options.entities,
+            baseDir: options.baseDir,
+          });
 
-    if (mode === "manual") {
-      candidatesForChunk = selectManualCandidates(virtualQuestions, {
-        count: thisChunkSize,
-        domain_id: options.domainId,
-        subtopic_id: options.subtopicId,
-        archetype_ids: options.archetypeId ? [options.archetypeId] : undefined,
-        difficulty: options.difficulty,
-        entities: options.entities,
-        baseDir: options.baseDir,
-      });
-    } else {
-      candidatesForChunk = selectAutoCandidates(virtualQuestions, {
-        count: thisChunkSize,
-        domain_id: options.domainId,
-        archetype_ids: options.archetypeId ? [options.archetypeId] : undefined,
-        entities: options.entities,
-        baseDir: options.baseDir,
-      });
-    }
-
-    const domainId =
-      candidatesForChunk[0]?.domain_id || options.domainId || "general";
-    const archetypeId =
-      candidatesForChunk[0]?.archetype_id || options.archetypeId || "speed_blitz";
-    const subtopicId =
-      candidatesForChunk[0]?.subtopic_id || options.subtopicId || "general";
+    const domainId = candidatesForChunk[0]?.domain_id || options.domainId || "general";
+    const archetypeId = candidatesForChunk[0]?.archetype_id || options.archetypeId || "speed_blitz";
+    const subtopicId = candidatesForChunk[0]?.subtopic_id || options.subtopicId || "general";
 
     // Reserve chosen candidates in virtualQuestions so subsequent chunks select distinct entities
     const nowIso = new Date().toISOString();

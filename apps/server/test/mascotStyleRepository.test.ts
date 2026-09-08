@@ -72,7 +72,7 @@ describe("Mascot Style Repository & Endpoints", () => {
     expect(migrated.styles?.length).toBe(1);
     expect(migrated.active_style_id).toBe("core");
 
-    const coreStyle = migrated.styles![0]!;
+    const coreStyle = migrated.styles![0];
     expect(coreStyle.id).toBe("core");
     expect(coreStyle.name).toBe("Core Style");
     expect(coreStyle.is_default).toBe(true);
@@ -94,7 +94,9 @@ describe("Mascot Style Repository & Endpoints", () => {
     expect(saved.styles![0]?.id).toBe("core");
 
     // Verify persisted on disk
-    const diskContent = JSON.parse(await readFile(path.join(app.repository.roots.mascots, saved.id, "mascot.json"), "utf8")) as MascotProfile;
+    const diskContent = JSON.parse(
+      await readFile(path.join(app.repository.roots.mascots, saved.id, "mascot.json"), "utf8"),
+    ) as MascotProfile;
     expect(diskContent.styles?.length).toBe(1);
     expect(diskContent.styles![0]?.id).toBe("core");
     expect(diskContent.active_style_id).toBe("core");
@@ -126,12 +128,12 @@ describe("Mascot Style Repository & Endpoints", () => {
     expect(newStyle.states.celebrate.length).toBe(10);
 
     for (let i = 1; i <= 10; i++) {
-      const thinkSlot = newStyle.states.thinking[i - 1]!;
+      const thinkSlot = newStyle.states.thinking[i - 1];
       expect(thinkSlot.id).toBe(`slot_${i}`);
       expect(thinkSlot.slot_index).toBe(i);
       expect(thinkSlot.image_url).toBe("");
 
-      const celebSlot = newStyle.states.celebrate[i - 1]!;
+      const celebSlot = newStyle.states.celebrate[i - 1];
       expect(celebSlot.id).toBe(`slot_${i}`);
       expect(celebSlot.slot_index).toBe(i);
       expect(celebSlot.image_url).toBe("");
@@ -176,9 +178,7 @@ describe("Mascot Style Repository & Endpoints", () => {
     expect(activeChangedMascot.active_style_id).toBe(newStyle.id);
 
     // 6. Delete prevention: cannot delete core style
-    await expect(app.repository.deleteMascotStyle(mascot.id, "core")).rejects.toThrow(
-      "Cannot delete the default Core Style",
-    );
+    await expect(app.repository.deleteMascotStyle(mascot.id, "core")).rejects.toThrow("Cannot delete the default Core Style");
 
     // 7. Delete custom style and verify active style resets to "core"
     const deletedMascot = await app.repository.deleteMascotStyle(mascot.id, newStyle.id);

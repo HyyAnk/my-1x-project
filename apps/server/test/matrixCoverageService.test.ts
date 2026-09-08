@@ -10,7 +10,6 @@ import {
   loadAllKnowledgeEntities,
 } from "../src/quiz/bank/knowledgeBaseLoader.js";
 import {
-  ALL_MATRIX_ARCHETYPES,
   buildMatrixCoverageMap,
   calculateMatrixCoverageStats,
   selectAutoCandidates,

@@ -24,12 +24,7 @@ export function contextualizeChoiceSubject(choice: string, topicLower: string): 
   ) {
     return `luxury high-speed exotic sports car from ${trimmed}`;
   }
-  if (
-    topicLower.includes("weapon") ||
-    topicLower.includes("sword") ||
-    topicLower.includes("blade") ||
-    topicLower.includes("armor")
-  ) {
+  if (topicLower.includes("weapon") || topicLower.includes("sword") || topicLower.includes("blade") || topicLower.includes("armor")) {
     return `legendary iconic artifact weapon representing ${trimmed}`;
   }
   return trimmed;
@@ -110,7 +105,8 @@ export function resolveSubjectAnchors(input: ResolveThumbnailInput, layout: Thum
     } else if (layout === "odd_one_out") {
       anchors.push({
         label: "Odd Element",
-        visualPrompt: "3x3 matrix grid of cheerful yellow ducklings where one wears cool sunglasses and smirk, highlighted with red circle ⭕",
+        visualPrompt:
+          "3x3 matrix grid of cheerful yellow ducklings where one wears cool sunglasses and smirk, highlighted with red circle ⭕",
       });
     } else if (layout === "difficulty_tier") {
       anchors.push(

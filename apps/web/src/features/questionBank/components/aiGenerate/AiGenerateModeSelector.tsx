@@ -7,11 +7,7 @@ export interface AiGenerateModeSelectorProps {
   disabled?: boolean;
 }
 
-export function AiGenerateModeSelector({
-  mode,
-  onChangeMode,
-  disabled = false,
-}: AiGenerateModeSelectorProps) {
+export function AiGenerateModeSelector({ mode, onChangeMode, disabled = false }: AiGenerateModeSelectorProps) {
   const { t } = useTranslation();
 
   return (

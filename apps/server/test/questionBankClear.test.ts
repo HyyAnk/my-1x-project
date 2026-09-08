@@ -96,7 +96,7 @@ describe("Question Bank Clear All Operation", () => {
 
     // 5. Verify taxonomy is preserved
     const taxonomyRaw = await readFile(path.join(bankDir, "taxonomy.json"), "utf8");
-    const preservedTaxonomy = JSON.parse(taxonomyRaw);
+    const preservedTaxonomy = JSON.parse(taxonomyRaw) as { domains: Array<{ id: string }> };
     expect(preservedTaxonomy.domains[0].id).toBe("science_tech");
   });
 });

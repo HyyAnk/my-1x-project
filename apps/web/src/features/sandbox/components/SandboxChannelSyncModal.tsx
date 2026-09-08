@@ -149,24 +149,19 @@ export function SandboxChannelSyncModal({
             <strong>• {t("visualSandbox.summaryPalette")}</strong> {PALETTES.find((p) => p.id === paletteId)?.label || paletteId}
           </div>
           <div>
-            <strong>• {t("visualSandbox.summaryThinkingBar")}</strong>{" "}
-            {THINKING_BAR_STYLE_LABELS[thinkingBarStyle as Exclude<QuizThinkingBarStyle, "auto">]}
+            <strong>• {t("visualSandbox.summaryThinkingBar")}</strong> {THINKING_BAR_STYLE_LABELS[thinkingBarStyle]}
           </div>
           <div>
-            <strong>• {t("visualSandbox.summaryQuestionBox")}</strong>{" "}
-            {QUESTION_BOX_STYLE_LABELS[questionBoxStyle as Exclude<QuizQuestionBoxStyle, "auto">]}
+            <strong>• {t("visualSandbox.summaryQuestionBox")}</strong> {QUESTION_BOX_STYLE_LABELS[questionBoxStyle]}
           </div>
           <div>
-            <strong>• {t("visualSandbox.summaryAnswerCard")}</strong>{" "}
-            {ANSWER_CARD_STYLE_LABELS[answerCardStyle as Exclude<QuizAnswerCardStyle, "auto">]}
+            <strong>• {t("visualSandbox.summaryAnswerCard")}</strong> {ANSWER_CARD_STYLE_LABELS[answerCardStyle]}
           </div>
           <div>
-            <strong>• {t("visualSandbox.summaryCounter")}</strong>{" "}
-            {QUESTION_COUNTER_STYLE_LABELS[counterStyle as Exclude<QuizQuestionCounterStyle, "auto">]}
+            <strong>• {t("visualSandbox.summaryCounter")}</strong> {QUESTION_COUNTER_STYLE_LABELS[counterStyle]}
           </div>
           <div>
-            <strong>• {t("visualSandbox.summaryBackground")}</strong>{" "}
-            {BACKGROUND_STYLE_LABELS[backgroundStyle as Exclude<QuizBackgroundStyle, "auto">]}
+            <strong>• {t("visualSandbox.summaryBackground")}</strong> {BACKGROUND_STYLE_LABELS[backgroundStyle]}
           </div>
           {syncMascotToChannel && (
             <div>

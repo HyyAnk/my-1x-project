@@ -8,6 +8,7 @@ import { mascotApi } from "./api/mascotApi";
 import { settingsApi } from "./api/settingsApi";
 import { analyticsApi } from "./api/analyticsApi";
 import { questionBankApi } from "./api/questionBankApi";
+import { shortReelApi } from "./api/shortReelApi";
 
 export * from "./api/client";
 export * from "./api/channelApi";
@@ -20,6 +21,7 @@ export * from "./api/mascotApi";
 export * from "./api/settingsApi";
 export * from "./api/analyticsApi";
 export * from "./api/questionBankApi";
+export * from "./api/shortReelApi";
 
 /**
  * Unified API Client Facade
@@ -36,4 +38,5 @@ export const api = {
   ...settingsApi,
   ...analyticsApi,
   ...questionBankApi,
+  ...shortReelApi,
 };

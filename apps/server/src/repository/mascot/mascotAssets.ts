@@ -3,12 +3,7 @@ import path from "node:path";
 import { RepositoryError } from "../errors.js";
 import type { RepositoryRuntime } from "../runtime.js";
 
-export async function saveMascotAsset(
-  this: RepositoryRuntime,
-  mascotId: string,
-  filename: string,
-  content: Uint8Array,
-): Promise<string> {
+export async function saveMascotAsset(this: RepositoryRuntime, mascotId: string, filename: string, content: Uint8Array): Promise<string> {
   await this.ensureBootstrap();
   const mascotDir = path.join(this.roots.mascots, mascotId);
   const assetDir = path.join(mascotDir, "assets");

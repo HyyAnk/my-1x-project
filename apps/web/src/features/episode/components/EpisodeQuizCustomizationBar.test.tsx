@@ -1,6 +1,6 @@
 import type React from "react";
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
 import { LanguageProvider } from "../../../i18n";
 import { EpisodeQuizCustomizationBar } from "./EpisodeQuizCustomizationBar";
 import type { Channel, Episode, QuizV2 } from "@studio/shared";
@@ -89,10 +89,6 @@ describe("EpisodeQuizCustomizationBar", () => {
       { wrapper },
     );
 
-    const videoFormatBtn = screen.getByRole("button", { name: /Video Format/i });
-    expect(videoFormatBtn).toBeDefined();
-
-    fireEvent.click(videoFormatBtn);
-    expect(videoFormatBtn.getAttribute("aria-expanded")).toBe("true");
+    expect(screen.queryByRole("button", { name: /Video Format/i })).toBeNull();
   });
 });

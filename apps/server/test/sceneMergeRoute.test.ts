@@ -95,6 +95,7 @@ async function createEpisode(repository: Awaited<ReturnType<typeof buildApp>>["r
   const topics = Array.from({ length: 5 }, (_, index) => ({
     topic_id: `merge_topic_${index}`,
     channel_id: channel.channel_id,
+    content_kind: "episode" as const,
     title: `Merge Topic ${index}`,
     premise: "Premise",
     why_it_fits: "Fits",

@@ -16,13 +16,7 @@ interface DescriptionToneChipsProps {
   onSubmit: () => void;
 }
 
-export function DescriptionToneChips({
-  toneHint,
-  disabled,
-  onSelectTone,
-  onCustomToneChange,
-  onSubmit,
-}: DescriptionToneChipsProps) {
+export function DescriptionToneChips({ toneHint, disabled, onSelectTone, onCustomToneChange, onSubmit }: DescriptionToneChipsProps) {
   return (
     <div className="video-description-tone-bar">
       <div className="tone-chips-row">

@@ -4,21 +4,11 @@ import type { TaskManagerRuntime } from "../runtime.js";
 import type { QuizVoicePacingClamp } from "../../quiz/audio/voiceSynthesis.js";
 import { quizVoicePlanNeedsRegeneration, quizVoiceTargetWordsPerSecond } from "../../quiz/audio/voicePolicy.js";
 import { healQuizVoicePacingWithLLM } from "../../quiz/audio/voicePacingHealer.js";
-import {
-  generateVoice,
-  resolveAssets,
-  runQa,
-  readQuizArtifacts,
-} from "../../quiz/pipeline/orchestrator.js";
+import { generateVoice, resolveAssets, runQa, readQuizArtifacts } from "../../quiz/pipeline/orchestrator.js";
 import { RepositoryError } from "../../repository.js";
 import { hasValidNarrationAsset } from "./pipelineHelpers.js";
 
-export function handleVoicePacingClamp(
-  logger: StudioLogger,
-  channelId: string,
-  taskId: string,
-  details: QuizVoicePacingClamp,
-): void {
+export function handleVoicePacingClamp(logger: StudioLogger, channelId: string, taskId: string, details: QuizVoicePacingClamp): void {
   logger.warn(`Quiz voice pacing clamp hit ${JSON.stringify(details)}`, {
     profileId: channelId,
     workerId: taskId,
@@ -26,11 +16,7 @@ export function handleVoicePacingClamp(
   });
 }
 
-export function createQuizPipelineInput(
-  runtime: TaskManagerRuntime,
-  task: Task,
-  isParallelMode: () => boolean,
-) {
+export function createQuizPipelineInput(runtime: TaskManagerRuntime, task: Task, isParallelMode: () => boolean) {
   let assetState = { completed: 0, total: 0, reused: false };
   let voiceState = { completed: 0, total: 0, reused: false };
 

@@ -5,7 +5,12 @@ import os from "node:os";
 import path from "node:path";
 import { createStubQuizLlmClient } from "./helpers/stubQuizLlmClient.js";
 import { buildApp, type StudioApp } from "../src/app.js";
-import type { BankQuestion, TopicCandidate } from "@studio/shared";
+import type { BankQuestion, Task, TopicCandidate } from "@studio/shared";
+import type { CreateEpisodeFromTopicWithBankResult } from "../src/quiz/bank/questionBankToQuizBridge.js";
+
+type ConfirmEpisodeResponse = CreateEpisodeFromTopicWithBankResult & {
+  content_kind: "episode";
+};
 
 describe("Topic to Episode Pipeline E2E Bridge", () => {
   let app: StudioApp;
@@ -21,10 +26,10 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     }
     app = await buildApp(curr, { llmClient: createStubQuizLlmClient() });
     tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-pipeline-e2e-"));
-    app.repository.setStorageRoot(tempStorage);
+    await app.repository.setStorageRoot(tempStorage);
     app.tasks.runPipelineTask = async (task) => {
-      await (app.tasks as any).update(task.task_id, { status: "RUNNING" });
-      await (app.tasks as any).finish(task.task_id, "COMPLETED");
+      await app.tasks.update(task.task_id, { status: "RUNNING" });
+      await app.tasks.finish(task.task_id, "COMPLETED", null);
     };
 
     const channel1 = await app.repository.createChannel({
@@ -125,6 +130,8 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     const topic: TopicCandidate = {
       topic_id: "topic-rome-mysteries",
       channel_id: testChannelId,
+      content_kind: "episode",
+      origin: "discovery",
       title: "Secrets of the Roman Empire (Shorts)",
       premise: "Mind-blowing facts and trivia about ancient Rome that will leave you stunned.",
       why_it_fits: "High engagement historical trivia tailored for quick video retention.",
@@ -159,7 +166,7 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     });
 
     expect(response.statusCode).toBe(201);
-    const body = response.json();
+    const body = response.json<ConfirmEpisodeResponse>();
 
     // Verify root return contract
     expect(body.episode).toBeDefined();
@@ -169,14 +176,14 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     expect(body.question_ids).toHaveLength(3);
     expect(body.cooldown_recorded).toBe(true);
     expect(body.task).toBeDefined();
-    expect(body.task.task_type).toBe("GENERATE_PIPELINE");
+    expect(body.task?.task_type).toBe("GENERATE_PIPELINE");
 
     // Verify episode configuration
     const ep = body.episode;
-    expect(ep.quiz_config.question_count).toBe(3);
-    expect(ep.quiz_config.archetype).toBe("deep_trivia");
-    expect(ep.quiz_config.target_layout).toBe("portrait_hero_choices");
-    expect(ep.quiz_config.render_aspect_ratio).toBe("9:16");
+    expect(ep.quiz_config?.question_count).toBe(3);
+    expect(ep.quiz_config?.archetype).toBe("deep_trivia");
+    expect(ep.quiz_config?.target_layout).toBe("media_left_choices_right");
+    expect(ep.quiz_config?.render_aspect_ratio).toBe("16:9");
 
     // 4. Verify quiz.json on disk contains 3 questions in retention arc order
     const storedQuiz = await app.repository.readQuiz(testChannelId, ep.episode_id);
@@ -202,7 +209,7 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     const storedDirector = await app.repository.readDirectorPlan(testChannelId, ep.episode_id);
     expect(storedDirector).toBeDefined();
     expect(storedDirector!.beats).toHaveLength(3);
-    expect(storedDirector!.beats[0].layout_id).toBe("portrait_hero_choices");
+    expect(storedDirector!.beats[0].layout_id).toBe("media_left_choices_right");
     expect(storedDirector!.beats[0].question_id).toBe(storedQuiz!.questions[0].id);
     expect(storedDirector!.beats[1].question_id).toBe(storedQuiz!.questions[1].id);
     expect(storedDirector!.beats[2].question_id).toBe(storedQuiz!.questions[2].id);
@@ -230,6 +237,8 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     const topic: TopicCandidate = {
       topic_id: "topic-pipeline-toggle",
       channel_id: testChannelId,
+      content_kind: "episode",
+      origin: "discovery",
       title: "Pipeline Submission Check",
       premise: "Verifies autonomous pipeline start behavior.",
       why_it_fits: "Pipeline test.",
@@ -261,7 +270,7 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     });
 
     expect(resNoPipeline.statusCode).toBe(201);
-    expect(resNoPipeline.json().task).toBeNull();
+    expect(resNoPipeline.json<{ task: Task | null }>().task).toBeNull();
 
     // Test with auto_start_pipeline: true (default)
     const topic2 = { ...topic, topic_id: "topic-toggle-2", title: "Auto Pipeline Active" };
@@ -275,13 +284,14 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     });
 
     expect(resWithPipeline.statusCode).toBe(201);
-    const body = resWithPipeline.json();
+    const body = resWithPipeline.json<ConfirmEpisodeResponse>();
     expect(body.task).not.toBeNull();
-    expect(body.task.task_type).toBe("GENERATE_PIPELINE");
-    expect(body.task.channel_id).toBe(testChannelId);
-    expect(body.task.episode_id).toBe(body.episode.episode_id);
+    const task = body.task!;
+    expect(task.task_type).toBe("GENERATE_PIPELINE");
+    expect(task.channel_id).toBe(testChannelId);
+    expect(task.episode_id).toBe(body.episode.episode_id);
 
-    const taskId = body.task.task_id;
+    const taskId = task.task_id;
     const deadline = Date.now() + 5000;
     while (app.tasks.get(taskId).status !== "COMPLETED" && Date.now() < deadline) {
       await new Promise((resolve) => setTimeout(resolve, 20));
@@ -293,6 +303,8 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     const topic: TopicCandidate = {
       topic_id: "topic-jit-fallback-test",
       channel_id: testChannelId,
+      content_kind: "episode",
+      origin: "discovery",
       title: "Mystery Creature Identification",
       premise: "Guess the creature behind the dark silhouette.",
       why_it_fits: "High engagement silhouette mystery.",
@@ -325,12 +337,12 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     });
 
     expect(res.statusCode).toBe(201);
-    const body = res.json();
+    const body = res.json<ConfirmEpisodeResponse>();
 
     // Sourced via JIT fallback
     expect(body.curated_source).toBe("jit_only");
     expect(body.quiz.questions).toHaveLength(3);
-    expect(body.director_plan.beats[0].layout_id).toBe("portrait_hero_choices");
+    expect(body.director_plan.beats[0].layout_id).toBe("mystery_reveal");
     expect(body.director_plan.beats[0].archetype).toBe("mystery_reveal");
     expect(body.director_plan.beats[0].asset_intents).toContain("answer_reveal");
   });

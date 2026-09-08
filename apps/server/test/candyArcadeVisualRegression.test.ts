@@ -170,9 +170,7 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).toContain("-webkit-text-stroke: 4px var(--choice-stroke-shadow)");
     expect(html).toContain("--choice-text-color: #78350F");
     expect(html).toContain("--choice-text-color: #831843");
-    expect(html).toContain(
-      ".layout-media_left_choices_right .answer-grid.answer-count-2",
-    );
+    expect(html).toContain(".layout-media_left_choices_right .answer-grid.answer-count-2");
     expect(html).toContain("gap: 36px;");
     expect(html).toContain("--choice-badge-size: 138px;");
     expect(html).toContain("--choice-badge-margin-left: -74px;");

@@ -162,9 +162,7 @@ export function MascotActionSelector({
           >
             {activeCoreAction === "thinking" ? "Thinking Variants" : "Celebrate Variants"}
           </span>
-          <span style={{ fontSize: "10px", color: "var(--ink-secondary)" }}>
-            {filledVariants.length} available
-          </span>
+          <span style={{ fontSize: "10px", color: "var(--ink-secondary)" }}>{filledVariants.length} available</span>
         </div>
 
         {filledVariants.length > 0 ? (
@@ -235,9 +233,7 @@ export function MascotActionSelector({
                       }}
                     />
                   ) : null}
-                  <span style={{ fontWeight: 600, fontSize: "10.5px" }}>
-                    Slot {variant.slot_index}
-                  </span>
+                  <span style={{ fontWeight: 600, fontSize: "10.5px" }}>Slot {variant.slot_index}</span>
                 </button>
               );
             })}

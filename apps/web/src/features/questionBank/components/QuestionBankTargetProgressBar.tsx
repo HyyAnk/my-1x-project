@@ -9,11 +9,7 @@ export interface QuestionBankTargetProgressBarProps {
   matrixCoverage?: MatrixCoverageStats | null;
 }
 
-export function QuestionBankTargetProgressBar({
-  currentTotal,
-  milestoneProgress,
-  matrixCoverage,
-}: QuestionBankTargetProgressBarProps) {
+export function QuestionBankTargetProgressBar({ currentTotal, milestoneProgress, matrixCoverage }: QuestionBankTargetProgressBarProps) {
   const { t } = useTranslation();
   const { activeTier, nextTier, targetTotal, targetPercent, isMaxTier, track } = milestoneProgress;
 
@@ -21,11 +17,7 @@ export function QuestionBankTargetProgressBar({
   const nextTierLabel = nextTier ? nextTier.name : activeTier.name;
 
   return (
-    <div
-      className="qb-segmented-progress-card"
-      role="region"
-      aria-label="Question Bank Target Progress and Milestone Roadmap"
-    >
+    <div className="qb-segmented-progress-card" role="region" aria-label="Question Bank Target Progress and Milestone Roadmap">
       {/* Top Metric Strip: Visual Hierarchy & Status */}
       <div className="qb-progress-hero-strip">
         <div className="qb-progress-hero-left">

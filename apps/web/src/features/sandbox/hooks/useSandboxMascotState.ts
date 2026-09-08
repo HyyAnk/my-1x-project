@@ -4,7 +4,6 @@ import {
   resolveMascotStyle,
   type MascotActionType,
   type MascotProfile,
-  type MascotRenderAspectRatio,
   type MascotStyle,
   type MascotStateVariant,
 } from "@studio/shared";
@@ -12,37 +11,22 @@ import { api } from "../../../api";
 
 export type SandboxMascotAction = "thinking" | "celebrate";
 
-export function useSandboxMascotState(aspectRatio?: MascotRenderAspectRatio) {
+export function useSandboxMascotState() {
   const [mascots, setMascots] = useState<MascotProfile[]>([]);
   const [mascotId, setMascotId] = useState("none");
   const [mascotStyleId, setMascotStyleId] = useState<string | null>(null);
   const [selectedVariantIndex, setSelectedVariantIndex] = useState<number | null>(null);
   const [mascotEnabled, setMascotEnabled] = useState(false);
   const [mascotAction, setMascotActionState] = useState<SandboxMascotAction>("thinking");
-  const [mascotPosition, setMascotPositionState] = useState<"bottom_left" | "bottom_right">(
-    RECOMMENDED_MASCOT_PLACEMENT_PRESET.position,
-  );
+  const [mascotPosition, setMascotPositionState] = useState<"bottom_left" | "bottom_right">(RECOMMENDED_MASCOT_PLACEMENT_PRESET.position);
   const [mascotScale, setMascotScale] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.scale);
   const [mascotOffsetX, setMascotOffsetX] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_x);
   const [mascotOffsetY, setMascotOffsetY] = useState<number>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.offset_y);
   const [mascotFlipX, setMascotFlipX] = useState<boolean>(RECOMMENDED_MASCOT_PLACEMENT_PRESET.flip_x);
 
-  const setMascotPosition = useCallback(
-    (pos: "bottom_left" | "bottom_right") => {
-      if (aspectRatio === "16:9") {
-        setMascotPositionState("bottom_left");
-        return;
-      }
-      setMascotPositionState(pos);
-    },
-    [aspectRatio],
-  );
-
-  useEffect(() => {
-    if (aspectRatio === "16:9" && mascotPosition !== "bottom_left") {
-      setMascotPositionState("bottom_left");
-    }
-  }, [aspectRatio, mascotPosition]);
+  const setMascotPosition = useCallback((_pos: "bottom_left" | "bottom_right") => {
+    setMascotPositionState("bottom_left");
+  }, []);
 
   const setMascotAction = useCallback((action: MascotActionType | SandboxMascotAction) => {
     if (action === "celebrate") {

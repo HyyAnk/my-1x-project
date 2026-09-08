@@ -16,7 +16,7 @@ import {
   type QuizQuestion,
   type QuizV2,
   type Task,
-  type TopicCandidate,
+  type EpisodeTopicCandidate,
 } from "@studio/shared";
 import type { RepositoryService } from "../../../repository.js";
 import {
@@ -29,7 +29,7 @@ import type { TaskManager } from "../../../tasks.js";
 export interface CreateEpisodeFromQuestionBankInput {
   question_id: string;
   target_language?: string;
-  render_aspect_ratio?: "9:16" | "16:9";
+  render_aspect_ratio?: "16:9";
   auto_start_pipeline?: boolean;
   visual_style?: QuizImageStyle | "mixed";
   force?: boolean;
@@ -47,7 +47,7 @@ export interface CreateEpisodeFromTopicWithBankInput {
   topic_id: string;
   question_count?: number;
   target_language?: string;
-  render_aspect_ratio?: "9:16" | "16:9";
+  render_aspect_ratio?: "16:9";
   auto_start_pipeline?: boolean;
   visual_style?: QuizImageStyle | "mixed";
   force?: boolean;
@@ -73,7 +73,7 @@ export interface BootstrapSingleQuestionEpisodeParams {
   targetLayout: QuizLayoutId;
   requestedStyle: QuizImageStyle | "mixed";
   resolvedStyle: QuizImageStyle;
-  renderAspect: "9:16" | "16:9";
+  renderAspect?: "16:9";
   localizedHook: string;
   localizedPremise: string;
 }
@@ -82,13 +82,13 @@ export interface BootstrapTopicEpisodeParams {
   repository: RepositoryService;
   channel: Channel;
   channelId: string;
-  topic: TopicCandidate;
+  topic: EpisodeTopicCandidate;
   quizQuestions: QuizQuestion[];
   targetLanguage: string;
   targetLayout: QuizLayoutId;
   requestedStyle: QuizImageStyle | "mixed";
   resolvedStyle: QuizImageStyle;
-  renderAspect: "9:16" | "16:9";
+  renderAspect?: "16:9";
   blueprintDefaultFormat?: string;
   selectedAgeBand?: string;
 }
@@ -117,11 +117,7 @@ export function triggerPipelineTask(
   autoStart: boolean = true,
 ): Task | null {
   if (!autoStart || !tasks) return null;
-  try {
-    return tasks.submit("GENERATE_PIPELINE", channelId, episodeId);
-  } catch {
-    return (tasks.submit as any)("PIPELINE", channelId, episodeId);
-  }
+  return tasks.submit("GENERATE_PIPELINE", channelId, episodeId);
 }
 
 function buildEpisodeRecord(params: {
@@ -141,7 +137,7 @@ function buildEpisodeRecord(params: {
   requestedStyle: QuizImageStyle | "mixed";
   resolvedStyle: QuizImageStyle;
   channel: Channel;
-  renderAspect: "9:16" | "16:9";
+  renderAspect: "16:9";
   archetype?: string;
   targetLayout: QuizLayoutId;
   timestamp: string;
@@ -205,7 +201,10 @@ async function writeEpisodeMarkdownStubs(
     repository.writeTextAtomic(path.join(episodeDir, "treatment.md"), `# Treatment\n\n${treatment}`),
     repository.writeTextAtomic(path.join(episodeDir, "script.md"), script),
     repository.writeTextAtomic(path.join(episodeDir, "visual_bible.md"), "# Episode Visual Bible\n\nVisual development has not started.\n"),
-    repository.writeTextAtomic(path.join(episodeDir, "scene_plan.md"), `# Scene Plan\n\n${meta.isTopic ? "Scene breakdown has not started.\n" : ""}`),
+    repository.writeTextAtomic(
+      path.join(episodeDir, "scene_plan.md"),
+      `# Scene Plan\n\n${meta.isTopic ? "Scene breakdown has not started.\n" : ""}`,
+    ),
     repository.writeTextAtomic(path.join(episodeDir, "dialogue_script.md"), "# Dialogue Script\n\n"),
     repository.writeTextAtomic(path.join(episodeDir, "video_prompts.md"), "# Video Prompts\n\n"),
   ]);
@@ -214,10 +213,25 @@ async function writeEpisodeMarkdownStubs(
 /**
  * Bootstraps directory structure, episode record, quiz-v2.json, and markdown stubs for a single-question episode.
  */
-export async function bootstrapSingleQuestionEpisode(
-  params: BootstrapSingleQuestionEpisodeParams,
-): Promise<BootstrapEpisodeResult> {
-  const { repository, channel, channelId, bankQuestion, quizQuestion, targetLanguage, targetLayout, requestedStyle, resolvedStyle, renderAspect, localizedHook, localizedPremise } = params;
+export async function bootstrapSingleQuestionEpisode(params: BootstrapSingleQuestionEpisodeParams): Promise<BootstrapEpisodeResult> {
+  const {
+    repository,
+    channel,
+    channelId,
+    bankQuestion,
+    quizQuestion,
+    targetLanguage,
+    targetLayout,
+    requestedStyle,
+    resolvedStyle,
+    localizedHook,
+    localizedPremise,
+  } = params;
+
+  const renderAspect = params.renderAspect ?? "16:9";
+  if ((renderAspect as string) !== "16:9") {
+    throw new Error(`Unsupported episode render aspect ratio: ${String(renderAspect)}. Only 16:9 is supported.`);
+  }
 
   const title = `Shorts Quiz: ${localizedHook.slice(0, 50)}`;
   const parentDir = repository.resolvePath("channels", channel.slug, "episodes");
@@ -268,10 +282,25 @@ export async function bootstrapSingleQuestionEpisode(
 /**
  * Bootstraps directory structure, episode record, quiz-v2.json, markdown stubs, and topic database for a topic episode.
  */
-export async function bootstrapTopicEpisode(
-  params: BootstrapTopicEpisodeParams,
-): Promise<BootstrapEpisodeResult> {
-  const { repository, channel, channelId, topic, quizQuestions, targetLanguage, targetLayout, requestedStyle, resolvedStyle, renderAspect, blueprintDefaultFormat, selectedAgeBand } = params;
+export async function bootstrapTopicEpisode(params: BootstrapTopicEpisodeParams): Promise<BootstrapEpisodeResult> {
+  const {
+    repository,
+    channel,
+    channelId,
+    topic,
+    quizQuestions,
+    targetLanguage,
+    targetLayout,
+    requestedStyle,
+    resolvedStyle,
+    blueprintDefaultFormat,
+    selectedAgeBand,
+  } = params;
+
+  const renderAspect = params.renderAspect ?? "16:9";
+  if ((renderAspect as string) !== "16:9") {
+    throw new Error(`Unsupported episode render aspect ratio: ${String(renderAspect)}. Only 16:9 is supported.`);
+  }
 
   const parentDir = repository.resolvePath("channels", channel.slug, "episodes");
   const episodeSlug = await repository.uniqueSlug(topic.title, parentDir);
@@ -297,7 +326,7 @@ export async function bootstrapTopicEpisode(
     targetWordCount,
     questionCount: quizQuestions.length,
     quizFormat,
-    ageBand: (topic.age_band as any) || selectedAgeBand || "family",
+    ageBand: topic.age_band || selectedAgeBand || "family",
     visualTheme,
     requestedStyle,
     resolvedStyle,
@@ -309,7 +338,12 @@ export async function bootstrapTopicEpisode(
   });
 
   await repository.writeJsonAtomic(path.join(episodeDirectory, "episode.json"), episode);
-  await writeEpisodeMarkdownStubs(repository, episodeDirectory, { title: topic.title, hook: topic.hook, premise: topic.premise, isTopic: true });
+  await writeEpisodeMarkdownStubs(repository, episodeDirectory, {
+    title: topic.title,
+    hook: topic.hook,
+    premise: topic.premise,
+    isTopic: true,
+  });
   await repository.writeJsonAtomic(
     path.join(repository.resolvePath("channels", channel.slug), "topic_database.json"),
     (await repository.listTopics(channel.channel_id)).map(({ title, premise }) => ({ title, premise })),
@@ -318,7 +352,7 @@ export async function bootstrapTopicEpisode(
   const quiz: QuizV2 = QuizV2Schema.parse({
     schema_version: 2,
     episode_id: episodeId,
-    age_band: (topic.age_band as any) || selectedAgeBand || "family",
+    age_band: topic.age_band || selectedAgeBand || "family",
     language: targetLanguage,
     questions: quizQuestions,
   });

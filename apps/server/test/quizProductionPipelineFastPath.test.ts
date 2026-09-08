@@ -4,7 +4,7 @@ import { runPipelineTask } from "../src/tasks/pipeline/quizProductionPipelineRun
 import type { PipelineRun, TaskManagerRuntime } from "../src/tasks/runtime.js";
 
 vi.mock("../src/tasks/pipeline/quizV2PipelineRunner.js", () => ({
-  runQuizV2Pipeline: vi.fn(async () => {}),
+  runQuizV2Pipeline: vi.fn(() => Promise.resolve()),
 }));
 
 const mockQuiz: QuizV2 = {
@@ -80,7 +80,7 @@ describe("Quiz Production Pipeline Fast-Path Integration", () => {
     delete process.env.USE_LEGACY_QUIZ_PIPELINE;
   });
 
-  function createMockRuntime(overrides: Partial<Record<string, any>> = {}) {
+  function createMockRuntime(overrides: Partial<Record<string, unknown>> = {}) {
     const pipelineRuns = new Map<string, PipelineRun>();
 
     const runtime = {
@@ -99,23 +99,23 @@ describe("Quiz Production Pipeline Fast-Path Integration", () => {
         progress_percent: 100,
         render_progress: null,
       })),
-      update: vi.fn(async (_id: string, fields: any) => {
+      update: vi.fn((_id: string, fields: unknown) => {
         updatedStates.push(fields);
       }),
-      finish: vi.fn(async (_id: string, status: string) => {
+      finish: vi.fn((_id: string, status: string) => {
         finishedStatus = status;
       }),
       repository: {
-        readQuiz: vi.fn(async () => mockQuizOnDisk),
-        readScenes: vi.fn(async () => (savedScenes.length > 0 ? savedScenes : [mockScene])),
-        saveScenes: vi.fn(async (_ch: string, _ep: string, scenes: Scene[]) => {
+        readQuiz: vi.fn(() => mockQuizOnDisk),
+        readScenes: vi.fn(() => (savedScenes.length > 0 ? savedScenes : [mockScene])),
+        saveScenes: vi.fn((_ch: string, _ep: string, scenes: Scene[]) => {
           savedScenes = scenes;
         }),
-        getEpisodeFile: vi.fn(async () => ({ content: "generation has not started", modified_at: new Date().toISOString() })),
-        backupEpisodeFile: vi.fn(async () => {}),
-        readSequenceDrafts: vi.fn(async () => []),
-        clearSequenceDrafts: vi.fn(async () => {}),
-        commitSequenceDrafts: vi.fn(async () => true),
+        getEpisodeFile: vi.fn(() => ({ content: "generation has not started", modified_at: new Date().toISOString() })),
+        backupEpisodeFile: vi.fn(() => undefined),
+        readSequenceDrafts: vi.fn(() => []),
+        clearSequenceDrafts: vi.fn(() => undefined),
+        commitSequenceDrafts: vi.fn(() => true),
       },
       ...overrides,
     } as unknown as TaskManagerRuntime;
@@ -269,9 +269,9 @@ describe("Quiz Production Pipeline Fast-Path Integration", () => {
         return { task_id: `task_${type}_${Date.now()}` };
       }),
       repository: {
-        readQuiz: vi.fn(async () => mockQuizOnDisk),
-        readScenes: vi.fn(async () => savedScenesList),
-        saveScenes: vi.fn(async (_ch: string, _ep: string, scenes: Scene[]) => {
+        readQuiz: vi.fn(() => mockQuizOnDisk),
+        readScenes: vi.fn(() => savedScenesList),
+        saveScenes: vi.fn((_ch: string, _ep: string, scenes: Scene[]) => {
           savedScenesList = scenes;
         }),
       },

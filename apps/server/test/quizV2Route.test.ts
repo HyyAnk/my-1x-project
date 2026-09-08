@@ -1,7 +1,7 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { buildApp } from "../src/app.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
@@ -41,6 +41,7 @@ describe("Quiz V2 route workflow", () => {
         const topics = Array.from({ length: 5 }, (_, index) => ({
           topic_id: "topic-" + index,
           channel_id: channel.channel_id,
+          content_kind: "episode" as const,
           title: "Topic " + index,
           premise: "Premise",
           why_it_fits: "Fits",
@@ -133,6 +134,7 @@ describe("Quiz V2 route workflow", () => {
         const topics = Array.from({ length: 5 }, (_, index) => ({
           topic_id: "render-topic-" + index,
           channel_id: channel.channel_id,
+          content_kind: "episode" as const,
           title: "Render Topic " + index,
           premise: "Premise",
           why_it_fits: "Fits",

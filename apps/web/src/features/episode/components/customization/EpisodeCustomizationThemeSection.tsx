@@ -1,11 +1,4 @@
-import type {
-  Channel,
-  Episode,
-  MascotStyle,
-  QuizImageStyle,
-  QuizPaletteId,
-  VisualPresetItem,
-} from "@studio/shared";
+import type { Channel, Episode, MascotStyle, QuizImageStyle, QuizPaletteId, VisualPresetItem } from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import type { EpisodePreviewCandidate } from "../../hooks/useEpisodeStylePreview";
 import { PresetPickerDropdown } from "./PresetPickerDropdown";

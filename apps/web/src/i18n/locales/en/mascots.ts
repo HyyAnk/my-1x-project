@@ -339,7 +339,8 @@ export const mascotsEn = {
     styleAnchorGeneratePrompt: "Click to generate anchor",
     createStyleModalEyebrow: "Multi-Style Mascot Studio",
     createStyleModalTitle: "Create New Mascot Style",
-    createStyleModalIntro: "Add an alternative theme or wardrobe style for this mascot (e.g., Tactical Military, Cyberpunk Detective, Festive Holiday). Creating a style unlocks 20 customizable pose slots.",
+    createStyleModalIntro:
+      "Add an alternative theme or wardrobe style for this mascot (e.g., Tactical Military, Cyberpunk Detective, Festive Holiday). Creating a style unlocks 20 customizable pose slots.",
     createStyleNameLabel: "Style Name",
     createStyleNamePlaceholder: "e.g., Military Squad, Detective, Summer Beach",
     createStyleKeywordLabel: "Style Theme Keyword / Wardrobe Description",

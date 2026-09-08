@@ -228,6 +228,24 @@ zones:
         - "pnpm --filter @studio/server test -- test/candyArcade.test.ts test/quizChoiceGroupRenderer.test.ts"
       notes: "Use concrete planned files for parallel work."
 
+  - id: "short-reel-application"
+    name: "Short-Reel Application"
+    risk: "high"
+    lockPolicy: "exclusive"
+    description: "Short-Reel selection, script compilation, revision policy and package workflows"
+    globs:
+      - "apps/server/src/shortReel/**"
+    readStableDependencies:
+      - "shared-contracts"
+      - "artifact-contracts"
+      - "api-contracts"
+    coClaimWith:
+      - "server-tests"
+    verification:
+      commands:
+        - "pnpm --filter @studio/server test"
+        - "pnpm typecheck"
+
   - id: "image-thumbnail-prompt"
     name: "Image Thumbnail And Prompt Generation"
     risk: "medium"

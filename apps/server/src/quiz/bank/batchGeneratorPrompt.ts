@@ -3,15 +3,9 @@
  * Re-exports guidelines, prompt builders, and output parsers for 100% backward compatibility.
  */
 
-export {
-  ARCHETYPE_GUIDELINES,
-  type ArchetypePromptGuideline,
-} from "./prompts/archetypePromptGuidelines.js";
+export { ARCHETYPE_GUIDELINES, type ArchetypePromptGuideline } from "./prompts/archetypePromptGuidelines.js";
 
-export {
-  buildBatchGenerationPrompt,
-  type BuildBatchPromptOptions,
-} from "./prompts/standardBatchPromptBuilder.js";
+export { buildBatchGenerationPrompt, type BuildBatchPromptOptions } from "./prompts/standardBatchPromptBuilder.js";
 
 export {
   buildReverseGenerationPrompt,

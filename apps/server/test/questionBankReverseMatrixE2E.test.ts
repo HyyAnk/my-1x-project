@@ -5,17 +5,24 @@ import os from "node:os";
 import path from "node:path";
 import Fastify from "fastify";
 import { buildApp, type StudioApp } from "../src/app.js";
+
+type ReverseCoverageBody = {
+  coverage: {
+    total_combos: number;
+    total_variants: number;
+    covered_combos: number;
+    coverage_percent: number;
+    by_archetype: Record<string, unknown>;
+    by_domain: Record<string, unknown>;
+  };
+  code?: string;
+  success?: boolean;
+  approvedCount?: number;
+  matrixCoverage?: { total_combos: number };
+};
 import { registerQuestionBankRoutes } from "../src/routes/questionBank.js";
-import {
-  loadAllKnowledgeEntities,
-  getEntityById,
-  getKnowledgeBaseStats,
-} from "../src/quiz/bank/knowledgeBaseLoader.js";
-import {
-  calculateMatrixCoverageStats,
-  selectAutoCandidates,
-  selectManualCandidates,
-} from "../src/quiz/bank/matrixCoverageService.js";
+import { loadAllKnowledgeEntities, getEntityById, getKnowledgeBaseStats } from "../src/quiz/bank/knowledgeBaseLoader.js";
+import { calculateMatrixCoverageStats, selectAutoCandidates, selectManualCandidates } from "../src/quiz/bank/matrixCoverageService.js";
 import {
   buildBatchGenerationPrompt,
   buildReverseGenerationPrompt,
@@ -23,10 +30,7 @@ import {
   sanitizeBankQuestionText,
   type TargetEntityForGeneration,
 } from "../src/quiz/bank/batchGeneratorPrompt.js";
-import {
-  generateQuestionBankBatch,
-  type QuestionBankChunkProgress,
-} from "../src/quiz/bank/questionBankBatchService.js";
+import { generateQuestionBankBatch, type QuestionBankChunkProgress } from "../src/quiz/bank/questionBankBatchService.js";
 import type { BankQuestion } from "@studio/shared";
 
 describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
@@ -43,7 +47,7 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
     workspaceRoot = curr;
     app = await buildApp(curr);
     tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-reverse-matrix-e2e-"));
-    app.repository.setStorageRoot(tempStorage);
+    await app.repository.setStorageRoot(tempStorage);
   });
 
   afterAll(async () => {
@@ -94,7 +98,8 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
     });
 
     it("verifies zero Vietnamese or non-English accented characters exist across all entities", () => {
-      const vietnameseRegex = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ]/;
+      const vietnameseRegex =
+        /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ]/;
       const entityDir = path.join(workspaceRoot, ".quiz-studio", "knowledge_base", "entities");
       const files = readdirSync(entityDir).filter((f) => f.endsWith(".json"));
 
@@ -140,9 +145,7 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
             visual_anchor: "Cinematic mountain ridge",
             core_traits: ["Ghost of the mountains", "Thick fur"],
             distractor_pool: ["Cheetah", "Jaguar"],
-            facts_and_myths: [
-              { claim: "Snow leopards cannot roar", verdict: "fact", explanation: "True vocal cord structure" },
-            ],
+            facts_and_myths: [{ claim: "Snow leopards cannot roar", verdict: "fact", explanation: "True vocal cord structure" }],
           },
         ];
         writeFileSync(tempTestFile, JSON.stringify(newEntity, null, 2), "utf8");
@@ -248,7 +251,11 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
           subtopic_id: "mammals",
           format: "multiple_choice",
           question: "Lion question",
-          choices: [{ id: "A", text: "Ans", is_correct: true }, { id: "B", text: "Dist", is_correct: false }, { id: "C", text: "Dist2", is_correct: false }],
+          choices: [
+            { id: "A", text: "Ans", is_correct: true },
+            { id: "B", text: "Dist", is_correct: false },
+            { id: "C", text: "Dist2", is_correct: false },
+          ],
           correct_choice_id: "A",
           difficulty: 1,
           tags: [],
@@ -280,7 +287,11 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
           subtopic_id: "mammals",
           format: "multiple_choice",
           question: "Q1",
-          choices: [{ id: "A", text: "A", is_correct: true }, { id: "B", text: "B", is_correct: false }, { id: "C", text: "C", is_correct: false }],
+          choices: [
+            { id: "A", text: "A", is_correct: true },
+            { id: "B", text: "B", is_correct: false },
+            { id: "C", text: "C", is_correct: false },
+          ],
           correct_choice_id: "A",
           difficulty: 1,
           tags: [],
@@ -295,7 +306,11 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
           subtopic_id: "mammals",
           format: "multiple_choice",
           question: "Q2",
-          choices: [{ id: "A", text: "A", is_correct: true }, { id: "B", text: "B", is_correct: false }, { id: "C", text: "C", is_correct: false }],
+          choices: [
+            { id: "A", text: "A", is_correct: true },
+            { id: "B", text: "B", is_correct: false },
+            { id: "C", text: "C", is_correct: false },
+          ],
           correct_choice_id: "A",
           difficulty: 1,
           tags: [],
@@ -304,15 +319,12 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
         },
       ];
 
-      const candidates = selectManualCandidates(
-        mockQuestions,
-        {
-          count: 10,
-          domain_id: "nature_animals",
-          archetype_ids: ["speed_blitz"],
-          baseDir: baseDir(),
-        }
-      );
+      const candidates = selectManualCandidates(mockQuestions, {
+        count: 10,
+        domain_id: "nature_animals",
+        archetype_ids: ["speed_blitz"],
+        baseDir: baseDir(),
+      });
 
       expect(candidates.length).toBe(10);
       for (const cand of candidates) {
@@ -494,10 +506,7 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
     });
 
     it("sanitizeBankQuestionText cleanly strips redundant choice suffixes from Versus Faceoff questions", () => {
-      const choices = [
-        { text: "Billiards" },
-        { text: "Carrom" },
-      ];
+      const choices = [{ text: "Billiards" }, { text: "Carrom" }];
 
       const dirtyQ1 = "Which game flicks discs into pockets: Billiards or Carrom?";
       expect(sanitizeBankQuestionText(dirtyQ1, "versus_faceoff", choices)).toBe("Which game flicks discs into pockets?");
@@ -715,7 +724,7 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
       });
 
       expect(res.statusCode).toBe(200);
-      const body = JSON.parse(res.body);
+      const body = res.json<ReverseCoverageBody>();
       expect(body.coverage).toBeDefined();
       expect(body.coverage.total_combos).toBe(20000);
       expect(body.coverage.total_variants).toBeGreaterThanOrEqual(0);
@@ -741,7 +750,7 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
       });
 
       expect(res.statusCode).toBe(503);
-      const body = JSON.parse(res.body);
+      const body = res.json<ReverseCoverageBody>();
       expect(body.code).toBe("AI_CLIENT_UNAVAILABLE");
     });
 
@@ -780,7 +789,7 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
       });
 
       expect(res.statusCode).toBe(200);
-      const body = JSON.parse(res.body);
+      const body = res.json<ReverseCoverageBody>();
       expect(body.success).toBe(true);
       expect(body.approvedCount).toBe(1);
       expect(body.matrixCoverage).toBeDefined();

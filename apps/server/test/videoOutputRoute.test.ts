@@ -37,6 +37,7 @@ describe("video output routes", () => {
       const topics = Array.from({ length: 5 }, (_, index) => ({
         topic_id: `video-topic-${index}`,
         channel_id: channel.channel_id,
+        content_kind: "episode" as const,
         title: `Video topic ${index}`,
         premise: "Premise",
         why_it_fits: "Fits",

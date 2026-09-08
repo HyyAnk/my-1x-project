@@ -16,9 +16,7 @@ export function PresetManagerHeader({ onOpenImport, onClose }: PresetManagerHead
           <SlidersHorizontal size={20} weight="bold" />
           <span>{t("visualSandbox.modalPresetManagerTitle")}</span>
         </h3>
-        <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "var(--muted)" }}>
-          {t("visualSandbox.modalPresetManagerDesc")}
-        </p>
+        <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "var(--muted)" }}>{t("visualSandbox.modalPresetManagerDesc")}</p>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
         <button

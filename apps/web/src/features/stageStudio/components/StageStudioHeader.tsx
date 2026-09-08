@@ -1,4 +1,4 @@
-import { ArrowClockwise, Broadcast, DeviceMobile, DotsThreeVertical, GridFour, MonitorPlay, X } from "@phosphor-icons/react";
+import { ArrowClockwise, Broadcast, DotsThreeVertical, GridFour, MonitorPlay, X } from "@phosphor-icons/react";
 import type { useStageStudio } from "../hooks/useStageStudio";
 
 type StageStudioHeaderProps = {
@@ -13,7 +13,6 @@ export function StageStudioHeader({ studio, onClose }: StageStudioHeaderProps) {
     targetChannel,
     activeMascot,
     aspectRatio,
-    setAspectRatio,
     stageViewMode,
     setStageViewMode,
     showGuides,
@@ -44,25 +43,10 @@ export function StageStudioHeader({ studio, onClose }: StageStudioHeaderProps) {
 
       {/* Minimalist Toolbar Controls */}
       <div className="stage-studio-toolbar">
-        {/* Aspect Ratio 16:9 vs 9:16 */}
         <div className="studio-segmented-group" title={t("stageStudio.aspectRatioTooltip")}>
-          <button
-            type="button"
-            className={`studio-segment-btn ${aspectRatio === "16:9" ? "is-active" : ""}`}
-            onClick={() => setAspectRatio("16:9")}
-            aria-label="16:9"
-          >
+          <button type="button" className={`studio-segment-btn ${aspectRatio === "16:9" ? "is-active" : ""}`} aria-label="16:9">
             <MonitorPlay size={13} />
             <span>16:9</span>
-          </button>
-          <button
-            type="button"
-            className={`studio-segment-btn ${aspectRatio === "9:16" ? "is-active" : ""}`}
-            onClick={() => setAspectRatio("9:16")}
-            aria-label="9:16"
-          >
-            <DeviceMobile size={13} />
-            <span>9:16</span>
           </button>
         </div>
 

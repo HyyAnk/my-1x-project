@@ -25,7 +25,12 @@ export function resolveCounterBadgeVariant(
   if (!requested || requested === "auto") {
     return COUNTER_BADGE_VARIANTS[fallback] ?? COUNTER_BADGE_VARIANTS[DEFAULT_COUNTER_BADGE_STYLE];
   }
-  return (getStyleModuleAtRevision("counter", requested, revision)?.renderer as CounterBadgeVariant | undefined) ?? COUNTER_BADGE_VARIANTS[requested] ?? COUNTER_BADGE_VARIANTS[fallback] ?? COUNTER_BADGE_VARIANTS[DEFAULT_COUNTER_BADGE_STYLE];
+  return (
+    (getStyleModuleAtRevision("counter", requested, revision)?.renderer as CounterBadgeVariant | undefined) ??
+    COUNTER_BADGE_VARIANTS[requested] ??
+    COUNTER_BADGE_VARIANTS[fallback] ??
+    COUNTER_BADGE_VARIANTS[DEFAULT_COUNTER_BADGE_STYLE]
+  );
 }
 
 export function getCounterBadgesCss(revision?: string): string {

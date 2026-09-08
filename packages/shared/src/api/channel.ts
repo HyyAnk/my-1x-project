@@ -11,8 +11,12 @@ import {
   QuizVisualThemeSchema,
 } from "../enums.js";
 import { ChannelMascotConfigSchema, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT, QuestionHistorySettingsSchema } from "../schemas.js";
-import { MascotRenderAspectRatioSchema } from "../mascot/renderSchema.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
+import { EpisodeSchema } from "../schemas/episode.js";
+import { TaskSchema } from "../events.js";
+import { ShortReelRecordSchema } from "../shortReel/shortReel.schema.js";
+import { QuizV2Schema } from "../schemas/quiz/quizQuestions.js";
+import { DirectorPlanSchema } from "../schemas/quiz/quizDirector.js";
 
 export const SuggestTopicsInputSchema = z.object({
   topic_hint: z.string().optional(),
@@ -66,15 +70,56 @@ export const UpdateChannelInputSchema = z.object({
 
 export const SaveTextInputSchema = z.object({ content: z.string() });
 
-export const TopicConfirmInputSchema = z.object({
-  topic_id: z.string().min(1),
+export const EpisodeTopicConfirmInputSchema = z.object({
+  topic_id: z.string().min(1).optional(),
   question_count: z.number().int().min(QUIZ_MIN_QUESTION_COUNT).max(QUIZ_MAX_QUESTION_COUNT).optional(),
   visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]).optional(),
   auto_start_pipeline: z.boolean().optional(),
-  render_aspect_ratio: z.enum(["9:16", "16:9"]).optional(),
+  render_aspect_ratio: z.literal("16:9").optional(),
+  request_id: z.string().trim().min(1).optional(),
 });
+export type EpisodeTopicConfirmInput = z.infer<typeof EpisodeTopicConfirmInputSchema>;
+
+export const ShortReelTopicConfirmInputSchema = z.object({
+  topic_id: z.string().min(1).optional(),
+  question_count: z.literal(1).optional().default(1),
+  visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]).optional(),
+  auto_start_pipeline: z.boolean().optional(),
+  render_aspect_ratio: z.literal("9:16").optional(),
+  request_id: z.string().trim().min(1).optional(),
+});
+export type ShortReelTopicConfirmInput = z.infer<typeof ShortReelTopicConfirmInputSchema>;
+
+export const TopicConfirmInputSchema = z.union([EpisodeTopicConfirmInputSchema, ShortReelTopicConfirmInputSchema]);
 
 export type TopicConfirmInput = z.infer<typeof TopicConfirmInputSchema>;
+
+export const CuratedSourceTypeSchema = z.enum(["bank_only", "jit_only", "hybrid"]);
+export type CuratedSourceType = z.infer<typeof CuratedSourceTypeSchema>;
+
+export const ConfirmEpisodeTopicResponseSchema = z.object({
+  content_kind: z.literal("episode").default("episode"),
+  episode: EpisodeSchema,
+  task: TaskSchema.nullable().optional(),
+  quiz: QuizV2Schema.optional(),
+  director_plan: DirectorPlanSchema.optional(),
+  curated_source: CuratedSourceTypeSchema.optional(),
+  question_ids: z.array(z.string()).optional(),
+  cooldown_recorded: z.boolean().optional(),
+});
+export type ConfirmEpisodeTopicResponse = z.infer<typeof ConfirmEpisodeTopicResponseSchema>;
+
+export const ConfirmShortReelTopicResponseSchema = z.object({
+  content_kind: z.literal("short_reel"),
+  short_reel: ShortReelRecordSchema,
+});
+export type ConfirmShortReelTopicResponse = z.infer<typeof ConfirmShortReelTopicResponseSchema>;
+
+export const ConfirmTopicResponseSchema = z.discriminatedUnion("content_kind", [
+  ConfirmEpisodeTopicResponseSchema,
+  ConfirmShortReelTopicResponseSchema,
+]);
+export type ConfirmTopicResponse = z.infer<typeof ConfirmTopicResponseSchema>;
 
 export const EpisodeSettingsInputSchema = z.object({
   target_duration_minutes: z.number().min(3).max(60).optional(),
@@ -95,7 +140,7 @@ export const EpisodeSettingsInputSchema = z.object({
   style_catalog_revision: z.string().trim().min(1).optional(),
   style_preset_revision: z.number().int().positive().optional(),
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).optional(),
-  render_aspect_ratio: MascotRenderAspectRatioSchema.optional(),
+  render_aspect_ratio: z.literal("16:9").optional(),
   thumbnail_aspect_ratio: z.enum(["auto", "16:9", "9:16", "both"]).optional(),
 });
 

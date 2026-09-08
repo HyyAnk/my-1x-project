@@ -4,7 +4,7 @@ import { stageBackgroundPhase, stageBackgroundTime } from "./stageTimeline";
 
 export type StagePreviewRequestInput = {
   targetChannel: Channel | null;
-  aspectRatio?: "16:9" | "9:16";
+  aspectRatio?: "16:9";
   questionLayoutId: StageQuestionLayout;
   activeMascot: MascotProfile | null;
   selectedMascotId: string | null;
@@ -25,7 +25,7 @@ export type StagePreviewRequestInput = {
 
 export function buildStagePreviewRequest(input: StagePreviewRequestInput): SandboxPreviewRequest {
   return {
-    aspect_ratio: input.aspectRatio ?? "16:9",
+    aspect_ratio: "16:9",
     theme: "candy_arcade",
     palette_id: input.targetChannel?.default_palette_id || "lime",
     layout_id: input.questionLayoutId,

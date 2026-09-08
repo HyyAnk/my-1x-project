@@ -9,12 +9,7 @@ export interface StyleCreateModalProps {
   isSubmitting?: boolean;
 }
 
-export function StyleCreateModal({
-  isOpen,
-  onClose,
-  onCreate,
-  isSubmitting = false,
-}: StyleCreateModalProps) {
+export function StyleCreateModal({ isOpen, onClose, onCreate, isSubmitting = false }: StyleCreateModalProps) {
   const { t } = useTranslation();
   const [name, setName] = useState("");
   const [keyword, setKeyword] = useState("");
@@ -70,22 +65,14 @@ export function StyleCreateModal({
             </span>
             <h2 id="style-modal-title">{t("mascots.createStyleModalTitle")}</h2>
           </div>
-          <button
-            type="button"
-            className="icon-button"
-            aria-label={t("common.close")}
-            onClick={onClose}
-            disabled={effectiveSubmitting}
-          >
+          <button type="button" className="icon-button" aria-label={t("common.close")} onClick={onClose} disabled={effectiveSubmitting}>
             <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="modal-body" style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "16px" }}>
-            <p className="style-modal-intro">
-              {t("mascots.createStyleModalIntro")}
-            </p>
+            <p className="style-modal-intro">{t("mascots.createStyleModalIntro")}</p>
 
             <div className="form-group">
               <label htmlFor="style-name-input">
@@ -108,9 +95,7 @@ export function StyleCreateModal({
             </div>
 
             <div className="form-group">
-              <label htmlFor="style-keyword-input">
-                {t("mascots.createStyleKeywordLabel")}
-              </label>
+              <label htmlFor="style-keyword-input">{t("mascots.createStyleKeywordLabel")}</label>
               <textarea
                 id="style-keyword-input"
                 className="full-prompt-textarea"
@@ -121,29 +106,15 @@ export function StyleCreateModal({
                 disabled={effectiveSubmitting}
                 style={{ width: "100%", fontSize: "13px", resize: "vertical" }}
               />
-              <span className="form-field-hint">
-                {t("mascots.createStyleKeywordHint")}
-              </span>
+              <span className="form-field-hint">{t("mascots.createStyleKeywordHint")}</span>
             </div>
           </div>
 
-          <div
-            className="modal-actions"
-            style={{ marginTop: "24px", display: "flex", justifyContent: "flex-end", gap: "10px" }}
-          >
-            <button
-              type="button"
-              className="quiet-button"
-              onClick={onClose}
-              disabled={effectiveSubmitting}
-            >
+          <div className="modal-actions" style={{ marginTop: "24px", display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+            <button type="button" className="quiet-button" onClick={onClose} disabled={effectiveSubmitting}>
               {t("common.cancel")}
             </button>
-            <button
-              type="submit"
-              className="primary-button"
-              disabled={effectiveSubmitting || !name.trim()}
-            >
+            <button type="submit" className="primary-button" disabled={effectiveSubmitting || !name.trim()}>
               {effectiveSubmitting ? (
                 <>
                   <CircleNotch size={16} className="spin" />

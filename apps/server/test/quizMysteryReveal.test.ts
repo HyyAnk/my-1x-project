@@ -1,16 +1,7 @@
 import { describe, expect, it } from "vitest";
-import {
-  getQuizGameplayArchetype,
-  getQuizPreviewLayoutCapability,
-  QUIZ_LAYOUT_CATALOG,
-  resolveQuizLayout,
-} from "@studio/shared";
+import { getQuizGameplayArchetype, QUIZ_LAYOUT_CATALOG, resolveQuizLayout } from "@studio/shared";
 import { candyArcadeHeroAreaRatio } from "../src/quiz/render/candyArcade/candyArcadeStyles.js";
-import {
-  getQuizLayoutRenderer,
-  quizLayoutCss,
-  renderQuizLayoutBody,
-} from "../src/quiz/render/layouts/registry.js";
+import { getQuizLayoutRenderer, renderQuizLayoutBody } from "../src/quiz/render/layouts/registry.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
 
 describe("Mystery Reveal layout & archetype", () => {
@@ -48,10 +39,10 @@ describe("Mystery Reveal layout & archetype", () => {
 
   it("renders layout body slots correctly with backdrop, dual layers, and scanner bar", () => {
     const slots = {
-      questionBoxHtml: "<header class=\"question-title\">Who's that Pokemon?</header>",
-      heroHtml: "<figure class=\"hero-image\"><img src=\"pokemon.png\" /></figure>",
-      choicesHtml: "<div class=\"answer-grid answer-count-1\"><span>Pikachu</span></div>",
-      phaseHtml: "<div class=\"thinking\">3</div>",
+      questionBoxHtml: '<header class="question-title">Who\'s that Pokemon?</header>',
+      heroHtml: '<figure class="hero-image"><img src="pokemon.png" /></figure>',
+      choicesHtml: '<div class="answer-grid answer-count-1"><span>Pikachu</span></div>',
+      phaseHtml: '<div class="thinking">3</div>',
     };
 
     const rendered = renderQuizLayoutBody("mystery_reveal", slots);
@@ -78,7 +69,7 @@ describe("Mystery Reveal layout & archetype", () => {
     expect(css16x9).toContain("bottom: 28px;");
 
     const css9x16 = renderer.css("9:16");
-    expect(css9x16).toContain("#stage[data-aspect-ratio=\"9:16\"] .layout-mystery_reveal .game-stage");
+    expect(css9x16).toContain('#stage[data-aspect-ratio="9:16"] .layout-mystery_reveal .game-stage');
     expect(css9x16).toContain("grid-template-columns: minmax(0, 1fr);");
     expect(css9x16).toContain("height: 1100px;");
   });
@@ -151,4 +142,3 @@ describe("Mystery Reveal layout & archetype", () => {
     expect(composition.html).toContain("margin-right: auto");
   });
 });
-

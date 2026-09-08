@@ -21,17 +21,8 @@ export interface RunBatchAutoQaOptions {
 
 export const DEFAULT_SIMILARITY_THRESHOLD = 0.75;
 
-/**
- * Runs comprehensive Auto-QA validation on a single question.
- */
-export function runAutoQaOnQuestion(
-  question: BankQuestion,
-  existingQuestions: BankQuestion[] = [],
-  similarityThreshold = DEFAULT_SIMILARITY_THRESHOLD,
-): AutoQaResult {
+function checkCopyrightIssues(question: BankQuestion): AutoQaIssue[] {
   const issues: AutoQaIssue[] = [];
-
-  // 1. Copyright Check
   const textsToScan: string[] = [
     question.question,
     question.explanation,
@@ -52,8 +43,12 @@ export function runAutoQaOnQuestion(
       break;
     }
   }
+  return issues;
+}
 
-  // 2. Quality & Schema validation
+function checkQualityAndSchemaIssues(question: BankQuestion): AutoQaIssue[] {
+  const issues: AutoQaIssue[] = [];
+
   if (!question.question || question.question.trim().length < 8) {
     issues.push({
       type: "quality",
@@ -74,13 +69,13 @@ export function runAutoQaOnQuestion(
     });
   }
 
-  // Quality check: Versus Faceoff redundant choice text
   if (question.archetype_id === "versus_faceoff" && question.choices && question.choices.length === 2) {
     const qTrim = question.question?.trim() || "";
     if (/:\s*[^:?]+\s*(?:or|vs\.?)\s*[^:?]+\??$/i.test(qTrim)) {
       issues.push({
         type: "quality",
-        message: "Versus Faceoff question should not redundantly append ': Choice A or Choice B?' at the end. Choices are rendered directly on the split-screen buttons.",
+        message:
+          "Versus Faceoff question should not redundantly append ': Choice A or Choice B?' at the end. Choices are rendered directly on the split-screen buttons.",
         details: { question: qTrim },
       });
     }
@@ -92,7 +87,6 @@ export function runAutoQaOnQuestion(
       message: "Question must have at least 2 choices.",
     });
   } else {
-    // Check duplicate choices
     const normChoices = question.choices.map((c) => normalizeQuestionText(c.text));
     const uniqueChoices = new Set(normChoices);
     if (uniqueChoices.size !== question.choices.length) {
@@ -102,7 +96,6 @@ export function runAutoQaOnQuestion(
       });
     }
 
-    // Check correct_choice_id
     const correctChoice = question.choices.find((c) => c.id === question.correct_choice_id);
     if (!correctChoice) {
       issues.push({
@@ -117,12 +110,16 @@ export function runAutoQaOnQuestion(
     }
   }
 
-  // 3. Deduplication Check against existing bank
+  return issues;
+}
+
+function checkDuplicateIssues(question: BankQuestion, existingQuestions: BankQuestion[], similarityThreshold: number): AutoQaIssue[] {
+  const issues: AutoQaIssue[] = [];
   const normQuestion = normalizeQuestionText(question.question || "");
+
   for (const existing of existingQuestions) {
     if (existing.id === question.id) continue;
 
-    // Exact duplicate check
     const normExisting = normalizeQuestionText(existing.question || "");
     if (normQuestion && normExisting && normQuestion === normExisting) {
       issues.push({
@@ -133,7 +130,6 @@ export function runAutoQaOnQuestion(
       break;
     }
 
-    // Semantic similarity check
     if (question.question && existing.question) {
       const similarity = calculateQuestionSimilarity(question.question, existing.question);
       if (similarity >= similarityThreshold) {
@@ -146,6 +142,23 @@ export function runAutoQaOnQuestion(
       }
     }
   }
+
+  return issues;
+}
+
+/**
+ * Runs comprehensive Auto-QA validation on a single question.
+ */
+export function runAutoQaOnQuestion(
+  question: BankQuestion,
+  existingQuestions: BankQuestion[] = [],
+  similarityThreshold = DEFAULT_SIMILARITY_THRESHOLD,
+): AutoQaResult {
+  const issues: AutoQaIssue[] = [
+    ...checkCopyrightIssues(question),
+    ...checkQualityAndSchemaIssues(question),
+    ...checkDuplicateIssues(question, existingQuestions, similarityThreshold),
+  ];
 
   return {
     passed: issues.length === 0,
@@ -174,10 +187,7 @@ export interface BatchAutoQaReport {
 /**
  * Detects formulaic boilerplate repetition across a batch (e.g. repetitive suffixes or identical consecutive prefixes).
  */
-export function detectSyntacticRepetition(
-  question: BankQuestion,
-  priorApprovedQuestions: BankQuestion[],
-): AutoQaIssue | null {
+export function detectSyntacticRepetition(question: BankQuestion, priorApprovedQuestions: BankQuestion[]): AutoQaIssue | null {
   const norm = normalizeQuestionText(question.question || "");
   if (!norm) return null;
 

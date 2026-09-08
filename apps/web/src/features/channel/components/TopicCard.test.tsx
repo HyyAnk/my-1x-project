@@ -11,6 +11,8 @@ describe("TopicCard", () => {
   const baseTopic: TopicCandidate = {
     topic_id: "topic_science_001",
     channel_id: "channel_123",
+    content_kind: "episode",
+    origin: "discovery",
     title: "Ancient Space Mysteries",
     premise: "Exploring forgotten cosmic events",
     why_it_fits: "High viewer retention in astronomy",
@@ -28,14 +30,7 @@ describe("TopicCard", () => {
   };
 
   it("renders Domain badge with formatted domain name when domain_id is provided", () => {
-    const { container, getByText } = render(
-      <TopicCard
-        topic={baseTopic}
-        onConfirm={vi.fn()}
-        busy={false}
-        disabled={false}
-      />,
-    );
+    const { container, getByText } = render(<TopicCard topic={baseTopic} onConfirm={vi.fn()} busy={false} disabled={false} />);
 
     const badge = container.querySelector(".topic-domain-badge");
     expect(badge).not.toBeNull();
@@ -48,14 +43,7 @@ describe("TopicCard", () => {
       domain_id: undefined,
     };
 
-    const { container } = render(
-      <TopicCard
-        topic={topicWithoutDomain}
-        onConfirm={vi.fn()}
-        busy={false}
-        disabled={false}
-      />,
-    );
+    const { container } = render(<TopicCard topic={topicWithoutDomain} onConfirm={vi.fn()} busy={false} disabled={false} />);
 
     const badge = container.querySelector(".topic-domain-badge");
     expect(badge).toBeNull();
@@ -63,14 +51,7 @@ describe("TopicCard", () => {
 
   it("renders 'Build Video (1-Click)' button and calls onConfirm with selected question count and visual style", () => {
     const onConfirmMock = vi.fn();
-    const { getByRole } = render(
-      <TopicCard
-        topic={baseTopic}
-        onConfirm={onConfirmMock}
-        busy={false}
-        disabled={false}
-      />,
-    );
+    const { getByRole } = render(<TopicCard topic={baseTopic} onConfirm={onConfirmMock} busy={false} disabled={false} />);
 
     const buildButton = getByRole("button", { name: /Build Video \(1-Click\)/i });
     expect(buildButton).toBeDefined();
@@ -84,14 +65,7 @@ describe("TopicCard", () => {
 
   it("displays spinner and 'Building Video…' when busy is true", () => {
     const onConfirmMock = vi.fn();
-    const { getByRole, queryByText } = render(
-      <TopicCard
-        topic={baseTopic}
-        onConfirm={onConfirmMock}
-        busy={true}
-        disabled={false}
-      />,
-    );
+    const { getByRole, queryByText } = render(<TopicCard topic={baseTopic} onConfirm={onConfirmMock} busy={true} disabled={false} />);
 
     const busyButton = getByRole("button", { name: /Building Video…/i });
     expect(busyButton).toBeDefined();

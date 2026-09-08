@@ -34,6 +34,9 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     if (scenes.length === 0) throw new RepositoryError("Generate Quiz scenes before rendering video", "SCENES_REQUIRED");
 
     const renderAspectRatio = episode.quiz_config?.render_aspect_ratio ?? this.videoConfig.aspect_ratio;
+    if ((renderAspectRatio as string) === "9:16") {
+      throw new RepositoryError("Episodes only support 16:9 landscape video rendering", "UNSUPPORTED_ASPECT_RATIO");
+    }
     const renderCanvas = MASCOT_CANVAS_SIZES[renderAspectRatio];
     if (!renderCanvas || !renderCanvas.width || !renderCanvas.height) {
       throw new RepositoryError(

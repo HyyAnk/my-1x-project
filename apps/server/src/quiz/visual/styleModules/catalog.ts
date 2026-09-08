@@ -72,7 +72,8 @@ const builtInCatalog = createStyleCatalog(BUILT_IN_STYLE_MODULES);
 let runtimeCatalog: StyleCatalog = builtInCatalog;
 
 export const getStyleCatalogSnapshot = (): StyleCatalogSnapshot => runtimeCatalog.getStyleCatalogSnapshot();
-export const getStyleCatalogEntry = (slot: StyleSlot, id: string): StyleCatalogEntry | undefined => runtimeCatalog.getStyleCatalogEntry(slot, id);
+export const getStyleCatalogEntry = (slot: StyleSlot, id: string): StyleCatalogEntry | undefined =>
+  runtimeCatalog.getStyleCatalogEntry(slot, id);
 export const getStyleModule = (slot: StyleSlot, id: string): SlotScopedStyleModule | undefined => runtimeCatalog.getStyleModule(slot, id);
 export function setRuntimeStyleCatalog(catalog: StyleCatalog): void {
   runtimeCatalog = catalog;

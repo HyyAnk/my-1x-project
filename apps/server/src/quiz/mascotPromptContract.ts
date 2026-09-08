@@ -11,12 +11,7 @@ import {
   pickShuffledUnusedPoses,
 } from "@studio/shared";
 
-export {
-  getMascotPoses,
-  getUnusedMascotPoses,
-  pickRandomUnusedPose,
-  pickShuffledUnusedPoses,
-};
+export { getMascotPoses, getUnusedMascotPoses, pickRandomUnusedPose, pickShuffledUnusedPoses };
 
 export const MASCOT_STYLE_PROMPTS: Record<QuizImageStyle, string> = {
   pixar_3d:
@@ -92,7 +87,9 @@ export function buildMascotStyleConceptPrompt(
   const costumeDirective = `Theme & Costume: Styled in authentic ${costumeTarget} attire, costume, and accessories.`;
 
   const customDirective = overridePrompt?.trim()
-    ? (overridePrompt.trim().endsWith(".") ? overridePrompt.trim() : `${overridePrompt.trim()}.`)
+    ? overridePrompt.trim().endsWith(".")
+      ? overridePrompt.trim()
+      : `${overridePrompt.trim()}.`
     : "";
 
   const conceptPose = [
@@ -106,12 +103,7 @@ export function buildMascotStyleConceptPrompt(
     `Strictly one single standalone mascot character in full-body view from head to toe. Single viewpoint, centered in canvas. No multiple views, no character sheet, no sprite sheet, no sprite strip, no spritesheet, no model sheet, no turnaround, no front-and-back poses, no multiple angles, no side-by-side poses, no duplicate characters, no grid, no split screen, no collage, no text, no watermark.`,
   ].join(" ");
 
-  return [
-    continuityDirective,
-    costumeDirective,
-    conceptPose,
-    isolationConstraints,
-  ].join(" ");
+  return [continuityDirective, costumeDirective, conceptPose, isolationConstraints].join(" ");
 }
 
 /**
@@ -142,31 +134,20 @@ export function buildMascotActionPrompt(
 
   const rawKeyword = options.keyword?.trim();
   const cleanKeyword = rawKeyword ? (rawKeyword.endsWith(".") ? rawKeyword.slice(0, -1) : rawKeyword) : undefined;
-  const costumeDirective = cleanKeyword
-    ? `Theme & Costume: Styled in authentic ${cleanKeyword} attire and accessories.`
-    : undefined;
+  const costumeDirective = cleanKeyword ? `Theme & Costume: Styled in authentic ${cleanKeyword} attire and accessories.` : undefined;
 
   if (options.hasReferenceImage) {
     if (options.hasStyleAnchor) {
       const continuityDirective = `Strictly preserve character identity, outfit, costume details, colors, and accessories from @1 for "${mascot.name}". The character must wear the exact same costume shown in @1; only modify the pose, action, and facial expression.`;
 
-      const parts = [
-        continuityDirective,
-        actionDirective,
-        MASCOT_STUDIO_ISOLATION_TAGS,
-      ];
+      const parts = [continuityDirective, actionDirective, MASCOT_STUDIO_ISOLATION_TAGS];
 
       return parts.join(" ");
     }
 
     const continuityDirective = `Strictly preserve character identity from @1 for "${mascot.name}": face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image.`;
 
-    const parts = [
-      continuityDirective,
-      ...(costumeDirective ? [costumeDirective] : []),
-      actionDirective,
-      MASCOT_STUDIO_ISOLATION_TAGS,
-    ];
+    const parts = [continuityDirective, ...(costumeDirective ? [costumeDirective] : []), actionDirective, MASCOT_STUDIO_ISOLATION_TAGS];
 
     return parts.join(" ");
   }

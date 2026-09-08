@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, afterEach, beforeEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
-import type { BankIndex, BankQuestionWithCooldown, BankTaxonomy } from "@studio/shared";
+import type { BankIndex, BankQuestionWithCooldown, BankTaxonomy, Channel } from "@studio/shared";
 import { LanguageProvider } from "../../i18n";
 import { QuestionBankHeaderStats } from "./components/QuestionBankHeaderStats";
 import { QuestionBankToolbar } from "./components/QuestionBankToolbar";
@@ -150,7 +150,7 @@ describe("Question Bank Studio UI Components", () => {
     fireEvent.change(domainSelect, { target: { value: "logic_puzzles" } });
     expect(onUpdateFilter).toHaveBeenCalledWith("domainId", "logic_puzzles");
 
-    const langSelect = screen.getByLabelText("Filter by Language") as HTMLSelectElement;
+    const langSelect = screen.getByLabelText<HTMLSelectElement>("Filter by Language");
     expect(langSelect.options.length).toBe(11); // ALL + 10 canonical channel languages
     const optionValues = Array.from(langSelect.options).map((o) => o.value);
     expect(optionValues).toContain("en");
@@ -210,18 +210,9 @@ describe("Question Bank Studio UI Components", () => {
   });
 
   it("QuestionBankLivePreview renders simulated layout and reveals answer in English", () => {
-    const onToggleAspect = vi.fn();
     const onQuickBuildVideo = vi.fn();
 
-    renderWithLanguage(
-      <QuestionBankLivePreview
-        question={mockQuestion}
-        aspect="16:9"
-        onToggleAspect={onToggleAspect}
-        onQuickBuildVideo={onQuickBuildVideo}
-      />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankLivePreview question={mockQuestion} onQuickBuildVideo={onQuickBuildVideo} />, "en");
 
     expect(screen.getByText("speed_blitz")).toBeDefined();
     expect(screen.getByText("How many ends does a stick have if broken in half?")).toBeDefined();
@@ -231,19 +222,13 @@ describe("Question Bank Studio UI Components", () => {
     fireEvent.click(revealBtn);
     expect(screen.getByText("✓ CORRECT")).toBeDefined();
 
-    // Aspect ratio toggle
-    const aspectBtn = screen.getByText("16:9");
-    fireEvent.click(aspectBtn);
-    expect(onToggleAspect).toHaveBeenCalledTimes(1);
-
     // Quick build button
     const quickBuildBtn = screen.getByText("🎬 Create Video Shorts Now (1-Click Build)");
     fireEvent.click(quickBuildBtn);
-    expect(onQuickBuildVideo).toHaveBeenCalledWith(mockQuestion, "16:9");
+    expect(onQuickBuildVideo).toHaveBeenCalledWith(mockQuestion);
   });
 
-  it("QuestionBankLivePreview switches languages and triggers on-demand transcreation", async () => {
-    const onToggleAspect = vi.fn();
+  it("QuestionBankLivePreview switches languages and triggers on-demand transcreation", () => {
     const onQuickBuildVideo = vi.fn();
     const onTranscreateQuestion = vi.fn().mockResolvedValue({ success: true });
 
@@ -274,8 +259,6 @@ describe("Question Bank Studio UI Components", () => {
     renderWithLanguage(
       <QuestionBankLivePreview
         question={englishQuestion}
-        aspect="16:9"
-        onToggleAspect={onToggleAspect}
         onQuickBuildVideo={onQuickBuildVideo}
         onTranscreateQuestion={onTranscreateQuestion}
       />,
@@ -326,7 +309,7 @@ describe("Question Bank Studio UI Components", () => {
       <div>
         <QuestionBankHeaderStats stats={mockStats} recalculating={false} onRecalculate={onRecalculate} onOpenAiModal={onOpenAiModal} />
         <QuestionBankToolbar
-          channels={[{ channel_id: "ch_test", display_name: "Channel Test", slug: "test" } as any]}
+          channels={[{ channel_id: "ch_test", display_name: "Channel Test", slug: "test" } as unknown as Channel]}
           taxonomy={mockTaxonomy}
           filters={filters}
           onUpdateFilter={onUpdateFilter}
@@ -380,7 +363,7 @@ describe("Question Bank Studio UI Components", () => {
     expect(screen.getByTitle(/19,680 combos unfilled/i)).toBeDefined();
   });
 
-  it("QuestionBankAiGenerateModal supports Auto Coverage and Manual Diversity modes", async () => {
+  it("QuestionBankAiGenerateModal supports Auto Coverage and Manual Diversity modes", () => {
     const onGenerate = vi.fn().mockResolvedValue({
       success: true,
       mode: "auto",
@@ -465,10 +448,7 @@ describe("Question Bank Studio UI Components", () => {
 
   it("QuestionBankTargetProgressBar renders segmented rail, milestone nodes, and active tier metrics", () => {
     const progress = getMilestoneProgress(250);
-    renderWithLanguage(
-      <QuestionBankTargetProgressBar currentTotal={250} milestoneProgress={progress} />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankTargetProgressBar currentTotal={250} milestoneProgress={progress} />, "en");
 
     const progressBar = screen.getByRole("progressbar");
     expect(progressBar).toBeDefined();
@@ -490,13 +470,9 @@ describe("Question Bank Studio UI Components", () => {
 
   it("QuestionBankTargetProgressBar displays max tier achieved state cleanly", () => {
     const maxProgress = getMilestoneProgress(120000);
-    renderWithLanguage(
-      <QuestionBankTargetProgressBar currentTotal={120000} milestoneProgress={maxProgress} />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankTargetProgressBar currentTotal={120000} milestoneProgress={maxProgress} />, "en");
 
     expect(screen.getByText("Max Tier Achieved")).toBeDefined();
     expect(screen.getByText("100%")).toBeDefined();
   });
 });
-

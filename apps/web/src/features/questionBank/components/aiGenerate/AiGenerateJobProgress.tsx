@@ -6,10 +6,7 @@ export interface AiGenerateActiveJobBannerProps {
   onClose: () => void;
 }
 
-export function AiGenerateActiveJobBanner({
-  batchJob,
-  onClose,
-}: AiGenerateActiveJobBannerProps) {
+export function AiGenerateActiveJobBanner({ batchJob, onClose }: AiGenerateActiveJobBannerProps) {
   const { t } = useTranslation();
 
   if (!batchJob || batchJob.status !== "running") return null;
@@ -35,12 +32,7 @@ export function AiGenerateActiveJobBanner({
           target: batchJob.targetCount,
         })}
       </span>
-      <button
-        type="button"
-        className="qb-btn qb-btn-secondary qb-btn-sm"
-        onClick={onClose}
-        style={{ whiteSpace: "nowrap" }}
-      >
+      <button type="button" className="qb-btn qb-btn-secondary qb-btn-sm" onClick={onClose} style={{ whiteSpace: "nowrap" }}>
         {t("questionBank.aiModal.viewInActivityBarBtn")}
       </button>
     </div>
@@ -52,10 +44,7 @@ export interface AiGenerateChunkProgressProps {
   targetCount: number;
 }
 
-export function AiGenerateChunkProgress({
-  generating,
-  targetCount,
-}: AiGenerateChunkProgressProps) {
+export function AiGenerateChunkProgress({ generating, targetCount }: AiGenerateChunkProgressProps) {
   const { t } = useTranslation();
 
   if (!generating) return null;

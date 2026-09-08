@@ -1,10 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Trash,
-  Lightning,
-  Check,
-  CircleNotch,
-} from "@phosphor-icons/react";
+import { Trash, Lightning, Check, CircleNotch } from "@phosphor-icons/react";
 import type { MascotProfile, MascotStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
@@ -34,15 +29,9 @@ export function MascotStyleHeader({
   onOpenLightbox,
 }: MascotStyleHeaderProps) {
   const { t } = useTranslation();
-  const {
-    handleUpdateStyleKeyword,
-    handleDeleteStyle,
-    handleBatchGenerateStyle,
-  } = stylesState;
+  const { handleUpdateStyleKeyword, handleDeleteStyle, handleBatchGenerateStyle } = stylesState;
 
-  const [keywordInput, setKeywordInput] = useState<string>(
-    resolvedActiveStyle?.keyword || "",
-  );
+  const [keywordInput, setKeywordInput] = useState<string>(resolvedActiveStyle?.keyword || "");
   const [isSavingKeyword, setIsSavingKeyword] = useState<boolean>(false);
 
   useEffect(() => {
@@ -74,9 +63,7 @@ export function MascotStyleHeader({
           <div className="active-style-info-col">
             <div className="active-style-title-row">
               <h4 className="active-style-name">
-                {resolvedActiveStyle?.is_default || resolvedActiveStyle?.id === "core"
-                  ? "Core Style (Default)"
-                  : resolvedActiveStyle?.name}
+                {resolvedActiveStyle?.is_default || resolvedActiveStyle?.id === "core" ? "Core Style (Default)" : resolvedActiveStyle?.name}
               </h4>
               <span className={`style-type-badge ${isCoreStyle ? "is-core" : "is-custom"}`}>
                 {isCoreStyle ? "Default Style" : "Custom Style"}
@@ -149,18 +136,10 @@ export function MascotStyleHeader({
             type="button"
             className="save-keyword-btn"
             onClick={handleSaveKeyword}
-            disabled={
-              keywordInput === (resolvedActiveStyle?.keyword || "") ||
-              isSavingKeyword ||
-              busySlotKey !== null
-            }
+            disabled={keywordInput === (resolvedActiveStyle?.keyword || "") || isSavingKeyword || busySlotKey !== null}
             title="Save keyword updates"
           >
-            {isSavingKeyword ? (
-              <CircleNotch size={14} className="spin" />
-            ) : (
-              <Check size={14} weight="bold" />
-            )}
+            {isSavingKeyword ? <CircleNotch size={14} className="spin" /> : <Check size={14} weight="bold" />}
             <span>Save Keyword</span>
           </button>
         </div>

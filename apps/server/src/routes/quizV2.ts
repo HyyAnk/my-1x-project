@@ -161,11 +161,7 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
         antigravityClient: antigravity,
         codexClient: codex,
       };
-      const result = await remixQuizQuestions(
-        deps,
-        input.question_ids,
-        input.mode,
-      );
+      const result = await remixQuizQuestions(deps, input.question_ids, input.mode);
       let description = null;
       try {
         const descResult = await generateEpisodeDescription({ ...deps, force: true });
@@ -201,28 +197,13 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
       const episode = await repository.getEpisode(params.channelId, params.episodeId);
       const quiz = await repository.readQuiz(params.channelId, params.episodeId);
 
-      const updatedDescription: VideoDescription = {
-        topic_category: input.topic_category ?? existing?.topic_category ?? episode.topic.title,
-        primary_keyword: input.primary_keyword ?? existing?.primary_keyword ?? episode.topic.title,
-        keyword_variations: input.keyword_variations ?? existing?.keyword_variations ?? [],
-        question_count: existing?.question_count ?? quiz?.questions.length ?? episode.quiz_config.question_count,
-        hook_lines: input.hook_lines ?? existing?.hook_lines ?? "",
-        semantic_paragraph: input.semantic_paragraph ?? existing?.semantic_paragraph ?? "",
-        scoring_cta: input.scoring_cta ?? existing?.scoring_cta ?? {
-          beginner: "1-3: Beginner",
-          intermediate: "4-6: Pro",
-          expert: "7-8: Genius",
-          cta_text: "Comment below!",
-        },
-        suggested_playlist_category:
-          input.suggested_playlist_category ?? existing?.suggested_playlist_category ?? episode.topic.title,
-        hashtags: input.hashtags ?? existing?.hashtags ?? ["#quiz", "#trivia"],
-        full_description_text: input.full_description_text,
-        char_count: input.full_description_text.length,
-        language: existing?.language ?? channel.language ?? "English",
-        generated_at: existing?.generated_at ?? nowIso(),
-        updated_at: nowIso(),
-      };
+      const updatedDescription = mergeUpdatedDescription({
+        input,
+        existing,
+        channel,
+        episode,
+        quiz,
+      });
 
       const artifact_path = await repository.writeVideoDescription(params.channelId, params.episodeId, updatedDescription);
       return { description: updatedDescription, artifact_path };
@@ -283,5 +264,48 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
       }
     });
     done();
+  };
+}
+
+function resolveTopicFields(
+  input: ReturnType<typeof VideoDescriptionInputSchema.parse>,
+  existing: VideoDescription | null,
+  fallbackTitle: string,
+) {
+  return {
+    topic_category: input.topic_category ?? existing?.topic_category ?? fallbackTitle,
+    primary_keyword: input.primary_keyword ?? existing?.primary_keyword ?? fallbackTitle,
+    keyword_variations: input.keyword_variations ?? existing?.keyword_variations ?? [],
+    suggested_playlist_category: input.suggested_playlist_category ?? existing?.suggested_playlist_category ?? fallbackTitle,
+    hashtags: input.hashtags ?? existing?.hashtags ?? ["#quiz", "#trivia"],
+  };
+}
+
+function mergeUpdatedDescription(params: {
+  input: ReturnType<typeof VideoDescriptionInputSchema.parse>;
+  existing: VideoDescription | null;
+  channel: Awaited<ReturnType<RepositoryService["getChannel"]>>;
+  episode: Awaited<ReturnType<RepositoryService["getEpisode"]>>;
+  quiz: Awaited<ReturnType<RepositoryService["readQuiz"]>>;
+}): VideoDescription {
+  const { input, existing, channel, episode, quiz } = params;
+  const topicFields = resolveTopicFields(input, existing, episode.topic.title);
+  return {
+    ...topicFields,
+    question_count: existing?.question_count ?? quiz?.questions.length ?? episode.quiz_config.question_count,
+    hook_lines: input.hook_lines ?? existing?.hook_lines ?? "",
+    semantic_paragraph: input.semantic_paragraph ?? existing?.semantic_paragraph ?? "",
+    scoring_cta: input.scoring_cta ??
+      existing?.scoring_cta ?? {
+        beginner: "1-3: Beginner",
+        intermediate: "4-6: Pro",
+        expert: "7-8: Genius",
+        cta_text: "Comment below!",
+      },
+    full_description_text: input.full_description_text,
+    char_count: input.full_description_text.length,
+    language: existing?.language ?? channel.language ?? "English",
+    generated_at: existing?.generated_at ?? nowIso(),
+    updated_at: nowIso(),
   };
 }

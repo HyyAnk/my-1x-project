@@ -1,5 +1,14 @@
 import { EventEmitter } from "node:events";
-import { nowIso, type AppConfig, type Task, type TaskEvent, type TaskStatus, type TaskType } from "@studio/shared";
+import {
+  nowIso,
+  type AppConfig,
+  type GenerateShortReelRequest,
+  type GenerateShortReelTarget,
+  type Task,
+  type TaskEvent,
+  type TaskStatus,
+  type TaskType,
+} from "@studio/shared";
 import type { AntigravityClient } from "../antigravity.js";
 import type { CodexAppServerClient, CodexServerRequest } from "../codex.js";
 import { DEFAULT_CONFIG } from "../config.js";
@@ -43,6 +52,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   declare retryScript: TaskManagerRuntime["retryScript"];
   declare retryVisualBible: TaskManagerRuntime["retryVisualBible"];
   declare retrySequenceScenes: TaskManagerRuntime["retrySequenceScenes"];
+  declare retryTopicSuggestions: TaskManagerRuntime["retryTopicSuggestions"];
   declare cleanupExpiredFailedBuilds: TaskManagerRuntime["cleanupExpiredFailedBuilds"];
   declare hasActiveEpisodeTasks: TaskManagerRuntime["hasActiveEpisodeTasks"];
   declare hasActiveChannelTasks: TaskManagerRuntime["hasActiveChannelTasks"];
@@ -61,6 +71,8 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   readonly assemblingEpisodes = new Set<string>();
   readonly activeImageControllers = new Map<string, AbortController>();
   readonly activeVideoControllers = new Map<string, AbortController>();
+  readonly activeShortReelControllers = new Map<string, AbortController>();
+  readonly shortReelTargets = new Map<string, GenerateShortReelTarget>();
   readonly imageVariants = new Map<string, number>();
   readonly topicHints = new Map<string, string>();
   private readonly taskMutations = new TaskMutationQueue();
@@ -129,6 +141,8 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     this.topicHints.clear();
     this.activeImageControllers.clear();
     this.activeVideoControllers.clear();
+    this.activeShortReelControllers.clear();
+    this.shortReelTargets.clear();
     this.approvalRequests.clear();
     this.locks.clear();
     this.runningCount = this.runningAudioCount = this.runningImageCount = this.runningVideoCount = this.runningPipelineCount = 0;
@@ -179,6 +193,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
       this.activeAudio.size > 0 ||
       this.activeImageControllers.size > 0 ||
       this.activeVideoControllers.size > 0 ||
+      this.activeShortReelControllers.size > 0 ||
       this.pipelineRuns.size > 0 ||
       this.runningCount > 0 ||
       this.runningAudioCount > 0 ||
@@ -197,8 +212,19 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     sceneNumber?: number,
     requestedImageVariant?: number,
     topicHint?: string,
+    reelId?: string | null,
   ): Task {
-    const task = submitTask(this, taskType, channelId, episodeId, sceneNumber, requestedImageVariant, topicHint);
+    const task = submitTask(this, taskType, channelId, episodeId, sceneNumber, requestedImageVariant, topicHint, reelId);
+    this.tasks.set(task.task_id, task);
+    void this.taskMutations.enqueue(task.task_id, () => this.persist(task));
+    this.emitTask(task);
+    void this.pump();
+    return task;
+  }
+
+  submitShortReel(channelId: string, reelId: string, request: GenerateShortReelRequest): Task {
+    const task = submitTask(this, "GENERATE_SHORT_REEL_PACKAGE", channelId, null, undefined, undefined, undefined, reelId, request);
+    this.shortReelTargets.set(task.task_id, request.target);
     this.tasks.set(task.task_id, task);
     void this.taskMutations.enqueue(task.task_id, () => this.persist(task));
     this.emitTask(task);
@@ -236,6 +262,8 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     this.active.delete(taskId);
     this.completionWaiters.get(taskId)?.();
     this.completionWaiters.delete(taskId);
+    this.activeShortReelControllers.delete(taskId);
+    this.shortReelTargets.delete(taskId);
     await this.update(taskId, {
       status,
       error,
@@ -271,6 +299,39 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
 }
 
 Object.assign(TaskManager.prototype, taskDelegates, {
+  async pruneEpisodeTasks(this: TaskManager, episodeId: string) {
+    const taskIds = await taskDelegates.pruneEpisodeTasks.call(this, episodeId);
+    for (const id of taskIds) {
+      this.activeShortReelControllers.get(id)?.abort();
+      this.activeShortReelControllers.delete(id);
+      this.shortReelTargets.delete(id);
+    }
+    return taskIds;
+  },
+  async pruneChannelTasks(this: TaskManager, channelId: string) {
+    const taskIds = await taskDelegates.pruneChannelTasks.call(this, channelId);
+    for (const id of taskIds) {
+      this.activeShortReelControllers.get(id)?.abort();
+      this.activeShortReelControllers.delete(id);
+      this.shortReelTargets.delete(id);
+    }
+    return taskIds;
+  },
+  async reconcileOrphanedTasks(this: TaskManager) {
+    const result = await taskDelegates.reconcileOrphanedTasks.call(this);
+    for (const [id, ctrl] of this.activeShortReelControllers) {
+      if (!this.tasks.has(id)) {
+        ctrl.abort();
+        this.activeShortReelControllers.delete(id);
+      }
+    }
+    for (const id of this.shortReelTargets.keys()) {
+      if (!this.tasks.has(id)) {
+        this.shortReelTargets.delete(id);
+      }
+    }
+    return result;
+  },
   cleanupExpiredFailedBuilds(this: TaskManager, nowMs?: number) {
     return runFailedBuildCleanup(this, nowMs);
   },

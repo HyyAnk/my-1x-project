@@ -333,10 +333,6 @@ describe("buildSandboxComposition Preview Engine", () => {
       { layoutId: "visual_choices_three", choices: ["A", "B", "C"] },
       { layoutId: "visual_choices_three_pure", choices: ["A", "B", "C"], question_format: "odd_one_out" },
       { layoutId: "full_stack_list", choices: ["A", "B", "C"] },
-      { layoutId: "portrait_hero_choices", choices: ["A", "B", "C"] },
-      { layoutId: "portrait_split_versus", choices: ["Alpha", "Beta"], question_format: "multiple_choice" },
-      { layoutId: "portrait_verdict_tf", choices: ["True", "False"], question_format: "true_false" },
-      { layoutId: "portrait_stack_list", choices: ["A", "B", "C"] },
     ];
 
     for (const preset of BUILT_IN_PRESETS) {
@@ -404,4 +400,3 @@ describe("buildSandboxComposition Preview Engine", () => {
     });
   });
 });
-

@@ -17,15 +17,10 @@ export interface CreateChannelModalProps {
 
 export function CreateChannelModal({ onClose, onCreated, onError }: CreateChannelModalProps) {
   const { t } = useTranslation();
-  const {
-    form,
-    setForm,
-    busy,
-    handleCountrySelect,
-    handleLanguageChange,
-    handleAudienceSelect,
-    submit,
-  } = useCreateChannelForm({ onCreated, onError });
+  const { form, setForm, busy, handleCountrySelect, handleLanguageChange, handleAudienceSelect, submit } = useCreateChannelForm({
+    onCreated,
+    onError,
+  });
 
   return (
     <AccessibleModal titleId={CREATE_CHANNEL_TITLE_ID} onDismiss={onClose} dismissalAllowed={!busy}>
@@ -40,13 +35,7 @@ export function CreateChannelModal({ onClose, onCreated, onError }: CreateChanne
               <span className="channel-engine-badge">Top 20 CPM YouTube</span>
             </div>
           </div>
-          <button
-            type="button"
-            className="channel-create-close-btn"
-            onClick={onClose}
-            aria-label={t("common.close")}
-            disabled={busy}
-          >
+          <button type="button" className="channel-create-close-btn" onClick={onClose} aria-label={t("common.close")} disabled={busy}>
             <X size={18} />
           </button>
         </div>
@@ -78,11 +67,7 @@ export function CreateChannelModal({ onClose, onCreated, onError }: CreateChanne
             <button type="button" className="quiet-button" onClick={onClose} disabled={busy}>
               {t("common.cancel")}
             </button>
-            <button
-              type="submit"
-              className="primary-button channel-submit-btn"
-              disabled={busy || !form.name.trim()}
-            >
+            <button type="submit" className="primary-button channel-submit-btn" disabled={busy || !form.name.trim()}>
               {busy ? (
                 <>
                   <CircleNotch size={16} className="spinner-icon spin" />

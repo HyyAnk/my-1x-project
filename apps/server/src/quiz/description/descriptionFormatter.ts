@@ -38,7 +38,7 @@ export function assembleFullDescription(input: AssembleDescriptionInput): {
   charCount: number;
   hashtags: string[];
 } {
-  const { hookLines, semanticParagraph, scoringCta, suggestedPlaylistCategory, language = "English" } = input;
+  const { hookLines, semanticParagraph, scoringCta, suggestedPlaylistCategory, language: _language = "English" } = input;
   const normalizedTags = normalizeHashtags(input.hashtags);
 
   const scoringHeader = "🏆 SCORING TIERS:";

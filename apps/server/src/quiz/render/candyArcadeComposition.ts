@@ -116,8 +116,10 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     const nextResolvedQuestion = nextQuestion ? resolvedQuestionById.get(nextQuestion.id) : undefined;
     const start = eventAt(question.id, "question.enter", 0);
     const questionNarrationStart =
-      events.find((event) => event.question_id === question.id && event.type === "narration.segment" && event.segment_id === question.id + ":question")
-        ?.at_seconds ?? start;
+      events.find(
+        (event) =>
+          event.question_id === question.id && event.type === "narration.segment" && event.segment_id === question.id + ":question",
+      )?.at_seconds ?? start;
     const choicesStart = eventAt(question.id, "choices.enter", start + 1);
     const thinkingStart = eventAt(question.id, "countdown.start", choicesStart + 1);
     const revealStart = eventAt(question.id, "answer.reveal", thinkingStart + 8);

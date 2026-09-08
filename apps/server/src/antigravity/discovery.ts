@@ -147,8 +147,8 @@ export async function resolveAntigravityTarget(config: AppConfig, rootDirectory:
 }
 
 export async function discoverActiveSession(logger: StudioLogger, forceRefresh = false): Promise<ActiveSessionInfo> {
-  let address = !forceRefresh ? (process.env.ANTIGRAVITY_LS_ADDRESS?.trim() || null) : null;
-  let csrfToken = !forceRefresh ? (process.env.ANTIGRAVITY_CSRF_TOKEN?.trim() || null) : null;
+  let address = !forceRefresh ? process.env.ANTIGRAVITY_LS_ADDRESS?.trim() || null : null;
+  let csrfToken = !forceRefresh ? process.env.ANTIGRAVITY_CSRF_TOKEN?.trim() || null : null;
   let projectId = process.env.ANTIGRAVITY_PROJECT_ID?.trim() || null;
 
   if (process.platform === "win32" && (forceRefresh || !address || !csrfToken)) {

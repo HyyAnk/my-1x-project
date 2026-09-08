@@ -1,11 +1,6 @@
 import { mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import {
-  BankIndexSchema,
-  type BankIndex,
-  type BankQuestion,
-  type MatrixCoverageStats,
-} from "@studio/shared";
+import { BankIndexSchema, type BankIndex, type BankQuestion, type MatrixCoverageStats } from "@studio/shared";
 import { calculateMatrixCoverageStats } from "../../../quiz/bank/matrixCoverageService.js";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { getQuestionBankPath, getQuestionBankWritePath } from "./bankPathResolver.js";
@@ -91,9 +86,7 @@ export async function recalculateQuestionBankIndex(this: RepositoryRuntime): Pro
 /**
  * Calculates full 20,000 combo matrix coverage statistics across all active bank questions.
  */
-export async function getQuestionBankMatrixCoverage(
-  this: RepositoryRuntime,
-): Promise<MatrixCoverageStats> {
+export async function getQuestionBankMatrixCoverage(this: RepositoryRuntime): Promise<MatrixCoverageStats> {
   const batches = await listQuestionBankBatches.call(this);
   const questions: BankQuestion[] = [];
   for (const batch of batches) {

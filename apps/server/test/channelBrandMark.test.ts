@@ -221,18 +221,19 @@ describe("Channel Brand Mark Integration - Sandbox Composition", () => {
     expect(noneResult.html).not.toContain('class="channel-brand-mark"');
   });
 
-  it("does NOT render channel brand mark in 9:16 portrait sandbox when mascot is disabled", () => {
-    const portraitDisabledResult = buildSandboxComposition(
-      {
-        aspect_ratio: "9:16",
-        layout_id: "portrait_stack_list",
-        channel_brand_name: "Tino",
-        mascot_id: sampleMascot.id,
-        mascot_enabled: false,
-      },
-      sampleMascot,
-    );
-    expect(portraitDisabledResult.html).not.toContain('class="channel-brand-mark"');
+  it("rejects retired 9:16 portrait Sandbox brand-mark input", () => {
+    expect(() =>
+      buildSandboxComposition(
+        {
+          aspect_ratio: "9:16",
+          layout_id: "portrait_stack_list",
+          channel_brand_name: "Tino",
+          mascot_id: sampleMascot.id,
+          mascot_enabled: false,
+        },
+        sampleMascot,
+      ),
+    ).toThrow();
   });
 });
 
@@ -304,25 +305,23 @@ describe("Channel Brand Mark Integration - Production Composition Bundle", () =>
     expect(questionSubComp).not.toContain('class="channel-brand-mark"');
   });
 
-  it("does NOT render channel brand mark in 9:16 question clips when mascot is absent", () => {
+  it("rejects retired 9:16 production brand-mark input", () => {
     const director = createDefaultDirectorPlan(sampleQuiz);
     director.beats[0].layout_id = "portrait_stack_list";
     const timeline = compileQuizTimeline({ quiz: sampleQuiz, director, voicePlan: buildQuizVoicePlan(sampleQuiz) });
 
-    const bundle = buildCandyArcadeCompositionBundle({
-      quiz: sampleQuiz,
-      director,
-      timeline,
-      styleContext: { theme: "candy_arcade", override: { channelBrandName: "Robot World" } },
-      audioPath: "./soundtrack.wav",
-      narrationDurationSeconds: 30,
-      mascot: null,
-      aspectRatio: "9:16",
-    });
-
-    const questionSubComp = Object.entries(bundle.files).find(([k]) => k.startsWith("compositions/quiz-q1-"))?.[1];
-    expect(questionSubComp).toBeDefined();
-    expect(questionSubComp).not.toContain('class="channel-brand-mark"');
+    expect(() =>
+      buildCandyArcadeCompositionBundle({
+        quiz: sampleQuiz,
+        director,
+        timeline,
+        styleContext: { theme: "candy_arcade", override: { channelBrandName: "Robot World" } },
+        audioPath: "./soundtrack.wav",
+        narrationDurationSeconds: 30,
+        mascot: null,
+        aspectRatio: "9:16",
+      }),
+    ).toThrow(/layout_no_compatible_candidate/);
   });
 
   it("production and sandbox compositions produce the identical brand mark element contract", () => {

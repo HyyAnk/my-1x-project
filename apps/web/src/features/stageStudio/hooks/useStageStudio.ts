@@ -9,7 +9,7 @@ import { useStageTimelineDirector } from "./useStageTimelineDirector";
 import { useStageTransformState } from "./useStageTransformState";
 import { useStageChannelFilter } from "./useStageChannelFilter";
 import { useStageSaveAction } from "./useStageSaveAction";
-import { getCompatibleStageQuestionLayout, resolveInitialStageQuestionLayout } from "../questionLayouts";
+import { resolveInitialStageQuestionLayout } from "../questionLayouts";
 
 export function useStageStudio({
   isOpen,
@@ -33,16 +33,9 @@ export function useStageStudio({
   const [activeInspectorTab, setActiveInspectorTab] = useState<StageInspectorTab>("transform");
   const rawTargetChannel = targetChannel as unknown as {
     layout_id?: string;
-    render_aspect_ratio?: string;
-    aspect_ratio?: string;
   } | null;
-  const channelAspectRatio: StageAspectRatio =
-    rawTargetChannel?.render_aspect_ratio === "9:16" || rawTargetChannel?.aspect_ratio === "9:16"
-      ? "9:16"
-      : "16:9";
-  const [aspectRatio, setAspectRatioState] = useState<StageAspectRatio>(() => {
-    return isSingleChannelMode && targetChannel ? channelAspectRatio : "16:9";
-  });
+  const channelAspectRatio: StageAspectRatio = "16:9";
+  const aspectRatio: StageAspectRatio = "16:9";
   const [stageViewMode, setStageViewMode] = useState<StageViewMode>("video_stage");
   const [questionLayoutId, setQuestionLayoutId] = useState<StageQuestionLayout>(() => {
     const initialAspect = isSingleChannelMode && targetChannel ? channelAspectRatio : "16:9";
@@ -52,24 +45,11 @@ export function useStageStudio({
   const [showGuides, setShowGuides] = useState(true);
   const [showSafeMargins, setShowSafeMargins] = useState(false);
 
-  const setAspectRatio = (action: React.SetStateAction<StageAspectRatio>) => {
-    setAspectRatioState((prevAspect) => {
-      const nextAspect = typeof action === "function" ? action(prevAspect) : action;
-      if (nextAspect !== prevAspect) {
-        setQuestionLayoutId((currentLayoutId) =>
-          getCompatibleStageQuestionLayout(currentLayoutId, nextAspect),
-        );
-      }
-      return nextAspect;
-    });
-  };
-
   // Selected Mascot & Channels
   const [selectedMascotId, setSelectedMascotId] = useState<string | null>(null);
   const channelFilter = useStageChannelFilter();
   const transformState = useStageTransformState(aspectRatio);
   const {
-    placements,
     initPlacements,
     position,
     setPosition,
@@ -91,7 +71,6 @@ export function useStageStudio({
 
   const placementPreset = useMascotPlacementPreset({
     isOpen,
-    aspectRatio,
     position,
     scale,
     offsetX,
@@ -106,7 +85,7 @@ export function useStageStudio({
     onNotice,
     t,
   });
-  const { defaultPlacement, defaultPlacements, presetReady, applyPlacement, applyDefaultPlacement } = placementPreset;
+  const { defaultPlacement, defaultPlacements, presetReady } = placementPreset;
 
   const initializedForOpenRef = useRef(false);
 
@@ -120,7 +99,6 @@ export function useStageStudio({
 
     const rawLayoutId = rawTargetChannel?.layout_id;
     if (isSingleChannelMode && targetChannel) {
-      setAspectRatioState(channelAspectRatio);
       setQuestionLayoutId(resolveInitialStageQuestionLayout(rawLayoutId, channelAspectRatio));
     } else {
       setQuestionLayoutId(resolveInitialStageQuestionLayout(rawLayoutId, aspectRatio));
@@ -132,13 +110,12 @@ export function useStageStudio({
       if (targetChannel.mascot_id && targetChannel.mascot_config) {
         initPlacements({
           "16:9": resolveChannelMascotPlacement(targetChannel.mascot_config, "16:9"),
-          "9:16": resolveChannelMascotPlacement(targetChannel.mascot_config, "9:16"),
         });
         setShowInIntro(targetChannel.mascot_config.show_in_intro ?? false);
         setShowInOutro(targetChannel.mascot_config.show_in_outro ?? false);
         setShowInQuestion(targetChannel.mascot_config.show_in_question ?? true);
       } else {
-        initPlacements({ "16:9": defaultPlacements["16:9"], "9:16": defaultPlacements["9:16"] });
+        initPlacements({ "16:9": defaultPlacements["16:9"] });
         setShowInIntro(false);
         setShowInOutro(false);
         setShowInQuestion(true);
@@ -150,13 +127,12 @@ export function useStageStudio({
       if (sample?.mascot_config) {
         initPlacements({
           "16:9": resolveChannelMascotPlacement(sample.mascot_config, "16:9"),
-          "9:16": resolveChannelMascotPlacement(sample.mascot_config, "9:16"),
         });
         setShowInIntro(sample.mascot_config.show_in_intro ?? false);
         setShowInOutro(sample.mascot_config.show_in_outro ?? false);
         setShowInQuestion(sample.mascot_config.show_in_question ?? true);
       } else {
-        initPlacements({ "16:9": defaultPlacements["16:9"], "9:16": defaultPlacements["9:16"] });
+        initPlacements({ "16:9": defaultPlacements["16:9"] });
         setShowInIntro(false);
         setShowInOutro(false);
         setShowInQuestion(true);
@@ -177,7 +153,6 @@ export function useStageStudio({
     setShowInIntro,
     setShowInOutro,
     setShowInQuestion,
-    aspectRatio,
   ]);
 
   const selectMascot = (mascotId: string | null) => {
@@ -186,13 +161,12 @@ export function useStageStudio({
       if (mascotId && mascotId === targetChannel?.mascot_id && targetChannel?.mascot_config) {
         initPlacements({
           "16:9": resolveChannelMascotPlacement(targetChannel.mascot_config, "16:9"),
-          "9:16": resolveChannelMascotPlacement(targetChannel.mascot_config, "9:16"),
         });
         setShowInIntro(targetChannel.mascot_config.show_in_intro ?? false);
         setShowInOutro(targetChannel.mascot_config.show_in_outro ?? false);
         setShowInQuestion(targetChannel.mascot_config.show_in_question ?? true);
       } else if (mascotId && mascotId !== targetChannel?.mascot_id) {
-        initPlacements({ "16:9": defaultPlacements["16:9"], "9:16": defaultPlacements["9:16"] });
+        initPlacements({ "16:9": defaultPlacements["16:9"] });
       }
     }
   };
@@ -256,7 +230,6 @@ export function useStageStudio({
   };
 
   const saveAction = useStageSaveAction({
-    aspectRatio,
     isSingleChannelMode,
     targetChannel,
     selectedMascotId,
@@ -268,7 +241,6 @@ export function useStageStudio({
     offsetX,
     offsetY,
     flipHorizontal,
-    placements,
     showInIntro,
     showInOutro,
     showInQuestion,
@@ -285,7 +257,6 @@ export function useStageStudio({
     activeInspectorTab,
     setActiveInspectorTab,
     aspectRatio,
-    setAspectRatio,
     stageViewMode,
     setStageViewMode,
     questionLayoutId,

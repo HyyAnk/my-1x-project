@@ -72,6 +72,7 @@ describe("ShopAIKey image provider", () => {
     const topic = {
       topic_id: "shopaikey_topic",
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: "Image topic",
       premise: "Premise",
       why_it_fits: "Fits",
@@ -128,6 +129,7 @@ describe("ShopAIKey image provider", () => {
     const topic = {
       topic_id: "retry_topic",
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: "Retry topic",
       premise: "Premise",
       why_it_fits: "Fits",
@@ -177,6 +179,7 @@ describe("ShopAIKey image provider", () => {
     const topic = {
       topic_id: "fallback_topic",
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: "Fallback topic",
       premise: "Premise",
       why_it_fits: "Fits",

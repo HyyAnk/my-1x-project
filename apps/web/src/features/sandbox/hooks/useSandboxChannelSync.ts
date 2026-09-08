@@ -1,15 +1,8 @@
 import { useState } from "react";
-import {
-  type Channel,
-  type ChannelMascotConfig,
-  type MascotPlacementPreset,
-  RECOMMENDED_MASCOT_PLACEMENT_PRESETS,
-  resolveChannelMascotPlacement,
-} from "@studio/shared";
+import { type Channel, type ChannelMascotConfig, type MascotPlacementPreset } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
-import type { StageAspectRatio } from "../../stageStudio/types";
 import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
 
@@ -23,19 +16,11 @@ type UseSandboxChannelSyncInput = {
     SandboxMascotState,
     "mascotId" | "mascotEnabled" | "mascotPosition" | "mascotScale" | "mascotOffsetX" | "mascotOffsetY" | "mascotFlipX"
   >;
-  aspectRatio?: StageAspectRatio;
   onNotice?: (notice: NonNullable<Notice>) => void;
   onRefreshChannels?: () => Promise<void>;
 };
 
-export function useSandboxChannelSync({
-  channels,
-  design,
-  mascot,
-  aspectRatio = "16:9",
-  onNotice,
-  onRefreshChannels,
-}: UseSandboxChannelSyncInput) {
+export function useSandboxChannelSync({ channels, design, mascot, onNotice, onRefreshChannels }: UseSandboxChannelSyncInput) {
   const { t } = useTranslation();
   const [channelSyncOpen, setChannelSyncOpen] = useState(false);
   const [selectedChannelId, setSelectedChannelId] = useState(channels[0]?.channel_id || "");
@@ -62,9 +47,6 @@ export function useSandboxChannelSync({
         if (mascot.mascotId === "none") {
           await api.assignMascotToChannel(selectedChannelId, { mascot_id: null, config: { enabled: false } });
         } else {
-          const activeAspect = aspectRatio ?? "16:9";
-          const otherAspect: StageAspectRatio = activeAspect === "16:9" ? "9:16" : "16:9";
-
           const activePlacement: MascotPlacementPreset = {
             position: mascot.mascotPosition,
             scale: mascot.mascotScale,
@@ -73,15 +55,7 @@ export function useSandboxChannelSync({
             flip_x: mascot.mascotFlipX,
           };
 
-          const otherPlacement: MascotPlacementPreset =
-            targetChannel.mascot_config
-              ? resolveChannelMascotPlacement(targetChannel.mascot_config, otherAspect)
-              : RECOMMENDED_MASCOT_PLACEMENT_PRESETS[otherAspect];
-
-          const placements: Record<StageAspectRatio, MascotPlacementPreset> = {
-            [activeAspect]: activePlacement,
-            [otherAspect]: otherPlacement,
-          } as Record<StageAspectRatio, MascotPlacementPreset>;
+          const placements = { "16:9": activePlacement };
 
           const config: ChannelMascotConfig = {
             enabled: mascot.mascotEnabled,

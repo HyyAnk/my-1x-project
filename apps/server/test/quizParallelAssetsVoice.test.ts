@@ -74,6 +74,7 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `topic-par-${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Parallel Quiz Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -298,6 +299,7 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `topic-single-${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Single Quiz Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -452,6 +454,7 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
     const topics = Array.from({ length: 5 }, (_, index) => ({
       topic_id: `topic-vo-${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Voice Only Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",

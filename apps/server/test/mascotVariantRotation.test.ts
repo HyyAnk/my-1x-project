@@ -1,17 +1,10 @@
 import { describe, expect, it } from "vitest";
-import {
-  QuizV2Schema,
-  type ChannelMascotConfig,
-  type MascotProfile,
-} from "@studio/shared";
+import { QuizV2Schema, type ChannelMascotConfig, type MascotProfile } from "@studio/shared";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
-import {
-  renderProductionMascotHtmlLayer,
-  resolveMascotQuestionStyle,
-} from "../src/quiz/render/productionMascotRenderer.js";
+import { renderProductionMascotHtmlLayer, resolveMascotQuestionStyle } from "../src/quiz/render/productionMascotRenderer.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
 
 function createFiveQuestionQuiz() {

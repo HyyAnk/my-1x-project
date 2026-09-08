@@ -14,7 +14,7 @@ import { runPipelineTask } from "../src/tasks/pipeline/quizProductionPipelineRun
 import type { ActiveRun, PipelineRun, TaskManagerRuntime } from "../src/tasks/runtime.js";
 
 vi.mock("../src/tasks/pipeline/quizV2PipelineRunner.js", () => ({
-  runQuizV2Pipeline: vi.fn(async () => {}),
+  runQuizV2Pipeline: vi.fn(() => Promise.resolve()),
 }));
 
 describe("Level 2 Architecture: End-to-End Quiz-Native Flow Verification", () => {
@@ -86,7 +86,8 @@ describe("Level 2 Architecture: End-to-End Quiz-Native Flow Verification", () =>
         explanation: "A blue whale's tongue can weigh as much as an entire adult elephant!",
         fun_fact: "It weighs about 2.7 metric tons!",
         source_ids: ["C01"],
-        visual_opportunity: "A massive, friendly blue whale swimming in crystal blue ocean water, warm sunlight rays, 3D Pixar animation style",
+        visual_opportunity:
+          "A massive, friendly blue whale swimming in crystal blue ocean water, warm sunlight rays, 3D Pixar animation style",
         validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
       },
       {
@@ -137,24 +138,24 @@ describe("Level 2 Architecture: End-to-End Quiz-Native Flow Verification", () =>
     let stageUpdated: string | null = null;
 
     const mockRepository = {
-      getEpisode: vi.fn(async () => episode),
-      getChannel: vi.fn(async () => channel),
-      writeQuiz: vi.fn(async (_ch: string, _ep: string, quiz: QuizV2) => {
+      getEpisode: vi.fn(() => episode),
+      getChannel: vi.fn(() => channel),
+      writeQuiz: vi.fn((_ch: string, _ep: string, quiz: QuizV2) => {
         savedQuiz = quiz;
         return "channels/ocean-explorers/episodes/ep_e2e/quiz.json";
       }),
-      readQuestionHistory: vi.fn(async () => []),
-      writeHistoryCheck: vi.fn(async () => "history_check.json"),
-      invalidateQuizArtifacts: vi.fn(async () => []),
-      saveEpisodeFile: vi.fn(async (_ch: string, _ep: string, filename: string, content: string) => {
+      readQuestionHistory: vi.fn(() => []),
+      writeHistoryCheck: vi.fn(() => "history_check.json"),
+      invalidateQuizArtifacts: vi.fn(() => []),
+      saveEpisodeFile: vi.fn((_ch: string, _ep: string, filename: string, content: string) => {
         if (filename === "script.md") savedScript = content;
         if (filename === "visual_bible.md") savedVisual = content;
         return { path: filename, modified_at: new Date().toISOString() };
       }),
-      saveScenes: vi.fn(async (_ch: string, _ep: string, scenes: Scene[]) => {
+      saveScenes: vi.fn((_ch: string, _ep: string, scenes: Scene[]) => {
         savedScenes = scenes;
       }),
-      updateEpisodeStage: vi.fn(async (_ch: string, _ep: string, stage: string) => {
+      updateEpisodeStage: vi.fn((_ch: string, _ep: string, stage: string) => {
         stageUpdated = stage;
       }),
     };
@@ -239,14 +240,14 @@ describe("Level 2 Architecture: End-to-End Quiz-Native Flow Verification", () =>
         progress_percent: 100,
         render_progress: null,
       })),
-      update: vi.fn(async () => {}),
-      finish: vi.fn(async (_id: string, status: string) => {
+      update: vi.fn(() => undefined),
+      finish: vi.fn((_id: string, status: string) => {
         if (status === "COMPLETED") pipelineCompleted = true;
       }),
       repository: {
-        readQuiz: vi.fn(async () => mockLLMQuizOutput),
-        readScenes: vi.fn(async () => synthesized.scenes),
-        saveScenes: vi.fn(async () => {}),
+        readQuiz: vi.fn(() => mockLLMQuizOutput),
+        readScenes: vi.fn(() => synthesized.scenes),
+        saveScenes: vi.fn(() => undefined),
       },
     } as unknown as TaskManagerRuntime;
 

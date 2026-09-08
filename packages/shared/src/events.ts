@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { type EngineId, TaskStatusSchema, TaskTypeSchema } from "./enums.js";
+import { type EngineId, ShortReelGenerationTargetSchema, TaskStatusSchema, TaskTypeSchema } from "./enums.js";
 
 const IsoDate = z.string().datetime({ offset: true });
 
@@ -78,6 +78,14 @@ export const TaskSchema = z.object({
   task_type: TaskTypeSchema,
   channel_id: z.string().min(1),
   episode_id: z.string().nullable(),
+  reel_id: z.string().nullable().optional(),
+  short_reel_request: z
+    .object({
+      request_id: z.string().min(1),
+      expected_revision: z.number().int().min(1),
+      target: ShortReelGenerationTargetSchema,
+    })
+    .optional(),
   status: TaskStatusSchema,
   created_at: IsoDate,
   started_at: IsoDate.nullable().default(null),

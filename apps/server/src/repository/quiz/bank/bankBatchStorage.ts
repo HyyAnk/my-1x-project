@@ -1,16 +1,9 @@
 import { existsSync } from "node:fs";
 import { mkdir, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import {
-  BankSubtopicBatchSchema,
-  type BankSubtopicBatch,
-} from "@studio/shared";
+import { BankSubtopicBatchSchema, type BankSubtopicBatch } from "@studio/shared";
 import type { RepositoryRuntime } from "../../runtime.js";
-import {
-  QUESTION_BANK_DIR,
-  getQuestionBankPath,
-  getQuestionBankWritePath,
-} from "./bankPathResolver.js";
+import { QUESTION_BANK_DIR, getQuestionBankPath, getQuestionBankWritePath } from "./bankPathResolver.js";
 
 /**
  * Checks if a directory archetype matches an archetype filter,
@@ -66,10 +59,7 @@ export async function readSubtopicBatch(
 /**
  * Atomically writes a subtopic batch to disk and keeps legacy mirrored files updated.
  */
-export async function writeSubtopicBatch(
-  this: RepositoryRuntime,
-  batch: BankSubtopicBatch,
-): Promise<void> {
+export async function writeSubtopicBatch(this: RepositoryRuntime, batch: BankSubtopicBatch): Promise<void> {
   const normalizedBatch = {
     ...batch,
     archetype_id: batch.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : batch.archetype_id,
@@ -119,11 +109,9 @@ export async function listQuestionBankBatches(
 
   for (const bankRoot of candidateRoots) {
     const isRuntime = bankRoot === runtimeBankRoot;
-    let archetypeDirs: string[] = [];
+    let archetypeDirs: string[];
     try {
-      archetypeDirs = (await readdir(bankRoot, { withFileTypes: true }))
-        .filter((d) => d.isDirectory())
-        .map((d) => d.name);
+      archetypeDirs = (await readdir(bankRoot, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name);
     } catch {
       continue;
     }
@@ -132,11 +120,9 @@ export async function listQuestionBankBatches(
       if (!matchesArchetypeFilter(archDir, filter?.archetypeId)) continue;
       const archPath = path.join(bankRoot, archDir);
 
-      let domainDirs: string[] = [];
+      let domainDirs: string[];
       try {
-        domainDirs = (await readdir(archPath, { withFileTypes: true }))
-          .filter((d) => d.isDirectory())
-          .map((d) => d.name);
+        domainDirs = (await readdir(archPath, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name);
       } catch {
         continue;
       }
@@ -145,7 +131,7 @@ export async function listQuestionBankBatches(
         if (filter?.domainId && domDir !== filter.domainId) continue;
         const domPath = path.join(archPath, domDir);
 
-        let batchFiles: string[] = [];
+        let batchFiles: string[];
         try {
           batchFiles = (await readdir(domPath, { withFileTypes: true }))
             .filter((f) => f.isFile() && f.name.endsWith(".json"))
@@ -176,7 +162,11 @@ export async function listQuestionBankBatches(
                 batchesMap.set(key, { data, isRuntime, archDir });
               } else if (isRuntime && !existing.isRuntime) {
                 batchesMap.set(key, { data, isRuntime, archDir });
-              } else if (isRuntime === existing.isRuntime && archDir === "verdict_true_false" && existing.archDir !== "verdict_true_false") {
+              } else if (
+                isRuntime === existing.isRuntime &&
+                archDir === "verdict_true_false" &&
+                existing.archDir !== "verdict_true_false"
+              ) {
                 batchesMap.set(key, { data, isRuntime, archDir });
               }
             }

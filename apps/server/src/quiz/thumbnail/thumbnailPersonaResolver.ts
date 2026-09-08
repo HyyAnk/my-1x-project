@@ -1,6 +1,17 @@
 import type { ThumbnailLayoutType } from "@studio/shared";
 import type { MascotThemedPersona } from "./thumbnailTypes.js";
 
+const SPACE_KEYWORDS = ["space", "astronomy", "universe", "galaxy", "cosmos"];
+const HISTORY_KEYWORDS = ["history", "egypt", "pyramid", "ancient"];
+const SCIENCE_KEYWORDS = ["science", "physics", "chemistry", "brain"];
+const BAKE_KEYWORDS = ["bake", "cookie", "biscuit", "pastry", "culinary", "dessert"];
+const RACING_KEYWORDS = ["supercar", "hypercar", "racing", "racecar"];
+const OCEAN_KEYWORDS = ["ocean", "sea", "marine", "fish", "shark"];
+
+function hasKeyword(topic: string, keywords: readonly string[]): boolean {
+  return keywords.some((kw) => topic.includes(kw));
+}
+
 /**
  * Maps topic keywords to themed mascot costume, props, and actions.
  */
@@ -29,13 +40,7 @@ export function resolveMascotThemedPersona(
     };
   }
 
-  if (
-    topicLower.includes("space") ||
-    topicLower.includes("astronomy") ||
-    topicLower.includes("universe") ||
-    topicLower.includes("galaxy") ||
-    topicLower.includes("cosmos")
-  ) {
+  if (hasKeyword(topicLower, SPACE_KEYWORDS)) {
     return {
       role: "Space Explorer",
       costume: "Cute transparent mini astronaut space helmet and futuristic cosmic scout suit",
@@ -45,12 +50,7 @@ export function resolveMascotThemedPersona(
     };
   }
 
-  if (
-    topicLower.includes("history") ||
-    topicLower.includes("egypt") ||
-    topicLower.includes("pyramid") ||
-    topicLower.includes("ancient")
-  ) {
+  if (hasKeyword(topicLower, HISTORY_KEYWORDS)) {
     return {
       role: "Archaeologist Explorer",
       costume: "Vintage adventurer leather jacket and safari explorer hat",
@@ -60,12 +60,7 @@ export function resolveMascotThemedPersona(
     };
   }
 
-  if (
-    topicLower.includes("science") ||
-    topicLower.includes("physics") ||
-    topicLower.includes("chemistry") ||
-    topicLower.includes("brain")
-  ) {
+  if (hasKeyword(topicLower, SCIENCE_KEYWORDS)) {
     return {
       role: "Genius Scientist",
       costume: "White lab coat with round nerdy spectacles",
@@ -75,14 +70,7 @@ export function resolveMascotThemedPersona(
     };
   }
 
-  if (
-    topicLower.includes("bake") ||
-    topicLower.includes("cookie") ||
-    topicLower.includes("biscuit") ||
-    topicLower.includes("pastry") ||
-    topicLower.includes("culinary") ||
-    topicLower.includes("dessert")
-  ) {
+  if (hasKeyword(topicLower, BAKE_KEYWORDS)) {
     return {
       role: "Master Pastry Chef",
       costume: "White chef hat and baker apron with flour dusted pockets",
@@ -92,12 +80,7 @@ export function resolveMascotThemedPersona(
     };
   }
 
-  if (
-    topicLower.includes("supercar") ||
-    topicLower.includes("hypercar") ||
-    topicLower.includes("racing") ||
-    topicLower.includes("racecar")
-  ) {
+  if (hasKeyword(topicLower, RACING_KEYWORDS)) {
     return {
       role: "Pro Racing Driver",
       costume: "High-speed aerodynamic racing driver jumpsuit and racing helmet",
@@ -107,13 +90,7 @@ export function resolveMascotThemedPersona(
     };
   }
 
-  if (
-    topicLower.includes("ocean") ||
-    topicLower.includes("sea") ||
-    topicLower.includes("marine") ||
-    topicLower.includes("fish") ||
-    topicLower.includes("shark")
-  ) {
+  if (hasKeyword(topicLower, OCEAN_KEYWORDS)) {
     return {
       role: "Deep Sea Diver",
       costume: "Retro scuba diving goggles and bright aquatic life vest",

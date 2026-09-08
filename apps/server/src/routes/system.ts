@@ -87,7 +87,7 @@ export function registerSystemRoutes(deps: SystemRouteDeps): FastifyPluginCallba
         throw new RepositoryError("Storage folder cannot be inside .git", "INVALID_STORAGE_PATH");
       }
       await mkdir(nextStorageRoot, { recursive: true });
-      repository.setStorageRoot(nextStorageRoot);
+      await repository.setStorageRoot(nextStorageRoot);
       await repository.ensureBootstrap();
       logger.setRuntimeRoot(repository.roots.runtime);
       await tasks.reload();

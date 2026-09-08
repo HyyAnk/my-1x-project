@@ -13,7 +13,7 @@ test("buildTopologyPayload extracts zones and dependency links", () => {
   const zoneList = loadZoneMap(root);
   const topology = buildTopologyPayload(zoneList);
 
-  assert.equal(topology.zones.length, 23, "Expected 23 zones");
+  assert.equal(topology.zones.length, zoneList.length, `Expected ${zoneList.length} zones`);
   assert.ok(topology.links.length > 0, "Expected at least one dependency link");
   assert.ok(Array.isArray(topology.files), "Expected topology.files array");
   assert.ok(topology.files.length > 500, "Expected hundreds of mapped file micro-nodes");
@@ -39,9 +39,10 @@ test("ZONE_POSITIONS covers all 23 repository zones with valid 3D coordinates", 
 
 test("buildCoordinationState maps active claims to zone statuses", () => {
   const root = findWorkspaceRoot();
+  const zoneList = loadZoneMap(root);
   const state = buildCoordinationState({ workspaceRoot: root });
 
-  assert.equal(state.zones.length, 23);
+  assert.equal(state.zones.length, zoneList.length);
   assert.ok(typeof state.summary.totalZones === "number");
   assert.ok(typeof state.summary.idleZones === "number");
   assert.ok(typeof state.summary.activeZones === "number");
@@ -71,6 +72,30 @@ test("calculateSafeZones identifies safe disjoint zones", () => {
   assert.ok(result.safeZones.length > 0, "Expected at least one safe zone");
 });
 
+test("file activity enrichment tolerates an unavailable claims database", async () => {
+  const root = findWorkspaceRoot();
+  const server = createMonitorServer({ workspaceRoot: root, customDbPath: root });
+  await new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+
+  try {
+    assert.doesNotThrow(() => {
+      server.fileWatcher.onActivity([
+        {
+          file: "apps/server/src/routes/episodes.ts",
+          zoneId: "api-contracts",
+        },
+      ]);
+    });
+  } finally {
+    await new Promise((resolve, reject) => {
+      server.close((error) => (error ? reject(error) : resolve()));
+    });
+  }
+});
+
 test("createMonitorServer responds to HTTP endpoints, static files, and SSE streams", async () => {
   const root = findWorkspaceRoot();
   const server = createMonitorServer({ workspaceRoot: root, pollIntervalMs: 200 });
@@ -92,13 +117,14 @@ test("createMonitorServer responds to HTTP endpoints, static files, and SSE stre
     const topoRes = await fetch(`${baseUrl}/api/topology`);
     assert.equal(topoRes.status, 200);
     const topoData = await topoRes.json();
-    assert.equal(topoData.zones.length, 23);
+    const zoneList = loadZoneMap(root);
+    assert.equal(topoData.zones.length, zoneList.length);
 
     // 3. Test /api/state
     const stateRes = await fetch(`${baseUrl}/api/state`);
     assert.equal(stateRes.status, 200);
     const stateData = await stateRes.json();
-    assert.equal(stateData.summary.totalZones, 23);
+    assert.equal(stateData.summary.totalZones, zoneList.length);
 
     // 4. Test /api/safe-zones
     const safeRes = await fetch(`${baseUrl}/api/safe-zones?zone=agent-coordination`);

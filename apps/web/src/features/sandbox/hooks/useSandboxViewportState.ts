@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export type SandboxAspectRatio = "16:9" | "9:16";
+export type SandboxAspectRatio = "16:9";
 
 export function useSandboxViewportState() {
-  const [aspectRatio, setAspectRatio] = useState<SandboxAspectRatio>("16:9");
+  const aspectRatio: SandboxAspectRatio = "16:9";
   const [showSafeArea, setShowSafeArea] = useState(false);
   const [showShortsGuide, setShowShortsGuide] = useState(false);
   const [zoom, setZoom] = useState<"fit" | "50" | "75" | "100">("fit");
@@ -18,8 +18,8 @@ export function useSandboxViewportState() {
       return;
     }
 
-    const targetWidth = aspectRatio === "16:9" ? 1920 : 1080;
-    const targetHeight = aspectRatio === "16:9" ? 1080 : 1920;
+    const targetWidth = 1920;
+    const targetHeight = 1080;
     const containerWidth = containerRef.current.clientWidth - 32;
     const containerHeight = containerRef.current.clientHeight - 32;
     const calculatedScale = Math.min(containerWidth / targetWidth, containerHeight / targetHeight, 1);
@@ -47,7 +47,6 @@ export function useSandboxViewportState() {
     setZoom,
     scaleFactor,
     aspectRatio,
-    setAspectRatio,
     containerRef,
   };
 }

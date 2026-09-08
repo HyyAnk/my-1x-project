@@ -1,12 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check } from "@phosphor-icons/react";
-import {
-  getMascotStyleReadiness,
-  type Channel,
-  type Episode,
-  type MascotProfile,
-  type MascotStyle,
-} from "@studio/shared";
+import { getMascotStyleReadiness, type Channel, type Episode, type MascotProfile, type MascotStyle } from "@studio/shared";
 import { api } from "../../../../api";
 import { useTranslation } from "../../../../i18n";
 import { CustomizationPill } from "./CustomizationPill";
@@ -24,6 +18,99 @@ export type MascotStyleDropdownProps = {
   onSaveMascotStyle?: (styleId: string | null) => void;
   availableMascotStyles?: MascotStyle[];
 };
+
+function computeDisplayValue(
+  hasNoMascot: boolean,
+  isMascotDisabled: boolean,
+  currentStyleId: string | null,
+  styles: MascotStyle[],
+): string {
+  if (hasNoMascot) return "No Mascot";
+  if (isMascotDisabled) return "Disabled";
+  if (currentStyleId === "cycle" || currentStyleId === "all") return "Cycle All Styles";
+  if (currentStyleId && currentStyleId !== "core" && currentStyleId !== "default") {
+    const matched = styles.find((s) => s.id === currentStyleId);
+    if (matched) {
+      return matched.is_default ? `${matched.name} (Default)` : matched.name;
+    }
+    return currentStyleId;
+  }
+  const defaultStyle = styles.find((s) => s.is_default);
+  if (defaultStyle && defaultStyle.id !== "core") {
+    return `${defaultStyle.name} (Default)`;
+  }
+  return "Core Style (Default)";
+}
+
+function getStyleReadinessLabel(style: MascotStyle | null): string | null {
+  if (!style) return null;
+  const readiness = getMascotStyleReadiness(style);
+  const thinkingCount = (style.states?.thinking || []).filter((v) => Boolean(v.image_url?.trim())).length;
+  const celebrateCount = (style.states?.celebrate || []).filter((v) => Boolean(v.image_url?.trim())).length;
+  const total = thinkingCount + celebrateCount;
+
+  if (readiness === "fully_expressive") {
+    return `${total} Poses`;
+  }
+  if (readiness === "concept_locked") {
+    return total > 0 ? `${total} Poses` : "Concept Locked";
+  }
+  return null;
+}
+
+function StyleThumbnail({ thumbUrl, altText }: { thumbUrl: string | null; altText: string }) {
+  if (!thumbUrl) return null;
+  return (
+    <span className="style-option-leading">
+      <img
+        src={thumbUrl}
+        alt={altText}
+        className="style-option-thumb mascot-style-thumb"
+        style={{ width: 28, height: 28, borderRadius: 4, objectFit: "cover" }}
+      />
+    </span>
+  );
+}
+
+function ReadinessChip({ style }: { style: MascotStyle | null }) {
+  const readinessText = getStyleReadinessLabel(style);
+  if (!readinessText || !style) return null;
+  const readiness = getMascotStyleReadiness(style);
+  const isFully = readiness === "fully_expressive";
+
+  return (
+    <span
+      className={`mascot-style-readiness-chip ${isFully ? "is-fully-expressive" : "is-concept-locked"}`}
+      style={{
+        marginLeft: 8,
+        fontSize: "0.72rem",
+        padding: "1px 6px",
+        borderRadius: 4,
+        background: isFully ? "rgba(34, 197, 94, 0.15)" : "rgba(59, 130, 246, 0.15)",
+        color: isFully ? "#4ade80" : "#60a5fa",
+        border: isFully ? "1px solid rgba(34, 197, 94, 0.3)" : "1px solid rgba(59, 130, 246, 0.3)",
+        fontWeight: 600,
+      }}
+    >
+      {readinessText}
+    </span>
+  );
+}
+
+function resolveStyleThumbnail(
+  style: MascotStyle | null,
+  isCore: boolean,
+  hasMascotId: boolean,
+  masterImageUrl?: string | null,
+): string | null {
+  if (style?.anchor_image_url?.trim()) {
+    return style.anchor_image_url.trim();
+  }
+  if (isCore && hasMascotId) {
+    return masterImageUrl?.trim() || null;
+  }
+  return null;
+}
 
 export function MascotStyleDropdown({
   channel,
@@ -71,34 +158,8 @@ export function MascotStyleDropdown({
   const isMascotDisabled = channel.mascot_config?.enabled === false;
   const isControlDisabled = Boolean(disabled || hasNoMascot || isMascotDisabled);
 
-  const currentStyleId =
-    mascotStyleId !== undefined
-      ? mascotStyleId
-      : (episode.quiz_config?.mascot_style_id ?? null);
-
-  let displayValue = "Core Style (Default)";
-  if (hasNoMascot) {
-    displayValue = "No Mascot";
-  } else if (isMascotDisabled) {
-    displayValue = "Disabled";
-  } else if (currentStyleId === "cycle" || currentStyleId === "all") {
-    displayValue = "Cycle All Styles";
-  } else if (currentStyleId && currentStyleId !== "core" && currentStyleId !== "default") {
-    const matched = styles.find((s) => s.id === currentStyleId);
-    if (matched) {
-      displayValue = matched.is_default ? `${matched.name} (Default)` : matched.name;
-    } else {
-      displayValue = currentStyleId;
-    }
-  } else {
-    const defaultStyle = styles.find((s) => s.is_default);
-    if (defaultStyle && defaultStyle.id !== "core") {
-      displayValue = `${defaultStyle.name} (Default)`;
-    } else {
-      displayValue = "Core Style (Default)";
-    }
-  }
-
+  const currentStyleId = mascotStyleId !== undefined ? mascotStyleId : (episode.quiz_config?.mascot_style_id ?? null);
+  const displayValue = computeDisplayValue(hasNoMascot, isMascotDisabled, currentStyleId, styles);
   const customStyles = styles.filter((s) => s.id !== "core");
 
   const coreStyle: MascotStyle | null = useMemo(() => {
@@ -122,72 +183,8 @@ export function MascotStyleDropdown({
     return null;
   }, [styles, fetchedMascot]);
 
-  const getStyleThumbnail = (style: MascotStyle | null, isCore = false): string | null => {
-    if (style?.anchor_image_url?.trim()) {
-      return style.anchor_image_url.trim();
-    }
-    if (isCore && channel.mascot_id) {
-      return fetchedMascot?.master_image_url?.trim() || null;
-    }
-    return null;
-  };
-
-  const getStyleReadinessLabel = (style: MascotStyle | null): string | null => {
-    if (!style) return null;
-    const readiness = getMascotStyleReadiness(style);
-    if (readiness === "fully_expressive") {
-      const thinkingCount = (style.states?.thinking || []).filter((v) => Boolean(v.image_url?.trim())).length;
-      const celebrateCount = (style.states?.celebrate || []).filter((v) => Boolean(v.image_url?.trim())).length;
-      const total = thinkingCount + celebrateCount;
-      return `${total} Poses`;
-    }
-    if (readiness === "concept_locked") {
-      const thinkingCount = (style.states?.thinking || []).filter((v) => Boolean(v.image_url?.trim())).length;
-      const celebrateCount = (style.states?.celebrate || []).filter((v) => Boolean(v.image_url?.trim())).length;
-      const total = thinkingCount + celebrateCount;
-      return total > 0 ? `${total} Poses` : "Concept Locked";
-    }
-    return null;
-  };
-
-  const renderThumbnail = (thumbUrl: string | null, altText: string) => {
-    if (!thumbUrl) return null;
-    return (
-      <span className="style-option-leading">
-        <img
-          src={thumbUrl}
-          alt={altText}
-          className="style-option-thumb mascot-style-thumb"
-          style={{ width: 28, height: 28, borderRadius: 4, objectFit: "cover" }}
-        />
-      </span>
-    );
-  };
-
-  const renderReadinessChip = (style: MascotStyle | null) => {
-    const readinessText = getStyleReadinessLabel(style);
-    if (!readinessText || !style) return null;
-    const readiness = getMascotStyleReadiness(style);
-    const isFully = readiness === "fully_expressive";
-
-    return (
-      <span
-        className={`mascot-style-readiness-chip ${isFully ? "is-fully-expressive" : "is-concept-locked"}`}
-        style={{
-          marginLeft: 8,
-          fontSize: "0.72rem",
-          padding: "1px 6px",
-          borderRadius: 4,
-          background: isFully ? "rgba(34, 197, 94, 0.15)" : "rgba(59, 130, 246, 0.15)",
-          color: isFully ? "#4ade80" : "#60a5fa",
-          border: isFully ? "1px solid rgba(34, 197, 94, 0.3)" : "1px solid rgba(59, 130, 246, 0.3)",
-          fontWeight: 600,
-        }}
-      >
-        {readinessText}
-      </span>
-    );
-  };
+  const isCoreSelected = !currentStyleId || currentStyleId === "core" || currentStyleId === "default";
+  const coreThumbnail = resolveStyleThumbnail(coreStyle, true, Boolean(channel.mascot_id), fetchedMascot?.master_image_url);
 
   return (
     <div className="customization-dropdown-item">
@@ -202,40 +199,26 @@ export function MascotStyleDropdown({
       {isOpen && !isControlDisabled ? (
         <CustomizationPopover title={label}>
           {/* Core Style Option */}
-          <label
-            className={`style-option-row ${!currentStyleId || currentStyleId === "core" || currentStyleId === "default" ? "is-checked" : ""}`}
-            onClick={() => onSaveMascotStyle?.(null)}
-          >
-            <input
-              type="radio"
-              name="mascot_style_choice"
-              checked={!currentStyleId || currentStyleId === "core" || currentStyleId === "default"}
-              onChange={() => onSaveMascotStyle?.(null)}
-            />
-            {renderThumbnail(getStyleThumbnail(coreStyle, true), "Core Style")}
+          <label className={`style-option-row ${isCoreSelected ? "is-checked" : ""}`} onClick={() => onSaveMascotStyle?.(null)}>
+            <input type="radio" name="mascot_style_choice" checked={isCoreSelected} onChange={() => onSaveMascotStyle?.(null)} />
+            <StyleThumbnail thumbUrl={coreThumbnail} altText="Core Style" />
             <span className="style-option-label">
               Core Style (Default)
-              {renderReadinessChip(coreStyle)}
+              <ReadinessChip style={coreStyle} />
             </span>
-            {!currentStyleId || currentStyleId === "core" || currentStyleId === "default" ? (
-              <Check size={14} weight="bold" className="style-option-check" />
-            ) : null}
+            {isCoreSelected ? <Check size={14} weight="bold" className="style-option-check" /> : null}
           </label>
           {customStyles.map((style) => {
             const isChecked = currentStyleId === style.id;
+            const thumbUrl = resolveStyleThumbnail(style, false, Boolean(channel.mascot_id));
             return (
               <label
                 key={style.id}
                 className={`style-option-row ${isChecked ? "is-checked" : ""}`}
                 onClick={() => onSaveMascotStyle?.(style.id)}
               >
-                <input
-                  type="radio"
-                  name="mascot_style_choice"
-                  checked={isChecked}
-                  onChange={() => onSaveMascotStyle?.(style.id)}
-                />
-                {renderThumbnail(getStyleThumbnail(style, false), style.name)}
+                <input type="radio" name="mascot_style_choice" checked={isChecked} onChange={() => onSaveMascotStyle?.(style.id)} />
+                <StyleThumbnail thumbUrl={thumbUrl} altText={style.name} />
                 <span className="style-option-label">
                   {style.name}
                   {style.keyword ? (
@@ -253,11 +236,9 @@ export function MascotStyleDropdown({
                       {style.keyword}
                     </span>
                   ) : null}
-                  {renderReadinessChip(style)}
+                  <ReadinessChip style={style} />
                 </span>
-                {isChecked ? (
-                  <Check size={14} weight="bold" className="style-option-check" />
-                ) : null}
+                {isChecked ? <Check size={14} weight="bold" className="style-option-check" /> : null}
               </label>
             );
           })}

@@ -29,7 +29,7 @@ export function SandboxPresetSelector({
   matchedPreset,
   activeCustomPreset,
   loadedPresetId,
-  loadedPreset,
+  loadedPreset: _loadedPreset,
   canUpdateActivePreset = false,
   onLoadPreset,
   onOpenSaveModal,

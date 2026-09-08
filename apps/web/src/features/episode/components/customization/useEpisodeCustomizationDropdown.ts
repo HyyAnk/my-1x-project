@@ -16,10 +16,7 @@ export type EpisodeCustomizationDropdownName =
   | "thumbnailRatio"
   | null;
 
-export function useEpisodeCustomizationDropdown(
-  containerRef: React.RefObject<HTMLDivElement | null>,
-  isPipelineRunning: boolean,
-) {
+export function useEpisodeCustomizationDropdown(containerRef: React.RefObject<HTMLDivElement | null>, isPipelineRunning: boolean) {
   const [openDropdown, setOpenDropdown] = useState<EpisodeCustomizationDropdownName>(null);
   const [candidate, setCandidate] = useState<EpisodePreviewCandidate | null>(null);
 

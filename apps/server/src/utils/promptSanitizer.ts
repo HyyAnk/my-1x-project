@@ -84,7 +84,9 @@ export async function executeSinglePromptText(
   } = {},
 ): Promise<string> {
   const timeoutMs = options.timeoutMs ?? 180_000;
+  options.signal?.throwIfAborted();
   await client.connect();
+  options.signal?.throwIfAborted();
 
   if (typeof (client as { generateContent?: unknown }).generateContent === "function") {
     const res = await (client as { generateContent: (p: string, o?: unknown) => Promise<{ text?: string } | string> }).generateContent(
@@ -96,6 +98,7 @@ export async function executeSinglePromptText(
 
   const threadClient = client as unknown as { startThread(): Promise<string> };
   const threadId = await threadClient.startThread();
+  options.signal?.throwIfAborted();
 
   return new Promise<string>((resolve, reject) => {
     let output = "";
@@ -185,6 +188,9 @@ export async function executeSinglePromptText(
     Promise.resolve(startTurnPromise)
       .then((tId: string) => {
         turnId = tId;
+        if (options.signal?.aborted && typeof client.interruptTurn === "function") {
+          return client.interruptTurn(threadId, tId);
+        }
       })
       .catch((err: unknown) => {
         cleanup();

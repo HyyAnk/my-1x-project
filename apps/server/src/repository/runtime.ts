@@ -38,6 +38,14 @@ import type {
   MatrixCoverageStats,
 } from "@studio/shared";
 import type { CreateStylePresetInput, StylePreset, UpdateStylePresetInput } from "@studio/shared";
+import type {
+  MutationContext,
+  ReelKey,
+  ShortReelEditCommand,
+  ShortReelRecord,
+  ShortReelSourceSnapshot,
+  ShortReelTopicSnapshot,
+} from "@studio/shared";
 import type { QueryQuestionBankParams } from "./quiz/questionBankRepository.js";
 import type { BundleImageAsset, BundleImageMeta, RepositoryRoots } from "./types.js";
 
@@ -54,12 +62,20 @@ export type QuizArtifactFilename =
   | "stage-timings.json";
 
 export interface RepositoryRuntime {
+  readonly serviceId: string;
   readonly rootDirectory: string;
   readonly storageRoot: string;
   roots: RepositoryRoots;
   questionHistoryWrites: Map<string, Promise<void>>;
   usageLedgerWrites: Map<string, Promise<void>>;
   artifactMutationQueues: Map<string, Promise<void>>;
+  shortReelMutationQueues: Map<string, Promise<void>>;
+
+  // Writer admission lifecycle
+  acquireWriterAdmission(): void;
+  releaseWriterAdmission(): Promise<void>;
+  isWriterAdmissionHeld(): boolean;
+  close(): Promise<void> | void;
 
   // Infrastructure & Path safety
   resolvePath(root: keyof RepositoryRoots, ...segments: string[]): string;
@@ -333,5 +349,16 @@ export interface RepositoryRuntime {
   deleteQuestionBankQuestion(questionId: string): Promise<boolean>;
   clearQuestionBank(): Promise<{ cleared_batches_count: number }>;
   getQuestionBankMatrixCoverage(): Promise<MatrixCoverageStats>;
-}
 
+  // Short Reels
+  listShortReels(channelId: string): Promise<ShortReelRecord[]>;
+  getShortReel(key: ReelKey): Promise<ShortReelRecord>;
+  getShortReelByTopic(channelId: string, topicId: string): Promise<ShortReelRecord | null>;
+  createShortReel(
+    channelId: string,
+    topic: ShortReelTopicSnapshot,
+    source: ShortReelSourceSnapshot,
+    requestId?: string,
+  ): Promise<ShortReelRecord>;
+  updateShortReel(key: ReelKey, context: MutationContext, command: ShortReelEditCommand): Promise<ShortReelRecord>;
+}

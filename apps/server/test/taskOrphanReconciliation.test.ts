@@ -34,6 +34,7 @@ async function fixture() {
     Array.from({ length: 5 }, (_, index) => ({
       topic_id: `topic-${index}`,
       channel_id: channel.channel_id,
+      content_kind: "episode" as const,
       title: `Topic ${index}`,
       premise: "Premise",
       why_it_fits: "Fits",
@@ -71,7 +72,7 @@ function createTask(taskId: string, channelId: string, episodeId: string | null,
 
 describe("task orphan reconciliation and channel deletion", () => {
   it("automatically purges orphaned tasks for non-existent episodes and channels on load", async () => {
-    const { app, root, channel, episode } = await fixture();
+    const { app, channel, episode } = await fixture();
     try {
       // Create a valid task
       const validTask = createTask("task-valid", channel.channel_id, episode.episode_id, "COMPLETED");

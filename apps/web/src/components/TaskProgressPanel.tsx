@@ -25,6 +25,104 @@ function resolveProgressLabel(options: {
 
 export type TaskProgressVariant = "default" | "hero";
 
+function resolveAriaValueText(task: Task, ariaProgressMessage: string): string {
+  if (task.status === "COMPLETED") return "Complete";
+  if (task.status === "FAILED") return "Failed";
+  if (task.status === "CANCELLED") return "Cancelled";
+  return ariaProgressMessage;
+}
+
+function formatPercentLabel(task: Task, percent: number | null): string | null {
+  if (percent === null) return null;
+  return task.render_progress ? `${Number(percent.toFixed(2))}%` : `${Math.round(percent)}%`;
+}
+
+function TaskProgressHead({
+  title,
+  label,
+  active,
+  isHero,
+  percentLabel,
+  timeString,
+  onCancel,
+}: {
+  title: string;
+  label: string;
+  active: boolean;
+  isHero: boolean;
+  percentLabel: string | null;
+  timeString: string;
+  onCancel?: () => void;
+}) {
+  return (
+    <div className="task-progress-head">
+      <div className="task-progress-title">
+        <div className="task-progress-title-row">
+          {isHero && active ? <span className="task-hero-live-indicator" aria-hidden="true" /> : null}
+          <span className="eyebrow">{title}</span>
+        </div>
+        <strong className={active ? "task-progress-thinking" : ""}>
+          {active ? (
+            <span className="task-thinking-pill">
+              <Sparkle size={13} className="task-thinking-icon" weight="fill" />
+              <span className="task-thinking-msg" key={label}>
+                {label}
+              </span>
+            </span>
+          ) : (
+            label
+          )}
+        </strong>
+      </div>
+      <div className="task-progress-meta">
+        {percentLabel ? <span className="task-progress-percent-badge">{percentLabel}</span> : null}
+        <span className="task-progress-time">{timeString}</span>
+        {active && onCancel ? (
+          <button
+            type="button"
+            className="danger-button compact stop-icon-btn"
+            onClick={onCancel}
+            title="Stop task"
+            aria-label={`Stop ${title}`}
+          >
+            <Stop size={12} weight="fill" />
+            <span>Stop</span>
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function TaskProgressTrack({
+  percent,
+  active,
+  progressLabel,
+  valueText,
+}: {
+  percent: number | null;
+  active: boolean;
+  progressLabel: string;
+  valueText: string;
+}) {
+  return (
+    <div
+      className={`task-progress-track ${percent === null ? "is-indeterminate" : ""}`}
+      role="progressbar"
+      aria-label={progressLabel}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={percent ?? undefined}
+      aria-valuetext={valueText}
+    >
+      <span className="task-progress-fill" style={percent === null ? undefined : { width: `${Math.max(0, Math.min(100, percent))}%` }}>
+        {active && percent !== null && percent > 0 ? <span className="task-progress-glow-head" aria-hidden="true" /> : null}
+        {active ? <span className="task-progress-shimmer" aria-hidden="true" /> : null}
+      </span>
+    </div>
+  );
+}
+
 export function TaskProgressPanel({
   task,
   title,
@@ -59,72 +157,27 @@ export function TaskProgressPanel({
   const rawPercent = completed ? 100 : typeof task.progress_percent === "number" ? task.progress_percent : null;
   const percent = useContinuousProgress(task, rawPercent);
   const ariaProgressMessage = renderMetrics ? `${progressMessage}. ${renderMetrics}` : progressMessage;
-  const percentLabel = percent === null ? null : task.render_progress ? `${Number(percent.toFixed(2))}%` : `${Math.round(percent)}%`;
+  const percentLabel = formatPercentLabel(task, percent);
+  const valueText = resolveAriaValueText(task, ariaProgressMessage);
+  const showErrorMessage = !completed && (failed || cancelled || Boolean(task.error)) && progressMessage;
 
   return (
     <div
       className={`task-progress-panel ${task.status.toLowerCase()} ${compact ? "is-compact" : ""} ${isHero ? "is-hero" : ""}`}
       role="status"
     >
-      <div className="task-progress-head">
-        <div className="task-progress-title">
-          <div className="task-progress-title-row">
-            {isHero && active ? <span className="task-hero-live-indicator" aria-hidden="true" /> : null}
-            <span className="eyebrow">{title}</span>
-          </div>
-          <strong className={active ? "task-progress-thinking" : ""}>
-            {active ? (
-              <span className="task-thinking-pill">
-                <Sparkle size={13} className="task-thinking-icon" weight="fill" />
-                <span className="task-thinking-msg" key={label}>
-                  {label}
-                </span>
-              </span>
-            ) : (
-              label
-            )}
-          </strong>
-        </div>
-        <div className="task-progress-meta">
-          {percentLabel ? <span className="task-progress-percent-badge">{percentLabel}</span> : null}
-          <span className="task-progress-time">{formatTaskElapsed(task, now)}</span>
-          {active && onCancel ? (
-            <button
-              type="button"
-              className="danger-button compact stop-icon-btn"
-              onClick={() => onCancel(task)}
-              title="Stop task"
-              aria-label={`Stop ${title}`}
-            >
-              <Stop size={12} weight="fill" />
-              <span>Stop</span>
-            </button>
-          ) : null}
-        </div>
-      </div>
-      <div
-        className={`task-progress-track ${percent === null ? "is-indeterminate" : ""}`}
-        role="progressbar"
-        aria-label={progressLabel}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={percent ?? undefined}
-        aria-valuetext={completed ? "Complete" : failed ? "Failed" : cancelled ? "Cancelled" : ariaProgressMessage}
-      >
-        <span
-          className="task-progress-fill"
-          style={percent === null ? undefined : { width: `${Math.max(0, Math.min(100, percent))}%` }}
-        >
-          {active && percent !== null && percent > 0 ? (
-            <span className="task-progress-glow-head" aria-hidden="true" />
-          ) : null}
-          {active ? <span className="task-progress-shimmer" aria-hidden="true" /> : null}
-        </span>
-      </div>
+      <TaskProgressHead
+        title={title}
+        label={label}
+        active={active}
+        isHero={isHero}
+        percentLabel={percentLabel}
+        timeString={formatTaskElapsed(task, now)}
+        onCancel={onCancel ? () => onCancel(task) : undefined}
+      />
+      <TaskProgressTrack percent={percent} active={active} progressLabel={progressLabel} valueText={valueText} />
       {renderMetrics ? <p className="task-progress-measurements">{renderMetrics}</p> : null}
-      {!completed && (failed || cancelled || Boolean(task.error)) && progressMessage ? (
-        <p className="task-progress-copy">{progressMessage}</p>
-      ) : null}
+      {showErrorMessage ? <p className="task-progress-copy">{progressMessage}</p> : null}
     </div>
   );
 }

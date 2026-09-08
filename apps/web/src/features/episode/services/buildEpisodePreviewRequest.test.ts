@@ -18,7 +18,7 @@ const mockResolved: ResolvedEpisodePreviewStyle = {
 const emptyOverride: EpisodeStyleOverride = {};
 
 describe("buildEpisodePreviewRequest Mascot Decoupling", () => {
-  it("resolves decoupled 9:16 mascot placement when aspectRatio is 9:16", () => {
+  it("always builds a landscape Episode preview request", () => {
     const channelWithDualPlacements = {
       channel_id: "ch-1",
       display_name: "Quiz Channel",
@@ -57,17 +57,17 @@ describe("buildEpisodePreviewRequest Mascot Decoupling", () => {
       channel: channelWithDualPlacements,
       override: emptyOverride,
       resolved: mockResolved,
-      aspectRatio: "9:16",
+      aspectRatio: "16:9",
     });
 
-    expect(request916.aspect_ratio).toBe("9:16");
+    expect(request916.aspect_ratio).toBe("16:9");
     expect(request916.mascot_id).toBe("mascot-fox");
     expect(request916.mascot_enabled).toBe(true);
-    expect(request916.mascot_position).toBe("bottom_right");
-    expect(request916.mascot_scale).toBe(0.85);
-    expect(request916.mascot_offset_x).toBe(45);
-    expect(request916.mascot_offset_y).toBe(-30);
-    expect(request916.mascot_flip_x).toBe(true);
+    expect(request916.mascot_position).toBe("bottom_left");
+    expect(request916.mascot_scale).toBe(1.2);
+    expect(request916.mascot_offset_x).toBe(-10);
+    expect(request916.mascot_offset_y).toBe(20);
+    expect(request916.mascot_flip_x).toBe(false);
   });
 
   it("resolves 16:9 mascot placement when aspectRatio is 16:9 or omitted", () => {
@@ -149,17 +149,17 @@ describe("buildEpisodePreviewRequest Mascot Decoupling", () => {
       },
     } as unknown as Channel;
 
-    const request916 = buildEpisodePreviewRequest({
+    const request169 = buildEpisodePreviewRequest({
       channel: legacyChannel,
       override: emptyOverride,
       resolved: mockResolved,
-      aspectRatio: "9:16",
+      aspectRatio: "16:9",
     });
 
     // Mirrors 16:9 legacy config seamlessly
-    expect(request916.mascot_position).toBe("bottom_left");
-    expect(request916.mascot_scale).toBe(1.1);
-    expect(request916.mascot_offset_x).toBe(15);
-    expect(request916.mascot_offset_y).toBe(25);
+    expect(request169.mascot_position).toBe("bottom_left");
+    expect(request169.mascot_scale).toBe(1.1);
+    expect(request169.mascot_offset_x).toBe(15);
+    expect(request169.mascot_offset_y).toBe(25);
   });
 });

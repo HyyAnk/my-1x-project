@@ -1,52 +1,25 @@
 import { useState } from "react";
-import {
-  type Channel,
-  type ChannelMascotConfig,
-  type MascotPlacementPreset,
-  type MascotProfile,
-  RECOMMENDED_MASCOT_PLACEMENT_PRESETS,
-  resolveChannelMascotPlacement,
-} from "@studio/shared";
+import { type Channel, type ChannelMascotConfig, type MascotPlacementPreset, type MascotProfile } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import type { StageAspectRatio, StagePosition } from "../types";
 
 export interface BuildDecoupledChannelMascotConfigParams {
-  aspectRatio: StageAspectRatio;
   activePlacement: MascotPlacementPreset;
-  placements?: Partial<Record<StageAspectRatio, MascotPlacementPreset>> | null;
-  channel?: Channel | null;
   showInIntro?: boolean;
   showInOutro?: boolean;
   showInQuestion?: boolean;
 }
 
-/**
- * Builds a ChannelMascotConfig ensuring active and other aspect ratio placements
- * remain strictly isolated without fallbacks crossing between 16:9 and 9:16.
- */
 export function buildDecoupledChannelMascotConfig({
-  aspectRatio,
   activePlacement,
-  placements,
-  channel,
   showInIntro = false,
   showInOutro = false,
   showInQuestion = true,
 }: BuildDecoupledChannelMascotConfigParams): ChannelMascotConfig {
-  const activeAspect = aspectRatio ?? "16:9";
-  const otherAspect: StageAspectRatio = activeAspect === "16:9" ? "9:16" : "16:9";
-
-  const otherPlacement =
-    placements?.[otherAspect] ??
-    (channel?.mascot_config
-      ? resolveChannelMascotPlacement(channel.mascot_config, otherAspect)
-      : RECOMMENDED_MASCOT_PLACEMENT_PRESETS[otherAspect]);
-
   const resolvedPlacements: Record<StageAspectRatio, MascotPlacementPreset> = {
-    [activeAspect]: { ...activePlacement },
-    [otherAspect]: { ...otherPlacement },
-  } as Record<StageAspectRatio, MascotPlacementPreset>;
+    "16:9": { ...activePlacement },
+  };
 
   return {
     enabled: true,
@@ -63,7 +36,6 @@ export function buildDecoupledChannelMascotConfig({
 }
 
 export function useStageSaveAction(options: {
-  aspectRatio?: StageAspectRatio;
   isSingleChannelMode: boolean;
   targetChannel: Channel | null;
   selectedMascotId: string | null;
@@ -75,7 +47,6 @@ export function useStageSaveAction(options: {
   offsetX: number;
   offsetY: number;
   flipHorizontal: boolean;
-  placements?: Record<StageAspectRatio, MascotPlacementPreset>;
   showInIntro: boolean;
   showInOutro: boolean;
   showInQuestion: boolean;
@@ -85,7 +56,6 @@ export function useStageSaveAction(options: {
   t: (key: string, values?: Record<string, string | number>) => string;
 }) {
   const {
-    aspectRatio = "16:9",
     isSingleChannelMode,
     targetChannel,
     selectedMascotId,
@@ -97,7 +67,6 @@ export function useStageSaveAction(options: {
     offsetX,
     offsetY,
     flipHorizontal,
-    placements,
     showInIntro,
     showInOutro,
     showInQuestion,
@@ -120,12 +89,9 @@ export function useStageSaveAction(options: {
         flip_x: flipHorizontal,
       };
 
-      const createConfig = (ch: Channel | null) =>
+      const createConfig = (_ch: Channel | null) =>
         buildDecoupledChannelMascotConfig({
-          aspectRatio,
           activePlacement,
-          placements,
-          channel: ch,
           showInIntro,
           showInOutro,
           showInQuestion,

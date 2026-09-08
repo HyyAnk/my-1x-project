@@ -10,12 +10,7 @@ export type TopicLayoutPreviewButtonProps = {
   aspectRatio?: "16:9" | "9:16";
 };
 
-export function TopicLayoutPreviewButton({
-  quizFormat,
-  archetype,
-  layoutId,
-  aspectRatio,
-}: TopicLayoutPreviewButtonProps) {
+export function TopicLayoutPreviewButton({ quizFormat, archetype, layoutId, aspectRatio }: TopicLayoutPreviewButtonProps) {
   const [showPreview, setShowPreview] = useState(false);
   const { id, meta: layoutInfo } = resolveLayoutMeta(quizFormat, archetype, layoutId, aspectRatio);
 

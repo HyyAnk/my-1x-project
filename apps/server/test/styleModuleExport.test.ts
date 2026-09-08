@@ -103,8 +103,9 @@ describe("style module packages", () => {
       },
     } as SlotScopedStyleModule;
     const imported = importStyleModulePackage(exportStyleModulePackage(source).zipBuffer);
-    expect(imported.renderer.renderHtml({ duration: 8.5, clipStart: 1.25 } as never)).toContain('data-duration="8.5"');
-    expect(imported.renderer.renderHtml({ duration: 8.5, clipStart: 1.25 } as never)).toContain('data-start="1.25"');
+    const renderer = imported.renderer as { renderHtml: (context: Record<string, unknown>) => string };
+    expect(renderer.renderHtml({ duration: 8.5, clipStart: 1.25 })).toContain('data-duration="8.5"');
+    expect(renderer.renderHtml({ duration: 8.5, clipStart: 1.25 })).toContain('data-start="1.25"');
   });
 
   it("rejects context-dependent renderers without a portable template", () => {
@@ -155,7 +156,8 @@ describe("style module packages", () => {
     } as SlotScopedStyleModule;
 
     const imported = importStyleModulePackage(exportStyleModulePackage(source).zipBuffer);
-    const rendered = imported.renderer.renderHtml({
+    const renderer = imported.renderer as { renderHtml: (context: Record<string, unknown>) => string };
+    const rendered = renderer.renderHtml({
       palette: {
         id: "aqua",
         backgroundPrimary: "#111111",
@@ -170,7 +172,7 @@ describe("style module packages", () => {
         text: "Ada's <ink>",
         muted: "#AAAAAA",
       },
-    } as never);
+    });
 
     expect(rendered).toContain('data-palette="aqua"');
     expect(rendered).toContain('data-primary="#111111"');
@@ -197,10 +199,11 @@ describe("style module packages", () => {
       },
     } as SlotScopedStyleModule;
     const imported = importStyleModulePackage(exportStyleModulePackage(source).zipBuffer);
-    const rendered = imported.renderer.renderHtml({
+    const renderer = imported.renderer as { renderHtml: (context: Record<string, unknown>) => string };
+    const rendered = renderer.renderHtml({
       question: "Ada's quiz",
       highlightedHtml: '<strong class="keyword-highlight">Ada</strong>',
-    } as never);
+    });
     expect(rendered).toContain("Ada&#39;s quiz");
     expect(rendered).toContain('<strong class="keyword-highlight">Ada</strong>');
   });

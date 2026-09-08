@@ -1,8 +1,4 @@
-import type {
-  BankGameplayArchetypeId,
-  BankQuestion,
-  MatrixCoverageStats,
-} from "@studio/shared";
+import type { BankGameplayArchetypeId, BankQuestion, MatrixCoverageStats } from "@studio/shared";
 import type { RepositoryService } from "../../../repository/service.js";
 import { executeSinglePromptText, type LLMClient } from "../../../utils/promptSanitizer.js";
 import { retryWithBackoff } from "../../../utils/retryWithBackoff.js";
@@ -105,11 +101,7 @@ export class AsyncMutex {
 /**
  * Single prompt execution with transient rate-limit retry (429 / resource exhausted).
  */
-export async function executePromptWithRetry(
-  llmClient: LLMClient,
-  prompt: string,
-  signal?: AbortSignal,
-): Promise<string> {
+export async function executePromptWithRetry(llmClient: LLMClient, prompt: string, signal?: AbortSignal): Promise<string> {
   return retryWithBackoff(
     () =>
       executeSinglePromptText(llmClient, prompt, {
@@ -229,9 +221,7 @@ async function generateChunkCandidates(
  * Chunk execution scheduler managing worker concurrency throttling, LLM calls,
  * Auto-QA verification, mutexed persistence, chunk progress reporting, and cancellation.
  */
-export async function executeBatchChunkScheduler(
-  options: ScheduleBatchChunksOptions,
-): Promise<ScheduledBatchExecutionOutput> {
+export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOptions): Promise<ScheduledBatchExecutionOutput> {
   const { repository, input, plannedChunks, allBankQuestions, targetCount } = options;
   const totalChunks = plannedChunks.length;
   const persist = input.persist !== false;
@@ -260,6 +250,7 @@ export async function executeBatchChunkScheduler(
     try {
       chunkCandidates = await generateChunkCandidates(chunk, input, allBankQuestions);
     } catch (err) {
+      if (input.signal?.aborted) return;
       lastError = err instanceof Error ? err.message : String(err);
       console.error(`[QuestionBankBatch] LLM generation error:`, err);
     }
@@ -309,21 +300,18 @@ export async function executeBatchChunkScheduler(
     });
   }
 
-  const concurrency = Math.max(
-    1,
-    Math.min(input.concurrency ?? DEFAULT_BATCH_CONCURRENCY, plannedChunks.length),
-  );
+  const concurrency = Math.max(1, Math.min(input.concurrency ?? DEFAULT_BATCH_CONCURRENCY, plannedChunks.length));
   let nextChunkIndex = 0;
-  let workerFatalError: Error | null = null;
+  const workerFailure: { error: Error | null } = { error: null };
 
   const runWorker = async () => {
     while (nextChunkIndex < plannedChunks.length) {
-      if (input.signal?.aborted || workerFatalError) break;
+      if (input.signal?.aborted || workerFailure.error) break;
       const chunk = plannedChunks[nextChunkIndex++];
       try {
         await processPlannedChunk(chunk);
       } catch (err) {
-        workerFatalError = err instanceof Error ? err : new Error(String(err));
+        workerFailure.error = err instanceof Error ? err : new Error(String(err));
         break;
       }
     }
@@ -332,8 +320,8 @@ export async function executeBatchChunkScheduler(
   const workers = Array.from({ length: concurrency }, () => runWorker());
   await Promise.all(workers);
 
-  if (workerFatalError && allGenerated.length === 0) {
-    throw workerFatalError;
+  if (workerFailure.error && allGenerated.length === 0) {
+    throw workerFailure.error;
   }
 
   if (allGenerated.length === 0 && lastError) {

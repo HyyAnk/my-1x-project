@@ -42,7 +42,7 @@ export default tseslint.config(
         ...globals.node,
       },
       parserOptions: {
-        project: ["./apps/*/tsconfig.eslint.json", "./packages/*/tsconfig.json"],
+        project: ["./apps/*/tsconfig.eslint.json", "./packages/*/tsconfig.eslint.json"],
         tsconfigRootDir: import.meta.dirname,
       },
     },

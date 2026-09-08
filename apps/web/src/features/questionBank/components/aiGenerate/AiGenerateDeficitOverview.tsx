@@ -6,18 +6,13 @@ export interface AiGenerateDeficitOverviewProps {
   variant?: "preview" | "result";
 }
 
-export function AiGenerateDeficitOverview({
-  matrixCoverage,
-  variant = "preview",
-}: AiGenerateDeficitOverviewProps) {
+export function AiGenerateDeficitOverview({ matrixCoverage, variant = "preview" }: AiGenerateDeficitOverviewProps) {
   const { t } = useTranslation();
 
   if (!matrixCoverage) return null;
 
   const gradient =
-    variant === "result"
-      ? "linear-gradient(90deg, #10b981 0%, #06b6d4 100%)"
-      : "linear-gradient(90deg, #0891b2 0%, #8b5cf6 100%)";
+    variant === "result" ? "linear-gradient(90deg, #10b981 0%, #06b6d4 100%)" : "linear-gradient(90deg, #0891b2 0%, #8b5cf6 100%)";
 
   return (
     <div className="qb-matrix-preview-card">

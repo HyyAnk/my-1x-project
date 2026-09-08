@@ -1,21 +1,17 @@
 import { useCallback, useState } from "react";
-import {
-  type MascotPlacementPreset,
-  RECOMMENDED_MASCOT_PLACEMENT_PRESETS,
-} from "@studio/shared";
+import { type MascotPlacementPreset, RECOMMENDED_MASCOT_PLACEMENT_PRESETS } from "@studio/shared";
 import type { StageAspectRatio, StagePosition } from "../types";
 
 export function useStageTransformState(aspectRatio: StageAspectRatio = "16:9") {
   const [placements, setPlacements] = useState<Record<StageAspectRatio, MascotPlacementPreset>>({
     "16:9": { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["16:9"] },
-    "9:16": { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["9:16"] },
   });
 
   const [showInIntro, setShowInIntro] = useState<boolean>(false);
   const [showInOutro, setShowInOutro] = useState<boolean>(false);
   const [showInQuestion, setShowInQuestion] = useState<boolean>(true);
 
-  const currentPlacement = placements[aspectRatio] ?? RECOMMENDED_MASCOT_PLACEMENT_PRESETS[aspectRatio];
+  const currentPlacement = placements[aspectRatio] ?? RECOMMENDED_MASCOT_PLACEMENT_PRESETS["16:9"];
 
   const setPosition = useCallback(
     (position: StagePosition) => {
@@ -105,35 +101,17 @@ export function useStageTransformState(aspectRatio: StageAspectRatio = "16:9") {
     [aspectRatio],
   );
 
-  const resetAllPlacements = useCallback(
-    (presets?: Partial<Record<StageAspectRatio, MascotPlacementPreset>>) => {
-      setPlacements({
-        "16:9": presets?.["16:9"] ? { ...presets["16:9"] } : { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["16:9"] },
-        "9:16": presets?.["9:16"] ? { ...presets["9:16"] } : { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["9:16"] },
-      });
-    },
-    [],
-  );
+  const resetAllPlacements = useCallback((presets?: Partial<Record<StageAspectRatio, MascotPlacementPreset>>) => {
+    setPlacements({
+      "16:9": presets?.["16:9"] ? { ...presets["16:9"] } : { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["16:9"] },
+    });
+  }, []);
 
   const initPlacements = useCallback((newPlacements: Partial<Record<StageAspectRatio, MascotPlacementPreset>>) => {
     setPlacements((prev) => ({
-      "16:9": newPlacements["16:9"] ? { ...newPlacements["16:9"] } : prev["16:9"] ?? { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["16:9"] },
-      "9:16": newPlacements["9:16"] ? { ...newPlacements["9:16"] } : prev["9:16"] ?? { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["9:16"] },
+      "16:9": newPlacements["16:9"] ? { ...newPlacements["16:9"] } : (prev["16:9"] ?? { ...RECOMMENDED_MASCOT_PLACEMENT_PRESETS["16:9"] }),
     }));
   }, []);
-
-  const copyPlacementFrom = useCallback(
-    (sourceAspect: StageAspectRatio, targetAspect: StageAspectRatio) => {
-      setPlacements((prev) => {
-        const source = prev[sourceAspect] ?? RECOMMENDED_MASCOT_PLACEMENT_PRESETS[sourceAspect];
-        return {
-          ...prev,
-          [targetAspect]: { ...source },
-        };
-      });
-    },
-    [],
-  );
 
   return {
     placements,
@@ -142,7 +120,6 @@ export function useStageTransformState(aspectRatio: StageAspectRatio = "16:9") {
     applyPlacement,
     resetPlacement,
     resetAllPlacements,
-    copyPlacementFrom,
     position: currentPlacement.position,
     setPosition,
     scale: currentPlacement.scale,

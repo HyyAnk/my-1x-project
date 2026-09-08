@@ -1,10 +1,6 @@
 import { useMemo } from "react";
 import { ArrowLeft, ArrowRight, Sparkle } from "@phosphor-icons/react";
-import {
-  type MascotProfile,
-  type MascotStyle,
-  synthesizeLegacyCoreStyle,
-} from "@studio/shared";
+import { type MascotProfile, type MascotStyle, synthesizeLegacyCoreStyle } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
 import type { useMascotStyles } from "../hooks/useMascotStyles";
 import { MascotStyleTabBar } from "./MascotStyleTabBar";
@@ -21,13 +17,7 @@ export type MascotActionsStepProps = {
   onOpenLightbox?: (img: string) => void;
 };
 
-export function MascotActionsStep({
-  editingMascot,
-  stylesState,
-  onBackStep,
-  onNextStep,
-  onOpenLightbox,
-}: MascotActionsStepProps) {
+export function MascotActionsStep({ editingMascot, stylesState, onBackStep, onNextStep, onOpenLightbox }: MascotActionsStepProps) {
   const { t } = useTranslation();
 
   const {
@@ -47,10 +37,7 @@ export function MascotActionsStep({
 
   // Compute all available styles, ensuring Core Style exists
   const allStyles: MascotStyle[] = useMemo(() => {
-    const rawStyles =
-      editingMascot?.styles && editingMascot.styles.length > 0
-        ? [...editingMascot.styles]
-        : [];
+    const rawStyles = editingMascot?.styles && editingMascot.styles.length > 0 ? [...editingMascot.styles] : [];
 
     const hasCore = rawStyles.some((s) => s.id === "core" || s.is_default);
     if (!hasCore) {
@@ -119,10 +106,7 @@ export function MascotActionsStep({
         />
 
         {/* 3. Live Batch Generation Progress Deck */}
-        <MascotBatchProgressCard
-          batchProgress={batchProgress}
-          onStopBatch={handleStopBatchGeneration}
-        />
+        <MascotBatchProgressCard batchProgress={batchProgress} onStopBatch={handleStopBatchGeneration} />
 
         {/* 4. Two State Columns (10 Slots Each) */}
         <div className="variant-states-container">

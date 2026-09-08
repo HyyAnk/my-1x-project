@@ -1,5 +1,4 @@
 import React from "react";
-import { useTranslation } from "../../../../i18n";
 import type { AudiencePreset } from "./types";
 
 const AUDIENCE_PRESETS: AudiencePreset[] = [
@@ -39,16 +38,12 @@ export interface CreateChannelAudienceChipsProps {
   disabled?: boolean;
 }
 
-export function CreateChannelAudienceChips({
-  selectedAudience,
-  onSelectAudience,
-  disabled = false,
-}: CreateChannelAudienceChipsProps) {
+export function CreateChannelAudienceChips({ selectedAudience, onSelectAudience, disabled = false }: CreateChannelAudienceChipsProps) {
   return (
     <div className="channel-preset-chips-row" role="group" aria-label="Audience Presets">
       {AUDIENCE_PRESETS.map((preset) => {
-        const isSelected = selectedAudience.toLowerCase().includes(preset.value.toLowerCase()) ||
-          selectedAudience.toLowerCase().includes(preset.id);
+        const isSelected =
+          selectedAudience.toLowerCase().includes(preset.value.toLowerCase()) || selectedAudience.toLowerCase().includes(preset.id);
         const label = preset.labelEn;
 
         return (

@@ -15,7 +15,11 @@ export function resolveAnswerCardSkin(style?: QuizAnswerCardStyle | null, revisi
   if (!style || style === "auto") {
     return answerCardRegistry.get("glossy_arcade")!;
   }
-  return (getStyleModuleAtRevision("answer-card", style, revision)?.renderer as AnswerCardSkin | undefined) ?? answerCardRegistry.get(style) ?? answerCardRegistry.get("glossy_arcade")!;
+  return (
+    (getStyleModuleAtRevision("answer-card", style, revision)?.renderer as AnswerCardSkin | undefined) ??
+    answerCardRegistry.get(style) ??
+    answerCardRegistry.get("glossy_arcade")!
+  );
 }
 
 export function getAnswerCardSkinsCss(revision?: string): string {
@@ -26,7 +30,9 @@ export function getAnswerCardSkinsCss(revision?: string): string {
   const snapshot = revision ? getStyleSnapshotAtRevision(revision) : getActiveStyleSnapshot();
   if (!snapshot) return css;
   const activeRevision = snapshot.revision;
-  for (const entry of snapshot.catalog.entries.filter((item) => item.slot === "answer-card" && !BUILT_IN_ANSWER_CARD_MODULES.some((module) => module.manifest.id === item.id))) {
+  for (const entry of snapshot.catalog.entries.filter(
+    (item) => item.slot === "answer-card" && !BUILT_IN_ANSWER_CARD_MODULES.some((module) => module.manifest.id === item.id),
+  )) {
     const module = getStyleModuleAtRevision("answer-card", entry.id, activeRevision);
     if (module) css += `\n/* === Answer Card: ${entry.displayName} === */\n` + renderValidatedModuleCss(module) + "\n";
   }

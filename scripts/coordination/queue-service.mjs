@@ -24,7 +24,6 @@ export function getIntegratorReport({ workspaceRoot, customDbPath } = {}) {
     const stale = [];
     const releasable = [];
     const released = [];
-    const blocked = [];
 
     // Filter active vs released/expired
     for (const c of allClaims) {

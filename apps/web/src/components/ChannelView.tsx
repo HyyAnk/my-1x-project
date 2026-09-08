@@ -11,6 +11,7 @@ import { TopicHistoryRow } from "../features/channel/components/TopicHistoryRow"
 import { EpisodeCard } from "../features/channel/components/EpisodeCard";
 import { CreateChannelModal } from "../features/channel/components/CreateChannelModal";
 import { ChannelDetail } from "../features/channel/ChannelDetail";
+import { ShortReelStudio } from "../features/shortReel/ShortReelStudio";
 
 export {
   DeleteChannelModal,
@@ -23,11 +24,13 @@ export {
   EpisodeCard,
   ChannelDetail,
   CreateChannelModal,
+  ShortReelStudio,
 };
 
 export function ChannelsView({
   selectedChannel,
   selectedEpisodeId,
+  selectedShortReelId,
   channels,
   tasks,
   activeTab,
@@ -48,6 +51,7 @@ export function ChannelsView({
 }: {
   selectedChannel: Channel | null;
   selectedEpisodeId: string | null;
+  selectedShortReelId?: string | null;
   channels: Channel[];
   tasks: Task[];
   activeTab?: string | null;
@@ -66,6 +70,17 @@ export function ChannelsView({
   imagesPerBundle: number;
   simplifyMode?: boolean;
 }) {
+  if (selectedChannel && selectedShortReelId) {
+    return (
+      <ShortReelStudio
+        channel={selectedChannel}
+        reelId={selectedShortReelId}
+        onBack={() => openChannel(selectedChannel.channel_id)}
+        onNotice={onNotice}
+      />
+    );
+  }
+
   if (selectedChannel && selectedEpisodeId) {
     return (
       <EpisodeDetail

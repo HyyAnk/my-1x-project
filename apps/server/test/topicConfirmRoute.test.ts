@@ -8,7 +8,9 @@ import { createStubQuizLlmClient } from "./helpers/stubQuizLlmClient.js";
 const roots: string[] = [];
 
 afterEach(async () => {
-  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }).catch(() => {})));
+  await Promise.all(
+    roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 }).catch(() => {})),
+  );
 });
 
 describe("topic confirmation", () => {
@@ -27,6 +29,8 @@ describe("topic confirmation", () => {
       const topics = Array.from({ length: 5 }, (_, index) => ({
         topic_id: `question-count-${index}`,
         channel_id: channel.channel_id,
+        content_kind: "episode" as const,
+        origin: "discovery" as const,
         title: `Question count topic ${index}`,
         premise: "Premise",
         why_it_fits: "Fits",
@@ -45,7 +49,12 @@ describe("topic confirmation", () => {
       });
 
       expect(response.statusCode).toBe(201);
-      expect(response.json().episode).toMatchObject({
+      const body = response.json<{
+        content_kind: string;
+        episode: { quiz_config: { question_count: number }; target_duration_minutes: number; target_word_count: number };
+      }>();
+      expect(body.content_kind).toBe("episode");
+      expect(body.episode).toMatchObject({
         quiz_config: { question_count: 12 },
         target_duration_minutes: 7,
         target_word_count: 918,
@@ -74,6 +83,8 @@ describe("topic confirmation", () => {
       const topics = Array.from({ length: 5 }, (_, index) => ({
         topic_id: `question-limit-${index}`,
         channel_id: channel.channel_id,
+        content_kind: "episode" as const,
+        origin: "discovery" as const,
         title: `Question limit topic ${index}`,
         premise: "Premise",
         why_it_fits: "Fits",

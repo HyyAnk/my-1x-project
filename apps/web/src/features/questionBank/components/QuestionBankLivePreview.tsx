@@ -1,24 +1,159 @@
 import { useState } from "react";
-import { ArrowsClockwise, DeviceMobile, Eye, EyeSlash, GameController, Info, Monitor, Sparkle, VideoCamera } from "@phosphor-icons/react";
+import { ArrowsClockwise, Eye, EyeSlash, GameController, Info, Sparkle, VideoCamera } from "@phosphor-icons/react";
 import type { BankQuestionWithCooldown } from "../types/questionBankUi.types";
 import { useTranslation } from "../../../i18n";
 
 export interface QuestionBankLivePreviewProps {
   question: BankQuestionWithCooldown | null;
-  aspect: "16:9" | "9:16";
   buildingVideo?: boolean;
   transcreating?: boolean;
-  onToggleAspect: () => void;
-  onQuickBuildVideo?: (q: BankQuestionWithCooldown, aspect: "16:9" | "9:16") => void;
+  onQuickBuildVideo?: (q: BankQuestionWithCooldown) => void;
   onTranscreateQuestion?: (questionId: string, targetLanguage: string) => Promise<unknown>;
+}
+
+function PreviewEmptyState() {
+  const { t } = useTranslation();
+  return (
+    <div className="qb-preview-empty">
+      <div className="qb-preview-empty-icon">
+        <Sparkle size={36} weight="fill" />
+      </div>
+      <p className="qb-preview-empty-title">No Question Selected</p>
+      <p className="qb-preview-empty-text">{t("questionBank.preview.emptyPrompt")}</p>
+    </div>
+  );
+}
+
+function ArcadeTabContent({
+  question,
+  currentQuestionText,
+  currentChoices,
+  currentExplanation,
+  showAnswer,
+}: {
+  question: BankQuestionWithCooldown;
+  currentQuestionText: string;
+  currentChoices: Array<{ id: string; text: string; is_correct?: boolean }>;
+  currentExplanation?: string | null;
+  showAnswer: boolean;
+}) {
+  const { t } = useTranslation();
+  return (
+    <>
+      {/* Candy Arcade Canvas Mockup */}
+      <div className="qb-mockup-frame is-horizontal">
+        <div className="qb-mockup-screen">
+          {/* Header Bar */}
+          <div className="qb-mockup-top">
+            <span className="qb-mockup-subtopic">{(question.subtopic_id || "").replaceAll("_", " ").toUpperCase()}</span>
+            <span className="qb-mockup-timer">⏱️ {question.thinking_seconds ?? 4}s</span>
+          </div>
+
+          {/* Question Text */}
+          <div className="qb-mockup-q-box">
+            <h3 className="qb-mockup-question">{currentQuestionText}</h3>
+          </div>
+
+          {/* Simulated Choices */}
+          <div className="qb-mockup-choices">
+            {currentChoices.map((c) => {
+              const isCorrect = c.id === question.correct_choice_id;
+              const highlight = showAnswer && isCorrect;
+
+              return (
+                <div key={c.id} className={`qb-mockup-choice ${highlight ? "is-correct" : ""}`}>
+                  <span className="qb-mockup-choice-id">{c.id}</span>
+                  <span className="qb-mockup-choice-text">{c.text}</span>
+                  {highlight && <span className="qb-mockup-correct-tag">{t("questionBank.preview.correctBadge")}</span>}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Visual Spec Hint if provided */}
+          {question.visual_spec?.prompt && (
+            <div className="qb-mockup-visual-hint">
+              <Sparkle size={13} weight="fill" />
+              <span>
+                {t("questionBank.preview.aiPromptHint")} {question.visual_spec.prompt}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Compact Explanation on Arcade tab */}
+      {currentExplanation && (
+        <div className="qb-preview-info-box">
+          <strong>{t("questionBank.preview.explanation")}</strong>
+          <p>{currentExplanation}</p>
+        </div>
+      )}
+    </>
+  );
+}
+
+function DetailsTabContent({
+  question,
+  currentExplanation,
+  currentFunFact,
+}: {
+  question: BankQuestionWithCooldown;
+  currentExplanation?: string | null;
+  currentFunFact?: string | null;
+}) {
+  const { t } = useTranslation();
+  return (
+    <>
+      {/* Explanation & Facts */}
+      <div className="qb-preview-info-box">
+        <div className="qb-info-row">
+          <strong>{t("questionBank.preview.explanation")}</strong>
+          <p>{currentExplanation || t("questionBank.preview.noExplanation")}</p>
+        </div>
+        {currentFunFact && (
+          <div className="qb-info-row qb-info-funfact">
+            <strong>{t("questionBank.preview.funFact")}</strong>
+            <p>{currentFunFact}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Question Spec Metadata Grid */}
+      <div className="qb-metadata-grid">
+        <div className="qb-metadata-item">
+          <span className="qb-metadata-label">Archetype</span>
+          <span className="qb-metadata-val">{question.archetype_id}</span>
+        </div>
+        <div className="qb-metadata-item">
+          <span className="qb-metadata-label">Domain</span>
+          <span className="qb-metadata-val">{question.domain_id.replaceAll("_", " ")}</span>
+        </div>
+        <div className="qb-metadata-item">
+          <span className="qb-metadata-label">Thinking Time</span>
+          <span className="qb-metadata-val">{question.thinking_seconds ?? 4}s</span>
+        </div>
+        <div className="qb-metadata-item">
+          <span className="qb-metadata-label">Audience / Age</span>
+          <span className="qb-metadata-val">{question.age_band || "family"}</span>
+        </div>
+      </div>
+
+      {/* Visual Spec Image Prompt */}
+      {question.visual_spec?.prompt && (
+        <div className="qb-preview-info-box">
+          <strong>Visual Prompt (English):</strong>
+          <p>{question.visual_spec.prompt}</p>
+        </div>
+      )}
+    </>
+  );
 }
 
 export function QuestionBankLivePreview({
   question,
-  aspect,
   buildingVideo,
   transcreating,
-  onToggleAspect,
   onQuickBuildVideo,
   onTranscreateQuestion,
 }: QuestionBankLivePreviewProps) {
@@ -28,18 +163,9 @@ export function QuestionBankLivePreview({
   const [selectedLang, setSelectedLang] = useState<string>("original");
 
   if (!question) {
-    return (
-      <div className="qb-preview-empty">
-        <div className="qb-preview-empty-icon">
-          <Sparkle size={36} weight="fill" />
-        </div>
-        <p className="qb-preview-empty-title">No Question Selected</p>
-        <p className="qb-preview-empty-text">{t("questionBank.preview.emptyPrompt")}</p>
-      </div>
-    );
+    return <PreviewEmptyState />;
   }
 
-  const isShorts = aspect === "9:16";
   const availableLangs = Object.keys(question.translations || {}).filter((l) => l !== (question.language || "en"));
   const activeTranslation = selectedLang !== "original" ? question.translations?.[selectedLang] : null;
 
@@ -66,16 +192,6 @@ export function QuestionBankLivePreview({
           <div className="qb-preview-controls">
             <button
               type="button"
-              className="qb-preview-toggle-btn"
-              onClick={onToggleAspect}
-              title={isShorts ? t("questionBank.preview.aspectLandscape") : t("questionBank.preview.aspectShorts")}
-            >
-              {isShorts ? <Monitor size={14} /> : <DeviceMobile size={14} />}
-              <span>{aspect}</span>
-            </button>
-
-            <button
-              type="button"
               className={`qb-preview-toggle-btn ${showAnswer ? "is-active" : ""}`}
               onClick={() => setShowAnswer((prev) => !prev)}
               title={showAnswer ? t("questionBank.preview.hideAnswer") : t("questionBank.preview.showAnswer")}
@@ -92,7 +208,7 @@ export function QuestionBankLivePreview({
             type="button"
             className="qb-btn qb-btn-primary qb-quick-build-btn"
             disabled={buildingVideo}
-            onClick={() => onQuickBuildVideo(question, aspect)}
+            onClick={() => onQuickBuildVideo(question)}
           >
             <VideoCamera size={16} weight="fill" />
             <span>{buildingVideo ? t("questionBank.preview.quickBuilding") : t("questionBank.preview.quickBuildBtn")}</span>
@@ -166,101 +282,15 @@ export function QuestionBankLivePreview({
         </div>
 
         {activeTab === "arcade" ? (
-          <>
-            {/* Candy Arcade Canvas Mockup */}
-            <div className={`qb-mockup-frame ${isShorts ? "is-vertical" : "is-horizontal"}`}>
-              <div className="qb-mockup-screen">
-                {/* Header Bar */}
-                <div className="qb-mockup-top">
-                  <span className="qb-mockup-subtopic">{(question.subtopic_id || "").replaceAll("_", " ").toUpperCase()}</span>
-                  <span className="qb-mockup-timer">⏱️ {question.thinking_seconds ?? 4}s</span>
-                </div>
-
-                {/* Question Text */}
-                <div className="qb-mockup-q-box">
-                  <h3 className="qb-mockup-question">{currentQuestionText}</h3>
-                </div>
-
-                {/* Simulated Choices */}
-                <div className="qb-mockup-choices">
-                  {currentChoices.map((c) => {
-                    const isCorrect = c.id === question.correct_choice_id;
-                    const highlight = showAnswer && isCorrect;
-
-                    return (
-                      <div key={c.id} className={`qb-mockup-choice ${highlight ? "is-correct" : ""}`}>
-                        <span className="qb-mockup-choice-id">{c.id}</span>
-                        <span className="qb-mockup-choice-text">{c.text}</span>
-                        {highlight && <span className="qb-mockup-correct-tag">{t("questionBank.preview.correctBadge")}</span>}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Visual Spec Hint if provided */}
-                {question.visual_spec?.prompt && (
-                  <div className="qb-mockup-visual-hint">
-                    <Sparkle size={13} weight="fill" />
-                    <span>
-                      {t("questionBank.preview.aiPromptHint")} {question.visual_spec.prompt}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Compact Explanation on Arcade tab */}
-            {currentExplanation && (
-              <div className="qb-preview-info-box">
-                <strong>{t("questionBank.preview.explanation")}</strong>
-                <p>{currentExplanation}</p>
-              </div>
-            )}
-          </>
+          <ArcadeTabContent
+            question={question}
+            currentQuestionText={currentQuestionText}
+            currentChoices={currentChoices}
+            currentExplanation={currentExplanation}
+            showAnswer={showAnswer}
+          />
         ) : (
-          <>
-            {/* Explanation & Facts */}
-            <div className="qb-preview-info-box">
-              <div className="qb-info-row">
-                <strong>{t("questionBank.preview.explanation")}</strong>
-                <p>{currentExplanation || t("questionBank.preview.noExplanation")}</p>
-              </div>
-              {currentFunFact && (
-                <div className="qb-info-row qb-info-funfact">
-                  <strong>{t("questionBank.preview.funFact")}</strong>
-                  <p>{currentFunFact}</p>
-                </div>
-              )}
-            </div>
-
-            {/* Question Spec Metadata Grid */}
-            <div className="qb-metadata-grid">
-              <div className="qb-metadata-item">
-                <span className="qb-metadata-label">Archetype</span>
-                <span className="qb-metadata-val">{question.archetype_id}</span>
-              </div>
-              <div className="qb-metadata-item">
-                <span className="qb-metadata-label">Domain</span>
-                <span className="qb-metadata-val">{question.domain_id.replaceAll("_", " ")}</span>
-              </div>
-              <div className="qb-metadata-item">
-                <span className="qb-metadata-label">Thinking Time</span>
-                <span className="qb-metadata-val">{question.thinking_seconds ?? 4}s</span>
-              </div>
-              <div className="qb-metadata-item">
-                <span className="qb-metadata-label">Audience / Age</span>
-                <span className="qb-metadata-val">{question.age_band || "family"}</span>
-              </div>
-            </div>
-
-            {/* Visual Spec Image Prompt */}
-            {question.visual_spec?.prompt && (
-              <div className="qb-preview-info-box">
-                <strong>Visual Prompt (English):</strong>
-                <p>{question.visual_spec.prompt}</p>
-              </div>
-            )}
-          </>
+          <DetailsTabContent question={question} currentExplanation={currentExplanation} currentFunFact={currentFunFact} />
         )}
       </div>
     </div>

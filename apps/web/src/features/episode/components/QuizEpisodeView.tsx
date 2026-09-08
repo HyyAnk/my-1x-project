@@ -66,13 +66,11 @@ export function QuizEpisodeView({
         onSaveCounterStyle={pipeline.saveCounterStyle}
         onSaveBackgroundStyle={pipeline.saveBackgroundStyle}
         onSavePaletteId={pipeline.savePaletteId}
-        onSaveAspectRatio={pipeline.saveAspectRatio}
         onSaveThumbnailRatio={pipeline.saveThumbnailRatio}
         onApplyStylePreset={pipeline.applyStylePreset}
         setEpisode={setEpisode}
         onNotice={onNotice}
       />
-
 
       <QuizV2Panel
         state={quizV2}

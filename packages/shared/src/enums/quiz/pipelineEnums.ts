@@ -26,20 +26,6 @@ export const DirectorEnergySchema = z.enum(["gentle", "curious", "playful", "exc
 
 export const DirectorVisualDensitySchema = z.enum(["calm", "focused", "lively", "burst"]);
 
-export const QUIZ_PORTRAIT_LAYOUT_IDS = [
-  "portrait_hero_choices",
-  "portrait_split_versus",
-  "portrait_verdict_tf",
-  "portrait_stack_list",
-] as const;
-
-export const QuizPortraitLayoutIdSchema = z.enum(QUIZ_PORTRAIT_LAYOUT_IDS);
-export type QuizPortraitLayoutId = z.infer<typeof QuizPortraitLayoutIdSchema>;
-
-export function isPortraitQuizLayoutId(layoutId: string): layoutId is QuizPortraitLayoutId {
-  return (QUIZ_PORTRAIT_LAYOUT_IDS as readonly string[]).includes(layoutId);
-}
-
 export const QuizLayoutIdSchema = z.enum([
   "auto",
   "media_left_choices_right",
@@ -50,10 +36,6 @@ export const QuizLayoutIdSchema = z.enum([
   "full_stack_list",
   "mystery_reveal",
   "clue_deduction",
-  "portrait_hero_choices",
-  "portrait_split_versus",
-  "portrait_verdict_tf",
-  "portrait_stack_list",
 ]);
 export type QuizLayoutId = z.infer<typeof QuizLayoutIdSchema>;
 

@@ -1,7 +1,7 @@
 import type { Channel, MascotProfile, ResolvedQuizLayoutId } from "@studio/shared";
 import type { Notice } from "../../components/types";
 
-export type StageAspectRatio = "16:9" | "9:16";
+export type StageAspectRatio = "16:9";
 export type StageViewMode = "video_stage" | "grid";
 export type StagePosition = "bottom_left" | "bottom_right";
 export type StageReactionStyle = "celebrate" | "oops";

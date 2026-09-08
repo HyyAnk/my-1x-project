@@ -14,10 +14,7 @@ import {
 } from "../src/quiz/mascotPromptContract.js";
 
 describe("mascotPromptContract", () => {
-  const testMascot: Pick<
-    MascotProfile,
-    "name" | "description" | "visual_style" | "master_prompt" | "color_theme"
-  > = {
+  const testMascot: Pick<MascotProfile, "name" | "description" | "visual_style" | "master_prompt" | "color_theme"> = {
     name: "Pip the Penguin",
     description: "A cheerful baby penguin with a tiny scarf and warm smile",
     visual_style: "pixar_3d",
@@ -71,9 +68,7 @@ describe("mascotPromptContract", () => {
 
       expect(prompt).toContain("@1");
       expect(prompt).toContain('Strictly preserve character identity from @1 for "Pip the Penguin"');
-      expect(prompt).toContain(
-        "Theme & Costume: Styled in authentic tactical military uniform, camouflage, beret attire and accessories.",
-      );
+      expect(prompt).toContain("Theme & Costume: Styled in authentic tactical military uniform, camouflage, beret attire and accessories.");
       expect(prompt).toContain("Pose and Action: Pointing hand or pointer stick at question / explanation card.");
       expect(prompt).toContain("floating character");
       expect(prompt).toContain("no ground shadow");
@@ -87,9 +82,7 @@ describe("mascotPromptContract", () => {
         keyword,
       });
 
-      expect(prompt).toContain(
-        "Theme & Costume: Styled in authentic cyberpunk neon streetwear, glowing visor attire and accessories.",
-      );
+      expect(prompt).toContain("Theme & Costume: Styled in authentic cyberpunk neon streetwear, glowing visor attire and accessories.");
       expect(prompt).toContain(
         "Pose and Action: Chin-resting, pondering or companion pose while question is presented and timer counts down.",
       );
@@ -125,9 +118,7 @@ describe("mascotPromptContract", () => {
 
       expect(prompt).toContain("@1");
       expect(prompt).toContain('Strictly preserve character identity from @1 for "Pip the Penguin"');
-      expect(prompt).toContain(
-        "Theme & Costume: Styled in authentic steampunk aviator jacket, brass goggles attire and accessories.",
-      );
+      expect(prompt).toContain("Theme & Costume: Styled in authentic steampunk aviator jacket, brass goggles attire and accessories.");
       expect(prompt).toContain(`Pose and Action: ${customAction}.`);
       expect(validateMascotPromptContract(prompt, true)).toBe(true);
     });
@@ -197,8 +188,7 @@ describe("mascotPromptContract", () => {
     });
 
     it("validates standalone prompts requiring floating character, no ground shadow, and rim lighting", () => {
-      const validPrompt =
-        "Chibi penguin pose. floating character, no ground shadow, high contrast studio rim lighting.";
+      const validPrompt = "Chibi penguin pose. floating character, no ground shadow, high contrast studio rim lighting.";
       expect(validateMascotPromptContract(validPrompt, false)).toBe(true);
 
       const missingRimLighting = "Chibi penguin pose. floating character, no ground shadow, soft ambient light.";
@@ -246,10 +236,16 @@ describe("mascotPromptContract", () => {
 
       expect(prompt).toContain("@1");
       expect(prompt).toContain('Strictly preserve character identity from @1 for "Pip the Penguin"');
-      expect(prompt).toContain("face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image");
-      expect(prompt).toContain("Theme & Costume: Styled in authentic stealth cyber armor katana holographic visor attire, costume, and accessories.");
+      expect(prompt).toContain(
+        "face, fur/skin tone, eye shape, and chibi 1:2 head-to-body proportions matching the master reference image",
+      );
+      expect(prompt).toContain(
+        "Theme & Costume: Styled in authentic stealth cyber armor katana holographic visor attire, costume, and accessories.",
+      );
       expect(prompt).toContain('Full-body single character concept illustration of "Pip the Penguin" dressed in Cyber Ninja style.');
-      expect(prompt).toContain("Single centered subject standing proudly facing camera, cute chibi proportions (1:2 head-to-body), large expressive sparkling eyes, friendly and joyful expression.");
+      expect(prompt).toContain(
+        "Single centered subject standing proudly facing camera, cute chibi proportions (1:2 head-to-body), large expressive sparkling eyes, friendly and joyful expression.",
+      );
       expect(prompt).toContain("floating character");
       expect(prompt).toContain("no ground shadow");
       expect(prompt).toContain("high contrast studio rim lighting");
@@ -267,7 +263,9 @@ describe("mascotPromptContract", () => {
 
       expect(prompt).toContain("@1");
       expect(prompt).toContain("Theme & Costume: Styled in authentic Victorian Detective attire, costume, and accessories.");
-      expect(prompt).toContain('Full-body single character concept illustration of "Pip the Penguin" dressed in Victorian Detective style.');
+      expect(prompt).toContain(
+        'Full-body single character concept illustration of "Pip the Penguin" dressed in Victorian Detective style.',
+      );
       expect(validateMascotPromptContract(prompt, true)).toBe(true);
     });
 
@@ -278,7 +276,9 @@ describe("mascotPromptContract", () => {
       expect(prompt).toContain("@1");
       expect(prompt).toContain(override);
       expect(prompt).toContain('Full-body single character concept illustration of "Pip the Penguin" dressed in Cyber Ninja style.');
-      expect(prompt).toContain("Theme & Costume: Styled in authentic stealth cyber armor katana holographic visor attire, costume, and accessories.");
+      expect(prompt).toContain(
+        "Theme & Costume: Styled in authentic stealth cyber armor katana holographic visor attire, costume, and accessories.",
+      );
       expect(prompt).toContain("floating character");
       expect(prompt).toContain("no ground shadow");
       expect(validateMascotPromptContract(prompt, true)).toBe(true);
@@ -302,24 +302,24 @@ describe("mascotPromptContract", () => {
 
     it("excludes already used prompts and ids cleanly", () => {
       const allThinking = getMascotPoses("thinking");
-      const usedPrompts = [allThinking[0]!.prompt, allThinking[1]!.id];
+      const usedPrompts = [allThinking[0].prompt, allThinking[1].id];
 
       const unused = getUnusedMascotPoses("thinking", usedPrompts);
       expect(unused.length).toBe(18);
-      expect(unused.find((p) => p.id === allThinking[0]!.id)).toBeUndefined();
-      expect(unused.find((p) => p.id === allThinking[1]!.id)).toBeUndefined();
+      expect(unused.find((p) => p.id === allThinking[0].id)).toBeUndefined();
+      expect(unused.find((p) => p.id === allThinking[1].id)).toBeUndefined();
     });
 
     it("shuffles and picks distinct non-overlapping unused poses", () => {
       const allCelebrate = getMascotPoses("celebrate");
-      const usedPrompts = [allCelebrate[0]!.prompt, allCelebrate[1]!.prompt];
+      const usedPrompts = [allCelebrate[0].prompt, allCelebrate[1].prompt];
 
       const picked = pickShuffledUnusedPoses("celebrate", usedPrompts, 10);
       expect(picked.length).toBe(10);
       const pickedSet = new Set(picked.map((p) => p.id));
       expect(pickedSet.size).toBe(10);
-      expect(pickedSet.has(allCelebrate[0]!.id)).toBe(false);
-      expect(pickedSet.has(allCelebrate[1]!.id)).toBe(false);
+      expect(pickedSet.has(allCelebrate[0].id)).toBe(false);
+      expect(pickedSet.has(allCelebrate[1].id)).toBe(false);
     });
 
     it("picks a single random unused pose excluding used poses", () => {
@@ -327,8 +327,8 @@ describe("mascotPromptContract", () => {
       // Use 19 out of 20 poses
       const usedPrompts = allThinking.slice(0, 19).map((p) => p.prompt);
       const chosen = pickRandomUnusedPose("thinking", usedPrompts);
-      expect(chosen.id).toBe(allThinking[19]!.id);
-      expect(chosen.prompt).toBe(allThinking[19]!.prompt);
+      expect(chosen.id).toBe(allThinking[19].id);
+      expect(chosen.prompt).toBe(allThinking[19].prompt);
     });
   });
 });

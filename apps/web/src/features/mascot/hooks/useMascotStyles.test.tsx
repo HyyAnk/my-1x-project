@@ -1,7 +1,8 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, type Mock } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import type { GenerateMascotStyleConceptResponse, MascotProfile, MascotStyle } from "@studio/shared";
 import { useMascotStyles } from "./useMascotStyles";
+import type { Notice } from "../../../components/types";
 import { api } from "../../../api";
 
 vi.mock("../../../api", () => ({
@@ -84,12 +85,12 @@ const mockMascot: MascotProfile = {
 
 describe("useMascotStyles", () => {
   let onMascotUpdated: ReturnType<typeof vi.fn>;
-  let onNotice: ReturnType<typeof vi.fn>;
+  let onNotice: Mock<(notice: Notice) => void>;
 
   beforeEach(() => {
     vi.clearAllMocks();
     onMascotUpdated = vi.fn();
-    onNotice = vi.fn();
+    onNotice = vi.fn<(notice: Notice) => void>();
   });
 
   it("resolves the initial active style and allows switching style tabs", () => {
@@ -141,9 +142,7 @@ describe("useMascotStyles", () => {
 
     expect(result.current.activeStyle?.id).toBe("core");
     expect(result.current.activeStyle?.states.thinking).toHaveLength(1);
-    expect(result.current.activeStyle?.states.thinking[0].image_url).toBe(
-      "https://example.com/legacy_think.png",
-    );
+    expect(result.current.activeStyle?.states.thinking[0].image_url).toBe("https://example.com/legacy_think.png");
   });
 
   it("creates a new style, updates state, and displays success notice", async () => {
@@ -193,9 +192,9 @@ describe("useMascotStyles", () => {
     expect(result.current.activeStyleId).toBe("style_winter");
     expect(result.current.isCreateModalOpen).toBe(false);
     expect(result.current.newStyleName).toBe("");
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({ tone: "good", message: expect.stringContaining("Winter Magic") }),
-    );
+    expect(onNotice).toHaveBeenCalled();
+    expect(onNotice.mock.lastCall?.[0]?.tone).toBe("good");
+    expect(onNotice.mock.lastCall?.[0]?.message).toContain("Winter Magic");
   });
 
   it("prevents creating style with empty name and displays error notice", async () => {
@@ -212,18 +211,13 @@ describe("useMascotStyles", () => {
     });
 
     expect(api.createMascotStyle).not.toHaveBeenCalled();
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({ tone: "bad", message: "Style name is required" }),
-    );
+    expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "bad", message: "Style name is required" }));
   });
 
   it("updates style keyword and displays success notice", async () => {
     const updatedMascot: MascotProfile = {
       ...mockMascot,
-      styles: [
-        mockStyleCore,
-        { ...mockStyleCyber, keyword: "futuristic neon, cyberpunk 2077" },
-      ],
+      styles: [mockStyleCore, { ...mockStyleCyber, keyword: "futuristic neon, cyberpunk 2077" }],
     };
     vi.mocked(api.updateMascotStyle).mockResolvedValue({ mascot: updatedMascot });
 
@@ -243,9 +237,7 @@ describe("useMascotStyles", () => {
       keyword: "futuristic neon, cyberpunk 2077",
     });
     expect(onMascotUpdated).toHaveBeenCalledWith(updatedMascot);
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({ tone: "good" }),
-    );
+    expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "good" }));
   });
 
   it("deletes a style and resets active tab to core when deleting current style", async () => {
@@ -275,9 +267,7 @@ describe("useMascotStyles", () => {
     expect(api.deleteMascotStyle).toHaveBeenCalledWith("mascot_1", "style_cyber");
     expect(onMascotUpdated).toHaveBeenCalledWith(updatedMascot);
     expect(result.current.activeStyleId).toBe("core");
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({ tone: "good", message: "Style deleted successfully" }),
-    );
+    expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "good", message: "Style deleted successfully" }));
   });
 
   it("sets active style on mascot profile", async () => {
@@ -302,9 +292,7 @@ describe("useMascotStyles", () => {
     expect(api.setActiveMascotStyle).toHaveBeenCalledWith("mascot_1", "style_cyber");
     expect(onMascotUpdated).toHaveBeenCalledWith(updatedMascot);
     expect(result.current.activeStyleId).toBe("style_cyber");
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({ tone: "good" }),
-    );
+    expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "good" }));
   });
 
   it("handles slot generation with busy indicators and success notice", async () => {
@@ -346,9 +334,7 @@ describe("useMascotStyles", () => {
     });
     expect(onMascotUpdated).toHaveBeenCalledWith(updatedMascot);
     expect(result.current.busySlotKey).toBeNull();
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({ tone: "good" }),
-    );
+    expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "good" }));
   });
 
   it("delegates batch generation to the single server-side batch endpoint", async () => {
@@ -376,12 +362,9 @@ describe("useMascotStyles", () => {
     expect(onMascotUpdated).toHaveBeenCalledWith(updatedMascot);
     expect(result.current.busySlotKey).toBeNull();
     expect(result.current.batchProgress).toBeNull();
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({
-        tone: "good",
-        message: expect.stringContaining("9/9 slots generated"),
-      }),
-    );
+    expect(onNotice).toHaveBeenCalled();
+    expect(onNotice.mock.lastCall?.[0]?.tone).toBe("good");
+    expect(onNotice.mock.lastCall?.[0]?.message).toContain("9/9 slots generated");
   });
 
   it("supports stopping batch generation early by aborting the server request", async () => {
@@ -393,7 +376,7 @@ describe("useMascotStyles", () => {
       }),
     );
 
-    vi.mocked(api.generateMascotStyleBatch).mockImplementation(async () => {
+    vi.mocked(api.generateMascotStyleBatch).mockImplementation(() => {
       act(() => {
         result.current.handleStopBatchGeneration();
       });
@@ -407,12 +390,9 @@ describe("useMascotStyles", () => {
     expect(api.generateMascotStyleSlot).not.toHaveBeenCalled();
     expect(result.current.busySlotKey).toBeNull();
     expect(result.current.batchProgress).toBeNull();
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({
-        tone: "good",
-        message: expect.stringContaining("stopped"),
-      }),
-    );
+    expect(onNotice).toHaveBeenCalled();
+    expect(onNotice.mock.lastCall?.[0]?.tone).toBe("good");
+    expect(onNotice.mock.lastCall?.[0]?.message).toContain("stopped");
   });
 
   it("shows an error notice when the server batch generation fails", async () => {
@@ -473,9 +453,7 @@ describe("useMascotStyles", () => {
       prompt_modifier: "scratching head",
     });
     expect(result.current.editingSlot).toBeNull();
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({ tone: "good" }),
-    );
+    expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "good" }));
 
     act(() => {
       result.current.handleOpenSlotPromptModal("celebrate", 1);
@@ -504,25 +482,21 @@ describe("useMascotStyles", () => {
     await act(async () => {
       await result.current.handleCreateStyle("Failing Style");
     });
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({ tone: "bad", message: "Network timeout" }),
-    );
+    expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "bad", message: "Network timeout" }));
 
     await act(async () => {
       await result.current.handleGenerateSlot("thinking", 1);
     });
     expect(result.current.busySlotKey).toBeNull();
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({ tone: "bad", message: "GPU out of memory" }),
-    );
+    expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "bad", message: "GPU out of memory" }));
 
     await act(async () => {
       await result.current.handleBatchGenerateStyle("all");
     });
     expect(result.current.busySlotKey).toBeNull();
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({ tone: "bad", message: expect.stringContaining("Batch failed") }),
-    );
+    expect(onNotice).toHaveBeenCalled();
+    expect(onNotice.mock.lastCall?.[0]?.tone).toBe("bad");
+    expect(onNotice.mock.lastCall?.[0]?.message).toContain("Batch failed");
   });
 
   it("generates style concept anchor successfully and updates profile", async () => {
@@ -542,9 +516,7 @@ describe("useMascotStyles", () => {
         ],
       },
     };
-    vi.mocked(api.generateStyleConcept).mockResolvedValue(
-      conceptResponse as unknown as GenerateMascotStyleConceptResponse,
-    );
+    vi.mocked(api.generateStyleConcept).mockResolvedValue(conceptResponse as unknown as GenerateMascotStyleConceptResponse);
 
     const { result } = renderHook(() =>
       useMascotStyles({
@@ -572,12 +544,9 @@ describe("useMascotStyles", () => {
     });
     expect(onMascotUpdated).toHaveBeenCalledWith(conceptResponse.mascot);
     expect(result.current.generatingConceptStyleId).toBeNull();
-    expect(onNotice).toHaveBeenCalledWith(
-      expect.objectContaining({
-        tone: "good",
-        message: expect.stringContaining('Concept for style "Cyber Neon" generated successfully'),
-      }),
-    );
+    expect(onNotice).toHaveBeenCalled();
+    expect(onNotice.mock.lastCall?.[0]?.tone).toBe("good");
+    expect(onNotice.mock.lastCall?.[0]?.message).toContain('Concept for style "Cyber Neon" generated successfully');
   });
 
   it("handles errors when generating style concept fails and resets generatingConceptStyleId", async () => {

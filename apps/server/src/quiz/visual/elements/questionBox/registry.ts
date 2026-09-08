@@ -25,7 +25,12 @@ export function resolveQuestionBoxVariant(
   if (!requested || requested === "auto") {
     return QUESTION_BOX_VARIANTS[fallback] ?? QUESTION_BOX_VARIANTS[DEFAULT_QUESTION_BOX_STYLE];
   }
-  return (getStyleModuleAtRevision("question-box", requested, revision)?.renderer as QuestionBoxVariant | undefined) ?? QUESTION_BOX_VARIANTS[requested] ?? QUESTION_BOX_VARIANTS[fallback] ?? QUESTION_BOX_VARIANTS[DEFAULT_QUESTION_BOX_STYLE];
+  return (
+    (getStyleModuleAtRevision("question-box", requested, revision)?.renderer as QuestionBoxVariant | undefined) ??
+    QUESTION_BOX_VARIANTS[requested] ??
+    QUESTION_BOX_VARIANTS[fallback] ??
+    QUESTION_BOX_VARIANTS[DEFAULT_QUESTION_BOX_STYLE]
+  );
 }
 
 export function getQuestionBoxesCss(revision?: string): string {

@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  decodePngToRgba,
-  encodeRgbaToPng,
-  createMosaicPixelateRgba,
-  createMosaicImagePng,
-} from "../src/utils/imageMatting.js";
+import { decodePngToRgba, encodeRgbaToPng, createMosaicPixelateRgba, createMosaicImagePng } from "../src/utils/imageMatting.js";
 
 describe("Mosaic Pixelate Matting Engine", () => {
   it("creates block-averaged mosaic while preserving alpha channel transparency and dimensions", () => {

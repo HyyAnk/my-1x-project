@@ -95,7 +95,7 @@ export async function updateMascotStyle(
       throw new RepositoryError(`Style ${styleId} not found`, "STYLE_NOT_FOUND");
     }
 
-    const existingStyle = styles[styleIndex]!;
+    const existingStyle = styles[styleIndex];
     const now = nowIso();
     const updatedStyle: MascotStyle = {
       ...existingStyle,
@@ -132,7 +132,7 @@ export async function saveMascotStyleConcept(
       throw new RepositoryError(`Style ${styleId} not found`, "STYLE_NOT_FOUND");
     }
 
-    const existingStyle = styles[styleIndex]!;
+    const existingStyle = styles[styleIndex];
     const now = nowIso();
     const updatedStyle: MascotStyle = {
       ...existingStyle,
@@ -153,11 +153,7 @@ export async function saveMascotStyleConcept(
   });
 }
 
-export async function deleteMascotStyle(
-  this: RepositoryRuntime,
-  mascotId: string,
-  styleId: string,
-): Promise<MascotProfile> {
+export async function deleteMascotStyle(this: RepositoryRuntime, mascotId: string, styleId: string): Promise<MascotProfile> {
   return withMascotWriteLock(mascotId, async () => {
     const mascot = await this.getMascot(mascotId);
     const styles = mascot.styles || [];
@@ -183,11 +179,7 @@ export async function deleteMascotStyle(
   });
 }
 
-export async function updateMascotSlot(
-  this: RepositoryRuntime,
-  mascotId: string,
-  input: UpdateMascotSlotInput,
-): Promise<MascotProfile> {
+export async function updateMascotSlot(this: RepositoryRuntime, mascotId: string, input: UpdateMascotSlotInput): Promise<MascotProfile> {
   return withMascotWriteLock(mascotId, async () => {
     const mascot = await this.getMascot(mascotId);
     const styles = mascot.styles || [];
@@ -196,13 +188,13 @@ export async function updateMascotSlot(
       throw new RepositoryError(`Style ${input.style_id} not found`, "STYLE_NOT_FOUND");
     }
 
-    const existingStyle = styles[styleIndex]!;
+    const existingStyle = styles[styleIndex];
     const stateSlots = [...(existingStyle.states[input.state] || [])];
     const slotIndex = stateSlots.findIndex((s) => s.slot_index === input.slot_index);
 
     let updatedSlot: MascotStateVariant;
     if (slotIndex >= 0) {
-      const current = stateSlots[slotIndex]!;
+      const current = stateSlots[slotIndex];
       updatedSlot = {
         ...current,
         ...(input.image_url !== undefined ? { image_url: input.image_url } : {}),
@@ -249,11 +241,7 @@ export async function updateMascotSlot(
   });
 }
 
-export async function setActiveMascotStyle(
-  this: RepositoryRuntime,
-  mascotId: string,
-  styleId: string,
-): Promise<MascotProfile> {
+export async function setActiveMascotStyle(this: RepositoryRuntime, mascotId: string, styleId: string): Promise<MascotProfile> {
   return withMascotWriteLock(mascotId, async () => {
     const mascot = await this.getMascot(mascotId);
     const styles = mascot.styles || [];

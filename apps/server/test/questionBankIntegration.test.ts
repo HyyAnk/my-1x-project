@@ -21,7 +21,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
     }
     app = await buildApp(curr);
     tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-integration-storage-"));
-    app.repository.setStorageRoot(tempStorage);
+    await app.repository.setStorageRoot(tempStorage);
     await app.repository.deleteQuestionBankQuestion("INT-TEST-001").catch(() => {});
     await app.repository.deleteQuestionBankQuestion("INT-TEST-002").catch(() => {});
     await app.repository.deleteQuestionBankQuestion("INT-AUTO-TRANS-001").catch(() => {});
@@ -191,7 +191,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
         channelId: testChannelId,
         input: {
           question_id: "INT-TEST-001",
-          render_aspect_ratio: "9:16",
+          render_aspect_ratio: "16:9",
           auto_start_pipeline: true,
         },
       });
@@ -200,7 +200,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       expect(result.episode.episode_id).toBeDefined();
       expect(result.episode.quiz_config.archetype).toBe("speed_blitz");
       expect(result.episode.quiz_config.target_layout).toBe("full_stack_list");
-      expect(result.episode.quiz_config.render_aspect_ratio).toBe("9:16");
+      expect(result.episode.quiz_config.render_aspect_ratio).toBe("16:9");
       expect(result.cooldown_recorded).toBe(true);
 
       // 3. Verify quiz.json was written
@@ -219,6 +219,20 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       const q = cooldownQuery.questions[0];
       expect(q.channel_cooldown?.is_cooldown).toBe(true);
       expect(q.channel_cooldown?.days_remaining).toBeGreaterThanOrEqual(29);
+    });
+
+    it("rejects episode creation with unsupported aspect ratio 9:16", async () => {
+      await expect(
+        createEpisodeFromQuestionBank({
+          repository: app.repository,
+          tasks: app.tasks,
+          channelId: testChannelId,
+          input: {
+            question_id: "INT-TEST-001",
+            render_aspect_ratio: "9:16" as "16:9",
+          },
+        }),
+      ).rejects.toThrow("Episode creation only supports 16:9 landscape");
     });
 
     it("POST /api/channels/:channelId/question-bank/create-episode creates episode via REST API", async () => {
@@ -248,13 +262,16 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
         url: `/api/channels/${testChannelId}/question-bank/create-episode`,
         payload: {
           question_id: "INT-TEST-002",
-          render_aspect_ratio: "9:16",
+          render_aspect_ratio: "16:9",
           auto_start_pipeline: false,
         },
       });
 
       expect(res.statusCode).toBe(201);
-      const body = JSON.parse(res.body);
+      const body = JSON.parse(res.body) as {
+        episode: { quiz_config: { archetype: string } };
+        cooldown_recorded: boolean;
+      };
       expect(body.episode).toBeDefined();
       expect(body.episode.quiz_config.archetype).toBe("verdict_true_false");
       expect(body.episode.quiz_config.target_layout).toBe("verdict_true_false");
@@ -290,9 +307,9 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
 
       const emitter = new EventEmitter();
       const mockLlmClient = Object.assign(emitter, {
-        connect: async () => {},
-        startThread: async () => "thread-mock-int-1",
-        startTurn: async (threadId: string, prompt: string) => {
+        connect: () => Promise.resolve(),
+        startThread: () => Promise.resolve("thread-mock-int-1"),
+        startTurn: (_threadId: string, _prompt: string) => {
           setTimeout(() => {
             emitter.emit("notification", {
               method: "item/agentMessage/delta",
@@ -316,7 +333,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
               params: { turn: { status: "completed" } },
             });
           }, 10);
-          return "turn-mock-int-1";
+          return Promise.resolve("turn-mock-int-1");
         },
       });
 
@@ -325,10 +342,10 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
         repository: app.repository,
         tasks: app.tasks,
         channelId: testChannelId, // Spanish channel
-        llmClient: mockLlmClient as any,
+        llmClient: mockLlmClient,
         input: {
           question_id: "INT-AUTO-TRANS-001",
-          render_aspect_ratio: "9:16",
+          render_aspect_ratio: "16:9",
           auto_start_pipeline: false,
         },
       });
@@ -381,7 +398,11 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       });
 
       expect(res.statusCode).toBe(200);
-      const body = JSON.parse(res.body);
+      const body = JSON.parse(res.body) as {
+        success: boolean;
+        language: string;
+        content: { choices: unknown[] };
+      };
       expect(body.success).toBe(true);
       expect(body.language).toBe("es");
       expect(body.content).toBeDefined();
@@ -400,7 +421,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
         },
       });
       expect(res2.statusCode).toBe(200);
-      const body2 = JSON.parse(res2.body);
+      const body2 = JSON.parse(res2.body) as { cached: boolean };
       expect(body2.cached).toBe(true);
     });
   });

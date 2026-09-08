@@ -1,8 +1,4 @@
-import {
-  type BankGameplayArchetypeId,
-  type BankQuestion,
-  type TopicCandidate,
-} from "@studio/shared";
+import { type BankGameplayArchetypeId, type BankQuestion, type TopicCandidate } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../repository.js";
 import { executeSinglePromptText, type LLMClient } from "../../utils/promptSanitizer.js";
 import { retryWithBackoff } from "../../utils/retryWithBackoff.js";
@@ -24,7 +20,6 @@ export interface EnsureTopicQuestionsWithJitDeps {
   targetLanguage?: string;
   llmClient?: LLMClient | null;
   forceIncludeCooldown?: boolean;
-  aspectRatio?: "16:9" | "9:16";
 }
 
 export interface EnsureTopicQuestionsResult {
@@ -147,7 +142,6 @@ export async function ensureTopicQuestionsWithJitFallback(deps: EnsureTopicQuest
     questionCount: targetCount,
     targetLanguage: deps.targetLanguage,
     forceIncludeCooldown: deps.forceIncludeCooldown,
-    aspectRatio: deps.aspectRatio,
   });
 
   if (curated.missingCount === 0 && curated.selectedQuestions.length >= targetCount) {
@@ -161,10 +155,7 @@ export async function ensureTopicQuestionsWithJitFallback(deps: EnsureTopicQuest
   }
 
   const existingQuestions = curated.selectedQuestions;
-  let archetypeId = resolveTargetArchetype(deps.topic) ?? "deep_trivia";
-  if (deps.aspectRatio === "9:16" && archetypeId === "visual_spotting") {
-    archetypeId = "deep_trivia";
-  }
+  const archetypeId = resolveTargetArchetype(deps.topic) ?? "deep_trivia";
   const domainId = deps.topic.domain_id?.trim() || "nature_animals";
   const subtopicId =
     deps.topic.subtopic_id?.trim() ||

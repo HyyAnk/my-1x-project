@@ -48,6 +48,8 @@ const taskLabels: Record<Task["task_type"], string> = {
   GENERATE_BUNDLE_IMAGE: "Generating visuals",
   GENERATE_VIDEO: "Rendering video",
   GENERATE_QUIZ: "Drafting quiz",
+  GENERATE_SHORT_REEL: "Generating short-reel",
+  GENERATE_SHORT_REEL_PACKAGE: "Generating short-reel package",
 };
 
 function resolveLayoutLabel(format?: Episode["quiz_config"]["quiz_format"]): string {
@@ -84,13 +86,8 @@ function resolveDurationLabel(episode: Episode): string {
 
 function resolveThumbnailRatio(episode: Episode): EpisodeThumbnailRatio | null {
   if (!episode.video_asset_path) return null;
-  if (episode.quiz_config?.render_aspect_ratio === "9:16") {
-    if (episode.thumbnail_asset_path_9_16) return "9:16";
-    if (episode.thumbnail_asset_path_16_9) return "16:9";
-  } else {
-    if (episode.thumbnail_asset_path_16_9) return "16:9";
-    if (episode.thumbnail_asset_path_9_16) return "9:16";
-  }
+  if (episode.thumbnail_asset_path_16_9) return "16:9";
+  if (episode.thumbnail_asset_path_9_16) return "9:16";
   return null;
 }
 

@@ -5,7 +5,6 @@ import {
   QUIZ_LAYOUT_CATALOG,
   QUIZ_LAYOUTS,
   QUIZ_LANDSCAPE_LAYOUT_IDS,
-  QUIZ_PORTRAIT_LAYOUT_IDS,
   isResolvedQuizLayoutId,
   type ResolvedQuizLayoutId,
 } from "./quizLayouts.catalog.js";
@@ -22,7 +21,7 @@ import type {
 export type AnyQuizArchetype = DirectorArchetype | QuizGameplayArchetypeId | (string & {});
 
 export function quizChoicePresentationFor(archetype: AnyQuizArchetype, questionFormat: QuizQuestionFormat): QuizChoicePresentation {
-  return (archetype as string) === "visual_multiple_choice" || questionFormat === "odd_one_out" ? "visual" : "text";
+  return archetype === "visual_multiple_choice" || questionFormat === "odd_one_out" ? "visual" : "text";
 }
 
 export function quizMediaForPresentation(presentation: QuizChoicePresentation): readonly QuizLayoutMediaKind[] {
@@ -89,51 +88,17 @@ export function evaluateQuizLayoutCompatibility(
   return issues.length ? { compatible: false, layout, issues } : { compatible: true, layout };
 }
 
-export const PORTRAIT_QUIZ_AUTO_CANDIDATES: readonly ResolvedQuizLayoutId[] = QUIZ_PORTRAIT_LAYOUT_IDS;
-
 export const LANDSCAPE_QUIZ_AUTO_CANDIDATES: readonly ResolvedQuizLayoutId[] = QUIZ_LANDSCAPE_LAYOUT_IDS;
 
-export function getCompatibleQuizLayout(
-  currentLayoutId: ResolvedQuizLayoutId,
-  targetAspectRatio: "16:9" | "9:16",
-): ResolvedQuizLayoutId {
-  if (targetAspectRatio === "9:16") {
-    if ((QUIZ_PORTRAIT_LAYOUT_IDS as readonly string[]).includes(currentLayoutId)) {
-      return currentLayoutId;
-    }
-    switch (currentLayoutId) {
-      case "split_versus_two":
-        return "portrait_split_versus";
-      case "verdict_true_false":
-        return "portrait_verdict_tf";
-      case "full_stack_list":
-        return "portrait_stack_list";
-      default:
-        return "portrait_hero_choices";
-    }
+export function getCompatibleQuizLayout(currentLayoutId: ResolvedQuizLayoutId, targetAspectRatio: "16:9" | "9:16"): ResolvedQuizLayoutId {
+  if (targetAspectRatio !== "16:9") {
+    throw new Error("Quiz layouts support 16:9 landscape only");
   }
-
-  if ((QUIZ_LANDSCAPE_LAYOUT_IDS as readonly string[]).includes(currentLayoutId)) {
-    return currentLayoutId;
-  }
-  switch (currentLayoutId) {
-    case "portrait_split_versus":
-      return "split_versus_two";
-    case "portrait_verdict_tf":
-      return "verdict_true_false";
-    case "portrait_stack_list":
-      return "full_stack_list";
-    default:
-      return "media_left_choices_right";
-  }
+  return currentLayoutId;
 }
 
-export function filterQuizLayoutsByAspectRatio(
-  aspectRatio?: "16:9" | "9:16",
-): readonly ResolvedQuizLayoutId[] {
-  if (aspectRatio === "9:16") {
-    return QUIZ_PORTRAIT_LAYOUT_IDS;
-  }
+export function filterQuizLayoutsByAspectRatio(aspectRatio?: "16:9" | "9:16"): readonly ResolvedQuizLayoutId[] {
+  if (aspectRatio === "9:16") return [];
   return QUIZ_LANDSCAPE_LAYOUT_IDS;
 }
 
@@ -149,24 +114,6 @@ export function resolveQuizLayout(input: QuizLayoutResolutionInput): QuizLayoutR
     media,
   } as const;
 
-  if (aspectRatio === "9:16" && (input.questionFormat === "odd_one_out" || (input.archetype as string) === "visual_spotting")) {
-    return {
-      ok: false,
-      requestedLayout: input.requestedLayout,
-      source: input.requestedLayout === "auto" ? "auto" : "explicit",
-      issues: [
-        issue(
-          "layout_question_format_unsupported",
-          "questionFormat",
-          input.questionFormat,
-          ["multiple_choice", "image_guess", "true_false"],
-          "The 3-image format 'odd_one_out' and archetype 'visual_spotting' are strictly disallowed in 9:16 portrait video. Vertical videos only support 4 single-hero and list layouts.",
-          "Use a 16:9 landscape aspect ratio for 3-image visual choices, or change question format to multiple_choice, image_guess, or true_false.",
-        ),
-      ],
-    };
-  }
-
   if (input.requestedLayout !== "auto") {
     if (!isResolvedQuizLayoutId(input.requestedLayout)) {
       return {
@@ -179,7 +126,7 @@ export function resolveQuizLayout(input: QuizLayoutResolutionInput): QuizLayoutR
             "layout",
             input.requestedLayout,
             QUIZ_LAYOUTS.map((layout) => layout.id),
-            `Layout ${input.requestedLayout} is not active in the current layout catalog.`,
+            `Layout ${String(input.requestedLayout)} is not active in the current layout catalog.`,
             "Choose an active production layout or configure layout capabilities.",
           ),
         ],
@@ -191,7 +138,7 @@ export function resolveQuizLayout(input: QuizLayoutResolutionInput): QuizLayoutR
       : { ok: false, requestedLayout: input.requestedLayout, source: "explicit", issues: compatibility.issues };
   }
 
-  const autoCandidates = aspectRatio === "9:16" ? PORTRAIT_QUIZ_AUTO_CANDIDATES : LANDSCAPE_QUIZ_AUTO_CANDIDATES;
+  const autoCandidates = LANDSCAPE_QUIZ_AUTO_CANDIDATES;
   const preferred = preferredAutoLayout(input.archetype, input.questionFormat, {
     aspectRatio,
     choiceCount: input.choiceCount,
@@ -249,46 +196,20 @@ export function preferredAutoLayout(
         media?: readonly QuizLayoutMediaKind[];
       },
   maybeQuestionFormat?: QuizQuestionFormat,
-  maybeOptions?: PreferredAutoLayoutOptions,
+  _maybeOptions?: PreferredAutoLayoutOptions,
 ): ResolvedQuizLayoutId {
   let archetype: AnyQuizArchetype;
   let questionFormat: QuizQuestionFormat;
-  let aspectRatio: MascotRenderAspectRatio = "16:9";
-  let choiceCount: number | undefined;
-  let media: readonly QuizLayoutMediaKind[] = [];
 
   if (typeof archetypeOrInput === "object" && archetypeOrInput !== null) {
     archetype = archetypeOrInput.archetype;
     questionFormat = archetypeOrInput.questionFormat;
-    aspectRatio = archetypeOrInput.aspectRatio ?? "16:9";
-    choiceCount = archetypeOrInput.choiceCount;
-    media = archetypeOrInput.media ?? [];
   } else {
     archetype = archetypeOrInput;
     questionFormat = maybeQuestionFormat!;
-    aspectRatio = maybeOptions?.aspectRatio ?? "16:9";
-    choiceCount = maybeOptions?.choiceCount;
-    media = maybeOptions?.media ?? [];
   }
 
   const archetypeStr = String(archetype);
-
-  if (aspectRatio === "9:16") {
-    if (questionFormat === "true_false" || archetypeStr === "true_false") {
-      return "portrait_verdict_tf";
-    }
-    if (choiceCount === 2 || archetypeStr === "versus_faceoff") {
-      return "portrait_split_versus";
-    }
-    if (
-      media.includes("question") ||
-      media.includes("choice") ||
-      questionFormat === "image_guess"
-    ) {
-      return "portrait_hero_choices";
-    }
-    return "portrait_stack_list";
-  }
 
   if (archetypeStr === "clue_deduction") {
     return "clue_deduction";

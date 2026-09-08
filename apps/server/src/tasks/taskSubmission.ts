@@ -2,6 +2,47 @@ import { TaskSchema, makeId, nowIso, type Task, type TaskType } from "@studio/sh
 import { RepositoryError } from "../repository.js";
 import { channelTaskTypes } from "./taskQueuePump.js";
 import type { TaskManagerRuntime } from "./runtime.js";
+import type { GenerateShortReelRequest } from "@studio/shared";
+
+const activeStatuses = ["QUEUED", "RUNNING", "WAITING_APPROVAL"] as const;
+
+function resolveImageVariant(
+  runtime: TaskManagerRuntime,
+  taskType: TaskType,
+  episodeId: string | null,
+  sceneNumber?: number,
+  requestedImageVariant?: number,
+): number {
+  if (taskType !== "GENERATE_BUNDLE_IMAGE" || !episodeId || !sceneNumber) return 0;
+  if (requestedImageVariant !== undefined) return requestedImageVariant;
+  const activeVariantCount = runtime
+    .list()
+    .filter(
+      (item) =>
+        item.task_type === "GENERATE_BUNDLE_IMAGE" &&
+        item.episode_id === episodeId &&
+        item.scene_number === sceneNumber &&
+        activeStatuses.some((status) => status === item.status),
+    ).length;
+  return activeVariantCount % Math.max(1, runtime.imageConfig.images_per_bundle);
+}
+
+function resolveLockKey(
+  taskType: TaskType,
+  channelId: string,
+  episodeId: string | null,
+  sceneNumber: number | undefined,
+  imageVariant: number,
+  reelId?: string | null,
+): string | null {
+  if (taskType === "GENERATE_PIPELINE" && episodeId) return `${episodeId}:pipeline`;
+  if (taskType === "GENERATE_SEQUENCE_SCENES" && episodeId && sceneNumber) return `${episodeId}:sequence:${sceneNumber}`;
+  if (taskType === "GENERATE_BUNDLE_IMAGE" && episodeId && sceneNumber) {
+    return `${episodeId}:bundle:${sceneNumber}:variant:${imageVariant}`;
+  }
+  if (reelId) return `${reelId}:reel`;
+  return channelTaskTypes.has(taskType) ? channelId : episodeId;
+}
 
 export function submitTask(
   runtime: TaskManagerRuntime,
@@ -11,34 +52,14 @@ export function submitTask(
   sceneNumber?: number,
   requestedImageVariant?: number,
   topicHint?: string,
+  reelId?: string | null,
+  shortReelRequest?: GenerateShortReelRequest,
 ): Task {
   if (taskType === "GENERATE_BUNDLE_IMAGE" && !runtime.imageConfig.enabled)
     throw new RepositoryError("Image generation is disabled in Settings", "IMAGE_GENERATION_DISABLED");
 
-  const imageVariant =
-    taskType === "GENERATE_BUNDLE_IMAGE" && episodeId && sceneNumber
-      ? (requestedImageVariant ??
-        runtime
-          .list()
-          .filter(
-            (item) =>
-              item.task_type === "GENERATE_BUNDLE_IMAGE" &&
-              item.episode_id === episodeId &&
-              item.scene_number === sceneNumber &&
-              ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(item.status),
-          ).length % Math.max(1, runtime.imageConfig.images_per_bundle))
-      : 0;
-
-  const lockKey =
-    taskType === "GENERATE_PIPELINE" && episodeId
-      ? `${episodeId}:pipeline`
-      : taskType === "GENERATE_SEQUENCE_SCENES" && episodeId && sceneNumber
-        ? `${episodeId}:sequence:${sceneNumber}`
-        : taskType === "GENERATE_BUNDLE_IMAGE" && episodeId && sceneNumber
-          ? `${episodeId}:bundle:${sceneNumber}:variant:${imageVariant}`
-          : channelTaskTypes.has(taskType)
-            ? channelId
-            : episodeId;
+  const imageVariant = resolveImageVariant(runtime, taskType, episodeId, sceneNumber, requestedImageVariant);
+  const lockKey = resolveLockKey(taskType, channelId, episodeId, sceneNumber, imageVariant, reelId);
 
   if (!lockKey) throw new RepositoryError("Episode is required for this task", "EPISODE_REQUIRED");
 
@@ -77,6 +98,8 @@ export function submitTask(
     task_type: taskType,
     channel_id: channelId,
     episode_id: episodeId,
+    reel_id: reelId ?? null,
+    ...(shortReelRequest ? { short_reel_request: shortReelRequest } : {}),
     status: "QUEUED",
     created_at: nowIso(),
     started_at: null,
@@ -122,6 +145,13 @@ export async function cancelTask(runtime: TaskManagerRuntime, taskId: string): P
   } else if (runtime.activeVideoControllers.has(taskId)) {
     await runtime.update(taskId, { status: "CANCELLED", progress_message: "Stopping video render" });
     runtime.activeVideoControllers.get(taskId)?.abort();
+    await runtime.finish(taskId, "CANCELLED", "Cancelled by user");
+  } else if (
+    (task.status === "RUNNING" && (task.task_type === "GENERATE_SHORT_REEL" || task.task_type === "GENERATE_SHORT_REEL_PACKAGE")) ||
+    runtime.activeShortReelControllers.has(taskId)
+  ) {
+    runtime.activeShortReelControllers.get(taskId)?.abort();
+    await runtime.update(taskId, { status: "CANCELLED", progress_message: "Cancelled by user" });
     await runtime.finish(taskId, "CANCELLED", "Cancelled by user");
   } else {
     const pipeline = runtime.pipelineRuns.get(taskId);

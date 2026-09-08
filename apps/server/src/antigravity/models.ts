@@ -2,7 +2,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import type { AntigravityModel, AppConfig } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
-import { DEFAULT_ANTIGRAVITY_MODELS, describeError, type ActiveSessionInfo, type ResolvedAntigravityTarget } from "./types.js";
+import { describeError, type ActiveSessionInfo, type ResolvedAntigravityTarget } from "./types.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -92,7 +92,7 @@ export function parseAgentApiModels(payload: {
   return models.length > 0 ? models : null;
 }
 
-export async function getAgentApiModels(session: ActiveSessionInfo, logger: StudioLogger): Promise<AntigravityModel[] | null> {
+export async function getAgentApiModels(session: ActiveSessionInfo, _logger: StudioLogger): Promise<AntigravityModel[] | null> {
   if (!session.address || !session.csrfToken) return null;
 
   const rawPort = session.address.replace(/^localhost:/, "").replace(/^127\.0\.0\.1:/, "");

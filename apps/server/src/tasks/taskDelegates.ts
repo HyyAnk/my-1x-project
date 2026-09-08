@@ -12,6 +12,7 @@ import {
   retryScript as retryScriptImplementation,
   retryVisualBible as retryVisualBibleImplementation,
   retrySequenceScenes as retrySequenceScenesImplementation,
+  retryTopicSuggestions as retryTopicSuggestionsImplementation,
 } from "./codexRunner.js";
 import {
   createImageProvider as createImageProviderImplementation,
@@ -140,6 +141,9 @@ export const taskDelegates = {
   },
   retrySequenceScenes(this: TaskManagerRuntime, active: ActiveRun, reason: string): Promise<void> {
     return retrySequenceScenesImplementation.call(this, active, reason);
+  },
+  retryTopicSuggestions(this: TaskManagerRuntime, active: ActiveRun, reason: string): Promise<void> {
+    return retryTopicSuggestionsImplementation.call(this, active, reason);
   },
   cleanupExpiredFailedBuilds(this: TaskManagerRuntime, nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }> {
     if (this.failedBuildCleanupPromise) return this.failedBuildCleanupPromise;

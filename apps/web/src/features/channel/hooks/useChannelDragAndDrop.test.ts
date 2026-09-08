@@ -2,23 +2,34 @@ import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useChannelDragAndDrop } from "./useChannelDragAndDrop";
 
-function createMockDragEvent(type: string): React.DragEvent<HTMLElement> {
+function createMockDragEvent(type: string) {
   const dataStore: Record<string, string> = {};
-  return {
+  const preventDefault = vi.fn();
+  const stopPropagation = vi.fn();
+  const setData = vi.fn((key: string, val: string) => {
+    dataStore[key] = val;
+  });
+  const getData = vi.fn((key: string) => dataStore[key] || "");
+
+  const event = {
     type,
-    preventDefault: vi.fn(),
-    stopPropagation: vi.fn(),
+    preventDefault,
+    stopPropagation,
     dataTransfer: {
       effectAllowed: "none",
       dropEffect: "none",
-      setData: vi.fn((key: string, val: string) => {
-        dataStore[key] = val;
-      }),
-      getData: vi.fn((key: string) => dataStore[key] || ""),
+      setData,
+      getData,
     },
     currentTarget: document.createElement("div"),
     target: document.createElement("div"),
-  } as unknown as React.DragEvent<HTMLElement>;
+  } as unknown as React.DragEvent<HTMLElement> & {
+    mockPreventDefault: typeof preventDefault;
+    mockSetData: typeof setData;
+  };
+  event.mockPreventDefault = preventDefault;
+  event.mockSetData = setData;
+  return event;
 }
 
 describe("useChannelDragAndDrop - Step 2: Drag & Drop Engine", () => {
@@ -44,7 +55,7 @@ describe("useChannelDragAndDrop - Step 2: Drag & Drop Engine", () => {
     expect(result.current.isDragging).toBe(true);
     expect(result.current.draggedIndex).toBe(1);
     expect(result.current.dragOverIndex).toBe(1);
-    expect(event.dataTransfer.setData).toHaveBeenCalledWith("text/plain", "ch_quiz_1");
+    expect(event.mockSetData).toHaveBeenCalledWith("text/plain", "ch_quiz_1");
   });
 
   it("handles drag over and drag enter to update hover target", () => {
@@ -61,7 +72,7 @@ describe("useChannelDragAndDrop - Step 2: Drag & Drop Engine", () => {
       result.current.handleDragOver(overEvent, 2);
     });
 
-    expect(overEvent.preventDefault).toHaveBeenCalled();
+    expect(overEvent.mockPreventDefault).toHaveBeenCalled();
     expect(result.current.dragOverIndex).toBe(2);
   });
 
@@ -79,7 +90,7 @@ describe("useChannelDragAndDrop - Step 2: Drag & Drop Engine", () => {
       result.current.handleDrop(dropEvent, 2);
     });
 
-    expect(dropEvent.preventDefault).toHaveBeenCalled();
+    expect(dropEvent.mockPreventDefault).toHaveBeenCalled();
     expect(onReorder).toHaveBeenCalledWith(0, 2);
     expect(result.current.isDragging).toBe(false);
     expect(result.current.draggedIndex).toBeNull();

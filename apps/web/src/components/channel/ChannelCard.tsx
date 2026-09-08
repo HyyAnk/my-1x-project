@@ -67,11 +67,7 @@ export function ChannelCard({
       <div className="channel-card-header">
         <div className="channel-card-chips">
           {isReordering ? (
-            <span
-              className="channel-drag-handle"
-              title={t("channels.dragHandleTooltip")}
-              aria-label={t("channels.dragHandleTooltip")}
-            >
+            <span className="channel-drag-handle" title={t("channels.dragHandleTooltip")} aria-label={t("channels.dragHandleTooltip")}>
               <DotsSixVertical size={16} weight="bold" />
             </span>
           ) : null}

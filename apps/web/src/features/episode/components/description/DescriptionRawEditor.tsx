@@ -9,14 +9,7 @@ interface DescriptionRawEditorProps {
   onSave: () => void;
 }
 
-export function DescriptionRawEditor({
-  draftText,
-  isModified,
-  isOverLimit,
-  saving,
-  onDraftChange,
-  onSave,
-}: DescriptionRawEditorProps) {
+export function DescriptionRawEditor({ draftText, isModified, isOverLimit, saving, onDraftChange, onSave }: DescriptionRawEditorProps) {
   const handleInsertSnippet = (snippet: string) => {
     const separator = draftText.endsWith("\n\n") ? "" : draftText.endsWith("\n") ? "\n" : "\n\n";
     onDraftChange(draftText + separator + snippet);
@@ -26,13 +19,15 @@ export function DescriptionRawEditor({
     <div className="description-raw-editor-container">
       <div className="raw-editor-toolbar">
         <div className="raw-editor-helpers">
-          <span style={{ fontSize: "0.75rem", color: "var(--muted)", fontWeight: 600, marginRight: "4px" }}>
-            Quick Insert:
-          </span>
+          <span style={{ fontSize: "0.75rem", color: "var(--muted)", fontWeight: 600, marginRight: "4px" }}>Quick Insert:</span>
           <button
             type="button"
             className="raw-editor-helper-btn"
-            onClick={() => handleInsertSnippet("⏱️ CHAPTERS & TIMESTAMPS:\n00:00 - Introduction\n00:15 - Question 1\n00:45 - Question 2\n01:15 - Question 3\n01:45 - Final Scorecard")}
+            onClick={() =>
+              handleInsertSnippet(
+                "⏱️ CHAPTERS & TIMESTAMPS:\n00:00 - Introduction\n00:15 - Question 1\n00:45 - Question 2\n01:15 - Question 3\n01:45 - Final Scorecard",
+              )
+            }
             title="Insert chapter timestamps template"
           >
             <PlusCircle size={12} style={{ display: "inline", marginRight: "3px" }} />
@@ -41,7 +36,11 @@ export function DescriptionRawEditor({
           <button
             type="button"
             className="raw-editor-helper-btn"
-            onClick={() => handleInsertSnippet("🏆 SCORING TIERS:\n• 1 correct: Beginner\n• 2-3 correct: Intermediate\n• 4-5 correct: Expert / Master\n\nHow many questions did you answer correctly? Comment below!")}
+            onClick={() =>
+              handleInsertSnippet(
+                "🏆 SCORING TIERS:\n• 1 correct: Beginner\n• 2-3 correct: Intermediate\n• 4-5 correct: Expert / Master\n\nHow many questions did you answer correctly? Comment below!",
+              )
+            }
             title="Insert scoring tiers leaderboard template"
           >
             <PlusCircle size={12} style={{ display: "inline", marginRight: "3px" }} />

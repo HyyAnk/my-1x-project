@@ -1,12 +1,6 @@
 import type { FastifyPluginCallback } from "fastify";
 import { readFile, stat } from "node:fs/promises";
-import path from "node:path";
-import {
-  ThumbnailAspectRatioSchema,
-  ThumbnailGenerationRequestSchema,
-  ThumbnailLayoutTypeSchema,
-  type ThumbnailLayoutType,
-} from "@studio/shared";
+import { ThumbnailAspectRatioSchema, ThumbnailLayoutTypeSchema } from "@studio/shared";
 import { z } from "zod";
 import type { RepositoryService } from "../repository.js";
 import type { AppState } from "./state.js";
@@ -64,7 +58,7 @@ export function registerThumbnailsRoutes(deps: ThumbnailsRouteDeps): FastifyPlug
           ? {
               api_key: activeImageConfig.api_key,
               model: activeImageConfig.model,
-              provider: activeImageConfig.provider as any,
+              provider: activeImageConfig.provider,
               base_url: activeImageConfig.base_url,
               quality: activeImageConfig.quality,
             }
@@ -108,15 +102,7 @@ export function registerThumbnailsRoutes(deps: ThumbnailsRouteDeps): FastifyPlug
       let filePath: string;
       if (query.variant_id && query.variant_id.trim()) {
         const sanitizedId = query.variant_id.replace(/[^a-zA-Z0-9_-]/g, "");
-        filePath = repository.resolvePath(
-          "channels",
-          channel.slug,
-          "episodes",
-          episode.slug,
-          "assets",
-          "thumbnails",
-          `${sanitizedId}.jpg`,
-        );
+        filePath = repository.resolvePath("channels", channel.slug, "episodes", episode.slug, "assets", "thumbnails", `${sanitizedId}.jpg`);
       } else {
         const filename = params.ratio === "9_16" || params.ratio === "9-16" ? "thumbnail_9_16.jpg" : "thumbnail_16_9.jpg";
         filePath = repository.resolvePath("channels", channel.slug, "episodes", episode.slug, "assets", filename);
@@ -135,5 +121,3 @@ export function registerThumbnailsRoutes(deps: ThumbnailsRouteDeps): FastifyPlug
     done();
   };
 }
-
-

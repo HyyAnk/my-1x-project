@@ -201,29 +201,30 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
 
     // Mock LLM that returns valid questions for whatever prompt it receives
     const mockLlmClient: LLMClient = {
-      connect: async () => {},
-      generateContent: async () => ({
-        text: JSON.stringify([
-          {
-            entity_id: "ENT-ANI-001",
-            question: "Lions roar to mark territory up to five miles. Fact or Myth?",
-            format: "true_false",
-            choices: [
-              { id: "A", text: "Fact", is_correct: true },
-              { id: "B", text: "Myth", is_correct: false },
-            ],
-            correct_choice_id: "A",
-            explanation: "Lions have a specialized larynx that allows powerful roars.",
-            visual_spec: {
-              intent: "question_illustration",
-              prompt: "Lion roaring on a rock.",
+      connect: () => Promise.resolve(),
+      generateContent: () =>
+        Promise.resolve({
+          text: JSON.stringify([
+            {
+              entity_id: "ENT-ANI-001",
+              question: "Lions roar to mark territory up to five miles. Fact or Myth?",
+              format: "true_false",
+              choices: [
+                { id: "A", text: "Fact", is_correct: true },
+                { id: "B", text: "Myth", is_correct: false },
+              ],
+              correct_choice_id: "A",
+              explanation: "Lions have a specialized larynx that allows powerful roars.",
+              visual_spec: {
+                intent: "question_illustration",
+                prompt: "Lion roaring on a rock.",
+              },
+              difficulty: 1,
+              thinking_seconds: 5,
+              tags: ["nature"],
             },
-            difficulty: 1,
-            thinking_seconds: 5,
-            tags: ["nature"],
-          },
-        ]),
-      }),
+          ]),
+        }),
     };
 
     const result = await generateQuestionBankBatch(repo, {
@@ -252,12 +253,12 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
   it("rotates domain and archetype across multi-chunk auto generation", async () => {
     const requestedArchetypes: string[] = [];
     const mockLlmClient: LLMClient = {
-      connect: async () => {},
-      generateContent: async (prompt: string) => {
+      connect: () => Promise.resolve(),
+      generateContent: (prompt: string) => {
         // Extract archetype from prompt
         const match = prompt.match(/Gameplay Archetype:\s*"?([a-z_]+)"?/i);
         if (match) requestedArchetypes.push(match[1]);
-        return {
+        return Promise.resolve({
           text: JSON.stringify([
             {
               entity_id: "ENT-ANI-001",
@@ -275,7 +276,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
               tags: ["test"],
             },
           ]),
-        };
+        });
       },
     };
 
@@ -308,7 +309,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     ];
 
     const mockLlmClient: LLMClient = {
-      connect: async () => {},
+      connect: () => Promise.resolve(),
       generateContent: async () => {
         callCounter++;
         const currentId = callCounter;
@@ -321,7 +322,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
         await new Promise((res) => setTimeout(res, 25));
         activeCalls--;
 
-        return {
+        return Promise.resolve({
           text: JSON.stringify([
             {
               entity_id: `ENT-ANI-00${currentId}`,
@@ -339,7 +340,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
               tags: ["test"],
             },
           ]),
-        };
+        });
       },
     };
 
@@ -365,12 +366,12 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     let callsCount = 0;
 
     const mockLlmClient: LLMClient = {
-      connect: async () => {},
-      generateContent: async () => {
+      connect: () => Promise.resolve(),
+      generateContent: () => {
         callsCount++;
         // Abort on first call
         ac.abort();
-        return {
+        return Promise.resolve({
           text: JSON.stringify([
             {
               entity_id: `ENT-ANI-00${callsCount}`,
@@ -388,12 +389,12 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
               tags: ["test"],
             },
           ]),
-        };
+        });
       },
     };
 
     // 200 questions -> 10 chunks of 20, concurrency = 3
-    const result = await generateQuestionBankBatch(repo, {
+    await generateQuestionBankBatch(repo, {
       mode: "auto",
       count: 200,
       concurrency: 3,
@@ -406,5 +407,3 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     expect(callsCount).toBeLessThan(10);
   });
 });
-
-

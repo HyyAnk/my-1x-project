@@ -62,13 +62,8 @@ describe("ChannelsListView - Reordering & Customization Integration", () => {
     const onDelete = vi.fn();
 
     const { container } = render(
-      <ChannelsListView
-        channels={[chA, chB, chC]}
-        onCreate={onCreate}
-        openChannel={openChannel}
-        onDelete={onDelete}
-      />,
-      { wrapper }
+      <ChannelsListView channels={[chA, chB, chC]} onCreate={onCreate} openChannel={openChannel} onDelete={onDelete} />,
+      { wrapper },
     );
 
     expect(screen.getByText("Alpha Channel")).toBeDefined();
@@ -105,24 +100,12 @@ describe("ChannelsListView - Reordering & Customization Integration", () => {
     const chNew = createMockChannel("ch_new", "Omega New Channel", 0);
 
     const { container, rerender } = render(
-      <ChannelsListView
-        channels={[chA, chB]}
-        onCreate={vi.fn()}
-        openChannel={vi.fn()}
-        onDelete={vi.fn()}
-      />,
-      { wrapper }
+      <ChannelsListView channels={[chA, chB]} onCreate={vi.fn()} openChannel={vi.fn()} onDelete={vi.fn()} />,
+      { wrapper },
     );
 
     // Now re-render with the new channel added
-    rerender(
-      <ChannelsListView
-        channels={[chA, chB, chNew]}
-        onCreate={vi.fn()}
-        openChannel={vi.fn()}
-        onDelete={vi.fn()}
-      />
-    );
+    rerender(<ChannelsListView channels={[chA, chB, chNew]} onCreate={vi.fn()} openChannel={vi.fn()} onDelete={vi.fn()} />);
 
     const cards = Array.from(container.querySelectorAll(".channel-card"));
     expect(cards).toHaveLength(3);

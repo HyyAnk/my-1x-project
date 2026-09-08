@@ -6,6 +6,21 @@ import path from "node:path";
 import { buildApp, type StudioApp } from "../src/app.js";
 import { seedQuestionBankFixtures } from "./questionBankRepository.test.js";
 
+type RouteQuestion = { archetype_id: string; channel_cooldown?: { is_cooldown: boolean } };
+type QuestionBankRouteBody = {
+  taxonomy?: { domains: unknown[] };
+  stats?: { target_total: number; current_total: number };
+  channel_id?: string;
+  questions?: RouteQuestion[];
+  code?: string;
+  question?: { id: string; explanation?: string };
+  ok?: boolean;
+  coverage?: { total_combos: number; covered_combos: number; by_domain: Record<string, unknown>; by_archetype: Record<string, unknown> };
+  success?: boolean;
+  approvedCount?: number;
+  matrixCoverage?: { total_combos: number };
+};
+
 describe("Question Bank REST API Routes", () => {
   let app: StudioApp;
   let tempStorage: string;
@@ -18,7 +33,7 @@ describe("Question Bank REST API Routes", () => {
     }
     app = await buildApp(curr);
     tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-route-test-"));
-    app.repository.setStorageRoot(tempStorage);
+    await app.repository.setStorageRoot(tempStorage);
     await seedQuestionBankFixtures(app.repository);
   });
 
@@ -34,7 +49,7 @@ describe("Question Bank REST API Routes", () => {
     });
 
     expect(res.statusCode).toBe(200);
-    const body = JSON.parse(res.body);
+    const body = res.json<QuestionBankRouteBody>();
     expect(body.taxonomy).toBeDefined();
     expect(body.taxonomy.domains.length).toBeGreaterThanOrEqual(9);
   });
@@ -46,7 +61,7 @@ describe("Question Bank REST API Routes", () => {
     });
 
     expect(res.statusCode).toBe(200);
-    const body = JSON.parse(res.body);
+    const body = res.json<QuestionBankRouteBody>();
     expect(body.stats).toBeDefined();
     expect(body.stats.target_total).toBe(20000);
     expect(body.stats.current_total).toBeGreaterThanOrEqual(10);
@@ -59,7 +74,7 @@ describe("Question Bank REST API Routes", () => {
     });
 
     expect(res.statusCode).toBe(200);
-    const body = JSON.parse(res.body);
+    const body = res.json<QuestionBankRouteBody>();
     expect(body.channel_id).toBe("test-channel");
     expect(body.questions.length).toBeLessThanOrEqual(5);
     expect(body.questions[0].channel_cooldown).toBeDefined();
@@ -73,16 +88,16 @@ describe("Question Bank REST API Routes", () => {
     });
 
     expect(res.statusCode).toBe(200);
-    const body = JSON.parse(res.body);
+    const body = res.json<QuestionBankRouteBody>();
     expect(body.questions.length).toBeGreaterThanOrEqual(5);
-    expect(body.questions.every((q: any) => q.archetype_id === "speed_blitz")).toBe(true);
+    expect(body.questions?.every((q) => q.archetype_id === "speed_blitz")).toBe(true);
 
     const searchRes = await app.server.inject({
       method: "GET",
       url: "/api/question-bank/questions?search=stick",
     });
     expect(searchRes.statusCode).toBe(200);
-    const searchBody = JSON.parse(searchRes.body);
+    const searchBody = searchRes.json<QuestionBankRouteBody>();
     expect(searchBody.questions.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -93,7 +108,7 @@ describe("Question Bank REST API Routes", () => {
     });
 
     expect(res.statusCode).toBe(404);
-    const body = JSON.parse(res.body);
+    const body = res.json<QuestionBankRouteBody>();
     expect(body.code).toBe("QUESTION_NOT_FOUND");
   });
 
@@ -134,7 +149,7 @@ describe("Question Bank REST API Routes", () => {
       payload: newQuestion,
     });
     expect(createRes.statusCode).toBe(201);
-    const created = JSON.parse(createRes.body);
+    const created = createRes.json<QuestionBankRouteBody>();
     expect(created.question.id).toBe(testId);
 
     // 3. Update question
@@ -144,7 +159,7 @@ describe("Question Bank REST API Routes", () => {
       payload: { explanation: "Updated explanation via REST API" },
     });
     expect(updateRes.statusCode).toBe(200);
-    const updated = JSON.parse(updateRes.body);
+    const updated = updateRes.json<QuestionBankRouteBody>();
     expect(updated.question.explanation).toBe("Updated explanation via REST API");
 
     // 4. Delete question
@@ -153,7 +168,7 @@ describe("Question Bank REST API Routes", () => {
       url: `/api/question-bank/questions/${testId}`,
     });
     expect(deleteRes.statusCode).toBe(200);
-    const deleted = JSON.parse(deleteRes.body);
+    const deleted = deleteRes.json<QuestionBankRouteBody>();
     expect(deleted.ok).toBe(true);
 
     // 5. Subsequent delete returns 404
@@ -171,7 +186,7 @@ describe("Question Bank REST API Routes", () => {
     });
 
     expect(res.statusCode).toBe(200);
-    const body = JSON.parse(res.body);
+    const body = res.json<QuestionBankRouteBody>();
     expect(body.coverage).toBeDefined();
     expect(body.coverage.total_combos).toBe(20000);
     expect(body.coverage.covered_combos).toBeGreaterThanOrEqual(0);
@@ -213,7 +228,7 @@ describe("Question Bank REST API Routes", () => {
     });
 
     expect(res.statusCode).toBe(200);
-    const body = JSON.parse(res.body);
+    const body = res.json<QuestionBankRouteBody>();
     expect(body.success).toBe(true);
     expect(body.approvedCount).toBe(1);
     expect(body.matrixCoverage).toBeDefined();

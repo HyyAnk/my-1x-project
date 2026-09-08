@@ -36,11 +36,7 @@ export const BankTranslationChoiceSchema = z.object({
 export type BankTranslationChoice = z.infer<typeof BankTranslationChoiceSchema>;
 
 export function bankRequiredChoiceCountForArchetype(archetypeId: BankGameplayArchetypeId): number {
-  return archetypeId === "verdict_true_false" ||
-    archetypeId === "verdict_fact_myth" ||
-    archetypeId === "versus_faceoff"
-    ? 2
-    : 3;
+  return archetypeId === "verdict_true_false" || archetypeId === "verdict_fact_myth" || archetypeId === "versus_faceoff" ? 2 : 3;
 }
 
 export const BankTranslationContentSchema = z.object({
@@ -200,4 +196,3 @@ export type MatrixComboCandidate = z.infer<typeof MatrixComboCandidateSchema>;
 
 export const BatchGenerationModeSchema = z.enum(["auto", "manual"]).default("auto");
 export type BatchGenerationMode = z.infer<typeof BatchGenerationModeSchema>;
-

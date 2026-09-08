@@ -48,7 +48,6 @@ export function DashboardView({
   onNavigate,
 }: DashboardViewProps) {
   const { t } = useTranslation();
-  const numberLocale = "en-US";
 
   // Channel & Episode metrics
   const activeChannelsCount = channels.filter((c) => c.status === "ACTIVE").length;
