@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { existsSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
-import { mkdtemp, rm } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import Fastify from "fastify";
@@ -33,10 +33,11 @@ import {
 import { generateQuestionBankBatch, type QuestionBankChunkProgress } from "../src/quiz/bank/questionBankBatchService.js";
 import type { BankQuestion } from "@studio/shared";
 
-describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
+describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
   let app: StudioApp;
-  let workspaceRoot: string;
   let tempStorage: string;
+  let isolatedStudioRoot: string;
+  let workspaceRoot: string;
 
   beforeAll(async () => {
     let curr = process.cwd();
@@ -45,15 +46,31 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
       curr = path.dirname(curr);
     }
     workspaceRoot = curr;
-    app = await buildApp(curr);
     tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-reverse-matrix-e2e-"));
-    await app.repository.setStorageRoot(tempStorage);
+    isolatedStudioRoot = await mkdtemp(path.join(os.tmpdir(), "qb-reverse-matrix-root-"));
+    await mkdir(path.join(isolatedStudioRoot, ".quiz-studio"), { recursive: true });
+    await writeFile(
+      path.join(isolatedStudioRoot, ".quiz-studio", "storage.local.json"),
+      JSON.stringify({ storage_path: tempStorage }, null, 2),
+      "utf8",
+    );
+    const srcKb = path.join(curr, ".quiz-studio", "knowledge_base");
+    const destKb = path.join(isolatedStudioRoot, ".quiz-studio", "knowledge_base");
+    await cp(srcKb, destKb, { recursive: true }).catch(() => {});
+    const srcTemplates = path.join(curr, "templates");
+    const destTemplates = path.join(isolatedStudioRoot, "templates");
+    await cp(srcTemplates, destTemplates, { recursive: true }).catch(() => {});
+
+    app = await buildApp(isolatedStudioRoot);
   });
 
   afterAll(async () => {
     await app.close();
     if (tempStorage) {
       await rm(tempStorage, { recursive: true, force: true }).catch(() => {});
+    }
+    if (isolatedStudioRoot) {
+      await rm(isolatedStudioRoot, { recursive: true, force: true }).catch(() => {});
     }
   });
 
@@ -126,7 +143,7 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
     });
 
     it("automatically detects newly added entities and scales matrix combos dynamically (+8 per entity)", () => {
-      const entityDir = path.join(workspaceRoot, ".quiz-studio", "knowledge_base", "entities");
+      const entityDir = path.join(isolatedStudioRoot, ".quiz-studio", "knowledge_base", "entities");
       const tempTestFile = path.join(entityDir, "zz_dynamic_test_entity.json");
 
       try {
@@ -637,6 +654,7 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
         archetype_id: "speed_blitz",
         domain_id: "nature_animals",
         subtopic_id: "mammals",
+        language: "en",
         format: "multiple_choice",
         question: d.q,
         choices: [
@@ -681,6 +699,7 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
         archetype_id: "speed_blitz",
         domain_id: "nature_animals",
         subtopic_id: "custom_exotic_subtopic_outside_kb",
+        language: "en",
         format: "multiple_choice",
         question: "Custom exotic subtopic question?",
         choices: [
@@ -761,6 +780,7 @@ describe("Question Bank Reverse Matrix E2E Comprehensive Verification", () => {
         archetype_id: "speed_blitz",
         domain_id: "nature_animals",
         subtopic_id: "mammals",
+        language: "en",
         format: "multiple_choice",
         question: "Rest API E2E test question?",
         choices: [

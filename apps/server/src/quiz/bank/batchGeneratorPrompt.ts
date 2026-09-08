@@ -16,5 +16,6 @@ export {
 export {
   parseBatchGenerationOutput,
   parseReverseBatchGenerationOutput,
+  normalizeGenerationLanguage,
   sanitizeBankQuestionText,
 } from "./prompts/batchPromptOutputParser.js";

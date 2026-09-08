@@ -4,6 +4,7 @@ import path from "node:path";
 import { BankTaxonomySchema, type BankDomainMeta, type BankTaxonomy } from "@studio/shared";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { getQuestionBankPath } from "./bankPathResolver.js";
+import { withBankRead } from "./bankSerializationBoundary.js";
 
 export const CANONICAL_DOMAIN_META: Record<string, { title: string; description: string; icon: string }> = {
   careers_occupations: {
@@ -153,9 +154,9 @@ export async function syncTaxonomyFromKnowledgeBase(runtime: RepositoryRuntime):
 }
 
 /**
- * Reads and merges question bank taxonomy from knowledge base and stored taxonomy.json.
+ * Reads and merges question bank taxonomy from knowledge base and stored taxonomy.json (unlocked internal helper).
  */
-export async function readQuestionBankTaxonomy(this: RepositoryRuntime): Promise<BankTaxonomy> {
+export async function readQuestionBankTaxonomyUnlocked(this: RepositoryRuntime): Promise<BankTaxonomy> {
   const dynamicDomains = await syncTaxonomyFromKnowledgeBase(this);
 
   const taxonomyPath = getQuestionBankPath.call(this, "taxonomy.json");
@@ -210,4 +211,11 @@ export async function readQuestionBankTaxonomy(this: RepositoryRuntime): Promise
     updated_at: new Date().toISOString(),
     domains,
   };
+}
+
+/**
+ * Reads and merges question bank taxonomy, serialized under withBankRead boundary.
+ */
+export function readQuestionBankTaxonomy(this: RepositoryRuntime): Promise<BankTaxonomy> {
+  return withBankRead(this, () => readQuestionBankTaxonomyUnlocked.call(this));
 }

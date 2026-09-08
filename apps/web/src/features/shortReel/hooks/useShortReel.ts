@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { GenerateShortReelTarget, ReelPublishingPayload, ReelSegment, ShortReelRecord, Task } from "@studio/shared";
 import type { Notice } from "../../../components/types";
-import { subscribeEvents } from "../../../api/client";
 import { api, ApiError } from "../../../api";
+import { useShortReelTaskSync } from "./useShortReelTaskSync";
+import { useShortReelExport } from "./useShortReelExport";
 
 export interface UseShortReelOptions {
   channelId: string;
@@ -11,6 +12,20 @@ export interface UseShortReelOptions {
 }
 
 export type ShortReelStudioStatus = "loading" | "ready" | "not_found" | "error";
+
+const TERMINAL_GENERATION_STATUSES = ["QUEUED", "RUNNING", "WAITING_APPROVAL"];
+
+function createRequestId(prefix: string): string {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+function cloneDraftScript(reel: ShortReelRecord): ReelSegment[] | null {
+  return reel.script?.segments ? [...reel.script.segments] : null;
+}
+
+function cloneDraftPublishing(reel: ShortReelRecord): ReelPublishingPayload | null {
+  return reel.units.publishing.last_accepted_payload ? { ...reel.units.publishing.last_accepted_payload } : null;
+}
 
 export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOptions) {
   const [status, setStatus] = useState<ShortReelStudioStatus>("loading");
@@ -51,7 +66,7 @@ export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOption
         if (activeReelIdRef.current !== targetReelId) return;
         const remoteReel = response.short_reel;
         setActiveTask(response.task ?? null);
-        setIsGenerating(Boolean(response.task && ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(response.task.status)));
+        setIsGenerating(Boolean(response.task && TERMINAL_GENERATION_STATUSES.includes(response.task.status)));
 
         const currentReel = reelRef.current;
         if (isDraftDirtyRef.current && currentReel && remoteReel.revision > currentReel.revision) {
@@ -60,10 +75,8 @@ export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOption
         } else {
           setReel(remoteReel);
           if (!isDraftDirtyRef.current) {
-            setDraftScript(remoteReel.script?.segments ? [...remoteReel.script.segments] : null);
-            setDraftPublishing(
-              remoteReel.units.publishing.last_accepted_payload ? { ...remoteReel.units.publishing.last_accepted_payload } : null,
-            );
+            setDraftScript(cloneDraftScript(remoteReel));
+            setDraftPublishing(cloneDraftPublishing(remoteReel));
             setDraftModelNote(remoteReel.model_note ?? "");
           }
           setConflictRemoteRecord(null);
@@ -91,24 +104,17 @@ export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOption
     void loadReel();
   }, [channelId, reelId]);
 
-  // Real-time event subscription for task updates and record reconciliation
-  useEffect(() => {
-    const unsubscribe = subscribeEvents((event) => {
-      if (event.type === "task.updated" && event.task) {
-        if (event.task.reel_id === reelId) {
-          setActiveTask(event.task);
-          if (["COMPLETED", "FAILED", "CANCELLED"].includes(event.task.status)) {
-            setIsGenerating(false);
-            void loadReel(true);
-          }
-        }
-      }
-    });
+  // Real-time task progress listening (SSE), delegated to the task sync hook
+  const handleTaskUpdate = useCallback((task: Task) => {
+    setActiveTask(task);
+  }, []);
 
-    return () => {
-      unsubscribe();
-    };
-  }, [reelId, loadReel]);
+  const handleTaskSettled = useCallback(() => {
+    setIsGenerating(false);
+    void loadReel(true);
+  }, [loadReel]);
+
+  useShortReelTaskSync({ reelId, onTaskUpdate: handleTaskUpdate, onTaskSettled: handleTaskSettled });
 
   // Visibility-aware bounded fallback polling and connectivity recovery
   useEffect(() => {
@@ -136,7 +142,7 @@ export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOption
       try {
         const response = await api.updateShortReel(channelId, reelId, {
           expected_revision: reel.revision,
-          request_id: `save-seg-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          request_id: createRequestId("save-seg"),
           command: {
             kind: "update_segment",
             segment_index: segmentIndex,
@@ -146,7 +152,7 @@ export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOption
 
         const updated = response.short_reel;
         setReel(updated);
-        setDraftScript(updated.script?.segments ? [...updated.script.segments] : null);
+        setDraftScript(cloneDraftScript(updated));
         setIsDraftDirty(false);
         setConflictRemoteRecord(null);
         onNotice?.({ tone: "good", message: `Segment ${segmentIndex} saved successfully.` });
@@ -178,7 +184,7 @@ export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOption
       try {
         const response = await api.updateShortReel(channelId, reelId, {
           expected_revision: reel.revision,
-          request_id: `save-pub-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          request_id: createRequestId("save-pub"),
           command: {
             kind: "update_publishing",
             publishing,
@@ -187,7 +193,7 @@ export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOption
 
         const updated = response.short_reel;
         setReel(updated);
-        setDraftPublishing(updated.units.publishing.last_accepted_payload ? { ...updated.units.publishing.last_accepted_payload } : null);
+        setDraftPublishing(cloneDraftPublishing(updated));
         setIsDraftDirty(false);
         setConflictRemoteRecord(null);
         onNotice?.({ tone: "good", message: "Publishing details saved successfully." });
@@ -219,7 +225,7 @@ export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOption
       try {
         const response = await api.generateShortReel(channelId, reelId, {
           expected_revision: reel.revision,
-          request_id: `gen-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          request_id: createRequestId("gen"),
           target,
         });
 
@@ -265,27 +271,8 @@ export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOption
     [channelId, reelId, reel, activeTask, onNotice],
   );
 
-  // Export PKZIP package
-  const exportPackage = useCallback(async () => {
-    if (!reel) return;
-    try {
-      const blob = await api.exportPackage(channelId, reelId, reel.revision);
-      const url = window.URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = `short-reel-${reel.reel_id}-rev${reel.revision}.zip`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(anchor);
-      onNotice?.({ tone: "good", message: "Package exported successfully." });
-    } catch (err) {
-      onNotice?.({
-        tone: "bad",
-        message: err instanceof Error ? err.message : "Failed to export package.",
-      });
-    }
-  }, [channelId, reelId, reel, onNotice]);
+  // Export PKZIP package (DOM Blob download), delegated to the export hook
+  const { exportPackage } = useShortReelExport({ channelId, reelId, reel, onNotice });
 
   // Copy to clipboard with selectable text fallback on permission rejection
   const copyText = useCallback(
@@ -319,12 +306,8 @@ export function useShortReel({ channelId, reelId, onNotice }: UseShortReelOption
   const discardDraftAndReload = useCallback(() => {
     if (conflictRemoteRecord) {
       setReel(conflictRemoteRecord);
-      setDraftScript(conflictRemoteRecord.script?.segments ? [...conflictRemoteRecord.script.segments] : null);
-      setDraftPublishing(
-        conflictRemoteRecord.units.publishing.last_accepted_payload
-          ? { ...conflictRemoteRecord.units.publishing.last_accepted_payload }
-          : null,
-      );
+      setDraftScript(cloneDraftScript(conflictRemoteRecord));
+      setDraftPublishing(cloneDraftPublishing(conflictRemoteRecord));
       setDraftModelNote(conflictRemoteRecord.model_note ?? "");
       setIsDraftDirty(false);
       setConflictRemoteRecord(null);

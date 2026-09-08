@@ -1,5 +1,6 @@
 import { extractNarrationSections } from "../production.js";
 import type { ActiveRun, TaskManagerRuntime } from "./runtime.js";
+import { getAssignedTopicAllocation } from "../context/channelContextBuilder.js";
 
 export async function retryQuizResearch(this: TaskManagerRuntime, active: ActiveRun, reason: string): Promise<void> {
   const episode = await this.repository.getEpisode(active.task.channel_id, active.task.episode_id!);
@@ -100,9 +101,11 @@ export async function retrySequenceScenes(this: TaskManagerRuntime, active: Acti
 export async function retryTopicSuggestions(this: TaskManagerRuntime, active: ActiveRun, reason: string): Promise<void> {
   const client = this.activeEngine === "antigravity" && this.antigravity ? this.antigravity : this.codex;
   const threadId = await client.startThread();
+  const allocation = getAssignedTopicAllocation(active.manifest);
+  const slotCount = allocation ? allocation.allocatedSlots.length : active.topicMatrixPlan?.slots.length ?? 5;
   const turnId = await client.startTurn(
     threadId,
-    `${active.manifest.prompt}\n\nSTRICT RETRY: The previous topic suggestions response failed slot plan validation (${reason}). Start over in a fresh response. Return exactly 5 JSON candidates strictly matching the assigned slot plan: Slots 1-3 Episode concepts (content_kind: "episode"), Slots 4-5 Short-Reel concepts (content_kind: "short_reel", question_count: 1, 9:16 vertical, archetype "versus_faceoff" or "deep_trivia"). Each candidate must have non-empty title, premise, why_it_fits, hook, estimated_potential, domain_id, and content_kind. Do not return Markdown fences or commentary outside the JSON.`,
+    `${active.manifest.prompt}\n\nSTRICT RETRY: The previous topic suggestions response failed slot plan validation (${reason}). Start over in a fresh response. Return exactly ${slotCount} JSON candidate(s) strictly matching the assigned allocated slot plan. For each candidate, provide ONLY the creative fields: slot_id, title, premise, why_it_fits, hook, estimated_potential. Do not return Markdown fences or commentary outside the JSON.`,
   );
   active.threadId = threadId;
   active.turnId = turnId;

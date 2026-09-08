@@ -14,6 +14,7 @@ import {
 import { IsoDate, QUIZ_MAX_QUESTION_COUNT, QUIZ_MIN_QUESTION_COUNT } from "./common.js";
 import { ChannelMascotConfigSchema } from "./mascot.js";
 import { CHANNEL_BRAND_NAME_MAX_LENGTH } from "../branding.js";
+import { TopicSourceBindingSetSchema } from "./topicSourceBinding.js";
 
 export const ChannelSchema = z
   .object({
@@ -41,6 +42,7 @@ export const ChannelSchema = z
     default_palette_id: z.string().optional().default("auto"),
     mascot_id: z.string().nullable().default(null),
     mascot_config: ChannelMascotConfigSchema.default({ enabled: true, position: "bottom_left", scale: 1.0 }),
+    default_intro_outro_style_id: z.string().nullable().optional(),
   })
   .strict();
 
@@ -77,6 +79,8 @@ const TopicCandidateBaseSchema = z.object({
   theme_hint: z.string().optional(),
   domain_id: z.string().optional(),
   subtopic_id: z.string().optional(),
+  slot_id: z.string().trim().min(1).optional(),
+  source_bindings: TopicSourceBindingSetSchema.optional(),
 });
 
 export const EpisodeTopicCandidateSchema = TopicCandidateBaseSchema.extend({
@@ -133,6 +137,37 @@ export const QuizConfigSchema = z.object({
   archetype: TopicGameplayArchetypeSchema.optional(),
   target_layout: QuizLayoutIdSchema.optional(),
   mascot_style_id: z.string().optional(),
+  intro_outro_style_id: z.string().nullable().optional(),
 });
 
 export type QuizConfig = z.infer<typeof QuizConfigSchema>;
+
+export const IntroOutroClipMetaSchema = z.object({
+  filename: z.string().min(1),
+  duration_seconds: z.number().positive(),
+  width: z.literal(1920),
+  height: z.literal(1080),
+  fps: z.number().positive(),
+  has_audio: z.boolean(),
+  thumbnail_filename: z.string().optional(),
+});
+
+export type IntroOutroClipMeta = z.infer<typeof IntroOutroClipMetaSchema>;
+
+export const IntroOutroTransitionTypeSchema = z.enum(["stinger_swipe", "crossfade", "cut"]);
+export type IntroOutroTransitionType = z.infer<typeof IntroOutroTransitionTypeSchema>;
+
+export const IntroOutroStyleSchema = z.object({
+  style_id: z.string().min(1),
+  channel_id: z.string().min(1),
+  name: z.string().min(1).max(50),
+  intro: IntroOutroClipMetaSchema,
+  outro: IntroOutroClipMetaSchema,
+  transition_type: IntroOutroTransitionTypeSchema.default("stinger_swipe"),
+  transition_duration_seconds: z.number().min(0.2).max(1.5).default(0.5),
+  audio_mode: z.enum(["use_video_audio", "overlay_bgm"]).default("use_video_audio"),
+  created_at: IsoDate,
+  updated_at: IsoDate,
+});
+
+export type IntroOutroStyle = z.infer<typeof IntroOutroStyleSchema>;

@@ -5,6 +5,7 @@ import { isTaskActive, isTaskTerminal, latestTask } from "../../../lib/utils";
 import type { Notice } from "../../../components/types";
 import { useChannelDna } from "./useChannelDna";
 import { useChannelMascotAndStyle } from "./useChannelMascotAndStyle";
+import { useTopicAvailability } from "./useTopicAvailability";
 
 export type UseChannelDetailProps = {
   channel: Channel;
@@ -35,13 +36,16 @@ export function useChannelDetail({
   const [confirmingTopicId, setConfirmingTopicId] = useState<string | null>(null);
   const [deleteEpisodeTarget, setDeleteEpisodeTarget] = useState<Episode | null>(null);
   const [loadingChannel, setLoadingChannel] = useState(true);
-  const initialTab = activeTab === "episodes" || activeTab === "topics" || (activeTab === "dna" && !simplifyMode) ? activeTab : "episodes";
-  const [channelTab, setChannelTab] = useState<"episodes" | "topics" | "dna">(initialTab);
+  const initialTab =
+    activeTab === "episodes" || activeTab === "topics" || activeTab === "intro-outro" || (activeTab === "dna" && !simplifyMode)
+      ? activeTab
+      : "episodes";
+  const [channelTab, setChannelTab] = useState<"episodes" | "topics" | "dna" | "intro-outro">(initialTab);
 
   useEffect(() => {
     if (
       activeTab &&
-      (activeTab === "episodes" || activeTab === "topics" || (activeTab === "dna" && !simplifyMode)) &&
+      (activeTab === "episodes" || activeTab === "topics" || activeTab === "intro-outro" || (activeTab === "dna" && !simplifyMode)) &&
       activeTab !== channelTab
     ) {
       setChannelTab(activeTab);
@@ -54,7 +58,7 @@ export function useChannelDetail({
     }
   }, [simplifyMode, channelTab]);
 
-  const switchTab = (tab: "episodes" | "topics" | "dna") => {
+  const switchTab = (tab: "episodes" | "topics" | "dna" | "intro-outro") => {
     setChannelTab(tab);
     onTabChange?.(tab);
   };
@@ -84,6 +88,11 @@ export function useChannelDetail({
     onNotice,
   });
 
+  const topicAvailabilityHook = useTopicAvailability({
+    channelId: channel.channel_id,
+    enabled: channelTab === "topics",
+  });
+
   const load = useCallback(
     async (showLoading = false) => {
       const version = ++loadVersion.current;
@@ -99,11 +108,12 @@ export function useChannelDetail({
         dnaHook.setDnaDraft(dnaResponse.content);
         setTopics(topicResponse.topics);
         setEpisodes(episodeResponse.episodes);
+        void topicAvailabilityHook.refresh();
       } finally {
         if (showLoading && version === loadVersion.current) setLoadingChannel(false);
       }
     },
-    [channel.channel_id],
+    [channel.channel_id, topicAvailabilityHook.refresh],
   );
 
   useEffect(() => {
@@ -141,7 +151,7 @@ export function useChannelDetail({
       onTaskSubmitted(result.task);
       onNotice({
         tone: "good",
-        message: hintToUse ? `Generating 5 topic ideas (2 on "${hintToUse}" + 3 random)...` : "Generating 5 lightweight topic ideas...",
+        message: hintToUse ? `Generating topics with hint "${hintToUse}"...` : "Generating topics...",
       });
       switchTab("topics");
     } catch (error) {
@@ -251,5 +261,8 @@ export function useChannelDetail({
     resetDnaDraft: dnaHook.resetDnaDraft,
     archive,
     load,
+    topicAvailability: topicAvailabilityHook.availability,
+    topicAvailabilityMap: topicAvailabilityHook.availabilityMap,
+    refreshTopicAvailability: topicAvailabilityHook.refresh,
   };
 }

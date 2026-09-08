@@ -128,7 +128,7 @@ describe("evaluateQuestionEligibility", () => {
     }
   });
 
-  it("accepts valid verified English translation for non-English question", () => {
+  it("rejects non-English source even when a verified English translation exists", () => {
     const q = createValidBankQuestion({
       language: "es",
       question: "¿Qué depredador tiene mayor fuerza de mordida?",
@@ -148,16 +148,13 @@ describe("evaluateQuestionEligibility", () => {
     });
 
     const result = evaluateQuestionEligibility(q, "versus_faceoff");
-    expect(result.eligible).toBe(true);
-    if (result.eligible) {
-      expect(result.candidate.sourceText).toBe("Which predator has stronger bite force?");
-      expect(result.candidate.explanation).toBe("The Jaguar has exceptional jaw strength.");
-      expect(result.candidate.translationProvenance).toBe("verified_translation");
-      expect(result.candidate.selectedAnswerText).toBe("Jaguar");
+    expect(result.eligible).toBe(false);
+    if (!result.eligible) {
+      expect(result.reason).toBe("MISSING_ENGLISH_SOURCE");
     }
   });
 
-  it("rejects unverified English translation", () => {
+  it("ignores unverified translations when the source is non-English", () => {
     const q = createValidBankQuestion({
       language: "fr",
       translations: {
@@ -177,11 +174,11 @@ describe("evaluateQuestionEligibility", () => {
     const result = evaluateQuestionEligibility(q, "versus_faceoff");
     expect(result.eligible).toBe(false);
     if (!result.eligible) {
-      expect(result.reason).toBe("UNVERIFIED_TRANSLATION");
+      expect(result.reason).toBe("MISSING_ENGLISH_SOURCE");
     }
   });
 
-  it("rejects translation with duplicate choice IDs", () => {
+  it("ignores translated choice structure when the source is non-English", () => {
     const q = createValidBankQuestion({
       language: "de",
       translations: {
@@ -201,11 +198,11 @@ describe("evaluateQuestionEligibility", () => {
     const result = evaluateQuestionEligibility(q, "versus_faceoff");
     expect(result.eligible).toBe(false);
     if (!result.eligible) {
-      expect(result.reason).toBe("DUPLICATE_TRANSLATED_CHOICE_IDS");
+      expect(result.reason).toBe("MISSING_ENGLISH_SOURCE");
     }
   });
 
-  it("rejects translation with missing or mismatched choice IDs", () => {
+  it("ignores translated choice IDs when the source is non-English", () => {
     const q = createValidBankQuestion({
       language: "ja",
       translations: {
@@ -225,11 +222,11 @@ describe("evaluateQuestionEligibility", () => {
     const result = evaluateQuestionEligibility(q, "versus_faceoff");
     expect(result.eligible).toBe(false);
     if (!result.eligible) {
-      expect(result.reason).toBe("TRANSLATED_CHOICE_ID_MISMATCH");
+      expect(result.reason).toBe("MISSING_ENGLISH_SOURCE");
     }
   });
 
-  it("rejects translation with empty explanation (never falls back to non-English explanation)", () => {
+  it("ignores translated content validity when the source is non-English", () => {
     const q = createValidBankQuestion({
       language: "es",
       explanation: "Explicación en español.",
@@ -250,7 +247,7 @@ describe("evaluateQuestionEligibility", () => {
     const result = evaluateQuestionEligibility(q, "versus_faceoff");
     expect(result.eligible).toBe(false);
     if (!result.eligible) {
-      expect(result.reason).toBe("EMPTY_TRANSLATED_CONTENT");
+      expect(result.reason).toBe("MISSING_ENGLISH_SOURCE");
     }
   });
 });

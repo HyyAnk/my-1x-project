@@ -20,11 +20,7 @@ export function useGlobalMetrics() {
   const fetchBalance = useCallback(async () => {
     try {
       setLoadingBalance(true);
-      const [res, vmRes, ledgerRes] = await Promise.allSettled([
-        api.imageBalance(),
-        api.voiceRenderedMetrics(),
-        api.usageLedger(),
-      ]);
+      const [res, vmRes, ledgerRes] = await Promise.allSettled([api.imageBalance(), api.voiceRenderedMetrics(), api.usageLedger()]);
       if (res.status === "fulfilled") {
         setImageBalance(res.value);
         setBalanceError(null);

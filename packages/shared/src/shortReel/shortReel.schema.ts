@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { sha256Hex, ReelArchetypeSchema, CompleteShortReelSourceSnapshotSchema } from "./shortReelSource.schema.js";
+import { sha256Hex, canonicalJsonStringify, ReelArchetypeSchema, CompleteShortReelSourceSnapshotSchema } from "./shortReelSource.schema.js";
 
-export { sha256Hex, ReelArchetypeSchema, CompleteShortReelSourceSnapshotSchema };
+export { sha256Hex, canonicalJsonStringify, ReelArchetypeSchema, CompleteShortReelSourceSnapshotSchema };
 
 export const SegmentIndexSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 
@@ -386,13 +386,7 @@ export function validateReelScript(
   return { valid: errors.length === 0, errors };
 }
 
-export {
-  canonicalJsonStringify,
-  computeSourceContentHash,
-  isEnglishLanguage,
-  createEnglishSourceSnapshot,
-  createSourceSnapshot,
-} from "./shortReelSource.js";
+export { computeSourceContentHash, isEnglishLanguage, createEnglishSourceSnapshot, createSourceSnapshot } from "./shortReelSource.js";
 
 export function createInitialShortReel(params: {
   channel_id: string;

@@ -37,6 +37,8 @@ export function EpisodeQuizCustomizationBar({
   mascotStyleId,
   onSaveMascotStyle,
   availableMascotStyles,
+  introOutroStyleId,
+  onSaveIntroOutroStyle,
 }: EpisodeQuizCustomizationBarProps) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -91,6 +93,8 @@ export function EpisodeQuizCustomizationBar({
             mascotStyleId={mascotStyleId}
             onSaveMascotStyle={onSaveMascotStyle}
             availableMascotStyles={availableMascotStyles}
+            introOutroStyleId={introOutroStyleId}
+            onSaveIntroOutroStyle={onSaveIntroOutroStyle}
           />
 
           <EpisodeCustomizationElementsSection

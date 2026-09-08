@@ -121,10 +121,12 @@ describe("Question Bank Batch Generator Prompt & Parser", () => {
     expect(parsed[0].entity_id).toBe("ENT-ANI-001");
     expect(parsed[0].domain_id).toBe("nature_animals");
     expect(parsed[0].archetype_id).toBe("verdict_fact_myth");
+    expect(parsed[0].language).toBe("en");
 
     expect(parsed[1].entity_id).toBe("ENT-ANI-002");
     expect(parsed[1].domain_id).toBe("nature_animals");
     expect(parsed[1].subtopic_id).toBe("mammals");
+    expect(parsed[1].language).toBe("en");
   });
 });
 
@@ -155,6 +157,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
         domain_id: "nature_animals",
         subtopic_id: "marine_life",
         entity_id: "ENT-ANI-001",
+        language: "en",
         format: "multiple_choice",
         question: "Which Australian mammal is known to lay eggs?",
         choices: [
@@ -190,6 +193,69 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     expect(progressEvents[0].completedCount).toBe(1);
     expect(result.matrixCoverage).toBeDefined();
     expect(result.matrixCoverage?.total_combos).toBe(20000);
+  });
+
+  it.each(["fr", "vi", "unknown", undefined, "English"])(
+    "rejects raw candidates with non-canonical language %s before persistence",
+    async (language) => {
+      let saveCalls = 0;
+      const candidate: BankQuestion = {
+        id: `RAW-LANGUAGE-${String(language)}-${Date.now()}`,
+        archetype_id: "speed_blitz",
+        domain_id: "nature_animals",
+        subtopic_id: "marine_life",
+        language,
+        format: "multiple_choice",
+        question: "Which mammal lays eggs?",
+        choices: [
+          { id: "A", text: "Platypus", is_correct: true },
+          { id: "B", text: "Kangaroo", is_correct: false },
+          { id: "C", text: "Koala", is_correct: false },
+        ],
+        correct_choice_id: "A",
+        explanation: "The platypus is a mammal that lays eggs.",
+        difficulty: 1,
+        tags: [],
+        status: "approved",
+      };
+      const guardedRepository = {
+        queryQuestionBankQuestions: () => Promise.resolve({ questions: [], total: 0 }),
+        saveQuestionBankQuestion: () => {
+          saveCalls += 1;
+          return candidate;
+        },
+      } as unknown as RepositoryService;
+
+      await expect(
+        generateQuestionBankBatch(guardedRepository, {
+          rawCandidatesOverride: [candidate],
+          persist: true,
+        }),
+      ).rejects.toThrow(/BANK_ENGLISH_ONLY: Raw Bank candidate/);
+      expect(saveCalls).toBe(0);
+    },
+  );
+
+  it("rejects invalid generation language before invoking the provider", async () => {
+    let providerCalls = 0;
+    const llmClient: LLMClient = {
+      connect: () => Promise.resolve(),
+      generateContent: () => {
+        providerCalls += 1;
+        return Promise.resolve({ text: "[]" });
+      },
+    };
+
+    await expect(
+      generateQuestionBankBatch(repo, {
+        mode: "auto",
+        count: 1,
+        language: "vi",
+        persist: false,
+        llmClient,
+      }),
+    ).rejects.toThrow("Vietnamese generation targets are not supported");
+    expect(providerCalls).toBe(0);
   });
 
   it("executes chunking loop when target count exceeds MAX_BATCH_CHUNK_SIZE", async () => {

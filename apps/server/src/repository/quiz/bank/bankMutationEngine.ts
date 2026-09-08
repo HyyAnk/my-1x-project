@@ -4,13 +4,14 @@ import path from "node:path";
 import { BankQuestionSchema, BankSubtopicBatchSchema, type BankIndex, type BankQuestion, type BankSubtopicBatch } from "@studio/shared";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { QUESTION_BANK_DIR, getQuestionBankPath, getQuestionBankWritePath } from "./bankPathResolver.js";
-import { listQuestionBankBatches } from "./bankBatchStorage.js";
-import { recalculateQuestionBankIndex } from "./bankIndexManager.js";
+import { listQuestionBankBatchesUnlocked } from "./bankBatchStorage.js";
+import { recalculateQuestionBankIndexUnlocked } from "./bankIndexManager.js";
+import { withBankWrite } from "./bankSerializationBoundary.js";
 
 /**
  * Validates, normalizes, and upserts a bank question into its corresponding subtopic batch file.
  */
-export async function saveQuestionBankQuestion(this: RepositoryRuntime, question: BankQuestion): Promise<BankQuestion> {
+export async function saveQuestionBankQuestionUnlocked(this: RepositoryRuntime, question: BankQuestion): Promise<BankQuestion> {
   const normalizedQuestion = {
     ...question,
     archetype_id: question.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : question.archetype_id,
@@ -74,15 +75,19 @@ export async function saveQuestionBankQuestion(this: RepositoryRuntime, question
   }
 
   // Recalculate index
-  await recalculateQuestionBankIndex.call(this);
+  await recalculateQuestionBankIndexUnlocked.call(this);
   return toSave;
+}
+
+export function saveQuestionBankQuestion(this: RepositoryRuntime, question: BankQuestion): Promise<BankQuestion> {
+  return withBankWrite(this, () => saveQuestionBankQuestionUnlocked.call(this, question));
 }
 
 /**
  * Removes a question from its batch and recalculates index statistics.
  */
-export async function deleteQuestionBankQuestion(this: RepositoryRuntime, questionId: string): Promise<boolean> {
-  const batches = await listQuestionBankBatches.call(this);
+export async function deleteQuestionBankQuestionUnlocked(this: RepositoryRuntime, questionId: string): Promise<boolean> {
+  const batches = await listQuestionBankBatchesUnlocked.call(this);
   let foundAndDeleted = false;
 
   for (const batch of batches) {
@@ -120,17 +125,21 @@ export async function deleteQuestionBankQuestion(this: RepositoryRuntime, questi
   }
 
   if (foundAndDeleted) {
-    await recalculateQuestionBankIndex.call(this);
+    await recalculateQuestionBankIndexUnlocked.call(this);
     return true;
   }
 
   return false;
 }
 
+export function deleteQuestionBankQuestion(this: RepositoryRuntime, questionId: string): Promise<boolean> {
+  return withBankWrite(this, () => deleteQuestionBankQuestionUnlocked.call(this, questionId));
+}
+
 /**
  * Clears all batches from the question bank directory and resets the index.
  */
-export async function clearQuestionBank(this: RepositoryRuntime): Promise<{ cleared_batches_count: number }> {
+export async function clearQuestionBankUnlocked(this: RepositoryRuntime): Promise<{ cleared_batches_count: number }> {
   const runtimeBankRoot = path.join(this.roots.runtime, QUESTION_BANK_DIR);
   const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
   const isRedirectedRuntime = path.resolve(this.roots.runtime) !== path.resolve(defaultProjectRuntime);
@@ -181,6 +190,10 @@ export async function clearQuestionBank(this: RepositoryRuntime): Promise<{ clea
   }
 
   return { cleared_batches_count: clearedBatchesCount };
+}
+
+export function clearQuestionBank(this: RepositoryRuntime): Promise<{ cleared_batches_count: number }> {
+  return withBankWrite(this, () => clearQuestionBankUnlocked.call(this));
 }
 
 export const clearAllQuestionBankQuestions = clearQuestionBank;

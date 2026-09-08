@@ -1,6 +1,6 @@
 import { copyFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { EpisodeSchema, type Channel, type Episode, type MascotProfile, type QuizAssetResolution, type Scene } from "@studio/shared";
+import { EpisodeSchema, type Channel, type Episode, type MascotProfile, type QuizAssetResolution, type Scene, type IntroOutroTransitionType } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../repository.js";
 import { buildQuizComposition } from "../../quiz/render/buildComposition.js";
 import { preflightQuizRender } from "../../quiz/qa/preflight.js";
@@ -171,6 +171,38 @@ export async function prepareVideoComposition(options: {
     selectedBgmFilename = soundtrackResult.selectedBgmFilename;
   }
 
+  const styleId = episode.quiz_config?.intro_outro_style_id !== undefined
+    ? episode.quiz_config.intro_outro_style_id
+    : (channel.default_intro_outro_style_id ?? null);
+
+  let introVideoPath: string | undefined;
+  let outroVideoPath: string | undefined;
+  let transitionType: IntroOutroTransitionType | undefined;
+
+  if (styleId && styleId !== "none") {
+    const style = await repository.getChannelIntroOutroStyle(channel.channel_id, styleId).catch(() => null);
+    if (style) {
+      const sourceIntroPath = repository.resolvePath("channels", channel.slug, "intro_outro_styles", style.style_id, "intro.mp4");
+      const sourceOutroPath = repository.resolvePath("channels", channel.slug, "intro_outro_styles", style.style_id, "outro.mp4");
+      const targetIntroPath = path.join(renderRoot, "intro.mp4");
+      const targetOutroPath = path.join(renderRoot, "outro.mp4");
+
+      try {
+        await copyFile(sourceIntroPath, targetIntroPath);
+        introVideoPath = "./intro.mp4";
+      } catch {
+        // Fallback if file not found
+      }
+      try {
+        await copyFile(sourceOutroPath, targetOutroPath);
+        outroVideoPath = "./outro.mp4";
+      } catch {
+        // Fallback if file not found
+      }
+      transitionType = style.transition_type;
+    }
+  }
+
   const mascotAspectRatio = renderAspectRatio === "9:16" ? "9:16" : "16:9";
   const renderFps = runtime.videoConfig?.fps ?? 30;
   const preparedQuizRender = completeQuizV2
@@ -193,6 +225,9 @@ export async function prepareVideoComposition(options: {
         mascot: mascotProfile,
         mascotConfig: channel.mascot_config,
         fps: renderFps,
+        introVideoPath,
+        outroVideoPath,
+        transitionType,
       })
     : null;
 

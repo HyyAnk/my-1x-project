@@ -1,7 +1,23 @@
 import type { VoicePlan } from "@studio/shared";
 import { TimelineContext, round } from "./timelineContext.js";
 
-export function compileOutroStage(ctx: TimelineContext, voicePlan: VoicePlan): void {
+export function compileOutroStage(ctx: TimelineContext, voicePlan: VoicePlan, outroDuration?: number): void {
+  if (outroDuration !== undefined) {
+    if (outroDuration > 0) {
+      const outroStart = ctx.cursor;
+      ctx.cursor = round(outroStart + outroDuration);
+      ctx.add({
+        type: "background.motion",
+        at_seconds: outroStart,
+        duration_seconds: round(ctx.cursor - outroStart),
+        question_id: null,
+        choice_id: null,
+        segment_id: "outro",
+        payload: { layers: ["sunburst", "ambient_shapes"] },
+      });
+    }
+    return;
+  }
   const outro = voicePlan.segments.find((segment) => segment.role === "outro");
   if (outro) {
     const outroStart = ctx.cursor;

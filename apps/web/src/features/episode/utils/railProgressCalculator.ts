@@ -63,12 +63,7 @@ function resolveVoiceProgress(state: QuizV2State, pipelineTask?: Task | null): S
     : itemProgress(0, 1, "task");
 }
 
-function resolveScenesProgress(
-  readiness: Readiness,
-  tasks: Task[],
-  questionTotal: number,
-  pipelineTask?: Task | null,
-): StageProgress {
+function resolveScenesProgress(readiness: Readiness, tasks: Task[], questionTotal: number, pipelineTask?: Task | null): StageProgress {
   if (pipelineTask && isTaskActive(pipelineTask) && pipelineTask.progress_message) {
     const match = /(?:sequences|shots)\s+(\d+)\/(\d+)/i.exec(pipelineTask.progress_message);
     if (match) {
@@ -76,17 +71,10 @@ function resolveScenesProgress(
     }
   }
   const sequenceTasks = tasks.filter((task) => task.task_type === "GENERATE_SEQUENCE_SCENES");
-  return sequenceTasks.length > 0
-    ? sequenceTaskProgress(sequenceTasks, questionTotal)
-    : itemProgress(readiness.scenes ? 1 : 0, 1, "task");
+  return sequenceTasks.length > 0 ? sequenceTaskProgress(sequenceTasks, questionTotal) : itemProgress(readiness.scenes ? 1 : 0, 1, "task");
 }
 
-function resolveRenderProgress(
-  state: QuizV2State,
-  tasks: Task[],
-  readiness: Readiness,
-  pipelineTask?: Task | null,
-): StageProgress {
+function resolveRenderProgress(state: QuizV2State, tasks: Task[], readiness: Readiness, pipelineTask?: Task | null): StageProgress {
   const videoTask = latestRelevantTask("render", tasks);
   const renderProgress = videoTask?.render_progress ?? pipelineTask?.render_progress;
   if (renderProgress && renderProgress.total_frames > 0) {
@@ -145,12 +133,9 @@ export function resolveProgress(
     return resolveVoiceProgress(state, pipelineTask);
   }
   if (stage === "timeline") {
-    const coveredQuestions = new Set(
-      (state.timeline?.events ?? []).filter((event) => event.question_id).map((event) => event.question_id),
-    ).size;
-    return questionTotal > 0
-      ? itemProgress(coveredQuestions, questionTotal, "questions")
-      : itemProgress(state.timeline ? 1 : 0, 1, "task");
+    const coveredQuestions = new Set((state.timeline?.events ?? []).filter((event) => event.question_id).map((event) => event.question_id))
+      .size;
+    return questionTotal > 0 ? itemProgress(coveredQuestions, questionTotal, "questions") : itemProgress(state.timeline ? 1 : 0, 1, "task");
   }
   if (stage === "qa") {
     return itemProgress(state.assessment ? 1 : 0, 1, "check");

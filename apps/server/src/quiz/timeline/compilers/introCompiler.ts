@@ -1,7 +1,7 @@
 import type { DirectorPlan, VoicePlan } from "@studio/shared";
 import { TimelineContext, round } from "./timelineContext.js";
 
-export function compileIntroStage(ctx: TimelineContext, director: DirectorPlan, voicePlan: VoicePlan): void {
+export function compileIntroStage(ctx: TimelineContext, director: DirectorPlan, voicePlan: VoicePlan, introDuration?: number): void {
   const intro = voicePlan.segments.find((segment) => segment.role === "intro");
   ctx.add({
     type: "background.enter",
@@ -13,8 +13,12 @@ export function compileIntroStage(ctx: TimelineContext, director: DirectorPlan, 
     payload: { theme: director.archetype_family },
   });
 
-  const introEnd = intro ? ctx.scheduleNarration(intro.segment_id, ctx.cursor, intro.text, null) : 0;
-  ctx.cursor = round(Math.max(ctx.policy.intro_minimum_seconds, introEnd));
+  if (introDuration !== undefined) {
+    ctx.cursor = round(introDuration);
+  } else {
+    const introEnd = intro ? ctx.scheduleNarration(intro.segment_id, ctx.cursor, intro.text, null) : 0;
+    ctx.cursor = round(Math.max(ctx.policy.intro_minimum_seconds, introEnd));
+  }
   if (ctx.cursor > 0) {
     ctx.add({
       type: "background.motion",

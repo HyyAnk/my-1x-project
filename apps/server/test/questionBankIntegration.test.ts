@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { EventEmitter } from "node:events";
 import { existsSync } from "node:fs";
-import { mkdtemp, rm } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { buildApp, type StudioApp } from "../src/app.js";
@@ -12,6 +12,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
   let app: StudioApp;
   let testChannelId: string;
   let tempStorage: string;
+  let isolatedStudioRoot: string;
 
   beforeAll(async () => {
     let curr = process.cwd();
@@ -19,13 +20,22 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       if (existsSync(path.join(curr, "pnpm-workspace.yaml"))) break;
       curr = path.dirname(curr);
     }
-    app = await buildApp(curr);
     tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-integration-storage-"));
-    await app.repository.setStorageRoot(tempStorage);
-    await app.repository.deleteQuestionBankQuestion("INT-TEST-001").catch(() => {});
-    await app.repository.deleteQuestionBankQuestion("INT-TEST-002").catch(() => {});
-    await app.repository.deleteQuestionBankQuestion("INT-AUTO-TRANS-001").catch(() => {});
-    await app.repository.deleteQuestionBankQuestion("INT-TRANS-ROUTE-001").catch(() => {});
+    isolatedStudioRoot = await mkdtemp(path.join(os.tmpdir(), "qb-integration-root-"));
+    await mkdir(path.join(isolatedStudioRoot, ".quiz-studio"), { recursive: true });
+    await writeFile(
+      path.join(isolatedStudioRoot, ".quiz-studio", "storage.local.json"),
+      JSON.stringify({ storage_path: tempStorage }, null, 2),
+      "utf8",
+    );
+    const srcKb = path.join(curr, ".quiz-studio", "knowledge_base");
+    const destKb = path.join(isolatedStudioRoot, ".quiz-studio", "knowledge_base");
+    await cp(srcKb, destKb, { recursive: true }).catch(() => {});
+    const srcTemplates = path.join(curr, "templates");
+    const destTemplates = path.join(isolatedStudioRoot, "templates");
+    await cp(srcTemplates, destTemplates, { recursive: true }).catch(() => {});
+
+    app = await buildApp(isolatedStudioRoot);
     const channel = await app.repository.createChannel({
       name: "Integration Channel",
       language: "Spanish",
@@ -34,13 +44,12 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
   });
 
   afterAll(async () => {
-    await app.repository.deleteQuestionBankQuestion("INT-TEST-001").catch(() => {});
-    await app.repository.deleteQuestionBankQuestion("INT-TEST-002").catch(() => {});
-    await app.repository.deleteQuestionBankQuestion("INT-AUTO-TRANS-001").catch(() => {});
-    await app.repository.deleteQuestionBankQuestion("INT-TRANS-ROUTE-001").catch(() => {});
     await app.close();
     if (tempStorage) {
       await rm(tempStorage, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }).catch(() => {});
+    }
+    if (isolatedStudioRoot) {
+      await rm(isolatedStudioRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }).catch(() => {});
     }
   });
 
@@ -359,11 +368,9 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       // Localized topic
       expect(result.episode.topic.hook).toBe("¿Cuál es la velocidad de la luz en el vacío?");
 
-      // 2. Verify cached translation was persisted in Question Bank on disk
+      // 2. Verify Bank question remains immutable (no translation writeback during episode creation)
       const updatedQuestion = await app.repository.getQuestionBankQuestion("INT-AUTO-TRANS-001");
-      expect(updatedQuestion?.translations?.es).toBeDefined();
-      expect(updatedQuestion?.translations?.es?.question).toBe("¿Cuál es la velocidad de la luz en el vacío?");
-      expect(updatedQuestion?.translations?.es?.choices[0].text).toBe("300.000 km/s");
+      expect(updatedQuestion?.translations?.es).toBeUndefined();
     }, 15000);
 
     it("POST /api/question-bank/:id/transcreate translates on-demand and caches to disk", async () => {

@@ -18,3 +18,4 @@ export * from "./mascot/styleReadiness.js";
 export * from "./thumbnail/index.js";
 export * from "./utils/languageNormalize.js";
 export * from "./shortReel/index.js";
+export { hashBankQuestionSource, sourceCanonicalJsonStringify, sourceSha256Hex } from "./utils/contentHash.js";

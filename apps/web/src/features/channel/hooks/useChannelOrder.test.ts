@@ -1,11 +1,7 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import type { Channel } from "@studio/shared";
-import {
-  CHANNEL_ORDER_STORAGE_KEY,
-  computeOrderedChannels,
-  useChannelOrder,
-} from "./useChannelOrder";
+import { CHANNEL_ORDER_STORAGE_KEY, computeOrderedChannels, useChannelOrder } from "./useChannelOrder";
 
 function createMockChannel(id: string, name: string): Channel {
   return {
@@ -119,11 +115,7 @@ describe("useChannelOrder - Step 1: State & Persistence", () => {
 
       expect(result.current.orderedChannels.map((c) => c.channel_id)).toEqual(["ch_2", "ch_3", "ch_1"]);
       expect(result.current.hasCustomOrder).toBe(true);
-      expect(JSON.parse(localStorage.getItem(CHANNEL_ORDER_STORAGE_KEY) || "[]")).toEqual([
-        "ch_2",
-        "ch_3",
-        "ch_1",
-      ]);
+      expect(JSON.parse(localStorage.getItem(CHANNEL_ORDER_STORAGE_KEY) || "[]")).toEqual(["ch_2", "ch_3", "ch_1"]);
     });
 
     it("pins a channel to the top (index 0)", () => {
@@ -153,12 +145,9 @@ describe("useChannelOrder - Step 1: State & Persistence", () => {
 
     it("automatically appends newly added channels to the end when channels list updates", () => {
       localStorage.setItem(CHANNEL_ORDER_STORAGE_KEY, JSON.stringify(["ch_3", "ch_1"]));
-      const { result, rerender } = renderHook(
-        ({ channelList }) => useChannelOrder(channelList),
-        {
-          initialProps: { channelList: [ch1, ch3] },
-        }
-      );
+      const { result, rerender } = renderHook(({ channelList }) => useChannelOrder(channelList), {
+        initialProps: { channelList: [ch1, ch3] },
+      });
 
       expect(result.current.orderedChannels.map((c) => c.channel_id)).toEqual(["ch_3", "ch_1"]);
 
@@ -166,11 +155,7 @@ describe("useChannelOrder - Step 1: State & Persistence", () => {
       rerender({ channelList: [ch1, ch3, ch4] });
 
       expect(result.current.orderedChannels.map((c) => c.channel_id)).toEqual(["ch_3", "ch_1", "ch_4"]);
-      expect(JSON.parse(localStorage.getItem(CHANNEL_ORDER_STORAGE_KEY) || "[]")).toEqual([
-        "ch_3",
-        "ch_1",
-        "ch_4",
-      ]);
+      expect(JSON.parse(localStorage.getItem(CHANNEL_ORDER_STORAGE_KEY) || "[]")).toEqual(["ch_3", "ch_1", "ch_4"]);
     });
   });
 });

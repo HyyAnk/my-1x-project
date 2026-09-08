@@ -90,12 +90,40 @@ export async function resolveAssets(
   return { asset_resolution: result.resolution, issues: result.issues, invalidated };
 }
 
+export async function resolveIntroOutroConfig(repository: QuizOrchestratorInput["repository"], channelId: string, episodeId: string) {
+  const [channel, episode] = await Promise.all([
+    repository.getChannel(channelId).catch(() => null),
+    repository.getEpisode(channelId, episodeId).catch(() => null),
+  ]);
+  const styleId = episode?.quiz_config?.intro_outro_style_id !== undefined
+    ? episode.quiz_config.intro_outro_style_id
+    : (channel?.default_intro_outro_style_id ?? null);
+
+  if (styleId === "none") {
+    return { style: null, skipIntro: true, skipOutro: true, introDuration: 0, outroDuration: 0 };
+  }
+  if (styleId) {
+    const style = await repository.getChannelIntroOutroStyle(channelId, styleId).catch(() => null);
+    if (style) {
+      return {
+        style,
+        skipIntro: style.intro.has_audio,
+        skipOutro: style.outro.has_audio,
+        introDuration: style.intro.duration_seconds,
+        outroDuration: style.outro.duration_seconds,
+      };
+    }
+  }
+  return { style: null, skipIntro: false, skipOutro: false, introDuration: undefined, outroDuration: undefined };
+}
+
 export async function planVoice(
   input: QuizOrchestratorInput,
 ): Promise<{ voice_plan: VoicePlan; artifact_path: string; invalidated: string[] }> {
   const quiz = await input.repository.readQuiz(input.channelId, input.episodeId);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before planning voice", "QUIZ_REQUIRED");
-  const voice_plan = buildQuizVoicePlan(quiz);
+  const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
+  const voice_plan = buildQuizVoicePlan(quiz, { skipIntro: introOutro.skipIntro, skipOutro: introOutro.skipOutro });
   const artifact_path = await input.repository.writeVoicePlan(input.channelId, input.episodeId, voice_plan);
   const invalidatedStages = invalidateQuizArtifacts("voice");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
@@ -120,7 +148,8 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
   assertDirectorPlanValid(quiz, director_plan);
   const invalidatedStages = invalidateQuizArtifacts("voice");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
-  const plannedVoice = buildQuizVoicePlan(quiz);
+  const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
+  const plannedVoice = buildQuizVoicePlan(quiz, { skipIntro: introOutro.skipIntro, skipOutro: introOutro.skipOutro });
   const measured = await synthesizeQuizVoiceSegments({
     repository: input.repository,
     config: input.config.audio_generation,
@@ -136,7 +165,14 @@ export async function generateVoice(input: QuizOrchestratorInput): Promise<{
       segment.duration_seconds === null ? [] : [[segment.segment_id, segment.duration_seconds]],
     ),
   );
-  const timeline = compileQuizTimeline({ quiz, director: director_plan, voicePlan: measured.voicePlan, audioDurations });
+  const timeline = compileQuizTimeline({
+    quiz,
+    director: director_plan,
+    voicePlan: measured.voicePlan,
+    audioDurations,
+    introDuration: introOutro.introDuration,
+    outroDuration: introOutro.outroDuration,
+  });
   const narration = await assembleQuizNarration({
     repository: input.repository,
     channelId: input.channelId,

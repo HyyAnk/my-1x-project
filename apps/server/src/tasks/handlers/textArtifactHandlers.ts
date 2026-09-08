@@ -2,6 +2,8 @@ import type { TaskManagerRuntime, ActiveRun } from "../runtime.js";
 import { extractMarkdown, extractScriptMarkdown, parseTopicCandidates } from "../parsers.js";
 import { validateQuizResearch, validateQuizScript, validateQuizTreatment, validateQuizVisualBible } from "../validators.js";
 import { handleDirectQuizOutput } from "./directQuizHandler.js";
+import { getAssignedTopicAllocation } from "../../context/channelContextBuilder.js";
+import { validateTopicCandidateResponse } from "../../context/topicCandidateValidator.js";
 
 export async function handleTextArtifactOutput(runtime: TaskManagerRuntime, active: ActiveRun, output: string): Promise<string[] | null> {
   const task = active.task;
@@ -13,6 +15,18 @@ export async function handleTextArtifactOutput(runtime: TaskManagerRuntime, acti
   }
 
   if (task.task_type === "SUGGEST_TOPICS") {
+    const allocation = getAssignedTopicAllocation(active.manifest);
+    if (allocation) {
+      const runResult = validateTopicCandidateResponse({
+        rawOutput: output,
+        allocatedSlots: allocation.allocatedSlots,
+        channelId: task.channel_id,
+        shortages: allocation.shortages,
+      });
+      await runtime.repository.saveTopicRun(task.channel_id, runResult);
+      const updatedChannel = await runtime.repository.getChannel(task.channel_id);
+      return [`channels/${updatedChannel.slug}/topics/`];
+    }
     if (!active.topicMatrixPlan) throw new Error("Topic suggestion task is missing its assigned matrix plan");
     const candidates = parseTopicCandidates(output, task.channel_id, active.topicMatrixPlan);
     await runtime.repository.saveTopicRun(task.channel_id, candidates);

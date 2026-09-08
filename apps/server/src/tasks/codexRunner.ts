@@ -15,8 +15,9 @@ import { retryQuizResearch, retryScript, retrySequenceScenes, retryVisualBible, 
 import { handleNotification } from "./stream/notificationHandler.js";
 import { handleServerRequest } from "./stream/approvalHandler.js";
 import { completeWithOutput } from "./handlers/outputCompletionHandler.js";
-import { getAssignedTopicMatrixPlan } from "../context/channelContextBuilder.js";
+import { getAssignedTopicMatrixPlan, getAssignedTopicAllocation } from "../context/channelContextBuilder.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
+import type { TopicRunResult } from "@studio/shared";
 
 export {
   retryQuizResearch,
@@ -138,6 +139,24 @@ export async function run(this: TaskManagerRuntime, task: Task): Promise<void> {
       this.imageVariants.get(task.task_id) ?? 0,
       topicHint,
     );
+
+    if (task.task_type === "SUGGEST_TOPICS") {
+      const allocation = getAssignedTopicAllocation(manifest);
+      if (allocation && allocation.allocatedSlots.length === 0) {
+        const emptyRun: TopicRunResult = {
+          run_id: randomUUID(),
+          target_episode_count: 3,
+          target_short_reel_count: 2,
+          candidates: [],
+          shortages: allocation.shortages,
+        };
+        await this.repository.saveTopicRun(task.channel_id, emptyRun);
+        await this.finish(task.task_id, "COMPLETED", null);
+        this.logger.step("Topic suggestion completed (empty inventory fast-path)", context);
+        return;
+      }
+    }
+
     const isAntigravity = this.activeEngine === "antigravity" && Boolean(this.antigravity);
     const client = isAntigravity ? this.antigravity! : this.codex;
     const engineName = isAntigravity ? "Antigravity" : "Codex";

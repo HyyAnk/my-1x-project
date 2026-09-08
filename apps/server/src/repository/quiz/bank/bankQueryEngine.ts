@@ -1,7 +1,10 @@
 import { normalizeLanguageCode, type BankQuestion, type BankQuestionWithCooldown } from "@studio/shared";
 import { calculateQuestionSimilarity, normalizeQuestionText } from "../../../quiz/qa/questionHistory.js";
 import type { RepositoryRuntime } from "../../runtime.js";
-import { listQuestionBankBatches } from "./bankBatchStorage.js";
+import { listQuestionBankBatchesUnlocked } from "./bankBatchStorage.js";
+import { readQuestionBankIndexUnlocked } from "./bankIndexManager.js";
+import { bankRevisionToken, digestBankSnapshot, getBankSerializationBoundary, withBankRead } from "./bankSerializationBoundary.js";
+import type { BankQuestionSnapshot } from "./bankSerializationBoundary.js";
 
 // Re-export mutation operations for 100% backward compatibility
 export {
@@ -32,11 +35,11 @@ export interface QueryQuestionBankParams {
  * Queries bank questions with multi-attribute filtering, search, pagination,
  * and optional channel cooldown calculation.
  */
-export async function queryQuestionBankQuestions(
+export async function queryQuestionBankQuestionsUnlocked(
   this: RepositoryRuntime,
   params: QueryQuestionBankParams = {},
 ): Promise<{ questions: BankQuestionWithCooldown[]; total: number }> {
-  const batches = await listQuestionBankBatches.call(this, {
+  const batches = await listQuestionBankBatchesUnlocked.call(this, {
     archetypeId: params.archetypeId,
     domainId: params.domainId,
   });
@@ -181,6 +184,23 @@ export async function queryQuestionBankQuestions(
   return { questions: paginated, total };
 }
 
+export function queryQuestionBankQuestions(
+  this: RepositoryRuntime,
+  params: QueryQuestionBankParams = {},
+): Promise<{ questions: BankQuestionWithCooldown[]; total: number }> {
+  return withBankRead(this, () => queryQuestionBankQuestionsUnlocked.call(this, params));
+}
+
+export function readQuestionBankQuestionsSnapshot(
+  this: RepositoryRuntime,
+  params: QueryQuestionBankParams = {},
+): Promise<{ questions: BankQuestionWithCooldown[]; total: number; revision: number }> {
+  return withBankRead(this, async () => ({
+    ...(await queryQuestionBankQuestionsUnlocked.call(this, params)),
+    revision: getBankSerializationBoundary(this).revision,
+  }));
+}
+
 /**
  * Convenience helper to search questions by text keyword across questions, tags, and translations.
  */
@@ -189,18 +209,44 @@ export async function searchQuestionBank(
   search: string,
   options: Omit<QueryQuestionBankParams, "search"> = {},
 ): Promise<{ questions: BankQuestionWithCooldown[]; total: number }> {
-  return queryQuestionBankQuestions.call(this, { ...options, search });
+  return withBankRead(this, () => queryQuestionBankQuestionsUnlocked.call(this, { ...options, search }));
 }
 
 /**
  * Finds a single question in the bank by its unique identifier.
  */
-export async function getQuestionBankQuestion(
+export async function getQuestionBankQuestionUnlocked(
   this: RepositoryRuntime,
   questionId: string,
   channelId?: string,
 ): Promise<BankQuestionWithCooldown | null> {
-  const result = await queryQuestionBankQuestions.call(this, { channelId, limit: 10000 });
+  const result = await queryQuestionBankQuestionsUnlocked.call(this, { channelId, limit: 10000 });
   const found = result.questions.find((q) => q.id === questionId);
   return found || null;
+}
+
+export function getQuestionBankQuestion(
+  this: RepositoryRuntime,
+  questionId: string,
+  channelId?: string,
+): Promise<BankQuestionWithCooldown | null> {
+  return withBankRead(this, () => getQuestionBankQuestionUnlocked.call(this, questionId, channelId));
+}
+
+export async function readQuestionBankSnapshotUnlocked(this: RepositoryRuntime): Promise<BankQuestionSnapshot> {
+  const batches = await listQuestionBankBatchesUnlocked.call(this);
+  const index = await readQuestionBankIndexUnlocked.call(this);
+  const boundary = getBankSerializationBoundary(this);
+  const digest = digestBankSnapshot(batches, index);
+  return {
+    epoch: boundary.epoch,
+    revision: boundary.revision,
+    snapshotToken: bankRevisionToken(boundary.epoch, boundary.revision, digest),
+    batches,
+    index,
+  };
+}
+
+export function readQuestionBankSnapshot(this: RepositoryRuntime): Promise<BankQuestionSnapshot> {
+  return withBankRead(this, () => readQuestionBankSnapshotUnlocked.call(this));
 }

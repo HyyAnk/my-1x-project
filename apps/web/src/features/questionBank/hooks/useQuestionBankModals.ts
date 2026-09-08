@@ -1,8 +1,5 @@
 import { useCallback, useState } from "react";
-import type {
-  BankQuestionWithCooldown,
-  QuestionBankModalState,
-} from "../types/questionBankUi.types";
+import type { BankQuestionWithCooldown, QuestionBankModalState } from "../types/questionBankUi.types";
 
 export function useQuestionBankModals() {
   const [selectedQuestion, setSelectedQuestion] = useState<BankQuestionWithCooldown | null>(null);

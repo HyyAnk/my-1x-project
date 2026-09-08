@@ -24,6 +24,7 @@ import type {
   QuizV2,
   Scene,
   TopicCandidate,
+  TopicRunResult,
   VideoDescription,
   VoicePlan,
   VoiceProfile,
@@ -36,7 +37,10 @@ import type {
   BankQuestionWithCooldown,
   BankTranslationContent,
   MatrixCoverageStats,
+  IntroOutroStyle,
+  IntroOutroClipMeta,
 } from "@studio/shared";
+import type { BankQuestionSnapshot } from "./quiz/bank/bankSerializationBoundary.js";
 import type { CreateStylePresetInput, StylePreset, UpdateStylePresetInput } from "@studio/shared";
 import type {
   MutationContext,
@@ -154,6 +158,7 @@ export interface RepositoryRuntime {
   listEpisodes(channelId: string): Promise<Episode[]>;
   getEpisode(channelId: string, episodeId: string): Promise<Episode>;
   getEpisodeFile(channelId: string, episodeId: string, filename: string): Promise<{ content: string; path: string; modified_at: string }>;
+  loadEpisodeFile(channelId: string, episodeId: string, filename: string): Promise<string>;
   saveEpisodeFile(channelId: string, episodeId: string, filename: string, content: string): Promise<{ path: string; modified_at: string }>;
   deleteEpisode(channelId: string, episodeId: string, confirmed?: boolean): Promise<void>;
   updateEpisodeStage(channelId: string, episodeId: string, stage: Episode["stage"]): Promise<Episode>;
@@ -234,7 +239,7 @@ export interface RepositoryRuntime {
 
   // Topics
   listTopics(channelId: string): Promise<TopicCandidate[]>;
-  saveTopicRun(channelId: string, candidates: TopicCandidate[]): Promise<void>;
+  saveTopicRun(channelId: string, candidates: TopicCandidate[] | TopicRunResult): Promise<void>;
   confirmTopic(channelId: string, topicId: string, questionCount?: number, visualStyle?: QuizImageStyle | "mixed"): Promise<Episode>;
   updateEpisodeSettings(channelId: string, episodeId: string, settings: EpisodeSettingsInput, wordsPerSecond: number): Promise<Episode>;
 
@@ -343,7 +348,11 @@ export interface RepositoryRuntime {
   listQuestionBankBatches(filter?: { archetypeId?: string; domainId?: string }): Promise<BankSubtopicBatch[]>;
   recalculateQuestionBankIndex(): Promise<BankIndex>;
   queryQuestionBankQuestions(params?: QueryQuestionBankParams): Promise<{ questions: BankQuestionWithCooldown[]; total: number }>;
+  readQuestionBankQuestionsSnapshot(
+    params?: QueryQuestionBankParams,
+  ): Promise<{ questions: BankQuestionWithCooldown[]; total: number; revision: number }>;
   getQuestionBankQuestion(questionId: string, channelId?: string): Promise<BankQuestionWithCooldown | null>;
+  readQuestionBankSnapshot(): Promise<BankQuestionSnapshot>;
   saveQuestionBankQuestion(question: BankQuestion): Promise<BankQuestion>;
   saveQuestionBankTranslation(questionId: string, translation: BankTranslationContent): Promise<BankQuestion | null>;
   deleteQuestionBankQuestion(questionId: string): Promise<boolean>;
@@ -361,4 +370,19 @@ export interface RepositoryRuntime {
     requestId?: string,
   ): Promise<ShortReelRecord>;
   updateShortReel(key: ReelKey, context: MutationContext, command: ShortReelEditCommand): Promise<ShortReelRecord>;
+
+  // Intro / Outro Styles
+  listChannelIntroOutroStyles(channelId: string): Promise<IntroOutroStyle[]>;
+  getChannelIntroOutroStyle(channelId: string, styleId: string): Promise<IntroOutroStyle | null>;
+  saveChannelIntroOutroStyle(channelId: string, style: IntroOutroStyle): Promise<void>;
+  deleteChannelIntroOutroStyle(channelId: string, styleId: string): Promise<void>;
+  processAndStoreStyleClip(
+    channelId: string,
+    styleId: string,
+    kind: "intro" | "outro",
+    sourceBufferOrPath: Buffer | string,
+    originalFilename: string,
+  ): Promise<IntroOutroClipMeta>;
+  getIntroOutroClipPath(channelId: string, styleId: string, kind: "intro" | "outro"): Promise<string>;
+  getIntroOutroThumbPath(channelId: string, styleId: string, kind: "intro" | "outro"): Promise<string | null>;
 }

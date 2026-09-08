@@ -129,15 +129,11 @@ export function getMilestoneProgress(currentCount: number): MilestoneProgressRes
   const nextTier = !isMaxTier && activeTierIndex + 1 < tiers.length ? tiers[activeTierIndex + 1] : null;
 
   const targetTotal = activeTier.target;
-  const targetPercent = isMaxTier
-    ? 100
-    : Math.min(100, Math.max(0, Math.round((currentTotal / targetTotal) * 1000) / 10));
+  const targetPercent = isMaxTier ? 100 : Math.min(100, Math.max(0, Math.round((currentTotal / targetTotal) * 1000) / 10));
 
   const bracketSpan = activeTier.target - activeTier.prevTarget;
   const bracketProgress = Math.max(0, currentTotal - activeTier.prevTarget);
-  const bracketPercent = isMaxTier
-    ? 100
-    : Math.min(100, Math.max(0, Math.round((bracketProgress / bracketSpan) * 1000) / 10));
+  const bracketPercent = isMaxTier ? 100 : Math.min(100, Math.max(0, Math.round((bracketProgress / bracketSpan) * 1000) / 10));
 
   const track: MilestoneTrackNode[] = tiers.map((tier, index) => {
     let status: MilestoneTrackNode["status"];

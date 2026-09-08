@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../../api";
-import type {
-  BankIndex,
-  BankTaxonomy,
-  MatrixCoverageStats,
-} from "../types/questionBankUi.types";
+import type { BankIndex, BankTaxonomy, MatrixCoverageStats } from "../types/questionBankUi.types";
 
 export interface UseQuestionBankTaxonomyOptions {
   onAfterRecalculate?: () => Promise<void> | void;

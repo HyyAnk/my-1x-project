@@ -4,12 +4,43 @@ import { BankIndexSchema, type BankIndex, type BankQuestion, type MatrixCoverage
 import { calculateMatrixCoverageStats } from "../../../quiz/bank/matrixCoverageService.js";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { getQuestionBankPath, getQuestionBankWritePath } from "./bankPathResolver.js";
-import { listQuestionBankBatches } from "./bankBatchStorage.js";
+import { listQuestionBankBatchesUnlocked } from "./bankBatchStorage.js";
+import { withBankRead, withBankWrite } from "./bankSerializationBoundary.js";
 
 /**
- * Reads the question bank index, calculating it on-the-fly if missing.
+ * Derives index statistics in-memory across all question batches without disk writes.
  */
-export async function readQuestionBankIndex(this: RepositoryRuntime): Promise<BankIndex> {
+export async function deriveQuestionBankIndexInMemory(this: RepositoryRuntime): Promise<BankIndex> {
+  const batches = await listQuestionBankBatchesUnlocked.call(this);
+  const by_archetype: Record<string, number> = {};
+  const by_domain: Record<string, number> = {};
+  let current_total = 0;
+
+  for (const batch of batches) {
+    const qCount = batch.questions.length;
+    current_total += qCount;
+    by_archetype[batch.archetype_id] = (by_archetype[batch.archetype_id] || 0) + qCount;
+    if (batch.archetype_id === "verdict_true_false") {
+      by_archetype.verdict_fact_myth = (by_archetype.verdict_fact_myth || 0) + qCount;
+    }
+    by_domain[batch.domain_id] = (by_domain[batch.domain_id] || 0) + qCount;
+  }
+
+  return {
+    schema_version: 2,
+    target_total: 20000,
+    current_total,
+    by_archetype,
+    by_domain,
+    updated_at: new Date().toISOString(),
+  };
+}
+
+/**
+ * Reads the question bank index, calculating it in-memory on-the-fly if missing.
+ * Strictly read-only: does not persist index.json.
+ */
+export async function readQuestionBankIndexUnlocked(this: RepositoryRuntime): Promise<BankIndex> {
   const indexPath = getQuestionBankPath.call(this, "index.json");
   try {
     const raw = JSON.parse(await readFile(indexPath, "utf8")) as unknown;
@@ -25,7 +56,7 @@ export async function readQuestionBankIndex(this: RepositoryRuntime): Promise<Ba
   }
 
   try {
-    return await recalculateQuestionBankIndex.call(this);
+    return await deriveQuestionBankIndexInMemory.call(this);
   } catch {
     return {
       schema_version: 2,
@@ -38,11 +69,15 @@ export async function readQuestionBankIndex(this: RepositoryRuntime): Promise<Ba
   }
 }
 
+export function readQuestionBankIndex(this: RepositoryRuntime): Promise<BankIndex> {
+  return withBankRead(this, () => readQuestionBankIndexUnlocked.call(this));
+}
+
 /**
  * Recalculates index statistics across all question batches and persists index.json.
  */
-export async function recalculateQuestionBankIndex(this: RepositoryRuntime): Promise<BankIndex> {
-  const batches = await listQuestionBankBatches.call(this);
+export async function recalculateQuestionBankIndexUnlocked(this: RepositoryRuntime): Promise<BankIndex> {
+  const batches = await listQuestionBankBatchesUnlocked.call(this);
   const by_archetype: Record<string, number> = {};
   const by_domain: Record<string, number> = {};
   let current_total = 0;
@@ -83,14 +118,22 @@ export async function recalculateQuestionBankIndex(this: RepositoryRuntime): Pro
   return updatedIndex;
 }
 
+export function recalculateQuestionBankIndex(this: RepositoryRuntime): Promise<BankIndex> {
+  return withBankWrite(this, () => recalculateQuestionBankIndexUnlocked.call(this));
+}
+
 /**
  * Calculates full 20,000 combo matrix coverage statistics across all active bank questions.
  */
-export async function getQuestionBankMatrixCoverage(this: RepositoryRuntime): Promise<MatrixCoverageStats> {
-  const batches = await listQuestionBankBatches.call(this);
+export async function getQuestionBankMatrixCoverageUnlocked(this: RepositoryRuntime): Promise<MatrixCoverageStats> {
+  const batches = await listQuestionBankBatchesUnlocked.call(this);
   const questions: BankQuestion[] = [];
   for (const batch of batches) {
     questions.push(...batch.questions);
   }
   return calculateMatrixCoverageStats(questions);
+}
+
+export function getQuestionBankMatrixCoverage(this: RepositoryRuntime): Promise<MatrixCoverageStats> {
+  return withBankRead(this, () => getQuestionBankMatrixCoverageUnlocked.call(this));
 }

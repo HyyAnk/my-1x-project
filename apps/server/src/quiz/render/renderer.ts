@@ -6,6 +6,7 @@ import type {
   QuizV2,
   MascotRenderAspectRatio,
   Scene,
+  IntroOutroTransitionType,
 } from "@studio/shared";
 import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
 import type { QuizRenderStyleContext } from "./quizRenderStyleContext.js";
@@ -27,6 +28,9 @@ export type QuizRenderInput = {
   premixedAudio?: boolean;
   /** Must match the renderer CLI --fps so markup and encoder stay in sync. */
   fps?: number;
+  introVideoPath?: string;
+  outroVideoPath?: string;
+  transitionType?: IntroOutroTransitionType;
 };
 
 export type PreparedQuizRender = {

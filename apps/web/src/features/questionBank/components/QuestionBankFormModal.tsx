@@ -1,7 +1,11 @@
 import { useState } from "react";
-import { Check, Plus, Trash, X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react";
 import type { BankChoice, BankGameplayArchetypeId, BankQuestion, BankTaxonomy, QuizAgeBand, QuizQuestionFormat } from "@studio/shared";
 import { useTranslation } from "../../../i18n";
+import { QuestionBankChoicesEditor } from "./QuestionBankChoicesEditor";
+import { QuestionBankMetaFields } from "./QuestionBankMetaFields";
+import { appendNextChoice, buildBankQuestion, removeChoiceItem } from "../utils/questionBankFormBuilder";
+import { validateQuestionForm } from "../utils/questionBankFormValidation";
 
 export interface QuestionBankFormModalProps {
   initialQuestion?: BankQuestion | null;
@@ -10,121 +14,23 @@ export interface QuestionBankFormModalProps {
   onClose: () => void;
 }
 
-const ARCHETYPE_OPTIONS: Array<{ id: string; defaultLabel: string; icon: string }> = [
-  { id: "verdict_true_false", defaultLabel: "True or False", icon: "⚖️" },
-  { id: "speed_blitz", defaultLabel: "Speed Blitz", icon: "⚡" },
-  { id: "deep_trivia", defaultLabel: "Deep Trivia", icon: "🧠" },
-  { id: "versus_faceoff", defaultLabel: "1v1 Faceoff", icon: "⚔️" },
-  { id: "visual_spotting", defaultLabel: "Visual Spotting", icon: "👁️" },
-  { id: "visual_identification", defaultLabel: "Visual ID", icon: "🔍" },
-  { id: "mystery_reveal", defaultLabel: "Mystery Reveal", icon: "🎭" },
-  { id: "clue_deduction", defaultLabel: "Clue Deduction", icon: "🕵️" },
-];
-
-type ChoicesEditorProps = {
-  choices: BankChoice[];
-  onSetCorrect: (id: string) => void;
-  onUpdateChoiceText: (id: string, text: string) => void;
-  onRemoveChoice: (id: string) => void;
-  onAddChoice: () => void;
-  t: (path: string) => string;
-};
-
-function QuestionBankChoicesEditor({ choices, onSetCorrect, onUpdateChoiceText, onRemoveChoice, onAddChoice, t }: ChoicesEditorProps) {
-  return (
-    <div className="qb-choices-editor">
-      {choices.map((c) => (
-        <div key={c.id} className={`qb-choice-edit-row ${c.is_correct ? "is-correct" : ""}`}>
-          <button
-            type="button"
-            className={`qb-choice-correct-btn ${c.is_correct ? "is-correct" : ""}`}
-            onClick={() => onSetCorrect(c.id)}
-            title={c.is_correct ? t("questionBank.form.correctAnswer") : t("questionBank.form.markAsCorrect")}
-          >
-            {c.is_correct ? <Check size={14} weight="bold" /> : c.id}
-          </button>
-          <input
-            type="text"
-            className="qb-input qb-choice-input"
-            value={c.text}
-            onChange={(e) => onUpdateChoiceText(c.id, e.target.value)}
-            placeholder={`Option ${c.id}`}
-          />
-          {choices.length > 2 && (
-            <button
-              type="button"
-              className="qb-choice-delete-btn"
-              onClick={() => onRemoveChoice(c.id)}
-              title={t("questionBank.form.removeOption")}
-            >
-              <Trash size={14} />
-            </button>
-          )}
-        </div>
-      ))}
-      {choices.length < 5 && (
-        <button type="button" className="qb-btn qb-btn-secondary qb-btn-sm" onClick={onAddChoice}>
-          <Plus size={14} />
-          <span>{t("questionBank.form.addChoice")}</span>
-        </button>
-      )}
-    </div>
-  );
-}
-
-function validateQuestionForm(
-  questionText: string,
-  explanation: string,
-  choices: BankChoice[],
-  t: (path: string) => string,
-): string | null {
-  if (!questionText.trim()) return t("questionBank.form.errorEnterQuestion");
-  if (!explanation.trim()) return t("questionBank.form.errorEnterExplanation");
-  if (!choices.some((c) => c.is_correct)) return t("questionBank.form.errorSelectCorrect");
-  return null;
-}
-
-function buildBankQuestion(params: {
-  initialId?: string;
+interface QuestionBankFormState {
+  isEditing: boolean;
   archetypeId: BankGameplayArchetypeId;
   domainId: string;
   subtopicId: string;
   questionText: string;
   format: QuizQuestionFormat;
-  choices: BankChoice[];
   explanation: string;
   funFact: string;
   visualPrompt: string;
   difficulty: number;
   thinkingSeconds: number;
   ageBand: QuizAgeBand;
-}): BankQuestion {
-  const correct = params.choices.find((c) => c.is_correct);
-  return {
-    id: params.initialId || `Q-${Date.now()}`,
-    archetype_id: params.archetypeId,
-    domain_id: params.domainId,
-    subtopic_id: params.subtopicId,
-    question: params.questionText.trim(),
-    format: params.format,
-    choices: params.choices,
-    correct_choice_id: correct ? correct.id : "",
-    explanation: params.explanation.trim(),
-    fun_fact: params.funFact.trim(),
-    visual_spec: {
-      intent: params.visualPrompt.trim() ? "question_illustration" : "none",
-      prompt: params.visualPrompt.trim() || undefined,
-      aspect_ratio: "16:9",
-    },
-    difficulty: params.difficulty,
-    thinking_seconds: params.thinkingSeconds,
-    age_band: params.ageBand,
-    tags: [params.domainId, params.subtopicId],
-    status: "approved",
-  };
+  choices: BankChoice[];
 }
 
-function resolveInitialFormState(initialQuestion?: BankQuestion | null) {
+function resolveInitialFormState(initialQuestion?: BankQuestion | null): QuestionBankFormState {
   const rawArch = initialQuestion?.archetype_id;
   const normalizedArch: BankGameplayArchetypeId = rawArch === "verdict_fact_myth" ? "verdict_true_false" : rawArch || "speed_blitz";
   const format: QuizQuestionFormat = (initialQuestion?.format as QuizQuestionFormat) || "multiple_choice";
@@ -149,49 +55,25 @@ function resolveInitialFormState(initialQuestion?: BankQuestion | null) {
   };
 }
 
-function appendNextChoice(currentChoices: BankChoice[]): BankChoice[] {
-  const nextLetters = ["A", "B", "C", "D", "E"];
-  const usedIds = new Set(currentChoices.map((c) => c.id));
-  const nextId = nextLetters.find((l) => !usedIds.has(l)) || `OPT-${currentChoices.length + 1}`;
-  return [...currentChoices, { id: nextId, text: `Option ${nextId}`, is_correct: false }];
-}
-
-function removeChoiceItem(currentChoices: BankChoice[], id: string): BankChoice[] {
-  const filtered = currentChoices.filter((c) => c.id !== id);
-  if (!filtered.some((c) => c.is_correct) && filtered.length > 0) {
-    filtered[0].is_correct = true;
-  }
-  return filtered;
-}
-
 export function QuestionBankFormModal({ initialQuestion, taxonomy, onSave, onClose }: QuestionBankFormModalProps) {
   const { t } = useTranslation();
-  const isEditing = Boolean(initialQuestion?.id);
   const [initialState] = useState(() => resolveInitialFormState(initialQuestion));
+  const isEditing = initialState.isEditing;
 
-  const [archetypeId, setArchetypeId] = useState<BankGameplayArchetypeId>(initialState.archetypeId);
+  const [archetypeId, setArchetypeId] = useState(initialState.archetypeId);
   const [domainId, setDomainId] = useState(initialState.domainId);
   const [subtopicId, setSubtopicId] = useState(initialState.subtopicId);
   const [questionText, setQuestionText] = useState(initialState.questionText);
-  const format = initialState.format;
   const [explanation, setExplanation] = useState(initialState.explanation);
   const [funFact, setFunFact] = useState(initialState.funFact);
   const [visualPrompt, setVisualPrompt] = useState(initialState.visualPrompt);
-  const difficulty = initialState.difficulty;
-  const thinkingSeconds = initialState.thinkingSeconds;
-  const ageBand = initialState.ageBand;
   const [choices, setChoices] = useState<BankChoice[]>(initialState.choices);
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSetCorrect = (id: string) => {
-    setChoices((prev) =>
-      prev.map((c) => ({
-        ...c,
-        is_correct: c.id === id,
-      })),
-    );
+    setChoices((prev) => prev.map((c) => ({ ...c, is_correct: c.id === id })));
   };
 
   const handleUpdateChoiceText = (id: string, text: string) => {
@@ -228,16 +110,15 @@ export function QuestionBankFormModal({ initialQuestion, taxonomy, onSave, onClo
         domainId,
         subtopicId,
         questionText,
-        format,
+        format: initialState.format,
         choices,
         explanation,
         funFact,
         visualPrompt,
-        difficulty,
-        thinkingSeconds,
-        ageBand,
+        difficulty: initialState.difficulty,
+        thinkingSeconds: initialState.thinkingSeconds,
+        ageBand: initialState.ageBand,
       });
-
       await onSave(q);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save question");
@@ -260,41 +141,16 @@ export function QuestionBankFormModal({ initialQuestion, taxonomy, onSave, onClo
         <form className="qb-modal-body" onSubmit={handleSubmit}>
           {error && <div className="qb-modal-error">{error}</div>}
 
-          <div className="qb-form-grid">
-            <div className="qb-form-group">
-              <label className="qb-label">{t("questionBank.form.archetypeLabel")}</label>
-              <select className="qb-select" value={archetypeId} onChange={(e) => setArchetypeId(e.target.value as BankGameplayArchetypeId)}>
-                {ARCHETYPE_OPTIONS.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.icon} {t(`questionBank.archetypes.${a.id}`) || a.defaultLabel}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="qb-form-group">
-              <label className="qb-label">{t("questionBank.form.domainLabel")}</label>
-              <select className="qb-select" value={domainId} onChange={(e) => setDomainId(e.target.value)}>
-                {(taxonomy?.domains || []).map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="qb-form-group">
-            <label className="qb-label">{t("questionBank.form.subtopicLabel")}</label>
-            <input
-              type="text"
-              className="qb-input"
-              value={subtopicId}
-              onChange={(e) => setSubtopicId(e.target.value)}
-              placeholder="e.g. ocean_giants, tricky_riddles..."
-              required
-            />
-          </div>
+          <QuestionBankMetaFields
+            taxonomy={taxonomy}
+            archetypeId={archetypeId}
+            onArchetypeChange={setArchetypeId}
+            domainId={domainId}
+            onDomainChange={setDomainId}
+            subtopicId={subtopicId}
+            onSubtopicChange={setSubtopicId}
+            t={t}
+          />
 
           <div className="qb-form-group">
             <label className="qb-label">{t("questionBank.form.questionTextLabel")}</label>

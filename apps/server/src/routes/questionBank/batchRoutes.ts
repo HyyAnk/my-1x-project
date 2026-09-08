@@ -1,7 +1,11 @@
 import type { FastifyInstance } from "fastify";
 import type { BankGameplayArchetypeId, BankQuestion } from "@studio/shared";
 import type { LLMClient } from "../../utils/promptSanitizer.js";
-import { generateQuestionBankBatch, type GenerateBatchInput } from "../../quiz/bank/questionBankBatchService.js";
+import {
+  generateQuestionBankBatch,
+  validateBankRawCandidateLanguages,
+  type GenerateBatchInput,
+} from "../../quiz/bank/questionBankBatchService.js";
 import { questionBankJobManager } from "../../quiz/bank/questionBankJobManager.js";
 import type { QuestionBankRouteDeps } from "./index.js";
 
@@ -72,6 +76,11 @@ export function registerBatchRoutes(server: FastifyInstance, deps: QuestionBankR
     const validationError = validateManualModeParams(body);
     if (validationError) {
       return reply.code(400).send(validationError);
+    }
+
+    const candidateLanguageError = validateBankRawCandidateLanguages(body.candidates as readonly unknown[] | undefined);
+    if (candidateLanguageError) {
+      return reply.code(400).send(candidateLanguageError);
     }
 
     const llmClient = resolveLlmClient(deps);

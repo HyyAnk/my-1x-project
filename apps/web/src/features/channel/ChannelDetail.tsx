@@ -1,4 +1,4 @@
-import { Archive, FileText, FilmSlate, Lightbulb, PencilSimple, Trash } from "@phosphor-icons/react";
+import { Archive, FileText, FilmSlate, Lightbulb, PencilSimple, Trash, VideoCamera } from "@phosphor-icons/react";
 import type { Channel, Episode, Task } from "@studio/shared";
 import { ChannelBreadcrumb } from "../../components/Breadcrumbs";
 import { StatusBadge } from "../../components/AppChrome";
@@ -12,6 +12,7 @@ import { EditChannelModal } from "./components/EditChannelModal";
 import { ChannelEpisodesTab } from "./components/ChannelEpisodesTab";
 import { ChannelTopicsTab } from "./components/ChannelTopicsTab";
 import { ChannelDnaTab } from "./components/ChannelDnaTab";
+import { ChannelIntroOutroTab } from "./components/ChannelIntroOutroTab";
 import { useChannelDetail } from "./hooks/useChannelDetail";
 
 export function ChannelDetail({
@@ -127,6 +128,17 @@ export function ChannelDetail({
               <span>Channel DNA & Identity</span>
             </a>
           ) : null}
+          <a
+            role="tab"
+            aria-selected={state.channelTab === "intro-outro"}
+            className={`channel-group-tab ${state.channelTab === "intro-outro" ? "is-selected" : ""}`}
+            {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: "intro-outro" }), () =>
+              state.switchTab("intro-outro"),
+            )}
+          >
+            <VideoCamera size={18} weight={state.channelTab === "intro-outro" ? "fill" : "regular"} />
+            <span>Intro & Outro</span>
+          </a>
         </div>
 
         {/* Tab 1: Episodes */}
@@ -181,6 +193,11 @@ export function ChannelDetail({
             onOpenStageStudio={() => state.setIsStageStudioOpen(true)}
             onTaskSubmitted={onTaskSubmitted}
           />
+        ) : null}
+
+        {/* Tab 4: Custom Intro & Outro Styles */}
+        {state.channelTab === "intro-outro" ? (
+          <ChannelIntroOutroTab channel={channel} onNotice={onNotice} onChannelUpdate={() => void onRefresh()} />
         ) : null}
       </section>
 

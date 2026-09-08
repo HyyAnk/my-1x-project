@@ -7,6 +7,7 @@ import {
   buildReverseGenerationPrompt,
   parseBatchGenerationOutput,
   parseReverseBatchGenerationOutput,
+  normalizeGenerationLanguage,
   type TargetEntityForGeneration,
 } from "../batchGeneratorPrompt.js";
 import { runBatchAutoQa, type BatchAutoQaReport } from "../questionBankAutoQa.js";
@@ -185,6 +186,7 @@ async function generateChunkCandidates(
       archetypeId: archId,
       domainId: domId,
       subtopicId: subId,
+      language: input.language,
       difficulty: input.difficulty,
       ageBand: input.ageBand,
     });
@@ -208,6 +210,7 @@ async function generateChunkCandidates(
     const rawOutput = await executePromptWithRetry(input.llmClient!, prompt, input.signal);
     const parsed = parseReverseBatchGenerationOutput(rawOutput, targets, {
       archetypeId: chunk.archetypeId,
+      language: input.language,
       difficulty: input.difficulty,
       ageBand: input.ageBand,
     });
@@ -223,8 +226,10 @@ async function generateChunkCandidates(
  */
 export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOptions): Promise<ScheduledBatchExecutionOutput> {
   const { repository, input, plannedChunks, allBankQuestions, targetCount } = options;
+  const generationLanguage = normalizeGenerationLanguage(input.language);
+  const normalizedInput = generationLanguage === input.language ? input : { ...input, language: generationLanguage };
   const totalChunks = plannedChunks.length;
-  const persist = input.persist !== false;
+  const persist = normalizedInput.persist !== false;
 
   const allGenerated: BankQuestion[] = [];
   const allSaved: BankQuestion[] = [];
@@ -244,18 +249,18 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
   const persistenceMutex = new AsyncMutex();
 
   async function processPlannedChunk(chunk: PlannedBatchChunk): Promise<void> {
-    if (input.signal?.aborted) return;
+    if (normalizedInput.signal?.aborted) return;
 
     let chunkCandidates: BankQuestion[] = [];
     try {
-      chunkCandidates = await generateChunkCandidates(chunk, input, allBankQuestions);
+      chunkCandidates = await generateChunkCandidates(chunk, normalizedInput, allBankQuestions);
     } catch (err) {
-      if (input.signal?.aborted) return;
+      if (normalizedInput.signal?.aborted) return;
       lastError = err instanceof Error ? err.message : String(err);
       console.error(`[QuestionBankBatch] LLM generation error:`, err);
     }
 
-    if (input.signal?.aborted) return;
+    if (normalizedInput.signal?.aborted) return;
 
     // Run Auto-QA on this chunk's generated candidates
     const qaReport = runBatchAutoQa(chunkCandidates, {
@@ -288,7 +293,7 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
       completedChunksCount++;
 
       // Emit real-time chunk progress
-      input.onChunkProgress?.({
+      normalizedInput.onChunkProgress?.({
         totalRequested: targetCount,
         completedCount: allSaved.length,
         currentChunk: completedChunksCount,
@@ -306,7 +311,7 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
 
   const runWorker = async () => {
     while (nextChunkIndex < plannedChunks.length) {
-      if (input.signal?.aborted || workerFailure.error) break;
+      if (normalizedInput.signal?.aborted || workerFailure.error) break;
       const chunk = plannedChunks[nextChunkIndex++];
       try {
         await processPlannedChunk(chunk);

@@ -2,7 +2,7 @@ import { type BankGameplayArchetypeId, type BankQuestion, type TopicCandidate } 
 import { RepositoryError, type RepositoryService } from "../../repository.js";
 import { executeSinglePromptText, type LLMClient } from "../../utils/promptSanitizer.js";
 import { retryWithBackoff } from "../../utils/retryWithBackoff.js";
-import { ARCHETYPE_GUIDELINES, parseBatchGenerationOutput } from "./batchGeneratorPrompt.js";
+import { ARCHETYPE_GUIDELINES, normalizeGenerationLanguage, parseBatchGenerationOutput } from "./batchGeneratorPrompt.js";
 import {
   assembleRetentionArc,
   calculateRelevanceScore,
@@ -70,6 +70,7 @@ export async function generateJitQuestionsWithLLM(
   targetDifficulties: number[],
   lang?: string,
 ): Promise<BankQuestion[]> {
+  const generationLanguage = normalizeGenerationLanguage(lang);
   const guideline = ARCHETYPE_GUIDELINES[archetypeId] || ARCHETYPE_GUIDELINES.deep_trivia;
   const prompt = [
     `You are an expert Quiz Designer for YouTube Shorts & TikTok.`,
@@ -78,7 +79,7 @@ export async function generateJitQuestionsWithLLM(
     `Hook: "${topic.hook || topic.title}".`,
     `Theme hint: "${topic.theme_hint || topic.title}".`,
     `Archetype: "${archetypeId}" (format: "${guideline.format}", choiceCount: ${guideline.choiceCount}).`,
-    `Domain: "${domainId}", Subtopic: "${subtopicId}". Language: "${lang || "en"}".`,
+    `Domain: "${domainId}", Subtopic: "${subtopicId}". Language: "${generationLanguage || "en"}".`,
     `Target difficulties: ${targetDifficulties.join(", ")}.`,
     `Output ONLY a valid JSON array of question objects with fields:`,
     `archetype_id, domain_id, subtopic_id, question, format, choices, correct_choice_id, explanation, fun_fact, visual_spec, difficulty, thinking_seconds, tags.`,
@@ -92,6 +93,7 @@ export async function generateJitQuestionsWithLLM(
     archetypeId,
     domainId,
     subtopicId,
+    language: generationLanguage,
   });
 
   return parsed.slice(0, targetDifficulties.length);

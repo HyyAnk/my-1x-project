@@ -18,4 +18,5 @@ export * from "./useEpisodeCustomizationDropdown";
 export * from "./EpisodeCustomizationContentSection";
 export * from "./EpisodeCustomizationThemeSection";
 export * from "./EpisodeCustomizationElementsSection";
+export * from "./IntroOutroStyleDropdown";
 export * from "./customizationBar.types";

@@ -1,11 +1,12 @@
 import { CircleNotch, Play } from "@phosphor-icons/react";
-import { ALL_QUIZ_IMAGE_STYLES, type QuizImageStyle, type TopicCandidate } from "@studio/shared";
+import { ALL_QUIZ_IMAGE_STYLES, type QuizImageStyle, type TopicAvailability, type TopicCandidate } from "@studio/shared";
 import { TopicLayoutPreviewButton } from "./TopicLayoutPreviewButton";
 
 export function TopicHistoryRow({
   topic,
   index,
   channelStyles = ALL_QUIZ_IMAGE_STYLES,
+  availability,
   onConfirm,
   busy,
   disabled,
@@ -13,6 +14,7 @@ export function TopicHistoryRow({
   topic: TopicCandidate;
   index: number;
   channelStyles?: QuizImageStyle[];
+  availability?: TopicAvailability;
   onConfirm: (questionCount: number, visualStyle: QuizImageStyle | "mixed") => void;
   busy: boolean;
   disabled: boolean;
@@ -36,13 +38,37 @@ export function TopicHistoryRow({
         <span className="topic-history-potential" title="Estimated Potential">
           {topic.estimated_potential || "Normal"}
         </span>
+        {availability ? (
+          <span
+            className="badge"
+            style={{
+              fontSize: "10px",
+              padding: "1px 5px",
+              borderRadius: "3px",
+              backgroundColor: availability.can_confirm ? "#059669" : "#dc2626",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+            title={availability.recovery_action}
+          >
+            {availability.can_confirm
+              ? `${availability.source_capacity} Ready`
+              : availability.reason_code === "UNBOUND_LEGACY_TOPIC"
+              ? "Legacy Unbound"
+              : "Unavailable"}
+          </span>
+        ) : null}
         {topic.content_kind === "episode" ? <TopicLayoutPreviewButton quizFormat={topic.quiz_format} /> : null}
         <button
           type="button"
           className="topic-history-use-btn"
-          disabled={disabled}
+          disabled={disabled || (availability !== undefined && !availability.can_confirm)}
           onClick={() => onConfirm(topic.question_count, topic.content_kind === "episode" ? (topic.visual_style ?? "mixed") : "mixed")}
-          title={`Use this topic (${topic.question_count} questions)`}
+          title={
+            availability && !availability.can_confirm
+              ? availability.recovery_action
+              : `Use this topic (${topic.question_count} questions${availability ? `, ${availability.source_capacity} available` : ""})`
+          }
         >
           {busy ? <CircleNotch className="spin" size={13} /> : <Play size={12} weight="fill" />}
           <span>{busy ? "Creating…" : "Use"}</span>

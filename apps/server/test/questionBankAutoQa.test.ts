@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { EventEmitter } from "node:events";
-import { existsSync } from "node:fs";
+import { mkdtemp, rm } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import Fastify from "fastify";
 import type { BankQuestion } from "@studio/shared";
@@ -13,18 +14,18 @@ import type { LLMClient } from "../src/utils/promptSanitizer.js";
 
 describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
   let app: StudioApp;
+  let tempRoot: string;
 
   beforeAll(async () => {
-    let curr = process.cwd();
-    while (curr !== path.dirname(curr)) {
-      if (existsSync(path.join(curr, "pnpm-workspace.yaml"))) break;
-      curr = path.dirname(curr);
-    }
-    app = await buildApp(curr);
+    tempRoot = await mkdtemp(path.join(os.tmpdir(), "qb-autoqa-root-"));
+    app = await buildApp(tempRoot);
   });
 
   afterAll(async () => {
     await app.close();
+    if (tempRoot) {
+      await rm(tempRoot, { recursive: true, force: true }).catch(() => {});
+    }
   });
 
   const sampleValidQuestion: BankQuestion = {
@@ -33,6 +34,7 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     domain_id: "logic_puzzles",
     subtopic_id: "tricky_riddles",
     question: "How many letters are in the modern English alphabet?",
+    language: "en",
     format: "multiple_choice",
     choices: [
       { id: "A", text: "24 letters", is_correct: false },

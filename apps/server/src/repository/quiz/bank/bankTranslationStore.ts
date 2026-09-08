@@ -4,13 +4,14 @@ import path from "node:path";
 import { BankTranslationContentSchema, normalizeLanguageCode, type BankQuestion, type BankTranslationContent } from "@studio/shared";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { getQuestionBankWritePath } from "./bankPathResolver.js";
-import { listQuestionBankBatches } from "./bankBatchStorage.js";
-import { getQuestionBankQuestion } from "./bankQueryEngine.js";
+import { listQuestionBankBatchesUnlocked } from "./bankBatchStorage.js";
+import { getQuestionBankQuestionUnlocked } from "./bankQueryEngine.js";
+import { withBankRead, withBankWrite } from "./bankSerializationBoundary.js";
 
 /**
  * Saves a translated version of a question to its corresponding batch file.
  */
-export async function saveQuestionBankTranslation(
+export async function saveQuestionBankTranslationUnlocked(
   this: RepositoryRuntime,
   questionId: string,
   translation: BankTranslationContent,
@@ -18,7 +19,7 @@ export async function saveQuestionBankTranslation(
   const validatedTranslation = BankTranslationContentSchema.parse(translation);
   const normLang = normalizeLanguageCode(validatedTranslation.language);
 
-  const batches = await listQuestionBankBatches.call(this);
+  const batches = await listQuestionBankBatchesUnlocked.call(this);
   for (const batch of batches) {
     const qIndex = batch.questions.findIndex((q) => q.id === questionId);
     if (qIndex >= 0) {
@@ -60,18 +61,34 @@ export async function saveQuestionBankTranslation(
   return null;
 }
 
+export function saveQuestionBankTranslation(
+  this: RepositoryRuntime,
+  questionId: string,
+  translation: BankTranslationContent,
+): Promise<BankQuestion | null> {
+  return withBankWrite(this, () => saveQuestionBankTranslationUnlocked.call(this, questionId, translation));
+}
+
 /**
  * Reads a cached translation for a specific question and target language.
  */
-export async function readQuestionBankTranslation(
+export async function readQuestionBankTranslationUnlocked(
   this: RepositoryRuntime,
   questionId: string,
   language: string,
 ): Promise<BankTranslationContent | null> {
-  const question = await getQuestionBankQuestion.call(this, questionId);
+  const question = await getQuestionBankQuestionUnlocked.call(this, questionId);
   if (!question || !question.translations) {
     return null;
   }
   const normLang = normalizeLanguageCode(language);
   return question.translations[normLang] || null;
+}
+
+export function readQuestionBankTranslation(
+  this: RepositoryRuntime,
+  questionId: string,
+  language: string,
+): Promise<BankTranslationContent | null> {
+  return withBankRead(this, () => readQuestionBankTranslationUnlocked.call(this, questionId, language));
 }

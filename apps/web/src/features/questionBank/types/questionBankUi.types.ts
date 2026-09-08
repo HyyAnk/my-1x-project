@@ -105,4 +105,3 @@ export type {
   BankTranslationContent,
   MatrixCoverageStats,
 };
-

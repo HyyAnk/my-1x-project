@@ -17,65 +17,78 @@ import type { StudioLogger } from "../logger.js";
 import { ChatterboxProvider, type ChatterboxTarget } from "../providers/chatterbox.js";
 import type { AudioProvider } from "../providers/index.js";
 import { RepositoryError, RepositoryService } from "../repository.js";
+import { TaskAbortRegistry } from "./taskAbortRegistry.js";
+import { TaskApprovalRegistry } from "./taskApprovalRegistry.js";
+import { TaskQueueCoordinator } from "./taskQueueCoordinator.js";
+import { PipelineExecutionEngine } from "./pipelineExecutionEngine.js";
 import { pumpTaskQueue } from "./taskQueuePump.js";
 import { applyTaskPatch, loadTasksFromDisk, persistTask } from "./taskStateStore.js";
-import { decideTaskApproval } from "./taskApprovalManager.js";
 import { cancelTask, submitTask } from "./taskSubmission.js";
 import { TaskMutationQueue } from "./taskMutationQueue.js";
-import { taskDelegates } from "./taskDelegates.js";
 import type { ActiveRun, PipelineRun, TaskManagerRuntime } from "./runtime.js";
 import { attachTaskManagerClientEvents, type ConnectionStatus } from "./taskClientEvents.js";
 import { runFailedBuildCleanup, scheduleFailedBuildCleanup } from "./taskFailedBuildCleaner.js";
+import {
+  run,
+  handleNotification,
+  handleServerRequest,
+  completeWithOutput,
+  retryQuizResearch,
+  retryScript,
+  retryVisualBible,
+  retrySequenceScenes,
+  retryTopicSuggestions,
+} from "./codexRunner.js";
+import {
+  createImageProvider,
+  generateBundleImageWithSafetyRetry,
+  runAntigravityBundleImageTask,
+  runGpti2BundleImageTask,
+  runShopAiKeyImageTask,
+} from "./imageRunner.js";
+import {
+  runPipelineTask,
+  hasReadyArtifact,
+  generatePipelineBundleImages,
+  runQuizV2Pipeline,
+  attachPipelineBundleImages,
+  hasReadyScript,
+  hasValidNarrationAsset,
+  isShotPlanFresh,
+  waitForTaskTerminal,
+} from "./pipelineRunner.js";
+import { runAudioTask } from "./audioRunner.js";
+import { runVideoTask } from "./videoRunner.js";
+import {
+  hasActiveEpisodeTasks,
+  hasActiveChannelTasks,
+  pruneEpisodeTasks,
+  pruneChannelTasks,
+  reconcileQuestionHistory,
+  reconcileOrphanedTasks,
+} from "./taskLifecycle.js";
+
+const ACTIVE_TERMINAL_STATUSES = ["QUEUED", "RUNNING", "WAITING_APPROVAL"] as const;
 
 export class TaskManager extends EventEmitter implements TaskManagerRuntime {
-  declare run: TaskManagerRuntime["run"];
-  declare createImageProvider: TaskManagerRuntime["createImageProvider"];
-  declare generateBundleImageWithSafetyRetry: TaskManagerRuntime["generateBundleImageWithSafetyRetry"];
-  declare runGpti2BundleImageTask: TaskManagerRuntime["runGpti2BundleImageTask"];
-  declare runAntigravityBundleImageTask: TaskManagerRuntime["runAntigravityBundleImageTask"];
-  declare runShopAiKeyImageTask: TaskManagerRuntime["runShopAiKeyImageTask"];
-  declare runPipelineTask: TaskManagerRuntime["runPipelineTask"];
-  declare runVideoTask: TaskManagerRuntime["runVideoTask"];
-  declare hasReadyArtifact: TaskManagerRuntime["hasReadyArtifact"];
-  declare generatePipelineBundleImages: TaskManagerRuntime["generatePipelineBundleImages"];
-  declare runQuizV2Pipeline: TaskManagerRuntime["runQuizV2Pipeline"];
-  declare attachPipelineBundleImages: TaskManagerRuntime["attachPipelineBundleImages"];
-  declare hasReadyScript: TaskManagerRuntime["hasReadyScript"];
-  declare hasValidNarrationAsset: TaskManagerRuntime["hasValidNarrationAsset"];
-  declare isShotPlanFresh: TaskManagerRuntime["isShotPlanFresh"];
-  declare waitForTaskTerminal: TaskManagerRuntime["waitForTaskTerminal"];
-  declare runAudioTask: TaskManagerRuntime["runAudioTask"];
-  declare handleNotification: TaskManagerRuntime["handleNotification"];
-  declare handleServerRequest: TaskManagerRuntime["handleServerRequest"];
-  declare completeWithOutput: TaskManagerRuntime["completeWithOutput"];
-  declare retryQuizResearch: TaskManagerRuntime["retryQuizResearch"];
-  declare retryScript: TaskManagerRuntime["retryScript"];
-  declare retryVisualBible: TaskManagerRuntime["retryVisualBible"];
-  declare retrySequenceScenes: TaskManagerRuntime["retrySequenceScenes"];
-  declare retryTopicSuggestions: TaskManagerRuntime["retryTopicSuggestions"];
-  declare cleanupExpiredFailedBuilds: TaskManagerRuntime["cleanupExpiredFailedBuilds"];
-  declare hasActiveEpisodeTasks: TaskManagerRuntime["hasActiveEpisodeTasks"];
-  declare hasActiveChannelTasks: TaskManagerRuntime["hasActiveChannelTasks"];
-  declare pruneEpisodeTasks: TaskManagerRuntime["pruneEpisodeTasks"];
-  declare pruneChannelTasks: TaskManagerRuntime["pruneChannelTasks"];
-  declare reconcileQuestionHistory: TaskManagerRuntime["reconcileQuestionHistory"];
-  declare reconcileOrphanedTasks: TaskManagerRuntime["reconcileOrphanedTasks"];
-  declare startFailedBuildCleanupTimer: TaskManagerRuntime["startFailedBuildCleanupTimer"];
+  private readonly abortRegistry = new TaskAbortRegistry();
+  private readonly pipelineEngine = new PipelineExecutionEngine();
+  private readonly queueCoordinator = new TaskQueueCoordinator(() => pumpTaskQueue(this));
+  private approvalRegistry!: TaskApprovalRegistry;
+  readonly taskMutations = new TaskMutationQueue();
 
   readonly tasks = new Map<string, Task>();
-  readonly active = new Map<string, ActiveRun>();
-  readonly approvalRequests = new Map<number, { taskId: string; request: CodexServerRequest }>();
-  readonly completionWaiters = new Map<string, () => void>();
-  readonly pipelineRuns = new Map<string, PipelineRun>();
-  readonly locks = new Set<string>();
+  readonly active: Map<string, ActiveRun> = this.pipelineEngine.activeRuns;
+  readonly completionWaiters: Map<string, () => void> = this.pipelineEngine.completionWaiters;
+  readonly pipelineRuns: Map<string, PipelineRun> = this.pipelineEngine.pipelineRuns;
+  readonly locks: Set<string> = this.queueCoordinator.lockSet;
   readonly assemblingEpisodes = new Set<string>();
-  readonly activeImageControllers = new Map<string, AbortController>();
-  readonly activeVideoControllers = new Map<string, AbortController>();
-  readonly activeShortReelControllers = new Map<string, AbortController>();
-  readonly shortReelTargets = new Map<string, GenerateShortReelTarget>();
+  readonly activeImageControllers: Map<string, AbortController> = this.abortRegistry.imageControllers;
+  readonly activeVideoControllers: Map<string, AbortController> = this.abortRegistry.videoControllers;
+  readonly activeShortReelControllers: Map<string, AbortController> = this.abortRegistry.shortReelControllers;
+  readonly shortReelTargets: Map<string, GenerateShortReelTarget> = this.abortRegistry.shortReelTargets;
   readonly imageVariants = new Map<string, number>();
   readonly topicHints = new Map<string, string>();
-  private readonly taskMutations = new TaskMutationQueue();
   runningCount = 0;
   runningAudioCount = 0;
   runningImageCount = 0;
@@ -91,6 +104,11 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   connectionStatus: ConnectionStatus = "disconnected";
   antigravityStatus: ConnectionStatus = "disconnected";
   activeEngine: "codex" | "antigravity" = "codex";
+
+  /** Pending approval requests, owned by the approval registry (frozen flat contract). */
+  get approvalRequests(): Map<number, { taskId: string; request: CodexServerRequest }> {
+    return this.approvalRegistry.requests;
+  }
 
   constructor(
     readonly repository: RepositoryService,
@@ -115,6 +133,11 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   ) {
     super();
     this.activeEngine = activeEngine;
+    this.approvalRegistry = new TaskApprovalRegistry(codex, {
+      finish: (id, status, message) => this.finish(id, status, message),
+      update: (id, patch) => this.update(id, patch),
+      getTask: (id) => this.get(id),
+    });
     this.videoConfig =
       typeof videoConfigOrMaxSceneDuration === "number"
         ? { ...DEFAULT_CONFIG.video_generation, max_scene_duration_seconds: videoConfigOrMaxSceneDuration }
@@ -139,12 +162,9 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     this.tasks.clear();
     this.imageVariants.clear();
     this.topicHints.clear();
-    this.activeImageControllers.clear();
-    this.activeVideoControllers.clear();
-    this.activeShortReelControllers.clear();
-    this.shortReelTargets.clear();
-    this.approvalRequests.clear();
-    this.locks.clear();
+    this.abortRegistry.clearAll();
+    this.approvalRegistry.clear();
+    this.queueCoordinator.reset();
     this.runningCount = this.runningAudioCount = this.runningImageCount = this.runningVideoCount = this.runningPipelineCount = 0;
     this.connectionStatus = this.codex.isConnected ? "connected" : "disconnected";
     await this.load();
@@ -188,20 +208,21 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
 
   hasActiveWork(): boolean {
+    const queueState = {
+      locks: this.locks,
+      runningCount: this.runningCount,
+      runningAudioCount: this.runningAudioCount,
+      runningImageCount: this.runningImageCount,
+      runningVideoCount: this.runningVideoCount,
+      runningPipelineCount: this.runningPipelineCount,
+    };
     return (
-      this.active.size > 0 ||
+      this.pipelineEngine.hasActiveRuns() ||
       this.activeAudio.size > 0 ||
-      this.activeImageControllers.size > 0 ||
-      this.activeVideoControllers.size > 0 ||
-      this.activeShortReelControllers.size > 0 ||
-      this.pipelineRuns.size > 0 ||
-      this.runningCount > 0 ||
-      this.runningAudioCount > 0 ||
-      this.runningImageCount > 0 ||
-      this.runningVideoCount > 0 ||
-      this.runningPipelineCount > 0 ||
+      this.abortRegistry.hasActiveControllers() ||
+      this.queueCoordinator.hasRunningWork(queueState) ||
       this.failedBuildCleanupPromise !== null ||
-      this.list().some((task) => ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(task.status))
+      this.list().some((task) => (ACTIVE_TERMINAL_STATUSES as readonly string[]).includes(task.status))
     );
   }
 
@@ -239,31 +260,19 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
 
   decideApproval(taskId: string, requestId: number, decision: "accept" | "acceptForSession" | "decline" | "cancel"): Promise<Task> {
-    return decideTaskApproval(
-      taskId,
-      requestId,
-      decision,
-      this.approvalRequests,
-      this.codex,
-      (id, status, msg) => this.finish(id, status, msg),
-      (id, patch) => this.update(id, patch),
-      (id) => this.get(id),
-    );
+    return this.approvalRegistry.decide(taskId, requestId, decision);
   }
 
   private pump(): Promise<void> {
-    return pumpTaskQueue(this);
+    return this.queueCoordinator.pumpQueue();
   }
   findSceneNumber(taskId: string): number | undefined {
     return this.tasks.get(taskId)?.scene_number ?? undefined;
   }
 
   async finish(taskId: string, status: TaskStatus, error: string | null, outputFiles: string[] = []): Promise<void> {
-    this.active.delete(taskId);
-    this.completionWaiters.get(taskId)?.();
-    this.completionWaiters.delete(taskId);
-    this.activeShortReelControllers.delete(taskId);
-    this.shortReelTargets.delete(taskId);
+    this.pipelineEngine.completeRun(taskId);
+    this.abortRegistry.releaseCompletedShortReel(taskId);
     await this.update(taskId, {
       status,
       error,
@@ -296,46 +305,125 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   emitEvent(event: TaskEvent): void {
     this.emit("event", event);
   }
-}
 
-Object.assign(TaskManager.prototype, taskDelegates, {
-  async pruneEpisodeTasks(this: TaskManager, episodeId: string) {
-    const taskIds = await taskDelegates.pruneEpisodeTasks.call(this, episodeId);
-    for (const id of taskIds) {
-      this.activeShortReelControllers.get(id)?.abort();
-      this.activeShortReelControllers.delete(id);
-      this.shortReelTargets.delete(id);
-    }
+  // --- Task execution (delegated to focused runner modules) ---
+
+  run(task: Task): Promise<void> {
+    return run.call(this, task);
+  }
+  createImageProvider(
+    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+    output?: string,
+  ): ReturnType<TaskManagerRuntime["createImageProvider"]> {
+    return createImageProvider.call(this, imageTarget, output);
+  }
+  generateBundleImageWithSafetyRetry(
+    task: Task,
+    imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+    initialPrompt: string,
+    signal?: AbortSignal,
+    output?: string,
+    visualBibleContent?: string,
+  ): Promise<{ image: { asset_path: string }; updatedPrompt?: string }> {
+    return generateBundleImageWithSafetyRetry.call(this, task, imageTarget, initialPrompt, signal, output, visualBibleContent);
+  }
+  runGpti2BundleImageTask(task: Task): Promise<void> {
+    return runGpti2BundleImageTask.call(this, task);
+  }
+  runAntigravityBundleImageTask(task: Task): Promise<void> {
+    return runAntigravityBundleImageTask.call(this, task);
+  }
+  runShopAiKeyImageTask(task: Task): Promise<void> {
+    return runShopAiKeyImageTask.call(this, task);
+  }
+  runPipelineTask(task: Task): Promise<void> {
+    return runPipelineTask.call(this, task);
+  }
+  runVideoTask(task: Task): Promise<void> {
+    return runVideoTask.call(this, task);
+  }
+  hasReadyArtifact(channelId: string, episodeId: string, filename: string): Promise<boolean> {
+    return hasReadyArtifact.call(this, channelId, episodeId, filename);
+  }
+  generatePipelineBundleImages(task: Task, run: PipelineRun): Promise<void> {
+    return generatePipelineBundleImages.call(this, task, run);
+  }
+  runQuizV2Pipeline(task: Task): Promise<void> {
+    return runQuizV2Pipeline.call(this, task);
+  }
+  attachPipelineBundleImages(channelId: string, episodeId: string): Promise<void> {
+    return attachPipelineBundleImages.call(this, channelId, episodeId);
+  }
+  hasReadyScript(channelId: string, episodeId: string): Promise<boolean> {
+    return hasReadyScript.call(this, channelId, episodeId);
+  }
+  hasValidNarrationAsset(channelId: string, episodeId: string, assetPath: string | null): Promise<boolean> {
+    return hasValidNarrationAsset.call(this, channelId, episodeId, assetPath);
+  }
+  isShotPlanFresh(channelId: string, episodeId: string): Promise<boolean> {
+    return isShotPlanFresh.call(this, channelId, episodeId);
+  }
+  waitForTaskTerminal(taskId: string, run: PipelineRun, onProgress?: (task: Task) => Promise<void> | void): Promise<Task> {
+    return waitForTaskTerminal.call(this, taskId, run, onProgress);
+  }
+  runAudioTask(task: Task): Promise<void> {
+    return runAudioTask.call(this, task);
+  }
+  handleNotification(method: string, params: Record<string, unknown>): void {
+    return handleNotification.call(this, method, params);
+  }
+  handleServerRequest(request: CodexServerRequest): void {
+    return handleServerRequest.call(this, request);
+  }
+  completeWithOutput(active: ActiveRun): Promise<void> {
+    return completeWithOutput.call(this, active);
+  }
+  retryQuizResearch(active: ActiveRun, reason: string): Promise<void> {
+    return retryQuizResearch.call(this, active, reason);
+  }
+  retryScript(active: ActiveRun, reason: string): Promise<void> {
+    return retryScript.call(this, active, reason);
+  }
+  retryVisualBible(active: ActiveRun, reason: string): Promise<void> {
+    return retryVisualBible.call(this, active, reason);
+  }
+  retrySequenceScenes(active: ActiveRun, reason: string): Promise<void> {
+    return retrySequenceScenes.call(this, active, reason);
+  }
+  retryTopicSuggestions(active: ActiveRun, reason: string): Promise<void> {
+    return retryTopicSuggestions.call(this, active, reason);
+  }
+
+  // --- Lifecycle maintenance (prune/reconcile/cleanup) ---
+
+  hasActiveEpisodeTasks(episodeId: string): boolean {
+    return hasActiveEpisodeTasks.call(this, episodeId);
+  }
+  hasActiveChannelTasks(channelId: string): boolean {
+    return hasActiveChannelTasks.call(this, channelId);
+  }
+  async pruneEpisodeTasks(episodeId: string): Promise<string[]> {
+    const taskIds = await pruneEpisodeTasks.call(this, episodeId);
+    this.abortRegistry.releaseShortReelsFor(taskIds);
     return taskIds;
-  },
-  async pruneChannelTasks(this: TaskManager, channelId: string) {
-    const taskIds = await taskDelegates.pruneChannelTasks.call(this, channelId);
-    for (const id of taskIds) {
-      this.activeShortReelControllers.get(id)?.abort();
-      this.activeShortReelControllers.delete(id);
-      this.shortReelTargets.delete(id);
-    }
+  }
+  async pruneChannelTasks(channelId: string): Promise<string[]> {
+    const taskIds = await pruneChannelTasks.call(this, channelId);
+    this.abortRegistry.releaseShortReelsFor(taskIds);
     return taskIds;
-  },
-  async reconcileOrphanedTasks(this: TaskManager) {
-    const result = await taskDelegates.reconcileOrphanedTasks.call(this);
-    for (const [id, ctrl] of this.activeShortReelControllers) {
-      if (!this.tasks.has(id)) {
-        ctrl.abort();
-        this.activeShortReelControllers.delete(id);
-      }
-    }
-    for (const id of this.shortReelTargets.keys()) {
-      if (!this.tasks.has(id)) {
-        this.shortReelTargets.delete(id);
-      }
-    }
+  }
+  reconcileQuestionHistory(): Promise<void> {
+    return reconcileQuestionHistory.call(this);
+  }
+  async reconcileOrphanedTasks(): Promise<{ removedEpisodes: number; removedTasks: number }> {
+    const result = await reconcileOrphanedTasks.call(this);
+    this.abortRegistry.reconcileShortReels(new Set(this.tasks.keys()));
     return result;
-  },
-  cleanupExpiredFailedBuilds(this: TaskManager, nowMs?: number) {
+  }
+  cleanupExpiredFailedBuilds(nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }> {
     return runFailedBuildCleanup(this, nowMs);
-  },
-  startFailedBuildCleanupTimer(this: TaskManager) {
+  }
+  startFailedBuildCleanupTimer(): void {
     scheduleFailedBuildCleanup(this);
-  },
-});
+  }
+}

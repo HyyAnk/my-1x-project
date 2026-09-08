@@ -1,13 +1,19 @@
 import { useState } from "react";
-import { ArrowClockwise, ArrowLeft, DownloadSimple, FilmStrip, Sparkle, Stop, Warning, X } from "@phosphor-icons/react";
-import type { Channel, GenerateShortReelTarget, ShortReelRecord, Task } from "@studio/shared";
+import { X } from "@phosphor-icons/react";
+import type { Channel } from "@studio/shared";
 import type { Notice } from "../../components/types";
 import { LoadingState } from "../../components/EmptyState";
 import { ShortReelSourceCard } from "./components/ShortReelSourceCard";
 import { SegmentEditor } from "./components/SegmentEditor";
 import { ReelAssets } from "./components/ReelAssets";
 import { PublishingPanel } from "./components/PublishingPanel";
+import { ShortReelHeader } from "./components/ShortReelHeader";
+import { ShortReelConflictBanner, ShortReelTaskProgressBanner } from "./components/ShortReelConflictBanner";
+import { ShortReelTopicCard } from "./components/ShortReelTopicCard";
+import { ShortReelDeliverablesGrid } from "./components/ShortReelDeliverablesGrid";
+import { ShortReelStateError } from "./components/ShortReelStateError";
 import { useShortReel } from "./hooks/useShortReel";
+import { canExportReel, getCleanTopicTitle, hasPendingGeneration } from "./utils/shortReelStudioRules";
 import "./ShortReelStudio.css";
 
 export interface ShortReelStudioProps {
@@ -19,64 +25,61 @@ export interface ShortReelStudioProps {
 
 type StudioTab = "script" | "assets" | "publishing";
 
-type HeaderActionsProps = {
-  isGeneratingOrPending: boolean;
-  canExport: boolean;
-  scriptMissing: boolean;
-  cancel: () => void;
-  generate: (target: GenerateShortReelTarget) => void;
-  exportPackage: () => void;
-};
+const STUDIO_TABS: { key: StudioTab; label: string; ariaLabel: string }[] = [
+  { key: "script", label: "Script", ariaLabel: "Script & Segments" },
+  { key: "assets", label: "Assets", ariaLabel: "Assets & Prompts" },
+  { key: "publishing", label: "Publishing", ariaLabel: "Publishing Metadata" },
+];
 
-function HeaderActions({ isGeneratingOrPending, canExport, scriptMissing, cancel, generate, exportPackage }: HeaderActionsProps) {
+function StudioTabNav({ activeTab, onSelectTab }: { activeTab: StudioTab; onSelectTab: (tab: StudioTab) => void }) {
   return (
-    <div className="short-reel-header-actions">
-      {isGeneratingOrPending ? (
-        <button type="button" className="short-reel-cancel-btn" onClick={cancel} aria-label="Cancel active generation">
-          <Stop size={16} weight="fill" />
-          <span>Cancel</span>
+    <nav className="short-reel-nav-tabs" role="tablist" aria-label="Studio View Tabs">
+      {STUDIO_TABS.map((tab) => (
+        <button
+          key={tab.key}
+          type="button"
+          role="tab"
+          aria-label={tab.ariaLabel}
+          aria-selected={activeTab === tab.key}
+          className={`short-reel-nav-tab ${activeTab === tab.key ? "active" : ""}`}
+          onClick={() => onSelectTab(tab.key)}
+        >
+          <span>{tab.label}</span>
         </button>
-      ) : (
-        <>
-          {scriptMissing && (
-            <button type="button" className="short-reel-secondary-btn" onClick={() => generate("script")} aria-label="Generate Script">
-              <Sparkle size={16} weight="fill" />
-              <span>Generate Script</span>
-            </button>
-          )}
-          <button type="button" className="short-reel-generate-btn" onClick={() => generate("package")} aria-label="Generate Full Package">
-            <Sparkle size={16} weight="fill" />
-            <span>Generate Package</span>
-          </button>
-        </>
-      )}
-      <button
-        type="button"
-        className="short-reel-export-btn"
-        disabled={!canExport || isGeneratingOrPending}
-        onClick={exportPackage}
-        title={
-          !canExport
-            ? "All units (script, references, cover, publishing) must be ready and current before exporting."
-            : "Download complete short-reel PKZIP package."
-        }
-        aria-label="Export PKZIP Package"
-      >
-        <DownloadSimple size={16} weight="bold" />
-        <span>Export Package</span>
-      </button>
-    </div>
+      ))}
+    </nav>
   );
 }
 
-function canExportReel(reel: ShortReelRecord): boolean {
-  const requiredUnits = [reel.units.script, reel.units.references, reel.units.cover, reel.units.publishing];
-  return requiredUnits.every((unit) => unit.state === "ready") && (reel.stale_segments?.length ?? 0) === 0;
-}
-
-function hasPendingGeneration(reel: ShortReelRecord, task: Task | null, isGenerating: boolean): boolean {
-  if (isGenerating || task?.status === "RUNNING" || task?.status === "QUEUED") return true;
-  return [reel.units.script, reel.units.references, reel.units.cover, reel.units.publishing].some((unit) => unit.state === "pending");
+function ClipboardFallbackModal({ clipboardFallbackText, onClose }: { clipboardFallbackText: string; onClose: () => void }) {
+  return (
+    <div className="short-reel-modal-backdrop" role="dialog" aria-modal="true" aria-label="Manual Copy Fallback">
+      <div className="short-reel-modal">
+        <div className="short-reel-modal-header">
+          <h3>Manual Copy Fallback</h3>
+          <button type="button" className="short-reel-modal-close-btn" onClick={onClose} aria-label="Close dialog">
+            <X size={18} />
+          </button>
+        </div>
+        <div className="short-reel-modal-body">
+          <p>Clipboard access was not permitted. You can select and copy the text below:</p>
+          <textarea
+            readOnly
+            rows={6}
+            className="short-reel-textarea short-reel-fallback-textarea"
+            value={clipboardFallbackText}
+            autoFocus
+            onFocus={(e) => e.target.select()}
+          />
+        </div>
+        <div className="short-reel-modal-footer">
+          <button type="button" className="short-reel-primary-btn" onClick={onClose}>
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function ShortReelStudio({ channel, reelId, onBack, onNotice }: ShortReelStudioProps) {
@@ -117,196 +120,48 @@ export function ShortReelStudio({ channel, reelId, onBack, onNotice }: ShortReel
   }
 
   if (status === "not_found" || status === "error" || !reel) {
-    return (
-      <div className="short-reel-state-container" role="region" aria-label="Short-Reel Error">
-        <FilmStrip size={40} weight="duotone" />
-        <h3>{status === "not_found" ? "Short-Reel Not Found" : "Failed to Load Short-Reel"}</h3>
-        <p>{error || "The requested Short-Reel could not be found or loaded."}</p>
-        <div className="short-reel-state-actions">
-          <button type="button" className="short-reel-back-btn" onClick={onBack} aria-label="Back to channel">
-            <ArrowLeft size={16} />
-            <span>Back to Channel</span>
-          </button>
-          <button type="button" className="short-reel-primary-btn" onClick={retry} aria-label="Retry loading Short-Reel">
-            <ArrowClockwise size={16} />
-            <span>Retry</span>
-          </button>
-        </div>
-      </div>
-    );
+    return <ShortReelStateError isNotFound={status === "not_found"} error={error} onBack={onBack} onRetry={retry} />;
   }
 
   const { topic, source, units, revision } = reel;
-  const cleanTitle = topic.title.replace(/\.+$/, "");
-  const isKeywordOrigin = topic.origin === "keyword";
-
   const isAllReadyForExport = canExportReel(reel);
   const isGeneratingOrPending = hasPendingGeneration(reel, activeTask, isGenerating);
 
   return (
     <div className="short-reel-studio">
-      {/* Header bar */}
-      <header className="short-reel-header">
-        <div className="short-reel-header-left">
-          <button type="button" className="short-reel-back-btn" onClick={onBack} aria-label="Back to channel">
-            <ArrowLeft size={16} />
-            <span>Back</span>
-          </button>
-          <div className="short-reel-title-block">
-            <div className="short-reel-title-row">
-              <h2 className="short-reel-title">{cleanTitle}</h2>
-              <span className="short-reel-badge short-reel-badge-aspect">9:16 Short-Reel</span>
-              <span className="short-reel-badge short-reel-badge-rev">Rev v{revision}</span>
-              <span className="short-reel-badge short-reel-badge-status">Draft</span>
-              {isDraftDirty && <span className="short-reel-badge short-reel-badge-dirty">Unsaved Draft</span>}
-            </div>
-            <div className="short-reel-sub-bar">
-              <span>Channel: {channel.display_name}</span>
-              <span>•</span>
-              <span>
-                Reel ID: <code>{reel.reel_id}</code>
-              </span>
-              <span>•</span>
-              <span>Source: {source.question_id}</span>
-            </div>
-          </div>
-        </div>
+      <ShortReelHeader
+        channel={channel}
+        reelId={reel.reel_id}
+        cleanTitle={getCleanTopicTitle(topic.title)}
+        revision={revision}
+        sourceQuestionId={source.question_id}
+        isDraftDirty={isDraftDirty}
+        onBack={onBack}
+        isGeneratingOrPending={isGeneratingOrPending}
+        canExport={isAllReadyForExport}
+        scriptMissing={!reel.script || units.script.state === "missing"}
+        cancel={() => cancel()}
+        generate={generate}
+        exportPackage={exportPackage}
+      />
 
-        <HeaderActions
-          isGeneratingOrPending={isGeneratingOrPending}
-          canExport={isAllReadyForExport}
-          scriptMissing={!reel.script || units.script.state === "missing"}
-          cancel={() => cancel()}
-          generate={generate}
-          exportPackage={exportPackage}
-        />
-      </header>
+      <ShortReelConflictBanner
+        conflictRemoteRecord={conflictRemoteRecord}
+        onKeepLocalDraft={keepLocalDraft}
+        onDiscardDraftAndReload={discardDraftAndReload}
+      />
 
-      {/* Concurrent Edit Conflict Banner */}
-      {conflictRemoteRecord && (
-        <div className="short-reel-alert short-reel-alert-conflict" role="alert">
-          <Warning size={20} weight="fill" />
-          <div className="short-reel-alert-body">
-            <strong>Revision Conflict Detected</strong>
-            <p>
-              This Short-Reel was updated to Revision v{conflictRemoteRecord.revision} while you were editing. You can keep your local draft
-              for manual reconciliation, or reload the latest remote version. Saving the local draft does not bypass revision checks.
-            </p>
-            <div className="short-reel-conflict-actions">
-              <button type="button" className="short-reel-secondary-btn" onClick={keepLocalDraft}>
-                Keep My Draft
-              </button>
-              <button type="button" className="short-reel-primary-btn" onClick={discardDraftAndReload}>
-                Discard & Reload Remote
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ShortReelTaskProgressBanner isVisible={isGeneratingOrPending} activeTask={activeTask} />
 
-      {/* Background Task Banner */}
-      {isGeneratingOrPending && (
-        <div className="short-reel-alert short-reel-alert-info" role="status">
-          <span className="short-reel-spinner" aria-hidden="true" />
-          <div className="short-reel-alert-body">
-            <strong>Generation In Progress</strong>
-            <p>{activeTask?.progress_message || "Generating creative deliverables..."}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Top Cards Grid: Topic Concept & Source Question */}
       <main className="short-reel-grid">
-        <section className="short-reel-card short-reel-topic-card" aria-label="Topic Concept">
-          <div className="short-reel-card-header">
-            <div className="short-reel-card-title-group">
-              <h3 className="short-reel-card-title">Topic Concept</h3>
-              <span className={`short-reel-tag ${isKeywordOrigin ? "short-reel-tag-origin-keyword" : "short-reel-tag-origin-discovery"}`}>
-                Origin: {topic.origin}
-              </span>
-            </div>
-          </div>
-
-          <div className="short-reel-field">
-            <span className="short-reel-field-label">Premise</span>
-            <p className="short-reel-field-value">{topic.premise}</p>
-          </div>
-
-          <div className="short-reel-field">
-            <span className="short-reel-field-label">Hook</span>
-            <p className="short-reel-field-value">{topic.hook}</p>
-          </div>
-        </section>
-
+        <ShortReelTopicCard topic={topic} />
         <ShortReelSourceCard source={source} />
       </main>
 
-      {/* Deliverable Units Overview */}
-      <section className="short-reel-card short-reel-units-section" aria-label="Creative Deliverables">
-        <div className="short-reel-card-header">
-          <h3 className="short-reel-card-title">Creative Deliverables Status</h3>
-        </div>
-        <div className="short-reel-units-grid">
-          {(["references", "script", "cover", "publishing"] as const).map((unitKey) => {
-            const unit = units[unitKey];
-            const isReady = unit.state === "ready";
-            const isPending = unit.state === "pending";
-            const isStale = unit.state === "stale";
-            const isFailed = unit.state === "failed";
+      <ShortReelDeliverablesGrid units={units} />
 
-            let stateClass = "short-reel-unit-state-missing";
-            if (isReady) stateClass = "short-reel-unit-state-ready";
-            if (isPending) stateClass = "short-reel-unit-state-pending";
-            if (isStale) stateClass = "short-reel-unit-state-stale";
-            if (isFailed) stateClass = "short-reel-unit-state-failed";
+      <StudioTabNav activeTab={activeTab} onSelectTab={setActiveTab} />
 
-            return (
-              <div key={unitKey} className="short-reel-unit-card">
-                <span className="short-reel-unit-title">{unitKey}</span>
-                <span className="short-reel-unit-status">
-                  Status: <strong className={stateClass}>{unit.state}</strong>
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Primary Studio Tabs: Script | Assets | Publishing */}
-      <nav className="short-reel-nav-tabs" role="tablist" aria-label="Studio View Tabs">
-        <button
-          type="button"
-          role="tab"
-          aria-label="Script & Segments"
-          aria-selected={activeTab === "script"}
-          className={`short-reel-nav-tab ${activeTab === "script" ? "active" : ""}`}
-          onClick={() => setActiveTab("script")}
-        >
-          <span>Script</span>
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-label="Assets & Prompts"
-          aria-selected={activeTab === "assets"}
-          className={`short-reel-nav-tab ${activeTab === "assets" ? "active" : ""}`}
-          onClick={() => setActiveTab("assets")}
-        >
-          <span>Assets</span>
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-label="Publishing Metadata"
-          aria-selected={activeTab === "publishing"}
-          className={`short-reel-nav-tab ${activeTab === "publishing" ? "active" : ""}`}
-          onClick={() => setActiveTab("publishing")}
-        >
-          <span>Publishing</span>
-        </button>
-      </nav>
-
-      {/* Active Tab Panel */}
       <div className="short-reel-tab-panel">
         {activeTab === "script" && (
           <SegmentEditor
@@ -342,35 +197,7 @@ export function ShortReelStudio({ channel, reelId, onBack, onNotice }: ShortReel
         )}
       </div>
 
-      {/* Selectable Fallback Modal for Clipboard Denial */}
-      {clipboardFallbackText && (
-        <div className="short-reel-modal-backdrop" role="dialog" aria-modal="true" aria-label="Manual Copy Fallback">
-          <div className="short-reel-modal">
-            <div className="short-reel-modal-header">
-              <h3>Manual Copy Fallback</h3>
-              <button type="button" className="short-reel-modal-close-btn" onClick={clearClipboardFallback} aria-label="Close dialog">
-                <X size={18} />
-              </button>
-            </div>
-            <div className="short-reel-modal-body">
-              <p>Clipboard access was not permitted. You can select and copy the text below:</p>
-              <textarea
-                readOnly
-                rows={6}
-                className="short-reel-textarea short-reel-fallback-textarea"
-                value={clipboardFallbackText}
-                autoFocus
-                onFocus={(e) => e.target.select()}
-              />
-            </div>
-            <div className="short-reel-modal-footer">
-              <button type="button" className="short-reel-primary-btn" onClick={clearClipboardFallback}>
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {clipboardFallbackText && <ClipboardFallbackModal clipboardFallbackText={clipboardFallbackText} onClose={clearClipboardFallback} />}
     </div>
   );
 }

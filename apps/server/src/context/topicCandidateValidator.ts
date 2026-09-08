@@ -2,12 +2,18 @@ import {
   makeId,
   nowIso,
   TopicCandidateSchema,
+  TopicRunCandidateSchema,
+  TopicRunResultSchema,
   type EpisodeTopicCandidate,
   type ShortReelTopicCandidate,
   type TopicCandidate,
   type TopicProvenanceOrigin,
+  type TopicRunCandidate,
+  type TopicRunResult,
+  type TopicSourceShortage,
 } from "@studio/shared";
 import type { TopicMatrixPlan, TopicMatrixSlotPlan } from "./topicMatrixPlanner.js";
+import type { AllocatedSlot } from "./bankTopicAllocation.js";
 
 function extractRawCandidates(rawOutput: unknown): unknown[] {
   if (Array.isArray(rawOutput)) {
@@ -227,4 +233,132 @@ export function validateTopicCandidateSlots(rawOutput: unknown, plan: TopicMatri
     ids.add(candidate.topic_id);
   }
   return candidates;
+}
+
+export interface ValidateTopicResponseInput {
+  rawOutput: unknown;
+  allocatedSlots: AllocatedSlot[];
+  channelId: string;
+  runId?: string;
+  shortages?: TopicSourceShortage[];
+}
+
+export function validateTopicCandidateResponse(input: ValidateTopicResponseInput): TopicRunResult {
+  const { rawOutput, allocatedSlots, channelId, runId, shortages = [] } = input;
+  const rawList = extractRawCandidates(rawOutput);
+
+  // Check if rawList has duplicate responses for the same slot
+  const seenRawSlots = new Set<string>();
+  for (const item of rawList) {
+    if (item && typeof item === "object") {
+      const sId = (item as Record<string, unknown>).slot_id ?? (item as Record<string, unknown>).slotId;
+      if (typeof sId === "string" && sId.trim()) {
+        const normalizedSlot = sId.trim();
+        if (seenRawSlots.has(normalizedSlot)) {
+          throw new Error(`Duplicate candidate response for slot "${normalizedSlot}"`);
+        }
+        seenRawSlots.add(normalizedSlot);
+      }
+    }
+  }
+
+  const seenSlots = new Set<string>();
+  const candidates: TopicRunCandidate[] = [];
+
+  for (let idx = 0; idx < allocatedSlots.length; idx += 1) {
+    const slot = allocatedSlots[idx];
+    const match =
+      rawList.find(
+        (item) =>
+          item &&
+          typeof item === "object" &&
+          ((item as Record<string, unknown>).slot_id === slot.slotId || (item as Record<string, unknown>).slotId === slot.slotId),
+      ) ?? (rawList.length === allocatedSlots.length ? rawList[idx] : undefined);
+
+    if (!match || typeof match !== "object" || Array.isArray(match)) {
+      throw new Error(`Missing candidate response for allocated slot "${slot.slotId}"`);
+    }
+
+    if (seenSlots.has(slot.slotId)) {
+      throw new Error(`Duplicate candidate response for slot "${slot.slotId}"`);
+    }
+    seenSlots.add(slot.slotId);
+
+    const item = match as Record<string, unknown>;
+    const textFields = extractCandidateTextFields(item, slot.slot);
+
+    const topicId =
+      typeof item.topic_id === "string" && item.topic_id.trim()
+        ? item.topic_id.trim()
+        : makeId(slot.contentKind === "short_reel" ? "topic_reel" : "topic_ep");
+
+    const origin: TopicProvenanceOrigin = slot.isKeySteered ? "keyword" : "discovery";
+    const themeHint = slot.isKeySteered ? slot.domainTitle : undefined;
+
+    let candidateData: TopicCandidate;
+    if (slot.contentKind === "short_reel") {
+      const shortReelCandidate: ShortReelTopicCandidate = {
+        topic_id: topicId,
+        channel_id: channelId,
+        content_kind: "short_reel",
+        title: textFields.title,
+        premise: textFields.premise,
+        why_it_fits: textFields.whyItFits,
+        hook: textFields.hook,
+        estimated_potential: textFields.estimatedPotential,
+        generated_at: nowIso(),
+        selected: false,
+        origin,
+        question_count: 1,
+        aspect_ratio: "9:16",
+        archetype: slot.archetype as "versus_faceoff" | "deep_trivia",
+        ...(themeHint ? { theme_hint: themeHint } : {}),
+        domain_id: slot.domainId,
+        ...(slot.subtopicId ? { subtopic_id: slot.subtopicId } : {}),
+      };
+      candidateData = TopicCandidateSchema.parse(shortReelCandidate);
+    } else {
+      const visualStyle = typeof item.visual_style === "string" ? (item.visual_style as EpisodeTopicCandidate["visual_style"]) : "mixed";
+      const ageBand = typeof item.age_band === "string" ? (item.age_band as EpisodeTopicCandidate["age_band"]) : "7-9";
+
+      const episodeCandidate: EpisodeTopicCandidate = {
+        topic_id: topicId,
+        channel_id: channelId,
+        content_kind: "episode",
+        title: textFields.title,
+        premise: textFields.premise,
+        why_it_fits: textFields.whyItFits,
+        hook: textFields.hook,
+        estimated_potential: textFields.estimatedPotential,
+        generated_at: nowIso(),
+        selected: false,
+        origin,
+        quiz_format: slot.quizFormat,
+        archetype: slot.archetype,
+        suggested_layout: slot.suggestedLayout,
+        question_count: slot.questionCount,
+        visual_style: visualStyle,
+        age_band: ageBand,
+        ...(themeHint ? { theme_hint: themeHint } : {}),
+        domain_id: slot.domainId,
+        ...(slot.subtopicId ? { subtopic_id: slot.subtopicId } : {}),
+      };
+      candidateData = TopicCandidateSchema.parse(episodeCandidate);
+    }
+
+    const runCandidate = TopicRunCandidateSchema.parse({
+      ...candidateData,
+      slot_id: slot.slotId,
+      source_bindings: slot.sourceBindings,
+    });
+    candidates.push(runCandidate);
+  }
+
+  return TopicRunResultSchema.parse({
+    run_id: runId || makeId("run"),
+    target_episode_count: 3,
+    target_short_reel_count: 2,
+    candidates,
+    shortages,
+  });
 }

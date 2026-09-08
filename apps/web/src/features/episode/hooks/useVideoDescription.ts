@@ -13,13 +13,7 @@ export interface UseVideoDescriptionProps {
   onNotice?: (notice: NonNullable<Notice>) => void;
 }
 
-export function useVideoDescription({
-  channelId,
-  episodeId,
-  hasQuiz = true,
-  initialDescription,
-  onNotice,
-}: UseVideoDescriptionProps) {
+export function useVideoDescription({ channelId, episodeId, hasQuiz = true, initialDescription, onNotice }: UseVideoDescriptionProps) {
   const [description, setDescription] = useState<VideoDescription | null>(initialDescription ?? null);
   const [draftText, setDraftText] = useState<string>(initialDescription?.full_description_text ?? "");
   const [loading, setLoading] = useState(false);

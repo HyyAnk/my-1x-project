@@ -109,8 +109,7 @@ export function useQuestionBankBatchJob(options: UseQuestionBankBatchJobOptions 
             dismissedJobIdsRef.current.delete(job.jobId);
             setBatchJob(job);
           } else if (job.status !== "idle" && !dismissedJobIdsRef.current.has(job.jobId)) {
-            const isRecent =
-              !job.completedAt || Date.now() - new Date(job.completedAt).getTime() <= 15_000;
+            const isRecent = !job.completedAt || Date.now() - new Date(job.completedAt).getTime() <= 15_000;
             if (isRecent) {
               setBatchJob(job);
             }
@@ -118,12 +117,8 @@ export function useQuestionBankBatchJob(options: UseQuestionBankBatchJobOptions 
             setBatchJob(null);
           }
 
-          const isNewCompleted =
-            job.status === "completed" &&
-            lastRefreshedJobIdRef.current !== `${job.jobId}:completed`;
-          const isCountIncreased =
-            job.progress.completedCount > lastRefreshedCountRef.current &&
-            job.progress.completedCount > 0;
+          const isNewCompleted = job.status === "completed" && lastRefreshedJobIdRef.current !== `${job.jobId}:completed`;
+          const isCountIncreased = job.progress.completedCount > lastRefreshedCountRef.current && job.progress.completedCount > 0;
 
           if (isNewCompleted || isCountIncreased) {
             if (isNewCompleted) {

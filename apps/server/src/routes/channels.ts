@@ -18,6 +18,7 @@ import type { AppState } from "./state.js";
 import { createVoiceWithPreview } from "./voiceHelpers.js";
 import { createEpisodeFromTopicWithBank } from "../quiz/bank/questionBankToQuizBridge.js";
 import { confirmShortReelTopic } from "../shortReel/topicConfirmation.js";
+import { getTopicAvailabilityBatch } from "../repository/topics.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
 
 export type ChannelsRouteDeps = {
@@ -123,6 +124,10 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
     server.get("/api/channels/:channelId/topics", async (request) => ({
       topics: await repository.listTopics((request.params as { channelId: string }).channelId),
     }));
+    server.get("/api/channels/:channelId/topics/availability", async (request) => {
+      const channelId = (request.params as { channelId: string }).channelId;
+      return getTopicAvailabilityBatch(repository, channelId);
+    });
     server.post("/api/channels/:channelId/topics/suggest", async (request, reply) => {
       const channelId = (request.params as { channelId: string }).channelId;
       const payload = request.body && typeof request.body === "object" && !Array.isArray(request.body) ? request.body : {};
@@ -150,6 +155,11 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
           channelId: params.channelId,
           topicId: params.topicId,
           requestId: input.request_id,
+          options: {
+            question_count: 1,
+            visual_style: input.visual_style,
+            render_aspect_ratio: input.render_aspect_ratio,
+          },
         });
         return reply.code(201).send(result);
       }
@@ -166,6 +176,7 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
           visual_style: input.visual_style,
           auto_start_pipeline: input.auto_start_pipeline ?? true,
           render_aspect_ratio: input.render_aspect_ratio,
+          request_id: input.request_id,
         },
       });
       return reply.code(201).send({

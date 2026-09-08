@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { existsSync } from "node:fs";
-import { mkdtemp, rm } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { buildApp, type StudioApp } from "../src/app.js";
@@ -24,6 +24,7 @@ type QuestionBankRouteBody = {
 describe("Question Bank REST API Routes", () => {
   let app: StudioApp;
   let tempStorage: string;
+  let isolatedStudioRoot: string;
 
   beforeAll(async () => {
     let curr = process.cwd();
@@ -31,15 +32,26 @@ describe("Question Bank REST API Routes", () => {
       if (existsSync(path.join(curr, "pnpm-workspace.yaml"))) break;
       curr = path.dirname(curr);
     }
-    app = await buildApp(curr);
     tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-route-test-"));
-    await app.repository.setStorageRoot(tempStorage);
+    isolatedStudioRoot = await mkdtemp(path.join(os.tmpdir(), "qb-route-root-"));
+    await mkdir(path.join(isolatedStudioRoot, ".quiz-studio"), { recursive: true });
+    await writeFile(
+      path.join(isolatedStudioRoot, ".quiz-studio", "storage.local.json"),
+      JSON.stringify({ storage_path: tempStorage }, null, 2),
+      "utf8",
+    );
+    const srcKb = path.join(curr, ".quiz-studio", "knowledge_base");
+    const destKb = path.join(isolatedStudioRoot, ".quiz-studio", "knowledge_base");
+    await cp(srcKb, destKb, { recursive: true }).catch(() => {});
+
+    app = await buildApp(isolatedStudioRoot);
     await seedQuestionBankFixtures(app.repository);
   });
 
   afterAll(async () => {
     await app.close();
-    await rm(tempStorage, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+    await rm(tempStorage, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }).catch(() => {});
+    await rm(isolatedStudioRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }).catch(() => {});
   });
 
   it("GET /api/question-bank/taxonomy returns 9 domains synced from knowledge base", async () => {
@@ -201,6 +213,7 @@ describe("Question Bank REST API Routes", () => {
       domain_id: "nature_animals",
       subtopic_id: "mammals",
       entity_id: "ENT-ANI-001",
+      language: "en",
       format: "multiple_choice",
       question: "Which mammal has the thickest fur of any animal?",
       choices: [
@@ -233,5 +246,42 @@ describe("Question Bank REST API Routes", () => {
     expect(body.approvedCount).toBe(1);
     expect(body.matrixCoverage).toBeDefined();
     expect(body.matrixCoverage.total_combos).toBe(20000);
+  });
+
+  it("POST /api/question-bank/generate-batch rejects foreign raw candidates before persistence", async () => {
+    const res = await app.server.inject({
+      method: "POST",
+      url: "/api/question-bank/generate-batch",
+      payload: {
+        mode: "auto",
+        target_count: 1,
+        wait: true,
+        persist: true,
+        candidates: [
+          {
+            id: `BATCH-ROUTE-FOREIGN-${Date.now()}`,
+            archetype_id: "speed_blitz",
+            domain_id: "nature_animals",
+            subtopic_id: "mammals",
+            language: "fr",
+            format: "multiple_choice",
+            question: "Which mammal lays eggs?",
+            choices: [
+              { id: "A", text: "Platypus", is_correct: true },
+              { id: "B", text: "Kangaroo", is_correct: false },
+              { id: "C", text: "Koala", is_correct: false },
+            ],
+            correct_choice_id: "A",
+            explanation: "The platypus is a mammal that lays eggs.",
+            difficulty: 1,
+            tags: [],
+            status: "approved",
+          },
+        ],
+      },
+    });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.json<QuestionBankRouteBody>().code).toBe("BANK_ENGLISH_ONLY");
   });
 });

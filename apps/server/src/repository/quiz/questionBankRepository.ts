@@ -22,8 +22,10 @@ export {
   COOLDOWN_DAYS_DEFAULT,
   type QueryQuestionBankParams,
   queryQuestionBankQuestions,
+  readQuestionBankQuestionsSnapshot,
   searchQuestionBank,
   getQuestionBankQuestion,
+  readQuestionBankSnapshot,
   saveQuestionBankQuestion,
   deleteQuestionBankQuestion,
   clearQuestionBank,
@@ -31,3 +33,20 @@ export {
 } from "./bank/bankQueryEngine.js";
 
 export { saveQuestionBankTranslation, readQuestionBankTranslation } from "./bank/bankTranslationStore.js";
+export {
+  previewBankLanguageMigration,
+  backupBankLanguageMigration,
+  applyBankLanguageMigration,
+  rollbackBankLanguageMigration,
+  type BankLanguageMigrationManifest,
+  type BankLanguageMigrationPreview,
+  type BankLanguageMigrationResult,
+} from "./bank/bankMetadataMigration.js";
+export {
+  createBankSerializationBoundary,
+  getBankSerializationBoundary,
+  withBankRead,
+  withBankWrite,
+  type BankSerializationBoundary,
+  type BankQuestionSnapshot,
+} from "./bank/bankSerializationBoundary.js";

@@ -14,6 +14,7 @@ export type EpisodeCustomizationDropdownName =
   | "thinkingBar"
   | "palette"
   | "thumbnailRatio"
+  | "introOutroStyle"
   | null;
 
 export function useEpisodeCustomizationDropdown(containerRef: React.RefObject<HTMLDivElement | null>, isPipelineRunning: boolean) {

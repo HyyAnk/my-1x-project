@@ -1,16 +1,10 @@
 import { describe, expect, it } from "vitest";
-import {
-  QUESTION_BANK_MILESTONES,
-  formatMilestoneTarget,
-  getMilestoneProgress,
-} from "./questionBankMilestones";
+import { QUESTION_BANK_MILESTONES, formatMilestoneTarget, getMilestoneProgress } from "./questionBankMilestones";
 
 describe("questionBankMilestones", () => {
   it("defines exactly 6 progressive tiers", () => {
     expect(QUESTION_BANK_MILESTONES).toHaveLength(6);
-    expect(QUESTION_BANK_MILESTONES.map((t) => t.target)).toEqual([
-      2000, 5000, 10000, 20000, 50000, 100000,
-    ]);
+    expect(QUESTION_BANK_MILESTONES.map((t) => t.target)).toEqual([2000, 5000, 10000, 20000, 50000, 100000]);
   });
 
   it("formats milestone targets with K suffix correctly", () => {

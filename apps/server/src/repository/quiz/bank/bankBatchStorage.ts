@@ -4,6 +4,7 @@ import path from "node:path";
 import { BankSubtopicBatchSchema, type BankSubtopicBatch } from "@studio/shared";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { QUESTION_BANK_DIR, getQuestionBankPath, getQuestionBankWritePath } from "./bankPathResolver.js";
+import { withBankRead, withBankWrite } from "./bankSerializationBoundary.js";
 
 /**
  * Checks if a directory archetype matches an archetype filter,
@@ -24,7 +25,7 @@ export function matchesArchetypeFilter(dirArchetype: string, filterArchetype?: s
 /**
  * Reads a single subtopic batch file from storage, normalizing legacy archetypes.
  */
-export async function readSubtopicBatch(
+export async function readSubtopicBatchUnlocked(
   this: RepositoryRuntime,
   archetypeId: string,
   domainId: string,
@@ -56,10 +57,19 @@ export async function readSubtopicBatch(
   }
 }
 
+export function readSubtopicBatch(
+  this: RepositoryRuntime,
+  archetypeId: string,
+  domainId: string,
+  subtopicId: string,
+): Promise<BankSubtopicBatch | null> {
+  return withBankRead(this, () => readSubtopicBatchUnlocked.call(this, archetypeId, domainId, subtopicId));
+}
+
 /**
  * Atomically writes a subtopic batch to disk and keeps legacy mirrored files updated.
  */
-export async function writeSubtopicBatch(this: RepositoryRuntime, batch: BankSubtopicBatch): Promise<void> {
+export async function writeSubtopicBatchUnlocked(this: RepositoryRuntime, batch: BankSubtopicBatch): Promise<void> {
   const normalizedBatch = {
     ...batch,
     archetype_id: batch.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : batch.archetype_id,
@@ -86,10 +96,14 @@ export async function writeSubtopicBatch(this: RepositoryRuntime, batch: BankSub
   }
 }
 
+export function writeSubtopicBatch(this: RepositoryRuntime, batch: BankSubtopicBatch): Promise<void> {
+  return withBankWrite(this, () => writeSubtopicBatchUnlocked.call(this, batch));
+}
+
 /**
  * Discovers and lists all subtopic batches across runtime and project repository locations.
  */
-export async function listQuestionBankBatches(
+export async function listQuestionBankBatchesUnlocked(
   this: RepositoryRuntime,
   filter?: { archetypeId?: string; domainId?: string },
 ): Promise<BankSubtopicBatch[]> {
@@ -179,4 +193,11 @@ export async function listQuestionBankBatches(
   }
 
   return Array.from(batchesMap.values()).map((v) => v.data);
+}
+
+export function listQuestionBankBatches(
+  this: RepositoryRuntime,
+  filter?: { archetypeId?: string; domainId?: string },
+): Promise<BankSubtopicBatch[]> {
+  return withBankRead(this, () => listQuestionBankBatchesUnlocked.call(this, filter));
 }

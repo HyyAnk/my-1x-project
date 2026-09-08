@@ -6,6 +6,7 @@ import { assertDirectorPlanValid } from "../../director/validateDirectorPlan.js"
 import { compileQuizTimeline } from "../../timeline/compileTimeline.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
 import { readQuizArtifacts, type QuizArtifacts, type QuizOrchestratorInput } from "../orchestrator.js";
+import { resolveIntroOutroConfig } from "./assetsVoiceStages.js";
 
 export async function compileTimeline(
   input: QuizOrchestratorInput,
@@ -23,7 +24,15 @@ export async function compileTimeline(
   for (const segment of voice_plan.segments) {
     if (segment.duration_seconds !== null) audioDurations[segment.segment_id] = segment.duration_seconds;
   }
-  const timeline = compileQuizTimeline({ quiz, director: director_plan, voicePlan: voice_plan, audioDurations });
+  const introOutro = await resolveIntroOutroConfig(input.repository, input.channelId, input.episodeId);
+  const timeline = compileQuizTimeline({
+    quiz,
+    director: director_plan,
+    voicePlan: voice_plan,
+    audioDurations,
+    introDuration: introOutro.introDuration,
+    outroDuration: introOutro.outroDuration,
+  });
   const artifact_path = await input.repository.writeQuizTimeline(input.channelId, input.episodeId, timeline);
   const invalidatedStages = invalidateQuizArtifacts("timeline");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);

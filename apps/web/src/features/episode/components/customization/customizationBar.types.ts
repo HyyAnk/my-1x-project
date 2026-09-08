@@ -41,4 +41,6 @@ export type EpisodeQuizCustomizationBarProps = {
   mascotStyleId?: string | null;
   onSaveMascotStyle?: (styleId: string | null) => void;
   availableMascotStyles?: MascotStyle[];
+  introOutroStyleId?: string | null;
+  onSaveIntroOutroStyle?: (styleId: string | null) => void;
 };

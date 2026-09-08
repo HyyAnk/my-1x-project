@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { existsSync } from "node:fs";
-import { mkdtemp, rm } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { createStubQuizLlmClient } from "./helpers/stubQuizLlmClient.js";
@@ -15,6 +15,7 @@ type ConfirmEpisodeResponse = CreateEpisodeFromTopicWithBankResult & {
 describe("Topic to Episode Pipeline E2E Bridge", () => {
   let app: StudioApp;
   let tempStorage: string;
+  let isolatedStudioRoot: string;
   let testChannelId: string;
   let otherChannelId: string;
 
@@ -24,9 +25,22 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
       if (existsSync(path.join(curr, "pnpm-workspace.yaml"))) break;
       curr = path.dirname(curr);
     }
-    app = await buildApp(curr, { llmClient: createStubQuizLlmClient() });
     tempStorage = await mkdtemp(path.join(os.tmpdir(), "qb-pipeline-e2e-"));
-    await app.repository.setStorageRoot(tempStorage);
+    isolatedStudioRoot = await mkdtemp(path.join(os.tmpdir(), "qb-pipeline-root-"));
+    await mkdir(path.join(isolatedStudioRoot, ".quiz-studio"), { recursive: true });
+    await writeFile(
+      path.join(isolatedStudioRoot, ".quiz-studio", "storage.local.json"),
+      JSON.stringify({ storage_path: tempStorage }, null, 2),
+      "utf8",
+    );
+    const srcKb = path.join(curr, ".quiz-studio", "knowledge_base");
+    const destKb = path.join(isolatedStudioRoot, ".quiz-studio", "knowledge_base");
+    await cp(srcKb, destKb, { recursive: true }).catch(() => {});
+    const srcTemplates = path.join(curr, "templates");
+    const destTemplates = path.join(isolatedStudioRoot, "templates");
+    await cp(srcTemplates, destTemplates, { recursive: true }).catch(() => {});
+
+    app = await buildApp(isolatedStudioRoot, { llmClient: createStubQuizLlmClient() });
     app.tasks.runPipelineTask = async (task) => {
       await app.tasks.update(task.task_id, { status: "RUNNING" });
       await app.tasks.finish(task.task_id, "COMPLETED", null);
@@ -48,7 +62,10 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
   afterAll(async () => {
     await app.close();
     if (tempStorage) {
-      await rm(tempStorage, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }).catch(() => {});
+      await rm(tempStorage, { recursive: true, force: true }).catch(() => {});
+    }
+    if (isolatedStudioRoot) {
+      await rm(isolatedStudioRoot, { recursive: true, force: true }).catch(() => {});
     }
   });
 

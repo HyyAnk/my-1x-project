@@ -142,6 +142,7 @@ export const EpisodeSettingsInputSchema = z.object({
   channel_brand_name: z.string().trim().max(CHANNEL_BRAND_NAME_MAX_LENGTH).optional(),
   render_aspect_ratio: z.literal("16:9").optional(),
   thumbnail_aspect_ratio: z.enum(["auto", "16:9", "9:16", "both"]).optional(),
+  intro_outro_style_id: z.string().nullable().optional(),
 });
 
 export type EpisodeSettingsInput = z.infer<typeof EpisodeSettingsInputSchema>;

@@ -20,6 +20,25 @@ export {
   type BatchGenerationResult,
 };
 
+export type BankRawCandidateLanguageError = {
+  code: "BANK_ENGLISH_ONLY";
+  error: string;
+};
+
+/** Validates the immutable Bank language boundary before QA, persistence, or provider work. */
+export function validateBankRawCandidateLanguages(candidates: readonly unknown[] | undefined): BankRawCandidateLanguageError | null {
+  if (!candidates || candidates.length === 0) return null;
+  const invalidIndex = candidates.findIndex((candidate) => {
+    if (!candidate || typeof candidate !== "object") return true;
+    return (candidate as { language?: unknown }).language !== "en";
+  });
+  if (invalidIndex < 0) return null;
+  return {
+    code: "BANK_ENGLISH_ONLY",
+    error: `Raw Bank candidate at index ${invalidIndex} must declare explicit language 'en'`,
+  };
+}
+
 /**
  * Coordinates the entire AI batch question generation workflow:
  * - Chunking execution in groups of <= 20 questions
@@ -35,6 +54,8 @@ export async function generateQuestionBankBatch(repository: RepositoryService, i
 
   // 1. Fast path for raw candidates override (offline tests / direct imports)
   if (input.rawCandidatesOverride && input.rawCandidatesOverride.length > 0) {
+    const languageError = validateBankRawCandidateLanguages(input.rawCandidatesOverride);
+    if (languageError) throw new Error(`${languageError.code}: ${languageError.error}`);
     const existingResult = await repository.queryQuestionBankQuestions({ limit: 10000 });
     const existingQuestions = existingResult.questions;
 

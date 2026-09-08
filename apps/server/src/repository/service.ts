@@ -26,6 +26,15 @@ import { questionBankBindings } from "./bindings/questionBankBindings.js";
 import { shortReelBindings } from "./bindings/shortReelBindings.js";
 import { acquireWriterAdmission, releaseWriterAdmission, isWriterAdmissionHeld } from "./shortReelStorage.js";
 import { listStylePresets, createStylePreset, updateStylePreset, deleteStylePreset } from "./stylePresets.js";
+import {
+  listChannelIntroOutroStyles,
+  getChannelIntroOutroStyle,
+  saveChannelIntroOutroStyle,
+  deleteChannelIntroOutroStyle,
+  processAndStoreStyleClip,
+  getIntroOutroClipPath,
+  getIntroOutroThumbPath,
+} from "./introOutroStyles.js";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-unsafe-declaration-merging
 export interface RepositoryService extends RepositoryRuntime {}
@@ -172,6 +181,11 @@ export class RepositoryService {
     return writeTextAtomic(target, content);
   }
 
+  async loadEpisodeFile(channelId: string, episodeId: string, filename: string): Promise<string> {
+    const file = await (this as any).getEpisodeFile(channelId, episodeId, filename);
+    return file.content;
+  }
+
   writeBinaryAtomic(target: string, content: Uint8Array): Promise<void> {
     return writeBinaryAtomic(target, content);
   }
@@ -203,4 +217,13 @@ Object.assign(
   questionBankBindings,
   shortReelBindings,
   { listStylePresets, createStylePreset, updateStylePreset, deleteStylePreset },
+  {
+    listChannelIntroOutroStyles,
+    getChannelIntroOutroStyle,
+    saveChannelIntroOutroStyle,
+    deleteChannelIntroOutroStyle,
+    processAndStoreStyleClip,
+    getIntroOutroClipPath,
+    getIntroOutroThumbPath,
+  },
 );

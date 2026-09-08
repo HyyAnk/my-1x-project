@@ -1,4 +1,4 @@
-import { QUIZ_SECONDS_PER_QUESTION, type TopicCandidate } from "@studio/shared";
+import { QUIZ_SECONDS_PER_QUESTION, type TopicCandidate, type TopicSourceShortage } from "@studio/shared";
 
 export const DEFAULT_NARRATION_WORDS_PER_SECOND = 2.3;
 
@@ -46,7 +46,14 @@ export function estimateQuizTargetWordCount(targetDurationMinutes: number, words
   return Math.round(targetDurationMinutes * 60 * Math.max(0.1, wordsPerSecond) * 0.95);
 }
 
-export type TopicRun = { generated_at: string; candidates: TopicCandidate[] };
+export type TopicRun = {
+  run_id?: string;
+  generated_at: string;
+  target_episode_count?: number;
+  target_short_reel_count?: number;
+  candidates: TopicCandidate[];
+  shortages?: TopicSourceShortage[];
+};
 
 export const allowedEpisodeFiles = new Set([
   "brief.md",

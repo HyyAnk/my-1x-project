@@ -57,6 +57,20 @@ interface RawChoice {
   [key: string]: unknown;
 }
 
+const VIETNAMESE_LANGUAGE_CODES = new Set(["vi", "vie", "vietnamese"]);
+
+/** Resolves an explicit generation target to a persisted base language code. */
+export function normalizeGenerationLanguage(language?: string): string | undefined {
+  if (language === undefined || language.trim() === "") return "en";
+  const normalizedInput = language.trim().toLowerCase().replaceAll("_", "-");
+  const baseInput = normalizedInput.split("-", 1)[0];
+  if (VIETNAMESE_LANGUAGE_CODES.has(normalizedInput) || VIETNAMESE_LANGUAGE_CODES.has(baseInput)) {
+    throw new Error("Vietnamese generation targets are not supported");
+  }
+  if (normalizedInput === "en" || normalizedInput === "eng" || normalizedInput === "english" || baseInput === "en") return "en";
+  throw new Error(`Bank generation requires English; received '${language}'`);
+}
+
 function extractJsonArray(rawOutput: string, context: string): Record<string, unknown>[] | null {
   let cleaned = rawOutput.trim();
   const jsonMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
@@ -142,12 +156,15 @@ export function parseBatchGenerationOutput(
     archetypeId: BankGameplayArchetypeId;
     domainId: string;
     subtopicId: string;
+    language?: string;
     difficulty?: number;
     ageBand?: "kids" | "family" | "teen" | "mature";
   },
 ): BankQuestion[] {
   const items = extractJsonArray(rawOutput, meta.archetypeId);
   if (!items) return [];
+
+  const generationLanguage = normalizeGenerationLanguage(meta.language);
 
   const result: BankQuestion[] = [];
   const now = new Date().toISOString();
@@ -179,6 +196,7 @@ export function parseBatchGenerationOutput(
       age_band: typeof item.age_band === "string" ? item.age_band : (meta.ageBand ?? "family"),
       created_at: now,
       updated_at: now,
+      ...(generationLanguage ? { language: generationLanguage } : {}),
     };
 
     const visualSpec = normalizeVisualSpec(candidate.visual_spec);
@@ -207,12 +225,15 @@ export function parseReverseBatchGenerationOutput(
   targets: TargetEntityForGeneration[],
   meta: {
     archetypeId: BankGameplayArchetypeId;
+    language?: string;
     difficulty?: number;
     ageBand?: "kids" | "family" | "teen" | "mature";
   },
 ): BankQuestion[] {
   const items = extractJsonArray(rawOutput, `reverse/${meta.archetypeId}`);
   if (!items) return [];
+
+  const generationLanguage = normalizeGenerationLanguage(meta.language);
 
   const result: BankQuestion[] = [];
   const now = new Date().toISOString();
@@ -261,6 +282,7 @@ export function parseReverseBatchGenerationOutput(
       age_band: typeof item.age_band === "string" ? item.age_band : (meta.ageBand ?? "family"),
       created_at: now,
       updated_at: now,
+      ...(generationLanguage ? { language: generationLanguage } : {}),
     };
 
     const visualSpec = normalizeVisualSpec(candidate.visual_spec);

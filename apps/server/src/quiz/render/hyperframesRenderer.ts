@@ -18,6 +18,9 @@ export class HyperframesRenderer implements QuizRenderer {
       mascotConfig: input.mascotConfig,
       premixedAudio: input.premixedAudio,
       fps: input.fps,
+      introVideoPath: input.introVideoPath,
+      outroVideoPath: input.outroVideoPath,
+      transitionType: input.transitionType,
     });
     return {
       html: composition.html,

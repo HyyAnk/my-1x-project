@@ -1,4 +1,12 @@
-import type { Episode, ProductionAssessment, Scene, Task, ThumbnailManifest, ThumbnailLayoutType, ThumbnailAspectRatio } from "@studio/shared";
+import type {
+  Episode,
+  ProductionAssessment,
+  Scene,
+  Task,
+  ThumbnailManifest,
+  ThumbnailLayoutType,
+  ThumbnailAspectRatio,
+} from "@studio/shared";
 import { request, type BundleImage } from "./client";
 
 export const episodeApi = {
@@ -88,5 +96,3 @@ export const episodeApi = {
     return `/api/channels/${channelId}/episodes/${episodeId}/thumbnail/file/${ratio === "9:16" ? "9_16" : "16_9"}${qs ? `?${qs}` : ""}`;
   },
 };
-
-

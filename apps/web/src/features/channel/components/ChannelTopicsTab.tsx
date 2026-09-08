@@ -1,7 +1,9 @@
+import { useMemo } from "react";
 import { CircleNotch, Lightbulb, Sparkle } from "@phosphor-icons/react";
-import type { Channel, QuizImageStyle, Task, TopicCandidate } from "@studio/shared";
+import type { Channel, QuizImageStyle, Task, TopicAvailability, TopicCandidate } from "@studio/shared";
 import { EmptyState } from "../../../components/EmptyState";
 import { TopicProgress } from "../../../components/TaskProgressPanel";
+import { useTopicAvailability } from "../hooks/useTopicAvailability";
 import { TopicCard } from "./TopicCard";
 import { TopicHistoryRow } from "./TopicHistoryRow";
 
@@ -17,6 +19,7 @@ type ChannelTopicsTabProps = {
   confirmingTopicId: string | null;
   onSuggest: (overrideHint?: string) => Promise<void>;
   onConfirmTopic: (topic: TopicCandidate, questionCount: number, visualStyle?: QuizImageStyle | "mixed") => Promise<void>;
+  availabilityMap?: Map<string, TopicAvailability>;
 };
 
 export function ChannelTopicsTab({
@@ -31,7 +34,26 @@ export function ChannelTopicsTab({
   confirmingTopicId,
   onSuggest,
   onConfirmTopic,
+  availabilityMap: externalAvailabilityMap,
 }: ChannelTopicsTabProps) {
+  const internalAvailability = useTopicAvailability({
+    channelId: channel.channel_id,
+    enabled: true,
+  });
+  const availabilityMap = externalAvailabilityMap ?? internalAvailability.availabilityMap;
+
+  // Group latest run as a coherent unit; do not fill partial runs with historical results
+  const { latestRunTopics, historyTopics } = useMemo(() => {
+    if (topics.length === 0) return { latestRunTopics: [], historyTopics: [] };
+    const latestTimestamp = topics[0]?.generated_at;
+    const isSameRun = (timeA: string, timeB: string) => {
+      if (timeA === timeB) return true;
+      return Math.abs(new Date(timeA).getTime() - new Date(timeB).getTime()) < 1500;
+    };
+    const latestRun = topics.filter((t) => isSameRun(t.generated_at, latestTimestamp));
+    const history = topics.filter((t) => !isSameRun(t.generated_at, latestTimestamp));
+    return { latestRunTopics: latestRun, historyTopics: history };
+  }, [topics]);
   return (
     <div>
       <div className="section-heading" style={{ marginTop: "12px" }}>
@@ -59,7 +81,7 @@ export function ChannelTopicsTab({
             onClick={() => void onSuggest()}
           >
             {busy === "topics" || topicTaskActive ? <CircleNotch className="spin" size={17} /> : <Sparkle size={17} />}
-            <span>{topicTaskActive ? "Generating…" : "Suggest 5 topics"}</span>
+            <span>{topicTaskActive ? "Generating…" : "Suggest topics"}</span>
           </button>
         </div>
       </div>
@@ -71,7 +93,7 @@ export function ChannelTopicsTab({
           compact
           icon={<Lightbulb size={23} />}
           title="No topic candidates yet"
-          copy="Let AI generate 5 tailored video concepts aligned with your Channel DNA, or enter a topic hint above."
+          copy="Generate tailored video concepts aligned with your Channel DNA, or enter a topic hint above."
           action="Suggest topics"
           disabled={topicTaskActive}
           busy={topicTaskActive}
@@ -81,11 +103,12 @@ export function ChannelTopicsTab({
       ) : (
         <>
           <div className="topic-grid">
-            {topics.slice(0, 5).map((topic) => (
+            {latestRunTopics.map((topic) => (
               <TopicCard
                 key={topic.topic_id}
                 topic={topic}
                 channelStyles={channel.selected_styles}
+                availability={availabilityMap.get(topic.topic_id)}
                 busy={confirmingTopicId === topic.topic_id}
                 disabled={Boolean(confirmingTopicId) || channel.status === "ARCHIVED"}
                 onConfirm={(questionCount, visualStyle) => void onConfirmTopic(topic, questionCount, visualStyle)}
@@ -93,22 +116,23 @@ export function ChannelTopicsTab({
             ))}
           </div>
 
-          {topics.length > 5 ? (
+          {historyTopics.length > 0 ? (
             <div className="topic-history-section">
               <div className="section-heading" style={{ marginTop: "32px", marginBottom: "14px" }}>
                 <div>
                   <p className="eyebrow">Archive & Previous Ideas</p>
-                  <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700 }}>Older Ideas History ({topics.length - 5})</h3>
+                  <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700 }}>Older Ideas History ({historyTopics.length})</h3>
                 </div>
                 <span className="count-note">Single-line archive view</span>
               </div>
               <div className="topic-history-list">
-                {topics.slice(5).map((topic, index) => (
+                {historyTopics.map((topic, index) => (
                   <TopicHistoryRow
                     key={topic.topic_id}
-                    index={index + 6}
+                    index={latestRunTopics.length + index + 1}
                     topic={topic}
                     channelStyles={channel.selected_styles}
+                    availability={availabilityMap.get(topic.topic_id)}
                     busy={confirmingTopicId === topic.topic_id}
                     disabled={Boolean(confirmingTopicId) || channel.status === "ARCHIVED"}
                     onConfirm={(questionCount, visualStyle) => void onConfirmTopic(topic, questionCount, visualStyle)}

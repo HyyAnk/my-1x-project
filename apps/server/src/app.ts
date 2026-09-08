@@ -35,6 +35,7 @@ import { registerStylePresetsRoutes } from "./routes/stylePresets.js";
 import { registerStyleModulesRoutes } from "./routes/styleModules.js";
 import { registerQuestionBankRoutes } from "./routes/questionBank.js";
 import { registerShortReelsRoutes } from "./routes/shortReels.js";
+import { registerIntroOutroStylesRoutes } from "./routes/introOutroStyles.js";
 import { styleActivationManager } from "./quiz/visual/styleModules/activation.js";
 
 export type StudioApp = {
@@ -132,7 +133,7 @@ export async function buildApp(
     if (error instanceof RepositoryError) {
       if (error.code.endsWith("NOT_FOUND")) {
         statusCode = 404;
-      } else if (error.code === "BANK_EMPTY" || error.code === "INVALID_SOURCE") {
+      } else if (error.code === "BANK_EMPTY" || error.code === "INVALID_SOURCE" || error.code === "INVALID_RESOLUTION") {
         statusCode = 422;
       } else if (error.code === "STALE_REVISION" || error.code === "CONFLICT") {
         statusCode = 409;
@@ -172,6 +173,7 @@ export async function buildApp(
   await server.register(registerStylePresetsRoutes({ repository }));
   await server.register(registerStyleModulesRoutes({ repository }));
   await server.register(registerQuestionBankRoutes({ repository, tasks, codex, antigravity, state }));
+  await server.register(registerIntroOutroStylesRoutes({ repository, logger, state }));
 
   return {
     server,

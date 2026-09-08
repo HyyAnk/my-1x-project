@@ -5,6 +5,7 @@ import { PresetPickerDropdown } from "./PresetPickerDropdown";
 import { ArtStyleDropdown } from "./ArtStyleDropdown";
 import { PaletteDropdown } from "./PaletteDropdown";
 import { MascotStyleDropdown } from "./MascotStyleDropdown";
+import { IntroOutroStyleDropdown } from "./IntroOutroStyleDropdown";
 import type { EpisodeCustomizationDropdownName } from "./useEpisodeCustomizationDropdown";
 
 export interface EpisodeCustomizationThemeSectionProps {
@@ -22,6 +23,8 @@ export interface EpisodeCustomizationThemeSectionProps {
   mascotStyleId?: string | null;
   onSaveMascotStyle?: (styleId: string | null) => void;
   availableMascotStyles?: MascotStyle[];
+  introOutroStyleId?: string | null;
+  onSaveIntroOutroStyle?: (styleId: string | null) => void;
 }
 
 export function EpisodeCustomizationThemeSection({
@@ -39,6 +42,8 @@ export function EpisodeCustomizationThemeSection({
   mascotStyleId,
   onSaveMascotStyle,
   availableMascotStyles,
+  introOutroStyleId,
+  onSaveIntroOutroStyle,
 }: EpisodeCustomizationThemeSectionProps) {
   const { t } = useTranslation();
 
@@ -96,6 +101,19 @@ export function EpisodeCustomizationThemeSection({
           availableMascotStyles={availableMascotStyles}
           onSaveMascotStyle={(styleId) => {
             onSaveMascotStyle?.(styleId);
+            closeDropdown();
+          }}
+        />
+        <IntroOutroStyleDropdown
+          channel={channel}
+          episode={episode}
+          disabled={isPipelineRunning}
+          saving={isSaving("intro-outro-style")}
+          isOpen={openDropdown === "introOutroStyle"}
+          onToggle={() => toggleDropdown("introOutroStyle")}
+          introOutroStyleId={introOutroStyleId}
+          onSaveIntroOutroStyle={(styleId) => {
+            onSaveIntroOutroStyle?.(styleId);
             closeDropdown();
           }}
         />

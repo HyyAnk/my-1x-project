@@ -31,7 +31,7 @@ export function useChannelDragAndDrop({ onReorder, enabled = true }: UseChannelD
       e.dataTransfer.setData("text/plain", channelId);
       e.dataTransfer.setData("application/x-channel-index", String(index));
     },
-    [enabled]
+    [enabled],
   );
 
   const handleDragOver = useCallback(
@@ -44,7 +44,7 @@ export function useChannelDragAndDrop({ onReorder, enabled = true }: UseChannelD
         setDragOverIndex(index);
       }
     },
-    [enabled, draggedIndex, dragOverIndex]
+    [enabled, draggedIndex, dragOverIndex],
   );
 
   const handleDragEnter = useCallback(
@@ -55,7 +55,7 @@ export function useChannelDragAndDrop({ onReorder, enabled = true }: UseChannelD
         setDragOverIndex(index);
       }
     },
-    [enabled, draggedIndex, dragOverIndex]
+    [enabled, draggedIndex, dragOverIndex],
   );
 
   const handleDragLeave = useCallback(
@@ -66,7 +66,7 @@ export function useChannelDragAndDrop({ onReorder, enabled = true }: UseChannelD
         setDragOverIndex(null);
       }
     },
-    [enabled, dragOverIndex]
+    [enabled, dragOverIndex],
   );
 
   const handleDrop = useCallback(
@@ -81,7 +81,7 @@ export function useChannelDragAndDrop({ onReorder, enabled = true }: UseChannelD
       setDraggedIndex(null);
       setDragOverIndex(null);
     },
-    [enabled, draggedIndex, onReorder]
+    [enabled, draggedIndex, onReorder],
   );
 
   const handleDragEnd = useCallback(() => {
@@ -109,17 +109,7 @@ export function useChannelDragAndDrop({ onReorder, enabled = true }: UseChannelD
         "data-drag-over": isCurrentDragOver,
       };
     },
-    [
-      enabled,
-      draggedIndex,
-      dragOverIndex,
-      handleDragStart,
-      handleDragOver,
-      handleDragEnter,
-      handleDragLeave,
-      handleDrop,
-      handleDragEnd,
-    ]
+    [enabled, draggedIndex, dragOverIndex, handleDragStart, handleDragOver, handleDragEnter, handleDragLeave, handleDrop, handleDragEnd],
   );
 
   /**
@@ -131,7 +121,7 @@ export function useChannelDragAndDrop({ onReorder, enabled = true }: UseChannelD
         onReorder(index, index - 1);
       }
     },
-    [onReorder]
+    [onReorder],
   );
 
   /**
@@ -143,7 +133,7 @@ export function useChannelDragAndDrop({ onReorder, enabled = true }: UseChannelD
         onReorder(index, index + 1);
       }
     },
-    [onReorder]
+    [onReorder],
   );
 
   return {

@@ -44,9 +44,6 @@ export async function resolveBankQuestionTranslation(
       llmClient,
     });
     const activeTranslation = transResult.content;
-    await repository.saveQuestionBankTranslation(bankQuestion.id, activeTranslation).catch((err) => {
-      console.warn(`[QuestionBankBridge] Failed to cache translation for ${bankQuestion.id}:`, err);
-    });
     return activeTranslation;
   } catch (transErr) {
     console.warn(

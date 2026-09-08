@@ -1,0 +1,753 @@
+import { describe, expect, it } from "vitest";
+import { AssetConsistencyGroupSchema, QuizV2Schema, resolveQuizLayout, type ChannelMascotConfig } from "@studio/shared";
+import { compileQuizAssetPrompt } from "../src/quiz/assets/promptCompiler.js";
+import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
+import { buildQuizVoicePlan, ENGLISH_OUTRO_CLOSING_VARIANTS } from "../src/quiz/audio/voicePlan.js";
+import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
+import { assessQuiz } from "../src/quiz/qa/quizAssessment.js";
+import { assessQuizVisualLayout } from "../src/quiz/qa/visualQa.js";
+import { buildCandyArcadeCompositionBundle, candyArcadeHeroAreaRatio } from "../src/quiz/render/candyArcadeComposition.js";
+import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
+import {
+  ambientPhaseSeconds,
+  candyArcadePalettes,
+  candyArcadeTemplate,
+  quizTimerState,
+  resolvePalette,
+  textLayout,
+  textTier,
+  timelineProgress,
+  visualAnswerState,
+} from "../src/quiz/visual/candyArcade.js";
+import { candyArcadeQuiz, choiceCardTag, compositionSources, dummyMascot, questionCompositionFiles } from "./candyArcadeTestUtils.js";
+
+describe("Candy Arcade visual template", () => {
+  it("reserves AA-compliant colors for text on light cards and bright badges", () => {
+    for (const palette of candyArcadePalettes) {
+      expect(contrastRatio(palette.surfaceAccent, palette.surface), `${palette.id} surface accent`).toBeGreaterThanOrEqual(4.5);
+      for (const background of [palette.accent, palette.answerBadge, palette.correct, palette.incorrect]) {
+        expect(contrastRatio(palette.onAccent, background), `${palette.id} badge ink on ${background}`).toBeGreaterThanOrEqual(4.5);
+      }
+    }
+  });
+
+  it("uses reusable tokens and never auto-repeats a palette", () => {
+    expect(candyArcadeTemplate.tokens.safeArea.left).toBeGreaterThan(0);
+    expect(candyArcadeTemplate.tokens.typography.question.family).toContain("SVN-Hello Headline");
+    expect(candyArcadeTemplate.tokens.typography.question.family).toContain("Fredoka");
+    const first = resolvePalette("auto", 0);
+    expect(resolvePalette("auto", 0, first.id).id).not.toBe(first.id);
+  });
+
+  it("mounts scene files without parent-traversal asset paths", () => {
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    const timeline = compileQuizTimeline({ quiz: candyArcadeQuiz, director, voicePlan: buildQuizVoicePlan(candyArcadeQuiz) });
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz: candyArcadeQuiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
+
+    expect(bundle.html).toContain('data-composition-src="compositions/candy-intro.html"');
+    expect(bundle.html).toContain('class="clip sfx-clip"');
+    expect(bundle.html).toContain("ui_pop.wav");
+    expect(bundle.html).toContain("correct_ding.wav");
+    expect(bundle.html).toContain("data-no-timeline");
+    expect(Object.keys(bundle.files)).toContain("compositions/candy-intro.html");
+    expect(Object.values(bundle.files).every((file) => file.includes("data-no-timeline"))).toBe(true);
+    expect(Object.values(bundle.files).every((file) => !file.includes('src="../'))).toBe(true);
+    expect(Object.values(bundle.files).every((file) => !file.includes("data-start="))).toBe(true);
+    expect(Object.values(bundle.files).every((file) => !file.includes("data-track-index="))).toBe(true);
+    expect(bundle.html.match(/data-composition-src=/g)).toHaveLength(Object.keys(bundle.files).length);
+  });
+
+  it("fails closed before rendering a quiz with a fourth answer", () => {
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    const timeline = compileQuizTimeline({ quiz: candyArcadeQuiz, director, voicePlan: buildQuizVoicePlan(candyArcadeQuiz) });
+    const invalidQuiz = {
+      ...candyArcadeQuiz,
+      questions: [
+        {
+          ...candyArcadeQuiz.questions[0],
+          choices: [...candyArcadeQuiz.questions[0].choices, { id: "choice-d", text: "Forbidden fourth answer" }],
+        },
+      ],
+    };
+
+    expect(() =>
+      buildCandyArcadeCompositionBundle({
+        quiz: invalidQuiz,
+        director,
+        timeline,
+        styleContext: { theme: "candy_arcade" },
+        audioPath: "./narration.wav",
+        narrationDurationSeconds: timeline.duration_seconds,
+      }),
+    ).toThrow();
+  });
+
+  it("selects semantic layouts and deterministic readable text tiers", () => {
+    expect(resolvedLayout("illustrated_multiple_choice", "multiple_choice")).toBe("media_left_choices_right");
+    expect(resolvedLayout("illustrated_multiple_choice", "image_guess")).toBe("media_left_choices_right");
+    expect(resolvedLayout("visual_multiple_choice", "odd_one_out")).toBe("visual_choices_three_pure");
+    // Question text layout - Mascot OFF: [28, 50, 85, 135, 176]
+    const ultraShortQOff = textLayout("Who was the first?", "question", { hasMascot: false });
+    expect(ultraShortQOff.tier).toBe("ultra_short");
+    expect(ultraShortQOff.fontSize).toBe(74);
+    expect(ultraShortQOff.maxLines).toBe(1);
+
+    const shortQOff = textLayout("Which ocean is the largest on Earth?", "question", { hasMascot: false });
+    expect(shortQOff.tier).toBe("short");
+    expect(shortQOff.fontSize).toBe(64);
+    expect(shortQOff.fits).toBe(true);
+
+    const overflowQOff = textLayout("x".repeat(190), "question", { hasMascot: false });
+    expect(overflowQOff.tier).toBe("overflow");
+    expect(overflowQOff.fits).toBe(false);
+
+    // Question text layout - Mascot ON: [22, 44, 76, 125, 165]
+    const ultraShortQOn = textLayout("What is Paris?", "question", { hasMascot: true });
+    expect(ultraShortQOn.tier).toBe("ultra_short");
+    expect(ultraShortQOn.fontSize).toBe(70);
+    expect(ultraShortQOn.maxLines).toBe(1);
+
+    const shortQOn = textLayout("Which ocean is the largest on Earth?", "question", { hasMascot: true });
+    expect(shortQOn.tier).toBe("short");
+    expect(shortQOn.fontSize).toBe(60);
+    expect(shortQOn.fits).toBe(true);
+
+    const overflowQOn = textLayout("x".repeat(170), "question", { hasMascot: true });
+    expect(overflowQOn.tier).toBe("overflow");
+    expect(overflowQOn.fits).toBe(false);
+
+    // Mascot OFF mode for choices: standard limits [18, 34, 58, 82]
+    const offLayout = textLayout("Pacific Oceanic", "choice", { hasMascot: false });
+    expect(offLayout.tier).toBe("short");
+    expect(offLayout.fontSize).toBe(34);
+
+    // Mascot ON mode for choices: narrower limits [10, 22, 40, 60] -> 15-char string shifts to medium tier to avoid clipping
+    const onLayout = textLayout("Pacific Oceanic", "choice", { hasMascot: true });
+    expect(onLayout.tier).toBe("medium");
+    expect(onLayout.fontSize).toBe(24);
+
+    // Ultra short choice text remains short tier in Mascot ON mode
+    const shortOnLayout = textLayout("Paris", "choice", { hasMascot: true });
+    expect(shortOnLayout.tier).toBe("short");
+    expect(shortOnLayout.fontSize).toBe(28);
+  });
+
+  it("defaults textLayout and textTier to canonical Mascot-Ready 1420px grid when options or hasMascot is omitted", () => {
+    // Question limits: [22, 44, 76, 125, 165]
+    // ultra_short: <= 22 -> 70px
+    // short: <= 44 -> 60px
+    // medium: <= 76 -> 50px
+    // long: <= 125 -> 42px
+    // very_long: <= 165 -> 35px
+    // overflow: > 165 -> 30px, fits: false
+    const qUltraShort = textLayout("x".repeat(22), "question");
+    expect(qUltraShort.tier).toBe("ultra_short");
+    expect(qUltraShort.fontSize).toBe(70);
+    expect(qUltraShort.lineHeight).toBe(1.12);
+    expect(qUltraShort.maxLines).toBe(1);
+    expect(qUltraShort.fits).toBe(true);
+
+    const qShort = textLayout("x".repeat(44), "question");
+    expect(qShort.tier).toBe("short");
+    expect(qShort.fontSize).toBe(60);
+    expect(qShort.lineHeight).toBe(1.15);
+    expect(qShort.maxLines).toBe(2);
+    expect(qShort.fits).toBe(true);
+
+    const qMedium = textLayout("x".repeat(76), "question", {});
+    expect(qMedium.tier).toBe("medium");
+    expect(qMedium.fontSize).toBe(50);
+    expect(qMedium.lineHeight).toBe(1.18);
+    expect(qMedium.maxLines).toBe(2);
+    expect(qMedium.fits).toBe(true);
+
+    const qLong = textLayout("x".repeat(125), "question", { layoutId: "media_left_choices_right" });
+    expect(qLong.tier).toBe("long");
+    expect(qLong.fontSize).toBe(42);
+    expect(qLong.lineHeight).toBe(1.2);
+    expect(qLong.maxLines).toBe(2);
+    expect(qLong.fits).toBe(true);
+
+    const qVeryLong = textLayout("x".repeat(165), "question");
+    expect(qVeryLong.tier).toBe("very_long");
+    expect(qVeryLong.fontSize).toBe(35);
+    expect(qVeryLong.lineHeight).toBe(1.22);
+    expect(qVeryLong.maxLines).toBe(2);
+    expect(qVeryLong.fits).toBe(true);
+
+    const qOverflow = textLayout("x".repeat(166), "question");
+    expect(qOverflow.tier).toBe("overflow");
+    expect(qOverflow.fontSize).toBe(30);
+    expect(qOverflow.lineHeight).toBe(1.24);
+    expect(qOverflow.maxLines).toBe(2);
+    expect(qOverflow.fits).toBe(false);
+
+    // Choice limits: [10, 22, 40, 60]
+    // short: <= 10 -> 28px
+    // medium: <= 22 -> 24px
+    // long: <= 40 -> 21px
+    // very_long: <= 60 -> 18px
+    // overflow: > 60 -> 18px, fits: false
+    const cShort = textLayout("x".repeat(10), "choice");
+    expect(cShort.tier).toBe("short");
+    expect(cShort.fontSize).toBe(28);
+    expect(cShort.lineHeight).toBe(1.1);
+    expect(cShort.maxLines).toBe(2);
+    expect(cShort.fits).toBe(true);
+
+    const cMedium = textLayout("x".repeat(22), "choice", {});
+    expect(cMedium.tier).toBe("medium");
+    expect(cMedium.fontSize).toBe(24);
+    expect(cMedium.lineHeight).toBe(1.12);
+    expect(cMedium.maxLines).toBe(2);
+    expect(cMedium.fits).toBe(true);
+
+    const cLong = textLayout("x".repeat(40), "choice", { layoutId: "baseline" });
+    expect(cLong.tier).toBe("long");
+    expect(cLong.fontSize).toBe(21);
+    expect(cLong.lineHeight).toBe(1.15);
+    expect(cLong.maxLines).toBe(3);
+    expect(cLong.fits).toBe(true);
+
+    const cVeryLong = textLayout("x".repeat(60), "choice");
+    expect(cVeryLong.tier).toBe("very_long");
+    expect(cVeryLong.fontSize).toBe(18);
+    expect(cVeryLong.lineHeight).toBe(1.16);
+    expect(cVeryLong.maxLines).toBe(3);
+    expect(cVeryLong.fits).toBe(true);
+
+    const cOverflow = textLayout("x".repeat(61), "choice");
+    expect(cOverflow.tier).toBe("overflow");
+    expect(cOverflow.fontSize).toBe(18);
+    expect(cOverflow.lineHeight).toBe(1.16);
+    expect(cOverflow.maxLines).toBe(3);
+    expect(cOverflow.fits).toBe(false);
+
+    // Direct textTier calls verify omission of options defaults to Mascot-Ready thresholds
+    expect(textTier("x".repeat(22), "question")).toBe("ultra_short");
+    expect(textTier("x".repeat(23), "question")).toBe("short");
+    expect(textTier("x".repeat(10), "choice")).toBe("short");
+    expect(textTier("x".repeat(11), "choice")).toBe("medium");
+  });
+
+  it("maps answer state only from the canonical QuizV2 choice", () => {
+    expect(visualAnswerState("choice-b", "choice-b", "reveal")).toBe("correct");
+    expect(visualAnswerState("choice-a", "choice-b", "reveal")).toBe("incorrect");
+    expect(visualAnswerState("choice-a", "choice-b", "idle")).toBe("idle");
+  });
+
+  it("derives thinking and transition progress from timeline time", () => {
+    expect(timelineProgress(10, 20, 10)).toBe(0);
+    expect(timelineProgress(10, 20, 15)).toBe(0.5);
+    expect(timelineProgress(10, 20, 32)).toBe(1);
+  });
+
+  it("couples timer fill and marker to one seek-deterministic normalized value", () => {
+    for (const value of [0, 0.1, 0.25, 0.5, 0.75, 0.9, 1]) {
+      const state = quizTimerState(10, 20, 10 + value * 10);
+      expect(state.boundary).toBe(state.remaining);
+      expect(quizTimerState(10, 20, 10 + value * 10)).toEqual(state);
+    }
+    for (const fps of [24, 30, 60]) {
+      const samples = Array.from({ length: fps * 2 + 1 }, (_, index) => quizTimerState(0, 2, index / fps).boundary);
+      expect(samples.every((value, index) => index === 0 || value <= samples[index - 1])).toBe(true);
+    }
+  });
+
+  it("assigns stable ambient phases without runtime randomness", () => {
+    expect(ambientPhaseSeconds("float", 1, "question-02")).toBe(ambientPhaseSeconds("float", 1, "question-02"));
+    expect(ambientPhaseSeconds("float", 1, "question-02")).not.toBe(ambientPhaseSeconds("float", 2, "question-02"));
+    expect(ambientPhaseSeconds("none", 4, "question-02")).toBe(0);
+  });
+
+  it("compiles purpose-specific image prompts and checks visual layout semantically", () => {
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    const visualBeat = director.beats[1];
+    expect(visualBeat.layout_id).toBe("visual_choices_three_pure");
+    const assetPlan = planQuizAssets(candyArcadeQuiz, director);
+    const option = assetPlan.assets.find((asset) => asset.asset_id === "asset-question-02-choice-a")!;
+    const group = assetPlan.consistency_groups.find((candidate) => candidate.group_id === option.consistency_group_id)!;
+    const prompt = compileQuizAssetPrompt(option, group);
+    expect(prompt.prompt).toContain("consistent with the other answer options");
+    expect(prompt.prompt).toContain("Every option in this set must share this exact art direction");
+    expect(prompt.prompt).toContain("No words");
+    expect(group.face_policy).toBe("natural_only");
+    expect(prompt.prompt).toContain("face policy natural_only");
+    expect(prompt.prompt).toContain("Use facial features only when naturally present in the subject");
+    const { face_policy: _facePolicy, ...groupWithoutFacePolicy } = group;
+    expect(AssetConsistencyGroupSchema.parse(groupWithoutFacePolicy).face_policy).toBe("natural_only");
+    const hero = assetPlan.assets.find((asset) => asset.asset_id === "asset-question-01-hero")!;
+    const heroPrompt = compileQuizAssetPrompt(hero);
+    expect(heroPrompt.prompt).toContain("3D Pixar Animation");
+    expect(heroPrompt.prompt).toContain("soft cinematic studio lighting");
+    expect(heroPrompt.prompt).toContain("Face policy: natural_only");
+    expect(heroPrompt.prompt).toContain("cinematic 3D environment");
+
+    // Test other visual styles
+    const vectorPrompt = compileQuizAssetPrompt(hero, undefined, "flat_vector");
+    expect(vectorPrompt.prompt).toContain("2D Flat Vector");
+    expect(vectorPrompt.prompt).toContain("vibrant modern vector landscape");
+
+    const realismPrompt = compileQuizAssetPrompt(hero, undefined, "natural_realism");
+    expect(realismPrompt.prompt).toContain("Cinematic Realism");
+    expect(realismPrompt.prompt).toContain("breathtaking authentic natural landscape");
+
+    const plasticToyPrompt = compileQuizAssetPrompt(hero, undefined, "plastic_toy");
+    expect(plasticToyPrompt.prompt).toContain("3D Glossy Vinyl Toy");
+    expect(plasticToyPrompt.prompt).toContain("cute painted glossy eyes with expressive pupils");
+    expect(plasticToyPrompt.prompt).toContain(
+      "Living creatures, characters, dinosaurs, and animals must have complete, expressive natural eyes",
+    );
+    expect(plasticToyPrompt.cacheVersion).toContain("v3-expressive-faces");
+
+    expect(assessQuizVisualLayout({ quiz: candyArcadeQuiz, director }).filter((issue) => issue.severity === "blocker")).toEqual([]);
+    const fairnessIssues = assessQuizVisualLayout({ quiz: candyArcadeQuiz, director, assetPlan });
+    expect(fairnessIssues.filter((issue) => issue.severity === "blocker")).toEqual([]);
+    expect(fairnessIssues.some((issue) => issue.code === "needs_visual_review")).toBe(true);
+  });
+
+  it("accounts for question-phase Mascot occupancy in fallback text QA", () => {
+    const longChoiceQuiz = QuizV2Schema.parse({
+      ...candyArcadeQuiz,
+      episode_id: "candy-mascot-choice-capacity",
+      questions: [
+        {
+          ...candyArcadeQuiz.questions[0],
+          choices: [{ ...candyArcadeQuiz.questions[0].choices[0], text: "x".repeat(61) }, ...candyArcadeQuiz.questions[0].choices.slice(1)],
+        },
+      ],
+    });
+    const director = createDefaultDirectorPlan(longChoiceQuiz);
+    const hasChoiceOverflow = (issues: ReturnType<typeof assessQuizVisualLayout>) =>
+      issues.some((issue) => issue.code === "layout_choice_overflow");
+
+    expect(hasChoiceOverflow(assessQuizVisualLayout({ quiz: longChoiceQuiz, director, hasMascot: false }))).toBe(false);
+    expect(hasChoiceOverflow(assessQuizVisualLayout({ quiz: longChoiceQuiz, director, hasMascot: true }))).toBe(true);
+    // Omitting hasMascot defaults to canonical Mascot-Ready 1420px grid
+    expect(hasChoiceOverflow(assessQuizVisualLayout({ quiz: longChoiceQuiz, director }))).toBe(true);
+
+    const assessWithQuestionMascot = (showInQuestion: boolean) =>
+      assessQuiz({
+        quiz: longChoiceQuiz,
+        director,
+        mascot: dummyMascot,
+        mascotConfig: {
+          mascot_id: dummyMascot.id,
+          enabled: true,
+          position: "bottom_left",
+          scale: 1,
+          show_in_question: showInQuestion,
+        },
+      }).issues;
+
+    expect(hasChoiceOverflow(assessWithQuestionMascot(false))).toBe(false);
+    expect(hasChoiceOverflow(assessWithQuestionMascot(true))).toBe(true);
+    // Omitting mascot configuration in assessQuiz defaults hasQuestionMascot to true for 16:9 validation
+    expect(hasChoiceOverflow(assessQuiz({ quiz: longChoiceQuiz, director }).issues)).toBe(true);
+  });
+
+  it("creates one complete visual-answer consistency group and blocks missing group metadata", () => {
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    const plan = planQuizAssets(candyArcadeQuiz, director);
+    const group = plan.consistency_groups[0];
+    expect(group.asset_ids).toHaveLength(3);
+    expect(plan.assets.filter((asset) => asset.consistency_group_id === group.group_id)).toHaveLength(3);
+    const broken = {
+      ...plan,
+      assets: plan.assets.map((asset) => (asset.consistency_group_id ? { ...asset, consistency_group_id: null } : asset)),
+    };
+    expect(
+      assessQuizVisualLayout({ quiz: candyArcadeQuiz, director, assetPlan: broken }).some(
+        (issue) => issue.code === "VISUAL_ANSWER_LEAKAGE" && issue.severity === "blocker",
+      ),
+    ).toBe(true);
+  });
+
+  it("keeps the reveal focused on the canonical answer card and drives the Thinking Bar from timeline ranges", () => {
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    const voice = buildQuizVoicePlan(candyArcadeQuiz);
+    const timeline = compileQuizTimeline({ quiz: candyArcadeQuiz, director, voicePlan: voice });
+    const html = compositionSources({
+      quiz: candyArcadeQuiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
+    expect(html).not.toContain("reveal-panel");
+    expect(html).toContain("Many more questions to explore");
+    expect(html).toContain("--surface-accent:");
+    expect(html).toContain("--on-accent:");
+    expect(html).toContain(".fact-card span { color: var(--surface-accent);");
+    expect(html).toContain(".timer-marker { position: absolute;");
+    expect(html).toContain(".marker-star-svg {");
+    expect(html).toContain(
+      ".intro-card > span, .outro-card > span { display: inline-flex; padding: 15px 23px; border-radius: 999px; background: #FF6277; color: #172A59;",
+    );
+    expect(html).toContain(".intro-stars, .outro-stars { margin-top: 35px; color: #172A59;");
+    expect(html).toContain("background: #29B9A8; color: #172A59;");
+    expect(html).not.toContain("reveal-lockup");
+    expect(html).toContain("timer-marker");
+    expect(html).toContain(
+      '<div class="timer-progress"></div><span class="timer-marker" data-layout-allow-occlusion data-layout-allow-overlap>',
+    );
+    const thinkingBarCount = [...html.matchAll(/<div class="thinking-bar thinking-bar-/g)].length;
+    expect([...html.matchAll(/class="marker-val val-query"/g)]).toHaveLength(thinkingBarCount);
+    expect([...html.matchAll(/>\?</g)]).toHaveLength(thinkingBarCount);
+    expect(html).not.toContain('<div class="timer-progress"><span class="timer-marker');
+    expect(html).toContain("@keyframes quiz-timer-marker-slide");
+    expect(html).toContain("layout-media_left_choices_right .game-stage");
+    expect(html).toContain('<strong class="keyword-highlight">');
+    expect(candyArcadeHeroAreaRatio("media_left_choices_right")).toBeGreaterThan(0.2);
+    expect(html).toContain("transition-bubble_splash");
+    expect(html).toContain("splash-brand");
+    expect(html).toContain(".decor-7 { left: 30%; top: 8%;");
+    expect(html).toContain('font-family: "SVN-Hello Headline"');
+    expect(html).toContain('.question-title h1 { margin: 0; color: #342245; font-family: "Fredoka", "SVN-Hello Headline"');
+    expect(html).toContain("is-final-scene");
+    expect(html).toContain(".game-stage { position: relative; z-index: 3;");
+    expect(html).toContain(".reward-fx { position: absolute; z-index: 7; inset: 0;");
+    expect(html).toContain("--candy-layer-transition: 10;");
+    expect(html).toContain("--candy-layer-mascot: 11;");
+    expect(html).toContain(".candy-transition { position: absolute; z-index: var(--candy-layer-transition);");
+    expect(html).toContain(
+      ".candy-mascot-container { position: absolute; width: 220px; height: 220px; z-index: var(--candy-layer-mascot);",
+    );
+    expect(html).toContain(".brand-mascot { position: absolute; z-index: var(--candy-layer-mascot);");
+    expect(html).toContain("hanging-wood-sign");
+    expect(html).toContain("wood-sign-plank");
+    expect(html).toContain("question-number-val");
+    expect(html).toContain("@keyframes hanging-sign-sway");
+  });
+
+  it("starts production question files with pending answers and scheduled reveal targets", () => {
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    const timeline = compileQuizTimeline({ quiz: candyArcadeQuiz, director, voicePlan: buildQuizVoicePlan(candyArcadeQuiz) });
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz: candyArcadeQuiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
+    const questionFiles = questionCompositionFiles(bundle.files);
+
+    expect(questionFiles).toHaveLength(candyArcadeQuiz.questions.length);
+
+    for (const [index, html] of questionFiles.entries()) {
+      const question = candyArcadeQuiz.questions[index];
+      expect(html.match(/data-answer-state="pending"/g) ?? []).toHaveLength(question.choices.length);
+      expect(html.match(/answer-reveal-correct/g) ?? []).toHaveLength(1);
+      expect(html.match(/answer-reveal-incorrect/g) ?? []).toHaveLength(question.choices.length - 1);
+      expect(html).not.toMatch(/class="[^"]*answer-correct/);
+      expect(html).not.toMatch(/class="[^"]*answer-incorrect/);
+      expect(choiceCardTag(html, question.correct_choice_id)).toContain("answer-reveal-correct");
+    }
+
+    expect(bundle.html).not.toContain("var(--reveal-at, 0s) + .14s");
+    expect(bundle.html).not.toContain("var(--reveal-at, 0s) + 0.14s");
+  });
+
+  it("keeps the 50-question maximum to one scene and one hero image per question", () => {
+    const maximumQuiz = QuizV2Schema.parse({
+      ...candyArcadeQuiz,
+      episode_id: "candy-maximum",
+      questions: Array.from({ length: 50 }, (_, index) => ({
+        ...candyArcadeQuiz.questions[0],
+        id: `question-${String(index + 1).padStart(2, "0")}`,
+        number: index + 1,
+        question: `Which simple machine is shown in challenge ${index + 1}?`,
+      })),
+    });
+    const director = createDefaultDirectorPlan(maximumQuiz);
+    const timeline = compileQuizTimeline({ quiz: maximumQuiz, director, voicePlan: buildQuizVoicePlan(maximumQuiz) });
+    const html = compositionSources({
+      quiz: maximumQuiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
+    expect(html.match(/<section id="quiz-q/g) ?? []).toHaveLength(50);
+    expect(html.match(/class="image-card hero-image"/g) ?? []).toHaveLength(50);
+    expect(html).toContain("ray-spin 150s");
+    expect(html).not.toContain("repeat:-1");
+    expect(html).toContain("filter: grayscale");
+    expect(html).not.toContain("clip-path");
+  });
+
+  it("applies the improved pacing, removes redundant reveal-panel, and sets outro pause and copy", () => {
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    const voicePlan = buildQuizVoicePlan(candyArcadeQuiz);
+    const timeline = compileQuizTimeline({ quiz: candyArcadeQuiz, director, voicePlan });
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz: candyArcadeQuiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
+    const sources = [bundle.html, ...Object.values(bundle.files)].join("\n");
+
+    // Requirement 1: No reveal-panel badge at bottom, fact-card is preserved
+    expect(sources).not.toContain("reveal-panel");
+    expect(sources).not.toContain("reveal-stamp");
+    expect(sources).toContain("fact-card");
+
+    // Requirement 2: Timing pacing - 2s lead before narration, 2s hold after explanation before transition
+    const q1Enter = timeline.events.find((e) => e.type === "question.enter" && e.question_id === "question-01")!;
+    const q1Narration = timeline.events.find((e) => e.segment_id === "question-01:question")!;
+    expect(q1Narration.at_seconds - q1Enter.at_seconds).toBeGreaterThanOrEqual(2.0);
+
+    const q1Explain = timeline.events.find((e) => e.segment_id === "question-01:explanation")!;
+    const q1Transition = timeline.events.find((e) => e.type === "transition.start" && e.question_id === "question-01")!;
+    expect(q1Transition.at_seconds - (q1Explain.at_seconds + q1Explain.duration_seconds)).toBeGreaterThanOrEqual(2.0);
+
+    const q2Enter = timeline.events.find((e) => e.type === "question.enter" && e.question_id === "question-02")!;
+    expect(q2Enter.at_seconds).toBeGreaterThanOrEqual(q1Transition.at_seconds + q1Transition.duration_seconds);
+
+    // Requirement 3: Outro phrases have 1s pause after score prompt & copy is 'Many more questions to explore'
+    const outroSegment = voicePlan.segments.find((s) => s.role === "outro")!;
+    expect(outroSegment.phrases[0]?.text).toBe("How many did you get right?");
+    expect(outroSegment.phrases[0]?.pause_after).toBe("long");
+    expect(bundle.files["compositions/candy-outro.html"]).toContain("Many more questions to explore");
+    expect(bundle.files["compositions/candy-outro.html"]).not.toContain("2 questions to explore");
+
+    // Vietnamese legacy input fallback to English outro copy check
+    const vietnameseQuiz = { ...candyArcadeQuiz, language: "Vietnamese" };
+    const viVoice = buildQuizVoicePlan(vietnameseQuiz);
+    const viOutro = viVoice.segments.find((s) => s.role === "outro")!;
+    expect(viOutro.phrases[0]?.text).toBe("How many did you get right?");
+    expect(viOutro.phrases[0]?.pause_after).toBe("long");
+    const viTimeline = compileQuizTimeline({ quiz: vietnameseQuiz, director, voicePlan: viVoice });
+    const viBundle = buildCandyArcadeCompositionBundle({
+      quiz: vietnameseQuiz,
+      director,
+      timeline: viTimeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: viTimeline.duration_seconds,
+    });
+    expect(viBundle.files["compositions/candy-outro.html"]).toContain("Many more questions to explore");
+    expect(viBundle.files["compositions/candy-outro.html"]).toContain("badge-cta");
+    expect(viBundle.files["compositions/candy-outro.html"]).toContain("Subscribe");
+    expect(viBundle.files["compositions/candy-outro.html"]).toContain("Comment");
+
+    // Outro hold test (5s hold after voice segment)
+    const outroEvent = viTimeline.events.find((e) => e.segment_id === "outro")!;
+    expect(viTimeline.duration_seconds - (outroEvent.at_seconds + outroEvent.duration_seconds)).toBeGreaterThanOrEqual(4.9);
+  });
+
+  it("generates dynamic high-energy outro closings across different episodes", () => {
+    const closings = new Set<string>();
+    const sampleEpisodeIds = ["episode-alpha", "episode-beta", "episode-gamma", "episode-delta", "episode-epsilon"];
+    for (const epId of sampleEpisodeIds) {
+      const epQuiz = { ...candyArcadeQuiz, episode_id: epId };
+      const plan = buildQuizVoicePlan(epQuiz);
+      const outro = plan.segments.find((s) => s.role === "outro")!;
+      const lastPhrase = outro.phrases.at(-1)?.text ?? "";
+      expect(lastPhrase).toBe("Bye bye!");
+      closings.add(outro.text);
+    }
+    // Multiple distinct closings are assigned across diverse episodes
+    expect(closings.size).toBeGreaterThan(1);
+
+    // All English closing variants are high-energy and conclude with Bye bye!
+    expect(ENGLISH_OUTRO_CLOSING_VARIANTS.length).toBeGreaterThanOrEqual(4);
+    for (const variant of ENGLISH_OUTRO_CLOSING_VARIANTS) {
+      expect(variant).toContain("Bye bye!");
+    }
+  });
+
+  it("keeps the production Mascot-on content layout independent of the mascot anchor", () => {
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    const timeline = compileQuizTimeline({ quiz: candyArcadeQuiz, director, voicePlan: buildQuizVoicePlan(candyArcadeQuiz) });
+    const renderAt = (position: "bottom_left" | "bottom_right") =>
+      buildCandyArcadeCompositionBundle({
+        quiz: candyArcadeQuiz,
+        director,
+        timeline,
+        styleContext: { theme: "candy_arcade" },
+        audioPath: "./narration.wav",
+        narrationDurationSeconds: timeline.duration_seconds,
+        mascot: dummyMascot,
+        mascotConfig: { mascot_id: "mascot-1", enabled: true, position, scale: 1, show_in_question: true },
+      });
+    const leftBundle = renderAt("bottom_left");
+    const rightBundle = renderAt("bottom_right");
+    const bundleSources = (bundle: ReturnType<typeof renderAt>) => [bundle.html, ...Object.values(bundle.files)].join("\n");
+    const questionClasses = (bundle: ReturnType<typeof renderAt>) =>
+      Array.from(bundleSources(bundle).matchAll(/<section id="quiz-q[^"]+" class="([^"]+)"/g), (match) => match[1]);
+
+    expect(questionClasses(leftBundle).length).toBeGreaterThan(0);
+    expect(questionClasses(leftBundle)).toEqual(questionClasses(rightBundle));
+    expect(questionClasses(leftBundle).every((className) => className.split(" ").includes("has-mascot"))).toBe(true);
+    expect(bundleSources(leftBundle)).not.toContain("has-mascot-left");
+    expect(bundleSources(rightBundle)).not.toContain("has-mascot-right");
+    expect(bundleSources(leftBundle)).toContain("anchor-bottom_left");
+    expect(bundleSources(rightBundle)).toContain("anchor-bottom_right");
+  });
+
+  it("renders Game SFX onto track 3, avoids Mascot-specific SFX, and prevents audio overlaps on the same track", () => {
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    const timeline = compileQuizTimeline({ quiz: candyArcadeQuiz, director, voicePlan: buildQuizVoicePlan(candyArcadeQuiz) });
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz: candyArcadeQuiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      mascot: dummyMascot,
+      mascotConfig: { mascot_id: "mascot-1", enabled: true, position: "bottom_left", scale: 1, show_in_question: true },
+    });
+
+    // 1. Must NOT reference non-existent ui_soft.wav
+    expect(bundle.html).not.toContain("ui_soft.wav");
+    expect(bundle.html).toContain("ui_pop.wav");
+
+    // 2. Mascot SFX should not exist
+    expect(bundle.html).not.toContain("mascot-sfx");
+
+    // 3. Extract all audio tags and verify tracks and overlaps
+    const audioRegex =
+      /<audio\s+id="([^"]+)"[^>]*data-start="([^"]+)"\s+data-duration="([^"]+)"\s+data-track-index="([^"]+)"[^>]*src="([^"]+)"/g;
+    const matches = Array.from(bundle.html.matchAll(audioRegex));
+    expect(matches.length).toBeGreaterThan(0);
+
+    const tracks = new Map<number, Array<{ id: string; start: number; end: number; src: string }>>();
+    for (const match of matches) {
+      const id = match[1];
+      const start = parseFloat(match[2]);
+      const duration = parseFloat(match[3]);
+      const trackIndex = parseInt(match[4], 10);
+      const src = match[5];
+      const end = start + duration;
+
+      if (!tracks.has(trackIndex)) tracks.set(trackIndex, []);
+      tracks.get(trackIndex)!.push({ id, start, end, src });
+    }
+
+    // Verify game SFX is on track 3 and no mascot SFX on track 5
+    const track3 = tracks.get(3) ?? [];
+    const track5 = tracks.get(5) ?? [];
+    expect(track3.length).toBeGreaterThan(0);
+    expect(track5.length).toBe(0);
+
+    // Verify no overlapping audio clips on any track
+    for (const [trackIndex, clips] of tracks.entries()) {
+      clips.sort((a, b) => a.start - b.start);
+      for (let i = 0; i < clips.length - 1; i++) {
+        const current = clips[i];
+        const next = clips[i + 1];
+        expect(
+          current.end,
+          `Track ${trackIndex} overlap between ${current.id} (${current.start}-${current.end}) and ${next.id} (${next.start}-${next.end})`,
+        ).toBeLessThanOrEqual(next.start + 0.001);
+      }
+    }
+  });
+
+  it("resolves the retained 16:9 mascot placement", () => {
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    const timeline = compileQuizTimeline({ quiz: candyArcadeQuiz, director, voicePlan: buildQuizVoicePlan(candyArcadeQuiz) });
+    const mascotConfig: ChannelMascotConfig = {
+      enabled: true,
+      position: "bottom_left",
+      scale: 1.84,
+      offset_x: 67,
+      offset_y: 90,
+      flip_x: false,
+      show_in_question: true,
+      placements: {
+        "16:9": { position: "bottom_left", scale: 1.84, offset_x: 67, offset_y: 90, flip_x: false },
+      },
+    };
+
+    const bundle16_9 = buildCandyArcadeCompositionBundle({
+      quiz: candyArcadeQuiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      mascot: { ...dummyMascot, master_image_url: "/assets/mascot.png" },
+      mascotConfig,
+      aspectRatio: "16:9",
+    });
+
+    const source16_9 = [bundle16_9.html, ...Object.values(bundle16_9.files)].join("\n");
+
+    expect(source16_9).toContain("anchor-bottom_left");
+    expect(source16_9).toContain('data-mascot-scale="1.84"');
+    expect(source16_9).toContain('data-mascot-canvas="1920x1080"');
+  });
+
+  it("renders dynamic QuestionBox, CounterBadge, and AnswerCard element variants in video composition", () => {
+    const timeline = compileQuizTimeline({
+      quiz: candyArcadeQuiz,
+      director: createDefaultDirectorPlan(candyArcadeQuiz),
+      voicePlan: buildQuizVoicePlan(candyArcadeQuiz, createDefaultDirectorPlan(candyArcadeQuiz)),
+      assets: planQuizAssets(candyArcadeQuiz, createDefaultDirectorPlan(candyArcadeQuiz)),
+    });
+    const director = createDefaultDirectorPlan(candyArcadeQuiz);
+    // Customize question 1 styles
+    director.beats[0].question_box_style = "comic_bubble";
+    director.beats[0].question_counter_style = "neon_badge";
+    director.beats[0].answer_card_style = "comic_chunky";
+    director.beats[0].thinking_bar_style = "flame_fuse";
+
+    const sources = compositionSources({
+      quiz: candyArcadeQuiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./voice.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
+
+    // Verify comic bubble question box rendered
+    expect(sources).toContain("qb-comic-bubble");
+    // Verify neon badge counter rendered
+    expect(sources).toContain("cb-neon-badge");
+    // Verify comic chunky answer card rendered
+    expect(sources).toContain("ac-comic-chunky");
+    // Verify flame fuse thinking bar rendered
+    expect(sources).toContain("thinking-bar-flame-fuse");
+  });
+});
+
+function resolvedLayout(
+  archetype: Parameters<typeof resolveQuizLayout>[0]["archetype"],
+  questionFormat: Parameters<typeof resolveQuizLayout>[0]["questionFormat"],
+) {
+  const result = resolveQuizLayout({
+    requestedLayout: "auto",
+    archetype,
+    questionFormat,
+    choiceCount: questionFormat === "true_false" ? 2 : 3,
+  });
+  if (!result.ok) throw new Error("Expected a compatible layout");
+  return result.layoutId;
+}
+
+function contrastRatio(foreground: string, background: string): number {
+  const luminance = (hex: string): number => {
+    const channels = [1, 3, 5].map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16) / 255);
+    const [red, green, blue] = channels.map((channel) => (channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+  };
+  const [lighter, darker] = [luminance(foreground), luminance(background)].sort((left, right) => right - left);
+  return (lighter + 0.05) / (darker + 0.05);
+}

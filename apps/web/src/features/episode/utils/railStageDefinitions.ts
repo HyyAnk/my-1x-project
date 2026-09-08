@@ -1,14 +1,7 @@
 import type { Task } from "@studio/shared";
 import type { QuizV2Stages } from "../../../api";
 
-export type StreamlinedRailStage =
-  | "quizContent"
-  | "assets"
-  | "voice"
-  | "thumbnail"
-  | "description"
-  | "qaGates"
-  | "render";
+export type StreamlinedRailStage = "quizContent" | "assets" | "voice" | "thumbnail" | "description" | "qaGates" | "render";
 
 export type RailStage =
   | "research"
@@ -84,9 +77,7 @@ export const STAGES: Array<{ key: RailStage; label: string }> = [
   { key: "render", label: "Render" },
 ];
 
-export const QUIZ_PREPRODUCTION_TASK_MAP: Partial<
-  Record<RailStage, { types: Task["task_type"][]; readyKey: keyof Readiness }>
-> = {
+export const QUIZ_PREPRODUCTION_TASK_MAP: Partial<Record<RailStage, { types: Task["task_type"][]; readyKey: keyof Readiness }>> = {
   research: { types: ["GENERATE_RESEARCH"], readyKey: "research" },
   treatment: { types: ["GENERATE_TREATMENT"], readyKey: "treatment" },
   script: { types: ["GENERATE_SCRIPT"], readyKey: "script" },

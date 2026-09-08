@@ -6,5 +6,8 @@ export * from "./thumbnailEnvironmentResolver.js";
 export * from "./thumbnailAiPlanner.js";
 export * from "./thumbnailPromptCompiler.js";
 export * from "./thumbnailManifestManager.js";
+export * from "./thumbnailVariantGenerator.js";
+export * from "./thumbnailManifestStore.js";
+export * from "./thumbnailLegacyMigrator.js";
 export * from "./thumbnailService.js";
 export * from "./thumbnailLocale.js";

@@ -1,18 +1,19 @@
 import { VoicePlanSchema, type QuizV2, type VoicePhrase, type VoiceSegmentRole, type VoicePlan } from "@studio/shared";
 import { sanitizeTextForSpeech, splitSmartPunctuationPhrases, canSplitBetweenWords } from "../../utils/speechSanitizer.js";
 
-export function buildQuizVoicePlan(quiz: QuizV2): VoicePlan {
+export function buildQuizVoicePlan(quiz: QuizV2, options?: { skipIntro?: boolean; skipOutro?: boolean }): VoicePlan {
   const copy = voiceCopy(quiz.language, quiz.episode_id);
-  const segments: VoicePlan["segments"] = [
-    {
+  const segments: VoicePlan["segments"] = [];
+  if (!options?.skipIntro) {
+    segments.push({
       segment_id: "intro",
       role: "intro",
       question_id: null,
       text: copy.intro,
       duration_seconds: null,
       phrases: performancePhrases(copy.intro, "intro"),
-    },
-  ];
+    });
+  }
   quiz.questions.forEach((question, index) => {
     const answer = question.choices.find((choice) => choice.id === question.correct_choice_id)?.text ?? "";
     segments.push(
@@ -64,7 +65,9 @@ export function buildQuizVoicePlan(quiz: QuizV2): VoicePlan {
         : []),
     );
   });
-  segments.push(withPhrases({ segment_id: "outro", role: "outro", question_id: null, text: copy.outro, duration_seconds: null }));
+  if (!options?.skipOutro) {
+    segments.push(withPhrases({ segment_id: "outro", role: "outro", question_id: null, text: copy.outro, duration_seconds: null }));
+  }
   return VoicePlanSchema.parse({ schema_version: 2, episode_id: quiz.episode_id, segments });
 }
 

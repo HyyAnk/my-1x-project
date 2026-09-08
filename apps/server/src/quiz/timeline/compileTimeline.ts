@@ -11,6 +11,8 @@ export type TimelineCompileInput = {
   voicePlan: VoicePlan;
   audioDurations?: Record<string, number>;
   timing?: Partial<QuizTimingPolicy>;
+  introDuration?: number;
+  outroDuration?: number;
 };
 
 export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
@@ -18,7 +20,7 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
   const ctx = new TimelineContext(policy, input.audioDurations);
 
   // 1. Intro Stage
-  compileIntroStage(ctx, input.director, input.voicePlan);
+  compileIntroStage(ctx, input.director, input.voicePlan, input.introDuration);
 
   // 2. Question Blocks
   for (const [questionIndex, question] of input.quiz.questions.entries()) {
@@ -26,7 +28,7 @@ export function compileQuizTimeline(input: TimelineCompileInput): QuizTimeline {
   }
 
   // 3. Outro Stage
-  compileOutroStage(ctx, input.voicePlan);
+  compileOutroStage(ctx, input.voicePlan, input.outroDuration);
 
   // 4. Validate All Voice Segments Were Scheduled
   const missingNarration = input.voicePlan.segments.filter((segment) => !ctx.scheduled.has(segment.segment_id));

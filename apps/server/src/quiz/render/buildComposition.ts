@@ -11,6 +11,7 @@ import {
   MASCOT_CANVAS_SIZES,
   type MascotRenderAspectRatio,
   type Scene,
+  type IntroOutroTransitionType,
 } from "@studio/shared";
 import {
   buildCandyArcadeComposition,
@@ -150,6 +151,9 @@ export type QuizV2CompositionInput = {
   mascotConfig?: ChannelMascotConfig | null;
   premixedAudio?: boolean;
   fps?: number;
+  introVideoPath?: string;
+  outroVideoPath?: string;
+  transitionType?: IntroOutroTransitionType;
 };
 
 /**

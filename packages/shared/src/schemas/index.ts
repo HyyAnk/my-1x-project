@@ -8,3 +8,5 @@ export * from "./thumbnail.js";
 export * from "./videoDescription.js";
 export * from "./analytics/index.js";
 export * from "./questionBank.js";
+export * from "./topicSourceBinding.js";
+export * from "./topicRun.js";

@@ -5,11 +5,19 @@ import type { StudioLogger } from "../logger.js";
 import type { ContextFile } from "./contextTypes.js";
 import { composeContextPrompt, finalizeContextManifest, readSharedRules } from "./contextManifestFinalizer.js";
 import { formatTopicMatrixPrompt, planTopicSuggestionMatrix, type TopicMatrixPlan } from "./topicMatrixPlanner.js";
+import { scanBankInventory } from "../quiz/bank/bankInventory.js";
+import { allocateSourceBackedTopicSlots, type TopicAllocationResult } from "./bankTopicAllocation.js";
+import { formatSourceBackedTopicPrompt } from "./bankTopicPromptBuilder.js";
 
 const assignedTopicPlans = new WeakMap<ContextManifest, TopicMatrixPlan>();
+const assignedTopicAllocations = new WeakMap<ContextManifest, TopicAllocationResult>();
 
 export function getAssignedTopicMatrixPlan(manifest: ContextManifest): TopicMatrixPlan | undefined {
   return assignedTopicPlans.get(manifest);
+}
+
+export function getAssignedTopicAllocation(manifest: ContextManifest): TopicAllocationResult | undefined {
+  return assignedTopicAllocations.get(manifest);
 }
 
 export async function buildChannelContext(input: {
@@ -81,18 +89,60 @@ export async function buildChannelContext(input: {
       taxonomy = null;
     }
 
-    let index = null;
-    try {
-      if (typeof repository.readQuestionBankIndex === "function") {
-        index = await repository.readQuestionBankIndex();
-      }
-    } catch {
-      index = null;
+    const scanResult = await scanBankInventory(repository, {
+      channelId,
+      targetLanguage: "en",
+    });
+
+    const eligibleQuestions = scanResult.eligible_sources.map((s) => s.candidate.question);
+    const allocation = allocateSourceBackedTopicSlots({
+      questions: eligibleQuestions,
+      scanStatus: scanResult.scan_status,
+      channelId,
+      topicHint,
+      taxonomy,
+    });
+
+    const fallbackPlan = planTopicSuggestionMatrix({ taxonomy, index: null, topicHint, aspectRatio: "16:9" });
+
+    const matrixPlan: TopicMatrixPlan = {
+      slots:
+        allocation.allocatedSlots.length > 0
+          ? allocation.allocatedSlots.map((s) => ({
+              slot: s.slot,
+              name: s.name,
+              domainId: s.domainId,
+              domainTitle: s.domainTitle,
+              archetype: s.archetype,
+              suggestedLayout: s.suggestedLayout,
+              quizFormat: s.quizFormat,
+              description: "",
+              isKeySteered: s.isKeySteered,
+              contentKind: s.contentKind,
+            }))
+          : fallbackPlan.slots,
+      steeredKeyword: topicHint?.trim() || undefined,
+      aspectRatio: "16:9",
+    };
+
+    let outputContract: string;
+    let promptGuidance: string;
+
+    if (allocation.allocatedSlots.length > 0) {
+      const sourcePrompt = formatSourceBackedTopicPrompt(allocation, topicHint);
+      outputContract = sourcePrompt.outputContract;
+      promptGuidance = sourcePrompt.promptGuidance;
+    } else {
+      const formattedFallback = formatTopicMatrixPrompt(fallbackPlan, topicHint, "16:9");
+      outputContract = formattedFallback.outputContract;
+      promptGuidance = "No eligible source questions available in question bank.";
     }
 
-    const aspectRatio = "16:9" as const;
-    const matrixPlan = planTopicSuggestionMatrix({ taxonomy, index, topicHint, aspectRatio });
-    const { outputContract } = formatTopicMatrixPrompt(matrixPlan, topicHint, aspectRatio);
+    add({
+      path: `channels/${channel.slug}/topic_source_context.md`,
+      reason: "pre-allocated source questions for topic generation",
+      content: promptGuidance,
+    });
 
     const prompt = composeContextPrompt(taskType, channel, null, [...files, ...sharedFiles], {
       output_contract: outputContract,
@@ -111,6 +161,7 @@ export async function buildChannelContext(input: {
     Object.freeze(matrixPlan.slots);
     Object.freeze(matrixPlan);
     assignedTopicPlans.set(manifest, matrixPlan);
+    assignedTopicAllocations.set(manifest, allocation);
     return manifest;
   }
 
