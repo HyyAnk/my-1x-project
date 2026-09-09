@@ -220,9 +220,76 @@ export async function getQuestionBankQuestionUnlocked(
   questionId: string,
   channelId?: string,
 ): Promise<BankQuestionWithCooldown | null> {
-  const result = await queryQuestionBankQuestionsUnlocked.call(this, { channelId, limit: 10000 });
-  const found = result.questions.find((q) => q.id === questionId);
-  return found || null;
+  const batches = await listQuestionBankBatchesUnlocked.call(this);
+  let matchedQuestion: BankQuestion | null = null;
+  for (const batch of batches) {
+    const found = batch.questions.find((q) => q.id === questionId);
+    if (found) {
+      matchedQuestion =
+        found.archetype_id === "verdict_fact_myth"
+          ? { ...found, archetype_id: "verdict_true_false" }
+          : found;
+      break;
+    }
+  }
+
+  if (!matchedQuestion) return null;
+
+  if (!channelId) {
+    return {
+      ...matchedQuestion,
+      channel_cooldown: {
+        is_cooldown: false,
+        days_remaining: 0,
+      },
+    };
+  }
+
+  const historyEntries = await this.readQuestionHistory(channelId).catch(() => []);
+  const nowMs = Date.now();
+  const cooldownMs = COOLDOWN_DAYS_DEFAULT * 24 * 60 * 60 * 1000;
+
+  let matchedEntry: (typeof historyEntries)[number] | null = null;
+  let highestSim = 0;
+
+  for (const entry of historyEntries) {
+    if (entry.question_id === matchedQuestion.id) {
+      matchedEntry = entry;
+      break;
+    }
+    const sim = calculateQuestionSimilarity(matchedQuestion.question, entry.question_text);
+    if (sim >= 0.75 && sim > highestSim) {
+      highestSim = sim;
+      matchedEntry = entry;
+    }
+  }
+
+  if (matchedEntry) {
+    const renderedMs = new Date(matchedEntry.rendered_at).getTime();
+    const timeDiff = nowMs - renderedMs;
+    if (timeDiff < cooldownMs) {
+      const daysRemaining = Math.max(1, Math.ceil((cooldownMs - timeDiff) / (24 * 60 * 60 * 1000)));
+      return {
+        ...matchedQuestion,
+        channel_cooldown: {
+          is_cooldown: true,
+          days_remaining: daysRemaining,
+          last_used_at: matchedEntry.rendered_at,
+          episode_id: matchedEntry.episode_id,
+          episode_title: matchedEntry.episode_title,
+        },
+      };
+    }
+  }
+
+  return {
+    ...matchedQuestion,
+    channel_cooldown: {
+      is_cooldown: false,
+      days_remaining: 0,
+      last_used_at: matchedEntry ? matchedEntry.rendered_at : undefined,
+    },
+  };
 }
 
 export function getQuestionBankQuestion(

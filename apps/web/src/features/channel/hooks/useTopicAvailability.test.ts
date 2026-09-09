@@ -120,6 +120,40 @@ describe("useTopicAvailability Hook", () => {
     expect(result.current.availabilityMap.has("topic-new")).toBe(true);
   });
 
+  it("clears the old channel while the next channel is loading", async () => {
+    vi.mocked(channelApi.topicAvailability)
+      .mockResolvedValueOnce(mockBatch)
+      .mockImplementationOnce(() => new Promise(() => {}));
+    const { result, rerender } = renderHook(({ channelId }) => useTopicAvailability({ channelId }), {
+      initialProps: { channelId: "first" },
+    });
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(result.current.availabilityMap.size).toBe(2);
+    rerender({ channelId: "second" });
+    expect(result.current.availabilityMap.size).toBe(0);
+  });
+
+  it("rejects a late response after disabling even when abort is ignored", async () => {
+    let finish!: (batch: TopicAvailabilityBatch) => void;
+    vi.mocked(channelApi.topicAvailability).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const { result, rerender } = renderHook(({ enabled }) => useTopicAvailability({ channelId: mockChannelId, enabled }), {
+      initialProps: { enabled: true },
+    });
+    rerender({ enabled: false });
+    await act(async () => {
+      finish(mockBatch);
+      await Promise.resolve();
+    });
+    expect(result.current.availability).toBeNull();
+  });
+
   it("handles errors and allows retry via refresh", async () => {
     vi.mocked(channelApi.topicAvailability).mockRejectedValueOnce(new Error("Network disconnect")).mockResolvedValueOnce(mockBatch);
 

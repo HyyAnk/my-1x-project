@@ -7,6 +7,11 @@ import { compileFlowPrompts } from "./flowPromptCompiler.js";
 import { computeDependencyFingerprint, type DeliverableUnitKey } from "./dependencyPolicy.js";
 import type { ScriptGenerationErrorCode } from "./scriptProvider.js";
 import { RepositoryError } from "../repository/errors.js";
+import {
+  extractShortReelDisplayProjection,
+  loadShortReelLocalizationArtifact,
+  type ShortReelDisplayProjection,
+} from "../quiz/bank/localization/productLocalization.js";
 
 export interface UnitAttemptInfo {
   operationId: string;
@@ -26,8 +31,8 @@ export type AcceptResult =
     };
 
 /**
- * Linearly checks and accepts a completed unit generation attempt into the repository record.
- * Discards results if the unit was cancelled, superseded by a newer operation,
+ * Validates, records and applies a generated unit deliverable to the Short-Reel record.
+ * Rejects application if the attempt was cancelled, superseded by another attempt,
  * or if upstream dependencies changed during execution.
  * Executes under the repository record queue shared with edits and cancellation.
  */
@@ -39,6 +44,7 @@ export async function acceptReelUnitResult(
   payload: unknown,
 ): Promise<AcceptResult> {
   let reason: "CANCELLED" | "SUPERSEDED_OPERATION" | "STALE_DEPENDENCY" | "VALIDATION_FAILED" | undefined;
+  const localization = unitKey === "script" ? await loadShortReelLocalizationArtifact(repository, key.channel_id, key.reel_id) : null;
   const record = await mutateShortReelRecord(repository, key, (current) => {
     const unit = current.units[unitKey];
     if (unit.state === "cancelled") {
@@ -56,9 +62,10 @@ export async function acceptReelUnitResult(
     requireCompleteShortReelSource(current.source);
     const registeredAttempt = unit.current_attempt;
     const scriptPayload = typeof payload === "object" && payload !== null && "script" in payload ? payload.script : payload;
+    const displayProjection = unitKey === "script" ? extractShortReelDisplayProjection(current.source, localization) : undefined;
     const parsedCommand = ShortReelEditCommandSchema.safeParse(
       unitKey === "script"
-        ? { kind: "update_script", script: scriptPayload }
+        ? { kind: "update_script", script: scriptPayload, display_projection: displayProjection }
         : unitKey === "references"
           ? { kind: "update_references", references: payload }
           : unitKey === "cover"

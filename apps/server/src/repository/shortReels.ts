@@ -25,6 +25,10 @@ import {
   runInCanonicalShortReelQueue,
   writeShortReelJsonAtomic,
 } from "./shortReelStorage.js";
+import {
+  extractShortReelDisplayProjection,
+  loadShortReelLocalizationArtifact,
+} from "../quiz/bank/localization/productLocalization.js";
 
 export async function listShortReels(this: RepositoryRuntime, channelId: string): Promise<ShortReelRecord[]> {
   const channel = await this.getChannel(channelId);
@@ -189,6 +193,17 @@ export async function updateShortReel(
       const updated: ShortReelRecord = structuredClone(current);
       updated.revision = nextRevision;
       updated.updated_at = now;
+
+      if (
+        (validatedCommand.kind === "update_script" || validatedCommand.kind === "update_segment") &&
+        !validatedCommand.display_projection
+      ) {
+        const localization = await loadShortReelLocalizationArtifact(this, key.channel_id, key.reel_id);
+        const displayProjection = extractShortReelDisplayProjection(current.source, localization);
+        if (displayProjection) {
+          validatedCommand.display_projection = displayProjection;
+        }
+      }
 
       applyShortReelEdit(updated, validatedCommand);
 

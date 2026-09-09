@@ -85,14 +85,12 @@ export function useQuestionBank(initialChannelId?: string) {
     totalQuestions: list.totalQuestions,
     loading: list.loading,
     buildingVideo: list.buildingVideo,
-    transcreating: list.transcreating,
     clearing: list.clearing,
     error: list.error,
     saveQuestion: list.saveQuestion,
     deleteQuestion: list.deleteQuestion,
     clearAllQuestions: list.clearAllQuestions,
     createOneClickVideo: list.createOneClickVideo,
-    transcreateQuestion: list.transcreateQuestion,
     refresh: list.fetchQuestions,
 
     // Filters

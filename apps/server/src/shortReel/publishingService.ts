@@ -2,11 +2,13 @@ import { ReelPublishingPayloadSchema, type ReelPublishingPayload, type ShortReel
 import type { LLMClient } from "../utils/promptSanitizer.js";
 import { requestScriptText, ScriptGenerationError } from "./scriptProvider.js";
 import { requireCompleteShortReelSource } from "../repository/shortReelSourcePolicy.js";
+import type { ProductLocalizationArtifact } from "../quiz/bank/localization/productLocalization.js";
 
 export interface PublishingGenerationOptions {
   llmClient?: LLMClient;
   signal?: AbortSignal;
   timeoutMs?: number;
+  localization?: ProductLocalizationArtifact | null;
 }
 
 export function buildPublishingPrompt(record: ShortReelRecord): string {
@@ -80,10 +82,11 @@ export function parsePublishingJson(raw: string): ReelPublishingPayload | null {
 /**
  * Builds deterministic fallback publishing copy when LLM is unavailable or unparseable.
  */
-function buildFallbackPublishing(record: ShortReelRecord): ReelPublishingPayload {
+function buildFallbackPublishing(record: ShortReelRecord, localization?: ProductLocalizationArtifact | null): ReelPublishingPayload {
   const archetypeTag = record.source.archetype_id === "versus_faceoff" ? "#Versus" : "#DeepTrivia";
   const hook = record.topic.hook || record.source.question_text;
-  const description = `${record.topic.title}: ${record.topic.premise}\n\n${record.source.explanation}`.trim();
+  const descriptionBody = localization?.video_description || `${record.topic.premise}\n\n${record.source.explanation}`.trim();
+  const description = `${record.topic.title}: ${descriptionBody}`.trim();
   const cta = "Comment your answer below!";
   const hashtags = ["#Shorts", "#Trivia", "#Quiz", archetypeTag];
 
@@ -104,13 +107,23 @@ export async function generateReelPublishing(
 ): Promise<ReelPublishingPayload> {
   requireCompleteShortReelSource(record.source);
   if (options?.signal?.aborted) throw new ScriptGenerationError("ABORTED", "Publishing generation was cancelled.");
+  let payload: ReelPublishingPayload;
   if (options?.llmClient) {
     const prompt = buildPublishingPrompt(record);
     const text = await requestScriptText(options.llmClient, prompt, options.signal, options.timeoutMs ?? 15_000);
     const parsed = parsePublishingJson(text);
-    if (parsed) return parsed;
-    throw new ScriptGenerationError("VALIDATION_FAILED", "Publishing response is invalid. Retry generation.");
+    if (!parsed) {
+      throw new ScriptGenerationError("VALIDATION_FAILED", "Publishing response is invalid. Retry generation.");
+    }
+    payload = parsed;
+  } else {
+    payload = buildFallbackPublishing(record, options?.localization);
   }
 
-  return buildFallbackPublishing(record);
+  if (options?.localization?.video_description) {
+    const localizedDesc = `${record.topic.title}: ${options.localization.video_description}`.trim();
+    payload.description = localizedDesc.slice(0, 2000);
+  }
+
+  return payload;
 }

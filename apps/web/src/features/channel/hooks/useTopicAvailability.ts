@@ -53,7 +53,7 @@ export function useTopicAvailability({
       const result = await channelApi.topicAvailability(channelId, { signal: controller.signal });
 
       // Out-of-order rejection: drop if a newer request was dispatched
-      if (requestSeq !== sequenceRef.current || !isMountedRef.current) {
+      if (requestSeq !== sequenceRef.current || !isMountedRef.current || controller.signal.aborted) {
         return null;
       }
 
@@ -91,6 +91,8 @@ export function useTopicAvailability({
   useEffect(() => {
     isMountedRef.current = true;
     lastCheckedAtRef.current = null;
+    setAvailability(null);
+    setError(null);
     if (channelId && enabled) {
       void refresh();
     } else {
@@ -101,6 +103,7 @@ export function useTopicAvailability({
 
     return () => {
       isMountedRef.current = false;
+      sequenceRef.current += 1;
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
         abortControllerRef.current = null;

@@ -38,12 +38,15 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
     app = await buildApp(isolatedStudioRoot);
     const channel = await app.repository.createChannel({
       name: "Integration Channel",
-      language: "Spanish",
+      language: "English",
     });
     testChannelId = channel.channel_id;
   });
 
   afterAll(async () => {
+    for (const t of app.tasks?.list() ?? []) {
+      await app.tasks.cancel(t.task_id).catch(() => {});
+    }
     await app.close();
     if (tempStorage) {
       await rm(tempStorage, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }).catch(() => {});
@@ -179,14 +182,15 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
         question: "How many months in a year have 28 days?",
         format: "multiple_choice",
         choices: [
-          { id: "A", text: "1 month", is_correct: false },
-          { id: "B", text: "12 months", is_correct: true },
-          { id: "C", text: "2 months", is_correct: false },
+          { id: "a", text: "1 month", is_correct: false },
+          { id: "b", text: "12 months", is_correct: true },
+          { id: "c", text: "2 months", is_correct: false },
         ],
-        correct_choice_id: "B",
+        correct_choice_id: "b",
         explanation: "Every month in a calendar year has at least 28 days!",
         fun_fact: "February has 28 days, or 29 in a leap year.",
         difficulty: 1,
+        language: "en",
         status: "approved",
         tags: ["calendar"],
       };
@@ -228,6 +232,9 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       const q = cooldownQuery.questions[0];
       expect(q.channel_cooldown?.is_cooldown).toBe(true);
       expect(q.channel_cooldown?.days_remaining).toBeGreaterThanOrEqual(29);
+      if (result.task) {
+        await app.tasks.cancel(result.task.task_id).catch(() => {});
+      }
     });
 
     it("rejects episode creation with unsupported aspect ratio 9:16", async () => {
@@ -253,13 +260,14 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
         question: "Do sharks ever get cancer?",
         format: "true_false",
         choices: [
-          { id: "A", text: "True", is_correct: false },
-          { id: "B", text: "False", is_correct: true },
+          { id: "a", text: "True", is_correct: false },
+          { id: "b", text: "False", is_correct: true },
         ],
-        correct_choice_id: "B",
+        correct_choice_id: "b",
         explanation: "Scientists have documented numerous cases of sharks developing tumors and cancer.",
         fun_fact: "This false rumor originally started to promote shark cartilage supplements.",
         difficulty: 2,
+        language: "en",
         status: "approved",
         tags: ["shark", "myth"],
       };
@@ -297,11 +305,11 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
         question: "What is the speed of light in a vacuum?",
         format: "multiple_choice",
         choices: [
-          { id: "A", text: "300,000 km/s", is_correct: true },
-          { id: "B", text: "150,000 km/s", is_correct: false },
-          { id: "C", text: "3,000 km/s", is_correct: false },
+          { id: "a", text: "300,000 km/s", is_correct: true },
+          { id: "b", text: "150,000 km/s", is_correct: false },
+          { id: "c", text: "3,000 km/s", is_correct: false },
         ],
-        correct_choice_id: "A",
+        correct_choice_id: "a",
         explanation: "Light travels at approximately 299,792 kilometers per second in a vacuum.",
         fun_fact: "Nothing in the universe can travel faster than light.",
         difficulty: 2,
@@ -312,6 +320,10 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
         },
       };
 
+      const spanishChannel = await app.repository.createChannel({
+        name: "Spanish Integration Channel",
+        language: "Spanish",
+      });
       await app.repository.saveQuestionBankQuestion(enQuestion);
 
       const emitter = new EventEmitter();
@@ -324,16 +336,14 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
               method: "item/agentMessage/delta",
               params: {
                 delta: JSON.stringify({
-                  language: "es",
-                  question: "¿Cuál es la velocidad de la luz en el vacío?",
-                  choices: [
-                    { id: "A", text: "300.000 km/s" },
-                    { id: "B", text: "150.000 km/s" },
-                    { id: "C", text: "3.000 km/s" },
-                  ],
-                  explanation: "La luz viaja a aproximadamente 299.792 kilómetros por segundo en el vacío.",
-                  fun_fact: "Nada en el universo puede viajar más rápido que la velocidad de la luz.",
-                  verified: true,
+                  "INT-AUTO-TRANS-001_question": "¿Cuál es la velocidad de la luz en el vacío?",
+                  "INT-AUTO-TRANS-001_choice_a": "300.000 km/s",
+                  "INT-AUTO-TRANS-001_choice_b": "150.000 km/s",
+                  "INT-AUTO-TRANS-001_choice_c": "3.000 km/s",
+                  "INT-AUTO-TRANS-001_explanation": "La luz viaja a aproximadamente 299.792 kilómetros por segundo en el vacío.",
+                  "INT-AUTO-TRANS-001_fun_fact": "Nada en el universo puede viajar más rápido que la velocidad de la luz.",
+                  product_video_description: "La luz viaja a aproximadamente 299.792 kilómetros por segundo en el vacío.",
+                  product_thumbnail_text: "¿Cuál es la velocidad de la luz en el vacío?",
                 }),
               },
             });
@@ -350,7 +360,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       const result = await createEpisodeFromQuestionBank({
         repository: app.repository,
         tasks: app.tasks,
-        channelId: testChannelId, // Spanish channel
+        channelId: spanishChannel.channel_id,
         llmClient: mockLlmClient,
         input: {
           question_id: "INT-AUTO-TRANS-001",
@@ -360,13 +370,13 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
       });
 
       expect(result.episode).toBeDefined();
-      expect(result.quiz.language).toBe("Spanish");
+      expect(result.quiz.language).toBe("es");
       expect(result.quiz.questions[0].question).toBe("¿Cuál es la velocidad de la luz en el vacío?");
       expect(result.quiz.questions[0].choices[0].text).toBe("300.000 km/s");
       // Visual prompt strictly preserved in English
       expect(result.quiz.questions[0].visual_opportunity).toBe("A beam of glowing photon light accelerating across the cosmos, neon rays");
-      // Localized topic
-      expect(result.episode.topic.hook).toBe("¿Cuál es la velocidad de la luz en el vacío?");
+      // Canonical English topic metadata strictly preserved on episode record
+      expect(result.episode.topic.hook).toBe("What is the speed of light in a vacuum?");
 
       // 2. Verify Bank question remains immutable (no translation writeback during episode creation)
       const updatedQuestion = await app.repository.getQuestionBankQuestion("INT-AUTO-TRANS-001");
@@ -395,7 +405,7 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
 
       await app.repository.saveQuestionBankQuestion(seedQuestion);
 
-      // Call transcreate route (offline fallback if no llmClient configured on server)
+      // Call retired transcreate route
       const res = await app.server.inject({
         method: "POST",
         url: "/api/question-bank/INT-TRANS-ROUTE-001/transcreate",
@@ -404,32 +414,13 @@ describe("Question Bank 1-Click Integration & Bridge", () => {
         },
       });
 
-      expect(res.statusCode).toBe(200);
-      const body = JSON.parse(res.body) as {
-        success: boolean;
-        language: string;
-        content: { choices: unknown[] };
-      };
-      expect(body.success).toBe(true);
-      expect(body.language).toBe("es");
-      expect(body.content).toBeDefined();
-      expect(body.content.choices).toHaveLength(2);
+      expect(res.statusCode).toBe(410);
+      const body = JSON.parse(res.body) as { code: string; error: string };
+      expect(body.code).toBe("BANK_TRANSCREATION_RETIRED");
 
-      // Verify cached on disk
+      // Verify no translations written to disk
       const questionAfter = await app.repository.getQuestionBankQuestion("INT-TRANS-ROUTE-001");
-      expect(questionAfter?.translations?.es).toBeDefined();
-
-      // Second call returns cached: true
-      const res2 = await app.server.inject({
-        method: "POST",
-        url: "/api/question-bank/INT-TRANS-ROUTE-001/transcreate",
-        payload: {
-          target_language: "es",
-        },
-      });
-      expect(res2.statusCode).toBe(200);
-      const body2 = JSON.parse(res2.body) as { cached: boolean };
-      expect(body2.cached).toBe(true);
+      expect(questionAfter?.translations).toBeUndefined();
     });
   });
 });

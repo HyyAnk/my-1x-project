@@ -39,13 +39,13 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
 
     const channel1 = await app.repository.createChannel({
       name: "Resilience Channel A",
-      language: "Vietnamese",
+      language: "English",
     });
     testChannelId = channel1.channel_id;
 
     const channel2 = await app.repository.createChannel({
       name: "Resilience Channel B",
-      language: "Vietnamese",
+      language: "English",
     });
     secondaryChannelId = channel2.channel_id;
   });
@@ -283,15 +283,15 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
         choices:
           archetypeMeta.defaultFormat === "true_false" || archetypeMeta.id === "versus_faceoff"
             ? [
-                { id: "1", text: "Option 1", is_correct: true },
-                { id: "2", text: "Option 2", is_correct: false },
+                { id: "a", text: "Option 1", is_correct: true },
+                { id: "b", text: "Option 2", is_correct: false },
               ]
             : [
-                { id: "1", text: "Option 1", is_correct: true },
-                { id: "2", text: "Option 2", is_correct: false },
-                { id: "3", text: "Option 3", is_correct: false },
+                { id: "a", text: "Option 1", is_correct: true },
+                { id: "b", text: "Option 2", is_correct: false },
+                { id: "c", text: "Option 3", is_correct: false },
               ],
-        correct_choice_id: "1",
+        correct_choice_id: "a",
         explanation: "Test explanation for archetype validation.",
         fun_fact: "Interesting scientific fact.",
         difficulty: 2,
@@ -554,11 +554,11 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
         question: "What is the fastest land animal?",
         format: "multiple_choice",
         choices: [
-          { id: "1", text: "Cheetah", is_correct: true },
-          { id: "2", text: "Lion", is_correct: false },
-          { id: "3", text: "Gazelle", is_correct: false },
+          { id: "a", text: "Cheetah", is_correct: true },
+          { id: "b", text: "Lion", is_correct: false },
+          { id: "c", text: "Gazelle", is_correct: false },
         ],
-        correct_choice_id: "1",
+        correct_choice_id: "a",
         explanation: "The cheetah can reach speeds of 70 mph.",
         difficulty: 1,
         status: "approved",
@@ -567,29 +567,32 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
 
       await app.repository.saveQuestionBankQuestion(testQ);
 
-      const failingLLM: LLMClient = {
+      const failingLLM = {
+        connect: async () => {},
+        generateContent: async () => {
+          throw new Error("LLM Gateway 504 Gateway Timeout");
+        },
+        startThread: async () => {
+          throw new Error("LLM Gateway 504 Gateway Timeout");
+        },
         generateStream: () => {
           throw new Error("LLM Gateway 504 Gateway Timeout");
         },
-      };
+      } as unknown as LLMClient;
 
-      const res = await createEpisodeFromQuestionBank({
-        repository: app.repository,
-        channelId: testChannelId,
-        input: {
-          question_id: testQ.id,
-          target_language: "es",
-          auto_start_pipeline: false,
-          force: true,
-        },
-        llmClient: failingLLM,
-      });
-
-      expect(res.episode).toBeDefined();
-      expect(res.quiz).toBeDefined();
-      expect(res.quiz.questions).toHaveLength(1);
-      expect(res.quiz.questions[0].question).toContain("[ES]");
-      expect(res.quiz.questions[0].choices[0].text).toContain("[ES]");
+      await expect(
+        createEpisodeFromQuestionBank({
+          repository: app.repository,
+          channelId: testChannelId,
+          input: {
+            question_id: testQ.id,
+            target_language: "es",
+            auto_start_pipeline: false,
+            force: true,
+          },
+          llmClient: failingLLM,
+        }),
+      ).rejects.toThrow(/LLM Gateway 504 Gateway Timeout/);
     });
 
     it("correctly routes voice copy, question prompts, and outro across various language strings", () => {

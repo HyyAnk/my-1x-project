@@ -1,6 +1,12 @@
-# Codex integration
+# LLM Engine Integration (Codex & Google Antigravity)
 
-The dashboard supports two local transports:
+The platform features native dual-engine support for LLM generation. Users can seamlessly toggle between **OpenAI Codex** and **Google Antigravity** via the interactive topbar selector ([`EngineToggleGroup.tsx`](apps/web/src/components/chrome/topbar/EngineToggleGroup.tsx)). Both engines adhere to identical context boundaries, concurrency locks, and artifact output contracts.
+
+---
+
+## 1. OpenAI Codex Integration
+
+The dashboard supports two local transports for Codex:
 
 - **Local Codex App Server**: starts `codex app-server --listen stdio://` by default. The wire format is newline-delimited JSON-RPC messages without the `jsonrpc` header.
 - **Cockpit API Service**: calls the OpenAI-compatible Responses API exposed by Cockpit Tools. Set the Base URL and API key in Settings; the adapter accepts a host URL or a URL that already ends in `/v1`.
@@ -23,13 +29,7 @@ The app records `task_id`, channel, episode, `codex_thread_id`, `codex_turn_id`,
 
 Codex threads remain available in the configured provider after a task reaches a terminal state. Repository files remain the source of truth for generated project artifacts.
 
-## Context contract
-
-`ContextEngine` builds an auditable manifest for every call. Topic suggestions include only channel DNA, style/rules, existing titles/premises, and episode titles. Script and scene tasks include only the confirmed episode plus the required rules. Single-scene regeneration includes that scene, immediate neighbors, a script excerpt, and relevant DNA sections.
-
-The exact prompt and included file list are written to `.quiz-studio/logs/context-manifests.jsonl`. Other channels, full unrelated episodes, raw task history, and secrets are excluded.
-
-## Cockpit setup
+### Cockpit Setup
 
 1. Start Cockpit Tools and enable its Codex API service.
 2. Open this dashboard's Settings.
@@ -38,10 +38,32 @@ The exact prompt and included file list are written to `.quiz-studio/logs/contex
 5. Paste the API key. It is written to `.quiz-studio/codex.local.json`, which is ignored by Git.
 6. Choose the model from the top-bar dropdown and reconnect Codex.
 
-The adapter uses `POST /responses` with the selected model and scoped prompt, then translates the response back into the dashboard task lifecycle. It also reads `GET /models` when available; the dropdown keeps a small Codex fallback list if Cockpit does not expose that endpoint.
+The adapter uses `POST /responses` with the selected model and scoped prompt, then translates the response back into the dashboard task lifecycle. It also reads `GET /models` when available; the dropdown keeps a small Codex fallback list if Cockpit does not expose that endpoint. Do not put Cockpit keys in `.quiz-studio/config.json`, source files, screenshots, logs, or issue reports.
 
-Do not put Cockpit keys in `.quiz-studio/config.json`, source files, screenshots, logs, or issue reports.
+---
 
-## Approvals and failure states
+## 2. Google Antigravity Integration
 
-Server-initiated approval requests become `WAITING_APPROVAL` and are surfaced in the Tasks view. The user can accept, accept for the session, decline, or cancel. Disconnects, malformed output, timeouts, and upstream errors become visible task failures with technical details kept in logs/debug state.
+Google Antigravity is implemented as a first-class engine via [`AntigravityClient`](apps/server/src/antigravity/client.ts) and exported through [`apps/server/src/antigravity.ts`](apps/server/src/antigravity.ts):
+
+- **Target & Session Discovery ([`discovery.ts`](apps/server/src/antigravity/discovery.ts)):** Automatically discovers and attaches to running Antigravity sessions. Supports both the local Agent API HTTP endpoint and direct CLI child process execution.
+- **Dynamic Model Enumeration ([`models.ts`](apps/server/src/antigravity/models.ts)):** Queries available models from the active Agent API, Google API, or CLI, falling back to canonical defaults (`DEFAULT_ANTIGRAVITY_MODELS`).
+- **Turn Execution ([`turnRunner.ts`](apps/server/src/antigravity/turnRunner.ts)):** Coordinates turn lifecycle, streaming responses, error recovery, and abort signal propagation.
+- **Real-Time Transcript Watcher ([`transcriptWatcher.ts`](apps/server/src/antigravity/transcriptWatcher.ts)):** Tails the active session's transcript log, streaming incremental generation events and thinking steps back to the dashboard SSE feed.
+
+---
+
+## 3. Context Contract & Engine Parity
+
+`ContextEngine` builds an auditable manifest for every task regardless of which engine is active:
+- **Topic suggestions:** Include channel DNA, style/rules, existing titles/premises, and recent episode titles.
+- **Quiz / Direct Quiz tasks:** Include confirmed topic brief, channel target audience, age-band rules, and gameplay constraints.
+- **Scene / dialogue regeneration:** Include the targeted scene, immediate neighbor scenes, script excerpt, and relevant DNA guidelines.
+
+The exact prompt and included file list are written to `.quiz-studio/logs/context-manifests.jsonl`. Other channels, unrelated episodes, raw task histories, and secrets are strictly excluded.
+
+---
+
+## 4. Approvals and Failure States
+
+Server-initiated approval requests become `WAITING_APPROVAL` and are surfaced in the Tasks view. The user can accept, accept for the session, decline, or cancel. Disconnects, malformed output, timeouts, and upstream errors become visible task failures with technical details preserved in logs and debug state.

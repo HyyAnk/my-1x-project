@@ -5,6 +5,7 @@ import sharp from "sharp";
 import { afterEach, expect } from "vitest";
 import {
   BankQuestionSchema,
+  hashBankQuestionSource,
   type BankQuestion,
   type Channel,
   type ConfirmShortReelTopicResponse,
@@ -50,13 +51,13 @@ export function createSampleBankQuestion(id: string, archetypeId: "versus_faceof
   const choices =
     archetypeId === "deep_trivia"
       ? [
-          { id: "A", text: "Jaguar", is_correct: true },
-          { id: "B", text: "Lion", is_correct: false },
-          { id: "C", text: "Tiger", is_correct: false },
+          { id: "a", text: "Jaguar", is_correct: true },
+          { id: "b", text: "Lion", is_correct: false },
+          { id: "c", text: "Tiger", is_correct: false },
         ]
       : [
-          { id: "A", text: "Jaguar", is_correct: true },
-          { id: "B", text: "Lion", is_correct: false },
+          { id: "a", text: "Jaguar", is_correct: true },
+          { id: "b", text: "Lion", is_correct: false },
         ];
 
   return BankQuestionSchema.parse({
@@ -68,7 +69,7 @@ export function createSampleBankQuestion(id: string, archetypeId: "versus_faceof
     question: "Which predator has a stronger bite: Jaguar or Lion?",
     format: "multiple_choice",
     choices,
-    correct_choice_id: "A",
+    correct_choice_id: "a",
     explanation: "Jaguars possess an exceptionally powerful bite force relative to their size.",
     status: "approved",
     age_band: "family",
@@ -88,6 +89,7 @@ export interface ReelTopicSeedInput {
   topicId: string;
   title?: string;
   archetype?: "versus_faceoff" | "deep_trivia";
+  questionId?: string;
 }
 
 export function buildShortReelTopicCandidate({
@@ -95,7 +97,9 @@ export function buildShortReelTopicCandidate({
   topicId,
   title,
   archetype = "versus_faceoff",
+  questionId = "bank-test-q-1",
 }: ReelTopicSeedInput): ShortReelTopicCandidate {
+  const sampleBankQ = createSampleBankQuestion(questionId, archetype);
   return {
     topic_id: topicId,
     channel_id: channelId,
@@ -111,6 +115,19 @@ export function buildShortReelTopicCandidate({
     question_count: 1,
     aspect_ratio: "9:16",
     archetype,
+    source_bindings: [
+      {
+        source_question_id: questionId,
+        source_hash_version: 1,
+        source_content_hash: hashBankQuestionSource(sampleBankQ),
+        projection_provenance: {
+          source_variant: "native",
+          resolved_language: "en",
+          translation_key: null,
+          translation_provenance: "native",
+        },
+      },
+    ],
   };
 }
 
@@ -146,9 +163,11 @@ export async function seedTopicRunWithReel({
   app,
   channelId,
   reelTopicId,
-  reelArchetype,
+  reelArchetype = "versus_faceoff",
 }: SeedTopicRunInput): Promise<ShortReelTopicCandidate> {
-  const shortReelTopic = buildShortReelTopicCandidate({ channelId, topicId: reelTopicId, archetype: reelArchetype });
+  const qId = `bank-seed-${reelTopicId}`;
+  await app.repository.saveQuestionBankQuestion(createSampleBankQuestion(qId, reelArchetype));
+  const shortReelTopic = buildShortReelTopicCandidate({ channelId, topicId: reelTopicId, archetype: reelArchetype, questionId: qId });
   const dummyEp = buildDummyEpisodeCandidate(channelId, "ep-dummy-1");
   await app.repository.saveTopicRun(channelId, [
     dummyEp,

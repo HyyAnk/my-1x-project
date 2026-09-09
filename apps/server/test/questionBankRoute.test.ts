@@ -143,6 +143,7 @@ describe("Question Bank REST API Routes", () => {
       status: "approved",
       age_band: "family",
       difficulty: 2,
+      language: "en",
       tags: ["api_test"],
     };
 

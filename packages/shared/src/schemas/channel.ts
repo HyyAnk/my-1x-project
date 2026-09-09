@@ -80,6 +80,7 @@ const TopicCandidateBaseSchema = z.object({
   domain_id: z.string().optional(),
   subtopic_id: z.string().optional(),
   slot_id: z.string().trim().min(1).optional(),
+  run_id: z.string().trim().min(1).optional(),
   source_bindings: TopicSourceBindingSetSchema.optional(),
 });
 

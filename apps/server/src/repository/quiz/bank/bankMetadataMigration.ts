@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, readdir } from "node:fs/promises";
+import { lstat, mkdir, readFile, readdir, realpath, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { BankSubtopicBatch } from "@studio/shared";
 import { RepositoryError } from "../../errors.js";
@@ -93,6 +93,7 @@ export function assertSafeRelativePath(relativePath: string, canonicalRoot: stri
     path.isAbsolute(relativePath) ||
     /^[a-zA-Z]:/.test(relativePath) ||
     relativePath.includes("\0")
+    || relativePath.replace(/\\/g, "/").split("/").some((segment) => segment === ".." || segment === ".")
   ) {
     throw new RepositoryError(`Unsafe relative path "${relativePath}" in migration manifest`, "UNSAFE_PATH");
   }
@@ -104,9 +105,49 @@ export function assertSafeRelativePath(relativePath: string, canonicalRoot: stri
 }
 
 export function assertSafeBackupPath(backupPath: string, canonicalRoot: string, migrationId: string): void {
+  assertValidMigrationId(migrationId);
+  if (typeof backupPath !== "string" || backupPath.includes("\0")) {
+    throw new RepositoryError("Invalid backup path in migration manifest", "UNSAFE_PATH");
+  }
   const root = path.join(migrationRoot(canonicalRoot), migrationId, "backup");
   if (!isInside(root, path.resolve(backupPath))) {
     throw new RepositoryError(`Backup path escaped migration backup root: "${backupPath}"`, "UNSAFE_PATH");
+  }
+}
+
+async function assertSafeFilesystemPath(rootPath: string, targetPath: string): Promise<void> {
+  const root = path.resolve(rootPath);
+  const target = path.resolve(targetPath);
+  if (!isInside(root, target)) {
+    throw new RepositoryError(`Filesystem path escaped its root: "${targetPath}"`, "UNSAFE_PATH");
+  }
+
+  let current = target;
+  while (true) {
+    try {
+      if ((await lstat(current)).isSymbolicLink()) {
+        throw new RepositoryError(`Filesystem path contains a symlink or junction: "${current}"`, "UNSAFE_PATH");
+      }
+    } catch (error) {
+      if (error instanceof RepositoryError) throw error;
+      const code = (error as NodeJS.ErrnoException).code;
+      if (code !== "ENOENT" && code !== "ENOTDIR") throw error;
+    }
+    if (current === root) return;
+    const parent = path.dirname(current);
+    if (parent === current) {
+      throw new RepositoryError(`Filesystem path could not be contained: "${targetPath}"`, "UNSAFE_PATH");
+    }
+    current = parent;
+  }
+}
+
+async function assertCanonicalRoot(repository: RepositoryRuntime, canonicalRoot: string): Promise<string> {
+  await assertSafeFilesystemPath(path.join(repository.storageRoot, ".quiz-studio"), canonicalRoot);
+  try {
+    return await realpath(canonicalRoot);
+  } catch (error) {
+    throw new RepositoryError(`Question bank root is missing or unreadable at ${canonicalRoot}`, "BANK_ROOT_MISSING", { cause: error });
   }
 }
 
@@ -138,16 +179,25 @@ async function resolveCanonicalRoot(repository: RepositoryRuntime): Promise<stri
   if (typeof config.storage_path !== "string" || path.resolve(config.storage_path) !== path.resolve(repository.storageRoot)) {
     throw new Error("BANK_ROOT_MISMATCH: configured storage root does not match the repository runtime root");
   }
-  return path.join(repository.roots.runtime, QUESTION_BANK_DIR);
+  return assertCanonicalRoot(repository, path.join(repository.roots.runtime, QUESTION_BANK_DIR));
 }
 
 async function collectBatchFiles(root: string): Promise<string[]> {
   const result: string[] = [];
   const archetypes = await readdir(root, { withFileTypes: true });
+  if (archetypes.some((entry) => entry.isSymbolicLink())) {
+    throw new RepositoryError("Question bank contains a symlink or junction", "UNSAFE_PATH");
+  }
   for (const archetype of archetypes.filter((entry) => entry.isDirectory())) {
     const domains = await readdir(path.join(root, archetype.name), { withFileTypes: true });
+    if (domains.some((entry) => entry.isSymbolicLink())) {
+      throw new RepositoryError("Question bank contains a symlink or junction", "UNSAFE_PATH");
+    }
     for (const domain of domains.filter((entry) => entry.isDirectory())) {
       const files = await readdir(path.join(root, archetype.name, domain.name), { withFileTypes: true });
+      if (files.some((entry) => entry.isSymbolicLink())) {
+        throw new RepositoryError("Question bank contains a symlink or junction", "UNSAFE_PATH");
+      }
       result.push(
         ...files
           .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
@@ -173,6 +223,7 @@ export async function previewBankLanguageMigration(
 
     // Verify index.json exists and capture byte hash
     const indexPath = path.join(canonicalRoot, "index.json");
+    await assertSafeFilesystemPath(canonicalRoot, indexPath);
     let indexByteHash: string;
     try {
       const indexBytes = await readFile(indexPath);
@@ -237,9 +288,15 @@ function manifestPath(manifest: BankLanguageMigrationManifest): string {
   return path.join(path.dirname(manifest.canonicalRoot), "question_bank_migrations", manifest.migrationId, "manifest.json");
 }
 
+async function assertManifestPathSafe(manifest: BankLanguageMigrationManifest): Promise<void> {
+  await assertSafeFilesystemPath(migrationRoot(manifest.canonicalRoot), manifestPath(manifest));
+}
+
 async function persistManifest(repository: RepositoryRuntime, manifest: BankLanguageMigrationManifest): Promise<string> {
   const target = manifestPath(manifest);
+  await assertManifestPathSafe(manifest);
   await mkdir(path.dirname(target), { recursive: true });
+  await assertManifestPathSafe(manifest);
   await repository.writeTextAtomic(target, `${JSON.stringify(manifest, null, 2)}\n`);
   return target;
 }
@@ -252,28 +309,36 @@ export async function backupBankLanguageMigration(
   return withBankWrite(repository, async () => {
     const currentRoot = await resolveCanonicalRoot(repository);
     if (path.resolve(currentRoot) !== path.resolve(preview.canonicalRoot)) throw new Error("BANK_ROOT_MISMATCH: migration root changed");
+    const previewManifest: BankLanguageMigrationManifest = { ...preview, status: "backed_up" };
+    await assertManifestPathSafe(previewManifest);
 
     // Verify index.json before backing up
     const indexPath = path.join(preview.canonicalRoot, "index.json");
+    await assertSafeFilesystemPath(preview.canonicalRoot, indexPath);
     const indexBytes = await readFile(indexPath);
     if (sha256(indexBytes) !== preview.indexByteHash) {
       throw new RepositoryError("BANK_DRIFT: index.json changed before backup", "BANK_DRIFT");
     }
     const indexBackupPath = path.join(migrationRoot(preview.canonicalRoot), preview.migrationId, "backup", "index.json");
+    await assertSafeFilesystemPath(path.join(migrationRoot(preview.canonicalRoot), preview.migrationId, "backup"), indexBackupPath);
     await mkdir(path.dirname(indexBackupPath), { recursive: true });
+    await assertSafeFilesystemPath(path.join(migrationRoot(preview.canonicalRoot), preview.migrationId, "backup"), indexBackupPath);
     await repository.writeBinaryAtomic(indexBackupPath, indexBytes);
 
     for (const file of preview.files) {
       assertSafeRelativePath(file.relativePath, preview.canonicalRoot);
       assertSafeBackupPath(file.backupPath, preview.canonicalRoot, preview.migrationId);
-      const bytes = await readFile(path.join(preview.canonicalRoot, file.relativePath));
+      const sourcePath = path.join(preview.canonicalRoot, file.relativePath);
+      await assertSafeFilesystemPath(preview.canonicalRoot, sourcePath);
+      await assertSafeFilesystemPath(path.join(migrationRoot(preview.canonicalRoot), preview.migrationId, "backup"), file.backupPath);
+      const bytes = await readFile(sourcePath);
       if (sha256(bytes) !== file.byteHashBefore) throw new Error(`BANK_DRIFT: preimage changed for ${file.relativePath}`);
       await mkdir(path.dirname(file.backupPath), { recursive: true });
+      await assertSafeFilesystemPath(path.join(migrationRoot(preview.canonicalRoot), preview.migrationId, "backup"), file.backupPath);
       await repository.writeBinaryAtomic(file.backupPath, bytes);
     }
-    const manifest: BankLanguageMigrationManifest = { ...preview, status: "backed_up" };
-    const savedPath = await persistManifest(repository, manifest);
-    return { manifest, files: preview.files, manifestPath: savedPath };
+    const savedPath = await persistManifest(repository, previewManifest);
+    return { manifest: previewManifest, files: preview.files, manifestPath: savedPath };
   });
 }
 
@@ -281,6 +346,7 @@ async function validateBackups(repository: RepositoryRuntime, manifest: BankLang
   for (const file of manifest.files) {
     assertSafeRelativePath(file.relativePath, manifest.canonicalRoot);
     assertSafeBackupPath(file.backupPath, manifest.canonicalRoot, manifest.migrationId);
+    await assertSafeFilesystemPath(path.join(migrationRoot(manifest.canonicalRoot), manifest.migrationId, "backup"), file.backupPath);
     const bytes = await readFile(file.backupPath);
     if (sha256(bytes) !== file.byteHashBefore) throw new Error(`BANK_BACKUP_INVALID: backup hash mismatch for ${file.relativePath}`);
   }
@@ -297,16 +363,24 @@ export async function applyBankLanguageMigration(
     }
     const currentRoot = await resolveCanonicalRoot(repository);
     if (path.resolve(currentRoot) !== path.resolve(manifest.canonicalRoot)) throw new Error("BANK_ROOT_MISMATCH: migration root changed");
+    await assertManifestPathSafe(manifest);
 
     // Verify index.json before applying
     const indexPath = path.join(manifest.canonicalRoot, "index.json");
+    await assertSafeFilesystemPath(manifest.canonicalRoot, indexPath);
     const indexBytesBefore = await readFile(indexPath);
     if (sha256(indexBytesBefore) !== manifest.indexByteHash) {
       throw new RepositoryError("BANK_DRIFT: index.json changed before apply", "BANK_DRIFT");
     }
 
     await validateBackups(repository, manifest);
-    const currentBytes = await Promise.all(manifest.files.map((file) => readFile(path.join(manifest.canonicalRoot, file.relativePath))));
+    const currentBytes = await Promise.all(
+      manifest.files.map(async (file) => {
+        const sourcePath = path.join(manifest.canonicalRoot, file.relativePath);
+        await assertSafeFilesystemPath(manifest.canonicalRoot, sourcePath);
+        return readFile(sourcePath);
+      }),
+    );
 
     // Interrupted / partial recovery check
     let anyPending = false;
@@ -340,37 +414,48 @@ export async function applyBankLanguageMigration(
       return { changed: false, manifest: applied, manifestPath: savedPath };
     }
 
-    for (const [index, file] of manifest.files.entries()) {
-      const curHash = sha256(currentBytes[index]);
-      if (curHash === file.expectedByteHashAfter) {
-        // Already migrated in prior partial attempt
-        continue;
+    try {
+      for (const [index, file] of manifest.files.entries()) {
+        const curHash = sha256(currentBytes[index]);
+        if (curHash === file.expectedByteHashAfter) continue;
+        const targetIds = new Set(file.missingLanguageQuestionIds);
+        if (targetIds.size === 0) continue;
+        const parsed = parseBatchForMigration(currentBytes[index].toString("utf8"), file.relativePath);
+        if (!parsed) throw new Error(`BANK_DRIFT: invalid batch for ${file.relativePath}`);
+        const migrated = {
+          ...parsed,
+          questions: parsed.questions.map((question) => (targetIds.has(question.id) ? { ...question, language: "en" as const } : question)),
+        };
+        if (sha256(serializedBatch(migrated)) !== file.expectedByteHashAfter) {
+          throw new Error(`BANK_DRIFT: membership changed for ${file.relativePath}`);
+        }
+        if (semanticHash(parsed, targetIds) !== file.semanticHashBefore) {
+          throw new Error(`BANK_DRIFT: semantic preimage changed for ${file.relativePath}`);
+        }
+        const targetPath = path.join(manifest.canonicalRoot, file.relativePath);
+        await assertSafeFilesystemPath(manifest.canonicalRoot, targetPath);
+        await repository.writeBinaryAtomic(targetPath, serializedBatch(migrated));
       }
-      const targetIds = new Set(file.missingLanguageQuestionIds);
-      if (targetIds.size === 0) continue;
-      const parsed = parseBatchForMigration(currentBytes[index].toString("utf8"), file.relativePath);
-      if (!parsed) throw new Error(`BANK_DRIFT: invalid batch for ${file.relativePath}`);
-      const migrated = {
-        ...parsed,
-        questions: parsed.questions.map((question) => (targetIds.has(question.id) ? { ...question, language: "en" as const } : question)),
-      };
-      if (sha256(serializedBatch(migrated)) !== file.expectedByteHashAfter) {
-        throw new Error(`BANK_DRIFT: membership changed for ${file.relativePath}`);
+
+      const indexBytesAfter = await readFile(indexPath);
+      if (sha256(indexBytesAfter) !== manifest.indexByteHash) {
+        throw new RepositoryError("BANK_DRIFT: index.json changed during migration", "BANK_DRIFT");
       }
-      if (semanticHash(parsed, targetIds) !== file.semanticHashBefore) {
-        throw new Error(`BANK_DRIFT: semantic preimage changed for ${file.relativePath}`);
+
+      const savedPath = await persistManifest(repository, applied);
+      return { changed: true, manifest: applied, manifestPath: savedPath };
+    } catch (error) {
+      for (const [index, file] of manifest.files.entries()) {
+        const targetPath = path.join(manifest.canonicalRoot, file.relativePath);
+        try {
+          await repository.writeBinaryAtomic(targetPath, currentBytes[index]);
+        } catch {
+          await writeFile(targetPath, currentBytes[index]);
+        }
       }
-      await repository.writeBinaryAtomic(path.join(manifest.canonicalRoot, file.relativePath), serializedBatch(migrated));
+      throw error;
     }
 
-    // Verify index.json unchanged after all batch writes
-    const indexBytesAfter = await readFile(indexPath);
-    if (sha256(indexBytesAfter) !== manifest.indexByteHash) {
-      throw new RepositoryError("BANK_DRIFT: index.json changed during migration", "BANK_DRIFT");
-    }
-
-    const savedPath = await persistManifest(repository, applied);
-    return { changed: true, manifest: applied, manifestPath: savedPath };
   });
 }
 
@@ -382,16 +467,24 @@ export async function rollbackBankLanguageMigration(
   return withBankWrite(repository, async () => {
     const currentRoot = await resolveCanonicalRoot(repository);
     if (path.resolve(currentRoot) !== path.resolve(manifest.canonicalRoot)) throw new Error("BANK_ROOT_MISMATCH: migration root changed");
+    await assertManifestPathSafe(manifest);
 
     // Verify index.json before rollback
     const indexPath = path.join(manifest.canonicalRoot, "index.json");
+    await assertSafeFilesystemPath(manifest.canonicalRoot, indexPath);
     const indexBytesBefore = await readFile(indexPath);
     if (sha256(indexBytesBefore) !== manifest.indexByteHash) {
       throw new RepositoryError("BANK_DRIFT: index.json changed before rollback", "BANK_DRIFT");
     }
 
     await validateBackups(repository, manifest);
-    const currentBytes = await Promise.all(manifest.files.map((file) => readFile(path.join(manifest.canonicalRoot, file.relativePath))));
+    const currentBytes = await Promise.all(
+      manifest.files.map(async (file) => {
+        const sourcePath = path.join(manifest.canonicalRoot, file.relativePath);
+        await assertSafeFilesystemPath(manifest.canonicalRoot, sourcePath);
+        return readFile(sourcePath);
+      }),
+    );
 
     let anyApplied = false;
     for (let index = 0; index < manifest.files.length; index += 1) {
@@ -420,7 +513,10 @@ export async function rollbackBankLanguageMigration(
     for (const [index, file] of manifest.files.entries()) {
       const curHash = sha256(currentBytes[index]);
       if (curHash === file.byteHashBefore) continue;
-      await repository.writeBinaryAtomic(path.join(manifest.canonicalRoot, file.relativePath), await readFile(file.backupPath));
+      const targetPath = path.join(manifest.canonicalRoot, file.relativePath);
+      await assertSafeFilesystemPath(manifest.canonicalRoot, targetPath);
+      await assertSafeFilesystemPath(path.join(migrationRoot(manifest.canonicalRoot), manifest.migrationId, "backup"), file.backupPath);
+      await repository.writeBinaryAtomic(targetPath, await readFile(file.backupPath));
     }
 
     // Verify index.json unchanged after rollback

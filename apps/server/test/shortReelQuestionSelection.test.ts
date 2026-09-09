@@ -6,6 +6,7 @@ import {
   BankQuestionSchema,
   EpisodeTopicCandidateSchema,
   ShortReelTopicCandidateSchema,
+  hashBankQuestionSource,
   type BankQuestion,
   type Channel,
   type EpisodeTopicCandidate,
@@ -211,6 +212,58 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
   it("TP-03: routes content_kind without title heuristic effect", async () => {
     const { repo, channel } = await createTestRepository();
 
+    // Seed bank with approved questions for Episode and Short-Reel
+    const epQuestions = Array.from({ length: 3 }, (_, i) =>
+      BankQuestionSchema.parse({
+        id: `bank-ep-rome-${i}`,
+        archetype_id: "deep_trivia",
+        domain_id: "history",
+        subtopic_id: "empires",
+        language: "en",
+        question: `Roman question ${i}?`,
+        format: "multiple_choice",
+        choices: [
+          { id: "a", text: "Answer A", is_correct: true },
+          { id: "b", text: "Answer B", is_correct: false },
+          { id: "c", text: "Answer C", is_correct: false },
+        ],
+        correct_choice_id: "a",
+        explanation: "Explanation",
+        status: "approved",
+        age_band: "family",
+        difficulty: 2,
+        thinking_seconds: 5,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }),
+    );
+    for (const q of epQuestions) {
+      await repo.saveQuestionBankQuestion(q);
+    }
+
+    const bankQuestion: BankQuestion = BankQuestionSchema.parse({
+      id: "bank-versus-rome-01",
+      archetype_id: "versus_faceoff",
+      domain_id: "history",
+      subtopic_id: "empires",
+      language: "en",
+      question: "Which empire was larger at its peak: Rome or Greece?",
+      format: "multiple_choice",
+      choices: [
+        { id: "a", text: "Rome", is_correct: true },
+        { id: "b", text: "Greece", is_correct: false },
+      ],
+      correct_choice_id: "a",
+      explanation: "The Roman Empire encompassed over 5 million square kilometers.",
+      status: "approved",
+      age_band: "family",
+      difficulty: 2,
+      thinking_seconds: 5,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+    await repo.saveQuestionBankQuestion(bankQuestion);
+
     // Candidate A: Episode whose title includes "shorts"
     const episodeCandidate: EpisodeTopicCandidate = {
       topic_id: "topic_ep_shorts_title",
@@ -229,6 +282,17 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
       age_band: "family",
       visual_style: "flat_vector",
       archetype: "deep_trivia",
+      source_bindings: epQuestions.map((q) => ({
+        source_question_id: q.id,
+        source_hash_version: 1 as const,
+        source_content_hash: hashBankQuestionSource(q),
+        projection_provenance: {
+          source_variant: "native" as const,
+          resolved_language: "en" as const,
+          translation_key: null,
+          translation_provenance: "native" as const,
+        },
+      })),
     };
 
     // Candidate B: Short-Reel whose title does NOT include "shorts"
@@ -247,6 +311,19 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
       question_count: 1,
       aspect_ratio: "9:16",
       archetype: "versus_faceoff",
+      source_bindings: [
+        {
+          source_question_id: bankQuestion.id,
+          source_hash_version: 1 as const,
+          source_content_hash: hashBankQuestionSource(bankQuestion),
+          projection_provenance: {
+            source_variant: "native" as const,
+            resolved_language: "en" as const,
+            translation_key: null,
+            translation_provenance: "native" as const,
+          },
+        },
+      ],
     };
 
     const dummyEp1: EpisodeTopicCandidate = { ...episodeCandidate, topic_id: "dummy_ep_1", title: "Dummy Ep 1" };
@@ -254,30 +331,6 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
     const dummyReel: ShortReelTopicCandidate = { ...reelCandidate, topic_id: "dummy_reel_1", title: "Dummy Reel 1" };
 
     await repo.saveTopicRun(channel.channel_id, [episodeCandidate, dummyEp1, dummyEp2, reelCandidate, dummyReel]);
-
-    // Seed bank with approved question for Short-Reel
-    const bankQuestion: BankQuestion = BankQuestionSchema.parse({
-      id: "bank-versus-rome-01",
-      archetype_id: "versus_faceoff",
-      domain_id: "history",
-      subtopic_id: "empires",
-      language: "en",
-      question: "Which empire was larger at its peak: Rome or Greece?",
-      format: "multiple_choice",
-      choices: [
-        { id: "A", text: "Rome", is_correct: true },
-        { id: "B", text: "Greece", is_correct: false },
-      ],
-      correct_choice_id: "A",
-      explanation: "The Roman Empire encompassed over 5 million square kilometers.",
-      status: "approved",
-      age_band: "family",
-      difficulty: 2,
-      thinking_seconds: 5,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
-    await repo.saveQuestionBankQuestion(bankQuestion);
 
     // 1. Confirm Episode candidate whose title includes "shorts"
     const epResult = await createEpisodeFromTopicWithBank({
@@ -451,7 +504,6 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
       code: "BANK_EMPTY",
     });
 
-    // 3. Spanish question with UNVERIFIED English translation returns BANK_EMPTY
     const spanishWithUnverifiedEn: BankQuestion = BankQuestionSchema.parse({
       id: "bank-q-spanish-unverified",
       archetype_id: "deep_trivia",
@@ -487,7 +539,21 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     });
-    await repo.saveQuestionBankQuestion(spanishWithUnverifiedEn);
+    const batchDir = path.join(repo.roots.runtime, "question_bank", "deep_trivia", "ocean");
+    await mkdir(batchDir, { recursive: true });
+    await writeFile(
+      path.join(batchDir, "depths.json"),
+      JSON.stringify({
+        schema_version: 2,
+        archetype_id: "deep_trivia",
+        domain_id: "ocean",
+        subtopic_id: "depths",
+        subtopic_title: "Depths",
+        updated_at: new Date().toISOString(),
+        questions: [archivedQuestion, spanishWithUnverifiedEn],
+      }),
+      "utf8",
+    );
 
     await expect(selectShortReelQuestion({ topic, repository: repo })).rejects.toMatchObject({
       code: "BANK_EMPTY",
@@ -508,6 +574,30 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
   it("TP-06: idempotent repeat confirmation returns existing reel without creating duplicate records or mutations", async () => {
     const { repo, channel } = await createTestRepository();
 
+    // Seed approved English bank question
+    const eligibleQuestion: BankQuestion = BankQuestionSchema.parse({
+      id: "bank-versus-solar-001",
+      archetype_id: "versus_faceoff",
+      domain_id: "space_earth",
+      subtopic_id: "solar_flares",
+      language: "en",
+      question: "Which releases more energy: a solar flare or volcanic eruption?",
+      format: "multiple_choice",
+      choices: [
+        { id: "a", text: "Solar flare", is_correct: true },
+        { id: "b", text: "Volcanic eruption", is_correct: false },
+      ],
+      correct_choice_id: "a",
+      explanation: "A solar flare releases millions of times more energy.",
+      status: "approved",
+      age_band: "family",
+      difficulty: 2,
+      thinking_seconds: 5,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+    await repo.saveQuestionBankQuestion(eligibleQuestion);
+
     const topic: ShortReelTopicCandidate = {
       topic_id: "topic_reel_idempotent_test",
       channel_id: channel.channel_id,
@@ -524,6 +614,19 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
       question_count: 1,
       aspect_ratio: "9:16",
       archetype: "versus_faceoff",
+      source_bindings: [
+        {
+          source_question_id: eligibleQuestion.id,
+          source_hash_version: 1 as const,
+          source_content_hash: hashBankQuestionSource(eligibleQuestion),
+          projection_provenance: {
+            source_variant: "native" as const,
+            resolved_language: "en" as const,
+            translation_key: null,
+            translation_provenance: "native" as const,
+          },
+        },
+      ],
     };
 
     const dummyEp1: EpisodeTopicCandidate = {
@@ -549,30 +652,6 @@ describe("Phase 03: Mixed Topics And Bank Selection", () => {
     const dummyReel: ShortReelTopicCandidate = { ...topic, topic_id: "dummy_reel_tp06_2", title: "Dummy Reel 2" };
 
     await repo.saveTopicRun(channel.channel_id, [dummyEp1, dummyEp2, dummyEp3, topic, dummyReel]);
-
-    // Seed approved English bank question
-    const eligibleQuestion: BankQuestion = BankQuestionSchema.parse({
-      id: "bank-versus-solar-001",
-      archetype_id: "versus_faceoff",
-      domain_id: "space_earth",
-      subtopic_id: "solar_flares",
-      language: "en",
-      question: "Which releases more energy: a solar flare or volcanic eruption?",
-      format: "multiple_choice",
-      choices: [
-        { id: "A", text: "Solar flare", is_correct: true },
-        { id: "B", text: "Volcanic eruption", is_correct: false },
-      ],
-      correct_choice_id: "A",
-      explanation: "A solar flare releases millions of times more energy.",
-      status: "approved",
-      age_band: "family",
-      difficulty: 2,
-      thinking_seconds: 5,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
-    await repo.saveQuestionBankQuestion(eligibleQuestion);
 
     // First confirmation
     const firstConfirm = await confirmShortReelTopic({

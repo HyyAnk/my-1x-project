@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { CancelShortReelResponse, ConfirmShortReelTopicResponse, GetShortReelResponse, ListShortReelsResponse } from "@studio/shared";
 import {
+  buildShortReelTopicCandidate,
   buildTestApp,
   createSampleBankQuestion,
   createTestChannel,
@@ -19,22 +20,13 @@ describe("Short-Reel HTTP Routes and Confirmation Discrimination", () => {
 
       await app.repository.saveQuestionBankQuestion(createSampleBankQuestion("bank-jaguar-lion-01", "versus_faceoff"));
 
-      const shortReelTopic = {
-        topic_id: "topic-reel-predators-1",
-        channel_id: channel.channel_id,
-        content_kind: "short_reel",
-        origin: "discovery",
+      const shortReelTopic = buildShortReelTopicCandidate({
+        channelId: channel.channel_id,
+        topicId: "topic-reel-predators-1",
         title: "Jaguar vs Lion Bite Force",
-        premise: "Comparing feline bite strengths",
-        why_it_fits: "Engaging matchup",
-        hook: "Can a jaguar crack turtle shells with one bite?",
-        estimated_potential: "Viral",
-        generated_at: new Date().toISOString(),
-        selected: false,
-        question_count: 1,
-        aspect_ratio: "9:16",
         archetype: "versus_faceoff",
-      } as const;
+        questionId: "bank-jaguar-lion-01",
+      });
 
       const ep1 = {
         topic_id: "ep-1",

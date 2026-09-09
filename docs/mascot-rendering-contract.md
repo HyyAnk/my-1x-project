@@ -153,3 +153,36 @@ overwritten.
   data-retention plan; they are not required by the active V2 authoring path.
 - Legacy route names remain as compatibility shims until downstream clients have
   migrated to action-image terminology.
+
+---
+
+## Modular Style Packages & Visual Element Registries
+
+In addition to mascot rendering, the visual composition pipeline incorporates an extensible, slot-scoped modular style package architecture:
+
+### 1. Style Module Catalog ([`apps/server/src/quiz/visual/styleModules/catalog.ts`](apps/server/src/quiz/visual/styleModules/catalog.ts))
+
+The Style Catalog manages portable, version-controlled style packages organized across five distinct visual slots (`StyleSlot`):
+- `answer-card`: Choice cards, layout grids, and reveal selection states.
+- `question-box`: Question text containers, header pills, and badge styling.
+- `background`: Animated dynamic backgrounds, particle overlays, and ambient color gradients.
+- `counter-badge`: Question counter pills and progress indicators.
+- `thinking-bar`: Countdown timer bars, urgency pulses, and progress animations.
+
+Each module declares a `StyleModuleManifest` (`manifestSchema.ts`) defining:
+- `id`, `slot`, `displayName`, and unique `namespace`.
+- Associated static assets (`assetPaths`).
+- Scoped CSS rules and selectors (`cssSelectors`) rendered with strict namespace isolation (`namespaceCss.ts`).
+- Deterministic catalog snapshots with SHA-256 revision hashes (`catalog-${digest}`), enabling runtime caching, snapshot immutability, and safe dynamic switching.
+
+Built-in modules (`BUILT_IN_STYLE_MODULES` in `builtins.ts`) are registered at startup, and runtime packages can be exported or activated dynamically via `createStyleCatalog` and `renderPortableHtml` (`exportPackage.ts`).
+
+### 2. Visual Element Variant Registries ([`apps/server/src/quiz/visual/elements/`](apps/server/src/quiz/visual/elements/))
+
+Each visual slot is governed by a dedicated variant registry mapping abstract style names to concrete renderers with deterministic fallback guarantees:
+- **Answer Card Registry ([`elements/answerCard/registry.ts`](apps/server/src/quiz/visual/elements/answerCard/registry.ts)):** Maps `glossy_arcade`, `comic_chunky`, `glass_neon`, and `minimal_soft` to `AnswerCardSkin` implementations. Supports revision-aware resolution via `resolveAnswerCardSkin` and generates aggregated CSS via `getAnswerCardSkinsCss`.
+- **Question Box Registry ([`elements/questionBox/registry.ts`](apps/server/src/quiz/visual/elements/questionBox/registry.ts)):** Resolves question box skins (`glossy_arcade`, `comic_chunky`, etc.) with revision-aware lookups and fallback handling.
+- **Background Registry ([`elements/background/registry.ts`](apps/server/src/quiz/visual/elements/background/registry.ts)):** Manages background theme skins, dynamic gradients, and ambient visual components.
+- **Counter Badge Registry ([`elements/counterBadge/registry.ts`](apps/server/src/quiz/visual/elements/counterBadge/registry.ts)):** Manages badge typography, pill geometry, and animation state.
+- **Thinking Bar Registry ([`elements/thinkingBar/registry.ts`](apps/server/src/quiz/visual/elements/thinkingBar/registry.ts)):** Controls progress timer animations, geometry, and countdown color ramp transitions.
+- **Visual Template Registry ([`apps/server/src/quiz/visual/registry.ts`](apps/server/src/quiz/visual/registry.ts)):** Aggregates themes into complete visual compositions (such as `candy_arcade` via `candyArcade.ts`), resolving theme configurations deterministically through `getQuizVisualTemplate`.

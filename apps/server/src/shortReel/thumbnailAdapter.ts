@@ -8,6 +8,10 @@ import { runBoundedPackageProvider } from "./packageProvider.js";
 import { ScriptGenerationError } from "./scriptProvider.js";
 import { requireCompleteShortReelSource } from "../repository/shortReelSourcePolicy.js";
 import type { ImageProvider } from "../providers/index.js";
+import {
+  loadShortReelLocalizationArtifact,
+  type ProductLocalizationArtifact,
+} from "../quiz/bank/localization/productLocalization.js";
 
 export type CoverErrorCode = "INVALID_COVER_SOURCE" | "COVER_GENERATION_FAILED" | "INVALID_DIMENSIONS" | "PROVIDER_ERROR";
 
@@ -25,17 +29,19 @@ export interface CoverGenerationOptions {
   imageProvider?: ImageProvider;
   signal?: AbortSignal;
   timeoutMs?: number;
+  localization?: ProductLocalizationArtifact | null;
 }
 
 /**
  * Compiles a 9:16 portrait prompt suitable for Short-Reel cover generation.
  */
-export function compileCoverPrompt(record: ShortReelRecord): string {
+export function compileCoverPrompt(record: ShortReelRecord, localizedThumbnailText?: string): string {
+  const inSceneQuestion = localizedThumbnailText || record.source.question_text;
   return [
     "9:16 portrait cover art, high resolution 1080x1920, vertical composition.",
     `Title: ${record.topic.title}`,
     `Premise: ${record.topic.premise}`,
-    `In-Scene Question: "${record.source.question_text}"`,
+    `In-Scene Question: "${inSceneQuestion}"`,
     `Canonical answer: ${JSON.stringify(record.source.selected_answer_text)}`,
     ...(record.units.references.last_accepted_payload?.references ?? []).map(
       (reference) =>
@@ -66,7 +72,8 @@ export async function generateReelCoverImage(
 
   if (options?.imageProvider) {
     try {
-      const prompt = compileCoverPrompt(reel);
+      const localization = options?.localization ?? (await loadShortReelLocalizationArtifact(repository, key.channel_id, key.reel_id));
+      const prompt = compileCoverPrompt(reel, localization?.thumbnail_text);
       const provider = options.imageProvider;
       const generated = await runBoundedPackageProvider(
         (signal) => provider.generateReference(prompt, signal),

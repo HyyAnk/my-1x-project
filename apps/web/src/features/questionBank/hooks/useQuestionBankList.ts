@@ -18,7 +18,6 @@ export function useQuestionBankList(options: UseQuestionBankListOptions) {
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [loading, setLoading] = useState(false);
   const [buildingVideo, setBuildingVideo] = useState(false);
-  const [transcreating, setTranscreating] = useState(false);
   const [clearing, setClearing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -219,58 +218,6 @@ export function useQuestionBankList(options: UseQuestionBankListOptions) {
     [fetchQuestions],
   );
 
-  const transcreateQuestion = useCallback(
-    async (questionId: string, targetLanguage: string = "es") => {
-      setTranscreating(true);
-      setError(null);
-      try {
-        const res = await api.transcreateQuestion(questionId, {
-          target_language: targetLanguage,
-          channel_id: filters.channelId || undefined,
-        });
-
-        // Update selectedQuestion if currently selected
-        setSelectedQuestion((prev) => {
-          if (prev && prev.id === questionId) {
-            return {
-              ...prev,
-              translations: {
-                ...(prev.translations || {}),
-                [res.language]: res.content,
-              },
-            };
-          }
-          return prev;
-        });
-
-        // Update questions list in place so table immediately reflects the new translation badge
-        setQuestions((prevList) =>
-          prevList.map((q) => {
-            if (q.id === questionId) {
-              return {
-                ...q,
-                translations: {
-                  ...(q.translations || {}),
-                  [res.language]: res.content,
-                },
-              };
-            }
-            return q;
-          }),
-        );
-
-        return res;
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : "Question translation failed";
-        setError(msg);
-        throw err;
-      } finally {
-        setTranscreating(false);
-      }
-    },
-    [filters.channelId, setSelectedQuestion],
-  );
-
   return {
     questions,
     setQuestions,
@@ -278,7 +225,6 @@ export function useQuestionBankList(options: UseQuestionBankListOptions) {
     setTotalQuestions,
     loading,
     buildingVideo,
-    transcreating,
     clearing,
     error,
     setError,
@@ -287,12 +233,10 @@ export function useQuestionBankList(options: UseQuestionBankListOptions) {
     deleteQuestion,
     clearAllQuestions,
     createOneClickVideo,
-    transcreateQuestion,
     handleCreateQuestion,
     handleUpdateQuestion,
     handleDeleteQuestion: deleteQuestion,
     handleClearQuestions: clearAllQuestions,
     handleBuildVideo: createOneClickVideo,
-    handleTranscreate: transcreateQuestion,
   };
 }

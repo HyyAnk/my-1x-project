@@ -16,6 +16,7 @@ export default tseslint.config(
       "services/**",
       "test-results/**",
       "playwright-report/**",
+      "scripts/archive/**",
     ],
   },
   {
@@ -23,14 +24,6 @@ export default tseslint.config(
     extends: [js.configs.recommended],
     languageOptions: {
       globals: globals.node,
-    },
-  },
-  {
-    files: ["scripts/coordination/monitor/web/**/*.{js,mjs}"],
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
     },
   },
   {

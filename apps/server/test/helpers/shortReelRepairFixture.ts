@@ -20,16 +20,16 @@ export const repairSource = createSourceSnapshot(
     archetype_id: "versus_faceoff",
     domain_id: "science",
     subtopic_id: "speed",
-    language: "English",
+    language: "en",
     status: "approved",
     age_band: "family",
     question: "Which speed is higher?",
     explanation: "Twenty is greater than ten.",
     choices: [
-      { id: "A", text: "20", is_correct: true },
-      { id: "B", text: "10", is_correct: false },
+      { id: "a", text: "20", is_correct: true },
+      { id: "b", text: "10", is_correct: false },
     ],
-    correct_choice_id: "A",
+    correct_choice_id: "a",
   }),
 );
 

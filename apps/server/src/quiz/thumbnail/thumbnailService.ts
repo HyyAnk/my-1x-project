@@ -10,6 +10,7 @@ import { StudioLogger } from "../../logger.js";
 import type { RepositoryService } from "../../repository.js";
 import { planThumbnailWithAI } from "./thumbnailAiPlanner.js";
 import { compileThumbnailPrompt } from "./thumbnailPromptCompiler.js";
+import { loadProductLocalizationArtifact } from "../bank/localization/productLocalization.js";
 import {
   generateThumbnailVariant,
   getEpisodeThumbnailManifest,
@@ -93,6 +94,25 @@ async function loadEpisodeQuestions(
   }
 }
 
+export function applyLocalizedQuestionProjection(
+  questions: Array<{ question: string; choices?: string[]; answer?: string }>,
+  localization: Awaited<ReturnType<typeof loadProductLocalizationArtifact>>,
+): Array<{ question: string; choices?: string[]; answer?: string }> {
+  if (!localization || localization.status !== "applied" || localization.quiz_questions.length === 0) return questions;
+  const localized = localization.quiz_questions;
+  return questions.map((question, index) => {
+    const translated = localized[index];
+    if (!translated) return question;
+    const answer = question.answer;
+    const answerIndex = question.choices?.findIndex((choice) => choice === answer) ?? -1;
+    return {
+      question: translated.question,
+      choices: translated.choices.map((choice) => choice.text),
+      answer: answerIndex >= 0 ? translated.choices[answerIndex]?.text || answer : answer,
+    };
+  });
+}
+
 interface VariantGenerationState {
   assetPath: string | null;
   activeId: string | undefined;
@@ -150,13 +170,17 @@ export async function generateEpisodeThumbnail(
   const episode = await repository.getEpisode(channelId, episodeId);
   const channel = await repository.getChannel(channelId);
   const targetRatio = resolveTargetThumbnailRatio(episode, options.aspectRatio);
+  const localization = await loadProductLocalizationArtifact(repository, channelId, episode.slug);
 
   const mascotProfile = await loadChannelMascot(repository, channelId, episodeId, channel.mascot_id, logger);
-  const questions = await loadEpisodeQuestions(repository, channelId, episodeId);
+  const sourceQuestions = await loadEpisodeQuestions(repository, channelId, episodeId);
+  const questions = applyLocalizedQuestionProjection(sourceQuestions, localization);
+  const localizedSummary = localization?.status === "applied" ? localization.video_description : undefined;
+  const localizedHook = localization?.status === "applied" ? localization.thumbnail_text : undefined;
 
   const plan = await planThumbnailWithAI({
     topicTitle: episode.topic?.title || "Quiz Episode",
-    topicSummary: episode.topic?.premise || episode.topic?.hook || "",
+    topicSummary: localizedSummary || episode.topic?.premise || episode.topic?.hook || "",
     questionCount: episode.quiz_config?.question_count || (questions.length > 0 ? questions.length : 10),
     questionFormat: episode.quiz_config?.quiz_format,
     questions,
@@ -164,7 +188,7 @@ export async function generateEpisodeThumbnail(
     visualStyle: episode.quiz_config?.resolved_visual_style || episode.quiz_config?.visual_style || "pixar_3d",
     colorTheme: mascotProfile?.color_theme,
     layoutOverride,
-    customHookText,
+    customHookText: customHookText ?? localizedHook,
     badgeOverride: badgeOverride || "auto",
     mascotProfile,
     llmClient: options.antigravityClient ?? null,

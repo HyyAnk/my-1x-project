@@ -7,6 +7,7 @@ import { allocateSourceBackedTopicSlots } from "../src/context/bankTopicAllocati
 import { validateTopicCandidateResponse } from "../src/context/topicCandidateValidator.js";
 import { formatSourceBackedTopicPrompt, MAX_SOURCE_CONTEXT_CHARS } from "../src/context/bankTopicPromptBuilder.js";
 import { RepositoryService } from "../src/repository.js";
+import { getLatestTopicRun } from "../src/repository/topics.js";
 
 function makeQuestion(overrides: Partial<BankQuestion> = {}): BankQuestion {
   const id = overrides.id ?? "q1";
@@ -46,7 +47,55 @@ function makeQuestion(overrides: Partial<BankQuestion> = {}): BankQuestion {
 }
 
 describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
+  it("rejects provider responses naming an unallocated slot", () => {
+    const allocation = allocateSourceBackedTopicSlots({ questions: [makeQuestion()], scanStatus: "complete_nonempty", channelId: "ch" });
+    expect(() =>
+      validateTopicCandidateResponse({
+        channelId: "ch",
+        allocatedSlots: allocation.allocatedSlots,
+        rawOutput: [
+          { slot_id: "slot_999", title: "Title", premise: "Premise", hook: "Hook", why_it_fits: "Fit", estimated_potential: "High" },
+        ],
+      }),
+    ).toThrow(/slot/i);
+  });
   describe("RED: allocateSourceBackedTopicSlots", () => {
+    it("does not count the same question twice when inventory projects both policies", () => {
+      const questions = Array.from({ length: 4 }, (_, i) => makeQuestion({ id: `unique_${i}` }));
+      const result = allocateSourceBackedTopicSlots({
+        questions: questions.flatMap((q) => [q, q]),
+        scanStatus: "complete_nonempty",
+        channelId: "ch",
+      });
+      expect(result.allocatedSlots.some((slot) => slot.slot === 1)).toBe(false);
+      for (const slot of result.allocatedSlots) {
+        expect(new Set(slot.sourceBindings.map((binding) => binding.source_question_id)).size).toBe(slot.sourceBindings.length);
+      }
+    });
+    it("does not combine sparse groups or same-named subtopics across domains", () => {
+      const questions = Array.from({ length: 8 }, (_, i) =>
+        makeQuestion({
+          id: `group_${i}`,
+          domain_id: i < 4 ? "space" : "animals",
+          subtopic_id: "facts",
+        }),
+      );
+      const result = allocateSourceBackedTopicSlots({ questions, scanStatus: "complete_nonempty", channelId: "ch" });
+      expect(result.allocatedSlots.some((slot) => slot.slot === 1)).toBe(false);
+      expect(result.shortages.find((slot) => slot.slot_id === "slot_1")?.reason_code).toBe("INSUFFICIENT_GROUP_SOURCES");
+    });
+
+    it("requires every meaningful keyword token rather than one partial match", () => {
+      const questions = Array.from({ length: 8 }, (_, i) => makeQuestion({ id: `space_${i}` }));
+      const result = allocateSourceBackedTopicSlots({
+        questions,
+        scanStatus: "complete_nonempty",
+        channelId: "ch",
+        topicHint: "space dinosaurs",
+      });
+      expect(result.allocatedSlots.some((slot) => slot.slot === 1)).toBe(false);
+    });
+
     it("complete fixture yields three coherent Episode allocations and two Reel allocations with no repeated source ID", () => {
       // 8 deep_trivia for slot 1 (Episode)
       const slot1Questions = Array.from({ length: 8 }, (_, i) =>
@@ -232,6 +281,24 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       expect(slot4Shortage).toBeDefined();
       expect(slot4Shortage?.reason_code).toBe("NO_KEYWORD_MATCH");
     });
+
+    it("reports NO_KEYWORD_MATCH when topicHint consists solely of stopwords", () => {
+      const slot1Questions = Array.from({ length: 8 }, (_, i) => makeQuestion({ id: `q_${i + 1}`, archetype_id: "deep_trivia" }));
+      const result = allocateSourceBackedTopicSlots({
+        questions: slot1Questions,
+        scanStatus: "complete_nonempty",
+        channelId: "channel_1",
+        topicHint: "the and for of in with",
+      });
+      const slot1Shortage = result.shortages.find((s) => s.slot_id === "slot_1");
+      const slot4Shortage = result.shortages.find((s) => s.slot_id === "slot_4");
+      expect(slot1Shortage).toBeDefined();
+      expect(slot1Shortage?.reason_code).toBe("NO_KEYWORD_MATCH");
+      expect(slot4Shortage).toBeDefined();
+      expect(slot4Shortage?.reason_code).toBe("NO_KEYWORD_MATCH");
+      // But discovery slot 5 (deep_trivia Short-Reel) can still allocate questions
+      expect(result.allocatedSlots.some((s) => s.slot === 5)).toBe(true);
+    });
   });
 
   describe("RED: validateTopicCandidateResponse", () => {
@@ -308,7 +375,7 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
           runId: "test_run_3",
           shortages: allocation.shortages,
         }),
-      ).toThrowError(/Missing candidate response for allocated slot/);
+      ).toThrowError(/Candidate response count does not match allocated slots/);
 
       // Duplicated slot response fails
       expect(() =>
@@ -320,6 +387,32 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
           shortages: allocation.shortages,
         }),
       ).toThrowError(/Duplicate candidate response for slot/);
+    });
+
+    it("rejects candidate response when candidate item declares an unknown or conflicting slot_id", () => {
+      const slot1Questions = Array.from({ length: 8 }, (_, i) => makeQuestion({ id: `q_${i + 1}`, archetype_id: "deep_trivia" }));
+      const allocation = allocateSourceBackedTopicSlots({
+        questions: slot1Questions,
+        scanStatus: "complete_nonempty",
+        channelId: "channel_1",
+      });
+
+      expect(() =>
+        validateTopicCandidateResponse({
+          rawOutput: [
+            {
+              slot_id: "slot_unknown",
+              title: "Unknown Slot Candidate",
+              premise: "Premise",
+              why_it_fits: "Fit",
+              hook: "Hook",
+              estimated_potential: "High",
+            },
+          ],
+          allocatedSlots: allocation.allocatedSlots,
+          channelId: "channel_1",
+        }),
+      ).toThrowError(/Unknown allocated slot/);
     });
   });
 
@@ -570,6 +663,198 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       const sourcesMd = await readFile(repo.resolvePath("channels", channel.slug, "episodes", episode.slug, "sources.md"), "utf8");
       expect(sourcesMd).toContain("q_src_1");
       expect(sourcesMd).toContain("q_src_5");
+    });
+
+    it("ensures newer run candidate takes precedence when topic_id appears across multiple runs in listTopics", async () => {
+      const { repo, channelId } = await createTestRepo();
+
+      const run1: TopicRunResult = {
+        run_id: "run_older",
+        target_episode_count: 1,
+        target_short_reel_count: 0,
+        candidates: [
+          {
+            topic_id: "topic_duplicate_across_runs",
+            slot_id: "slot_1",
+            channel_id: channelId,
+            content_kind: "episode",
+            title: "Older Version Title",
+            premise: "Older Premise",
+            why_it_fits: "Older Fits",
+            hook: "Older Hook",
+            estimated_potential: "Medium",
+            generated_at: "2026-09-08T10:00:00.000Z",
+            selected: false,
+            origin: "discovery",
+            quiz_format: "multiple_choice",
+            archetype: "deep_trivia",
+            suggested_layout: "media_left_choices_right",
+            question_count: 3,
+            visual_style: "mixed",
+            age_band: "7-9",
+            source_bindings: [
+              {
+                source_question_id: "q_1",
+                source_hash_version: 1,
+                source_content_hash: "a".repeat(64),
+                projection_provenance: {
+                  source_variant: "native",
+                  resolved_language: "en",
+                  translation_key: null,
+                  translation_provenance: "native",
+                },
+              },
+              {
+                source_question_id: "q_2",
+                source_hash_version: 1,
+                source_content_hash: "b".repeat(64),
+                projection_provenance: {
+                  source_variant: "native",
+                  resolved_language: "en",
+                  translation_key: null,
+                  translation_provenance: "native",
+                },
+              },
+              {
+                source_question_id: "q_3",
+                source_hash_version: 1,
+                source_content_hash: "c".repeat(64),
+                projection_provenance: {
+                  source_variant: "native",
+                  resolved_language: "en",
+                  translation_key: null,
+                  translation_provenance: "native",
+                },
+              },
+            ],
+          },
+        ],
+        shortages: [],
+      };
+
+      await repo.saveTopicRun(channelId, run1);
+      await new Promise((resolve) => setTimeout(resolve, 20));
+
+      const run2: TopicRunResult = {
+        run_id: "run_newer",
+        target_episode_count: 1,
+        target_short_reel_count: 0,
+        candidates: [
+          {
+            topic_id: "topic_duplicate_across_runs",
+            slot_id: "slot_1",
+            channel_id: channelId,
+            content_kind: "episode",
+            title: "Newer Version Title",
+            premise: "Newer Premise",
+            why_it_fits: "Newer Fits",
+            hook: "Newer Hook",
+            estimated_potential: "High",
+            generated_at: "2026-09-08T11:00:00.000Z",
+            selected: false,
+            origin: "discovery",
+            quiz_format: "multiple_choice",
+            archetype: "deep_trivia",
+            suggested_layout: "media_left_choices_right",
+            question_count: 3,
+            visual_style: "mixed",
+            age_band: "7-9",
+            source_bindings: [
+              {
+                source_question_id: "q_1",
+                source_hash_version: 1,
+                source_content_hash: "a".repeat(64),
+                projection_provenance: {
+                  source_variant: "native",
+                  resolved_language: "en",
+                  translation_key: null,
+                  translation_provenance: "native",
+                },
+              },
+              {
+                source_question_id: "q_2",
+                source_hash_version: 1,
+                source_content_hash: "b".repeat(64),
+                projection_provenance: {
+                  source_variant: "native",
+                  resolved_language: "en",
+                  translation_key: null,
+                  translation_provenance: "native",
+                },
+              },
+              {
+                source_question_id: "q_3",
+                source_hash_version: 1,
+                source_content_hash: "c".repeat(64),
+                projection_provenance: {
+                  source_variant: "native",
+                  resolved_language: "en",
+                  translation_key: null,
+                  translation_provenance: "native",
+                },
+              },
+            ],
+          },
+        ],
+        shortages: [],
+      };
+
+      await repo.saveTopicRun(channelId, run2);
+
+      const topics = await repo.listTopics(channelId);
+      expect(topics).toHaveLength(1);
+      expect(topics[0].topic_id).toBe("topic_duplicate_across_runs");
+      expect(topics[0].title).toBe("Newer Version Title");
+      expect(topics[0].run_id).toBe("run_newer");
+
+      const latestRun = await getLatestTopicRun(repo, channelId);
+      expect(latestRun).toBeDefined();
+      expect(latestRun?.run_id).toBe("run_newer");
+      expect(latestRun?.candidates[0].title).toBe("Newer Version Title");
+    });
+
+    it("executes full task-to-storage topic suggestion with allocation and retrieval", async () => {
+      const { repo, channelId } = await createTestRepo();
+
+      const questions = Array.from({ length: 8 }, (_, i) =>
+        makeQuestion({ id: `q_task_${i + 1}`, archetype_id: "deep_trivia" }),
+      );
+      const allocation = allocateSourceBackedTopicSlots({
+        questions,
+        scanStatus: "complete_nonempty",
+        channelId,
+      });
+
+      const mockOutput = JSON.stringify([
+        {
+          slot_id: "slot_1",
+          title: "Galactic Mysteries",
+          premise: "Exploring deep space wonders",
+          why_it_fits: "Science audience engagement",
+          hook: "Can you name the secrets of the galaxy?",
+          estimated_potential: "Very High",
+        },
+      ]);
+
+      const runResult = validateTopicCandidateResponse({
+        rawOutput: mockOutput,
+        allocatedSlots: allocation.allocatedSlots,
+        channelId,
+        shortages: allocation.shortages,
+      });
+
+      await repo.saveTopicRun(channelId, runResult);
+
+      const listed = await repo.listTopics(channelId);
+      expect(listed).toHaveLength(1);
+      expect(listed[0].title).toBe("Galactic Mysteries");
+      expect(listed[0].run_id).toBe(runResult.run_id);
+
+      const latest = await getLatestTopicRun(repo, channelId);
+      expect(latest).toBeDefined();
+      expect(latest?.run_id).toBe(runResult.run_id);
+      expect(latest?.candidates).toHaveLength(1);
+      expect(latest?.shortages.length).toBeGreaterThanOrEqual(1);
     });
   });
 });

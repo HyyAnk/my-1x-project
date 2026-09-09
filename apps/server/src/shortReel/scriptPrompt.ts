@@ -10,6 +10,10 @@ export interface ScriptPromptContext {
   artDirection?: string;
   mascotName?: string;
   styleName?: string;
+  displayProjection?: {
+    question_text?: string;
+    selected_answer_text?: string;
+  };
 }
 
 function sanitizeUntrustedSourceText(text: string): string {
@@ -47,6 +51,8 @@ function formatArchetypeGuidance(archetype: "versus_faceoff" | "deep_trivia"): s
 export function buildScriptGenerationPrompt(context: ScriptPromptContext): string {
   const { topic, source, channelName, artDirection, mascotName, styleName } = context;
   const archetype = source.archetype_id;
+  const questionCueText = context.displayProjection?.question_text || source.question_text;
+  const answerCueText = context.displayProjection?.selected_answer_text || source.selected_answer_text;
 
   return [
     "You are an expert director and screenwriter for short-form 9:16 vertical video micro-stories (Short-Reel).",
@@ -76,11 +82,13 @@ export function buildScriptGenerationPrompt(context: ScriptPromptContext): strin
     "</SOURCE_DATA>",
     "",
     "=== STRUCTURAL AND CONTINUITY CONSTRAINTS ===",
+    "LANGUAGE BOUNDARY: Keep narrative, action, camera, environment, props, continuity, revealed_facts, and audio_direction instructions strictly in English. Only visible quiz cues (text_cues.text and visible_text) may use the requested target language.",
+    "Do not translate or localize production instructions, camera directions, sound design, or continuity handoffs. The target language applies only to audience-facing quiz cue text.",
     "1. Exactly 3 segments: Segment 1 (mode: 'generate', index: 1), Segment 2 (mode: 'extend', index: 2), Segment 3 (mode: 'extend', index: 3).",
     "2. Each segment duration must be a finite number between 8 and 10 seconds (default: 8). Total duration must be 24 to 30 seconds.",
     "3. Text cues MUST be requested inside the video footage (no overlay instructions):",
-    `   - Segment 1 MUST contain a text cue with role "question" and text EXACTLY matching: "${sanitizeUntrustedSourceText(source.question_text)}".`,
-    `   - Segment 3 MUST contain a text cue with role "answer" and text EXACTLY matching: "${sanitizeUntrustedSourceText(source.selected_answer_text)}".`,
+    `   - Segment 1 MUST contain a text cue with role "question" and text EXACTLY matching: "${sanitizeUntrustedSourceText(questionCueText)}".`,
+    `   - Segment 3 MUST contain a text cue with role "answer" and text EXACTLY matching: "${sanitizeUntrustedSourceText(answerCueText)}".`,
     "   - Question cue must be revealed before the answer cue in cumulative timing.",
     "   - Each cue start_seconds must be < end_seconds <= segment duration_seconds.",
     "4. Continuity State Handover:",
@@ -101,7 +109,7 @@ export function buildScriptGenerationPrompt(context: ScriptPromptContext): strin
             text_cues: [
               {
                 role: "question",
-                text: source.question_text,
+                text: questionCueText,
                 start_seconds: 1.0,
                 end_seconds: 6.0,
               },
@@ -114,7 +122,7 @@ export function buildScriptGenerationPrompt(context: ScriptPromptContext): strin
               camera: "Eye-level 9:16 medium close-up",
               environment: "Studio / arena stage",
               props: ["Scoreboard", "Microphone"],
-              visible_text: [source.question_text],
+              visible_text: [questionCueText],
               revealed_facts: ["Question presented"],
             },
             end_state: {
@@ -124,7 +132,7 @@ export function buildScriptGenerationPrompt(context: ScriptPromptContext): strin
               camera: "Dynamic zoom out to wide 9:16 shot",
               environment: "Studio / arena stage",
               props: ["Scoreboard", "Microphone"],
-              visible_text: [source.question_text],
+              visible_text: [questionCueText],
               revealed_facts: ["Question presented"],
             },
           },

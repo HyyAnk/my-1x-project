@@ -42,6 +42,7 @@ export interface BankInventoryScan {
   eligible_by_policy: { episode: number; short_reel: number };
   exclusion_counts: Partial<Record<TopicSourceExclusionReasonCode, number>>;
   eligible_sources: Array<{ policy: "episode" | "short_reel"; candidate: EvaluatedBankQuestionCandidate; source_content_hash: string }>;
+  scanned_questions: BankQuestionWithCooldown[];
   error_code?: "BANK_READ_FAILED" | "BANK_SCAN_TRUNCATED" | "BANK_SCAN_INCONSISTENT";
 }
 
@@ -112,6 +113,7 @@ function createResult(
     eligible_by_policy: eligibleByPolicy,
     exclusion_counts: exclusions,
     eligible_sources: eligibleSources,
+    scanned_questions: scanned,
     ...(errorCode ? { error_code: errorCode } : {}),
   };
 }

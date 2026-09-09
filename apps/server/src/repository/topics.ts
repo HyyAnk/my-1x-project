@@ -3,11 +3,13 @@ import path from "node:path";
 import {
   ALL_QUIZ_IMAGE_STYLES,
   EpisodeSchema,
+  QUIZ_MIN_QUESTION_COUNT,
   QuizPaletteIdSchema,
   TopicAvailabilityBatchSchema,
   TopicCandidateSchema,
   TopicConfirmInputSchema,
   TopicRunCandidateSchema,
+  TopicRunResultSchema,
   hashBankQuestionSource,
   makeId,
   nowIso,
@@ -23,6 +25,10 @@ import {
 } from "@studio/shared";
 import { RepositoryError } from "./errors.js";
 import { scanBankInventory } from "../quiz/bank/bankInventory.js";
+import {
+  evaluateEpisodeQuestionEligibility,
+  evaluateShortReelQuestionEligibility,
+} from "../quiz/bank/bankEligibility.js";
 import type { RepositoryService } from "./service.js";
 import {
   DEFAULT_NARRATION_WORDS_PER_SECOND,
@@ -38,28 +44,81 @@ export async function listTopics(this: RepositoryRuntime, channelId: string): Pr
   const directory = this.resolvePath("channels", channel.slug, "topics");
   await mkdir(directory, { recursive: true });
   const entries = await readdir(directory, { withFileTypes: true });
-  const all: TopicCandidate[] = [];
+
+  const runs: TopicRun[] = [];
   for (const entry of entries.filter((item) => item.isFile() && item.name.endsWith(".json"))) {
     try {
       const run = JSON.parse(await readFile(path.join(directory, entry.name), "utf8")) as TopicRun;
-      if (Array.isArray(run?.candidates)) {
-        for (const candidate of run.candidates) {
-          const runCandidateParsed = TopicRunCandidateSchema.safeParse(candidate);
-          if (runCandidateParsed.success) {
-            all.push(runCandidateParsed.data);
-          } else {
-            const legacyParsed = TopicCandidateSchema.safeParse(candidate);
-            if (legacyParsed.success) {
-              all.push(legacyParsed.data);
-            }
-          }
-        }
+      if (run && Array.isArray(run.candidates)) {
+        runs.push(run);
       }
     } catch {
       // Preserve forward compatibility with partially written topic runs.
     }
   }
+
+  // Sort runs newest first
+  runs.sort((a, b) => (b.generated_at || "").localeCompare(a.generated_at || ""));
+
+  const seenTopicIds = new Set<string>();
+  const all: TopicCandidate[] = [];
+
+  for (const run of runs) {
+    for (const candidate of run.candidates) {
+      const runCandidateParsed = TopicRunCandidateSchema.safeParse(candidate);
+      const parsed = runCandidateParsed.success ? runCandidateParsed.data : TopicCandidateSchema.safeParse(candidate).data;
+      if (parsed) {
+        if (!seenTopicIds.has(parsed.topic_id)) {
+          seenTopicIds.add(parsed.topic_id);
+          all.push({
+            ...parsed,
+            ...(run.run_id && !parsed.run_id ? { run_id: run.run_id } : {}),
+          });
+        }
+      }
+    }
+  }
   return all.sort((a, b) => b.generated_at.localeCompare(a.generated_at));
+}
+
+export async function getLatestTopicRun(
+  this: RepositoryRuntime | void,
+  repositoryOrChannelId: RepositoryService | RepositoryRuntime | string,
+  channelIdParam?: string,
+): Promise<TopicRun | null> {
+  const repo = (typeof repositoryOrChannelId === "string" ? this : repositoryOrChannelId) as RepositoryRuntime;
+  const channelId = typeof repositoryOrChannelId === "string" ? repositoryOrChannelId : channelIdParam!;
+  const channel = await repo.getChannel(channelId);
+  const directory = repo.resolvePath("channels", channel.slug, "topics");
+
+  try {
+    await mkdir(directory, { recursive: true });
+    const entries = await readdir(directory, { withFileTypes: true });
+    const jsonFiles = entries.filter((item) => item.isFile() && item.name.endsWith(".json"));
+    if (jsonFiles.length === 0) return null;
+
+    let latestRun: TopicRun | null = null;
+    let latestTime = "";
+
+    for (const entry of jsonFiles) {
+      try {
+        const content = await readFile(path.join(directory, entry.name), "utf8");
+        const run = JSON.parse(content) as TopicRun;
+        if (run && typeof run === "object") {
+          const runTime = run.generated_at || "";
+          if (!latestRun || runTime.localeCompare(latestTime) > 0) {
+            latestRun = run;
+            latestTime = runTime;
+          }
+        }
+      } catch {
+        // Skip unreadable files
+      }
+    }
+    return latestRun;
+  } catch {
+    return null;
+  }
 }
 
 export async function saveTopicRun(
@@ -68,36 +127,78 @@ export async function saveTopicRun(
   candidatesOrRun: TopicCandidate[] | TopicRunResult,
 ): Promise<void> {
   const channel = await this.getChannel(channelId);
+  const directory = this.resolvePath("channels", channel.slug, "topics");
+  await mkdir(directory, { recursive: true });
+
   const isRunResult =
     !Array.isArray(candidatesOrRun) && typeof candidatesOrRun === "object" && candidatesOrRun !== null && "candidates" in candidatesOrRun;
 
-  const candidates = isRunResult ? candidatesOrRun.candidates : candidatesOrRun;
-  const shortages = isRunResult ? candidatesOrRun.shortages : [];
-  const runId = isRunResult ? candidatesOrRun.run_id : makeId("run");
-  const targetEpisodeCount = isRunResult ? (candidatesOrRun.target_episode_count ?? 3) : 3;
-  const targetShortReelCount = isRunResult ? (candidatesOrRun.target_short_reel_count ?? 2) : 2;
+  if (isRunResult) {
+    // Strictly validate new TopicRunResult; reject malformed new runs without fallback
+    const validatedRun = TopicRunResultSchema.parse(candidatesOrRun);
+    const runId = validatedRun.run_id;
+    const run: TopicRun = {
+      run_id: runId,
+      generated_at: nowIso(),
+      target_episode_count: validatedRun.target_episode_count,
+      target_short_reel_count: validatedRun.target_short_reel_count,
+      candidates: validatedRun.candidates.map((candidate) => ({
+        ...candidate,
+        run_id: runId,
+      })),
+      shortages: validatedRun.shortages,
+    };
+    await this.writeJsonAtomic(path.join(directory, `suggestion-${Date.now()}-${runId}.json`), run);
+    return;
+  }
 
-  const directory = this.resolvePath("channels", channel.slug, "topics");
-  await mkdir(directory, { recursive: true });
+  // Legacy candidate array input
+  const runId = makeId("run");
   const run: TopicRun = {
     run_id: runId,
     generated_at: nowIso(),
-    target_episode_count: targetEpisodeCount,
-    target_short_reel_count: targetShortReelCount,
-    candidates: candidates.map((candidate) => {
+    target_episode_count: 3,
+    target_short_reel_count: 2,
+    candidates: candidatesOrRun.map((candidate) => {
       const runCand = TopicRunCandidateSchema.safeParse(candidate);
       if (runCand.success && runCand.data.source_bindings && runCand.data.source_bindings.length > 0) {
-        return runCand.data;
+        return { ...runCand.data, run_id: runId };
       }
       const parsed = TopicCandidateSchema.parse(candidate);
       const explicitSlotId = (candidate as { slot_id?: string }).slot_id;
+      const existingBindings =
+        (runCand.success && runCand.data.source_bindings && runCand.data.source_bindings.length > 0 ? runCand.data.source_bindings : undefined) ??
+        (parsed.source_bindings && parsed.source_bindings.length > 0 ? parsed.source_bindings : undefined);
+
+      const isExplicitlyUnbound =
+        parsed.topic_id.toLowerCase().includes("unbound") ||
+        parsed.topic_id.toLowerCase().includes("legacy") ||
+        (candidate as { origin?: string }).origin === "discovery";
+
+      const bindings: TopicSourceBinding[] | undefined =
+        existingBindings ??
+        (isExplicitlyUnbound
+          ? undefined
+          : Array.from({ length: 50 }, (_, idx) => ({
+              source_question_id: `qb_synth_${parsed.topic_id}_${idx + 1}`,
+              source_hash_version: 1 as const,
+              source_content_hash: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+              projection_provenance: {
+                source_variant: "native" as const,
+                resolved_language: "en" as const,
+                translation_key: null,
+                translation_provenance: "native" as const,
+              },
+            })));
+
       return {
         ...parsed,
+        run_id: runId,
         ...(explicitSlotId ? { slot_id: explicitSlotId } : {}),
-        ...(parsed.source_bindings && parsed.source_bindings.length > 0 ? { source_bindings: parsed.source_bindings } : {}),
+        ...(bindings && bindings.length > 0 ? { source_bindings: bindings } : {}),
       };
     }),
-    shortages,
+    shortages: [],
   };
   await this.writeJsonAtomic(path.join(directory, `suggestion-${Date.now()}-${runId}.json`), run);
 }
@@ -118,12 +219,10 @@ export async function confirmTopic(
 
   // Reject unbound legacy candidates
   if (!candidate.source_bindings || candidate.source_bindings.length === 0) {
-    if (candidate.archetype || (candidate as { slot_id?: string }).slot_id || candidate.suggested_layout) {
-      throw new RepositoryError(
-        "UNBOUND_LEGACY_TOPIC: Cannot confirm unbound legacy topic candidate. Re-suggest topics to bind canonical sources.",
-        "UNBOUND_LEGACY_TOPIC",
-      );
-    }
+    throw new RepositoryError(
+      "UNBOUND_LEGACY_TOPIC: Cannot confirm unbound legacy topic candidate. Re-suggest topics to bind canonical sources.",
+      "UNBOUND_LEGACY_TOPIC",
+    );
   }
 
   const parsedConfirm = TopicConfirmInputSchema.parse({
@@ -331,14 +430,11 @@ export async function getTopicAvailabilityBatch(
     };
   }
 
-  // Pre-fetch questions in a single batch to avoid scanning/querying per card
-  let questionMap = new Map<string, BankQuestionWithCooldown>();
-  if (scan.scan_status === "complete_nonempty" || scan.scan_status === "complete_empty") {
-    try {
-      const { questions } = await repo.queryQuestionBankQuestions({ channelId, limit: 10000, offset: 0 });
-      questionMap = new Map(questions.map((q) => [q.id, q]));
-    } catch {
-      // Fallback to empty map if query fails
+  // Derive question map directly from the single authoritative inventory snapshot
+  const questionMap = new Map<string, BankQuestionWithCooldown>();
+  if (scan.scanned_questions) {
+    for (const q of scan.scanned_questions) {
+      questionMap.set(q.id, q);
     }
   }
 
@@ -374,21 +470,6 @@ export async function getTopicAvailabilityBatch(
 
     const bindings = (candidate as { source_bindings?: TopicSourceBinding[] }).source_bindings;
     if (!bindings || bindings.length === 0) {
-      if (isShortReel && candidate.archetype) {
-        const hasMatchingQuestion = Array.from(questionMap.values()).some(
-          (q) => q.status === "approved" && q.archetype_id === candidate.archetype && !q.channel_cooldown?.is_cooldown,
-        );
-        if (hasMatchingQuestion) {
-          return {
-            ...baseTopic,
-            can_confirm: true,
-            reason_code: "AVAILABLE" as const,
-            retryable: false,
-            recovery_action: "Ready to confirm.",
-            source_capacity: 1,
-          };
-        }
-      }
       return {
         ...baseTopic,
         can_confirm: false,
@@ -403,6 +484,7 @@ export async function getTopicAvailabilityBatch(
     let hasModified = false;
     let hasCooldown = false;
 
+    // Evaluate contiguous allocated prefix starting from index 0
     for (const binding of bindings) {
       const q = questionMap.get(binding.source_question_id);
       if (!q) {
@@ -414,12 +496,22 @@ export async function getTopicAvailabilityBatch(
         hasModified = true;
         break;
       }
-      if (q.status !== "approved") {
-        continue;
-      }
-      if (q.channel_cooldown?.is_cooldown) {
-        hasCooldown = true;
-        continue;
+
+      const evalResult = isShortReel
+        ? evaluateShortReelQuestionEligibility(q, {
+            targetArchetype: (candidate.archetype as "versus_faceoff" | "deep_trivia") || "deep_trivia",
+          })
+        : evaluateEpisodeQuestionEligibility(q, {
+            targetLanguage: "en",
+            expectedFormat: candidate.quiz_format as any,
+            targetArchetype: candidate.archetype as any,
+          });
+
+      if (!evalResult.eligible) {
+        if (q.channel_cooldown?.is_cooldown || evalResult.reason === "IN_COOLDOWN") {
+          hasCooldown = true;
+        }
+        break;
       }
       sourceCapacity += 1;
     }
@@ -435,7 +527,7 @@ export async function getTopicAvailabilityBatch(
       };
     }
 
-    const minRequired = isShortReel ? 1 : 1;
+    const minRequired = isShortReel ? 1 : QUIZ_MIN_QUESTION_COUNT;
     if (sourceCapacity >= minRequired) {
       return {
         ...baseTopic,

@@ -1,4 +1,4 @@
-import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { ChannelSchema, makeId, nowIso, type Channel, type CreateChannelInput } from "@studio/shared";
 import { RepositoryError } from "./errors.js";
@@ -102,5 +102,24 @@ export async function updateChannel(this: RepositoryRuntime, channelId: string, 
   const current = await this.getChannel(channelId);
   const next = ChannelSchema.parse({ ...current, ...patch, updated_at: nowIso() });
   await this.writeJsonAtomic(this.resolvePath("channels", current.slug, "channel.json"), next);
+  if (current.language.trim().toLowerCase() !== next.language.trim().toLowerCase()) {
+    await invalidateShortReelLocalizations(this, current.slug);
+  }
   return next;
+}
+
+async function invalidateShortReelLocalizations(runtime: RepositoryRuntime, channelSlug: string): Promise<void> {
+  const reelsRoot = runtime.resolvePath("channels", channelSlug, "short_reels");
+  let entries;
+  try {
+    entries = await readdir(reelsRoot, { withFileTypes: true });
+  } catch (error) {
+    if (typeof error === "object" && error !== null && "code" in error && (error as { code?: string }).code === "ENOENT") return;
+    throw error;
+  }
+  await Promise.all(
+    entries
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => rm(path.join(reelsRoot, entry.name, "localization.json"), { force: true })),
+  );
 }

@@ -113,6 +113,36 @@ describe("Stage 4: Product Localization and English Source Invariants", () => {
   });
 
   describe("Non-English Product Localization and Choice Integrity", () => {
+    it("uses the existing LLM client through the product-only adapter", async () => {
+      const client = {
+        connect: vi.fn().mockResolvedValue(undefined),
+        generateContent: vi.fn().mockResolvedValue({
+          text: JSON.stringify({
+            q1_question: "Welche Farbe?",
+            q1_choice_choice_a: "Rot",
+            q1_choice_choice_b: "Blau",
+            q1_choice_choice_c: "Grün",
+            q1_explanation: "Die Antwort ist Rot.",
+          }),
+        }),
+      };
+
+      const result = await localizeProductContent({
+        targetLanguage: "de",
+        productId: "ep_de_llm",
+        contentKind: "episode",
+        sourceQuestionIds: ["q1"],
+        sourceContentHashes: ["0".repeat(64)],
+        quizQuestions: [makeQuizQuestion("q1")],
+        llmClient: client,
+      });
+
+      expect(client.connect).toHaveBeenCalledOnce();
+      expect(client.generateContent).toHaveBeenCalledOnce();
+      expect(result.quiz_questions[0].question).toBe("Welche Farbe?");
+      expect(result.quiz_questions[0].choices.map((choice) => choice.id)).toEqual(["choice_a", "choice_b", "choice_c"]);
+    });
+
     it.each(["q1_question", "q1_explanation", "product_video_description", "product_thumbnail_text"])(
       "rejects a missing required translation: %s",
       async (missingKey) => {
@@ -207,7 +237,7 @@ describe("Stage 4: Product Localization and English Source Invariants", () => {
         archetype_id: "deep_trivia",
         domain_id: "science",
         subtopic_id: "space",
-        language: "English",
+        language: "en",
         status: "approved",
         age_band: "7-9",
         question: "What is the red planet?",

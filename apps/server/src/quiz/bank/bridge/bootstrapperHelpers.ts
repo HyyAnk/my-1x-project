@@ -4,6 +4,7 @@ import {
   ALL_QUIZ_IMAGE_STYLES,
   QuizPaletteIdSchema,
   EpisodeSchema,
+  QUIZ_MIN_QUESTION_COUNT,
   makeId,
   nowIso,
   type Channel,
@@ -94,7 +95,7 @@ export function buildEpisodeRecord(params: BuildEpisodeRecordParams): Episode {
     target_duration_minutes: params.targetDurationMinutes,
     target_word_count: params.targetWordCount,
     quiz_config: {
-      question_count: params.questionCount,
+      question_count: Math.max(QUIZ_MIN_QUESTION_COUNT, params.questionCount),
       quiz_format: params.quizFormat,
       age_band: params.ageBand,
       answer_mode: "voice_and_reveal",

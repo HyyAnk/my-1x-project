@@ -18,7 +18,7 @@ import type { AppState } from "./state.js";
 import { createVoiceWithPreview } from "./voiceHelpers.js";
 import { createEpisodeFromTopicWithBank } from "../quiz/bank/questionBankToQuizBridge.js";
 import { confirmShortReelTopic } from "../shortReel/topicConfirmation.js";
-import { getTopicAvailabilityBatch } from "../repository/topics.js";
+import { getTopicAvailabilityBatch, getLatestTopicRun } from "../repository/topics.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
 
 export type ChannelsRouteDeps = {
@@ -121,9 +121,17 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
       const channelId = (request.params as { channelId: string }).channelId;
       return repository.resetChannelDna(channelId);
     });
-    server.get("/api/channels/:channelId/topics", async (request) => ({
-      topics: await repository.listTopics((request.params as { channelId: string }).channelId),
-    }));
+    server.get("/api/channels/:channelId/topics", async (request) => {
+      const channelId = (request.params as { channelId: string }).channelId;
+      const [topics, latestRun] = await Promise.all([
+        repository.listTopics(channelId),
+        getLatestTopicRun(repository, channelId),
+      ]);
+      return {
+        topics,
+        latest_run: latestRun,
+      };
+    });
     server.get("/api/channels/:channelId/topics/availability", async (request) => {
       const channelId = (request.params as { channelId: string }).channelId;
       return getTopicAvailabilityBatch(repository, channelId);
@@ -159,7 +167,9 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
             question_count: 1,
             visual_style: input.visual_style,
             render_aspect_ratio: input.render_aspect_ratio,
+            target_language: input.target_language,
           },
+          llmClient: deps.llmClient,
         });
         return reply.code(201).send(result);
       }
@@ -174,6 +184,7 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
           topic_id: params.topicId,
           question_count: input.question_count,
           visual_style: input.visual_style,
+          target_language: input.target_language,
           auto_start_pipeline: input.auto_start_pipeline ?? true,
           render_aspect_ratio: input.render_aspect_ratio,
           request_id: input.request_id,

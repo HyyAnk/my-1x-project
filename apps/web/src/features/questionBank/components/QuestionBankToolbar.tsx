@@ -1,5 +1,5 @@
-import { Funnel, Globe, MagnifyingGlass, Plus, Trash, X } from "@phosphor-icons/react";
-import { TARGET_LANGUAGE_OPTIONS, type Channel } from "@studio/shared";
+import { Funnel, MagnifyingGlass, Plus, Trash, X } from "@phosphor-icons/react";
+import type { Channel } from "@studio/shared";
 import type { BankTaxonomy, QuestionBankFilters } from "../types/questionBankUi.types";
 import { useTranslation } from "../../../i18n";
 
@@ -117,24 +117,6 @@ export function QuestionBankToolbar({
             </div>
           )}
 
-          {/* Compact Language Pill */}
-          <div className="qb-lang-pill-container" title={t("questionBank.filters.filterByLanguage")}>
-            <Globe size={15} className="qb-lang-icon" />
-            <select
-              id="qb-lang-select"
-              className="qb-lang-compact-select"
-              value={filters.languageFilter}
-              onChange={(e) => onUpdateFilter("languageFilter", e.target.value)}
-              aria-label={t("questionBank.filters.filterByLanguage")}
-            >
-              <option value="">ALL</option>
-              {TARGET_LANGUAGE_OPTIONS.map((lang) => (
-                <option key={lang.code} value={lang.code}>
-                  {lang.code.toUpperCase()}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
 
         <div className="qb-filters-row-right" style={{ display: "flex", alignItems: "center", gap: "8px" }}>

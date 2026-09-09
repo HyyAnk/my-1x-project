@@ -32,7 +32,6 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
     recalculating,
     generating,
     buildingVideo,
-    transcreating,
     error,
     filters,
     selectedQuestion,
@@ -49,7 +48,6 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
     generateBatch,
     batchJob,
     createOneClickVideo,
-    transcreateQuestion,
   } = useQuestionBank(selectedChannel?.channel_id);
 
   const handleQuickBuildVideo = async (q: BankQuestionWithCooldown) => {
@@ -121,7 +119,6 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
           pageSize={filters.pageSize}
           selectedId={selectedQuestion?.id || null}
           hasChannelSelected={Boolean(filters.channelId)}
-          activeLanguage={filters.languageFilter}
           onSelectQuestion={setSelectedQuestion}
           onEditQuestion={(q) => setModalState({ type: "edit", question: q })}
           onDeleteQuestion={deleteQuestion}
@@ -132,9 +129,7 @@ export function QuestionBankView({ channels, selectedChannel, onQuickBuildVideo 
         <QuestionBankLivePreview
           question={selectedQuestionWithDetails}
           buildingVideo={buildingVideo}
-          transcreating={transcreating}
           onQuickBuildVideo={handleQuickBuildVideo}
-          onTranscreateQuestion={transcreateQuestion}
         />
       </div>
 

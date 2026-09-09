@@ -64,28 +64,7 @@ You are an expert software architect and senior engineer. When generating or ref
 
 ---
 
-## 6. Agent Coordination Protocol & Main-Direct Operating Rules
-
-**Parallel-First Execution:** For every task, assess safe parallel decomposition and default to multiple subagents when it improves end-to-end completion time without reducing quality. Follow [the mandatory provider-neutral policy](docs/agent-coordination/parallel-execution-policy.md) for delegation, ownership, fallback, and integration. Do not wait for the user to request subagents again when the conditions are met.
-
-When working in this repository across multiple agents, chats, or tasks, all agents MUST strictly follow the Agent Coordination Protocol (`docs/agent-coordination/`):
-
-- **Source of Truth:** Read `AGENTS.md`, `docs/agent-coordination/README.md`, `docs/agent-coordination/master-spec.md`, `docs/agent-coordination/phase-roadmap.md`, and the latest handoff summary in `docs/agent-coordination/handoffs/` before performing work. Repo artifacts are the source of truth, not chat history.
-- **Main-Direct Working Mode:** Work directly on the current `main` checkout. Do NOT create git branches or worktrees unless explicitly instructed by the user.
-- **Dirty Workspace Baseline (Mandatory):** Capture the pre-existing workspace baseline (`git status --porcelain`) before making any edits. Never touch, commit, or revert pre-existing dirty files outside your assigned scope.
-- **Zone Ownership & High-Risk Boundaries:** High-risk shared contract areas include `shared-contracts` (exclusive Core Hub), `shared-layout-contracts` (shared-disjoint), and `shared-mascot-contracts` (shared-disjoint). Shared contract modifications must target the specific sub-zone with concrete `--planned-files` to enable parallel multi-agent work. High-risk exclusive areas (`shared-contracts`, `server-pipeline`, `task-status-progress`, `api-contracts`, `artifact-contracts`, `render-inputs`) require exclusive ownership. Do NOT edit outside your declared zone or phase scope; if unexpected changes are required, stop and request claim expansion.
-- **Phase Handoff Deliverables:** Every task or phase MUST complete by generating a handoff summary in `docs/agent-coordination/handoffs/` following `docs/agent-coordination/templates/phase-handoff-summary.md`.
-- **Authenticated Lifecycle:** Before editing, run `node scripts/agent-status.mjs --json`, then create a claim with `node scripts/agent-claim.mjs ... --planned-files <concrete-paths> --json`. Capture the one-time `leaseToken` only in session memory. Wildcards are forbidden in planned files; an empty list claims the whole zone.
-- **Mutations Require The Token:** Pass `--token <lease-token>` to expand, heartbeat, verify, release, and re-baseline. If scope grows, run `agent-expand` and wait for success before editing the added paths.
-- **Re-baseline On Concurrent Drift:** If concurrent released work changed the repository after a claim started (verification/scope fails on files outside the claim), refresh the baseline with `node scripts/agent-rebaseline.mjs --claim <id> --token <lease-token> --json` instead of recreating the claim; re-baselining clears stored verification, so verify again before release.
-- **Verified Release Gate:** Run required checks, then `node scripts/agent-verify-claim.mjs --claim <id> --token <lease-token> --evidence "<checks and results>" --json`. Do not edit after successful verification. Release with `node scripts/agent-release.mjs --claim <id> --token <lease-token> --json`.
-- **Commit Gate:** Do not commit while any implementation claim is active. Release the verified claim first, confirm `agent-status --integrator --json`, then stage only files owned by the completed task. The cooperative `.githooks/pre-commit` gate (active via `git config core.hooksPath .githooks`) blocks staged files owned by unreleased active claims.
-- **Coverage Gate:** Run `node scripts/agent-validate-zones.mjs --json` when product paths or zone definitions change. Integration must reject unmapped paths, overlaps, active unverified claims, or stale verification.
-- **Enforcement Limit:** This protocol cannot prevent an unrestricted process from bypassing the CLI and writing files. Repository instructions, review, and the verification/release/integration gates are the enforcement boundary.
-
----
-
-## 7. Strict English-Only Codebase & System Specification
+## 6. Strict English-Only Codebase & System Specification
 
 - **Absolute Prohibition of Vietnamese in Code & Files:** All code, file contents, file and folder names, comments, docstrings, variable/type/function names, test cases, mock data, commit messages, and documentation within the project MUST be in English. Under no circumstances should Vietnamese (accented or unaccented) be written into any file or filename.
 - **System & UI Language:** The entire system interface, including all UI labels, buttons, dialogs, tooltips, error messages, notifications, and placeholders across the web and server applications, MUST be strictly in English.

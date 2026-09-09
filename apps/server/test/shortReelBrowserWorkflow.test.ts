@@ -6,7 +6,7 @@ import { expect, it } from "vitest";
 import { buildApp } from "../src/app.js";
 import { saveStorageRoot } from "../src/config.js";
 import { repairSource } from "./helpers/shortReelRepairFixture.js";
-import type { ShortReelTopicCandidate } from "@studio/shared";
+import { hashBankQuestionSource, type ShortReelTopicCandidate } from "@studio/shared";
 
 it("creates a real draft from its card, reopens it, and reconnects without duplicate persistence", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "short-reel-browser-"));
@@ -35,6 +35,19 @@ it("creates a real draft from its card, reopens it, and reconnects without dupli
       archetype: "versus_faceoff",
       question_count: 1,
       aspect_ratio: "9:16",
+      source_bindings: [
+        {
+          source_question_id: "repair-source",
+          source_hash_version: 1,
+          source_content_hash: hashBankQuestionSource(repairSource.original_question!),
+          projection_provenance: {
+            source_variant: "native",
+            resolved_language: "en",
+            translation_key: null,
+            translation_provenance: "native",
+          },
+        },
+      ],
     };
     const episode = {
       ...topic,

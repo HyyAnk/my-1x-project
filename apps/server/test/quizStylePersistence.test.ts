@@ -3,10 +3,12 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
+  BankQuestionSchema,
   QuizAssessmentSchema,
   QuizAssetPlanSchema,
   QuizAssetResolutionSchema,
   QuizV2Schema,
+  hashBankQuestionSource,
   type Channel,
   type Episode,
 } from "@studio/shared";
@@ -57,6 +59,9 @@ describe("Quiz style persistence contracts", () => {
         url: `/api/channels/${channel.channel_id}`,
         payload: { default_answer_card_style: "glass_neon", default_background_style: "aurora_glow" },
       });
+      for (let i = 0; i < 8; i++) {
+        await app.repository.saveQuestionBankQuestion(createSampleStyleBankQuestion(i));
+      }
       await app.repository.saveTopicRun(channel.channel_id, topics(channel.channel_id));
       const confirmed = await app.server.inject({
         method: "POST",
@@ -115,7 +120,44 @@ function createChannel(app: StudioApp) {
   });
 }
 
+function createSampleStyleBankQuestion(index: number) {
+  return BankQuestionSchema.parse({
+    id: `q-style-${index}`,
+    archetype_id: "deep_trivia",
+    domain_id: "general_knowledge",
+    subtopic_id: "facts",
+    language: "en",
+    question: `Style question ${index}?`,
+    format: "multiple_choice",
+    choices: [
+      { id: "a", text: "Choice A", is_correct: true },
+      { id: "b", text: "Choice B", is_correct: false },
+      { id: "c", text: "Choice C", is_correct: false },
+    ],
+    correct_choice_id: "a",
+    explanation: "Style explanation",
+    status: "approved",
+    age_band: "family",
+    difficulty: 1,
+    thinking_seconds: 5,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+}
+
 function topics(channelId: string) {
+  const bindings = Array.from({ length: 8 }, (_, i) => ({
+    source_question_id: `q-style-${i}`,
+    source_hash_version: 1 as const,
+    source_content_hash: hashBankQuestionSource(createSampleStyleBankQuestion(i)),
+    projection_provenance: {
+      source_variant: "native" as const,
+      resolved_language: "en" as const,
+      translation_key: null,
+      translation_provenance: "native" as const,
+    },
+  }));
+
   return Array.from({ length: 5 }, (_, index) => ({
     topic_id: `style-topic-${index}`,
     channel_id: channelId,
@@ -127,6 +169,8 @@ function topics(channelId: string) {
     estimated_potential: "High",
     generated_at: "2026-08-31T00:00:00.000Z",
     selected: false,
+    question_count: 8,
+    source_bindings: bindings,
   }));
 }
 

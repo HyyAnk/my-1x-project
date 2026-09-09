@@ -229,6 +229,18 @@ export const ShortReelRecordSchema = z
   })
   .strict();
 
+export const ShortReelDisplayProjectionSchema = z
+  .object({
+    question_text: z.string(),
+    selected_answer_text: z.string(),
+    explanation: z.string().optional(),
+    video_description: z.string().optional(),
+    thumbnail_text: z.string().optional(),
+  })
+  .strict();
+
+export type ShortReelDisplayProjection = z.infer<typeof ShortReelDisplayProjectionSchema>;
+
 export const ShortReelEditCommandSchema = z.discriminatedUnion("kind", [
   z
     .object({
@@ -240,6 +252,7 @@ export const ShortReelEditCommandSchema = z.discriminatedUnion("kind", [
     .object({
       kind: z.literal("update_script"),
       script: ReelScriptSchema,
+      display_projection: ShortReelDisplayProjectionSchema.partial().optional(),
     })
     .strict(),
   z
@@ -247,6 +260,7 @@ export const ShortReelEditCommandSchema = z.discriminatedUnion("kind", [
       kind: z.literal("update_segment"),
       segment_index: SegmentIndexSchema,
       segment: ReelSegmentSchema,
+      display_projection: ShortReelDisplayProjectionSchema.partial().optional(),
     })
     .strict(),
   z
@@ -297,6 +311,7 @@ export function validateReelScript(
   script: ReelScript,
   source: z.infer<typeof ShortReelSourceSnapshotSchema>,
   staleSegments: readonly (1 | 2 | 3)[] = [],
+  displayProjection?: Partial<ShortReelDisplayProjection> | null,
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
@@ -307,6 +322,9 @@ export function validateReelScript(
     }
     return { valid: false, errors };
   }
+
+  const expectedQuestionText = displayProjection?.question_text || source.question_text;
+  const expectedAnswerText = displayProjection?.selected_answer_text || source.selected_answer_text;
 
   let questionCueFound = false;
   let firstQuestionTime = Number.POSITIVE_INFINITY;
@@ -324,32 +342,48 @@ export function validateReelScript(
 
       if (cue.role === "question") {
         if (s !== 0) errors.push("Canonical question cues belong in segment 1");
-        if (cue.text === source.question_text) {
+        if (cue.text === expectedQuestionText || cue.text === source.question_text) {
           questionCueFound = true;
           firstQuestionTime = Math.min(firstQuestionTime, globalStart);
         } else {
-          errors.push(`Question cue text "${cue.text}" does not match source question text "${source.question_text}"`);
+          errors.push(
+            displayProjection?.question_text
+              ? `Question cue text "${cue.text}" does not match projected question text "${expectedQuestionText}"`
+              : `Question cue text "${cue.text}" does not match source question text "${source.question_text}"`,
+          );
         }
       }
 
       if (cue.role === "answer") {
         if (s !== 2) errors.push("Canonical answer cues belong in segment 3");
-        if (cue.text === source.selected_answer_text) {
+        if (cue.text === expectedAnswerText || cue.text === source.selected_answer_text) {
           answerCueFound = true;
           firstAnswerTime = Math.min(firstAnswerTime, globalStart);
         } else {
-          errors.push(`Answer cue text "${cue.text}" does not match source answer text "${source.selected_answer_text}"`);
+          errors.push(
+            displayProjection?.selected_answer_text
+              ? `Answer cue text "${cue.text}" does not match projected answer text "${expectedAnswerText}"`
+              : `Answer cue text "${cue.text}" does not match source answer text "${source.selected_answer_text}"`,
+          );
         }
       }
     }
   }
 
   if (!questionCueFound) {
-    errors.push("Script is missing canonical question cue matching source question text");
+    errors.push(
+      displayProjection?.question_text
+        ? "Script is missing question cue matching projected question text"
+        : "Script is missing canonical question cue matching source question text",
+    );
   }
 
   if (!answerCueFound) {
-    errors.push("Script is missing canonical answer cue matching source answer text");
+    errors.push(
+      displayProjection?.selected_answer_text
+        ? "Script is missing answer cue matching projected answer text"
+        : "Script is missing canonical answer cue matching source answer text",
+    );
   }
 
   if (answerCueFound && questionCueFound && firstAnswerTime <= firstQuestionTime) {

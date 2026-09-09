@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Channel, Episode, QuizImageStyle, Task, TopicCandidate } from "@studio/shared";
+import type { Channel, Episode, QuizImageStyle, Task, TopicCandidate, TopicRun } from "@studio/shared";
 import { api } from "../../../api";
 import { isTaskActive, isTaskTerminal, latestTask } from "../../../lib/utils";
 import type { Notice } from "../../../components/types";
@@ -31,6 +31,7 @@ export function useChannelDetail({
   simplifyMode = true,
 }: UseChannelDetailProps) {
   const [topics, setTopics] = useState<TopicCandidate[]>([]);
+  const [latestTopicRun, setLatestTopicRun] = useState<TopicRun | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [confirmingTopicId, setConfirmingTopicId] = useState<string | null>(null);
@@ -107,6 +108,7 @@ export function useChannelDetail({
         dnaHook.setDna(dnaResponse);
         dnaHook.setDnaDraft(dnaResponse.content);
         setTopics(topicResponse.topics);
+        setLatestTopicRun(topicResponse.latest_run ?? null);
         setEpisodes(episodeResponse.episodes);
         void topicAvailabilityHook.refresh();
       } finally {
@@ -224,6 +226,7 @@ export function useChannelDetail({
   return {
     dna: dnaHook.dna,
     topics,
+    latestTopicRun,
     episodes,
     editingDna: dnaHook.editingDna,
     setEditingDna: dnaHook.setEditingDna,

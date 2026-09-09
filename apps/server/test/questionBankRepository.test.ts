@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { RepositoryService } from "../src/repository/service.js";
-import type { BankQuestion, BankTranslationContent } from "@studio/shared";
+import { writeSubtopicBatch } from "../src/repository/quiz/bank/bankBatchStorage.js";
+import type { BankQuestion, BankSubtopicBatch } from "@studio/shared";
 
 describe("QuestionBankRepository & Channel Cooldown Engine", () => {
   let tempDir: string;
@@ -149,6 +150,7 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
       difficulty: 1,
       tags: ["test", "crud"],
       status: "approved",
+      language: "en",
     };
 
     // 1. Save new question
@@ -168,73 +170,83 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
     expect(fetchedAfter).toBeNull();
   });
 
-  it("saves and caches multilingual translations atomically in subtopic batch JSON", async () => {
-    const questionId = "VFM-NAT-OCN-0001";
-    const original = await repo.getQuestionBankQuestion(questionId);
-    expect(original).toBeDefined();
+  it("rejects missing and foreign-language question writes before touching storage", async () => {
+    const baseQuestion = await repo.getQuestionBankQuestion("VFM-NAT-OCN-0001");
+    expect(baseQuestion).toBeDefined();
+    const batchPath = path.join(repo.roots.runtime, "question_bank", "verdict_true_false", "nature_animals", "marine_life.json");
+    const before = await readFile(batchPath, "utf8");
 
-    const esTranslation: BankTranslationContent = {
-      language: "es",
-      question: "¿Es la ballena azul el animal más grande del planeta?",
-      choices: [
-        { id: "A", text: "VERDADERO" },
-        { id: "B", text: "FALSO" },
-      ],
-      explanation: "La ballena azul puede medir más de 30 metros y pesar 200 toneladas.",
-      fun_fact: "El corazón de una ballena azul pesa como un auto compacto.",
-      verified: true,
-    };
-
-    // 1. Save translation for existing question
-    const updated = await repo.saveQuestionBankTranslation(questionId, esTranslation);
-    expect(updated).toBeDefined();
-    expect(updated?.translations?.es).toBeDefined();
-    expect(updated?.translations?.es?.question).toContain("ballena azul");
-    expect(updated?.translations?.es?.verified).toBe(true);
-
-    // 2. Fetch via getQuestionBankQuestion to confirm persistence
-    const refetched = await repo.getQuestionBankQuestion(questionId);
-    expect(refetched?.translations?.es).toBeDefined();
-    expect(refetched?.translations?.es?.explanation).toContain("30 metros");
-
-    // 3. Attempting to save translation for non-existent question returns null
-    const nonExistent = await repo.saveQuestionBankTranslation("NON-EXISTENT-999", esTranslation);
-    expect(nonExistent).toBeNull();
+    await expect(repo.saveQuestionBankQuestion({ ...baseQuestion!, id: "MISSING-LANGUAGE", language: undefined })).rejects.toMatchObject({
+      code: "BANK_ENGLISH_ONLY",
+    });
+    await expect(repo.saveQuestionBankQuestion({ ...baseQuestion!, id: "FOREIGN-LANGUAGE", language: "es" })).rejects.toMatchObject({
+      code: "BANK_ENGLISH_ONLY",
+    });
+    expect(await readFile(batchPath, "utf8")).toBe(before);
   });
 
-  it("filters questions by hasTranslationFor and supports multilingual keyword search", async () => {
-    await repo.saveQuestionBankTranslation("VFM-NAT-OCN-0001", {
-      language: "es",
-      question: "¿Es la ballena azul el animal más grande del planeta?",
-      choices: [
-        { id: "A", text: "VERDADERO" },
-        { id: "B", text: "FALSO" },
-      ],
-      explanation: "La ballena azul puede medir más de 30 metros y pesar 200 toneladas.",
-      fun_fact: "El corazón de una ballena azul pesa como un auto compacto.",
-      verified: true,
+  it("rejects batch writes when any nested question is not explicitly English", async () => {
+    const source = await repo.getQuestionBankQuestion("SPB-NAT-OCN-0001");
+    expect(source).toBeDefined();
+    const batch: BankSubtopicBatch = {
+      schema_version: 2,
+      archetype_id: "speed_blitz",
+      domain_id: "logic_puzzles",
+      subtopic_id: "language-guard",
+      subtopic_title: "Language guard",
+      updated_at: new Date().toISOString(),
+      questions: [{ ...source!, id: "BATCH-FOREIGN", language: "fr" }],
+    };
+
+    await expect(writeSubtopicBatch.call(repo, batch)).rejects.toMatchObject({ code: "BANK_ENGLISH_ONLY" });
+    await expect(readFile(path.join(repo.roots.runtime, "question_bank", "speed_blitz", "logic_puzzles", "language-guard.json"), "utf8")).rejects.toMatchObject({
+      code: "ENOENT",
     });
+  });
 
-    // 1. Query questions that have translation for "es"
-    const esQuestions = await repo.queryQuestionBankQuestions({ hasTranslationFor: "es" });
-    expect(esQuestions.total).toBeGreaterThanOrEqual(1);
-    expect(esQuestions.questions.some((q) => q.id === "VFM-NAT-OCN-0001")).toBe(true);
+  it("rejects all translation persistence without scanning or mutating the bank", async () => {
+    const questionId = "VFM-NAT-OCN-0001";
+    const batchPath = path.join(repo.roots.runtime, "question_bank", "verdict_true_false", "nature_animals", "marine_life.json");
+    const before = await readFile(batchPath, "utf8");
 
-    // 2. Query questions that have translation for a language with no translations (e.g. "th")
-    const thQuestions = await repo.queryQuestionBankQuestions({ hasTranslationFor: "th" });
-    expect(thQuestions.total).toBe(0);
+    await expect(repo.saveQuestionBankTranslation(questionId, {
+      language: "es",
+      question: "Is the blue whale the largest animal?",
+      choices: [
+        { id: "A", text: "True" },
+        { id: "B", text: "False" },
+      ],
+      explanation: "Blue whales can exceed 30 meters.",
+      verified: true,
+    })).rejects.toMatchObject({ code: "BANK_TRANSLATION_WRITES_RETIRED" });
+    expect(await readFile(batchPath, "utf8")).toBe(before);
+  });
 
-    // 3. Search query matching Spanish translation text ("auto compacto")
-    const searchResult = await repo.queryQuestionBankQuestions({ search: "auto compacto" });
-    expect(searchResult.total).toBeGreaterThanOrEqual(1);
-    expect(searchResult.questions[0].id).toBe("VFM-NAT-OCN-0001");
+  it("keeps legacy foreign and missing language metadata readable", async () => {
+    const source = await repo.getQuestionBankQuestion("SPB-NAT-OCN-0001");
+    expect(source).toBeDefined();
+    const legacyRoot = path.join(repo.roots.runtime, "question_bank", "speed_blitz", "nature_animals");
+    const legacyBatch = {
+      schema_version: 2,
+      archetype_id: "speed_blitz",
+      domain_id: "nature_animals",
+      subtopic_id: "legacy-language",
+      subtopic_title: "Legacy language",
+      updated_at: new Date().toISOString(),
+      questions: [
+        { ...source!, id: "LEGACY-FOREIGN", language: "de", subtopic_id: "legacy-language" },
+        (() => {
+          const { language: _language, ...withoutLanguage } = source!;
+          return { ...withoutLanguage, id: "LEGACY-MISSING", subtopic_id: "legacy-language" };
+        })(),
+      ],
+    };
+    await writeFile(path.join(legacyRoot, "legacy-language.json"), JSON.stringify(legacyBatch), "utf8");
 
-    // Clean up test translation
-    const cleanQ = await repo.getQuestionBankQuestion("VFM-NAT-OCN-0001");
-    if (cleanQ) {
-      cleanQ.translations = {};
-      await repo.saveQuestionBankQuestion(cleanQ);
-    }
+    const result = await repo.queryQuestionBankQuestions({ subtopicId: "legacy-language" });
+    expect(result.questions.map((question) => question.id)).toEqual(expect.arrayContaining(["LEGACY-FOREIGN", "LEGACY-MISSING"]));
+    expect(result.questions.find((question) => question.id === "LEGACY-FOREIGN")?.language).toBe("de");
+    expect(result.questions.find((question) => question.id === "LEGACY-MISSING")?.language).toBeUndefined();
   });
 
   it("sorts query results newest first by default", async () => {
@@ -245,6 +257,95 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
       const timeNext = new Date(res.questions[i + 1].updated_at || res.questions[i + 1].created_at || 0).getTime();
       expect(timeCurrent).toBeGreaterThanOrEqual(timeNext);
     }
+  });
+
+  it("resolves single question beyond 10,000 records without being capped by pagination", async () => {
+    const source = await repo.getQuestionBankQuestion("SPB-NAT-OCN-0001");
+    expect(source).toBeDefined();
+
+    // Create a batch containing 50 questions with the target question at the end
+    const batchQuestions: BankQuestion[] = [];
+    for (let i = 0; i < 20; i++) {
+      batchQuestions.push({
+        ...source!,
+        id: `DEEP-Q-${i}`,
+        subtopic_id: "deep_ceiling_test",
+        question: `Deep question index ${i}`,
+      });
+    }
+    const targetQuestionId = "BEYOND-LIMIT-TARGET";
+    batchQuestions.push({
+      ...source!,
+      id: targetQuestionId,
+      subtopic_id: "deep_ceiling_test",
+      question: "Target question beyond earlier queries",
+    });
+
+    const deepBatch: BankSubtopicBatch = {
+      schema_version: 2,
+      archetype_id: "speed_blitz",
+      domain_id: "nature_animals",
+      subtopic_id: "deep_ceiling_test",
+      subtopic_title: "Deep ceiling test",
+      updated_at: new Date().toISOString(),
+      questions: batchQuestions,
+    };
+    await writeSubtopicBatch.call(repo, deepBatch);
+
+    // getQuestionBankQuestion must find the single question reliably
+    const found = await repo.getQuestionBankQuestion(targetQuestionId);
+    expect(found).not.toBeNull();
+    expect(found?.id).toBe(targetQuestionId);
+  });
+
+  it("fails closed on malformed JSON, invalid schema, and inconsistent membership during batch traversal", async () => {
+    const domDir = path.join(repo.roots.runtime, "question_bank", "speed_blitz", "nature_animals");
+
+    // 1. Malformed JSON
+    const malformedPath = path.join(domDir, "corrupt_json.json");
+    await writeFile(malformedPath, "{ not valid json", "utf8");
+    await expect(repo.queryQuestionBankQuestions()).rejects.toMatchObject({
+      code: "BANK_BATCH_CORRUPT",
+    });
+    await rm(malformedPath, { force: true });
+
+    // 2. Schema violation (e.g. invalid archetype)
+    const invalidSchemaPath = path.join(domDir, "bad_schema.json");
+    await writeFile(
+      invalidSchemaPath,
+      JSON.stringify({
+        schema_version: 2,
+        archetype_id: "non_existent_archetype",
+        domain_id: "nature_animals",
+        subtopic_id: "bad_schema",
+        subtopic_title: "Bad Schema",
+        questions: [],
+      }),
+      "utf8",
+    );
+    await expect(repo.queryQuestionBankQuestions()).rejects.toMatchObject({
+      code: "BANK_BATCH_CORRUPT",
+    });
+    await rm(invalidSchemaPath, { force: true });
+
+    // 3. Inconsistent membership (filename does not match subtopic_id)
+    const mismatchedPath = path.join(domDir, "mismatched_filename.json");
+    await writeFile(
+      mismatchedPath,
+      JSON.stringify({
+        schema_version: 2,
+        archetype_id: "speed_blitz",
+        domain_id: "nature_animals",
+        subtopic_id: "actual_subtopic_id",
+        subtopic_title: "Mismatched",
+        questions: [],
+      }),
+      "utf8",
+    );
+    await expect(repo.queryQuestionBankQuestions()).rejects.toMatchObject({
+      code: "BANK_BATCH_INCONSISTENT",
+    });
+    await rm(mismatchedPath, { force: true });
   });
 });
 

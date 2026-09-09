@@ -40,6 +40,30 @@ try {
   SqliteDbClass = null;
 }
 
+async function openReaderLock(bankRoot: string): Promise<SqliteDatabase> {
+  const deadline = Date.now() + 3000;
+  let lastError: unknown;
+  while (Date.now() < deadline) {
+    let db: SqliteDatabase | undefined;
+    try {
+      fs.mkdirSync(bankRoot, { recursive: true });
+      if (!SqliteDbClass) throw new Error("SQLite is unavailable");
+      db = new SqliteDbClass(path.join(bankRoot, ".bank_writer.lock"));
+      db.exec("PRAGMA busy_timeout = 1; CREATE TABLE IF NOT EXISTS lock_lease (id INTEGER PRIMARY KEY); BEGIN; SELECT count(*) FROM lock_lease;");
+      return db;
+    } catch (error) {
+      lastError = error;
+      try {
+        db?.close();
+      } catch {
+        // Ignore failed cleanup before the next bounded acquisition attempt.
+      }
+      await new Promise<void>((resolve) => setTimeout(resolve, 25));
+    }
+  }
+  throw lastError;
+}
+
 export interface BankSnapshotRevision {
   epoch?: string;
   revision: number;
@@ -104,18 +128,25 @@ class QueueBoundary implements BankSerializationBoundary {
       .then(async () => {
         return this.asyncLocalStorage.run({ active: true, type: writes ? "write" : "read" }, async () => {
           let db: SqliteDatabase | undefined;
-          if (writes && this.bankRoot && SqliteDbClass) {
+          if (this.bankRoot && SqliteDbClass) {
             try {
-              fs.mkdirSync(this.bankRoot, { recursive: true });
-              db = new SqliteDbClass(path.join(this.bankRoot, ".bank_writer.lock"));
-              db.exec("PRAGMA busy_timeout = 200; PRAGMA locking_mode = EXCLUSIVE;");
-              db.exec("CREATE TABLE IF NOT EXISTS lock_lease (id INTEGER PRIMARY KEY);");
-              db.exec("BEGIN EXCLUSIVE;");
+              if (writes) {
+                fs.mkdirSync(this.bankRoot, { recursive: true });
+                db = new SqliteDbClass(path.join(this.bankRoot, ".bank_writer.lock"));
+                db.exec("PRAGMA busy_timeout = 200;");
+                db.exec("PRAGMA locking_mode = EXCLUSIVE;");
+                db.exec("CREATE TABLE IF NOT EXISTS lock_lease (id INTEGER PRIMARY KEY);");
+                db.exec("BEGIN EXCLUSIVE;");
+              } else {
+                db = await openReaderLock(this.bankRoot);
+              }
             } catch (err) {
               db?.close();
-              throw new RepositoryError("BANK_WRITER_BUSY: question bank writer lock held by another process", "BANK_WRITER_BUSY", {
-                cause: err,
-              });
+              const code = writes ? "BANK_WRITER_BUSY" : "BANK_READER_BUSY";
+              const message = writes
+                ? "BANK_WRITER_BUSY: question bank writer lock held by another process"
+                : "BANK_READER_BUSY: question bank writer lock held by another process";
+              throw new RepositoryError(message, code, { cause: err });
             }
           }
           try {
@@ -151,6 +182,12 @@ export function getBankSerializationBoundary(runtime: RepositoryRuntime): BankSe
 }
 
 export function createBankSerializationBoundary(bankRoot?: string): BankSerializationBoundary {
+  if (bankRoot !== undefined && !SqliteDbClass) {
+    throw new RepositoryError(
+      "BANK_SQLITE_UNAVAILABLE: cross-process Bank serialization requires the bundled SQLite runtime",
+      "BANK_SQLITE_UNAVAILABLE",
+    );
+  }
   return new QueueBoundary(bankRoot);
 }
 

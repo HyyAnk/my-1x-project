@@ -1,6 +1,7 @@
 import { mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { BankIndexSchema, type BankIndex, type BankQuestion, type MatrixCoverageStats } from "@studio/shared";
+import { RepositoryError } from "../../errors.js";
 import { calculateMatrixCoverageStats } from "../../../quiz/bank/matrixCoverageService.js";
 import type { RepositoryRuntime } from "../../runtime.js";
 import { getQuestionBankPath, getQuestionBankWritePath } from "./bankPathResolver.js";
@@ -42,30 +43,24 @@ export async function deriveQuestionBankIndexInMemory(this: RepositoryRuntime): 
  */
 export async function readQuestionBankIndexUnlocked(this: RepositoryRuntime): Promise<BankIndex> {
   const indexPath = getQuestionBankPath.call(this, "index.json");
+  let rawContent: string;
   try {
-    const raw = JSON.parse(await readFile(indexPath, "utf8")) as unknown;
-    const parsed = BankIndexSchema.parse(raw);
-    if (parsed.current_total > 0) {
-      return {
-        ...parsed,
-        target_total: parsed.target_total >= 20000 ? parsed.target_total : 20000,
-      };
+    rawContent = await readFile(indexPath, "utf8");
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw new RepositoryError(`Failed to read Question Bank index at ${indexPath}`, "BANK_INDEX_READ_FAILED", { cause: error });
     }
-  } catch {
-    // Missing or invalid index file
+    return deriveQuestionBankIndexInMemory.call(this);
   }
 
   try {
-    return await deriveQuestionBankIndexInMemory.call(this);
-  } catch {
+    const parsed = BankIndexSchema.parse(JSON.parse(rawContent) as unknown);
     return {
-      schema_version: 2,
-      target_total: 20000,
-      current_total: 0,
-      by_archetype: {},
-      by_domain: {},
-      updated_at: new Date().toISOString(),
+      ...parsed,
+      target_total: parsed.target_total >= 20000 ? parsed.target_total : 20000,
     };
+  } catch (error) {
+    throw new RepositoryError(`Question Bank index is corrupt at ${indexPath}`, "BANK_INDEX_CORRUPT", { cause: error });
   }
 }
 
@@ -96,11 +91,11 @@ export async function recalculateQuestionBankIndexUnlocked(this: RepositoryRunti
   try {
     const prevPath = getQuestionBankPath.call(this, "index.json");
     const raw = JSON.parse(await readFile(prevPath, "utf8")) as Record<string, unknown>;
-    if (typeof raw?.target_total === "number" && raw.target_total >= 20000) {
-      target_total = raw.target_total;
+    if (typeof raw?.target_total === "number" && raw.target_total >= 20000) target_total = raw.target_total;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw new RepositoryError("Question Bank index is corrupt and cannot be recalculated", "BANK_INDEX_CORRUPT", { cause: error });
     }
-  } catch {
-    // Default to 20,000 target
   }
 
   const updatedIndex: BankIndex = {

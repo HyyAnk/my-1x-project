@@ -1,14 +1,12 @@
 import { useState } from "react";
-import { ArrowsClockwise, Eye, EyeSlash, GameController, Info, Sparkle, VideoCamera } from "@phosphor-icons/react";
+import { Eye, EyeSlash, GameController, Info, Sparkle, VideoCamera } from "@phosphor-icons/react";
 import type { BankQuestionWithCooldown } from "../types/questionBankUi.types";
 import { useTranslation } from "../../../i18n";
 
 export interface QuestionBankLivePreviewProps {
   question: BankQuestionWithCooldown | null;
   buildingVideo?: boolean;
-  transcreating?: boolean;
   onQuickBuildVideo?: (q: BankQuestionWithCooldown) => void;
-  onTranscreateQuestion?: (questionId: string, targetLanguage: string) => Promise<unknown>;
 }
 
 function PreviewEmptyState() {
@@ -153,31 +151,20 @@ function DetailsTabContent({
 export function QuestionBankLivePreview({
   question,
   buildingVideo,
-  transcreating,
   onQuickBuildVideo,
-  onTranscreateQuestion,
 }: QuestionBankLivePreviewProps) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"arcade" | "details">("arcade");
   const [showAnswer, setShowAnswer] = useState(false);
-  const [selectedLang, setSelectedLang] = useState<string>("original");
 
   if (!question) {
     return <PreviewEmptyState />;
   }
 
-  const availableLangs = Object.keys(question.translations || {}).filter((l) => l !== (question.language || "en"));
-  const activeTranslation = selectedLang !== "original" ? question.translations?.[selectedLang] : null;
-
-  const currentQuestionText = activeTranslation ? activeTranslation.question : question.question;
-  const currentChoices = activeTranslation
-    ? activeTranslation.choices.map((c) => {
-        const orig = question.choices?.find((oc) => oc.id === c.id);
-        return { id: c.id, text: c.text, is_correct: orig?.is_correct ?? false };
-      })
-    : question.choices || [];
-  const currentExplanation = activeTranslation ? activeTranslation.explanation : question.explanation;
-  const currentFunFact = activeTranslation ? activeTranslation.fun_fact : question.fun_fact;
+  const currentQuestionText = question.question;
+  const currentChoices = question.choices || [];
+  const currentExplanation = question.explanation;
+  const currentFunFact = question.fun_fact;
 
   return (
     <div className="qb-preview-card">
@@ -237,50 +224,12 @@ export function QuestionBankLivePreview({
           onClick={() => setActiveTab("details")}
         >
           <Info size={15} />
-          <span>{t("questionBank.preview.tabs.details")}</span>
+          <span>Details</span>
         </button>
       </div>
 
       {/* 3. Scrollable Tab Content */}
       <div className="qb-preview-scroll-body">
-        {/* Universal Multilingual Switcher Bar - Available across both tabs */}
-        <div className="qb-preview-lang-bar">
-          <div className="qb-lang-tabs">
-            <button
-              type="button"
-              className={`qb-lang-tab-btn ${selectedLang === "original" ? "is-active" : ""}`}
-              onClick={() => setSelectedLang("original")}
-            >
-              {t("questionBank.preview.originalEn")}
-            </button>
-
-            {availableLangs.map((langCode) => (
-              <button
-                key={langCode}
-                type="button"
-                className={`qb-lang-tab-btn ${selectedLang === langCode ? "is-active" : ""}`}
-                onClick={() => setSelectedLang(langCode)}
-              >
-                <span>{langCode.toUpperCase()}</span>
-                <span className="qb-tab-dot is-cached" />
-              </button>
-            ))}
-          </div>
-
-          {selectedLang !== "original" && onTranscreateQuestion && (
-            <button
-              type="button"
-              className="qb-btn-retranscreate"
-              disabled={transcreating}
-              onClick={() => onTranscreateQuestion(question.id, selectedLang)}
-              title={t("questionBank.preview.retranslateTitle")}
-            >
-              <ArrowsClockwise size={13} className={transcreating ? "qb-spin" : ""} />
-              <span>{transcreating ? t("questionBank.preview.translating") : t("questionBank.preview.retranslateBtn")}</span>
-            </button>
-          )}
-        </div>
-
         {activeTab === "arcade" ? (
           <ArcadeTabContent
             question={question}

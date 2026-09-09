@@ -73,6 +73,7 @@ export const SaveTextInputSchema = z.object({ content: z.string() });
 export const EpisodeTopicConfirmInputSchema = z.object({
   topic_id: z.string().min(1).optional(),
   question_count: z.number().int().min(QUIZ_MIN_QUESTION_COUNT).max(QUIZ_MAX_QUESTION_COUNT).optional(),
+  target_language: z.string().trim().min(2).max(20).optional(),
   visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]).optional(),
   auto_start_pipeline: z.boolean().optional(),
   render_aspect_ratio: z.literal("16:9").optional(),
@@ -83,6 +84,7 @@ export type EpisodeTopicConfirmInput = z.infer<typeof EpisodeTopicConfirmInputSc
 export const ShortReelTopicConfirmInputSchema = z.object({
   topic_id: z.string().min(1).optional(),
   question_count: z.literal(1).optional().default(1),
+  target_language: z.string().trim().min(2).max(20).optional(),
   visual_style: z.enum(["mixed", "pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"]).optional(),
   auto_start_pipeline: z.boolean().optional(),
   render_aspect_ratio: z.literal("9:16").optional(),

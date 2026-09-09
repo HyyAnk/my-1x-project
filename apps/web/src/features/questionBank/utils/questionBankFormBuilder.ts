@@ -24,6 +24,7 @@ export function buildBankQuestion(params: BuildBankQuestionParams): BankQuestion
     archetype_id: params.archetypeId,
     domain_id: params.domainId,
     subtopic_id: params.subtopicId,
+    language: "en",
     question: params.questionText.trim(),
     format: params.format,
     choices: params.choices,

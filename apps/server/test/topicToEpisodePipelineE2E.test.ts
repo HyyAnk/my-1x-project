@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { createStubQuizLlmClient } from "./helpers/stubQuizLlmClient.js";
 import { buildApp, type StudioApp } from "../src/app.js";
-import type { BankQuestion, Task, TopicCandidate } from "@studio/shared";
+import { BankQuestionSchema, hashBankQuestionSource, type BankQuestion, type Task, type TopicCandidate } from "@studio/shared";
 import type { CreateEpisodeFromTopicWithBankResult } from "../src/quiz/bank/questionBankToQuizBridge.js";
 
 type ConfirmEpisodeResponse = CreateEpisodeFromTopicWithBankResult & {
@@ -71,7 +71,7 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
 
   it("confirms a topic creating an episode with pre-populated quiz.json in retention arc order", async () => {
     // 1. Seed 3 questions in Question Bank with distinct difficulties
-    const seedQ1: BankQuestion = {
+    const seedQ1: BankQuestion = BankQuestionSchema.parse({
       id: "E2E-HIST-001",
       archetype_id: "deep_trivia",
       domain_id: "history_ancient",
@@ -79,11 +79,11 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
       question: "Which color dye was so expensive in ancient Rome that only emperors could wear full robes of it?",
       format: "multiple_choice",
       choices: [
-        { id: "A", text: "Tyrian Purple", is_correct: true },
-        { id: "B", text: "Egyptian Blue", is_correct: false },
-        { id: "C", text: "Spartan Red", is_correct: false },
+        { id: "a", text: "Tyrian Purple", is_correct: true },
+        { id: "b", text: "Egyptian Blue", is_correct: false },
+        { id: "c", text: "Spartan Red", is_correct: false },
       ],
-      correct_choice_id: "A",
+      correct_choice_id: "a",
       explanation: "Tyrian purple was harvested from thousands of sea snails and worth more than gold.",
       fun_fact: "A single pound of Tyrian purple dye required crushing 60,000 snails.",
       difficulty: 1, // Hook (diff 1)
@@ -92,9 +92,9 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
       language: "en",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-    };
+    });
 
-    const seedQ2: BankQuestion = {
+    const seedQ2: BankQuestion = BankQuestionSchema.parse({
       id: "E2E-HIST-002",
       archetype_id: "deep_trivia",
       domain_id: "history_ancient",
@@ -102,11 +102,11 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
       question: "Approximately how many miles of paved roads did the Roman Empire construct at its height?",
       format: "multiple_choice",
       choices: [
-        { id: "A", text: "15,000 miles", is_correct: false },
-        { id: "B", text: "50,000 miles", is_correct: true },
-        { id: "C", text: "120,000 miles", is_correct: false },
+        { id: "a", text: "15,000 miles", is_correct: false },
+        { id: "b", text: "50,000 miles", is_correct: true },
+        { id: "c", text: "120,000 miles", is_correct: false },
       ],
-      correct_choice_id: "B",
+      correct_choice_id: "b",
       explanation: "The Romans constructed over 50,000 miles of stone-paved highways linking all provinces.",
       difficulty: 3, // Challenge (diff 3)
       visual_spec: { prompt: "Stone-paved Roman military road cutting through rolling green hills", intent: "question_illustration" },
@@ -114,9 +114,9 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
       language: "en",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-    };
+    });
 
-    const seedQ3: BankQuestion = {
+    const seedQ3: BankQuestion = BankQuestionSchema.parse({
       id: "E2E-HIST-003",
       archetype_id: "deep_trivia",
       domain_id: "history_ancient",
@@ -124,11 +124,11 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
       question: "Which erratic Roman emperor notoriously ordered his soldiers to collect seashells as spoils of war from Neptune?",
       format: "multiple_choice",
       choices: [
-        { id: "A", text: "Nero", is_correct: false },
-        { id: "B", text: "Caligula", is_correct: true },
-        { id: "C", text: "Commodus", is_correct: false },
+        { id: "a", text: "Nero", is_correct: false },
+        { id: "b", text: "Caligula", is_correct: true },
+        { id: "c", text: "Commodus", is_correct: false },
       ],
-      correct_choice_id: "B",
+      correct_choice_id: "b",
       explanation: "Caligula marched his legions to the English Channel and commanded them to gather seashells.",
       fun_fact: "He proclaimed the sea shells as the spoils of the conquered ocean.",
       difficulty: 5, // Climax (diff 5)
@@ -137,7 +137,7 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
       language: "en",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-    };
+    });
 
     await app.repository.saveQuestionBankQuestion(seedQ1);
     await app.repository.saveQuestionBankQuestion(seedQ2);
@@ -161,6 +161,41 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
       subtopic_id: "roman_empire",
       archetype: "deep_trivia",
       suggested_layout: "media_left_choices_right",
+      source_bindings: [
+        {
+          source_question_id: seedQ1.id,
+          source_hash_version: 1,
+          source_content_hash: hashBankQuestionSource(seedQ1),
+          projection_provenance: {
+            source_variant: "native",
+            resolved_language: "en",
+            translation_key: null,
+            translation_provenance: "native",
+          },
+        },
+        {
+          source_question_id: seedQ2.id,
+          source_hash_version: 1,
+          source_content_hash: hashBankQuestionSource(seedQ2),
+          projection_provenance: {
+            source_variant: "native",
+            resolved_language: "en",
+            translation_key: null,
+            translation_provenance: "native",
+          },
+        },
+        {
+          source_question_id: seedQ3.id,
+          source_hash_version: 1,
+          source_content_hash: hashBankQuestionSource(seedQ3),
+          projection_provenance: {
+            source_variant: "native",
+            resolved_language: "en",
+            translation_key: null,
+            translation_provenance: "native",
+          },
+        },
+      ],
     };
 
     await app.repository.saveTopicRun(testChannelId, [
@@ -251,6 +286,99 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
   });
 
   it("submits a PIPELINE task when auto_start_pipeline is true, and skips when false", async () => {
+    const qA: BankQuestion = BankQuestionSchema.parse({
+      id: "E2E-TOGGLE-001",
+      archetype_id: "speed_blitz",
+      domain_id: "science_space",
+      subtopic_id: "general",
+      question: "What is the closest planet to the Sun in our solar system?",
+      format: "multiple_choice",
+      choices: [
+        { id: "a", text: "Mercury", is_correct: true },
+        { id: "b", text: "Venus", is_correct: false },
+        { id: "c", text: "Mars", is_correct: false },
+      ],
+      correct_choice_id: "a",
+      explanation: "Mercury orbits closest to the Sun.",
+      difficulty: 1,
+      status: "approved",
+      language: "en",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+    const qB: BankQuestion = BankQuestionSchema.parse({
+      ...qA,
+      id: "E2E-TOGGLE-002",
+      question: "Which planet in the solar system is famously known as the Red Planet?",
+      difficulty: 3,
+      choices: [
+        { id: "a", text: "Jupiter", is_correct: false },
+        { id: "b", text: "Mars", is_correct: true },
+        { id: "c", text: "Saturn", is_correct: false },
+      ],
+      correct_choice_id: "b",
+      explanation: "Mars appears red due to iron oxide on its surface.",
+    });
+    const qC: BankQuestion = BankQuestionSchema.parse({
+      ...qA,
+      id: "E2E-TOGGLE-003",
+      question: "What is the largest moon orbiting Jupiter?",
+      difficulty: 5,
+      choices: [
+        { id: "a", text: "Europa", is_correct: false },
+        { id: "b", text: "Io", is_correct: false },
+        { id: "c", text: "Ganymede", is_correct: true },
+      ],
+      correct_choice_id: "c",
+      explanation: "Ganymede is the largest moon in the Solar System.",
+    });
+    const qD: BankQuestion = BankQuestionSchema.parse({
+      ...qA,
+      id: "E2E-TOGGLE-004",
+      question: "How many moons does the planet Mars have orbiting around it?",
+      difficulty: 1,
+      choices: [
+        { id: "a", text: "Two moons", is_correct: true },
+        { id: "b", text: "Four moons", is_correct: false },
+        { id: "c", text: "Zero moons", is_correct: false },
+      ],
+      correct_choice_id: "a",
+      explanation: "Mars has two small moons: Phobos and Deimos.",
+    });
+    const qE: BankQuestion = BankQuestionSchema.parse({
+      ...qA,
+      id: "E2E-TOGGLE-005",
+      question: "Which galaxy is the nearest major spiral galaxy to the Milky Way?",
+      difficulty: 3,
+      choices: [
+        { id: "a", text: "Triangulum", is_correct: false },
+        { id: "b", text: "Andromeda", is_correct: true },
+        { id: "c", text: "Sombrero", is_correct: false },
+      ],
+      correct_choice_id: "b",
+      explanation: "Andromeda is approximately 2.5 million light years away.",
+    });
+    const qF: BankQuestion = BankQuestionSchema.parse({
+      ...qA,
+      id: "E2E-TOGGLE-006",
+      question: "What is the name of the brightest star visible in Earth's night sky?",
+      difficulty: 5,
+      choices: [
+        { id: "a", text: "Betelgeuse", is_correct: false },
+        { id: "b", text: "Polaris", is_correct: false },
+        { id: "c", text: "Sirius", is_correct: true },
+      ],
+      correct_choice_id: "c",
+      explanation: "Sirius is the brightest star in the night sky.",
+    });
+
+    await app.repository.saveQuestionBankQuestion(qA);
+    await app.repository.saveQuestionBankQuestion(qB);
+    await app.repository.saveQuestionBankQuestion(qC);
+    await app.repository.saveQuestionBankQuestion(qD);
+    await app.repository.saveQuestionBankQuestion(qE);
+    await app.repository.saveQuestionBankQuestion(qF);
+
     const topic: TopicCandidate = {
       topic_id: "topic-pipeline-toggle",
       channel_id: testChannelId,
@@ -266,11 +394,57 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
       question_count: 3,
       domain_id: "science_space",
       archetype: "speed_blitz",
+      source_bindings: [
+        {
+          source_question_id: qA.id,
+          source_hash_version: 1,
+          source_content_hash: hashBankQuestionSource(qA),
+          projection_provenance: { source_variant: "native", resolved_language: "en", translation_key: null, translation_provenance: "native" },
+        },
+        {
+          source_question_id: qB.id,
+          source_hash_version: 1,
+          source_content_hash: hashBankQuestionSource(qB),
+          projection_provenance: { source_variant: "native", resolved_language: "en", translation_key: null, translation_provenance: "native" },
+        },
+        {
+          source_question_id: qC.id,
+          source_hash_version: 1,
+          source_content_hash: hashBankQuestionSource(qC),
+          projection_provenance: { source_variant: "native", resolved_language: "en", translation_key: null, translation_provenance: "native" },
+        },
+      ],
+    };
+
+    const topic2: TopicCandidate = {
+      ...topic,
+      topic_id: "topic-toggle-2",
+      title: "Auto Pipeline Active",
+      source_bindings: [
+        {
+          source_question_id: qD.id,
+          source_hash_version: 1,
+          source_content_hash: hashBankQuestionSource(qD),
+          projection_provenance: { source_variant: "native", resolved_language: "en", translation_key: null, translation_provenance: "native" },
+        },
+        {
+          source_question_id: qE.id,
+          source_hash_version: 1,
+          source_content_hash: hashBankQuestionSource(qE),
+          projection_provenance: { source_variant: "native", resolved_language: "en", translation_key: null, translation_provenance: "native" },
+        },
+        {
+          source_question_id: qF.id,
+          source_hash_version: 1,
+          source_content_hash: hashBankQuestionSource(qF),
+          projection_provenance: { source_variant: "native", resolved_language: "en", translation_key: null, translation_provenance: "native" },
+        },
+      ],
     };
 
     await app.repository.saveTopicRun(testChannelId, [
       topic,
-      { ...topic, topic_id: "topic-toggle-2", title: "Toggle 2" },
+      topic2,
       { ...topic, topic_id: "topic-toggle-3", title: "Toggle 3" },
       { ...topic, topic_id: "topic-toggle-4", title: "Toggle 4" },
       { ...topic, topic_id: "topic-toggle-5", title: "Toggle 5" },
@@ -290,7 +464,6 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     expect(resNoPipeline.json<{ task: Task | null }>().task).toBeNull();
 
     // Test with auto_start_pipeline: true (default)
-    const topic2 = { ...topic, topic_id: "topic-toggle-2", title: "Auto Pipeline Active" };
     const resWithPipeline = await app.server.inject({
       method: "POST",
       url: `/api/channels/${testChannelId}/topics/${topic2.topic_id}/confirm`,
@@ -316,9 +489,9 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     expect(app.tasks.get(taskId).status).toBe("COMPLETED");
   }, 15000);
 
-  it("handles JIT fallback when Question Bank has no pre-existing candidates", async () => {
+  it("strictly rejects confirming unbound topic candidate via public endpoint", async () => {
     const topic: TopicCandidate = {
-      topic_id: "topic-jit-fallback-test",
+      topic_id: "topic-unbound-endpoint-test",
       channel_id: testChannelId,
       content_kind: "episode",
       origin: "discovery",
@@ -338,10 +511,10 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
 
     await app.repository.saveTopicRun(testChannelId, [
       topic,
-      { ...topic, topic_id: "topic-jit-2", title: "Jit 2" },
-      { ...topic, topic_id: "topic-jit-3", title: "Jit 3" },
-      { ...topic, topic_id: "topic-jit-4", title: "Jit 4" },
-      { ...topic, topic_id: "topic-jit-5", title: "Jit 5" },
+      { ...topic, topic_id: "topic-unbound-2", title: "Unbound 2" },
+      { ...topic, topic_id: "topic-unbound-3", title: "Unbound 3" },
+      { ...topic, topic_id: "topic-unbound-4", title: "Unbound 4" },
+      { ...topic, topic_id: "topic-unbound-5", title: "Unbound 5" },
     ]);
 
     const res = await app.server.inject({
@@ -353,14 +526,8 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
       },
     });
 
-    expect(res.statusCode).toBe(201);
-    const body = res.json<ConfirmEpisodeResponse>();
-
-    // Sourced via JIT fallback
-    expect(body.curated_source).toBe("jit_only");
-    expect(body.quiz.questions).toHaveLength(3);
-    expect(body.director_plan.beats[0].layout_id).toBe("mystery_reveal");
-    expect(body.director_plan.beats[0].archetype).toBe("mystery_reveal");
-    expect(body.director_plan.beats[0].asset_intents).toContain("answer_reveal");
+    expect(res.statusCode).toBe(400);
+    const body = res.json<{ error: string }>();
+    expect(body.error).toContain("UNBOUND_LEGACY_TOPIC");
   });
 });

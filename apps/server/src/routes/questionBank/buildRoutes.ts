@@ -1,12 +1,10 @@
 import type { FastifyInstance } from "fastify";
 import type { QuizImageStyle } from "@studio/shared";
 import { createEpisodeFromQuestionBank } from "../../quiz/bank/questionBankToQuizBridge.js";
-import { transcreateBankQuestion } from "../../quiz/bank/transcreation/transcreationEngine.js";
 import type { QuestionBankRouteDeps } from "./index.js";
 
 /**
- * Registers episode creation and transcreation routes connecting Question Bank
- * questions with video generation pipelines and multi-language adaptation.
+ * Registers episode creation routes connecting Question Bank questions with video generation pipelines.
  */
 export function registerBuildRoutes(server: FastifyInstance, deps: QuestionBankRouteDeps): void {
   // 10. 1-Click Video Shorts Episode Creation
@@ -55,29 +53,11 @@ export function registerBuildRoutes(server: FastifyInstance, deps: QuestionBankR
     }
   });
 
-  // 11. On-Demand Multilingual Transcreation
+  // 11. Retired Bank transcreation endpoint. Keep the route for an explicit migration response.
   server.post("/api/question-bank/:id/transcreate", async (request, reply) => {
-    const { id } = request.params as { id: string };
-    const body = (request.body || {}) as Record<string, unknown>;
-    const targetLanguage = typeof body.target_language === "string" ? body.target_language : "vi";
-    const channelId = typeof body.channel_id === "string" ? body.channel_id : undefined;
-
-    const question = await deps.repository.getQuestionBankQuestion(id, channelId);
-    if (!question) {
-      return reply.code(404).send({ error: `Question not found: ${id}`, code: "QUESTION_NOT_FOUND" });
-    }
-
-    const transResult = await transcreateBankQuestion(question, {
-      targetLanguage,
-      channelTone: typeof body.channel_tone === "string" ? body.channel_tone : undefined,
-      llmClient: deps.llmClient,
-      forceRecreate: body.force === true,
+    return reply.code(410).send({
+      error: "Question Bank transcreation has been retired; Bank content is English-only",
+      code: "BANK_TRANSCREATION_RETIRED",
     });
-
-    if (body.persist !== false) {
-      await deps.repository.saveQuestionBankTranslation(question.id, transResult.content);
-    }
-
-    return reply.code(200).send(transResult);
   });
 }

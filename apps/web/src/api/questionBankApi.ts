@@ -3,7 +3,6 @@ import type {
   BankQuestion,
   BankQuestionWithCooldown,
   BankTaxonomy,
-  BankTranslationContent,
   Episode,
   MatrixCoverageStats,
   Task,
@@ -113,23 +112,4 @@ export const questionBankApi = {
       },
     ),
 
-  transcreateQuestion: (
-    id: string,
-    payload: {
-      target_language?: string;
-      channel_id?: string;
-      channel_tone?: string;
-      force?: boolean;
-      persist?: boolean;
-    } = {},
-  ) =>
-    request<{
-      success: boolean;
-      cached: boolean;
-      language: string;
-      content: BankTranslationContent;
-    }>(`/api/question-bank/${encodeURIComponent(id)}/transcreate`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-    }),
 };

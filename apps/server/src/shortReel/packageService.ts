@@ -8,11 +8,19 @@ import { runPackageAttempt, PackageServiceError } from "./packageAttempt.js";
 import { generateReelScript, ScriptGenerationError, type GenerateReelScriptOptions } from "./scriptService.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
 import type { CompleteShortReelSourceSnapshot } from "./scriptPrompt.js";
+import {
+  extractShortReelDisplayProjection,
+  loadShortReelLocalizationArtifact,
+  type ShortReelDisplayProjection,
+} from "../quiz/bank/localization/productLocalization.js";
 
 export { PackageServiceError, type PackageServiceErrorCode } from "./packageAttempt.js";
 export { exportShortReelPackage } from "./exportService.js";
 
-function createBaselineReelScript(source: ShortReelSourceSnapshot): ReelScript {
+function createBaselineReelScript(source: ShortReelSourceSnapshot, displayProjection?: ShortReelDisplayProjection): ReelScript {
+  const questionCue = displayProjection?.question_text || source.question_text;
+  const answerCue = displayProjection?.selected_answer_text || source.selected_answer_text;
+
   const baselineContinuity = {
     character_identity: "Host",
     position: "Center",
@@ -34,14 +42,17 @@ function createBaselineReelScript(source: ShortReelSourceSnapshot): ReelScript {
         text_cues: [
           {
             role: "question",
-            text: source.question_text,
+            text: questionCue,
             start_seconds: 0.5,
             end_seconds: 4.5,
           },
         ],
         audio_direction: "Upbeat narration and question introduction",
         start_state: structuredClone(baselineContinuity),
-        end_state: structuredClone(baselineContinuity),
+        end_state: {
+          ...structuredClone(baselineContinuity),
+          visible_text: [questionCue],
+        },
       },
       {
         index: 2,
@@ -57,25 +68,37 @@ function createBaselineReelScript(source: ShortReelSourceSnapshot): ReelScript {
           },
         ],
         audio_direction: "Dramatic pause and contemplation tone",
-        start_state: structuredClone(baselineContinuity),
-        end_state: structuredClone(baselineContinuity),
+        start_state: {
+          ...structuredClone(baselineContinuity),
+          visible_text: [questionCue],
+        },
+        end_state: {
+          ...structuredClone(baselineContinuity),
+          visible_text: [questionCue],
+        },
       },
       {
         index: 3,
         mode: "extend",
         duration_seconds: 8,
-        narrative: `Reveal answer: ${source.selected_answer_text}`,
+        narrative: `Reveal answer: ${answerCue}`,
         text_cues: [
           {
             role: "answer",
-            text: source.selected_answer_text,
+            text: answerCue,
             start_seconds: 0.5,
             end_seconds: 4.5,
           },
         ],
         audio_direction: "Celebratory resolution chime",
-        start_state: structuredClone(baselineContinuity),
-        end_state: structuredClone(baselineContinuity),
+        start_state: {
+          ...structuredClone(baselineContinuity),
+          visible_text: [questionCue],
+        },
+        end_state: {
+          ...structuredClone(baselineContinuity),
+          visible_text: [answerCue],
+        },
       },
     ],
   };
@@ -89,7 +112,7 @@ export function generateReelScriptUnit(
   options?: GenerateReelScriptOptions,
 ): Promise<ShortReelRecord> {
   return runPackageAttempt(repository, key, "script", operationId, async (snapshot) => {
-    return { script: await buildGeneratedScript(snapshot, llmClient, options) };
+    return { script: await buildGeneratedScript(snapshot, llmClient, options, repository) };
   });
 }
 
@@ -97,17 +120,27 @@ async function buildGeneratedScript(
   snapshot: ShortReelRecord,
   llmClient?: LLMClient,
   options?: GenerateReelScriptOptions,
+  repository?: RepositoryService,
 ): Promise<ReelScript> {
-  if (!llmClient) return createBaselineReelScript(snapshot.source);
+  const localization = repository
+    ? await loadShortReelLocalizationArtifact(repository, snapshot.channel_id, snapshot.reel_id)
+    : null;
+  const displayProjection = extractShortReelDisplayProjection(snapshot.source, localization);
+
+  if (!llmClient) return createBaselineReelScript(snapshot.source, displayProjection);
   try {
     return await generateReelScript(
-      { topic: snapshot.topic, source: snapshot.source as CompleteShortReelSourceSnapshot },
+      {
+        topic: snapshot.topic,
+        source: snapshot.source as CompleteShortReelSourceSnapshot,
+        displayProjection,
+      },
       llmClient,
       options,
     );
   } catch (error) {
     if (error instanceof ScriptGenerationError && (error.code === "PROVIDER_ERROR" || error.code === "TIMEOUT")) {
-      return createBaselineReelScript(snapshot.source);
+      return createBaselineReelScript(snapshot.source, displayProjection);
     }
     throw error;
   }
@@ -123,7 +156,7 @@ export function generateReelSegmentUnit(
 ): Promise<ShortReelRecord> {
   return runPackageAttempt(repository, key, "script", operationId, async (snapshot) => {
     if (!snapshot.script) throw new PackageServiceError("VALIDATION_FAILED", "Generate a complete script before regenerating one segment.");
-    const generated = await buildGeneratedScript(snapshot, llmClient, options);
+    const generated = await buildGeneratedScript(snapshot, llmClient, options, repository);
     const replacement = generated.segments.find((segment) => segment.index === segmentIndex);
     if (!replacement) throw new PackageServiceError("VALIDATION_FAILED", `Generated script omitted segment ${segmentIndex}.`);
     return {
@@ -151,7 +184,10 @@ export function generateReelPublishingUnit(
   operationId: string,
   options?: PublishingGenerationOptions,
 ) {
-  return runPackageAttempt(repository, key, "publishing", operationId, (snapshot) => generateReelPublishing(snapshot, options));
+  return runPackageAttempt(repository, key, "publishing", operationId, async (snapshot) => {
+    const localization = options?.localization ?? (await loadShortReelLocalizationArtifact(repository, key.channel_id, key.reel_id));
+    return generateReelPublishing(snapshot, { ...options, localization });
+  });
 }
 export interface FullPackageGenerationOptions {
   script?: ReelScript;

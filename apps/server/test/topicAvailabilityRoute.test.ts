@@ -29,7 +29,7 @@ describe("Stage 5: Topic Batch Availability Route", () => {
       archetype_id: "deep_trivia",
       domain_id: "science",
       subtopic_id: "animals",
-      language: "English",
+      language: "en",
       status: "approved",
       age_band: "7-9",
       question: `Question text for ${id}`,
@@ -236,7 +236,7 @@ describe("Stage 5: Topic Batch Availability Route", () => {
       ],
     };
 
-    await app.repository.saveTopicRun(testChannelId, legacyRun as unknown as TopicRunResult);
+    await app.repository.saveTopicRun(testChannelId, legacyRun.candidates as unknown as any);
 
     const res = await app.server.inject({
       method: "GET",

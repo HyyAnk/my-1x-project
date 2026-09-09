@@ -1,4 +1,4 @@
-import type { Channel, ConfirmTopicResponse, QuizImageStyle, Task, TopicAvailabilityBatch, TopicCandidate } from "@studio/shared";
+import type { Channel, ConfirmTopicResponse, QuizImageStyle, Task, TopicAvailabilityBatch, TopicCandidate, TopicRun } from "@studio/shared";
 import { request } from "./client";
 
 export const channelApi = {
@@ -13,7 +13,7 @@ export const channelApi = {
   generateDna: (id: string) => request<{ task: Task }>(`/api/channels/${id}/dna/generate`, { method: "POST", body: "{}" }),
   resetDnaTemplate: (id: string) =>
     request<{ content: string; path: string; modified_at: string }>(`/api/channels/${id}/dna/reset`, { method: "POST", body: "{}" }),
-  topics: (id: string) => request<{ topics: TopicCandidate[] }>(`/api/channels/${id}/topics`),
+  topics: (id: string) => request<{ topics: TopicCandidate[]; latest_run?: TopicRun | null }>(`/api/channels/${id}/topics`),
   topicAvailability: (id: string, options?: { signal?: AbortSignal }) =>
     request<TopicAvailabilityBatch>(`/api/channels/${id}/topics/availability`, { signal: options?.signal }),
   suggestTopics: (id: string, topicHint?: string) =>

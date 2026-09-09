@@ -18,6 +18,13 @@ export function registerCrudRoutes(server: FastifyInstance, deps: QuestionBankRo
       });
     }
 
+    if (parsed.data.language !== "en") {
+      return reply.code(400).send({
+        error: "Question Bank writes require explicit language 'en'",
+        code: "BANK_ENGLISH_ONLY",
+      });
+    }
+
     const saved = await deps.repository.saveQuestionBankQuestion(parsed.data);
     return reply.code(201).send({ question: saved });
   });
@@ -39,6 +46,13 @@ export function registerCrudRoutes(server: FastifyInstance, deps: QuestionBankRo
         error: "Invalid question data",
         code: "VALIDATION_ERROR",
         issues: parsed.error.issues,
+      });
+    }
+
+    if (parsed.data.language !== "en") {
+      return reply.code(400).send({
+        error: "Question Bank writes require explicit language 'en'",
+        code: "BANK_ENGLISH_ONLY",
       });
     }
 

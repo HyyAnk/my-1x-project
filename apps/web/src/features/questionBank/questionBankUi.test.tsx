@@ -9,6 +9,7 @@ import { QuestionBankLivePreview } from "./components/QuestionBankLivePreview";
 import { QuestionBankAiGenerateModal } from "./components/QuestionBankAiGenerateModal";
 import { QuestionBankTargetProgressBar } from "./components/QuestionBankTargetProgressBar";
 import { getMilestoneProgress } from "./utils/questionBankMilestones";
+import { buildBankQuestion } from "./utils/questionBankFormBuilder";
 import type { QuestionBankFilters } from "./types/questionBankUi.types";
 
 function renderWithLanguage(ui: React.ReactElement, lang: string = "en") {
@@ -81,6 +82,30 @@ const mockQuestion: BankQuestionWithCooldown = {
 };
 
 describe("Question Bank Studio UI Components", () => {
+  it("builds new manual questions with explicit English metadata", () => {
+    const question = buildBankQuestion({
+      archetypeId: "speed_blitz",
+      domainId: "logic_puzzles",
+      subtopicId: "tricky_riddles",
+      questionText: "Which answer is correct?",
+      format: "multiple_choice",
+      choices: [
+        { id: "A", text: "Correct", is_correct: true },
+        { id: "B", text: "Wrong", is_correct: false },
+        { id: "C", text: "Also wrong", is_correct: false },
+      ],
+      explanation: "The first answer is correct.",
+      funFact: "Facts make quizzes memorable.",
+      visualPrompt: "",
+      difficulty: 2,
+      thinkingSeconds: 4,
+      ageBand: "family",
+    });
+
+    expect(question.language).toBe("en");
+    expect(question.translations).toBeUndefined();
+  });
+
   it("QuestionBankHeaderStats renders current count, progress bar, and buttons in English", () => {
     const onRecalculate = vi.fn();
     const onOpenAiModal = vi.fn();
@@ -140,7 +165,6 @@ describe("Question Bank Studio UI Components", () => {
     expect(screen.getByPlaceholderText(/Search by question prompt/)).toBeDefined();
     expect(screen.getByText(/25 questions found/)).toBeDefined();
     expect(screen.getByLabelText("Domain:")).toBeDefined();
-    expect(screen.getByLabelText("Filter by Language")).toBeDefined();
 
     const searchInput = screen.getByPlaceholderText(/Search by question prompt/);
     fireEvent.change(searchInput, { target: { value: "space" } });
@@ -149,17 +173,6 @@ describe("Question Bank Studio UI Components", () => {
     const domainSelect = screen.getByLabelText("Domain:");
     fireEvent.change(domainSelect, { target: { value: "logic_puzzles" } });
     expect(onUpdateFilter).toHaveBeenCalledWith("domainId", "logic_puzzles");
-
-    const langSelect = screen.getByLabelText<HTMLSelectElement>("Filter by Language");
-    expect(langSelect.options.length).toBe(11); // ALL + 10 canonical channel languages
-    const optionValues = Array.from(langSelect.options).map((o) => o.value);
-    expect(optionValues).toContain("en");
-    expect(optionValues).toContain("de");
-    expect(optionValues).toContain("ja");
-    expect(optionValues).not.toContain("vi");
-
-    fireEvent.change(langSelect, { target: { value: "de" } });
-    expect(onUpdateFilter).toHaveBeenCalledWith("languageFilter", "de");
 
     const addBtn = screen.getByText("Add Question");
     fireEvent.click(addBtn);
@@ -228,9 +241,8 @@ describe("Question Bank Studio UI Components", () => {
     expect(onQuickBuildVideo).toHaveBeenCalledWith(mockQuestion);
   });
 
-  it("QuestionBankLivePreview switches languages and triggers on-demand transcreation", () => {
+  it("QuestionBankLivePreview always renders the English source", () => {
     const onQuickBuildVideo = vi.fn();
-    const onTranscreateQuestion = vi.fn().mockResolvedValue({ success: true });
 
     const englishQuestion: BankQuestionWithCooldown = {
       ...mockQuestion,
@@ -256,32 +268,14 @@ describe("Question Bank Studio UI Components", () => {
       },
     };
 
-    renderWithLanguage(
-      <QuestionBankLivePreview
-        question={englishQuestion}
-        onQuickBuildVideo={onQuickBuildVideo}
-        onTranscreateQuestion={onTranscreateQuestion}
-      />,
-      "en",
-    );
+    renderWithLanguage(<QuestionBankLivePreview question={englishQuestion} onQuickBuildVideo={onQuickBuildVideo} />, "en");
 
     // Initial view is original English
     expect(screen.getByText("Which planet is known as the Red Planet?")).toBeDefined();
     expect(screen.getByText("Mars")).toBeDefined();
 
-    // Switch to Spanish tab
-    const esTab = screen.getByText("ES");
-    fireEvent.click(esTab);
-
-    // Should now display the cached Spanish translation
-    expect(screen.getByText("¿Qué planeta se conoce como el Planeta Rojo?")).toBeDefined();
-    expect(screen.getByText("Marte")).toBeDefined();
-    expect(screen.getByText("Venus")).toBeDefined();
-
-    // Retranscreate button
-    const retransBtn = screen.getByTitle("Retranslate with AI to refresh wording");
-    fireEvent.click(retransBtn);
-    expect(onTranscreateQuestion).toHaveBeenCalledWith("SPB-LOG-001", "es");
+    expect(screen.queryByText("¿Qué planeta se conoce como el Planeta Rojo?")).toBeNull();
+    expect(screen.queryByText("Retranslate with AI to refresh wording")).toBeNull();
   });
 
   it("renders components in English even when legacy language is set to 'vi'", () => {
@@ -331,7 +325,6 @@ describe("Question Bank Studio UI Components", () => {
     // Toolbar in English
     expect(screen.getByPlaceholderText(/Search by question prompt/)).toBeDefined();
     expect(screen.getByLabelText("Domain:")).toBeDefined();
-    expect(screen.getByLabelText("Filter by Language")).toBeDefined();
     expect(screen.getByText("Add Question")).toBeDefined();
   });
 

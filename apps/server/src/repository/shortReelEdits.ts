@@ -33,7 +33,7 @@ export function applyShortReelEdit(updated: ShortReelRecord, validatedCommand: S
       break;
     }
     case "update_script": {
-      const validation = validateReelScript(validatedCommand.script, updated.source);
+      const validation = validateReelScript(validatedCommand.script, updated.source, [], validatedCommand.display_projection);
       if (!validation.valid) {
         throw new RepositoryError(`Invalid script: ${validation.errors.join("; ")}`, "INVALID_SCRIPT");
       }
@@ -58,7 +58,7 @@ export function applyShortReelEdit(updated: ShortReelRecord, validatedCommand: S
           ...invalidatedDownstreamSegments(validatedCommand.segment_index),
         ]),
       ];
-      const validation = validateReelScript(candidateScript, updated.source, stale);
+      const validation = validateReelScript(candidateScript, updated.source, stale, validatedCommand.display_projection);
       if (!validation.valid) {
         throw new RepositoryError(`Invalid script after segment update: ${validation.errors.join("; ")}`, "INVALID_SCRIPT");
       }

@@ -2,7 +2,7 @@ import { mkdtemp, mkdir, rm, writeFile, readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { BankQuestion, EpisodeTopicCandidate, ShortReelTopicCandidate } from "@studio/shared";
+import { hashBankQuestionSource, type BankQuestion, type EpisodeTopicCandidate, type ShortReelTopicCandidate } from "@studio/shared";
 import { RepositoryService } from "../src/repository/service.js";
 import { confirmShortReelTopic } from "../src/shortReel/topicConfirmation.js";
 import { serializeTopicRunOperation } from "../src/repository/topicSelectionProjection.js";
@@ -43,9 +43,9 @@ function seedBankQuestions(repo: RepositoryService): Promise<BankQuestion[]> {
     subtopic_id: "predators",
     question: "Which cat has greater muscle mass?",
     explanation: "Tigers have denser muscular frames than lions.",
-    format: "multiple_choice",
+    format: "true_false",
     status: "approved",
-    language: "English",
+    language: "en",
     correct_choice_id: "c1",
     choices: [
       { id: "c1", text: "Tiger" },
@@ -68,7 +68,7 @@ function seedBankQuestions(repo: RepositoryService): Promise<BankQuestion[]> {
     explanation: "Uranus has an extreme axial tilt of approximately 98 degrees.",
     format: "multiple_choice",
     status: "approved",
-    language: "English",
+    language: "en",
     correct_choice_id: "c1",
     choices: [
       { id: "c1", text: "Uranus" },
@@ -257,7 +257,7 @@ describe("Task B3: Durable Topic Selection Projection and Recovery", () => {
 
   it("repairs incomplete projection when confirming an already-persisted Short-Reel", async () => {
     const { repo, channelId, root: _root } = await createTestEnv();
-    await seedBankQuestions(repo);
+    const [q1] = await seedBankQuestions(repo);
 
     const topic: ShortReelTopicCandidate = {
       topic_id: "sr-topic-repair",
@@ -275,6 +275,19 @@ describe("Task B3: Durable Topic Selection Projection and Recovery", () => {
       aspect_ratio: "9:16",
       origin: "keyword",
       domain_id: "nature_animals",
+      source_bindings: [
+        {
+          source_question_id: q1.id,
+          source_hash_version: 1,
+          source_content_hash: hashBankQuestionSource(q1),
+          projection_provenance: {
+            source_variant: "native",
+            resolved_language: "en",
+            translation_key: null,
+            translation_provenance: "native",
+          },
+        },
+      ],
     };
 
     const dummy1 = {

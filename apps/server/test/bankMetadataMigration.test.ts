@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rename, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { RepositoryService } from "../src/repository/service.js";
@@ -245,5 +245,84 @@ describe("Question Bank language migration", () => {
     );
     const persisted = JSON.parse(await readFile(savedManifestPath, "utf8")) as { status: string };
     expect(persisted.status).toBe("applied");
+  });
+
+  it("rejects a Bank directory junction that redirects migration reads outside the configured root", async () => {
+    const fixture = await createFixture();
+    const redirectedBank = path.join(fixture.root, "redirected-bank");
+    await rename(fixture.bankRoot, redirectedBank);
+    await symlink(redirectedBank, fixture.bankRoot, "junction");
+    const repository = new RepositoryService(fixture.root, fixture.root);
+
+    await expect(previewBankLanguageMigration(repository, { migrationId: "junction-bank-test" })).rejects.toThrow(
+      /symlink|junction|unsafe|root/i,
+    );
+  });
+
+  it("rejects an index symlink during preview", async () => {
+    const fixture = await createFixture();
+    const redirectedIndex = path.join(fixture.root, "redirected-index.json");
+    await rename(path.join(fixture.bankRoot, "index.json"), redirectedIndex);
+    await symlink(redirectedIndex, path.join(fixture.bankRoot, "index.json"), "file");
+    const repository = new RepositoryService(fixture.root, fixture.root);
+
+    await expect(previewBankLanguageMigration(repository, { migrationId: "symlink-index-test" })).rejects.toThrow(
+      /symlink|junction|unsafe|root/i,
+    );
+  });
+
+  it("rejects a backup junction before migration writes can escape the migration root", async () => {
+    const fixture = await createFixture();
+    const repository = new RepositoryService(fixture.root, fixture.root);
+    const preview = await previewBankLanguageMigration(repository, { migrationId: "junction-backup-test" });
+    const backupRoot = path.join(path.dirname(fixture.bankRoot), "question_bank_migrations", preview.migrationId, "backup");
+    const redirectedBackup = path.join(fixture.root, "redirected-backup");
+    await mkdir(redirectedBackup, { recursive: true });
+    await mkdir(path.dirname(backupRoot), { recursive: true });
+    await symlink(redirectedBackup, backupRoot, "junction");
+
+    await expect(backupBankLanguageMigration(repository, preview)).rejects.toThrow(/symlink|junction|unsafe|root/i);
+  });
+
+  it("rejects a source file symlink during apply even when its bytes match the manifest", async () => {
+    const fixture = await createFixture();
+    const repository = new RepositoryService(fixture.root, fixture.root);
+    const preview = await previewBankLanguageMigration(repository, { migrationId: "symlink-source-test" });
+    const backup = await backupBankLanguageMigration(repository, preview);
+    const redirectedSource = path.join(fixture.root, "redirected-source.json");
+    await rename(fixture.batchPath, redirectedSource);
+    await symlink(redirectedSource, fixture.batchPath, "file");
+
+    await expect(applyBankLanguageMigration(repository, backup.manifest)).rejects.toThrow(/symlink|junction|unsafe|root/i);
+  });
+
+  it("rejects a manifest symlink before apply can mutate the Bank", async () => {
+    const fixture = await createFixture();
+    const repository = new RepositoryService(fixture.root, fixture.root);
+    const preview = await previewBankLanguageMigration(repository, { migrationId: "symlink-manifest-test" });
+    const backup = await backupBankLanguageMigration(repository, preview);
+    const redirectedManifest = path.join(fixture.root, "redirected-manifest.json");
+    const manifestBytes = await readFile(backup.manifestPath);
+    await writeFile(redirectedManifest, manifestBytes);
+    await rm(backup.manifestPath);
+    await symlink(redirectedManifest, backup.manifestPath, "file");
+
+    await expect(applyBankLanguageMigration(repository, backup.manifest)).rejects.toThrow(/symlink|junction|unsafe|root/i);
+    expect(JSON.parse(await readFile(fixture.batchPath, "utf8")).questions[0].language).toBe("");
+  });
+
+  it("rejects a backup file symlink during rollback", async () => {
+    const fixture = await createFixture();
+    const repository = new RepositoryService(fixture.root, fixture.root);
+    const preview = await previewBankLanguageMigration(repository, { migrationId: "symlink-rollback-test" });
+    const backup = await backupBankLanguageMigration(repository, preview);
+    await applyBankLanguageMigration(repository, backup.manifest);
+
+    const redirectedBackup = path.join(fixture.root, "redirected-rollback-backup.json");
+    await writeFile(redirectedBackup, await readFile(backup.files[0].backupPath));
+    await rm(backup.files[0].backupPath);
+    await symlink(redirectedBackup, backup.files[0].backupPath, "file");
+
+    await expect(rollbackBankLanguageMigration(repository, backup.manifest)).rejects.toThrow(/symlink|junction|unsafe|root/i);
   });
 });

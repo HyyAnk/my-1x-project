@@ -246,6 +246,7 @@ export interface ValidateTopicResponseInput {
 export function validateTopicCandidateResponse(input: ValidateTopicResponseInput): TopicRunResult {
   const { rawOutput, allocatedSlots, channelId, runId, shortages = [] } = input;
   const rawList = extractRawCandidates(rawOutput);
+  const allowedSlots = new Set(allocatedSlots.map((slot) => slot.slotId));
 
   // Check if rawList has duplicate responses for the same slot
   const seenRawSlots = new Set<string>();
@@ -254,6 +255,7 @@ export function validateTopicCandidateResponse(input: ValidateTopicResponseInput
       const sId = (item as Record<string, unknown>).slot_id ?? (item as Record<string, unknown>).slotId;
       if (typeof sId === "string" && sId.trim()) {
         const normalizedSlot = sId.trim();
+        if (!allowedSlots.has(normalizedSlot)) throw new Error(`Unknown allocated slot "${normalizedSlot}"`);
         if (seenRawSlots.has(normalizedSlot)) {
           throw new Error(`Duplicate candidate response for slot "${normalizedSlot}"`);
         }
@@ -263,21 +265,39 @@ export function validateTopicCandidateResponse(input: ValidateTopicResponseInput
   }
 
   const seenSlots = new Set<string>();
+  if (rawList.length !== allocatedSlots.length) {
+    throw new Error("Candidate response count does not match allocated slots");
+  }
   const candidates: TopicRunCandidate[] = [];
+  const usedRawIndices = new Set<number>();
 
   for (let idx = 0; idx < allocatedSlots.length; idx += 1) {
     const slot = allocatedSlots[idx];
-    const match =
-      rawList.find(
-        (item) =>
-          item &&
-          typeof item === "object" &&
-          ((item as Record<string, unknown>).slot_id === slot.slotId || (item as Record<string, unknown>).slotId === slot.slotId),
-      ) ?? (rawList.length === allocatedSlots.length ? rawList[idx] : undefined);
+    let matchIdx = rawList.findIndex(
+      (item, i) =>
+        !usedRawIndices.has(i) &&
+        item &&
+        typeof item === "object" &&
+        ((item as Record<string, unknown>).slot_id === slot.slotId || (item as Record<string, unknown>).slotId === slot.slotId),
+    );
 
-    if (!match || typeof match !== "object" || Array.isArray(match)) {
+    if (matchIdx === -1 && !usedRawIndices.has(idx)) {
+      const candidateAtIdx = rawList[idx];
+      if (candidateAtIdx && typeof candidateAtIdx === "object" && !Array.isArray(candidateAtIdx)) {
+        const itemObj = candidateAtIdx as Record<string, unknown>;
+        const explicitSlotId = (itemObj.slot_id ?? itemObj.slotId) as string | undefined;
+        if (!explicitSlotId || (typeof explicitSlotId === "string" && (!explicitSlotId.trim() || explicitSlotId.trim() === slot.slotId))) {
+          matchIdx = idx;
+        }
+      }
+    }
+
+    if (matchIdx === -1) {
       throw new Error(`Missing candidate response for allocated slot "${slot.slotId}"`);
     }
+
+    usedRawIndices.add(matchIdx);
+    const match = rawList[matchIdx];
 
     if (seenSlots.has(slot.slotId)) {
       throw new Error(`Duplicate candidate response for slot "${slot.slotId}"`);
@@ -287,10 +307,7 @@ export function validateTopicCandidateResponse(input: ValidateTopicResponseInput
     const item = match as Record<string, unknown>;
     const textFields = extractCandidateTextFields(item, slot.slot);
 
-    const topicId =
-      typeof item.topic_id === "string" && item.topic_id.trim()
-        ? item.topic_id.trim()
-        : makeId(slot.contentKind === "short_reel" ? "topic_reel" : "topic_ep");
+    const topicId = makeId(slot.contentKind === "short_reel" ? "topic_reel" : "topic_ep");
 
     const origin: TopicProvenanceOrigin = slot.isKeySteered ? "keyword" : "discovery";
     const themeHint = slot.isKeySteered ? slot.domainTitle : undefined;

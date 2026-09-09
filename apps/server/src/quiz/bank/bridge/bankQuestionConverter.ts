@@ -1,5 +1,6 @@
 import {
   QuizQuestionSchema,
+  bankRequiredChoiceCountForArchetype,
   makeId,
   normalizeLanguageCode,
   type BankQuestion,
@@ -61,106 +62,40 @@ export async function resolveBankQuestionTranslation(
 /**
  * Converts a BankQuestion into a fully validated QuizQuestion for QuizV2 format.
  */
-function buildRawChoices(bankQuestion: BankQuestion, translation?: ConvertBankQuestionOptions["translation"]) {
-  const isTrueFalse = bankQuestion.format === "true_false";
-  if (Array.isArray(bankQuestion.choices) && bankQuestion.choices.length > 0) {
-    return bankQuestion.choices.map((c, idx) => {
-      if (!translation?.choices) return { ...c };
-      const tc = translation.choices.find((item) => item.id.trim().toLowerCase() === c.id.trim().toLowerCase()) ?? translation.choices[idx];
-      return {
-        ...c,
-        text: tc?.text || c.text,
-      };
-    });
-  }
-  if (isTrueFalse) {
-    return [
-      { id: "choice_tf_1", text: "True", is_correct: true },
-      { id: "choice_tf_2", text: "False", is_correct: false },
-    ];
-  }
-  return [
-    { id: "choice_mc_1", text: "Option A", is_correct: true },
-    { id: "choice_mc_2", text: "Option B", is_correct: false },
-    { id: "choice_mc_3", text: "Option C", is_correct: false },
-  ];
-}
-
-function buildFinalChoices(
-  rawChoices: Array<{ id: string; text: string; is_correct?: boolean }>,
-  correctRaw: { id: string; text: string; is_correct?: boolean },
-  isTrueFalse: boolean,
-): Array<{ text: string; isCorrect: boolean }> {
-  const distractersRaw = rawChoices.filter((c) => c !== correctRaw);
-
-  if (isTrueFalse) {
-    if (distractersRaw.length >= 1) {
-      const choices = [
-        { text: (correctRaw.text || "True").trim(), isCorrect: true },
-        { text: (distractersRaw[0].text || "False").trim(), isCorrect: false },
-      ];
-      if (rawChoices.indexOf(distractersRaw[0]) < rawChoices.indexOf(correctRaw)) {
-        choices.reverse();
-      }
-      return choices;
-    }
-    const isCorrectTrue = (correctRaw.text || "").toLowerCase().includes("true");
-    return [
-      { text: "True", isCorrect: isCorrectTrue },
-      { text: "False", isCorrect: !isCorrectTrue },
-    ];
+function resolveLosslessChoices(bankQuestion: BankQuestion, translation?: ConvertBankQuestionOptions["translation"]) {
+  const expectedCount = bankRequiredChoiceCountForArchetype(bankQuestion.archetype_id);
+  if (bankQuestion.choices.length !== expectedCount) {
+    throw new Error(
+      `BOUND_SOURCE_INCOMPATIBLE: Question "${bankQuestion.id}" has ${bankQuestion.choices.length} choices; ${bankQuestion.format} requires exactly ${expectedCount}.`,
+    );
   }
 
-  const neededDistracters = distractersRaw.slice(0, 2);
-  if (neededDistracters.length === 0) {
-    neededDistracters.push({ id: "fallback_1", text: "Other Option", is_correct: false });
-    neededDistracters.push({ id: "fallback_2", text: "None of the Above", is_correct: false });
-  } else if (neededDistracters.length === 1) {
-    neededDistracters.push({ id: "fallback_1", text: "All of the Above", is_correct: false });
+  const translatedById = new Map((translation?.choices ?? []).map((choice) => [choice.id, choice.text]));
+  if (
+    translation &&
+    (translatedById.size !== bankQuestion.choices.length ||
+      translation.choices.some((choice) => !bankQuestion.choices.some((source) => source.id === choice.id)))
+  ) {
+    throw new Error(`TRANSLATION_CHOICE_INTEGRITY_FAILED: Translation choices for "${bankQuestion.id}" do not preserve source IDs.`);
   }
 
-  const originalCorrectIndex = rawChoices.indexOf(correctRaw);
-  const targetCorrectIndex = Math.min(Math.max(0, originalCorrectIndex), 2);
-
-  const finalChoices = [
-    { text: (neededDistracters[0].text || "Option B").trim(), isCorrect: false },
-    { text: (neededDistracters[1].text || "Option C").trim(), isCorrect: false },
-  ];
-  finalChoices.splice(targetCorrectIndex, 0, { text: (correctRaw.text || "Option A").trim(), isCorrect: true });
-  return finalChoices;
-}
-
-function buildDeduplicatedQuizChoices(finalRawChoices: Array<{ text: string; isCorrect: boolean }>, requiredCount: number) {
-  const letters = ["a", "b", "c", "d"];
-  const quizChoices = finalRawChoices.slice(0, requiredCount).map((c, idx) => ({
-    id: letters[idx],
-    text: (c.text || "").slice(0, 180).trim() || `Option ${letters[idx].toUpperCase()}`,
+  return bankQuestion.choices.map((choice) => ({
+    id: choice.id,
+    text: (translatedById.get(choice.id) ?? choice.text).trim(),
   }));
-
-  const seenTexts = new Set<string>();
-  for (let i = 0; i < quizChoices.length; i++) {
-    const norm = quizChoices[i].text.normalize("NFKC").trim().toLowerCase();
-    if (seenTexts.has(norm) || !norm) {
-      quizChoices[i].text = `${quizChoices[i].text || `Option ${letters[i].toUpperCase()}`} (${letters[i].toUpperCase()})`;
-    }
-    seenTexts.add(quizChoices[i].text.normalize("NFKC").trim().toLowerCase());
-  }
-
-  return quizChoices;
 }
 
-export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, options: ConvertBankQuestionOptions = {}): QuizQuestion {
-  const isTrueFalse = bankQuestion.format === "true_false";
-  const requiredCount = isTrueFalse ? 2 : 3;
+export function convertBankQuestionToQuizQuestionLossless(
+  bankQuestion: BankQuestion,
+  options: ConvertBankQuestionOptions = {},
+): QuizQuestion {
   const translation = options.translation;
-
-  const rawChoices = buildRawChoices(bankQuestion, translation);
-  const correctRaw =
-    rawChoices.find((c) => c.id === bankQuestion.correct_choice_id) ?? rawChoices.find((c) => c.is_correct) ?? rawChoices[0];
-
-  const finalRawChoices = buildFinalChoices(rawChoices, correctRaw, isTrueFalse);
-  const quizChoices = buildDeduplicatedQuizChoices(finalRawChoices, requiredCount);
-  const correctChoice = quizChoices.find((_, idx) => finalRawChoices[idx].isCorrect) ?? quizChoices[0];
+  const quizChoices = resolveLosslessChoices(bankQuestion, translation);
+  if (!quizChoices.some((choice) => choice.id === bankQuestion.correct_choice_id)) {
+    throw new Error(
+      `BOUND_SOURCE_INCOMPATIBLE: Correct choice "${bankQuestion.correct_choice_id}" is not present in question "${bankQuestion.id}".`,
+    );
+  }
 
   const localizedQuestion = translation?.question || bankQuestion.question || "Engaging trivia challenge question";
   const localizedExplanation = translation?.explanation || bankQuestion.explanation || "Detailed explanation for the correct answer.";
@@ -169,15 +104,15 @@ export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, op
   const candidateQuestion = {
     id: (bankQuestion.id || makeId("bq")).slice(0, 80),
     number: 1,
-    format: bankQuestion.format || "multiple_choice",
+    format: quizChoices.length === 2 ? "true_false" : (bankQuestion.format || "multiple_choice"),
     difficulty: Math.min(Math.max(1, Number(bankQuestion.difficulty) || 2), 5),
-    question: localizedQuestion.slice(0, 320).trim(),
+    question: localizedQuestion.trim(),
     choices: quizChoices,
-    correct_choice_id: correctChoice.id,
-    explanation: localizedExplanation.slice(0, 600).trim(),
-    fun_fact: localizedFunFact.slice(0, 600).trim(),
+    correct_choice_id: bankQuestion.correct_choice_id,
+    explanation: localizedExplanation.trim(),
+    fun_fact: localizedFunFact.trim(),
     source_ids: [],
-    visual_opportunity: (bankQuestion.visual_spec?.prompt || "").slice(0, 1000).trim(),
+    visual_opportunity: (bankQuestion.visual_spec?.prompt || "").trim(),
     validation: {
       semantic_status: "validated" as const,
       source_coverage: false,
@@ -186,6 +121,75 @@ export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, op
   };
 
   return QuizQuestionSchema.parse(candidateQuestion);
+}
+
+/**
+ * Converts legacy and dynamically transcreated questions for the historical
+ * non-bound flow. Bound products must use convertBankQuestionToQuizQuestionLossless.
+ */
+export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, options: ConvertBankQuestionOptions = {}): QuizQuestion {
+  const sourceChoices =
+    bankQuestion.choices.length > 0
+      ? bankQuestion.choices
+      : bankQuestion.format === "true_false"
+        ? [
+            { id: "true", text: "True", is_correct: true },
+            { id: "false", text: "False", is_correct: false },
+          ]
+        : [
+            { id: "a", text: "Option A", is_correct: true },
+            { id: "b", text: "Option B", is_correct: false },
+            { id: "c", text: "Option C", is_correct: false },
+          ];
+  const translated = options.translation?.choices ?? [];
+  const choices = sourceChoices.map((choice, index) => ({
+    source: choice,
+    text:
+      translated.find((item) => item.id.trim().toLowerCase() === choice.id.trim().toLowerCase())?.text ??
+      translated[index]?.text ??
+      choice.text,
+  }));
+  const correctIndex = Math.max(
+    0,
+    sourceChoices.findIndex((choice) => choice.id === bankQuestion.correct_choice_id) >= 0
+      ? sourceChoices.findIndex((choice) => choice.id === bankQuestion.correct_choice_id)
+      : sourceChoices.findIndex((choice) => choice.is_correct),
+  );
+  const requiredCount = bankQuestion.format === "true_false" ? 2 : 3;
+  const visible = choices.slice(0, requiredCount);
+  while (visible.length < requiredCount)
+    visible.push({
+      source: { id: `fallback_${visible.length}`, text: `Option ${visible.length + 1}`, is_correct: false },
+      text: `Option ${visible.length + 1}`,
+    });
+  const ids = ["a", "b", "c"];
+  const mapped = visible.map((choice, index) => ({
+    id: ids[index],
+    text: choice.text.trim().slice(0, 180) || `Option ${ids[index].toUpperCase()}`,
+  }));
+  const seenTexts = new Set<string>();
+  mapped.forEach((choice, index) => {
+    const normalized = choice.text.normalize("NFKC").trim().toLowerCase();
+    if (seenTexts.has(normalized)) choice.text = `${choice.text} (${ids[index].toUpperCase()})`;
+    seenTexts.add(choice.text.normalize("NFKC").trim().toLowerCase());
+  });
+  const mappedCorrectIndex = Math.min(Math.max(correctIndex, 0), requiredCount - 1);
+  return QuizQuestionSchema.parse({
+    id: (bankQuestion.id || makeId("bq")).slice(0, 80),
+    number: 1,
+    format: bankQuestion.format || "multiple_choice",
+    difficulty: Math.min(Math.max(1, Number(bankQuestion.difficulty) || 2), 5),
+    question: (options.translation?.question || bankQuestion.question || "Engaging trivia challenge question").slice(0, 320).trim(),
+    choices: mapped,
+    correct_choice_id: mapped[mappedCorrectIndex].id,
+    explanation: (options.translation?.explanation || bankQuestion.explanation || "Detailed explanation for the correct answer.")
+      .slice(0, 600)
+      .trim(),
+    fun_fact: (options.translation?.fun_fact ?? bankQuestion.fun_fact ?? "").slice(0, 600).trim(),
+    source_ids: [],
+    visual_opportunity: (bankQuestion.visual_spec?.prompt || "").slice(0, 1000).trim(),
+    validation: { semantic_status: "validated", source_coverage: false, fact_locked: true },
+  });
 }
 
 /**

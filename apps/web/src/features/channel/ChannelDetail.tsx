@@ -158,6 +158,7 @@ export function ChannelDetail({
           <ChannelTopicsTab
             channel={channel}
             topics={state.topics}
+            latestRun={state.latestTopicRun}
             topicTask={state.topicTask}
             topicClock={state.topicClock}
             topicHint={state.topicHint}

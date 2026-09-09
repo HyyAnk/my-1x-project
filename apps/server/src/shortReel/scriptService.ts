@@ -33,7 +33,7 @@ function parseScript(raw: string, context: ScriptPromptContext): ReelScript {
       "Script structure is invalid.",
       parsed.error.issues.map((issue) => issue.path.join(".")),
     );
-  const validation = validateReelScript(parsed.data, context.source);
+  const validation = validateReelScript(parsed.data, context.source, [], context.displayProjection);
   const questionInFirst = parsed.data.segments[0].text_cues.some((cue) => cue.role === "question");
   const earlyAnswer = parsed.data.segments.slice(0, 2).some((segment) => segment.text_cues.some((cue) => cue.role === "answer"));
   if (!validation.valid || !questionInFirst || earlyAnswer) {

@@ -10,7 +10,6 @@ export interface QuestionBankTableProps {
   pageSize: number;
   selectedId: string | null;
   hasChannelSelected: boolean;
-  activeLanguage?: string;
   onSelectQuestion: (q: BankQuestionWithCooldown) => void;
   onEditQuestion: (q: BankQuestionWithCooldown) => void;
   onDeleteQuestion: (id: string) => void;
@@ -38,7 +37,6 @@ export function QuestionBankTable({
   pageSize,
   selectedId,
   hasChannelSelected,
-  activeLanguage,
   onSelectQuestion,
   onEditQuestion,
   onDeleteQuestion,
@@ -92,11 +90,7 @@ export function QuestionBankTable({
                 icon: "✨",
               };
               const archetypeLabel = t(`questionBank.archetypes.${q.archetype_id}`) || meta.label;
-              const hasTranslations = q.translations && Object.keys(q.translations).filter((l) => l !== (q.language || "en")).length > 0;
-              const targetLang = activeLanguage && activeLanguage !== "en" ? activeLanguage.toLowerCase() : null;
-              const translation = targetLang ? q.translations?.[targetLang] : null;
-              const displayQuestion = translation ? translation.question : q.question;
-              const displayLang = (targetLang || q.language || "EN").toUpperCase();
+              const displayQuestion = q.question;
 
               return (
                 <tr key={q.id} className={`qb-row ${isSelected ? "is-selected" : ""}`} onClick={() => onSelectQuestion(q)}>
@@ -112,17 +106,8 @@ export function QuestionBankTable({
                   <td>
                     <div className="qb-cell-question">
                       <div className="qb-q-title-row">
-                        <span className="qb-lang-pill">{displayLang}</span>
+                        <span className="qb-lang-pill">EN</span>
                         <span className="qb-q-text">{displayQuestion}</span>
-                        {translation ? (
-                          <span className="qb-trans-badge qb-trans-ready" title={`Translated into ${displayLang}`}>
-                            {displayLang} TRANSLATED
-                          </span>
-                        ) : hasTranslations ? (
-                          <span className="qb-trans-badge qb-trans-ready" title={t("questionBank.table.transReadyTitle")}>
-                            {t("questionBank.table.transReady")}
-                          </span>
-                        ) : null}
                       </div>
                       <span className="qb-q-sub">
                         {q.subtopic_id.replaceAll("_", " ")} • {t("questionBank.table.choicesCount", { count: q.choices?.length ?? 0 })} •{" "}

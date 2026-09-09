@@ -30,3 +30,15 @@ export const TopicRunResultSchema = z
   })
   .strict();
 export type TopicRunResult = z.infer<typeof TopicRunResultSchema>;
+
+export const TopicRunSchema = z
+  .object({
+    run_id: z.string().trim().min(1),
+    generated_at: z.string(),
+    target_episode_count: z.number().int().nonnegative().default(3),
+    target_short_reel_count: z.number().int().nonnegative().default(2),
+    candidates: z.array(TopicRunCandidateSchema),
+    shortages: z.array(TopicSourceShortageSchema).default([]),
+  })
+  .strict();
+export type TopicRun = z.infer<typeof TopicRunSchema>;

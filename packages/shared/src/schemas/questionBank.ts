@@ -14,6 +14,24 @@ export const BankGameplayArchetypeIdSchema = z.enum([
 ]);
 export type BankGameplayArchetypeId = z.infer<typeof BankGameplayArchetypeIdSchema>;
 
+/** Identifiers used as Question Bank directory and file path segments. */
+export const BankStorageIdentifierSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(80)
+  .refine(
+    (value) =>
+      value !== "." &&
+      value !== ".." &&
+      !value.includes("/") &&
+      !value.includes("\\") &&
+      !value.includes("\0") &&
+      !/^[A-Za-z]:/.test(value),
+    { message: "Must be a safe Question Bank path segment" },
+  );
+export type BankStorageIdentifier = z.infer<typeof BankStorageIdentifierSchema>;
+
 export const BankChoiceSchema = z.object({
   id: z.string().trim().min(1).max(32),
   text: z.string().trim().min(1).max(200),
@@ -58,8 +76,8 @@ export const BankQuestionSchema = z
     id: z.string().trim().min(1).max(80),
     entity_id: z.string().trim().max(80).optional(),
     archetype_id: BankGameplayArchetypeIdSchema,
-    domain_id: z.string().trim().min(1).max(80),
-    subtopic_id: z.string().trim().min(1).max(80),
+    domain_id: BankStorageIdentifierSchema,
+    subtopic_id: BankStorageIdentifierSchema,
     language: z.string().trim().min(1).max(40).optional(),
     question: z.string().trim().min(1).max(350),
     format: QuizQuestionFormatSchema,
@@ -101,8 +119,8 @@ export type BankQuestion = z.infer<typeof BankQuestionSchema>;
 export const BankSubtopicBatchSchema = z.object({
   schema_version: z.literal(2).default(2),
   archetype_id: BankGameplayArchetypeIdSchema,
-  domain_id: z.string().trim().min(1).max(80),
-  subtopic_id: z.string().trim().min(1).max(80),
+  domain_id: BankStorageIdentifierSchema,
+  subtopic_id: BankStorageIdentifierSchema,
   subtopic_title: z.string().trim().min(1).max(120),
   updated_at: z.string().datetime().optional(),
   questions: BankQuestionSchema.array(),
@@ -110,14 +128,14 @@ export const BankSubtopicBatchSchema = z.object({
 export type BankSubtopicBatch = z.infer<typeof BankSubtopicBatchSchema>;
 
 export const BankSubtopicMetaSchema = z.object({
-  id: z.string().trim().min(1).max(80),
+  id: BankStorageIdentifierSchema,
   title: z.string().trim().min(1).max(120),
   description: z.string().trim().max(300).default(""),
 });
 export type BankSubtopicMeta = z.infer<typeof BankSubtopicMetaSchema>;
 
 export const BankDomainMetaSchema = z.object({
-  id: z.string().trim().min(1).max(80),
+  id: BankStorageIdentifierSchema,
   title: z.string().trim().min(1).max(120),
   description: z.string().trim().max(300).default(""),
   icon: z.string().trim().max(50).default("Sparkle"),
@@ -187,8 +205,8 @@ export type MatrixCoverageStats = z.infer<typeof MatrixCoverageStatsSchema>;
 export const MatrixComboCandidateSchema = z.object({
   entity_id: z.string().trim(),
   archetype_id: BankGameplayArchetypeIdSchema,
-  domain_id: z.string().trim(),
-  subtopic_id: z.string().trim(),
+  domain_id: BankStorageIdentifierSchema,
+  subtopic_id: BankStorageIdentifierSchema,
   entity_name: z.string().trim(),
   current_variants: z.number().int().nonnegative().default(0),
 });
