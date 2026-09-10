@@ -297,4 +297,33 @@ describe("ShortReelRepository Behavioral Tests (Phase 02)", () => {
       expect(successfulRetry.model_note).toBe("Successfully updated after fault cleared");
     });
   });
+
+  describe("RP-07: Deletion removes record and cleans up filesystem", () => {
+    it("deletes short reel and files, and throws SHORT_REEL_NOT_FOUND on subsequent reads", async () => {
+      const repo = await fixture();
+      const channel = await repo.createChannel({
+        name: "Delete Channel",
+        language: "English",
+        dna_mode: "example",
+      });
+
+      const topic = { ...sampleTopic, channel_id: channel.channel_id };
+      const source = createSourceSnapshot(sampleBankQuestion);
+      const reel = await repo.createShortReel(channel.channel_id, topic, source, "req_delete_test");
+
+      const beforeList = await repo.listShortReels(channel.channel_id);
+      expect(beforeList.length).toBe(1);
+
+      const deleted = await repo.deleteShortReel({
+        channel_id: channel.channel_id,
+        reel_id: reel.reel_id,
+      });
+      expect(deleted).toBe(true);
+
+      const afterList = await repo.listShortReels(channel.channel_id);
+      expect(afterList.length).toBe(0);
+
+      await expect(repo.getShortReel({ channel_id: channel.channel_id, reel_id: reel.reel_id })).rejects.toThrow(/not found/i);
+    });
+  });
 });

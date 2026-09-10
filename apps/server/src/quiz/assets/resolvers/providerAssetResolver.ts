@@ -149,7 +149,7 @@ async function generateShopAiKeyAsset(input: ProviderAssetInput): Promise<Provid
 }
 
 async function generateAntigravityAsset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
-  const { repository, channelId, episodeId, request, fingerprint, compiledPrompt, antigravityClient, logger } = input;
+  const { repository, channelId, episodeId, request, fingerprint, compiledPrompt, antigravityClient, logger, imageConfig } = input;
   const episode = await repository.getEpisode(channelId, episodeId);
   const chainProvider = new AntigravityImageChainProvider(repository, {
     channelId,
@@ -166,15 +166,31 @@ async function generateAntigravityAsset(input: ProviderAssetInput): Promise<Prov
       result = await chainProvider.generateReference(compiledPrompt);
       break;
     } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      const isClientUnsupported = /startThread is not a function|ANTIGRAVITY_CLIENT_UNSUPPORTED/i.test(errMsg);
+      if (isClientUnsupported) {
+        logger.warn(`Antigravity client unsupported for ${request.asset_id}: ${errMsg}. Skipping further Antigravity attempts.`, { profileId: channelId, workerId: episodeId });
+        break;
+      }
       if (attempt < maxAttempts) {
-        logger.warn(`Quiz asset ${request.asset_id} Antigravity generation attempt ${attempt} failed (${err instanceof Error ? err.message : String(err)}). Retrying in ${attempt * 500}ms...`, { profileId: channelId, workerId: episodeId });
+        logger.warn(`Quiz asset ${request.asset_id} Antigravity generation attempt ${attempt} failed (${errMsg}). Retrying in ${attempt * 500}ms...`, { profileId: channelId, workerId: episodeId });
         await new Promise((resolve) => setTimeout(resolve, attempt * 500));
         continue;
       }
       throw err;
     }
   }
-  if (!result) throw new Error(`Failed to generate Antigravity asset ${request.asset_id}`);
+  if (!result) {
+    if (ShopAiKeyQuizImageProvider.isConfigured(imageConfig?.api_key)) {
+      logger.info(`Antigravity generation unavailable for ${request.asset_id}, falling back to ShopAiKey...`, { profileId: channelId, workerId: episodeId });
+      return generateShopAiKeyAsset(input);
+    }
+    if (imageConfig?.api_key || process.env.GEMINI_API_KEY) {
+      logger.info(`Antigravity generation unavailable for ${request.asset_id}, falling back to Google Imagen...`, { profileId: channelId, workerId: episodeId });
+      return generateGoogleAsset(input);
+    }
+    throw new Error(`Failed to generate Antigravity asset ${request.asset_id}`);
+  }
   const isTier3 = Boolean(result.degraded || result.fallback_tier === 3);
   if (!isTier3) {
     await repository

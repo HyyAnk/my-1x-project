@@ -7,6 +7,7 @@ import {
   type MascotArchetypeDefinition,
 } from "./thumbnailArchetypes.js";
 import { resolveThumbnailLayout } from "./thumbnailLayoutResolver.js";
+import { sanitizeThumbnailHook } from "./thumbnailHookGuardrail.js";
 import type {
   MascotPersonaVariation,
   MascotThemedPersona,
@@ -71,7 +72,7 @@ export function buildAiPlannerPrompt(input: PlanThumbnailWithAiInput, directedAr
     JSON.stringify(sampleQuestions, null, 2),
     "",
     "[CRITICAL INSTRUCTIONS]:",
-    `1. hook_text: Catchy headline (2-4 words MAX in ${input.language || "English"}). Specifically about the episode's subject. NEVER output generic "GENERAL KNOWLEDGE".`,
+    `1. hook_text: Ultra-punchy headline (2 to 6 words MAX, strictly under 30 characters in ${input.language || "English"}). Specifically about the episode's subject. High CTR, bold, concise. NEVER output generic "GENERAL KNOWLEDGE". NEVER output long sentences, descriptions, or question bodies.`,
     `2. badge_text: High-impact curiosity trigger badge (1-3 words + 1 relevant emoji in ${input.language || "English"}). Dynamically pick ONE psychological hook fitting this episode (such as extreme failure rate/stakes, IQ/genius tier, time pressure, or direct challenge). DO NOT always repeat "99% FAIL!". Be creative and contextually relevant.`,
     '3. layout: Select best layout: ["mega_grid", "split_vs", "mystery_silhouette", "odd_one_out", "difficulty_tier", "true_false"].',
     "4. environment_atmosphere: A clean minimalist, soft-focus Pixar 3D studio background specifically tailored to this episode's topic with heavy depth of field, smooth warm gradients, and ZERO busy landscape clutter.",
@@ -89,7 +90,7 @@ export function buildAiPlannerPrompt(input: PlanThumbnailWithAiInput, directedAr
     "",
     "Respond with ONLY valid JSON matching this schema:",
     "{",
-    '  "hook_text": "<Catchy 2-4 word headline in target language>",',
+    '  "hook_text": "<Ultra-punchy 2-6 word headline, strictly under 30 characters, in target language>",',
     '  "badge_text": "<High-CTR curiosity badge>",',
     '  "layout": "mega_grid",',
     '  "environment_atmosphere": "<Topic-tailored soft-focus 3D environment description>",',
@@ -141,12 +142,21 @@ export async function planThumbnailWithAI(input: PlanThumbnailWithAiInput): Prom
     });
 
     const parsed = parseAiPlanJson(rawResponse);
-    if (!parsed || !parsed.hook_text) {
+    if (!parsed) {
       return fallbackPlan;
     }
 
     const layout = input.layoutOverride || parsed.layout || fallbackPlan.layout;
-    const hookText = input.customHookText || parsed.hook_text || fallbackPlan.hookText;
+
+    let hookText: string;
+    if (input.customHookText && input.customHookText.trim().length > 0) {
+      hookText = sanitizeThumbnailHook(input.customHookText, fallbackPlan.hookText);
+    } else if (parsed.hook_text && parsed.hook_text.trim().length > 0) {
+      hookText = sanitizeThumbnailHook(parsed.hook_text, fallbackPlan.hookText);
+    } else {
+      hookText = fallbackPlan.hookText;
+    }
+
     const isSpecificBadgeOverride = input.badgeOverride && input.badgeOverride !== "auto";
     const badgeText = isSpecificBadgeOverride ? fallbackPlan.badgeText : parsed.badge_text || fallbackPlan.badgeText;
     const environmentAtmosphere = parsed.environment_atmosphere || fallbackPlan.environmentAtmosphere;

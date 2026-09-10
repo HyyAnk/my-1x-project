@@ -4,7 +4,8 @@ import { BankIndexSchema, type BankIndex, type BankQuestion, type MatrixCoverage
 import { RepositoryError } from "../../errors.js";
 import { calculateMatrixCoverageStats } from "../../../quiz/bank/matrixCoverageService.js";
 import type { RepositoryRuntime } from "../../runtime.js";
-import { getQuestionBankPath, getQuestionBankWritePath } from "./bankPathResolver.js";
+import { assertSafeBankFilesystemPath, isInside } from "./bankPathSafety.js";
+import { QUESTION_BANK_DIR, getQuestionBankPath, getQuestionBankWritePath } from "./bankPathResolver.js";
 import { listQuestionBankBatchesUnlocked } from "./bankBatchStorage.js";
 import { withBankRead, withBankWrite } from "./bankSerializationBoundary.js";
 
@@ -43,6 +44,16 @@ export async function deriveQuestionBankIndexInMemory(this: RepositoryRuntime): 
  */
 export async function readQuestionBankIndexUnlocked(this: RepositoryRuntime): Promise<BankIndex> {
   const indexPath = getQuestionBankPath.call(this, "index.json");
+  const runtimeBankRoot = path.join(this.roots.runtime, QUESTION_BANK_DIR);
+  const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
+  const projectBankRoot = path.join(defaultProjectRuntime, QUESTION_BANK_DIR);
+  const containmentRoot = isInside(runtimeBankRoot, indexPath)
+    ? this.roots.runtime
+    : isInside(projectBankRoot, indexPath)
+      ? defaultProjectRuntime
+      : path.dirname(indexPath);
+  await assertSafeBankFilesystemPath(containmentRoot, indexPath);
+
   let rawContent: string;
   try {
     rawContent = await readFile(indexPath, "utf8");
@@ -87,12 +98,25 @@ export async function recalculateQuestionBankIndexUnlocked(this: RepositoryRunti
     by_domain[batch.domain_id] = (by_domain[batch.domain_id] || 0) + qCount;
   }
 
+  const runtimeBankRoot = path.join(this.roots.runtime, QUESTION_BANK_DIR);
+  const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
+  const projectBankRoot = path.join(defaultProjectRuntime, QUESTION_BANK_DIR);
+
   let target_total = 20000;
   try {
     const prevPath = getQuestionBankPath.call(this, "index.json");
+    const prevContainmentRoot = isInside(runtimeBankRoot, prevPath)
+      ? this.roots.runtime
+      : isInside(projectBankRoot, prevPath)
+        ? defaultProjectRuntime
+        : path.dirname(prevPath);
+    await assertSafeBankFilesystemPath(prevContainmentRoot, prevPath);
     const raw = JSON.parse(await readFile(prevPath, "utf8")) as Record<string, unknown>;
     if (typeof raw?.target_total === "number" && raw.target_total >= 20000) target_total = raw.target_total;
   } catch (error) {
+    if (error instanceof RepositoryError && error.code === "UNSAFE_PATH") {
+      throw error;
+    }
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
       throw new RepositoryError("Question Bank index is corrupt and cannot be recalculated", "BANK_INDEX_CORRUPT", { cause: error });
     }
@@ -108,6 +132,12 @@ export async function recalculateQuestionBankIndexUnlocked(this: RepositoryRunti
   };
 
   const indexPath = getQuestionBankWritePath.call(this, "index.json");
+  const writeContainmentRoot = isInside(runtimeBankRoot, indexPath)
+    ? this.roots.runtime
+    : isInside(projectBankRoot, indexPath)
+      ? defaultProjectRuntime
+      : path.dirname(indexPath);
+  await assertSafeBankFilesystemPath(writeContainmentRoot, indexPath);
   await mkdir(path.dirname(indexPath), { recursive: true });
   await this.writeJsonAtomic(indexPath, updatedIndex);
   return updatedIndex;

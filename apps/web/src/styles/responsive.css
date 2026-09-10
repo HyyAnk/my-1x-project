@@ -8,9 +8,6 @@
   .channel-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .topic-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
   .pipeline-rail,
   .quiz-v2-rail {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -96,6 +93,18 @@
   .detail-grid,
   .settings-grid {
     grid-template-columns: 1fr;
+  }
+  .topic-history-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .topic-history-main {
+    width: 100%;
+  }
+  .topic-history-meta {
+    width: 100%;
+    justify-content: space-between;
   }
   .scene-columns {
     grid-template-columns: 1fr;

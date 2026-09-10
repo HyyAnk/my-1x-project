@@ -6,7 +6,11 @@ import {
   makeId,
   nowIso,
   QuizV2Schema,
+  type Channel,
   type DirectorPlan,
+  type Episode,
+  type EpisodeTopicCandidate,
+  type QuizImageStyle,
   type QuizQuestion,
   type QuizV2,
 } from "@studio/shared";
@@ -112,6 +116,7 @@ export async function createEpisodeFromQuestionBank(deps: {
   const timestamp = nowIso();
 
   // Localize before creating any discoverable episode record on disk
+  const explicitThumbnailText = input.custom_hook_text?.trim() || input.thumbnail_text?.trim() || undefined;
   const localizationArtifact = await localizeProductContent({
     targetLanguage,
     productId: episodeId,
@@ -120,7 +125,7 @@ export async function createEpisodeFromQuestionBank(deps: {
     sourceContentHashes: [hashBankQuestionSource(bankQuestion)],
     quizQuestions: [baseQuizQuestion],
     videoDescription: bankQuestion.explanation,
-    thumbnailText: bankQuestion.question,
+    thumbnailText: explicitThumbnailText,
     llmClient: deps.llmClient,
   });
 
@@ -245,65 +250,70 @@ export async function createEpisodeFromTopicWithBank(deps: {
   }
 }
 
-async function executeEpisodeConfirmation(deps: {
-  repository: RepositoryService;
-  tasks?: TaskManager;
-  channelId: string;
-  input: CreateEpisodeFromTopicWithBankInput;
-  llmClient?: LLMClient | null;
-}): Promise<CreateEpisodeFromTopicWithBankResult> {
-  const { repository, tasks, channelId, input } = deps;
-  if (input.render_aspect_ratio && (input.render_aspect_ratio as string) !== "16:9") {
-    throw new RepositoryError("Episode creation only supports 16:9 landscape", "UNSUPPORTED_ASPECT_RATIO");
-  }
-  const channel = await repository.getChannel(channelId);
-
-  // 1. Check existing confirmation receipt for durable replay / conflict
-  const targetLanguage = normalizeTargetLanguage(input.target_language || channel.language || "en");
-  const questionCount = input.question_count ?? 3;
-  const incomingOptions: TopicConfirmationOptions = {
-    question_count: questionCount,
-    visual_style: input.visual_style || "mixed",
-    render_aspect_ratio: "16:9",
-    target_language: targetLanguage,
-  };
-
-  const existingReceipt = await getTopicConfirmationReceipt(repository, channelId, input.topic_id);
-  if (existingReceipt) {
-    assertConfirmationReplayOrConflict(existingReceipt, incomingOptions, "episode");
-    if (existingReceipt.status === "completed") {
-      const existingEpisode = await repository.getEpisode(channelId, existingReceipt.product_id);
-      const existingQuiz = await repository.readQuiz(channelId, existingEpisode.episode_id);
-      const existingDirectorPlan = await repository.readDirectorPlan(channelId, existingEpisode.episode_id);
-
-      // Reconcile topic selected state projection if not already projected
-      const topics = await repository.listTopics(channelId);
-      const topic = topics.find((t) => t.topic_id === input.topic_id);
-      if (topic && !topic.selected) {
-        await repository.markTopicSelected(channelId, input.topic_id, existingReceipt.source_question_ids.length);
-      }
-
-      return {
-        episode: existingEpisode,
-        task: null,
-        quiz: existingQuiz ?? {
-          schema_version: 2,
-          episode_id: existingEpisode.episode_id,
-          age_band: "family",
-          language: targetLanguage,
-          questions: [],
-        },
-        director_plan: (existingDirectorPlan ?? { scenes: [] }) as DirectorPlan,
-        curated_source: "bank_only",
-        question_ids: existingReceipt.source_question_ids,
-        cooldown_recorded: true,
-      };
-    }
+async function handleExistingConfirmationReceipt(
+  repository: RepositoryService,
+  channelId: string,
+  topicId: string,
+  incomingOptions: TopicConfirmationOptions,
+  _targetLanguage: string,
+): Promise<CreateEpisodeFromTopicWithBankResult | null> {
+  const existingReceipt = await getTopicConfirmationReceipt(repository, channelId, topicId);
+  if (!existingReceipt) {
+    return null;
   }
 
-  // 2. Retrieve topic candidate
+  assertConfirmationReplayOrConflict(existingReceipt, incomingOptions, "episode");
+  if (existingReceipt.status !== "completed") {
+    return null;
+  }
+
+  const existingEpisode = await repository.getEpisode(channelId, existingReceipt.product_id);
+  const existingQuiz = await repository.readQuiz(channelId, existingEpisode.episode_id);
+  const existingDirectorPlan = await repository.readDirectorPlan(channelId, existingEpisode.episode_id);
+
+  if (!existingQuiz || !Array.isArray(existingQuiz.questions) || existingQuiz.questions.length === 0) {
+    throw new RepositoryError("CONFIRMATION_PRODUCT_CORRUPT: Completed episode quiz is missing or empty.", "CONFIRMATION_PRODUCT_CORRUPT");
+  }
+  const beats =
+    (existingDirectorPlan as { beats?: unknown[]; scenes?: unknown[] })?.beats ?? (existingDirectorPlan as { scenes?: unknown[] })?.scenes;
+  if (!existingDirectorPlan || !Array.isArray(beats) || beats.length === 0) {
+    throw new RepositoryError(
+      "CONFIRMATION_PRODUCT_CORRUPT: Completed episode director plan is missing or empty.",
+      "CONFIRMATION_PRODUCT_CORRUPT",
+    );
+  }
+
+  // Reconcile question history if missing
+  const existingHistory = await repository.readQuestionHistory(channelId);
+  const hasHistory = existingHistory.some((entry) => entry.episode_id === existingEpisode.episode_id);
+  if (!hasHistory && existingQuiz.questions.length > 0) {
+    await repository.appendQuestionHistory(channelId, existingEpisode.episode_id, existingQuiz.questions, 30);
+  }
+
   const topics = await repository.listTopics(channelId);
-  const topic = topics.find((t) => t.topic_id === input.topic_id);
+  const topic = topics.find((t) => t.topic_id === topicId);
+  if (topic && !topic.selected) {
+    await repository.markTopicSelected(channelId, topicId, existingReceipt.source_question_ids.length);
+  }
+
+  return {
+    episode: existingEpisode,
+    task: null,
+    quiz: existingQuiz,
+    director_plan: existingDirectorPlan,
+    curated_source: "bank_only",
+    question_ids: existingReceipt.source_question_ids,
+    cooldown_recorded: true,
+  };
+}
+
+async function findAndValidateTopicCandidate(
+  repository: RepositoryService,
+  channelId: string,
+  topicId: string,
+): Promise<EpisodeTopicCandidate> {
+  const topics = await repository.listTopics(channelId);
+  const topic = topics.find((t) => t.topic_id === topicId);
   if (!topic) {
     throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
   }
@@ -312,7 +322,6 @@ async function executeEpisodeConfirmation(deps: {
     throw new RepositoryError("Cannot create episode from short-reel topic candidate", "INVALID_TOPIC_KIND");
   }
 
-  // Reject unbound legacy candidates in all cases: zero hidden JIT or reselection
   if (!topic.source_bindings || topic.source_bindings.length === 0) {
     throw new RepositoryError(
       "UNBOUND_LEGACY_TOPIC: Cannot confirm unbound legacy topic candidate. Re-suggest topics to bind canonical sources.",
@@ -320,74 +329,64 @@ async function executeEpisodeConfirmation(deps: {
     );
   }
 
-  // 3. Resolve bound topic sources authoritatively
-  const boundResult = await resolveBoundTopicSources({
-    repository,
-    channelId,
-    topicId: input.topic_id,
-    requestedQuestionCount: questionCount,
-    force: input.force,
-  });
-  const selectedQuestions = boundResult.questions;
+  return topic;
+}
 
-  // 4. Losslessly convert Bank questions to base English QuizQuestions
-  const baseQuizQuestions: QuizQuestion[] = selectedQuestions.map((bankQ, idx) => {
-    const q = convertBankQuestionToQuizQuestionLossless(bankQ);
-    q.number = idx + 1;
-    return q;
-  });
-
-  // 5. Reserve deterministic identity in memory before any disk operations
-  const parentDir = repository.resolvePath("channels", channel.slug, "episodes");
-  const episodeSlug = existingReceipt?.product_slug || (await repository.uniqueSlug(topic.title, parentDir));
-  const episodeId = existingReceipt?.product_id || makeId("ep");
-  const timestamp = nowIso();
-
-  // 6. Product localization (localizes product-only fields, never writing back to bank)
-  // If non-English and translation fails/provider missing, throws before writing any discoverable episode record
-  const localizationArtifact = await localizeProductContent({
-    targetLanguage,
-    productId: episodeId,
-    contentKind: "episode",
-    sourceQuestionIds: boundResult.questionIds,
-    sourceContentHashes: boundResult.sourceContentHashes,
-    quizQuestions: baseQuizQuestions,
-    videoDescription: topic.premise,
-    thumbnailText: topic.title,
-    llmClient: deps.llmClient,
-  });
-
-  let finalQuizQuestions = baseQuizQuestions;
-  if (targetLanguage !== "en" && localizationArtifact.quiz_questions) {
-    const locMap = new Map(localizationArtifact.quiz_questions.map((l) => [l.question_id, l]));
-    finalQuizQuestions = baseQuizQuestions.map((q) => {
-      const loc = locMap.get(q.id);
-      if (!loc) return q;
-      const choiceMap = new Map(loc.choices.map((c) => [c.id, c.text]));
-      return {
-        ...q,
-        question: loc.question,
-        explanation: loc.explanation || q.explanation,
-        choices: q.choices.map((c) => ({
-          ...c,
-          text: choiceMap.get(c.id) || c.text,
-        })),
-      };
-    });
+function applyLocalizedQuestionOverrides(
+  baseQuizQuestions: QuizQuestion[],
+  localizationArtifact: Awaited<ReturnType<typeof localizeProductContent>>,
+  targetLanguage: string,
+): QuizQuestion[] {
+  if (targetLanguage === "en" || !localizationArtifact.quiz_questions) {
+    return baseQuizQuestions;
   }
 
-  const renderAspect = resolveRenderAspect(input.render_aspect_ratio);
+  const locMap = new Map(localizationArtifact.quiz_questions.map((l) => [l.question_id, l]));
+  return baseQuizQuestions.map((q) => {
+    const loc = locMap.get(q.id);
+    if (!loc) return q;
+    const choiceMap = new Map(loc.choices.map((c) => [c.id, c.text]));
+    return {
+      ...q,
+      question: loc.question,
+      explanation: loc.explanation || q.explanation,
+      choices: q.choices.map((c) => ({
+        ...c,
+        text: choiceMap.get(c.id) || c.text,
+      })),
+    };
+  });
+}
+
+function buildConfiguredEpisode(params: {
+  episodeId: string;
+  channel: Channel;
+  episodeSlug: string;
+  topic: EpisodeTopicCandidate;
+  finalQuizQuestions: QuizQuestion[];
+  renderAspect: "16:9";
+  targetLanguage: string;
+  timestamp: string;
+  inputVisualStyle?: QuizImageStyle | "mixed";
+}): {
+  episode: Episode;
+  quiz: QuizV2;
+  directorPlan: DirectorPlan;
+} {
+  const { episodeId, channel, episodeSlug, topic, finalQuizQuestions, renderAspect, targetLanguage, timestamp, inputVisualStyle } = params;
   const targetLayout = resolveTargetLayoutForTopic(topic, renderAspect);
   const blueprint = topic.archetype ? getQuizGameplayArchetype(topic.archetype) : undefined;
-  const { requestedStyle, resolvedStyle } = resolveEpisodeVisualStyles(channel, input.visual_style ?? topic.visual_style);
+  const { requestedStyle, resolvedStyle } = resolveEpisodeVisualStyles(channel, inputVisualStyle ?? topic.visual_style);
   const targetDurationMinutes = estimateQuizTargetDurationMinutes(finalQuizQuestions.length);
   const targetWordCount = estimateQuizTargetWordCount(targetDurationMinutes, DEFAULT_NARRATION_WORDS_PER_SECOND);
-  const ageBand = topic.age_band || selectedQuestions[0]?.age_band || "family";
+  const ageBand = topic.age_band || "family";
 
-  // English topic metadata preserved on episode record
+  const defaultFormat = blueprint?.defaultFormat ?? finalQuizQuestions[0]?.format ?? topic.quiz_format ?? "multiple_choice";
+  const visualTheme = topic.quiz_format === "image_guess" || topic.archetype === "mystery_reveal" ? "jungle_jamboree" : "candy_pop";
+
   const episode = buildEpisodeRecord({
     episodeId,
-    channelId,
+    channelId: channel.channel_id,
     channelSlug: channel.slug,
     episodeSlug,
     title: topic.title,
@@ -396,9 +395,9 @@ async function executeEpisodeConfirmation(deps: {
     targetDurationMinutes,
     targetWordCount,
     questionCount: finalQuizQuestions.length,
-    quizFormat: blueprint?.defaultFormat ?? finalQuizQuestions[0]?.format ?? topic.quiz_format ?? "multiple_choice",
+    quizFormat: defaultFormat,
     ageBand,
-    visualTheme: topic.quiz_format === "image_guess" || topic.archetype === "mystery_reveal" ? "jungle_jamboree" : "candy_pop",
+    visualTheme,
     requestedStyle,
     resolvedStyle,
     channel,
@@ -417,6 +416,214 @@ async function executeEpisodeConfirmation(deps: {
   });
 
   const directorPlan = buildTopicDirectorPlan(quiz, topic, channel, targetLayout, renderAspect);
+
+  return { episode, quiz, directorPlan };
+}
+
+async function stageAndPublishEpisodeFiles(params: {
+  repository: RepositoryService;
+  channelSlug: string;
+  parentDir: string;
+  episodeSlug: string;
+  episode: Episode;
+  quiz: QuizV2;
+  directorPlan: DirectorPlan;
+  localizationArtifact: Awaited<ReturnType<typeof localizeProductContent>>;
+  sourcesContent: string;
+  topic: EpisodeTopicCandidate;
+  isPreparingReceipt: boolean;
+}): Promise<void> {
+  const {
+    repository,
+    channelSlug,
+    parentDir,
+    episodeSlug,
+    episode,
+    quiz,
+    directorPlan,
+    localizationArtifact,
+    sourcesContent,
+    topic,
+    isPreparingReceipt,
+  } = params;
+
+  const stagingDir = repository.resolvePath("channels", channelSlug, ".staging", episodeSlug);
+  await rm(stagingDir, { recursive: true, force: true }).catch(() => {});
+  await mkdir(path.join(stagingDir, "assets"), { recursive: true });
+  await mkdir(path.join(stagingDir, "quiz"), { recursive: true });
+
+  try {
+    await repository.writeJsonAtomic(path.join(stagingDir, "episode.json"), episode);
+    await repository.writeJsonAtomic(path.join(stagingDir, "quiz", "quiz-v2.json"), quiz);
+    await repository.writeJsonAtomic(path.join(stagingDir, "quiz", "director-plan.json"), directorPlan);
+    await repository.writeJsonAtomic(path.join(stagingDir, "localization.json"), localizationArtifact);
+    await repository.writeTextAtomic(path.join(stagingDir, "sources.md"), sourcesContent);
+    await writeEpisodeMarkdownStubs(repository, stagingDir, {
+      title: topic.title,
+      hook: topic.hook,
+      premise: topic.premise,
+      isTopic: true,
+    });
+
+    const finalEpisodeDir = path.join(parentDir, episodeSlug);
+    await publishStagedEpisode(stagingDir, finalEpisodeDir, isPreparingReceipt);
+  } catch (stageErr) {
+    await rm(stagingDir, { recursive: true, force: true }).catch(() => {});
+    throw stageErr;
+  }
+}
+
+async function recordConfirmationCompletion(params: {
+  repository: RepositoryService;
+  tasks?: TaskManager;
+  channelId: string;
+  channelSlug: string;
+  episode: Episode;
+  topicId: string;
+  finalQuizQuestions: QuizQuestion[];
+  incomingOptions: TopicConfirmationOptions;
+  boundResult: { questionIds: string[]; sourceContentHashes: string[] };
+  effectiveRequestId: string;
+  timestamp: string;
+  autoStartPipeline?: boolean;
+}): Promise<CreateEpisodeFromTopicWithBankResult["task"]> {
+  const {
+    repository,
+    tasks,
+    channelId,
+    channelSlug,
+    episode,
+    topicId,
+    finalQuizQuestions,
+    incomingOptions,
+    boundResult,
+    effectiveRequestId,
+    timestamp,
+    autoStartPipeline,
+  } = params;
+
+  // 1. Append question history FIRST
+  await repository.appendQuestionHistory(channelId, episode.episode_id, finalQuizQuestions, 30);
+
+  // 2. Mark topic selected
+  await repository.markTopicSelected(channelId, topicId, finalQuizQuestions.length);
+
+  // 3. Update channel
+  await repository.updateChannel(channelId, { updated_at: timestamp });
+
+  // 4. Update topic database
+  await repository.writeJsonAtomic(
+    path.join(repository.resolvePath("channels", channelSlug), "topic_database.json"),
+    (await repository.listTopics(channelId)).map(({ title, premise }) => ({ title, premise })),
+  );
+
+  // 5. Durably save completed receipt ONLY AFTER all required effects succeeded!
+  await saveTopicConfirmationReceipt(repository, channelId, {
+    receipt_id: `rec-${episode.episode_id}`,
+    channel_id: channelId,
+    topic_id: topicId,
+    content_kind: "episode",
+    product_id: episode.episode_id,
+    product_slug: episode.slug,
+    confirmed_at: timestamp,
+    request_id: effectiveRequestId,
+    options_fingerprint: computeConfirmationOptionsFingerprint(incomingOptions),
+    options: incomingOptions,
+    source_question_ids: boundResult.questionIds,
+    source_content_hashes: boundResult.sourceContentHashes,
+    status: "completed",
+  });
+
+  return triggerPipelineTask(tasks, channelId, episode.episode_id, autoStartPipeline !== false);
+}
+
+async function executeEpisodeConfirmation(deps: {
+  repository: RepositoryService;
+  tasks?: TaskManager;
+  channelId: string;
+  input: CreateEpisodeFromTopicWithBankInput;
+  llmClient?: LLMClient | null;
+}): Promise<CreateEpisodeFromTopicWithBankResult> {
+  const { repository, tasks, channelId, input } = deps;
+  if (input.render_aspect_ratio && (input.render_aspect_ratio as string) !== "16:9") {
+    throw new RepositoryError("Episode creation only supports 16:9 landscape", "UNSUPPORTED_ASPECT_RATIO");
+  }
+  const channel = await repository.getChannel(channelId);
+
+  // 1. Retrieve topic candidate and establish effective options from candidate defaults upfront
+  const topic = await findAndValidateTopicCandidate(repository, channelId, input.topic_id);
+  const targetLanguage = normalizeTargetLanguage(input.target_language || channel.language || "en");
+  const questionCount = input.question_count ?? topic.question_count ?? 8;
+  const visualStyle = input.visual_style ?? topic.visual_style ?? "mixed";
+  const incomingOptions: TopicConfirmationOptions = {
+    question_count: questionCount,
+    visual_style: visualStyle,
+    render_aspect_ratio: "16:9",
+    target_language: targetLanguage,
+    ...(input.custom_hook_text ? { custom_hook_text: input.custom_hook_text.trim() } : {}),
+    ...(input.thumbnail_text ? { thumbnail_text: input.thumbnail_text.trim() } : {}),
+  };
+
+  // 2. Check existing confirmation receipt for durable replay / conflict
+  const existingReceipt = await getTopicConfirmationReceipt(repository, channelId, input.topic_id);
+  if (existingReceipt) {
+    const replayResult = await handleExistingConfirmationReceipt(repository, channelId, input.topic_id, incomingOptions, targetLanguage);
+    if (replayResult) {
+      return replayResult;
+    }
+  }
+
+  // 3. Resolve bound topic sources authoritatively
+  const isPreparingRetry = existingReceipt?.status === "preparing";
+  const boundResult = await resolveBoundTopicSources({
+    repository,
+    channelId,
+    topicId: input.topic_id,
+    requestedQuestionCount: questionCount,
+    force: Boolean(input.force || isPreparingRetry),
+  });
+
+  // 4. Losslessly convert Bank questions to base English QuizQuestions
+  const baseQuizQuestions: QuizQuestion[] = boundResult.questions.map((bankQ, idx) => {
+    const q = convertBankQuestionToQuizQuestionLossless(bankQ);
+    q.number = idx + 1;
+    return q;
+  });
+
+  // 5. Reserve deterministic identity in memory before any disk operations
+  const parentDir = repository.resolvePath("channels", channel.slug, "episodes");
+  const episodeSlug = existingReceipt?.product_slug || (await repository.uniqueSlug(topic.title, parentDir));
+  const episodeId = existingReceipt?.product_id || makeId("ep");
+  const timestamp = nowIso();
+
+  // 6. Product localization
+  const explicitThumbnailText = input.custom_hook_text?.trim() || input.thumbnail_text?.trim() || undefined;
+  const localizationArtifact = await localizeProductContent({
+    targetLanguage,
+    productId: episodeId,
+    contentKind: "episode",
+    sourceQuestionIds: boundResult.questionIds,
+    sourceContentHashes: boundResult.sourceContentHashes,
+    quizQuestions: baseQuizQuestions,
+    videoDescription: topic.premise,
+    thumbnailText: explicitThumbnailText,
+    llmClient: deps.llmClient,
+  });
+
+  const finalQuizQuestions = applyLocalizedQuestionOverrides(baseQuizQuestions, localizationArtifact, targetLanguage);
+  const renderAspect = resolveRenderAspect(input.render_aspect_ratio);
+
+  const { episode, quiz, directorPlan } = buildConfiguredEpisode({
+    episodeId,
+    channel,
+    episodeSlug,
+    topic,
+    finalQuizQuestions,
+    renderAspect,
+    targetLanguage,
+    timestamp,
+    inputVisualStyle: input.visual_style,
+  });
 
   const effectiveRequestId = input.request_id || existingReceipt?.request_id || `req-confirm-${Date.now()}`;
   await saveTopicConfirmationReceipt(repository, channelId, {
@@ -443,61 +650,35 @@ async function executeEpisodeConfirmation(deps: {
   ].join("\n");
 
   // 7. Staging complete artifacts outside discoverable directories
-  const stagingDir = repository.resolvePath("channels", channel.slug, ".staging", episodeSlug);
-  await rm(stagingDir, { recursive: true, force: true }).catch(() => {});
-  await mkdir(path.join(stagingDir, "assets"), { recursive: true });
-  await mkdir(path.join(stagingDir, "quiz"), { recursive: true });
-
-  try {
-    await repository.writeJsonAtomic(path.join(stagingDir, "episode.json"), episode);
-    await repository.writeJsonAtomic(path.join(stagingDir, "quiz", "quiz-v2.json"), quiz);
-    await repository.writeJsonAtomic(path.join(stagingDir, "quiz", "director-plan.json"), directorPlan);
-    await repository.writeJsonAtomic(path.join(stagingDir, "localization.json"), localizationArtifact);
-    await repository.writeTextAtomic(path.join(stagingDir, "sources.md"), sourcesContent);
-    await writeEpisodeMarkdownStubs(repository, stagingDir, {
-      title: topic.title,
-      hook: topic.hook,
-      premise: topic.premise,
-      isTopic: true,
-    });
-
-    // Publish staged directory atomically to discoverable episodes location
-    const finalEpisodeDir = path.join(parentDir, episodeSlug);
-    await publishStagedEpisode(stagingDir, finalEpisodeDir, existingReceipt?.status === "preparing");
-  } catch (stageErr) {
-    await rm(stagingDir, { recursive: true, force: true }).catch(() => {});
-    throw stageErr;
-  }
-
-  // 8. Update topic database
-  await repository.writeJsonAtomic(
-    path.join(repository.resolvePath("channels", channel.slug), "topic_database.json"),
-    (await repository.listTopics(channelId)).map(({ title, premise }) => ({ title, premise })),
-  );
-
-  // 9. Save durable topic confirmation receipt
-  await saveTopicConfirmationReceipt(repository, channelId, {
-    receipt_id: `rec-${episode.episode_id}`,
-    channel_id: channelId,
-    topic_id: topic.topic_id,
-    content_kind: "episode",
-    product_id: episode.episode_id,
-    product_slug: episode.slug,
-    confirmed_at: timestamp,
-    request_id: effectiveRequestId,
-    options_fingerprint: computeConfirmationOptionsFingerprint(incomingOptions),
-    options: incomingOptions,
-    source_question_ids: boundResult.questionIds,
-    source_content_hashes: boundResult.sourceContentHashes,
-    status: "completed",
+  await stageAndPublishEpisodeFiles({
+    repository,
+    channelSlug: channel.slug,
+    parentDir,
+    episodeSlug,
+    episode,
+    quiz,
+    directorPlan,
+    localizationArtifact,
+    sourcesContent,
+    topic,
+    isPreparingReceipt: existingReceipt?.status === "preparing",
   });
 
-  // 10. Record question history, mark topic selected, and trigger pipeline
-  await repository.appendQuestionHistory(channelId, episode.episode_id, finalQuizQuestions, 30);
-  await repository.markTopicSelected(channelId, topic.topic_id, finalQuizQuestions.length);
-  await repository.updateChannel(channelId, { updated_at: timestamp });
-
-  const task = triggerPipelineTask(tasks, channelId, episode.episode_id, input.auto_start_pipeline !== false);
+  // 8, 9, 10. Record history, mark topic selected, and trigger pipeline
+  const task = await recordConfirmationCompletion({
+    repository,
+    tasks,
+    channelId,
+    channelSlug: channel.slug,
+    episode,
+    topicId: topic.topic_id,
+    finalQuizQuestions,
+    incomingOptions,
+    boundResult,
+    effectiveRequestId,
+    timestamp,
+    autoStartPipeline: input.auto_start_pipeline,
+  });
 
   return {
     episode,

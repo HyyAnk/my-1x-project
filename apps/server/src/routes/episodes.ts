@@ -1,8 +1,9 @@
 import type { FastifyPluginCallback } from "fastify";
-import { EpisodeSettingsInputSchema, SaveTextInputSchema } from "@studio/shared";
+import { EpisodeSettingsInputSchema, PaginationQuerySchema, SaveTextInputSchema } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../repository.js";
 import type { TaskManager } from "../tasks.js";
 import type { AppState } from "./state.js";
+import { paginateEpisodes } from "./paginationUtils.js";
 
 export type EpisodesRouteDeps = {
   repository: RepositoryService;
@@ -13,9 +14,20 @@ export type EpisodesRouteDeps = {
 export function registerEpisodesRoutes(deps: EpisodesRouteDeps): FastifyPluginCallback {
   return (server, _options, done) => {
     const { repository, state, tasks } = deps;
-    server.get("/api/channels/:channelId/episodes", async (request) => ({
-      episodes: await repository.listEpisodes((request.params as { channelId: string }).channelId),
-    }));
+    server.get("/api/channels/:channelId/episodes", async (request) => {
+      const channelId = (request.params as { channelId: string }).channelId;
+      const query = PaginationQuerySchema.parse(request.query);
+      const episodes = await repository.listEpisodes(channelId);
+      const result = paginateEpisodes(episodes, query);
+      return {
+        episodes: result.items,
+        total: result.total,
+        page: result.page,
+        limit: result.limit,
+        total_pages: result.total_pages,
+        pagination: result.pagination,
+      };
+    });
     server.get("/api/channels/:channelId/bgm-history", async (request) => ({
       history: await repository.readBgmHistory((request.params as { channelId: string }).channelId),
     }));
@@ -51,6 +63,21 @@ export function registerEpisodesRoutes(deps: EpisodesRouteDeps): FastifyPluginCa
     server.get("/api/channels/:channelId/episodes/:episodeId/scenes", async (request) => {
       const params = request.params as { channelId: string; episodeId: string };
       return { scenes: await repository.readScenes(params.channelId, params.episodeId) };
+    });
+    server.get("/api/episodes/titles", async (request) => {
+      const query = request.query as { ids?: string | string[]; episode_ids?: string | string[] };
+      const rawIds = query.ids ?? query.episode_ids;
+      const ids = Array.isArray(rawIds) ? rawIds.flatMap((id) => id.split(",")) : typeof rawIds === "string" ? rawIds.split(",") : [];
+      const cleanIds = ids.map((id) => id.trim()).filter((id) => id.length > 0);
+      const titles = await repository.resolveEpisodeTitles(cleanIds);
+      return { titles };
+    });
+    server.post("/api/episodes/batch-titles", async (request) => {
+      const body = (request.body as { ids?: string[]; episode_ids?: string[] }) || {};
+      const ids = Array.isArray(body.ids) ? body.ids : Array.isArray(body.episode_ids) ? body.episode_ids : [];
+      const cleanIds = ids.map((id) => String(id).trim()).filter((id) => id.length > 0);
+      const titles = await repository.resolveEpisodeTitles(cleanIds);
+      return { titles };
     });
     done();
   };

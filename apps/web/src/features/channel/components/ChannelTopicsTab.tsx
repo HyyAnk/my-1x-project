@@ -48,8 +48,8 @@ export function ChannelTopicsTab({
   const { latestRunTopics, historyTopics, hasEmptyLatestRunShortages } = useMemo(() => {
     if (latestRun) {
       const runId = latestRun.run_id;
-      const latest = topics.filter((t) => t.run_id === runId);
-      const history = topics.filter((t) => t.run_id !== runId);
+      const latest = topics.filter((t) => Boolean(t.run_id && t.run_id === runId));
+      const history = topics.filter((t) => !t.run_id || t.run_id !== runId);
       const hasEmptyLatestRunShortages = latest.length === 0 && (latestRun.shortages?.length ?? 0) > 0;
       return { latestRunTopics: latest, historyTopics: history, hasEmptyLatestRunShortages };
     }
@@ -60,19 +60,13 @@ export function ChannelTopicsTab({
 
     const firstRunId = topics[0]?.run_id;
     if (firstRunId) {
-      const latest = topics.filter((t) => t.run_id === firstRunId);
-      const history = topics.filter((t) => t.run_id !== firstRunId);
+      const latest = topics.filter((t) => Boolean(t.run_id && t.run_id === firstRunId));
+      const history = topics.filter((t) => !t.run_id || t.run_id !== firstRunId);
       return { latestRunTopics: latest, historyTopics: history, hasEmptyLatestRunShortages: false };
     }
 
-    const latestTimestamp = topics[0]?.generated_at;
-    const isSameRun = (timeA: string, timeB: string) => {
-      if (timeA === timeB) return true;
-      return Math.abs(new Date(timeA).getTime() - new Date(timeB).getTime()) < 1500;
-    };
-    const latest = topics.filter((t) => isSameRun(t.generated_at, latestTimestamp));
-    const history = topics.filter((t) => !isSameRun(t.generated_at, latestTimestamp));
-    return { latestRunTopics: latest, historyTopics: history, hasEmptyLatestRunShortages: false };
+    // Unassigned legacy candidates without run_id belong in history, never inferred into a latest run
+    return { latestRunTopics: [], historyTopics: topics, hasEmptyLatestRunShortages: false };
   }, [topics, latestRun]);
   return (
     <div>
@@ -125,7 +119,8 @@ export function ChannelTopicsTab({
             <span>Latest Suggestion Run Shortage Notice</span>
           </div>
           <p style={{ margin: "6px 0 0", fontSize: "14px", color: "var(--text-muted, #555)" }}>
-            No candidates could be generated for the latest run because the Question Bank lacks sufficient eligible questions matching the required formats and archetypes.
+            No candidates could be generated for the latest run because the Question Bank lacks sufficient eligible questions matching the
+            required formats and archetypes.
           </p>
         </div>
       ) : null}

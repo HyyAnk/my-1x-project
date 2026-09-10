@@ -4,13 +4,16 @@ import type { FastifyPluginCallback, FastifyReply, FastifyRequest } from "fastif
 import { ZodError } from "zod";
 import {
   CancelShortReelRequestSchema,
+  CreateShortReelRequestSchema,
   GenerateShortReelRequestSchema,
+  PaginationQuerySchema,
   TaskSchema,
   UpdateShortReelRequestSchema,
   type ReelKey,
   type ShortReelRecord,
   type Task,
 } from "@studio/shared";
+import { paginateShortReels } from "./paginationUtils.js";
 import type { StudioLogger } from "../logger.js";
 import { RepositoryError } from "../repository/errors.js";
 import type { RepositoryService } from "../repository/service.js";
@@ -28,12 +31,16 @@ import { ReferenceError } from "../shortReel/packageImage.js";
 import { CoverGenerationError } from "../shortReel/thumbnailAdapter.js";
 import { cancelReelUnitAttempt } from "../shortReel/unitLifecycle.js";
 import { readBoundedAsset } from "../shortReel/packageAssets.js";
+import { confirmShortReelTopic } from "../shortReel/topicConfirmation.js";
+import { createDirectShortReelCandidate } from "../shortReel/directCreation.js";
 import type { TaskManager } from "../tasks/manager.js";
+import type { LLMClient } from "../utils/promptSanitizer.js";
 
 export type ShortReelsRouteDeps = {
   repository: RepositoryService;
   tasks?: TaskManager;
   logger: StudioLogger;
+  llmClient?: LLMClient | null;
 };
 
 type RouteErrorResponse = { status: number; body: { error: string; code: string } };
@@ -101,8 +108,44 @@ export function registerShortReelsRoutes(deps: ShortReelsRouteDeps): FastifyPlug
       const params = request.params as { channelId: string };
       try {
         await repository.getChannel(params.channelId);
+        const query = PaginationQuerySchema.parse(request.query);
         const shortReels = await repository.listShortReels(params.channelId);
-        return { short_reels: shortReels };
+        const result = paginateShortReels(shortReels, query);
+        return {
+          short_reels: result.items,
+          total: result.total,
+          page: result.page,
+          limit: result.limit,
+          total_pages: result.total_pages,
+          pagination: result.pagination,
+        };
+      } catch (error) {
+        return handleRouteError(error, reply);
+      }
+    });
+
+    // Create a Short-Reel directly from Question Bank
+    server.post("/api/channels/:channelId/short-reels", async (request: FastifyRequest, reply: FastifyReply) => {
+      const params = request.params as { channelId: string };
+      try {
+        await repository.getChannel(params.channelId);
+        const body = CreateShortReelRequestSchema.parse(request.body);
+        const { topicId } = await createDirectShortReelCandidate({
+          repository,
+          channelId: params.channelId,
+          questionId: body.question_id,
+        });
+        const result = await confirmShortReelTopic({
+          repository,
+          channelId: params.channelId,
+          topicId,
+          options: {
+            question_count: 1,
+            visual_style: body.visual_style,
+          },
+          llmClient: deps.llmClient,
+        });
+        return reply.code(201).send({ short_reel: result.short_reel });
       } catch (error) {
         return handleRouteError(error, reply);
       }
@@ -126,6 +169,21 @@ export function registerShortReelsRoutes(deps: ShortReelsRouteDeps): FastifyPlug
               ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(candidate.status),
           );
         return { short_reel: shortReel, task: task ?? null };
+      } catch (error) {
+        return handleRouteError(error, reply);
+      }
+    });
+
+    // Delete a Short-Reel
+    server.delete("/api/channels/:channelId/short-reels/:reelId", async (request: FastifyRequest, reply: FastifyReply) => {
+      const params = request.params as { channelId: string; reelId: string };
+      try {
+        await repository.getChannel(params.channelId);
+        await repository.deleteShortReel({
+          channel_id: params.channelId,
+          reel_id: params.reelId,
+        });
+        return { success: true };
       } catch (error) {
         return handleRouteError(error, reply);
       }

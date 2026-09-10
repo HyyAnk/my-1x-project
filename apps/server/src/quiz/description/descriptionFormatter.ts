@@ -38,11 +38,23 @@ export function assembleFullDescription(input: AssembleDescriptionInput): {
   charCount: number;
   hashtags: string[];
 } {
-  const { hookLines, semanticParagraph, scoringCta, suggestedPlaylistCategory, language: _language = "English" } = input;
+  const { hookLines, semanticParagraph, scoringCta, suggestedPlaylistCategory, language = "English" } = input;
   const normalizedTags = normalizeHashtags(input.hashtags);
+  const langKey = language.trim().toLowerCase();
 
-  const scoringHeader = "🏆 SCORING TIERS:";
-  const playlistHeader = "📂 Playlist Category:";
+  const scoringHeader =
+    langKey === "de" || langKey === "german"
+      ? "🏆 PUNKTESTUFEN:"
+      : langKey === "fr" || langKey === "french"
+        ? "🏆 BAREME DE SCORE :"
+        : "🏆 SCORING TIERS:";
+
+  const playlistHeader =
+    langKey === "de" || langKey === "german"
+      ? "📂 Playlist-Kategorie:"
+      : langKey === "fr" || langKey === "french"
+        ? "📂 Catégorie de playlist :"
+        : "📂 Playlist Category:";
 
   const sections: string[] = [
     hookLines.trim(),

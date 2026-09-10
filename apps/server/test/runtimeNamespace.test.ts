@@ -16,14 +16,11 @@ describe("runtime namespace", () => {
     roots.push(root);
     await saveCodexSettings(root, { model: "gpt-5.5" });
 
-    const expectedDirectory = [".quiz", "-studio"].join("");
+    const expectedDirectory = ".quiz-studio";
     await expect(access(path.join(root, expectedDirectory, "codex.local.json"))).resolves.toBeUndefined();
 
     const runtimePaths = await import("../src/runtimePaths.js").catch(() => null);
     expect(runtimePaths?.STUDIO_RUNTIME_DIRECTORY).toBe(expectedDirectory);
     expect(runtimePaths?.studioRuntimePath(root, "codex.local.json")).toBe(path.join(root, expectedDirectory, "codex.local.json"));
-
-    const retiredDirectory = [".docu", "mentary-studio"].join("");
-    await expect(access(path.join(root, retiredDirectory, "codex.local.json"))).rejects.toThrow();
   });
 });

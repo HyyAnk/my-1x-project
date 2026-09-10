@@ -44,39 +44,84 @@ export function useTasksViewData({ tasks, channels = [], now, onRefresh, onNotic
     };
   }, [actionsMenuOpen]);
 
-  // Load episode titles for channels
+  // Load episode titles only for relevant episode IDs present in active tasks
   useEffect(() => {
     let isCancelled = false;
-    const fetchEpisodeTitles = async () => {
-      const titleMap = new Map<string, string>();
-      await Promise.all(
-        channels.map(async (channel) => {
-          try {
-            const res = await api.episodes(channel.channel_id);
-            if (res.episodes) {
-              res.episodes.forEach((ep) => {
-                if (ep.topic?.title) {
-                  titleMap.set(ep.episode_id, ep.topic.title);
-                }
-              });
+
+    // Collect unique episode IDs and any pre-attached titles from active tasks
+    const relevantEpisodeIds = new Set<string>();
+    const seedTitles = new Map<string, string>();
+
+    for (const task of tasks) {
+      if (task.episode_id) {
+        relevantEpisodeIds.add(task.episode_id);
+        if (task.episode_title) {
+          seedTitles.set(task.episode_id, task.episode_title);
+        }
+      }
+    }
+
+    if (relevantEpisodeIds.size === 0) {
+      return;
+    }
+
+    // Identify which episode IDs are missing from existing cache and seed titles
+    const missingIds = Array.from(relevantEpisodeIds).filter((id) => !episodeTitleMap.has(id) && !seedTitles.has(id));
+
+    if (missingIds.length === 0) {
+      if (seedTitles.size > 0) {
+        setEpisodeTitleMap((prev) => {
+          let hasChange = false;
+          const next = new Map(prev);
+          for (const [id, title] of seedTitles) {
+            if (!next.has(id)) {
+              next.set(id, title);
+              hasChange = true;
             }
-          } catch {
-            // Ignore background title load errors
           }
-        }),
-      );
-      if (!isCancelled) {
-        setEpisodeTitleMap(titleMap);
+          return hasChange ? next : prev;
+        });
+      }
+      return;
+    }
+
+    // Fetch only missing titles in a single batch network call
+    const fetchBatchTitles = async () => {
+      try {
+        const res = await api.batchEpisodeTitles(missingIds);
+        if (isCancelled) return;
+
+        setEpisodeTitleMap((prev) => {
+          const next = new Map(prev);
+          for (const [id, title] of seedTitles) {
+            next.set(id, title);
+          }
+          if (res?.titles) {
+            for (const [id, title] of Object.entries(res.titles)) {
+              if (title) next.set(id, title);
+            }
+          }
+          return next;
+        });
+      } catch {
+        if (!isCancelled && seedTitles.size > 0) {
+          setEpisodeTitleMap((prev) => {
+            const next = new Map(prev);
+            for (const [id, title] of seedTitles) {
+              next.set(id, title);
+            }
+            return next;
+          });
+        }
       }
     };
 
-    if (channels.length > 0) {
-      void fetchEpisodeTitles();
-    }
+    void fetchBatchTitles();
+
     return () => {
       isCancelled = true;
     };
-  }, [channels]);
+  }, [tasks]);
 
   const filtering = useTaskFiltering({
     tasks,

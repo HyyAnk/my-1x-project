@@ -26,7 +26,7 @@ export function SequenceDivider({
           className="sequence-anchor-btn"
           onClick={() =>
             onPreviewImage?.({
-              url: api.bundleImageUrl(channelId, episodeId, image.filename),
+              url: api.bundleImageUrl(channelId, episodeId, image.filename, image.modified_at),
               filename: image.filename,
               bundleId: scene.continuity_bundle_id,
               title: scene.sequence_title,
@@ -35,7 +35,7 @@ export function SequenceDivider({
           }
           title="Click to enlarge image"
         >
-          <img src={api.bundleImageUrl(channelId, episodeId, image.filename)} alt={`${scene.continuity_bundle_id} anchor`} />
+          <img src={api.bundleImageUrl(channelId, episodeId, image.filename, image.modified_at)} alt={`${scene.continuity_bundle_id} anchor`} />
           <span>{scene.continuity_bundle_id}</span>
         </button>
       ) : null}

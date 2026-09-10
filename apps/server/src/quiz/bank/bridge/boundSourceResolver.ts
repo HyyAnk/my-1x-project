@@ -1,5 +1,6 @@
-import { hashBankQuestionSource, type BankQuestion, type TopicRunCandidate } from "@studio/shared";
+import { hashBankQuestionSource, type BankQuestion, type BankQuestionWithCooldown, type TopicRunCandidate } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../../repository.js";
+import { evaluateEpisodeQuestionEligibility, evaluateShortReelQuestionEligibility } from "../bankEligibility.js";
 
 export interface ResolveBoundTopicSourcesInput {
   repository: RepositoryService;
@@ -16,6 +17,88 @@ export interface ResolvedBoundTopicSources {
   questionIds: string[];
   sourceContentHashes: string[];
   selectedCount: number;
+  snapshotRevision?: number;
+  snapshotToken?: string;
+}
+
+function checkShortReelEligibility(candidate: TopicRunCandidate, bankQuestion: BankQuestionWithCooldown, force: boolean): void {
+  const targetArchetype: "versus_faceoff" | "deep_trivia" =
+    candidate.archetype === "versus_faceoff" || candidate.archetype === "deep_trivia"
+      ? candidate.archetype
+      : (bankQuestion.archetype_id as "versus_faceoff" | "deep_trivia");
+  const evalQuestion = force ? { ...bankQuestion, channel_cooldown: { is_cooldown: false, days_remaining: 0 } } : bankQuestion;
+  const eligibility = evaluateShortReelQuestionEligibility(evalQuestion, { targetArchetype });
+  if (!eligibility.eligible) {
+    if (!force && bankQuestion.channel_cooldown?.is_cooldown) {
+      const days = bankQuestion.channel_cooldown?.days_remaining ?? 30;
+      throw new RepositoryError(
+        `SOURCE_QUESTION_IN_COOLDOWN: Bound source question "${bankQuestion.id}" entered channel cooldown (${days} days remaining). Re-suggest topics or set force=true to override.`,
+        "SOURCE_QUESTION_IN_COOLDOWN",
+      );
+    }
+    if (eligibility.reason === "NOT_APPROVED") {
+      throw new RepositoryError(
+        `SOURCE_QUESTION_NOT_APPROVED: Bound source question "${bankQuestion.id}" is not approved.`,
+        "SOURCE_QUESTION_NOT_APPROVED",
+      );
+    }
+    if (eligibility.reason === "MISSING_ENGLISH_SOURCE") {
+      throw new RepositoryError(
+        `SOURCE_QUESTION_NOT_ENGLISH: Bound source question "${bankQuestion.id}" must be explicitly English.`,
+        "SOURCE_QUESTION_NOT_ENGLISH",
+      );
+    }
+    throw new RepositoryError(
+      `SOURCE_QUESTION_INELIGIBLE: Bound source question "${bankQuestion.id}" is ineligible: ${eligibility.detail}`,
+      "SOURCE_QUESTION_INELIGIBLE",
+    );
+  }
+}
+
+function checkEpisodeEligibility(candidate: TopicRunCandidate, bankQuestion: BankQuestionWithCooldown, force: boolean): void {
+  const evalQuestion = force ? { ...bankQuestion, channel_cooldown: { is_cooldown: false, days_remaining: 0 } } : bankQuestion;
+  const candQuizFormat = (candidate as { quiz_format?: string; format?: string }).quiz_format ?? (candidate as { format?: string }).format;
+  const expectedFormat =
+    candQuizFormat === "true_false"
+      ? "true_false"
+      : candQuizFormat === "multiple_choice" || candQuizFormat === "knowledge"
+        ? "multiple_choice"
+        : undefined;
+  const eligibility = evaluateEpisodeQuestionEligibility(evalQuestion, {
+    targetLanguage: "en",
+    expectedFormat,
+  });
+  if (!eligibility.eligible) {
+    if (!force && bankQuestion.channel_cooldown?.is_cooldown) {
+      const days = bankQuestion.channel_cooldown?.days_remaining ?? 30;
+      throw new RepositoryError(
+        `SOURCE_QUESTION_IN_COOLDOWN: Bound source question "${bankQuestion.id}" entered channel cooldown (${days} days remaining). Re-suggest topics or set force=true to override.`,
+        "SOURCE_QUESTION_IN_COOLDOWN",
+      );
+    }
+    if (eligibility.reason === "NOT_APPROVED") {
+      throw new RepositoryError(
+        `SOURCE_QUESTION_NOT_APPROVED: Bound source question "${bankQuestion.id}" is not approved.`,
+        "SOURCE_QUESTION_NOT_APPROVED",
+      );
+    }
+    if (eligibility.reason === "MISSING_ENGLISH_SOURCE") {
+      throw new RepositoryError(
+        `SOURCE_QUESTION_NOT_ENGLISH: Bound source question "${bankQuestion.id}" must be explicitly English.`,
+        "SOURCE_QUESTION_NOT_ENGLISH",
+      );
+    }
+    if (eligibility.reason === "INCOMPATIBLE_FORMAT") {
+      throw new RepositoryError(
+        `SOURCE_QUESTION_FORMAT_MISMATCH: Bound source question "${bankQuestion.id}" format mismatch: ${eligibility.detail}`,
+        "SOURCE_QUESTION_FORMAT_MISMATCH",
+      );
+    }
+    throw new RepositoryError(
+      `SOURCE_QUESTION_INELIGIBLE: Bound source question "${bankQuestion.id}" is ineligible: ${eligibility.detail}`,
+      "SOURCE_QUESTION_INELIGIBLE",
+    );
+  }
 }
 
 /**
@@ -61,13 +144,38 @@ export async function resolveBoundTopicSources(input: ResolveBoundTopicSourcesIn
 
   // 5. Authoritatively resolve bound questions and verify immutable content hashes
   const activeBindings = candidate.source_bindings.slice(0, selectedCount);
+
+  // Reject duplicate source question IDs in active bindings
+  const seenQuestionIds = new Set<string>();
+  for (const binding of activeBindings) {
+    if (seenQuestionIds.has(binding.source_question_id)) {
+      throw new RepositoryError(
+        `DUPLICATE_SOURCE_QUESTION_ID: Duplicate source question ID "${binding.source_question_id}" in candidate bindings`,
+        "DUPLICATE_SOURCE_QUESTION_ID",
+      );
+    }
+    seenQuestionIds.add(binding.source_question_id);
+  }
+
+  // Read full ordered binding set against one coherent inventory snapshot
+  const snapshot = await repository.readQuestionBankQuestionsSnapshot({
+    channelId,
+    limit: 100000,
+    offset: 0,
+  });
+
+  const bankQuestionMap = new Map<string, BankQuestionWithCooldown>();
+  for (const q of snapshot.questions) {
+    bankQuestionMap.set(q.id, q);
+  }
+
   const questions: BankQuestion[] = [];
   const questionIds: string[] = [];
   const sourceContentHashes: string[] = [];
 
   for (const binding of activeBindings) {
     const questionId = binding.source_question_id;
-    const bankQuestion = await repository.getQuestionBankQuestion(questionId, channelId);
+    const bankQuestion = bankQuestionMap.get(questionId);
 
     if (!bankQuestion) {
       throw new RepositoryError(
@@ -91,13 +199,11 @@ export async function resolveBoundTopicSources(input: ResolveBoundTopicSourcesIn
       );
     }
 
-    const isCooldown = Boolean(bankQuestion.channel_cooldown?.is_cooldown);
-    if (isCooldown && !force) {
-      const days = bankQuestion.channel_cooldown?.days_remaining ?? 30;
-      throw new RepositoryError(
-        `SOURCE_QUESTION_IN_COOLDOWN: Bound source question "${questionId}" entered channel cooldown (${days} days remaining). Re-suggest topics or set force=true to override.`,
-        "SOURCE_QUESTION_IN_COOLDOWN",
-      );
+    // Evaluate full shared eligibility
+    if (isShortReel) {
+      checkShortReelEligibility(candidate, bankQuestion, Boolean(force));
+    } else {
+      checkEpisodeEligibility(candidate, bankQuestion, Boolean(force));
     }
 
     questions.push(bankQuestion);
@@ -111,5 +217,7 @@ export async function resolveBoundTopicSources(input: ResolveBoundTopicSourcesIn
     questionIds,
     sourceContentHashes,
     selectedCount,
+    snapshotRevision: snapshot.revision,
+    snapshotToken: `rev_${snapshot.revision}_${snapshot.total}`,
   };
 }

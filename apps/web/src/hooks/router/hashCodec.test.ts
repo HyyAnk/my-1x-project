@@ -38,4 +38,20 @@ describe("hashCodec", () => {
     expect(parsed.page).toBe("question_bank");
     expect(parsed.tab).toBe("preview");
   });
+
+  it("supports short-reels tab via query param and path segment", () => {
+    const fromQuery = parseHash("#/channels/ch-1?tab=short-reels");
+    expect(fromQuery.page).toBe("channels");
+    expect(fromQuery.channelId).toBe("ch-1");
+    expect(fromQuery.tab).toBe("short-reels");
+
+    const fromPath = parseHash("#/channels/ch-1/short-reels");
+    expect(fromPath.page).toBe("channels");
+    expect(fromPath.channelId).toBe("ch-1");
+    expect(fromPath.tab).toBe("short-reels");
+    expect(fromPath.shortReelId).toBeNull();
+
+    const built = buildHash({ page: "channels", channelId: "ch-1", tab: "short-reels" });
+    expect(built).toBe("#/channels/ch-1?tab=short-reels");
+  });
 });

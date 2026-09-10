@@ -123,10 +123,7 @@ export function registerChannelsRoutes(deps: ChannelsRouteDeps): FastifyPluginCa
     });
     server.get("/api/channels/:channelId/topics", async (request) => {
       const channelId = (request.params as { channelId: string }).channelId;
-      const [topics, latestRun] = await Promise.all([
-        repository.listTopics(channelId),
-        getLatestTopicRun(repository, channelId),
-      ]);
+      const [topics, latestRun] = await Promise.all([repository.listTopics(channelId), getLatestTopicRun(repository, channelId)]);
       return {
         topics,
         latest_run: latestRun,

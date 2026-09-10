@@ -6,15 +6,43 @@ import { verifyAndCheckLayout } from "./video/videoLayoutChecker.js";
 import { prepareVideoComposition } from "./video/videoCompositionPreparer.js";
 import { executeHyperframesRender } from "./video/videoRenderExecution.js";
 import { persistVideoRenderArtifacts } from "./video/renderManifestWriter.js";
+import { videoRenderConcurrencyLimiter } from "./video/renderConcurrencyLimiter.js";
+import { pruneRenderRootIntermediateFiles } from "./storage/artifactRetentionPruner.js";
 
 function ensureVideoTaskActive(runtime: TaskManagerRuntime, taskId: string, signal: AbortSignal): void {
   if (signal.aborted || runtime.get(taskId).status === "CANCELLED") throw new Error("Video render cancelled");
+}
+
+async function acquireRenderSlotWithProgress(runtime: TaskManagerRuntime, taskId: string, signal: AbortSignal): Promise<() => void> {
+  const limiter = runtime.videoRenderLimiter ?? videoRenderConcurrencyLimiter;
+  if (runtime.videoConfig?.max_concurrent_tasks && !process.env.MAX_CONCURRENT_VIDEO_RENDERS) {
+    limiter.setMaxConcurrency(runtime.videoConfig.max_concurrent_tasks);
+  }
+  const release = await limiter.acquireSlot(
+    taskId,
+    async (pos) => {
+      await runtime.update(taskId, {
+        queue_position: pos,
+        progress_message: `Queued · Waiting for available render slot (position ${pos})`,
+        progress_percent: 4,
+      });
+    },
+    signal,
+  );
+  ensureVideoTaskActive(runtime, taskId, signal);
+  await runtime.update(taskId, {
+    queue_position: null,
+    progress_message: "Preparing Quiz composition",
+    progress_percent: 5,
+  });
+  return release;
 }
 
 export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   const context = { profileId: task.channel_id, workerId: task.task_id, step: "render_video" };
   const controller = new AbortController();
   this.activeVideoControllers.set(task.task_id, controller);
+  let releaseSlot: (() => void) | null = null;
   try {
     await this.update(task.task_id, {
       status: "RUNNING",
@@ -44,6 +72,8 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
         "UNSUPPORTED_ASPECT_RATIO",
       );
     }
+
+    releaseSlot = await acquireRenderSlotWithProgress(this, task.task_id, controller.signal);
 
     const comp = await prepareVideoComposition({
       runtime: this,
@@ -110,19 +140,25 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       probe,
     });
 
+    try {
+      await pruneRenderRootIntermediateFiles(comp.renderRoot);
+    } catch (pruneError) {
+      this.logger.warn(
+        `Post-render intermediate artifact pruning deferred: ${pruneError instanceof Error ? pruneError.message : "unknown error"}`,
+      );
+    }
+
     ensureVideoTaskActive(this, task.task_id, controller.signal);
 
     await this.finish(task.task_id, "COMPLETED", null, [videoPath, manifestPath]);
     const quiz = await this.repository.readQuiz(task.channel_id, task.episode_id);
-    if (quiz && quiz.questions.length > 0) {
+    if (quiz?.questions.length) {
       await this.repository.appendQuestionHistory(task.channel_id, task.episode_id, quiz.questions, undefined, task.task_id);
     }
     if (comp.selectedBgmTrackId && comp.selectedBgmFilename) {
-      try {
-        await this.repository.appendBgmHistory(task.channel_id, task.episode_id, comp.selectedBgmTrackId, comp.selectedBgmFilename);
-      } catch {
-        // Ignore non-fatal BGM history save error
-      }
+      await this.repository
+        .appendBgmHistory(task.channel_id, task.episode_id, comp.selectedBgmTrackId, comp.selectedBgmFilename)
+        .catch(() => undefined);
     }
     this.logger.ok("Quiz video rendered", { ...context, step: "render_video" });
   } catch (error) {
@@ -144,6 +180,16 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     await this.finish(task.task_id, "FAILED", message);
     this.logger.error(message, context);
   } finally {
+    try {
+      if (releaseSlot) {
+        releaseSlot();
+      } else {
+        const limiter = this.videoRenderLimiter ?? videoRenderConcurrencyLimiter;
+        limiter.releaseSlot(task.task_id);
+      }
+    } catch {
+      // Ignore release error
+    }
     if (this.activeVideoControllers.get(task.task_id) === controller) this.activeVideoControllers.delete(task.task_id);
   }
 }

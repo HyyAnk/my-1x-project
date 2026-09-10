@@ -14,7 +14,7 @@ type UseVoiceSettingsProps = {
 function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.addEventListener("load", () => resolve(String(reader.result ?? "")));
+    reader.addEventListener("load", () => resolve(typeof reader.result === "string" ? reader.result : ""));
     reader.addEventListener("error", () => reject(reader.error ?? new Error("Could not read file")));
     reader.readAsDataURL(file);
   });

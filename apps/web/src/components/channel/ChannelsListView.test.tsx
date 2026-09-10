@@ -70,13 +70,13 @@ describe("ChannelsListView - Reordering & Customization Integration", () => {
     expect(screen.getByText("Beta Channel")).toBeDefined();
     expect(screen.getByText("Gamma Channel")).toBeDefined();
 
-    // Click Reorder button (supports en/vi regex)
-    const reorderBtn = screen.getByRole("button", { name: /reorder|sắp xếp/i });
+    // Click Reorder button
+    const reorderBtn = screen.getByRole("button", { name: /reorder/i });
     fireEvent.click(reorderBtn);
 
     // Active reorder banner should now appear
-    expect(screen.getByText(/reordering mode|chế độ sắp xếp/i)).toBeDefined();
-    expect(screen.getByRole("button", { name: /done|hoàn tất/i })).toBeDefined();
+    expect(screen.getByText(/reordering mode/i)).toBeDefined();
+    expect(screen.getByRole("button", { name: /done/i })).toBeDefined();
 
     // In reorder mode, cards have role="listitem" and clicking does NOT trigger openChannel navigation
     const alphaCard = container.querySelector(".channel-card");
@@ -84,11 +84,11 @@ describe("ChannelsListView - Reordering & Customization Integration", () => {
     expect(openChannel).not.toHaveBeenCalled();
 
     // Click Done button
-    const doneBtn = screen.getByRole("button", { name: /done|hoàn tất/i });
+    const doneBtn = screen.getByRole("button", { name: /done/i });
     fireEvent.click(doneBtn);
 
     // Banner should disappear and normal navigation restored
-    expect(screen.queryByText(/reordering mode|chế độ sắp xếp/i)).toBeNull();
+    expect(screen.queryByText(/reordering mode/i)).toBeNull();
     if (alphaCard) fireEvent.click(alphaCard);
     expect(openChannel).toHaveBeenCalledWith("ch_a");
   });

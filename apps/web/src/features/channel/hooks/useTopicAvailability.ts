@@ -32,7 +32,6 @@ export function useTopicAvailability({
   const sequenceRef = useRef<number>(0);
   const abortControllerRef = useRef<AbortController | null>(null);
   const isMountedRef = useRef<boolean>(true);
-  const lastCheckedAtRef = useRef<string | null>(null);
 
   const boundedInterval = Math.max(MIN_POLL_INTERVAL_MS, Math.min(MAX_POLL_INTERVAL_MS, pollIntervalMs));
 
@@ -57,12 +56,6 @@ export function useTopicAvailability({
         return null;
       }
 
-      // Temporal check: reject stale responses older than current state
-      if (lastCheckedAtRef.current && result.checked_at < lastCheckedAtRef.current) {
-        return null;
-      }
-
-      lastCheckedAtRef.current = result.checked_at;
       setAvailability(result);
       setError(null);
       return result;
@@ -90,7 +83,6 @@ export function useTopicAvailability({
   // Initial and reactive fetch on channel change
   useEffect(() => {
     isMountedRef.current = true;
-    lastCheckedAtRef.current = null;
     setAvailability(null);
     setError(null);
     if (channelId && enabled) {

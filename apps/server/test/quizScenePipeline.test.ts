@@ -128,7 +128,7 @@ describe("Phase 3 cross-surface scene pipeline", () => {
 
 function productionSource(
   presentation: "text" | "visual",
-  aspectRatio: "16:9" | "9:16" = "16:9",
+  aspectRatio: "16:9" = "16:9",
   questionText = "Which option is canonical?",
   firstChoice = "Alpha",
   answerCardStyle?: QuizAnswerCardStyle,
@@ -139,7 +139,7 @@ function productionSource(
     director.beats[0] = {
       ...director.beats[0],
       archetype: "visual_multiple_choice",
-      layout_id: aspectRatio === "9:16" ? "portrait_hero_choices" : "visual_choices_three",
+      layout_id: "visual_choices_three",
       asset_intents: ["choice_illustration"],
     };
   }

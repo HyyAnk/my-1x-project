@@ -97,6 +97,7 @@ export function QuizEpisodeView({
         episodeId={episodeId}
         activeEpisodeTask={pipeline.activeEpisodeTask}
         onNotice={onNotice}
+        onUpdated={pipeline.load}
       />
 
       <VideoDescriptionCard
@@ -106,6 +107,7 @@ export function QuizEpisodeView({
         hasQuiz={Boolean(quizV2?.quiz?.questions && quizV2.quiz.questions.length > 0)}
         initialDescription={quizV2?.description}
         onNotice={onNotice}
+        onUpdated={pipeline.load}
       />
 
       <EpisodeWorkspaceTabs

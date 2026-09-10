@@ -4,6 +4,7 @@ import path from "node:path";
 import { BankQuestionSchema, createSourceSnapshot, type ReelScript, type ShortReelRecord } from "@studio/shared";
 import { RepositoryService } from "../../src/repository/service.js";
 import { resolveShortReelFile } from "../../src/repository/shortReelStorage.js";
+import { saveTopicConfirmationReceipt, computeConfirmationOptionsFingerprint } from "../../src/repository/topicConfirmationReceipts.js";
 
 export function deferred() {
   let resolve!: () => void;
@@ -86,6 +87,20 @@ export async function repairFixture() {
     origin: "discovery" as const,
   };
   const reel = await repo.createShortReel(channel.channel_id, topic, repairSource, "create");
+  await saveTopicConfirmationReceipt(repo, channel.channel_id, {
+    receipt_id: `rec-${reel.reel_id}`,
+    channel_id: channel.channel_id,
+    topic_id: topic.topic_id,
+    content_kind: "short_reel",
+    product_id: reel.reel_id,
+    status: "completed",
+    confirmed_at: new Date().toISOString(),
+    request_id: "req-repair-fixture",
+    options_fingerprint: computeConfirmationOptionsFingerprint({ target_language: "en" }),
+    options: { target_language: "en" },
+    source_question_ids: repairSource.original_question ? [repairSource.original_question.id] : [],
+    source_content_hashes: [],
+  });
   const key = { channel_id: channel.channel_id, reel_id: reel.reel_id };
   const file = resolveShortReelFile(repo.roots, channel.slug, reel.reel_id);
   return {

@@ -85,6 +85,7 @@ export const EpisodeSchema = z.object({
   video_generated_at: IsoDate.nullable().default(null),
   video_duration_seconds: z.number().positive().nullable().default(null),
   render_manifest_path: z.string().nullable().default(null),
+  render_stale: z.boolean().default(false),
   thumbnail_asset_path_16_9: z.string().nullable().default(null),
   thumbnail_asset_path_9_16: z.string().nullable().default(null),
   created_at: IsoDate,

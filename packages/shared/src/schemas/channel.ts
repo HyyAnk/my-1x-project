@@ -155,8 +155,8 @@ export const IntroOutroClipMetaSchema = z.object({
 
 export type IntroOutroClipMeta = z.infer<typeof IntroOutroClipMetaSchema>;
 
-export const IntroOutroTransitionTypeSchema = z.enum(["stinger_swipe", "crossfade", "cut"]);
-export type IntroOutroTransitionType = z.infer<typeof IntroOutroTransitionTypeSchema>;
+export const IntroOutroTransitionTypeSchema = z.string().min(1);
+export type IntroOutroTransitionType = "stinger_swipe" | "crossfade" | "cut" | (string & {});
 
 export const IntroOutroStyleSchema = z.object({
   style_id: z.string().min(1),
@@ -165,7 +165,7 @@ export const IntroOutroStyleSchema = z.object({
   intro: IntroOutroClipMetaSchema,
   outro: IntroOutroClipMetaSchema,
   transition_type: IntroOutroTransitionTypeSchema.default("stinger_swipe"),
-  transition_duration_seconds: z.number().min(0.2).max(1.5).default(0.5),
+  transition_duration_seconds: z.number().min(0).max(1.5).default(0.5),
   audio_mode: z.enum(["use_video_audio", "overlay_bgm"]).default("use_video_audio"),
   created_at: IsoDate,
   updated_at: IsoDate,

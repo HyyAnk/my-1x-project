@@ -9,7 +9,6 @@ import { expect, test } from "@playwright/test";
  * test keeps the exact original fixture behavior.
  */
 export const smokeTest = test.extend({
-  // eslint-disable-next-line no-empty-pattern
   page: async ({ page }, use, testInfo) => {
     await page.route("**/api/tasks", (route) =>
       route.fulfill({ contentType: "application/json", body: JSON.stringify({ tasks: [], codex_status: "connected" }) }),

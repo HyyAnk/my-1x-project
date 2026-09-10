@@ -221,7 +221,15 @@
       "Loki",
       "Zeus",
       "Hercules"
-    ]
+    ],
+    "copyright_risk": "medium",
+    "is_trademark_ip": false,
+    "forbidden_visual_keywords": [
+      "Marvel",
+      "Avengers",
+      "blonde superhero"
+    ],
+    "safe_visual_proxy": "Ancient Norse mythological thunder deity with wild red beard and iron gloves wielding stone hammer Mjolnir amid stormy clouds."
   },
   {
     "id": "ENT-MYT-006",
@@ -6048,7 +6056,7 @@
       "Two-Thirds Divine"
     ],
     "difficulty": 1,
-    "visual_anchor": "Imposing Mesopotamian monarch with braided beard and gold armband holding a lion cub under his arm, standing atop the sunbaked brick walls of Uruk.",
+    "visual_anchor": "Imposing Mesopotamian monarch with braided beard and gold armband holding a young lion under his arm, standing atop the sunbaked brick walls of Uruk.",
     "core_traits": [
       "Demigod king of Uruk and legendary hero of the ancient Mesopotamian Epic of Gilgamesh",
       "Two-thirds divine and one-third human, possessing peerless physical strength and courage",

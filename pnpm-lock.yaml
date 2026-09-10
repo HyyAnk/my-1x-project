@@ -84,6 +84,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^2.1.9
         version: 2.1.9(vitest@2.1.9(@types/node@22.20.1)(jsdom@30.0.1))
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
       hyperframes:
         specifier: 0.8.17
         version: 0.8.17(@types/node@22.20.1)

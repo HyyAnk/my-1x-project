@@ -12,9 +12,19 @@ The default transport is local stdio. If using a configured WebSocket endpoint, 
 
 Open Tasks. Queued tasks wait for the same episode/channel lock or for the global concurrency cap. A running task can be cancelled. After a dashboard restart, an interrupted running task is marked failed while repository artifacts remain intact.
 
+## Topic confirmation or localization fails
+
+Re-suggest a topic when source bindings are missing, modified or no longer eligible. Do not edit hashes or fabricate source records. Repeated confirmation must use compatible options; conflicting requests should not create a second product silently.
+
+For missing localization or incomplete receipts, preserve product files and collect the error plus logs before repair. Do not substitute English text under a different language code. See [Question bank](question-bank.md).
+
+## Progress is stale
+
+Task events use WebSocket `/api/events`. Check connection state and failed requests. Reconnection triggers task refetch; product views also depend on feature refresh logic. Stale display is not a safe reason to duplicate a side-effecting request.
+
 ## A file does not save
 
-The backend accepts only known Markdown artifact names and only paths beneath the selected channel or episode. Check `.quiz-studio/logs/` with `STUDIO_DEBUG=1` for the technical detail.
+Markdown editing accepts known artifact names through repository-controlled paths. Other product writes have schema, revision and lifecycle constraints. Check the selected content root and `.quiz-studio/logs/` with `STUDIO_DEBUG=1`; preserve input and resolve conflicts rather than writing around the API.
 
 ## Quiz runtime migration fails
 

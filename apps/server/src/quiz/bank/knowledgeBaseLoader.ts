@@ -1,38 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
 
-export interface KnowledgeFactOrMyth {
-  claim: string;
-  verdict: "fact" | "myth" | "true" | "false";
-  explanation: string;
-  fun_fact?: string;
-}
+import type {
+  CopyrightRiskLevel,
+  KnowledgeFactOrMyth,
+  KnowledgeEntity,
+  KnowledgeBaseStats,
+  KnowledgeBaseLoaderOptions,
+} from "./knowledgeBase.types.js";
 
-export interface KnowledgeEntity {
-  id: string;
-  domain_id: string;
-  subtopic_id: string;
-  name: string;
-  language: "en";
-  aliases?: string[];
-  difficulty?: number;
-  visual_anchor: string;
-  core_traits: string[];
-  distractor_pool?: string[];
-  facts_and_myths: KnowledgeFactOrMyth[];
-  versus_candidates?: string[];
-}
-
-export interface KnowledgeBaseStats {
-  totalEntities: number;
-  domainCounts: Record<string, number>;
-  subtopicCounts: Record<string, number>;
-}
-
-export interface KnowledgeBaseLoaderOptions {
-  baseDir?: string;
-  forceReload?: boolean;
-}
+export type { CopyrightRiskLevel, KnowledgeFactOrMyth, KnowledgeEntity, KnowledgeBaseStats, KnowledgeBaseLoaderOptions };
 
 // In-memory cache structures
 let cachedEntities: KnowledgeEntity[] | null = null;

@@ -3,7 +3,7 @@ import { runConcurrent } from "../src/utils/concurrency.js";
 
 describe("runConcurrent worker pool", () => {
   it("processes items concurrently and preserves order", async () => {
-    const items = [50, 10, 30, 20, 40];
+    const items = [20, 4, 12, 8, 16];
     const startedOrder: number[] = [];
     const completedOrder: number[] = [];
 
@@ -14,9 +14,9 @@ describe("runConcurrent worker pool", () => {
       return `result-${index}-${ms}`;
     });
 
-    expect(results).toEqual(["result-0-50", "result-1-10", "result-2-30", "result-3-20", "result-4-40"]);
+    expect(results).toEqual(["result-0-20", "result-1-4", "result-2-12", "result-3-8", "result-4-16"]);
     expect(startedOrder.slice(0, 3)).toEqual([0, 1, 2]);
-    expect(completedOrder[0]).toBe(1); // 10ms finished first
+    expect(completedOrder[0]).toBe(1); // 4ms finished first
   });
 
   it("handles empty items gracefully", async () => {

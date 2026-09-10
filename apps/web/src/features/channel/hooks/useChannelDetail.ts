@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Channel, Episode, QuizImageStyle, Task, TopicCandidate, TopicRun } from "@studio/shared";
+import type { Channel, Episode, QuizImageStyle, ShortReelRecord, Task, TopicCandidate, TopicRun } from "@studio/shared";
 import { api } from "../../../api";
+
+export type ChannelTab = "episodes" | "short-reels" | "topics" | "dna" | "intro-outro";
 import { isTaskActive, isTaskTerminal, latestTask } from "../../../lib/utils";
 import type { Notice } from "../../../components/types";
 import { useChannelDna } from "./useChannelDna";
 import { useChannelMascotAndStyle } from "./useChannelMascotAndStyle";
 import { useTopicAvailability } from "./useTopicAvailability";
+import { useChannelEpisodes } from "./useChannelEpisodes";
 
 export type UseChannelDetailProps = {
   channel: Channel;
@@ -32,23 +35,21 @@ export function useChannelDetail({
 }: UseChannelDetailProps) {
   const [topics, setTopics] = useState<TopicCandidate[]>([]);
   const [latestTopicRun, setLatestTopicRun] = useState<TopicRun | null>(null);
-  const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [shortReels, setShortReels] = useState<ShortReelRecord[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [confirmingTopicId, setConfirmingTopicId] = useState<string | null>(null);
   const [deleteEpisodeTarget, setDeleteEpisodeTarget] = useState<Episode | null>(null);
+  const [deleteShortReelTarget, setDeleteShortReelTarget] = useState<ShortReelRecord | null>(null);
   const [loadingChannel, setLoadingChannel] = useState(true);
-  const initialTab =
-    activeTab === "episodes" || activeTab === "topics" || activeTab === "intro-outro" || (activeTab === "dna" && !simplifyMode)
-      ? activeTab
-      : "episodes";
-  const [channelTab, setChannelTab] = useState<"episodes" | "topics" | "dna" | "intro-outro">(initialTab);
+
+  const isValidTab = (tab?: string | null): tab is ChannelTab =>
+    tab === "episodes" || tab === "short-reels" || tab === "topics" || tab === "intro-outro" || (tab === "dna" && !simplifyMode);
+
+  const initialTab: ChannelTab = isValidTab(activeTab) ? activeTab : "episodes";
+  const [channelTab, setChannelTab] = useState<ChannelTab>(initialTab);
 
   useEffect(() => {
-    if (
-      activeTab &&
-      (activeTab === "episodes" || activeTab === "topics" || activeTab === "intro-outro" || (activeTab === "dna" && !simplifyMode)) &&
-      activeTab !== channelTab
-    ) {
+    if (activeTab && isValidTab(activeTab) && activeTab !== channelTab) {
       setChannelTab(activeTab);
     }
   }, [activeTab, simplifyMode, channelTab]);
@@ -59,7 +60,7 @@ export function useChannelDetail({
     }
   }, [simplifyMode, channelTab]);
 
-  const switchTab = (tab: "episodes" | "topics" | "dna" | "intro-outro") => {
+  const switchTab = (tab: ChannelTab) => {
     setChannelTab(tab);
     onTabChange?.(tab);
   };
@@ -94,28 +95,34 @@ export function useChannelDetail({
     enabled: channelTab === "topics",
   });
 
+  const episodesHook = useChannelEpisodes({
+    channelId: channel.channel_id,
+    onNotice,
+  });
+
   const load = useCallback(
     async (showLoading = false) => {
       const version = ++loadVersion.current;
       if (showLoading) setLoadingChannel(true);
       try {
-        const [dnaResponse, topicResponse, episodeResponse] = await Promise.all([
+        const [dnaResponse, topicResponse, shortReelsResponse] = await Promise.all([
           api.dna(channel.channel_id),
           api.topics(channel.channel_id),
-          api.episodes(channel.channel_id),
+          api.listShortReels(channel.channel_id).catch(() => ({ short_reels: [] })),
         ]);
         if (version !== loadVersion.current) return;
         dnaHook.setDna(dnaResponse);
         dnaHook.setDnaDraft(dnaResponse.content);
         setTopics(topicResponse.topics);
         setLatestTopicRun(topicResponse.latest_run ?? null);
-        setEpisodes(episodeResponse.episodes);
+        setShortReels(shortReelsResponse.short_reels ?? []);
         void topicAvailabilityHook.refresh();
+        void episodesHook.reload();
       } finally {
         if (showLoading && version === loadVersion.current) setLoadingChannel(false);
       }
     },
-    [channel.channel_id, topicAvailabilityHook.refresh],
+    [channel.channel_id, episodesHook.reload, topicAvailabilityHook.refresh],
   );
 
   useEffect(() => {
@@ -167,7 +174,7 @@ export function useChannelDetail({
     if (confirmingTopicId) return;
     setConfirmingTopicId(topic.topic_id);
     try {
-      const result = await api.confirmTopic(channel.channel_id, topic.topic_id, questionCount, visualStyle, true);
+      const result = await api.confirmTopic(channel.channel_id, topic.topic_id, questionCount, visualStyle, false);
       if (result.content_kind === "short_reel") {
         onNotice({
           tone: "good",
@@ -206,8 +213,15 @@ export function useChannelDetail({
 
   const handleEpisodeDeleted = async (episode: Episode) => {
     setDeleteEpisodeTarget(null);
-    setEpisodes((current) => current.filter((item) => item.episode_id !== episode.episode_id));
+    await episodesHook.handleEpisodeDeleted(episode);
     onNotice({ tone: "good", message: `Episode deleted: ${episode.topic.title}` });
+    await onRefresh();
+  };
+
+  const handleShortReelDeleted = async (reel: ShortReelRecord) => {
+    setDeleteShortReelTarget(null);
+    setShortReels((current) => current.filter((item) => item.reel_id !== reel.reel_id));
+    onNotice({ tone: "good", message: `Short-Reel deleted: ${reel.topic.title}` });
     await onRefresh();
   };
 
@@ -227,7 +241,9 @@ export function useChannelDetail({
     dna: dnaHook.dna,
     topics,
     latestTopicRun,
-    episodes,
+    episodes: episodesHook.episodes,
+    episodesHook,
+    shortReels,
     editingDna: dnaHook.editingDna,
     setEditingDna: dnaHook.setEditingDna,
     dnaDraft: dnaHook.dnaDraft,
@@ -238,6 +254,8 @@ export function useChannelDetail({
     confirmingTopicId,
     deleteEpisodeTarget,
     setDeleteEpisodeTarget,
+    deleteShortReelTarget,
+    setDeleteShortReelTarget,
     loadingChannel,
     channelTab,
     switchTab,
@@ -259,6 +277,7 @@ export function useChannelDetail({
     suggest,
     confirmTopic,
     handleEpisodeDeleted,
+    handleShortReelDeleted,
     saveDna: dnaHook.saveDna,
     generateDna: dnaHook.generateDna,
     resetDnaDraft: dnaHook.resetDnaDraft,

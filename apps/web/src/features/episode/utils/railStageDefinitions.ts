@@ -120,6 +120,7 @@ export function statusLabel(status: RailStatus): string {
   if (status === "queued") return "Waiting";
   if (status === "running") return "Generating";
   if (status === "ready") return "Ready";
+  if (status === "stale") return "Stale (Re-render Recommended)";
   if (status === "failed") return "Failed";
-  return status.replaceAll("_", " ");
+  return (status as string).replace(/_/g, " ");
 }

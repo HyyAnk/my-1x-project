@@ -307,29 +307,80 @@ export function calculateCumulativeTimings(script: ReelScript): Array<{ segment_
   });
 }
 
-export function validateReelScript(
+interface CueTrackingState {
+  questionCueFound: boolean;
+  firstQuestionTime: number;
+  answerCueFound: boolean;
+  firstAnswerTime: number;
+}
+
+function processQuestionCue(params: {
+  cue: { role: string; text: string; start_seconds: number };
+  segmentIndex: number;
+  globalStart: number;
+  expectedQuestionText: string;
+  sourceQuestionText: string;
+  isProjected: boolean;
+  state: CueTrackingState;
+  errors: string[];
+}): void {
+  if (params.segmentIndex !== 0) {
+    params.errors.push("Canonical question cues belong in segment 1");
+  }
+  if (params.cue.text === params.expectedQuestionText || params.cue.text === params.sourceQuestionText) {
+    params.state.questionCueFound = true;
+    params.state.firstQuestionTime = Math.min(params.state.firstQuestionTime, params.globalStart);
+  } else {
+    params.errors.push(
+      params.isProjected
+        ? `Question cue text "${params.cue.text}" does not match projected question text "${params.expectedQuestionText}"`
+        : `Question cue text "${params.cue.text}" does not match source question text "${params.sourceQuestionText}"`,
+    );
+  }
+}
+
+function processAnswerCue(params: {
+  cue: { role: string; text: string; start_seconds: number };
+  segmentIndex: number;
+  globalStart: number;
+  expectedAnswerText: string;
+  sourceAnswerText: string;
+  isProjected: boolean;
+  state: CueTrackingState;
+  errors: string[];
+}): void {
+  if (params.segmentIndex !== 2) {
+    params.errors.push("Canonical answer cues belong in segment 3");
+  }
+  if (params.cue.text === params.expectedAnswerText || params.cue.text === params.sourceAnswerText) {
+    params.state.answerCueFound = true;
+    params.state.firstAnswerTime = Math.min(params.state.firstAnswerTime, params.globalStart);
+  } else {
+    params.errors.push(
+      params.isProjected
+        ? `Answer cue text "${params.cue.text}" does not match projected answer text "${params.expectedAnswerText}"`
+        : `Answer cue text "${params.cue.text}" does not match source answer text "${params.sourceAnswerText}"`,
+    );
+  }
+}
+
+function validateScriptCues(
   script: ReelScript,
   source: z.infer<typeof ShortReelSourceSnapshotSchema>,
-  staleSegments: readonly (1 | 2 | 3)[] = [],
   displayProjection?: Partial<ShortReelDisplayProjection> | null,
-): { valid: boolean; errors: string[] } {
+): string[] {
   const errors: string[] = [];
-
-  const parsed = ReelScriptSchema.safeParse(script);
-  if (!parsed.success) {
-    for (const issue of parsed.error.issues) {
-      errors.push(`${issue.path.join(".")}: ${issue.message}`);
-    }
-    return { valid: false, errors };
-  }
-
   const expectedQuestionText = displayProjection?.question_text || source.question_text;
   const expectedAnswerText = displayProjection?.selected_answer_text || source.selected_answer_text;
+  const isQuestionProjected = Boolean(displayProjection?.question_text);
+  const isAnswerProjected = Boolean(displayProjection?.selected_answer_text);
 
-  let questionCueFound = false;
-  let firstQuestionTime = Number.POSITIVE_INFINITY;
-  let firstAnswerTime = Number.POSITIVE_INFINITY;
-  let answerCueFound = false;
+  const state: CueTrackingState = {
+    questionCueFound: false,
+    firstQuestionTime: Number.POSITIVE_INFINITY,
+    answerCueFound: false,
+    firstAnswerTime: Number.POSITIVE_INFINITY,
+  };
 
   const timings = calculateCumulativeTimings(script);
 
@@ -339,83 +390,114 @@ export function validateReelScript(
 
     for (const cue of seg.text_cues) {
       const globalStart = segTiming.start + cue.start_seconds;
-
       if (cue.role === "question") {
-        if (s !== 0) errors.push("Canonical question cues belong in segment 1");
-        if (cue.text === expectedQuestionText || cue.text === source.question_text) {
-          questionCueFound = true;
-          firstQuestionTime = Math.min(firstQuestionTime, globalStart);
-        } else {
-          errors.push(
-            displayProjection?.question_text
-              ? `Question cue text "${cue.text}" does not match projected question text "${expectedQuestionText}"`
-              : `Question cue text "${cue.text}" does not match source question text "${source.question_text}"`,
-          );
-        }
-      }
-
-      if (cue.role === "answer") {
-        if (s !== 2) errors.push("Canonical answer cues belong in segment 3");
-        if (cue.text === expectedAnswerText || cue.text === source.selected_answer_text) {
-          answerCueFound = true;
-          firstAnswerTime = Math.min(firstAnswerTime, globalStart);
-        } else {
-          errors.push(
-            displayProjection?.selected_answer_text
-              ? `Answer cue text "${cue.text}" does not match projected answer text "${expectedAnswerText}"`
-              : `Answer cue text "${cue.text}" does not match source answer text "${source.selected_answer_text}"`,
-          );
-        }
+        processQuestionCue({
+          cue,
+          segmentIndex: s,
+          globalStart,
+          expectedQuestionText,
+          sourceQuestionText: source.question_text,
+          isProjected: isQuestionProjected,
+          state,
+          errors,
+        });
+      } else if (cue.role === "answer") {
+        processAnswerCue({
+          cue,
+          segmentIndex: s,
+          globalStart,
+          expectedAnswerText,
+          sourceAnswerText: source.selected_answer_text,
+          isProjected: isAnswerProjected,
+          state,
+          errors,
+        });
       }
     }
   }
 
-  if (!questionCueFound) {
+  if (!state.questionCueFound) {
     errors.push(
-      displayProjection?.question_text
+      isQuestionProjected
         ? "Script is missing question cue matching projected question text"
         : "Script is missing canonical question cue matching source question text",
     );
   }
 
-  if (!answerCueFound) {
+  if (!state.answerCueFound) {
     errors.push(
-      displayProjection?.selected_answer_text
+      isAnswerProjected
         ? "Script is missing answer cue matching projected answer text"
         : "Script is missing canonical answer cue matching source answer text",
     );
   }
 
-  if (answerCueFound && questionCueFound && firstAnswerTime <= firstQuestionTime) {
-    errors.push(`Answer cue revealed at ${firstAnswerTime}s before or at the same time as question cue at ${firstQuestionTime}s`);
+  if (state.answerCueFound && state.questionCueFound && state.firstAnswerTime <= state.firstQuestionTime) {
+    errors.push(
+      `Answer cue revealed at ${state.firstAnswerTime}s before or at the same time as question cue at ${state.firstQuestionTime}s`,
+    );
   }
 
+  return errors;
+}
+
+function validateSegmentContinuity(
+  currentEnd: ReelScript["segments"][number]["end_state"],
+  nextStart: ReelScript["segments"][number]["start_state"],
+  index: number,
+): string[] {
+  const errors: string[] = [];
+  const segA = index + 1;
+  const segB = index + 2;
+
+  if (currentEnd.character_identity !== nextStart.character_identity) {
+    errors.push(
+      `Continuity mismatch between segment ${segA} and ${segB}: character_identity "${currentEnd.character_identity}" vs "${nextStart.character_identity}"`,
+    );
+  }
+  if (currentEnd.environment !== nextStart.environment) {
+    errors.push(
+      `Continuity mismatch between segment ${segA} and ${segB}: environment "${currentEnd.environment}" vs "${nextStart.environment}"`,
+    );
+  }
+  const currProps = [...currentEnd.props].sort();
+  const nextProps = [...nextStart.props].sort();
+  if (JSON.stringify(currProps) !== JSON.stringify(nextProps)) {
+    errors.push(`Continuity mismatch between segment ${segA} and ${segB}: props differ`);
+  }
+  const currText = [...currentEnd.visible_text].sort();
+  const nextText = [...nextStart.visible_text].sort();
+  if (JSON.stringify(currText) !== JSON.stringify(nextText)) {
+    errors.push(`Continuity mismatch between segment ${segA} and ${segB}: visible_text differs`);
+  }
+
+  return errors;
+}
+
+function validateScriptContinuity(script: ReelScript, staleSegments: readonly (1 | 2 | 3)[] = []): string[] {
+  const errors: string[] = [];
   for (let i = 0; i < 2; i++) {
     if (staleSegments.includes((i + 2) as 2 | 3)) continue;
-    const currentEnd = script.segments[i].end_state;
-    const nextStart = script.segments[i + 1].start_state;
-
-    if (currentEnd.character_identity !== nextStart.character_identity) {
-      errors.push(
-        `Continuity mismatch between segment ${i + 1} and ${i + 2}: character_identity "${currentEnd.character_identity}" vs "${nextStart.character_identity}"`,
-      );
-    }
-    if (currentEnd.environment !== nextStart.environment) {
-      errors.push(
-        `Continuity mismatch between segment ${i + 1} and ${i + 2}: environment "${currentEnd.environment}" vs "${nextStart.environment}"`,
-      );
-    }
-    const currProps = [...currentEnd.props].sort();
-    const nextProps = [...nextStart.props].sort();
-    if (JSON.stringify(currProps) !== JSON.stringify(nextProps)) {
-      errors.push(`Continuity mismatch between segment ${i + 1} and ${i + 2}: props differ`);
-    }
-    const currText = [...currentEnd.visible_text].sort();
-    const nextText = [...nextStart.visible_text].sort();
-    if (JSON.stringify(currText) !== JSON.stringify(nextText)) {
-      errors.push(`Continuity mismatch between segment ${i + 1} and ${i + 2}: visible_text differs`);
-    }
+    errors.push(...validateSegmentContinuity(script.segments[i].end_state, script.segments[i + 1].start_state, i));
   }
+  return errors;
+}
+
+export function validateReelScript(
+  script: ReelScript,
+  source: z.infer<typeof ShortReelSourceSnapshotSchema>,
+  staleSegments: readonly (1 | 2 | 3)[] = [],
+  displayProjection?: Partial<ShortReelDisplayProjection> | null,
+): { valid: boolean; errors: string[] } {
+  const parsed = ReelScriptSchema.safeParse(script);
+  if (!parsed.success) {
+    return {
+      valid: false,
+      errors: parsed.error.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`),
+    };
+  }
+
+  const errors = [...validateScriptCues(script, source, displayProjection), ...validateScriptContinuity(script, staleSegments)];
 
   return { valid: errors.length === 0, errors };
 }

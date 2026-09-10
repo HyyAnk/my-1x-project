@@ -120,6 +120,7 @@ export function useEpisodePipeline({
     totalImageCostVnd,
     artifactValues,
     prerequisites,
+    load,
     // From useEpisodeSceneFiltering
     selectedSequenceId: sceneFiltering.selectedSequenceId,
     setSelectedSequenceId: sceneFiltering.setSelectedSequenceId,

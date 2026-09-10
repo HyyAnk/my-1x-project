@@ -78,10 +78,11 @@ export async function generateNanoBananaImage(
       signal: requestSignal,
     });
   } catch (error) {
-    if (options.cancellationSignal?.aborted) throw new Error("Image generation was cancelled");
+    if (options.cancellationSignal?.aborted) throw new Error("Image generation was cancelled", { cause: error });
     throw new RepositoryError(
       `Failed to connect to gpti2.store Nano Banana API: ${error instanceof Error ? error.message : String(error)}`,
       "IMAGE_PROVIDER_UNAVAILABLE",
+      { cause: error },
     );
   }
 

@@ -26,16 +26,17 @@ export class FakeCodex extends EventEmitter {
   activeTurns = 0;
   maxActiveTurns = 0;
   prompts: string[] = [];
-  async connect(): Promise<void> {
+  connect(): Promise<void> {
     this.emit("status", "connected");
+    return Promise.resolve();
   }
-  async startThread(): Promise<string> {
-    return `thread_${this.turnNumber + 1}`;
+  startThread(): Promise<string> {
+    return Promise.resolve(`thread_${this.turnNumber + 1}`);
   }
-  async resumeThread(threadId: string): Promise<string> {
-    return threadId;
+  resumeThread(threadId: string): Promise<string> {
+    return Promise.resolve(threadId);
   }
-  async startTurn(threadId: string, prompt = ""): Promise<string> {
+  startTurn(threadId: string, prompt = ""): Promise<string> {
     const turnId = `turn_${++this.turnNumber}`;
     this.prompts.push(prompt);
     this.activeTurns += 1;
@@ -123,10 +124,11 @@ export class FakeCodex extends EventEmitter {
       this.activeTurns -= 1;
       this.emit("notification", { method: "turn/completed", params: { turn: { id: turnId, status: "completed" } } });
     }, 30);
-    return turnId;
+    return Promise.resolve(turnId);
   }
-  async interruptTurn(): Promise<void> {
+  interruptTurn(): Promise<void> {
     /* deterministic fake */
+    return Promise.resolve();
   }
   respond(): void {
     /* deterministic fake */

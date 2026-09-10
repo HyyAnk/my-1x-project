@@ -439,6 +439,51 @@ describe("Question Bank Studio UI Components", () => {
     });
   });
 
+  it("QuestionBankAiGenerateModal auto-closes immediately when generation starts as a background job", async () => {
+    const onGenerate = vi.fn().mockResolvedValue({
+      success: true,
+      job: {
+        jobId: "job-test-123",
+        status: "running",
+        mode: "auto",
+        targetCount: 20,
+        startedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        progress: {
+          totalRequested: 20,
+          completedCount: 0,
+          currentChunk: 1,
+          totalChunks: 1,
+          chunkSize: 20,
+          approvedInChunk: 0,
+          rejectedInChunk: 0,
+          approvedTotal: 0,
+          rejectedTotal: 0,
+        },
+      },
+    });
+    const onClose = vi.fn();
+
+    renderWithLanguage(
+      <QuestionBankAiGenerateModal
+        taxonomy={mockTaxonomy}
+        matrixCoverage={null}
+        generating={false}
+        onGenerate={onGenerate}
+        onClose={onClose}
+      />,
+      "en",
+    );
+
+    const submitBtn = screen.getByText(/Auto-Fill Matrix \(20 questions\)/);
+    fireEvent.click(submitBtn);
+
+    expect(onGenerate).toHaveBeenCalled();
+    await vi.waitFor(() => {
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it("QuestionBankTargetProgressBar renders segmented rail, milestone nodes, and active tier metrics", () => {
     const progress = getMilestoneProgress(250);
     renderWithLanguage(<QuestionBankTargetProgressBar currentTotal={250} milestoneProgress={progress} />, "en");

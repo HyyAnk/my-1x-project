@@ -51,7 +51,7 @@ export async function assertSafeBankFilesystemPath(rootPath: string, targetPath:
   }
 }
 
-function isInside(rootPath: string, targetPath: string): boolean {
+export function isInside(rootPath: string, targetPath: string): boolean {
   const relative = path.relative(path.resolve(rootPath), path.resolve(targetPath));
   return relative === "" || (relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
 }

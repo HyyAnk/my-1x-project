@@ -119,7 +119,7 @@ export const channelsEn = {
     mascotSelectTitle: "Assign Mascot to this Channel",
     noMascotOption: "🚫 No Mascot assigned",
     mascotDefaultDesc: "Host mascot avatar for quiz videos.",
-    posesReadyBadge: "✨ {count}/7 Poses Ready",
+    posesReadyBadge: "✨ {count}/2 States Ready",
     stageAnchorLabel: "Stage Anchor Position",
     bottomLeftLabel: "👈 Bottom-Left",
     bottomRightLabel: "👉 Bottom-Right",

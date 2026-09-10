@@ -59,6 +59,7 @@ import {
 } from "./pipelineRunner.js";
 import { runAudioTask } from "./audioRunner.js";
 import { runVideoTask } from "./videoRunner.js";
+import { videoRenderConcurrencyLimiter } from "./video/renderConcurrencyLimiter.js";
 import {
   hasActiveEpisodeTasks,
   hasActiveChannelTasks,
@@ -66,6 +67,7 @@ import {
   pruneChannelTasks,
   reconcileQuestionHistory,
   reconcileOrphanedTasks,
+  reconcileStartupState,
 } from "./taskLifecycle.js";
 
 const ACTIVE_TERMINAL_STATUSES = ["QUEUED", "RUNNING", "WAITING_APPROVAL"] as const;
@@ -98,6 +100,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   audioConfig: AppConfig["audio_generation"];
   imageConfig: AppConfig["image_generation"];
   videoConfig: AppConfig["video_generation"];
+  readonly videoRenderLimiter = videoRenderConcurrencyLimiter;
   readonly audioProviderFactory: (target: ChatterboxTarget, config: AppConfig["audio_generation"]) => AudioProvider;
   failedBuildCleanupPromise: Promise<{ removedEpisodes: number; removedTasks: number }> | null = null;
   failedBuildCleanupTimer: NodeJS.Timeout | null = null;
@@ -142,6 +145,9 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
       typeof videoConfigOrMaxSceneDuration === "number"
         ? { ...DEFAULT_CONFIG.video_generation, max_scene_duration_seconds: videoConfigOrMaxSceneDuration }
         : videoConfigOrMaxSceneDuration;
+    if (this.videoConfig?.max_concurrent_tasks && !process.env.MAX_CONCURRENT_VIDEO_RENDERS) {
+      videoRenderConcurrencyLimiter.setMaxConcurrency(this.videoConfig.max_concurrent_tasks);
+    }
     this.audioConfig = audioConfig;
     this.imageConfig = imageConfig;
     this.audioProviderFactory = audioProviderFactory ?? ((target, config) => new ChatterboxProvider(repository, config, target));
@@ -154,6 +160,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     await this.reconcileOrphanedTasks();
     await this.reconcileQuestionHistory();
     await this.cleanupExpiredFailedBuilds();
+    await this.reconcileStartupState();
     this.startFailedBuildCleanupTimer();
   }
 
@@ -165,6 +172,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     this.abortRegistry.clearAll();
     this.approvalRegistry.clear();
     this.queueCoordinator.reset();
+    videoRenderConcurrencyLimiter.reset();
     this.runningCount = this.runningAudioCount = this.runningImageCount = this.runningVideoCount = this.runningPipelineCount = 0;
     this.connectionStatus = this.codex.isConnected ? "connected" : "disconnected";
     await this.load();
@@ -176,6 +184,9 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
   updateVideoConfig(config: AppConfig["video_generation"]): void {
     this.videoConfig = config;
+    if (config.max_concurrent_tasks && !process.env.MAX_CONCURRENT_VIDEO_RENDERS) {
+      videoRenderConcurrencyLimiter.setMaxConcurrency(config.max_concurrent_tasks);
+    }
     void this.pump();
   }
   updateImageConfig(config: AppConfig["image_generation"]): void {
@@ -363,8 +374,13 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   isShotPlanFresh(channelId: string, episodeId: string): Promise<boolean> {
     return isShotPlanFresh.call(this, channelId, episodeId);
   }
-  waitForTaskTerminal(taskId: string, run: PipelineRun, onProgress?: (task: Task) => Promise<void> | void): Promise<Task> {
-    return waitForTaskTerminal.call(this, taskId, run, onProgress);
+  waitForTaskTerminal(
+    taskId: string,
+    run: PipelineRun,
+    onProgress?: (task: Task) => Promise<void> | void,
+    pollIntervalMs?: number,
+  ): Promise<Task> {
+    return waitForTaskTerminal.call(this, taskId, run, onProgress, pollIntervalMs);
   }
   runAudioTask(task: Task): Promise<void> {
     return runAudioTask.call(this, task);
@@ -419,6 +435,9 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     const result = await reconcileOrphanedTasks.call(this);
     this.abortRegistry.reconcileShortReels(new Set(this.tasks.keys()));
     return result;
+  }
+  reconcileStartupState(): Promise<{ prunedDirs: string[]; reclaimedBytes: number }> {
+    return reconcileStartupState.call(this);
   }
   cleanupExpiredFailedBuilds(nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }> {
     return runFailedBuildCleanup(this, nowMs);

@@ -31,6 +31,7 @@ export type QuizRenderInput = {
   introVideoPath?: string;
   outroVideoPath?: string;
   transitionType?: IntroOutroTransitionType;
+  transitionDurationSeconds?: number;
 };
 
 export type PreparedQuizRender = {

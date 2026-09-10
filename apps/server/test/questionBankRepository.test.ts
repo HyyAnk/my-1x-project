@@ -199,7 +199,9 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
     };
 
     await expect(writeSubtopicBatch.call(repo, batch)).rejects.toMatchObject({ code: "BANK_ENGLISH_ONLY" });
-    await expect(readFile(path.join(repo.roots.runtime, "question_bank", "speed_blitz", "logic_puzzles", "language-guard.json"), "utf8")).rejects.toMatchObject({
+    await expect(
+      readFile(path.join(repo.roots.runtime, "question_bank", "speed_blitz", "logic_puzzles", "language-guard.json"), "utf8"),
+    ).rejects.toMatchObject({
       code: "ENOENT",
     });
   });
@@ -209,16 +211,18 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
     const batchPath = path.join(repo.roots.runtime, "question_bank", "verdict_true_false", "nature_animals", "marine_life.json");
     const before = await readFile(batchPath, "utf8");
 
-    await expect(repo.saveQuestionBankTranslation(questionId, {
-      language: "es",
-      question: "Is the blue whale the largest animal?",
-      choices: [
-        { id: "A", text: "True" },
-        { id: "B", text: "False" },
-      ],
-      explanation: "Blue whales can exceed 30 meters.",
-      verified: true,
-    })).rejects.toMatchObject({ code: "BANK_TRANSLATION_WRITES_RETIRED" });
+    await expect(
+      repo.saveQuestionBankTranslation(questionId, {
+        language: "es",
+        question: "Is the blue whale the largest animal?",
+        choices: [
+          { id: "A", text: "True" },
+          { id: "B", text: "False" },
+        ],
+        explanation: "Blue whales can exceed 30 meters.",
+        verified: true,
+      }),
+    ).rejects.toMatchObject({ code: "BANK_TRANSLATION_WRITES_RETIRED" });
     expect(await readFile(batchPath, "utf8")).toBe(before);
   });
 

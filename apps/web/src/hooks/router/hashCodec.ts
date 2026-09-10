@@ -64,12 +64,14 @@ export function parseHash(hash: string): RouteState {
     const isShortReelsSegment = segments[2] === "short-reels";
     const shortReelId = isShortReelsSegment && segments[3] ? decodeURIComponent(segments[3]) : null;
 
+    const effectiveTab = tab ?? (isShortReelsSegment && !shortReelId ? "short-reels" : null);
+
     return {
       page: "channels",
       channelId,
       episodeId,
       shortReelId,
-      tab,
+      tab: effectiveTab,
       group,
       rawHash: hash,
     };

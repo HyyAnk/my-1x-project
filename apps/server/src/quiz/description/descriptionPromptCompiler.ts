@@ -1,11 +1,14 @@
 import type { Channel, Episode, QuizV2 } from "@studio/shared";
 import { calculateScoringTiers, formatScoringRange } from "./scoringTiers.js";
+import type { ProductLocalizationArtifact } from "../bank/localization/productLocalization.js";
 
 export interface CompileVideoDescriptionPromptInput {
   quiz: QuizV2;
   channel: Channel;
   episode: Episode;
   toneHint?: string;
+  targetLanguage?: string;
+  localization?: ProductLocalizationArtifact | null;
 }
 
 /**
@@ -13,16 +16,22 @@ export interface CompileVideoDescriptionPromptInput {
  * Implements the 11 Quiz Description rules with strict anti-hallucination and SEO LSI constraints.
  */
 export function compileVideoDescriptionPrompt(input: CompileVideoDescriptionPromptInput): string {
-  const { quiz, channel, episode, toneHint } = input;
+  const { quiz, channel, episode, toneHint, targetLanguage, localization } = input;
   const questions = quiz.questions;
   const questionCount = questions.length;
   const tiers = calculateScoringTiers(questionCount);
-  const language = channel.language || "English";
+  const language = targetLanguage || localization?.target_language || channel.language || "English";
 
   const questionSummaries = questions
     .map((q, index) => {
-      const correctChoice = q.choices.find((c) => c.id === q.correct_choice_id)?.text ?? "";
-      return `Q${index + 1}: ${q.question} | Ans: ${correctChoice} | Exp: ${q.explanation}`;
+      const locQ = localization?.status === "applied" ? localization.quiz_questions?.find((lq) => lq.question_id === q.id) : undefined;
+      const questionText = locQ?.question || q.question;
+      const correctChoiceId = q.correct_choice_id;
+      const locChoice = locQ?.choices.find((c) => c.id === correctChoiceId)?.text;
+      const fallbackChoice = q.choices.find((c) => c.id === correctChoiceId)?.text ?? "";
+      const correctChoice = locChoice || fallbackChoice;
+      const exp = locQ?.explanation || q.explanation;
+      return `Q${index + 1}: ${questionText} | Ans: ${correctChoice} | Exp: ${exp}`;
     })
     .join("\n");
 

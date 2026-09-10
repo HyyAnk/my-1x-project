@@ -7,7 +7,7 @@ import path from "node:path";
 import { promisify } from "node:util";
 import { buildApp, type StudioApp } from "../src/app.js";
 import { probeAndValidate1080pVideo } from "../src/repository/introOutroStyles.js";
-import { RepositoryError } from "../src/repository.js";
+import { registerTransition, type Channel, type IntroOutroStyle } from "@studio/shared";
 
 const execFileAsync = promisify(execFile);
 
@@ -46,21 +46,37 @@ describe("Intro/Outro Styles & 1080p Validation Gate", () => {
 
     await execFileAsync("ffmpeg", [
       "-y",
-      "-f", "lavfi", "-i", "color=c=blue:s=1920x1080:d=1.2",
-      "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo",
-      "-t", "1.2",
-      "-c:v", "libx264",
-      "-pix_fmt", "yuv420p",
-      "-c:a", "aac",
+      "-f",
+      "lavfi",
+      "-i",
+      "color=c=blue:s=1920x1080:d=1.2",
+      "-f",
+      "lavfi",
+      "-i",
+      "anullsrc=r=44100:cl=stereo",
+      "-t",
+      "1.2",
+      "-c:v",
+      "libx264",
+      "-pix_fmt",
+      "yuv420p",
+      "-c:a",
+      "aac",
       valid1080pVideoPath,
     ]);
 
     await execFileAsync("ffmpeg", [
       "-y",
-      "-f", "lavfi", "-i", "color=c=red:s=1280x720:d=1.0",
-      "-t", "1.0",
-      "-c:v", "libx264",
-      "-pix_fmt", "yuv420p",
+      "-f",
+      "lavfi",
+      "-i",
+      "color=c=red:s=1280x720:d=1.0",
+      "-t",
+      "1.0",
+      "-c:v",
+      "libx264",
+      "-pix_fmt",
+      "yuv420p",
       invalid720pVideoPath,
     ]);
   }, 40_000);
@@ -80,9 +96,9 @@ describe("Intro/Outro Styles & 1080p Validation Gate", () => {
     });
 
     it("rejects non-1080p video with INVALID_RESOLUTION error code", async () => {
-      await expect(probeAndValidate1080pVideo(invalid720pVideoPath)).rejects.toThrowError(
-        expect.objectContaining({ code: "INVALID_RESOLUTION" }),
-      );
+      await expect(probeAndValidate1080pVideo(invalid720pVideoPath)).rejects.toMatchObject({
+        code: "INVALID_RESOLUTION",
+      });
     });
   });
 
@@ -101,7 +117,7 @@ describe("Intro/Outro Styles & 1080p Validation Gate", () => {
       });
 
       expect(res.statusCode).toBe(422);
-      const json = JSON.parse(res.body);
+      const json = JSON.parse(res.body) as { error: string };
       expect(json.error).toContain("Video must be exactly 1080p (1920x1080)");
     });
 
@@ -119,7 +135,7 @@ describe("Intro/Outro Styles & 1080p Validation Gate", () => {
       });
 
       expect(res.statusCode).toBe(201);
-      const json = JSON.parse(res.body);
+      const json = JSON.parse(res.body) as { style: IntroOutroStyle };
       expect(json.style).toBeDefined();
       expect(json.style.name).toBe("Hero 3D Style");
       expect(json.style.intro.width).toBe(1920);
@@ -129,6 +145,86 @@ describe("Intro/Outro Styles & 1080p Validation Gate", () => {
       createdStyleId = json.style.style_id;
     });
 
+    it("POST /api/channels/:channelId/intro-outro-styles rejects invalid transition type", async () => {
+      const res = await app.server.inject({
+        method: "POST",
+        url: `/api/channels/${testChannelId}/intro-outro-styles`,
+        payload: {
+          name: "Invalid Transition Style",
+          intro_data: valid1080pVideoPath,
+          outro_data: valid1080pVideoPath,
+          transition_type: "unsupported_motion_xyz",
+        },
+      });
+
+      expect(res.statusCode).toBe(400);
+    });
+
+    it("POST /api/channels/:channelId/intro-outro-styles accepts cut with 0 duration", async () => {
+      const res = await app.server.inject({
+        method: "POST",
+        url: `/api/channels/${testChannelId}/intro-outro-styles`,
+        payload: {
+          name: "Cut Style",
+          intro_data: valid1080pVideoPath,
+          outro_data: valid1080pVideoPath,
+          transition_type: "cut",
+          transition_duration_seconds: 0,
+        },
+      });
+
+      expect(res.statusCode).toBe(201);
+      const json = JSON.parse(res.body) as { style: IntroOutroStyle };
+      expect(json.style.transition_type).toBe("cut");
+      expect(json.style.transition_duration_seconds).toBe(0);
+    });
+
+    it("POST /api/channels/:channelId/intro-outro-styles rejects out-of-range transition duration", async () => {
+      const res = await app.server.inject({
+        method: "POST",
+        url: `/api/channels/${testChannelId}/intro-outro-styles`,
+        payload: {
+          name: "Out of Bounds Style",
+          intro_data: valid1080pVideoPath,
+          outro_data: valid1080pVideoPath,
+          transition_type: "stinger_swipe",
+          transition_duration_seconds: 2.5,
+        },
+      });
+
+      expect(res.statusCode).toBe(400);
+    });
+
+    it("POST /api/channels/:channelId/intro-outro-styles supports dynamically registered transitions", async () => {
+      registerTransition({
+        id: "server_glow",
+        name: "Server Glow",
+        description: "Dynamic glow transition",
+        category: "intro_outro",
+        defaultDuration: 0.6,
+        minDuration: 0.2,
+        maxDuration: 1.5,
+        cssClass: "transition-server-glow",
+      });
+
+      const res = await app.server.inject({
+        method: "POST",
+        url: `/api/channels/${testChannelId}/intro-outro-styles`,
+        payload: {
+          name: "Dynamic Glow Style",
+          intro_data: valid1080pVideoPath,
+          outro_data: valid1080pVideoPath,
+          transition_type: "server_glow",
+          transition_duration_seconds: 0.7,
+        },
+      });
+
+      expect(res.statusCode).toBe(201);
+      const json = JSON.parse(res.body) as { style: IntroOutroStyle };
+      expect(json.style.transition_type).toBe("server_glow");
+      expect(json.style.transition_duration_seconds).toBe(0.7);
+    });
+
     it("GET /api/channels/:channelId/intro-outro-styles returns created styles", async () => {
       const res = await app.server.inject({
         method: "GET",
@@ -136,7 +232,7 @@ describe("Intro/Outro Styles & 1080p Validation Gate", () => {
       });
 
       expect(res.statusCode).toBe(200);
-      const json = JSON.parse(res.body);
+      const json = JSON.parse(res.body) as { styles: IntroOutroStyle[] };
       expect(Array.isArray(json.styles)).toBe(true);
       expect(json.styles.some((s: { style_id: string }) => s.style_id === createdStyleId)).toBe(true);
     });
@@ -160,7 +256,7 @@ describe("Intro/Outro Styles & 1080p Validation Gate", () => {
       });
 
       expect(res.statusCode).toBe(200);
-      const json = JSON.parse(res.body);
+      const json = JSON.parse(res.body) as { channel: Channel };
       expect(json.channel.default_intro_outro_style_id).toBe(createdStyleId);
     });
 

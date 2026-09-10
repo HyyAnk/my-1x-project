@@ -78,6 +78,7 @@ export const TaskSchema = z.object({
   task_type: TaskTypeSchema,
   channel_id: z.string().min(1),
   episode_id: z.string().nullable(),
+  episode_title: z.string().nullable().optional(),
   reel_id: z.string().nullable().optional(),
   short_reel_request: z
     .object({

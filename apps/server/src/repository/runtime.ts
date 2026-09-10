@@ -52,6 +52,9 @@ import type {
 } from "@studio/shared";
 import type { QueryQuestionBankParams } from "./quiz/questionBankRepository.js";
 import type { BundleImageAsset, BundleImageMeta, RepositoryRoots } from "./types.js";
+import type { EntityIdResolver } from "./cache/entityIdResolver.js";
+import type { ChannelCache } from "./cache/channelCache.js";
+import type { TransparentMascotAssetOptions, TransparentMascotAssetResult } from "./mascot/mascotTransparentCache.js";
 
 export type QuizArtifactFilename =
   | "quiz-v2.json"
@@ -69,6 +72,8 @@ export interface RepositoryRuntime {
   readonly serviceId: string;
   readonly rootDirectory: string;
   readonly storageRoot: string;
+  readonly entityIdResolver: EntityIdResolver;
+  readonly channelCache: ChannelCache;
   roots: RepositoryRoots;
   questionHistoryWrites: Map<string, Promise<void>>;
   usageLedgerWrites: Map<string, Promise<void>>;
@@ -99,7 +104,7 @@ export interface RepositoryRuntime {
   removeTree(target: string): Promise<void>;
   safeEpisodeCount(channelDirectory: string): Promise<number>;
   getTemplate(filename: string): Promise<string>;
-  readChannelBySlug(slug: string): Promise<Channel>;
+  readChannelBySlug(slug: string, forceDisk?: boolean): Promise<Channel>;
   markTopicSelected(channelId: string, topicId: string, questionCount: number): Promise<void>;
 
   // Quiz Artifact targets
@@ -137,6 +142,13 @@ export interface RepositoryRuntime {
   calibrateMascotAction(mascotId: string, action: MascotActionType, calibration: CalibrateMascotActionInput): Promise<MascotProfile>;
   listMascotAssets(mascotId: string): Promise<string[]>;
   deleteMascotAssetFile(mascotId: string, filename: string): Promise<void>;
+  getTransparentMascotAssetFile(mascotId: string, filename: string): Promise<{ absolutePath: string; size: number; modified_at: string }>;
+  deleteTransparentMascotAssetFile(mascotId: string, filename: string): Promise<void>;
+  getOrCreateTransparentMascotAsset(
+    mascotId: string,
+    filename: string,
+    options?: TransparentMascotAssetOptions,
+  ): Promise<TransparentMascotAssetResult>;
   assignMascotToChannel(channelId: string, mascotId: string | null, config?: Partial<ChannelMascotConfig>): Promise<Channel>;
   createMascotStyle(mascotId: string, input: CreateMascotStyleInput): Promise<{ mascot: MascotProfile; style: MascotStyle }>;
   updateMascotStyle(mascotId: string, styleId: string, input: UpdateMascotStyleInput): Promise<MascotProfile>;
@@ -157,6 +169,7 @@ export interface RepositoryRuntime {
   // Episode Operations
   listEpisodes(channelId: string): Promise<Episode[]>;
   getEpisode(channelId: string, episodeId: string): Promise<Episode>;
+  resolveEpisodeTitles(episodeIds: string[]): Promise<Record<string, string>>;
   getEpisodeFile(channelId: string, episodeId: string, filename: string): Promise<{ content: string; path: string; modified_at: string }>;
   loadEpisodeFile(channelId: string, episodeId: string, filename: string): Promise<string>;
   saveEpisodeFile(channelId: string, episodeId: string, filename: string, content: string): Promise<{ path: string; modified_at: string }>;
@@ -368,8 +381,10 @@ export interface RepositoryRuntime {
     topic: ShortReelTopicSnapshot,
     source: ShortReelSourceSnapshot,
     requestId?: string,
+    reelId?: string,
   ): Promise<ShortReelRecord>;
   updateShortReel(key: ReelKey, context: MutationContext, command: ShortReelEditCommand): Promise<ShortReelRecord>;
+  deleteShortReel(key: ReelKey): Promise<boolean>;
 
   // Intro / Outro Styles
   listChannelIntroOutroStyles(channelId: string): Promise<IntroOutroStyle[]>;

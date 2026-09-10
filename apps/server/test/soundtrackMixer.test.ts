@@ -118,6 +118,8 @@ describe("Master Soundtrack Mixer", () => {
       ducking: true,
       duckingThreshold: 0.08,
       duckingRatio: 4,
+      duckingAttackMs: 100,
+      duckingReleaseMs: 400,
       loudnorm: true,
       targetLufs: -14,
       bgmItems: [
@@ -175,6 +177,36 @@ describe("Master Soundtrack Mixer", () => {
     // Verify loudnorm filter
     expect(script).toContain("loudnorm=I=-14:TP=-1:LRA=7");
     expect(script).toContain("[out_master]");
+  });
+
+  it("builds FFmpeg filtergraph script with default professional ducking parameters", () => {
+    const plan: MasterSoundtrackPlan = {
+      durationSeconds: 15,
+      narrationPath: "narration.wav",
+      ducking: true,
+      bgmItems: [
+        {
+          id: "bgm-1",
+          trackId: "track_1",
+          filename: "bgm.mp3",
+          filePath: "D:/music/bgm.mp3",
+          startSeconds: 0,
+          durationSeconds: 15,
+          volume: 0.09,
+          fadeInSeconds: 0.5,
+          fadeOutSeconds: 2.0,
+        },
+      ],
+      sfxItems: [],
+    };
+
+    const inputIndices = new Map<string, number>([
+      ["narration.wav", 0],
+      ["D:/music/bgm.mp3", 1],
+    ]);
+
+    const script = buildFilterGraphScript(plan, inputIndices);
+    expect(script).toContain("sidechaincompress=threshold=0.04:ratio=10:attack=80:release=450:makeup=1[bgm_ducked];");
   });
 
   it("mixes real master soundtrack WAV using FFmpeg with ducking, loudnorm, and diagnostics", async () => {

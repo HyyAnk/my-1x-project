@@ -308,7 +308,10 @@ describe("Question Bank language migration", () => {
     await symlink(redirectedManifest, backup.manifestPath, "file");
 
     await expect(applyBankLanguageMigration(repository, backup.manifest)).rejects.toThrow(/symlink|junction|unsafe|root/i);
-    expect(JSON.parse(await readFile(fixture.batchPath, "utf8")).questions[0].language).toBe("");
+    const abortedBatch = JSON.parse(await readFile(fixture.batchPath, "utf8")) as {
+      questions: Array<{ language?: string }>;
+    };
+    expect(abortedBatch.questions[0]?.language).toBe("");
   });
 
   it("rejects a backup file symlink during rollback", async () => {
@@ -324,5 +327,128 @@ describe("Question Bank language migration", () => {
     await symlink(redirectedBackup, backup.files[0].backupPath, "file");
 
     await expect(rollbackBankLanguageMigration(repository, backup.manifest)).rejects.toThrow(/symlink|junction|unsafe|root/i);
+  });
+
+  it("resolves relative storage_path against repository.rootDirectory and succeeds", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "bank-relative-root-"));
+    tempDirs.push(root);
+    // Relative storage directory inside root
+    const relStorage = "custom-storage";
+    const storageDir = path.join(root, relStorage);
+    const bankDir = path.join(storageDir, ".quiz-studio", "question_bank");
+    await mkdir(path.join(bankDir, "deep_trivia", "science"), { recursive: true });
+    await mkdir(path.join(root, ".quiz-studio"), { recursive: true });
+    await writeFile(path.join(root, ".quiz-studio", "storage.local.json"), JSON.stringify({ storage_path: `./${relStorage}` }), "utf8");
+
+    const indexBytes = `${JSON.stringify({ schema_version: 2, current_total: 0, by_archetype: {}, by_domain: {} }, null, 2)}\n`;
+    await writeFile(path.join(bankDir, "index.json"), indexBytes, "utf8");
+
+    const repo = new RepositoryService(root, storageDir);
+    const preview = await previewBankLanguageMigration(repo, { migrationId: "rel-path-test" });
+    expect(preview.canonicalRoot).toBe(bankDir);
+  });
+
+  it("throws typed RepositoryError when storage.local.json is malformed JSON", async () => {
+    const fixture = await createFixture();
+    await writeFile(path.join(fixture.root, ".quiz-studio", "storage.local.json"), "{ malformed json", "utf8");
+    const repository = new RepositoryService(fixture.root, fixture.root);
+    await expect(previewBankLanguageMigration(repository, { migrationId: "malformed-config" })).rejects.toMatchObject({
+      code: "BANK_CONFIG_CORRUPT",
+    });
+  });
+
+  it("restores manifest preimage when apply manifest write fails after batch write", async () => {
+    const fixture = await createFixture();
+    const repository = new RepositoryService(fixture.root, fixture.root);
+    const preview = await previewBankLanguageMigration(repository, { migrationId: "apply-manifest-fail" });
+    const backup = await backupBankLanguageMigration(repository, preview);
+
+    const manifestBefore = await readFile(backup.manifestPath, "utf8");
+    const batchBefore = await readFile(fixture.batchPath, "utf8");
+
+    // Intercept manifest write during apply
+    const originalWriteText = repository.writeTextAtomic.bind(repository);
+    repository.writeTextAtomic = async (target, content) => {
+      if (target === backup.manifestPath) {
+        // Write then throw
+        await originalWriteText(target, content);
+        throw new Error("simulated manifest write failure during apply");
+      }
+      return originalWriteText(target, content);
+    };
+
+    await expect(applyBankLanguageMigration(repository, backup.manifest)).rejects.toThrow(/simulated manifest write failure/);
+    // Batch must be restored to preimage
+    expect(await readFile(fixture.batchPath, "utf8")).toBe(batchBefore);
+    expect(await readFile(backup.manifestPath, "utf8")).toBe(manifestBefore);
+    // Manifest on disk must be restored to preimage (backed_up), not left as applied!
+    const manifestAfter = JSON.parse(await readFile(backup.manifestPath, "utf8")) as { status: string };
+    expect(manifestAfter.status).toBe("backed_up");
+  });
+
+  it("rolls back first batch when second batch fails during rollback", async () => {
+    const fixture = await createFixture();
+    const repository = new RepositoryService(fixture.root, fixture.root);
+
+    // Add second batch
+    const secondBatchDir = path.join(fixture.bankRoot, "deep_trivia", "history");
+    await mkdir(secondBatchDir, { recursive: true });
+    const secondBatch = {
+      schema_version: 2,
+      archetype_id: "deep_trivia",
+      domain_id: "history",
+      subtopic_id: "ancient",
+      subtopic_title: "Ancient",
+      updated_at: "2026-01-01T00:00:00.000Z",
+      questions: [
+        {
+          id: "hist-q1",
+          archetype_id: "deep_trivia",
+          domain_id: "history",
+          subtopic_id: "ancient",
+          format: "multiple_choice",
+          question: "Ancient Rome founded when?",
+          choices: [
+            { id: "A", text: "753 BC", is_correct: true },
+            { id: "B", text: "500 BC", is_correct: false },
+            { id: "C", text: "100 BC", is_correct: false },
+          ],
+          correct_choice_id: "A",
+          explanation: "753 BC",
+          difficulty: 1,
+          language: "",
+          tags: ["history"],
+          created_at: "2026-01-01T00:00:00.000Z",
+          updated_at: "2026-01-01T00:00:00.000Z",
+        },
+      ],
+    };
+    const secondBatchPath = path.join(secondBatchDir, "ancient.json");
+    await writeFile(secondBatchPath, `${JSON.stringify(secondBatch, null, 2)}\n`, "utf8");
+
+    const preview = await previewBankLanguageMigration(repository, { migrationId: "rollback-fail-test" });
+    const backup = await backupBankLanguageMigration(repository, preview);
+    await applyBankLanguageMigration(repository, backup.manifest);
+
+    // Now both batches are applied (language: en)
+    const appliedBatch0 = await readFile(fixture.batchPath, "utf8");
+    const appliedBatch1 = await readFile(secondBatchPath, "utf8");
+
+    // Fail during rollback on second batch write
+    const secondFilePath = path.join(backup.manifest.canonicalRoot, backup.manifest.files[1].relativePath);
+    const originalWriteBinary = repository.writeBinaryAtomic.bind(repository);
+    repository.writeBinaryAtomic = async (target, content) => {
+      if (path.resolve(target) === path.resolve(secondFilePath)) {
+        throw new Error("simulated second batch rollback failure");
+      }
+      return originalWriteBinary(target, content);
+    };
+
+    await expect(rollbackBankLanguageMigration(repository, backup.manifest)).rejects.toThrow(/simulated second batch rollback failure/);
+    // First batch must be compensated back to its postimage before rollback! Not left rolled back!
+    const firstFilePath = path.join(backup.manifest.canonicalRoot, backup.manifest.files[0].relativePath);
+    expect(await readFile(firstFilePath, "utf8")).toBe(
+      backup.manifest.files[0].relativePath === "deep_trivia/science/astronomy.json" ? appliedBatch0 : appliedBatch1,
+    );
   });
 });

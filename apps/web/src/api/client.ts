@@ -39,6 +39,7 @@ export type QuizV2State = {
   assessment: QuizAssessment | null;
   description?: VideoDescription | null;
   timings?: QuizStageTimings | null;
+  render_stale?: boolean;
   stages: QuizV2Stages;
 };
 

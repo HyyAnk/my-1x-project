@@ -80,6 +80,7 @@ export async function updateEpisodeStage(
   const channel = await this.getChannel(channelId);
   const next = EpisodeSchema.parse({ ...episode, stage, updated_at: nowIso() });
   await this.writeJsonAtomic(this.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
+  this.entityIdResolver.setEpisodeSlug(channelId, next.episode_id, next.slug);
   return next;
 }
 

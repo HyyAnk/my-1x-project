@@ -15,6 +15,7 @@ export interface VideoDescriptionCardProps {
   hasQuiz?: boolean;
   initialDescription?: VideoDescription | null;
   onNotice?: (notice: NonNullable<Notice>) => void;
+  onUpdated?: () => Promise<void> | void;
 }
 
 export function VideoDescriptionCard({
@@ -24,6 +25,7 @@ export function VideoDescriptionCard({
   hasQuiz = true,
   initialDescription,
   onNotice,
+  onUpdated,
 }: VideoDescriptionCardProps) {
   const {
     description,
@@ -51,6 +53,7 @@ export function VideoDescriptionCard({
     hasQuiz,
     initialDescription,
     onNotice,
+    onUpdated,
   });
 
   return (

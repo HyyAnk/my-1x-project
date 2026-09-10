@@ -89,8 +89,11 @@ describe("Quiz style persistence contracts", () => {
 
       await expectUpstreamArtifactsPreserved(app, channel.channel_id, episode.episode_id);
       expect(await app.repository.readQuizAssessment(channel.channel_id, episode.episode_id)).toBeNull();
-      expect((await app.repository.getEpisode(channel.channel_id, episode.episode_id)).video_asset_path).toBeNull();
-      await expect(app.repository.getEpisodeVideoFile(channel.channel_id, episode.episode_id)).rejects.toThrow("not found");
+      const updatedEpisode = await app.repository.getEpisode(channel.channel_id, episode.episode_id);
+      expect(updatedEpisode.video_asset_path).not.toBeNull();
+      expect(updatedEpisode.render_stale).toBe(true);
+      expect(updatedEpisode.stage).toBe("VIDEO_READY");
+      await expect(app.repository.getEpisodeVideoFile(channel.channel_id, episode.episode_id)).resolves.toBeDefined();
     } finally {
       await app.close();
     }

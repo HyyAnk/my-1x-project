@@ -1,6 +1,8 @@
 # LLM Engine Integration (Codex & Google Antigravity)
 
-The platform features native dual-engine support for LLM generation. Users can seamlessly toggle between **OpenAI Codex** and **Google Antigravity** via the interactive topbar selector ([`EngineToggleGroup.tsx`](apps/web/src/components/chrome/topbar/EngineToggleGroup.tsx)). Both engines adhere to identical context boundaries, concurrency locks, and artifact output contracts.
+Reviewed against repository integration boundaries on 2026-09-09. This describes this project's adapters, not a guarantee of upstream product/API behavior. Verify configured transport and provider readiness before live generation.
+
+The platform features native dual-engine support for LLM generation. Users can seamlessly toggle between **OpenAI Codex** and **Google Antigravity** via the interactive topbar selector ([`EngineToggleGroup.tsx`](../apps/web/src/components/chrome/topbar/EngineToggleGroup.tsx)). Both engines adhere to identical context boundaries, concurrency locks, and artifact output contracts.
 
 ---
 
@@ -44,18 +46,19 @@ The adapter uses `POST /responses` with the selected model and scoped prompt, th
 
 ## 2. Google Antigravity Integration
 
-Google Antigravity is implemented as a first-class engine via [`AntigravityClient`](apps/server/src/antigravity/client.ts) and exported through [`apps/server/src/antigravity.ts`](apps/server/src/antigravity.ts):
+Google Antigravity is implemented as a first-class engine via [`AntigravityClient`](../apps/server/src/antigravity/client.ts) and exported through [`apps/server/src/antigravity.ts`](../apps/server/src/antigravity.ts):
 
-- **Target & Session Discovery ([`discovery.ts`](apps/server/src/antigravity/discovery.ts)):** Automatically discovers and attaches to running Antigravity sessions. Supports both the local Agent API HTTP endpoint and direct CLI child process execution.
-- **Dynamic Model Enumeration ([`models.ts`](apps/server/src/antigravity/models.ts)):** Queries available models from the active Agent API, Google API, or CLI, falling back to canonical defaults (`DEFAULT_ANTIGRAVITY_MODELS`).
-- **Turn Execution ([`turnRunner.ts`](apps/server/src/antigravity/turnRunner.ts)):** Coordinates turn lifecycle, streaming responses, error recovery, and abort signal propagation.
-- **Real-Time Transcript Watcher ([`transcriptWatcher.ts`](apps/server/src/antigravity/transcriptWatcher.ts)):** Tails the active session's transcript log, streaming incremental generation events and thinking steps back to the dashboard SSE feed.
+- **Target & Session Discovery ([`discovery.ts`](../apps/server/src/antigravity/discovery.ts)):** Automatically discovers and attaches to running Antigravity sessions. Supports both the local Agent API HTTP endpoint and direct CLI child process execution.
+- **Dynamic Model Enumeration ([`models.ts`](../apps/server/src/antigravity/models.ts)):** Queries available models from the active Agent API, Google API, or CLI, falling back to canonical defaults (`DEFAULT_ANTIGRAVITY_MODELS`).
+- **Turn Execution ([`turnRunner.ts`](../apps/server/src/antigravity/turnRunner.ts)):** Coordinates turn lifecycle, streaming responses, error recovery, and abort signal propagation.
+- **Real-Time Transcript Watcher ([`transcriptWatcher.ts`](../apps/server/src/antigravity/transcriptWatcher.ts)):** Tails the active session's transcript log, streaming incremental generation events and thinking steps back to the dashboard WebSocket event feed.
 
 ---
 
 ## 3. Context Contract & Engine Parity
 
-`ContextEngine` builds an auditable manifest for every task regardless of which engine is active:
+`ContextEngine` builds manifests for context-driven LLM tasks. Audio, image, render, and direct service calls do not necessarily build one; engine selection does not make all task types share a manifest lifecycle:
+
 - **Topic suggestions:** Include channel DNA, style/rules, existing titles/premises, and recent episode titles.
 - **Quiz / Direct Quiz tasks:** Include confirmed topic brief, channel target audience, age-band rules, and gameplay constraints.
 - **Scene / dialogue regeneration:** Include the targeted scene, immediate neighbor scenes, script excerpt, and relevant DNA guidelines.

@@ -5,12 +5,7 @@ import { RepositoryError } from "./errors.js";
 import { allowedEpisodeFiles } from "./helpers.js";
 import type { RepositoryRuntime } from "./runtime.js";
 
-export async function deleteChannel(this: RepositoryRuntime, channelId: string, confirmed = true): Promise<void> {
-  if (!confirmed) throw new RepositoryError("Delete confirmation is required", "CONFIRMATION_REQUIRED");
-  const channel = await this.getChannel(channelId);
-  const directory = this.resolvePath("channels", channel.slug);
-  await this.removeTree(directory);
-}
+export { deleteChannel } from "./channels.js";
 
 export async function deleteEpisode(this: RepositoryRuntime, channelId: string, episodeId: string, confirmed = true): Promise<void> {
   if (!confirmed) throw new RepositoryError("Delete confirmation is required", "CONFIRMATION_REQUIRED");
@@ -21,6 +16,8 @@ export async function deleteEpisode(this: RepositoryRuntime, channelId: string, 
   await this.assertRealPathInside(episodesRoot, directory);
   await this.removeQuestionHistoryEntries(channelId, { episodeIds: [episodeId] });
   await Promise.all([this.removeTree(directory), this.removeEpisodeRuntimeArtifacts(episodeId)]);
+  this.entityIdResolver.deleteEpisode(channelId, episodeId);
+  this.channelCache.decrementEpisodeCount(channelId);
   await this.updateChannel(channelId, { updated_at: nowIso() });
 }
 
@@ -71,6 +68,7 @@ export async function resetChannelDna(
 
 export async function listEpisodes(this: RepositoryRuntime, channelId: string): Promise<Episode[]> {
   const channel = await this.getChannel(channelId);
+  this.entityIdResolver.setChannelSlug(channel.channel_id, channel.slug);
   const directory = this.resolvePath("channels", channel.slug, "episodes");
   await mkdir(directory, { recursive: true });
   const entries = await readdir(directory, { withFileTypes: true });
@@ -81,6 +79,8 @@ export async function listEpisodes(this: RepositoryRuntime, channelId: string): 
       await this.assertRealPathInside(path.join(this.resolvePath("channels", channel.slug), "episodes"), episodeDirectory);
       const episode = EpisodeSchema.parse(JSON.parse(await readFile(path.join(episodeDirectory, "episode.json"), "utf8")));
       episodes.push(episode);
+      this.entityIdResolver.setEpisodeSlug(channelId, episode.episode_id, episode.slug);
+      this.entityIdResolver.setEpisodeTitle(episode.episode_id, episode.topic?.title || "");
     } catch {
       // Ignore incomplete episode directories and keep the rest visible.
     }
@@ -89,9 +89,31 @@ export async function listEpisodes(this: RepositoryRuntime, channelId: string): 
 }
 
 export async function getEpisode(this: RepositoryRuntime, channelId: string, episodeId: string): Promise<Episode> {
+  const cachedSlug = this.entityIdResolver.getEpisodeSlug(channelId, episodeId);
+  if (cachedSlug) {
+    try {
+      const channelSlug = this.entityIdResolver.getChannelSlug(channelId) || (await this.getChannel(channelId)).slug;
+      const episodesRoot = this.resolvePath("channels", channelSlug, "episodes");
+      const episodeDirectory = this.resolvePath("channels", channelSlug, "episodes", cachedSlug);
+      await this.assertRealPathInside(episodesRoot, episodeDirectory);
+      const episodeFile = path.join(episodeDirectory, "episode.json");
+      const raw = await readFile(episodeFile, "utf8");
+      const episode = EpisodeSchema.parse(JSON.parse(raw));
+      if (episode.episode_id === episodeId && episode.channel_id === channelId) {
+        this.entityIdResolver.setEpisodeTitle(episode.episode_id, episode.topic?.title || "");
+        return episode;
+      }
+      this.entityIdResolver.deleteEpisode(channelId, episodeId);
+    } catch {
+      this.entityIdResolver.deleteEpisode(channelId, episodeId);
+    }
+  }
+
   const episodes = await this.listEpisodes(channelId);
   const episode = episodes.find((item) => item.episode_id === episodeId);
   if (!episode) throw new RepositoryError("Episode not found", "EPISODE_NOT_FOUND");
+  this.entityIdResolver.setEpisodeSlug(channelId, episode.episode_id, episode.slug);
+  this.entityIdResolver.setEpisodeTitle(episode.episode_id, episode.topic?.title || "");
   return episode;
 }
 
@@ -139,6 +161,8 @@ export async function saveEpisodeFile(
     updated_at: nowIso(),
   });
   await this.writeJsonAtomic(path.join(path.dirname(absolutePath), "episode.json"), updated);
+  this.entityIdResolver.setEpisodeSlug(channelId, updated.episode_id, updated.slug);
+  this.entityIdResolver.setEpisodeTitle(updated.episode_id, updated.topic?.title || "");
   if (["research.md", "treatment.md", "script.md", "visual_bible.md"].includes(filename))
     await this.invalidateQuizSourceArtifacts(channelId, episodeId);
   const metadata = await stat(absolutePath);

@@ -360,31 +360,17 @@ describe("buildSandboxComposition Preview Engine", () => {
             expect(res.html).toContain(`layout-${lc.layoutId}`);
             expect(res.css).toBeTruthy();
             expect(res.contrast_report.ok).toBe(true);
-
-            if (aspectRatio === "9:16") {
-              expect(res.css).toContain("--safe-zone-top: 180px;");
-              expect(res.css).toContain("--safe-zone-bottom: 440px;");
-              expect(res.css).toContain("--safe-zone-right: 140px;");
-            }
           }
         });
       }
     }
 
-    it("includes font readiness contract across all layouts including pure visual and portrait", () => {
+    it("includes font readiness contract across all layouts including pure visual", () => {
       for (const layout of QUIZ_LAYOUTS) {
-        const is2Choice =
-          layout.id === "verdict_true_false" ||
-          layout.id === "split_versus_two" ||
-          layout.id === "portrait_verdict_tf" ||
-          layout.id === "portrait_split_versus";
+        const is2Choice = layout.id === "verdict_true_false" || layout.id === "split_versus_two";
         const choices = is2Choice ? ["Option A", "Option B"] : ["Option A", "Option B", "Option C"];
         const questionFormat =
-          layout.id === "verdict_true_false" || layout.id === "portrait_verdict_tf"
-            ? "true_false"
-            : layout.id === "visual_choices_three_pure"
-              ? "odd_one_out"
-              : "multiple_choice";
+          layout.id === "verdict_true_false" ? "true_false" : layout.id === "visual_choices_three_pure" ? "odd_one_out" : "multiple_choice";
         const aspectRatio = layout.supportedAspectRatios[0];
 
         const res = buildSandboxComposition({

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArrowCounterClockwise, Check, CircleNotch, Copy, FileText, FloppyDisk, PencilSimple, Robot, X } from "@phosphor-icons/react";
 import type { Channel, Task } from "@studio/shared";
 import { api } from "../../../api";
-import { formatDate } from "../../../lib/utils";
+import { formatDate, isTaskActive } from "../../../lib/utils";
 import { TaskProgressPanel } from "../../../components/TaskProgressPanel";
 import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
@@ -42,6 +42,8 @@ export function ChannelDnaBlueprintSection({
   const [copied, setCopied] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
+  const dnaTaskActive = Boolean(dnaTask && isTaskActive(dnaTask));
+  const isGeneratingDna = regenerating || dnaTaskActive;
 
   const handleCopyDna = async () => {
     if (!dna?.content) return;
@@ -144,9 +146,9 @@ export function ChannelDnaBlueprintSection({
                 className="quiet-button compact"
                 onClick={() => void handleRegenerateDna()}
                 title={t("channelDetail.regenerateDna")}
-                disabled={regenerating}
+                disabled={isGeneratingDna}
               >
-                {regenerating ? <CircleNotch className="spin" size={15} /> : <Robot size={15} />}
+                {isGeneratingDna ? <CircleNotch className="spin" size={15} /> : <Robot size={15} />}
                 <span>{t("channelDetail.regenerateDna")}</span>
               </button>
 

@@ -122,9 +122,7 @@ async function buildGeneratedScript(
   options?: GenerateReelScriptOptions,
   repository?: RepositoryService,
 ): Promise<ReelScript> {
-  const localization = repository
-    ? await loadShortReelLocalizationArtifact(repository, snapshot.channel_id, snapshot.reel_id)
-    : null;
+  const localization = repository ? await loadShortReelLocalizationArtifact(repository, snapshot.channel_id, snapshot.reel_id) : null;
   const displayProjection = extractShortReelDisplayProjection(snapshot.source, localization);
 
   if (!llmClient) return createBaselineReelScript(snapshot.source, displayProjection);

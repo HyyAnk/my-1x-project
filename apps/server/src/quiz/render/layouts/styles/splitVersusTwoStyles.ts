@@ -158,7 +158,7 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-display, "Titan One", "Fredoka", cursive, sans-serif);
+  font-family: var(--font-display, "Fredoka", "SVN-Hello Headline", "Baloo 2", sans-serif);
   font-size: 48px;
   font-weight: 900;
   color: #FFFFFF;

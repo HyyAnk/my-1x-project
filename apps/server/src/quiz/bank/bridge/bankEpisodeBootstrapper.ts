@@ -7,6 +7,8 @@ export interface CreateEpisodeFromQuestionBankInput {
   auto_start_pipeline?: boolean;
   visual_style?: QuizImageStyle | "mixed";
   force?: boolean;
+  thumbnail_text?: string;
+  custom_hook_text?: string;
 }
 
 export interface CreateEpisodeFromQuestionBankResult {
@@ -26,6 +28,8 @@ export interface CreateEpisodeFromTopicWithBankInput {
   visual_style?: QuizImageStyle | "mixed";
   force?: boolean;
   request_id?: string;
+  thumbnail_text?: string;
+  custom_hook_text?: string;
 }
 
 export interface CreateEpisodeFromTopicWithBankResult {

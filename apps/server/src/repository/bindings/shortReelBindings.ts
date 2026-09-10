@@ -1,4 +1,4 @@
-import { listShortReels, getShortReel, getShortReelByTopic, createShortReel, updateShortReel } from "../shortReels.js";
+import { listShortReels, getShortReel, getShortReelByTopic, createShortReel, updateShortReel, deleteShortReel } from "../shortReels.js";
 
 export const shortReelBindings = {
   listShortReels,
@@ -6,4 +6,5 @@ export const shortReelBindings = {
   getShortReelByTopic,
   createShortReel,
   updateShortReel,
+  deleteShortReel,
 };

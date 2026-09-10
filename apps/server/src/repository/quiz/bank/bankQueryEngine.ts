@@ -225,10 +225,7 @@ export async function getQuestionBankQuestionUnlocked(
   for (const batch of batches) {
     const found = batch.questions.find((q) => q.id === questionId);
     if (found) {
-      matchedQuestion =
-        found.archetype_id === "verdict_fact_myth"
-          ? { ...found, archetype_id: "verdict_true_false" }
-          : found;
+      matchedQuestion = found.archetype_id === "verdict_fact_myth" ? { ...found, archetype_id: "verdict_true_false" } : found;
       break;
     }
   }

@@ -20,9 +20,10 @@ type ThumbnailPreviewCardProps = {
   episodeId: string;
   activeEpisodeTask?: Task | null;
   onNotice?: (notice: NonNullable<Notice>) => void;
+  onUpdated?: () => Promise<void> | void;
 };
 
-export function ThumbnailPreviewCard({ channel, episode, episodeId, activeEpisodeTask, onNotice }: ThumbnailPreviewCardProps) {
+export function ThumbnailPreviewCard({ channel, episode, episodeId, activeEpisodeTask, onNotice, onUpdated }: ThumbnailPreviewCardProps) {
   const initialRatio = episode.quiz_config?.thumbnail_aspect_ratio === "9:16" ? "9:16" : "16:9";
 
   const [activeRatio, setActiveRatio] = useState<ThumbnailAspectRatio>(initialRatio);
@@ -124,6 +125,7 @@ export function ThumbnailPreviewCard({ channel, episode, episodeId, activeEpisod
         setManifest(res.manifest);
         setImageTimestamp(String(Date.now()));
         setCarouselIndex(0);
+        await onUpdated?.();
         onNotice?.({
           tone: "good",
           message:
@@ -155,6 +157,7 @@ export function ThumbnailPreviewCard({ channel, episode, episodeId, activeEpisod
       if (res.ok && res.manifest) {
         setManifest(res.manifest);
         setImageTimestamp(String(Date.now()));
+        await onUpdated?.();
         onNotice?.({ tone: "good", message: `Version activated as main thumbnail for ${activeRatio}!` });
       }
     } catch (err) {
@@ -169,6 +172,7 @@ export function ThumbnailPreviewCard({ channel, episode, episodeId, activeEpisod
         setManifest(res.manifest);
         setImageTimestamp(String(Date.now()));
         setCarouselIndex((prev) => Math.max(0, prev - 1));
+        await onUpdated?.();
         onNotice?.({ tone: "good", message: "Thumbnail version deleted." });
       }
     } catch (err) {

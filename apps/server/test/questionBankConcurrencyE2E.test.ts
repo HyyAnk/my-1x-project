@@ -47,7 +47,7 @@ describe("QuestionBank Concurrency & Background Job E2E Stress Tests", () => {
           maxConcurrent = activeCalls;
         }
         // Small delay to simulate LLM network latency and verify concurrent overlap
-        await new Promise((res) => setTimeout(res, 35));
+        await new Promise((res) => setTimeout(res, 2));
         activeCalls--;
 
         return {
@@ -90,7 +90,7 @@ describe("QuestionBank Concurrency & Background Job E2E Stress Tests", () => {
       if (Date.now() - startTime > 10000) {
         throw new Error("Timeout waiting for 5-worker background job to complete");
       }
-      await new Promise((res) => setTimeout(res, 20));
+      await new Promise((res) => setTimeout(res, 2));
     }
 
     const finalStatus = jobManager.getStatus();
@@ -111,7 +111,7 @@ describe("QuestionBank Concurrency & Background Job E2E Stress Tests", () => {
       connect: async () => {},
       generateContent: async () => {
         callCounter++;
-        await new Promise((res) => setTimeout(res, 40));
+        await new Promise((res) => setTimeout(res, 8));
         return {
           text: JSON.stringify([
             {
@@ -147,14 +147,14 @@ describe("QuestionBank Concurrency & Background Job E2E Stress Tests", () => {
     expect(jobManager.isJobRunning()).toBe(true);
 
     // Wait a brief moment for wave 1 to begin, then cancel
-    await new Promise((res) => setTimeout(res, 15));
+    await new Promise((res) => setTimeout(res, 2));
     const cancelRes = jobManager.cancelJob();
 
     expect(cancelRes).toBe(true);
     expect(jobManager.isJobRunning()).toBe(false);
 
     // Wait for in-flight wave to settle
-    await new Promise((res) => setTimeout(res, 80));
+    await new Promise((res) => setTimeout(res, 15));
 
     const finalStatus = jobManager.getStatus();
     expect(finalStatus.status).toBe("cancelled");
@@ -166,7 +166,7 @@ describe("QuestionBank Concurrency & Background Job E2E Stress Tests", () => {
     const mockLlmClient: LLMClient = {
       connect: () => Promise.resolve(),
       generateContent: async () => {
-        await new Promise((res) => setTimeout(res, 150));
+        await new Promise((res) => setTimeout(res, 20));
         return { text: "[]" };
       },
     };

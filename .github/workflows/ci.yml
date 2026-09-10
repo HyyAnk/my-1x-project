@@ -46,6 +46,9 @@ jobs:
       - name: Unit and integration tests
         run: pnpm test
 
+      - name: Repository integrity audit
+        run: pnpm run audit
+
       - name: Upload visual regression diffs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7

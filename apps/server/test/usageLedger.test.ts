@@ -42,7 +42,7 @@ describe("UsageLedger Analytics & Persistence", () => {
       name: "Quiz History Channel",
       description: "Testing bootstrap",
       target_audience: "Everyone",
-      language: "Vietnamese",
+      language: "English",
       market: "Global",
       dna_mode: "example",
     });
@@ -104,7 +104,7 @@ describe("UsageLedger Analytics & Persistence", () => {
       name: "Voice Test Channel",
       description: "Testing voice accumulation",
       target_audience: "Everyone",
-      language: "Vietnamese",
+      language: "English",
       market: "Global",
       dna_mode: "example",
     });
@@ -214,7 +214,7 @@ describe("UsageLedger Analytics & Persistence", () => {
       name: "Image History Channel",
       description: "Testing image bootstrap",
       target_audience: "Everyone",
-      language: "Vietnamese",
+      language: "English",
       market: "Global",
       dna_mode: "example",
     });

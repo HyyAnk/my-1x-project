@@ -11,3 +11,5 @@ export * from "./thumbnailManifestStore.js";
 export * from "./thumbnailLegacyMigrator.js";
 export * from "./thumbnailService.js";
 export * from "./thumbnailLocale.js";
+export * from "./thumbnailHookGuardrail.js";
+export { isValidShortHookText } from "./thumbnailHookGuardrail.js";

@@ -21,6 +21,8 @@ export function QuizV2StageItem({ stageKey, label, index, status, progress, timi
       <span className="quiz-v2-stage-icon">
         {status === "ready" ? (
           <CheckCircle size={16} weight="fill" />
+        ) : status === "stale" ? (
+          <WarningCircle size={16} weight="fill" />
         ) : status === "failed" ? (
           <WarningCircle size={16} weight="fill" />
         ) : status === "running" ? (
@@ -40,7 +42,7 @@ export function QuizV2StageItem({ stageKey, label, index, status, progress, timi
             >
               ⏱ {timing.formattedDuration}
               {timing.isParallel && timing.parallelTotalSeconds ? (
-                <span className="quiz-v2-stage-parallel-badge" title={`Thời gian song song: ${timing.parallelTotalSeconds}s`}>
+                <span className="quiz-v2-stage-parallel-badge" title={`Parallel time: ${timing.parallelTotalSeconds}s`}>
                   //{timing.parallelTotalSeconds}s
                 </span>
               ) : null}

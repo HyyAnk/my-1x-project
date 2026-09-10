@@ -1,4 +1,4 @@
-import type React from "react";
+import React from "react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import { AppViewRouter, type AppViewRouterProps } from "./AppViewRouter";
@@ -6,6 +6,38 @@ import { LanguageProvider } from "../i18n";
 import { ErrorBoundary } from "./ErrorBoundary";
 import type { Channel, Task } from "@studio/shared";
 import type { Page } from "./types";
+
+vi.mock("./dashboard/DashboardView", () => ({
+  DashboardView: () => <div data-testid="dashboard-view">Studio Workspace</div>,
+}));
+
+vi.mock("./ChannelView", () => ({
+  ChannelsView: (props: { channels?: Channel[] }) => (
+    <div data-testid="channels-view">Channels View {props.channels?.[0]?.display_name ?? "Trivia Channel"}</div>
+  ),
+}));
+
+vi.mock("./MascotStudio", () => ({
+  MascotStudioView: () => <div data-testid="mascot-studio-view">Mascot Studio</div>,
+}));
+
+vi.mock("../features/sandbox/VisualSandboxTab", () => ({
+  VisualSandboxTab: () => <div data-testid="visual-sandbox-tab">Visual Sandbox</div>,
+}));
+
+vi.mock("../features/tasks/TasksView", () => ({
+  TasksView: () => <div data-testid="tasks-view">Queue #—</div>,
+}));
+
+vi.mock("./SettingsPanel", () => ({
+  SettingsView: (props: { activeTab?: string | null }) => (
+    <div data-testid="settings-view">Studio Settings {props.activeTab ? `tab:${props.activeTab}` : ""}</div>
+  ),
+}));
+
+vi.mock("../features/questionBank/QuestionBankView", () => ({
+  QuestionBankView: () => <div data-testid="question-bank-view">Question Bank Studio</div>,
+}));
 
 const mockChannel: Channel = {
   channel_id: "ch_quiz_1",

@@ -51,11 +51,21 @@ export async function readSubtopicBatchUnlocked(
         cause: parsed.error,
       });
     }
-    if (parsed.data.domain_id !== domainId || parsed.data.subtopic_id !== subtopicId || !matchesArchetypeFilter(normalizedArch, parsed.data.archetype_id)) {
-      throw new RepositoryError(`Batch membership does not match requested path ${normalizedArch}/${domainId}/${subtopicId}`, "BANK_BATCH_INCONSISTENT");
+    if (
+      parsed.data.domain_id !== domainId ||
+      parsed.data.subtopic_id !== subtopicId ||
+      !matchesArchetypeFilter(normalizedArch, parsed.data.archetype_id)
+    ) {
+      throw new RepositoryError(
+        `Batch membership does not match requested path ${normalizedArch}/${domainId}/${subtopicId}`,
+        "BANK_BATCH_INCONSISTENT",
+      );
     }
     assertNestedQuestionMembership(parsed.data, sourcePath);
-    const normalized = { ...parsed.data, archetype_id: parsed.data.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : parsed.data.archetype_id };
+    const normalized = {
+      ...parsed.data,
+      archetype_id: parsed.data.archetype_id === "verdict_fact_myth" ? "verdict_true_false" : parsed.data.archetype_id,
+    };
     normalized.questions = normalized.questions.map((question) =>
       question.archetype_id === "verdict_fact_myth" ? { ...question, archetype_id: "verdict_true_false" as const } : question,
     );
@@ -189,10 +199,13 @@ export async function listQuestionBankBatchesUnlocked(
       entries.forEach((entry) => assertSafeBankPathSegments([entry.name], ["archetype"]));
       archetypeDirs = entries.filter((d) => d.isDirectory()).map((d) => d.name);
     } catch (err: unknown) {
+      if (err instanceof RepositoryError) throw err;
       if ((err as NodeJS.ErrnoException).code === "ENOENT") {
         continue;
       }
-      throw new RepositoryError(`Failed to read Question Bank root at ${bankRoot}: ${(err as Error).message}`, "BANK_READ_FAILED", { cause: err });
+      throw new RepositoryError(`Failed to read Question Bank root at ${bankRoot}: ${(err as Error).message}`, "BANK_READ_FAILED", {
+        cause: err,
+      });
     }
 
     for (const archDir of archetypeDirs) {
@@ -209,10 +222,13 @@ export async function listQuestionBankBatchesUnlocked(
         entries.forEach((entry) => assertSafeBankPathSegments([entry.name], ["domain"]));
         domainDirs = entries.filter((d) => d.isDirectory()).map((d) => d.name);
       } catch (err: unknown) {
+        if (err instanceof RepositoryError) throw err;
         if ((err as NodeJS.ErrnoException).code === "ENOENT") {
           continue;
         }
-        throw new RepositoryError(`Failed to read archetype directory at ${archPath}: ${(err as Error).message}`, "BANK_READ_FAILED", { cause: err });
+        throw new RepositoryError(`Failed to read archetype directory at ${archPath}: ${(err as Error).message}`, "BANK_READ_FAILED", {
+          cause: err,
+        });
       }
 
       for (const domDir of domainDirs) {
@@ -229,10 +245,13 @@ export async function listQuestionBankBatchesUnlocked(
           entries.forEach((entry) => assertSafeBankPathSegments([entry.name], ["batch file"]));
           batchFiles = entries.filter((f) => f.isFile() && f.name.endsWith(".json")).map((f) => f.name);
         } catch (err: unknown) {
+          if (err instanceof RepositoryError) throw err;
           if ((err as NodeJS.ErrnoException).code === "ENOENT") {
             continue;
           }
-          throw new RepositoryError(`Failed to read domain directory at ${domPath}: ${(err as Error).message}`, "BANK_READ_FAILED", { cause: err });
+          throw new RepositoryError(`Failed to read domain directory at ${domPath}: ${(err as Error).message}`, "BANK_READ_FAILED", {
+            cause: err,
+          });
         }
 
         for (const file of batchFiles) {
@@ -242,14 +261,18 @@ export async function listQuestionBankBatchesUnlocked(
           try {
             rawContent = await readFile(filePath, "utf8");
           } catch (err: unknown) {
-            throw new RepositoryError(`Failed to read batch file ${filePath}: ${(err as Error).message}`, "BANK_READ_FAILED", { cause: err });
+            throw new RepositoryError(`Failed to read batch file ${filePath}: ${(err as Error).message}`, "BANK_READ_FAILED", {
+              cause: err,
+            });
           }
 
           let content: unknown;
           try {
             content = JSON.parse(rawContent);
           } catch (err: unknown) {
-            throw new RepositoryError(`Malformed JSON in batch file ${filePath}: ${(err as Error).message}`, "BANK_BATCH_CORRUPT", { cause: err });
+            throw new RepositoryError(`Malformed JSON in batch file ${filePath}: ${(err as Error).message}`, "BANK_BATCH_CORRUPT", {
+              cause: err,
+            });
           }
 
           const parsed = BankSubtopicBatchSchema.safeParse(content);
@@ -298,11 +321,7 @@ export async function listQuestionBankBatchesUnlocked(
             batchesMap.set(key, { data, isRuntime, archDir });
           } else if (isRuntime && !existing.isRuntime) {
             batchesMap.set(key, { data, isRuntime, archDir });
-          } else if (
-            isRuntime === existing.isRuntime &&
-            archDir === "verdict_true_false" &&
-            existing.archDir !== "verdict_true_false"
-          ) {
+          } else if (isRuntime === existing.isRuntime && archDir === "verdict_true_false" && existing.archDir !== "verdict_true_false") {
             batchesMap.set(key, { data, isRuntime, archDir });
           }
         }

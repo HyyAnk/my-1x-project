@@ -4,23 +4,24 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 const execFileAsync = promisify(execFile);
-const roots: string[] = [];
 const script = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../scripts/migrate-quiz-only.ps1");
 const retiredRuntimeName = [".docu", "mentary-studio"].join("");
 const targetRuntimeName = ".quiz-studio";
 
-type MigrationFixture = Awaited<ReturnType<typeof createFixture>>;
+type MigrationFixture = {
+  root: string;
+  projectRoot: string;
+  contentRoot: string;
+  originals: Map<string, string>;
+  nestedMetadata: string;
+  nestedContent: string;
+};
 
-afterEach(async () => {
-  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })));
-});
-
-async function createFixture() {
+async function createFixture(): Promise<MigrationFixture> {
   const root = await mkdtemp(path.join(os.tmpdir(), "quiz-migration-"));
-  roots.push(root);
   const projectRoot = path.join(root, "project");
   const contentRoot = path.join(root, "content");
   const originals = new Map<string, string>();
@@ -42,9 +43,19 @@ async function createFixture() {
   return { root, projectRoot, contentRoot, originals, nestedMetadata, nestedContent };
 }
 
+async function withFixture<T>(fn: (fixture: MigrationFixture) => Promise<T>): Promise<T> {
+  const fixture = await createFixture();
+  try {
+    return await fn(fixture);
+  } finally {
+    await rm(fixture.root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }).catch(() => {});
+  }
+}
+
 async function runMigration(fixture: MigrationFixture, failureCheckpoint?: string) {
   const args = [
     "-NoProfile",
+    "-NonInteractive",
     "-ExecutionPolicy",
     "Bypass",
     "-File",
@@ -55,7 +66,7 @@ async function runMigration(fixture: MigrationFixture, failureCheckpoint?: strin
     fixture.contentRoot,
   ];
   if (failureCheckpoint) args.push("-FailureCheckpoint", failureCheckpoint);
-  return execFileAsync("powershell.exe", args, { windowsHide: true });
+  return execFileAsync("powershell.exe", args, { windowsHide: true, timeout: 15000 });
 }
 
 async function assertRolledBack(fixture: MigrationFixture) {
@@ -69,28 +80,33 @@ async function assertRolledBack(fixture: MigrationFixture) {
 }
 
 describe.runIf(process.platform === "win32")("Quiz-only runtime migration", () => {
-  it("migrates channel metadata and both runtime directories with a retained recovery backup", async () => {
-    const fixture = await createFixture();
-    const result = await runMigration(fixture);
+  it.concurrent(
+    "migrates channel metadata and both runtime directories with a retained recovery backup",
+    async () => {
+      await withFixture(async (fixture) => {
+        const result = await runMigration(fixture);
 
-    expect(await pathExists(path.join(fixture.projectRoot, retiredRuntimeName))).toBe(false);
-    expect(await pathExists(path.join(fixture.contentRoot, retiredRuntimeName))).toBe(false);
-    expect(await readFile(path.join(fixture.projectRoot, targetRuntimeName, "settings.json"), "utf8")).toContain("dark");
-    expect(await readFile(path.join(fixture.contentRoot, targetRuntimeName, "tasks.json"), "utf8")).toBe("[]\n");
-    for (const channelFile of fixture.originals.keys()) {
-      const migrated = JSON.parse(await readFile(channelFile, "utf8")) as Record<string, unknown>;
-      expect(migrated).toMatchObject({ language: "French" });
-      expect(migrated).not.toHaveProperty("group_id");
-      expect(migrated).not.toHaveProperty("engine");
-    }
-    expect(await readFile(fixture.nestedMetadata, "utf8")).toBe(fixture.nestedContent);
-    const backups = await findFiles(path.join(fixture.contentRoot, targetRuntimeName, "migration-backups"), "channel.json");
-    expect(backups).toHaveLength(2);
-    expect(JSON.parse(await readFile(backups[0], "utf8"))).toHaveProperty("group_id", "quiz");
-    expect(result.stdout).toMatch(/total=2 success=2 failed=0 skipped=0 retries=0 elapsed=/i);
-  }, 15000);
+        expect(await pathExists(path.join(fixture.projectRoot, retiredRuntimeName))).toBe(false);
+        expect(await pathExists(path.join(fixture.contentRoot, retiredRuntimeName))).toBe(false);
+        expect(await readFile(path.join(fixture.projectRoot, targetRuntimeName, "settings.json"), "utf8")).toContain("dark");
+        expect(await readFile(path.join(fixture.contentRoot, targetRuntimeName, "tasks.json"), "utf8")).toBe("[]\n");
+        for (const channelFile of fixture.originals.keys()) {
+          const migrated = JSON.parse(await readFile(channelFile, "utf8")) as Record<string, unknown>;
+          expect(migrated).toMatchObject({ language: "French" });
+          expect(migrated).not.toHaveProperty("group_id");
+          expect(migrated).not.toHaveProperty("engine");
+        }
+        expect(await readFile(fixture.nestedMetadata, "utf8")).toBe(fixture.nestedContent);
+        const backups = await findFiles(path.join(fixture.contentRoot, targetRuntimeName, "migration-backups"), "channel.json");
+        expect(backups).toHaveLength(2);
+        expect(JSON.parse(await readFile(backups[0], "utf8"))).toHaveProperty("group_id", "quiz");
+        expect(result.stdout).toMatch(/total=2 success=2 failed=0 skipped=0 retries=0 elapsed=/i);
+      });
+    },
+    15000,
+  );
 
-  it.each([
+  it.concurrent.each([
     "after-channel-rewrite:1",
     "after-channel-rewrite:2",
     "after-project-runtime-move",
@@ -99,31 +115,33 @@ describe.runIf(process.platform === "win32")("Quiz-only runtime migration", () =
   ])(
     "rolls back metadata and runtime moves at checkpoint %s",
     async (checkpoint) => {
-      const fixture = await createFixture();
-      const error = await runMigration(fixture, checkpoint).catch((reason: { stdout?: string; stderr?: string }) => reason);
+      await withFixture(async (fixture) => {
+        const error = await runMigration(fixture, checkpoint).catch((reason: { stdout?: string; stderr?: string }) => reason);
 
-      expect(error).toHaveProperty("code");
-      expect(`${error.stdout ?? ""}${error.stderr ?? ""}`).toContain(checkpoint);
-      expect(`${error.stdout ?? ""}${error.stderr ?? ""}`).toMatch(/total=2 success=0 failed=1 skipped=0 retries=0 elapsed=/i);
-      await assertRolledBack(fixture);
+        expect(error).toHaveProperty("code");
+        expect(`${error.stdout ?? ""}${error.stderr ?? ""}`).toContain(checkpoint);
+        expect(`${error.stdout ?? ""}${error.stderr ?? ""}`).toMatch(/total=2 success=0 failed=1 skipped=0 retries=0 elapsed=/i);
+        await assertRolledBack(fixture);
+      });
     },
     15000,
   );
 
-  it.each(["missing-source", "existing-destination"])(
+  it.concurrent.each(["missing-source", "existing-destination"])(
     "aborts before mutation for %s",
     async (condition) => {
-      const fixture = await createFixture();
-      if (condition === "missing-source") await rm(path.join(fixture.projectRoot, retiredRuntimeName), { recursive: true });
-      else await mkdir(path.join(fixture.projectRoot, targetRuntimeName), { recursive: true });
+      await withFixture(async (fixture) => {
+        if (condition === "missing-source") await rm(path.join(fixture.projectRoot, retiredRuntimeName), { recursive: true });
+        else await mkdir(path.join(fixture.projectRoot, targetRuntimeName), { recursive: true });
 
-      const error = await runMigration(fixture).catch((reason: { stdout?: string; stderr?: string }) => reason);
-      const output = `${error.stdout ?? ""}${error.stderr ?? ""}`;
-      expect(error).toHaveProperty("code");
-      expect(output).toContain(condition === "missing-source" ? "Missing source runtime" : "Destination already exists");
-      expect(output).toMatch(/success=0 failed=1 skipped=0 retries=0 elapsed=/i);
-      for (const [channelFile, original] of fixture.originals) expect(await readFile(channelFile, "utf8")).toBe(original);
-      expect((await readdir(fixture.contentRoot)).some((entry) => entry.startsWith(".quiz-migration-"))).toBe(false);
+        const error = await runMigration(fixture).catch((reason: { stdout?: string; stderr?: string }) => reason);
+        const output = `${error.stdout ?? ""}${error.stderr ?? ""}`;
+        expect(error).toHaveProperty("code");
+        expect(output).toContain(condition === "missing-source" ? "Missing source runtime" : "Destination already exists");
+        expect(output).toMatch(/success=0 failed=1 skipped=0 retries=0 elapsed=/i);
+        for (const [channelFile, original] of fixture.originals) expect(await readFile(channelFile, "utf8")).toBe(original);
+        expect((await readdir(fixture.contentRoot)).some((entry) => entry.startsWith(".quiz-migration-"))).toBe(false);
+      });
     },
     15000,
   );

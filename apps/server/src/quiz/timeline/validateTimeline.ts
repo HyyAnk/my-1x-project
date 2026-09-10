@@ -30,7 +30,9 @@ export function validateQuizTimeline(quiz: QuizV2, timeline: unknown): QuizIssue
     if (event.type === "question.enter" && event.question_id) questionEnters.set(event.question_id, event.at_seconds);
     if (event.type === "answer.reveal" && event.question_id) {
       const question = quiz.questions.find((candidate) => candidate.id === event.question_id);
-      const canonical = String(event.payload.canonical_choice_id ?? event.choice_id ?? "");
+      const rawCanonical = event.payload.canonical_choice_id;
+      const canonical =
+        typeof rawCanonical === "string" ? rawCanonical : typeof rawCanonical === "number" ? String(rawCanonical) : (event.choice_id ?? "");
       if (question && canonical !== question.correct_choice_id)
         issues.push({
           code: "timeline_canonical_answer_mismatch",

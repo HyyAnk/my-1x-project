@@ -1,5 +1,8 @@
 import type { MascotProfile, ThumbnailAspectRatio } from "@studio/shared";
 import { QUIZ_STYLE_CONTRACTS } from "../assets/promptCompiler.js";
+import { sanitizeVisualPrompt } from "../assets/visualPromptSanitizer.js";
+import { sanitizeThumbnailHook } from "./thumbnailHookGuardrail.js";
+import { resolveTopicEnvironmentSubject } from "./thumbnailEnvironmentResolver.js";
 import type { CompiledThumbnailPrompts, QuizThumbnailPlan } from "./thumbnailTypes.js";
 
 /**
@@ -83,17 +86,18 @@ export function compileThumbnailPrompt(
 
   // 2. Mascot Definition (Clean, Expressive, Uncluttered)
   const mascotDescription = resolveMascotDescription(plan, mascotProfile);
+  const hookBannerText = sanitizeThumbnailHook(plan.hookText);
 
   // 3. Clean Modern Typography & Capsule Badge
   const typographySection = `Typography & Text Hierarchy:
-- Top Banner: Clean, bold modern 3D sans-serif typography in matte white and soft warm gold reading '${plan.hookText}' with a crisp, subtle drop shadow for maximum legibility.
+- Top Banner: Clean, bold modern 3D sans-serif typography in matte white and soft warm gold reading '${hookBannerText}' with a crisp, subtle drop shadow for maximum legibility.
 - Curiosity Badge: A sleek, compact matte rounded pill badge reading '${plan.badgeText}', positioned cleanly near the mascot.
 - STRICT NO QUESTION TEXT & NO NUMBER LABELS: DO NOT write any question sentences, body text, paragraphs, or numerical option labels (STRICT NO 1, 2, 3, 4 numbers, NO Option A/B text). Objects MUST be clean standalone 3D models floating with natural contact shadows, with ZERO white box cards, ZERO frames, and ZERO checkmarks (NO ✅/❌).`;
 
   // 4. Environment & Lighting Setup (Minimalist, Vibrant & Family-Friendly)
   const environmentDescription =
     plan.environmentAtmosphere ||
-    `Clean minimalist vibrant Pixar 3D studio background tailored to ${plan.topicTitle} with heavy soft bokeh blur, smooth warm gradient, generous negative space, and zero busy background clutter`;
+    `Clean minimalist vibrant Pixar 3D studio background tailored to ${resolveTopicEnvironmentSubject(plan.topicTitle)} with heavy soft bokeh blur, smooth warm gradient, generous negative space, and zero busy background clutter`;
 
   const lightingDescription =
     plan.lightingPalette ||
@@ -105,7 +109,8 @@ export function compileThumbnailPrompt(
   // 6. Aesthetic Quality & Cinematic Lighting
   const aestheticSection = `Style: ${styleContract.name} (${styleContract.renderingMedium}). Quality: Pixar / Disney feature animation benchmark quality, smooth subsurface scattering on character skin/scales, clean matte materials on props. Lighting: ${lightingDescription}. Environment: ${environmentDescription}. Color palette: Rich, saturated, warm, inviting, and cheerful for family/kids audience. Clean spacious negative space, zero background clutter, zero numerical labels on objects. Ultra-clean, modern, non-cluttered YouTube thumbnail masterpiece.`;
 
-  return [framingSection, typographySection, layoutSection, aestheticSection].join(" \n\n");
+  const rawPrompt = [framingSection, typographySection, layoutSection, aestheticSection].join(" \n\n");
+  return sanitizeVisualPrompt(rawPrompt);
 }
 
 /**

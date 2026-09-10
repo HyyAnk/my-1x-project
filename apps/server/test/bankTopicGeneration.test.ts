@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { BankQuestion, TopicRunResult } from "@studio/shared";
+import { hashBankQuestionSource, type BankQuestion, type TopicRunResult } from "@studio/shared";
 import { allocateSourceBackedTopicSlots } from "../src/context/bankTopicAllocation.js";
 import { validateTopicCandidateResponse } from "../src/context/topicCandidateValidator.js";
 import { formatSourceBackedTopicPrompt, MAX_SOURCE_CONTEXT_CHARS } from "../src/context/bankTopicPromptBuilder.js";
@@ -608,6 +608,18 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
     it("enforces supported source capacity: rejects question count beyond capacity, succeeds within capacity", async () => {
       const { repo, channelId } = await createTestRepo();
 
+      const questions = Array.from({ length: 5 }, (_, i) =>
+        makeQuestion({
+          id: `q_src_${i + 1}`,
+          format: "multiple_choice",
+          status: "approved",
+          language: "en",
+        }),
+      );
+      for (const q of questions) {
+        await repo.saveQuestionBankQuestion(q);
+      }
+
       const runResult: TopicRunResult = {
         run_id: "run_capacity_test",
         target_episode_count: 3,
@@ -632,10 +644,10 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
             question_count: 5,
             visual_style: "mixed",
             age_band: "7-9",
-            source_bindings: Array.from({ length: 5 }, (_, i) => ({
-              source_question_id: `q_src_${i + 1}`,
+            source_bindings: questions.map((q) => ({
+              source_question_id: q.id,
               source_hash_version: 1 as const,
-              source_content_hash: "d".repeat(64),
+              source_content_hash: hashBankQuestionSource(q),
               projection_provenance: {
                 source_variant: "native" as const,
                 resolved_language: "en" as const,
@@ -816,9 +828,7 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
     it("executes full task-to-storage topic suggestion with allocation and retrieval", async () => {
       const { repo, channelId } = await createTestRepo();
 
-      const questions = Array.from({ length: 8 }, (_, i) =>
-        makeQuestion({ id: `q_task_${i + 1}`, archetype_id: "deep_trivia" }),
-      );
+      const questions = Array.from({ length: 8 }, (_, i) => makeQuestion({ id: `q_task_${i + 1}`, archetype_id: "deep_trivia" }));
       const allocation = allocateSourceBackedTopicSlots({
         questions,
         scanStatus: "complete_nonempty",

@@ -99,6 +99,7 @@ smokeTest("topic confirmation sends the selected question count before episode g
     quiz_format: "multiple_choice",
     question_count: 8,
     age_band: "7-9",
+    run_id: "run_topic_count",
   };
   const episode = {
     episode_id: "ep_topic_count",
@@ -240,18 +241,18 @@ smokeTest("topic confirmation sends the selected question count before episode g
   await expect(questionPicker).toHaveAttribute("min", "3");
   await expect(questionPicker).toHaveAttribute("max", "50");
   await questionPicker.fill("51");
-  await expect(topicCard.getByRole("button", { name: "Build Video (1-Click)", exact: true })).toBeDisabled();
+  await expect(topicCard.getByRole("button", { name: "Select Topic", exact: true })).toBeDisabled();
   await expect(topicCard.getByText("Choose 3-50", { exact: true })).toBeVisible();
   await questionPicker.fill("12");
   await expect(questionPicker).toHaveValue("12");
   await expect(topicCard.getByText("About 7 min", { exact: true })).toBeVisible();
 
-  const confirmButton = topicCard.getByRole("button", { name: "Build Video (1-Click)", exact: true });
+  const confirmButton = topicCard.getByRole("button", { name: "Select Topic", exact: true });
   await confirmButton.click();
-  await expect(topicCard.getByRole("button", { name: "Building Video…", exact: true })).toBeDisabled();
+  await expect(topicCard.getByRole("button", { name: "Selecting Topic…", exact: true })).toBeDisabled();
   await expect
     .poll(() => confirmedPayload)
-    .toEqual({ topic_id: topic.topic_id, question_count: 12, visual_style: "mixed", auto_start_pipeline: true });
+    .toEqual({ topic_id: topic.topic_id, question_count: 12, visual_style: "mixed", auto_start_pipeline: false });
   releaseConfirmation?.();
   await expect(page.getByRole("status")).toContainText("with 12 questions");
   await page.locator(".breadcrumbs-nav").getByRole("link", { name: channel.display_name }).click();

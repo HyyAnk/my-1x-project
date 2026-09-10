@@ -1,4 +1,6 @@
 import type { AssetConsistencyGroup, QuizAssetRequirement, QuizImageStyle } from "@studio/shared";
+import { framingRules, purposeRules } from "./promptFramingRules.js";
+import { sanitizeVisualSubject, sanitizeVisualPrompt } from "./visualPromptSanitizer.js";
 
 export type CompiledAssetPrompt = {
   prompt: string;
@@ -89,6 +91,7 @@ export function compileQuizAssetPrompt(
 ): CompiledAssetPrompt {
   const contract = QUIZ_STYLE_CONTRACTS[visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
   const rules = purposeRules(request.purpose);
+  const cleanSubject = sanitizeVisualSubject(request.subject);
 
   const backgroundGuidance = request.transparent_background
     ? "Background: isolated centered subject on a pure solid white studio backdrop, crystal clear silhouette boundaries, high edge contrast, zero background clutter, zero shadows on backdrop, perfectly suited for clean background matting."
@@ -115,9 +118,9 @@ export function compileQuizAssetPrompt(
   ] : [];
 
   const framing = framingRules(request.aspect_ratio, request.purpose);
-  const prompt = [
+  const rawPrompt = [
     "Create one image asset for a children's educational quiz video.",
-    `Subject: ${request.subject}.`,
+    `Subject: ${cleanSubject}.`,
     `Purpose: ${request.purpose.replaceAll("_", " ")}.`,
     `Visual Style: ${contract.name}, bright, friendly, high saturation, clean lighting, large identifiable subject, simple composition, safe and positive for children.`,
     ...soloHeroContract,
@@ -129,35 +132,11 @@ export function compileQuizAssetPrompt(
     "No words, letters, captions, labels, logos, watermark, collage, or split screen.",
   ].join("\n");
 
+  const prompt = sanitizeVisualPrompt(rawPrompt);
+
   return {
     prompt,
     cacheVersion: `${contract.id}-v3-expressive-faces`,
     critical: request.required,
   };
-}
-
-function framingRules(aspectRatio: QuizAssetRequirement["aspect_ratio"], _purpose: QuizAssetRequirement["purpose"]): string {
-  if (aspectRatio === "1:1") {
-    return "Composition: 1:1 square canvas. Center the subject perfectly with balanced breathing room on all sides so it fits cleanly inside an answer card box.";
-  }
-  if (aspectRatio === "9:16") {
-    return "Composition: 9:16 vertical portrait framing. Position the primary subject centrally with generous vertical headroom and no horizontal cutoffs.";
-  }
-  if (aspectRatio === "16:9") {
-    return "Composition: 16:9 widescreen landscape framing. Broad horizontal perspective suited for video background, header, or hero illustration.";
-  }
-  if (aspectRatio === "4:3") {
-    return "Composition: 4:3 standard horizontal canvas with well-proportioned margins.";
-  }
-  if (aspectRatio === "3:4") {
-    return "Composition: 3:4 portrait card canvas. Keep the subject vertically structured with clean top/bottom margins.";
-  }
-  return `Composition: ${aspectRatio} aspect ratio canvas with balanced margins.`;
-}
-
-function purposeRules(purpose: QuizAssetRequirement["purpose"]): string {
-  if (purpose === "hero_question_image" || purpose === "question_illustration") return "Hero question image. Keep one clear focal subject, with room around it for the quiz card and no distracting details.";
-  if (purpose === "answer_option") return "One centered, instantly recognizable subject. Keep lighting, scale, framing, and background complexity consistent with the other answer options so the style does not reveal the answer.";
-  if (purpose === "answer_reveal") return "Create a celebratory but controlled reveal image with one clear subject and room for a green answer frame.";
-  return "Clean simple composition suitable as a supporting quiz visual.";
 }

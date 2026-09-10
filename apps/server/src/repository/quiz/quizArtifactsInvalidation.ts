@@ -35,9 +35,9 @@ async function invalidateQuizArtifactsLocked(
     qa: "qa.json",
   };
   const removed: string[] = [];
-  // Style activation invalidates generated video outputs, but leaves source artifacts intact.
-  const shouldInvalidateRender = stages.includes("render") || stages.includes("style");
-  const hasQuizV2Artifact = shouldInvalidateRender ? Boolean(await this.readQuiz(channelId, episodeId)) : false;
+  const shouldDestroyRender = stages.includes("render");
+  const shouldMarkStyleStale = stages.includes("style") && !shouldDestroyRender;
+  const hasQuizV2Artifact = shouldDestroyRender || shouldMarkStyleStale ? Boolean(await this.readQuiz(channelId, episodeId)) : false;
 
   for (const stage of stages) {
     const filename = filenames[stage];
@@ -47,26 +47,55 @@ async function invalidateQuizArtifactsLocked(
     removed.push(target.relativePath);
   }
 
-  if (shouldInvalidateRender && hasQuizV2Artifact) {
+  if (hasQuizV2Artifact) {
     const episode = await this.getEpisode(channelId, episodeId);
     const channel = await this.getChannel(channelId);
-    const assetsDirectory = this.resolvePath("channels", channel.slug, "episodes", episode.slug, "assets");
-    const videoFilename = episode.video_asset_path ? path.basename(episode.video_asset_path) : "quiz-video.mp4";
-    if (/^[a-z0-9][a-z0-9._-]*\.mp4$/i.test(videoFilename)) {
-      await rm(path.join(assetsDirectory, videoFilename), { force: true });
+    if (shouldDestroyRender) {
+      await destroyRenderArtifacts(this, channel, episode);
+    } else if (shouldMarkStyleStale) {
+      await markRenderStale(this, channel, episode);
     }
-    await rm(path.join(assetsDirectory, "render-manifest.json"), { force: true });
-    const next = EpisodeSchema.parse({
-      ...episode,
-      stage: episode.stage === "VIDEO_READY" ? "SCENE_READY" : episode.stage,
-      video_asset_path: null,
-      video_generated_at: null,
-      video_duration_seconds: null,
-      render_manifest_path: null,
-      updated_at: nowIso(),
-    });
-    await this.writeJsonAtomic(this.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
   }
 
   return removed;
+}
+
+async function destroyRenderArtifacts(
+  runtime: RepositoryRuntime,
+  channel: { slug: string; channel_id: string },
+  episode: { slug: string; stage: string; video_asset_path: string | null },
+): Promise<void> {
+  const assetsDirectory = runtime.resolvePath("channels", channel.slug, "episodes", episode.slug, "assets");
+  const videoFilename = episode.video_asset_path ? path.basename(episode.video_asset_path) : "quiz-video.mp4";
+  if (/^[a-z0-9][a-z0-9._-]*\.mp4$/i.test(videoFilename)) {
+    await rm(path.join(assetsDirectory, videoFilename), { force: true });
+  }
+  await rm(path.join(assetsDirectory, "render-manifest.json"), { force: true });
+  const next = EpisodeSchema.parse({
+    ...episode,
+    stage: episode.stage === "VIDEO_READY" ? "SCENE_READY" : episode.stage,
+    video_asset_path: null,
+    video_generated_at: null,
+    video_duration_seconds: null,
+    render_manifest_path: null,
+    render_stale: false,
+    updated_at: nowIso(),
+  });
+  await runtime.writeJsonAtomic(runtime.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
+  runtime.entityIdResolver.setEpisodeSlug(channel.channel_id, next.episode_id, next.slug);
+}
+
+async function markRenderStale(
+  runtime: RepositoryRuntime,
+  channel: { slug: string; channel_id: string },
+  episode: { slug: string; stage: string; video_asset_path: string | null; render_stale?: boolean },
+): Promise<void> {
+  if (!episode.video_asset_path || episode.render_stale) return;
+  const next = EpisodeSchema.parse({
+    ...episode,
+    render_stale: true,
+    updated_at: nowIso(),
+  });
+  await runtime.writeJsonAtomic(runtime.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
+  runtime.entityIdResolver.setEpisodeSlug(channel.channel_id, next.episode_id, next.slug);
 }

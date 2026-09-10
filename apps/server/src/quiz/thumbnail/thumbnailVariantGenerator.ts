@@ -216,7 +216,7 @@ type BuildVariantResultParams = {
 };
 
 function buildVariantResult(params: BuildVariantResultParams): VariantGenerationResult {
-  const { versionId, variantFilename, ratio, prompt, plan, channel, episode, targets } = params;
+  const { versionId, variantFilename, ratio, prompt, plan, targets } = params;
   return {
     versionId,
     variantFilename,

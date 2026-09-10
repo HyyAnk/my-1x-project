@@ -14,8 +14,7 @@ function normalizeRawChoices(rawChoices: unknown, fallbackChoices?: QuizQuestion
       }
       if (typeof c === "object" && c !== null) {
         const itemObj = c as Record<string, unknown>;
-        const rawCId =
-          typeof itemObj.id === "string" && /^[a-z][a-z0-9_-]{0,31}$/i.test(itemObj.id) ? itemObj.id.toLowerCase() : `c${idx + 1}`;
+        const rawCId = typeof itemObj.id === "string" && itemObj.id.trim() ? itemObj.id.trim() : `c${idx + 1}`;
         const rawCText = typeof itemObj.text === "string" ? itemObj.text.trim() : `Option ${idx + 1}`;
         return { id: rawCId, text: rawCText };
       }
@@ -35,8 +34,14 @@ function normalizeRawChoices(rawChoices: unknown, fallbackChoices?: QuizQuestion
 }
 
 function resolveCorrectChoiceId(rawId: unknown, choices: Array<{ id: string; text: string }>): string {
-  let correctChoiceId = typeof rawId === "string" ? rawId.toLowerCase() : (choices[0]?.id ?? "c1");
-  const matchedChoice = choices.find((c) => c.id === correctChoiceId || c.text.toLowerCase() === correctChoiceId.toLowerCase());
+  const trimmedRawId = typeof rawId === "string" ? rawId.trim() : "";
+  let correctChoiceId = trimmedRawId || (choices[0]?.id ?? "c1");
+  const matchedChoice = choices.find(
+    (c) =>
+      c.id === correctChoiceId ||
+      c.id.toLowerCase() === correctChoiceId.toLowerCase() ||
+      c.text.toLowerCase() === correctChoiceId.toLowerCase(),
+  );
   if (matchedChoice) {
     correctChoiceId = matchedChoice.id;
   } else if (choices.length > 0) {

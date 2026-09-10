@@ -13,7 +13,7 @@ export function quizChoiceCountForFormat(format: QuizQuestionFormat): number {
 }
 
 export const QuizChoiceSchema = z.object({
-  id: z.string().regex(/^[a-z][a-z0-9_-]{0,31}$/),
+  id: z.string().trim().min(1).max(64),
   text: z.string().trim().min(1).max(180),
 });
 

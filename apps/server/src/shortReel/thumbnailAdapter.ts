@@ -8,10 +8,7 @@ import { runBoundedPackageProvider } from "./packageProvider.js";
 import { ScriptGenerationError } from "./scriptProvider.js";
 import { requireCompleteShortReelSource } from "../repository/shortReelSourcePolicy.js";
 import type { ImageProvider } from "../providers/index.js";
-import {
-  loadShortReelLocalizationArtifact,
-  type ProductLocalizationArtifact,
-} from "../quiz/bank/localization/productLocalization.js";
+import { loadShortReelLocalizationArtifact, type ProductLocalizationArtifact } from "../quiz/bank/localization/productLocalization.js";
 
 export type CoverErrorCode = "INVALID_COVER_SOURCE" | "COVER_GENERATION_FAILED" | "INVALID_DIMENSIONS" | "PROVIDER_ERROR";
 

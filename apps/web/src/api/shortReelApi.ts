@@ -15,12 +15,23 @@ export { ApiError };
 export const shortReelApi = {
   listShortReels: (channelId: string) => request<{ short_reels: ShortReelRecord[] }>(`/api/channels/${channelId}/short-reels`),
 
+  createShortReel: (channelId: string, payload: { question_id: string; visual_style?: string }) =>
+    request<{ short_reel: ShortReelRecord }>(`/api/channels/${channelId}/short-reels`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
   getShortReel: (channelId: string, reelId: string) => request<GetShortReelResponse>(`/api/channels/${channelId}/short-reels/${reelId}`),
 
   updateShortReel: (channelId: string, reelId: string, body: UpdateShortReelRequest) =>
     request<UpdateShortReelResponse>(`/api/channels/${channelId}/short-reels/${reelId}`, {
       method: "PATCH",
       body: JSON.stringify(body),
+    }),
+
+  deleteShortReel: (channelId: string, reelId: string) =>
+    request<{ success: boolean }>(`/api/channels/${channelId}/short-reels/${reelId}`, {
+      method: "DELETE",
     }),
 
   generateShortReel: (channelId: string, reelId: string, body: GenerateShortReelRequest) =>

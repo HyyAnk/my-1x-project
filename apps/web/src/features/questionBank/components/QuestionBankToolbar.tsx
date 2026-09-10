@@ -116,7 +116,6 @@ export function QuestionBankToolbar({
               </select>
             </div>
           )}
-
         </div>
 
         <div className="qb-filters-row-right" style={{ display: "flex", alignItems: "center", gap: "8px" }}>

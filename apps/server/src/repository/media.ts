@@ -233,9 +233,11 @@ export async function saveVideoMetadata(
     video_generated_at: nowIso(),
     video_duration_seconds: durationSeconds,
     render_manifest_path: renderManifestPath,
+    render_stale: false,
     updated_at: nowIso(),
   });
   await this.writeJsonAtomic(this.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
+  this.entityIdResolver.setEpisodeSlug(channelId, next.episode_id, next.slug);
   return next;
 }
 
@@ -290,5 +292,6 @@ export async function saveNarrationMetadata(
     updated_at: nowIso(),
   });
   await this.writeJsonAtomic(this.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
+  this.entityIdResolver.setEpisodeSlug(channelId, next.episode_id, next.slug);
   return next;
 }

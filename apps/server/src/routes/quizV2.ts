@@ -72,6 +72,7 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
         assessment,
         description,
         timings,
+        render_stale: Boolean(episode.render_stale),
         stages: {
           research: [
             "RESEARCH_READY",
@@ -96,7 +97,11 @@ export function registerQuizV2Routes(deps: QuizV2RouteDeps): FastifyPluginCallba
           voice: voicePlan ? "ready" : "not_started",
           timeline: timeline ? "ready" : "not_started",
           qa: assessment ? (assessment.issues.some((issue) => issue.severity === "blocker") ? "failed" : "ready") : "not_started",
-          render: active?.task_type === "GENERATE_VIDEO" ? "running" : episode.video_asset_path ? "ready" : "not_started",
+          render: active?.task_type === "GENERATE_VIDEO"
+            ? "running"
+            : episode.video_asset_path
+              ? (episode.render_stale ? "stale" : "ready")
+              : "not_started",
         },
       };
     });

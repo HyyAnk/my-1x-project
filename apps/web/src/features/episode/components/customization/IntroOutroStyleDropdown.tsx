@@ -48,7 +48,7 @@ export function IntroOutroStyleDropdown({
   const defaultStyle = styles.find((s) => s.style_id === channel?.default_intro_outro_style_id);
   const selectedStyle = styles.find((s) => s.style_id === effectiveStyleId);
 
-  let displayValue = "Default";
+  let displayValue: string;
   if (effectiveStyleId === "none") {
     displayValue = "None (Skip Intro)";
   } else if (selectedStyle) {
@@ -89,19 +89,9 @@ export function IntroOutroStyleDropdown({
       {isOpen && !disabled ? (
         <CustomizationPopover title="Intro / Outro Style">
           {/* Default Option */}
-          <label
-            className={`style-option-row ${!effectiveStyleId ? "is-checked" : ""}`}
-            onClick={() => handleSelectStyle(null)}
-          >
-            <input
-              type="radio"
-              name="intro_outro_choice"
-              checked={!effectiveStyleId}
-              onChange={() => handleSelectStyle(null)}
-            />
-            <span className="style-option-label">
-              {defaultStyle ? `${defaultStyle.name} (Channel Default)` : "Channel Default"}
-            </span>
+          <label className={`style-option-row ${!effectiveStyleId ? "is-checked" : ""}`} onClick={() => handleSelectStyle(null)}>
+            <input type="radio" name="intro_outro_choice" checked={!effectiveStyleId} onChange={() => handleSelectStyle(null)} />
+            <span className="style-option-label">{defaultStyle ? `${defaultStyle.name} (Channel Default)` : "Channel Default"}</span>
             {!effectiveStyleId ? <Check size={14} weight="bold" className="style-option-check" /> : null}
           </label>
 
@@ -114,12 +104,7 @@ export function IntroOutroStyleDropdown({
                 className={`style-option-row ${isChecked ? "is-checked" : ""}`}
                 onClick={() => handleSelectStyle(style.style_id)}
               >
-                <input
-                  type="radio"
-                  name="intro_outro_choice"
-                  checked={isChecked}
-                  onChange={() => handleSelectStyle(style.style_id)}
-                />
+                <input type="radio" name="intro_outro_choice" checked={isChecked} onChange={() => handleSelectStyle(style.style_id)} />
                 <span className="style-option-label" style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
                   <span>{style.name}</span>
                   <span style={{ fontSize: 11, color: "#888", marginLeft: 8 }}>

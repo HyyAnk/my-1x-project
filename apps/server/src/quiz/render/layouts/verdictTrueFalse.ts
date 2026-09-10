@@ -75,10 +75,7 @@ export const verdictTrueFalseLayout = {
   border-radius: 26px;
 }
 .layout-verdict_true_false.quiz-question-clip .hero-image {
-  animation:
-    enter-from-left 0.66s cubic-bezier(0.22, 0.8, 0.3, 1) var(--clip-start) both,
-    hero-float var(--scene-duration) ease-in-out calc(var(--clip-start) + 0.66s) 1 alternate both;
-  will-change: transform;
+  animation: enter-from-left 0.66s cubic-bezier(0.22, 0.8, 0.3, 1) var(--clip-start) both;
 }
 
 /* Verdict Choices Grid: 2 Oversized Physical Arcade Buttons Centered Vertically */

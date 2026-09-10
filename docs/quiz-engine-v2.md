@@ -1,101 +1,60 @@
 # Quiz Engine V2
 
-Quiz Engine V2 is the default and only production path for fresh Quiz episodes. The primary **Build video** action executes it automatically.
+Reviewed against working-tree source on 2026-09-09. See [Architecture](architecture.md) for system boundaries and [Episode workflow](episode-workflow.md) for product entry points.
 
----
+## Production path
 
-## 1. Quiz-Native Fast Path (Default Architecture)
+[quizProductionPipelineRunner.ts](../apps/server/src/tasks/pipeline/quizProductionPipelineRunner.ts) owns the outer task and video child. It reuses an existing quiz or submits `GENERATE_QUIZ`. The default path is quiz-native; `USE_LEGACY_QUIZ_PIPELINE=true` still enables the compatibility research/treatment/script/scene path.
 
-Fresh episodes default to the streamlined **Quiz-Native Fast Path** orchestrated by [`quizProductionPipelineRunner.ts`](apps/server/src/tasks/pipeline/quizProductionPipelineRunner.ts):
+[directQuizHandler.ts](../apps/server/src/tasks/handlers/directQuizHandler.ts) parses direct quiz output, balances answer positions, and synthesizes compatibility script/visual-bible/scene artifacts. Do not make those compatibility artifacts a second source of truth for quiz questions.
 
-- **Direct Quiz Generation:** A single `GENERATE_QUIZ` task directly prompts the configured LLM engine (Codex or Antigravity) to produce structured quiz content.
-- **Deterministic Choice Balancing:** The output is parsed and normalized by [`directQuizHandler.ts`](apps/server/src/tasks/handlers/directQuizHandler.ts), which applies [`balanceQuizChoicePositions`](apps/server/src/quiz/domain/quiz.ts) to guarantee that correct answer positions rotate deterministically across questions and avoid consecutive repeat choices.
-- **Backward-Compatible Stubs:** `directQuizHandler.ts` synthesizes `script.md`, `visual_bible.md`, and `scenes.json` on the fly, allowing legacy inspection tools, editors, and downstream readers to function seamlessly without requiring the old narrative steps.
-- **Legacy Pipeline Switch:** The multi-stage narrative sequence (`GENERATE_RESEARCH` → `TREATMENT` → `SCRIPT` → `VISUAL_BIBLE` → `SEQUENCE_SCENES`) is completely bypassed by default. It only executes when explicitly enabled via the environment flag:
-  ```bash
-  USE_LEGACY_QUIZ_PIPELINE=true
-  ```
+## Stage sequence
 
----
+[quizV2PipelineRunner.ts](../apps/server/src/tasks/pipeline/quizV2PipelineRunner.ts) coordinates these stages, implemented through [the domain orchestrator](../apps/server/src/quiz/pipeline/orchestrator.ts):
 
-## 2. Canonical Pipeline Stages & Execution Flow
+1. Ensure quiz and director artifacts.
+2. Ensure the asset plan.
+3. Attempt description generation if missing.
+4. Resolve assets and synthesize voice concurrently when both need work; otherwise run only the needed branch.
+5. Ensure a measured, compiled timeline.
+6. Run QA and supported healing.
+7. Attempt thumbnail generation.
+8. Return to the outer runner for the video child task.
 
-The canonical stage lifecycle (defined in [`apps/server/src/quiz/pipeline/invalidation.ts`](apps/server/src/quiz/pipeline/invalidation.ts)) consists of:
+Description and thumbnail failures are non-fatal warnings. Both calls are awaited: non-fatal does not mean detached or zero-latency. The runner does not generate the thumbnail twice in this sequence.
+
+Voice synthesis measures segment durations and assembles episode narration. Timing must use measured media, not estimated text duration alone. Stage and parallel timings are persisted for diagnostics.
+
+## QA and invalidation
+
+[quizPipelineVoiceStep.ts](../apps/server/src/tasks/pipeline/quizPipelineVoiceStep.ts) defaults to three blocker checks, with at most two intervening healing rounds. Supported asset and voice repairs can run concurrently. Remaining blockers fail with `QUIZ_QA_BLOCKED`; unsupported blockers must not be silently ignored.
+
+Domain validation is owned by:
+
+- [Director validation](../apps/server/src/quiz/director/validateDirectorPlan.ts): question coverage, semantic presentation and pacing requirements.
+- [Timeline compilation](../apps/server/src/quiz/timeline/compileTimeline.ts): scheduled segments and timeline construction.
+- [QA stages](../apps/server/src/quiz/qa/): semantic, asset, voice and other assessments. The copyright filter is application policy, not a legal clearance guarantee.
+- [Invalidation map](../apps/server/src/quiz/pipeline/invalidation.ts) and [repository invalidation](../apps/server/src/repository/quiz/quizArtifactsInvalidation.ts): upstream changes invalidate derived artifacts.
+
+Read thresholds in source/tests instead of copying numeric rules into new modules.
+
+## Persistence and rendering
+
+The exact JSON artifact filenames are:
 
 ```text
-research | quiz | director | assets | asset_resolution | voice | timeline | render | qa
+quiz-v2.json          director-plan.json       asset-plan.json
+asset-resolution.json voice-plan.json         timeline.json
+qa.json               history-check.json      video-description.json
+stage-timings.json
 ```
 
-Pipeline execution in [`quizV2PipelineRunner.ts`](apps/server/src/tasks/pipeline/quizV2PipelineRunner.ts) follows these distinct phases:
+[RepositoryRuntime](../apps/server/src/repository/runtime.ts) declares the names; [quizPlanArtifacts.ts](../apps/server/src/repository/quiz/quizPlanArtifacts.ts) owns schema-bound reads/writes. DTO field names such as `director_plan` or `assessment` are not filenames. Reuse repository write queues and atomic helpers.
 
-### Phase 1: Quiz Derivation & Director Planning
-1. **`generateQuiz`:** Derives normalized `quiz.json` and evaluates candidate questions against the 30-day question history ledger (`questionHistory.ts`) using Token Jaccard and Character Bigram Dice similarity algorithms.
-2. **`generateDirector`:** Generates a deterministic `director_plan.json`. Validated by [`validateDirectorPlan.ts`](apps/server/src/quiz/director/validateDirectorPlan.ts), which strictly requires:
-   - Coverage of every Quiz question ID exactly once (no orphaned or missing questions).
-   - Strict adherence to semantic presentation enums.
-   - An explicit `answer_reveal` intent on every beat.
-   - Enforcement of age-band thinking-time floors (`4-6` ≥ 7.2s, `7-9`/`family` ≥ 6.8s, `10-12` ≥ 6.5s).
-3. **`planAssets`:** Extracts visual asset requirements into `asset_plan.json` matching visual themes and scene requirements.
+[videoRunner.ts](../apps/server/src/tasks/videoRunner.ts) owns composition preparation, render execution, output persistence, completion, and history handling. It appends question history after rendering and rolls back question-history entries by render task on failure. BGM history has separate error handling; do not claim both ledgers form a single atomic transaction.
 
-### Phase 2: Integrated YouTube Description (Non-Blocking)
-- Immediately following asset planning, [`generateEpisodeDescription`](apps/server/src/quiz/description/index.ts) is triggered automatically.
-- It formats channel hashtags, age-appropriate descriptions, and scoring tiers into `video_description.json`.
-- **Non-blocking safety:** The step is wrapped in a non-fatal `try/catch` block. If LLM description generation fails, the error is logged as a warning and pipeline execution continues without interruption.
+Episode configuration currently fixes output to landscape `16:9`; see [config schema](../packages/shared/src/schemas/config.ts) and [channel/episode schemas](../packages/shared/src/schemas/channel.ts). Lower-level portrait-capable types do not establish a supported portrait episode workflow. [Short Reels](short-reel.md) are a separate product.
 
-### Phase 3: Concurrent Asset & Batch Voice Synthesis (`Promise.all`)
-When both visual assets and voice narration require generation, [`quizV2PipelineRunner.ts`](apps/server/src/tasks/pipeline/quizV2PipelineRunner.ts) executes both stages in parallel using `Promise.all`:
+## Verification
 
-```typescript
-await Promise.all([
-  (async () => {
-    assetsStart = Date.now();
-    await resolveAssets(input);
-    assetsEnd = Date.now();
-  })(),
-  (async () => {
-    voiceStart = Date.now();
-    await generateVoice(input);
-    voiceEnd = Date.now();
-  })(),
-]);
-```
-
-- **`resolveAssets` ([`resolveQuizAssets.ts`](apps/server/src/quiz/assets/resolveQuizAssets.ts)):** Concurrently resolves and fetches visual assets based on the active channel visual style and provider configuration.
-- **`generateVoice` ([`assetsVoiceStages.ts`](apps/server/src/quiz/pipeline/stages/assetsVoiceStages.ts)):** Synthesizes all question voice segments in batch through the local Chatterbox neural TTS sidecar (`services/tts/app.py`), measures precise audio durations per segment, compiles the initial timeline, and stitches together the full episode narration into `narration.wav`.
-- **Parallel Timing Metrics:** Execution durations for both concurrent branches are recorded via `recordParallelTiming("assets_voice", ...)`.
-
-### Phase 4: Integrated Thumbnail Generation (Non-Blocking)
-- Automated thumbnail synthesis ([`generateEpisodeThumbnail`](apps/server/src/quiz/thumbnail/index.ts)) runs automatically following asset resolution and again prior to video rendering.
-- It leverages high-CTR prompt engineering and channel visual branding.
-- **Non-blocking safety:** Like episode descriptions, thumbnail generation is wrapped in non-fatal error handling: any failure logs a warning and does not block video rendering.
-
-### Phase 5: Timeline Compilation & Autonomous QA Healing
-1. **`compileTimeline` ([`compileTimeline.ts`](apps/server/src/quiz/timeline/compileTimeline.ts)):** Deterministically aligns narration segments, thinking music, sound effects, mascot actions, and visual cues against measured audio durations. Every planned audio segment must be scheduled, or compilation halts fatally.
-2. **Deterministic QA Gates:** [`runQa`](apps/server/src/quiz/pipeline/stages/timelineAssessmentStages.ts) evaluates timeline bounds, copyright compliance (`copyrightValidator.ts`), answer verification, and voice pacing safety (`assessVoiceQa.ts`).
-3. **3-Cycle Autonomous Healing Loop:** If QA blockers are detected, [`executeQuizQaGatesWithHealing`](apps/server/src/tasks/pipeline/quizPipelineVoiceStep.ts) initiates up to 3 automated remediation cycles before escalating:
-   - **Voice Pacing Blocker (`voice_pace_unsafe` / `voice_pace_fast`):** Automatically invokes [`voicePacingHealer.ts`](apps/server/src/quiz/audio/voicePacingHealer.ts) (`healVoicePlanWithPacingRewrite`) to re-prompt the LLM to rewrite dialogue segments to meet target Words Per Second (WPS) thresholds, invalidates downstream voice/timeline artifacts, and re-synthesizes speech.
-   - **Asset Blocker (`asset_required_unresolved` / `asset_generation_failed`):** Automatically retries visual asset resolution (`resolveAssets`).
-   - **Dual Blockers:** When both voice pacing and asset blockers exist simultaneously, the healing loop resolves assets and rewrites voice pacing concurrently via `Promise.all`.
-   - **Fatal Escalation:** If blockers persist after 3 complete healing cycles, the runner halts with a typed `QUIZ_QA_BLOCKED` exception.
-
-### Phase 6: Video Composition & HyperFrames Render
-- **Child Task Execution:** The runner launches `runVideoTask` ([`videoRunner.ts`](apps/server/src/tasks/videoRunner.ts)).
-- **HTML5 Composition Preparation:** Prepares HTML5 composition assets and mixed audio (`soundtrack.wav`) via [`videoCompositionPreparer.ts`](apps/server/src/tasks/video/videoCompositionPreparer.ts).
-- **Headless Browser Render:** Executes frame-by-frame rendering with [`videoRenderExecution.ts`](apps/server/src/tasks/video/videoRenderExecution.ts) using the headless browser renderer to produce broadcast-quality MP4 video (`quiz-video.mp4`) and `render_manifest.json`.
-- **History Ledger Commit:** On successful render completion, newly rendered questions and BGM tracks are appended to the 30-day history ledger. If rendering fails, additions are rolled back.
-
----
-
-## 3. Artifact Storage & Atomic Persistence
-
-Artifacts are persisted in each episode's dedicated filesystem directory via [`RepositoryService`](apps/server/src/repository.ts) and [`quizArtifacts.ts`](apps/server/src/repository/quizArtifacts.ts):
-- Every JSON artifact (`quiz.json`, `director_plan.json`, `asset_plan.json`, `asset_resolution.json`, `voice_plan.json`, `timeline.json`, `assessment.json`, `video_description.json`, `render_manifest.json`) is validated against strict Zod schemas before persistence.
-- Writes are performed atomically (write to temporary file followed by atomic rename).
-- Writes and stage invalidations are serialized per episode using dedicated repository locks, guaranteeing that concurrent pipeline operations (e.g. `resolveAssets` and `generateVoice`) cannot corrupt state or interleave dirty writes.
-
----
-
-## 4. Preflight & Post-Render Quality Assurance
-
-- **Preflight Verification:** Blocks rendering if any of the following occur: canonical answer mismatches, missing required semantic assets, thinking time below the age-band floor, timeline bounds out of range, or unmeasured audio segments.
-- **Post-Render FFprobe Verification:** Inspects the rendered MP4 file verifying container integrity, video/audio stream codecs, target dimensions (1920x1080 landscape or 1080x1920 portrait), frame rate, duration, and audio-video synchronization alignment.
+Start with [quizOnlyPipeline.test.ts](../apps/server/test/quizOnlyPipeline.test.ts), [quizParallelAssetsVoice.test.ts](../apps/server/test/quizParallelAssetsVoice.test.ts), and [pipelineVideoProgress.test.ts](../apps/server/test/pipelineVideoProgress.test.ts). Add targeted coverage for changed stages, invalidation, failure and cancellation. Follow [the workflow guide](workflow.md) for full checks. This documentation review did not run generation or certify render quality.

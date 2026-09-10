@@ -54,7 +54,7 @@ export function baseStatus(stage: RailStage, readiness: Readiness, state: QuizV2
   if (stage === "script") return readiness.script ? "ready" : "not_started";
   if (stage === "visualBible") return readiness.visualBible ? "ready" : "not_started";
   if (stage === "scenes") return readiness.scenes ? "ready" : "not_started";
-  if (stage === "render") return readiness.video ? "ready" : state.stages.render;
+  if (stage === "render") return state.stages.render === "stale" ? "stale" : readiness.video ? "ready" : state.stages.render;
   if (stage === "quizContent" || stage === "voiceAndAssets" || stage === "thumbnail" || stage === "description" || stage === "qaGates") {
     return baseStreamlinedStatus(stage as StreamlinedRailStage, readiness, state);
   }
@@ -105,6 +105,7 @@ function resolveRenderStatus(readiness: Readiness, state?: Partial<QuizV2State> 
   const stageStatus = state?.stages?.render;
   if (stageStatus === "failed") return "failed";
   if (stageStatus === "running") return "running";
+  if (stageStatus === "stale") return "stale";
   if (readiness.video || stageStatus === "ready") return "ready";
   return stageStatus ?? "not_started";
 }

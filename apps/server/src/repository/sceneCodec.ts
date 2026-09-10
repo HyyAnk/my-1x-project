@@ -116,11 +116,13 @@ function parseOverlayData(value: string): Array<{ label: string; value: string |
         (item): item is { label?: unknown; value?: unknown; unit?: unknown } =>
           Boolean(item) && typeof item === "object" && !Array.isArray(item),
       )
-      .map((item) => ({
-        label: String(item.label ?? ""),
-        value: typeof item.value === "number" ? item.value : String(item.value ?? ""),
-        unit: String(item.unit ?? ""),
-      }))
+      .map((item) => {
+        const label = typeof item.label === "string" ? item.label : typeof item.label === "number" ? String(item.label) : "";
+        const rawVal = item.value;
+        const value = typeof rawVal === "number" ? rawVal : typeof rawVal === "string" ? rawVal : "";
+        const unit = typeof item.unit === "string" ? item.unit : typeof item.unit === "number" ? String(item.unit) : "";
+        return { label, value, unit };
+      })
       .filter((item) => item.label && item.value !== "");
   } catch {
     return [];

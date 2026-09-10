@@ -1923,7 +1923,16 @@
       "Jenga",
       "Tetris",
       "Sudoku"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Rubik's Cube",
+      "Magic Cube",
+      "Speedcube",
+      "Erno Rubik"
+    ],
+    "safe_visual_proxy": "A twistable 3x3x3 puzzle cube with brightly colored square faces in red, blue, green, yellow, orange, and white."
   },
   {
     "id": "ENT-SPO-044",
@@ -2012,7 +2021,16 @@
       "Scrabble",
       "Settlers of Catan",
       "Risk (Board Game)"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Monopoly",
+      "The Fast-Dealing Property Trading Game",
+      "Hasbro",
+      "Parker Brothers"
+    ],
+    "safe_visual_proxy": "A traditional square board game layout featuring colored property streets, dice, and small metal playing tokens."
   },
   {
     "id": "ENT-SPO-046",
@@ -2056,7 +2074,16 @@
       "Boggle",
       "Monopoly",
       "Chess"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Scrabble",
+      "Word Tile Game",
+      "Hasbro",
+      "Mattel"
+    ],
+    "safe_visual_proxy": "A wooden grid board game with crossword-style letter tiles and numerical scores."
   },
   {
     "id": "ENT-SPO-047",
@@ -3136,7 +3163,16 @@
       "Playing Cards",
       "Monopoly",
       "Poker"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Uno (Card Game)",
+      "Uno",
+      "Color Shedding Card Game",
+      "Mattel"
+    ],
+    "safe_visual_proxy": "A colorful shedding card game with numbered cards in red, yellow, green, and blue with special action symbols."
   },
   {
     "id": "ENT-SPO-071",
@@ -3181,7 +3217,18 @@
       "Pac-Man",
       "Space Invaders",
       "Pong"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Tetris",
+      "The Soviet Tile Puzzle",
+      "Falling Block Game",
+      "Alexey Pajitnov",
+      "Tetromino",
+      "Nintendo"
+    ],
+    "safe_visual_proxy": "A falling geometric block puzzle game with colorful tetromino shapes slotting into place on a grid."
   },
   {
     "id": "ENT-SPO-072",
@@ -3226,7 +3273,21 @@
       "Space Invaders",
       "Tetris",
       "Donkey Kong (Arcade)"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Pac-Man",
+      "Puck Man",
+      "The Yellow Pellet Muncher",
+      "Namco",
+      "Blinky",
+      "Pinky",
+      "Inky",
+      "Clyde",
+      "Power Pellet"
+    ],
+    "safe_visual_proxy": "A retro yellow circular character chomping glowing dots along neon blue maze pathways surrounded by colorful retro ghost sprites."
   },
   {
     "id": "ENT-SPO-073",
@@ -3271,7 +3332,16 @@
       "Galaga",
       "Asteroids (Arcade)",
       "Pac-Man"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Space Invaders",
+      "Invaders from Space",
+      "Taito Arcade Classic",
+      "Taito"
+    ],
+    "safe_visual_proxy": "Classic monochrome pixelated alien space fleet descending toward defensive bunkers in arcade space."
   },
   {
     "id": "ENT-SPO-074",
@@ -3496,7 +3566,19 @@
       "Pac-Man",
       "Space Invaders",
       "Frogger"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Donkey Kong (Arcade)",
+      "DK Arcade",
+      "Jumpman Arcade",
+      "Donkey Kong",
+      "DK",
+      "Nintendo",
+      "Mario"
+    ],
+    "safe_visual_proxy": "A mighty jungle gorilla wearing a monogrammed red necktie beating his chest on wooden girder platforms."
   },
   {
     "id": "ENT-SPO-079",
@@ -3541,7 +3623,17 @@
       "Space Invaders",
       "Asteroids (Arcade)",
       "Centipede (Arcade)"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Galaga",
+      "Namco Galaga",
+      "Alien Swarm Arcade",
+      "Namco",
+      "Bally Midway"
+    ],
+    "safe_visual_proxy": "A vertical retro arcade space shooter featuring a lone white starfighter firing upwards at descending alien formations."
   },
   {
     "id": "ENT-SPO-080",
@@ -3586,7 +3678,17 @@
       "Space Invaders",
       "Galaga",
       "Defender"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Asteroids (Arcade)",
+      "Atari Asteroids",
+      "Vector Asteroids",
+      "Asteroids",
+      "Atari"
+    ],
+    "safe_visual_proxy": "A vector graphics arcade screen showing a triangular spaceship floating in deep space among geometric drifting rocks."
   },
   {
     "id": "ENT-SPO-081",
@@ -3631,7 +3733,20 @@
       "Mortal Kombat",
       "Tekken",
       "Virtua Fighter"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Street Fighter II",
+      "Street Fighter II: The World Warrior",
+      "SF2",
+      "Street Fighter",
+      "Capcom",
+      "Ryu",
+      "Ken",
+      "Chun-Li"
+    ],
+    "safe_visual_proxy": "A retro 1990s competitive arcade martial arts fighting tournament on glowing CRT screen."
   },
   {
     "id": "ENT-SPO-082",
@@ -3676,7 +3791,17 @@
       "Pac-Man",
       "Donkey Kong (Arcade)",
       "Q*bert"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Frogger",
+      "The Road Crossing Arcade",
+      "Konami Frogger",
+      "Konami",
+      "Sega"
+    ],
+    "safe_visual_proxy": "A top-down arcade perspective of a small green frog hopping across busy highway lanes and floating river logs."
   },
   {
     "id": "ENT-SPO-083",
@@ -4174,7 +4299,17 @@
       "Time Crisis",
       "Light Gun",
       "Space Invaders"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Duck Hunt",
+      "NES Duck Hunt",
+      "Shooting Gallery",
+      "Nintendo",
+      "NES Zapper"
+    ],
+    "safe_visual_proxy": "A classic 8-bit meadow scene with mallard ducks taking flight against a blue sky while a retriever dog looks on."
   },
   {
     "id": "ENT-SPO-094",
@@ -4264,7 +4399,17 @@
       "Galaga",
       "Space Invaders",
       "Dig Dug"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Centipede (Arcade)",
+      "Atari Centipede",
+      "Bug Shooter",
+      "Centipede",
+      "Atari"
+    ],
+    "safe_visual_proxy": "A vibrant retro arcade screen featuring a segmented insect winding downwards through a mushroom forest."
   },
   {
     "id": "ENT-SPO-096",
@@ -4309,7 +4454,16 @@
       "Pac-Man",
       "Donkey Kong (Arcade)",
       "Centipede (Arcade)"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Dig Dug",
+      "Namco Dig Dug",
+      "Subterranean Arcade",
+      "Namco"
+    ],
+    "safe_visual_proxy": "An underground arcade cross-section of a shovel-wielding character tunneling through dirt layers."
   },
   {
     "id": "ENT-SPO-097",
@@ -4354,7 +4508,18 @@
       "Pole Position",
       "Daytona USA",
       "Ridge Racer"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Out Run (Arcade)",
+      "Sega OutRun",
+      "Super Scaler Racing",
+      "Out Run",
+      "Sega",
+      "Yu Suzuki"
+    ],
+    "safe_visual_proxy": "A rear-view arcade driving perspective of an open-top red sports convertible racing down a palm-tree coastal highway."
   },
   {
     "id": "ENT-SPO-098",
@@ -4399,7 +4564,16 @@
       "House of the Dead",
       "Virtua Cop",
       "Duck Hunt"
-    ]
+    ],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": [
+      "Time Crisis",
+      "Time Crisis Arcade",
+      "Recoil Light Gun Game",
+      "Namco"
+    ],
+    "safe_visual_proxy": "A first-person arcade light-gun action rail shooter in an industrial urban setting."
   },
   {
     "id": "ENT-SPO-099",

@@ -15,7 +15,20 @@ export type SfxRawClip = {
 };
 
 export function source(value: string): string {
-  if (/^(data:|https?:|file:)/i.test(value) || value.startsWith("./") || value.startsWith("../")) return value;
+  if (!value) return "";
+  if (/^(data:|https?:|file:)/i.test(value) || value.startsWith("./") || value.startsWith("../")) {
+    return value;
+  }
+  if (value.startsWith("/mascot-assets/")) {
+    return `.${value}`;
+  }
+  if (value.startsWith("/api/")) {
+    const match = value.match(/\/api\/mascots\/[^/]+\/assets\/([^/?#]+)/);
+    if (match && match[1]) {
+      return `./mascot-assets/${match[1]}`;
+    }
+    return value;
+  }
   return pathToFileURL(value).href;
 }
 

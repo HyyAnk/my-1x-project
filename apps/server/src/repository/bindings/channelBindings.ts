@@ -6,8 +6,9 @@ import {
   updateChannel,
   readChannelBySlug,
   safeEpisodeCount,
+  deleteChannel,
 } from "../channels.js";
-import { deleteChannel, getChannelDna, saveChannelDna, resetChannelDna } from "../episodes.js";
+import { getChannelDna, saveChannelDna, resetChannelDna } from "../episodes.js";
 
 export const channelBindings = {
   listChannels,

@@ -521,4 +521,152 @@ describe("Thumbnail Layout Resolver & Prompt Compiler (Step 2)", () => {
     expect(prompt916).toContain("zero cluttered 3-card or 3-subject matrices");
     expect(prompt916).toContain("clear vertical stacking");
   });
+
+  describe("Phase 3 AI Planner & Guardrail Integration", () => {
+    function createMockLlm(responsePayload: Record<string, unknown>) {
+      return {
+        connect: () => Promise.resolve(),
+        startThread: () => Promise.resolve("thread_thumb_test"),
+        startTurn: () => Promise.resolve("turn_thumb_test"),
+        interruptTurn: () => Promise.resolve(),
+        on: (event: string, cb: (payload: unknown) => void) => {
+          if (event === "notification") {
+            setTimeout(() => {
+              cb({
+                method: "turn/completed",
+                params: {
+                  turn: {
+                    status: "completed",
+                  },
+                },
+              });
+            }, 10);
+            setTimeout(() => {
+              cb({
+                method: "item/agentMessage/delta",
+                params: {
+                  delta: JSON.stringify(responsePayload),
+                },
+              });
+            }, 5);
+          }
+        },
+        off: () => {},
+      };
+    }
+
+    it("buildAiPlannerPrompt explicitly directs LLM to generate 2 to 6 words MAX, strictly under 30 characters", async () => {
+      const { buildAiPlannerPrompt } = await import("../src/quiz/thumbnail/thumbnailAiPlanner.js");
+      const prompt = buildAiPlannerPrompt({
+        topicTitle: "Space Planets",
+        language: "English",
+      });
+      expect(prompt).toContain("2 to 6 words MAX, strictly under 30 characters");
+      expect(prompt).toContain("Ultra-punchy 2-6 word headline, strictly under 30 characters");
+    });
+
+    it("AI Planner accepts valid 2-6 word hook under 30 chars from LLM", async () => {
+      const { planThumbnailWithAI } = await import("../src/quiz/thumbnail/thumbnailAiPlanner.js");
+      const mockLlm = createMockLlm({
+        hook_text: "SECRET PLANETS!",
+        badge_text: "99% FAIL! 🔥",
+        layout: "mega_grid",
+      });
+
+      const plan = await planThumbnailWithAI({
+        topicTitle: "Astronomy Secrets",
+        language: "English",
+        llmClient: mockLlm,
+        mascotProfile: sampleMascot,
+      });
+
+      expect(plan.hookText).toBe("SECRET PLANETS!");
+      const prompt = compileThumbnailPrompt(plan, "16:9", sampleMascot);
+      expect(prompt).toContain("SECRET PLANETS!");
+    });
+
+    it("AI Planner automatically condenses overlong AI hook (>6 words / >30 chars) without crashing", async () => {
+      const { planThumbnailWithAI } = await import("../src/quiz/thumbnail/thumbnailAiPlanner.js");
+      const mockLlm = createMockLlm({
+        hook_text: "Arcade Game Secrets: True or False Gaming Showdown", // 8 words / 50 chars
+        badge_text: "ONLY 1% WIN ⚡",
+        layout: "split_vs",
+      });
+
+      const plan = await planThumbnailWithAI({
+        topicTitle: "Arcade Games Trivia",
+        language: "English",
+        llmClient: mockLlm,
+        mascotProfile: sampleMascot,
+      });
+
+      // Delimiter split condensation should extract first valid segment
+      expect(plan.hookText).toBe("ARCADE GAME SECRETS");
+      const prompt = compileThumbnailPrompt(plan, "16:9", sampleMascot);
+      expect(prompt).toContain("ARCADE GAME SECRETS");
+    });
+
+    it("AI Planner falls back to archetype template when AI hook is 1 word or un-condensable without crashing", async () => {
+      const { planThumbnailWithAI } = await import("../src/quiz/thumbnail/thumbnailAiPlanner.js");
+      const mockLlm = createMockLlm({
+        hook_text: "Secrets", // 1 word, rejected by guardrail
+        badge_text: "ONLY 1% WIN ⚡",
+        layout: "true_false",
+      });
+
+      const plan = await planThumbnailWithAI({
+        topicTitle: "Myths and Facts",
+        questionFormat: "true_false",
+        language: "English",
+        llmClient: mockLlm,
+        mascotProfile: sampleMascot,
+      });
+
+      // Should fall back cleanly to true_false archetype template "TRUE OR FALSE?"
+      expect(plan.hookText).toBe("TRUE OR FALSE?");
+    });
+
+    it("AI Planner prioritizes sanitized manual customHookText over AI output", async () => {
+      const { planThumbnailWithAI } = await import("../src/quiz/thumbnail/thumbnailAiPlanner.js");
+      const mockLlm = createMockLlm({
+        hook_text: "AI GENERATED HOOK",
+        badge_text: "GENIUS TIER",
+        layout: "mega_grid",
+      });
+
+      const plan = await planThumbnailWithAI({
+        topicTitle: "Space Trivia",
+        language: "English",
+        customHookText: "CUSTOM USER HOOK!",
+        llmClient: mockLlm,
+        mascotProfile: sampleMascot,
+      });
+
+      expect(plan.hookText).toBe("CUSTOM USER HOOK!");
+    });
+
+    it("resolveThumbnailLayout sanitizes overlong customHookText through guardrail", () => {
+      const plan = resolveThumbnailLayout({
+        topicTitle: "Space Trivia",
+        customHookText: "This Is An Overlong Manual Hook Headline That Exceeds Word Limits",
+        mascotProfile: sampleMascot,
+      });
+
+      // Guardrail condenses or falls back safely
+      expect(plan.hookText.length).toBeLessThanOrEqual(30);
+      expect(plan.hookText).not.toBe("This Is An Overlong Manual Hook Headline That Exceeds Word Limits");
+    });
+
+    it("compileThumbnailPrompt consumes sanitized hook in top banner instruction", () => {
+      const rawPlan = resolveThumbnailLayout({
+        topicTitle: "Space Planets",
+        mascotProfile: sampleMascot,
+      });
+
+      // Even if raw plan had un-sanitized lowercase hook
+      rawPlan.hookText = "can you pass this quiz?";
+      const prompt = compileThumbnailPrompt(rawPlan, "16:9", sampleMascot);
+      expect(prompt).toContain("CAN YOU PASS THIS QUIZ?");
+    });
+  });
 });

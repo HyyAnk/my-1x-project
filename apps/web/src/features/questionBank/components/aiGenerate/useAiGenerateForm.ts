@@ -10,9 +10,10 @@ import type {
 interface UseAiGenerateFormProps {
   taxonomy: BankTaxonomy | null;
   onGenerate: (payload: QuestionBankBatchGenPayload) => Promise<QuestionBankBatchGenResponse>;
+  onClose?: () => void;
 }
 
-export function useAiGenerateForm({ taxonomy, onGenerate }: UseAiGenerateFormProps) {
+export function useAiGenerateForm({ taxonomy, onGenerate, onClose }: UseAiGenerateFormProps) {
   const { t } = useTranslation();
   const [mode, setMode] = useState<"auto" | "manual">("auto");
   const [targetCount, setTargetCount] = useState(20);
@@ -59,7 +60,12 @@ export function useAiGenerateForm({ taxonomy, onGenerate }: UseAiGenerateFormPro
         ...(mode === "manual" && domainId ? { domain_id: domainId } : {}),
         ...(mode === "manual" && subtopicId ? { subtopic_id: subtopicId, subtopic_title: subtopicTitle } : {}),
       };
-      setResult(await onGenerate(payload));
+      const response = await onGenerate(payload);
+      if (response.job && onClose) {
+        onClose();
+        return;
+      }
+      setResult(response);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("questionBank.aiModal.failedDefault"));
     }

@@ -1,30 +1,31 @@
 # Episode workflow
 
-An episode is created in one of two ways:
+Reviewed against working-tree source on 2026-09-09.
 
-1. **Topic confirmation** — a `SUGGEST_TOPICS` task returns candidate topics. Confirming one creates the episode directory, copies the selected topic into `episode.json` and `brief.md`, and sets the episode stage to `SELECTED`. Unselected candidates remain in topic history to prevent repeats.
-2. **Question bank bridge** — a one-click topic→episode bridge action creates the episode from curated question-bank entries (see `apps/server/src/quiz/bank/`).
+## Create and confirm
 
-Production then runs the Quiz V2 pipeline end to end (quiz → director → assets + voice → timeline → QA → render); see [quiz-engine-v2.md](quiz-engine-v2.md). The Quiz fast path synthesizes `script.md`, `visual_bible.md`, and `scenes.json` for backward compatibility with tooling that reads those files.
+Topics and bank questions feed landscape Episodes through [the bank bridge](../apps/server/src/quiz/bank/questionBankToQuizBridge.ts). Topic confirmation must use authoritative source bindings, eligibility checks and durable receipts; it is not merely copying a topic into a new folder. See [Question bank](question-bank.md).
 
----
+A selected bank question can also create an Episode through the single-question bridge. Pipeline auto-start is controlled by the flow's input; do not assume every creation always starts rendering.
 
-## Audio Synthesis & Voice Architecture
+[Episode contracts](../packages/shared/src/schemas/channel.ts) fix render aspect ratio to `16:9`. [Short Reels](short-reel.md) have their own records, confirmation and deliverables.
 
-Audio synthesis in the production pipeline operates in two modes:
+## Build and resume
 
-### 1. Episode-Wide Batch Voice Synthesis (Quiz V2 Production Pipeline)
+The production runner reuses existing artifacts when valid, generates missing quiz content, and runs the [Quiz V2 pipeline](quiz-engine-v2.md). The main sequence is quiz/director, asset planning, assets and voice, timeline, QA, thumbnail and video rendering. Description and thumbnail errors are non-fatal; QA blockers are not.
 
-In the automated Quiz V2 pipeline, voice synthesis is an **episode-level batch operation** executed by `generateVoice` ([`apps/server/src/quiz/pipeline/stages/assetsVoiceStages.ts`](apps/server/src/quiz/pipeline/stages/assetsVoiceStages.ts)):
+Compatibility `script.md`, `visual_bible.md` and `scenes.json` can be synthesized from direct quiz output. Their existence does not mean the legacy narrative workflow ran.
 
-- **Voice Planning:** `buildQuizVoicePlan` extracts dialogue and narration segments for the entire episode into a structured `VoicePlan` (intro, question stems, answer options, thinking countdowns, reveal reactions, explanations, and outro).
-- **Batch Synthesis:** `synthesizeQuizVoiceSegments` synthesizes all segments in batch against the local Chatterbox neural TTS sidecar (`services/tts/app.py`), employing content fingerprinting for cache reuse.
-- **Duration Measurement & Timeline Alignment:** Measured audio durations for every segment feed directly into `compileQuizTimeline`, locking in deterministic beat boundaries based on actual voice speed.
-- **Episode Master Narration Assembly:** `assembleQuizNarration` stitches all synthesized segment WAVs with precise silence offsets into a unified, episode-wide `narration.wav` track used in composition and final video rendering.
+Upstream edits must invalidate affected downstream artifacts through repository operations. Cancellation and retry must preserve accepted work and respect task locks; do not clear files manually to force a rebuild.
 
-### 2. Interactive Scene Audio Regeneration (Compatibility & Fine-Tuning)
+## Voice and media
 
-For manual tuning in the scene breakdown editor:
-- Users can trigger `Generate Audio` on individual scene blocks, queueing a `GENERATE_AUDIO` task for that specific scene through Chatterbox.
-- When dialogue is manually modified or regenerated via `REGENERATE_DIALOGUE` / `REGENERATE_BOTH`, the repository automatically invalidates `audio_asset_path`, `audio_generated_at`, and `audio_duration_seconds` before saving.
-- The dashboard compares the generated WAV duration against the scene's configured duration, surfacing duration variance warnings when exceeding 1 second or 15%. Audio can be regenerated on-demand to replace the player without a page reload.
+[Voice stages](../apps/server/src/quiz/pipeline/stages/assetsVoiceStages.ts) plan and synthesize episode segments, measure durations, and assemble narration for timeline/render consumption. Cache reuse is based on the relevant content and voice inputs.
+
+Scene-level audio/regeneration code remains for compatibility consumers. Its existence does not guarantee a visible scene editor in every current Episode view. Trace [audio/video routes](../apps/server/src/routes/audioVideo.ts) and the actual UI before changing or documenting a user-facing action.
+
+## Progress and recovery
+
+Task state is delivered through WebSocket events with refetch on reconnect and terminal updates. Feature hooks must refresh Episode details and artifact views, not only the task list.
+
+Verify successful build, reused artifacts, upstream invalidation, cancellation, retry, provider failure and reconnect without requiring a full-page refresh. See [Workflow](workflow.md) and [Troubleshooting](troubleshooting.md).

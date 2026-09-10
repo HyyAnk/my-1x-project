@@ -2,6 +2,7 @@ import { mkdir, readdir, stat, unlink } from "node:fs/promises";
 import path from "node:path";
 import { RepositoryError } from "../errors.js";
 import type { RepositoryRuntime } from "../runtime.js";
+import { deleteCachedTransparentAssetFile } from "./mascotTransparentCache.js";
 
 export async function saveMascotAsset(this: RepositoryRuntime, mascotId: string, filename: string, content: Uint8Array): Promise<string> {
   await this.ensureBootstrap();
@@ -10,6 +11,7 @@ export async function saveMascotAsset(this: RepositoryRuntime, mascotId: string,
   await mkdir(assetDir, { recursive: true });
   const targetFile = path.join(assetDir, filename);
   await this.writeBinaryAtomic(targetFile, content);
+  await deleteCachedTransparentAssetFile(this.roots.mascots, mascotId, filename);
   return `/api/mascots/${mascotId}/assets/${filename}`;
 }
 
@@ -48,4 +50,5 @@ export async function deleteMascotAssetFile(this: RepositoryRuntime, mascotId: s
   } catch {
     // Ignore if already deleted
   }
+  await deleteCachedTransparentAssetFile(this.roots.mascots, mascotId, filename);
 }

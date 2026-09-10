@@ -15,7 +15,7 @@ describe("Question Bank English-only write boundary", () => {
     };
     const llmClient = { connect: vi.fn() };
     const server = Fastify();
-    registerBuildRoutes(server, { repository: repository as never, llmClient: llmClient as never });
+    registerBuildRoutes(server, { repository: repository as never, llmClient });
     await server.ready();
 
     const response = await server.inject({

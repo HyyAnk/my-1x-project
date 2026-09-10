@@ -3,6 +3,7 @@ import { FAILED_BUILD_RETENTION_MS, type Channel, type Task } from "@studio/shar
 import { RepositoryError } from "../repository.js";
 import { failReelUnitAttempt } from "../shortReel/unitLifecycle.js";
 import type { TaskManagerRuntime } from "./runtime.js";
+import { pruneStaleHyperframesDirectories } from "./storage/artifactRetentionPruner.js";
 
 const buildTaskTypes = new Set<Task["task_type"]>(["GENERATE_PIPELINE", "GENERATE_VIDEO"]);
 const activeStatuses = new Set<Task["status"]>(["QUEUED", "RUNNING", "WAITING_APPROVAL"]);
@@ -328,4 +329,36 @@ export async function cleanupExpiredFailedBuilds(
     this.emitEvent({ type: "tasks.pruned", task_ids: removedTaskIds, episode_ids: removedEpisodeIds });
   }
   return { removedEpisodes: removedEpisodeIds.length, removedTasks: removedTaskIds.length };
+}
+
+export async function reconcileStartupState(
+  this: TaskManagerRuntime | void,
+  runtimeArg?: TaskManagerRuntime,
+): Promise<{ prunedDirs: string[]; reclaimedBytes: number }> {
+  const runtime = (this as TaskManagerRuntime) || runtimeArg;
+  if (!runtime) {
+    return { prunedDirs: [], reclaimedBytes: 0 };
+  }
+  const hyperframesRoot = runtime.repository.resolvePath("runtime", "hyperframes");
+  const activeEpisodeIds = new Set(
+    runtime
+      .list()
+      .filter((task) => activeStatuses.has(task.status) && task.episode_id)
+      .map((task) => task.episode_id as string),
+  );
+  try {
+    const result = await pruneStaleHyperframesDirectories(hyperframesRoot, undefined, activeEpisodeIds);
+    if (result.prunedDirs.length > 0) {
+      runtime.logger.info(
+        `Startup hyperframes pruning: cleaned ${result.prunedDirs.length} stale directories, reclaimed ${result.reclaimedBytes} bytes`,
+        { step: "startup_reconciliation" },
+      );
+    }
+    return result;
+  } catch (error) {
+    runtime.logger.warn(`Stale hyperframes pruning failed during startup: ${error instanceof Error ? error.message : "unknown error"}`, {
+      step: "startup_reconciliation",
+    });
+    return { prunedDirs: [], reclaimedBytes: 0 };
+  }
 }

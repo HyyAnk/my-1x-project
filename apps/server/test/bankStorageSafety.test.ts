@@ -63,7 +63,13 @@ describe("Question Bank storage safety", () => {
     await writeFile(path.join(root, ".quiz-studio", "storage.local.json"), JSON.stringify({ storage_path: root }), "utf8");
     await writeFile(
       path.join(bankRoot, "index.json"),
-      JSON.stringify({ schema_version: 2, target_total: 20000, current_total: 1, by_archetype: { speed_blitz: 1 }, by_domain: { science: 1 } }),
+      JSON.stringify({
+        schema_version: 2,
+        target_total: 20000,
+        current_total: 1,
+        by_archetype: { speed_blitz: 1 },
+        by_domain: { science: 1 },
+      }),
       "utf8",
     );
     await writeFile(path.join(bankRoot, "speed_blitz", "science", "space.json"), JSON.stringify(batch()), "utf8");
@@ -81,7 +87,9 @@ describe("Question Bank storage safety", () => {
     const { repository, bankRoot } = await repositoryWithBank();
     const filePath = path.join(bankRoot, "speed_blitz", "science", "space.json");
     await writeFile(filePath, "{ not json", "utf8");
-    await expect(readSubtopicBatch.call(repository, "speed_blitz", "science", "space")).rejects.toMatchObject({ code: "BANK_BATCH_CORRUPT" });
+    await expect(readSubtopicBatch.call(repository, "speed_blitz", "science", "space")).rejects.toMatchObject({
+      code: "BANK_BATCH_CORRUPT",
+    });
   });
 
   it("rejects nested questions whose taxonomy does not match the batch path", async () => {
@@ -139,5 +147,101 @@ describe("Question Bank storage safety", () => {
     };
     await expect(applyBankLanguageMigration(repository, backup.manifest)).rejects.toThrow(/simulated second write failure/);
     expect(await readFile(firstPath, "utf8")).toBe(firstBefore);
+  });
+
+  it("rejects an external index symlink before reading or writing external bytes", async () => {
+    const { repository, bankRoot } = await repositoryWithBank();
+    const externalDir = await mkdtemp(path.join(os.tmpdir(), "bank-external-"));
+    tempRoots.push(externalDir);
+    const externalIndexPath = path.join(externalDir, "external-index.json");
+    const externalBytes = JSON.stringify({ external: "do-not-touch" });
+    await writeFile(externalIndexPath, externalBytes, "utf8");
+
+    const indexPath = path.join(bankRoot, "index.json");
+    await rm(indexPath);
+    await (await import("node:fs/promises")).symlink(externalIndexPath, indexPath, "file");
+
+    await expect(readQuestionBankIndex.call(repository)).rejects.toMatchObject({ code: "UNSAFE_PATH" });
+    expect(await readFile(externalIndexPath, "utf8")).toBe(externalBytes);
+
+    await expect(repository.recalculateQuestionBankIndex()).rejects.toMatchObject({ code: "UNSAFE_PATH" });
+    expect(await readFile(externalIndexPath, "utf8")).toBe(externalBytes);
+  });
+
+  it("rejects a Bank junction ancestor before reading or recalculating index", async () => {
+    const { bankRoot, repository } = await repositoryWithBank();
+    const externalBankDir = await mkdtemp(path.join(os.tmpdir(), "bank-junction-external-"));
+    tempRoots.push(externalBankDir);
+    const externalIndexPath = path.join(externalBankDir, "index.json");
+    const externalBytes = JSON.stringify({ schema_version: 2, current_total: 999 });
+    await writeFile(externalIndexPath, externalBytes, "utf8");
+
+    // Replace bankRoot with a junction pointing to externalBankDir
+    await rm(bankRoot, { recursive: true, force: true });
+    await (await import("node:fs/promises")).symlink(externalBankDir, bankRoot, "junction");
+
+    await expect(readQuestionBankIndex.call(repository)).rejects.toMatchObject({ code: "UNSAFE_PATH" });
+    await expect(repository.recalculateQuestionBankIndex()).rejects.toMatchObject({ code: "UNSAFE_PATH" });
+    expect(await readFile(externalIndexPath, "utf8")).toBe(externalBytes);
+  });
+
+  it("deletes a runtime question when runtime is redirected without mutating project duplicate or throwing UNSAFE_PATH", async () => {
+    const projectRoot = await mkdtemp(path.join(os.tmpdir(), "bank-project-root-"));
+    const runtimeRoot = await mkdtemp(path.join(os.tmpdir(), "bank-runtime-root-"));
+    tempRoots.push(projectRoot, runtimeRoot);
+
+    const projectBank = path.join(projectRoot, ".quiz-studio", "question_bank", "speed_blitz", "science");
+    const runtimeBank = path.join(runtimeRoot, ".quiz-studio", "question_bank", "speed_blitz", "science");
+    await mkdir(projectBank, { recursive: true });
+    await mkdir(runtimeBank, { recursive: true });
+
+    const qProject = question({ id: "Q-1", question: "Stale project question" });
+    const qRuntime = question({ id: "Q-1", question: "Active runtime question" });
+
+    const projectBatchBytes = JSON.stringify(batch({ questions: [qProject] }));
+    await writeFile(path.join(projectBank, "space.json"), projectBatchBytes, "utf8");
+    await writeFile(
+      path.join(projectRoot, ".quiz-studio", "question_bank", "index.json"),
+      JSON.stringify({ schema_version: 2, current_total: 1 }),
+      "utf8",
+    );
+
+    await writeFile(path.join(runtimeBank, "space.json"), JSON.stringify(batch({ questions: [qRuntime] })), "utf8");
+    await writeFile(
+      path.join(runtimeRoot, ".quiz-studio", "question_bank", "index.json"),
+      JSON.stringify({ schema_version: 2, current_total: 1 }),
+      "utf8",
+    );
+
+    const repo = new RepositoryService(projectRoot, runtimeRoot);
+    // Deleting Q-1 should succeed and modify ONLY runtime, not touch project copy
+    const deleted = await repo.deleteQuestionBankQuestion("Q-1");
+    expect(deleted).toBe(true);
+
+    // Verify project copy was NOT touched
+    expect(await readFile(path.join(projectBank, "space.json"), "utf8")).toBe(projectBatchBytes);
+    // Verify runtime copy has 0 questions
+    const runtimeBatch = JSON.parse(await readFile(path.join(runtimeBank, "space.json"), "utf8")) as BankSubtopicBatch;
+    expect(runtimeBatch.questions).toHaveLength(0);
+  });
+
+  it("rolls back batch file mutation if index recalculation fails during delete", async () => {
+    const { repository, bankRoot } = await repositoryWithBank();
+    const batchPath = path.join(bankRoot, "speed_blitz", "science", "space.json");
+    const originalBatchBytes = await readFile(batchPath, "utf8");
+    const indexPath = path.join(bankRoot, "index.json");
+    const originalIndexBytes = await readFile(indexPath, "utf8");
+
+    const originalWrite = repository.writeJsonAtomic.bind(repository);
+    repository.writeJsonAtomic = async (target, content) => {
+      if (target.endsWith("index.json")) {
+        throw new Error("simulated index write failure during delete");
+      }
+      return originalWrite(target, content);
+    };
+
+    await expect(repository.deleteQuestionBankQuestion("Q-1")).rejects.toThrow(/simulated index write failure/);
+    expect(await readFile(batchPath, "utf8")).toBe(originalBatchBytes);
+    expect(await readFile(indexPath, "utf8")).toBe(originalIndexBytes);
   });
 });

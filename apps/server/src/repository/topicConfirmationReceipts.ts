@@ -11,6 +11,8 @@ export const TopicConfirmationOptionsSchema = z
     visual_style: z.string().trim().min(1).optional(),
     render_aspect_ratio: z.string().trim().min(1).optional(),
     target_language: z.string().trim().min(1).optional(),
+    custom_hook_text: z.string().trim().min(1).optional(),
+    thumbnail_text: z.string().trim().min(1).optional(),
   })
   .strict();
 
@@ -42,6 +44,8 @@ export function computeConfirmationOptionsFingerprint(options: TopicConfirmation
     visual_style: options.visual_style?.trim().toLowerCase() || "mixed",
     ...(options.render_aspect_ratio !== undefined ? { render_aspect_ratio: options.render_aspect_ratio } : {}),
     target_language: options.target_language?.trim().toLowerCase() || "en",
+    ...(options.custom_hook_text !== undefined ? { custom_hook_text: options.custom_hook_text.trim() } : {}),
+    ...(options.thumbnail_text !== undefined ? { thumbnail_text: options.thumbnail_text.trim() } : {}),
   };
   const canonicalJson = sourceCanonicalJsonStringify(normalized);
   return createHash("sha256").update(canonicalJson).digest("hex");

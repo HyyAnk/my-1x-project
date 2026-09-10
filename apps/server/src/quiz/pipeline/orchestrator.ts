@@ -9,12 +9,14 @@ import {
   type QuizV2,
   type VideoDescription,
   type VoicePlan,
+  type ThumbnailLayoutType,
 } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../repository.js";
 import type { QuizVoicePacingClamp } from "../audio/voiceSynthesis.js";
 import type { AntigravityClient } from "../../antigravity.js";
 import type { CodexAppServerClient } from "../../codex.js";
 import { generateVideoDescription } from "../description/index.js";
+import { resolveEpisodeTargetLanguage } from "../bank/localization/productLocalization.js";
 
 import { readQuizArtifacts, generateQuiz, generateDirector } from "./stages/quizGenerationStage.js";
 import { planAssets, resolveAssets, planVoice, generateVoice } from "./stages/assetsVoiceStages.js";
@@ -49,6 +51,9 @@ export type QuizOrchestratorInput = {
   onAssetProgress?: (progress: { completed: number; total: number; reused: boolean }) => Promise<void> | void;
   onVoiceProgress?: (progress: { completed: number; total: number; reused: boolean }) => Promise<void> | void;
   onVoicePacingClamp?: (details: QuizVoicePacingClamp) => Promise<void> | void;
+  customHookText?: string;
+  layoutOverride?: ThumbnailLayoutType;
+  badgeOverride?: string;
 };
 
 export type QuizArtifacts = {
@@ -84,6 +89,8 @@ export async function generateEpisodeDescription(
 
   const timeoutMs = input.timeoutMs ?? (process.env.NODE_ENV === "test" || process.env.VITEST ? 1500 : 45_000);
 
+  const { targetLanguage, localization } = await resolveEpisodeTargetLanguage(input.repository, input.channelId, episode);
+
   const description = await generateVideoDescription({
     client,
     channel,
@@ -91,6 +98,8 @@ export async function generateEpisodeDescription(
     quiz,
     toneHint: input.toneHint,
     timeoutMs,
+    targetLanguage,
+    localization,
   });
 
   const artifact_path = await input.repository.writeVideoDescription(input.channelId, input.episodeId, description);
@@ -113,6 +122,9 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
       episodeId: input.episodeId,
       activeEngine: input.activeEngine,
       antigravityClient: input.antigravityClient,
+      customHookText: input.customHookText,
+      layoutOverride: input.layoutOverride,
+      badgeOverride: input.badgeOverride,
       imageConfig: input.config.image_generation
         ? {
             api_key: input.config.image_generation.api_key,

@@ -1,4 +1,4 @@
-import { CircleNotch, Play } from "@phosphor-icons/react";
+import { CheckCircle, CircleNotch } from "@phosphor-icons/react";
 import { ALL_QUIZ_IMAGE_STYLES, type QuizImageStyle, type TopicAvailability, type TopicCandidate } from "@studio/shared";
 import { TopicLayoutPreviewButton } from "./TopicLayoutPreviewButton";
 
@@ -54,8 +54,8 @@ export function TopicHistoryRow({
             {availability.can_confirm
               ? `${availability.source_capacity} Ready`
               : availability.reason_code === "UNBOUND_LEGACY_TOPIC"
-              ? "Legacy Unbound"
-              : "Unavailable"}
+                ? "Legacy Unbound"
+                : "Unavailable"}
           </span>
         ) : null}
         {topic.content_kind === "episode" ? <TopicLayoutPreviewButton quizFormat={topic.quiz_format} /> : null}
@@ -67,11 +67,11 @@ export function TopicHistoryRow({
           title={
             availability && !availability.can_confirm
               ? availability.recovery_action
-              : `Use this topic (${topic.question_count} questions${availability ? `, ${availability.source_capacity} available` : ""})`
+              : `Select this topic (${topic.question_count} questions${availability ? `, ${availability.source_capacity} available` : ""})`
           }
         >
-          {busy ? <CircleNotch className="spin" size={13} /> : <Play size={12} weight="fill" />}
-          <span>{busy ? "Creating…" : "Use"}</span>
+          {busy ? <CircleNotch className="spin" size={13} /> : <CheckCircle size={13} weight="bold" />}
+          <span>{busy ? "Selecting…" : "Select"}</span>
         </button>
       </div>
     </div>

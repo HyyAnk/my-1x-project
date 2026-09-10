@@ -18,9 +18,9 @@ describe("Quiz Video Description Engine (Step 2)", () => {
     display_name: "Quiz Master VN",
     description: "Kênh câu đố kiến thức hấp dẫn",
     target_audience: "Gia đình và học sinh",
-    language: "Vietnamese",
-    country: "VN",
-    market: "Vietnam",
+    language: "English",
+    country: "US",
+    market: "United States",
     channel_dna_path: "channels/quiz-master/channel_dna.md",
     style_guide_path: null,
     status: "ACTIVE",
@@ -93,7 +93,7 @@ describe("Quiz Video Description Engine (Step 2)", () => {
     schema_version: 2,
     episode_id: "ep-01",
     age_band: "7-9",
-    language: "Vietnamese",
+    language: "English",
     questions: [
       {
         id: "q-01",
@@ -260,7 +260,7 @@ describe("Quiz Video Description Engine (Step 2)", () => {
         },
         suggestedPlaylistCategory: "Kỳ Quan & Lịch Sử",
         hashtags: ["#quiz", "#kyquan", "#lichsu", "#trivia"],
-        language: "Vietnamese",
+        language: "English",
       });
 
       expect(result.fullText).toContain("Khám phá 8 kỳ quan thế giới cổ đại!");

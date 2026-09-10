@@ -12,11 +12,13 @@ import {
   setActiveThumbnailVersion,
 } from "../quiz/thumbnail/index.js";
 import type { AntigravityClient } from "../antigravity.js";
+import type { ImageProvider } from "../providers/index.js";
 
 export type ThumbnailsRouteDeps = {
   repository: RepositoryService;
   state: AppState;
   antigravity?: AntigravityClient;
+  imageProvider?: ImageProvider;
 };
 
 const GenerateThumbnailBodySchema = z
@@ -53,6 +55,7 @@ export function registerThumbnailsRoutes(deps: ThumbnailsRouteDeps): FastifyPlug
         badgeOverride: body.badge_override,
         activeEngine: currentConfig.active_engine || state.config.active_engine,
         antigravityClient: antigravity,
+        imageProvider: deps.imageProvider,
 
         imageConfig: activeImageConfig
           ? {

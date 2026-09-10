@@ -1,7 +1,7 @@
 import path from "node:path";
 import { createReadStream } from "node:fs";
-import { readFile } from "node:fs/promises";
 import type { FastifyPluginCallback, FastifyReply, FastifyRequest } from "fastify";
+import { generateAssetETag, isAssetNotModified, resolveMediaMimeType } from "../utils/mediaMime.js";
 import { z } from "zod";
 import {
   BatchGenerateStyleSlotsInputSchema,
@@ -198,17 +198,23 @@ export function registerMascotsRoutes(deps: MascotsRouteDeps): FastifyPluginCall
     server.get("/api/mascots/:mascotId/assets/:filename", async (request, reply) => {
       const params = request.params as { mascotId: string; filename: string };
       const file = await repository.getMascotAssetFile(params.mascotId, params.filename);
-      const ext = path.extname(params.filename).toLowerCase();
-      let contentType =
-        ext === ".svg" ? "image/svg+xml" : ext === ".webp" ? "image/webp" : ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "image/png";
-      try {
-        const sample = await readFile(file.absolutePath, { encoding: "utf8" });
-        if (sample.trimStart().startsWith("<svg") || sample.trimStart().startsWith("<?xml")) contentType = "image/svg+xml";
-      } catch {
-        // Keep default contentType
+      const etag = generateAssetETag(file.size, file.modified_at);
+      const lastModified = new Date(file.modified_at).toUTCString();
+      const cacheControl = "public, max-age=31536000, immutable";
+
+      if (isAssetNotModified(request.headers, etag, file.modified_at)) {
+        return reply.code(304).headers({ etag, "last-modified": lastModified, "cache-control": cacheControl }).send();
       }
+
+      const contentType = await resolveMediaMimeType(file.absolutePath, params.filename);
       return reply
-        .headers({ "content-type": contentType, "content-length": file.size, "cache-control": "public, max-age=86400" })
+        .headers({
+          "content-type": contentType,
+          "content-length": file.size,
+          "cache-control": cacheControl,
+          etag,
+          "last-modified": lastModified,
+        })
         .send(createReadStream(file.absolutePath));
     });
     server.post("/api/mascots/:mascotId/generate-concept", async (request) => {

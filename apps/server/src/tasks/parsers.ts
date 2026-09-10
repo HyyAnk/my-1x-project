@@ -33,6 +33,17 @@ export function extractScriptMarkdown(output: string, episodeTitle: string): str
   return value.slice(selected.index, nextHeading?.index).trim();
 }
 
+function asString(value: unknown, fallback = ""): string {
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const candidate = value as { text?: unknown; value?: unknown };
+    if (typeof candidate.text === "string") return candidate.text;
+    if (typeof candidate.value === "string") return candidate.value;
+  }
+  return fallback;
+}
+
 export function parseJson(output: string, context = "Codex"): unknown {
   const fenced = output.match(/```(?:json)?\s*([\s\S]*?)```/i)?.[1]?.trim();
   const value = fenced || output.trim();
@@ -43,7 +54,7 @@ export function parseJson(output: string, context = "Codex"): unknown {
     return JSON.parse(value.slice(objectStart));
   } catch (error) {
     const detail = error instanceof Error ? error.message : "invalid JSON syntax";
-    throw new Error(`${context} JSON output malformed: ${detail}`);
+    throw new Error(`${context} JSON output malformed: ${detail}`, { cause: error });
   }
 }
 
@@ -57,28 +68,26 @@ export function parseBeatsOutput(output: string): Beat[] {
   if (!Array.isArray(list) || list.length === 0) throw new Error("Codex beat output must contain beats");
   return list.map((item, index) => {
     const beat = item as Record<string, unknown>;
-    const dialogue = String(beat.dialogue ?? "").trim();
-    const visualPrompt = stripEditorialOverlayInstructions(String(beat.visual_prompt ?? beat.video_prompt ?? "").trim());
+    const dialogue = asString(beat.dialogue).trim();
+    const visualPrompt = stripEditorialOverlayInstructions(asString(beat.visual_prompt ?? beat.video_prompt).trim());
     if (!dialogue) throw new Error(`Codex beat ${index + 1} is missing dialogue`);
     if (!visualPrompt) throw new Error(`Codex beat ${index + 1} is missing visual_prompt`);
     return {
       dialogue,
       visual_prompt: visualPrompt,
-      continuity_key: normalizeContinuityKey(String(beat.continuity_key ?? ""), index),
-      transition_note: String(beat.transition_note ?? "").trim(),
-      continuity_note: String(beat.continuity_note ?? "").trim(),
-      sequence_id: normalizeIdentifier(String(beat.sequence_id ?? "sequence-1"), `sequence-${index + 1}`),
-      sequence_title: String(beat.sequence_title ?? "Sequence 1").trim() || "Sequence 1",
-      shot_id: normalizeIdentifier(String(beat.shot_id ?? ""), `shot-${index + 1}`),
+      continuity_key: normalizeContinuityKey(asString(beat.continuity_key), index),
+      transition_note: asString(beat.transition_note).trim(),
+      continuity_note: asString(beat.continuity_note).trim(),
+      sequence_id: normalizeIdentifier(asString(beat.sequence_id, "sequence-1"), `sequence-${index + 1}`),
+      sequence_title: asString(beat.sequence_title, "Sequence 1").trim() || "Sequence 1",
+      shot_id: normalizeIdentifier(asString(beat.shot_id), `shot-${index + 1}`),
       asset_type: parseAssetType(beat.asset_type),
-      continuity_bundle_id: normalizeIdentifier(String(beat.continuity_bundle_id ?? beat.continuity_key ?? ""), `bundle-${index + 1}`),
+      continuity_bundle_id: normalizeIdentifier(asString(beat.continuity_bundle_id ?? beat.continuity_key), `bundle-${index + 1}`),
       reference_asset_ids: parseStringList(beat.reference_asset_ids),
       source_ids: parseStringList(beat.source_ids),
       reconstruction:
-        typeof beat.reconstruction === "boolean"
-          ? beat.reconstruction
-          : String(beat.asset_type ?? "").toLowerCase() === "ai_reconstruction",
-      sound_cue: String(beat.sound_cue ?? "").trim(),
+        typeof beat.reconstruction === "boolean" ? beat.reconstruction : asString(beat.asset_type).toLowerCase() === "ai_reconstruction",
+      sound_cue: asString(beat.sound_cue).trim(),
       editorial_overlay: parseEditorialOverlay(beat.editorial_overlay),
       quiz: parseQuizSceneContent(beat.quiz),
     };
@@ -105,11 +114,7 @@ function normalizeIdentifier(value: string, fallback: string): string {
 }
 
 function parseStringList(value: unknown): string[] {
-  if (Array.isArray(value))
-    return value
-      .map(String)
-      .map((item) => item.trim())
-      .filter(Boolean);
+  if (Array.isArray(value)) return value.map((item) => asString(item).trim()).filter(Boolean);
   if (typeof value === "string")
     return value
       .split(",")
@@ -119,9 +124,7 @@ function parseStringList(value: unknown): string[] {
 }
 
 function parseAssetType(value: unknown): Beat["asset_type"] {
-  const candidate = String(value ?? "ai_reconstruction")
-    .trim()
-    .toLowerCase();
+  const candidate = asString(value, "ai_reconstruction").trim().toLowerCase();
   return ["archive", "document", "map", "diagram", "ai_reconstruction", "contemporary", "transition"].includes(candidate)
     ? (candidate as Beat["asset_type"])
     : "ai_reconstruction";
@@ -157,18 +160,21 @@ function parseEditorialOverlay(value: unknown): Beat["editorial_overlay"] {
   const kinds = ["none", "caption", "stat_card", "timeline", "bar_chart", "line_chart", "map_callout", "comparison", "quote"] as const;
   const motions = ["none", "fade_up", "slide_in", "draw_on", "count_up", "highlight"] as const;
   const placements = ["lower_third", "upper_left", "upper_right", "center", "side_panel"] as const;
-  const kind = kinds.includes(String(raw.kind ?? "none") as (typeof kinds)[number]) ? String(raw.kind ?? "none") : "none";
-  const motion = motions.includes(String(raw.motion ?? "none") as (typeof motions)[number]) ? String(raw.motion ?? "none") : "none";
-  const placement = placements.includes(String(raw.placement ?? "lower_third") as (typeof placements)[number])
-    ? String(raw.placement ?? "lower_third")
+  const rawKind = asString(raw.kind, "none");
+  const kind = kinds.includes(rawKind as (typeof kinds)[number]) ? (rawKind as (typeof kinds)[number]) : "none";
+  const rawMotion = asString(raw.motion, "none");
+  const motion = motions.includes(rawMotion as (typeof motions)[number]) ? (rawMotion as (typeof motions)[number]) : "none";
+  const rawPlacement = asString(raw.placement, "lower_third");
+  const placement = placements.includes(rawPlacement as (typeof placements)[number])
+    ? (rawPlacement as (typeof placements)[number])
     : "lower_third";
   const data = Array.isArray(raw.data)
     ? raw.data
         .filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === "object" && !Array.isArray(item))
         .map((item) => ({
-          label: String(item.label ?? "").trim(),
-          value: typeof item.value === "number" ? item.value : String(item.value ?? "").trim(),
-          unit: String(item.unit ?? "").trim(),
+          label: asString(item.label).trim(),
+          value: typeof item.value === "number" ? item.value : asString(item.value).trim(),
+          unit: asString(item.unit).trim(),
         }))
         .filter((item) => item.label && item.value !== "")
     : [];
@@ -178,7 +184,7 @@ function parseEditorialOverlay(value: unknown): Beat["editorial_overlay"] {
       : null;
   return EditorialOverlaySchema.parse({
     kind,
-    text: String(raw.text ?? "").trim(),
+    text: asString(raw.text).trim(),
     motion,
     placement,
     duration_seconds: duration,
@@ -191,29 +197,25 @@ function parseQuizSceneContent(value: unknown): Scene["quiz"] {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
   const raw = value as Record<string, unknown>;
   const phases = ["intro", "question", "reveal", "explanation", "outro"] as const;
-  const phaseValue = String(raw.phase ?? "question") as (typeof phases)[number];
-  const choices = Array.isArray(raw.choices)
-    ? raw.choices
-        .map(String)
-        .map((item) => stripQuizChoiceLabel(item.trim()))
-        .filter(Boolean)
-    : [];
+  const rawPhase = asString(raw.phase, "question");
+  const phaseValue = phases.includes(rawPhase as (typeof phases)[number]) ? (rawPhase as (typeof phases)[number]) : "question";
+  const choices = Array.isArray(raw.choices) ? raw.choices.map((item) => stripQuizChoiceLabel(asString(item).trim())).filter(Boolean) : [];
   if (choices.length > QUIZ_MAX_CHOICES_PER_QUESTION) {
     const questionNumber = Number.isInteger(Number(raw.question_number)) ? Number(raw.question_number) : "unknown";
     throw new Error(
       `QUIZ_CHOICE_COUNT_INVALID: Question ${questionNumber} returned ${choices.length} choices; the maximum is ${QUIZ_MAX_CHOICES_PER_QUESTION}`,
     );
   }
-  const rawAnswer = String(raw.answer ?? "").trim();
+  const rawAnswer = asString(raw.answer).trim();
   const canonicalAnswer = canonicalizeVisibleQuizAnswer(choices, rawAnswer);
   return {
-    phase: phases.includes(phaseValue) ? phaseValue : "question",
+    phase: phaseValue,
     question_number: Number.isInteger(Number(raw.question_number)) && Number(raw.question_number) > 0 ? Number(raw.question_number) : null,
-    question: String(raw.question ?? "").trim(),
+    question: asString(raw.question).trim(),
     choices,
     answer: canonicalAnswer ?? rawAnswer,
-    explanation: String(raw.explanation ?? "").trim(),
-    image_prompt: String(raw.image_prompt ?? "").trim(),
+    explanation: asString(raw.explanation).trim(),
+    image_prompt: asString(raw.image_prompt).trim(),
   };
 }
 

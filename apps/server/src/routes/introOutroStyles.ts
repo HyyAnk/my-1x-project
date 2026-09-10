@@ -3,27 +3,54 @@ import { stat } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import type { FastifyPluginCallback } from "fastify";
 import { z } from "zod";
-import {
-  IntroOutroStyleSchema,
-  IntroOutroTransitionTypeSchema,
-  nowIso,
-  type IntroOutroStyle,
-} from "@studio/shared";
+import { getTransition, isValidTransition, nowIso, type IntroOutroStyle, type IntroOutroTransitionType } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";
 import { RepositoryError, type RepositoryService } from "../repository.js";
 import type { AppState } from "./state.js";
 
-export const CreateIntroOutroStyleInputSchema = z.object({
-  name: z.string().min(1).max(50),
-  style_id: z.string().optional(),
-  transition_type: IntroOutroTransitionTypeSchema.default("stinger_swipe"),
-  transition_duration_seconds: z.number().min(0.2).max(1.5).default(0.5),
-  audio_mode: z.enum(["use_video_audio", "overlay_bgm"]).default("use_video_audio"),
-  intro_data: z.string().min(1),
-  outro_data: z.string().min(1),
-  intro_filename: z.string().default("intro.mp4"),
-  outro_filename: z.string().default("outro.mp4"),
-});
+export const CreateIntroOutroStyleInputSchema = z
+  .object({
+    name: z.string().min(1).max(50),
+    style_id: z.string().optional(),
+    transition_type: z.string().min(1).default("stinger_swipe"),
+    transition_duration_seconds: z.number().min(0).max(1.5).optional(),
+    audio_mode: z.enum(["use_video_audio", "overlay_bgm"]).default("use_video_audio"),
+    intro_data: z.string().min(1),
+    outro_data: z.string().min(1),
+    intro_filename: z.string().default("intro.mp4"),
+    outro_filename: z.string().default("outro.mp4"),
+  })
+  .superRefine((data, ctx) => {
+    if (!isValidTransition(data.transition_type, "intro_outro") && !isValidTransition(data.transition_type)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Invalid or unregistered transition type '${data.transition_type}' for intro/outro`,
+        path: ["transition_type"],
+      });
+      return;
+    }
+
+    const def = getTransition(data.transition_type);
+    if (def) {
+      const duration = data.transition_duration_seconds ?? def.defaultDuration;
+      if (duration < def.minDuration || duration > def.maxDuration) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Transition duration ${duration}s is out of range [${def.minDuration}s, ${def.maxDuration}s] for transition '${def.name}'`,
+          path: ["transition_duration_seconds"],
+        });
+      }
+    }
+  })
+  .transform((data) => {
+    const def = getTransition(data.transition_type);
+    const resolvedDuration = data.transition_duration_seconds ?? def?.defaultDuration ?? 0.5;
+    return {
+      ...data,
+      transition_duration_seconds: resolvedDuration,
+      transition_type: data.transition_type,
+    };
+  });
 
 export type CreateIntroOutroStyleInput = z.infer<typeof CreateIntroOutroStyleInputSchema>;
 
@@ -65,23 +92,11 @@ export function registerIntroOutroStylesRoutes(deps: IntroOutroStylesRouteDeps):
       const introSource = parseVideoPayload(input.intro_data);
       const outroSource = parseVideoPayload(input.outro_data);
 
-      const introMeta = await repository.processAndStoreStyleClip(
-        channelId,
-        styleId,
-        "intro",
-        introSource,
-        input.intro_filename,
-      );
+      const introMeta = await repository.processAndStoreStyleClip(channelId, styleId, "intro", introSource, input.intro_filename);
 
       let outroMeta;
       try {
-        outroMeta = await repository.processAndStoreStyleClip(
-          channelId,
-          styleId,
-          "outro",
-          outroSource,
-          input.outro_filename,
-        );
+        outroMeta = await repository.processAndStoreStyleClip(channelId, styleId, "outro", outroSource, input.outro_filename);
       } catch (error) {
         // If outro processing fails, delete the partially created style
         await repository.deleteChannelIntroOutroStyle(channelId, styleId);

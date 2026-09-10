@@ -104,7 +104,7 @@ export function convertBankQuestionToQuizQuestionLossless(
   const candidateQuestion = {
     id: (bankQuestion.id || makeId("bq")).slice(0, 80),
     number: 1,
-    format: quizChoices.length === 2 ? "true_false" : (bankQuestion.format || "multiple_choice"),
+    format: quizChoices.length === 2 ? "true_false" : bankQuestion.format || "multiple_choice",
     difficulty: Math.min(Math.max(1, Number(bankQuestion.difficulty) || 2), 5),
     question: localizedQuestion.trim(),
     choices: quizChoices,

@@ -10,6 +10,7 @@ import {
   type TopicAvailabilityBatch,
   type TopicAvailability,
   type TopicRunResult,
+  type TopicCandidate,
 } from "@studio/shared";
 import { buildApp, type StudioApp } from "../src/app.js";
 
@@ -210,33 +211,25 @@ describe("Stage 5: Topic Batch Availability Route", () => {
   });
 
   it("identifies UNBOUND_LEGACY_TOPIC candidates correctly", async () => {
-    const legacyRun = {
-      run_id: "run-legacy-1",
-      target_episode_count: 1,
-      target_short_reel_count: 0,
-      shortages: [],
-      candidates: [
-        {
-          topic_id: "top-legacy-unbound",
-          channel_id: testChannelId,
-          title: "Legacy Topic",
-          premise: "Old topic without sources",
-          why_it_fits: "Legacy fits",
-          hook: "Old hook",
-          estimated_potential: "Low",
-          generated_at: new Date(Date.now() + 1000).toISOString(),
-          selected: false,
-          origin: "discovery",
-          content_kind: "episode",
-          quiz_format: "multiple_choice",
-          question_count: 5,
-          age_band: "7-9",
-          visual_style: "mixed",
-        },
-      ],
+    const legacyCandidate: TopicCandidate = {
+      topic_id: "top-legacy-unbound",
+      channel_id: testChannelId,
+      title: "Legacy Topic",
+      premise: "Old topic without sources",
+      why_it_fits: "Legacy fits",
+      hook: "Old hook",
+      estimated_potential: "Low",
+      generated_at: new Date(Date.now() + 1000).toISOString(),
+      selected: false,
+      origin: "discovery",
+      content_kind: "episode",
+      quiz_format: "multiple_choice",
+      question_count: 5,
+      age_band: "7-9",
+      visual_style: "mixed",
     };
 
-    await app.repository.saveTopicRun(testChannelId, legacyRun.candidates as unknown as any);
+    await app.repository.saveTopicRun(testChannelId, [legacyCandidate]);
 
     const res = await app.server.inject({
       method: "GET",

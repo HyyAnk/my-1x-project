@@ -1,134 +1,61 @@
-# Lean Developer Workflow & Verification Guide
+# Development and verification
 
-_Last updated: 2026-09-09_
+Reviewed on 2026-09-09. Follow [AGENTS.md](../AGENTS.md) for engineering rules and [Documentation](README.md) for the reading order.
 
-This guide outlines the streamlined developer workflow for solo engineers and paired AI coding agents working on **AI Quiz Studio**.
+## Before changing code
 
-The legacy multi-agent coordination protocol (claim gates, lease tokens, heartbeat loops, conflict checkers, and lockfiles) has been decommissioned. In its place, the repository operates under a **Lean Workflow** characterized by zero ceremony, autonomous execution, strict separation of concerns, and one-touch automated verification.
+1. Inspect `git status --short`; preserve existing work and avoid unrelated cleanup.
+2. Read [Architecture](architecture.md), then the relevant domain guide and current source/tests. If `.codegraph/` exists, use CodeGraph before text search.
+3. Identify responsibilities, contracts, data flow, side effects, failure modes and verification scope.
+4. For UI work, plan pending/success/error/retry/cancel states, synchronization, stale-result handling, keyboard/touch access and responsive behavior.
+5. Keep business workflows separate from UI/transport, and external I/O behind focused adapters/repositories. Do not enlarge mixed-responsibility facades unnecessarily.
 
----
+Retired agent claim/lease scripts are not required. This does not remove application-level locks, storage serialization or revision checks.
 
-## The Four-Stage Lean Workflow
+## Verification commands
 
-```mermaid
-flowchart LR
-    A["1. Orientation<br/><i>Inspect system-map.md & domain docs</i>"] --> B["2. Implementation<br/><i>Modular SoC, strict TS, English-only</i>"]
-    B --> C["3. Verification<br/><i>pnpm check:all (typecheck + tests)</i>"]
-    C --> D["4. Commit<br/><i>Atomic commits, clear git hygiene</i>"]
+Commands are defined in [package.json](../package.json); [CI](../.github/workflows/ci.yml) defines automated gates.
+
+| Command              | Scope                                               |
+| -------------------- | --------------------------------------------------- |
+| `pnpm build:shared`  | Build shared contracts before consumers when needed |
+| `pnpm typecheck`     | Build shared and typecheck workspace                |
+| `pnpm test`          | Shared, server and web unit/integration suites      |
+| `pnpm run audit`     | Quiz choice and quiz-only integrity audits          |
+| `pnpm check:all`     | Typecheck, tests and audits only                    |
+| `pnpm lint`          | ESLint                                              |
+| `pnpm format:check`  | Formatting policy and baseline check                |
+| `pnpm build`         | Workspace production build                          |
+| `pnpm test:e2e`      | Playwright scenarios                                |
+| `pnpm test:visual`   | Opt-in visual regression                            |
+| `pnpm test:coverage` | Server/web coverage                                 |
+
+For focused tests:
+
+```powershell
+pnpm build:shared
+pnpm --filter @studio/server exec vitest run test/runtimeNamespace.test.ts
+pnpm --filter @studio/web exec vitest run src/features/channel/components/TopicCard.test.tsx
 ```
 
----
+For code/config/dependency updates, rebuild or restart affected processes and exercise the updated primary workflow. Test relevant success, slow, empty, failure, retry, reconnect and concurrent-update paths. Use isolated fixtures; do not mutate live channels for testing.
 
-### Stage 1: Orientation & Discovery
+Documentation-only updates need formatting, local-link/source-reference checks and diff review, not an application restart. Check Markdown explicitly with `pnpm exec prettier --check "docs/*.md"`; do not assume the baseline command covers every document.
 
-Before introducing modifications or authoring new features, inspect the architecture and domain invariants:
+Report exact commands, outcomes and unverified behavior. Failed E2E remains a failed/unverified gate even if suspected to be environmental; record evidence and recovery steps rather than declaring unconditional acceptance.
 
-1. **System Map Navigation:** Start with [`docs/system-map.md`](system-map.md). It serves as the single source of truth for repository structure, module entry points, data flow, and non-obvious invariants (e.g., director plan coverage, age-band thinking floors, 30-day duplicate question gates).
-2. **Domain Architecture Deep-Dives:** Consult domain documents relevant to your scope:
-   - [`docs/architecture.md`](architecture.md): Overall workspace layers, Fastify security boundary, and dual LLM engine (Codex + Antigravity).
-   - [`docs/quiz-engine-v2.md`](quiz-engine-v2.md): End-to-end Quiz V2 pipeline, parallel asset/voice synthesis, and autonomous healing loops.
-   - [`docs/question-bank.md`](question-bank.md): Reusable trivia question bank, coverage matrix, JIT seeder, and channel transcreation bridge.
-   - [`docs/mascot-rendering-contract.md`](mascot-rendering-contract.md): Mascot HTML coordinate transform order, motion presets, and style packages.
-   - [`docs/episode-workflow.md`](episode-workflow.md): Batch voice synthesis, scene breakdown, and topic lifecycle.
-   - [`docs/codex-integration.md`](codex-integration.md): LLM JSON-RPC protocol, transcript streaming, and recovery strategies.
-3. **Inspect Existing Test Fixtures:** Review relevant tests in `apps/server/test/` or `apps/web/src/` to understand expected inputs, outputs, and edge cases.
+## Publishing checklist
 
----
+The project already has [an MIT license](../LICENSE), [an environment example](../.env.example), and CI. Before publishing:
 
-### Stage 2: Implementation Standards
+- Inspect the actual staged diff and tracked files; ignore rules do not remove previously tracked secrets.
+- Keep API keys, local configuration, credentials, logs and user content out of commits.
+- Check [ignore rules](../.gitignore), especially selected content roots outside the checkout and generated assets.
+- Keep source, schemas, tests, templates and the lockfile versioned. Review asset licensing and release packaging separately.
+- Preserve unrelated edits. Commit or push only when requested or authorized; a passing build does not authorize publication.
 
-All contributions must adhere to clean code principles and repository standards:
+The former standalone GitHub publishing checklist has been consolidated here.
 
-1. **Modular Design & Separation of Concerns (SoC):**
-   - **Presentation Layer (`apps/web`):** Components focus strictly on rendering and immediate user interactions. Keep them stateless or limited to local UI state.
-   - **Business & Domain Logic (`apps/server/src/quiz`, `packages/shared`):** Keep workflows, pacing rules, scoring algorithms, and data transformations isolated in dedicated services, stages, or pure helpers.
-   - **Data Access Layer (`apps/server/src/repository`):** Filesystem storage, atomic JSON writes, and path safety must remain encapsulated in repository modules.
-   - **Contract Boundaries (`packages/shared/src`):** Shared models, enums, and Zod schemas must reside in `@studio/shared` and be exported through its root barrel.
-2. **File & Function Size Restraints:**
-   - Keep functions concise (ideally under 30–40 lines). Decompose complex logic into well-named helper functions.
-   - Keep modules and components under 150–200 lines. Proactively extract sub-components or utility modules when complexity grows.
-3. **Strict TypeScript Typing:**
-   - Avoid `any` or loose typing. Define strict TypeScript interfaces and Zod validation contracts.
-   - Maintain full compilation cleanliness without type assertions (`as any`) or suppressed warnings.
-4. **Strict English-Only Specification:**
-   - All code, filenames, directory names, variable/function/type identifiers, docstrings, inline comments, test cases, and mock fixtures MUST be 100% in English.
-   - All user-facing text (UI labels, dialogs, buttons, toasts, tooltips) and server outputs (logs, error messages) MUST be strictly in English.
+## Documentation maintenance
 
----
-
-### Stage 3: One-Command Verification Suite
-
-Verification is fully automated and executable with simple, high-signal commands from the repository root:
-
-#### Unified Workspace Verification
-
-```bash
-# Run full workspace typecheck followed by all test suites and audits
-pnpm check:all
-```
-
-#### Individual Verification Checks
-
-- **Type Checking:**
-  ```bash
-  # Builds @studio/shared and typechecks packages/shared, apps/server, and apps/web
-  pnpm typecheck
-  ```
-- **Test Suite & Domain Audits:**
-  ```bash
-  # Runs all Vitest suites across server and web, plus question-choice and quiz-only audits
-  pnpm test
-  ```
-- **Production Build:**
-  ```bash
-  # Verifies clean compilation and Vite production bundling across the entire workspace
-  pnpm build
-  ```
-
-#### Targeted & Incremental Testing
-
-For rapid development, run targeted Vitest filters:
-
-```bash
-# Run a specific server test suite
-pnpm --filter @studio/server test -- test/quizPipeline.test.ts
-
-# Run a specific web component or hook test suite
-pnpm --filter @studio/web test -- src/features/channel/components/TopicCard.test.tsx
-
-# Run visual regression tests for quiz layout rendering
-pnpm test:visual
-```
-
----
-
-### Stage 4: Git Hygiene & Commit Standards
-
-With claim gates and file-locking scripts retired:
-
-1. **No Coordination Ceremonies:** Developers and agents do not need to obtain lease tokens, start monitor daemons, or execute claim/release scripts.
-2. **Atomic Commits:** Group cohesive changes together. Keep refactoring, feature additions, and documentation updates logically distinct.
-3. **Conventional Commit Messages:** Write clear, descriptive English commit messages following standard conventions:
-   - `feat: add topic coverage matrix visualizer`
-   - `fix: correct mascot transform pivot offset for portrait layouts`
-   - `refactor: extract question bank bridge adapter into dedicated service`
-   - `docs: update system map with lean workflow guide`
-   - `test: add unit coverage for voice pacing auto-healer`
-4. **Clean Workspace State:** Ensure scratch files, temporary logs, and generated test output files are cleaned up or excluded via `.gitignore`.
-
----
-
-## Command Reference Cheat Sheet
-
-| Command              | Target / Scope            | Description                                                                 |
-| :------------------- | :------------------------ | :-------------------------------------------------------------------------- |
-| `pnpm check:all`     | Entire workspace          | **Primary verification gate:** Executes `pnpm typecheck` and `pnpm test`.   |
-| `pnpm typecheck`     | `shared`, `server`, `web` | Builds `@studio/shared` and validates TypeScript across all packages.       |
-| `pnpm test`          | Server + Web + Audits     | Runs complete Vitest behavioral suite and automated consistency audits.     |
-| `pnpm build`         | Entire workspace          | Compiles TypeScript and creates Vite production web bundle.                 |
-| `pnpm dev`           | `server` + `web`          | Concurrently launches backend Fastify server and frontend Vite dev server.  |
-| `pnpm start`         | `server`                  | Launches production Fastify server.                                         |
-| `pnpm test:coverage` | Server + Web              | Executes Vitest with V8 code coverage instrumentation.                      |
-| `pnpm test:visual`   | Server (HyperFrames)      | Executes Pixelmatch visual regression tests against layout baseline images. |
-| `pnpm format:check`  | Staged / changed files    | Validates formatting against Prettier and the baseline ledger.              |
-| `pnpm lint`          | Entire workspace          | Validates ESLint rules across all workspace packages.                       |
+Update domain docs when public contracts, persistence, supported workflows or failure handling change. Prefer source links over duplicated catalogs and line-number claims. Date a source review without implying runtime acceptance. Keep historical reports separate from current implementation guidance.

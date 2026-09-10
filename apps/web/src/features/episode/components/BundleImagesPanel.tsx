@@ -98,7 +98,7 @@ export function BundleImagesPanel({
                         className="bundle-image-thumb-btn"
                         onClick={() =>
                           onPreviewImage({
-                            url: api.bundleImageUrl(channelId, episodeId, image.filename),
+                            url: api.bundleImageUrl(channelId, episodeId, image.filename, image.modified_at),
                             filename: image.filename,
                             bundleId: bundle.bundle_id,
                             title: bundle.title,
@@ -110,7 +110,7 @@ export function BundleImagesPanel({
                         }
                         title="Click to enlarge image"
                       >
-                        <img src={api.bundleImageUrl(channelId, episodeId, image.filename)} alt={`${bundle.bundle_id} anchor`} />
+                        <img src={api.bundleImageUrl(channelId, episodeId, image.filename, image.modified_at)} alt={`${bundle.bundle_id} anchor`} />
                         <span className="bundle-image-zoom-overlay">
                           <Eye size={16} weight="bold" />
                           <span>Zoom</span>

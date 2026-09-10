@@ -21,6 +21,7 @@ export class HyperframesRenderer implements QuizRenderer {
       introVideoPath: input.introVideoPath,
       outroVideoPath: input.outroVideoPath,
       transitionType: input.transitionType,
+      transitionDurationSeconds: input.transitionDurationSeconds,
     });
     return {
       html: composition.html,

@@ -45,6 +45,8 @@ export type ResolveBgmOptions = {
   baseDirectory?: string;
 };
 
+export const DEFAULT_BGM_BASE_VOLUME = 0.09;
+
 export function hashStringToSeed(input?: string | number): number {
   if (typeof input === "number") return Math.abs(Math.floor(input));
   if (!input) return 0;
@@ -181,7 +183,7 @@ export class BgmRegistry {
   resolveBgmSchedule(totalDurationSeconds: number, options?: ResolveBgmOptions): BgmPlacement[] {
     const duration = Math.max(1, totalDurationSeconds);
     const categoryPref = options?.bpmPreference ?? "120_bpm_upbeat";
-    const baseVolume = options?.baseVolume ?? 0.18;
+    const baseVolume = options?.baseVolume ?? DEFAULT_BGM_BASE_VOLUME;
     const explicitTrack = options?.trackId
       ? (this.getTrack(options.trackId) ?? this.getTracks().find((t) => t.id === options.trackId || t.filename === options.trackId) ?? null)
       : null;

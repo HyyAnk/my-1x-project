@@ -189,7 +189,7 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
 
       // Simulate progress callback
       await input.onAssetProgress?.({ completed: 1, total: 1, reused: false });
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       const resolution = QuizAssetResolutionSchema.parse({
         schema_version: 2,
@@ -209,7 +209,7 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
 
       // Simulate progress callback
       await input.onVoiceProgress?.({ completed: 1, total: 1, reused: false });
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       const quiz = await input.repository.readQuiz(input.channelId, input.episodeId);
       const director = await input.repository.readDirectorPlan(input.channelId, input.episodeId);

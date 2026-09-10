@@ -10,6 +10,7 @@ import type { CodexAppServerClient } from "../codex.js";
 import type { AntigravityClient } from "../antigravity.js";
 import { saveStorageRoot } from "../config.js";
 import type { AppState } from "./state.js";
+import { getStorageUsageSummary, pruneStaleHyperframesDirectories } from "../tasks/storage/artifactRetentionPruner.js";
 
 export type SystemRouteDeps = {
   rootDirectory: string;
@@ -95,6 +96,44 @@ export function registerSystemRoutes(deps: SystemRouteDeps): FastifyPluginCallba
       state.storageConfigured = true;
       logger.ok("Content storage folder updated", { step: "storage" });
       return getStorageInfo();
+    });
+    server.get("/api/system/storage-health", async () => {
+      const summary = await getStorageUsageSummary(repository.rootDirectory, repository.roots.runtime);
+      return {
+        ok: true,
+        runtime_bytes: summary.runtime_bytes,
+        hyperframes_bytes: summary.hyperframes_bytes,
+        storage_root: repository.storageRoot,
+        runtime_root: repository.roots.runtime,
+        usage: summary,
+      };
+    });
+    server.post("/api/system/prune-storage", async (request) => {
+      const body = (request.body as { max_age_ms?: number; maxAgeMs?: number } | undefined) ?? {};
+      const maxAgeMs = body.max_age_ms ?? body.maxAgeMs;
+      const hyperframesRoot = repository.resolvePath("runtime", "hyperframes");
+      const activeEpisodeIds = new Set(
+        tasks
+          .list()
+          .filter((task) => ["QUEUED", "RUNNING", "WAITING_APPROVAL"].includes(task.status) && task.episode_id)
+          .map((task) => task.episode_id as string),
+      );
+      const pruneResult = await pruneStaleHyperframesDirectories(hyperframesRoot, maxAgeMs, activeEpisodeIds);
+      const summary = await getStorageUsageSummary(repository.rootDirectory, repository.roots.runtime);
+      logger.ok("Storage pruning executed", {
+        pruned_count: pruneResult.prunedDirs.length,
+        reclaimed_bytes: pruneResult.reclaimedBytes,
+        step: "storage_prune",
+      });
+      return {
+        ok: true,
+        reclaimed_bytes: pruneResult.reclaimedBytes,
+        reclaimedBytes: pruneResult.reclaimedBytes,
+        pruned_directories: pruneResult.prunedDirs,
+        prunedDirs: pruneResult.prunedDirs,
+        storage_usage: summary,
+        usage: summary,
+      };
     });
     done();
   };

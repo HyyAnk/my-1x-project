@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { BankQuestionSchema, type BankIndex, type BankQuestion, type BankSubtopicBatch } from "@studio/shared";
 import type { RepositoryRuntime } from "../../runtime.js";
@@ -8,7 +8,8 @@ import { listQuestionBankBatchesUnlocked, readSubtopicBatchUnlocked } from "./ba
 import { recalculateQuestionBankIndexUnlocked } from "./bankIndexManager.js";
 import { withBankWrite } from "./bankSerializationBoundary.js";
 import { assertEnglishQuestionWrite } from "./bankWritePolicy.js";
-import { assertSafeBankFilesystemPath } from "./bankPathSafety.js";
+import { assertSafeBankFilesystemPath, isInside } from "./bankPathSafety.js";
+import { captureFile, captureFiles, restoreFile, restoreFiles } from "./bankFileTransaction.js";
 
 /**
  * Validates, normalizes, and upserts a bank question into its corresponding subtopic batch file.
@@ -54,8 +55,14 @@ export async function saveQuestionBankQuestionUnlocked(this: RepositoryRuntime, 
     validated.archetype_id === "verdict_true_false"
       ? getQuestionBankWritePath.call(this, "verdict_fact_myth", validated.domain_id, `${validated.subtopic_id}.json`)
       : null;
-  await assertSafeBankFilesystemPath(path.join(this.roots.runtime, QUESTION_BANK_DIR), batchFilePath);
-  if (legacyPath) await assertSafeBankFilesystemPath(path.join(this.roots.runtime, QUESTION_BANK_DIR), legacyPath);
+  const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
+  const runtimeBankRoot = path.join(this.roots.runtime, QUESTION_BANK_DIR);
+  const containmentRoot = isInside(runtimeBankRoot, batchFilePath) ? this.roots.runtime : defaultProjectRuntime;
+  await assertSafeBankFilesystemPath(containmentRoot, batchFilePath);
+  if (legacyPath) {
+    const legacyContainment = isInside(runtimeBankRoot, legacyPath) ? this.roots.runtime : defaultProjectRuntime;
+    await assertSafeBankFilesystemPath(legacyContainment, legacyPath);
+  }
   const originalFiles = await captureFiles([batchFilePath, ...(legacyPath && existsSync(legacyPath) ? [legacyPath] : [])]);
   const indexPath = getQuestionBankPath.call(this, "index.json");
   const originalIndex = await captureFile(indexPath);
@@ -75,34 +82,6 @@ export async function saveQuestionBankQuestionUnlocked(this: RepositoryRuntime, 
   return toSave;
 }
 
-type CapturedFile = { target: string; bytes?: Buffer };
-
-async function captureFile(target: string): Promise<Buffer | undefined> {
-  try {
-    return await readFile(target);
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") return undefined;
-    throw error;
-  }
-}
-
-async function captureFiles(targets: string[]): Promise<CapturedFile[]> {
-  return Promise.all(targets.map(async (target) => ({ target, bytes: await captureFile(target) })));
-}
-
-async function restoreFile(runtime: RepositoryRuntime, target: string, bytes: Buffer | undefined): Promise<void> {
-  try {
-    if (bytes === undefined) await rm(target, { force: true });
-    else await runtime.writeBinaryAtomic(target, bytes);
-  } catch {
-    if (bytes !== undefined) await writeFile(target, bytes);
-  }
-}
-
-async function restoreFiles(runtime: RepositoryRuntime, files: CapturedFile[]): Promise<void> {
-  for (const file of files) await restoreFile(runtime, file.target, file.bytes);
-}
-
 export function saveQuestionBankQuestion(this: RepositoryRuntime, question: BankQuestion): Promise<BankQuestion> {
   return withBankWrite(this, () => saveQuestionBankQuestionUnlocked.call(this, question));
 }
@@ -114,6 +93,12 @@ export async function deleteQuestionBankQuestionUnlocked(this: RepositoryRuntime
   const batches = await listQuestionBankBatchesUnlocked.call(this);
   let foundAndDeleted = false;
 
+  const defaultProjectRuntime = path.join(this.rootDirectory, ".quiz-studio");
+  const isRedirectedRuntime = path.resolve(this.roots.runtime) !== path.resolve(defaultProjectRuntime);
+  const runtimeBankRoot = path.join(this.roots.runtime, QUESTION_BANK_DIR);
+
+  const targetsToMutate: Array<{ filePath: string; batch: BankSubtopicBatch }> = [];
+
   for (const batch of batches) {
     const idx = batch.questions.findIndex((q) => q.id === questionId);
     if (idx >= 0) {
@@ -122,26 +107,41 @@ export async function deleteQuestionBankQuestionUnlocked(this: RepositoryRuntime
 
       const candidatePaths = [
         path.join(this.roots.runtime, QUESTION_BANK_DIR, batch.archetype_id, batch.domain_id, `${batch.subtopic_id}.json`),
-        path.join(this.rootDirectory, ".quiz-studio", QUESTION_BANK_DIR, batch.archetype_id, batch.domain_id, `${batch.subtopic_id}.json`),
       ];
-      if (batch.archetype_id === "verdict_true_false") {
+      if (!isRedirectedRuntime) {
         candidatePaths.push(
-          path.join(this.roots.runtime, QUESTION_BANK_DIR, "verdict_fact_myth", batch.domain_id, `${batch.subtopic_id}.json`),
           path.join(
             this.rootDirectory,
             ".quiz-studio",
             QUESTION_BANK_DIR,
-            "verdict_fact_myth",
+            batch.archetype_id,
             batch.domain_id,
             `${batch.subtopic_id}.json`,
           ),
         );
       }
+      if (batch.archetype_id === "verdict_true_false") {
+        candidatePaths.push(
+          path.join(this.roots.runtime, QUESTION_BANK_DIR, "verdict_fact_myth", batch.domain_id, `${batch.subtopic_id}.json`),
+        );
+        if (!isRedirectedRuntime) {
+          candidatePaths.push(
+            path.join(
+              this.rootDirectory,
+              ".quiz-studio",
+              QUESTION_BANK_DIR,
+              "verdict_fact_myth",
+              batch.domain_id,
+              `${batch.subtopic_id}.json`,
+            ),
+          );
+        }
+      }
 
-      for (const filePath of candidatePaths) {
+      const uniquePaths = [...new Set(candidatePaths)];
+      for (const filePath of uniquePaths) {
         if (existsSync(filePath)) {
-          await assertSafeBankFilesystemPath(path.join(this.roots.runtime, QUESTION_BANK_DIR), filePath);
-          await this.writeJsonAtomic(filePath, batch);
+          targetsToMutate.push({ filePath, batch });
         }
       }
 
@@ -149,12 +149,33 @@ export async function deleteQuestionBankQuestionUnlocked(this: RepositoryRuntime
     }
   }
 
-  if (foundAndDeleted) {
-    await recalculateQuestionBankIndexUnlocked.call(this);
-    return true;
+  if (!foundAndDeleted) {
+    return false;
   }
 
-  return false;
+  // Preflight all targets before any write
+  for (const { filePath } of targetsToMutate) {
+    const containmentRoot = isInside(runtimeBankRoot, filePath) ? this.roots.runtime : defaultProjectRuntime;
+    await assertSafeBankFilesystemPath(containmentRoot, filePath);
+  }
+
+  const indexPath = getQuestionBankWritePath.call(this, "index.json");
+  const indexContainmentRoot = isInside(runtimeBankRoot, indexPath) ? this.roots.runtime : defaultProjectRuntime;
+  await assertSafeBankFilesystemPath(indexContainmentRoot, indexPath);
+
+  const filesToCapture = [...new Set([...targetsToMutate.map((t) => t.filePath), indexPath])];
+  const originalFiles = await captureFiles(filesToCapture);
+
+  try {
+    for (const { filePath, batch } of targetsToMutate) {
+      await this.writeJsonAtomic(filePath, batch);
+    }
+    await recalculateQuestionBankIndexUnlocked.call(this);
+    return true;
+  } catch (error) {
+    await restoreFiles(this, originalFiles);
+    throw error;
+  }
 }
 
 export function deleteQuestionBankQuestion(this: RepositoryRuntime, questionId: string): Promise<boolean> {
@@ -201,6 +222,7 @@ export async function clearQuestionBankUnlocked(this: RepositoryRuntime): Promis
     }
 
     const indexPath = path.join(bankRoot, "index.json");
+    await assertSafeBankFilesystemPath(bankRoot, indexPath);
     const emptyIndex: BankIndex = {
       schema_version: 2,
       target_total: 20000,

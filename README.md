@@ -51,6 +51,10 @@ To stop running services:
 
 ---
 
+## Architecture and development
+
+Start with the [Documentation index](docs/README.md), then [System architecture](docs/architecture.md) for implemented boundaries, data flow, persistence contracts, and agent verification guidance. Use the [System map](docs/system-map.md) to locate subsystem entry points and follow [AGENTS.md](AGENTS.md) for repository rules.
+
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.

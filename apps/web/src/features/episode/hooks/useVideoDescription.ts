@@ -11,9 +11,10 @@ export interface UseVideoDescriptionProps {
   hasQuiz?: boolean;
   initialDescription?: VideoDescription | null;
   onNotice?: (notice: NonNullable<Notice>) => void;
+  onUpdated?: () => Promise<void> | void;
 }
 
-export function useVideoDescription({ channelId, episodeId, hasQuiz = true, initialDescription, onNotice }: UseVideoDescriptionProps) {
+export function useVideoDescription({ channelId, episodeId, hasQuiz = true, initialDescription, onNotice, onUpdated }: UseVideoDescriptionProps) {
   const [description, setDescription] = useState<VideoDescription | null>(initialDescription ?? null);
   const [draftText, setDraftText] = useState<string>(initialDescription?.full_description_text ?? "");
   const [loading, setLoading] = useState(false);
@@ -64,6 +65,7 @@ export function useVideoDescription({ channelId, episodeId, hasQuiz = true, init
       setDescription(res.description);
       setDraftText(res.description.full_description_text);
       if (hint !== undefined) setToneHint(hint);
+      await onUpdated?.();
       onNotice?.({ tone: "good", message: "SEO video description generated successfully" });
     } catch (err) {
       onNotice?.({ tone: "bad", message: err instanceof Error ? err.message : "Failed to generate video description" });
@@ -81,6 +83,7 @@ export function useVideoDescription({ channelId, episodeId, hasQuiz = true, init
       });
       setDescription(res.description);
       setDraftText(res.description.full_description_text);
+      await onUpdated?.();
       onNotice?.({ tone: "good", message: "Video description saved" });
     } catch (err) {
       onNotice?.({ tone: "bad", message: err instanceof Error ? err.message : "Failed to save video description" });

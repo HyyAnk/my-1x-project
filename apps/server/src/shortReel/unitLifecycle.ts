@@ -7,11 +7,7 @@ import { compileFlowPrompts } from "./flowPromptCompiler.js";
 import { computeDependencyFingerprint, type DeliverableUnitKey } from "./dependencyPolicy.js";
 import type { ScriptGenerationErrorCode } from "./scriptProvider.js";
 import { RepositoryError } from "../repository/errors.js";
-import {
-  extractShortReelDisplayProjection,
-  loadShortReelLocalizationArtifact,
-  type ShortReelDisplayProjection,
-} from "../quiz/bank/localization/productLocalization.js";
+import { extractShortReelDisplayProjection, loadShortReelLocalizationArtifact } from "../quiz/bank/localization/productLocalization.js";
 
 export interface UnitAttemptInfo {
   operationId: string;

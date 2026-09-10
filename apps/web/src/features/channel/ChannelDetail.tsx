@@ -1,4 +1,5 @@
-import { Archive, FileText, FilmSlate, Lightbulb, PencilSimple, Trash, VideoCamera } from "@phosphor-icons/react";
+import { useState } from "react";
+import { Archive, FileText, FilmSlate, FilmStrip, Lightbulb, PencilSimple, Trash, VideoCamera } from "@phosphor-icons/react";
 import type { Channel, Episode, Task } from "@studio/shared";
 import { ChannelBreadcrumb } from "../../components/Breadcrumbs";
 import { StatusBadge } from "../../components/AppChrome";
@@ -7,9 +8,12 @@ import { useTranslation } from "../../i18n";
 import { buildHash, getNavProps } from "../../hooks/useRouter";
 import { MascotAssignModal } from "../../components/MascotAssignModal";
 import { ChannelLoadingState } from "./components/ChannelLoadingState";
+import { CreateShortReelModal } from "./components/CreateShortReelModal";
 import { DeleteEpisodeModal } from "./components/DeleteEpisodeModal";
+import { DeleteShortReelModal } from "./components/DeleteShortReelModal";
 import { EditChannelModal } from "./components/EditChannelModal";
 import { ChannelEpisodesTab } from "./components/ChannelEpisodesTab";
+import { ChannelShortReelsTab } from "./components/ChannelShortReelsTab";
 import { ChannelTopicsTab } from "./components/ChannelTopicsTab";
 import { ChannelDnaTab } from "./components/ChannelDnaTab";
 import { ChannelIntroOutroTab } from "./components/ChannelIntroOutroTab";
@@ -56,6 +60,8 @@ export function ChannelDetail({
     onSelectEpisode: (episodeId) => openEpisode(channel.channel_id, episodeId),
     simplifyMode,
   });
+
+  const [isCreateShortReelOpen, setIsCreateShortReelOpen] = useState(false);
 
   if (state.loadingChannel) {
     return <ChannelLoadingState channel={channel} onBack={onBack} onNavigateHome={onNavigateHome} />;
@@ -109,6 +115,18 @@ export function ChannelDetail({
           </a>
           <a
             role="tab"
+            aria-selected={state.channelTab === "short-reels"}
+            className={`channel-group-tab ${state.channelTab === "short-reels" ? "is-selected" : ""}`}
+            {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: "short-reels" }), () =>
+              state.switchTab("short-reels"),
+            )}
+          >
+            <FilmStrip size={18} weight={state.channelTab === "short-reels" ? "fill" : "regular"} />
+            <span>Short-Reels</span>
+            <small>{state.shortReels.length}</small>
+          </a>
+          <a
+            role="tab"
             aria-selected={state.channelTab === "topics"}
             className={`channel-group-tab ${state.channelTab === "topics" ? "is-selected" : ""}`}
             {...getNavProps(buildHash({ page: "channels", channelId: channel.channel_id, tab: "topics" }), () => state.switchTab("topics"))}
@@ -150,6 +168,34 @@ export function ChannelDetail({
             onOpenEpisode={openEpisode}
             onDeleteEpisode={(ep) => state.setDeleteEpisodeTarget(ep)}
             onGoToTopics={() => state.switchTab("topics")}
+            page={state.episodesHook.page}
+            totalPages={state.episodesHook.paginationMeta.total_pages}
+            totalItems={state.episodesHook.paginationMeta.total}
+            limit={state.episodesHook.limit}
+            onPageChange={state.episodesHook.setPage}
+            onLimitChange={state.episodesHook.setLimit}
+            search={state.episodesHook.search}
+            onSearchChange={state.episodesHook.setSearch}
+            sort={state.episodesHook.sort}
+            onSortChange={state.episodesHook.setSort}
+            status={state.episodesHook.status}
+            onStatusChange={state.episodesHook.setStatus}
+            loading={state.episodesHook.loading}
+          />
+        ) : null}
+
+        {/* Tab 2: Short-Reels */}
+        {state.channelTab === "short-reels" ? (
+          <ChannelShortReelsTab
+            channel={channel}
+            shortReels={state.shortReels}
+            tasks={tasks}
+            onOpenStudio={(channelId, reelId) => {
+              window.location.hash = `#/channels/${encodeURIComponent(channelId)}/short-reels/${encodeURIComponent(reelId)}`;
+            }}
+            onDeleteShortReel={(reel) => state.setDeleteShortReelTarget(reel)}
+            onGoToTopics={() => state.switchTab("topics")}
+            onNewShortReel={() => setIsCreateShortReelOpen(true)}
           />
         ) : null}
 
@@ -236,6 +282,33 @@ export function ChannelDetail({
           onClose={() => state.setDeleteEpisodeTarget(null)}
           onDeleted={state.handleEpisodeDeleted}
           onError={(error) => onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not delete episode" })}
+        />
+      ) : null}
+
+      {state.deleteShortReelTarget ? (
+        <DeleteShortReelModal
+          channel={channel}
+          reel={state.deleteShortReelTarget}
+          onClose={() => state.setDeleteShortReelTarget(null)}
+          onDeleted={state.handleShortReelDeleted}
+          onError={(error) => onNotice({ tone: "bad", message: error instanceof Error ? error.message : "Could not delete Short-Reel" })}
+        />
+      ) : null}
+
+      {isCreateShortReelOpen ? (
+        <CreateShortReelModal
+          channel={channel}
+          onClose={() => setIsCreateShortReelOpen(false)}
+          onCreated={async (newReel) => {
+            setIsCreateShortReelOpen(false);
+            onNotice({
+              tone: "good",
+              message: `Short-Reel created: ${newReel.topic.title}`,
+            });
+            await state.load();
+            await onRefresh();
+            window.location.hash = `#/channels/${encodeURIComponent(channel.channel_id)}/short-reels/${encodeURIComponent(newReel.reel_id)}`;
+          }}
         />
       ) : null}
     </>

@@ -1,4 +1,4 @@
-import { mkdir, readFile, readdir } from "node:fs/promises";
+import { mkdir, readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import {
   ALL_QUIZ_IMAGE_STYLES,
@@ -10,6 +10,7 @@ import {
   TopicConfirmInputSchema,
   TopicRunCandidateSchema,
   TopicRunResultSchema,
+  TopicRunSchema,
   hashBankQuestionSource,
   makeId,
   nowIso,
@@ -25,10 +26,14 @@ import {
 } from "@studio/shared";
 import { RepositoryError } from "./errors.js";
 import { scanBankInventory } from "../quiz/bank/bankInventory.js";
+import { evaluateEpisodeQuestionEligibility, evaluateShortReelQuestionEligibility } from "../quiz/bank/bankEligibility.js";
+import { resolveBoundTopicSources, type ResolvedBoundTopicSources } from "../quiz/bank/bridge/boundSourceResolver.js";
 import {
-  evaluateEpisodeQuestionEligibility,
-  evaluateShortReelQuestionEligibility,
-} from "../quiz/bank/bankEligibility.js";
+  saveTopicConfirmationReceipt,
+  computeConfirmationOptionsFingerprint,
+  type TopicConfirmationOptions,
+} from "./topicConfirmationReceipts.js";
+import { normalizeTargetLanguage } from "../quiz/bank/localization/productLocalization.js";
 import type { RepositoryService } from "./service.js";
 import {
   DEFAULT_NARRATION_WORDS_PER_SECOND,
@@ -91,34 +96,87 @@ export async function getLatestTopicRun(
   const channel = await repo.getChannel(channelId);
   const directory = repo.resolvePath("channels", channel.slug, "topics");
 
+  await mkdir(directory, { recursive: true });
+  const entries = await readdir(directory, { withFileTypes: true });
+  const jsonFiles = entries.filter((item) => item.isFile() && item.name.endsWith(".json"));
+  if (jsonFiles.length === 0) return null;
+
+  // Gather file metadata to determine chronological order
+  const filesWithMeta = await Promise.all(
+    jsonFiles.map(async (entry) => {
+      const filePath = path.join(directory, entry.name);
+      const fileStat = await stat(filePath).catch(() => null);
+      const match = entry.name.match(/(?:suggestion|topic-run|run)-(\d+)/);
+      const filenameTimestamp = match ? Number(match[1]) : 0;
+      const mtimeMs = fileStat?.mtimeMs ?? 0;
+      const effectiveDiskTime = filenameTimestamp > 0 ? filenameTimestamp : mtimeMs;
+      return { entry, filePath, effectiveDiskTime };
+    }),
+  );
+
+  // Sort files newest first by disk time
+  filesWithMeta.sort((a, b) => b.effectiveDiskTime - a.effectiveDiskTime);
+
+  // The latest file on disk is the authoritative latest run
+  const latestFile = filesWithMeta[0];
+  let content: string;
   try {
-    await mkdir(directory, { recursive: true });
-    const entries = await readdir(directory, { withFileTypes: true });
-    const jsonFiles = entries.filter((item) => item.isFile() && item.name.endsWith(".json"));
-    if (jsonFiles.length === 0) return null;
-
-    let latestRun: TopicRun | null = null;
-    let latestTime = "";
-
-    for (const entry of jsonFiles) {
-      try {
-        const content = await readFile(path.join(directory, entry.name), "utf8");
-        const run = JSON.parse(content) as TopicRun;
-        if (run && typeof run === "object") {
-          const runTime = run.generated_at || "";
-          if (!latestRun || runTime.localeCompare(latestTime) > 0) {
-            latestRun = run;
-            latestTime = runTime;
-          }
-        }
-      } catch {
-        // Skip unreadable files
-      }
-    }
-    return latestRun;
-  } catch {
-    return null;
+    content = await readFile(latestFile.filePath, "utf8");
+  } catch (error) {
+    throw new RepositoryError(
+      `TOPIC_RUN_CORRUPTED: Failed to read latest topic run file "${latestFile.entry.name}".`,
+      "TOPIC_RUN_CORRUPTED",
+      { cause: error },
+    );
   }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(content);
+  } catch (error) {
+    throw new RepositoryError(
+      `TOPIC_RUN_CORRUPTED: Latest topic run file "${latestFile.entry.name}" contains invalid JSON.`,
+      "TOPIC_RUN_CORRUPTED",
+      { cause: error },
+    );
+  }
+
+  const validated = TopicRunSchema.safeParse(parsed);
+  if (validated.success) {
+    return validated.data;
+  }
+
+  // Handle legacy run format if it has run_id and candidates array
+  if (
+    typeof parsed === "object" &&
+    parsed !== null &&
+    "run_id" in parsed &&
+    typeof parsed.run_id === "string" &&
+    "candidates" in parsed &&
+    Array.isArray(parsed.candidates)
+  ) {
+    const legacy = parsed as {
+      run_id: string;
+      generated_at?: string;
+      target_episode_count?: number;
+      target_short_reel_count?: number;
+      candidates: unknown[];
+      shortages?: unknown[];
+    };
+    return {
+      run_id: legacy.run_id,
+      generated_at: legacy.generated_at || nowIso(),
+      target_episode_count: legacy.target_episode_count ?? 3,
+      target_short_reel_count: legacy.target_short_reel_count ?? 2,
+      candidates: legacy.candidates as TopicRun["candidates"],
+      shortages: (legacy.shortages as TopicRun["shortages"]) || [],
+    };
+  }
+
+  throw new RepositoryError(
+    `TOPIC_RUN_CORRUPTED: Latest topic run file "${latestFile.entry.name}" failed schema validation.`,
+    "TOPIC_RUN_CORRUPTED",
+  );
 }
 
 export async function saveTopicRun(
@@ -167,40 +225,49 @@ export async function saveTopicRun(
       const parsed = TopicCandidateSchema.parse(candidate);
       const explicitSlotId = (candidate as { slot_id?: string }).slot_id;
       const existingBindings =
-        (runCand.success && runCand.data.source_bindings && runCand.data.source_bindings.length > 0 ? runCand.data.source_bindings : undefined) ??
-        (parsed.source_bindings && parsed.source_bindings.length > 0 ? parsed.source_bindings : undefined);
-
-      const isExplicitlyUnbound =
-        parsed.topic_id.toLowerCase().includes("unbound") ||
-        parsed.topic_id.toLowerCase().includes("legacy") ||
-        (candidate as { origin?: string }).origin === "discovery";
-
-      const bindings: TopicSourceBinding[] | undefined =
-        existingBindings ??
-        (isExplicitlyUnbound
-          ? undefined
-          : Array.from({ length: 50 }, (_, idx) => ({
-              source_question_id: `qb_synth_${parsed.topic_id}_${idx + 1}`,
-              source_hash_version: 1 as const,
-              source_content_hash: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-              projection_provenance: {
-                source_variant: "native" as const,
-                resolved_language: "en" as const,
-                translation_key: null,
-                translation_provenance: "native" as const,
-              },
-            })));
+        (runCand.success && runCand.data.source_bindings && runCand.data.source_bindings.length > 0
+          ? runCand.data.source_bindings
+          : undefined) ?? (parsed.source_bindings && parsed.source_bindings.length > 0 ? parsed.source_bindings : undefined);
 
       return {
         ...parsed,
         run_id: runId,
         ...(explicitSlotId ? { slot_id: explicitSlotId } : {}),
-        ...(bindings && bindings.length > 0 ? { source_bindings: bindings } : {}),
+        ...(existingBindings && existingBindings.length > 0 ? { source_bindings: existingBindings } : {}),
       };
     }),
     shortages: [],
   };
   await this.writeJsonAtomic(path.join(directory, `suggestion-${Date.now()}-${runId}.json`), run);
+}
+
+function assertConfirmableCandidate(candidate: TopicCandidate): void {
+  if (!candidate.source_bindings || candidate.source_bindings.length === 0) {
+    if (
+      candidate.archetype ||
+      (candidate as { slot_id?: string }).slot_id ||
+      candidate.suggested_layout ||
+      candidate.topic_id.toLowerCase().includes("unbound") ||
+      candidate.topic_id.toLowerCase().includes("legacy")
+    ) {
+      throw new RepositoryError(
+        "UNBOUND_LEGACY_TOPIC: Cannot confirm unbound legacy topic candidate. Re-suggest topics to bind canonical sources.",
+        "UNBOUND_LEGACY_TOPIC",
+      );
+    }
+  }
+}
+
+function resolveCandidateStyles(
+  requested?: QuizImageStyle | "mixed",
+  candidateStyle?: QuizImageStyle | "mixed",
+  channelStyles?: QuizImageStyle[],
+): { requestedStyle: QuizImageStyle | "mixed"; resolvedStyle: QuizImageStyle } {
+  const req = requested ?? candidateStyle ?? "mixed";
+  const availableStyles = channelStyles && channelStyles.length > 0 ? channelStyles : ALL_QUIZ_IMAGE_STYLES;
+  const resolved: QuizImageStyle =
+    req === "mixed" ? availableStyles[Math.floor(Math.random() * availableStyles.length)] || "pixar_3d" : req;
+  return { requestedStyle: req, resolvedStyle: resolved };
 }
 
 export async function confirmTopic(
@@ -217,13 +284,7 @@ export async function confirmTopic(
     throw new RepositoryError("Cannot confirm Short-Reel topic candidate as Episode", "INVALID_TOPIC_KIND");
   }
 
-  // Reject unbound legacy candidates
-  if (!candidate.source_bindings || candidate.source_bindings.length === 0) {
-    throw new RepositoryError(
-      "UNBOUND_LEGACY_TOPIC: Cannot confirm unbound legacy topic candidate. Re-suggest topics to bind canonical sources.",
-      "UNBOUND_LEGACY_TOPIC",
-    );
-  }
+  assertConfirmableCandidate(candidate);
 
   const parsedConfirm = TopicConfirmInputSchema.parse({
     topic_id: topicId,
@@ -232,18 +293,22 @@ export async function confirmTopic(
   });
   const selectedQuestionCount = parsedConfirm.question_count ?? candidate.question_count;
 
-  // Enforce supported source capacity
-  if (candidate.source_bindings && selectedQuestionCount > candidate.source_bindings.length) {
-    throw new RepositoryError(
-      `INSUFFICIENT_SOURCE_CAPACITY: Requested question count (${selectedQuestionCount}) exceeds supported source capacity (${candidate.source_bindings.length})`,
-      "INSUFFICIENT_SOURCE_CAPACITY",
-    );
+  // Authoritatively resolve and validate bound sources against Question Bank when bindings are present
+  let boundResult: Partial<ResolvedBoundTopicSources> | undefined;
+  if (candidate.source_bindings && candidate.source_bindings.length > 0) {
+    boundResult = await resolveBoundTopicSources({
+      repository: this as unknown as RepositoryService,
+      channelId,
+      topicId,
+      requestedQuestionCount: selectedQuestionCount,
+    });
   }
 
-  const requestedStyle = parsedConfirm.visual_style ?? candidate.visual_style ?? "mixed";
-  const availableStyles = channel.selected_styles && channel.selected_styles.length > 0 ? channel.selected_styles : ALL_QUIZ_IMAGE_STYLES;
-  const resolvedStyle: QuizImageStyle =
-    requestedStyle === "mixed" ? availableStyles[Math.floor(Math.random() * availableStyles.length)] || "pixar_3d" : requestedStyle;
+  const { requestedStyle, resolvedStyle } = resolveCandidateStyles(
+    parsedConfirm.visual_style,
+    candidate.visual_style,
+    channel.selected_styles,
+  );
   const targetDurationMinutes = estimateQuizTargetDurationMinutes(selectedQuestionCount);
   const targetWordCount = estimateQuizTargetWordCount(targetDurationMinutes, DEFAULT_NARRATION_WORDS_PER_SECOND);
   await this.markTopicSelected(channelId, topicId, selectedQuestionCount);
@@ -255,10 +320,17 @@ export async function confirmTopic(
   await mkdir(path.join(episodeDirectory, "assets"), { recursive: true });
 
   // Persist source bindings for the confirmed episode
-  if (candidate.source_bindings && candidate.source_bindings.length > 0) {
+  if (boundResult?.questions && boundResult.questions.length > 0 && boundResult.sourceContentHashes) {
+    const hashes = boundResult.sourceContentHashes;
+    const recordedBindings = boundResult.questions.map((q, idx) => ({
+      source_question_id: q.id,
+      source_content_hash: hashes[idx],
+      choice_ids: q.choices.map((c) => c.id),
+      correct_choice_id: q.correct_choice_id,
+    }));
     await this.writeTextAtomic(
       path.join(episodeDirectory, "sources.md"),
-      `# Source Questions\n\n\`\`\`json\n${JSON.stringify(candidate.source_bindings.slice(0, selectedQuestionCount), null, 2)}\n\`\`\`\n`,
+      `# Source Questions\n\n\`\`\`json\n${JSON.stringify(recordedBindings, null, 2)}\n\`\`\`\n`,
     );
   }
   const episode = EpisodeSchema.parse({
@@ -300,6 +372,9 @@ export async function confirmTopic(
     updated_at: timestamp,
   });
   await this.writeJsonAtomic(path.join(episodeDirectory, "episode.json"), episode);
+  this.entityIdResolver.setEpisodeSlug(channelId, episode.episode_id, episode.slug);
+  this.entityIdResolver.setEpisodeTitle(episode.episode_id, episode.topic?.title || "");
+  this.channelCache.incrementEpisodeCount(channelId);
   await this.writeTextAtomic(
     path.join(episodeDirectory, "brief.md"),
     `# ${candidate.title}\n\n## Premise\n\n${candidate.premise}\n\n## Hook\n\n${candidate.hook}\n`,
@@ -318,7 +393,71 @@ export async function confirmTopic(
     (await this.listTopics(channelId)).map(({ title, premise }) => ({ title, premise })),
   );
   await this.updateChannel(channelId, { updated_at: timestamp });
+  const effectiveTargetLang = normalizeTargetLanguage(channel.language ?? "en");
+  const confirmOptions: TopicConfirmationOptions = {
+    question_count: selectedQuestionCount,
+    visual_style: requestedStyle,
+    target_language: effectiveTargetLang,
+  };
+  await saveTopicConfirmationReceipt(this as unknown as RepositoryService, channelId, {
+    receipt_id: `rec-${episode.episode_id}`,
+    channel_id: channelId,
+    topic_id: topicId,
+    content_kind: "episode",
+    product_id: episode.episode_id,
+    product_slug: episode.slug,
+    status: "completed",
+    confirmed_at: timestamp,
+    request_id: makeId("req"),
+    options_fingerprint: computeConfirmationOptionsFingerprint(confirmOptions),
+    options: confirmOptions,
+    source_question_ids: boundResult?.questions?.map((q) => q.id) ?? [],
+    source_content_hashes: boundResult?.sourceContentHashes ?? [],
+  });
   return episode;
+}
+
+function resolveNextResolvedStyle(
+  inputStyle?: QuizImageStyle | "mixed",
+  inputResolved?: QuizImageStyle,
+  currentResolved?: QuizImageStyle,
+  channelStyles?: QuizImageStyle[],
+): QuizImageStyle {
+  if (inputStyle !== undefined) {
+    if (inputStyle === "mixed") {
+      const availableStyles = channelStyles && channelStyles.length > 0 ? channelStyles : ALL_QUIZ_IMAGE_STYLES;
+      return availableStyles[Math.floor(Math.random() * availableStyles.length)] || "pixar_3d";
+    }
+    return inputStyle;
+  }
+  if (inputResolved !== undefined) {
+    return inputResolved;
+  }
+  return currentResolved ?? "pixar_3d";
+}
+
+function hasQuizSourceSettingsChanged(next: Episode["quiz_config"], prev: Episode["quiz_config"]): boolean {
+  return (
+    next.question_count !== prev.question_count ||
+    next.quiz_format !== prev.quiz_format ||
+    next.age_band !== prev.age_band ||
+    next.visual_style !== prev.visual_style ||
+    next.resolved_visual_style !== prev.resolved_visual_style
+  );
+}
+
+function hasRenderStyleSettingsChanged(next: Episode["quiz_config"], prev: Episode["quiz_config"]): boolean {
+  return (
+    next.visual_theme !== prev.visual_theme ||
+    next.thinking_bar_style !== prev.thinking_bar_style ||
+    next.question_counter_style !== prev.question_counter_style ||
+    next.question_box_style !== prev.question_box_style ||
+    next.answer_card_style !== prev.answer_card_style ||
+    next.background_style !== prev.background_style ||
+    next.palette_id !== prev.palette_id ||
+    next.style_preset_id !== prev.style_preset_id ||
+    next.render_aspect_ratio !== prev.render_aspect_ratio
+  );
 }
 
 export async function updateEpisodeSettings(
@@ -330,19 +469,13 @@ export async function updateEpisodeSettings(
 ): Promise<Episode> {
   const episode = await this.getEpisode(channelId, episodeId);
   const channel = await this.getChannel(channelId);
-  let nextResolvedStyle = episode.quiz_config.resolved_visual_style ?? "pixar_3d";
+  const nextResolvedStyle = resolveNextResolvedStyle(
+    input.visual_style,
+    input.resolved_visual_style,
+    episode.quiz_config.resolved_visual_style,
+    channel.selected_styles,
+  );
   const nextStyle = input.visual_style ?? episode.quiz_config.visual_style ?? "mixed";
-  if (input.visual_style !== undefined) {
-    if (input.visual_style === "mixed") {
-      const availableStyles =
-        channel.selected_styles && channel.selected_styles.length > 0 ? channel.selected_styles : ALL_QUIZ_IMAGE_STYLES;
-      nextResolvedStyle = availableStyles[Math.floor(Math.random() * availableStyles.length)] || "pixar_3d";
-    } else {
-      nextResolvedStyle = input.visual_style;
-    }
-  } else if (input.resolved_visual_style !== undefined) {
-    nextResolvedStyle = input.resolved_visual_style;
-  }
   const nextQuizConfig = {
     ...episode.quiz_config,
     ...(input.question_count === undefined ? {} : { question_count: input.question_count }),
@@ -364,22 +497,8 @@ export async function updateEpisodeSettings(
     visual_style: nextStyle,
     resolved_visual_style: nextResolvedStyle,
   };
-  const quizSourceSettingsChanged =
-    nextQuizConfig.question_count !== episode.quiz_config.question_count ||
-    nextQuizConfig.quiz_format !== episode.quiz_config.quiz_format ||
-    nextQuizConfig.age_band !== episode.quiz_config.age_band ||
-    nextQuizConfig.visual_style !== episode.quiz_config.visual_style ||
-    nextQuizConfig.resolved_visual_style !== episode.quiz_config.resolved_visual_style;
-  const renderStyleSettingsChanged =
-    nextQuizConfig.visual_theme !== episode.quiz_config.visual_theme ||
-    nextQuizConfig.thinking_bar_style !== episode.quiz_config.thinking_bar_style ||
-    nextQuizConfig.question_counter_style !== episode.quiz_config.question_counter_style ||
-    nextQuizConfig.question_box_style !== episode.quiz_config.question_box_style ||
-    nextQuizConfig.answer_card_style !== episode.quiz_config.answer_card_style ||
-    nextQuizConfig.background_style !== episode.quiz_config.background_style ||
-    nextQuizConfig.palette_id !== episode.quiz_config.palette_id ||
-    nextQuizConfig.style_preset_id !== episode.quiz_config.style_preset_id ||
-    nextQuizConfig.render_aspect_ratio !== episode.quiz_config.render_aspect_ratio;
+  const quizSourceSettingsChanged = hasQuizSourceSettingsChanged(nextQuizConfig, episode.quiz_config);
+  const renderStyleSettingsChanged = hasRenderStyleSettingsChanged(nextQuizConfig, episode.quiz_config);
   if (renderStyleSettingsChanged) {
     // A manual style choice opts the episode into the current catalog. The
     // previous pinned revision may not contain an imported style ID.
@@ -395,10 +514,11 @@ export async function updateEpisodeSettings(
     updated_at: nowIso(),
   });
   await this.writeJsonAtomic(this.resolvePath("channels", channel.slug, "episodes", episode.slug, "episode.json"), next);
+  this.entityIdResolver.setEpisodeSlug(channelId, next.episode_id, next.slug);
   if (quizSourceSettingsChanged) {
     await this.invalidateQuizSourceArtifacts(channelId, episodeId);
   } else if (renderStyleSettingsChanged) {
-    await this.invalidateQuizArtifacts(channelId, episodeId, ["render", "qa"]);
+    await this.invalidateQuizArtifacts(channelId, episodeId, ["style", "qa"]);
   }
   return next;
 }
@@ -407,13 +527,29 @@ export async function markTopicSelected(this: RepositoryRuntime, channelId: stri
   return projectTopicSelected(this, channelId, topicId, questionCount);
 }
 
+export type TopicAvailabilityBatchOptions = {
+  overrides?: Record<string, { question_count?: number }>;
+};
+
 export async function getTopicAvailabilityBatch(
   this: RepositoryRuntime | void,
   repositoryOrChannelId: RepositoryService | RepositoryRuntime | string,
-  channelIdParam?: string,
+  channelIdOrOptions?: string | TopicAvailabilityBatchOptions,
+  optionsParam?: TopicAvailabilityBatchOptions,
 ): Promise<TopicAvailabilityBatch> {
-  const repo = (typeof repositoryOrChannelId === "string" ? this : repositoryOrChannelId) as RepositoryRuntime;
-  const channelId = typeof repositoryOrChannelId === "string" ? repositoryOrChannelId : channelIdParam!;
+  let repo: RepositoryRuntime;
+  let channelId: string;
+  let options: TopicAvailabilityBatchOptions | undefined;
+
+  if (typeof repositoryOrChannelId === "string") {
+    repo = this as RepositoryRuntime;
+    channelId = repositoryOrChannelId;
+    options = channelIdOrOptions as TopicAvailabilityBatchOptions | undefined;
+  } else {
+    repo = repositoryOrChannelId;
+    channelId = channelIdOrOptions as string;
+    options = optionsParam;
+  }
 
   await repo.getChannel(channelId);
   const candidates = await repo.listTopics(channelId);
@@ -497,15 +633,16 @@ export async function getTopicAvailabilityBatch(
         break;
       }
 
-      const evalResult = isShortReel
-        ? evaluateShortReelQuestionEligibility(q, {
-            targetArchetype: (candidate.archetype as "versus_faceoff" | "deep_trivia") || "deep_trivia",
-          })
-        : evaluateEpisodeQuestionEligibility(q, {
-            targetLanguage: "en",
-            expectedFormat: candidate.quiz_format as any,
-            targetArchetype: candidate.archetype as any,
-          });
+      const evalResult =
+        candidate.content_kind === "short_reel"
+          ? evaluateShortReelQuestionEligibility(q, {
+              targetArchetype: candidate.archetype,
+            })
+          : evaluateEpisodeQuestionEligibility(q, {
+              targetLanguage: "en",
+              expectedFormat: candidate.quiz_format,
+              targetArchetype: candidate.archetype,
+            });
 
       if (!evalResult.eligible) {
         if (q.channel_cooldown?.is_cooldown || evalResult.reason === "IN_COOLDOWN") {
@@ -527,8 +664,12 @@ export async function getTopicAvailabilityBatch(
       };
     }
 
-    const minRequired = isShortReel ? 1 : QUIZ_MIN_QUESTION_COUNT;
-    if (sourceCapacity >= minRequired) {
+    const overrideCount = options?.overrides?.[candidate.topic_id]?.question_count;
+    const requiredCount = isShortReel
+      ? 1
+      : (overrideCount ?? candidate.question_count ?? candidate.source_bindings?.length ?? QUIZ_MIN_QUESTION_COUNT);
+
+    if (sourceCapacity >= requiredCount) {
       return {
         ...baseTopic,
         can_confirm: true,

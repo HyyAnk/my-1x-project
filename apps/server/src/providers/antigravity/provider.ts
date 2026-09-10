@@ -115,6 +115,17 @@ export class AntigravityNativeImageProvider implements ImageProvider {
     const config = await loadConfig(this.repository.rootDirectory);
     const client = this.client ?? new AntigravityClient(this.repository.rootDirectory, config, this.logger);
 
+    if (
+      !client ||
+      typeof (client as { startThread?: unknown }).startThread !== "function" ||
+      typeof (client as { startTurn?: unknown }).startTurn !== "function"
+    ) {
+      throw new RepositoryError(
+        "Antigravity client does not support interactive sessions (startThread is not a function)",
+        "ANTIGRAVITY_CLIENT_UNSUPPORTED",
+      );
+    }
+
     const imageName = this.target.assetId
       ? `quiz_${this.target.assetId.toLowerCase().replace(/[^a-z0-9_]/g, "_")}`
       : `bundle_cb_${String(this.target.bundleNumber ?? 1).padStart(2, "0")}`;
@@ -173,6 +184,15 @@ export class AntigravityNativeImageProvider implements ImageProvider {
       }
 
       if (attempt < maxAttempts) {
+        if (
+          lastError &&
+          (lastError.message.includes("startThread is not a function") ||
+            (lastError as RepositoryError).code === "ANTIGRAVITY_CLIENT_UNSUPPORTED")
+        ) {
+          this.logger.warn(`Antigravity client unsupported (${lastError.message}), skipping retries.`);
+          break;
+        }
+
         const isRateLimit = /429|quota|rate limit|resource_exhausted|exhausted/i.test(lastError.message);
         const baseDelay = process.env.NODE_ENV === "test" ? 50 : isRateLimit ? 10000 : 3000;
         const retryDelay = attempt * baseDelay;

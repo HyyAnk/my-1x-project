@@ -36,7 +36,7 @@ export function QuestionBankAiGenerateModal({
   onClose,
 }: QuestionBankAiGenerateModalProps) {
   const { t } = useTranslation();
-  const form = useAiGenerateForm({ taxonomy, onGenerate });
+  const form = useAiGenerateForm({ taxonomy, onGenerate, onClose });
 
   return (
     <div className="qb-modal-backdrop" onClick={onClose}>

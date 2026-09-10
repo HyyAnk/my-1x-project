@@ -54,7 +54,7 @@ smokeTest("failed tasks expose a retry path with the original task scope", async
   );
   await page.route("**/api/tasks", async (route) => {
     if (route.request().method() === "POST") {
-      retryBody = route.request().postDataJSON();
+      retryBody = route.request().postDataJSON() as Record<string, unknown> | null;
       tasks = [retryTask, failedTask];
       return route.fulfill({ status: 202, contentType: "application/json", body: JSON.stringify({ task: retryTask }) });
     }

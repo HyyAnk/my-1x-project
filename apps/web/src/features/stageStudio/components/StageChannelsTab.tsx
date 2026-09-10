@@ -80,12 +80,13 @@ export function StageChannelsTab({ studio, channels, allMascots }: StageChannels
             {allMascots.map((m) => {
               const isSelected = selectedMascotId === m.id;
               const activeStyle = m.styles?.find((s) => s.id === m.active_style_id) || m.styles?.find((s) => s.is_default) || m.styles?.[0];
-              const styleVariantsCount = activeStyle?.states
-                ? (activeStyle.states.thinking?.filter((v) => Boolean(v?.image_url)).length || 0) +
-                  (activeStyle.states.celebrate?.filter((v) => Boolean(v?.image_url)).length || 0)
-                : 0;
-              const legacyActionsCount = Object.values(m.actions || {}).filter((a) => Boolean(a?.sprite_url)).length;
-              const readyPoses = styleVariantsCount > 0 ? styleVariantsCount : legacyActionsCount;
+              const hasThinking =
+                (activeStyle?.states?.thinking?.filter((v) => Boolean(v?.image_url)).length || 0) > 0 ||
+                Boolean(m.actions?.thinking?.sprite_url);
+              const hasCelebrate =
+                (activeStyle?.states?.celebrate?.filter((v) => Boolean(v?.image_url)).length || 0) > 0 ||
+                Boolean(m.actions?.celebrate?.sprite_url);
+              const readyStates = (hasThinking ? 1 : 0) + (hasCelebrate ? 1 : 0);
               const avatarThumbnail = activeStyle?.anchor_image_url || m.master_image_url;
 
               return (
@@ -107,7 +108,7 @@ export function StageChannelsTab({ studio, channels, allMascots }: StageChannels
                       <strong>{m.name}</strong>
                       <span className="style-chip">{m.visual_style.replace("_", " ")}</span>
                     </div>
-                    <small>{t("stageStudio.posesReadyBadge", { count: readyPoses })}</small>
+                    <small>{t("stageStudio.posesReadyBadge", { count: readyStates })}</small>
                   </div>
                   {isSelected ? <CheckCircle size={16} weight="fill" className="selected-check-icon" /> : null}
                 </button>

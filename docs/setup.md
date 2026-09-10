@@ -14,7 +14,7 @@ Use the Power button in the dashboard top bar to stop the local services when yo
 
 The first startup can take several minutes and uses substantial disk space because PyTorch and the Chatterbox model are downloaded. Later startups reuse the ignored virtual environment and cached model. If installation or model loading fails, the launcher stops with a readable error and points to `.quiz-studio/logs/tts.stderr.log` instead of opening a dashboard that cannot generate audio.
 
-The current Chatterbox package requires Python 3.10 or newer and is tested upstream on Python 3.11. The launcher prefers Python 3.11, then 3.10, then 3.13. If no suitable Python is installed, it attempts to install Python 3.11 through winget.
+The repository's [TTS bootstrap](../scripts/ensure-tts.ps1) checks Python versions in this order: 3.11, 3.12, 3.10, then 3.13. If no suitable Python is installed, it attempts to install Python 3.11 through winget.
 
 ## Manual development startup
 
@@ -22,6 +22,7 @@ For frontend/backend development without the managed audio bootstrap:
 
 ```text
 pnpm install
+pnpm build:shared
 pnpm dev
 ```
 
@@ -36,20 +37,21 @@ cd services/tts
 
 Check `http://127.0.0.1:8890/health`. It returns ready only after the Turbo model is loaded and `paralinguistic_tags` is enabled. The Node server talks to this service over loopback HTTP; it never imports Python packages directly.
 
-Narration scripts may contain invisible `AUDIO_CUE` comments for restrained chuckles or laughs. The one-click launcher enables the English Turbo model automatically, so no extra command is required. For manual startup, use:
+Narration scripts may contain invisible `AUDIO_CUE` comments for restrained chuckles or laughs. The one-click launcher enables the English Turbo model automatically, so no extra command is required. From the repository root, manual Turbo startup is:
 
 ```powershell
 $env:CHATTERBOX_MODEL = "turbo"
-.\services\tts\.venv\Scripts\python -m uvicorn app:app --host 127.0.0.1 --port 8890
+Set-Location services/tts
+.\.venv\Scripts\python -m uvicorn app:app --host 127.0.0.1 --port 8890
 ```
 
 Turbo supports `[chuckle]` and `[laugh]`; the launcher also restarts an already-running cue-less sidecar when needed. The health endpoint reports `paralinguistic_tags: true` when Turbo is active.
 
 Audio settings are available in Settings. The service URL, Chatterbox controls, and optional per-channel WAV voice reference are stored locally. Voice references and generated WAV files stay in the selected content storage folder, which is ignored by Git.
 
-Settings also contains a shared voice library. Adding a voice creates a reusable reference and a cached preview under `.quiz-studio/voices/`; assigning it to a channel controls the next audio generation task. Quiz episodes get their narration as one batched Quiz V2 voice stage that assembles an episode-wide `narration.wav`; scene-level audio can be queued per scene with `Generate audio` inside that scene's Dialogue / Narration block.
+Settings also contains a shared voice library. Adding a voice creates a reusable reference and a cached preview under `.quiz-studio/voices/`; assigning it to a channel controls the next audio generation task. Quiz episodes get their narration as one batched Quiz V2 voice stage that assembles an episode-wide `narration.wav`; scene-level audio routes remain compatibility functionality; inspect the active Episode UI before assuming a scene editor is exposed.
 
-On the first launch, the dashboard asks for a local content storage folder. It creates `channels/`, `.quiz-studio/tasks/`, `.quiz-studio/codex/`, and `.quiz-studio/logs/` inside that folder. The code, templates, and shared rules remain in the Git project.
+The dashboard supports selecting a local content storage folder. Without a configured override, the repository uses the project root. It creates `channels/`, `.quiz-studio/tasks/`, `.quiz-studio/codex/`, and `.quiz-studio/logs/` inside that folder. The code, templates, and shared rules remain in the Git project.
 
 The selected folder is saved locally in `.quiz-studio/storage.local.json`, which is ignored by Git. Change it later from Settings → Storage folder. Existing content is not moved automatically when switching folders. To use a different code project root, set `STUDIO_ROOT` before starting the server. To enable extra structured diagnostics, set `STUDIO_DEBUG=1`.
 

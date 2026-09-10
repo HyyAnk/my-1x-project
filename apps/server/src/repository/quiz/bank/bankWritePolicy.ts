@@ -4,7 +4,7 @@ import { RepositoryError } from "../../errors.js";
 const ENGLISH_LANGUAGE = "en";
 
 function rejectLanguage(language: string | undefined, subject: string): never {
-  const detail = language === undefined ? "is required" : `must be \"${ENGLISH_LANGUAGE}\"`;
+  const detail = language === undefined ? "is required" : `must be "${ENGLISH_LANGUAGE}"`;
   throw new RepositoryError(`${subject} language ${detail}`, "BANK_ENGLISH_ONLY");
 }
 

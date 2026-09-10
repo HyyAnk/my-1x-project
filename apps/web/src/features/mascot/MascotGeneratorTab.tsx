@@ -148,12 +148,12 @@ export function MascotGeneratorTab({ generatorState, onNotice }: MascotGenerator
                       : busyAction === "batch-core"
                         ? t("mascots.globalGenTitleBatchCore")
                         : busyAction === "batch"
-                          ? t("mascots.globalGenTitleBatchAll", { total: batchState?.total || 7 })
+                          ? t("mascots.globalGenTitleBatchAll", { total: batchState?.total || 2 })
                           : busyAction === "assign"
                             ? t("mascots.savingAndApplyingBtn") || "Saving & Applying..."
                             : busyAction === "matting-master" || busyAction?.startsWith("matting-")
                               ? busyAction === "matting-all"
-                                ? t("mascots.globalGenTitleMattingAll", { total: 7 })
+                                ? t("mascots.globalGenTitleMattingAll", { total: 2 })
                                 : t("mascots.globalGenTitleMatting")
                               : t("mascots.globalGenTitleSingle", {
                                   action: getLocalizedActionMeta(busyAction, t).label.split(" ")[0],

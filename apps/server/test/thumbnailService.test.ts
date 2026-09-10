@@ -4,7 +4,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { RepositoryService } from "../src/repository.js";
-import { generateEpisodeThumbnail, getEpisodeThumbnailManifest, resolveTargetThumbnailRatio } from "../src/quiz/thumbnail/index.js";
+import {
+  generateEpisodeThumbnail,
+  getEpisodeThumbnailManifest,
+  isValidShortHookText,
+  resolveTargetThumbnailRatio,
+} from "../src/quiz/thumbnail/index.js";
+import { saveProductLocalizationArtifact } from "../src/quiz/bank/localization/productLocalization.js";
 import type { ImageProvider } from "../src/providers/index.js";
 import type { Episode, TopicCandidate } from "@studio/shared";
 import type { AppState } from "../src/routes/state.js";
@@ -156,13 +162,13 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
       channelId: channel.channel_id,
       episodeId: episode.episode_id,
       layoutOverride: "mystery_silhouette",
-      customHookText: "AI ĐÃ XÂY KIM TỰ THÁP?",
+      customHookText: "WHO BUILT THE PYRAMIDS?",
       aspectRatio: "16:9",
       imageProvider: mockImageProvider,
     });
 
     expect(manifest.layout).toBe("mystery_silhouette");
-    expect(manifest.hook_text).toBe("AI ĐÃ XÂY KIM TỰ THÁP?");
+    expect(manifest.hook_text).toBe("WHO BUILT THE PYRAMIDS?");
     expect(manifest.asset_path_16_9).toBeDefined();
     expect(manifest.asset_path_9_16).toBeNull(); // Only 16:9 was requested
   });
@@ -403,6 +409,164 @@ describe("Thumbnail Service & API Integration (Step 3)", () => {
       expect(resolveTargetThumbnailRatio(episode, "both")).toBe("both");
       expect(resolveTargetThumbnailRatio(episode, "16:9")).toBe("16:9");
       expect(resolveTargetThumbnailRatio(episode, "9:16")).toBe("9:16");
+    });
+  });
+
+  describe("isValidShortHookText", () => {
+    it("accepts concise punchy hooks within 2-6 words and 30 characters", () => {
+      expect(isValidShortHookText("CAN YOU PASS?")).toBe(true);
+      expect(isValidShortHookText("SOLAR SYSTEM QUIZ")).toBe(true);
+      expect(isValidShortHookText("WHO BUILT THE PYRAMIDS?")).toBe(true);
+      expect(isValidShortHookText("TRUE OR FALSE?")).toBe(true);
+      expect(isValidShortHookText("GENIUS TIER")).toBe(true);
+    });
+
+    it("rejects long topic titles and conversational hooks", () => {
+      expect(isValidShortHookText("Arcade Game Secrets: True or False Gaming Showdown")).toBe(false);
+      expect(isValidShortHookText("What can you hold in your left hand but never in your right hand?")).toBe(false);
+      expect(isValidShortHookText("This is an excessively long thumbnail hook that definitely exceeds character limit")).toBe(false);
+    });
+
+    it("rejects single word hooks (minimum 2 words required)", () => {
+      expect(isValidShortHookText("Secrets")).toBe(false);
+      expect(isValidShortHookText("QUIZ")).toBe(false);
+    });
+
+    it("rejects empty or invalid inputs", () => {
+      expect(isValidShortHookText("")).toBe(false);
+      expect(isValidShortHookText("   ")).toBe(false);
+      expect(isValidShortHookText(null)).toBe(false);
+      expect(isValidShortHookText(undefined)).toBe(false);
+    });
+  });
+
+  describe("thumbnail hook decoupling & override policy", () => {
+    it("sanitizes explicit options.customHookText through the hook guardrail", async () => {
+      const channel = await repository.createChannel({ name: "Manual Override Channel" });
+      const episode = await createTestEpisode(repository, channel.channel_id, "Test Episode", "Test Description");
+
+      const mockImageProvider: ImageProvider = {
+        generateReference: async () => {
+          const dummyPath = path.join(tempDir, "mock_manual_override.jpg");
+          await writeFile(dummyPath, Buffer.from("MOCK_MANUAL_OVERRIDE_DATA"));
+          return { asset_path: dummyPath, fallback_tier: 0, degraded: false };
+        },
+      };
+
+      const manifest = await generateEpisodeThumbnail(repository, {
+        channelId: channel.channel_id,
+        episodeId: episode.episode_id,
+        aspectRatio: "16:9",
+        customHookText: "This Is An Explicit User Custom Hook Override",
+        imageProvider: mockImageProvider,
+      });
+
+      expect(manifest.hook_text).toBe("THIS IS AN EXPLICIT USER");
+    });
+
+    it("preserves valid concise options.customHookText without condensation", async () => {
+      const channel = await repository.createChannel({ name: "Concise Override Channel" });
+      const episode = await createTestEpisode(repository, channel.channel_id, "Test Episode", "Test Description");
+
+      const mockImageProvider: ImageProvider = {
+        generateReference: async () => {
+          const dummyPath = path.join(tempDir, "mock_concise_override.jpg");
+          await writeFile(dummyPath, Buffer.from("MOCK_CONCISE_OVERRIDE_DATA"));
+          return { asset_path: dummyPath, fallback_tier: 0, degraded: false };
+        },
+      };
+
+      const manifest = await generateEpisodeThumbnail(repository, {
+        channelId: channel.channel_id,
+        episodeId: episode.episode_id,
+        aspectRatio: "16:9",
+        customHookText: "CAN YOU PASS?",
+        imageProvider: mockImageProvider,
+      });
+
+      expect(manifest.hook_text).toBe("CAN YOU PASS?");
+    });
+
+    it("ignores long localization artifact thumbnail text and allows fallback layout template hook", async () => {
+      const channel = await repository.createChannel({ name: "Long Artifact Hook Channel" });
+      const episode = await createTestEpisode(
+        repository,
+        channel.channel_id,
+        "Solar System Secrets: Would You Rather Explore Mars or Jupiter?",
+        "Epic space showdown",
+      );
+
+      // Durably save a localization artifact with an old long topic title as thumbnail_text
+      await saveProductLocalizationArtifact(repository, channel.channel_id, episode.slug, {
+        schema_version: 1,
+        product_id: episode.episode_id,
+        content_kind: "episode",
+        target_language: "en",
+        source_question_ids: ["q1"],
+        source_content_hashes: ["0".repeat(64)],
+        status: "applied",
+        quiz_questions: [],
+        thumbnail_text: "Arcade Game Secrets: True or False Gaming Showdown", // 8 words / 49 chars (TOO LONG)
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
+      const mockImageProvider: ImageProvider = {
+        generateReference: async () => {
+          const dummyPath = path.join(tempDir, "mock_long_artifact.jpg");
+          await writeFile(dummyPath, Buffer.from("MOCK_LONG_ARTIFACT_DATA"));
+          return { asset_path: dummyPath, fallback_tier: 0, degraded: false };
+        },
+      };
+
+      const manifest = await generateEpisodeThumbnail(repository, {
+        channelId: channel.channel_id,
+        episodeId: episode.episode_id,
+        aspectRatio: "16:9",
+        imageProvider: mockImageProvider,
+      });
+
+      // Must NOT be the suppressed 8-word raw topic title
+      expect(manifest.hook_text).not.toBe("Arcade Game Secrets: True or False Gaming Showdown");
+      // Must use punchy layout/template hook (resolved topic hook "SOLAR SYSTEM QUIZ")
+      expect(manifest.hook_text).toBe("SOLAR SYSTEM QUIZ");
+    });
+
+    it("uses short localization artifact thumbnail text when no manual override is provided", async () => {
+      const channel = await repository.createChannel({ name: "Short Artifact Hook Channel" });
+      const episode = await createTestEpisode(repository, channel.channel_id, "Space Quiz", "Space quiz description");
+
+      // Save localization artifact with a valid punchy short hook
+      await saveProductLocalizationArtifact(repository, channel.channel_id, episode.slug, {
+        schema_version: 1,
+        product_id: episode.episode_id,
+        content_kind: "episode",
+        target_language: "en",
+        source_question_ids: ["q1"],
+        source_content_hashes: ["0".repeat(64)],
+        status: "applied",
+        quiz_questions: [],
+        thumbnail_text: "CAN YOU PASS?", // 3 words / 13 chars (VALID SHORT HOOK)
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
+      const mockImageProvider: ImageProvider = {
+        generateReference: async () => {
+          const dummyPath = path.join(tempDir, "mock_short_artifact.jpg");
+          await writeFile(dummyPath, Buffer.from("MOCK_SHORT_ARTIFACT_DATA"));
+          return { asset_path: dummyPath, fallback_tier: 0, degraded: false };
+        },
+      };
+
+      const manifest = await generateEpisodeThumbnail(repository, {
+        channelId: channel.channel_id,
+        episodeId: episode.episode_id,
+        aspectRatio: "16:9",
+        imageProvider: mockImageProvider,
+      });
+
+      expect(manifest.hook_text).toBe("CAN YOU PASS?");
     });
   });
 });

@@ -20,20 +20,6 @@ async function fixture(): Promise<RepositoryService> {
   return new RepositoryService(root);
 }
 
-function makeMockBindings(topicId: string, count = 8) {
-  return Array.from({ length: count }, (_, i) => ({
-    source_question_id: `src_${topicId}_${i}`,
-    source_hash_version: 1 as const,
-    source_content_hash: "0000000000000000000000000000000000000000000000000000000000000000",
-    projection_provenance: {
-      source_variant: "native" as const,
-      resolved_language: "en" as const,
-      translation_key: null,
-      translation_provenance: "native" as const,
-    },
-  }));
-}
-
 afterEach(async () => {
   await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
 });
@@ -132,7 +118,6 @@ describe("RepositoryService", () => {
       generated_at: new Date().toISOString(),
       selected: false,
       question_count: 8,
-      source_bindings: makeMockBindings(`topic_${index}`, 8),
     }));
     await repository.saveTopicRun(channel.channel_id, topics);
     expect((await repository.listEpisodes(channel.channel_id)).length).toBe(0);
@@ -163,7 +148,6 @@ describe("RepositoryService", () => {
       generated_at: new Date().toISOString(),
       selected: false,
       question_count: 8,
-      source_bindings: makeMockBindings(`delete_topic_${index}`, 8),
     }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);
@@ -283,7 +267,6 @@ describe("scene markdown", () => {
       generated_at: new Date().toISOString(),
       selected: false,
       question_count: 8,
-      source_bindings: makeMockBindings(`audio_topic_${index}`, 8),
     }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, topics[0].topic_id);

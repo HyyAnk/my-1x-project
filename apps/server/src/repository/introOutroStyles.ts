@@ -2,12 +2,7 @@ import { execFile } from "node:child_process";
 import { access, copyFile, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import {
-  IntroOutroStyleSchema,
-  nowIso,
-  type IntroOutroClipMeta,
-  type IntroOutroStyle,
-} from "@studio/shared";
+import { IntroOutroStyleSchema, type IntroOutroClipMeta, type IntroOutroStyle } from "@studio/shared";
 import { RepositoryError } from "./errors.js";
 import type { RepositoryRuntime } from "./runtime.js";
 
@@ -33,11 +28,10 @@ export async function probeAndValidate1080pVideo(
 ): Promise<{ duration_seconds: number; width: number; height: number; fps: number; has_audio: boolean }> {
   let probe: FfprobeOutput;
   try {
-    const result = await execFileAsync(
-      "ffprobe",
-      ["-v", "error", "-show_streams", "-show_format", "-of", "json", filePath],
-      { timeout: 30_000, windowsHide: true },
-    );
+    const result = await execFileAsync("ffprobe", ["-v", "error", "-show_streams", "-show_format", "-of", "json", filePath], {
+      timeout: 30_000,
+      windowsHide: true,
+    });
     probe = JSON.parse(result.stdout) as FfprobeOutput;
   } catch (error) {
     const msg = error instanceof Error ? error.message : "ffprobe execution failed";
@@ -109,11 +103,10 @@ export async function probeAndValidate1080pVideo(
 export async function extractVideoThumbnail(videoPath: string, targetThumbPath: string, durationSeconds: number): Promise<void> {
   const seekTime = durationSeconds >= 1.0 ? "0.5" : "0.0";
   try {
-    await execFileAsync(
-      "ffmpeg",
-      ["-y", "-ss", seekTime, "-i", videoPath, "-vframes", "1", "-q:v", "2", targetThumbPath],
-      { timeout: 30_000, windowsHide: true },
-    );
+    await execFileAsync("ffmpeg", ["-y", "-ss", seekTime, "-i", videoPath, "-vframes", "1", "-q:v", "2", targetThumbPath], {
+      timeout: 30_000,
+      windowsHide: true,
+    });
   } catch {
     // Non-fatal if thumbnail extraction fails
   }
@@ -171,11 +164,7 @@ export async function getChannelIntroOutroStyle(
   }
 }
 
-export async function saveChannelIntroOutroStyle(
-  this: RepositoryRuntime,
-  channelId: string,
-  style: IntroOutroStyle,
-): Promise<void> {
+export async function saveChannelIntroOutroStyle(this: RepositoryRuntime, channelId: string, style: IntroOutroStyle): Promise<void> {
   const channel = await this.getChannel(channelId);
   const styleDir = getStyleDir(this, channel.slug, style.style_id);
   await mkdir(styleDir, { recursive: true });
@@ -183,11 +172,7 @@ export async function saveChannelIntroOutroStyle(
   await this.writeJsonAtomic(metaPath, style);
 }
 
-export async function deleteChannelIntroOutroStyle(
-  this: RepositoryRuntime,
-  channelId: string,
-  styleId: string,
-): Promise<void> {
+export async function deleteChannelIntroOutroStyle(this: RepositoryRuntime, channelId: string, styleId: string): Promise<void> {
   const channel = await this.getChannel(channelId);
   const styleDir = getStyleDir(this, channel.slug, styleId);
   await rm(styleDir, { recursive: true, force: true });
@@ -199,7 +184,7 @@ export async function processAndStoreStyleClip(
   styleId: string,
   kind: "intro" | "outro",
   sourceBufferOrPath: Buffer | string,
-  originalFilename: string,
+  _originalFilename: string,
 ): Promise<IntroOutroClipMeta> {
   const channel = await this.getChannel(channelId);
   const styleDir = getStyleDir(this, channel.slug, styleId);
@@ -210,7 +195,7 @@ export async function processAndStoreStyleClip(
   const thumbFilename = `${kind}_thumb.jpg`;
   const targetThumbPath = path.join(styleDir, thumbFilename);
 
-  let tempPath: string | null = null;
+  const tempPath: string | null = null;
   let videoPathForProbe: string;
 
   if (typeof sourceBufferOrPath === "string") {

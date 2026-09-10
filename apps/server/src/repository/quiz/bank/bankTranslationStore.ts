@@ -7,7 +7,7 @@ import { assertTranslationWritesRetired } from "./bankWritePolicy.js";
 /**
  * Saves a translated version of a question to its corresponding batch file.
  */
-export async function saveQuestionBankTranslationUnlocked(
+export function saveQuestionBankTranslationUnlocked(
   this: RepositoryRuntime,
   questionId: string,
   translation: BankTranslationContent,

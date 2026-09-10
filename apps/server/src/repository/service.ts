@@ -13,6 +13,8 @@ import {
 } from "./pathSafety.js";
 import type { RepositoryRuntime } from "./runtime.js";
 import type { RepositoryRoots } from "./types.js";
+import { EntityIdResolver } from "./cache/entityIdResolver.js";
+import { ChannelCache } from "./cache/channelCache.js";
 import { channelBindings } from "./bindings/channelBindings.js";
 import { topicBindings } from "./bindings/topicBindings.js";
 import { mascotBindings } from "./bindings/mascotBindings.js";
@@ -24,6 +26,7 @@ import { mediaBindings } from "./bindings/mediaBindings.js";
 import { miscBindings } from "./bindings/miscBindings.js";
 import { questionBankBindings } from "./bindings/questionBankBindings.js";
 import { shortReelBindings } from "./bindings/shortReelBindings.js";
+export { deleteShortReel } from "./shortReels.js";
 import { acquireWriterAdmission, releaseWriterAdmission, isWriterAdmissionHeld } from "./shortReelStorage.js";
 import { listStylePresets, createStylePreset, updateStylePreset, deleteStylePreset } from "./stylePresets.js";
 import {
@@ -43,6 +46,8 @@ export interface RepositoryService extends RepositoryRuntime {}
 export class RepositoryService {
   private writerState: "open" | "switching" | "closed" = "open";
   readonly serviceId: string;
+  readonly entityIdResolver = new EntityIdResolver();
+  readonly channelCache = new ChannelCache();
   roots: RepositoryRoots;
   readonly questionHistoryWrites = new Map<string, Promise<void>>();
   readonly usageLedgerWrites = new Map<string, Promise<void>>();
@@ -68,6 +73,8 @@ export class RepositoryService {
     try {
       await releaseWriterAdmission(oldRoot, this.serviceId);
       this.roots = this.createRoots(storageRoot);
+      this.entityIdResolver.clear();
+      this.channelCache.clear();
     } finally {
       if (this.writerState === "switching") this.writerState = "open";
     }
@@ -182,7 +189,7 @@ export class RepositoryService {
   }
 
   async loadEpisodeFile(channelId: string, episodeId: string, filename: string): Promise<string> {
-    const file = await (this as any).getEpisodeFile(channelId, episodeId, filename);
+    const file = await this.getEpisodeFile(channelId, episodeId, filename);
     return file.content;
   }
 

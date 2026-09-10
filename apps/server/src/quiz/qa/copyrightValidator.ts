@@ -55,8 +55,8 @@ export const STRICT_COPYRIGHT_PATTERNS: CopyrightPatternDef[] = [
 ];
 
 /**
- * Quét chuỗi văn bản để tìm vi phạm từ khóa bản quyền cấm.
- * LƯU Ý: Anime/Manga (Naruto, Goku, Doraemon, One Piece, Conan...) và "Sư tử" trưởng thành hoàn toàn hợp lệ.
+ * Scans a text string for prohibited copyright and trademark terms.
+ * NOTE: Whitelisted Anime/Manga (Naruto, Goku, Doraemon, One Piece, Conan...) and adult lions are permitted.
  */
 export function validateTextCopyright(text: string): CopyrightViolation {
   if (!text || !text.trim()) return { violated: false };
@@ -77,13 +77,13 @@ export function validateTextCopyright(text: string): CopyrightViolation {
 }
 
 /**
- * Kiểm tra kịch bản Quiz Markdown xem có câu hỏi nào chứa từ khóa cấm hay không.
- * Trả về thông tin vi phạm kèm theo số thứ tự câu hỏi để phục vụ re-prompt đích danh.
+ * Validates a Markdown quiz narration script for prohibited copyright terms.
+ * Returns violation details with question number for targeted re-prompting.
  */
 export function validateQuizScriptCopyright(markdown: string): CopyrightViolation {
   if (!markdown || !markdown.trim()) return { violated: false };
 
-  // Tách từng block câu hỏi: ## Question 1, ## Question 2... hoặc Question 1:
+  // Split question blocks: ## Question 1, ## Question 2... or Question 1:
   const questionBlocks = markdown.split(/(?=^#{2,3}\s+Question\s+\d+|^Question\s+\d+[:.—])/gim);
 
   for (const block of questionBlocks) {
@@ -103,8 +103,10 @@ export function validateQuizScriptCopyright(markdown: string): CopyrightViolatio
 }
 
 /**
- * Kiểm tra tài liệu Research Quiz Markdown xem có claim hay ledger entry nào vi phạm không.
+ * Validates a Markdown quiz research dossier for prohibited copyright claims or ledger entries.
  */
 export function validateQuizResearchCopyright(markdown: string): CopyrightViolation {
   return validateQuizScriptCopyright(markdown);
 }
+
+export { validateQuizQuestionCopyright, validateQuizV2Copyright, type QuizV2CopyrightViolation } from "./quizV2CopyrightValidator.js";

@@ -69,6 +69,9 @@ export async function resolveAssets(
       episodeId: input.episodeId,
       activeEngine: input.activeEngine,
       antigravityClient: input.antigravityClient,
+      customHookText: input.customHookText,
+      layoutOverride: input.layoutOverride,
+      badgeOverride: input.badgeOverride,
       imageConfig: input.config.image_generation
         ? {
             api_key: input.config.image_generation.api_key,
@@ -95,9 +98,10 @@ export async function resolveIntroOutroConfig(repository: QuizOrchestratorInput[
     repository.getChannel(channelId).catch(() => null),
     repository.getEpisode(channelId, episodeId).catch(() => null),
   ]);
-  const styleId = episode?.quiz_config?.intro_outro_style_id !== undefined
-    ? episode.quiz_config.intro_outro_style_id
-    : (channel?.default_intro_outro_style_id ?? null);
+  const styleId =
+    episode?.quiz_config?.intro_outro_style_id !== undefined
+      ? episode.quiz_config.intro_outro_style_id
+      : (channel?.default_intro_outro_style_id ?? null);
 
   if (styleId === "none") {
     return { style: null, skipIntro: true, skipOutro: true, introDuration: 0, outroDuration: 0 };

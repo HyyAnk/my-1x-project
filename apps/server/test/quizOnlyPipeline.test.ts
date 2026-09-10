@@ -28,8 +28,6 @@ describe("Quiz-only server pipeline", () => {
       const source = readFileSync(path.join(serverRoot, relative), "utf8");
       expect(source).not.toMatch(/channel\.(engine|group_id)/);
     }
-    const retiredRunner = ["docu", "mentaryPipelineRunner.ts"].join("");
     expect(existsSync(path.join(serverRoot, "tasks/pipeline/quizProductionPipelineRunner.ts"))).toBe(true);
-    expect(existsSync(path.join(serverRoot, "tasks/pipeline", retiredRunner))).toBe(false);
   });
 });

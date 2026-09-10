@@ -85,7 +85,7 @@ describe("BGM Registry and Audio Pipeline", () => {
     expect(schedule.length).toBe(1);
     expect(schedule[0]?.startSeconds).toBe(0);
     expect(schedule[0]?.durationSeconds).toBe(175);
-    expect(schedule[0]?.volume).toBe(0.18);
+    expect(schedule[0]?.volume).toBe(0.09);
     expect(schedule[0]?.bpm).toBeGreaterThan(110);
   });
 
@@ -116,7 +116,7 @@ describe("BGM Registry and Audio Pipeline", () => {
     // Check BGM tag
     expect(bundle.html).toContain('class="clip bgm-clip"');
     expect(bundle.html).toContain('data-track-index="4"');
-    expect(bundle.html).toContain('data-volume="0.18"');
+    expect(bundle.html).toContain('data-volume="0.09"');
     expect(bundle.html).toContain('data-automation="');
     expect(bundle.html).toContain('src="./bgm/');
     expect(bundle.html).not.toContain('src="file:///');
@@ -134,8 +134,8 @@ describe("BGM Registry and Audio Pipeline", () => {
     expect(points.length).toBeGreaterThanOrEqual(3);
     // Starts at 0 (fade-in)
     expect(points[0]).toEqual({ t: 0, v: 0 });
-    // Ramps to base volume 0.18
-    expect(points[1]).toEqual({ t: 0.5, v: 0.18 });
+    // Ramps to base volume 0.09
+    expect(points[1]).toEqual({ t: 0.5, v: 0.09 });
     // Ends at 0 (fade-out at total duration)
     expect(points[points.length - 1].v).toBe(0);
     expect(points[points.length - 1].t).toBeCloseTo(timeline.duration_seconds, 1);

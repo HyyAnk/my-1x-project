@@ -1,5 +1,7 @@
 import type {
   Episode,
+  PaginationMeta,
+  PaginationQuery,
   ProductionAssessment,
   Scene,
   Task,
@@ -9,8 +11,38 @@ import type {
 } from "@studio/shared";
 import { request, type BundleImage } from "./client";
 
+export type PaginationQueryParams = PaginationQuery;
+
+export interface GetEpisodesResponse {
+  episodes: Episode[];
+  total?: number;
+  page?: number;
+  limit?: number;
+  total_pages?: number;
+  pagination?: PaginationMeta;
+}
+
 export const episodeApi = {
-  episodes: (id: string) => request<{ episodes: Episode[] }>(`/api/channels/${id}/episodes`),
+  episodes: (id: string, params?: PaginationQueryParams) => {
+    const searchParams = new URLSearchParams();
+    if (params?.page !== undefined) searchParams.set("page", String(params.page));
+    if (params?.limit !== undefined) searchParams.set("limit", String(params.limit));
+    if (params?.search !== undefined && params.search.trim() !== "") searchParams.set("search", params.search.trim());
+    if (params?.sort !== undefined && params.sort.trim() !== "") searchParams.set("sort", params.sort.trim());
+    if (params?.status !== undefined && params.status.trim() !== "") searchParams.set("status", params.status.trim());
+    if (params?.projection !== undefined) searchParams.set("projection", params.projection);
+    const qs = searchParams.toString();
+    return request<GetEpisodesResponse>(`/api/channels/${id}/episodes${qs ? `?${qs}` : ""}`);
+  },
+  batchEpisodeTitles: (episodeIds: string[]) =>
+    request<{ titles: Record<string, string> }>("/api/episodes/batch-titles", {
+      method: "POST",
+      body: JSON.stringify({ episode_ids: episodeIds }),
+    }),
+  episodeTitles: (episodeIds: string[]) => {
+    const qs = episodeIds.map(encodeURIComponent).join(",");
+    return request<{ titles: Record<string, string> }>(`/api/episodes/titles?ids=${qs}`);
+  },
   deleteEpisode: (channelId: string, episodeId: string) =>
     request<{ ok: true }>(`/api/channels/${channelId}/episodes/${episodeId}?confirm=true`, { method: "DELETE" }),
   updateEpisode: (channelId: string, episodeId: string, body: Partial<Episode["quiz_config"]> & { target_duration_minutes?: number }) =>
@@ -40,8 +72,8 @@ export const episodeApi = {
       method: "POST",
       body: JSON.stringify({ force }),
     }),
-  bundleImageUrl: (channelId: string, episodeId: string, filename: string) =>
-    `/api/channels/${channelId}/episodes/${episodeId}/visual-bible/images/${encodeURIComponent(filename)}`,
+  bundleImageUrl: (channelId: string, episodeId: string, filename: string, version?: string) =>
+    `/api/channels/${channelId}/episodes/${episodeId}/visual-bible/images/${encodeURIComponent(filename)}${version ? `?v=${encodeURIComponent(version)}` : ""}`,
   downloadBundleImagesUrl: (channelId: string, episodeId: string) =>
     `/api/channels/${channelId}/episodes/${episodeId}/visual-bible/images/download`,
   productionAssessment: (channelId: string, episodeId: string) =>

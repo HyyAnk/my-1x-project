@@ -9,6 +9,7 @@ import type { QuizThumbnailPlan, ResolveThumbnailInput } from "./thumbnailTypes.
 import { resolveMascotThemedPersona } from "./thumbnailPersonaResolver.js";
 import { resolveSubjectAnchors } from "./thumbnailSubjectAnchorResolver.js";
 import { resolveFallbackEnvironment } from "./thumbnailEnvironmentResolver.js";
+import { sanitizeThumbnailHook } from "./thumbnailHookGuardrail.js";
 
 export { resolveMascotThemedPersona } from "./thumbnailPersonaResolver.js";
 export { resolveSubjectAnchors } from "./thumbnailSubjectAnchorResolver.js";
@@ -115,7 +116,8 @@ export function resolveThumbnailLayout(input: ResolveThumbnailInput): QuizThumbn
   const localized = getThumbnailLocalizedTexts(layout, count, language);
 
   const topicSpecificHook = resolveTopicSpecificHook(topicLower, language);
-  const hookText = input.customHookText || topicSpecificHook || localized.hookText;
+  const rawHookCandidate = input.customHookText || topicSpecificHook || localized.hookText;
+  const hookText = sanitizeThumbnailHook(rawHookCandidate, localized.hookText);
   const badgeText = getCuriosityBadgeText(input.badgeOverride, count, language, localized.badgeText, input.rng);
 
   // 3. Resolve Contextual Mascot Persona based on Topic & Layout

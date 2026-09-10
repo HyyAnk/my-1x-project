@@ -16,6 +16,7 @@
 @import "./components/buttons.css";
 @import "./components/cards.css";
 @import "./components/modals.css";
+@import "./components/pagination.css";
 
 /* 5. Feature-specific Styles */
 @import "./features/dashboard.css";
@@ -27,6 +28,10 @@
 @import "./features/remix.css";
 @import "./features/mascot.css";
 @import "./features/sandbox.css";
+@import "./features/transitionPreview.css";
 
 /* 6. Responsive Breakpoints & Media Queries */
 @import "./responsive.css";
+
+/* 7. Shared Motion & Transitions */
+@import "./transitions.css";

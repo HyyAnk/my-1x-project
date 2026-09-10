@@ -51,6 +51,7 @@ export type CandyArcadeCompositionInput = {
   introVideoPath?: string;
   outroVideoPath?: string;
   transitionType?: IntroOutroTransitionType;
+  transitionDurationSeconds?: number;
 };
 
 export type CandyArcadeCompositionBundle = {
@@ -117,7 +118,15 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
 
   const clips: string[] = [];
   if (input.introVideoPath && firstStart > 0.04) {
-    clips.push(customIntroVideoClip(input.introVideoPath, firstStart, input.transitionType ?? "stinger_swipe"));
+    clips.push(
+      customIntroVideoClip(
+        input.introVideoPath,
+        firstStart,
+        input.transitionType ?? "stinger_swipe",
+        true,
+        input.transitionDurationSeconds,
+      ),
+    );
   } else if (firstStart > 0.04) {
     const introMascot = adaptMascotForPhase(input.mascot, "intro", chosenStyleId);
     clips.push(introClip(firstStart, input.quiz.questions.length, copy, introMascot, input.mascotConfig, aspectRatio));

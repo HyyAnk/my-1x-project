@@ -117,6 +117,7 @@ export async function waitForTaskTerminal(
   taskId: string,
   run: PipelineRun,
   onProgress?: (task: Task) => Promise<void> | void,
+  pollIntervalMs = 30,
 ): Promise<Task> {
   let lastStatus: Task["status"] | "" = "";
   let lastProgressMessage = "";
@@ -146,6 +147,6 @@ export async function waitForTaskTerminal(
       }
     }
     if (["COMPLETED", "FAILED", "CANCELLED"].includes(task.status)) return task;
-    await new Promise((resolve) => setTimeout(resolve, 30));
+    await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
   }
 }

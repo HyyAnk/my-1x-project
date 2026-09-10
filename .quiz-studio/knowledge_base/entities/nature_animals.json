@@ -3187,7 +3187,16 @@
       "Honey Badger",
       "Gray Wolf",
       "Grizzly Bear"
-    ]
+    ],
+    "copyright_risk": "none",
+    "is_trademark_ip": false,
+    "forbidden_visual_keywords": [
+      "Marvel",
+      "X-Men",
+      "superhero",
+      "Logan"
+    ],
+    "safe_visual_proxy": "Wild taiga mammal Gulo gulo with shaggy brown fur cresting a snowy ridge."
   },
   {
     "id": "ENT-ANI-072",
@@ -4942,7 +4951,16 @@
       "Dingo",
       "Wolverine",
       "Honey Badger"
-    ]
+    ],
+    "copyright_risk": "none",
+    "is_trademark_ip": false,
+    "forbidden_visual_keywords": [
+      "Looney Tunes",
+      "Warner Bros",
+      "Taz",
+      "cartoon"
+    ],
+    "safe_visual_proxy": "A stocky black carnivorous marsupial Sarcophilus harrisii with a white chest crescent on Australian forest ground."
   },
   {
     "id": "ENT-ANI-111",

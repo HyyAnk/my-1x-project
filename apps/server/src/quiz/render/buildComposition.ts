@@ -154,6 +154,7 @@ export type QuizV2CompositionInput = {
   introVideoPath?: string;
   outroVideoPath?: string;
   transitionType?: IntroOutroTransitionType;
+  transitionDurationSeconds?: number;
 };
 
 /**

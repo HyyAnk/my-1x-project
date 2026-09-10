@@ -1,4 +1,4 @@
-import type { Task } from "@studio/shared";
+import type { Task, ThumbnailLayoutType } from "@studio/shared";
 import type { StudioLogger } from "../../logger.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 import type { QuizVoicePacingClamp } from "../../quiz/audio/voiceSynthesis.js";
@@ -16,7 +16,16 @@ export function handleVoicePacingClamp(logger: StudioLogger, channelId: string, 
   });
 }
 
-export function createQuizPipelineInput(runtime: TaskManagerRuntime, task: Task, isParallelMode: () => boolean) {
+export function createQuizPipelineInput(
+  runtime: TaskManagerRuntime,
+  task: Task,
+  isParallelMode: () => boolean,
+  options?: {
+    customHookText?: string;
+    layoutOverride?: ThumbnailLayoutType;
+    badgeOverride?: string;
+  },
+) {
   let assetState = { completed: 0, total: 0, reused: false };
   let voiceState = { completed: 0, total: 0, reused: false };
 
@@ -41,6 +50,9 @@ export function createQuizPipelineInput(runtime: TaskManagerRuntime, task: Task,
     episodeId: task.episode_id!,
     activeEngine: runtime.activeEngine,
     antigravityClient: runtime.antigravity,
+    customHookText: options?.customHookText,
+    layoutOverride: options?.layoutOverride,
+    badgeOverride: options?.badgeOverride,
     onAssetProgress: async ({ completed, total, reused }: { completed: number; total: number; reused: boolean }) => {
       assetState = { completed, total, reused };
       if (isParallelMode()) {

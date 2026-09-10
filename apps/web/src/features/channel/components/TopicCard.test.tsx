@@ -49,11 +49,11 @@ describe("TopicCard", () => {
     expect(badge).toBeNull();
   });
 
-  it("renders 'Build Video (1-Click)' button and calls onConfirm with selected question count and visual style", () => {
+  it("renders 'Select Topic' button and calls onConfirm with selected question count and visual style", () => {
     const onConfirmMock = vi.fn();
     const { getByRole } = render(<TopicCard topic={baseTopic} onConfirm={onConfirmMock} busy={false} disabled={false} />);
 
-    const buildButton = getByRole("button", { name: /Build Video \(1-Click\)/i });
+    const buildButton = getByRole("button", { name: /Select Topic/i });
     expect(buildButton).toBeDefined();
     expect(buildButton.className).toContain("primary-button");
     expect(buildButton.className).toContain("topic-build-btn");
@@ -63,12 +63,12 @@ describe("TopicCard", () => {
     expect(onConfirmMock).toHaveBeenCalledWith(5, "pixar_3d");
   });
 
-  it("displays spinner and 'Building Video…' when busy is true", () => {
+  it("displays spinner and 'Selecting Topic…' when busy is true", () => {
     const onConfirmMock = vi.fn();
     const { getByRole, queryByText } = render(<TopicCard topic={baseTopic} onConfirm={onConfirmMock} busy={true} disabled={false} />);
 
-    const busyButton = getByRole("button", { name: /Building Video…/i });
+    const busyButton = getByRole("button", { name: /Selecting Topic…/i });
     expect(busyButton).toBeDefined();
-    expect(queryByText(/Build Video \(1-Click\)/i)).toBeNull();
+    expect(queryByText(/Select Topic/i)).toBeNull();
   });
 });

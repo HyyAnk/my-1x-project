@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CircleNotch, Lightning } from "@phosphor-icons/react";
+import { CheckCircle, CircleNotch } from "@phosphor-icons/react";
 import {
   ALL_QUIZ_IMAGE_STYLES,
   QUIZ_IMAGE_STYLE_LABELS,
@@ -30,33 +30,22 @@ function TopicTopBar({
   const isShortReel = topic.content_kind === "short_reel";
   return (
     <div className="topic-card-top-bar">
-      <div style={{ display: "flex", gap: "6px", alignItems: "center", flexWrap: "wrap" }}>
-        <div className="topic-number">{isShortReel ? "Short-Reel" : "Episode"} candidate</div>
-        <span
-          className="badge"
-          style={{
-            fontSize: "11px",
-            padding: "1px 6px",
-            borderRadius: "4px",
-            backgroundColor: isShortReel ? "#8b5cf6" : "#0284c7",
-            color: "#fff",
-            fontWeight: 600,
-          }}
-        >
-          {isShortReel ? "9:16 Vertical" : "16:9 Landscape"}
-        </span>
-        <span
-          className="badge"
-          style={{
-            fontSize: "11px",
-            padding: "1px 6px",
-            borderRadius: "4px",
-            backgroundColor: topic.origin === "keyword" ? "#f59e0b" : "#475569",
-            color: "#fff",
-          }}
-        >
-          {topic.origin === "keyword" ? "Keyword-directed" : "Discovery"}
-        </span>
+      <div className="topic-card-top-row">
+        <div className="topic-card-format-group">
+          <span className={`topic-format-badge ${isShortReel ? "is-vertical" : "is-landscape"}`}>
+            {isShortReel ? "9:16 Short-Reel" : "16:9 Episode"}
+          </span>
+          <span className="topic-origin-badge">{topic.origin === "keyword" ? "Keyword" : "Discovery"}</span>
+        </div>
+        <div>
+          {topic.content_kind === "episode" ? (
+            <TopicLayoutPreviewButton quizFormat={topic.quiz_format} archetype={topic.archetype} layoutId={topic.suggested_layout} />
+          ) : (
+            <span className="topic-archetype-tag">{topic.archetype === "versus_faceoff" ? "Versus Face-off" : "Deep Trivia"}</span>
+          )}
+        </div>
+      </div>
+      <div className="topic-card-tags-row">
         {topic.domain_id ? (
           <span className="topic-domain-badge" title={`Domain: ${formatDomain(topic.domain_id)}`}>
             🏛️ {formatDomain(topic.domain_id)}
@@ -68,18 +57,7 @@ function TopicTopBar({
           </span>
         ) : null}
         {availability ? (
-          <span
-            className="badge"
-            style={{
-              fontSize: "11px",
-              padding: "1px 6px",
-              borderRadius: "4px",
-              backgroundColor: canConfirm ? "#059669" : "#dc2626",
-              color: "#fff",
-              fontWeight: 600,
-            }}
-            title={availability.recovery_action}
-          >
+          <span className={`badge topic-availability-pill ${canConfirm ? "is-ready" : "is-unready"}`} title={availability.recovery_action}>
             {canConfirm
               ? `${sourceCapacity} Ready`
               : availability.reason_code === "UNBOUND_LEGACY_TOPIC"
@@ -88,21 +66,6 @@ function TopicTopBar({
           </span>
         ) : null}
       </div>
-      {topic.content_kind === "episode" ? (
-        <TopicLayoutPreviewButton quizFormat={topic.quiz_format} archetype={topic.archetype} layoutId={topic.suggested_layout} />
-      ) : (
-        <span
-          style={{
-            fontSize: "12px",
-            color: "#aaa",
-            border: "1px solid #444",
-            borderRadius: "4px",
-            padding: "2px 8px",
-          }}
-        >
-          {topic.archetype === "versus_faceoff" ? "Versus Face-off" : "Deep Trivia"}
-        </span>
-      )}
     </div>
   );
 }
@@ -132,10 +95,10 @@ function TopicPickers({
 }) {
   if (topic.content_kind === "short_reel") {
     return (
-      <div className="topic-pickers-row" style={{ alignItems: "center" }}>
-        <div style={{ fontSize: "13px", color: "#aaa" }}>
-          <span>Question Bank: </span>
-          <strong style={{ color: "#fff" }}>1 Question ({topic.archetype})</strong>
+      <div className="topic-pickers-row topic-pickers-short-reel">
+        <div className="topic-short-reel-info">
+          <span>Question Bank</span>
+          <strong>1 Question ({topic.archetype})</strong>
         </div>
       </div>
     );
@@ -189,20 +152,8 @@ function TopicPickers({
 function TopicAvailabilityNotice({ availability }: { availability: TopicAvailability }) {
   if (availability.can_confirm) return null;
   return (
-    <div
-      className="topic-availability-notice"
-      role="alert"
-      style={{
-        padding: "8px 12px",
-        borderRadius: "6px",
-        backgroundColor: "rgba(220, 38, 38, 0.1)",
-        border: "1px solid rgba(220, 38, 38, 0.3)",
-        fontSize: "12px",
-        color: "#fca5a5",
-        marginBottom: "12px",
-      }}
-    >
-      <strong style={{ display: "block", marginBottom: "2px" }}>{availability.reason_code.replace(/_/g, " ")}</strong>
+    <div className="topic-availability-notice" role="alert">
+      <strong>{availability.reason_code.replace(/_/g, " ")}</strong>
       <span>{availability.recovery_action}</span>
     </div>
   );
@@ -234,7 +185,12 @@ function TopicFooter({
   const isShortReel = topic.content_kind === "short_reel";
   return (
     <div className="topic-footer">
-      <span>{topic.estimated_potential}</span>
+      <div className="topic-footer-meta">
+        <span className="topic-potential-label">Potential</span>
+        <span className="topic-potential-val" title={`Estimated Potential: ${topic.estimated_potential || "Normal"}`}>
+          {topic.estimated_potential || "Normal"}
+        </span>
+      </div>
       <button
         className="primary-button topic-build-btn"
         disabled={disabled || !isQuestionCountValid || !canConfirm}
@@ -243,8 +199,10 @@ function TopicFooter({
         }
         onClick={() => onConfirm(isShortReel ? 1 : questionCount, selectedStyle)}
       >
-        {busy ? <CircleNotch className="spin" size={15} /> : <Lightning size={14} weight="fill" />}
-        {busy ? (isShortReel ? "Creating Short-Reel…" : "Building Video…") : isShortReel ? "Create Short-Reel" : "Build Video (1-Click)"}
+        {busy ? <CircleNotch className="spin" size={15} /> : <CheckCircle size={15} weight="bold" />}
+        <span>
+          {busy ? (isShortReel ? "Creating Short-Reel…" : "Selecting Topic…") : isShortReel ? "Create Short-Reel" : "Select Topic"}
+        </span>
       </button>
     </div>
   );
@@ -290,15 +248,21 @@ export function TopicCard({
   return (
     <article className={`topic-card ${isShortReel ? "topic-card-short-reel" : ""}`}>
       <TopicTopBar topic={topic} availability={availability} canConfirm={canConfirm} sourceCapacity={sourceCapacity} />
-      <h3>{topic.title}</h3>
-      <p className="topic-premise">{topic.premise}</p>
-      <div className="topic-detail">
-        <span>Why it fits</span>
-        <p>{topic.why_it_fits}</p>
-      </div>
-      <div className="topic-detail">
-        <span>Hook</span>
-        <p>{topic.hook}</p>
+      <h3 className="topic-card-title" title={topic.title}>
+        {topic.title}
+      </h3>
+      <p className="topic-premise" title={topic.premise}>
+        {topic.premise}
+      </p>
+      <div className="topic-insights-panel">
+        <div className="topic-insight-item topic-detail">
+          <span>Why it fits</span>
+          <p title={topic.why_it_fits}>{topic.why_it_fits}</p>
+        </div>
+        <div className="topic-insight-item topic-detail">
+          <span>Hook</span>
+          <p title={topic.hook}>{topic.hook}</p>
+        </div>
       </div>
       <TopicPickers
         topic={topic}

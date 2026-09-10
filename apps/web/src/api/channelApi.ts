@@ -26,7 +26,7 @@ export const channelApi = {
     topicId: string,
     questionCount?: number,
     visualStyle?: QuizImageStyle | "mixed",
-    autoStartPipeline: boolean = true,
+    autoStartPipeline: boolean = false,
     renderAspectRatio?: "9:16" | "16:9",
   ) =>
     request<ConfirmTopicResponse>(`/api/channels/${channelId}/topics/${topicId}/confirm`, {

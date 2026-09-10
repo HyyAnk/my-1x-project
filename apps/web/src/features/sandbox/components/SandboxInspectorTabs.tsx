@@ -1,9 +1,11 @@
-import { Question, SlidersHorizontal, Smiley } from "@phosphor-icons/react";
+import { ArrowsLeftRight, Question, SlidersHorizontal, Smiley } from "@phosphor-icons/react";
 import { useTranslation } from "../../../i18n";
 
+export type SandboxInspectorTabId = "design" | "mascot" | "content" | "transition";
+
 export interface SandboxInspectorTabsProps {
-  activeTab: "design" | "mascot" | "content";
-  onTabChange: (tab: "design" | "mascot" | "content") => void;
+  activeTab: SandboxInspectorTabId;
+  onTabChange: (tab: SandboxInspectorTabId) => void;
   mascotEnabled: boolean;
   mascotId: string;
 }
@@ -15,7 +17,7 @@ export function SandboxInspectorTabs({ activeTab, onTabChange, mascotEnabled, ma
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "1.2fr 1fr 1fr",
+        gridTemplateColumns: "1.1fr 1fr 1fr 1fr",
         gap: "3px",
         background: "var(--surface-strong)",
         padding: "3px",
@@ -52,6 +54,15 @@ export function SandboxInspectorTabs({ activeTab, onTabChange, mascotEnabled, ma
       >
         <Question size={13} weight="bold" />
         <span>{t("visualSandbox.tabContent")}</span>
+      </button>
+      <button
+        type="button"
+        className={activeTab === "transition" ? "primary-button compact" : "quiet-button compact"}
+        style={{ fontSize: "11px", padding: "6px 4px", justifyContent: "center", borderRadius: "7px" }}
+        onClick={() => onTabChange("transition")}
+      >
+        <ArrowsLeftRight size={13} weight="bold" />
+        <span>{t("visualSandbox.tabTransition")}</span>
       </button>
     </div>
   );

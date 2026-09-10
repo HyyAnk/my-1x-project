@@ -23,7 +23,7 @@ export function ShotPlanHeader({
   episodeTasks,
   onCreateTask,
 }: ShotPlanHeaderProps) {
-  const generateScenesTask = latestTask(episodeTasks, ["GENERATE_SCENES"]);
+  const generateScenesTask = latestTask(episodeTasks, ["GENERATE_SCENES", "GENERATE_SEQUENCE_SCENES"]);
   const isGenerating = Boolean(generateScenesTask && isTaskActive(generateScenesTask));
 
   return (

@@ -1,9 +1,10 @@
 import path from "node:path";
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir, readFile, readdir } from "node:fs/promises";
 import { z } from "zod";
-import { nowIso, type QuizQuestion, type ShortReelDisplayProjection } from "@studio/shared";
+import { nowIso, type Episode, type QuizQuestion, type ShortReelDisplayProjection, type ShortReelRecord } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../../repository.js";
 import { executeSinglePromptText, type LLMClient } from "../../../utils/promptSanitizer.js";
+import { TopicConfirmationReceiptSchema, type TopicConfirmationReceipt } from "../../../repository/topicConfirmationReceipts.js";
 
 export type { ShortReelDisplayProjection };
 
@@ -104,10 +105,7 @@ export function extractShortReelDisplayProjection(
   const choiceMap = new Map(localizedQ.choices.map((c) => [c.id, c.text]));
   const choiceId = source.selected_choice_id || source.correct_choice_id;
   const projectedAnswerText =
-    (choiceId ? choiceMap.get(choiceId) : undefined) ||
-    choiceMap.get("c1") ||
-    choiceMap.get("a") ||
-    source.selected_answer_text;
+    (choiceId ? choiceMap.get(choiceId) : undefined) || choiceMap.get("c1") || choiceMap.get("a") || source.selected_answer_text;
 
   return {
     question_text: localizedQ.question || source.question_text,
@@ -316,17 +314,25 @@ export async function loadProductLocalizationArtifact(
     try {
       parsed = JSON.parse(raw);
     } catch (error) {
-      throw new RepositoryError("LOCALIZATION_CORRUPTED: Episode localization artifact is not valid JSON.", "LOCALIZATION_CORRUPTED", { cause: error });
+      throw new RepositoryError("LOCALIZATION_CORRUPTED: Episode localization artifact is not valid JSON.", "LOCALIZATION_CORRUPTED", {
+        cause: error,
+      });
     }
     try {
       return ProductLocalizationArtifactSchema.parse(parsed);
     } catch (error) {
-      throw new RepositoryError("LOCALIZATION_CORRUPTED: Episode localization artifact failed schema validation.", "LOCALIZATION_CORRUPTED", { cause: error });
+      throw new RepositoryError(
+        "LOCALIZATION_CORRUPTED: Episode localization artifact failed schema validation.",
+        "LOCALIZATION_CORRUPTED",
+        { cause: error },
+      );
     }
   } catch (error) {
     if (typeof error === "object" && error !== null && "code" in error && (error as { code?: string }).code === "ENOENT") return null;
     if (error instanceof RepositoryError) throw error;
-    throw new RepositoryError("LOCALIZATION_UNREADABLE: Episode localization artifact could not be read.", "LOCALIZATION_UNREADABLE", { cause: error });
+    throw new RepositoryError("LOCALIZATION_UNREADABLE: Episode localization artifact could not be read.", "LOCALIZATION_UNREADABLE", {
+      cause: error,
+    });
   }
 }
 
@@ -364,16 +370,112 @@ export async function loadShortReelLocalizationArtifact(
     try {
       parsed = JSON.parse(raw);
     } catch (error) {
-      throw new RepositoryError("LOCALIZATION_CORRUPTED: Short-Reel localization artifact is not valid JSON.", "LOCALIZATION_CORRUPTED", { cause: error });
+      throw new RepositoryError("LOCALIZATION_CORRUPTED: Short-Reel localization artifact is not valid JSON.", "LOCALIZATION_CORRUPTED", {
+        cause: error,
+      });
     }
     try {
       return ProductLocalizationArtifactSchema.parse(parsed);
     } catch (error) {
-      throw new RepositoryError("LOCALIZATION_CORRUPTED: Short-Reel localization artifact failed schema validation.", "LOCALIZATION_CORRUPTED", { cause: error });
+      throw new RepositoryError(
+        "LOCALIZATION_CORRUPTED: Short-Reel localization artifact failed schema validation.",
+        "LOCALIZATION_CORRUPTED",
+        { cause: error },
+      );
     }
   } catch (error) {
     if (typeof error === "object" && error !== null && "code" in error && (error as { code?: string }).code === "ENOENT") return null;
     if (error instanceof RepositoryError) throw error;
-    throw new RepositoryError("LOCALIZATION_UNREADABLE: Short-Reel localization artifact could not be read.", "LOCALIZATION_UNREADABLE", { cause: error });
+    throw new RepositoryError("LOCALIZATION_UNREADABLE: Short-Reel localization artifact could not be read.", "LOCALIZATION_UNREADABLE", {
+      cause: error,
+    });
   }
+}
+
+export async function findConfirmationReceiptForProduct(
+  repo: { resolvePath(...segments: string[]): string; getChannel(channelId: string): Promise<{ slug: string }> },
+  channelId: string,
+  productId: string,
+): Promise<TopicConfirmationReceipt | null> {
+  const channel = await repo.getChannel(channelId);
+  const receiptsDir = repo.resolvePath("channels", channel.slug, "receipts");
+  let entries: string[];
+  try {
+    entries = await readdir(receiptsDir);
+  } catch (error) {
+    if (typeof error === "object" && error !== null && "code" in error && (error as { code?: string }).code === "ENOENT") {
+      return null;
+    }
+    throw error;
+  }
+  for (const name of entries) {
+    if (!name.endsWith(".json")) continue;
+    try {
+      const raw = await readFile(path.join(receiptsDir, name), "utf8");
+      const parsed = TopicConfirmationReceiptSchema.safeParse(JSON.parse(raw));
+      if (parsed.success && parsed.data.product_id === productId) {
+        return parsed.data;
+      }
+    } catch {
+      // Ignore unreadable or corrupted sibling receipts during lookup
+    }
+  }
+  return null;
+}
+
+export async function resolveEpisodeTargetLanguage(
+  repo: RepositoryService,
+  channelId: string,
+  episode: Episode,
+): Promise<{ targetLanguage: SupportedBaseLanguage; localization: ProductLocalizationArtifact | null }> {
+  const localization = await loadProductLocalizationArtifact(repo, channelId, episode.slug);
+  if (localization) {
+    return { targetLanguage: localization.target_language, localization };
+  }
+
+  // If no localization artifact exists, check for confirmed receipt
+  const receipt = await findConfirmationReceiptForProduct(repo, channelId, episode.episode_id);
+  if (receipt && receipt.options.target_language) {
+    const receiptLang = normalizeTargetLanguage(receipt.options.target_language);
+    if (receiptLang !== "en") {
+      throw new RepositoryError(
+        `PRODUCT_LANGUAGE_UNRESOLVED: Missing localization artifact for non-English confirmed episode "${episode.episode_id}" (target: ${receiptLang}). Recovery required.`,
+        "PRODUCT_LANGUAGE_UNRESOLVED",
+      );
+    }
+    return { targetLanguage: "en", localization: null };
+  }
+
+  throw new RepositoryError(
+    `PRODUCT_LANGUAGE_UNRESOLVED: Product language cannot be established from a validated receipt or localization artifact for episode "${episode.episode_id}".`,
+    "PRODUCT_LANGUAGE_UNRESOLVED",
+  );
+}
+
+export async function resolveShortReelTargetLanguage(
+  repo: RepositoryStorageAccessor & RepositoryService,
+  channelId: string,
+  reel: ShortReelRecord,
+): Promise<{ targetLanguage: SupportedBaseLanguage; localization: ProductLocalizationArtifact | null }> {
+  const localization = await loadShortReelLocalizationArtifact(repo, channelId, reel.reel_id);
+  if (localization) {
+    return { targetLanguage: localization.target_language, localization };
+  }
+
+  const receipt = await findConfirmationReceiptForProduct(repo, channelId, reel.reel_id);
+  if (receipt && receipt.options.target_language) {
+    const receiptLang = normalizeTargetLanguage(receipt.options.target_language);
+    if (receiptLang !== "en") {
+      throw new RepositoryError(
+        `PRODUCT_LANGUAGE_UNRESOLVED: Missing localization artifact for non-English confirmed Short-Reel "${reel.reel_id}" (target: ${receiptLang}). Recovery required.`,
+        "PRODUCT_LANGUAGE_UNRESOLVED",
+      );
+    }
+    return { targetLanguage: "en", localization: null };
+  }
+
+  throw new RepositoryError(
+    `PRODUCT_LANGUAGE_UNRESOLVED: Product language cannot be established from a validated receipt or localization artifact for Short-Reel "${reel.reel_id}".`,
+    "PRODUCT_LANGUAGE_UNRESOLVED",
+  );
 }

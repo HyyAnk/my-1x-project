@@ -10,4 +10,9 @@ export const taskApi = {
     request<Task>(`/api/tasks/${id}/approval`, { method: "POST", body: JSON.stringify({ request_id: requestId, decision }) }),
   git: () => request<{ branch: string | null; dirty: boolean; changed_files: number }>("/api/git"),
   reconnectCodex: () => request<{ status: string; message?: string }>("/api/codex/reconnect", { method: "POST", body: "{}" }),
+  batchEpisodeTitles: (episodeIds: string[]) =>
+    request<{ titles: Record<string, string> }>("/api/episodes/batch-titles", {
+      method: "POST",
+      body: JSON.stringify({ episode_ids: episodeIds }),
+    }),
 };

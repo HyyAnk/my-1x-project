@@ -243,132 +243,158 @@ export interface ValidateTopicResponseInput {
   shortages?: TopicSourceShortage[];
 }
 
+function validateRawCandidateSlotIds(rawList: unknown[], allowedSlots: Set<string>): void {
+  const seenRawSlots = new Set<string>();
+  for (const item of rawList) {
+    if (!item || typeof item !== "object") continue;
+    const record = item as Record<string, unknown>;
+    const sId = record.slot_id ?? record.slotId;
+    if (typeof sId !== "string" || !sId.trim()) continue;
+
+    const normalizedSlot = sId.trim();
+    if (!allowedSlots.has(normalizedSlot)) {
+      throw new Error(`Unknown allocated slot "${normalizedSlot}"`);
+    }
+    if (seenRawSlots.has(normalizedSlot)) {
+      throw new Error(`Duplicate candidate response for slot "${normalizedSlot}"`);
+    }
+    seenRawSlots.add(normalizedSlot);
+  }
+}
+
+function findCandidateIndexForSlot(rawList: unknown[], slot: AllocatedSlot, idx: number, usedRawIndices: Set<number>): number {
+  let matchIdx = rawList.findIndex(
+    (item, i) =>
+      !usedRawIndices.has(i) &&
+      item &&
+      typeof item === "object" &&
+      ((item as Record<string, unknown>).slot_id === slot.slotId || (item as Record<string, unknown>).slotId === slot.slotId),
+  );
+
+  if (matchIdx === -1 && !usedRawIndices.has(idx)) {
+    const candidateAtIdx = rawList[idx];
+    if (candidateAtIdx && typeof candidateAtIdx === "object" && !Array.isArray(candidateAtIdx)) {
+      const itemObj = candidateAtIdx as Record<string, unknown>;
+      const explicitSlotId = (itemObj.slot_id ?? itemObj.slotId) as string | undefined;
+      if (!explicitSlotId || (typeof explicitSlotId === "string" && (!explicitSlotId.trim() || explicitSlotId.trim() === slot.slotId))) {
+        matchIdx = idx;
+      }
+    }
+  }
+
+  if (matchIdx === -1) {
+    throw new Error(`Missing candidate response for allocated slot "${slot.slotId}"`);
+  }
+
+  return matchIdx;
+}
+
+function buildShortReelRunCandidate(slot: AllocatedSlot, item: Record<string, unknown>, channelId: string): TopicRunCandidate {
+  const textFields = extractCandidateTextFields(item, slot.slot);
+  const topicId = makeId("topic_reel");
+  const origin: TopicProvenanceOrigin = slot.isKeySteered ? "keyword" : "discovery";
+  const themeHint = slot.isKeySteered ? slot.domainTitle : undefined;
+
+  const shortReelCandidate: ShortReelTopicCandidate = {
+    topic_id: topicId,
+    channel_id: channelId,
+    content_kind: "short_reel",
+    title: textFields.title,
+    premise: textFields.premise,
+    why_it_fits: textFields.whyItFits,
+    hook: textFields.hook,
+    estimated_potential: textFields.estimatedPotential,
+    generated_at: nowIso(),
+    selected: false,
+    origin,
+    question_count: 1,
+    aspect_ratio: "9:16",
+    archetype: slot.archetype as "versus_faceoff" | "deep_trivia",
+    ...(themeHint ? { theme_hint: themeHint } : {}),
+    domain_id: slot.domainId,
+    ...(slot.subtopicId ? { subtopic_id: slot.subtopicId } : {}),
+  };
+
+  return TopicRunCandidateSchema.parse({
+    ...TopicCandidateSchema.parse(shortReelCandidate),
+    slot_id: slot.slotId,
+    source_bindings: slot.sourceBindings,
+  });
+}
+
+function buildEpisodeRunCandidate(slot: AllocatedSlot, item: Record<string, unknown>, channelId: string): TopicRunCandidate {
+  const textFields = extractCandidateTextFields(item, slot.slot);
+  const topicId = makeId("topic_ep");
+  const origin: TopicProvenanceOrigin = slot.isKeySteered ? "keyword" : "discovery";
+  const themeHint = slot.isKeySteered ? slot.domainTitle : undefined;
+  const visualStyle = typeof item.visual_style === "string" ? (item.visual_style as EpisodeTopicCandidate["visual_style"]) : "mixed";
+  const ageBand = typeof item.age_band === "string" ? (item.age_band as EpisodeTopicCandidate["age_band"]) : "7-9";
+
+  const episodeCandidate: EpisodeTopicCandidate = {
+    topic_id: topicId,
+    channel_id: channelId,
+    content_kind: "episode",
+    title: textFields.title,
+    premise: textFields.premise,
+    why_it_fits: textFields.whyItFits,
+    hook: textFields.hook,
+    estimated_potential: textFields.estimatedPotential,
+    generated_at: nowIso(),
+    selected: false,
+    origin,
+    quiz_format: slot.quizFormat,
+    archetype: slot.archetype,
+    suggested_layout: slot.suggestedLayout,
+    question_count: slot.questionCount,
+    visual_style: visualStyle,
+    age_band: ageBand,
+    ...(themeHint ? { theme_hint: themeHint } : {}),
+    domain_id: slot.domainId,
+    ...(slot.subtopicId ? { subtopic_id: slot.subtopicId } : {}),
+  };
+
+  return TopicRunCandidateSchema.parse({
+    ...TopicCandidateSchema.parse(episodeCandidate),
+    slot_id: slot.slotId,
+    source_bindings: slot.sourceBindings,
+  });
+}
+
+function buildAllocatedRunCandidate(slot: AllocatedSlot, rawMatch: unknown, channelId: string): TopicRunCandidate {
+  const item = rawMatch as Record<string, unknown>;
+  if (slot.contentKind === "short_reel") {
+    return buildShortReelRunCandidate(slot, item, channelId);
+  }
+  return buildEpisodeRunCandidate(slot, item, channelId);
+}
+
 export function validateTopicCandidateResponse(input: ValidateTopicResponseInput): TopicRunResult {
   const { rawOutput, allocatedSlots, channelId, runId, shortages = [] } = input;
   const rawList = extractRawCandidates(rawOutput);
   const allowedSlots = new Set(allocatedSlots.map((slot) => slot.slotId));
 
-  // Check if rawList has duplicate responses for the same slot
-  const seenRawSlots = new Set<string>();
-  for (const item of rawList) {
-    if (item && typeof item === "object") {
-      const sId = (item as Record<string, unknown>).slot_id ?? (item as Record<string, unknown>).slotId;
-      if (typeof sId === "string" && sId.trim()) {
-        const normalizedSlot = sId.trim();
-        if (!allowedSlots.has(normalizedSlot)) throw new Error(`Unknown allocated slot "${normalizedSlot}"`);
-        if (seenRawSlots.has(normalizedSlot)) {
-          throw new Error(`Duplicate candidate response for slot "${normalizedSlot}"`);
-        }
-        seenRawSlots.add(normalizedSlot);
-      }
-    }
-  }
+  validateRawCandidateSlotIds(rawList, allowedSlots);
 
-  const seenSlots = new Set<string>();
   if (rawList.length !== allocatedSlots.length) {
     throw new Error("Candidate response count does not match allocated slots");
   }
+
+  const seenSlots = new Set<string>();
   const candidates: TopicRunCandidate[] = [];
   const usedRawIndices = new Set<number>();
 
   for (let idx = 0; idx < allocatedSlots.length; idx += 1) {
     const slot = allocatedSlots[idx];
-    let matchIdx = rawList.findIndex(
-      (item, i) =>
-        !usedRawIndices.has(i) &&
-        item &&
-        typeof item === "object" &&
-        ((item as Record<string, unknown>).slot_id === slot.slotId || (item as Record<string, unknown>).slotId === slot.slotId),
-    );
-
-    if (matchIdx === -1 && !usedRawIndices.has(idx)) {
-      const candidateAtIdx = rawList[idx];
-      if (candidateAtIdx && typeof candidateAtIdx === "object" && !Array.isArray(candidateAtIdx)) {
-        const itemObj = candidateAtIdx as Record<string, unknown>;
-        const explicitSlotId = (itemObj.slot_id ?? itemObj.slotId) as string | undefined;
-        if (!explicitSlotId || (typeof explicitSlotId === "string" && (!explicitSlotId.trim() || explicitSlotId.trim() === slot.slotId))) {
-          matchIdx = idx;
-        }
-      }
-    }
-
-    if (matchIdx === -1) {
-      throw new Error(`Missing candidate response for allocated slot "${slot.slotId}"`);
-    }
+    const matchIdx = findCandidateIndexForSlot(rawList, slot, idx, usedRawIndices);
 
     usedRawIndices.add(matchIdx);
-    const match = rawList[matchIdx];
 
     if (seenSlots.has(slot.slotId)) {
       throw new Error(`Duplicate candidate response for slot "${slot.slotId}"`);
     }
     seenSlots.add(slot.slotId);
 
-    const item = match as Record<string, unknown>;
-    const textFields = extractCandidateTextFields(item, slot.slot);
-
-    const topicId = makeId(slot.contentKind === "short_reel" ? "topic_reel" : "topic_ep");
-
-    const origin: TopicProvenanceOrigin = slot.isKeySteered ? "keyword" : "discovery";
-    const themeHint = slot.isKeySteered ? slot.domainTitle : undefined;
-
-    let candidateData: TopicCandidate;
-    if (slot.contentKind === "short_reel") {
-      const shortReelCandidate: ShortReelTopicCandidate = {
-        topic_id: topicId,
-        channel_id: channelId,
-        content_kind: "short_reel",
-        title: textFields.title,
-        premise: textFields.premise,
-        why_it_fits: textFields.whyItFits,
-        hook: textFields.hook,
-        estimated_potential: textFields.estimatedPotential,
-        generated_at: nowIso(),
-        selected: false,
-        origin,
-        question_count: 1,
-        aspect_ratio: "9:16",
-        archetype: slot.archetype as "versus_faceoff" | "deep_trivia",
-        ...(themeHint ? { theme_hint: themeHint } : {}),
-        domain_id: slot.domainId,
-        ...(slot.subtopicId ? { subtopic_id: slot.subtopicId } : {}),
-      };
-      candidateData = TopicCandidateSchema.parse(shortReelCandidate);
-    } else {
-      const visualStyle = typeof item.visual_style === "string" ? (item.visual_style as EpisodeTopicCandidate["visual_style"]) : "mixed";
-      const ageBand = typeof item.age_band === "string" ? (item.age_band as EpisodeTopicCandidate["age_band"]) : "7-9";
-
-      const episodeCandidate: EpisodeTopicCandidate = {
-        topic_id: topicId,
-        channel_id: channelId,
-        content_kind: "episode",
-        title: textFields.title,
-        premise: textFields.premise,
-        why_it_fits: textFields.whyItFits,
-        hook: textFields.hook,
-        estimated_potential: textFields.estimatedPotential,
-        generated_at: nowIso(),
-        selected: false,
-        origin,
-        quiz_format: slot.quizFormat,
-        archetype: slot.archetype,
-        suggested_layout: slot.suggestedLayout,
-        question_count: slot.questionCount,
-        visual_style: visualStyle,
-        age_band: ageBand,
-        ...(themeHint ? { theme_hint: themeHint } : {}),
-        domain_id: slot.domainId,
-        ...(slot.subtopicId ? { subtopic_id: slot.subtopicId } : {}),
-      };
-      candidateData = TopicCandidateSchema.parse(episodeCandidate);
-    }
-
-    const runCandidate = TopicRunCandidateSchema.parse({
-      ...candidateData,
-      slot_id: slot.slotId,
-      source_bindings: slot.sourceBindings,
-    });
-    candidates.push(runCandidate);
+    candidates.push(buildAllocatedRunCandidate(slot, rawList[matchIdx], channelId));
   }
 
   return TopicRunResultSchema.parse({

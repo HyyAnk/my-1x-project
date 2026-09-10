@@ -148,11 +148,7 @@ function DetailsTabContent({
   );
 }
 
-export function QuestionBankLivePreview({
-  question,
-  buildingVideo,
-  onQuickBuildVideo,
-}: QuestionBankLivePreviewProps) {
+export function QuestionBankLivePreview({ question, buildingVideo, onQuickBuildVideo }: QuestionBankLivePreviewProps) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"arcade" | "details">("arcade");
   const [showAnswer, setShowAnswer] = useState(false);

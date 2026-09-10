@@ -69,9 +69,7 @@ export const mediaLeftChoicesRightLayout = {
   object-fit: cover;
 }
 .layout-media_left_choices_right.quiz-question-clip .hero-image {
-  animation: enter-from-left 0.66s cubic-bezier(0.22, 0.8, 0.3, 1) var(--clip-start) both,
-    hero-float var(--scene-duration) ease-in-out calc(var(--clip-start) + 0.66s) 1 alternate both;
-  will-change: transform;
+  animation: enter-from-left 0.66s cubic-bezier(0.22, 0.8, 0.3, 1) var(--clip-start) both;
 }
 
 /* Choice Group: Vertically Centered in 540px Right Column */

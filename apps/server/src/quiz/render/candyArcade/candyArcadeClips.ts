@@ -151,37 +151,13 @@ export function outroClip(
   return `<section id="candy-outro" class="clip candy-scene candy-outro" data-start="${start.toFixed(3)}" data-duration="${Math.max(0.04, end - start).toFixed(3)}" data-track-index="0"><div class="intro-rays"></div><div class="outro-blob blob-a"></div><div class="outro-blob blob-b"></div><div class="outro-card"><span>${esc(copy.scorePrompt)}</span><h1>${esc(copy.playAgain)}</h1><p>${esc(copy.exploreMore)}</p><div class="outro-cta-badges"><span class="badge-cta badge-comment">💬 ${esc(copy.ctaComment)}</span><span class="badge-cta badge-like">👍 ${esc(copy.ctaLike)}</span><span class="badge-cta badge-sub">🔔 ${esc(copy.ctaSubscribe)}</span></div><div class="outro-stars" data-layout-ignore aria-hidden="true">★&nbsp;&nbsp;✦&nbsp;&nbsp;★</div></div>${mascotHtml}</section>`;
 }
 
-export function customIntroVideoClip(
-  videoPath: string,
-  durationSeconds: number,
-  transitionType: IntroOutroTransitionType = "stinger_swipe",
-  hasAudio: boolean = true,
-): string {
-  if (durationSeconds < 0.08) return "";
-  const transitionDuration = Math.min(0.8, durationSeconds / 2);
-  const transitionStart = Math.max(0, durationSeconds - transitionDuration);
-  const transitionHtml =
-    transitionType === "cut"
-      ? ""
-      : transitionType === "crossfade"
-        ? `<div class="intro-transition transition-crossfade" style="--trans-start:${transitionStart.toFixed(3)}s;--trans-dur:${transitionDuration.toFixed(3)}s;"></div>`
-        : `<div class="intro-transition transition-stinger" style="--trans-start:${transitionStart.toFixed(3)}s;--trans-dur:${transitionDuration.toFixed(3)}s;"><div class="stinger-slash slash-a"></div><div class="stinger-slash slash-b"></div><div class="stinger-flash"></div></div>`;
-
-  const audioAttrs = hasAudio ? 'data-has-audio="true"' : 'data-has-audio="false" muted';
-
-  return `<section id="custom-intro" class="clip candy-scene custom-intro-scene" data-start="0" data-duration="${durationSeconds.toFixed(3)}" data-track-index="0"><video id="custom-intro-video-track" class="custom-intro-video" src="${escAttr(videoPath)}" data-start="0" data-duration="${durationSeconds.toFixed(3)}" ${audioAttrs} autoplay playsinline></video>${transitionHtml}</section>`;
-}
-
-export function customOutroVideoClip(
-  videoPath: string,
-  start: number,
-  durationSeconds: number,
-  hasAudio: boolean = true,
-): string {
-  if (durationSeconds < 0.08) return "";
-  const audioAttrs = hasAudio ? 'data-has-audio="true"' : 'data-has-audio="false" muted';
-  return `<section id="custom-outro" class="clip candy-scene custom-outro-scene" data-start="${start.toFixed(3)}" data-duration="${durationSeconds.toFixed(3)}" data-track-index="0"><video id="custom-outro-video-track" class="custom-outro-video" src="${escAttr(videoPath)}" data-start="${start.toFixed(3)}" data-duration="${durationSeconds.toFixed(3)}" ${audioAttrs} autoplay playsinline></video></section>`;
-}
+export {
+  customIntroVideoClip,
+  customOutroVideoClip,
+  calculateIntroTransitionTiming,
+  renderIntroTransitionOverlay,
+  resolveTransitionDefinition,
+} from "./customVideoClips.js";
 
 export function questionClip(input: {
   start: number;

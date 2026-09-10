@@ -93,11 +93,14 @@ export function submitTask(
     accumulatedDuration = (latestPreviousTask.accumulated_duration_seconds || 0) + elapsed;
   }
 
+  const episodeTitle = episodeId ? (runtime.repository.entityIdResolver.getEpisodeTitle(episodeId) ?? null) : null;
+
   const task = TaskSchema.parse({
     task_id: makeId("task"),
     task_type: taskType,
     channel_id: channelId,
     episode_id: episodeId,
+    episode_title: episodeTitle,
     reel_id: reelId ?? null,
     ...(shortReelRequest ? { short_reel_request: shortReelRequest } : {}),
     status: "QUEUED",

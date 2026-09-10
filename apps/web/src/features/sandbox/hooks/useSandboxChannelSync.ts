@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type Channel, type ChannelMascotConfig, type MascotPlacementPreset } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import { useTranslation } from "../../../i18n";
 import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
+import type { SandboxTransitionState } from "./useSandboxTransitionState";
 
 type UseSandboxChannelSyncInput = {
   channels: Channel[];
@@ -16,16 +17,25 @@ type UseSandboxChannelSyncInput = {
     SandboxMascotState,
     "mascotId" | "mascotEnabled" | "mascotPosition" | "mascotScale" | "mascotOffsetX" | "mascotOffsetY" | "mascotFlipX"
   >;
+  transition?: Pick<SandboxTransitionState, "syncFromChannel">;
   onNotice?: (notice: NonNullable<Notice>) => void;
   onRefreshChannels?: () => Promise<void>;
 };
 
-export function useSandboxChannelSync({ channels, design, mascot, onNotice, onRefreshChannels }: UseSandboxChannelSyncInput) {
+export function useSandboxChannelSync({ channels, design, mascot, transition, onNotice, onRefreshChannels }: UseSandboxChannelSyncInput) {
   const { t } = useTranslation();
   const [channelSyncOpen, setChannelSyncOpen] = useState(false);
   const [selectedChannelId, setSelectedChannelId] = useState(channels[0]?.channel_id || "");
   const [syncMascotToChannel, setSyncMascotToChannel] = useState(true);
   const [savingChannel, setSavingChannel] = useState(false);
+
+  useEffect(() => {
+    if (!selectedChannelId) return;
+    const targetChannel = channels.find((channel) => channel.channel_id === selectedChannelId);
+    if (targetChannel && transition?.syncFromChannel) {
+      transition.syncFromChannel(targetChannel);
+    }
+  }, [selectedChannelId, channels, transition]);
 
   const handleApplyToChannel = async () => {
     if (!selectedChannelId) return;

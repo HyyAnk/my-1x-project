@@ -568,13 +568,9 @@ describe("Question Bank Resilience, Edge-Cases & System Coordination", () => {
       await app.repository.saveQuestionBankQuestion(testQ);
 
       const failingLLM = {
-        connect: async () => {},
-        generateContent: async () => {
-          throw new Error("LLM Gateway 504 Gateway Timeout");
-        },
-        startThread: async () => {
-          throw new Error("LLM Gateway 504 Gateway Timeout");
-        },
+        connect: () => Promise.resolve(),
+        generateContent: () => Promise.reject(new Error("LLM Gateway 504 Gateway Timeout")),
+        startThread: () => Promise.reject(new Error("LLM Gateway 504 Gateway Timeout")),
         generateStream: () => {
           throw new Error("LLM Gateway 504 Gateway Timeout");
         },

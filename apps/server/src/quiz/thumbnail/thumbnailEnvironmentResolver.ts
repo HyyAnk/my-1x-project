@@ -1,3 +1,29 @@
+import { sanitizeThumbnailHook, validateThumbnailHook, DEFAULT_FALLBACK_HOOK } from "./thumbnailHookGuardrail.js";
+
+/**
+ * Resolves a concise, punchy subject name for background environments,
+ * preventing long 8+ word topic titles from polluting thumbnail prompts.
+ */
+export function resolveTopicEnvironmentSubject(topicTitle: string): string {
+  if (!topicTitle) return "the trivia challenge";
+  const validation = validateThumbnailHook(topicTitle);
+  if (validation.valid) {
+    return validation.normalized.toLowerCase();
+  }
+  const split = topicTitle.split(/[:|—–-]/)[0]?.trim();
+  if (split) {
+    const splitVal = validateThumbnailHook(split);
+    if (splitVal.valid) {
+      return splitVal.normalized.toLowerCase();
+    }
+  }
+  const condensed = sanitizeThumbnailHook(topicTitle, "");
+  if (condensed && condensed !== DEFAULT_FALLBACK_HOOK) {
+    return condensed.toLowerCase();
+  }
+  return "the quiz subject";
+}
+
 /**
  * Resolves fallback vibrant environment and lighting palette for family/kids Pixar aesthetic.
  */
@@ -46,7 +72,7 @@ export function resolveFallbackEnvironment(
     };
   }
   return {
-    environmentAtmosphere: `Vibrant, colorful, family-friendly Pixar 3D studio environment tailored to ${topicTitle} with soft atmospheric depth of field and cheerful bright colors`,
+    environmentAtmosphere: `Vibrant, colorful, family-friendly Pixar 3D studio environment tailored to ${resolveTopicEnvironmentSubject(topicTitle)} with soft atmospheric depth of field and cheerful bright colors`,
     lightingPalette:
       "Soft warm three-point cinematic studio lighting, bright luminous rim lighting on subjects, soft natural contact shadows, zero muddy darkness",
   };

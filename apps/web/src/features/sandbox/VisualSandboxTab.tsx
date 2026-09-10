@@ -11,19 +11,27 @@ import { useSandboxQuestionState } from "./hooks/useSandboxQuestionState";
 import { useSandboxTimelineState } from "./hooks/useSandboxTimelineState";
 import { useSandboxViewportState } from "./hooks/useSandboxViewportState";
 import { useSandboxLayoutSync } from "./hooks/useSandboxLayoutSync";
+import { useSandboxTransitionState, type SandboxTransitionState } from "./hooks/useSandboxTransitionState";
+import { PALETTES } from "./constants";
+import { TransitionPreviewPlayer } from "../transitions/components/TransitionPreviewPlayer";
+import type { TransitionAspectRatio } from "../transitions/types/transitionPreview.types";
 import {
   SandboxChannelSyncModal,
   SandboxContentTab,
   SandboxDesignTab,
   SandboxHeader,
   SandboxInspectorTabs,
+  type SandboxInspectorTabId,
   SandboxMascotTab,
   SandboxPresetModal,
   SandboxPresetSelector,
   SandboxPreviewCanvas,
+  SandboxTransitionTab,
 } from "./components";
 
 export type { VisualPresetItem } from "./hooks/useSandboxPresets";
+export type { SandboxTransitionState } from "./hooks/useSandboxTransitionState";
+export type { SandboxInspectorTabId } from "./components/SandboxInspectorTabs";
 
 export function VisualSandboxTab({
   channels = [],
@@ -34,7 +42,7 @@ export function VisualSandboxTab({
   onNotice?: (notice: NonNullable<Notice>) => void;
   onRefreshChannels?: () => Promise<void>;
 }) {
-  const [activeInspectorTab, setActiveInspectorTab] = useState<"design" | "mascot" | "content">("design");
+  const [activeInspectorTab, setActiveInspectorTab] = useState<SandboxInspectorTabId>("design");
 
   const viewport = useSandboxViewportState();
   const design = useSandboxDesignState();
@@ -42,6 +50,7 @@ export function VisualSandboxTab({
   const brandName = useSandboxBrandNameState();
   const timeline = useSandboxTimelineState();
   const question = useSandboxQuestionState();
+  const transition = useSandboxTransitionState();
 
   const { handleLayoutChange, handleApplyPresetQuestion } = useSandboxLayoutSync({
     design,
@@ -59,14 +68,26 @@ export function VisualSandboxTab({
     channelBrandName: brandName.channelBrandName,
     onNotice,
   });
-  const presets = useSandboxPresets({ design, mascot, brandName, onNotice, onLayoutChange: handleLayoutChange });
+  const presets = useSandboxPresets({
+    design,
+    mascot,
+    brandName,
+    transition,
+    onNotice,
+    onLayoutChange: handleLayoutChange,
+  });
   const channelSync = useSandboxChannelSync({
     channels,
     design,
     mascot,
+    transition,
     onNotice,
     onRefreshChannels,
   });
+
+  const activePalette = PALETTES.find((p) => p.id === design.paletteId) ?? PALETTES[0];
+  const themeColors = { from: activePalette.primary, to: activePalette.secondary };
+  const isTransitionMode = activeInspectorTab === "transition" || transition.isTransitionActive;
 
   return (
     <section className="page-wrap visual-sandbox-page">
@@ -191,42 +212,91 @@ export function VisualSandboxTab({
               onLayoutChange={handleLayoutChange}
             />
           )}
+
+          {activeInspectorTab === "transition" && <SandboxTransitionTab transition={transition} />}
         </div>
 
-        <SandboxPreviewCanvas
-          containerRef={viewport.containerRef}
-          contrastReport={preview.contrastReport}
-          lastRenderTime={preview.lastRenderTime}
-          showSafeArea={viewport.showSafeArea}
-          setShowSafeArea={viewport.setShowSafeArea}
-          showShortsGuide={viewport.showShortsGuide}
-          setShowShortsGuide={viewport.setShowShortsGuide}
-          aspectRatio="16:9"
-          iframeKey={preview.iframeKey}
-          setIframeKey={preview.setIframeKey}
-          zoom={viewport.zoom}
-          setZoom={viewport.setZoom}
-          scaleFactor={viewport.scaleFactor}
-          previewHtml={preview.previewHtml}
-          pendingPreviewHtml={preview.pendingPreviewHtml}
-          loading={preview.loading}
-          previewError={preview.previewError}
-          onPendingPreviewLoad={preview.verifyPendingPreview}
-          onRetryPreview={() => void preview.renderPreview()}
-          phase={timeline.phase}
-          useScrubber={timeline.useScrubber}
-          timelineSeconds={timeline.timelineSeconds}
-          handlePhaseChange={timeline.handlePhaseChange}
-          isPlaying={timeline.isPlaying}
-          setIsPlaying={timeline.setIsPlaying}
-          handleTogglePlay={timeline.handleTogglePlay}
-          setUseScrubber={timeline.setUseScrubber}
-          handleScrubberChange={timeline.handleScrubberChange}
-          iframeRef={timeline.iframeRef}
-          isMuted={timeline.isMuted}
-          onToggleMute={timeline.toggleMute}
-          totalDuration={timeline.totalDuration}
-        />
+        {isTransitionMode ? (
+          <div
+            className="sandbox-transition-canvas-area"
+            data-testid="sandbox-transition-canvas-area"
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#060911",
+              borderRadius: "16px",
+              border: "1px solid var(--line)",
+              padding: "24px",
+              minHeight: 0,
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "880px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <TransitionPreviewPlayer
+                transitionType={transition.transitionId}
+                durationSeconds={transition.transitionDuration}
+                aspectRatio={viewport.aspectRatio}
+                themeColors={themeColors}
+                progress={transition.transitionProgress}
+                onProgressChange={transition.setTransitionProgress}
+                isPlaying={transition.isPlaying}
+                onPlayingChange={transition.setIsPlaying}
+                isLooping={transition.isLooping}
+                onLoopingChange={transition.setIsLooping}
+                playTrigger={transition.playTrigger}
+                onTogglePlay={transition.togglePlay}
+                onReplay={transition.triggerPlay}
+                onToggleLoop={transition.toggleLoop}
+              />
+            </div>
+          </div>
+        ) : (
+          <SandboxPreviewCanvas
+            containerRef={viewport.containerRef}
+            contrastReport={preview.contrastReport}
+            lastRenderTime={preview.lastRenderTime}
+            showSafeArea={viewport.showSafeArea}
+            setShowSafeArea={viewport.setShowSafeArea}
+            showShortsGuide={viewport.showShortsGuide}
+            setShowShortsGuide={viewport.setShowShortsGuide}
+            aspectRatio="16:9"
+            iframeKey={preview.iframeKey}
+            setIframeKey={preview.setIframeKey}
+            zoom={viewport.zoom}
+            setZoom={viewport.setZoom}
+            scaleFactor={viewport.scaleFactor}
+            previewHtml={preview.previewHtml}
+            pendingPreviewHtml={preview.pendingPreviewHtml}
+            loading={preview.loading}
+            previewError={preview.previewError}
+            onPendingPreviewLoad={preview.verifyPendingPreview}
+            onRetryPreview={() => void preview.renderPreview()}
+            phase={timeline.phase}
+            useScrubber={timeline.useScrubber}
+            timelineSeconds={timeline.timelineSeconds}
+            handlePhaseChange={timeline.handlePhaseChange}
+            isPlaying={timeline.isPlaying}
+            setIsPlaying={timeline.setIsPlaying}
+            handleTogglePlay={timeline.handleTogglePlay}
+            setUseScrubber={timeline.setUseScrubber}
+            handleScrubberChange={timeline.handleScrubberChange}
+            iframeRef={timeline.iframeRef}
+            isMuted={timeline.isMuted}
+            onToggleMute={timeline.toggleMute}
+            totalDuration={timeline.totalDuration}
+          />
+        )}
       </div>
 
       <SandboxPresetModal

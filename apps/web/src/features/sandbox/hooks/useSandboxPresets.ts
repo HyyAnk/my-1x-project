@@ -4,6 +4,7 @@ import { useTranslation } from "../../../i18n";
 import type { SandboxDesignState } from "./useSandboxDesignState";
 import type { SandboxMascotState } from "./useSandboxMascotState";
 import type { SandboxBrandNameState } from "./useSandboxBrandNameState";
+import type { SandboxTransitionState } from "./useSandboxTransitionState";
 import type { QuizPreviewLayoutId, VisualPresetItem } from "@studio/shared";
 import { useStylePresets } from "../../stylePresets/hooks/useStylePresets";
 import { api } from "../../../api";
@@ -24,11 +25,12 @@ type UseSandboxPresetsInput = {
   design: SandboxDesignState;
   mascot: SandboxMascotState;
   brandName?: SandboxBrandNameState;
+  transition?: Pick<SandboxTransitionState, "syncFromPreset">;
   onNotice?: (notice: NonNullable<Notice>) => void;
   onLayoutChange?: (layout: QuizPreviewLayoutId) => void;
 };
 
-export function useSandboxPresets({ design, mascot, brandName, onNotice, onLayoutChange }: UseSandboxPresetsInput) {
+export function useSandboxPresets({ design, mascot, brandName, transition, onNotice, onLayoutChange }: UseSandboxPresetsInput) {
   const { t } = useTranslation();
   const stylePresetApi = useStylePresets();
   const [localDraftPresets, setLocalDraftPresets] = useState<VisualPresetItem[]>(loadStoredCustomPresets);
@@ -78,6 +80,9 @@ export function useSandboxPresets({ design, mascot, brandName, onNotice, onLayou
   const handleLoadPreset = (preset: VisualPresetItem) => {
     setLoadedPresetId(preset.id);
     applyPresetToStudio({ preset, design, mascot, brandName, onLayoutChange });
+    if (transition?.syncFromPreset) {
+      transition.syncFromPreset(preset);
+    }
     if (onNotice) {
       onNotice({ tone: "good", message: t("visualSandbox.noticeLoadedPreset", { name: preset.name }) });
     }

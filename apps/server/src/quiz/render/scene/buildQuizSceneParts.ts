@@ -1,5 +1,6 @@
 import { textLayout } from "../../visual/candyArcade.js";
 import { highlightQuestionMarkup } from "../candyArcade/candyArcadeSvg.js";
+import { normalizeQuestionPunctuation } from "../../formatting/questionPunctuationNormalizer.js";
 import type { QuizSceneChoice, QuizSceneMedia, QuizSceneRenderModel } from "./quizScene.types.js";
 
 export type QuizSceneParts = {
@@ -54,16 +55,17 @@ export type QuizSceneParts = {
 
 export function buildQuizSceneParts(model: QuizSceneRenderModel): QuizSceneParts {
   const is16x9 = model.aspectRatio !== "9:16";
-  const questionLayout = textLayout(model.question.text, "question", {
+  const normalizedQuestionText = normalizeQuestionPunctuation(model.question.text, model.question.format);
+  const questionLayout = textLayout(normalizedQuestionText, "question", {
     hasMascot: is16x9 ? true : model.mascot.occupied,
     layoutId: model.layout.id,
   });
   return {
     styleCatalogRevision: model.styleCatalogRevision,
     question: {
-      text: model.question.text,
+      text: normalizedQuestionText,
       visualOpportunity: model.question.visualOpportunity,
-      highlightedHtml: highlightQuestionMarkup(model.question.text, model.question.visualOpportunity),
+      highlightedHtml: highlightQuestionMarkup(normalizedQuestionText, model.question.visualOpportunity),
       layout: questionLayout,
       number: model.question.number,
       paletteAccent: model.palette.accent,

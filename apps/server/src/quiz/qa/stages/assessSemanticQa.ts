@@ -1,5 +1,5 @@
 import { quizChoiceCountForFormat, type QuizIssue, type QuizV2 } from "@studio/shared";
-import { validateTextCopyright } from "../copyrightValidator.js";
+import { validateQuizQuestionCopyright, validateTextCopyright } from "../copyrightValidator.js";
 
 export function assessSemanticQa(quiz: QuizV2): QuizIssue[] {
   const issues: QuizIssue[] = [];
@@ -37,14 +37,18 @@ export function assessSemanticQa(quiz: QuizV2): QuizIssue[] {
         stage: "semantic",
       });
     }
-    const textToScan = `${question.question} ${question.choices.map((c) => c.text).join(" ")} ${question.explanation} ${question.visual_opportunity ?? ""}`;
-    const copyright = validateTextCopyright(textToScan);
+    const copyright = validateQuizQuestionCopyright(question);
     if (copyright.violated) {
+      const isVisualViolation =
+        copyright.field === "visual_opportunity" || validateTextCopyright(question.visual_opportunity ?? "").violated;
+      const severity = isVisualViolation ? "blocker" : "warning";
       result.push({
         code: "semantic_copyright_violation",
-        severity: "blocker",
+        severity,
         message: `Question ${question.number} contains prohibited term '${copyright.term}' (${copyright.reason}).`,
-        next_action: "Regenerate this question using a safe alternative subject without using copyrighted characters or lion cubs.",
+        next_action: isVisualViolation
+          ? "Regenerate this question using a safe alternative subject without using copyrighted characters or lion cubs."
+          : "Review trivia text to ensure it adheres to fair use educational guidelines.",
         question_ids: [question.id],
         stage: "semantic",
       });

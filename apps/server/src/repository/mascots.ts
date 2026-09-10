@@ -21,6 +21,12 @@ import { ensureMascotStyles } from "./mascot/mascotStyles.js";
 export { withMascotWriteLock } from "./mascot/mascotLock.js";
 export { saveMascotAsset, getMascotAssetFile, listMascotAssets, deleteMascotAssetFile } from "./mascot/mascotAssets.js";
 export {
+  getTransparentMascotAssetFile,
+  deleteTransparentMascotAssetFile,
+  getOrCreateTransparentMascotAsset,
+  clearTransparentMascotCache,
+} from "./mascot/mascotTransparentCache.js";
+export {
   ensureMascotStyles,
   createMascotStyle,
   updateMascotStyle,

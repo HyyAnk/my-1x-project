@@ -118,7 +118,7 @@ export function ShotPlanSection({
           copy="Lock the visual bible first, then generate parallel sequence shots."
           action="Generate shots"
           disabled={!readiness.visualBible || Boolean(activeEpisodeTask)}
-          busy={Boolean(latestTask(episodeTasks, ["GENERATE_SCENES"]) && isTaskActive(latestTask(episodeTasks, ["GENERATE_SCENES"])!))}
+          busy={Boolean(latestTask(episodeTasks, ["GENERATE_SCENES", "GENERATE_SEQUENCE_SCENES"]) && isTaskActive(latestTask(episodeTasks, ["GENERATE_SCENES", "GENERATE_SEQUENCE_SCENES"])!))}
           busyLabel="Generating…"
           onAction={() => void onCreateTask("GENERATE_SCENES")}
         />

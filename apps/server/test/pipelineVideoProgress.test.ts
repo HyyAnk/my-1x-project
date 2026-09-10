@@ -45,16 +45,22 @@ describe("pipeline video progress forwarding", () => {
     const run: PipelineRun = { cancelled: false, children: new Set(["task_video_1"]) };
     const progressHistory: Array<{ message: string; percent: number | null; framesCompleted: number | null }> = [];
 
-    const waitPromise = waitForTaskTerminal.call(mockRuntime, "task_video_1", run, (childTask) => {
-      progressHistory.push({
-        message: childTask.progress_message ?? "",
-        percent: childTask.progress_percent,
-        framesCompleted: childTask.render_progress?.frames_completed ?? null,
-      });
-    });
+    const waitPromise = waitForTaskTerminal.call(
+      mockRuntime,
+      "task_video_1",
+      run,
+      (childTask) => {
+        progressHistory.push({
+          message: childTask.progress_message ?? "",
+          percent: childTask.progress_percent,
+          framesCompleted: childTask.render_progress?.frames_completed ?? null,
+        });
+      },
+      2,
+    );
 
     // Simulate task update 1: rendering frame 1000/2000
-    await new Promise((resolve) => setTimeout(resolve, 60));
+    await new Promise((resolve) => setTimeout(resolve, 5));
     currentProgressMessage = "Video · rendering frame 1,000 / 2,000";
     currentProgressPercent = 75;
     currentRenderProgress = {
@@ -67,7 +73,7 @@ describe("pipeline video progress forwarding", () => {
     };
 
     // Simulate task update 2: rendering frame 2000/2000
-    await new Promise((resolve) => setTimeout(resolve, 60));
+    await new Promise((resolve) => setTimeout(resolve, 5));
     currentProgressMessage = "Video · rendering frame 2,000 / 2,000";
     currentProgressPercent = 89;
     currentRenderProgress = {
@@ -80,7 +86,7 @@ describe("pipeline video progress forwarding", () => {
     };
 
     // Simulate completion
-    await new Promise((resolve) => setTimeout(resolve, 60));
+    await new Promise((resolve) => setTimeout(resolve, 5));
     currentStatus = "COMPLETED";
 
     const result = await waitPromise;

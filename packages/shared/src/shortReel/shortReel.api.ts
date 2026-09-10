@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ShortReelGenerationTargetSchema } from "../enums.js";
+import { QuizImageStyleSchema, ShortReelGenerationTargetSchema } from "../enums.js";
 import { ShortReelRecordSchema, ShortReelEditCommandSchema } from "./shortReel.schema.js";
 import { TaskSchema } from "../events.js";
 
@@ -62,6 +62,19 @@ export const CancelShortReelResponseSchema = z
   })
   .strict();
 
+export const CreateShortReelRequestSchema = z
+  .object({
+    question_id: z.string().trim().min(1),
+    visual_style: z.union([QuizImageStyleSchema, z.literal("mixed")]).optional(),
+  })
+  .strict();
+
+export const CreateShortReelResponseSchema = z
+  .object({
+    short_reel: ShortReelRecordSchema,
+  })
+  .strict();
+
 export type ListShortReelsResponse = z.infer<typeof ListShortReelsResponseSchema>;
 export type GetShortReelResponse = z.infer<typeof GetShortReelResponseSchema>;
 export type UpdateShortReelRequest = z.infer<typeof UpdateShortReelRequestSchema>;
@@ -71,3 +84,5 @@ export type GenerateShortReelRequest = z.infer<typeof GenerateShortReelRequestSc
 export type GenerateShortReelResponse = z.infer<typeof GenerateShortReelResponseSchema>;
 export type CancelShortReelRequest = z.infer<typeof CancelShortReelRequestSchema>;
 export type CancelShortReelResponse = z.infer<typeof CancelShortReelResponseSchema>;
+export type CreateShortReelRequest = z.infer<typeof CreateShortReelRequestSchema>;
+export type CreateShortReelResponse = z.infer<typeof CreateShortReelResponseSchema>;

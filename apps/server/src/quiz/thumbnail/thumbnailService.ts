@@ -10,7 +10,7 @@ import { StudioLogger } from "../../logger.js";
 import type { RepositoryService } from "../../repository.js";
 import { planThumbnailWithAI } from "./thumbnailAiPlanner.js";
 import { compileThumbnailPrompt } from "./thumbnailPromptCompiler.js";
-import { loadProductLocalizationArtifact } from "../bank/localization/productLocalization.js";
+import { loadProductLocalizationArtifact, resolveEpisodeTargetLanguage } from "../bank/localization/productLocalization.js";
 import {
   generateThumbnailVariant,
   getEpisodeThumbnailManifest,
@@ -19,6 +19,7 @@ import {
   type GenerateEpisodeThumbnailOptions,
 } from "./thumbnailManifestManager.js";
 import type { QuizThumbnailPlan } from "./thumbnailTypes.js";
+import { validateThumbnailHook } from "./thumbnailHookGuardrail.js";
 
 export type { GenerateEpisodeThumbnailOptions } from "./thumbnailManifestManager.js";
 export {
@@ -157,50 +158,88 @@ async function processVariantGeneration(params: {
   return { assetPath: result.assetPath, activeId: result.versionId };
 }
 
+function resolvePlanTopicSummary(episode: Episode, localizedSummary?: string): string {
+  if (localizedSummary) return localizedSummary;
+  if (episode.topic?.premise) return episode.topic.premise;
+  if (episode.topic?.hook) return episode.topic.hook;
+  return "";
+}
+
+function resolvePlanQuestionCount(episode: Episode, questionCount: number): number {
+  if (episode.quiz_config?.question_count) {
+    return episode.quiz_config.question_count;
+  }
+  return questionCount > 0 ? questionCount : 10;
+}
+
 /**
- * End-to-end service for planning, compiling, generating, and persisting Episode Thumbnails with full version history.
+ * Checks whether a candidate hook text is concise enough to serve as a punchy thumbnail hook banner.
+ * Delegates directly to validateThumbnailHook to maintain a single source of truth.
  */
-export async function generateEpisodeThumbnail(
-  repository: RepositoryService,
-  options: GenerateEpisodeThumbnailOptions,
-): Promise<ThumbnailManifest> {
-  const { channelId, episodeId, layoutOverride, customHookText, badgeOverride } = options;
-  const logger = new StudioLogger(repository.rootDirectory);
+export function isValidShortHookText(text: string | null | undefined): boolean {
+  return validateThumbnailHook(text).valid;
+}
 
-  const episode = await repository.getEpisode(channelId, episodeId);
-  const channel = await repository.getChannel(channelId);
-  const targetRatio = resolveTargetThumbnailRatio(episode, options.aspectRatio);
-  const localization = await loadProductLocalizationArtifact(repository, channelId, episode.slug);
-
-  const mascotProfile = await loadChannelMascot(repository, channelId, episodeId, channel.mascot_id, logger);
-  const sourceQuestions = await loadEpisodeQuestions(repository, channelId, episodeId);
-  const questions = applyLocalizedQuestionProjection(sourceQuestions, localization);
+async function createThumbnailPlan(params: {
+  episode: Episode;
+  channel: Channel;
+  questions: Array<{ question: string; choices?: string[]; answer?: string }>;
+  mascotProfile: MascotProfile | null;
+  localization: Awaited<ReturnType<typeof loadProductLocalizationArtifact>>;
+  targetLanguage?: string;
+  options: GenerateEpisodeThumbnailOptions;
+}): Promise<QuizThumbnailPlan> {
+  const { episode, channel, questions, mascotProfile, localization, targetLanguage, options } = params;
   const localizedSummary = localization?.status === "applied" ? localization.video_description : undefined;
   const localizedHook = localization?.status === "applied" ? localization.thumbnail_text : undefined;
 
-  const plan = await planThumbnailWithAI({
+  // options.customHookText is treated as a true user manual override.
+  // localizedHook from product artifacts is only used if it is a valid, punchy short hook (<= 6 words, <= 36 chars);
+  // otherwise, leave undefined so the AI Planner can generate parsed.hook_text or fallback to archetype templates.
+  const manualHook = options.customHookText?.trim();
+  const effectiveCustomHook = manualHook || (isValidShortHookText(localizedHook) ? localizedHook?.trim() : undefined);
+
+  return planThumbnailWithAI({
     topicTitle: episode.topic?.title || "Quiz Episode",
-    topicSummary: localizedSummary || episode.topic?.premise || episode.topic?.hook || "",
-    questionCount: episode.quiz_config?.question_count || (questions.length > 0 ? questions.length : 10),
+    topicSummary: resolvePlanTopicSummary(episode, localizedSummary),
+    questionCount: resolvePlanQuestionCount(episode, questions.length),
     questionFormat: episode.quiz_config?.quiz_format,
     questions,
-    language: channel.language || "English",
+    language: targetLanguage || localization?.target_language || channel.language || "English",
     visualStyle: episode.quiz_config?.resolved_visual_style || episode.quiz_config?.visual_style || "pixar_3d",
     colorTheme: mascotProfile?.color_theme,
-    layoutOverride,
-    customHookText: customHookText ?? localizedHook,
-    badgeOverride: badgeOverride || "auto",
+    layoutOverride: options.layoutOverride,
+    customHookText: effectiveCustomHook,
+    badgeOverride: options.badgeOverride || "auto",
     mascotProfile,
     llmClient: options.antigravityClient ?? null,
   });
+}
 
+async function generateThumbnailVariants(params: {
+  targetRatio: ThumbnailAspectRatio | "both";
+  plan: QuizThumbnailPlan;
+  mascotProfile: MascotProfile | null;
+  repository: RepositoryService;
+  channel: Channel;
+  episode: Episode;
+  options: GenerateEpisodeThumbnailOptions;
+  logger: StudioLogger;
+  existingManifest: ThumbnailManifest | null;
+}): Promise<{
+  gen169: VariantGenerationState;
+  gen916: VariantGenerationState;
+  prompt169: string | null;
+  prompt916: string | null;
+  history: ThumbnailHistoryItem[];
+}> {
+  const { targetRatio, plan, mascotProfile, repository, channel, episode, options, logger, existingManifest } = params;
   const shouldGenerate169 = targetRatio === "16:9" || targetRatio === "both";
   const shouldGenerate916 = targetRatio === "9:16" || targetRatio === "both";
 
   const prompt169 = shouldGenerate169 ? compileThumbnailPrompt(plan, "16:9", mascotProfile) : null;
   const prompt916 = shouldGenerate916 ? compileThumbnailPrompt(plan, "9:16", mascotProfile) : null;
 
-  const existingManifest = await getEpisodeThumbnailManifest(repository, channelId, episodeId);
   const history: ThumbnailHistoryItem[] = existingManifest?.history ? [...existingManifest.history] : [];
   const nowTimestamp = Date.now();
 
@@ -234,6 +273,51 @@ export async function generateEpisodeThumbnail(
     currentAssetPath: episode.thumbnail_asset_path_9_16,
     currentActiveId: existingManifest?.active_9_16_id,
     history,
+  });
+
+  return { gen169, gen916, prompt169, prompt916, history };
+}
+
+/**
+ * End-to-end service for planning, compiling, generating, and persisting Episode Thumbnails with full version history.
+ */
+export async function generateEpisodeThumbnail(
+  repository: RepositoryService,
+  options: GenerateEpisodeThumbnailOptions,
+): Promise<ThumbnailManifest> {
+  const { channelId, episodeId } = options;
+  const logger = new StudioLogger(repository.rootDirectory);
+
+  const episode = await repository.getEpisode(channelId, episodeId);
+  const channel = await repository.getChannel(channelId);
+  const targetRatio = resolveTargetThumbnailRatio(episode, options.aspectRatio);
+  const { targetLanguage, localization } = await resolveEpisodeTargetLanguage(repository, channelId, episode);
+
+  const mascotProfile = await loadChannelMascot(repository, channelId, episodeId, channel.mascot_id, logger);
+  const sourceQuestions = await loadEpisodeQuestions(repository, channelId, episodeId);
+  const questions = applyLocalizedQuestionProjection(sourceQuestions, localization);
+
+  const plan = await createThumbnailPlan({
+    episode,
+    channel,
+    questions,
+    mascotProfile,
+    localization,
+    targetLanguage,
+    options,
+  });
+
+  const existingManifest = await getEpisodeThumbnailManifest(repository, channelId, episodeId);
+  const { gen169, gen916, prompt169, prompt916, history } = await generateThumbnailVariants({
+    targetRatio,
+    plan,
+    mascotProfile,
+    repository,
+    channel,
+    episode,
+    options,
+    logger,
+    existingManifest,
   });
 
   const prunedHistory = pruneVersionHistory(history);

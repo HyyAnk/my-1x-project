@@ -385,7 +385,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
           maxConcurrent = activeCalls;
         }
         // Small delay to verify concurrent overlap
-        await new Promise((res) => setTimeout(res, 25));
+        await new Promise((res) => setTimeout(res, 5));
         activeCalls--;
 
         return Promise.resolve({

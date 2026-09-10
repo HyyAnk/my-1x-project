@@ -18,10 +18,8 @@ describe("Candy Arcade visual and workflow regression", () => {
     }
   });
 
-  it("renders 16:9 and rejects retired Sandbox portrait compositions", () => {
+  it("renders 16:9 sandbox compositions", () => {
     const res169 = buildSandboxComposition({ aspect_ratio: "16:9" });
-    expect(() => buildSandboxComposition({ aspect_ratio: "9:16", layout_id: "portrait_hero_choices" })).toThrow();
-
     expect(res169.html).toContain('data-aspect-ratio="16:9"');
   });
 

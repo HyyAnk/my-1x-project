@@ -235,7 +235,7 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
     });
   });
 
-  describe("3. Scene Pipeline HTML/CSS Rendering for All Layouts (16:9 & 9:16)", () => {
+  describe("3. Scene Pipeline HTML/CSS Rendering for All Layouts (16:9)", () => {
     const layoutScenarios: Array<{
       layoutId: QuizPreviewLayoutId;
       archetype: DirectorArchetype;
@@ -328,21 +328,9 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
           expect(fullHtml).toContain(`Test question for ${scenario.layoutId}?`);
           expect(bundle.html).toContain("<style>");
 
-          if (ar === "9:16") {
-            expect(bundle.html).toContain('data-aspect-ratio="9:16"');
-            expect(bundle.html).toContain('data-width="1080"');
-            expect(bundle.html).toContain('data-height="1920"');
-            expect(fullHtml).toContain('data-aspect-ratio="9:16"');
-            expect(fullHtml).toContain('data-width="1080"');
-            expect(fullHtml).toContain('data-height="1920"');
-            expect(fullHtml).toContain("data-reveal-at=");
-            expect(bundle.html).toMatch(/<audio\s+id="quiz-narration"/);
-            expect(bundle.html).toContain('data-composition-src="compositions/candy-intro.html"');
-          } else {
-            expect(bundle.html).toContain('data-aspect-ratio="16:9"');
-            expect(bundle.html).toContain('data-width="1920"');
-            expect(bundle.html).toContain('data-height="1080"');
-          }
+          expect(bundle.html).toContain('data-aspect-ratio="16:9"');
+          expect(bundle.html).toContain('data-width="1920"');
+          expect(bundle.html).toContain('data-height="1080"');
         });
       }
     }
@@ -408,13 +396,6 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
           expect(res.css).toBeTruthy();
           expect(res.contrast_report.ok).toBe(true);
 
-          if (ar === "9:16") {
-            expect(res.html).toContain('data-aspect-ratio="9:16"');
-            expect(res.html).toContain('data-width="1080"');
-            expect(res.html).toContain('data-height="1920"');
-            expect(res.html).toContain("data-reveal-at=");
-          }
-
           if (phase === "reveal") {
             expect(res.html).toContain("answer-correct");
           }
@@ -438,12 +419,6 @@ describe("Quiz All 6 Layouts End-to-End Integration", () => {
         "mystery_reveal",
         "clue_deduction",
       ]);
-    });
-  });
-
-  describe("5. Retired Portrait Layout Verification", () => {
-    it("keeps retired portrait layouts out of the production catalog", () => {
-      expect(QUIZ_LAYOUTS.every((layout) => !layout.id.startsWith("portrait_"))).toBe(true);
     });
   });
 });

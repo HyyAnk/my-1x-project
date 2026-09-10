@@ -13,10 +13,7 @@ import {
   saveTopicConfirmationReceipt,
 } from "../src/repository/topicConfirmationReceipts.js";
 import { confirmShortReelTopic } from "../src/shortReel/topicConfirmation.js";
-import {
-  createEpisodeFromTopicWithBank,
-  createEpisodeFromQuestionBank,
-} from "../src/quiz/bank/questionBankToQuizBridge.js";
+import { createEpisodeFromTopicWithBank, createEpisodeFromQuestionBank } from "../src/quiz/bank/questionBankToQuizBridge.js";
 import { loadProductLocalizationArtifact } from "../src/quiz/bank/localization/productLocalization.js";
 import type { LLMClient } from "../src/utils/promptSanitizer.js";
 
@@ -83,6 +80,20 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
     expect(converted.choices.map((choice) => choice.id)).toEqual(["c1", "c2", "c3"]);
     expect(converted.correct_choice_id).toBe("c1");
     expect(converted.choices.map((choice) => choice.text)).toEqual(["Option A", "Option B", "Option C"]);
+  });
+
+  it("converts bound sources with uppercase choice IDs (A, B, C) losslessly without regex errors", () => {
+    const question = makeBankQuestion("q_lossless_uppercase", {
+      choices: [
+        { id: "A", text: "Alpha", is_correct: true },
+        { id: "B", text: "Beta", is_correct: false },
+        { id: "C", text: "Gamma", is_correct: false },
+      ],
+      correct_choice_id: "A",
+    });
+    const converted = convertBankQuestionToQuizQuestionLossless(question);
+    expect(converted.choices.map((choice) => choice.id)).toEqual(["A", "B", "C"]);
+    expect(converted.correct_choice_id).toBe("A");
   });
 
   it("rejects bound sources with incompatible choice counts", () => {
@@ -340,9 +351,7 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
     });
 
     it("treats omitted visual style as the effective mixed default", () => {
-      expect(
-        computeConfirmationOptionsFingerprint({ question_count: 3, render_aspect_ratio: "16:9", target_language: "en" }),
-      ).toBe(
+      expect(computeConfirmationOptionsFingerprint({ question_count: 3, render_aspect_ratio: "16:9", target_language: "en" })).toBe(
         computeConfirmationOptionsFingerprint({
           question_count: 3,
           visual_style: "mixed",
@@ -381,9 +390,7 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       await mkdir(receiptsDir, { recursive: true });
       await writeFile(path.join(receiptsDir, "confirm-corrupt_topic.json"), "{ invalid json syntax", "utf8");
 
-      await expect(getTopicConfirmationReceipt(repo, channel.channel_id, "corrupt_topic")).rejects.toThrow(
-        /RECEIPT_CORRUPTED/,
-      );
+      await expect(getTopicConfirmationReceipt(repo, channel.channel_id, "corrupt_topic")).rejects.toThrow(/RECEIPT_CORRUPTED/);
     });
   });
 
@@ -743,28 +750,29 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       await repo.saveTopicRun(channel.channel_id, runResult);
 
       const stubLlmClient: LLMClient = {
-        connect: async () => {},
-        generateContent: async () => ({
-          text: JSON.stringify({
-            [`${q1.id}_question`]: "Welche Frage 1?",
-            [`${q1.id}_explanation`]: "Erklärung 1 auf Deutsch.",
-            [`${q1.id}_choice_c1`]: "Option A auf Deutsch",
-            [`${q1.id}_choice_c2`]: "Option B auf Deutsch",
-            [`${q1.id}_choice_c3`]: "Option C auf Deutsch",
-            [`${q2.id}_question`]: "Welche Frage 2?",
-            [`${q2.id}_explanation`]: "Erklärung 2 auf Deutsch.",
-            [`${q2.id}_choice_c1`]: "Zweite Option A auf Deutsch",
-            [`${q2.id}_choice_c2`]: "Zweite Option B auf Deutsch",
-            [`${q2.id}_choice_c3`]: "Zweite Option C auf Deutsch",
-            [`${q3.id}_question`]: "Welche Frage 3?",
-            [`${q3.id}_explanation`]: "Erklärung 3 auf Deutsch.",
-            [`${q3.id}_choice_c1`]: "Dritte Option A auf Deutsch",
-            [`${q3.id}_choice_c2`]: "Dritte Option B auf Deutsch",
-            [`${q3.id}_choice_c3`]: "Dritte Option C auf Deutsch",
-            product_video_description: "Deutsche Beschreibung für das Video",
-            product_thumbnail_text: "DEUTSCHER TITEL",
+        connect: () => Promise.resolve(),
+        generateContent: () =>
+          Promise.resolve({
+            text: JSON.stringify({
+              [`${q1.id}_question`]: "Welche Frage 1?",
+              [`${q1.id}_explanation`]: "Erklärung 1 auf Deutsch.",
+              [`${q1.id}_choice_c1`]: "Option A auf Deutsch",
+              [`${q1.id}_choice_c2`]: "Option B auf Deutsch",
+              [`${q1.id}_choice_c3`]: "Option C auf Deutsch",
+              [`${q2.id}_question`]: "Welche Frage 2?",
+              [`${q2.id}_explanation`]: "Erklärung 2 auf Deutsch.",
+              [`${q2.id}_choice_c1`]: "Zweite Option A auf Deutsch",
+              [`${q2.id}_choice_c2`]: "Zweite Option B auf Deutsch",
+              [`${q2.id}_choice_c3`]: "Zweite Option C auf Deutsch",
+              [`${q3.id}_question`]: "Welche Frage 3?",
+              [`${q3.id}_explanation`]: "Erklärung 3 auf Deutsch.",
+              [`${q3.id}_choice_c1`]: "Dritte Option A auf Deutsch",
+              [`${q3.id}_choice_c2`]: "Dritte Option B auf Deutsch",
+              [`${q3.id}_choice_c3`]: "Dritte Option C auf Deutsch",
+              product_video_description: "Deutsche Beschreibung für das Video",
+              product_thumbnail_text: "DEUTSCHER TITEL",
+            }),
           }),
-        }),
       };
 
       const result = await createEpisodeFromTopicWithBank({
@@ -801,13 +809,13 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       expect(persistedQuiz?.questions[0].question).toBe(result.quiz.questions[0].question);
       expect(persistedQuiz?.questions[0].choices).toEqual(result.quiz.questions[0].choices);
 
-      // Verify product localization artifact was saved
+      // Product localization artifact is saved, thumbnail_text is decoupled from topic.title and remains undefined
       const locArtifact = await loadProductLocalizationArtifact(repo, channel.channel_id, result.episode.slug);
       expect(locArtifact).toBeDefined();
       expect(locArtifact?.target_language).toBe("de");
       expect(locArtifact?.status).toBe("applied");
       expect(locArtifact?.video_description).toBe("Deutsche Beschreibung für das Video");
-      expect(locArtifact?.thumbnail_text).toBe("DEUTSCHER TITEL");
+      expect(locArtifact?.thumbnail_text).toBeUndefined();
     });
 
     it("leaves zero discoverable episodes if localization fails during topic confirmation", async () => {
@@ -1060,7 +1068,11 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
     });
 
     await expect(
-      createEpisodeFromTopicWithBank({ repository: repo, channelId: channel.channel_id, input: { topic_id: "topic_receipt_retry", auto_start_pipeline: false } }),
+      createEpisodeFromTopicWithBank({
+        repository: repo,
+        channelId: channel.channel_id,
+        input: { topic_id: "topic_receipt_retry", auto_start_pipeline: false },
+      }),
     ).rejects.toThrow("completion receipt failure");
     writeSpy.mockRestore();
     const firstReceipt = await getTopicConfirmationReceipt(repo, channel.channel_id, "topic_receipt_retry");
@@ -1121,9 +1133,7 @@ describe("Stage 4: Bound Topic Confirmation and Replay", () => {
       ).rejects.toThrow(/UNBOUND_LEGACY_TOPIC/);
 
       // repo.confirmTopic must reject
-      await expect(
-        repo.confirmTopic(channel.channel_id, "unbound_cand_1", 3),
-      ).rejects.toThrow(/UNBOUND_LEGACY_TOPIC/);
+      await expect(repo.confirmTopic(channel.channel_id, "unbound_cand_1", 3)).rejects.toThrow(/UNBOUND_LEGACY_TOPIC/);
     });
   });
 });

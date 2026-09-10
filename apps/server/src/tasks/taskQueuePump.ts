@@ -1,5 +1,6 @@
 import type { Task, TaskType } from "@studio/shared";
 import type { TaskManagerRuntime } from "./runtime.js";
+import { resolveMaxConcurrentVideoRenders } from "./video/renderConcurrencyLimiter.js";
 
 export const channelTaskTypes = new Set<TaskType>(["GENERATE_DNA", "SUGGEST_TOPICS"]);
 export const audioTaskTypes = new Set<TaskType>(["GENERATE_AUDIO"]);
@@ -24,7 +25,7 @@ export async function pumpTaskQueue(
     runningPipelineCount: number;
   },
 ): Promise<void> {
-  const maxVideoConcurrent = runtime.videoConfig.max_concurrent_tasks ?? 1;
+  const maxVideoConcurrent = resolveMaxConcurrentVideoRenders(runtime.videoConfig.max_concurrent_tasks ?? 1);
 
   // 1. Video Queue Lane
   while (runtime.runningVideoCount < maxVideoConcurrent) {

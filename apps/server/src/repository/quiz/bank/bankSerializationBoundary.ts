@@ -49,7 +49,9 @@ async function openReaderLock(bankRoot: string): Promise<SqliteDatabase> {
       fs.mkdirSync(bankRoot, { recursive: true });
       if (!SqliteDbClass) throw new Error("SQLite is unavailable");
       db = new SqliteDbClass(path.join(bankRoot, ".bank_writer.lock"));
-      db.exec("PRAGMA busy_timeout = 1; CREATE TABLE IF NOT EXISTS lock_lease (id INTEGER PRIMARY KEY); BEGIN; SELECT count(*) FROM lock_lease;");
+      db.exec(
+        "PRAGMA busy_timeout = 1; CREATE TABLE IF NOT EXISTS lock_lease (id INTEGER PRIMARY KEY); BEGIN; SELECT count(*) FROM lock_lease;",
+      );
       return db;
     } catch (error) {
       lastError = error;

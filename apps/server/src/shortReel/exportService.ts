@@ -11,10 +11,7 @@ import { createZipArchive, type ZipEntry } from "../quiz/zipHelper.js";
 import { requireCompleteShortReelSource } from "../repository/shortReelSourcePolicy.js";
 import { compileFlowPrompts } from "./flowPromptCompiler.js";
 import { readVerifiedAsset, reelAssetRoot } from "./packageAssets.js";
-import {
-  extractShortReelDisplayProjection,
-  loadShortReelLocalizationArtifact,
-} from "../quiz/bank/localization/productLocalization.js";
+import { extractShortReelDisplayProjection, resolveShortReelTargetLanguage } from "../quiz/bank/localization/productLocalization.js";
 
 export type ExportErrorCode =
   "REVISION_CONFLICT" | "INCOMPLETE_PACKAGE" | "STALE_EXPORT" | "INVALID_SCRIPT" | "UNSAFE_PATH" | "DUPLICATE_ENTRY" | "INVALID_ASSET";
@@ -153,7 +150,7 @@ export async function exportShortReelPackage(repository: RepositoryService, key:
     throw new ExportError("STALE_EXPORT", `Cannot export Short-Reel with stale segments [${record.stale_segments.join(", ")}].`);
   }
 
-  const localization = await loadShortReelLocalizationArtifact(repository, key.channel_id, key.reel_id);
+  const { localization } = await resolveShortReelTargetLanguage(repository, key.channel_id, record);
   const displayProjection = extractShortReelDisplayProjection(record.source, localization);
   const scriptValidation = validateReelScript(record.script, record.source, record.stale_segments, displayProjection);
   if (!scriptValidation.valid) {

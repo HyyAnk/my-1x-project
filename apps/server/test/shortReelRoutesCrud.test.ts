@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import type { CancelShortReelResponse, ConfirmShortReelTopicResponse, GetShortReelResponse, ListShortReelsResponse } from "@studio/shared";
+import type {
+  ConfirmShortReelTopicResponse,
+  CreateShortReelResponse,
+  GetShortReelResponse,
+  ListShortReelsResponse,
+  ShortReelRecord,
+} from "@studio/shared";
 import {
   buildShortReelTopicCandidate,
   buildTestApp,
@@ -303,6 +309,118 @@ describe("Short-Reel HTTP Routes and Confirmation Discrimination", () => {
       });
       expect(app.tasks.get(task.task_id).error).toBe("Image provider failed to generate a valid cover. Retry generation.");
       expect(app.tasks.get(task.task_id).error).not.toContain("provider-secret-token-123");
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("successfully deletes a Short-Reel via DELETE endpoint and returns 404 on subsequent get", async () => {
+    const root = await createTestRoot();
+    const app = await buildTestApp(root);
+
+    try {
+      const { channel, reel } = await createTestReel(app);
+
+      const getResponse = await app.server.inject({
+        method: "GET",
+        url: `/api/channels/${channel.channel_id}/short-reels/${reel.reel_id}`,
+      });
+      expect(getResponse.statusCode).toBe(200);
+
+      const deleteResponse = await app.server.inject({
+        method: "DELETE",
+        url: `/api/channels/${channel.channel_id}/short-reels/${reel.reel_id}`,
+      });
+      expect(deleteResponse.statusCode).toBe(200);
+      expect(deleteResponse.json()).toEqual({ success: true });
+
+      const afterGet = await app.server.inject({
+        method: "GET",
+        url: `/api/channels/${channel.channel_id}/short-reels/${reel.reel_id}`,
+      });
+      expect(afterGet.statusCode).toBe(404);
+
+      const listResponse = await app.server.inject({
+        method: "GET",
+        url: `/api/channels/${channel.channel_id}/short-reels`,
+      });
+      expect(listResponse.statusCode).toBe(200);
+      expect(listResponse.json<{ short_reels: unknown[] }>().short_reels).toHaveLength(0);
+
+      const secondDelete = await app.server.inject({
+        method: "DELETE",
+        url: `/api/channels/${channel.channel_id}/short-reels/${reel.reel_id}`,
+      });
+      expect(secondDelete.statusCode).toBe(404);
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("creates a Short-Reel directly from Question Bank question ID and returns 201", async () => {
+    const root = await createTestRoot();
+    const app = await buildTestApp(root);
+
+    try {
+      const channel = await createTestChannel(app, "Direct Reel Channel");
+      const question = createSampleBankQuestion("bank-direct-q-1", "deep_trivia");
+      await app.repository.saveQuestionBankQuestion(question);
+
+      const response = await app.server.inject({
+        method: "POST",
+        url: `/api/channels/${channel.channel_id}/short-reels`,
+        payload: {
+          question_id: "bank-direct-q-1",
+          visual_style: "flat_vector",
+        },
+      });
+
+      expect(response.statusCode).toBe(201);
+      const body = response.json<CreateShortReelResponse>();
+      expect(body.short_reel).toBeDefined();
+      expect(body.short_reel.reel_id).toMatch(/^sreel_/);
+      expect(body.short_reel.channel_id).toBe(channel.channel_id);
+      expect(body.short_reel.aspect_ratio).toBe("9:16");
+      expect(body.short_reel.source.question_id).toBe("bank-direct-q-1");
+
+      // Verify the short reel is persisted in repository
+      const persisted = await app.repository.getShortReel({
+        channel_id: channel.channel_id,
+        reel_id: body.short_reel.reel_id,
+      });
+      expect(persisted).toBeDefined();
+      expect(persisted.reel_id).toBe(body.short_reel.reel_id);
+
+      // Verify list endpoint returns the new short reel
+      const listResponse = await app.server.inject({
+        method: "GET",
+        url: `/api/channels/${channel.channel_id}/short-reels`,
+      });
+      expect(listResponse.statusCode).toBe(200);
+      const listBody = listResponse.json<ListShortReelsResponse>();
+      expect(listBody.short_reels).toHaveLength(1);
+      expect(listBody.short_reels[0].reel_id).toBe(body.short_reel.reel_id);
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("returns 404 when creating Short-Reel with non-existent question ID", async () => {
+    const root = await createTestRoot();
+    const app = await buildTestApp(root);
+
+    try {
+      const channel = await createTestChannel(app, "Direct Reel Channel 404");
+
+      const response = await app.server.inject({
+        method: "POST",
+        url: `/api/channels/${channel.channel_id}/short-reels`,
+        payload: {
+          question_id: "non-existent-q",
+        },
+      });
+
+      expect(response.statusCode).toBe(404);
     } finally {
       await app.close();
     }

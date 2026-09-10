@@ -1,12 +1,4 @@
-import type {
-  BankIndex,
-  BankQuestion,
-  BankQuestionWithCooldown,
-  BankTaxonomy,
-  Episode,
-  MatrixCoverageStats,
-  Task,
-} from "@studio/shared";
+import type { BankIndex, BankQuestion, BankQuestionWithCooldown, BankTaxonomy, Episode, MatrixCoverageStats, Task } from "@studio/shared";
 import { request } from "./client";
 import type {
   QuestionBankBatchGenPayload,
@@ -111,5 +103,4 @@ export const questionBankApi = {
         body: JSON.stringify(payload),
       },
     ),
-
 };

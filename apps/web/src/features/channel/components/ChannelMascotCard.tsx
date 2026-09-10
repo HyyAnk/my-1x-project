@@ -10,6 +10,20 @@ type ChannelMascotCardProps = {
   onOpenStageStudio: () => void;
 };
 
+function getMascotReadyStatesCount(mascot?: MascotProfile | null): number {
+  if (!mascot) return 0;
+  const activeStyle =
+    mascot.styles?.find((s) => s.id === mascot.active_style_id) || mascot.styles?.find((s) => s.is_default) || mascot.styles?.[0];
+
+  const hasThinking =
+    (activeStyle?.states?.thinking?.filter((v) => Boolean(v?.image_url)).length || 0) > 0 || Boolean(mascot.actions?.thinking?.sprite_url);
+  const hasCelebrate =
+    (activeStyle?.states?.celebrate?.filter((v) => Boolean(v?.image_url)).length || 0) > 0 ||
+    Boolean(mascot.actions?.celebrate?.sprite_url);
+
+  return (hasThinking ? 1 : 0) + (hasCelebrate ? 1 : 0);
+}
+
 export function ChannelMascotCard({ channel, mascotsList, changingMascot, onMascotChange, onOpenStageStudio }: ChannelMascotCardProps) {
   const { t } = useTranslation();
   const assignedMascot = mascotsList.find((m) => m.id === channel.mascot_id);
@@ -20,7 +34,7 @@ export function ChannelMascotCard({ channel, mascotsList, changingMascot, onMasc
     cfg.show_in_outro ? t("channelDetail.sceneOutroBadge") : null,
   ].filter(Boolean);
 
-  const readyPosesCount = Object.values(assignedMascot?.actions || {}).filter((a) => a?.sprite_url).length;
+  const readyStatesCount = getMascotReadyStatesCount(assignedMascot);
   const p169 = resolveChannelMascotPlacement(cfg, "16:9");
   const p916 = resolveChannelMascotPlacement(cfg, "9:16");
 
@@ -41,7 +55,7 @@ export function ChannelMascotCard({ channel, mascotsList, changingMascot, onMasc
             <option value="">{t("channelDetail.noMascotOption")}</option>
             {mascotsList.map((m) => (
               <option key={m.id} value={m.id}>
-                🎨 {m.name} ({t("mascots.posesBadge", { count: Object.values(m.actions).filter((a) => a?.sprite_url).length })})
+                🎨 {m.name} ({t("mascots.posesBadge", { count: getMascotReadyStatesCount(m) })})
               </option>
             ))}
           </select>
@@ -65,7 +79,7 @@ export function ChannelMascotCard({ channel, mascotsList, changingMascot, onMasc
                   <h3 className="mascot-persona-name">{assignedMascot.name}</h3>
                   <span className="action-ready-badge">
                     <Sparkle size={12} weight="fill" />
-                    <span>{t("channelDetail.posesReadyBadge", { count: readyPosesCount })}</span>
+                    <span>{t("channelDetail.posesReadyBadge", { count: readyStatesCount })}</span>
                   </span>
                 </div>
               </div>

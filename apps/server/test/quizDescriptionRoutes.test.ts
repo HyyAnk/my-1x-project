@@ -63,8 +63,8 @@ describe("Quiz Video Description API Routes (Step 1 & Step 3)", () => {
           name: "Quiz Channel Description Test",
           description: "Test channel",
           target_audience: "General",
-          language: "Vietnamese",
-          market: "VN",
+          language: "English",
+          market: "US",
           dna_mode: "example",
         });
 

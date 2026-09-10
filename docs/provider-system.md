@@ -1,15 +1,17 @@
 # Provider system
 
+Reviewed against repository boundaries on 2026-09-09. Configured remote generation can require credentials, network access and billable requests. Local storage does not imply fully offline generation.
+
 The scene model is provider-neutral:
 
 ```ts
-scene.dialogue
-scene.visual_prompt
-scene.duration_seconds
-scene.aspect_ratio
-scene.audio_asset_path
-scene.audio_generated_at
-scene.audio_duration_seconds
+scene.dialogue;
+scene.visual_prompt;
+scene.duration_seconds;
+scene.aspect_ratio;
+scene.audio_asset_path;
+scene.audio_generated_at;
+scene.audio_duration_seconds;
 ```
 
 `AudioProvider.generateDialogue` is implemented by `ChatterboxProvider`. It sends a local HTTP request to the Chatterbox sidecar, validates the returned WAV, and writes it through the repository path resolver to the episode `assets/` folder. The task runner then reads the WAV header and persists its duration beside the scene.
@@ -29,6 +31,6 @@ The sidecar loads `ChatterboxTTS` once at startup and exposes:
 
 Narration-only `<!-- AUDIO_CUE: chuckle -->` and `<!-- AUDIO_CUE: laugh -->` comments are converted to native tags by the default Chatterbox Turbo sidecar. The launcher sets `CHATTERBOX_MODEL=turbo` and automatically replaces a cue-less sidecar if one is already running. `GET /health` reports the active model and `paralinguistic_tags` capability.
 
-Audio failures are mapped to the plain-language task error `Audio service unavailable`; the browser does not receive a Python traceback. Audio tasks have no `codex_thread_id` or `codex_turn_id`.
+Audio is a provider task, not an LLM turn. Trace [task handling](../apps/server/src/tasks/) and [Chatterbox](../apps/server/src/providers/chatterbox.ts) for timeout, error and output validation behavior. Do not create Codex thread identifiers or promise one universal error string for every audio failure.
 
-Future interfaces remain reserved for `VideoProvider.generateScene`, `ImageProvider.generateReference`, and `ResearchProvider.search`. A Google Veo adapter can be added behind `VideoProvider` without adding provider-specific parameters to the episode UI.
+Image generation is already implemented behind `ImageProvider.generateReference`; see [provider exports](../apps/server/src/providers/index.ts) and [asset resolution](../apps/server/src/quiz/assets/resolveQuizAssets.ts). Do not treat it as a future-only interface. The exported `VideoProvider` and `ResearchProvider` interfaces alone do not establish an active integration; trace their callers before extending them. Current quiz video production uses the [video task runner](../apps/server/src/tasks/videoRunner.ts). See [System architecture](architecture.md) for the current cross-system boundaries.

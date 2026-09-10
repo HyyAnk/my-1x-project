@@ -135,6 +135,9 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
       episodeId: task.episode_id!,
       activeEngine: this.activeEngine,
       antigravityClient: this.antigravity,
+      customHookText: input.customHookText,
+      layoutOverride: input.layoutOverride,
+      badgeOverride: input.badgeOverride,
       imageConfig: input.config.image_generation
         ? {
             api_key: input.config.image_generation.api_key,

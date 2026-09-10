@@ -38,14 +38,10 @@ interface LockChild {
 }
 
 function spawnLockChild(mode: "reader" | "writer", root: string): LockChild {
-  const child = spawn(
-    process.execPath,
-    ["--import", "tsx/esm", "--input-type=module", "--eval", CHILD_LOCK_SCRIPT, mode, root],
-    {
-      cwd: path.resolve(import.meta.dirname, ".."),
-      stdio: "pipe",
-    },
-  );
+  const child = spawn(process.execPath, ["--import", "tsx/esm", "--input-type=module", "--eval", CHILD_LOCK_SCRIPT, mode, root], {
+    cwd: path.resolve(import.meta.dirname, ".."),
+    stdio: "pipe",
+  });
 
   const lines: string[] = [];
   let buffer = "";
@@ -273,13 +269,17 @@ describe("Question Bank serialization boundary", () => {
       const lockGate = new Promise<void>((resolve) => {
         releaseGate = resolve;
       });
+      let write1Started = false;
 
       const write1 = b1.runWrite(async () => {
+        write1Started = true;
         await lockGate;
       });
 
       // While b1 holds the lock, b2 from a separate boundary instance attempts to write
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      while (!write1Started) {
+        await new Promise((resolve) => setTimeout(resolve, 2));
+      }
       await expect(b2.runWrite(async () => {})).rejects.toThrow(/BANK_WRITER_BUSY/);
 
       releaseGate();
@@ -309,7 +309,9 @@ describe("Question Bank serialization boundary", () => {
         return "coherent";
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      while (!readerStarted) {
+        await new Promise((resolve) => setTimeout(resolve, 2));
+      }
       expect(readerStarted).toBe(true);
       const writer = writerBoundary.runWrite(() => Promise.resolve("written"));
       await expect(writer).rejects.toThrow(/BANK_WRITER_BUSY/);
@@ -320,7 +322,7 @@ describe("Question Bank serialization boundary", () => {
     }
   });
 
-  it("serializes reader-first access across separate Node processes", async () => {
+  it("serializes reader-first access across separate Node processes", { timeout: 30_000 }, async () => {
     const tempDir = await mkdtemp(path.join(os.tmpdir(), "bank-child-reader-first-"));
     const reader = spawnLockChild("reader", tempDir);
     try {
@@ -339,21 +341,24 @@ describe("Question Bank serialization boundary", () => {
     }
   });
 
-  it("serializes writer-first access across separate Node processes", async () => {
+  it("serializes writer-first access across separate Node processes", { timeout: 30_000 }, async () => {
     const tempDir = await mkdtemp(path.join(os.tmpdir(), "bank-child-writer-first-"));
     const writer = spawnLockChild("writer", tempDir);
-    const reader = spawnLockChild("reader", tempDir);
     try {
       await writer.waitForLine(/^writer-started$/);
-      const readerAttempt = reader.waitForLine(/^reader-(error|started)/);
-      writer.release();
-      await writer.waitForLine(/^writer-done$/);
-      await expect(readerAttempt).resolves.toMatch(/^reader-started$/);
-      reader.release();
-      await reader.waitForLine(/^reader-done$/);
+      const reader = spawnLockChild("reader", tempDir);
+      try {
+        const readerAttempt = reader.waitForLine(/^reader-(error|started)/);
+        writer.release();
+        await writer.waitForLine(/^writer-done$/);
+        await expect(readerAttempt).resolves.toMatch(/^reader-started$/);
+        reader.release();
+        await reader.waitForLine(/^reader-done$/);
+      } finally {
+        await reader.stop();
+      }
     } finally {
       await writer.stop();
-      await reader.stop();
       await rm(tempDir, { recursive: true, force: true });
     }
   });

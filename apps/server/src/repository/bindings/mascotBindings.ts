@@ -14,6 +14,9 @@ import {
   deleteMascotStyle,
   updateMascotSlot,
   setActiveMascotStyle,
+  getTransparentMascotAssetFile,
+  deleteTransparentMascotAssetFile,
+  getOrCreateTransparentMascotAsset,
 } from "../mascots.js";
 
 export const mascotBindings = {
@@ -32,4 +35,7 @@ export const mascotBindings = {
   deleteMascotStyle,
   updateMascotSlot,
   setActiveMascotStyle,
+  getTransparentMascotAssetFile,
+  deleteTransparentMascotAssetFile,
+  getOrCreateTransparentMascotAsset,
 };

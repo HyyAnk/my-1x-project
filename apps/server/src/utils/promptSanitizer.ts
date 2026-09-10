@@ -13,6 +13,23 @@ export type LLMClient =
       interruptTurn?(threadId: string, turnId: string): Promise<void>;
     };
 
+function formatUnknownError(error: unknown): string {
+  if (typeof error === "string") return error;
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object") {
+    const candidate = error as { message?: unknown };
+    if (typeof candidate.message === "string") {
+      return candidate.message;
+    }
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return "";
+    }
+  }
+  return typeof error === "number" || typeof error === "boolean" ? String(error) : "";
+}
+
 /**
  * Checks if an error from an image generation API is caused by a safety or content moderation filter.
  */
@@ -21,7 +38,7 @@ export function isContentFilterError(error: unknown): boolean {
   if (typeof error === "object" && "code" in error && (error as { code?: string }).code === "IMAGE_CONTENT_FILTER_REJECTED") {
     return true;
   }
-  const message = error instanceof Error ? error.message : String(error);
+  const message = formatUnknownError(error);
   return /(?:rejected by (?:the )?content filter|content filter|safety filter|safety system|policy violation|prohibited content|inappropriate content|moderation filter|safety guidelines|trigger(?:ed)? (?:a |the )?safety)/i.test(
     message,
   );
@@ -32,8 +49,8 @@ export function isContentFilterError(error: unknown): boolean {
  */
 export function extractFilterReason(error: unknown): string {
   if (!error) return "Safety content filter triggered";
-  const message = error instanceof Error ? error.message : String(error);
-  return message.slice(0, 300);
+  const message = formatUnknownError(error);
+  return (message || "Safety content filter triggered").slice(0, 300);
 }
 
 /**
@@ -94,6 +111,10 @@ export async function executeSinglePromptText(
       options,
     );
     return typeof res === "string" ? res : (res?.text ?? "");
+  }
+
+  if (typeof (client as { startThread?: unknown }).startThread !== "function") {
+    return sanitizePromptRuleBased(prompt);
   }
 
   const threadClient = client as unknown as { startThread(): Promise<string> };

@@ -9,7 +9,9 @@
     "build": "tsc --project tsconfig.json",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "vitest run --testTimeout 15000",
-    "test:coverage": "vitest run --coverage --testTimeout 15000"
+    "test:coverage": "vitest run --coverage --testTimeout 15000",
+    "test:visual": "cross-env RUN_VISUAL_REGRESSION=1 vitest run test/quizPixelVisualRegression.test.ts",
+    "test:visual:update": "cross-env RUN_VISUAL_REGRESSION=1 UPDATE_VISUAL_SNAPSHOTS=1 vitest run test/quizPixelVisualRegression.test.ts"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",
@@ -27,6 +29,7 @@
     "@types/pixelmatch": "^5.2.6",
     "@types/ws": "^8.5.13",
     "@vitest/coverage-v8": "^2.1.9",
+    "cross-env": "^7.0.3",
     "hyperframes": "0.8.17",
     "pixelmatch": "^6.0.0",
     "typescript": "^5.7.3",

@@ -18,11 +18,21 @@ describe("promptSanitizer", () => {
 
     const error4 = new RepositoryError("Quota exceeded", "RATE_LIMIT_EXCEEDED");
     expect(isContentFilterError(error4)).toBe(false);
+
+    const plainObjectError = { message: "Prompt was rejected by content filter" };
+    expect(isContentFilterError(plainObjectError)).toBe(true);
+
+    const stringError = "safety guidelines triggered";
+    expect(isContentFilterError(stringError)).toBe(true);
   });
 
   it("extracts filter reason from error", () => {
     const error = new Error("Your prompt was rejected by the content filter, which did not report a category.");
     expect(extractFilterReason(error)).toContain("rejected by the content filter");
+
+    const plainObjectError = { message: "rejected by safety filter: violent theme" };
+    expect(extractFilterReason(plainObjectError)).toContain("rejected by safety filter");
+    expect(extractFilterReason(plainObjectError)).not.toContain("[object Object]");
   });
 
   it("scrubs obvious trigger words with rule-based sanitizer", () => {

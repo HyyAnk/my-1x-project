@@ -1,6 +1,7 @@
 import type { TaskManagerRuntime, ActiveRun } from "../runtime.js";
 import { parseJson } from "../parsers.js";
 import { balanceQuizChoicePositions, validateQuizV2 } from "../../quiz/domain/quiz.js";
+import { validateQuizV2Copyright } from "../../quiz/qa/copyrightValidator.js";
 import { checkQuestionsAgainstHistory } from "../../quiz/qa/questionHistory.js";
 import { invalidateQuizArtifacts } from "../../quiz/pipeline/invalidation.js";
 import { synthesizeAllLegacyArtifacts } from "../../quiz/domain/quizArtifactSynthesizer.js";
@@ -25,6 +26,34 @@ export async function handleDirectQuizOutput(runtime: TaskManagerRuntime, active
   // Rebalance choice positions to prevent consecutive identical positions
   const balancedQuestions = balanceQuizChoicePositions(quiz.questions);
   const balancedQuiz = { ...quiz, questions: balancedQuestions };
+
+  // Early-gate copyright check immediately after parsing and balancing
+  const copyrightViolation = validateQuizV2Copyright(balancedQuiz);
+  if (copyrightViolation.violated) {
+    const qNum =
+      copyrightViolation.questionNumber ?? (copyrightViolation.questionIndex !== undefined ? copyrightViolation.questionIndex + 1 : 1);
+    const fieldDesc = copyrightViolation.field ?? "content";
+    const term = copyrightViolation.term ?? "unknown";
+    const category = copyrightViolation.category ?? "UNKNOWN";
+    const reason = copyrightViolation.reason ?? "Blocked by copyright policy";
+
+    runtime.logger?.warn?.(
+      `[directQuizHandler] Copyright policy violation detected in question ${qNum} (${fieldDesc}): prohibited term '${term}' [Category: ${category}]. ${reason}`,
+      {
+        channelId: task.channel_id,
+        episodeId: task.episode_id,
+        questionNumber: qNum,
+        field: fieldDesc,
+        term,
+        category,
+        reason,
+      },
+    );
+
+    throw new Error(
+      `Direct quiz generation failed copyright policy gate: Question ${qNum} (${fieldDesc}) contains prohibited copyright term '${term}' [Category: ${category}]. ${reason}`,
+    );
+  }
 
   // Write quiz.json
   const artifactPath = await runtime.repository.writeQuiz(task.channel_id, task.episode_id!, balancedQuiz);

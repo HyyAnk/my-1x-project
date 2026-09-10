@@ -25,10 +25,7 @@ import {
   runInCanonicalShortReelQueue,
   writeShortReelJsonAtomic,
 } from "./shortReelStorage.js";
-import {
-  extractShortReelDisplayProjection,
-  loadShortReelLocalizationArtifact,
-} from "../quiz/bank/localization/productLocalization.js";
+import { extractShortReelDisplayProjection, loadShortReelLocalizationArtifact } from "../quiz/bank/localization/productLocalization.js";
 
 export async function listShortReels(this: RepositoryRuntime, channelId: string): Promise<ShortReelRecord[]> {
   const channel = await this.getChannel(channelId);
@@ -45,6 +42,7 @@ export async function listShortReels(this: RepositoryRuntime, channelId: string)
       const record = await readShortReelJson(reelFile);
       if (record.channel_id === channel.channel_id) {
         reels.push(record);
+        this.entityIdResolver.setShortReelTopic(channel.channel_id, record.topic_id, record.reel_id);
       }
     } catch {
       // Safely ignore missing or corrupted individual entries
@@ -71,12 +69,34 @@ export async function getShortReel(this: RepositoryRuntime, key: ReelKey): Promi
     throw new RepositoryError("Short-Reel not found", "SHORT_REEL_NOT_FOUND");
   }
 
+  this.entityIdResolver.setShortReelTopic(record.channel_id, record.topic_id, record.reel_id);
   return record;
 }
 
 export async function getShortReelByTopic(this: RepositoryRuntime, channelId: string, topicId: string): Promise<ShortReelRecord | null> {
+  const cachedReelId = this.entityIdResolver.getShortReelIdByTopic(channelId, topicId);
+  if (cachedReelId) {
+    try {
+      const record = await this.getShortReel({ channel_id: channelId, reel_id: cachedReelId });
+      if (record.topic_id === topicId) {
+        return record;
+      }
+      this.entityIdResolver.deleteShortReel(channelId, cachedReelId);
+    } catch (err) {
+      if (err instanceof RepositoryError && err.code === "SHORT_REEL_NOT_FOUND") {
+        this.entityIdResolver.deleteShortReel(channelId, cachedReelId);
+      } else {
+        throw err;
+      }
+    }
+  }
+
   const all = await this.listShortReels(channelId);
-  return all.find((r) => r.topic_id === topicId) ?? null;
+  const found = all.find((r) => r.topic_id === topicId) ?? null;
+  if (found) {
+    this.entityIdResolver.setShortReelTopic(channelId, found.topic_id, found.reel_id);
+  }
+  return found;
 }
 
 export async function createShortReel(
@@ -85,6 +105,7 @@ export async function createShortReel(
   topic: ShortReelTopicSnapshot,
   source: ShortReelSourceSnapshot,
   requestId: string,
+  reelId?: string,
 ): Promise<ShortReelRecord> {
   this.acquireWriterAdmission();
   const canonicalRoot = resolveCanonicalStorageRoot(this.storageRoot);
@@ -126,6 +147,7 @@ export async function createShortReel(
         channel_id: channelId,
         topic,
         source: completeSource,
+        reel_id: reelId,
       });
 
       const receipt = {
@@ -140,6 +162,7 @@ export async function createShortReel(
 
       const targetFile = resolveShortReelFile(this.roots, channel.slug, initial.reel_id);
       await writeShortReelJsonAtomic(targetFile, initial);
+      this.entityIdResolver.setShortReelTopic(channelId, initial.topic.topic_id, initial.reel_id);
       return initial;
     },
     this.serviceId,
@@ -222,7 +245,49 @@ export async function updateShortReel(
 
       const targetFile = resolveShortReelFile(this.roots, channel.slug, key.reel_id);
       await writeShortReelJsonAtomic(targetFile, updated);
+      this.entityIdResolver.setShortReelTopic(key.channel_id, updated.topic.topic_id, updated.reel_id);
       return updated;
+    },
+    this.serviceId,
+  );
+}
+
+export async function deleteShortReel(this: RepositoryRuntime, key: ReelKey): Promise<boolean> {
+  this.acquireWriterAdmission();
+  const canonicalRoot = resolveCanonicalStorageRoot(this.storageRoot);
+  const queueKey = `${key.channel_id}:${key.reel_id}`;
+
+  return runInCanonicalShortReelQueue(
+    canonicalRoot,
+    queueKey,
+    async () => {
+      const channel = await this.getChannel(key.channel_id);
+      const root = resolveShortReelsRoot(this.roots, channel.slug);
+      const dir = resolveShortReelDirectory(this.roots, channel.slug, key.reel_id);
+      const file = resolveShortReelFile(this.roots, channel.slug, key.reel_id);
+
+      if (!(await this.exists(file))) {
+        throw new RepositoryError(`Short-Reel not found: ${key.reel_id}`, "SHORT_REEL_NOT_FOUND");
+      }
+
+      await this.assertRealPathInside(root, dir);
+      const record = await readShortReelJson(file);
+      if (record.channel_id !== key.channel_id) {
+        throw new RepositoryError("Short-Reel not found", "SHORT_REEL_NOT_FOUND");
+      }
+
+      try {
+        await this.removeTree(dir);
+        this.entityIdResolver.deleteShortReel(key.channel_id, key.reel_id);
+        return true;
+      } catch (err) {
+        const error = err as NodeJS.ErrnoException;
+        if (error.code === "ENOENT") {
+          this.entityIdResolver.deleteShortReel(key.channel_id, key.reel_id);
+          return true;
+        }
+        throw error;
+      }
     },
     this.serviceId,
   );

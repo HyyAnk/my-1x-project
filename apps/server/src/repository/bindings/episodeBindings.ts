@@ -1,4 +1,5 @@
 import { deleteEpisode, listEpisodes, getEpisode, getEpisodeFile, saveEpisodeFile } from "../episodes.js";
+import { resolveEpisodeTitles } from "../episodeTitleLookup.js";
 import {
   clearSequenceDrafts,
   removeEpisodeRuntimeArtifacts,
@@ -13,6 +14,7 @@ export const episodeBindings = {
   deleteEpisode,
   listEpisodes,
   getEpisode,
+  resolveEpisodeTitles,
   getEpisodeFile,
   saveEpisodeFile,
   clearSequenceDrafts,

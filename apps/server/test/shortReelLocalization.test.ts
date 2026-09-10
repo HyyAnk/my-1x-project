@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, rm, writeFile, readFile, readdir } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, writeFile, readdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -13,19 +13,15 @@ import {
 } from "@studio/shared";
 import { RepositoryService } from "../src/repository/service.js";
 import { confirmShortReelTopic } from "../src/shortReel/topicConfirmation.js";
-import {
-  generateFullReelPackage,
-  generateReelScriptUnit,
-  generateReelPublishingUnit,
-  exportShortReelPackage,
-} from "../src/shortReel/packageService.js";
+import { generateReelScriptUnit, generateReelPublishingUnit, exportShortReelPackage } from "../src/shortReel/packageService.js";
 import {
   loadShortReelLocalizationArtifact,
   loadProductLocalizationArtifact,
+  type ProductLocalizationArtifact,
   type TranslateFunction,
 } from "../src/quiz/bank/localization/productLocalization.js";
 import { getTopicConfirmationReceipt } from "../src/repository/topicConfirmationReceipts.js";
-import { compileCoverPrompt, generateReelCoverImage } from "../src/shortReel/thumbnailAdapter.js";
+import { compileCoverPrompt } from "../src/shortReel/thumbnailAdapter.js";
 import { applyLocalizedQuestionProjection } from "../src/quiz/thumbnail/thumbnailService.js";
 import { compileFlowPrompts } from "../src/shortReel/flowPromptCompiler.js";
 import { buildScriptGenerationPrompt } from "../src/shortReel/scriptPrompt.js";
@@ -96,11 +92,7 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
     return repo.saveQuestionBankQuestion(q);
   }
 
-  function makeBoundTopicCandidate(
-    channelId: string,
-    topicId: string,
-    bankQuestion: BankQuestion,
-  ): ShortReelTopicCandidate {
+  function makeBoundTopicCandidate(channelId: string, topicId: string, bankQuestion: BankQuestion): ShortReelTopicCandidate {
     return {
       topic_id: topicId,
       channel_id: channelId,
@@ -243,7 +235,6 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
     it("bypasses provider for English target and preserves canonical English source snapshot and hash", async () => {
       const { repo, channel } = await createTestEnv("en");
       const bankQ = await seedBankQuestion(repo);
-      const originalBankHash = hashBankQuestionSource(bankQ);
       const topic = makeBoundTopicCandidate(channel.channel_id, "topic-en-test", bankQ);
       await repo.saveTopicRun(channel.channel_id, [topic]);
 
@@ -291,20 +282,19 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
     it("localizes audience-facing display fields into German while keeping source snapshot and premise English", async () => {
       const { repo, channel } = await createTestEnv();
       const bankQ = await seedBankQuestion(repo);
-      const originalBankHash = hashBankQuestionSource(bankQ);
       const topic = makeBoundTopicCandidate(channel.channel_id, "topic-de-test", bankQ);
       await repo.saveTopicRun(channel.channel_id, [topic]);
 
-      const germanTranslate: TranslateFunction = async ({ targetLanguage, items }) => {
+      const germanTranslate: TranslateFunction = ({ targetLanguage }) => {
         expect(targetLanguage).toBe("de");
-        return {
+        return Promise.resolve({
           [`${bankQ.id}_question`]: "Welche Katze hat eine größere Muskeldichte: Jaguar oder Leopard?",
           [`${bankQ.id}_choice_c1`]: "Jaguar",
           [`${bankQ.id}_choice_c2`]: "Leopard",
           [`${bankQ.id}_explanation`]: "Jaguare besitzen eine deutlich kompaktere Muskelmasse als Leoparden.",
           product_video_description: "Vergleich der rohen Muskelmasse und Beißkraft von Großkatzen.",
           product_thumbnail_text: "Wer ist das wahre Raubtier?",
-        };
+        });
       };
 
       const result = await confirmShortReelTopic({
@@ -315,6 +305,7 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
           question_count: 1,
           render_aspect_ratio: "9:16",
           target_language: "de",
+          thumbnail_text: "Wer ist das wahre Raubtier?",
         },
         translateFn: germanTranslate,
       });
@@ -347,14 +338,12 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
           selected_answer_text: loc?.quiz_questions[0].choices[0].text,
         },
       });
-      expect(generationPrompt).toContain("Keep narrative, action, camera, environment, props, continuity, revealed_facts, and audio_direction instructions strictly in English");
+      expect(generationPrompt).toContain(
+        "Keep narrative, action, camera, environment, props, continuity, revealed_facts, and audio_direction instructions strictly in English",
+      );
 
       // 4. Generate Baseline Script: localized cues pass display projection validation
-      const scriptRecord = await generateReelScriptUnit(
-        repo,
-        { channel_id: channel.channel_id, reel_id: reel.reel_id },
-        "op-script-1",
-      );
+      const scriptRecord = await generateReelScriptUnit(repo, { channel_id: channel.channel_id, reel_id: reel.reel_id }, "op-script-1");
       const script = scriptRecord.script!;
       expect(script).not.toBeNull();
       // Segment 1 question text cue uses German localized question
@@ -369,18 +358,16 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
 
       // 5. Flow prompt compilation traces localized text cues while instructions remain English
       const [p1, _p2, p3] = compileFlowPrompts(script);
-      expect(p1).toContain('Welche Katze hat eine größere Muskeldichte: Jaguar oder Leopard?');
+      expect(p1).toContain("Welche Katze hat eine größere Muskeldichte: Jaguar oder Leopard?");
       expect(p1).toContain("--- ACTION & NARRATIVE ---");
-      expect(p3).toContain('Jaguar');
+      expect(p3).toContain("Jaguar");
 
       // 6. Publishing copy keeps English title and uses German localized description
-      const pubRecord = await generateReelPublishingUnit(
-        repo,
-        { channel_id: channel.channel_id, reel_id: reel.reel_id },
-        "op-pub-1",
-      );
+      const pubRecord = await generateReelPublishingUnit(repo, { channel_id: channel.channel_id, reel_id: reel.reel_id }, "op-pub-1");
       const pubPayload = pubRecord.units.publishing.last_accepted_payload!;
-      expect(pubPayload.description).toBe("Jaguar vs Leopard: Muscle Showdown: Vergleich der rohen Muskelmasse und Beißkraft von Großkatzen.");
+      expect(pubPayload.description).toBe(
+        "Jaguar vs Leopard: Muscle Showdown: Vergleich der rohen Muskelmasse und Beißkraft von Großkatzen.",
+      );
 
       // 7. Thumbnail cover prompt uses localized thumbnail text while instructions remain English
       const coverPrompt = compileCoverPrompt(reel, loc?.thumbnail_text);
@@ -454,13 +441,13 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
       ).rejects.toThrow(/CONFIRMATION_OPTIONS_CONFLICT/);
     });
 
-  it("does not join concurrent confirmations when normalized target languages conflict", async () => {
+    it("does not join concurrent confirmations when normalized target languages conflict", async () => {
       const { repo, channel } = await createTestEnv();
       const bankQ = await seedBankQuestion(repo);
       const topic = makeBoundTopicCandidate(channel.channel_id, "topic-concurrent-language", bankQ);
       await repo.saveTopicRun(channel.channel_id, [topic]);
-      const translateFn: TranslateFunction = async ({ targetLanguage, items }) =>
-        Object.fromEntries(Object.keys(items).map((key) => [key, `${targetLanguage}:${items[key]}`]));
+      const translateFn: TranslateFunction = ({ targetLanguage, items }) =>
+        Promise.resolve(Object.fromEntries(Object.keys(items).map((key) => [key, `${targetLanguage}:${items[key]}`])));
 
       const outcomes = await Promise.allSettled([
         confirmShortReelTopic({
@@ -481,17 +468,17 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
 
       expect(outcomes.filter((outcome) => outcome.status === "fulfilled")).toHaveLength(1);
       expect(outcomes.filter((outcome) => outcome.status === "rejected")[0]).toMatchObject({
-        reason: expect.objectContaining({ code: "CONFIRMATION_OPTIONS_CONFLICT" }),
+        reason: { code: "CONFIRMATION_OPTIONS_CONFLICT" },
       });
     });
 
-    it("invalidates only Short-Reel localization when the channel language changes", async () => {
+    it("preserves Short-Reel localization when the channel language changes", async () => {
       const { repo, channel } = await createTestEnv();
       const bankQ = await seedBankQuestion(repo);
       const topic = makeBoundTopicCandidate(channel.channel_id, "topic-language-change", bankQ);
       await repo.saveTopicRun(channel.channel_id, [topic]);
-      const translateFn: TranslateFunction = async ({ items }) =>
-        Object.fromEntries(Object.keys(items).map((key) => [key, `Translated ${key}`]));
+      const translateFn: TranslateFunction = ({ items }) =>
+        Promise.resolve(Object.fromEntries(Object.keys(items).map((key) => [key, `Translated ${key}`])));
       const result = await confirmShortReelTopic({
         repository: repo,
         channelId: channel.channel_id,
@@ -503,7 +490,9 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
 
       await repo.updateChannel(channel.channel_id, { language: "fr" });
 
-      expect(await loadShortReelLocalizationArtifact(repo, channel.channel_id, result.short_reel.reel_id)).toBeNull();
+      const preservedLoc = await loadShortReelLocalizationArtifact(repo, channel.channel_id, result.short_reel.reel_id);
+      expect(preservedLoc).not.toBeNull();
+      expect(preservedLoc?.target_language).toBe("de");
       const source = await repo.getShortReel({ channel_id: channel.channel_id, reel_id: result.short_reel.reel_id });
       expect(source.source.question_text).toBe(bankQ.question);
     });
@@ -523,9 +512,9 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
         return originalWrite(file, value);
       });
 
-      await expect(
-        confirmShortReelTopic({ repository: repo, channelId: channel.channel_id, topicId: topic.topic_id }),
-      ).rejects.toThrow("receipt disk failure");
+      await expect(confirmShortReelTopic({ repository: repo, channelId: channel.channel_id, topicId: topic.topic_id })).rejects.toThrow(
+        "receipt disk failure",
+      );
       writeSpy.mockRestore();
 
       const retry = await confirmShortReelTopic({ repository: repo, channelId: channel.channel_id, topicId: topic.topic_id });
@@ -540,7 +529,7 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
     const reelId = "reel-corrupt-localization";
     const reelDir = repo.resolvePath("channels", channel.slug, "short_reels", reelId);
     await mkdir(reelDir, { recursive: true });
-    await writeFile(path.join(reelDir, "localization.json"), "{\"schema_version\":1,\"status\":\"applied\"}", "utf8");
+    await writeFile(path.join(reelDir, "localization.json"), '{"schema_version":1,"status":"applied"}', "utf8");
 
     await expect(loadShortReelLocalizationArtifact(repo, channel.channel_id, reelId)).rejects.toThrow(/LOCALIZATION_CORRUPTED/);
   });
@@ -556,31 +545,28 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
   });
 
   it("uses localized thumbnail question and answer projections without changing source answers", () => {
-    const projected = applyLocalizedQuestionProjection(
-      [{ question: "Which?", choices: ["Jaguar", "Leopard"], answer: "Jaguar" }],
-      {
-        schema_version: 1,
-        product_id: "reel-1",
-        content_kind: "short_reel",
-        target_language: "de",
-        source_question_ids: ["q-1"],
-        source_content_hashes: ["a".repeat(64)],
-        status: "applied",
-        quiz_questions: [
-          {
-            question_id: "q-1",
-            question: "Welche Katze?",
-            choices: [
-              { id: "c1", text: "Jaguarin" },
-              { id: "c2", text: "Leopard" },
-            ],
-            explanation: "Erklärung",
-          },
-        ],
-        created_at: "2026-09-01T00:00:00.000Z",
-        updated_at: "2026-09-01T00:00:00.000Z",
-      },
-    );
+    const projected = applyLocalizedQuestionProjection([{ question: "Which?", choices: ["Jaguar", "Leopard"], answer: "Jaguar" }], {
+      schema_version: 1,
+      product_id: "reel-1",
+      content_kind: "short_reel",
+      target_language: "de",
+      source_question_ids: ["q-1"],
+      source_content_hashes: ["a".repeat(64)],
+      status: "applied",
+      quiz_questions: [
+        {
+          question_id: "q-1",
+          question: "Welche Katze?",
+          choices: [
+            { id: "c1", text: "Jaguarin" },
+            { id: "c2", text: "Leopard" },
+          ],
+          explanation: "Erklärung",
+        },
+      ],
+      created_at: "2026-09-01T00:00:00.000Z",
+      updated_at: "2026-09-01T00:00:00.000Z",
+    });
 
     expect(projected[0]).toEqual({ question: "Welche Katze?", choices: ["Jaguarin", "Leopard"], answer: "Jaguarin" });
   });
@@ -592,16 +578,16 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
       const topic = makeBoundTopicCandidate(channel.channel_id, "topic-fr-full-test", bankQ);
       await repo.saveTopicRun(channel.channel_id, [topic]);
 
-      const frenchTranslate: TranslateFunction = async ({ targetLanguage, items }) => {
+      const frenchTranslate: TranslateFunction = ({ targetLanguage }) => {
         expect(targetLanguage).toBe("fr");
-        return {
+        return Promise.resolve({
           [`${bankQ.id}_question`]: "Quel félin a une plus grande densité musculaire: le jaguar ou le léopard?",
           [`${bankQ.id}_choice_c1`]: "Jaguar",
           [`${bankQ.id}_choice_c2`]: "Léopard",
           [`${bankQ.id}_explanation`]: "Les jaguars possèdent une musculature plus dense et une mâchoire plus puissante.",
           product_video_description: "Comparaison de la force et de la masse musculaire des grands félins.",
           product_thumbnail_text: "Qui est le véritable prédateur?",
-        };
+        });
       };
 
       const result = await confirmShortReelTopic({
@@ -698,19 +684,15 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
       // Verify localization.json in ZIP matches French content
       const locEntry = extractedEntries.find((e) => e.filename === "localization.json");
       expect(locEntry).toBeDefined();
-      const locParsed = JSON.parse(locEntry!.data.toString("utf8"));
+      const locParsed = JSON.parse(locEntry!.data.toString("utf8")) as ProductLocalizationArtifact;
       expect(locParsed.target_language).toBe("fr");
-      expect(locParsed.quiz_questions[0].question).toBe(
-        "Quel félin a une plus grande densité musculaire: le jaguar ou le léopard?",
-      );
+      expect(locParsed.quiz_questions[0]?.question).toBe("Quel félin a une plus grande densité musculaire: le jaguar ou le léopard?");
 
       // Verify script.json in ZIP contains French text cues
       const scriptEntry = extractedEntries.find((e) => e.filename === "script.json");
       expect(scriptEntry).toBeDefined();
-      const scriptParsed: ReelScript = JSON.parse(scriptEntry!.data.toString("utf8"));
-      expect(scriptParsed.segments[0].text_cues[0].text).toBe(
-        "Quel félin a une plus grande densité musculaire: le jaguar ou le léopard?",
-      );
+      const scriptParsed = JSON.parse(scriptEntry!.data.toString("utf8")) as ReelScript;
+      expect(scriptParsed.segments[0].text_cues[0].text).toBe("Quel félin a une plus grande densité musculaire: le jaguar ou le léopard?");
 
       // Verify publishing.txt uses French description
       const pubEntry = extractedEntries.find((e) => e.filename === "publishing.txt");

@@ -210,4 +210,42 @@ describe("useTopicAvailability Hook", () => {
 
     expect(channelApi.topicAvailability).toHaveBeenCalledTimes(2);
   });
+
+  it("accepts newer request B even if B.checked_at is earlier than prior state (clock skew)", async () => {
+    const batchEarlierCheckedAt: TopicAvailabilityBatch = {
+      ...mockBatch,
+      checked_at: "2026-09-08T14:00:00.000Z", // earlier than mockBatch (15:00)
+      snapshot_token: "token-earlier-skew",
+      topics: [
+        {
+          topic_id: "topic-skew",
+          content_kind: "episode",
+          can_confirm: true,
+          reason_code: "AVAILABLE",
+          retryable: false,
+          recovery_action: "Ready to confirm.",
+          source_capacity: 4,
+        },
+      ],
+    };
+
+    vi.mocked(channelApi.topicAvailability).mockResolvedValueOnce(mockBatch).mockResolvedValueOnce(batchEarlierCheckedAt);
+
+    const { result } = renderHook(() => useTopicAvailability({ channelId: mockChannelId }));
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(result.current.availability?.snapshot_token).toBe("token-abc-123");
+
+    // Dispatch request B with earlier checked_at
+    await act(async () => {
+      await result.current.refresh();
+    });
+
+    // Request B must win regardless of checked_at timestamp
+    expect(result.current.availability?.snapshot_token).toBe("token-earlier-skew");
+    expect(result.current.availabilityMap.has("topic-skew")).toBe(true);
+  });
 });

@@ -8,6 +8,7 @@ import type { ChatterboxTarget } from "../providers/chatterbox.js";
 import type { AudioProvider, ImageProvider } from "../providers/index.js";
 import type { TopicMatrixPlan } from "../context/topicMatrixPlanner.js";
 import type { GenerateShortReelTarget } from "@studio/shared";
+import type { VideoRenderConcurrencyLimiter } from "./video/renderConcurrencyLimiter.js";
 
 export type ActiveRun = {
   task: Task;
@@ -53,6 +54,7 @@ export interface TaskManagerRuntime {
   repository: RepositoryService;
   topicHints: Map<string, string>;
   videoConfig: AppConfig["video_generation"];
+  videoRenderLimiter?: VideoRenderConcurrencyLimiter;
 
   cancel(taskId: string): Promise<Task>;
   cleanupExpiredFailedBuilds(nowMs?: number): Promise<{ removedEpisodes: number; removedTasks: number }>;
@@ -91,6 +93,7 @@ export interface TaskManagerRuntime {
   retryTopicSuggestions(active: ActiveRun, reason: string): Promise<void>;
   reconcileQuestionHistory(): Promise<void>;
   reconcileOrphanedTasks(): Promise<{ removedEpisodes: number; removedTasks: number }>;
+  reconcileStartupState(): Promise<{ prunedDirs: string[]; reclaimedBytes: number }>;
   pruneEpisodeTasks(episodeId: string): Promise<string[]>;
   pruneChannelTasks(channelId: string): Promise<string[]>;
   run(task: Task): Promise<void>;
@@ -111,5 +114,10 @@ export interface TaskManagerRuntime {
     topicHint?: string,
   ): Task;
   update(taskId: string, patch: Partial<Task>): Promise<void>;
-  waitForTaskTerminal(taskId: string, run: PipelineRun, onProgress?: (task: Task) => Promise<void> | void): Promise<Task>;
+  waitForTaskTerminal(
+    taskId: string,
+    run: PipelineRun,
+    onProgress?: (task: Task) => Promise<void> | void,
+    pollIntervalMs?: number,
+  ): Promise<Task>;
 }
