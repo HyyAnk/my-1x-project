@@ -1,7 +1,6 @@
 import type { Episode, QuizImageStyle } from "@studio/shared";
 import { QUIZ_STYLE_CONTRACTS } from "../quiz/assets/promptCompiler.js";
 import type { OutputContractInput } from "./taskInstructions.js";
-import { GENERAL_COPYRIGHT_CONSTRAINTS, resolveTopicCopyrightGuidance } from "./quizDirectCopyrightGuidance.js";
 
 function resolveVisualStyleContract(episode: Episode | null) {
   const resolvedStyle: QuizImageStyle = episode?.quiz_config?.resolved_visual_style ?? "pixar_3d";
@@ -14,7 +13,6 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
   const isTrueFalse = quizConfig?.quiz_format === "true_false";
   const styleContract = resolveVisualStyleContract(episode);
   const targetLanguage = input.channelLanguage?.trim() || "en";
-  const copyrightGuidance = resolveTopicCopyrightGuidance(episode);
   const choiceCountDesc = isTrueFalse
     ? "exactly 2 choices with ids 'choice-true' and 'choice-false' (texts: 'True' / 'False')"
     : "strictly exactly 3 choices with ids 'choice-a', 'choice-b', and 'choice-c'";
@@ -61,12 +59,7 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
     `4. Age appropriateness: Tailor question vocabulary and concepts strictly for age band "${quizConfig?.age_band ?? "7-9"}".`,
     `5. Visual prompt purity: The "visual_opportunity" field is used by the AI image generator to illustrate this specific question. Focus purely on vibrant character/animal/subject illustration.`,
     `6. ABSOLUTE LANGUAGE INTEGRITY: Write every question, choice text, explanation, and fun_fact 100% in "${targetLanguage}". Never mix any other language into the content.`,
-    `7. ${GENERAL_COPYRIGHT_CONSTRAINTS}`,
   ];
-
-  if (copyrightGuidance.hasHighRiskReference && copyrightGuidance.mitigationPrompt) {
-    lines.push(``, copyrightGuidance.mitigationPrompt);
-  }
 
   return lines.join("\n");
 }

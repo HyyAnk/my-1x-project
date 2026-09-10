@@ -7,12 +7,26 @@ import { ShopAiKeyQuizImageProvider } from "../../providers/shopAiKeyImage.js";
 import { assetFingerprint } from "./assetFingerprint.js";
 import { compileQuizAssetPrompt } from "./promptCompiler.js";
 import { runConcurrent } from "../../utils/concurrency.js";
-import { isValidQuizAsset, isQuizAssetResolutionComplete } from "./assetValidator.js";
+import { isValidQuizAsset, isQuizAssetResolutionComplete, resolveQuizImageProviderName } from "./assetValidator.js";
 import { syncHeroImageToBundle } from "./resolvers/bundleAssetSync.js";
 import { generateAssetWithProvider } from "./resolvers/providerAssetResolver.js";
 import type { AntigravityClient } from "../../antigravity.js";
+import { isContentFilterError } from "../../utils/promptSanitizer.js";
 
-export { isValidQuizAsset, isQuizAssetResolutionComplete };
+export { isValidQuizAsset, isQuizAssetResolutionComplete, resolveQuizImageProviderName };
+
+export function hasExplicitAssetProvenance(meta?: {
+  model?: string;
+  provenance?: string;
+  user_selected?: boolean;
+} | null): boolean {
+  if (!meta) return false;
+  return (
+    meta.model === "user_selected" ||
+    meta.provenance === "explicit" ||
+    meta.user_selected === true
+  );
+}
 
 export async function resolveQuizAssets(input: {
   repository: RepositoryService;
@@ -25,9 +39,18 @@ export async function resolveQuizAssets(input: {
   imageConfig?: {
     api_key?: string;
     model?: string;
-    provider?: "gpti2" | "shopaikey" | "custom";
+    provider?: "gpti2" | "shopaikey" | "custom" | "imgstudio";
     base_url?: string;
     quality?: string;
+  };
+  imageFallbackConfig?: {
+    enabled?: boolean;
+    provider?: "imgstudio";
+    base_url?: string;
+    api_key?: string;
+    model?: string;
+    resolution?: "1K" | "2K" | "4K";
+    quality?: "standard" | "high";
   };
   onProgress?: (progress: { completed: number; total: number; reused: boolean }) => Promise<void> | void;
   maxRounds?: number;
@@ -41,10 +64,26 @@ export async function resolveQuizAssets(input: {
   const activeEngine = input.activeEngine ?? "codex";
   const maxRounds = input.maxRounds ?? 3;
 
-  // Pre-load valid existing assets
+  // Pre-load valid existing assets that match current identity
   if (existing?.assets) {
+    const visualStyle = input.visualStyle ?? "pixar_3d";
+    const providerName = resolveQuizImageProviderName({
+      imageConfig: input.imageConfig,
+      activeEngine,
+    });
     for (const asset of existing.assets) {
-      if (await isValidQuizAsset(input.repository, input.channelId, input.episodeId, asset.path)) {
+      const request = input.plan.assets.find((r) => r.asset_id === asset.asset_id);
+      if (!request || asset.semantic_key !== request.semantic_key) continue;
+      if (!(await isValidQuizAsset(input.repository, input.channelId, input.episodeId, asset.path))) continue;
+
+      const compiled = compileQuizAssetPrompt(
+        request,
+        request.consistency_group_id ? consistencyGroups.get(request.consistency_group_id) : undefined,
+        visualStyle,
+      );
+      const expectedFingerprint = assetFingerprint(request, providerName, compiled.cacheVersion);
+
+      if (asset.fingerprint === expectedFingerprint || asset.source === "explicit_episode") {
         resolvedMap.set(asset.asset_id, asset);
       }
     }
@@ -64,9 +103,10 @@ export async function resolveQuizAssets(input: {
   };
 
   const ASSET_CONCURRENCY = 4;
+  const terminalFailed = new Set<string>();
 
   for (let round = 1; round <= maxRounds; round++) {
-    const pendingRequests = input.plan.assets.filter((req) => !resolvedMap.has(req.asset_id));
+    const pendingRequests = input.plan.assets.filter((req) => !resolvedMap.has(req.asset_id) && !terminalFailed.has(req.asset_id));
     if (pendingRequests.length === 0) break;
 
     if (round > 1) {
@@ -99,18 +139,10 @@ export async function resolveQuizAssets(input: {
         step: "compile_asset_prompt",
       });
       const configuredProvider = input.imageConfig?.provider ?? "gpti2";
-      const providerName =
-        configuredProvider === "gpti2" && Gpti2QuizImageProvider.isConfigured(input.imageConfig?.api_key)
-          ? "gpti2"
-          : configuredProvider === "shopaikey" && (input.imageConfig?.api_key || ShopAiKeyQuizImageProvider.isConfigured())
-          ? "shopaikey"
-          : configuredProvider === "custom" && input.imageConfig?.api_key
-          ? "custom"
-          : activeEngine === "antigravity"
-          ? "antigravity-chain"
-          : ShopAiKeyQuizImageProvider.isConfigured(input.imageConfig?.api_key)
-          ? "shopaikey"
-          : "inline-fallback";
+      const providerName = resolveQuizImageProviderName({
+        imageConfig: input.imageConfig,
+        activeEngine,
+      });
       const fingerprint = assetFingerprint(request, providerName, compiled.cacheVersion);
       const cached = byFingerprint.get(fingerprint);
       const bundleNumber = request.question_id ? Number(/^question-(\d+)$/i.exec(request.question_id)?.[1] ?? 0) : 0;
@@ -121,7 +153,7 @@ export async function resolveQuizAssets(input: {
       }
 
       try {
-        if (existingBundleFile) {
+        if (existingBundleFile && hasExplicitAssetProvenance(existingBundleFile)) {
           const bundleBytes = new Uint8Array(await readFile(existingBundleFile.absolutePath));
           const quizAssetPath = await input.repository.writeQuizImageAsset(
             input.channelId,
@@ -134,6 +166,8 @@ export async function resolveQuizAssets(input: {
               price_breakdown: existingBundleFile.price_breakdown,
               model: existingBundleFile.model,
               aspect_ratio: existingBundleFile.aspect_ratio,
+              provenance: "explicit",
+              user_selected: true,
             },
           );
           resolvedMap.set(request.asset_id, {
@@ -168,6 +202,7 @@ export async function resolveQuizAssets(input: {
             activeEngine,
             antigravityClient: input.antigravityClient,
             imageConfig: input.imageConfig,
+            imageFallbackConfig: input.imageFallbackConfig,
             logger,
           });
           resolvedMap.set(request.asset_id, generated.entry);
@@ -178,7 +213,11 @@ export async function resolveQuizAssets(input: {
           }
         }
       } catch (error) {
-        if (error instanceof Error && error.message === "PROVIDER_UNAVAILABLE") {
+        if (isContentFilterError(error)) {
+          terminalFailed.add(request.asset_id);
+          issues.push(issue(request, "asset_generation_failed", "blocker", `Image generation rejected by content filter for ${request.asset_id}: ${error instanceof Error ? error.message : "content filter rejection"}`, "Modify the prompt or attach an authorized asset manually."));
+        } else if (error instanceof Error && error.message === "PROVIDER_UNAVAILABLE") {
+          terminalFailed.add(request.asset_id);
           issues.push(issue(request, "asset_provider_unavailable", "blocker", "A semantically critical visual asset needs image generation, but no image provider is configured.", "Configure an image provider (gpti2.store, ShopAiKey, or Custom) in Settings or switch to Antigravity engine before rendering."));
         } else if (round === maxRounds) {
           issues.push(issue(request, "asset_generation_failed", "blocker", `Image generation failed for ${request.asset_id} after ${maxRounds} retry rounds: ${error instanceof Error ? error.message : "unknown error"}`, "Retry generation or attach the exact semantic asset before rendering."));

@@ -1,0 +1,46 @@
+{
+  "channel_id": "ch_875916a8fd10411f",
+  "slug": "novy",
+  "display_name": "Novy",
+  "description": "",
+  "target_audience": "Children and families",
+  "language": "English",
+  "country": "US",
+  "market": "US",
+  "channel_dna_path": "channels/novy/channel_dna.md",
+  "style_guide_path": "channels/novy/style_guide.md",
+  "status": "ACTIVE",
+  "created_at": "2026-09-05T13:47:54.253Z",
+  "updated_at": "2026-09-09T09:46:49.130Z",
+  "episode_count": 1,
+  "voice_reference_path": null,
+  "selected_styles": ["pixar_3d", "flat_vector", "kawaii_chibi", "natural_realism", "plastic_toy"],
+  "default_thinking_bar_style": "auto",
+  "default_question_box_style": "auto",
+  "default_answer_card_style": "auto",
+  "default_counter_style": "auto",
+  "default_background_style": "auto",
+  "default_palette_id": "auto",
+  "mascot_id": "mascot_22cb190ece7b4475",
+  "mascot_config": {
+    "enabled": true,
+    "position": "bottom_left",
+    "scale": 1.84,
+    "offset_x": 67,
+    "offset_y": 90,
+    "flip_x": false,
+    "show_in_intro": false,
+    "show_in_outro": false,
+    "show_in_question": true,
+    "placements": {
+      "16:9": {
+        "position": "bottom_left",
+        "scale": 1.84,
+        "offset_x": 67,
+        "offset_y": 90,
+        "flip_x": false
+      }
+    }
+  },
+  "default_intro_outro_style_id": "style_7120782e"
+}

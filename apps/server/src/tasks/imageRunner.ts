@@ -4,9 +4,10 @@ import { CodexImageProvider } from "../providers/codexImage.js";
 import { ShopAiKeyImageProvider } from "../providers/shopAiKeyImage.js";
 import { AntigravityImageChainProvider } from "../providers/antigravityImageChain.js";
 import { Gpti2ImageProvider } from "../providers/gpti2Image.js";
+import { ImgStudioImageProvider } from "../providers/imgstudio/index.js";
 import type { ImageProvider } from "../providers/index.js";
-import { parseContinuityBundles, replaceBundleAnchorPrompt } from "../visualBundles.js";
-import { isContentFilterError, extractFilterReason, sanitizeImagePromptWithLLM } from "../utils/promptSanitizer.js";
+import { parseContinuityBundles } from "../visualBundles.js";
+import { isContentFilterError } from "../utils/promptSanitizer.js";
 import type { TaskManagerRuntime } from "./runtime.js";
 
 export function createImageProvider(
@@ -14,11 +15,19 @@ export function createImageProvider(
   imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
   output?: string,
 ): ImageProvider {
-  const providerType = this.imageConfig.provider ?? "gpti2";
+  const providerType: string = this.imageConfig.provider ?? "gpti2";
   if (providerType === "gpti2" && Gpti2ImageProvider.isConfigured(this.imageConfig.api_key)) {
     return new Gpti2ImageProvider(this.repository, imageTarget, {
       apiKey: this.imageConfig.api_key,
       model: this.imageConfig.model,
+    });
+  }
+  if (providerType === "imgstudio" && (this.imageConfig.api_key || ImgStudioImageProvider.isConfigured(this.imageFallbackConfig?.api_key))) {
+    return new ImgStudioImageProvider(this.repository, imageTarget, {
+      apiKey: this.imageConfig.api_key || this.imageFallbackConfig?.api_key,
+      baseUrl: this.imageConfig.base_url || this.imageFallbackConfig?.base_url,
+      model: this.imageConfig.model || this.imageFallbackConfig?.model,
+      quality: this.imageConfig.quality || this.imageFallbackConfig?.quality,
     });
   }
   if (providerType === "shopaikey" && (this.imageConfig.api_key || ShopAiKeyImageProvider.isConfigured())) {
@@ -57,16 +66,15 @@ export async function generateBundleImageWithSafetyRetry(
   initialPrompt: string,
   signal?: AbortSignal,
   output?: string,
-  visualBibleContent?: string,
+  _visualBibleContent?: string,
 ): Promise<{ image: { asset_path: string }; updatedPrompt?: string }> {
-  let currentPrompt = initialPrompt;
   const maxAttempts = 2;
   let lastError: unknown = null;
 
   for (let attempt = 0; attempt <= maxAttempts; attempt++) {
     try {
       const provider = this.createImageProvider(imageTarget, output);
-      const image = await provider.generateReference(currentPrompt, signal);
+      const image = await provider.generateReference(initialPrompt, signal);
       await this.repository
         .recordImageUsage({
           channelId: imageTarget.channelId,
@@ -77,52 +85,64 @@ export async function generateBundleImageWithSafetyRetry(
           note: `Continuity bundle image CB-${String(imageTarget.bundleNumber).padStart(2, "0")}`,
         })
         .catch(() => undefined);
-      return { image, updatedPrompt: currentPrompt !== initialPrompt ? currentPrompt : undefined };
+      return { image };
     } catch (err) {
       lastError = err;
       if (signal?.aborted || this.get(task.task_id).status === "CANCELLED") throw err;
-      if (isContentFilterError(err) && attempt < maxAttempts) {
-        const reason = extractFilterReason(err);
-        const client = this.activeEngine === "antigravity" && this.antigravity ? this.antigravity : this.codex;
-        const engineLabel = this.activeEngine === "antigravity" ? "Antigravity" : "Codex";
+      if (isContentFilterError(err)) {
+        throw err;
+      }
+      if (attempt < maxAttempts) {
         this.logger.warn(
-          `Style anchor ${imageTarget.bundleNumber} prompt rejected by content filter (${reason}). Auto-rephrasing with ${engineLabel} (attempt ${attempt + 1}/${maxAttempts})...`,
+          `Style anchor ${imageTarget.bundleNumber} generation attempt ${attempt + 1} failed (${err instanceof Error ? err.message : String(err)}). Retrying...`,
           {
             profileId: imageTarget.channelId,
-            step: "image_safety_rephrase",
+            step: "image_transient_retry",
           },
         );
-        await this.update(task.task_id, {
-          progress_message: `Prompt rejected by safety filter. Auto-rephrasing with ${engineLabel} (${attempt + 1}/${maxAttempts})...`,
-        });
-        const rephrased = await sanitizeImagePromptWithLLM({
-          client,
-          originalPrompt: currentPrompt,
-          rejectionReason: reason,
-          context: `Style anchor continuity bundle CB-${String(imageTarget.bundleNumber).padStart(2, "0")}`,
-          signal,
-        });
-        if (rephrased && rephrased !== currentPrompt) {
-          currentPrompt = rephrased;
-          if (visualBibleContent) {
-            const updated = replaceBundleAnchorPrompt(visualBibleContent, imageTarget.bundleNumber, rephrased);
-            if (updated !== visualBibleContent) {
-              await this.repository
-                .saveEpisodeFile(imageTarget.channelId, imageTarget.episodeId, "visual_bible.md", updated)
-                .catch(() => undefined);
-              visualBibleContent = updated;
-            }
-          }
-          await this.update(task.task_id, {
-            progress_message: `Retrying continuity image with sanitized prompt (${attempt + 1}/${maxAttempts})`,
-            progress_percent: 45,
-          });
-          continue;
-        }
+        continue;
       }
-      throw err;
     }
   }
+
+  const fallbackConfig = this.imageFallbackConfig;
+  if (
+    fallbackConfig &&
+    fallbackConfig.enabled !== false &&
+    ImgStudioImageProvider.isConfigured(fallbackConfig.api_key)
+  ) {
+    this.logger.warn(
+      `Primary image provider failed for bundle CB-${String(imageTarget.bundleNumber).padStart(2, "0")} (${(lastError as Error)?.message}). Initiating fallback to ImgStudio...`,
+      { profileId: imageTarget.channelId, step: "IMAGE_FALLBACK_TRIGGERED" },
+    );
+    try {
+      const fallbackProvider = new ImgStudioImageProvider(this.repository, imageTarget, {
+        apiKey: fallbackConfig.api_key,
+        baseUrl: fallbackConfig.base_url,
+        model: fallbackConfig.model,
+        resolution: fallbackConfig.resolution,
+        quality: fallbackConfig.quality,
+      });
+      const image = await fallbackProvider.generateReference(initialPrompt, signal);
+      await this.repository
+        .recordImageUsage({
+          channelId: imageTarget.channelId,
+          episodeId: imageTarget.episodeId,
+          provider: "imgstudio",
+          model: fallbackConfig.model,
+          count: 1,
+          note: `Continuity bundle image CB-${String(imageTarget.bundleNumber).padStart(2, "0")} (fallback)`,
+        })
+        .catch(() => undefined);
+      return { image };
+    } catch (fallbackErr) {
+      this.logger.error(
+        `ImgStudio fallback generation also failed for bundle CB-${String(imageTarget.bundleNumber).padStart(2, "0")}: ${(fallbackErr as Error)?.message}`,
+        { profileId: imageTarget.channelId },
+      );
+    }
+  }
+
   throw lastError ?? new Error("Failed to generate continuity image");
 }
 
@@ -184,6 +204,7 @@ export async function executeBundleImageTask(this: TaskManagerRuntime, task: Tas
       undefined,
       visualBible?.content,
     );
+    if (controller.signal.aborted || this.get(task.task_id).status === "CANCELLED") return;
     const bundleId = `CB-${String(bundleNumber).padStart(2, "0")}`;
     await this.repository.attachBundleReference(task.channel_id, task.episode_id, bundleId, image.asset_path);
     await this.update(task.task_id, { progress_message: "Saving continuity image", progress_percent: 90 });

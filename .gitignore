@@ -48,6 +48,8 @@ output/
 .quiz-studio/config.json
 .quiz-studio/*.json
 .quiz-studio/question_bank/
+.quiz-studio/knowledge_base/entity_assets/
+**/.quiz-studio/knowledge_base/entity_assets/
 
 
 # Heavy media assets managed via GitHub Releases

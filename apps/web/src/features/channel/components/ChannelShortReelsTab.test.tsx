@@ -57,10 +57,10 @@ describe("ChannelShortReelsTab Component", () => {
         origin: "discovery",
       },
       units: {
-        references: { state: "ready", last_accepted_payload: null, current_attempt: null },
-        script: { state: "ready", last_accepted_payload: null, current_attempt: null },
-        cover: { state: "ready", last_accepted_payload: null, current_attempt: null },
-        publishing: { state: "ready", last_accepted_payload: null, current_attempt: null },
+        references: { state: "ready", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
+        script: { state: "ready", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
+        cover: { state: "ready", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
+        publishing: { state: "ready", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
       },
     });
 
@@ -108,10 +108,10 @@ describe("ChannelShortReelsTab Component", () => {
         origin: "discovery",
       },
       units: {
-        references: { state: "ready", last_accepted_payload: null, current_attempt: null },
-        script: { state: "ready", last_accepted_payload: null, current_attempt: null },
-        cover: { state: "ready", last_accepted_payload: null, current_attempt: null },
-        publishing: { state: "ready", last_accepted_payload: null, current_attempt: null },
+        references: { state: "ready", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
+        script: { state: "ready", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
+        cover: { state: "ready", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
+        publishing: { state: "ready", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
       },
     });
 

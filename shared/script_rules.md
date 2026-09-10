@@ -10,6 +10,6 @@
 - Add the hidden marker `<!-- HUMOR_POLICY: v1 -->` immediately after the script title. Humor is optional, restrained, and limited to a short observation or analogy that clarifies the answer without adding unsupported claims.
 - Put an audio cue after a humorous spoken line using only `<!-- AUDIO_CUE: chuckle -->` or, rarely, `<!-- AUDIO_CUE: laugh -->`. Never write spoken production directions such as `(laughs)` or `[laugh]`.
 - Never mock victims, vulnerable people, tragedies, or cultures. Use neutral, respectful wording for sensitive subjects.
-- Apply strict copyright and trademark safety. Do not use protected commercial characters, logos, or franchise-specific likenesses in questions, choices, examples, or narration.
+- Preserve the requested subject's names and identifying features. Do not substitute an unrelated generic subject. Keep all existing factual, structural, and audience-appropriateness requirements.
 - Keep spoken text TTS-safe: avoid dotted single-letter abbreviations and scientific names; spell out titles and common abbreviations; express numbers, measurements, and symbols conversationally.
 - Keep visual or editing directions out of narration. Only the approved hidden HTML comments may carry non-spoken metadata.

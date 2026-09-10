@@ -2,21 +2,21 @@ import type { QuizAssetRequirement } from "@studio/shared";
 
 export function framingRules(aspectRatio: QuizAssetRequirement["aspect_ratio"], _purpose: QuizAssetRequirement["purpose"]): string {
   if (aspectRatio === "1:1") {
-    return "Composition: 1:1 square canvas. Center the subject perfectly with balanced breathing room on all sides so it fits cleanly inside an answer card box.";
+    return "Composition: 1:1 square canvas. Center the focal subject perfectly with balanced breathing room and safe margins on all sides to avoid edge-clipping, so it fits cleanly inside an answer card box.";
   }
   if (aspectRatio === "9:16") {
-    return "Composition: 9:16 vertical portrait framing. Position the primary subject centrally with generous vertical headroom and no horizontal cutoffs.";
+    return "Composition: 9:16 vertical portrait framing. Position the primary subject centrally with generous vertical headroom, safe margins, and no edge-clipping or horizontal cutoffs.";
   }
   if (aspectRatio === "16:9") {
-    return "Composition: 16:9 widescreen landscape framing. Broad horizontal perspective suited for video background, header, or hero illustration.";
+    return "Composition: 16:9 widescreen landscape framing. Broad horizontal perspective with centered focal subject, balanced breathing room, and generous margins on all sides to avoid edge-clipping, suited for video background, header, or hero illustration.";
   }
   if (aspectRatio === "4:3") {
-    return "Composition: 4:3 standard horizontal canvas with well-proportioned margins.";
+    return "Composition: 4:3 standard horizontal canvas. Center the focal subject with balanced breathing room and ample margins on all sides to avoid edge-clipping, optimized for split-column and media-left quiz containers.";
   }
   if (aspectRatio === "3:4") {
-    return "Composition: 3:4 portrait card canvas. Keep the subject vertically structured with clean top/bottom margins.";
+    return "Composition: 3:4 portrait card canvas. Center the focal subject vertically and horizontally with balanced top/bottom and side margins to avoid edge-clipping, tailored for card containers.";
   }
-  return `Composition: ${aspectRatio} aspect ratio canvas with balanced margins.`;
+  return `Composition: ${aspectRatio} aspect ratio canvas. Center the focal subject with balanced breathing room and safe margins on all sides to avoid edge-clipping.`;
 }
 
 export function purposeRules(purpose: QuizAssetRequirement["purpose"]): string {

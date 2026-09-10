@@ -190,6 +190,9 @@ export function AppViewRouter(props: AppViewRouterProps) {
               props.setAppConfig((current) => (current ? { ...current, image_generation: image } : current));
               void props.fetchBalance();
             }}
+            onImageFallbackSaved={(fallback) => {
+              props.setAppConfig((current) => (current ? { ...current, image_fallback: fallback } : current));
+            }}
             onChannelUpdated={(channel) =>
               props.setChannels((current) => current.map((item) => (item.channel_id === channel.channel_id ? channel : item)))
             }

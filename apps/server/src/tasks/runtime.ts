@@ -46,6 +46,7 @@ export interface TaskManagerRuntime {
   failedBuildCleanupPromise: Promise<{ removedEpisodes: number; removedTasks: number }> | null;
   failedBuildCleanupTimer: NodeJS.Timeout | null;
   imageConfig: AppConfig["image_generation"];
+  imageFallbackConfig?: AppConfig["image_fallback"];
   imageVariants: Map<string, number>;
   logger: StudioLogger;
   locks: Set<string>;

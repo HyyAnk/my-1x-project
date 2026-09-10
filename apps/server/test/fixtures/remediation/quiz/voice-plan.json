@@ -1,0 +1,231 @@
+{
+  "schema_version": 2,
+  "episode_id": "ep_4dc807da5f174c36",
+  "segments": [
+    {
+      "segment_id": "question-01:question",
+      "role": "question",
+      "question_id": "question-01",
+      "text": "Could player two steer the ducks in Duck Hunt?",
+      "duration_seconds": 3.22,
+      "phrases": [
+        {
+          "text": "Could player two steer the ducks in Duck Hunt?",
+          "delivery": "question_end",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-01:choice",
+      "role": "choice",
+      "question_id": "question-01",
+      "text": "True, or False?",
+      "duration_seconds": 1.86,
+      "phrases": [
+        {
+          "text": "True, or False?",
+          "delivery": "normal",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-01:thinking",
+      "role": "thinking_prompt",
+      "question_id": "question-01",
+      "text": "Pick fast!",
+      "duration_seconds": 1.23,
+      "phrases": [
+        {
+          "text": "Pick fast!",
+          "delivery": "playful",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-01:reveal",
+      "role": "reveal",
+      "question_id": "question-01",
+      "text": "That's right! It's True!",
+      "duration_seconds": 2.14,
+      "phrases": [
+        {
+          "text": "That's right!",
+          "delivery": "emphasis",
+          "pause_after": "anticipation"
+        },
+        {
+          "text": "It's True!",
+          "delivery": "emphasis",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-01:explanation",
+      "role": "explanation",
+      "question_id": "question-01",
+      "text": "A second controller moved the duck around the screen!",
+      "duration_seconds": 3.5,
+      "phrases": [
+        {
+          "text": "A second controller moved the duck around the screen!",
+          "delivery": "warm",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-02:question",
+      "role": "question",
+      "question_id": "question-02",
+      "text": "Do classic arcade light guns shoot real laser beams?",
+      "duration_seconds": 3.28,
+      "phrases": [
+        {
+          "text": "Do classic arcade light guns shoot real laser beams?",
+          "delivery": "question_end",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-02:choice",
+      "role": "choice",
+      "question_id": "question-02",
+      "text": "True, or False?",
+      "duration_seconds": 1.71,
+      "phrases": [
+        {
+          "text": "True, or False?",
+          "delivery": "normal",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-02:thinking",
+      "role": "thinking_prompt",
+      "question_id": "question-02",
+      "text": "Which one?",
+      "duration_seconds": 1.08,
+      "phrases": [
+        {
+          "text": "Which one?",
+          "delivery": "playful",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-02:reveal",
+      "role": "reveal",
+      "question_id": "question-02",
+      "text": "That's right! It's False!",
+      "duration_seconds": 2.27,
+      "phrases": [
+        {
+          "text": "That's right!",
+          "delivery": "emphasis",
+          "pause_after": "anticipation"
+        },
+        {
+          "text": "It's False!",
+          "delivery": "emphasis",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-02:explanation",
+      "role": "explanation",
+      "question_id": "question-02",
+      "text": "The gun sensor detects flashing light on the screen!",
+      "duration_seconds": 3.69,
+      "phrases": [
+        {
+          "text": "The gun sensor detects flashing light on the screen!",
+          "delivery": "warm",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-03:question",
+      "role": "question",
+      "question_id": "question-03",
+      "text": "Was Pac-Man inspired by a pizza missing one slice?",
+      "duration_seconds": 3.69,
+      "phrases": [
+        {
+          "text": "Was Pac-Man inspired by a pizza missing one slice?",
+          "delivery": "question_end",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-03:choice",
+      "role": "choice",
+      "question_id": "question-03",
+      "text": "True, or False?",
+      "duration_seconds": 1.64,
+      "phrases": [
+        {
+          "text": "True, or False?",
+          "delivery": "normal",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-03:thinking",
+      "role": "thinking_prompt",
+      "question_id": "question-03",
+      "text": "What's your guess?",
+      "duration_seconds": 1.22,
+      "phrases": [
+        {
+          "text": "What's your guess?",
+          "delivery": "playful",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-03:reveal",
+      "role": "reveal",
+      "question_id": "question-03",
+      "text": "That's right! It's True!",
+      "duration_seconds": 2.23,
+      "phrases": [
+        {
+          "text": "That's right!",
+          "delivery": "emphasis",
+          "pause_after": "anticipation"
+        },
+        {
+          "text": "It's True!",
+          "delivery": "emphasis",
+          "pause_after": "none"
+        }
+      ]
+    },
+    {
+      "segment_id": "question-03:explanation",
+      "role": "explanation",
+      "question_id": "question-03",
+      "text": "The creator got the idea while eating round pizza!",
+      "duration_seconds": 3.6,
+      "phrases": [
+        {
+          "text": "The creator got the idea while eating round pizza!",
+          "delivery": "warm",
+          "pause_after": "none"
+        }
+      ]
+    }
+  ]
+}

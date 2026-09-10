@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Copy, Check, FloppyDisk, ArrowsClockwise } from "@phosphor-icons/react";
 import type { ReelPublishingPayload } from "@studio/shared";
+import { formatPublishingText } from "../utils/publishingText";
 
 export interface PublishingPanelProps {
   publishing: ReelPublishingPayload | null;
@@ -21,65 +22,41 @@ export function PublishingPanel({
   onCopyText,
   onChangeDraft,
 }: PublishingPanelProps) {
-  const [copied, setCopied] = useState(false);
+  const [copiedCombined, setCopiedCombined] = useState(false);
+  const [copiedTitle, setCopiedTitle] = useState(false);
+  const [copiedDescription, setCopiedDescription] = useState(false);
 
   const current = publishing ?? {
-    hook: "",
+    title: "",
     description: "",
-    cta: null,
-    hashtags: [],
   };
-
-  const [rawHashtags, setRawHashtags] = useState(() => (current.hashtags ?? []).join(", "));
-  const lastParsedRef = useRef<string[]>(current.hashtags ?? []);
-
-  useEffect(() => {
-    const incoming = publishing?.hashtags ?? [];
-    const isSame = incoming.length === lastParsedRef.current.length && incoming.every((val, i) => val === lastParsedRef.current[i]);
-    if (!isSame) {
-      lastParsedRef.current = incoming;
-      setRawHashtags(incoming.join(", "));
-    }
-  }, [publishing?.hashtags]);
 
   const handleUpdate = <K extends keyof ReelPublishingPayload>(field: K, value: ReelPublishingPayload[K]) => {
     onChangeDraft({ ...current, [field]: value });
   };
 
-  const handleHashtagsChange = (value: string) => {
-    setRawHashtags(value);
-    const parsed = value
-      .split(",")
-      .map((t) => t.trim().replace(/^#/, ""))
-      .filter(Boolean);
-    lastParsedRef.current = parsed;
-    handleUpdate("hashtags", parsed);
+  const handleCopyTitle = async () => {
+    const success = await onCopyText(current.title, "Title");
+    if (success) {
+      setCopiedTitle(true);
+      setTimeout(() => setCopiedTitle(false), 2500);
+    }
   };
 
-  const handleHashtagsBlur = () => {
-    const parsed = rawHashtags
-      .split(",")
-      .map((t) => t.trim().replace(/^#/, ""))
-      .filter(Boolean);
-    lastParsedRef.current = parsed;
-    setRawHashtags(parsed.join(", "));
-    handleUpdate("hashtags", parsed);
+  const handleCopyDescription = async () => {
+    const success = await onCopyText(current.description, "Description");
+    if (success) {
+      setCopiedDescription(true);
+      setTimeout(() => setCopiedDescription(false), 2500);
+    }
   };
 
   const handleCopyFullPublishing = async () => {
-    const lines = [
-      `HOOK:\n${current.hook}`,
-      `\nDESCRIPTION:\n${current.description}`,
-      current.cta ? `\nCALL TO ACTION:\n${current.cta}` : "",
-      current.hashtags.length > 0 ? `\nHASHTAGS:\n${current.hashtags.map((t) => (t.startsWith("#") ? t : `#${t}`)).join(" ")}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    const success = await onCopyText(lines, "Publishing metadata");
+    const text = formatPublishingText(current);
+    const success = await onCopyText(text, "Publishing metadata");
     if (success) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      setCopiedCombined(true);
+      setTimeout(() => setCopiedCombined(false), 2500);
     }
   };
 
@@ -95,11 +72,11 @@ export function PublishingPanel({
             type="button"
             className="short-reel-secondary-btn"
             onClick={handleCopyFullPublishing}
-            disabled={!current.hook && !current.description}
+            disabled={!current.title && !current.description}
             aria-label="Copy Publishing Text"
           >
-            {copied ? <Check size={14} weight="bold" /> : <Copy size={14} />}
-            <span>{copied ? "Copied" : "Copy Publishing Text"}</span>
+            {copiedCombined ? <Check size={14} weight="bold" /> : <Copy size={14} />}
+            <span>{copiedCombined ? "Copied" : "Copy Publishing Text"}</span>
           </button>
           <button
             type="button"
@@ -115,61 +92,67 @@ export function PublishingPanel({
       </div>
 
       <div className="short-reel-form-group">
-        <label className="short-reel-label" htmlFor="pub-hook">
-          <span>Hook Statement</span>
-        </label>
-        <textarea
-          id="pub-hook"
-          rows={2}
-          className="short-reel-textarea"
-          value={current.hook}
-          onChange={(e) => handleUpdate("hook", e.target.value)}
-          placeholder="Captivating short-form video opening hook..."
+        <div className="short-reel-field-header">
+          <label className="short-reel-label" htmlFor="pub-title">
+            Title
+          </label>
+          <div className="short-reel-field-actions">
+            <span className={`short-reel-char-counter ${current.title.length > 80 ? "short-reel-char-counter-warn" : ""}`}>
+              {current.title.length}/80
+            </span>
+            <button
+              type="button"
+              className="short-reel-icon-btn"
+              onClick={handleCopyTitle}
+              disabled={!current.title}
+              aria-label="Copy Title"
+              title="Copy Title"
+            >
+              {copiedTitle ? <Check size={14} weight="bold" /> : <Copy size={14} />}
+            </button>
+          </div>
+        </div>
+        <input
+          id="pub-title"
+          name="Title"
+          type="text"
+          className="short-reel-input"
+          value={current.title}
+          onChange={(e) => handleUpdate("title", e.target.value)}
+          placeholder="Concise hook title..."
         />
       </div>
 
       <div className="short-reel-form-group">
-        <label className="short-reel-label" htmlFor="pub-description">
-          <span>Video Description</span>
-        </label>
+        <div className="short-reel-field-header">
+          <label className="short-reel-label" htmlFor="pub-description">
+            Description
+          </label>
+          <div className="short-reel-field-actions">
+            <span className={`short-reel-char-counter ${current.description.length > 600 ? "short-reel-char-counter-warn" : ""}`}>
+              {current.description.length}/600
+            </span>
+            <button
+              type="button"
+              className="short-reel-icon-btn"
+              onClick={handleCopyDescription}
+              disabled={!current.description}
+              aria-label="Copy Description"
+              title="Copy Description"
+            >
+              {copiedDescription ? <Check size={14} weight="bold" /> : <Copy size={14} />}
+            </button>
+          </div>
+        </div>
         <textarea
           id="pub-description"
-          rows={4}
+          name="Description"
+          rows={6}
           className="short-reel-textarea"
           value={current.description}
           onChange={(e) => handleUpdate("description", e.target.value)}
-          placeholder="Full description for YouTube Shorts / TikTok / Reels..."
+          placeholder="Description including hashtags and call to action..."
         />
-      </div>
-
-      <div className="short-reel-form-row">
-        <div className="short-reel-form-col">
-          <label className="short-reel-label" htmlFor="pub-cta">
-            <span>Call to Action (Optional)</span>
-          </label>
-          <input
-            id="pub-cta"
-            type="text"
-            className="short-reel-input"
-            value={current.cta ?? ""}
-            onChange={(e) => handleUpdate("cta", e.target.value || null)}
-            placeholder="e.g. Subscribe for daily wildlife trivia!"
-          />
-        </div>
-        <div className="short-reel-form-col">
-          <label className="short-reel-label" htmlFor="pub-hashtags">
-            <span>Hashtags (comma-separated)</span>
-          </label>
-          <input
-            id="pub-hashtags"
-            type="text"
-            className="short-reel-input"
-            value={rawHashtags}
-            onChange={(e) => handleHashtagsChange(e.target.value)}
-            onBlur={handleHashtagsBlur}
-            placeholder="shorts, trivia, wildlife"
-          />
-        </div>
       </div>
 
       <div className="short-reel-form-actions">
@@ -188,7 +171,7 @@ export function PublishingPanel({
           ) : (
             <>
               <FloppyDisk size={16} weight="bold" />
-              <span>Save Publishing Metadata</span>
+              <span>Save Publishing Details</span>
             </>
           )}
         </button>

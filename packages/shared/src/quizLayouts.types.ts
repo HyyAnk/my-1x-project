@@ -11,9 +11,12 @@ export type QuizLayoutRenderMetrics = {
   itemCount: number;
 };
 
+export type QuizLayoutAssetAspectRatio = "16:9" | "4:3" | "1:1" | "3:4";
+
 export type QuizLayoutAssetMetrics = {
   maxWidth: number;
   maxHeight: number;
+  aspectRatio?: QuizLayoutAssetAspectRatio;
 };
 
 export type QuizLayoutMetrics = {

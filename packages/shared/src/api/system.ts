@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { EngineIdSchema, ImageProviderIdSchema } from "../enums.js";
 import { MascotRenderAspectRatioSchema } from "../mascot/renderSchema.js";
+import { KnowledgeBaseSettingsSchema } from "../schemas/config.js";
 
 export const CreateVoiceInputSchema = z.object({
   name: z.string().trim().min(1).max(80),
@@ -30,6 +31,18 @@ export const ImageSettingsInputSchema = z.object({
 });
 
 export type ImageSettingsInput = z.infer<typeof ImageSettingsInputSchema>;
+
+export const ImageFallbackSettingsInputSchema = z.object({
+  enabled: z.boolean().optional(),
+  provider: z.literal("imgstudio").optional(),
+  base_url: z.string().trim().max(2000).optional(),
+  model: z.string().trim().max(160).optional(),
+  api_key: z.string().max(4000).optional(),
+  resolution: z.enum(["1K", "2K", "4K"]).optional(),
+  quality: z.enum(["standard", "high"]).optional(),
+});
+
+export type ImageFallbackSettingsInput = z.infer<typeof ImageFallbackSettingsInputSchema>;
 
 export const AudioSettingsInputSchema = z.object({
   provider: z.string().trim().max(80).optional(),
@@ -162,3 +175,6 @@ export type StorageInfo = z.infer<typeof StorageInfoSchema>;
 export const StoragePathInputSchema = z.object({
   path: z.string().trim().min(1).max(2000),
 });
+
+export const KnowledgeBaseSettingsInputSchema = KnowledgeBaseSettingsSchema.partial();
+export type KnowledgeBaseSettingsInput = z.infer<typeof KnowledgeBaseSettingsInputSchema>;

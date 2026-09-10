@@ -33,6 +33,7 @@ type SettingsViewProps = {
   onAudioSaved: (audio: AppConfig["audio_generation"]) => void | Promise<void>;
   onVideoSaved: (video: AppConfig["video_generation"]) => void | Promise<void>;
   onImageSaved: (image: AppConfig["image_generation"]) => void | Promise<void>;
+  onImageFallbackSaved?: (fallback: AppConfig["image_fallback"]) => void | Promise<void>;
   onChannelUpdated: (channel: Channel) => void;
   onNotice: (notice: NonNullable<Notice>) => void;
   simplifyMode?: boolean;
@@ -55,6 +56,7 @@ export function SettingsView({
   onAudioSaved,
   onVideoSaved,
   onImageSaved,
+  onImageFallbackSaved,
   onChannelUpdated,
   onNotice,
   simplifyMode = true,
@@ -164,7 +166,13 @@ export function SettingsView({
 
       {/* Tab 3: Media & Generation */}
       {currentTab === "media" ? (
-        <MediaSettingsTab appConfig={appConfig} onVideoSaved={onVideoSaved} onImageSaved={onImageSaved} onNotice={onNotice} />
+        <MediaSettingsTab
+          appConfig={appConfig}
+          onVideoSaved={onVideoSaved}
+          onImageSaved={onImageSaved}
+          onImageFallbackSaved={onImageFallbackSaved}
+          onNotice={onNotice}
+        />
       ) : null}
 
       {/* Tab 4: Storage & System */}

@@ -42,7 +42,7 @@ describe("Question Bank REST API Routes", () => {
     );
     const srcKb = path.join(curr, ".quiz-studio", "knowledge_base");
     const destKb = path.join(isolatedStudioRoot, ".quiz-studio", "knowledge_base");
-    await cp(srcKb, destKb, { recursive: true }).catch(() => {});
+    await cp(srcKb, destKb, { recursive: true, filter: (src) => !src.includes("entity_assets") }).catch(() => {});
 
     app = await buildApp(isolatedStudioRoot);
     await seedQuestionBankFixtures(app.repository);
@@ -247,6 +247,13 @@ describe("Question Bank REST API Routes", () => {
     expect(body.approvedCount).toBe(1);
     expect(body.matrixCoverage).toBeDefined();
     expect(body.matrixCoverage.total_combos).toBe(20000);
+    const qaSummary = (body as Record<string, unknown>).qaSummary as Record<string, unknown> | undefined;
+    expect(qaSummary).toEqual({
+      duplicateRejections: 0,
+      schemaRejections: 0,
+      qualityRejections: 0,
+    });
+    expect(Object.hasOwn(qaSummary || {}, "copyrightRejections")).toBe(false);
   });
 
   it("POST /api/question-bank/generate-batch rejects foreign raw candidates before persistence", async () => {

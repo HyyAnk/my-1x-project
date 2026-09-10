@@ -46,6 +46,7 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
         activeEngine: runtime.activeEngine,
         antigravityClient: runtime.antigravity,
         imageConfig: { api_key: runtime.imageConfig.api_key, model: runtime.imageConfig.model },
+        imageFallbackConfig: runtime.imageFallbackConfig,
       })
     ).resolution;
   }

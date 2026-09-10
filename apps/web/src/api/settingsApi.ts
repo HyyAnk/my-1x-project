@@ -4,6 +4,9 @@ import type {
   AppConfig,
   CodexSettingsInput,
   CodexSettingsResponse,
+  ImageFallbackConfig,
+  ImageFallbackSettingsInput,
+  IMGSTUDIO_MODELS,
   QuestionHistorySettings,
   StorageInfo,
 } from "@studio/shared";
@@ -47,6 +50,26 @@ export const settingsApi = {
     }),
   saveImageSettings: (body: Partial<AppConfig["image_generation"]>) =>
     request<{ image_generation: AppConfig["image_generation"] }>("/api/image/settings", { method: "POST", body: JSON.stringify(body) }),
+  imageFallbackSettings: () =>
+    request<{
+      settings: ImageFallbackConfig & { has_api_key?: boolean };
+      models: typeof IMGSTUDIO_MODELS;
+      default_model: string;
+    }>("/api/image-fallback/settings"),
+  saveImageFallbackSettings: (body: ImageFallbackSettingsInput) =>
+    request<{ settings: ImageFallbackConfig & { has_api_key?: boolean } }>("/api/image-fallback/settings", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  verifyImageFallback: (body?: { api_key?: string; base_url?: string }) =>
+    request<{ ok: boolean; models?: unknown[] }>("/api/image-fallback/verify", {
+      method: "POST",
+      body: JSON.stringify(body || {}),
+    }),
+  clearImageFallbackKey: () =>
+    request<{ settings: ImageFallbackConfig & { has_api_key?: boolean } }>("/api/image-fallback/key", {
+      method: "DELETE",
+    }),
   codexModels: () => request<{ models: CodexSettingsResponse["models"] }>("/api/codex/models"),
   storage: () => request<StorageInfo>("/api/storage"),
   setStorage: (path: string) => request<StorageInfo>("/api/storage", { method: "POST", body: JSON.stringify({ path }) }),

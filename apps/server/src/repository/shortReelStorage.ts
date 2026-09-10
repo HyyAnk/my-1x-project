@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { ShortReelRecordSchema, type ShortReelRecord } from "@studio/shared";
+import { parseCompatibleShortReelRecord, type ShortReelRecord } from "@studio/shared";
 import { RepositoryError } from "./errors.js";
 import { resolvePath } from "./pathSafety.js";
 import type { RepositoryRoots } from "./types.js";
@@ -49,7 +49,7 @@ export function resolveShortReelFile(roots: RepositoryRoots, channelSlug: string
 export async function readShortReelJson(filePath: string): Promise<ShortReelRecord> {
   try {
     const raw = await readFile(filePath, "utf8");
-    return ShortReelRecordSchema.parse(JSON.parse(raw));
+    return parseCompatibleShortReelRecord(JSON.parse(raw));
   } catch (err) {
     const error = err as NodeJS.ErrnoException;
     if (error.code === "ENOENT") {

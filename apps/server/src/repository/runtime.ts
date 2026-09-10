@@ -220,6 +220,7 @@ export interface RepositoryRuntime {
   recordImageUsage(input: {
     channelId?: string;
     episodeId?: string;
+    reelId?: string;
     provider: string;
     model?: string;
     count?: number;

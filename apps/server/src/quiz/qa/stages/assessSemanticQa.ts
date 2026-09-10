@@ -1,5 +1,4 @@
 import { quizChoiceCountForFormat, type QuizIssue, type QuizV2 } from "@studio/shared";
-import { validateQuizQuestionCopyright, validateTextCopyright } from "../copyrightValidator.js";
 
 export function assessSemanticQa(quiz: QuizV2): QuizIssue[] {
   const issues: QuizIssue[] = [];
@@ -33,22 +32,6 @@ export function assessSemanticQa(quiz: QuizV2): QuizIssue[] {
         severity: "blocker",
         message: "Question " + question.number + " has no source IDs.",
         next_action: "Attach source IDs from the research ledger before rendering.",
-        question_ids: [question.id],
-        stage: "semantic",
-      });
-    }
-    const copyright = validateQuizQuestionCopyright(question);
-    if (copyright.violated) {
-      const isVisualViolation =
-        copyright.field === "visual_opportunity" || validateTextCopyright(question.visual_opportunity ?? "").violated;
-      const severity = isVisualViolation ? "blocker" : "warning";
-      result.push({
-        code: "semantic_copyright_violation",
-        severity,
-        message: `Question ${question.number} contains prohibited term '${copyright.term}' (${copyright.reason}).`,
-        next_action: isVisualViolation
-          ? "Regenerate this question using a safe alternative subject without using copyrighted characters or lion cubs."
-          : "Review trivia text to ensure it adheres to fair use educational guidelines.",
         question_ids: [question.id],
         stage: "semantic",
       });

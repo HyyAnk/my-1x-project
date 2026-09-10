@@ -28,6 +28,7 @@ export const UsageLedgerEventSchema = z.object({
   type: UsageLedgerEventTypeSchema,
   channel_id: z.string().optional(),
   episode_id: z.string().optional(),
+  reel_id: z.string().optional(),
   details: z.object({
     characters: z.number().optional(),
     duration_seconds: z.number().optional(),
@@ -37,6 +38,8 @@ export const UsageLedgerEventSchema = z.object({
     image_count: z.number().optional(),
     cost_usd: z.number().optional(),
     cost_vnd: z.number().optional(),
+    cost_estimated: z.boolean().optional(),
+    measured_cost: z.number().optional(),
     note: z.string().optional(),
   }),
 });

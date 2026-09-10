@@ -1,0 +1,124 @@
+{
+  "id": "mascot_22cb190ece7b4475",
+  "name": "Novy",
+  "description": "",
+  "visual_style": "pixar_3d",
+  "master_prompt": "Adorable playful baby red dinosaur with tiny soft wings and round cute belly, joyful smiling expression, big anime eyes, wearing small sneakers, solid white background, vibrant lighting",
+  "master_image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/master_concept_1787905113496.png",
+  "color_theme": "#ff6b4a",
+  "actions": {
+    "thinking": {
+      "action": "thinking",
+      "sprite_url": "/api/mascots/mascot_22cb190ece7b4475/assets/state_thinking_1787905166153.png",
+      "frames_count": 1,
+      "fps": 8,
+      "loop": true,
+      "frame_width": 512,
+      "frame_height": 512,
+      "offset_x": 0,
+      "offset_y": 0,
+      "motion_preset": "breathe"
+    },
+    "celebrate": {
+      "action": "celebrate",
+      "sprite_url": "/api/mascots/mascot_22cb190ece7b4475/assets/state_celebrate_1787987726367.png",
+      "frames_count": 1,
+      "fps": 10,
+      "loop": true,
+      "frame_width": 512,
+      "frame_height": 512,
+      "offset_x": 0,
+      "offset_y": 0,
+      "preview_url": "/api/mascots/mascot_22cb190ece7b4475/assets/state_celebrate_1787987726367.png",
+      "motion_preset": "jump",
+      "motion_speed": 0.5,
+      "motion_intensity": "subtle"
+    }
+  },
+  "styles": [
+    {
+      "id": "core",
+      "name": "Core Style",
+      "keyword": "",
+      "anchor_image_url": null,
+      "is_default": true,
+      "states": {
+        "thinking": [
+          {
+            "id": "slot_1",
+            "slot_index": 1,
+            "image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/state_thinking_1787905166153.png",
+            "motion_preset": "breathe",
+            "motion_speed": 1,
+            "motion_intensity": "normal",
+            "created_at": "2026-08-28T08:18:33.485Z"
+          },
+          {
+            "id": "slot_2",
+            "slot_index": 2,
+            "image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/style_core_thinking_slot2_1788624241363.png"
+          },
+          {
+            "id": "slot_3",
+            "slot_index": 3,
+            "image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/style_core_thinking_slot3_1788680301738.png",
+            "prompt_modifier": "Head tilted with curious wide eyes and wondering eyebrows, trying to solve the puzzle"
+          },
+          {
+            "id": "slot_4",
+            "slot_index": 4,
+            "image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/style_core_thinking_slot4_1788680341542.png",
+            "prompt_modifier": "Playfully peeking between fingers held before eyes, curious and mischievous focus"
+          },
+          {
+            "id": "slot_5",
+            "slot_index": 5,
+            "image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/style_core_thinking_slot5_1788660379648.png"
+          },
+          {
+            "id": "slot_6",
+            "slot_index": 6,
+            "image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/style_core_thinking_slot6_1788660380373.png"
+          },
+          {
+            "id": "slot_7",
+            "slot_index": 7,
+            "image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/style_core_thinking_slot7_1788660380619.png"
+          },
+          {
+            "id": "slot_8",
+            "slot_index": 8,
+            "image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/style_core_thinking_slot8_1788660380656.png"
+          },
+          {
+            "id": "slot_9",
+            "slot_index": 9,
+            "image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/style_core_thinking_slot9_1788660380990.png"
+          },
+          {
+            "id": "slot_10",
+            "slot_index": 10,
+            "image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/style_core_thinking_slot10_1788660381264.png"
+          }
+        ],
+        "celebrate": [
+          {
+            "id": "slot_1",
+            "slot_index": 1,
+            "image_url": "/api/mascots/mascot_22cb190ece7b4475/assets/state_celebrate_1787987726367.png",
+            "motion_preset": "jump",
+            "motion_speed": 0.5,
+            "motion_intensity": "subtle",
+            "created_at": "2026-08-28T08:18:33.485Z"
+          }
+        ]
+      },
+      "created_at": "2026-08-28T08:18:33.485Z",
+      "updated_at": "2026-09-06T07:39:26.820Z"
+    }
+  ],
+  "active_style_id": "core",
+  "assigned_channel_ids": [],
+  "created_at": "2026-08-28T08:18:33.485Z",
+  "updated_at": "2026-09-06T07:39:26.871Z"
+}

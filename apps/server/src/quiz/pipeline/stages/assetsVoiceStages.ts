@@ -54,6 +54,7 @@ export async function resolveAssets(
           quality: input.config.image_generation.quality,
         }
       : undefined,
+    imageFallbackConfig: input.config.image_fallback,
     onProgress: input.onAssetProgress,
   });
   const invalidated = await input.repository.invalidateQuizArtifacts(
@@ -81,6 +82,7 @@ export async function resolveAssets(
             quality: input.config.image_generation.quality,
           }
         : undefined,
+      imageFallbackConfig: input.config.image_fallback,
     });
   } catch (error) {
     const logger = new StudioLogger(input.repository.rootDirectory);

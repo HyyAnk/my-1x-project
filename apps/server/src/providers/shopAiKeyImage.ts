@@ -1,6 +1,7 @@
 import type { ImageProvider } from "./index.js";
 import { RepositoryError, RepositoryService } from "../repository.js";
 import { compactImagePrompt } from "../utils/promptSanitizer.js";
+import { resolveImageDimensions } from "./gpti2Dimensions.js";
 
 type ShopAiKeyImageTarget = {
   channelId: string;
@@ -48,6 +49,7 @@ export type OpenAiCompatibleImageOptions = {
   baseUrl?: string;
   model?: string;
   size?: string;
+  aspectRatio?: string;
   quality?: string;
 };
 
@@ -59,11 +61,17 @@ export async function generateShopAiKeyImageBytes(
   const apiKey = options?.apiKey?.trim() || process.env.SHOPAIKEY_API_KEY?.trim() || process.env.CUSTOM_IMAGE_API_KEY?.trim();
   if (!apiKey) throw new RepositoryError("Image API key is not configured", "IMAGE_PROVIDER_NOT_CONFIGURED");
   const baseUrl = (options?.baseUrl?.trim() || process.env.SHOPAIKEY_BASE_URL?.trim() || DEFAULT_BASE_URL).replace(/\/+$/, "");
-  const size = options?.size?.trim() || process.env.SHOPAIKEY_IMAGE_SIZE?.trim() || DEFAULT_SIZE;
   const quality = options?.quality?.trim() || process.env.SHOPAIKEY_IMAGE_QUALITY?.trim() || DEFAULT_QUALITY;
   let lastNetworkError: unknown = null;
   let lastFailureMessage = "unknown provider error";
   const requestedModels = options?.model ? [options.model] : imageModelChain();
+
+  const promptRatioMatch =
+    prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i) ||
+    prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
+  const detectedAspectRatio = options?.aspectRatio || (promptRatioMatch ? promptRatioMatch[1] : undefined);
+  const resolvedDefaultSize = detectedAspectRatio ? resolveImageDimensions(detectedAspectRatio, requestedModels[0] || DEFAULT_MODELS[0]).size : DEFAULT_SIZE;
+  const size = options?.size?.trim() || process.env.SHOPAIKEY_IMAGE_SIZE?.trim() || resolvedDefaultSize;
   for (const [modelIndex, requestedModel] of requestedModels.entries()) {
     let retryFallback = false;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
@@ -165,14 +173,17 @@ export class ShopAiKeyQuizImageProvider {
     return ShopAiKeyImageProvider.isConfigured(apiKey);
   }
 
-  async generateAsset(input: { assetId: string; fingerprint: string; prompt: string }): Promise<{ path: string }> {
+  async generateAsset(input: { assetId: string; fingerprint: string; prompt: string; aspect_ratio?: string }): Promise<{ path: string }> {
     return {
       path: await this.repository.writeQuizImageAsset(
         this.target.channelId,
         this.target.episodeId,
         input.assetId,
         input.fingerprint,
-        await generateShopAiKeyImageBytes(input.prompt, undefined, this.options),
+        await generateShopAiKeyImageBytes(input.prompt, undefined, {
+          ...this.options,
+          aspectRatio: input.aspect_ratio || this.options?.aspectRatio,
+        }),
       ),
     };
   }

@@ -39,7 +39,7 @@ export function StorageSetupModal({
             <h2>Choose storage</h2>
           </div>
         </div>
-        <p className="modal-copy">Channel files stay here and out of Git.</p>
+        <p className="modal-copy">Channel files, media caches, and entity assets stay here and strictly out of Git.</p>
         <label>
           Parent folder
           <input
@@ -51,7 +51,7 @@ export function StorageSetupModal({
           />
         </label>
         <p className="storage-hint">
-          A <code>channels/</code> folder will be created here.
+          A <code>channels/</code> folder and media asset directories will be safely kept here.
         </p>
         <div className="modal-actions">
           <button type="button" className="quiet-button" disabled={busy} onClick={() => void save(storage.default_path)}>

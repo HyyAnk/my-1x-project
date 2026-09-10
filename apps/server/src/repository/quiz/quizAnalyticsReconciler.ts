@@ -32,6 +32,7 @@ export interface ImageUsageDelta {
   count: number;
   addedCostVnd: number;
   addedCostUsd: number;
+  costEstimated: boolean;
 }
 
 export function estimateVoiceSavingsUsd(characters: number): number {
@@ -56,7 +57,8 @@ export function resolveImageUsageDelta(input: {
   const unitCostUsd = isGpti2 ? GPTI2_IMAGE_UNIT_COST_USD : DEFAULT_IMAGE_UNIT_COST_USD;
   const addedCostVnd = input.costVnd !== undefined ? Math.max(0, input.costVnd) : count * unitCostVnd;
   const addedCostUsd = input.costUsd !== undefined ? Math.max(0, input.costUsd) : Number((count * unitCostUsd).toFixed(4));
-  return { providerKey, count, addedCostVnd, addedCostUsd };
+  const costEstimated = input.costVnd === undefined && input.costUsd === undefined;
+  return { providerKey, count, addedCostVnd, addedCostUsd, costEstimated };
 }
 
 /**

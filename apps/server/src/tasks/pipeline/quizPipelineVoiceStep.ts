@@ -45,7 +45,11 @@ export function createQuizPipelineInput(
 
   return {
     repository: runtime.repository,
-    config: { audio_generation: runtime.audioConfig, image_generation: runtime.imageConfig },
+    config: {
+      audio_generation: runtime.audioConfig,
+      image_generation: runtime.imageConfig,
+      image_fallback: runtime.imageFallbackConfig,
+    },
     channelId: task.channel_id,
     episodeId: task.episode_id!,
     activeEngine: runtime.activeEngine,

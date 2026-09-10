@@ -30,3 +30,4 @@ export * from "./googleImagen.js";
 export * from "./antigravityImageChain.js";
 export * from "./chatterbox.js";
 export * from "./gpti2Image.js";
+export * from "./imgstudio/index.js";

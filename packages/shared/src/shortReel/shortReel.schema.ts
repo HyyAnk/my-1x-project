@@ -1,7 +1,17 @@
 import { z } from "zod";
 import { sha256Hex, canonicalJsonStringify, ReelArchetypeSchema, CompleteShortReelSourceSnapshotSchema } from "./shortReelSource.schema.js";
+import { ReelPublishingPayloadSchema, GeneratedReelPublishingSchema } from "./shortReelPublishing.schema.js";
+import { ReelVisualContextSchema } from "./shortReelVisual.schema.js";
 
-export { sha256Hex, canonicalJsonStringify, ReelArchetypeSchema, CompleteShortReelSourceSnapshotSchema };
+export {
+  sha256Hex,
+  canonicalJsonStringify,
+  ReelArchetypeSchema,
+  CompleteShortReelSourceSnapshotSchema,
+  ReelPublishingPayloadSchema,
+  GeneratedReelPublishingSchema,
+  ReelVisualContextSchema,
+};
 
 export const SegmentIndexSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 
@@ -131,6 +141,8 @@ export const ReelAttemptMetadataSchema = z
     started_at: z.string(),
     completed_at: z.string().nullable(),
     error: z.string().nullable(),
+    error_message: z.string().optional(),
+    retryable: z.boolean().optional(),
   })
   .strict();
 
@@ -140,6 +152,7 @@ export function createReelUnitStateSchema<T extends z.ZodTypeAny>(payloadSchema:
       state: ReelUnitStatusSchema,
       last_accepted_payload: payloadSchema.nullable(),
       current_attempt: ReelAttemptMetadataSchema.nullable(),
+      accepted_dependency_fingerprint: z.string().nullable().default(null),
     })
     .strict();
 }
@@ -173,15 +186,6 @@ export const ReelCoverPayloadSchema = z
   })
   .strict();
 
-export const ReelPublishingPayloadSchema = z
-  .object({
-    hook: z.string().min(1).max(500),
-    description: z.string().min(1).max(2000),
-    cta: z.string().max(200).nullable(),
-    hashtags: z.array(z.string().min(1).max(50)),
-  })
-  .strict();
-
 export const ReelScriptPayloadSchema = z
   .object({
     script: ReelScriptSchema,
@@ -210,7 +214,7 @@ export const MutationReceiptSchema = z
 
 export const ShortReelRecordSchema = z
   .object({
-    schema_version: z.literal(1),
+    schema_version: z.literal(2),
     reel_id: z.string().min(1),
     channel_id: z.string().min(1),
     topic_id: z.string().min(1),
@@ -223,6 +227,7 @@ export const ShortReelRecordSchema = z
     updated_at: z.string(),
     script: ReelScriptSchema.nullable(),
     stale_segments: z.array(SegmentIndexSchema).optional(),
+    visual_context: ReelVisualContextSchema.nullable().default(null),
     units: ReelDeliverableUnitsSchema,
     last_mutation: MutationReceiptSchema.nullable().optional(),
     mutation_history: z.array(MutationReceiptSchema).optional(),
@@ -515,7 +520,7 @@ export function createInitialShortReel(params: {
   const reelId = params.reel_id || `sreel_${sha256Hex(`${params.channel_id}:${params.topic.topic_id}:${now}`).slice(0, 16)}`;
 
   return ShortReelRecordSchema.parse({
-    schema_version: 1,
+    schema_version: 2,
     reel_id: reelId,
     channel_id: params.channel_id,
     topic_id: params.topic.topic_id,
@@ -527,26 +532,31 @@ export function createInitialShortReel(params: {
     created_at: now,
     updated_at: now,
     script: null,
+    visual_context: null,
     units: {
       references: {
         state: "missing",
         last_accepted_payload: null,
         current_attempt: null,
+        accepted_dependency_fingerprint: null,
       },
       script: {
         state: "missing",
         last_accepted_payload: null,
         current_attempt: null,
+        accepted_dependency_fingerprint: null,
       },
       cover: {
         state: "missing",
         last_accepted_payload: null,
         current_attempt: null,
+        accepted_dependency_fingerprint: null,
       },
       publishing: {
         state: "missing",
         last_accepted_payload: null,
         current_attempt: null,
+        accepted_dependency_fingerprint: null,
       },
     },
   });

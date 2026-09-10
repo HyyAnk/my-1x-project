@@ -1,6 +1,5 @@
 import type { MascotProfile, ThumbnailAspectRatio } from "@studio/shared";
 import { QUIZ_STYLE_CONTRACTS } from "../assets/promptCompiler.js";
-import { sanitizeVisualPrompt } from "../assets/visualPromptSanitizer.js";
 import { sanitizeThumbnailHook } from "./thumbnailHookGuardrail.js";
 import { resolveTopicEnvironmentSubject } from "./thumbnailEnvironmentResolver.js";
 import type { CompiledThumbnailPrompts, QuizThumbnailPlan } from "./thumbnailTypes.js";
@@ -110,7 +109,7 @@ export function compileThumbnailPrompt(
   const aestheticSection = `Style: ${styleContract.name} (${styleContract.renderingMedium}). Quality: Pixar / Disney feature animation benchmark quality, smooth subsurface scattering on character skin/scales, clean matte materials on props. Lighting: ${lightingDescription}. Environment: ${environmentDescription}. Color palette: Rich, saturated, warm, inviting, and cheerful for family/kids audience. Clean spacious negative space, zero background clutter, zero numerical labels on objects. Ultra-clean, modern, non-cluttered YouTube thumbnail masterpiece.`;
 
   const rawPrompt = [framingSection, typographySection, layoutSection, aestheticSection].join(" \n\n");
-  return sanitizeVisualPrompt(rawPrompt);
+  return rawPrompt.replace(/\s{2,}/g, " ").trim();
 }
 
 /**

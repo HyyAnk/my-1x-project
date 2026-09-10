@@ -2,6 +2,20 @@ import { z } from "zod";
 import { EngineIdSchema, TaskTypeSchema } from "../enums.js";
 import { MascotStageSettingsSchema } from "./mascot.js";
 import { IsoDate, QUIZ_MAX_CHOICES_PER_QUESTION } from "./common.js";
+import { IMGSTUDIO_DEFAULT_MODEL_ID } from "../constants/imgstudioModels.js";
+
+export const ImageFallbackConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  provider: z.literal("imgstudio").default("imgstudio"),
+  base_url: z.string().default("https://imgstudio.site"),
+  api_key: z.string().default(""),
+  has_api_key: z.boolean().optional(),
+  model: z.string().default(IMGSTUDIO_DEFAULT_MODEL_ID),
+  resolution: z.enum(["1K", "2K", "4K"]).default("2K"),
+  quality: z.enum(["standard", "high"]).default("standard"),
+});
+
+export type ImageFallbackConfig = z.infer<typeof ImageFallbackConfigSchema>;
 
 export const AppConfigSchema = z.object({
   active_engine: EngineIdSchema.default("codex"),
@@ -31,6 +45,7 @@ export const AppConfigSchema = z.object({
     quality: z.string().default("low"),
     max_concurrent_tasks: z.number().int().positive().default(3),
   }),
+  image_fallback: ImageFallbackConfigSchema.default({}),
   codex: z.object({
     max_concurrent_tasks: z.number().int().positive().default(3),
     transport: z.enum(["app_server", "openai_compatible"]).default("app_server"),
@@ -65,9 +80,20 @@ export const AppConfigSchema = z.object({
       auto_remix: z.boolean().default(false),
     })
     .default({}),
+  knowledge_base: z
+    .object({
+      entity_assets_dir: z.string().default(""),
+    })
+    .default({}),
 });
 
 export type AppConfig = z.infer<typeof AppConfigSchema>;
+
+export const KnowledgeBaseSettingsSchema = z.object({
+  entity_assets_dir: z.string().default(""),
+});
+
+export type KnowledgeBaseSettings = z.infer<typeof KnowledgeBaseSettingsSchema>;
 
 export const QuestionHistorySettingsSchema = z.object({
   enabled: z.boolean().default(true),

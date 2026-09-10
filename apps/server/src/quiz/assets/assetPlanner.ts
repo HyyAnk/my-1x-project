@@ -1,4 +1,11 @@
-import { QuizAssetPlanSchema, type DirectorPlan, type QuizAssetPlan, type QuizImageStyle, type QuizV2 } from "@studio/shared";
+import {
+  QuizAssetPlanSchema,
+  resolveQuizLayoutAssetAspectRatio,
+  type DirectorPlan,
+  type QuizAssetPlan,
+  type QuizImageStyle,
+  type QuizV2,
+} from "@studio/shared";
 import { QUIZ_STYLE_CONTRACTS } from "./promptCompiler.js";
 
 export const QUIZ_ASSET_SUBJECT_MAX_LENGTH = 180;
@@ -17,7 +24,7 @@ export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle
         subject: compactQuizAssetSubject(question.visual_opportunity || "", question.question),
         purpose: "hero_question_image",
         style: "cute_illustration",
-        aspect_ratio: "16:9",
+        aspect_ratio: resolveQuizLayoutAssetAspectRatio(beat.layout_id, "hero_question_image"),
         transparent_background:
           beat.layout_id === "mystery_reveal" ||
           beat.archetype === "mystery_reveal" ||
@@ -54,7 +61,7 @@ export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle
         subject: choice.text,
         purpose: "answer_option",
         style: "cute_illustration",
-        aspect_ratio: "1:1",
+        aspect_ratio: resolveQuizLayoutAssetAspectRatio(beat.layout_id, "answer_option"),
         transparent_background: true,
         required: true,
         semantic_key: question.id + ":choice:" + choice.id,

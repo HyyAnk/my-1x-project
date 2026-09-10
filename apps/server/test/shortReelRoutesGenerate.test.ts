@@ -277,10 +277,8 @@ describe("Short-Reel HTTP Routes and Confirmation Discrimination", () => {
           generateContent: () =>
             Promise.resolve(
               JSON.stringify({
-                hook: "Hook test",
-                description: "Desc test",
-                cta: "Comment below!",
-                hashtags: ["#Shorts", "#Trivia"],
+                title: "Title test",
+                description: "Desc test #Shorts #Trivia",
               }),
             ),
         };
@@ -301,7 +299,7 @@ describe("Short-Reel HTTP Routes and Confirmation Discrimination", () => {
 
         const reloaded = await app.repository.getShortReel({ channel_id: channel.channel_id, reel_id: reel.reel_id });
         expect(reloaded.units.publishing.state).toBe("ready");
-        expect(reloaded.units.publishing.last_accepted_payload?.hook).toBe("Hook test");
+        expect(reloaded.units.publishing.last_accepted_payload?.title).toBe("Title test");
         expect(reloaded.units.script.state).toBe("missing");
         expect(reloaded.units.references.state).toBe("missing");
         expect(reloaded.units.cover.state).toBe("missing");

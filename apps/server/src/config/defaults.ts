@@ -34,6 +34,15 @@ export const DEFAULT_CONFIG: AppConfig = {
     quality: "low",
     max_concurrent_tasks: 3,
   },
+  image_fallback: {
+    enabled: true,
+    provider: "imgstudio",
+    base_url: "https://imgstudio.site",
+    api_key: "",
+    model: "2d059365-a09a-4fd5-aa9e-b5335d09bbe9",
+    resolution: "2K",
+    quality: "standard",
+  },
   codex: {
     max_concurrent_tasks: 3,
     transport: "app_server",
@@ -65,6 +74,9 @@ export const DEFAULT_CONFIG: AppConfig = {
     pass_threshold: 2,
     ttl_days: 30,
     auto_remix: false,
+  },
+  knowledge_base: {
+    entity_assets_dir: "",
   },
 };
 

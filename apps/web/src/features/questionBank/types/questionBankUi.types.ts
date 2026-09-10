@@ -54,7 +54,7 @@ export interface QuestionBankBatchGenResponse {
   approvedCount: number;
   rejectedCount: number;
   qaSummary: {
-    copyrightRejections: number;
+    copyrightRejections?: number;
     duplicateRejections: number;
     schemaRejections: number;
     qualityRejections: number;

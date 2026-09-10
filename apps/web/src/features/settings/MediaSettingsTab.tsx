@@ -3,16 +3,18 @@ import type { Notice } from "../../components/types";
 import { useMediaSettings } from "./hooks/useMediaSettings";
 import { VideoTimingSettingsCard } from "./components/VideoTimingSettingsCard";
 import { ImageProviderSettingsCard } from "./components/ImageProviderSettingsCard";
+import { ImageProviderFallbackCard } from "./components/ImageProviderFallbackCard";
 import { TopicDeduplicationSettingsCard } from "./components/TopicDeduplicationSettingsCard";
 
 export interface MediaSettingsTabProps {
   appConfig: AppConfig | null;
   onVideoSaved: (video: AppConfig["video_generation"]) => void | Promise<void>;
   onImageSaved: (image: AppConfig["image_generation"]) => void | Promise<void>;
+  onImageFallbackSaved?: (fallback: AppConfig["image_fallback"]) => void | Promise<void>;
   onNotice: (notice: NonNullable<Notice>) => void;
 }
 
-export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onNotice }: MediaSettingsTabProps) {
+export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onImageFallbackSaved, onNotice }: MediaSettingsTabProps) {
   const {
     maxSceneDuration,
     setMaxSceneDuration,
@@ -53,6 +55,25 @@ export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onNoti
     saveImage,
     clearImageKey,
     checkImageBalance,
+    fallbackEnabled,
+    setFallbackEnabled,
+    fallbackModel,
+    setFallbackModel,
+    fallbackResolution,
+    setFallbackResolution,
+    fallbackQuality,
+    setFallbackQuality,
+    fallbackApiKey,
+    setFallbackApiKey,
+    showFallbackKey,
+    setShowFallbackKey,
+    hasFallbackApiKey,
+    savingFallback,
+    verifyingFallback,
+    availableModels,
+    saveFallbackSettings,
+    clearFallbackKey,
+    verifyFallbackConnection,
     historyEnabled,
     setHistoryEnabled,
     passThreshold,
@@ -67,6 +88,7 @@ export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onNoti
     appConfig,
     onVideoSaved,
     onImageSaved,
+    onImageFallbackSaved,
     onNotice,
   });
 
@@ -120,6 +142,28 @@ export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onNoti
         onSaveImage={saveImage}
         onClearImageKey={clearImageKey}
         onCheckImageBalance={checkImageBalance}
+      />
+
+      <ImageProviderFallbackCard
+        fallbackEnabled={fallbackEnabled}
+        setFallbackEnabled={setFallbackEnabled}
+        fallbackModel={fallbackModel}
+        setFallbackModel={setFallbackModel}
+        fallbackResolution={fallbackResolution}
+        setFallbackResolution={setFallbackResolution}
+        fallbackQuality={fallbackQuality}
+        setFallbackQuality={setFallbackQuality}
+        fallbackApiKey={fallbackApiKey}
+        setFallbackApiKey={setFallbackApiKey}
+        showFallbackKey={showFallbackKey}
+        setShowFallbackKey={setShowFallbackKey}
+        hasFallbackApiKey={hasFallbackApiKey}
+        savingFallback={savingFallback}
+        verifyingFallback={verifyingFallback}
+        availableModels={availableModels}
+        onSaveFallback={saveFallbackSettings}
+        onClearFallbackKey={clearFallbackKey}
+        onVerifyFallbackConnection={verifyFallbackConnection}
       />
 
       <TopicDeduplicationSettingsCard

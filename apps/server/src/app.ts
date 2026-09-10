@@ -19,6 +19,7 @@ import { TaskManager } from "./tasks.js";
 import { registerAudioVideoRoutes } from "./routes/audioVideo.js";
 import { registerChannelsRoutes } from "./routes/channels.js";
 import type { LLMClient } from "./utils/promptSanitizer.js";
+import { createPortraitImageClient } from "./providers/imageGeneration/portraitImageClient.js";
 import { registerEpisodesRoutes } from "./routes/episodes.js";
 import { registerEventsRoutes, type EventClient } from "./routes/events.js";
 import { registerMascotsRoutes } from "./routes/mascots.js";
@@ -87,6 +88,7 @@ export async function buildApp(
     state.config.image_generation,
     antigravity,
     state.config.active_engine,
+    state.config.image_fallback,
   );
   await tasks.load();
 
@@ -159,10 +161,16 @@ export async function buildApp(
   await server.register(registerSystemRoutes({ rootDirectory, repository, tasks, codex, antigravity, logger, state }));
   await server.register(registerSettingsRoutes({ rootDirectory, tasks, codex, antigravity, state }));
   await server.register(registerVoicesRoutes({ repository, logger, state }));
-  await server.register(registerChannelsRoutes({ repository, tasks, logger, state, llmClient: options.llmClient }));
+  const activeLlmClient: LLMClient | undefined =
+    options.llmClient !== undefined
+      ? (options.llmClient ?? undefined)
+      : (state.config.active_engine === "antigravity" ? antigravity : codex);
+  const portraitImageClient = createPortraitImageClient(state.config.image_generation, state.config.image_fallback);
+
+  await server.register(registerChannelsRoutes({ repository, tasks, logger, state, llmClient: activeLlmClient }));
   await server.register(registerMascotsRoutes({ repository, logger, state }));
   await server.register(registerEpisodesRoutes({ repository, state, tasks }));
-  await server.register(registerShortReelsRoutes({ repository, tasks, logger, llmClient: options.llmClient }));
+  await server.register(registerShortReelsRoutes({ repository, tasks, logger, llmClient: activeLlmClient, imageClient: portraitImageClient }));
   await server.register(registerQuizV2Routes({ repository, tasks, codex, antigravity, state }));
   await server.register(registerVisualBibleRoutes({ repository, tasks, state }));
   await server.register(registerAudioVideoRoutes({ repository, tasks, state, revealFile }));

@@ -8,7 +8,7 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  * 1. 3-Row CSS Grid: "title title" (Row 1), "hero answers" (Row 2), "phase phase" (Row 3).
  * 2. Inviolable Anchors: Stage margin-left and justify-self: end clear the Counter Badge (x <= 290px)
  *    and Channel Brand Mark (x <= 340px) with 100% spatial isolation.
- * 3. Hero Media: Height 540px, ratio 1.54:1 (reducing 16:9 cropping to <13.4%), liberating 40px vertical space.
+ * 3. Hero Media: Height 540px, ratio ~1.33:1 (4:3 aspect ratio, ~728x540px column), fitting 4:3 assets pixel-perfect with ~0% crop.
  * 4. Choices: Symmetrically centered in right column, staggered entrance animation from the right.
  *    - 2 Choices: Expanded cards (min-height 136px, font-size 52px, gap 36px).
  *    - 3 Choices: Balanced cards (min-height 116px, font-size 48px, gap 24px).
@@ -55,7 +55,7 @@ export const mediaLeftChoicesRightLayout = {
   contain: layout style;
 }
 
-/* Hero Media: Aspect Ratio 1.54:1 (830.5x540px), liberates 40px vertical space */
+/* Hero Media: Aspect Ratio 4:3 (~728x540px column), pixel-perfect fit with ~0% crop */
 .layout-media_left_choices_right .game-stage > .hero-image {
   grid-area: hero;
   width: 100%;

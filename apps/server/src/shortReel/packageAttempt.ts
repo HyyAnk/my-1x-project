@@ -4,6 +4,7 @@ import { beginReelUnitAttempt, acceptReelUnitResult, failReelUnitAttempt, type D
 import { ScriptGenerationError } from "./scriptProvider.js";
 import { ReferenceError } from "./packageImage.js";
 import { CoverGenerationError } from "./thumbnailAdapter.js";
+import { GenerationError } from "./generationErrors.js";
 import { resolveCanonicalStorageRoot } from "../repository/shortReelStorage.js";
 
 export type PackageServiceErrorCode =
@@ -76,9 +77,11 @@ async function execute(
     const code =
       error instanceof ScriptGenerationError
         ? error.code
-        : error instanceof PackageServiceError && error.code === "VALIDATION_FAILED"
-          ? "VALIDATION_FAILED"
-          : "PROVIDER_ERROR";
+        : error instanceof GenerationError
+          ? String(error.code)
+          : error instanceof PackageServiceError && error.code === "VALIDATION_FAILED"
+            ? "VALIDATION_FAILED"
+            : "PROVIDER_ERROR";
     if (repository.storageRoot === root) {
       try {
         await failReelUnitAttempt(repository, key, unit, operationId, code);
@@ -86,7 +89,7 @@ async function execute(
         throw new PackageServiceError("STATE_WRITE_FAILED", "Could not record package failure. Restore storage access before retrying.");
       }
     }
-    if (error instanceof PackageServiceError || error instanceof ScriptGenerationError) throw error;
+    if (error instanceof PackageServiceError || error instanceof ScriptGenerationError || error instanceof GenerationError) throw error;
     // Domain errors already carry safe codes; do not forward unknown provider messages or I/O paths.
     if (error instanceof ReferenceError || error instanceof CoverGenerationError) throw error;
     throw new PackageServiceError("ATTEMPT_FAILED", "Package generation failed. Retry the affected unit.");

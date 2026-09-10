@@ -51,7 +51,7 @@ export const verdictTrueFalseLayout = {
   margin: 0 auto;
 }
 
-/* Hero Evidence Viewport: 852px x 520px (ratio 1.64:1) */
+/* Hero Evidence Viewport: ~747px x 520px (4:3 aspect ratio support with safe margins) */
 .layout-verdict_true_false .game-stage > .hero-image {
   grid-area: hero;
   width: 100%;

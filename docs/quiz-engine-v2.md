@@ -33,7 +33,7 @@ Domain validation is owned by:
 
 - [Director validation](../apps/server/src/quiz/director/validateDirectorPlan.ts): question coverage, semantic presentation and pacing requirements.
 - [Timeline compilation](../apps/server/src/quiz/timeline/compileTimeline.ts): scheduled segments and timeline construction.
-- [QA stages](../apps/server/src/quiz/qa/): semantic, asset, voice and other assessments. The copyright filter is application policy, not a legal clearance guarantee.
+- [QA stages](../apps/server/src/quiz/qa/): semantic, asset, voice and other assessments.
 - [Invalidation map](../apps/server/src/quiz/pipeline/invalidation.ts) and [repository invalidation](../apps/server/src/repository/quiz/quizArtifactsInvalidation.ts): upstream changes invalidate derived artifacts.
 
 Read thresholds in source/tests instead of copying numeric rules into new modules.

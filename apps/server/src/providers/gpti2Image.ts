@@ -1,4 +1,9 @@
-export { resolveImageDimensions, type SupportedAspectRatio } from "./gpti2Dimensions.js";
+export {
+  resolveImageDimensions,
+  getStandardDimensionsForAspectRatio,
+  STANDARD_ASPECT_RATIO_DIMENSIONS,
+  type SupportedAspectRatio,
+} from "./gpti2Dimensions.js";
 
 export type { Gpti2ImageResult, Gpti2GenerationOptions } from "./gpti2NanoBanana.js";
 

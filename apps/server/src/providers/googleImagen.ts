@@ -9,6 +9,7 @@ type GoogleImagenTarget = {
   variant?: number;
   assetId?: string;
   fingerprint?: string;
+  aspectRatio?: string;
 };
 
 export class GoogleImagenProvider implements ImageProvider {
@@ -35,7 +36,7 @@ export class GoogleImagenProvider implements ImageProvider {
     const cleanPrompt = this.extractCleanVisualPrompt(prompt);
     const ratioMatch =
       prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i) || prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
-    const targetAspectRatio = ratioMatch ? ratioMatch[1] : "16:9";
+    const targetAspectRatio = this.target.aspectRatio || (ratioMatch ? ratioMatch[1] : "16:9");
     const isGeminiContentModel = !this.model.startsWith("imagen-");
     const method = isGeminiContentModel ? "generateContent" : "predict";
     const url = `${this.apiBaseUrl.replace(/\/+$/, "")}/models/${this.model}:${method}?key=${this.apiKey.trim()}`;
@@ -181,10 +182,10 @@ export class GoogleImagenProvider implements ImageProvider {
         artContract ? `Art Direction: ${artContract}.` : "",
         lighting ? `Lighting: ${lighting}.` : "",
         background ? `Background: ${background}.` : "",
-        "High quality, vibrant colors, child-friendly, clear focal subject, no text, no letters, no logos, no watermark, no split screen.",
+        "High quality, vibrant colors, child-friendly, clear focal subject, no text, no letters, no unrelated logos, no watermark, no split screen; retain identifying marks explicitly required by the subject.",
       ].filter(Boolean);
 
-      return parts.join(" ").slice(0, 900);
+      return parts.join(" ").slice(0, 1200);
     }
     return rawPrompt.replace(/\s+/g, " ").trim().slice(0, 600);
   }

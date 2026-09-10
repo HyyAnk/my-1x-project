@@ -232,4 +232,30 @@ describe("writer admission drain", () => {
       await rm(root, { recursive: true, force: true });
     }
   });
+
+  it("R03: rejects late writes from cancelled/pre-switch tasks and preserves target record integrity", async () => {
+    const f = await repairFixture();
+    try {
+      await f.repo.updateShortReel(
+        f.key,
+        { expected_revision: 1, request_id: "first_op" },
+        { kind: "update_model_note", model_note: "Legitimate Update" },
+      );
+
+      // Late write with obsolete revision is strictly rejected with REVISION_CONFLICT
+      await expect(
+        f.repo.updateShortReel(
+          f.key,
+          { expected_revision: 1, request_id: "late_stale_op" },
+          { kind: "update_model_note", model_note: "Late Stale Mutation" },
+        ),
+      ).rejects.toMatchObject({ code: "REVISION_CONFLICT" });
+
+      const record = await f.repo.getShortReel(f.key);
+      expect(record.model_note).toBe("Legitimate Update");
+      expect(record.revision).toBe(2);
+    } finally {
+      await f.cleanup();
+    }
+  });
 });

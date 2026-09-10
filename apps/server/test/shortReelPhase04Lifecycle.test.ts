@@ -183,7 +183,12 @@ describe("Phase 04 persisted lifecycle", () => {
   it("merges sibling completion queued while another is inside the atomic writer", async () => {
     const f = await repairFixture();
     cleanups.push(f.cleanup);
-    const scriptPending = await beginReelUnitAttempt(f.repo, f.key, "script", "script");
+    await f.repo.updateShortReel(
+      f.key,
+      { expected_revision: (await f.repo.getShortReel(f.key)).revision, request_id: "seed-script" },
+      { kind: "update_script", script: repairScript() },
+    );
+    const refPending = await beginReelUnitAttempt(f.repo, f.key, "references", "references");
     const publishingPending = await beginReelUnitAttempt(f.repo, f.key, "publishing", "publishing");
     const entered = deferred();
     const release = deferred();
@@ -195,12 +200,12 @@ describe("Phase 04 persisted lifecycle", () => {
       }
     });
     try {
-      const script = acceptReelUnitResult(
+      const ref = acceptReelUnitResult(
         f.repo,
         f.key,
-        "script",
-        { operationId: "script", dependencyFingerprint: scriptPending.units.script.current_attempt!.dependency_fingerprint },
-        { script: repairScript() },
+        "references",
+        { operationId: "references", dependencyFingerprint: refPending.units.references.current_attempt!.dependency_fingerprint },
+        { references: [] },
       );
       await entered.promise;
       const publishing = acceptReelUnitResult(
@@ -208,14 +213,14 @@ describe("Phase 04 persisted lifecycle", () => {
         f.key,
         "publishing",
         { operationId: "publishing", dependencyFingerprint: publishingPending.units.publishing.current_attempt!.dependency_fingerprint },
-        { hook: "Speed", description: "Compare the speeds", cta: null, hashtags: [] },
+        { title: "Speed", description: "Compare the speeds #tag" },
       );
       release.resolve();
-      expect((await Promise.all([script, publishing])).map((result) => result.accepted)).toEqual([true, true]);
+      expect((await Promise.all([ref, publishing])).map((result) => result.accepted)).toEqual([true, true]);
       const final = await f.repo.getShortReel(f.key);
-      expect(final.units.script.state).toBe("ready");
+      expect(final.units.references.state).toBe("ready");
       expect(final.units.publishing.state).toBe("ready");
-      expect(final.revision).toBe(5);
+      expect(final.revision).toBe(6);
     } finally {
       release.resolve();
       setShortReelWriteHookForTesting(null);

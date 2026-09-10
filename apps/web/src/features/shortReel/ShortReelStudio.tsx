@@ -8,10 +8,11 @@ import { SegmentEditor } from "./components/SegmentEditor";
 import { ReelAssets } from "./components/ReelAssets";
 import { PublishingPanel } from "./components/PublishingPanel";
 import { ShortReelHeader } from "./components/ShortReelHeader";
-import { ShortReelConflictBanner, ShortReelTaskProgressBanner } from "./components/ShortReelConflictBanner";
+import { ShortReelConflictBanner } from "./components/ShortReelConflictBanner";
 import { ShortReelTopicCard } from "./components/ShortReelTopicCard";
 import { ShortReelDeliverablesGrid } from "./components/ShortReelDeliverablesGrid";
 import { ShortReelStateError } from "./components/ShortReelStateError";
+import { ReelGenerationProgress } from "./components/ReelGenerationProgress";
 import { useShortReel } from "./hooks/useShortReel";
 import { canExportReel, getCleanTopicTitle, hasPendingGeneration } from "./utils/shortReelStudioRules";
 import "./ShortReelStudio.css";
@@ -126,6 +127,7 @@ export function ShortReelStudio({ channel, reelId, onBack, onNotice }: ShortReel
   const { topic, source, units, revision } = reel;
   const isAllReadyForExport = canExportReel(reel);
   const isGeneratingOrPending = hasPendingGeneration(reel, activeTask, isGenerating);
+  const hasExistingDeliverables = Boolean(reel.script || units.references.last_accepted_payload || units.cover.last_accepted_payload);
 
   return (
     <div className="short-reel-studio">
@@ -140,6 +142,7 @@ export function ShortReelStudio({ channel, reelId, onBack, onNotice }: ShortReel
         isGeneratingOrPending={isGeneratingOrPending}
         canExport={isAllReadyForExport}
         scriptMissing={!reel.script || units.script.state === "missing"}
+        hasExistingDeliverables={hasExistingDeliverables}
         cancel={() => cancel()}
         generate={generate}
         exportPackage={exportPackage}
@@ -151,7 +154,13 @@ export function ShortReelStudio({ channel, reelId, onBack, onNotice }: ShortReel
         onDiscardDraftAndReload={discardDraftAndReload}
       />
 
-      <ShortReelTaskProgressBanner isVisible={isGeneratingOrPending} activeTask={activeTask} />
+      <ReelGenerationProgress
+        isVisible={isGeneratingOrPending}
+        activeStage={activeTask?.short_reel_progress?.stages?.find((s) => s.state === "running")?.stage}
+        progressPercent={activeTask?.progress_percent ?? undefined}
+        progressMessage={activeTask?.progress_message}
+        stages={activeTask?.short_reel_progress?.stages}
+      />
 
       <main className="short-reel-grid">
         <ShortReelTopicCard topic={topic} />
@@ -178,9 +187,11 @@ export function ShortReelStudio({ channel, reelId, onBack, onNotice }: ShortReel
         {activeTab === "assets" && (
           <ReelAssets
             reel={reel}
+            channel={channel}
             onCopyText={copyText}
             onRegenerateUnit={(target) => generate(target)}
             isGenerating={isGeneratingOrPending}
+            activeTask={activeTask}
           />
         )}
 

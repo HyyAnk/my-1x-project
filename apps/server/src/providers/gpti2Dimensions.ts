@@ -11,6 +11,30 @@ export const POLL_INTERVAL_MS = 3_000;
 export const MAX_POLL_ATTEMPTS = 60; // Up to 3 minutes for async generation
 export const REQUEST_TIMEOUT_MS = 120_000;
 
+/**
+ * Canonical 720p base dimensions for standard video and layout aspect ratios:
+ * 16:9 (1280x720), 4:3 (960x720), 1:1 (720x720), 3:4 (720x960), 9:16 (720x1280).
+ */
+export const STANDARD_ASPECT_RATIO_DIMENSIONS: Record<
+  SupportedAspectRatio,
+  { width: number; height: number; dimensions: string }
+> = {
+  "16:9": { width: 1280, height: 720, dimensions: "1280x720" },
+  "4:3": { width: 960, height: 720, dimensions: "960x720" },
+  "1:1": { width: 720, height: 720, dimensions: "720x720" },
+  "3:4": { width: 720, height: 960, dimensions: "720x960" },
+  "9:16": { width: 720, height: 1280, dimensions: "720x1280" },
+  "3:2": { width: 1080, height: 720, dimensions: "1080x720" },
+  "2:3": { width: 720, height: 1080, dimensions: "720x1080" },
+};
+
+export function getStandardDimensionsForAspectRatio(
+  aspectRatio: string = "16:9",
+): { width: number; height: number; dimensions: string } {
+  const norm = (aspectRatio.trim() || "16:9") as SupportedAspectRatio;
+  return STANDARD_ASPECT_RATIO_DIMENSIONS[norm] || STANDARD_ASPECT_RATIO_DIMENSIONS["16:9"];
+}
+
 export function resolveImageDimensions(
   aspectRatio: string = "16:9",
   model: string = DEFAULT_MODEL,

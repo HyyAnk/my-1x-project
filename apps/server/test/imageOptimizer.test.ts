@@ -18,11 +18,16 @@ describe("imageOptimizer", () => {
   });
 
   it("calculates layout-aware optimal dimensions correctly", () => {
-    expect(getOptimalAssetDimensions("choice_thumbnail")).toEqual({ maxWidth: 640, maxHeight: 480 });
-    expect(getOptimalAssetDimensions("hero", "visual_choices_three")).toEqual({ maxWidth: 640, maxHeight: 480 });
-    expect(getOptimalAssetDimensions("hero", "media_left_choices_right")).toEqual({ maxWidth: 1080, maxHeight: 810 });
-    expect(getOptimalAssetDimensions("hero", "baseline")).toEqual({ maxWidth: 1080, maxHeight: 608 });
-    expect(getOptimalAssetDimensions()).toEqual({ maxWidth: 1280, maxHeight: 720 });
+    expect(getOptimalAssetDimensions("choice_thumbnail")).toEqual({ maxWidth: 640, maxHeight: 640, aspectRatio: "1:1" });
+    expect(getOptimalAssetDimensions("hero", "visual_choices_three")).toEqual({ maxWidth: 640, maxHeight: 640, aspectRatio: "1:1" });
+    expect(getOptimalAssetDimensions("hero", "media_left_choices_right")).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
+    expect(getOptimalAssetDimensions("hero", "baseline")).toEqual({ maxWidth: 1080, maxHeight: 608, aspectRatio: "16:9" });
+    expect(getOptimalAssetDimensions("hero", "split_versus_two")).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
+    expect(getOptimalAssetDimensions("answer_option", "split_versus_two")).toEqual({ maxWidth: 640, maxHeight: 640, aspectRatio: "1:1" });
+    expect(getOptimalAssetDimensions("hero", "mystery_reveal")).toEqual({ maxWidth: 1280, maxHeight: 720, aspectRatio: "16:9" });
+    expect(getOptimalAssetDimensions("hero", "clue_deduction")).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
+    expect(getOptimalAssetDimensions("hero", "verdict_true_false")).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
+    expect(getOptimalAssetDimensions()).toEqual({ maxWidth: 1280, maxHeight: 720, aspectRatio: "16:9" });
   });
 
   it("resizes high-resolution PNG image down to target bounds while maintaining aspect ratio", async () => {
@@ -124,5 +129,46 @@ describe("imageOptimizer", () => {
 
     const content = await readFile(targetPath, "utf8");
     expect(content).toBe("Hello world");
+  });
+
+  it("properly pre-resizes images for 4:3, 1:1, and 3:4 targets without distortion", async () => {
+    // 1600x1200 (4:3) image resized to fit 4:3 target (1080x810)
+    const src4_3 = path.join(tempDir, "src4_3.png");
+    const out4_3 = path.join(tempDir, "out4_3.png");
+    await sharp({
+      create: { width: 1600, height: 1200, channels: 4, background: { r: 10, g: 20, b: 30, alpha: 1 } },
+    })
+      .png()
+      .toFile(src4_3);
+    const res4_3 = await optimizeRenderImage({ sourcePath: src4_3, targetPath: out4_3, maxWidth: 1080, maxHeight: 810 });
+    expect(res4_3.optimized).toBe(true);
+    expect(res4_3.targetWidth).toBe(1080);
+    expect(res4_3.targetHeight).toBe(810);
+
+    // 1200x1200 (1:1) image resized to fit 1:1 target (640x640)
+    const src1_1 = path.join(tempDir, "src1_1.png");
+    const out1_1 = path.join(tempDir, "out1_1.png");
+    await sharp({
+      create: { width: 1200, height: 1200, channels: 4, background: { r: 10, g: 20, b: 30, alpha: 1 } },
+    })
+      .png()
+      .toFile(src1_1);
+    const res1_1 = await optimizeRenderImage({ sourcePath: src1_1, targetPath: out1_1, maxWidth: 640, maxHeight: 640 });
+    expect(res1_1.optimized).toBe(true);
+    expect(res1_1.targetWidth).toBe(640);
+    expect(res1_1.targetHeight).toBe(640);
+
+    // 1200x1600 (3:4) image resized to fit 3:4 target (768x1024)
+    const src3_4 = path.join(tempDir, "src3_4.png");
+    const out3_4 = path.join(tempDir, "out3_4.png");
+    await sharp({
+      create: { width: 1200, height: 1600, channels: 4, background: { r: 10, g: 20, b: 30, alpha: 1 } },
+    })
+      .png()
+      .toFile(src3_4);
+    const res3_4 = await optimizeRenderImage({ sourcePath: src3_4, targetPath: out3_4, maxWidth: 768, maxHeight: 1024 });
+    expect(res3_4.optimized).toBe(true);
+    expect(res3_4.targetWidth).toBe(768);
+    expect(res3_4.targetHeight).toBe(1024);
   });
 });

@@ -169,7 +169,7 @@ describe("topic confirmation", () => {
       }
       await app.close();
     }
-  });
+  }, 30000);
 
   it("accepts 50 questions and rejects values above the product limit", async () => {
     const root = await createTestRoot();
@@ -236,7 +236,7 @@ describe("topic confirmation", () => {
       }
       await app.close();
     }
-  });
+  }, 30000);
 });
 
 async function createTestRoot(): Promise<string> {

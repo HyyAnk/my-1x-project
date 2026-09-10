@@ -131,17 +131,7 @@
       "Bugs Bunny",
       "Donald Duck",
       "Doraemon"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Mickey Mouse",
-      "Mickey",
-      "Disney's Mickey",
-      "Disney",
-      "Steamboat Willie"
-    ],
-    "safe_visual_proxy": "A cheerful retro cartoon mouse with large round ears wearing bright red button shorts and white gloves."
+    ]
   },
   {
     "id": "ENT-POP-004",
@@ -1947,15 +1937,7 @@
       "Shere Khan",
       "Baloo",
       "Mowgli"
-    ],
-    "copyright_risk": "medium",
-    "is_trademark_ip": false,
-    "forbidden_visual_keywords": [
-      "Marvel",
-      "Wakanda",
-      "superhero"
-    ],
-    "safe_visual_proxy": "A sleek black Indian leopard resting gracefully on a tropical jungle branch."
+    ]
   },
   {
     "id": "ENT-POP-044",
@@ -5737,16 +5719,7 @@
       "Mickey Mouse",
       "Daisy Duck",
       "Betty Boop"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Minnie Mouse",
-      "Minerva Mouse",
-      "Minnie",
-      "Disney"
-    ],
-    "safe_visual_proxy": "A cheerful vintage cartoon mouse with round ears wearing a polka-dot dress and matching bow."
+    ]
   },
   {
     "id": "ENT-POP-128",
@@ -5790,15 +5763,7 @@
       "Daffy Duck",
       "Mickey Mouse",
       "Bugs Bunny"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Donald Duck",
-      "Donald Fauntleroy Duck",
-      "Disney"
-    ],
-    "safe_visual_proxy": "A feisty classic cartoon white duck wearing a blue sailor suit with red bow tie and sailor cap."
+    ]
   },
   {
     "id": "ENT-POP-129",
@@ -5843,16 +5808,7 @@
       "Donald Duck",
       "Minnie Mouse",
       "Betty Boop"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Daisy Duck",
-      "Donna Duck",
-      "Daisy",
-      "Disney"
-    ],
-    "safe_visual_proxy": "An expressive stylish white cartoon duck with large purple hair bow and fashionable lavender blouse."
+    ]
   },
   {
     "id": "ENT-POP-130",
@@ -5898,17 +5854,7 @@
       "Pluto",
       "Donald Duck",
       "Mickey Mouse"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Goofy",
-      "Dippy Dawg",
-      "George Geef",
-      "Goofy Goof",
-      "Disney"
-    ],
-    "safe_visual_proxy": "A tall friendly cartoon hound dog wearing a rumpled green fedora, orange turtleneck, and blue trousers."
+    ]
   },
   {
     "id": "ENT-POP-131",
@@ -5953,17 +5899,7 @@
       "Goofy",
       "Scooby-Doo",
       "Snoopy"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Pluto (Disney)",
-      "Pluto the Pup",
-      "Rover",
-      "Pluto",
-      "Disney"
-    ],
-    "safe_visual_proxy": "A loyal golden-orange cartoon bloodhound with long black floppy ears and green collar."
+    ]
   },
   {
     "id": "ENT-POP-132",
@@ -6008,16 +5944,7 @@
       "Donald Duck",
       "Ebenezer Scrooge",
       "Flintheart Glomgold"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Scrooge McDuck",
-      "Uncle Scrooge",
-      "The Richest Duck in the World",
-      "Disney"
-    ],
-    "safe_visual_proxy": "An elderly wealthy cartoon duck in red spats, top hat, and spectacles examining gold coins."
+    ]
   },
   {
     "id": "ENT-POP-133",
@@ -6062,17 +5989,7 @@
       "Mickey Mouse",
       "Daffy Duck",
       "Elmer Fudd"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Bugs Bunny",
-      "Bugs",
-      "The Wascal Wabbit",
-      "Looney Tunes",
-      "Warner Bros"
-    ],
-    "safe_visual_proxy": "A witty gray and white trickster rabbit nonchalantly munching a crisp orange carrot."
+    ]
   },
   {
     "id": "ENT-POP-134",
@@ -6117,17 +6034,7 @@
       "Donald Duck",
       "Bugs Bunny",
       "Porky Pig"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Daffy Duck",
-      "Daffy",
-      "Duck Dodgers",
-      "Looney Tunes",
-      "Warner Bros"
-    ],
-    "safe_visual_proxy": "A dramatic black cartoon duck with orange beak and white neck ring striking an animated pose."
+    ]
   },
   {
     "id": "ENT-POP-135",
@@ -6171,16 +6078,7 @@
       "Daffy Duck",
       "Bugs Bunny",
       "Elmer Fudd"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Porky Pig",
-      "Porky",
-      "Looney Tunes",
-      "Warner Bros"
-    ],
-    "safe_visual_proxy": "A timid plump cartoon pig wearing a blue jacket and red bow tie."
+    ]
   },
   {
     "id": "ENT-POP-136",
@@ -6224,16 +6122,7 @@
       "Bugs Bunny",
       "Daffy Duck",
       "Yosemite Sam"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Elmer Fudd",
-      "Elmer J. Fudd",
-      "Looney Tunes",
-      "Warner Bros"
-    ],
-    "safe_visual_proxy": "A bumbling cartoon hunter in brown hunting cap carrying a double-barrel shotgun through the woods."
+    ]
   },
   {
     "id": "ENT-POP-137",
@@ -6278,17 +6167,7 @@
       "Sylvester the Cat",
       "Tom and Jerry",
       "Road Runner"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Tweety Bird",
-      "Tweety",
-      "Tweety Pie",
-      "Looney Tunes",
-      "Warner Bros"
-    ],
-    "safe_visual_proxy": "A small cheerful canary bird with large blue eyes perched inside a brass birdcage."
+    ]
   },
   {
     "id": "ENT-POP-138",
@@ -6333,18 +6212,7 @@
       "Tweety Bird",
       "Tom Cat",
       "Speedy Gonzales"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Sylvester the Cat",
-      "Sylvester J. Pussycat",
-      "Puddy Tat",
-      "Sylvester",
-      "Looney Tunes",
-      "Warner Bros"
-    ],
-    "safe_visual_proxy": "A scruffy tuxedo cat with a large red nose tip-toeing in pursuit of a canary."
+    ]
   },
   {
     "id": "ENT-POP-139",
@@ -6389,18 +6257,7 @@
       "Road Runner",
       "Tom Cat",
       "Bugs Bunny"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Wile E. Coyote",
-      "The Coyote",
-      "Wile E. Coyote, Genius",
-      "Looney Tunes",
-      "Warner Bros",
-      "ACME"
-    ],
-    "safe_visual_proxy": "A persistent cartoon coyote setting complex mechanical blueprint traps in a desert canyon."
+    ]
   },
   {
     "id": "ENT-POP-140",
@@ -6445,17 +6302,7 @@
       "Wile E. Coyote",
       "Speedy Gonzales",
       "Sonic the Hedgehog"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Road Runner",
-      "Beep Beep",
-      "Acceleratii Incredibilis",
-      "Looney Tunes",
-      "Warner Bros"
-    ],
-    "safe_visual_proxy": "A swift blue desert ground cuckoo speeding down an open highway leaving a dust plume."
+    ]
   },
   {
     "id": "ENT-POP-141",
@@ -6500,17 +6347,7 @@
       "Bugs Bunny",
       "Crash Bandicoot",
       "Wile E. Coyote"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Tasmanian Devil",
-      "Taz",
-      "The Tasmanian Devil",
-      "Looney Tunes",
-      "Warner Bros"
-    ],
-    "safe_visual_proxy": "A spinning whirlwind cartoon carnivore with sharp teeth ripping across the landscape."
+    ]
   },
   {
     "id": "ENT-POP-142",
@@ -6555,18 +6392,7 @@
       "Jerry Mouse",
       "Sylvester the Cat",
       "Wile E. Coyote"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Tom Cat",
-      "Thomas Jasper Cat",
-      "Jasper",
-      "Tom and Jerry",
-      "MGM",
-      "Warner Bros"
-    ],
-    "safe_visual_proxy": "A determined domestic grey-and-white feline tip-toeing across a suburban living room floor."
+    ]
   },
   {
     "id": "ENT-POP-143",
@@ -6611,18 +6437,7 @@
       "Tom Cat",
       "Mickey Mouse",
       "Speedy Gonzales"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Jerry Mouse",
-      "Jerome A. Mouse",
-      "Jerry",
-      "Tom and Jerry",
-      "MGM",
-      "Warner Bros"
-    ],
-    "safe_visual_proxy": "A clever quick-witted brown mouse peeking cheerfully out from an arched baseboard mouse hole."
+    ]
   },
   {
     "id": "ENT-POP-144",
@@ -6667,16 +6482,7 @@
       "Bluto",
       "Captain Hook",
       "Mickey Mouse"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Popeye the Sailor",
-      "Popeye",
-      "Popeye the Sailor Man",
-      "King Features"
-    ],
-    "safe_visual_proxy": "A rugged squinting sailor with anchor tattoos on his forearms popping open a can of spinach."
+    ]
   },
   {
     "id": "ENT-POP-145",
@@ -6720,15 +6526,7 @@
       "Betty Boop",
       "Popeye the Sailor",
       "Bluto"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Olive Oyl",
-      "Olive",
-      "King Features"
-    ],
-    "safe_visual_proxy": "A slender cartoon woman with high hair bun wearing a red long-sleeve blouse and black skirt."
+    ]
   },
   {
     "id": "ENT-POP-146",
@@ -6773,16 +6571,7 @@
       "Popeye the Sailor",
       "Captain Hook",
       "Bowser"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Bluto",
-      "Brutus",
-      "The Terrible Bluto",
-      "Popeye"
-    ],
-    "safe_visual_proxy": "A hulking broad-shouldered bearded cartoon sailor with a menacing sneer."
+    ]
   },
   {
     "id": "ENT-POP-147",
@@ -6826,15 +6615,7 @@
       "Olive Oyl",
       "Minnie Mouse",
       "Jessica Rabbit"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Betty Boop",
-      "Betty",
-      "Fleischer Studios"
-    ],
-    "safe_visual_proxy": "A vintage 1930s animated flapper girl with round baby-doll face and short curled black hair."
+    ]
   },
   {
     "id": "ENT-POP-148",
@@ -6878,17 +6659,7 @@
       "Daffy Duck",
       "Bugs Bunny",
       "Road Runner"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Woody Woodpecker",
-      "Woody",
-      "Toy Story",
-      "Pixar",
-      "Disney"
-    ],
-    "safe_visual_proxy": "A traditional vintage pull-string cowboy doll with a leather vest, star badge, and wide-brimmed stetson hat."
+    ]
   },
   {
     "id": "ENT-POP-149",
@@ -6932,15 +6703,7 @@
       "Felix the Cat",
       "Sylvester the Cat",
       "Tom Cat"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "The Pink Panther",
-      "Pink Panther",
-      "MGM"
-    ],
-    "safe_visual_proxy": "A suave stylized pink panther feline walking with elongated stealthy steps."
+    ]
   },
   {
     "id": "ENT-POP-150",
@@ -6985,17 +6748,7 @@
       "Shaggy Rogers",
       "Courage the Cowardly Dog",
       "Pluto"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Scooby-Doo",
-      "Scoobert Doo",
-      "Scoob",
-      "Hanna-Barbera",
-      "Warner Bros"
-    ],
-    "safe_visual_proxy": "A timid brown Great Dane with black spots wearing a diamond-shaped turquoise dog tag."
+    ]
   },
   {
     "id": "ENT-POP-151",
@@ -7040,17 +6793,7 @@
       "Scooby-Doo",
       "Fred Jones",
       "Jughead Jones"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Shaggy Rogers",
-      "Norville Rogers",
-      "Shaggy",
-      "Scooby-Doo",
-      "Hanna-Barbera"
-    ],
-    "safe_visual_proxy": "A lanky scruffy cartoon detective in loose green v-neck shirt and brown bell-bottom pants."
+    ]
   },
   {
     "id": "ENT-POP-152",
@@ -7094,16 +6837,7 @@
       "Barney Rubble",
       "George Jetson",
       "Homer Simpson"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Fred Flintstone",
-      "Frederick Joseph Flintstone",
-      "The Flintstones",
-      "Hanna-Barbera"
-    ],
-    "safe_visual_proxy": "A prehistoric cartoon caveman wearing an orange animal pelt tunic with black triangles."
+    ]
   },
   {
     "id": "ENT-POP-153",
@@ -7147,16 +6881,7 @@
       "Fred Flintstone",
       "George Jetson",
       "Ned Flanders"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Barney Rubble",
-      "Bernard Matthew Rubble",
-      "The Flintstones",
-      "Hanna-Barbera"
-    ],
-    "safe_visual_proxy": "A short cheerful prehistoric cartoon caveman wearing a brown ragged tunic."
+    ]
   },
   {
     "id": "ENT-POP-154",
@@ -7200,16 +6925,7 @@
       "Fred Flintstone",
       "Homer Simpson",
       "Cosmo Spacely"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "George Jetson",
-      "George J. Jetson",
-      "The Jetsons",
-      "Hanna-Barbera"
-    ],
-    "safe_visual_proxy": "A retro-futuristic cartoon office worker flying a bubble-canopy aerocar among elevated sky platforms."
+    ]
   },
   {
     "id": "ENT-POP-155",
@@ -7253,15 +6969,7 @@
       "Mickey Mouse",
       "Oswald the Lucky Rabbit",
       "The Pink Panther"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Felix the Cat",
-      "Felix",
-      "Otto Messmer"
-    ],
-    "safe_visual_proxy": "A vintage black-and-white cartoon cat with wide grin carrying a magic trick satchel."
+    ]
   },
   {
     "id": "ENT-POP-156",
@@ -7306,16 +7014,7 @@
       "Slimer",
       "Beetlejuice",
       "Scooby-Doo"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Casper the Friendly Ghost",
-      "Casper",
-      "The Friendly Ghost",
-      "Harvey Comics"
-    ],
-    "safe_visual_proxy": "A gentle translucent white cartoon ghost with large friendly eyes floating pleasantly."
+    ]
   },
   {
     "id": "ENT-POP-157",
@@ -7359,15 +7058,7 @@
       "Baloo",
       "Smokey Bear",
       "Fred Flintstone"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Yogi Bear",
-      "Yogi",
-      "Hanna-Barbera"
-    ],
-    "safe_visual_proxy": "A clever brown cartoon bear wearing a green collar, necktie, and porkpie hat swiping a picnic basket."
+    ]
   },
   {
     "id": "ENT-POP-158",
@@ -7412,16 +7103,7 @@
       "Patrick Star",
       "Squidward Tentacles",
       "Mickey Mouse"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "SpongeBob SquarePants",
-      "SpongeBob",
-      "Bob the Sponge",
-      "Nickelodeon"
-    ],
-    "safe_visual_proxy": "A cheerful yellow sea sponge in crisp collared shirt and brown square trousers undersea."
+    ]
   },
   {
     "id": "ENT-POP-159",
@@ -7465,15 +7147,7 @@
       "SpongeBob SquarePants",
       "Squidward Tentacles",
       "Sandy Cheeks"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Patrick Star",
-      "Patrick",
-      "Nickelodeon"
-    ],
-    "safe_visual_proxy": "A jovial pink starfish wearing green Hawaiian flower-patterned trunks on the ocean floor."
+    ]
   },
   {
     "id": "ENT-POP-160",
@@ -7517,15 +7191,7 @@
       "SpongeBob SquarePants",
       "Mr. Krabs",
       "Patrick Star"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Squidward Tentacles",
-      "Squidward",
-      "Nickelodeon"
-    ],
-    "safe_visual_proxy": "A disgruntled turquoise cartoon octopus holding a clarinet inside an undersea tiki home."
+    ]
   },
   {
     "id": "ENT-POP-161",
@@ -7570,17 +7236,7 @@
       "Plankton",
       "Scrooge McDuck",
       "SpongeBob SquarePants"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Mr. Krabs",
-      "Eugene H. Krabs",
-      "Captain Krabs",
-      "Nickelodeon",
-      "Krusty Krab"
-    ],
-    "safe_visual_proxy": "A burly crimson sailor crab clutching shiny coins inside a nautical underwater eatery."
+    ]
   },
   {
     "id": "ENT-POP-162",
@@ -7625,18 +7281,7 @@
       "Peter Griffin",
       "Fred Flintstone",
       "Bart Simpson"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Homer Simpson",
-      "Homer Jay Simpson",
-      "Homer",
-      "The Simpsons",
-      "Fox",
-      "Matt Groening"
-    ],
-    "safe_visual_proxy": "A comical cartoon father in white polo shirt and blue jeans holding a frosted pink donut."
+    ]
   },
   {
     "id": "ENT-POP-163",
@@ -7681,17 +7326,7 @@
       "Homer Simpson",
       "Eric Cartman",
       "Dennis the Menace"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Bart Simpson",
-      "Bartholomew Jo-Jo Simpson",
-      "El Barto",
-      "The Simpsons",
-      "Fox"
-    ],
-    "safe_visual_proxy": "A mischievous yellow cartoon schoolboy with spiky hair riding a green skateboard in red t-shirt."
+    ]
   },
   {
     "id": "ENT-POP-164",
@@ -7736,16 +7371,7 @@
       "Donkey (Shrek)",
       "The Hulk",
       "The Beast"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Shrek",
-      "Sir Shrek",
-      "The Ogre",
-      "DreamWorks"
-    ],
-    "safe_visual_proxy": "A stout friendly green ogre wearing a rustic linen tunic and brown vest in a misty secluded swamp."
+    ]
   },
   {
     "id": "ENT-POP-165",
@@ -7789,16 +7415,7 @@
       "Shrek",
       "Puss in Boots",
       "Eeyore"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Donkey (Shrek)",
-      "Donkey",
-      "Shrek",
-      "DreamWorks"
-    ],
-    "safe_visual_proxy": "An expressive talking gray miniature donkey trotting cheerfully down a fairytale forest trail."
+    ]
   },
   {
     "id": "ENT-POP-166",
@@ -7843,17 +7460,7 @@
       "Scar",
       "Mufasa",
       "Aslan"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Simba",
-      "King Simba",
-      "The Lion King",
-      "Disney",
-      "lion cub"
-    ],
-    "safe_visual_proxy": "A spirited young golden savannah lion resting beneath sweeping acacia trees on the African plains."
+    ]
   },
   {
     "id": "ENT-POP-167",
@@ -7897,16 +7504,7 @@
       "Scar",
       "Simba",
       "Aslan"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Mufasa",
-      "King Mufasa",
-      "The Lion King",
-      "Disney"
-    ],
-    "safe_visual_proxy": "A noble adult male lion with a grand dark golden mane surveying sunrise over the savannah."
+    ]
   },
   {
     "id": "ENT-POP-168",
@@ -7951,17 +7549,7 @@
       "Simba",
       "Mufasa",
       "Shere Khan"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Scar (The Lion King)",
-      "Scar",
-      "Prince Taka",
-      "The Lion King",
-      "Disney"
-    ],
-    "safe_visual_proxy": "A sly dark-maned savannah lion with a distinct facial scar lurking among shadowed rocks."
+    ]
   },
   {
     "id": "ENT-POP-169",
@@ -8006,19 +7594,7 @@
       "Buzz Lightyear",
       "Jessie",
       "Mr. Potato Head"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Woody (Toy Story)",
-      "Sheriff Woody",
-      "Woody Pride",
-      "Woody",
-      "Toy Story",
-      "Pixar",
-      "Disney"
-    ],
-    "safe_visual_proxy": "A traditional vintage pull-string cowboy doll with a leather vest, star badge, and wide-brimmed stetson hat."
+    ]
   },
   {
     "id": "ENT-POP-170",
@@ -8063,19 +7639,7 @@
       "Woody",
       "Emperor Zurg",
       "Wall-E"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Buzz Lightyear",
-      "Buzz",
-      "Space Ranger",
-      "Toy Story",
-      "Pixar",
-      "Disney",
-      "Star Command"
-    ],
-    "safe_visual_proxy": "A heroic sci-fi space ranger action figure in a white and green armored spacesuit with clear helmet dome."
+    ]
   },
   {
     "id": "ENT-POP-171",
@@ -8121,20 +7685,7 @@
       "Tai Lung",
       "Master Shifu",
       "Tigress"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Po (Kung Fu Panda)",
-      "The Dragon Warrior",
-      "Po Ping",
-      "Master Po",
-      "Po",
-      "Kung Fu Panda",
-      "DreamWorks",
-      "Dragon Warrior"
-    ],
-    "safe_visual_proxy": "An enthusiastic martial-arts giant panda wearing patchwork pants striking a dynamic kung fu stance."
+    ]
   },
   {
     "id": "ENT-POP-172",
@@ -8676,19 +8227,7 @@
       "Charizard",
       "Mickey Mouse",
       "Sonic the Hedgehog"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Pikachu",
-      "Pokemon #025",
-      "Mouse Pokemon",
-      "Pokemon",
-      "Pokeball",
-      "Nintendo",
-      "Game Freak"
-    ],
-    "safe_visual_proxy": "A cheerful electric yellow rodent creature with red cheek pouches and lightning bolt-shaped tail emitting bright sparks."
+    ]
   },
   {
     "id": "ENT-POP-184",
@@ -8733,19 +8272,7 @@
       "Gary Oak",
       "Red",
       "Pikachu"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Ash Ketchum",
-      "Satoshi",
-      "Pokemon Master",
-      "Pokemon",
-      "Pokeball",
-      "Pikachu",
-      "Nintendo"
-    ],
-    "safe_visual_proxy": "An ambitious anime adventure trainer wearing a red and white baseball cap and blue vest with a backpack."
+    ]
   },
   {
     "id": "ENT-POP-185",
@@ -8790,18 +8317,7 @@
       "Blastoise",
       "Pikachu",
       "Dragonite"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Charizard",
-      "Lizardon",
-      "Pokemon #006",
-      "Pokemon",
-      "Pokeball",
-      "Nintendo"
-    ],
-    "safe_visual_proxy": "A colossal bipedal orange fire-breathing dragon with teal underwings and a fiery flaming tail tip."
+    ]
   },
   {
     "id": "ENT-POP-186",
@@ -9207,17 +8723,7 @@
       "RoboCop",
       "T-1000",
       "Darth Vader"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "The Terminator (T-800)",
-      "T-800",
-      "Cyberdyne Systems Model 101",
-      "Terminator",
-      "Arnold Schwarzenegger"
-    ],
-    "safe_visual_proxy": "A gleaming metallic chrome cybernetic endoskeleton with glowing red ocular sensors."
+    ]
   },
   {
     "id": "ENT-POP-195",
@@ -9261,16 +8767,7 @@
       "Ellen Ripley",
       "The Terminator (T-800)",
       "Lara Croft"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Sarah Connor",
-      "Mother of the Resistance",
-      "Terminator",
-      "Linda Hamilton"
-    ],
-    "safe_visual_proxy": "A hardened combat-ready survivalist woman in tactical tank top and aviator sunglasses."
+    ]
   },
   {
     "id": "ENT-POP-196",
@@ -9315,17 +8812,7 @@
       "Sarah Connor",
       "Princess Leia",
       "Lara Croft"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Ellen Ripley",
-      "Lieutenant Ripley",
-      "Ripley",
-      "Alien",
-      "Sigourney Weaver"
-    ],
-    "safe_visual_proxy": "A resilient sci-fi astronaut and space officer in flight jumpsuit navigating steam-filled ship corridors."
+    ]
   },
   {
     "id": "ENT-POP-197",
@@ -9370,18 +8857,7 @@
       "Agent Smith",
       "Morpheus",
       "Luke Skywalker"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Neo (The Matrix)",
-      "Thomas A. Anderson",
-      "The One",
-      "Neo",
-      "The Matrix",
-      "Keanu Reeves"
-    ],
-    "safe_visual_proxy": "A calm martial arts master in flowing black duster coat and dark sunglasses against falling green digital glyphs."
+    ]
   },
   {
     "id": "ENT-POP-198",
@@ -9426,17 +8902,7 @@
       "Agent Smith",
       "Neo",
       "Mace Windu"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Morpheus (The Matrix)",
-      "Morpheus",
-      "Captain Morpheus",
-      "The Matrix",
-      "Laurence Fishburne"
-    ],
-    "safe_visual_proxy": "A wise mentor in mirrored rimless sunglasses and leather overcoat offering two colored pills."
+    ]
   },
   {
     "id": "ENT-POP-199",
@@ -9481,17 +8947,7 @@
       "Doc Brown",
       "Biff Tannen",
       "Ferris Bueller"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Marty McFly",
-      "Martin Seamus McFly",
-      "Clint Eastwood",
-      "Back to the Future",
-      "Michael J. Fox"
-    ],
-    "safe_visual_proxy": "A 1980s teenager in orange puffer vest and denim jacket riding a skateboard beside a stainless-steel car."
+    ]
   },
   {
     "id": "ENT-POP-200",
@@ -9536,17 +8992,7 @@
       "Marty McFly",
       "Rick Sanchez",
       "Professor Farnsworth"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Doc Brown",
-      "Dr. Emmett L. Brown",
-      "Doc",
-      "Back to the Future",
-      "Christopher Lloyd"
-    ],
-    "safe_visual_proxy": "An eccentric wild-haired inventor in white lab coat adjusting futuristic glowing gauge dials."
+    ]
   },
   {
     "id": "ENT-POP-201",
@@ -9590,15 +9036,7 @@
       "Apollo Creed",
       "Ivan Drago",
       "John Rambo"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Rocky Balboa",
-      "The Italian Stallion",
-      "Sylvester Stallone"
-    ],
-    "safe_visual_proxy": "A determined boxer in red-and-white striped trunks raising leather boxing gloves in a smoky boxing ring."
+    ]
   },
   {
     "id": "ENT-POP-202",
@@ -9642,15 +9080,7 @@
       "The Terminator",
       "Rocky Balboa",
       "Solid Snake"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "John Rambo",
-      "Rambo",
-      "Sylvester Stallone"
-    ],
-    "safe_visual_proxy": "A battle-hardened survival commando with red headband trekking through a dense monsoon jungle."
+    ]
   },
   {
     "id": "ENT-POP-203",
@@ -9695,16 +9125,7 @@
       "Jason Bourne",
       "Ethan Hunt",
       "Sherlock Holmes"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "James Bond",
-      "007",
-      "Commander Bond",
-      "MI6"
-    ],
-    "safe_visual_proxy": "A sharp secret agent in a tailored black tuxedo and bow tie standing in a glamorous casino lounge."
+    ]
   },
   {
     "id": "ENT-POP-204",
@@ -9749,16 +9170,7 @@
       "Lara Croft",
       "James Bond",
       "Nathan Drake"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Indiana Jones",
-      "Dr. Henry Walton Jones, Jr.",
-      "Indy",
-      "Harrison Ford"
-    ],
-    "safe_visual_proxy": "A daring archaeologist in brown fedora and leather jacket holding a coiled bullwhip inside an ancient cavern."
+    ]
   },
   {
     "id": "ENT-POP-205",
@@ -9803,18 +9215,7 @@
       "Captain Hook",
       "Long John Silver",
       "Davy Jones"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Captain Jack Sparrow",
-      "Jack Sparrow",
-      "Captain Jack",
-      "Pirates of the Caribbean",
-      "Disney",
-      "Johnny Depp"
-    ],
-    "safe_visual_proxy": "An eccentric dreadlocked swashbuckling pirate captain in tricorn hat holding a brass compass on a wooden ship deck."
+    ]
   },
   {
     "id": "ENT-POP-206",
@@ -11537,15 +10938,7 @@
       "Baloo",
       "Shere Khan",
       "Mowgli"
-    ],
-    "copyright_risk": "medium",
-    "is_trademark_ip": false,
-    "forbidden_visual_keywords": [
-      "Marvel",
-      "Wakanda",
-      "superhero"
-    ],
-    "safe_visual_proxy": "A sleek black Indian leopard resting gracefully on a tropical jungle branch."
+    ]
   },
   {
     "id": "ENT-POP-246",
@@ -12625,19 +12018,7 @@
       "Sonic the Hedgehog",
       "Pac-Man",
       "Donkey Kong"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Super Mario",
-      "Mario",
-      "Jumpman",
-      "Nintendo",
-      "Luigi",
-      "Bowser",
-      "Princess Peach"
-    ],
-    "safe_visual_proxy": "A cheerful mustachioed retro platformer plumber in a red work cap and blue overalls leaping over floating brick blocks."
+    ]
   },
   {
     "id": "ENT-POP-271",
@@ -12680,17 +12061,7 @@
       "Super Mario",
       "Sonic the Hedgehog",
       "Pac-Man"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Luigi",
-      "Luigi Mario",
-      "Mario",
-      "Nintendo",
-      "Bowser"
-    ],
-    "safe_visual_proxy": "A tall green-capped mustachioed videogame brother in denim overalls navigating spooky haunted mansions."
+    ]
   },
   {
     "id": "ENT-POP-272",
@@ -12733,18 +12104,7 @@
       "Princess Zelda",
       "Super Mario",
       "Bowser"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Princess Peach",
-      "Princess Toadstool",
-      "Peach",
-      "Mario",
-      "Nintendo",
-      "Toadstool"
-    ],
-    "safe_visual_proxy": "A gentle fairytale princess in a flowing pink gown and golden tiara holding a parasol."
+    ]
   },
   {
     "id": "ENT-POP-273",
@@ -12787,16 +12147,7 @@
       "Super Mario",
       "Donkey Kong",
       "Godzilla"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Bowser",
-      "King Koopa",
-      "Mario",
-      "Nintendo"
-    ],
-    "safe_visual_proxy": "A massive fiery spiked dragon-turtle creature roaring inside a lava-filled castle throne room."
+    ]
   },
   {
     "id": "ENT-POP-274",
@@ -12839,19 +12190,7 @@
       "Super Mario",
       "Pac-Man",
       "Crash Bandicoot"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Sonic the Hedgehog",
-      "Blue Blur",
-      "Sonic",
-      "Sega",
-      "Tails",
-      "Knuckles",
-      "Dr. Eggman"
-    ],
-    "safe_visual_proxy": "A hyper-fast cobalt blue woodland hedgehog sprinting at high speed along rolling green loop-the-loop hills collecting gold rings."
+    ]
   },
   {
     "id": "ENT-POP-275",
@@ -12894,18 +12233,7 @@
       "Doraemon",
       "Mickey Mouse",
       "Sonic the Hedgehog"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Pikachu",
-      "Electric Mouse",
-      "Pokemon",
-      "Pokeball",
-      "Nintendo",
-      "Game Freak"
-    ],
-    "safe_visual_proxy": "A cheerful electric yellow rodent creature with red cheek pouches and lightning bolt-shaped tail emitting bright sparks."
+    ]
   },
   {
     "id": "ENT-POP-276",
@@ -12948,21 +12276,7 @@
       "Super Mario",
       "Sonic the Hedgehog",
       "Donkey Kong"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Pac-Man",
-      "The Yellow Dot-Eater",
-      "Puck Man",
-      "Namco",
-      "Blinky",
-      "Pinky",
-      "Inky",
-      "Clyde",
-      "Power Pellet"
-    ],
-    "safe_visual_proxy": "A retro yellow circular character chomping glowing dots along neon blue maze pathways surrounded by colorful retro ghost sprites."
+    ]
   },
   {
     "id": "ENT-POP-277",
@@ -13005,16 +12319,7 @@
       "King Kong",
       "Bowser",
       "Super Mario"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Donkey Kong",
-      "DK",
-      "Nintendo",
-      "Mario"
-    ],
-    "safe_visual_proxy": "A mighty jungle gorilla wearing a monogrammed red necktie beating his chest on wooden girder platforms."
+    ]
   },
   {
     "id": "ENT-POP-278",
@@ -13058,20 +12363,7 @@
       "Princess Zelda",
       "Peter Pan",
       "Robin Hood"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Link",
-      "Hero of Time",
-      "Hero of Hyrule",
-      "Zelda",
-      "The Legend of Zelda",
-      "Nintendo",
-      "Triforce",
-      "Master Sword"
-    ],
-    "safe_visual_proxy": "A courageous fantasy elven hero in a green tunic wielding a magical sword and heraldic shield in ancient ruins."
+    ]
   },
   {
     "id": "ENT-POP-279",
@@ -13114,18 +12406,7 @@
       "Link",
       "Princess Peach",
       "Lara Croft"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Princess Zelda",
-      "Zelda",
-      "The Legend of Zelda",
-      "Nintendo",
-      "Triforce",
-      "Hyrule"
-    ],
-    "safe_visual_proxy": "An elegant fantasy princess in royal ceremonial robes wielding radiant sacred magic."
+    ]
   },
   {
     "id": "ENT-POP-280",
@@ -13168,16 +12449,7 @@
       "Indiana Jones",
       "Nathan Drake",
       "James Bond"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Lara Croft",
-      "Tomb Raider",
-      "Eidos",
-      "Square Enix"
-    ],
-    "safe_visual_proxy": "An athletic dual-holstered explorer and archaeologist traversing treacherous ancient subterranean temples."
+    ]
   },
   {
     "id": "ENT-POP-281",
@@ -13221,18 +12493,7 @@
       "James Bond",
       "Batman",
       "Lara Croft"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Solid Snake",
-      "David",
-      "Old Snake",
-      "Metal Gear",
-      "Konami",
-      "Kojima"
-    ],
-    "safe_visual_proxy": "A tactical operative in dark infiltration gear with bandana and radio earpiece crouching behind surveillance walls."
+    ]
   },
   {
     "id": "ENT-POP-282",
@@ -13275,16 +12536,7 @@
       "Sonic the Hedgehog",
       "Super Mario",
       "Spyro the Dragon"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Crash Bandicoot",
-      "Crash",
-      "Naughty Dog",
-      "Activision"
-    ],
-    "safe_visual_proxy": "A wild orange marsupial creature in blue jeans spinning energetically across jungle stepping crates."
+    ]
   },
   {
     "id": "ENT-POP-283",
@@ -13328,16 +12580,7 @@
       "Astro Boy",
       "Sonic the Hedgehog",
       "Super Mario"
-    ],
-    "copyright_risk": "high",
-    "is_trademark_ip": true,
-    "forbidden_visual_keywords": [
-      "Mega Man",
-      "Rockman",
-      "The Blue Bomber",
-      "Capcom"
-    ],
-    "safe_visual_proxy": "A futuristic robotic boy hero clad in blue armor with an arm-mounted energy cannon."
+    ]
   },
   {
     "id": "ENT-POP-284",

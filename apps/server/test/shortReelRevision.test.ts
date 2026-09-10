@@ -31,14 +31,14 @@ describe("Short-Reel Revision and Invalidation Policy (Phase 04)", () => {
         kind: "update_references",
         references: { references: [] },
       }),
-    ).toEqual(["script", "cover"]);
+    ).toEqual(["references", "cover"]);
 
     expect(
       affectedReelUnits({
         kind: "update_script",
         script: repairScript(),
       }),
-    ).toEqual(["script"]);
+    ).toEqual(["script", "references", "cover", "publishing"]);
 
     expect(
       affectedReelUnits({
@@ -46,7 +46,7 @@ describe("Short-Reel Revision and Invalidation Policy (Phase 04)", () => {
         segment_index: 1,
         segment: repairScript().segments[0],
       }),
-    ).toEqual(["script"]);
+    ).toEqual(["script", "references", "cover", "publishing"]);
 
     expect(
       affectedReelUnits({
@@ -186,76 +186,86 @@ describe("Short-Reel Revision and Invalidation Policy (Phase 04)", () => {
   it("SG-07: accepts two sibling component completions from same snapshot without false invalidation", async () => {
     const { repo, key, reel } = await fixture();
 
-    // Both script and publishing operations start from the same initial record snapshot
-    const scriptFingerprint = computeDependencyFingerprint("script", reel);
-    const publishingFingerprint = computeDependencyFingerprint("publishing", reel);
+    // In Phase 05, script is accepted first, then sibling branches (references, publishing) run concurrently
+    const withScript = await repo.updateShortReel(
+      key,
+      { expected_revision: reel.revision, request_id: "seed-script" },
+      { kind: "update_script", script: repairScript() },
+    );
 
-    const scriptOp = "op-script-sibling";
+    // Both references and publishing operations start from the same record snapshot
+    const refFingerprint = computeDependencyFingerprint("references", withScript);
+    const pubFingerprint = computeDependencyFingerprint("publishing", withScript);
+
+    const refOp = "op-ref-sibling";
     const pubOp = "op-pub-sibling";
-    await beginReelUnitAttempt(repo, key, "script", scriptOp);
+    await beginReelUnitAttempt(repo, key, "references", refOp);
     await beginReelUnitAttempt(repo, key, "publishing", pubOp);
 
-    const scriptPayload = { script: repairScript() };
+    const refPayload = { references: [] };
     const pubPayload = {
-      hook: "Amazing Hook",
-      description: "Exciting explanation",
-      cta: "Watch next",
-      hashtags: ["#science", "#trivia"],
+      title: "Amazing Title",
+      description: "Exciting explanation #science #trivia",
     };
 
-    // 1. Script resolves and is accepted -> updates record revision
-    const scriptResult = await acceptReelUnitResult(
+    // 1. References resolves and is accepted -> updates record revision
+    const refResult = await acceptReelUnitResult(
       repo,
       key,
-      "script",
-      { operationId: scriptOp, dependencyFingerprint: scriptFingerprint },
-      scriptPayload,
+      "references",
+      { operationId: refOp, dependencyFingerprint: refFingerprint },
+      refPayload,
     );
-    expect(scriptResult.accepted).toBe(true);
-    expect(scriptResult.record.revision).toBe(4);
+    expect(refResult.accepted).toBe(true);
+    expect(refResult.record.revision).toBe(5);
 
     // 2. Publishing resolves afterward: its dependency fingerprint has NOT changed
-    // even though the record's revision bumped due to the sibling script unit!
+    // even though the record's revision bumped due to the sibling references unit!
     const pubResult = await acceptReelUnitResult(
       repo,
       key,
       "publishing",
-      { operationId: pubOp, dependencyFingerprint: publishingFingerprint },
+      { operationId: pubOp, dependencyFingerprint: pubFingerprint },
       pubPayload,
     );
     expect(pubResult.accepted).toBe(true);
-    expect(pubResult.record.revision).toBe(5);
+    expect(pubResult.record.revision).toBe(6);
 
     // 3. Verify final persisted record contains both accepted units
     const finalRecord = await repo.getShortReel(key);
-    expect(finalRecord.units.script.state).toBe("ready");
+    expect(finalRecord.units.references.state).toBe("ready");
     expect(finalRecord.units.publishing.state).toBe("ready");
   });
 
   it("SG-07-CONCURRENT: merges two concurrent sibling completions dispatched via Promise.all using CAS retry", async () => {
     const { repo, key, reel } = await fixture();
-    await beginReelUnitAttempt(repo, key, "script", "op-concurrent-script");
+
+    const withScript = await repo.updateShortReel(
+      key,
+      { expected_revision: reel.revision, request_id: "seed-script-concurrent" },
+      { kind: "update_script", script: repairScript() },
+    );
+
+    await beginReelUnitAttempt(repo, key, "references", "op-concurrent-ref");
     await beginReelUnitAttempt(repo, key, "publishing", "op-concurrent-pub");
 
-    const scriptFingerprint = computeDependencyFingerprint("script", reel);
-    const pubFingerprint = computeDependencyFingerprint("publishing", reel);
+    const refFingerprint = computeDependencyFingerprint("references", withScript);
+    const pubFingerprint = computeDependencyFingerprint("publishing", withScript);
 
-    const scriptPayload = { script: repairScript() };
+    const refPayload = { references: [] };
     const pubPayload = {
-      hook: "Concurrent Hook",
-      description: "Concurrent description",
-      cta: "Watch now",
-      hashtags: ["#fast", "#concurrency"],
+      title: "Concurrent Title",
+      description: "Concurrent description #fast #concurrency",
     };
 
     // Dispatched in true parallel concurrency
-    const [resScript, resPub] = await Promise.all([
+    const [resRef, resPub] = await Promise.all([
       acceptReelUnitResult(
         repo,
         key,
-        "script",
-        { operationId: "op-concurrent-script", dependencyFingerprint: scriptFingerprint },
-        scriptPayload,
+        "references",
+        { operationId: "op-concurrent-ref", dependencyFingerprint: refFingerprint },
+        refPayload,
       ),
       acceptReelUnitResult(
         repo,
@@ -267,13 +277,13 @@ describe("Short-Reel Revision and Invalidation Policy (Phase 04)", () => {
     ]);
 
     // Both must be accepted successfully through CAS retry
-    expect(resScript.accepted).toBe(true);
+    expect(resRef.accepted).toBe(true);
     expect(resPub.accepted).toBe(true);
 
     const finalRecord = await repo.getShortReel(key);
-    expect(finalRecord.units.script.state).toBe("ready");
+    expect(finalRecord.units.references.state).toBe("ready");
     expect(finalRecord.units.publishing.state).toBe("ready");
-    expect(finalRecord.revision).toBe(5);
+    expect(finalRecord.revision).toBe(6);
   });
 
   it("invalidatedDownstreamSegments correctly marks segments 2 and 3 stale on segment 1 change, and segment 3 on segment 2 change", async () => {

@@ -1,9 +1,8 @@
 import type { BankQuestion } from "@studio/shared";
-import { validateTextCopyright } from "../qa/copyrightValidator.js";
 import { calculateQuestionSimilarity, normalizeQuestionText } from "../qa/questionHistory.js";
 
 export interface AutoQaIssue {
-  type: "copyright" | "duplicate" | "schema" | "quality";
+  type: "duplicate" | "schema" | "quality";
   message: string;
   details?: Record<string, unknown>;
 }
@@ -20,31 +19,6 @@ export interface RunBatchAutoQaOptions {
 }
 
 export const DEFAULT_SIMILARITY_THRESHOLD = 0.75;
-
-function checkCopyrightIssues(question: BankQuestion): AutoQaIssue[] {
-  const issues: AutoQaIssue[] = [];
-  const textsToScan: string[] = [
-    question.question,
-    question.explanation,
-    question.fun_fact || "",
-    ...(question.choices || []).map((c) => c.text),
-    question.visual_spec?.prompt || "",
-  ];
-
-  for (const text of textsToScan) {
-    if (!text) continue;
-    const copyrightResult = validateTextCopyright(text);
-    if (copyrightResult.violated) {
-      issues.push({
-        type: "copyright",
-        message: `Copyright violation detected (${copyrightResult.category}): term "${copyrightResult.term}" - ${copyrightResult.reason}`,
-        details: { category: copyrightResult.category, term: copyrightResult.term },
-      });
-      break;
-    }
-  }
-  return issues;
-}
 
 function checkQualityAndSchemaIssues(question: BankQuestion): AutoQaIssue[] {
   const issues: AutoQaIssue[] = [];
@@ -155,7 +129,6 @@ export function runAutoQaOnQuestion(
   similarityThreshold = DEFAULT_SIMILARITY_THRESHOLD,
 ): AutoQaResult {
   const issues: AutoQaIssue[] = [
-    ...checkCopyrightIssues(question),
     ...checkQualityAndSchemaIssues(question),
     ...checkDuplicateIssues(question, existingQuestions, similarityThreshold),
   ];
@@ -177,7 +150,6 @@ export interface BatchAutoQaReport {
     issues: AutoQaIssue[];
   }>;
   summary: {
-    copyrightRejections: number;
     duplicateRejections: number;
     schemaRejections: number;
     qualityRejections: number;
@@ -243,7 +215,6 @@ export function runBatchAutoQa(candidates: BankQuestion[], options: RunBatchAuto
   const rejectedQuestions: Array<{ question: BankQuestion; issues: AutoQaIssue[] }> = [];
 
   const summary = {
-    copyrightRejections: 0,
     duplicateRejections: 0,
     schemaRejections: 0,
     qualityRejections: 0,
@@ -272,8 +243,7 @@ export function runBatchAutoQa(candidates: BankQuestion[], options: RunBatchAuto
       });
 
       for (const issue of combinedIssues) {
-        if (issue.type === "copyright") summary.copyrightRejections++;
-        else if (issue.type === "duplicate") summary.duplicateRejections++;
+        if (issue.type === "duplicate") summary.duplicateRejections++;
         else if (issue.type === "schema") summary.schemaRejections++;
         else if (issue.type === "quality") summary.qualityRejections++;
       }

@@ -1,6 +1,7 @@
 import { open, rename, unlink, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { ShortReelRecordSchema, type ShortReelRecord } from "@studio/shared";
+import { prepareShortReelV1UpgradeBackup } from "./shortReelUpgrade.js";
 export {
   acquireWriterAdmission,
   releaseWriterAdmission,
@@ -29,6 +30,7 @@ export function setShortReelSyncHookForTesting(hook: ((source: string, destinati
 }
 
 export async function writeShortReelJsonAtomic(targetPath: string, record: ShortReelRecord): Promise<void> {
+  await prepareShortReelV1UpgradeBackup(targetPath);
   const directory = path.dirname(targetPath);
   await mkdir(directory, { recursive: true });
 

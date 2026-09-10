@@ -4,6 +4,8 @@ export type BundleImageMeta = {
   model?: string;
   aspect_ratio?: string;
   size?: string;
+  provenance?: "explicit" | "curated" | "auto";
+  user_selected?: boolean;
 };
 
 export type BundleImageAsset = {
@@ -19,6 +21,8 @@ export type BundleImageAsset = {
   price_breakdown?: Record<string, number>;
   model?: string;
   aspect_ratio?: string;
+  provenance?: "explicit" | "curated" | "auto";
+  user_selected?: boolean;
 };
 
 export type RepositoryRoots = {

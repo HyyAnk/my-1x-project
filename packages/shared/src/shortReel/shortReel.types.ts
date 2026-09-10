@@ -14,7 +14,6 @@ import type {
   ReelAttemptMetadataSchema,
   ReelReferencesPayloadSchema,
   ReelCoverPayloadSchema,
-  ReelPublishingPayloadSchema,
   ReelScriptPayloadSchema,
   ReelDeliverableUnitsSchema,
   ShortReelRecordSchema,
@@ -37,7 +36,7 @@ export type ReelUnitStatus = z.infer<typeof ReelUnitStatusSchema>;
 export type ReelAttemptMetadata = z.infer<typeof ReelAttemptMetadataSchema>;
 export type ReelReferencesPayload = z.infer<typeof ReelReferencesPayloadSchema>;
 export type ReelCoverPayload = z.infer<typeof ReelCoverPayloadSchema>;
-export type ReelPublishingPayload = z.infer<typeof ReelPublishingPayloadSchema>;
+export type { ReelPublishingPayload, GeneratedReelPublishing } from "./shortReelPublishing.schema.js";
 export type ReelScriptPayload = z.infer<typeof ReelScriptPayloadSchema>;
 export type ReelDeliverableUnits = z.infer<typeof ReelDeliverableUnitsSchema>;
 export type ShortReelRecord = z.infer<typeof ShortReelRecordSchema>;

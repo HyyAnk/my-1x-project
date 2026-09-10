@@ -39,19 +39,18 @@ export function getOptimalAssetDimensions(
   purpose?: OptimizeRenderImageOptions["purpose"],
   layout?: QuizPreviewLayoutId,
 ): QuizLayoutAssetMetrics {
-  if (purpose === "choice_thumbnail" || purpose === "answer_option") return QUIZ_DEFAULT_CHOICE_ASSET_METRICS;
-  if (!layout) return QUIZ_DEFAULT_ASSET_METRICS;
+  const isChoice = purpose === "choice_thumbnail" || purpose === "answer_option";
+
+  if (!layout) {
+    return isChoice ? QUIZ_DEFAULT_CHOICE_ASSET_METRICS : QUIZ_DEFAULT_ASSET_METRICS;
+  }
 
   const capability = getQuizPreviewLayoutCapability(layout);
-  const choiceAsset = capability.metrics.assets.choice;
-  if (choiceAsset && capability.media.supported.includes("choice")) {
-    return choiceAsset;
+  if (isChoice) {
+    return capability?.metrics?.assets?.choice ?? QUIZ_DEFAULT_CHOICE_ASSET_METRICS;
   }
-  const questionAsset = capability.metrics.assets.question;
-  if (questionAsset) {
-    return questionAsset;
-  }
-  return QUIZ_DEFAULT_ASSET_METRICS;
+
+  return capability?.metrics?.assets?.question ?? capability?.metrics?.assets?.choice ?? QUIZ_DEFAULT_ASSET_METRICS;
 }
 
 /**
@@ -120,15 +119,15 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
       pipeline = pipeline.jpeg({ quality, mozjpeg: true });
     }
 
-    await pipeline.toFile(targetPath);
+    const outputInfo = await pipeline.toFile(targetPath);
 
     return {
       optimized: true,
       skippedExisting: false,
       originalWidth: width,
       originalHeight: height,
-      targetWidth: Math.min(width, maxWidth),
-      targetHeight: Math.min(height, maxHeight),
+      targetWidth: outputInfo.width,
+      targetHeight: outputInfo.height,
     };
   } catch {
     // Fall back to direct copy if Sharp encounters an unsupported format or corrupted header

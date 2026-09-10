@@ -11,6 +11,7 @@ type PngEncoderTarget = {
   assetId?: string;
   fingerprint?: string;
   theme?: string;
+  aspectRatio?: string;
 };
 
 // 5x7 Basic ASCII font definitions for characters 32-126
@@ -282,10 +283,32 @@ export class PngEncoderProvider implements ImageProvider {
   ) {}
 
   async generateReference(prompt: string): Promise<{ asset_path: string; fallback_tier: number; degraded: true }> {
+    const ratioMatch =
+      prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i) || prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
+    const targetAspectRatio = this.target.aspectRatio || (ratioMatch ? ratioMatch[1] : "16:9");
+
+    let width = 960;
+    let height = 540;
+    if (targetAspectRatio === "1:1") {
+      width = 540;
+      height = 540;
+    } else if (targetAspectRatio === "4:3") {
+      width = 720;
+      height = 540;
+    } else if (targetAspectRatio === "3:4") {
+      width = 540;
+      height = 720;
+    } else if (targetAspectRatio === "9:16") {
+      width = 540;
+      height = 960;
+    }
+
     const bytes = generateThemedPlaceholderPng(
       prompt,
       this.target.assetId ? `ASSET: ${this.target.assetId}` : `BUNDLE CB-${String(this.target.bundleNumber ?? 1).padStart(2, "0")}`,
       this.target.theme ?? "candy_arcade",
+      width,
+      height,
     );
 
     let assetPath: string;

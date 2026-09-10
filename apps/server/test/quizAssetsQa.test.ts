@@ -62,6 +62,8 @@ describe("Quiz V2 assets and QA", () => {
     };
     expect(assetFingerprint(request)).toBe(assetFingerprint({ ...request, subject: " tiger " }));
     expect(assetFingerprint(request)).not.toBe(assetFingerprint({ ...request, subject: "Dolphin" }));
+    expect(assetFingerprint(request)).not.toBe(assetFingerprint({ ...request, aspect_ratio: "4:3" as const }));
+    expect(assetFingerprint(request)).not.toBe(assetFingerprint({ ...request, aspect_ratio: "1:1" as const }));
   });
 
   it("keeps long visual opportunities within the asset subject contract", () => {
@@ -199,7 +201,12 @@ describe("Quiz V2 assets and QA", () => {
       "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAFAAI/9B+f9AAAAABJRU5ErkJggg==",
       "base64",
     );
-    await repository.writeBundleImage(channel.channel_id, episode.episode_id, 1, pngBytes, 0, { price_vnd: 250, model: "imagen-3" });
+    await repository.writeBundleImage(channel.channel_id, episode.episode_id, 1, pngBytes, 0, {
+      price_vnd: 250,
+      model: "imagen-3",
+      provenance: "explicit",
+      user_selected: true,
+    });
 
     const quizWithVisual = QuizV2Schema.parse({
       schema_version: 2,

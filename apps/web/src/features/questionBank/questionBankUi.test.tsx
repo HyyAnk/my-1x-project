@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, afterEach, beforeEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
-import type { BankIndex, BankQuestionWithCooldown, BankTaxonomy, Channel } from "@studio/shared";
+import type { BankIndex, BankQuestion, BankQuestionWithCooldown, BankTaxonomy, Channel } from "@studio/shared";
 import { LanguageProvider } from "../../i18n";
 import { QuestionBankHeaderStats } from "./components/QuestionBankHeaderStats";
 import { QuestionBankToolbar } from "./components/QuestionBankToolbar";
@@ -364,12 +364,12 @@ describe("Question Bank Studio UI Components", () => {
       generatedCount: 40,
       approvedCount: 38,
       rejectedCount: 2,
-      qaSummary: { copyrightRejections: 1, duplicateRejections: 1, schemaRejections: 0, qualityRejections: 0 },
+      qaSummary: { duplicateRejections: 1, schemaRejections: 0, qualityRejections: 1 },
       savedQuestions: [],
       rejectedQuestions: [
         {
           question: { question: "Disqualified question" },
-          issues: [{ type: "COPYRIGHT_VIOLATION", message: "Contains trademark" }],
+          issues: [{ type: "duplicate", message: "Semantic duplicate of existing question" }],
         },
       ],
       matrixCoverage: {
@@ -437,6 +437,140 @@ describe("Question Bank Studio UI Components", () => {
       difficulty: 2,
       persist: true,
     });
+  });
+
+  it("QuestionBankAiGenerateModal tolerates historical payloads containing copyrightRejections at input boundary", async () => {
+    const historicalPayload = {
+      success: true,
+      mode: "auto" as const,
+      requestedCount: 20,
+      generatedCount: 20,
+      approvedCount: 19,
+      rejectedCount: 1,
+      qaSummary: {
+        copyrightRejections: 1, // tolerated historical field
+        duplicateRejections: 0,
+        schemaRejections: 0,
+        qualityRejections: 0,
+      },
+      savedQuestions: [],
+      rejectedQuestions: [
+        {
+          question: {
+            id: "Q-HIST-1",
+            archetype_id: "speed_blitz",
+            domain_id: "nature_animals",
+            subtopic_id: "mammals",
+            language: "en",
+            format: "multiple_choice",
+            question: "Sample question?",
+            choices: [],
+            correct_choice_id: "A",
+            explanation: "Exp",
+            status: "draft",
+          } as unknown as BankQuestion,
+          issues: [{ type: "quality", message: "Legacy rejection note" }],
+        },
+      ],
+    };
+
+    const onGenerate = vi.fn().mockResolvedValue(historicalPayload);
+    const onClose = vi.fn();
+
+    renderWithLanguage(
+      <QuestionBankAiGenerateModal
+        taxonomy={mockTaxonomy}
+        matrixCoverage={null}
+        generating={false}
+        onGenerate={onGenerate}
+        onClose={onClose}
+      />,
+      "en",
+    );
+
+    const submitBtn = screen.getByText(/Auto-Fill Matrix \(20 questions\)/);
+    fireEvent.click(submitBtn);
+
+    await vi.waitFor(() => {
+      expect(screen.getByText("Question batch generation complete!")).toBeDefined();
+      expect(screen.getByText(/Legacy rejection note/)).toBeDefined();
+    });
+  });
+
+  it("QuestionBankAiGenerateModal disables submission and renders spinner during pending generation", () => {
+    const onGenerate = vi.fn();
+    const onClose = vi.fn();
+
+    renderWithLanguage(
+      <QuestionBankAiGenerateModal
+        taxonomy={mockTaxonomy}
+        matrixCoverage={null}
+        generating={true}
+        onGenerate={onGenerate}
+        onClose={onClose}
+      />,
+      "en",
+    );
+
+    const submitBtn = screen.getByRole("button", { name: /generating/i });
+    expect(submitBtn.hasAttribute("disabled")).toBe(true);
+    fireEvent.click(submitBtn);
+    expect(onGenerate).not.toHaveBeenCalled();
+  });
+
+  it("QuestionBankAiGenerateModal preserves form input on failure and allows retry", async () => {
+    let callCount = 0;
+    const onGenerate = vi.fn().mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        return Promise.reject(new Error("Network timeout during generation"));
+      }
+      return Promise.resolve({
+        success: true,
+        mode: "auto",
+        requestedCount: 40,
+        generatedCount: 40,
+        approvedCount: 40,
+        rejectedCount: 0,
+        qaSummary: { duplicateRejections: 0, schemaRejections: 0, qualityRejections: 0 },
+        savedQuestions: [],
+        rejectedQuestions: [],
+      });
+    });
+    const onClose = vi.fn();
+
+    renderWithLanguage(
+      <QuestionBankAiGenerateModal
+        taxonomy={mockTaxonomy}
+        matrixCoverage={null}
+        generating={false}
+        onGenerate={onGenerate}
+        onClose={onClose}
+      />,
+      "en",
+    );
+
+    // Select 40 questions
+    const chip40 = screen.getByText(/40 Questions/);
+    fireEvent.click(chip40);
+
+    // First submit fails
+    const submitBtn = screen.getByText(/Auto-Fill Matrix \(40 questions\)/);
+    fireEvent.click(submitBtn);
+
+    await vi.waitFor(() => {
+      expect(screen.getByText("Network timeout during generation")).toBeDefined();
+    });
+
+    // Form retains targetCount 40
+    expect(screen.getByText(/Auto-Fill Matrix \(40 questions\)/)).toBeDefined();
+
+    // Retry submit succeeds
+    fireEvent.click(screen.getByText(/Auto-Fill Matrix \(40 questions\)/));
+    await vi.waitFor(() => {
+      expect(screen.getByText("Question batch generation complete!")).toBeDefined();
+    });
+    expect(callCount).toBe(2);
   });
 
   it("QuestionBankAiGenerateModal auto-closes immediately when generation starts as a background job", async () => {

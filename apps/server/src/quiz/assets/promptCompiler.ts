@@ -1,6 +1,5 @@
 import type { AssetConsistencyGroup, QuizAssetRequirement, QuizImageStyle } from "@studio/shared";
 import { framingRules, purposeRules } from "./promptFramingRules.js";
-import { sanitizeVisualSubject, sanitizeVisualPrompt } from "./visualPromptSanitizer.js";
 
 export type CompiledAssetPrompt = {
   prompt: string;
@@ -91,7 +90,7 @@ export function compileQuizAssetPrompt(
 ): CompiledAssetPrompt {
   const contract = QUIZ_STYLE_CONTRACTS[visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;
   const rules = purposeRules(request.purpose);
-  const cleanSubject = sanitizeVisualSubject(request.subject);
+  const cleanSubject = request.subject.trim();
 
   const backgroundGuidance = request.transparent_background
     ? "Background: isolated centered subject on a pure solid white studio backdrop, crystal clear silhouette boundaries, high edge contrast, zero background clutter, zero shadows on backdrop, perfectly suited for clean background matting."
@@ -129,14 +128,14 @@ export function compileQuizAssetPrompt(
     framing,
     backgroundGuidance,
     `Output framing: ${request.aspect_ratio}.`,
-    "No words, letters, captions, labels, logos, watermark, collage, or split screen.",
+    "No words, letters, captions, labels, watermark, collage, or split screen; do not add unrelated logos; retain identifying marks explicitly required by the subject.",
   ].join("\n");
 
-  const prompt = sanitizeVisualPrompt(rawPrompt);
+  const prompt = rawPrompt.replace(/\s{2,}/g, " ").trim();
 
   return {
     prompt,
-    cacheVersion: `${contract.id}-v3-expressive-faces`,
+    cacheVersion: `${contract.id}-v4-subject-identity`,
     critical: request.required,
   };
 }

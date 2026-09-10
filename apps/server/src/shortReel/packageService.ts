@@ -13,9 +13,12 @@ import {
   loadShortReelLocalizationArtifact,
   type ShortReelDisplayProjection,
 } from "../quiz/bank/localization/productLocalization.js";
+import { mutateShortReelRecord } from "../repository/shortReelTransaction.js";
+import { resolveMascotReference } from "./mascotReferenceService.js";
 
 export { PackageServiceError, type PackageServiceErrorCode } from "./packageAttempt.js";
 export { exportShortReelPackage } from "./exportService.js";
+export { createBaselineReelScript };
 
 function createBaselineReelScript(source: ShortReelSourceSnapshot, displayProjection?: ShortReelDisplayProjection): ReelScript {
   const questionCue = displayProjection?.question_text || source.question_text;
@@ -125,23 +128,24 @@ async function buildGeneratedScript(
   const localization = repository ? await loadShortReelLocalizationArtifact(repository, snapshot.channel_id, snapshot.reel_id) : null;
   const displayProjection = extractShortReelDisplayProjection(snapshot.source, localization);
 
-  if (!llmClient) return createBaselineReelScript(snapshot.source, displayProjection);
-  try {
-    return await generateReelScript(
-      {
-        topic: snapshot.topic,
-        source: snapshot.source as CompleteShortReelSourceSnapshot,
-        displayProjection,
-      },
-      llmClient,
-      options,
-    );
-  } catch (error) {
-    if (error instanceof ScriptGenerationError && (error.code === "PROVIDER_ERROR" || error.code === "TIMEOUT")) {
+  if (!llmClient) {
+    if (options?.allowBaselineFallback ?? false) {
       return createBaselineReelScript(snapshot.source, displayProjection);
     }
-    throw error;
+    throw new ScriptGenerationError("PROVIDER_ERROR", "LLM client is not configured or unavailable.");
   }
+
+  return await generateReelScript(
+    {
+      topic: snapshot.topic,
+      source: snapshot.source as CompleteShortReelSourceSnapshot,
+      displayProjection,
+      mascotName: snapshot.visual_context?.mascot_name,
+      artDirection: snapshot.visual_context?.art_direction,
+    },
+    llmClient,
+    options,
+  );
 }
 
 export function generateReelSegmentUnit(
@@ -184,7 +188,11 @@ export function generateReelPublishingUnit(
 ) {
   return runPackageAttempt(repository, key, "publishing", operationId, async (snapshot) => {
     const localization = options?.localization ?? (await loadShortReelLocalizationArtifact(repository, key.channel_id, key.reel_id));
-    return generateReelPublishing(snapshot, { ...options, localization });
+    return generateReelPublishing(snapshot, {
+      allowBaselineFallback: options?.allowBaselineFallback ?? true,
+      ...options,
+      localization,
+    });
   });
 }
 export interface FullPackageGenerationOptions {
@@ -202,19 +210,41 @@ export async function generateFullReelPackage(
 ): Promise<ShortReelRecord> {
   const operation = randomUUID();
   const original = await repository.getShortReel(key);
-  if (options?.referenceOptions || original.units.references.state !== "ready")
-    await generateReelReferencesUnit(repository, key, `references-${operation}`, options?.referenceOptions);
+  const channel = await repository.getChannel(key.channel_id);
+  if (channel.mascot_id) {
+    try {
+      const visualContext = await resolveMascotReference(repository, key);
+      await mutateShortReelRecord(repository, key, (r) => {
+        r.visual_context = visualContext;
+        return r;
+      });
+    } catch {
+      // Ignore if visual reference cannot be resolved in legacy fallback
+    }
+  }
   if (options?.script)
     await runPackageAttempt(repository, key, "script", `script-${operation}`, () => Promise.resolve({ script: options.script }));
   else if (original.units.script.state !== "ready" || !original.script)
-    await generateReelScriptUnit(repository, key, `script-${operation}`, options?.llmClient, options?.scriptOptions);
+    await generateReelScriptUnit(repository, key, `script-${operation}`, options?.llmClient, {
+      allowBaselineFallback: true,
+      ...options?.scriptOptions,
+    });
   const current = await repository.getShortReel(key);
   if (current.units.script.state !== "ready" || !current.script)
     throw new PackageServiceError("VALIDATION_FAILED", "A current script is required before generating a package.");
+  if (options?.referenceOptions || current.units.references.state !== "ready")
+    await generateReelReferencesUnit(repository, key, `references-${operation}`, options?.referenceOptions);
+  const afterRefs = await repository.getShortReel(key);
   const jobs: Promise<ShortReelRecord>[] = [];
-  if (current.units.cover.state !== "ready") jobs.push(generateReelCover(repository, key, `cover-${operation}`, options?.coverOptions));
-  if (current.units.publishing.state !== "ready")
-    jobs.push(generateReelPublishingUnit(repository, key, `publishing-${operation}`, options?.publishingOptions));
+  if (afterRefs.units.cover.state !== "ready") jobs.push(generateReelCover(repository, key, `cover-${operation}`, options?.coverOptions));
+  if (afterRefs.units.publishing.state !== "ready")
+    jobs.push(
+      generateReelPublishingUnit(repository, key, `publishing-${operation}`, {
+        llmClient: options?.llmClient,
+        allowBaselineFallback: options?.publishingOptions?.allowBaselineFallback ?? true,
+        ...options?.publishingOptions,
+      }),
+    );
   const results = await Promise.allSettled(jobs);
   const failed = results.find((result) => result.status === "rejected");
   if (failed?.status === "rejected")

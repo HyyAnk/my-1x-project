@@ -30,12 +30,11 @@ describe("ShortReelStudio Export And Asset Delivery", () => {
         publishing: {
           state: "ready",
           last_accepted_payload: {
-            hook: "Who hits 60 mph fastest?",
-            description: "Cheetah vs Greyhound speed comparison.",
-            cta: "Subscribe for more nature facts!",
-            hashtags: ["#animals", "#speed"],
+            title: "Who hits 60 mph fastest?",
+            description: "Cheetah vs Greyhound speed comparison.\n\nSubscribe for more nature facts!\n\n#animals #speed",
           },
           current_attempt: null,
+          accepted_dependency_fingerprint: "pub-fp",
         },
       },
     });

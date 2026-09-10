@@ -35,7 +35,7 @@ describe("Topic to Episode Pipeline E2E Bridge", () => {
     );
     const srcKb = path.join(curr, ".quiz-studio", "knowledge_base");
     const destKb = path.join(isolatedStudioRoot, ".quiz-studio", "knowledge_base");
-    await cp(srcKb, destKb, { recursive: true }).catch(() => {});
+    await cp(srcKb, destKb, { recursive: true, filter: (src) => !src.includes("entity_assets") }).catch(() => {});
     const srcTemplates = path.join(curr, "templates");
     const destTemplates = path.join(isolatedStudioRoot, "templates");
     await cp(srcTemplates, destTemplates, { recursive: true }).catch(() => {});

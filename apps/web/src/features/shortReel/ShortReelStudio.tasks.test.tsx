@@ -146,7 +146,7 @@ describe("ShortReelStudio Generation Tasks And Studio Tabs", () => {
     const assetsTab = getByRole("tab", { name: /assets & prompts/i });
     fireEvent.click(assetsTab);
     await waitFor(() => {
-      expect(getByText("Visual References")).toBeDefined();
+      expect(getByText("Portrait Style Reference")).toBeDefined();
       expect(getByText("Cover Image")).toBeDefined();
     });
 
@@ -155,7 +155,8 @@ describe("ShortReelStudio Generation Tasks And Studio Tabs", () => {
     fireEvent.click(pubTab);
     await waitFor(() => {
       expect(getByText("Publishing & Distribution")).toBeDefined();
-      expect(getByText("Hook Statement")).toBeDefined();
+      expect(getByText("Title")).toBeDefined();
+      expect(getByText("Description")).toBeDefined();
     });
   });
 
@@ -240,8 +241,8 @@ describe("ShortReelStudio Generation Tasks And Studio Tabs", () => {
     });
   });
 
-  // UI-09: Hashtag Comma Trapping Prevention
-  it("hashtag input allows typing commas and multiple tags without comma trapping", async () => {
+  // UI-09: Publishing Panel Title and Description Edit and Save
+  it("allows typing and saving title and video description", async () => {
     const mockReel = createMockShortReel({
       script: createMockScript(),
       units: createMockReadyUnits(),
@@ -252,7 +253,7 @@ describe("ShortReelStudio Generation Tasks And Studio Tabs", () => {
     });
     const channel = createMockChannel();
 
-    const { getByRole, getByLabelText } = render(
+    const { getByRole, getByLabelText, queryByLabelText } = render(
       <ShortReelStudio channel={channel} reelId="sreel_test_999" onBack={vi.fn()} onNotice={vi.fn()} />,
     );
 
@@ -261,19 +262,11 @@ describe("ShortReelStudio Generation Tasks And Studio Tabs", () => {
     // Switch to Publishing tab
     fireEvent.click(getByRole("tab", { name: /publishing metadata/i }));
 
-    const hashtagInput = getByLabelText("Hashtags (comma-separated)") as HTMLInputElement;
+    const titleInput = getByLabelText("Title") as HTMLInputElement;
+    const descInput = (queryByLabelText("Video Description") ?? getByRole("textbox", { name: "Description" })) as HTMLTextAreaElement;
 
-    // Type with trailing comma - comma should NOT vanish
-    fireEvent.change(hashtagInput, { target: { value: "shorts, " } });
-    expect(hashtagInput.value).toBe("shorts, ");
-
-    // Continue typing multiple tags
-    fireEvent.change(hashtagInput, { target: { value: "shorts, trivia, #wildlife" } });
-    expect(hashtagInput.value).toBe("shorts, trivia, #wildlife");
-
-    // Trigger blur to normalize
-    fireEvent.blur(hashtagInput);
-    expect(hashtagInput.value).toBe("shorts, trivia, wildlife");
+    fireEvent.change(titleInput, { target: { value: "New Hook Title" } });
+    fireEvent.change(descInput, { target: { value: "Updated video description #quiz" } });
 
     // Save publishing details
     const saveBtn = getByRole("button", { name: /save publishing/i });
@@ -283,7 +276,8 @@ describe("ShortReelStudio Generation Tasks And Studio Tabs", () => {
     const updateRequest = updateSpy.mock.calls.at(-1)?.[2];
     expect(updateRequest?.command.kind).toBe("update_publishing");
     if (updateRequest?.command.kind !== "update_publishing") throw new Error("Expected an update_publishing command");
-    expect(updateRequest.command.publishing.hashtags).toEqual(["shorts", "trivia", "wildlife"]);
+    expect(updateRequest.command.publishing.title).toBe("New Hook Title");
+    expect(updateRequest.command.publishing.description).toBe("Updated video description #quiz");
   });
 
   // UI-10: Script Tab Generate Script Action
@@ -293,7 +287,7 @@ describe("ShortReelStudio Generation Tasks And Studio Tabs", () => {
       script: null,
       units: {
         ...createMockShortReel().units,
-        script: { state: "missing", last_accepted_payload: null, current_attempt: null },
+        script: { state: "missing", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
       },
     };
     vi.spyOn(api, "getShortReel").mockResolvedValue({ short_reel: missingScriptReel });

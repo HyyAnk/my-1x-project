@@ -213,4 +213,31 @@ describe("ShopAIKey image provider", () => {
     expect(models.at(-1)).toBe("fallback-model");
     expect(asset.asset_path.endsWith("CB-01.png")).toBe(true);
   });
+
+  it("resolves size dynamically based on aspectRatio or prompt framing for 4:3, 1:1, 16:9, and 3:4", async () => {
+    process.env.SHOPAIKEY_API_KEY = "test-key";
+    delete process.env.SHOPAIKEY_IMAGE_SIZE;
+    const sizes: string[] = [];
+    globalThis.fetch = vi.fn(async (_input, init) => {
+      const body = JSON.parse(String(init?.body));
+      sizes.push(body.size);
+      return new Response(JSON.stringify({ data: [{ b64_json: "iVBORw0KGgo=" }] }), { status: 200 });
+    });
+
+    // 1. Explicit aspectRatio option (4:3)
+    await generateShopAiKeyImageBytes("A picture of a vintage clock", undefined, { aspectRatio: "4:3" });
+    expect(sizes.at(-1)).toBe("1024x768");
+
+    // 2. Explicit aspectRatio option (1:1)
+    await generateShopAiKeyImageBytes("An apple icon", undefined, { aspectRatio: "1:1" });
+    expect(sizes.at(-1)).toBe("1024x1024");
+
+    // 3. Prompt-detected aspect ratio (3:4)
+    await generateShopAiKeyImageBytes("Hero card. Output framing: 3:4. Beautiful character");
+    expect(sizes.at(-1)).toBe("768x1024");
+
+    // 4. Prompt-detected aspect ratio (16:9)
+    await generateShopAiKeyImageBytes("Landscape view. Composition: 16:9. Majestic mountain");
+    expect(sizes.at(-1)).toBe("1280x720");
+  });
 });

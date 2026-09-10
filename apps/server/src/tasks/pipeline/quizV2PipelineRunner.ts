@@ -146,6 +146,7 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
             base_url: input.config.image_generation.base_url,
           }
         : undefined,
+      imageFallbackConfig: input.config.image_fallback,
     });
     await recordStageTiming("thumbnail", thumbStart);
   } catch (error) {

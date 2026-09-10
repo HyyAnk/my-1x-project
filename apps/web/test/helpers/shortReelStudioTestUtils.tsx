@@ -138,6 +138,7 @@ export function createMockReadyUnits() {
         ],
       },
       current_attempt: null,
+      accepted_dependency_fingerprint: "ref-fp",
     },
     script: {
       state: "ready" as const,
@@ -146,6 +147,7 @@ export function createMockReadyUnits() {
         compiled_prompts: ["Prompt 1 text", "Prompt 2 text", "Prompt 3 text"] as [string, string, string],
       },
       current_attempt: null,
+      accepted_dependency_fingerprint: "script-fp",
     },
     cover: {
       state: "ready" as const,
@@ -158,16 +160,16 @@ export function createMockReadyUnits() {
         checksum: "fedcba654321",
       },
       current_attempt: null,
+      accepted_dependency_fingerprint: "cover-fp",
     },
     publishing: {
       state: "ready" as const,
       last_accepted_payload: {
-        hook: "Who hits 60 mph fastest?",
-        description: "Cheetah vs Greyhound speed comparison.",
-        cta: "Subscribe for more nature facts!",
-        hashtags: ["#animals", "#speed"],
+        title: "Who hits 60 mph fastest?",
+        description: "Cheetah vs Greyhound speed comparison.\n\nSubscribe for more nature facts!\n\n#animals #speed",
       },
       current_attempt: null,
+      accepted_dependency_fingerprint: "pub-fp",
     },
   };
 }

@@ -261,6 +261,8 @@ describe("Phase 4: Product Localization Consumers & Finding L1/L2 Regressions", 
         repo,
         { channel_id: channel.channel_id, reel_id: reel.reel_id },
         "op-script-after-ch-change",
+        undefined,
+        { allowBaselineFallback: true },
       );
       expect(regeneratedScript.script?.segments[0].text_cues[0].text).toContain("[de]");
 

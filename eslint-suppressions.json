@@ -167,11 +167,6 @@
       "count": 2
     }
   },
-  "apps/server/test/copyrightValidator.test.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 1
-    }
-  },
   "apps/server/test/fs.test.ts": {
     "@typescript-eslint/no-unsafe-assignment": {
       "count": 1

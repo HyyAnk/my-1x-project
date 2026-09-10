@@ -7,8 +7,8 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  * Architectural specifications:
  * 1. Restored Letter Badges (BUG-VCP-01): .visual-answer-label is styled as a transparent, corner-pinned
  *    overlay hosting 3D arcade letter tokens (A, B, C) while hiding only .choice-text.
- * 2. Optimized Media Height (BUG-VCP-02): Reduced from 580px to 520px (0.963:1 ratio, <3.7% crop),
- *    freeing 60px of vertical clearance.
+ * 2. Optimized Media Height (BUG-VCP-02): 500px height (~0.91:1 ratio, ~437x480px inner viewport),
+ *    perfectly calibrated for standardized 1:1 square assets.
  * 3. Centered Question Title (BUG-VCP-03): max-width 1560px centered directly over the 3 visual cards.
  * 4. Phase 2 Kinetic Stagger Entrance (BUG-VCP-04): Cascading pop-in keyframe animations (+0.00s, +0.12s, +0.24s).
  * 5. Phase 4 Victory Celebration (BUG-VCP-06): Emerald green #10B981 glowing border and halo on the winning

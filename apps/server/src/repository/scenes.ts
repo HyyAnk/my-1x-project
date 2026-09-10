@@ -130,6 +130,8 @@ export async function getBundleImageFile(
       price_breakdown: meta.price_breakdown,
       model: meta.model,
       aspect_ratio: meta.aspect_ratio,
+      provenance: meta.provenance,
+      user_selected: meta.user_selected,
     };
   } catch {
     throw new RepositoryError("Image asset not found", "IMAGE_NOT_FOUND");

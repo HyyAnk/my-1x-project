@@ -176,7 +176,7 @@ export const questionBankEn = {
     aiModal: {
       title: "Generate Question Batch with AI (With Auto-QA)",
       intro:
-        "The system generates questions connecting Archetypes with 2,500 Knowledge Base entities, filtered through 3 layers: Copyright filter, Semantic deduplication (>=75%), and Zod schema validation.",
+        "The system generates questions connecting Archetypes with 2,500 Knowledge Base entities, filtered through Auto-QA layers: Semantic deduplication (>=75%), question quality, and schema validation.",
       modeAuto: "Auto Coverage Mode",
       modeManual: "Manual Diversity Mode",
       modeAutoTag: "Recommended",
@@ -197,8 +197,7 @@ export const questionBankEn = {
       difficultyLabel: "Target Difficulty:",
       difficultyVal: "Target Difficulty (1: Easy, 5: Master): ⭐ {difficulty}/5",
       qaAssuranceTitle: "Auto-QA Assurance:",
-      qaAssuranceDesc:
-        "Automatically rejects questions with copyrighted brands (Marvel, Disney, Pokémon...) or semantic similarity >= 75% with existing questions in bank.",
+      qaAssuranceDesc: "Checks question quality, duplicate content, and schema validity.",
       chunkNotice:
         "Chunking Engine: Large batches are split into <= 20 questions with real-time Auto-QA verification and instant persistence.",
       leastVariantNotice:

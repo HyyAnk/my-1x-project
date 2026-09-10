@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { type EngineId, ShortReelGenerationTargetSchema, TaskStatusSchema, TaskTypeSchema } from "./enums.js";
+import { ReelProgressPayloadSchema } from "./shortReel/shortReelProgress.schema.js";
 
 const IsoDate = z.string().datetime({ offset: true });
 
@@ -85,8 +86,10 @@ export const TaskSchema = z.object({
       request_id: z.string().min(1),
       expected_revision: z.number().int().min(1),
       target: ShortReelGenerationTargetSchema,
+      mode: z.enum(["repair", "regenerate"]).optional(),
     })
     .optional(),
+  short_reel_progress: ReelProgressPayloadSchema.nullable().optional(),
   status: TaskStatusSchema,
   created_at: IsoDate,
   started_at: IsoDate.nullable().default(null),

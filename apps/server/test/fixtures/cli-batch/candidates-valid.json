@@ -1,0 +1,22 @@
+[
+  {
+    "id": "CLI-TEST-VALID-001",
+    "archetype_id": "speed_blitz",
+    "domain_id": "nature_animals",
+    "subtopic_id": "mammals",
+    "language": "en",
+    "format": "multiple_choice",
+    "question": "Which mammal is capable of true sustained flight?",
+    "choices": [
+      { "id": "A", "text": "Bat", "is_correct": true },
+      { "id": "B", "text": "Flying Squirrel", "is_correct": false },
+      { "id": "C", "text": "Sugar Glider", "is_correct": false }
+    ],
+    "correct_choice_id": "A",
+    "explanation": "Bats are the only mammals with the physiological ability for true sustained flight.",
+    "age_band": "family",
+    "difficulty": 2,
+    "thinking_seconds": 4,
+    "status": "approved"
+  }
+]

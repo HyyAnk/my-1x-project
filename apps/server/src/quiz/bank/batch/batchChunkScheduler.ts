@@ -240,7 +240,6 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
   let lastError: string | null = null;
 
   const combinedSummary: BatchAutoQaReport["summary"] = {
-    copyrightRejections: 0,
     duplicateRejections: 0,
     schemaRejections: 0,
     qualityRejections: 0,
@@ -286,7 +285,6 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
       totalApproved += qaReport.passedCount;
       totalRejected += qaReport.rejectedCount;
       allRejected.push(...qaReport.rejectedQuestions);
-      combinedSummary.copyrightRejections += qaReport.summary.copyrightRejections;
       combinedSummary.duplicateRejections += qaReport.summary.duplicateRejections;
       combinedSummary.schemaRejections += qaReport.summary.schemaRejections;
       combinedSummary.qualityRejections += qaReport.summary.qualityRejections;

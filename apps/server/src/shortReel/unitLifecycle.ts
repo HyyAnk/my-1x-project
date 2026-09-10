@@ -3,9 +3,8 @@ import type { RepositoryService } from "../repository/service.js";
 import { mutateShortReelRecord } from "../repository/shortReelTransaction.js";
 import { applyShortReelEdit } from "../repository/shortReelEdits.js";
 import { requireCompleteShortReelSource } from "../repository/shortReelSourcePolicy.js";
-import { compileFlowPrompts } from "./flowPromptCompiler.js";
+import { refreshCompiledReelPrompts } from "./compiledPromptRefresh.js";
 import { computeDependencyFingerprint, type DeliverableUnitKey } from "./dependencyPolicy.js";
-import type { ScriptGenerationErrorCode } from "./scriptProvider.js";
 import { RepositoryError } from "../repository/errors.js";
 import { extractShortReelDisplayProjection, loadShortReelLocalizationArtifact } from "../quiz/bank/localization/productLocalization.js";
 
@@ -96,9 +95,8 @@ export async function acceptReelUnitResult(
       reason = "VALIDATION_FAILED";
       return null;
     }
-    if (unitKey === "script" && current.script && current.units.script.last_accepted_payload) {
-      current.units.script.last_accepted_payload.compiled_prompts = compileFlowPrompts(current.script, undefined, current.model_note);
-    }
+    refreshCompiledReelPrompts(current);
+    unit.accepted_dependency_fingerprint = attempt.dependencyFingerprint;
     unit.current_attempt = { ...registeredAttempt, completed_at: new Date().toISOString() };
     return current;
   });
@@ -150,7 +148,7 @@ export async function failReelUnitAttempt(
   key: ReelKey,
   unitKey: DeliverableUnitKey,
   operationId: string,
-  code: ScriptGenerationErrorCode,
+  code: string,
 ): Promise<ShortReelRecord> {
   return mutateShortReelRecord(repository, key, (record) => {
     const unit = record.units[unitKey];

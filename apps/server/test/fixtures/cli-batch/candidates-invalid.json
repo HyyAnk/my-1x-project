@@ -1,0 +1,20 @@
+[
+  {
+    "id": "CLI-TEST-INVALID-001",
+    "archetype_id": "speed_blitz",
+    "domain_id": "nature_animals",
+    "subtopic_id": "mammals",
+    "language": "fr",
+    "format": "multiple_choice",
+    "question": "Quel mammifère est capable de voler?",
+    "choices": [
+      { "id": "A", "text": "Chauve-souris", "is_correct": true },
+      { "id": "B", "text": "Écureuil volant", "is_correct": false }
+    ],
+    "correct_choice_id": "A",
+    "explanation": "Les chauves-souris sont les seuls mammifères capables de voler.",
+    "age_band": "family",
+    "difficulty": 2,
+    "status": "approved"
+  }
+]

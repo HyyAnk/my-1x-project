@@ -343,7 +343,13 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
       );
 
       // 4. Generate Baseline Script: localized cues pass display projection validation
-      const scriptRecord = await generateReelScriptUnit(repo, { channel_id: channel.channel_id, reel_id: reel.reel_id }, "op-script-1");
+      const scriptRecord = await generateReelScriptUnit(
+        repo,
+        { channel_id: channel.channel_id, reel_id: reel.reel_id },
+        "op-script-1",
+        undefined,
+        { allowBaselineFallback: true },
+      );
       const script = scriptRecord.script!;
       expect(script).not.toBeNull();
       // Segment 1 question text cue uses German localized question
@@ -362,12 +368,23 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
       expect(p1).toContain("--- ACTION & NARRATIVE ---");
       expect(p3).toContain("Jaguar");
 
-      // 6. Publishing copy keeps English title and uses German localized description
-      const pubRecord = await generateReelPublishingUnit(repo, { channel_id: channel.channel_id, reel_id: reel.reel_id }, "op-pub-1");
+      // 6. Publishing copy keeps English title and does NOT overwrite with German localization (P03)
+      const pubLlmClient = {
+        async connect() {},
+        generateContent: vi.fn().mockResolvedValue({
+          text: JSON.stringify({
+            title: "Jaguar vs Leopard: Muscle Showdown",
+            description: "Comparing raw feline muscle mass and bite power.\n\n#Shorts #Trivia",
+          }),
+        }),
+      };
+      const pubRecord = await generateReelPublishingUnit(repo, { channel_id: channel.channel_id, reel_id: reel.reel_id }, "op-pub-1", {
+        llmClient: pubLlmClient as any,
+      });
       const pubPayload = pubRecord.units.publishing.last_accepted_payload!;
-      expect(pubPayload.description).toBe(
-        "Jaguar vs Leopard: Muscle Showdown: Vergleich der rohen Muskelmasse und Beißkraft von Großkatzen.",
-      );
+      expect(pubPayload.title).toBe("Jaguar vs Leopard: Muscle Showdown");
+      expect(pubPayload.description).toBe("Comparing raw feline muscle mass and bite power.\n\n#Shorts #Trivia");
+      expect(pubPayload.description).not.toContain("Vergleich der rohen Muskelmasse");
 
       // 7. Thumbnail cover prompt uses localized thumbnail text while instructions remain English
       const coverPrompt = compileCoverPrompt(reel, loc?.thumbnail_text);
@@ -634,6 +651,9 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
         height: 1920 as const,
       };
 
+      // Generate script unit first
+      await generateReelScriptUnit(repo, reelKey, "op-script-fr", undefined, { allowBaselineFallback: true });
+
       // Update references and cover units
       const beforeRefs = await repo.getShortReel(reelKey);
       await repo.updateShortReel(
@@ -655,11 +675,18 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
         },
       );
 
-      // Generate script unit
-      await generateReelScriptUnit(repo, reelKey, "op-script-fr");
-
       // Generate publishing unit
-      await generateReelPublishingUnit(repo, reelKey, "op-pub-fr");
+      await generateReelPublishingUnit(repo, reelKey, "op-pub-fr", {
+        llmClient: {
+          async connect() {},
+          generateContent: vi.fn().mockResolvedValue({
+            text: JSON.stringify({
+              title: "French Topic Title in English",
+              description: "English publishing copy.\n\n#Shorts #Quiz",
+            }),
+          }),
+        } as any,
+      });
 
       const readyRecord = await repo.getShortReel(reelKey);
 
@@ -694,11 +721,12 @@ describe("Work 3: Short-Reel Localization, Source Invariants, and Pipeline Integ
       const scriptParsed = JSON.parse(scriptEntry!.data.toString("utf8")) as ReelScript;
       expect(scriptParsed.segments[0].text_cues[0].text).toBe("Quel félin a une plus grande densité musculaire: le jaguar ou le léopard?");
 
-      // Verify publishing.txt uses French description
+      // Verify publishing.txt preserves generated English copy (P03)
       const pubEntry = extractedEntries.find((e) => e.filename === "publishing.txt");
       expect(pubEntry).toBeDefined();
       const pubText = pubEntry!.data.toString("utf8");
-      expect(pubText).toContain("Comparaison de la force et de la masse musculaire des grands félins.");
+      expect(pubText).toContain("English publishing copy.");
+      expect(pubText).not.toContain("Comparaison de la force");
     });
   });
 });

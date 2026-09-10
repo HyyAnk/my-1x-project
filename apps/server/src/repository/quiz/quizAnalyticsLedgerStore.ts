@@ -97,6 +97,7 @@ export async function recordImageUsage(
   input: {
     channelId?: string;
     episodeId?: string;
+    reelId?: string;
     provider: string;
     model?: string;
     count?: number;
@@ -180,11 +181,14 @@ function createImageGenerationEvent(
   input: {
     channelId?: string;
     episodeId?: string;
+    reelId?: string;
     provider: string;
     model?: string;
     note?: string;
+    costVnd?: number;
+    costUsd?: number;
   },
-  delta: { count: number; addedCostVnd: number; addedCostUsd: number },
+  delta: { count: number; addedCostVnd: number; addedCostUsd: number; costEstimated: boolean },
   now: string,
 ): UsageLedgerEvent {
   return {
@@ -193,12 +197,15 @@ function createImageGenerationEvent(
     type: "image_generation",
     channel_id: input.channelId,
     episode_id: input.episodeId,
+    reel_id: input.reelId,
     details: {
       provider: input.provider,
       model: input.model,
       image_count: delta.count,
       cost_vnd: delta.addedCostVnd,
       cost_usd: delta.addedCostUsd,
+      cost_estimated: delta.costEstimated,
+      measured_cost: delta.costEstimated ? undefined : (input.costVnd ?? input.costUsd),
       note: input.note,
     },
   };

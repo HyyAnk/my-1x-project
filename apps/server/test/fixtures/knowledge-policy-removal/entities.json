@@ -1,0 +1,18 @@
+[
+  {
+    "id": "ENT-REHEARSAL-001",
+    "domain_id": "sports_games",
+    "subtopic_id": "arcade",
+    "name": "Pac-Man",
+    "language": "en",
+    "aliases": ["Pac Man"],
+    "visual_anchor": "Pac-Man moving through a maze",
+    "core_traits": ["arcade character"],
+    "facts_and_myths": [],
+    "copyright_risk": "high",
+    "is_trademark_ip": true,
+    "forbidden_visual_keywords": ["Pac-Man"],
+    "safe_visual_proxy": "A yellow circular arcade figure",
+    "fixture_metadata": { "preserve": true }
+  }
+]

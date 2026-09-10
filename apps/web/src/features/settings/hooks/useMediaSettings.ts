@@ -4,17 +4,30 @@ import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 import { useVideoSettingsState } from "./useVideoSettingsState";
 import { useImageProviderSettingsState } from "./useImageProviderSettingsState";
+import { useImageFallbackSettingsState } from "./useImageFallbackSettingsState";
 
 export type UseMediaSettingsProps = {
   appConfig: AppConfig | null;
   onVideoSaved: (video: AppConfig["video_generation"]) => void | Promise<void>;
   onImageSaved: (image: AppConfig["image_generation"]) => void | Promise<void>;
+  onImageFallbackSaved?: (fallback: AppConfig["image_fallback"]) => void | Promise<void>;
   onNotice: (notice: NonNullable<Notice>) => void;
 };
 
-export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNotice }: UseMediaSettingsProps) {
+export function useMediaSettings({
+  appConfig,
+  onVideoSaved,
+  onImageSaved,
+  onImageFallbackSaved,
+  onNotice,
+}: UseMediaSettingsProps) {
   const videoState = useVideoSettingsState({ appConfig, onVideoSaved, onNotice });
   const imageState = useImageProviderSettingsState({ appConfig, onImageSaved, onNotice });
+  const fallbackState = useImageFallbackSettingsState({
+    appConfig,
+    onFallbackSaved: onImageFallbackSaved,
+    onNotice,
+  });
 
   const [historyEnabled, setHistoryEnabled] = useState(appConfig?.question_history?.enabled ?? true);
   const [passThreshold, setPassThreshold] = useState(appConfig?.question_history?.pass_threshold ?? 2);
@@ -52,6 +65,7 @@ export function useMediaSettings({ appConfig, onVideoSaved, onImageSaved, onNoti
   return {
     ...videoState,
     ...imageState,
+    ...fallbackState,
     historyEnabled,
     setHistoryEnabled,
     passThreshold,

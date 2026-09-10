@@ -13,7 +13,7 @@ export const settingsEn = {
     contentDataFolder: "Content Data Folder",
     saveStorageLocation: "Save Storage Location",
     storagePathLabel: "Parent folder path",
-    storageHint: "Channel and episode media files stay here and are excluded from Git repository.",
+    storageHint: "Channel, episode media files, and entity assets stay here and are strictly excluded from the Git repository.",
     codexTitle: "OpenAI Codex JSON-RPC Engine",
     antigravityTitle: "Google Antigravity Engine",
     saveCodexSettings: "Save Codex Settings",

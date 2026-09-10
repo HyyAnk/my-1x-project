@@ -145,7 +145,7 @@ describe("ChannelDetail Short-Reels Integration", () => {
     expect(result.current.shortReels.length).toBe(0);
     expect(onNotice).toHaveBeenCalledWith({
       tone: "good",
-      message: expect.stringContaining("Short-Reel deleted"),
+      message: `Short-Reel deleted: ${mockReel.topic.title}`,
     });
     expect(onRefresh).toHaveBeenCalled();
   });

@@ -9,10 +9,14 @@ export const ListShortReelsResponseSchema = z
   })
   .strict();
 
+export const ShortReelInputStatusSchema = z.enum(["current", "changed", "missing", "unverified"]);
+export type ShortReelInputStatus = z.infer<typeof ShortReelInputStatusSchema>;
+
 export const GetShortReelResponseSchema = z
   .object({
     short_reel: ShortReelRecordSchema,
     task: TaskSchema.nullable().optional(),
+    input_status: ShortReelInputStatusSchema.optional(),
   })
   .strict();
 
@@ -37,6 +41,7 @@ export const GenerateShortReelRequestSchema = z
     expected_revision: z.number().int().min(1),
     request_id: z.string().min(1),
     target: GenerateShortReelTargetSchema,
+    mode: z.enum(["repair", "regenerate"]).optional(),
   })
   .strict();
 

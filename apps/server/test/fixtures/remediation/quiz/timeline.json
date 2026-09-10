@@ -1,0 +1,925 @@
+{
+  "schema_version": 2,
+  "episode_id": "ep_4dc807da5f174c36",
+  "duration_seconds": 79.532,
+  "events": [
+    {
+      "event_id": "event-0001",
+      "type": "background.enter",
+      "at_seconds": 0,
+      "duration_seconds": 0,
+      "question_id": null,
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "theme": "candy_arcade"
+      }
+    },
+    {
+      "event_id": "event-0002",
+      "type": "background.motion",
+      "at_seconds": 0,
+      "duration_seconds": 2.6,
+      "question_id": null,
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "layers": ["sunburst", "pattern", "ambient_shapes"]
+      }
+    },
+    {
+      "event_id": "event-0003",
+      "type": "question.enter",
+      "at_seconds": 2.6,
+      "duration_seconds": 0.95,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "archetype": "true_false",
+        "energy": "curious"
+      }
+    },
+    {
+      "event_id": "event-0004",
+      "type": "mascot.state",
+      "at_seconds": 2.6,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "thinking",
+        "phase": "question_start"
+      }
+    },
+    {
+      "event_id": "event-0027",
+      "type": "background.motion",
+      "at_seconds": 2.6,
+      "duration_seconds": 24.584,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "layers": ["sunburst", "pattern", "ambient_shapes", "hero_float"]
+      }
+    },
+    {
+      "event_id": "event-0006",
+      "type": "choices.enter",
+      "at_seconds": 3.08,
+      "duration_seconds": 0.72,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "choice_ids": ["choice-a", "choice-b"]
+      }
+    },
+    {
+      "event_id": "event-0005",
+      "type": "narration.segment",
+      "at_seconds": 4.6,
+      "duration_seconds": 4.39,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": "question-01:question",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0007",
+      "type": "narration.segment",
+      "at_seconds": 9.99,
+      "duration_seconds": 1.463,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": "question-01:choice",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0008",
+      "type": "narration.segment",
+      "at_seconds": 11.553,
+      "duration_seconds": 0.976,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": "question-01:thinking",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0009",
+      "type": "countdown.start",
+      "at_seconds": 11.553,
+      "duration_seconds": 7,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "seconds": 7
+      }
+    },
+    {
+      "event_id": "event-0010",
+      "type": "mascot.state",
+      "at_seconds": 11.553,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "thinking",
+        "phase": "thinking_start"
+      }
+    },
+    {
+      "event_id": "event-0011",
+      "type": "mascot.state",
+      "at_seconds": 12.953,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "thinking",
+        "phase": "thinking_pulse"
+      }
+    },
+    {
+      "event_id": "event-0012",
+      "type": "countdown.tick",
+      "at_seconds": 13.553,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 5
+      }
+    },
+    {
+      "event_id": "event-0013",
+      "type": "countdown.tick",
+      "at_seconds": 14.553,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 4
+      }
+    },
+    {
+      "event_id": "event-0014",
+      "type": "countdown.tick",
+      "at_seconds": 15.553,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 3
+      }
+    },
+    {
+      "event_id": "event-0015",
+      "type": "countdown.tick",
+      "at_seconds": 16.553,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 2
+      }
+    },
+    {
+      "event_id": "event-0016",
+      "type": "countdown.tick",
+      "at_seconds": 17.553,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 1
+      }
+    },
+    {
+      "event_id": "event-0017",
+      "type": "answer.reveal",
+      "at_seconds": 18.603,
+      "duration_seconds": 0.58,
+      "question_id": "question-01",
+      "choice_id": "choice-a",
+      "segment_id": null,
+      "payload": {
+        "canonical_choice_id": "choice-a",
+        "answer_text": "True"
+      }
+    },
+    {
+      "event_id": "event-0018",
+      "type": "mascot.state",
+      "at_seconds": 18.603,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "celebrate",
+        "phase": "answer_reveal"
+      }
+    },
+    {
+      "event_id": "event-0019",
+      "type": "answer.dim_wrong",
+      "at_seconds": 18.603,
+      "duration_seconds": 0.58,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "wrong_choice_ids": ["choice-b"]
+      }
+    },
+    {
+      "event_id": "event-0020",
+      "type": "narration.segment",
+      "at_seconds": 18.603,
+      "duration_seconds": 1.951,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": "question-01:reveal",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0021",
+      "type": "reward.play",
+      "at_seconds": 19.183,
+      "duration_seconds": 0.58,
+      "question_id": "question-01",
+      "choice_id": "choice-a",
+      "segment_id": null,
+      "payload": {
+        "intensity": "medium"
+      }
+    },
+    {
+      "event_id": "event-0022",
+      "type": "mascot.state",
+      "at_seconds": 19.183,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "celebrate",
+        "phase": "reward_play"
+      }
+    },
+    {
+      "event_id": "event-0025",
+      "type": "sfx.play",
+      "at_seconds": 19.183,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "intents": ["countdown_tick", "correct_small"]
+      }
+    },
+    {
+      "event_id": "event-0023",
+      "type": "narration.segment",
+      "at_seconds": 20.794,
+      "duration_seconds": 4.39,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": "question-01:explanation",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0024",
+      "type": "mascot.state",
+      "at_seconds": 20.794,
+      "duration_seconds": 0,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "celebrate",
+        "phase": "explanation_start"
+      }
+    },
+    {
+      "event_id": "event-0026",
+      "type": "transition.start",
+      "at_seconds": 27.184,
+      "duration_seconds": 0.86,
+      "question_id": "question-01",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "intent": "cut"
+      }
+    },
+    {
+      "event_id": "event-0028",
+      "type": "question.enter",
+      "at_seconds": 28.044,
+      "duration_seconds": 0.95,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "archetype": "true_false",
+        "energy": "excited"
+      }
+    },
+    {
+      "event_id": "event-0029",
+      "type": "mascot.state",
+      "at_seconds": 28.044,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "thinking",
+        "phase": "question_start"
+      }
+    },
+    {
+      "event_id": "event-0052",
+      "type": "background.motion",
+      "at_seconds": 28.044,
+      "duration_seconds": 24.584,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "layers": ["sunburst", "pattern", "ambient_shapes", "hero_float"]
+      }
+    },
+    {
+      "event_id": "event-0031",
+      "type": "choices.enter",
+      "at_seconds": 28.524,
+      "duration_seconds": 0.72,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "choice_ids": ["choice-a", "choice-b"]
+      }
+    },
+    {
+      "event_id": "event-0030",
+      "type": "narration.segment",
+      "at_seconds": 30.044,
+      "duration_seconds": 4.39,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": "question-02:question",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0032",
+      "type": "narration.segment",
+      "at_seconds": 35.434,
+      "duration_seconds": 1.463,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": "question-02:choice",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0033",
+      "type": "narration.segment",
+      "at_seconds": 36.997,
+      "duration_seconds": 0.976,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": "question-02:thinking",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0034",
+      "type": "countdown.start",
+      "at_seconds": 36.997,
+      "duration_seconds": 7,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "seconds": 7
+      }
+    },
+    {
+      "event_id": "event-0035",
+      "type": "mascot.state",
+      "at_seconds": 36.997,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "thinking",
+        "phase": "thinking_start"
+      }
+    },
+    {
+      "event_id": "event-0036",
+      "type": "mascot.state",
+      "at_seconds": 38.397,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "thinking",
+        "phase": "thinking_pulse"
+      }
+    },
+    {
+      "event_id": "event-0037",
+      "type": "countdown.tick",
+      "at_seconds": 38.997,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 5
+      }
+    },
+    {
+      "event_id": "event-0038",
+      "type": "countdown.tick",
+      "at_seconds": 39.997,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 4
+      }
+    },
+    {
+      "event_id": "event-0039",
+      "type": "countdown.tick",
+      "at_seconds": 40.997,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 3
+      }
+    },
+    {
+      "event_id": "event-0040",
+      "type": "countdown.tick",
+      "at_seconds": 41.997,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 2
+      }
+    },
+    {
+      "event_id": "event-0041",
+      "type": "countdown.tick",
+      "at_seconds": 42.997,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 1
+      }
+    },
+    {
+      "event_id": "event-0042",
+      "type": "answer.reveal",
+      "at_seconds": 44.047,
+      "duration_seconds": 0.58,
+      "question_id": "question-02",
+      "choice_id": "choice-b",
+      "segment_id": null,
+      "payload": {
+        "canonical_choice_id": "choice-b",
+        "answer_text": "False"
+      }
+    },
+    {
+      "event_id": "event-0043",
+      "type": "mascot.state",
+      "at_seconds": 44.047,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "celebrate",
+        "phase": "answer_reveal"
+      }
+    },
+    {
+      "event_id": "event-0044",
+      "type": "answer.dim_wrong",
+      "at_seconds": 44.047,
+      "duration_seconds": 0.58,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "wrong_choice_ids": ["choice-a"]
+      }
+    },
+    {
+      "event_id": "event-0045",
+      "type": "narration.segment",
+      "at_seconds": 44.047,
+      "duration_seconds": 1.951,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": "question-02:reveal",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0046",
+      "type": "reward.play",
+      "at_seconds": 44.627,
+      "duration_seconds": 0.42,
+      "question_id": "question-02",
+      "choice_id": "choice-b",
+      "segment_id": null,
+      "payload": {
+        "intensity": "small"
+      }
+    },
+    {
+      "event_id": "event-0047",
+      "type": "mascot.state",
+      "at_seconds": 44.627,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "celebrate",
+        "phase": "reward_play"
+      }
+    },
+    {
+      "event_id": "event-0050",
+      "type": "sfx.play",
+      "at_seconds": 44.627,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "intents": ["countdown_tick", "correct_medium"]
+      }
+    },
+    {
+      "event_id": "event-0048",
+      "type": "narration.segment",
+      "at_seconds": 46.238,
+      "duration_seconds": 4.39,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": "question-02:explanation",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0049",
+      "type": "mascot.state",
+      "at_seconds": 46.238,
+      "duration_seconds": 0,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "celebrate",
+        "phase": "explanation_start"
+      }
+    },
+    {
+      "event_id": "event-0051",
+      "type": "transition.start",
+      "at_seconds": 52.628,
+      "duration_seconds": 0.86,
+      "question_id": "question-02",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "intent": "slide"
+      }
+    },
+    {
+      "event_id": "event-0053",
+      "type": "question.enter",
+      "at_seconds": 53.488,
+      "duration_seconds": 0.95,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "archetype": "final_challenge",
+        "energy": "triumphant"
+      }
+    },
+    {
+      "event_id": "event-0054",
+      "type": "mascot.state",
+      "at_seconds": 53.488,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "thinking",
+        "phase": "question_start"
+      }
+    },
+    {
+      "event_id": "event-0077",
+      "type": "background.motion",
+      "at_seconds": 53.488,
+      "duration_seconds": 25.184,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "layers": ["sunburst", "pattern", "ambient_shapes", "hero_float"]
+      }
+    },
+    {
+      "event_id": "event-0056",
+      "type": "choices.enter",
+      "at_seconds": 53.968,
+      "duration_seconds": 0.72,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "choice_ids": ["choice-a", "choice-b"]
+      }
+    },
+    {
+      "event_id": "event-0055",
+      "type": "narration.segment",
+      "at_seconds": 55.488,
+      "duration_seconds": 4.39,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": "question-03:question",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0057",
+      "type": "narration.segment",
+      "at_seconds": 60.878,
+      "duration_seconds": 1.463,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": "question-03:choice",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0058",
+      "type": "narration.segment",
+      "at_seconds": 62.441,
+      "duration_seconds": 1.463,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": "question-03:thinking",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0059",
+      "type": "countdown.start",
+      "at_seconds": 62.441,
+      "duration_seconds": 7.6,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "seconds": 7.6
+      }
+    },
+    {
+      "event_id": "event-0060",
+      "type": "mascot.state",
+      "at_seconds": 62.441,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "thinking",
+        "phase": "thinking_start"
+      }
+    },
+    {
+      "event_id": "event-0061",
+      "type": "mascot.state",
+      "at_seconds": 63.841,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "thinking",
+        "phase": "thinking_pulse"
+      }
+    },
+    {
+      "event_id": "event-0062",
+      "type": "countdown.tick",
+      "at_seconds": 65.041,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 5
+      }
+    },
+    {
+      "event_id": "event-0063",
+      "type": "countdown.tick",
+      "at_seconds": 66.041,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 4
+      }
+    },
+    {
+      "event_id": "event-0064",
+      "type": "countdown.tick",
+      "at_seconds": 67.041,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 3
+      }
+    },
+    {
+      "event_id": "event-0065",
+      "type": "countdown.tick",
+      "at_seconds": 68.041,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 2
+      }
+    },
+    {
+      "event_id": "event-0066",
+      "type": "countdown.tick",
+      "at_seconds": 69.041,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "value": 1
+      }
+    },
+    {
+      "event_id": "event-0067",
+      "type": "answer.reveal",
+      "at_seconds": 70.091,
+      "duration_seconds": 0.58,
+      "question_id": "question-03",
+      "choice_id": "choice-a",
+      "segment_id": null,
+      "payload": {
+        "canonical_choice_id": "choice-a",
+        "answer_text": "True"
+      }
+    },
+    {
+      "event_id": "event-0068",
+      "type": "mascot.state",
+      "at_seconds": 70.091,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "celebrate",
+        "phase": "answer_reveal"
+      }
+    },
+    {
+      "event_id": "event-0069",
+      "type": "answer.dim_wrong",
+      "at_seconds": 70.091,
+      "duration_seconds": 0.58,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "wrong_choice_ids": ["choice-b"]
+      }
+    },
+    {
+      "event_id": "event-0070",
+      "type": "narration.segment",
+      "at_seconds": 70.091,
+      "duration_seconds": 1.951,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": "question-03:reveal",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0071",
+      "type": "reward.play",
+      "at_seconds": 70.671,
+      "duration_seconds": 0.86,
+      "question_id": "question-03",
+      "choice_id": "choice-a",
+      "segment_id": null,
+      "payload": {
+        "intensity": "big"
+      }
+    },
+    {
+      "event_id": "event-0072",
+      "type": "mascot.state",
+      "at_seconds": 70.671,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "celebrate",
+        "phase": "reward_play"
+      }
+    },
+    {
+      "event_id": "event-0075",
+      "type": "sfx.play",
+      "at_seconds": 70.671,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "intents": ["countdown_final", "correct_big", "score_gain"]
+      }
+    },
+    {
+      "event_id": "event-0073",
+      "type": "narration.segment",
+      "at_seconds": 72.282,
+      "duration_seconds": 4.39,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": "question-03:explanation",
+      "payload": {}
+    },
+    {
+      "event_id": "event-0074",
+      "type": "mascot.state",
+      "at_seconds": 72.282,
+      "duration_seconds": 0,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "state": "celebrate",
+        "phase": "explanation_start"
+      }
+    },
+    {
+      "event_id": "event-0076",
+      "type": "transition.start",
+      "at_seconds": 78.672,
+      "duration_seconds": 0.86,
+      "question_id": "question-03",
+      "choice_id": null,
+      "segment_id": null,
+      "payload": {
+        "intent": "zoom"
+      }
+    }
+  ]
+}

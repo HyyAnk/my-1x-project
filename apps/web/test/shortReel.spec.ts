@@ -212,10 +212,8 @@ const mockShortReel = {
     publishing: {
       state: "ready",
       last_accepted_payload: {
-        hook: "Can any bird outfly gravity?",
-        description: "Peregrine falcon diving speed analysis.",
-        cta: "Follow for daily animal physics!",
-        hashtags: ["#falcon", "#speed", "#nature"],
+        title: "Can any bird outfly gravity?",
+        description: "Peregrine falcon diving speed analysis. #falcon #speed #nature",
       },
       current_attempt: null,
     },
@@ -283,7 +281,7 @@ test.describe("Short-Reel Studio E2E Integration", () => {
     ]) {
       await page.setViewportSize(viewport);
       await page.getByRole("tab", { name: "Assets & Prompts" }).click();
-      await expect(page.getByRole("heading", { name: "Visual References" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Portrait Style Reference" })).toBeVisible();
       await page.getByRole("tab", { name: "Publishing Metadata" }).click();
       await expect(page.getByRole("heading", { name: "Publishing & Distribution" })).toBeVisible();
       await page.getByRole("tab", { name: "Script & Segments" }).click();

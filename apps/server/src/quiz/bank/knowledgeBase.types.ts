@@ -1,5 +1,6 @@
-﻿export type CopyrightRiskLevel = "high" | "medium" | "none";
-
+/**
+ * Represents a verified factual claim or myth debunking in the knowledge base.
+ */
 export interface KnowledgeFactOrMyth {
   claim: string;
   verdict: "fact" | "myth" | "true" | "false";
@@ -7,6 +8,13 @@ export interface KnowledgeFactOrMyth {
   fun_fact?: string;
 }
 
+/**
+ * Clean domain knowledge entity representing real-world subjects, pop-culture icons,
+ * animals, places, or concepts with authentic identity and factual visual anchors.
+ *
+ * NOTE: Legacy enforcement-only metadata (copyright_risk, is_trademark_ip,
+ * forbidden_visual_keywords, safe_visual_proxy) has been permanently retired.
+ */
 export interface KnowledgeEntity {
   id: string;
   domain_id: string;
@@ -20,10 +28,6 @@ export interface KnowledgeEntity {
   distractor_pool?: string[];
   facts_and_myths: KnowledgeFactOrMyth[];
   versus_candidates?: string[];
-  copyright_risk?: CopyrightRiskLevel;
-  is_trademark_ip?: boolean;
-  forbidden_visual_keywords?: string[];
-  safe_visual_proxy?: string;
 }
 
 export interface KnowledgeBaseStats {
@@ -36,3 +40,4 @@ export interface KnowledgeBaseLoaderOptions {
   baseDir?: string;
   forceReload?: boolean;
 }
+

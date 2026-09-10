@@ -32,10 +32,10 @@ export function extractCleanVisualPrompt(rawPrompt: string): string {
       artContract ? `Art Direction: ${artContract}.` : "",
       lighting ? `Lighting: ${lighting}.` : "",
       background ? `Background: ${background}.` : "",
-      "High quality, vibrant colors, child-friendly, clear focal subject, no text, no letters, no logos, no watermark, no split screen.",
+      "High quality, vibrant colors, child-friendly, clear focal subject, no text, no letters, no unrelated logos, no watermark, no split screen; retain identifying marks explicitly required by the subject.",
     ].filter(Boolean);
 
-    return parts.join(" ").slice(0, 900);
+    return parts.join(" ").slice(0, 1200);
   }
 
   // 3. If prompt is structured manifest, extract core visual instructions

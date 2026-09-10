@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { buildTestApp, createTestChannel, createTestReel, createTestRoot } from "./shortReelRoutesTestUtils.js";
+import { parseZipArchive } from "../src/quiz/zipHelper.js";
+import { generateFullReelPackage } from "../src/shortReel/packageService.js";
+import { attachMascotWithStyle, buildTestApp, createTestChannel, createTestReel, createTestRoot } from "./shortReelRoutesTestUtils.js";
 
 describe("Short-Reel HTTP Routes and Confirmation Discrimination", () => {
   describe("HTTP-01 through HTTP-05: Phase 06 Endpoint Behaviors", () => {
@@ -49,6 +51,58 @@ describe("Short-Reel HTTP Routes and Confirmation Discrimination", () => {
           url: `/api/channels/${channelA.channel_id}/short-reels/${reel.reel_id}/export?revision=1`,
         });
         expect(unreadyExportRes.statusCode).toBe(422);
+      } finally {
+        await app.close();
+      }
+    });
+
+    it("HTTP-02: exports ready package returning 200 with ZIP binary and correct headers", async () => {
+      const root = await createTestRoot();
+      const app = await buildTestApp(root);
+
+      try {
+        const { channel, reel } = await createTestReel(app);
+        await attachMascotWithStyle(app, channel.channel_id, "Route Export Mascot");
+
+        const providerPath = `${root}/provider.png`;
+        const { packageImage } = await import("./helpers/shortReelPackageFixture.js");
+        const { writeFile } = await import("node:fs/promises");
+        await writeFile(providerPath, await packageImage());
+
+        const ready = await generateFullReelPackage(
+          app.repository,
+          {
+            channel_id: channel.channel_id,
+            reel_id: reel.reel_id,
+          },
+          {
+            coverOptions: { imageProvider: { generateReference: () => Promise.resolve({ asset_path: providerPath }) } },
+          },
+        );
+        expect(ready.units.script.state).toBe("ready");
+
+        const exportRes = await app.server.inject({
+          method: "GET",
+          url: `/api/channels/${channel.channel_id}/short-reels/${reel.reel_id}/export?revision=${ready.revision}`,
+        });
+
+        expect(exportRes.statusCode).toBe(200);
+        expect(exportRes.headers["content-type"]).toBe("application/zip");
+        expect(exportRes.headers["content-disposition"]).toBe(`attachment; filename="short-reel-${reel.reel_id}-rev${ready.revision}.zip"`);
+
+        const zipBuffer = exportRes.rawPayload;
+        const entries = parseZipArchive(zipBuffer);
+        expect(entries.length).toBeGreaterThanOrEqual(11);
+        expect(entries.some((e) => e.filename === "manifest.json")).toBe(true);
+        expect(entries.some((e) => e.filename === "publishing.json")).toBe(true);
+        expect(entries.some((e) => e.filename === "publishing.txt")).toBe(true);
+
+        // Stale revision query param returns 409
+        const staleRes = await app.server.inject({
+          method: "GET",
+          url: `/api/channels/${channel.channel_id}/short-reels/${reel.reel_id}/export?revision=${ready.revision + 99}`,
+        });
+        expect(staleRes.statusCode).toBe(409);
       } finally {
         await app.close();
       }

@@ -4,20 +4,24 @@ import {
   AudioSettingsInputSchema,
   CodexSettingsInputSchema,
   ImageSettingsInputSchema,
+  ImageFallbackSettingsInputSchema,
   MascotStageSettingsInputSchema,
   VideoSettingsInputSchema,
   AntigravitySettingsInputSchema,
   EngineSettingsInputSchema,
   SaveHistorySettingsInputSchema,
+  KnowledgeBaseSettingsInputSchema,
   type AppConfig,
   type AudioSettingsInput,
   type CodexSettingsInput,
   type ImageSettingsInput,
+  type ImageFallbackSettingsInput,
   type MascotStageSettingsInput,
   type VideoSettingsInput,
   type AntigravitySettingsInput,
   type EngineSettingsInput,
   type SaveHistorySettingsInput,
+  type KnowledgeBaseSettingsInput,
 } from "@studio/shared";
 import { studioRuntimePath } from "../runtimePaths.js";
 import {
@@ -47,6 +51,20 @@ export async function saveHistorySettings(rootDirectory: string, input: SaveHist
   await mkdir(path.dirname(configPath), { recursive: true });
   const raw = await readJsonFile(configPath);
   await writeFile(configPath, `${JSON.stringify({ ...raw, question_history: next }, null, 2)}\n`, "utf8");
+  return loadConfig(rootDirectory);
+}
+
+export async function saveKnowledgeBaseSettings(
+  rootDirectory: string,
+  input: KnowledgeBaseSettingsInput,
+): Promise<AppConfig> {
+  const parsed = KnowledgeBaseSettingsInputSchema.parse(input);
+  const current = await loadConfig(rootDirectory);
+  const next = { ...current.knowledge_base, ...parsed };
+  const configPath = studioRuntimePath(rootDirectory, "config.json");
+  await mkdir(path.dirname(configPath), { recursive: true });
+  const raw = await readJsonFile(configPath);
+  await writeFile(configPath, `${JSON.stringify({ ...raw, knowledge_base: next }, null, 2)}\n`, "utf8");
   return loadConfig(rootDirectory);
 }
 
@@ -192,7 +210,34 @@ export async function saveImageSettings(rootDirectory: string, input: ImageSetti
     if (value !== undefined) nextImage[key] = value;
   }
   await mkdir(settingsDirectory, { recursive: true });
-  await writeFile(localPath, `${JSON.stringify({ image_generation: nextImage }, null, 2)}\n`, "utf8");
+  await writeFile(localPath, `${JSON.stringify({ ...currentLocal, image_generation: nextImage }, null, 2)}\n`, "utf8");
+  return loadConfig(rootDirectory);
+}
+
+export async function saveImageFallbackSettings(rootDirectory: string, input: ImageFallbackSettingsInput): Promise<AppConfig> {
+  const parsed = ImageFallbackSettingsInputSchema.parse(input);
+  const settingsDirectory = studioRuntimePath(rootDirectory);
+  const localPath = path.join(settingsDirectory, imageSettingsFilename);
+  const currentLocal = await readJsonFile(localPath);
+  const currentFallback =
+    currentLocal.image_fallback && typeof currentLocal.image_fallback === "object"
+      ? (currentLocal.image_fallback as Record<string, unknown>)
+      : {};
+  const nextFallback = { ...currentFallback } as Record<string, unknown>;
+  for (const key of [
+    "enabled",
+    "provider",
+    "base_url",
+    "model",
+    "api_key",
+    "resolution",
+    "quality",
+  ] as const) {
+    const value = parsed[key];
+    if (value !== undefined) nextFallback[key] = value;
+  }
+  await mkdir(settingsDirectory, { recursive: true });
+  await writeFile(localPath, `${JSON.stringify({ ...currentLocal, image_fallback: nextFallback }, null, 2)}\n`, "utf8");
   return loadConfig(rootDirectory);
 }
 

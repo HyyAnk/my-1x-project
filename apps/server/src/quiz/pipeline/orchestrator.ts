@@ -41,6 +41,7 @@ export type QuizOrchestratorInput = {
   repository: RepositoryService;
   config: Pick<AppConfig, "audio_generation"> & {
     image_generation?: AppConfig["image_generation"];
+    image_fallback?: AppConfig["image_fallback"];
     question_history?: AppConfig["question_history"];
   };
   channelId: string;

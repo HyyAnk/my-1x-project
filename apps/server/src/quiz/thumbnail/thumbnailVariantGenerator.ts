@@ -33,6 +33,15 @@ export type GenerateEpisodeThumbnailOptions = {
     base_url?: string;
     quality?: string;
   };
+  imageFallbackConfig?: {
+    enabled?: boolean;
+    provider?: "imgstudio";
+    base_url?: string;
+    api_key?: string;
+    model?: string;
+    resolution?: "1K" | "2K" | "4K";
+    quality?: "standard" | "high";
+  };
   throwOnError?: boolean;
 };
 
@@ -191,6 +200,7 @@ async function generateProviderAsset(params: GenerateProviderAssetParams): Promi
     activeEngine: options.activeEngine ?? "codex",
     antigravityClient: options.antigravityClient,
     imageConfig: options.imageConfig,
+    imageFallbackConfig: options.imageFallbackConfig,
     logger,
   });
 

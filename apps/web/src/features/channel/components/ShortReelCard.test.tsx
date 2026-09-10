@@ -10,7 +10,7 @@ describe("ShortReelCard Component", () => {
     vi.clearAllMocks();
   });
 
-  it("renders reel title, premise, archetype, duration, and draft status pill", () => {
+  it("renders reel title, archetype, duration, and draft status pill without premise", () => {
     const reel = createMockShortReel();
     const onOpenStudio = vi.fn();
     const onDelete = vi.fn();
@@ -18,7 +18,7 @@ describe("ShortReelCard Component", () => {
     render(<ShortReelCard reel={reel} tasks={[]} onOpenStudio={onOpenStudio} onDelete={onDelete} />);
 
     expect(screen.getByText("Cheetah vs Greyhound Speed")).toBeTruthy();
-    expect(screen.getByText("Comparing raw sprint acceleration across terrain.")).toBeTruthy();
+    expect(screen.queryByText("Comparing raw sprint acceleration across terrain.")).toBeNull();
     expect(screen.getByText("Versus Faceoff")).toBeTruthy();
     expect(screen.getByText("24–30s")).toBeTruthy();
     expect(screen.getByText("Draft")).toBeTruthy();
@@ -61,8 +61,8 @@ describe("ShortReelCard Component", () => {
   it("renders ready status when all deliverable units are ready", () => {
     const reel = createMockShortReel({
       units: {
-        references: { state: "ready", last_accepted_payload: null, current_attempt: null },
-        script: { state: "ready", last_accepted_payload: null, current_attempt: null },
+        references: { state: "ready", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
+        script: { state: "ready", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
         cover: {
           state: "ready",
           last_accepted_payload: {
@@ -74,15 +74,16 @@ describe("ShortReelCard Component", () => {
             checksum: "checksum_123",
           },
           current_attempt: null,
+          accepted_dependency_fingerprint: null,
         },
-        publishing: { state: "ready", last_accepted_payload: null, current_attempt: null },
+        publishing: { state: "ready", last_accepted_payload: null, current_attempt: null, accepted_dependency_fingerprint: null },
       },
     });
 
     render(<ShortReelCard reel={reel} tasks={[]} onOpenStudio={vi.fn()} onDelete={vi.fn()} />);
 
     expect(screen.getByText("Ready")).toBeTruthy();
-    const img = screen.getByAltText("Cover for Cheetah vs Greyhound Speed") as HTMLImageElement;
+    const img = screen.getByAltText<HTMLImageElement>("Cover for Cheetah vs Greyhound Speed");
     expect(img).toBeTruthy();
     expect(img.src).toContain("cover_asset_001");
   });

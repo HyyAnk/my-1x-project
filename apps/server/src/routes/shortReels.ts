@@ -9,6 +9,7 @@ import {
   PaginationQuerySchema,
   TaskSchema,
   UpdateShortReelRequestSchema,
+  normalizeLegacyPublishing,
   type ReelKey,
   type ShortReelRecord,
   type Task,
@@ -29,18 +30,23 @@ import {
 } from "../shortReel/packageService.js";
 import { ReferenceError } from "../shortReel/packageImage.js";
 import { CoverGenerationError } from "../shortReel/thumbnailAdapter.js";
+import { GenerationError } from "../shortReel/generationErrors.js";
 import { cancelReelUnitAttempt } from "../shortReel/unitLifecycle.js";
 import { readBoundedAsset } from "../shortReel/packageAssets.js";
 import { confirmShortReelTopic } from "../shortReel/topicConfirmation.js";
 import { createDirectShortReelCandidate } from "../shortReel/directCreation.js";
 import type { TaskManager } from "../tasks/manager.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
+import type { PortraitImageClient } from "../providers/imageGeneration/imageGeneration.types.js";
+import { executeReelGeneration } from "../shortReel/generationWorkflow.js";
 
 export type ShortReelsRouteDeps = {
   repository: RepositoryService;
   tasks?: TaskManager;
   logger: StudioLogger;
   llmClient?: LLMClient | null;
+  imageClient?: PortraitImageClient | null;
+  executor?: typeof executeReelGeneration;
 };
 
 type RouteErrorResponse = { status: number; body: { error: string; code: string } };
@@ -69,12 +75,16 @@ function knownErrorResponse(error: unknown): RouteErrorResponse | null {
   if (error instanceof PackageServiceError) {
     const status = ["SUPERSEDED_OPERATION", "PENDING_OPERATION", "STALE_DEPENDENCY"].includes(error.code)
       ? 409
-      : error.code === "VALIDATION_FAILED"
+      : error.code === "VALIDATION_FAILED" || (error.code as string) === "MISSING_MASCOT"
         ? 422
         : error.code === "STATE_WRITE_FAILED"
           ? 503
           : 400;
     return { status, body: { error: error.message, code: error.code } };
+  }
+  if (error instanceof GenerationError) {
+    const status = ["MISSING_REFERENCE", "ANIMATION_ATLAS_REJECTED", "VALIDATION_FAILED"].includes(String(error.code)) ? 422 : 400;
+    return { status, body: { error: error.message, code: String(error.code) } };
   }
   if (error instanceof ReferenceError) {
     const status = ["MISSING_REFERENCE", "ANIMATION_ATLAS_REJECTED"].includes(error.code) ? 422 : 400;
@@ -194,7 +204,24 @@ export function registerShortReelsRoutes(deps: ShortReelsRouteDeps): FastifyPlug
       const params = request.params as { channelId: string; reelId: string };
       try {
         await repository.getChannel(params.channelId);
-        const parsedBody = UpdateShortReelRequestSchema.parse(request.body);
+        let rawBody = request.body as any;
+        if (
+          rawBody &&
+          typeof rawBody === "object" &&
+          rawBody.command &&
+          rawBody.command.kind === "update_publishing" &&
+          rawBody.command.publishing &&
+          typeof rawBody.command.publishing.hook === "string"
+        ) {
+          rawBody = {
+            ...rawBody,
+            command: {
+              ...rawBody.command,
+              publishing: normalizeLegacyPublishing(rawBody.command.publishing),
+            },
+          };
+        }
+        const parsedBody = UpdateShortReelRequestSchema.parse(rawBody);
         const key: ReelKey = { channel_id: params.channelId, reel_id: params.reelId };
 
         const updated = await repository.updateShortReel(
@@ -225,9 +252,13 @@ export function registerShortReelsRoutes(deps: ShortReelsRouteDeps): FastifyPlug
           const reelTasks = tasks.list().filter((task) => task.channel_id === params.channelId && task.reel_id === params.reelId);
           const replay = reelTasks.find((task) => task.short_reel_request?.request_id === parsedBody.request_id);
           if (replay) {
+            const normalizedRequestedMode = parsedBody.mode ?? (parsedBody.target === "package" ? "repair" : "regenerate");
+            const replayReq = replay.short_reel_request;
+            const normalizedReplayMode = replayReq?.mode ?? (replayReq?.target === "package" ? "repair" : "regenerate");
             if (
-              replay.short_reel_request?.expected_revision !== parsedBody.expected_revision ||
-              replay.short_reel_request.target !== parsedBody.target
+              replayReq?.expected_revision !== parsedBody.expected_revision ||
+              replayReq?.target !== parsedBody.target ||
+              normalizedReplayMode !== normalizedRequestedMode
             ) {
               return reply
                 .code(409)
@@ -256,16 +287,42 @@ export function registerShortReelsRoutes(deps: ShortReelsRouteDeps): FastifyPlug
 
         // Direct fallback when task manager is not wired (e.g. standalone route test)
         let updated: ShortReelRecord;
-        if (parsedBody.target === "cover") {
+        if (deps.executor) {
+          updated = await deps.executor(repository, key, parsedBody, {
+            llmClient: (deps.llmClient ?? undefined) as any,
+            imageClient: (deps.imageClient ?? undefined) as any,
+            signal: new AbortController().signal,
+            onProgress: async () => {},
+          });
+        } else if (parsedBody.target === "cover") {
           updated = await generateReelCover(repository, key, "cover-" + randomUUID());
         } else if (parsedBody.target === "references") {
           updated = await generateReelReferencesUnit(repository, key, "references-" + randomUUID());
         } else if (parsedBody.target === "publishing") {
-          updated = await generateReelPublishingUnit(repository, key, "publishing-" + randomUUID());
+          updated = await generateReelPublishingUnit(repository, key, "publishing-" + randomUUID(), {
+            llmClient: deps.llmClient ?? undefined,
+          });
         } else if (parsedBody.target === "script") {
-          updated = await generateReelScriptUnit(repository, key, "script-" + randomUUID());
+          if (!deps.llmClient) {
+            return reply.code(503).send({
+              error: "LLM client is unavailable to generate script.",
+              code: "SERVICE_UNAVAILABLE",
+            });
+          }
+          updated = await generateReelScriptUnit(repository, key, "script-" + randomUUID(), deps.llmClient);
         } else {
-          updated = await generateFullReelPackage(repository, key);
+          if (!deps.llmClient) {
+            return reply.code(503).send({
+              error: "Generation service is unavailable. LLM client is required.",
+              code: "SERVICE_UNAVAILABLE",
+            });
+          }
+          updated = await executeReelGeneration(repository, key, parsedBody, {
+            llmClient: deps.llmClient,
+            imageClient: (deps.imageClient ?? undefined) as any,
+            signal: new AbortController().signal,
+            onProgress: async () => {},
+          });
         }
         const completedTask = TaskSchema.parse({
           task_id: `task-${parsedBody.request_id}`,
@@ -273,6 +330,7 @@ export function registerShortReelsRoutes(deps: ShortReelsRouteDeps): FastifyPlug
           channel_id: params.channelId,
           episode_id: null,
           reel_id: params.reelId,
+          short_reel_request: parsedBody,
           status: "COMPLETED",
           created_at: new Date().toISOString(),
           started_at: new Date().toISOString(),

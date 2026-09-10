@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import { parseArgs } from "node:util";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { log, logStartupSummary, logFinalSummary } from "./lib/terminalLogger.mjs";
 
 let RepositoryService;
 let generateQuestionBankBatch;
@@ -41,6 +42,7 @@ function findWorkspaceRoot(startDir = process.cwd()) {
 }
 
 async function main() {
+  const startTime = Date.now();
   const { values } = parseArgs({
     options: {
       archetype: { type: "string", short: "a" },
@@ -51,6 +53,8 @@ async function main() {
       difficulty: { type: "string", default: "2" },
       "age-band": { type: "string", default: "family" },
       "no-persist": { type: "boolean", default: false },
+      "candidates-file": { type: "string" },
+      "candidates-json": { type: "string" },
       json: { type: "boolean", default: false },
       help: { type: "boolean", short: "h" },
     },
@@ -72,6 +76,8 @@ Options:
   --difficulty <1-5>            Target difficulty rating (default: 2)
   --age-band <band>             Target age band: kids | family | teen | mature (default: family)
   --no-persist                  Dry-run mode: generate and validate without saving to disk
+  --candidates-file <path>      Path to JSON file with candidate questions (offline validation)
+  --candidates-json <string>    JSON string with candidate questions (offline validation)
   --json                        Output results in JSON format
   -h, --help                    Show this help message
 `);
@@ -86,34 +92,50 @@ Options:
   const ageBand = values["age-band"] || "family";
   const persist = !values["no-persist"];
 
+  let rawCandidatesOverride;
+  if (values["candidates-json"]) {
+    rawCandidatesOverride = JSON.parse(values["candidates-json"]);
+  } else if (values["candidates-file"]) {
+    rawCandidatesOverride = JSON.parse(readFileSync(values["candidates-file"], "utf8"));
+  }
+
   if (!values.json) {
-    console.log(`\n======================================================`);
-    console.log(`🤖 AI QUESTION BANK BATCH INGESTION & AUTO-QA`);
-    console.log(`======================================================`);
-    console.log(`Archetype : ${values.archetype}`);
-    console.log(`Domain    : ${values.domain}`);
-    console.log(`Subtopic  : ${values.subtopic} (${values["subtopic-title"] || values.subtopic})`);
-    console.log(`Count     : ${count} questions (Difficulty: ${difficulty}/5, Age: ${ageBand})`);
-    console.log(`Persist   : ${persist ? "YES (Will append to batch file)" : "DRY RUN (Validate only)"}`);
-    console.log(`------------------------------------------------------`);
-    console.log(`Running Auto-QA pipeline (Copyright, Deduplication, Schema)...`);
+    logStartupSummary({
+      method: "HTTP API",
+      executionMode: persist ? "persist" : "dry-run",
+      profileCount: 0,
+      concurrency: 1,
+      config: {
+        archetype: values.archetype,
+        domain: values.domain,
+        subtopic: values.subtopic,
+        subtopicTitle: values["subtopic-title"] || values.subtopic,
+        count,
+        difficulty,
+        ageBand,
+        persist,
+      },
+    });
+    log("INFO", "Running Auto-QA pipeline (Deduplication, Schema, Quality)...", { step: "QA_PREPARE" });
   }
 
   let llmClient = null;
-  try {
-    const configModule = await import("../apps/server/src/config.js");
-    const loggerModule = await import("../apps/server/src/logger.js");
-    const antigravityModule = await import("../apps/server/src/antigravity.js");
-    const codexModule = await import("../apps/server/src/codex.js");
-    const config = await configModule.loadConfig(workspaceRoot);
-    const logger = new loggerModule.StudioLogger(workspaceRoot, false);
-    llmClient =
-      config.active_engine === "antigravity"
-        ? new antigravityModule.AntigravityClient(workspaceRoot, config, logger)
-        : new codexModule.CodexAppServerClient(workspaceRoot, config, logger);
-  } catch (clientErr) {
-    if (!values.json) {
-      console.warn(`[CLI] Warning: Could not initialize AI engine client:`, clientErr?.message || clientErr);
+  if (!rawCandidatesOverride) {
+    try {
+      const configModule = await import("../apps/server/src/config.js");
+      const loggerModule = await import("../apps/server/src/logger.js");
+      const antigravityModule = await import("../apps/server/src/antigravity.js");
+      const codexModule = await import("../apps/server/src/codex.js");
+      const config = await configModule.loadConfig(workspaceRoot);
+      const logger = new loggerModule.StudioLogger(workspaceRoot, false);
+      llmClient =
+        config.active_engine === "antigravity"
+          ? new antigravityModule.AntigravityClient(workspaceRoot, config, logger)
+          : new codexModule.CodexAppServerClient(workspaceRoot, config, logger);
+    } catch (clientErr) {
+      if (!values.json) {
+        log("WARN", `Could not initialize AI engine client: ${clientErr?.message || clientErr}`, { step: "CLIENT_INIT" });
+      }
     }
   }
 
@@ -128,6 +150,7 @@ Options:
       ageBand,
       persist,
       llmClient,
+      rawCandidatesOverride,
     });
 
     if (values.json) {
@@ -135,30 +158,47 @@ Options:
       return;
     }
 
-    console.log(`\n✅ Batch Ingestion Completed!`);
-    console.log(`- Requested : ${result.requestedCount}`);
-    console.log(`- Generated : ${result.generatedCount}`);
-    console.log(`- Passed QA : ${result.approvedCount}`);
-    console.log(`- Rejected  : ${result.rejectedCount}`);
+    log(
+      "OK",
+      `Batch ingestion completed: Requested=${result.requestedCount} Generated=${result.generatedCount} Approved=${result.approvedCount} Rejected=${result.rejectedCount}`,
+      { step: "INGEST" },
+    );
 
     if (result.rejectedCount > 0) {
-      console.log(`\n⚠️ Rejection Summary:`);
-      console.log(`  * Copyright violations : ${result.qaSummary.copyrightRejections}`);
-      console.log(`  * Semantic duplicates  : ${result.qaSummary.duplicateRejections}`);
-      console.log(`  * Schema / Quality     : ${result.qaSummary.schemaRejections + result.qaSummary.qualityRejections}`);
+      log(
+        "WARN",
+        `Rejection summary: Duplicates=${result.qaSummary.duplicateRejections} Schema=${result.qaSummary.schemaRejections} Quality=${result.qaSummary.qualityRejections}`,
+        { step: "QA_SUMMARY" },
+      );
     }
 
     if (result.savedQuestions.length > 0) {
-      console.log(`\n📋 Sample Saved Questions:`);
       for (const [idx, q] of result.savedQuestions.slice(0, 3).entries()) {
-        console.log(`  ${idx + 1}. [${q.id}] ${q.question} -> Đáp án: ${q.correct_choice_id}`);
+        log("INFO", `Sample ${idx + 1}: [${q.id}] ${q.question} -> Answer: ${q.correct_choice_id}`, { step: "PERSIST" });
       }
     }
+
+    logFinalSummary({
+      total: result.requestedCount,
+      success: result.approvedCount,
+      failed: result.rejectedCount,
+      skipped: 0,
+      retries: 0,
+      elapsedMs: Date.now() - startTime,
+    });
   } catch (err) {
     if (values.json) {
       console.error(JSON.stringify({ error: err instanceof Error ? err.message : String(err) }));
     } else {
-      console.error(`\n❌ Ingestion Failed:`, err);
+      log("ERROR", `Ingestion failed: ${err instanceof Error ? err.message : String(err)}`, { step: "ERROR" });
+      logFinalSummary({
+        total: count,
+        success: 0,
+        failed: count,
+        skipped: 0,
+        retries: 0,
+        elapsedMs: Date.now() - startTime,
+      });
     }
     process.exit(1);
   }

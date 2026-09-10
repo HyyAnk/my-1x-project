@@ -14,6 +14,7 @@ type AntigravityImageTarget = {
   assetId?: string;
   fingerprint?: string;
   theme?: string;
+  aspectRatio?: string;
 };
 
 export class AntigravityImageChainProvider implements ImageProvider {

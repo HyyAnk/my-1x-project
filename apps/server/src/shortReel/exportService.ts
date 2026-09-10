@@ -12,6 +12,7 @@ import { requireCompleteShortReelSource } from "../repository/shortReelSourcePol
 import { compileFlowPrompts } from "./flowPromptCompiler.js";
 import { readVerifiedAsset, reelAssetRoot } from "./packageAssets.js";
 import { extractShortReelDisplayProjection, resolveShortReelTargetLanguage } from "../quiz/bank/localization/productLocalization.js";
+import { buildPublishingExport } from "./publishingExport.js";
 
 export type ExportErrorCode =
   "REVISION_CONFLICT" | "INCOMPLETE_PACKAGE" | "STALE_EXPORT" | "INVALID_SCRIPT" | "UNSAFE_PATH" | "DUPLICATE_ENTRY" | "INVALID_ASSET";
@@ -111,24 +112,6 @@ function buildScriptMarkdown(record: ShortReelRecord): string {
   return lines.join("\n").trim();
 }
 
-function buildPublishingText(record: ShortReelRecord): string {
-  const pub = record.units.publishing.last_accepted_payload!;
-  const lines: string[] = [
-    "=== SHORT-REEL PUBLISHING COPY ===",
-    "",
-    `HOOK: ${pub.hook}`,
-    "",
-    `DESCRIPTION:\n${pub.description}`,
-    "",
-    `CALL TO ACTION: ${pub.cta || "None"}`,
-    "",
-    `SUGGESTED HASHTAGS: ${pub.hashtags.join(" ")}`,
-    "",
-    "NOTE: Hashtags are suggestions only; no reach or viral performance is guaranteed.",
-  ];
-  return lines.join("\n").trim();
-}
-
 /**
  * Builds and validates a PKZIP package from a consistent Short-Reel snapshot.
  * Guarantees zero path traversal, no mixed revisions, and strict content hash manifest.
@@ -172,6 +155,11 @@ export async function exportShortReelPackage(repository: RepositoryService, key:
     }
   }
 
+  const channel = await repository.getChannel(key.channel_id);
+  if (channel.mascot_id && record.visual_context?.mascot_id && channel.mascot_id !== record.visual_context.mascot_id) {
+    throw new ExportError("STALE_EXPORT", "Channel mascot selection has changed. Package requires regeneration.");
+  }
+
   const refsPayload = record.units.references.last_accepted_payload!;
   const mascotRef = refsPayload.references.find((r) => r.role === "mascot");
   if (
@@ -211,7 +199,12 @@ export async function exportShortReelPackage(repository: RepositoryService, key:
 
   const scriptJson = canonicalJsonStringify(record.script);
   const scriptMd = buildScriptMarkdown(record);
-  const publishingTxt = buildPublishingText(record);
+  const pubPayload = record.units.publishing.last_accepted_payload!;
+  const publishingTxt = buildPublishingExport(pubPayload);
+  const publishingJson = canonicalJsonStringify({
+    title: pubPayload.title,
+    description: pubPayload.description,
+  });
 
   const mascotExt = mimeToExtension(mascotRef.mime_type);
   const styleExt = mimeToExtension(styleRef.mime_type);
@@ -227,6 +220,7 @@ export async function exportShortReelPackage(repository: RepositoryService, key:
     [`references/style.${styleExt}`]: styleBytes,
     [`cover.${coverExt}`]: coverBytes,
     "publishing.txt": Buffer.from(publishingTxt, "utf8"),
+    "publishing.json": Buffer.from(publishingJson, "utf8"),
     ...(localization ? { "localization.json": Buffer.from(canonicalJsonStringify(localization), "utf8") } : {}),
   };
 
@@ -255,6 +249,18 @@ export async function exportShortReelPackage(repository: RepositoryService, key:
       height: ref.height,
       mime_type: ref.mime_type,
     })),
+    cover: {
+      asset_id: coverPayload.asset_id,
+      checksum: coverPayload.checksum,
+      width: coverPayload.width,
+      height: coverPayload.height,
+      mime_type: coverPayload.mime_type,
+    },
+    provenance: {
+      mascot_name: record.visual_context?.mascot_name ?? null,
+      art_direction: record.visual_context?.art_direction ?? null,
+      model_note: record.model_note ?? null,
+    },
     requested_durations: record.script.segments.map((s) => s.duration_seconds),
     total_duration: calculateScriptTotalDuration(record.script),
     content_hashes: contentHashes,

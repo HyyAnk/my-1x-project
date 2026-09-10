@@ -1,0 +1,43 @@
+{
+  "schema_version": 2,
+  "episode_id": "ep_4dc807da5f174c36",
+  "assets": [
+    {
+      "asset_id": "asset-question-01-hero",
+      "question_id": "question-01",
+      "subject": "A cheerful, cute cartoon duck wearing a tiny pilot helmet flying playfully over tall green grass in a vibrant retro arcade meadow",
+      "purpose": "hero_question_image",
+      "style": "cute_illustration",
+      "aspect_ratio": "16:9",
+      "transparent_background": false,
+      "required": true,
+      "semantic_key": "question-01:hero_question_image",
+      "consistency_group_id": null
+    },
+    {
+      "asset_id": "asset-question-02-hero",
+      "question_id": "question-02",
+      "subject": "A playful young kid character holding a sleek futuristic retro arcade blaster toy aiming toward a glowing arcade cabinet, 3D modern digital animated movie character render style",
+      "purpose": "hero_question_image",
+      "style": "cute_illustration",
+      "aspect_ratio": "16:9",
+      "transparent_background": false,
+      "required": true,
+      "semantic_key": "question-02:hero_question_image",
+      "consistency_group_id": null
+    },
+    {
+      "asset_id": "asset-question-03-hero",
+      "question_id": "question-03",
+      "subject": "A delightful, glossy yellow round character smiling joyfully beside a giant delicious cheesy pizza with one slice missing on a colorful diner table",
+      "purpose": "hero_question_image",
+      "style": "cute_illustration",
+      "aspect_ratio": "16:9",
+      "transparent_background": false,
+      "required": true,
+      "semantic_key": "question-03:hero_question_image",
+      "consistency_group_id": null
+    }
+  ],
+  "consistency_groups": []
+}

@@ -99,6 +99,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   readonly activeAudio = new Set<string>();
   audioConfig: AppConfig["audio_generation"];
   imageConfig: AppConfig["image_generation"];
+  imageFallbackConfig: AppConfig["image_fallback"];
   videoConfig: AppConfig["video_generation"];
   readonly videoRenderLimiter = videoRenderConcurrencyLimiter;
   readonly audioProviderFactory: (target: ChatterboxTarget, config: AppConfig["audio_generation"]) => AudioProvider;
@@ -133,6 +134,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     imageConfig: AppConfig["image_generation"] = DEFAULT_CONFIG.image_generation,
     readonly antigravity?: AntigravityClient,
     activeEngine: "codex" | "antigravity" = "codex",
+    imageFallbackConfig: AppConfig["image_fallback"] = DEFAULT_CONFIG.image_fallback,
   ) {
     super();
     this.activeEngine = activeEngine;
@@ -150,6 +152,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     }
     this.audioConfig = audioConfig;
     this.imageConfig = imageConfig;
+    this.imageFallbackConfig = imageFallbackConfig;
     this.audioProviderFactory = audioProviderFactory ?? ((target, config) => new ChatterboxProvider(repository, config, target));
     attachTaskManagerClientEvents(this, codex, antigravity);
   }
@@ -191,6 +194,10 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
   }
   updateImageConfig(config: AppConfig["image_generation"]): void {
     this.imageConfig = config;
+    void this.pump();
+  }
+  updateImageFallbackConfig(config: AppConfig["image_fallback"]): void {
+    this.imageFallbackConfig = config;
     void this.pump();
   }
   setActiveEngine(engine: "codex" | "antigravity"): void {

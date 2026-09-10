@@ -396,7 +396,7 @@ describe("Phase 05: References, Cover And Export (PK-01 - PK-06)", () => {
       await beginReelUnitAttempt(fix.repo, fix.key, "publishing", "op_pub_1");
       const current2 = await fix.repo.getShortReel(fix.key);
       const pubAttempt = current2.units.publishing.current_attempt!;
-      const pubPayload = await generateReelPublishing(current2);
+      const pubPayload = await generateReelPublishing(current2, { allowBaselineFallback: true });
       const pubRes = await acceptReelUnitResult(
         fix.repo,
         fix.key,
@@ -648,11 +648,12 @@ describe("Phase 05: References, Cover And Export (PK-01 - PK-06)", () => {
       expect(filenames).toContain("references/mascot.webp");
       expect(filenames).toContain("references/style.webp");
 
-      // Verify publishing.txt contains disclaimer
+      // Verify publishing.txt contains Title and Description
       const pubEntry = entries.find((e) => e.filename === "publishing.txt");
       expect(pubEntry).toBeDefined();
       const pubText = Buffer.from(pubEntry!.data).toString("utf8");
-      expect(pubText).toContain("Hashtags are suggestions only");
+      expect(pubText).toContain("TITLE:");
+      expect(pubText).toContain("DESCRIPTION:");
     });
 
     it("rejects export with STALE_EXPORT when a deliverable unit is marked stale", async () => {
@@ -717,26 +718,20 @@ describe("Phase 05: References, Cover And Export (PK-01 - PK-06)", () => {
   });
 
   describe("Publishing Parser Robustness", () => {
-    it("parses LLM output with extra fields and comma-separated hashtags successfully", () => {
+    it("parses LLM output with title and description within bounds successfully", () => {
       const rawLlmResponse = `
 \`\`\`json
 {
-  "title": "Extra LLM Key That Usually Fails Strict Schemas",
-  "hook": "Why do deep sea creatures survive extreme ocean pressures?",
-  "description": "A fascinating exploration into cellular adaptations at 8000m depths.",
-  "cta": "Share your thoughts in the comments below!",
-  "hashtags": "shorts, science, ocean, deepsea",
-  "reasoning": "High engagement topic for science fans"
+  "title": "Why do deep sea creatures survive extreme ocean pressures?",
+  "description": "A fascinating exploration into cellular adaptations at 8000m depths. #ocean #deepsea"
 }
 \`\`\`
       `;
 
       const parsed = parsePublishingJson(rawLlmResponse);
       expect(parsed).not.toBeNull();
-      expect(parsed?.hook).toContain("Why do deep sea creatures");
+      expect(parsed?.title).toContain("Why do deep sea creatures");
       expect(parsed?.description).toContain("A fascinating exploration");
-      expect(parsed?.cta).toBe("Share your thoughts in the comments below!");
-      expect(parsed?.hashtags).toEqual(["#shorts", "#science", "#ocean", "#deepsea"]);
     });
   });
 
@@ -821,7 +816,7 @@ describe("Phase 05: References, Cover And Export (PK-01 - PK-06)", () => {
       const fix = await repairFixture();
       cleanups.push(fix.cleanup);
 
-      const updated = await generateReelScriptUnit(fix.repo, fix.key, "script-test-op");
+      const updated = await generateReelScriptUnit(fix.repo, fix.key, "script-test-op", undefined, { allowBaselineFallback: true });
       expect(updated.units.script.state).toBe("ready");
       expect(updated.script).not.toBeNull();
       expect(updated.script?.segments).toHaveLength(3);
@@ -832,7 +827,7 @@ describe("Phase 05: References, Cover And Export (PK-01 - PK-06)", () => {
     it("regenerates only the requested segment and preserves its siblings", async () => {
       const fix = await repairFixture();
       cleanups.push(fix.cleanup);
-      const initial = await generateReelScriptUnit(fix.repo, fix.key, "script-initial");
+      const initial = await generateReelScriptUnit(fix.repo, fix.key, "script-initial", undefined, { allowBaselineFallback: true });
       const segmentOne = { ...initial.script!.segments[0], narrative: "Preserve segment one" };
       const withFirstEdit = await fix.repo.updateShortReel(
         fix.key,
@@ -846,7 +841,9 @@ describe("Phase 05: References, Cover And Export (PK-01 - PK-06)", () => {
         { kind: "update_segment", segment_index: 3, segment: segmentThree },
       );
 
-      const regenerated = await generateReelSegmentUnit(fix.repo, fix.key, 2, "segment-two-regeneration");
+      const regenerated = await generateReelSegmentUnit(fix.repo, fix.key, 2, "segment-two-regeneration", undefined, {
+        allowBaselineFallback: true,
+      });
       expect(regenerated.script?.segments[0].narrative).toBe("Preserve segment one");
       expect(regenerated.script?.segments[2].narrative).toBe("Preserve segment three");
     });

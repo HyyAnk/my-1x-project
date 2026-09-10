@@ -5,6 +5,9 @@ import {
   CodexSettingsInputSchema,
   EngineSettingsInputSchema,
   ImageSettingsInputSchema,
+  ImageFallbackSettingsInputSchema,
+  IMGSTUDIO_MODELS,
+  IMGSTUDIO_DEFAULT_MODEL_ID,
   MascotStageSettingsInputSchema,
   SaveHistorySettingsInputSchema,
   VideoSettingsInputSchema,
@@ -18,10 +21,12 @@ import {
   saveEngineSettings,
   saveHistorySettings,
   saveImageSettings,
+  saveImageFallbackSettings,
   saveMascotStageSettings,
   saveVideoSettings,
 } from "../config.js";
 import { checkGpti2Balance } from "../providers/gpti2Image.js";
+import { checkImgStudioConnectivity } from "../providers/imgstudio/index.js";
 import { RepositoryError } from "../repository.js";
 import type { TaskManager } from "../tasks.js";
 import type { AppState } from "./state.js";
@@ -239,6 +244,54 @@ function registerImageSettingsRoutes(server: FastifyInstance, deps: SettingsRout
         ...state.config.image_generation,
         api_key: "",
         has_api_key: Boolean(state.config.image_generation.api_key),
+      },
+    };
+  });
+
+  server.get("/api/image-fallback/settings", () => ({
+    settings: {
+      ...state.config.image_fallback,
+      api_key: "",
+      has_api_key: Boolean(state.config.image_fallback.api_key),
+    },
+    models: IMGSTUDIO_MODELS,
+    default_model: IMGSTUDIO_DEFAULT_MODEL_ID,
+  }));
+
+  server.post("/api/image-fallback/settings", async (request) => {
+    const input = ImageFallbackSettingsInputSchema.parse(request.body);
+    if (tasks.hasActiveWork()) throw new RepositoryError("Finish active tasks before changing image fallback settings", "IMAGE_SETTINGS_BUSY");
+    state.config = await saveImageFallbackSettings(rootDirectory, input);
+    tasks.updateImageFallbackConfig(state.config.image_fallback);
+    return {
+      settings: {
+        ...state.config.image_fallback,
+        api_key: "",
+        has_api_key: Boolean(state.config.image_fallback.api_key),
+      },
+    };
+  });
+
+  server.post("/api/image-fallback/verify", async (request) => {
+    const body = (request.body && typeof request.body === "object" ? request.body : {}) as {
+      api_key?: string;
+      base_url?: string;
+    };
+    const apiKey = (body.api_key !== undefined ? body.api_key : state.config.image_fallback.api_key) || "";
+    const baseUrl = body.base_url !== undefined ? body.base_url : state.config.image_fallback.base_url;
+    if (!apiKey) throw new RepositoryError("API Key is required to verify ImgStudio", "IMAGE_PROVIDER_NOT_CONFIGURED");
+    return await checkImgStudioConnectivity(apiKey, baseUrl);
+  });
+
+  server.delete("/api/image-fallback/key", async () => {
+    if (tasks.hasActiveWork()) throw new RepositoryError("Finish active tasks before clearing API key", "IMAGE_SETTINGS_BUSY");
+    state.config = await saveImageFallbackSettings(rootDirectory, { api_key: "" });
+    tasks.updateImageFallbackConfig(state.config.image_fallback);
+    return {
+      settings: {
+        ...state.config.image_fallback,
+        api_key: "",
+        has_api_key: false,
       },
     };
   });

@@ -11,6 +11,7 @@ import { buildBatchGenerationPrompt, parseBatchGenerationOutput } from "../src/q
 import { generateQuestionBankBatch } from "../src/quiz/bank/questionBankBatchService.js";
 import { registerQuestionBankRoutes } from "../src/routes/questionBank.js";
 import type { LLMClient } from "../src/utils/promptSanitizer.js";
+import { makeAuthorizedBankQuestion } from "./helpers/authorizedContentFixtures.js";
 
 describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
   let app: StudioApp;
@@ -52,31 +53,43 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     status: "approved",
   };
 
-  it("Auto-QA: Copyright Check blocks sensitive IP terms", () => {
+  it("Auto-QA: accepts valid named subjects and IP terms", () => {
     // 1. Marvel IP
     const marvelQ: BankQuestion = {
       ...sampleValidQuestion,
-      id: "MARVEL-FAIL",
+      id: "MARVEL-PASS",
       question: "How many legs does Spider-Man have?",
     };
     const resMarvel = runAutoQaOnQuestion(marvelQ);
-    expect(resMarvel.passed).toBe(false);
-    expect(resMarvel.issues.some((i) => i.type === "copyright")).toBe(true);
+    expect(resMarvel.passed).toBe(true);
+    expect(resMarvel.issues.length).toBe(0);
 
     // 2. Lion King / Simba
     const simbaQ: BankQuestion = {
       ...sampleValidQuestion,
-      id: "SIMBA-FAIL",
+      id: "SIMBA-PASS",
       explanation: "Simba the lion cub is the main character.",
     };
     const resSimba = runAutoQaOnQuestion(simbaQ);
-    expect(resSimba.passed).toBe(false);
-    expect(resSimba.issues.some((i) => i.type === "copyright")).toBe(true);
+    expect(resSimba.passed).toBe(true);
+    expect(resSimba.issues.length).toBe(0);
 
     // 3. Valid question passes
     const resClean = runAutoQaOnQuestion(sampleValidQuestion);
     expect(resClean.passed).toBe(true);
     expect(resClean.issues.length).toBe(0);
+  });
+
+  it("Auto-QA: runBatchAutoQa exposes only active categories and no copyrightRejections", () => {
+    const report = runBatchAutoQa([makeAuthorizedBankQuestion("Pikachu")]);
+    expect(report.passedCount).toBe(1);
+    expect(report.rejectedCount).toBe(0);
+    expect(report.summary).toEqual({
+      duplicateRejections: 0,
+      schemaRejections: 0,
+      qualityRejections: 0,
+    });
+    expect(Object.hasOwn(report.summary, "copyrightRejections")).toBe(false);
   });
 
   it("Auto-QA: Deduplication Filter blocks identical and high-similarity questions", () => {
@@ -153,16 +166,15 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
       },
       {
         ...sampleValidQuestion,
-        id: "COPYRIGHT-FAIL",
+        id: "NAMED-SUBJECT-PASS",
         question: "What elemental type is Pikachu?",
       },
     ];
 
     const report = runBatchAutoQa(batchCandidates, { similarityThreshold: 0.7 });
     expect(report.total).toBe(3);
-    expect(report.passedCount).toBe(1);
-    expect(report.rejectedCount).toBe(2);
-    expect(report.summary.copyrightRejections).toBe(1);
+    expect(report.passedCount).toBe(2);
+    expect(report.rejectedCount).toBe(1);
     expect(report.summary.duplicateRejections).toBe(1);
   });
 
@@ -210,7 +222,7 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     const badQ: BankQuestion = {
       ...cleanQ,
       id: `BAD-${Date.now()}`,
-      question: "What superpowers does Batman have in Gotham City?",
+      correct_choice_id: "NON_EXISTENT",
     };
 
     const result = await generateQuestionBankBatch(app.repository, {
@@ -224,7 +236,7 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     expect(result.success).toBe(true);
     expect(result.approvedCount).toBe(1);
     expect(result.rejectedCount).toBe(1);
-    expect(result.qaSummary.copyrightRejections).toBe(1);
+    expect(result.qaSummary.schemaRejections).toBe(1);
     expect(result.savedQuestions.some((q) => q.id === testIdClean)).toBe(true);
 
     // Verify it was actually persisted
@@ -266,10 +278,21 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     });
 
     expect(res.statusCode).toBe(200);
-    const body = JSON.parse(res.body) as { success: boolean; approvedCount: number; rejectedCount: number };
+    const body = JSON.parse(res.body) as {
+      success: boolean;
+      approvedCount: number;
+      rejectedCount: number;
+      qaSummary: Record<string, unknown>;
+    };
     expect(body.success).toBe(true);
     expect(body.approvedCount).toBe(1);
     expect(body.rejectedCount).toBe(0);
+    expect(body.qaSummary).toEqual({
+      duplicateRejections: 0,
+      schemaRejections: 0,
+      qualityRejections: 0,
+    });
+    expect(Object.hasOwn(body.qaSummary, "copyrightRejections")).toBe(false);
 
     // Clean up
     await app.repository.deleteQuestionBankQuestion(testApiId);

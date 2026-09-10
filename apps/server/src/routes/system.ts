@@ -77,6 +77,11 @@ export function registerSystemRoutes(deps: SystemRouteDeps): FastifyPluginCallba
         api_key: "",
         has_api_key: Boolean(state.config.image_generation.api_key),
       },
+      image_fallback: {
+        ...state.config.image_fallback,
+        api_key: "",
+        has_api_key: Boolean(state.config.image_fallback?.api_key),
+      },
     }));
     server.get("/api/storage", () => getStorageInfo());
     server.post("/api/storage", async (request) => {

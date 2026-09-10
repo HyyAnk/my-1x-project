@@ -14,6 +14,7 @@ export type AntigravityNativeImageTarget = {
   assetId?: string;
   fingerprint?: string;
   theme?: string;
+  aspectRatio?: string;
 };
 
 export class AntigravityNativeImageProvider implements ImageProvider {
@@ -133,7 +134,7 @@ export class AntigravityNativeImageProvider implements ImageProvider {
     const cleanPrompt = extractCleanVisualPrompt(prompt);
     const ratioMatch =
       prompt.match(/Output framing:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i) || prompt.match(/Composition:\s*(1:1|16:9|9:16|4:3|3:4|2:3|3:2)/i);
-    const targetAspectRatio = ratioMatch ? ratioMatch[1] : "16:9";
+    const targetAspectRatio = this.target.aspectRatio || (ratioMatch ? ratioMatch[1] : "16:9");
 
     const maxAttempts = 5;
     let lastError: Error | null = null;

@@ -3,7 +3,9 @@ import {
   sha256Hex,
   type Channel,
   type ConfirmShortReelTopicResponse,
+  type QuizQuestion,
   type ShortReelRecord,
+  type TopicCandidate,
 } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../repository/service.js";
 import { resolveBoundTopicSources } from "../quiz/bank/bridge/boundSourceResolver.js";
@@ -13,9 +15,12 @@ import {
   localizeProductContent,
   normalizeTargetLanguage,
   saveShortReelLocalizationArtifact,
+  type ProductLocalizationArtifact,
   type TranslateFunction,
 } from "../quiz/bank/localization/productLocalization.js";
 import type { LLMClient } from "../utils/promptSanitizer.js";
+import { resolveMascotReference } from "./mascotReferenceService.js";
+import { adoptVisualContext } from "./visualContextService.js";
 import {
   assertConfirmationReplayOrConflict,
   computeConfirmationOptionsFingerprint,
@@ -154,26 +159,180 @@ async function handleLegacyDiscoveredReel(
   };
 }
 
-async function executeConfirmShortReelTopic(deps: ConfirmShortReelTopicDeps): Promise<ConfirmShortReelTopicResponse> {
-  const { repository, channelId, topicId, requestId, options } = deps;
+async function findAndValidateTopicCandidate(repository: RepositoryService, channelId: string, topicId: string): Promise<TopicCandidate> {
+  const topics = await repository.listTopics(channelId);
+  const topic = topics.find((t) => t.topic_id === topicId);
+  if (!topic) {
+    throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
+  }
 
-  // 1. Verify channel exists
-  const channel = await repository.getChannel(channelId);
+  if (topic.content_kind !== "short_reel") {
+    throw new RepositoryError(`Cannot confirm topic with content_kind "${topic.content_kind}" as Short-Reel`, "INVALID_CONTENT_KIND");
+  }
 
-  // Normalize target language upfront - rejects "vi" and unknown codes immediately
-  const targetLanguage = normalizeTargetLanguage(options?.target_language || channel.language || "en");
+  if (!topic.source_bindings || topic.source_bindings.length === 0) {
+    throw new RepositoryError(
+      "UNBOUND_LEGACY_TOPIC: Cannot confirm unbound legacy topic candidate. Re-suggest topics to bind canonical sources.",
+      "UNBOUND_LEGACY_TOPIC",
+    );
+  }
 
-  const explicitCustomHookText = deps.customHookText?.trim() || options?.custom_hook_text?.trim() || undefined;
-  const explicitThumbnailText = explicitCustomHookText || deps.thumbnailText?.trim() || options?.thumbnail_text?.trim() || undefined;
+  return topic;
+}
+
+interface CreateAndFinalizeParams {
+  repository: RepositoryService;
+  channelId: string;
+  topic: TopicCandidate;
+  sourceSnapshot: ReturnType<typeof createEnglishSourceSnapshot>;
+  baseQuizQuestion: QuizQuestion;
+  boundQuestionIds: string[];
+  boundContentHashes: string[];
+  incomingOptions: TopicConfirmationOptions;
+  effectiveRequestId: string;
+  reservedReelId: string;
+  localizationArtifact: ProductLocalizationArtifact;
+}
+
+async function createAndFinalizeShortReel(params: CreateAndFinalizeParams) {
+  const {
+    repository,
+    channelId,
+    topic,
+    sourceSnapshot,
+    baseQuizQuestion,
+    boundQuestionIds,
+    boundContentHashes,
+    incomingOptions,
+    effectiveRequestId,
+    reservedReelId,
+    localizationArtifact,
+  } = params;
+
+  const createdReel =
+    (await repository.getShortReelByTopic(channelId, topic.topic_id)) ||
+    (await repository.createShortReel(
+      channelId,
+      {
+        topic_id: topic.topic_id,
+        channel_id: channelId,
+        title: topic.title,
+        premise: topic.premise,
+        hook: topic.hook,
+        origin: topic.origin,
+      },
+      sourceSnapshot,
+      effectiveRequestId,
+      reservedReelId,
+    ));
+
+  localizationArtifact.product_id = createdReel.reel_id;
+  await saveShortReelLocalizationArtifact(repository, channelId, createdReel.reel_id, localizationArtifact);
+  await repository.appendQuestionHistory(channelId, createdReel.reel_id, [baseQuizQuestion], 30);
+  await repository.markTopicSelected(channelId, topic.topic_id, 1);
+
+  let finalizedReel = createdReel;
+  try {
+    const visualContext = await resolveMascotReference(repository, { channel_id: channelId, reel_id: createdReel.reel_id });
+    finalizedReel = await adoptVisualContext(repository, { channel_id: channelId, reel_id: createdReel.reel_id }, visualContext);
+  } catch {
+    // Channel mascot might not be configured yet; visual context will be resolved when generating assets.
+  }
+
+  await saveTopicConfirmationReceipt(repository, channelId, {
+    receipt_id: `rec-${createdReel.reel_id}`,
+    channel_id: channelId,
+    topic_id: topic.topic_id,
+    content_kind: "short_reel",
+    product_id: createdReel.reel_id,
+    confirmed_at: new Date().toISOString(),
+    request_id: effectiveRequestId,
+    options_fingerprint: computeConfirmationOptionsFingerprint(incomingOptions),
+    options: incomingOptions,
+    source_question_ids: boundQuestionIds,
+    source_content_hashes: boundContentHashes,
+    status: "completed",
+  });
+
+  return finalizedReel;
+}
+
+function resolveConfirmationOptions(
+  deps: ConfirmShortReelTopicDeps,
+  channelLanguage?: string,
+): { incomingOptions: TopicConfirmationOptions; targetLanguage: string; explicitThumbnailText?: string } {
+  const targetLanguage = normalizeTargetLanguage(deps.options?.target_language || channelLanguage || "en");
+  const explicitCustomHookText = deps.customHookText?.trim() || deps.options?.custom_hook_text?.trim() || undefined;
+  const explicitThumbnailText = explicitCustomHookText || deps.thumbnailText?.trim() || deps.options?.thumbnail_text?.trim() || undefined;
 
   const incomingOptions: TopicConfirmationOptions = {
     question_count: 1,
-    visual_style: options?.visual_style || "mixed",
+    visual_style: deps.options?.visual_style || "mixed",
     render_aspect_ratio: "9:16",
     target_language: targetLanguage,
     ...(explicitCustomHookText ? { custom_hook_text: explicitCustomHookText } : {}),
     ...(explicitThumbnailText ? { thumbnail_text: explicitThumbnailText } : {}),
   };
+
+  return { incomingOptions, targetLanguage, explicitThumbnailText };
+}
+
+function resolveSnapshotProvenance(topic: TopicCandidate): "verified_translation" | "source" {
+  const translationProvenance = topic.source_bindings?.[0]?.projection_provenance?.translation_provenance;
+  return translationProvenance === "verified_translation" ? "verified_translation" : "source";
+}
+
+interface EnsurePreparingReceiptParams {
+  repository: RepositoryService;
+  channelId: string;
+  topicId: string;
+  existingReceipt: TopicConfirmationReceipt | null;
+  reservedReelId: string;
+  effectiveRequestId: string;
+  incomingOptions: TopicConfirmationOptions;
+  boundQuestionIds: string[];
+  boundContentHashes: string[];
+}
+
+async function ensurePreparingReceipt(params: EnsurePreparingReceiptParams): Promise<void> {
+  const {
+    repository,
+    channelId,
+    topicId,
+    existingReceipt,
+    reservedReelId,
+    effectiveRequestId,
+    incomingOptions,
+    boundQuestionIds,
+    boundContentHashes,
+  } = params;
+
+  if (existingReceipt && existingReceipt.status === "preparing") {
+    return;
+  }
+
+  await saveTopicConfirmationReceipt(repository, channelId, {
+    receipt_id: `rec-${reservedReelId}`,
+    channel_id: channelId,
+    topic_id: topicId,
+    content_kind: "short_reel",
+    product_id: reservedReelId,
+    confirmed_at: new Date().toISOString(),
+    request_id: effectiveRequestId,
+    options_fingerprint: computeConfirmationOptionsFingerprint(incomingOptions),
+    options: incomingOptions,
+    source_question_ids: boundQuestionIds,
+    source_content_hashes: boundContentHashes,
+    status: "preparing",
+  });
+}
+
+async function executeConfirmShortReelTopic(deps: ConfirmShortReelTopicDeps): Promise<ConfirmShortReelTopicResponse> {
+  const { repository, channelId, topicId, requestId, options } = deps;
+
+  // 1. Verify channel exists
+  const channel = await repository.getChannel(channelId);
+  const { incomingOptions, targetLanguage, explicitThumbnailText } = resolveConfirmationOptions(deps, channel.language);
 
   // 2. Durable replay check via confirmation receipts
   const existingReceipt = await getTopicConfirmationReceipt(repository, channelId, topicId);
@@ -190,69 +349,39 @@ async function executeConfirmShortReelTopic(deps: ConfirmShortReelTopicDeps): Pr
     return await handleLegacyDiscoveredReel(repository, channel, topicId, legacyReel, options, incomingOptions, targetLanguage, requestId);
   }
 
-  // 4. Retrieve topic candidate
-  const topics = await repository.listTopics(channelId);
-  const topic = topics.find((t) => t.topic_id === topicId);
-  if (!topic) {
-    throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
-  }
-
-  if (topic.content_kind !== "short_reel") {
-    throw new RepositoryError(`Cannot confirm topic with content_kind "${topic.content_kind}" as Short-Reel`, "INVALID_CONTENT_KIND");
-  }
-
-  // Unconditionally reject unbound candidates for new Short-Reel creation
-  if (!topic.source_bindings || topic.source_bindings.length === 0) {
-    throw new RepositoryError(
-      "UNBOUND_LEGACY_TOPIC: Cannot confirm unbound legacy topic candidate. Re-suggest topics to bind canonical sources.",
-      "UNBOUND_LEGACY_TOPIC",
-    );
-  }
-
-  const isPreparingRetry = existingReceipt?.status === "preparing";
-
-  // Authoritatively resolve bound topic source questions
-  // If this is a retry of an already admitted preparing receipt, force=true allows recovery without rejecting its own cooldown
+  // 4. Retrieve topic candidate and bound sources
+  const topic = await findAndValidateTopicCandidate(repository, channelId, topicId);
   const boundResult = await resolveBoundTopicSources({
     repository,
     channelId,
     topicId,
     requestedQuestionCount: 1,
-    force: isPreparingRetry,
+    force: existingReceipt?.status === "preparing",
   });
+
   const bankQuestion = boundResult.questions[0];
-  const translationProvenance = topic.source_bindings?.[0]?.projection_provenance?.translation_provenance;
-  const snapshotProvenance = translationProvenance === "verified_translation" ? "verified_translation" : "source";
-  const sourceSnapshot = createEnglishSourceSnapshot(bankQuestion, snapshotProvenance);
+  const sourceSnapshot = createEnglishSourceSnapshot(bankQuestion, resolveSnapshotProvenance(topic));
   const boundQuestionIds = boundResult.questionIds;
   const boundContentHashes = boundResult.sourceContentHashes;
 
-  // Convert lossless for product localization
   const baseQuizQuestion = convertBankQuestionToQuizQuestionLossless(bankQuestion);
   baseQuizQuestion.number = 1;
 
   const effectiveRequestId = requestId || existingReceipt?.request_id || `req-confirm-${Date.now()}`;
   const reservedReelId = existingReceipt?.product_id || `sreel_${sha256Hex(`${channelId}:${topic.topic_id}:${Date.now()}`).slice(0, 16)}`;
 
-  // DURABLY PERSIST PREPARING RECEIPT BEFORE ANY DISCOVERABLE SHORT-REEL IS CREATED!
-  if (!existingReceipt || existingReceipt.status !== "preparing") {
-    await saveTopicConfirmationReceipt(repository, channelId, {
-      receipt_id: `rec-${reservedReelId}`,
-      channel_id: channelId,
-      topic_id: topic.topic_id,
-      content_kind: "short_reel",
-      product_id: reservedReelId,
-      confirmed_at: new Date().toISOString(),
-      request_id: effectiveRequestId,
-      options_fingerprint: computeConfirmationOptionsFingerprint(incomingOptions),
-      options: incomingOptions,
-      source_question_ids: boundQuestionIds,
-      source_content_hashes: boundContentHashes,
-      status: "preparing",
-    });
-  }
+  await ensurePreparingReceipt({
+    repository,
+    channelId,
+    topicId: topic.topic_id,
+    existingReceipt,
+    reservedReelId,
+    effectiveRequestId,
+    incomingOptions,
+    boundQuestionIds,
+    boundContentHashes,
+  });
 
-  // Localize content linked to reserved reel ID
   const localizationArtifact = await localizeProductContent({
     targetLanguage,
     productId: reservedReelId,
@@ -266,46 +395,18 @@ async function executeConfirmShortReelTopic(deps: ConfirmShortReelTopicDeps): Pr
     translateFn: deps.translateFn,
   });
 
-  // 5. Create Short-Reel record in repository with the reserved reel ID
-  const createdReel =
-    (await repository.getShortReelByTopic(channelId, topicId)) ||
-    (await repository.createShortReel(
-      channelId,
-      {
-        topic_id: topic.topic_id,
-        channel_id: channelId,
-        title: topic.title,
-        premise: topic.premise,
-        hook: topic.hook,
-        origin: topic.origin,
-      },
-      sourceSnapshot,
-      effectiveRequestId,
-      reservedReelId,
-    ));
-
-  // 6. Save product localization artifact linked to the created reel ID
-  localizationArtifact.product_id = createdReel.reel_id;
-  await saveShortReelLocalizationArtifact(repository, channelId, createdReel.reel_id, localizationArtifact);
-  await repository.appendQuestionHistory(channelId, createdReel.reel_id, [baseQuizQuestion], 30);
-
-  // 7. Reconcile topic selection projection
-  await repository.markTopicSelected(channelId, topic.topic_id, 1);
-
-  // 8. Save durable confirmation receipt with status "completed" ONLY AFTER ALL SIDE-EFFECTS SUCCEED!
-  await saveTopicConfirmationReceipt(repository, channelId, {
-    receipt_id: `rec-${createdReel.reel_id}`,
-    channel_id: channelId,
-    topic_id: topic.topic_id,
-    content_kind: "short_reel",
-    product_id: createdReel.reel_id,
-    confirmed_at: new Date().toISOString(),
-    request_id: effectiveRequestId,
-    options_fingerprint: computeConfirmationOptionsFingerprint(incomingOptions),
-    options: incomingOptions,
-    source_question_ids: boundQuestionIds,
-    source_content_hashes: boundContentHashes,
-    status: "completed",
+  const createdReel = await createAndFinalizeShortReel({
+    repository,
+    channelId,
+    topic,
+    sourceSnapshot,
+    baseQuizQuestion,
+    boundQuestionIds,
+    boundContentHashes,
+    incomingOptions,
+    effectiveRequestId,
+    reservedReelId,
+    localizationArtifact,
   });
 
   return {

@@ -8,8 +8,8 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  * 1. Left Anchor Clearance: Stage starts at x = 340px, clearing both the Counter Badge
  *    (x <= 290px) and Channel Brand Mark (x <= 340px).
  * 2. Question Title Box: Centered at x = 1110px, max-width 1440px, height 168px.
- * 3. Choice Cards: 3-column grid (492px cards, 32px gap), media height 340px (3:2 ratio),
- *    eliminating asset cropping on 4:3 and 16:9 images.
+ * 3. Choice Cards: 3-column grid on 1420px stage (457px cards, 24px gap), media height 320px,
+ *    calibrated for standardized 1:1 square assets.
  * 4. Staggered Cascading Entrances: Sequential pop-in animation for Cards 1, 2, and 3.
  * 5. Card Badge & Label Alignment: Eliminates -56px overhang, badge sits cleanly within card boundaries.
  * 6. Native 3-Row CSS Grid & Phase Region: Row 3 position eliminates overlap with choice cards.

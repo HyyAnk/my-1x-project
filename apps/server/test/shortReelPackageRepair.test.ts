@@ -230,12 +230,36 @@ describe("Phase 05 review regressions", () => {
       coverOptions: { imageProvider: f.imageProvider },
     });
     const entries = parseZipArchive(await exportShortReelPackage(f.repo, f.key, record.revision));
-    expect(entries).toHaveLength(10);
+    expect(entries).toHaveLength(11);
+    expect(entries.some((e) => e.filename === "publishing.json")).toBe(true);
+    expect(entries.some((e) => e.filename === "publishing.txt")).toBe(true);
     const manifest: unknown = JSON.parse(Buffer.from(entries.find((e) => e.filename === "manifest.json")!.data).toString());
     for (const entry of entries.filter((e) => e.filename !== "manifest.json"))
       expect(manifest).toHaveProperty(["content_hashes", entry.filename], createHash("sha256").update(entry.data).digest("hex"));
     const prompt = Buffer.from(entries.find((e) => e.filename === "prompts/01-generate.txt")!.data).toString();
     expect(prompt).toContain("references/mascot.png");
     expect(prompt).toContain("references/style.png");
+  });
+
+  it("R02: repairs v1 record with accepted script and failed references without losing accepted script", async () => {
+    const f = await fixture();
+    // Set up a record with accepted script and failed references
+    const script = repairScript();
+    await f.repo.updateShortReel(f.key, { expected_revision: 1, request_id: "init_script" }, { kind: "update_script", script });
+    const afterScript = await f.repo.getShortReel(f.key);
+    expect(afterScript.units.script.state).toBe("ready");
+    expect(afterScript.script?.segments[0].narrative).toBe(script.segments[0].narrative);
+
+    // Run repair
+    const repaired = await generateFullReelPackage(f.repo, f.key, {
+      coverOptions: { imageProvider: f.imageProvider },
+    });
+
+    expect(repaired.units.script.state).toBe("ready");
+    expect(repaired.script?.segments[0].narrative).toBe(script.segments[0].narrative);
+    expect(repaired.units.references.state).toBe("ready");
+    expect(repaired.units.cover.state).toBe("ready");
+    expect(repaired.units.publishing.state).toBe("ready");
+    expect(repaired.reel_id).toBe(f.key.reel_id);
   });
 });

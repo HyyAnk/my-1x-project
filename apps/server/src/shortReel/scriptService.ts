@@ -9,6 +9,7 @@ export interface GenerateReelScriptOptions {
   signal?: AbortSignal;
   timeoutMs?: number;
   maxCorrectionAttempts?: number;
+  allowBaselineFallback?: boolean;
 }
 
 function extractScriptJson(rawOutput: string): unknown {
@@ -55,8 +56,8 @@ export async function generateReelScript(
     throw new ScriptGenerationError("VALIDATION_FAILED", "A complete validated source is required.");
   }
   const frozenContext = structuredClone(context);
-  const configuredTimeout = options.timeoutMs ?? 60_000;
-  const timeoutMs = Number.isFinite(configuredTimeout) && configuredTimeout > 0 ? Math.min(configuredTimeout, 60_000) : 60_000;
+  const configuredTimeout = options.timeoutMs ?? 90_000;
+  const timeoutMs = Number.isFinite(configuredTimeout) && configuredTimeout > 0 ? Math.min(configuredTimeout, 300_000) : 90_000;
   const deadline = Date.now() + timeoutMs;
   const initialPrompt = buildScriptGenerationPrompt(frozenContext);
   let prompt = initialPrompt;

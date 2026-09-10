@@ -246,6 +246,24 @@ describe("gpti2.store Image Provider", () => {
     requestBody = JSON.parse(fetchMock.mock.calls[2][1].body as string);
     expect(requestBody.size).toBe("1024x768");
 
+    // Test 3:4 for gpt-image-2
+    await generateGpti2ImageBytes("A portrait card hero", {
+      apiKey: "sk-test",
+      model: "gpt-image-2",
+      aspect_ratio: "3:4",
+    });
+    requestBody = JSON.parse(fetchMock.mock.calls[3][1].body as string);
+    expect(requestBody.size).toBe("768x1024");
+
+    // Test 16:9 for gpt-image-2
+    await generateGpti2ImageBytes("A widescreen panorama", {
+      apiKey: "sk-test",
+      model: "gpt-image-2",
+      aspect_ratio: "16:9",
+    });
+    requestBody = JSON.parse(fetchMock.mock.calls[4][1].body as string);
+    expect(requestBody.size).toBe("1280x720");
+
     // Test nano-banana-2 with direct aspect_ratio
     fetchMock
       .mockResolvedValueOnce({
@@ -276,7 +294,7 @@ describe("gpti2.store Image Provider", () => {
     });
     expect(nanoResult.aspect_ratio).toBe("1:1");
     expect(nanoResult.price_vnd).toBe(100);
-    const nanoCallBody = JSON.parse(fetchMock.mock.calls[3][1].body as string);
+    const nanoCallBody = JSON.parse(fetchMock.mock.calls[5][1].body as string);
     expect(nanoCallBody.aspect_ratio).toBe("1:1");
   });
 

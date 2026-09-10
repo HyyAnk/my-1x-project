@@ -1,0 +1,89 @@
+{
+  "schema_version": 2,
+  "episode_id": "ep_4dc807da5f174c36",
+  "age_band": "7-9",
+  "language": "English",
+  "questions": [
+    {
+      "id": "question-01",
+      "number": 1,
+      "format": "true_false",
+      "difficulty": 1,
+      "question": "Could player two steer the ducks in Duck Hunt?",
+      "choices": [
+        {
+          "id": "choice-a",
+          "text": "True"
+        },
+        {
+          "id": "choice-b",
+          "text": "False"
+        }
+      ],
+      "correct_choice_id": "choice-a",
+      "explanation": "A second controller moved the duck around the screen!",
+      "fun_fact": "",
+      "source_ids": ["C01"],
+      "visual_opportunity": "A cheerful, cute cartoon duck wearing a tiny pilot helmet flying playfully over tall green grass in a vibrant retro arcade meadow, 3D modern digital animated movie character render style, soft cinematic studio lighting with warm golden key and cool blue rim lights, rich feathered textures, large expressive sparkling eyes, vibrant warm cheerful colors of sunny yellow, emerald green, and sky blue, lush atmospheric environment with gentle depth of field, the main duck is sharply focused and stands out prominently.",
+      "validation": {
+        "semantic_status": "validated",
+        "source_coverage": true,
+        "fact_locked": true
+      }
+    },
+    {
+      "id": "question-02",
+      "number": 2,
+      "format": "true_false",
+      "difficulty": 2,
+      "question": "Do classic arcade light guns shoot real laser beams?",
+      "choices": [
+        {
+          "id": "choice-a",
+          "text": "True"
+        },
+        {
+          "id": "choice-b",
+          "text": "False"
+        }
+      ],
+      "correct_choice_id": "choice-b",
+      "explanation": "The gun sensor detects flashing light on the screen!",
+      "fun_fact": "",
+      "source_ids": ["C02"],
+      "visual_opportunity": "A playful young kid character holding a sleek futuristic retro arcade blaster toy aiming toward a glowing arcade cabinet, 3D modern digital animated movie character render style, soft cinematic studio lighting with energetic coral and neon mint rim lights, rich polished plastic and metallic textures, large expressive sparkling eyes with a curious smile, vibrant warm cheerful colors of electric cyan and energetic coral, lush retro arcade hall environment with softly blurred cabinet glows in background depth, the child hero is sharply focused and stands out prominently.",
+      "validation": {
+        "semantic_status": "validated",
+        "source_coverage": true,
+        "fact_locked": true
+      }
+    },
+    {
+      "id": "question-03",
+      "number": 3,
+      "format": "true_false",
+      "difficulty": 3,
+      "question": "Was Pac-Man inspired by a pizza missing one slice?",
+      "choices": [
+        {
+          "id": "choice-a",
+          "text": "True"
+        },
+        {
+          "id": "choice-b",
+          "text": "False"
+        }
+      ],
+      "correct_choice_id": "choice-a",
+      "explanation": "The creator got the idea while eating round pizza!",
+      "fun_fact": "",
+      "source_ids": ["C03"],
+      "visual_opportunity": "A delightful, glossy yellow round character smiling joyfully beside a giant delicious cheesy pizza with one slice missing on a colorful diner table, 3D modern digital animated movie character render style, soft cinematic studio lighting with warm key light and bright magenta rim light, rich melted cheese and glossy surface textures, large expressive sparkling eyes, vibrant warm cheerful colors of sunny yellow, rich tomato red, and bright violet, lush cozy arcade pizzeria environment with gentle atmospheric depth, the round yellow hero is sharply focused and stands out prominently.",
+      "validation": {
+        "semantic_status": "validated",
+        "source_coverage": true,
+        "fact_locked": true
+      }
+    }
+  ]
+}

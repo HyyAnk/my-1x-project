@@ -46,8 +46,16 @@ export async function loadConfig(rootDirectory: string): Promise<AppConfig> {
       localImage.image_generation && typeof localImage.image_generation === "object"
         ? (localImage.image_generation as Record<string, unknown>)
         : {};
+    const trackedFallback =
+      raw.image_fallback && typeof raw.image_fallback === "object" ? (raw.image_fallback as Record<string, unknown>) : {};
+    const localFallbackSettings =
+      localImage.image_fallback && typeof localImage.image_fallback === "object"
+        ? (localImage.image_fallback as Record<string, unknown>)
+        : {};
     const trackedHistory =
       raw.question_history && typeof raw.question_history === "object" ? (raw.question_history as Record<string, unknown>) : {};
+    const trackedKnowledgeBase =
+      raw.knowledge_base && typeof raw.knowledge_base === "object" ? (raw.knowledge_base as Record<string, unknown>) : {};
     return AppConfigSchema.parse({
       ...DEFAULT_CONFIG,
       ...raw,
@@ -57,7 +65,9 @@ export async function loadConfig(rootDirectory: string): Promise<AppConfig> {
       antigravity: { ...DEFAULT_CONFIG.antigravity, ...trackedAgy, api_key: "", ...localAgySettings },
       audio_generation: { ...DEFAULT_CONFIG.audio_generation, ...trackedAudio, ...localAudioSettings },
       image_generation: { ...DEFAULT_CONFIG.image_generation, ...trackedImages, ...localImageSettings },
+      image_fallback: { ...DEFAULT_CONFIG.image_fallback, ...trackedFallback, ...localFallbackSettings },
       question_history: { ...DEFAULT_CONFIG.question_history, ...trackedHistory },
+      knowledge_base: { ...DEFAULT_CONFIG.knowledge_base, ...trackedKnowledgeBase },
     });
   } catch {
     await mkdir(path.dirname(configPath), { recursive: true });
@@ -77,12 +87,17 @@ export async function loadConfig(rootDirectory: string): Promise<AppConfig> {
       localImage.image_generation && typeof localImage.image_generation === "object"
         ? (localImage.image_generation as Record<string, unknown>)
         : {};
+    const localFallbackSettings =
+      localImage.image_fallback && typeof localImage.image_fallback === "object"
+        ? (localImage.image_fallback as Record<string, unknown>)
+        : {};
     return AppConfigSchema.parse({
       ...DEFAULT_CONFIG,
       codex: { ...DEFAULT_CONFIG.codex, ...localCodex },
       antigravity: { ...DEFAULT_CONFIG.antigravity, ...localAgySettings },
       audio_generation: { ...DEFAULT_CONFIG.audio_generation, ...localAudioSettings },
       image_generation: { ...DEFAULT_CONFIG.image_generation, ...localImageSettings },
+      image_fallback: { ...DEFAULT_CONFIG.image_fallback, ...localFallbackSettings },
     });
   }
 }
