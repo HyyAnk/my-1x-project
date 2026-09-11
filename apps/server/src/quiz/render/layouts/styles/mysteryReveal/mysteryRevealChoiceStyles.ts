@@ -6,8 +6,8 @@
 export function mysteryRevealChoiceStyles(): string {
   return `
 /* === Answer Card & Grid System (Mode A: Riddle vs Mode B: Multi-Choice - BUG-MR-03 Fix) === */
-.layout-mystery_reveal .mystery-stage-wrapper > .choice-group,
-.layout-mystery_reveal .mystery-stage-wrapper > .answer-grid {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .mystery-stage-wrapper > .choice-group,
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .mystery-stage-wrapper > .answer-grid {
   position: absolute;
   bottom: 28px;
   left: 0;
@@ -20,9 +20,77 @@ export function mysteryRevealChoiceStyles(): string {
   box-sizing: border-box;
 }
 
+/* Unified Arena Candidate Strip: top: 384px; height: 120px; */
+.quiz-frame-unified.layout-mystery_reveal .choice-group,
+.quiz-frame-unified.layout-mystery_reveal .answer-grid {
+  position: absolute;
+  top: 384px;
+  height: 120px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  z-index: 10;
+}
+
+.quiz-frame-unified.layout-mystery_reveal .choice-card {
+  height: 120px;
+  min-height: 120px;
+  max-height: 120px;
+  box-sizing: border-box;
+  opacity: 1;
+  transform: none;
+}
+
+.quiz-frame-unified.layout-mystery_reveal .answer-count-0,
+.quiz-frame-unified.layout-mystery_reveal .answer-count-1 {
+  left: 250px;
+  width: 920px;
+  max-width: 920px;
+  display: flex;
+  justify-content: center;
+}
+.quiz-frame-unified.layout-mystery_reveal .answer-count-0 .choice-card,
+.quiz-frame-unified.layout-mystery_reveal .answer-count-1 .choice-card {
+  width: 920px;
+}
+
+.quiz-frame-unified.layout-mystery_reveal .answer-count-2 {
+  left: 90px;
+  width: 1240px;
+  max-width: 1240px;
+  display: grid;
+  grid-template-columns: 600px 600px;
+  gap: 40px;
+}
+.quiz-frame-unified.layout-mystery_reveal .answer-count-2 .choice-card {
+  width: 600px;
+}
+
+.quiz-frame-unified.layout-mystery_reveal .answer-count-3 {
+  left: 0;
+  width: 1420px;
+  max-width: 1420px;
+  display: grid;
+  grid-template-columns: repeat(3, 452px);
+  gap: 32px;
+}
+.quiz-frame-unified.layout-mystery_reveal .answer-count-3 .choice-card {
+  width: 452px;
+}
+
+.quiz-frame-unified.layout-mystery_reveal .answer-count-2 .choice-badge,
+.quiz-frame-unified.layout-mystery_reveal .answer-count-2 .choice-label,
+.quiz-frame-unified.layout-mystery_reveal .answer-count-3 .choice-badge,
+.quiz-frame-unified.layout-mystery_reveal .answer-count-3 .choice-label {
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  font-size: 38px;
+}
+
 /* Mode A: Single Answer / Riddle Mode (count <= 1) */
-.layout-mystery_reveal .answer-count-0,
-.layout-mystery_reveal .answer-count-1 {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-0,
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-1 {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,8 +98,8 @@ export function mysteryRevealChoiceStyles(): string {
   max-width: 840px;
 }
 
-.layout-mystery_reveal .answer-count-0 .choice-card,
-.layout-mystery_reveal .answer-count-1 .choice-card {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-0 .choice-card,
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-1 .choice-card {
   width: 100%;
   min-height: var(--choice-card-min-height, 84px);
   padding: var(--choice-card-padding, 14px 32px);
@@ -49,10 +117,10 @@ export function mysteryRevealChoiceStyles(): string {
   pointer-events: none;
 }
 
-.layout-mystery_reveal .answer-count-0 .choice-badge,
-.layout-mystery_reveal .answer-count-0 .choice-label,
-.layout-mystery_reveal .answer-count-1 .choice-badge,
-.layout-mystery_reveal .answer-count-1 .choice-label {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-0 .choice-badge,
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-0 .choice-label,
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-1 .choice-badge,
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-1 .choice-label {
   display: none !important;
 }
 
@@ -75,14 +143,14 @@ export function mysteryRevealChoiceStyles(): string {
 }
 
 /* Mode B: Multiple Choice Mode (count == 2 or 3) */
-.layout-mystery_reveal .answer-count-2 {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   max-width: 960px;
 }
 
-.layout-mystery_reveal .answer-count-3 {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;

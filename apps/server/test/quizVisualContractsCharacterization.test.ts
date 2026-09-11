@@ -47,12 +47,14 @@ describe("Phase 1 layout and resolver characterization", () => {
   it("L-02 through L-04 preserve registered slots", () => {
     expect(renderQuizLayoutBody("baseline", slots)).toBe('<question-box /><hero /><choices /><div class="phase-region"><phase /></div>');
     expect(renderQuizLayoutBody("media_left_choices_right", slots)).toBe(
-      '<question-box /><hero /><choices /><div class="phase-region"><phase /></div>',
+      '<div class="quiz-question-anchor" data-quiz-fixed="question"><question-box /></div><div class="quiz-content-anchor" data-quiz-content><hero /><choices /></div><div class="phase-region"><phase /></div>',
     );
     expect(renderQuizLayoutBody("visual_choices_three", slots)).toBe(
-      '<question-box /><choices /><div class="phase-region"><phase /></div>',
+      '<div class="quiz-question-anchor" data-quiz-fixed="question"><question-box /></div><div class="quiz-content-anchor" data-quiz-content><choices /></div><div class="phase-region"><phase /></div>',
     );
-    expect(renderQuizLayoutBody("full_stack_list", slots)).toBe('<question-box /><choices /><div class="phase-region"><phase /></div>');
+    expect(renderQuizLayoutBody("full_stack_list", slots)).toBe(
+      '<div class="quiz-question-anchor" data-quiz-fixed="question"><question-box /></div><div class="quiz-content-anchor" data-quiz-content><choices /></div><div class="phase-region"><phase /></div>',
+    );
   });
 });
 

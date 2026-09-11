@@ -544,186 +544,6 @@
     "id": "ENT-SPA-013",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
-    "name": "Ceres",
-    "language": "en",
-    "aliases": [
-      "1 Ceres",
-      "Queen of the Asteroid Belt"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A round cratered grey dwarf planet displaying bright glowing salt deposits inside Occator Crater in the asteroid belt.",
-    "core_traits": [
-      "Largest object in the main asteroid belt between Mars and Jupiter",
-      "Only dwarf planet located within the inner solar system",
-      "Contains approximately one-third of the total mass of the entire asteroid belt",
-      "Famous for mysterious reflective bright spots of sodium carbonate inside Occator Crater"
-    ],
-    "distractor_pool": [
-      "Vesta",
-      "Pallas",
-      "Pluto",
-      "Eris",
-      "Mercury"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Ceres was historically considered a full planet for half a century after its discovery.",
-        "verdict": "fact",
-        "explanation": "Discovered by Giuseppe Piazzi in 1801, Ceres was listed as a planet alongside Mars and Jupiter until demoted to asteroid.",
-        "fun_fact": "NASA's Dawn spacecraft orbited Ceres from 2015 to 2018, revealing signs of cryovolcanism (ice volcanoes)."
-      },
-      {
-        "claim": "The bright white spots on Ceres are fields of radioactive diamonds.",
-        "verdict": "myth",
-        "explanation": "High-resolution data from the Dawn mission confirmed the bright spots are sodium carbonate salt minerals left by evaporating briny water.",
-        "fun_fact": "Ceres may harbor a subsurface ocean of salty liquid water beneath its crust."
-      }
-    ],
-    "versus_candidates": [
-      "Vesta",
-      "Pluto",
-      "Eris"
-    ]
-  },
-  {
-    "id": "ENT-SPA-014",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Eris",
-    "language": "en",
-    "aliases": [
-      "136199 Eris",
-      "Xena"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A shimmering frosty trans-Neptunian dwarf planet gleaming white in deep distant space accompanied by tiny moon Dysnomia.",
-    "core_traits": [
-      "Massive icy dwarf planet located in the scattered disc beyond the Kuiper Belt",
-      "Its discovery in 2005 directly triggered the IAU decision to redefine planet criteria and reclassify Pluto",
-      "Second-largest known dwarf planet in the solar system, slightly smaller in diameter than Pluto but 27% more massive",
-      "Has one known natural moon named Dysnomia"
-    ],
-    "distractor_pool": [
-      "Pluto",
-      "Makemake",
-      "Haumea",
-      "Ceres",
-      "Sedna"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The discovery of Eris was the direct reason Pluto lost its official major planet status.",
-        "verdict": "fact",
-        "explanation": "Because Eris was more massive than Pluto, astronomers had to either designate Eris as the tenth planet or create the dwarf planet category.",
-        "fun_fact": "Eris was named after the Greek goddess of discord and strife because of the fierce debate its discovery ignited."
-      },
-      {
-        "claim": "Eris orbits the Sun faster than Pluto.",
-        "verdict": "myth",
-        "explanation": "Eris is three times farther from the Sun than Pluto and takes roughly 558 Earth years to complete one single orbit.",
-        "fun_fact": "At its surface, the Sun appears as nothing more than an intensely bright pinpoint of starlight."
-      }
-    ],
-    "versus_candidates": [
-      "Pluto",
-      "Haumea",
-      "Makemake"
-    ]
-  },
-  {
-    "id": "ENT-SPA-015",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Haumea",
-    "language": "en",
-    "aliases": [
-      "136108 Haumea",
-      "The Football Planet"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "An elongated oval dwarf planet shaped like an American football spinning rapidly with a crystalline ice ring.",
-    "core_traits": [
-      "Dwarf planet in the Kuiper Belt notable for its distinctly elongated, rugby-football shape",
-      "Rotates at blistering speed once every 3.9 hours, stretching it into an ellipsoid",
-      "Possesses a ring system and two small moons named Hi'iaka and Namaka",
-      "Surface is covered in brilliant crystalline water ice"
-    ],
-    "distractor_pool": [
-      "Makemake",
-      "Eris",
-      "Pluto",
-      "Ceres",
-      "Charon"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Haumea has the fastest rotation of any known equilibrium body in the solar system.",
-        "verdict": "fact",
-        "explanation": "Its 3.9-hour spin is so rapid that centrifugal force distorts what would be a spherical body into a three-axis triaxial ellipsoid.",
-        "fun_fact": "Haumea was named after the Hawaiian goddess of fertility and childbirth."
-      },
-      {
-        "claim": "Haumea is completely spherical just like Earth and Pluto.",
-        "verdict": "myth",
-        "explanation": "Haumea's long axis is roughly twice the length of its shortest axis, making it resemble an American football.",
-        "fun_fact": "In 2017, astronomers observed Haumea occult a star and discovered it possesses a narrow ring system."
-      }
-    ],
-    "versus_candidates": [
-      "Makemake",
-      "Eris",
-      "Pluto"
-    ]
-  },
-  {
-    "id": "ENT-SPA-016",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Makemake",
-    "language": "en",
-    "aliases": [
-      "136472 Makemake",
-      "Easter Bunny"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A reddish frozen dwarf planet covered in frozen methane sheets drifting silently through the Kuiper Belt.",
-    "core_traits": [
-      "Dwarf planet and classical Kuiper Belt object discovered shortly after Easter in 2005",
-      "Has a reddish tint caused by tholins formed from frozen methane and ethane",
-      "Lacks a significant atmosphere due to freezing cold temperatures hovering around 30 Kelvin",
-      "Orbits the Sun every 306 Earth years"
-    ],
-    "distractor_pool": [
-      "Haumea",
-      "Eris",
-      "Pluto",
-      "Sedna",
-      "Quaoar"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Makemake was named after the creator god of the Rapa Nui people of Easter Island.",
-        "verdict": "fact",
-        "explanation": "Because it was discovered shortly after Easter, the team chose Makemake, chief creator deity of Rapa Nui mythology.",
-        "fun_fact": "Its provisional nickname among its discovery team was 'Easterbunny'."
-      },
-      {
-        "claim": "Makemake is encircled by an immense ring system larger than Saturn's.",
-        "verdict": "myth",
-        "explanation": "Makemake has no detected ring system, although the Hubble Space Telescope discovered a tiny dark moon nicknamed MK2 in 2016.",
-        "fun_fact": "Makemake is the second brightest Kuiper Belt object in the night sky after Pluto."
-      }
-    ],
-    "versus_candidates": [
-      "Haumea",
-      "Eris",
-      "Pluto"
-    ]
-  },
-  {
-    "id": "ENT-SPA-017",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
     "name": "Ganymede",
     "language": "en",
     "aliases": [
@@ -766,7 +586,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-018",
+    "id": "ENT-SPA-014",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Titan",
@@ -811,7 +631,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-019",
+    "id": "ENT-SPA-015",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Callisto",
@@ -856,7 +676,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-020",
+    "id": "ENT-SPA-016",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Io",
@@ -902,7 +722,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-021",
+    "id": "ENT-SPA-017",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Europa",
@@ -947,7 +767,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-022",
+    "id": "ENT-SPA-018",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Enceladus",
@@ -992,7 +812,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-023",
+    "id": "ENT-SPA-019",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Triton",
@@ -1037,7 +857,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-024",
+    "id": "ENT-SPA-020",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Phobos",
@@ -1082,7 +902,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-025",
+    "id": "ENT-SPA-021",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Deimos",
@@ -1127,7 +947,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-026",
+    "id": "ENT-SPA-022",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Charon",
@@ -1172,7 +992,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-027",
+    "id": "ENT-SPA-023",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Comet Halley",
@@ -1217,97 +1037,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-028",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Comet Hale-Bopp",
-    "language": "en",
-    "aliases": [
-      "C/1995 O1",
-      "The Great Comet of 1997"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A magnificent celestial comet displaying twin sweeping tails - one brilliant golden dust and one glowing electric-blue gas.",
-    "core_traits": [
-      "One of the most widely observed and brightest comets of the 20th century",
-      "Remained visible to the naked eye for a record-shattering 18 continuous months in 1996 and 1997",
-      "Possessed an unusually huge nucleus measuring approximately 60 kilometers in diameter",
-      "Has an orbital period estimated between 2,500 and 4,000 years"
-    ],
-    "distractor_pool": [
-      "Comet Halley",
-      "Comet NEOWISE",
-      "Comet Hyakutake",
-      "Comet Encke",
-      "Shoemaker-Levy 9"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Comet Hale-Bopp was visible to the naked eye longer than any other comet recorded in history.",
-        "verdict": "fact",
-        "explanation": "It was visible without binoculars or telescopes for 18 months, twice as long as the previous record holder, the Great Comet of 1811.",
-        "fun_fact": "Co-discovered independently by amateur astronomer Alan Hale and Thomas Bopp on July 23, 1995."
-      },
-      {
-        "claim": "An alien mothership was trailing directly behind Hale-Bopp's nucleus.",
-        "verdict": "myth",
-        "explanation": "The claim was an internet hoax propagated by amateur radio enthusiasts, which tragically inspired the Heaven's Gate cult tragedy in 1997.",
-        "fun_fact": "Hale-Bopp produced an extremely rare third tail made entirely of neutral sodium atoms."
-      }
-    ],
-    "versus_candidates": [
-      "Comet Halley",
-      "Comet NEOWISE",
-      "Comet Hyakutake"
-    ]
-  },
-  {
-    "id": "ENT-SPA-029",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Comet NEOWISE",
-    "language": "en",
-    "aliases": [
-      "C/2020 F3",
-      "NEOWISE"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A glowing white and yellow comet with a dramatic split tail soaring above twilight horizons during the summer of 2020.",
-    "core_traits": [
-      "Spectacular long-period comet discovered in March 2020 by the NEOWISE space telescope",
-      "Became the brightest comet visible from the Northern Hemisphere since Hale-Bopp in 1997",
-      "Survived perihelion passage inside Mercury's orbit without disintegrating",
-      "Its orbital period was altered by planetary gravity to roughly 6,800 years"
-    ],
-    "distractor_pool": [
-      "Comet Halley",
-      "Comet Hale-Bopp",
-      "Comet ISON",
-      "Comet Lovejoy",
-      "Comet Kohoutek"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Comet NEOWISE will not return to the inner solar system for nearly 7,000 years.",
-        "verdict": "fact",
-        "explanation": "Gravitational interactions with planets expanded its orbital period from 4,500 years to approximately 6,800 years.",
-        "fun_fact": "Astronauts aboard the International Space Station captured stunning time-lapse videos of NEOWISE rising above Earth's aurora."
-      },
-      {
-        "claim": "NEOWISE collided with the Sun and was completely vaporized.",
-        "verdict": "myth",
-        "explanation": "It successfully rounded the Sun on July 3, 2020, passing within 43 million kilometers before flying back toward deep space.",
-        "fun_fact": "The comet nucleus is about 5 kilometers across and coated in dark soot."
-      }
-    ],
-    "versus_candidates": [
-      "Comet Halley",
-      "Comet Hale-Bopp",
-      "Comet Hyakutake"
-    ]
-  },
-  {
-    "id": "ENT-SPA-030",
+    "id": "ENT-SPA-024",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Asteroid Belt",
@@ -1352,7 +1082,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-031",
+    "id": "ENT-SPA-025",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Kuiper Belt",
@@ -1397,7 +1127,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-032",
+    "id": "ENT-SPA-026",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Oort Cloud",
@@ -1442,7 +1172,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-033",
+    "id": "ENT-SPA-027",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Olympus Mons",
@@ -1486,7 +1216,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-034",
+    "id": "ENT-SPA-028",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Great Red Spot",
@@ -1531,7 +1261,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-035",
+    "id": "ENT-SPA-029",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Valles Marineris",
@@ -1576,7 +1306,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-036",
+    "id": "ENT-SPA-030",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Solar Wind",
@@ -1621,7 +1351,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-037",
+    "id": "ENT-SPA-031",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Solar Flare",
@@ -1666,52 +1396,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-038",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Coronal Mass Ejection",
-    "language": "en",
-    "aliases": [
-      "CME",
-      "Solar Plasma Cloud"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A colossal bubble of billions of tons of magnetized solar plasma erupting into interplanetary space from the Sun's corona.",
-    "core_traits": [
-      "Significant release of plasma and accompanying magnetic field from the solar corona into space",
-      "Hurls billions of tons of coronal material at speeds up to 3,000 km/s",
-      "Takes 1 to 3 days to travel the 150 million kilometers to Earth",
-      "Can trigger severe geomagnetic storms, induce power grid failures, and disable orbiting satellites"
-    ],
-    "distractor_pool": [
-      "Solar Flare",
-      "Solar Wind",
-      "Sunspot",
-      "Gamma-Ray Burst",
-      "Supernova"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A massive CME struck Earth in 1859, causing telegraph wires to catch fire and shock operators.",
-        "verdict": "fact",
-        "explanation": "The Carrington Event of 1859 was a massive CME collision that induced powerful currents in telegraph lines worldwide.",
-        "fun_fact": "During the Carrington Event, auroras were so intensely bright that gold miners in the Rocky Mountains woke up and cooked breakfast at 2 a.m."
-      },
-      {
-        "claim": "A Coronal Mass Ejection and a Solar Flare are the exact same physical phenomenon.",
-        "verdict": "myth",
-        "explanation": "A flare is a burst of electromagnetic light arriving in 8 minutes, whereas a CME is a physical cloud of billions of tons of plasma taking days to arrive.",
-        "fun_fact": "In July 2012, an ultra-powerful Carrington-class CME narrowly missed Earth by just 9 days."
-      }
-    ],
-    "versus_candidates": [
-      "Solar Flare",
-      "Solar Wind",
-      "Aurora Borealis"
-    ]
-  },
-  {
-    "id": "ENT-SPA-039",
+    "id": "ENT-SPA-032",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Sunspot",
@@ -1756,7 +1441,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-040",
+    "id": "ENT-SPA-033",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Solar Eclipse",
@@ -1801,7 +1486,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-041",
+    "id": "ENT-SPA-034",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Lunar Eclipse",
@@ -1846,186 +1531,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-042",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Transit of Venus",
-    "language": "en",
-    "aliases": [
-      "Venusian Transit"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A crisp black circular silhouette of Venus creeping slowly across the brilliant golden face of the Sun.",
-    "core_traits": [
-      "Rare astronomical transit where the planet Venus passes directly between the Sun and Earth",
-      "Appears as a distinct tiny black dot crawling across the solar disk over several hours",
-      "Occurs in an unusual pattern repeating every 243 years: pairs separated by 8 years, then gaps of over a century",
-      "Historically used by 18th-century astronomers to calculate the absolute distance from Earth to the Sun (the Astronomical Unit)"
-    ],
-    "distractor_pool": [
-      "Solar Eclipse",
-      "Transit of Mercury",
-      "Lunar Eclipse",
-      "Sunspot",
-      "Halley's Comet"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "No human alive today will witness another Transit of Venus unless they live past the year 2117.",
-        "verdict": "fact",
-        "explanation": "Following the historic transits of 2004 and 2012, the next transit of Venus will not occur until December 11, 2117.",
-        "fun_fact": "Captain James Cook's famous first voyage to Tahiti in 1769 was commissioned by the Royal Society to observe the Transit of Venus."
-      },
-      {
-        "claim": "Venus completely blocks out sunlight and plunges Earth into darkness during a transit.",
-        "verdict": "myth",
-        "explanation": "Venus is so distant that it covers only about 0.1% of the solar disk, appearing merely as a small black bead.",
-        "fun_fact": "Mikhail Lomonosov discovered that Venus has an atmosphere in 1761 after observing a halo of light refract around its edge during a transit."
-      }
-    ],
-    "versus_candidates": [
-      "Solar Eclipse",
-      "Transit of Mercury",
-      "Venus"
-    ]
-  },
-  {
-    "id": "ENT-SPA-043",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Asteroid Bennu",
-    "language": "en",
-    "aliases": [
-      "101955 Bennu",
-      "Near-Earth Asteroid Bennu"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A dark diamond-shaped spinning rubble-pile asteroid strewn with jagged boulders floating in near-Earth space.",
-    "core_traits": [
-      "Carbonaceous near-Earth asteroid classified as a potentially hazardous asteroid",
-      "Shaped like a spinning top, composed of a loose gravity-bound collection of rock rubble",
-      "Target of NASA's OSIRIS-REx mission, which successfully collected surface samples in 2020 and returned them to Earth in 2023",
-      "Contains primordial organic molecules and water-bearing clay minerals dating back to the birth of the solar system"
-    ],
-    "distractor_pool": [
-      "Asteroid Ryugu",
-      "Asteroid Psyche",
-      "Ceres",
-      "Vesta",
-      "Eros"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "NASA's OSIRIS-REx spacecraft sank into Bennu's surface like a ball in a children's plastic ball pit.",
-        "verdict": "fact",
-        "explanation": "Bennu's surface has almost no cohesion; the probe's sampling arm penetrated deeply into the asteroid with virtually zero resistance.",
-        "fun_fact": "The sample capsule parachuted into the Utah desert on September 24, 2023, delivering 121 grams of pristine asteroid material."
-      },
-      {
-        "claim": "Asteroid Bennu is guaranteed to collide with Earth and destroy civilization in the next 10 years.",
-        "verdict": "myth",
-        "explanation": "Calculations indicate a cumulative 1-in-1,750 chance of impact between 2178 and 2290, with September 24, 2182 being the most significant date.",
-        "fun_fact": "Bennu was named after an ancient Egyptian mythological heron associated with the Sun, creation, and rebirth."
-      }
-    ],
-    "versus_candidates": [
-      "Asteroid Ryugu",
-      "Asteroid Psyche",
-      "Ceres"
-    ]
-  },
-  {
-    "id": "ENT-SPA-044",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Asteroid Ryugu",
-    "language": "en",
-    "aliases": [
-      "162173 Ryugu",
-      "Dragon Palace Asteroid"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A spinning dark top-shaped carbonaceous asteroid covered in rugged black boulders visited by Japan's Hayabusa2.",
-    "core_traits": [
-      "Diamond-shaped near-Earth asteroid explored by Japan's Hayabusa2 spacecraft",
-      "Rubble-pile asteroid rich in carbon, water-bearing minerals, and amino acids",
-      "Hayabusa2 deployed rovers and blasted an artificial impact crater to sample subsurface material in 2019",
-      "Successfully returned 5.4 grams of pristine asteroid material to Earth in December 2020"
-    ],
-    "distractor_pool": [
-      "Asteroid Bennu",
-      "Asteroid Psyche",
-      "Itokawa",
-      "Vesta",
-      "Eros"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Laboratory analysis of Ryugu samples discovered over 20 different amino acids essential for life.",
-        "verdict": "fact",
-        "explanation": "The pristine samples contained glycine, alanine, and other prebiotic organic compounds untouched by Earth's atmosphere.",
-        "fun_fact": "Ryugu was named after the mythical underwater 'Dragon Palace' (Ryugu-jo) from Japanese folklore."
-      },
-      {
-        "claim": "Ryugu is a solid block of pure gold and titanium.",
-        "verdict": "myth",
-        "explanation": "Ryugu is a loose 'rubble pile' held together by weak gravity, with high porosity and composed mostly of carbonaceous rock.",
-        "fun_fact": "Hayabusa2 fired a 2.5 kg copper projectile into Ryugu to create a crater and retrieve unweathered underground rocks."
-      }
-    ],
-    "versus_candidates": [
-      "Asteroid Bennu",
-      "Asteroid Psyche",
-      "Itokawa"
-    ]
-  },
-  {
-    "id": "ENT-SPA-045",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Asteroid Psyche",
-    "language": "en",
-    "aliases": [
-      "16 Psyche",
-      "The Metal Asteroid"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A massive gleaming metallic potato-shaped asteroid composed of exposed iron-nickel metal drifting in the main belt.",
-    "core_traits": [
-      "One of the most massive objects in the main asteroid belt, measuring over 220 km across",
-      "Unique M-type asteroid thought to be the exposed metallic iron-nickel core of a shattered early protoplanet",
-      "Target of NASA's dedicated Psyche spacecraft mission launched in October 2023",
-      "Offers scientists a unique direct window into planetary core formation that is inaccessible inside Earth"
-    ],
-    "distractor_pool": [
-      "Ceres",
-      "Vesta",
-      "Asteroid Bennu",
-      "Asteroid Ryugu",
-      "Pallas"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Psyche contains enough precious metals to make every human on Earth a billionaire if mined.",
-        "verdict": "fact",
-        "explanation": "Its iron, nickel, and gold content has a theoretical commodity value estimated at 10 quintillion dollars, though bringing it to Earth would collapse metal markets.",
-        "fun_fact": "NASA's Psyche spacecraft uses solar electric Hall-effect thrusters and will arrive at the asteroid in 2029."
-      },
-      {
-        "claim": "Psyche was discovered by modern radar satellites in 2020.",
-        "verdict": "myth",
-        "explanation": "Italian astronomer Annibale de Gasparis discovered Psyche with an optical telescope in Naples on March 17, 1852.",
-        "fun_fact": "Psyche is named after the mythological Greek goddess of the soul who married Cupid."
-      }
-    ],
-    "versus_candidates": [
-      "Ceres",
-      "Vesta",
-      "Asteroid Bennu"
-    ]
-  },
-  {
-    "id": "ENT-SPA-046",
+    "id": "ENT-SPA-035",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Meteor",
@@ -2070,7 +1576,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-047",
+    "id": "ENT-SPA-036",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Meteorite",
@@ -2115,7 +1621,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-048",
+    "id": "ENT-SPA-037",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Meteoroid",
@@ -2160,7 +1666,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-049",
+    "id": "ENT-SPA-038",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Shooting Star",
@@ -2205,7 +1711,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-050",
+    "id": "ENT-SPA-039",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Perseid Meteor Shower",
@@ -2250,7 +1756,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-051",
+    "id": "ENT-SPA-040",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Geminid Meteor Shower",
@@ -2294,52 +1800,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-052",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Lunar Regolith",
-    "language": "en",
-    "aliases": [
-      "Moon Dust",
-      "Lunar Soil"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Fine abrasive grey powder covering the lunar surface, marked with deep boot prints of Apollo astronauts.",
-    "core_traits": [
-      "Layer of fine, abrasive dust, broken rock, and impact glass covering the solid bedrock of the Moon",
-      "Formed over billions of years by relentless micrometeorite bombardment pulverizing lunar surface rocks",
-      "Extremely sharp and jagged because there is no wind or water erosion to round its microscopic edges",
-      "Smelled distinctively like spent gunpowder to Apollo astronauts returning into the lunar module"
-    ],
-    "distractor_pool": [
-      "Martian Dust",
-      "Asteroid Regolith",
-      "Volcanic Ash",
-      "Sand",
-      "Cosmic Dust"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Apollo astronauts reported that Moon dust smelled like burnt gunpowder.",
-        "verdict": "fact",
-        "explanation": "When astronauts brought lunar dust into the pressurized lunar module cabin, contact with oxygen triggered an odor resembling burnt gunpowder.",
-        "fun_fact": "Because of electrostatic levitation, tiny grains of lunar dust can float above the Moon's surface during sunrise and sunset."
-      },
-      {
-        "claim": "Lunar dust is soft and smooth like fine beach sand.",
-        "verdict": "myth",
-        "explanation": "Without air or water erosion, lunar dust consists of razor-sharp glass shards that ate through Kevlar spacesuit layers and jammed seals.",
-        "fun_fact": "Lunar regolith contains trapped helium-3 from the solar wind, considered a potential future nuclear fusion fuel."
-      }
-    ],
-    "versus_candidates": [
-      "Moon",
-      "Martian Soil",
-      "Meteorite"
-    ]
-  },
-  {
-    "id": "ENT-SPA-053",
+    "id": "ENT-SPA-041",
     "domain_id": "space_earth",
     "subtopic_id": "solar_system",
     "name": "Rings of Saturn",
@@ -2383,97 +1844,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-054",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Heliopause",
-    "language": "en",
-    "aliases": [
-      "Boundary of the Solar System",
-      "Heliospheric Boundary"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "An invisible cosmic boundary in deep space where the outward rushing solar wind meets the interstellar cold plasma of the galaxy.",
-    "core_traits": [
-      "Outer boundary of the heliosphere where the solar wind's strength is halted by the interstellar medium",
-      "Located roughly 120 astronomical units (18 billion kilometers) from the Sun",
-      "Crossed by NASA's Voyager 1 spacecraft in August 2012 and Voyager 2 in November 2018",
-      "Marks the transition where cosmic ray intensity dramatically spikes and interstellar magnetic fields dominate"
-    ],
-    "distractor_pool": [
-      "Oort Cloud",
-      "Kuiper Belt",
-      "Termination Shock",
-      "Magnetopause",
-      "Interstellar Space"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Voyager 1 officially crossed the heliopause in 2012, becoming the first human-made object to enter interstellar space.",
-        "verdict": "fact",
-        "explanation": "Instruments on Voyager 1 detected a sudden drop in solar wind particles and a dramatic surge in galactic cosmic rays.",
-        "fun_fact": "The heliopause is not a sphere but a teardrop shape carved by the Sun's motion through the interstellar medium."
-      },
-      {
-        "claim": "Crossing the heliopause means a spacecraft has completely exited the Sun's gravitational field.",
-        "verdict": "myth",
-        "explanation": "The Sun's gravity dominates out to the Oort Cloud, thousands of times farther than the heliopause.",
-        "fun_fact": "Outside the heliopause, interstellar gas is significantly denser and colder than the solar wind plasma inside."
-      }
-    ],
-    "versus_candidates": [
-      "Oort Cloud",
-      "Kuiper Belt",
-      "Interstellar Space"
-    ]
-  },
-  {
-    "id": "ENT-SPA-055",
-    "domain_id": "space_earth",
-    "subtopic_id": "solar_system",
-    "name": "Solar Prominence",
-    "language": "en",
-    "aliases": [
-      "Solar Filament",
-      "Coronal Loop"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A gigantic looping arch of glowing red-hot plasma anchored to the Sun's surface, reaching hundreds of thousands of kilometers into space.",
-    "core_traits": [
-      "Large, bright gaseous feature extending outward from the Sun's surface into the corona",
-      "Anchored to the photosphere and held in place by strong magnetic field loops",
-      "Can persist in a stable state for several months or erupt suddenly into a coronal mass ejection",
-      "When viewed against the bright solar disk, it appears as a dark streak known as a solar filament"
-    ],
-    "distractor_pool": [
-      "Solar Flare",
-      "Coronal Mass Ejection",
-      "Sunspot",
-      "Solar Wind",
-      "Aurora Borealis"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A single solar prominence loop can be large enough to comfortably bridge dozens of Earths.",
-        "verdict": "fact",
-        "explanation": "Prominences can stretch over 500,000 kilometers into space, easily spanning dozens of Earth diameters along their arch.",
-        "fun_fact": "The plasma in a prominence is about 100 times cooler and denser than the surrounding superheated coronal gas."
-      },
-      {
-        "claim": "A solar prominence and a solar filament are two completely unrelated phenomena.",
-        "verdict": "myth",
-        "explanation": "They are the exact same physical feature: called a prominence when viewed extending off the edge against dark space, and a filament when seen against the Sun's disk.",
-        "fun_fact": "The Grand Daddy prominence observed in 1946 expanded to over 1.7 million kilometers before dispersing."
-      }
-    ],
-    "versus_candidates": [
-      "Solar Flare",
-      "Coronal Mass Ejection",
-      "Sunspot"
-    ]
-  },
-  {
-    "id": "ENT-SPA-056",
+    "id": "ENT-SPA-042",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Black Hole",
@@ -2518,7 +1889,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-057",
+    "id": "ENT-SPA-043",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Supermassive Black Hole",
@@ -2563,7 +1934,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-058",
+    "id": "ENT-SPA-044",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Sagittarius A*",
@@ -2608,7 +1979,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-059",
+    "id": "ENT-SPA-045",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Event Horizon",
@@ -2653,52 +2024,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-060",
-    "domain_id": "space_earth",
-    "subtopic_id": "deep_space",
-    "name": "Gravitational Singularity",
-    "language": "en",
-    "aliases": [
-      "Spacetime Singularity",
-      "Cosmic Core"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "An infinitely dense conceptual pinpoint at the deepest core of a black hole where the fabric of spacetime curves to infinity.",
-    "core_traits": [
-      "Point of infinite density and zero volume at the very center of a black hole",
-      "Location where classical general relativity breaks down and quantum gravity effects dominate",
-      "Gravitational curvature becomes infinite, causing physical laws as currently understood to cease functioning",
-      "In rotating black holes, it is predicted to form a one-dimensional ring singularity"
-    ],
-    "distractor_pool": [
-      "Event Horizon",
-      "Wormhole",
-      "Accretion Disk",
-      "White Dwarf",
-      "Neutron Star"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A gravitational singularity represents a breakdown in our current mathematical equations rather than an infinite physical object.",
-        "verdict": "fact",
-        "explanation": "Most theoretical physicists agree that singularities signal the need for a unified theory of quantum gravity to replace general relativity at Planck scales.",
-        "fun_fact": "The Big Bang began from an initial cosmic singularity roughly 13.8 billion years ago."
-      },
-      {
-        "claim": "Astronomers have visually seen and photographed the bare singularity inside a black hole.",
-        "verdict": "myth",
-        "explanation": "Singularities are hidden behind event horizons according to the cosmic censorship hypothesis, preventing any light from revealing them.",
-        "fun_fact": "A hypothetical singularity without an event horizon is called a 'naked singularity'."
-      }
-    ],
-    "versus_candidates": [
-      "Event Horizon",
-      "Black Hole",
-      "Wormhole"
-    ]
-  },
-  {
-    "id": "ENT-SPA-061",
+    "id": "ENT-SPA-046",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Wormhole",
@@ -2743,7 +2069,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-062",
+    "id": "ENT-SPA-047",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Supernova",
@@ -2788,52 +2114,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-063",
-    "domain_id": "space_earth",
-    "subtopic_id": "deep_space",
-    "name": "Hypernova",
-    "language": "en",
-    "aliases": [
-      "Superluminous Supernova",
-      "Collapsar"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "An unimaginably violent cosmic detonation of a giant star, blasting relativistic beams of gamma radiation from its spinning poles.",
-    "core_traits": [
-      "Extremely energetic supernova that releases 10 to 100 times more energy than a standard supernova",
-      "Result of the collapse of an exceptionally massive star (over 30 solar masses) with rapid rotation",
-      "Thought to be the primary engine driving long-duration gamma-ray bursts",
-      "Immediately forms a rapidly spinning black hole at its core"
-    ],
-    "distractor_pool": [
-      "Supernova",
-      "Kilonova",
-      "Pulsar",
-      "Quasar",
-      "Magnetar"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A hypernova can blast beams of gamma radiation across billions of light-years that are detectable from Earth.",
-        "verdict": "fact",
-        "explanation": "The collapsar mechanism channels immense energy into narrow relativistic jets that pierce through the star into deep intergalactic space.",
-        "fun_fact": "The term 'hypernova' was coined by astrophysicist Bohdan Paczynski in 1998."
-      },
-      {
-        "claim": "Hypernovae occur every few weeks in our own solar system.",
-        "verdict": "myth",
-        "explanation": "Hypernovae are exceptionally rare across the universe, occurring only once every few hundred thousand years in an average galaxy.",
-        "fun_fact": "Eta Carinae in our galaxy is a hypergiant star considered a prime candidate for a future hypernova."
-      }
-    ],
-    "versus_candidates": [
-      "Supernova",
-      "Gamma-Ray Burst",
-      "Black Hole"
-    ]
-  },
-  {
-    "id": "ENT-SPA-064",
+    "id": "ENT-SPA-048",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Milky Way Galaxy",
@@ -2878,7 +2159,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-065",
+    "id": "ENT-SPA-049",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Andromeda Galaxy",
@@ -2924,7 +2205,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-066",
+    "id": "ENT-SPA-050",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Triangulum Galaxy",
@@ -2970,7 +2251,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-067",
+    "id": "ENT-SPA-051",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Large Magellanic Cloud",
@@ -3015,7 +2296,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-068",
+    "id": "ENT-SPA-052",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Small Magellanic Cloud",
@@ -3060,7 +2341,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-069",
+    "id": "ENT-SPA-053",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Whirlpool Galaxy",
@@ -3106,7 +2387,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-070",
+    "id": "ENT-SPA-054",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Sombrero Galaxy",
@@ -3151,7 +2432,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-071",
+    "id": "ENT-SPA-055",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Nebula",
@@ -3196,7 +2477,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-072",
+    "id": "ENT-SPA-056",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Orion Nebula",
@@ -3242,7 +2523,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-073",
+    "id": "ENT-SPA-057",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Crab Nebula",
@@ -3288,7 +2569,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-074",
+    "id": "ENT-SPA-058",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Eagle Nebula",
@@ -3334,7 +2615,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-075",
+    "id": "ENT-SPA-059",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Ring Nebula",
@@ -3380,7 +2661,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-076",
+    "id": "ENT-SPA-060",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Helix Nebula",
@@ -3426,7 +2707,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-077",
+    "id": "ENT-SPA-061",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Horsehead Nebula",
@@ -3471,7 +2752,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-078",
+    "id": "ENT-SPA-062",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Carina Nebula",
@@ -3517,7 +2798,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-079",
+    "id": "ENT-SPA-063",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Tarantula Nebula",
@@ -3562,7 +2843,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-080",
+    "id": "ENT-SPA-064",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Cat's Eye Nebula",
@@ -3607,7 +2888,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-081",
+    "id": "ENT-SPA-065",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Butterfly Nebula",
@@ -3652,7 +2933,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-082",
+    "id": "ENT-SPA-066",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Pillars of Creation",
@@ -3697,7 +2978,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-083",
+    "id": "ENT-SPA-067",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "White Dwarf",
@@ -3742,7 +3023,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-084",
+    "id": "ENT-SPA-068",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Red Giant",
@@ -3787,7 +3068,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-085",
+    "id": "ENT-SPA-069",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Red Supergiant",
@@ -3832,7 +3113,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-086",
+    "id": "ENT-SPA-070",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Blue Supergiant",
@@ -3877,7 +3158,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-087",
+    "id": "ENT-SPA-071",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Neutron Star",
@@ -3922,7 +3203,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-088",
+    "id": "ENT-SPA-072",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Pulsar",
@@ -3967,187 +3248,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-089",
-    "domain_id": "space_earth",
-    "subtopic_id": "deep_space",
-    "name": "Magnetar",
-    "language": "en",
-    "aliases": [
-      "Magnetic Monster Star"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "An ultra-magnetic neutron star surrounded by distorted quantum vacuum fields, erupting with high-energy gamma-ray starquakes.",
-    "core_traits": [
-      "Type of neutron star possessing an extremely powerful magnetic field up to a quadrillion Gauss",
-      "Has the strongest magnetic fields measured in the universe, a thousand times stronger than typical neutron stars",
-      "Experiences 'starquakes' where its rigid crust cracks, releasing massive blasts of X-rays and gamma rays",
-      "Magnetic field is strong enough to dissolve atoms and wipe credit cards from halfway to the Moon"
-    ],
-    "distractor_pool": [
-      "Pulsar",
-      "Neutron Star",
-      "Black Hole",
-      "Quasar",
-      "Supernova"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A magnetar passing within 1,000 kilometers of Earth would literally dissolve human bodies at an atomic level.",
-        "verdict": "fact",
-        "explanation": "Its magnetic field would distort atomic electron clouds into needle-like cylinders, instantly destroying all molecular chemistry.",
-        "fun_fact": "In December 2004, a giant flare from magnetar SGR 1806-20 (50,000 light-years away) visibly altered Earth's upper ionosphere."
-      },
-      {
-        "claim": "Magnetars live for hundreds of billions of years in an active high-magnetic state.",
-        "verdict": "myth",
-        "explanation": "Their extreme magnetic fields decay rapidly through magnetic field dissipation, lasting only about 10,000 years in peak active phase.",
-        "fun_fact": "Only around 30 confirmed magnetars are known in the entire Milky Way."
-      }
-    ],
-    "versus_candidates": [
-      "Pulsar",
-      "Neutron Star",
-      "Gamma-Ray Burst"
-    ]
-  },
-  {
-    "id": "ENT-SPA-090",
-    "domain_id": "space_earth",
-    "subtopic_id": "deep_space",
-    "name": "Quasar",
-    "language": "en",
-    "aliases": [
-      "Quasi-Stellar Radio Source",
-      "Active Galactic Nucleus"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A blinding beacon at the edge of the observable universe powered by a supermassive black hole consuming gas in a brilliant accretion blaze.",
-    "core_traits": [
-      "Extremely luminous active galactic nucleus powered by a supermassive black hole accreting matter",
-      "Can shine thousands of times brighter than an entire galaxy of hundreds of billions of stars",
-      "Located at immense cosmological distances, seen as they existed in the early universe billions of years ago",
-      "Releases titanic amounts of energy across radio, optical, ultraviolet, and X-ray wavelengths"
-    ],
-    "distractor_pool": [
-      "Pulsar",
-      "Blazar",
-      "Supernova",
-      "Magnetar",
-      "Hypernova"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The most luminous quasars shine brighter than 100 trillion Suns.",
-        "verdict": "fact",
-        "explanation": "Frictional and gravitational energy in their accretion disks converts falling matter into radiant energy with extraordinary efficiency.",
-        "fun_fact": "The word quasar is a contraction of 'quasi-stellar radio source' because they initially looked like stars through optical telescopes."
-      },
-      {
-        "claim": "Quasars are individual giant stars located in our neighboring solar neighborhood.",
-        "verdict": "myth",
-        "explanation": "They are the active cores of ancient baby galaxies billions of light-years away, powered by supermassive black holes.",
-        "fun_fact": "Quasar J0529-4351 discovered in 2024 consumes the mass equivalent of one entire Sun every single day."
-      }
-    ],
-    "versus_candidates": [
-      "Blazar",
-      "Pulsar",
-      "Supermassive Black Hole"
-    ]
-  },
-  {
-    "id": "ENT-SPA-091",
-    "domain_id": "space_earth",
-    "subtopic_id": "deep_space",
-    "name": "Blazar",
-    "language": "en",
-    "aliases": [
-      "Relativistic Jet AGN",
-      "BL Lacertae Object"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A supermassive black hole firing an intense relativistic plasma jet pointed directly down the line of sight toward Earth.",
-    "core_traits": [
-      "Active galactic nucleus with a relativistic jet pointed almost directly toward the observer on Earth",
-      "Special orientation causes relativistic beaming, amplifying perceived brightness and variability",
-      "Displays rapid fluctuations in brightness over days, hours, or minutes",
-      "Source of high-energy cosmic neutrinos and ultra-high-energy gamma rays"
-    ],
-    "distractor_pool": [
-      "Quasar",
-      "Pulsar",
-      "Magnetar",
-      "Supernova",
-      "Gamma-Ray Burst"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The difference between a quasar and a blazar is primarily the angle at which Earth views its jet.",
-        "verdict": "fact",
-        "explanation": "Under the unified model of active galactic nuclei, a blazar is simply a quasar whose particle jet is pointing directly down Earth's throat.",
-        "fun_fact": "In 2017, the IceCube Neutrino Observatory traced a high-energy cosmic neutrino back to blazar TXS 0506+056."
-      },
-      {
-        "claim": "Blazar jets travel at 1,000 times the speed of light.",
-        "verdict": "myth",
-        "explanation": "The jet particles travel at 99.9% the speed of light; optical illusion effects cause 'apparent superluminal motion', but no physical matter exceeds light speed.",
-        "fun_fact": "Blazars are among the most violent particle accelerators in the universe."
-      }
-    ],
-    "versus_candidates": [
-      "Quasar",
-      "Pulsar",
-      "Black Hole"
-    ]
-  },
-  {
-    "id": "ENT-SPA-092",
-    "domain_id": "space_earth",
-    "subtopic_id": "deep_space",
-    "name": "Cosmic Microwave Background",
-    "language": "en",
-    "aliases": [
-      "CMB",
-      "Relic Radiation",
-      "Echo of the Big Bang"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A speckled oval cosmological heat map showing tiny temperature fluctuations across the infant universe 380,000 years after the Big Bang.",
-    "core_traits": [
-      "Electromagnetic radiation left over from the earliest stage of the universe, often called the 'afterglow of the Big Bang'",
-      "Formed during the epoch of recombination roughly 380,000 years after the Big Bang when the universe became transparent",
-      "Permeates all of space uniformly at an average temperature of approximately 2.725 Kelvin (-270.4 degrees Celsius)",
-      "Discovered accidentally in 1965 by Arno Penzias and Robert Wilson, earning them the Nobel Prize"
-    ],
-    "distractor_pool": [
-      "Dark Matter",
-      "Dark Energy",
-      "Cosmic Ray",
-      "Gravitational Wave",
-      "Light-Year"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A small fraction of static 'snow' on old analog television sets was caused by the Cosmic Microwave Background.",
-        "verdict": "fact",
-        "explanation": "Roughly 1% of the static interference on untuned analog rabbit-ear televisions was direct interaction with CMB photons.",
-        "fun_fact": "Tiny temperature variations of one part in 100,000 in the CMB represent the primordial seeds that grew into all galaxies."
-      },
-      {
-        "claim": "The Cosmic Microwave Background originated from stars burning in the Milky Way.",
-        "verdict": "myth",
-        "explanation": "The CMB was created billions of years before any stars, galaxies, or planets existed in the cosmos.",
-        "fun_fact": "Penzias and Wilson initially thought the hiss in their antenna was caused by pigeon droppings inside the horn."
-      }
-    ],
-    "versus_candidates": [
-      "Dark Matter",
-      "Dark Energy",
-      "Gravitational Wave"
-    ]
-  },
-  {
-    "id": "ENT-SPA-093",
+    "id": "ENT-SPA-073",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Dark Matter",
@@ -4192,7 +3293,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-094",
+    "id": "ENT-SPA-074",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Dark Energy",
@@ -4237,7 +3338,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-095",
+    "id": "ENT-SPA-075",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Gravitational Wave",
@@ -4282,7 +3383,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-096",
+    "id": "ENT-SPA-076",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Light-Year",
@@ -4327,52 +3428,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-097",
-    "domain_id": "space_earth",
-    "subtopic_id": "deep_space",
-    "name": "Parsec",
-    "language": "en",
-    "aliases": [
-      "pc",
-      "Parallax Second"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A geometric triangle spanning Earth's orbit and a distant star, demonstrating the tiny parallax angle of one arcsecond.",
-    "core_traits": [
-      "Unit of distance used in astronomy, defined as the distance at which one AU subtends an angle of one arcsecond",
-      "Equivalent to approximately 3.26 light-years or 30.9 trillion kilometers",
-      "Derived from the combination of 'parallax' and 'arcsecond'",
-      "Standard unit preferred by professional astrophysicists and astronomers over light-years"
-    ],
-    "distractor_pool": [
-      "Light-Year",
-      "Astronomical Unit",
-      "Kiloparsec",
-      "Megaparsec",
-      "Fermi"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Han Solo famously bragged that the Millennium Falcon made the Kessel Run in less than twelve parsecs.",
-        "verdict": "fact",
-        "explanation": "The famous Star Wars quote initially sounded like a mistake using distance for time, later retconned as taking a dangerous shorter spatial route.",
-        "fun_fact": "One kiloparsec (kpc) is 1,000 parsecs, and one megaparsec (Mpc) is 1,000,000 parsecs, used for measuring intergalactic distances."
-      },
-      {
-        "claim": "A parsec is shorter than a light-year.",
-        "verdict": "myth",
-        "explanation": "One parsec equals approximately 3.26 light-years, making it more than three times longer than a single light-year.",
-        "fun_fact": "The parallax method to determine stellar distance in parsecs was first successfully achieved by Friedrich Bessel in 1838 for 61 Cygni."
-      }
-    ],
-    "versus_candidates": [
-      "Light-Year",
-      "Astronomical Unit",
-      "Exoplanet"
-    ]
-  },
-  {
-    "id": "ENT-SPA-098",
+    "id": "ENT-SPA-077",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Exoplanet",
@@ -4417,7 +3473,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-099",
+    "id": "ENT-SPA-078",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Super-Earth",
@@ -4461,7 +3517,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-100",
+    "id": "ENT-SPA-079",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Hot Jupiter",
@@ -4506,7 +3562,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-101",
+    "id": "ENT-SPA-080",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Rogue Planet",
@@ -4551,142 +3607,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-102",
-    "domain_id": "space_earth",
-    "subtopic_id": "deep_space",
-    "name": "Brown Dwarf",
-    "language": "en",
-    "aliases": [
-      "Failed Star",
-      "Substellar Object"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A massive glowing magenta sphere with swirling storm stripes, hovering ambiguously between a giant planet and a dim star.",
-    "core_traits": [
-      "Substellar object that is more massive than the heaviest gas giant planets but below the minimum mass needed for hydrogen fusion",
-      "Ranges from roughly 13 to 80 Jupiter masses",
-      "Can fuse deuterium and sometimes lithium during their early lives, but never ignite stable hydrogen fusion",
-      "Often referred to popularly as 'failed stars'"
-    ],
-    "distractor_pool": [
-      "Red Dwarf",
-      "White Dwarf",
-      "Hot Jupiter",
-      "Jupiter",
-      "Neutron Star"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Brown dwarfs are actually reddish-brown or magenta in color rather than chocolate brown.",
-        "verdict": "fact",
-        "explanation": "They emit most of their light in the infrared; their visual appearance ranges from deep red to dark magenta depending on temperature.",
-        "fun_fact": "The Luhman 16 binary system contains two brown dwarfs located just 6.5 light-years from Earth, our third closest star system."
-      },
-      {
-        "claim": "Brown dwarfs are solid rock and iron like planet Earth.",
-        "verdict": "myth",
-        "explanation": "Brown dwarfs are composed almost entirely of hydrogen and helium gas, resembling an oversized Jupiter.",
-        "fun_fact": "Cool brown dwarfs can have atmospheric clouds made of liquid iron, silicate sand, and ruby-sapphire minerals."
-      }
-    ],
-    "versus_candidates": [
-      "Jupiter",
-      "Red Dwarf",
-      "White Dwarf"
-    ]
-  },
-  {
-    "id": "ENT-SPA-103",
-    "domain_id": "space_earth",
-    "subtopic_id": "deep_space",
-    "name": "Accretion Disk",
-    "language": "en",
-    "aliases": [
-      "Circumstellar Disk",
-      "Infall Disk"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A blinding, flattened vortex of glowing gas and dust spiraling at relativistic speeds into the maw of a central black hole.",
-    "core_traits": [
-      "Structure formed by diffuse material in orbital motion around a massive central body (black hole, neutron star, or newborn star)",
-      "Gravitational and frictional forces compress and heat the swirling material to millions of degrees",
-      "Emits powerful electromagnetic radiation, often predominantly in X-ray and ultraviolet wavelengths",
-      "One of the most efficient energy conversion mechanisms in the universe, turning up to 40% of rest mass into radiation"
-    ],
-    "distractor_pool": [
-      "Event Horizon",
-      "Protoplanetary Disk",
-      "Asteroid Belt",
-      "Saturn's Rings",
-      "Singularity"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "An accretion disk around a spinning black hole converts mass into energy vastly more efficiently than nuclear fusion.",
-        "verdict": "fact",
-        "explanation": "Nuclear fusion converts about 0.7% of mass to energy, while a spinning Kerr black hole's accretion disk can convert up to 42% into radiation.",
-        "fun_fact": "The Doppler effect makes the side of the disk rotating toward Earth appear significantly brighter than the side moving away."
-      },
-      {
-        "claim": "Accretion disks only exist around black holes.",
-        "verdict": "myth",
-        "explanation": "Accretion disks also form around white dwarfs in cataclysmic variables, neutron stars, and newborn protostars during planet formation.",
-        "fun_fact": "Magnetic fields in accretion disks twist into coils that launch relativistic plasma jets from their poles."
-      }
-    ],
-    "versus_candidates": [
-      "Event Horizon",
-      "Black Hole",
-      "Saturn's Rings"
-    ]
-  },
-  {
-    "id": "ENT-SPA-104",
-    "domain_id": "space_earth",
-    "subtopic_id": "deep_space",
-    "name": "Cosmic Ray",
-    "language": "en",
-    "aliases": [
-      "Galactic Cosmic Ray",
-      "Cosmic Particle"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Subatomic protons and atomic nuclei blazing through the interstellar void at 99.9% the speed of light.",
-    "core_traits": [
-      "High-energy protons and atomic nuclei that move through space at nearly the speed of light",
-      "Originate from supernovae explosions, active galactic nuclei, and colliding stars across the galaxy",
-      "Collide with Earth's upper atmosphere, producing secondary showers of muons, electrons, and pions",
-      "Pose a major radiation hazard to astronauts in deep space beyond Earth's protective magnetic field"
-    ],
-    "distractor_pool": [
-      "Solar Wind",
-      "Gamma-Ray Burst",
-      "Neutrino",
-      "Gravitational Wave",
-      "Light-Year"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Apollo astronauts reported seeing strange bright flashes of light in their eyes while resting in deep space.",
-        "verdict": "fact",
-        "explanation": "Cosmic rays traveling through their eyeballs passed through the retina, emitting Cherenkov radiation that produced perceived flashes.",
-        "fun_fact": "The 'Oh-My-God particle' detected in Utah in 1991 had so much kinetic energy (3x10^20 eV) that a single subatomic proton packed the punch of a fast-pitch baseball."
-      },
-      {
-        "claim": "Cosmic rays are beams of visible laser light.",
-        "verdict": "myth",
-        "explanation": "Despite the historical name 'ray', they are physical matter - individual atomic nuclei, mostly protons and helium cores.",
-        "fun_fact": "Victor Hess discovered cosmic rays in 1912 by taking electroscopes up in high-altitude hot air balloons, winning the 1936 Nobel Prize."
-      }
-    ],
-    "versus_candidates": [
-      "Solar Wind",
-      "Gamma-Ray Burst",
-      "Cosmic Microwave Background"
-    ]
-  },
-  {
-    "id": "ENT-SPA-105",
+    "id": "ENT-SPA-081",
     "domain_id": "space_earth",
     "subtopic_id": "deep_space",
     "name": "Gamma-Ray Burst",
@@ -4731,7 +3652,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-106",
+    "id": "ENT-SPA-082",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Polaris",
@@ -4777,7 +3698,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-107",
+    "id": "ENT-SPA-083",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Sirius",
@@ -4823,7 +3744,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-108",
+    "id": "ENT-SPA-084",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Betelgeuse",
@@ -4868,7 +3789,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-109",
+    "id": "ENT-SPA-085",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Rigel",
@@ -4913,7 +3834,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-110",
+    "id": "ENT-SPA-086",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Alpha Centauri",
@@ -4958,7 +3879,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-111",
+    "id": "ENT-SPA-087",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Proxima Centauri",
@@ -5003,144 +3924,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-112",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Vega",
-    "language": "en",
-    "aliases": [
-      "Alpha Lyrae",
-      "Harp Star"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A sapphire-white jewel star spinning at breakneck speed, surrounded by a faint glowing dust disk in Lyra.",
-    "core_traits": [
-      "Fifth-brightest star in the night sky and second-brightest in the northern celestial hemisphere",
-      "Located just 25 light-years from Earth in the constellation Lyra",
-      "Serves as one vertex of the prominent northern Summer Triangle alongside Deneb and Altair",
-      "Historically served as the North Pole star around 12,000 BC and will do so again around 13,727 AD"
-    ],
-    "distractor_pool": [
-      "Deneb",
-      "Altair",
-      "Sirius",
-      "Polaris",
-      "Arcturus"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Vega was the first star other than the Sun ever to be photographed by astronomers.",
-        "verdict": "fact",
-        "explanation": "William Cranch Bond and John Adams Whipple photographed Vega on a daguerreotype plate at Harvard Observatory on July 17, 1850.",
-        "fun_fact": "Vega spins so rapidly (once every 12.5 hours) that centrifugal force causes its equator to bulge outward by 19%."
-      },
-      {
-        "claim": "Vega is a dying red supergiant on the verge of collapsing into a black hole.",
-        "verdict": "myth",
-        "explanation": "Vega is a young, healthy blue-white main-sequence star only about 455 million years old.",
-        "fun_fact": "Vega was the baseline reference star historically defined as magnitude 0.0 in photometric systems."
-      }
-    ],
-    "versus_candidates": [
-      "Altair",
-      "Deneb",
-      "Polaris"
-    ]
-  },
-  {
-    "id": "ENT-SPA-113",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Aldebaran",
-    "language": "en",
-    "aliases": [
-      "Alpha Tauri",
-      "The Eye of the Bull",
-      "The Follower"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A piercing fiery orange giant star glowing angrily as the fiery eye of Taurus the Bull in front of the Hyades cluster.",
-    "core_traits": [
-      "Brightest star in the zodiac constellation Taurus, shining with a distinct reddish-orange hue",
-      "Evolved red giant star about 44 times larger than our Sun, located roughly 65 light-years away",
-      "Appears visually at the center of the V-shaped Hyades star cluster, though it is physically twice as close to Earth",
-      "Name comes from the Arabic 'Al Dabaran', meaning 'The Follower', because it follows the Pleiades across the night sky"
-    ],
-    "distractor_pool": [
-      "Betelgeuse",
-      "Antares",
-      "Rigel",
-      "Arcturus",
-      "Sirius"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "NASA's Pioneer 10 spacecraft is currently drifting on a trajectory heading toward Aldebaran.",
-        "verdict": "fact",
-        "explanation": "Pioneer 10 will make its closest approach to Aldebaran in approximately two million years.",
-        "fun_fact": "Aldebaran has a confirmed giant exoplanet, Aldebaran b, which has roughly six times the mass of Jupiter."
-      },
-      {
-        "claim": "Aldebaran is physically bound inside the Hyades open star cluster.",
-        "verdict": "myth",
-        "explanation": "Aldebaran is an accidental foreground star located 65 light-years away, while the Hyades cluster lies 150 light-years behind it.",
-        "fun_fact": "The Moon regularly passes directly in front of Aldebaran in dramatic lunar occultations."
-      }
-    ],
-    "versus_candidates": [
-      "Antares",
-      "Betelgeuse",
-      "Arcturus"
-    ]
-  },
-  {
-    "id": "ENT-SPA-114",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Antares",
-    "language": "en",
-    "aliases": [
-      "Alpha Scorpii",
-      "Heart of the Scorpion",
-      "Rival of Mars"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A blood-red pulsating supergiant star gleaming at the anatomical heart of the curving constellation Scorpius.",
-    "core_traits": [
-      "Luminous red supergiant star marking the heart of the southern constellation Scorpius",
-      "Name translates from Greek as 'Rival to Ares (Mars)' due to its vivid reddish tint competing with the Red Planet",
-      "Colossal star with a radius roughly 680 times that of our Sun, located approximately 550 light-years away",
-      "Binary system accompanied by a faint blue-white companion star (Antares B)"
-    ],
-    "distractor_pool": [
-      "Betelgeuse",
-      "Aldebaran",
-      "Mars",
-      "Arcturus",
-      "Rigel"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Antares was named 'Rival of Mars' because ancient stargazers often confused it with the red planet.",
-        "verdict": "fact",
-        "explanation": "Because both objects sit near the ecliptic and shine with a nearly identical fiery orange-red color, Greeks named it Anti-Ares.",
-        "fun_fact": "If Antares replaced our Sun, its outer atmosphere would engulf the orbits of Mercury, Venus, Earth, and Mars."
-      },
-      {
-        "claim": "Antares is a solid ball of iron located inside our Oort cloud.",
-        "verdict": "myth",
-        "explanation": "Antares is a thermonuclear gas supergiant located hundreds of light-years away in interstellar space.",
-        "fun_fact": "Antares is surrounded by the colorful Rho Ophiuchi cloud complex, one of the most photographed nebulae in the sky."
-      }
-    ],
-    "versus_candidates": [
-      "Betelgeuse",
-      "Mars",
-      "Aldebaran"
-    ]
-  },
-  {
-    "id": "ENT-SPA-115",
+    "id": "ENT-SPA-088",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Arcturus",
@@ -5185,458 +3969,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-116",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Canopus",
-    "language": "en",
-    "aliases": [
-      "Alpha Carinae",
-      "Star of the South"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A brilliant pearl-white supergiant star commanding the southern skies second only to Sirius in nocturnal brightness.",
-    "core_traits": [
-      "Second-brightest star in Earth's entire night sky with an apparent visual magnitude of -0.74",
-      "Brightest star in the southern constellation Carina (The Keel of Argo Navis)",
-      "Luminous bright giant of spectral type A9 located approximately 310 light-years from Earth",
-      "Extensively used by spacecraft attitude control systems as a bright optical navigational guide star"
-    ],
-    "distractor_pool": [
-      "Sirius",
-      "Rigel",
-      "Vega",
-      "Alpha Centauri",
-      "Capella"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Robotic spacecraft like Mariner and Voyager used Canopus to navigate through the solar system.",
-        "verdict": "fact",
-        "explanation": "Canopus's high brightness and location far from the ecliptic plane made it the perfect target for star trackers to orient spacecraft in 3D space.",
-        "fun_fact": "Because it lies deep in the southern sky, Canopus cannot be seen from Europe or the northern United States."
-      },
-      {
-        "claim": "Canopus is dimmer than planet Saturn at all times.",
-        "verdict": "myth",
-        "explanation": "Canopus is so exceptionally luminous (10,000 times brighter than our Sun) that only Sirius outshines it among stars in the night sky.",
-        "fun_fact": "Canopus is named after the legendary ship navigator for King Menelaus of Sparta in Homer's Iliad."
-      }
-    ],
-    "versus_candidates": [
-      "Sirius",
-      "Alpha Centauri",
-      "Rigel"
-    ]
-  },
-  {
-    "id": "ENT-SPA-117",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Spica",
-    "language": "en",
-    "aliases": [
-      "Alpha Virginis",
-      "Ear of Wheat"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A sparkling blue-white binary star shining proudly in the constellation Virgo, located by speeding on from Arcturus.",
-    "core_traits": [
-      "Brightest star in the constellation Virgo and the 16th-brightest star in the night sky",
-      "Spectroscopic binary star system located approximately 250 light-years away from Earth",
-      "Easily located via the mnemonic 'Follow the arc to Arcturus, and speed on to Spica'",
-      "Name comes from the Latin 'Spica virginis', meaning 'Virgo's ear of grain/wheat'"
-    ],
-    "distractor_pool": [
-      "Arcturus",
-      "Vega",
-      "Regulus",
-      "Pollux",
-      "Antares"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Hipparchus discovered the precession of the equinoxes by measuring the motion of Spica in 127 BC.",
-        "verdict": "fact",
-        "explanation": "Comparing Spica's position with records from Timocharis 150 years earlier, Hipparchus proved Earth's rotational axis wobbles.",
-        "fun_fact": "The two stars of Spica orbit each other every 4 days, so close that mutual gravity distorts them into egg shapes."
-      },
-      {
-        "claim": "Spica is a lone red dwarf star.",
-        "verdict": "myth",
-        "explanation": "Spica consists of two massive, hot blue giant stars that burn at temperatures over 20,000 Kelvin.",
-        "fun_fact": "Spica is depicted on the national flag of Brazil, representing the federal state of Para."
-      }
-    ],
-    "versus_candidates": [
-      "Arcturus",
-      "Regulus",
-      "Antares"
-    ]
-  },
-  {
-    "id": "ENT-SPA-118",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Pollux",
-    "language": "en",
-    "aliases": [
-      "Beta Geminorum",
-      "The Immortal Twin"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A warm golden-orange giant star shining brightly beside its twin Castor at the heads of the Gemini constellation.",
-    "core_traits": [
-      "Brightest star in the constellation Gemini, outshining its mythological twin Castor",
-      "Orange giant star located roughly 34 light-years from Earth",
-      "Has an extrasolar planet, Thestias (Pollux b), confirmed in orbit around it in 2006",
-      "Named after Polydeuces, the immortal twin son of Zeus and Leda in Greek mythology"
-    ],
-    "distractor_pool": [
-      "Castor",
-      "Regulus",
-      "Aldebaran",
-      "Capella",
-      "Procyon"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Although designated Beta Geminorum, Pollux is actually brighter than Alpha Geminorum (Castor).",
-        "verdict": "fact",
-        "explanation": "Johann Bayer designated Castor as Alpha and Pollux as Beta in 1603 based on northern position, even though Pollux shines brighter.",
-        "fun_fact": "Pollux is the closest giant star to our Sun."
-      },
-      {
-        "claim": "Pollux and Castor are physically orbiting each other as a binary pair.",
-        "verdict": "myth",
-        "explanation": "They appear close together in the sky by perspective; Pollux is 34 light-years away, while Castor is 51 light-years away.",
-        "fun_fact": "Pollux's planet Thestias is a gas giant with at least twice the mass of Jupiter."
-      }
-    ],
-    "versus_candidates": [
-      "Castor",
-      "Regulus",
-      "Aldebaran"
-    ]
-  },
-  {
-    "id": "ENT-SPA-119",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Castor",
-    "language": "en",
-    "aliases": [
-      "Alpha Geminorum",
-      "The Mortal Twin"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A pure white star system at the head of Gemini, which telescopes reveal to be a sextuple system of six gravitationally bound stars.",
-    "core_traits": [
-      "Second-brightest star in the constellation Gemini, partnering with Pollux",
-      "Fascinating sextuple star system consisting of three pairs of binary stars orbiting a common center of gravity",
-      "Located approximately 51 light-years from Earth",
-      "Radiant point of the prolific Geminid meteor shower in mid-December"
-    ],
-    "distractor_pool": [
-      "Pollux",
-      "Capella",
-      "Procyon",
-      "Vega",
-      "Altair"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Castor is not just one star, but six distinct stars bound together by gravity.",
-        "verdict": "fact",
-        "explanation": "Telescopic and spectroscopic analysis reveals Castor is a sextuple system composed of three pairs of binary stars.",
-        "fun_fact": "In Greek mythology, Castor was the mortal twin, renowned as a master tamer of horses."
-      },
-      {
-        "claim": "Castor was destroyed in a supernova explosion witnessed in 1999.",
-        "verdict": "myth",
-        "explanation": "Castor is completely intact and stable, continuing to shine brightly in Gemini.",
-        "fun_fact": "The Geminid meteor shower appears to radiate directly from the vicinity of Castor."
-      }
-    ],
-    "versus_candidates": [
-      "Pollux",
-      "Geminid Meteor Shower",
-      "Sirius"
-    ]
-  },
-  {
-    "id": "ENT-SPA-120",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Deneb",
-    "language": "en",
-    "aliases": [
-      "Alpha Cygni",
-      "Tail of the Swan"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A majestic white supergiant crowning the northern cross of Cygnus the Swan at the apex of the Summer Triangle.",
-    "core_traits": [
-      "Brightest star in the constellation Cygnus (The Swan) and 19th-brightest star in the night sky",
-      "Colossal white supergiant star located roughly 2,600 light-years away from Earth",
-      "One of the most intrinsically luminous stars visible to the naked eye (roughly 200,000 times brighter than the Sun)",
-      "Forms the Summer Triangle asterism along with Vega and Altair"
-    ],
-    "distractor_pool": [
-      "Vega",
-      "Altair",
-      "Rigel",
-      "Polaris",
-      "Betelgeuse"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Deneb is so intrinsically luminous that if it were as close to Earth as Sirius, it would shine as bright as the full Moon.",
-        "verdict": "fact",
-        "explanation": "Shining from a staggering 2,600 light-years away, Deneb is among the most distant first-magnitude stars visible without a telescope.",
-        "fun_fact": "The name Deneb comes from the Arabic 'Dhanab ad-Dajajah', meaning 'tail of the hen (swan)'."
-      },
-      {
-        "claim": "Deneb will never run out of nuclear fuel.",
-        "verdict": "myth",
-        "explanation": "As a massive supergiant, Deneb burns fuel rapidly and will likely detonate in a supernova within a few million years.",
-        "fun_fact": "Deneb serves as the prototype for a class of pulsating variable stars known as Alpha Cygni variables."
-      }
-    ],
-    "versus_candidates": [
-      "Vega",
-      "Altair",
-      "Rigel"
-    ]
-  },
-  {
-    "id": "ENT-SPA-121",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Altair",
-    "language": "en",
-    "aliases": [
-      "Alpha Aquilae",
-      "The Flying Eagle Star"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A fast-spinning oblate white star flattened at its poles, completing the southern vertex of the Summer Triangle in Aquila.",
-    "core_traits": [
-      "Brightest star in the constellation Aquila (The Eagle) and twelfth-brightest star in the night sky",
-      "White main-sequence star located relatively close to Earth at roughly 16.7 light-years",
-      "Rotates at extreme speed (roughly 286 km/s at the equator), flattening it into an oblate spheroid",
-      "Third corner of the prominent northern Summer Triangle asterism with Vega and Deneb"
-    ],
-    "distractor_pool": [
-      "Vega",
-      "Deneb",
-      "Sirius",
-      "Procyon",
-      "Arcturus"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Altair spins so fast that its equator completes a rotation in roughly 9 hours, causing it to bulge outward like a squashed ball.",
-        "verdict": "fact",
-        "explanation": "Centrifugal force flattens Altair's equatorial radius to 20% wider than its polar radius, verified by optical interferometry in 2007.",
-        "fun_fact": "Its rapid rotation causes gravity darkening, making its equator cooler and dimmer than its poles."
-      },
-      {
-        "claim": "Altair is the mythological name for an ancient Egyptian crocodile.",
-        "verdict": "myth",
-        "explanation": "Altair comes from the Arabic phrase 'an-nasr at-ta'ir', meaning 'the flying eagle'.",
-        "fun_fact": "In the East Asian Qixi/Tanabata legend, Altair represents the Cowherd separated from the Weaver Girl (Vega) by the Milky Way."
-      }
-    ],
-    "versus_candidates": [
-      "Vega",
-      "Deneb",
-      "Sirius"
-    ]
-  },
-  {
-    "id": "ENT-SPA-122",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Bellatrix",
-    "language": "en",
-    "aliases": [
-      "Gamma Orionis",
-      "The Amazon Star"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A hot blue-white giant star gleaming aggressively at the left shoulder of Orion the Hunter opposite Betelgeuse.",
-    "core_traits": [
-      "Third-brightest star in the constellation Orion, marking Orion's right (west) shoulder",
-      "Hot blue-white giant star of spectral type B2 located roughly 250 light-years away",
-      "Name is Latin for 'female warrior' or 'Amazon star'",
-      "Used as a historical standard star for luminosity calibration before being discovered to be slightly variable"
-    ],
-    "distractor_pool": [
-      "Betelgeuse",
-      "Rigel",
-      "Saiph",
-      "Alnilam",
-      "Deneb"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Bellatrix was named after a famous character in the Harry Potter book series.",
-        "verdict": "myth",
-        "explanation": "Author J.K. Rowling named the character Bellatrix Lestrange after the ancient Roman star name, which has existed for thousands of years.",
-        "fun_fact": "Bellatrix has a surface temperature around 22,000 Kelvin, nearly four times hotter than our Sun."
-      },
-      {
-        "claim": "Bellatrix is about six times more massive than our Sun.",
-        "verdict": "fact",
-        "explanation": "With a mass around 8.6 solar masses, it is on the borderline of stars that could collapse into a white dwarf or go supernova.",
-        "fun_fact": "Unlike Betelgeuse which is expanding as a red supergiant, Bellatrix is still a blue giant fusing hydrogen."
-      }
-    ],
-    "versus_candidates": [
-      "Betelgeuse",
-      "Rigel",
-      "Sirius"
-    ]
-  },
-  {
-    "id": "ENT-SPA-123",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "VY Canis Majoris",
-    "language": "en",
-    "aliases": [
-      "VY CMa",
-      "The Hypergiant of Canis Major"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A gargantuan crimson red hypergiant star churning amid a massive expanding cloud of ejected gas and silicate dust.",
-    "core_traits": [
-      "Extreme oxygen-rich red hypergiant star in the constellation Canis Major",
-      "One of the largest known stars by radius, measuring roughly 1,420 times the radius of the Sun",
-      "Located approximately 3,900 light-years away from Earth",
-      "Surrounded by a complex circumstellar envelope created by violent mass-loss eruptions"
-    ],
-    "distractor_pool": [
-      "UY Scuti",
-      "Betelgeuse",
-      "Antares",
-      "Stephenson 2-18",
-      "Sirius"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "If an airplane flew along the equator of VY Canis Majoris at 900 km/h, it would take over 1,100 years to complete one lap.",
-        "verdict": "fact",
-        "explanation": "With a circumference of over 9 billion kilometers, its immense size boggles human comprehension.",
-        "fun_fact": "Light, which circles Earth in 0.13 seconds, takes over 8 hours just to travel around VY Canis Majoris."
-      },
-      {
-        "claim": "VY Canis Majoris is denser than lead throughout its entire body.",
-        "verdict": "myth",
-        "explanation": "Because its mass is spread over an unfathomable volume, its outer atmosphere is extremely rarefied, a billion times less dense than air on Earth.",
-        "fun_fact": "It is shedding mass at a rate of 30 Earth masses every single year."
-      }
-    ],
-    "versus_candidates": [
-      "UY Scuti",
-      "Stephenson 2-18",
-      "Betelgeuse"
-    ]
-  },
-  {
-    "id": "ENT-SPA-124",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "UY Scuti",
-    "language": "en",
-    "aliases": [
-      "Scutum Supergiant",
-      "The King of Stars"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A colossal red supergiant pulsating weakly in the southern constellation Scutum, vast enough to swallow Jupiter's orbit.",
-    "core_traits": [
-      "Extreme red supergiant star located approximately 9,500 light-years away in the constellation Scutum",
-      "Ranked among the largest known stars by radius, historically estimated at up to 1,700 solar radii",
-      "Pulsates semiregularly over a cycle of roughly 740 days",
-      "So vast that its volume could hold approximately 5 billion Suns"
-    ],
-    "distractor_pool": [
-      "VY Canis Majoris",
-      "Stephenson 2-18",
-      "Betelgeuse",
-      "Antares",
-      "Aldebaran"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "UY Scuti could comfortably contain about 5 billion spheres the size of our Sun inside its volume.",
-        "verdict": "fact",
-        "explanation": "Because volume scales with the cube of the radius, a radius of 1,700 solar radii yields over 4.9 billion solar volumes.",
-        "fun_fact": "If placed at the center of our solar system, its surface would extend well past the orbit of Jupiter."
-      },
-      {
-        "claim": "UY Scuti is the heaviest star in the universe by weight.",
-        "verdict": "myth",
-        "explanation": "UY Scuti is huge in physical size, but its mass is only about 7 to 10 solar masses; stars like R136a1 are vastly heavier (over 200 solar masses).",
-        "fun_fact": "Gaia satellite parallax measurements recently revised its distance and radius estimates slightly downward."
-      }
-    ],
-    "versus_candidates": [
-      "Stephenson 2-18",
-      "VY Canis Majoris",
-      "Betelgeuse"
-    ]
-  },
-  {
-    "id": "ENT-SPA-125",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Stephenson 2-18",
-    "language": "en",
-    "aliases": [
-      "St2-18",
-      "RSGC2-18",
-      "The Largest Star"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A mind-boggling red hypergiant star of unimaginable scale, dwarfing all nearby stars in the open cluster Stephenson 2.",
-    "core_traits": [
-      "Red hypergiant star in the constellation Scutum, member of the open cluster Stephenson 2",
-      "Currently recognized as one of the largest stars known in the universe, with an estimated radius of 2,150 solar radii",
-      "Located approximately 19,000 light-years from Earth",
-      "Could hold roughly 10 billion Suns inside its physical boundary"
-    ],
-    "distractor_pool": [
-      "UY Scuti",
-      "VY Canis Majoris",
-      "Betelgeuse",
-      "Antares",
-      "Rigel"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "If placed at the center of our solar system, the surface of Stephenson 2-18 would engulf the orbit of Saturn.",
-        "verdict": "fact",
-        "explanation": "At 2,150 solar radii (nearly 10 astronomical units), its photosphere would extend to roughly 1.5 billion kilometers from the center.",
-        "fun_fact": "A ray of light traveling at 300,000 km/s would take nearly 9 hours to complete a single trip around its equator."
-      },
-      {
-        "claim": "Stephenson 2-18 was discovered by Galileo Galilei in 1609.",
-        "verdict": "myth",
-        "explanation": "It was discovered in 1990 by American astronomer Charles Bruce Stephenson using deep-sky infrared survey data.",
-        "fun_fact": "Its luminosity is estimated at roughly 440,000 times that of the Sun."
-      }
-    ],
-    "versus_candidates": [
-      "UY Scuti",
-      "VY Canis Majoris",
-      "Betelgeuse"
-    ]
-  },
-  {
-    "id": "ENT-SPA-126",
+    "id": "ENT-SPA-089",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Orion",
@@ -5681,7 +4014,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-127",
+    "id": "ENT-SPA-090",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Ursa Major",
@@ -5726,7 +4059,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-128",
+    "id": "ENT-SPA-091",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Ursa Minor",
@@ -5771,7 +4104,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-129",
+    "id": "ENT-SPA-092",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Big Dipper",
@@ -5817,7 +4150,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-130",
+    "id": "ENT-SPA-093",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Cassiopeia",
@@ -5862,7 +4195,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-131",
+    "id": "ENT-SPA-094",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Southern Cross",
@@ -5907,7 +4240,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-132",
+    "id": "ENT-SPA-095",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Canis Major",
@@ -5952,7 +4285,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-133",
+    "id": "ENT-SPA-096",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Cygnus",
@@ -5997,7 +4330,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-134",
+    "id": "ENT-SPA-097",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Scorpius",
@@ -6042,7 +4375,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-135",
+    "id": "ENT-SPA-098",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Taurus",
@@ -6087,7 +4420,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-136",
+    "id": "ENT-SPA-099",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Leo",
@@ -6132,7 +4465,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-137",
+    "id": "ENT-SPA-100",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Pegasus",
@@ -6177,7 +4510,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-138",
+    "id": "ENT-SPA-101",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Andromeda Constellation",
@@ -6222,7 +4555,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-139",
+    "id": "ENT-SPA-102",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Centaurus",
@@ -6267,7 +4600,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-140",
+    "id": "ENT-SPA-103",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Pleiades",
@@ -6313,7 +4646,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-141",
+    "id": "ENT-SPA-104",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Hyades",
@@ -6358,7 +4691,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-142",
+    "id": "ENT-SPA-105",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Zodiac",
@@ -6403,7 +4736,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-143",
+    "id": "ENT-SPA-106",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Sagittarius Constellation",
@@ -6448,7 +4781,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-144",
+    "id": "ENT-SPA-107",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Gemini Constellation",
@@ -6493,7 +4826,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-145",
+    "id": "ENT-SPA-108",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Aries",
@@ -6538,7 +4871,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-146",
+    "id": "ENT-SPA-109",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Aquarius",
@@ -6583,7 +4916,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-147",
+    "id": "ENT-SPA-110",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Pisces",
@@ -6628,7 +4961,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-148",
+    "id": "ENT-SPA-111",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Virgo",
@@ -6673,7 +5006,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-149",
+    "id": "ENT-SPA-112",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Libra",
@@ -6718,7 +5051,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-150",
+    "id": "ENT-SPA-113",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Capricornus",
@@ -6763,144 +5096,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-151",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Fomalhaut",
-    "language": "en",
-    "aliases": [
-      "Alpha Piscis Austrini",
-      "The Solitary Star",
-      "The Eye of Sauron Star"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A lonely white star shining brightly in a dark empty southern sky, surrounded by a razor-sharp ring of cometary debris.",
-    "core_traits": [
-      "Brightest star in the constellation Piscis Austrinus (The Southern Fish) and 18th-brightest star in the sky",
-      "Located approximately 25 light-years from Earth, shining with about 16 times the luminosity of our Sun",
-      "Surrounded by an prominent ring of cold debris dust resembling the 'Eye of Sauron'",
-      "One of the four 'Royal Stars' of ancient Persian astronomy, guarding the southern sky"
-    ],
-    "distractor_pool": [
-      "Vega",
-      "Sirius",
-      "Altair",
-      "Canopus",
-      "Regulus"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Hubble photographs of Fomalhaut's debris ring made it look so much like the 'Eye of Sauron' that the nickname became world-famous.",
-        "verdict": "fact",
-        "explanation": "The sharp, tilted oval dust ring with the bright star offset in the center bears an uncanny resemblance to the fiery eye from Lord of the Rings.",
-        "fun_fact": "In 2023, the James Webb Space Telescope discovered Fomalhaut has three nested asteroid belts, more complex than our own solar system."
-      },
-      {
-        "claim": "Fomalhaut is located inside our solar system between Mars and Jupiter.",
-        "verdict": "myth",
-        "explanation": "Fomalhaut is an independent star located 25 light-years away in interstellar space.",
-        "fun_fact": "The name Fomalhaut comes from the Arabic 'Fam al-Hut', meaning 'mouth of the southern fish'."
-      }
-    ],
-    "versus_candidates": [
-      "Vega",
-      "Sirius",
-      "Regulus"
-    ]
-  },
-  {
-    "id": "ENT-SPA-152",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Regulus",
-    "language": "en",
-    "aliases": [
-      "Alpha Leonis",
-      "The Little King",
-      "Heart of the Lion"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A brilliant blue-white jewel star pulsating at the base of the sickle at the heart of Leo the Lion.",
-    "core_traits": [
-      "Brightest star in the constellation Leo and 21st-brightest star in the entire night sky",
-      "Located roughly 79 light-years from Earth, sitting almost directly on the ecliptic path",
-      "Spins at a blistering speed of 320 km/s, completing a full rotation in just 15.9 hours and bulging heavily at the equator",
-      "Regularly occulted by the Moon and occasionally by planets like Venus and Mercury"
-    ],
-    "distractor_pool": [
-      "Spica",
-      "Pollux",
-      "Aldebaran",
-      "Sirius",
-      "Antares"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Regulus spins so fast that if it spun just 10% faster, centrifugal force would tear the star apart.",
-        "verdict": "fact",
-        "explanation": "Its rotational speed is 86% of the critical breakup velocity, squashing it into an oblate pumpkin shape.",
-        "fun_fact": "The name Regulus was given by Nicolaus Copernicus, translating from Latin as 'prince' or 'little king'."
-      },
-      {
-        "claim": "Regulus is a dead black hole with zero light output.",
-        "verdict": "myth",
-        "explanation": "Regulus is a blazing four-star quadruple system dominated by a blue-white subgiant star 288 times more luminous than our Sun.",
-        "fun_fact": "Because it lies right on the ecliptic, asteroid occultations of Regulus allow astronomers to measure asteroid profiles precisely."
-      }
-    ],
-    "versus_candidates": [
-      "Spica",
-      "Leo",
-      "Aldebaran"
-    ]
-  },
-  {
-    "id": "ENT-SPA-153",
-    "domain_id": "space_earth",
-    "subtopic_id": "constellations_stars",
-    "name": "Barnard's Star",
-    "language": "en",
-    "aliases": [
-      "Barnard's Runaway Star",
-      "GJ 699"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A small, ancient dim red dwarf star streaking across the background star field of Ophiuchus faster than any other star.",
-    "core_traits": [
-      "Very low-mass red dwarf star in the constellation Ophiuchus, located about 5.96 light-years from Earth",
-      "Fourth-closest known individual star to the Sun after the three stars of the Alpha Centauri system",
-      "Holds the record for the highest proper motion of any known star, moving 10.3 arcseconds per year across the sky",
-      "Discovered in 1916 by American astronomer E. E. Barnard"
-    ],
-    "distractor_pool": [
-      "Proxima Centauri",
-      "Sirius",
-      "Alpha Centauri",
-      "Wolf 359",
-      "Lalande 21185"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Barnard's Star moves across Earth's sky so fast that its motion can be spotted in photographs taken just a few years apart.",
-        "verdict": "fact",
-        "explanation": "At 10.3 arcseconds per year, it travels the diameter of the full Moon in roughly 180 years, faster than any other star.",
-        "fun_fact": "Around the year 11,800 AD, Barnard's Star will approach within 3.75 light-years of our Sun, temporarily becoming our closest star."
-      },
-      {
-        "claim": "Barnard's Star is a supermassive giant that shines brighter than the full Moon.",
-        "verdict": "myth",
-        "explanation": "It is a dim red dwarf with only 14% of the Sun's mass and magnitude 9.5, completely invisible to the naked eye.",
-        "fun_fact": "Project Daedalus in the 1970s was a British Interplanetary Society design study for an uncrewed nuclear fusion starship to explore Barnard's Star."
-      }
-    ],
-    "versus_candidates": [
-      "Proxima Centauri",
-      "Alpha Centauri",
-      "Sirius"
-    ]
-  },
-  {
-    "id": "ENT-SPA-154",
+    "id": "ENT-SPA-114",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Summer Triangle",
@@ -6944,7 +5140,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-155",
+    "id": "ENT-SPA-115",
     "domain_id": "space_earth",
     "subtopic_id": "constellations_stars",
     "name": "Orion's Belt",
@@ -6990,7 +5186,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-156",
+    "id": "ENT-SPA-116",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Grand Canyon",
@@ -7035,7 +5231,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-157",
+    "id": "ENT-SPA-117",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Great Barrier Reef",
@@ -7080,7 +5276,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-158",
+    "id": "ENT-SPA-118",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Mount Kilimanjaro",
@@ -7125,7 +5321,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-159",
+    "id": "ENT-SPA-119",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Mount Fuji",
@@ -7170,7 +5366,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-160",
+    "id": "ENT-SPA-120",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Mount Vesuvius",
@@ -7215,7 +5411,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-161",
+    "id": "ENT-SPA-121",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Mount St. Helens",
@@ -7260,7 +5456,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-162",
+    "id": "ENT-SPA-122",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Mount Rainier",
@@ -7306,7 +5502,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-163",
+    "id": "ENT-SPA-123",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Denali",
@@ -7351,7 +5547,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-164",
+    "id": "ENT-SPA-124",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "K2",
@@ -7397,7 +5593,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-165",
+    "id": "ENT-SPA-125",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Matterhorn",
@@ -7443,7 +5639,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-166",
+    "id": "ENT-SPA-126",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Yellowstone Supervolcano",
@@ -7488,7 +5684,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-167",
+    "id": "ENT-SPA-127",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Old Faithful Geyser",
@@ -7533,7 +5729,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-168",
+    "id": "ENT-SPA-128",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Victoria Falls",
@@ -7578,7 +5774,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-169",
+    "id": "ENT-SPA-129",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Niagara Falls",
@@ -7623,7 +5819,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-170",
+    "id": "ENT-SPA-130",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Iguazu Falls",
@@ -7668,7 +5864,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-171",
+    "id": "ENT-SPA-131",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Angel Falls",
@@ -7713,7 +5909,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-172",
+    "id": "ENT-SPA-132",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Yosemite Falls",
@@ -7757,7 +5953,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-173",
+    "id": "ENT-SPA-133",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Amazon River",
@@ -7802,7 +5998,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-174",
+    "id": "ENT-SPA-134",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Nile River",
@@ -7847,7 +6043,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-175",
+    "id": "ENT-SPA-135",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Mississippi River",
@@ -7892,7 +6088,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-176",
+    "id": "ENT-SPA-136",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Yangtze River",
@@ -7937,7 +6133,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-177",
+    "id": "ENT-SPA-137",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Danube River",
@@ -7983,7 +6179,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-178",
+    "id": "ENT-SPA-138",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Ganges River",
@@ -8028,7 +6224,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-179",
+    "id": "ENT-SPA-139",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Colorado River",
@@ -8072,7 +6268,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-180",
+    "id": "ENT-SPA-140",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Mariana Trench",
@@ -8117,7 +6313,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-181",
+    "id": "ENT-SPA-141",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Dead Sea",
@@ -8162,7 +6358,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-182",
+    "id": "ENT-SPA-142",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Great Salt Lake",
@@ -8206,7 +6402,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-183",
+    "id": "ENT-SPA-143",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Lake Baikal",
@@ -8251,7 +6447,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-184",
+    "id": "ENT-SPA-144",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Lake Superior",
@@ -8296,7 +6492,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-185",
+    "id": "ENT-SPA-145",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Lake Victoria",
@@ -8341,7 +6537,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-186",
+    "id": "ENT-SPA-146",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Lake Titicaca",
@@ -8386,7 +6582,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-187",
+    "id": "ENT-SPA-147",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Lake Michigan",
@@ -8430,7 +6626,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-188",
+    "id": "ENT-SPA-148",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Lake Tanganyika",
@@ -8474,7 +6670,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-189",
+    "id": "ENT-SPA-149",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Crater Lake",
@@ -8518,7 +6714,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-190",
+    "id": "ENT-SPA-150",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Loch Ness",
@@ -8563,7 +6759,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-191",
+    "id": "ENT-SPA-151",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Sahara Desert",
@@ -8608,7 +6804,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-192",
+    "id": "ENT-SPA-152",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Gobi Desert",
@@ -8653,7 +6849,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-193",
+    "id": "ENT-SPA-153",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Atacama Desert",
@@ -8698,7 +6894,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-194",
+    "id": "ENT-SPA-154",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Mojave Desert",
@@ -8743,7 +6939,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-195",
+    "id": "ENT-SPA-155",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Death Valley",
@@ -8788,7 +6984,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-196",
+    "id": "ENT-SPA-156",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Namib Desert",
@@ -8833,7 +7029,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-197",
+    "id": "ENT-SPA-157",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Kalahari Desert",
@@ -8878,7 +7074,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-198",
+    "id": "ENT-SPA-158",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Antarctica Ice Sheet",
@@ -8923,7 +7119,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-199",
+    "id": "ENT-SPA-159",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Greenland Ice Sheet",
@@ -8968,7 +7164,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-200",
+    "id": "ENT-SPA-160",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Permafrost",
@@ -9013,7 +7209,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-201",
+    "id": "ENT-SPA-161",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Glacier",
@@ -9058,7 +7254,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-202",
+    "id": "ENT-SPA-162",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Iceberg",
@@ -9103,7 +7299,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-203",
+    "id": "ENT-SPA-163",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Fjord",
@@ -9148,7 +7344,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-204",
+    "id": "ENT-SPA-164",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Geyser",
@@ -9193,7 +7389,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-205",
+    "id": "ENT-SPA-165",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Hot Springs",
@@ -9238,7 +7434,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-206",
+    "id": "ENT-SPA-166",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Mammoth Cave",
@@ -9283,7 +7479,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-207",
+    "id": "ENT-SPA-167",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Waitomo Glowworm Caves",
@@ -9328,7 +7524,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-208",
+    "id": "ENT-SPA-168",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Giant's Causeway",
@@ -9373,7 +7569,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-209",
+    "id": "ENT-SPA-169",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Pamukkale Thermal Terraces",
@@ -9418,7 +7614,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-210",
+    "id": "ENT-SPA-170",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Salar de Uyuni",
@@ -9463,7 +7659,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-211",
+    "id": "ENT-SPA-171",
     "domain_id": "space_earth",
     "subtopic_id": "earth_wonders",
     "name": "Cliffs of Moher",
@@ -9508,7 +7704,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-212",
+    "id": "ENT-SPA-172",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Aurora Borealis",
@@ -9553,7 +7749,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-213",
+    "id": "ENT-SPA-173",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Aurora Australis",
@@ -9598,7 +7794,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-214",
+    "id": "ENT-SPA-174",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Volcano",
@@ -9643,7 +7839,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-215",
+    "id": "ENT-SPA-175",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Caldera",
@@ -9688,7 +7884,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-216",
+    "id": "ENT-SPA-176",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Lava Flow",
@@ -9733,7 +7929,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-217",
+    "id": "ENT-SPA-177",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Magma",
@@ -9778,7 +7974,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-218",
+    "id": "ENT-SPA-178",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Earthquake",
@@ -9823,7 +8019,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-219",
+    "id": "ENT-SPA-179",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Tsunami",
@@ -9868,7 +8064,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-220",
+    "id": "ENT-SPA-180",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Tornado",
@@ -9913,7 +8109,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-221",
+    "id": "ENT-SPA-181",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Waterspout",
@@ -9958,7 +8154,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-222",
+    "id": "ENT-SPA-182",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Hurricane",
@@ -10003,7 +8199,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-223",
+    "id": "ENT-SPA-183",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Typhoon",
@@ -10048,7 +8244,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-224",
+    "id": "ENT-SPA-184",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Cyclone",
@@ -10093,7 +8289,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-225",
+    "id": "ENT-SPA-185",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Monsoon",
@@ -10138,7 +8334,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-226",
+    "id": "ENT-SPA-186",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Blizzard",
@@ -10183,7 +8379,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-227",
+    "id": "ENT-SPA-187",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Avalanche",
@@ -10228,7 +8424,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-228",
+    "id": "ENT-SPA-188",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Lightning",
@@ -10273,7 +8469,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-229",
+    "id": "ENT-SPA-189",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Thunder",
@@ -10318,7 +8514,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-230",
+    "id": "ENT-SPA-190",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Ball Lightning",
@@ -10363,7 +8559,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-231",
+    "id": "ENT-SPA-191",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Rainbow",
@@ -10408,7 +8604,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-232",
+    "id": "ENT-SPA-192",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Double Rainbow",
@@ -10453,7 +8649,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-233",
+    "id": "ENT-SPA-193",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Hailstorm",
@@ -10498,7 +8694,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-234",
+    "id": "ENT-SPA-194",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Sandstorm",
@@ -10543,7 +8739,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-235",
+    "id": "ENT-SPA-195",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Dust Devil",
@@ -10589,7 +8785,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-236",
+    "id": "ENT-SPA-196",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Mirage",
@@ -10634,7 +8830,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-237",
+    "id": "ENT-SPA-197",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Fog",
@@ -10679,7 +8875,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-238",
+    "id": "ENT-SPA-198",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Dew",
@@ -10724,7 +8920,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-239",
+    "id": "ENT-SPA-199",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Frost",
@@ -10769,7 +8965,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-240",
+    "id": "ENT-SPA-200",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Tectonic Plates",
@@ -10814,7 +9010,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-241",
+    "id": "ENT-SPA-201",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Ring of Fire",
@@ -10859,7 +9055,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-242",
+    "id": "ENT-SPA-202",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Continental Drift",
@@ -10904,7 +9100,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-243",
+    "id": "ENT-SPA-203",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Mid-Atlantic Ridge",
@@ -10949,7 +9145,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-244",
+    "id": "ENT-SPA-204",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "San Andreas Fault",
@@ -10994,7 +9190,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-245",
+    "id": "ENT-SPA-205",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Sinkhole",
@@ -11040,7 +9236,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-246",
+    "id": "ENT-SPA-206",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Stalactite",
@@ -11085,7 +9281,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-247",
+    "id": "ENT-SPA-207",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Stalagmite",
@@ -11130,7 +9326,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-248",
+    "id": "ENT-SPA-208",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Sand Dunes",
@@ -11175,7 +9371,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-249",
+    "id": "ENT-SPA-209",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Bioluminescence",
@@ -11220,7 +9416,7 @@
     ]
   },
   {
-    "id": "ENT-SPA-250",
+    "id": "ENT-SPA-210",
     "domain_id": "space_earth",
     "subtopic_id": "natural_phenomena",
     "name": "Hydrothermal Vent",

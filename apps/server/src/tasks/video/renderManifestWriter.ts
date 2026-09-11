@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
-import { nowIso, type Episode, type QuizAssetResolution } from "@studio/shared";
+import { nowIso, type Episode, type QuizAssetResolution, type ResolvedTransitionInstance } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import type { inspectRenderedVideo } from "../../quiz/qa/postRenderQa.js";
 import type { preflightQuizRender } from "../../quiz/qa/preflight.js";
+import type { RenderEngineSnapshot } from "./renderEngineSnapshot.js";
 
 export async function persistVideoRenderArtifacts(options: {
   repository: RepositoryService;
@@ -19,10 +20,12 @@ export async function persistVideoRenderArtifacts(options: {
   selectedBgmTrackId: string | null;
   selectedBgmFilename: string | null;
   assetResolution: QuizAssetResolution | null;
-  completeQuizV2: boolean;
-  preflightAssessment: ReturnType<typeof preflightQuizRender>["assessment"] | null;
+  preflightAssessment: NonNullable<ReturnType<typeof preflightQuizRender>["assessment"]>;
   checkStatus: "passed" | "skipped_fast_mode";
   probe: Awaited<ReturnType<typeof inspectRenderedVideo>>;
+  engineSnapshot?: RenderEngineSnapshot;
+  artifactSha256?: string;
+  transitionInstances?: Record<string, ResolvedTransitionInstance>;
 }): Promise<{ videoPath: string; manifestPath: string }> {
   const {
     repository,
@@ -37,7 +40,6 @@ export async function persistVideoRenderArtifacts(options: {
     renderCanvas,
     fps,
     assetResolution,
-    completeQuizV2,
     preflightAssessment,
     checkStatus,
     probe,
@@ -60,8 +62,8 @@ export async function persistVideoRenderArtifacts(options: {
     episodeId,
     JSON.stringify({
       engine: "hyperframes",
-      quiz_engine_version: completeQuizV2 ? 2 : 1,
-      schema_version: completeQuizV2 ? 2 : 1,
+      quiz_engine_version: 2,
+      schema_version: 2,
       composition: "runtime/hyperframes/" + episode.episode_id + "/index.html",
       source_fingerprints: { composition: sourceFingerprint },
       question_count: episode.quiz_config.question_count,
@@ -75,13 +77,11 @@ export async function persistVideoRenderArtifacts(options: {
       degraded: hasDegradedFallback,
       fallback_tier: hasDegradedFallback ? 3 : undefined,
       degraded_assets: hasDegradedFallback ? degradedAssets.map((a) => a.asset_id) : undefined,
-      preflight: preflightAssessment
-        ? {
-            status: "passed",
-            score: preflightAssessment.score,
-            blockers: preflightAssessment.issues.filter((issue) => issue.severity === "blocker").length,
-          }
-        : { status: "legacy_skipped" },
+      preflight: {
+        status: "passed",
+        score: preflightAssessment.score,
+        blockers: preflightAssessment.issues.filter((issue) => issue.severity === "blocker").length,
+      },
       check: { status: checkStatus },
       render: { status: "passed", output: "quiz-video.mp4" },
       post_render: {
@@ -95,6 +95,9 @@ export async function persistVideoRenderArtifacts(options: {
             r_frame_rate: stream.r_frame_rate,
           })) ?? [],
       },
+      engine_snapshot: options.engineSnapshot ?? undefined,
+      artifact_sha256: options.artifactSha256 ?? undefined,
+      transition_instances: options.transitionInstances ?? undefined,
       generated_at: nowIso(),
     }),
   );

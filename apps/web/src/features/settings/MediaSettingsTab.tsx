@@ -70,6 +70,8 @@ export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onImag
     hasFallbackApiKey,
     savingFallback,
     verifyingFallback,
+    verificationResult,
+    setVerificationResult,
     availableModels,
     saveFallbackSettings,
     clearFallbackKey,
@@ -160,6 +162,8 @@ export function MediaSettingsTab({ appConfig, onVideoSaved, onImageSaved, onImag
         hasFallbackApiKey={hasFallbackApiKey}
         savingFallback={savingFallback}
         verifyingFallback={verifyingFallback}
+        verificationResult={verificationResult}
+        setVerificationResult={setVerificationResult}
         availableModels={availableModels}
         onSaveFallback={saveFallbackSettings}
         onClearFallbackKey={clearFallbackKey}

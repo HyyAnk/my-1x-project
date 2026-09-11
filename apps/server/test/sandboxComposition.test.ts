@@ -5,12 +5,61 @@ import {
   ALL_THINKING_BAR_STYLES,
   BUILT_IN_PRESETS,
   QUIZ_LAYOUTS,
+  computeSandboxPhaseTimeline,
   getQuizPreviewLayoutCapability,
   type QuizPreviewLayoutId,
 } from "@studio/shared";
 import { getQuestionBoxVariant, resolveQuestionBoxVariant } from "../src/quiz/visual/elements/questionBox/registry.js";
 import { getCounterBadgeVariant, resolveCounterBadgeVariant } from "../src/quiz/visual/elements/counterBadge/registry.js";
 import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
+import { SANDBOX_PHASE_BOUNDARIES } from "../src/quiz/render/scene/sandboxSceneStateAdapter.js";
+
+const mockMascotProfile = {
+  id: "mascot_test_123",
+  name: "Robo Fox",
+  description: "Smart orange robot fox",
+  visual_style: "pixar_3d" as const,
+  master_prompt: "cute robo fox",
+  master_image_url: "/api/mascots/mascot_test_123/assets/concept.png",
+  color_theme: "#f97316",
+  actions: {
+    thinking: {
+      action: "thinking" as const,
+      sprite_url: "/api/mascots/mascot_test_123/assets/thinking_sprite.png",
+      frames_count: 6,
+      fps: 12,
+      loop: true,
+      motion_preset: "sway" as const,
+    },
+    celebrate: {
+      action: "celebrate" as const,
+      sprite_url: "/api/mascots/mascot_test_123/assets/celebrate_sprite.png",
+      frames_count: 8,
+      fps: 15,
+      loop: true,
+      motion_preset: "jump" as const,
+    },
+    point: {
+      action: "point" as const,
+      sprite_url: "/api/mascots/mascot_test_123/assets/point_sprite.png",
+      frames_count: 4,
+      fps: 10,
+      loop: true,
+      motion_preset: "point" as const,
+    },
+    wave: {
+      action: "wave" as const,
+      sprite_url: "/api/mascots/mascot_test_123/assets/wave_sprite.png",
+      frames_count: 5,
+      fps: 10,
+      loop: true,
+      motion_preset: "wave" as const,
+    },
+  },
+  assigned_channel_ids: [],
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+};
 
 describe("QuestionBox and CounterBadge Element Registries", () => {
   it("registers all QuestionBox styles", () => {
@@ -148,37 +197,6 @@ describe("buildSandboxComposition Preview Engine", () => {
   });
 
   describe("Mascot rendering in Sandbox", () => {
-    const mockMascotProfile = {
-      id: "mascot_test_123",
-      name: "Robo Fox",
-      description: "Smart orange robot fox",
-      visual_style: "pixar_3d" as const,
-      master_prompt: "cute robo fox",
-      master_image_url: "/api/mascots/mascot_test_123/assets/concept.png",
-      color_theme: "#f97316",
-      actions: {
-        thinking: {
-          action: "thinking" as const,
-          sprite_url: "/api/mascots/mascot_test_123/assets/thinking_sprite.png",
-          frames_count: 6,
-          fps: 12,
-          loop: true,
-          motion_preset: "sway" as const,
-        },
-        celebrate: {
-          action: "celebrate" as const,
-          sprite_url: "/api/mascots/mascot_test_123/assets/celebrate_sprite.png",
-          frames_count: 8,
-          fps: 15,
-          loop: true,
-          motion_preset: "jump" as const,
-        },
-      },
-      assigned_channel_ids: [],
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
     it("renders real mascot with sprite URL and action animation metadata", () => {
       const res = buildSandboxComposition(
         {
@@ -384,5 +402,170 @@ describe("buildSandboxComposition Preview Engine", () => {
         expect(res.html).toContain("fitChoiceGroups()");
       }
     });
+
+    it("renders standardized specimen sample images with explicit aspect ratios and dimensions", () => {
+      // 4:3 Hero Image in media_left_choices_right
+      const mediaLeftRes = buildSandboxComposition({
+        layout_id: "media_left_choices_right",
+        choices: ["Option A", "Option B", "Option C"],
+      });
+      expect(mediaLeftRes.html).toContain("hero-image");
+      expect(mediaLeftRes.html).toContain("4%3A3%20HERO");
+      expect(mediaLeftRes.html).toContain("1080%20%C3%97%20810%20px");
+
+      // 16:9 Hero Banner in mystery_reveal
+      const mysteryRes = buildSandboxComposition({
+        layout_id: "mystery_reveal",
+        choices: ["Option A", "Option B", "Option C"],
+      });
+      expect(mysteryRes.html).toContain("hero-image");
+      expect(mysteryRes.html).toContain("16%3A9%20HERO");
+      expect(mysteryRes.html).toContain("1280%20%C3%97%20720%20px");
+
+      // 1:1 Choice Cards in visual_choices_three
+      const visualRes = buildSandboxComposition({
+        layout_id: "visual_choices_three",
+        choices: ["Apple", "Banana", "Cherry"],
+        question_format: "odd_one_out",
+      });
+      expect(visualRes.html).toContain("CHOICE%20A");
+      expect(visualRes.html).toContain("CHOICE%20B");
+      expect(visualRes.html).toContain("CHOICE%20C");
+      expect(visualRes.html).toContain("640%20%C3%97%20640%20px");
+    });
+  });
+
+  describe("Sandbox Rehearsal Phase Timing & Parity", () => {
+    it("sets --reward-at, --reveal-duration, --timer-duration, and --timer-start matching production pacing", () => {
+      const timeline = computeSandboxPhaseTimeline();
+      const res = buildSandboxComposition({
+        mode: "rehearsal",
+        aspect_ratio: "16:9",
+        choices: ["Red", "Green", "Blue"],
+        correct_choice_index: 0,
+        fact_card_text: "Red has the longest wavelength.",
+      });
+
+      const rewardAtExpected = (timeline.revealStart + 0.8).toFixed(3);
+      expect(res.html).toContain(`--reward-at: ${rewardAtExpected}s;`);
+      expect(res.html).toContain("--reveal-duration: 0.800s;");
+      expect(res.html).toContain(`--timer-duration: ${timeline.revealStart.toFixed(3)}s;`);
+      expect(res.html).toContain("--timer-start: 0s;");
+    });
+
+    it("synchronizes SANDBOX_PHASE_BOUNDARIES with computeSandboxPhaseTimeline", () => {
+      const timeline = computeSandboxPhaseTimeline();
+      expect(SANDBOX_PHASE_BOUNDARIES.choices).toBe(timeline.choicesStart);
+      expect(SANDBOX_PHASE_BOUNDARIES.thinking).toBe(timeline.thinkingStart);
+      expect(SANDBOX_PHASE_BOUNDARIES.reveal).toBe(timeline.revealStart);
+      expect(SANDBOX_PHASE_BOUNDARIES.explain).toBe(timeline.explainStart);
+      expect(timeline.explainStart - timeline.revealStart).toBeCloseTo(0.8, 3);
+    });
+
+    it("renders all mascot state layers with clean transitions across rehearsal timeline", () => {
+      const timeline = computeSandboxPhaseTimeline();
+      const res = buildSandboxComposition(
+        {
+          mode: "rehearsal",
+          aspect_ratio: "16:9",
+          mascot_id: "mascot_test_123",
+          mascot_enabled: true,
+          choices: ["Alpha", "Beta", "Gamma"],
+          correct_choice_index: 0,
+          fact_card_text: "Alpha is the first Greek letter.",
+        },
+        mockMascotProfile,
+      );
+
+      // Verify all canonical state layers are rendered in rehearsal HTML
+      expect(res.html).toContain('class="candy-mascot-container mascot-v2-container mascot-stage');
+      expect(res.html).toContain('data-mascot-phase="choices"');
+      expect(res.html).toContain('data-mascot-phase="thinking"');
+      expect(res.html).toContain('data-mascot-phase="reveal"');
+      expect(res.html).toContain('data-mascot-phase="explain"');
+
+      // Verify phase timestamps and actions
+      expect(res.html).toContain(`--mascot-state-delay:${Number(timeline.choicesStart.toFixed(3))}s`);
+      expect(res.html).toContain(`--mascot-state-delay:${Number(timeline.thinkingStart.toFixed(3))}s`);
+      expect(res.html).toContain(`--mascot-state-delay:${Number(timeline.revealStart.toFixed(3))}s`);
+      expect(res.html).toContain("state-celebrate");
+
+      // Verify explanation mascot transition timestamp matches revealStart + 0.8s
+      const expectedExplainDelay = Number((timeline.revealStart + 0.8).toFixed(3)).toString();
+      expect(res.html).toContain(`--mascot-state-delay:${expectedExplainDelay}s`);
+      expect(res.html).toContain("state-point");
+      expect(res.html).toContain('data-mascot-action="point"');
+      expect(res.html).toContain("/api/mascots/mascot_test_123/assets/point_sprite.png");
+    });
+
+    it("creates appropriate action override in initial state when specifying mascot_action in rehearsal", () => {
+      const timeline = computeSandboxPhaseTimeline();
+      const res = buildSandboxComposition(
+        {
+          mode: "rehearsal",
+          aspect_ratio: "16:9",
+          mascot_id: "mascot_test_123",
+          mascot_enabled: true,
+          mascot_action: "wave",
+          choices: ["Alpha", "Beta", "Gamma"],
+          correct_choice_index: 0,
+        },
+        mockMascotProfile,
+      );
+
+      // Initial state at 0s should be the action override "wave"
+      expect(res.html).toContain("state-wave");
+      expect(res.html).toContain('data-mascot-action="wave"');
+      expect(res.html).toContain("/api/mascots/mascot_test_123/assets/wave_sprite.png");
+      expect(res.html).toContain("--mascot-state-delay:0s");
+
+      // Standard transitions should be preserved for subsequent phases
+      expect(res.html).toContain(`--mascot-state-delay:${Number(timeline.choicesStart.toFixed(3))}s`);
+      expect(res.html).toContain(`--mascot-state-delay:${Number(timeline.thinkingStart.toFixed(3))}s`);
+      expect(res.html).toContain(`--mascot-state-delay:${Number(timeline.revealStart.toFixed(3))}s`);
+      expect(res.html).toContain("state-celebrate");
+      const expectedExplainDelay = Number((timeline.revealStart + 0.8).toFixed(3)).toString();
+      expect(res.html).toContain(`--mascot-state-delay:${expectedExplainDelay}s`);
+      expect(res.html).toContain("state-point");
+    });
+
+    it("targets specific phase when mascot_action is accompanied by mascot_phase", () => {
+      const timeline = computeSandboxPhaseTimeline();
+      const res = buildSandboxComposition(
+        {
+          mode: "rehearsal",
+          aspect_ratio: "16:9",
+          mascot_id: "mascot_test_123",
+          mascot_enabled: true,
+          mascot_action: "wave",
+          mascot_phase: "reveal",
+          choices: ["Alpha", "Beta", "Gamma"],
+          correct_choice_index: 0,
+        },
+        mockMascotProfile,
+      );
+
+      // The reveal phase marker at revealStart should receive the wave action override
+      expect(res.html).toContain(`--mascot-state-delay:${Number(timeline.revealStart.toFixed(3))}s`);
+      expect(res.html).toContain("state-wave");
+      expect(res.html).toContain('data-mascot-action="wave"');
+    });
+
+    it("ensures CSS animation keyframes and fill mode prevent flicker and disappearing frames during seeking", () => {
+      const res = buildSandboxComposition({
+        mode: "rehearsal",
+        aspect_ratio: "16:9",
+        mascot_id: "mascot_test_123",
+        mascot_enabled: true,
+      }, mockMascotProfile);
+
+      // Verify forwards fill mode so state layers stay opacity 0 before delay and hold 100% after duration
+      expect(res.css).toContain("animation: mascot-v2-state-window var(--mascot-state-span, .04s) linear var(--mascot-state-delay, 0s) 1 forwards;");
+
+      // Verify 0% keyframe has opacity 1 so active layer is immediately visible at currentTime = delay
+      expect(res.css).toContain("0%, 99.9% { opacity: 1; }");
+      expect(res.css).toContain("100% { opacity: 0; }");
+    });
   });
 });
+

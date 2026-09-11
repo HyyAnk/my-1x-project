@@ -29,6 +29,25 @@ export function clueDeductionEvidenceStyles(): string {
   justify-content: center;
 }
 
+/* Unified Evidence Viewport: (400, 329, 824, 410) -> local (20, 76, 824, 410) */
+.quiz-frame-unified.layout-clue_deduction .clue-card-stage {
+  left: 20px;
+  top: 76px;
+  width: 824px;
+  height: 410px;
+  right: auto;
+  bottom: auto;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.quiz-frame-unified.layout-clue_deduction .clue-hero-frame {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
 /* Brass Forensic Corner Brackets */
 .layout-clue_deduction .evidence-bracket {
   position: absolute;

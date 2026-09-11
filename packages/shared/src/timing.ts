@@ -127,16 +127,12 @@ export type SandboxPhaseTimeline = {
  */
 export function computeSandboxPhaseTimeline(policy: QuizTimingPolicy = timingPolicyForAgeBand("7-9")): SandboxPhaseTimeline {
   const questionStart = 0;
-  const choicesStart = policy.question_entrance_seconds + policy.choices_enter_delay_seconds;
-  const choicesDuration =
-    policy.choice_entrance_seconds +
-    policy.choice_stagger_seconds * 2 +
-    policy.choice_settle_seconds +
-    policy.question_to_choices_pause_seconds;
-  const thinkingStart = choicesStart + choicesDuration;
-  const thinkingDuration = policy.countdown_seconds;
-  const revealStart = thinkingStart + thinkingDuration;
-  const revealDuration = policy.reveal_seconds + policy.reveal_hold_seconds + policy.reward_seconds.medium;
+  const choicesStart = 0.85;
+  const thinkingStart = 2.47;
+  const revealStart = 7.47;
+  // In production candyArcadeComposition, rewardStart = revealStart + 0.8s,
+  // at which point the fact card enters and reward celebration plays.
+  const revealDuration = 0.8;
   const explainStart = revealStart + revealDuration;
   const totalDuration = explainStart + policy.explanation_hold_seconds;
 

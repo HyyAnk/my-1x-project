@@ -1,18 +1,37 @@
-import React, { useEffect } from "react";
-import { getTransition, injectTransitionStyles } from "@studio/shared";
-import { useTransitionPlayback } from "../hooks/useTransitionPlayback";
-import type { TransitionPreviewPlayerProps } from "../types/transitionPreview.types";
-import { buildTransitionCssVariables } from "../utils/transitionOverlayRenderer";
-import { TransitionOverlay } from "./TransitionOverlay";
-import { TransitionPlaybackControls } from "./TransitionPlaybackControls";
-import { TransitionSceneA } from "./TransitionSceneA";
-import { TransitionSceneB } from "./TransitionSceneB";
+import React, { useState } from "react";
+import type { TransitionPreviewSource, TransitionSelection } from "@studio/shared";
+import type { TransitionAspectRatio } from "../types/transitionPreview.types";
+import { useTransitionCatalog } from "../hooks/useTransitionCatalog";
+import { useTransitionPreview } from "../hooks/useTransitionPreview";
+import { useTransitionTransport } from "../hooks/useTransitionTransport";
+import { TransitionTransport } from "./TransitionTransport";
+import { TransitionTimingPanel } from "./TransitionTimingPanel";
+import { TransitionPreviewStatus } from "./TransitionPreviewStatus";
 
-/**
- * Reusable Transition Preview Player component.
- * Allows interactive previewing, scrubbing, and freeze-frame inspection
- * of intro/outro and scene transitions across 16:9 widescreen and 9:16 vertical reels.
- */
+export type TransitionPreviewPlayerProps = {
+  transitionType: string;
+  durationSeconds?: number;
+  aspectRatio?: TransitionAspectRatio;
+  autoPlay?: boolean;
+  isLooping?: boolean;
+  showControls?: boolean;
+  onComplete?: () => void;
+  className?: string;
+  source?: TransitionPreviewSource;
+  onTransitionChange?: (id: string) => void;
+  onDurationChange?: (duration: number) => void;
+  playTrigger?: number;
+  progress?: number;
+  onProgressChange?: (progress: number) => void;
+  isPlaying?: boolean;
+  onPlayingChange?: (isPlaying: boolean) => void;
+  onLoopingChange?: (isLooping: boolean) => void;
+  onTogglePlay?: () => void;
+  onReplay?: () => void;
+  onToggleLoop?: () => void;
+  themeColors?: { from?: string; to?: string };
+};
+
 export const TransitionPreviewPlayer: React.FC<TransitionPreviewPlayerProps> = ({
   transitionType,
   durationSeconds,
@@ -20,87 +39,133 @@ export const TransitionPreviewPlayer: React.FC<TransitionPreviewPlayerProps> = (
   autoPlay = false,
   isLooping = false,
   showControls = true,
-  themeColors = { from: "#F59E0B", to: "#EF4444" },
   onComplete,
   className = "",
+  source,
+  onDurationChange,
   playTrigger,
-  progress,
-  onProgressChange,
-  isPlaying,
-  onPlayingChange,
-  onLoopingChange,
+  themeColors,
 }) => {
-  // Ensure shared transition motion styles are injected into document head
-  useEffect(() => {
-    injectTransitionStyles();
-  }, []);
+  const [isTimingOpen, setIsTimingOpen] = useState<boolean>(false);
+  const [isInspectNative, setIsInspectNative] = useState<boolean>(false);
 
-  const playback = useTransitionPlayback({
-    durationSeconds,
+  const { catalog, entries } = useTransitionCatalog();
+
+  const selectedDef = entries.find((e) => e.id === transitionType);
+  const effectiveDuration = durationSeconds ?? selectedDef?.defaultDurationSeconds ?? 0.8;
+
+  const defaultSource: TransitionPreviewSource = {
+    kind: "sample",
+    sampleRevision: catalog?.sampleRevision ?? "sample-v1",
+    sandboxInput: {
+      aspect_ratio: "16:9",
+      theme: "candy_arcade",
+      palette_id: "lime",
+    },
+  };
+
+  const effectiveSource = source ?? defaultSource;
+
+  const selection: TransitionSelection = {
+    id: transitionType,
+    durationSeconds: transitionType === "cut" ? 0 : effectiveDuration,
+  };
+
+  const preview = useTransitionPreview({
+    selection,
+    source: effectiveSource,
+    catalogRevision: catalog?.revision,
+  });
+
+  const transport = useTransitionTransport({
+    artifact: preview.artifact,
     autoPlay,
     isLooping,
     onComplete,
     playTrigger,
-    progress,
-    onProgressChange,
-    isPlaying,
-    onPlayingChange,
-    onLoopingChange,
   });
 
-  const transitionDef = getTransition(transitionType);
-  const displayName = transitionDef?.name ?? transitionType.replace(/_/g, " ");
-  const displayTag = transitionDef?.tag;
+  const handleResetDuration = () => {
+    if (selectedDef && onDurationChange) {
+      onDurationChange(selectedDef.defaultDurationSeconds);
+    }
+  };
 
-  // Opacity handling between Outgoing (A) and Incoming (B) scenes
-  const isCrossfade = transitionType === "crossfade";
-  const sceneAOpacity = isCrossfade ? Math.max(0, 1 - playback.progress) : playback.progress < 0.5 ? 1 : 0;
-  const sceneBOpacity = isCrossfade ? Math.min(1, playback.progress) : playback.progress >= 0.5 ? 1 : 0;
-
-  const viewportVariables = buildTransitionCssVariables(durationSeconds, themeColors);
+  const resolvedInst = preview.artifact?.manifest.instances.find((i) => i.id === transitionType);
 
   return (
-    <div className={`transition-preview-player ${className}`} data-aspect-ratio={aspectRatio} data-testid="transition-preview-player">
-      {/* Player Header Bar */}
-      <div className="transition-player-header">
-        <div className="transition-info-group">
-          <span className="transition-player-title">{displayName}</span>
-          {displayTag && <span className="transition-player-tag">{displayTag}</span>}
-        </div>
-        <span className="transition-player-duration">{durationSeconds.toFixed(1)}s duration</span>
-      </div>
-
-      {/* Main Viewport */}
+    <div
+      className={`transition-preview-player ${className}`}
+      data-aspect-ratio={aspectRatio}
+      data-testid="transition-preview-player"
+    >
+      {/* Viewport container */}
       <div
-        className={`transition-viewport aspect-${aspectRatio.replace(":", "-")}`}
-        style={viewportVariables}
+        className={`transition-viewport-wrapper aspect-${aspectRatio.replace(":", "-")} ${
+          isInspectNative ? "inspect-native-mode" : ""
+        }`}
         data-testid="transition-preview-viewport"
+        style={
+          themeColors
+            ? ({
+                "--from": themeColors.from,
+                "--to": themeColors.to,
+              } as React.CSSProperties)
+            : undefined
+        }
       >
-        <TransitionSceneA aspectRatio={aspectRatio} opacity={sceneAOpacity} themeColor={themeColors.from} />
-        <TransitionSceneB aspectRatio={aspectRatio} opacity={sceneBOpacity} themeColor={themeColors.to} />
-        <TransitionOverlay
-          transitionType={transitionType}
-          durationSeconds={durationSeconds}
-          progress={playback.progress}
-          currentTime={playback.currentTime}
-          isPlaying={playback.isPlaying}
-          themeColors={themeColors}
+        {/* Real server-rendered MP4 video */}
+        {preview.artifact?.videoUrl && (
+          <video
+            ref={transport.videoRef}
+            src={preview.artifact.videoUrl}
+            className={`transition-video-element ${
+              !transport.isPlaying && transport.authoritativePngUrl ? "video-paused-behind" : ""
+            }`}
+            playsInline
+            muted
+            data-testid="transition-video"
+          />
+        )}
+
+        {/* Authoritative exact paused frame PNG layer */}
+        {!transport.isPlaying && transport.authoritativePngUrl && (
+          <img
+            src={transport.authoritativePngUrl}
+            className="authoritative-frame-layer"
+            alt={`Authoritative frame ${transport.currentFrameIndex + 1}`}
+            data-testid="authoritative-frame-image"
+          />
+        )}
+
+        {/* Status pill & feedback */}
+        <TransitionPreviewStatus
+          state={preview.state}
+          isStale={preview.isStale}
+          onRetry={preview.retry}
+          isSampleSource={effectiveSource.kind === "sample"}
         />
       </div>
 
-      {/* Playback Controls */}
+      {/* Timing adjustment panel (secondary, collapsible) */}
+      {isTimingOpen && selectedDef && selectedDef.id !== "cut" && (
+        <TransitionTimingPanel
+          definition={selectedDef}
+          currentDurationSeconds={effectiveDuration}
+          effectiveDurationSeconds={resolvedInst?.effectiveDurationSeconds}
+          onDurationChange={(d) => onDurationChange?.(d)}
+          onReset={handleResetDuration}
+        />
+      )}
+
+      {/* Primary transport bar */}
       {showControls && (
-        <TransitionPlaybackControls
-          isPlaying={playback.isPlaying}
-          progress={playback.progress}
-          currentTime={playback.currentTime}
-          durationSeconds={durationSeconds}
-          isLooping={playback.isLooping}
-          onTogglePlay={playback.togglePlay}
-          onReplay={playback.replay}
-          onToggleLoop={playback.toggleLoop}
-          onSeek={playback.seek}
-          onPause={playback.pause}
+        <TransitionTransport
+          transport={transport}
+          onToggleTiming={() => setIsTimingOpen(!isTimingOpen)}
+          isTimingOpen={isTimingOpen}
+          videoUrl={preview.artifact?.videoUrl}
+          onInspectNative={() => setIsInspectNative(!isInspectNative)}
         />
       )}
     </div>

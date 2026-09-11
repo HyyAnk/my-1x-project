@@ -51,7 +51,7 @@ These are responsibilities, not ownership zones or a claim/lease protocol. Exist
 ### Quiz episodes
 
 1. A topic/question-bank confirmation can materialize quiz and director artifacts through the bank bridge. Otherwise the production runner submits `GENERATE_QUIZ` when no quiz exists.
-2. [quizProductionPipelineRunner.ts](../apps/server/src/tasks/pipeline/quizProductionPipelineRunner.ts) chooses the quiz-native path by default. The legacy research/treatment/script/scene path still exists behind `USE_LEGACY_QUIZ_PIPELINE=true`; it is compatibility behavior, not the default design for new work.
+2. [quizProductionPipelineRunner.ts](../apps/server/src/tasks/pipeline/quizProductionPipelineRunner.ts) executes the quiz-native V2 production path. The legacy research/treatment/script/scene pipeline has been retired; production is strictly quiz-native and V2-only, and `USE_LEGACY_QUIZ_PIPELINE` is obsolete and ignored.
 3. [quizV2PipelineRunner.ts](../apps/server/src/tasks/pipeline/quizV2PipelineRunner.ts) ensures quiz/director/asset plans, attempts description generation, resolves assets and synthesizes voice in parallel when both are needed, and compiles the timeline.
 4. [quizPipelineVoiceStep.ts](../apps/server/src/tasks/pipeline/quizPipelineVoiceStep.ts) checks QA and attempts supported repairs. The default loop has three blocker checks with at most two intervening healing rounds, not three repair retries. Remaining blockers raise `QUIZ_QA_BLOCKED`.
 5. Thumbnail generation is attempted after QA. Description and thumbnail errors are caught and logged without failing the pipeline; these calls are still awaited, not detached background jobs.

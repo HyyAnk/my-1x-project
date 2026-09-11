@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { CircleNotch, Eye, EyeSlash, FileText, FloppyDisk, Trash } from "@phosphor-icons/react";
+import { CheckCircle, CircleNotch, Eye, EyeSlash, FileText, FloppyDisk, Trash, XCircle } from "@phosphor-icons/react";
 import type { ImageProviderId } from "@studio/shared";
 import { StatusLine } from "../../../components/AppChrome";
 
@@ -73,7 +73,20 @@ export function ImageProviderSettingsCard({
               : "Custom OpenAI-compatible API"
         }
       />
-      <StatusLine label="API Key status" value={hasImageApiKey ? "Configured" : "Not configured"} />
+      <StatusLine
+        label="API Key status"
+        value={
+          hasImageApiKey ? (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "var(--green)", fontWeight: 700 }}>
+              <CheckCircle weight="fill" size={14} /> Configured & Active
+            </span>
+          ) : (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "var(--muted)", fontWeight: 600 }}>
+              <XCircle size={14} /> Not configured
+            </span>
+          )
+        }
+      />
       {imageBalanceInfo && imageProvider === "gpti2" ? (
         <StatusLine
           label="Available balance"
@@ -136,43 +149,87 @@ export function ImageProviderSettingsCard({
         ) : null}
 
         <label>
-          {imageProvider === "gpti2"
-            ? "gpti2.store API key"
-            : imageProvider === "shopaikey"
-              ? "ShopAiKey API key"
-              : "API Key / Bearer Token"}
-          <div style={{ display: "flex", gap: "6px", alignItems: "center", width: "100%" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span>
+              {imageProvider === "gpti2"
+                ? "gpti2.store API key"
+                : imageProvider === "shopaikey"
+                  ? "ShopAiKey API key"
+                  : "API Key / Bearer Token"}
+            </span>
+            {hasImageApiKey ? (
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  color: "var(--green)",
+                  background: "var(--soft-green)",
+                  padding: "2px 8px",
+                  borderRadius: "999px",
+                }}
+              >
+                <CheckCircle size={13} weight="fill" />
+                Key Saved & Active
+              </span>
+            ) : (
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: "var(--muted)",
+                }}
+              >
+                Not configured
+              </span>
+            )}
+          </div>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", width: "100%" }}>
             <input
               type={showImageKey ? "text" : "password"}
               value={imageApiKey}
               onChange={(event) => setImageApiKey(event.target.value)}
               placeholder={
-                imageProvider === "gpti2"
-                  ? "Paste gpti2.store API key (sk-...)"
-                  : imageProvider === "shopaikey"
-                    ? "Paste ShopAiKey API key (sk-...)"
-                    : "Paste custom API key or Bearer token"
+                hasImageApiKey
+                  ? showImageKey
+                    ? "Stored securely in local settings (enter new key to replace)"
+                    : "•••••••••••••••••••••••••••••••• (Key saved & active)"
+                  : imageProvider === "gpti2"
+                    ? "Paste gpti2.store API key (sk-...)"
+                    : imageProvider === "shopaikey"
+                      ? "Paste ShopAiKey API key (sk-...)"
+                      : "Paste custom API key or Bearer token"
               }
               autoComplete="off"
-              style={{ flex: 1 }}
+              style={{
+                flex: 1,
+                ...(hasImageApiKey && !imageApiKey
+                  ? { borderColor: "color-mix(in srgb, var(--green) 40%, var(--line))" }
+                  : {}),
+              }}
             />
             <button
               type="button"
-              className="quiet-button compact"
+              className="icon-button"
               title={showImageKey ? "Hide key" : "Show key"}
+              aria-label={showImageKey ? "Hide key" : "Show key"}
               onClick={() => setShowImageKey(!showImageKey)}
-              style={{ height: "35px", padding: "0 10px" }}
             >
               {showImageKey ? <EyeSlash size={16} /> : <Eye size={16} />}
             </button>
             {hasImageApiKey || imageApiKey ? (
               <button
                 type="button"
-                className="icon-button danger compact"
+                className="icon-button danger"
                 title="Remove this API Key"
+                aria-label="Remove this API Key"
                 disabled={savingImage}
                 onClick={() => void onClearImageKey()}
-                style={{ height: "35px", width: "35px", minWidth: "35px", borderRadius: "6px" }}
               >
                 <Trash size={16} />
               </button>

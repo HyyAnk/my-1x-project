@@ -77,7 +77,6 @@ export function isBlockingFinding(finding: HyperframesFinding): boolean {
 
 export function hasHyperframesBlockingIssues(report: HyperframesCheckReport | null): boolean {
   if (!report) return false;
-  if (hasHyperframesContrastIssue(report)) return true;
 
   const categories = [report.layout?.findings, report.runtime?.findings, report.motion?.findings, report.lint?.findings];
   return categories.some((findings) => findings?.some((finding) => isBlockingFinding(finding)) ?? false);
@@ -86,14 +85,16 @@ export function hasHyperframesBlockingIssues(report: HyperframesCheckReport | nu
 export function formatHyperframesCheckFailure(report: HyperframesCheckReport | null, fallback?: string): string {
   if (!report) return `HyperFrames composition check failed${fallback ? `: ${fallback}` : ""}`;
 
-  const contrastFindings = actionableContrastFindings(report);
-  const categories = [
-    ["contrast", contrastFindings],
+  const blockingCategories = [
     ["layout", report.layout?.findings?.filter(isBlockingFinding)],
     ["runtime", report.runtime?.findings?.filter(isBlockingFinding)],
     ["motion", report.motion?.findings?.filter(isBlockingFinding)],
     ["lint", report.lint?.findings?.filter(isBlockingFinding)],
   ] as const;
+  const contrastFindings = actionableContrastFindings(report);
+
+  // True blockers take precedence over advisory/diagnostic findings
+  const categories = [...blockingCategories, ["contrast", contrastFindings]] as const;
   const details = categories
     .flatMap(([category, findings]) => (findings ?? []).map((finding) => formatFinding(category, finding)))
     .slice(0, 8);

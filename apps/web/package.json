@@ -9,6 +9,8 @@
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:transitions": "vitest run \"transition\"",
+    "test:transitions:e2e": "playwright test test/transitionPreview.spec.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {

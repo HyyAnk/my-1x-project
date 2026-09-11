@@ -4,7 +4,7 @@ Reviewed against working-tree source on 2026-09-09. See [Architecture](architect
 
 ## Production path
 
-[quizProductionPipelineRunner.ts](../apps/server/src/tasks/pipeline/quizProductionPipelineRunner.ts) owns the outer task and video child. It reuses an existing quiz or submits `GENERATE_QUIZ`. The default path is quiz-native; `USE_LEGACY_QUIZ_PIPELINE=true` still enables the compatibility research/treatment/script/scene path.
+[quizProductionPipelineRunner.ts](../apps/server/src/tasks/pipeline/quizProductionPipelineRunner.ts) owns the outer task and video child. It reuses an existing quiz or submits `GENERATE_QUIZ`. Quiz video production is strictly quiz-native and V2-only; the legacy multi-step narrative pipeline has been retired, and `USE_LEGACY_QUIZ_PIPELINE` is obsolete and ignored.
 
 [directQuizHandler.ts](../apps/server/src/tasks/handlers/directQuizHandler.ts) parses direct quiz output, balances answer positions, and synthesizes compatibility script/visual-bible/scene artifacts. Do not make those compatibility artifacts a second source of truth for quiz questions.
 
@@ -37,6 +37,13 @@ Domain validation is owned by:
 - [Invalidation map](../apps/server/src/quiz/pipeline/invalidation.ts) and [repository invalidation](../apps/server/src/repository/quiz/quizArtifactsInvalidation.ts): upstream changes invalidate derived artifacts.
 
 Read thresholds in source/tests instead of copying numeric rules into new modules.
+
+### Pre-render composition and contrast QA policy
+
+Before rendering MP4 frames, [videoLayoutChecker.ts](../apps/server/src/tasks/video/videoLayoutChecker.ts) performs a preflight layout check on the generated HTML composition bundle.
+
+- **Blocking failures:** True structural and execution defects—such as bounding box collisions/overflows, uncaught runtime script errors, motion glitches, or syntax errors—throw `QUIZ_COMPOSITION_CHECK_FAILED` and abort the render.
+- **Non-blocking contrast advisory:** WCAG AA text and component contrast findings are advisory and strictly non-blocking. When actionable contrast issues are reported, [contrastHealer.ts](../apps/server/src/quiz/qa/contrastHealer.ts) attempts best-effort CSS self-healing injection. If contrast deficits remain after healing or cannot be fully satisfied, verification succeeds (`status: "passed"`) and rendering proceeds without aborting.
 
 ## Persistence and rendering
 

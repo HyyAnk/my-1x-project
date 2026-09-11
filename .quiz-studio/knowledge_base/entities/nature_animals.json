@@ -8233,50 +8233,6 @@
     "id": "ENT-ANI-184",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
-    "name": "Ringed Caecilian",
-    "language": "en",
-    "aliases": [
-      "Siphonops annulatus"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A shiny dark blue-gray legless caecilian with white ringed body grooves burrowing through rich Amazonian soil.",
-    "core_traits": [
-      "Limbless, subterranean tropical amphibian resembling an earthworm or snake",
-      "Body marked by distinct circular rings called annuli, giving it a segmented appearance",
-      "Nearly blind eyes covered by skin and bone, navigating using sensory chemosensory tentacles on its snout",
-      "Practices dermatotrophy: newly hatched young peel and eat the outer skin layer off their mother"
-    ],
-    "distractor_pool": [
-      "Slow Worm",
-      "Green Anaconda",
-      "Axolotl",
-      "Electric Eel",
-      "Earthworm"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Caecilians are a specialized species of burrowing snakes lacking venom.",
-        "verdict": "myth",
-        "explanation": "Caecilians are true amphibians belonging to the order Gymnophiona; they have moist glandular skin and no scales, completely distinct from snakes.",
-        "fun_fact": "Caecilians possess a pair of tiny retractable tentacles between their eyes and nostrils used for tasting scents underground."
-      },
-      {
-        "claim": "Baby caecilians graze on the nutrient-rich skin of their living mother using specialized teeth.",
-        "verdict": "fact",
-        "explanation": "In maternal dermatotrophy, the mother grows a fatty, protein-packed outer skin layer every three days, which hatchlings scrape off and eat.",
-        "fun_fact": "Caecilian skulls are heavily fused into a solid bone battering ram to push through packed subterranean earth."
-      }
-    ],
-    "versus_candidates": [
-      "Slow Worm",
-      "Axolotl",
-      "Green Anaconda"
-    ]
-  },
-  {
-    "id": "ENT-ANI-185",
-    "domain_id": "nature_animals",
-    "subtopic_id": "reptiles_amphibians",
     "name": "Leatherback Sea Turtle",
     "language": "en",
     "aliases": [
@@ -8319,7 +8275,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-186",
+    "id": "ENT-ANI-185",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Alligator Snapping Turtle",
@@ -8364,7 +8320,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-187",
+    "id": "ENT-ANI-186",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Common Box Turtle",
@@ -8409,7 +8365,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-188",
+    "id": "ENT-ANI-187",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Leopard Tortoise",
@@ -8453,7 +8409,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-189",
+    "id": "ENT-ANI-188",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Marine Iguana",
@@ -8498,7 +8454,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-190",
+    "id": "ENT-ANI-189",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Frilled Lizard",
@@ -8544,7 +8500,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-191",
+    "id": "ENT-ANI-190",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Thorny Devil",
@@ -8590,7 +8546,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-192",
+    "id": "ENT-ANI-191",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Basilisk Lizard",
@@ -8636,7 +8592,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-193",
+    "id": "ENT-ANI-192",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Slow Worm",
@@ -8683,7 +8639,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-194",
+    "id": "ENT-ANI-193",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Reticulated Python",
@@ -8727,7 +8683,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-195",
+    "id": "ENT-ANI-194",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Green Tree Python",
@@ -8772,7 +8728,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-196",
+    "id": "ENT-ANI-195",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Inland Taipan",
@@ -8818,7 +8774,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-197",
+    "id": "ENT-ANI-196",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Russell's Viper",
@@ -8863,7 +8819,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-198",
+    "id": "ENT-ANI-197",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Saw-Scaled Viper",
@@ -8908,7 +8864,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-199",
+    "id": "ENT-ANI-198",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Boomslang",
@@ -8953,7 +8909,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-200",
+    "id": "ENT-ANI-199",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Sidewinder",
@@ -8998,7 +8954,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-201",
+    "id": "ENT-ANI-200",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Goliath Frog",
@@ -9042,7 +8998,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-202",
+    "id": "ENT-ANI-201",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Dyeing Poison Dart Frog",
@@ -9087,7 +9043,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-203",
+    "id": "ENT-ANI-202",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Glass Frog",
@@ -9131,7 +9087,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-204",
+    "id": "ENT-ANI-203",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "African Bullfrog",
@@ -9176,7 +9132,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-205",
+    "id": "ENT-ANI-204",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Japanese Giant Salamander",
@@ -9222,146 +9178,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-206",
-    "domain_id": "nature_animals",
-    "subtopic_id": "reptiles_amphibians",
-    "name": "Hellbender",
-    "language": "en",
-    "aliases": [
-      "Cryptobranchus alleganiensis",
-      "Snot Otter",
-      "Mud Devil",
-      "Grampus"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A flat, wrinkled chocolate-brown hellbender salamander crawling between riverbed boulders in a clear Appalachian stream.",
-    "core_traits": [
-      "Largest aquatic salamander native to North America, reaching lengths of up to 70 centimeters (over two feet)",
-      "Extremely flattened head and body with copious wrinkled skin folds along its flanks to absorb oxygen",
-      "Key bioindicator species requiring pristine, highly oxygenated cold running mountain streams",
-      "Nicknamed 'snot otter' due to slippery protective mucus secreted from its skin"
-    ],
-    "distractor_pool": [
-      "Japanese Giant Salamander",
-      "Mudpuppy",
-      "Axolotl",
-      "Olm",
-      "American Bullfrog"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Hellbenders are venomous river monsters that poison fish and fishermen.",
-        "verdict": "myth",
-        "explanation": "Hellbenders are completely harmless to humans and have zero venom; early European settlers feared their bizarre wrinkled appearance.",
-        "fun_fact": "The hellbender's wrinkled frilly skin flaps vastly increase body surface area, allowing it to breathe entirely through cutaneous respiration."
-      },
-      {
-        "claim": "Hellbenders have light-sensitive cells distributed across their entire tail.",
-        "verdict": "fact",
-        "explanation": "Photoreceptors on their tail alert the salamander if its tail is sticking out from under a sheltering river boulder into open sunlight.",
-        "fun_fact": "Male hellbenders protect and care for egg nests beneath flat river rocks for over two months."
-      }
-    ],
-    "versus_candidates": [
-      "Japanese Giant Salamander",
-      "Mudpuppy",
-      "American Bullfrog"
-    ]
-  },
-  {
-    "id": "ENT-ANI-207",
-    "domain_id": "nature_animals",
-    "subtopic_id": "reptiles_amphibians",
-    "name": "Mudpuppy",
-    "language": "en",
-    "aliases": [
-      "Common Mudpuppy",
-      "Necturus maculosus",
-      "Waterdog"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A mottled brown mudpuppy with bushy deep-red external gills walking along a sandy lake bottom under winter ice.",
-    "core_traits": [
-      "Aquatic North American salamander that retains large bushy reddish-maroon external gills throughout its entire life",
-      "Brownish-gray mottled skin with dark spots and a paddle-like swimming tail",
-      "Active throughout the freezing winter, frequently caught by ice fishermen on frozen northern lakes",
-      "Produces a faint dog-like yelping or barking sound when pulled from the water"
-    ],
-    "distractor_pool": [
-      "Axolotl",
-      "Hellbender",
-      "Olm",
-      "Japanese Giant Salamander",
-      "Eastern Newt"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Mudpuppies are venomous animals whose red gills can sting swimmers like jellyfish.",
-        "verdict": "myth",
-        "explanation": "Mudpuppy gills are delicate, blood-rich respiratory organs with zero stinging cells or venom; the animal is completely harmless.",
-        "fun_fact": "In warm, oxygen-poor water, a mudpuppy's gills expand into enormous fluffy bright-red plumes, beating constantly to absorb oxygen."
-      },
-      {
-        "claim": "Mudpuppies remain active and forage on lake bottoms throughout freezing winters underneath solid ice.",
-        "verdict": "fact",
-        "explanation": "Unlike most cold-blooded amphibians that hibernate in mud, mudpuppies hunt crayfish, fish, and insects all winter under thick ice sheets.",
-        "fun_fact": "Early naturalists named the animal 'mudpuppy' based on the myth that it could bark like a puppy."
-      }
-    ],
-    "versus_candidates": [
-      "Axolotl",
-      "Hellbender",
-      "Olm"
-    ]
-  },
-  {
-    "id": "ENT-ANI-208",
-    "domain_id": "nature_animals",
-    "subtopic_id": "reptiles_amphibians",
-    "name": "Olm",
-    "language": "en",
-    "aliases": [
-      "Proteus anguinus",
-      "Human Fish",
-      "Cave Salamander"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A ghostly pale pink olm with translucent skin and feathery red gills undulating through crystal-clear water in a subterranean cave.",
-    "core_traits": [
-      "Cave-dwelling blind salamander endemic to subterranean waters of the Dinaric Alps in southeastern Europe",
-      "Completely blind, with underdeveloped eyes covered over by layers of translucent pale flesh",
-      "Extraordinary sensory adaptations, possessing acute magnetic, acoustic, and electrical detectors",
-      "Can survive for up to ten full years without eating a single bite of food"
-    ],
-    "distractor_pool": [
-      "Axolotl",
-      "Mudpuppy",
-      "Hellbender",
-      "Japanese Giant Salamander",
-      "Electric Eel"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "An olm can survive for up to a decade without consuming any food.",
-        "verdict": "fact",
-        "explanation": "In food-barren cave waters, olms drop their metabolism to nearly zero, re-absorbing their own tissues and surviving up to ten years between meals.",
-        "fun_fact": "Medieval Slovenian villagers believed heavy floods washed baby dragon offspring out of caves when they found washed-up olms."
-      },
-      {
-        "claim": "Because it lives in pitch-black caves, an olm's skin is incapable of tanning or producing pigment.",
-        "verdict": "myth",
-        "explanation": "If an olm is exposed to sunlight for prolonged periods, its pale pink flesh gradually turns dark brown and develops functional melanin pigment.",
-        "fun_fact": "Olms have a documented lifespan exceeding 100 years, making them the longest-lived amphibians on Earth."
-      }
-    ],
-    "versus_candidates": [
-      "Axolotl",
-      "Mudpuppy",
-      "Japanese Giant Salamander"
-    ]
-  },
-  {
-    "id": "ENT-ANI-209",
+    "id": "ENT-ANI-205",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Nile Crocodile",
@@ -9406,7 +9223,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-210",
+    "id": "ENT-ANI-206",
     "domain_id": "nature_animals",
     "subtopic_id": "reptiles_amphibians",
     "name": "Chinese Alligator",
@@ -9451,7 +9268,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-211",
+    "id": "ENT-ANI-207",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Golden Eagle",
@@ -9496,7 +9313,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-212",
+    "id": "ENT-ANI-208",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Harpy Eagle",
@@ -9541,7 +9358,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-213",
+    "id": "ENT-ANI-209",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Western Osprey",
@@ -9588,7 +9405,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-214",
+    "id": "ENT-ANI-210",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "American Kestrel",
@@ -9633,7 +9450,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-215",
+    "id": "ENT-ANI-211",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Red-Tailed Hawk",
@@ -9678,7 +9495,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-216",
+    "id": "ENT-ANI-212",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Common Buzzard",
@@ -9723,7 +9540,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-217",
+    "id": "ENT-ANI-213",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Red Kite",
@@ -9767,7 +9584,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-218",
+    "id": "ENT-ANI-214",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Turkey Vulture",
@@ -9813,7 +9630,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-219",
+    "id": "ENT-ANI-215",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Andean Condor",
@@ -9857,7 +9674,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-220",
+    "id": "ENT-ANI-216",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Snowy Owl",
@@ -9903,7 +9720,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-221",
+    "id": "ENT-ANI-217",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Great Horned Owl",
@@ -9948,7 +9765,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-222",
+    "id": "ENT-ANI-218",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Eastern Screech Owl",
@@ -9992,7 +9809,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-223",
+    "id": "ENT-ANI-219",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Mute Swan",
@@ -10037,7 +9854,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-224",
+    "id": "ENT-ANI-220",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Canada Goose",
@@ -10082,7 +9899,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-225",
+    "id": "ENT-ANI-221",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Mallard Duck",
@@ -10128,7 +9945,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-226",
+    "id": "ENT-ANI-222",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Mandarin Duck",
@@ -10172,7 +9989,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-227",
+    "id": "ENT-ANI-223",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Brown Pelican",
@@ -10216,7 +10033,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-228",
+    "id": "ENT-ANI-224",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Great Blue Heron",
@@ -10261,7 +10078,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-229",
+    "id": "ENT-ANI-225",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Great Egret",
@@ -10308,7 +10125,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-230",
+    "id": "ENT-ANI-226",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "White Stork",
@@ -10352,7 +10169,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-231",
+    "id": "ENT-ANI-227",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Whooping Crane",
@@ -10396,7 +10213,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-232",
+    "id": "ENT-ANI-228",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Scarlet Ibis",
@@ -10440,7 +10257,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-233",
+    "id": "ENT-ANI-229",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Roseate Spoonbill",
@@ -10484,7 +10301,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-234",
+    "id": "ENT-ANI-230",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Wandering Albatross",
@@ -10530,7 +10347,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-235",
+    "id": "ENT-ANI-231",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Northern Fulmar",
@@ -10575,7 +10392,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-236",
+    "id": "ENT-ANI-232",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Herring Gull",
@@ -10621,7 +10438,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-237",
+    "id": "ENT-ANI-233",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Arctic Tern",
@@ -10666,7 +10483,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-238",
+    "id": "ENT-ANI-234",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Atlantic Puffin",
@@ -10712,7 +10529,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-239",
+    "id": "ENT-ANI-235",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "King Penguin",
@@ -10756,7 +10573,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-240",
+    "id": "ENT-ANI-236",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Gentoo Penguin",
@@ -10800,7 +10617,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-241",
+    "id": "ENT-ANI-237",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Macaroni Penguin",
@@ -10845,7 +10662,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-242",
+    "id": "ENT-ANI-238",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Emu",
@@ -10889,7 +10706,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-243",
+    "id": "ENT-ANI-239",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Southern Cassowary",
@@ -10935,7 +10752,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-244",
+    "id": "ENT-ANI-240",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Greater Rhea",
@@ -10981,7 +10798,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-245",
+    "id": "ENT-ANI-241",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Brown Kiwi",
@@ -11026,7 +10843,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-246",
+    "id": "ENT-ANI-242",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Greater Roadrunner",
@@ -11072,7 +10889,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-247",
+    "id": "ENT-ANI-243",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Common Cuckoo",
@@ -11116,7 +10933,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-248",
+    "id": "ENT-ANI-244",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Common Swift",
@@ -11160,7 +10977,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-249",
+    "id": "ENT-ANI-245",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Common Kingfisher",
@@ -11206,7 +11023,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-250",
+    "id": "ENT-ANI-246",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Pileated Woodpecker",
@@ -11251,7 +11068,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-251",
+    "id": "ENT-ANI-247",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Great Hornbill",
@@ -11297,7 +11114,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-252",
+    "id": "ENT-ANI-248",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Sulphur-Crested Cockatoo",
@@ -11341,7 +11158,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-253",
+    "id": "ENT-ANI-249",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Budgerigar",
@@ -11387,7 +11204,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-254",
+    "id": "ENT-ANI-250",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Peach-Faced Lovebird",
@@ -11432,7 +11249,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-255",
+    "id": "ENT-ANI-251",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Mourning Dove",
@@ -11478,7 +11295,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-256",
+    "id": "ENT-ANI-252",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Common Raven",
@@ -11523,7 +11340,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-257",
+    "id": "ENT-ANI-253",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Eurasian Magpie",
@@ -11568,7 +11385,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-258",
+    "id": "ENT-ANI-254",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Blue Jay",
@@ -11612,7 +11429,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-259",
+    "id": "ENT-ANI-255",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Northern Cardinal",
@@ -11657,7 +11474,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-260",
+    "id": "ENT-ANI-256",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "American Robin",
@@ -11702,7 +11519,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-261",
+    "id": "ENT-ANI-257",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Bumblebee",
@@ -11748,7 +11565,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-262",
+    "id": "ENT-ANI-258",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "European Hornet",
@@ -11792,7 +11609,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-263",
+    "id": "ENT-ANI-259",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Yellowjacket Wasp",
@@ -11837,7 +11654,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-264",
+    "id": "ENT-ANI-260",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Black Carpenter Ant",
@@ -11881,7 +11698,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-265",
+    "id": "ENT-ANI-261",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Army Ant",
@@ -11926,7 +11743,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-266",
+    "id": "ENT-ANI-262",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Red Imported Fire Ant",
@@ -11972,7 +11789,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-267",
+    "id": "ENT-ANI-263",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Bullet Ant",
@@ -12018,7 +11835,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-268",
+    "id": "ENT-ANI-264",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Subterranean Termite",
@@ -12063,7 +11880,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-269",
+    "id": "ENT-ANI-265",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Eastern Tiger Swallowtail",
@@ -12107,7 +11924,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-270",
+    "id": "ENT-ANI-266",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Blue Morpho Butterfly",
@@ -12152,7 +11969,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-271",
+    "id": "ENT-ANI-267",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Atlas Moth",
@@ -12197,7 +12014,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-272",
+    "id": "ENT-ANI-268",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Luna Moth",
@@ -12242,7 +12059,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-273",
+    "id": "ENT-ANI-269",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Domestic Silk Moth",
@@ -12287,7 +12104,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-274",
+    "id": "ENT-ANI-270",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Giant Walkingstick",
@@ -12333,7 +12150,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-275",
+    "id": "ENT-ANI-271",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Malayan Leaf Insect",
@@ -12378,7 +12195,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-276",
+    "id": "ENT-ANI-272",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Migratory Locust",
@@ -12423,7 +12240,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-277",
+    "id": "ENT-ANI-273",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "House Cricket",
@@ -12467,7 +12284,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-278",
+    "id": "ENT-ANI-274",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "True Katydid",
@@ -12513,7 +12330,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-279",
+    "id": "ENT-ANI-275",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Periodic Cicada",
@@ -12559,7 +12376,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-280",
+    "id": "ENT-ANI-276",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Common Green Darner",
@@ -12604,7 +12421,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-281",
+    "id": "ENT-ANI-277",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Ebony Jewelwing",
@@ -12649,7 +12466,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-282",
+    "id": "ENT-ANI-278",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Burrowing Mayfly",
@@ -12695,7 +12512,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-283",
+    "id": "ENT-ANI-279",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Seven-Spotted Ladybug",
@@ -12740,7 +12557,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-284",
+    "id": "ENT-ANI-280",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Dung Beetle",
@@ -12786,7 +12603,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-285",
+    "id": "ENT-ANI-281",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Japanese Rhinoceros Beetle",
@@ -12832,7 +12649,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-286",
+    "id": "ENT-ANI-282",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Hercules Beetle",
@@ -12876,7 +12693,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-287",
+    "id": "ENT-ANI-283",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "European Stag Beetle",
@@ -12920,7 +12737,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-288",
+    "id": "ENT-ANI-284",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Sacred Scarab Beetle",
@@ -12965,7 +12782,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-289",
+    "id": "ENT-ANI-285",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Boll Weevil",
@@ -13010,141 +12827,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-290",
-    "domain_id": "nature_animals",
-    "subtopic_id": "insects",
-    "name": "Cat Flea",
-    "language": "en",
-    "aliases": [
-      "Ctenocephalides felis"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A tiny laterally flattened reddish-brown flea with backward-facing bristles jumping through pet fur under high magnification.",
-    "core_traits": [
-      "Wingless parasitic insect that feeds exclusively on the blood of mammals and birds",
-      "Laterally flattened body like a coin, allowing it to glide effortlessly between dense fur hairs",
-      "Covered in backward-pointing spines and combs (ctenidia) that lock firmly into animal fur",
-      "Possesses specialized rubber-like resilin protein in its hind legs enabling spectacular leaps"
-    ],
-    "distractor_pool": [
-      "Blacklegged Deer Tick",
-      "Yellow Fever Mosquito",
-      "Bedbug",
-      "Housefly",
-      "Boll Weevil"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Fleas jump using a biological rubber catapult system made of the protein resilin.",
-        "verdict": "fact",
-        "explanation": "Fleas store elastic tension in pads of resilin protein (which returns 97% of stored energy) to launch jumps over 150 times their body height.",
-        "fun_fact": "If a human had the jumping ability of a flea relative to size, they could leap over the Eiffel Tower."
-      },
-      {
-        "claim": "The cat flea lives and feeds exclusively on cats and will never bite dogs or humans.",
-        "verdict": "myth",
-        "explanation": "Despite its name, the cat flea is the primary flea found on domestic dogs, domestic cats, and humans worldwide.",
-        "fun_fact": "A female flea can consume 15 times her body weight in blood each day, laying up to 50 eggs daily."
-      }
-    ],
-    "versus_candidates": [
-      "Blacklegged Deer Tick",
-      "Yellow Fever Mosquito",
-      "Bedbug"
-    ]
-  },
-  {
-    "id": "ENT-ANI-291",
-    "domain_id": "nature_animals",
-    "subtopic_id": "insects",
-    "name": "Blacklegged Deer Tick",
-    "language": "en",
-    "aliases": [
-      "Ixodes scapularis",
-      "Bear Tick"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A tiny dark-legged deer tick questing on the tip of a tall blade of grass with its front legs outstretched.",
-    "core_traits": [
-      "Parasitic blood-feeding arachnid infamous as the primary vector of Lyme disease (Borrelia burgdorferi)",
-      "Performs 'questing': climbs to the tips of tall grass and weeds with front legs outstretched to grab passing hosts",
-      "Possesses a barbed, harpoon-like feeding tube called a hypostome that anchors securely into skin",
-      "Body can expand to over 100 times its original unfed weight as it gorges on host blood"
-    ],
-    "distractor_pool": [
-      "Cat Flea",
-      "Yellow Fever Mosquito",
-      "Bedbug",
-      "Brown Recluse Spider",
-      "Horsefly"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Ticks drop out of tall oak and pine trees onto the heads of passing hikers.",
-        "verdict": "myth",
-        "explanation": "Ticks do not climb trees or jump; they wait on grass blades barely ankle to knee high ('questing') and brush onto passing legs.",
-        "fun_fact": "Tick saliva contains natural painkillers and anticoagulants so the host never feels the bite occur."
-      },
-      {
-        "claim": "An engorged female deer tick can expand its body volume by hundreds of times.",
-        "verdict": "fact",
-        "explanation": "Specialized expandable folded cuticle stretches like a water balloon as the female drinks blood for up to seven days, ballooning into a gray sphere.",
-        "fun_fact": "Biologically, ticks are not insects; as arachnids, adult ticks have eight legs and no antennae."
-      }
-    ],
-    "versus_candidates": [
-      "Cat Flea",
-      "Yellow Fever Mosquito",
-      "Virginia Opossum"
-    ]
-  },
-  {
-    "id": "ENT-ANI-292",
-    "domain_id": "nature_animals",
-    "subtopic_id": "insects",
-    "name": "Yellow Fever Mosquito",
-    "language": "en",
-    "aliases": [
-      "Aedes aegypti",
-      "Tiger Mosquito"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A slender black mosquito with brilliant white lyre-shaped thoracic markings piercing human skin with its proboscis.",
-    "core_traits": [
-      "Notorious tropical mosquito recognized by white lyre-shaped markings on its thorax and banded legs",
-      "Primary global vector of deadly viral diseases including yellow fever, dengue fever, Zika, and chikungunya",
-      "Prefers biting during daylight hours, especially in early morning and late afternoon",
-      "Only females feed on blood, requiring iron and protein to develop their eggs"
-    ],
-    "distractor_pool": [
-      "Cat Flea",
-      "Blacklegged Deer Tick",
-      "Housefly",
-      "Horsefly",
-      "Common Green Darner"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Both male and female mosquitoes drink blood from humans and animals.",
-        "verdict": "myth",
-        "explanation": "Male mosquitoes have bushy antennae and feed exclusively on plant nectar and sap; only females bite to obtain protein needed for egg production.",
-        "fun_fact": "Mosquitoes are the deadliest animals on Earth to humans, causing over 700,000 deaths annually through disease transmission."
-      },
-      {
-        "claim": "Mosquitoes are attracted to human breath and can detect carbon dioxide from over 50 meters away.",
-        "verdict": "fact",
-        "explanation": "They use specialized maxillary palp sensory organs to detect plumes of exhaled carbon dioxide, body heat, and skin lactic acid.",
-        "fun_fact": "Aedes aegypti eggs can dry out completely and remain viable on dry surfaces for up to a year, hatching when submerged in water."
-      }
-    ],
-    "versus_candidates": [
-      "Common Green Darner",
-      "Housefly",
-      "Bat"
-    ]
-  },
-  {
-    "id": "ENT-ANI-293",
+    "id": "ENT-ANI-286",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Housefly",
@@ -13189,7 +12872,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-294",
+    "id": "ENT-ANI-287",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Horsefly",
@@ -13235,7 +12918,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-295",
+    "id": "ENT-ANI-288",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Common Fruit Fly",
@@ -13280,7 +12963,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-296",
+    "id": "ENT-ANI-289",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Green Peach Aphid",
@@ -13326,7 +13009,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-297",
+    "id": "ENT-ANI-290",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Brown Marmorated Stink Bug",
@@ -13372,7 +13055,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-298",
+    "id": "ENT-ANI-291",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Common Water Strider",
@@ -13419,7 +13102,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-299",
+    "id": "ENT-ANI-292",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Arizona Bark Scorpion",
@@ -13463,7 +13146,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-300",
+    "id": "ENT-ANI-293",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Giant Vinegaroon",
@@ -13509,7 +13192,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-301",
+    "id": "ENT-ANI-294",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Camel Spider",
@@ -13555,7 +13238,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-302",
+    "id": "ENT-ANI-295",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Goliath Birdeater Tarantula",
@@ -13600,7 +13283,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-303",
+    "id": "ENT-ANI-296",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Brown Recluse Spider",
@@ -13646,7 +13329,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-304",
+    "id": "ENT-ANI-297",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Carolina Wolf Spider",
@@ -13690,7 +13373,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-305",
+    "id": "ENT-ANI-298",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Bold Jumping Spider",
@@ -13735,7 +13418,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-306",
+    "id": "ENT-ANI-299",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "California Trapdoor Spider",
@@ -13779,7 +13462,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-307",
+    "id": "ENT-ANI-300",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Golden Silk Orb Weaver",
@@ -13825,7 +13508,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-308",
+    "id": "ENT-ANI-301",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Flower Crab Spider",
@@ -13870,7 +13553,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-309",
+    "id": "ENT-ANI-302",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Daddy Longlegs",
@@ -13916,7 +13599,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-310",
+    "id": "ENT-ANI-303",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Giant Desert Centipede",
@@ -13962,7 +13645,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-311",
+    "id": "ENT-ANI-304",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Giant African Millipede",
@@ -14007,7 +13690,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-312",
+    "id": "ENT-ANI-305",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Trap-Jaw Ant",
@@ -14052,7 +13735,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-313",
+    "id": "ENT-ANI-306",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Leafcutter Ant",
@@ -14097,7 +13780,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-314",
+    "id": "ENT-ANI-307",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Tarantula Hawk Wasp",
@@ -14142,7 +13825,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-315",
+    "id": "ENT-ANI-308",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Bombardier Beetle",
@@ -14187,7 +13870,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-316",
+    "id": "ENT-ANI-309",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Paper Wasp",
@@ -14232,7 +13915,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-317",
+    "id": "ENT-ANI-310",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "House Centipede",
@@ -14277,7 +13960,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-318",
+    "id": "ENT-ANI-311",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Sydney Funnel-Web Spider",
@@ -14322,7 +14005,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-319",
+    "id": "ENT-ANI-312",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Brazilian Wandering Spider",
@@ -14368,7 +14051,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-320",
+    "id": "ENT-ANI-313",
     "domain_id": "nature_animals",
     "subtopic_id": "insects",
     "name": "Wheel Bug",
@@ -14413,7 +14096,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-321",
+    "id": "ENT-ANI-314",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "House Sparrow",
@@ -14458,7 +14141,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-322",
+    "id": "ENT-ANI-315",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "European Starling",
@@ -14503,7 +14186,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-323",
+    "id": "ENT-ANI-316",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Barn Swallow",
@@ -14548,7 +14231,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-324",
+    "id": "ENT-ANI-317",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Goldfinch",
@@ -14593,7 +14276,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-325",
+    "id": "ENT-ANI-318",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Canary",
@@ -14638,7 +14321,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-326",
+    "id": "ENT-ANI-319",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Laughing Kookaburra",
@@ -14683,7 +14366,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-327",
+    "id": "ENT-ANI-320",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Shoebill",
@@ -14729,7 +14412,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-328",
+    "id": "ENT-ANI-321",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Secretarybird",
@@ -14774,7 +14457,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-329",
+    "id": "ENT-ANI-322",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Black Swan",
@@ -14818,7 +14501,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-330",
+    "id": "ENT-ANI-323",
     "domain_id": "nature_animals",
     "subtopic_id": "birds",
     "name": "Helmeted Guineafowl",
@@ -14863,7 +14546,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-331",
+    "id": "ENT-ANI-324",
     "domain_id": "nature_animals",
     "subtopic_id": "marine_life",
     "name": "Spotted Eagle Ray",
@@ -14908,7 +14591,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-332",
+    "id": "ENT-ANI-325",
     "domain_id": "nature_animals",
     "subtopic_id": "marine_life",
     "name": "Japanese Spider Crab",
@@ -14953,7 +14636,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-333",
+    "id": "ENT-ANI-326",
     "domain_id": "nature_animals",
     "subtopic_id": "marine_life",
     "name": "Peacock Mantis Shrimp",
@@ -14998,7 +14681,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-334",
+    "id": "ENT-ANI-327",
     "domain_id": "nature_animals",
     "subtopic_id": "marine_life",
     "name": "Spiny Lobster",
@@ -15044,7 +14727,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-335",
+    "id": "ENT-ANI-328",
     "domain_id": "nature_animals",
     "subtopic_id": "marine_life",
     "name": "Blobfish",
@@ -15089,7 +14772,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-336",
+    "id": "ENT-ANI-329",
     "domain_id": "nature_animals",
     "subtopic_id": "marine_life",
     "name": "Blue Dragon Sea Slug",
@@ -15135,7 +14818,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-337",
+    "id": "ENT-ANI-330",
     "domain_id": "nature_animals",
     "subtopic_id": "marine_life",
     "name": "Giant Isopod",
@@ -15180,7 +14863,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-338",
+    "id": "ENT-ANI-331",
     "domain_id": "nature_animals",
     "subtopic_id": "marine_life",
     "name": "Dumbo Octopus",
@@ -15225,7 +14908,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-339",
+    "id": "ENT-ANI-332",
     "domain_id": "nature_animals",
     "subtopic_id": "marine_life",
     "name": "Gulper Eel",
@@ -15270,7 +14953,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-340",
+    "id": "ENT-ANI-333",
     "domain_id": "nature_animals",
     "subtopic_id": "marine_life",
     "name": "Giant Oarfish",
@@ -15316,7 +14999,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-341",
+    "id": "ENT-ANI-334",
     "domain_id": "nature_animals",
     "subtopic_id": "mammals",
     "name": "Common Wombat",
@@ -15361,7 +15044,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-342",
+    "id": "ENT-ANI-335",
     "domain_id": "nature_animals",
     "subtopic_id": "mammals",
     "name": "Quokka",
@@ -15406,7 +15089,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-343",
+    "id": "ENT-ANI-336",
     "domain_id": "nature_animals",
     "subtopic_id": "mammals",
     "name": "Sugar Glider",
@@ -15451,7 +15134,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-344",
+    "id": "ENT-ANI-337",
     "domain_id": "nature_animals",
     "subtopic_id": "mammals",
     "name": "Thylacine",
@@ -15497,7 +15180,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-345",
+    "id": "ENT-ANI-338",
     "domain_id": "nature_animals",
     "subtopic_id": "mammals",
     "name": "Red Kangaroo",
@@ -15542,7 +15225,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-346",
+    "id": "ENT-ANI-339",
     "domain_id": "nature_animals",
     "subtopic_id": "mammals",
     "name": "Common Spotted Cuscus",
@@ -15587,7 +15270,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-347",
+    "id": "ENT-ANI-340",
     "domain_id": "nature_animals",
     "subtopic_id": "mammals",
     "name": "Proboscis Monkey",
@@ -15632,7 +15315,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-348",
+    "id": "ENT-ANI-341",
     "domain_id": "nature_animals",
     "subtopic_id": "mammals",
     "name": "Aye-Aye",
@@ -15676,7 +15359,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-349",
+    "id": "ENT-ANI-342",
     "domain_id": "nature_animals",
     "subtopic_id": "mammals",
     "name": "Sloth Bear",
@@ -15721,7 +15404,7 @@
     ]
   },
   {
-    "id": "ENT-ANI-350",
+    "id": "ENT-ANI-343",
     "domain_id": "nature_animals",
     "subtopic_id": "mammals",
     "name": "Sun Bear",

@@ -100,6 +100,11 @@ export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise
     } catch (error) {
       const failure = error as Error & { stdout?: string };
       const errorReport = parseHyperframesCheckReport(failure.stdout);
+
+      if (errorReport && hasHyperframesBlockingIssues(errorReport)) {
+        throw new RepositoryError(formatHyperframesCheckFailure(errorReport, failure.message), "QUIZ_COMPOSITION_CHECK_FAILED");
+      }
+
       if (attempt < maxCheckAttempts && hasHyperframesContrastIssue(errorReport)) {
         if (onProgress) {
           await onProgress("Video · auto-healing contrast issues...", 60);
@@ -107,26 +112,26 @@ export async function verifyAndCheckLayout(options: LayoutCheckOptions): Promise
         await healCompositionContrast(renderRoot, errorReport);
         continue;
       }
+
       if (errorReport && !hasHyperframesBlockingIssues(errorReport)) {
         break;
       }
+
       throw new RepositoryError(formatHyperframesCheckFailure(errorReport, failure.message), "QUIZ_COMPOSITION_CHECK_FAILED");
     }
 
     const checkReport = parseHyperframesCheckReport(checkOutput);
-    if (hasHyperframesContrastIssue(checkReport)) {
-      if (attempt < maxCheckAttempts) {
-        if (onProgress) {
-          await onProgress("Video · auto-healing contrast issues...", 60);
-        }
-        await healCompositionContrast(renderRoot, checkReport);
-        continue;
-      }
-      throw new RepositoryError(formatHyperframesCheckFailure(checkReport), "QUIZ_COMPOSITION_CONTRAST_FAILED");
-    }
 
     if (hasHyperframesBlockingIssues(checkReport)) {
       throw new RepositoryError(formatHyperframesCheckFailure(checkReport), "QUIZ_COMPOSITION_CHECK_FAILED");
+    }
+
+    if (attempt < maxCheckAttempts && hasHyperframesContrastIssue(checkReport)) {
+      if (onProgress) {
+        await onProgress("Video · auto-healing contrast issues...", 60);
+      }
+      await healCompositionContrast(renderRoot, checkReport);
+      continue;
     }
 
     break;

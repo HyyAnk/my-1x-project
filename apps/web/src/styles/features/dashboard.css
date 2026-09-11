@@ -258,6 +258,67 @@
   border-color: var(--blue, #3b82f6);
 }
 
+.economics-fallback-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 10px;
+  margin-top: 2px;
+  border-top: 1px dashed color-mix(in srgb, var(--line) 70%, transparent);
+  font-size: 11px;
+}
+
+.fallback-row-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fallback-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm, 4px);
+  background: color-mix(in srgb, var(--blue, #3b82f6) 12%, transparent);
+  color: var(--blue, #3b82f6);
+  border: 1px solid color-mix(in srgb, var(--blue, #3b82f6) 25%, transparent);
+}
+
+.fallback-rate {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.fallback-row-values {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+}
+
+.fallback-count {
+  color: var(--muted);
+}
+
+.fallback-divider {
+  color: var(--line);
+}
+
+.fallback-spend {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.fallback-vnd {
+  color: var(--muted);
+  font-size: 10px;
+}
+
 .savings-metrics-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));

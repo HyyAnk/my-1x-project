@@ -22,6 +22,9 @@
     "typecheck": "pnpm --filter @studio/shared build && pnpm -r typecheck",
     "test": "pnpm --filter @studio/shared test && pnpm --filter @studio/server test && pnpm --filter @studio/web test",
     "test:coverage": "pnpm --filter @studio/shared build && pnpm --filter @studio/server test:coverage && pnpm --filter @studio/web test:coverage",
+    "test:transitions": "pnpm --filter @studio/shared build && pnpm --filter @studio/shared test transition && pnpm --filter @studio/server test:transitions && pnpm --filter @studio/web test:transitions",
+    "test:transitions:parity": "pnpm --filter @studio/shared build && pnpm --filter @studio/server test:transitions:parity",
+    "test:transitions:e2e": "pnpm --filter @studio/web test:transitions:e2e",
     "test:e2e": "pnpm --filter @studio/web test:e2e",
     "test:visual": "pnpm --filter @studio/shared build && cross-env RUN_VISUAL_REGRESSION=1 pnpm --filter @studio/server test:visual",
     "test:visual:update": "pnpm --filter @studio/shared build && cross-env RUN_VISUAL_REGRESSION=1 UPDATE_VISUAL_SNAPSHOTS=1 pnpm --filter @studio/server test:visual:update"

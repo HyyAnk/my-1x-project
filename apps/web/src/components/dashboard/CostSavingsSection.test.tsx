@@ -1,6 +1,6 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { UsageLedger } from "@studio/shared";
 import { LanguageProvider } from "../../i18n";
 import { CostSavingsSection } from "./CostSavingsSection";
@@ -8,6 +8,10 @@ import { CostSavingsSection } from "./CostSavingsSection";
 describe("CostSavingsSection i18n & unit localization", () => {
   beforeEach(() => {
     window.localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   const sampleLedger: UsageLedger = {
@@ -122,5 +126,70 @@ describe("CostSavingsSection i18n & unit localization", () => {
     // Card titles should be localized in English
     expect(screen.getAllByText("Voice TTS Savings").length).toBeGreaterThan(0);
     expect(screen.getAllByText("AI Image Spend").length).toBeGreaterThan(0);
+  });
+
+  it("renders ImgStudio fallback spend line and accurately converts 150 VND to USD per image", () => {
+    window.localStorage.setItem("studio-language", "en");
+
+    const fallbackLedger: UsageLedger = {
+      ...sampleLedger,
+      image: {
+        total_images_generated: 15,
+        estimated_cost_vnd: 2250,
+        estimated_cost_usd: 0.09,
+        by_provider: {
+          gpti2: 10,
+          imgstudio: 5,
+        },
+        by_model: {
+          "gpt-image-2": 10,
+          "2d059365-a09a-4fd5-aa9e-b5335d09bbe9": 5,
+        },
+      },
+    };
+
+    render(
+      <LanguageProvider>
+        <CostSavingsSection usageLedger={fallbackLedger} />
+      </LanguageProvider>,
+    );
+
+    // Verify ImgStudio fallback badge and rate note
+    expect(screen.getByText("ImgStudio Fallback")).toBeDefined();
+    expect(screen.getByText("150 VND ($0.006) / image")).toBeDefined();
+
+    // 5 fallback images: 5 * 150 = 750 VND -> 750 / 25000 = $0.030 USD
+    expect(screen.getByText(/\b5 images\b/i)).toBeDefined();
+    expect(screen.getByText(/\$0\.030 USD/i)).toBeDefined();
+    expect(screen.getByText(/\(750 VND\)/i)).toBeDefined();
+  });
+
+  it("correctly handles single fallback image unit cost conversion", () => {
+    window.localStorage.setItem("studio-language", "en");
+
+    const singleFallbackLedger: UsageLedger = {
+      ...sampleLedger,
+      image: {
+        total_images_generated: 1,
+        estimated_cost_vnd: 150,
+        estimated_cost_usd: 0.006,
+        by_provider: {
+          imgstudio: 1,
+        },
+        by_model: {
+          "2d059365-a09a-4fd5-aa9e-b5335d09bbe9": 1,
+        },
+      },
+    };
+
+    render(
+      <LanguageProvider>
+        <CostSavingsSection usageLedger={singleFallbackLedger} />
+      </LanguageProvider>,
+    );
+
+    // 1 fallback image: 150 VND -> $0.006 USD
+    expect(screen.getByText(/\$0\.006 USD/i)).toBeDefined();
+    expect(screen.getByText(/\(150 VND\)/i)).toBeDefined();
   });
 });

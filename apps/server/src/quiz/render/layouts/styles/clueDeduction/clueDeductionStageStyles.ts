@@ -21,6 +21,17 @@ export function clueDeductionStageStyles(): string {
   backdrop-filter: blur(12px);
 }
 
+/* Unified Header Bar: (400, 265, 1380, 40) -> local (20, 12, 1380, 40) */
+.quiz-frame-unified.layout-clue_deduction .clue-dossier-bar {
+  left: 20px;
+  top: 12px;
+  width: 1380px;
+  height: 40px;
+  right: auto;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
 .layout-clue_deduction .dossier-case-badge {
   display: flex;
   align-items: center;

@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "status": "proposed-not-implemented",
+  "canvas": { "width": 1920, "height": 1080 },
+  "fixed": {
+    "counterReference": { "x": 55, "y": 0, "width": 250, "height": 194 },
+    "question": { "x": 380, "y": 53, "width": 1420, "height": 168 },
+    "brandReference": { "x": 20, "y": 390, "width": 320, "height": 246.594 },
+    "thinking": { "x": 470, "y": 882, "width": 1240, "height": 84 },
+    "fact": { "x": 470, "y": 846, "width": 1240, "height": 156 }
+  },
+  "referenceThinking": { "x": 470, "y": 822, "width": 1240, "height": 84 },
+  "counterAnchor": { "centerX": 180, "top": 0, "size": "preserve-per-skin" },
+  "brandAnchor": { "centerX": 180, "top": 390, "width": 320, "height": "intrinsic" },
+  "arena": { "x": 380, "y": 253, "width": 1420, "height": 520 },
+  "timerProtection": { "x": 350, "y": 804, "width": 1480, "height": 240 },
+  "layouts": {
+    "media_left_choices_right": {
+      "hero": { "x": 380, "y": 253, "width": 720, "height": 510 },
+      "answerVariants": {
+        "2": [
+          { "x": 1140, "y": 336, "width": 660, "height": 152 },
+          { "x": 1140, "y": 528, "width": 660, "height": 152 }
+        ],
+        "3": [
+          { "x": 1140, "y": 274, "width": 660, "height": 132 },
+          { "x": 1140, "y": 442, "width": 660, "height": 132 },
+          { "x": 1140, "y": 610, "width": 660, "height": 132 }
+        ]
+      }
+    },
+    "visual_choices_three": {
+      "hero": null,
+      "answerVariants": {
+        "3": [
+          { "x": 380, "y": 253, "width": 452, "height": 504 },
+          { "x": 864, "y": 253, "width": 452, "height": 504 },
+          { "x": 1348, "y": 253, "width": 452, "height": 504 }
+        ]
+      },
+      "cardInternals": { "mediaHeight": 356, "labelGap": 16, "labelHeight": 132, "badgeSize": 88 }
+    },
+    "visual_choices_three_pure": {
+      "hero": null,
+      "answerVariants": {
+        "3": [
+          { "x": 380, "y": 253, "width": 452, "height": 504 },
+          { "x": 864, "y": 253, "width": 452, "height": 504 },
+          { "x": 1348, "y": 253, "width": 452, "height": 504 }
+        ]
+      },
+      "cardInternals": { "mediaHeight": 504, "labelHeight": 0, "badgeSize": 88, "badgeInset": 16 }
+    },
+    "split_versus_two": {
+      "hero": null,
+      "answerVariants": {
+        "2": [
+          { "x": 380, "y": 253, "width": 646, "height": 504 },
+          { "x": 1154, "y": 253, "width": 646, "height": 504 }
+        ]
+      },
+      "versus": { "x": 1042, "y": 457, "width": 96, "height": 96 },
+      "cardInternals": { "mediaHeight": 366, "labelGap": 16, "labelHeight": 122, "badgeSize": 96 }
+    },
+    "verdict_true_false": {
+      "hero": { "x": 380, "y": 253, "width": 820, "height": 510 },
+      "answerVariants": {
+        "2": [
+          { "x": 1240, "y": 322, "width": 560, "height": 164 },
+          { "x": 1240, "y": 530, "width": 560, "height": 164 }
+        ]
+      }
+    },
+    "full_stack_list": {
+      "hero": null,
+      "answerVariants": {
+        "2": [
+          { "x": 450, "y": 329, "width": 1280, "height": 164 },
+          { "x": 450, "y": 533, "width": 1280, "height": 164 }
+        ],
+        "3": [
+          { "x": 450, "y": 275, "width": 1280, "height": 140 },
+          { "x": 450, "y": 443, "width": 1280, "height": 140 },
+          { "x": 450, "y": 611, "width": 1280, "height": 140 }
+        ]
+      }
+    },
+    "mystery_reveal": {
+      "hero": { "x": 630, "y": 253, "width": 920, "height": 360 },
+      "answerVariants": {
+        "0": [],
+        "1": [{ "x": 630, "y": 637, "width": 920, "height": 120 }],
+        "2": [
+          { "x": 470, "y": 637, "width": 600, "height": 120 },
+          { "x": 1110, "y": 637, "width": 600, "height": 120 }
+        ],
+        "3": [
+          { "x": 380, "y": 637, "width": 452, "height": 120 },
+          { "x": 864, "y": 637, "width": 452, "height": 120 },
+          { "x": 1348, "y": 637, "width": 452, "height": 120 }
+        ]
+      }
+    },
+    "clue_deduction": {
+      "panel": { "x": 380, "y": 253, "width": 1420, "height": 510 },
+      "dossierHeader": { "x": 400, "y": 265, "width": 1380, "height": 40 },
+      "hero": { "x": 400, "y": 329, "width": 824, "height": 410 },
+      "answerVariants": {
+        "0": [],
+        "1": [{ "x": 1256, "y": 462, "width": 524, "height": 144 }],
+        "2": [
+          { "x": 1256, "y": 376, "width": 524, "height": 144 },
+          { "x": 1256, "y": 548, "width": 524, "height": 144 }
+        ],
+        "3": [
+          { "x": 1256, "y": 340, "width": 524, "height": 116 },
+          { "x": 1256, "y": 476, "width": 524, "height": 116 },
+          { "x": 1256, "y": 612, "width": 524, "height": 116 }
+        ]
+      }
+    }
+  }
+}

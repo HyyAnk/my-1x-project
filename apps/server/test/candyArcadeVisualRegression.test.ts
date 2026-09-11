@@ -99,7 +99,7 @@ describe("Candy Arcade visual regression contract", () => {
 
   it("emits real selectors for semantic media layouts and a safe keyword fallback", () => {
     const html = renderHtml();
-    expect(html).toContain(".layout-media_left_choices_right .game-stage");
+    expect(html).toContain("layout-media_left_choices_right .hero-image");
     expect(html).toContain(".layout-visual_choices_three .visual-answer-grid");
     expect(html).toContain('<strong class="keyword-highlight">ocean</strong>');
     const keywordChecks = [
@@ -123,6 +123,12 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).toContain("@keyframes phase-enter { from { opacity: 0; } to { opacity: 1; } }");
     expect(html).toContain(
       ".fact-card { position: relative; z-index: 5; max-width: 1220px; margin-top: 14px; padding: 24px 48px; border: 6px solid rgba(255,255,255,.85); border-radius: 38px; background: var(--surface); box-shadow: 0 16px 0 rgba(13,35,71,.18), 0 22px 36px rgba(10,25,60,.14); text-align: center; opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--reward-at)) both; contain: layout style; will-change: transform, opacity; }",
+    );
+    expect(html).toContain(
+      ".reward-fx i:nth-child(2) { right: 6%; top: 38%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .06s); }",
+    );
+    expect(html).toContain(
+      ".reward-fx i:nth-child(9) { left: 20%; bottom: 23%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .48s); }",
     );
   });
 
@@ -170,14 +176,12 @@ describe("Candy Arcade visual regression contract", () => {
     expect(html).toContain("-webkit-text-stroke: 4px var(--choice-stroke-shadow)");
     expect(html).toContain("--choice-text-color: #78350F");
     expect(html).toContain("--choice-text-color: #831843");
-    expect(html).toContain(".layout-media_left_choices_right .answer-grid.answer-count-2");
-    expect(html).toContain("gap: 36px;");
-    expect(html).toContain("--choice-badge-size: 138px;");
-    expect(html).toContain("--choice-badge-margin-left: -74px;");
-    expect(html).toContain("--choice-badge-font-size: 72px;");
-    expect(html).toContain("--choice-font-size-base: 36px;");
-    expect(html).toContain("--choice-font-size-medium: 28px;");
-    expect(html).toContain("--choice-font-size-long: 23px;");
-    expect(html).toContain("--choice-font-size-base: 38px;");
+    expect(html).toContain(".quiz-frame-unified.layout-media_left_choices_right .answer-grid.answer-count-2");
+    expect(html).toContain("gap: 40px;");
+    expect(html).toContain("--choice-badge-size: 112px;");
+    expect(html).toContain("--choice-card-height: 152px;");
+    expect(html).toContain("--choice-font-size-base: 44px;");
+    expect(html).toContain("--choice-font-size-medium: 38px;");
+    expect(html).toContain("--choice-font-size-long: 32px;");
   });
 });

@@ -74,12 +74,22 @@ export async function scanEpisodeImageMetrics(
   const byProvider: Record<string, number> = {};
   const byModel: Record<string, number> = {};
 
-  const recordImage = (priceVnd: number, model: string): void => {
+  const recordImage = (priceVnd: number, model: string, provider?: string): void => {
     const costUsd = Number((priceVnd / 25500).toFixed(4));
     count += 1;
     spendVnd += priceVnd;
     spendUsd += costUsd;
-    const providerKey = model.startsWith("gemini") ? "google" : "gpti2";
+    let providerKey = "gpti2";
+    if (
+      provider === "imgstudio" ||
+      model.startsWith("imgstudio") ||
+      model.includes("qwen") ||
+      model === "2d059365-a09a-4fd5-aa9e-b5335d09bbe9"
+    ) {
+      providerKey = "imgstudio";
+    } else if (model.startsWith("gemini")) {
+      providerKey = "google";
+    }
     byProvider[providerKey] = (byProvider[providerKey] || 0) + 1;
     byModel[model] = (byModel[model] || 0) + 1;
   };
@@ -91,7 +101,7 @@ export async function scanEpisodeImageMetrics(
 
     for (const file of imageFiles) {
       const meta = await readQuizImageMeta(quizImagesDir, file.name);
-      recordImage(meta.priceVnd, meta.model);
+      recordImage(meta.priceVnd, meta.model, meta.provider);
     }
   } catch {
     // directory may not exist
@@ -113,15 +123,31 @@ export async function scanEpisodeImageMetrics(
   return { count, spendVnd, spendUsd, byProvider, byModel };
 }
 
-async function readQuizImageMeta(quizImagesDir: string, imageFilename: string): Promise<{ priceVnd: number; model: string }> {
+async function readQuizImageMeta(
+  quizImagesDir: string,
+  imageFilename: string,
+): Promise<{ priceVnd: number; model: string; provider?: string }> {
   const metaFilename = imageFilename.replace(IMAGE_FILE_PATTERN, ".meta.json");
   const metaPath = path.join(quizImagesDir, metaFilename);
 
   try {
-    const rawMeta = JSON.parse(await readFile(metaPath, "utf8")) as { price_vnd?: number; model?: string };
+    const rawMeta = JSON.parse(await readFile(metaPath, "utf8")) as {
+      price_vnd?: number;
+      model?: string;
+      provider?: string;
+    };
+    const isImgStudio =
+      rawMeta.provider === "imgstudio" ||
+      (typeof rawMeta.model === "string" &&
+        (rawMeta.model.startsWith("imgstudio") ||
+          rawMeta.model.includes("qwen") ||
+          rawMeta.model === "2d059365-a09a-4fd5-aa9e-b5335d09bbe9"));
+    const fallbackPrice = isImgStudio ? 150 : QUIZ_IMAGE_FALLBACK_PRICE_VND;
+
     return {
-      priceVnd: typeof rawMeta.price_vnd === "number" ? rawMeta.price_vnd : QUIZ_IMAGE_FALLBACK_PRICE_VND,
+      priceVnd: typeof rawMeta.price_vnd === "number" ? rawMeta.price_vnd : fallbackPrice,
       model: typeof rawMeta.model === "string" && rawMeta.model ? rawMeta.model : QUIZ_IMAGE_FALLBACK_MODEL,
+      provider: typeof rawMeta.provider === "string" ? rawMeta.provider : isImgStudio ? "imgstudio" : undefined,
     };
   } catch {
     return { priceVnd: QUIZ_IMAGE_FALLBACK_PRICE_VND, model: QUIZ_IMAGE_FALLBACK_MODEL };

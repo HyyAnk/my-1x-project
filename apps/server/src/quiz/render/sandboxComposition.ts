@@ -9,8 +9,14 @@ import { evaluateContrast } from "../visual/contrastCalculator.js";
 import { candyArcadeCss } from "./candyArcadeComposition.js";
 import { esc } from "./candyArcade/candyArcadeSvg.js";
 import { renderQuizLayoutBody } from "./layouts/registry.js";
+import { isUnifiedQuizFrame, renderQuizPhaseSlots } from "./frame/renderQuizFrameBody.js";
 import { renderPreviewMascotHtmlLayer } from "./previewMascotRenderer.js";
-import { adaptMascotForPhase, adaptMascotForQuestion, renderProductionMascotHtmlLayer } from "./productionMascotRenderer.js";
+import {
+  adaptMascotForPhase,
+  adaptMascotForQuestion,
+  renderProductionMascotHtmlLayer,
+  type ProductionMascotTimelineEvent,
+} from "./productionMascotRenderer.js";
 import { adaptSandboxQuizScene } from "./scene/sandboxSceneAdapter.js";
 import { sandboxPreviewTimeForPhase, sandboxSceneState } from "./scene/sandboxSceneStateAdapter.js";
 import { buildQuizSceneParts } from "./scene/buildQuizSceneParts.js";
@@ -45,6 +51,35 @@ function buildSandboxRehearsalComposition(parsed: SandboxPreviewInput, mascotPro
   };
   const questionIndex = Math.max(0, (parsed.question_number ?? 1) - 1);
   const adaptedMascot = adaptMascotForQuestion(mascotProfile, parsed.mascot_style_id, questionIndex);
+  const actionAtSeconds =
+    parsed.mascot_phase === "choices"
+      ? timeline.choicesStart
+      : parsed.mascot_phase === "thinking"
+        ? timeline.thinkingStart
+        : parsed.mascot_phase === "reveal"
+          ? timeline.revealStart
+          : parsed.mascot_phase === "explain"
+            ? timeline.revealStart + 0.8
+            : 0;
+
+  const timelineEvents: ProductionMascotTimelineEvent[] = [
+    { type: "choices.enter", at_seconds: timeline.choicesStart },
+    { type: "countdown.start", at_seconds: timeline.thinkingStart },
+    { type: "answer.reveal", at_seconds: timeline.revealStart },
+    { type: "fact.enter", at_seconds: timeline.revealStart + 0.8 },
+  ];
+
+  if (parsed.mascot_action) {
+    timelineEvents.push({
+      type: "mascot.state",
+      at_seconds: actionAtSeconds,
+      payload: {
+        state: parsed.mascot_action,
+        ...(parsed.mascot_phase ? { phase: parsed.mascot_phase } : {}),
+      },
+    });
+  }
+
   const mascotHtml =
     mascotEnabled && adaptedMascot
       ? renderProductionMascotHtmlLayer(adaptedMascot, mascotConfig, {
@@ -52,12 +87,7 @@ function buildSandboxRehearsalComposition(parsed: SandboxPreviewInput, mascotPro
           clipStartSeconds: 0,
           clipDurationSeconds: timeline.totalDuration,
           styleId: parsed.mascot_style_id,
-          timelineEvents: [
-            { type: "choices.enter", at_seconds: timeline.choicesStart },
-            { type: "countdown.start", at_seconds: timeline.thinkingStart },
-            { type: "answer.reveal", at_seconds: timeline.revealStart },
-            { type: "fact.enter", at_seconds: timeline.explainStart },
-          ],
+          timelineEvents,
           revealOutcome: parsed.mascot_reveal_outcome ?? "correct",
           aspectRatio: parsed.aspect_ratio,
         })
@@ -66,22 +96,25 @@ function buildSandboxRehearsalComposition(parsed: SandboxPreviewInput, mascotPro
   const model = adaptSandboxQuizScene(parsed, Boolean(mascotHtml));
   const parts = buildQuizSceneParts(model);
   const stableParts = renderStableQuizSceneParts(parts);
-  const choicesHtml = renderQuizSceneChoicePart(parts);
+  const choicesHtml = renderQuizSceneChoicePart(parts, { revealMode: "scheduled" });
+  const rewardStart = timeline.revealStart + 0.8;
   const timing = {
     start: 0,
     choicesStart: timeline.choicesStart,
     thinkingStart: timeline.thinkingStart,
     revealStart: timeline.revealStart,
-    rewardStart: timeline.explainStart,
+    rewardStart,
     end: timeline.totalDuration,
   };
+  const isUnified = isUnifiedQuizFrame(model.layout.id, model.aspectRatio);
   const thinkingHtml = renderQuizSceneThinkingPart(parts, timing);
   const factHtml = `<div class="fact-card sandbox-explain-card" data-layout-allow-occlusion><p>${esc(parsed.fact_card_text)}</p></div>`;
+  const phaseHtml = isUnified ? renderQuizPhaseSlots(thinkingHtml, factHtml) : `${thinkingHtml}${factHtml}`;
   const stageContent = renderQuizLayoutBody(model.layout.id, {
     questionBoxHtml: stableParts.questionBoxHtml,
     heroHtml: stableParts.heroHtml,
     choicesHtml,
-    phaseHtml: `${thinkingHtml}${factHtml}`,
+    phaseHtml,
   });
   const rewardHtml = rewardFx("big");
   const html = sandboxRehearsalDocument(model, parts, stableParts, stageContent, mascotHtml, rewardHtml, timeline);
@@ -100,19 +133,21 @@ function buildSandboxSnapshotComposition(parsed: SandboxPreviewInput, mascotProf
   const stableParts = renderStableQuizSceneParts(parts);
   const choicesHtml = renderQuizSceneChoicePart(parts);
   const timing = { start: 0, choicesStart: 0, thinkingStart: 0, revealStart: 10, rewardStart: 10, end: 10 };
+  const isUnified = isUnifiedQuizFrame(model.layout.id, model.aspectRatio);
   const thinkingHtml = parts.phase.thinkingVisible ? renderQuizSceneThinkingPart(parts, timing) : "";
   const factHtml = parts.phase.factVisible
     ? `
-    <div class="fact-card sandbox-explain-card" style="opacity: 1; animation: none; transform: translateX(-50%);">
+    <div class="fact-card sandbox-explain-card" style="opacity: 1; animation: none;${isUnified ? "" : " transform: translateX(-50%);"}">
       <p>${esc(parts.phase.factText)}</p>
     </div>
   `
     : "";
+  const phaseHtml = isUnified ? renderQuizPhaseSlots(thinkingHtml, factHtml) : `${thinkingHtml}${factHtml}`;
   const stageContent = renderQuizLayoutBody(model.layout.id, {
     questionBoxHtml: stableParts.questionBoxHtml,
     heroHtml: stableParts.heroHtml,
     choicesHtml,
-    phaseHtml: `${thinkingHtml}${factHtml}`,
+    phaseHtml,
   });
   const html = sandboxSnapshotDocument(model, parts, stableParts, stageContent, mascotHtml);
   return {

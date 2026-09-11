@@ -1,4 +1,4 @@
-import { Lightning } from "@phosphor-icons/react";
+import { Lightning, CircleNotch } from "@phosphor-icons/react";
 import type { MascotStateVariant } from "@studio/shared";
 import type { BatchProgressState } from "../hooks/useMascotBatchGeneration";
 import { VariantSlotCard } from "./VariantSlotCard";
@@ -38,6 +38,15 @@ export function MascotStateSlotsColumn({
   const filledCount = variants.filter((v) => Boolean(v.image_url)).length;
   const emptyCount = 10 - filledCount;
 
+  const isThisBatchActive =
+    Boolean(isBatchBusy) &&
+    Boolean(
+      batchProgress &&
+        (batchProgress.targetState === state ||
+          batchProgress.targetState === "all" ||
+          batchProgress.activeSlotKeys.some((k) => k.startsWith(`${state}_`))),
+    );
+
   const getSlotBusyState = (slotIndex: number) => {
     const slotKey = `${state}_${slotIndex}`;
     if (busySlotKey === slotKey) return true;
@@ -49,6 +58,12 @@ export function MascotStateSlotsColumn({
       return !existing?.image_url;
     }
     return false;
+  };
+
+  const isSlotQueued = (slotIndex: number, hasImage: boolean) => {
+    if (!isThisBatchActive || hasImage) return false;
+    const slotKey = `${state}_${slotIndex}`;
+    return Boolean(batchProgress && !batchProgress.activeSlotKeys.includes(slotKey));
   };
 
   const getSlotStatusText = (slotIndex: number) => {
@@ -75,15 +90,24 @@ export function MascotStateSlotsColumn({
         <div className="state-header-actions">
           <button
             type="button"
-            className="quiet-button is-quick-batch"
+            className={`quiet-button is-quick-batch ${isThisBatchActive ? "is-generating" : ""}`}
             onClick={() => onBatchGenerate(state)}
             disabled={isBatchBusy || busySlotKey !== null || filledCount === 10}
             title={`Generate all empty ${title} slots`}
           >
-            <Lightning size={13} weight="bold" />
-            <span>
-              Batch {title} ({emptyCount} empty)
-            </span>
+            {isThisBatchActive ? (
+              <>
+                <CircleNotch size={13} className="spin" />
+                <span>Generating {title}...</span>
+              </>
+            ) : (
+              <>
+                <Lightning size={13} weight="bold" />
+                <span>
+                  Batch {title} ({emptyCount} empty)
+                </span>
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -91,7 +115,9 @@ export function MascotStateSlotsColumn({
       <div className="variant-slots-grid">
         {SLOT_NUMBERS.map((slotIndex) => {
           const variant = variants.find((v) => v.slot_index === slotIndex);
+          const hasImage = Boolean(variant?.image_url);
           const isBusy = getSlotBusyState(slotIndex);
+          const isQueued = isSlotQueued(slotIndex, hasImage);
 
           return (
             <VariantSlotCard
@@ -100,6 +126,7 @@ export function MascotStateSlotsColumn({
               slotIndex={slotIndex}
               variant={variant}
               isBusy={isBusy}
+              isQueued={isQueued}
               statusText={getSlotStatusText(slotIndex)}
               onGenerate={(slot) => onGenerateSlot(state, slot)}
               onRegenerate={(slot) => onGenerateSlot(state, slot, undefined)}
@@ -112,3 +139,4 @@ export function MascotStateSlotsColumn({
     </section>
   );
 }
+

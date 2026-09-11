@@ -278,7 +278,11 @@ export function compileQuestionBlock(
     question_id: question.id,
     choice_id: null,
     segment_id: null,
-    payload: { intent: beat.transition_intent },
+    payload: {
+      intent: beat.transition_intent,
+      transition_id: beat.transition_id,
+      instance_id: question.id,
+    },
   });
   ctx.add({
     type: "background.motion",

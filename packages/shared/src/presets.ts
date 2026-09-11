@@ -8,6 +8,7 @@ import type {
   QuizThinkingBarStyle,
   QuizVisualTheme,
 } from "./enums.js";
+import type { TransitionSettings } from "./transitions/transition.types.js";
 
 export type VisualPresetItem = {
   id: string;
@@ -32,6 +33,7 @@ export type VisualPresetItem = {
   mascot_offset_y?: number;
   mascot_flip_x?: boolean;
   channel_brand_name?: string;
+  transitions?: TransitionSettings;
   isBuiltIn?: boolean;
   nameKey?: string;
   descKey?: string;

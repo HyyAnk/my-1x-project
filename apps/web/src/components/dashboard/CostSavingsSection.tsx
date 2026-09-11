@@ -31,6 +31,15 @@ export function CostSavingsSection({ voiceMetrics, usageLedger }: CostSavingsSec
     ? providers.sort((a, b) => (usageLedger?.image?.by_provider[b] ?? 0) - (usageLedger?.image?.by_provider[a] ?? 0))[0]
     : "GPT-Image-2";
 
+  // Fallback metrics (ImgStudio fallback rate: 150 VND = $0.006 USD per image, 25,000 VND / USD)
+  const fallbackImagesCount = Object.entries(usageLedger?.image?.by_provider ?? {}).reduce(
+    (acc, [provider, count]) => (provider.toLowerCase() === "imgstudio" ? acc + count : acc),
+    0,
+  );
+  const fallbackSpendVnd = fallbackImagesCount * 150;
+  const fallbackSpendUsd = fallbackSpendVnd / 25000;
+  const fallbackUsdDecimals = fallbackSpendUsd > 0 && fallbackSpendUsd < 0.1 ? 3 : 2;
+
   return (
     <div className="dashboard-section economics-section">
       <div className="dashboard-section-header">
@@ -112,6 +121,26 @@ export function CostSavingsSection({ voiceMetrics, usageLedger }: CostSavingsSec
               <strong className="submetric-val" style={{ textTransform: "capitalize" }}>
                 {topProvider}
               </strong>
+            </div>
+          </div>
+
+          <div className="economics-fallback-row">
+            <div className="fallback-row-label">
+              <span className="fallback-badge">{t("dashboard.fallbackSpendLabel")}</span>
+              <span className="fallback-rate">{t("dashboard.fallbackRateNote")}</span>
+            </div>
+            <div className="fallback-row-values">
+              <span className="fallback-count">
+                {fallbackImagesCount.toLocaleString(numberLocale)}{" "}
+                {fallbackImagesCount === 1 ? t("dashboard.unitImagesSingular") : t("dashboard.unitImages")}
+              </span>
+              <span className="fallback-divider">·</span>
+              <strong className="fallback-spend">
+                ${fallbackSpendUsd.toLocaleString(numberLocale, { minimumFractionDigits: fallbackUsdDecimals, maximumFractionDigits: fallbackUsdDecimals })} USD
+              </strong>
+              {fallbackSpendVnd > 0 && (
+                <span className="fallback-vnd">({fallbackSpendVnd.toLocaleString(numberLocale)} VND)</span>
+              )}
             </div>
           </div>
         </div>

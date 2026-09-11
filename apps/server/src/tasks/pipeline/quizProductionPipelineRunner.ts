@@ -1,114 +1,10 @@
 import { nowIso, type Task, type TaskType } from "@studio/shared";
-import { extractNarrationSections } from "../../production.js";
 import { rebalanceEditorialOverlays } from "../../sceneTiming.js";
-import { planSequenceResume } from "../planning.js";
-import { hasReadyArtifact, hasReadyScript, isShotPlanFresh, waitForTaskTerminal } from "./pipelineHelpers.js";
+import { waitForTaskTerminal } from "./pipelineHelpers.js";
 import { runQuizV2Pipeline } from "./quizV2PipelineRunner.js";
 import type { PipelineRun, TaskManagerRuntime } from "../runtime.js";
 
 type PipelineStepFn = (label: string, percent: number, childType: TaskType, shouldRun: () => Promise<boolean>) => Promise<boolean>;
-
-async function executeShotPlanSequences(
-  runtime: TaskManagerRuntime,
-  task: Task,
-  episodeId: string,
-  run: PipelineRun,
-  upstreamChanged: boolean,
-): Promise<void> {
-  const script = await runtime.repository.getEpisodeFile(task.channel_id, episodeId, "script.md");
-  const sections = extractNarrationSections(script.content);
-  if (sections.length === 0) throw new Error("Shot plan failed: a completed script is required");
-  await runtime.repository.backupEpisodeFile(task.channel_id, episodeId, "scene_plan.md");
-  const existingDrafts = await runtime.repository.readSequenceDrafts(episodeId);
-  const resumePlan = planSequenceResume(sections.length, existingDrafts, script.modified_at, upstreamChanged);
-  if (resumePlan.shouldClearDrafts) await runtime.repository.clearSequenceDrafts(episodeId);
-  const totalCount = Math.max(1, sections.length);
-  let completedCount = resumePlan.reusedSequenceNumbers.length;
-  const initialPercent = Math.min(25, Math.max(10, 10 + Math.round((completedCount / totalCount) * 15)));
-  await runtime.update(task.task_id, {
-    progress_message: completedCount
-      ? `Shot plan · resuming ${completedCount}/${totalCount} completed sequences`
-      : "Shot plan · generating sequences",
-    progress_percent: initialPercent,
-  });
-  if (resumePlan.pendingSequenceNumbers.length === 0) {
-    const committed = await runtime.repository.commitSequenceDrafts(task.channel_id, episodeId, sections.length);
-    if (!committed) throw new Error("Shot plan failed: completed sequence drafts could not be committed");
-  }
-  const children = resumePlan.pendingSequenceNumbers.map((sequenceNumber) =>
-    runtime.submit("GENERATE_SEQUENCE_SCENES", task.channel_id, episodeId, sequenceNumber),
-  );
-  children.forEach((child) => run.children.add(child.task_id));
-  try {
-    await Promise.all(
-      children.map(async (child) => {
-        const result = await waitForTaskTerminal.call(runtime, child.task_id, run);
-        if (result.status !== "COMPLETED") throw new Error(`Shot plan failed: ${result.error ?? result.status}`);
-        completedCount++;
-        const seqPercent = Math.min(25, Math.max(10, 10 + Math.round((completedCount / totalCount) * 15)));
-        await runtime.update(task.task_id, {
-          progress_message: `Shot plan · sequence ${completedCount}/${totalCount} ready`,
-          progress_percent: seqPercent,
-        });
-        return result;
-      }),
-    );
-  } catch (error) {
-    await Promise.all(children.map((child) => runtime.cancel(child.task_id).catch(() => undefined)));
-    throw error;
-  } finally {
-    children.forEach((child) => run.children.delete(child.task_id));
-  }
-}
-
-async function runLegacyPipeline(
-  runtime: TaskManagerRuntime,
-  task: Task,
-  episodeId: string,
-  run: PipelineRun,
-  step: PipelineStepFn,
-): Promise<void> {
-  const researchChanged = await step(
-    "Research · verifying sources",
-    3,
-    "GENERATE_RESEARCH",
-    async () => !(await hasReadyArtifact.call(runtime, task.channel_id, episodeId, "research.md")),
-  );
-  const treatmentChanged = await step(
-    "Treatment · structuring the story",
-    5,
-    "GENERATE_TREATMENT",
-    async () => !(await hasReadyArtifact.call(runtime, task.channel_id, episodeId, "treatment.md")),
-  );
-  const scriptChanged = await step(
-    "Narration script · writing the argument",
-    8,
-    "GENERATE_SCRIPT",
-    async () => !(await hasReadyScript.call(runtime, task.channel_id, episodeId)),
-  );
-  const visualBibleChanged = await step(
-    "Visual bible · locking continuity",
-    10,
-    "GENERATE_VISUAL_BIBLE",
-    async () => !(await hasReadyArtifact.call(runtime, task.channel_id, episodeId, "visual_bible.md")),
-  );
-  const upstreamChanged = researchChanged || treatmentChanged || scriptChanged || visualBibleChanged;
-
-  const scenes = await runtime.repository.readScenes(task.channel_id, episodeId);
-  if (run.cancelled) throw new Error("Pipeline cancelled");
-  const shotPlanFresh = await isShotPlanFresh.call(runtime, task.channel_id, episodeId);
-  const regenerateShots = scenes.length === 0 || upstreamChanged || !shotPlanFresh;
-  await runtime.update(task.task_id, {
-    progress_message: regenerateShots ? "Shot plan · generating sequences" : "Shot plan · already ready",
-    progress_percent: 10,
-  });
-  if (regenerateShots) {
-    await executeShotPlanSequences(runtime, task, episodeId, run, upstreamChanged);
-  }
-
-  const balancedScenes = rebalanceEditorialOverlays(await runtime.repository.readScenes(task.channel_id, episodeId));
-  await runtime.repository.saveScenes(task.channel_id, episodeId, balancedScenes);
-}
 
 async function runQuizNativePipeline(runtime: TaskManagerRuntime, task: Task, episodeId: string, step: PipelineStepFn): Promise<void> {
   const existingQuiz = await runtime.repository.readQuiz(task.channel_id, episodeId);
@@ -213,13 +109,8 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
       progress_message: "Starting Quiz production pipeline",
       progress_percent: 0,
     });
-    const useLegacyPipeline = process.env.USE_LEGACY_QUIZ_PIPELINE === "true";
 
-    if (useLegacyPipeline) {
-      await runLegacyPipeline(this, task, episodeId, run, step);
-    } else {
-      await runQuizNativePipeline(this, task, episodeId, step);
-    }
+    await runQuizNativePipeline(this, task, episodeId, step);
 
     if (run.cancelled) throw new Error("Pipeline cancelled");
     await runQuizV2Pipeline.call(this, task);

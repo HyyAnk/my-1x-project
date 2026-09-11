@@ -7,6 +7,7 @@ import type {
   MascotRenderAspectRatio,
   Scene,
   IntroOutroTransitionType,
+  ResolvedTransitionInstance,
 } from "@studio/shared";
 import type { ResolveBgmOptions } from "../audio/bgmRegistry.js";
 import type { QuizRenderStyleContext } from "./quizRenderStyleContext.js";
@@ -32,6 +33,7 @@ export type QuizRenderInput = {
   outroVideoPath?: string;
   transitionType?: IntroOutroTransitionType;
   transitionDurationSeconds?: number;
+  transitionInstances?: Record<string, ResolvedTransitionInstance>;
 };
 
 export type PreparedQuizRender = {
@@ -41,6 +43,7 @@ export type PreparedQuizRender = {
   questionCount: number;
   styleCatalogRevision?: string;
   stylePresetRevision?: number;
+  transitionInstances?: Record<string, ResolvedTransitionInstance>;
 };
 export type QuizRenderResult = { composition: string; durationSeconds: number };
 

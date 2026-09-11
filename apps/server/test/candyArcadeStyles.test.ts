@@ -180,12 +180,12 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     const mlcr = mediaLeftChoicesRightLayout.css("16:9");
     const vc3 = visualChoicesThreeLayout.css("16:9");
 
-    expect(mlcr).toContain("--choice-card-min-height: 116px;");
-    expect(mlcr).toContain("--choice-badge-size: 138px;");
-    expect(mlcr).toContain("--choice-font-size-base: 38px;");
-    expect(mlcr).toContain("--choice-font-size-medium: 30px;");
-    expect(mlcr).toContain("--choice-font-size-long: 24px;");
-    expect(mlcr).toContain("--choice-font-size-very_long: 20px;");
+    expect(mlcr).toContain("--choice-card-min-height: 132px;");
+    expect(mlcr).toContain("--choice-badge-size: 104px;");
+    expect(mlcr).toContain("--choice-font-size-base: 44px;");
+    expect(mlcr).toContain("--choice-font-size-medium: 38px;");
+    expect(mlcr).toContain("--choice-font-size-long: 32px;");
+    expect(mlcr).toContain("--choice-font-size-very_long: 32px;");
 
     expect(vc3).toContain("--choice-media-height: 320px;");
     expect(vc3).toContain("--choice-badge-size: 72px;");
@@ -221,21 +221,16 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     expect(sv2).toContain("max-width: 1360px;");
     expect(sv2).not.toContain(".has-mascot");
 
-    expect(vtf).toContain("--choice-card-min-height: 140px;");
-    expect(vtf).toContain("--choice-card-height: 140px;");
-    expect(vtf).toContain("--choice-badge-size: 148px;");
-    expect(vtf).toContain("--choice-badge-font-size: 80px;");
-    expect(vtf).toContain("--choice-font-size-base: 46px;");
-    expect(vtf).toContain("--choice-font-size-medium: 38px;");
-    expect(vtf).toContain("--choice-font-size-long: 30px;");
-    expect(vtf).toContain("--choice-font-size-very_long: 24px;");
-    expect(vtf).toContain("--choice-font-size-overflow: 22px;");
-    expect(vtf).toContain("--choice-fit-min: 24px;");
-    expect(vtf).toContain("--choice-fit-max: 68px;");
-    expect(vtf).toContain("width: 1420px;");
-    expect(vtf).toContain("max-width: 1420px;");
-    expect(vtf).toContain("width: min(1260px, 100%);");
-    expect(vtf).toContain("width: min(1220px, 100%);");
+    expect(vtf).toContain("--choice-card-min-height: 164px;");
+    expect(vtf).toContain("--choice-card-height: 164px;");
+    expect(vtf).toContain("--choice-badge-size: 112px;");
+    expect(vtf).toContain("--choice-badge-font-size: 64px;");
+    expect(vtf).toContain("--choice-font-size-base: 48px;");
+    expect(vtf).toContain("--choice-font-size-medium: 40px;");
+    expect(vtf).toContain("--choice-font-size-long: 32px;");
+    expect(vtf).toContain("--choice-font-size-very_long: 32px;");
+    expect(vtf).toContain("--choice-font-size-overflow: 32px;");
+    expect(vtf).toContain("--choice-fit-min: 32px;");
     expect(vtf).not.toContain(".has-mascot");
 
     const mr = mysteryRevealLayout.css("16:9");

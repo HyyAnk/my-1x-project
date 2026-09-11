@@ -117,3 +117,43 @@ export function EpisodeBreadcrumb({
 
   return <Breadcrumbs items={items} className="episode-breadcrumbs" />;
 }
+
+export function ShortReelBreadcrumb({
+  channelName,
+  channelId,
+  reelTitle,
+  onNavigateHome,
+  onNavigateChannels,
+  onNavigateChannel,
+}: {
+  channelName: string;
+  channelId?: string;
+  reelTitle: string;
+  onNavigateHome?: () => void;
+  onNavigateChannels?: () => void;
+  onNavigateChannel?: () => void;
+}) {
+  const items: BreadcrumbItem[] = [
+    {
+      label: "Dashboard",
+      onClick: onNavigateHome,
+      href: "#/dashboard",
+    },
+    {
+      label: "Channels",
+      onClick: onNavigateChannels,
+      href: "#/channels",
+    },
+    {
+      label: channelName,
+      onClick: onNavigateChannel,
+      href: channelId ? buildHash({ page: "channels", channelId, tab: "short-reels" }) : "#/channels",
+    },
+    {
+      label: reelTitle,
+      isCurrent: true,
+    },
+  ];
+
+  return <Breadcrumbs items={items} className="short-reel-breadcrumbs" />;
+}

@@ -1,4 +1,5 @@
 import type { QuizLayoutRenderDefinition } from "./types.js";
+import { renderQuizFrameBody } from "../frame/renderQuizFrameBody.js";
 import { getSplitVersusTwoCss } from "./styles/splitVersusTwoStyles.js";
 
 /**
@@ -25,6 +26,6 @@ import { getSplitVersusTwoCss } from "./styles/splitVersusTwoStyles.js";
  */
 export const splitVersusTwoLayout = {
   id: "split_versus_two",
-  renderBody: (slots) => `${slots.questionBoxHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
+  renderBody: (slots) => renderQuizFrameBody(slots, slots.choicesHtml),
   css: (aspectRatio) => getSplitVersusTwoCss(aspectRatio),
 } satisfies QuizLayoutRenderDefinition;

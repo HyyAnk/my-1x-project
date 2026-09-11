@@ -23,7 +23,28 @@
   border-color: var(--line);
 }
 
-.variant-slot-card:hover {
+.variant-slot-card.is-busy {
+  border-style: solid;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1.5px var(--accent), 0 0 16px rgba(6, 182, 212, 0.25);
+  animation: slotCardPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes slotCardPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 1.5px var(--accent), 0 0 8px rgba(6, 182, 212, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 2px var(--accent), 0 0 18px rgba(6, 182, 212, 0.45);
+  }
+}
+
+.variant-slot-card.is-queued {
+  border-color: rgba(6, 182, 212, 0.35);
+  opacity: 0.85;
+}
+
+.variant-slot-card:hover:not(.is-busy) {
   border-color: var(--accent);
   box-shadow: var(--shadow-sm);
 }
@@ -55,6 +76,19 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.slot-queued-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(6, 182, 212, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
 }
 
 /* Slot Canvas & Checkerboard */

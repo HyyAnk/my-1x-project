@@ -46,6 +46,8 @@ export function useSandboxPreviewRenderer({
   const [lastRenderTime, setLastRenderTime] = useState(() => new Date().toLocaleTimeString());
   const [iframeKey, setIframeKey] = useState(1);
   const latestRequestId = useRef(0);
+  const timelineRef = useRef(timeline);
+  timelineRef.current = timeline;
 
   const renderPreview = useCallback(
     async (manualNotice = false) => {
@@ -54,6 +56,7 @@ export function useSandboxPreviewRenderer({
       setPreviewError(null);
       setPendingPreview(null);
       try {
+        const currentTimeline = timelineRef.current;
         const questionFormat =
           design.layoutId === "verdict_true_false"
             ? "true_false"
@@ -78,8 +81,8 @@ export function useSandboxPreviewRenderer({
           answer_card_style: design.answerCardStyle,
           counter_style: design.counterStyle,
           background_style: design.backgroundStyle,
-          phase: timeline.phase,
-          timeline_time_seconds: timeline.useScrubber ? timeline.timelineSeconds : undefined,
+          phase: currentTimeline.phase,
+          timeline_time_seconds: currentTimeline.useScrubber ? currentTimeline.timelineSeconds : undefined,
           question_format: questionFormat,
           question_text: question.questionText,
           choices: question.choices,
@@ -99,8 +102,8 @@ export function useSandboxPreviewRenderer({
           mascot_offset_x: mascot.mascotOffsetX,
           mascot_offset_y: mascot.mascotOffsetY,
           mascot_flip_x: mascot.mascotFlipX,
-          mascot_timeline_time_seconds: timeline.useScrubber ? timeline.timelineSeconds : undefined,
-          mascot_playing: timeline.isPlaying,
+          mascot_timeline_time_seconds: currentTimeline.useScrubber ? currentTimeline.timelineSeconds : undefined,
+          mascot_playing: currentTimeline.isPlaying,
         };
 
         const response = await api.previewSandboxComposition(input);
@@ -166,11 +169,12 @@ export function useSandboxPreviewRenderer({
 
         // After mount, seek to current timeline seconds and pause if not playing
         const syncIframe = () => {
-          timeline.seekIframe(timeline.timelineSeconds);
-          if (!timeline.isPlaying) {
-            timeline.pauseIframe();
+          const currentTimeline = timelineRef.current;
+          currentTimeline.seekIframe(currentTimeline.timelineSeconds);
+          if (!currentTimeline.isPlaying) {
+            currentTimeline.pauseIframe();
           } else {
-            timeline.playIframe(timeline.timelineSeconds);
+            currentTimeline.playIframe(currentTimeline.timelineSeconds);
           }
         };
         setTimeout(syncIframe, 20);
@@ -189,7 +193,7 @@ export function useSandboxPreviewRenderer({
         onNotice?.({ tone: "bad", message });
       }
     },
-    [onNotice, pendingPreview, t, timeline],
+    [onNotice, pendingPreview, t],
   );
 
   useEffect(() => {

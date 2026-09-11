@@ -60,6 +60,23 @@ describe("Candy Arcade background parity and composition integration", () => {
     expect(firstSandbox.css).toContain("@media (prefers-reduced-motion: reduce)");
     expect(firstSandbox.css).toContain("animation-duration: var(--mascot-state-span, .04s) !important");
   });
+
+  it("renders scheduled choice reveal classes and synchronized reward FX delays in rehearsal mode", () => {
+    const rehearsal = buildSandboxComposition({
+      mode: "rehearsal",
+      theme: "candy_arcade",
+      choices: ["Jupiter", "Mars", "Saturn"],
+      correct_choice_index: 0,
+    });
+    expect(rehearsal.html).toContain("answer-reveal-correct");
+    expect(rehearsal.html).toContain("answer-reveal-incorrect");
+    expect(rehearsal.css).toContain(
+      ".reward-fx i:nth-child(2) { right: 6%; top: 38%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .06s); }",
+    );
+    expect(rehearsal.css).toContain(
+      ".reward-fx i:nth-child(9) { left: 20%; bottom: 23%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .48s); }",
+    );
+  });
 });
 
 function parityProductionBundle(backgrounds: [BackgroundId, BackgroundId]) {

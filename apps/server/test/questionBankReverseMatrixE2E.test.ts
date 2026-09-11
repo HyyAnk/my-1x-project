@@ -77,17 +77,17 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
   // ============================================================================
   // Suite 1: Knowledge Base Integrity, Completeness & English-Only Sanitization
   // ============================================================================
-  describe("1. Knowledge Base Integrity (2,500 Entities across 14 Domains)", () => {
-    it("loads all 14 entity files totaling exactly 2,500 entities", () => {
+  describe("1. Knowledge Base Integrity (2,850 Entities across 18 Domains)", () => {
+    it("loads all 18 entity files totaling exactly 2,850 entities", () => {
       const baseDir = path.join(workspaceRoot, ".quiz-studio", "knowledge_base", "entities");
       const stats = getKnowledgeBaseStats({ baseDir });
-      expect(stats.totalEntities).toBe(2500);
+      expect(stats.totalEntities).toBe(2850);
 
       const files = readdirSync(baseDir).filter((f) => f.endsWith(".json"));
-      expect(files.length).toBe(14);
+      expect(files.length).toBe(18);
     });
 
-    it("ensures all 2,500 entity IDs are strictly unique", () => {
+    it("ensures all 2,850 entity IDs are strictly unique", () => {
       const baseDir = path.join(workspaceRoot, ".quiz-studio", "knowledge_base", "entities");
       const all = loadAllKnowledgeEntities({ baseDir });
       const idSet = new Set<string>();
@@ -95,7 +95,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
         expect(idSet.has(ent.id)).toBe(false);
         idSet.add(ent.id);
       }
-      expect(idSet.size).toBe(2500);
+      expect(idSet.size).toBe(2850);
     });
 
     it("verifies every entity contains required traits, facts, and distractor pool", () => {
@@ -147,9 +147,9 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       const tempTestFile = path.join(entityDir, "zz_dynamic_test_entity.json");
 
       try {
-        // Initial baseline is 2,500 entities and 20,000 combos
+        // Initial baseline is 2,850 entities and 22,800 combos
         const before = calculateMatrixCoverageStats([], { baseDir: entityDir });
-        expect(before.total_combos).toBe(20000);
+        expect(before.total_combos).toBe(22800);
 
         // Dynamically add a new entity file to the knowledge base
         const newEntity = [
@@ -169,7 +169,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
 
         // The very next call to calculateMatrixCoverageStats immediately recognizes the addition
         const after = calculateMatrixCoverageStats([], { baseDir: entityDir });
-        expect(after.total_combos).toBe(20008); // 2,501 * 8 = 20,008 (+8 combos automatically!)
+        expect(after.total_combos).toBe(22808); // 2,851 * 8 = 22,808 (+8 combos automatically!)
 
         const dynamicEntity = getEntityById("ENT-DYN-001", { baseDir: entityDir });
         expect(dynamicEntity).toBeDefined();
@@ -178,9 +178,9 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
         if (existsSync(tempTestFile)) {
           unlinkSync(tempTestFile);
         }
-        // Cache automatically detects removal and reverts back to 20,000
+        // Cache automatically detects removal and reverts back to 22,800
         const reverted = calculateMatrixCoverageStats([], { baseDir: entityDir });
-        expect(reverted.total_combos).toBe(20000);
+        expect(reverted.total_combos).toBe(22800);
       }
     });
   });
@@ -191,13 +191,13 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
   describe("2. Matrix Coverage Service & Least-Variant-First Priority Queue", () => {
     const baseDir = () => path.join(workspaceRoot, ".quiz-studio", "knowledge_base", "entities");
 
-    it("computes exactly 20,000 total combos with 0% coverage on empty question bank", () => {
+    it("computes exactly 22,800 total combos with 0% coverage on empty question bank", () => {
       const coverage = calculateMatrixCoverageStats([], { baseDir: baseDir() });
-      expect(coverage.total_combos).toBe(20000);
+      expect(coverage.total_combos).toBe(22800);
       expect(coverage.covered_combos).toBe(0);
       expect(coverage.coverage_percent).toBe(0);
       expect(Object.keys(coverage.by_archetype).length).toBe(8);
-      expect(Object.keys(coverage.by_domain).length).toBe(14);
+      expect(Object.keys(coverage.by_domain).length).toBe(18);
     });
 
     it("accurately tracks coverage when questions with and without entity_id coexist", () => {
@@ -242,7 +242,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       ];
 
       const coverage = calculateMatrixCoverageStats(questions, { baseDir: baseDir() });
-      expect(coverage.total_combos).toBe(20000);
+      expect(coverage.total_combos).toBe(22800);
       expect(coverage.covered_combos).toBe(1);
       expect(coverage.total_variants).toBe(1);
     });
@@ -686,7 +686,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(result.approvedCount).toBe(5);
       expect(result.rejectedCount).toBe(0);
       expect(result.matrixCoverage).toBeDefined();
-      expect(result.matrixCoverage?.total_combos).toBe(20000);
+      expect(result.matrixCoverage?.total_combos).toBe(22800);
 
       expect(progressCalls.length).toBeGreaterThan(0);
       const lastProgress = progressCalls[progressCalls.length - 1];
@@ -745,12 +745,12 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(res.statusCode).toBe(200);
       const body = res.json<ReverseCoverageBody>();
       expect(body.coverage).toBeDefined();
-      expect(body.coverage.total_combos).toBe(20000);
+      expect(body.coverage.total_combos).toBe(22800);
       expect(body.coverage.total_variants).toBeGreaterThanOrEqual(0);
       expect(body.coverage.covered_combos).toBeGreaterThanOrEqual(0);
       expect(typeof body.coverage.coverage_percent).toBe("number");
       expect(Object.keys(body.coverage.by_archetype).length).toBe(8);
-      expect(Object.keys(body.coverage.by_domain).length).toBe(14);
+      expect(Object.keys(body.coverage.by_domain).length).toBe(18);
     });
 
     it("POST /api/question-bank/generate-batch returns 503 when AI client is unavailable and no candidates provided", async () => {
@@ -813,7 +813,7 @@ describe("Question Bank Reverse Matrix Generation & Coverage E2E", () => {
       expect(body.success).toBe(true);
       expect(body.approvedCount).toBe(1);
       expect(body.matrixCoverage).toBeDefined();
-      expect(body.matrixCoverage.total_combos).toBe(20000);
+      expect(body.matrixCoverage.total_combos).toBe(22800);
     });
   });
 });

@@ -1,6 +1,8 @@
-import type { Channel, QuizConfig, QuizStyleResolutionContext } from "@studio/shared";
+import type { Channel, QuizConfig, QuizStyleResolutionContext, TransitionSettings } from "@studio/shared";
 
-export type QuizRenderStyleContext = Omit<QuizStyleResolutionContext, "beat">;
+export type QuizRenderStyleContext = Omit<QuizStyleResolutionContext, "beat"> & {
+  transitions?: TransitionSettings;
+};
 
 /**
  * Adapts persisted Channel and Episode settings to the shared style policy
@@ -9,6 +11,7 @@ export type QuizRenderStyleContext = Omit<QuizStyleResolutionContext, "beat">;
 export function buildQuizRenderStyleContext(channel: Channel, episode: QuizConfig): QuizRenderStyleContext {
   return {
     theme: episode.visual_theme,
+    transitions: (episode as any).transitions ?? (channel as any).transitions,
     channel: {
       default_palette_id: channel.default_palette_id,
       default_thinking_bar_style: channel.default_thinking_bar_style,

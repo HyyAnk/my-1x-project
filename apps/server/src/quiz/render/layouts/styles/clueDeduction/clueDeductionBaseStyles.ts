@@ -32,7 +32,7 @@ export function clueDeductionBaseStyles(): string {
 }
 
 /* --- 3-Row Native CSS Grid Architecture (BUG-CD-03, BUG-CD-07 Fix) --- */
-.layout-clue_deduction .game-stage {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .game-stage {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto auto auto;
@@ -50,7 +50,7 @@ export function clueDeductionBaseStyles(): string {
 }
 
 /* --- Row 1: Question Title Card --- */
-.layout-clue_deduction .question-title {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .question-title {
   grid-area: title;
   width: 100%;
   max-width: 1380px;
@@ -60,7 +60,7 @@ export function clueDeductionBaseStyles(): string {
 }
 
 /* --- Row 2: Clue Deduction Stage Wrapper --- */
-.layout-clue_deduction .clue-deduction-stage-wrapper {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .clue-deduction-stage-wrapper {
   grid-area: stage;
   position: relative;
   width: 100%;
@@ -72,6 +72,21 @@ export function clueDeductionBaseStyles(): string {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 0 3.5px rgba(56, 189, 248, 0.28), inset 0 2px 4px rgba(255, 255, 255, 0.15);
   background: #080e1e;
   animation: clue-stage-enter 0.65s cubic-bezier(0.18, 1.4, 0.3, 1) var(--clip-start, 0s) both;
+}
+
+/* Unified Outer Dossier: (380, 253, 1420, 510) -> local (0, 0, 1420, 510) */
+.quiz-frame-unified.layout-clue_deduction .clue-deduction-stage-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1420px;
+  height: 510px;
+  max-width: 1420px;
+  margin: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 0 3.5px rgba(56, 189, 248, 0.28), inset 0 2px 4px rgba(255, 255, 255, 0.15);
+  background: #080e1e;
 }
 
 /* Detective Stage Backdrop: Vignette & Cyber Grid (BUG-CD-08) */

@@ -3,9 +3,10 @@ import { RepositoryError } from "../../repository.js";
 import { inspectRenderedVideo } from "../../quiz/qa/postRenderQa.js";
 import { hasNonEmptyFile } from "../artifactFiles.js";
 import { readRenderCheckpoint, writeRenderCheckpoint } from "../checkpoints.js";
-import { getHyperframesInvocation } from "./videoInvocation.js";
+import { resolveRenderEngineSnapshot } from "./renderEngineSnapshot.js";
+import { buildRenderInvocation } from "./renderInvocationOptions.js";
 import { mapRenderTaskPercent } from "./hyperframesProgress.js";
-import { calculateOptimalWorkers, getHyperframesExecutionEnv } from "./videoPerformance.js";
+import { calculateOptimalWorkers } from "./videoPerformance.js";
 import { runHyperframesProcess } from "./hyperframesProcess.js";
 
 export async function executeHyperframesRender(options: {
@@ -51,28 +52,16 @@ export async function executeHyperframesRender(options: {
     await onProgress("Video · reusing verified MP4", 85, null);
   } else {
     await onProgress("Video · rendering MP4 with narration", 65, null);
-    const browserTimeout = process.env.HYPERFRAMES_BROWSER_TIMEOUT_SECONDS || "300";
-    const renderTimeoutMs = Number(process.env.HYPERFRAMES_RENDER_TIMEOUT_MS) || 120 * 60_000;
-    const hyperframesEnv = getHyperframesExecutionEnv();
     const optimalWorkers = calculateOptimalWorkers(videoConfig.render_workers);
-    const renderInvocation = getHyperframesInvocation(
-      "render",
+    const snapshot = resolveRenderEngineSnapshot({
+      fps: videoConfig.fps,
+      quality: videoConfig.render_quality,
+    });
+    const renderInvocation = buildRenderInvocation(snapshot, {
       renderRoot,
-      "--output",
       outputPath,
-      "--fps",
-      String(videoConfig.fps),
-      "--quality",
-      videoConfig.render_quality,
-      "--workers",
-      String(optimalWorkers),
-      "--gpu",
-      "--browser-gpu",
-      "--browser-timeout",
-      browserTimeout,
-      "--strict",
-      "--json",
-    );
+      workers: optimalWorkers,
+    });
     let latestPercent = 65;
     let latestFrames = 0;
     let latestProgress: RenderProgress | null = null;
@@ -80,8 +69,8 @@ export async function executeHyperframesRender(options: {
       command: renderInvocation.command,
       args: renderInvocation.args,
       cwd: repositoryRoot,
-      env: hyperframesEnv,
-      timeoutMs: renderTimeoutMs,
+      env: renderInvocation.env,
+      timeoutMs: renderInvocation.timeoutMs,
       logPath,
       signal,
       onProgress: async (event) => {

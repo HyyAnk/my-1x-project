@@ -104,12 +104,13 @@ export const mascotApi = {
       method: "POST",
       body: JSON.stringify({ style_id: styleId }),
     }),
-  generateMascotStyleSlot: (mascotId: string, styleId: string, input: GenerateMascotSlotInput) =>
+  generateMascotStyleSlot: (mascotId: string, styleId: string, input: GenerateMascotSlotInput, signal?: AbortSignal) =>
     request<{ mascot: MascotProfile; slot: MascotStateVariant; prompt_used: string; placeholder?: boolean }>(
       `/api/mascots/${mascotId}/styles/${styleId}/generate-slot`,
       {
         method: "POST",
         body: JSON.stringify(input),
+        signal,
       },
     ),
   generateMascotStyleBatch: (mascotId: string, styleId: string, input: BatchGenerateStyleSlotsInput, signal?: AbortSignal) =>

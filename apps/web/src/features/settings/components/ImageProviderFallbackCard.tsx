@@ -1,7 +1,8 @@
 import type { FormEvent } from "react";
-import { CircleNotch, Eye, EyeSlash, FloppyDisk, Plug, ShieldCheck, Trash } from "@phosphor-icons/react";
+import { CheckCircle, CircleNotch, Eye, EyeSlash, FloppyDisk, Plug, ShieldCheck, Trash, XCircle } from "@phosphor-icons/react";
 import { type ImgStudioModelDefinition, IMGSTUDIO_DEFAULT_MODEL_ID, resolveImgStudioModelName } from "@studio/shared";
 import { StatusLine } from "../../../components/AppChrome";
+import type { VerificationResult } from "../hooks/useImageFallbackSettingsState";
 
 export interface ImageProviderFallbackCardProps {
   fallbackEnabled: boolean;
@@ -19,6 +20,8 @@ export interface ImageProviderFallbackCardProps {
   hasFallbackApiKey: boolean;
   savingFallback: boolean;
   verifyingFallback: boolean;
+  verificationResult?: VerificationResult;
+  setVerificationResult?: (result: VerificationResult) => void;
   availableModels: readonly ImgStudioModelDefinition[];
   onSaveFallback: (event: FormEvent) => void | Promise<void>;
   onClearFallbackKey: () => void | Promise<void>;
@@ -41,6 +44,8 @@ export function ImageProviderFallbackCard({
   hasFallbackApiKey,
   savingFallback,
   verifyingFallback,
+  verificationResult,
+  setVerificationResult,
   availableModels,
   onSaveFallback,
   onClearFallbackKey,
@@ -59,11 +64,32 @@ export function ImageProviderFallbackCard({
       <StatusLine label="Fallback Provider" value="ImgStudio (imgstudio.site)" />
       <StatusLine
         label="Fallback Mode"
-        value={fallbackEnabled ? "Active (Auto-failover on primary failure)" : "Disabled"}
+        value={
+          fallbackEnabled ? (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "var(--accent-deep)", fontWeight: 700 }}>
+              <ShieldCheck weight="fill" size={14} />
+              Active (Auto-failover on primary failure)
+            </span>
+          ) : (
+            <span style={{ color: "var(--muted)" }}>Disabled</span>
+          )
+        }
       />
       <StatusLine
         label="API Key Status"
-        value={hasFallbackApiKey ? "Configured" : "Not configured"}
+        value={
+          hasFallbackApiKey ? (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "var(--green)", fontWeight: 700 }}>
+              <CheckCircle weight="fill" size={14} />
+              Configured & Active
+            </span>
+          ) : (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "var(--muted)", fontWeight: 600 }}>
+              <XCircle size={14} />
+              Not configured
+            </span>
+          )
+        }
       />
       <StatusLine
         label="Active Fallback Model"
@@ -127,15 +153,62 @@ export function ImageProviderFallbackCard({
         </div>
 
         <label>
-          ImgStudio API Key
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span>ImgStudio API Key</span>
+            {hasFallbackApiKey ? (
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  color: "var(--green)",
+                  background: "var(--soft-green)",
+                  padding: "2px 8px",
+                  borderRadius: "999px",
+                }}
+              >
+                <CheckCircle size={13} weight="fill" />
+                Key Saved & Active
+              </span>
+            ) : (
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: "var(--muted)",
+                }}
+              >
+                Not configured
+              </span>
+            )}
+          </div>
           <div style={{ display: "flex", gap: "8px", alignItems: "center", width: "100%" }}>
             <input
               type={showFallbackKey ? "text" : "password"}
               value={fallbackApiKey}
-              onChange={(event) => setFallbackApiKey(event.target.value)}
-              placeholder="Paste ImgStudio API key"
+              onChange={(event) => {
+                setFallbackApiKey(event.target.value);
+                if (setVerificationResult) setVerificationResult(null);
+              }}
+              placeholder={
+                hasFallbackApiKey
+                  ? showFallbackKey
+                    ? "Stored securely in local settings (enter new key to replace)"
+                    : "•••••••••••••••••••••••••••••••• (Key saved & active)"
+                  : "Paste ImgStudio API key"
+              }
               autoComplete="off"
-              style={{ flex: 1 }}
+              style={{
+                flex: 1,
+                ...(hasFallbackApiKey && !fallbackApiKey
+                  ? { borderColor: "color-mix(in srgb, var(--green) 40%, var(--line))" }
+                  : {}),
+              }}
             />
             <button
               type="button"
@@ -160,7 +233,9 @@ export function ImageProviderFallbackCard({
             ) : null}
           </div>
           <small className="field-help">
-            Obtain your API key from https://imgstudio.site/docs/api. Key is securely stored in local untracked config.
+            {hasFallbackApiKey
+              ? "API key is securely stored in local settings. To update it, enter a new key above and click Save Fallback Settings. Click the trash icon to remove it."
+              : "Obtain your API key from https://imgstudio.site/docs/api. Key is securely stored in local untracked config."}
           </small>
         </label>
 
@@ -202,6 +277,40 @@ export function ImageProviderFallbackCard({
             )}
           </button>
         </div>
+
+        {verificationResult ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "9px 13px",
+              borderRadius: "9px",
+              fontSize: "12px",
+              fontWeight: 600,
+              background:
+                verificationResult.status === "success"
+                  ? "var(--soft-green)"
+                  : "var(--danger-surface)",
+              color:
+                verificationResult.status === "success"
+                  ? "var(--green)"
+                  : "var(--notice-error)",
+              border: `1px solid ${
+                verificationResult.status === "success"
+                  ? "color-mix(in srgb, var(--green) 35%, transparent)"
+                  : "color-mix(in srgb, var(--notice-error) 35%, transparent)"
+              }`,
+            }}
+          >
+            {verificationResult.status === "success" ? (
+              <CheckCircle size={16} weight="fill" />
+            ) : (
+              <XCircle size={16} weight="fill" />
+            )}
+            <span>{verificationResult.message}</span>
+          </div>
+        ) : null}
       </form>
     </section>
   );

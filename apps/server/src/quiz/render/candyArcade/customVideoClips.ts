@@ -1,4 +1,4 @@
-import { getTransition, type IntroOutroTransitionType, type TransitionDefinition } from "@studio/shared";
+import { getTransition, getTransitionDefinition, type IntroOutroTransitionType, type TransitionDefinition } from "@studio/shared";
 import { escAttr } from "./candyArcadeSvg.js";
 
 /**
@@ -94,27 +94,54 @@ export function renderIntroTransitionOverlay(
   transitionType: IntroOutroTransitionType | string,
   transitionStart: number,
   transitionDuration: number,
-  def?: TransitionDefinition,
+  def?: any,
+  instanceId?: string,
 ): string {
-  const activeDef = def ?? resolveTransitionDefinition(transitionType);
-  const transitionId = activeDef.id;
+  let activeDef = def;
+  if (!activeDef) {
+    try {
+      activeDef = getTransitionDefinition(transitionType);
+    } catch {
+      activeDef = resolveTransitionDefinition(transitionType);
+    }
+  }
+  const transitionId = activeDef?.id ?? "stinger_swipe";
 
   if (transitionId === "cut" || transitionDuration <= 0) {
     return "";
   }
 
+  const instAttr = instanceId ? ` data-transition-instance="${instanceId}"` : "";
   const styleAttr = `style="--trans-start:${transitionStart.toFixed(3)}s;--trans-dur:${transitionDuration.toFixed(3)}s;"`;
+
+  if (typeof activeDef?.renderMarkup === "function") {
+    const markup = activeDef.renderMarkup({
+      instanceId: instanceId ?? "intro",
+      placement: "intro",
+      fps: { numerator: 30, denominator: 1 },
+      startFrame: Math.round(transitionStart * 30),
+      boundaryFrame: Math.round((transitionStart + transitionDuration) * 30),
+      availableEndFrameExclusive: Math.round((transitionStart + transitionDuration) * 30),
+      width: 1920,
+      height: 1080,
+      fromColor: "#000000",
+      toColor: "#000000",
+      inkColor: "#ffffff",
+    });
+    const cssClass = activeDef.cssClass || `transition-${transitionId}`;
+    return `<div class="intro-transition ${cssClass}"${instAttr} ${styleAttr}>${markup}</div>`;
+  }
 
   switch (transitionId) {
     case "crossfade":
-      return `<div class="intro-transition transition-crossfade" ${styleAttr}></div>`;
+      return `<div class="intro-transition transition-crossfade"${instAttr} ${styleAttr}></div>`;
     case "stinger_swipe":
-      return `<div class="intro-transition transition-stinger" ${styleAttr}><div class="stinger-slash slash-a"></div><div class="stinger-slash slash-b"></div><div class="stinger-flash"></div></div>`;
+      return `<div class="intro-transition transition-stinger"${instAttr} ${styleAttr}><div class="stinger-slash slash-a"></div><div class="stinger-slash slash-b"></div><div class="stinger-flash"></div></div>`;
     case "swipe":
-      return `<div class="intro-transition transition-swipe" ${styleAttr}><div class="swipe-curtain"></div></div>`;
+      return `<div class="intro-transition transition-swipe"${instAttr} ${styleAttr}><div class="swipe-curtain"></div></div>`;
     default: {
-      const cssClass = activeDef.cssClass || `transition-${transitionId}`;
-      return `<div class="intro-transition ${cssClass}" ${styleAttr}></div>`;
+      const cssClass = activeDef?.cssClass || `transition-${transitionId}`;
+      return `<div class="intro-transition ${cssClass}"${instAttr} ${styleAttr}></div>`;
     }
   }
 }
@@ -128,6 +155,7 @@ export function customIntroVideoClip(
   transitionType: IntroOutroTransitionType | string = "stinger_swipe",
   hasAudioOrDuration: boolean | number = true,
   transitionDurationSeconds?: number,
+  instanceId?: string,
 ): string {
   if (durationSeconds < 0.08) return "";
 
@@ -139,9 +167,14 @@ export function customIntroVideoClip(
     targetDuration = hasAudioOrDuration;
   }
 
-  const def = resolveTransitionDefinition(transitionType);
+  let def: any;
+  try {
+    def = getTransitionDefinition(transitionType);
+  } catch {
+    def = resolveTransitionDefinition(transitionType);
+  }
   const { transitionStart, transitionDuration } = calculateIntroTransitionTiming(durationSeconds, transitionType, targetDuration);
-  const transitionHtml = renderIntroTransitionOverlay(transitionType, transitionStart, transitionDuration, def);
+  const transitionHtml = renderIntroTransitionOverlay(transitionType, transitionStart, transitionDuration, def, instanceId);
 
   const audioAttrs = hasAudio ? 'data-has-audio="true"' : 'data-has-audio="false" muted';
 

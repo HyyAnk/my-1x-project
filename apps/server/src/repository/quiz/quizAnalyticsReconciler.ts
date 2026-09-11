@@ -11,6 +11,8 @@ const DEFAULT_IMAGE_UNIT_COST_VND = 500;
 const DEFAULT_IMAGE_UNIT_COST_USD = 0.02;
 const GPTI2_IMAGE_UNIT_COST_VND = 50;
 const GPTI2_IMAGE_UNIT_COST_USD = 0.002;
+const IMGSTUDIO_IMAGE_UNIT_COST_VND = 150;
+const IMGSTUDIO_IMAGE_UNIT_COST_USD = 0.006;
 
 export function getLedgerDirectory(runtime: RepositoryRuntime): string {
   return path.join(runtime.roots.runtime, "analytics");
@@ -52,9 +54,10 @@ export function resolveImageUsageDelta(input: {
 }): ImageUsageDelta {
   const count = Math.max(1, input.count ?? 1);
   const providerKey = (input.provider || "unknown").toLowerCase();
+  const isImgStudio = providerKey === "imgstudio";
   const isGpti2 = providerKey === "gpti2" || (input.model !== undefined && input.model.includes("gpt-image-2"));
-  const unitCostVnd = isGpti2 ? GPTI2_IMAGE_UNIT_COST_VND : DEFAULT_IMAGE_UNIT_COST_VND;
-  const unitCostUsd = isGpti2 ? GPTI2_IMAGE_UNIT_COST_USD : DEFAULT_IMAGE_UNIT_COST_USD;
+  const unitCostVnd = isImgStudio ? IMGSTUDIO_IMAGE_UNIT_COST_VND : isGpti2 ? GPTI2_IMAGE_UNIT_COST_VND : DEFAULT_IMAGE_UNIT_COST_VND;
+  const unitCostUsd = isImgStudio ? IMGSTUDIO_IMAGE_UNIT_COST_USD : isGpti2 ? GPTI2_IMAGE_UNIT_COST_USD : DEFAULT_IMAGE_UNIT_COST_USD;
   const addedCostVnd = input.costVnd !== undefined ? Math.max(0, input.costVnd) : count * unitCostVnd;
   const addedCostUsd = input.costUsd !== undefined ? Math.max(0, input.costUsd) : Number((count * unitCostUsd).toFixed(4));
   const costEstimated = input.costVnd === undefined && input.costUsd === undefined;

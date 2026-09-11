@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <linearGradient id="bgGrad_16_9" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+    <linearGradient id="badgeGrad_16_9" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <radialGradient id="glow_16_9" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid_16_9" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow_16_9" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background Layer -->
+  <rect width="1280" height="720" fill="url(#bgGrad_16_9)"/>
+  <rect width="1280" height="720" fill="url(#grid_16_9)"/>
+  <circle cx="640" cy="360" r="324" fill="url(#glow_16_9)"/>
+
+  <!-- Safe Area Guides -->
+  <rect x="102" y="58" width="1076" height="604" rx="20" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2" stroke-dasharray="6 6"/>
+  <text x="118" y="86" fill="rgba(255,255,255,0.35)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" letter-spacing="1">SAFE AREA (85%)</text>
+
+  <!-- Alignment Crosshairs -->
+  <path d="M 616 360 L 664 360 M 640 336 L 640 384" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+
+  <!-- Corner Crop Marks -->
+  <path d="M 24 48 L 24 24 L 48 24" fill="none" stroke="#38bdf8" stroke-width="3"/>
+  <path d="M 1256 48 L 1256 24 L 1232 24" fill="none" stroke="#38bdf8" stroke-width="3"/>
+  <path d="M 24 672 L 24 696 L 48 696" fill="none" stroke="#38bdf8" stroke-width="3"/>
+  <path d="M 1256 672 L 1256 696 L 1232 696" fill="none" stroke="#38bdf8" stroke-width="3"/>
+
+  <!-- Center Specimen Card -->
+  <rect x="360" y="230" width="560" height="260" rx="24" fill="rgba(15, 23, 42, 0.82)" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" filter="url(#shadow_16_9)"/>
+
+  <!-- Specimen Badge Pill -->
+  <g transform="translate(640, 284)">
+    <rect x="-105" y="-22" width="210" height="44" rx="22" fill="url(#badgeGrad_16_9)"/>
+    <text x="0" y="6" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" letter-spacing="0.5">16:9 RATIO</text>
+  </g>
+
+  <!-- Dimension Metric -->
+  <text x="640" y="358" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="32" font-weight="700" letter-spacing="-0.5">1280 × 720 px</text>
+
+  <!-- Role Subtitle -->
+  <text x="640" y="394" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="500">Hero Banner / Mystery Reveal</text>
+
+  <!-- Dimensions Indicator Edge Markers -->
+  <text x="640" y="702" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">WIDTH: 1280px</text>
+  <text x="18" y="360" text-anchor="middle" transform="rotate(-90 18 360)" fill="rgba(255,255,255,0.4)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">HEIGHT: 720px</text>
+</svg>

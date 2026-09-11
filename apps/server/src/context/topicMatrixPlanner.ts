@@ -30,6 +30,26 @@ export const CANONICAL_FALLBACK_DOMAINS: Array<{ id: string; title: string; desc
     title: "Pop Culture & Classics",
     description: "Cinema legends, animation, gaming icons, classic literature, and art.",
   },
+  {
+    id: "global_brands",
+    title: "Global Brands & Icons",
+    description: "World-famous corporate brands, iconic logos, tech giants, automotive legends, and consumer empires.",
+  },
+  {
+    id: "anime_manga",
+    title: "Anime & Manga Universe",
+    description: "Iconic anime series, legendary shonen heroes, psychological thrillers, mecha epics, and Studio Ghibli masterpieces.",
+  },
+  {
+    id: "gaming_esports",
+    title: "Video Games & Esports",
+    description: "Legendary video game franchises, esports titles, gaming icons, sandbox worlds, and RPG lore.",
+  },
+  {
+    id: "modern_cinema_tv",
+    title: "Modern Pop Franchises & Cinema",
+    description: "Iconic movie franchises, superhero universes, sci-fi space sagas, fantasy epics, and binge-worthy TV series.",
+  },
 ];
 
 export const ARCHETYPE_SLOT_DEFINITIONS = [

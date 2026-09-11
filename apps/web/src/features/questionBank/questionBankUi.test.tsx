@@ -439,6 +439,68 @@ describe("Question Bank Studio UI Components", () => {
     });
   });
 
+  it("supports custom count input and high volume presets like 1000 and 5000 questions", async () => {
+    const onGenerate = vi.fn().mockResolvedValue({
+      success: true,
+      mode: "auto",
+      requestedCount: 5000,
+      generatedCount: 5000,
+      approvedCount: 5000,
+      rejectedCount: 0,
+      qaSummary: { duplicateRejections: 0, schemaRejections: 0, qualityRejections: 0 },
+      savedQuestions: [],
+      rejectedQuestions: [],
+    });
+
+    renderWithLanguage(
+      <QuestionBankAiGenerateModal
+        taxonomy={mockTaxonomy}
+        matrixCoverage={{
+          total_combos: 20000,
+          covered_combos: 320,
+          total_variants: 320,
+          coverage_percent: 1.6,
+          by_archetype: {},
+          by_domain: {},
+        }}
+        generating={false}
+        onClose={vi.fn()}
+        onGenerate={onGenerate}
+      />,
+      "en",
+    );
+
+    // Verify 1000 and 5000 presets exist
+    expect(screen.getByText(/1000 Questions \(50 chunks\)/)).toBeDefined();
+    expect(screen.getByText(/5000 Questions \(250 chunks\)/)).toBeDefined();
+
+    // Click 5000 preset
+    const chip5000 = screen.getByText(/5000 Questions \(250 chunks\)/);
+    fireEvent.click(chip5000);
+    expect(screen.getByText(/Auto-Fill Matrix \(5000 questions\)/)).toBeDefined();
+
+    // Custom input shows 5000
+    const customInput = screen.getByPlaceholderText("e.g. 5000") as HTMLInputElement;
+    expect(customInput.value).toBe("5000");
+
+    // Type a custom count like 2500
+    fireEvent.change(customInput, { target: { value: "2500" } });
+    expect(screen.getByText(/Auto-Fill Matrix \(2500 questions\)/)).toBeDefined();
+    expect(screen.getByText(/125 chunks \(<= 20 questions each\)/)).toBeDefined();
+
+    // Submit custom batch
+    const submitBtn = screen.getByText(/Auto-Fill Matrix \(2500 questions\)/);
+    fireEvent.click(submitBtn);
+
+    expect(onGenerate).toHaveBeenCalledWith({
+      mode: "auto",
+      count: 2500,
+      target_count: 2500,
+      difficulty: 2,
+      persist: true,
+    });
+  });
+
   it("QuestionBankAiGenerateModal tolerates historical payloads containing copyrightRejections at input boundary", async () => {
     const historicalPayload = {
       success: true,

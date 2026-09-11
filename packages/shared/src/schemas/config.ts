@@ -32,6 +32,11 @@ export const AppConfigSchema = z.object({
     aspect_ratio: z.literal("16:9").default("16:9"),
     max_concurrent_tasks: z.number().int().min(1).max(10).default(1),
     render_workers: z.number().int().min(1).max(16).optional(),
+    /**
+     * Bypasses pre-render layout preflight checks for rapid drafting/dev.
+     * Defaults to false so standard layout validation runs safely.
+     * Contrast QA is non-blocking and will never abort video renders regardless of this setting.
+     */
     fast_render_mode: z.boolean().default(false),
   }),
   image_generation: z.object({

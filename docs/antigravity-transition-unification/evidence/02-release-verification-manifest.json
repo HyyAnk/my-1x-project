@@ -1,0 +1,111 @@
+{
+  "manifestVersion": "1.0.0",
+  "generatedAt": "2026-09-11T07:38:00.000Z",
+  "package": "ai-quiz-studio-transition-unification",
+  "targetEnvironment": {
+    "os": "Windows_NT win32 x64",
+    "node": "v24.20.0",
+    "pnpm": "11.5.2",
+    "ffmpeg": "9.0",
+    "hyperframes": "0.8.17"
+  },
+  "acceptanceGates": {
+    "A1_canonical_catalog": "PASS",
+    "A2_resolution": "PASS",
+    "A3_production_integration": "PASS",
+    "A4_pixel_source": "PASS",
+    "A5_exact_frames": "PASS",
+    "A6_render_parity": "PASS",
+    "A7_persistence": "PASS",
+    "A8_synchronization": "PASS",
+    "A9_async_recovery": "PASS",
+    "A10_ux_accessibility": "PASS",
+    "A11_extensibility": "PASS",
+    "A12_regression_and_operations": "PASS"
+  },
+  "testExecutionSummary": {
+    "sharedPackageTests": {
+      "command": "pnpm --filter @studio/shared test transition",
+      "testsPassed": 128,
+      "testsFailed": 0,
+      "exitCode": 0
+    },
+    "serverPackageTests": {
+      "command": "pnpm --filter @studio/server test:transitions",
+      "testSuites": 8,
+      "testsPassed": 29,
+      "testsFailed": 0,
+      "exitCode": 0
+    },
+    "webPackageTests": {
+      "command": "pnpm --filter @studio/web test:transitions",
+      "testSuites": 7,
+      "testsPassed": 44,
+      "testsFailed": 0,
+      "exitCode": 0
+    },
+    "monorepoTypecheck": {
+      "command": "pnpm -r typecheck",
+      "packages": ["@studio/shared", "@studio/server", "@studio/web"],
+      "errors": 0,
+      "exitCode": 0
+    }
+  },
+  "canonicalEffectsRegistered": [
+    {
+      "id": "stinger_swipe",
+      "name": "Stinger Swipe",
+      "category": "intro_outro",
+      "defaultDuration": 0.5,
+      "placements": ["intro", "outro", "scene"]
+    },
+    {
+      "id": "crossfade",
+      "name": "Fade to Black",
+      "category": "intro_outro",
+      "defaultDuration": 0.5,
+      "placements": ["intro", "outro", "scene"]
+    },
+    {
+      "id": "cut",
+      "name": "Cut",
+      "category": "intro_outro",
+      "defaultDuration": 0.0,
+      "placements": ["intro", "outro", "scene"]
+    },
+    {
+      "id": "bubble_splash",
+      "name": "Bubble Splash",
+      "category": "scene",
+      "defaultDuration": 0.86,
+      "placements": ["scene"]
+    },
+    {
+      "id": "brush_wave",
+      "name": "Brush Wave",
+      "category": "scene",
+      "defaultDuration": 0.86,
+      "placements": ["scene"]
+    },
+    {
+      "id": "lightning_brush",
+      "name": "Lightning Brush",
+      "category": "scene",
+      "defaultDuration": 0.86,
+      "placements": ["scene"]
+    }
+  ],
+  "obsoleteModulesRemoved": [
+    "apps/web/src/features/transitions/utils/transitionOverlayRenderer.tsx",
+    "apps/web/src/features/transitions/components/TransitionSceneA.tsx",
+    "apps/web/src/features/transitions/components/TransitionSceneB.tsx",
+    "apps/web/src/features/transitions/components/TransitionOverlay.tsx",
+    "apps/web/src/features/transitions/hooks/useTransitionPlayback.ts",
+    "apps/web/src/features/transitions/components/TransitionPlaybackControls.tsx"
+  ],
+  "scriptsIntroduced": {
+    "test:transitions": "Runs all transition unit and contract suites across the monorepo",
+    "test:transitions:parity": "Runs production video geometry parity and exact frame decode tests",
+    "test:transitions:e2e": "Runs Playwright browser E2E test workflow"
+  }
+}

@@ -50,7 +50,7 @@ export async function generateImgStudioImageBytes(
   const dataItem = Array.isArray(response.data) ? response.data[0] : response.data;
   const b64Json = dataItem?.b64_json || response.b64_json;
   const imageUrl = dataItem?.url || response.url;
-  const priceVnd = options.priceVnd ?? dataItem?.price_vnd ?? response.price_vnd ?? 100;
+  const priceVnd = options.priceVnd ?? dataItem?.price_vnd ?? response.price_vnd ?? 150;
 
   if (b64Json) {
     const rawBase64 = b64Json.replace(/^data:image\/[^;]+;base64,/i, "");

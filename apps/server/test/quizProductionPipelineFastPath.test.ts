@@ -196,8 +196,9 @@ describe("Quiz Production Pipeline Fast-Path Integration", () => {
     expect(updatedStates.some((s) => s.progress_message === "Quiz · questions already ready")).toBe(true);
   });
 
-  it("falls back to legacy multi-step pipeline when USE_LEGACY_QUIZ_PIPELINE is true", async () => {
+  it("ignores obsolete USE_LEGACY_QUIZ_PIPELINE flag and runs quiz-native pipeline", async () => {
     process.env.USE_LEGACY_QUIZ_PIPELINE = "true";
+    mockQuizOnDisk = null;
     const runtime = createMockRuntime();
 
     const task: Task = {
@@ -224,8 +225,14 @@ describe("Quiz Production Pipeline Fast-Path Integration", () => {
 
     await runPipelineTask.call(runtime, task);
 
-    expect(submittedTypes).toContain("GENERATE_RESEARCH");
-    expect(submittedTypes).not.toContain("GENERATE_QUIZ");
+    expect(submittedTypes).toContain("GENERATE_QUIZ");
+    expect(submittedTypes).toContain("GENERATE_VIDEO");
+    expect(submittedTypes).not.toContain("GENERATE_RESEARCH");
+    expect(submittedTypes).not.toContain("GENERATE_TREATMENT");
+    expect(submittedTypes).not.toContain("GENERATE_SCRIPT");
+    expect(submittedTypes).not.toContain("GENERATE_VISUAL_BIBLE");
+    expect(submittedTypes).not.toContain("GENERATE_SEQUENCE_SCENES");
+    expect(finishedStatus).toBe("COMPLETED");
   });
 
   it("handles missing episode_id error cleanly", async () => {

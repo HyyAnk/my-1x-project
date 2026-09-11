@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TransitionSettingsSchema } from "../transitions/transition.schemas.js";
 
 export const StylePresetSlotsSchema = z.object({
   thinking_bar_style: z.string().min(1),
@@ -23,6 +24,7 @@ export const StylePresetSchema = StylePresetSlotsSchema.extend({
   mascot_offset_y: z.number().finite().optional(),
   mascot_flip_x: z.boolean().optional(),
   channel_brand_name: z.string().max(200).optional(),
+  transitions: TransitionSettingsSchema.optional(),
   revision: z.number().int().positive(),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
@@ -42,6 +44,7 @@ export const CreateStylePresetInputSchema = StylePresetSlotsSchema.extend({
   mascot_offset_y: z.number().finite().optional(),
   mascot_flip_x: z.boolean().optional(),
   channel_brand_name: z.string().max(200).optional(),
+  transitions: TransitionSettingsSchema.optional(),
 });
 
 export const UpdateStylePresetInputSchema = CreateStylePresetInputSchema.partial().extend({

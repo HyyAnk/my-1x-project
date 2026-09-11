@@ -122,4 +122,74 @@ describe("production mascot renderer", () => {
     expect(fallback).toContain('data-mascot-action="thinking"');
     expect(fallback).toContain("/assets/thinking.png");
   });
+
+  it("transitions to point on fact.enter at explanation timestamp without explicit mascot.state override", () => {
+    const html = renderProductionMascotHtmlLayer(mascot, config, {
+      phase: "question",
+      clipStartSeconds: 0,
+      clipDurationSeconds: 10,
+      timelineEvents: [
+        { type: "choices.enter", at_seconds: 0.85 },
+        { type: "countdown.start", at_seconds: 2.47 },
+        { type: "answer.reveal", at_seconds: 7.47 },
+        { type: "fact.enter", at_seconds: 8.27 },
+      ],
+    });
+
+    expect(html).toContain('data-mascot-phase="explain"');
+    expect(html).toContain('data-mascot-action="point"');
+    expect(html).toContain("--mascot-state-delay:8.27s");
+    expect(html).toContain("/assets/point-strip.png");
+  });
+
+  it("allows initial mascot action override at clipStartSeconds while preserving standard phase transitions", () => {
+    const mascotWithWave = {
+      ...mascot,
+      actions: {
+        ...mascot.actions,
+        wave: {
+          action: "wave" as const,
+          sprite_url: "/assets/wave.png",
+          frames_count: 1,
+          fps: 8,
+          loop: true,
+          frame_width: 512,
+          frame_height: 512,
+          offset_x: 0,
+          offset_y: 0,
+          motion_preset: "wave" as const,
+          motion_speed: 1.0,
+          motion_intensity: "normal" as const,
+        },
+      },
+    };
+
+    const html = renderProductionMascotHtmlLayer(mascotWithWave, config, {
+      phase: "question",
+      clipStartSeconds: 0,
+      clipDurationSeconds: 10,
+      timelineEvents: [
+        { type: "choices.enter", at_seconds: 0.85 },
+        { type: "countdown.start", at_seconds: 2.47 },
+        { type: "answer.reveal", at_seconds: 7.47 },
+        { type: "fact.enter", at_seconds: 8.27 },
+        { type: "mascot.state", at_seconds: 0, payload: { state: "wave" } },
+      ],
+    });
+
+    // Initial state layer at 0s should be the action override "wave"
+    expect(html).toContain('class="mascot-v2-state state-wave"');
+    expect(html).toContain("--mascot-state-delay:0s");
+    expect(html).toContain('data-mascot-action="wave"');
+
+    // Subsequent layers preserve standard transitions
+    expect(html).toContain('data-mascot-phase="choices"');
+    expect(html).toContain("--mascot-state-delay:0.85s");
+    expect(html).toContain('data-mascot-phase="thinking"');
+    expect(html).toContain("--mascot-state-delay:2.47s");
+    expect(html).toContain('data-mascot-phase="reveal"');
+    expect(html).toContain("--mascot-state-delay:7.47s");
+    expect(html).toContain('data-mascot-phase="explain"');
+    expect(html).toContain("--mascot-state-delay:8.27s");
+  });
 });

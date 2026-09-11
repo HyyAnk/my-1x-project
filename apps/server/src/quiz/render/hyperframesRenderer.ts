@@ -1,10 +1,10 @@
 import type { PreparedQuizRender, QuizRenderInput, QuizRenderResult, QuizRenderer } from "./renderer.js";
-import { buildQuizV2CompositionBundle } from "./buildComposition.js";
+import { buildCandyArcadeCompositionBundle } from "./candyArcadeComposition.js";
 import { getActiveStyleSnapshot } from "../visual/styleModules/activation.js";
 
 export class HyperframesRenderer implements QuizRenderer {
   async prepare(input: QuizRenderInput): Promise<PreparedQuizRender> {
-    const composition = buildQuizV2CompositionBundle({
+    const composition = buildCandyArcadeCompositionBundle({
       quiz: input.quiz,
       director: input.director,
       timeline: input.timeline,
@@ -22,6 +22,7 @@ export class HyperframesRenderer implements QuizRenderer {
       outroVideoPath: input.outroVideoPath,
       transitionType: input.transitionType,
       transitionDurationSeconds: input.transitionDurationSeconds,
+      transitionInstances: input.transitionInstances,
     });
     return {
       html: composition.html,
@@ -30,6 +31,7 @@ export class HyperframesRenderer implements QuizRenderer {
       questionCount: input.quiz.questions.length,
       styleCatalogRevision: input.styleContext.styleCatalogRevision ?? getActiveStyleSnapshot().revision,
       stylePresetRevision: input.styleContext.stylePresetRevision ?? undefined,
+      transitionInstances: composition.transitionInstances,
     };
   }
 

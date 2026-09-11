@@ -99,7 +99,12 @@ export async function patchCompositionFilesWithContrastFix(renderRoot: string, c
  * Analyzes contrast report, generates healing CSS, and patches composition files.
  */
 export async function healCompositionContrast(renderRoot: string, report: HyperframesCheckReport | null): Promise<boolean> {
-  const cssPatch = generateContrastSelfHealingCss(report);
-  const count = await patchCompositionFilesWithContrastFix(renderRoot, cssPatch);
-  return count > 0;
+  try {
+    const cssPatch = generateContrastSelfHealingCss(report);
+    const count = await patchCompositionFilesWithContrastFix(renderRoot, cssPatch);
+    return count > 0;
+  } catch (error) {
+    console.warn(`[contrastHealer] Failed to heal composition contrast: ${error instanceof Error ? error.message : String(error)}`);
+    return false;
+  }
 }

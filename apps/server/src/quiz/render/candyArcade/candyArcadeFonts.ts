@@ -3,6 +3,7 @@ import fs from "node:fs";
 import { copyFile, mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { choiceTextFitScript } from "../choices/choiceTextFitScript.js";
+import { factTextFitScript } from "../facts/factTextFitScript.js";
 import { channelBrandMarkFitScript } from "./channelBrandMark.js";
 
 export type CandyArcadeFontMode = "preview" | "render";
@@ -116,6 +117,7 @@ export function candyArcadeFontReadinessScript(): string {
   return `(function(){
     ${channelBrandMarkFitScript()}
     ${choiceTextFitScript()}
+    ${factTextFitScript()}
     const checks=${JSON.stringify(checks)};
     const sample="BẠN CÓ BIẾT? Hành tinh kỳ thú 0123456789";
     window.__playerReady=false;
@@ -140,6 +142,15 @@ export function candyArcadeFontReadinessScript(): string {
         } catch (fitError) {
           window.__choiceFitStatus=resetChoiceGroupsToFallback(fitError);
           throw fitError;
+        }
+        try {
+          window.__factFitStatus=fitFactCards();
+          if (window.__factFitStatus.overflowCount>0) {
+            throw new Error('QUIZ_FACT_TEXT_OVERFLOW: '+window.__factFitStatus.message);
+          }
+        } catch (factFitError) {
+          window.__factFitStatus=resetFactCardsToFallback(factFitError);
+          throw factFitError;
         }
         document.documentElement.dataset.fontsReady="true";
         window.__fontStatus={state:"ready",families:checks.map((item)=>item.family)};

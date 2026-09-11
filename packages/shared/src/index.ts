@@ -22,4 +22,5 @@ export * from "./thumbnail/index.js";
 export * from "./utils/languageNormalize.js";
 export * from "./shortReel/index.js";
 export * from "./transitions/index.js";
-export { hashBankQuestionSource, sourceCanonicalJsonStringify, sourceSha256Hex } from "./utils/contentHash.js";
+export * from "./sampleImages.js";
+export { hashBankQuestionSource, sourceCanonicalJsonStringify, sourceSha256Hex, canonicalJsonStringify, sha256Hex } from "./utils/contentHash.js";

@@ -63,18 +63,9 @@ describe("ImgStudio Fallback Configuration & Catalog Tests", () => {
 
   describe("Helper Functions", () => {
     it("resolveImgStudioModelName returns proper names for known models", () => {
-      assert.equal(
-        resolveImgStudioModelName("2d059365-a09a-4fd5-aa9e-b5335d09bbe9"),
-        "Qwen Image 3.0 Pro",
-      );
-      assert.equal(
-        resolveImgStudioModelName("618e7813-24e8-462c-a3d4-0a0a509be700"),
-        "Grok-Imagine-Image-2.0",
-      );
-      assert.equal(
-        resolveImgStudioModelName("flow-nano-banana-pro"),
-        "Flow · Nano Banana Pro",
-      );
+      assert.equal(resolveImgStudioModelName("2d059365-a09a-4fd5-aa9e-b5335d09bbe9"), "Qwen Image 3.0 Pro");
+      assert.equal(resolveImgStudioModelName("618e7813-24e8-462c-a3d4-0a0a509be700"), "Grok-Imagine-Image-2.0");
+      assert.equal(resolveImgStudioModelName("flow-nano-banana-pro"), "Flow · Nano Banana Pro");
     });
 
     it("resolveImgStudioModelName returns the modelId itself for unknown IDs", () => {
@@ -233,6 +224,28 @@ describe("ImgStudio Fallback Configuration & Catalog Tests", () => {
       assert.equal(parsed.image_fallback.model, "flow-nano-banana-pro");
       assert.equal(parsed.image_fallback.resolution, "4K");
       assert.equal(parsed.image_fallback.quality, "high");
+    });
+
+    it("AppConfigSchema defaults fast_render_mode to false when omitted", () => {
+      const base = createBaseConfig();
+      const { fast_render_mode: _omitted, ...videoGenWithoutFastRender } = base.video_generation;
+      const parsed = AppConfigSchema.parse({
+        ...base,
+        video_generation: videoGenWithoutFastRender,
+      });
+      assert.equal(parsed.video_generation.fast_render_mode, false);
+    });
+
+    it("AppConfigSchema preserves explicit fast_render_mode setting", () => {
+      const base = createBaseConfig();
+      const parsed = AppConfigSchema.parse({
+        ...base,
+        video_generation: {
+          ...base.video_generation,
+          fast_render_mode: true,
+        },
+      });
+      assert.equal(parsed.video_generation.fast_render_mode, true);
     });
   });
 });

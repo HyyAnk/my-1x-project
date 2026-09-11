@@ -40,6 +40,8 @@ export function findMatchedPreset(
   design: SandboxDesignState,
   mascotId: string,
   channelBrandName?: string,
+  transitionId?: string,
+  transitionDuration?: number,
 ): VisualPresetItem | undefined {
   return allPresets.find(
     (preset) =>
@@ -50,7 +52,10 @@ export function findMatchedPreset(
       preset.counter_style === design.counterStyle &&
       (preset.background_style === undefined || preset.background_style === design.backgroundStyle) &&
       (preset.mascot_id === undefined || preset.mascot_id === mascotId) &&
-      (preset.channel_brand_name === undefined || preset.channel_brand_name === channelBrandName),
+      (preset.channel_brand_name === undefined || preset.channel_brand_name === channelBrandName) &&
+      (preset.transitions === undefined ||
+        (preset.transitions.scene?.id === transitionId &&
+          (transitionDuration === undefined || preset.transitions.scene?.durationSeconds === transitionDuration))),
   );
 }
 
@@ -80,12 +85,14 @@ export function createCustomPreset({
   design,
   mascot,
   channelBrandName,
+  transitions,
 }: {
   name: string;
   defaultDesc: string;
   design: SandboxDesignState;
   mascot: SandboxMascotState;
   channelBrandName?: string;
+  transitions?: VisualPresetItem["transitions"];
 }): VisualPresetItem {
   const resolved = resolvePresetStyles(design);
   return {
@@ -103,6 +110,7 @@ export function createCustomPreset({
     mascot_offset_y: mascot.mascotOffsetY,
     mascot_flip_x: mascot.mascotFlipX,
     channel_brand_name: channelBrandName,
+    transitions,
     isBuiltIn: false,
   };
 }
@@ -112,6 +120,7 @@ export function updateCustomPreset(
   design: SandboxDesignState,
   mascot: SandboxMascotState,
   channelBrandName?: string,
+  transitions?: VisualPresetItem["transitions"],
 ): VisualPresetItem {
   const resolved = resolvePresetStyles(design);
   return {
@@ -126,6 +135,7 @@ export function updateCustomPreset(
     mascot_offset_y: mascot.mascotOffsetY,
     mascot_flip_x: mascot.mascotFlipX,
     channel_brand_name: channelBrandName,
+    transitions: transitions ?? presetToUpdate.transitions,
   };
 }
 
@@ -135,6 +145,7 @@ export function duplicateCustomPreset(preset: VisualPresetItem, suffix: string):
     ...preset,
     id: `custom_${Date.now()}`,
     name: newName,
+    transitions: preset.transitions ? { ...preset.transitions } : undefined,
     isBuiltIn: false,
   };
 }
@@ -145,12 +156,14 @@ export function applyPresetToStudio({
   mascot,
   brandName,
   onLayoutChange,
+  transition,
 }: {
   preset: VisualPresetItem;
   design: SandboxDesignState;
   mascot: SandboxMascotState;
   brandName?: SandboxBrandNameState;
   onLayoutChange?: (layout: QuizPreviewLayoutId) => void;
+  transition?: { syncFromPreset?: (preset: VisualPresetItem) => void };
 }): void {
   design.setPaletteId(preset.palette_id);
   design.setThinkingBarStyle(preset.thinking_bar_style);
@@ -174,5 +187,8 @@ export function applyPresetToStudio({
   if (preset.mascot_flip_x !== undefined) mascot.setMascotFlipX(preset.mascot_flip_x);
   if (preset.channel_brand_name !== undefined && brandName) {
     brandName.setChannelBrandName(preset.channel_brand_name);
+  }
+  if (transition?.syncFromPreset) {
+    transition.syncFromPreset(preset);
   }
 }

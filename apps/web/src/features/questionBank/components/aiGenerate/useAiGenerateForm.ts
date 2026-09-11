@@ -50,10 +50,11 @@ export function useAiGenerateForm({ taxonomy, onGenerate, onClose }: UseAiGenera
     setError(null);
     setResult(null);
     try {
+      const safeCount = Math.max(1, Math.min(50000, targetCount || 20));
       const payload: QuestionBankBatchGenPayload = {
         mode,
-        count: targetCount,
-        target_count: targetCount,
+        count: safeCount,
+        target_count: safeCount,
         difficulty,
         persist: true,
         ...(mode === "manual" && archetypeId ? { archetype_id: archetypeId } : {}),

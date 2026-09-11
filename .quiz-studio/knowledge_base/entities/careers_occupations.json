@@ -1749,52 +1749,6 @@
     "id": "ENT-CAR-039",
     "domain_id": "careers_occupations",
     "subtopic_id": "medicine_healthcare",
-    "name": "Forensic Pathologist",
-    "language": "en",
-    "aliases": [
-      "Medical Examiner",
-      "Autopsy Doctor",
-      "Forensic Autopsy Physician"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A solemn forensic pathologist in sterile surgical scrubs and face shield examining tissue specimens at a stainless steel post-mortem dissection suite.",
-    "core_traits": [
-      "Medical physician who performs autopsies to determine the official cause and manner of sudden or suspicious deaths",
-      "Examines external and internal traumatic injuries, wound patterns, and toxicological blood findings",
-      "Determines manners of death: Natural, Accident, Suicide, Homicide, or Undetermined",
-      "Testifies as an expert medical witness in criminal homicide and civil court trials"
-    ],
-    "distractor_pool": [
-      "Crime Scene Investigator",
-      "Detective",
-      "Surgeon",
-      "Forensic Scientist",
-      "Mortician"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Forensic pathologists can determine the exact minute of a victim's death simply by touching the corpse.",
-        "verdict": "myth",
-        "explanation": "Estimating time of death relies on a window of hours using body temperature, rigor mortis, lividity, and gastric contents; exact minutes are fictional.",
-        "fun_fact": "Environmental ambient temperatures heavily alter the speed at which rigor mortis stiffening sets in and fades."
-      },
-      {
-        "claim": "The word 'autopsy' originates from the ancient Greek phrase meaning 'to see for oneself'.",
-        "verdict": "fact",
-        "explanation": "Derived from 'autos' (self) and 'opsis' (sight), reflecting the doctor's duty to personally inspect the anatomical evidence.",
-        "fun_fact": "Forensic pathologists must complete four years of medical school, four years of pathology residency, and a fellowship in forensic pathology."
-      }
-    ],
-    "versus_candidates": [
-      "Detective",
-      "Crime Scene Investigator",
-      "Surgeon"
-    ]
-  },
-  {
-    "id": "ENT-CAR-040",
-    "domain_id": "careers_occupations",
-    "subtopic_id": "medicine_healthcare",
     "name": "Medical Lab Scientist",
     "language": "en",
     "aliases": [
@@ -1838,7 +1792,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-041",
+    "id": "ENT-CAR-040",
     "domain_id": "careers_occupations",
     "subtopic_id": "medicine_healthcare",
     "name": "Obstetrician",
@@ -1884,7 +1838,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-042",
+    "id": "ENT-CAR-041",
     "domain_id": "careers_occupations",
     "subtopic_id": "medicine_healthcare",
     "name": "Chiropractor",
@@ -1930,7 +1884,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-043",
+    "id": "ENT-CAR-042",
     "domain_id": "careers_occupations",
     "subtopic_id": "medicine_healthcare",
     "name": "Audiologist",
@@ -1976,7 +1930,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-044",
+    "id": "ENT-CAR-043",
     "domain_id": "careers_occupations",
     "subtopic_id": "medicine_healthcare",
     "name": "Genetic Counselor",
@@ -2022,7 +1976,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-045",
+    "id": "ENT-CAR-044",
     "domain_id": "careers_occupations",
     "subtopic_id": "medicine_healthcare",
     "name": "Biomedical Engineer",
@@ -2068,7 +2022,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-046",
+    "id": "ENT-CAR-045",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Archaeologist",
@@ -2114,7 +2068,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-047",
+    "id": "ENT-CAR-046",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Marine Biologist",
@@ -2160,7 +2114,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-048",
+    "id": "ENT-CAR-047",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Paleontologist",
@@ -2206,7 +2160,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-049",
+    "id": "ENT-CAR-048",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Volcanologist",
@@ -2252,7 +2206,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-050",
+    "id": "ENT-CAR-049",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Astronomer",
@@ -2298,7 +2252,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-051",
+    "id": "ENT-CAR-050",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Meteorologist",
@@ -2344,7 +2298,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-052",
+    "id": "ENT-CAR-051",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Geologist",
@@ -2390,7 +2344,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-053",
+    "id": "ENT-CAR-052",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Botanist",
@@ -2436,7 +2390,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-054",
+    "id": "ENT-CAR-053",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Zoologist",
@@ -2482,7 +2436,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-055",
+    "id": "ENT-CAR-054",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Nuclear Physicist",
@@ -2528,7 +2482,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-056",
+    "id": "ENT-CAR-055",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Chemist",
@@ -2574,7 +2528,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-057",
+    "id": "ENT-CAR-056",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Geneticist",
@@ -2620,7 +2574,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-058",
+    "id": "ENT-CAR-057",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Oceanographer",
@@ -2666,7 +2620,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-059",
+    "id": "ENT-CAR-058",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Seismologist",
@@ -2712,7 +2666,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-060",
+    "id": "ENT-CAR-059",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Glaciologist",
@@ -2758,7 +2712,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-061",
+    "id": "ENT-CAR-060",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Astrobiologist",
@@ -2804,7 +2758,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-062",
+    "id": "ENT-CAR-061",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Entomologist",
@@ -2850,7 +2804,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-063",
+    "id": "ENT-CAR-062",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Anthropologist",
@@ -2896,7 +2850,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-064",
+    "id": "ENT-CAR-063",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Robotics Engineer",
@@ -2942,7 +2896,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-065",
+    "id": "ENT-CAR-064",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Aerospace Engineer",
@@ -2988,7 +2942,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-066",
+    "id": "ENT-CAR-065",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Software Developer",
@@ -3034,7 +2988,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-067",
+    "id": "ENT-CAR-066",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Cybersecurity Analyst",
@@ -3080,7 +3034,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-068",
+    "id": "ENT-CAR-067",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Civil Engineer",
@@ -3126,7 +3080,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-069",
+    "id": "ENT-CAR-068",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Mechanical Engineer",
@@ -3172,7 +3126,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-070",
+    "id": "ENT-CAR-069",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Electrical Engineer",
@@ -3218,7 +3172,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-071",
+    "id": "ENT-CAR-070",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Electrician",
@@ -3264,7 +3218,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-072",
+    "id": "ENT-CAR-071",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Plumber",
@@ -3310,7 +3264,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-073",
+    "id": "ENT-CAR-072",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Carpenter",
@@ -3356,7 +3310,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-074",
+    "id": "ENT-CAR-073",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Blacksmith",
@@ -3402,7 +3356,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-075",
+    "id": "ENT-CAR-074",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Welder",
@@ -3448,7 +3402,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-076",
+    "id": "ENT-CAR-075",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Construction Worker",
@@ -3494,7 +3448,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-077",
+    "id": "ENT-CAR-076",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Crane Operator",
@@ -3540,7 +3494,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-078",
+    "id": "ENT-CAR-077",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Heavy Equipment Operator",
@@ -3586,7 +3540,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-079",
+    "id": "ENT-CAR-078",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Roofer",
@@ -3632,7 +3586,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-080",
+    "id": "ENT-CAR-079",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Stonemason",
@@ -3678,7 +3632,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-081",
+    "id": "ENT-CAR-080",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Locksmith",
@@ -3724,7 +3678,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-082",
+    "id": "ENT-CAR-081",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Auto Mechanic",
@@ -3770,7 +3724,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-083",
+    "id": "ENT-CAR-082",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Aircraft Mechanic",
@@ -3816,7 +3770,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-084",
+    "id": "ENT-CAR-083",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Glassblower",
@@ -3862,7 +3816,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-085",
+    "id": "ENT-CAR-084",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Watchmaker",
@@ -3908,7 +3862,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-086",
+    "id": "ENT-CAR-085",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Jeweler",
@@ -3954,7 +3908,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-087",
+    "id": "ENT-CAR-086",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Potter",
@@ -4000,7 +3954,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-088",
+    "id": "ENT-CAR-087",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Tailor",
@@ -4046,7 +4000,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-089",
+    "id": "ENT-CAR-088",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Cobbler",
@@ -4092,7 +4046,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-090",
+    "id": "ENT-CAR-089",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Lumberjack",
@@ -4138,7 +4092,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-091",
+    "id": "ENT-CAR-090",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Locomotive Engineer",
@@ -4184,7 +4138,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-092",
+    "id": "ENT-CAR-091",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Long-Haul Truck Driver",
@@ -4230,7 +4184,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-093",
+    "id": "ENT-CAR-092",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Bus Driver",
@@ -4276,7 +4230,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-094",
+    "id": "ENT-CAR-093",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Coal Miner",
@@ -4322,7 +4276,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-095",
+    "id": "ENT-CAR-094",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Wind Turbine Technician",
@@ -4368,7 +4322,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-096",
+    "id": "ENT-CAR-095",
     "domain_id": "careers_occupations",
     "subtopic_id": "culinary",
     "name": "Baker",
@@ -4414,7 +4368,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-097",
+    "id": "ENT-CAR-096",
     "domain_id": "careers_occupations",
     "subtopic_id": "culinary",
     "name": "Pastry Chef",
@@ -4460,7 +4414,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-098",
+    "id": "ENT-CAR-097",
     "domain_id": "careers_occupations",
     "subtopic_id": "culinary",
     "name": "Chocolatier",
@@ -4506,53 +4460,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-099",
-    "domain_id": "careers_occupations",
-    "subtopic_id": "culinary",
-    "name": "Sommelier",
-    "language": "en",
-    "aliases": [
-      "Wine Steward",
-      "Master Sommelier",
-      "Cellarmaster"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A distinguished sommelier in a tailored tuxedo wearing a silver tastevin medallion gently decanting a vintage red wine by candlelight in a fine dining wine cellar.",
-    "core_traits": [
-      "Trained wine professional specializing in wine service, cellar management, and food-and-wine pairings",
-      "Identifies grape varietals, vintage years, and terroir regions through blind sensory organoleptic tasting",
-      "Performs formal tableside decanting, cork inspection, and champagne sabering service",
-      "Curates international wine lists, manages cellar humidity, and evaluates craft beers, spirits, and coffees"
-    ],
-    "distractor_pool": [
-      "Bartender",
-      "Brewmaster",
-      "Chef",
-      "Food Critic",
-      "Barista"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Smelling the extracted cork at a restaurant table tells you if the wine tastes delicious.",
-        "verdict": "myth",
-        "explanation": "Smelling the cork merely smells like wet wood; sommeliers inspect the cork visually for mold or drying cracks, but taste the wine directly to test for spoilage.",
-        "fun_fact": "The primary cork fault is TCA (trichloroanisole), which makes wine smell like wet cardboard or a damp basement."
-      },
-      {
-        "claim": "The Master Sommelier diploma exam has one of the lowest pass rates of any professional exam in the world.",
-        "verdict": "fact",
-        "explanation": "Since its founding in 1969, fewer than 300 candidates worldwide have successfully passed the grueling Master Sommelier exam.",
-        "fun_fact": "The blind tasting component requires candidates to identify the grape, region, and exact vintage year of six mystery wines in 25 minutes."
-      }
-    ],
-    "versus_candidates": [
-      "Bartender",
-      "Brewmaster",
-      "Chef"
-    ]
-  },
-  {
-    "id": "ENT-CAR-100",
+    "id": "ENT-CAR-098",
     "domain_id": "careers_occupations",
     "subtopic_id": "culinary",
     "name": "Bartender",
@@ -4598,7 +4506,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-101",
+    "id": "ENT-CAR-099",
     "domain_id": "careers_occupations",
     "subtopic_id": "culinary",
     "name": "Barista",
@@ -4644,7 +4552,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-102",
+    "id": "ENT-CAR-100",
     "domain_id": "careers_occupations",
     "subtopic_id": "culinary",
     "name": "Butcher",
@@ -4690,7 +4598,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-103",
+    "id": "ENT-CAR-101",
     "domain_id": "careers_occupations",
     "subtopic_id": "culinary",
     "name": "Cheesemaker",
@@ -4736,53 +4644,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-104",
-    "domain_id": "careers_occupations",
-    "subtopic_id": "culinary",
-    "name": "Brewmaster",
-    "language": "en",
-    "aliases": [
-      "Master Brewer",
-      "Craft Brewer",
-      "Head Brewer"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A brewmaster inspecting a glass hydrometer cylinder checking wort gravity beside gleaming stainless steel mash tuns and fermentation tanks in a craft brewery.",
-    "core_traits": [
-      "Directs the formulation, mashing, boiling, fermentation, and packaging of craft beers and ales",
-      "Masters malted barley grain bills, hop alpha-acid isomerizations, water mineral chemistry, and yeast strains",
-      "Operates mash tuns, lauter tuns, brew kettles, heat exchangers, and conical fermenters",
-      "Controls sanitization protocols, dissolved oxygen limits, and carbonation volumes"
-    ],
-    "distractor_pool": [
-      "Sommelier",
-      "Bartender",
-      "Chemist",
-      "Cheesemaker",
-      "Distiller"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The German Beer Purity Law (Reinheitsgebot) of 1516 originally allowed only three ingredients: water, barley, and hops.",
-        "verdict": "fact",
-        "explanation": "Yeast was not mentioned in the 1516 law because microorganisms were unknown; brewers relied on wild ambient fermentation until Louis Pasteur discovered yeast cells.",
-        "fun_fact": "The Reinheitsgebot is considered one of the oldest consumer food safety regulations still referenced in the world."
-      },
-      {
-        "claim": "Green and clear glass beer bottles protect beer from sunlight just as effectively as dark brown glass bottles.",
-        "verdict": "myth",
-        "explanation": "Visible and UV blue light penetrates green and clear glass, reacting with hop isohumulones to produce 3-methyl-2-butene-1-thiol, causing 'skunky' beer flavor.",
-        "fun_fact": "Dark amber-brown glass blocks almost all photochemically reactive light wavelengths, protecting the beer."
-      }
-    ],
-    "versus_candidates": [
-      "Sommelier",
-      "Bartender",
-      "Chemist"
-    ]
-  },
-  {
-    "id": "ENT-CAR-105",
+    "id": "ENT-CAR-102",
     "domain_id": "careers_occupations",
     "subtopic_id": "culinary",
     "name": "Sushi Master",
@@ -4828,7 +4690,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-106",
+    "id": "ENT-CAR-103",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Farmer",
@@ -4874,7 +4736,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-107",
+    "id": "ENT-CAR-104",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Beekeeper",
@@ -4920,7 +4782,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-108",
+    "id": "ENT-CAR-105",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Rancher",
@@ -4966,7 +4828,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-109",
+    "id": "ENT-CAR-106",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Shepherd",
@@ -5012,7 +4874,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-110",
+    "id": "ENT-CAR-107",
     "domain_id": "careers_occupations",
     "subtopic_id": "aviation_maritime",
     "name": "Commercial Fisherman",
@@ -5058,7 +4920,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-111",
+    "id": "ENT-CAR-108",
     "domain_id": "careers_occupations",
     "subtopic_id": "emergency_services",
     "name": "Park Ranger",
@@ -5104,7 +4966,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-112",
+    "id": "ENT-CAR-109",
     "domain_id": "careers_occupations",
     "subtopic_id": "emergency_services",
     "name": "Forest Ranger",
@@ -5150,7 +5012,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-113",
+    "id": "ENT-CAR-110",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Safari Guide",
@@ -5196,7 +5058,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-114",
+    "id": "ENT-CAR-111",
     "domain_id": "careers_occupations",
     "subtopic_id": "science_exploration",
     "name": "Mountain Guide",
@@ -5242,7 +5104,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-115",
+    "id": "ENT-CAR-112",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Dog Groomer",
@@ -5288,7 +5150,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-116",
+    "id": "ENT-CAR-113",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Animal Trainer",
@@ -5334,7 +5196,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-117",
+    "id": "ENT-CAR-114",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Wildlife Photographer",
@@ -5380,7 +5242,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-118",
+    "id": "ENT-CAR-115",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Film Director",
@@ -5426,7 +5288,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-119",
+    "id": "ENT-CAR-116",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Cinematographer",
@@ -5472,7 +5334,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-120",
+    "id": "ENT-CAR-117",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Actor",
@@ -5518,7 +5380,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-121",
+    "id": "ENT-CAR-118",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Voice Actor",
@@ -5564,7 +5426,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-122",
+    "id": "ENT-CAR-119",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Musician",
@@ -5610,7 +5472,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-123",
+    "id": "ENT-CAR-120",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Orchestra Conductor",
@@ -5656,7 +5518,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-124",
+    "id": "ENT-CAR-121",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Opera Singer",
@@ -5702,7 +5564,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-125",
+    "id": "ENT-CAR-122",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Ballet Dancer",
@@ -5748,7 +5610,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-126",
+    "id": "ENT-CAR-123",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Circus Acrobat",
@@ -5794,7 +5656,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-127",
+    "id": "ENT-CAR-124",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Magician",
@@ -5840,7 +5702,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-128",
+    "id": "ENT-CAR-125",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Stunt Performer",
@@ -5886,7 +5748,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-129",
+    "id": "ENT-CAR-126",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Ringmaster",
@@ -5932,7 +5794,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-130",
+    "id": "ENT-CAR-127",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Sculptor",
@@ -5978,7 +5840,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-131",
+    "id": "ENT-CAR-128",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Painter",
@@ -6024,7 +5886,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-132",
+    "id": "ENT-CAR-129",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Fashion Designer",
@@ -6070,7 +5932,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-133",
+    "id": "ENT-CAR-130",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Makeup Artist",
@@ -6116,7 +5978,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-134",
+    "id": "ENT-CAR-131",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Tattoo Artist",
@@ -6162,7 +6024,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-135",
+    "id": "ENT-CAR-132",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Olympic Gymnast",
@@ -6208,7 +6070,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-136",
+    "id": "ENT-CAR-133",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Boxing Referee",
@@ -6254,7 +6116,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-137",
+    "id": "ENT-CAR-134",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Sports Coach",
@@ -6300,7 +6162,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-138",
+    "id": "ENT-CAR-135",
     "domain_id": "careers_occupations",
     "subtopic_id": "arts_entertainment",
     "name": "Martial Arts Master",
@@ -6346,7 +6208,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-139",
+    "id": "ENT-CAR-136",
     "domain_id": "careers_occupations",
     "subtopic_id": "crafts_trades",
     "name": "Architect",
@@ -6392,7 +6254,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-140",
+    "id": "ENT-CAR-137",
     "domain_id": "careers_occupations",
     "subtopic_id": "education_public",
     "name": "Librarian",
@@ -6438,7 +6300,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-141",
+    "id": "ENT-CAR-138",
     "domain_id": "careers_occupations",
     "subtopic_id": "education_public",
     "name": "Museum Curator",
@@ -6484,7 +6346,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-142",
+    "id": "ENT-CAR-139",
     "domain_id": "careers_occupations",
     "subtopic_id": "education_public",
     "name": "High School Teacher",
@@ -6530,7 +6392,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-143",
+    "id": "ENT-CAR-140",
     "domain_id": "careers_occupations",
     "subtopic_id": "education_public",
     "name": "University Professor",
@@ -6576,7 +6438,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-144",
+    "id": "ENT-CAR-141",
     "domain_id": "careers_occupations",
     "subtopic_id": "education_public",
     "name": "School Principal",
@@ -6622,7 +6484,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-145",
+    "id": "ENT-CAR-142",
     "domain_id": "careers_occupations",
     "subtopic_id": "education_public",
     "name": "Kindergarten Teacher",
@@ -6668,7 +6530,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-146",
+    "id": "ENT-CAR-143",
     "domain_id": "careers_occupations",
     "subtopic_id": "education_public",
     "name": "Judge",
@@ -6714,7 +6576,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-147",
+    "id": "ENT-CAR-144",
     "domain_id": "careers_occupations",
     "subtopic_id": "education_public",
     "name": "Lawyer",
@@ -6760,7 +6622,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-148",
+    "id": "ENT-CAR-145",
     "domain_id": "careers_occupations",
     "subtopic_id": "education_public",
     "name": "Diplomat",
@@ -6806,7 +6668,7 @@
     ]
   },
   {
-    "id": "ENT-CAR-149",
+    "id": "ENT-CAR-146",
     "domain_id": "careers_occupations",
     "subtopic_id": "education_public",
     "name": "News Anchor",
@@ -6849,52 +6711,6 @@
       "War Correspondent",
       "Meteorologist",
       "Journalist"
-    ]
-  },
-  {
-    "id": "ENT-CAR-150",
-    "domain_id": "careers_occupations",
-    "subtopic_id": "education_public",
-    "name": "War Correspondent",
-    "language": "en",
-    "aliases": [
-      "Combat Journalist",
-      "Frontline Reporter",
-      "Conflict Correspondent"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A courageous war correspondent in a blue ballistic flak vest clearly marked 'PRESS' and a combat helmet reporting into a microphone amid rubble in a war zone.",
-    "core_traits": [
-      "Investigative journalist who reports on armed conflicts, civil wars, and humanitarian crises directly from frontline combat zones",
-      "Wears prominent blue body armor and ballistic helmets emblazoned with large white 'PRESS' lettering",
-      "Transmits live eyewitness reports, combat footage, and civilian interviews via portable BGAN satellite terminals",
-      "Operates under international humanitarian law as protected non-combatants under the Geneva Conventions"
-    ],
-    "distractor_pool": [
-      "News Anchor",
-      "Soldier",
-      "Diplomat",
-      "Photojournalist",
-      "Detective"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "War correspondents are armed with military rifles to engage in direct combat alongside the soldiers they cover.",
-        "verdict": "myth",
-        "explanation": "Carrying weapons forfeits non-combatant status under the Geneva Conventions; journalists must remain unarmed neutral observers.",
-        "fun_fact": "Bearing arms would make the journalist a lawful military target and endanger other reporters."
-      },
-      {
-        "claim": "Renowned World War II correspondent Ernie Pyle lived directly alongside frontline infantry soldiers in European trenches.",
-        "verdict": "fact",
-        "explanation": "Pyle won a Pulitzer Prize in 1944 for his poignant columns describing the daily hardships of common infantry soldiers ('dogfaces') before being killed by machine-gun fire in Okinawa in 1945.",
-        "fun_fact": "Pyle was so beloved by soldiers that President Truman paid tribute to him as an essential voice of the American GI."
-      }
-    ],
-    "versus_candidates": [
-      "News Anchor",
-      "Soldier",
-      "Photojournalist"
     ]
   }
 ]

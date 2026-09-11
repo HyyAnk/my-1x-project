@@ -33,7 +33,7 @@ export function mysteryRevealBaseStyles(): string {
 }
 
 /* --- 3-Row Explicit CSS Grid (Eliminates Phase 5 Fact Card Overlap - BUG-MR-02) --- */
-.layout-mystery_reveal .game-stage {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .game-stage {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto auto auto;
@@ -50,7 +50,7 @@ export function mysteryRevealBaseStyles(): string {
   margin: 12px 40px 0 auto;
 }
 
-.layout-mystery_reveal .question-title {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .question-title {
   grid-area: title;
   width: 100%;
   max-width: 1380px;
@@ -59,7 +59,7 @@ export function mysteryRevealBaseStyles(): string {
 }
 
 /* --- Mystery Stage Viewport --- */
-.layout-mystery_reveal .mystery-stage-wrapper {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .mystery-stage-wrapper {
   grid-area: stage;
   position: relative;
   width: 100%;
@@ -70,6 +70,23 @@ export function mysteryRevealBaseStyles(): string {
   overflow: hidden;
   border: 5px solid rgba(251, 191, 36, 0.4);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 40px rgba(56, 189, 248, 0.18), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  background: #090d1a;
+  contain: layout paint;
+}
+
+/* Unified Mystery Stage Viewport: (630, 253, 920, 360) -> local (250, 0, 920, 360) */
+.quiz-frame-unified.layout-mystery_reveal .mystery-stage-wrapper {
+  position: absolute;
+  left: 250px;
+  top: 0;
+  width: 920px;
+  height: 360px;
+  max-width: 920px;
+  margin: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 4px solid rgba(251, 191, 36, 0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 32px rgba(56, 189, 248, 0.18);
   background: #090d1a;
   contain: layout paint;
 }

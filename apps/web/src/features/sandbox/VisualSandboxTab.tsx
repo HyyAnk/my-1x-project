@@ -89,6 +89,13 @@ export function VisualSandboxTab({
   const themeColors = { from: activePalette.primary, to: activePalette.secondary };
   const isTransitionMode = activeInspectorTab === "transition" || transition.isTransitionActive;
 
+  const handleTabChange = (tab: SandboxInspectorTabId) => {
+    setActiveInspectorTab(tab);
+    if (tab === "transition") {
+      transition.triggerPlay();
+    }
+  };
+
   return (
     <section className="page-wrap visual-sandbox-page">
       <SandboxHeader
@@ -133,7 +140,7 @@ export function VisualSandboxTab({
 
           <SandboxInspectorTabs
             activeTab={activeInspectorTab}
-            onTabChange={setActiveInspectorTab}
+            onTabChange={handleTabChange}
             mascotEnabled={mascot.mascotEnabled}
             mascotId={mascot.mascotId}
           />
@@ -205,7 +212,7 @@ export function VisualSandboxTab({
               factCardText={question.factCardText}
               setFactCardText={question.setFactCardText}
               phase={timeline.phase}
-              setPhase={timeline.setPhase}
+              setPhase={timeline.handlePhaseChange}
               setUseScrubber={timeline.setUseScrubber}
               handleApplyPresetQuestion={handleApplyPresetQuestion}
               layoutId={design.layoutId}
@@ -248,6 +255,8 @@ export function VisualSandboxTab({
                 durationSeconds={transition.transitionDuration}
                 aspectRatio={viewport.aspectRatio}
                 themeColors={themeColors}
+                onDurationChange={transition.setTransitionDuration}
+                onTransitionChange={transition.setTransitionId}
                 progress={transition.transitionProgress}
                 onProgressChange={transition.setTransitionProgress}
                 isPlaying={transition.isPlaying}

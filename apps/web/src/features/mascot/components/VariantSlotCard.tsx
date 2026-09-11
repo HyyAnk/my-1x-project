@@ -6,6 +6,7 @@ export interface VariantSlotCardProps {
   slotIndex: number;
   variant?: MascotStateVariant | null;
   isBusy: boolean;
+  isQueued?: boolean;
   statusText?: string;
   onGenerate: (slotIndex: number) => void;
   onRegenerate: (slotIndex: number) => void;
@@ -18,6 +19,7 @@ export function VariantSlotCard({
   slotIndex,
   variant,
   isBusy,
+  isQueued = false,
   statusText = "Generating pose...",
   onGenerate,
   onRegenerate,
@@ -43,7 +45,7 @@ export function VariantSlotCard({
 
   return (
     <div
-      className={`variant-slot-card ${isFilled ? "is-filled" : "is-empty"} ${isBusy ? "is-busy" : ""}`}
+      className={`variant-slot-card ${isFilled ? "is-filled" : "is-empty"} ${isBusy ? "is-busy" : ""} ${isQueued ? "is-queued" : ""}`}
       data-slot-index={slotIndex}
       data-slot-state={state}
       title={poseTooltip}
@@ -52,7 +54,12 @@ export function VariantSlotCard({
       <div className="variant-slot-header">
         <span className="slot-number-badge">Slot {slotIndex}</span>
         <div className="slot-header-tags">
-          {poseBadgeLabel ? (
+          {isQueued ? (
+            <span className="slot-queued-tag" title="In queue for batch generation">
+              <CircleNotch size={10} className="spin" />
+              <span>Queued</span>
+            </span>
+          ) : poseBadgeLabel ? (
             <span className="slot-custom-tag" title={poseTooltip}>
               {poseBadgeLabel}
             </span>
@@ -82,7 +89,7 @@ export function VariantSlotCard({
             <div className="slot-empty-icon-wrap">
               <Plus size={24} weight="bold" />
             </div>
-            <span className="slot-empty-text">Empty Slot</span>
+            <span className="slot-empty-text">{isQueued ? "Waiting in Queue..." : "Empty Slot"}</span>
           </div>
         )}
 
@@ -101,19 +108,28 @@ export function VariantSlotCard({
           <>
             <button
               type="button"
-              className="slot-action-btn is-regen"
+              className={`slot-action-btn is-regen ${isBusy ? "is-generating" : ""}`}
               onClick={() => onRegenerate(slotIndex)}
-              disabled={isBusy}
+              disabled={isBusy || isQueued}
               title="Regenerate with an unused pose from library"
             >
-              <ArrowCounterClockwise size={13} weight="bold" />
-              <span>Regenerate</span>
+              {isBusy ? (
+                <>
+                  <CircleNotch size={13} className="spin" />
+                  <span>Regenerating...</span>
+                </>
+              ) : (
+                <>
+                  <ArrowCounterClockwise size={13} weight="bold" />
+                  <span>Regenerate</span>
+                </>
+              )}
             </button>
             <button
               type="button"
               className="slot-action-btn is-edit-prompt"
               onClick={() => onEditPrompt(slotIndex)}
-              disabled={isBusy}
+              disabled={isBusy || isQueued}
               title="Edit action prompt modifier"
             >
               <PencilSimple size={13} />
@@ -122,15 +138,29 @@ export function VariantSlotCard({
           </>
         ) : (
           <>
-            <button type="button" className="slot-action-btn is-generate" onClick={() => onGenerate(slotIndex)} disabled={isBusy}>
-              <Sparkle size={13} weight="fill" />
-              <span>Generate</span>
+            <button
+              type="button"
+              className={`slot-action-btn is-generate ${isBusy ? "is-generating" : ""}`}
+              onClick={() => onGenerate(slotIndex)}
+              disabled={isBusy || isQueued}
+            >
+              {isBusy ? (
+                <>
+                  <CircleNotch size={13} className="spin" />
+                  <span>Generating...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkle size={13} weight="fill" />
+                  <span>Generate</span>
+                </>
+              )}
             </button>
             <button
               type="button"
               className="slot-action-btn is-pre-prompt"
               onClick={() => onEditPrompt(slotIndex)}
-              disabled={isBusy}
+              disabled={isBusy || isQueued}
               title="Add prompt modifier before generating"
             >
               <PencilSimple size={13} />

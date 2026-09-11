@@ -260,6 +260,7 @@ describe("Quiz V2 pacing", () => {
     expect(timeline.thinkingStart).toBeGreaterThan(timeline.choicesStart);
     expect(timeline.revealStart).toBeGreaterThan(timeline.thinkingStart);
     expect(timeline.explainStart).toBeGreaterThan(timeline.revealStart);
+    expect(timeline.explainStart - timeline.revealStart).toBeCloseTo(0.8, 3);
     expect(timeline.totalDuration).toBeGreaterThan(timeline.explainStart);
 
     expect(getSandboxPhaseAtTime(0)).toBe("question");

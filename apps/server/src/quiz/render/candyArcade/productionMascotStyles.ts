@@ -58,7 +58,7 @@ export function productionMascotCss(): string {
   opacity: 0;
   pointer-events: none;
   will-change: opacity;
-  animation: mascot-v2-state-window var(--mascot-state-span, .04s) linear var(--mascot-state-delay, 0s) 1 both;
+  animation: mascot-v2-state-window var(--mascot-state-span, .04s) linear var(--mascot-state-delay, 0s) 1 forwards;
 }
 .candy-mascot-container.mascot-v2-container .mascot-v2-motion {
   position: absolute;
@@ -109,8 +109,7 @@ export function productionMascotCss(): string {
   background-position: var(--mascot-preview-frame-position, 0%) 50%;
 }
 @keyframes mascot-v2-state-window {
-  0% { opacity: 0; }
-  0.1%, 99.9% { opacity: 1; }
+  0%, 99.9% { opacity: 1; }
   100% { opacity: 0; }
 }
 @keyframes mascot-v2-motion {

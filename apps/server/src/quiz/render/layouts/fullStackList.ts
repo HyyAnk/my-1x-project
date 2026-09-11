@@ -1,4 +1,5 @@
 import type { QuizLayoutRenderDefinition } from "./types.js";
+import { renderQuizFrameBody } from "../frame/renderQuizFrameBody.js";
 
 /**
  * Full Stack List Layout (16:9 Landscape Video, 1920x1080).
@@ -26,84 +27,80 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  */
 export const fullStackListLayout = {
   id: "full_stack_list",
-  renderBody: (slots) => `${slots.questionBoxHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
+  renderBody: (slots) => renderQuizFrameBody(slots, slots.choicesHtml),
   css: (_aspectRatio) => `
 /* ==========================================================================
    Full Stack List Layout (16:9 Landscape - 1920x1080)
    Candy Arcade Quiz Engine v2
    ========================================================================== */
 
-/* --- Game Stage: 3-Row Grid Flow (Row 1: Title, Row 2: Answers, Row 3: Phase) --- */
-.layout-full_stack_list .game-stage {
-  grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr auto;
-  grid-template-areas:
-    "title"
-    "answers"
-    "phase";
-  align-items: center;
-  justify-items: center;
-  row-gap: 20px;
-  width: var(--mascot-content-width, 1420px);
-  max-width: 1420px;
-  min-height: 945px;
-  margin: 16px 40px 0 auto;
-}
-
-/* --- Row 1: Question Title Card --- */
-.layout-full_stack_list .question-title {
-  grid-area: title;
-  width: 100%;
-  max-width: 1360px;
-  margin: 0 auto;
-}
-
-/* --- Row 2: Answer Choices Stack --- */
-.layout-full_stack_list .answer-grid {
-  grid-area: answers;
-  width: 100%;
-  max-width: 1360px;
-  margin: 0 auto;
+/* Unified Quiz Frame Arena Geometry */
+.quiz-frame-unified.layout-full_stack_list .answer-grid,
+.quiz-frame-unified.layout-full_stack_list .choice-group {
+  position: absolute;
+  left: 70px;
+  top: 0;
+  width: 1280px;
+  height: 520px;
+  max-height: 520px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.quiz-frame-unified.layout-full_stack_list .choice-card,
+.quiz-frame-unified.layout-full_stack_list .answer-card {
+  width: 1280px;
   box-sizing: border-box;
 }
 
-.layout-full_stack_list .answer-grid.answer-count-2 {
-  gap: 36px;
-  padding: 12px 0;
-  --choice-card-min-height: 142px;
-  --choice-badge-size: 148px;
-  --choice-badge-margin-left: -80px;
-  --choice-badge-font-size: 78px;
-  --choice-card-margin-left: 80px;
-  --choice-card-padding: 18px 40px 18px 48px;
-  --choice-font-size-base: 50px;
-  --choice-fit-max: 68px;
+.quiz-frame-unified.layout-full_stack_list .answer-grid.answer-count-2,
+.quiz-frame-unified.layout-full_stack_list .choice-group.answer-count-2 {
+  gap: 40px;
+}
+.quiz-frame-unified.layout-full_stack_list .answer-grid.answer-count-2 .choice-card,
+.quiz-frame-unified.layout-full_stack_list .choice-group.answer-count-2 .choice-card {
+  height: 164px;
+  min-height: 164px;
+  max-height: 164px;
+  --choice-card-height: 164px;
+  --choice-card-min-height: 164px;
+  --choice-badge-size: 112px;
 }
 
-.layout-full_stack_list .answer-grid.answer-count-3 {
-  gap: 24px;
-  padding: 6px 0;
+.quiz-frame-unified.layout-full_stack_list .answer-grid.answer-count-3,
+.quiz-frame-unified.layout-full_stack_list .choice-group.answer-count-3 {
+  gap: 28px;
+}
+.quiz-frame-unified.layout-full_stack_list .answer-grid.answer-count-3 .choice-card,
+.quiz-frame-unified.layout-full_stack_list .choice-group.answer-count-3 .choice-card {
+  height: 140px;
+  min-height: 140px;
+  max-height: 140px;
+  --choice-card-height: 140px;
+  --choice-card-min-height: 140px;
+  --choice-badge-size: 112px;
 }
 
 /* --- Choice Card Tokens (Capacity & Typography) --- */
 .layout-full_stack_list {
-  --choice-card-min-height: 126px;
+  --choice-card-min-height: 140px;
   --choice-card-height: auto;
-  --choice-card-margin-left: 76px;
+  --choice-card-margin-left: 0px;
   --choice-card-padding: 14px 36px 14px 44px;
   --choice-text-padding-right: 48px;
-  --choice-badge-size: 140px;
-  --choice-badge-margin-left: -76px;
-  --choice-badge-font-size: 74px;
+  --choice-badge-size: 112px;
+  --choice-badge-margin-left: 0px;
+  --choice-badge-font-size: 64px;
   --choice-font-size-base: 44px;
-  --choice-font-size-medium: 36px;
-  --choice-font-size-long: 28px;
-  --choice-font-size-very_long: 24px;
-  --choice-font-size-overflow: 24px;
-  --choice-fit-min: 22px;
+  --choice-font-size-medium: 38px;
+  --choice-font-size-long: 32px;
+  --choice-font-size-very_long: 32px;
+  --choice-font-size-overflow: 32px;
+  --choice-fit-min: 32px;
   --choice-fit-max: 64px;
   --choice-fit-max-lines: 2;
   --choice-fit-leading: 1.08;
@@ -111,7 +108,7 @@ export const fullStackListLayout = {
 }
 
 /* --- Row 3: Phase Region (Thinking Bar & Fact Card) --- */
-.layout-full_stack_list .phase-region {
+.candy-scene:not(.quiz-frame-unified).layout-full_stack_list .phase-region {
   grid-area: phase;
   position: relative;
   left: auto;
@@ -128,7 +125,7 @@ export const fullStackListLayout = {
 }
 
 /* Fix Star Marker clipping bug (BUG-FSL-01): constrain track so star marker (192px) stays within 1920px canvas */
-.layout-full_stack_list .phase-region > .thinking-bar {
+.candy-scene:not(.quiz-frame-unified).layout-full_stack_list .phase-region > .thinking-bar {
   position: relative;
   left: auto;
   bottom: auto;
@@ -139,7 +136,7 @@ export const fullStackListLayout = {
   margin: 0 auto;
 }
 
-.layout-full_stack_list .phase-region > .fact-card {
+.candy-scene:not(.quiz-frame-unified).layout-full_stack_list .phase-region > .fact-card {
   position: relative;
   left: auto;
   bottom: auto;

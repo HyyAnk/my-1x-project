@@ -1,10 +1,8 @@
 import React from "react";
 import { ArrowCounterClockwise } from "@phosphor-icons/react";
 import type { SandboxTransitionState } from "../../hooks/useSandboxTransitionState";
-import { SandboxTransitionCategoryToggle } from "./SandboxTransitionCategoryToggle";
-import { SandboxTransitionSelector } from "./SandboxTransitionSelector";
-import { SandboxTransitionDurationSlider } from "./SandboxTransitionDurationSlider";
-import { SandboxTransitionScrubber } from "./SandboxTransitionScrubber";
+import { useTransitionCatalog } from "../../../transitions/hooks/useTransitionCatalog";
+import { TransitionSelector } from "../../../transitions/components/TransitionSelector";
 
 export interface SandboxTransitionTabProps {
   transition: SandboxTransitionState;
@@ -12,6 +10,8 @@ export interface SandboxTransitionTabProps {
 }
 
 export const SandboxTransitionTab: React.FC<SandboxTransitionTabProps> = ({ transition, disabled = false }) => {
+  const { entries } = useTransitionCatalog();
+
   return (
     <div
       className="sandbox-transition-tab"
@@ -34,7 +34,7 @@ export const SandboxTransitionTab: React.FC<SandboxTransitionTabProps> = ({ tran
       >
         <div>
           <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>Transition Inspector</span>
-          <p style={{ margin: "2px 0 0", fontSize: "11px", color: "var(--muted)" }}>Preview and tune video transition animations</p>
+          <p style={{ margin: "2px 0 0", fontSize: "11px", color: "var(--muted)" }}>Preview and inspect video transition output</p>
         </div>
         <button
           type="button"
@@ -49,41 +49,14 @@ export const SandboxTransitionTab: React.FC<SandboxTransitionTabProps> = ({ tran
         </button>
       </div>
 
-      {/* 1. Category Toggle */}
-      <SandboxTransitionCategoryToggle
-        activeCategory={transition.transitionCategory}
-        onChangeCategory={transition.setTransitionCategory}
-        disabled={disabled}
-      />
-
-      {/* 2. Transition Selector */}
-      <SandboxTransitionSelector
+      {/* Grouped Transition Selector */}
+      <TransitionSelector
+        entries={entries}
         selectedId={transition.transitionId}
-        category={transition.transitionCategory}
-        onSelectTransition={transition.setTransitionId}
-        onPreview={transition.triggerPlay}
-        disabled={disabled}
-      />
-
-      {/* 3. Duration Slider */}
-      <SandboxTransitionDurationSlider
-        durationSeconds={transition.transitionDuration}
-        onChangeDuration={transition.setTransitionDuration}
-        transitionDef={transition.activeTransitionDefinition}
-        disabled={disabled}
-      />
-
-      {/* 4. Scrubber & Playback Controls */}
-      <SandboxTransitionScrubber
-        progress={transition.transitionProgress}
-        durationSeconds={transition.transitionDuration}
-        isPlaying={transition.isPlaying}
-        isLooping={transition.isLooping}
-        onSeek={transition.setTransitionProgress}
-        onTogglePlay={transition.togglePlay}
-        onReplay={transition.triggerPlay}
-        onToggleLoop={transition.toggleLoop}
-        onPause={() => transition.setIsPlaying(false)}
+        onChange={(id) => {
+          transition.setTransitionId(id);
+          transition.triggerPlay();
+        }}
         disabled={disabled}
       />
     </div>

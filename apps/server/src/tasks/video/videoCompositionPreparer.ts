@@ -10,7 +10,7 @@ import {
   type IntroOutroTransitionType,
 } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../repository.js";
-import { buildQuizComposition } from "../../quiz/render/buildComposition.js";
+import { loadRequiredQuizRenderArtifacts, type RequiredQuizRenderArtifacts } from "./quizRenderArtifacts.js";
 import { preflightQuizRender } from "../../quiz/qa/preflight.js";
 import { prepareLocalizedMascot } from "./mascotLocalization.js";
 import { prepareSoundtrack } from "./soundtrackPreparation.js";
@@ -31,16 +31,7 @@ export type VideoCompositionContext = {
   selectedBgmTrackId: string | null;
   selectedBgmFilename: string | null;
   assetResolution: QuizAssetResolution | null;
-  completeQuizV2: boolean;
-  preflightAssessment: ReturnType<typeof preflightQuizRender>["assessment"] | null;
-};
-
-type CompleteQuizV2Artifacts = {
-  quiz: NonNullable<Awaited<ReturnType<RepositoryService["readQuiz"]>>>;
-  director: NonNullable<Awaited<ReturnType<RepositoryService["readDirectorPlan"]>>>;
-  assetPlan: NonNullable<Awaited<ReturnType<RepositoryService["readAssetPlan"]>>>;
-  voicePlan: NonNullable<Awaited<ReturnType<RepositoryService["readVoicePlan"]>>>;
-  timeline: NonNullable<Awaited<ReturnType<RepositoryService["readQuizTimeline"]>>>;
+  preflightAssessment: NonNullable<ReturnType<typeof preflightQuizRender>["assessment"]>;
 };
 
 interface IntroOutroMediaResolution {
@@ -54,7 +45,7 @@ async function validateQuizPreflight(
   repository: RepositoryService,
   channelId: string,
   episodeId: string,
-  artifacts: CompleteQuizV2Artifacts,
+  artifacts: RequiredQuizRenderArtifacts,
   resolvedAssets: QuizAssetResolution["assets"],
   hasMeasuredAudio: boolean,
 ) {
@@ -90,32 +81,6 @@ async function writeCompositionFiles(
     await mkdir(path.dirname(filePath), { recursive: true });
     await writeFile(filePath, content, "utf8");
   }
-}
-
-async function loadAndValidateQuizV2(
-  repository: RepositoryService,
-  channelId: string,
-  episodeId: string,
-  hasExistingVideo: boolean,
-): Promise<CompleteQuizV2Artifacts | null> {
-  const [quizV2, directorPlan, assetPlan, voicePlan, timeline] = await Promise.all([
-    repository.readQuiz(channelId, episodeId),
-    repository.readDirectorPlan(channelId, episodeId),
-    repository.readAssetPlan(channelId, episodeId),
-    repository.readVoicePlan(channelId, episodeId),
-    repository.readQuizTimeline(channelId, episodeId),
-  ]);
-
-  const complete =
-    quizV2 && directorPlan && assetPlan && voicePlan && timeline
-      ? { quiz: quizV2, director: directorPlan, assetPlan, voicePlan, timeline }
-      : null;
-
-  if (!complete && !hasExistingVideo) {
-    throw new RepositoryError("Quiz V2 artifacts are required before rendering a new Quiz video", "QUIZ_V2_REQUIRED");
-  }
-
-  return complete;
 }
 
 async function resolveAndCopyIntroOutro(
@@ -169,7 +134,7 @@ async function resolveAndCopyIntroOutro(
 }
 
 async function compileCompositionHtml(params: {
-  completeQuizV2: CompleteQuizV2Artifacts | null;
+  artifacts: RequiredQuizRenderArtifacts;
   channel: Channel;
   episode: Episode;
   scenes: Scene[];
@@ -180,43 +145,34 @@ async function compileCompositionHtml(params: {
   mascotProfile: MascotProfile | null;
   introOutro: IntroOutroMediaResolution;
 }): Promise<{ html: string; compositionFiles?: Record<string, string> }> {
-  const { completeQuizV2, channel, episode, scenes, renderAspectRatio, renderFps, assetSources, bgmHistory, mascotProfile, introOutro } =
-    params;
+  const { artifacts, channel, episode, scenes, renderAspectRatio, renderFps, assetSources, bgmHistory, mascotProfile, introOutro } = params;
   const mascotAspectRatio = renderAspectRatio === "9:16" ? "9:16" : "16:9";
 
-  if (completeQuizV2) {
-    const preparedQuizRender = await prepareQuizVideoRender({
-      channel,
-      episodeQuizConfig: episode.quiz_config,
-      quiz: completeQuizV2.quiz,
-      director: completeQuizV2.director,
-      timeline: completeQuizV2.timeline,
-      scenes,
-      audioPath: "./soundtrack.wav",
-      premixedAudio: true,
-      aspectRatio: mascotAspectRatio,
-      narrationDurationSeconds: episode.narration_duration_seconds ?? undefined,
-      assets: assetSources,
-      bgmOptions: {
-        recentTrackIds: bgmHistory.map((entry) => entry.track_id),
-        seed: episode.episode_id,
-      },
-      mascot: mascotProfile,
-      mascotConfig: channel.mascot_config,
-      fps: renderFps,
-      introVideoPath: introOutro.introVideoPath,
-      outroVideoPath: introOutro.outroVideoPath,
-      transitionType: introOutro.transitionType,
-      transitionDurationSeconds: introOutro.transitionDurationSeconds,
-    });
-    return { html: preparedQuizRender.html, compositionFiles: preparedQuizRender.compositionFiles };
-  }
-
-  const html = buildQuizComposition(episode.quiz_config, scenes, "./narration.wav", episode.narration_duration_seconds ?? undefined, {
+  const preparedQuizRender = await prepareQuizVideoRender({
+    channel,
+    episodeQuizConfig: episode.quiz_config,
+    quiz: artifacts.quiz,
+    director: artifacts.director,
+    timeline: artifacts.timeline,
+    scenes,
+    audioPath: "./soundtrack.wav",
+    premixedAudio: true,
     aspectRatio: mascotAspectRatio,
+    narrationDurationSeconds: episode.narration_duration_seconds ?? undefined,
+    assets: assetSources,
+    bgmOptions: {
+      recentTrackIds: bgmHistory.map((entry) => entry.track_id),
+      seed: episode.episode_id,
+    },
+    mascot: mascotProfile,
+    mascotConfig: channel.mascot_config,
     fps: renderFps,
+    introVideoPath: introOutro.introVideoPath,
+    outroVideoPath: introOutro.outroVideoPath,
+    transitionType: introOutro.transitionType,
+    transitionDurationSeconds: introOutro.transitionDurationSeconds,
   });
-  return { html };
+  return { html: preparedQuizRender.html, compositionFiles: preparedQuizRender.compositionFiles };
 }
 
 export async function prepareVideoComposition(options: {
@@ -230,6 +186,9 @@ export async function prepareVideoComposition(options: {
   onProgress: (message: string, percent: number) => Promise<void>;
 }): Promise<VideoCompositionContext> {
   const { runtime, repository, channel, scenes, renderAspectRatio, onProgress } = options;
+
+  const artifacts = await loadRequiredQuizRenderArtifacts(repository, channel.channel_id, options.episode.episode_id);
+
   const episode = await pinEpisodeStyleRevision(repository, channel, options.episode);
 
   const narration = await repository.getEpisodeAudioFile(
@@ -244,67 +203,54 @@ export async function prepareVideoComposition(options: {
   const renderAudioPath = path.join(renderRoot, "narration.wav");
   await copyFile(narration.absolutePath, renderAudioPath);
 
-  const completeQuizV2 = await loadAndValidateQuizV2(repository, channel.channel_id, episode.episode_id, Boolean(episode.video_asset_path));
-
-  let assetSources: Record<string, string> = {};
+  const mascotAspectRatio = renderAspectRatio === "9:16" ? "9:16" : "16:9";
   let assetResolution = await repository.readQuizAssetResolution(channel.channel_id, episode.episode_id);
-  if (completeQuizV2) {
-    const mascotAspectRatio = renderAspectRatio === "9:16" ? "9:16" : "16:9";
-    const assetPrep = await prepareVideoAssets({
-      runtime,
-      channelId: channel.channel_id,
-      episodeId: episode.episode_id,
-      renderRoot,
-      assetPlan: completeQuizV2.assetPlan,
-      assetResolution,
-      quiz: completeQuizV2.quiz,
-      director: completeQuizV2.director,
-      aspectRatio: mascotAspectRatio,
-      onProgress,
-    });
-    assetResolution = assetPrep.assetResolution;
-    assetSources = assetPrep.assetSources;
-  }
+  const assetPrep = await prepareVideoAssets({
+    runtime,
+    channelId: channel.channel_id,
+    episodeId: episode.episode_id,
+    renderRoot,
+    assetPlan: artifacts.assetPlan,
+    assetResolution,
+    quiz: artifacts.quiz,
+    director: artifacts.director,
+    aspectRatio: mascotAspectRatio,
+    onProgress,
+  });
+  assetResolution = assetPrep.assetResolution;
+  const assetSources = assetPrep.assetSources;
 
-  let preflightAssessment: ReturnType<typeof preflightQuizRender>["assessment"] | null = null;
-  if (completeQuizV2) {
-    preflightAssessment = await validateQuizPreflight(
-      repository,
-      channel.channel_id,
-      episode.episode_id,
-      completeQuizV2,
-      assetResolution?.assets ?? [],
-      episode.narration_duration_seconds !== null,
-    );
-  }
+  const preflightAssessment = await validateQuizPreflight(
+    repository,
+    channel.channel_id,
+    episode.episode_id,
+    artifacts,
+    assetResolution?.assets ?? [],
+    episode.narration_duration_seconds !== null,
+  );
 
   const bgmHistory = await repository.readBgmHistory(channel.channel_id);
   const mascotProfile: MascotProfile | null = await prepareLocalizedMascot(channel, repository, renderRoot);
 
-  let selectedBgmTrackId: string | null = null;
-  let selectedBgmFilename: string | null = null;
-
-  if (completeQuizV2) {
-    const soundtrackResult = await prepareSoundtrack({
-      renderRoot,
-      narration,
-      timeline: completeQuizV2.timeline,
-      episode,
-      bgmHistory,
-      assetSources,
-      onProgressMessage: async (message) => {
-        await onProgress(message, 15);
-      },
-    });
-    selectedBgmTrackId = soundtrackResult.selectedBgmTrackId;
-    selectedBgmFilename = soundtrackResult.selectedBgmFilename;
-  }
+  const soundtrackResult = await prepareSoundtrack({
+    renderRoot,
+    narration,
+    timeline: artifacts.timeline,
+    episode,
+    bgmHistory,
+    assetSources,
+    onProgressMessage: async (message) => {
+      await onProgress(message, 15);
+    },
+  });
+  const selectedBgmTrackId = soundtrackResult.selectedBgmTrackId;
+  const selectedBgmFilename = soundtrackResult.selectedBgmFilename;
 
   const introOutro = await resolveAndCopyIntroOutro(repository, channel, episode, renderRoot);
   const renderFps = runtime.videoConfig?.fps ?? 30;
 
   const { html, compositionFiles } = await compileCompositionHtml({
-    completeQuizV2,
+    artifacts,
     channel,
     episode,
     scenes,
@@ -339,7 +285,6 @@ export async function prepareVideoComposition(options: {
     selectedBgmTrackId,
     selectedBgmFilename,
     assetResolution,
-    completeQuizV2: Boolean(completeQuizV2),
     preflightAssessment,
   };
 }

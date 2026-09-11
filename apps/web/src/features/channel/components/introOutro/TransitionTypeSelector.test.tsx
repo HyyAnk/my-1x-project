@@ -53,7 +53,7 @@ describe("TransitionTypeSelector", () => {
     expect(listbox).toBeDefined();
 
     expect(screen.getByRole("option", { name: /Stinger Swipe/i })).toBeDefined();
-    expect(screen.getByRole("option", { name: /Smooth Crossfade/i })).toBeDefined();
+    expect(screen.getByRole("option", { name: /Fade to Black/i })).toBeDefined();
     expect(screen.getByRole("option", { name: /Direct Cut/i })).toBeDefined();
   });
 
@@ -131,7 +131,7 @@ describe("TransitionTypeSelector", () => {
     const searchInput = screen.getByRole("textbox", { name: /Filter transitions/i });
     fireEvent.change(searchInput, { target: { value: "crossfade" } });
 
-    expect(screen.getByRole("option", { name: /Smooth Crossfade/i })).toBeDefined();
+    expect(screen.getByRole("option", { name: /Fade to Black/i })).toBeDefined();
     expect(screen.queryByRole("option", { name: /Direct Cut/i })).toBeNull();
   });
 

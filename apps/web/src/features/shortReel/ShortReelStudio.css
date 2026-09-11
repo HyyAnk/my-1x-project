@@ -63,7 +63,8 @@
   flex-wrap: wrap;
 }
 
-.short-reel-title {
+.short-reel-title-block .short-reel-title,
+.short-reel-header .short-reel-title {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
@@ -438,7 +439,8 @@
     gap: 16px;
   }
 
-  .short-reel-title {
+  .short-reel-title-block .short-reel-title,
+  .short-reel-header .short-reel-title {
     font-size: 18px;
   }
 
@@ -484,7 +486,8 @@
     padding: 8px 4px;
   }
 
-  .short-reel-title {
+  .short-reel-title-block .short-reel-title,
+  .short-reel-header .short-reel-title {
     font-size: 16px;
   }
 

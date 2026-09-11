@@ -1,4 +1,5 @@
 import type { QuizLayoutRenderDefinition } from "./types.js";
+import { renderQuizFrameBody } from "../frame/renderQuizFrameBody.js";
 
 /**
  * Verdict True or False Layout (16:9 Landscape Video, 1920×1080).
@@ -21,43 +22,19 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  */
 export const verdictTrueFalseLayout = {
   id: "verdict_true_false",
-  renderBody: (slots) => `${slots.questionBoxHtml}${slots.heroHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
+  renderBody: (slots) => renderQuizFrameBody(slots, `${slots.heroHtml}${slots.choicesHtml}`),
   css: (_aspectRatio) => `
 /* === Verdict True/False Layout (16:9 Landscape Video, 1920x1080) === */
-.layout-verdict_true_false .game-stage {
-  display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(460px, 0.92fr);
-  grid-template-areas:
-    "title title"
-    "hero answers"
-    "phase phase";
-  align-items: start;
-  column-gap: 36px;
-  row-gap: 22px;
-  width: 1420px;
-  max-width: 1420px;
-  min-height: 0;
-  margin: 20px 40px 0 auto;
-}
 
-/* Question Statement Card */
-.layout-verdict_true_false .question-title {
-  grid-area: title;
-  width: 100%;
-  max-width: 1380px;
-  height: 168px;
-  min-height: 168px;
-  justify-self: center;
-  margin: 0 auto;
-}
-
-/* Hero Evidence Viewport: ~747px x 520px (4:3 aspect ratio support with safe margins) */
-.layout-verdict_true_false .game-stage > .hero-image {
-  grid-area: hero;
-  width: 100%;
-  height: 520px;
-  max-height: 520px;
-  margin-top: 0;
+/* Unified Quiz Frame Arena Geometry */
+.quiz-frame-unified.layout-verdict_true_false .hero-image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 820px;
+  height: 510px;
+  max-height: 510px;
+  margin: 0;
   border-radius: 38px;
   border: 10px solid #FFFFFF;
   box-shadow:
@@ -68,46 +45,61 @@ export const verdictTrueFalseLayout = {
   overflow: hidden;
   box-sizing: border-box;
 }
-.layout-verdict_true_false .hero-image img {
+.quiz-frame-unified.layout-verdict_true_false .hero-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 26px;
 }
-.layout-verdict_true_false.quiz-question-clip .hero-image {
+.quiz-frame-unified.layout-verdict_true_false.quiz-question-clip .hero-image {
   animation: enter-from-left 0.66s cubic-bezier(0.22, 0.8, 0.3, 1) var(--clip-start) both;
 }
 
-/* Verdict Choices Grid: 2 Oversized Physical Arcade Buttons Centered Vertically */
-.layout-verdict_true_false .answer-grid {
-  grid-area: answers;
-  grid-template-columns: 1fr;
-  width: 100%;
-  height: 520px;
-  margin-top: 0;
+/* Verdict Choices Grid: 2 Oversized Physical Buttons Centered Vertically */
+.quiz-frame-unified.layout-verdict_true_false .answer-grid,
+.quiz-frame-unified.layout-verdict_true_false .choice-group {
+  position: absolute;
+  left: 860px;
+  top: 0;
+  width: 560px;
+  height: 510px;
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 36px;
+  gap: 44px;
+}
+
+.quiz-frame-unified.layout-verdict_true_false .choice-card,
+.quiz-frame-unified.layout-verdict_true_false .answer-card {
+  width: 560px;
+  height: 164px;
+  min-height: 164px;
+  max-height: 164px;
+  margin: 0;
+  box-sizing: border-box;
+  --choice-card-height: 164px;
+  --choice-card-min-height: 164px;
+  --choice-badge-size: 112px;
 }
 
 .layout-verdict_true_false {
-  --choice-card-min-height: 140px;
-  --choice-card-height: 140px;
-  --choice-card-margin-left: 80px;
+  --choice-card-min-height: 164px;
+  --choice-card-height: 164px;
+  --choice-card-margin-left: 0px;
   --choice-card-padding: 16px 42px 16px 48px;
-  --choice-badge-size: 148px;
-  --choice-badge-margin-left: -80px;
-  --choice-badge-font-size: 80px;
-  --choice-font-size-base: 46px;
-  --choice-font-size-medium: 38px;
-  --choice-font-size-long: 30px;
-  --choice-font-size-very_long: 24px;
-  --choice-font-size-overflow: 22px;
-  --choice-fit-min: 24px;
-  --choice-fit-max: 68px;
+  --choice-badge-size: 112px;
+  --choice-badge-margin-left: 0px;
+  --choice-badge-font-size: 64px;
+  --choice-font-size-base: 48px;
+  --choice-font-size-medium: 40px;
+  --choice-font-size-long: 32px;
+  --choice-font-size-very_long: 32px;
+  --choice-font-size-overflow: 32px;
+  --choice-fit-min: 32px;
+  --choice-fit-max: 48px;
   --choice-fit-max-lines: 2;
   --choice-fit-leading: 1.08;
   --choice-fit-multiline-gain: 6px;
@@ -260,53 +252,5 @@ export const verdictTrueFalseLayout = {
   }
 }
 
-/* Phase Region: Strictly Placed in Row 3 of CSS Grid (Zero Overlap with Row 2) */
-.layout-verdict_true_false .phase-region {
-  grid-area: phase;
-  position: relative;
-  z-index: 5;
-  left: auto;
-  right: auto;
-  bottom: auto;
-  top: auto;
-  transform: none;
-  width: 100%;
-  max-width: 1420px;
-  height: 96px;
-  margin: 0 auto;
-  margin-top: 0;
-  box-sizing: border-box;
-}
-
-/* Phase 3 Thinking Bar: Constrained to 1260px Width Guarding Star Marker From Canvas Edge */
-.layout-verdict_true_false .phase-region > .thinking-bar {
-  position: absolute;
-  top: 0;
-  bottom: auto;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(1260px, 100%);
-  min-height: 84px;
-}
-
-/* Phase 5 Fact Card: Constrained to 1220px Width, Zero Overlap With Hero/Choices */
-.layout-verdict_true_false .phase-region > .fact-card {
-  position: absolute;
-  top: 0;
-  bottom: auto;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(1220px, 100%);
-  margin-top: 0;
-  padding: 18px 44px;
-  border-radius: 36px;
-  box-sizing: border-box;
-  animation: verdict-fact-enter 0.45s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reward-at, 0s)) both;
-}
-
-@keyframes verdict-fact-enter {
-  0% { opacity: 0; transform: translate(-50%, 18px) scale(0.92); }
-  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-}
 `,
 } satisfies QuizLayoutRenderDefinition;

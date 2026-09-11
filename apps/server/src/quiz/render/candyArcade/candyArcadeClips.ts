@@ -11,9 +11,14 @@ import type {
   QuizQuestionCounterStyle,
   QuizThinkingBarStyle,
   ResolvedQuizLayoutId,
-  IntroOutroTransitionType,
 } from "@studio/shared";
-import { resolveChannelMascotPlacement, serializeQuizPaletteInlineStyle } from "@studio/shared";
+import {
+  getTransitionDefinition,
+  resolveChannelMascotPlacement,
+  serializeQuizPaletteInlineStyle,
+  type ResolvedTransitionInstance,
+} from "@studio/shared";
+import { renderResolvedTransitionClip } from "../transitions/renderTransitionClip.js";
 import { ambientPhaseSeconds, motionCssClass, textLayout } from "../../visual/candyArcade.js";
 import type { QuizTemplateScene } from "../../visual/types.js";
 import { esc, escAttr, illustrationDataUri } from "./candyArcadeSvg.js";
@@ -32,6 +37,7 @@ import {
   renderStableQuizSceneParts,
 } from "../scene/renderQuizSceneParts.js";
 import { renderQuizLayoutBody } from "../layouts/registry.js";
+import { isUnifiedQuizFrame, renderQuizPhaseSlots } from "../frame/renderQuizFrameBody.js";
 import { renderCandyRaysDecorations } from "../../visual/elements/background/variants/candyRays.js";
 import type { QuizSceneTiming } from "../scene/quizScene.types.js";
 
@@ -41,6 +47,8 @@ export type SubComposition = {
   duration: string;
   trackIndex: string;
   revealAt?: string;
+  transitionInstance?: string;
+  className?: string;
   html: string;
 };
 
@@ -75,6 +83,8 @@ export function toSubComposition(clip: string, aspectRatio: MascotRenderAspectRa
   const duration = requiredAttribute(openingTag, "data-duration");
   const trackIndex = requiredAttribute(openingTag, "data-track-index");
   const revealAt = openingTag.match(/\sdata-reveal-at="([^"]+)"/)?.[1];
+  const transitionInstance = openingTag.match(/\sdata-transition-instance="([^"]+)"/)?.[1];
+  const className = openingTag.match(/\sclass="([^"]+)"/)?.[1];
   const sceneRoot = openingTag
     .replace(/\sdata-start="[^"]*"/g, "")
     .replace(/\sdata-duration="[^"]*"/g, "")
@@ -84,7 +94,7 @@ export function toSubComposition(clip: string, aspectRatio: MascotRenderAspectRa
       ` data-composition-id="${id}" data-no-timeline data-width="${aspectRatio === "9:16" ? 1080 : 1920}" data-height="${aspectRatio === "9:16" ? 1920 : 1080}" data-aspect-ratio="${aspectRatio}">`,
     );
   const body = rootRelativeSubCompositionAssets(clip.replace(openingTag, sceneRoot));
-  return { id, start, duration, trackIndex, revealAt, html: `<template id="${id}-template">${body}</template>` };
+  return { id, start, duration, trackIndex, revealAt, transitionInstance, className, html: `<template id="${id}-template">${body}</template>` };
 }
 
 export function requiredAttribute(tag: string, name: string): string {
@@ -99,7 +109,9 @@ export function rootRelativeSubCompositionAssets(html: string): string {
 
 export function subCompositionMount(scene: SubComposition): string {
   const revealAttr = scene.revealAt ? ` data-reveal-at="${scene.revealAt}"` : "";
-  return `<div id="${scene.id}-mount" data-composition-id="${scene.id}" data-composition-src="compositions/${scene.id}.html" data-start="${scene.start}" data-duration="${scene.duration}" data-track-index="${scene.trackIndex}"${revealAttr} data-no-timeline></div>`;
+  const instanceAttr = scene.transitionInstance ? ` data-transition-instance="${scene.transitionInstance}"` : "";
+  const classAttr = scene.className ? ` class="sub-composition ${scene.className}"` : ' class="sub-composition"';
+  return `<div id="${scene.id}-mount"${classAttr} data-composition-id="${scene.id}" data-composition-src="compositions/${scene.id}.html" data-start="${scene.start}" data-duration="${scene.duration}" data-track-index="${scene.trackIndex}"${revealAttr}${instanceAttr} data-no-timeline></div>`;
 }
 
 export function mascotElement(
@@ -248,10 +260,12 @@ export function questionClip(input: {
   const stableParts = renderStableQuizSceneParts(parts);
   const choicesHtml = renderQuizSceneChoicePart(parts, { revealMode: "scheduled" });
   const mascotClass = model.mascot.occupied ? "has-mascot" : "";
+  const isUnified = isUnifiedQuizFrame(model.layout.id, model.aspectRatio);
   const classNames = [
     "clip",
     "candy-scene",
     "quiz-question-clip",
+    isUnified ? "quiz-frame-unified" : "",
     `layout-${model.layout.id}`,
     `archetype-${question.format}`,
     motionCssClass(visual.motionId),
@@ -260,15 +274,18 @@ export function questionClip(input: {
   ]
     .filter(Boolean)
     .join(" ");
+  const thinkingHtml = renderQuizSceneThinkingPart(parts, timing);
+  const factHtml = `<div class="fact-card" data-layout-allow-occlusion><p>${esc(parts.phase.factText)}</p></div>`;
+  const phaseHtml = isUnified ? renderQuizPhaseSlots(thinkingHtml, factHtml) : `${thinkingHtml}${factHtml}`;
   const layoutBody = renderQuizLayoutBody(model.layout.id, {
     questionBoxHtml: stableParts.questionBoxHtml,
     heroHtml: stableParts.heroHtml,
     choicesHtml,
-    phaseHtml: `${renderQuizSceneThinkingPart(parts, timing)}<div class="fact-card" data-layout-allow-occlusion><p>${esc(parts.phase.factText)}</p></div>`,
+    phaseHtml,
   });
   const body = `<div class="game-stage" data-layout-allow-overflow>${layoutBody}</div>`;
   const revealAtSeconds = Math.max(0, input.revealStart - input.start).toFixed(3);
-  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0" data-reveal-at="${revealAtSeconds}">${renderQuizSceneBackground(parts, "production", { questionIndex: input.questionIndex, clipStart: input.start, duration: input.end - input.start })}<header class="game-header" data-layout-allow-occlusion>${stableParts.counterBadgeHtml}</header>${body}${stableParts.brandMarkHtml}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
+  return `<section id="quiz-q${question.number}-${Math.round(input.start * 1000)}" class="${classNames}" ${config} data-start="${input.start.toFixed(3)}" data-duration="${Math.max(0.04, input.end - input.start).toFixed(3)}" data-track-index="0" data-reveal-at="${revealAtSeconds}">${renderQuizSceneBackground(parts, "production", { questionIndex: input.questionIndex, clipStart: input.start, duration: input.end - input.start })}<header class="game-header" data-quiz-fixed="counter" data-layout-allow-occlusion>${stableParts.counterBadgeHtml}</header>${body}${stableParts.brandMarkHtml}${mascotHtml}${rewardFx(input.isFinal ? "big" : "small")}</section>`;
 }
 
 export function transitionClip(input: {
@@ -276,13 +293,43 @@ export function transitionClip(input: {
   end: number;
   visual: QuizTemplateScene;
   nextPalette: QuizTemplateScene["palette"];
+  instanceId?: string;
+  instance?: ResolvedTransitionInstance;
 }): string {
   if (input.end - input.start < 0.04) return "";
-  const special = input.visual.transitionId === "lightning_brush";
-  const body = special
-    ? `<div class="brush brush-one" data-layout-allow-occlusion data-layout-allow-overflow></div><div class="brush brush-two" data-layout-allow-occlusion data-layout-allow-overflow></div><div class="transition-mark" data-layout-ignore aria-hidden="true">✦</div>`
-    : `<div class="splash-bed" data-layout-allow-occlusion data-layout-allow-overflow></div><i class="splash-bubble splash-bubble-a" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-b" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-c" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-d" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-e" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-f" data-layout-allow-occlusion data-layout-allow-overflow></i><div class="splash-brand" data-layout-ignore aria-hidden="true">✦</div><div class="splash-particles" data-layout-ignore aria-hidden="true"><i>✦</i><i>•</i><i>✦</i><i>•</i></div><div class="splash-release" data-layout-allow-occlusion data-layout-allow-overflow></div>`;
-  return `<section id="candy-transition-${Math.round(input.start * 1000)}" class="clip candy-transition transition-${input.visual.transitionId}" data-layout-ignore data-layout-allow-occlusion data-layout-allow-overflow style="--from:${input.visual.palette.accent};--to:${input.nextPalette.backgroundPrimary};--ink:${input.visual.palette.text};--clip-start:${input.start.toFixed(3)}s" data-start="${input.start.toFixed(3)}" data-duration="${(input.end - input.start).toFixed(3)}" data-track-index="1">${body}</section>`;
+  if (input.instance) {
+    return renderResolvedTransitionClip(input.instance, {
+      visual: input.visual,
+      nextPalette: input.nextPalette,
+    });
+  }
+  try {
+    const def = getTransitionDefinition(input.visual.transitionId);
+    if (def.id === "cut") return "";
+    const body = def.renderMarkup({
+      instanceId: input.instanceId ?? `trans-${Math.round(input.start * 1000)}`,
+      placement: "scene",
+      fps: { numerator: 30, denominator: 1 },
+      startFrame: Math.round(input.start * 30),
+      boundaryFrame: Math.round(((input.start + input.end) / 2) * 30),
+      availableEndFrameExclusive: Math.round(input.end * 30),
+      width: 1920,
+      height: 1080,
+      fromColor: input.visual.palette.accent,
+      toColor: input.nextPalette.backgroundPrimary,
+      inkColor: input.visual.palette.text,
+    });
+    const instanceAttr = input.instanceId ? ` data-transition-instance="${input.instanceId}"` : "";
+    return `<section id="candy-transition-${Math.round(input.start * 1000)}" class="clip candy-transition transition-${input.visual.transitionId}"${instanceAttr} data-layout-ignore data-layout-allow-occlusion data-layout-allow-overflow style="--from:${input.visual.palette.accent};--to:${input.nextPalette.backgroundPrimary};--ink:${input.visual.palette.text};--clip-start:${input.start.toFixed(3)}s;--trans-dur:${(input.end - input.start).toFixed(3)}s;--trans-start:0s" data-start="${input.start.toFixed(3)}" data-duration="${(input.end - input.start).toFixed(3)}" data-track-index="1">${body}</section>`;
+  } catch {
+    const isBrush = input.visual.transitionId === "lightning_brush" || input.visual.transitionId === "brush_wave";
+    const mark = input.visual.transitionId === "lightning_brush" ? `<div class="transition-mark" data-layout-ignore aria-hidden="true">✦</div>` : "";
+    const body = isBrush
+      ? `<div class="brush brush-one" data-layout-allow-occlusion data-layout-allow-overflow></div><div class="brush brush-two" data-layout-allow-occlusion data-layout-allow-overflow></div>${mark}`
+      : `<div class="splash-bed" data-layout-allow-occlusion data-layout-allow-overflow></div><i class="splash-bubble splash-bubble-a" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-b" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-c" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-d" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-e" data-layout-allow-occlusion data-layout-allow-overflow></i><i class="splash-bubble splash-bubble-f" data-layout-allow-occlusion data-layout-allow-overflow></i><div class="splash-brand" data-layout-ignore aria-hidden="true">✦</div><div class="splash-particles" data-layout-ignore aria-hidden="true"><i>✦</i><i>•</i><i>✦</i><i>•</i></div><div class="splash-release" data-layout-allow-occlusion data-layout-allow-overflow></div>`;
+    const instanceAttr = input.instanceId ? ` data-transition-instance="${input.instanceId}"` : "";
+    return `<section id="candy-transition-${Math.round(input.start * 1000)}" class="clip candy-transition transition-${input.visual.transitionId}"${instanceAttr} data-layout-ignore data-layout-allow-occlusion data-layout-allow-overflow style="--from:${input.visual.palette.accent};--to:${input.nextPalette.backgroundPrimary};--ink:${input.visual.palette.text};--clip-start:${input.start.toFixed(3)}s;--trans-dur:${(input.end - input.start).toFixed(3)}s;--trans-start:0s" data-start="${input.start.toFixed(3)}" data-duration="${(input.end - input.start).toFixed(3)}" data-track-index="1">${body}</section>`;
+  }
 }
 
 export function rewardFx(intensity: "small" | "big"): string {

@@ -404,7 +404,7 @@ describe("Candy Arcade visual template", () => {
     expect([...html.matchAll(/>\?</g)]).toHaveLength(thinkingBarCount);
     expect(html).not.toContain('<div class="timer-progress"><span class="timer-marker');
     expect(html).toContain("@keyframes quiz-timer-marker-slide");
-    expect(html).toContain("layout-media_left_choices_right .game-stage");
+    expect(html).toContain("layout-media_left_choices_right .hero-image");
     expect(html).toContain('<strong class="keyword-highlight">');
     expect(candyArcadeHeroAreaRatio("media_left_choices_right")).toBeGreaterThan(0.2);
     expect(html).toContain("transition-bubble_splash");

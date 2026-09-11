@@ -450,6 +450,7 @@ describe("ImgStudio Quiz & Image Providers Integration", () => {
     }));
     await repository.saveTopicRun(channel.channel_id, topics);
     const episode = await repository.confirmTopic(channel.channel_id, "t1");
+    await repository.readUsageLedger();
 
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,

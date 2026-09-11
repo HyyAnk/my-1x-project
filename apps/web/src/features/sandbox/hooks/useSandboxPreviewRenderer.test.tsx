@@ -402,6 +402,97 @@ describe("useSandboxPreviewRenderer", () => {
     expect(result.current.pendingPreviewHtml).toContain("latest-aurora");
     expect(result.current.pendingPreviewHtml).not.toContain("stale-candy");
   });
+
+  it("does NOT trigger previewSandboxComposition when timeline phase or timelineSeconds changes", async () => {
+    const previewSpy = vi.spyOn(api, "previewSandboxComposition").mockResolvedValue({
+      html: "<section>Rehearsal Scene</section>",
+      css: "",
+      contrast_report: { ok: true, ratio: 5, message: "OK" },
+    });
+
+    const { rerender } = renderHook(
+      ({ timeline }: { timeline: SandboxTimelineState }) =>
+        useSandboxPreviewRenderer({
+          design: mockDesign,
+          mascot: mockMascot,
+          question: mockQuestion,
+          timeline,
+          aspectRatio: "16:9",
+        }),
+      {
+        initialProps: {
+          timeline: {
+            ...mockTimeline,
+            phase: "choices",
+            timelineSeconds: 1.1,
+          },
+        },
+        wrapper,
+      },
+    );
+
+    await vi.waitFor(() => expect(previewSpy).toHaveBeenCalledTimes(1));
+
+    // Scrub or change phase on the timeline
+    rerender({
+      timeline: {
+        ...mockTimeline,
+        phase: "reveal",
+        timelineSeconds: 7.7,
+        useScrubber: true,
+      },
+    });
+
+    // Wait past debounce timer to confirm no additional network fetch occurred
+    await new Promise((resolve) => setTimeout(resolve, 200));
+
+    expect(previewSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("syncs timeline seeking after frame verification in verifyPendingPreview", async () => {
+    const previewDeferred = deferred<ReturnType<typeof previewResponse>>();
+    vi.spyOn(api, "previewSandboxComposition").mockReturnValue(previewDeferred.promise);
+    vi.spyOn(previewFontVerification, "verifyPreviewFonts").mockResolvedValue(undefined);
+
+    const seekSpy = vi.fn();
+    const pauseSpy = vi.fn();
+
+    const currentTimeline = {
+      ...mockTimeline,
+      timelineSeconds: 3.5,
+      isPlaying: false,
+      seekIframe: seekSpy,
+      pauseIframe: pauseSpy,
+    };
+
+    const { result } = renderHook(
+      () =>
+        useSandboxPreviewRenderer({
+          design: mockDesign,
+          mascot: mockMascot,
+          question: mockQuestion,
+          timeline: currentTimeline,
+          aspectRatio: "16:9",
+        }),
+      { wrapper },
+    );
+
+    await vi.waitFor(() => expect(result.current.loading).toBe(true));
+    previewDeferred.resolve(previewResponse("sync-test"));
+    await vi.waitFor(() => expect(result.current.pendingPreviewHtml).toContain("sync-test"));
+
+    await act(async () => {
+      await result.current.verifyPendingPreview(document.createElement("iframe"), result.current.pendingPreviewHtml);
+    });
+
+    expect(result.current.previewHtml).toContain("sync-test");
+
+    // Wait for the sync timeouts (20ms, 80ms, 200ms) to fire
+    await vi.waitFor(() => {
+      expect(seekSpy).toHaveBeenCalledWith(3.5);
+      expect(pauseSpy).toHaveBeenCalled();
+    });
+  });
 });
 
 function previewResponse(marker: string) {

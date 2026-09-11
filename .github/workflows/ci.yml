@@ -46,6 +46,9 @@ jobs:
       - name: Unit and integration tests
         run: pnpm test
 
+      - name: Transition parity tests
+        run: pnpm test:transitions:parity
+
       - name: Repository integrity audit
         run: pnpm run audit
 

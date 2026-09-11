@@ -282,53 +282,6 @@
     "id": "ENT-PLA-007",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
-    "name": "Prison",
-    "language": "en",
-    "aliases": [
-      "Penitentiary",
-      "Correctional Facility",
-      "Jail",
-      "Detention Center"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "High concrete security walls topped with coils of razor wire, illuminated by sweeping high-intensity halogen watchtower searchlights into a misty night sky with barred cell windows in the distance.",
-    "core_traits": [
-      "Enforces involuntary confinement and rehabilitation for individuals convicted of legal crimes",
-      "Secured with reinforced steel bars, electronic interlocks, barbed wire perimeters, and observation towers",
-      "Operates on rigid daily schedules with headcounts, recreation yard hours, and cafeteria meal calls",
-      "Monitored by armed correctional officers, surveillance camera matrices, and metal detection gates"
-    ],
-    "distractor_pool": [
-      "Police Station",
-      "Courthouse",
-      "Military Base",
-      "Civil Defense Bunker",
-      "Hospital"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The Panopticon design was created so a single guard in a central tower could observe all inmates without them knowing if they were watched.",
-        "verdict": "fact",
-        "explanation": "Philosopher Jeremy Bentham designed the circular panopticon prison in the late 18th century to induce constant self-monitoring among prisoners.",
-        "fun_fact": "Stateville Correctional Center in Illinois was one of the few facilities actually built on the panopticon model."
-      },
-      {
-        "claim": "The terms 'prison' and 'jail' refer to the exact same administrative type of penal institution.",
-        "verdict": "myth",
-        "explanation": "Jails are local facilities holding detainees awaiting trial or serving short misdemeanors under one year, whereas prisons house convicted felons serving long-term sentences.",
-        "fun_fact": "Jails are typically run by county sheriffs, while prisons are managed by state or federal departments."
-      }
-    ],
-    "versus_candidates": [
-      "Police Station",
-      "Courthouse",
-      "Military Base"
-    ]
-  },
-  {
-    "id": "ENT-PLA-008",
-    "domain_id": "places_facilities",
-    "subtopic_id": "public_civic",
     "name": "Embassy",
     "language": "en",
     "aliases": [
@@ -372,7 +325,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-009",
+    "id": "ENT-PLA-008",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Military Base",
@@ -419,7 +372,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-010",
+    "id": "ENT-PLA-009",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Public Library",
@@ -466,7 +419,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-011",
+    "id": "ENT-PLA-010",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Town Square",
@@ -513,7 +466,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-012",
+    "id": "ENT-PLA-011",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Community Center",
@@ -559,7 +512,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-013",
+    "id": "ENT-PLA-012",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Parliament Building",
@@ -606,7 +559,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-014",
+    "id": "ENT-PLA-013",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "High School",
@@ -652,7 +605,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-015",
+    "id": "ENT-PLA-014",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "University Campus",
@@ -698,7 +651,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-016",
+    "id": "ENT-PLA-015",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Public Park",
@@ -745,7 +698,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-017",
+    "id": "ENT-PLA-016",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Cemetery",
@@ -792,53 +745,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-018",
-    "domain_id": "places_facilities",
-    "subtopic_id": "public_civic",
-    "name": "Wastewater Treatment Plant",
-    "language": "en",
-    "aliases": [
-      "Sewage Treatment Plant",
-      "Water Reclamation Facility",
-      "Water Pollution Control Plant"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Sprawling industrial water reclamation facility beside a river, showcasing massive circular settling clarifier basins, bubbling aeration tanks, and intricate networks of green pipes and pumping stations.",
-    "core_traits": [
-      "Purifies municipal domestic sewage and industrial wastewater before returning clean effluent to waterways",
-      "Utilizes primary mechanical settling screens, secondary biological bacteria breakdown, and chemical disinfection",
-      "Identified by large open circular clarifier tanks with rotating scraper bridges and aerator bubbles",
-      "Protects downstream river ecosystems and public municipal drinking water sources from contamination"
-    ],
-    "distractor_pool": [
-      "Municipal Water Tower",
-      "Power Plant",
-      "Recycling Center",
-      "Canal Lock",
-      "Chemical Processing Facility"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Microscopic beneficial bacteria and microorganisms do the vast majority of organic waste consumption in modern sewage treatment.",
-        "verdict": "fact",
-        "explanation": "In secondary aeration tanks, trillions of aerobic microbes digest dissolved human waste, converting it into harmless cell biomass and carbon dioxide.",
-        "fun_fact": "This biological sludge is subsequently converted into rich agricultural fertilizer or biogas fuel."
-      },
-      {
-        "claim": "Treated wastewater from modern plants is simply dumped raw without destroying harmful pathogens.",
-        "verdict": "myth",
-        "explanation": "Final stages include intensive ultraviolet (UV) radiation or chlorination that obliterates bacteria and viruses before discharge.",
-        "fun_fact": "Advanced tertiary plants produce water purer than standard municipal tap water."
-      }
-    ],
-    "versus_candidates": [
-      "Municipal Water Tower",
-      "Recycling Center",
-      "Power Plant"
-    ]
-  },
-  {
-    "id": "ENT-PLA-019",
+    "id": "ENT-PLA-017",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Recycling Center",
@@ -884,7 +791,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-020",
+    "id": "ENT-PLA-018",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Power Plant",
@@ -930,7 +837,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-021",
+    "id": "ENT-PLA-019",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Weather Station",
@@ -976,7 +883,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-022",
+    "id": "ENT-PLA-020",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Astronomical Observatory",
@@ -1022,7 +929,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-023",
+    "id": "ENT-PLA-021",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Blood Donation Center",
@@ -1068,7 +975,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-024",
+    "id": "ENT-PLA-022",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Public Archive",
@@ -1114,7 +1021,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-025",
+    "id": "ENT-PLA-023",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Municipal Water Tower",
@@ -1160,7 +1067,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-026",
+    "id": "ENT-PLA-024",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Botanical Conservatory",
@@ -1207,7 +1114,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-027",
+    "id": "ENT-PLA-025",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Supreme Court",
@@ -1254,7 +1161,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-028",
+    "id": "ENT-PLA-026",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Presidential Palace",
@@ -1300,7 +1207,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-029",
+    "id": "ENT-PLA-027",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Coast Guard Station",
@@ -1346,7 +1253,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-030",
+    "id": "ENT-PLA-028",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Animal Shelter",
@@ -1392,53 +1299,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-031",
-    "domain_id": "places_facilities",
-    "subtopic_id": "public_civic",
-    "name": "Civil Defense Bunker",
-    "language": "en",
-    "aliases": [
-      "Fallout Shelter",
-      "Bomb Shelter",
-      "Underground Command Bunker"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Subterranean fortified blast bunker carved into solid granite bedrock, sealed by a massive circular steel blast door with locking lugs, yellow tactical floodlights illuminating air filtration conduits.",
-    "core_traits": [
-      "Engineered to protect personnel and command leadership from nuclear blast overpressure, radiation, or bomb strikes",
-      "Constructed deep underground with thick reinforced concrete walls, blast doors, and shock-absorbing dampers",
-      "Self-contained with independent diesel generators, NBC (nuclear, biological, chemical) air scrubbers, and deep water wells",
-      "Stocked with long-shelf-life rations, emergency communication lines, and survival bunking bays"
-    ],
-    "distractor_pool": [
-      "Military Base",
-      "Bank Vault",
-      "Subway Metro Station",
-      "Prison",
-      "Underground Road Tunnel"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Switzerland maintains enough civil defense fallout bunker spaces to shelter more than 100% of its entire national population.",
-        "verdict": "fact",
-        "explanation": "Swiss federal law mandated fallout shelter construction in residential buildings starting in the Cold War, creating millions of fortified spaces.",
-        "fun_fact": "The Lucerne Sonnenberg Tunnel bunker was designed to accommodate up to 20,000 citizens in an emergency."
-      },
-      {
-        "claim": "A standard home basement provides total, complete protection against high-radiation nuclear blast waves without reinforcement.",
-        "verdict": "myth",
-        "explanation": "Ordinary house walls provide minimal blast overpressure resistance and allow gamma radiation infiltration unless shielded by substantial earth, lead, or concrete.",
-        "fun_fact": "At least 3 feet of packed earth or 2 feet of concrete is required to reduce gamma radiation by 99%."
-      }
-    ],
-    "versus_candidates": [
-      "Military Base",
-      "Bank Vault",
-      "Subway Metro Station"
-    ]
-  },
-  {
-    "id": "ENT-PLA-032",
+    "id": "ENT-PLA-029",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Central Bank",
@@ -1484,7 +1345,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-033",
+    "id": "ENT-PLA-030",
     "domain_id": "places_facilities",
     "subtopic_id": "public_civic",
     "name": "Public Fountain Plaza",
@@ -1530,7 +1391,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-034",
+    "id": "ENT-PLA-031",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "International Airport",
@@ -1576,7 +1437,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-035",
+    "id": "ENT-PLA-032",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Train Station",
@@ -1622,7 +1483,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-036",
+    "id": "ENT-PLA-033",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Subway Metro Station",
@@ -1668,7 +1529,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-037",
+    "id": "ENT-PLA-034",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Bus Terminal",
@@ -1714,7 +1575,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-038",
+    "id": "ENT-PLA-035",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Harbor Seaport",
@@ -1760,7 +1621,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-039",
+    "id": "ENT-PLA-036",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Lighthouse",
@@ -1806,7 +1667,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-040",
+    "id": "ENT-PLA-037",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Gas Station",
@@ -1853,7 +1714,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-041",
+    "id": "ENT-PLA-038",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Multi-Story Parking Garage",
@@ -1900,7 +1761,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-042",
+    "id": "ENT-PLA-039",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Suspension Bridge",
@@ -1946,7 +1807,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-043",
+    "id": "ENT-PLA-040",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Ferry Terminal",
@@ -1992,7 +1853,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-044",
+    "id": "ENT-PLA-041",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Canal Lock",
@@ -2038,7 +1899,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-045",
+    "id": "ENT-PLA-042",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Helicopter Pad",
@@ -2085,7 +1946,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-046",
+    "id": "ENT-PLA-043",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Highway Toll Booth",
@@ -2132,7 +1993,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-047",
+    "id": "ENT-PLA-044",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Air Traffic Control Tower",
@@ -2178,7 +2039,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-048",
+    "id": "ENT-PLA-045",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Cable Car Station",
@@ -2225,7 +2086,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-049",
+    "id": "ENT-PLA-046",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Cruise Ship Terminal",
@@ -2271,7 +2132,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-050",
+    "id": "ENT-PLA-047",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Highway Rest Stop",
@@ -2318,7 +2179,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-051",
+    "id": "ENT-PLA-048",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Railway Freight Depot",
@@ -2365,7 +2226,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-052",
+    "id": "ENT-PLA-049",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Container Port Terminal",
@@ -2411,7 +2272,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-053",
+    "id": "ENT-PLA-050",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Dry Dock Shipyard",
@@ -2457,7 +2318,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-054",
+    "id": "ENT-PLA-051",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Bascule Drawbridge",
@@ -2504,7 +2365,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-055",
+    "id": "ENT-PLA-052",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Highway Interchange",
@@ -2551,7 +2412,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-056",
+    "id": "ENT-PLA-053",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Pedestrian Overpass",
@@ -2598,7 +2459,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-057",
+    "id": "ENT-PLA-054",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Monorail Station",
@@ -2644,7 +2505,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-058",
+    "id": "ENT-PLA-055",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Underground Road Tunnel",
@@ -2690,7 +2551,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-059",
+    "id": "ENT-PLA-056",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Electric Tram Depot",
@@ -2736,7 +2597,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-060",
+    "id": "ENT-PLA-057",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Marina Boardwalk",
@@ -2782,7 +2643,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-061",
+    "id": "ENT-PLA-058",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Bicycle Sharing Station",
@@ -2828,7 +2689,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-062",
+    "id": "ENT-PLA-059",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Electric Vehicle Charging Hub",
@@ -2874,7 +2735,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-063",
+    "id": "ENT-PLA-060",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Mountain Pass Highway",
@@ -2920,7 +2781,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-064",
+    "id": "ENT-PLA-061",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Riverboat Pier",
@@ -2966,7 +2827,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-065",
+    "id": "ENT-PLA-062",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Funicular Railway Station",
@@ -3012,7 +2873,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-066",
+    "id": "ENT-PLA-063",
     "domain_id": "places_facilities",
     "subtopic_id": "transit_urban",
     "name": "Aviation Hangar",
@@ -3058,7 +2919,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-067",
+    "id": "ENT-PLA-064",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Supermarket",
@@ -3104,7 +2965,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-068",
+    "id": "ENT-PLA-065",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Shopping Mall",
@@ -3150,7 +3011,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-069",
+    "id": "ENT-PLA-066",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Movie Cinema",
@@ -3197,7 +3058,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-070",
+    "id": "ENT-PLA-067",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Art Museum",
@@ -3243,7 +3104,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-071",
+    "id": "ENT-PLA-068",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "History Museum",
@@ -3289,7 +3150,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-072",
+    "id": "ENT-PLA-069",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "City Zoo",
@@ -3335,7 +3196,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-073",
+    "id": "ENT-PLA-070",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Public Aquarium",
@@ -3381,7 +3242,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-074",
+    "id": "ENT-PLA-071",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Amusement Theme Park",
@@ -3428,7 +3289,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-075",
+    "id": "ENT-PLA-072",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Circus Big Top",
@@ -3474,7 +3335,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-076",
+    "id": "ENT-PLA-073",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Traditional Bakery",
@@ -3521,7 +3382,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-077",
+    "id": "ENT-PLA-074",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Fine Dining Restaurant",
@@ -3567,7 +3428,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-078",
+    "id": "ENT-PLA-075",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Coffeehouse",
@@ -3614,7 +3475,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-079",
+    "id": "ENT-PLA-076",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Luxury Grand Hotel",
@@ -3660,7 +3521,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-080",
+    "id": "ENT-PLA-077",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Fitness Gymnasium",
@@ -3707,7 +3568,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-081",
+    "id": "ENT-PLA-078",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Underground Bank Vault",
@@ -3753,7 +3614,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-082",
+    "id": "ENT-PLA-079",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Community Pharmacy",
@@ -3800,7 +3661,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-083",
+    "id": "ENT-PLA-080",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Botanical Garden",
@@ -3847,7 +3708,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-084",
+    "id": "ENT-PLA-081",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Water Park",
@@ -3893,7 +3754,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-085",
+    "id": "ENT-PLA-082",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Bowling Alley",
@@ -3939,7 +3800,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-086",
+    "id": "ENT-PLA-083",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Ice Skating Rink",
@@ -3985,7 +3846,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-087",
+    "id": "ENT-PLA-084",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Flea Market",
@@ -4032,7 +3893,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-088",
+    "id": "ENT-PLA-085",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Laundromat",
@@ -4078,7 +3939,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-089",
+    "id": "ENT-PLA-086",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Barber Shop",
@@ -4124,7 +3985,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-090",
+    "id": "ENT-PLA-087",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Sports Stadium Arena",
@@ -4171,7 +4032,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-091",
+    "id": "ENT-PLA-088",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Opera House",
@@ -4217,7 +4078,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-092",
+    "id": "ENT-PLA-089",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Symphony Concert Hall",
@@ -4263,53 +4124,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-093",
-    "domain_id": "places_facilities",
-    "subtopic_id": "commerce_leisure",
-    "name": "Casino Resort",
-    "language": "en",
-    "aliases": [
-      "Gaming Resort",
-      "Casino Hotel",
-      "Gaming Hall"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Vibrant and dazzling casino floor filled with rows of flashing neon slot machines, spinning green roulette wheels, velvet blackjack tables with stacks of clay chips, and glittering chandeliers reflecting in mirror tiles.",
-    "core_traits": [
-      "Offers legal gambling games of chance including slot machines, blackjack, roulette, poker, and baccarat",
-      "Operates 24/7 with vibrant sensory lighting, jingling electronic coin sound effects, and complimentary beverages",
-      "Monitored by extensive overhead 'eye in the sky' pan-tilt surveillance cameras and pit bosses",
-      "Frequently integrated into massive hospitality entertainment resorts with luxury suites, dining, and theatrical shows"
-    ],
-    "distractor_pool": [
-      "Luxury Grand Hotel",
-      "Arcade Game Center",
-      "Nightclub Dance Hall",
-      "Movie Cinema",
-      "Shopping Mall"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Casino chips are manufactured from proprietary clay-composite formulations embedded with RFID microchips to prevent counterfeiting.",
-        "verdict": "fact",
-        "explanation": "RFID sensors in chip trays instantly verify chip authenticity and track high-stakes betting movements across tables.",
-        "fun_fact": "The distinctive click of casino chips is carefully engineered by chip makers."
-      },
-      {
-        "claim": "Casinos secretly pump pure oxygen onto the gaming floor to keep gamblers awake and gambling longer.",
-        "verdict": "myth",
-        "explanation": "Pumping pure oxygen would be an extreme fire hazard and illegal under occupational safety regulations; casinos simply maintain cool air conditioning.",
-        "fun_fact": "Casinos do intentionally avoid clocks and windows so players lose track of daytime progression."
-      }
-    ],
-    "versus_candidates": [
-      "Luxury Grand Hotel",
-      "Arcade Game Center",
-      "Nightclub Dance Hall"
-    ]
-  },
-  {
-    "id": "ENT-PLA-094",
+    "id": "ENT-PLA-090",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Arcade Game Center",
@@ -4356,7 +4171,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-095",
+    "id": "ENT-PLA-091",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Bookshop Cafe",
@@ -4402,7 +4217,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-096",
+    "id": "ENT-PLA-092",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Farmers Market",
@@ -4448,7 +4263,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-097",
+    "id": "ENT-PLA-093",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Golf Clubhouse",
@@ -4494,7 +4309,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-098",
+    "id": "ENT-PLA-094",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Public Swimming Pool",
@@ -4541,54 +4356,7 @@
     ]
   },
   {
-    "id": "ENT-PLA-099",
-    "domain_id": "places_facilities",
-    "subtopic_id": "commerce_leisure",
-    "name": "Nightclub Dance Hall",
-    "language": "en",
-    "aliases": [
-      "Disco Club",
-      "Dance Club",
-      "Nightclub",
-      "Music Lounge"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Pulsating underground nightclub with lasers cutting through theatrical haze over a crowded sunken dance floor, elevated DJ booth with illuminated turntable mixers, strobe lights, and glowing back-lit bars.",
-    "core_traits": [
-      "Hosts late-night entertainment centered around social dancing, amplified electronic music, and alcoholic beverages",
-      "Features a central sprung dance floor, high-wattage sound systems with heavy subwoofers, and intelligent moving lights",
-      "Dominated by live performance DJs mixing track tempos with headphones, bass vibrations, and smoke machines",
-      "Regulated at the entrance by velvet rope queues, bouncers checking identification cards, and dress codes"
-    ],
-    "distractor_pool": [
-      "Symphony Concert Hall",
-      "Casino Resort",
-      "Arcade Game Center",
-      "Movie Cinema",
-      "Coffeehouse"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The mirror disco ball originated in the 19th century and was patented in the 1910s decades before the disco boom of the 1970s.",
-        "verdict": "fact",
-        "explanation": "Known initially as 'myriad reflectors', mirrored balls rotated in dance halls in the 1890s to scatter sparkling light spots across ballroom crowds.",
-        "fun_fact": "Louis Armstrong's band played under mirror balls in Chicago speakeasies during the 1920s."
-      },
-      {
-        "claim": "Nightclub subwoofers produce acoustic vibrations powerful enough to physically stop a human heart.",
-        "verdict": "myth",
-        "explanation": "While heavy bass produces palpable chest vibrations through air displacement, audio sound pressure levels in clubs cannot alter the intrinsic electrical cardiac rhythm.",
-        "fun_fact": "High sound levels can, however, cause permanent hearing damage without protective earplugs."
-      }
-    ],
-    "versus_candidates": [
-      "Casino Resort",
-      "Symphony Concert Hall",
-      "Arcade Game Center"
-    ]
-  },
-  {
-    "id": "ENT-PLA-100",
+    "id": "ENT-PLA-095",
     "domain_id": "places_facilities",
     "subtopic_id": "commerce_leisure",
     "name": "Wholesale Fish Market",

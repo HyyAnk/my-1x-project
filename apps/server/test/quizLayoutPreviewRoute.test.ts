@@ -47,6 +47,8 @@ describe("Phase 2 Sandbox layout API boundary", () => {
       expect(rehearsalBody.html).toContain("__hyperframesRehearsal");
       expect(rehearsalBody.html).toContain("--choices-at");
       expect(rehearsalBody.html).toContain("--reveal-at");
+      expect(rehearsalBody.html).toContain("answer-reveal-correct");
+      expect(rehearsalBody.html).toContain("answer-reveal-incorrect");
 
       // Test Comic Action Boom preset payload across all 6 layouts
       const layoutTests = [

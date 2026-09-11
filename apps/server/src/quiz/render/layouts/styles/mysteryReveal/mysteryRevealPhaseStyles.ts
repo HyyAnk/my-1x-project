@@ -5,7 +5,7 @@
 export function mysteryRevealPhaseStyles(): string {
   return `
 /* === Row 3: Phase Region (Integrated CSS Grid Flow - ZERO OVERLAP - BUG-MR-02 & BUG-MR-05 Fix) === */
-.layout-mystery_reveal .phase-region {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .phase-region {
   grid-area: phase;
   position: relative;
   left: auto;
@@ -21,7 +21,7 @@ export function mysteryRevealPhaseStyles(): string {
   margin: 0 auto;
 }
 
-.layout-mystery_reveal .phase-region > .thinking-bar {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .phase-region > .thinking-bar {
   position: relative;
   bottom: auto;
   left: auto;
@@ -31,7 +31,7 @@ export function mysteryRevealPhaseStyles(): string {
   margin: 0 auto;
 }
 
-.layout-mystery_reveal .phase-region > .fact-card {
+.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .phase-region > .fact-card {
   position: relative;
   bottom: auto;
   left: auto;

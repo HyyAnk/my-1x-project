@@ -27,8 +27,7 @@ export const ModalTransitionPreview: React.FC<ModalTransitionPreviewProps> = ({
       <div className="modal-transition-preview-header">
         <div className="modal-transition-preview-title">
           <Sparkle size={15} weight="fill" style={{ color: "var(--accent)" }} />
-          <span>Live Transition Preview</span>
-          <span className="modal-transition-preview-badge">Real-time</span>
+          <span>Transition Preview</span>
         </div>
 
         <div className="modal-transition-preview-actions">

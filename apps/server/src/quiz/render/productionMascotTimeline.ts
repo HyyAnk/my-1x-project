@@ -57,7 +57,7 @@ export function resolveProductionMascotMarkers(
   addPhaseMarker(markers, choicesAt, "choices", clipStartSeconds, clipEndSeconds);
   addPhaseMarker(markers, thinkingAt, "thinking", clipStartSeconds, clipEndSeconds);
   addPhaseMarker(markers, revealAt, "reveal", clipStartSeconds, clipEndSeconds, revealOutcome);
-  addPhaseMarker(markers, explanationAt, "explain", clipStartSeconds, clipEndSeconds);
+  addPhaseMarker(markers, explanationAt, "explain", clipStartSeconds, clipEndSeconds, null, "point");
 
   for (const { event } of events) {
     if (event.type !== "mascot.state") continue;
@@ -105,9 +105,10 @@ function addPhaseMarker(
   clipStartSeconds: number,
   clipEndSeconds: number,
   revealOutcome: MascotRevealOutcome | null = null,
+  actionOverride: MascotRenderActionOverride | null = null,
 ): void {
   if (!Number.isFinite(atSeconds)) return;
-  addMarker(markers, { atSeconds, phase, revealOutcome }, clipStartSeconds, clipEndSeconds);
+  addMarker(markers, { atSeconds, phase, revealOutcome, actionOverride }, clipStartSeconds, clipEndSeconds);
 }
 
 function addMarker(markers: Map<number, MascotMarker>, marker: MascotMarker, clipStartSeconds: number, clipEndSeconds: number): void {

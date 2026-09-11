@@ -8,7 +8,7 @@ import {
 } from "../src/quiz/qa/hyperframesQuality.js";
 
 describe("HyperFrames quality reporting", () => {
-  it("turns a JSON contrast finding into an actionable render error", () => {
+  it("flags actionable contrast findings for telemetry and healing without blocking render", () => {
     const report = parseHyperframesCheckReport(
       `[INFO] compiler ready\n${JSON.stringify({
         ok: false,
@@ -28,7 +28,7 @@ describe("HyperFrames quality reporting", () => {
     );
 
     expect(hasHyperframesContrastIssue(report)).toBe(true);
-    expect(hasHyperframesBlockingIssues(report)).toBe(true);
+    expect(hasHyperframesBlockingIssues(report)).toBe(false);
     expect(formatHyperframesCheckFailure(report)).toContain("“Question Title” at 56.69s");
     expect(formatHyperframesCheckFailure(report)).toContain("need 3.00:1");
   });
@@ -150,5 +150,100 @@ describe("HyperFrames quality reporting", () => {
 
     // Real content text must still be flagged
     expect(isExemptContrastFinding({ severity: "error", text: "Mercury is the smallest planet" })).toBe(false);
+  });
+
+  it("treats layout, runtime, motion, and lint error findings as blocking issues", () => {
+    const report = parseHyperframesCheckReport(
+      JSON.stringify({
+        ok: false,
+        layout: {
+          findings: [
+            {
+              severity: "error",
+              message: "Element overflows viewport bounds",
+              text: "Header",
+            },
+          ],
+        },
+        contrast: {
+          findings: [
+            {
+              severity: "error",
+              message: "Contrast is 1.41:1; WCAG AA requires 3:1.",
+              text: "Subtitle",
+              ratio: 1.41,
+              requiredRatio: 3,
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(hasHyperframesContrastIssue(report)).toBe(true);
+    expect(hasHyperframesBlockingIssues(report)).toBe(true);
+    const failureMsg = formatHyperframesCheckFailure(report);
+    expect(failureMsg.indexOf("[ERROR] layout")).toBeLessThan(failureMsg.indexOf("[ERROR] contrast"));
+  });
+
+  it("prioritizes true blockers over contrast findings in failure formatting", () => {
+    const report = parseHyperframesCheckReport(
+      JSON.stringify({
+        ok: false,
+        runtime: {
+          findings: [
+            {
+              severity: "fatal",
+              message: "Uncaught ReferenceError: foo is not defined",
+              time: 12.34,
+            },
+          ],
+        },
+        contrast: {
+          findings: [
+            {
+              severity: "error",
+              message: "Contrast is 2.1:1; WCAG AA requires 3:1.",
+              text: "Card",
+              ratio: 2.1,
+              requiredRatio: 3,
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(hasHyperframesBlockingIssues(report)).toBe(true);
+    const formatted = formatHyperframesCheckFailure(report);
+    expect(formatted).toContain("• [FATAL] runtime");
+    expect(formatted.indexOf("• [FATAL] runtime")).toBeLessThan(formatted.indexOf("• [ERROR] contrast"));
+  });
+
+  it("does not treat fatal or error contrast findings as blocking when no other blockers exist", () => {
+    const report = parseHyperframesCheckReport(
+      JSON.stringify({
+        ok: false,
+        contrast: {
+          findings: [
+            {
+              severity: "fatal",
+              message: "Extreme contrast deficit",
+              text: "Critical Alert",
+              ratio: 1.1,
+              requiredRatio: 4.5,
+            },
+            {
+              severity: "error",
+              message: "Contrast is 1.5:1",
+              text: "Option D",
+              ratio: 1.5,
+              requiredRatio: 3,
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(hasHyperframesContrastIssue(report)).toBe(true);
+    expect(hasHyperframesBlockingIssues(report)).toBe(false);
   });
 });

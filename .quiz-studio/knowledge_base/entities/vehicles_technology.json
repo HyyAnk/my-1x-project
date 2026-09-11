@@ -3,9 +3,10 @@
     "id": "ENT-VEH-001",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
-    "name": "Commercial Airplane",
+    "name": "Airplane",
     "language": "en",
     "aliases": [
+      "Commercial Airplane",
       "Airliner",
       "Passenger Jet",
       "Boeing / Airbus"
@@ -779,98 +780,6 @@
     "id": "ENT-VEH-018",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
-    "name": "Gyrocopter",
-    "language": "en",
-    "aliases": [
-      "Autogyro",
-      "Gyroplane",
-      "Rotaplane"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Compact open-cockpit gyrocopter cruising low over sandy coastlines with its unpowered free-spinning rotor blades.",
-    "core_traits": [
-      "Rotorcraft with an unpowered overhead rotor that spins freely via aerodynamic autorotation",
-      "Propelled forward by an independent engine-driven pusher or tractor propeller",
-      "Invented in 1923 by Spanish engineer Juan de la Cierva to prevent aircraft stalls",
-      "Cannot hover in completely calm air but can land in astonishingly short distances"
-    ],
-    "distractor_pool": [
-      "Helicopter",
-      "Ultralight Aircraft",
-      "Glider",
-      "Drone",
-      "Hang Glider"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A gyrocopter's top rotor is powered by an engine throughout the entire flight.",
-        "verdict": "myth",
-        "explanation": "The main rotor has no engine connection during flight; forward motion pushes air upward through the blades to spin them naturally.",
-        "fun_fact": "Because the rotor is always in autorotation, gyrocopters cannot stall in the traditional aviation sense."
-      },
-      {
-        "claim": "Gyrocopters can land safely even if their forward thrust engine fails.",
-        "verdict": "fact",
-        "explanation": "Since the lift rotor already operates in permanent autorotation, a dead engine simply causes the craft to glide to a gentle landing.",
-        "fun_fact": "A gyrocopter was famously featured in the James Bond movie 'You Only Live Twice' as 'Little Nellie'."
-      }
-    ],
-    "versus_candidates": [
-      "Helicopter",
-      "Ultralight Aircraft",
-      "Glider"
-    ]
-  },
-  {
-    "id": "ENT-VEH-019",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "aviation",
-    "name": "Tiltrotor Aircraft",
-    "language": "en",
-    "aliases": [
-      "V-22 Osprey",
-      "Proprotor Aircraft",
-      "VTOL Hybrid"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Military tiltrotor aircraft rotating its massive wingtip proprotors forward from vertical hover to horizontal high-speed flight.",
-    "core_traits": [
-      "Aircraft that generates lift and propulsion using proprotors mounted on tilting wingtip nacelles",
-      "Combines the vertical takeoff, landing, and hovering capabilities of a helicopter with airplane speed",
-      "Transitions in mid-flight between helicopter mode and turboprop airplane mode",
-      "Cruises twice as fast and twice as far as conventional rotary-wing helicopters"
-    ],
-    "distractor_pool": [
-      "Helicopter",
-      "Fighter Jet",
-      "Cargo Plane",
-      "Drone",
-      "Commercial Airplane"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "If one wingtip engine fails on a tiltrotor, the aircraft flips over immediately.",
-        "verdict": "myth",
-        "explanation": "An interconnected drive shaft runs through the wings, allowing either engine to power both proprotors simultaneously.",
-        "fun_fact": "The drive shaft spins at over 6,000 RPM inside the aircraft's upper wing."
-      },
-      {
-        "claim": "The Bell Boeing V-22 Osprey was the first operational military tiltrotor in world history.",
-        "verdict": "fact",
-        "explanation": "Entering service in 2007 with the US Marine Corps, it revolutionized amphibious troop transport and long-range rescue.",
-        "fun_fact": "Its wings can fold parallel to the fuselage and rotor blades tuck in for compact aircraft carrier storage."
-      }
-    ],
-    "versus_candidates": [
-      "Helicopter",
-      "Commercial Airplane",
-      "Fighter Jet"
-    ]
-  },
-  {
-    "id": "ENT-VEH-020",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "aviation",
     "name": "Flying Boat",
     "language": "en",
     "aliases": [
@@ -914,99 +823,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-021",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "aviation",
-    "name": "Ultralight Aircraft",
-    "language": "en",
-    "aliases": [
-      "Microlight",
-      "Ultralight Trike",
-      "Sport Microlight"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Minimalist tubular frame ultralight trike with a buzzing rear pusher propeller cruising low over golden farmland.",
-    "core_traits": [
-      "Extremely lightweight, simple 1- or 2-seat recreational aircraft operating under relaxed regulatory rules",
-      "Powered by a small high-output two-stroke or four-stroke gasoline engine",
-      "Operates with very low stall speeds and requires only a small grass strip for takeoff and landing",
-      "Built from open aluminum tubing, Dacron sailcloth wings, and minimal flight instrumentation"
-    ],
-    "distractor_pool": [
-      "Hang Glider",
-      "Glider",
-      "Gyrocopter",
-      "Helicopter",
-      "Drone"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "In the United States, single-seat ultralight aircraft do not require an FAA pilot's license to fly.",
-        "verdict": "fact",
-        "explanation": "Under FAA Part 103, ultralights weighing under 254 pounds empty with limited fuel capacity require no license or registration.",
-        "fun_fact": "Despite no legal license requirement, professional training is strongly recommended for safety."
-      },
-      {
-        "claim": "Ultralights can fly through clouds and controlled commercial airport airspace anytime.",
-        "verdict": "myth",
-        "explanation": "Ultralights are strictly restricted to daylight visual meteorological conditions (VFR) and prohibited from congested airport airspace.",
-        "fun_fact": "Ultralight pilots often use ballistic emergency parachutes that deploy a rocket to lower the whole aircraft."
-      }
-    ],
-    "versus_candidates": [
-      "Hang Glider",
-      "Gyrocopter",
-      "Glider"
-    ]
-  },
-  {
-    "id": "ENT-VEH-022",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "aviation",
-    "name": "Crop Duster",
-    "language": "en",
-    "aliases": [
-      "Agricultural Aircraft",
-      "Ag Plane",
-      "Air Tractor"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Rugged low-wing crop duster skimming barely ten feet above sprawling corn rows releasing an even mist of fertilizer.",
-    "core_traits": [
-      "Specialized agricultural fixed-wing airplane or helicopter designed for aerial application of seed and fertilizer",
-      "Equipped with large chemical hopper tanks and under-wing spray boom nozzle bars",
-      "Flies at extremely low altitudes (5 to 15 feet above crops) requiring exceptional pilot precision",
-      "Reinforced cockpits with rollover protection and forward-impact crumple zones"
-    ],
-    "distractor_pool": [
-      "Biplane",
-      "Commercial Airplane",
-      "Drone",
-      "Helicopter",
-      "Cargo Plane"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Crop dusters still spray dry arsenic and lead dust like in early 1920s agriculture.",
-        "verdict": "myth",
-        "explanation": "Modern agricultural planes spray liquid bio-fertilizers, targeted pesticides, or even drop rice and cover crop seeds.",
-        "fun_fact": "The nickname 'crop duster' stuck from early trials in 1921 when pilots dusted peach trees with lead arsenate powder."
-      },
-      {
-        "claim": "Modern agricultural aircraft use high-precision GPS lightbars to spray fields with inch-level accuracy.",
-        "verdict": "fact",
-        "explanation": "Satellite GPS guidance guides pilots along exact parallel swathes to prevent overlapping or missed patches of crops.",
-        "fun_fact": "Modern agricultural airplanes like the Air Tractor are powered by massive 1,400 horsepower Pratt & Whitney turboprop engines."
-      }
-    ],
-    "versus_candidates": [
-      "Agricultural Tractor",
-      "Helicopter",
-      "Commercial Airplane"
-    ]
-  },
-  {
-    "id": "ENT-VEH-023",
+    "id": "ENT-VEH-019",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Aerial Firefighting Plane",
@@ -1052,7 +869,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-024",
+    "id": "ENT-VEH-020",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Jetpack",
@@ -1098,7 +915,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-025",
+    "id": "ENT-VEH-021",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Paraglider",
@@ -1143,7 +960,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-026",
+    "id": "ENT-VEH-022",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Wingsuit",
@@ -1189,7 +1006,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-027",
+    "id": "ENT-VEH-023",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Zeppelin",
@@ -1235,7 +1052,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-028",
+    "id": "ENT-VEH-024",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Spy Plane",
@@ -1281,7 +1098,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-029",
+    "id": "ENT-VEH-025",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Spaceplane",
@@ -1327,7 +1144,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-030",
+    "id": "ENT-VEH-026",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Air Ambulance Helicopter",
@@ -1373,7 +1190,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-031",
+    "id": "ENT-VEH-027",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Bush Plane",
@@ -1419,52 +1236,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-032",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "aviation",
-    "name": "Glider Tow Plane",
-    "language": "en",
-    "aliases": [
-      "Tug Aircraft",
-      "Aero Tow Plane"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Sturdy taildragger airplane pulling a sleek sailplane behind it on a long yellow towline above green patchwork fields.",
-    "core_traits": [
-      "High-power single-engine aircraft specifically rigged to tow unpowered gliders into the air",
-      "Fitted with a rear-mounted tow release hook and heavy-duty steel or nylon towline mechanism",
-      "Climbs steep ascents while hauling a glider to an altitude with promising thermal activity",
-      "Features upgraded engine cooling systems to prevent overheating during slow high-power climbs"
-    ],
-    "distractor_pool": [
-      "Glider",
-      "Commercial Airplane",
-      "Biplane",
-      "Bush Plane",
-      "Helicopter"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "In an emergency, only the tow plane pilot has the ability to release the tow cable.",
-        "verdict": "myth",
-        "explanation": "Both the tow plane pilot and the glider pilot have independent quick-release levers to sever the tow cable immediately.",
-        "fun_fact": "Tow releases use a standardized mechanical ring coupling called a Schweizer release."
-      },
-      {
-        "claim": "During World War II, military tow planes pulled large gliders loaded with dozens of combat troops across the English Channel.",
-        "verdict": "fact",
-        "explanation": "C-47 transports towed massive wooden Horsa and Waco troop gliders into Normandy on D-Day.",
-        "fun_fact": "Gliders could land silently behind enemy lines without engine noise giving away their position."
-      }
-    ],
-    "versus_candidates": [
-      "Glider",
-      "Commercial Airplane",
-      "Bush Plane"
-    ]
-  },
-  {
-    "id": "ENT-VEH-033",
+    "id": "ENT-VEH-028",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Military Transport Plane",
@@ -1510,7 +1282,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-034",
+    "id": "ENT-VEH-029",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Drone",
@@ -1556,7 +1328,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-035",
+    "id": "ENT-VEH-030",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Solar-Powered Airplane",
@@ -1602,53 +1374,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-036",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "aviation",
-    "name": "Microjet",
-    "language": "en",
-    "aliases": [
-      "Very Light Jet",
-      "Bede BD-5J",
-      "Personal Jet"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Tiny needle-nosed personal microjet jetting through the sky at 300 mph with an engine barely larger than a watermelon.",
-    "core_traits": [
-      "Extremely compact, lightweight single-seat or two-seat jet-propelled aircraft",
-      "Powered by a miniature turbojet engine that delivers high thrust with a tiny airframe footprint",
-      "Popularized by the kit-built Bede BD-5J, famously featured in airshows and movies",
-      "Offers high-speed aerobatic maneuverability and jet performance at a fraction of business jet size"
-    ],
-    "distractor_pool": [
-      "Fighter Jet",
-      "Commercial Airplane",
-      "Ultralight Aircraft",
-      "Glider",
-      "Drone"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The BD-5J Microjet holds the Guinness World Record for the world's smallest jet aircraft.",
-        "verdict": "fact",
-        "explanation": "Weighing just 358 pounds empty with a 17-foot wingspan, it is recognized as the world's lightest jet.",
-        "fun_fact": "James Bond famously piloted one through an airplane hangar in the opening scene of 'Octopussy'."
-      },
-      {
-        "claim": "Microjets are so small that they do not need retractable landing gear.",
-        "verdict": "myth",
-        "explanation": "To minimize drag and achieve speeds exceeding 300 mph, microjets use fully retractable tricycle landing gear.",
-        "fun_fact": "The microjet's fuel tanks are built directly into the hollow wings."
-      }
-    ],
-    "versus_candidates": [
-      "Fighter Jet",
-      "Commercial Airplane",
-      "Ultralight Aircraft"
-    ]
-  },
-  {
-    "id": "ENT-VEH-037",
+    "id": "ENT-VEH-031",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Aerobatic Plane",
@@ -1694,7 +1420,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-038",
+    "id": "ENT-VEH-032",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Vintage Triplane",
@@ -1740,7 +1466,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-039",
+    "id": "ENT-VEH-033",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "VTOL Jet",
@@ -1786,7 +1512,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-040",
+    "id": "ENT-VEH-034",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Search and Rescue Helicopter",
@@ -1832,7 +1558,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-041",
+    "id": "ENT-VEH-035",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Heavy-Lift Helicopter",
@@ -1878,7 +1604,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-042",
+    "id": "ENT-VEH-036",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Reconnaissance Balloon",
@@ -1924,7 +1650,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-043",
+    "id": "ENT-VEH-037",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Attack Helicopter",
@@ -1970,52 +1696,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-044",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "aviation",
-    "name": "Sailplane",
-    "language": "en",
-    "aliases": [
-      "Competition Glider",
-      "High-Performance Sailplane"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Graceful carbon-fiber sailplane banking steeply along a sunlit Alpine ridge with wings flexed upward in lift.",
-    "core_traits": [
-      "Specialized high-performance glider designed for competition distance, speed, and soaring cross-country",
-      "Constructed entirely of ultra-smooth glass-fiber and carbon-fiber composite materials",
-      "Carries water ballast in internal wing tanks to increase penetration speed between rising thermals",
-      "Dumps water ballast before landing to minimize touchdown speed and landing rollout"
-    ],
-    "distractor_pool": [
-      "Glider",
-      "Hang Glider",
-      "Paraglider",
-      "Commercial Airplane",
-      "Ultralight Aircraft"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Sailplane pilots intentionally fill their hollow wings with hundreds of pounds of water before flying.",
-        "verdict": "fact",
-        "explanation": "Water ballast adds weight, increasing the speed at which the glider achieves its optimal glide ratio through sinking air.",
-        "fun_fact": "When thermals weaken in the afternoon, pilots open jettison valves to dump the water in seconds."
-      },
-      {
-        "claim": "Sailplanes cannot fly over high mountain peaks because there is not enough air.",
-        "verdict": "myth",
-        "explanation": "Using atmospheric mountain wave lift, the Perlan 2 sailplane soared to over 76,000 feet in 2018, higher than U-2 spy planes.",
-        "fun_fact": "At 76,000 feet, sailplane pilots must breathe pressurized pure oxygen and wear pressurized space suits."
-      }
-    ],
-    "versus_candidates": [
-      "Glider",
-      "Hang Glider",
-      "Commercial Airplane"
-    ]
-  },
-  {
-    "id": "ENT-VEH-045",
+    "id": "ENT-VEH-038",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Experimental Rocket Plane",
@@ -2061,7 +1742,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-046",
+    "id": "ENT-VEH-039",
     "domain_id": "vehicles_technology",
     "subtopic_id": "aviation",
     "name": "Skydiving Plane",
@@ -2107,99 +1788,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-047",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "aviation",
-    "name": "Aerial Refueling Tanker",
-    "language": "en",
-    "aliases": [
-      "Flying Gas Station",
-      "KC-135 Stratotanker",
-      "KC-46 Pegasus"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Huge tanker jet extending a rigid flying boom downward into the refueling receptacle of a trailing fighter jet at 30,000 feet.",
-    "core_traits": [
-      "Military tanker aircraft converted to transfer aviation fuel to other aircraft in mid-flight",
-      "Utilizes a rigid steerable 'flying boom' controlled by a boom operator or a flexible 'probe-and-drogue' hose basket",
-      "Carries hundreds of thousands of pounds of jet fuel inside internal fuselage and wing fuel bladders",
-      "Multiplies the combat range and flight endurance of bombers, fighters, and surveillance aircraft worldwide"
-    ],
-    "distractor_pool": [
-      "Commercial Airplane",
-      "Cargo Plane",
-      "Fighter Jet",
-      "Oil Tanker",
-      "Stealth Bomber"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Aerial refueling can transfer up to 1,000 gallons of fuel per minute between planes flying at 500 mph.",
-        "verdict": "fact",
-        "explanation": "High-pressure fuel pumps push aviation kerosene through the flying boom fast enough to fill a fighter jet in minutes.",
-        "fun_fact": "Refueling requires flying formations spaced only 30 feet apart at high altitude."
-      },
-      {
-        "claim": "Aerial refueling was invented only recently in the 1990s.",
-        "verdict": "myth",
-        "explanation": "The first aerial refueling took place in 1923 using a simple garden hose between two biplanes.",
-        "fun_fact": "In 1929, the 'Question Mark' aircraft stayed airborne for 150 hours continuously using 43 mid-air refuelings."
-      }
-    ],
-    "versus_candidates": [
-      "Commercial Airplane",
-      "Cargo Plane",
-      "Fighter Jet"
-    ]
-  },
-  {
-    "id": "ENT-VEH-048",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "aviation",
-    "name": "Turbo-Prop Commuter Plane",
-    "language": "en",
-    "aliases": [
-      "Regional Turboprop",
-      "ATR 72 / Dash 8",
-      "Propeller Airliner"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Regional turboprop airliner climbing out over scenic islands with its six-bladed scimitar propellers spinning in the sun.",
-    "core_traits": [
-      "Regional airliner powered by gas turbine engines connected through reduction gearboxes to multi-bladed propellers",
-      "Highly fuel-efficient over short regional flight routes between 100 and 500 miles",
-      "Operates efficiently on shorter regional runways than pure turbojet passenger airliners",
-      "Features pressurized cabins accommodating 30 to 80 passengers for intercity and island hops"
-    ],
-    "distractor_pool": [
-      "Commercial Airplane",
-      "Cargo Plane",
-      "Biplane",
-      "Bush Plane",
-      "Seaplane"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Turboprop planes use old piston car engines like 1930s aircraft.",
-        "verdict": "myth",
-        "explanation": "Turboprops are true jet turbine engines that use expanding gas to spin a drive shaft rather than relying solely on jet thrust.",
-        "fun_fact": "Turboprops burn up to 30% less fuel per passenger on short hops compared to regional jets."
-      },
-      {
-        "claim": "Turboprop propellers can reverse blade pitch on landing to bring the airplane to a rapid stop without heavy wheel braking.",
-        "verdict": "fact",
-        "explanation": "By shifting propeller blades into negative beta pitch, the propellers blow air forward, acting as powerful airbrakes.",
-        "fun_fact": "Some turboprops can even back up away from an airport gate under their own power using reverse pitch."
-      }
-    ],
-    "versus_candidates": [
-      "Commercial Airplane",
-      "Bush Plane",
-      "Cargo Plane"
-    ]
-  },
-  {
-    "id": "ENT-VEH-049",
+    "id": "ENT-VEH-040",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Space Shuttle",
@@ -2245,7 +1834,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-050",
+    "id": "ENT-VEH-041",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Multi-Stage Rocket",
@@ -2291,7 +1880,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-051",
+    "id": "ENT-VEH-042",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "International Space Station",
@@ -2337,7 +1926,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-052",
+    "id": "ENT-VEH-043",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Lunar Rover",
@@ -2383,7 +1972,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-053",
+    "id": "ENT-VEH-044",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Mars Rover",
@@ -2429,7 +2018,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-054",
+    "id": "ENT-VEH-045",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Space Telescope",
@@ -2475,7 +2064,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-055",
+    "id": "ENT-VEH-046",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Communications Satellite",
@@ -2521,7 +2110,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-056",
+    "id": "ENT-VEH-047",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Apollo Lunar Module",
@@ -2567,7 +2156,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-057",
+    "id": "ENT-VEH-048",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Space Capsule",
@@ -2613,7 +2202,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-058",
+    "id": "ENT-VEH-049",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Interplanetary Space Probe",
@@ -2659,7 +2248,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-059",
+    "id": "ENT-VEH-050",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Solar Observatory Satellite",
@@ -2705,7 +2294,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-060",
+    "id": "ENT-VEH-051",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Reusable Rocket Booster",
@@ -2751,7 +2340,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-061",
+    "id": "ENT-VEH-052",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Astronaut Jetpack",
@@ -2797,7 +2386,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-062",
+    "id": "ENT-VEH-053",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Lunar Lander",
@@ -2843,7 +2432,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-063",
+    "id": "ENT-VEH-054",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Mars Helicopter",
@@ -2889,7 +2478,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-064",
+    "id": "ENT-VEH-055",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Cargo Resupply Spacecraft",
@@ -2935,7 +2524,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-065",
+    "id": "ENT-VEH-056",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Weather Satellite",
@@ -2981,7 +2570,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-066",
+    "id": "ENT-VEH-057",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "GPS Navigation Satellite",
@@ -3027,7 +2616,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-067",
+    "id": "ENT-VEH-058",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Orbital Space Laboratory",
@@ -3073,7 +2662,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-068",
+    "id": "ENT-VEH-059",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "CubeSat",
@@ -3119,7 +2708,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-069",
+    "id": "ENT-VEH-060",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Deep Space Probe",
@@ -3165,7 +2754,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-070",
+    "id": "ENT-VEH-061",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Sample Return Capsule",
@@ -3211,7 +2800,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-071",
+    "id": "ENT-VEH-062",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Crew Spacecraft",
@@ -3257,7 +2846,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-072",
+    "id": "ENT-VEH-063",
     "domain_id": "vehicles_technology",
     "subtopic_id": "spacecraft",
     "name": "Solar Sail Spacecraft",
@@ -3303,7 +2892,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-073",
+    "id": "ENT-VEH-064",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Bullet Train",
@@ -3349,7 +2938,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-074",
+    "id": "ENT-VEH-065",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Monorail",
@@ -3395,7 +2984,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-075",
+    "id": "ENT-VEH-066",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Maglev Train",
@@ -3441,7 +3030,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-076",
+    "id": "ENT-VEH-067",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Subway",
@@ -3487,7 +3076,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-077",
+    "id": "ENT-VEH-068",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Cable Car",
@@ -3533,7 +3122,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-078",
+    "id": "ENT-VEH-069",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Tram",
@@ -3579,7 +3168,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-079",
+    "id": "ENT-VEH-070",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Diesel Locomotive",
@@ -3625,7 +3214,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-080",
+    "id": "ENT-VEH-071",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "High-Speed Electric Train",
@@ -3671,7 +3260,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-081",
+    "id": "ENT-VEH-072",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Freight Train",
@@ -3717,7 +3306,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-082",
+    "id": "ENT-VEH-073",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Cog Railway",
@@ -3763,7 +3352,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-083",
+    "id": "ENT-VEH-074",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Commuter Train",
@@ -3809,7 +3398,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-084",
+    "id": "ENT-VEH-075",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Elevated Train",
@@ -3855,7 +3444,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-085",
+    "id": "ENT-VEH-076",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Handcar",
@@ -3901,7 +3490,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-086",
+    "id": "ENT-VEH-077",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Intercity Passenger Train",
@@ -3947,7 +3536,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-087",
+    "id": "ENT-VEH-078",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Double-Decker Train",
@@ -3993,7 +3582,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-088",
+    "id": "ENT-VEH-079",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Luxury Sleeper Train",
@@ -4039,99 +3628,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-089",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "rail",
-    "name": "Auto-Rack Train",
-    "language": "en",
-    "aliases": [
-      "Car Carrier Train",
-      "Automobile Transporter",
-      "Autorack"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Long specialized freight train composed of fully enclosed corrugated steel railcars filled with brand new factory cars.",
-    "core_traits": [
-      "Specialized rail freight car designed specifically to transport new automobiles and pickup trucks from factory to distribution centers",
-      "Features bi-level or tri-level internal decks with wheel chocks to secure vehicles tightly during transit",
-      "Completely enclosed with perforated metal side screens and end doors to protect new cars from vandalism, rocks, and weather",
-      "A single tri-level autorack railcar can transport up to 15 to 18 automobiles simultaneously"
-    ],
-    "distractor_pool": [
-      "Freight Train",
-      "Semi-Trailer Truck",
-      "Cargo Ship",
-      "Container Ship",
-      "Diesel Locomotive"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "In early days of automobile rail shipping, new cars were shipped on open flatcars and suffered heavy theft and stone vandalism.",
-        "verdict": "fact",
-        "explanation": "Open-air shipments in the 1960s resulted in stolen hubcaps, smashed windshields, and hobo vandalism, forcing railroads to invent fully enclosed autoracks.",
-        "fun_fact": "Modern autoracks are locked tight with anti-theft security seals throughout transit."
-      },
-      {
-        "claim": "Auto-rack railcars are the shortest freight cars on the railroad.",
-        "verdict": "myth",
-        "explanation": "Autoracks are among the tallest and longest freight cars in rail service, measuring 89 feet in length and over 20 feet high.",
-        "fun_fact": "Roughly 70% of all newly manufactured vehicles in North America travel by train for at least part of their journey."
-      }
-    ],
-    "versus_candidates": [
-      "Freight Train",
-      "Semi-Trailer Truck",
-      "Cargo Ship"
-    ]
-  },
-  {
-    "id": "ENT-VEH-090",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "rail",
-    "name": "Ballast Tamper Train",
-    "language": "en",
-    "aliases": [
-      "Tamping Machine",
-      "Track Tamper",
-      "Plasser & Theurer"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Heavy bright-yellow maintenance-of-way train vibrating hydraulic tamping tines deep into the stone track ballast under the rails.",
-    "core_traits": [
-      "Specialized maintenance-of-way rail vehicle used to pack track ballast under railway tracks to make them level and durable",
-      "Uses vibrating hydraulic tines to squeeze and consolidate crushed stone ballast beneath railroad ties",
-      "Corrects track geometry alignment, curvature, and elevation using laser guidance systems",
-      "Essential for maintaining high-speed track safety and preventing derailments from uneven ground settlement"
-    ],
-    "distractor_pool": [
-      "Freight Train",
-      "Diesel Locomotive",
-      "Steamroller",
-      "Hydraulic Excavator",
-      "Bulldozer"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Before automated tamping machines, track ballast was packed entirely by hundreds of workers with handheld picks.",
-        "verdict": "fact",
-        "explanation": "Railroad track gangs had to manually shovel and pound crushed gravel beneath ties with pickaxes and tamping bars.",
-        "fun_fact": "A modern automated tamping train can align and tamp over a mile of heavy track per hour."
-      },
-      {
-        "claim": "The crushed rocks under train tracks are just random decorative stones.",
-        "verdict": "myth",
-        "explanation": "Track ballast consists of sharp, angular crushed granite engineered to interlock tightly, drain water, and absorb crushing loads.",
-        "fun_fact": "Round river stones cannot be used because they would roll and allow the tracks to shift dangerously."
-      }
-    ],
-    "versus_candidates": [
-      "Freight Train",
-      "Steamroller",
-      "Hydraulic Excavator"
-    ]
-  },
-  {
-    "id": "ENT-VEH-091",
+    "id": "ENT-VEH-080",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Aerial Tramway",
@@ -4177,7 +3674,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-092",
+    "id": "ENT-VEH-081",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Airport People Mover",
@@ -4223,145 +3720,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-093",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "rail",
-    "name": "Yard Switching Locomotive",
-    "language": "en",
-    "aliases": [
-      "Shunter",
-      "Yard Switcher",
-      "Switcher Engine"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Compact heavy diesel switcher locomotive with low hood and all-around handrails nudging boxcars into classification yard tracks.",
-    "core_traits": [
-      "Specialized small locomotive designed for assembling, sorting, and breaking up trains inside rail classification yards",
-      "Engineered for high tractive effort and low speed rather than long-distance high-speed cruising",
-      "Features low hoods and elevated cab windows to give the engineer 360-degree visibility around tight yard curves",
-      "Often operated today via remote radio belt-pack controllers by ground crew switchmen"
-    ],
-    "distractor_pool": [
-      "Diesel Locomotive",
-      "Steam Locomotive",
-      "Freight Train",
-      "Forklift",
-      "Commuter Train"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Modern yard switchers can be driven by a remote control box strapped to a ground worker's chest without anyone in the cab.",
-        "verdict": "fact",
-        "explanation": "Remote Control Locomotive (RCL) systems allow a ground switchman to control throttle, brakes, and couplers while walking the tracks.",
-        "fun_fact": "Built-in tilt sensors automatically trigger emergency brakes if the operator falls over."
-      },
-      {
-        "claim": "Switcher locomotives are lightweight engines with little pulling power.",
-        "verdict": "myth",
-        "explanation": "Switchers are intentionally built with thick solid steel frame ballast plates to maximize weight and rail traction on heavy cuts of cars.",
-        "fun_fact": "A heavy switcher can move thousands of tons of freight cars at low yard speeds."
-      }
-    ],
-    "versus_candidates": [
-      "Diesel Locomotive",
-      "Freight Train",
-      "Forklift"
-    ]
-  },
-  {
-    "id": "ENT-VEH-094",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "rail",
-    "name": "Rotary Snowplow Train",
-    "language": "en",
-    "aliases": [
-      "Rotary Snowplow",
-      "Rail Snowblower",
-      "Rotary Plow"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Mighty railway snowplow with a massive spinning circular cutting wheel blasting a towering plume of white snow across Donner Pass.",
-    "core_traits": [
-      "Specialized railroad car equipped with a colossal circular rotating fan-blade cutting wheel on its front end",
-      "Cuts through massive avalanche snowdrifts and packed snowpack that would derail ordinary wedge plows",
-      "Blasts excavated snow hundreds of feet away from the tracks through an adjustable discharge chute",
-      "Pushed from behind by multiple heavy diesel locomotives over treacherous high mountain railroad passes"
-    ],
-    "distractor_pool": [
-      "Freight Train",
-      "Diesel Locomotive",
-      "Steamroller",
-      "Bulldozer",
-      "Snowmobile"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Rotary snowplows have their own internal engines that turn the train's wheels down the track.",
-        "verdict": "myth",
-        "explanation": "The internal engine solely powers the spinning cutter wheel; the entire plow car must be pushed by separate locomotives behind it.",
-        "fun_fact": "Historically, steam rotary plows had full boilers dedicated exclusively to spinning the giant cutting wheel."
-      },
-      {
-        "claim": "Rotary snowplows can blast through snowdrifts taller than the train itself.",
-        "verdict": "fact",
-        "explanation": "Equipped with folding side wings that channel snow into the 12-foot spinning rotor, they can clear drifts exceeding 20 feet deep.",
-        "fun_fact": "Union Pacific still maintains historic operational rotary snowplows to keep the Sierra Nevada mountain tracks open."
-      }
-    ],
-    "versus_candidates": [
-      "Diesel Locomotive",
-      "Bulldozer",
-      "Snowmobile"
-    ]
-  },
-  {
-    "id": "ENT-VEH-095",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "rail",
-    "name": "Container Well Car Train",
-    "language": "en",
-    "aliases": [
-      "Well Car",
-      "Double-Stack Car",
-      "Intermodal Well Car"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Articulated three-unit well car train carrying brightly painted ocean shipping containers riding barely inches above the rails.",
-    "core_traits": [
-      "Specialized railway car with a depressed center 'well' section designed to carry double-stacked intermodal shipping containers",
-      "Lowers the bottom container to ride just inches above the rail, clearing overhead bridges and tunnels",
-      "Features twistlock corner castings that lock top and bottom shipping containers securely together",
-      "Forms articulated multi-unit cars that share middle wheel bogies to reduce weight and slack action"
-    ],
-    "distractor_pool": [
-      "Freight Train",
-      "Container Ship",
-      "Semi-Trailer Truck",
-      "Cargo Ship",
-      "Cargo Plane"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The bottom container in a well car sits higher up than on a normal flatbed train car.",
-        "verdict": "myth",
-        "explanation": "The well drops down between the wheels, allowing the bottom container to sit 10 to 12 inches lower than a standard flatcar.",
-        "fun_fact": "This crucial foot of clearance makes double-stacking possible across thousands of miles of standard bridges."
-      },
-      {
-        "claim": "A single long double-stack container train can replace up to 300 heavy semi-trucks on the highway.",
-        "verdict": "fact",
-        "explanation": "Hauling hundreds of containers with just two or three crew members, intermodal well cars form the backbone of global commerce.",
-        "fun_fact": "They seamlessly transfer standard 40-foot and 53-foot containers between container ships and highway truck chassis."
-      }
-    ],
-    "versus_candidates": [
-      "Container Ship",
-      "Semi-Trailer Truck",
-      "Freight Train"
-    ]
-  },
-  {
-    "id": "ENT-VEH-096",
+    "id": "ENT-VEH-082",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Armored Train",
@@ -4407,145 +3766,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-097",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "rail",
-    "name": "Heritage Steam Railcar",
-    "language": "en",
-    "aliases": [
-      "Steam Rail Motor",
-      "Railbus",
-      "Self-Propelled Steam Coach"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Charming polished mahogany and brass vintage self-propelled steam railcar puffing along a preserved branch line.",
-    "core_traits": [
-      "Self-contained passenger railroad coach with a built-in miniature steam engine and boiler inside one end",
-      "Designed for low-cost, low-passenger branch line operations without needing a separate heavy locomotive",
-      "Popular in Victorian and Edwardian Britain and Europe before internal combustion railcars took over",
-      "Preserved today on heritage railways as operating museum treasures"
-    ],
-    "distractor_pool": [
-      "Steam Locomotive",
-      "Commuter Train",
-      "Tram",
-      "Handcar",
-      "Intercity Passenger Train"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Steam railcars required a separate tender car coupled behind to carry water and coal.",
-        "verdict": "myth",
-        "explanation": "All coal, water tanks, and the vertical firetube boiler were built into a compact engine compartment inside the coach itself.",
-        "fun_fact": "The driver sat in a small forward glass cabin directly beside the miniature boiler."
-      },
-      {
-        "claim": "The Great Western Railway in Britain operated dozens of steam rail motors to compete with newly emerging electric street trams.",
-        "verdict": "fact",
-        "explanation": "Introduced in 1903, they could stop at simple wooden roadside halts with fold-down steps, serving rural communities efficiently.",
-        "fun_fact": "Several working examples have been meticulously restored and operate on English heritage railways today."
-      }
-    ],
-    "versus_candidates": [
-      "Steam Locomotive",
-      "Tram",
-      "Commuter Train"
-    ]
-  },
-  {
-    "id": "ENT-VEH-098",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "rail",
-    "name": "Tilting Train",
-    "language": "en",
-    "aliases": [
-      "Pendolino",
-      "Acela Express",
-      "Active Tilt Train"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "High-speed electric passenger train tilting gracefully inward at an angle as it powers through a sweeping track curve.",
-    "core_traits": [
-      "High-speed passenger train with active hydraulic or pneumatic mechanisms that tilt the carriages into curves like a motorcycle",
-      "Compensates for lateral centrifugal forces, allowing trains to travel up to 30% faster around existing curved tracks in passenger comfort",
-      "Avoids the multi-billion dollar cost of blasting brand new straight railroad tunnels through mountains",
-      "Exemplified by the Italian Pendolino technology and the American Northeast Corridor Acela"
-    ],
-    "distractor_pool": [
-      "Bullet Train",
-      "High-Speed Electric Train",
-      "Maglev Train",
-      "Commuter Train",
-      "Monorail"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Tilting trains lean into curves to keep the train from flying off the tracks.",
-        "verdict": "myth",
-        "explanation": "The tracks and wheel flanges can easily keep the train on track; the tilt exists primarily so passengers do not feel nauseous or get thrown sideways.",
-        "fun_fact": "Early passive tilting trains actually made passengers motion-sick until modern gyro-sensors improved active tilt timing."
-      },
-      {
-        "claim": "Modern tilting trains use gyroscopes and GPS curve databases to start tilting before the car enters the turn.",
-        "verdict": "fact",
-        "explanation": "Look-ahead electronic sensors calculate track geometry in advance, commanding hydraulic actuators to smoothly tilt the cars up to 8 degrees.",
-        "fun_fact": "Amtrak's Acela uses tilting technology to run high-speed service on historic colonial-era tracks between Boston and Washington DC."
-      }
-    ],
-    "versus_candidates": [
-      "Bullet Train",
-      "High-Speed Electric Train",
-      "Commuter Train"
-    ]
-  },
-  {
-    "id": "ENT-VEH-099",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "rail",
-    "name": "Electric Multiple Unit",
-    "language": "en",
-    "aliases": [
-      "EMU",
-      "Multiple-Unit Train",
-      "Motor Coach Train"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Sleek aerodynamic eight-car commuter train with rooftop pantographs pulling away from a station with rapid quiet acceleration.",
-    "core_traits": [
-      "Multiple-car passenger train where electric traction motors are distributed across multiple wheel bogies throughout the train",
-      "Has no separate locomotive; all passenger coaches contribute traction and braking power",
-      "Delivers rapid, smooth acceleration and regenerative braking ideal for urban and suburban stop-and-go transit",
-      "Dominates modern passenger rail networks worldwide from suburban commuter lines to airport expresses"
-    ],
-    "distractor_pool": [
-      "Diesel Locomotive",
-      "Commuter Train",
-      "Subway",
-      "Tram",
-      "High-Speed Electric Train"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Frank J. Sprague invented the multiple-unit traction control system in 1897.",
-        "verdict": "fact",
-        "explanation": "Sprague's revolutionary master-controller system allowed a single driver to control electric motors on dozens of individual cars simultaneously.",
-        "fun_fact": "His invention paved the way for modern subways, high-speed trains, and electric multiple units."
-      },
-      {
-        "claim": "If one motor car fails in an electric multiple unit, the entire train breaks down and cannot move.",
-        "verdict": "myth",
-        "explanation": "Because power is distributed across multiple cars, an EMU can simply isolate a broken motor and continue operating on remaining powered bogies.",
-        "fun_fact": "Distributing power also prevents wheel slippage because train weight is distributed evenly across all drive wheels."
-      }
-    ],
-    "versus_candidates": [
-      "Diesel Locomotive",
-      "Subway",
-      "Commuter Train"
-    ]
-  },
-  {
-    "id": "ENT-VEH-100",
+    "id": "ENT-VEH-083",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Mine Train",
@@ -4591,99 +3812,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-101",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "rail",
-    "name": "Rail Tanker Train",
-    "language": "en",
-    "aliases": [
-      "DOT-111 Tank Car",
-      "Oil Train",
-      "Liquid Chemical Railcar"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Long train of cylindrical black steel pressurized tank cars rounding a curve carrying crude oil and liquid chemicals.",
-    "core_traits": [
-      "Specialized cylindrical freight railcar engineered to transport liquids, petroleum, liquefied gases, and hazardous chemicals",
-      "Constructed with thick pressurized steel or aluminum cylindrical tanks with dished hemispherical ends",
-      "Equipped with pressure relief safety valves, thermal insulation blankets, and reinforced head shields to prevent punctures",
-      "Essential for moving ethanol, crude oil, liquid chlorine, and anhydrous ammonia between refineries and industrial plants"
-    ],
-    "distractor_pool": [
-      "Freight Train",
-      "Oil Tanker",
-      "Semi-Trailer Truck",
-      "Container Ship",
-      "Diesel Locomotive"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Rail tank cars are simply thin steel hollow tubes with no internal safety reinforcement.",
-        "verdict": "myth",
-        "explanation": "Modern DOT-117 tank cars feature 9/16-inch thick steel tanks, full-height 1/2-inch head shields, thermal jackets, and rollover protection.",
-        "fun_fact": "These strict safety upgrades were mandated after the 2013 Lac-Megantic oil train derailment in Quebec."
-      },
-      {
-        "claim": "A single rail tank car can hold up to 30,000 gallons of liquid cargo.",
-        "verdict": "fact",
-        "explanation": "That is equivalent to more than three large highway semi-tanker trucks carried in a single railcar.",
-        "fun_fact": "Some specialized tank cars feature internal heating coils to melt solidified molasses or asphalt so it can be pumped out."
-      }
-    ],
-    "versus_candidates": [
-      "Oil Tanker",
-      "Semi-Trailer Truck",
-      "Freight Train"
-    ]
-  },
-  {
-    "id": "ENT-VEH-102",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "rail",
-    "name": "Track Inspection Train",
-    "language": "en",
-    "aliases": [
-      "Geometry Car",
-      "Doctor Yellow",
-      "Sperry Rail Car"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Specialized high-speed yellow inspection train shooting laser beams and ultrasonic sound waves at the rails while speeding down the track.",
-    "core_traits": [
-      "Comprehensive diagnostic laboratory train that tests and inspects railroad tracks for microscopic cracks and rail wear",
-      "Uses ultrasonic testing and electromagnetic induction to detect hidden internal steel fractures inside the rail heads",
-      "Equipped with laser profilometers, optical cameras, and accelerometers to measure track gauge, alignment, and overhead catenary wire wear",
-      "Japan's famous high-speed Shinkansen test train is celebrated as 'Doctor Yellow' by train enthusiasts"
-    ],
-    "distractor_pool": [
-      "Bullet Train",
-      "Ballast Tamper Train",
-      "Commuter Train",
-      "High-Speed Electric Train",
-      "Freight Train"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Spotting the bright yellow 'Doctor Yellow' test train in Japan is widely believed to bring good luck.",
-        "verdict": "fact",
-        "explanation": "Because its inspection schedules are secret and not published to the public, seeing it streak by is considered a rare lucky omen.",
-        "fun_fact": "It tests the entire Shinkansen high-speed rail line at full 270 km/h operational speeds."
-      },
-      {
-        "claim": "Ultrasonic track testing was invented only in the 21st century.",
-        "verdict": "myth",
-        "explanation": "Dr. Elmer Sperry built the first practical induction rail flaw detector car back in 1928, saving countless trains from derailments.",
-        "fun_fact": "Modern inspection cars can scan rails at over 60 mph while pinpointing flaws the size of a pinhead."
-      }
-    ],
-    "versus_candidates": [
-      "Bullet Train",
-      "Ballast Tamper Train",
-      "Freight Train"
-    ]
-  },
-  {
-    "id": "ENT-VEH-103",
+    "id": "ENT-VEH-084",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Hybrid Passenger Train",
@@ -4729,7 +3858,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-104",
+    "id": "ENT-VEH-085",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Funicular Railway",
@@ -4775,7 +3904,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-105",
+    "id": "ENT-VEH-086",
     "domain_id": "vehicles_technology",
     "subtopic_id": "rail",
     "name": "Vintage Trolley",
@@ -4821,7 +3950,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-106",
+    "id": "ENT-VEH-087",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Sailboat",
@@ -4867,7 +3996,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-107",
+    "id": "ENT-VEH-088",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Luxury Yacht",
@@ -4913,7 +4042,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-108",
+    "id": "ENT-VEH-089",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Cruise Ship",
@@ -4959,7 +4088,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-109",
+    "id": "ENT-VEH-090",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Container Ship",
@@ -5005,7 +4134,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-110",
+    "id": "ENT-VEH-091",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Cargo Ship",
@@ -5051,7 +4180,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-111",
+    "id": "ENT-VEH-092",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Oil Tanker",
@@ -5097,7 +4226,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-112",
+    "id": "ENT-VEH-093",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Aircraft Carrier",
@@ -5143,7 +4272,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-113",
+    "id": "ENT-VEH-094",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Battleship",
@@ -5189,7 +4318,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-114",
+    "id": "ENT-VEH-095",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Naval Destroyer",
@@ -5235,7 +4364,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-115",
+    "id": "ENT-VEH-096",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Speedboat",
@@ -5281,7 +4410,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-116",
+    "id": "ENT-VEH-097",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Jet Ski",
@@ -5327,7 +4456,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-117",
+    "id": "ENT-VEH-098",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Canoe",
@@ -5373,7 +4502,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-118",
+    "id": "ENT-VEH-099",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Kayak",
@@ -5419,7 +4548,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-119",
+    "id": "ENT-VEH-100",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Rowboat",
@@ -5465,7 +4594,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-120",
+    "id": "ENT-VEH-101",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Venetian Gondola",
@@ -5511,7 +4640,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-121",
+    "id": "ENT-VEH-102",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Passenger Ferry",
@@ -5557,7 +4686,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-122",
+    "id": "ENT-VEH-103",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Hovercraft",
@@ -5603,7 +4732,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-123",
+    "id": "ENT-VEH-104",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Harbor Tugboat",
@@ -5649,7 +4778,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-124",
+    "id": "ENT-VEH-105",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Polar Icebreaker",
@@ -5695,7 +4824,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-125",
+    "id": "ENT-VEH-106",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Pirate Ship",
@@ -5741,53 +4870,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-126",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "maritime",
-    "name": "Deep-Sea Bathyscaphe",
-    "language": "en",
-    "aliases": [
-      "Trieste",
-      "Deepsea Challenger",
-      "Abyssal Submersible"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Rugged sphere-and-float bathyscaphe with blinding halogen floodlights illuminating the eerie silt bottom of the Mariana Trench.",
-    "core_traits": [
-      "Free-diving deep-sea submersible vessel capable of descending into the deepest abyssal trenches on Earth",
-      "Consists of a thick forged steel or titanium crew sphere suspended beneath a giant buoyant gasoline-filled float chamber",
-      "Engineered to withstand crushing hydrostatic pressures exceeding 1,000 atmospheres (16,000 pounds per square inch)",
-      "Jacques Piccard and Don Walsh made history in 1960 descending to the Challenger Deep (35,800 feet) in the bathyscaphe Trieste"
-    ],
-    "distractor_pool": [
-      "Submarine",
-      "Autonomous Underwater Vehicle",
-      "Speedboat",
-      "Hovercraft",
-      "Scuba Gear"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The float tank of the bathyscaphe Trieste was filled with air like a standard submarine.",
-        "verdict": "myth",
-        "explanation": "Air would be crushed flat by abyssal pressure; the float was filled with lightweight petroleum gasoline, which is lighter than water and virtually incompressible.",
-        "fun_fact": "It used tons of iron pellets held by electromagnets as descent ballast; turning off the magnets dropped the weights to float home."
-      },
-      {
-        "claim": "Filmmaker James Cameron piloted a solo deep-sea submersible to the bottom of the Mariana Trench in 2012.",
-        "verdict": "fact",
-        "explanation": "Cameron piloted the vertical-designed Deepsea Challenger to 35,787 feet, becoming the first person to reach the abyss solo.",
-        "fun_fact": "The extreme pressure compressed the specialized syntactic foam hull so much that the submersible physically shrank three inches in length."
-      }
-    ],
-    "versus_candidates": [
-      "Submarine",
-      "Autonomous Underwater Vehicle",
-      "Space Capsule"
-    ]
-  },
-  {
-    "id": "ENT-VEH-127",
+    "id": "ENT-VEH-107",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Catamaran",
@@ -5833,7 +4916,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-128",
+    "id": "ENT-VEH-108",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Trimaran",
@@ -5879,7 +4962,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-129",
+    "id": "ENT-VEH-109",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Hydrofoil Boat",
@@ -5925,7 +5008,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-130",
+    "id": "ENT-VEH-110",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Houseboat",
@@ -5971,7 +5054,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-131",
+    "id": "ENT-VEH-111",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Pontoon Boat",
@@ -6017,7 +5100,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-132",
+    "id": "ENT-VEH-112",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Fishing Trawler",
@@ -6063,7 +5146,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-133",
+    "id": "ENT-VEH-113",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Airboat",
@@ -6109,7 +5192,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-134",
+    "id": "ENT-VEH-114",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Viking Longship",
@@ -6155,7 +5238,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-135",
+    "id": "ENT-VEH-115",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Inflatable Raft",
@@ -6201,7 +5284,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-136",
+    "id": "ENT-VEH-116",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Paddle Steamer",
@@ -6247,7 +5330,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-137",
+    "id": "ENT-VEH-117",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Naval Frigate",
@@ -6293,7 +5376,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-138",
+    "id": "ENT-VEH-118",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Coast Guard Cutter",
@@ -6339,7 +5422,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-139",
+    "id": "ENT-VEH-119",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Offshore Drilling Rig",
@@ -6385,7 +5468,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-140",
+    "id": "ENT-VEH-120",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Oceanographic Research Vessel",
@@ -6431,7 +5514,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-141",
+    "id": "ENT-VEH-121",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Autonomous Underwater Vehicle",
@@ -6477,145 +5560,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-142",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "maritime",
-    "name": "Cable-Laying Ship",
-    "language": "en",
-    "aliases": [
-      "Cable Ship",
-      "Subsea Cable Layer",
-      "Cable Layer"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Specialized cable ship feeding a continuous armored submarine fiber-optic cable over a giant stern sheave into the deep ocean.",
-    "core_traits": [
-      "Deep-sea vessel specialized in spooling, laying, and repairing underwater telecommunication and power transmission cables",
-      "Houses colossal circular cable tanks inside its holds holding thousands of miles of coiled fiber-optic cable",
-      "Deploys underwater robotic plows to bury subsea cables beneath the seabed sediment to prevent damage from ship anchors and fishing trawlers",
-      "Maintains the critical physical infrastructure that carries over 95% of all transoceanic global internet traffic"
-    ],
-    "distractor_pool": [
-      "Cargo Ship",
-      "Container Ship",
-      "Oil Tanker",
-      "Research Vessel",
-      "Harbor Tugboat"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Almost all international internet data is transmitted via orbiting space satellites rather than ocean cables.",
-        "verdict": "myth",
-        "explanation": "Over 95% of all international internet traffic, cloud data, and financial transactions travel through fiber-optic cables on the ocean floor.",
-        "fun_fact": "Undersea fiber cables transmit hundreds of terabits per second at the speed of light."
-      },
-      {
-        "claim": "The first transatlantic telegraph cable was laid between Europe and North America in 1858.",
-        "verdict": "fact",
-        "explanation": "Cyrus Field financed the historic project, allowing Queen Victoria to send the first transatlantic message to President James Buchanan.",
-        "fun_fact": "What previously took ten days by steamship could suddenly be transmitted in minutes."
-      }
-    ],
-    "versus_candidates": [
-      "Container Ship",
-      "Communications Satellite",
-      "Research Vessel"
-    ]
-  },
-  {
-    "id": "ENT-VEH-143",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "maritime",
-    "name": "Heavy Lift Ship",
-    "language": "en",
-    "aliases": [
-      "Semi-Submersible Heavy Lifter",
-      "Boka Vanguard",
-      "Float-On Float-Off Ship"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Colossal semi-submersible heavy lift ship submerged up to its deck in open sea with an entire offshore oil drilling platform floating on top.",
-    "core_traits": [
-      "Vessel engineered to transport extraordinarily heavy, outsized industrial cargo that cannot be handled by normal ships",
-      "Semi-submersible 'float-on/float-off' (Flo-Flo) design ballasts down to submerge its long flat cargo deck beneath the water surface",
-      "Loads other entire ships, submarines, damaged warships, and colossal oil platforms by deballasting and lifting them into the air",
-      "Exemplified by the Dockwise Vanguard, capable of lifting payloads weighing over 110,000 metric tons"
-    ],
-    "distractor_pool": [
-      "Cargo Ship",
-      "Container Ship",
-      "Aircraft Carrier",
-      "Offshore Drilling Rig",
-      "Crane"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Heavy lift ships can carry entire damaged US Navy destroyers across oceans on their open decks.",
-        "verdict": "fact",
-        "explanation": "Following collisions in 2017, the guided missile destroyers USS Fitzgerald and USS John S. McCain were transported back to port aboard heavy lift ships.",
-        "fun_fact": "The warship is strapped tightly to the dry deck with custom-welded steel sea-fastenings."
-      },
-      {
-        "claim": "The ship sinks completely under water when loading cargo and the crew must evacuate.",
-        "verdict": "myth",
-        "explanation": "Only the midship cargo deck submerges; the towering forward superstructure and aft buoyancy casings remain safely above water with the crew.",
-        "fun_fact": "Pumps discharge tens of thousands of tons of water ballast in hours to re-float the deck."
-      }
-    ],
-    "versus_candidates": [
-      "Cargo Ship",
-      "Offshore Drilling Rig",
-      "Container Ship"
-    ]
-  },
-  {
-    "id": "ENT-VEH-144",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "maritime",
-    "name": "Dredger Ship",
-    "language": "en",
-    "aliases": [
-      "Trailing Suction Hopper Dredger",
-      "Dredge",
-      "Cutter Suction Dredger"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Massive trailing suction dredger pumping a rainbow arc of gold sand through a bow nozzle to construct artificial land in a harbor.",
-    "core_traits": [
-      "Specialized excavation ship equipped to scoop or suck sediment, sand, gravel, and silt from the bottom of waterways",
-      "Keeps shipping channels, river mouths, and harbors deep enough for deep-draft mega container ships and oil tankers",
-      "Trailing suction hopper dredgers use massive vacuum dragheads to pump slurry into internal hopper holds",
-      "Used extensively for coastal land reclamation, building world-famous mega-projects like Dubai's Palm Islands"
-    ],
-    "distractor_pool": [
-      "Cargo Ship",
-      "Harbor Tugboat",
-      "Hydraulic Excavator",
-      "Container Ship",
-      "Fishing Trawler"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Dredger ships only scrape rocks off harbor bottoms and dump them out at sea.",
-        "verdict": "myth",
-        "explanation": "Modern dredgers pump sand directly onto beaches via high-pressure bow nozzles in a process called 'rainbowing' to nourish eroded shorelines.",
-        "fun_fact": "Rainbowing shoots thousands of tons of sand slurry through the air in majestic high arcs."
-      },
-      {
-        "claim": "Dredger ships were responsible for building the entire land area of Hong Kong International Airport.",
-        "verdict": "fact",
-        "explanation": "Fleets of dredgers leveled two small rocky islands and reclaimed hundreds of hectares of land from the sea to build the modern airport.",
-        "fun_fact": "A mega dredger can fill its 40,000-cubic-meter hopper with sand in under an hour."
-      }
-    ],
-    "versus_candidates": [
-      "Hydraulic Excavator",
-      "Cargo Ship",
-      "Harbor Tugboat"
-    ]
-  },
-  {
-    "id": "ENT-VEH-145",
+    "id": "ENT-VEH-122",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Dragon Boat",
@@ -6661,7 +5606,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-146",
+    "id": "ENT-VEH-123",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Traditional Dhow",
@@ -6707,7 +5652,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-147",
+    "id": "ENT-VEH-124",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Outrigger Canoe",
@@ -6753,7 +5698,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-148",
+    "id": "ENT-VEH-125",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "River Barge",
@@ -6799,7 +5744,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-149",
+    "id": "ENT-VEH-126",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Car Carrier Ship",
@@ -6845,7 +5790,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-150",
+    "id": "ENT-VEH-127",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Naval Corvette",
@@ -6891,7 +5836,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-151",
+    "id": "ENT-VEH-128",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Fireboat",
@@ -6937,7 +5882,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-152",
+    "id": "ENT-VEH-129",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Lifeboat",
@@ -6983,7 +5928,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-153",
+    "id": "ENT-VEH-130",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Stand-Up Paddleboard",
@@ -7029,7 +5974,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-154",
+    "id": "ENT-VEH-131",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Submersible Tourist Vessel",
@@ -7075,7 +6020,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-155",
+    "id": "ENT-VEH-132",
     "domain_id": "vehicles_technology",
     "subtopic_id": "maritime",
     "name": "Motorized Dinghy",
@@ -7121,7 +6066,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-156",
+    "id": "ENT-VEH-133",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Bicycle",
@@ -7167,7 +6112,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-157",
+    "id": "ENT-VEH-134",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Mountain Bike",
@@ -7213,7 +6158,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-158",
+    "id": "ENT-VEH-135",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Road Racing Bicycle",
@@ -7259,7 +6204,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-159",
+    "id": "ENT-VEH-136",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Cruiser Bicycle",
@@ -7305,7 +6250,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-160",
+    "id": "ENT-VEH-137",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Tandem Bicycle",
@@ -7351,7 +6296,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-161",
+    "id": "ENT-VEH-138",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Electric Bicycle",
@@ -7397,7 +6342,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-162",
+    "id": "ENT-VEH-139",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Motorcycle",
@@ -7443,7 +6388,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-163",
+    "id": "ENT-VEH-140",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Sportbike",
@@ -7489,7 +6434,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-164",
+    "id": "ENT-VEH-141",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Motor Scooter",
@@ -7535,7 +6480,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-165",
+    "id": "ENT-VEH-142",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Moped",
@@ -7581,7 +6526,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-166",
+    "id": "ENT-VEH-143",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Kick Scooter",
@@ -7627,7 +6572,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-167",
+    "id": "ENT-VEH-144",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Electric Scooter",
@@ -7673,7 +6618,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-168",
+    "id": "ENT-VEH-145",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Skateboard",
@@ -7719,7 +6664,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-169",
+    "id": "ENT-VEH-146",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Longboard",
@@ -7765,7 +6710,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-170",
+    "id": "ENT-VEH-147",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Roller Skates",
@@ -7811,7 +6756,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-171",
+    "id": "ENT-VEH-148",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Rollerblades",
@@ -7857,7 +6802,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-172",
+    "id": "ENT-VEH-149",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Segway",
@@ -7903,7 +6848,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-173",
+    "id": "ENT-VEH-150",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Hoverboard",
@@ -7949,7 +6894,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-174",
+    "id": "ENT-VEH-151",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Electric Unicycle",
@@ -7995,12 +6940,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-175",
+    "id": "ENT-VEH-152",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
-    "name": "Gasoline Sedan",
+    "name": "Sedan",
     "language": "en",
     "aliases": [
+      "Gasoline Sedan",
       "Saloon Car",
       "Four-Door Passenger Car",
       "Family Sedan"
@@ -8041,7 +6987,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-176",
+    "id": "ENT-VEH-153",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Sports Car",
@@ -8087,7 +7033,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-177",
+    "id": "ENT-VEH-154",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Convertible",
@@ -8133,7 +7079,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-178",
+    "id": "ENT-VEH-155",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Compact Hatchback",
@@ -8179,7 +7125,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-179",
+    "id": "ENT-VEH-156",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Station Wagon",
@@ -8225,7 +7171,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-180",
+    "id": "ENT-VEH-157",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Luxury Limousine",
@@ -8271,7 +7217,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-181",
+    "id": "ENT-VEH-158",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "SUV",
@@ -8317,7 +7263,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-182",
+    "id": "ENT-VEH-159",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Pickup Truck",
@@ -8363,7 +7309,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-183",
+    "id": "ENT-VEH-160",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Monster Truck",
@@ -8409,7 +7355,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-184",
+    "id": "ENT-VEH-161",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Muscle Car",
@@ -8455,7 +7401,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-185",
+    "id": "ENT-VEH-162",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Vintage Hot Rod",
@@ -8501,7 +7447,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-186",
+    "id": "ENT-VEH-163",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Formula 1 Racing Car",
@@ -8547,7 +7493,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-187",
+    "id": "ENT-VEH-164",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Stock Car",
@@ -8593,7 +7539,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-188",
+    "id": "ENT-VEH-165",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Go-Kart",
@@ -8639,7 +7585,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-189",
+    "id": "ENT-VEH-166",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Dune Buggy",
@@ -8685,7 +7631,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-190",
+    "id": "ENT-VEH-167",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "All-Terrain Vehicle",
@@ -8731,7 +7677,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-191",
+    "id": "ENT-VEH-168",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Utility Task Vehicle",
@@ -8777,7 +7723,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-192",
+    "id": "ENT-VEH-169",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Snowmobile",
@@ -8823,7 +7769,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-193",
+    "id": "ENT-VEH-170",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Bobsled",
@@ -8869,7 +7815,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-194",
+    "id": "ENT-VEH-171",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Dog Sled",
@@ -8915,7 +7861,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-195",
+    "id": "ENT-VEH-172",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Golf Cart",
@@ -8961,7 +7907,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-196",
+    "id": "ENT-VEH-173",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Campervan",
@@ -9007,7 +7953,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-197",
+    "id": "ENT-VEH-174",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Travel Trailer",
@@ -9053,12 +7999,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-198",
+    "id": "ENT-VEH-175",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
-    "name": "City Transit Bus",
+    "name": "City Bus",
     "language": "en",
     "aliases": [
+      "City Transit Bus",
       "Public Transit Bus",
       "City Bus",
       "Low-Floor Bus"
@@ -9099,12 +8046,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-199",
+    "id": "ENT-VEH-176",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
-    "name": "Yellow School Bus",
+    "name": "School Bus",
     "language": "en",
     "aliases": [
+      "Yellow School Bus",
       "School Bus",
       "National School Bus Glossy Yellow",
       "Type C Bus"
@@ -9145,7 +8093,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-200",
+    "id": "ENT-VEH-177",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Double-Decker Bus",
@@ -9191,12 +8139,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-201",
+    "id": "ENT-VEH-178",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
-    "name": "Tour Coach Bus",
+    "name": "Tour Bus",
     "language": "en",
     "aliases": [
+      "Tour Coach Bus",
       "Motorcoach",
       "Intercity Coach",
       "Greyhound Bus"
@@ -9237,7 +8186,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-202",
+    "id": "ENT-VEH-179",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Fire Engine",
@@ -9283,12 +8232,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-203",
+    "id": "ENT-VEH-180",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
-    "name": "Ladder Fire Truck",
+    "name": "Fire Truck",
     "language": "en",
     "aliases": [
+      "Ladder Fire Truck",
       "Aerial Ladder",
       "Tiller Truck",
       "Hook and Ladder"
@@ -9329,12 +8279,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-204",
+    "id": "ENT-VEH-181",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
-    "name": "Emergency Ambulance",
+    "name": "Ambulance",
     "language": "en",
     "aliases": [
+      "Emergency Ambulance",
       "Medic Unit",
       "EMS Ambulance",
       "Life Support Vehicle"
@@ -9375,12 +8326,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-205",
+    "id": "ENT-VEH-182",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
-    "name": "Police Cruiser",
+    "name": "Police Car",
     "language": "en",
     "aliases": [
+      "Police Cruiser",
       "Patrol Car",
       "Cop Car",
       "Police Interceptor"
@@ -9421,7 +8373,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-206",
+    "id": "ENT-VEH-183",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Garbage Truck",
@@ -9467,7 +8419,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-207",
+    "id": "ENT-VEH-184",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Street Sweeper",
@@ -9513,12 +8465,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-208",
+    "id": "ENT-VEH-185",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
-    "name": "Semi-Trailer Truck",
+    "name": "Semi Truck",
     "language": "en",
     "aliases": [
+      "Semi-Trailer Truck",
       "18-Wheeler",
       "Tractor-Trailer",
       "Big Rig"
@@ -9559,7 +8512,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-209",
+    "id": "ENT-VEH-186",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Heavy Tow Truck",
@@ -9605,7 +8558,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-210",
+    "id": "ENT-VEH-187",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Wheelchair",
@@ -9651,7 +8604,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-211",
+    "id": "ENT-VEH-188",
     "domain_id": "vehicles_technology",
     "subtopic_id": "automotive",
     "name": "Electric Wheelchair",
@@ -9697,7 +8650,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-212",
+    "id": "ENT-VEH-189",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Agricultural Tractor",
@@ -9743,7 +8696,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-213",
+    "id": "ENT-VEH-190",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Combine Harvester",
@@ -9789,7 +8742,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-214",
+    "id": "ENT-VEH-191",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Bulldozer",
@@ -9835,7 +8788,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-215",
+    "id": "ENT-VEH-192",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Hydraulic Excavator",
@@ -9881,12 +8834,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-216",
+    "id": "ENT-VEH-193",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
-    "name": "Construction Crane",
+    "name": "Crane",
     "language": "en",
     "aliases": [
+      "Construction Crane",
       "Tower Crane",
       "Building Crane",
       "Hammerhead Crane"
@@ -9927,7 +8881,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-217",
+    "id": "ENT-VEH-194",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Mobile Crane",
@@ -9973,12 +8927,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-218",
+    "id": "ENT-VEH-195",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
-    "name": "Warehouse Forklift",
+    "name": "Forklift",
     "language": "en",
     "aliases": [
+      "Warehouse Forklift",
       "Forklift",
       "Lift Truck",
       "Fork Truck"
@@ -10019,12 +8974,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-219",
+    "id": "ENT-VEH-196",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
-    "name": "Cement Mixer Truck",
+    "name": "Cement Mixer",
     "language": "en",
     "aliases": [
+      "Cement Mixer Truck",
       "Concrete Transit Mixer",
       "Cement Truck",
       "Agitator Truck"
@@ -10065,12 +9021,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-220",
+    "id": "ENT-VEH-197",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
-    "name": "Heavy Dump Truck",
+    "name": "Dump Truck",
     "language": "en",
     "aliases": [
+      "Heavy Dump Truck",
       "Haul Truck",
       "Tipper Truck",
       "Caterpillar 797"
@@ -10111,7 +9068,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-221",
+    "id": "ENT-VEH-198",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Steamroller",
@@ -10157,53 +9114,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-222",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "industrial_inventions",
-    "name": "Road Grader",
-    "language": "en",
-    "aliases": [
-      "Motor Grader",
-      "Road Blade",
-      "Maintainer"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Long yellow motor grader with an angled center moldboard blade sculpting a perfectly smooth crowned gravel roadbed.",
-    "core_traits": [
-      "Heavy construction machine with a long wheelbase and an adjustable center blade (moldboard) positioned between the front and rear axles",
-      "Used to create flat, smooth finish surfaces and precise road grading before laying asphalt or gravel",
-      "Can pitch, tilt, raise, and angle its long blade in three dimensions with hydraulic precision",
-      "Features articulating frames and leaning front wheels that resist lateral sideways blade pressure"
-    ],
-    "distractor_pool": [
-      "Bulldozer",
-      "Steamroller",
-      "Asphalt Paver",
-      "Dump Truck",
-      "Backhoe Loader"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Motor graders lean their front wheels sideways on purpose when grading a slope.",
-        "verdict": "fact",
-        "explanation": "Leaning the wheels counteracts the lateral pushing force of heavy earth sliding across the angled center blade.",
-        "fun_fact": "It prevents the front of the grader from sliding sideways off the road."
-      },
-      {
-        "claim": "A road grader is designed for rough mass excavation like a bulldozer.",
-        "verdict": "myth",
-        "explanation": "Dozers do rough heavy pushing; motor graders are precision instruments designed for final millimetric grading and crown drainage.",
-        "fun_fact": "Skilled grader operators are considered among the most artistic and highly paid heavy equipment operators."
-      }
-    ],
-    "versus_candidates": [
-      "Bulldozer",
-      "Steamroller",
-      "Asphalt Paver"
-    ]
-  },
-  {
-    "id": "ENT-VEH-223",
+    "id": "ENT-VEH-199",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Backhoe Loader",
@@ -10249,99 +9160,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-224",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "industrial_inventions",
-    "name": "Skid-Steer Loader",
-    "language": "en",
-    "aliases": [
-      "Bobcat",
-      "Skid Steer",
-      "Compact Loader"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Compact white-and-orange Bobcat skid-steer spinning on its own axis in a tight demolition site with bucket raised high.",
-    "core_traits": [
-      "Small, rigid-frame, engine-powered machine with lift arms used to attach a wide variety of labor-saving attachments",
-      "Steers using 'skid-steering': drive wheels on each side are synchronized and driven independently at different speeds or opposite directions",
-      "Can execute a complete zero-degree radius pivot turn on its own footprint (spinning like a top)",
-      "Can swap buckets for hydraulic jackhammers, trenchers, auger post-hole diggers, and pallet forks in seconds"
-    ],
-    "distractor_pool": [
-      "Backhoe Loader",
-      "Hydraulic Excavator",
-      "Warehouse Forklift",
-      "Bulldozer",
-      "Agricultural Tractor"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The Keller brothers invented the skid-steer loader in Minnesota in 1957 to help a farmer clean a two-story turkey barn.",
-        "verdict": "fact",
-        "explanation": "The farmer needed a lightweight compact machine agile enough to turn around inside tight poultry barn posts without breaking floorboards.",
-        "fun_fact": "The Melroe manufacturing company bought the rights and branded it as the iconic 'Bobcat'."
-      },
-      {
-        "claim": "A skid-steer has front wheels that turn on steering knuckles like a car.",
-        "verdict": "myth",
-        "explanation": "The wheels have zero steering angle; the machine turns by spinning the left wheels forward and the right wheels in reverse, causing the tires to skid.",
-        "fun_fact": "This allows an unprecedented turning radius of literally zero inches."
-      }
-    ],
-    "versus_candidates": [
-      "Backhoe Loader",
-      "Warehouse Forklift",
-      "Hydraulic Excavator"
-    ]
-  },
-  {
-    "id": "ENT-VEH-225",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "industrial_inventions",
-    "name": "Asphalt Paver",
-    "language": "en",
-    "aliases": [
-      "Road Paver",
-      "Asphalt Finisher",
-      "Paving Machine"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Heavy steel asphalt paver receiving steaming hot black bitumen asphalt from a dump truck and laying a glass-smooth highway mat.",
-    "core_traits": [
-      "Construction machine used to lay hot asphalt concrete or portland cement concrete flat on roads and bridges",
-      "Receives steaming asphalt into a front hopper pushed by a dump truck, moving it back via internal flight augers",
-      "Features a floating heated rear 'screed' plate that spreads, levels, and partially compacts the asphalt to an exact thickness",
-      "Followed immediately by tandem steel rollers that perform final compaction before cooling"
-    ],
-    "distractor_pool": [
-      "Steamroller",
-      "Road Grader",
-      "Dump Truck",
-      "Bulldozer",
-      "Cement Mixer Truck"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The floating screed plate on an asphalt paver is electrically or gas heated to hundreds of degrees.",
-        "verdict": "fact",
-        "explanation": "Heating the steel screed prevents sticky hot bitumen (300 degrees F) from sticking, tearing, and cooling during placement.",
-        "fun_fact": "The heated plate irons the asphalt into a smooth uniform road surface."
-      },
-      {
-        "claim": "The asphalt paver fully compacts the road to its final density on its own.",
-        "verdict": "myth",
-        "explanation": "The paver's screed achieves roughly 75% to 85% compaction; heavy vibrating road rollers must roll it immediately while hot for final density.",
-        "fun_fact": "If asphalt cools below 180 degrees F before rolling, proper compaction is impossible."
-      }
-    ],
-    "versus_candidates": [
-      "Steamroller",
-      "Road Grader",
-      "Dump Truck"
-    ]
-  },
-  {
-    "id": "ENT-VEH-226",
+    "id": "ENT-VEH-200",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Tunnel Boring Machine",
@@ -10387,7 +9206,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-227",
+    "id": "ENT-VEH-201",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Jackhammer",
@@ -10433,7 +9252,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-228",
+    "id": "ENT-VEH-202",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Chainsaw",
@@ -10479,7 +9298,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-229",
+    "id": "ENT-VEH-203",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Printing Press",
@@ -10525,99 +9344,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-230",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "industrial_inventions",
-    "name": "Cotton Gin",
-    "language": "en",
-    "aliases": [
-      "Whitney Cotton Gin",
-      "Saw Gin",
-      "Cotton Engine"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Historic wooden cotton gin machine with revolving saw blades separating fluffy white cotton fibers from small dark sticky seeds.",
-    "core_traits": [
-      "Machine that quickly and easily separates cotton fibers from their seeds, multiplying worker productivity by 50 times",
-      "Invented by American inventor Eli Whitney in 1793 and patented in 1794",
-      "Uses a revolving wooden cylinder studded with wire teeth or circular saw blades that pull cotton lint through wire mesh grates",
-      "Profoundly transformed the economy of the American South and fueled the global Industrial Revolution textile boom"
-    ],
-    "distractor_pool": [
-      "Sewing Machine",
-      "Mechanical Loom",
-      "Printing Press",
-      "Agricultural Tractor",
-      "Combine Harvester"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The word 'gin' in cotton gin is short for the English word 'engine'.",
-        "verdict": "fact",
-        "explanation": "In 18th-century vernacular, 'gin' was simply an abbreviation for mechanical device or engine.",
-        "fun_fact": "A small hand-cranked gin could clean 50 pounds of cotton per day, compared to just one pound by hand."
-      },
-      {
-        "claim": "Eli Whitney made millions of dollars in royalty profits from his cotton gin patent.",
-        "verdict": "myth",
-        "explanation": "The machine was so simple that Southern plantation owners copied and built unauthorized knockoffs, leaving Whitney bankrupt from patent lawsuits.",
-        "fun_fact": "Whitney later made his fortune by pioneering interchangeable parts manufacturing for military muskets."
-      }
-    ],
-    "versus_candidates": [
-      "Sewing Machine",
-      "Mechanical Loom",
-      "Agricultural Tractor"
-    ]
-  },
-  {
-    "id": "ENT-VEH-231",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "industrial_inventions",
-    "name": "Mechanical Loom",
-    "language": "en",
-    "aliases": [
-      "Power Loom",
-      "Jacquard Loom",
-      "Industrial Loom"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Clattering Victorian iron power loom weaving intricate patterned silk fabric guided by a chain of punched paper cards.",
-    "core_traits": [
-      "Mechanized textile weaving machine powered by a steam engine or waterwheel rather than human foot treadles",
-      "Pioneered by Edmund Cartwright in 1785 and revolutionized by Joseph Marie Jacquard's punch-card loom in 1804",
-      "Automates the rapid interweaving of vertical warp threads and horizontal weft threads",
-      "Jacquard's punch-card programmable loom was the direct conceptual ancestor of modern binary computer programming"
-    ],
-    "distractor_pool": [
-      "Sewing Machine",
-      "Cotton Gin",
-      "Printing Press",
-      "Desktop Computer",
-      "Spinning Jenny"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The punch-card system used in Jacquard looms directly inspired Charles Babbage's Analytical Engine and modern computer code.",
-        "verdict": "fact",
-        "explanation": "Ada Lovelace famously wrote: 'We may say most aptly that the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves.'",
-        "fun_fact": "Poles and holes on punch cards formed the world's first mechanical binary data storage."
-      },
-      {
-        "claim": "Power looms were embraced peacefully by all weavers when introduced during the Industrial Revolution.",
-        "verdict": "myth",
-        "explanation": "The introduction of automated power looms sparked the violent 1811 Luddite rebellion in England, where displaced artisanal weavers smashed machines.",
-        "fun_fact": "The British government made smashing industrial textile machinery a capital crime punishable by death."
-      }
-    ],
-    "versus_candidates": [
-      "Sewing Machine",
-      "Desktop Computer",
-      "Cotton Gin"
-    ]
-  },
-  {
-    "id": "ENT-VEH-232",
+    "id": "ENT-VEH-204",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Sewing Machine",
@@ -10663,53 +9390,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-233",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "industrial_inventions",
-    "name": "Stationary Steam Engine",
-    "language": "en",
-    "aliases": [
-      "Watt Steam Engine",
-      "Beam Engine",
-      "Mill Engine"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Enormous iron James Watt beam engine rocking its overhead timber beam with a massive 20-foot flywheel spinning in a brick pump house.",
-    "core_traits": [
-      "Fixed stationary steam engine used to drive industrial machinery in factories, mills, and pump water out of deep coal mines",
-      "Pioneered by Thomas Newcomen in 1712 and drastically perfected in 1769 by James Watt with the separate condenser",
-      "Converts thermal steam expansion into reciprocating mechanical motion and rotary shaft power via flywheels",
-      "The prime technological catalyst that launched the British Industrial Revolution, unshackling factories from rivers"
-    ],
-    "distractor_pool": [
-      "Steam Locomotive",
-      "Internal Combustion Engine",
-      "Electric Motor",
-      "Waterwheel",
-      "Windmill"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "James Watt invented the term 'horsepower' to market his steam engines to skeptical mine owners.",
-        "verdict": "fact",
-        "explanation": "Watt calculated how much work a brewery pit pony could perform in a minute, creating the standard 33,000 foot-pounds per minute unit to demonstrate power.",
-        "fun_fact": "His customers understood immediately that a 10-HP engine replaced ten real horses."
-      },
-      {
-        "claim": "James Watt invented the very first working steam engine from scratch.",
-        "verdict": "myth",
-        "explanation": "Thomas Newcomen built working atmospheric steam engines 50 years before Watt; Watt's breakthrough was adding a separate condenser to save 75% of fuel.",
-        "fun_fact": "Watt's improvements made steam engines practical and affordable for general factory use."
-      }
-    ],
-    "versus_candidates": [
-      "Steam Locomotive",
-      "Electric Motor",
-      "Waterwheel"
-    ]
-  },
-  {
-    "id": "ENT-VEH-234",
+    "id": "ENT-VEH-205",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Waterwheel",
@@ -10755,12 +9436,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-235",
+    "id": "ENT-VEH-206",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
-    "name": "Traditional Windmill",
+    "name": "Windmill",
     "language": "en",
     "aliases": [
+      "Traditional Windmill",
       "Dutch Windmill",
       "Windpump",
       "Smock Mill"
@@ -10801,12 +9483,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-236",
+    "id": "ENT-VEH-207",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
-    "name": "Modern Wind Turbine",
+    "name": "Wind Turbine",
     "language": "en",
     "aliases": [
+      "Modern Wind Turbine",
       "Wind Generator",
       "Offshore Wind Turbine",
       "Wind Power Generator"
@@ -10847,7 +9530,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-237",
+    "id": "ENT-VEH-208",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Hydroelectric Turbine",
@@ -10893,7 +9576,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-238",
+    "id": "ENT-VEH-209",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Solar Panel",
@@ -10939,7 +9622,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-239",
+    "id": "ENT-VEH-210",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Electric Motor",
@@ -10985,7 +9668,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-240",
+    "id": "ENT-VEH-211",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Internal Combustion Engine",
@@ -11031,7 +9714,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-241",
+    "id": "ENT-VEH-212",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "3D Printer",
@@ -11077,7 +9760,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-242",
+    "id": "ENT-VEH-213",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Industrial Robotic Arm",
@@ -11123,145 +9806,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-243",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "industrial_inventions",
-    "name": "CNC Milling Machine",
-    "language": "en",
-    "aliases": [
-      "CNC Mill",
-      "Machining Center",
-      "Computer Numerical Control Mill"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Enclosed five-axis CNC milling machine spinning a carbide endmill at 20,000 RPM carving an aerospace titanium jet turbine blade under white coolant.",
-    "core_traits": [
-      "Automated machine tool that uses Computer Numerical Control (CNC) to carve complex solid shapes out of raw metal or plastic billets",
-      "Rotates a high-speed cutting tool (endmill) while translating the workpiece across multiple axes (X, Y, Z, plus A and B rotational axes)",
-      "Floods the cutting zone with liquid coolant to lubricate tools and flush away metal chips (swarf)",
-      "Produces aerospace airframe parts, medical bone implants, and automotive engine blocks with micron precision"
-    ],
-    "distractor_pool": [
-      "3D Printer",
-      "Industrial Laser Cutter",
-      "Industrial Robotic Arm",
-      "Waterjet Cutter",
-      "Lathe"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "John T. Parsons and MIT developed the first numerical control (NC) machine tool in 1952 using punched paper tape.",
-        "verdict": "fact",
-        "explanation": "Parsons motorized machine tool lead screws using coordinates read from punched tape to machine complex curved helicopter rotor blade templates.",
-        "fun_fact": "This breakthrough replaced manual hand-crank machining and founded the modern aerospace industry."
-      },
-      {
-        "claim": "CNC milling is an 'additive' manufacturing process just like 3D printing.",
-        "verdict": "myth",
-        "explanation": "CNC milling is a 'subtractive' manufacturing process; it starts with a solid block of raw material and carves away excess material until the part remains.",
-        "fun_fact": "3D printing, conversely, builds objects by adding material layer-by-layer."
-      }
-    ],
-    "versus_candidates": [
-      "3D Printer",
-      "Industrial Laser Cutter",
-      "Waterjet Cutter"
-    ]
-  },
-  {
-    "id": "ENT-VEH-244",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "industrial_inventions",
-    "name": "Industrial Laser Cutter",
-    "language": "en",
-    "aliases": [
-      "Fiber Laser Cutter",
-      "CO2 Laser Cutter",
-      "Laser Cutting Table"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "High-speed industrial fiber laser cutting head gliding over a sheet of stainless steel with a brilliant pinpoint white-blue spark cutting intricate contours.",
-    "core_traits": [
-      "Precision industrial cutting machine that uses a focused high-power coherent laser beam to vaporize, melt, or burn through sheet material",
-      "Blows a high-pressure coaxial assist gas (oxygen or nitrogen) through the nozzle to blow molten metal cleanly out of the kerf",
-      "Operated by CNC computer controllers moving the laser optics at speeds up to several meters per second",
-      "Cuts sheet steel, aluminum, brass, acrylic, and wood with razor-sharp tolerances and zero mechanical tool wear"
-    ],
-    "distractor_pool": [
-      "Waterjet Cutter",
-      "CNC Milling Machine",
-      "3D Printer",
-      "Chainsaw",
-      "Plasma Cutter"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The first production laser cutting machine was used in 1965 to drill microscopic holes in diamond wire-drawing dies.",
-        "verdict": "fact",
-        "explanation": "Western Electric built the machine using a ruby laser, cutting holes in the hardest natural substance on Earth in minutes instead of days.",
-        "fun_fact": "Modern fiber lasers can cut through 1-inch thick solid steel plates like butter."
-      },
-      {
-        "claim": "Laser cutters create huge amounts of physical contact force pushing down against the metal sheet.",
-        "verdict": "myth",
-        "explanation": "Laser cutting is a completely non-contact thermal process; light touches the material without applying any mechanical cutting pressure.",
-        "fun_fact": "Because there is no contact force, delicate and flexible sheet materials can be cut without bending or clamping."
-      }
-    ],
-    "versus_candidates": [
-      "Waterjet Cutter",
-      "CNC Milling Machine",
-      "3D Printer"
-    ]
-  },
-  {
-    "id": "ENT-VEH-245",
-    "domain_id": "vehicles_technology",
-    "subtopic_id": "industrial_inventions",
-    "name": "Waterjet Cutter",
-    "language": "en",
-    "aliases": [
-      "Abrasive Waterjet",
-      "Hydro-Abrasive Cutter",
-      "Water Jet"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Ultra-high-pressure waterjet nozzle blasting a supersonic stream of garnet-infused water slicing cleanly through a 6-inch thick slab of solid granite.",
-    "core_traits": [
-      "Industrial cutting tool that uses an ultra-high-pressure jet of water (up to 60,000 to 90,000 PSI) to cut through materials",
-      "Injects fine abrasive crushed garnet sand into the water stream to slice through steel, titanium, bulletproof glass, and stone",
-      "Performs 'cold cutting', creating zero heat-affected zones (HAZ) and causing no thermal warping or metallurgical damage",
-      "Can cut through virtually any solid material up to a foot thick with smooth satin-finish edges"
-    ],
-    "distractor_pool": [
-      "Industrial Laser Cutter",
-      "CNC Milling Machine",
-      "3D Printer",
-      "Chainsaw",
-      "Plasma Cutter"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The waterjet stream exits the tiny sapphire nozzle orifice at speeds exceeding Mach 3 (three times the speed of sound).",
-        "verdict": "fact",
-        "explanation": "Pressurized to 60,000 PSI by hydraulic intensifier pumps, the water accelerates through a jewel orifice at over 2,500 mph.",
-        "fun_fact": "The supersonic water accelerates hard garnet sand particles that act like millions of microscopic chisels."
-      },
-      {
-        "claim": "Waterjet cutters melt through steel using extreme water temperature.",
-        "verdict": "myth",
-        "explanation": "Waterjet cutting is entirely cold mechanical erosion; the water is room temperature, so materials never experience heat hardening or toxic fumes.",
-        "fun_fact": "Pure waterjets (without garnet sand) are used to slice frozen pizzas, disposable diapers, and cardboard without dulling blades."
-      }
-    ],
-    "versus_candidates": [
-      "Industrial Laser Cutter",
-      "CNC Milling Machine",
-      "Chainsaw"
-    ]
-  },
-  {
-    "id": "ENT-VEH-246",
+    "id": "ENT-VEH-214",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Traffic Light",
@@ -11307,7 +9852,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-247",
+    "id": "ENT-VEH-215",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Metal Detector",
@@ -11353,7 +9898,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-248",
+    "id": "ENT-VEH-216",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Industrial Laser",
@@ -11399,7 +9944,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-249",
+    "id": "ENT-VEH-217",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Radar System",
@@ -11445,7 +9990,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-250",
+    "id": "ENT-VEH-218",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Sonar System",
@@ -11491,7 +10036,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-251",
+    "id": "ENT-VEH-219",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "X-Ray Machine",
@@ -11537,7 +10082,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-252",
+    "id": "ENT-VEH-220",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "MRI Scanner",
@@ -11583,7 +10128,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-253",
+    "id": "ENT-VEH-221",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "CT Scanner",
@@ -11629,7 +10174,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-254",
+    "id": "ENT-VEH-222",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Ultrasound Scanner",
@@ -11675,7 +10220,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-255",
+    "id": "ENT-VEH-223",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Stethoscope",
@@ -11721,12 +10266,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-256",
+    "id": "ENT-VEH-224",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
-    "name": "Optical Telescope",
+    "name": "Telescope",
     "language": "en",
     "aliases": [
+      "Optical Telescope",
       "Refracting Telescope",
       "Reflecting Telescope",
       "Astronomical Telescope"
@@ -11767,7 +10313,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-257",
+    "id": "ENT-VEH-225",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Optical Microscope",
@@ -11813,7 +10359,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-258",
+    "id": "ENT-VEH-226",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Electron Microscope",
@@ -11859,7 +10405,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-259",
+    "id": "ENT-VEH-227",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Magnetic Compass",
@@ -11905,12 +10451,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-260",
+    "id": "ENT-VEH-228",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
-    "name": "Mechanical Clock",
+    "name": "Clock",
     "language": "en",
     "aliases": [
+      "Mechanical Clock",
       "Pendulum Clock",
       "Grandfather Clock",
       "Horological Clock"
@@ -11951,7 +10498,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-261",
+    "id": "ENT-VEH-229",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Hourglass",
@@ -11997,7 +10544,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-262",
+    "id": "ENT-VEH-230",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Thermometer",
@@ -12043,7 +10590,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-263",
+    "id": "ENT-VEH-231",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Barometer",
@@ -12089,12 +10636,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-264",
+    "id": "ENT-VEH-232",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
-    "name": "Electronic Calculator",
+    "name": "Calculator",
     "language": "en",
     "aliases": [
+      "Electronic Calculator",
       "Pocket Calculator",
       "Scientific Calculator",
       "Texas Instruments / Casio"
@@ -12135,12 +10683,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-265",
+    "id": "ENT-VEH-233",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
-    "name": "Mechanical Typewriter",
+    "name": "Typewriter",
     "language": "en",
     "aliases": [
+      "Mechanical Typewriter",
       "Typewriter",
       "Underwood Typewriter",
       "Manual Typewriter"
@@ -12181,7 +10730,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-266",
+    "id": "ENT-VEH-234",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Desktop Computer",
@@ -12227,7 +10776,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-267",
+    "id": "ENT-VEH-235",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Laptop",
@@ -12273,7 +10822,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-268",
+    "id": "ENT-VEH-236",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Tablet",
@@ -12319,7 +10868,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-269",
+    "id": "ENT-VEH-237",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Smartwatch",
@@ -12365,7 +10914,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-270",
+    "id": "ENT-VEH-238",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Digital Camera",
@@ -12411,7 +10960,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-271",
+    "id": "ENT-VEH-239",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Video Camera",
@@ -12457,7 +11006,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-272",
+    "id": "ENT-VEH-240",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Television",
@@ -12503,7 +11052,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-273",
+    "id": "ENT-VEH-241",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Radio",
@@ -12549,7 +11098,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-274",
+    "id": "ENT-VEH-242",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Walkie-Talkie",
@@ -12595,7 +11144,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-275",
+    "id": "ENT-VEH-243",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Headphones",
@@ -12641,7 +11190,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-276",
+    "id": "ENT-VEH-244",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Earphones",
@@ -12687,7 +11236,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-277",
+    "id": "ENT-VEH-245",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Microphone",
@@ -12733,7 +11282,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-278",
+    "id": "ENT-VEH-246",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Audio Speaker",
@@ -12779,7 +11328,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-279",
+    "id": "ENT-VEH-247",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Projector",
@@ -12825,7 +11374,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-280",
+    "id": "ENT-VEH-248",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Gaming Console",
@@ -12871,7 +11420,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-281",
+    "id": "ENT-VEH-249",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Virtual Reality Headset",
@@ -12917,7 +11466,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-282",
+    "id": "ENT-VEH-250",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Flashlight",
@@ -12963,7 +11512,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-283",
+    "id": "ENT-VEH-251",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Light Bulb",
@@ -13009,7 +11558,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-284",
+    "id": "ENT-VEH-252",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Battery",
@@ -13055,7 +11604,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-285",
+    "id": "ENT-VEH-253",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Refrigerator",
@@ -13101,7 +11650,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-286",
+    "id": "ENT-VEH-254",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Microwave Oven",
@@ -13147,12 +11696,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-287",
+    "id": "ENT-VEH-255",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
-    "name": "Electric Toaster",
+    "name": "Toaster",
     "language": "en",
     "aliases": [
+      "Electric Toaster",
       "Pop-Up Toaster",
       "Bread Toaster",
       "Toastmaster"
@@ -13193,12 +11743,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-288",
+    "id": "ENT-VEH-256",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
-    "name": "Kitchen Blender",
+    "name": "Blender",
     "language": "en",
     "aliases": [
+      "Kitchen Blender",
       "Blender",
       "Food Liquidizer",
       "Smoothie Maker"
@@ -13239,7 +11790,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-289",
+    "id": "ENT-VEH-257",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Dishwasher",
@@ -13285,7 +11836,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-290",
+    "id": "ENT-VEH-258",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Washing Machine",
@@ -13331,7 +11882,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-291",
+    "id": "ENT-VEH-259",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Vacuum Cleaner",
@@ -13377,7 +11928,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-292",
+    "id": "ENT-VEH-260",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Robot Vacuum",
@@ -13423,7 +11974,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-293",
+    "id": "ENT-VEH-261",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Hairdryer",
@@ -13469,7 +12020,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-294",
+    "id": "ENT-VEH-262",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Air Conditioner",
@@ -13515,12 +12066,13 @@
     ]
   },
   {
-    "id": "ENT-VEH-295",
+    "id": "ENT-VEH-263",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
-    "name": "Electric Fan",
+    "name": "Fan",
     "language": "en",
     "aliases": [
+      "Electric Fan",
       "Desk Fan",
       "Ceiling Fan",
       "Oscillating Fan"
@@ -13561,7 +12113,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-296",
+    "id": "ENT-VEH-264",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Elevator",
@@ -13607,7 +12159,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-297",
+    "id": "ENT-VEH-265",
     "domain_id": "vehicles_technology",
     "subtopic_id": "industrial_inventions",
     "name": "Escalator",
@@ -13653,7 +12205,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-298",
+    "id": "ENT-VEH-266",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "E-Reader",
@@ -13699,7 +12251,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-299",
+    "id": "ENT-VEH-267",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Handheld Gaming Console",
@@ -13745,7 +12297,7 @@
     ]
   },
   {
-    "id": "ENT-VEH-300",
+    "id": "ENT-VEH-268",
     "domain_id": "vehicles_technology",
     "subtopic_id": "consumer_tech",
     "name": "Wristwatch",

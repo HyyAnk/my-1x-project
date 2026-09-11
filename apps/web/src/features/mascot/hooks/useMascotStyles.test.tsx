@@ -337,11 +337,16 @@ describe("useMascotStyles", () => {
     expect(onNotice).toHaveBeenCalledWith(expect.objectContaining({ tone: "good" }));
   });
 
-  it("delegates batch generation to the single server-side batch endpoint", async () => {
+  it("orchestrates real-time batch slot generation across concurrent streams", async () => {
     const updatedMascot: MascotProfile = { ...mockMascot };
-    vi.mocked(api.generateMascotStyleBatch).mockResolvedValue({
+    vi.mocked(api.generateMascotStyleSlot).mockResolvedValue({
       mascot: updatedMascot,
-      generated_count: 9,
+      slot: {
+        id: "var_t2",
+        slot_index: 2,
+        image_url: "https://example.com/think2.png",
+      },
+      prompt_used: "Concentrated thought",
     });
 
     const { result } = renderHook(() =>
@@ -356,10 +361,9 @@ describe("useMascotStyles", () => {
       await result.current.handleBatchGenerateStyle("thinking");
     });
 
-    // Thinking slots 2..10 (9 empty slots) are handled by one server batch call
-    expect(api.generateMascotStyleBatch).toHaveBeenCalledTimes(1);
-    expect(api.generateMascotStyleSlot).not.toHaveBeenCalled();
-    expect(onMascotUpdated).toHaveBeenCalledWith(updatedMascot);
+    // Thinking slots 2..10 (9 empty slots) are generated in real-time
+    expect(api.generateMascotStyleSlot).toHaveBeenCalledTimes(9);
+    expect(onMascotUpdated).toHaveBeenCalled();
     expect(result.current.busySlotKey).toBeNull();
     expect(result.current.batchProgress).toBeNull();
     expect(onNotice).toHaveBeenCalled();
@@ -367,7 +371,7 @@ describe("useMascotStyles", () => {
     expect(onNotice.mock.lastCall?.[0]?.message).toContain("9/9 slots generated");
   });
 
-  it("supports stopping batch generation early by aborting the server request", async () => {
+  it("supports stopping batch generation early by aborting the batch", async () => {
     const { result } = renderHook(() =>
       useMascotStyles({
         mascot: mockMascot,
@@ -376,7 +380,7 @@ describe("useMascotStyles", () => {
       }),
     );
 
-    vi.mocked(api.generateMascotStyleBatch).mockImplementation(() => {
+    vi.mocked(api.generateMascotStyleSlot).mockImplementation(() => {
       act(() => {
         result.current.handleStopBatchGeneration();
       });
@@ -387,7 +391,6 @@ describe("useMascotStyles", () => {
       await result.current.handleBatchGenerateStyle("thinking");
     });
 
-    expect(api.generateMascotStyleSlot).not.toHaveBeenCalled();
     expect(result.current.busySlotKey).toBeNull();
     expect(result.current.batchProgress).toBeNull();
     expect(onNotice).toHaveBeenCalled();
@@ -395,8 +398,8 @@ describe("useMascotStyles", () => {
     expect(onNotice.mock.lastCall?.[0]?.message).toContain("stopped");
   });
 
-  it("shows an error notice when the server batch generation fails", async () => {
-    vi.mocked(api.generateMascotStyleBatch).mockRejectedValue(new Error("Batch failed"));
+  it("shows an error notice when all batch slots fail", async () => {
+    vi.mocked(api.generateMascotStyleSlot).mockRejectedValue(new Error("Batch failed"));
 
     const { result } = renderHook(() =>
       useMascotStyles({
@@ -413,7 +416,7 @@ describe("useMascotStyles", () => {
     expect(onNotice).toHaveBeenCalledWith(
       expect.objectContaining({
         tone: "bad",
-        message: "Batch failed",
+        message: expect.stringContaining("failed"),
       }),
     );
     expect(result.current.busySlotKey).toBeNull();
@@ -496,7 +499,7 @@ describe("useMascotStyles", () => {
     expect(result.current.busySlotKey).toBeNull();
     expect(onNotice).toHaveBeenCalled();
     expect(onNotice.mock.lastCall?.[0]?.tone).toBe("bad");
-    expect(onNotice.mock.lastCall?.[0]?.message).toContain("Batch failed");
+    expect(onNotice.mock.lastCall?.[0]?.message).toContain("failed");
   });
 
   it("generates style concept anchor successfully and updates profile", async () => {

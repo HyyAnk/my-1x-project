@@ -258,7 +258,7 @@ describe("P4: Knowledge Policy Metadata Migration", () => {
         .filter((file) => file.endsWith(".json"))
         .sort();
 
-      expect(jsonFiles.length).toBe(14);
+      expect(jsonFiles.length).toBe(18);
 
       const forbiddenKeys = ["copyright_risk", "is_trademark_ip", "forbidden_visual_keywords", "safe_visual_proxy"];
       let totalEntitiesChecked = 0;

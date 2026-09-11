@@ -1,5 +1,11 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { CORE_TRANSITIONS, getTransition, listTransitions, type TransitionDefinition } from "@studio/shared";
+import {
+  CORE_TRANSITIONS,
+  getTransition,
+  listTransitions,
+  type TransitionDefinition,
+  type TransitionSettings,
+} from "@studio/shared";
 
 export const DEFAULT_TRANSITION_ID = "stinger_swipe";
 export const DEFAULT_TRANSITION_DURATION = 0.5;
@@ -14,6 +20,7 @@ export interface ChannelTransitionConfigInput {
   transition_type?: string;
   transition_duration_seconds?: number;
   default_intro_outro_style_id?: string | null;
+  transitions?: TransitionSettings;
   [key: string]: unknown;
 }
 
@@ -24,6 +31,7 @@ export interface PresetTransitionConfigInput {
   transition_duration?: number;
   transition_type?: string;
   transition_duration_seconds?: number;
+  transitions?: TransitionSettings;
   [key: string]: unknown;
 }
 
@@ -135,10 +143,18 @@ export function useSandboxTransitionState(options?: UseSandboxTransitionStateOpt
   const syncFromChannel = useCallback(
     (channel?: ChannelTransitionConfigInput | null) => {
       if (!channel) return;
-      if (channel.transition_type && typeof channel.transition_type === "string") {
-        setTransitionId(channel.transition_type);
-        if (typeof channel.transition_duration_seconds === "number") {
-          setTransitionDuration(channel.transition_duration_seconds);
+      const transId =
+        channel.transitions?.scene?.id ??
+        channel.transitions?.intro?.id ??
+        channel.transition_type;
+      if (transId && typeof transId === "string") {
+        setTransitionId(transId);
+        const duration =
+          channel.transitions?.scene?.durationSeconds ??
+          channel.transitions?.intro?.durationSeconds ??
+          channel.transition_duration_seconds;
+        if (typeof duration === "number") {
+          setTransitionDuration(duration);
         }
       }
     },
@@ -148,10 +164,20 @@ export function useSandboxTransitionState(options?: UseSandboxTransitionStateOpt
   const syncFromPreset = useCallback(
     (preset?: PresetTransitionConfigInput | null) => {
       if (!preset) return;
-      const transId = preset.transitionId ?? preset.transition_id ?? preset.transition_type;
+      const transId =
+        preset.transitions?.scene?.id ??
+        preset.transitions?.intro?.id ??
+        preset.transitionId ??
+        preset.transition_id ??
+        preset.transition_type;
       if (transId && typeof transId === "string") {
         setTransitionId(transId);
-        const duration = preset.transitionDuration ?? preset.transition_duration ?? preset.transition_duration_seconds;
+        const duration =
+          preset.transitions?.scene?.durationSeconds ??
+          preset.transitions?.intro?.durationSeconds ??
+          preset.transitionDuration ??
+          preset.transition_duration ??
+          preset.transition_duration_seconds;
         if (typeof duration === "number") {
           setTransitionDuration(duration);
         }

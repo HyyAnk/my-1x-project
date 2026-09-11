@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { QuizV2Schema, type Scene } from "@studio/shared";
-import { buildQuizComposition, buildQuizV2Composition, buildQuizV2CompositionBundle } from "../src/quiz/render/buildComposition.js";
+import { QuizV2Schema } from "@studio/shared";
+import { buildCandyArcadeComposition, buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 import { HyperframesRenderer } from "../src/quiz/render/hyperframesRenderer.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
@@ -34,77 +34,6 @@ const sampleQuiz = QuizV2Schema.parse({
 });
 
 describe("Quiz HTML Composition Output & Video Pipeline", () => {
-  describe("buildQuizComposition (Legacy / V1)", () => {
-    it("generates well-formed HTML with data attributes, styling, and narration audio", () => {
-      const scenes: Scene[] = [
-        {
-          scene_id: "sc-1",
-          sequence_title: "Question 1",
-          dialogue: "What color is the sky?",
-          visual_prompt: "Sky",
-          duration_seconds: 5,
-          media_path: "media/sc1.png",
-          quiz: {
-            question_number: 1,
-            question: "What color is the sky?",
-            choices: ["Blue", "Green", "Red"],
-            correct_index: 0,
-            phase: "question",
-            explanation: "The sky is blue.",
-            fun_fact: "",
-          },
-        },
-      ];
-
-      const html = buildQuizComposition(
-        { question_count: 1, quiz_format: "multiple_choice", age_band: "7-9", visual_theme: "candy_arcade" },
-        scenes,
-        "audio/narration.wav",
-        10,
-      );
-
-      expect(html).toContain("<!doctype html>");
-      expect(html).toContain('id="stage"');
-      expect(html).toContain('data-duration="10.000"');
-      expect(html).toContain('<audio id="quiz-narration"');
-      expect(html).toContain("READY TO PLAY");
-      expect(html).toContain("Blue");
-      expect(html).toContain("Green");
-      expect(html).toContain("Red");
-      expect(html).toContain("window.__renderReady=true;");
-    });
-
-    it("throws an error when scene choice count does not match the format requirement", () => {
-      const invalidScenes: Scene[] = [
-        {
-          scene_id: "sc-bad",
-          sequence_title: "Question 1",
-          dialogue: "Invalid choices count",
-          visual_prompt: "Sky",
-          duration_seconds: 5,
-          media_path: "media/sc1.png",
-          quiz: {
-            question_number: 1,
-            question: "Invalid choices count",
-            choices: ["Only One Choice"],
-            correct_index: 0,
-            phase: "question",
-            explanation: "",
-            fun_fact: "",
-          },
-        },
-      ];
-
-      expect(() =>
-        buildQuizComposition(
-          { question_count: 1, quiz_format: "multiple_choice", age_band: "7-9", visual_theme: "candy_arcade" },
-          invalidScenes,
-          "audio/narration.wav",
-        ),
-      ).toThrow("QUIZ_CHOICE_COUNT_INVALID");
-    });
-  });
-
   describe("HyperframesRenderer & V2 Composition Bundle", () => {
     it("prepares and renders a deterministic V2 composition bundle", async () => {
       const director = createDefaultDirectorPlan(sampleQuiz);
@@ -148,7 +77,7 @@ describe("Quiz HTML Composition Output & Video Pipeline", () => {
       expect(rendered.composition).toBe(prepared.html);
       expect(rendered.durationSeconds).toBe(timeline.duration_seconds);
 
-      const directHtml = buildQuizV2Composition({
+      const directHtml = buildCandyArcadeComposition({
         quiz: sampleQuiz,
         director,
         timeline,
@@ -170,7 +99,7 @@ describe("Quiz HTML Composition Output & Video Pipeline", () => {
         audioDurations: Object.fromEntries(voicePlan.segments.map((s) => [s.segment_id, 1.2])),
       });
 
-      const bundle = buildQuizV2CompositionBundle({
+      const bundle = buildCandyArcadeCompositionBundle({
         quiz: sampleQuiz,
         director,
         timeline,

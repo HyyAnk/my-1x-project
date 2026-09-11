@@ -5,7 +5,7 @@
 export function clueDeductionPhaseStyles(): string {
   return `
 /* --- Row 3: Dedicated Phase Region (BUG-CD-03 & BUG-CD-04 Fix) --- */
-.layout-clue_deduction .phase-region {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .phase-region {
   grid-area: phase;
   position: relative;
   left: auto;
@@ -22,7 +22,7 @@ export function clueDeductionPhaseStyles(): string {
 }
 
 /* Thinking Bar: Sized to 1180px to eliminate Star Marker Overflow (BUG-CD-04 Fix) */
-.layout-clue_deduction .phase-region > .thinking-bar {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .phase-region > .thinking-bar {
   position: relative;
   left: auto;
   bottom: auto;
@@ -33,7 +33,7 @@ export function clueDeductionPhaseStyles(): string {
 }
 
 /* Fact Card: Dedicated Row 3 containment with ZERO stage overlap */
-.layout-clue_deduction .phase-region > .fact-card {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .phase-region > .fact-card {
   position: relative;
   left: auto;
   bottom: auto;

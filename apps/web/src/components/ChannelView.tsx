@@ -77,6 +77,9 @@ export function ChannelsView({
         reelId={selectedShortReelId}
         onBack={() => openChannel(selectedChannel.channel_id)}
         onNotice={onNotice}
+        onNavigateHome={onNavigateHome}
+        onNavigateChannels={() => openChannel("")}
+        onNavigateChannel={() => openChannel(selectedChannel.channel_id)}
       />
     );
   }

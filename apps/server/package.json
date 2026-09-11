@@ -10,6 +10,8 @@
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "vitest run --testTimeout 15000",
     "test:coverage": "vitest run --coverage --testTimeout 15000",
+    "test:transitions": "vitest run --testTimeout 15000 \"transition\"",
+    "test:transitions:parity": "vitest run --testTimeout 60000 test/transitionProductionParity.test.ts",
     "test:visual": "cross-env RUN_VISUAL_REGRESSION=1 vitest run test/quizPixelVisualRegression.test.ts",
     "test:visual:update": "cross-env RUN_VISUAL_REGRESSION=1 UPDATE_VISUAL_SNAPSHOTS=1 vitest run test/quizPixelVisualRegression.test.ts"
   },

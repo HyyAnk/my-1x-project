@@ -1,4 +1,11 @@
-import { getQuizPreviewLayoutCapability, quizChoicePresentationFor, type SandboxPreviewInput } from "@studio/shared";
+import {
+  generateSampleImageDataUri,
+  getQuizPreviewLayoutCapability,
+  getSampleImageSpec,
+  quizChoicePresentationFor,
+  resolveQuizLayoutAssetAspectRatio,
+  type SandboxPreviewInput,
+} from "@studio/shared";
 import { candyArcadePalettes } from "../../visual/candyArcade.js";
 import { buildQuizSceneRenderModel } from "./buildQuizSceneRenderModel.js";
 import { sandboxSceneState } from "./sandboxSceneStateAdapter.js";
@@ -17,6 +24,34 @@ export function adaptSandboxQuizScene(input: SandboxPreviewInput, mascotOccupied
   const choices = input.choices.map((text, index) => ({ id: `sandbox-choice-${index + 1}`, text }));
   const correctChoiceId = input.choices.length > 0 ? (choices[input.correct_choice_index]?.id ?? choices[0]?.id ?? "") : "";
   const palette = candyArcadePalettes.find((candidate) => candidate.id === input.palette_id) ?? candyArcadePalettes[0];
+
+  const heroAspectRatio = resolveQuizLayoutAssetAspectRatio(input.layout_id, "hero_question_image");
+  const heroSpec = getSampleImageSpec(heroAspectRatio);
+  const heroSource = generateSampleImageDataUri(heroSpec, {
+    slotLabel: `${heroSpec.aspectRatio} HERO`,
+    subLabel: `${heroSpec.recommendedResolution} • ${heroSpec.role}`,
+  });
+
+  const choiceAspectRatio = resolveQuizLayoutAssetAspectRatio(input.layout_id, "answer_option");
+  const choiceSpec = getSampleImageSpec(choiceAspectRatio);
+  const choiceMedia = Object.fromEntries(
+    choices.map((choice, index) => {
+      const label = String.fromCharCode(65 + index);
+      const choiceSource = generateSampleImageDataUri(choiceSpec, {
+        slotLabel: `CHOICE ${label}`,
+        subLabel: `${choiceSpec.aspectRatio} • ${choiceSpec.recommendedResolution}`,
+      });
+      return [
+        choice.id,
+        {
+          source: choiceSource,
+          altText: choice.text,
+          fallback: { subject: choice.text, seed: questionNumber + index + 1 },
+        },
+      ];
+    }),
+  );
+
   return buildQuizSceneRenderModel({
     question: {
       id: questionId,
@@ -34,13 +69,8 @@ export function adaptSandboxQuizScene(input: SandboxPreviewInput, mascotOccupied
     layout: { id: input.layout_id, source: "preview", capability, presentation },
     aspectRatio: input.aspect_ratio,
     mascot: mascotOccupied ? { occupied: true, anchor: input.mascot_position } : { occupied: false, anchor: null },
-    hero: { source: null, altText: input.question_text, fallback: { subject: input.question_text, seed: questionNumber } },
-    choiceMedia: Object.fromEntries(
-      choices.map((choice, index) => [
-        choice.id,
-        { source: null, altText: choice.text, fallback: { subject: choice.text, seed: questionNumber + index + 1 } },
-      ]),
-    ),
+    hero: { source: heroSource, altText: input.question_text, fallback: { subject: input.question_text, seed: questionNumber } },
+    choiceMedia,
     palette,
     styles: resolveQuizSceneElementStyles({
       thinkingBar: input.thinking_bar_style,

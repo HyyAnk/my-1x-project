@@ -63,6 +63,15 @@
   cursor: not-allowed;
 }
 
+.slot-action-btn.is-generating,
+.slot-action-btn.is-generating:disabled {
+  opacity: 1;
+  background: rgba(6, 182, 212, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+  cursor: wait;
+}
+
 .slot-action-btn.is-generate {
   background: var(--accent);
   border-color: var(--accent);

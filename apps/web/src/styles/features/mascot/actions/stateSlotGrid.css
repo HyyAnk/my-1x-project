@@ -77,6 +77,16 @@
   background: rgba(6, 182, 212, 0.16);
 }
 
+.quiet-button.is-quick-batch.is-generating,
+.quiet-button.is-quick-batch.is-generating:disabled {
+  opacity: 1;
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(6, 182, 212, 0.18);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
+  cursor: wait;
+}
+
 /* 4. 10-Slot Grid */
 .variant-slots-grid {
   display: grid;

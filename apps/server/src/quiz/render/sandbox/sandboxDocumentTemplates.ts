@@ -5,6 +5,7 @@ import { renderQuizSceneBackground, type renderStableQuizSceneParts } from "../s
 import type { buildQuizSceneParts } from "../scene/buildQuizSceneParts.js";
 import type { adaptSandboxQuizScene } from "../scene/sandboxSceneAdapter.js";
 import { getSandboxRehearsalClientScript } from "./sandboxRehearsalScript.js";
+import { isUnifiedQuizFrame } from "../frame/renderQuizFrameBody.js";
 
 export function sandboxRewardFx(): string {
   return `
@@ -35,6 +36,7 @@ export function sandboxSnapshotDocument(
   const rewardAt = model.state.fact === "visible" ? 0 : 999;
   const mascotClass = model.mascot.occupied ? "has-mascot" : "";
   const rewardHtml = model.state.reward === "visible" ? sandboxRewardFx() : "";
+  const isUnified = isUnifiedQuizFrame(model.layout.id, model.aspectRatio);
   return `<!doctype html>
 <html>
 <head>
@@ -71,10 +73,10 @@ ${serializeQuizPaletteCss(model.palette, "      ")}
 </head>
 <body>
   <main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="${canvas.width}" data-height="${canvas.height}" data-aspect-ratio="${model.aspectRatio}" data-duration="10" data-fps="30">
-    <section class="clip candy-scene quiz-question-clip layout-${model.layout.id} ${mascotClass} sandbox-preview-stage ${model.isFinal ? "is-final-scene" : ""}" data-reveal-at="${revealAt}">
+    <section class="clip candy-scene quiz-question-clip ${isUnified ? "quiz-frame-unified" : ""} layout-${model.layout.id} ${mascotClass} sandbox-preview-stage ${model.isFinal ? "is-final-scene" : ""}" data-reveal-at="${revealAt}">
       ${renderQuizSceneBackground(parts, "sandbox", { questionIndex: model.question.number - 1 })}
 
-      <header class="game-header" data-layout-allow-occlusion>
+      <header class="game-header" data-quiz-fixed="counter" data-layout-allow-occlusion>
         ${stableParts.counterBadgeHtml}
       </header>
 
@@ -103,7 +105,10 @@ export function sandboxRehearsalDocument(
 ): string {
   const canvas = MASCOT_CANVAS_SIZES[model.aspectRatio];
   const mascotClass = model.mascot.occupied ? "has-mascot" : "";
-  const timerDuration = Math.max(0.04, timeline.revealStart - timeline.thinkingStart);
+  const isUnified = isUnifiedQuizFrame(model.layout.id, model.aspectRatio);
+  const timerDuration = Math.max(0.04, timeline.revealStart);
+  const rewardStart = timeline.revealStart + 0.8;
+  const revealDuration = Math.max(0.04, rewardStart - timeline.revealStart);
   return `<!doctype html>
 <html>
 <head>
@@ -116,14 +121,15 @@ export function sandboxRehearsalDocument(
     /* Rehearsal Stage Dynamic Animation Pacing */
     .sandbox-preview-stage {
       --clip-start: 0s;
+      --timer-start: 0s;
       --scene-duration: ${timeline.totalDuration.toFixed(3)}s;
       --choices-at: ${timeline.choicesStart.toFixed(3)}s;
       --thinking-at: ${timeline.thinkingStart.toFixed(3)}s;
       --reveal-at: ${timeline.revealStart.toFixed(3)}s;
-      --reward-at: ${timeline.explainStart.toFixed(3)}s;
+      --reward-at: ${rewardStart.toFixed(3)}s;
       --choices-duration: ${(timeline.revealStart - timeline.choicesStart).toFixed(3)}s;
       --timer-duration: ${timerDuration.toFixed(3)}s;
-      --reveal-duration: ${(timeline.explainStart - timeline.revealStart).toFixed(3)}s;
+      --reveal-duration: ${revealDuration.toFixed(3)}s;
       --ambient-phase: 0s;
 ${serializeQuizPaletteCss(model.palette, "      ")}
       --question-size: ${parts.question.layout.fontSize}px;
@@ -138,10 +144,10 @@ ${serializeQuizPaletteCss(model.palette, "      ")}
 </head>
 <body>
   <main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="${canvas.width}" data-height="${canvas.height}" data-aspect-ratio="${model.aspectRatio}" data-duration="${timeline.totalDuration.toFixed(3)}" data-fps="30">
-    <section class="clip candy-scene quiz-question-clip layout-${model.layout.id} ${mascotClass} sandbox-preview-stage ${model.isFinal ? "is-final-scene" : ""}" data-reveal-at="${timeline.revealStart.toFixed(3)}">
+    <section class="clip candy-scene quiz-question-clip ${isUnified ? "quiz-frame-unified" : ""} layout-${model.layout.id} ${mascotClass} sandbox-preview-stage ${model.isFinal ? "is-final-scene" : ""}" data-reveal-at="${timeline.revealStart.toFixed(3)}">
       ${renderQuizSceneBackground(parts, "production", { questionIndex: model.question.number - 1, clipStart: 0, duration: timeline.totalDuration })}
 
-      <header class="game-header" data-layout-allow-occlusion>
+      <header class="game-header" data-quiz-fixed="counter" data-layout-allow-occlusion>
         ${stableParts.counterBadgeHtml}
       </header>
 

@@ -1,6 +1,7 @@
 export type BundleImageMeta = {
   price_vnd?: number;
   price_breakdown?: Record<string, number>;
+  provider?: string;
   model?: string;
   aspect_ratio?: string;
   size?: string;
@@ -19,6 +20,7 @@ export type BundleImageAsset = {
   modified_at: string;
   price_vnd?: number;
   price_breakdown?: Record<string, number>;
+  provider?: string;
   model?: string;
   aspect_ratio?: string;
   provenance?: "explicit" | "curated" | "auto";

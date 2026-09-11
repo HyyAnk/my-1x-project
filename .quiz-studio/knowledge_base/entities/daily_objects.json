@@ -189,9 +189,10 @@
     "id": "ENT-OBJ-005",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
-    "name": "Door Key",
+    "name": "Key",
     "language": "en",
     "aliases": [
+      "Door Key",
       "House Key",
       "Brass Key",
       "Latchkey",
@@ -282,9 +283,10 @@
     "id": "ENT-OBJ-007",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
-    "name": "Leather Wallet",
+    "name": "Wallet",
     "language": "en",
     "aliases": [
+      "Leather Wallet",
       "Bifold Wallet",
       "Billfold",
       "Cardholder",
@@ -797,9 +799,10 @@
     "id": "ENT-OBJ-018",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
-    "name": "Leather Belt",
+    "name": "Belt",
     "language": "en",
     "aliases": [
+      "Leather Belt",
       "Belt",
       "Waistbelt",
       "Trouser Belt"
@@ -843,9 +846,10 @@
     "id": "ENT-OBJ-019",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
-    "name": "Finger Ring",
+    "name": "Ring",
     "language": "en",
     "aliases": [
+      "Finger Ring",
       "Wedding Band",
       "Ring",
       "Signet Ring",
@@ -890,9 +894,10 @@
     "id": "ENT-OBJ-020",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
-    "name": "Metal Coin",
+    "name": "Coin",
     "language": "en",
     "aliases": [
+      "Metal Coin",
       "Coin",
       "Pocket Change",
       "Specie",
@@ -1078,53 +1083,6 @@
     "id": "ENT-OBJ-024",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
-    "name": "Cigarette Lighter",
-    "language": "en",
-    "aliases": [
-      "Lighter",
-      "Butane Lighter",
-      "Zippo",
-      "Flint Lighter"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A polished chrome flip-top lighter snapping open to ignite a steady golden flame against a dark urban backdrop, throwing fiery sparks from its flint wheel.",
-    "core_traits": [
-      "A handheld fire-starting device containing pressurized butane gas or lighter fluid",
-      "Flicking a serrated thumbwheel across ferrocerium flint sparks an instant controlled flame",
-      "Used to ignite candles, campfires, gas stoves, and tobacco products",
-      "Available as cheap colorful disposable plastic units or refillable windproof metal cases"
-    ],
-    "distractor_pool": [
-      "Matchbox",
-      "Candle",
-      "Flashlight",
-      "Pocket Knife",
-      "Soldering Iron"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The mechanical cigarette lighter was invented before the modern friction match.",
-        "verdict": "fact",
-        "explanation": "Johann Wolfgang Dobereiner invented a chemical lighter ('Dobereiner's Lamp') in 1823, three years before John Walker invented the friction friction match in 1826.",
-        "fun_fact": "Dobereiner's early table lighter utilized hydrogen gas ignited over platinum sponge catalyst."
-      },
-      {
-        "claim": "Leaving a disposable plastic lighter in a hot parked car will explode with the force of dynamite.",
-        "verdict": "myth",
-        "explanation": "Extreme dashboard heat can rupture the plastic reservoir and release butane vapor with a pop, but it will not detonate like high explosives without an open spark.",
-        "fun_fact": "It still creates a fire hazard and can crack a windshield if expanding gas bursts violently."
-      }
-    ],
-    "versus_candidates": [
-      "Matchbox",
-      "Electronic Lighter",
-      "Torch Lighter"
-    ]
-  },
-  {
-    "id": "ENT-OBJ-025",
-    "domain_id": "daily_objects",
-    "subtopic_id": "personal_essentials",
     "name": "Matchbox",
     "language": "en",
     "aliases": [
@@ -1169,7 +1127,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-026",
+    "id": "ENT-OBJ-025",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Nail Clipper",
@@ -1215,7 +1173,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-027",
+    "id": "ENT-OBJ-026",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Hair Dryer",
@@ -1261,54 +1219,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-028",
-    "domain_id": "daily_objects",
-    "subtopic_id": "personal_essentials",
-    "name": "Safety Razor",
-    "language": "en",
-    "aliases": [
-      "Shaving Razor",
-      "Disposable Razor",
-      "Double-Edge Razor",
-      "Wet Razor"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A precision-machined stainless steel double-edge safety razor head resting on lathered white shaving soap, backlit with crisp hygienic bathroom light.",
-    "core_traits": [
-      "A shaving tool with a protective guard positioned between the sharp blade edge and the skin",
-      "Glides over lathered skin to cleanly slice away facial or body stubble without deep cuts",
-      "Loaded with replaceable ultra-thin steel blades or modular multi-blade cartridges",
-      "A core grooming item found in bathroom cabinets for a smooth, clean-shaven look"
-    ],
-    "distractor_pool": [
-      "Electric Shaver",
-      "Straight Razor",
-      "Scissors",
-      "Tweezers",
-      "Nail Clipper"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Shaving hair makes it grow back significantly thicker, darker, and faster than before.",
-        "verdict": "myth",
-        "explanation": "Shaving cuts hair bluntly across the shaft rather than with a naturally tapered tip, making stubble feel coarser, but it does not alter follicle biology.",
-        "fun_fact": "Clinical studies since 1928 have consistently proven shaving does not accelerate growth rates."
-      },
-      {
-        "claim": "King Camp Gillette revolutionized shaving in 1901 by inventing disposable stamped-steel razor blades.",
-        "verdict": "fact",
-        "explanation": "Before Gillette's disposable safety razor, men had to hone and strop dangerous cutthroat straight razors or pay a professional barber.",
-        "fun_fact": "The US military issued millions of Gillette razors to soldiers in World War I."
-      }
-    ],
-    "versus_candidates": [
-      "Electric Shaver",
-      "Straight Razor",
-      "Beard Trimmer"
-    ]
-  },
-  {
-    "id": "ENT-OBJ-029",
+    "id": "ENT-OBJ-027",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Lip Balm",
@@ -1354,7 +1265,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-030",
+    "id": "ENT-OBJ-028",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Hand Sanitizer",
@@ -1400,7 +1311,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-031",
+    "id": "ENT-OBJ-029",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Earphones",
@@ -1447,7 +1358,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-032",
+    "id": "ENT-OBJ-030",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Smartphone Case",
@@ -1493,7 +1404,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-033",
+    "id": "ENT-OBJ-031",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Travel Suitcase",
@@ -1540,7 +1451,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-034",
+    "id": "ENT-OBJ-032",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Passport",
@@ -1586,7 +1497,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-035",
+    "id": "ENT-OBJ-033",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Credit Card",
@@ -1633,7 +1544,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-036",
+    "id": "ENT-OBJ-034",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Safety Pin",
@@ -1679,7 +1590,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-037",
+    "id": "ENT-OBJ-035",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Sewing Needle",
@@ -1725,7 +1636,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-038",
+    "id": "ENT-OBJ-036",
     "domain_id": "daily_objects",
     "subtopic_id": "personal_essentials",
     "name": "Shoelace",
@@ -1772,7 +1683,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-039",
+    "id": "ENT-OBJ-037",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Scented Candle",
@@ -1819,12 +1730,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-040",
+    "id": "ENT-OBJ-038",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
-    "name": "Bed Pillow",
+    "name": "Pillow",
     "language": "en",
     "aliases": [
+      "Bed Pillow",
       "Pillow",
       "Cushion",
       "Sleeping Pillow",
@@ -1866,12 +1778,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-041",
+    "id": "ENT-OBJ-039",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
-    "name": "Wool Blanket",
+    "name": "Blanket",
     "language": "en",
     "aliases": [
+      "Wool Blanket",
       "Blanket",
       "Throw Blanket",
       "Quilt",
@@ -1913,12 +1826,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-042",
+    "id": "ENT-OBJ-040",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
-    "name": "Bed Mattress",
+    "name": "Mattress",
     "language": "en",
     "aliases": [
+      "Bed Mattress",
       "Mattress",
       "Spring Mattress",
       "Memory Foam Mattress",
@@ -1960,7 +1874,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-043",
+    "id": "ENT-OBJ-041",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Wall Clock",
@@ -2007,7 +1921,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-044",
+    "id": "ENT-OBJ-042",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Alarm Clock",
@@ -2053,7 +1967,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-045",
+    "id": "ENT-OBJ-043",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Desk Lamp",
@@ -2100,7 +2014,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-046",
+    "id": "ENT-OBJ-044",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Clothespin",
@@ -2147,7 +2061,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-047",
+    "id": "ENT-OBJ-045",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Clothes Hanger",
@@ -2194,12 +2108,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-048",
+    "id": "ENT-OBJ-046",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
-    "name": "Electric Fan",
+    "name": "Fan",
     "language": "en",
     "aliases": [
+      "Electric Fan",
       "Desk Fan",
       "Standing Fan",
       "Oscillating Fan",
@@ -2241,7 +2156,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-049",
+    "id": "ENT-OBJ-047",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Space Heater",
@@ -2288,7 +2203,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-050",
+    "id": "ENT-OBJ-048",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Air Conditioner Remote",
@@ -2334,7 +2249,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-051",
+    "id": "ENT-OBJ-049",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Broom",
@@ -2381,7 +2296,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-052",
+    "id": "ENT-OBJ-050",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Dustpan",
@@ -2428,7 +2343,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-053",
+    "id": "ENT-OBJ-051",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Mop",
@@ -2475,7 +2390,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-054",
+    "id": "ENT-OBJ-052",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Cleaning Bucket",
@@ -2522,7 +2437,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-055",
+    "id": "ENT-OBJ-053",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Clothes Iron",
@@ -2569,7 +2484,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-056",
+    "id": "ENT-OBJ-054",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Ironing Board",
@@ -2615,7 +2530,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-057",
+    "id": "ENT-OBJ-055",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Trash Can",
@@ -2662,12 +2577,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-058",
+    "id": "ENT-OBJ-056",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
-    "name": "Flower Vase",
+    "name": "Vase",
     "language": "en",
     "aliases": [
+      "Flower Vase",
       "Vase",
       "Flowerpot",
       "Glass Vase",
@@ -2709,7 +2625,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-059",
+    "id": "ENT-OBJ-057",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Carpet",
@@ -2756,12 +2672,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-060",
+    "id": "ENT-OBJ-058",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
-    "name": "Window Curtain",
+    "name": "Curtain",
     "language": "en",
     "aliases": [
+      "Window Curtain",
       "Drapes",
       "Window Drapes",
       "Window Shade",
@@ -2803,7 +2720,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-061",
+    "id": "ENT-OBJ-059",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Doormat",
@@ -2850,7 +2767,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-062",
+    "id": "ENT-OBJ-060",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Doorbell",
@@ -2897,12 +2814,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-063",
+    "id": "ENT-OBJ-061",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
-    "name": "Bath Towel",
+    "name": "Towel",
     "language": "en",
     "aliases": [
+      "Bath Towel",
       "Towel",
       "Shower Towel",
       "Bath Sheet",
@@ -2944,7 +2862,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-064",
+    "id": "ENT-OBJ-062",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Flashlight",
@@ -2991,7 +2909,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-065",
+    "id": "ENT-OBJ-063",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Lightbulb",
@@ -3038,7 +2956,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-066",
+    "id": "ENT-OBJ-064",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Extension Cord",
@@ -3085,7 +3003,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-067",
+    "id": "ENT-OBJ-065",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Electrical Wall Outlet",
@@ -3132,7 +3050,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-068",
+    "id": "ENT-OBJ-066",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Television Remote",
@@ -3179,7 +3097,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-069",
+    "id": "ENT-OBJ-067",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Tissue Box",
@@ -3225,12 +3143,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-070",
+    "id": "ENT-OBJ-068",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
-    "name": "Wastepaper Basket",
+    "name": "Wastebasket",
     "language": "en",
     "aliases": [
+      "Wastepaper Basket",
       "Wastebasket",
       "Office Bin",
       "Small Trash Can",
@@ -3272,7 +3191,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-071",
+    "id": "ENT-OBJ-069",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Laundry Hamper",
@@ -3318,7 +3237,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-072",
+    "id": "ENT-OBJ-070",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Shoe Rack",
@@ -3365,7 +3284,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-073",
+    "id": "ENT-OBJ-071",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Coat Rack",
@@ -3412,7 +3331,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-074",
+    "id": "ENT-OBJ-072",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Throw Pillow",
@@ -3459,7 +3378,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-075",
+    "id": "ENT-OBJ-073",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Bookend",
@@ -3505,7 +3424,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-076",
+    "id": "ENT-OBJ-074",
     "domain_id": "daily_objects",
     "subtopic_id": "household_living",
     "name": "Reed Diffuser",
@@ -3551,12 +3470,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-077",
+    "id": "ENT-OBJ-075",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
-    "name": "Claw Hammer",
+    "name": "Hammer",
     "language": "en",
     "aliases": [
+      "Claw Hammer",
       "Hammer",
       "Carpenters Hammer",
       "Nail Hammer"
@@ -3597,7 +3517,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-078",
+    "id": "ENT-OBJ-076",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Pliers",
@@ -3643,7 +3563,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-079",
+    "id": "ENT-OBJ-077",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Screwdriver",
@@ -3689,7 +3609,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-080",
+    "id": "ENT-OBJ-078",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Tape Measure",
@@ -3735,7 +3655,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-081",
+    "id": "ENT-OBJ-079",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Duct Tape",
@@ -3782,7 +3702,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-082",
+    "id": "ENT-OBJ-080",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Adjustable Wrench",
@@ -3828,7 +3748,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-083",
+    "id": "ENT-OBJ-081",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Handsaw",
@@ -3875,7 +3795,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-084",
+    "id": "ENT-OBJ-082",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Paintbrush",
@@ -3922,7 +3842,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-085",
+    "id": "ENT-OBJ-083",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Paint Roller",
@@ -3969,7 +3889,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-086",
+    "id": "ENT-OBJ-084",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Stepladder",
@@ -4016,12 +3936,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-087",
+    "id": "ENT-OBJ-085",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
-    "name": "Braided Rope",
+    "name": "Rope",
     "language": "en",
     "aliases": [
+      "Braided Rope",
       "Rope",
       "Cordage",
       "Nylon Rope",
@@ -4063,12 +3984,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-088",
+    "id": "ENT-OBJ-086",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
-    "name": "Common Nail",
+    "name": "Nail",
     "language": "en",
     "aliases": [
+      "Common Nail",
       "Nail",
       "Framing Nail",
       "Steel Nail",
@@ -4110,12 +4032,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-089",
+    "id": "ENT-OBJ-087",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
-    "name": "Wood Screw",
+    "name": "Screw",
     "language": "en",
     "aliases": [
+      "Wood Screw",
       "Screw",
       "Fastener",
       "Countersunk Screw",
@@ -4157,7 +4080,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-090",
+    "id": "ENT-OBJ-088",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Nut and Bolt",
@@ -4204,7 +4127,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-091",
+    "id": "ENT-OBJ-089",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Toolbox",
@@ -4251,7 +4174,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-092",
+    "id": "ENT-OBJ-090",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Spirit Level",
@@ -4298,7 +4221,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-093",
+    "id": "ENT-OBJ-091",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Sandpaper",
@@ -4345,7 +4268,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-094",
+    "id": "ENT-OBJ-092",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Utility Knife",
@@ -4392,7 +4315,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-095",
+    "id": "ENT-OBJ-093",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Toilet Plunger",
@@ -4439,7 +4362,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-096",
+    "id": "ENT-OBJ-094",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Garden Hose",
@@ -4486,7 +4409,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-097",
+    "id": "ENT-OBJ-095",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Garden Shovel",
@@ -4533,7 +4456,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-098",
+    "id": "ENT-OBJ-096",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Garden Rake",
@@ -4580,7 +4503,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-099",
+    "id": "ENT-OBJ-097",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Wheelbarrow",
@@ -4626,7 +4549,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-100",
+    "id": "ENT-OBJ-098",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Lawn Mower",
@@ -4673,7 +4596,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-101",
+    "id": "ENT-OBJ-099",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Electric Drill",
@@ -4720,7 +4643,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-102",
+    "id": "ENT-OBJ-100",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Drill Bit",
@@ -4767,7 +4690,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-103",
+    "id": "ENT-OBJ-101",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Hex Key",
@@ -4814,7 +4737,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-104",
+    "id": "ENT-OBJ-102",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Sledgehammer",
@@ -4861,7 +4784,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-105",
+    "id": "ENT-OBJ-103",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Rubber Mallet",
@@ -4908,7 +4831,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-106",
+    "id": "ENT-OBJ-104",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Wire Cutters",
@@ -4955,7 +4878,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-107",
+    "id": "ENT-OBJ-105",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Putty Knife",
@@ -5002,7 +4925,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-108",
+    "id": "ENT-OBJ-106",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Caulking Gun",
@@ -5049,7 +4972,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-109",
+    "id": "ENT-OBJ-107",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Pruning Shears",
@@ -5096,7 +5019,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-110",
+    "id": "ENT-OBJ-108",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Watering Can",
@@ -5143,7 +5066,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-111",
+    "id": "ENT-OBJ-109",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Cable Zip Tie",
@@ -5190,7 +5113,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-112",
+    "id": "ENT-OBJ-110",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Bench Vise",
@@ -5237,7 +5160,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-113",
+    "id": "ENT-OBJ-111",
     "domain_id": "daily_objects",
     "subtopic_id": "tools_maintenance",
     "name": "Safety Goggles",
@@ -5284,12 +5207,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-114",
+    "id": "ENT-OBJ-112",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Ceramic Mug",
+    "name": "Mug",
     "language": "en",
     "aliases": [
+      "Ceramic Mug",
       "Coffee Mug",
       "Tea Mug",
       "Coffee Cup",
@@ -5331,12 +5255,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-115",
+    "id": "ENT-OBJ-113",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Dinner Plate",
+    "name": "Plate",
     "language": "en",
     "aliases": [
+      "Dinner Plate",
       "Plate",
       "Dish",
       "Serving Plate",
@@ -5378,12 +5303,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-116",
+    "id": "ENT-OBJ-114",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Cereal Bowl",
+    "name": "Bowl",
     "language": "en",
     "aliases": [
+      "Cereal Bowl",
       "Soup Bowl",
       "Bowl",
       "Salad Bowl",
@@ -5425,12 +5351,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-117",
+    "id": "ENT-OBJ-115",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Table Fork",
+    "name": "Fork",
     "language": "en",
     "aliases": [
+      "Table Fork",
       "Dinner Fork",
       "Fork",
       "Cutlery Fork",
@@ -5472,12 +5399,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-118",
+    "id": "ENT-OBJ-116",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Soup Spoon",
+    "name": "Spoon",
     "language": "en",
     "aliases": [
+      "Soup Spoon",
       "Tablespoon",
       "Spoon",
       "Teaspoon",
@@ -5519,7 +5447,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-119",
+    "id": "ENT-OBJ-117",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Chopsticks",
@@ -5566,12 +5494,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-120",
+    "id": "ENT-OBJ-118",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Kitchen Chef Knife",
+    "name": "Kitchen Knife",
     "language": "en",
     "aliases": [
+      "Kitchen Chef Knife",
       "Chefs Knife",
       "Cooks Knife",
       "French Knife",
@@ -5613,12 +5542,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-121",
+    "id": "ENT-OBJ-119",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Ceramic Teapot",
+    "name": "Teapot",
     "language": "en",
     "aliases": [
+      "Ceramic Teapot",
       "Teapot",
       "Tea Kettle",
       "Stoneware Teapot",
@@ -5660,7 +5590,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-122",
+    "id": "ENT-OBJ-120",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Frying Pan",
@@ -5707,7 +5637,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-123",
+    "id": "ENT-OBJ-121",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Cooking Pot",
@@ -5754,7 +5684,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-124",
+    "id": "ENT-OBJ-122",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Cutting Board",
@@ -5801,7 +5731,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-125",
+    "id": "ENT-OBJ-123",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Bottle Opener",
@@ -5848,7 +5778,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-126",
+    "id": "ENT-OBJ-124",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Can Opener",
@@ -5894,7 +5824,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-127",
+    "id": "ENT-OBJ-125",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Thermos Flask",
@@ -5941,7 +5871,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-128",
+    "id": "ENT-OBJ-126",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Wire Whisk",
@@ -5988,12 +5918,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-129",
+    "id": "ENT-OBJ-127",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Wooden Rolling Pin",
+    "name": "Rolling Pin",
     "language": "en",
     "aliases": [
+      "Wooden Rolling Pin",
       "Rolling Pin",
       "Baker's Pin",
       "Pastry Roller",
@@ -6035,7 +5966,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-130",
+    "id": "ENT-OBJ-128",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Kitchen Colander",
@@ -6082,7 +6013,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-131",
+    "id": "ENT-OBJ-129",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Vegetable Peeler",
@@ -6129,54 +6060,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-132",
-    "domain_id": "daily_objects",
-    "subtopic_id": "kitchen_dining",
-    "name": "Corkscrew",
-    "language": "en",
-    "aliases": [
-      "Wine Opener",
-      "Waiter's Friend",
-      "Sommelier Knife",
-      "Winged Corkscrew"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A professional stainless steel waiter's corkscrew with its grooved Teflon worm spiraling deep into a natural wine cork, catching moody restaurant cellar candlelight.",
-    "core_traits": [
-      "A pointed metallic helix spiral called a 'worm' attached to a handle or leverage arm",
-      "Twisted clockwise into the natural cork stopper of a sealed wine bottle",
-      "Uses a hinged fulcrum lever or twin descending wings to extract the tight cork without crumbling",
-      "The essential pocket tool of restaurant sommeliers, wine enthusiasts, and dinner hosts"
-    ],
-    "distractor_pool": [
-      "Bottle Opener",
-      "Wine Stopper",
-      "Decanter",
-      "Can Opener",
-      "Pocket Knife"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The corkscrew spiral was derived from a 17th-century military tool called a 'gun worm' used to extract unspent musket balls.",
-        "verdict": "fact",
-        "explanation": "Soldiers attached a spiral screw to a ramrod to retrieve stuck wadding from musket barrels; drinkers adapted the tool to pull corks from newly invented glass bottles.",
-        "fun_fact": "The first patent for a corkscrew was granted to Reverend Samuel Henshall in England in 1795."
-      },
-      {
-        "claim": "A corkscrew with a hollow center core along the spiral worm is vastly inferior to a solid screw thread.",
-        "verdict": "myth",
-        "explanation": "A hollow helix 'worm' grips the cork from the outside and cuts less internal cell structure; a solid center auger acts like a drill bit, tearing and pulverizing old fragile corks.",
-        "fun_fact": "Sommeliers always check that a pencil can slide through the center of a good worm."
-      }
-    ],
-    "versus_candidates": [
-      "Wine Stopper",
-      "Electric Wine Opener",
-      "Ah-So Opener"
-    ]
-  },
-  {
-    "id": "ENT-OBJ-133",
+    "id": "ENT-OBJ-130",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Bread Toaster",
@@ -6223,12 +6107,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-134",
+    "id": "ENT-OBJ-131",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Kitchen Blender",
+    "name": "Blender",
     "language": "en",
     "aliases": [
+      "Kitchen Blender",
       "Blender",
       "Countertop Blender",
       "Smoothie Maker",
@@ -6270,7 +6155,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-135",
+    "id": "ENT-OBJ-132",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Microwave Oven",
@@ -6317,7 +6202,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-136",
+    "id": "ENT-OBJ-133",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Electric Kettle",
@@ -6364,7 +6249,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-137",
+    "id": "ENT-OBJ-134",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Kitchen Spatula",
@@ -6411,7 +6296,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-138",
+    "id": "ENT-OBJ-135",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Soup Ladle",
@@ -6458,7 +6343,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-139",
+    "id": "ENT-OBJ-136",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Kitchen Tongs",
@@ -6505,7 +6390,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-140",
+    "id": "ENT-OBJ-137",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Cheese Grater",
@@ -6552,7 +6437,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-141",
+    "id": "ENT-OBJ-138",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Garlic Press",
@@ -6598,7 +6483,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-142",
+    "id": "ENT-OBJ-139",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Salt and Pepper Shakers",
@@ -6645,12 +6530,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-143",
+    "id": "ENT-OBJ-140",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Glass Mason Jar",
+    "name": "Glass Jar",
     "language": "en",
     "aliases": [
+      "Glass Mason Jar",
       "Mason Jar",
       "Canning Jar",
       "Preserve Jar",
@@ -6692,7 +6578,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-144",
+    "id": "ENT-OBJ-141",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Ice Cube Tray",
@@ -6739,12 +6625,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-145",
+    "id": "ENT-OBJ-142",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Silicone Oven Mitt",
+    "name": "Oven Mitt",
     "language": "en",
     "aliases": [
+      "Silicone Oven Mitt",
       "Oven Mitt",
       "Oven Glove",
       "Pot Holder",
@@ -6786,7 +6673,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-146",
+    "id": "ENT-OBJ-143",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Dish Drying Rack",
@@ -6833,7 +6720,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-147",
+    "id": "ENT-OBJ-144",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Kitchen Sponge",
@@ -6880,12 +6767,13 @@
     ]
   },
   {
-    "id": "ENT-OBJ-148",
+    "id": "ENT-OBJ-145",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
-    "name": "Digital Kitchen Scale",
+    "name": "Kitchen Scale",
     "language": "en",
     "aliases": [
+      "Digital Kitchen Scale",
       "Kitchen Scale",
       "Food Scale",
       "Baking Scale",
@@ -6927,7 +6815,7 @@
     ]
   },
   {
-    "id": "ENT-OBJ-149",
+    "id": "ENT-OBJ-146",
     "domain_id": "daily_objects",
     "subtopic_id": "kitchen_dining",
     "name": "Measuring Cup",
@@ -6971,53 +6859,6 @@
       "Digital Kitchen Scale",
       "Measuring Spoon",
       "Graduated Cylinder"
-    ]
-  },
-  {
-    "id": "ENT-OBJ-150",
-    "domain_id": "daily_objects",
-    "subtopic_id": "kitchen_dining",
-    "name": "Cocktail Shaker",
-    "language": "en",
-    "aliases": [
-      "Cobbler Shaker",
-      "Boston Shaker",
-      "Bar Shaker",
-      "Drink Shaker"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "A three-piece polished mirror stainless steel Cobbler cocktail shaker frosted with crystalline exterior condensation, pouring a vibrant ruby cosmopolitan into a chilled martini glass.",
-    "core_traits": [
-      "A cylindrical stainless steel vessel consisting of a mixing tin, a built-in strainer lid, and a jigger cap",
-      "Vigorously shaken by hand with ice cubes to rapidly chill, dilute, and aerate cocktails",
-      "Frosts over with ice condensation within ten seconds of rapid shaking",
-      "The quintessential showpiece tool of mixologists, speakeasies, and home bar carts"
-    ],
-    "distractor_pool": [
-      "Thermos Flask",
-      "Water Bottle",
-      "Cocktail Strainer",
-      "Ceramic Mug",
-      "Ice Bucket"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Shaking a cocktail with ice chills the drink to sub-zero temperatures faster and colder than stirring.",
-        "verdict": "fact",
-        "explanation": "Violent shaking breaks ice crystals and maximizes thermal surface contact, dropping the cocktail temperature below 0 degrees Celsius in less than twelve seconds.",
-        "fun_fact": "Shaking also incorporates microscopic air bubbles that give drinks a velvety, cloudy mouthfeel."
-      },
-      {
-        "claim": "James Bond's iconic request for a martini 'shaken, not stirred' is how classic gin martinis are traditionally made by purist bartenders.",
-        "verdict": "myth",
-        "explanation": "Classic gin and vermouth martinis are traditionally stirred to maintain clarity and silky texture without aerating cloudiness or melting excessive ice.",
-        "fun_fact": "Ian Fleming gave Bond the eccentric quirk to show his idiosyncratic taste."
-      }
-    ],
-    "versus_candidates": [
-      "Mixing Glass",
-      "Bar Spoon",
-      "Cocktail Strainer"
     ]
   }
 ]

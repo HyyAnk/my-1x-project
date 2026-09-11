@@ -451,95 +451,6 @@
     "id": "ENT-BOD-011",
     "domain_id": "human_body",
     "subtopic_id": "organs",
-    "name": "Spleen",
-    "language": "en",
-    "aliases": [
-      "Lien"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical view of the purple fist-sized spleen filtering old red erythrocytes under the left ribcage.",
-    "core_traits": [
-      "Fist-sized purple organ nestled under the left ribcage above the stomach",
-      "Largest single lymphoid organ in the human lymphatic and immune system",
-      "Filters blood by recycling worn-out red blood cells and storing platelets and white cells",
-      "Differentiated internally into red pulp for blood filtration and white pulp for immune defense"
-    ],
-    "distractor_pool": [
-      "Liver",
-      "Pancreas",
-      "Gallbladder",
-      "Kidneys",
-      "Thymus"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A human can survive without a spleen following surgical removal.",
-        "verdict": "fact",
-        "explanation": "While splenectomy leaves individuals more vulnerable to bacterial infections, the liver and lymph nodes take over blood-filtering functions.",
-        "fun_fact": "Free-diving Bajau people of Southeast Asia evolved spleens 50 percent larger than average to store oxygenated blood."
-      },
-      {
-        "claim": "The spleen is a digestive organ that manufactures digestive enzymes for the stomach.",
-        "verdict": "myth",
-        "explanation": "The spleen has no digestive role whatsoever; it functions exclusively within the circulatory and immune systems.",
-        "fun_fact": "In ancient medicine, the spleen was believed to be the seat of melancholy and black bile."
-      }
-    ],
-    "versus_candidates": [
-      "Liver",
-      "Thymus",
-      "Pancreas"
-    ]
-  },
-  {
-    "id": "ENT-BOD-012",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Gallbladder",
-    "language": "en",
-    "aliases": [
-      "Cholecyst",
-      "Bile Sac"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Cinematic vertical 9:16 anatomical rendering of the small green pear-shaped gallbladder tucked beneath the liver.",
-    "core_traits": [
-      "Small pear-shaped muscular sac located directly beneath the right lobe of the liver",
-      "Stores and concentrates bitter greenish-yellow bile produced by the liver",
-      "Contracts and releases bile into the small intestine upon ingestion of fatty meals",
-      "Commonly subject to crystalline deposits known as gallstones"
-    ],
-    "distractor_pool": [
-      "Liver",
-      "Pancreas",
-      "Urinary Bladder",
-      "Spleen",
-      "Stomach"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The gallbladder produces the bile needed to digest dietary fats.",
-        "verdict": "myth",
-        "explanation": "The liver produces bile; the gallbladder merely stores, concentrates, and dispenses it when needed.",
-        "fun_fact": "People who have their gallbladder removed can still digest fats normally as bile drips continuously into the gut."
-      },
-      {
-        "claim": "Gallstones can range in size from tiny sand grains to golf balls.",
-        "verdict": "fact",
-        "explanation": "Gallstones form when hardened cholesterol or bilirubin precipitates, occasionally growing into large obstructing masses.",
-        "fun_fact": "Bile gets its distinctive dark green or golden-brown color from the pigment bilirubin."
-      }
-    ],
-    "versus_candidates": [
-      "Liver",
-      "Pancreas",
-      "Bladder"
-    ]
-  },
-  {
-    "id": "ENT-BOD-013",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
     "name": "Urinary Bladder",
     "language": "en",
     "aliases": [
@@ -582,7 +493,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-014",
+    "id": "ENT-BOD-012",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Thyroid Gland",
@@ -627,96 +538,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-015",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Pituitary Gland",
-    "language": "en",
-    "aliases": [
-      "Master Gland",
-      "Hypophysis"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 microscopic perspective of the pea-sized pituitary gland resting in the sella turcica bony cradle at the base of the brain.",
-    "core_traits": [
-      "Pea-sized master endocrine gland sitting in a bony pocket at the base of the skull",
-      "Controlled directly by neural and hormonal signals from the hypothalamus",
-      "Regulates growth, blood pressure, reproduction, lactation, and metabolism",
-      "Divided into distinct anterior and posterior lobes with specialized secretory cells"
-    ],
-    "distractor_pool": [
-      "Pineal Gland",
-      "Thyroid Gland",
-      "Hypothalamus",
-      "Adrenal Glands",
-      "Thymus"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The pituitary gland produces human growth hormone (HGH) that dictates adult height.",
-        "verdict": "fact",
-        "explanation": "Excessive growth hormone before growth plate closure causes gigantism, while deficiency causes pituitary dwarfism.",
-        "fun_fact": "Robert Wadlow, the tallest recorded human at 8 feet 11 inches, suffered from a pituitary adenoma."
-      },
-      {
-        "claim": "The pituitary gland is the largest endocrine organ in the human body.",
-        "verdict": "myth",
-        "explanation": "It weighs only about 0.5 grams (the size of a pea), despite orchestrating nearly all other endocrine glands.",
-        "fun_fact": "It also releases oxytocin, famously nicknamed the bonding or love hormone."
-      }
-    ],
-    "versus_candidates": [
-      "Hypothalamus",
-      "Pineal Gland",
-      "Thyroid Gland"
-    ]
-  },
-  {
-    "id": "ENT-BOD-016",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Adrenal Glands",
-    "language": "en",
-    "aliases": [
-      "Suprarenal Glands"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Dramatic 9:16 vertical visualization of golden triangular adrenal glands resting atop each kidney surging with adrenaline pulses.",
-    "core_traits": [
-      "Pair of triangular glands perched like caps on top of both kidneys",
-      "Secretes vital stress hormones including adrenaline, noradrenaline, and cortisol",
-      "Orchestrates the body's acute fight-or-flight sympathetic nervous response",
-      "Composed of an outer adrenal cortex and an inner adrenal medulla"
-    ],
-    "distractor_pool": [
-      "Kidneys",
-      "Thyroid Gland",
-      "Pancreas",
-      "Pituitary Gland",
-      "Thymus"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Adrenaline release can temporarily endow humans with superhuman-like physical strength.",
-        "verdict": "fact",
-        "explanation": "In extreme crises, adrenaline spikes cardiac output, dilates airways, and overrides muscle pain thresholds, enabling extreme physical feats.",
-        "fun_fact": "The inner adrenal medulla is actually modified sympathetic nervous tissue."
-      },
-      {
-        "claim": "Adrenal fatigue is a proven medical syndrome caused by exhausted hormone glands.",
-        "verdict": "myth",
-        "explanation": "Endocrinology societies state adrenal fatigue is a myth; genuine adrenal insufficiency (Addison's disease) is a rare autoimmune disorder.",
-        "fun_fact": "Cortisol produced by the adrenal cortex naturally peaks in the early morning to wake you up."
-      }
-    ],
-    "versus_candidates": [
-      "Kidneys",
-      "Thyroid Gland",
-      "Pituitary Gland"
-    ]
-  },
-  {
-    "id": "ENT-BOD-017",
+    "id": "ENT-BOD-013",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Appendix",
@@ -760,7 +582,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-018",
+    "id": "ENT-BOD-014",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Esophagus",
@@ -805,7 +627,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-019",
+    "id": "ENT-BOD-015",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Trachea",
@@ -849,7 +671,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-020",
+    "id": "ENT-BOD-016",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Diaphragm",
@@ -893,7 +715,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-021",
+    "id": "ENT-BOD-017",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Pharynx",
@@ -937,7 +759,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-022",
+    "id": "ENT-BOD-018",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Larynx",
@@ -981,51 +803,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-023",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Thymus",
-    "language": "en",
-    "aliases": [
-      "Thymus Gland"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical view of the two-lobed pinkish thymus gland resting behind the sternum above the heart.",
-    "core_traits": [
-      "Specialized primary lymphoid organ located in the upper chest behind the sternum",
-      "Serves as the training and maturation site for immune T-lymphocytes (T-cells)",
-      "Reaches maximum physical size during puberty before gradually shrinking with age",
-      "Undergoes involution where active lymphoid tissue is progressively replaced by fat"
-    ],
-    "distractor_pool": [
-      "Thyroid Gland",
-      "Spleen",
-      "Tonsils",
-      "Lymph Nodes",
-      "Adrenal Glands"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The thymus gland shrinks naturally as humans age from adolescence into adulthood.",
-        "verdict": "fact",
-        "explanation": "Through thymic involution, the gland shrinks after puberty, having already established the lifetime repertoire of diverse T-cells.",
-        "fun_fact": "The 'T' in T-cell literally stands for thymus-derived cell."
-      },
-      {
-        "claim": "The thymus is responsible for regulating overall body calcium levels.",
-        "verdict": "myth",
-        "explanation": "Calcium is regulated by the parathyroid glands; the thymus functions strictly in adaptive immune maturation.",
-        "fun_fact": "In ancient Greece, Galen believed the thymus was the seat of courage and human spirit."
-      }
-    ],
-    "versus_candidates": [
-      "Thyroid Gland",
-      "Spleen",
-      "Bone Marrow"
-    ]
-  },
-  {
-    "id": "ENT-BOD-024",
+    "id": "ENT-BOD-019",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Salivary Glands",
@@ -1069,7 +847,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-025",
+    "id": "ENT-BOD-020",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Tongue",
@@ -1114,7 +892,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-026",
+    "id": "ENT-BOD-021",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Teeth",
@@ -1159,95 +937,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-027",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Epiglottis",
-    "language": "en",
-    "aliases": [
-      "Laryngeal Flap"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical view of the leaf-shaped elastic epiglottis folding downward over the airway during swallowing.",
-    "core_traits": [
-      "Leaf-shaped flap of flexible elastic cartilage located at the root of the tongue",
-      "Stands upright during breathing to allow air free passage into the larynx",
-      "Folds backward and downward during swallowing to seal off the laryngeal inlet",
-      "Prevents ingested food, liquids, and foreign particles from entering the lungs"
-    ],
-    "distractor_pool": [
-      "Larynx",
-      "Pharynx",
-      "Trachea",
-      "Uvula",
-      "Vocal Cords"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "When food accidentally goes down the wrong tube, it means the epiglottis failed to seal in time.",
-        "verdict": "fact",
-        "explanation": "If swallowing coordination lapses, particles pass the epiglottis into the larynx, triggering a violent protective cough reflex.",
-        "fun_fact": "Human infants have an elevated epiglottis touching the soft palate, allowing them to suckle and breathe simultaneously."
-      },
-      {
-        "claim": "The epiglottis and the dangling punching bag at the back of the throat (uvula) are the same thing.",
-        "verdict": "myth",
-        "explanation": "The uvula hangs from the soft palate to block the nasal cavity; the epiglottis sits lower down at the voice box to seal the lungs.",
-        "fun_fact": "Acute epiglottitis is a rare medical emergency where the flap swells rapidly, threatening total airway obstruction."
-      }
-    ],
-    "versus_candidates": [
-      "Larynx",
-      "Uvula",
-      "Trachea"
-    ]
-  },
-  {
-    "id": "ENT-BOD-028",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Duodenum",
-    "language": "en",
-    "aliases": [
-      "First Part of Small Intestine"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 medical cutaway showing the C-shaped duodenum curving tightly around the pancreatic head receiving bile droplets.",
-    "core_traits": [
-      "First and shortest section of the small intestine, measuring roughly 25 to 30 centimeters",
-      "Forms a C-shaped curve cradling the head of the pancreas",
-      "Receives acidic chyme from the stomach via the pyloric sphincter",
-      "Serves as the convergence point where bile and pancreatic digestive juices enter via the ampulla of Vater"
-    ],
-    "distractor_pool": [
-      "Stomach",
-      "Jejunum",
-      "Ileum",
-      "Colon",
-      "Gallbladder"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The name duodenum comes from Latin meaning twelve finger-breadths in length.",
-        "verdict": "fact",
-        "explanation": "Ancient physicians measured the organ as being roughly twelve fingers wide (about 25 to 30 centimeters).",
-        "fun_fact": "Brunner's glands in the duodenum secrete thick alkaline mucus to protect the lining from caustic stomach acid."
-      },
-      {
-        "claim": "Most nutrient absorption into the bloodstream occurs inside the duodenum.",
-        "verdict": "myth",
-        "explanation": "The duodenum primarily breaks down food chemically; the bulk of actual absorption occurs downstream in the jejunum and ileum.",
-        "fun_fact": "Iron and folate are among the few essential nutrients preferentially absorbed in the duodenum."
-      }
-    ],
-    "versus_candidates": [
-      "Stomach",
-      "Small Intestine",
-      "Pancreas"
-    ]
-  },
-  {
-    "id": "ENT-BOD-029",
+    "id": "ENT-BOD-022",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Colon",
@@ -1291,139 +981,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-030",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Rectum",
-    "language": "en",
-    "aliases": [
-      "Terminal Bowel"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical diagram of the vertical rectum nestled within the sacral hollow ending at the anal sphincters.",
-    "core_traits": [
-      "Terminal 12 to 15 centimeters of the large intestine connecting the sigmoid colon to the anal canal",
-      "Acts as a temporary reservoir holding formed fecal matter before defecation",
-      "Lined with stretch-sensitive mechanoreceptors that signal fullness to the central nervous system",
-      "Regulated by internal involuntary and external voluntary muscular sphincters"
-    ],
-    "distractor_pool": [
-      "Colon",
-      "Bladder",
-      "Small Intestine",
-      "Cecum",
-      "Pelvis"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The rectum is usually empty until a mass peristaltic movement pushes stool downward.",
-        "verdict": "fact",
-        "explanation": "Feces is held higher in the colon until mass movements propel it into the rectum, triggering the urge to defecate.",
-        "fun_fact": "The word rectum comes from the Latin 'intestinum rectum', meaning straight intestine, describing its vertical path."
-      },
-      {
-        "claim": "Humans have no voluntary muscular control over defecation reflexes.",
-        "verdict": "myth",
-        "explanation": "While the internal anal sphincter is involuntary smooth muscle, the external anal sphincter is voluntary skeletal muscle under conscious control.",
-        "fun_fact": "Specialized vascular cushions in the rectal canal help maintain complete continence for gas and liquids."
-      }
-    ],
-    "versus_candidates": [
-      "Colon",
-      "Bladder",
-      "Pelvis"
-    ]
-  },
-  {
-    "id": "ENT-BOD-031",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Ureters",
-    "language": "en",
-    "aliases": [
-      "Urinary Ducts"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical view of two slender muscular ureter tubes coursing downward from both kidneys to the urinary bladder.",
-    "core_traits": [
-      "Pair of narrow muscular tubes measuring approximately 25 to 30 centimeters in length",
-      "Transports urine from the renal pelvis of each kidney down into the bladder",
-      "Propels fluid actively using rhythmic peristaltic smooth muscle contractions",
-      "Enters the bladder at an oblique angle forming physiological valves to prevent backflow"
-    ],
-    "distractor_pool": [
-      "Urethra",
-      "Kidneys",
-      "Bladder",
-      "Vena Cava",
-      "Aorta"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Urine moves down the ureters through muscular squeezing waves rather than gravity alone.",
-        "verdict": "fact",
-        "explanation": "Smooth muscle in ureter walls contracts peristaltically several times a minute, pushing urine even when lying flat or upside down.",
-        "fun_fact": "When a kidney stone lodges inside a narrow ureter, the violent smooth muscle contractions cause excruciating renal colic pain."
-      },
-      {
-        "claim": "The ureter and the urethra are two names for the same single tube.",
-        "verdict": "myth",
-        "explanation": "Ureters are the pair of tubes connecting kidneys to the bladder; the urethra is the single tube carrying urine from the bladder outside.",
-        "fun_fact": "The oblique entrance of ureters into the bladder naturally squeezes shut as the bladder fills, protecting kidneys from reflux."
-      }
-    ],
-    "versus_candidates": [
-      "Urethra",
-      "Kidneys",
-      "Bladder"
-    ]
-  },
-  {
-    "id": "ENT-BOD-032",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Urethra",
-    "language": "en",
-    "aliases": [
-      "Urinary Canal"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical cutaway of the lower pelvic region showing the urethra emerging from the bladder base to the exterior.",
-    "core_traits": [
-      "Single canal conveying urine from the urinary bladder to the exterior of the body",
-      "In females, measures approximately 4 centimeters long; in males, roughly 20 centimeters long",
-      "In males, serves as a dual passage for both urine and reproductive semen",
-      "Encompassed by the voluntary external urethral sphincter for conscious urinary control"
-    ],
-    "distractor_pool": [
-      "Ureters",
-      "Bladder",
-      "Prostate",
-      "Kidneys",
-      "Pelvis"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Females are significantly more prone to urinary tract infections (UTIs) due to urethral anatomy.",
-        "verdict": "fact",
-        "explanation": "The female urethra is much shorter (about 4 cm) and located closer to the anal region, allowing bacteria easier access to the bladder.",
-        "fun_fact": "The male urethra travels directly through the prostate gland before extending through the penis."
-      },
-      {
-        "claim": "Urine and semen can be discharged simultaneously through the male urethra.",
-        "verdict": "myth",
-        "explanation": "During sexual climax, the internal bladder sphincter contracts firmly, blocking urine discharge and preventing retrograde ejaculation.",
-        "fun_fact": "The lining of the urethra changes from transitional epithelium near the bladder to stratified squamous epithelium near the exit."
-      }
-    ],
-    "versus_candidates": [
-      "Ureters",
-      "Bladder",
-      "Kidneys"
-    ]
-  },
-  {
-    "id": "ENT-BOD-033",
+    "id": "ENT-BOD-023",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Bronchi",
@@ -1468,52 +1026,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-034",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Alveoli",
-    "language": "en",
-    "aliases": [
-      "Pulmonary Alveoli",
-      "Air Sacs"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Microscopic vertical 9:16 cinematic render of grape-like cluster alveoli surrounded by a dense web of red and blue capillaries exchanging oxygen.",
-    "core_traits": [
-      "Microscopic cup-shaped air sacs clustered at the terminal ends of respiratory bronchioles",
-      "Roughly 300 to 500 million alveoli exist across both adult human lungs",
-      "Site of primary gas exchange: oxygen diffuses into blood while carbon dioxide diffuses out",
-      "Coated with a phospholipid substance called surfactant that prevents alveolar collapse"
-    ],
-    "distractor_pool": [
-      "Bronchi",
-      "Capillaries",
-      "Lungs",
-      "Trachea",
-      "Red Blood Cells"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Premature babies often struggle to breathe because their alveoli lack adequate surfactant.",
-        "verdict": "fact",
-        "explanation": "Surfactant reduces surface tension inside alveoli; without it, tiny air sacs collapse, causing infant respiratory distress syndrome.",
-        "fun_fact": "The alveolar-capillary barrier is less than one micrometer thick, allowing oxygen diffusion in milliseconds."
-      },
-      {
-        "claim": "Alveoli are lined with thick muscular walls that actively pump air into the bloodstream.",
-        "verdict": "myth",
-        "explanation": "Alveoli have extremely thin single-cell squamous epithelial walls; gas exchange occurs purely through passive physical diffusion.",
-        "fun_fact": "Macrophage cells patrol inside alveoli 24/7, engulfing inhaled particulate dust and airborne bacteria."
-      }
-    ],
-    "versus_candidates": [
-      "Bronchi",
-      "Capillaries",
-      "Red Blood Cells"
-    ]
-  },
-  {
-    "id": "ENT-BOD-035",
+    "id": "ENT-BOD-024",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Vocal Cords",
@@ -1558,7 +1071,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-036",
+    "id": "ENT-BOD-025",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Tonsils",
@@ -1603,52 +1116,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-037",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Pineal Gland",
-    "language": "en",
-    "aliases": [
-      "Epiphysis Cerebri",
-      "Third Eye Gland"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 cinematic brain visualization highlighting the pinecone-shaped pineal gland glowing with deep blue circadian melatonin pulses.",
-    "core_traits": [
-      "Tiny pinecone-shaped endocrine gland situated near the center of the brain between hemispheres",
-      "Synthesizes and secretes melatonin in direct response to environmental darkness",
-      "Regulates the body's circadian rhythm and sleep-wake cycles",
-      "Often accumulates calcium deposits (brain sand) that make it visible on CT scans"
-    ],
-    "distractor_pool": [
-      "Pituitary Gland",
-      "Hypothalamus",
-      "Thyroid Gland",
-      "Thalamus",
-      "Adrenal Glands"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Exposure to blue light from smartphone screens at night suppresses pineal melatonin secretion.",
-        "verdict": "fact",
-        "explanation": "Retinal photoreceptors signal darkness to the suprachiasmatic nucleus; artificial blue light mimics daylight, stalling melatonin release.",
-        "fun_fact": "Philosopher Rene Descartes famously regarded the pineal gland as the 'principal seat of the soul'."
-      },
-      {
-        "claim": "The pineal gland produces human growth hormone to trigger adolescent puberty.",
-        "verdict": "myth",
-        "explanation": "Growth hormone is produced by the pituitary gland; the pineal gland is specialized almost entirely for melatonin and sleep rhythms.",
-        "fun_fact": "Its pinecone shape inspired its scientific name 'pineal', derived from the Latin 'pinea'."
-      }
-    ],
-    "versus_candidates": [
-      "Pituitary Gland",
-      "Hypothalamus",
-      "Brain"
-    ]
-  },
-  {
-    "id": "ENT-BOD-038",
+    "id": "ENT-BOD-026",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Hypothalamus",
@@ -1692,229 +1160,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-039",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Parathyroid Glands",
-    "language": "en",
-    "aliases": [
-      "Parathyroids"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical view highlighting the four tiny grain-of-rice parathyroid glands embedded behind the thyroid lobes.",
-    "core_traits": [
-      "Four tiny rice-grain-sized endocrine glands embedded on the posterior surface of the thyroid gland",
-      "Produces parathyroid hormone (PTH) to regulate systemic calcium and phosphate levels",
-      "Stimulates calcium release from bone tissue when blood calcium concentrations drop",
-      "Enhances calcium reabsorption in the kidneys and activates vitamin D for intestinal absorption"
-    ],
-    "distractor_pool": [
-      "Thyroid Gland",
-      "Thymus",
-      "Adrenal Glands",
-      "Pituitary Gland",
-      "Pancreas"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Without functioning parathyroid glands, a person can suffer fatal tetanic muscle spasms.",
-        "verdict": "fact",
-        "explanation": "Severe hypocalcemia causes nervous system hyper-excitability, leading to laryngospasms, seizures, and cardiac arrest.",
-        "fun_fact": "Parathyroid glands were the last major anatomical organ discovered in humans, identified by Ivar Sandstrom in 1880."
-      },
-      {
-        "claim": "The parathyroid glands and thyroid gland perform identical physiological roles.",
-        "verdict": "myth",
-        "explanation": "Despite physical proximity, they are completely separate systems; thyroid controls metabolic rate, while parathyroids control calcium.",
-        "fun_fact": "Most people have four parathyroids, but some individuals have five or six scattered along the neck."
-      }
-    ],
-    "versus_candidates": [
-      "Thyroid Gland",
-      "Adrenal Glands",
-      "Thymus"
-    ]
-  },
-  {
-    "id": "ENT-BOD-040",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Cecum",
-    "language": "en",
-    "aliases": [
-      "Caecum",
-      "Blind Gut"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical render of the pouch-like cecum receiving chyme from the ileum through the ileocecal valve.",
-    "core_traits": [
-      "Cul-de-sac pouch forming the very beginning of the large intestine in the right lower abdomen",
-      "Receives digested material from the terminal ileum through the ileocecal valve",
-      "Gives origin to the vermiform appendix from its inferior posteromedial aspect",
-      "Aids in absorbing fluids and salts remaining after intestinal digestion"
-    ],
-    "distractor_pool": [
-      "Appendix",
-      "Colon",
-      "Ileum",
-      "Duodenum",
-      "Rectum"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Herbivorous animals have a massive cecum compared to the relatively small human cecum.",
-        "verdict": "fact",
-        "explanation": "In herbivores like koalas and rabbits, a huge cecum houses millions of microbes that ferment tough fibrous plant cellulose.",
-        "fun_fact": "The word cecum derives from Latin 'caecus', meaning blind, referring to its dead-end pouch structure."
-      },
-      {
-        "claim": "The cecum is an unnecessary evolutionary leftover identical in function to the appendix.",
-        "verdict": "myth",
-        "explanation": "The cecum is an active segment of the colon that absorbs water, electrolytes, and facilitates bacterial fermentation.",
-        "fun_fact": "The ileocecal valve acts as a one-way flap preventing colon bacteria from backwashing into the sterile small intestine."
-      }
-    ],
-    "versus_candidates": [
-      "Appendix",
-      "Colon",
-      "Ileum"
-    ]
-  },
-  {
-    "id": "ENT-BOD-041",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Peritoneum",
-    "language": "en",
-    "aliases": [
-      "Peritoneal Membrane"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 medical cutaway showing the translucent serous peritoneum lining the entire abdominal cavity and wrapping visceral organs.",
-    "core_traits": [
-      "Continuous serous membrane lining the abdominal cavity and covering internal viscera",
-      "Divided into outer parietal peritoneum (lining body wall) and inner visceral peritoneum (covering organs)",
-      "Produces lubricating peritoneal fluid that allows abdominal organs to glide without friction",
-      "Forms specialized folds including the greater omentum, lesser omentum, and mesentery"
-    ],
-    "distractor_pool": [
-      "Pleura",
-      "Pericardium",
-      "Meninges",
-      "Diaphragm",
-      "Mesentery"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The greater omentum of the peritoneum is nicknamed the 'abdominal policeman'.",
-        "verdict": "fact",
-        "explanation": "This fatty peritoneal fold physically migrates toward areas of infection, wrapping around ruptured appendices to contain peritonitis.",
-        "fun_fact": "Peritoneal dialysis uses the natural filtering ability of the peritoneum to filter blood when kidneys fail."
-      },
-      {
-        "claim": "All abdominal organs reside completely inside the peritoneal cavity.",
-        "verdict": "myth",
-        "explanation": "Organs like the kidneys, pancreas, and aorta are retroperitoneal, situated behind rather than inside the peritoneal sac.",
-        "fun_fact": "The peritoneal cavity in males is completely sealed, while in females it communicates with the exterior via Fallopian tubes."
-      }
-    ],
-    "versus_candidates": [
-      "Pleura",
-      "Meninges",
-      "Diaphragm"
-    ]
-  },
-  {
-    "id": "ENT-BOD-042",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Pleura",
-    "language": "en",
-    "aliases": [
-      "Pleural Sac",
-      "Pleural Membrane"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical diagram of the dual-layered glistening pleura enveloping both lungs inside the thoracic ribcage.",
-    "core_traits": [
-      "Double-layered serous membrane enveloping each lung within the thoracic cavity",
-      "Parietal layer lines the inner chest wall; visceral layer clings tightly to the lung surface",
-      "Separated by a microscopic fluid-filled pleural space maintaining negative surface tension",
-      "Enables frictionless expansion and contraction of lungs during every breath"
-    ],
-    "distractor_pool": [
-      "Peritoneum",
-      "Pericardium",
-      "Diaphragm",
-      "Meninges",
-      "Trachea"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A puncture wound allowing air into the pleural space causes the lung to collapse.",
-        "verdict": "fact",
-        "explanation": "Known as a pneumothorax, air breaks the negative vacuum between pleural layers, causing the elastic lung to shrink.",
-        "fun_fact": "Pleurisy is a painful inflammation where rough pleural layers rub together like sandpaper with every breath."
-      },
-      {
-        "claim": "Both lungs share a single continuous pleural sac across the middle chest.",
-        "verdict": "myth",
-        "explanation": "Each lung occupies its own completely independent pleural cavity separated by the central mediastinum.",
-        "fun_fact": "The pleural space normally contains only about 10 to 15 milliliters of lubricating serous fluid."
-      }
-    ],
-    "versus_candidates": [
-      "Peritoneum",
-      "Lungs",
-      "Diaphragm"
-    ]
-  },
-  {
-    "id": "ENT-BOD-043",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Meninges",
-    "language": "en",
-    "aliases": [
-      "Cranial and Spinal Meninges"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical render displaying the three protective meningeal layers cushioning the brain beneath the skull.",
-    "core_traits": [
-      "Three protective connective tissue membranes enveloping the brain and spinal cord",
-      "Consists of three layers: dura mater (outer tough), arachnoid mater (middle web-like), and pia mater (inner delicate)",
-      "Subarachnoid space contains circulating cerebrospinal fluid (CSF) providing buoyancy and shock absorption",
-      "Susceptible to life-threatening bacterial or viral inflammation known as meningitis"
-    ],
-    "distractor_pool": [
-      "Pleura",
-      "Peritoneum",
-      "Skull",
-      "Spinal Cord",
-      "Brainstem"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The cerebrospinal fluid beneath the meninges allows the brain to float, reducing its effective weight.",
-        "verdict": "fact",
-        "explanation": "By floating the 1,400-gram brain in CSF, its net buoyant weight drops to roughly 50 grams, preventing it from crushing its own base.",
-        "fun_fact": "The names dura mater and pia mater translate from Latin as 'tough mother' and 'tender mother'."
-      },
-      {
-        "claim": "A lumbar puncture (spinal tap) inserts a needle directly into brain tissue to test for meningitis.",
-        "verdict": "myth",
-        "explanation": "A spinal tap samples CSF from the lumbar subarachnoid space in the lower back, well below where the spinal cord ends.",
-        "fun_fact": "Epidural anesthesia injects pain medicine into the space outside the dura mater of the spine during childbirth."
-      }
-    ],
-    "versus_candidates": [
-      "Brain",
-      "Skull",
-      "Spinal Cord"
-    ]
-  },
-  {
-    "id": "ENT-BOD-044",
+    "id": "ENT-BOD-027",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Cornea",
@@ -1958,7 +1204,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-045",
+    "id": "ENT-BOD-028",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Retina",
@@ -2002,7 +1248,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-046",
+    "id": "ENT-BOD-029",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Pupil",
@@ -2046,7 +1292,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-047",
+    "id": "ENT-BOD-030",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Iris",
@@ -2090,7 +1336,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-048",
+    "id": "ENT-BOD-031",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Lens of the Eye",
@@ -2134,7 +1380,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-049",
+    "id": "ENT-BOD-032",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Cochlea",
@@ -2179,7 +1425,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-050",
+    "id": "ENT-BOD-033",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Eardrum",
@@ -2223,52 +1469,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-051",
-    "domain_id": "human_body",
-    "subtopic_id": "senses",
-    "name": "Semicircular Canals",
-    "language": "en",
-    "aliases": [
-      "Vestibular Canals",
-      "Balance Canals"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical render of three interconnected fluid-filled ring loops arranged at right angles deep within the inner ear.",
-    "core_traits": [
-      "Three interconnected fluid-filled loops situated in the inner ear above the cochlea",
-      "Arranged perpendicularly to each other along the three spatial geometric planes (pitch, roll, yaw)",
-      "Detects angular rotational acceleration of the head in three-dimensional space",
-      "Essential component of the vestibular system maintaining dynamic human physical balance"
-    ],
-    "distractor_pool": [
-      "Cochlea",
-      "Eardrum",
-      "Auditory Nerve",
-      "Cerebellum",
-      "Vestibulocochlear Nerve"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Spinning around rapidly causes dizziness because fluid in the semicircular canals keeps sloshing.",
-        "verdict": "fact",
-        "explanation": "When you abruptly stop spinning, endolymph fluid inertia continues bending sensory cupula hairs, telling the brain you are still moving.",
-        "fun_fact": "Loose calcium carbonate crystals falling into these canals trigger intense spinning sensations called BPPV vertigo."
-      },
-      {
-        "claim": "The semicircular canals are primarily responsible for detecting low-frequency audible bass sounds.",
-        "verdict": "myth",
-        "explanation": "These canals play zero role in hearing sound; they function exclusively as sensory gyroscopes for spatial equilibrium.",
-        "fun_fact": "Astronauts experience space motion sickness because the vestibular fluid behaves differently without gravity."
-      }
-    ],
-    "versus_candidates": [
-      "Cochlea",
-      "Cerebellum",
-      "Sense of Balance"
-    ]
-  },
-  {
-    "id": "ENT-BOD-052",
+    "id": "ENT-BOD-034",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Taste Buds",
@@ -2313,51 +1514,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-053",
-    "domain_id": "human_body",
-    "subtopic_id": "senses",
-    "name": "Olfactory Bulb",
-    "language": "en",
-    "aliases": [
-      "Bulbus Olfactorius"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical view of the two olfactory bulbs resting on the cribriform plate beneath the frontal lobe receiving scent axons.",
-    "core_traits": [
-      "Paired neural structure situated on the inferior surface of the brain's frontal lobe",
-      "Receives sensory axonal inputs from olfactory receptor neurons in the nasal roof",
-      "Processes and refines smell information before routing it to the piriform cortex and limbic system",
-      "Directly connected to the amygdala and hippocampus, explaining powerful scent-evoked memories"
-    ],
-    "distractor_pool": [
-      "Taste Buds",
-      "Optic Nerve",
-      "Hippocampus",
-      "Amygdala",
-      "Thalamus"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Smell is the only sensory modality that bypasses the thalamus on its primary route to the cortex.",
-        "verdict": "fact",
-        "explanation": "Olfactory signals project directly to the olfactory cortex and limbic memory structures without initial thalamic gating.",
-        "fun_fact": "This unique direct wiring is why smells trigger vivid autobiographical childhood memories so instantly (Proust effect)."
-      },
-      {
-        "claim": "Humans have an exceptionally weak sense of smell that can only detect about 1,000 scents.",
-        "verdict": "myth",
-        "explanation": "A landmark Rockefeller University study demonstrated the human olfactory system can discriminate over one trillion distinct odor mixtures.",
-        "fun_fact": "Dogs have olfactory bulbs forty times proportionally larger than humans, with up to 300 million scent receptors."
-      }
-    ],
-    "versus_candidates": [
-      "Taste Buds",
-      "Hippocampus",
-      "Sense of Smell"
-    ]
-  },
-  {
-    "id": "ENT-BOD-054",
+    "id": "ENT-BOD-035",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Optic Nerve",
@@ -2401,52 +1558,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-055",
-    "domain_id": "human_body",
-    "subtopic_id": "senses",
-    "name": "Auditory Nerve",
-    "language": "en",
-    "aliases": [
-      "Cochlear Nerve",
-      "Vestibulocochlear Nerve (Cochlear Branch)"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical view of the cochlear nerve transmitting electrical acoustic impulses from the inner ear to the brainstem auditory nuclei.",
-    "core_traits": [
-      "Sensory nerve branch conveying sound frequency and volume impulses from the cochlea to the brainstem",
-      "Combines with the vestibular nerve to form Cranial Nerve VIII (vestibulocochlear nerve)",
-      "Contains approximately 30,000 bipolar auditory nerve fibers firing action potentials",
-      "Passes through the internal acoustic meatus of the skull into the cerebellopontine angle"
-    ],
-    "distractor_pool": [
-      "Optic Nerve",
-      "Cochlea",
-      "Eardrum",
-      "Vagus Nerve",
-      "Facial Nerve"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Tinnitus (phantom ringing in the ears) often stems from spontaneous neural hyperactivity in the auditory pathway.",
-        "verdict": "fact",
-        "explanation": "When peripheral hair cells die, central auditory neurons fire spontaneous compensatory signals that the brain perceives as continuous ringing.",
-        "fun_fact": "The auditory nerve processes timing differences as small as 10 microseconds between ears to pinpoint where a sound came from."
-      },
-      {
-        "claim": "The auditory nerve directly powers the physical movements of facial expression muscles.",
-        "verdict": "myth",
-        "explanation": "Facial muscles are controlled by Cranial Nerve VII (facial nerve), which runs alongside CN VIII through the temporal bone.",
-        "fun_fact": "An acoustic neuroma is a benign slow-growing tumor on the myelin sheath of this nerve that can cause gradual hearing loss."
-      }
-    ],
-    "versus_candidates": [
-      "Optic Nerve",
-      "Cochlea",
-      "Sense of Hearing"
-    ]
-  },
-  {
-    "id": "ENT-BOD-056",
+    "id": "ENT-BOD-036",
     "domain_id": "human_body",
     "subtopic_id": "nervous_system",
     "name": "Spinal Cord",
@@ -2491,7 +1603,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-057",
+    "id": "ENT-BOD-037",
     "domain_id": "human_body",
     "subtopic_id": "nervous_system",
     "name": "Neurons",
@@ -2536,52 +1648,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-058",
-    "domain_id": "human_body",
-    "subtopic_id": "nervous_system",
-    "name": "Synapses",
-    "language": "en",
-    "aliases": [
-      "Neuronal Junctions",
-      "Synaptic Clefts"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Cinematic vertical 9:16 microscopic perspective of a synaptic terminal releasing glowing neurotransmitter vesicles across a 20-nanometer cleft.",
-    "core_traits": [
-      "Microscopic specialized junctions through which neurons transmit signals to target cells",
-      "Chemical synapses release neurotransmitters like dopamine, serotonin, and acetylcholine into the cleft",
-      "Synaptic cleft measures an astonishingly narrow gap of only 20 to 40 nanometers wide",
-      "A single cortical neuron can form upwards of 10,000 synaptic connections with neighboring cells"
-    ],
-    "distractor_pool": [
-      "Neurons",
-      "Axons",
-      "Dendrites",
-      "Receptors",
-      "Myelin"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The human brain contains over 100 trillion individual synaptic connections.",
-        "verdict": "fact",
-        "explanation": "With 86 billion neurons each making thousands of connections, the brain possesses an estimated 100 to 500 trillion synapses.",
-        "fun_fact": "Synaptic plasticity - the strengthening or weakening of synapses over time (LTP) - is the physical foundation of learning and memory."
-      },
-      {
-        "claim": "Electrical signals jump across chemical synapses as literal electrical sparks between cells.",
-        "verdict": "myth",
-        "explanation": "At chemical synapses, electrical action potentials trigger calcium influx, which releases chemical neurotransmitters across the fluid gap.",
-        "fun_fact": "Botox (botulinum toxin) works by blocking acetylcholine release at neuromuscular synapses, paralyzing targeted wrinkle muscles."
-      }
-    ],
-    "versus_candidates": [
-      "Neurons",
-      "Brain",
-      "Dopamine"
-    ]
-  },
-  {
-    "id": "ENT-BOD-059",
+    "id": "ENT-BOD-038",
     "domain_id": "human_body",
     "subtopic_id": "nervous_system",
     "name": "Cerebellum",
@@ -2625,7 +1692,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-060",
+    "id": "ENT-BOD-039",
     "domain_id": "human_body",
     "subtopic_id": "nervous_system",
     "name": "Brainstem",
@@ -2669,7 +1736,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-061",
+    "id": "ENT-BOD-040",
     "domain_id": "human_body",
     "subtopic_id": "nervous_system",
     "name": "Cerebrum",
@@ -2714,7 +1781,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-062",
+    "id": "ENT-BOD-041",
     "domain_id": "human_body",
     "subtopic_id": "nervous_system",
     "name": "Frontal Lobe",
@@ -2758,97 +1825,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-063",
-    "domain_id": "human_body",
-    "subtopic_id": "nervous_system",
-    "name": "Hippocampus",
-    "language": "en",
-    "aliases": [
-      "Cornu Ammonis",
-      "Memory Seahorse"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 cutaway of the brain's medial temporal lobe highlighting the curved seahorse-shaped hippocampus indexing memories.",
-    "core_traits": [
-      "Curved seahorse-shaped neural structure located deep within the medial temporal lobe",
-      "Essential hub for converting short-term memories into long-term declarative memories (memory consolidation)",
-      "Contains specialized place cells that form cognitive spatial maps for navigation and mental orientation",
-      "One of the earliest and most severely affected brain regions in Alzheimer's disease pathology"
-    ],
-    "distractor_pool": [
-      "Amygdala",
-      "Thalamus",
-      "Hypothalamus",
-      "Frontal Lobe",
-      "Cerebellum"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "London taxi drivers develop an enlarged posterior hippocampus from memorizing thousands of city streets.",
-        "verdict": "fact",
-        "explanation": "Neuroimaging showed taxi drivers who passed 'The Knowledge' navigation test had significantly greater gray matter volume in the hippocampus.",
-        "fun_fact": "The word hippocampus comes from Greek mythology, meaning 'sea horse' monster, due to its distinctive shape."
-      },
-      {
-        "claim": "Long-term memories are stored permanently inside the hippocampus like files on a hard drive.",
-        "verdict": "myth",
-        "explanation": "The hippocampus acts as a temporary indexer; consolidated memories are eventually transferred to distributed areas of the cerebral cortex.",
-        "fun_fact": "Patient H.M., whose hippocampi were surgically removed, could never form another new conscious memory for the rest of his life."
-      }
-    ],
-    "versus_candidates": [
-      "Amygdala",
-      "Hypothalamus",
-      "Cerebrum"
-    ]
-  },
-  {
-    "id": "ENT-BOD-064",
-    "domain_id": "human_body",
-    "subtopic_id": "nervous_system",
-    "name": "Amygdala",
-    "language": "en",
-    "aliases": [
-      "Corpus Amygdaloideum",
-      "Fear Center"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 cinematic visualization of the paired almond-shaped amygdala glowing red deep in the limbic system during emotional threat detection.",
-    "core_traits": [
-      "Paired almond-shaped clusters of nuclei nestled deep within the brain's temporal lobes",
-      "Key component of the limbic system responsible for processing emotions, especially fear and aggression",
-      "Orchestrates rapid physiological threat detection and triggers immediate fight-or-flight signaling",
-      "Plays an essential role in emotional memory consolidation and reading emotional facial expressions"
-    ],
-    "distractor_pool": [
-      "Hippocampus",
-      "Hypothalamus",
-      "Thalamus",
-      "Frontal Lobe",
-      "Pineal Gland"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "People with bilateral destruction of the amygdala experience almost total fearlessness.",
-        "verdict": "fact",
-        "explanation": "Patient S.M., who has Urbach-Wiethe disease destroying both amygdalae, exhibits complete lack of fear toward snakes, spiders, and horror films.",
-        "fun_fact": "The word amygdala derives from the Greek word for 'almond', matching its size and outline."
-      },
-      {
-        "claim": "The amygdala is solely a destructive center producing negative anger and phobias.",
-        "verdict": "myth",
-        "explanation": "The amygdala processes all biologically salient stimuli, including positive social rewards, romance, affection, and joyful excitement.",
-        "fun_fact": "An 'amygdala hijack' occurs when emotional threat circuits bypass logical prefrontal reasoning during sudden rage or panic."
-      }
-    ],
-    "versus_candidates": [
-      "Hippocampus",
-      "Hypothalamus",
-      "Frontal Lobe"
-    ]
-  },
-  {
-    "id": "ENT-BOD-065",
+    "id": "ENT-BOD-042",
     "domain_id": "human_body",
     "subtopic_id": "nervous_system",
     "name": "Peripheral Nerves",
@@ -2893,141 +1870,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-066",
-    "domain_id": "human_body",
-    "subtopic_id": "nervous_system",
-    "name": "Sciatic Nerve",
-    "language": "en",
-    "aliases": [
-      "Ischiadic Nerve"
-    ],
-    "difficulty": 1,
-    "visual_anchor": "Vertical 9:16 anatomical view of the thick sciatic nerve descending from the lower lumbar spine through the pelvis down the leg.",
-    "core_traits": [
-      "Longest and widest single nerve in the entire human body",
-      "Originates from spinal roots L4 through S3 in the lumbosacral plexus",
-      "Travels from the lower back through the buttock down the posterior thigh to the foot",
-      "Measures approximately as thick as an adult human thumb at its widest pelvic origin"
-    ],
-    "distractor_pool": [
-      "Vagus Nerve",
-      "Femoral Nerve",
-      "Spinal Cord",
-      "Auditory Nerve",
-      "Optic Nerve"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Sciatica is caused by irritation, inflammation, or pinching of the sciatic nerve roots.",
-        "verdict": "fact",
-        "explanation": "A herniated disc or bone spur in the lumbar spine compressing the nerve causes shooting electric pain radiating down the leg.",
-        "fun_fact": "Near the popliteal fossa behind the knee, the sciatic nerve splits into the tibial and common fibular nerves."
-      },
-      {
-        "claim": "Sciatic nerve pain always originates from a muscular tear directly in the calf muscle.",
-        "verdict": "myth",
-        "explanation": "While pain can radiate into the calf and foot, the structural root cause is almost always in the lower lumbar spine or piriformis muscle.",
-        "fun_fact": "Sitting on a thick wallet in your back pocket can compress the sciatic nerve, a condition nicknamed 'wallet sciatica'."
-      }
-    ],
-    "versus_candidates": [
-      "Spinal Cord",
-      "Vagus Nerve",
-      "Femur"
-    ]
-  },
-  {
-    "id": "ENT-BOD-067",
-    "domain_id": "human_body",
-    "subtopic_id": "nervous_system",
-    "name": "Vagus Nerve",
-    "language": "en",
-    "aliases": [
-      "Cranial Nerve X",
-      "The Wanderer"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical visual of the extensive wandering vagus nerve meandering from the brainstem into the heart, lungs, and intestines.",
-    "core_traits": [
-      "Tenth cranial nerve (CN X) and the longest cranial nerve in the human body",
-      "Originates in the brainstem and wanders extensively into the neck, chest, heart, lungs, and gut",
-      "Primary commander of the parasympathetic nervous system governing the rest-and-digest response",
-      "Slows heart rate, stimulates digestive enzyme secretion, and moderates systemic inflammation"
-    ],
-    "distractor_pool": [
-      "Sciatic Nerve",
-      "Optic Nerve",
-      "Trigeminal Nerve",
-      "Spinal Cord",
-      "Phrenic Nerve"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Overstimulation of the vagus nerve can cause a sudden drop in heart rate and fainting (vasovagal syncope).",
-        "verdict": "fact",
-        "explanation": "Triggers like sight of blood, extreme fear, or prolonged standing cause acute vagal surges, pooling blood in legs and fainting.",
-        "fun_fact": "The word vagus comes from the Latin word for 'wandering', the same root as 'vagrant' and 'vagabond'."
-      },
-      {
-        "claim": "The vagus nerve carries signals in only one direction from the brain down to abdominal organs.",
-        "verdict": "myth",
-        "explanation": "Roughly 80 percent of vagus nerve fibers are afferent (sensory), sending gut microbiome and organ data upward into the brain.",
-        "fun_fact": "Vagus nerve stimulation (VNS) devices are surgically implanted to treat drug-resistant epilepsy and severe depression."
-      }
-    ],
-    "versus_candidates": [
-      "Sciatic Nerve",
-      "Heart",
-      "Sympathetic Nervous System"
-    ]
-  },
-  {
-    "id": "ENT-BOD-068",
-    "domain_id": "human_body",
-    "subtopic_id": "nervous_system",
-    "name": "Autonomic Nervous System",
-    "language": "en",
-    "aliases": [
-      "ANS",
-      "Involuntary Nervous System"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 duality graphic illustrating the twin branches of the autonomic system: red fight-or-flight vs blue rest-and-digest.",
-    "core_traits": [
-      "Division of the peripheral nervous system regulating involuntary physiological body functions",
-      "Controls heart rate, digestion, respiration rate, salivation, perspiration, and pupillary dilation",
-      "Divided into two antagonistic branches: sympathetic (fight-or-flight) and parasympathetic (rest-and-digest)",
-      "Maintains continuous internal physiological stability known as homeostasis"
-    ],
-    "distractor_pool": [
-      "Somatic Nervous System",
-      "Central Nervous System",
-      "Spinal Cord",
-      "Endocrine System",
-      "Brainstem"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The autonomic nervous system can be consciously influenced through controlled slow deep breathing.",
-        "verdict": "fact",
-        "explanation": "Prolonged exhalation activates the parasympathetic vagus nerve, deliberately lowering heart rate and reducing stress hormones.",
-        "fun_fact": "The enteric nervous system embedded in the gut is often classified as a semi-autonomous third branch of the ANS."
-      },
-      {
-        "claim": "Humans can completely shut down their autonomic nervous system through deep meditation.",
-        "verdict": "myth",
-        "explanation": "Total shutdown of autonomic function would stop the heartbeat and respiration, causing immediate clinical death.",
-        "fun_fact": "Pupil dilation in the dark is mediated by sympathetic nerves, while constriction in bright sun is parasympathetic."
-      }
-    ],
-    "versus_candidates": [
-      "Vagus Nerve",
-      "Brainstem",
-      "Heart"
-    ]
-  },
-  {
-    "id": "ENT-BOD-069",
+    "id": "ENT-BOD-043",
     "domain_id": "human_body",
     "subtopic_id": "nervous_system",
     "name": "Sensory Neurons",
@@ -3071,7 +1914,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-070",
+    "id": "ENT-BOD-044",
     "domain_id": "human_body",
     "subtopic_id": "nervous_system",
     "name": "Motor Neurons",
@@ -3116,7 +1959,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-071",
+    "id": "ENT-BOD-045",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Blood",
@@ -3161,7 +2004,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-072",
+    "id": "ENT-BOD-046",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Red Blood Cells",
@@ -3206,7 +2049,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-073",
+    "id": "ENT-BOD-047",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "White Blood Cells",
@@ -3251,7 +2094,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-074",
+    "id": "ENT-BOD-048",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Platelets",
@@ -3295,7 +2138,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-075",
+    "id": "ENT-BOD-049",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Blood Plasma",
@@ -3339,7 +2182,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-076",
+    "id": "ENT-BOD-050",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Hemoglobin",
@@ -3384,7 +2227,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-077",
+    "id": "ENT-BOD-051",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Arteries",
@@ -3428,7 +2271,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-078",
+    "id": "ENT-BOD-052",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Veins",
@@ -3472,7 +2315,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-079",
+    "id": "ENT-BOD-053",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Capillaries",
@@ -3517,7 +2360,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-080",
+    "id": "ENT-BOD-054",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Aorta",
@@ -3561,7 +2404,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-081",
+    "id": "ENT-BOD-055",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Vena Cava",
@@ -3605,51 +2448,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-082",
-    "domain_id": "human_body",
-    "subtopic_id": "circulatory",
-    "name": "Coronary Arteries",
-    "language": "en",
-    "aliases": [
-      "Heart Arteries"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 cinematic visual of left and right coronary arteries branching like a crown across the pulsing myocardium surface.",
-    "core_traits": [
-      "Specialized arterial blood vessels branching directly from the base of the ascending aorta",
-      "Encircle the heart like a crown, supplying oxygen-rich blood directly to the working heart muscle (myocardium)",
-      "Left Main and Right Coronary Arteries divide into major branches including the LAD (left anterior descending)",
-      "Susceptible to atherosclerotic plaque accumulation that causes ischemic coronary artery disease"
-    ],
-    "distractor_pool": [
-      "Aorta",
-      "Carotid Artery",
-      "Pulmonary Artery",
-      "Vena Cava",
-      "Femoral Artery"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The left anterior descending (LAD) coronary artery is nicknamed the 'widowmaker'.",
-        "verdict": "fact",
-        "explanation": "Because the LAD supplies over 50 percent of the left ventricle, an acute blockage causes catastrophic, often fatal myocardial infarction.",
-        "fun_fact": "Coronary arteries fill with blood primarily during cardiac diastole (when the heart relaxes), unlike other systemic arteries."
-      },
-      {
-        "claim": "The heart muscle gets all its oxygen directly by absorbing blood flowing inside its own four interior chambers.",
-        "verdict": "myth",
-        "explanation": "The thick muscular myocardium cannot absorb oxygen across its endocardium lining; it relies exclusively on external coronary arteries.",
-        "fun_fact": "Coronary bypass surgery (CABG) often harvests the saphenous vein from the leg to detour around blocked coronary arteries."
-      }
-    ],
-    "versus_candidates": [
-      "Heart",
-      "Aorta",
-      "Arteries"
-    ]
-  },
-  {
-    "id": "ENT-BOD-083",
+    "id": "ENT-BOD-056",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Blood Vessels",
@@ -3694,7 +2493,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-084",
+    "id": "ENT-BOD-057",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Lymph Nodes",
@@ -3739,7 +2538,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-085",
+    "id": "ENT-BOD-058",
     "domain_id": "human_body",
     "subtopic_id": "circulatory",
     "name": "Lymphatic System",
@@ -3783,7 +2582,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-086",
+    "id": "ENT-BOD-059",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Bone Marrow",
@@ -3828,7 +2627,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-087",
+    "id": "ENT-BOD-060",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Human Skeleton",
@@ -3873,7 +2672,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-088",
+    "id": "ENT-BOD-061",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Skull",
@@ -3917,7 +2716,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-089",
+    "id": "ENT-BOD-062",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Spine",
@@ -3962,7 +2761,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-090",
+    "id": "ENT-BOD-063",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Rib Cage",
@@ -4007,7 +2806,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-091",
+    "id": "ENT-BOD-064",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Pelvis",
@@ -4052,7 +2851,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-092",
+    "id": "ENT-BOD-065",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Femur",
@@ -4096,7 +2895,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-093",
+    "id": "ENT-BOD-066",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Humerus",
@@ -4140,7 +2939,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-094",
+    "id": "ENT-BOD-067",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Tibia",
@@ -4185,7 +2984,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-095",
+    "id": "ENT-BOD-068",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Fibula",
@@ -4229,7 +3028,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-096",
+    "id": "ENT-BOD-069",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Radius",
@@ -4273,7 +3072,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-097",
+    "id": "ENT-BOD-070",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Ulna",
@@ -4317,7 +3116,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-098",
+    "id": "ENT-BOD-071",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Clavicle",
@@ -4361,7 +3160,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-099",
+    "id": "ENT-BOD-072",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Scapula",
@@ -4405,7 +3204,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-100",
+    "id": "ENT-BOD-073",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Sternum",
@@ -4449,7 +3248,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-101",
+    "id": "ENT-BOD-074",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Patella",
@@ -4493,7 +3292,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-102",
+    "id": "ENT-BOD-075",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Joints",
@@ -4538,7 +3337,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-103",
+    "id": "ENT-BOD-076",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Cartilage",
@@ -4583,7 +3382,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-104",
+    "id": "ENT-BOD-077",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Ligaments",
@@ -4627,7 +3426,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-105",
+    "id": "ENT-BOD-078",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Tendons",
@@ -4671,7 +3470,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-106",
+    "id": "ENT-BOD-079",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Skeletal Muscles",
@@ -4716,7 +3515,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-107",
+    "id": "ENT-BOD-080",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Smooth Muscle",
@@ -4761,7 +3560,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-108",
+    "id": "ENT-BOD-081",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Cardiac Muscle",
@@ -4806,7 +3605,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-109",
+    "id": "ENT-BOD-082",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Biceps",
@@ -4851,7 +3650,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-110",
+    "id": "ENT-BOD-083",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Triceps",
@@ -4895,7 +3694,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-111",
+    "id": "ENT-BOD-084",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Quadriceps",
@@ -4940,7 +3739,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-112",
+    "id": "ENT-BOD-085",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Hamstrings",
@@ -4984,7 +3783,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-113",
+    "id": "ENT-BOD-086",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Abdominal Muscles",
@@ -5030,7 +3829,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-114",
+    "id": "ENT-BOD-087",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Gluteus Maximus",
@@ -5074,7 +3873,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-115",
+    "id": "ENT-BOD-088",
     "domain_id": "human_body",
     "subtopic_id": "skeletal_muscular",
     "name": "Achilles Tendon",
@@ -5118,7 +3917,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-116",
+    "id": "ENT-BOD-089",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Epidermis",
@@ -5162,7 +3961,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-117",
+    "id": "ENT-BOD-090",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Hair Follicles",
@@ -5207,7 +4006,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-118",
+    "id": "ENT-BOD-091",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Sweat Glands",
@@ -5251,7 +4050,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-119",
+    "id": "ENT-BOD-092",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Fingernails",
@@ -5296,51 +4095,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-120",
-    "domain_id": "human_body",
-    "subtopic_id": "organs",
-    "name": "Sebaceous Glands",
-    "language": "en",
-    "aliases": [
-      "Oil Glands"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 microscopic cutaway showing a lobed sebaceous gland secreting golden lubricating sebum into a hair follicle canal.",
-    "core_traits": [
-      "Microscopic exocrine glands located in the skin that secrete an oily or waxy substance called sebum",
-      "Usually connected directly to hair follicles, discharging sebum through the follicular canal",
-      "Abundant on the face, scalp, and upper back, but completely absent from the palms and soles",
-      "Sebum waterproofs and lubricates skin and hair while inhibiting bacterial and fungal proliferation"
-    ],
-    "distractor_pool": [
-      "Sweat Glands",
-      "Hair Follicles",
-      "Salivary Glands",
-      "Epidermis",
-      "Pores"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Acne develops when excess sebum mixes with dead skin cells and bacteria inside the pore.",
-        "verdict": "fact",
-        "explanation": "Overactive sebaceous glands plug pores, creating an anaerobic environment where Cutibacterium acnes bacteria proliferate.",
-        "fun_fact": "Sebaceous glands are holocrine glands: their cells disintegrate entirely to release their oily contents."
-      },
-      {
-        "claim": "Eating greasy chocolate and french fries causes immediate excess sebum secretion and pimples.",
-        "verdict": "myth",
-        "explanation": "Dietary oils do not travel directly to skin oil glands; hormones (androgens) drive sebum production, though high-glycemic foods can influence hormones.",
-        "fun_fact": "Newborn babies are born covered in vernix caseosa, a protective white cheese-like coating made by fetal sebaceous glands."
-      }
-    ],
-    "versus_candidates": [
-      "Sweat Glands",
-      "Hair Follicles",
-      "Skin"
-    ]
-  },
-  {
-    "id": "ENT-BOD-121",
+    "id": "ENT-BOD-093",
     "domain_id": "human_body",
     "subtopic_id": "organs",
     "name": "Tooth Enamel",
@@ -5385,7 +4140,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-122",
+    "id": "ENT-BOD-094",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Sense of Sight",
@@ -5430,7 +4185,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-123",
+    "id": "ENT-BOD-095",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Sense of Hearing",
@@ -5475,7 +4230,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-124",
+    "id": "ENT-BOD-096",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Sense of Smell",
@@ -5520,7 +4275,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-125",
+    "id": "ENT-BOD-097",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Sense of Taste",
@@ -5565,7 +4320,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-126",
+    "id": "ENT-BOD-098",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Sense of Touch",
@@ -5610,7 +4365,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-127",
+    "id": "ENT-BOD-099",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Sense of Balance",
@@ -5655,52 +4410,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-128",
-    "domain_id": "human_body",
-    "subtopic_id": "senses",
-    "name": "Proprioception",
-    "language": "en",
-    "aliases": [
-      "Kinesthesia",
-      "The Sixth Sense"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "Vertical 9:16 anatomical render of glowing muscle spindles and Golgi tendon organs sensing joint angles in the dark without vision.",
-    "core_traits": [
-      "The body's intrinsic sense of its own position, movement, and posture in space without using vision",
-      "Mediated by specialized mechanoreceptors: muscle spindles (stretch), Golgi tendon organs (tension), and joint capsule receptors",
-      "Allows you to touch your index finger to your nose with eyes closed or navigate stairs in pitch darkness",
-      "Processed subconsciously in the cerebellum and consciously in the primary somatosensory cortex"
-    ],
-    "distractor_pool": [
-      "Sense of Balance",
-      "Sense of Touch",
-      "Reflexes",
-      "Cerebellum",
-      "Muscle Spindles"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Police officers use proprioception tests (touching your nose with eyes closed) to check for alcohol intoxication.",
-        "verdict": "fact",
-        "explanation": "Alcohol severely disrupts cerebellar coordination and proprioceptive feedback loops, making smooth closed-eye motor targeting impossible.",
-        "fun_fact": "Ian Waterman completely lost his sense of touch and proprioception from a viral infection and had to learn to walk purely using visual guidance."
-      },
-      {
-        "claim": "Proprioception is identical to the vestibular balance sense located inside the inner ear.",
-        "verdict": "myth",
-        "explanation": "Vestibular sense detects head tilt and acceleration via inner ear fluid; proprioception senses limb position and muscle stretch throughout the body.",
-        "fun_fact": "Phantom limb sensations occur when cortical proprioceptive maps remain active after a limb has been amputated."
-      }
-    ],
-    "versus_candidates": [
-      "Sense of Balance",
-      "Sense of Touch",
-      "Cerebellum"
-    ]
-  },
-  {
-    "id": "ENT-BOD-129",
+    "id": "ENT-BOD-100",
     "domain_id": "human_body",
     "subtopic_id": "senses",
     "name": "Pain Perception",
@@ -5745,7 +4455,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-130",
+    "id": "ENT-BOD-101",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Heartbeat",
@@ -5790,7 +4500,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-131",
+    "id": "ENT-BOD-102",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Pulse",
@@ -5835,7 +4545,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-132",
+    "id": "ENT-BOD-103",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Blood Pressure",
@@ -5880,7 +4590,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-133",
+    "id": "ENT-BOD-104",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Breathing",
@@ -5925,7 +4635,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-134",
+    "id": "ENT-BOD-105",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Digestion",
@@ -5970,7 +4680,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-135",
+    "id": "ENT-BOD-106",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Reflexes",
@@ -6015,7 +4725,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-136",
+    "id": "ENT-BOD-107",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Yawning",
@@ -6060,7 +4770,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-137",
+    "id": "ENT-BOD-108",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Hiccups",
@@ -6104,7 +4814,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-138",
+    "id": "ENT-BOD-109",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Sneezing",
@@ -6148,7 +4858,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-139",
+    "id": "ENT-BOD-110",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Coughing",
@@ -6193,7 +4903,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-140",
+    "id": "ENT-BOD-111",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Blinking",
@@ -6238,7 +4948,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-141",
+    "id": "ENT-BOD-112",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Crying and Tears",
@@ -6283,7 +4993,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-142",
+    "id": "ENT-BOD-113",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Sweating",
@@ -6328,7 +5038,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-143",
+    "id": "ENT-BOD-114",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Shivering",
@@ -6373,7 +5083,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-144",
+    "id": "ENT-BOD-115",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Goosebumps",
@@ -6419,7 +5129,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-145",
+    "id": "ENT-BOD-116",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Sleep",
@@ -6464,7 +5174,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-146",
+    "id": "ENT-BOD-117",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "REM Sleep",
@@ -6509,7 +5219,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-147",
+    "id": "ENT-BOD-118",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Dreaming",
@@ -6554,7 +5264,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-148",
+    "id": "ENT-BOD-119",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Immune Response",
@@ -6599,7 +5309,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-149",
+    "id": "ENT-BOD-120",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Wound Healing",
@@ -6644,7 +5354,7 @@
     ]
   },
   {
-    "id": "ENT-BOD-150",
+    "id": "ENT-BOD-121",
     "domain_id": "human_body",
     "subtopic_id": "biological_phenomena",
     "name": "Fingerprints",

@@ -3,10 +3,15 @@
  */
 
 export * from "./types/transitionPreview.types";
-export * from "./hooks/useTransitionPlayback";
-export * from "./utils/transitionOverlayRenderer";
-export * from "./components/TransitionSceneA";
-export * from "./components/TransitionSceneB";
-export * from "./components/TransitionOverlay";
-export * from "./components/TransitionPlaybackControls";
+export * from "./types/transitionPlayer.types";
+export * from "./services/transitionPreviewApi";
+export * from "./hooks/useTransitionCatalog";
+export * from "./hooks/useTransitionPreview";
+export * from "./hooks/useTransitionTransport";
+export * from "./utils/transitionFramePosition";
+export * from "./components/TransitionSelector";
+export * from "./components/TransitionTransport";
+export * from "./components/TransitionTimingPanel";
+export * from "./components/TransitionPreviewStatus";
 export * from "./components/TransitionPreviewPlayer";
+

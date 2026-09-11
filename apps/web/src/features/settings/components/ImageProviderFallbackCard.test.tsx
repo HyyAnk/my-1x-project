@@ -77,4 +77,30 @@ describe("ImageProviderFallbackCard", () => {
     fireEvent.click(saveBtn);
     expect(onSaveFallback).toHaveBeenCalled();
   });
+
+  it("displays Key Saved & Active badge and masked placeholder when API key is configured", () => {
+    render(
+      <ImageProviderFallbackCard
+        {...defaultProps}
+        hasFallbackApiKey={true}
+        fallbackApiKey=""
+      />,
+    );
+
+    expect(screen.getByText("Key Saved & Active")).toBeDefined();
+    expect(screen.getByText("Configured & Active")).toBeDefined();
+    const input = screen.getByPlaceholderText("•••••••••••••••••••••••••••••••• (Key saved & active)");
+    expect(input).toBeDefined();
+  });
+
+  it("displays verificationResult banner when present", () => {
+    render(
+      <ImageProviderFallbackCard
+        {...defaultProps}
+        verificationResult={{ status: "success", message: "Connected successfully to ImgStudio API (10 models verified)." }}
+      />,
+    );
+
+    expect(screen.getByText("Connected successfully to ImgStudio API (10 models verified).")).toBeDefined();
+  });
 });

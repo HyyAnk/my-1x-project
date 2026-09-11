@@ -1,4 +1,5 @@
 import type { QuizLayoutRenderDefinition } from "./types.js";
+import { renderQuizFrameBody } from "../frame/renderQuizFrameBody.js";
 
 /**
  * Visual Choices Three Pure Layout (16:9 Landscape Video, 1920x1080).
@@ -18,7 +19,7 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  */
 export const visualChoicesThreePureLayout = {
   id: "visual_choices_three_pure",
-  renderBody: (slots) => `${slots.questionBoxHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
+  renderBody: (slots) => renderQuizFrameBody(slots, slots.choicesHtml),
   css: (_aspectRatio) => `
 /* ==========================================================================
    LAYOUT: visual_choices_three_pure (16:9 Landscape Video - 1920x1080)
@@ -26,7 +27,7 @@ export const visualChoicesThreePureLayout = {
    ========================================================================== */
 
 /* 1. Stage Container & 3-Row CSS Grid */
-.layout-visual_choices_three_pure .game-stage {
+.candy-scene:not(.quiz-frame-unified).layout-visual_choices_three_pure .game-stage {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas:
@@ -44,7 +45,7 @@ export const visualChoicesThreePureLayout = {
 }
 
 /* 2. Question Title Box: Perfectly centered above the 3 visual cards */
-.layout-visual_choices_three_pure .question-title {
+.candy-scene:not(.quiz-frame-unified).layout-visual_choices_three_pure .question-title {
   grid-area: title;
   width: 100%;
   max-width: 1380px;
@@ -55,7 +56,7 @@ export const visualChoicesThreePureLayout = {
 }
 
 /* 3. 3-Column Pure Visual Answer Grid */
-.layout-visual_choices_three_pure .visual-answer-grid {
+.candy-scene:not(.quiz-frame-unified).layout-visual_choices_three_pure .visual-answer-grid {
   grid-area: answers;
   width: 1420px;
   max-width: 1420px;
@@ -63,6 +64,64 @@ export const visualChoicesThreePureLayout = {
   gap: 24px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* --- Unified Arena Geometry --- */
+.quiz-frame-unified.layout-visual_choices_three_pure .visual-answer-grid,
+.quiz-frame-unified.layout-visual_choices_three_pure .choice-group {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1420px;
+  height: 504px;
+  max-width: 1420px;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 452px);
+  gap: 32px;
+  box-sizing: border-box;
+}
+
+.quiz-frame-unified.layout-visual_choices_three_pure .choice-card-visual,
+.quiz-frame-unified.layout-visual_choices_three_pure .visual-answer-card {
+  width: 452px;
+  height: 504px;
+  min-height: 504px;
+  max-height: 504px;
+  box-sizing: border-box;
+}
+
+.quiz-frame-unified.layout-visual_choices_three_pure .choice-media,
+.quiz-frame-unified.layout-visual_choices_three_pure .option-image {
+  height: 504px;
+  min-height: 504px;
+  max-height: 504px;
+  box-sizing: border-box;
+}
+
+.quiz-frame-unified.layout-visual_choices_three_pure .visual-answer-label {
+  display: block;
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 88px;
+  height: 88px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.quiz-frame-unified.layout-visual_choices_three_pure .visual-answer-label .choice-label,
+.quiz-frame-unified.layout-visual_choices_three_pure .visual-answer-card .visual-answer-label > b {
+  width: 88px;
+  height: 88px;
+  min-width: 88px;
+  font-size: 52px;
+  margin: 0;
 }
 
 /* 4. Choice Cards & Media Framing (500px height) */
@@ -205,7 +264,7 @@ export const visualChoicesThreePureLayout = {
 /* ==========================================================================
    PHASE 3 & 5: PHASE REGION IN ROW 3 (100% ZERO-COLLISION GUARANTEE)
    ========================================================================== */
-.layout-visual_choices_three_pure .phase-region {
+.candy-scene:not(.quiz-frame-unified).layout-visual_choices_three_pure .phase-region {
   grid-area: phase;
   position: relative;
   top: auto;
@@ -222,7 +281,7 @@ export const visualChoicesThreePureLayout = {
   box-sizing: border-box;
 }
 
-.layout-visual_choices_three_pure .phase-region > .thinking-bar {
+.candy-scene:not(.quiz-frame-unified).layout-visual_choices_three_pure .phase-region > .thinking-bar {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -232,7 +291,7 @@ export const visualChoicesThreePureLayout = {
   min-height: 84px;
 }
 
-.layout-visual_choices_three_pure .phase-region > .fact-card {
+.candy-scene:not(.quiz-frame-unified).layout-visual_choices_three_pure .phase-region > .fact-card {
   position: absolute;
   top: 50%;
   left: 50%;

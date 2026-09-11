@@ -18,6 +18,7 @@ import { candyArcadeFontFaceCss, type CandyArcadeFontMode } from "./candyArcadeF
 import { channelBrandMarkCss } from "./channelBrandMarkStyles.js";
 import { productionMascotCss } from "./productionMascotStyles.js";
 import { quizLayoutCss } from "../layouts/registry.js";
+import { quizFrameCss } from "../frame/quizFrameStyles.js";
 import { baseChoiceStyles, choiceTypographyStyles, choiceStateStyles } from "../choices/index.js";
 
 export function candyArcadeHeroAreaRatio(layout: QuizPreviewLayoutId, aspectRatio: MascotRenderAspectRatio = "16:9"): number {
@@ -157,8 +158,8 @@ ${choiceStateStyles()}
 .quiz-question-clip .hero-image { animation: hero-enter .62s cubic-bezier(.22,.8,.3,1) var(--clip-start) both; }
 .reward-fx { position: absolute; z-index: 7; inset: 0; color: #fff; pointer-events: none; text-shadow: 0 7px 0 rgba(13,35,71,.18); opacity: 0; animation: phase-enter .01s steps(1,end) calc(var(--clip-start) + var(--reward-at)) both; }
 .reward-fx i { position: absolute; font-size: 51px; font-style: normal; animation: star-burst .72s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + var(--reward-at)) both; }
-.reward-fx i:nth-child(1) { left: 5%; top: 34%; }.reward-fx i:nth-child(2) { right: 6%; top: 38%; animation-delay: calc(var(--clip-start) + .06s); }.reward-fx i:nth-child(3) { left: 9%; bottom: 18%; animation-delay: calc(var(--clip-start) + .12s); }.reward-fx i:nth-child(4) { right: 10%; bottom: 16%; animation-delay: calc(var(--clip-start) + .18s); }.reward-fx i:nth-child(5) { left: 3%; top: 58%; animation-delay: calc(var(--clip-start) + .24s); }.reward-fx i:nth-child(6) { right: 3%; top: 61%; animation-delay: calc(var(--clip-start) + .3s); }.reward-fx i:nth-child(7) { left: 7%; bottom: 8%; animation-delay: calc(var(--clip-start) + .36s); }
-.reward-fx i:nth-child(8) { right: 18%; top: 20%; animation-delay: calc(var(--clip-start) + .42s); }.reward-fx i:nth-child(9) { left: 20%; bottom: 23%; animation-delay: calc(var(--clip-start) + .48s); }
+.reward-fx i:nth-child(1) { left: 5%; top: 34%; }.reward-fx i:nth-child(2) { right: 6%; top: 38%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .06s); }.reward-fx i:nth-child(3) { left: 9%; bottom: 18%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .12s); }.reward-fx i:nth-child(4) { right: 10%; bottom: 16%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .18s); }.reward-fx i:nth-child(5) { left: 3%; top: 58%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .24s); }.reward-fx i:nth-child(6) { right: 3%; top: 61%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .3s); }.reward-fx i:nth-child(7) { left: 7%; bottom: 8%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .36s); }
+.reward-fx i:nth-child(8) { right: 18%; top: 20%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .42s); }.reward-fx i:nth-child(9) { left: 20%; bottom: 23%; animation-delay: calc(var(--clip-start, 0s) + var(--reward-at, 0s) + .48s); }
 .reward-small i { font-size: 57px; }
 .reward-big i { font-size: 71px; }
 .episode-progress.streak { animation: progress-pop .52s cubic-bezier(.18,1.42,.34,1) calc(var(--clip-start) + .12s) both; }
@@ -359,6 +360,7 @@ ${getThinkingBarsCss(options.styleCatalogRevision)}
 ${getQuestionBoxesCss(options.styleCatalogRevision)}
 ${getCounterBadgesCss(options.styleCatalogRevision)}
 ${getAnswerCardSkinsCss(options.styleCatalogRevision)}
+${aspectRatio === "16:9" ? quizFrameCss() : ""}
 ${semanticBackgroundLayerCss()}
 ${getSelectedBackgroundStylesCss(options.backgroundStyles ?? ["candy_rays", "aurora_glow"], options.styleCatalogRevision)}
 @media (prefers-reduced-motion: reduce) {

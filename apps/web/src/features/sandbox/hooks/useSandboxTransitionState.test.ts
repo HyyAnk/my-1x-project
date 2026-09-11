@@ -231,5 +231,29 @@ describe("useSandboxTransitionState", () => {
       result.current.syncFromPreset(undefined);
     });
     expect(result.current.transitionId).toBe("lightning_brush");
+
+    // Sync from channel with canonical transitions object
+    act(() => {
+      result.current.syncFromChannel({
+        transitions: {
+          scene: { id: "bubble_splash", durationSeconds: 0.95 },
+        },
+      });
+    });
+    expect(result.current.transitionId).toBe("bubble_splash");
+    expect(result.current.transitionDuration).toBe(0.95);
+    expect(result.current.transitionCategory).toBe("scene");
+
+    // Sync from preset with canonical transitions object
+    act(() => {
+      result.current.syncFromPreset({
+        transitions: {
+          scene: { id: "brush_wave", durationSeconds: 0.85 },
+        },
+      });
+    });
+    expect(result.current.transitionId).toBe("brush_wave");
+    expect(result.current.transitionDuration).toBe(0.85);
+    expect(result.current.transitionCategory).toBe("scene");
   });
 });

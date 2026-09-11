@@ -1,0 +1,3750 @@
+[
+  {
+    "id": "ENT-MUS-001",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Grand Piano",
+    "language": "en",
+    "aliases": [
+      "Concert Grand",
+      "Acoustic Grand Piano",
+      "Pianoforte"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A massive glossy black lacquered concert grand piano with its heavy lid propped open, reflecting warm stage spotlights along polished cast-iron framing and pristine white keys in a 9:16 vertical concert hall framing.",
+    "core_traits": [
+      "Large acoustic keyboard instrument where felt-padded hammers strike horizontal steel strings",
+      "Features a standard full keyboard of 88 keys comprising 52 white keys and 36 black keys",
+      "Equipped with three foot pedals including the sustain pedal, sostenuto pedal, and una corda soft pedal",
+      "Strings are strung horizontally across a heavy cast-iron plate supported by a rim of bent laminated hardwood",
+      "Invented in Italy by Bartolomeo Cristofori around the year 1700"
+    ],
+    "distractor_pool": [
+      "Upright Piano",
+      "Harpsichord",
+      "Pipe Organ",
+      "Celesta",
+      "Clavichord"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A concert grand piano's strings exert over twenty tons of tension on its cast-iron frame.",
+        "verdict": "fact",
+        "explanation": "Combined string tension across all 230-plus steel strings on a concert grand typically exceeds 18 to 20 metric tons.",
+        "fun_fact": "The cast-iron harp plate is the only component strong enough to prevent the piano from imploding under this massive tension."
+      },
+      {
+        "claim": "Modern piano keys are still manufactured using genuine elephant ivory.",
+        "verdict": "myth",
+        "explanation": "Ivory keys were banned internationally under CITES in the late twentieth century, and modern pianos use high-grade polymer composites or acrylic resins.",
+        "fun_fact": "Top manufacturers developed synthetic materials that mimic the moisture absorption and tactile grip of natural ivory."
+      }
+    ],
+    "versus_candidates": [
+      "Upright Piano",
+      "Harpsichord",
+      "Synthesizer Keyboard"
+    ]
+  },
+  {
+    "id": "ENT-MUS-002",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Upright Piano",
+    "language": "en",
+    "aliases": [
+      "Vertical Piano",
+      "Spinet Piano",
+      "Console Piano"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A warm walnut-veneer upright piano standing against a brick wall, its vertical soundboard glowing softly under ambient parlor lamp light with brass pedals gleaming near the floor.",
+    "core_traits": [
+      "Acoustic piano whose frame and strings run vertically perpendicular to the keyboard to save floor space",
+      "Standard 88-key keyboard with vertical action mechanism driven by spring-assisted hammer returns",
+      "Compact rectangular cabinet design tailored for home living rooms, practice rooms, and classrooms",
+      "Features two or three floor pedals for sustain, soft muting, and practice dampening",
+      "First patented in London by John Isaac Hawkins in the year 1800"
+    ],
+    "distractor_pool": [
+      "Grand Piano",
+      "Electronic Keyboard",
+      "Harpsichord",
+      "Harmonium",
+      "Spinette"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "An upright piano produces sound with equal mechanical repetition speed to a concert grand piano.",
+        "verdict": "myth",
+        "explanation": "Grand pianos use natural gravity to reset their hammers, allowing rapid note repetition, whereas uprights rely on springs that reset more slowly.",
+        "fun_fact": "Professional classical pianists prefer grand pianos because double-escapement actions allow notes to repeat twice as fast."
+      },
+      {
+        "claim": "Many modern upright pianos include a center pedal that lowers a strip of felt to whisper-quiet volume.",
+        "verdict": "fact",
+        "explanation": "The practice pedal or celeste rail drops a felt baffle between the hammers and strings, reducing loudness for late-night practice.",
+        "fun_fact": "This mechanical mute is commonly referred to as the apartment pedal."
+      }
+    ],
+    "versus_candidates": [
+      "Grand Piano",
+      "Electric Keyboard",
+      "Harmonium"
+    ]
+  },
+  {
+    "id": "ENT-MUS-003",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Acoustic Guitar",
+    "language": "en",
+    "aliases": [
+      "Steel-String Acoustic Guitar",
+      "Folk Guitar",
+      "Flattop Guitar"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A sunburst dreadnought acoustic guitar resting on a wooden stand, close-up macro view capturing the fine spruce soundboard grain, tortoiseshell pickguard, and gleaming steel strings running over an ebony bridge.",
+    "core_traits": [
+      "Six-string fretted hollow-body instrument that amplifies string vibration purely through its wooden acoustic soundbox",
+      "Strung with steel wire strings anchored through bridge pins into an internal spruce bridge plate",
+      "Features an open circular soundhole in the front soundboard surrounded by decorative rosette purfling",
+      "Tuned conventionally in standard intervals: E-A-D-G-B-E",
+      "Popularized internationally across folk, country, rock, and blues traditions"
+    ],
+    "distractor_pool": [
+      "Classical Guitar",
+      "Electric Guitar",
+      "Ukulele",
+      "Banjo",
+      "Bass Guitar"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Putting steel strings onto a traditional classical nylon-string guitar is completely safe.",
+        "verdict": "myth",
+        "explanation": "Steel strings produce nearly double the tension of nylon strings, which quickly warps, cracks, or rips off a classical guitar bridge.",
+        "fun_fact": "Steel-string acoustic guitars require internal X-bracing and metal truss rods inside the neck to handle the 160 pounds of string pull."
+      },
+      {
+        "claim": "The dreadnought body shape was named after a massive British battleship class.",
+        "verdict": "fact",
+        "explanation": "C.F. Martin introduced the larger, deeper guitar body in 1916 and named it after HMS Dreadnought due to its commanding volume.",
+        "fun_fact": "Dreadnought remains the single most common acoustic guitar body shape in history."
+      }
+    ],
+    "versus_candidates": [
+      "Electric Guitar",
+      "Classical Guitar",
+      "Banjo"
+    ]
+  },
+  {
+    "id": "ENT-MUS-004",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Classical Guitar",
+    "language": "en",
+    "aliases": [
+      "Spanish Guitar",
+      "Nylon-String Guitar",
+      "Flamenco Guitar"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A traditional Spanish classical guitar with warm golden cedar top, slotted headstock with ornate pearl tuning pegs, and tied nylon strings over an intricate mosaic rosette.",
+    "core_traits": [
+      "Six-string hollow-body wooden guitar strung exclusively with nylon or fluorocarbon trebles and silver-plated wound basses",
+      "Features a noticeably wider and flat fretboard with no radius to facilitate fingerstyle classical technique",
+      "Characterized by an open slotted headstock where strings wind around horizontal plastic rollers",
+      "Strings are tied onto a tie-block bridge rather than secured by bridge pins",
+      "Pioneered in modern proportions by Spanish luthier Antonio de Torres in the 1850s"
+    ],
+    "distractor_pool": [
+      "Acoustic Guitar",
+      "Lute",
+      "Ukulele",
+      "Mandolin",
+      "Electric Guitar"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Historically, classical guitar strings were made from animal gut rather than nylon.",
+        "verdict": "fact",
+        "explanation": "Prior to World War II, treble strings were made from dried sheep intestines; nylon strings were introduced in 1948 by Albert Augustine and Andres Segovia.",
+        "fun_fact": "Nylon strings revolutionized classical guitar touring because they stayed in tune much longer than temperamental gut strings."
+      },
+      {
+        "claim": "Classical guitarists use hard plastic plectrums to project their sound in symphony halls.",
+        "verdict": "myth",
+        "explanation": "Classical guitar technique relies strictly on the fingers, using carefully filed natural fingernails and fleshy fingertips for varied tonal color.",
+        "fun_fact": "Pianissimo, ponticello, and tasto timbres are shaped entirely by the angle of the right-hand nail strike."
+      }
+    ],
+    "versus_candidates": [
+      "Acoustic Guitar",
+      "Lute",
+      "Flamenco Guitar"
+    ]
+  },
+  {
+    "id": "ENT-MUS-005",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Electric Guitar",
+    "language": "en",
+    "aliases": [
+      "Solid-Body Electric Guitar",
+      "Stratocaster",
+      "Les Paul"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A vibrant candy-apple-red solid-body electric guitar with dual chrome humbucker pickups, chrome bridge saddles, and rotary control knobs reflecting neon stage lighting at a sharp 9:16 angle.",
+    "core_traits": [
+      "Solid or semi-hollow body fretted string instrument that converts string vibrations into electrical signals using magnetic pickups",
+      "Requires an external amplifier and speaker cabinet to produce audible performance volume",
+      "Equipped with electromagnetic coil pickups, volume and tone potentiometers, and a pickup selector toggle switch",
+      "Typically tuned E-A-D-G-B-E and fitted with light-gauge nickel-wound steel strings",
+      "Commercialized in the 1930s to 1950s by pioneers such as Leo Fender, Adolph Rickenbacker, and Les Paul"
+    ],
+    "distractor_pool": [
+      "Bass Guitar",
+      "Acoustic Guitar",
+      "Keytar",
+      "Lap Steel Guitar",
+      "Violin"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "An unplugged solid-body electric guitar is completely silent.",
+        "verdict": "myth",
+        "explanation": "The vibrating metal strings still transfer minor kinetic energy through the body and neck, making it audible in a quiet room at intimate volume.",
+        "fun_fact": "Many famous rock riffs were written by musicians practicing unplugged on hotel room beds."
+      },
+      {
+        "claim": "Electric guitar pickups do not contain microphones, but rather magnets wrapped in thousands of turns of fine copper wire.",
+        "verdict": "fact",
+        "explanation": "Pickups operate on electromagnetic induction; vibrating ferrous strings disrupt the magnetic field, generating a micro-voltage current in the coil.",
+        "fun_fact": "A standard single-coil pickup contains roughly 8,000 turns of wire as thin as a human hair."
+      }
+    ],
+    "versus_candidates": [
+      "Acoustic Guitar",
+      "Bass Guitar",
+      "Synthesizer Keyboard"
+    ]
+  },
+  {
+    "id": "ENT-MUS-006",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Bass Guitar",
+    "language": "en",
+    "aliases": [
+      "Electric Bass",
+      "Bass",
+      "Four-String Bass"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A sunburst four-string electric bass guitar with heavy-gauge nickel strings, chunky split-coil pickup, and extra-long 34-inch maple neck leaning against a massive amplifier cabinet.",
+    "core_traits": [
+      "Long-scale fretted stringed instrument designed to play low basslines and establish harmonic foundation with the rhythm section",
+      "Standardly configured with four thick steel or nickel strings tuned E-A-D-G, one octave lower than the lowest four guitar strings",
+      "Features a long neck scale length, typically 34 inches, with heavy-duty open-gear tuning pegs",
+      "Transfers electromagnetic signals through magnetic pickups into a bass amplifier cabinet",
+      "Popularized globally by Leo Fender with the introduction of the Precision Bass in 1951"
+    ],
+    "distractor_pool": [
+      "Electric Guitar",
+      "Double Bass",
+      "Cello",
+      "Acoustic Guitar",
+      "Keytar"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The electric bass guitar was originally invented to relieve upright bassists from hauling massive double basses.",
+        "verdict": "fact",
+        "explanation": "Leo Fender designed the Precision Bass so touring dance band bassists could easily transport their instrument in a car backseat and play in tune using frets.",
+        "fun_fact": "It was named the 'Precision' bass because frets allowed precise intonation unlike fretless uprights."
+      },
+      {
+        "claim": "A bass guitar cannot be played with a pick and must only be plucked with fingers.",
+        "verdict": "myth",
+        "explanation": "Many iconic bassists across rock, punk, metal, and pop play exclusively with heavy plectrums to achieve an aggressive percussive attack.",
+        "fun_fact": "Paul McCartney and Chris Squire played iconic basslines using picks."
+      }
+    ],
+    "versus_candidates": [
+      "Double Bass",
+      "Electric Guitar",
+      "Synthesizer Keyboard"
+    ]
+  },
+  {
+    "id": "ENT-MUS-007",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Violin",
+    "language": "en",
+    "aliases": [
+      "Fiddle",
+      "Soprano Violin"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An antique flamed maple violin with carved f-holes, delicate spruce arching, chinrest, and ebony fingerboard, posed with a horsehair bow across its four strings under soft warm illumination.",
+    "core_traits": [
+      "Smallest and highest-pitched member of the orchestral violin family of bowed stringed instruments",
+      "Strung with four strings tuned in perfect fifths: G-D-A-E",
+      "Played by drawing a horsehair bow across the strings or by plucking them with fingers in pizzicato",
+      "Features an arched wooden body with two elegant f-shaped soundholes and a floating bridge held by string pressure",
+      "Refined to its pinnacle during the 17th and 18th centuries by Italian masters like Stradivari and Guarneri"
+    ],
+    "distractor_pool": [
+      "Viola",
+      "Cello",
+      "Mandolin",
+      "Acoustic Guitar",
+      "Ukulele"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A violin and a fiddle are two entirely different physical instruments made by different makers.",
+        "verdict": "myth",
+        "explanation": "They are physically the identical instrument; 'fiddle' simply refers to the playing style, folk genre, and occasional flat bridge setup.",
+        "fun_fact": "A musician can perform a Bach partita and an Irish reel on the exact same instrument in the same concert."
+      },
+      {
+        "claim": "The hair on a quality violin bow is sourced from real horse tails.",
+        "verdict": "fact",
+        "explanation": "Traditional violin bows use unbleached stallion tail hair coated with pine rosin to create microscopic friction against the strings.",
+        "fun_fact": "A standard violin bow contains roughly 150 to 200 individual horsehairs."
+      }
+    ],
+    "versus_candidates": [
+      "Viola",
+      "Cello",
+      "Mandolin"
+    ]
+  },
+  {
+    "id": "ENT-MUS-008",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Viola",
+    "language": "en",
+    "aliases": [
+      "Alto Violin",
+      "Tenor Violin"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A rich reddish-amber wooden viola resting beside orchestral sheet music, showing its slightly broader bout and thicker strings compared to a violin, highlighted by side-raking warm light.",
+    "core_traits": [
+      "Middle-voice bowed string instrument of the violin family, slightly larger in body and deeper in pitch than a violin",
+      "Strung with four strings tuned in fifths: C-G-D-A, exactly a fifth lower than a violin",
+      "Notated primarily in the alto clef, which places middle C directly on the center staff line",
+      "Features a deeper wooden rib profile and darker, more resonant, mellow timbre",
+      "Essential harmonic voice in symphonic string sections and string quartets"
+    ],
+    "distractor_pool": [
+      "Violin",
+      "Cello",
+      "Double Bass",
+      "Lute",
+      "Acoustic Guitar"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The viola is simply an oversized violin that reads standard treble clef.",
+        "verdict": "myth",
+        "explanation": "The viola is acoustically proportional to its deeper pitch range and relies almost exclusively on the alto clef, rarely reading treble clef only in high registers.",
+        "fun_fact": "The viola is the only standard symphonic instrument whose primary native clef is alto clef."
+      },
+      {
+        "claim": "Wolfgang Amadeus Mozart and Johann Sebastian Bach both preferred playing the viola in chamber ensembles.",
+        "verdict": "fact",
+        "explanation": "Both composers loved playing viola in quartets because it placed them in the harmonic center of the music where they could hear all parts.",
+        "fun_fact": "Mozart wrote some of his finest concertante parts specifically for the viola."
+      }
+    ],
+    "versus_candidates": [
+      "Violin",
+      "Cello",
+      "Double Bass"
+    ]
+  },
+  {
+    "id": "ENT-MUS-009",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Cello",
+    "language": "en",
+    "aliases": [
+      "Violoncello",
+      "Bass Viol"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A large glossy honey-varnished cello seated vertically on a chrome endpin, featuring deep curved ribs, prominent carved f-holes, and a heavy bow resting over its four thick strings.",
+    "core_traits": [
+      "Large bowed string instrument played seated between the player's knees with an extendable metal endpin resting on the floor",
+      "Strung with four strings tuned in fifths: C-G-D-A, one octave lower than the viola",
+      "Possesses a broad four-octave expressive vocal range spanning deep resonant bass to soaring tenor notes",
+      "Features a large acoustic body with carved arched spruce top and flamed maple back and sides",
+      "Anchors the bass and tenor registers of symphony orchestras, string quartets, and solo concertos"
+    ],
+    "distractor_pool": [
+      "Double Bass",
+      "Viola",
+      "Violin",
+      "Acoustic Guitar",
+      "Harp"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The cello was always played resting on an extendable metal endpin throughout history.",
+        "verdict": "myth",
+        "explanation": "Until the late nineteenth century, cellists held the instrument suspended entirely between their calves without any floor pin.",
+        "fun_fact": "The metal endpin became universally popular only after Belgian virtuoso Adrien-Francois Servais popularized it in the mid-1800s."
+      },
+      {
+        "claim": "The sound of the cello is widely considered the closest acoustic instrument to the human singing voice.",
+        "verdict": "fact",
+        "explanation": "Due to its frequency range and harmonic resonance matching both male baritone and female soprano vocal tracts, composers frequently describe it as singing.",
+        "fun_fact": "Its acoustic overtone structure closely matches the formants found in human vocal speech."
+      }
+    ],
+    "versus_candidates": [
+      "Double Bass",
+      "Viola",
+      "Violin"
+    ]
+  },
+  {
+    "id": "ENT-MUS-010",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Double Bass",
+    "language": "en",
+    "aliases": [
+      "Upright Bass",
+      "Contrabass",
+      "Standup Bass",
+      "String Bass"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A colossal wooden upright double bass towering over six feet tall, its massive deep-brown carved body and thick steel strings illuminated under a smoky jazz club spotlight.",
+    "core_traits": [
+      "Largest and lowest-pitched bowed string instrument in the modern symphony orchestra",
+      "Stands over six feet tall, played either standing up or perched on a tall stool",
+      "Strung with four heavy strings tuned in fourths: E-A-D-G, sounding an octave lower than written",
+      "Features sloping shoulders derived from the historical viol family and an adjustable endpin",
+      "A core pillar of classical symphony orchestras, big band swing, jazz combos, and rockabilly slap-bass"
+    ],
+    "distractor_pool": [
+      "Cello",
+      "Bass Guitar",
+      "Viola",
+      "Harp",
+      "Tuba"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Unlike other modern orchestral strings, the double bass is tuned in fourths rather than fifths.",
+        "verdict": "fact",
+        "explanation": "Tuning in fourths (E-A-D-G) prevents players from having to stretch their fingers impossibly far along its enormous fingerboard scale.",
+        "fun_fact": "Many orchestral double basses add a low C extension or a fifth string to reach notes below low E."
+      },
+      {
+        "claim": "The double bass is identical in shape and proportions to an enlarged violin.",
+        "verdict": "myth",
+        "explanation": "The double bass has sloping shoulders and a flat back, retaining key design characteristics of the Renaissance viol da gamba family.",
+        "fun_fact": "Its hybrid viol-violin lineage makes it unique among orchestral string instruments."
+      }
+    ],
+    "versus_candidates": [
+      "Bass Guitar",
+      "Cello",
+      "Tuba"
+    ]
+  },
+  {
+    "id": "ENT-MUS-011",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Concert Harp",
+    "language": "en",
+    "aliases": [
+      "Pedal Harp",
+      "Orchestral Harp"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An ornate gold-gilded concert pedal harp standing tall with its sculpted neoclassical pillar, sweeping harmonic curve neck, and 47 parallel strings glowing under a soft theatre spotlight.",
+    "core_traits": [
+      "Large triangular plucked string instrument standing upright with strings running perpendicular to the soundboard",
+      "Features 47 strings spanning six and a half octaves, color-coded with red C strings and black or blue F strings",
+      "Equipped with seven mechanical foot pedals at the base that alter string pitches by semitones",
+      "Sound is produced by plucking the strings with the thumb and first three fingers of each hand",
+      "An essential coloristic instrument in late Romantic orchestral works, ballet scores, and solo impressionist repertoire"
+    ],
+    "distractor_pool": [
+      "Grand Piano",
+      "Harpsichord",
+      "Lute",
+      "Acoustic Guitar",
+      "Cello"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Harpists use all ten fingers including their little pinky fingers when plucking the strings.",
+        "verdict": "myth",
+        "explanation": "Harp technique uses only four fingers per hand; the little fingers are considered too short and weak to maintain consistent tone and posture.",
+        "fun_fact": "All harp music is transcribed and fingered strictly for eight fingers."
+      },
+      {
+        "claim": "The seven foot pedals on a concert harp correspond to the seven musical pitch classes from A to G.",
+        "verdict": "fact",
+        "explanation": "Each pedal controls all the octaves of a single note letter, shifting every matching string sharp, natural, or flat via internal rods.",
+        "fun_fact": "Harpists perform intricate pedal footwork while their hands are busy plucking complex arpeggios."
+      }
+    ],
+    "versus_candidates": [
+      "Grand Piano",
+      "Harpsichord",
+      "Lute"
+    ]
+  },
+  {
+    "id": "ENT-MUS-012",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Accordion",
+    "language": "en",
+    "aliases": [
+      "Piano Accordion",
+      "Squeezebox"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A vintage pearlescent red piano accordion with pleated cloth bellows expanded in mid-air, showing gleaming chrome treble grille, white keys, and an array of black bass buttons.",
+    "core_traits": [
+      "Portable free-reed aerophone instrument played by compressing and expanding pleated bellows",
+      "Features a piano-style treble keyboard on the right side and a matrix of bass chord buttons on the left",
+      "Airflow created by the bellows rushes across tuned metal reeds inside wooden chambers to generate sound",
+      "Equipped with register switches that toggle different reed sets for varied octaves and vibrato timbres",
+      "Widely embraced across folk music, polka, French musette, Argentine tango, and sea shanties"
+    ],
+    "distractor_pool": [
+      "Harmonica",
+      "Melodica",
+      "Concertina",
+      "Pipe Organ",
+      "Synthesizer Keyboard"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The accordion generates its sound through miniature mechanical strings inside the bellows.",
+        "verdict": "myth",
+        "explanation": "The accordion contains no strings whatsoever; sound is generated exclusively by vibrating steel or brass reeds through air pressure.",
+        "fun_fact": "It is classified organologically as a free-reed aerophone, closely related to the harmonica."
+      },
+      {
+        "claim": "The left-hand bass section of a standard accordion uses a clever mechanical system to play entire multi-note chords with one button.",
+        "verdict": "fact",
+        "explanation": "The Stradella bass system uses interconnected mechanical rods that trigger root notes and full major, minor, seventh, or diminished chords simultaneously.",
+        "fun_fact": "A single button press can open three or four reed valves simultaneously inside the bass chamber."
+      }
+    ],
+    "versus_candidates": [
+      "Melodica",
+      "Harmonica",
+      "Concertina"
+    ]
+  },
+  {
+    "id": "ENT-MUS-013",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Ukulele",
+    "language": "en",
+    "aliases": [
+      "Uke",
+      "Hawaiian Ukulele",
+      "Soprano Ukulele"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A small koa-wood soprano ukulele resting on a tropical woven mat, its figure-eight body, round soundhole, and four nylon strings glowing warmly in late afternoon golden sunshine.",
+    "core_traits": [
+      "Small four-stringed fretted lute originating in nineteenth-century Hawaii as an adaptation of Portuguese instruments",
+      "Strung with four nylon or gut strings typically tuned in re-entrant tuning: G-C-E-A",
+      "Features a light hollow wooden body, short scale neck, and sweet bright percussive strumming timbre",
+      "Available in four traditional sizes: soprano, concert, tenor, and baritone",
+      "Its name translates roughly in Hawaiian to 'jumping flea', describing rapid finger movement across strings"
+    ],
+    "distractor_pool": [
+      "Acoustic Guitar",
+      "Classical Guitar",
+      "Mandolin",
+      "Banjo",
+      "Violin"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The ukulele was invented entirely by ancient native Polynesians centuries before European arrival.",
+        "verdict": "myth",
+        "explanation": "The ukulele was developed in the 1880s after Portuguese immigrants from Madeira brought traditional instruments like the machete to Hawaii.",
+        "fun_fact": "Hawaiian King Kalakaua, an enthusiastic musician, championed the instrument and integrated it into royal gatherings."
+      },
+      {
+        "claim": "Standard soprano ukulele tuning has a high string at the top rather than a descending bass string.",
+        "verdict": "fact",
+        "explanation": "In re-entrant tuning (high-G), the top G string is tuned higher in pitch than the neighboring C string below it.",
+        "fun_fact": "This re-entrant tuning gives the ukulele its signature cheerful, chime-like chord ring."
+      }
+    ],
+    "versus_candidates": [
+      "Acoustic Guitar",
+      "Mandolin",
+      "Banjo"
+    ]
+  },
+  {
+    "id": "ENT-MUS-014",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Banjo",
+    "language": "en",
+    "aliases": [
+      "Five-String Banjo",
+      "Bluegrass Banjo",
+      "Tenor Banjo"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A sparkling five-string bluegrass banjo with a circular white mylar drum head, polished chrome tension hoop, mahogany neck, and fifth-string tuner pegged halfway up the fretboard.",
+    "core_traits": [
+      "Four- or five-string fretted string instrument with a thin circular membrane head stretched over a wooden or metal rim",
+      "The drum-head soundboard produces an unmistakable sharp, bright, fast-decaying percussive ring",
+      "Five-string models feature a unique short thumb drone string that begins at the fifth fret",
+      "Played with fingerpicks in rapid three-finger Scruggs style or down-picking clawhammer style",
+      "Rooted historically in traditional West African lutes brought to the Americas by enslaved people"
+    ],
+    "distractor_pool": [
+      "Acoustic Guitar",
+      "Mandolin",
+      "Ukulele",
+      "Dobro",
+      "Bass Guitar"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The banjo was originally invented by European settlers in the Appalachian Mountains.",
+        "verdict": "myth",
+        "explanation": "The banjo was created in the Caribbean and American South by enslaved West Africans who fashioned gourd instruments with animal hide heads.",
+        "fun_fact": "Early ancestors like the akonting and ngoni directly inspired the modern banjo's high drone string and playing mechanics."
+      },
+      {
+        "claim": "A resonator on the back of a bluegrass banjo acts like a satellite dish to throw sound forward to the audience.",
+        "verdict": "fact",
+        "explanation": "The curved wooden bowl attached to the rear reflects sound waves escaping the back of the drum head straight out toward the listener.",
+        "fun_fact": "Earl Scruggs relied on heavy metal tone rings and resonators to cut through acoustic fiddles and guitars."
+      }
+    ],
+    "versus_candidates": [
+      "Acoustic Guitar",
+      "Mandolin",
+      "Dobro"
+    ]
+  },
+  {
+    "id": "ENT-MUS-015",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Mandolin",
+    "language": "en",
+    "aliases": [
+      "Bluegrass Mandolin",
+      "Bowlback Mandolin",
+      "F-Style Mandolin"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A teardrop sunburst F-style mandolin with hand-carved scroll, pointed body points, dual f-holes, and eight gleaming steel strings paired in unison over an adjustable ebony bridge.",
+    "core_traits": [
+      "Small fretted stringed instrument of the lute family with eight strings arranged in four unison pairs (courses)",
+      "Tuned in exact fifths identical to a violin: G-G, D-D, A-A, E-E",
+      "Played with a rigid plectrum using rapid alternating tremolo picking to sustain singing notes",
+      "Distinctive percussive chopping rhythm chords serve as a driving snare-like heartbeat in bluegrass bands",
+      "Evolved in Italy during the seventeenth and eighteenth centuries from the mandora"
+    ],
+    "distractor_pool": [
+      "Ukulele",
+      "Acoustic Guitar",
+      "Banjo",
+      "Violin",
+      "Lute"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The eight strings on a mandolin produce eight different musical notes when played open.",
+        "verdict": "myth",
+        "explanation": "The strings are paired in four courses; each pair is tuned to the exact same pitch in unison, producing only four open note pitches.",
+        "fun_fact": "Pairing strings in unison doubles the acoustic volume and imparts a rich shimmering natural chorus."
+      },
+      {
+        "claim": "Orville Gibson revolutionized the mandolin by carving arched tops and backs inspired by violin craftsmanship.",
+        "verdict": "fact",
+        "explanation": "In the 1890s, Gibson abandoned traditional round-back bowl designs in favor of carved solid spruce tops with f-holes, creating modern flatback mandolins.",
+        "fun_fact": "The 1920s Gibson F-5 signed by Lloyd Loar is considered the Stradivarius of mandolins."
+      }
+    ],
+    "versus_candidates": [
+      "Ukulele",
+      "Violin",
+      "Banjo"
+    ]
+  },
+  {
+    "id": "ENT-MUS-016",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Synthesizer Keyboard",
+    "language": "en",
+    "aliases": [
+      "Synth",
+      "Analog Synthesizer",
+      "Polyphonic Synthesizer"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A classic analog synthesizer keyboard with wooden side cheeks, illuminated pitch-bend wheels, rotary filter cutoff knobs, patch cord jacks, and glowing LED display indicators.",
+    "core_traits": [
+      "Electronic keyboard instrument that generates and shapes sound waveforms using oscillators, filters, and envelope generators",
+      "Allows sound design via voltage control or digital signal processing (DSP) rather than vibrating strings or air columns",
+      "Features tactile rotary potentiometers, sliders, pitch-bend wheels, and modulation controllers",
+      "Capable of producing sub-bass pulses, sweeping leads, ambient pads, and electronic sound effects",
+      "Popularized in the 1960s and 1970s by visionary inventors Robert Moog, Don Buchla, and Dave Smith"
+    ],
+    "distractor_pool": [
+      "Electric Keyboard",
+      "Grand Piano",
+      "Pipe Organ",
+      "Keytar",
+      "Midi Controller"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Early analog synthesizers like the iconic Minimoog could play full ten-finger piano chords simultaneously.",
+        "verdict": "myth",
+        "explanation": "The original Minimoog was strictly monophonic, meaning its circuits could only synthesize one single note at any given moment.",
+        "fun_fact": "Keyboards had to wait until the late 1970s with instruments like the Prophet-5 to play polyphonic chords comfortably."
+      },
+      {
+        "claim": "Synthesizer manufacturers agreed on a universal communication language called MIDI in 1983 that is still used today.",
+        "verdict": "fact",
+        "explanation": "Musical Instrument Digital Interface (MIDI) was introduced so instruments from competing brands could connect and control each other seamlessly.",
+        "fun_fact": "The original 5-pin DIN MIDI standard remains functional and backward-compatible four decades later."
+      }
+    ],
+    "versus_candidates": [
+      "Grand Piano",
+      "Electric Keyboard",
+      "Pipe Organ"
+    ]
+  },
+  {
+    "id": "ENT-MUS-017",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Pipe Organ",
+    "language": "en",
+    "aliases": [
+      "Church Organ",
+      "Cathedral Organ",
+      "King of Instruments"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A towering cathedral pipe organ with thousands of polished pewter and wooden pipes rising toward vaulted stone arches, with a multi-tiered four-manual keyboard console below.",
+    "core_traits": [
+      "Monumental keyboard instrument that produces sound by directing pressurized wind through hundreds or thousands of tuned organ pipes",
+      "Played from a console featuring multiple keyboard manuals, an extensive pedalboard for the feet, and rows of drawstops",
+      "Each stop controls a specific rank of pipes mimicking flutes, reeds, strings, or brass choruses",
+      "Often built directly into the architectural fabric of cathedrals, concert halls, and churches",
+      "Regarded historically by Mozart and other masters as the 'King of Instruments'"
+    ],
+    "distractor_pool": [
+      "Grand Piano",
+      "Harpsichord",
+      "Synthesizer Keyboard",
+      "Accordion",
+      "Harmonium"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The largest pipe organs contain pipes larger than telephone poles and smaller than a pencil.",
+        "verdict": "fact",
+        "explanation": "The largest pipes can exceed 32 or 64 feet in length, producing sub-bass frequencies below human hearing, while the smallest are a few millimeters long.",
+        "fun_fact": "The Boardwalk Hall Auditorium Organ in Atlantic City holds over 33,000 individual pipes."
+      },
+      {
+        "claim": "Pressing down a pipe organ key harder makes the sound play louder like a grand piano.",
+        "verdict": "myth",
+        "explanation": "Pipe organ keys are simple on-off mechanical or electric valves; volume does not respond to finger pressure, only to opening expression swell shutters or engaging more stops.",
+        "fun_fact": "Organists create dynamic changes by pulling more stops or switching between manuals."
+      }
+    ],
+    "versus_candidates": [
+      "Grand Piano",
+      "Harpsichord",
+      "Accordion"
+    ]
+  },
+  {
+    "id": "ENT-MUS-018",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Harpsichord",
+    "language": "en",
+    "aliases": [
+      "Clavicembalo",
+      "Cembalo",
+      "Virginal"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An exquisite Baroque harpsichord with intricate floral oil painting inside its lid, reverse-color black naturals and white sharps on two keyboards, and delicate cabriole legs.",
+    "core_traits": [
+      "Historical keyboard instrument in which strings are plucked by small plectra rather than struck by hammers",
+      "Key mechanism lifts a wooden jack containing a quill or plastic plectrum that plucks the wire string as it passes",
+      "Produces a sharp, crisp, metallic, and brilliant attack with negligible touch-sensitive volume dynamics",
+      "Frequently configured with two stacked keyboard manuals and inverted key colors (ebony naturals, bone sharps)",
+      "The dominant keyboard instrument of the Renaissance and Baroque eras from 1500 to 1750"
+    ],
+    "distractor_pool": [
+      "Grand Piano",
+      "Pipe Organ",
+      "Clavichord",
+      "Celesta",
+      "Lute"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A harpsichord player can produce loud and soft notes by pressing the keys with varying force.",
+        "verdict": "myth",
+        "explanation": "Because the plectrum simply plucks past the string at fixed tension, pressing harder makes zero difference in note volume.",
+        "fun_fact": "Bartolomeo Cristofori invented the piano precisely to overcome this lack of touch-sensitive dynamics."
+      },
+      {
+        "claim": "Historical harpsichord plectra were carved from the quills of birds like ravens or turkeys.",
+        "verdict": "fact",
+        "explanation": "Hard flight feather quills provided the perfect balance of stiffness and flexibility to snap past brass and iron strings without snapping.",
+        "fun_fact": "Modern builders often use durable Delrin plastic, though purists still carve real bird quills."
+      }
+    ],
+    "versus_candidates": [
+      "Grand Piano",
+      "Pipe Organ",
+      "Lute"
+    ]
+  },
+  {
+    "id": "ENT-MUS-019",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Lute",
+    "language": "en",
+    "aliases": [
+      "Renaissance Lute",
+      "Baroque Lute",
+      "Archlute"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A delicate Renaissance wooden lute showing its multi-ribbed vaulted pear-shaped back, ornate carved parchment rose soundhole, bent-back pegbox, and tied gut frets.",
+    "core_traits": [
+      "Plucked string instrument with a vaulted, rounded pear-shaped body constructed from thin wooden staves",
+      "Features a distinct pegbox bent backward at nearly a 90-degree right angle to reduce string tension on the neck",
+      "Strung with gut or synthetic strings arranged in paired courses and played with the fleshy pads of fingers",
+      "Tied movable gut frets wrap around the neck, allowing historical temperaments to be adjusted",
+      "The preeminent domestic and courtly instrument throughout Renaissance and Baroque Europe"
+    ],
+    "distractor_pool": [
+      "Classical Guitar",
+      "Oud",
+      "Mandolin",
+      "Harp",
+      "Banjo"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The word 'lute' and the instrument itself originated from the Arabic 'al-oud'.",
+        "verdict": "fact",
+        "explanation": "The European lute evolved directly from the Moorish oud brought into Andalusia and Sicily during the Middle Ages.",
+        "fun_fact": "Europeans added frets to the neck to adapt the fretless oud to Western harmony and polyphony."
+      },
+      {
+        "claim": "The famous right-angle bent pegbox on a lute was purely a decorative fashion trend with no engineering purpose.",
+        "verdict": "myth",
+        "explanation": "The sharp angle relieves forward leverage tension on the neck joint and allows the lutenist to fit dozens of tuning pegs without an impossibly long neck.",
+        "fun_fact": "A Baroque lute could have up to 24 strings on a single neck."
+      }
+    ],
+    "versus_candidates": [
+      "Classical Guitar",
+      "Mandolin",
+      "Harp"
+    ]
+  },
+  {
+    "id": "ENT-MUS-020",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Sitar",
+    "language": "en",
+    "aliases": [
+      "Indian Sitar",
+      "Classical Sitar"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "An ornate long-necked sitar featuring an etched seasoned gourd resonator, curved brass frets, bone flat bridge, and sympathetic strings reflecting incense-scented studio lighting.",
+    "core_traits": [
+      "Plucked string instrument of the lute family central to Hindustani classical music tradition",
+      "Features a long hollow teak or tun neck attached to a dried pumpkin gourd resonator (tumba)",
+      "Equipped with 18 to 21 metal strings, including main melody strings, drone strings (chikari), and 11 to 13 sympathetic strings",
+      "Curved arched metal frets are movable, allowing precise microtonal pitch inflections (shruti)",
+      "Played using a wire plectrum (mizrab) worn on the right index finger while pulling strings laterally for meend glissando"
+    ],
+    "distractor_pool": [
+      "Sarod",
+      "Tanpura",
+      "Lute",
+      "Acoustic Guitar",
+      "Banjo"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The shimmering buzzing drone of a sitar is produced by sympathetic strings vibrating automatically without being struck.",
+        "verdict": "fact",
+        "explanation": "Sympathetic strings (tarab) resonate through acoustic empathy whenever their corresponding pitches are sounded on the melody strings above.",
+        "fun_fact": "The wide flat deer-horn or bone bridge (jawari) creates intentional micro-buzzing called the jawari effect."
+      },
+      {
+        "claim": "The Beatles' George Harrison learned to play the sitar from Ravi Shankar in a single weekend afternoon.",
+        "verdict": "myth",
+        "explanation": "Mastering the sitar requires years of arduous physical discipline to build calluses and master complex ragas; Harrison studied diligently for years under Shankar.",
+        "fun_fact": "Harrison first introduced the sitar to mainstream Western pop on 'Norwegian Wood' in 1965."
+      }
+    ],
+    "versus_candidates": [
+      "Acoustic Guitar",
+      "Banjo",
+      "Lute"
+    ]
+  },
+  {
+    "id": "ENT-MUS-021",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Keytar",
+    "language": "en",
+    "aliases": [
+      "Remote Keyboard",
+      "Shoulder Synthesizer",
+      "Strap-On Keyboard"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A retro-futuristic glossy white keytar strapped over a performer's shoulder, sporting a 37-key synth keyboard, left-hand control neck with pitch-bend ribbon, and neon 1980s stage lighting.",
+    "core_traits": [
+      "Lightweight electronic keyboard or synthesizer mounted on a guitar strap worn across the shoulders",
+      "Allows keyboardists to roam freely across the concert stage alongside lead guitarists and vocalists",
+      "Features a guitar-like neck housing modulation buttons, pitch-bend ribbons, and sustain triggers",
+      "Operates either with onboard sound engines or sends MIDI control data wirelessly to rack synths",
+      "Iconic symbol of 1980s synth-pop, new wave, and glam rock stage performances"
+    ],
+    "distractor_pool": [
+      "Electric Guitar",
+      "Synthesizer Keyboard",
+      "Bass Guitar",
+      "Melodica",
+      "Accordion"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A keytar produces sound by vibrating physical internal strings mounted inside its neck.",
+        "verdict": "myth",
+        "explanation": "The keytar has no strings whatsoever; it is purely an electronic synthesizer or MIDI controller that triggers electronic sound modules.",
+        "fun_fact": "The neck exists purely to give the player's left hand expressive controls like pitch bends and vibrato."
+      },
+      {
+        "claim": "Jazz virtuoso Herbie Hancock was one of the earliest prominent musicians to showcase the keytar to global audiences.",
+        "verdict": "fact",
+        "explanation": "Hancock championed early models like the clavitar and Roland keytars during his groundbreaking electro-funk performances in the late 1970s and 1980s.",
+        "fun_fact": "His live performances proved that keyboardists could be energetic frontmen rather than stationary players."
+      }
+    ],
+    "versus_candidates": [
+      "Synthesizer Keyboard",
+      "Electric Guitar",
+      "Melodica"
+    ]
+  },
+  {
+    "id": "ENT-MUS-022",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Electric Keyboard",
+    "language": "en",
+    "aliases": [
+      "Digital Piano",
+      "Electronic Piano",
+      "Portable Keyboard"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A sleek black digital electric keyboard mounted on an X-frame metal stand, featuring backlit LCD screen, stereo speaker grilles, touch-sensitive weighted keys, and headphone jack.",
+    "core_traits": [
+      "Electronic keyboard instrument designed to emulate acoustic pianos and organs using digital audio samples",
+      "Features full-size weighted or semi-weighted keys with hammer-action velocity sensitivity",
+      "Equipped with built-in stereo speakers, headphone jacks, metronome, and polyphonic voice banks",
+      "Requires no tuning or humidity control, remaining permanently at pitch regardless of climate",
+      "Commonly connects to computers and recording software via USB-MIDI interfaces"
+    ],
+    "distractor_pool": [
+      "Grand Piano",
+      "Synthesizer Keyboard",
+      "Upright Piano",
+      "Accordion",
+      "Harpsichord"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Modern digital pianos require annual tuning by a piano technician just like acoustic grand pianos.",
+        "verdict": "myth",
+        "explanation": "Digital pianos produce sound entirely from high-resolution digital audio samples stored in flash memory chips and never drift out of tune.",
+        "fun_fact": "They save owners thousands of dollars over their lifetime by eliminating the need for periodic tuning."
+      },
+      {
+        "claim": "High-end digital pianos simulate the physical weight and mechanical escapement feel of real piano hammers.",
+        "verdict": "fact",
+        "explanation": "Advanced models employ graded hammer action mechanisms where lower bass keys physically feel heavier to press than higher treble keys.",
+        "fun_fact": "Some hybrid models even include real wooden grand piano action assemblies inside the digital chassis."
+      }
+    ],
+    "versus_candidates": [
+      "Grand Piano",
+      "Upright Piano",
+      "Synthesizer Keyboard"
+    ]
+  },
+  {
+    "id": "ENT-MUS-023",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Melodica",
+    "language": "en",
+    "aliases": [
+      "Pianica",
+      "Blow-Organ",
+      "Key-Flute"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A bright blue handheld melodica with a two-octave piano keyboard, black flexible blowtube, and brass reeds visible through ventilation slots resting on a school desk.",
+    "core_traits": [
+      "Handheld free-reed wind instrument played by blowing air through a mouthpiece while pressing piano-style keys",
+      "Depressing a key opens a valve that routes exhaled air across a corresponding tuned brass reed",
+      "Features a miniature keyboard typically spanning two to three octaves",
+      "Combines the pitch layout of a piano keyboard with the breath-control dynamics of a harmonica",
+      "Invented by Hohner in the 1950s and widely used in music education, dub reggae, and indie pop"
+    ],
+    "distractor_pool": [
+      "Accordion",
+      "Harmonica",
+      "Clarinet",
+      "Synthesizer Keyboard",
+      "Concert Flute"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A melodica requires electronic batteries or an AC power plug to generate sound.",
+        "verdict": "myth",
+        "explanation": "The melodica is an acoustic wind instrument powered 100% by human lung power pushing air through free reeds without any electricity.",
+        "fun_fact": "It functions completely unplugged on beaches, campfires, and street corners."
+      },
+      {
+        "claim": "Legendary Jamaican reggae artist Augustus Pablo transformed the melodica from a children's toy into an iconic dub solo voice.",
+        "verdict": "fact",
+        "explanation": "Augustus Pablo recorded seminal roots reggae and dub instrumental tracks in the 1970s featuring haunting, minor-key melodica melodies.",
+        "fun_fact": "His classic album 'King Tubbys Meets Rockers Uptown' made the humble instrument globally famous."
+      }
+    ],
+    "versus_candidates": [
+      "Harmonica",
+      "Accordion",
+      "Concert Flute"
+    ]
+  },
+  {
+    "id": "ENT-MUS-024",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Hammered Dulcimer",
+    "language": "en",
+    "aliases": [
+      "Dulcimer",
+      "Santur",
+      "Cimbalom"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A trapezoidal hammered dulcimer resting on an angled wooden stand, its dozens of gleaming steel strings crisscrossing wooden bridges struck by two delicate curved wooden mallets.",
+    "core_traits": [
+      "Trapezoidal stringed percussion-string instrument with numerous strings stretched over a flat soundboard",
+      "Sound is produced by striking the strings with handheld lightweight wooden hammers or mallets",
+      "Strings are divided across long bridges into specific musical intervals on either side",
+      "Produces a resonant, sustained, ringing metallic timbre with natural shimmering reverb",
+      "Direct acoustic predecessor to the modern struck-string piano mechanism"
+    ],
+    "distractor_pool": [
+      "Zither",
+      "Concert Harp",
+      "Harpsichord",
+      "Acoustic Guitar",
+      "Xylophone"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The hammered dulcimer is physically played by plucking strings with guitar picks.",
+        "verdict": "myth",
+        "explanation": "While the Appalachian mountain dulcimer is plucked, the hammered dulcimer is played exclusively by bouncing miniature wooden mallets off the strings.",
+        "fun_fact": "The mallets are often tipped with soft leather or felt to produce warmer, softer tones."
+      },
+      {
+        "claim": "The hammered dulcimer was the direct conceptual ancestor that inspired the invention of the piano.",
+        "verdict": "fact",
+        "explanation": "Bartolomeo Cristofori was inspired by the percussive hammers of the dulcimer when designing a keyboard mechanism that could strike strings dynamically.",
+        "fun_fact": "Its worldwide cousins include the Persian santur, Hungarian cimbalom, and Chinese yangqin."
+      }
+    ],
+    "versus_candidates": [
+      "Concert Harp",
+      "Harpsichord",
+      "Grand Piano"
+    ]
+  },
+  {
+    "id": "ENT-MUS-025",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "strings_keys",
+    "name": "Autoharp",
+    "language": "en",
+    "aliases": [
+      "Chorded Zither",
+      "Autoharp Zither"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A glossy cherry-finished autoharp held upright in a folk musician's lap, showing spring-loaded chord damper bars across 36 tight steel strings with fingerpicks shining in the light.",
+    "core_traits": [
+      "Chorded stringed instrument belonging to the zither family featuring a series of spring-loaded chord bars",
+      "Pressing a chord button mutes all unwanted strings with felt pads, leaving only the notes of the chosen chord free to ring",
+      "Player strums across the exposed strings with plastic or metal fingerpicks in the right hand",
+      "Typically fitted with 12 to 21 chord bars and 36 individual steel strings",
+      "Popularized across American folk and country music by Maybelle Carter and the Carter Family"
+    ],
+    "distractor_pool": [
+      "Hammered Dulcimer",
+      "Concert Harp",
+      "Acoustic Guitar",
+      "Banjo",
+      "Accordion"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "An autoharp contains an automatic internal motor or clockwork mechanism that plays melodies automatically.",
+        "verdict": "myth",
+        "explanation": "Despite the 'auto' prefix, it is completely manual; the name refers to the automatic damping of non-chord notes when a button is depressed.",
+        "fun_fact": "The mechanical felt dampers allow beginners to strum full in-tune chords on their first try."
+      },
+      {
+        "claim": "Folk music icon Mother Maybelle Carter developed an influential scratch technique on the autoharp.",
+        "verdict": "fact",
+        "explanation": "Maybelle Carter pinched individual melody notes with her thumb while brushing rhythmic chord strokes across the high strings.",
+        "fun_fact": "Her technique transformed the autoharp from a simple rhythm strummer into a versatile lead solo instrument."
+      }
+    ],
+    "versus_candidates": [
+      "Acoustic Guitar",
+      "Hammered Dulcimer",
+      "Concert Harp"
+    ]
+  },
+  {
+    "id": "ENT-MUS-026",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Drum Kit",
+    "language": "en",
+    "aliases": [
+      "Drum Set",
+      "Traps",
+      "Acoustic Drum Kit"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A shimmering silver-sparkle five-piece acoustic drum kit with gleaming bronze cymbals, chrome hardware stands, wooden drumsticks resting on the snare, under vibrant concert stage backlights in a 9:16 perspective.",
+    "core_traits": [
+      "Collection of drums, cymbals, and percussion hardware arranged for a single seated drummer using sticks and foot pedals",
+      "Standard layout includes a bass drum with kick pedal, snare drum, mounted tom-toms, floor tom, hi-hat, and ride and crash cymbals",
+      "Forms the rhythmic engine and tempo backbone across rock, jazz, funk, metal, and pop music ensembles",
+      "Played using wooden drumsticks, nylon rods, wire brushes, or soft mallets",
+      "Evolved in New Orleans in the early twentieth century by combining marching band percussion into one compact rig"
+    ],
+    "distractor_pool": [
+      "Bongos",
+      "Congas",
+      "Timpani",
+      "Xylophone",
+      "Tambourine"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Modern drum kit heads are made from calfskin leather.",
+        "verdict": "myth",
+        "explanation": "While calfskin was standard before the late 1950s, modern drumheads are almost universally made from durable synthetic polyester films like Mylar.",
+        "fun_fact": "Synthetic heads stay in tune regardless of room humidity and temperature shifts."
+      },
+      {
+        "claim": "The invention of the bass drum foot pedal made the modern one-person drum kit possible.",
+        "verdict": "fact",
+        "explanation": "Before William F. Ludwig patented an efficient spring-return foot pedal in 1909, orchestras required separate percussionists for snare and bass drum.",
+        "fun_fact": "The foot pedal freed the drummer's hands to play snare and cymbals simultaneously."
+      }
+    ],
+    "versus_candidates": [
+      "Bongos",
+      "Congas",
+      "Synthesizer Keyboard"
+    ]
+  },
+  {
+    "id": "ENT-MUS-027",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Snare Drum",
+    "language": "en",
+    "aliases": [
+      "Side Drum",
+      "Trap Snare",
+      "Concert Snare"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A polished chrome-over-brass snare drum mounted on a basket stand, close-up view highlighting the coated batter head, die-cast hoops, throw-off lever, and coiled steel snares beneath.",
+    "core_traits": [
+      "Cylindrical double-headed drum equipped with a set of coiled metal wires (snares) stretched across the bottom head",
+      "Striking the top head causes the bottom head to vibrate violently against the wires, creating a sharp, crisp, crackling sound",
+      "Features a mechanical throw-off strainer switch that disengages the snare wires for a warm tom-like tone",
+      "Played with wooden sticks using rudiments like rolls, paradiddles, and rimshots",
+      "Essential lead voice in marching corps, concert wind ensembles, and rock drum kits"
+    ],
+    "distractor_pool": [
+      "Bass Drum",
+      "Tom-Tom",
+      "Bongos",
+      "Tambourine",
+      "Timpani"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A rimshot occurs when a drummer accidentally misses the drum head and hits the metal rim.",
+        "verdict": "myth",
+        "explanation": "A rimshot is an intentional advanced technique where the stick strikes the head and the outer metal hoop simultaneously for maximum cracking volume.",
+        "fun_fact": "Rimshots produce the loud, explosive backbeat crack heard in modern rock and pop music."
+      },
+      {
+        "claim": "Historical snare drum wires were made from twisted animal gut strings rather than coiled steel.",
+        "verdict": "fact",
+        "explanation": "Military side drums in European armies used twisted sheep gut cords stretched under the calfskin bottom head to produce a carrying rattle.",
+        "fun_fact": "Metal coiled wire snares were patented in the early twentieth century to increase crispness."
+      }
+    ],
+    "versus_candidates": [
+      "Bass Drum",
+      "Tom-Tom",
+      "Tambourine"
+    ]
+  },
+  {
+    "id": "ENT-MUS-028",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Bass Drum",
+    "language": "en",
+    "aliases": [
+      "Kick Drum",
+      "Gran Cassa"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A massive black gloss 22-inch bass drum resting on spur legs, featuring a front resonant head with a microphone sound port, reflecting floor lighting in a rehearsal studio.",
+    "core_traits": [
+      "Largest drum of the percussion section producing the lowest deep, punchy acoustic thump",
+      "Mounted horizontally on the floor in drum kits and struck via a foot pedal with a felt or plastic beater",
+      "Measures typically 18 to 26 inches in diameter with dual synthetic drumheads",
+      "Orchestral concert versions are suspended on large tilting metal frames and played with heavy soft mallets",
+      "Provides the fundamental low-end rhythmic pulse in modern music and marching cadence"
+    ],
+    "distractor_pool": [
+      "Snare Drum",
+      "Timpani",
+      "Congas",
+      "Gong",
+      "Tom-Tom"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Drummers often place an ordinary bed pillow or folded towel inside the bass drum.",
+        "verdict": "fact",
+        "explanation": "Placing internal dampening material against the drumheads shortens the boom decay and creates a tight, punchy kick sound for recording.",
+        "fun_fact": "Major drumhead manufacturers now build internal foam rings directly into kick drumheads."
+      },
+      {
+        "claim": "A larger bass drum diameter always guarantees a louder and deeper sound in a stadium.",
+        "verdict": "myth",
+        "explanation": "Acoustic projection depends heavily on head tuning, beater hardness, internal shell depth, and microphone placement rather than diameter alone.",
+        "fun_fact": "A 20-inch kick drum tuned low often provides tighter, more focused sub-bass punch than a loose 26-inch drum."
+      }
+    ],
+    "versus_candidates": [
+      "Snare Drum",
+      "Timpani",
+      "Congas"
+    ]
+  },
+  {
+    "id": "ENT-MUS-029",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Crash Cymbal",
+    "language": "en",
+    "aliases": [
+      "Cymbal",
+      "Crash",
+      "Orchestral Crash Cymbals"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A shimmering lathed bronze crash cymbal suspended on an angled boom stand, capturing hammered surface micro-grooves and warm golden reflections as it flexes after being struck.",
+    "core_traits": [
+      "Circular thin concave plate crafted from acoustic bronze alloy that produces an explosive, shimmering splash of sound",
+      "Struck with a wooden drumstick edge on drum kits to accent major downbeats, song transitions, and climaxes",
+      "Features a raised center bell (cup) and a tapered bow leading to a thin, flexible outer edge",
+      "Commonly crafted from B20 bronze (80 percent copper and 20 percent tin) or B8 alloy",
+      "Available as kit-mounted cymbals or hand-held orchestral crash pairs clashed together"
+    ],
+    "distractor_pool": [
+      "Gong",
+      "Triangle",
+      "Tambourine",
+      "Snare Drum",
+      "Xylophone"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The finest musical cymbals are manufactured using secret metal casting formulas developed in seventeenth-century Istanbul.",
+        "verdict": "fact",
+        "explanation": "Alchemist Avedis Zildjian discovered a secret bronze treating process in Constantinople in 1623 that prevents brittle bronze from shattering under heavy strikes.",
+        "fun_fact": "The Zildjian company is one of the oldest continuously operating corporations in the world."
+      },
+      {
+        "claim": "Polishing a vintage bronze cymbal until it shines like a mirror improves its musical acoustic quality.",
+        "verdict": "myth",
+        "explanation": "Over-cleaning removes natural patina oxidation that mellows harsh highs; many professional drummers deliberately let cymbals age for darker, warmer tone.",
+        "fun_fact": "Some cymbal makers bury new cymbals in soil for months to artificially age their patina."
+      }
+    ],
+    "versus_candidates": [
+      "Gong",
+      "Tambourine",
+      "Triangle"
+    ]
+  },
+  {
+    "id": "ENT-MUS-030",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Bongos",
+    "language": "en",
+    "aliases": [
+      "Bongo Drums",
+      "Bongocitos"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A pair of Cuban wooden bongos connected by a central wooden bridge, displaying tight raw rawhide heads, chrome tuning lugs, and warm mahogany shell grain in a vertical framing.",
+    "core_traits": [
+      "Afro-Cuban percussion instrument consisting of a pair of small, open-bottomed single-headed drums joined by a wooden block",
+      "Consists of a smaller drum called the macho (male) and a slightly larger drum called the hembra (female)",
+      "Traditionally held gripped between the knees of a seated player and struck directly with fingers and palms",
+      "Tuned exceptionally high to produce a sharp, dry, percussive slap and rhythmic popping syncopation",
+      "Key rhythmic component of son cubano, salsa, mambo, and Latin jazz"
+    ],
+    "distractor_pool": [
+      "Congas",
+      "Djembe",
+      "Snare Drum",
+      "Tambourine",
+      "Maracas"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Bongo players hit the drum heads using heavy wooden sticks in traditional Cuban music.",
+        "verdict": "myth",
+        "explanation": "Traditional bongo playing (martillo pattern) relies strictly on bare fingertips, thumbs, and palms to achieve precise tonal slaps and open tones.",
+        "fun_fact": "Drumsticks are used only in modern rock or orchestral pit setups when the bongos are mounted on a hardware stand."
+      },
+      {
+        "claim": "The smaller bongo drum is tuned to a significantly higher pitch than the larger one.",
+        "verdict": "fact",
+        "explanation": "The macho is tuned tight to yield a sharp crackling rim slap, while the larger hembra provides a lower resonant contrast.",
+        "fun_fact": "The high tension on bongo heads was historically maintained by holding the drums near a warm flame to tighten the skin."
+      }
+    ],
+    "versus_candidates": [
+      "Congas",
+      "Drum Kit",
+      "Maracas"
+    ]
+  },
+  {
+    "id": "ENT-MUS-031",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Congas",
+    "language": "en",
+    "aliases": [
+      "Conga Drums",
+      "Tumbadoras"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A set of three tall barrel-shaped wooden congas with wine-red gloss finish, gleaming chrome tension crowns, and thick rawhide skins standing proud on rubber bottom rings.",
+    "core_traits": [
+      "Tall, narrow, single-headed Afro-Cuban barrel drums made from staves of wood or fiberglass",
+      "Played standing up or seated using bare hands to produce open tones, muted tones, bass strikes, and heel-toe movements",
+      "Commonly played in sets of two or three: quinto (high lead), conga (middle), and tumba (low bass)",
+      "Features a thick water buffalo or cow rawhide head stretched over a curved top rim",
+      "Forms the syncopated rhythmic heartbeat (tumbao pattern) of salsa, rumba, and Afro-Caribbean grooves"
+    ],
+    "distractor_pool": [
+      "Bongos",
+      "Djembe",
+      "Drum Kit",
+      "Bass Drum",
+      "Cymbals"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Original Cuban conga drums were constructed from salvaged wooden rum and lard barrels.",
+        "verdict": "fact",
+        "explanation": "In nineteenth-century Havana and Matanzas, Afro-Cuban dockworkers converted discarded wooden barrels into drums by tacking cow skins across the top.",
+        "fun_fact": "Modern stave-constructed congas still preserve the bulging barrel shape of those early containers."
+      },
+      {
+        "claim": "Congas are identical in size, pitch, and playing technique to bongos.",
+        "verdict": "myth",
+        "explanation": "Congas are much taller freestanding barrel drums with thick skins played with the whole hand, whereas bongos are small paired knee drums played with fingers.",
+        "fun_fact": "A single conga drum often weighs over twenty pounds and stands nearly three feet tall."
+      }
+    ],
+    "versus_candidates": [
+      "Bongos",
+      "Drum Kit",
+      "Djembe"
+    ]
+  },
+  {
+    "id": "ENT-MUS-032",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Tambourine",
+    "language": "en",
+    "aliases": [
+      "Hand Drum with Jingles",
+      "Pandero"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A round wooden-rimmed tambourine with pairs of hammered brass jingles reflecting studio light, complete with a tight natural parchment head and finger hole cut into the frame.",
+    "core_traits": [
+      "Percussion instrument consisting of a circular wooden or plastic frame set with pairs of small metallic jingles called zils",
+      "Available either headless for shaking or equipped with a tight calfskin or synthetic striking head",
+      "Played by shaking, striking against the palm or hip, or rubbing a moistened thumb across the head to produce a continuous roll",
+      "Produces a bright, festive, metallic rhythmic jingling and crisp acoustic impact",
+      "Found in ancient Egyptian, Roman, Turkish, and folk traditions, as well as gospel, rock, and pop music"
+    ],
+    "distractor_pool": [
+      "Maracas",
+      "Triangle",
+      "Crash Cymbal",
+      "Snare Drum",
+      "Bongos"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A thumb roll on a tambourine is performed by tapping the head repeatedly at lightning speed with fingers.",
+        "verdict": "myth",
+        "explanation": "A thumb roll is executed by dragging a rosin-coated thumb across the perimeter of the head, creating rapid friction hops that sustain the jingles smoothly.",
+        "fun_fact": "Orchestral percussionists often apply beeswax or rosin to the tambourine head specifically for thumb rolls."
+      },
+      {
+        "claim": "The small pairs of metal cymbals in a tambourine are historically called 'zils'.",
+        "verdict": "fact",
+        "explanation": "The metal discs mounted in slots along the hoop are known as jingles or zils, derived from Ottoman Turkish percussion terminology.",
+        "fun_fact": "Modern pop singers frequently use headless crescent-shaped plastic tambourines on stage."
+      }
+    ],
+    "versus_candidates": [
+      "Maracas",
+      "Triangle",
+      "Crash Cymbal"
+    ]
+  },
+  {
+    "id": "ENT-MUS-033",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Triangle",
+    "language": "en",
+    "aliases": [
+      "Musical Triangle",
+      "Orchestral Triangle"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A gleaming polished steel triangle suspended by a fine monofilament nylon cord, positioned with a slender metal beater poised just inside one of its open corners against a dark background.",
+    "core_traits": [
+      "Idiophone percussion instrument consisting of a steel rod bent into an equilateral or isosceles triangle with one open corner",
+      "Suspended freely from a thin non-vibrating thread or monofilament loop held in the player's hand or mounted on a stand",
+      "Struck with a slender solid metal rod (beater) to produce an ethereal, high-pitched crystalline chime",
+      "The open corner prevents the loop from having a closed loop harmonic mode, generating a complex overtone spectrum",
+      "Added to European orchestral music during the eighteenth century as part of the craze for Janissary (Turkish) military band color"
+    ],
+    "distractor_pool": [
+      "Tubular Bells",
+      "Crash Cymbal",
+      "Tambourine",
+      "Gong",
+      "Xylophone"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The triangle produces a single, definite musical pitch like a flute or piano note.",
+        "verdict": "myth",
+        "explanation": "The open corner and circular rod cross-section generate non-harmonic, inharmonic overtones that produce a shimmering indefinite pitch that cuts through an orchestra.",
+        "fun_fact": "It can blend into any chord without clashing because it lacks a dominant fundamental frequency."
+      },
+      {
+        "claim": "Franz Liszt wrote a piano concerto nicknamed 'The Triangle Concerto' because it gave the triangle a prominent solo role.",
+        "verdict": "fact",
+        "explanation": "Liszt's Piano Concerto No. 1 in E-flat major gives the triangle a famous exposed rhythmic solo alongside the piano in the third movement.",
+        "fun_fact": "Critics initially mocked Liszt for highlighting a humble triangle in a serious concert hall concerto."
+      }
+    ],
+    "versus_candidates": [
+      "Tubular Bells",
+      "Tambourine",
+      "Gong"
+    ]
+  },
+  {
+    "id": "ENT-MUS-034",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Xylophone",
+    "language": "en",
+    "aliases": [
+      "Concert Xylophone",
+      "Orchestral Xylophone"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A concert xylophone with polished rosewood tone bars laid out in piano-keyboard fashion, suspended over vertical aluminum resonator tubes, with hard plastic mallets resting across the bars.",
+    "core_traits": [
+      "Tuned percussion instrument consisting of wooden bars tuned to definite pitches and arranged like a piano keyboard",
+      "Tone bars are traditionally carved from dense Honduran rosewood (palisander) or durable synthetic fiberglass materials",
+      "Struck with hard rubber, plastic, or wooden mallets to produce a dry, piercing, bright, and woody staccato attack",
+      "Each bar is suspended over a tuned hollow metal resonator tube beneath that amplifies its fundamental pitch",
+      "Prominent in symphonic works like Saint-Saens' 'Danse Macabre', cartoon animation soundtracks, and marching drum corps"
+    ],
+    "distractor_pool": [
+      "Marimba",
+      "Glockenspiel",
+      "Vibraphone",
+      "Tubular Bells",
+      "Grand Piano"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A xylophone and a marimba are identical instruments called by different names in different countries.",
+        "verdict": "myth",
+        "explanation": "Xylophone bars are tuned to emphasize the third harmonic (producing a bright, sharp sound), while marimbas use wider bars tuned to the fourth harmonic for warm, mellow sustain.",
+        "fun_fact": "Xylophone mallets are much harder, which would dent the softer, thinner bars of a fine marimba."
+      },
+      {
+        "claim": "The name 'xylophone' translates literally from ancient Greek roots as 'wood sound'.",
+        "verdict": "fact",
+        "explanation": "Derived from the Greek words 'xylon' (wood) and 'phone' (voice or sound), describing its acoustic vibrating wood bars.",
+        "fun_fact": "Similar struck-wood instruments have developed independently across Africa, Southeast Asia, and Central America for millennia."
+      }
+    ],
+    "versus_candidates": [
+      "Marimba",
+      "Tubular Bells",
+      "Grand Piano"
+    ]
+  },
+  {
+    "id": "ENT-MUS-035",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Marimba",
+    "language": "en",
+    "aliases": [
+      "Concert Marimba",
+      "Five-Octave Marimba"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A five-octave concert marimba with wide rich Honduran rosewood bars and cascading gold-anodized resonator tubes, accompanied by four yarn-wrapped mallets held in two hands.",
+    "core_traits": [
+      "Large pitched percussion keyboard instrument featuring wide wooden bars tuned to deep fundamental and harmonic overtones",
+      "Bars are suspended over long vertical aluminum resonator pipes that produce a rich, resonant, warm, mellow sustain",
+      "Played using two, four, or six yarn-wrapped or cord-wrapped mallets using advanced four-mallet grip techniques",
+      "Standard modern concert models span four and a third to five full chromatic octaves down to low C2",
+      "Deeply rooted in indigenous African traditions and celebrated as the national musical instrument of Guatemala and Costa Rica"
+    ],
+    "distractor_pool": [
+      "Xylophone",
+      "Vibraphone",
+      "Glockenspiel",
+      "Tubular Bells",
+      "Grand Piano"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Traditional Mesoamerican village marimbas used dried hollow gourds as sound resonators beneath the wooden bars.",
+        "verdict": "fact",
+        "explanation": "Before metal tubes were introduced, dried hanging gourds fitted with buzzing pig-intestine membranes created the marimba's traditional buzzing charleo timbre.",
+        "fun_fact": "The buzzing membrane acts like an acoustic kazoo, amplifying projection outdoors."
+      },
+      {
+        "claim": "A marimba player can safely strike the rosewood bars using hard brass or steel mallets to play louder.",
+        "verdict": "myth",
+        "explanation": "Metal or hard plastic mallets will permanently fracture and ruin the delicate, precisely carved rosewood bars.",
+        "fun_fact": "Marimba performers use soft rubber cores wound in hundreds of layers of wool or nylon yarn."
+      }
+    ],
+    "versus_candidates": [
+      "Xylophone",
+      "Synthesizer Keyboard",
+      "Grand Piano"
+    ]
+  },
+  {
+    "id": "ENT-MUS-036",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Gong",
+    "language": "en",
+    "aliases": [
+      "Tam-tam",
+      "Chau Gong",
+      "Orchestral Gong"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A massive, hand-hammered 40-inch orchestral chau gong suspended inside a black circular steel stand, its dark bronze face and golden bullseye center trembling in dramatic concert lighting.",
+    "core_traits": [
+      "Large circular heavy metal disc instrument originating in East and Southeast Asia, suspended vertically from a frame",
+      "Struck with a heavy, soft, cloth-padded or felt-wrapped mallet to unleash a deep, oceanic, room-shaking roar",
+      "Flat-faced non-pitched tam-tams produce a complex white-noise explosion of shimmering crashing harmonics",
+      "Nipple gongs feature a raised center boss that produces a focused, singing, definite musical pitch",
+      "Essential color instrument in symphonies by Mahler, Tchaikovsky, and Stravinsky, as well as Indonesian gamelan"
+    ],
+    "distractor_pool": [
+      "Crash Cymbal",
+      "Triangle",
+      "Tubular Bells",
+      "Bass Drum",
+      "Timpani"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "An orchestral percussionist must warm up a large gong silently before striking a climactic blow.",
+        "verdict": "fact",
+        "explanation": "Gently priming the metal with soft, inaudible mallet taps gets the massive bronze molecules moving, preventing harsh cracking when struck with force.",
+        "fun_fact": "A primed gong erupts into full bloom instantly, whereas a cold gong takes seconds to open up."
+      },
+      {
+        "claim": "All gongs produce a chaotic crashing sound with no distinct musical notes.",
+        "verdict": "myth",
+        "explanation": "Nipple gongs (bossed gongs) used extensively throughout Indonesian gamelan orchestras are tuned to precise pitch intervals.",
+        "fun_fact": "Gamelan ensembles use sets of dozens of pitched gongs to play intricate melodic polyphony."
+      }
+    ],
+    "versus_candidates": [
+      "Crash Cymbal",
+      "Bass Drum",
+      "Tubular Bells"
+    ]
+  },
+  {
+    "id": "ENT-MUS-037",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Tubular Bells",
+    "language": "en",
+    "aliases": [
+      "Orchestral Chimes",
+      "Chimes"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A vertical rack of long chrome-plated brass tubes suspended in piano-keyboard order, with a foot-damper pedal mechanism and wooden rawhide striking hammer resting nearby.",
+    "core_traits": [
+      "Percussion instrument consisting of an array of tuned hollow brass or steel tubes suspended vertically in a mobile frame",
+      "Designed to replicate the majestic, tolling sound of massive cathedral church bells within an orchestra",
+      "Played by striking the top reinforced metal lip of the tubes with a dense rawhide or synthetic hammer",
+      "Features a foot-operated damper pedal bar that silences or sustains the ringing tubes like a piano damper",
+      "Achieved legendary pop fame as the cornerstone of Mike Oldfield's 1973 debut album 'Tubular Bells'"
+    ],
+    "distractor_pool": [
+      "Triangle",
+      "Gong",
+      "Xylophone",
+      "Glockenspiel",
+      "Pipe Organ"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Tubular bells were invented because genuine bronze church bells were far too heavy to fit on a concert hall stage.",
+        "verdict": "fact",
+        "explanation": "Cast church bells weigh thousands of pounds each, making a full chromatic set impossible to transport into concert halls, leading to compact hanging tubes in the 1880s.",
+        "fun_fact": "A full set of tubular bells weighs around 150 pounds and easily rolls through standard doorways."
+      },
+      {
+        "claim": "The tubes are struck in the center of the pipe where the metal is thickest.",
+        "verdict": "myth",
+        "explanation": "Tubular bells are struck exclusively on the top steel cap or reinforced rim; hitting the middle produces an ugly clank and dents the acoustic tube.",
+        "fun_fact": "The striking caps are angled toward the player to facilitate rapid mallet runs."
+      }
+    ],
+    "versus_candidates": [
+      "Triangle",
+      "Gong",
+      "Pipe Organ"
+    ]
+  },
+  {
+    "id": "ENT-MUS-038",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Alto Saxophone",
+    "language": "en",
+    "aliases": [
+      "Saxophone",
+      "Alto Sax"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A glistening gold-lacquered brass alto saxophone with mother-of-pearl key touches, curved neck, black rubber mouthpiece with cane reed, and intricately engraved flared bell in a 9:16 vertical spotlight.",
+    "core_traits": [
+      "Single-reed woodwind instrument crafted from brass with a conical bore and flared bell",
+      "Tuned in E-flat, sounding a major sixth lower than written notation",
+      "Sound is produced by a vibrating cane reed clamped to a beak mouthpiece with a metal ligature",
+      "Equipped with 22 or 23 padded keys linked by mechanical rods to cover toneholes along the body",
+      "Patented in Paris in 1846 by Belgian instrument maker Adolphe Sax"
+    ],
+    "distractor_pool": [
+      "Clarinet",
+      "Trumpet",
+      "Trombone",
+      "Concert Flute",
+      "Oboe"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Because the saxophone is made of shiny brass metal, it belongs scientifically to the brass instrument family.",
+        "verdict": "myth",
+        "explanation": "The saxophone is classified strictly as a woodwind because sound is generated by a vibrating wooden cane reed, and pitch is altered by opening toneholes.",
+        "fun_fact": "Brass instruments, by contrast, require buzzing the player's lips into a cup mouthpiece."
+      },
+      {
+        "claim": "Adolphe Sax survived multiple near-fatal childhood accidents before successfully inventing the saxophone.",
+        "verdict": "fact",
+        "explanation": "As a child, Sax fell down three flights of stairs, swallowed a needle, survived gunpowder explosions, and drank diluted acid before growing up to invent the sax.",
+        "fun_fact": "His neighbors in Belgium called him 'little Sax, the ghost' because he constantly cheated death."
+      }
+    ],
+    "versus_candidates": [
+      "Clarinet",
+      "Trumpet",
+      "Trombone"
+    ]
+  },
+  {
+    "id": "ENT-MUS-039",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Trumpet",
+    "language": "en",
+    "aliases": [
+      "B-flat Trumpet",
+      "Cornet",
+      "Horn"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A brilliant polished silver-plated B-flat trumpet with three mother-of-pearl valve buttons, looping cylindrical brass tubing, and a flared bell reflecting stage spotlights in crisp macro focus.",
+    "core_traits": [
+      "Highest-register brass instrument played by buzzing lips into a cup-shaped silver or brass mouthpiece",
+      "Features approximately four and a half feet of brass tubing coiled into an oblong loop with a flared bell",
+      "Uses three piston valves to alter the length of the tubing and lower the pitch by various semitone steps",
+      "Tuned standardly in the key of B-flat, producing a bright, triumphant, piercing, and powerful heraldic timbre",
+      "Anchors fanfare melodies in classical orchestras, jazz big bands, mariachi groups, and military bugle calls"
+    ],
+    "distractor_pool": [
+      "Trombone",
+      "French Horn",
+      "Tuba",
+      "Alto Saxophone",
+      "Cornet"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Depressing the trumpet's three piston valves provides enough finger combinations to play all twelve chromatic notes alone.",
+        "verdict": "myth",
+        "explanation": "Three valves provide only seven finger combinations; the trumpeter must change lip tension and airflow speed (embouchure) to navigate different overtones in the harmonic series.",
+        "fun_fact": "A bugle with zero valves can play complete military tunes using embouchure alone."
+      },
+      {
+        "claim": "Ancient trumpets carved from animal horns, conch shells, and hammered bronze were used primarily for military signals rather than art music.",
+        "verdict": "fact",
+        "explanation": "Because early natural trumpets lacked valves, their loud blast was deployed on battlefields to coordinate troop movements across great distances.",
+        "fun_fact": "Piston valves were invented only in the 1810s, transforming the trumpet into a fully chromatic instrument."
+      }
+    ],
+    "versus_candidates": [
+      "Trombone",
+      "Alto Saxophone",
+      "French Horn"
+    ]
+  },
+  {
+    "id": "ENT-MUS-040",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Trombone",
+    "language": "en",
+    "aliases": [
+      "Tenor Trombone",
+      "Slide Trombone",
+      "Sackbut"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A gleaming golden brass tenor slide trombone extended out in fourth position, capturing the smooth chrome inner slide stockings, tuning slide counterweight, and expansive flared bell.",
+    "core_traits": [
+      "Brass instrument characterized by a telescoping U-shaped hand slide that changes tubing length continuously",
+      "Lacks valves, relying on seven slide positions combined with lip embouchure to play full chromatic scales",
+      "Capable of executing seamless, continuous acoustic pitch bends and glissandos unlike valved brass",
+      "Tuned fundamentally in B-flat and notated primarily in bass clef and tenor clef in non-transposing concert pitch",
+      "Evolved in the fifteenth century from the Renaissance sackbut"
+    ],
+    "distractor_pool": [
+      "Trumpet",
+      "French Horn",
+      "Tuba",
+      "Euphonium",
+      "Alto Saxophone"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The slide on a trombone has small physical notches or grooves to help the player find the exact pitch.",
+        "verdict": "myth",
+        "explanation": "The slide is completely smooth with zero notches; the trombonist relies entirely on muscle memory and ear intonation to position the slide within fractions of a millimeter.",
+        "fun_fact": "Temperature changes shift slide positions, requiring players to micro-adjust by ear in real time."
+      },
+      {
+        "claim": "The original historical name for the trombone in English was the 'sackbut'.",
+        "verdict": "fact",
+        "explanation": "Derived from the French 'saquer' (to draw) and 'bouter' (to push), vividly describing the distinctive push-and-pull motion of the slide.",
+        "fun_fact": "Sackbuts had smaller bells and produced a gentler, more vocal sound for church choirs."
+      }
+    ],
+    "versus_candidates": [
+      "Trumpet",
+      "French Horn",
+      "Tuba"
+    ]
+  },
+  {
+    "id": "ENT-MUS-041",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "French Horn",
+    "language": "en",
+    "aliases": [
+      "Horn",
+      "Double Horn",
+      "Concert Horn"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A complex golden brass double French horn showing its intricately coiled tubing, rotary valve levers, funnel-shaped mouthpiece, and immense backwards-facing bell resting under warm theater illumination.",
+    "core_traits": [
+      "Brass instrument consisting of twelve to sixteen feet of coiled tubing ending in a wide, backwards-facing flared bell",
+      "Operated using rotary valves pressed by the player's left hand while the right hand rests inside the bell",
+      "Deep funnel-shaped cup mouthpiece produces a rich, velvety, heroic, and mellow orchestral voice",
+      "The hand placed inside the bell fine-tunes pitch, alters timbre, and creates sharp brassy stopped-horn effects",
+      "Directly descended from hunting horns blown on horseback in seventeenth-century European forests"
+    ],
+    "distractor_pool": [
+      "Trumpet",
+      "Trombone",
+      "Tuba",
+      "Euphonium",
+      "Bassoon"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The French horn player puts their right hand in the bell simply as a comfortable resting place.",
+        "verdict": "myth",
+        "explanation": "The hand inside the bell is an active acoustic tool that adjusts intonation, darkens tone, and can completely choke the airflow for buzzy 'stopped horn' sound.",
+        "fun_fact": "Before valves were invented, hand-stopping was the only way hornists could play non-harmonic scale notes."
+      },
+      {
+        "claim": "The International Horn Society officially recommends referring to the instrument simply as the 'Horn' rather than French Horn.",
+        "verdict": "fact",
+        "explanation": "The society noted that major development occurred across Germany and Austria rather than France, making 'French' historically inaccurate.",
+        "fun_fact": "If uncoiled completely, the tubing of a modern double horn would stretch more than twenty feet long."
+      }
+    ],
+    "versus_candidates": [
+      "Trumpet",
+      "Trombone",
+      "Tuba"
+    ]
+  },
+  {
+    "id": "ENT-MUS-042",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Tuba",
+    "language": "en",
+    "aliases": [
+      "Concert Tuba",
+      "Bass Tuba",
+      "Contrabass Tuba"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A colossal polished brass concert tuba sitting upright on its bottom bow, with wide conical body tubing wrapping into four rotary valves, its giant upward-facing bell reaching toward the rafters.",
+    "core_traits": [
+      "Largest and lowest-pitched member of the orchestral brass instrument family",
+      "Features twelve to eighteen feet of wide conical brass tubing terminating in an expansive upward-pointing bell",
+      "Fitted with four to six piston or rotary valves operated by the right hand to reach sub-bass pedal notes",
+      "Plays seated with the heavy instrument resting in the player's lap or on a specialized performance stand",
+      "Provides the deep acoustic anchor and bass foundation for symphony orchestras, brass bands, and military ensembles"
+    ],
+    "distractor_pool": [
+      "Trombone",
+      "French Horn",
+      "Trumpet",
+      "Bass Drum",
+      "Double Bass"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The tuba is an ancient medieval instrument that has existed since Roman antiquity.",
+        "verdict": "myth",
+        "explanation": "The modern concert tuba was patented in Berlin in 1835 by Wilhelm Wieprecht and Johann Moritz, making it one of the newest orchestral instruments.",
+        "fun_fact": "It was invented to replace the serpent and ophicleide, quirky keyed bass brass ancestors."
+      },
+      {
+        "claim": "The sousaphone is an ergonomic marching version of the tuba designed specifically to wrap around the musician's body.",
+        "verdict": "fact",
+        "explanation": "John Philip Sousa commissioned the circular body design so military band tubists could march comfortably with the bell firing sound over the ensemble.",
+        "fun_fact": "Sousaphones are commonly constructed from lightweight white fiberglass to reduce marching fatigue."
+      }
+    ],
+    "versus_candidates": [
+      "Double Bass",
+      "Trombone",
+      "Bass Drum"
+    ]
+  },
+  {
+    "id": "ENT-MUS-043",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Concert Flute",
+    "language": "en",
+    "aliases": [
+      "Western Concert Flute",
+      "Silver Flute",
+      "Transverse Flute"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A brilliant sterling-silver concert flute resting horizontally on black velvet, showing its detailed French pointed key arms, open toneholes, and curved lip plate around the embouchure hole.",
+    "core_traits": [
+      "Side-blown (transverse) woodwind instrument made of nickel-silver, solid silver, gold, or platinum",
+      "Produces sound when the player's airstream splits across the sharp edge of the embouchure blowhole, creating acoustic flutter",
+      "Features approximately sixteen keys operating padded pads over cylindrical body toneholes",
+      "Pioneered in modern acoustic proportions by Theobald Boehm in Munich between 1832 and 1847",
+      "Possesses a light, agile, sweet, bird-like upper register capable of dazzling virtuosic runs"
+    ],
+    "distractor_pool": [
+      "Piccolo",
+      "Clarinet",
+      "Oboe",
+      "Alto Saxophone",
+      "Recorder"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Because modern concert flutes are crafted from gleaming silver or gold metal, they belong to the brass family.",
+        "verdict": "myth",
+        "explanation": "The flute is classified as a woodwind because historically it was carved from wood, and it generates sound via a split air jet rather than buzzing lip embouchures.",
+        "fun_fact": "Many traditional Irish folk and baroque performers still prefer wooden flutes for warm, earthy tone."
+      },
+      {
+        "claim": "Theobald Boehm redesigned the flute using rigorous scientific physics calculations rather than traditional trial-and-error guesswork.",
+        "verdict": "fact",
+        "explanation": "Boehm calculated the exact acoustic placement and size for each tonehole, creating the padded keywork mechanism still used globally on flutes today.",
+        "fun_fact": "The Boehm key system was so successful it was adapted for clarinets and saxophones as well."
+      }
+    ],
+    "versus_candidates": [
+      "Piccolo",
+      "Clarinet",
+      "Recorder"
+    ]
+  },
+  {
+    "id": "ENT-MUS-044",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Piccolo",
+    "language": "en",
+    "aliases": [
+      "Ottavino",
+      "Piccolo Flute"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A tiny ebony-wood piccolo with delicate silver keywork resting alongside a full-sized concert flute, its slender conical bore highlighted against dark theatrical stage curtaining.",
+    "core_traits": [
+      "Half-sized woodwind instrument of the flute family that sounds exactly one octave higher than the concert flute",
+      "Highest-pitched member of the orchestral woodwind section, capable of cutting through an entire fortissimo symphony",
+      "Constructed from grenadilla wood, plastic resin, or silver with a conical bore body",
+      "Requires high-velocity air pressure and precise embouchure control to intonate notes in the extreme upper register",
+      "Famous for memorable high-flying bird solos in Sousa's 'The Stars and Stripes Forever' and Tchaikovsky's ballets"
+    ],
+    "distractor_pool": [
+      "Concert Flute",
+      "Recorder",
+      "Clarinet",
+      "Oboe",
+      "Harmonica"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The piccolo has a separate key mechanism and fingering chart completely different from the concert flute.",
+        "verdict": "myth",
+        "explanation": "The piccolo shares virtually identical fingerings with the concert flute, allowing flute players to double on piccolo with minimal finger retraining.",
+        "fun_fact": "The main challenge is embouchure tightness and breath control rather than hand fingerings."
+      },
+      {
+        "claim": "The piccolo's highest piercing notes can easily exceed 4,000 Hertz, reaching the upper limits of orchestral hearing.",
+        "verdict": "fact",
+        "explanation": "Its top register note, high C8, rings at 4,186 Hertz, easily penetrating over a hundred brass, string, and percussion players playing simultaneously.",
+        "fun_fact": "Piccolo players frequently wear specialized musician earplugs during rehearsals to protect their hearing."
+      }
+    ],
+    "versus_candidates": [
+      "Concert Flute",
+      "Clarinet",
+      "Recorder"
+    ]
+  },
+  {
+    "id": "ENT-MUS-045",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Clarinet",
+    "language": "en",
+    "aliases": [
+      "B-flat Clarinet",
+      "Soprano Clarinet"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A fine African blackwood B-flat clarinet standing upright with polished silver keys, cork tenons, ligature clamping a flat cane reed to its hard ebonite mouthpiece, and subtly flared bell.",
+    "core_traits": [
+      "Single-reed woodwind instrument with a cylindrical bore terminating in a gently flared bell",
+      "Made traditionally from dense African blackwood (grenadilla) with silver-plated or nickel keys",
+      "Uses a single flat cane reed held against a beak-shaped mouthpiece with a metal ligature",
+      "Features a register key that overblows at the musical twelfth (octave plus a fifth) rather than the octave",
+      "Boasts an enormous four-octave pitch range spanning the rich chalumeau register to the singing clarion register"
+    ],
+    "distractor_pool": [
+      "Oboe",
+      "Alto Saxophone",
+      "Bassoon",
+      "Concert Flute",
+      "Recorder"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The clarinet and the oboe use the exact same single cane reed.",
+        "verdict": "myth",
+        "explanation": "The clarinet uses a single flat reed tied to a mouthpiece, whereas the oboe uses a double reed made of two cane blades bound directly to a brass staple without a mouthpiece.",
+        "fun_fact": "The single reed gives the clarinet its warm, round, liquid tone, compared to the oboe's reedy nasal cry."
+      },
+      {
+        "claim": "George Gershwin's 'Rhapsody in Blue' opens with the most famous clarinet glissando in music history.",
+        "verdict": "fact",
+        "explanation": "Clarinetist Ross Gorman improvised a seamless seventeen-note upwards smear at the 1924 premiere, and Gershwin loved it so much he made it permanent.",
+        "fun_fact": "Executing this glissando requires relaxing the lower lip while sliding fingers off the toneholes."
+      }
+    ],
+    "versus_candidates": [
+      "Oboe",
+      "Alto Saxophone",
+      "Concert Flute"
+    ]
+  },
+  {
+    "id": "ENT-MUS-046",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Oboe",
+    "language": "en",
+    "aliases": [
+      "Hautbois",
+      "Concert Oboe"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "An elegant dark grenadilla oboe with intricate silver conservatory keywork, showing a tiny dual-cane reed inserted directly into the top socket, isolated under warm concert hall lights.",
+    "core_traits": [
+      "Double-reed woodwind instrument with a narrow conical bore that produces a penetrating, plaintive, poignant timbre",
+      "Played by blowing through two thin, precisely scraped cane blades bound together without any mouthpiece",
+      "Known as the instrument that conventionally sounds the tuning pitch (concert A at 440 Hz) for the symphony orchestra",
+      "Features a complex conservatory key system with dozens of linked levers and trill keys",
+      "Descended from the medieval and Renaissance shawm"
+    ],
+    "distractor_pool": [
+      "Clarinet",
+      "Bassoon",
+      "English Horn",
+      "Concert Flute",
+      "Alto Saxophone"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The oboe tunes the orchestra because its pitch is physically fixed and cannot be changed by the player.",
+        "verdict": "myth",
+        "explanation": "Oboe pitch can fluctuate with embouchure pressure and reed warmth; it tunes the orchestra because its bright, overtone-rich sound cuts cleanly through the hall for everyone to hear.",
+        "fun_fact": "Historically, oboes were also the most stable wind instrument available in eighteenth-century orchestras."
+      },
+      {
+        "claim": "Professional oboists spend hours hand-carving and scraping their own reeds with razor blades.",
+        "verdict": "fact",
+        "explanation": "Because cane responds sensitively to humidity, temperature, and altitude, oboists micro-scrape their own reeds to match their embouchure and climate.",
+        "fun_fact": "Many oboists claim they spend more time making reeds than actually practicing music."
+      }
+    ],
+    "versus_candidates": [
+      "Clarinet",
+      "Bassoon",
+      "English Horn"
+    ]
+  },
+  {
+    "id": "ENT-MUS-047",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Bassoon",
+    "language": "en",
+    "aliases": [
+      "Fagotto",
+      "Double-Reed Bassoon"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A tall maple-wood bassoon standing nearly five feet tall, its warm red-stained wooden joints bound with nickel-silver ferrules, curved metal bocal, and double reed pointing into a vertical frame.",
+    "core_traits": [
+      "Large double-reed woodwind instrument that anchors the tenor and bass registers of the woodwind family",
+      "Constructed from over eight feet of conical bore folded in half into a double wooden tube (boot joint)",
+      "Player blows through a double cane reed fitted onto a curved metal swan-neck tube called the bocal or crook",
+      "Features a deep, warm, reedy, sometimes comical or melancholic voice notated primarily in bass and tenor clefs",
+      "Known for playing the grandfather in Prokofiev's 'Peter and the Wolf' and the opening solo of Stravinsky's 'The Rite of Spring'"
+    ],
+    "distractor_pool": [
+      "Oboe",
+      "Clarinet",
+      "Tuba",
+      "Cello",
+      "French Horn"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The bassoon has more keys operated exclusively by the player's left thumb than any other woodwind instrument.",
+        "verdict": "fact",
+        "explanation": "The left thumb alone controls up to nine or ten individual keys on the back of the wing joint and bass joint.",
+        "fun_fact": "This makes the bassoonist's thumbs the busiest fingers on the entire instrument."
+      },
+      {
+        "claim": "The bassoon is a single straight tube of wood like a giant walking stick.",
+        "verdict": "myth",
+        "explanation": "Its eight-foot acoustic tube is bent into a sharp U-turn inside the bottom boot joint, creating two parallel bores that allow it to stand five feet tall.",
+        "fun_fact": "Its Italian name, 'fagotto', translates literally to 'bundle of sticks', referring to its joined wood tubes."
+      }
+    ],
+    "versus_candidates": [
+      "Oboe",
+      "Clarinet",
+      "Cello"
+    ]
+  },
+  {
+    "id": "ENT-MUS-048",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Harmonica",
+    "language": "en",
+    "aliases": [
+      "Blues Harp",
+      "Mouth Organ",
+      "French Harp"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A gleaming pocket-sized ten-hole diatonic harmonica with polished chrome cover plates, pearwood comb, and brass reed plates resting on a worn denim jacket under warm amber light.",
+    "core_traits": [
+      "Small handheld free-reed wind instrument played by exhaling (blowing) and inhaling (drawing) air through numbered chambers",
+      "Airflow sets miniature brass or bronze reeds vibrating against slotted reed plates mounted on a wooden or plastic comb",
+      "Ten-hole diatonic models are tuned to the Richter tuning system in a specific key",
+      "Players alter pitch and express emotional vocal cries using breath control, tongue blocking, and pitch bending",
+      "Central instrument across Chicago blues, folk, country, rock, and bluegrass traditions"
+    ],
+    "distractor_pool": [
+      "Melodica",
+      "Accordion",
+      "Kazoo",
+      "Concert Flute",
+      "Clarinet"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A harmonica produces sound only when the musician blows air out through the mouthpiece.",
+        "verdict": "myth",
+        "explanation": "The harmonica is unique because it makes sound both on the blow (exhale) and the draw (inhale), using two separate opposing sets of tuned reeds.",
+        "fun_fact": "Drawing air allows blues players to bend notes downwards to produce expressive blue notes."
+      },
+      {
+        "claim": "The harmonica was the very first musical instrument ever played in outer space.",
+        "verdict": "fact",
+        "explanation": "Astronaut Wally Schirra smuggled a miniature four-hole Hohner Little Lady harmonica onto Gemini 6A in 1965 and played 'Jingle Bells' to Mission Control.",
+        "fun_fact": "That historic two-inch harmonica is preserved today at the Smithsonian National Air and Space Museum."
+      }
+    ],
+    "versus_candidates": [
+      "Melodica",
+      "Accordion",
+      "Kazoo"
+    ]
+  },
+  {
+    "id": "ENT-MUS-049",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Bagpipes",
+    "language": "en",
+    "aliases": [
+      "Great Highland Bagpipe",
+      "Scottish Bagpipes"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A magnificent set of Scottish Great Highland bagpipes with tartan-draped airtight bag, carved African blackwood drone pipes with silver mounts, and ribbons resting in misty highland morning light.",
+    "core_traits": [
+      "Traditional wind instrument using enclosed reeds fed from a continuous reservoir of air held in an airtight bag",
+      "Musician blows air into the bag through a blowpipe with a one-way leather non-return flapper valve",
+      "Equipped with a melodic finger chanter and three continuous drone pipes (two tenor drones and one bass drone)",
+      "Constant air squeezed from under the arm creates an unbroken, continuous, roaring wall of sound",
+      "Deeply rooted in Scottish national identity, martial piping traditions, and Celtic celebrations worldwide"
+    ],
+    "distractor_pool": [
+      "Accordion",
+      "Concert Flute",
+      "Clarinet",
+      "Harmonica",
+      "Trumpet"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Bagpipes can easily be played at whisper-soft volumes for intimate living room gatherings.",
+        "verdict": "myth",
+        "explanation": "Great Highland bagpipes require immense air pressure to keep all four reeds vibrating, producing an unyielding, ear-splitting 100-plus decibel roar designed for open battlefields.",
+        "fun_fact": "Scottish pipers practicing indoors often use quiet practice chanters without the bag and drones."
+      },
+      {
+        "claim": "British law historically classified Scottish Highland bagpipes as an instrument of war during eighteenth-century rebellions.",
+        "verdict": "fact",
+        "explanation": "Following the Jacobite rising of 1745, British courts prosecuted captured bagpipers because Highland regiments used pipes to stir men to battle like military banners.",
+        "fun_fact": "A single bagpiper led hundreds of charging warriors across smoke-filled battlefields."
+      }
+    ],
+    "versus_candidates": [
+      "Accordion",
+      "Harmonica",
+      "Trumpet"
+    ]
+  },
+  {
+    "id": "ENT-MUS-050",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "winds_percussion",
+    "name": "Maracas",
+    "language": "en",
+    "aliases": [
+      "Rumba Shakers",
+      "Gourd Shakers"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A pair of brightly painted wooden maracas with tropical floral patterns and turned wooden handles, angled dynamic shot showing small dried seeds motion-blurred inside their rounded heads.",
+    "core_traits": [
+      "Percussion rattle consisting of a dried gourd, hollow wood, or molded plastic shell filled with dried seeds, beads, or pellets",
+      "Fitted with a central wooden handle and traditionally played in matched pairs, one in each hand",
+      "Sound is generated by shaking or snapping the wrists, causing internal seeds to crash sharply against the hollow chamber walls",
+      "One shaker is traditionally tuned or filled slightly different from the other to create high and low rhythmic interplay",
+      "Ubiquitous across Caribbean, Latin American, salsa, bossa nova, and mariachi rhythm sections"
+    ],
+    "distractor_pool": [
+      "Tambourine",
+      "Bongos",
+      "Congas",
+      "Triangle",
+      "Castanets"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "In a pair of traditional maracas, both shakers are completely identical in pitch and sound.",
+        "verdict": "myth",
+        "explanation": "Traditional maracas are made as a male and female pair; one contains fewer or larger seeds to produce a deeper sound, while the other sounds higher and crisper.",
+        "fun_fact": "The higher-pitched maraca is held in the dominant hand to articulate rapid syncopated rhythms."
+      },
+      {
+        "claim": "Indigenous Taino and Arawak peoples of the Caribbean crafted the original maracas from the fruit of the calabash tree.",
+        "verdict": "fact",
+        "explanation": "Native carvers scooped out the dried pulp of circular calabash fruits, filled them with small river pebbles or seeds, and inserted a wooden handle.",
+        "fun_fact": "The name 'maraca' comes from the indigenous Guarani word 'mbaraka' meaning rattle."
+      }
+    ],
+    "versus_candidates": [
+      "Tambourine",
+      "Bongos",
+      "Castanets"
+    ]
+  },
+  {
+    "id": "ENT-MUS-051",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Gramophone",
+    "language": "en",
+    "aliases": [
+      "Phonograph",
+      "Wind-Up Gramophone",
+      "Talking Machine",
+      "Victrola"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A majestic antique wooden gramophone featuring a polished fluted brass horn flaring upward, manual winding hand-crank on its mahogany cabinet, and steel needle resting on a spinning shellac disc.",
+    "core_traits": [
+      "Early mechanical acoustic audio player featuring a turntable, steel stylus, mica diaphragm, and large amplifying horn",
+      "Powered entirely by a hand-cranked clockwork spring motor requiring zero electrical current",
+      "Vibrating steel needle tracks lateral spiraling grooves cut into 78 RPM shellac records",
+      "Sound vibrations travel directly from the diaphragm into the expanding flared horn for acoustic amplification",
+      "Patented by Emile Berliner in 1887, replacing Thomas Edison's early wax cylinders with flat discs"
+    ],
+    "distractor_pool": [
+      "Vinyl Record",
+      "Jukebox",
+      "Reel-to-Reel Tape Recorder",
+      "Boombox",
+      "Retro Transistor Radio"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Early acoustic gramophones had an electric volume knob to turn the music up and down.",
+        "verdict": "myth",
+        "explanation": "Early gramophones had no electricity or electronic circuits; the only way to reduce volume was by stuffing a sock or cloth into the flared horn.",
+        "fun_fact": "This practice of muting the horn gave rise to the popular English idiom 'put a sock in it'."
+      },
+      {
+        "claim": "The iconic painting 'His Master's Voice' depicting Nipper the dog listening to a gramophone became one of the world's first global trademarks.",
+        "verdict": "fact",
+        "explanation": "Francis Barraud's 1898 painting of his brother's terrier Nipper became the famous trademark for Victor Talking Machine Company, HMV, and RCA Victor.",
+        "fun_fact": "The original painting actually depicted an Edison phonograph cylinder, which was overpainted with a Berliner disc gramophone."
+      }
+    ],
+    "versus_candidates": [
+      "DJ Turntable",
+      "Jukebox",
+      "Wax Cylinder Phonograph"
+    ]
+  },
+  {
+    "id": "ENT-MUS-052",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Vinyl Record",
+    "language": "en",
+    "aliases": [
+      "LP Album",
+      "Phonograph Record",
+      "12-Inch Vinyl",
+      "Vinyl Disc"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A glossy black 12-inch vinyl LP record glistening under macro studio light, revealing microscopic spiraling sound grooves, centered paper album label, and light rainbow diffraction.",
+    "core_traits": [
+      "Analog sound storage medium consisting of a flat polyvinyl chloride disc inscribed with continuous modulated spiral grooves",
+      "Played on a turntable where a diamond stylus (needle) converts physical groove wiggles into electrical audio signals",
+      "Common formats include 12-inch 33-1/3 RPM Long Play (LP) albums and 7-inch 45 RPM singles",
+      "Introduced by Columbia Records in 1948, dramatically improving durability and playing time over fragile shellac 78s",
+      "Celebrated for its warm analog sound, tactile ritual of needle dropping, and iconic twelve-inch cover art packaging"
+    ],
+    "distractor_pool": [
+      "Compact Cassette Tape",
+      "8-Track Tape Cartridge",
+      "Portable CD Player",
+      "Gramophone",
+      "Walkman"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A vinyl record album has two separate audio grooves on each side, one for the left ear and one for the right ear.",
+        "verdict": "myth",
+        "explanation": "Each side of a vinyl record contains a single, continuous spiral groove running from outer edge to run-out label; stereo channels are cut at 45-degree opposing angles into the same groove walls.",
+        "fun_fact": "The left channel is encoded on the inner wall, and the right channel on the outer wall."
+      },
+      {
+        "claim": "Vinyl record sales surpassed compact disc (CD) sales in recent years for the first time since the late 1980s.",
+        "verdict": "fact",
+        "explanation": "The global vinyl resurgence drove physical vinyl sales past CDs in the early 2020s, fueled by collector culture, audiophile appreciation, and deluxe merchandise.",
+        "fun_fact": "Many contemporary pop artists now produce albums in multiple colored vinyl variants for fans."
+      }
+    ],
+    "versus_candidates": [
+      "Compact Cassette Tape",
+      "Portable CD Player",
+      "DJ Turntable"
+    ]
+  },
+  {
+    "id": "ENT-MUS-053",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Jukebox",
+    "language": "en",
+    "aliases": [
+      "Coin-Operated Phonograph",
+      "Rock-Ola",
+      "Wurlitzer Jukebox"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A classic 1940s chrome-and-neon Wurlitzer jukebox glowing with bubbling neon glass tubes, curved Art Deco arch, rotating carousel of 45 RPM vinyl records, and lighted mechanical song selector buttons.",
+    "core_traits": [
+      "Coin-operated automated musical entertainment machine historically installed in diners, bars, bowling alleys, and lounges",
+      "Allows patrons to deposit coins and press alphanumeric pushbuttons to select specific songs from a library of records or discs",
+      "Features an illuminated display cabinet, bubble tubes, chrome grilles, and a visible mechanical record-changer arm",
+      "Mechanical arm selects the requested disc from a rotating carousel or rack and places it gently onto a turntable",
+      "Golden era dominated in the 1940s and 1950s by American manufacturers Wurlitzer, Seeburg, and Rock-Ola"
+    ],
+    "distractor_pool": [
+      "Boombox",
+      "Gramophone",
+      "Vinyl Record",
+      "Retro Transistor Radio",
+      "DJ Mixing Console"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The word 'jukebox' comes from the Gullah African-American slang term 'juke', meaning disorderly, rowdy, or dancing.",
+        "verdict": "fact",
+        "explanation": "'Juke joints' were rural drinking and dance halls where early coin-operated phonographs provided music, leading people to call them jukeboxes.",
+        "fun_fact": "Manufacturers originally hated the slang name 'jukebox', preferring formal titles like 'automatic coin phonograph'."
+      },
+      {
+        "claim": "The mechanical selector arm inside a vintage jukebox was controlled by an internal microcomputer chip.",
+        "verdict": "myth",
+        "explanation": "Vintage 1940s and 1950s jukeboxes operated purely on complex electro-mechanical relays, solenoids, rotating gears, and stepper wheels with zero silicon chips.",
+        "fun_fact": "The rhythmic click-clack of the mechanical selector searching for a record was part of the magical charm."
+      }
+    ],
+    "versus_candidates": [
+      "Boombox",
+      "Gramophone",
+      "DJ Turntable"
+    ]
+  },
+  {
+    "id": "ENT-MUS-054",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Boombox",
+    "language": "en",
+    "aliases": [
+      "Ghetto Blaster",
+      "Portable Stereo",
+      "Radio Cassette Player"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A massive 1980s silver chrome boombox with twin 8-inch speaker grilles, dual cassette decks, multi-band graphic equalizer sliders, analog VU meters, and heavy-duty metal carrying handle in street portrait lighting.",
+    "core_traits": [
+      "Portable battery-powered high-output stereo system integrating an AM/FM radio, cassette tape deck, amplifier, and prominent stereo speakers",
+      "Designed with a heavy top handle allowing it to be carried on shoulders or placed on sidewalks and basketball courts",
+      "Features multi-segment LED power meters or needle VU meters, graphic equalizer sliders, and high-wattage bass drivers",
+      "Allowed youth to share and blast music in public spaces without needing stationary home stereos",
+      "Cornerstone cultural symbol of early hip-hop, breakdancing battles, and street skateboarding throughout the 1980s"
+    ],
+    "distractor_pool": [
+      "Personal Cassette Player",
+      "Retro Transistor Radio",
+      "Compact Cassette Tape",
+      "Jukebox",
+      "Studio Monitor Headphones"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Carrying a large 1980s boombox outdoors required carrying dozens of heavy D-cell batteries.",
+        "verdict": "fact",
+        "explanation": "High-output boomboxes frequently required eight to ten heavy D-cell batteries, adding several kilograms of weight and lasting only a few hours at high volume.",
+        "fun_fact": "B-boys and breakdancers kept extra battery packs in their backpacks during outdoor dance ciphers."
+      },
+      {
+        "claim": "The boombox was invented exclusively for hip-hop musicians in the Bronx in 1982.",
+        "verdict": "myth",
+        "explanation": "Portable radio-cassette players were first developed in Japan and Europe in the late 1960s and 1970s before being embraced and transformed by urban youth culture worldwide.",
+        "fun_fact": "Japanese electronics companies competed fiercely to build ever larger models with double cassette decks and detachable speakers."
+      }
+    ],
+    "versus_candidates": [
+      "Personal Cassette Player",
+      "Retro Transistor Radio",
+      "DJ Turntable"
+    ]
+  },
+  {
+    "id": "ENT-MUS-055",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Compact Cassette Tape",
+    "language": "en",
+    "aliases": [
+      "Audio Cassette",
+      "Tape",
+      "Cassette",
+      "Mixtape"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A clear plastic compact cassette tape showing twin white spools holding dark brown magnetic tape, leader tape, write-protect notches, and handwritten lined label under crisp macro lighting.",
+    "core_traits": [
+      "Analog magnetic tape audio recording and playback format enclosed in a small rectangular plastic housing",
+      "Contains two miniature spools that wind 3.81 mm magnetic tape across playback, record, and erase heads",
+      "Features two playable sides (Side A and Side B) that can be reversed manually or via autoreverse tape decks",
+      "Equipped with write-protect tabs on the top spine to prevent accidental tape erasure",
+      "Developed by Philips in 1962 and launched royalty-free, democratizing personal recording and custom mixtapes"
+    ],
+    "distractor_pool": [
+      "8-Track Tape Cartridge",
+      "Reel-to-Reel Tape Recorder",
+      "Vinyl Record",
+      "Personal Cassette Player",
+      "Portable CD Player"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Placing a strip of sticky tape over the broken write-protect tab allows you to record over an old cassette again.",
+        "verdict": "fact",
+        "explanation": "Cassette recorders have a mechanical sensor pin that detects the top notch hole; covering the hole fools the deck into allowing recording again.",
+        "fun_fact": "Millions of teenagers used Scotch tape to record top-40 radio countdowns onto commercial cassette tapes."
+      },
+      {
+        "claim": "Using a standard hexagonal pencil to manually wind loose cassette tape back into its shell damages the audio quality.",
+        "verdict": "myth",
+        "explanation": "A standard yellow pencil fits the cassette spool teeth perfectly, safely winding loose tape without touching the delicate magnetic coating.",
+        "fun_fact": "Winding cassettes with pencils was universally practiced to save player battery power."
+      }
+    ],
+    "versus_candidates": [
+      "Vinyl Record",
+      "8-Track Tape Cartridge",
+      "Reel-to-Reel Tape Recorder"
+    ]
+  },
+  {
+    "id": "ENT-MUS-056",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Personal Cassette Player",
+    "language": "en",
+    "aliases": [
+      "Walkman",
+      "Portable Cassette Player",
+      "Cassette Personal Stereo"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An iconic metallic blue-and-silver portable cassette player with clip-on belt attachment, tactile orange play button, twin headphone jacks, and lightweight foam-padded orange headphones.",
+    "core_traits": [
+      "Ultra-compact portable battery-operated cassette tape player designed for private listening through lightweight headphones",
+      "Allowed individuals for the first time in human history to carry a personalized musical soundtrack anywhere in their pocket",
+      "Operated on two AA batteries with mechanical play, stop, fast-forward, and rewind tactile pushbuttons",
+      "Introduced internationally by Sony in 1979 under the iconic brand name Walkman (TPS-L2)",
+      "Fundamentally altered urban commuter culture, exercise workouts, and personal audio lifestyle worldwide"
+    ],
+    "distractor_pool": [
+      "Boombox",
+      "Portable CD Player",
+      "Compact Cassette Tape",
+      "Retro Transistor Radio",
+      "Studio Monitor Headphones"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The original Sony Walkman had no built-in loudspeaker because it was engineered exclusively for headphone listening.",
+        "verdict": "fact",
+        "explanation": "Sony co-founder Masaru Ibuka requested a pocket device to listen to opera on long flights without disturbing others, eliminating bulky built-in speakers entirely.",
+        "fun_fact": "The first TPS-L2 model featured dual headphone jacks so two friends could listen together simultaneously."
+      },
+      {
+        "claim": "The Oxford English Dictionary refused to add the trademarked word 'Walkman' to the English language.",
+        "verdict": "myth",
+        "explanation": "The word 'Walkman' was officially entered into the Oxford English Dictionary in 1986 as a recognized common noun for personal stereo players.",
+        "fun_fact": "Sony sold over 400 million Walkman devices across tape, CD, Minidisc, and digital formats."
+      }
+    ],
+    "versus_candidates": [
+      "Boombox",
+      "Portable CD Player",
+      "Studio Monitor Headphones"
+    ]
+  },
+  {
+    "id": "ENT-MUS-057",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Mechanical Metronome",
+    "language": "en",
+    "aliases": [
+      "Maelzel Metronome",
+      "Wind-Up Metronome",
+      "Pyramid Metronome"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A pyramid-shaped mahogany mechanical metronome standing tall with its front cover removed, showcasing an inverted pendulum swinging back and forth with an adjustable brass weight ticking past calibrated tempo markings.",
+    "core_traits": [
+      "Pyramidal clockwork timing device that produces regular, metric acoustic clicks or ticks at adjustable tempos",
+      "Features an inverted double-pendulum rod powered by a wound mainspring escapement mechanism",
+      "Tempo (beats per minute) is adjusted by sliding a weighted brass bob up or down the calibrated pendulum shaft",
+      "Moving the weight higher slows the pendulum swing; sliding it lower speeds up the ticking tempo",
+      "Patented by Johann Nepomuk Maelzel in 1815 and enthusiastically adopted by Ludwig van Beethoven"
+    ],
+    "distractor_pool": [
+      "Steel Tuning Fork",
+      "Music Box",
+      "Retro Transistor Radio",
+      "Gramophone",
+      "Audio Equalizer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ludwig van Beethoven was the first famous composer to publish exact metronome tempo markings on his symphonies.",
+        "verdict": "fact",
+        "explanation": "Beethoven was a close friend of inventor Johann Maelzel and added Maelzel Metronome (MM) tempo numbers to all his symphonies to guide future conductors.",
+        "fun_fact": "Beethoven was delighted that the device freed his music from ambiguous Italian tempo words like 'Allegro'."
+      },
+      {
+        "claim": "A mechanical metronome requires an internal AA battery to keep accurate swinging momentum.",
+        "verdict": "myth",
+        "explanation": "Traditional mechanical metronomes are 100% mechanical, powered purely by hand-winding an internal coiled clockwork mainspring with a metal key.",
+        "fun_fact": "A single winding typically keeps the pendulum ticking faithfully for 30 to 45 minutes."
+      }
+    ],
+    "versus_candidates": [
+      "Steel Tuning Fork",
+      "Music Box",
+      "Synthesizer Keyboard"
+    ]
+  },
+  {
+    "id": "ENT-MUS-058",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Retro Transistor Radio",
+    "language": "en",
+    "aliases": [
+      "Pocket Radio",
+      "Transistor",
+      "Portable AM Radio"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A colorful 1960s pastel pocket transistor radio with perforated speaker grille, circular tuning dial showing AM frequency numbers, wrist strap, and telescoping chrome antenna pointing up.",
+    "core_traits": [
+      "Small portable radio receiver utilizing solid-state semiconductor transistors rather than bulky glass vacuum tubes",
+      "Enabled consumers to fit a battery-operated wireless broadcast receiver into a shirt pocket for the first time",
+      "Features a rotary frequency tuning wheel, volume on/off switch, small dynamic speaker, and monaural earphone jack",
+      "First commercially released as the Regency TR-1 in 1954, sparking the mass consumer electronics revolution",
+      "Allowed teenagers in the late 1950s and 1960s to listen privately to rock-and-roll broadcasts away from parents"
+    ],
+    "distractor_pool": [
+      "Boombox",
+      "Walkman",
+      "Antique Tube Radio",
+      "Reel-to-Reel Tape Recorder",
+      "Jukebox"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Transistor radios were huge furniture cabinets that took thirty seconds to warm up before playing.",
+        "verdict": "myth",
+        "explanation": "Bulky vacuum tube consoles took time to warm up filaments; solid-state transistor radios powered on instantly and slipped right into a jacket pocket.",
+        "fun_fact": "The transistor reduced radio power consumption by over 90 percent."
+      },
+      {
+        "claim": "The commercial success of the pocket transistor radio launched Sony into a global electronics powerhouse.",
+        "verdict": "fact",
+        "explanation": "Tokyo Telecommunications Engineering Corporation rebranded as Sony and scored a colossal worldwide hit with its pocket TR-55 and TR-63 transistor radios.",
+        "fun_fact": "Sony salesmen wore custom shirts with slightly enlarged pockets to prove the radio was truly pocketable."
+      }
+    ],
+    "versus_candidates": [
+      "Antique Tube Radio",
+      "Boombox",
+      "Personal Cassette Player"
+    ]
+  },
+  {
+    "id": "ENT-MUS-059",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Reel-to-Reel Tape Recorder",
+    "language": "en",
+    "aliases": [
+      "Open-Reel Tape Deck",
+      "Reel-to-Reel",
+      "Master Tape Deck"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A professional studio reel-to-reel tape recorder with twin 10.5-inch aluminum NAB reels spinning quarter-inch magnetic tape, glowing illuminated VU meters, and precision tape guides.",
+    "core_traits": [
+      "High-fidelity analog audio recording machine where magnetic tape is held on exposed open spools rather than an enclosed cartridge",
+      "Tape passes from a feed reel past erase, record, and playback heads onto a motorized take-up reel",
+      "Operates at high tape speeds (7.5, 15, or 30 inches per second) to achieve superior signal-to-noise ratio and wide frequency response",
+      "Features analog needle VU meters, mechanical tape transport buttons, and manual tape splicing editing blocks",
+      "Standard studio master recording medium used across the recording industry from the 1950s through the 1980s"
+    ],
+    "distractor_pool": [
+      "Compact Cassette Tape",
+      "8-Track Tape Cartridge",
+      "Gramophone",
+      "DJ Mixing Console",
+      "Audio Interface"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Audio engineers edited reel-to-reel tape recordings by physically slicing the tape with razor blades.",
+        "verdict": "fact",
+        "explanation": "Before digital software, editing music required locating exact edit points by rocking the reels by hand, cutting tape at a 45-degree angle with a razor, and joining with adhesive splicing tape.",
+        "fun_fact": "The Beatles and Pink Floyd created famous tape loops by stretching spliced tape across microphone stands around Abbey Road studios."
+      },
+      {
+        "claim": "Reel-to-reel tape decks sound far worse and grainier than standard compact cassette tapes.",
+        "verdict": "myth",
+        "explanation": "Reel-to-reel tape travels up to sixteen times faster and is significantly wider than cassette tape, offering pristine audio fidelity and rich analog tape compression.",
+        "fun_fact": "High-end studios still track to 2-inch 24-track reel-to-reel machines for warm tape saturation."
+      }
+    ],
+    "versus_candidates": [
+      "Compact Cassette Tape",
+      "8-Track Tape Cartridge",
+      "Studio Audio Interface"
+    ]
+  },
+  {
+    "id": "ENT-MUS-060",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "8-Track Tape Cartridge",
+    "language": "en",
+    "aliases": [
+      "8-Track Cartridge",
+      "Stereo 8",
+      "Eight-Track"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A chunky plastic 8-track tape cartridge showing its exposed pinch roller, visible loop of lubricated magnetic tape, grooved grip ridges, and vibrant retro 1970s album art label.",
+    "core_traits": [
+      "Analog magnetic tape sound recording format featuring an endless continuous loop wound on a single internal hub",
+      "Contains eight parallel magnetic tracks arranged into four stereo programs that switch sequentially",
+      "Playback heads shift up and down mechanically with an audible clunk when switching between the four programs",
+      "Requires no rewinding because the continuous loop tape pulls from the center of the reel and winds onto the outside",
+      "Dominant mobile audio format in American car dashboards throughout the late 1960s and 1970s"
+    ],
+    "distractor_pool": [
+      "Compact Cassette Tape",
+      "Reel-to-Reel Tape Recorder",
+      "Vinyl Record",
+      "Walkman",
+      "Music Box"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A listener could quickly rewind an 8-track tape back to the beginning of a song at the push of a button.",
+        "verdict": "myth",
+        "explanation": "Because tape is wound in an endless loop from the center hub, 8-tracks physically cannot be rewound; you had to let the tape run forward or click track programs.",
+        "fun_fact": "The endless tape loop had to be coated with slippery graphite lubrication to keep it from binding on itself."
+      },
+      {
+        "claim": "Aviation and industrial visionary Bill Lear, creator of the Learjet, co-invented the 8-track stereo cartridge system.",
+        "verdict": "fact",
+        "explanation": "Bill Lear redesigned existing continuous-loop cartridges in 1964 into the Lear Jet Stereo 8, partnering with Ford to install players into luxury automobiles.",
+        "fun_fact": "Ford offered 8-track players as factory options on 1966 Mustang, Thunderbird, and Lincoln models."
+      }
+    ],
+    "versus_candidates": [
+      "Compact Cassette Tape",
+      "Vinyl Record",
+      "Reel-to-Reel Tape Recorder"
+    ]
+  },
+  {
+    "id": "ENT-MUS-061",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Music Box",
+    "language": "en",
+    "aliases": [
+      "Musical Box",
+      "Cylinder Music Box",
+      "Carillon a Musique"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An ornate carved walnut antique music box with its hinged lid opened, revealing a gleaming brass pin cylinder, tuned steel comb, and brass governor fan glittering under warm amber light.",
+    "core_traits": [
+      "Automatic musical instrument that produces sound via a revolving tuned cylinder or disc plucked by tuned steel teeth",
+      "Features a steel comb with dozens of tuned teeth of varying lengths and weights that act as lamellophones",
+      "Revolving metal cylinder is studded with tiny raised pins positioned to pluck specific teeth at precise rhythmic moments",
+      "Powered by a wound clockwork spring regulated by a tiny rotating air-vane governor",
+      "Developed in Switzerland in the late eighteenth century by watchmakers adapting pocket-watch chiming mechanisms"
+    ],
+    "distractor_pool": [
+      "Mechanical Metronome",
+      "Steel Tuning Fork",
+      "Gramophone",
+      "Wax Cylinder Phonograph",
+      "Autoharp"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A music box creates sound using tiny hidden string hammers like a miniature piano.",
+        "verdict": "myth",
+        "explanation": "A music box uses no hammers; raised pins directly pluck tuned steel prongs of a metal comb like a mechanical kalimba.",
+        "fun_fact": "The thick base of the metal comb screws directly into the wooden case, which serves as an acoustic amplifier."
+      },
+      {
+        "claim": "Swiss watchmakers in Geneva and Sainte-Croix were the master artisans who perfected the music box industry.",
+        "verdict": "fact",
+        "explanation": "Swiss clockmaker Antoine Favre invented the pinned cylinder and steel comb mechanism in 1796, giving rise to Sainte-Croix as the world capital of music boxes.",
+        "fun_fact": "Deluxe Swiss music boxes could play up to twelve different classical melodies from one interchangeable cylinder."
+      }
+    ],
+    "versus_candidates": [
+      "Mechanical Metronome",
+      "Wax Cylinder Phonograph",
+      "Grand Piano"
+    ]
+  },
+  {
+    "id": "ENT-MUS-062",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "45 RPM Record Adapter",
+    "language": "en",
+    "aliases": [
+      "45 Adapter",
+      "Spindle Insert",
+      "Spider Adapter",
+      "Turntable Puck"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A classic bright yellow three-pronged plastic spider adapter snapped securely into the large 1.5-inch center hole of a red 7-inch vinyl 45 RPM single on a turntable felt mat.",
+    "core_traits": [
+      "Small circular or three-pronged insert designed to adapt 7-inch 45 RPM vinyl records to standard turntable spindles",
+      "Snaps directly into the large 1.5-inch center hole of a 45 RPM single to center it over a standard 0.28-inch turntable spindle",
+      "Commonly molded from durable colored plastic in a distinctive three-legged spider geometry or turned from solid aluminum",
+      "Created because RCA Victor designed 45 RPM singles with large center holes for fast-dropping automatic record changers in 1949",
+      "Iconic graphic pop-culture symbol of vinyl culture, jukeboxes, rock-and-roll singles, and DJ accessories"
+    ],
+    "distractor_pool": [
+      "Vinyl Record",
+      "DJ Turntable",
+      "Gramophone",
+      "Jukebox",
+      "Boombox"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Seven-inch 45 RPM records were pressed with large holes simply because vinyl record companies made a manufacturing mistake.",
+        "verdict": "myth",
+        "explanation": "RCA Victor intentionally created the 1.5-inch center hole to fit the thick center spindle of their rapid-fire automatic record changers that held a stack of singles.",
+        "fun_fact": "The automatic changer could drop and start a new single in less than two seconds."
+      },
+      {
+        "claim": "The iconic three-pronged plastic 'spider' snap-in adapter was invented by Webster-Chicago and Thomas Hutchison.",
+        "verdict": "fact",
+        "explanation": "Thomas Hutchison patented the lightweight three-legged snap-in adapter in 1952, enabling teenagers to play 45s on standard single-spindle home record players.",
+        "fun_fact": "The spider adapter shape is now a popular tattoo and graphic motif among vinyl collectors and DJs."
+      }
+    ],
+    "versus_candidates": [
+      "Vinyl Record",
+      "DJ Turntable",
+      "Compact Cassette Tape"
+    ]
+  },
+  {
+    "id": "ENT-MUS-063",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Portable CD Player",
+    "language": "en",
+    "aliases": [
+      "Discman",
+      "Personal Compact Disc Player"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A slim circular metallic-silver portable CD player with top clamshell lid opened, revealing a shimmering rainbow compact disc, optical laser pickup lens, and electronic anti-shock buffer display.",
+    "core_traits": [
+      "Battery-powered portable electronic player that reads digital audio compact discs using an optical semiconductor laser pickup",
+      "Decodes 16-bit 44.1 kHz PCM uncompressed stereo digital audio directly from microscopic pits on the disc surface",
+      "Equipped with electronic anti-shock memory buffers (ESP) that store seconds of audio to prevent skipping while walking or jogging",
+      "Features liquid crystal display (LCD), track skip buttons, bass boost EQ, and 3.5mm stereo headphone output",
+      "Pioneered by Sony with the release of the D-50 Discman in 1984, bridging the tape era to modern digital music"
+    ],
+    "distractor_pool": [
+      "Personal Cassette Player",
+      "Boombox",
+      "Vinyl Record",
+      "Retro Transistor Radio",
+      "Studio Audio Interface"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Early portable CD players skipped violently if you took a single jogging step while listening.",
+        "verdict": "fact",
+        "explanation": "Before electronic shock protection (ESP) was invented in the 1990s, the tiny laser optical head was easily jolted off track by ordinary walking steps.",
+        "fun_fact": "Anti-shock technology read the disc faster than playback speed, caching audio data into RAM memory chips."
+      },
+      {
+        "claim": "Compact discs produce sound when a tiny diamond needle physically touches the micro-grooves.",
+        "verdict": "myth",
+        "explanation": "CDs are non-contact optical media; an infrared semiconductor laser beam shines through the polycarbonate plastic and reflects off microscopic pits with zero physical friction.",
+        "fun_fact": "Because nothing touches the data layer, a well-cared-for CD does not degrade with repeated plays."
+      }
+    ],
+    "versus_candidates": [
+      "Personal Cassette Player",
+      "Vinyl Record",
+      "Boombox"
+    ]
+  },
+  {
+    "id": "ENT-MUS-064",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Antique Tube Radio",
+    "language": "en",
+    "aliases": [
+      "Vacuum Tube Radio",
+      "Cathedral Radio",
+      "Console Radio",
+      "Wireless"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A 1930s arched cathedral-style wooden vacuum tube radio with dark burl walnut cabinet, fabric speaker grille, glowing amber glass dial, and vacuum tubes glowing warm orange from inside the rear.",
+    "core_traits": [
+      "Early twentieth-century broadcast radio receiver powered by thermionic vacuum tubes (valves) housed in a decorative wooden cabinet",
+      "Amplifies and demodulates radio frequency waves using vacuum tubes that require several seconds to warm up",
+      "Features heavy wound inductors, copper shielding, cloth-covered wire, and an electromagnetic dynamic cone speaker",
+      "Architectural cabinet styling often reflects Art Deco, cathedral arch, or luxury floor-standing console designs",
+      "The central entertainment hearth of family living rooms during the Golden Age of Radio in the 1920s to 1940s"
+    ],
+    "distractor_pool": [
+      "Retro Transistor Radio",
+      "Gramophone",
+      "Boombox",
+      "Guitar Tube Amplifier",
+      "Jukebox"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Families in the 1930s gathered around the living room console radio to listen to broadcasts just like people watch television today.",
+        "verdict": "fact",
+        "explanation": "During the Great Depression and World War II, living rooms were arranged around the radio console for evening fireside chats, comedy serials, and live concerts.",
+        "fun_fact": "Orson Welles' 1938 'War of the Worlds' radio broadcast famously panicked listeners across America."
+      },
+      {
+        "claim": "Antique vacuum tube radios turn on instantaneously the exact millisecond you turn the power switch.",
+        "verdict": "myth",
+        "explanation": "Vacuum tubes require 15 to 30 seconds for electric filaments to heat the cathode enough to boil off electrons (thermionic emission) before sound emerges.",
+        "fun_fact": "The warm orange glow inside the tubes comes from these internal heating filaments."
+      }
+    ],
+    "versus_candidates": [
+      "Retro Transistor Radio",
+      "Gramophone",
+      "Guitar Tube Amplifier"
+    ]
+  },
+  {
+    "id": "ENT-MUS-065",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "vintage_audio",
+    "name": "Wax Cylinder Phonograph",
+    "language": "en",
+    "aliases": [
+      "Edison Phonograph",
+      "Cylinder Phonograph",
+      "Tinfoil Phonograph"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "An 1890s Thomas Edison cylinder phonograph showing its horizontal spinning mandrel, brown hollow wax cylinder, delicate glass diaphragm reproducer, and small black conical listening horn.",
+    "core_traits": [
+      "World's first practical audio recording and reproduction device, invented by Thomas Alva Edison in 1877",
+      "Records sound as vertical undulating hill-and-dale grooves cut into the surface of a spinning hollow wax cylinder",
+      "Powered by a hand crank or spring-driven governor motor rotating a horizontal tapered mandrel",
+      "Uses a sapphire stylus attached to a glass or mica diaphragm that physically vibrates with acoustic sound waves",
+      "The direct technological ancestor of the entire global recorded music industry"
+    ],
+    "distractor_pool": [
+      "Gramophone",
+      "Vinyl Record",
+      "Music Box",
+      "Mechanical Metronome",
+      "Reel-to-Reel Tape Recorder"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Thomas Edison's very first successful audio recording on the phonograph was the nursery rhyme 'Mary Had a Little Lamb'.",
+        "verdict": "fact",
+        "explanation": "In late 1877, Edison spoke the words 'Mary had a little lamb, its fleece was white as snow' into the recorder and was astonished when it spoke back to him.",
+        "fun_fact": "Edison originally believed the phonograph would be used primarily for office dictation and preserving dying languages, not music."
+      },
+      {
+        "claim": "Early wax cylinders could be easily mass-duplicated by pressing them in giant hydraulic stampers like modern vinyl.",
+        "verdict": "myth",
+        "explanation": "Early wax cylinders could not be pressed; musicians had to perform the same song hundreds of times in front of banks of phonographs to produce copies.",
+        "fun_fact": "The invention of flat disc records by Emile Berliner made industrial mass pressing possible."
+      }
+    ],
+    "versus_candidates": [
+      "Gramophone",
+      "Music Box",
+      "Vinyl Record"
+    ]
+  },
+  {
+    "id": "ENT-MUS-066",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Studio Condenser Microphone",
+    "language": "en",
+    "aliases": [
+      "Large-Diaphragm Condenser",
+      "Studio Mic",
+      "Capacitor Microphone"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A high-end studio large-diaphragm condenser microphone suspended in an elastic spider shockmount, its gold-sputtered capsule visible through fine dual-mesh grilles, positioned behind a pop filter in a vocal booth.",
+    "core_traits": [
+      "High-sensitivity electroacoustic transducer that converts sound waves into electrical signals via electrostatic capacitance changes",
+      "Features a conductive ultra-thin gold-sputtered Mylar diaphragm positioned parallel to a solid metal backplate",
+      "Requires external 48-volt phantom power (+48V) supplied via an XLR cable to polarize the capsule and power internal preamps",
+      "Delivers exceptional transient speed, extended high-frequency air, and pristine detail for studio vocal and acoustic tracking",
+      "Exemplified by legendary studio icons such as the Neumann U87, AKG C414, and Telefunken U47"
+    ],
+    "distractor_pool": [
+      "Dynamic Stage Microphone",
+      "Studio Monitor Headphones",
+      "Studio Audio Interface",
+      "Audio Equalizer",
+      "Boom Microphone Stand"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A studio condenser microphone can be plugged straight into an ordinary unpowered mixer channel with zero external voltage.",
+        "verdict": "myth",
+        "explanation": "Condenser microphones require active electrical polarization known as +48V phantom power to charge the capacitor and power internal impedance-converter circuitry.",
+        "fun_fact": "Dynamic microphones, in contrast, generate their own current through magnetic induction without phantom power."
+      },
+      {
+        "claim": "The elastic spider shockmount around a studio condenser microphone prevents floor vibrations from traveling into the recording.",
+        "verdict": "fact",
+        "explanation": "Condenser capsules are so hyper-sensitive that footsteps, air conditioning rumble, and street traffic would rumble through the stand without elastic decoupling bands.",
+        "fun_fact": "The spider elastic bands act as a mechanical low-pass filter against physical vibrations."
+      }
+    ],
+    "versus_candidates": [
+      "Dynamic Stage Microphone",
+      "Studio Audio Interface",
+      "Studio Pop Filter"
+    ]
+  },
+  {
+    "id": "ENT-MUS-067",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Dynamic Stage Microphone",
+    "language": "en",
+    "aliases": [
+      "Vocal Mic",
+      "Handheld Microphone",
+      "Cardioid Dynamic Mic"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An iconic matte-dark grey handheld dynamic stage microphone with dent-resistant spherical steel mesh grille, gripped firmly on a concert stage with purple arena spotlights glowing in the background.",
+    "core_traits": [
+      "Rugged electroacoustic transducer operating on electromagnetic induction using a moving coil attached to a diaphragm",
+      "A lightweight diaphragm moves a fine copper voice coil within a permanent magnetic field, generating an audio voltage",
+      "Requires zero phantom power or external batteries to operate, functioning purely as a passive induction generator",
+      "Engineered with a directional cardioid pickup pattern that rejects ambient stage noise and resists acoustic feedback",
+      "World-renowned for bulletproof road durability, epitomized globally by the legendary Shure SM58 and SM57"
+    ],
+    "distractor_pool": [
+      "Studio Condenser Microphone",
+      "Boom Microphone Stand",
+      "Studio Monitor Headphones",
+      "Electronic Megaphone",
+      "Audio Equalizer"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Cupping your hands tightly around the spherical steel ball of a stage microphone makes vocals sound clearer and louder.",
+        "verdict": "myth",
+        "explanation": "Cupping the mic blocks the rear acoustic ports, turning a directional cardioid mic into an omnidirectional mic and triggering immediate, screeching feedback squeals.",
+        "fun_fact": "Sound engineers consider cupping the mic the number one mistake made by inexperienced performers."
+      },
+      {
+        "claim": "The industry-standard Shure SM58 dynamic vocal microphone can survive being dropped from a helicopter, run over by a truck, and submerged in beer.",
+        "verdict": "fact",
+        "explanation": "Shure's famous torture tests have repeatedly proved the SM58 continues functioning after extreme physical trauma, drops onto concrete, and outdoor blizzards.",
+        "fun_fact": "It is the most popular, best-selling vocal microphone in global human history."
+      }
+    ],
+    "versus_candidates": [
+      "Studio Condenser Microphone",
+      "Electronic Megaphone",
+      "Studio Pop Filter"
+    ]
+  },
+  {
+    "id": "ENT-MUS-068",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "DJ Turntable",
+    "language": "en",
+    "aliases": [
+      "Direct-Drive Turntable",
+      "Deck",
+      "Technics SL-1200",
+      "DJ Deck"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A high-torque direct-drive DJ turntable with heavy die-cast aluminum platter spinning a slipmat, illuminated target light highlighting strobe dots, pitch fader slider, and S-shaped tonearm in club fog.",
+    "core_traits": [
+      "Heavy-duty specialized vinyl record player featuring a high-torque direct-drive motor that reaches full speed instantly",
+      "Equipped with a continuous pitch fader slider allowing the DJ to speed up or slow down tempo (typically plus-minus 8%) for beatmatching",
+      "Uses a felt slipmat beneath the vinyl allowing the DJ to hold, backcue, and scratch the record while the platter spins underneath",
+      "Features an S-shaped or straight tracking tonearm fitted with a high-tracking cartridge and spherical diamond stylus",
+      "The definitive industry benchmark set by the legendary Technics SL-1200 series introduced in 1972"
+    ],
+    "distractor_pool": [
+      "DJ Mixing Console",
+      "Gramophone",
+      "Vinyl Record",
+      "Boombox",
+      "45 RPM Record Adapter"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Hip-hop turntablism scratching was invented accidentally when a Bronx teenager tried to quiet his record player.",
+        "verdict": "fact",
+        "explanation": "In 1975, Grand Wizzard Theodore was playing vinyl when his mother yelled at him to turn it down; holding the spinning record with his hands, he moved it back and forth, discovering the scratch sound.",
+        "fun_fact": "Grandmaster Flash later perfected the technique, elevating the turntable into a rhythmic percussion instrument."
+      },
+      {
+        "claim": "Belt-drive home hi-fi turntables are preferred by club DJs over direct-drive turntables.",
+        "verdict": "myth",
+        "explanation": "Belt-drive turntables have weak torque and stretch or slip when touched; DJs require direct-drive motors where the platter is physically integrated into the motor rotor for instant start and stop.",
+        "fun_fact": "A Technics SL-1200 reaches stable quartz-locked 33 RPM speed in under 0.7 seconds."
+      }
+    ],
+    "versus_candidates": [
+      "DJ Mixing Console",
+      "Gramophone",
+      "Vinyl Record"
+    ]
+  },
+  {
+    "id": "ENT-MUS-069",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "DJ Mixing Console",
+    "language": "en",
+    "aliases": [
+      "DJ Mixer",
+      "Battle Mixer",
+      "Club Mixer",
+      "Two-Channel Mixer"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A sleek black two-channel DJ mixer positioned between two turntables, showing smooth horizontal crossfader, multi-band rotary EQ knobs, LED level meters, and headphone cue cueing switches in neon club lighting.",
+    "core_traits": [
+      "Audio mixing console specifically tailored for DJs to blend, crossfade, and transition seamlessly between multiple sound sources",
+      "Features a horizontal crossfader that smoothly fades between Channel 1 on the left and Channel 2 on the right",
+      "Equipped with headphone pre-fade listen (PFL / Cue) monitoring, three-band isolator EQ knobs, gain trims, and microphone inputs",
+      "Allows beatmatching, harmonic mixing, frequency carving, and rapid cutting for hip-hop scratching",
+      "Standard fixture in nightclub DJ booths and electronic dance music festivals worldwide"
+    ],
+    "distractor_pool": [
+      "DJ Turntable",
+      "Graphic Audio Equalizer",
+      "Studio Audio Interface",
+      "Guitar Tube Amplifier",
+      "Boombox"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The horizontal crossfader on a DJ mixer is simply a standard volume slider turned sideways.",
+        "verdict": "myth",
+        "explanation": "A crossfader simultaneously controls two opposing channels with customizable fade curves, from smooth slow blends to razor-sharp instantaneous on-off cuts for scratch DJs.",
+        "fun_fact": "Modern battle mixers use contactless optical or magnetic crossfaders that survive millions of rapid cuts."
+      },
+      {
+        "claim": "Alex Rosner and Francis Grasso invented the modern DJ mixer cueing system in 1969 to preview songs before the audience hears them.",
+        "verdict": "fact",
+        "explanation": "The 'Rosie' mixer built for club DJ Francis Grasso allowed him to listen to the incoming track in one headphone ear while matching its tempo to the live room speaker.",
+        "fun_fact": "This invention made continuous, seamless beatmatching and non-stop dancefloor flow possible."
+      }
+    ],
+    "versus_candidates": [
+      "DJ Turntable",
+      "Graphic Audio Equalizer",
+      "Studio Audio Interface"
+    ]
+  },
+  {
+    "id": "ENT-MUS-070",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Studio Monitor Headphones",
+    "language": "en",
+    "aliases": [
+      "Reference Headphones",
+      "Studio Cans",
+      "Over-Ear Monitor Headphones"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A pair of professional matte-black over-ear studio monitor headphones resting on an audio mixing desk, with coiled heavy-duty cable, plush circumaural earcups, and padded headband under low ambient studio lighting.",
+    "core_traits": [
+      "Closed-back or open-back over-ear headphones engineered to deliver an honest, flat, uncolored acoustic frequency response",
+      "Enables audio engineers, producers, and musicians to critically evaluate audio mixes, stereo imaging, and background clicks",
+      "Circumaural padded ear cushions isolate the listener's ears from external ambient room noise and prevent headphone spill into microphones",
+      "Equipped with large 40mm to 50mm neodymium magnet dynamic drivers and coiled or straight detachable audio cables",
+      "Celebrated across recording studios by workhorse models like the Sony MDR-7506, Audio-Technica ATH-M50x, and Sennheiser HD 280 Pro"
+    ],
+    "distractor_pool": [
+      "Studio Condenser Microphone",
+      "Studio Audio Interface",
+      "Dynamic Stage Microphone",
+      "Boombox",
+      "Personal Cassette Player"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Consumer bass-heavy headphones are just as good for mixing hit records as neutral studio monitor headphones.",
+        "verdict": "myth",
+        "explanation": "Consumer headphones artificially boost bass and treble, tricking the engineer into cutting those frequencies; the resulting mix sounds thin and lifeless on car radios and earbuds.",
+        "fun_fact": "Studio headphones strive for a 'flat' response so mixes translate accurately across all playback systems."
+      },
+      {
+        "claim": "The Sony MDR-7506 monitor headphones have remained essentially unchanged in design and heavily used in studios since 1991.",
+        "verdict": "fact",
+        "explanation": "Its rugged folding design, replaceable parts, clear midrange, and reliable sound have made it an unbroken film set, broadcast, and studio standard for over three decades.",
+        "fun_fact": "Countless Grammy-winning vocalists recorded their greatest vocal tracks wearing them."
+      }
+    ],
+    "versus_candidates": [
+      "Personal Cassette Player",
+      "Studio Condenser Microphone",
+      "Studio Audio Interface"
+    ]
+  },
+  {
+    "id": "ENT-MUS-071",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Guitar Tube Amplifier",
+    "language": "en",
+    "aliases": [
+      "Valve Amp",
+      "Guitar Amp",
+      "Tube Combo Amp",
+      "Half-Stack"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A vintage tweed guitar combo amplifier with glowing vacuum tubes visible through the open back, wheat grille cloth, chicken-head control knobs, and jeweled red pilot light glowing brightly in a 9:16 vertical view.",
+    "core_traits": [
+      "Electronic audio amplifier designed for electric guitars that utilizes thermionic vacuum tubes (valves) in the preamp and power stages",
+      "Converts weak electromagnetic guitar pickup signals into powerful high-current output to drive heavy loudspeaker cones",
+      "Prized by guitarists for its warm organic harmonic distortion, musical compression, and touch-sensitive dynamic breakup when driven hard",
+      "Equipped with control potentiometers for gain, three-band EQ (treble, middle, bass), master volume, and spring reverb",
+      "Pioneered by historic amplifier builders Leo Fender, Jim Marshall, and Vox during the birth of rock and blues"
+    ],
+    "distractor_pool": [
+      "Antique Tube Radio",
+      "DJ Mixing Console",
+      "Graphic Audio Equalizer",
+      "Electric Guitar",
+      "Studio Audio Interface"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "In early rock and roll history, musical guitar distortion was considered an unwanted engineering defect to be avoided.",
+        "verdict": "fact",
+        "explanation": "Engineers initially designed amplifiers to play as clean as possible; early rock, blues, and garage players discovered that pushing tubes into overdrive produced thrilling sustain and crunch.",
+        "fun_fact": "Guitarists like Link Wray even poked holes in their speaker cones with pencils to force distorted buzz."
+      },
+      {
+        "claim": "Vacuum tube amplifiers and digital solid-state transistor amplifiers respond to a guitarist's pick attack with identical physics.",
+        "verdict": "myth",
+        "explanation": "Tubes naturally compress and introduce musical even-order harmonics when hit harder, giving a dynamic 'spongy' feel that digital modelers spend vast computing power trying to replicate.",
+        "fun_fact": "Tube amplifiers remain the primary benchmark of tone for touring electric guitarists worldwide."
+      }
+    ],
+    "versus_candidates": [
+      "Electric Guitar",
+      "Antique Tube Radio",
+      "Graphic Audio Equalizer"
+    ]
+  },
+  {
+    "id": "ENT-MUS-072",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Graphic Audio Equalizer",
+    "language": "en",
+    "aliases": [
+      "Graphic EQ",
+      "Equalizer",
+      "31-Band EQ"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A 19-inch rackmount dual 31-band graphic equalizer unit with dozens of illuminated slider faders arranged in a gentle smile curve against dark brushed aluminum casing.",
+    "core_traits": [
+      "Audio processing device that divides the audible frequency spectrum (20 Hz to 20 kHz) into multiple discrete frequency bands",
+      "Uses vertical linear slider faders for each band, allowing individual frequencies to be boosted or cut by decibels",
+      "The physical positions of all slider faders together graphically trace out the overall frequency response curve",
+      "Crucial for tuning venue acoustics, eliminating acoustic microphone feedback rings, and balancing audio mixes",
+      "Available as 10-band octave, 15-band 2/3-octave, or precision 31-band 1/3-octave audio processing hardware"
+    ],
+    "distractor_pool": [
+      "DJ Mixing Console",
+      "Studio Audio Interface",
+      "Guitar Tube Amplifier",
+      "Electronic Megaphone",
+      "Mechanical Metronome"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Setting the graphic EQ sliders into an exaggerated 'smile curve' (boosting extreme lows and highs while scooping midrange) creates the most accurate audiophile sound.",
+        "verdict": "myth",
+        "explanation": "The 'smiley-face EQ' hollows out the critical midrange where human vocals and instruments live; it can sound exciting briefly, but ruins mix balance and clarity.",
+        "fun_fact": "Audio engineers nickname it the 'bedroom smile' because amateurs commonly set it this way."
+      },
+      {
+        "claim": "Live concert sound engineers use 31-band graphic equalizers primarily to notch out annoying feedback frequencies during soundcheck.",
+        "verdict": "fact",
+        "explanation": "By slowly raising system volume until a stage microphone begins to ring or howl, the engineer can pull down the exact offending frequency slider by a few decibels.",
+        "fun_fact": "This tuning process is known in live audio engineering as 'ringing out the room'."
+      }
+    ],
+    "versus_candidates": [
+      "DJ Mixing Console",
+      "Studio Audio Interface",
+      "Guitar Tube Amplifier"
+    ]
+  },
+  {
+    "id": "ENT-MUS-073",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Electronic Megaphone",
+    "language": "en",
+    "aliases": [
+      "Bullhorn",
+      "Voice Amplifier",
+      "Loudhailer"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A high-visibility white and red electronic megaphone with flared conical horn, pistol grip handle, trigger switch, and detachable hand microphone held up under bright daylight sky.",
+    "core_traits": [
+      "Portable handheld acoustic and electronic voice amplification device shaped like a flared cone",
+      "Equipped with an integrated microphone, solid-state amplifier circuit, rechargeable battery or D-cells, and re-entrant horn speaker",
+      "Features a pistol-grip trigger switch, built-in siren alarm button, and volume thumbwheel control",
+      "Produces a piercing, focused, band-limited directional vocal blast that cuts across large crowds and outdoor noise",
+      "Ubiquitous across sports coaching, rally speeches, crowd safety coordination, film directing, and maritime communications"
+    ],
+    "distractor_pool": [
+      "Dynamic Stage Microphone",
+      "Studio Condenser Microphone",
+      "Boombox",
+      "Guitar Tube Amplifier",
+      "Stage Spotlight"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The piercing, nasal, tinny sound of a megaphone is caused by low-quality engineering mistakes.",
+        "verdict": "myth",
+        "explanation": "Megaphones are intentionally engineered to concentrate electrical power strictly into the 300 to 3,000 Hertz speech band, discarding battery-wasting sub-bass for maximum vocal intelligibility.",
+        "fun_fact": "This narrow frequency focus allows human speech to project over a mile away using just a few watts of battery power."
+      },
+      {
+        "claim": "Before electric bullhorns were invented, naval captains and movie directors used simple acoustic brass and cardboard speaking trumpets.",
+        "verdict": "fact",
+        "explanation": "Acoustic speaking trumpets date back centuries; they amplify purely by matching the acoustic impedance of the human mouth to open air.",
+        "fun_fact": "Thomas Edison constructed a giant twelve-foot paper megaphone in 1878 to hear whispers across long distances."
+      }
+    ],
+    "versus_candidates": [
+      "Dynamic Stage Microphone",
+      "Boombox",
+      "Graphic Audio Equalizer"
+    ]
+  },
+  {
+    "id": "ENT-MUS-074",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Steel Tuning Fork",
+    "language": "en",
+    "aliases": [
+      "Tuning Fork",
+      "Pitch Fork",
+      "Concert A440 Fork"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A precision-milled polished steel two-pronged tuning fork engraved with 'A 440 Hz', held by its slender stem as its vibrating tines hum beside a wooden resonant soundboard in dramatic rim lighting.",
+    "core_traits": [
+      "Two-pronged metal acoustic resonator that vibrates at a precise, unchanging musical pitch when struck",
+      "Emits an exceptionally pure acoustic sine wave with virtually zero overtone harmonics after the initial strike",
+      "Vibrations from the U-shaped prongs cancel each other out laterally, funneling motion down the central stem into any surface it touches",
+      "Standard international pitch reference model is calibrated to Concert A at 440 Hertz",
+      "Invented in 1711 by British royal trumpeter and lutenist John Shore"
+    ],
+    "distractor_pool": [
+      "Mechanical Metronome",
+      "Triangle",
+      "Tubular Bells",
+      "XLR Audio Cable",
+      "Boom Microphone Stand"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Pressing the base stem of a struck tuning fork against a wooden tabletop makes the sound dramatically louder.",
+        "verdict": "fact",
+        "explanation": "The stem transfers its vibrational kinetic energy to the broad wooden surface, which acts as a large sounding board to radiate sound waves into the room.",
+        "fun_fact": "Holding the vibrating stem against the skull or jawbone conducts the pitch straight into the inner ear through bone conduction."
+      },
+      {
+        "claim": "A steel tuning fork will quickly drift out of tune if stored in a drawer for a few years.",
+        "verdict": "myth",
+        "explanation": "Because pitch is determined by the physical mass and elasticity of high-grade steel alloy, a quality tuning fork remains in pitch for centuries unless rusted or filed.",
+        "fun_fact": "Piano tuners historically used the same family heirloom tuning fork for their entire fifty-year careers."
+      }
+    ],
+    "versus_candidates": [
+      "Mechanical Metronome",
+      "Triangle",
+      "Electronic Megaphone"
+    ]
+  },
+  {
+    "id": "ENT-MUS-075",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Stage Spotlight",
+    "language": "en",
+    "aliases": [
+      "Followspot",
+      "PAR Can",
+      "Stage Light",
+      "Fresnel Spotlight"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A heavy-duty black aluminum stage spotlight mounted on an overhead lighting truss, casting a dramatic, focused golden-amber beam down through atmospheric theatrical haze and stage smoke.",
+    "core_traits": [
+      "High-intensity lighting fixture designed to illuminate performers and focal points on theatre and concert stages",
+      "Features a powerful halogen, arc lamp, or LED light engine focused through optical lenses with adjustable beam angles",
+      "Equipped with four-leaf barn doors, color gel frames, internal iris shutters, and gobo stencil projection slots",
+      "Mounts overhead on aluminum stage trusses or operates manually on a high swivel stand as a followspot",
+      "Shapes the visual atmosphere, dramatic tension, and emotional color of live musical performances"
+    ],
+    "distractor_pool": [
+      "Boom Microphone Stand",
+      "Studio Monitor Headphones",
+      "Electronic Megaphone",
+      "DJ Turntable",
+      "Guitar Tube Amplifier"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The historical theatrical phrase 'in the limelight' originated from spotlights that actually burned real chunks of quicklime rock.",
+        "verdict": "fact",
+        "explanation": "In the 1830s, theater spotlights directed an oxyhydrogen flame onto a cylinder of calcium oxide (quicklime), producing an intense, blinding white glow.",
+        "fun_fact": "Limelight was the brightest light source available before electric carbon-arc lamps were invented."
+      },
+      {
+        "claim": "Stage lights rely on colored water poured inside glass lenses to project colored lighting onto the band.",
+        "verdict": "myth",
+        "explanation": "Theatrical lights historically used heat-resistant plastic sheets called 'gels' slotted into the front, and modern units use RGBW LED computer-controlled color mixing.",
+        "fun_fact": "Early nineteenth-century gels were actually made from thin sheets of animal gelatin, giving them their name."
+      }
+    ],
+    "versus_candidates": [
+      "Boom Microphone Stand",
+      "Dynamic Stage Microphone",
+      "DJ Mixing Console"
+    ]
+  },
+  {
+    "id": "ENT-MUS-076",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "XLR Audio Cable",
+    "language": "en",
+    "aliases": [
+      "Microphone Cable",
+      "Balanced XLR Lead",
+      "Cannon Cable"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A heavy-duty flexible black rubber XLR audio cable coiled neatly on a road case, close-up macro view capturing the three-pin male and three-socket female silver connectors with spring locking latch.",
+    "core_traits": [
+      "Three-pin balanced audio cable standard used to transmit low-noise microphone and line-level signals in professional audio",
+      "Consists of a twisted pair of signal conductors (Pin 2 hot, Pin 3 cold) surrounded by a braided shielding ground (Pin 1)",
+      "Balanced differential signaling cancels out electromagnetic interference and hum over long cable runs",
+      "Features a rugged metal circular housing with a push-button positive locking latch that prevents accidental unplugging",
+      "Originally invented by James H. Cannon of the Cannon Electric Company in Los Angeles"
+    ],
+    "distractor_pool": [
+      "Studio Pop Filter",
+      "Boom Microphone Stand",
+      "Steel Tuning Fork",
+      "Studio Audio Interface",
+      "Dynamic Stage Microphone"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A balanced XLR cable eliminates background electrical noise by using a special noise-canceling computer chip inside the rubber cable.",
+        "verdict": "myth",
+        "explanation": "XLR cables use pure analog physics (common-mode rejection); two copies of the audio signal are sent in reverse polarity, and subtracting them at the preamp wipes out inducted noise.",
+        "fun_fact": "This simple phase trick allows balanced cables to run hundreds of feet through electrical cables without buzzing."
+      },
+      {
+        "claim": "The letters 'XLR' stand for 'X series, Latch, Rubber'.",
+        "verdict": "fact",
+        "explanation": "Cannon Electric developed the original 'X' audio connector, added a mechanical latch lock creating the 'XL', and wrapped it in resilient rubber insulation to yield 'XLR'.",
+        "fun_fact": "The Cannon XLR connector was adopted as the universal worldwide broadcast standard in the late 1950s."
+      }
+    ],
+    "versus_candidates": [
+      "Studio Pop Filter",
+      "Boom Microphone Stand",
+      "Studio Audio Interface"
+    ]
+  },
+  {
+    "id": "ENT-MUS-077",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Studio Pop Filter",
+    "language": "en",
+    "aliases": [
+      "Pop Shield",
+      "Pop Screen",
+      "Microphone Windscreen"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A circular dual-layer black nylon mesh studio pop filter clamped by a flexible metal gooseneck arm directly in front of a silver condenser microphone capsule in a dimly lit recording booth.",
+    "core_traits": [
+      "Acoustic screen positioned between a vocalist's mouth and a sensitive studio microphone capsule",
+      "Constructed from a round plastic or metal hoop stretched with acoustic nylon mesh or micro-perforated stainless steel",
+      "Disperses and breaks up high-velocity bursts of expelled breath caused by plosive consonants like 'P', 'B', and 'T'",
+      "Mounted to the microphone stand via an adjustable flexible metal gooseneck arm and clamp",
+      "Prevents low-frequency audio clipping, capsule wind overload, and protects delicate microphones from moisture saliva droplets"
+    ],
+    "distractor_pool": [
+      "Studio Condenser Microphone",
+      "Boom Microphone Stand",
+      "XLR Audio Cable",
+      "Dynamic Stage Microphone",
+      "Studio Monitor Headphones"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A pop filter acts like an audio equalizer by removing treble frequencies from the singer's voice.",
+        "verdict": "myth",
+        "explanation": "A well-designed pop filter is acoustically transparent to sound waves, only diffusing physical air gusts while letting full audio frequencies pass through untouched.",
+        "fun_fact": "Singers also use the pop filter as a physical spatial guide to maintain consistent distance from the mic."
+      },
+      {
+        "claim": "Before commercial pop filters were sold in stores, famous studio engineers used women's nylon stockings stretched over bent wire coat hangers.",
+        "verdict": "fact",
+        "explanation": "Abbey Road and other top studios routinely fashioned homemade pop shields from bent wire hangers and pantyhose because the sheer weave stopped plosives perfectly.",
+        "fun_fact": "Many top producers still swear that a homemade pantyhose hanger works as well as a fifty-dollar commercial filter."
+      }
+    ],
+    "versus_candidates": [
+      "Studio Condenser Microphone",
+      "Boom Microphone Stand",
+      "Dynamic Stage Microphone"
+    ]
+  },
+  {
+    "id": "ENT-MUS-078",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Boom Microphone Stand",
+    "language": "en",
+    "aliases": [
+      "Tripod Mic Stand",
+      "Boom Arm Stand",
+      "Studio Boom"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A heavy-duty black steel tripod microphone stand with an extendable angled boom arm holding a microphone shockmount, counterweight gleaming, standing ready on stage floorboards.",
+    "core_traits": [
+      "Adjustable floor stand equipped with a folding three-legged tripod base and a horizontal tilting extension arm (boom)",
+      "Allows microphones to be positioned precisely over drum kits, grand pianos, guitar amplifiers, and seated acoustic players",
+      "Features ergonomic clutch collars and T-bar friction tightening knobs to lock height and horizontal angle securely",
+      "Equipped with a counterweight at the rear of the boom arm to balance heavy studio microphones without tipping over",
+      "Folds down compactly for touring transport in flight cases and gear bags"
+    ],
+    "distractor_pool": [
+      "XLR Audio Cable",
+      "Studio Pop Filter",
+      "Stage Spotlight",
+      "Dynamic Stage Microphone",
+      "Studio Monitor Headphones"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A straight round-base mic stand is superior to a tripod boom stand for miking drum kits and acoustic guitars.",
+        "verdict": "myth",
+        "explanation": "Straight stands have no reach; the boom arm's horizontal extension is essential for reaching into drum kits and over instrument tops where a floor base cannot fit.",
+        "fun_fact": "Straight round-base stands are preferred primarily by lead vocalists who like to tilt and drag the stand across the stage."
+      },
+      {
+        "claim": "Tripod microphone stands should always be positioned with one leg pointing directly in the direction of the extended boom arm.",
+        "verdict": "fact",
+        "explanation": "Aligning a tripod leg directly under the boom arm maximizes leverage support and prevents the weight of a heavy microphone from toppling the stand forward.",
+        "fun_fact": "Studio assistants are taught this golden rule on their first day of internship."
+      }
+    ],
+    "versus_candidates": [
+      "Dynamic Stage Microphone",
+      "Studio Pop Filter",
+      "XLR Audio Cable"
+    ]
+  },
+  {
+    "id": "ENT-MUS-079",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Studio Audio Interface",
+    "language": "en",
+    "aliases": [
+      "USB Audio Interface",
+      "Sound Card",
+      "Audio Interface",
+      "DAC / ADC Interface"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A sleek red anodized aluminum desktop audio interface with combo XLR inputs, glowing halo gain knobs, large metal monitor volume wheel, and USB-C port connected to a studio laptop.",
+    "core_traits": [
+      "Hardware device that converts analog microphone and instrument signals into digital audio data (and vice versa) for computers",
+      "Features high-quality analog-to-digital converters (ADC) and digital-to-analog converters (DAC) operating up to 24-bit 192 kHz",
+      "Equipped with built-in microphone preamps, switchable +48V phantom power, instrument Hi-Z inputs, and headphone outputs",
+      "Connects to computers and digital audio workstations (DAWs) via USB, Thunderbolt, or Ethernet connections",
+      "The central hub of modern home recording, podcasting, and digital music production, popularized by devices like Focusrite Scarlett"
+    ],
+    "distractor_pool": [
+      "DJ Mixing Console",
+      "Graphic Audio Equalizer",
+      "Studio Monitor Headphones",
+      "Guitar Tube Amplifier",
+      "Reel-to-Reel Tape Recorder"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A computer's standard built-in 3.5mm headphone jack provides the same professional recording quality as a dedicated studio audio interface.",
+        "verdict": "myth",
+        "explanation": "Standard computer sound chips suffer from cheap preamps, high background electrical hiss, poor latency, and cannot supply balanced XLR inputs or +48V phantom power.",
+        "fun_fact": "An audio interface offloads heavy audio conversion from the computer motherboard to dedicated low-latency hardware."
+      },
+      {
+        "claim": "Modern audio interfaces can convert sound waves into digital numbers nearly 200,000 times every second.",
+        "verdict": "fact",
+        "explanation": "Operating at 192 kHz sample rate, the analog-to-digital converter measures and digitizes incoming voltage 192,000 times per second per channel.",
+        "fun_fact": "This exceeds the human hearing range to ensure ultra-smooth filtering and transient fidelity."
+      }
+    ],
+    "versus_candidates": [
+      "DJ Mixing Console",
+      "Reel-to-Reel Tape Recorder",
+      "Studio Monitor Headphones"
+    ]
+  },
+  {
+    "id": "ENT-MUS-080",
+    "domain_id": "music_instruments_gear",
+    "subtopic_id": "studio_stage_gear",
+    "name": "Passive Direct Box",
+    "language": "en",
+    "aliases": [
+      "DI Box",
+      "Direct Injection Box",
+      "Direct Box"
+    ],
+    "difficulty": 2,
+    "visual_anchor": "A rugged extruded-aluminum passive DI box sitting on a stage floor, displaying 1/4-inch instrument input jack, parallel thru jack, ground lift toggle switch, and male XLR output connector.",
+    "core_traits": [
+      "Utility audio interface box that converts unbalanced high-impedance (Hi-Z) instrument signals into balanced low-impedance (Lo-Z) mic signals",
+      "Enables electric basses, acoustic guitars, and keyboards to plug directly into studio mixing consoles and stage snakes without an amplifier",
+      "Contains an internal audio isolation transformer that decouples electrical grounds and eliminates annoying 60 Hz hums and ground loops",
+      "Features a ground lift switch, input attenuation pad (-20 dB), and parallel thru jack to feed an on-stage amplifier simultaneously",
+      "Indispensable problem-solver on live concert stages and recording studios worldwide"
+    ],
+    "distractor_pool": [
+      "XLR Audio Cable",
+      "Studio Audio Interface",
+      "Graphic Audio Equalizer",
+      "Guitar Tube Amplifier",
+      "DJ Mixing Console"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "A passive DI box requires fresh 9-volt batteries or phantom power to operate its transformer.",
+        "verdict": "myth",
+        "explanation": "Passive direct boxes use passive magnetic transformers that require zero electrical power, working entirely by electromagnetic flux induction.",
+        "fun_fact": "Active DI boxes use batteries or phantom power for active circuitry, whereas passive boxes work indefinitely unplugged."
+      },
+      {
+        "claim": "The ground lift switch on a DI box safely disconnects the audio ground shield to stop loud humming noises caused by ground loops.",
+        "verdict": "fact",
+        "explanation": "When equipment is plugged into different electrical wall outlets, ground potential differences create annoying 60 Hz hum; flipping the ground lift breaks this ground loop instantly.",
+        "fun_fact": "Sound engineers consider the DI box's ground lift switch a literal concert-saving button."
+      }
+    ],
+    "versus_candidates": [
+      "Studio Audio Interface",
+      "Guitar Tube Amplifier",
+      "XLR Audio Cable"
+    ]
+  }
+]

@@ -134,7 +134,6 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
       selectedBgmTrackId: comp.selectedBgmTrackId,
       selectedBgmFilename: comp.selectedBgmFilename,
       assetResolution: comp.assetResolution,
-      completeQuizV2: comp.completeQuizV2,
       preflightAssessment: comp.preflightAssessment,
       checkStatus: layoutResult.bypassed ? "skipped_fast_mode" : "passed",
       probe,

@@ -37,6 +37,10 @@ import { registerStyleModulesRoutes } from "./routes/styleModules.js";
 import { registerQuestionBankRoutes } from "./routes/questionBank.js";
 import { registerShortReelsRoutes } from "./routes/shortReels.js";
 import { registerIntroOutroStylesRoutes } from "./routes/introOutroStyles.js";
+import { registerTransitionPreviewsRoutes } from "./routes/transitionPreviews.js";
+import { TransitionPreviewService } from "./quiz/transitionPreview/transitionPreviewService.js";
+import { DiskTransitionPreviewStore } from "./quiz/transitionPreview/transitionPreviewStore.js";
+import { HyperframesTransitionPreviewRunner } from "./tasks/video/transitionPreviewRunner.js";
 import { styleActivationManager } from "./quiz/visual/styleModules/activation.js";
 
 export type StudioApp = {
@@ -182,6 +186,41 @@ export async function buildApp(
   await server.register(registerStyleModulesRoutes({ repository }));
   await server.register(registerQuestionBankRoutes({ repository, tasks, codex, antigravity, state }));
   await server.register(registerIntroOutroStylesRoutes({ repository, logger, state }));
+
+  const transitionPreviewStore = new DiskTransitionPreviewStore({
+    storeDir: repository.resolvePath("runtime", "transition-previews", "artifacts"),
+  });
+  const transitionPreviewRunner = new HyperframesTransitionPreviewRunner({
+    runtimeDir: repository.resolvePath("runtime", "transition-previews", "renders"),
+  });
+  const transitionPreviewService = new TransitionPreviewService({
+    store: transitionPreviewStore,
+    runner: transitionPreviewRunner,
+    repository: {
+      getEpisodeRenderOutput: async (channelId: string, episodeId: string) => {
+        try {
+          const episode = (await repository.getEpisode(channelId, episodeId)) as any;
+          if (!episode || !episode.render_output?.video_path) return null;
+          return {
+            videoPath: repository.resolvePath(episode.render_output.video_path),
+            manifestPath: episode.render_output.manifest_path
+              ? repository.resolvePath(episode.render_output.manifest_path)
+              : undefined,
+            transitionSettings: episode.director_plan?.beats?.[0]?.transition_id
+              ? { scene: { id: episode.director_plan.beats[0].transition_id } }
+              : undefined,
+          };
+        } catch {
+          return null;
+        }
+      },
+    },
+    limiter: tasks.videoRenderLimiter,
+  });
+  await server.register(registerTransitionPreviewsRoutes({
+    service: transitionPreviewService,
+    store: transitionPreviewStore,
+  }));
 
   return {
     server,

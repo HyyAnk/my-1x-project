@@ -22,8 +22,6 @@ export const QUIZ_LAYOUT_RENDERERS = {
   clue_deduction: clueDeductionLayout,
 } satisfies Record<QuizPreviewLayoutId, QuizLayoutRenderDefinition>;
 
-export const QUIZ_LAYOUT_REGISTRY = QUIZ_LAYOUT_RENDERERS;
-
 export function getQuizLayoutRenderer(layoutId: QuizPreviewLayoutId): QuizLayoutRenderDefinition {
   return QUIZ_LAYOUT_RENDERERS[layoutId];
 }

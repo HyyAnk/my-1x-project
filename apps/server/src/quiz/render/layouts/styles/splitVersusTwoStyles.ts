@@ -9,7 +9,7 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
    Split Versus Two Layout (16:9 Landscape Video, 1920×1080)
    ========================================================================== */
 
-.layout-split_versus_two .game-stage {
+.candy-scene:not(.quiz-frame-unified).layout-split_versus_two .game-stage {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas:
@@ -24,7 +24,7 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
   margin: 12px 40px 0 auto;
 }
 
-.layout-split_versus_two .question-title {
+.candy-scene:not(.quiz-frame-unified).layout-split_versus_two .question-title {
   grid-area: title;
   width: 100%;
   max-width: 1380px;
@@ -33,8 +33,8 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
 }
 
 /* --- Versus Combat Arena: 2-Column Grid --- */
-.layout-split_versus_two .answer-grid,
-.layout-split_versus_two .visual-answer-grid {
+.candy-scene:not(.quiz-frame-unified).layout-split_versus_two .answer-grid,
+.candy-scene:not(.quiz-frame-unified).layout-split_versus_two .visual-answer-grid {
   grid-area: answers;
   position: relative;
   width: 100%;
@@ -45,6 +45,78 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
   gap: 56px;
   box-sizing: border-box;
   align-items: stretch;
+}
+
+/* --- Unified Arena Styles --- */
+.quiz-frame-unified.layout-split_versus_two .answer-grid,
+.quiz-frame-unified.layout-split_versus_two .visual-answer-grid {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1420px;
+  height: 504px;
+  max-width: 1420px;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 646px 646px;
+  gap: 128px;
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+.quiz-frame-unified.layout-split_versus_two .choice-card {
+  width: 646px;
+  height: 504px;
+  max-width: 646px;
+  max-height: 504px;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.quiz-frame-unified.layout-split_versus_two .choice-card-visual,
+.quiz-frame-unified.layout-split_versus_two .visual-answer-card {
+  height: 504px;
+  min-height: 504px;
+  border-radius: 36px;
+}
+
+.quiz-frame-unified.layout-split_versus_two .choice-media,
+.quiz-frame-unified.layout-split_versus_two .option-image {
+  height: 366px;
+  border-radius: 32px 32px 0 0;
+}
+
+.quiz-frame-unified.layout-split_versus_two .visual-answer-label {
+  height: 122px;
+  min-height: 122px;
+  border-radius: 0 0 32px 32px;
+  margin: 0;
+  padding: 8px 24px;
+  box-sizing: border-box;
+}
+
+.quiz-frame-unified.layout-split_versus_two .choice-group-text .choice-card-text,
+.quiz-frame-unified.layout-split_versus_two .choice-group-text .answer-card {
+  width: 646px;
+  height: 504px;
+  min-height: 504px;
+  max-height: 504px;
+  box-sizing: border-box;
+  padding: 32px 40px;
+  margin: 0;
+  border-radius: 36px;
+}
+
+.quiz-frame-unified.layout-split_versus_two .answer-grid::after,
+.quiz-frame-unified.layout-split_versus_two .visual-answer-grid::after,
+.quiz-frame-unified.layout-split_versus_two .vs-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-4deg);
+  width: 96px;
+  height: 96px;
+  font-size: 42px;
 }
 
 /* Layout Dimensional Tokens */
@@ -279,7 +351,7 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
 }
 
 /* --- Phase 3 & 5: Embedded Phase Region & Flow --- */
-.layout-split_versus_two .phase-region {
+.candy-scene:not(.quiz-frame-unified).layout-split_versus_two .phase-region {
   grid-area: phase;
   position: relative;
   z-index: 5;
@@ -292,7 +364,7 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
   margin: 0 auto;
 }
 
-.layout-split_versus_two .phase-region > .thinking-bar {
+.candy-scene:not(.quiz-frame-unified).layout-split_versus_two .phase-region > .thinking-bar {
   position: absolute;
   top: 0;
   bottom: auto;
@@ -302,7 +374,7 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
   min-height: 84px;
 }
 
-.layout-split_versus_two .phase-region > .fact-card {
+.candy-scene:not(.quiz-frame-unified).layout-split_versus_two .phase-region > .fact-card {
   position: absolute;
   top: -12px;
   bottom: auto;

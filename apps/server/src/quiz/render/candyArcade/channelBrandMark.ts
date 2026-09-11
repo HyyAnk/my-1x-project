@@ -44,7 +44,7 @@ export function renderChannelBrandMark(
   </div>
 `;
 
-  return `<div class="channel-brand-mark" data-layout-ignore aria-hidden="true" data-aspect-ratio="${aspectRatio}">
+  return `<div class="channel-brand-mark" data-quiz-fixed="brand" data-layout-ignore aria-hidden="true" data-aspect-ratio="${aspectRatio}">
 ${iconHtml}  <span class="brand-mark-channel-name" data-layout-ignore data-brand-name="${safeAttr}">${safeName}</span>
   <span class="brand-mark-sub" data-layout-ignore>QUIZ</span>
 </div>`;

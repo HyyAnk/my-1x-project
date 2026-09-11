@@ -4,6 +4,11 @@ import { IMGSTUDIO_DEFAULT_MODEL_ID, IMGSTUDIO_MODELS } from "@studio/shared";
 import { api } from "../../../api";
 import type { Notice } from "../../../components/types";
 
+export type VerificationResult = {
+  status: "success" | "error";
+  message: string;
+} | null;
+
 export type UseImageFallbackSettingsProps = {
   appConfig: AppConfig | null;
   onFallbackSaved?: (fallback: ImageFallbackConfig) => void | Promise<void>;
@@ -35,6 +40,7 @@ export function useImageFallbackSettingsState({
   );
   const [savingFallback, setSavingFallback] = useState(false);
   const [verifyingFallback, setVerifyingFallback] = useState(false);
+  const [verificationResult, setVerificationResult] = useState<VerificationResult>(null);
   const [availableModels] = useState(IMGSTUDIO_MODELS);
 
   useEffect(() => {
@@ -67,11 +73,17 @@ export function useImageFallbackSettingsState({
       await onFallbackSaved?.(response.settings);
       setHasFallbackApiKey(Boolean(response.settings.has_api_key || response.settings.api_key));
       setFallbackApiKey(response.settings.api_key ?? "");
+      setVerificationResult({
+        status: "success",
+        message: "Fallback settings and API key saved successfully.",
+      });
       onNotice({ tone: "good", message: "Image fallback settings saved successfully" });
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "Could not save image fallback settings";
+      setVerificationResult({ status: "error", message: errorMsg });
       onNotice({
         tone: "bad",
-        message: error instanceof Error ? error.message : "Could not save image fallback settings",
+        message: errorMsg,
       });
     } finally {
       setSavingFallback(false);
@@ -86,6 +98,7 @@ export function useImageFallbackSettingsState({
       await onFallbackSaved?.(response.settings);
       setFallbackApiKey("");
       setHasFallbackApiKey(false);
+      setVerificationResult(null);
       onNotice({ tone: "good", message: "ImgStudio API key removed" });
     } catch (error) {
       onNotice({
@@ -99,21 +112,26 @@ export function useImageFallbackSettingsState({
 
   const verifyFallbackConnection = async () => {
     setVerifyingFallback(true);
+    setVerificationResult(null);
     try {
       const result = await api.verifyImageFallback({
         api_key: fallbackApiKey.trim(),
         base_url: fallbackBaseUrl.trim(),
       });
       if (result.ok) {
+        const msg = `Connected successfully to ImgStudio API (${result.models?.length ?? 10} models verified).`;
+        setVerificationResult({ status: "success", message: msg });
         onNotice({
           tone: "good",
-          message: `Connected successfully to ImgStudio API! (${result.models?.length ?? 10} models verified)`,
+          message: msg,
         });
       }
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "ImgStudio connection verification failed";
+      setVerificationResult({ status: "error", message: errorMsg });
       onNotice({
         tone: "bad",
-        message: error instanceof Error ? error.message : "ImgStudio connection verification failed",
+        message: errorMsg,
       });
     } finally {
       setVerifyingFallback(false);
@@ -138,6 +156,8 @@ export function useImageFallbackSettingsState({
     hasFallbackApiKey,
     savingFallback,
     verifyingFallback,
+    verificationResult,
+    setVerificationResult,
     availableModels,
     saveFallbackSettings,
     clearFallbackKey,

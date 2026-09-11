@@ -93,6 +93,11 @@ export function mysteryRevealStageStyles(): string {
   justify-content: center;
 }
 
+.quiz-frame-unified.layout-mystery_reveal .mystery-revealed-inner {
+  width: 920px;
+  height: 360px;
+}
+
 .layout-mystery_reveal .mystery-revealed-layer img {
   filter: drop-shadow(0 24px 44px rgba(0, 0, 0, 0.55));
 }

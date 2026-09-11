@@ -25,7 +25,8 @@ type UseSandboxPresetsInput = {
   design: SandboxDesignState;
   mascot: SandboxMascotState;
   brandName?: SandboxBrandNameState;
-  transition?: Pick<SandboxTransitionState, "syncFromPreset">;
+  transition?: Pick<SandboxTransitionState, "syncFromPreset"> &
+    Partial<Pick<SandboxTransitionState, "transitionId" | "transitionDuration">>;
   onNotice?: (notice: NonNullable<Notice>) => void;
   onLayoutChange?: (layout: QuizPreviewLayoutId) => void;
 };
@@ -53,7 +54,15 @@ export function useSandboxPresets({ design, mascot, brandName, transition, onNot
   const allPresets = useMemo(() => [...builtInPresets, ...customPresets], [builtInPresets, customPresets]);
 
   const matchedPreset = useMemo(
-    () => findMatchedPreset(allPresets, design, mascot.mascotId, brandName?.channelBrandName),
+    () =>
+      findMatchedPreset(
+        allPresets,
+        design,
+        mascot.mascotId,
+        brandName?.channelBrandName,
+        transition?.transitionId,
+        transition?.transitionDuration,
+      ),
     [
       allPresets,
       design.paletteId,
@@ -64,6 +73,8 @@ export function useSandboxPresets({ design, mascot, brandName, transition, onNot
       design.backgroundStyle,
       mascot.mascotId,
       brandName?.channelBrandName,
+      transition?.transitionId,
+      transition?.transitionDuration,
     ],
   );
 
@@ -93,19 +104,33 @@ export function useSandboxPresets({ design, mascot, brandName, transition, onNot
     if (!name) return;
     setPresetError(null);
 
+    const currentTransitions = transition?.transitionId
+      ? {
+          scene: {
+            id: transition.transitionId,
+            durationSeconds: transition.transitionDuration ?? 0.5,
+          },
+        }
+      : undefined;
+
     const newPreset = createCustomPreset({
       name,
       defaultDesc: t("visualSandbox.customPresetDefaultDesc"),
       design,
       mascot,
       channelBrandName: brandName?.channelBrandName,
+      transitions: currentTransitions,
     });
 
     setLoadedPresetId(newPreset.id);
     persistPresets([newPreset, ...customPresets]);
 
     try {
-      await stylePresetApi.create({ ...newPreset, background_style: newPreset.background_style || "candy_rays" });
+      await stylePresetApi.create({
+        ...newPreset,
+        background_style: newPreset.background_style || "candy_rays",
+        transitions: currentTransitions,
+      });
       setNewPresetName("");
       setPresetModalOpen(false);
       onNotice?.({ tone: "good", message: t("visualSandbox.noticeSavedPreset", { name }) });
@@ -123,7 +148,22 @@ export function useSandboxPresets({ design, mascot, brandName, transition, onNot
     if (!presetToUpdate) return;
 
     setPresetError(null);
-    const updatedPreset = updateCustomPreset(presetToUpdate, design, mascot, brandName?.channelBrandName);
+    const currentTransitions = transition?.transitionId
+      ? {
+          scene: {
+            id: transition.transitionId,
+            durationSeconds: transition.transitionDuration ?? 0.5,
+          },
+        }
+      : presetToUpdate.transitions;
+
+    const updatedPreset = updateCustomPreset(
+      presetToUpdate,
+      design,
+      mascot,
+      brandName?.channelBrandName,
+      currentTransitions,
+    );
     const nextPresets = customPresets.map((p) => (p.id === idToUpdate ? updatedPreset : p));
     persistPresets(nextPresets);
 
@@ -137,6 +177,7 @@ export function useSandboxPresets({ design, mascot, brandName, transition, onNot
           answer_card_style: updatedPreset.answer_card_style,
           counter_style: updatedPreset.counter_style,
           background_style: updatedPreset.background_style,
+          transitions: updatedPreset.transitions,
         });
         onNotice?.({
           tone: "good",

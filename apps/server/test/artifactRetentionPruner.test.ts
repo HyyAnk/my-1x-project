@@ -6,11 +6,7 @@ import { EpisodeSchema, TaskSchema } from "@studio/shared";
 import { buildApp } from "../src/app.js";
 import type { TaskManagerRuntime } from "../src/tasks/runtime.js";
 import { reconcileStartupState } from "../src/tasks/taskLifecycle.js";
-import {
-  pruneRenderRootIntermediateFiles,
-  pruneStaleHyperframesDirectories,
-  getStorageUsageSummary,
-} from "../src/tasks/storage/artifactRetentionPruner.js";
+import { pruneRenderRootIntermediateFiles, pruneStaleHyperframesDirectories } from "../src/tasks/storage/artifactRetentionPruner.js";
 import { runVideoTask } from "../src/tasks/videoRunner.js";
 
 vi.mock("../src/tasks/video/videoCompositionPreparer.js", () => ({
@@ -132,8 +128,22 @@ describe("artifactRetentionPruner", () => {
       selectedBgmTrackId: null,
       selectedBgmFilename: null,
       assetResolution: null,
-      completeQuizV2: false,
-      preflightAssessment: null,
+      preflightAssessment: {
+        schema_version: 2,
+        episode_id: "ep-1",
+        assessed_at: new Date().toISOString(),
+        score: 100,
+        rating: "production_ready",
+        categories: {
+          semantic: 100,
+          visual: 100,
+          pacing: 100,
+          audio: 100,
+          variety: 100,
+          render_integrity: 100,
+        },
+        issues: [],
+      },
     });
 
     const { verifyAndCheckLayout } = await import("../src/tasks/video/videoLayoutChecker.js");
@@ -240,7 +250,7 @@ describe("artifactRetentionPruner", () => {
     try {
       const healthRes = await app.server.inject({ method: "GET", url: "/api/system/storage-health" });
       expect(healthRes.statusCode).toBe(200);
-      const healthBody = healthRes.json();
+      const healthBody = healthRes.json<{ ok: boolean; runtime_bytes: number; hyperframes_bytes: number }>();
       expect(healthBody.ok).toBe(true);
       expect(typeof healthBody.runtime_bytes).toBe("number");
       expect(typeof healthBody.hyperframes_bytes).toBe("number");
@@ -255,7 +265,7 @@ describe("artifactRetentionPruner", () => {
         payload: { max_age_ms: 0 },
       });
       expect(pruneRes.statusCode).toBe(200);
-      const pruneBody = pruneRes.json();
+      const pruneBody = pruneRes.json<{ ok: boolean; pruned_directories: string[] }>();
       expect(pruneBody.ok).toBe(true);
       expect(pruneBody.pruned_directories).toContain("stale-api-ep");
       await expect(stat(staleEpDir)).rejects.toThrow();

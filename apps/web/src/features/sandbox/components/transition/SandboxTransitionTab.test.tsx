@@ -52,18 +52,14 @@ describe("SandboxTransitionTab and Subcomponents", () => {
   });
 
   describe("SandboxTransitionTab", () => {
-    it("renders all sections: header, category toggle, selector, duration slider, and scrubber", () => {
+    it("renders header, reset button, and unified grouped transition selector", () => {
       const mockState = createMockTransitionState();
       render(<SandboxTransitionTab transition={mockState} />);
 
       expect(screen.getByTestId("sandbox-transition-tab")).toBeDefined();
       expect(screen.getByText("Transition Inspector")).toBeDefined();
       expect(screen.getByTestId("sandbox-transition-reset-btn")).toBeDefined();
-
-      expect(screen.getByTestId("sandbox-transition-category-toggle")).toBeDefined();
-      expect(screen.getByTestId("sandbox-transition-selector")).toBeDefined();
-      expect(screen.getByTestId("sandbox-transition-duration-slider")).toBeDefined();
-      expect(screen.getByTestId("sandbox-transition-scrubber")).toBeDefined();
+      expect(screen.getByTestId("transition-selector")).toBeDefined();
     });
 
     it("triggers resetTransition when clicking reset button", () => {
@@ -74,6 +70,17 @@ describe("SandboxTransitionTab and Subcomponents", () => {
       fireEvent.click(resetBtn);
 
       expect(mockState.resetTransition).toHaveBeenCalledTimes(1);
+    });
+
+    it("triggers setTransitionId and play when selecting an option in the grouped selector", () => {
+      const mockState = createMockTransitionState();
+      render(<SandboxTransitionTab transition={mockState} />);
+
+      const selector = screen.getByTestId("transition-selector");
+      fireEvent.change(selector, { target: { value: "crossfade" } });
+
+      expect(mockState.setTransitionId).toHaveBeenCalledWith("crossfade");
+      expect(mockState.triggerPlay).toHaveBeenCalledTimes(1);
     });
   });
 

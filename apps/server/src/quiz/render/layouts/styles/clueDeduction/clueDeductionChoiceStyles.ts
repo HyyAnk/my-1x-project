@@ -6,8 +6,8 @@
 export function clueDeductionChoiceStyles(): string {
   return `
 /* --- Suspect Lineup / Answer Grid (Docked at Foot of Stage - BUG-CD-02 & BUG-CD-06 Fix) --- */
-.layout-clue_deduction .clue-deduction-stage-wrapper > .choice-group,
-.layout-clue_deduction .clue-deduction-stage-wrapper > .answer-grid {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .clue-deduction-stage-wrapper > .choice-group,
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .clue-deduction-stage-wrapper > .answer-grid {
   position: absolute;
   bottom: 28px;
   left: 0;
@@ -20,15 +20,83 @@ export function clueDeductionChoiceStyles(): string {
   justify-content: center;
 }
 
+/* Unified Candidate Column: left: 876px; width: 524px; */
+.quiz-frame-unified.layout-clue_deduction .choice-group,
+.quiz-frame-unified.layout-clue_deduction .answer-grid {
+  position: absolute;
+  left: 876px;
+  width: 524px;
+  max-width: 524px;
+  margin: 0;
+  padding: 0;
+  z-index: 10;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box;
+}
+
+.quiz-frame-unified.layout-clue_deduction .choice-card {
+  width: 524px;
+  max-width: 524px;
+  box-sizing: border-box;
+  opacity: 1;
+  transform: none;
+}
+
+.quiz-frame-unified.layout-clue_deduction .answer-count-0,
+.quiz-frame-unified.layout-clue_deduction .answer-count-1 {
+  top: 209px;
+  height: 144px;
+  justify-content: center;
+}
+.quiz-frame-unified.layout-clue_deduction .answer-count-0 .choice-card,
+.quiz-frame-unified.layout-clue_deduction .answer-count-1 .choice-card {
+  height: 144px;
+  min-height: 144px;
+  max-height: 144px;
+}
+
+.quiz-frame-unified.layout-clue_deduction .answer-count-2 {
+  top: 123px;
+  height: 316px;
+  gap: 28px !important;
+}
+.quiz-frame-unified.layout-clue_deduction .answer-count-2 .choice-card {
+  height: 144px;
+  min-height: 144px;
+  max-height: 144px;
+  flex: none !important;
+}
+
+.quiz-frame-unified.layout-clue_deduction .answer-count-3 {
+  top: 87px;
+  height: 388px;
+  gap: 20px !important;
+}
+.quiz-frame-unified.layout-clue_deduction .answer-count-3 .choice-card {
+  height: 116px;
+  min-height: 116px;
+  max-height: 116px;
+  flex: none !important;
+}
+
+.quiz-frame-unified.layout-clue_deduction .choice-badge,
+.quiz-frame-unified.layout-clue_deduction .choice-label {
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  font-size: 38px;
+}
+
 /* 0 & 1 Choice Mode: Centered Verdict Plate */
-.layout-clue_deduction .answer-count-0,
-.layout-clue_deduction .answer-count-1 {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .answer-count-0,
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .answer-count-1 {
   width: calc(100% - 48px);
   max-width: 720px;
 }
 
 /* 2-Choice Mode: Horizontal Suspect Lineup */
-.layout-clue_deduction .answer-count-2 {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .answer-count-2 {
   display: flex !important;
   flex-direction: row !important;
   gap: 24px;
@@ -36,13 +104,13 @@ export function clueDeductionChoiceStyles(): string {
   max-width: 900px;
 }
 
-.layout-clue_deduction .answer-count-2 .choice-card {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .answer-count-2 .choice-card {
   flex: 1 1 0;
   max-width: 440px;
 }
 
 /* 3-Choice Mode: 3-Column Suspect Lineup */
-.layout-clue_deduction .answer-count-3 {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .answer-count-3 {
   display: flex !important;
   flex-direction: row !important;
   gap: 16px;
@@ -50,7 +118,7 @@ export function clueDeductionChoiceStyles(): string {
   max-width: 960px;
 }
 
-.layout-clue_deduction .answer-count-3 .choice-card {
+.candy-scene:not(.quiz-frame-unified).layout-clue_deduction .answer-count-3 .choice-card {
   flex: 1 1 0;
   max-width: 310px;
 }

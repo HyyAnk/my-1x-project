@@ -1,7 +1,21 @@
 import { createRequire } from "node:module";
 import path from "node:path";
+import { TransitionDomainError } from "@studio/shared";
 
 const require = createRequire(import.meta.url);
+
+export function getHyperframesPackageVersion(): string {
+  try {
+    const pkgJson = require.resolve("hyperframes/package.json");
+    const pkg = require(pkgJson);
+    return typeof pkg.version === "string" ? pkg.version : "0.8.17";
+  } catch {
+    throw new TransitionDomainError(
+      "HyperFrames render engine is unavailable locally. Reinstall via 'pnpm install' or run 'pnpm --filter @studio/server add hyperframes@0.8.17'",
+      "ENGINE_UNAVAILABLE",
+    );
+  }
+}
 
 export function getHyperframesInvocation(...args: string[]): { command: string; args: string[] } {
   try {
@@ -12,15 +26,9 @@ export function getHyperframesInvocation(...args: string[]): { command: string; 
       args: [binPath, ...args],
     };
   } catch {
-    if (process.platform === "win32") {
-      return {
-        command: process.execPath,
-        args: [path.join(path.dirname(process.execPath), "node_modules", "npm", "bin", "npx-cli.js"), "--yes", "hyperframes", ...args],
-      };
-    }
-    return {
-      command: "npx",
-      args: ["--yes", "hyperframes", ...args],
-    };
+    throw new TransitionDomainError(
+      "HyperFrames render engine is unavailable locally. Reinstall via 'pnpm install' or run 'pnpm --filter @studio/server add hyperframes@0.8.17'",
+      "ENGINE_UNAVAILABLE",
+    );
   }
 }

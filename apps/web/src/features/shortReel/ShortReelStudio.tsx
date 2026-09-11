@@ -14,6 +14,7 @@ import { ShortReelDeliverablesGrid } from "./components/ShortReelDeliverablesGri
 import { ShortReelStateError } from "./components/ShortReelStateError";
 import { ReelGenerationProgress } from "./components/ReelGenerationProgress";
 import { useShortReel } from "./hooks/useShortReel";
+import { ShortReelBreadcrumb } from "../../components/Breadcrumbs";
 import { canExportReel, getCleanTopicTitle, hasPendingGeneration } from "./utils/shortReelStudioRules";
 import "./ShortReelStudio.css";
 
@@ -22,6 +23,9 @@ export interface ShortReelStudioProps {
   reelId: string;
   onBack: () => void;
   onNotice: (notice: NonNullable<Notice>) => void;
+  onNavigateHome?: () => void;
+  onNavigateChannels?: () => void;
+  onNavigateChannel?: () => void;
 }
 
 type StudioTab = "script" | "assets" | "publishing";
@@ -83,7 +87,15 @@ function ClipboardFallbackModal({ clipboardFallbackText, onClose }: { clipboardF
   );
 }
 
-export function ShortReelStudio({ channel, reelId, onBack, onNotice }: ShortReelStudioProps) {
+export function ShortReelStudio({
+  channel,
+  reelId,
+  onBack,
+  onNotice,
+  onNavigateHome,
+  onNavigateChannels,
+  onNavigateChannel,
+}: ShortReelStudioProps) {
   const [activeTab, setActiveTab] = useState<StudioTab>("script");
 
   const {
@@ -131,6 +143,17 @@ export function ShortReelStudio({ channel, reelId, onBack, onNotice }: ShortReel
 
   return (
     <div className="short-reel-studio">
+      {onNavigateHome ? (
+        <ShortReelBreadcrumb
+          channelName={channel.display_name}
+          channelId={channel.channel_id}
+          reelTitle={getCleanTopicTitle(topic.title)}
+          onNavigateHome={onNavigateHome}
+          onNavigateChannels={onNavigateChannels}
+          onNavigateChannel={onNavigateChannel || onBack}
+        />
+      ) : null}
+
       <ShortReelHeader
         channel={channel}
         reelId={reel.reel_id}

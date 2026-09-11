@@ -7,6 +7,8 @@ import {
   type QuizV2,
   type MascotRenderAspectRatio,
   type IntroOutroTransitionType,
+  type ResolvedTransitionInstance,
+  resolveTransitionInstance,
   MASCOT_CANVAS_SIZES,
 } from "@studio/shared";
 import { type ResolveBgmOptions } from "../audio/bgmRegistry.js";
@@ -27,6 +29,7 @@ import {
   transitionClip,
   mascotElement,
 } from "./candyArcade/candyArcadeClips.js";
+import { calculateIntroTransitionTiming } from "./candyArcade/customVideoClips.js";
 import { renderChannelBrandMark } from "./candyArcade/channelBrandMark.js";
 import { getMascotPreloadTags } from "./mascotStateResolver.js";
 import { adaptMascotForPhase, adaptMascotForQuestion } from "./productionMascotRenderer.js";
@@ -52,11 +55,13 @@ export type CandyArcadeCompositionInput = {
   outroVideoPath?: string;
   transitionType?: IntroOutroTransitionType;
   transitionDurationSeconds?: number;
+  transitionInstances?: Record<string, ResolvedTransitionInstance>;
 };
 
 export type CandyArcadeCompositionBundle = {
   html: string;
   files: Record<string, string>;
+  transitionInstances: Record<string, ResolvedTransitionInstance>;
 };
 
 export {
@@ -116,15 +121,48 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
     (input.mascotConfig as { mascot_style_id?: string })?.mascot_style_id ??
     input.mascot?.active_style_id;
 
+  const transitionInstances: Record<string, ResolvedTransitionInstance> = {};
   const clips: string[] = [];
   if (input.introVideoPath && firstStart > 0.04) {
+    const introBoundaryId = "intro";
+    const introTransitionType = input.transitionType ?? "stinger_swipe";
+    const fpsVal = input.fps ?? 30;
+    const timing = calculateIntroTransitionTiming(firstStart, introTransitionType, input.transitionDurationSeconds);
+    const startFrames = Math.round(timing.transitionStart * fpsVal);
+    const boundaryFrame = Math.round(firstStart * fpsVal);
+    const endFramesExclusive = boundaryFrame + Math.max(1, Math.round(timing.transitionDuration * fpsVal));
+
+    if (introTransitionType !== "cut") {
+      try {
+        const resolvedIntroInstance = input.transitionInstances?.[introBoundaryId] ?? resolveTransitionInstance(
+          { id: introTransitionType, durationSeconds: timing.transitionDuration },
+          {
+            instanceId: introBoundaryId,
+            placement: "intro",
+            fps: { numerator: fpsVal, denominator: 1 },
+            startFrame: startFrames,
+            boundaryFrame,
+            availableEndFrameExclusive: endFramesExclusive,
+            width: canvas.width,
+            height: canvas.height,
+            fromColor: "#000000",
+            toColor: "#000000",
+            inkColor: "#ffffff",
+          },
+        );
+        transitionInstances[introBoundaryId] = resolvedIntroInstance;
+      } catch {
+        // Uncataloged or legacy intro transition type
+      }
+    }
     clips.push(
       customIntroVideoClip(
         input.introVideoPath,
         firstStart,
-        input.transitionType ?? "stinger_swipe",
+        introTransitionType,
         true,
         input.transitionDurationSeconds,
+        introBoundaryId,
       ),
     );
   } else if (firstStart > 0.04) {
@@ -184,15 +222,48 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
           styleCatalogRevision: input.styleContext.styleCatalogRevision ?? undefined,
         }),
       );
-    if (transition)
+    if (transition) {
+      const boundaryId = (transition.payload?.instance_id as string | undefined) ?? question.id;
+      const nextPalette = nextResolvedQuestion?.visual.palette ?? visual.palette;
+      const fpsVal = input.fps ?? 30;
+      const startFrames = Math.round(transition.at_seconds * fpsVal);
+      const durationFrames = Math.round(transition.duration_seconds * fpsVal);
+      const endFramesExclusive = startFrames + Math.max(1, durationFrames);
+      const boundaryFrame = Math.round((transition.at_seconds + transition.duration_seconds * 0.5) * fpsVal);
+
+      const resolvedInstance = input.transitionInstances?.[boundaryId] ?? resolveTransitionInstance(
+        {
+          id: visual.transitionId,
+          durationSeconds: transition.duration_seconds,
+        },
+        {
+          instanceId: boundaryId,
+          placement: "scene",
+          fps: { numerator: fpsVal, denominator: 1 },
+          startFrame: startFrames,
+          boundaryFrame: Math.min(endFramesExclusive - 1, Math.max(startFrames, boundaryFrame)),
+          availableEndFrameExclusive: endFramesExclusive,
+          width: canvas.width,
+          height: canvas.height,
+          fromColor: visual.palette.accent,
+          toColor: nextPalette.backgroundPrimary,
+          inkColor: visual.palette.text,
+        },
+      );
+
+      transitionInstances[boundaryId] = resolvedInstance;
+
       clips.push(
         transitionClip({
           start: transition.at_seconds,
           end: transition.at_seconds + transition.duration_seconds,
           visual,
-          nextPalette: nextResolvedQuestion?.visual.palette ?? visual.palette,
+          nextPalette,
+          instanceId: boundaryId,
+          instance: resolvedInstance,
         }),
       );
+    }
   });
   if (typeof outroStart === "number" && outroStart < duration - 0.04) {
     if (input.outroVideoPath) {
@@ -230,5 +301,6 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   return {
     html: `<!doctype html><html><head><meta charset="utf-8"><title>Candy Arcade Quiz</title>${mascotPreloads ? `\n${mascotPreloads}` : ""}<style>${candyArcadeCss({ aspectRatio, backgroundStyles: usedBackgroundStyles, styleCatalogRevision: input.styleContext.styleCatalogRevision ?? undefined })}</style></head><body><main id="stage" data-composition-id="quiz-v2-candy-arcade" data-no-timeline data-start="0" data-width="${canvas.width}" data-height="${canvas.height}" data-aspect-ratio="${aspectRatio}" data-duration="${duration.toFixed(3)}" data-fps="${fps}">${scenes.map(subCompositionMount).join("\n")}\n${audioTags}</main><script>${candyArcadeFontReadinessScript()}</script></body></html>`,
     files: Object.fromEntries(scenes.map((scene) => [`compositions/${scene.id}.html`, scene.html])),
+    transitionInstances,
   };
 }

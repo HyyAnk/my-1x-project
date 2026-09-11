@@ -9,7 +9,7 @@ import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPla
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
-import { buildQuizComposition } from "../src/tasks.js";
+import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 import { runPipelineTask } from "../src/tasks/pipeline/quizProductionPipelineRunner.js";
 import type { ActiveRun, PipelineRun, TaskManagerRuntime } from "../src/tasks/runtime.js";
 
@@ -286,6 +286,7 @@ describe("Level 2 Architecture: End-to-End Quiz-Native Flow Verification", () =>
 
   it("Step 5: Full downstream stages (Director, AssetPlan, VoicePlan, Timeline, Composition) assemble cleanly", () => {
     const synthesized = synthesizeAllLegacyArtifacts(mockLLMQuizOutput);
+    expect(synthesized.scenes).toHaveLength(2);
 
     // 1. Director Plan (Pure TS, 1ms)
     const directorPlan = createDefaultDirectorPlan(mockLLMQuizOutput);
@@ -309,16 +310,20 @@ describe("Level 2 Architecture: End-to-End Quiz-Native Flow Verification", () =>
     expect(timeline.events.length).toBeGreaterThanOrEqual(2);
 
     // 5. Final Candy Arcade Composition
-    const compositionHtml = buildQuizComposition(
-      episode.quiz_config,
-      synthesized.scenes,
-      "./audio/narration.wav",
-      timeline.duration_seconds,
-    );
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz: mockLLMQuizOutput,
+      director: directorPlan,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./audio/narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+    });
 
-    expect(compositionHtml).toContain("How heavy can a blue whale");
-    expect(compositionHtml).toContain("As heavy as an elephant");
-    expect(compositionHtml).toContain("data-duration=");
-    expect(compositionHtml).toContain('id="quiz-narration"');
+    expect(bundle.html).toContain('data-composition-id="quiz-v2-candy-arcade"');
+    expect(bundle.html).toContain(`data-duration="${timeline.duration_seconds.toFixed(3)}"`);
+    expect(bundle.html).toContain('id="quiz-narration"');
+    const allCompositionText = [bundle.html, ...Object.values(bundle.files)].join("\n");
+    expect(allCompositionText).toContain("whale");
+    expect(allCompositionText).toContain("As heavy as an elephant");
   });
 });

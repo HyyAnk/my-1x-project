@@ -227,4 +227,54 @@ describe("useSandboxPresets", () => {
     expect(renamed?.name).toBe("Renamed Preset");
     expect(renamed?.description).toBe("Updated Description");
   });
+
+  it("persists transition settings into custom presets and syncs them on load", () => {
+    const mockTransition = {
+      transitionId: "stinger_swipe",
+      transitionDuration: 0.75,
+      syncFromPreset: vi.fn(),
+    };
+
+    const { result } = renderHook(
+      () => useSandboxPresets({ design: mockDesign, mascot: mockMascot, transition: mockTransition }),
+      { wrapper },
+    );
+
+    act(() => {
+      result.current.setNewPresetName("Transition Preset");
+    });
+    act(() => {
+      void result.current.handleSaveCustomPreset();
+    });
+
+    expect(result.current.customPresets).toHaveLength(1);
+    const saved = result.current.customPresets[0];
+    expect(saved.transitions).toEqual({
+      scene: {
+        id: "stinger_swipe",
+        durationSeconds: 0.75,
+      },
+    });
+
+    // Update preset with modified transition duration
+    mockTransition.transitionDuration = 1.25;
+    act(() => {
+      void result.current.handleUpdateActivePreset();
+    });
+
+    expect(result.current.customPresets[0].transitions).toEqual({
+      scene: {
+        id: "stinger_swipe",
+        durationSeconds: 1.25,
+      },
+    });
+
+    // Load preset triggers syncFromPreset
+    act(() => {
+      result.current.handleLoadPreset(result.current.customPresets[0]);
+    });
+
+    expect(mockTransition.syncFromPreset).toHaveBeenCalledWith(result.current.customPresets[0]);
+  });
 });
+

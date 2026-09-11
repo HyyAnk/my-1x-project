@@ -1,4 +1,5 @@
 import type { QuizLayoutRenderDefinition } from "./types.js";
+import { renderQuizFrameBody } from "../frame/renderQuizFrameBody.js";
 
 /**
  * Media Left Choices Right Layout (16:9 Landscape Video, 1920x1080).
@@ -21,87 +22,77 @@ import type { QuizLayoutRenderDefinition } from "./types.js";
  */
 export const mediaLeftChoicesRightLayout = {
   id: "media_left_choices_right",
-  renderBody: (slots) => `${slots.questionBoxHtml}${slots.heroHtml}${slots.choicesHtml}<div class="phase-region">${slots.phaseHtml}</div>`,
+  renderBody: (slots) => renderQuizFrameBody(slots, `${slots.heroHtml}${slots.choicesHtml}`),
   css: (_aspectRatio) => `
 /* === Media Left Choices Right Layout (16:9 Landscape 1920x1080) === */
-.layout-media_left_choices_right .game-stage {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(480px, 0.95fr);
-  grid-template-rows: 168px 540px 110px;
-  grid-template-areas:
-    "title title"
-    "hero answers"
-    "phase phase";
-  align-items: start;
-  column-gap: 34px;
-  row-gap: 24px;
-  width: 1420px;
-  max-width: 1420px;
-  min-height: 0;
-  margin: 20px 40px 0 auto;
-  padding: 0;
-  box-sizing: border-box;
-}
 
-/* Question Title: Clears left header anchors (Inviolable Anchors preserved) */
-.layout-media_left_choices_right .question-title {
-  grid-area: title;
-  width: 100%;
-  max-width: 1440px;
-  height: 168px;
-  min-height: 168px;
-  justify-self: end;
-  margin-left: auto;
-  contain: layout style;
+/* Unified Quiz Frame Arena Geometry */
+.quiz-frame-unified.layout-media_left_choices_right .hero-image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 720px;
+  height: 510px;
+  max-height: 510px;
+  margin: 0;
 }
-
-/* Hero Media: Aspect Ratio 4:3 (~728x540px column), pixel-perfect fit with ~0% crop */
-.layout-media_left_choices_right .game-stage > .hero-image {
-  grid-area: hero;
-  width: 100%;
-  height: 540px;
-  max-height: 540px;
-  margin-top: 0;
-}
-.layout-media_left_choices_right .hero-image img {
+.quiz-frame-unified.layout-media_left_choices_right .hero-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.layout-media_left_choices_right.quiz-question-clip .hero-image {
+.quiz-frame-unified.layout-media_left_choices_right.quiz-question-clip .hero-image {
   animation: enter-from-left 0.66s cubic-bezier(0.22, 0.8, 0.3, 1) var(--clip-start) both;
 }
 
-/* Choice Group: Vertically Centered in 540px Right Column */
-.layout-media_left_choices_right .answer-grid {
-  grid-area: answers;
-  grid-template-columns: 1fr;
-  width: 100%;
-  height: 540px;
-  max-height: 540px;
+.quiz-frame-unified.layout-media_left_choices_right .answer-grid,
+.quiz-frame-unified.layout-media_left_choices_right .choice-group {
+  position: absolute;
+  left: 760px;
+  top: 0;
+  width: 660px;
+  height: 510px;
+  max-height: 510px;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 24px;
 }
-.layout-media_left_choices_right .answer-grid.answer-count-2 {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+
+.quiz-frame-unified.layout-media_left_choices_right .choice-card,
+.quiz-frame-unified.layout-media_left_choices_right .answer-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.quiz-frame-unified.layout-media_left_choices_right .answer-grid.answer-count-2,
+.quiz-frame-unified.layout-media_left_choices_right .choice-group.answer-count-2 {
+  gap: 40px;
+}
+.quiz-frame-unified.layout-media_left_choices_right .answer-grid.answer-count-2 .choice-card,
+.quiz-frame-unified.layout-media_left_choices_right .choice-group.answer-count-2 .choice-card {
+  height: 152px;
+  min-height: 152px;
+  max-height: 152px;
+  --choice-card-height: 152px;
+  --choice-card-min-height: 152px;
+  --choice-badge-size: 112px;
+}
+
+.quiz-frame-unified.layout-media_left_choices_right .answer-grid.answer-count-3,
+.quiz-frame-unified.layout-media_left_choices_right .choice-group.answer-count-3 {
   gap: 36px;
-  --choice-card-min-height: 136px;
-  --choice-badge-size: 148px;
-  --choice-badge-margin-left: -80px;
-  --choice-card-margin-left: 80px;
-  --choice-badge-font-size: 78px;
-  --choice-font-size-base: 44px;
-  --choice-font-size-medium: 34px;
 }
-.layout-media_left_choices_right .answer-grid.answer-count-3 {
-  gap: 24px;
+.quiz-frame-unified.layout-media_left_choices_right .answer-grid.answer-count-3 .choice-card,
+.quiz-frame-unified.layout-media_left_choices_right .choice-group.answer-count-3 .choice-card {
+  height: 132px;
+  min-height: 132px;
+  max-height: 132px;
+  --choice-card-height: 132px;
+  --choice-card-min-height: 132px;
+  --choice-badge-size: 104px;
 }
 
 /* Staggered Choice Entrance (Phase 2): Keyframes for cards 1, 2, and 3 */
@@ -134,19 +125,19 @@ export const mediaLeftChoicesRightLayout = {
 
 /* Choice Design Tokens (16:9 Default) */
 .layout-media_left_choices_right {
-  --choice-card-min-height: 116px;
+  --choice-card-min-height: 132px;
   --choice-card-height: auto;
-  --choice-card-margin-left: 76px;
+  --choice-card-margin-left: 0px;
   --choice-card-padding: 12px 34px 12px 42px;
-  --choice-badge-size: 138px;
-  --choice-badge-margin-left: -74px;
-  --choice-badge-font-size: 72px;
-  --choice-font-size-base: 38px;
-  --choice-font-size-medium: 30px;
-  --choice-font-size-long: 24px;
-  --choice-font-size-very_long: 20px;
-  --choice-font-size-overflow: 20px;
-  --choice-fit-min: 24px;
+  --choice-badge-size: 104px;
+  --choice-badge-margin-left: 0px;
+  --choice-badge-font-size: 56px;
+  --choice-font-size-base: 44px;
+  --choice-font-size-medium: 38px;
+  --choice-font-size-long: 32px;
+  --choice-font-size-very_long: 32px;
+  --choice-font-size-overflow: 32px;
+  --choice-fit-min: 32px;
   --choice-fit-max: 64px;
   --choice-fit-max-lines: 2;
   --choice-fit-leading: 1.08;
@@ -177,50 +168,5 @@ export const mediaLeftChoicesRightLayout = {
     box-shadow: 0 2px 0 rgba(10, 25, 60, 0.08);
   }
 }
-
-/* Phase Region: Row 3 of CSS Grid, 100% Collision-Free */
-.layout-media_left_choices_right .phase-region {
-  grid-area: phase;
-  position: relative;
-  top: auto;
-  bottom: auto;
-  left: auto;
-  right: auto;
-  transform: none;
-  width: 100%;
-  max-width: 1420px;
-  height: 110px;
-  margin: 0 auto;
-  padding: 0;
-  z-index: 5;
-  box-sizing: border-box;
-}
-
-/* Thinking Bar: Width min(65vw, 1240px), Marker Star Stays <= 1856px (64px Canvas Margin) */
-.layout-media_left_choices_right .phase-region > .thinking-bar {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  bottom: auto;
-  transform: translate(-50%, -50%);
-  width: min(65vw, 1240px);
-  min-height: 84px;
-}
-
-/* Fact Card: Width min(1140px, 100%), Sits Safely in Row 3 (y: 776-886px) */
-.layout-media_left_choices_right .phase-region > .fact-card {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  bottom: auto;
-  transform: translate(-50%, -50%);
-  width: min(1140px, 100%);
-  max-height: 110px;
-  margin: 0;
-  padding: 18px 42px;
-  border-radius: 36px;
-  box-sizing: border-box;
-}
-
 `,
 } satisfies QuizLayoutRenderDefinition;

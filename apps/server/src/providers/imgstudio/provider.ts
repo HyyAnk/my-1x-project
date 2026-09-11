@@ -58,15 +58,16 @@ export class ImgStudioQuizImageProvider {
       input.fingerprint,
       result.bytes,
       {
-        price_vnd: result.price_vnd,
+        price_vnd: result.price_vnd ?? 150,
         model: result.model,
         aspect_ratio: result.aspect_ratio || aspectRatio,
         size: result.resolution,
+        provider: "imgstudio",
       },
     );
 
-    const costVnd = result.price_vnd ?? 100;
-    const costUsd = Number((costVnd / 25500).toFixed(4));
+    const costVnd = result.price_vnd ?? 150;
+    const costUsd = Number((costVnd / 25000).toFixed(4));
     await this.repository
       .recordImageUsage({
         channelId: this.target.channelId,
@@ -144,15 +145,16 @@ export class ImgStudioImageProvider implements ImageProvider {
       result.bytes,
       variant,
       {
-        price_vnd: result.price_vnd,
+        price_vnd: result.price_vnd ?? 150,
         model: result.model,
         aspect_ratio: result.aspect_ratio || aspectRatio,
         size: result.resolution,
+        provider: "imgstudio",
       },
     );
 
-    const costVnd = result.price_vnd ?? 100;
-    const costUsd = Number((costVnd / 25500).toFixed(4));
+    const costVnd = result.price_vnd ?? 150;
+    const costUsd = Number((costVnd / 25000).toFixed(4));
     await this.repository
       .recordImageUsage({
         channelId: this.target.channelId,

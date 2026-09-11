@@ -2522,9 +2522,10 @@
     "id": "ENT-MUS-055",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "vintage_audio",
-    "name": "Compact Cassette Tape",
+    "name": "Cassette Tape",
     "language": "en",
     "aliases": [
+      "Compact Cassette Tape",
       "Audio Cassette",
       "Tape",
       "Cassette",
@@ -2570,9 +2571,10 @@
     "id": "ENT-MUS-056",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "vintage_audio",
-    "name": "Personal Cassette Player",
+    "name": "Cassette Player",
     "language": "en",
     "aliases": [
+      "Personal Cassette Player",
       "Walkman",
       "Portable Cassette Player",
       "Cassette Personal Stereo"
@@ -2664,9 +2666,10 @@
     "id": "ENT-MUS-058",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "vintage_audio",
-    "name": "Retro Transistor Radio",
+    "name": "Transistor Radio",
     "language": "en",
     "aliases": [
+      "Retro Transistor Radio",
       "Pocket Radio",
       "Transistor",
       "Portable AM Radio"
@@ -2758,53 +2761,6 @@
     "id": "ENT-MUS-060",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "vintage_audio",
-    "name": "8-Track Tape Cartridge",
-    "language": "en",
-    "aliases": [
-      "8-Track Cartridge",
-      "Stereo 8",
-      "Eight-Track"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A chunky plastic 8-track tape cartridge showing its exposed pinch roller, visible loop of lubricated magnetic tape, grooved grip ridges, and vibrant retro 1970s album art label.",
-    "core_traits": [
-      "Analog magnetic tape sound recording format featuring an endless continuous loop wound on a single internal hub",
-      "Contains eight parallel magnetic tracks arranged into four stereo programs that switch sequentially",
-      "Playback heads shift up and down mechanically with an audible clunk when switching between the four programs",
-      "Requires no rewinding because the continuous loop tape pulls from the center of the reel and winds onto the outside",
-      "Dominant mobile audio format in American car dashboards throughout the late 1960s and 1970s"
-    ],
-    "distractor_pool": [
-      "Compact Cassette Tape",
-      "Reel-to-Reel Tape Recorder",
-      "Vinyl Record",
-      "Walkman",
-      "Music Box"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A listener could quickly rewind an 8-track tape back to the beginning of a song at the push of a button.",
-        "verdict": "myth",
-        "explanation": "Because tape is wound in an endless loop from the center hub, 8-tracks physically cannot be rewound; you had to let the tape run forward or click track programs.",
-        "fun_fact": "The endless tape loop had to be coated with slippery graphite lubrication to keep it from binding on itself."
-      },
-      {
-        "claim": "Aviation and industrial visionary Bill Lear, creator of the Learjet, co-invented the 8-track stereo cartridge system.",
-        "verdict": "fact",
-        "explanation": "Bill Lear redesigned existing continuous-loop cartridges in 1964 into the Lear Jet Stereo 8, partnering with Ford to install players into luxury automobiles.",
-        "fun_fact": "Ford offered 8-track players as factory options on 1966 Mustang, Thunderbird, and Lincoln models."
-      }
-    ],
-    "versus_candidates": [
-      "Compact Cassette Tape",
-      "Vinyl Record",
-      "Reel-to-Reel Tape Recorder"
-    ]
-  },
-  {
-    "id": "ENT-MUS-061",
-    "domain_id": "music_instruments_gear",
-    "subtopic_id": "vintage_audio",
     "name": "Music Box",
     "language": "en",
     "aliases": [
@@ -2849,60 +2805,13 @@
     ]
   },
   {
-    "id": "ENT-MUS-062",
+    "id": "ENT-MUS-061",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "vintage_audio",
-    "name": "45 RPM Record Adapter",
+    "name": "CD Player",
     "language": "en",
     "aliases": [
-      "45 Adapter",
-      "Spindle Insert",
-      "Spider Adapter",
-      "Turntable Puck"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A classic bright yellow three-pronged plastic spider adapter snapped securely into the large 1.5-inch center hole of a red 7-inch vinyl 45 RPM single on a turntable felt mat.",
-    "core_traits": [
-      "Small circular or three-pronged insert designed to adapt 7-inch 45 RPM vinyl records to standard turntable spindles",
-      "Snaps directly into the large 1.5-inch center hole of a 45 RPM single to center it over a standard 0.28-inch turntable spindle",
-      "Commonly molded from durable colored plastic in a distinctive three-legged spider geometry or turned from solid aluminum",
-      "Created because RCA Victor designed 45 RPM singles with large center holes for fast-dropping automatic record changers in 1949",
-      "Iconic graphic pop-culture symbol of vinyl culture, jukeboxes, rock-and-roll singles, and DJ accessories"
-    ],
-    "distractor_pool": [
-      "Vinyl Record",
-      "DJ Turntable",
-      "Gramophone",
-      "Jukebox",
-      "Boombox"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Seven-inch 45 RPM records were pressed with large holes simply because vinyl record companies made a manufacturing mistake.",
-        "verdict": "myth",
-        "explanation": "RCA Victor intentionally created the 1.5-inch center hole to fit the thick center spindle of their rapid-fire automatic record changers that held a stack of singles.",
-        "fun_fact": "The automatic changer could drop and start a new single in less than two seconds."
-      },
-      {
-        "claim": "The iconic three-pronged plastic 'spider' snap-in adapter was invented by Webster-Chicago and Thomas Hutchison.",
-        "verdict": "fact",
-        "explanation": "Thomas Hutchison patented the lightweight three-legged snap-in adapter in 1952, enabling teenagers to play 45s on standard single-spindle home record players.",
-        "fun_fact": "The spider adapter shape is now a popular tattoo and graphic motif among vinyl collectors and DJs."
-      }
-    ],
-    "versus_candidates": [
-      "Vinyl Record",
-      "DJ Turntable",
-      "Compact Cassette Tape"
-    ]
-  },
-  {
-    "id": "ENT-MUS-063",
-    "domain_id": "music_instruments_gear",
-    "subtopic_id": "vintage_audio",
-    "name": "Portable CD Player",
-    "language": "en",
-    "aliases": [
+      "Portable CD Player",
       "Discman",
       "Personal Compact Disc Player"
     ],
@@ -2943,7 +2852,7 @@
     ]
   },
   {
-    "id": "ENT-MUS-064",
+    "id": "ENT-MUS-062",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "vintage_audio",
     "name": "Antique Tube Radio",
@@ -2991,59 +2900,13 @@
     ]
   },
   {
-    "id": "ENT-MUS-065",
-    "domain_id": "music_instruments_gear",
-    "subtopic_id": "vintage_audio",
-    "name": "Wax Cylinder Phonograph",
-    "language": "en",
-    "aliases": [
-      "Edison Phonograph",
-      "Cylinder Phonograph",
-      "Tinfoil Phonograph"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "An 1890s Thomas Edison cylinder phonograph showing its horizontal spinning mandrel, brown hollow wax cylinder, delicate glass diaphragm reproducer, and small black conical listening horn.",
-    "core_traits": [
-      "World's first practical audio recording and reproduction device, invented by Thomas Alva Edison in 1877",
-      "Records sound as vertical undulating hill-and-dale grooves cut into the surface of a spinning hollow wax cylinder",
-      "Powered by a hand crank or spring-driven governor motor rotating a horizontal tapered mandrel",
-      "Uses a sapphire stylus attached to a glass or mica diaphragm that physically vibrates with acoustic sound waves",
-      "The direct technological ancestor of the entire global recorded music industry"
-    ],
-    "distractor_pool": [
-      "Gramophone",
-      "Vinyl Record",
-      "Music Box",
-      "Mechanical Metronome",
-      "Reel-to-Reel Tape Recorder"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Thomas Edison's very first successful audio recording on the phonograph was the nursery rhyme 'Mary Had a Little Lamb'.",
-        "verdict": "fact",
-        "explanation": "In late 1877, Edison spoke the words 'Mary had a little lamb, its fleece was white as snow' into the recorder and was astonished when it spoke back to him.",
-        "fun_fact": "Edison originally believed the phonograph would be used primarily for office dictation and preserving dying languages, not music."
-      },
-      {
-        "claim": "Early wax cylinders could be easily mass-duplicated by pressing them in giant hydraulic stampers like modern vinyl.",
-        "verdict": "myth",
-        "explanation": "Early wax cylinders could not be pressed; musicians had to perform the same song hundreds of times in front of banks of phonographs to produce copies.",
-        "fun_fact": "The invention of flat disc records by Emile Berliner made industrial mass pressing possible."
-      }
-    ],
-    "versus_candidates": [
-      "Gramophone",
-      "Music Box",
-      "Vinyl Record"
-    ]
-  },
-  {
-    "id": "ENT-MUS-066",
+    "id": "ENT-MUS-063",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
-    "name": "Studio Condenser Microphone",
+    "name": "Condenser Microphone",
     "language": "en",
     "aliases": [
+      "Studio Condenser Microphone",
       "Large-Diaphragm Condenser",
       "Studio Mic",
       "Capacitor Microphone"
@@ -3085,12 +2948,13 @@
     ]
   },
   {
-    "id": "ENT-MUS-067",
+    "id": "ENT-MUS-064",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
-    "name": "Dynamic Stage Microphone",
+    "name": "Microphone",
     "language": "en",
     "aliases": [
+      "Dynamic Stage Microphone",
       "Vocal Mic",
       "Handheld Microphone",
       "Cardioid Dynamic Mic"
@@ -3132,7 +2996,7 @@
     ]
   },
   {
-    "id": "ENT-MUS-068",
+    "id": "ENT-MUS-065",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
     "name": "DJ Turntable",
@@ -3180,7 +3044,7 @@
     ]
   },
   {
-    "id": "ENT-MUS-069",
+    "id": "ENT-MUS-066",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
     "name": "DJ Mixing Console",
@@ -3228,12 +3092,13 @@
     ]
   },
   {
-    "id": "ENT-MUS-070",
+    "id": "ENT-MUS-067",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
-    "name": "Studio Monitor Headphones",
+    "name": "Studio Headphones",
     "language": "en",
     "aliases": [
+      "Studio Monitor Headphones",
       "Reference Headphones",
       "Studio Cans",
       "Over-Ear Monitor Headphones"
@@ -3275,7 +3140,7 @@
     ]
   },
   {
-    "id": "ENT-MUS-071",
+    "id": "ENT-MUS-068",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
     "name": "Guitar Tube Amplifier",
@@ -3323,54 +3188,7 @@
     ]
   },
   {
-    "id": "ENT-MUS-072",
-    "domain_id": "music_instruments_gear",
-    "subtopic_id": "studio_stage_gear",
-    "name": "Graphic Audio Equalizer",
-    "language": "en",
-    "aliases": [
-      "Graphic EQ",
-      "Equalizer",
-      "31-Band EQ"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A 19-inch rackmount dual 31-band graphic equalizer unit with dozens of illuminated slider faders arranged in a gentle smile curve against dark brushed aluminum casing.",
-    "core_traits": [
-      "Audio processing device that divides the audible frequency spectrum (20 Hz to 20 kHz) into multiple discrete frequency bands",
-      "Uses vertical linear slider faders for each band, allowing individual frequencies to be boosted or cut by decibels",
-      "The physical positions of all slider faders together graphically trace out the overall frequency response curve",
-      "Crucial for tuning venue acoustics, eliminating acoustic microphone feedback rings, and balancing audio mixes",
-      "Available as 10-band octave, 15-band 2/3-octave, or precision 31-band 1/3-octave audio processing hardware"
-    ],
-    "distractor_pool": [
-      "DJ Mixing Console",
-      "Studio Audio Interface",
-      "Guitar Tube Amplifier",
-      "Electronic Megaphone",
-      "Mechanical Metronome"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "Setting the graphic EQ sliders into an exaggerated 'smile curve' (boosting extreme lows and highs while scooping midrange) creates the most accurate audiophile sound.",
-        "verdict": "myth",
-        "explanation": "The 'smiley-face EQ' hollows out the critical midrange where human vocals and instruments live; it can sound exciting briefly, but ruins mix balance and clarity.",
-        "fun_fact": "Audio engineers nickname it the 'bedroom smile' because amateurs commonly set it this way."
-      },
-      {
-        "claim": "Live concert sound engineers use 31-band graphic equalizers primarily to notch out annoying feedback frequencies during soundcheck.",
-        "verdict": "fact",
-        "explanation": "By slowly raising system volume until a stage microphone begins to ring or howl, the engineer can pull down the exact offending frequency slider by a few decibels.",
-        "fun_fact": "This tuning process is known in live audio engineering as 'ringing out the room'."
-      }
-    ],
-    "versus_candidates": [
-      "DJ Mixing Console",
-      "Studio Audio Interface",
-      "Guitar Tube Amplifier"
-    ]
-  },
-  {
-    "id": "ENT-MUS-073",
+    "id": "ENT-MUS-069",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
     "name": "Electronic Megaphone",
@@ -3417,12 +3235,13 @@
     ]
   },
   {
-    "id": "ENT-MUS-074",
+    "id": "ENT-MUS-070",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
-    "name": "Steel Tuning Fork",
+    "name": "Tuning Fork",
     "language": "en",
     "aliases": [
+      "Steel Tuning Fork",
       "Tuning Fork",
       "Pitch Fork",
       "Concert A440 Fork"
@@ -3464,7 +3283,7 @@
     ]
   },
   {
-    "id": "ENT-MUS-075",
+    "id": "ENT-MUS-071",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
     "name": "Stage Spotlight",
@@ -3512,54 +3331,7 @@
     ]
   },
   {
-    "id": "ENT-MUS-076",
-    "domain_id": "music_instruments_gear",
-    "subtopic_id": "studio_stage_gear",
-    "name": "XLR Audio Cable",
-    "language": "en",
-    "aliases": [
-      "Microphone Cable",
-      "Balanced XLR Lead",
-      "Cannon Cable"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A heavy-duty flexible black rubber XLR audio cable coiled neatly on a road case, close-up macro view capturing the three-pin male and three-socket female silver connectors with spring locking latch.",
-    "core_traits": [
-      "Three-pin balanced audio cable standard used to transmit low-noise microphone and line-level signals in professional audio",
-      "Consists of a twisted pair of signal conductors (Pin 2 hot, Pin 3 cold) surrounded by a braided shielding ground (Pin 1)",
-      "Balanced differential signaling cancels out electromagnetic interference and hum over long cable runs",
-      "Features a rugged metal circular housing with a push-button positive locking latch that prevents accidental unplugging",
-      "Originally invented by James H. Cannon of the Cannon Electric Company in Los Angeles"
-    ],
-    "distractor_pool": [
-      "Studio Pop Filter",
-      "Boom Microphone Stand",
-      "Steel Tuning Fork",
-      "Studio Audio Interface",
-      "Dynamic Stage Microphone"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A balanced XLR cable eliminates background electrical noise by using a special noise-canceling computer chip inside the rubber cable.",
-        "verdict": "myth",
-        "explanation": "XLR cables use pure analog physics (common-mode rejection); two copies of the audio signal are sent in reverse polarity, and subtracting them at the preamp wipes out inducted noise.",
-        "fun_fact": "This simple phase trick allows balanced cables to run hundreds of feet through electrical cables without buzzing."
-      },
-      {
-        "claim": "The letters 'XLR' stand for 'X series, Latch, Rubber'.",
-        "verdict": "fact",
-        "explanation": "Cannon Electric developed the original 'X' audio connector, added a mechanical latch lock creating the 'XL', and wrapped it in resilient rubber insulation to yield 'XLR'.",
-        "fun_fact": "The Cannon XLR connector was adopted as the universal worldwide broadcast standard in the late 1950s."
-      }
-    ],
-    "versus_candidates": [
-      "Studio Pop Filter",
-      "Boom Microphone Stand",
-      "Studio Audio Interface"
-    ]
-  },
-  {
-    "id": "ENT-MUS-077",
+    "id": "ENT-MUS-072",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
     "name": "Studio Pop Filter",
@@ -3606,12 +3378,13 @@
     ]
   },
   {
-    "id": "ENT-MUS-078",
+    "id": "ENT-MUS-073",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
-    "name": "Boom Microphone Stand",
+    "name": "Microphone Stand",
     "language": "en",
     "aliases": [
+      "Boom Microphone Stand",
       "Tripod Mic Stand",
       "Boom Arm Stand",
       "Studio Boom"
@@ -3653,7 +3426,7 @@
     ]
   },
   {
-    "id": "ENT-MUS-079",
+    "id": "ENT-MUS-074",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
     "name": "Studio Audio Interface",
@@ -3701,7 +3474,7 @@
     ]
   },
   {
-    "id": "ENT-MUS-080",
+    "id": "ENT-MUS-075",
     "domain_id": "music_instruments_gear",
     "subtopic_id": "studio_stage_gear",
     "name": "Passive Direct Box",

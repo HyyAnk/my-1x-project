@@ -64,6 +64,10 @@ export const VideoSettingsInputSchema = z.object({
   render_workers: z.number().int().min(1).max(16).optional(),
   render_quality: z.enum(["draft", "standard", "high"]).optional(),
   fps: z.number().int().min(24).max(60).optional(),
+  /**
+   * Bypasses pre-render layout preflight checks for rapid drafting/dev.
+   * Contrast QA is non-blocking and will never abort video renders regardless of this setting.
+   */
   fast_render_mode: z.boolean().optional(),
 });
 

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <defs>
+    <linearGradient id="bgGrad_9_16" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1035"/>
+      <stop offset="50%" stop-color="#3b0764"/>
+      <stop offset="100%" stop-color="#090514"/>
+    </linearGradient>
+    <linearGradient id="badgeGrad_9_16" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <radialGradient id="glow_9_16" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid_9_16" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow_9_16" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#000" flood-opacity="0.65"/>
+    </filter>
+  </defs>
+
+  <!-- Background Layer -->
+  <rect width="1080" height="1920" fill="url(#bgGrad_9_16)"/>
+  <rect width="1080" height="1920" fill="url(#grid_9_16)"/>
+  <circle cx="540" cy="960" r="480" fill="url(#glow_9_16)"/>
+
+  <!-- Safe Area Guides (Shorts UI Margins: Top 15%, Bottom 20%) -->
+  <rect x="86" y="288" width="908" height="1248" rx="28" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="2.5" stroke-dasharray="8 8"/>
+  <text x="106" y="324" fill="rgba(255,255,255,0.35)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" letter-spacing="1">SHORTS SAFE ZONE</text>
+
+  <!-- Alignment Crosshairs -->
+  <path d="M 508 960 L 572 960 M 540 928 L 540 992" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+
+  <!-- Corner Crop Marks -->
+  <path d="M 28 56 L 28 28 L 56 28" fill="none" stroke="#a855f7" stroke-width="4"/>
+  <path d="M 1052 56 L 1052 28 L 1024 28" fill="none" stroke="#a855f7" stroke-width="4"/>
+  <path d="M 28 1864 L 28 1892 L 56 1892" fill="none" stroke="#a855f7" stroke-width="4"/>
+  <path d="M 1052 1864 L 1052 1892 L 1024 1892" fill="none" stroke="#a855f7" stroke-width="4"/>
+
+  <!-- Center Specimen Card -->
+  <rect x="220" y="800" width="640" height="320" rx="28" fill="rgba(30, 16, 53, 0.85)" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" filter="url(#shadow_9_16)"/>
+
+  <!-- Specimen Badge Pill -->
+  <g transform="translate(540, 866)">
+    <rect x="-115" y="-24" width="230" height="48" rx="24" fill="url(#badgeGrad_9_16)"/>
+    <text x="0" y="7" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800" letter-spacing="0.5">9:16 VERTICAL</text>
+  </g>
+
+  <!-- Dimension Metric -->
+  <text x="540" y="954" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="36" font-weight="700" letter-spacing="-0.5">1080 × 1920 px</text>
+
+  <!-- Role Subtitle -->
+  <text x="540" y="996" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="500">YouTube Shorts / TikTok Reel</text>
+
+  <!-- Dimensions Indicator Edge Markers -->
+  <text x="540" y="1898" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600">WIDTH: 1080px</text>
+  <text x="24" y="960" text-anchor="middle" transform="rotate(-90 24 960)" fill="rgba(255,255,255,0.4)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600">HEIGHT: 1920px</text>
+</svg>

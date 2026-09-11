@@ -17,13 +17,17 @@ import {
 } from "../src/quiz/bank/matrixCoverageService.js";
 
 describe("Knowledge Base Loader", () => {
-  it("loads exactly 2,500 entities across 14 domains", () => {
+  it("loads exactly 2,850 entities across 18 domains", () => {
     clearKnowledgeBaseCache();
     const entities = loadAllKnowledgeEntities();
-    expect(entities.length).toBe(2500);
+    expect(entities.length).toBe(2850);
 
     const domains = getAllKnowledgeDomains();
-    expect(domains.length).toBe(14);
+    expect(domains.length).toBe(18);
+    expect(domains).toContain("global_brands");
+    expect(domains).toContain("anime_manga");
+    expect(domains).toContain("gaming_esports");
+    expect(domains).toContain("modern_cinema_tv");
   });
 
   it("provides fast O(1) lookup by entity ID", () => {
@@ -45,27 +49,31 @@ describe("Knowledge Base Loader", () => {
     }
 
     const natureAnimals = getEntitiesByDomain("nature_animals");
-    expect(natureAnimals.length).toBe(350);
+    expect(natureAnimals.length).toBe(343);
   });
 
   it("calculates knowledge base domain statistics correctly", () => {
     const stats = getKnowledgeBaseStats();
-    expect(stats.totalEntities).toBe(2500);
-    expect(Object.keys(stats.domainCounts).length).toBe(14);
-    expect(stats.domainCounts.nature_animals).toBe(350);
-    expect(stats.domainCounts.vehicles_technology).toBe(300);
-    expect(stats.domainCounts.pop_culture_classics).toBe(300);
+    expect(stats.totalEntities).toBe(2850);
+    expect(Object.keys(stats.domainCounts).length).toBe(18);
+    expect(stats.domainCounts.global_brands).toBe(160);
+    expect(stats.domainCounts.anime_manga).toBe(144);
+    expect(stats.domainCounts.gaming_esports).toBe(138);
+    expect(stats.domainCounts.modern_cinema_tv).toBe(114);
+    expect(stats.domainCounts.nature_animals).toBe(343);
+    expect(stats.domainCounts.vehicles_technology).toBe(268);
+    expect(stats.domainCounts.pop_culture_classics).toBe(223);
     expect(stats.domainCounts.food_gastronomy).toBe(250);
-    expect(stats.domainCounts.space_earth).toBe(250);
-    expect(stats.domainCounts.daily_objects).toBe(150);
-    expect(stats.domainCounts.careers_occupations).toBe(150);
-    expect(stats.domainCounts.human_body).toBe(150);
+    expect(stats.domainCounts.space_earth).toBe(210);
+    expect(stats.domainCounts.daily_objects).toBe(146);
+    expect(stats.domainCounts.careers_occupations).toBe(146);
+    expect(stats.domainCounts.human_body).toBe(121);
     expect(stats.domainCounts.mythology_creatures).toBe(150);
     expect(stats.domainCounts.countries_nations).toBe(100);
-    expect(stats.domainCounts.places_facilities).toBe(100);
+    expect(stats.domainCounts.places_facilities).toBe(95);
     expect(stats.domainCounts.sports_games).toBe(100);
-    expect(stats.domainCounts.music_instruments_gear).toBe(80);
-    expect(stats.domainCounts.school_learning).toBe(70);
+    expect(stats.domainCounts.music_instruments_gear).toBe(75);
+    expect(stats.domainCounts.school_learning).toBe(67);
   });
 });
 
@@ -156,25 +164,25 @@ describe("Matrix Coverage Service", () => {
     expect(map.size).toBe(2);
   });
 
-  it("calculates matrix coverage statistics across all 20,000 combos", () => {
+  it("calculates matrix coverage statistics across all 22,800 combos", () => {
     const stats = calculateMatrixCoverageStats(mockSampleQuestions);
 
-    expect(stats.total_combos).toBe(20000); // 2,500 entities * 8 archetypes
+    expect(stats.total_combos).toBe(22800); // 2,850 entities * 8 archetypes
     expect(stats.covered_combos).toBe(2);
     expect(stats.total_variants).toBe(2);
-    expect(stats.coverage_percent).toBeCloseTo((2 / 20000) * 100, 1);
+    expect(stats.coverage_percent).toBeCloseTo((2 / 22800) * 100, 1);
 
     // Check domain breakdown
     expect(stats.by_domain.nature_animals).toBeDefined();
-    expect(stats.by_domain.nature_animals.total_entities).toBe(350);
-    expect(stats.by_domain.nature_animals.total_combos).toBe(350 * 8); // 2,800
+    expect(stats.by_domain.nature_animals.total_entities).toBe(343);
+    expect(stats.by_domain.nature_animals.total_combos).toBe(343 * 8); // 2,744
     expect(stats.by_domain.nature_animals.covered_combos).toBe(2);
 
     // Check archetype breakdown
     expect(stats.by_archetype.verdict_true_false.covered_combos).toBe(1);
     expect(stats.by_archetype.deep_trivia.covered_combos).toBe(1);
     expect(stats.by_archetype.versus_faceoff.covered_combos).toBe(0);
-    expect(stats.by_archetype.versus_faceoff.total_combos).toBe(2500);
+    expect(stats.by_archetype.versus_faceoff.total_combos).toBe(2850);
   });
 
   it("selectAutoCandidates selects empty combos (0 variants) first", () => {

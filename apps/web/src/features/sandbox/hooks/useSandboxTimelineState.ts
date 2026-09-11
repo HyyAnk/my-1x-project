@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { computeSandboxPhaseTimeline, getSandboxPhaseAtTime, getSandboxPhaseTimestamps, type SandboxPhase } from "@studio/shared";
 import { buildSandboxRehearsalCues, SandboxAudioEngine } from "../utils/sandboxAudioEngine";
 
 export type { SandboxPhase };
 
 export function useSandboxTimelineState() {
-  const timeline = computeSandboxPhaseTimeline();
+  const timeline = useMemo(() => computeSandboxPhaseTimeline(), []);
   const [phase, setPhase] = useState<SandboxPhase>("thinking");
   const [timelineSeconds, setTimelineSeconds] = useState(3.5);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -15,6 +15,10 @@ export function useSandboxTimelineState() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const audioEngineRef = useRef<SandboxAudioEngine | null>(null);
   const firedCuesRef = useRef<Set<string>>(new Set());
+  const timelineSecondsRef = useRef(timelineSeconds);
+  timelineSecondsRef.current = timelineSeconds;
+  const isPlayingRef = useRef(isPlaying);
+  isPlayingRef.current = isPlaying;
 
   // Initialize audio engine once
   if (!audioEngineRef.current && typeof window !== "undefined") {
@@ -33,7 +37,7 @@ export function useSandboxTimelineState() {
     ]);
   }
 
-  const sfxCues = buildSandboxRehearsalCues(timeline);
+  const sfxCues = useMemo(() => buildSandboxRehearsalCues(timeline), [timeline]);
 
   const seekIframe = useCallback((time: number) => {
     const frame = iframeRef.current;
@@ -85,7 +89,7 @@ export function useSandboxTimelineState() {
       return;
     }
 
-    playIframe(timelineSeconds);
+    playIframe(timelineSecondsRef.current);
 
     let animationFrameId: number | null = null;
     let lastStamp = performance.now();
@@ -126,7 +130,7 @@ export function useSandboxTimelineState() {
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [isPlaying, pauseIframe, playIframe, seekIframe, sfxCues, timeline.totalDuration, timelineSeconds]);
+  }, [isPlaying, pauseIframe, playIframe, seekIframe, sfxCues, timeline.totalDuration]);
 
   const handlePhaseChange = useCallback(
     (newPhase: SandboxPhase) => {
@@ -135,10 +139,7 @@ export function useSandboxTimelineState() {
       setPhase(newPhase);
 
       const timestamps = getSandboxPhaseTimestamps();
-      let targetTime = timestamps.find((t) => t.id === newPhase)?.time ?? 0;
-      if (newPhase === "thinking") {
-        targetTime = timeline.thinkingStart;
-      }
+      const targetTime = timestamps.find((t) => t.id === newPhase)?.time ?? 0;
       setTimelineSeconds(targetTime);
       seekIframe(targetTime);
       pauseIframe();
@@ -152,7 +153,7 @@ export function useSandboxTimelineState() {
         }
       }
     },
-    [pauseIframe, seekIframe, sfxCues, timeline.thinkingStart],
+    [pauseIframe, seekIframe, sfxCues],
   );
 
   const handleScrubberChange = useCallback(
@@ -162,6 +163,9 @@ export function useSandboxTimelineState() {
       setTimelineSeconds(clamped);
       setPhase(getSandboxPhaseAtTime(clamped));
       seekIframe(clamped);
+      if (!isPlayingRef.current) {
+        pauseIframe();
+      }
 
       // Adjust fired cues based on scrubbed position
       for (const cue of sfxCues) {
@@ -172,14 +176,14 @@ export function useSandboxTimelineState() {
         }
       }
     },
-    [seekIframe, sfxCues, timeline.totalDuration],
+    [pauseIframe, seekIframe, sfxCues, timeline.totalDuration],
   );
 
   const handleTogglePlay = useCallback(() => {
     setIsPlaying((prev) => {
       const next = !prev;
       if (next) {
-        let startTime = timelineSeconds;
+        let startTime = timelineSecondsRef.current;
         if (startTime >= timeline.totalDuration - 0.1) {
           setTimelineSeconds(0);
           seekIframe(0);
@@ -202,7 +206,7 @@ export function useSandboxTimelineState() {
       }
       return next;
     });
-  }, [phase, seekIframe, sfxCues, timeline.thinkingStart, timeline.totalDuration, timelineSeconds]);
+  }, [phase, seekIframe, sfxCues, timeline.thinkingStart, timeline.totalDuration]);
 
   const toggleMute = useCallback(() => {
     setIsMuted((prev) => {

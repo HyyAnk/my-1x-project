@@ -1,100 +1,95 @@
 import type { TransitionCategory, TransitionDefinition } from "./types.js";
 import { TransitionDefinitionSchema } from "./types.js";
+import {
+  getTransitionDefinition,
+  listTransitionDefinitions,
+  registerTransitionImplementation,
+  resetTransitionCatalog,
+} from "./catalog.js";
 
-export const CORE_TRANSITIONS: readonly TransitionDefinition[] = [
-  {
-    id: "stinger_swipe",
-    name: "Stinger Swipe",
+const LEGACY_METADATA: Record<string, { description: string; category: TransitionCategory; tag?: string; iconName?: string }> = {
+  stinger_swipe: {
     description: "Dynamic full-screen wipe animation with channel momentum.",
     category: "intro_outro",
-    defaultDuration: 0.5,
-    minDuration: 0.2,
-    maxDuration: 1.5,
-    cssClass: "transition-stinger",
     tag: "Recommended",
     iconName: "Lightning",
   },
-  {
-    id: "crossfade",
-    name: "Smooth Crossfade",
+  crossfade: {
     description: "Gentle cinematic blend between intro and question cards.",
     category: "intro_outro",
-    defaultDuration: 0.5,
-    minDuration: 0.2,
-    maxDuration: 1.5,
-    cssClass: "transition-crossfade",
     tag: "Cinematic",
     iconName: "Sparkle",
   },
-  {
-    id: "cut",
-    name: "Direct Cut",
+  cut: {
     description: "Instant snap transition straight into the first question.",
     category: "intro_outro",
-    defaultDuration: 0.0,
-    minDuration: 0.0,
-    maxDuration: 0.0,
-    cssClass: "transition-cut",
     tag: "Minimal",
     iconName: "Play",
   },
-  {
-    id: "bubble_splash",
-    name: "Bubble Splash",
+  bubble_splash: {
     description: "Playful bubble popping transition across scene backgrounds.",
     category: "scene",
-    defaultDuration: 0.86,
-    minDuration: 0.2,
-    maxDuration: 1.5,
-    cssClass: "transition-bubble_splash",
     tag: "Playful",
     iconName: "Drop",
   },
-  {
-    id: "brush_wave",
-    name: "Brush Wave",
+  brush_wave: {
     description: "Fluid paintbrush sweep transitioning between question palettes.",
     category: "scene",
-    defaultDuration: 0.8,
-    minDuration: 0.2,
-    maxDuration: 1.5,
-    cssClass: "transition-brush_wave",
     tag: "Artistic",
     iconName: "PaintBrush",
   },
-  {
-    id: "lightning_brush",
-    name: "Lightning Brush",
+  lightning_brush: {
     description: "High-voltage electrified brush stroke for high-stakes climactic beats.",
     category: "scene",
-    defaultDuration: 0.8,
-    minDuration: 0.2,
-    maxDuration: 1.5,
-    cssClass: "transition-lightning_brush",
     tag: "High Energy",
     iconName: "Lightning",
   },
+};
+
+function projectToDefinition(impl: ReturnType<typeof listTransitionDefinitions>[number]): TransitionDefinition {
+  const meta = LEGACY_METADATA[impl.id];
+  const isIntro = impl.placements.includes("intro");
+  const isScene = impl.placements.includes("scene");
+  const defaultCategory: TransitionCategory = isIntro && isScene ? "universal" : isIntro ? "intro_outro" : "scene";
+
+  return {
+    id: impl.id,
+    name: impl.name,
+    description: meta?.description ?? `${impl.name} transition`,
+    category: meta?.category ?? defaultCategory,
+    defaultDuration: impl.defaultDurationSeconds,
+    minDuration: impl.minDurationSeconds,
+    maxDuration: impl.maxDurationSeconds,
+    cssClass: impl.cssClass,
+    tag: meta?.tag,
+    iconName: meta?.iconName,
+  };
+}
+
+export const CORE_TRANSITIONS: readonly TransitionDefinition[] = [
+  projectToDefinition(getTransitionDefinition("stinger_swipe")),
+  projectToDefinition(getTransitionDefinition("crossfade")),
+  projectToDefinition(getTransitionDefinition("cut")),
+  projectToDefinition(getTransitionDefinition("bubble_splash")),
+  projectToDefinition(getTransitionDefinition("brush_wave")),
+  projectToDefinition(getTransitionDefinition("lightning_brush")),
 ] as const;
 
-const registry = new Map<string, TransitionDefinition>();
-
 export function resetTransitionRegistry(): void {
-  registry.clear();
-  for (const def of CORE_TRANSITIONS) {
-    registry.set(def.id, { ...def });
+  resetTransitionCatalog();
+}
+
+export function getTransition(id: string): TransitionDefinition | undefined {
+  try {
+    const impl = getTransitionDefinition(id);
+    return projectToDefinition(impl);
+  } catch {
+    return undefined;
   }
 }
 
-// Initialize registry with core transitions
-resetTransitionRegistry();
-
-export function getTransition(id: string): TransitionDefinition | undefined {
-  const item = registry.get(id);
-  return item ? { ...item } : undefined;
-}
-
 export function listTransitions(category?: TransitionCategory): TransitionDefinition[] {
-  const all = Array.from(registry.values()).map((def) => ({ ...def }));
+  const all = listTransitionDefinitions().map(projectToDefinition);
   if (!category) {
     return all;
   }
@@ -102,17 +97,45 @@ export function listTransitions(category?: TransitionCategory): TransitionDefini
 }
 
 export function isValidTransition(id: string, category?: TransitionCategory): boolean {
-  const def = registry.get(id);
-  if (!def) {
+  try {
+    const impl = getTransitionDefinition(id);
+    if (!category) {
+      return true;
+    }
+    const def = projectToDefinition(impl);
+    return def.category === category || def.category === "universal";
+  } catch {
     return false;
   }
-  if (!category) {
-    return true;
-  }
-  return def.category === category || def.category === "universal";
 }
 
 export function registerTransition(def: TransitionDefinition): void {
   const validated = TransitionDefinitionSchema.parse(def);
-  registry.set(validated.id, { ...validated });
+  const placements =
+    validated.category === "universal"
+      ? (["intro", "scene"] as const)
+      : validated.category === "intro_outro"
+        ? (["intro"] as const)
+        : (["scene"] as const);
+
+  LEGACY_METADATA[validated.id] = {
+    description: validated.description,
+    category: validated.category,
+    tag: validated.tag,
+    iconName: validated.iconName,
+  };
+
+  registerTransitionImplementation({
+    id: validated.id,
+    implementationRevision: "1.0.0",
+    name: validated.name,
+    placements,
+    defaultDurationSeconds: validated.defaultDuration,
+    minDurationSeconds: validated.minDuration,
+    maxDurationSeconds: validated.maxDuration,
+    cssClass: validated.cssClass,
+    handoff: validated.id === "cut" ? { kind: "cut" } : { kind: "cover", progress: 0.5 },
+    renderMarkup: () => `<div class="${validated.cssClass}"></div>`,
+    styles: `.${validated.cssClass} { display: block; }`,
+  });
 }

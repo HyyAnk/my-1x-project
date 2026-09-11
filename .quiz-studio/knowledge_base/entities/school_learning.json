@@ -469,9 +469,10 @@
     "id": "ENT-SCH-011",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Classroom Desk Globe",
+    "name": "Globe",
     "language": "en",
     "aliases": [
+      "Classroom Desk Globe",
       "Terrestrial Globe",
       "Geographic Globe",
       "World Globe"
@@ -515,9 +516,10 @@
     "id": "ENT-SCH-012",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Lined Notebook",
+    "name": "Notebook",
     "language": "en",
     "aliases": [
+      "Lined Notebook",
       "Exercise Book",
       "Composition Notebook",
       "Spiral Notebook",
@@ -562,9 +564,10 @@
     "id": "ENT-SCH-013",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Desktop Stapler",
+    "name": "Stapler",
     "language": "en",
     "aliases": [
+      "Desktop Stapler",
       "Paper Stapler",
       "Spring Fastener",
       "Office Stapler"
@@ -608,9 +611,10 @@
     "id": "ENT-SCH-014",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Steel Paperclip",
+    "name": "Paperclip",
     "language": "en",
     "aliases": [
+      "Steel Paperclip",
       "Wire Clip",
       "Gem Clip",
       "Page Fastener",
@@ -702,9 +706,10 @@
     "id": "ENT-SCH-016",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Fluorescent Highlighter",
+    "name": "Highlighter",
     "language": "en",
     "aliases": [
+      "Fluorescent Highlighter",
       "Text Marker",
       "Highlighter Pen",
       "Neon Marker",
@@ -749,9 +754,10 @@
     "id": "ENT-SCH-017",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Manual Pencil Sharpener",
+    "name": "Pencil Sharpener",
     "language": "en",
     "aliases": [
+      "Manual Pencil Sharpener",
       "Pencil Sharpener",
       "Prism Sharpener",
       "Hand Sharpener",
@@ -796,9 +802,10 @@
     "id": "ENT-SCH-018",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Solid Glue Stick",
+    "name": "Glue Stick",
     "language": "en",
     "aliases": [
+      "Solid Glue Stick",
       "Paste Stick",
       "Craft Glue Stick",
       "School Glue",
@@ -843,9 +850,10 @@
     "id": "ENT-SCH-019",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "School Safety Scissors",
+    "name": "Safety Scissors",
     "language": "en",
     "aliases": [
+      "School Safety Scissors",
       "Blunt-Tip Scissors",
       "Child Scissors",
       "Craft Scissors",
@@ -890,9 +898,10 @@
     "id": "ENT-SCH-020",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Self-Adhesive Sticky Notes",
+    "name": "Sticky Notes",
     "language": "en",
     "aliases": [
+      "Self-Adhesive Sticky Notes",
       "Post-it Note",
       "Sticky Memo",
       "Adhesive Notepad",
@@ -937,9 +946,10 @@
     "id": "ENT-SCH-021",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Paper Index Cards",
+    "name": "Index Cards",
     "language": "en",
     "aliases": [
+      "Paper Index Cards",
       "Flashcards",
       "Revision Cards",
       "Record Cards",
@@ -984,9 +994,10 @@
     "id": "ENT-SCH-022",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Three-Ring Binder",
+    "name": "Binder",
     "language": "en",
     "aliases": [
+      "Three-Ring Binder",
       "Ring Binder",
       "File Folder",
       "Lever Arch File",
@@ -1031,9 +1042,10 @@
     "id": "ENT-SCH-023",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Correction Tape Dispenser",
+    "name": "Correction Tape",
     "language": "en",
     "aliases": [
+      "Correction Tape Dispenser",
       "Tipp-Ex Tape",
       "White-Out Tape",
       "Correction Roller",
@@ -1078,9 +1090,10 @@
     "id": "ENT-SCH-024",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Zippered Pencil Case",
+    "name": "Pencil Case",
     "language": "en",
     "aliases": [
+      "Zippered Pencil Case",
       "Pencil Pouch",
       "Stationery Bag",
       "Pen Case",
@@ -1125,9 +1138,10 @@
     "id": "ENT-SCH-025",
     "domain_id": "school_learning",
     "subtopic_id": "stationery_supplies",
-    "name": "Plastic Protractor",
+    "name": "Protractor",
     "language": "en",
     "aliases": [
+      "Plastic Protractor",
       "Angle Ruler",
       "Half-Circle Protractor",
       "Semicircular Protractor",
@@ -1172,9 +1186,10 @@
     "id": "ENT-SCH-026",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
-    "name": "Compound Optical Microscope",
+    "name": "Microscope",
     "language": "en",
     "aliases": [
+      "Compound Optical Microscope",
       "Light Microscope",
       "Student Microscope",
       "Biological Microscope",
@@ -1219,9 +1234,10 @@
     "id": "ENT-SCH-027",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
-    "name": "Glass Test Tube",
+    "name": "Test Tube",
     "language": "en",
     "aliases": [
+      "Glass Test Tube",
       "Culture Tube",
       "Boiling Tube",
       "Sample Tube",
@@ -1360,9 +1376,10 @@
     "id": "ENT-SCH-030",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
-    "name": "Borosilicate Chemistry Beaker",
+    "name": "Beaker",
     "language": "en",
     "aliases": [
+      "Borosilicate Chemistry Beaker",
       "Griffin Beaker",
       "Glass Beaker",
       "Laboratory Beaker",
@@ -1501,53 +1518,6 @@
     "id": "ENT-SCH-033",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
-    "name": "Aneroid Barometer",
-    "language": "en",
-    "aliases": [
-      "Weather Barometer",
-      "Atmospheric Pressure Gauge",
-      "Classroom Barometer",
-      "Dial Barometer"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A vintage brass dial aneroid barometer mounted on mahogany wood, with a delicate needle indicating changing atmospheric millibars, 9:16 vertical composition.",
-    "core_traits": [
-      "Meteorological instrument that measures atmospheric air pressure without liquid mercury",
-      "Operates using a flexible sealed metallic capsule containing an internal vacuum",
-      "Atmospheric pressure changes compress or expand the capsule, mechanically moving an indicator pointer dial",
-      "Crucial classroom instrument for teaching barometric weather patterns, stormy low pressure, and fair high pressure"
-    ],
-    "distractor_pool": [
-      "Mercury Clinical Thermometer",
-      "Hygrometer",
-      "Anemometer",
-      "Spring Dynamometer Scale",
-      "Acoustic Stethoscope"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "The word 'aneroid' refers to an ancient Greek scientist who discovered barometric air pressure.",
-        "verdict": "myth",
-        "explanation": "The word 'aneroid' is derived from the Greek 'a-neros', meaning 'without fluid or liquid', distinguishing it from toxic liquid mercury barometers.",
-        "fun_fact": "French engineer Lucien Vidi invented the aneroid barometer in 1844."
-      },
-      {
-        "claim": "Rapidly dropping air pressure on a barometer reliably predicts approaching stormy weather.",
-        "verdict": "fact",
-        "explanation": "Low pressure systems feature rising warm air that draws in converging moist winds, triggering condensation, cloud formation, and rainfall.",
-        "fun_fact": "Altimeters used in airplanes and hiking watches are essentially specialized aneroid barometers calibrated to measure altitude above sea level."
-      }
-    ],
-    "versus_candidates": [
-      "Mercury Clinical Thermometer",
-      "Sand Hourglass",
-      "Mechanical Balance Scale"
-    ]
-  },
-  {
-    "id": "ENT-SCH-034",
-    "domain_id": "school_learning",
-    "subtopic_id": "school_science",
     "name": "Sand Hourglass",
     "language": "en",
     "aliases": [
@@ -1592,12 +1562,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-035",
+    "id": "ENT-SCH-034",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
-    "name": "Laboratory Bunsen Burner",
+    "name": "Bunsen Burner",
     "language": "en",
     "aliases": [
+      "Laboratory Bunsen Burner",
       "Gas Burner",
       "Teclu Burner",
       "Science Burner",
@@ -1639,7 +1610,7 @@
     ]
   },
   {
-    "id": "ENT-SCH-036",
+    "id": "ENT-SCH-035",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
     "name": "Anatomical Skeleton Model",
@@ -1686,7 +1657,7 @@
     ]
   },
   {
-    "id": "ENT-SCH-037",
+    "id": "ENT-SCH-036",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
     "name": "Solar System Desk Mobile",
@@ -1733,7 +1704,7 @@
     ]
   },
   {
-    "id": "ENT-SCH-038",
+    "id": "ENT-SCH-037",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
     "name": "Anatomical Human Eye Model",
@@ -1780,12 +1751,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-039",
+    "id": "ENT-SCH-038",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
-    "name": "Mechanical Balance Scale",
+    "name": "Balance Scale",
     "language": "en",
     "aliases": [
+      "Mechanical Balance Scale",
       "Two-Pan Balance",
       "Beam Balance",
       "Laboratory Scale",
@@ -1827,59 +1799,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-040",
+    "id": "ENT-SCH-039",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
-    "name": "Spring Dynamometer Scale",
+    "name": "Petri Dish",
     "language": "en",
     "aliases": [
-      "Spring Balance",
-      "Newton Meter",
-      "Force Gauge",
-      "Tension Scale"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A transparent cylindrical spring dynamometer hanging vertically with an extended internal coil spring measuring tension in Newtons, 9:16 vertical view.",
-    "core_traits": [
-      "Handheld force-measuring instrument consisting of a coiled steel spring enclosed in a clear calibrated sleeve",
-      "Features a top suspension ring and a bottom hook to hang masses or pull objects",
-      "Calibrated in Newtons (N) for force and grams (g) for mass equivalence",
-      "Used in science labs to demonstrate Hooke's Law and measure kinetic friction forces"
-    ],
-    "distractor_pool": [
-      "Mechanical Balance Scale",
-      "Horseshoe Magnet",
-      "Wooden Ruler",
-      "Tuning Fork",
-      "Aneroid Barometer"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "A spring balance measures the exact same weight anywhere in the universe.",
-        "verdict": "myth",
-        "explanation": "A spring balance measures gravitational pulling force; on the Moon, where gravity is one-sixth of Earth, the spring extends only one-sixth as far.",
-        "fun_fact": "Unlike a two-pan beam balance, a spring balance reads different values on different planets."
-      },
-      {
-        "claim": "The extension of the spring is directly proportional to the applied load within its elastic limit.",
-        "verdict": "fact",
-        "explanation": "This is Hooke's Law (F = k * x), stating that spring displacement is linear until the material exceeds its permanent deformation threshold.",
-        "fun_fact": "Robert Hooke first published his law as an anagram 'ceiiinosssttuv' in 1676 to protect his intellectual priority."
-      }
-    ],
-    "versus_candidates": [
-      "Mechanical Balance Scale",
-      "Wooden Ruler",
-      "Horseshoe Magnet"
-    ]
-  },
-  {
-    "id": "ENT-SCH-041",
-    "domain_id": "school_learning",
-    "subtopic_id": "school_science",
-    "name": "Glass Petri Dish",
-    "language": "en",
-    "aliases": [
+      "Glass Petri Dish",
       "Culture Dish",
       "Cell Culture Plate",
       "Agar Plate",
@@ -1921,7 +1847,7 @@
     ]
   },
   {
-    "id": "ENT-SCH-042",
+    "id": "ENT-SCH-040",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
     "name": "Tuning Fork",
@@ -1968,12 +1894,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-043",
+    "id": "ENT-SCH-041",
     "domain_id": "school_learning",
     "subtopic_id": "school_science",
-    "name": "Iron Filings Kit",
+    "name": "Iron Filings",
     "language": "en",
     "aliases": [
+      "Iron Filings Kit",
       "Magnetic Field Filings",
       "Iron Powder",
       "Magnetism Demonstrator",
@@ -2015,12 +1942,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-044",
+    "id": "ENT-SCH-042",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Geometric Cube",
+    "name": "Cube",
     "language": "en",
     "aliases": [
+      "Geometric Cube",
       "Regular Hexahedron",
       "Solid Cube",
       "Square Block",
@@ -2062,12 +1990,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-045",
+    "id": "ENT-SCH-043",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Solid Sphere",
+    "name": "Sphere",
     "language": "en",
     "aliases": [
+      "Solid Sphere",
       "Round Ball",
       "Perfect Sphere",
       "3D Circle",
@@ -2109,12 +2038,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-046",
+    "id": "ENT-SCH-044",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Circular Cylinder",
+    "name": "Cylinder",
     "language": "en",
     "aliases": [
+      "Circular Cylinder",
       "Right Cylinder",
       "Cylindrical Column",
       "Round Cylinder",
@@ -2156,7 +2086,7 @@
     ]
   },
   {
-    "id": "ENT-SCH-047",
+    "id": "ENT-SCH-045",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
     "name": "Conical Cone",
@@ -2203,12 +2133,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-048",
+    "id": "ENT-SCH-046",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Square Pyramid",
+    "name": "Pyramid",
     "language": "en",
     "aliases": [
+      "Square Pyramid",
       "Regular Pyramid",
       "Four-Sided Pyramid",
       "Pentahedron",
@@ -2250,7 +2181,7 @@
     ]
   },
   {
-    "id": "ENT-SCH-049",
+    "id": "ENT-SCH-047",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
     "name": "Triangular Prism",
@@ -2297,12 +2228,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-050",
+    "id": "ENT-SCH-048",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Regular Hexagon",
+    "name": "Hexagon",
     "language": "en",
     "aliases": [
+      "Regular Hexagon",
       "Six-Sided Polygon",
       "Honeycomb Shape",
       "Hexagonal Ring",
@@ -2344,59 +2276,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-051",
+    "id": "ENT-SCH-049",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Logarithmic Spiral",
+    "name": "Crescent",
     "language": "en",
     "aliases": [
-      "Golden Spiral",
-      "Equiangular Spiral",
-      "Growth Spiral",
-      "Spira Mirabilis"
-    ],
-    "difficulty": 2,
-    "visual_anchor": "A glowing mathematical logarithmic spiral tracing through a cross-section of a nautilus shell against dark slate, 9:16 vertical golden ratio view.",
-    "core_traits": [
-      "Self-similar geometric spiral curve whose radius grows exponentially with angle",
-      "Maintains a constant angle between the tangent line and the radial line at every point",
-      "Closely approximates the golden spiral derived from Fibonacci numbers and the golden ratio (phi)",
-      "Observed universally in nautilus shells, sunflower seed heads, spiral galaxies, and hurricane storm bands"
-    ],
-    "distractor_pool": [
-      "Archimedean Spiral",
-      "Conical Cone",
-      "Solid Sphere",
-      "Circular Cylinder",
-      "Geometric Torus"
-    ],
-    "facts_and_myths": [
-      {
-        "claim": "An Archimedean spiral and a logarithmic spiral are mathematically the same curve.",
-        "verdict": "myth",
-        "explanation": "In an Archimedean spiral (like a coiled rope or vinyl record groove), distance between coils is constant; in a logarithmic spiral, distance expands exponentially.",
-        "fun_fact": "Swiss mathematician Jacob Bernoulli was so enchanted by the curve that he dubbed it 'spira mirabilis' (the miraculous spiral)."
-      },
-      {
-        "claim": "Flying insects often fly in logarithmic spirals when approaching an artificial light source at night.",
-        "verdict": "fact",
-        "explanation": "Moths navigate by keeping celestial light at a constant visual angle; near a close light bulb, maintaining a fixed angle forces a inward spiral path.",
-        "fun_fact": "Peregrine falcons dive toward prey in logarithmic spiral paths to maintain optimal binocular vision while plummeting."
-      }
-    ],
-    "versus_candidates": [
-      "Regular Hexagon",
-      "Five-Pointed Star",
-      "Conical Cone"
-    ]
-  },
-  {
-    "id": "ENT-SCH-052",
-    "domain_id": "school_learning",
-    "subtopic_id": "shapes_geometry",
-    "name": "Crescent Moon Shape",
-    "language": "en",
-    "aliases": [
+      "Crescent Moon Shape",
       "Lune",
       "Meniscus Shape",
       "Sickle Curve",
@@ -2438,12 +2324,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-053",
+    "id": "ENT-SCH-050",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Five-Pointed Star",
+    "name": "Star",
     "language": "en",
     "aliases": [
+      "Five-Pointed Star",
       "Pentagram",
       "Star Polygon",
       "Five-Arm Star",
@@ -2485,12 +2372,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-054",
+    "id": "ENT-SCH-051",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Heart Shape",
+    "name": "Heart",
     "language": "en",
     "aliases": [
+      "Heart Shape",
       "Cardioid",
       "Valentine Heart",
       "Heart Symbol",
@@ -2532,12 +2420,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-055",
+    "id": "ENT-SCH-052",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Diamond Shape",
+    "name": "Diamond",
     "language": "en",
     "aliases": [
+      "Diamond Shape",
       "Rhombus",
       "Lozenge",
       "Skew Square",
@@ -2579,12 +2468,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-056",
+    "id": "ENT-SCH-053",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Equilateral Triangle",
+    "name": "Triangle",
     "language": "en",
     "aliases": [
+      "Equilateral Triangle",
       "Regular Triangle",
       "Trigon",
       "Equiangular Triangle",
@@ -2626,12 +2516,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-057",
+    "id": "ENT-SCH-054",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Regular Octagon",
+    "name": "Octagon",
     "language": "en",
     "aliases": [
+      "Regular Octagon",
       "Eight-Sided Polygon",
       "Stop Sign Shape",
       "Octagonal Ring",
@@ -2673,12 +2564,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-058",
+    "id": "ENT-SCH-055",
     "domain_id": "school_learning",
     "subtopic_id": "shapes_geometry",
-    "name": "Geometric Torus",
+    "name": "Donut Shape",
     "language": "en",
     "aliases": [
+      "Geometric Torus",
       "Donut Solid",
       "Toroid",
       "Anchor Ring",
@@ -2720,12 +2612,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-059",
+    "id": "ENT-SCH-056",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
-    "name": "Adhesive Bandage",
+    "name": "Bandage",
     "language": "en",
     "aliases": [
+      "Adhesive Bandage",
       "Plaster",
       "Band-Aid",
       "Sticking Plaster",
@@ -2768,12 +2661,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-060",
+    "id": "ENT-SCH-057",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
-    "name": "Mercury Clinical Thermometer",
+    "name": "Thermometer",
     "language": "en",
     "aliases": [
+      "Mercury Clinical Thermometer",
       "Fever Thermometer",
       "Glass Thermometer",
       "Medical Thermometer",
@@ -2815,7 +2709,7 @@
     ]
   },
   {
-    "id": "ENT-SCH-061",
+    "id": "ENT-SCH-058",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
     "name": "Medical Syringe",
@@ -2862,12 +2756,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-062",
+    "id": "ENT-SCH-059",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
-    "name": "Sterile Saline Eye Drops",
+    "name": "Eye Drops",
     "language": "en",
     "aliases": [
+      "Sterile Saline Eye Drops",
       "Artificial Tears",
       "Eye Wash Solution",
       "Saline Solution",
@@ -2909,12 +2804,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-063",
+    "id": "ENT-SCH-060",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
-    "name": "Surgical Face Mask",
+    "name": "Face Mask",
     "language": "en",
     "aliases": [
+      "Surgical Face Mask",
       "Medical Mask",
       "Procedure Mask",
       "Hygiene Mask",
@@ -2956,12 +2852,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-064",
+    "id": "ENT-SCH-061",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
-    "name": "Wooden Underarm Crutches",
+    "name": "Crutches",
     "language": "en",
     "aliases": [
+      "Wooden Underarm Crutches",
       "Axillary Crutches",
       "Walking Crutches",
       "Medical Crutches",
@@ -3003,12 +2900,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-065",
+    "id": "ENT-SCH-062",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
-    "name": "Sterile Cotton Swab",
+    "name": "Cotton Swab",
     "language": "en",
     "aliases": [
+      "Sterile Cotton Swab",
       "Q-tip",
       "Cotton Bud",
       "Swab Stick",
@@ -3050,12 +2948,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-066",
+    "id": "ENT-SCH-063",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
-    "name": "Instant Chemical Cold Pack",
+    "name": "Cold Pack",
     "language": "en",
     "aliases": [
+      "Instant Chemical Cold Pack",
       "Cold Ice Pack",
       "Chemical Cold Compress",
       "First Aid Ice Pack",
@@ -3097,12 +2996,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-067",
+    "id": "ENT-SCH-064",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
-    "name": "School First Aid Kit Box",
+    "name": "First Aid Kit",
     "language": "en",
     "aliases": [
+      "School First Aid Kit Box",
       "First Aid Cabinet",
       "Emergency Medical Kit",
       "First Aid Box",
@@ -3144,12 +3044,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-068",
+    "id": "ENT-SCH-065",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
-    "name": "Acoustic Stethoscope",
+    "name": "Stethoscope",
     "language": "en",
     "aliases": [
+      "Acoustic Stethoscope",
       "Binaural Stethoscope",
       "Medical Stethoscope",
       "Phonendoscope",
@@ -3191,12 +3092,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-069",
+    "id": "ENT-SCH-066",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
-    "name": "Elastic Compression Bandage",
+    "name": "Elastic Bandage",
     "language": "en",
     "aliases": [
+      "Elastic Compression Bandage",
       "Ace Bandage",
       "Crepe Bandage",
       "Elastic Wrap",
@@ -3238,12 +3140,13 @@
     ]
   },
   {
-    "id": "ENT-SCH-070",
+    "id": "ENT-SCH-067",
     "domain_id": "school_learning",
     "subtopic_id": "school_first_aid",
-    "name": "Antiseptic Wound Wipes",
+    "name": "Antiseptic Wipes",
     "language": "en",
     "aliases": [
+      "Antiseptic Wound Wipes",
       "Alcohol Prep Pad",
       "Disinfectant Wipe",
       "Sanitizing Swab",

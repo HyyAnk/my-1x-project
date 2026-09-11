@@ -201,9 +201,9 @@ describe("Question Bank REST API Routes", () => {
     expect(res.statusCode).toBe(200);
     const body = res.json<QuestionBankRouteBody>();
     expect(body.coverage).toBeDefined();
-    expect(body.coverage.total_combos).toBe(20000);
+    expect(body.coverage.total_combos).toBe(22800);
     expect(body.coverage.covered_combos).toBeGreaterThanOrEqual(0);
-    expect(Object.keys(body.coverage.by_domain).length).toBe(14);
+    expect(Object.keys(body.coverage.by_domain).length).toBe(18);
     expect(Object.keys(body.coverage.by_archetype).length).toBe(8);
   });
 
@@ -246,7 +246,7 @@ describe("Question Bank REST API Routes", () => {
     expect(body.success).toBe(true);
     expect(body.approvedCount).toBe(1);
     expect(body.matrixCoverage).toBeDefined();
-    expect(body.matrixCoverage.total_combos).toBe(20000);
+    expect(body.matrixCoverage.total_combos).toBe(22800);
     const qaSummary = (body as Record<string, unknown>).qaSummary as Record<string, unknown> | undefined;
     expect(qaSummary).toEqual({
       duplicateRejections: 0,
