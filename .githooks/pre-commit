@@ -1,4 +1,4 @@
 #!/bin/sh
-# Pre-commit hook: commit gate bypassed / neutralized.
-# Regular git commits are allowed without claim or zone locks.
-exit 0
+# Pre-commit hook: Repository hygiene gate.
+# Blocks runtime backup leaks and oversized assets from entering git.
+node "$(dirname "$0")/check-staged.mjs"

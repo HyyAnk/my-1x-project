@@ -50,6 +50,9 @@ output/
 .quiz-studio/question_bank/
 .quiz-studio/knowledge_base/entity_assets/
 **/.quiz-studio/knowledge_base/entity_assets/
+.quiz-studio/knowledge_base/backups/
+**/.quiz-studio/knowledge_base/backups/
+.quiz-studio/**/backups/
 
 
 # Heavy media assets managed via GitHub Releases
