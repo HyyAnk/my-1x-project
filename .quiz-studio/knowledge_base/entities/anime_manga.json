@@ -6633,5 +6633,1161 @@
       "Faye Valentine",
       "Balalaika"
     ]
+  },
+  {
+    "id": "ENT-ANM-145",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Doraemon",
+    "language": "en",
+    "aliases": [
+      "Doraemon: Gadget Cat from the Future",
+      "Doramon",
+      "Dora-chan"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A whimsical vertical 9:16 anime poster showcasing a bright pink Anywhere Door standing open on a lush grassy hill under a bright blue sky, revealing the cosmic expanse of space inside, with a golden bell collar and a flying bamboo-copter floating beside a robotic earless blue cat.",
+    "core_traits": [
+      "Created by the manga duo Fujiko F. Fujio (Hiroshi Fujimoto and Motoo Abiko) in December 1969, serialized across multiple Shogakukan children's learning magazines.",
+      "Follows Doraemon, an earless robotic cat sent back in time from the 22nd century to guide and support the clumsy, unlucky elementary school boy Nobita Nobi.",
+      "Features the fourth-dimensional pocket containing futuristic secret gadgets such as the Anywhere Door, Bamboo-Copter (Take-Copter), and Time Machine.",
+      "One of the best-selling manga franchises in history with over 170 million copies sold and designated as Japan's first official anime cultural ambassador in 2008."
+    ],
+    "distractor_pool": [
+      "Ninja Hattori-kun",
+      "Perman",
+      "Chibi Maruko-chan",
+      "Sazae-san",
+      "Kiteretsu Daihyakka"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Doraemon was originally yellow and had ears until a robotic mouse chewed them off.",
+        "verdict": "fact",
+        "explanation": "According to the canonical backstory, Doraemon was manufactured as a yellow robotic cat with ears. After a mechanical mouse gnawed his ears off at a robotic hospital, a series of mishaps and crying turned his yellow coating into blue.",
+        "fun_fact": "His extreme phobia of mice (musophobia) stems directly from this traumatic ear-chewing incident."
+      },
+      {
+        "claim": "The official ending of Doraemon was written by Fujiko F. Fujio where Nobita wakes up from a coma.",
+        "verdict": "myth",
+        "explanation": "Fujiko F. Fujio never wrote an ending where Nobita wakes from a coma or discovers Doraemon was a hallucination. That gloomy tale is a famous urban legend spread via chain letters and early internet forums; the author intended the series to remain timeless without a tragic finale.",
+        "fun_fact": "When Fujiko F. Fujio passed away in 1996, the creative production company Fujiko Pro officially confirmed that Doraemon has no definitive final chapter."
+      }
+    ],
+    "versus_candidates": [
+      "Crayon Shin-chan",
+      "Chibi Maruko-chan",
+      "Sazae-san"
+    ]
+  },
+  {
+    "id": "ENT-ANM-146",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Pokemon",
+    "language": "en",
+    "aliases": [
+      "Pocket Monsters",
+      "PokeMon",
+      "Pokemon the Series"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A dramatic vertical 9:16 cinematic scene depicting a glowing red-and-white Poke Ball releasing crackling blue electric energy onto a stadium battlefield, with Pikachu's silhouette charging a Thunderbolt amidst floating stadium lights and particle sparks.",
+    "core_traits": [
+      "Created by Satoshi Tajiri and Ken Sugimori with Game Freak and Nintendo, debuting as video games in 1996 followed by the anime adaptation in April 1997 by OLM Inc.",
+      "Follows the journey of Ash Ketchum (Satoshi) and his loyal electric-type partner Pikachu as they travel across diverse regions aiming to become a Pokemon Master.",
+      "Centred on catching, raising, and battling collectible creatures using Poke Balls, evolving partners, and mastering elemental affinities, Mega Evolution, Z-Moves, and Dynamax.",
+      "The highest-grossing media franchise of all time, generating over 100 billion dollars in worldwide revenue across games, cards, anime, and merchandise."
+    ],
+    "distractor_pool": [
+      "Digimon",
+      "Yo-kai Watch",
+      "Monster Rancher",
+      "Bakugan",
+      "Yu-Gi-Oh!"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Clefairy was originally intended to be the primary mascot of the Pokemon anime series instead of Pikachu.",
+        "verdict": "fact",
+        "explanation": "In early promotional planning and the initial Pocket Monsters manga series by Kosaku Anakubo, Clefairy was positioned as the central companion. Pikachu was ultimately chosen for the television anime because its yellow coloration and cute design appealed equally to boys and girls.",
+        "fun_fact": "Pikachu's name is a portmanteau of 'pika' (the Japanese onomatopoeia for an electric spark) and 'chu' (the sound a mouse makes)."
+      },
+      {
+        "claim": "Ash Ketchum remained ten years old throughout the entire 25-year run of the mainline anime series.",
+        "verdict": "fact",
+        "explanation": "Despite traveling through eight major regions and over 1,200 episodes from 1997 to 2023, the narrative explicitly maintained Ash's age as ten years old through a floating timeline mechanic until he achieved his world champion title.",
+        "fun_fact": "Ash finally captured the World Coronation Series World Championship by defeating Leon in November 2022, precisely 25 years after his journey began."
+      }
+    ],
+    "versus_candidates": [
+      "Digimon Adventure",
+      "Yu-Gi-Oh!",
+      "Yo-kai Watch"
+    ]
+  },
+  {
+    "id": "ENT-ANM-147",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Detective Conan",
+    "language": "en",
+    "aliases": [
+      "Case Closed",
+      "Meitantei Conan",
+      "Meitantei Konan"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A shadowy noir-style vertical 9:16 composition showcasing a magnifying glass reflecting a crime scene blueprint, framed by a crimson bowtie voice transmitter, wristwatch stun gun, and the silhouette of a bespectacled boy under rain-slicked city lamplight.",
+    "core_traits": [
+      "Created by Gosho Aoyama and serialized in Shogakukan's Weekly Shonen Sunday starting in January 1994, adapted into an anime by TMS Entertainment in 1996.",
+      "Chronicles high school prodigy detective Shinichi Kudo, who is transformed into child Conan Edogawa by the mysterious Black Organization's experimental drug APTX 4869.",
+      "Features Agatha-Christie-inspired locked-room deduction supported by Professor Agasa's high-tech inventions including the Voice-Changing Bowtie, Stun-Gun Wristwatch, and Turbo Engine Skateboard.",
+      "One of the longest-running anime and manga franchises with over 270 million copies sold and annual theatrical films routinely topping the Japanese box office."
+    ],
+    "distractor_pool": [
+      "Kindaichi Case Files",
+      "Death Note",
+      "Monster",
+      "Lupin the Third",
+      "City Hunter"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The pseudonym Conan Edogawa was derived from the authors Arthur Conan Doyle and Edogawa Ranpo.",
+        "verdict": "fact",
+        "explanation": "When Ran Mouri catches Shinichi right after his regression and asks his name, he glances at a bookshelf containing Sir Arthur Conan Doyle (Sherlock Holmes) and Edogawa Ranpo (celebrated Japanese mystery novelist) and improvises 'Conan Edogawa'.",
+        "fun_fact": "Edogawa Ranpo was itself a Japanese phonetic pen name honoring Edgar Allan Poe."
+      },
+      {
+        "claim": "The alias 'Case Closed' was adopted in North America due to trademark conflicts with Robert E. Howard's Conan the Barbarian.",
+        "verdict": "fact",
+        "explanation": "Funimation localized the English release as 'Case Closed' to avert potential trademark litigation from the estate and rights holders of Robert E. Howard's fantasy franchise 'Conan the Barbarian'.",
+        "fun_fact": "The English manga localization by Viz Media also preserved the 'Case Closed' title while renaming Shinichi Kudo to Jimmy Kudo."
+      }
+    ],
+    "versus_candidates": [
+      "Kindaichi Case Files",
+      "Death Note",
+      "Lupin the Third"
+    ]
+  },
+  {
+    "id": "ENT-ANM-148",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Crayon Shin-chan",
+    "language": "en",
+    "aliases": [
+      "Shin-chan",
+      "Kureyon Shinchan",
+      "Shin Chan"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A vibrant vertical 9:16 pop-art poster showcasing a mischievous five-year-old boy in a bright red shirt and yellow shorts grinning wildly, holding an Action Mask figure while chasing a fluffy white dog across the sunny suburbs of Kasukabe.",
+    "core_traits": [
+      "Created by Yoshito Usui and published in Futabasha's Weekly Manga Action starting in August 1990, adapted into an anime television series by Shin-Ei Animation in 1992.",
+      "Follows Shinnosuke 'Shin-chan' Nohara, an irreverent, precocious five-year-old whose outlandish antics constantly befuddle his parents Hiroshi and Misae in Kasukabe, Saitama.",
+      "Known for slapstick slice-of-life satire, signature comedic gags like the 'Buri Buri dance', and parody superhero motifs such as Action Kamen (Action Mask).",
+      "A multi-billion dollar cultural mainstay broadcast in dozens of countries with over 148 million manga copies sold and more than 30 blockbuster theatrical animated films."
+    ],
+    "distractor_pool": [
+      "Doraemon",
+      "Chibi Maruko-chan",
+      "Atashin'chi",
+      "Gintama",
+      "Kochikame"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Crayon Shin-chan was originally conceived and published as a seinen manga targeted at adult readers rather than young children.",
+        "verdict": "fact",
+        "explanation": "Yoshito Usui originally penned the manga for Weekly Manga Action, a magazine aimed at young adult men (seinen), focusing on satirical commentary on Japanese suburban family life and mature adult humor before the anime adapted it for family viewing.",
+        "fun_fact": "Because of its edgy toilet humor and cheeky behavior, the anime frequently topped surveys of 'shows parents least want their children to watch' in Japan during the 1990s."
+      },
+      {
+        "claim": "The series ended immediately following the tragic death of author Yoshito Usui in 2009.",
+        "verdict": "myth",
+        "explanation": "Although author Yoshito Usui tragically passed away while hiking at Mount Arafune in September 2009, his team of assistants formed 'Usui Yoshito & UY Studio' and continued the manga under the title 'New Crayon Shin-chan' alongside the ongoing anime adaptation.",
+        "fun_fact": "The anime series has aired more than 1,200 episodes and continues to release a high-grossing feature film every single year."
+      }
+    ],
+    "versus_candidates": [
+      "Doraemon",
+      "Chibi Maruko-chan",
+      "Kochikame"
+    ]
+  },
+  {
+    "id": "ENT-ANM-149",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Yu-Gi-Oh!",
+    "language": "en",
+    "aliases": [
+      "Yu-Gi-Oh! Duel Monsters",
+      "King of Games",
+      "Yugioh"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A mystical vertical 9:16 illustration featuring the glowing golden Millennium Puzzle casting ancient Egyptian hieroglyphic shadows, hovering above three swirling duel monster cards with the radiant spectral silhouette of the Nameless Pharaoh.",
+    "core_traits": [
+      "Created by Kazuki Takahashi and serialized in Shueisha's Weekly Shonen Jump from 1996 to 2004, with the globally popular 'Duel Monsters' anime produced by Studio Gallop in 2000.",
+      "Follows timid high schooler Yugi Mutou, who solves the ancient Millennium Puzzle and awakens a mysterious, confident alter-ego spirit known as Yami Yugi (Pharaoh Atem).",
+      "Evolved from playing diverse deadly 'Shadow Games' into the iconic Duel Monsters trading card system utilizing holographic duel disks, life points, spell/trap cards, and tribute summons.",
+      "Spawned the Guinness World Record-holding trading card game with over 25 billion cards sold worldwide and an enduring multimedia franchise spanning multiple generational spin-offs."
+    ],
+    "distractor_pool": [
+      "Duel Masters",
+      "Cardfight!! Vanguard",
+      "Beyblade",
+      "Pokemon",
+      "Magic: The Gathering"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "In the original manga and early 1998 Toei anime adaptation, the series was not centered on card battles but on various deadly occult games.",
+        "verdict": "fact",
+        "explanation": "The early chapters of Kazuki Takahashi's manga focused on Yami Yugi punishing criminals and bullies in lethal 'Penalty Games' using dice, puzzles, and tabletop challenges. The card game 'Magic & Wizards' was introduced in chapter 9 as a one-off homage to Magic: The Gathering, but overwhelming fan response transformed it into the core premise.",
+        "fun_fact": "The 1998 27-episode anime adaptation by Toei Animation covering these early chapters is widely referred to by international fans as 'Season Zero'."
+      },
+      {
+        "claim": "Kazuki Takahashi created the card game Duel Monsters based on an authentic ancient Egyptian card game played by Pharaohs.",
+        "verdict": "myth",
+        "explanation": "Ancient Egyptians played board games such as Senet and Mehen, but trading card games did not exist in antiquity. Kazuki Takahashi invented the card mechanics inspired by modern tabletop games like Magic: The Gathering and wove fictional Egyptian mythology, stone tablets, and mystical Ka monsters into the lore.",
+        "fun_fact": "The Millennium Puzzle was originally gifted to Yugi by his grandfather Sugoroku Mutou, who retrieved it from an archaeological expedition in the Valley of the Tombs."
+      }
+    ],
+    "versus_candidates": [
+      "Pokemon",
+      "Duel Masters",
+      "Cardfight!! Vanguard"
+    ]
+  },
+  {
+    "id": "ENT-ANM-150",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Sailor Moon",
+    "language": "en",
+    "aliases": [
+      "Pretty Guardian Sailor Moon",
+      "Bishoujo Senshi Sailor Moon",
+      "Sailor Moon Crystal",
+      "Pretty Soldier Sailor Moon"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Cinematic vertical 9:16 art poster of the Silver Millennium moon castle glowing under a celestial night sky, centered on Sailor Moon holding the radiant Moon Stick aloft while surrounded by glowing planetary symbols of the Sailor Guardians.",
+    "core_traits": [
+      "Created by manga artist Naoko Takeuchi and serialized in Kodansha's Nakayoshi magazine starting in December 1991",
+      "Chronicles schoolgirl Usagi Tsukino who discovers her destiny as Sailor Moon, reincarnated princess of the Moon Kingdom defending the galaxy",
+      "Pioneered the magical girl sentai team dynamic where guardians harness planetary celestial powers using magical transformation brooches and wands",
+      "Revolutionized the shoujo genre globally with over 46 million manga copies sold and establishing magical girl anime across Western pop culture"
+    ],
+    "distractor_pool": [
+      "Cardcaptor Sakura",
+      "Magic Knight Rayearth",
+      "Revolutionary Girl Utena",
+      "Tokyo Mew Mew",
+      "Princess Tutu"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Creator Naoko Takeuchi held a degree in chemistry and is a licensed pharmacist, which inspired the mineral-themed villains.",
+        "verdict": "fact",
+        "explanation": "Takeuchi graduated from Kyoritsu University of Pharmacy with a degree in chemistry, leading her to name many villains after gems, minerals, and metals such as Jadeite, Nephrite, Zoisite, and Kunzite.",
+        "fun_fact": "Takeuchi is married to Yoshihiro Togashi, the creator of Hunter x Hunter and Yu Yu Hakusho."
+      },
+      {
+        "claim": "Sailor Moon was originally conceived and pitched as a solo heroine story without any Sailor Guardian teammates.",
+        "verdict": "myth",
+        "explanation": "While Takeuchi previously created Codename: Sailor V, Toei Animation and Takeuchi specifically developed Sailor Moon from inception to fuse magical girl tropes with Super Sentai five-member team dynamics.",
+        "fun_fact": "Sailor V was originally planned to receive an anime adaptation before Toei suggested expanding the concept into an entire planetary team."
+      }
+    ],
+    "versus_candidates": [
+      "Cardcaptor Sakura",
+      "Magic Knight Rayearth",
+      "Revolutionary Girl Utena"
+    ]
+  },
+  {
+    "id": "ENT-ANM-151",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Inuyasha",
+    "language": "en",
+    "aliases": [
+      "InuYasha",
+      "Inu Yasha",
+      "Sengoku Otogizoushi InuYasha",
+      "Inuyasha: A Feudal Fairy Tale"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Cinematic vertical 9:16 poster of the sacred Bone Eater's Well beneath the towering Goshinboku tree, featuring the half-demon Inuyasha brandishing the colossal Tessaiga blade radiating golden demon aura beside the glowing Shikon Jewel.",
+    "core_traits": [
+      "Created by legendary mangaka Rumiko Takahashi and serialized in Shogakukan's Weekly Shonen Sunday from 1996 to 2008",
+      "Follows modern high school girl Kagome Higurashi who falls through a shrine well into feudal Japan and teams with half-demon Inuyasha",
+      "Centers on the quest to restore the shattered Sacred Shikon Jewel while battling evil demon Naraku with the fabled fang sword Tessaiga",
+      "Gained massive international acclaim with over 55 million manga volumes sold and becoming a foundational flagship anime on Cartoon Network's Adult Swim"
+    ],
+    "distractor_pool": [
+      "Yu Yu Hakusho",
+      "Rurouni Kenshin",
+      "Bleach",
+      "Dororo",
+      "Fushigi Yuugi"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Rumiko Takahashi chose feudal Japan as the setting because it allowed her to freely blend horror, mythology, and romance without modern constraints.",
+        "verdict": "fact",
+        "explanation": "After writing comedies like Ranma 1/2 and Urusei Yatsura, Takahashi deliberately chose the Sengoku era to craft a darker, more dramatic fantasy narrative steeped in authentic Japanese folklore.",
+        "fun_fact": "Inuyasha's bright red Fire Rat Robe was historically described in the classical Japanese tale The Tale of the Bamboo Cutter."
+      },
+      {
+        "claim": "The Tessaiga sword was originally forged from the fang of Inuyasha's human mother to protect him from demon corruption.",
+        "verdict": "myth",
+        "explanation": "Tessaiga was forged by the swordsmith Totosai from the canine fang of Inuyasha's demonic father, Toga (the Great Dog General), specifically to protect humans and suppress Inuyasha's demon blood.",
+        "fun_fact": "Tessaiga's sister sword Tenseiga was also forged from the same father's fang but can only heal and resurrect the dead rather than cut."
+      }
+    ],
+    "versus_candidates": [
+      "Yu Yu Hakusho",
+      "Rurouni Kenshin",
+      "Bleach"
+    ]
+  },
+  {
+    "id": "ENT-ANM-152",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Dragon Ball",
+    "language": "en",
+    "aliases": [
+      "DB",
+      "DBZ",
+      "Dragon Ball Z",
+      "Dragon Ball Super",
+      "Doragon Boru"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Cinematic vertical 9:16 artwork depicting the mystical eternal dragon Shenron coiled across a stormy twilight sky, with the seven glowing orange crystal Dragon Balls hovering in a circle above Son Goku charging a brilliant blue Kamehameha.",
+    "core_traits": [
+      "Created by Akira Toriyama and serialized in Shueisha's Weekly Shonen Jump from 1984 to 1995",
+      "Follows martial artist Son Goku from childhood adventures seeking wish-granting Dragon Balls to cosmic battles defending the multiverse",
+      "Defined battle shonen tropes with Ki energy manipulation, escalating Super Saiyan transformations, and iconic techniques like the Kamehameha",
+      "A multi-billion dollar global phenomenon with over 300 million manga copies sold and unmatched influence on generations of manga creators"
+    ],
+    "distractor_pool": [
+      "One Piece",
+      "Naruto",
+      "Bleach",
+      "Fist of the North Star",
+      "Saint Seiya"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Akira Toriyama originally based Goku's design and early adventure storyline on the classic 16th-century Chinese novel Journey to the West.",
+        "verdict": "fact",
+        "explanation": "Goku was modeled directly on Sun Wukong the Monkey King, featuring an extendable power pole (Nyoibo), a flying Nimbus cloud (Kinto'un), and a monkey tail.",
+        "fun_fact": "In early conceptual sketches before the manga began, Toriyama drew Goku literally as a realistic monkey dressed in martial arts gear."
+      },
+      {
+        "claim": "The 'Z' in Dragon Ball Z was chosen because Akira Toriyama wanted to indicate to the anime producers that the series was a zero-budget experiment.",
+        "verdict": "myth",
+        "explanation": "Toriyama selected the letter 'Z' because it is the final letter of the Latin alphabet, intending to signal that the series was reaching its definitive final conclusion.",
+        "fun_fact": "Despite Toriyama's expectation that Dragon Ball Z would soon conclude, the franchise continued for hundreds of additional episodes and multiple spin-offs."
+      }
+    ],
+    "versus_candidates": [
+      "One Piece",
+      "Naruto",
+      "Bleach"
+    ]
+  },
+  {
+    "id": "ENT-ANM-153",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "One Piece",
+    "language": "en",
+    "aliases": [
+      "OP",
+      "Wan Pisu",
+      "Straw Hat Pirates Saga"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Cinematic vertical 9:16 panoramic composition of the Thousand Sunny sailing through towering Grand Line waves, framed by Monkey D. Luffy's weathered straw hat hanging from the mast and the skull Jolly Roger flapping beneath sunny skies.",
+    "core_traits": [
+      "Created by Eiichiro Oda and serialized in Shueisha's Weekly Shonen Jump since July 1997",
+      "Follows rubber-bodied captain Monkey D. Luffy and the Straw Hat Pirates sailing the perilous Grand Line in search of the legendary treasure One Piece",
+      "Features an expansive world governed by supernatural Devil Fruits, three forms of Haki willpower, and ancient world-building lore",
+      "The best-selling manga series in history with over 516 million copies in circulation worldwide, earning a Guinness World Record"
+    ],
+    "distractor_pool": [
+      "Naruto",
+      "Bleach",
+      "Dragon Ball",
+      "Hunter x Hunter",
+      "Fairy Tail"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "One Piece holds the Guinness World Record for the most copies published for the same comic book series by a single author.",
+        "verdict": "fact",
+        "explanation": "Guinness World Records officially recognized Eiichiro Oda for surpassing 500 million copies in circulation, making One Piece the highest-selling comic series by a solo creator.",
+        "fun_fact": "Eiichiro Oda sleeps only about three to four hours a day during regular weekly publication to maintain his rigorous chapter deadlines."
+      },
+      {
+        "claim": "Eiichiro Oda originally planned for One Piece to run for twenty years across more than one thousand chapters from day one.",
+        "verdict": "myth",
+        "explanation": "Oda initially planned One Piece to last only five years, focusing directly on battling the Four Emperors, but expanding the Seven Warlords of the Sea lengthened the journey.",
+        "fun_fact": "Oda stated in interviews that introducing the Shichibukai (Seven Warlords) was the single creative decision that caused the story to balloon beyond five years."
+      }
+    ],
+    "versus_candidates": [
+      "Naruto",
+      "Bleach",
+      "Dragon Ball"
+    ]
+  },
+  {
+    "id": "ENT-ANM-154",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Naruto",
+    "language": "en",
+    "aliases": [
+      "Naruto Shippuden",
+      "Naruto: Shippuden",
+      "Boruto: Naruto Next Generations"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Cinematic vertical 9:16 view overlooking the carved stone faces of the Hokage Monument in the Hidden Leaf Village, with a scratched metal Leaf ninja forehead protector resting against a glowing spiraling blue Rasengan sphere.",
+    "core_traits": [
+      "Created by Masashi Kishimoto and serialized in Shueisha's Weekly Shonen Jump from 1999 to 2014",
+      "Follows ostracized orphan Naruto Uzumaki, host of the Nine-Tailed Fox demon, striving to earn village recognition and become Hokage",
+      "Builds on a rich ninja chakra system combining physical and spiritual energy to execute Ninjutsu, Genjutsu, and legendary Dojutsu ocular techniques",
+      "Achieved monumental worldwide popularity with over 250 million manga copies sold and spearheading anime's 2000s global renaissance as part of the Big Three"
+    ],
+    "distractor_pool": [
+      "Bleach",
+      "One Piece",
+      "Dragon Ball",
+      "Hunter x Hunter",
+      "My Hero Academia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Masashi Kishimoto created Naruto's iconic forehead protector headband because drawing goggles every week took too much time.",
+        "verdict": "fact",
+        "explanation": "In early chapters, Naruto wore aviation goggles, but Kishimoto found rendering glass reflections and straps exhausting for weekly deadlines, designing the metal plate headband as a faster replacement.",
+        "fun_fact": "The forehead protector became one of the most widely recognized cosplay and merchandise items in the history of the anime industry."
+      },
+      {
+        "claim": "Naruto's favorite food, ramen, was chosen solely because Masashi Kishimoto had an endorsement deal with a real-world noodle company.",
+        "verdict": "myth",
+        "explanation": "Kishimoto gave Naruto a passion for ramen because Kishimoto himself lived on instant ramen during his impoverished college years and loved visiting a shop named Ramen Ichiraku near his university.",
+        "fun_fact": "The real-world Ramen Ichiraku restaurant in Fukuoka that inspired the manga became a famous pilgrimage spot for global anime fans."
+      }
+    ],
+    "versus_candidates": [
+      "Bleach",
+      "One Piece",
+      "Dragon Ball"
+    ]
+  },
+  {
+    "id": "ENT-ANM-155",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Bleach",
+    "language": "en",
+    "aliases": [
+      "BLEACH",
+      "Buriichi",
+      "Bleach: Thousand-Year Blood War"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A dramatic vertical 9:16 composition featuring Ichigo Kurosaki clutching his oversized black cleaver Zangetsu against a moonlit Karakura Town skyline, spiritual blue reiatsu swirling around his black Shihakusho robe, cracked hollow mask fragments fluttering in the wind, and fluttering black hell butterflies.",
+    "core_traits": [
+      "Created by Tite Kubo and serialized in Weekly Shonen Jump from August 2001 to August 2016, spanning 74 tankobon volumes.",
+      "Follows high school teenager Ichigo Kurosaki, who accidentally inherits Soul Reaper powers from Rukia Kuchiki to protect the living and spirits from monstrous Hollows.",
+      "Features Zanpakuto spirit swords with distinct Shikai and Bankai release states, fueled by Reiryoku spiritual energy and Reiatsu spiritual pressure.",
+      "One of Shonen Jump's legendary 'Big Three' alongside One Piece and Naruto, boasting over 130 million manga copies in circulation worldwide."
+    ],
+    "distractor_pool": [
+      "Naruto",
+      "One Piece",
+      "Soul Eater",
+      "Jujutsu Kaisen",
+      "Yu Yu Hakusho"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Bleach was initially rejected by Weekly Shonen Jump editors until Akira Toriyama wrote a letter of encouragement to Tite Kubo.",
+        "verdict": "fact",
+        "explanation": "When Tite Kubo's initial pitch for Bleach was rejected by Shueisha editors, Dragon Ball creator Akira Toriyama read the draft, recognized its potential, and personally wrote an encouraging letter to Kubo, motivating him to persist until the series was greenlit.",
+        "fun_fact": "Tite Kubo originally conceptualized the series with Rukia Kuchiki carrying a scythe instead of a katana, and planned to title the work 'Snipe' with characters wielding firearms."
+      },
+      {
+        "claim": "The title 'Bleach' was chosen because Ichigo Kurosaki bleaches his naturally black hair to orange.",
+        "verdict": "myth",
+        "explanation": "Ichigo's orange hair is completely natural, which frequently got him into fights with delinquents. Tite Kubo chose the title 'Bleach' because he wanted a word evoking the color white to contrast with the black robes of the Soul Reapers, rejecting titles like 'Black' and 'White' before settling on 'Bleach'.",
+        "fun_fact": "Tite Kubo is an avid fashion enthusiast who personally designs high-fashion streetwear wardrobes for his characters in color spreads and artbooks."
+      }
+    ],
+    "versus_candidates": [
+      "Naruto",
+      "One Piece",
+      "Jujutsu Kaisen"
+    ]
+  },
+  {
+    "id": "ENT-ANM-156",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Hunter x Hunter",
+    "language": "en",
+    "aliases": [
+      "HxH",
+      "Hunter Hunter",
+      "Hanta Hanta"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A dynamic vertical 9:16 anime poster showcasing young Gon Freecss in green attire charging his fiery Jajanken aura alongside Killua Zoldyck crackling with blue Godspeed lightning, a gleaming metallic Hunter License floating prominently in the foreground against Heavens Arena.",
+    "core_traits": [
+      "Created by Yoshihiro Togashi and serialized in Weekly Shonen Jump beginning in March 1998, renowned for its complex narrative arcs and frequent hiatuses.",
+      "Centers on optimistic youth Gon Freecss, who embarks on a perilous quest to become a licensed Hunter to track down his legendary, elusive father Ging Freecss.",
+      "Features the celebrated Nen power system, a meticulously codified aura discipline divided into six distinct categories: Enhancement, Transmutation, Emission, Conjuration, Manipulation, and Specialization.",
+      "Universally acclaimed as one of the most intellectually sophisticated battle shonen in history, with over 84 million manga copies in circulation and two landmark anime adaptations."
+    ],
+    "distractor_pool": [
+      "Yu Yu Hakusho",
+      "Fullmetal Alchemist",
+      "JoJo's Bizarre Adventure",
+      "My Hero Academia",
+      "Chainsaw Man"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The title 'Hunter x Hunter' was inspired by the repetitive comedic timing of Japanese variety television shows.",
+        "verdict": "fact",
+        "explanation": "Yoshihiro Togashi revealed that while watching the comedy variety show 'Downtown', where jokes were often repeated for comedic effect, he decided to double the word 'Hunter' to create the distinctive title 'Hunter x Hunter'.",
+        "fun_fact": "The 'x' in Hunter x Hunter is completely silent; the title is officially pronounced simply as 'Hunter Hunter'."
+      },
+      {
+        "claim": "Kurapika's Emperor Time ability allows him to master all Nen categories with 100 percent efficiency without any physical drawback or lifespan cost.",
+        "verdict": "myth",
+        "explanation": "While Emperor Time grants Kurapika 100 percent efficiency across all Nen categories when his eyes turn scarlet, Togashi later revealed the devastating condition: every single second spent in Emperor Time shortens Kurapika's lifespan by one full hour.",
+        "fun_fact": "Yoshihiro Togashi is married to Naoko Takeuchi, the legendary creator of Sailor Moon, and the couple occasionally helps each other with artistic advice and manga manuscripts."
+      }
+    ],
+    "versus_candidates": [
+      "Yu Yu Hakusho",
+      "Fullmetal Alchemist: Brotherhood",
+      "Jujutsu Kaisen"
+    ]
+  },
+  {
+    "id": "ENT-ANM-157",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Slam Dunk",
+    "language": "en",
+    "aliases": [
+      "Suramu Danku",
+      "Shohoku Basketball"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An intense vertical 9:16 hardwood basketball court scene showing red-haired delinquent Hanamichi Sakuragi in his red #10 Shohoku jersey soaring toward the rim for a ferocious two-handed dunk, white sweat droplets glistening under arena spotlights alongside an iconic molten basketball.",
+    "core_traits": [
+      "Written and illustrated by Takehiko Inoue and serialized in Weekly Shonen Jump from October 1990 to June 1996, spanning 31 volumes.",
+      "Follows high school delinquent Hanamichi Sakuragi, who joins the Shohoku High School basketball team to impress a girl, only to discover genuine athletic passion and elite rebounding prowess.",
+      "Grounds its tension in authentic, regulation high-school basketball fundamentals, masterfully depicting fast breaks, defensive boxing out, clutch jump shots, and buzzer-beaters.",
+      "Single-handedly ignited a massive basketball craze across Japan and East Asia, selling over 170 million copies and inspiring the Japan Basketball Association to officially honor Inoue."
+    ],
+    "distractor_pool": [
+      "Kuroko's Basketball",
+      "Haikyu!!",
+      "Ace of Diamond",
+      "Hajime no Ippo",
+      "Blue Lock"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Slam Dunk was officially credited by the Japan Basketball Association for popularizing basketball across the entire country of Japan during the 1990s.",
+        "verdict": "fact",
+        "explanation": "Before Slam Dunk, basketball was a minor niche sport in Japanese schools. The manga triggered an unprecedented participation boom, leading the Japan Basketball Association to present Takehiko Inoue with a special commendation in 2010 and partner with him on the Slam Dunk Scholarship program.",
+        "fun_fact": "The Kamakurakokomae railway crossing featured in the anime's opening theme song has become an international pilgrimage site for millions of basketball and anime fans."
+      },
+      {
+        "claim": "Takehiko Inoue was pressured by Shonen Jump editors into continuing the manga to give Shohoku an undefeated National Championship victory.",
+        "verdict": "myth",
+        "explanation": "Takehiko Inoue fiercely defended his creative integrity and refused editorial pressure to artificially prolong the series; he concluded the Inter-High arc realistically when Shohoku, utterly exhausted after defeating reigning powerhouse Sannoh Kogyo, suffered a blowout defeat in the subsequent round.",
+        "fun_fact": "In 2022, Takehiko Inoue made his directorial debut writing and directing 'The First Slam Dunk', an award-winning feature film told from the perspective of point guard Ryota Miyagi."
+      }
+    ],
+    "versus_candidates": [
+      "Kuroko's Basketball",
+      "Haikyu!!",
+      "Hajime no Ippo"
+    ]
+  },
+  {
+    "id": "ENT-ANM-158",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Captain Tsubasa",
+    "language": "en",
+    "aliases": [
+      "Kyaputen Tsubasa",
+      "Flash Kicker",
+      "Olive et Tom",
+      "Super Campeones"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "An epic vertical 9:16 stadium perspective capturing prodigy Tsubasa Ozora in his crisp white Nankatsu #10 kit executing an airborne overhead bicycle kick, an exaggerated curved white vapor trail tracking the soccer ball slicing across a vast, curved green pitch under roaring stadium lights.",
+    "core_traits": [
+      "Created by Yoichi Takahashi and serialized in Weekly Shonen Jump starting in April 1981, spawning multiple multi-decade manga sequels and worldwide anime broadcasts.",
+      "Chronicles the inspiring journey of soccer prodigy Tsubasa Ozora from elementary school tournaments in Nankatsu to professional leagues in Brazil, Spain, and the FIFA World Cup.",
+      "Famous for sensational stylized soccer techniques such as the Drive Shot, Tiger Shot, and Twin Shoot, alongside sprawling pitches and dramatic aerial acrobatic saves.",
+      "A monumental global cultural phenomenon credited with inspiring real-world soccer legends including Lionel Messi, Andres Iniesta, Zinedine Zidane, and Fernando Torres to pursue professional careers."
+    ],
+    "distractor_pool": [
+      "Blue Lock",
+      "Inazuma Eleven",
+      "Giant Killing",
+      "Aoashi",
+      "Days"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "World-class soccer superstars including Andres Iniesta, Fernando Torres, and Alessandro Del Piero publicly credited Captain Tsubasa for inspiring their football careers.",
+        "verdict": "fact",
+        "explanation": "Numerous international football legends have explicitly stated that watching Captain Tsubasa (localized as 'Oliver y Benji' in Spain and 'Holly e Benji' in Italy) inspired them to play soccer and imitate Tsubasa's gravity-defying techniques during their youth.",
+        "fun_fact": "During the 2018 FIFA World Cup in Russia, Japanese supporters unveiled a colossal banner depicting Tsubasa Ozora holding the World Cup trophy to rally the national team."
+      },
+      {
+        "claim": "Yoichi Takahashi was a competitive semi-professional soccer player before he started drawing Captain Tsubasa.",
+        "verdict": "myth",
+        "explanation": "Yoichi Takahashi had virtually no personal soccer experience and played baseball throughout high school. He only became fascinated by association football after watching televised broadcasts of the 1978 FIFA World Cup in Argentina, which compelled him to introduce the sport to Japanese youth.",
+        "fun_fact": "Scientific calculations by fans and physicists jokingly estimated that based on the horizon curvature shown in the classic anime, the soccer pitch would measure over 18 kilometers in length."
+      }
+    ],
+    "versus_candidates": [
+      "Blue Lock",
+      "Inazuma Eleven",
+      "Slam Dunk"
+    ]
+  },
+  {
+    "id": "ENT-ANM-159",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Demon Slayer: Kimetsu no Yaiba",
+    "language": "en",
+    "aliases": [
+      "Kimetsu no Yaiba",
+      "Demon Slayer",
+      "Blade of Demon Destruction"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "A breathtaking vertical 9:16 visual displaying Tanjiro Kamado in his checkered green-and-black haori mid-air, swinging his black Nichirin blade enveloped in blazing crimson Hinokami Kagura solar flames intertwined with fluid blue water waves, Nezuko's wooden box strapped tightly to his back against a snowy mountain blizzard.",
+    "core_traits": [
+      "Created by Koyoharu Gotouge and serialized in Weekly Shonen Jump from February 2016 to May 2020, collected in 23 tankobon volumes.",
+      "Follows kind-hearted youth Tanjiro Kamado, who joins the Demon Slayer Corps to avenge his slaughtered family and find a cure to turn his demonized sister Nezuko back into a human.",
+      "Features breathing combat styles (Total Concentration Breathing) channeled through color-changing Nichirin swords, contrasting against Blood Demon Arts wielded by Muzan Kibutsuji's Twelve Kizuki.",
+      "A historic box-office juggernaut whose feature film 'Mugen Train' shattered records as the highest-grossing anime and Japanese film in global cinematic history with over 500 million dollars earned."
+    ],
+    "distractor_pool": [
+      "Jujutsu Kaisen",
+      "Bleach",
+      "Dororo",
+      "Chainsaw Man",
+      "Black Clover"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Demon Slayer: Kimetsu no Yaiba the Movie: Mugen Train surpassed Spirited Away to become the highest-grossing film of all time at the Japanese box office.",
+        "verdict": "fact",
+        "explanation": "In December 2020, 'Mugen Train' officially surpassed Hayao Miyazaki's 2001 classic 'Spirited Away' by earning over 40 billion yen in Japan and more than 500 million dollars worldwide, ending a 19-year box office record during the COVID-19 pandemic.",
+        "fun_fact": "Creator Koyoharu Gotouge uses a bespectacled alligator avatar as their author pen-name icon in manga author notes."
+      },
+      {
+        "claim": "The dazzling elemental effects of Breathing Styles, such as Tanjiro's water dragons and lightning bolts, are actual magical physical elements visible to ordinary humans.",
+        "verdict": "myth",
+        "explanation": "Koyoharu Gotouge explicitly clarified in the manga volume extras that the elemental breathing effects (water, fire, lightning) are visual metaphors representing the swordsman's technique, momentum, and mental focus, and are not tangible magical elements manifested in physical reality.",
+        "fun_fact": "Tanjiro's iconic Hanafuda earrings were passed down through generations of the Kamado family along with the Kagura fire dance, originally belonging to the progenitor of breathing styles, Yoriichi Tsugikuni."
+      }
+    ],
+    "versus_candidates": [
+      "Jujutsu Kaisen",
+      "Bleach",
+      "Attack on Titan"
+    ]
+  },
+  {
+    "id": "ENT-ANM-160",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Attack on Titan",
+    "language": "en",
+    "aliases": [
+      "Shingeki no Kyojin",
+      "AoT",
+      "SnK",
+      "The Advancing Giants"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Atmospheric and menacing vertical 9:16 poster showing the terrifying, skinless Colossal Titan peering over the massive stone parapet of Wall Maria, plumes of superheated steam billowing into an apocalyptic orange sunset as tiny Scout Regiment soldiers grapple into the air below.",
+    "core_traits": [
+      "Created by Hajime Isayama and serialized in Kodansha's Bessatsu Shonen Magazine from September 2009 to April 2021",
+      "Follows Eren Yeager, Mikasa Ackerman, and Armin Arlert as they join the Scout Regiment to combat giant man-eating Titans trapped behind three massive concentric walls",
+      "Features the Omni-Directional Mobility (ODM) gear grappling system, ultrahard steel blades, and the mystical Nine Titans inherited through Eldian spinal fluid and the Paths",
+      "Achieved over 140 million manga copies in circulation globally, winning multiple awards and becoming a monumental worldwide pop-culture phenomenon with its gripping dark fantasy anime adaptation"
+    ],
+    "distractor_pool": [
+      "Fullmetal Alchemist",
+      "Vinland Saga",
+      "Tokyo Ghoul",
+      "Neon Genesis Evangelion",
+      "Death Note"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Hajime Isayama originally pitched Attack on Titan to Weekly Shonen Jump, but the publisher rejected it.",
+        "verdict": "fact",
+        "explanation": "In 2006, Hajime Isayama brought his initial one-shot draft to Shueisha's Weekly Shonen Jump editors, who demanded he alter his raw art style and dark storyline to fit their shonen formula; Isayama refused and instead took the series to Kodansha's Bessatsu Shonen Magazine.",
+        "fun_fact": "The rejection proved legendary in manga history as the series went on to become one of the best-selling manga of all time under rival publisher Kodansha."
+      },
+      {
+        "claim": "The physical design and terrifying movement of the Titans was based entirely on mythical European folklore monsters.",
+        "verdict": "myth",
+        "explanation": "Isayama was actually inspired to create Titans after a frightening real-life encounter with an aggressive, drunken customer at an internet cafe where he worked, realizing the terror of communicating with someone who looks human but cannot be reasoned with.",
+        "fun_fact": "Isayama also modeled the physical brawling forms of the Rogue Titan and Armored Titan on real-world mixed martial artists Yushin Okami and Brock Lesnar."
+      }
+    ],
+    "versus_candidates": [
+      "Fullmetal Alchemist",
+      "Vinland Saga",
+      "Tokyo Ghoul"
+    ]
+  },
+  {
+    "id": "ENT-ANM-161",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Jujutsu Kaisen",
+    "language": "en",
+    "aliases": [
+      "JJK",
+      "Sorcery Fight",
+      "Jujutsu Kaisen 0"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Striking high-contrast vertical 9:16 visual displaying Ryomen Sukuna's malevolent shrine backdrop, Yuji Itadori and Satoru Gojo posing amidst swirling vortexes of black cursed energy, glowing crimson cursed seals, and the azure glow of the Limitless Six Eyes.",
+    "core_traits": [
+      "Created by Gege Akutami and serialized in Shueisha's Weekly Shonen Jump beginning in March 2018",
+      "Follows high school athletic prodigy Yuji Itadori, who swallows a rotting talisman finger of the King of Curses, Ryomen Sukuna, thrusting him into Tokyo Jujutsu High",
+      "Operates on a complex magic system of Cursed Energy fueled by negative human emotions, Innate Techniques, Black Flash impacts, and lethal Domain Expansions",
+      "Surpassed 100 million copies in circulation and earned massive worldwide acclaim, with Season 2's Shibuya Incident arc recognized globally as a modern anime masterclass"
+    ],
+    "distractor_pool": [
+      "Bleach",
+      "Chainsaw Man",
+      "Demon Slayer: Kimetsu no Yaiba",
+      "Hunter x Hunter",
+      "My Hero Academia"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Gege Akutami originally conceived Jujutsu Kaisen as a continuation of their earlier mini-series Tokyo Metropolitan Curse Technical School.",
+        "verdict": "fact",
+        "explanation": "The four-chapter prequel starring Yuta Okkotsu was published in Jump GIGA in 2017 before being retroactively numbered as Jujutsu Kaisen Volume 0 following the serialization greenlight of the main series.",
+        "fun_fact": "Jujutsu Kaisen 0 became a blockbuster animated feature film that grossed over 190 million dollars worldwide."
+      },
+      {
+        "claim": "Satoru Gojo's signature blindfold was designed because looking at cursed energy directly causes physical blindness to the user.",
+        "verdict": "myth",
+        "explanation": "Gojo wears a blindfold or dark sunglasses because his Six Eyes process sensory and cursed energy information with such infinitesimal detail that keeping his eyes uncovered at all times would quickly exhaust his brain.",
+        "fun_fact": "Despite wearing an opaque black blindfold, Gojo's Six Eyes allow him to perceive high-resolution thermal and cursed energy signatures better than normal eyesight."
+      }
+    ],
+    "versus_candidates": [
+      "Chainsaw Man",
+      "Bleach",
+      "Demon Slayer: Kimetsu no Yaiba"
+    ]
+  },
+  {
+    "id": "ENT-ANM-162",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Spy x Family",
+    "language": "en",
+    "aliases": [
+      "Spy Family",
+      "SPY_FAMILY",
+      "Supai Famiri"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Elegant retro 1960s-inspired vertical 9:16 key visual featuring the stylish Forger family sitting on mid-century modernist designer chairs: Twilight in a sharp teal suit holding a silenced pistol, Yor in a thorn princess black evening gown, and telepathic Anya clutching her stuffed Chimera doll with mischievous peanut-loving smirks.",
+    "core_traits": [
+      "Created by Tatsuya Endo and serialized biweekly on Shueisha's digital platform Shonen Jump+ since March 2019",
+      "Chronicles elite Westalian master spy Twilight, who assembles a fake suburban family named the Forgers to infiltrate an elite Ostania academy for Operation Strix",
+      "Centers on dramatic irony where neither spouse knows the other is an elite assassin or spy, while their adopted daughter Anya secretly reads minds and family dog Bond sees the future",
+      "Achieved over 35 million copies in circulation, sparking massive global merchandising and widespread popularity for its wholesome blend of cold-war espionage and heartwarming domestic comedy"
+    ],
+    "distractor_pool": [
+      "Kaguya-sama: Love Is War",
+      "Assassination Classroom",
+      "The Way of the Househusband",
+      "Bocchi the Rock!",
+      "Buddy Daddies"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Every single volume cover of Spy x Family features a real-world designer chair from iconic furniture history.",
+        "verdict": "fact",
+        "explanation": "Tatsuya Endo meticulously illustrates renowned designer chairs on every tankobon cover, including Le Corbusier's LC2 for Loid, Charles and Ray Eames's Lounge Chair for Anya, and Mies van der Rohe's Barcelona Chair for Yor.",
+        "fun_fact": "Endo has stated that he spends considerable research time studying classic modernist mid-century architectural and interior design to match each chair to its character."
+      },
+      {
+        "claim": "Anya Forger was originally designed as a high school spy partner rather than an adorable telepathic child.",
+        "verdict": "myth",
+        "explanation": "Endo evolved Anya from a character named Ashe in his previous one-shot 'Rengoku no Ashe', but she was always conceived as a small eccentric child possessing clairvoyant or supernatural powers to serve as the comedic linchpin of the family.",
+        "fun_fact": "Anya's iconic smirking 'heh' facial expression became one of the most widely shared anime internet memes of the 2020s."
+      }
+    ],
+    "versus_candidates": [
+      "Kaguya-sama: Love Is War",
+      "Assassination Classroom",
+      "Buddy Daddies"
+    ]
+  },
+  {
+    "id": "ENT-ANM-163",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "One Punch Man",
+    "language": "en",
+    "aliases": [
+      "OPM",
+      "Wanpanman",
+      "Caped Baldy"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Electrifying vertical 9:16 superhero poster featuring the yellow-suited Saitama with his red cape fluttering and crimson gloved fist thrust forward, unleashing a shockwave that splits atmospheric clouds in half while Genos and cosmic threat monsters loom in the fiery shattered cityscape.",
+    "core_traits": [
+      "Created by ONE as a viral webcomic in 2009 and brilliantly remade as a manga illustrated by Yusuke Murata in Tonari no Young Jump starting in 2012",
+      "Subverts the superhero genre through Saitama, an unassuming hero for fun who grew so unfathomably strong that he obliterates any foe with a single punch, leaving him perpetually bored",
+      "Features the Hero Association tier ranking system (Class C to Class S), cyborg technology, monster disaster levels (Tiger to God), and Saitama's absurd mundane training regimen",
+      "Became a global sensation with over 30 million manga copies sold and a critically acclaimed first anime season animated by Madhouse that redefined modern action choreography"
+    ],
+    "distractor_pool": [
+      "Mob Psycho 100",
+      "My Hero Academia",
+      "Dragon Ball Z",
+      "Mashle: Magic and Muscles",
+      "Gintama"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "ONE created the webcomic One Punch Man primarily as a quick digital drawing exercise to test web comic publishing software.",
+        "verdict": "fact",
+        "explanation": "ONE started drawing One Punch Man using ComicStudio software in early 2009 simply to practice digital manga tools and storytelling pacing before the hilarious, minimalist webcomic went explosively viral across Japan.",
+        "fun_fact": "Manga legend Yusuke Murata was so captivated by the webcomic while bedridden with illness that he personally reached out to ONE on Twitter proposing a fully illustrated manga collaboration."
+      },
+      {
+        "claim": "Saitama's overwhelming strength was granted by an extraterrestrial gene spliced into his DNA during an early monster encounter.",
+        "verdict": "myth",
+        "explanation": "According to the lore explained by Dr. Genus, Saitama possessed no special lineage or genetics, but rather shattered his human 'limiter' purely through an obsessive daily routine of 100 push-ups, 100 sit-ups, 100 squats, and a 10-kilometer run.",
+        "fun_fact": "Saitama's training regimen famously caused him to lose all his hair in exchange for boundless godlike strength."
+      }
+    ],
+    "versus_candidates": [
+      "Mob Psycho 100",
+      "My Hero Academia",
+      "Dragon Ball Z"
+    ]
+  },
+  {
+    "id": "ENT-ANM-164",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Chainsaw Man",
+    "language": "en",
+    "aliases": [
+      "CSM",
+      "Chensoman"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Gritty cinematic vertical 9:16 poster of the Chainsaw Devil hybrid standing atop a pile of urban debris under neon Tokyo rain, bloodied mechanical chainsaws roaring from his head and forearms with spray and exhaust smoke, a starter ripcord cord dangling from his ripped collar.",
+    "core_traits": [
+      "Created by Tatsuki Fujimoto and serialized in Weekly Shonen Jump from December 2018 to December 2020, continuing Part 2 on Shonen Jump+ since July 2022",
+      "Follows impoverished devil hunter Denji, who merges with his chainsaw devil canine Pochita to resurrect as Chainsaw Man and join Makima's Public Safety Special Division 4",
+      "Features a dark supernatural world where Devils are born from human fears, gaining strength from global dread and forming contracts with human hunters in exchange for body parts or lifespans",
+      "Surpassed 28 million manga copies sold and received prestigious Harvey Awards, celebrated worldwide for its subversive cinematic storytelling, unpredictable gore, and indie-cinema aesthetics"
+    ],
+    "distractor_pool": [
+      "Jujutsu Kaisen",
+      "Tokyo Ghoul",
+      "Dorohedoro",
+      "Devilman Crybaby",
+      "Hell's Paradise"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The first season of the Chainsaw Man anime featured a completely unique ending theme song and custom ending animation for every single episode.",
+        "verdict": "fact",
+        "explanation": "Studio MAPPA produced 12 completely distinct ending animations and commissioned 12 original songs from prominent Japanese artists including Kenshi Yonezu, Maximum the Hormone, Vaundy, and Aimer for each of the 12 broadcast episodes.",
+        "fun_fact": "Tatsuki Fujimoto is an avid cinephile whose anime opening sequence contains over a dozen direct shot-for-shot homages to classic Western films like Pulp Fiction, The Big Lebowski, and No Country for Old Men."
+      },
+      {
+        "claim": "Pochita's canine chainsaw form was inspired by a mythical Japanese yokai dog from ancient Shinto folklore.",
+        "verdict": "myth",
+        "explanation": "Tatsuki Fujimoto revealed that Pochita's distinctive design was inspired by a German handheld chainsaw tool and the lovable look of a small domestic puppy, intentionally contrasting adorable pet aesthetics with horrific mechanical violence.",
+        "fun_fact": "Denji's modest initial dream was simply to eat toast with jam and cuddle with a girl, subverting traditional shonen grand ambitions."
+      }
+    ],
+    "versus_candidates": [
+      "Jujutsu Kaisen",
+      "Tokyo Ghoul",
+      "Dorohedoro"
+    ]
+  },
+  {
+    "id": "ENT-ANM-165",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "My Hero Academia",
+    "language": "en",
+    "aliases": [
+      "Boku no Hero Academia",
+      "MHA",
+      "BnHA",
+      "My Hero"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Cinematic vertical 9:16 poster featuring Izuku Midoriya in his green hero suit channeling glowing emerald One For All lightning bolts across his arms, framed against the towering golden silhouette of All Might smiling under dramatic storm clouds over the U.A. High School campus.",
+    "core_traits": [
+      "Created by Kohei Horikoshi and serialized in Weekly Shonen Jump from July 2014 to August 2024, spanning 42 collected tankobon volumes.",
+      "Follows Izuku Midoriya, a quirkless boy born into a superhuman society who inherits the legendary One For All power from the greatest hero All Might to enroll in U.A. High School.",
+      "Revolves around Quirks, superhuman genetic mutations manifesting in eighty percent of humanity, countered by the hereditary stockpile quirk One For All and the villainous quirk-stealing power All For One.",
+      "Surpassed 100 million copies in circulation worldwide by 2024, becoming a cornerstone modern superhero anime franchise with multiple blockbuster theatrical films and global merchandising."
+    ],
+    "distractor_pool": [
+      "Black Clover",
+      "Jujutsu Kaisen",
+      "Fire Force",
+      "Demon Slayer: Kimetsu no Yaiba",
+      "Soul Eater"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Kohei Horikoshi originally conceived Izuku Midoriya as a quirkless gadget-wielding hero who would never receive a supernatural power.",
+        "verdict": "fact",
+        "explanation": "In Horikoshi's original 2008 one-shot manga titled My Hero, the protagonist Jack Midoriya was an ordinary salaryman who invented high-tech gadgets and weapons to fight monsters, but editors advised Horikoshi that giving the main character a true superpower would make the serialized story more compelling for Shonen Jump readers.",
+        "fun_fact": "Horikoshi is an avid fan of American superhero comic books, particularly Spider-Man, whose agility and web mechanics heavily inspired Deku's Blackwhip technique."
+      },
+      {
+        "claim": "All Might was originally planned to be an ancient demon disguised as a golden champion who manipulated Deku from the start.",
+        "verdict": "myth",
+        "explanation": "All Might was always envisioned as the pure, unyielding Symbol of Peace and surrogate father figure inspired by classic Western superheroes like Superman, with no planned storyline depicting him as a demonic deceiver or covert antagonist.",
+        "fun_fact": "All Might's signature booming catchphrase 'I am here!' was designed to invoke immediate psychological relief for victims in disaster zones."
+      }
+    ],
+    "versus_candidates": [
+      "Black Clover",
+      "Jujutsu Kaisen",
+      "Naruto"
+    ]
+  },
+  {
+    "id": "ENT-ANM-166",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Death Note",
+    "language": "en",
+    "aliases": [
+      "Desu Noto",
+      "DN",
+      "The Notebook of Death"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Dramatic vertical 9:16 composition showcasing the black leather Death Note notebook lying open with a crimson red apple beside a silver fountain pen, while the grotesque winged silhouette of Shinigami Ryuk looms ominously behind Light Yagami in shadows cast by neon police sirens.",
+    "core_traits": [
+      "Written by Tsugumi Ohba and illustrated by Takeshi Obata, serialized in Weekly Shonen Jump between December 2003 and May 2006 across 12 tankobon volumes.",
+      "Chronicles prodigy high school student Light Yagami, who discovers a supernatural notebook dropped by a death god and launches a worldwide vigilante crusade to execute criminals under the moniker Kira.",
+      "Centers on the Death Note, an artifact governing human mortality by killing anyone whose name and face are known to the writer within forty seconds, balanced by the optional Shinigami Eye trade.",
+      "Sold over 30 million manga copies, sparked international psychological thriller debates, spawned acclaimed anime adaptations directed by Tetsuro Araki, and remains one of the most widely recognized gateway anime worldwide."
+    ],
+    "distractor_pool": [
+      "Code Geass",
+      "Monster",
+      "Psycho-Pass",
+      "Steins;Gate",
+      "The Promised Neverland"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "The prototype pilot chapter of Death Note featured a magical Death Eraser capable of reviving people killed by the notebook.",
+        "verdict": "fact",
+        "explanation": "In the 2003 Shonen Jump pilot chapter starring Taro Kagami, Tsugumi Ohba included a special eraser that could resurrect victims if their names were cleanly erased before cremation, but this tool was intentionally abandoned in the serialized series to ensure death carried permanent stakes.",
+        "fun_fact": "Shinigami Ryuk's addiction to juicy red apples was chosen because apples aesthetically complement his gothic mouth design and evoke mythological forbidden fruit."
+      },
+      {
+        "claim": "L's true birth name was never decided by author Tsugumi Ohba and remains completely unknown to this day.",
+        "verdict": "myth",
+        "explanation": "L's official canonical name was explicitly revealed in the official guidebook Death Note 13: How to Read as L Lawliet, written with the special character card included in the collector volume.",
+        "fun_fact": "L's peculiar habit of crouching on furniture was calculated to increase his cognitive reasoning power by approximately forty percent according to his own dialogue."
+      }
+    ],
+    "versus_candidates": [
+      "Code Geass",
+      "Monster",
+      "Psycho-Pass"
+    ]
+  },
+  {
+    "id": "ENT-ANM-167",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Haikyu!!",
+    "language": "en",
+    "aliases": [
+      "Haikyuu!!",
+      "High Kyu!!",
+      "Haikyu!! Fly High",
+      "Volleyball!!"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Vibrant vertical 9:16 perspective of an orange-and-blue volleyball frozen mid-air at the apex of a net, flanked by a soaring black crow spreading feathered wings above Karasuno High court floorboards reflecting stadium lights.",
+    "core_traits": [
+      "Written and illustrated by Haruichi Furudate and serialized in Weekly Shonen Jump from February 2012 to July 2020, totaling 45 tankobon volumes.",
+      "Centers on pint-sized spiker Shoyo Hinata, who aims to overcome his short stature by forming an electrifying setter-spiker partnership with prodigy Tobio Kageyama on Karasuno High School's volleyball team.",
+      "Grounded in realistic volleyball athletics, biomechanics, and tactical court formations, famous for the rapid-tempo Freak Quick spike attack and Karasuno's synchronized multi-man offensive rushes.",
+      "Exceeded 60 million copies in circulation, credited with driving a historic resurgence in youth volleyball participation across Japan, and produced a critically acclaimed anime adaptation by Production I.G."
+    ],
+    "distractor_pool": [
+      "Kuroko's Basketball",
+      "Slam Dunk",
+      "Blue Lock",
+      "Ace of Diamond",
+      "Free!"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Real-world high school volleyball club registrations in Japan notably surged following the broadcast of the Haikyu!! anime series.",
+        "verdict": "fact",
+        "explanation": "Official sports census data from the Japan High School Athletic Federation confirmed that boys' volleyball club enrollment experienced significant year-over-year percentage gains directly correlating with Haikyu!!'s peak broadcast and publication years.",
+        "fun_fact": "Creator Haruichi Furudate played middle blocker during both junior high and high school, ensuring the manga depicted authentic court movements and tactical terminology."
+      },
+      {
+        "claim": "Karasuno High School was purely fictional and bore zero resemblance or connection to any real-world Japanese school or town.",
+        "verdict": "myth",
+        "explanation": "Karasuno High School and its surrounding countryside were directly modeled on Karumai High School located in Karumai Town, Iwate Prefecture, which is creator Haruichi Furudate's real hometown and now serves as an active anime pilgrimage destination.",
+        "fun_fact": "The Karasuno team motto 'Tobe' translates to 'Fly', matching their raven motif and black wing visual metaphors."
+      }
+    ],
+    "versus_candidates": [
+      "Kuroko's Basketball",
+      "Slam Dunk",
+      "Blue Lock"
+    ]
+  },
+  {
+    "id": "ENT-ANM-168",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "Tokyo Ghoul",
+    "language": "en",
+    "aliases": [
+      "Tokyo Guru",
+      "TG",
+      "Tokyo Ghoul:re"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "Gothic dark vertical 9:16 visual displaying Ken Kaneki's one-eyed leather zipper mask resting in a blooming field of crimson red spider lilies, glowing scarlet kagune tentacles curling upward against a rain-slicked Tokyo alleyway beneath a shattered crescent moon.",
+    "core_traits": [
+      "Created by Sui Ishida and serialized in Shueisha's Weekly Young Jump from September 2011 to September 2014, followed by its sequel Tokyo Ghoul:re through July 2018 across 30 total volumes.",
+      "Follows bookish university student Ken Kaneki, who survives a deadly encounter with a flesh-eating ghoul only to be transformed into an outcast half-ghoul through an emergency organ transplant.",
+      "Features biological RC cells enabling ghouls to summon predatory organs called Kagune (Ukaku, Koukaku, Rinkaku, Bikaku), countered by the CCG investigators' forged Quinque weapons.",
+      "Surpassed 47 million copies in circulation worldwide, becoming a defining dark urban fantasy phenomenon of the 2010s renowned for its psychological depth, iconic opening song 'Unravel', and cult global following."
+    ],
+    "distractor_pool": [
+      "Parasyte: The Maxim",
+      "Attack on Titan",
+      "Chainsaw Man",
+      "Deadman Wonderland",
+      "Jujutsu Kaisen"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Ken Kaneki's white hair transformation was biologically caused by the real-world medical condition known as Marie Antoinette syndrome.",
+        "verdict": "fact",
+        "explanation": "Kaneki's sudden hair color shift during Yamori's brutal torture represents Marie Antoinette syndrome, an acute physical condition where extreme emotional trauma, stress, and cell damage cause hair to rapidly lose pigmentation and turn white.",
+        "fun_fact": "Kaneki's habit of cracking his knuckles with his thumb was psychological mimicry unconsciously inherited from his torturer Yamori, who had originally stolen it from his own prison interrogator."
+      },
+      {
+        "claim": "Sui Ishida was an established veteran manga author who published several successful long-running series under a famous pen name before Tokyo Ghoul.",
+        "verdict": "myth",
+        "explanation": "Tokyo Ghoul was Sui Ishida's debut commercial serialization after winning a Rookie Manga Award in Young Jump in 2010; he had only drawn webcomics previously and kept his personal identity completely anonymous.",
+        "fun_fact": "Ishida personally illustrated over a thousand unique chapter title splash pages and bonus art cards throughout the franchise's weekly run."
+      }
+    ],
+    "versus_candidates": [
+      "Parasyte: The Maxim",
+      "Attack on Titan",
+      "Chainsaw Man"
+    ]
+  },
+  {
+    "id": "ENT-ANM-169",
+    "domain_id": "anime_manga",
+    "subtopic_id": "iconic_franchises",
+    "name": "JoJo's Bizarre Adventure",
+    "language": "en",
+    "aliases": [
+      "JJBA",
+      "JoJo no Kimyou na Bouken",
+      "JoJo"
+    ],
+    "difficulty": 1,
+    "visual_anchor": "High-fashion vertical 9:16 pop-art poster highlighting an ancient Aztec Stone Mask dripping with crimson mist beside a golden star-shaped Joestar birthmark, framed by jagged vibrant purple Japanese onomatopoeia 'Menacing' characters and flamboyant dynamic posture silhouettes.",
+    "core_traits": [
+      "Created by Hirohiko Araki and serialized in Weekly Shonen Jump starting December 1986 before transitioning to Ultra Jump in 2005, spanning over 130 tankobon volumes across multiple narrative parts.",
+      "Spans generations of the heroic Joestar bloodline, each nicknamed JoJo, battling supernatural vampires, ancient beings, and enemy Stand users across distinct historical eras and global settings.",
+      "Pioneered the concept of Stands—physical manifestations of spiritual life energy with bespoke supernatural abilities—succeeding the ancient martial art of solar breathing known as Ripple or Hamon.",
+      "Over 120 million copies in circulation, celebrated internationally for its flamboyant high-fashion aesthetics, Louvre museum collaborations, iconic poses, and pervasive influence on contemporary gaming and manga culture."
+    ],
+    "distractor_pool": [
+      "Fist of the North Star",
+      "Hunter x Hunter",
+      "Baki the Grappler",
+      "Yu Yu Hakusho",
+      "Golden Kamuy"
+    ],
+    "facts_and_myths": [
+      {
+        "claim": "Hirohiko Araki had his original artwork exhibited in the Louvre Museum in Paris as part of an official collaborative comic collection.",
+        "verdict": "fact",
+        "explanation": "In 2009, Araki created 'Rohan at the Louvre' for the Musee du Louvre's prestigious comic art exhibition project, making JoJo's Bizarre Adventure the first manga series ever officially featured and exhibited inside the historic Parisian institution.",
+        "fun_fact": "Araki named dozens of characters and Stands after Western rock, pop, and jazz musicians, including Led Zeppelin, Queen, Prince, and AC/DC."
+      },
+      {
+        "claim": "Stands were introduced in Part 1 Phantom Blood from the very beginning of the series.",
+        "verdict": "myth",
+        "explanation": "Parts 1 and 2 (Phantom Blood and Battle Tendency) relied entirely on the solar energy breathing technique known as Hamon (the Ripple) alongside vampiric stone masks; Stands were only introduced later in Part 3 (Stardust Crusaders) in 1989.",
+        "fun_fact": "The word 'Stand' comes from the phrase 'standing by me', describing a spirit avatar standing alongside its user."
+      }
+    ],
+    "versus_candidates": [
+      "Hunter x Hunter",
+      "Fist of the North Star",
+      "Baki the Grappler"
+    ]
   }
 ]
