@@ -61,7 +61,7 @@ Google Antigravity is implemented as a first-class engine via [`AntigravityClien
 
 - **Topic suggestions:** Include channel DNA, style/rules, existing titles/premises, and recent episode titles.
 - **Quiz / Direct Quiz tasks:** Include confirmed topic brief, channel target audience, age-band rules, and gameplay constraints.
-- **Scene / dialogue regeneration:** Include the targeted scene, immediate neighbor scenes, script excerpt, and relevant DNA guidelines.
+- **Quiz / Director regeneration:** Include the targeted question block, adjacent question context, answer schemas, and relevant DNA guidelines.
 
 The exact prompt and included file list are written to `.quiz-studio/logs/context-manifests.jsonl`. Other channels, unrelated episodes, raw task histories, and secrets are strictly excluded.
 

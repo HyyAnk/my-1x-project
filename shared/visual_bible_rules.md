@@ -2,10 +2,10 @@
 
 - A text prompt alone cannot guarantee continuity. Define reusable identity locks before writing shots.
 - Preserve channel constants across episodes: aspect ratio, graphic language, typography behavior, editorial overlay language, grain, caption style, and transition restraint.
-- Define episode constants: palette, recurring hero objects, era treatment, evidence treatment, and the reconstruction boundary.
+- Define episode constants: palette, recurring hero objects, artistic style, visual clues, and layout theme boundaries.
 - Create one continuity bundle per sequence with a stable ID, era, location, subjects, objects/wardrobe, palette, lighting, texture, anchor-frame prompt, reference asset slots, and allowed camera variation.
 - Reference asset slots are provider-neutral IDs. Provider adapters may later bind them to images, seeds, first frames, or model-specific references without polluting prompt text.
-- Reconstruction must be visibly plausible and tied to research claim IDs; never present a reconstruction as archive footage in the production metadata. Do not place an AI or reconstruction disclosure label inside the visual-generation prompt.
+- Generated imagery must be visually clear and tied to research claim IDs; never claim unverified visual details in the production metadata. Do not place an AI disclosure label inside the visual-generation prompt.
 - Define an editorial overlay language separately from footage prompts: caption, stat card, timeline, chart, map callout, comparison, and quote treatments with a restrained motion vocabulary.
 - For Quiz Visual Bible documents, include a clearly labeled `Safe motion` section covering allowed motion, prohibited motion, and a reduced-motion fallback; never use strobing, flashing, seizure-triggering patterns, or unsafe rapid camera movement.
 - For Quiz episodes, visual art direction must be vibrant, warm, saturated, and highly appealing to children and families (e.g. 3D claymation, storybook 3D, lively cartoon diorama, or rich dimensional stylized art). Avoid flat 2D monochrome, dull sketches, dark ink backgrounds, or gloomy/washed-out palettes.

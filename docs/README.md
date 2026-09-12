@@ -1,6 +1,8 @@
-# Documentation
+# AI Quiz Studio Documentation
 
-Reviewed on 2026-09-09 against the working tree. Source, schemas and executable tests take precedence. These guides describe implementation; they do not certify that current runtime tests pass.
+Technical documentation and architectural guides for **AI Quiz Studio**, a local-first automated AI quiz video production engine.
+
+Reviewed against the working tree. Source, schemas, and executable tests take precedence. These guides describe implementation; they do not certify that current runtime tests pass.
 
 ## Start here
 
@@ -23,4 +25,3 @@ Reviewed on 2026-09-09 against the working tree. Source, schemas and executable 
 
 - [Setup](setup.md)
 - [Troubleshooting](troubleshooting.md)
-

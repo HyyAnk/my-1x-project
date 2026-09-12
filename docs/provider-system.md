@@ -2,19 +2,11 @@
 
 Reviewed against repository boundaries on 2026-09-09. Configured remote generation can require credentials, network access and billable requests. Local storage does not imply fully offline generation.
 
-The scene model is provider-neutral:
+In Quiz Engine V2, provider generation operates primarily on quiz voice plans and asset plans, with scene-level interfaces maintained for backward compatibility:
 
-```ts
-scene.dialogue;
-scene.visual_prompt;
-scene.duration_seconds;
-scene.aspect_ratio;
-scene.audio_asset_path;
-scene.audio_generated_at;
-scene.audio_duration_seconds;
-```
-
-`AudioProvider.generateDialogue` is implemented by `ChatterboxProvider`. It sends a local HTTP request to the Chatterbox sidecar, validates the returned WAV, and writes it through the repository path resolver to the episode `assets/` folder. The task runner then reads the WAV header and persists its duration beside the scene.
+- **Quiz V2 Audio:** The voice pipeline plans and synthesizes episode narration segments using `AudioProvider` / Chatterbox Turbo, assembling the final `narration.wav` and measuring segment durations for timeline alignment.
+- **Quiz V2 Visual Assets:** The asset resolution pipeline calls `ImageProvider.generateReference` to render visual questions, hero clues, and choice illustrations according to the director's asset plan.
+- **Compatibility Scene Model:** A provider-neutral scene contract (`dialogue`, `visual_prompt`, `duration_seconds`, `audio_asset_path`) is retained for compatibility utilities.
 
 ```ts
 export interface AudioProvider {
