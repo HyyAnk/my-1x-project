@@ -17,6 +17,14 @@ import type { PlannedBatchChunk } from "../matrixCoverageService.js";
 export const MAX_BATCH_CHUNK_SIZE = 20;
 export const DEFAULT_BATCH_CONCURRENCY = 5;
 
+export interface FailedBatchChunk {
+  chunkIndex: number;
+  error: string;
+  archetypeId?: BankGameplayArchetypeId;
+  domainId?: string;
+  subtopicId?: string;
+}
+
 export interface QuestionBankChunkProgress {
   totalRequested: number;
   completedCount: number;
@@ -25,6 +33,7 @@ export interface QuestionBankChunkProgress {
   chunkSize: number;
   approvedInChunk: number;
   rejectedInChunk: number;
+  failedChunksCount?: number;
 }
 
 export interface GenerateBatchInput {
@@ -43,6 +52,8 @@ export interface GenerateBatchInput {
   signal?: AbortSignal;
   rawCandidatesOverride?: BankQuestion[];
   onChunkProgress?: (progress: QuestionBankChunkProgress) => void;
+  retryAttempts?: number;
+  retryBaseDelayMs?: number;
 }
 
 export interface BatchGenerationResult {
@@ -59,6 +70,9 @@ export interface BatchGenerationResult {
   savedQuestions: BankQuestion[];
   rejectedQuestions: BatchAutoQaReport["rejectedQuestions"];
   matrixCoverage?: MatrixCoverageStats;
+  failedChunks?: FailedBatchChunk[];
+  failedChunksCount?: number;
+  errorSummary?: string;
 }
 
 export interface ScheduleBatchChunksOptions {
@@ -76,6 +90,7 @@ export interface ScheduledBatchExecutionOutput {
   totalApproved: number;
   totalRejected: number;
   combinedSummary: BatchAutoQaReport["summary"];
+  failedChunks: FailedBatchChunk[];
 }
 
 /**
@@ -111,6 +126,50 @@ export async function executePromptWithRetry(llmClient: LLMClient, prompt: strin
       }),
     { attempts: 2, baseDelayMs: 2000, jitterMs: 1500 },
   );
+}
+
+export interface ChunkRetryOptions {
+  attempts?: number;
+  baseDelayMs?: number;
+  maxDelayMs?: number;
+  jitterMs?: number;
+  signal?: AbortSignal;
+  onRetry?: (error: unknown, attempt: number, delayMs: number) => void;
+}
+
+/**
+ * Retries an asynchronous chunk operation with exponential backoff and jitter.
+ * Aborts immediately without retrying if the abort signal is triggered.
+ */
+export async function retryChunkOperation<T>(
+  operation: (attempt: number) => Promise<T>,
+  options: ChunkRetryOptions = {},
+): Promise<T> {
+  const maxAttempts = Math.max(1, options.attempts ?? 3);
+  const baseDelayMs = Math.max(0, options.baseDelayMs ?? 500);
+  const maxDelayMs = Math.max(baseDelayMs, options.maxDelayMs ?? 4000);
+  const jitterMs = Math.max(0, options.jitterMs ?? 200);
+
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    if (options.signal?.aborted) {
+      const abortError = new Error("Batch generation cancelled by user");
+      abortError.name = "AbortError";
+      throw abortError;
+    }
+    try {
+      return await operation(attempt);
+    } catch (err) {
+      lastError = err;
+      if (options.signal?.aborted || attempt >= maxAttempts) {
+        throw err;
+      }
+      const delay = Math.min(maxDelayMs, baseDelayMs * Math.pow(2, attempt - 1)) + Math.random() * jitterMs;
+      options.onRetry?.(err, attempt, delay);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw lastError;
 }
 
 /**
@@ -234,10 +293,10 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
   const allGenerated: BankQuestion[] = [];
   const allSaved: BankQuestion[] = [];
   const allRejected: BatchAutoQaReport["rejectedQuestions"] = [];
+  const failedChunks: FailedBatchChunk[] = [];
   let totalApproved = 0;
   let totalRejected = 0;
   let completedChunksCount = 0;
-  let lastError: string | null = null;
 
   const combinedSummary: BatchAutoQaReport["summary"] = {
     duplicateRejections: 0,
@@ -247,16 +306,59 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
 
   const persistenceMutex = new AsyncMutex();
 
-  async function processPlannedChunk(chunk: PlannedBatchChunk): Promise<void> {
+  async function recordFailedChunk(chunk: PlannedBatchChunk, chunkIndex: number, errorMsg: string): Promise<void> {
+    await persistenceMutex.run(async () => {
+      failedChunks.push({
+        chunkIndex,
+        error: errorMsg,
+        archetypeId: chunk.archetypeId,
+        domainId: chunk.domainId,
+        subtopicId: chunk.subtopicId,
+      });
+      completedChunksCount++;
+      normalizedInput.onChunkProgress?.({
+        totalRequested: targetCount,
+        completedCount: allSaved.length,
+        currentChunk: completedChunksCount,
+        totalChunks,
+        chunkSize: chunk.chunkSize,
+        approvedInChunk: 0,
+        rejectedInChunk: 0,
+        failedChunksCount: failedChunks.length,
+      });
+    });
+  }
+
+  async function processPlannedChunk(chunk: PlannedBatchChunk, chunkIndex: number): Promise<void> {
     if (normalizedInput.signal?.aborted) return;
+
+    const retryAttempts = normalizedInput.retryAttempts ?? 3;
+    const retryBaseDelayMs = normalizedInput.retryBaseDelayMs ?? 500;
+    const retryOpts: ChunkRetryOptions = {
+      attempts: retryAttempts,
+      baseDelayMs: retryBaseDelayMs,
+      signal: normalizedInput.signal,
+    };
 
     let chunkCandidates: BankQuestion[] = [];
     try {
-      chunkCandidates = await generateChunkCandidates(chunk, normalizedInput, allBankQuestions);
+      chunkCandidates = await retryChunkOperation(
+        () => generateChunkCandidates(chunk, normalizedInput, allBankQuestions),
+        {
+          ...retryOpts,
+          onRetry: (err, attempt, delay) => {
+            console.warn(
+              `[QuestionBankBatch] Chunk ${chunkIndex + 1} candidate generation attempt ${attempt} failed, retrying in ${Math.round(delay)}ms: ${err instanceof Error ? err.message : String(err)}`,
+            );
+          },
+        },
+      );
     } catch (err) {
       if (normalizedInput.signal?.aborted) return;
-      lastError = err instanceof Error ? err.message : String(err);
-      console.error(`[QuestionBankBatch] LLM generation error:`, err);
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error(`[QuestionBankBatch] Chunk ${chunkIndex + 1} candidate generation failed after ${retryAttempts} attempts:`, errorMsg);
+      await recordFailedChunk(chunk, chunkIndex, errorMsg);
+      return;
     }
 
     if (normalizedInput.signal?.aborted) return;
@@ -266,69 +368,98 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
       existingQuestions: allBankQuestions,
     });
 
-    // Safely persist to disk & update state sequentially via Mutex to avoid file write race conditions
-    await persistenceMutex.run(async () => {
-      allGenerated.push(...chunkCandidates);
-      const savedInThisChunk: BankQuestion[] = [];
-      if (persist && qaReport.approvedQuestions.length > 0) {
-        for (const q of qaReport.approvedQuestions) {
-          const saved = await repository.saveQuestionBankQuestion(q);
-          savedInThisChunk.push(saved);
-          allBankQuestions.push(saved);
-        }
-      } else {
-        savedInThisChunk.push(...qaReport.approvedQuestions);
-        allBankQuestions.push(...qaReport.approvedQuestions);
-      }
+    try {
+      // Safely persist to disk & update state sequentially via Mutex to avoid file write race conditions
+      await retryChunkOperation(
+        async () => {
+          await persistenceMutex.run(async () => {
+            const savedMap = new Map<string, BankQuestion>();
+            if (persist && qaReport.approvedQuestions.length > 0) {
+              for (const q of qaReport.approvedQuestions) {
+                if (savedMap.has(q.id)) continue;
+                const saved = await repository.saveQuestionBankQuestion(q);
+                savedMap.set(saved.id, saved);
+              }
+            } else {
+              for (const q of qaReport.approvedQuestions) {
+                savedMap.set(q.id, q);
+              }
+            }
 
-      allSaved.push(...savedInThisChunk);
-      totalApproved += qaReport.passedCount;
-      totalRejected += qaReport.rejectedCount;
-      allRejected.push(...qaReport.rejectedQuestions);
-      combinedSummary.duplicateRejections += qaReport.summary.duplicateRejections;
-      combinedSummary.schemaRejections += qaReport.summary.schemaRejections;
-      combinedSummary.qualityRejections += qaReport.summary.qualityRejections;
-      completedChunksCount++;
+            const savedInThisChunk = Array.from(savedMap.values());
+            allGenerated.push(...chunkCandidates);
+            allSaved.push(...savedInThisChunk);
+            allBankQuestions.push(...savedInThisChunk);
+            totalApproved += qaReport.passedCount;
+            totalRejected += qaReport.rejectedCount;
+            allRejected.push(...qaReport.rejectedQuestions);
+            combinedSummary.duplicateRejections += qaReport.summary.duplicateRejections;
+            combinedSummary.schemaRejections += qaReport.summary.schemaRejections;
+            combinedSummary.qualityRejections += qaReport.summary.qualityRejections;
+            completedChunksCount++;
 
-      // Emit real-time chunk progress
-      normalizedInput.onChunkProgress?.({
-        totalRequested: targetCount,
-        completedCount: allSaved.length,
-        currentChunk: completedChunksCount,
-        totalChunks,
-        chunkSize: chunk.chunkSize,
-        approvedInChunk: qaReport.passedCount,
-        rejectedInChunk: qaReport.rejectedCount,
-      });
-    });
+            // Emit real-time chunk progress
+            normalizedInput.onChunkProgress?.({
+              totalRequested: targetCount,
+              completedCount: allSaved.length,
+              currentChunk: completedChunksCount,
+              totalChunks,
+              chunkSize: chunk.chunkSize,
+              approvedInChunk: qaReport.passedCount,
+              rejectedInChunk: qaReport.rejectedCount,
+              failedChunksCount: failedChunks.length,
+            });
+          });
+        },
+        {
+          ...retryOpts,
+          onRetry: (err, attempt, delay) => {
+            console.warn(
+              `[QuestionBankBatch] Chunk ${chunkIndex + 1} persistence attempt ${attempt} failed, retrying in ${Math.round(delay)}ms: ${err instanceof Error ? err.message : String(err)}`,
+            );
+          },
+        },
+      );
+    } catch (err) {
+      if (normalizedInput.signal?.aborted) return;
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error(`[QuestionBankBatch] Chunk ${chunkIndex + 1} persistence failed after ${retryAttempts} attempts:`, errorMsg);
+      await recordFailedChunk(chunk, chunkIndex, errorMsg);
+      return;
+    }
   }
 
   const concurrency = Math.max(1, Math.min(input.concurrency ?? DEFAULT_BATCH_CONCURRENCY, plannedChunks.length));
   let nextChunkIndex = 0;
-  const workerFailure: { error: Error | null } = { error: null };
 
   const runWorker = async () => {
     while (nextChunkIndex < plannedChunks.length) {
-      if (normalizedInput.signal?.aborted || workerFailure.error) break;
-      const chunk = plannedChunks[nextChunkIndex++];
-      try {
-        await processPlannedChunk(chunk);
-      } catch (err) {
-        workerFailure.error = err instanceof Error ? err : new Error(String(err));
-        break;
-      }
+      if (normalizedInput.signal?.aborted) break;
+      const currentIndex = nextChunkIndex++;
+      const chunk = plannedChunks[currentIndex];
+      await processPlannedChunk(chunk, currentIndex);
     }
   };
 
   const workers = Array.from({ length: concurrency }, () => runWorker());
   await Promise.all(workers);
 
-  if (workerFailure.error && allGenerated.length === 0) {
-    throw workerFailure.error;
+  if (normalizedInput.signal?.aborted) {
+    return {
+      allGenerated,
+      allSaved,
+      allRejected,
+      totalApproved,
+      totalRejected,
+      combinedSummary,
+      failedChunks,
+    };
   }
 
-  if (allGenerated.length === 0 && lastError) {
-    throw new Error(lastError);
+  // If all planned chunks failed completely, throw an error with aggregated details
+  if (allGenerated.length === 0 && failedChunks.length > 0) {
+    const details = failedChunks.map((f) => `Chunk ${f.chunkIndex + 1}: ${f.error}`).join("; ");
+    throw new Error(`Batch generation failed: all ${failedChunks.length} chunk(s) encountered errors. Details: ${details}`);
   }
 
   return {
@@ -338,5 +469,6 @@ export async function executeBatchChunkScheduler(options: ScheduleBatchChunksOpt
     totalApproved,
     totalRejected,
     combinedSummary,
+    failedChunks,
   };
 }

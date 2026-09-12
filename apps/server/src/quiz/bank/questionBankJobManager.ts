@@ -3,6 +3,7 @@ import type { RepositoryService } from "../../repository/service.js";
 import {
   generateQuestionBankBatch,
   type BatchGenerationResult,
+  type FailedBatchChunk,
   type GenerateBatchInput,
   type QuestionBankChunkProgress,
 } from "./questionBankBatchService.js";
@@ -17,6 +18,7 @@ export interface QuestionBankJobProgress {
   rejectedInChunk: number;
   approvedTotal: number;
   rejectedTotal: number;
+  failedChunksCount?: number;
 }
 
 export interface QuestionBankJobState {
@@ -33,6 +35,9 @@ export interface QuestionBankJobState {
   progress: QuestionBankJobProgress;
   error?: string;
   result?: BatchGenerationResult;
+  failedChunksCount?: number;
+  failedChunks?: FailedBatchChunk[];
+  errorSummary?: string;
 }
 
 class QuestionBankJobManager {
@@ -53,6 +58,7 @@ class QuestionBankJobManager {
       rejectedInChunk: 0,
       approvedTotal: 0,
       rejectedTotal: 0,
+      failedChunksCount: 0,
     },
   };
 
@@ -137,6 +143,7 @@ class QuestionBankJobManager {
         rejectedInChunk: 0,
         approvedTotal: 0,
         rejectedTotal: 0,
+        failedChunksCount: 0,
       },
     };
 
@@ -160,6 +167,7 @@ class QuestionBankJobManager {
               rejectedInChunk: chunkProgress.rejectedInChunk,
               approvedTotal: (this.currentJob.progress.approvedTotal || 0) + chunkProgress.approvedInChunk,
               rejectedTotal: (this.currentJob.progress.rejectedTotal || 0) + chunkProgress.rejectedInChunk,
+              failedChunksCount: chunkProgress.failedChunksCount ?? this.currentJob.progress.failedChunksCount ?? 0,
             };
             this.currentJob.updatedAt = new Date().toISOString();
           },
@@ -171,6 +179,13 @@ class QuestionBankJobManager {
           } else {
             this.currentJob.status = "completed";
             this.currentJob.result = result;
+            const failedCount = result.failedChunks?.length ?? 0;
+            this.currentJob.failedChunksCount = failedCount;
+            this.currentJob.failedChunks = result.failedChunks;
+            if (failedCount > 0) {
+              this.currentJob.errorSummary = result.errorSummary;
+              this.currentJob.error = result.errorSummary;
+            }
           }
           this.currentJob.completedAt = new Date().toISOString();
           this.currentJob.updatedAt = new Date().toISOString();

@@ -64,6 +64,17 @@ function ActivityBarCopy({ job, completed, target }: { job: QuestionBankJobState
     );
   }
   if (job.status === "completed") {
+    const failedChunksCount = job.failedChunksCount ?? job.progress.failedChunksCount ?? 0;
+    if (failedChunksCount > 0) {
+      return (
+        <div className="task-activity-copy">
+          <strong style={{ color: "#f59e0b" }}>
+            Batch Complete with Warnings: {completed} questions added ({failedChunksCount} chunk{failedChunksCount > 1 ? "s" : ""} failed)
+          </strong>
+          <span>{job.errorSummary || job.error || "Some chunks encountered errors during batch generation"}</span>
+        </div>
+      );
+    }
     return (
       <div className="task-activity-copy">
         <strong>Batch Complete: {completed} questions added to Question Bank</strong>

@@ -83,4 +83,71 @@ describe("Question Bank Job Manager", () => {
     const refreshed = questionBankJobManager.getStatus();
     expect(refreshed.status).toBe("idle");
   });
+
+  it("tracks failedChunksCount and errorSummary in job state upon partial chunk failures", async () => {
+    questionBankJobManager.cancelJob();
+    const mockRepoWithQuery = {
+      queryQuestionBankQuestions: () => Promise.resolve({ questions: [], total: 0 }),
+      saveQuestionBankQuestion: (q: unknown) => Promise.resolve(q),
+    } as unknown as RepositoryService;
+
+    let callCount = 0;
+    const mockLlmClient: LLMClient = {
+      connect: () => Promise.resolve(),
+      generateContent: () => {
+        callCount++;
+        // Chunk 2 fails on calls 2, 3, 4
+        if (callCount >= 2 && callCount <= 4) {
+          throw new Error("Temporary provider outage for chunk 2");
+        }
+        return Promise.resolve({
+          text: JSON.stringify([
+            {
+              entity_id: `ENT-JOB-${callCount}`,
+              question: `Valid question ${callCount}?`,
+              format: "multiple_choice",
+              choices: [
+                { id: "A", text: "Alpha", is_correct: true },
+                { id: "B", text: "Beta", is_correct: false },
+              ],
+              correct_choice_id: "A",
+              explanation: "Explanation.",
+              visual_spec: { intent: "none" },
+              difficulty: 1,
+              thinking_seconds: 5,
+              tags: ["test"],
+            },
+          ]),
+        });
+      },
+    };
+
+    const launched = questionBankJobManager.startJob(mockRepoWithQuery, {
+      mode: "auto",
+      count: 40, // 2 chunks of 20
+      concurrency: 1,
+      persist: false,
+      llmClient: mockLlmClient,
+      retryAttempts: 3,
+      retryBaseDelayMs: 5,
+    });
+
+    expect(launched.started).toBe(true);
+
+    // Poll until completed
+    const deadline = Date.now() + 5000;
+    let finalJob = questionBankJobManager.getStatus();
+    while (finalJob.status === "running" && Date.now() < deadline) {
+      await new Promise((res) => setTimeout(res, 20));
+      finalJob = questionBankJobManager.getStatus();
+    }
+
+    expect(finalJob.status).toBe("completed");
+    expect(finalJob.failedChunksCount).toBe(1);
+    expect(finalJob.failedChunks?.length).toBe(1);
+    expect(finalJob.failedChunks?.[0].error).toContain("Temporary provider outage for chunk 2");
+    expect(finalJob.errorSummary).toContain("1 of 2 chunk(s) encountered failures");
+    expect(finalJob.progress.failedChunksCount).toBe(1);
+    expect(finalJob.progress.completedCount).toBeGreaterThanOrEqual(1);
+  });
 });

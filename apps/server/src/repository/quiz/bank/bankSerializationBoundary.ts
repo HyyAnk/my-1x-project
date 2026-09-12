@@ -135,7 +135,7 @@ class QueueBoundary implements BankSerializationBoundary {
               if (writes) {
                 fs.mkdirSync(this.bankRoot, { recursive: true });
                 db = new SqliteDbClass(path.join(this.bankRoot, ".bank_writer.lock"));
-                db.exec("PRAGMA busy_timeout = 200;");
+                db.exec("PRAGMA busy_timeout = 5000;");
                 db.exec("PRAGMA locking_mode = EXCLUSIVE;");
                 db.exec("CREATE TABLE IF NOT EXISTS lock_lease (id INTEGER PRIMARY KEY);");
                 db.exec("BEGIN EXCLUSIVE;");

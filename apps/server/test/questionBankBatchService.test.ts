@@ -472,4 +472,127 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     // Out of 10 chunks, abort prevents the remaining chunks from ever starting
     expect(callsCount).toBeLessThan(10);
   });
+
+  it("retries failed chunk candidate generation with exponential backoff and succeeds on subsequent attempt", async () => {
+    let attemptCounter = 0;
+    const mockLlmClient: LLMClient = {
+      connect: () => Promise.resolve(),
+      generateContent: () => {
+        attemptCounter++;
+        if (attemptCounter === 1) {
+          throw new Error("Temporary network timeout");
+        }
+        return Promise.resolve({
+          text: JSON.stringify([
+            {
+              entity_id: "ENT-ANI-001",
+              question: "Sample recovered question on retry?",
+              format: "multiple_choice",
+              choices: [
+                { id: "A", text: "Alpha", is_correct: true },
+                { id: "B", text: "Beta", is_correct: false },
+              ],
+              correct_choice_id: "A",
+              explanation: "Recovered successfully.",
+              visual_spec: { intent: "none" },
+              difficulty: 1,
+              thinking_seconds: 4,
+              tags: ["test"],
+            },
+          ]),
+        });
+      },
+    };
+
+    const result = await generateQuestionBankBatch(repo, {
+      mode: "auto",
+      count: 20,
+      persist: false,
+      llmClient: mockLlmClient,
+      retryAttempts: 3,
+      retryBaseDelayMs: 10,
+    });
+
+    expect(attemptCounter).toBe(2);
+    expect(result.success).toBe(true);
+    expect(result.generatedCount).toBe(1);
+    expect(result.failedChunksCount).toBe(0);
+    expect(result.failedChunks).toEqual([]);
+  });
+
+  it("does not abort remaining chunks when a chunk fails completely after retries", async () => {
+    // 60 questions requested -> 3 chunks of 20
+    let callCounter = 0;
+    const progressReports: QuestionBankChunkProgress[] = [];
+
+    const distinctTexts = [
+      "What is the largest land mammal in the African savannah?",
+      "Which chemical element has the symbol Au on the periodic table?",
+      "How many minutes does sunlight take to reach Earth?",
+    ];
+
+    const mockLlmClient: LLMClient = {
+      connect: () => Promise.resolve(),
+      generateContent: () => {
+        callCounter++;
+        // Chunk 2 will fail on all 3 retry attempts (calls 2, 3, 4)
+        if (callCounter >= 2 && callCounter <= 4) {
+          throw new Error("Persistent LLM failure for chunk 2");
+        }
+
+        const qText = callCounter === 1 ? distinctTexts[0] : distinctTexts[1];
+
+        return Promise.resolve({
+          text: JSON.stringify([
+            {
+              entity_id: `ENT-TEST-${callCounter}`,
+              question: qText,
+              format: "multiple_choice",
+              choices: [
+                { id: "A", text: "Alpha Option", is_correct: true },
+                { id: "B", text: "Beta Option", is_correct: false },
+                { id: "C", text: "Gamma Option", is_correct: false },
+                { id: "D", text: "Delta Option", is_correct: false },
+              ],
+              correct_choice_id: "A",
+              explanation: "Clear and distinctive explanation text.",
+              visual_spec: { intent: "none" },
+              difficulty: 1,
+              thinking_seconds: 5,
+              tags: ["test"],
+            },
+          ]),
+        });
+      },
+    };
+
+    const result = await generateQuestionBankBatch(repo, {
+      mode: "auto",
+      count: 60,
+      concurrency: 1,
+      persist: false,
+      llmClient: mockLlmClient,
+      retryAttempts: 3,
+      retryBaseDelayMs: 10,
+      onChunkProgress: (p) => progressReports.push(p),
+    });
+
+    // Chunk 2 failed, but Chunk 1 and Chunk 3 succeeded without breaking!
+    expect(result.success).toBe(false);
+    expect(result.failedChunksCount).toBe(1);
+    expect(result.failedChunks).toBeDefined();
+    expect(result.failedChunks?.length).toBe(1);
+    expect(result.failedChunks?.[0].chunkIndex).toBe(1);
+    expect(result.failedChunks?.[0].error).toContain("Persistent LLM failure for chunk 2");
+    expect(result.errorSummary).toContain("1 of 3 chunk(s) encountered failures");
+
+    // Questions from successful chunks were preserved
+    expect(result.generatedCount).toBe(2);
+    expect(result.savedQuestions.length).toBe(2);
+
+    // Progress reports accurately tracked failedChunksCount
+    const finalReport = progressReports[progressReports.length - 1];
+    expect(finalReport.failedChunksCount).toBe(1);
+    expect(finalReport.currentChunk).toBe(3);
+  });
 });

@@ -66,6 +66,17 @@ export interface QuestionBankBatchGenResponse {
   }>;
   matrixCoverage?: MatrixCoverageStats;
   job?: QuestionBankJobState;
+  failedChunks?: FailedBatchChunk[];
+  failedChunksCount?: number;
+  errorSummary?: string;
+}
+
+export interface FailedBatchChunk {
+  chunkIndex: number;
+  error: string;
+  archetypeId?: BankGameplayArchetypeId;
+  domainId?: string;
+  subtopicId?: string;
 }
 
 export interface QuestionBankJobProgress {
@@ -78,6 +89,7 @@ export interface QuestionBankJobProgress {
   rejectedInChunk: number;
   approvedTotal: number;
   rejectedTotal: number;
+  failedChunksCount?: number;
 }
 
 export interface QuestionBankJobState {
@@ -94,6 +106,9 @@ export interface QuestionBankJobState {
   progress: QuestionBankJobProgress;
   error?: string;
   result?: QuestionBankBatchGenResponse;
+  failedChunksCount?: number;
+  failedChunks?: FailedBatchChunk[];
+  errorSummary?: string;
 }
 
 export type {

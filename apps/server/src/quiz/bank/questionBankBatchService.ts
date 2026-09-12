@@ -10,6 +10,7 @@ import {
   type QuestionBankChunkProgress,
   type GenerateBatchInput,
   type BatchGenerationResult,
+  type FailedBatchChunk,
 } from "./batch/batchChunkScheduler.js";
 
 export {
@@ -18,6 +19,7 @@ export {
   type QuestionBankChunkProgress,
   type GenerateBatchInput,
   type BatchGenerationResult,
+  type FailedBatchChunk,
 };
 
 export type BankRawCandidateLanguageError = {
@@ -96,6 +98,8 @@ export async function generateQuestionBankBatch(repository: RepositoryService, i
       savedQuestions,
       rejectedQuestions: qaReport.rejectedQuestions,
       matrixCoverage: calculateMatrixCoverageStats(allCurrent),
+      failedChunks: [],
+      failedChunksCount: 0,
     };
   }
 
@@ -132,9 +136,14 @@ export async function generateQuestionBankBatch(repository: RepositoryService, i
   });
 
   const finalCoverage = calculateMatrixCoverageStats(allBankQuestions);
+  const hasFailures = scheduled.failedChunks.length > 0;
+  const errorSummary = hasFailures
+    ? `${scheduled.failedChunks.length} of ${plannedChunks.length} chunk(s) encountered failures during batch generation: ` +
+      scheduled.failedChunks.map((f) => `Chunk ${f.chunkIndex + 1}: ${f.error}`).join("; ")
+    : undefined;
 
   return {
-    success: true,
+    success: !hasFailures,
     mode,
     archetypeId: input.archetypeId,
     domainId: input.domainId,
@@ -147,5 +156,8 @@ export async function generateQuestionBankBatch(repository: RepositoryService, i
     savedQuestions: scheduled.allSaved,
     rejectedQuestions: scheduled.allRejected,
     matrixCoverage: finalCoverage,
+    failedChunks: scheduled.failedChunks,
+    failedChunksCount: scheduled.failedChunks.length,
+    errorSummary,
   };
 }

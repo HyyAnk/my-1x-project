@@ -58,6 +58,22 @@ export function AiGenerateResultList({ result, targetCount, onReset, onClose }: 
         </div>
       )}
 
+      {result.failedChunks && result.failedChunks.length > 0 && (
+        <div className="qb-rejection-box" style={{ borderColor: "rgba(239, 68, 68, 0.4)", background: "rgba(239, 68, 68, 0.06)" }}>
+          <div className="qb-rejection-title" style={{ color: "#ef4444" }}>
+            <WarningCircle size={16} weight="fill" />
+            <span>{result.failedChunks.length} chunk(s) failed during generation</span>
+          </div>
+          <ul className="qb-rejection-list">
+            {result.failedChunks.map((fc, idx) => (
+              <li key={idx}>
+                Chunk {fc.chunkIndex + 1}: {fc.error}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="qb-modal-footer">
         <button type="button" className="qb-btn qb-btn-secondary" onClick={onReset}>
           {t("questionBank.aiModal.generateAnotherBtn")}
