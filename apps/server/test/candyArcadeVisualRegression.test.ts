@@ -54,8 +54,6 @@ describe("Candy Arcade visual regression contract", () => {
   it("keeps the timer marker circular and synchronized without nesting it under the scaled fill", () => {
     const html = renderHtml();
     const markerCss = html.match(/\.timer-marker \{([^}]+)\}/)?.[1] ?? "";
-    const thinkingBarCss = html.match(/\n ?\.thinking-bar \{([^}]+)\}/)?.[1] ?? "";
-    const timerProgressCss = html.match(/\.timer-progress \{([^}]+)\}/)?.[1] ?? "";
     const width = Number(markerCss.match(/width: ([\d.]+)px/)?.[1]);
     const height = Number(markerCss.match(/height: ([\d.]+)px/)?.[1]);
     expect(width / height).toBeGreaterThanOrEqual(0.92);

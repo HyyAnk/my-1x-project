@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DirectorPlanSchema, QuizV2Schema } from "@studio/shared";
+import { DirectorPlanSchema, QuizV2Schema, type Episode } from "@studio/shared";
 import { buildEpisodePreviewQuestions } from "./episodePreviewQuestions";
 
 const quiz = QuizV2Schema.parse({
@@ -88,7 +88,7 @@ describe("episode preview questions", () => {
         quiz_format: "odd_one_out" as const,
         question_count: 8,
       },
-    } as any;
+    } as unknown as Episode;
 
     const questions = buildEpisodePreviewQuestions(null, null, episodeOddOneOut);
     expect(questions).toHaveLength(1);
@@ -109,7 +109,7 @@ describe("episode preview questions", () => {
         quiz_format: "true_false" as const,
         question_count: 5,
       },
-    } as any;
+    } as unknown as Episode;
 
     const questions = buildEpisodePreviewQuestions(null, null, episodeTrueFalse);
     expect(questions).toHaveLength(1);

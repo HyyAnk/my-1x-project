@@ -21,8 +21,9 @@ describe("video output routes", () => {
     ]);
     const revealed: string[] = [];
     const app = await buildApp(root, {
-      revealFile: async (filePath) => {
+      revealFile: (filePath) => {
         revealed.push(filePath);
+        return Promise.resolve();
       },
     });
     try {
@@ -58,7 +59,9 @@ describe("video output routes", () => {
 
       const open = await app.server.inject({ method: "POST", url: `${base}/open-folder`, payload: {} });
       expect(open.statusCode).toBe(200);
-      expect(open.json()).toMatchObject({ opened: true, folder_path: expect.stringMatching(/\/assets$/) });
+      const openBody = open.json<{ opened: boolean; folder_path: string }>();
+      expect(openBody.opened).toBe(true);
+      expect(openBody.folder_path).toMatch(/\/assets$/);
       expect(revealed).toEqual([path.join(root, "channels", channel.slug, "episodes", episode.slug, "assets", "quiz-video.mp4")]);
     } finally {
       await app.close();

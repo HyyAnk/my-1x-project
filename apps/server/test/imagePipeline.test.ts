@@ -132,13 +132,9 @@ describe("Multi-Tier Image Pipeline", () => {
 
   it("AntigravityImageChainProvider throws IMAGE_GENERATION_FAILED by default when Tier 1 fails without Tier 2 fallback", async () => {
     const failingClient = {
-      startThread: async () => {
-        throw new Error("Antigravity offline");
-      },
-      startTurn: async () => {
-        throw new Error("Antigravity offline");
-      },
-      interruptTurn: async () => {},
+      startThread: () => Promise.reject(new Error("Antigravity offline")),
+      startTurn: () => Promise.reject(new Error("Antigravity offline")),
+      interruptTurn: () => Promise.resolve(),
       on: () => {},
       off: () => {},
     };
@@ -149,13 +145,9 @@ describe("Multi-Tier Image Pipeline", () => {
 
   it("AntigravityImageChainProvider cascades down to Tier 3 when allowTier3Fallback is true", async () => {
     const failingClient = {
-      startThread: async () => {
-        throw new Error("Antigravity offline");
-      },
-      startTurn: async () => {
-        throw new Error("Antigravity offline");
-      },
-      interruptTurn: async () => {},
+      startThread: () => Promise.reject(new Error("Antigravity offline")),
+      startTurn: () => Promise.reject(new Error("Antigravity offline")),
+      interruptTurn: () => Promise.resolve(),
       on: () => {},
       off: () => {},
     };
@@ -185,10 +177,10 @@ describe("Multi-Tier Image Pipeline", () => {
 
     // Mock client that immediately resolves turn
     const mockClient = {
-      startThread: async () => "mock-thread",
-      startTurn: async () => "mock-turn",
+      startThread: () => Promise.resolve("mock-thread"),
+      startTurn: () => Promise.resolve("mock-turn"),
       getConversationId: () => "test-img-conv",
-      interruptTurn: async () => {},
+      interruptTurn: () => Promise.resolve(),
       on: (event: string, handler: (payload: unknown) => void) => {
         if (event === "notification") {
           setTimeout(

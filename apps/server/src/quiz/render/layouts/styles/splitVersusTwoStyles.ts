@@ -65,24 +65,24 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
 }
 
 .quiz-frame-unified.layout-split_versus_two .choice-card {
-  width: 646px;
-  height: 504px;
-  max-width: 646px;
-  max-height: 504px;
+  width: var(--slot-card-width, 646px);
+  height: var(--slot-card-height, 504px);
+  max-width: var(--slot-card-width, 646px);
+  max-height: var(--slot-card-height, 504px);
   box-sizing: border-box;
   margin: 0;
 }
 
 .quiz-frame-unified.layout-split_versus_two .choice-card-visual,
 .quiz-frame-unified.layout-split_versus_two .visual-answer-card {
-  height: 504px;
-  min-height: 504px;
+  height: var(--slot-card-height, 504px);
+  min-height: var(--slot-card-height, 504px);
   border-radius: 36px;
 }
 
 .quiz-frame-unified.layout-split_versus_two .choice-media,
 .quiz-frame-unified.layout-split_versus_two .option-image {
-  height: 366px;
+  height: var(--slot-media-height, 366px);
   border-radius: 32px 32px 0 0;
 }
 
@@ -124,7 +124,7 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
   --choice-card-min-height: 500px;
   --choice-card-height: 500px;
   --choice-card-margin-left: 0;
-  --choice-media-height: 410px;
+  --choice-media-height: var(--slot-media-height, 366px);
   --choice-badge-size: 116px;
   --choice-badge-margin-left: -58px;
   --choice-badge-font-size: 60px;
@@ -162,7 +162,7 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
 
 .layout-split_versus_two .choice-media,
 .layout-split_versus_two .option-image {
-  height: 410px;
+  height: var(--slot-media-height, 366px);
   border-radius: 38px 38px 0 0;
 }
 

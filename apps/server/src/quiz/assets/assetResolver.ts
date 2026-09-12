@@ -6,6 +6,7 @@ export type ResolvedQuizAsset = QuizAssetRequirement & {
   fingerprint: string;
   path: string;
   source: "explicit_episode" | "channel_reusable" | "cache" | "provider" | "fallback";
+  actual_dimensions?: { width: number; height: number };
 };
 
 export type AssetCandidate = { path: string; semantic_key: string; source?: ResolvedQuizAsset["source"] };

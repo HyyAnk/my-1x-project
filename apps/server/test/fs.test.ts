@@ -25,7 +25,7 @@ describe("Atomic File System Utils", () => {
   it("writes json files atomically", async () => {
     const filePath = path.join(tmpDir, "sub", "test.json");
     await writeJsonAtomic(filePath, { key: "value", count: 42 });
-    const content = JSON.parse(await readFile(filePath, "utf8"));
+    const content = JSON.parse(await readFile(filePath, "utf8")) as Record<string, unknown>;
     expect(content).toEqual({ key: "value", count: 42 });
   });
 
@@ -71,10 +71,10 @@ describe("Atomic File System Utils", () => {
     const targetFile = path.join(tmpDir, "target2.txt");
     await writeFile(tempFile, "fallback success", "utf8");
 
-    const fakeRename = vi.fn(async () => {
+    const fakeRename = vi.fn((): Promise<void> => {
       const err = new Error("resource busy or locked") as NodeJS.ErrnoException;
       err.code = "EBUSY";
-      throw err;
+      return Promise.reject(err);
     });
 
     await atomicRenameWithRetry(tempFile, targetFile, {

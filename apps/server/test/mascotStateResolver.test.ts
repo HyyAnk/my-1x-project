@@ -206,13 +206,33 @@ describe("MascotStateResolver", () => {
 
   describe("renderMascotHtmlLayer", () => {
     it("renders intro phase correctly", () => {
-      const html = renderMascotHtmlLayer(baseMascot, { show_in_intro: true } as any, "intro");
+      const config: ChannelMascotConfig = {
+        enabled: true,
+        position: "bottom_left",
+        scale: 1,
+        offset_x: 0,
+        offset_y: 0,
+        show_in_intro: true,
+        show_in_outro: false,
+        show_in_question: false,
+      };
+      const html = renderMascotHtmlLayer(baseMascot, config, "intro");
       expect(html).toContain("mascot-intro");
       expect(html).toContain("anchor-bottom_left");
     });
 
     it("renders question phase with think and celebrate layers", () => {
-      const html = renderMascotHtmlLayer(baseMascot, { show_in_question: true } as any, "question");
+      const config: ChannelMascotConfig = {
+        enabled: true,
+        position: "bottom_left",
+        scale: 1,
+        offset_x: 0,
+        offset_y: 0,
+        show_in_intro: false,
+        show_in_outro: false,
+        show_in_question: true,
+      };
+      const html = renderMascotHtmlLayer(baseMascot, config, "question");
       expect(html).toContain("mascot-stage");
       expect(html).toContain("state-thinking");
       expect(html).toContain("state-celebrate");

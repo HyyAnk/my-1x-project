@@ -1,4 +1,4 @@
-import { ArrowClockwise, SpeakerHigh, WarningCircle } from "@phosphor-icons/react";
+import { ArrowClockwise, WarningCircle } from "@phosphor-icons/react";
 import type { Scene, Task } from "@studio/shared";
 import { InlineTaskState } from "../InlineTaskState";
 
@@ -8,13 +8,13 @@ export interface SceneAudioPlayerProps {
   audioSrc: string | null;
   processing: boolean;
   mergePending: boolean;
-  audioFailed: boolean;
-  audioMismatch: boolean;
-  audioDelta: number;
-  audioDirection: "longer" | "shorter";
+  audioFailed?: boolean;
+  audioMismatch?: boolean;
+  audioDelta?: number;
+  audioDirection?: "longer" | "shorter";
   now: number;
   onGenerateAudio: () => void;
-  onMatchDuration: () => void;
+  onMatchDuration?: () => void;
 }
 
 export function SceneAudioMismatchWarning({
@@ -46,7 +46,6 @@ export function SceneAudioPlayer({
   audioSrc,
   processing,
   mergePending,
-  audioFailed,
   now,
   onGenerateAudio,
 }: SceneAudioPlayerProps) {

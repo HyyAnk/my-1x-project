@@ -1,4 +1,4 @@
-import { access, mkdir, readFile, readdir, stat } from "node:fs/promises";
+import { mkdir, readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { EpisodeSchema, nowIso, type Episode } from "@studio/shared";
 import { RepositoryError } from "./errors.js";

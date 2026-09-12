@@ -68,7 +68,7 @@ export function resolveBgmScheduleItems(
     let fadeInDur = isFirstClip ? Math.min(0.5, clipDuration * 0.2) : Math.min(0.6, clipDuration * 0.2);
     if (fadeInDur <= 0.05) fadeInDur = 0;
 
-    let fadeOutDur = 0.6;
+    let fadeOutDur: number;
     if (isFinalClip) {
       let fadeOutSeconds = 2.5;
       if (typeof outroStartSeconds === "number" && outroStartSeconds > clipStart && outroStartSeconds < durationSeconds - 0.5) {

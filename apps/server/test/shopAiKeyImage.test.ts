@@ -35,6 +35,10 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 
+function toUrlString(input: RequestInfo | URL): string {
+  return typeof input === "string" ? input : "url" in input ? input.url : input.href;
+}
+
 describe("ShopAIKey image provider", () => {
   it("uses the requested four-model fallback chain by default", async () => {
     process.env.SHOPAIKEY_API_KEY = "test-key";
@@ -42,11 +46,11 @@ describe("ShopAIKey image provider", () => {
     delete process.env.SHOPAIKEY_IMAGE_FALLBACK_MODEL;
     delete process.env.SHOPAIKEY_IMAGE_FALLBACK_MODELS;
     const models: string[] = [];
-    globalThis.fetch = vi.fn(async (_input, init) => {
-      const body = JSON.parse(String(init?.body));
+    globalThis.fetch = vi.fn<typeof fetch>((_input, init) => {
+      const body = JSON.parse(init?.body as string) as { model: string };
       models.push(body.model);
       if (body.model !== "gpt-image-2-all") throw new Error("network timeout");
-      return new Response(JSON.stringify({ data: [{ b64_json: "iVBORw0KGgo=" }] }), { status: 200 });
+      return Promise.resolve(new Response(JSON.stringify({ data: [{ b64_json: "iVBORw0KGgo=" }] }), { status: 200 }));
     });
 
     await generateShopAiKeyImageBytes("A cheerful quiz image");
@@ -90,16 +94,20 @@ describe("ShopAIKey image provider", () => {
     process.env.SHOPAIKEY_BASE_URL = "https://direct.shopaikey.com/v1/";
     process.env.SHOPAIKEY_IMAGE_MODEL = "gpt-image-2-test";
     const png = "iVBORw0KGgo=";
-    globalThis.fetch = vi.fn(async (input, init) => {
-      expect(String(input)).toBe("https://direct.shopaikey.com/v1/images/generations");
-      expect((init?.headers as Record<string, string>).authorization).toBe("Bearer test-key");
-      expect(JSON.parse(String(init?.body))).toMatchObject({
+    globalThis.fetch = vi.fn<typeof fetch>((input, init) => {
+      expect(toUrlString(input)).toBe("https://direct.shopaikey.com/v1/images/generations");
+      const headers = init?.headers as Record<string, string>;
+      expect(headers.authorization).toBe("Bearer test-key");
+      const body = JSON.parse(init?.body as string) as Record<string, unknown>;
+      expect(body).toMatchObject({
         model: "gpt-image-2-test",
         size: "1536x1024",
         quality: "low",
         output_format: "png",
       });
-      return new Response(JSON.stringify({ data: [{ b64_json: png }] }), { status: 200, headers: { "content-type": "application/json" } });
+      return Promise.resolve(
+        new Response(JSON.stringify({ data: [{ b64_json: png }] }), { status: 200, headers: { "content-type": "application/json" } }),
+      );
     });
     const asset = await new ShopAiKeyImageProvider(repository, {
       channelId: channel.channel_id,
@@ -146,10 +154,12 @@ describe("ShopAIKey image provider", () => {
     process.env.SHOPAIKEY_API_KEY = "test-key";
     const png = "iVBORw0KGgo=";
     let calls = 0;
-    globalThis.fetch = vi.fn(async () => {
+    globalThis.fetch = vi.fn<typeof fetch>(() => {
       calls += 1;
-      if (calls === 1) return new Response(JSON.stringify({ error: { message: "temporary capacity" } }), { status: 503 });
-      return new Response(JSON.stringify({ data: [{ b64_json: png }] }), { status: 200, headers: { "content-type": "application/json" } });
+      if (calls === 1) return Promise.resolve(new Response(JSON.stringify({ error: { message: "temporary capacity" } }), { status: 503 }));
+      return Promise.resolve(
+        new Response(JSON.stringify({ data: [{ b64_json: png }] }), { status: 200, headers: { "content-type": "application/json" } }),
+      );
     });
     const asset = await new ShopAiKeyImageProvider(repository, {
       channelId: channel.channel_id,
@@ -197,11 +207,11 @@ describe("ShopAIKey image provider", () => {
     process.env.SHOPAIKEY_IMAGE_MODEL = "primary-model";
     process.env.SHOPAIKEY_IMAGE_FALLBACK_MODEL = "fallback-model";
     const models: string[] = [];
-    globalThis.fetch = vi.fn(async (_input, init) => {
-      const body = JSON.parse(String(init?.body));
+    globalThis.fetch = vi.fn<typeof fetch>((_input, init) => {
+      const body = JSON.parse(init?.body as string) as { model: string };
       models.push(body.model);
       if (body.model === "primary-model") throw new Error("network timeout");
-      return new Response(JSON.stringify({ data: [{ b64_json: "iVBORw0KGgo=" }] }), { status: 200 });
+      return Promise.resolve(new Response(JSON.stringify({ data: [{ b64_json: "iVBORw0KGgo=" }] }), { status: 200 }));
     });
     const asset = await new ShopAiKeyImageProvider(repository, {
       channelId: channel.channel_id,
@@ -218,10 +228,10 @@ describe("ShopAIKey image provider", () => {
     process.env.SHOPAIKEY_API_KEY = "test-key";
     delete process.env.SHOPAIKEY_IMAGE_SIZE;
     const sizes: string[] = [];
-    globalThis.fetch = vi.fn(async (_input, init) => {
-      const body = JSON.parse(String(init?.body));
+    globalThis.fetch = vi.fn<typeof fetch>((_input, init) => {
+      const body = JSON.parse(init?.body as string) as { size: string };
       sizes.push(body.size);
-      return new Response(JSON.stringify({ data: [{ b64_json: "iVBORw0KGgo=" }] }), { status: 200 });
+      return Promise.resolve(new Response(JSON.stringify({ data: [{ b64_json: "iVBORw0KGgo=" }] }), { status: 200 }));
     });
 
     // 1. Explicit aspectRatio option (4:3)

@@ -1,8 +1,11 @@
 import {
+  createSampleImageSpecFromRecommendation,
   generateSampleImageDataUri,
+  getQuizImageSlotGeometry,
   getQuizPreviewLayoutCapability,
   getSampleImageSpec,
   quizChoicePresentationFor,
+  recommendImageSizing,
   resolveQuizLayoutAssetAspectRatio,
   type SandboxPreviewInput,
 } from "@studio/shared";
@@ -25,15 +28,33 @@ export function adaptSandboxQuizScene(input: SandboxPreviewInput, mascotOccupied
   const correctChoiceId = input.choices.length > 0 ? (choices[input.correct_choice_index]?.id ?? choices[0]?.id ?? "") : "";
   const palette = candyArcadePalettes.find((candidate) => candidate.id === input.palette_id) ?? candyArcadePalettes[0];
 
-  const heroAspectRatio = resolveQuizLayoutAssetAspectRatio(input.layout_id, "hero_question_image");
-  const heroSpec = getSampleImageSpec(heroAspectRatio);
+  const heroGeometry = input.layout_id === "baseline" ? null : getQuizImageSlotGeometry({
+    layoutId: input.layout_id,
+    purpose: "hero_question_image",
+    presentation,
+    choiceCount: choices.length,
+    canvasAspectRatio: "16:9",
+  });
+  const heroRecommendation = heroGeometry ? recommendImageSizing(heroGeometry) : null;
+  const heroSpec = heroRecommendation && heroRecommendation.ok
+    ? createSampleImageSpecFromRecommendation(heroRecommendation.value, "Question Hero")
+    : getSampleImageSpec(resolveQuizLayoutAssetAspectRatio(input.layout_id, "hero_question_image"));
   const heroSource = generateSampleImageDataUri(heroSpec, {
     slotLabel: `${heroSpec.aspectRatio} HERO`,
     subLabel: `${heroSpec.recommendedResolution} • ${heroSpec.role}`,
   });
 
-  const choiceAspectRatio = resolveQuizLayoutAssetAspectRatio(input.layout_id, "answer_option");
-  const choiceSpec = getSampleImageSpec(choiceAspectRatio);
+  const choiceGeometry = input.layout_id === "baseline" ? null : getQuizImageSlotGeometry({
+    layoutId: input.layout_id,
+    purpose: "answer_option",
+    presentation,
+    choiceCount: choices.length,
+    canvasAspectRatio: "16:9",
+  });
+  const choiceRecommendation = choiceGeometry ? recommendImageSizing(choiceGeometry) : null;
+  const choiceSpec = choiceRecommendation && choiceRecommendation.ok
+    ? createSampleImageSpecFromRecommendation(choiceRecommendation.value, "Visual Choice")
+    : getSampleImageSpec(resolveQuizLayoutAssetAspectRatio(input.layout_id, "answer_option"));
   const choiceMedia = Object.fromEntries(
     choices.map((choice, index) => {
       const label = String.fromCharCode(65 + index);

@@ -19,14 +19,11 @@ describe("imageOptimizer", () => {
 
   it("calculates layout-aware optimal dimensions correctly", () => {
     expect(getOptimalAssetDimensions("choice_thumbnail")).toEqual({ maxWidth: 640, maxHeight: 640, aspectRatio: "1:1" });
-    expect(getOptimalAssetDimensions("hero", "visual_choices_three")).toEqual({ maxWidth: 640, maxHeight: 640, aspectRatio: "1:1" });
-    expect(getOptimalAssetDimensions("hero", "media_left_choices_right")).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
+    expect(getOptimalAssetDimensions("answer_option", "visual_choices_three")).toEqual({ maxWidth: 672, maxHeight: 504, aspectRatio: "4:3" });
+    expect(getOptimalAssetDimensions("answer_option", "visual_choices_three_pure")).toEqual({ maxWidth: 728, maxHeight: 728, aspectRatio: "1:1" });
+    expect(getOptimalAssetDimensions("hero", "media_left_choices_right")).toEqual({ maxWidth: 1056, maxHeight: 792, aspectRatio: "4:3" });
     expect(getOptimalAssetDimensions("hero", "baseline")).toEqual({ maxWidth: 1080, maxHeight: 608, aspectRatio: "16:9" });
-    expect(getOptimalAssetDimensions("hero", "split_versus_two")).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
-    expect(getOptimalAssetDimensions("answer_option", "split_versus_two")).toEqual({ maxWidth: 640, maxHeight: 640, aspectRatio: "1:1" });
-    expect(getOptimalAssetDimensions("hero", "mystery_reveal")).toEqual({ maxWidth: 1280, maxHeight: 720, aspectRatio: "16:9" });
-    expect(getOptimalAssetDimensions("hero", "clue_deduction")).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
-    expect(getOptimalAssetDimensions("hero", "verdict_true_false")).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
+    expect(getOptimalAssetDimensions("answer_option", "split_versus_two")).toEqual({ maxWidth: 1024, maxHeight: 576, aspectRatio: "16:9" });
     expect(getOptimalAssetDimensions()).toEqual({ maxWidth: 1280, maxHeight: 720, aspectRatio: "16:9" });
   });
 

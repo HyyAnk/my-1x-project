@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Archive, FileText, FilmSlate, FilmStrip, Lightbulb, PencilSimple, Trash, VideoCamera } from "@phosphor-icons/react";
-import type { Channel, Episode, Task } from "@studio/shared";
+import type { Channel, Task } from "@studio/shared";
 import { ChannelBreadcrumb } from "../../components/Breadcrumbs";
 import { StatusBadge } from "../../components/AppChrome";
 import type { Notice } from "../../components/types";

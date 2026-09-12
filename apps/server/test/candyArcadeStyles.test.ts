@@ -187,7 +187,7 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
     expect(mlcr).toContain("--choice-font-size-long: 32px;");
     expect(mlcr).toContain("--choice-font-size-very_long: 32px;");
 
-    expect(vc3).toContain("--choice-media-height: 320px;");
+    expect(vc3).toContain("--choice-media-height: var(--slot-media-height, 356px);");
     expect(vc3).toContain("--choice-badge-size: 72px;");
     expect(vc3).toContain("--choice-label-min-height: 70px;");
     expect(vc3).toContain("--choice-label-font-size-base: 26px;");
@@ -207,7 +207,7 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
 
     expect(sv2).toContain("--choice-card-min-height: 500px;");
     expect(sv2).toContain("--choice-card-height: 500px;");
-    expect(sv2).toContain("--choice-media-height: 410px;");
+    expect(sv2).toContain("--choice-media-height: var(--slot-media-height, 366px);");
     expect(sv2).toContain("--choice-badge-size: 116px;");
     expect(sv2).toContain("--choice-badge-font-size: 60px;");
     expect(sv2).toContain("--choice-font-size-base: 40px;");

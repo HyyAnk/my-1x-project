@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { QuizAssetPlanSchema, QuizAssetResolutionSchema, type Task } from "@studio/shared";
+import { QuizAssetResolutionSchema, type Task } from "@studio/shared";
 import { RepositoryService } from "../src/repository.js";
 import { StudioLogger } from "../src/logger.js";
 import { ContextEngine } from "../src/context.js";
@@ -142,14 +142,14 @@ describe("Quiz V2 Parallel Asset & Voice Execution", () => {
     let maxConcurrent = 0;
     const progressUpdates: Array<{ message: string; percent: number }> = [];
 
-    vi.spyOn(taskManager, "update").mockImplementation(async (_id, partial) => {
+    vi.spyOn(taskManager, "update").mockImplementation((_id, partial) => {
       if (partial.progress_message || partial.progress_percent !== undefined) {
         progressUpdates.push({
           message: partial.progress_message ?? "",
           percent: partial.progress_percent ?? 0,
         });
       }
-      return task;
+      return Promise.resolve(task);
     });
 
     vi.spyOn(orchestrator, "generateQuiz").mockImplementation(async (input) => {

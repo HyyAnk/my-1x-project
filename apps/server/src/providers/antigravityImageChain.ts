@@ -46,7 +46,6 @@ export class AntigravityImageChainProvider implements ImageProvider {
     cancellationSignal?: AbortSignal,
   ): Promise<{ asset_path: string; fallback_tier: number; degraded: boolean }> {
     const context = { profileId: this.target.channelId, workerId: this.target.episodeId, step: "antigravity_image_chain" };
-    let tier1Error: Error | null = null;
 
     // Tier 1A: Google Gemini Flash Lite Image (gemini-3.1-flash-lite-image) if API Key is available
     if (this.imagenTier) {
@@ -55,9 +54,9 @@ export class AntigravityImageChainProvider implements ImageProvider {
         this.logger.info("Generated image with Google Gemini Flash Lite Image (gemini-3.1-flash-lite-image)", context);
         return result;
       } catch (error) {
-        tier1Error = error instanceof Error ? error : new Error(String(error));
+        const imagenError = error instanceof Error ? error : new Error(String(error));
         this.logger.warn(
-          `Google Gemini Flash Lite Image (gemini-3.1-flash-lite-image) failed: ${tier1Error.message}, falling back to Native Tool...`,
+          `Google Gemini Flash Lite Image (gemini-3.1-flash-lite-image) failed: ${imagenError.message}, falling back to Native Tool...`,
           context,
         );
       }
@@ -69,15 +68,14 @@ export class AntigravityImageChainProvider implements ImageProvider {
       this.logger.info("Generated image with Tier 1 (Antigravity Native Tool - gemini-3.1-flash-image)", context);
       return result;
     } catch (error) {
-      tier1Error = error instanceof Error ? error : new Error(String(error));
+      const tier1Error = error instanceof Error ? error : new Error(String(error));
       this.logger.warn(`Tier 1 (Antigravity Native Tool) failed: ${tier1Error.message}`, context);
-    }
 
-    // No Tier 2 repeated/reused image fallback. If generation failed and deterministic fallback is not enabled, fail immediately.
-    if (!this.allowTier3Fallback) {
-      const reason = tier1Error?.message || "Unknown error";
-      this.logger.error(`Image generation failed: ${reason}`, context);
-      throw new RepositoryError(`Image generation failed: ${reason}`, "IMAGE_GENERATION_FAILED");
+      // No Tier 2 repeated/reused image fallback. If generation failed and deterministic fallback is not enabled, fail immediately.
+      if (!this.allowTier3Fallback) {
+        this.logger.error(`Image generation failed: ${tier1Error.message}`, context);
+        throw new RepositoryError(`Image generation failed: ${tier1Error.message}`, "IMAGE_GENERATION_FAILED");
+      }
     }
 
     // Tier 3: Theme-Aware PNG Encoder Placeholder (only when explicitly permitted)

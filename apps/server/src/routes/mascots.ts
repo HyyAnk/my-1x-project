@@ -1,4 +1,3 @@
-import path from "node:path";
 import { createReadStream } from "node:fs";
 import type { FastifyPluginCallback, FastifyReply, FastifyRequest } from "fastify";
 import { generateAssetETag, isAssetNotModified, resolveMediaMimeType } from "../utils/mediaMime.js";
@@ -20,7 +19,6 @@ import {
   UpdateMascotSlotInputSchema,
   UpdateMascotStyleInputSchema,
   UploadMascotSpriteInputSchema,
-  type MascotActionType,
   type MascotProfile,
 } from "@studio/shared";
 import type { StudioLogger } from "../logger.js";

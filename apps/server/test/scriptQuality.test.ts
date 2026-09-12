@@ -164,15 +164,16 @@ class ScriptCodex extends EventEmitter {
   private turnNumber = 0;
   readonly prompts: string[] = [];
 
-  async connect(): Promise<void> {
+  connect(): Promise<void> {
     this.emit("status", "connected");
+    return Promise.resolve();
   }
 
-  async startThread(): Promise<string> {
-    return `thread_${this.turnNumber + 1}`;
+  startThread(): Promise<string> {
+    return Promise.resolve(`thread_${this.turnNumber + 1}`);
   }
 
-  async startTurn(threadId: string, prompt: string): Promise<string> {
+  startTurn(threadId: string, prompt: string): Promise<string> {
     const turnId = `turn_${++this.turnNumber}`;
     this.prompts.push(prompt);
     const output =
@@ -191,11 +192,12 @@ class ScriptCodex extends EventEmitter {
       this.emit("notification", { method: "item/agentMessage/delta", params: { threadId, turnId, delta: output } });
       this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, status: "completed" } } });
     }, 5);
-    return turnId;
+    return Promise.resolve(turnId);
   }
 
-  async interruptTurn(): Promise<void> {
+  interruptTurn(): Promise<void> {
     /* deterministic fake */
+    return Promise.resolve();
   }
   respond(): void {
     /* deterministic fake */

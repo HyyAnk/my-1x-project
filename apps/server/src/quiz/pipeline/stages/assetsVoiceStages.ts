@@ -1,6 +1,8 @@
 import type { QuizAssetPlan, QuizAssetResolution, QuizIssue, VoicePlan, QuizTimeline } from "@studio/shared";
 import { RepositoryError } from "../../../repository.js";
 import { planQuizAssets } from "../../assets/assetPlanner.js";
+import { reconcileQuizAssetSizing } from "../../assets/reconcileQuizAssetSizing.js";
+import { ensureQuizAssetSizing } from "../../assets/ensureQuizAssetSizing.js";
 import { resolveQuizAssets } from "../../assets/resolveQuizAssets.js";
 import { buildQuizVoicePlan } from "../../audio/voicePlan.js";
 import { assembleQuizNarration, synthesizeQuizVoiceSegments } from "../../audio/voiceSynthesis.js";
@@ -21,7 +23,8 @@ export async function planAssets(
   ]);
   if (!quiz) throw new RepositoryError("Generate the Quiz facts before planning visual assets", "QUIZ_REQUIRED");
   if (!director_plan) throw new RepositoryError("Generate the Director plan before planning visual assets", "DIRECTOR_REQUIRED");
-  const asset_plan = planQuizAssets(quiz, director_plan);
+  const existingPlan = await input.repository.readAssetPlan(input.channelId, input.episodeId);
+  const asset_plan = existingPlan ? reconcileQuizAssetSizing(quiz, director_plan, existingPlan).plan : planQuizAssets(quiz, director_plan);
   const artifact_path = await input.repository.writeAssetPlan(input.channelId, input.episodeId, asset_plan);
   const invalidatedStages = invalidateQuizArtifacts("assets");
   const invalidated = await input.repository.invalidateQuizArtifacts(input.channelId, input.episodeId, invalidatedStages);
@@ -31,17 +34,35 @@ export async function planAssets(
 export async function resolveAssets(
   input: QuizOrchestratorInput,
 ): Promise<{ asset_resolution: QuizAssetResolution; issues: QuizIssue[]; invalidated: string[] }> {
-  const [asset_plan, channel] = await Promise.all([
+  const [asset_plan, channel, quiz, director_plan] = await Promise.all([
     input.repository.readAssetPlan(input.channelId, input.episodeId),
     input.repository.getChannel(input.channelId),
+    input.repository.readQuiz(input.channelId, input.episodeId),
+    input.repository.readDirectorPlan(input.channelId, input.episodeId),
   ]);
   if (!asset_plan) throw new RepositoryError("Generate the Asset plan before resolving visual assets", "ASSET_PLAN_REQUIRED");
+
+  let activePlan = asset_plan;
+  if (quiz && director_plan) {
+    const sizingResult = await ensureQuizAssetSizing({
+      repository: input.repository,
+      channelId: input.channelId,
+      episodeId: input.episodeId,
+      artifacts: { quiz, director: director_plan, assetPlan: asset_plan },
+      intent: "generate",
+      confirmed: true,
+    });
+    if (sizingResult.reconciledPlan && sizingResult.persisted) {
+      activePlan = sizingResult.reconciledPlan;
+    }
+  }
+
   const visualStyle = channel.selected_styles?.[0];
   const result = await resolveQuizAssets({
     repository: input.repository,
     channelId: input.channelId,
     episodeId: input.episodeId,
-    plan: asset_plan,
+    plan: activePlan,
     visualStyle,
     activeEngine: input.activeEngine,
     antigravityClient: input.antigravityClient,

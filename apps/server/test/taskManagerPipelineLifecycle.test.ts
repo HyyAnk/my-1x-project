@@ -8,6 +8,8 @@ import { StudioLogger } from "../src/logger.js";
 import { RepositoryService } from "../src/repository.js";
 import { TaskManager } from "../src/tasks.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
+import { assetFingerprint } from "../src/quiz/assets/assetFingerprint.js";
+import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { deriveQuizV2FromScenes } from "../src/quiz/domain/quiz.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
@@ -101,7 +103,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
         asset_type: "ai_reconstruction",
         continuity_bundle_id: "CB-01",
         reference_asset_ids: [],
-        source_ids: [],
+        source_ids: ["src-scene-1"],
         reconstruction: true,
         sound_cue: "",
         editorial_overlay: { kind: "none" },
@@ -115,7 +117,7 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
           choices: ["Tiger", "Dolphin", "Elephant"],
           answer: "Tiger",
           explanation: "Tigers have stripes.",
-          image_prompt: "",
+          image_prompt: "A friendly tiger with orange fur and black stripes",
         },
       },
     ]);
@@ -128,19 +130,28 @@ describe("TaskManager locks", { timeout: 20000 }, () => {
       scenes,
     });
     const director = createDefaultDirectorPlan(quiz);
+    director.beats[0].layout_id = "full_stack_list";
+    director.beats[0].asset_intents = [];
     const voice = buildQuizVoicePlan(quiz);
     const measuredVoice = { ...voice, segments: voice.segments.map((segment) => ({ ...segment, duration_seconds: 4 })) };
+    const assetPlan = planQuizAssets(quiz, director);
     await repository.writeQuiz(channel.channel_id, episode.episode_id, quiz);
     await repository.writeDirectorPlan(channel.channel_id, episode.episode_id, director);
-    await repository.writeAssetPlan(
-      channel.channel_id,
-      episode.episode_id,
-      QuizAssetPlanSchema.parse({ schema_version: 2, episode_id: episode.episode_id, assets: [], consistency_groups: [] }),
-    );
+    await repository.writeAssetPlan(channel.channel_id, episode.episode_id, assetPlan);
     await repository.writeQuizAssetResolution(
       channel.channel_id,
       episode.episode_id,
-      QuizAssetResolutionSchema.parse({ schema_version: 2, episode_id: episode.episode_id, template_id: "candy_arcade", assets: [] }),
+      QuizAssetResolutionSchema.parse({
+        schema_version: 2,
+        episode_id: episode.episode_id,
+        template_id: "candy_arcade",
+        assets: assetPlan.assets.map((asset) => ({
+          ...asset,
+          fingerprint: assetFingerprint(asset),
+          path: `assets/${asset.asset_id}.png`,
+          source: "cache",
+        })),
+      }),
     );
     await repository.writeVoicePlan(channel.channel_id, episode.episode_id, measuredVoice);
     await repository.writeQuizTimeline(

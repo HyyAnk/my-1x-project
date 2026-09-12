@@ -24,10 +24,3 @@ Reviewed on 2026-09-09 against the working tree. Source, schemas and executable 
 - [Setup](setup.md)
 - [Troubleshooting](troubleshooting.md)
 
-## Historical evidence
-
-[Bank-topic closeout](antigravity-bank-topic-closeout/README.md) is retained as historical planning and reported execution evidence, not a current task queue. Do not run its prompts automatically.
-
-Its final report records a failed E2E run despite an unconditional acceptance claim. That discrepancy remains unverified by this documentation review. Preserve the original evidence and require fresh checks before closing the remaining gate.
-
-The standalone GitHub publishing checklist was removed after consolidation into the workflow guide. Previously deleted historical folders were not restored.

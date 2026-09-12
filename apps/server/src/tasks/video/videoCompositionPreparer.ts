@@ -11,6 +11,7 @@ import {
 } from "@studio/shared";
 import { RepositoryError, type RepositoryService } from "../../repository.js";
 import { loadRequiredQuizRenderArtifacts, type RequiredQuizRenderArtifacts } from "./quizRenderArtifacts.js";
+import { ensureQuizAssetSizing } from "../../quiz/assets/ensureQuizAssetSizing.js";
 import { preflightQuizRender } from "../../quiz/qa/preflight.js";
 import { prepareLocalizedMascot } from "./mascotLocalization.js";
 import { prepareSoundtrack } from "./soundtrackPreparation.js";
@@ -188,6 +189,31 @@ export async function prepareVideoComposition(options: {
   const { runtime, repository, channel, scenes, renderAspectRatio, onProgress } = options;
 
   const artifacts = await loadRequiredQuizRenderArtifacts(repository, channel.channel_id, options.episode.episode_id);
+
+  const sizingResult = await ensureQuizAssetSizing({
+    repository,
+    channelId: channel.channel_id,
+    episodeId: options.episode.episode_id,
+    artifacts: {
+      quiz: artifacts.quiz,
+      director: artifacts.director,
+      assetPlan: artifacts.assetPlan,
+      voicePlan: artifacts.voicePlan,
+      timeline: artifacts.timeline,
+    },
+    intent: "render",
+  });
+
+  if (sizingResult.status !== "current") {
+    throw new RepositoryError(
+      `Asset plan sizing is stale for episode ${options.episode.episode_id}. Regenerate assets before video rendering. Affected assets: ${sizingResult.affectedAssetIds.join(", ")}`,
+      "QUIZ_ASSET_SIZING_STALE",
+    );
+  }
+
+  if (sizingResult.reconciledPlan && sizingResult.persisted) {
+    artifacts.assetPlan = sizingResult.reconciledPlan;
+  }
 
   const episode = await pinEpisodeStyleRevision(repository, channel, options.episode);
 

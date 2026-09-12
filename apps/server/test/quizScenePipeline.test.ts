@@ -101,7 +101,7 @@ describe("Phase 3 cross-surface scene pipeline", () => {
     expect(productionA).toBe(productionB);
     expect(sandboxA).toBe(sandboxB);
     expect(productionA).toContain("data:image/svg+xml;base64,");
-    expect(sandboxA).toContain("data:image/svg+xml;base64,");
+    expect(sandboxA).toContain("data:image/svg+xml;charset=utf-8,");
   });
 
   it("P3-PART-05 keeps reward visibility timeline-owned in production", () => {

@@ -2,6 +2,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
+import type { VoiceProfile } from "@studio/shared";
 import { buildApp } from "../src/app.js";
 
 const roots: string[] = [];
@@ -46,9 +47,9 @@ describe("Voice upload and management routes", () => {
       // 1. List voices has built-in voice
       const listRes = await app.server.inject({ method: "GET", url: "/api/voices" });
       expect(listRes.statusCode).toBe(200);
-      const voices = listRes.json().voices;
+      const { voices } = listRes.json<{ voices: VoiceProfile[] }>();
       expect(voices.length).toBeGreaterThanOrEqual(1);
-      const builtin = voices.find((v: { voice_id: string }) => v.voice_id === "voice_builtin_english_girl");
+      const builtin = voices.find((v) => v.voice_id === "voice_builtin_english_girl");
       expect(builtin).toMatchObject({
         voice_id: "voice_builtin_english_girl",
         name: "Voice English girl",
@@ -63,7 +64,8 @@ describe("Voice upload and management routes", () => {
       // 3. Attempting to delete built-in voice throws error
       const deleteRes = await app.server.inject({ method: "DELETE", url: "/api/voices/voice_builtin_english_girl" });
       expect(deleteRes.statusCode).toBe(400);
-      expect(deleteRes.json().error).toContain("Cannot delete built-in system voice");
+      const deleteData = deleteRes.json<{ error: string }>();
+      expect(deleteData.error).toContain("Cannot delete built-in system voice");
     } finally {
       await app.close();
     }
@@ -94,19 +96,18 @@ describe("Voice upload and management routes", () => {
       });
 
       expect(res.statusCode).toBe(200);
-      const voice = res.json();
-      expect(voice).toMatchObject({
-        voice_id: expect.stringMatching(/^voice_/),
-        name: "Deep Narrator",
-        reference_path: expect.stringContaining("reference.wav"),
-        sample_path: expect.stringContaining("sample.wav"),
-      });
+      const voice = res.json<VoiceProfile>();
+      expect(voice.voice_id).toMatch(/^voice_/);
+      expect(voice.name).toBe("Deep Narrator");
+      expect(voice.reference_path).toContain("reference.wav");
+      expect(voice.sample_path).toContain("sample.wav");
 
       // 2. List voices (contains built-in default + newly uploaded voice)
       const listRes = await app.server.inject({ method: "GET", url: "/api/voices" });
       expect(listRes.statusCode).toBe(200);
-      expect(listRes.json().voices.length).toBeGreaterThanOrEqual(2);
-      expect(listRes.json().voices.some((v: { voice_id: string }) => v.voice_id === voice.voice_id)).toBe(true);
+      const listData = listRes.json<{ voices: VoiceProfile[] }>();
+      expect(listData.voices.length).toBeGreaterThanOrEqual(2);
+      expect(listData.voices.some((v) => v.voice_id === voice.voice_id)).toBe(true);
 
       // 3. Get voice sample audio
       const sampleRes = await app.server.inject({ method: "GET", url: `/api/voices/${voice.voice_id}/sample` });
@@ -130,7 +131,8 @@ describe("Voice upload and management routes", () => {
         payload: { voice_id: voice.voice_id },
       });
       expect(assignRes.statusCode).toBe(200);
-      expect(assignRes.json().voice_reference_path).toBe(voice.reference_path);
+      const assignData = assignRes.json<{ voice_reference_path: string }>();
+      expect(assignData.voice_reference_path).toBe(voice.reference_path);
     } finally {
       await app.close();
     }
@@ -161,7 +163,7 @@ describe("Voice upload and management routes", () => {
       });
 
       expect(res.statusCode).toBe(200);
-      const voice = res.json();
+      const voice = res.json<VoiceProfile>();
       expect(voice.name).toBe("Large Voice Sample");
 
       // Verify the uploaded reference binary length on disk matches the 2MB WAV file
@@ -201,7 +203,8 @@ describe("Voice upload and management routes", () => {
       });
 
       expect(res.statusCode).toBe(400);
-      expect(res.json().error).toContain("Voice reference must be a WAV file");
+      const errorData = res.json<{ error: string }>();
+      expect(errorData.error).toContain("Voice reference must be a WAV file");
     } finally {
       await app.close();
     }

@@ -1,6 +1,7 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import sharp from "sharp";
 import { afterEach, describe, expect, it } from "vitest";
 import { QuizV2Schema } from "@studio/shared";
 import { SfxRegistry } from "../src/quiz/audio/sfxRegistry.js";
@@ -82,9 +83,9 @@ describe("Quiz V2 assets and QA", () => {
 
   it("blocks a semantically incorrect fallback for a required image question", async () => {
     const plan = planQuizAssets(quiz, createDefaultDirectorPlan(quiz));
-    const result = await new AssetResolver({ fallback: async () => ({ path: "fallback.png", semantic_key: "wrong-subject" }) }).resolve(
-      plan,
-    );
+    const result = await new AssetResolver({
+      fallback: () => Promise.resolve({ path: "fallback.png", semantic_key: "wrong-subject" }),
+    }).resolve(plan);
     expect(result.issues.some((issue) => issue.code === "asset_semantic_fallback" && issue.severity === "blocker")).toBe(true);
   });
 
@@ -92,13 +93,15 @@ describe("Quiz V2 assets and QA", () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "quiz-assets-"));
     roots.push(root);
     const file = path.join(root, "tiger.png");
-    await writeFile(
-      file,
-      Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAFAAI/9B+f9AAAAABJRU5ErkJggg==", "base64"),
-    );
+    const pngBuffer = await sharp({
+      create: { width: 728, height: 728, channels: 4, background: { r: 255, g: 120, b: 0, alpha: 1 } },
+    })
+      .png()
+      .toBuffer();
+    await writeFile(file, pngBuffer);
     const plan = planQuizAssets(quiz, createDefaultDirectorPlan(quiz));
     const result = await new AssetResolver({
-      explicit_episode: async () => ({ path: file, semantic_key: plan.assets[0].semantic_key }),
+      explicit_episode: () => Promise.resolve({ path: file, semantic_key: plan.assets[0].semantic_key }),
     }).resolve(plan);
     expect(result.assets[0].source).toBe("explicit_episode");
     expect(await validateResolvedAssets(plan.assets, result.assets)).toEqual([]);

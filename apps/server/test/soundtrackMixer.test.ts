@@ -18,7 +18,7 @@ import {
   resolveSfxSchedule,
   type MasterSoundtrackPlan,
 } from "../src/quiz/audio/soundtrackMixer.js";
-import { analyzeWavAudio, diagnoseMasterSoundtrack } from "../src/quiz/audio/audioDiagnostics.js";
+import { diagnoseMasterSoundtrack } from "../src/quiz/audio/audioDiagnostics.js";
 
 const sampleQuiz = QuizV2Schema.parse({
   schema_version: 2,

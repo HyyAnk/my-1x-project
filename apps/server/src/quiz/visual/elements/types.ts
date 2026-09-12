@@ -1,5 +1,4 @@
 import type { QuizPalette } from "../types.js";
-import type { QuizThinkingBarStyle, QuizQuestionCounterStyle, QuizQuestionBoxStyle } from "@studio/shared";
 
 export type ElementRenderContext = {
   clipStart?: number;

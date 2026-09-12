@@ -412,11 +412,13 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
         return Promise.resolve({
           ok: true,
           status: 200,
-          text: async () =>
-            JSON.stringify({
-              data: [{ b64_json: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" }],
-              price_vnd: 50,
-            }),
+          text: () =>
+            Promise.resolve(
+              JSON.stringify({
+                data: [{ b64_json: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" }],
+                price_vnd: 50,
+              }),
+            ),
         } as unknown as Response);
       });
 
@@ -445,7 +447,7 @@ describe("Mascot Studio Hub & Generator Pipeline", () => {
   });
 
   it("strictly enforces Studio Isolation Prompt Contract and AI Matting invariants", async () => {
-    const { buildMascotConceptPrompt, buildMascotActionPrompt, validateMascotPromptContract, MASCOT_STUDIO_ISOLATION_TAGS } =
+    const { buildMascotConceptPrompt, buildMascotActionPrompt, validateMascotPromptContract } =
       await import("../src/quiz/mascotPromptContract.js");
 
     const mascot = {

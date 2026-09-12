@@ -23,6 +23,24 @@ export async function generateGpti2ImageBytes(prompt: string, options: Gpti2Gene
 
   const model = options.model?.trim() || DEFAULT_MODEL;
   const isNano = model.startsWith("nano-banana");
+
+  if (options.size && options.aspect_ratio) {
+    const parts = options.size.split("x").map(Number);
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1]) && parts[0] > 0 && parts[1] > 0) {
+      const sizeRatio = parts[0] / parts[1];
+      const [n, d] = options.aspect_ratio.split(":").map(Number);
+      if (n && d) {
+        const expectedRatio = n / d;
+        if (Math.abs(sizeRatio - expectedRatio) / expectedRatio > 0.05) {
+          throw new RepositoryError(
+            `Explicit size override '${options.size}' conflicts with requested aspect ratio '${options.aspect_ratio}' (image_request_size_conflict)`,
+            "image_request_size_conflict",
+          );
+        }
+      }
+    }
+  }
+
   const dimensions = resolveImageDimensions(options.aspect_ratio || "16:9", model);
   const idempotencySeed = `${model}:${dimensions.aspect_ratio}:${prompt}:${options.referenceImageUrl || (options.referenceImageBase64 ? options.referenceImageBase64.slice(0, 64) : "")}`;
   const idempotencyKey = options.idempotencyKey || generateIdempotencyKey("img", idempotencySeed);

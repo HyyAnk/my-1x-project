@@ -45,9 +45,15 @@ function resolveAssetsProgress(state: QuizV2State, pipelineTask?: Task | null): 
     }
   }
   const total = state.asset_plan?.assets.length ?? 0;
-  return total > 0
-    ? itemProgress(state.asset_resolution?.assets.length ?? 0, total, "assets")
-    : itemProgress(state.asset_plan ? 1 : 0, 1, "task");
+  if (total === 0) return itemProgress(state.asset_plan ? 1 : 0, 1, "task");
+  const planAssets = state.asset_plan?.assets ?? [];
+  const resolutionAssets = state.asset_resolution?.assets ?? [];
+  const resById = new Map(resolutionAssets.map((a) => [a.asset_id, a]));
+  const validCount = planAssets.filter((req) => {
+    const res = resById.get(req.asset_id);
+    return res && res.aspect_ratio === req.aspect_ratio;
+  }).length;
+  return itemProgress(validCount, total, "assets");
 }
 
 function resolveVoiceProgress(state: QuizV2State, pipelineTask?: Task | null): StageProgress {

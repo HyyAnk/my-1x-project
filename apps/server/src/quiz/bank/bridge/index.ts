@@ -5,3 +5,8 @@ export * from "./singleQuestionBootstrapper.js";
 export * from "./topicEpisodeBootstrapper.js";
 export * from "./bootstrapperHelpers.js";
 export * from "./bootstrapperTypes.js";
+export * from "./topicConfirmationLock.js";
+export * from "./episodeStagingPublisher.js";
+export * from "./singleQuestionBridge.js";
+export * from "./topicEpisodeConfig.js";
+export * from "./topicEpisodeBridge.js";

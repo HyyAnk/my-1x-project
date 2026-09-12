@@ -31,9 +31,9 @@ export const mediaLeftChoicesRightLayout = {
   position: absolute;
   left: 0;
   top: 0;
-  width: 720px;
-  height: 510px;
-  max-height: 510px;
+  width: var(--slot-hero-width, 720px);
+  height: var(--slot-hero-height, 510px);
+  max-height: var(--slot-hero-height, 510px);
   margin: 0;
 }
 .quiz-frame-unified.layout-media_left_choices_right .hero-image img {

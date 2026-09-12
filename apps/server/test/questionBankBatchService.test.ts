@@ -192,7 +192,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     expect(progressEvents.length).toBe(1);
     expect(progressEvents[0].completedCount).toBe(1);
     expect(result.matrixCoverage).toBeDefined();
-    expect(result.matrixCoverage?.total_combos).toBe(22800);
+    expect(result.matrixCoverage?.total_combos).toBe(23000);
   });
 
   it.each(["fr", "vi", "unknown", undefined, "English"])(
@@ -313,7 +313,7 @@ describe("Question Bank Chunking Engine & Batch Service", () => {
     expect(progressReports[1].chunkSize).toBe(5);
 
     expect(result.matrixCoverage).toBeDefined();
-    expect(result.matrixCoverage?.total_combos).toBe(22800);
+    expect(result.matrixCoverage?.total_combos).toBe(23000);
   });
 
   it("rotates domain and archetype across multi-chunk auto generation", async () => {

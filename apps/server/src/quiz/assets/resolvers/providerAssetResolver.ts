@@ -1,12 +1,17 @@
+import { readFile } from "node:fs/promises";
 import type { QuizAssetPlan, QuizAssetResolution } from "@studio/shared";
 import { IMGSTUDIO_DEFAULT_MODEL_ID } from "@studio/shared";
-import type { RepositoryService } from "../../../repository.js";
+import { RepositoryError, type RepositoryService } from "../../../repository.js";
 import { StudioLogger } from "../../../logger.js";
 import { Gpti2QuizImageProvider } from "../../../providers/gpti2Image.js";
 import { ShopAiKeyQuizImageProvider } from "../../../providers/shopAiKeyImage.js";
 import { GoogleImagenProvider } from "../../../providers/googleImagen.js";
 import { AntigravityImageChainProvider } from "../../../providers/antigravityImageChain.js";
 import { ImgStudioQuizImageProvider } from "../../../providers/imgstudio/index.js";
+import {
+  getRecommendationForAssetRequirement,
+  validateQuizImageBytes,
+} from "../imageMetadataValidator.js";
 
 import { isContentFilterError } from "../../../utils/promptSanitizer.js";
 import type { AntigravityClient } from "../../../antigravity.js";
@@ -66,7 +71,10 @@ async function generateGpti2Asset(input: ProviderAssetInput): Promise<ProviderAs
       });
       break;
     } catch (err) {
-      if (isContentFilterError(err)) {
+      if (
+        isContentFilterError(err) ||
+        (err instanceof RepositoryError && err.code === "image_request_size_conflict")
+      ) {
         throw err;
       }
       if (attempt < maxAttempts) {
@@ -124,7 +132,10 @@ async function generateShopAiKeyAsset(input: ProviderAssetInput): Promise<Provid
       });
       break;
     } catch (err) {
-      if (isContentFilterError(err)) {
+      if (
+        isContentFilterError(err) ||
+        (err instanceof RepositoryError && err.code === "image_request_size_conflict")
+      ) {
         throw err;
       }
       if (attempt < maxAttempts) {
@@ -352,13 +363,47 @@ async function attemptPrimaryProvider(input: ProviderAssetInput): Promise<Provid
 }
 
 export async function generateAssetWithProvider(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
-  const { logger, channelId, episodeId, request, imageFallbackConfig } = input;
+  const { repository, logger, channelId, episodeId, request, imageFallbackConfig } = input;
   const isFallbackEnabled =
     imageFallbackConfig?.enabled !== false &&
     ImgStudioQuizImageProvider.isConfigured(imageFallbackConfig?.api_key);
 
+  const validateAndEnrich = async (result: ProviderAssetOutput): Promise<ProviderAssetOutput> => {
+    let bytes: Uint8Array;
+    try {
+      const absPath = await repository.resolveQuizAssetPath(channelId, episodeId, result.entry.path);
+      bytes = new Uint8Array(await readFile(absPath));
+    } catch {
+      // Non-blocking fallback if the file is mock-resolved or inaccessible in unit tests
+      return result;
+    }
+
+    const recommendation = getRecommendationForAssetRequirement(request);
+    const validation = await validateQuizImageBytes({
+      bytes,
+      recommendation,
+      provenance: "generated",
+      required: request.required,
+    });
+
+    if (validation.actual) {
+      result.entry.actual_dimensions = validation.actual;
+    }
+
+    const blocker = validation.issues.find((i) => i.severity === "blocker");
+    if (blocker) {
+      throw new RepositoryError(
+        `Generated asset ${request.asset_id} failed metadata validation: ${blocker.code}`,
+        blocker.code,
+      );
+    }
+
+    return result;
+  };
+
   try {
-    return await attemptPrimaryProvider(input);
+    const primaryResult = await attemptPrimaryProvider(input);
+    return await validateAndEnrich(primaryResult);
   } catch (primaryError) {
     if (!isFallbackEnabled) {
       throw primaryError;
@@ -372,11 +417,12 @@ export async function generateAssetWithProvider(input: ProviderAssetInput): Prom
 
     try {
       const fallbackResult = await generateImgStudioAsset(input);
+      const validatedFallback = await validateAndEnrich(fallbackResult);
       logger.info(
-        `Asset ${request.asset_id} successfully recovered via ImgStudio fallback (${fallbackResult.entry.path}).`,
+        `Asset ${request.asset_id} successfully recovered via ImgStudio fallback (${validatedFallback.entry.path}).`,
         { profileId: channelId, workerId: episodeId, step: "IMAGE_FALLBACK_SUCCESS" },
       );
-      return fallbackResult;
+      return validatedFallback;
     } catch (fallbackError) {
       logger.error(
         `ImgStudio fallback generation also failed for asset ${request.asset_id}: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}`,

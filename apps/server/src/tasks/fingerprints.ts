@@ -4,7 +4,7 @@ export function renderSourceFingerprint(
   html: string,
   narrationModifiedAt: string,
   narrationSize: number,
-  assets: Array<{ asset_id: string; fingerprint: string; path: string }>,
+  assets: Array<{ asset_id: string; fingerprint: string; path: string; renderIdentity?: string }>,
   dependencies: string[] = [],
   compositionFiles: Record<string, string> = {},
 ): string {
@@ -15,7 +15,12 @@ export function renderSourceFingerprint(
         html,
         narrationModifiedAt,
         narrationSize,
-        assets: assets.map((asset) => ({ asset_id: asset.asset_id, fingerprint: asset.fingerprint, path: asset.path })),
+        assets: assets.map((asset) => ({
+          asset_id: asset.asset_id,
+          fingerprint: asset.fingerprint,
+          path: asset.path,
+          renderIdentity: asset.renderIdentity,
+        })),
         dependencies,
         compositionFiles: Object.keys(compositionFiles)
           .sort()

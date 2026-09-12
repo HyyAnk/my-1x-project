@@ -124,10 +124,10 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
 
       // 4. Image Optimizer Target Metrics
       const dims = getOptimalAssetDimensions("hero", "media_left_choices_right");
-      expect(dims).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
+      expect(dims).toEqual({ maxWidth: 1056, maxHeight: 792, aspectRatio: "4:3" });
     });
 
-    it("executes full pipeline for '4:3' layout: verdict_true_false", () => {
+    it("executes full pipeline for '16:9' layout: verdict_true_false", () => {
       const quiz = buildTestQuiz([
         {
           id: "q-tf",
@@ -176,16 +176,16 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       const plan = planQuizAssets(quiz, director);
       const hero = plan.assets.find((a) => a.purpose === "hero_question_image");
       expect(hero).toBeDefined();
-      expect(hero?.aspect_ratio).toBe("4:3");
+      expect(hero?.aspect_ratio).toBe("16:9");
 
       const compiled = compileQuizAssetPrompt(hero!);
-      expect(compiled.prompt).toContain("Output framing: 4:3.");
+      expect(compiled.prompt).toContain("Output framing: 16:9.");
 
       const dims = getOptimalAssetDimensions("hero", "verdict_true_false");
-      expect(dims).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
+      expect(dims).toEqual({ maxWidth: 1408, maxHeight: 792, aspectRatio: "16:9" });
     });
 
-    it("executes full pipeline for '4:3' layout: clue_deduction", () => {
+    it("executes full pipeline for '16:9' layout: clue_deduction", () => {
       const quiz = buildTestQuiz([
         {
           id: "q-clue",
@@ -234,13 +234,13 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
 
       const plan = planQuizAssets(quiz, director);
       const hero = plan.assets.find((a) => a.purpose === "hero_question_image");
-      expect(hero?.aspect_ratio).toBe("4:3");
+      expect(hero?.aspect_ratio).toBe("16:9");
 
       const compiled = compileQuizAssetPrompt(hero!);
-      expect(compiled.prompt).toContain("Output framing: 4:3.");
+      expect(compiled.prompt).toContain("Output framing: 16:9.");
 
       const dims = getOptimalAssetDimensions("hero", "clue_deduction");
-      expect(dims).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
+      expect(dims).toEqual({ maxWidth: 896, maxHeight: 504, aspectRatio: "16:9" });
     });
 
     it("executes full pipeline for '1:1' layout: visual_choices_three and visual_choices_three_pure", () => {
@@ -295,39 +295,39 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       expect(choiceAssets).toHaveLength(3);
 
       for (const choice of choiceAssets) {
-        expect(choice.aspect_ratio).toBe("1:1");
+        expect(choice.aspect_ratio).toBe("4:3");
         expect(choice.transparent_background).toBe(true);
 
         const compiled = compileQuizAssetPrompt(choice);
-        expect(compiled.prompt).toContain("Output framing: 1:1.");
-        expect(compiled.prompt).toContain("1:1 square canvas");
+        expect(compiled.prompt).toContain("Output framing: 4:3.");
+        expect(compiled.prompt).toContain("4:3 standard horizontal canvas");
 
         const gpti2Size = resolveImageDimensions(choice.aspect_ratio, "gpt-image-2");
-        expect(gpti2Size).toEqual({ size: "1024x1024", aspect_ratio: "1:1" });
+        expect(gpti2Size).toEqual({ size: "1024x768", aspect_ratio: "4:3" });
 
         const nanoSize = resolveImageDimensions(choice.aspect_ratio, "nano-banana-2");
-        expect(nanoSize).toEqual({ size: "2K", aspect_ratio: "1:1" });
+        expect(nanoSize).toEqual({ size: "2K", aspect_ratio: "4:3" });
       }
 
       // Check visual_choices_three optimizer dimensions
       const optChoices = getOptimalAssetDimensions("choice_thumbnail", "visual_choices_three");
-      expect(optChoices).toEqual({ maxWidth: 640, maxHeight: 640, aspectRatio: "1:1" });
+      expect(optChoices).toEqual({ maxWidth: 672, maxHeight: 504, aspectRatio: "4:3" });
 
       // Check visual_choices_three_pure resolution & optimizer
       expect(resolveQuizLayoutAssetAspectRatio("visual_choices_three_pure", "answer_option")).toBe("1:1");
       const optPure = getOptimalAssetDimensions("choice_thumbnail", "visual_choices_three_pure");
-      expect(optPure).toEqual({ maxWidth: 640, maxHeight: 640, aspectRatio: "1:1" });
+      expect(optPure).toEqual({ maxWidth: 728, maxHeight: 728, aspectRatio: "1:1" });
     });
 
-    it("executes full pipeline for '1:1' and '4:3' hybrid layout: split_versus_two", () => {
-      expect(resolveQuizLayoutAssetAspectRatio("split_versus_two", "answer_option")).toBe("1:1");
+    it("executes full pipeline for '16:9' and '4:3' hybrid layout: split_versus_two", () => {
+      expect(resolveQuizLayoutAssetAspectRatio("split_versus_two", "answer_option")).toBe("16:9");
       expect(resolveQuizLayoutAssetAspectRatio("split_versus_two", "hero_question_image")).toBe("4:3");
 
       const heroDims = getOptimalAssetDimensions("hero", "split_versus_two");
       expect(heroDims).toEqual({ maxWidth: 1080, maxHeight: 810, aspectRatio: "4:3" });
 
       const choiceDims = getOptimalAssetDimensions("answer_option", "split_versus_two");
-      expect(choiceDims).toEqual({ maxWidth: 640, maxHeight: 640, aspectRatio: "1:1" });
+      expect(choiceDims).toEqual({ maxWidth: 1024, maxHeight: 576, aspectRatio: "16:9" });
     });
 
     it("executes full pipeline for '16:9' layout: mystery_reveal and baseline", () => {
@@ -390,7 +390,7 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       expect(gpti2Size).toEqual({ size: "1280x720", aspect_ratio: "16:9" });
 
       const dims = getOptimalAssetDimensions("hero", "mystery_reveal");
-      expect(dims).toEqual({ maxWidth: 1280, maxHeight: 720, aspectRatio: "16:9" });
+      expect(dims).toEqual({ maxWidth: 768, maxHeight: 432, aspectRatio: "16:9" });
 
       // Baseline preview layout
       expect(resolveQuizLayoutAssetAspectRatio("baseline", "hero_question_image")).toBe("16:9");
@@ -586,8 +586,8 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
       });
 
       expect(res4_3.optimized).toBe(true);
-      expect(res4_3.targetWidth).toBe(1080);
-      expect(res4_3.targetHeight).toBe(810);
+      expect(res4_3.targetWidth).toBe(1056);
+      expect(res4_3.targetHeight).toBe(792);
 
       // 2. 1:1 Choice Image optimization
       const src1_1 = path.join(tempDir, "sample_1_1.png");
@@ -602,12 +602,12 @@ describe("Quiz Layout Asset Aspect Ratio End-to-End Suite", () => {
         sourcePath: src1_1,
         targetPath: out1_1,
         purpose: "choice_thumbnail",
-        layout: "visual_choices_three",
+        layout: "visual_choices_three_pure",
       });
 
       expect(res1_1.optimized).toBe(true);
-      expect(res1_1.targetWidth).toBe(640);
-      expect(res1_1.targetHeight).toBe(640);
+      expect(res1_1.targetWidth).toBe(728);
+      expect(res1_1.targetHeight).toBe(728);
 
       // 3. 3:4 Card Image optimization
       const src3_4 = path.join(tempDir, "sample_3_4.png");

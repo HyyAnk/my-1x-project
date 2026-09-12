@@ -1,10 +1,15 @@
 import { readFile } from "node:fs/promises";
+import sharp from "sharp";
 import type { QuizAssetPlan, QuizAssetResolution, QuizImageStyle } from "@studio/shared";
 import type { RepositoryService } from "../../repository.js";
 import { Gpti2QuizImageProvider } from "../../providers/gpti2Image.js";
 import { ShopAiKeyQuizImageProvider } from "../../providers/shopAiKeyImage.js";
 import { assetFingerprint } from "./assetFingerprint.js";
 import { compileQuizAssetPrompt } from "./promptCompiler.js";
+import {
+  getRecommendationForAssetRequirement,
+  validateQuizImageBytes,
+} from "./imageMetadataValidator.js";
 
 export function resolveQuizImageProviderName(input: {
   imageConfig?: {
@@ -67,10 +72,18 @@ export async function isQuizAssetResolutionComplete(input: {
     const fingerprint = assetFingerprint(request, providerName, compiled.cacheVersion);
     const resolved = byId.get(request.asset_id);
     if (!resolved) return false;
+    const isExplicit = resolved.source === "explicit_episode";
     if (
-      resolved.fingerprint !== fingerprint ||
+      (!isExplicit && resolved.fingerprint !== fingerprint) ||
       resolved.semantic_key !== request.semantic_key ||
-      !(await isValidQuizAsset(input.repository, input.channelId, input.episodeId, resolved.path))
+      !(await isValidQuizAsset(
+        input.repository,
+        input.channelId,
+        input.episodeId,
+        resolved.path,
+        request,
+        isExplicit ? "explicit" : "generated",
+      ))
     ) {
       return false;
     }
@@ -83,15 +96,28 @@ export async function isValidQuizAsset(
   channelId: string,
   episodeId: string,
   assetPath: string,
+  expectedRequirement?: QuizAssetPlan["assets"][number],
+  provenanceOverride?: "generated" | "explicit",
 ): Promise<boolean> {
   try {
     const absolutePath = await repository.resolveQuizAssetPath(channelId, episodeId, assetPath);
     const data = new Uint8Array(await readFile(absolutePath));
-    if (data.length < 24 || !data.slice(0, 8).every((value, index) => value === [137, 80, 78, 71, 13, 10, 26, 10][index])) {
-      return false;
+    if (data.length === 0) return false;
+
+    if (expectedRequirement?.sizing) {
+      const rec = getRecommendationForAssetRequirement(expectedRequirement);
+      const provenance = provenanceOverride ?? (expectedRequirement.sizing ? "generated" : "explicit");
+      const validation = await validateQuizImageBytes({
+        bytes: data,
+        recommendation: rec,
+        provenance,
+        required: expectedRequirement.required,
+      });
+      return !validation.issues.some((i) => i.severity === "blocker");
     }
-    const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-    return view.getUint32(16) > 0 && view.getUint32(20) > 0;
+
+    const meta = await sharp(data, { failOn: "none" }).metadata();
+    return Boolean(meta.width && meta.height && meta.width > 0 && meta.height > 0);
   } catch {
     return false;
   }

@@ -64,7 +64,7 @@ export const PROMPT_TEMPLATES = [
 ];
 
 export function getLocalizedActionMeta(
-  action: MascotActionType | string | null | undefined,
+  action: string | null | undefined,
   t: (path: string, params?: Record<string, string | number>) => string,
 ) {
   const safeAction = action && MASCOT_ACTION_META[action as MascotActionType] ? (action as MascotActionType) : "idle";

@@ -85,18 +85,18 @@ export const visualChoicesThreePureLayout = {
 
 .quiz-frame-unified.layout-visual_choices_three_pure .choice-card-visual,
 .quiz-frame-unified.layout-visual_choices_three_pure .visual-answer-card {
-  width: 452px;
-  height: 504px;
-  min-height: 504px;
-  max-height: 504px;
+  width: var(--slot-card-width, 452px);
+  height: var(--slot-card-height, 504px);
+  min-height: var(--slot-card-height, 504px);
+  max-height: var(--slot-card-height, 504px);
   box-sizing: border-box;
 }
 
 .quiz-frame-unified.layout-visual_choices_three_pure .choice-media,
 .quiz-frame-unified.layout-visual_choices_three_pure .option-image {
-  height: 504px;
-  min-height: 504px;
-  max-height: 504px;
+  height: var(--slot-media-height, 504px);
+  min-height: var(--slot-media-height, 504px);
+  max-height: var(--slot-media-height, 504px);
   box-sizing: border-box;
 }
 
@@ -136,8 +136,8 @@ export const visualChoicesThreePureLayout = {
 
 .layout-visual_choices_three_pure .choice-media,
 .layout-visual_choices_three_pure .option-image {
-  height: 500px;
-  border: 10px solid #FFFFFF;
+  height: var(--slot-media-height, 504px);
+  border: var(--slot-border-width, 10px) solid #FFFFFF;
   border-radius: 36px;
   overflow: hidden;
   background: #1e293b;

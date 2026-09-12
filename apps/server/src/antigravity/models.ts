@@ -50,7 +50,7 @@ export function parseModelListOutput(stdout: string): AntigravityModel[] {
       if (/^(available|models|list):?$/i.test(line)) continue;
       const cleaned = line.replace(/^[-*•]\s*/, "").trim();
       if (!cleaned) continue;
-      const match = cleaned.match(/^([a-zA-Z0-9_\-\.]+)(?:\s*\((.*)\))?$/);
+      const match = cleaned.match(/^([a-zA-Z0-9_\-.]+)(?:\s*\((.*)\))?$/);
       if (match) {
         const id = match[1];
         const extra = match[2] ? ` (${match[2]})` : "";

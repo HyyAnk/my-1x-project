@@ -19,13 +19,14 @@ class ImageCodex extends EventEmitter {
   constructor(private readonly mediaOnly = false) {
     super();
   }
-  async connect(): Promise<void> {
+  connect(): Promise<void> {
     this.emit("status", "connected");
+    return Promise.resolve();
   }
-  async startThread(): Promise<string> {
-    return "image-thread";
+  startThread(): Promise<string> {
+    return Promise.resolve("image-thread");
   }
-  async startTurn(threadId: string): Promise<string> {
+  startTurn(threadId: string): Promise<string> {
     this.turnsStarted += 1;
     const turnId = `image-turn-${++this.turnNumber}`;
     setTimeout(() => {
@@ -33,10 +34,10 @@ class ImageCodex extends EventEmitter {
       else this.emit("notification", { method: "item/agentMessage/delta", params: { threadId, turnId, delta: PNG_DATA_URL } });
       this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, status: "completed" } } });
     }, 10);
-    return turnId;
+    return Promise.resolve(turnId);
   }
-  async interruptTurn(): Promise<void> {
-    return undefined;
+  interruptTurn(): Promise<void> {
+    return Promise.resolve();
   }
 }
 
@@ -222,7 +223,9 @@ describe("bundle image tasks", () => {
     const logger = new StudioLogger(root);
     await logger.init();
     process.env.SHOPAIKEY_API_KEY = "test-key";
-    globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ data: [{ b64_json: "iVBORw0KGgo=" }] }), { status: 200 }));
+    globalThis.fetch = vi.fn<typeof fetch>(() =>
+      Promise.resolve(new Response(JSON.stringify({ data: [{ b64_json: "iVBORw0KGgo=" }] }), { status: 200 })),
+    );
     const fakeCodex = new ImageCodex();
     const manager = new TaskManager(
       repository,
@@ -292,13 +295,14 @@ describe("bundle image tasks", () => {
     let maxConcurrentTurns = 0;
 
     class SlowImageCodex extends EventEmitter {
-      async connect(): Promise<void> {
+      connect(): Promise<void> {
         this.emit("status", "connected");
+        return Promise.resolve();
       }
-      async startThread(): Promise<string> {
-        return "seq-thread";
+      startThread(): Promise<string> {
+        return Promise.resolve("seq-thread");
       }
-      async startTurn(threadId: string): Promise<string> {
+      startTurn(threadId: string): Promise<string> {
         concurrentTurns += 1;
         maxConcurrentTurns = Math.max(maxConcurrentTurns, concurrentTurns);
         const turnId = `seq-turn-${Date.now()}`;
@@ -307,10 +311,10 @@ describe("bundle image tasks", () => {
           this.emit("notification", { method: "turn/completed", params: { threadId, turnId, turn: { id: turnId, status: "completed" } } });
           concurrentTurns -= 1;
         }, 50);
-        return turnId;
+        return Promise.resolve(turnId);
       }
-      async interruptTurn(): Promise<void> {
-        return undefined;
+      interruptTurn(): Promise<void> {
+        return Promise.resolve();
       }
     }
 

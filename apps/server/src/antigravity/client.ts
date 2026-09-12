@@ -174,7 +174,7 @@ export class AntigravityClient extends EventEmitter {
     return turnId;
   }
 
-  async interruptTurn(threadId: string, turnId: string): Promise<void> {
+  interruptTurn(threadId: string, turnId: string): Promise<void> {
     const controller = this.turnControllers.get(turnId);
     if (controller) {
       controller.abort();
@@ -184,13 +184,15 @@ export class AntigravityClient extends EventEmitter {
       method: "turn/completed",
       params: { threadId, turnId, turn: { id: turnId, threadId, status: "interrupted" } },
     });
+    return Promise.resolve();
   }
 
-  async close(): Promise<void> {
+  close(): Promise<void> {
     this.connected = false;
     this.initialized = false;
     for (const controller of this.turnControllers.values()) controller.abort();
     this.turnControllers.clear();
+    return Promise.resolve();
   }
 
   private async ensureConnected(): Promise<void> {

@@ -125,7 +125,14 @@ describe("BGM Registry and Audio Pipeline", () => {
     const bgmMatch = bundle.html.match(/<audio id="bgm-clip-[^"]*"[^>]*data-automation="([^"]+)"/);
     expect(bgmMatch).toBeTruthy();
     const automationJson = bgmMatch![1].replaceAll("&quot;", '"');
-    const automation = JSON.parse(automationJson);
+    type AutomationPayload = {
+      version: number;
+      lanes: Array<{
+        target: string;
+        points: Array<{ t: number; v: number }>;
+      }>;
+    };
+    const automation = JSON.parse(automationJson) as AutomationPayload;
     expect(automation.version).toBe(1);
     expect(automation.lanes).toHaveLength(1);
     expect(automation.lanes[0].target).toBe("volume");

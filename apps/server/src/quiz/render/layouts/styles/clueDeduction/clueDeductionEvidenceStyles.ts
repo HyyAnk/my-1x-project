@@ -33,8 +33,8 @@ export function clueDeductionEvidenceStyles(): string {
 .quiz-frame-unified.layout-clue_deduction .clue-card-stage {
   left: 20px;
   top: 76px;
-  width: 824px;
-  height: 410px;
+  width: var(--slot-hero-width, 824px);
+  height: var(--slot-hero-height, 410px);
   right: auto;
   bottom: auto;
   border-radius: 20px;

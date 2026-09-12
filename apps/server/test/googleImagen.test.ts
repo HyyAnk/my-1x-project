@@ -51,13 +51,14 @@ describe("GoogleImagenProvider", () => {
 
     const fakePngBase64 = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).toString("base64");
 
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
-      ok: true,
-      status: 200,
-      json: async () => ({
-        predictions: [{ bytesBase64Encoded: fakePngBase64, mimeType: "image/png" }],
-      }),
-    } as Response);
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          predictions: [{ bytesBase64Encoded: fakePngBase64, mimeType: "image/png" }],
+        }),
+        { status: 200 },
+      ),
+    );
 
     const provider = new GoogleImagenProvider(
       repository,
@@ -75,7 +76,8 @@ describe("GoogleImagenProvider", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     const [callUrl, callInit] = fetchSpy.mock.calls[0] as [string, RequestInit];
     expect(callUrl).toContain("models/imagen-3.0-generate-002:predict?key=test-api-key");
-    expect(JSON.parse(callInit.body as string)).toMatchObject({
+    const body = JSON.parse(callInit.body as string) as Record<string, unknown>;
+    expect(body).toMatchObject({
       instances: [{ prompt: "High speed bullet train in snow." }],
       parameters: { sampleCount: 1, aspectRatio: "16:9", outputOptions: { mimeType: "image/png" } },
     });
@@ -119,23 +121,24 @@ describe("GoogleImagenProvider", () => {
 
     const fakePngBase64 = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).toString("base64");
 
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
-      ok: true,
-      status: 200,
-      json: async () => ({
-        candidates: [
-          {
-            content: {
-              parts: [
-                {
-                  inlineData: { data: fakePngBase64, mimeType: "image/png" },
-                },
-              ],
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          candidates: [
+            {
+              content: {
+                parts: [
+                  {
+                    inlineData: { data: fakePngBase64, mimeType: "image/png" },
+                  },
+                ],
+              },
             },
-          },
-        ],
-      }),
-    } as Response);
+          ],
+        }),
+        { status: 200 },
+      ),
+    );
 
     const provider = new GoogleImagenProvider(
       repository,
@@ -153,7 +156,8 @@ describe("GoogleImagenProvider", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     const [callUrl, callInit] = fetchSpy.mock.calls[0] as [string, RequestInit];
     expect(callUrl).toContain("models/gemini-3.1-flash-lite-image:generateContent?key=test-api-key");
-    expect(JSON.parse(callInit.body as string)).toMatchObject({
+    const body = JSON.parse(callInit.body as string) as Record<string, unknown>;
+    expect(body).toMatchObject({
       contents: [{ parts: [{ text: "A futuristic sports car on neon highway., 16:9 aspect ratio, high quality" }] }],
       generationConfig: { responseModalities: ["IMAGE", "TEXT"] },
     });

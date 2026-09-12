@@ -2,6 +2,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import sharp from "sharp";
 import { StudioLogger } from "../src/logger.js";
 import { RepositoryService } from "../src/repository.js";
 import { generateAssetWithProvider } from "../src/quiz/assets/resolvers/providerAssetResolver.js";
@@ -74,7 +75,13 @@ describe("image provider fallback engine", () => {
     // Mock global fetch for ImgStudio:
     // 1. Generation API POST
     // 2. Image bytes download GET
-    const mockImageBytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
+    const mockImageBytes = new Uint8Array(
+      await sharp({
+        create: { width: 1280, height: 720, channels: 4, background: { r: 50, g: 150, b: 250, alpha: 1 } },
+      })
+        .png()
+        .toBuffer(),
+    );
     vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
       const urlStr = String(url);
       if (urlStr.includes("api/v1/images/generate")) {
@@ -172,7 +179,13 @@ describe("image provider fallback engine", () => {
   });
 
   it("successfully completes a batch when primary fails and fallback recovers", async () => {
-    const mockImageBytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
+    const mockImageBytes = new Uint8Array(
+      await sharp({
+        create: { width: 1280, height: 720, channels: 4, background: { r: 50, g: 150, b: 250, alpha: 1 } },
+      })
+        .png()
+        .toBuffer(),
+    );
     vi.spyOn(globalThis, "fetch").mockImplementation(async (url) => {
       const urlStr = String(url);
       if (urlStr.includes("api/v1/images/generate")) {
@@ -256,7 +269,13 @@ describe("image provider fallback engine", () => {
   });
 
   it("recovers a partial batch where 1 asset fails on primary and falls back while another succeeds on primary", async () => {
-    const mockImageBytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
+    const mockImageBytes = new Uint8Array(
+      await sharp({
+        create: { width: 1280, height: 720, channels: 4, background: { r: 50, g: 150, b: 250, alpha: 1 } },
+      })
+        .png()
+        .toBuffer(),
+    );
 
     vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
       const urlStr = String(url);

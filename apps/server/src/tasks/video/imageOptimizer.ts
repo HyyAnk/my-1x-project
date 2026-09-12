@@ -1,7 +1,12 @@
-import { copyFile, stat } from "node:fs/promises";
+import { copyFile, readFile, stat, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import {
+  getQuizImageSlotGeometry,
   getQuizPreviewLayoutCapability,
+  recommendImageSizing,
+  isResolvedQuizLayoutId,
+  type ResolvedQuizLayoutId,
   QUIZ_DEFAULT_ASSET_METRICS,
   QUIZ_DEFAULT_CHOICE_ASSET_METRICS,
   type QuizAssetPlan,
@@ -9,6 +14,7 @@ import {
   type QuizPreviewLayoutId,
 } from "@studio/shared";
 import sharp from "sharp";
+import { createRenderImageIdentity } from "./renderImageIdentity.js";
 
 type QuizAssetPurpose = QuizAssetPlan["assets"][number]["purpose"];
 
@@ -20,6 +26,8 @@ export interface OptimizeRenderImageOptions {
   quality?: number;
   purpose?: QuizAssetPurpose | "choice_thumbnail" | "hero";
   layout?: QuizPreviewLayoutId;
+  sourceFingerprint?: string;
+  fit?: "cover" | "contain" | "inside";
 }
 
 export interface OptimizeRenderImageResult {
@@ -29,11 +37,12 @@ export interface OptimizeRenderImageResult {
   originalHeight?: number;
   targetWidth?: number;
   targetHeight?: number;
+  renderIdentity?: string;
 }
 
 /**
  * Calculates optimal target dimensions based on asset purpose and visual layout,
- * applying a 1.25x - 1.5x sharpness multiplier for crisp high-DPI rendering.
+ * delegating to layout-driven canonical sizing recommendations when layout is known.
  */
 export function getOptimalAssetDimensions(
   purpose?: OptimizeRenderImageOptions["purpose"],
@@ -41,6 +50,29 @@ export function getOptimalAssetDimensions(
 ): QuizLayoutAssetMetrics {
   const isChoice = purpose === "choice_thumbnail" || purpose === "answer_option";
 
+  if (layout && layout !== "baseline" && isResolvedQuizLayoutId(layout)) {
+    const layoutId: ResolvedQuizLayoutId = layout;
+    const purposeKind = isChoice ? "answer_option" : "hero_question_image";
+    const geom = getQuizImageSlotGeometry({
+      layoutId,
+      purpose: purposeKind,
+      presentation: "visual",
+      choiceCount: 3,
+      canvasAspectRatio: "16:9",
+    });
+    if (geom) {
+      const rec = recommendImageSizing(geom);
+      if (rec.ok) {
+        return {
+          maxWidth: rec.value.recommended.width,
+          maxHeight: rec.value.recommended.height,
+          aspectRatio: rec.value.aspectRatio,
+        };
+      }
+    }
+  }
+
+  // Documented compatibility defaults when layout context is missing
   if (!layout) {
     return isChoice ? QUIZ_DEFAULT_CHOICE_ASSET_METRICS : QUIZ_DEFAULT_ASSET_METRICS;
   }
@@ -56,31 +88,87 @@ export function getOptimalAssetDimensions(
 /**
  * Pre-resizes high-resolution AI generated images (1536x1024 / 2K / 4K)
  * to match target canvas dimensions before Chromium renders frames.
- * This prevents Chromium from repeatedly downsampling large bitmaps on every single frame.
+ * Parameter-aware: invalidates optimized copies when target dimensions, fit, or source change.
  */
 export async function optimizeRenderImage(options: OptimizeRenderImageOptions): Promise<OptimizeRenderImageResult> {
-  const { sourcePath, targetPath, quality = 90, purpose, layout } = options;
+  const { sourcePath, targetPath, quality = 90, purpose, layout, fit = "inside" } = options;
 
   const defaultDims = getOptimalAssetDimensions(purpose, layout);
   const maxWidth = options.maxWidth ?? defaultDims.maxWidth;
   const maxHeight = options.maxHeight ?? defaultDims.maxHeight;
 
-  // Check if target already exists and is fresher than source
+  let sourceFingerprint = options.sourceFingerprint;
+  if (!sourceFingerprint) {
+    try {
+      const sourceBytes = await readFile(sourcePath);
+      sourceFingerprint = createHash("sha256").update(sourceBytes).digest("hex");
+    } catch {
+      sourceFingerprint = path.basename(sourcePath);
+    }
+  }
+
+  const identity = createRenderImageIdentity({
+    sourceFingerprint,
+    targetBounds: { width: maxWidth, height: maxHeight },
+    fit,
+    quality,
+    optimizerVersion: 1,
+  });
+
+  const sidecarPath = `${targetPath}.identity.json`;
+
+  // Check if target already exists with identical optimization parameters and is fresh
   try {
-    const [sourceStat, targetStat] = await Promise.all([stat(sourcePath), stat(targetPath)]);
+    const [sourceStat, targetStat, sidecarRaw] = await Promise.all([
+      stat(sourcePath),
+      stat(targetPath),
+      readFile(sidecarPath, "utf-8"),
+    ]);
     if (targetStat.size > 0 && targetStat.mtimeMs >= sourceStat.mtimeMs) {
-      return { optimized: true, skippedExisting: true };
+      const sidecar = JSON.parse(sidecarRaw);
+      if (sidecar.identity === identity) {
+        return {
+          optimized: true,
+          skippedExisting: true,
+          targetWidth: sidecar.targetWidth,
+          targetHeight: sidecar.targetHeight,
+          renderIdentity: identity,
+        };
+      }
     }
   } catch {
-    // Target doesn't exist yet, proceed with optimization
+    // Target or sidecar doesn't exist yet, proceed with optimization
   }
 
   const ext = path.extname(sourcePath).toLowerCase();
   const isRasterImage = [".png", ".jpg", ".jpeg", ".webp", ".avif", ".tiff"].includes(ext);
 
+  const writeSidecar = async (targetWidth?: number, targetHeight?: number) => {
+    try {
+      await writeFile(
+        sidecarPath,
+        JSON.stringify({
+          identity,
+          sourceFingerprint,
+          targetWidth,
+          targetHeight,
+          maxWidth,
+          maxHeight,
+          fit,
+          quality,
+          optimizedAt: new Date().toISOString(),
+        }),
+        "utf-8",
+      );
+    } catch {
+      // Non-blocking sidecar write failure
+    }
+  };
+
   if (!isRasterImage) {
     await copyFile(sourcePath, targetPath);
-    return { optimized: false, skippedExisting: false };
+    await writeSidecar();
+    return { optimized: false, skippedExisting: false, renderIdentity: identity };
   }
 
   try {
@@ -92,6 +180,7 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
     // If the image is already smaller than or equal to max bounds, copy directly
     if (width > 0 && height > 0 && width <= maxWidth && height <= maxHeight) {
       await copyFile(sourcePath, targetPath);
+      await writeSidecar(width, height);
       return {
         optimized: false,
         skippedExisting: false,
@@ -99,6 +188,7 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
         originalHeight: height,
         targetWidth: width,
         targetHeight: height,
+        renderIdentity: identity,
       };
     }
 
@@ -120,6 +210,7 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
     }
 
     const outputInfo = await pipeline.toFile(targetPath);
+    await writeSidecar(outputInfo.width, outputInfo.height);
 
     return {
       optimized: true,
@@ -128,10 +219,12 @@ export async function optimizeRenderImage(options: OptimizeRenderImageOptions): 
       originalHeight: height,
       targetWidth: outputInfo.width,
       targetHeight: outputInfo.height,
+      renderIdentity: identity,
     };
   } catch {
     // Fall back to direct copy if Sharp encounters an unsupported format or corrupted header
     await copyFile(sourcePath, targetPath);
-    return { optimized: false, skippedExisting: false };
+    await writeSidecar();
+    return { optimized: false, skippedExisting: false, renderIdentity: identity };
   }
 }

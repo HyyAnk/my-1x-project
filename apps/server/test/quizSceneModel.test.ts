@@ -94,6 +94,8 @@ describe("Phase 3 shared semantic parts", () => {
     const sandboxParts = buildQuizSceneParts(sandbox);
     expect(selectStableParts(productionParts)).toEqual(selectStableParts(sandboxParts));
     expect(productionParts.mascot).toEqual(sandboxParts.mascot);
+    expect(productionParts.hero.source).toBeNull();
+    expect(sandboxParts.hero.source).toContain("data:image/svg+xml");
   });
 });
 
@@ -165,7 +167,7 @@ function selectStableParts(parts: ReturnType<typeof buildQuizSceneParts>) {
   return {
     question: { text: parts.question.text, number: parts.question.number, accent: parts.question.paletteAccent },
     counter: parts.counter,
-    hero: { source: parts.hero.source, altText: parts.hero.altText, subject: parts.hero.fallback.subject },
+    hero: { altText: parts.hero.altText, subject: parts.hero.fallback.subject },
     choices: {
       items: parts.choices.items.map(({ id, order, text }) => ({ id, order, text })),
       correctChoiceId: parts.choices.correctChoiceId,

@@ -34,8 +34,6 @@ export function EngineSettingsTab({
     setApiKey,
     savingCodex,
     saveCodex,
-    agyApiKey,
-    setAgyApiKey,
     savingAntigravity,
     saveAntigravity,
   } = useEngineSettings({

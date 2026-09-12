@@ -79,9 +79,9 @@ export function mysteryRevealBaseStyles(): string {
   position: absolute;
   left: 250px;
   top: 0;
-  width: 920px;
-  height: 360px;
-  max-width: 920px;
+  width: var(--slot-hero-width, 920px);
+  height: var(--slot-hero-height, 360px);
+  max-width: var(--slot-hero-width, 920px);
   margin: 0;
   border-radius: 28px;
   overflow: hidden;

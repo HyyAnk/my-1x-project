@@ -4,7 +4,6 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { ContextEngine } from "../src/context.js";
 import { StudioLogger } from "../src/logger.js";
-import { calibratedScriptTargetWords, scriptWordBounds } from "../src/production.js";
 import { RepositoryService } from "../src/repository.js";
 
 const roots: string[] = [];

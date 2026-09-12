@@ -94,8 +94,8 @@ export function mysteryRevealStageStyles(): string {
 }
 
 .quiz-frame-unified.layout-mystery_reveal .mystery-revealed-inner {
-  width: 920px;
-  height: 360px;
+  width: var(--slot-hero-width, 920px);
+  height: var(--slot-hero-height, 360px);
 }
 
 .layout-mystery_reveal .mystery-revealed-layer img {

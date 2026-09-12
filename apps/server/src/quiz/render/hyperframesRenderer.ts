@@ -3,7 +3,7 @@ import { buildCandyArcadeCompositionBundle } from "./candyArcadeComposition.js";
 import { getActiveStyleSnapshot } from "../visual/styleModules/activation.js";
 
 export class HyperframesRenderer implements QuizRenderer {
-  async prepare(input: QuizRenderInput): Promise<PreparedQuizRender> {
+  prepare(input: QuizRenderInput): Promise<PreparedQuizRender> {
     const composition = buildCandyArcadeCompositionBundle({
       quiz: input.quiz,
       director: input.director,
@@ -24,7 +24,7 @@ export class HyperframesRenderer implements QuizRenderer {
       transitionDurationSeconds: input.transitionDurationSeconds,
       transitionInstances: input.transitionInstances,
     });
-    return {
+    return Promise.resolve({
       html: composition.html,
       compositionFiles: composition.files,
       durationSeconds: input.narrationDurationSeconds ?? input.timeline.duration_seconds,
@@ -32,7 +32,7 @@ export class HyperframesRenderer implements QuizRenderer {
       styleCatalogRevision: input.styleContext.styleCatalogRevision ?? getActiveStyleSnapshot().revision,
       stylePresetRevision: input.styleContext.stylePresetRevision ?? undefined,
       transitionInstances: composition.transitionInstances,
-    };
+    });
   }
 
   async render(input: QuizRenderInput): Promise<QuizRenderResult> {

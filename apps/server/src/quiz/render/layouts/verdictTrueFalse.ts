@@ -31,12 +31,12 @@ export const verdictTrueFalseLayout = {
   position: absolute;
   left: 0;
   top: 0;
-  width: 820px;
-  height: 510px;
-  max-height: 510px;
+  width: var(--slot-hero-width, 820px);
+  height: var(--slot-hero-height, 510px);
+  max-height: var(--slot-hero-height, 510px);
   margin: 0;
   border-radius: 38px;
-  border: 10px solid #FFFFFF;
+  border: var(--slot-hero-border-width, 10px) solid #FFFFFF;
   box-shadow:
     0 16px 0 rgba(13, 35, 71, 0.22),
     0 24px 44px rgba(10, 25, 60, 0.24),

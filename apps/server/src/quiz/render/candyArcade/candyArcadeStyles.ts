@@ -20,6 +20,7 @@ import { productionMascotCss } from "./productionMascotStyles.js";
 import { quizLayoutCss } from "../layouts/registry.js";
 import { quizFrameCss } from "../frame/quizFrameStyles.js";
 import { baseChoiceStyles, choiceTypographyStyles, choiceStateStyles } from "../choices/index.js";
+import { imageSlotStyles } from "../layouts/imageSlotStyles.js";
 
 export function candyArcadeHeroAreaRatio(layout: QuizPreviewLayoutId, aspectRatio: MascotRenderAspectRatio = "16:9"): number {
   const canvas = MASCOT_CANVAS_SIZES[aspectRatio];
@@ -354,6 +355,7 @@ ${
     : ""
 }
 ${quizLayoutCss(aspectRatio)}
+${imageSlotStyles()}
 ${productionMascotCss()}
 ${channelBrandMarkCss()}
 ${getThinkingBarsCss(options.styleCatalogRevision)}

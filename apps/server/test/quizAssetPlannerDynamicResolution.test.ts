@@ -111,21 +111,21 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
     expect(compiled.prompt).toContain("4:3 standard horizontal canvas");
   });
 
-  it("plans aspect_ratio: '4:3' for hero question image when layout is verdict_true_false", () => {
+  it("plans aspect_ratio: '16:9' for hero question image when layout is verdict_true_false", () => {
     const quiz = buildTestQuiz([
       {
         id: "q-verdict-tf",
         number: 1,
         format: "true_false",
         difficulty: 1,
-        question: "Is lightning hotter than the surface of the sun?",
+        question: "Lightning never strikes the same place twice.",
         choices: [
-          { id: "c-true", text: "True" },
-          { id: "c-false", text: "False" },
+          { id: "c-1", text: "True" },
+          { id: "c-2", text: "False" },
         ],
-        correct_choice_id: "c-true",
-        explanation: "Lightning can reach 30,000 kelvins.",
-        fun_fact: "",
+        correct_choice_id: "c-2",
+        explanation: "Lightning frequently strikes tall buildings multiple times.",
+        fun_fact: "The Empire State Building is struck dozens of times a year.",
         source_ids: ["S02"],
         visual_opportunity: "A dramatic lightning strike against storm clouds",
         validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
@@ -161,10 +161,10 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
     const heroAsset = plan.assets.find((asset) => asset.purpose === "hero_question_image");
 
     expect(heroAsset).toBeDefined();
-    expect(heroAsset?.aspect_ratio).toBe("4:3");
+    expect(heroAsset?.aspect_ratio).toBe("16:9");
 
     const compiled = compileQuizAssetPrompt(heroAsset!);
-    expect(compiled.prompt).toContain("Output framing: 4:3.");
+    expect(compiled.prompt).toContain("Output framing: 16:9.");
   });
 
   it("plans aspect_ratio: '16:9' for hero question image when layout is mystery_reveal", () => {
@@ -278,25 +278,25 @@ describe("Dynamic Resolution in Asset Planner & Pipeline", () => {
 
     expect(optionAssets.length).toBe(3);
     for (const option of optionAssets) {
-      expect(option.aspect_ratio).toBe("1:1");
+      expect(option.aspect_ratio).toBe("4:3");
       expect(option.transparent_background).toBe(true);
 
       const compiled = compileQuizAssetPrompt(option);
-      expect(compiled.prompt).toContain("Output framing: 1:1.");
-      expect(compiled.prompt).toContain("1:1 square canvas");
+      expect(compiled.prompt).toContain("Output framing: 4:3.");
+      expect(compiled.prompt).toContain("4:3 standard horizontal canvas");
     }
   });
 
   it("correctly resolves aspect ratio with resolveQuizLayoutAssetAspectRatio helper directly", () => {
     expect(resolveQuizLayoutAssetAspectRatio("media_left_choices_right", "hero_question_image")).toBe("4:3");
-    expect(resolveQuizLayoutAssetAspectRatio("verdict_true_false", "hero_question_image")).toBe("4:3");
-    expect(resolveQuizLayoutAssetAspectRatio("clue_deduction", "hero_question_image")).toBe("4:3");
+    expect(resolveQuizLayoutAssetAspectRatio("verdict_true_false", "hero_question_image")).toBe("16:9");
+    expect(resolveQuizLayoutAssetAspectRatio("clue_deduction", "hero_question_image")).toBe("16:9");
     expect(resolveQuizLayoutAssetAspectRatio("split_versus_two", "hero_question_image")).toBe("4:3");
     expect(resolveQuizLayoutAssetAspectRatio("mystery_reveal", "hero_question_image")).toBe("16:9");
     expect(resolveQuizLayoutAssetAspectRatio("baseline", "hero_question_image")).toBe("16:9");
-    expect(resolveQuizLayoutAssetAspectRatio("visual_choices_three", "answer_option")).toBe("1:1");
+    expect(resolveQuizLayoutAssetAspectRatio("visual_choices_three", "answer_option")).toBe("4:3");
     expect(resolveQuizLayoutAssetAspectRatio("visual_choices_three_pure", "answer_option")).toBe("1:1");
-    expect(resolveQuizLayoutAssetAspectRatio("split_versus_two", "answer_option")).toBe("1:1");
+    expect(resolveQuizLayoutAssetAspectRatio("split_versus_two", "answer_option")).toBe("16:9");
   });
 
   it("compiles authentic character identities verbatim without censorship across 16:9, 4:3, 1:1, 3:4, and 9:16", () => {

@@ -117,8 +117,8 @@ describe("Quiz pipeline director & layout integration", () => {
 
   it("consumes capability metrics in image optimization and visual QA", () => {
     const dimsSplit = getOptimalAssetDimensions("hero", "media_left_choices_right");
-    expect(dimsSplit.maxWidth).toBe(1080);
-    expect(dimsSplit.maxHeight).toBe(810);
+    expect(dimsSplit.maxWidth).toBe(1056);
+    expect(dimsSplit.maxHeight).toBe(792);
 
     const dimsStack = getOptimalAssetDimensions("hero", "full_stack_list");
     expect(dimsStack).toBeDefined();

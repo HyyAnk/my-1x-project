@@ -45,7 +45,13 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
         plan: assetPlan,
         activeEngine: runtime.activeEngine,
         antigravityClient: runtime.antigravity,
-        imageConfig: { api_key: runtime.imageConfig.api_key, model: runtime.imageConfig.model },
+        imageConfig: {
+          api_key: runtime.imageConfig.api_key,
+          model: runtime.imageConfig.model,
+          provider: runtime.imageConfig.provider,
+          base_url: runtime.imageConfig.base_url,
+          quality: runtime.imageConfig.quality,
+        },
         imageFallbackConfig: runtime.imageFallbackConfig,
       })
     ).resolution;
@@ -57,21 +63,34 @@ export async function prepareVideoAssets(options: PrepareVideoAssetsOptions): Pr
 
   const resolvedAssetEntries: Array<readonly [string, string] | null> = await Promise.all(
     (assetResolution?.assets ?? []).map(async (asset) => {
+      const requirement = assetPlan.assets.find((r) => r.asset_id === asset.asset_id);
       try {
         const sourcePath = await runtime.repository.resolveQuizAssetPath(channelId, episodeId, asset.path);
         const extension = path.extname(sourcePath) || ".png";
         const renderFilename = `${asset.asset_id}${extension}`;
         const targetPath = path.join(renderAssetDirectory, renderFilename);
-        const requirement = assetPlan.assets.find((r) => r.asset_id === asset.asset_id);
         const layout = resolveAssetLayout(options.quiz, options.director, requirement?.question_id, options.aspectRatio);
-        await optimizeRenderImage({
+        const optResult = await optimizeRenderImage({
           sourcePath,
           targetPath,
           purpose: requirement?.purpose,
           layout,
+          maxWidth: requirement?.sizing?.recommended_width,
+          maxHeight: requirement?.sizing?.recommended_height,
+          sourceFingerprint: asset.fingerprint,
         });
+        if (optResult.renderIdentity) {
+          (asset as { renderIdentity?: string }).renderIdentity = optResult.renderIdentity;
+        }
         return [asset.asset_id, `./quiz-images/${renderFilename}`] as const;
       } catch (error) {
+        if (requirement?.required) {
+          throw new Error(
+            `Required render asset "${asset.asset_id}" failed preparation for episode ${episodeId}: ${
+              error instanceof Error ? error.message : error
+            }`,
+          );
+        }
         console.warn(
           `[videoAssetPreparation] Failed to prepare render asset "${asset.asset_id}" for episode ${episodeId}; it will be missing from the render:`,
           error instanceof Error ? error.message : error,

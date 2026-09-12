@@ -1,3 +1,5 @@
+import type { ImageSizingRecommendation } from "./quizImageSizing/types.js";
+
 export type SampleImageAspectRatio = "16:9" | "4:3" | "1:1" | "9:16" | "3:4";
 
 export interface SampleImageSpec {
@@ -10,6 +12,23 @@ export interface SampleImageSpec {
   recommendedResolution: string;
   accentColor: string;
   secondaryColor: string;
+}
+
+export function createSampleImageSpecFromRecommendation(
+  recommendation: ImageSizingRecommendation,
+  role = "Specimen",
+): SampleImageSpec {
+  const { aspectRatio, recommended } = recommendation;
+  const baseSpec = getSampleImageSpec(aspectRatio);
+  return {
+    ...baseSpec,
+    id: `sample-${aspectRatio.replace(":", "-")}-${recommended.width}x${recommended.height}`,
+    aspectRatio: aspectRatio as SampleImageAspectRatio,
+    width: recommended.width,
+    height: recommended.height,
+    recommendedResolution: `${recommended.width} × ${recommended.height} px`,
+    role,
+  };
 }
 
 export const SAMPLE_IMAGE_SPECS: Record<SampleImageAspectRatio, SampleImageSpec> = {
@@ -139,7 +158,7 @@ export function generateSampleImageSvg(
 
   <!-- Safe Area Guides -->
   <rect x="${safeMarginX}" y="${safeMarginY}" width="${safeWidth}" height="${safeHeight}" rx="20" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2" stroke-dasharray="6 6"/>
-  <text x="${safeMarginX + 16}" y="${safeMarginY + 28}" fill="rgba(255,255,255,0.35)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" letter-spacing="1">SAFE AREA (85%)</text>
+  <text x="${safeMarginX + 16}" y="${safeMarginY + 28}" fill="rgba(255,255,255,0.35)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" letter-spacing="1">SAFE AREA (84%)</text>
 
   <!-- Alignment Crosshairs -->
   <path d="M ${cx - 24} ${cy} L ${cx + 24} ${cy} M ${cx} ${cy - 24} L ${cx} ${cy + 24}" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>

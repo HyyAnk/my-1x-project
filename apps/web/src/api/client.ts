@@ -33,7 +33,15 @@ export type QuizV2State = {
   quiz: QuizV2 | null;
   director_plan: DirectorPlan | null;
   asset_plan: QuizAssetPlan | null;
-  asset_resolution?: { assets: Array<{ asset_id: string; path: string; source: string }> } | null;
+  asset_resolution?: {
+    assets: Array<{
+      asset_id: string;
+      path: string;
+      source: string;
+      aspect_ratio?: string;
+      actual_dimensions?: { width: number; height: number };
+    }>;
+  } | null;
   voice_plan: VoicePlan | null;
   timeline: QuizTimeline | null;
   assessment: QuizAssessment | null;
@@ -70,7 +78,7 @@ export async function request<T>(url: string, init?: RequestInit): Promise<T> {
   if (init?.body !== undefined && init.body !== null && !headers.has("content-type")) headers.set("content-type", "application/json");
   const response = await fetch(url, { ...init, headers });
   const rawBody = await response.text();
-  let body: unknown = {};
+  let body: unknown;
   try {
     body = rawBody ? JSON.parse(rawBody) : {};
   } catch {

@@ -9,6 +9,10 @@ export { SandboxPresetModal } from "./SandboxPresetModal";
 export { SandboxPresetManagerModal } from "./SandboxPresetManagerModal";
 export { SandboxChannelSyncModal } from "./SandboxChannelSyncModal";
 export { SandboxChannelBrandControl } from "./SandboxChannelBrandControl";
+export { SandboxModalsContainer } from "./SandboxModalsContainer";
+export { SandboxInspectorContainer } from "./SandboxInspectorContainer";
+export { SandboxTransitionCanvasArea } from "./SandboxTransitionCanvasArea";
+export { SandboxCanvasArea } from "./SandboxCanvasArea";
 export {
   SandboxTransitionTab,
   SandboxTransitionCategoryToggle,
@@ -16,3 +20,4 @@ export {
   SandboxTransitionDurationSlider,
   SandboxTransitionScrubber,
 } from "./transition";
+

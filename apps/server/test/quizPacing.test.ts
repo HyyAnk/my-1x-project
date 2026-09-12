@@ -12,7 +12,6 @@ import {
   createSilenceWav,
   isStandardPcmWav,
   MIN_QUIZ_VOICE_SLOWDOWN_TEMPO,
-  quizVoiceFingerprint,
   quizVoicePaceCorrectionTempo,
   quizVoiceTempo,
   voicePerformanceConfig,

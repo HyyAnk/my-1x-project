@@ -32,6 +32,13 @@ describe("SandboxLayoutSelector", () => {
         <SandboxLayoutSelector layoutId="visual_choices_three" setLayoutId={vi.fn()} aspectRatio="16:9" />
       </LanguageProvider>,
     );
+    expect(screen.getByText(/Choices: 4:3/i)).toBeTruthy();
+
+    rerender(
+      <LanguageProvider>
+        <SandboxLayoutSelector layoutId="visual_choices_three_pure" setLayoutId={vi.fn()} aspectRatio="16:9" />
+      </LanguageProvider>,
+    );
     expect(screen.getByText(/Choices: 1:1/i)).toBeTruthy();
 
     rerender(

@@ -86,7 +86,7 @@ export function useMascotLibrary({
     }
   };
 
-  const handleImportZip = async (file: File) => {
+  const handleImportZip = (file: File) => {
     setImportingZip(true);
     try {
       const reader = new FileReader();

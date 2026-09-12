@@ -3,7 +3,6 @@ import path from "node:path";
 import { EpisodeSchema, SceneSchema, nowIso, type Episode, type Scene } from "@studio/shared";
 import { RepositoryError } from "./errors.js";
 import { allowedEpisodeFiles } from "./helpers.js";
-import { parseScenes, serializeScenes } from "./sceneCodec.js";
 import type { RepositoryRuntime } from "./runtime.js";
 
 export async function clearSequenceDrafts(this: RepositoryRuntime, episodeId: string): Promise<void> {

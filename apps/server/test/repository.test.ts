@@ -88,7 +88,7 @@ describe("RepositoryService", () => {
     const assigned = await repository.assignVoice(channel.channel_id, profile.voice_id);
     expect(assigned.voice_reference_path).toBe(profile.reference_path);
     await expect(repository.deleteVoiceProfile(profile.voice_id)).rejects.toThrow("Voice is in use by 1 channel(s)");
-    const reset = await repository.assignVoice(channel.channel_id, null);
+    await repository.assignVoice(channel.channel_id, null);
     await repository.deleteVoiceProfile(profile.voice_id);
     expect((await repository.listVoices()).some((voice) => voice.voice_id === profile.voice_id)).toBe(false);
     expect(await repository.listVoices()).toHaveLength(1);

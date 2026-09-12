@@ -1,5 +1,22 @@
 import { z } from "zod";
-import { QuizAssetAspectRatioSchema, QuizAssetPurposeSchema, QuizAssetStyleSchema } from "../../enums.js";
+import { QuizAssetAspectRatioSchema, QuizAssetPurposeSchema, QuizAssetStyleSchema, QuizLayoutIdSchema } from "../../enums.js";
+
+export const PersistedImageSizingSchema = z.object({
+  policy_version: z.literal(1),
+  layout_id: QuizLayoutIdSchema.exclude(["auto"]),
+  geometry_key: z.string().min(1),
+  recommended_width: z.number().int().positive(),
+  recommended_height: z.number().int().positive(),
+});
+
+export type PersistedImageSizing = z.infer<typeof PersistedImageSizingSchema>;
+
+export const ImageDimensionsSchema = z.object({
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+});
+
+export type ImageDimensions = z.infer<typeof ImageDimensionsSchema>;
 
 export const AssetConsistencyGroupSchema = z.object({
   group_id: z.string().min(1).max(120),
@@ -32,6 +49,7 @@ export const QuizAssetRequirementSchema = z.object({
   required: z.boolean(),
   semantic_key: z.string().trim().min(1).max(180),
   consistency_group_id: z.string().min(1).max(120).nullable().default(null),
+  sizing: PersistedImageSizingSchema.optional(),
 });
 
 export type QuizAssetRequirement = z.infer<typeof QuizAssetRequirementSchema>;
@@ -95,6 +113,7 @@ export const QuizResolvedAssetSchema = QuizAssetRequirementSchema.extend({
   source: z.enum(["explicit_episode", "channel_reusable", "cache", "provider", "fallback", "demo"]),
   fallback_tier: z.number().int().positive().optional(),
   degraded: z.boolean().optional(),
+  actual_dimensions: ImageDimensionsSchema.optional(),
 });
 
 export type QuizResolvedAsset = z.infer<typeof QuizResolvedAssetSchema>;

@@ -4,7 +4,6 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildApp } from "../src/app.js";
 import { computeContrastRatio, evaluateContrast } from "../src/quiz/visual/contrastCalculator.js";
-import { RepositoryError } from "../src/repository.js";
 
 const roots: string[] = [];
 
@@ -35,13 +34,13 @@ describe("Security & Resilience Suite", () => {
       try {
         const configRes = await app.server.inject({ method: "GET", url: "/api/config" });
         expect(configRes.statusCode).toBe(200);
-        const configData = configRes.json();
+        const configData = configRes.json<{ image_generation: { api_key: string; has_api_key: boolean } }>();
         expect(configData.image_generation.api_key).toBe("");
         expect(configData.image_generation.has_api_key).toBe(true);
 
         const settingsRes = await app.server.inject({ method: "GET", url: "/api/image/settings" });
         expect(settingsRes.statusCode).toBe(200);
-        const settingsData = settingsRes.json();
+        const settingsData = settingsRes.json<{ settings: { api_key: string; has_api_key: boolean } }>();
         expect(settingsData.settings.api_key).toBe("");
         expect(settingsData.settings.has_api_key).toBe(true);
       } finally {
@@ -118,7 +117,7 @@ describe("Security & Resilience Suite", () => {
           url: "/api/channels/non-existent-channel/episodes/non-existent-episode",
         });
         expect(res.statusCode).toBe(404);
-        const data = res.json();
+        const data = res.json<{ error?: unknown; detail?: unknown }>();
         expect(data.error).toBeTruthy();
         expect(data.detail).toBeUndefined();
       } finally {

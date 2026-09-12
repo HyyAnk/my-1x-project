@@ -1,4 +1,4 @@
-import type { Task, TaskType } from "@studio/shared";
+import type { TaskType } from "@studio/shared";
 import type { TaskManagerRuntime } from "./runtime.js";
 import { resolveMaxConcurrentVideoRenders } from "./video/renderConcurrencyLimiter.js";
 
@@ -16,7 +16,7 @@ export type QueueCounters = {
   runningPipelineCount: number;
 };
 
-export async function pumpTaskQueue(
+export function pumpTaskQueue(
   runtime: TaskManagerRuntime & {
     runningCount: number;
     runningAudioCount: number;
@@ -115,4 +115,6 @@ export async function pumpTaskQueue(
       void pumpTaskQueue(runtime);
     });
   }
+
+  return Promise.resolve();
 }

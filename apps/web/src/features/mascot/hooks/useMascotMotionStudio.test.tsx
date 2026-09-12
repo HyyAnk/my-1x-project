@@ -67,7 +67,7 @@ describe("useMascotMotionStudio", () => {
     const setBusyAction = vi.fn();
     const setGeneratorStep = vi.fn();
     let editingMascot: MascotProfile | null = { ...mockMascot };
-    const setEditingMascot = vi.fn((m) => {
+    const setEditingMascot = vi.fn((m: MascotProfile | null) => {
       editingMascot = m;
     });
 

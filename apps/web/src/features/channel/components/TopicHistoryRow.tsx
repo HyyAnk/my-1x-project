@@ -5,7 +5,7 @@ import { TopicLayoutPreviewButton } from "./TopicLayoutPreviewButton";
 export function TopicHistoryRow({
   topic,
   index,
-  channelStyles = ALL_QUIZ_IMAGE_STYLES,
+  channelStyles: _channelStyles = ALL_QUIZ_IMAGE_STYLES,
   availability,
   onConfirm,
   busy,

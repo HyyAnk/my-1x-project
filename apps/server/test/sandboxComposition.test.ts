@@ -411,7 +411,7 @@ describe("buildSandboxComposition Preview Engine", () => {
       });
       expect(mediaLeftRes.html).toContain("hero-image");
       expect(mediaLeftRes.html).toContain("4%3A3%20HERO");
-      expect(mediaLeftRes.html).toContain("1080%20%C3%97%20810%20px");
+      expect(mediaLeftRes.html).toContain("1056%20%C3%97%20792%20px");
 
       // 16:9 Hero Banner in mystery_reveal
       const mysteryRes = buildSandboxComposition({
@@ -420,9 +420,9 @@ describe("buildSandboxComposition Preview Engine", () => {
       });
       expect(mysteryRes.html).toContain("hero-image");
       expect(mysteryRes.html).toContain("16%3A9%20HERO");
-      expect(mysteryRes.html).toContain("1280%20%C3%97%20720%20px");
+      expect(mysteryRes.html).toContain("768%20%C3%97%20432%20px");
 
-      // 1:1 Choice Cards in visual_choices_three
+      // 4:3 Choice Cards in visual_choices_three
       const visualRes = buildSandboxComposition({
         layout_id: "visual_choices_three",
         choices: ["Apple", "Banana", "Cherry"],
@@ -431,7 +431,15 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(visualRes.html).toContain("CHOICE%20A");
       expect(visualRes.html).toContain("CHOICE%20B");
       expect(visualRes.html).toContain("CHOICE%20C");
-      expect(visualRes.html).toContain("640%20%C3%97%20640%20px");
+      expect(visualRes.html).toContain("672%20%C3%97%20504%20px");
+
+      // 1:1 Choice Cards in visual_choices_three_pure
+      const pureVisualRes = buildSandboxComposition({
+        layout_id: "visual_choices_three_pure",
+        choices: ["Apple", "Banana", "Cherry"],
+        question_format: "odd_one_out",
+      });
+      expect(pureVisualRes.html).toContain("728%20%C3%97%20728%20px");
     });
   });
 

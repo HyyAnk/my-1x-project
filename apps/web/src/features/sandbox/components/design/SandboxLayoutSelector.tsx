@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { CaretDown, Check, ListDashes, ListNumbers, SquareSplitHorizontal, type IconProps } from "@phosphor-icons/react";
-import { QUIZ_LANDSCAPE_LAYOUT_IDS, getCompatibleQuizLayout, getQuizPreviewLayoutCapability, type QuizPreviewLayoutId } from "@studio/shared";
+import {
+  QUIZ_LANDSCAPE_LAYOUT_IDS,
+  getCompatibleQuizLayout,
+  getQuizPreviewLayoutCapability,
+  type QuizPreviewLayoutId,
+} from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 import {
   QUIZ_LAYOUT_UI_DEFINITIONS,
@@ -8,6 +13,7 @@ import {
   getQuizLayoutUiDefinitions,
   type QuizLayoutUiDefinition,
 } from "../../../quizLayouts/quizLayoutUiCatalog";
+import { SandboxImageRequirements, type SandboxImageRequirementItem } from "./SandboxImageRequirements";
 
 export const LANDSCAPE_LAYOUT_IDS: readonly QuizPreviewLayoutId[] = QUIZ_LANDSCAPE_LAYOUT_IDS;
 
@@ -266,55 +272,27 @@ export function SandboxLayoutSelector({ layoutId, setLayoutId, disabled = false,
         const choiceAsset = capability.metrics.assets.choice;
         if (!questionAsset && !choiceAsset) return null;
 
-        return (
-          <div
-            data-testid="sandbox-layout-media-spec"
-            style={{
-              marginTop: "6px",
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "6px",
-              alignItems: "center",
-            }}
-          >
-            {questionAsset && (
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  fontSize: "10px",
-                  fontWeight: 600,
-                  padding: "2px 8px",
-                  borderRadius: "6px",
-                  background: "rgba(56, 189, 248, 0.12)",
-                  color: "#38bdf8",
-                  border: "1px solid rgba(56, 189, 248, 0.25)",
-                }}
-              >
-                Hero Media: {questionAsset.aspectRatio} ({questionAsset.maxWidth}×{questionAsset.maxHeight}px)
-              </span>
-            )}
-            {choiceAsset && (
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  fontSize: "10px",
-                  fontWeight: 600,
-                  padding: "2px 8px",
-                  borderRadius: "6px",
-                  background: "rgba(16, 185, 129, 0.12)",
-                  color: "#10b981",
-                  border: "1px solid rgba(16, 185, 129, 0.25)",
-                }}
-              >
-                Choices: {choiceAsset.aspectRatio} ({choiceAsset.maxWidth}×{choiceAsset.maxHeight}px)
-              </span>
-            )}
-          </div>
-        );
+        const requirements: SandboxImageRequirementItem[] = [];
+        if (questionAsset) {
+          requirements.push({
+            role: "hero",
+            label: "Hero Media",
+            aspectRatio: questionAsset.aspectRatio ?? "16:9",
+            recommended: { width: questionAsset.maxWidth, height: questionAsset.maxHeight },
+            fit: "cover",
+          });
+        }
+        if (choiceAsset) {
+          requirements.push({
+            role: "choice",
+            label: "Choices",
+            aspectRatio: choiceAsset.aspectRatio ?? "1:1",
+            recommended: { width: choiceAsset.maxWidth, height: choiceAsset.maxHeight },
+            fit: "cover",
+          });
+        }
+
+        return <SandboxImageRequirements requirements={requirements} />;
       })()}
     </div>
   );

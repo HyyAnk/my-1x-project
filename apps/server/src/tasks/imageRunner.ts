@@ -10,42 +10,56 @@ import { parseContinuityBundles } from "../visualBundles.js";
 import { isContentFilterError } from "../utils/promptSanitizer.js";
 import type { TaskManagerRuntime } from "./runtime.js";
 
+function tryCreateExplicitProvider(
+  runtime: TaskManagerRuntime,
+  imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
+): ImageProvider | null {
+  const providerType: string = runtime.imageConfig.provider ?? "gpti2";
+  const { api_key, model, quality, base_url } = runtime.imageConfig;
+
+  if (providerType === "gpti2" && Gpti2ImageProvider.isConfigured(api_key)) {
+    return new Gpti2ImageProvider(runtime.repository, imageTarget, { apiKey: api_key, model });
+  }
+
+  const fallbackKey = runtime.imageFallbackConfig?.api_key;
+  if (providerType === "imgstudio" && (api_key || ImgStudioImageProvider.isConfigured(fallbackKey))) {
+    return new ImgStudioImageProvider(runtime.repository, imageTarget, {
+      apiKey: api_key || fallbackKey,
+      baseUrl: base_url || runtime.imageFallbackConfig?.base_url,
+      model: model || runtime.imageFallbackConfig?.model,
+      quality: quality || runtime.imageFallbackConfig?.quality,
+    });
+  }
+
+  if (providerType === "shopaikey" && (api_key || ShopAiKeyImageProvider.isConfigured())) {
+    return new ShopAiKeyImageProvider(runtime.repository, imageTarget, {
+      apiKey: api_key || process.env.SHOPAIKEY_API_KEY,
+      baseUrl: base_url || "https://direct.shopaikey.com/v1",
+      model: model || "gpt-image-2",
+      quality,
+    });
+  }
+
+  if (providerType === "custom" && api_key) {
+    return new ShopAiKeyImageProvider(runtime.repository, imageTarget, {
+      apiKey: api_key,
+      baseUrl: base_url || "https://api.openai.com/v1",
+      model: model || "gpt-image-2",
+      quality,
+    });
+  }
+
+  return null;
+}
+
 export function createImageProvider(
   this: TaskManagerRuntime,
   imageTarget: { channelId: string; episodeId: string; bundleNumber: number; variant: number; theme?: string },
   output?: string,
 ): ImageProvider {
-  const providerType: string = this.imageConfig.provider ?? "gpti2";
-  if (providerType === "gpti2" && Gpti2ImageProvider.isConfigured(this.imageConfig.api_key)) {
-    return new Gpti2ImageProvider(this.repository, imageTarget, {
-      apiKey: this.imageConfig.api_key,
-      model: this.imageConfig.model,
-    });
-  }
-  if (providerType === "imgstudio" && (this.imageConfig.api_key || ImgStudioImageProvider.isConfigured(this.imageFallbackConfig?.api_key))) {
-    return new ImgStudioImageProvider(this.repository, imageTarget, {
-      apiKey: this.imageConfig.api_key || this.imageFallbackConfig?.api_key,
-      baseUrl: this.imageConfig.base_url || this.imageFallbackConfig?.base_url,
-      model: this.imageConfig.model || this.imageFallbackConfig?.model,
-      quality: this.imageConfig.quality || this.imageFallbackConfig?.quality,
-    });
-  }
-  if (providerType === "shopaikey" && (this.imageConfig.api_key || ShopAiKeyImageProvider.isConfigured())) {
-    return new ShopAiKeyImageProvider(this.repository, imageTarget, {
-      apiKey: this.imageConfig.api_key || process.env.SHOPAIKEY_API_KEY,
-      baseUrl: this.imageConfig.base_url || "https://direct.shopaikey.com/v1",
-      model: this.imageConfig.model || "gpt-image-2",
-      quality: this.imageConfig.quality,
-    });
-  }
-  if (providerType === "custom" && this.imageConfig.api_key) {
-    return new ShopAiKeyImageProvider(this.repository, imageTarget, {
-      apiKey: this.imageConfig.api_key,
-      baseUrl: this.imageConfig.base_url || "https://api.openai.com/v1",
-      model: this.imageConfig.model || "gpt-image-2",
-      quality: this.imageConfig.quality,
-    });
-  }
+  const explicit = tryCreateExplicitProvider(this, imageTarget);
+  if (explicit) return explicit;
+
   if (this.activeEngine === "antigravity" && this.antigravity) {
     return new AntigravityImageChainProvider(this.repository, imageTarget, this.antigravity, { allowTier3Fallback: false });
   }
@@ -143,7 +157,10 @@ export async function generateBundleImageWithSafetyRetry(
     }
   }
 
-  throw lastError ?? new Error("Failed to generate continuity image");
+  if (lastError instanceof Error) {
+    throw lastError;
+  }
+  throw new Error(typeof lastError === "string" ? lastError : "Failed to generate continuity image");
 }
 
 export type BundleImageExecutionOptions = {

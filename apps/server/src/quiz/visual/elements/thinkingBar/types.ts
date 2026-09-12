@@ -1,5 +1,5 @@
 import type { QuizThinkingBarStyle } from "@studio/shared";
-import type { ElementRenderContext, VisualElementVariant } from "../types.js";
+import type { VisualElementVariant } from "../types.js";
 
 export type ThinkingBarRenderInput = {
   clipStart: number;

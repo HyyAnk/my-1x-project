@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { VoicePlan, QuizV2 } from "@studio/shared";
+import type { VoicePlan } from "@studio/shared";
 import { healQuizVoicePacingWithLLM } from "../src/quiz/audio/voicePacingHealer.js";
 import { countQuizVoiceWords, quizVoiceTargetWordsPerSecond } from "../src/quiz/audio/voicePolicy.js";
 import type { LLMClient } from "../src/utils/promptSanitizer.js";
@@ -37,7 +37,7 @@ describe("Quiz Self-Healing & Auto-Retry", () => {
     const mockClient = {
       connect: vi.fn().mockResolvedValue(undefined),
       startThread: vi.fn().mockResolvedValue("thread-1"),
-      on: vi.fn().mockImplementation((event, handler) => {
+      on: vi.fn().mockImplementation((event: string, handler: (payload: { method: string; params: unknown }) => void) => {
         if (event === "notification") {
           setTimeout(() => {
             handler({

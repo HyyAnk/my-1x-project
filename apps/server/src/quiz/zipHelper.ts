@@ -102,7 +102,7 @@ export function parseZipArchive(buf: Buffer): ZipEntry[] {
       // Local file header
       const compMethod = buf.readUInt16LE(pos + 8);
       const compSize = buf.readUInt32LE(pos + 18);
-      const uncompSize = buf.readUInt32LE(pos + 22);
+      const _uncompSize = buf.readUInt32LE(pos + 22);
       const filenameLen = buf.readUInt16LE(pos + 26);
       const extraLen = buf.readUInt16LE(pos + 28);
 

@@ -1,4 +1,4 @@
-import { ArrowsInSimple, Check, Copy, DownloadSimple, FloppyDisk, Image, Sparkle, X } from "@phosphor-icons/react";
+import { Check, Copy, DownloadSimple, FloppyDisk, Image, X } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import type { Scene } from "@studio/shared";
 import { api } from "../api";

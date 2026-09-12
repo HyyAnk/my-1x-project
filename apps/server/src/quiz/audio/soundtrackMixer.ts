@@ -5,18 +5,8 @@ import type { QuizTimeline } from "@studio/shared";
 import { wavDurationSeconds } from "../../utils/binary.js";
 import { diagnoseMasterSoundtrack } from "./audioDiagnostics.js";
 import type { BgmRegistry, ResolveBgmOptions } from "./bgmRegistry.js";
-import {
-  defaultSfxCandidateDirectories,
-  resolveSfxCandidatePath,
-  resolveSfxSchedule,
-  type SfxScheduleItem,
-} from "./soundtrackSfxPlanner.js";
-import {
-  defaultBgmCandidateDirectories,
-  resolveBgmCandidatePath,
-  resolveBgmScheduleItems,
-  type BgmScheduleItem,
-} from "./soundtrackBgmPlanner.js";
+import { defaultSfxCandidateDirectories, resolveSfxSchedule } from "./soundtrackSfxPlanner.js";
+import { defaultBgmCandidateDirectories, resolveBgmScheduleItems } from "./soundtrackBgmPlanner.js";
 import { buildFilterGraphScript, type MasterSoundtrackPlan } from "./soundtrackFfmpegBuilder.js";
 
 const execFileAsync = promisify(execFile);

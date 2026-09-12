@@ -49,7 +49,7 @@ export function applyTaskPatch(current: Task, patch: Partial<Task>): Task {
   }
 
   if (current.started_at && patch.started_at && patch.status === "RUNNING") {
-    const { started_at, ...rest } = effectivePatch;
+    const { started_at: _started_at, ...rest } = effectivePatch;
     effectivePatch = rest;
   }
 

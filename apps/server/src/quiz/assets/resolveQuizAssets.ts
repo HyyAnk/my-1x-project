@@ -1,9 +1,6 @@
-import { readFile } from "node:fs/promises";
 import type { QuizAssetPlan, QuizAssetResolution, QuizImageStyle, QuizIssue } from "@studio/shared";
 import { StudioLogger } from "../../logger.js";
 import type { RepositoryService } from "../../repository.js";
-import { Gpti2QuizImageProvider } from "../../providers/gpti2Image.js";
-import { ShopAiKeyQuizImageProvider } from "../../providers/shopAiKeyImage.js";
 import { assetFingerprint } from "./assetFingerprint.js";
 import { compileQuizAssetPrompt } from "./promptCompiler.js";
 import { runConcurrent } from "../../utils/concurrency.js";
@@ -11,24 +8,18 @@ import { isValidQuizAsset, isQuizAssetResolutionComplete, resolveQuizImageProvid
 import { syncHeroImageToBundle } from "./resolvers/bundleAssetSync.js";
 import { generateAssetWithProvider } from "./resolvers/providerAssetResolver.js";
 import type { AntigravityClient } from "../../antigravity.js";
-import { isContentFilterError } from "../../utils/promptSanitizer.js";
+import { classifyAssetError, createQuizAssetIssue } from "./resolvers/assetErrorClassifier.js";
+import { preloadValidExistingAssets } from "./resolvers/existingAssetPreloader.js";
+import {
+  hasExplicitAssetProvenance,
+  tryReuseCachedAsset,
+  tryReuseExplicitBundleAsset,
+} from "./resolvers/reusableAssetResolver.js";
+import { validateConsistencyGroups } from "./resolvers/consistencyGroupValidator.js";
 
-export { isValidQuizAsset, isQuizAssetResolutionComplete, resolveQuizImageProviderName };
+export { isValidQuizAsset, isQuizAssetResolutionComplete, resolveQuizImageProviderName, hasExplicitAssetProvenance };
 
-export function hasExplicitAssetProvenance(meta?: {
-  model?: string;
-  provenance?: string;
-  user_selected?: boolean;
-} | null): boolean {
-  if (!meta) return false;
-  return (
-    meta.model === "user_selected" ||
-    meta.provenance === "explicit" ||
-    meta.user_selected === true
-  );
-}
-
-export async function resolveQuizAssets(input: {
+export type ResolveQuizAssetsInput = {
   repository: RepositoryService;
   channelId: string;
   episodeId: string;
@@ -54,40 +45,117 @@ export async function resolveQuizAssets(input: {
   };
   onProgress?: (progress: { completed: number; total: number; reused: boolean }) => Promise<void> | void;
   maxRounds?: number;
-}): Promise<{ resolution: QuizAssetResolution; issues: QuizIssue[] }> {
+};
+
+async function resolveSingleAsset(params: {
+  request: QuizAssetPlan["assets"][number];
+  round: number;
+  maxRounds: number;
+  input: ResolveQuizAssetsInput;
+  byFingerprint: Map<string, QuizAssetResolution["assets"][number]>;
+  consistencyGroups: Map<string, QuizAssetPlan["consistency_groups"][number]>;
+  logger: StudioLogger;
+  activeEngine: "codex" | "antigravity";
+}): Promise<{
+  entry?: QuizAssetResolution["assets"][number];
+  issue?: QuizIssue;
+  reused: boolean;
+}> {
+  const { request, round, maxRounds, input, byFingerprint, consistencyGroups, logger, activeEngine } = params;
+  const compiled = compileQuizAssetPrompt(
+    request,
+    request.consistency_group_id ? consistencyGroups.get(request.consistency_group_id) : undefined,
+    input.visualStyle ?? "pixar_3d",
+  );
+  logger.info(`Compiled prompt for ${request.asset_id}: ${JSON.stringify(compiled.prompt)} (round ${round}/${maxRounds})`, {
+    profileId: input.channelId,
+    workerId: input.episodeId,
+    step: "compile_asset_prompt",
+  });
+
+  const configuredProvider = input.imageConfig?.provider ?? "gpti2";
+  const providerName = resolveQuizImageProviderName({ imageConfig: input.imageConfig, activeEngine });
+  const fingerprint = assetFingerprint(request, providerName, compiled.cacheVersion);
+  const bundleNumber = request.question_id ? Number(/^question-(\d+)$/i.exec(request.question_id)?.[1] ?? 0) : 0;
+
+  const explicitEntry = await tryReuseExplicitBundleAsset({
+    repository: input.repository,
+    channelId: input.channelId,
+    episodeId: input.episodeId,
+    request,
+    fingerprint,
+    bundleNumber,
+  });
+  if (explicitEntry) {
+    return { entry: explicitEntry, reused: true };
+  }
+
+  const cached = byFingerprint.get(fingerprint);
+  const cachedResult = await tryReuseCachedAsset({
+    repository: input.repository,
+    channelId: input.channelId,
+    episodeId: input.episodeId,
+    request,
+    fingerprint,
+    cached,
+  });
+  if (cachedResult) {
+    return { entry: cachedResult.entry, issue: cachedResult.issue, reused: true };
+  }
+
+  const generated = await generateAssetWithProvider({
+    repository: input.repository,
+    channelId: input.channelId,
+    episodeId: input.episodeId,
+    request,
+    fingerprint,
+    compiledPrompt: compiled.prompt,
+    configuredProvider,
+    activeEngine,
+    antigravityClient: input.antigravityClient,
+    imageConfig: input.imageConfig,
+    imageFallbackConfig: input.imageFallbackConfig,
+    logger,
+  });
+
+  let issue: QuizIssue | undefined;
+  if (generated.tier3Fallback) {
+    issue = createQuizAssetIssue(
+      request,
+      "asset_fallback_degraded",
+      "warning",
+      `Asset ${request.asset_id} used Tier 3 deterministic fallback. Visual review recommended.`,
+      "Inspect the generated fallback card or replace with a dedicated image.",
+    );
+  } else if (request.purpose === "hero_question_image") {
+    await syncHeroImageToBundle(input.repository, input.channelId, input.episodeId, bundleNumber, generated.entry.path);
+  }
+
+  return { entry: generated.entry, issue, reused: false };
+}
+
+export async function resolveQuizAssets(
+  input: ResolveQuizAssetsInput,
+): Promise<{ resolution: QuizAssetResolution; issues: QuizIssue[] }> {
   const existing = await input.repository.readQuizAssetResolution(input.channelId, input.episodeId);
   const byFingerprint = new Map(existing?.assets.map((asset) => [asset.fingerprint, asset]) ?? []);
-  const resolvedMap = new Map<string, QuizAssetResolution["assets"][number]>();
   const issues: QuizIssue[] = [];
   const logger = new StudioLogger(input.repository.rootDirectory);
   const consistencyGroups = new Map(input.plan.consistency_groups.map((group) => [group.group_id, group]));
   const activeEngine = input.activeEngine ?? "codex";
   const maxRounds = input.maxRounds ?? 3;
 
-  // Pre-load valid existing assets that match current identity
-  if (existing?.assets) {
-    const visualStyle = input.visualStyle ?? "pixar_3d";
-    const providerName = resolveQuizImageProviderName({
-      imageConfig: input.imageConfig,
-      activeEngine,
-    });
-    for (const asset of existing.assets) {
-      const request = input.plan.assets.find((r) => r.asset_id === asset.asset_id);
-      if (!request || asset.semantic_key !== request.semantic_key) continue;
-      if (!(await isValidQuizAsset(input.repository, input.channelId, input.episodeId, asset.path))) continue;
-
-      const compiled = compileQuizAssetPrompt(
-        request,
-        request.consistency_group_id ? consistencyGroups.get(request.consistency_group_id) : undefined,
-        visualStyle,
-      );
-      const expectedFingerprint = assetFingerprint(request, providerName, compiled.cacheVersion);
-
-      if (asset.fingerprint === expectedFingerprint || asset.source === "explicit_episode") {
-        resolvedMap.set(asset.asset_id, asset);
-      }
-    }
-  }
+  const resolvedMap = await preloadValidExistingAssets({
+    repository: input.repository,
+    channelId: input.channelId,
+    episodeId: input.episodeId,
+    plan: input.plan,
+    existingResolution: existing,
+    consistencyGroups,
+    visualStyle: input.visualStyle ?? "pixar_3d",
+    activeEngine,
+    imageConfig: input.imageConfig,
+  });
 
   const persistIncrementalResolution = async () => {
     const currentAssets = input.plan.assets
@@ -106,7 +174,9 @@ export async function resolveQuizAssets(input: {
   const terminalFailed = new Set<string>();
 
   for (let round = 1; round <= maxRounds; round++) {
-    const pendingRequests = input.plan.assets.filter((req) => !resolvedMap.has(req.asset_id) && !terminalFailed.has(req.asset_id));
+    const pendingRequests = input.plan.assets.filter(
+      (req) => !resolvedMap.has(req.asset_id) && !terminalFailed.has(req.asset_id),
+    );
     if (pendingRequests.length === 0) break;
 
     if (round > 1) {
@@ -128,99 +198,31 @@ export async function resolveQuizAssets(input: {
 
     await runConcurrent(pendingRequests, ASSET_CONCURRENCY, async (request) => {
       let reused = false;
-      const compiled = compileQuizAssetPrompt(
-        request,
-        request.consistency_group_id ? consistencyGroups.get(request.consistency_group_id) : undefined,
-        input.visualStyle ?? "pixar_3d",
-      );
-      logger.info(`Compiled prompt for ${request.asset_id}: ${JSON.stringify(compiled.prompt)} (round ${round}/${maxRounds})`, {
-        profileId: input.channelId,
-        workerId: input.episodeId,
-        step: "compile_asset_prompt",
-      });
-      const configuredProvider = input.imageConfig?.provider ?? "gpti2";
-      const providerName = resolveQuizImageProviderName({
-        imageConfig: input.imageConfig,
-        activeEngine,
-      });
-      const fingerprint = assetFingerprint(request, providerName, compiled.cacheVersion);
-      const cached = byFingerprint.get(fingerprint);
-      const bundleNumber = request.question_id ? Number(/^question-(\d+)$/i.exec(request.question_id)?.[1] ?? 0) : 0;
-      let existingBundleFile: Awaited<ReturnType<RepositoryService["getBundleImageFile"]>> | null = null;
-      if (request.purpose === "hero_question_image" && bundleNumber > 0) {
-        const bundleTarget = await input.repository.getBundleImagePath(input.channelId, input.episodeId, bundleNumber);
-        existingBundleFile = await input.repository.getBundleImageFile(input.channelId, input.episodeId, bundleTarget.filename).catch(() => null);
-      }
-
       try {
-        if (existingBundleFile && hasExplicitAssetProvenance(existingBundleFile)) {
-          const bundleBytes = new Uint8Array(await readFile(existingBundleFile.absolutePath));
-          const quizAssetPath = await input.repository.writeQuizImageAsset(
-            input.channelId,
-            input.episodeId,
-            request.asset_id,
-            fingerprint,
-            bundleBytes,
-            {
-              price_vnd: existingBundleFile.price_vnd,
-              price_breakdown: existingBundleFile.price_breakdown,
-              model: existingBundleFile.model,
-              aspect_ratio: existingBundleFile.aspect_ratio,
-              provenance: "explicit",
-              user_selected: true,
-            },
-          );
-          resolvedMap.set(request.asset_id, {
-            ...request,
-            fingerprint,
-            path: quizAssetPath,
-            source: "explicit_episode",
-          });
-          reused = true;
-        } else if (cached && (await isValidQuizAsset(input.repository, input.channelId, input.episodeId, cached.path))) {
-          resolvedMap.set(request.asset_id, {
-            ...request,
-            fingerprint,
-            path: cached.path,
-            source: "cache",
-            fallback_tier: cached.fallback_tier,
-            degraded: cached.degraded,
-          });
-          if (cached.degraded || cached.fallback_tier === 3) {
-            issues.push(issue(request, "asset_fallback_degraded", "warning", `Asset ${request.asset_id} used Tier 3 deterministic fallback. Visual review recommended.`, "Inspect the generated fallback card or replace with a dedicated image."));
-          }
-          reused = true;
-        } else {
-          const generated = await generateAssetWithProvider({
-            repository: input.repository,
-            channelId: input.channelId,
-            episodeId: input.episodeId,
-            request,
-            fingerprint,
-            compiledPrompt: compiled.prompt,
-            configuredProvider,
-            activeEngine,
-            antigravityClient: input.antigravityClient,
-            imageConfig: input.imageConfig,
-            imageFallbackConfig: input.imageFallbackConfig,
-            logger,
-          });
-          resolvedMap.set(request.asset_id, generated.entry);
-          if (generated.tier3Fallback) {
-            issues.push(issue(request, "asset_fallback_degraded", "warning", `Asset ${request.asset_id} used Tier 3 deterministic fallback. Visual review recommended.`, "Inspect the generated fallback card or replace with a dedicated image."));
-          } else if (request.purpose === "hero_question_image") {
-            await syncHeroImageToBundle(input.repository, input.channelId, input.episodeId, bundleNumber, generated.entry.path);
-          }
+        const result = await resolveSingleAsset({
+          request,
+          round,
+          maxRounds,
+          input,
+          byFingerprint,
+          consistencyGroups,
+          logger,
+          activeEngine,
+        });
+        if (result.entry) {
+          resolvedMap.set(request.asset_id, result.entry);
         }
+        if (result.issue) {
+          issues.push(result.issue);
+        }
+        reused = result.reused;
       } catch (error) {
-        if (isContentFilterError(error)) {
-          terminalFailed.add(request.asset_id);
-          issues.push(issue(request, "asset_generation_failed", "blocker", `Image generation rejected by content filter for ${request.asset_id}: ${error instanceof Error ? error.message : "content filter rejection"}`, "Modify the prompt or attach an authorized asset manually."));
-        } else if (error instanceof Error && error.message === "PROVIDER_UNAVAILABLE") {
-          terminalFailed.add(request.asset_id);
-          issues.push(issue(request, "asset_provider_unavailable", "blocker", "A semantically critical visual asset needs image generation, but no image provider is configured.", "Configure an image provider (gpti2.store, ShopAiKey, or Custom) in Settings or switch to Antigravity engine before rendering."));
-        } else if (round === maxRounds) {
-          issues.push(issue(request, "asset_generation_failed", "blocker", `Image generation failed for ${request.asset_id} after ${maxRounds} retry rounds: ${error instanceof Error ? error.message : "unknown error"}`, "Retry generation or attach the exact semantic asset before rendering."));
+        const classified = classifyAssetError(request, error, round, maxRounds);
+        if (classified) {
+          if (classified.terminal) {
+            terminalFailed.add(request.asset_id);
+          }
+          issues.push(classified.issue);
         }
       } finally {
         if (resolvedMap.has(request.asset_id)) {
@@ -237,24 +239,14 @@ export async function resolveQuizAssets(input: {
     .map((req) => resolvedMap.get(req.asset_id))
     .filter((asset): asset is QuizAssetResolution["assets"][number] => Boolean(asset));
 
-  for (const group of input.plan.consistency_groups) {
-    const groupAssets = assets.filter((asset) => asset.consistency_group_id === group.group_id);
-    if (groupAssets.length !== group.asset_ids.length) continue;
-    issues.push({
-      code: "needs_visual_review",
-      severity: "warning",
-      message: `Visual answer set ${group.group_id} is technically resolved but needs a human fairness review.`,
-      next_action: "Review the generated options together for matching medium, framing, lighting, saturation, and no pre-reveal answer cue.",
-      question_ids: [group.question_id],
-      stage: "assets",
-    });
-  }
+  issues.push(...validateConsistencyGroups(input.plan, assets));
 
-  const resolution: QuizAssetResolution = { schema_version: 2, episode_id: input.episodeId, template_id: "candy_arcade", assets };
+  const resolution: QuizAssetResolution = {
+    schema_version: 2,
+    episode_id: input.episodeId,
+    template_id: "candy_arcade",
+    assets,
+  };
   await input.repository.writeQuizAssetResolution(input.channelId, input.episodeId, resolution);
   return { resolution, issues };
-}
-
-function issue(request: QuizAssetPlan["assets"][number], code: string, severity: "blocker" | "warning", message: string, nextAction: string): QuizIssue {
-  return { code, severity, message, next_action: nextAction, question_ids: request.question_id ? [request.question_id] : [], stage: "assets" };
 }

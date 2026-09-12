@@ -86,7 +86,8 @@ describe("Quiz V2 route workflow", () => {
         expect((await app.server.inject({ method: "POST", url: base + "/timeline/compile", payload: {} })).statusCode).toBe(200);
         const qa = await app.server.inject({ method: "POST", url: base + "/qa", payload: {} });
         expect(qa.statusCode).toBe(200);
-        expect(qa.json().assessment.issues.some((issue: { code: string }) => issue.code === "voice_measurement_missing")).toBe(true);
+        const qaBody = qa.json<{ assessment: { issues: Array<{ code: string }> } }>();
+        expect(qaBody.assessment.issues.some((issue: { code: string }) => issue.code === "voice_measurement_missing")).toBe(true);
         const retiredRenderRoute = await app.server.inject({ method: "POST", url: base + "/render", payload: {} });
         expect(retiredRenderRoute.statusCode).toBe(404);
         const retiredNarrationRoute = await app.server.inject({
@@ -97,7 +98,8 @@ describe("Quiz V2 route workflow", () => {
         expect(retiredNarrationRoute.statusCode).toBe(404);
         const state = await app.server.inject({ method: "GET", url: base });
         expect(state.statusCode).toBe(200);
-        expect(state.json().stages).toMatchObject({
+        const stateBody = state.json<{ stages: Record<string, string> }>();
+        expect(stateBody.stages).toMatchObject({
           questions: "ready",
           director: "ready",
           assets: "ready",

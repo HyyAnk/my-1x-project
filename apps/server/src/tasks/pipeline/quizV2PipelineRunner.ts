@@ -1,5 +1,6 @@
 import type { Task } from "@studio/shared";
 import { isQuizAssetResolutionComplete } from "../../quiz/assets/resolveQuizAssets.js";
+import { ensureQuizAssetSizing } from "../../quiz/assets/ensureQuizAssetSizing.js";
 import {
   compileTimeline,
   generateDirector,
@@ -50,6 +51,22 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
     await this.update(task.task_id, { progress_message: "Quiz · planning semantic assets", progress_percent: 30 });
     await planAssets(input);
     artifacts = await readQuizArtifacts(input);
+  } else if (artifacts.quiz && artifacts.director_plan) {
+    const sizingResult = await ensureQuizAssetSizing({
+      repository: this.repository,
+      channelId: task.channel_id,
+      episodeId: task.episode_id!,
+      artifacts: {
+        quiz: artifacts.quiz,
+        director: artifacts.director_plan,
+        assetPlan: artifacts.asset_plan,
+      },
+      intent: "generate",
+      confirmed: true,
+    });
+    if (sizingResult.persisted) {
+      artifacts = await readQuizArtifacts(input);
+    }
   }
 
   if (!artifacts.description) {
@@ -75,6 +92,15 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
       plan: artifacts.asset_plan,
       resolution: artifacts.asset_resolution,
       activeEngine: this.activeEngine,
+      imageConfig: input.config.image_generation
+        ? {
+            api_key: input.config.image_generation.api_key,
+            model: input.config.image_generation.model,
+            provider: input.config.image_generation.provider,
+            base_url: input.config.image_generation.base_url,
+            quality: input.config.image_generation.quality,
+          }
+        : undefined,
     }));
 
   const needsVoice = await shouldRegenerateQuizVoice(this, task, episode.narration_asset_path, artifacts);

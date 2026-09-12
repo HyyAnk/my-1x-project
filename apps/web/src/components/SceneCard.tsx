@@ -1,11 +1,12 @@
-import { ArrowClockwise, ArrowRight, Check, CircleNotch, Copy, SpeakerHigh } from "@phosphor-icons/react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { estimateSpokenSeconds, type Scene, type Task } from "@studio/shared";
 import { InlineTaskState } from "./InlineTaskState";
 import { isTaskActive } from "../lib/utils";
-import { SceneAudioMismatchWarning, SceneAudioPlayer } from "./scene/SceneAudioPlayer";
 import { ScenePromptEditor } from "./scene/ScenePromptEditor";
 import { SceneOverlayEditor } from "./scene/SceneOverlayEditor";
+import { SceneCardHeader } from "./scene/SceneCardHeader";
+import { SceneNarrationBlock } from "./scene/SceneNarrationBlock";
+import { SceneNotesEditor } from "./scene/SceneNotesEditor";
 
 export function SceneCard({
   scene,
@@ -75,9 +76,6 @@ export function SceneCard({
   const narrationReadout = Number.isInteger(estimatedNarrationSeconds)
     ? String(estimatedNarrationSeconds)
     : estimatedNarrationSeconds.toFixed(1);
-  const mergedDuration = nextScene ? scene.duration_seconds + nextScene.duration_seconds : null;
-  const mergeTooLong = mergedDuration !== null && mergedDuration > maxDuration;
-  const mergeTooltip = mergeTooLong ? `Combined duration exceeds the ${maxDuration}s generation limit` : "Override automatic shot grouping";
   const overlay: Scene["editorial_overlay"] = scene.editorial_overlay ?? {
     kind: "none",
     text: "",
@@ -91,10 +89,6 @@ export function SceneCard({
     if (scene.audio_duration_seconds !== null && scene.audio_duration_seconds !== undefined)
       onChange({ ...scene, duration_seconds: Math.min(maxDuration, Math.max(1, Math.round(scene.audio_duration_seconds))) });
   };
-  const clearAudioWhenDialogueChanges = (dialogue: string): Scene =>
-    dialogue === scene.dialogue
-      ? { ...scene, dialogue }
-      : { ...scene, dialogue, audio_asset_path: null, audio_generated_at: null, audio_duration_seconds: null };
   const autoGrow = (element: HTMLTextAreaElement) => {
     element.style.height = "auto";
     element.style.height = `${element.scrollHeight}px`;
@@ -115,109 +109,46 @@ export function SceneCard({
 
   return (
     <article className={`scene-card ${processing || mergePending ? "is-processing" : ""}`}>
-      <div className="scene-card-header">
-        <div className="scene-number">Shot {String(scene.scene_number).padStart(2, "0")}</div>
-        <span className="shot-sequence">{scene.sequence_title}</span>
-        <span className="shot-type">{scene.asset_type.replaceAll("_", " ")}</span>
-        {scene.continuity_bundle_id ? <span className="continuity-badge">{scene.continuity_bundle_id}</span> : null}
-        {overlay.kind !== "none" ? <span className="overlay-badge">overlay · {overlay.kind.replaceAll("_", " ")}</span> : null}
-        <label className="duration-input">
-          Duration{" "}
-          <input
-            type="number"
-            min="1"
-            max={maxDuration}
-            step="0.5"
-            value={scene.duration_seconds}
-            disabled={processing || mergePending}
-            onChange={(event) => onChange({ ...scene, duration_seconds: Math.min(maxDuration, Number(event.target.value)) })}
-          />{" "}
-          sec
-        </label>
-        <span className="narration-estimate">~{narrationReadout}s narration</span>
-        {shotCount > 1 ? (
-          <span className="scene-cut-badge">
-            {scene.duration_seconds}s · {shotCount} cuts
-          </span>
-        ) : null}
-        <SceneAudioMismatchWarning
+      <SceneCardHeader
+        scene={scene}
+        nextScene={nextScene}
+        maxDuration={maxDuration}
+        processing={processing}
+        mergePending={mergePending}
+        submitting={submitting}
+        regenerating={regenerating}
+        narrationReadout={narrationReadout}
+        shotCount={shotCount}
+        audioMismatch={audioMismatch}
+        audioDelta={audioDelta}
+        audioDirection={audioDirection}
+        overlayKind={overlay.kind}
+        onChange={onChange}
+        onRegenerate={onRegenerate}
+        onMergeNext={onMergeNext}
+        onMatchDuration={matchDuration}
+      />
+      {task ? <InlineTaskState task={task} now={now} /> : null}
+      <div className="scene-columns">
+        <SceneNarrationBlock
+          scene={scene}
+          audioTask={audioTask}
+          audioSrc={audioSrc}
+          processing={processing}
+          mergePending={mergePending}
+          audioFailed={audioFailed}
           audioMismatch={audioMismatch}
           audioDelta={audioDelta}
           audioDirection={audioDirection}
+          now={now}
+          copied={copied}
+          dialogueRef={dialogueRef}
+          onCopy={onCopy}
+          onGenerateAudio={onGenerateAudio}
           onMatchDuration={matchDuration}
+          onChange={onChange}
+          autoGrow={autoGrow}
         />
-        <div className="scene-tools">
-          <button
-            className="quiet-button compact"
-            onClick={() => onRegenerate("REGENERATE_BOTH")}
-            disabled={submitting || processing || mergePending}
-          >
-            {submitting || regenerating ? <CircleNotch className="spin" size={14} /> : <ArrowClockwise size={14} />}
-            {regenerating ? "Regenerating…" : "Regenerate"}
-          </button>
-          {nextScene ? (
-            <span className="control-tooltip" data-tooltip={mergeTooltip} title={mergeTooltip} tabIndex={mergeTooLong ? 0 : -1}>
-              <button
-                className="quiet-button compact merge-button"
-                type="button"
-                aria-label="Combine with next shot"
-                disabled={mergeTooLong || mergePending || processing}
-                onClick={onMergeNext}
-              >
-                {mergePending ? <CircleNotch className="spin" size={14} /> : <ArrowRight size={14} />}
-                {mergePending ? "Combining…" : "Combine"}
-              </button>
-            </span>
-          ) : null}
-        </div>
-      </div>
-      {task ? <InlineTaskState task={task} now={now} /> : null}
-      <div className="scene-columns">
-        <div className="scene-block">
-          <div className="block-heading">
-            <span>Narration timeline excerpt</span>
-            <div className="scene-block-actions">
-              <button className="copy-button" onClick={() => void onCopy(`${scene.scene_id}-dialogue`, scene.dialogue)}>
-                {copied === `${scene.scene_id}-dialogue` ? <Check size={14} /> : <Copy size={14} />}
-                {copied === `${scene.scene_id}-dialogue` ? "Copied" : "Copy"}
-              </button>
-              {!audioSrc ? (
-                <button
-                  className="copy-button"
-                  type="button"
-                  disabled={processing || mergePending}
-                  onClick={onGenerateAudio}
-                  title={audioFailed ? "Retry preview audio" : "Generate preview audio"}
-                >
-                  <SpeakerHigh size={14} />
-                  {audioFailed ? "Retry preview" : "Preview audio"}
-                </button>
-              ) : null}
-            </div>
-          </div>
-          <SceneAudioPlayer
-            scene={scene}
-            audioTask={audioTask}
-            audioSrc={audioSrc}
-            processing={processing}
-            mergePending={mergePending}
-            audioFailed={audioFailed}
-            audioMismatch={audioMismatch}
-            audioDelta={audioDelta}
-            audioDirection={audioDirection}
-            now={now}
-            onGenerateAudio={onGenerateAudio}
-            onMatchDuration={matchDuration}
-          />
-          <textarea
-            ref={dialogueRef}
-            rows={1}
-            value={scene.dialogue}
-            disabled={processing || mergePending}
-            onInput={(event) => autoGrow(event.currentTarget)}
-            onChange={(event) => onChange(clearAudioWhenDialogueChanges(event.target.value))}
-          />
-        </div>
         <ScenePromptEditor
           scene={scene}
           channelId={channelId}
@@ -234,22 +165,12 @@ export function SceneCard({
           autoGrow={autoGrow}
         />
       </div>
-      <div className="scene-notes">
-        <input
-          aria-label="Transition note"
-          placeholder="Transition"
-          value={scene.transition_note}
-          disabled={processing || mergePending}
-          onChange={(event) => onChange({ ...scene, transition_note: event.target.value })}
-        />
-        <input
-          aria-label="Continuity note"
-          placeholder="Continuity"
-          value={scene.continuity_note}
-          disabled={processing || mergePending}
-          onChange={(event) => onChange({ ...scene, continuity_note: event.target.value })}
-        />
-      </div>
+      <SceneNotesEditor
+        scene={scene}
+        processing={processing}
+        mergePending={mergePending}
+        onChange={onChange}
+      />
       <SceneOverlayEditor
         scene={scene}
         overlay={overlay}

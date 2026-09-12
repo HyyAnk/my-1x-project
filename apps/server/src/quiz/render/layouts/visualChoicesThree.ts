@@ -87,10 +87,10 @@ export const visualChoicesThreeLayout = {
 
 .quiz-frame-unified.layout-visual_choices_three .choice-card-visual,
 .quiz-frame-unified.layout-visual_choices_three .visual-answer-card {
-  width: 452px;
-  height: 504px;
-  min-height: 504px;
-  max-height: 504px;
+  width: var(--slot-card-width, 452px);
+  height: var(--slot-card-height, 504px);
+  min-height: var(--slot-card-height, 504px);
+  max-height: var(--slot-card-height, 504px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -98,9 +98,9 @@ export const visualChoicesThreeLayout = {
 
 .quiz-frame-unified.layout-visual_choices_three .choice-media,
 .quiz-frame-unified.layout-visual_choices_three .option-image {
-  height: 356px;
-  min-height: 356px;
-  max-height: 356px;
+  height: var(--slot-media-height, 356px);
+  min-height: var(--slot-media-height, 356px);
+  max-height: var(--slot-media-height, 356px);
   box-sizing: border-box;
 }
 
@@ -131,7 +131,7 @@ export const visualChoicesThreeLayout = {
 
 /* 4. Capacity & Sizing Custom Properties */
 .layout-visual_choices_three {
-  --choice-media-height: 320px;
+  --choice-media-height: var(--slot-media-height, 356px);
   --choice-label-min-height: 70px;
   --choice-label-padding: 8px 20px 8px 16px;
   --choice-badge-size: 72px;

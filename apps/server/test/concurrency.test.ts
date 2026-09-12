@@ -20,12 +20,12 @@ describe("runConcurrent worker pool", () => {
   });
 
   it("handles empty items gracefully", async () => {
-    const results = await runConcurrent([], 4, async () => "value");
+    const results = await runConcurrent([], 4, () => Promise.resolve("value"));
     expect(results).toEqual([]);
   });
 
   it("handles single item or concurrency greater than items", async () => {
-    const results = await runConcurrent([1, 2], 10, async (item) => item * 2);
+    const results = await runConcurrent([1, 2], 10, (item) => Promise.resolve(item * 2));
     expect(results).toEqual([2, 4]);
   });
 });

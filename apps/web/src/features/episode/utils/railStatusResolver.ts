@@ -76,9 +76,16 @@ function resolveAssetsStatus(state?: Partial<QuizV2State> | null): RailStatus {
   if (stageStatus === "failed") return "failed";
   if (stageStatus === "running") return "running";
   if (stageStatus === "ready") return "ready";
-  const total = state?.asset_plan?.assets.length ?? 0;
-  const resolved = state?.asset_resolution?.assets.length ?? 0;
-  if (total > 0 && resolved >= total) return "ready";
+  const planAssets = state?.asset_plan?.assets ?? [];
+  const resolutionAssets = state?.asset_resolution?.assets ?? [];
+  if (planAssets.length > 0 && resolutionAssets.length >= planAssets.length) {
+    const resById = new Map(resolutionAssets.map((a) => [a.asset_id, a]));
+    const allCompatible = planAssets.every((req) => {
+      const res = resById.get(req.asset_id);
+      return res && res.aspect_ratio === req.aspect_ratio;
+    });
+    if (allCompatible) return "ready";
+  }
   return stageStatus ?? "not_started";
 }
 

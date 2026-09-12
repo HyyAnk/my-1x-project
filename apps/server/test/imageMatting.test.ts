@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decodePngToRgba, encodeRgbaToPng, removeImageBackground, removeImageBackgroundRgba } from "../src/utils/imageMatting.js";
+import { decodePngToRgba, encodeRgbaToPng, removeImageBackground } from "../src/utils/imageMatting.js";
 
 describe("Image Matting & Background Removal Engine", () => {
   it("encodes and decodes PNG to and from RGBA correctly", () => {

@@ -75,7 +75,7 @@ describe("Cockpit OpenAI-compatible transport", () => {
   });
 
   it("lists models and bridges a Responses API output into Codex notifications", async () => {
-    server = createServer(async (request, response) => {
+    server = createServer((request, response) => {
       if (request.url === "/v1/models") {
         response.setHeader("content-type", "application/json");
         response.end(JSON.stringify({ data: [{ id: "cockpit-codex", name: "Cockpit Codex" }] }));

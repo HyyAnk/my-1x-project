@@ -1,7 +1,8 @@
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import sharp from "sharp";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { makeAuthorizedQuiz } from "./helpers/authorizedContentFixtures.js";
 import { planQuizAssets } from "../src/quiz/assets/assetPlanner.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
@@ -16,14 +17,24 @@ import type { QuizAssetPlan, QuizAssetResolution } from "@studio/shared";
 
 const tempDirs: string[] = [];
 
+let VALID_PNG_BYTES: Buffer;
+
+beforeAll(async () => {
+  VALID_PNG_BYTES = await sharp({
+    create: {
+      width: 1024,
+      height: 768,
+      channels: 4,
+      background: { r: 100, g: 150, b: 200, alpha: 1 },
+    },
+  })
+    .png()
+    .toBuffer();
+});
+
 afterEach(async () => {
   await Promise.all(tempDirs.splice(0).map((d) => rm(d, { recursive: true, force: true })));
 });
-
-const VALID_PNG_BYTES = Buffer.from(
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAFAAI/9B+f9AAAAABJRU5ErkJggg==",
-  "base64",
-);
 
 async function createTestRepository(root: string): Promise<RepositoryService> {
   await mkdir(path.join(root, "templates"), { recursive: true });

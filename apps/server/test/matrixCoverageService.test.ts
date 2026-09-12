@@ -17,10 +17,10 @@ import {
 } from "../src/quiz/bank/matrixCoverageService.js";
 
 describe("Knowledge Base Loader", () => {
-  it("loads exactly 2,850 entities across 18 domains", () => {
+  it("loads exactly 2,875 entities across 18 domains", () => {
     clearKnowledgeBaseCache();
     const entities = loadAllKnowledgeEntities();
-    expect(entities.length).toBe(2850);
+    expect(entities.length).toBe(2875);
 
     const domains = getAllKnowledgeDomains();
     expect(domains.length).toBe(18);
@@ -54,10 +54,10 @@ describe("Knowledge Base Loader", () => {
 
   it("calculates knowledge base domain statistics correctly", () => {
     const stats = getKnowledgeBaseStats();
-    expect(stats.totalEntities).toBe(2850);
+    expect(stats.totalEntities).toBe(2875);
     expect(Object.keys(stats.domainCounts).length).toBe(18);
     expect(stats.domainCounts.global_brands).toBe(160);
-    expect(stats.domainCounts.anime_manga).toBe(144);
+    expect(stats.domainCounts.anime_manga).toBe(169);
     expect(stats.domainCounts.gaming_esports).toBe(138);
     expect(stats.domainCounts.modern_cinema_tv).toBe(114);
     expect(stats.domainCounts.nature_animals).toBe(343);
@@ -166,11 +166,10 @@ describe("Matrix Coverage Service", () => {
 
   it("calculates matrix coverage statistics across all 22,800 combos", () => {
     const stats = calculateMatrixCoverageStats(mockSampleQuestions);
-
-    expect(stats.total_combos).toBe(22800); // 2,850 entities * 8 archetypes
+    expect(stats.total_combos).toBe(23000); // 2,875 entities * 8 archetypes = 23,000 combos
     expect(stats.covered_combos).toBe(2);
     expect(stats.total_variants).toBe(2);
-    expect(stats.coverage_percent).toBeCloseTo((2 / 22800) * 100, 1);
+    expect(stats.coverage_percent).toBeCloseTo((2 / 23000) * 100, 1);
 
     // Check domain breakdown
     expect(stats.by_domain.nature_animals).toBeDefined();
@@ -182,7 +181,7 @@ describe("Matrix Coverage Service", () => {
     expect(stats.by_archetype.verdict_true_false.covered_combos).toBe(1);
     expect(stats.by_archetype.deep_trivia.covered_combos).toBe(1);
     expect(stats.by_archetype.versus_faceoff.covered_combos).toBe(0);
-    expect(stats.by_archetype.versus_faceoff.total_combos).toBe(2850);
+    expect(stats.by_archetype.versus_faceoff.total_combos).toBe(2875);
   });
 
   it("selectAutoCandidates selects empty combos (0 variants) first", () => {

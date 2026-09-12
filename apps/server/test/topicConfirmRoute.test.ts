@@ -222,7 +222,8 @@ describe("topic confirmation", () => {
         payload: { question_count: 50, auto_start_pipeline: false },
       });
       expect(accepted.statusCode).toBe(201);
-      expect(accepted.json().episode).toMatchObject({ quiz_config: { question_count: 50 }, target_duration_minutes: 28 });
+      const body = accepted.json<{ episode: { quiz_config: { question_count: number }; target_duration_minutes: number } }>();
+      expect(body.episode).toMatchObject({ quiz_config: { question_count: 50 }, target_duration_minutes: 28 });
 
       const rejected = await app.server.inject({
         method: "POST",
