@@ -6,19 +6,13 @@ import type { buildQuizSceneParts } from "../scene/buildQuizSceneParts.js";
 import type { adaptSandboxQuizScene } from "../scene/sandboxSceneAdapter.js";
 import { getSandboxRehearsalClientScript } from "./sandboxRehearsalScript.js";
 import { isUnifiedQuizFrame } from "../frame/renderQuizFrameBody.js";
+import { calculateThinkingBarTiming } from "../../visual/elements/thinkingBar/types.js";
 
-export function sandboxRewardFx(): string {
+export function sandboxRewardFx(intensity: "small" | "big" = "big"): string {
+  const particles = intensity === "big" ? ["★", "✦", "★", "✦", "★", "✦", "★", "✦", "★"] : ["✦", "★", "✦", "★", "✦", "★", "✦"];
   return `
-    <div class="reward-fx reward-big" style="opacity: 1; animation: none;">
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
-      <i style="animation: none; opacity: 0.95;">★</i>
+    <div class="reward-fx reward-${intensity}" style="opacity: 1; animation: none;" data-layout-ignore aria-hidden="true">
+      ${particles.map((particle) => `<i style="animation: none; opacity: 0.95;">${particle}</i>`).join("")}
     </div>
   `;
 }
@@ -35,7 +29,7 @@ export function sandboxSnapshotDocument(
   const revealAt = model.state.answers === "revealed" ? 0 : 999;
   const rewardAt = model.state.fact === "visible" ? 0 : 999;
   const mascotClass = model.mascot.occupied ? "has-mascot" : "";
-  const rewardHtml = model.state.reward === "visible" ? sandboxRewardFx() : "";
+  const rewardHtml = model.state.reward === "visible" ? sandboxRewardFx(model.isFinal ? "big" : "big") : "";
   const isUnified = isUnifiedQuizFrame(model.layout.id, model.aspectRatio);
   return `<!doctype html>
 <html>
@@ -49,14 +43,23 @@ export function sandboxSnapshotDocument(
     /* Live Sandbox Phase Styling Overrides */
     .sandbox-preview-stage {
       --clip-start: 0s;
+      --timer-start: 0s;
       --scene-duration: 10s;
       --choices-at: ${choicesAt}s;
       --reveal-at: ${revealAt}s;
       --reward-at: ${rewardAt}s;
       --timer-duration: 10s;
+      --query-hold-duration: 5.000s;
 ${serializeQuizPaletteCss(model.palette, "      ")}
-      --question-size: ${parts.question.layout.fontSize}px;
-      --question-leading: ${parts.question.layout.lineHeight};
+${model.aspectRatio === "9:16" ? `      --safe-zone-top: 180px;
+      --safe-zone-bottom: 440px;
+      --safe-zone-left: 36px;
+      --safe-zone-right: 140px;` : `      --safe-zone-top: 54px;
+      --safe-zone-bottom: 54px;
+      --safe-zone-left: 96px;
+      --safe-zone-right: 96px;`}
+      --question-size: ${parts.question.layout.fontSize || 50}px;
+      --question-leading: ${parts.question.layout.lineHeight || 1.18};
       position: absolute;
       inset: 0;
       width: ${canvas.width}px;
@@ -106,7 +109,11 @@ export function sandboxRehearsalDocument(
   const canvas = MASCOT_CANVAS_SIZES[model.aspectRatio];
   const mascotClass = model.mascot.occupied ? "has-mascot" : "";
   const isUnified = isUnifiedQuizFrame(model.layout.id, model.aspectRatio);
-  const timerDuration = Math.max(0.04, timeline.revealStart);
+  const thinkingTiming = calculateThinkingBarTiming({
+    clipStart: 0,
+    revealStart: timeline.revealStart,
+    thinkingStart: timeline.thinkingStart,
+  });
   const rewardStart = timeline.revealStart + 0.8;
   const revealDuration = Math.max(0.04, rewardStart - timeline.revealStart);
   return `<!doctype html>
@@ -128,12 +135,31 @@ export function sandboxRehearsalDocument(
       --reveal-at: ${timeline.revealStart.toFixed(3)}s;
       --reward-at: ${rewardStart.toFixed(3)}s;
       --choices-duration: ${(timeline.revealStart - timeline.choicesStart).toFixed(3)}s;
-      --timer-duration: ${timerDuration.toFixed(3)}s;
+      --timer-duration: ${thinkingTiming.duration.toFixed(3)}s;
+      --query-hold-duration: ${thinkingTiming.queryHoldDuration.toFixed(3)}s;
+      --query-display: ${thinkingTiming.queryHoldDuration > 0 ? "grid" : "none"};
+      --cd5-at: ${thinkingTiming.cd5.toFixed(3)}s;
+      --cd5-display: ${thinkingTiming.cd5Show ? "grid" : "none"};
+      --cd4-at: ${thinkingTiming.cd4.toFixed(3)}s;
+      --cd4-display: ${thinkingTiming.cd4Show ? "grid" : "none"};
+      --cd3-at: ${thinkingTiming.cd3.toFixed(3)}s;
+      --cd3-display: ${thinkingTiming.cd3Show ? "grid" : "none"};
+      --cd2-at: ${thinkingTiming.cd2.toFixed(3)}s;
+      --cd2-display: ${thinkingTiming.cd2Show ? "grid" : "none"};
+      --cd1-at: ${thinkingTiming.cd1.toFixed(3)}s;
+      --cd1-display: ${thinkingTiming.cd1Show ? "grid" : "none"};
       --reveal-duration: ${revealDuration.toFixed(3)}s;
       --ambient-phase: 0s;
 ${serializeQuizPaletteCss(model.palette, "      ")}
-      --question-size: ${parts.question.layout.fontSize}px;
-      --question-leading: ${parts.question.layout.lineHeight};
+${model.aspectRatio === "9:16" ? `      --safe-zone-top: 180px;
+      --safe-zone-bottom: 440px;
+      --safe-zone-left: 36px;
+      --safe-zone-right: 140px;` : `      --safe-zone-top: 54px;
+      --safe-zone-bottom: 54px;
+      --safe-zone-left: 96px;
+      --safe-zone-right: 96px;`}
+      --question-size: ${parts.question.layout.fontSize || 50}px;
+      --question-leading: ${parts.question.layout.lineHeight || 1.18};
       position: absolute;
       inset: 0;
       width: ${canvas.width}px;

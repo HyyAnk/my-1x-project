@@ -76,6 +76,8 @@ export type RenderProgress = z.infer<typeof RenderProgressSchema>;
 
 export const TaskSchema = z.object({
   task_id: z.string().min(1),
+  parent_task_id: z.string().min(1).optional(),
+  restart_recovery_count: z.number().int().nonnegative().optional(),
   task_type: TaskTypeSchema,
   channel_id: z.string().min(1),
   episode_id: z.string().nullable(),

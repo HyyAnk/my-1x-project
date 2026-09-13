@@ -62,6 +62,7 @@ export async function selectShortReelQuestion(options: SelectShortReelQuestionOp
       readyOnly: true,
       status: "approved",
       archetypeId: targetArchetype,
+      scope: "short_reel",
       limit: pageSize,
       offset,
     });

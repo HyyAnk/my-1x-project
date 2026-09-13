@@ -12,7 +12,7 @@ import {
 import { resolveQuestionLayout } from "../layoutCompatibility.js";
 import { QUIZ_STYLE_CONTRACTS } from "./promptCompiler.js";
 
-export const QUIZ_ASSET_SUBJECT_MAX_LENGTH = 180;
+export const QUIZ_ASSET_SUBJECT_MAX_LENGTH = 280;
 
 export function planQuizAssets(quiz: QuizV2, director: DirectorPlan, visualStyle: QuizImageStyle = "pixar_3d"): QuizAssetPlan {
   const contract = QUIZ_STYLE_CONTRACTS[visualStyle] || QUIZ_STYLE_CONTRACTS.pixar_3d;

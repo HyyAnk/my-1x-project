@@ -109,7 +109,7 @@ describe("Phase 3 cross-surface scene pipeline", () => {
     expect(production).toContain("--reward-at:");
     expect(production).toContain('class="reward-fx reward-big"');
     expect(production).not.toContain('class="reward-fx reward-big" style="opacity: 1;"');
-    expect(buildSandboxComposition({ phase: "reveal" }).html).toContain('class="reward-fx reward-big" style="opacity: 1;');
+    expect(buildSandboxComposition({ phase: "explain" }).html).toContain('class="reward-fx reward-big" style="opacity: 1;');
   });
 
   it("P3-MIG-03 still rejects four choices before scene construction", () => {

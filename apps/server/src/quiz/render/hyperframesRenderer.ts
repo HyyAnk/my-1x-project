@@ -23,6 +23,7 @@ export class HyperframesRenderer implements QuizRenderer {
       transitionType: input.transitionType,
       transitionDurationSeconds: input.transitionDurationSeconds,
       transitionInstances: input.transitionInstances,
+      audioMode: input.audioMode,
     });
     return Promise.resolve({
       html: composition.html,

@@ -80,6 +80,16 @@ describe("artifactRetentionPruner", () => {
     await expect(stat(path.join(renderRoot, "narration.wav"))).rejects.toThrow();
   });
 
+  it("retains verified resumable render generations after successful cleanup", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "artifact-prune-resume-"));
+    cleanupDirs.push(root);
+    const resume = path.join(root, ".render-resume", "generation", "chunks");
+    await mkdir(resume, { recursive: true });
+    await writeFile(path.join(resume, "00000.mp4"), "verified chunk");
+    await pruneRenderRootIntermediateFiles(root);
+    expect(await stat(path.join(resume, "00000.mp4"))).toBeDefined();
+  });
+
   it("prunes stale hyperframes directories based on age and protects active episode IDs", async () => {
     const hyperRoot = await createTempDir("stale-hyper-");
     const staleDir = path.join(hyperRoot, "ep-stale");

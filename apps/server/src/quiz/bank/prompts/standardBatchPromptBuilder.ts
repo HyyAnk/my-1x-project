@@ -1,5 +1,5 @@
 import type { BankGameplayArchetypeId } from "@studio/shared";
-import { ARCHETYPE_GUIDELINES } from "./archetypePromptGuidelines.js";
+import { ARCHETYPE_GUIDELINES, FRANCHISE_ANCHOR_MANDATE_LINES, VISUAL_ANCHOR_MANDATE_LINES } from "./archetypePromptGuidelines.js";
 
 export interface BuildBatchPromptOptions {
   archetypeId: BankGameplayArchetypeId;
@@ -60,6 +60,18 @@ export function buildBatchGenerationPrompt(options: BuildBatchPromptOptions): st
           ``,
         ]
       : []),
+    ...(options.archetypeId === "deep_trivia"
+      ? [
+          `=== GOLDEN DEEP TRIVIA PARADIGMS (PUNCHY & DIVERSE HOOKS) ===`,
+          `CRITICAL: Strictly 45 to 65 characters (max 70). NEVER repeat "Which [noun] [verb]..." monotonically. Rotate across these 5 ultra-concise styles:`,
+          `1. Feat / Signature Action: "In Dragon Ball Z, whose signature energy wave is the Kamehameha?" -> Choices: [A: Son Goku (Correct), B: Vegeta, C: Piccolo]`,
+          `2. Iconic Relic / Hallmarks: "In One Piece, what straw accessory was given to Luffy by Shanks?" -> Choices: [A: Straw Hat (Correct), B: Red Cloak, C: Gold Compass]`,
+          `3. Universal Mascot / Partner: "In Pokemon, which electric mouse is Ash Ketchum's loyal partner?" -> Choices: [A: Pikachu (Correct), B: Raichu, C: Eevee]`,
+          `4. Signature Jutsu / Technique: "In Naruto, which swirling blue sphere technique did Minato invent?" -> Choices: [A: Rasengan (Correct), B: Chidori, C: Amaterasu]`,
+          `5. Detective Gadget / Identity: "In Detective Conan, what gadget lets Conan mimic Kogoro's voice?" -> Choices: [A: Voice-Changing Bowtie (Correct), B: Power Shoes, C: Tracking Glasses]`,
+          ``,
+        ]
+      : []),
     ...(options.archetypeId === "versus_faceoff"
       ? [
           `=== GOLDEN VERSUS FACEOFF PARADIGMS (TOP ENGAGEMENT EXAMPLES) ===`,
@@ -74,11 +86,12 @@ export function buildBatchGenerationPrompt(options: BuildBatchPromptOptions): st
     ...(options.archetypeId === "visual_spotting"
       ? [
           `=== GOLDEN VISUAL SPOTTING PARADIGMS (ANTI-REPETITION EXAMPLES) ===`,
-          `Study these 4 varied spotting hooks (NEVER repeat "is the odd one out" across the batch):`,
+          `Study these 5 varied spotting hooks (NEVER repeat "is the odd one out" or robotic suffixes like "spot the mismatch" across the batch):`,
           `1. Impostor alert: "Spot the impostor: Which Norse goddess does not belong?"`,
           `2. Group mismatch: "One of these Greek voyagers doesn't fit — can you spot it?"`,
           `3. Outlier challenge: "Which of these three mythical relics is the outlier?"`,
           `4. Exception finder: "Find the exception among these ancient champions!"`,
+          `5. Trait contrast: "Two are deadly venomous, but which snake is harmless?"`,
           ``,
         ]
       : []),
@@ -115,6 +128,10 @@ export function buildBatchGenerationPrompt(options: BuildBatchPromptOptions): st
           ``,
         ]
       : []),
+    ...FRANCHISE_ANCHOR_MANDATE_LINES,
+    ``,
+    ...VISUAL_ANCHOR_MANDATE_LINES,
+    ``,
     `=== MOBILE VIDEO SHORTS LENGTH & PACING RULES (STRICT) ===`,
     `1. QUESTION LENGTH: Strictly 6 to 12 words (40–75 characters max).`,
     `   - On vertical mobile screens (9:16 Shorts), the question box fits at most 2 lines without shrinking font size.`,
@@ -128,6 +145,10 @@ export function buildBatchGenerationPrompt(options: BuildBatchPromptOptions): st
     ``,
     `=== STRICT CONTENT POLICY ===`,
     `1. DO NOT create offensive, gory, or dangerous content.`,
+    `2. ANTI-OBSCURITY NEGATIVE CONSTRAINTS:`,
+    `   - NEVER test obscure manga chapter numbers, release dates, or background animator names.`,
+    `   - NEVER test secondary character family lineages, blood types, or obscure minor jutsu/spells.`,
+    `   - ALWAYS focus questions on world-famous hallmarks: signature attacks, legendary relics, iconic character traits, or universal plot premises that casual viewers and social media audiences immediately recognize and celebrate.`,
     existingSamplesBlock,
     `=== MANDATORY OUTPUT FORMAT ===`,
     `Return ONLY a valid JSON array containing ${options.count} question objects. NO markdown fences, NO intro, NO commentary outside the array.`,
@@ -148,7 +169,7 @@ export function buildBatchGenerationPrompt(options: BuildBatchPromptOptions): st
     `    "fun_fact": "Surprising bonus fact.",`,
     `    "visual_spec": {`,
     `      "intent": "${guideline.visualIntent}",`,
-    `      "prompt": "Detailed cinematic image prompt in English for AI image generator",`,
+    `      "prompt": "Detailed cinematic visual prompt in English: explicitly name entity and franchise, signature traits, and iconic environment",`,
     `      "aspect_ratio": "16:9"`,
     `    },`,
     `    "age_band": "${ageBand}",`,

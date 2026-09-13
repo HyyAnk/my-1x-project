@@ -6,6 +6,7 @@ import { RepositoryError } from "./errors.js";
 import { isValidImageBuffer } from "./helpers.js";
 import type { BundleImageAsset, BundleImageMeta } from "./types.js";
 import { parseScenes, serializeDialogue, serializePrompts, serializeScenes } from "./sceneCodec.js";
+import { synthesizeScenesFromQuiz } from "../quiz/domain/quizArtifactSynthesizer.js";
 
 function clearSceneAudio(scene: Scene): Scene {
   return { ...scene, audio_asset_path: null, audio_generated_at: null, audio_duration_seconds: null };
@@ -31,7 +32,22 @@ export async function readScenes(this: RepositoryRuntime, channelId: string, epi
     this.getEpisodeFile(channelId, episodeId, "scene_plan.md"),
     this.getEpisode(channelId, episodeId),
   ]);
-  const scenes = parseScenes(file.content, episodeId);
+  let scenes = parseScenes(file.content, episodeId);
+  if (scenes.length === 0) {
+    const quiz = typeof this.readQuiz === "function" ? await this.readQuiz(channelId, episodeId).catch(() => null) : null;
+    if (quiz && quiz.questions.length > 0) {
+      scenes = synthesizeScenesFromQuiz(quiz);
+      try {
+        const channel = await this.getChannel(channelId);
+        const episodeDirectory = this.resolvePath("channels", channel.slug, "episodes", episode.slug);
+        await this.writeTextAtomic(path.join(episodeDirectory, "scene_plan.md"), serializeScenes(scenes));
+        await this.writeTextAtomic(path.join(episodeDirectory, "dialogue_script.md"), serializeDialogue(scenes));
+        await this.writeTextAtomic(path.join(episodeDirectory, "video_prompts.md"), serializePrompts(scenes));
+      } catch {
+        // Non-blocking fallback sync
+      }
+    }
+  }
   assertQuizSceneChoicePolicy(scenes, episode);
   return scenes;
 }

@@ -117,11 +117,11 @@ export function mysteryRevealChoiceStyles(): string {
   pointer-events: none;
 }
 
-.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-0 .choice-badge,
-.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-0 .choice-label,
-.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-1 .choice-badge,
-.candy-scene:not(.quiz-frame-unified).layout-mystery_reveal .answer-count-1 .choice-label {
-  display: none !important;
+.layout-mystery_reveal .answer-count-0 .choice-badge,
+.layout-mystery_reveal .answer-count-0 .choice-label,
+.layout-mystery_reveal .answer-count-1 .choice-badge,
+.layout-mystery_reveal .answer-count-1 .choice-label {
+  display: none;
 }
 
 .quiz-question-clip.layout-mystery_reveal .answer-count-0 .choice-card,
@@ -175,7 +175,7 @@ export function mysteryRevealChoiceStyles(): string {
 .layout-mystery_reveal .answer-count-2 .choice-label,
 .layout-mystery_reveal .answer-count-3 .choice-badge,
 .layout-mystery_reveal .answer-count-3 .choice-label {
-  display: grid !important;
+  display: grid;
   place-items: center;
   width: 52px;
   height: 52px;
@@ -188,10 +188,21 @@ export function mysteryRevealChoiceStyles(): string {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
-.quiz-question-clip.layout-mystery_reveal .answer-count-2 .choice-card,
-.quiz-question-clip.layout-mystery_reveal .answer-count-3 .choice-card {
-  opacity: 0;
-  animation: mystery-choice-stagger-in 0.5s cubic-bezier(0.18, 1.4, 0.3, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both;
+.quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(1) {
+  animation: mystery-choice-stagger-in 0.50s cubic-bezier(0.18, 1.4, 0.3, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.00s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.50s) infinite alternate both;
+}
+.quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(2) {
+  animation: mystery-choice-stagger-in 0.50s cubic-bezier(0.18, 1.4, 0.3, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.12s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.62s) infinite alternate both;
+}
+.quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(3) {
+  animation: mystery-choice-stagger-in 0.50s cubic-bezier(0.18, 1.4, 0.3, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.24s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.74s) infinite alternate both;
+}
+.quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(4) {
+  animation: mystery-choice-stagger-in 0.50s cubic-bezier(0.18, 1.4, 0.3, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.36s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.86s) infinite alternate both;
 }
 
 .layout-mystery_reveal[data-choice-phase="choices"] .answer-count-2 .choice-card,
@@ -203,18 +214,76 @@ export function mysteryRevealChoiceStyles(): string {
 }
 
 /* Reveal State in Multi-Choice: Win celebration & Loss dimming */
+.quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(n).answer-reveal-correct,
+.quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(n).answer-correct,
+.quiz-question-clip.layout-mystery_reveal .answer-card:nth-child(n).answer-reveal-correct,
+.quiz-question-clip.layout-mystery_reveal .answer-card:nth-child(n).answer-correct,
 .quiz-question-clip.layout-mystery_reveal .choice-card.answer-reveal-correct,
-.layout-mystery_reveal .choice-card.answer-correct {
-  border-color: #22c55e !important;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 32px rgba(34, 197, 94, 0.7) !important;
-  transform: translateY(-4px) scale(1.03) !important;
+.quiz-question-clip.layout-mystery_reveal .choice-card.answer-correct,
+.quiz-question-clip.layout-mystery_reveal .answer-card.answer-reveal-correct,
+.quiz-question-clip.layout-mystery_reveal .answer-card.answer-correct,
+.layout-mystery_reveal .choice-card.answer-reveal-correct,
+.layout-mystery_reveal .choice-card.answer-correct,
+.layout-mystery_reveal .answer-card.answer-reveal-correct,
+.layout-mystery_reveal .answer-card.answer-correct {
+  animation: correct-card-reveal 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  z-index: 8;
 }
 
+/* Single-choice / Riddle Mode A priority: uses mystery-answer-dock with emerald celebration */
+.quiz-question-clip.layout-mystery_reveal .answer-count-0 .choice-card,
+.quiz-question-clip.layout-mystery_reveal .answer-count-1 .choice-card,
+.quiz-question-clip.layout-mystery_reveal .answer-count-0 .choice-card.answer-reveal-correct,
+.quiz-question-clip.layout-mystery_reveal .answer-count-1 .choice-card.answer-reveal-correct,
+.quiz-question-clip.layout-mystery_reveal .answer-count-0 .choice-card.answer-correct,
+.quiz-question-clip.layout-mystery_reveal .answer-count-1 .choice-card.answer-correct,
+.layout-mystery_reveal .answer-count-0 .choice-card.answer-reveal-correct,
+.layout-mystery_reveal .answer-count-1 .choice-card.answer-reveal-correct,
+.layout-mystery_reveal .answer-count-0 .choice-card.answer-correct,
+.layout-mystery_reveal .answer-count-1 .choice-card.answer-correct {
+  animation: mystery-answer-dock 0.65s cubic-bezier(0.18, 1.4, 0.3, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s) + 0.12s) both;
+}
+
+.quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(n).answer-reveal-correct .choice-label,
+.quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(n).answer-correct .choice-label,
+.quiz-question-clip.layout-mystery_reveal .choice-card.answer-reveal-correct .choice-label,
+.quiz-question-clip.layout-mystery_reveal .choice-card.answer-correct .choice-label {
+  animation: correct-badge-reveal 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+}
+
+.quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(n).answer-reveal-incorrect,
+.quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(n).answer-incorrect,
+.quiz-question-clip.layout-mystery_reveal .answer-card:nth-child(n).answer-reveal-incorrect,
+.quiz-question-clip.layout-mystery_reveal .answer-card:nth-child(n).answer-incorrect,
 .quiz-question-clip.layout-mystery_reveal .choice-card.answer-reveal-incorrect,
-.layout-mystery_reveal .choice-card.answer-incorrect {
-  opacity: 0.35 !important;
-  transform: scale(0.96) !important;
-  filter: grayscale(60%) !important;
+.quiz-question-clip.layout-mystery_reveal .choice-card.answer-incorrect,
+.quiz-question-clip.layout-mystery_reveal .answer-card.answer-reveal-incorrect,
+.quiz-question-clip.layout-mystery_reveal .answer-card.answer-incorrect,
+.layout-mystery_reveal .choice-card.answer-reveal-incorrect,
+.layout-mystery_reveal .choice-card.answer-incorrect,
+.layout-mystery_reveal .answer-card.answer-reveal-incorrect,
+.layout-mystery_reveal .answer-card.answer-incorrect {
+  animation: incorrect-card-settle 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+}
+
+.layout-mystery_reveal[data-choice-phase="reveal"] .choice-card.answer-correct,
+.layout-mystery_reveal[data-choice-phase="explain"] .choice-card.answer-correct,
+.layout-mystery_reveal.is-revealed .choice-card.answer-correct,
+.layout-mystery_reveal:not(.quiz-question-clip) .choice-card.answer-correct,
+.layout-mystery_reveal:not(.quiz-question-clip) .choice-card.answer-reveal-correct {
+  border-color: #22C55E;
+  box-shadow: 0 16px 0 #15803D, 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 32px rgba(34, 197, 94, 0.75);
+  transform: translateY(-4px) scale(1.03);
+}
+
+.layout-mystery_reveal[data-choice-phase="reveal"] .choice-card.answer-incorrect,
+.layout-mystery_reveal[data-choice-phase="explain"] .choice-card.answer-incorrect,
+.layout-mystery_reveal.is-revealed .choice-card.answer-incorrect,
+.layout-mystery_reveal:not(.quiz-question-clip) .choice-card.answer-incorrect,
+.layout-mystery_reveal:not(.quiz-question-clip) .choice-card.answer-reveal-incorrect {
+  opacity: 0.35;
+  transform: scale(0.96);
+  filter: grayscale(78%) contrast(0.95) brightness(0.92);
 }
 
 /* Choice Text Fitting (BUG-MR-07 Multi-Line Text Wrapping Fix) */

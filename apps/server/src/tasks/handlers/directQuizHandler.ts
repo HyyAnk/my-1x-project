@@ -44,7 +44,7 @@ export async function handleDirectQuizOutput(runtime: TaskManagerRuntime, active
   // Check against 30-day question history
   try {
     const history = await runtime.repository.readQuestionHistory(task.channel_id);
-    const historyCheck = checkQuestionsAgainstHistory(task.episode_id!, balancedQuiz.questions, history, 2);
+    const historyCheck = checkQuestionsAgainstHistory(task.episode_id!, balancedQuiz.questions, history, 2, "episode");
     await runtime.repository.writeHistoryCheck(task.channel_id, task.episode_id!, historyCheck);
   } catch {
     // Non-blocking duplicate history check

@@ -8,13 +8,14 @@ import type { SandboxMascotState } from "./useSandboxMascotState";
 import type { SandboxQuestionState } from "./useSandboxQuestionState";
 import type { SandboxTimelineState } from "./useSandboxTimelineState";
 import { verifyPreviewFonts } from "../../previewFonts/verifyPreviewFonts";
+import type { SandboxAspectRatio } from "./useSandboxViewportState";
 
 type UseSandboxPreviewRendererInput = {
   design: SandboxDesignState;
   mascot: SandboxMascotState;
   question: SandboxQuestionState;
   timeline: SandboxTimelineState;
-  aspectRatio: "16:9";
+  aspectRatio: SandboxAspectRatio;
   channelBrandName?: string;
   onNotice?: (notice: NonNullable<Notice>) => void;
 };

@@ -12,14 +12,15 @@ export function getSandboxRehearsalClientScript(timeline: SandboxPhaseTimeline |
       currentTimeSec: 0,
       seek: function(timeSec) {
         var num = typeof timeSec === "number" && !isNaN(timeSec) ? timeSec : Number(timeSec) || 0;
-        var timeMs = Math.max(0, num * 1000);
-        window.__hyperframesRehearsal.currentTimeSec = Math.max(0, num);
+        var targetSec = Math.max(0, num);
+        var timeMs = targetSec * 1000;
+        window.__hyperframesRehearsal.currentTimeSec = targetSec;
         var anims = document.getAnimations ? document.getAnimations({ subtree: true }) : [];
         for (var i = 0; i < anims.length; i++) {
           try {
             var anim = anims[i];
             if (window.__hyperframesRehearsal.isPlaying) {
-              if (anim.playState === "finished") {
+              if (anim.playState === "finished" || anim.playState === "paused") {
                 anim.play();
               }
               anim.currentTime = timeMs;
@@ -32,20 +33,30 @@ export function getSandboxRehearsalClientScript(timeline: SandboxPhaseTimeline |
       },
       play: function(timeSec) {
         window.__hyperframesRehearsal.isPlaying = true;
-        var hasTime = typeof timeSec === "number" && !isNaN(timeSec);
-        var timeMs = hasTime ? Math.max(0, timeSec * 1000) : null;
-        if (hasTime) {
-          window.__hyperframesRehearsal.currentTimeSec = Math.max(0, timeSec);
-        }
         var anims = document.getAnimations ? document.getAnimations({ subtree: true }) : [];
+        var hasTime = (typeof timeSec === "number" && !isNaN(timeSec)) || (typeof timeSec === "string" && !isNaN(Number(timeSec)) && timeSec.trim() !== "");
+        var targetSec;
+        if (hasTime) {
+          targetSec = Math.max(0, Number(timeSec));
+        } else if (window.__hyperframesRehearsal.currentTimeSec !== undefined && window.__hyperframesRehearsal.currentTimeSec !== null) {
+          targetSec = window.__hyperframesRehearsal.currentTimeSec;
+        } else {
+          targetSec = 0;
+        }
+        if (!hasTime && window.__hyperframesRehearsal.duration > 0 && targetSec >= window.__hyperframesRehearsal.duration) {
+          targetSec = 0;
+        }
+        window.__hyperframesRehearsal.currentTimeSec = targetSec;
+        var timeMs = targetSec * 1000;
         for (var i = 0; i < anims.length; i++) {
           try {
             var anim = anims[i];
-            if (timeMs !== null) {
+            if (anim.playState === "finished") {
+              anim.play();
               anim.currentTime = timeMs;
-            }
-            anim.play();
-            if (timeMs !== null) {
+            } else {
+              anim.currentTime = timeMs;
+              anim.play();
               anim.currentTime = timeMs;
             }
           } catch (e) {}
@@ -57,12 +68,14 @@ export function getSandboxRehearsalClientScript(timeline: SandboxPhaseTimeline |
         for (var i = 0; i < anims.length; i++) {
           try {
             var anim = anims[i];
-            var cur = anim.currentTime;
             anim.pause();
-            if (cur !== null && cur !== undefined) {
-              anim.currentTime = cur;
+            if (anim.currentTime !== null && anim.currentTime !== undefined) {
+              anim.currentTime = anim.currentTime;
             }
           } catch (e) {}
+        }
+        if (anims.length > 0 && anims[0].currentTime !== null && anims[0].currentTime !== undefined) {
+          window.__hyperframesRehearsal.currentTimeSec = Math.max(0, anims[0].currentTime / 1000);
         }
       }
     };

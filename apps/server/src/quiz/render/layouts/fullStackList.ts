@@ -149,19 +149,23 @@ export const fullStackListLayout = {
 /* --- Phase 2: Waterfall Stagger Entrance Animations --- */
 .layout-full_stack_list.quiz-question-clip .choice-card:nth-child(1),
 .layout-full_stack_list.quiz-question-clip .answer-card:nth-child(1) {
-  animation: full-stack-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.00s) both;
+  animation: full-stack-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.00s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both;
 }
 .layout-full_stack_list.quiz-question-clip .choice-card:nth-child(2),
 .layout-full_stack_list.quiz-question-clip .answer-card:nth-child(2) {
-  animation: full-stack-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s) both;
+  animation: full-stack-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.68s) infinite alternate both;
 }
 .layout-full_stack_list.quiz-question-clip .choice-card:nth-child(3),
 .layout-full_stack_list.quiz-question-clip .answer-card:nth-child(3) {
-  animation: full-stack-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.28s) both;
+  animation: full-stack-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.28s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.82s) infinite alternate both;
 }
 .layout-full_stack_list.quiz-question-clip .choice-card:nth-child(4),
 .layout-full_stack_list.quiz-question-clip .answer-card:nth-child(4) {
-  animation: full-stack-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.42s) both;
+  animation: full-stack-enter 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.42s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.96s) infinite alternate both;
 }
 
 @keyframes full-stack-enter {
@@ -179,19 +183,39 @@ export const fullStackListLayout = {
 }
 
 /* --- Phase 4: Answer Reveal Polish & Contrast Retention --- */
+.layout-full_stack_list.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct,
+.layout-full_stack_list.quiz-question-clip .choice-card:nth-child(n).answer-correct,
+.layout-full_stack_list.quiz-question-clip .answer-card:nth-child(n).answer-reveal-correct,
+.layout-full_stack_list.quiz-question-clip .answer-card:nth-child(n).answer-correct,
+.layout-full_stack_list.quiz-question-clip .choice-card.answer-reveal-correct,
+.layout-full_stack_list.quiz-question-clip .choice-card.answer-correct,
+.layout-full_stack_list.quiz-question-clip .answer-card.answer-reveal-correct,
+.layout-full_stack_list.quiz-question-clip .answer-card.answer-correct,
 .layout-full_stack_list .choice-card.answer-reveal-correct,
 .layout-full_stack_list .choice-card.answer-correct,
 .layout-full_stack_list .answer-card.answer-reveal-correct,
 .layout-full_stack_list .answer-card.answer-correct {
   animation: full-stack-correct-reveal 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  border-color: #22C55E;
+  box-shadow: 0 16px 0 #15803D, 0 0 40px rgba(74, 222, 128, 0.8);
   z-index: 6;
 }
 
+.layout-full_stack_list.quiz-question-clip .choice-card:nth-child(n).answer-reveal-incorrect,
+.layout-full_stack_list.quiz-question-clip .choice-card:nth-child(n).answer-incorrect,
+.layout-full_stack_list.quiz-question-clip .answer-card:nth-child(n).answer-reveal-incorrect,
+.layout-full_stack_list.quiz-question-clip .answer-card:nth-child(n).answer-incorrect,
+.layout-full_stack_list.quiz-question-clip .choice-card.answer-reveal-incorrect,
+.layout-full_stack_list.quiz-question-clip .choice-card.answer-incorrect,
+.layout-full_stack_list.quiz-question-clip .answer-card.answer-reveal-incorrect,
+.layout-full_stack_list.quiz-question-clip .answer-card.answer-incorrect,
 .layout-full_stack_list .choice-card.answer-reveal-incorrect,
 .layout-full_stack_list .choice-card.answer-incorrect,
 .layout-full_stack_list .answer-card.answer-reveal-incorrect,
 .layout-full_stack_list .answer-card.answer-incorrect {
-  animation: full-stack-incorrect-settle 0.42s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  animation: full-stack-incorrect-settle 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  opacity: 0.35;
+  filter: grayscale(78%) contrast(0.95);
 }
 
 @keyframes full-stack-correct-reveal {
@@ -216,12 +240,63 @@ export const fullStackListLayout = {
     filter: grayscale(0%);
   }
   to {
-    opacity: 0.45;
+    opacity: 0.35;
     transform: scale(0.97);
-    filter: grayscale(65%) contrast(0.95);
+    filter: grayscale(78%) contrast(0.95);
   }
 }
 
-
+/* Portrait 9:16 Safe-Zone Responsive Layout */
+${
+  _aspectRatio === "9:16"
+    ? `
+#stage[data-aspect-ratio="9:16"] .candy-scene.layout-full_stack_list .game-stage,
+#stage[data-aspect-ratio="9:16"] .layout-full_stack_list .game-stage {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "title"
+    "answers"
+    "phase";
+  width: calc(100% - 72px);
+  max-width: 960px;
+  min-height: 0;
+  margin: 184px auto 0;
+  row-gap: 24px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-full_stack_list .question-title {
+  width: 100%;
+  max-width: min(860px, calc(100% - 140px));
+  margin: 0 auto;
+}
+#stage[data-aspect-ratio="9:16"] .layout-full_stack_list .answer-grid,
+#stage[data-aspect-ratio="9:16"] .layout-full_stack_list .choice-group {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: min(860px, calc(100% - 140px));
+  max-width: 860px;
+  height: auto;
+  max-height: none;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-full_stack_list .choice-card,
+#stage[data-aspect-ratio="9:16"] .layout-full_stack_list .answer-card {
+  width: 100%;
+  height: 124px;
+  min-height: 124px;
+  max-height: 124px;
+  --choice-card-height: 124px;
+  --choice-card-min-height: 124px;
+  --choice-badge-size: 88px;
+  --choice-badge-font-size: 48px;
+  --choice-font-size-base: 36px;
+}
+`
+    : ""
+}
 `,
 } satisfies QuizLayoutRenderDefinition;

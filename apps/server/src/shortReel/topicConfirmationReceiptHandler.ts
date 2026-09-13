@@ -30,7 +30,7 @@ export async function reconcileQuestionHistory(
   const hasHistory = existingHistory.some((entry) => entry.episode_id === reelId);
   if (!hasHistory && originalQuestion) {
     const baseQ = convertBankQuestionToQuizQuestionLossless(originalQuestion);
-    await repository.appendQuestionHistory(channelId, reelId, [baseQ], 30);
+    await repository.appendQuestionHistory(channelId, reelId, [baseQ], 30, undefined, "short_reel");
   }
 }
 

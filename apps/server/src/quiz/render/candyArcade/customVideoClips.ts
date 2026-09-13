@@ -1,4 +1,11 @@
-import { getTransition, getTransitionDefinition, type IntroOutroTransitionType, type TransitionDefinition } from "@studio/shared";
+import {
+  getTransition,
+  getTransitionDefinition,
+  MASCOT_CANVAS_SIZES,
+  type IntroOutroTransitionType,
+  type MascotRenderAspectRatio,
+  type TransitionDefinition,
+} from "@studio/shared";
 import { escAttr } from "./candyArcadeSvg.js";
 
 /**
@@ -96,6 +103,7 @@ export function renderIntroTransitionOverlay(
   transitionDuration: number,
   def?: any,
   instanceId?: string,
+  aspectRatio: MascotRenderAspectRatio = "16:9",
 ): string {
   let activeDef = def;
   if (!activeDef) {
@@ -115,6 +123,7 @@ export function renderIntroTransitionOverlay(
   const styleAttr = `style="--trans-start:${transitionStart.toFixed(3)}s;--trans-dur:${transitionDuration.toFixed(3)}s;"`;
 
   if (typeof activeDef?.renderMarkup === "function") {
+    const canvas = MASCOT_CANVAS_SIZES[aspectRatio] ?? { width: 1920, height: 1080 };
     const markup = activeDef.renderMarkup({
       instanceId: instanceId ?? "intro",
       placement: "intro",
@@ -122,8 +131,8 @@ export function renderIntroTransitionOverlay(
       startFrame: Math.round(transitionStart * 30),
       boundaryFrame: Math.round((transitionStart + transitionDuration) * 30),
       availableEndFrameExclusive: Math.round((transitionStart + transitionDuration) * 30),
-      width: 1920,
-      height: 1080,
+      width: canvas.width,
+      height: canvas.height,
       fromColor: "#000000",
       toColor: "#000000",
       inkColor: "#ffffff",
@@ -156,6 +165,7 @@ export function customIntroVideoClip(
   hasAudioOrDuration: boolean | number = true,
   transitionDurationSeconds?: number,
   instanceId?: string,
+  aspectRatio: MascotRenderAspectRatio = "16:9",
 ): string {
   if (durationSeconds < 0.08) return "";
 
@@ -174,7 +184,7 @@ export function customIntroVideoClip(
     def = resolveTransitionDefinition(transitionType);
   }
   const { transitionStart, transitionDuration } = calculateIntroTransitionTiming(durationSeconds, transitionType, targetDuration);
-  const transitionHtml = renderIntroTransitionOverlay(transitionType, transitionStart, transitionDuration, def, instanceId);
+  const transitionHtml = renderIntroTransitionOverlay(transitionType, transitionStart, transitionDuration, def, instanceId, aspectRatio);
 
   const audioAttrs = hasAudio ? 'data-has-audio="true"' : 'data-has-audio="false" muted';
 

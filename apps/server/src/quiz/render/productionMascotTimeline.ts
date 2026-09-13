@@ -64,6 +64,9 @@ export function resolveProductionMascotMarkers(
     const actionOverride = parseActionOverride(event.payload?.state);
     if (!actionOverride) continue;
     const phase = phaseAt(event.at_seconds, choicesAt, thinkingAt, revealAt, explanationAt);
+    if (phase === "explain" && event.payload?.phase === "explanation_start" && actionOverride === "celebrate") {
+      continue;
+    }
     addMarker(
       markers,
       {

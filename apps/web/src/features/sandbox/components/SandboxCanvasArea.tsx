@@ -41,7 +41,7 @@ export function SandboxCanvasArea({
       setShowSafeArea={viewport.setShowSafeArea}
       showShortsGuide={viewport.showShortsGuide}
       setShowShortsGuide={viewport.setShowShortsGuide}
-      aspectRatio="16:9"
+      aspectRatio={viewport.aspectRatio}
       iframeKey={preview.iframeKey}
       setIframeKey={preview.setIframeKey}
       zoom={viewport.zoom}

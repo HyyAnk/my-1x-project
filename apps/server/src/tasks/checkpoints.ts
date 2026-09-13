@@ -5,7 +5,7 @@ export type RenderCheckpoint = {
   schema_version: 2;
   source_fingerprint: string;
   check: { status: "passed" | "skipped_fast_mode" };
-  render?: { status: "passed" };
+  render?: { status: "passed"; fingerprint?: string };
 };
 
 export async function readRenderCheckpoint(filePath: string): Promise<RenderCheckpoint | null> {

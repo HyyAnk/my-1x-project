@@ -26,6 +26,13 @@ export async function loadPipelineArtifacts(taskType: TaskType, repository: Repo
     } catch {
       // optional
     }
+    if (taskType === "GENERATE_QUIZ") {
+      try {
+        await artifact("sources.md", "source questions and entities", false);
+      } catch {
+        // optional
+      }
+    }
     if (taskType === "GENERATE_RESEARCH") {
       await readSharedRules(repository, ["research_rules.md"], sharedFiles);
     }

@@ -20,14 +20,16 @@ export function buildSingleTrackPlacement(
   duration: number,
   baseVolume: number,
   assets?: Record<string, string>,
+  startSeconds?: number,
 ): BgmPlacement[] {
+  const start = startSeconds ?? 0;
   return [
     {
       id: "bgm-clip-1-0",
       trackId: track.id,
       filename: track.filename,
       src: resolveTrackAudioSrc(track, assets),
-      startSeconds: 0,
+      startSeconds: Number(start.toFixed(3)),
       durationSeconds: Number(duration.toFixed(3)),
       volume: baseVolume,
       bpm: track.bpm,
@@ -41,14 +43,17 @@ export function sequenceMultipleTracks(
   baseVolume: number,
   seedNumber: number,
   options?: ResolveBgmOptions,
+  startSeconds?: number,
 ): BgmPlacement[] {
   const placements: BgmPlacement[] = [];
-  let cursor = 0;
+  const start = startSeconds ?? options?.startSeconds ?? 0;
+  const end = start + duration;
+  let cursor = start;
   let index = 0;
   const usedInSequence: string[] = [...(options?.recentTrackIds ?? [])];
 
-  while (cursor < duration - 0.1) {
-    const remaining = duration - cursor;
+  while (cursor < end - 0.1) {
+    const remaining = end - cursor;
     const track =
       selectCandidateTrack(available, {
         ...options,
@@ -84,15 +89,25 @@ export function planBgmSchedule(
 ): BgmPlacement[] {
   if (available.length === 0) return [];
 
-  const duration = Math.max(1, totalDurationSeconds);
+  const startSeconds = options?.startSeconds ?? 0;
+  let activeDuration = totalDurationSeconds;
+  if (
+    typeof options?.outroStartSeconds === "number" &&
+    options.outroStartSeconds > startSeconds &&
+    totalDurationSeconds >= options.outroStartSeconds
+  ) {
+    activeDuration = options.outroStartSeconds - startSeconds;
+  }
+
+  const duration = Math.max(1, activeDuration);
   const baseVolume = options?.baseVolume ?? DEFAULT_BGM_BASE_VOLUME;
   const seedNumber = hashStringToSeed(options?.seed);
 
   const longEnoughTracks = available.filter((t) => t.duration_seconds >= duration - 1.0);
   if (longEnoughTracks.length > 0) {
     const track = selectCandidateTrack(longEnoughTracks, options)!;
-    return buildSingleTrackPlacement(track, duration, baseVolume, options?.assets);
+    return buildSingleTrackPlacement(track, duration, baseVolume, options?.assets, startSeconds);
   }
 
-  return sequenceMultipleTracks(available, duration, baseVolume, seedNumber, options);
+  return sequenceMultipleTracks(available, duration, baseVolume, seedNumber, options, startSeconds);
 }

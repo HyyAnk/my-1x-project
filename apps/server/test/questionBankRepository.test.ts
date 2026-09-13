@@ -46,9 +46,9 @@ describe("QuestionBankRepository & Channel Cooldown Engine", () => {
     expect(recalculated.by_archetype.speed_blitz).toBeGreaterThanOrEqual(5);
   });
 
-  it("calculates 23,000 combo matrix coverage through repository", async () => {
+  it("calculates 22,072 combo matrix coverage through repository", async () => {
     const coverage = await repo.getQuestionBankMatrixCoverage();
-    expect(coverage.total_combos).toBe(23000);
+    expect(coverage.total_combos).toBe(22072);
     expect(coverage.covered_combos).toBeGreaterThanOrEqual(0);
     expect(Object.keys(coverage.by_domain).length).toBe(18);
     expect(Object.keys(coverage.by_archetype).length).toBe(8);

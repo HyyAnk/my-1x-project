@@ -51,11 +51,25 @@ export function buildBgmClips(
   assets?: Record<string, string>,
   outroStart?: number,
   bgmOptions?: ResolveBgmOptions,
+  startSeconds?: number,
 ): string[] {
+  const effectiveStartSeconds = Math.max(0, startSeconds ?? bgmOptions?.startSeconds ?? 0);
+  const effectiveOutroStart = outroStart ?? bgmOptions?.outroStartSeconds;
+  const effectiveEndSeconds = Math.min(
+    duration,
+    effectiveOutroStart ?? duration,
+  );
+
+  if (effectiveEndSeconds <= effectiveStartSeconds) {
+    return [];
+  }
+
   const schedule = defaultBgmRegistry.resolveBgmSchedule(duration, {
     assets,
     bpmPreference: "120_bpm_upbeat",
     ...bgmOptions,
+    startSeconds: effectiveStartSeconds,
+    outroStartSeconds: effectiveEndSeconds,
   });
   const totalClips = schedule.length;
 
@@ -68,7 +82,7 @@ export function buildBgmClips(
 
     const points: Array<{ t: number; v: number }> = [];
 
-    // Subtle 0.5s fade-in at the beginning of the audio track
+    // Subtle 0.5s fade-in at Question 1 entrance
     if (isFirstClip) {
       const fadeInDur = Math.min(0.5, clipDuration * 0.2);
       if (fadeInDur > 0.05) {
@@ -88,15 +102,15 @@ export function buildBgmClips(
     }
 
     if (isFinalClip) {
-      // Smooth fade-out towards the end of the video
-      let fadeOutSeconds = 2.5;
-      if (typeof outroStart === "number" && outroStart > clipStart && outroStart < duration - 0.5) {
-        const outroDur = duration - outroStart;
-        fadeOutSeconds = Math.max(2.0, Math.min(4.0, outroDur));
+      // Smooth fade-out towards outro start or end of the video (1.2s - 2.0s envelope)
+      let fadeOutSeconds = 1.5;
+      if (effectiveEndSeconds >= duration - 0.05) {
+        fadeOutSeconds = 2.0;
       }
       fadeOutSeconds = Math.min(fadeOutSeconds, clipDuration * 0.5);
+      const fadeOutDur = Math.min(2.0, Math.max(0.1, fadeOutSeconds));
 
-      const fadeStartLocal = Math.max(0, clipDuration - fadeOutSeconds);
+      const fadeStartLocal = Math.max(0, clipDuration - fadeOutDur);
       const lastPoint = points[points.length - 1];
       if (lastPoint && fadeStartLocal > lastPoint.t) {
         points.push({ t: Number(fadeStartLocal.toFixed(3)), v: baseVolume });
@@ -124,7 +138,7 @@ export function buildBgmClips(
 
     const automationAttr = `data-automation="${escAttr(JSON.stringify(automation))}"`;
 
-    return `<audio id="${item.id}" class="clip bgm-clip" data-start="${item.startSeconds.toFixed(3)}" data-duration="${item.durationSeconds.toFixed(3)}" data-track-index="4" data-volume="${item.volume.toFixed(2)}" ${automationAttr} src="${item.src}"></audio>`;
+    return `<audio id="${item.id}" class="clip bgm-clip" data-start="${item.startSeconds.toFixed(3)}" data-duration="${item.durationSeconds.toFixed(3)}" data-track-index="4" data-volume="${item.volume.toFixed(3)}" ${automationAttr} src="${item.src}"></audio>`;
   });
 }
 

@@ -8,6 +8,7 @@ import { executeHyperframesRender } from "./video/videoRenderExecution.js";
 import { persistVideoRenderArtifacts } from "./video/renderManifestWriter.js";
 import { videoRenderConcurrencyLimiter } from "./video/renderConcurrencyLimiter.js";
 import { pruneRenderRootIntermediateFiles } from "./storage/artifactRetentionPruner.js";
+import { synthesizeScenesFromQuiz } from "../quiz/domain/quizArtifactSynthesizer.js";
 
 function ensureVideoTaskActive(runtime: TaskManagerRuntime, taskId: string, signal: AbortSignal): void {
   if (signal.aborted || runtime.get(taskId).status === "CANCELLED") throw new Error("Video render cancelled");
@@ -38,6 +39,22 @@ async function acquireRenderSlotWithProgress(runtime: TaskManagerRuntime, taskId
   return release;
 }
 
+async function recordPostRenderHistory(
+  manager: TaskManagerRuntime,
+  task: Task,
+  comp: { selectedBgmTrackId?: string | null; selectedBgmFilename?: string | null },
+): Promise<void> {
+  const quiz = await manager.repository.readQuiz(task.channel_id, task.episode_id!);
+  if (quiz?.questions.length) {
+    await manager.repository.appendQuestionHistory(task.channel_id, task.episode_id!, quiz.questions, undefined, task.task_id, "episode");
+  }
+  if (comp.selectedBgmTrackId && comp.selectedBgmFilename) {
+    await manager.repository
+      .appendBgmHistory(task.channel_id, task.episode_id!, comp.selectedBgmTrackId, comp.selectedBgmFilename)
+      .catch(() => undefined);
+  }
+}
+
 export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promise<void> {
   const context = { profileId: task.channel_id, workerId: task.task_id, step: "render_video" };
   const controller = new AbortController();
@@ -56,7 +73,16 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     if (!task.episode_id) throw new RepositoryError("Episode is required", "EPISODE_REQUIRED");
     const episode = await this.repository.getEpisode(task.channel_id, task.episode_id);
     const channel = await this.repository.getChannel(task.channel_id);
-    const scenes = await this.repository.readScenes(task.channel_id, task.episode_id);
+    let scenes = await this.repository.readScenes(task.channel_id, task.episode_id);
+    if (scenes.length === 0) {
+      const quiz =
+        typeof this.repository.readQuiz === "function"
+          ? await this.repository.readQuiz(task.channel_id, task.episode_id).catch(() => null)
+          : null;
+      if (quiz && quiz.questions.length > 0) {
+        scenes = synthesizeScenesFromQuiz(quiz);
+      }
+    }
     if (!(await this.hasValidNarrationAsset(task.channel_id, task.episode_id, episode.narration_asset_path)))
       throw new RepositoryError("Generate the Chatterbox narration before rendering video", "NARRATION_REQUIRED");
     if (scenes.length === 0) throw new RepositoryError("Generate Quiz scenes before rendering video", "SCENES_REQUIRED");
@@ -150,15 +176,7 @@ export async function runVideoTask(this: TaskManagerRuntime, task: Task): Promis
     ensureVideoTaskActive(this, task.task_id, controller.signal);
 
     await this.finish(task.task_id, "COMPLETED", null, [videoPath, manifestPath]);
-    const quiz = await this.repository.readQuiz(task.channel_id, task.episode_id);
-    if (quiz?.questions.length) {
-      await this.repository.appendQuestionHistory(task.channel_id, task.episode_id, quiz.questions, undefined, task.task_id);
-    }
-    if (comp.selectedBgmTrackId && comp.selectedBgmFilename) {
-      await this.repository
-        .appendBgmHistory(task.channel_id, task.episode_id, comp.selectedBgmTrackId, comp.selectedBgmFilename)
-        .catch(() => undefined);
-    }
+    await recordPostRenderHistory(this, task, comp);
     this.logger.ok("Quiz video rendered", { ...context, step: "render_video" });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Video render failed";

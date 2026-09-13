@@ -1,10 +1,11 @@
+import { SETTLED_SANDBOX_PHASE_TIMESTAMPS } from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 
 export type SandboxPhase = "question" | "choices" | "thinking" | "reveal" | "explain";
 
 export interface SandboxPhaseScrubberProps {
   phase: string;
-  setPhase: (phase: SandboxPhase) => void;
+  setPhase: (phase: SandboxPhase, options?: { previewAnimation?: boolean }) => void;
   setUseScrubber: (use: boolean) => void;
   useScrubber?: boolean;
 }
@@ -49,6 +50,7 @@ export function SandboxPhaseScrubber({ phase, setPhase, setUseScrubber, useScrub
       <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
         {PHASES.map((p) => {
           const isActive = !useScrubber && phase === p.id;
+          const timestamp = SETTLED_SANDBOX_PHASE_TIMESTAMPS[p.id];
           return (
             <button
               key={p.id}
@@ -60,9 +62,18 @@ export function SandboxPhaseScrubber({ phase, setPhase, setUseScrubber, useScrub
                 fontWeight: isActive ? 700 : 500,
               }}
               onClick={() => {
-                setPhase(p.id);
+                if (p.id === "reveal") {
+                  setPhase("reveal", { previewAnimation: true });
+                } else {
+                  setPhase(p.id);
+                }
                 setUseScrubber(false);
               }}
+              title={
+                p.id === "reveal"
+                  ? `${t(p.labelKey) || p.defaultLabel} animation rehearsal (7.47s → ${timestamp.toFixed(1)}s settled)`
+                  : `${t(p.labelKey) || p.defaultLabel} settled keyframe (${timestamp.toFixed(1)}s)`
+              }
             >
               {t(p.labelKey) || p.defaultLabel}
             </button>

@@ -140,6 +140,9 @@ describe("useSandboxPreviewRenderer", () => {
       seekIframe: vi.fn(),
       playIframe: vi.fn(),
       pauseIframe: vi.fn(),
+      rehearseReveal: vi.fn(),
+      audioEngineRef: { current: null },
+      firedCuesRef: { current: new Set() },
     };
   });
 

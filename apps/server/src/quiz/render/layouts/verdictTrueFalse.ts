@@ -23,7 +23,7 @@ import { renderQuizFrameBody } from "../frame/renderQuizFrameBody.js";
 export const verdictTrueFalseLayout = {
   id: "verdict_true_false",
   renderBody: (slots) => renderQuizFrameBody(slots, `${slots.heroHtml}${slots.choicesHtml}`),
-  css: (_aspectRatio) => `
+  css: (aspectRatio) => `
 /* === Verdict True/False Layout (16:9 Landscape Video, 1920x1080) === */
 
 /* Unified Quiz Frame Arena Geometry */
@@ -210,22 +210,55 @@ export const verdictTrueFalseLayout = {
 
 /* Phase 2: Kinetic Staggered Entrance (Tied to choices-at) */
 .layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(1) {
-  animation: enter-from-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.08s) both;
+  animation: enter-from-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both;
 }
 .layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(2) {
-  animation: enter-from-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.22s) both;
+  animation: enter-from-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.68s) infinite alternate both;
 }
 
-/* Phase 4: High-Specificity Verdict Reveal Keyframes */
+/* Phase 4: Answer Reveal Polish & Resting Parity (Zero !important) */
+.layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct,
+.layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(n).answer-correct,
+.layout-verdict_true_false.quiz-question-clip .answer-card:nth-child(n).answer-reveal-correct,
+.layout-verdict_true_false.quiz-question-clip .answer-card:nth-child(n).answer-correct,
 .layout-verdict_true_false.quiz-question-clip .choice-card.answer-reveal-correct,
-.layout-verdict_true_false.quiz-question-clip .choice-card.answer-correct {
-  animation: verdict-correct-pop 0.68s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both !important;
-  z-index: 6 !important;
+.layout-verdict_true_false.quiz-question-clip .choice-card.answer-correct,
+.layout-verdict_true_false.quiz-question-clip .answer-card.answer-reveal-correct,
+.layout-verdict_true_false.quiz-question-clip .answer-card.answer-correct,
+.layout-verdict_true_false .choice-card.answer-reveal-correct,
+.layout-verdict_true_false .choice-card.answer-correct,
+.layout-verdict_true_false .answer-card.answer-reveal-correct,
+.layout-verdict_true_false .answer-card.answer-correct {
+  animation: verdict-correct-pop 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  border-color: #22C55E;
+  box-shadow:
+    0 16px 0 #15803D,
+    0 28px 52px rgba(34, 197, 94, 0.65),
+    0 0 48px rgba(74, 222, 128, 0.85),
+    inset 0 4px 8px rgba(255, 255, 255, 0.9);
+  z-index: 6;
 }
+
+.layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(n).answer-reveal-incorrect,
+.layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(n).answer-incorrect,
+.layout-verdict_true_false.quiz-question-clip .answer-card:nth-child(n).answer-reveal-incorrect,
+.layout-verdict_true_false.quiz-question-clip .answer-card:nth-child(n).answer-incorrect,
 .layout-verdict_true_false.quiz-question-clip .choice-card.answer-reveal-incorrect,
-.layout-verdict_true_false.quiz-question-clip .choice-card.answer-incorrect {
-  animation: verdict-incorrect-settle 0.45s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both !important;
-  z-index: 2 !important;
+.layout-verdict_true_false.quiz-question-clip .choice-card.answer-incorrect,
+.layout-verdict_true_false.quiz-question-clip .answer-card.answer-reveal-incorrect,
+.layout-verdict_true_false.quiz-question-clip .answer-card.answer-incorrect,
+.layout-verdict_true_false .choice-card.answer-reveal-incorrect,
+.layout-verdict_true_false .choice-card.answer-incorrect,
+.layout-verdict_true_false .answer-card.answer-reveal-incorrect,
+.layout-verdict_true_false .answer-card.answer-incorrect {
+  animation: verdict-incorrect-settle 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  opacity: 0.35;
+  filter: grayscale(78%) contrast(0.95) brightness(0.92);
+  box-shadow: 0 2px 0 rgba(10, 25, 60, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  z-index: 2;
 }
 
 @keyframes verdict-correct-pop {
@@ -233,10 +266,11 @@ export const verdictTrueFalseLayout = {
   50% { transform: translateY(-12px) scale(1.06); filter: brightness(1.15); }
   100% {
     transform: translateY(-8px) scale(1.04);
+    border-color: #22C55E;
     box-shadow:
-      0 16px 0 #047857,
-      0 28px 52px rgba(16, 185, 129, 0.65),
-      0 0 48px rgba(52, 211, 153, 0.85),
+      0 16px 0 #15803D,
+      0 28px 52px rgba(34, 197, 94, 0.65),
+      0 0 48px rgba(74, 222, 128, 0.85),
       inset 0 4px 8px rgba(255, 255, 255, 0.9);
   }
 }
@@ -245,12 +279,65 @@ export const verdictTrueFalseLayout = {
   0% { transform: scale(1); opacity: 1; filter: grayscale(0%); }
   100% {
     transform: translateY(4px) scale(0.94);
-    opacity: 0.32;
-    filter: grayscale(85%) contrast(0.9) brightness(0.85);
-    box-shadow: 0 4px 0 rgba(13, 35, 71, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
+    opacity: 0.35;
+    filter: grayscale(78%) contrast(0.95) brightness(0.92);
+    box-shadow: 0 2px 0 rgba(10, 25, 60, 0.08);
+    border-color: rgba(255, 255, 255, 0.25);
   }
 }
 
+/* Portrait 9:16 Safe-Zone Responsive Layout */
+${
+  aspectRatio === "9:16"
+    ? `
+#stage[data-aspect-ratio="9:16"] .layout-verdict_true_false .game-stage {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "title"
+    "hero"
+    "answers"
+    "phase";
+  width: calc(100% - 72px);
+  max-width: 960px;
+  min-height: 0;
+  margin: 184px auto 0;
+  row-gap: 20px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-verdict_true_false .hero-image {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: min(860px, calc(100% - 140px));
+  height: 480px;
+  max-height: 480px;
+  margin: 0 auto;
+  border-radius: 32px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-verdict_true_false .answer-grid,
+#stage[data-aspect-ratio="9:16"] .layout-verdict_true_false .choice-group {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: min(860px, calc(100% - 140px));
+  max-width: 860px;
+  height: auto;
+  margin: 0 auto;
+  gap: 24px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-verdict_true_false .choice-card,
+#stage[data-aspect-ratio="9:16"] .layout-verdict_true_false .answer-card {
+  width: 100%;
+  height: 136px;
+  min-height: 136px;
+  max-height: 136px;
+  --choice-card-height: 136px;
+  --choice-card-min-height: 136px;
+  --choice-badge-size: 96px;
+  --choice-badge-font-size: 52px;
+}
+`
+    : ""
+}
 `,
 } satisfies QuizLayoutRenderDefinition;

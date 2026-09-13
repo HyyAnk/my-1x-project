@@ -30,12 +30,16 @@ export { sandboxSnapshotDocument, sandboxRehearsalDocument, sandboxRewardFx };
 export function buildSandboxComposition(input: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
   const parsed = SandboxPreviewInputSchema.parse(input);
   if (parsed.mode === "rehearsal") {
-    return buildSandboxRehearsalComposition(parsed, mascotProfile);
+    return buildSandboxRehearsalComposition(parsed, mascotProfile, input);
   }
   return buildSandboxSnapshotComposition(parsed, mascotProfile);
 }
 
-function buildSandboxRehearsalComposition(parsed: SandboxPreviewInput, mascotProfile?: MascotProfile | null): SandboxPreviewResponse {
+function buildSandboxRehearsalComposition(
+  parsed: SandboxPreviewInput,
+  mascotProfile?: MascotProfile | null,
+  rawInput?: SandboxPreviewInput,
+): SandboxPreviewResponse {
   const timeline = computeSandboxPhaseTimeline();
   const mascotEnabled = parsed.mascot_enabled !== false && parsed.mascot_id !== "none";
   const mascotConfig = {
@@ -69,7 +73,10 @@ function buildSandboxRehearsalComposition(parsed: SandboxPreviewInput, mascotPro
     { type: "fact.enter", at_seconds: timeline.revealStart + 0.8 },
   ];
 
-  if (parsed.mascot_action) {
+  const hasExplicitActionOverride =
+    rawInput !== undefined ? rawInput.mascot_action !== undefined : Boolean(parsed.mascot_action && (parsed.mascot_action !== "thinking" || parsed.mascot_phase));
+
+  if (hasExplicitActionOverride && parsed.mascot_action) {
     timelineEvents.push({
       type: "mascot.state",
       at_seconds: actionAtSeconds,
@@ -137,7 +144,7 @@ function buildSandboxSnapshotComposition(parsed: SandboxPreviewInput, mascotProf
   const thinkingHtml = parts.phase.thinkingVisible ? renderQuizSceneThinkingPart(parts, timing) : "";
   const factHtml = parts.phase.factVisible
     ? `
-    <div class="fact-card sandbox-explain-card" style="opacity: 1; animation: none;${isUnified ? "" : " transform: translateX(-50%);"}">
+    <div class="fact-card sandbox-explain-card" data-layout-allow-occlusion style="opacity: 1; animation: none;${isUnified ? "" : " transform: translateX(-50%);"}">
       <p>${esc(parts.phase.factText)}</p>
     </div>
   `

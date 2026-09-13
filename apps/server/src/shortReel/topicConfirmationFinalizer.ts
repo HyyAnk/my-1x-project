@@ -65,7 +65,7 @@ export async function createAndFinalizeShortReel(params: CreateAndFinalizeReelPa
 
   localizationArtifact.product_id = createdReel.reel_id;
   await saveShortReelLocalizationArtifact(repository, channelId, createdReel.reel_id, localizationArtifact);
-  await repository.appendQuestionHistory(channelId, createdReel.reel_id, [baseQuizQuestion], 30);
+  await repository.appendQuestionHistory(channelId, createdReel.reel_id, [baseQuizQuestion], 30, undefined, "short_reel");
   await repository.markTopicSelected(channelId, topic.topic_id, 1);
 
   let finalizedReel = createdReel;

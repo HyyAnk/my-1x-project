@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=320, height=180" />
+    <title>Render recovery fixture</title>
+    <style>
+      html, body { margin: 0; width: 320px; height: 180px; overflow: hidden; }
+      #root { position: relative; width: 320px; height: 180px; }
+      .clip { position: absolute; inset: 0; }
+      #first { background: #ff0000; }
+      #second { background: #0000ff; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="resume-fixture" data-no-timeline data-width="320" data-height="180" data-duration="9">
+      <div id="first" class="clip" data-start="0" data-duration="8" data-track-index="0"></div>
+      <div id="second" class="clip" data-start="8" data-duration="1" data-track-index="0"></div>
+      <audio id="soundtrack" src="./soundtrack.wav" data-start="0" data-duration="9" data-track-index="1"></audio>
+    </div>
+  </body>
+</html>

@@ -96,14 +96,19 @@ export function baseChoiceStyles(): string {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
-.choice-group[data-choice-fit-lines="2"] .choice-text {
+.choice-group[data-choice-fit-lines="2"] .choice-text,
+.choice-group[data-choice-fit-lines="2"] .answer-card span,
+.choice-group[data-choice-fit-lines="2"] .visual-answer-label span {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   white-space: normal;
   overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .choice-group-visual,

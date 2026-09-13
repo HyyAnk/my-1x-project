@@ -1,4 +1,4 @@
-import { getQuizPreviewLayoutCapability, type MascotRenderAspectRatio, type QuizPreviewLayoutId } from "@studio/shared";
+import type { MascotRenderAspectRatio, QuizPreviewLayoutId } from "@studio/shared";
 import { baselineLayout } from "./baseline.js";
 import { fullStackListLayout } from "./fullStackList.js";
 import { mediaLeftChoicesRightLayout } from "./mediaLeftChoicesRight.js";
@@ -32,7 +32,6 @@ export function renderQuizLayoutBody(layoutId: QuizPreviewLayoutId, slots: QuizL
 
 export function quizLayoutCss(aspectRatio: MascotRenderAspectRatio): string {
   return Object.values(QUIZ_LAYOUT_RENDERERS)
-    .filter((layout) => getQuizPreviewLayoutCapability(layout.id).supportedAspectRatios.includes(aspectRatio))
     .map((layout) => layout.css(aspectRatio))
     .join("\n");
 }

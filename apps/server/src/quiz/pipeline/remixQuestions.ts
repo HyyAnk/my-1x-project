@@ -24,7 +24,7 @@ export async function remixQuizQuestions(
 
   const history = await input.repository.readQuestionHistory(input.channelId);
   const passThreshold = input.config.question_history?.pass_threshold ?? 2;
-  const initialCheck = checkQuestionsAgainstHistory(input.episodeId, currentQuiz.questions, history, passThreshold);
+  const initialCheck = checkQuestionsAgainstHistory(input.episodeId, currentQuiz.questions, history, passThreshold, "episode");
 
   const targetIds = new Set(
     requestedQuestionIds && requestedQuestionIds.length > 0

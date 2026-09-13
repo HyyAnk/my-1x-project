@@ -2,6 +2,7 @@ import { mkdir, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { TaskSchema, nowIso, type Task } from "@studio/shared";
 import { writeJsonAtomic } from "../utils/fs.js";
+import { recoverTasksAfterRestart } from "./taskRestartRecovery.js";
 
 export async function persistTask(runtimeRoot: string, task: Task): Promise<void> {
   const directory = path.join(runtimeRoot, "tasks");
@@ -18,12 +19,6 @@ export async function loadTasksFromDisk(runtimeRoot: string): Promise<Task[]> {
   for (const entry of entries.filter((item) => item.isFile() && item.name.endsWith(".json"))) {
     try {
       const task = TaskSchema.parse(JSON.parse(await readFile(path.join(directory, entry.name), "utf8")));
-      if (task.status === "RUNNING" || task.status === "WAITING_APPROVAL") {
-        task.status = "FAILED";
-        task.error = "Task interrupted by dashboard restart";
-        task.completed_at = nowIso();
-        await persistTask(runtimeRoot, task);
-      }
       tasks.push(task);
     } catch (error) {
       // A single corrupt operational record is skipped; repository artifacts remain safe.
@@ -31,7 +26,15 @@ export async function loadTasksFromDisk(runtimeRoot: string): Promise<Task[]> {
     }
   }
 
-  return tasks;
+  const recovered = recoverTasksAfterRestart(tasks, nowIso());
+  // Persist children before their owner. A second crash during reconciliation
+  // must not leave a queued child racing the recovered parent on the next boot.
+  for (const task of [...recovered].sort(
+    (a, b) => Number(a.task_type === "GENERATE_PIPELINE") - Number(b.task_type === "GENERATE_PIPELINE"),
+  )) {
+    if (task !== tasks.find((original) => original.task_id === task.task_id)) await persistTask(runtimeRoot, task);
+  }
+  return recovered;
 }
 
 export function applyTaskPatch(current: Task, patch: Partial<Task>): Task {

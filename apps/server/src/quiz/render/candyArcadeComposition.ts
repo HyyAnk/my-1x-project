@@ -56,6 +56,7 @@ export type CandyArcadeCompositionInput = {
   transitionType?: IntroOutroTransitionType;
   transitionDurationSeconds?: number;
   transitionInstances?: Record<string, ResolvedTransitionInstance>;
+  audioMode?: "use_video_audio" | "overlay_bgm";
 };
 
 export type CandyArcadeCompositionBundle = {
@@ -155,21 +156,25 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
         // Uncataloged or legacy intro transition type
       }
     }
+    const hasAudio = input.audioMode !== "overlay_bgm";
     clips.push(
       customIntroVideoClip(
         input.introVideoPath,
         firstStart,
         introTransitionType,
-        true,
+        hasAudio,
         input.transitionDurationSeconds,
         introBoundaryId,
+        aspectRatio,
       ),
     );
   } else if (firstStart > 0.04) {
     const introMascot = adaptMascotForPhase(input.mascot, "intro", chosenStyleId);
     clips.push(introClip(firstStart, input.quiz.questions.length, copy, introMascot, input.mascotConfig, aspectRatio));
   }
-  const outroStart = events.find((event) => event.segment_id === "outro")?.at_seconds;
+  const outroStart = events.find(
+    (event) => event.segment_id === "outro" || (event.type === "narration.segment" && event.segment_id === "outro"),
+  )?.at_seconds;
 
   resolvedQuestions.forEach(({ question, questionIndex, beat, style, layoutResolution, visual }) => {
     const nextQuestion = input.quiz.questions[questionIndex + 1];
@@ -267,7 +272,8 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   });
   if (typeof outroStart === "number" && outroStart < duration - 0.04) {
     if (input.outroVideoPath) {
-      clips.push(customOutroVideoClip(input.outroVideoPath, outroStart, duration - outroStart));
+      const hasAudio = input.audioMode !== "overlay_bgm";
+      clips.push(customOutroVideoClip(input.outroVideoPath, outroStart, duration - outroStart, hasAudio));
     } else {
       const outroMascot = adaptMascotForPhase(input.mascot, "outro", chosenStyleId);
       clips.push(outroClip(outroStart, duration, input.quiz.questions.length, copy, outroMascot, input.mascotConfig, aspectRatio));
@@ -278,12 +284,26 @@ export function buildCandyArcadeCompositionBundle(input: CandyArcadeCompositionI
   const audioSrc = source(input.audioPath);
   const narrationDuration = input.narrationDurationSeconds > 0 ? input.narrationDurationSeconds : duration;
   const isPremixed = input.premixedAudio ?? input.audioPath.includes("soundtrack");
+  const resolvedStartSeconds = input.introVideoPath
+    ? Math.max(firstStart, input.bgmOptions?.startSeconds ?? firstStart)
+    : (input.bgmOptions?.startSeconds ?? firstStart);
+  const resolvedOutroStartSeconds = input.outroVideoPath && typeof outroStart === "number"
+    ? (typeof input.bgmOptions?.outroStartSeconds === "number" ? Math.min(outroStart, input.bgmOptions.outroStartSeconds) : outroStart)
+    : (input.bgmOptions?.outroStartSeconds ?? outroStart);
   const bgmClips = isPremixed
     ? []
-    : buildBgmClips(duration, input.assets, outroStart, {
-        seed: input.quiz.episode_id,
-        ...input.bgmOptions,
-      });
+    : buildBgmClips(
+        duration,
+        input.assets,
+        resolvedOutroStartSeconds,
+        {
+          seed: input.quiz.episode_id,
+          startSeconds: resolvedStartSeconds,
+          outroStartSeconds: resolvedOutroStartSeconds,
+          ...input.bgmOptions,
+        },
+        resolvedStartSeconds,
+      );
   const sfxClips = isPremixed ? [] : buildSfxClips(events, input.assets);
 
   const mascotPreloads = getMascotPreloadTags(input.mascot, source);

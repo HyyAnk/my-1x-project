@@ -5,6 +5,7 @@ import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
 import { calculateIntroTransitionTiming } from "../src/quiz/render/candyArcade/customVideoClips.js";
+import { resolveAndCopyIntroOutro } from "../src/tasks/video/videoCompositionPreparer.js";
 
 const testQuiz = QuizV2Schema.parse({
   schema_version: 2,
@@ -85,6 +86,10 @@ describe("Custom Intro/Outro Dynamic Timeline & Rendering", () => {
     introDuration?: number;
     introVideoPath?: string;
     outroVideoPath?: string;
+    audioMode?: "use_video_audio" | "overlay_bgm";
+    premixedAudio?: boolean;
+    audioPath?: string;
+    bgmOptions?: import("../src/quiz/audio/bgmRegistry.js").ResolveBgmOptions;
   }) {
     const director = createDefaultDirectorPlan(testQuiz);
     const voicePlan = buildQuizVoicePlan(testQuiz, { skipIntro: true, skipOutro: true });
@@ -114,12 +119,15 @@ describe("Custom Intro/Outro Dynamic Timeline & Rendering", () => {
       director,
       timeline,
       styleContext,
-      audioPath: "./soundtrack.wav",
+      audioPath: options.audioPath ?? "./soundtrack.wav",
+      premixedAudio: options.premixedAudio,
       narrationDurationSeconds: timeline.duration_seconds,
       introVideoPath: options.introVideoPath ?? "./intro.mp4",
       outroVideoPath: options.outroVideoPath ?? "./outro.mp4",
       transitionType: options.transitionType,
       transitionDurationSeconds: options.transitionDurationSeconds,
+      audioMode: options.audioMode,
+      bgmOptions: options.bgmOptions,
     });
   }
 
@@ -256,5 +264,122 @@ describe("Custom Intro/Outro Dynamic Timeline & Rendering", () => {
 
     expect(bundle.files["compositions/candy-intro.html"]).toBeDefined();
     expect(bundle.html).toContain('data-composition-src="compositions/candy-intro.html"');
+  });
+
+  it("preserves audio on custom intro and outro videos when audio_mode is use_video_audio (or default)", () => {
+    // Default audioMode (omitted)
+    const defaultBundle = createTestBundle({ transitionType: "stinger_swipe" });
+    const defaultIntro = defaultBundle.files["compositions/custom-intro.html"];
+    const defaultOutro = defaultBundle.files["compositions/custom-outro.html"];
+    expect(defaultIntro).toContain('data-has-audio="true"');
+    expect(defaultIntro).not.toContain('data-has-audio="false"');
+    expect(defaultIntro).not.toContain("muted");
+    expect(defaultOutro).toContain('data-has-audio="true"');
+    expect(defaultOutro).not.toContain('data-has-audio="false"');
+    expect(defaultOutro).not.toContain("muted");
+
+    // Explicit audioMode: "use_video_audio"
+    const explicitBundle = createTestBundle({ transitionType: "stinger_swipe", audioMode: "use_video_audio" });
+    const explicitIntro = explicitBundle.files["compositions/custom-intro.html"];
+    const explicitOutro = explicitBundle.files["compositions/custom-outro.html"];
+    expect(explicitIntro).toContain('data-has-audio="true"');
+    expect(explicitIntro).not.toContain('data-has-audio="false"');
+    expect(explicitIntro).not.toContain("muted");
+    expect(explicitOutro).toContain('data-has-audio="true"');
+    expect(explicitOutro).not.toContain('data-has-audio="false"');
+    expect(explicitOutro).not.toContain("muted");
+  });
+
+  it("mutes custom intro and outro videos when audio_mode is overlay_bgm", () => {
+    const bundle = createTestBundle({ transitionType: "stinger_swipe", audioMode: "overlay_bgm" });
+    const introHtml = bundle.files["compositions/custom-intro.html"];
+    const outroHtml = bundle.files["compositions/custom-outro.html"];
+    expect(introHtml).toContain('data-has-audio="false" muted');
+    expect(introHtml).not.toContain('data-has-audio="true"');
+    expect(outroHtml).toContain('data-has-audio="false" muted');
+    expect(outroHtml).not.toContain('data-has-audio="true"');
+  });
+
+  it("guarantees BGM audio isolation: strictly begins after custom intro video and finishes fading before outro", () => {
+    const introDuration = 8.5;
+    const bundle = createTestBundle({
+      introDuration,
+      premixedAudio: false,
+      audioPath: "./narration.wav",
+    });
+
+    const bgmClipMatches = Array.from(bundle.html.matchAll(/<audio[^>]*class="clip bgm-clip"[^>]*>/g)).map((m) => m[0]);
+    expect(bgmClipMatches.length).toBeGreaterThan(0);
+
+    // The first BGM clip must start at firstStart (8.5s), never before
+    const firstBgm = bgmClipMatches[0];
+    const startMatch = firstBgm.match(/data-start="([^"]+)"/);
+    expect(startMatch).toBeTruthy();
+    const bgmStart = Number.parseFloat(startMatch![1]);
+    expect(bgmStart).toBeCloseTo(introDuration, 3);
+    expect(bgmStart).toBeGreaterThanOrEqual(introDuration);
+
+    // Even if bgmOptions specifies startSeconds: 0, presence of custom intro enforces startSeconds >= introDuration
+    const forcedZeroBundle = createTestBundle({
+      introDuration,
+      premixedAudio: false,
+      audioPath: "./narration.wav",
+      bgmOptions: { startSeconds: 0 },
+    });
+    const forcedZeroMatches = Array.from(forcedZeroBundle.html.matchAll(/<audio[^>]*class="clip bgm-clip"[^>]*>/g)).map((m) => m[0]);
+    expect(forcedZeroMatches.length).toBeGreaterThan(0);
+    const forcedStart = Number.parseFloat(forcedZeroMatches[0].match(/data-start="([^"]+)"/)![1]);
+    expect(forcedStart).toBeGreaterThanOrEqual(introDuration);
+
+    // Verify last BGM clip ends at or before outroStart
+    const lastBgm = bgmClipMatches[bgmClipMatches.length - 1];
+    const lastStart = Number.parseFloat(lastBgm.match(/data-start="([^"]+)"/)![1]);
+    const lastDur = Number.parseFloat(lastBgm.match(/data-duration="([^"]+)"/)![1]);
+    const lastEnd = lastStart + lastDur;
+
+    const director = createDefaultDirectorPlan(testQuiz);
+    const voicePlan = buildQuizVoicePlan(testQuiz, { skipIntro: true, skipOutro: true });
+    const timeline = compileQuizTimeline({ quiz: testQuiz, director, voicePlan, introDuration, outroDuration: 10.0 });
+    const outroEvent = timeline.events.find((e) => e.segment_id === "outro" || (e.type === "narration.segment" && e.segment_id === "outro"));
+    expect(outroEvent).toBeDefined();
+    expect(lastEnd).toBeLessThanOrEqual(outroEvent!.at_seconds + 0.001);
+  });
+
+  it("resolveAndCopyIntroOutro captures audio_mode from style and defaults cleanly", async () => {
+    const mockChannel = {
+      channel_id: "chan-1",
+      slug: "chan-slug",
+      default_intro_outro_style_id: "style-1",
+    } as any;
+    const mockEpisode = {
+      episode_id: "ep-1",
+      quiz_config: {},
+    } as any;
+
+    const mockRepoDefault = {
+      getChannelIntroOutroStyle: async () => ({
+        style_id: "style-1",
+        transition_type: "crossfade",
+        transition_duration_seconds: 0.8,
+      }),
+      resolvePath: () => "/non/existent/path.mp4",
+    } as any;
+
+    const resDefault = await resolveAndCopyIntroOutro(mockRepoDefault, mockChannel, mockEpisode, "/tmp");
+    expect(resDefault.audioMode).toBe("use_video_audio");
+    expect(resDefault.transitionType).toBe("crossfade");
+
+    const mockRepoOverlay = {
+      getChannelIntroOutroStyle: async () => ({
+        style_id: "style-1",
+        transition_type: "stinger_swipe",
+        transition_duration_seconds: 0.5,
+        audio_mode: "overlay_bgm",
+      }),
+      resolvePath: () => "/non/existent/path.mp4",
+    } as any;
+
+    const resOverlay = await resolveAndCopyIntroOutro(mockRepoOverlay, mockChannel, mockEpisode, "/tmp");
+    expect(resOverlay.audioMode).toBe("overlay_bgm");
   });
 });

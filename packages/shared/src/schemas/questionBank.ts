@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { QuizAgeBandSchema, QuizQuestionFormatSchema } from "../enums.js";
+import { QuestionContentTypeSchema, type QuestionContentType } from "./config.js";
 
 export const BankGameplayArchetypeIdSchema = z.enum([
   "deep_trivia",
@@ -160,6 +161,22 @@ export const BankIndexSchema = z.object({
 });
 export type BankIndex = z.infer<typeof BankIndexSchema>;
 
+export const BankQuestionCooldownSchema = z.object({
+  is_cooldown: z.boolean(),
+  days_remaining: z.number(),
+  last_used_at: z.string().optional(),
+  episode_id: z.string().optional(),
+  episode_title: z.string().optional(),
+  content_type: QuestionContentTypeSchema.optional(),
+});
+export type BankQuestionCooldown = z.infer<typeof BankQuestionCooldownSchema>;
+
+export const BankQuestionWithCooldownSchema = BankQuestionSchema.and(
+  z.object({
+    channel_cooldown: BankQuestionCooldownSchema.optional(),
+  }),
+);
+
 export interface BankQuestionWithCooldown extends BankQuestion {
   channel_cooldown?: {
     is_cooldown: boolean;
@@ -167,6 +184,7 @@ export interface BankQuestionWithCooldown extends BankQuestion {
     last_used_at?: string;
     episode_id?: string;
     episode_title?: string;
+    content_type?: QuestionContentType;
   };
 }
 

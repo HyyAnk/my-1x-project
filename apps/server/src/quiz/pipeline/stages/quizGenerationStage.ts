@@ -42,7 +42,7 @@ export async function generateQuiz(
   // Run History Check against past 30 days
   const history = await input.repository.readQuestionHistory(input.channelId);
   const passThreshold = input.config.question_history?.pass_threshold ?? 2;
-  const history_check = checkQuestionsAgainstHistory(input.episodeId, quiz.questions, history, passThreshold);
+  const history_check = checkQuestionsAgainstHistory(input.episodeId, quiz.questions, history, passThreshold, "episode");
   await input.repository.writeHistoryCheck(input.channelId, input.episodeId, history_check);
 
   const invalidatedStages = invalidateQuizArtifacts("quiz");

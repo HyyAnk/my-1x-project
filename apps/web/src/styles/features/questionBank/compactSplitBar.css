@@ -1,0 +1,856 @@
+/* ==========================================================================
+   Question Bank Studio: Compact Split Progress Bar & Dual-Track System
+   Option 2: Integrated Compact Split Bar Architecture (Stage 6 Polish)
+   Deep Petrol & Cyan SaaS Design System Aligned
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Root Container & Dual-Track Split Layout
+   ========================================================================== */
+
+.qb-compact-split-progress {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md, 10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 2px 8px rgba(0, 0, 0, 0.12);
+  position: relative;
+  transition: padding 0.25s cubic-bezier(0.16, 1, 0.3, 1), gap 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.qb-compact-split-progress.is-compact {
+  padding: 8px 12px;
+  gap: 12px;
+}
+
+.qb-compact-split-progress.is-collapsed {
+  padding: 8px 14px;
+  gap: 12px;
+}
+
+/* Vertical Split Divider (Desktop Default) */
+.qb-split-divider {
+  width: 1px;
+  align-self: stretch;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--line-dark) 20%,
+    var(--line-dark) 80%,
+    transparent 100%
+  );
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   2. Left Partition: Milestone Volume Progression Track
+   ========================================================================== */
+
+.qb-milestone-track {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.qb-milestone-track.is-compact {
+  gap: 5px;
+}
+
+.qb-milestone-track-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.qb-milestone-track-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+/* Active Tier Badge System */
+.qb-hero-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  border: 1px solid transparent;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.qb-hero-tier-icon {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.qb-hero-tier-name {
+  font-weight: 700;
+}
+
+.qb-hero-tier-lvl {
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.22);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+}
+
+/* Milestone Tier Color Variations */
+.qb-hero-tier-badge.qb-tier-seed {
+  background: rgba(249, 115, 22, 0.12);
+  color: #f97316;
+  border-color: rgba(249, 115, 22, 0.35);
+}
+
+.qb-hero-tier-badge.qb-tier-foundation {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.qb-hero-tier-badge.qb-tier-explorer {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+.qb-hero-tier-badge.qb-tier-master {
+  background: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+  border-color: rgba(139, 92, 246, 0.35);
+}
+
+.qb-hero-tier-badge.qb-tier-grandmaster {
+  background: rgba(244, 63, 94, 0.12);
+  color: #f43f5e;
+  border-color: rgba(244, 63, 94, 0.35);
+}
+
+.qb-hero-tier-badge.qb-tier-mythic {
+  background: rgba(168, 85, 247, 0.16);
+  color: #c084fc;
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
+}
+
+/* High-Contrast Question Counters */
+.qb-hero-count-group {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.qb-hero-current-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.qb-hero-target-slash {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.qb-hero-target-num {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.qb-hero-unit-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 2px;
+}
+
+/* Milestone Remaining / Max Status Pill */
+.qb-hero-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--soft-accent);
+  color: var(--accent);
+  border: 1px solid var(--line-dark);
+  white-space: nowrap;
+}
+
+.qb-hero-status-pill.is-max {
+  background: rgba(234, 179, 8, 0.12);
+  color: #eab308;
+  border-color: rgba(234, 179, 8, 0.3);
+}
+
+.qb-hero-percent-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Compact Segmented Progress Rail */
+.qb-milestone-track-rail.qb-compact-rail {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  height: 8px;
+  margin: 3px 0 5px;
+}
+
+.qb-rail-segment {
+  flex: 1;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.qb-rail-segment.qb-segment-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 8px var(--soft-accent);
+}
+
+.qb-rail-segment.qb-segment-achieved {
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.qb-rail-segment.qb-segment-upcoming {
+  opacity: 0.35;
+  border-style: dashed;
+}
+
+.qb-segment-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Checkpoint Markers Row */
+.qb-segmented-markers-row.qb-milestone-track-markers {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  padding-top: 2px;
+}
+
+.qb-milestone-marker {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+}
+
+.qb-milestone-marker:hover {
+  background: var(--surface-hover);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+
+.qb-marker-pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.qb-marker-check {
+  color: #10b981;
+}
+
+.qb-marker-emoji {
+  font-size: 11px;
+}
+
+.qb-marker-label {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.qb-marker-name {
+  font-weight: 600;
+  font-size: 10.5px;
+  color: var(--ink-secondary);
+}
+
+.qb-marker-target {
+  font-weight: 700;
+  font-size: 10.5px;
+  color: var(--ink);
+  opacity: 0.9;
+}
+
+.qb-milestone-marker.qb-marker-active {
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 8px var(--soft-accent);
+}
+
+.qb-milestone-marker.qb-marker-active .qb-marker-name {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.qb-milestone-marker.qb-marker-achieved {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.qb-milestone-marker.qb-marker-achieved .qb-marker-name {
+  color: #10b981;
+}
+
+.qb-milestone-marker.qb-marker-upcoming {
+  opacity: 0.4;
+  border: 1px dashed var(--line);
+}
+
+.qb-milestone-marker.qb-marker-upcoming .qb-marker-name {
+  color: var(--muted);
+}
+
+.qb-marker-active-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: qb-pulse-dot 1.8s infinite ease-in-out;
+}
+
+/* Compact Variant Overrides */
+.qb-milestone-track.is-compact .qb-hero-current-num {
+  font-size: 15px;
+}
+
+.qb-milestone-track.is-compact .qb-hero-percent-badge {
+  font-size: 14px;
+}
+
+.qb-milestone-track.is-compact .qb-milestone-track-rail.qb-compact-rail {
+  height: 6px;
+}
+
+.qb-milestone-track.is-compact .qb-segmented-markers-row {
+  padding-top: 1px;
+}
+
+.qb-milestone-track.is-compact .qb-milestone-marker {
+  padding: 2px 4px;
+  font-size: 10px;
+}
+
+/* ==========================================================================
+   3. Right Partition: 2D Matrix Coverage Track
+   ========================================================================== */
+
+.qb-matrix-track {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.qb-matrix-track.is-compact {
+  gap: 5px;
+}
+
+.qb-matrix-track-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.qb-matrix-track-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+/* Matrix Badge with Subtle Hover Glow */
+.qb-matrix-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--accent);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.qb-matrix-badge:hover {
+  background: rgba(6, 182, 212, 0.16);
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.2);
+}
+
+.qb-matrix-badge-icon {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.qb-matrix-badge-name {
+  font-weight: 700;
+}
+
+/* Matrix Combo Counters */
+.qb-matrix-count-group {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.qb-matrix-combo-summary {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.qb-matrix-current-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.qb-matrix-target-slash {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.qb-matrix-target-num {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.qb-matrix-unit-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 2px;
+}
+
+.qb-matrix-percent-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.qb-matrix-skeleton-text {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Dedicated Matrix Progress Rail */
+.qb-matrix-track-rail.qb-compact-rail {
+  width: 100%;
+  height: 8px;
+  background: rgba(6, 182, 212, 0.04);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  margin: 3px 0 5px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 8px rgba(6, 182, 212, 0.08);
+}
+
+.qb-matrix-track-rail.is-empty {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--line);
+  box-shadow: none;
+}
+
+/* Modern Cyan / Teal / Emerald Gradient Fill */
+.qb-matrix-track-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #0284c7 0%, #06b6d4 45%, #10b981 100%);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.qb-matrix-track-fill.is-empty {
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Deficit & Quick Action Row */
+.qb-matrix-track-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-height: 24px;
+}
+
+.qb-matrix-track-deficit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.qb-matrix-track-deficit.is-warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.1);
+}
+
+.qb-matrix-track-deficit.is-covered {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.1);
+}
+
+.qb-matrix-warning-icon {
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.qb-matrix-check-icon {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+/* Keyboard-Accessible Auto-Fill Deficit Button */
+.qb-matrix-autofill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  line-height: 1.4;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+  color: #22d3ee;
+  border: 1px solid rgba(6, 182, 212, 0.38);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.qb-matrix-autofill-btn:hover {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.28) 0%, rgba(16, 185, 129, 0.28) 100%);
+  border-color: rgba(6, 182, 212, 0.65);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(6, 182, 212, 0.28);
+}
+
+.qb-matrix-autofill-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.35);
+}
+
+.qb-matrix-autofill-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(6, 182, 212, 0.2);
+}
+
+/* Compact Variant Overrides */
+.qb-matrix-track.is-compact .qb-matrix-current-num {
+  font-size: 15px;
+}
+
+.qb-matrix-track.is-compact .qb-matrix-percent-badge {
+  font-size: 14px;
+}
+
+.qb-matrix-track.is-compact .qb-matrix-track-rail.qb-compact-rail {
+  height: 6px;
+}
+
+.qb-matrix-track.is-compact .qb-matrix-track-deficit {
+  font-size: 10px;
+  padding: 1px 6px;
+}
+
+.qb-matrix-track.is-compact .qb-matrix-autofill-btn {
+  font-size: 10px;
+  padding: 2px 8px;
+}
+
+/* ==========================================================================
+   4. Micro-Interactions, Shimmer & Pulse Animations
+   ========================================================================== */
+
+/* Shimmer Light Sweep Effect */
+.qb-shimmer-sweep {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.32) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: qb-shimmer-sweep 2.4s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes qb-shimmer-sweep {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Active Milestone Pulse Dot */
+@keyframes qb-pulse-dot {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.5);
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+    box-shadow: 0 0 6px 2px rgba(6, 182, 212, 0.6);
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.5);
+  }
+}
+
+/* ==========================================================================
+   5. Responsive Layout Breakpoints
+   ========================================================================== */
+
+/* Tablet & Smaller Screens (<= 960px): Graceful Vertical Stack */
+@media (max-width: 960px) {
+  .qb-compact-split-progress {
+    flex-direction: column;
+    gap: 14px;
+    padding: 12px 14px;
+  }
+
+  .qb-split-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--line-dark) 20%,
+      var(--line-dark) 80%,
+      transparent 100%
+    );
+    margin: 2px 0;
+  }
+
+  .qb-milestone-track,
+  .qb-matrix-track {
+    width: 100%;
+  }
+}
+
+/* Mobile Screens (<= 640px): Compact Typography & Fluid Controls */
+@media (max-width: 640px) {
+  .qb-milestone-track-header,
+  .qb-matrix-track-header {
+    gap: 6px;
+  }
+
+  .qb-hero-tier-badge,
+  .qb-matrix-badge {
+    font-size: 10.5px;
+    padding: 2px 8px;
+  }
+
+  .qb-hero-current-num,
+  .qb-matrix-current-num {
+    font-size: 16px;
+  }
+
+  .qb-hero-percent-badge,
+  .qb-matrix-percent-badge {
+    font-size: 15px;
+  }
+
+  /* Horizontal scrollable milestone markers with sleek scrollbar */
+  .qb-segmented-markers-row.qb-milestone-track-markers {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-dark) transparent;
+    padding-bottom: 2px;
+    gap: 4px;
+  }
+
+  .qb-segmented-markers-row.qb-milestone-track-markers::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .qb-segmented-markers-row.qb-milestone-track-markers::-webkit-scrollbar-thumb {
+    background: var(--line-dark);
+    border-radius: 3px;
+  }
+
+  .qb-milestone-marker {
+    flex: 0 0 auto;
+    min-width: fit-content;
+    padding: 2.5px 6px;
+    font-size: 10px;
+  }
+
+  .qb-matrix-track-footer {
+    gap: 6px;
+  }
+}
+
+/* Small Mobile Screens (<= 480px): Tightened Spacing & Resilient Wrap */
+@media (max-width: 480px) {
+  .qb-compact-split-progress {
+    padding: 10px 10px;
+    gap: 12px;
+  }
+
+  .qb-hero-count-group,
+  .qb-matrix-count-group {
+    gap: 3px;
+  }
+
+  .qb-hero-current-num,
+  .qb-matrix-current-num {
+    font-size: 15px;
+  }
+
+  .qb-hero-target-num,
+  .qb-matrix-target-num {
+    font-size: 13px;
+  }
+
+  .qb-hero-target-slash,
+  .qb-matrix-target-slash {
+    font-size: 12px;
+  }
+
+  /* Hide unit labels on extra small screens to prevent layout wrap blowout */
+  .qb-hero-unit-label,
+  .qb-matrix-unit-label {
+    display: none;
+  }
+
+  .qb-matrix-autofill-btn {
+    font-size: 10.5px;
+    padding: 2.5px 8px;
+  }
+}
+
+/* ==========================================================================
+   6. Accessibility & Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .qb-shimmer-sweep {
+    animation: none;
+    display: none;
+  }
+
+  .qb-marker-active-dot {
+    animation: none;
+  }
+
+  .qb-segment-fill,
+  .qb-matrix-track-fill,
+  .qb-milestone-marker,
+  .qb-matrix-autofill-btn,
+  .qb-hero-tier-badge,
+  .qb-compact-split-progress {
+    transition: none !important;
+  }
+}

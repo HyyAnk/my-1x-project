@@ -34,6 +34,7 @@ export type QuizRenderInput = {
   transitionType?: IntroOutroTransitionType;
   transitionDurationSeconds?: number;
   transitionInstances?: Record<string, ResolvedTransitionInstance>;
+  audioMode?: "use_video_audio" | "overlay_bgm";
 };
 
 export type PreparedQuizRender = {

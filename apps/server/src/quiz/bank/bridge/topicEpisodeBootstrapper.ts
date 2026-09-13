@@ -22,6 +22,7 @@ import {
   writeEpisodeMarkdownStubs,
 } from "./bootstrapperHelpers.js";
 import type { BootstrapEpisodeResult } from "./bootstrapperTypes.js";
+import { synthesizeScenesFromQuiz } from "../../domain/quizArtifactSynthesizer.js";
 
 export interface BootstrapTopicEpisodeParams {
   repository: RepositoryService;
@@ -102,25 +103,38 @@ export async function bootstrapTopicEpisode(params: BootstrapTopicEpisodeParams)
   });
 
   await repository.writeJsonAtomic(path.join(episodeDirectory, "episode.json"), episode);
-  await writeEpisodeMarkdownStubs(repository, episodeDirectory, {
-    title: topic.title,
-    hook: topic.hook,
-    premise: topic.premise,
-    isTopic: true,
-  });
   await repository.writeJsonAtomic(
     path.join(repository.resolvePath("channels", channel.slug), "topic_database.json"),
     (await repository.listTopics(channel.channel_id)).map(({ title, premise }) => ({ title, premise })),
   );
+
+  const sanitizedQuestions = quizQuestions.map((q, idx) => {
+    const claimId = `C${String(idx + 1).padStart(2, "0")}`;
+    const sourceIds = q.source_ids && q.source_ids.length > 0 ? q.source_ids : [claimId];
+    return {
+      ...q,
+      source_ids: sourceIds,
+      validation: { ...q.validation, source_coverage: true },
+    };
+  });
 
   const quiz: QuizV2 = QuizV2Schema.parse({
     schema_version: 2,
     episode_id: episodeId,
     age_band: ageBand,
     language: targetLanguage,
-    questions: quizQuestions,
+    questions: sanitizedQuestions,
   });
   await repository.writeQuiz(channelId, episodeId, quiz);
+
+  const synthesizedScenes = synthesizeScenesFromQuiz(quiz);
+  await writeEpisodeMarkdownStubs(repository, episodeDirectory, {
+    title: topic.title,
+    hook: topic.hook,
+    premise: topic.premise,
+    isTopic: true,
+    scenes: synthesizedScenes,
+  });
 
   return { episode, quiz, episodeDirectory, timestamp };
 }

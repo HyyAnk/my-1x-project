@@ -54,7 +54,12 @@ export async function mixMasterSoundtrack(options: MixMasterSoundtrackOptions): 
   const bgmCandidateDirs = options.bgmCandidateDirectories ?? defaultBgmCandidateDirectories();
 
   const sfxItems = resolveSfxSchedule(options.timeline.events, sfxCandidateDirs, options.assets);
-  const bgmItems = resolveBgmScheduleItems(duration, bgmCandidateDirs, options.bgmOptions, options.bgmRegistry, options.outroStartSeconds);
+  const outroStartSeconds = options.outroStartSeconds ?? options.bgmOptions?.outroStartSeconds;
+  const bgmOptions = options.bgmOptions
+    ? { ...options.bgmOptions, outroStartSeconds: options.bgmOptions.outroStartSeconds ?? outroStartSeconds }
+    : (outroStartSeconds !== undefined ? { outroStartSeconds } : undefined);
+
+  const bgmItems = resolveBgmScheduleItems(duration, bgmCandidateDirs, bgmOptions, options.bgmRegistry, outroStartSeconds);
 
   const plan: MasterSoundtrackPlan = {
     durationSeconds: duration,

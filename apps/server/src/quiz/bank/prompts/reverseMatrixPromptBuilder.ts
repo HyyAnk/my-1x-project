@@ -1,5 +1,5 @@
 import type { BankGameplayArchetypeId } from "@studio/shared";
-import { ARCHETYPE_GUIDELINES } from "./archetypePromptGuidelines.js";
+import { ARCHETYPE_GUIDELINES, FRANCHISE_ANCHOR_MANDATE_LINES, VISUAL_ANCHOR_MANDATE_LINES } from "./archetypePromptGuidelines.js";
 
 export interface TargetEntityForGeneration {
   entity_id: string;
@@ -56,6 +56,7 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
         `- Entity ID: "${target.entity_id}"`,
         `- Canonical Name: "${target.name}"`,
         `- Domain: "${target.domain_id}", Subtopic: "${target.subtopic_id}"`,
+        `- Visual Anchor (Use directly for visual_spec.prompt): "${target.visual_anchor}"`,
         `- Core Traits / Clues: ${traits}`,
         `- Distractor Pool: ${distractors}`,
         `- Versus Rivals: ${rivals}`,
@@ -118,6 +119,23 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
           ``,
         ]
       : []),
+    ...(options.archetypeId === "deep_trivia"
+      ? [
+          `=== SPECIALIZED DEEP TRIVIA DIRECTIVE ===`,
+          `CRITICAL RULES FOR DEEP TRIVIA (HIGH ENGAGEMENT & MOBILE BREVITY):`,
+          `1. CONCISE BREVITY MANDATE: Question length strictly 45 to 65 characters (6 to 10 words max, never exceed 70 chars) to prevent font shrinkage or text clipping on mobile screens.`,
+          `2. ANTI-MONOTONY & NO FILLER NOUNS: STRICTLY FORBIDDEN to monotonically open questions with "Which [category noun] [verb]..." (e.g. "Which villain...", "Which sorcerer...", "Which animal..."). Drop redundant category labels because the choices already display the candidates!`,
+          `3. HOOK VARIETY ROTATION: Rotate continuously across these 5 punchy phrasing styles:`,
+          `   - Feat / Signature Action: "In Dragon Ball Z, whose signature energy wave is the Kamehameha?"`,
+          `   - Iconic Relic / Hallmarks: "In One Piece, what straw accessory was given to Luffy by Shanks?"`,
+          `   - Universal Mascot / Partner: "In Pokemon, which electric mouse is Ash Ketchum's loyal partner?"`,
+          `   - Signature Jutsu / Technique: "In Naruto, which swirling blue sphere technique did Minato invent?"`,
+          `   - Detective Gadget / Identity: "In Detective Conan, what gadget lets Conan mimic Kogoro's voice?"`,
+          `4. ANCHORING: Root each question deeply into the Target Entity's most surprising lore, verified science, or iconic breakthrough.`,
+          `5. FRANCHISE ANCHORING: If the target entity belongs to anime, manga, gaming, comics, movies, or fictional lore, ALWAYS explicitly include the parent franchise/universe name in the question hook.`,
+          ``,
+        ]
+      : []),
     ...(options.archetypeId === "versus_faceoff"
       ? [
           `=== SPECIALIZED VERSUS FACEOFF COMPARATIVE DIRECTIVE ===`,
@@ -137,13 +155,13 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
       ? [
           `=== SPECIALIZED VISUAL SPOTTING OUTLIER DIRECTIVE ===`,
           `CRITICAL RULES FOR VISUAL SPOTTING (ODD ONE OUT):`,
-          `1. ANTI-MONOTONY MANDATE: STRICTLY FORBIDDEN to end every question with "... is the odd one out?". You MUST vary question hooks across every single question.`,
+          `1. ANTI-MONOTONY MANDATE: STRICTLY FORBIDDEN to end questions with repetitive formulas like "... is the odd one out?" or append robotic canned suffixes like "— spot the mismatch!". Frame questions as natural, engaging dilemmas that embed the contrast into the subject matter.`,
           `2. HOOK VARIETY ROTATION: Rotate between these 5 distinct spotting formulations:`,
           `   - Impostor alert: "Spot the impostor: Which [category] does not belong?"`,
           `   - Group mismatch: "One of these [category] doesn't fit — can you spot it?"`,
           `   - Outlier challenge: "Which of these three [subjects] is the outlier?"`,
           `   - Exception finder: "Find the exception among these [subjects]!"`,
-          `   - Intruder detection: "Two share [common trait], one does not — spot the mismatch!"`,
+          `   - Trait contrast: "Two share [common trait], but which one [contrasting trait]?" (e.g. "Two are venomous predators, but which one is harmless?")`,
           `3. ANCHORING: The correct choice is the anomaly/outlier, while the 2 distractors share a common theme/trait from the entity's domain.`,
           ``,
         ]
@@ -193,6 +211,10 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
           ``,
         ]
       : []),
+    ...FRANCHISE_ANCHOR_MANDATE_LINES,
+    ``,
+    ...VISUAL_ANCHOR_MANDATE_LINES,
+    ``,
     `=== REVERSE MATRIX GENERATION CONTRACT (STRICT) ===`,
     `1. 1-to-1 MAPPING: Generate exactly ${options.targets.length} questions, in the exact order of the Target Entities.`,
     `2. ENTITY ANCHOR: For each question, set "entity_id" to the corresponding Entity ID.`,
@@ -201,6 +223,11 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
       : `3. TRUTH & ACCURACY: Base the question directly on the provided Core Traits, True / False Claims, or Versus Rivals. Do NOT hallucinate facts.`,
     `4. DISTRACTORS: Draw plausible wrong choices from the provided Distractor Pool or Versus Rivals whenever possible.`,
     `5. CONCISE HOOK: Question text must be strictly 6 to 12 words (40-75 characters max) suited for fast mobile reading.`,
+    `6. STRICT CONTENT POLICY & ANTI-OBSCURITY CONSTRAINTS:`,
+    `   - DO NOT create offensive, gory, or dangerous content.`,
+    `   - NEVER test obscure manga chapter numbers, release dates, or background animator names.`,
+    `   - NEVER test secondary character family lineages, blood types, or obscure minor jutsu/spells.`,
+    `   - ALWAYS focus questions on world-famous hallmarks: signature attacks, legendary relics, iconic character traits, or universal plot premises that casual viewers and social media audiences immediately recognize and celebrate.`,
     existingSamplesBlock,
     `=== MANDATORY JSON OUTPUT FORMAT ===`,
     `Return ONLY a valid JSON array of ${options.targets.length} question objects. NO markdown, NO commentary outside the array.`,
@@ -222,7 +249,7 @@ export function buildReverseGenerationPrompt(options: BuildReverseBatchPromptOpt
     `    "fun_fact": "Surprising related fact.",`,
     `    "visual_spec": {`,
     `      "intent": "${guideline.visualIntent}",`,
-    `      "prompt": "Cinematic visual description in English",`,
+    `      "prompt": "Detailed cinematic visual prompt in English based on Visual Anchor and entity lore",`,
     `      "aspect_ratio": "16:9"`,
     `    },`,
     `    "difficulty": ${diff},`,

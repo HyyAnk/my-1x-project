@@ -41,13 +41,13 @@ export type AssetConsistencyGroup = z.infer<typeof AssetConsistencyGroupSchema>;
 export const QuizAssetRequirementSchema = z.object({
   asset_id: z.string().min(1).max(120),
   question_id: z.string().nullable().default(null),
-  subject: z.string().trim().min(1).max(180),
+  subject: z.string().trim().min(1).max(280),
   purpose: QuizAssetPurposeSchema,
   style: QuizAssetStyleSchema,
   aspect_ratio: QuizAssetAspectRatioSchema,
   transparent_background: z.boolean(),
   required: z.boolean(),
-  semantic_key: z.string().trim().min(1).max(180),
+  semantic_key: z.string().trim().min(1).max(280),
   consistency_group_id: z.string().min(1).max(120).nullable().default(null),
   sizing: PersistedImageSizingSchema.optional(),
 });

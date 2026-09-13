@@ -95,20 +95,29 @@ export const mediaLeftChoicesRightLayout = {
   --choice-badge-size: 104px;
 }
 
-/* Staggered Choice Entrance (Phase 2): Keyframes for cards 1, 2, and 3 */
+/* Staggered Choice Entrance (Phase 2): Keyframes for cards 1, 2, 3, and 4 */
 .layout-media_left_choices_right.quiz-question-clip .choice-card:nth-child(1),
 .layout-media_left_choices_right.quiz-question-clip .answer-card:nth-child(1) {
-  animation: choice-card-enter-right 0.50s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both;
+  animation: choice-card-enter-right 0.50s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.50s) infinite alternate both;
   will-change: transform, opacity;
 }
 .layout-media_left_choices_right.quiz-question-clip .choice-card:nth-child(2),
 .layout-media_left_choices_right.quiz-question-clip .answer-card:nth-child(2) {
-  animation: choice-card-enter-right 0.50s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.12s) both;
+  animation: choice-card-enter-right 0.50s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.12s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.62s) infinite alternate both;
   will-change: transform, opacity;
 }
 .layout-media_left_choices_right.quiz-question-clip .choice-card:nth-child(3),
 .layout-media_left_choices_right.quiz-question-clip .answer-card:nth-child(3) {
-  animation: choice-card-enter-right 0.50s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.24s) both;
+  animation: choice-card-enter-right 0.50s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.24s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.74s) infinite alternate both;
+  will-change: transform, opacity;
+}
+.layout-media_left_choices_right.quiz-question-clip .choice-card:nth-child(4),
+.layout-media_left_choices_right.quiz-question-clip .answer-card:nth-child(4) {
+  animation: choice-card-enter-right 0.50s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.36s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.86s) infinite alternate both;
   will-change: transform, opacity;
 }
 
@@ -144,7 +153,44 @@ export const mediaLeftChoicesRightLayout = {
   --choice-fit-multiline-gain: 6px;
 }
 
-/* Settle Contrast Hardening (Phase 4): WCAG AA Compliance (opacity: 0.42, grayscale: 65%) */
+/* Phase 4: Answer Reveal Polish & Climax */
+.layout-media_left_choices_right.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct,
+.layout-media_left_choices_right.quiz-question-clip .choice-card:nth-child(n).answer-correct,
+.layout-media_left_choices_right.quiz-question-clip .answer-card:nth-child(n).answer-reveal-correct,
+.layout-media_left_choices_right.quiz-question-clip .answer-card:nth-child(n).answer-correct,
+.layout-media_left_choices_right.quiz-question-clip .choice-card-text:nth-child(n).answer-reveal-correct,
+.layout-media_left_choices_right.quiz-question-clip .choice-card-text:nth-child(n).answer-correct,
+.layout-media_left_choices_right.quiz-question-clip .choice-card.answer-reveal-correct,
+.layout-media_left_choices_right.quiz-question-clip .choice-card.answer-correct,
+.layout-media_left_choices_right.quiz-question-clip .answer-card.answer-reveal-correct,
+.layout-media_left_choices_right.quiz-question-clip .answer-card.answer-correct,
+.layout-media_left_choices_right.quiz-question-clip .choice-card-text.answer-reveal-correct,
+.layout-media_left_choices_right.quiz-question-clip .choice-card-text.answer-correct,
+.layout-media_left_choices_right .answer-card.answer-correct,
+.layout-media_left_choices_right .choice-card-text.answer-correct,
+.layout-media_left_choices_right .choice-card.answer-correct,
+.layout-media_left_choices_right .answer-card.answer-reveal-correct,
+.layout-media_left_choices_right .choice-card-text.answer-reveal-correct,
+.layout-media_left_choices_right .choice-card.answer-reveal-correct {
+  animation: correct-card-reveal 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  border-color: #22C55E;
+  box-shadow: 0 16px 0 #15803D, 0 0 36px rgba(74, 222, 128, 0.75), inset 0 4px 0 rgba(255, 255, 255, 0.95);
+  z-index: 6;
+}
+
+/* Settle Contrast Hardening (Phase 4): WCAG AA Compliance (opacity: 0.35, grayscale: 78%) */
+.layout-media_left_choices_right.quiz-question-clip .choice-card:nth-child(n).answer-reveal-incorrect,
+.layout-media_left_choices_right.quiz-question-clip .choice-card:nth-child(n).answer-incorrect,
+.layout-media_left_choices_right.quiz-question-clip .answer-card:nth-child(n).answer-reveal-incorrect,
+.layout-media_left_choices_right.quiz-question-clip .answer-card:nth-child(n).answer-incorrect,
+.layout-media_left_choices_right.quiz-question-clip .choice-card-text:nth-child(n).answer-reveal-incorrect,
+.layout-media_left_choices_right.quiz-question-clip .choice-card-text:nth-child(n).answer-incorrect,
+.layout-media_left_choices_right.quiz-question-clip .answer-card.answer-incorrect,
+.layout-media_left_choices_right.quiz-question-clip .choice-card-text.answer-incorrect,
+.layout-media_left_choices_right.quiz-question-clip .choice-card.answer-incorrect,
+.layout-media_left_choices_right.quiz-question-clip .answer-card.answer-reveal-incorrect,
+.layout-media_left_choices_right.quiz-question-clip .choice-card-text.answer-reveal-incorrect,
+.layout-media_left_choices_right.quiz-question-clip .choice-card.answer-reveal-incorrect,
 .layout-media_left_choices_right .answer-card.answer-incorrect,
 .layout-media_left_choices_right .choice-card-text.answer-incorrect,
 .layout-media_left_choices_right .choice-card.answer-incorrect,
@@ -152,6 +198,10 @@ export const mediaLeftChoicesRightLayout = {
 .layout-media_left_choices_right .choice-card-text.answer-reveal-incorrect,
 .layout-media_left_choices_right .choice-card.answer-reveal-incorrect {
   animation: incorrect-card-settle-media-left 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  opacity: 0.35;
+  filter: grayscale(78%) contrast(0.95) brightness(0.92);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 0 rgba(10, 25, 60, 0.08);
 }
 
 @keyframes incorrect-card-settle-media-left {
@@ -161,9 +211,9 @@ export const mediaLeftChoicesRightLayout = {
     filter: grayscale(0%) contrast(1) brightness(1);
   }
   to {
-    opacity: 0.42;
+    opacity: 0.35;
     transform: scale(0.94);
-    filter: grayscale(65%) contrast(0.95) brightness(0.92);
+    filter: grayscale(78%) contrast(0.95) brightness(0.92);
     border-color: rgba(255, 255, 255, 0.25);
     box-shadow: 0 2px 0 rgba(10, 25, 60, 0.08);
   }

@@ -284,7 +284,7 @@ async function restoreLatestCompletedRenderHistory(this: TaskManagerRuntime, cha
     if (Date.parse(task.completed_at) < historyCutoff) continue;
     const quiz = await this.repository.readQuiz(channelId, task.episode_id!);
     if (quiz?.questions.length) {
-      await this.repository.appendQuestionHistory(channelId, task.episode_id!, quiz.questions, 30, task.task_id);
+      await this.repository.appendQuestionHistory(channelId, task.episode_id!, quiz.questions, 30, task.task_id, "episode");
     }
   }
 }

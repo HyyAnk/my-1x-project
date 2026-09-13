@@ -2,7 +2,7 @@ import { ArrowClockwise, CaretDown, CaretUp, Sparkle } from "@phosphor-icons/rea
 import type { BankIndex, MatrixCoverageStats } from "../types/questionBankUi.types";
 import { useTranslation } from "../../../i18n";
 import { getMilestoneProgress } from "../utils/questionBankMilestones";
-import { QuestionBankTargetProgressBar } from "./QuestionBankTargetProgressBar";
+import { QuestionBankCompactSplitProgress } from "./progress/QuestionBankCompactSplitProgress";
 
 export interface QuestionBankHeaderStatsProps {
   stats: BankIndex | null;
@@ -41,8 +41,6 @@ export function QuestionBankHeaderStats({
   const { t } = useTranslation();
   const currentTotal = stats?.current_total ?? 0;
   const milestoneProgress = getMilestoneProgress(currentTotal);
-  const activeTier = milestoneProgress.activeTier;
-  const unfilledCount = matrixCoverage ? matrixCoverage.total_combos - matrixCoverage.covered_combos : 0;
 
   return (
     <div className="qb-header-stats-card">
@@ -53,20 +51,6 @@ export function QuestionBankHeaderStats({
             <span>{t("questionBank.badge")}</span>
           </div>
           <h1 className="qb-header-title">{t("questionBank.title")}</h1>
-          <span
-            className={`qb-header-tier-pill ${activeTier.badgeClass}`}
-            title={`${activeTier.name} Tier: ${activeTier.tagline} (Target: ${activeTier.target.toLocaleString()} questions)`}
-          >
-            <span className="qb-tier-icon">{activeTier.icon}</span>
-            <span className="qb-tier-name">{activeTier.name}</span>
-            <span className="qb-tier-level">Lvl {activeTier.level}</span>
-          </span>
-          {matrixCoverage && (
-            <span className="qb-header-total-pill" title={`${unfilledCount.toLocaleString()} combos unfilled`}>
-              🎯 {matrixCoverage.covered_combos.toLocaleString()} / {matrixCoverage.total_combos.toLocaleString()} Combos (
-              {matrixCoverage.coverage_percent}%)
-            </span>
-          )}
         </div>
 
         <div className="qb-header-actions">
@@ -98,44 +82,44 @@ export function QuestionBankHeaderStats({
         </div>
       </div>
 
+      {/* Unified Compact Split Progress Bar (Option 2 Architecture) */}
+      <QuestionBankCompactSplitProgress
+        currentTotal={currentTotal}
+        milestoneProgress={milestoneProgress}
+        matrixCoverage={matrixCoverage}
+        isCollapsed={isCollapsed}
+        onOpenAiAutoFill={onOpenAiModal}
+      />
+
+      {/* Interactive Archetype Filter Chip Bar */}
       {!isCollapsed && (
-        <>
-          {/* Segmented Milestone Progress Bar */}
-          <QuestionBankTargetProgressBar
-            currentTotal={currentTotal}
-            milestoneProgress={milestoneProgress}
-            matrixCoverage={matrixCoverage}
-          />
+        <div className="qb-archetypes-chip-bar" role="tablist" aria-label="Archetype Filters">
+          {ARCHETYPE_CHIPS.map(({ id: archId, defaultLabel, icon }) => {
+            const isActive =
+              selectedArchetype === archId || (archId === "verdict_true_false" && selectedArchetype === "verdict_fact_myth");
+            const count =
+              archId === "verdict_true_false"
+                ? (stats?.by_archetype?.["verdict_true_false"] ?? 0) + (stats?.by_archetype?.["verdict_fact_myth"] ?? 0)
+                : (stats?.by_archetype?.[archId] ?? 0);
+            const label = t(`questionBank.archetypes.${archId}`) || defaultLabel;
 
-          {/* Interactive Archetype Filter Chip Bar */}
-          <div className="qb-archetypes-chip-bar" role="tablist" aria-label="Archetype Filters">
-            {ARCHETYPE_CHIPS.map(({ id: archId, defaultLabel, icon }) => {
-              const isActive =
-                selectedArchetype === archId || (archId === "verdict_true_false" && selectedArchetype === "verdict_fact_myth");
-              const count =
-                archId === "verdict_true_false"
-                  ? (stats?.by_archetype?.["verdict_true_false"] ?? 0) + (stats?.by_archetype?.["verdict_fact_myth"] ?? 0)
-                  : (stats?.by_archetype?.[archId] ?? 0);
-              const label = t(`questionBank.archetypes.${archId}`) || defaultLabel;
-
-              return (
-                <button
-                  key={archId}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  className={`qb-archetype-chip ${isActive ? "is-active" : ""}`}
-                  onClick={() => onSelectArchetype(isActive ? "" : archId)}
-                  title={`Filter by ${label}`}
-                >
-                  <span className="qb-chip-icon">{icon}</span>
-                  <span className="qb-chip-label">{label}</span>
-                  <span className="qb-chip-count">{count}</span>
-                </button>
-              );
-            })}
-          </div>
-        </>
+            return (
+              <button
+                key={archId}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                className={`qb-archetype-chip ${isActive ? "is-active" : ""}`}
+                onClick={() => onSelectArchetype(isActive ? "" : archId)}
+                title={`Filter by ${label}`}
+              >
+                <span className="qb-chip-icon">{icon}</span>
+                <span className="qb-chip-label">{label}</span>
+                <span className="qb-chip-count">{count}</span>
+              </button>
+            );
+          })}
+        </div>
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import { computeSandboxPhaseTimeline, type SandboxPreviewInput } from "@studio/shared";
+import { computeSandboxPhaseTimeline, SETTLED_SANDBOX_PHASE_TIMESTAMPS, type SandboxPreviewInput } from "@studio/shared";
 import { quizSceneStateForPhase } from "./quizSceneState.js";
 import type { QuizScenePhase, QuizSceneState } from "./quizScene.types.js";
 
@@ -27,11 +27,11 @@ export function sandboxPhaseAt(timeSeconds: number): QuizScenePhase {
 export function sandboxPreviewTimeForPhase(phase: "intro" | QuizScenePhase | "outro"): number {
   const times = {
     intro: 0.5,
-    question: Number((defaultTimeline.questionStart + 0.3).toFixed(1)),
-    choices: Number((defaultTimeline.choicesStart + 0.3).toFixed(1)),
-    thinking: Number((defaultTimeline.thinkingStart + 1.0).toFixed(1)),
-    reveal: Number((defaultTimeline.revealStart + 0.2).toFixed(1)),
-    explain: Number((defaultTimeline.explainStart + 0.2).toFixed(1)),
+    question: SETTLED_SANDBOX_PHASE_TIMESTAMPS.question,
+    choices: SETTLED_SANDBOX_PHASE_TIMESTAMPS.choices,
+    thinking: SETTLED_SANDBOX_PHASE_TIMESTAMPS.thinking,
+    reveal: SETTLED_SANDBOX_PHASE_TIMESTAMPS.reveal,
+    explain: SETTLED_SANDBOX_PHASE_TIMESTAMPS.explain,
     outro: Number((defaultTimeline.totalDuration - 0.5).toFixed(1)),
   } as const;
   return times[phase];

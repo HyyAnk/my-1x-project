@@ -75,7 +75,7 @@ export async function handleExistingConfirmationReceipt(
   const existingHistory = await repository.readQuestionHistory(channelId);
   const hasHistory = existingHistory.some((entry) => entry.episode_id === existingEpisode.episode_id);
   if (!hasHistory && existingQuiz.questions.length > 0) {
-    await repository.appendQuestionHistory(channelId, existingEpisode.episode_id, existingQuiz.questions, 30);
+    await repository.appendQuestionHistory(channelId, existingEpisode.episode_id, existingQuiz.questions, 30, undefined, "episode");
   }
 
   const topics = await repository.listTopics(channelId);
@@ -125,7 +125,7 @@ async function recordConfirmationCompletion(params: {
     autoStartPipeline,
   } = params;
 
-  await repository.appendQuestionHistory(channelId, episode.episode_id, finalQuizQuestions, 30);
+  await repository.appendQuestionHistory(channelId, episode.episode_id, finalQuizQuestions, 30, undefined, "episode");
   await repository.markTopicSelected(channelId, topicId, finalQuizQuestions.length);
   await repository.updateChannel(channelId, { updated_at: timestamp });
 
@@ -192,6 +192,9 @@ export async function executeEpisodeConfirmation(deps: {
   const baseQuizQuestions: QuizQuestion[] = boundResult.questions.map((bankQ, idx) => {
     const q = convertBankQuestionToQuizQuestionLossless(bankQ);
     q.number = idx + 1;
+    const claimId = `C${String(idx + 1).padStart(2, "0")}`;
+    q.source_ids = Array.from(new Set([claimId, ...(q.source_ids || []), bankQ.id].filter(Boolean)));
+    q.validation.source_coverage = true;
     return q;
   });
 

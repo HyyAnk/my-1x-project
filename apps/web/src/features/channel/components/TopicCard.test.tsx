@@ -49,26 +49,41 @@ describe("TopicCard", () => {
     expect(badge).toBeNull();
   });
 
-  it("renders 'Select Topic' button and calls onConfirm with selected question count and visual style", () => {
+  it("acts as a clickable card and calls onConfirm with question count and visual style on click", () => {
     const onConfirmMock = vi.fn();
     const { getByRole } = render(<TopicCard topic={baseTopic} onConfirm={onConfirmMock} busy={false} disabled={false} />);
 
-    const buildButton = getByRole("button", { name: /Select Topic/i });
-    expect(buildButton).toBeDefined();
-    expect(buildButton.className).toContain("primary-button");
-    expect(buildButton.className).toContain("topic-build-btn");
+    const cardButton = getByRole("button", { name: /Select topic: Ancient Space Mysteries/i });
+    expect(cardButton).toBeDefined();
+    expect(cardButton.className).toContain("topic-card");
+    expect(cardButton.className).toContain("is-clickable");
 
-    fireEvent.click(buildButton);
+    fireEvent.click(cardButton);
     expect(onConfirmMock).toHaveBeenCalledTimes(1);
     expect(onConfirmMock).toHaveBeenCalledWith(5, "pixar_3d");
   });
 
+  it("omits why-it-fits, premise text, question pickers, and potential rating from streamlined card", () => {
+    const { queryByText, queryByLabelText } = render(
+      <TopicCard topic={baseTopic} onConfirm={vi.fn()} busy={false} disabled={false} />,
+    );
+
+    expect(queryByText("High viewer retention in astronomy")).toBeNull();
+    expect(queryByText("Exploring forgotten cosmic events")).toBeNull();
+    expect(queryByText("9.5/10 Viral Score")).toBeNull();
+    expect(queryByLabelText(/Question count/i)).toBeNull();
+  });
+
   it("displays spinner and 'Selecting Topic…' when busy is true", () => {
     const onConfirmMock = vi.fn();
-    const { getByRole, queryByText } = render(<TopicCard topic={baseTopic} onConfirm={onConfirmMock} busy={true} disabled={false} />);
+    const { getByRole, getByText } = render(<TopicCard topic={baseTopic} onConfirm={onConfirmMock} busy={true} disabled={false} />);
 
-    const busyButton = getByRole("button", { name: /Selecting Topic…/i });
-    expect(busyButton).toBeDefined();
-    expect(queryByText(/Select Topic/i)).toBeNull();
+    const busyCard = getByRole("button", { name: /Select topic: Ancient Space Mysteries/i });
+    expect(busyCard).toBeDefined();
+    expect(busyCard.className).toContain("is-busy");
+    expect(getByText(/Selecting Topic…/i)).toBeDefined();
+
+    fireEvent.click(busyCard);
+    expect(onConfirmMock).not.toHaveBeenCalled();
   });
 });

@@ -159,17 +159,51 @@ export function getSandboxPhaseAtTime(timeSeconds: number, policy: QuizTimingPol
 }
 
 /**
+ * Canonical settled preview keyframe timestamps for quick-jump buttons in the Sandbox inspector.
+ * Values are calibrated so UI elements have completely finished their entrance/reveal animations
+ * and are fully resting in their settled steady state:
+ * - question: 0.6s (resting in steady float after question-card-enter 0.52s completes)
+ * - choices: 2.0s (all 4 staggered choices have fully landed and settled before thinkingStart at 2.47s)
+ * - thinking: 3.5s (active countdown running)
+ * - reveal: 8.1s (after correct-card-reveal 0.62s completes; green border #22C55E is settled, before explainStart at 8.27s)
+ * - explain: 8.8s (fact card settled with opacity 1, reward celebration active)
+ */
+export const SETTLED_SANDBOX_PHASE_TIMESTAMPS: Record<SandboxPhase, number> = {
+  question: 0.6,
+  choices: 2.0,
+  thinking: 3.5,
+  reveal: 8.1,
+  explain: 8.8,
+} as const;
+
+/**
+ * Visual reveal animation duration in seconds (correct-card-reveal duration: 0.62s).
+ */
+export const REVEAL_ANIMATION_DURATION_SECONDS = 0.62;
+
+/**
+ * Canonical start timestamps for rehearsal playback and animation triggers in the Sandbox preview.
+ */
+export const REHEARSAL_PHASE_START_TIMESTAMPS: Record<SandboxPhase, number> = {
+  question: 0,
+  choices: 0.85,
+  thinking: 2.47,
+  reveal: 7.47,
+  explain: 8.27,
+} as const;
+
+/**
  * Returns canonical preview timestamps for quick-jump buttons in the Sandbox inspector.
+ * Calibrated to settled keyframe values where UI animations are fully in steady state.
  */
 export function getSandboxPhaseTimestamps(
-  policy: QuizTimingPolicy = timingPolicyForAgeBand("7-9"),
+  _policy: QuizTimingPolicy = timingPolicyForAgeBand("7-9"),
 ): Array<{ id: SandboxPhase; time: number }> {
-  const timeline = computeSandboxPhaseTimeline(policy);
   return [
-    { id: "question", time: Number((timeline.questionStart + 0.3).toFixed(1)) },
-    { id: "choices", time: Number((timeline.choicesStart + 0.3).toFixed(1)) },
-    { id: "thinking", time: Number((timeline.thinkingStart + 1.0).toFixed(1)) },
-    { id: "reveal", time: Number((timeline.revealStart + 0.2).toFixed(1)) },
-    { id: "explain", time: Number((timeline.explainStart + 0.2).toFixed(1)) },
+    { id: "question", time: SETTLED_SANDBOX_PHASE_TIMESTAMPS.question },
+    { id: "choices", time: SETTLED_SANDBOX_PHASE_TIMESTAMPS.choices },
+    { id: "thinking", time: SETTLED_SANDBOX_PHASE_TIMESTAMPS.thinking },
+    { id: "reveal", time: SETTLED_SANDBOX_PHASE_TIMESTAMPS.reveal },
+    { id: "explain", time: SETTLED_SANDBOX_PHASE_TIMESTAMPS.explain },
   ];
 }

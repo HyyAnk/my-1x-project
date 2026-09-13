@@ -10,7 +10,7 @@ import { quizVoiceTargetWordsPerSecond } from "../../audio/voicePolicy.js";
 import { assertDirectorPlanValid } from "../../director/validateDirectorPlan.js";
 import { compileQuizTimeline } from "../../timeline/compileTimeline.js";
 import { invalidateQuizArtifacts } from "../invalidation.js";
-import { generateEpisodeThumbnail } from "../../thumbnail/index.js";
+import { ensureEpisodeThumbnail } from "../../thumbnail/ensureEpisodeThumbnail.js";
 import { StudioLogger } from "../../../logger.js";
 import type { QuizOrchestratorInput } from "../orchestrator.js";
 
@@ -86,7 +86,7 @@ export async function resolveAssets(
 
   // Auto-generate Thumbnail immediately upon completing Visual Assets resolution
   try {
-    await generateEpisodeThumbnail(input.repository, {
+    await ensureEpisodeThumbnail(input.repository, {
       channelId: input.channelId,
       episodeId: input.episodeId,
       activeEngine: input.activeEngine,

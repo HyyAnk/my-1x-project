@@ -11,4 +11,5 @@ export {
   computeSandboxPhaseTimeline,
   getSandboxPhaseAtTime,
   getSandboxPhaseTimestamps,
+  SETTLED_SANDBOX_PHASE_TIMESTAMPS,
 } from "@studio/shared";

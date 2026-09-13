@@ -215,9 +215,9 @@ describe("ChannelTopicsTab", () => {
     );
 
     const buttons = getAllByRole("button", { name: /Select Topic/i });
-    // Both buttons should be disabled because confirmingTopicId is active
+    // Both cards should be disabled because confirmingTopicId is active
     for (const btn of buttons) {
-      expect((btn as HTMLButtonElement).disabled).toBe(true);
+      expect(btn.getAttribute("aria-disabled")).toBe("true");
     }
   });
 

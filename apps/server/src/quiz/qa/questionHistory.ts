@@ -3,13 +3,24 @@ import {
   type QuestionHistoryCheckItem,
   type QuestionHistoryCheckResult,
   type QuizQuestion,
+  type QuestionContentType,
+  inferQuestionHistoryContentType,
   nowIso,
 } from "@studio/shared";
 
 /**
- * Chuẩn hóa chuỗi văn bản câu hỏi: loại bỏ dấu câu, chuyển chữ thường, xóa khoảng trắng thừa.
+ * Normalizes question text: NFKC normalization, lowercase, punctuation removal, whitespace trimming.
+ * Uses an ASCII fast-path for maximum throughput while maintaining full unicode correctness.
  */
 export function normalizeQuestionText(text: string): string {
+  // eslint-disable-next-line no-control-regex
+  if (!/[^\x00-\x7F]/.test(text)) {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
   return text
     .normalize("NFKC")
     .toLowerCase()
@@ -19,7 +30,8 @@ export function normalizeQuestionText(text: string): string {
 }
 
 /**
- * Tính toán độ tương đồng giữa 2 chuỗi văn bản câu hỏi dựa trên Jaccard Token và Bigram Dice Coefficient.
+ * Calculates similarity between two question text strings based on Token Jaccard and Bigram Dice Coefficient.
+ * Includes an early-exit length heuristic to avoid expensive n-gram computations when strings differ too much in length.
  */
 export function calculateQuestionSimilarity(textA: string, textB: string): number {
   const normA = normalizeQuestionText(textA);
@@ -27,6 +39,15 @@ export function calculateQuestionSimilarity(textA: string, textB: string): numbe
 
   if (!normA || !normB) return 0;
   if (normA === normB) return 1;
+
+  // Early-exit length heuristic: if the length discrepancy between normalized strings is too large,
+  // they can never mathematically meet the similarity threshold (>= 0.75 for Dice/Jaccard overlap).
+  const lenA = normA.length;
+  const lenB = normB.length;
+  const maxLen = Math.max(lenA, lenB);
+  if (maxLen > 0 && Math.abs(lenA - lenB) / maxLen > 0.4) {
+    return 0;
+  }
 
   // 1. Token Jaccard Similarity
   const tokensA = new Set(normA.split(" ").filter((w) => w.length > 1));
@@ -36,7 +57,7 @@ export function calculateQuestionSimilarity(textA: string, textB: string): numbe
   for (const token of tokensA) {
     if (tokensB.has(token)) intersectionCount++;
   }
-  const unionCount = new Set([...tokensA, ...tokensB]).size;
+  const unionCount = tokensA.size + tokensB.size - intersectionCount;
   const jaccard = unionCount > 0 ? intersectionCount / unionCount : 0;
 
   // 2. Character Bigram Dice Coefficient
@@ -61,7 +82,7 @@ export function calculateQuestionSimilarity(textA: string, textB: string): numbe
 }
 
 /**
- * Kiểm tra xem câu hỏi hiện tại có bị trùng với một câu hỏi trong lịch sử hay không.
+ * Evaluates whether a current question matches a question in history.
  */
 export function evaluateQuestionMatch(
   currentText: string,
@@ -114,7 +135,7 @@ export function evaluateQuestionMatch(
 }
 
 /**
- * Loại bỏ các câu hỏi quá hạn (TTL) khỏi danh sách lịch sử.
+ * Prunes expired question history entries based on TTL.
  */
 export function pruneQuestionHistory(entries: QuestionHistoryEntry[], ttlDays = 30, nowMs = Date.now()): QuestionHistoryEntry[] {
   const cutOff = nowMs - ttlDays * 24 * 60 * 60 * 1000;
@@ -125,15 +146,18 @@ export function pruneQuestionHistory(entries: QuestionHistoryEntry[], ttlDays = 
 }
 
 /**
- * Thực hiện đối chiếu toàn bộ danh sách câu hỏi của một Episode với lịch sử.
+ * Cross-checks all questions for an episode against history.
  */
 export function checkQuestionsAgainstHistory(
   episodeId: string,
   questions: QuizQuestion[],
   historyEntries: QuestionHistoryEntry[],
   passThreshold = 2,
+  targetContentType: QuestionContentType = "episode",
 ): QuestionHistoryCheckResult {
-  const validHistory = historyEntries.filter((entry) => entry.episode_id !== episodeId);
+  const validHistory = historyEntries.filter(
+    (entry) => entry.episode_id !== episodeId && inferQuestionHistoryContentType(entry) === targetContentType,
+  );
 
   const items: QuestionHistoryCheckItem[] = questions.map((question) => {
     const currentCorrectChoice = question.choices.find((c) => c.id === question.correct_choice_id)?.text || "";

@@ -30,6 +30,10 @@ export function renderProductionMascotHtmlLayer(
   const bundle = adaptMascotV1ToV2(effectiveMascot, config);
   if (!bundle) return "";
 
+  if (effectiveMascot && hasDedicatedAction(effectiveMascot, "idle")) {
+    bundle.config.visibility.phase_rules.question.action = "idle";
+  }
+
   const clipStart = finiteNonNegative(options.clipStartSeconds);
   const clipDuration = Math.max(0.04, finiteNonNegative(options.clipDurationSeconds));
   const markers = resolveProductionMascotMarkers(options, clipStart, clipDuration);

@@ -36,7 +36,7 @@ export function CreateShortReelModal({ channel, onClose, onCreated }: CreateShor
     let active = true;
     setLoading(true);
     api
-      .getChannelQuestionBankQuestions(channel.channel_id, { status: "approved" })
+      .getChannelQuestionBankQuestions(channel.channel_id, { status: "approved", scope: "short_reel" })
       .then((res) => {
         if (active) setQuestions(res.questions || []);
       })

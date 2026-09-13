@@ -113,6 +113,8 @@ export interface TaskManagerRuntime {
     sceneNumber?: number,
     requestedImageVariant?: number,
     topicHint?: string,
+    reelId?: string | null,
+    parentTaskId?: string,
   ): Task;
   update(taskId: string, patch: Partial<Task>): Promise<void>;
   waitForTaskTerminal(

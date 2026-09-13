@@ -1,5 +1,6 @@
 export * from "./shortReel.schema.js";
-export * from "./shortReel.types.js";
+export * from "./schemas/index.js";
+export type { ReelKey, MutationContext, GenerationTarget } from "./shortReel.types.js";
 export * from "./shortReel.api.js";
 export * from "./shortReelPublishing.schema.js";
 export * from "./shortReelVisual.schema.js";

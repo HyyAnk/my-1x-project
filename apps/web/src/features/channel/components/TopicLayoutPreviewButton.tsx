@@ -28,6 +28,7 @@ export function TopicLayoutPreviewButton({ quizFormat, archetype, layoutId, aspe
         aria-label={`Layout: ${layoutInfo.name}`}
         onClick={(e) => {
           e.preventDefault();
+          e.stopPropagation();
           setShowPreview((prev) => !prev);
         }}
       >

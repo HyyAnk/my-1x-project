@@ -76,6 +76,10 @@ describe("CreateShortReelModal Component", () => {
     expect(screen.getByTestId("short-reel-loading")).toBeTruthy();
 
     await waitFor(() => {
+      expect(api.getChannelQuestionBankQuestions).toHaveBeenCalledWith(channel.channel_id, {
+        status: "approved",
+        scope: "short_reel",
+      });
       expect(screen.getByText("Which moves faster: Light or Sound?")).toBeTruthy();
       expect(screen.getByText("What ancient wonder was located in Alexandria?")).toBeTruthy();
     });

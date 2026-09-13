@@ -2,6 +2,8 @@ import { CheckCircle, Eye, Play } from "@phosphor-icons/react";
 import { useTranslation } from "../../../../i18n";
 import type { ContrastReport } from "../../hooks/useSandboxPreviewRenderer";
 
+import type { SandboxAspectRatio } from "../../hooks/useSandboxViewportState";
+
 export type SandboxMonitorHeaderProps = {
   contrastReport: ContrastReport | null;
   lastRenderTime: string;
@@ -9,7 +11,7 @@ export type SandboxMonitorHeaderProps = {
   setShowSafeArea: (updater: (prev: boolean) => boolean) => void;
   showShortsGuide: boolean;
   setShowShortsGuide: (updater: (prev: boolean) => boolean) => void;
-  aspectRatio: "16:9";
+  aspectRatio: SandboxAspectRatio;
   setIframeKey: (updater: (prev: number) => number) => void;
   zoom: "fit" | "50" | "75" | "100";
   setZoom: (zoom: "fit" | "50" | "75" | "100") => void;
@@ -20,9 +22,9 @@ export function SandboxMonitorHeader({
   lastRenderTime,
   showSafeArea,
   setShowSafeArea,
-  showShortsGuide: _showShortsGuide,
-  setShowShortsGuide: _setShowShortsGuide,
-  aspectRatio: _aspectRatio,
+  showShortsGuide,
+  setShowShortsGuide,
+  aspectRatio,
   setIframeKey,
   zoom,
   setZoom,
@@ -70,7 +72,7 @@ export function SandboxMonitorHeader({
               boxShadow: "0 0 6px #22c55e",
             }}
           />
-          1920 × 1080
+          {aspectRatio === "9:16" ? "1080 × 1920" : "1920 × 1080"}
         </span>
 
         <div

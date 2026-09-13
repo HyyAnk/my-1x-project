@@ -25,6 +25,7 @@ import { sceneBindings } from "./bindings/sceneBindings.js";
 import { mediaBindings } from "./bindings/mediaBindings.js";
 import { miscBindings } from "./bindings/miscBindings.js";
 import { questionBankBindings } from "./bindings/questionBankBindings.js";
+import { closeBankSqliteDb } from "./quiz/bank/bankSqliteEngine.js";
 import { shortReelBindings } from "./bindings/shortReelBindings.js";
 export { deleteShortReel } from "./shortReels.js";
 import { acquireWriterAdmission, releaseWriterAdmission, isWriterAdmissionHeld } from "./shortReelStorage.js";
@@ -100,6 +101,8 @@ export class RepositoryService {
   async close(): Promise<void> {
     this.writerState = "closed";
     await this.releaseWriterAdmission();
+    const runtimeBankRoot = path.join(this.roots.runtime, "question_bank");
+    closeBankSqliteDb(runtimeBankRoot);
   }
 
   resolveContextPath(relativePath: string): string {

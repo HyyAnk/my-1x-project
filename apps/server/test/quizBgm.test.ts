@@ -7,6 +7,7 @@ import { BgmRegistry, defaultBgmRegistry } from "../src/quiz/audio/bgmRegistry.j
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { buildCandyArcadeCompositionBundle } from "../src/quiz/render/candyArcadeComposition.js";
+import { buildBgmClips } from "../src/quiz/render/candyArcade/candyArcadeAudio.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
 import { RepositoryService } from "../src/repository.js";
 
@@ -85,7 +86,7 @@ describe("BGM Registry and Audio Pipeline", () => {
     expect(schedule.length).toBe(1);
     expect(schedule[0]?.startSeconds).toBe(0);
     expect(schedule[0]?.durationSeconds).toBe(175);
-    expect(schedule[0]?.volume).toBe(0.09);
+    expect(schedule[0]?.volume).toBe(0.04);
     expect(schedule[0]?.bpm).toBeGreaterThan(110);
   });
 
@@ -113,10 +114,16 @@ describe("BGM Registry and Audio Pipeline", () => {
       narrationDurationSeconds: timeline.duration_seconds,
     });
 
+    const firstStart = timeline.events.find((event) => event.question_id === quiz.questions[0].id && event.type === "question.enter")?.at_seconds ?? 0;
+    const outroStart = timeline.events.find((event) => event.segment_id === "outro")?.at_seconds ?? timeline.duration_seconds;
+    const expectedBgmDuration = outroStart - firstStart;
+
     // Check BGM tag
     expect(bundle.html).toContain('class="clip bgm-clip"');
+    expect(bundle.html).toContain(`data-start="${firstStart.toFixed(3)}"`);
+    expect(bundle.html).toContain(`data-duration="${expectedBgmDuration.toFixed(3)}"`);
     expect(bundle.html).toContain('data-track-index="4"');
-    expect(bundle.html).toContain('data-volume="0.09"');
+    expect(bundle.html).toContain('data-volume="0.040"');
     expect(bundle.html).toContain('data-automation="');
     expect(bundle.html).toContain('src="./bgm/');
     expect(bundle.html).not.toContain('src="file:///');
@@ -139,13 +146,19 @@ describe("BGM Registry and Audio Pipeline", () => {
 
     const points = automation.lanes[0].points;
     expect(points.length).toBeGreaterThanOrEqual(3);
-    // Starts at 0 (fade-in)
+    // Starts at 0 (fade-in at Question 1 enter)
     expect(points[0]).toEqual({ t: 0, v: 0 });
-    // Ramps to base volume 0.09
-    expect(points[1]).toEqual({ t: 0.5, v: 0.09 });
-    // Ends at 0 (fade-out at total duration)
+    // Ramps to base volume 0.04
+    expect(points[1]).toEqual({ t: 0.5, v: 0.04 });
+    // Ends at 0 (fade-out ending at Outro start)
     expect(points[points.length - 1].v).toBe(0);
-    expect(points[points.length - 1].t).toBeCloseTo(timeline.duration_seconds, 1);
+    expect(points[points.length - 1].t).toBeCloseTo(expectedBgmDuration, 1);
+
+    // Verify fade-out envelope duration is between 1.2s and 2.0s
+    const fadeOutStartPoint = points[points.length - 2];
+    const fadeOutDur = points[points.length - 1].t - fadeOutStartPoint.t;
+    expect(fadeOutDur).toBeGreaterThanOrEqual(1.2);
+    expect(fadeOutDur).toBeLessThanOrEqual(2.0);
 
     // Check narration and SFX tracks coexist cleanly
     expect(bundle.html).toContain('id="quiz-narration"');
@@ -269,5 +282,93 @@ describe("BGM Registry and Audio Pipeline", () => {
     } finally {
       await rm(root, { recursive: true, force: true });
     }
+  });
+
+  it("resolves BGM schedule with startSeconds and outroStartSeconds leaving intro and outro empty", () => {
+    const registry = defaultBgmRegistry;
+    const startSeconds = 6.5;
+    const outroStartSeconds = 54.0;
+    const schedule = registry.resolveBgmSchedule(60, {
+      startSeconds,
+      outroStartSeconds,
+      bpmPreference: "120_bpm_upbeat",
+    });
+
+    expect(schedule.length).toBeGreaterThanOrEqual(1);
+    expect(schedule[0]?.startSeconds).toBeCloseTo(startSeconds, 2);
+    const totalDuration = schedule.reduce((sum, item) => sum + item.durationSeconds, 0);
+    expect(totalDuration).toBeCloseTo(outroStartSeconds - startSeconds, 1);
+  });
+
+  it("builds preview BGM clips returning zero clips when outroStart <= startSeconds", () => {
+    const clips = buildBgmClips(60, undefined, 5.0, undefined, 5.0);
+    expect(clips).toEqual([]);
+
+    const clipsInverted = buildBgmClips(60, undefined, 4.0, undefined, 6.0);
+    expect(clipsInverted).toEqual([]);
+  });
+
+  it("builds preview BGM clips matching master soundtrack timing and fade envelope", () => {
+    const duration = 60;
+    const startSeconds = 4.2;
+    const outroStart = 55.4;
+    const clips = buildBgmClips(duration, undefined, outroStart, { seed: "stage3-preview-test" }, startSeconds);
+
+    expect(clips.length).toBeGreaterThanOrEqual(1);
+
+    const firstTag = clips[0];
+    expect(firstTag).toContain(`data-start="${startSeconds.toFixed(3)}"`);
+    expect(firstTag).toContain('data-volume="0.040"');
+    expect(firstTag).toContain('data-track-index="4"');
+
+    const lastTag = clips[clips.length - 1];
+    const match = lastTag.match(/data-automation="([^"]+)"/);
+    expect(match).toBeTruthy();
+    const automation = JSON.parse(match![1].replaceAll("&quot;", '"')) as {
+      lanes: Array<{ points: Array<{ t: number; v: number }> }>;
+    };
+
+    const points = automation.lanes[0].points;
+    expect(points[0]).toEqual({ t: 0, v: 0 });
+    expect(points[1]).toEqual({ t: 0.5, v: 0.04 });
+
+    const finalPoint = points[points.length - 1];
+    const prevPoint = points[points.length - 2];
+    expect(finalPoint.v).toBe(0);
+
+    // Fade-out duration must be calibrated between 1.2s and 2.0s
+    const fadeOutDuration = finalPoint.t - prevPoint.t;
+    expect(fadeOutDuration).toBeGreaterThanOrEqual(1.2);
+    expect(fadeOutDuration).toBeLessThanOrEqual(2.0);
+
+    // Total duration of BGM playback must precisely match outroStart - startSeconds
+    const durMatch = firstTag.match(/data-duration="([^"]+)"/);
+    expect(durMatch).toBeTruthy();
+    const clipDuration = Number.parseFloat(durMatch![1]);
+    expect(clipDuration).toBeCloseTo(outroStart - startSeconds, 3);
+  });
+
+  it("respects explicit startSeconds and outroStartSeconds overrides in bgmOptions for composition bundle", () => {
+    const director = createDefaultDirectorPlan(quiz);
+    const timeline = compileQuizTimeline({ quiz, director, voicePlan: buildQuizVoicePlan(quiz) });
+    const explicitStart = 8.0;
+    const explicitOutro = 45.0;
+
+    const bundle = buildCandyArcadeCompositionBundle({
+      quiz,
+      director,
+      timeline,
+      styleContext: { theme: "candy_arcade" },
+      audioPath: "./narration.wav",
+      narrationDurationSeconds: timeline.duration_seconds,
+      bgmOptions: {
+        startSeconds: explicitStart,
+        outroStartSeconds: explicitOutro,
+      },
+    });
+
+    expect(bundle.html).toContain(`data-start="${explicitStart.toFixed(3)}"`);
+    expect(bundle.html).toContain(`data-duration="${(explicitOutro - explicitStart).toFixed(3)}"`);
+    expect(bundle.html).toContain('data-volume="0.040"');
   });
 });

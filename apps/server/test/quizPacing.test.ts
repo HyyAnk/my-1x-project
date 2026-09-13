@@ -268,9 +268,21 @@ describe("Quiz V2 pacing", () => {
     expect(getSandboxPhaseAtTime(timeline.revealStart + 0.1)).toBe("reveal");
     expect(getSandboxPhaseAtTime(timeline.explainStart + 0.1)).toBe("explain");
 
+    // Settled keyframe timestamps
+    expect(getSandboxPhaseAtTime(0.6)).toBe("question");
+    expect(getSandboxPhaseAtTime(2.0)).toBe("choices");
+    expect(getSandboxPhaseAtTime(3.5)).toBe("thinking");
+    expect(getSandboxPhaseAtTime(8.1)).toBe("reveal");
+    expect(getSandboxPhaseAtTime(8.8)).toBe("explain");
+
     const buttons = getSandboxPhaseTimestamps();
     expect(buttons).toHaveLength(5);
     expect(buttons.map((b) => b.id)).toEqual(["question", "choices", "thinking", "reveal", "explain"]);
+    expect(buttons.find((b) => b.id === "question")?.time).toBe(0.6);
+    expect(buttons.find((b) => b.id === "choices")?.time).toBe(2.0);
+    expect(buttons.find((b) => b.id === "thinking")?.time).toBe(3.5);
+    expect(buttons.find((b) => b.id === "reveal")?.time).toBe(8.1);
+    expect(buttons.find((b) => b.id === "explain")?.time).toBe(8.8);
   });
 
   it("exports standardized workspace constants without magic numbers", () => {

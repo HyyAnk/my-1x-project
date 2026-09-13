@@ -3,6 +3,7 @@ import { rebalanceEditorialOverlays } from "../../sceneTiming.js";
 import { waitForTaskTerminal } from "./pipelineHelpers.js";
 import { runQuizV2Pipeline } from "./quizV2PipelineRunner.js";
 import type { PipelineRun, TaskManagerRuntime } from "../runtime.js";
+import { synthesizeScenesFromQuiz } from "../../quiz/domain/quizArtifactSynthesizer.js";
 
 type PipelineStepFn = (label: string, percent: number, childType: TaskType, shouldRun: () => Promise<boolean>) => Promise<boolean>;
 
@@ -22,7 +23,10 @@ async function runQuizNativePipeline(runtime: TaskManagerRuntime, task: Task, ep
     });
   }
 
-  const scenes = await runtime.repository.readScenes(task.channel_id, episodeId);
+  let scenes = await runtime.repository.readScenes(task.channel_id, episodeId);
+  if (scenes.length === 0 && existingQuiz && existingQuiz.questions.length > 0) {
+    scenes = synthesizeScenesFromQuiz(existingQuiz);
+  }
   if (scenes.length > 0) {
     const balancedScenes = rebalanceEditorialOverlays(scenes);
     await runtime.repository.saveScenes(task.channel_id, episodeId, balancedScenes);
@@ -32,7 +36,7 @@ async function runQuizNativePipeline(runtime: TaskManagerRuntime, task: Task, ep
 async function runVideoRenderStep(runtime: TaskManagerRuntime, task: Task, episodeId: string, run: PipelineRun): Promise<void> {
   await runtime.update(task.task_id, { progress_message: "Video · linting Quiz composition", progress_percent: 60 });
   const renderStartMs = Date.now();
-  const videoChild = runtime.submit("GENERATE_VIDEO", task.channel_id, episodeId);
+  const videoChild = runtime.submit("GENERATE_VIDEO", task.channel_id, episodeId, undefined, undefined, undefined, undefined, task.task_id);
   run.children.add(videoChild.task_id);
   try {
     const completed = await waitForTaskTerminal.call(runtime, videoChild.task_id, run, async (childTask) => {
@@ -91,7 +95,7 @@ export async function runPipelineTask(this: TaskManagerRuntime, task: Task): Pro
     if (run.cancelled) throw new Error("Pipeline cancelled");
     await this.update(task.task_id, { progress_message: label, progress_percent: percent });
     if (!(await shouldRun())) return false;
-    const child = this.submit(childType, task.channel_id, episodeId);
+    const child = this.submit(childType, task.channel_id, episodeId, undefined, undefined, undefined, undefined, task.task_id);
     run.children.add(child.task_id);
     try {
       const completed = await waitForTaskTerminal.call(this, child.task_id, run);

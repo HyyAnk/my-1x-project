@@ -13,6 +13,11 @@ export type PrepareSoundtrackInput = {
   bgmHistory: BgmHistoryEntry[];
   assetSources: Record<string, string>;
   onProgressMessage?: (message: string) => Promise<void>;
+  introOutro?: {
+    introVideoPath?: string;
+    outroVideoPath?: string;
+    audioMode?: "use_video_audio" | "overlay_bgm";
+  };
 };
 
 export async function prepareSoundtrack({
@@ -23,9 +28,25 @@ export async function prepareSoundtrack({
   bgmHistory,
   assetSources,
   onProgressMessage,
+  introOutro,
 }: PrepareSoundtrackInput): Promise<{ selectedBgmTrackId: string | null; selectedBgmFilename: string | null }> {
   let selectedBgmTrackId: string | null = null;
   let selectedBgmFilename: string | null = null;
+
+  const firstQuestionStart = timeline.events.find((event) => event.type === "question.enter")?.at_seconds;
+  const outroStart = timeline.events.find(
+    (event) => event.segment_id === "outro" || (event.type === "narration.segment" && event.segment_id === "outro"),
+  )?.at_seconds;
+
+  const bgmStartSeconds =
+    introOutro?.introVideoPath && typeof firstQuestionStart === "number"
+      ? Math.max(0, firstQuestionStart)
+      : firstQuestionStart;
+
+  const bgmOutroStartSeconds =
+    introOutro?.outroVideoPath && typeof outroStart === "number"
+      ? outroStart
+      : outroStart;
 
   const renderSoundtrackPath = path.join(renderRoot, "soundtrack.wav");
   const soundtrackCheckpointPath = path.join(renderRoot, "soundtrack-checkpoint.json");
@@ -35,6 +56,10 @@ export async function prepareSoundtrack({
     timeline.events,
     undefined,
     bgmHistory.map((entry) => entry.track_id),
+    {
+      startSeconds: bgmStartSeconds,
+      outroStartSeconds: bgmOutroStartSeconds,
+    },
   );
   const existingSoundtrackCheckpoint = await readSoundtrackCheckpoint(soundtrackCheckpointPath);
   const hasValidCachedSoundtrack =
@@ -55,7 +80,10 @@ export async function prepareSoundtrack({
       bgmOptions: {
         recentTrackIds: bgmHistory.map((entry) => entry.track_id),
         seed: episode.episode_id,
+        startSeconds: bgmStartSeconds,
+        outroStartSeconds: bgmOutroStartSeconds,
       },
+      outroStartSeconds: bgmOutroStartSeconds,
       assets: assetSources,
     });
     if (mixResult.plan.bgmItems.length > 0) {

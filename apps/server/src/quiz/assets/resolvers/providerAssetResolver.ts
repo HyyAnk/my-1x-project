@@ -1,360 +1,55 @@
 import { readFile } from "node:fs/promises";
-import type { QuizAssetPlan, QuizAssetResolution } from "@studio/shared";
-import { IMGSTUDIO_DEFAULT_MODEL_ID } from "@studio/shared";
-import { RepositoryError, type RepositoryService } from "../../../repository.js";
-import { StudioLogger } from "../../../logger.js";
+import { RepositoryError } from "../../../repository.js";
 import { Gpti2QuizImageProvider } from "../../../providers/gpti2Image.js";
 import { ShopAiKeyQuizImageProvider } from "../../../providers/shopAiKeyImage.js";
-import { GoogleImagenProvider } from "../../../providers/googleImagen.js";
-import { AntigravityImageChainProvider } from "../../../providers/antigravityImageChain.js";
 import { ImgStudioQuizImageProvider } from "../../../providers/imgstudio/index.js";
+import { getRecommendationForAssetRequirement, validateQuizImageBytes } from "../imageMetadataValidator.js";
+import type { ProviderAssetInput, ProviderAssetOutput } from "./types/providerAsset.types.js";
 import {
-  getRecommendationForAssetRequirement,
-  validateQuizImageBytes,
-} from "../imageMetadataValidator.js";
+  generateGpti2Asset,
+  generateShopAiKeyAsset,
+  generateGoogleImagenAsset,
+  generateImgStudioAsset,
+  generateAntigravityAsset,
+} from "./strategies/index.js";
 
-import { isContentFilterError } from "../../../utils/promptSanitizer.js";
-import type { AntigravityClient } from "../../../antigravity.js";
+// Re-export types and strategies for 100% backward compatibility
+export type {
+  ProviderAssetInput,
+  ProviderAssetOutput,
+  ProviderAssetImageConfig,
+  ProviderAssetImageFallbackConfig,
+  AssetGenerationStrategy,
+} from "./types/providerAsset.types.js";
+export * from "./strategies/index.js";
 
-type ProviderAssetInput = {
-  repository: RepositoryService;
-  channelId: string;
-  episodeId: string;
-  request: QuizAssetPlan["assets"][number];
-  fingerprint: string;
-  compiledPrompt: string;
-  configuredProvider: string;
-  activeEngine: "codex" | "antigravity";
-  antigravityClient?: AntigravityClient;
-  imageConfig?: {
-    api_key?: string;
-    model?: string;
-    provider?: "gpti2" | "shopaikey" | "custom" | "google" | "imgstudio";
-
-    base_url?: string;
-    quality?: string;
-  };
-  imageFallbackConfig?: {
-    enabled?: boolean;
-    provider?: "imgstudio";
-    base_url?: string;
-    api_key?: string;
-    model?: string;
-    resolution?: "1K" | "2K" | "4K";
-    quality?: "standard" | "high";
-  };
-  logger: StudioLogger;
-};
-
-export type ProviderAssetOutput = {
-  entry: QuizAssetResolution["assets"][number];
-  tier3Fallback: boolean;
-};
-
-async function generateGpti2Asset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
-  const { repository, channelId, episodeId, request, fingerprint, compiledPrompt, imageConfig, logger } = input;
-  const provider = new Gpti2QuizImageProvider(
-    repository,
-    { channelId, episodeId },
-    { apiKey: imageConfig?.api_key, model: imageConfig?.model },
-  );
-  let generated: { path: string } | null = null;
-  const maxAttempts = 3;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      generated = await provider.generateAsset({
-        assetId: request.asset_id,
-        fingerprint,
-        prompt: compiledPrompt,
-        aspect_ratio: request.aspect_ratio,
-      });
-      break;
-    } catch (err) {
-      if (
-        isContentFilterError(err) ||
-        (err instanceof RepositoryError && err.code === "image_request_size_conflict")
-      ) {
-        throw err;
-      }
-      if (attempt < maxAttempts) {
-        logger.warn(`Quiz asset ${request.asset_id} generation attempt ${attempt} failed (${err instanceof Error ? err.message : String(err)}). Retrying in ${attempt * 500}ms...`, { profileId: channelId, workerId: episodeId });
-        await new Promise((resolve) => setTimeout(resolve, attempt * 500));
-        continue;
-      }
-      throw err;
-    }
-  }
-  if (!generated) throw new Error(`Failed to generate asset ${request.asset_id}`);
-  const gpti2PriceVnd = (generated as { price_vnd?: number }).price_vnd ?? 50;
-  const gpti2PriceUsd = Number((gpti2PriceVnd / 25500).toFixed(4));
-  await repository
-    .recordImageUsage({
-      channelId,
-      episodeId,
-      provider: "gpti2",
-      model: imageConfig?.model || (generated as { model?: string }).model || "gpt-image-2",
-      count: 1,
-      costVnd: gpti2PriceVnd,
-      costUsd: gpti2PriceUsd,
-      note: `Quiz asset ${request.asset_id} (${request.purpose})`,
-    })
-    .catch(() => undefined);
-
-  return {
-    entry: { ...request, fingerprint, path: generated.path, source: "provider" },
-    tier3Fallback: false,
-  };
-}
-
-async function generateShopAiKeyAsset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
-  const { repository, channelId, episodeId, request, fingerprint, compiledPrompt, configuredProvider, imageConfig, logger } = input;
-  const provider = new ShopAiKeyQuizImageProvider(
-    repository,
-    { channelId, episodeId },
-    {
-      apiKey: imageConfig?.api_key || process.env.SHOPAIKEY_API_KEY,
-      baseUrl: imageConfig?.base_url || (configuredProvider === "shopaikey" ? "https://direct.shopaikey.com/v1" : "https://api.openai.com/v1"),
-      model: imageConfig?.model || "gpt-image-2",
-      quality: imageConfig?.quality,
-    },
-  );
-  let generated: Awaited<ReturnType<typeof provider.generateAsset>> | null = null;
-  const maxAttempts = 3;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      generated = await provider.generateAsset({
-        assetId: request.asset_id,
-        fingerprint,
-        prompt: compiledPrompt,
-        aspect_ratio: request.aspect_ratio,
-      });
-      break;
-    } catch (err) {
-      if (
-        isContentFilterError(err) ||
-        (err instanceof RepositoryError && err.code === "image_request_size_conflict")
-      ) {
-        throw err;
-      }
-      if (attempt < maxAttempts) {
-        logger.warn(`Quiz asset ${request.asset_id} ${configuredProvider} generation attempt ${attempt} failed (${err instanceof Error ? err.message : String(err)}). Retrying in ${attempt * 500}ms...`, { profileId: channelId, workerId: episodeId });
-        await new Promise((resolve) => setTimeout(resolve, attempt * 500));
-        continue;
-      }
-      throw err;
-    }
-  }
-  if (!generated) throw new Error(`Failed to generate ${configuredProvider} asset ${request.asset_id}`);
-  await repository
-    .recordImageUsage({
-      channelId,
-      episodeId,
-      provider: configuredProvider || "shopaikey",
-      model: imageConfig?.model || "gpt-image-2",
-      count: 1,
-      costVnd: 500,
-      costUsd: 0.02,
-      note: `Quiz asset ${request.asset_id} (${request.purpose})`,
-    })
-    .catch(() => undefined);
-
-  return {
-    entry: { ...request, fingerprint, path: generated.path, source: "provider" },
-    tier3Fallback: false,
-  };
-}
-
-async function generateAntigravityAsset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
-  const { repository, channelId, episodeId, request, fingerprint, compiledPrompt, antigravityClient, logger, imageConfig } = input;
-  const episode = await repository.getEpisode(channelId, episodeId);
-  const chainProvider = new AntigravityImageChainProvider(repository, {
-    channelId,
-    episodeId,
-    assetId: request.asset_id,
-    fingerprint,
-    theme: episode.quiz_config.visual_theme,
-    aspectRatio: request.aspect_ratio,
-  }, antigravityClient, { allowTier3Fallback: false });
-  let result: Awaited<ReturnType<typeof chainProvider.generateReference>> | null = null;
-  const maxAttempts = 3;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      result = await chainProvider.generateReference(compiledPrompt);
-      break;
-    } catch (err) {
-      if (isContentFilterError(err)) {
-        throw err;
-      }
-      const errMsg = err instanceof Error ? err.message : String(err);
-      const isClientUnsupported = /startThread is not a function|ANTIGRAVITY_CLIENT_UNSUPPORTED/i.test(errMsg);
-      if (isClientUnsupported) {
-        logger.warn(`Antigravity client unsupported for ${request.asset_id}: ${errMsg}. Skipping further Antigravity attempts.`, { profileId: channelId, workerId: episodeId });
-        break;
-      }
-      if (attempt < maxAttempts) {
-        logger.warn(`Quiz asset ${request.asset_id} Antigravity generation attempt ${attempt} failed (${errMsg}). Retrying in ${attempt * 500}ms...`, { profileId: channelId, workerId: episodeId });
-        await new Promise((resolve) => setTimeout(resolve, attempt * 500));
-        continue;
-      }
-      throw err;
-    }
-  }
-  if (!result) {
-    if (ShopAiKeyQuizImageProvider.isConfigured(imageConfig?.api_key)) {
-      logger.info(`Antigravity generation unavailable for ${request.asset_id}, falling back to ShopAiKey...`, { profileId: channelId, workerId: episodeId });
-      return generateShopAiKeyAsset(input);
-    }
-    if (imageConfig?.api_key || process.env.GEMINI_API_KEY) {
-      logger.info(`Antigravity generation unavailable for ${request.asset_id}, falling back to Google Imagen...`, { profileId: channelId, workerId: episodeId });
-      return generateGoogleAsset(input);
-    }
-    throw new Error(`Failed to generate Antigravity asset ${request.asset_id}`);
-  }
-  const isTier3 = Boolean(result.degraded || result.fallback_tier === 3);
-  if (!isTier3) {
-    await repository
-      .recordImageUsage({
-        channelId,
-        episodeId,
-        provider: "antigravity",
-        model: "antigravity-native-chain",
-        count: 1,
-        costVnd: 0,
-        costUsd: 0,
-        note: `Quiz asset ${request.asset_id} (${request.purpose})`,
-      })
-      .catch(() => undefined);
-  }
-
-  return {
-    entry: {
-      ...request,
-      fingerprint,
-      path: result.asset_path,
-      source: result.fallback_tier === 3 ? "fallback" : "provider",
-      fallback_tier: result.fallback_tier,
-      degraded: result.degraded,
-    },
-    tier3Fallback: isTier3,
-  };
-}
-
-async function generateGoogleAsset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
-  const { repository, channelId, episodeId, request, fingerprint, compiledPrompt, imageConfig } = input;
-  const provider = new GoogleImagenProvider(
-    repository,
-    { channelId, episodeId, assetId: request.asset_id, fingerprint, aspectRatio: request.aspect_ratio },
-    imageConfig?.api_key || process.env.GEMINI_API_KEY || "",
-    imageConfig?.model || "gemini-3.1-flash-image",
-    imageConfig?.base_url,
-  );
-  const result = await provider.generateReference(compiledPrompt);
-  await repository
-    .recordImageUsage({
-      channelId,
-      episodeId,
-      provider: "google",
-      model: imageConfig?.model || "gemini-3.1-flash-image",
-      count: 1,
-      costVnd: 750,
-      costUsd: 0.03,
-      note: `Quiz asset ${request.asset_id} (${request.purpose})`,
-    })
-    .catch(() => undefined);
-
-  return {
-    entry: {
-      ...request,
-      fingerprint,
-      path: result.asset_path,
-      source: "provider",
-      fallback_tier: result.fallback_tier,
-      degraded: result.degraded,
-    },
-    tier3Fallback: false,
-  };
-}
-
-async function generateImgStudioAsset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
-  const { repository, channelId, episodeId, request, fingerprint, compiledPrompt, imageFallbackConfig, imageConfig, logger } = input;
-  const apiKey = imageFallbackConfig?.api_key || (input.configuredProvider === "imgstudio" ? imageConfig?.api_key : "") || process.env.IMGSTUDIO_API_KEY || "";
-  const provider = new ImgStudioQuizImageProvider(
-    repository,
-    { channelId, episodeId },
-    {
-      apiKey,
-      baseUrl: imageFallbackConfig?.base_url || imageConfig?.base_url || "https://imgstudio.site",
-      model: imageFallbackConfig?.model || imageConfig?.model || IMGSTUDIO_DEFAULT_MODEL_ID,
-      resolution: imageFallbackConfig?.resolution || "2K",
-      quality: imageFallbackConfig?.quality || "standard",
-    },
-  );
-
-  let generated: Awaited<ReturnType<typeof provider.generateAsset>> | null = null;
-  const maxAttempts = 3;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      generated = await provider.generateAsset({
-        assetId: request.asset_id,
-        fingerprint,
-        prompt: compiledPrompt,
-        aspect_ratio: request.aspect_ratio,
-      });
-      break;
-    } catch (err) {
-      if (attempt < maxAttempts) {
-        logger.warn(
-          `ImgStudio asset ${request.asset_id} generation attempt ${attempt} failed (${err instanceof Error ? err.message : String(err)}). Retrying in ${attempt * 500}ms...`,
-          { profileId: channelId, workerId: episodeId },
-        );
-        await new Promise((resolve) => setTimeout(resolve, attempt * 500));
-        continue;
-      }
-      throw err;
-    }
-  }
-
-  if (!generated) throw new Error(`Failed to generate ImgStudio asset ${request.asset_id}`);
-
-  return {
-    entry: {
-      ...request,
-      fingerprint,
-      path: generated.path,
-      source: "fallback",
-      fallback_tier: 1,
-    },
-    tier3Fallback: false,
-  };
-}
-
+/**
+ * Dispatches to the appropriate primary image generation strategy based on configuration.
+ */
 async function attemptPrimaryProvider(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
-  const { configuredProvider, activeEngine, imageConfig } = input;
+  const { configuredProvider, activeEngine, imageConfig, imageFallbackConfig } = input;
 
   if (configuredProvider === "gpti2" && Gpti2QuizImageProvider.isConfigured(imageConfig?.api_key)) {
     return generateGpti2Asset(input);
   }
-
-  if (configuredProvider === "imgstudio" && (imageConfig?.api_key || ImgStudioQuizImageProvider.isConfigured(input.imageFallbackConfig?.api_key))) {
+  if (
+    configuredProvider === "imgstudio" &&
+    (imageConfig?.api_key || ImgStudioQuizImageProvider.isConfigured(imageFallbackConfig?.api_key))
+  ) {
     return generateImgStudioAsset(input);
   }
-
-  if ((configuredProvider === "shopaikey" || configuredProvider === "custom") && (imageConfig?.api_key || ShopAiKeyQuizImageProvider.isConfigured())) {
+  if (
+    (configuredProvider === "shopaikey" || configuredProvider === "custom") &&
+    (imageConfig?.api_key || ShopAiKeyQuizImageProvider.isConfigured())
+  ) {
     return generateShopAiKeyAsset(input);
   }
-
   if (configuredProvider === "google" && (imageConfig?.api_key || process.env.GEMINI_API_KEY)) {
-    return generateGoogleAsset(input);
+    return generateGoogleImagenAsset(input);
   }
-
   if (activeEngine === "antigravity") {
     return generateAntigravityAsset(input);
   }
-
   if (ShopAiKeyQuizImageProvider.isConfigured(imageConfig?.api_key)) {
     return generateShopAiKeyAsset(input);
   }
@@ -362,48 +57,58 @@ async function attemptPrimaryProvider(input: ProviderAssetInput): Promise<Provid
   throw new Error("PROVIDER_UNAVAILABLE");
 }
 
-export async function generateAssetWithProvider(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
-  const { repository, logger, channelId, episodeId, request, imageFallbackConfig } = input;
+/**
+ * Validates generated asset bytes against dimensions and metadata requirements.
+ */
+async function validateAndEnrichAsset(
+  input: ProviderAssetInput,
+  result: ProviderAssetOutput,
+): Promise<ProviderAssetOutput> {
+  const { repository, channelId, episodeId, request } = input;
+  let bytes: Uint8Array;
+  try {
+    const absPath = await repository.resolveQuizAssetPath(channelId, episodeId, result.entry.path);
+    bytes = new Uint8Array(await readFile(absPath));
+  } catch {
+    // Non-blocking fallback if the file is mock-resolved or inaccessible in unit tests
+    return result;
+  }
+
+  const recommendation = getRecommendationForAssetRequirement(request);
+  const validation = await validateQuizImageBytes({
+    bytes,
+    recommendation,
+    provenance: "generated",
+    required: request.required,
+  });
+
+  if (validation.actual) {
+    result.entry.actual_dimensions = validation.actual;
+  }
+
+  const blocker = validation.issues.find((issue) => issue.severity === "blocker");
+  if (blocker) {
+    throw new RepositoryError(
+      `Generated asset ${request.asset_id} failed metadata validation: ${blocker.code}`,
+      blocker.code,
+    );
+  }
+
+  return result;
+}
+
+/**
+ * Resolves a quiz asset with the configured primary provider and automatic ImgStudio tier fallback.
+ */
+export async function resolveProviderAsset(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
+  const { channelId, episodeId, request, imageFallbackConfig, logger } = input;
   const isFallbackEnabled =
     imageFallbackConfig?.enabled !== false &&
     ImgStudioQuizImageProvider.isConfigured(imageFallbackConfig?.api_key);
 
-  const validateAndEnrich = async (result: ProviderAssetOutput): Promise<ProviderAssetOutput> => {
-    let bytes: Uint8Array;
-    try {
-      const absPath = await repository.resolveQuizAssetPath(channelId, episodeId, result.entry.path);
-      bytes = new Uint8Array(await readFile(absPath));
-    } catch {
-      // Non-blocking fallback if the file is mock-resolved or inaccessible in unit tests
-      return result;
-    }
-
-    const recommendation = getRecommendationForAssetRequirement(request);
-    const validation = await validateQuizImageBytes({
-      bytes,
-      recommendation,
-      provenance: "generated",
-      required: request.required,
-    });
-
-    if (validation.actual) {
-      result.entry.actual_dimensions = validation.actual;
-    }
-
-    const blocker = validation.issues.find((i) => i.severity === "blocker");
-    if (blocker) {
-      throw new RepositoryError(
-        `Generated asset ${request.asset_id} failed metadata validation: ${blocker.code}`,
-        blocker.code,
-      );
-    }
-
-    return result;
-  };
-
   try {
     const primaryResult = await attemptPrimaryProvider(input);
-    return await validateAndEnrich(primaryResult);
+    return await validateAndEnrichAsset(input, primaryResult);
   } catch (primaryError) {
     if (!isFallbackEnabled) {
       throw primaryError;
@@ -417,7 +122,7 @@ export async function generateAssetWithProvider(input: ProviderAssetInput): Prom
 
     try {
       const fallbackResult = await generateImgStudioAsset(input);
-      const validatedFallback = await validateAndEnrich(fallbackResult);
+      const validatedFallback = await validateAndEnrichAsset(input, fallbackResult);
       logger.info(
         `Asset ${request.asset_id} successfully recovered via ImgStudio fallback (${validatedFallback.entry.path}).`,
         { profileId: channelId, workerId: episodeId, step: "IMAGE_FALLBACK_SUCCESS" },
@@ -433,3 +138,9 @@ export async function generateAssetWithProvider(input: ProviderAssetInput): Prom
   }
 }
 
+/**
+ * Backward compatibility alias for resolveProviderAsset.
+ */
+export async function generateAssetWithProvider(input: ProviderAssetInput): Promise<ProviderAssetOutput> {
+  return resolveProviderAsset(input);
+}

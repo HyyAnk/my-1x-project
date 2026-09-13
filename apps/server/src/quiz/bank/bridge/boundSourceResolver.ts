@@ -160,6 +160,7 @@ export async function resolveBoundTopicSources(input: ResolveBoundTopicSourcesIn
   // Read full ordered binding set against one coherent inventory snapshot
   const snapshot = await repository.readQuestionBankQuestionsSnapshot({
     channelId,
+    scope: candidate.content_kind === "short_reel" ? "short_reel" : "episode",
     limit: 100000,
     offset: 0,
   });

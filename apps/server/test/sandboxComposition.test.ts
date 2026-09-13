@@ -459,6 +459,9 @@ describe("buildSandboxComposition Preview Engine", () => {
       expect(res.html).toContain("--reveal-duration: 0.800s;");
       expect(res.html).toContain(`--timer-duration: ${timeline.revealStart.toFixed(3)}s;`);
       expect(res.html).toContain("--timer-start: 0s;");
+      expect(res.html).toContain(`--query-hold-duration: ${(timeline.revealStart - 5).toFixed(3)}s;`);
+      expect(res.html).toContain(`--cd5-at: ${(timeline.revealStart - 5).toFixed(3)}s;`);
+      expect(res.html).toContain(`--cd1-at: ${(timeline.revealStart - 1).toFixed(3)}s;`);
     });
 
     it("synchronizes SANDBOX_PHASE_BOUNDARIES with computeSandboxPhaseTimeline", () => {

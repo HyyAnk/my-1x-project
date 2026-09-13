@@ -97,7 +97,7 @@ export async function generateQuestionBankBatch(repository: RepositoryService, i
       qaSummary: qaReport.summary,
       savedQuestions,
       rejectedQuestions: qaReport.rejectedQuestions,
-      matrixCoverage: calculateMatrixCoverageStats(allCurrent),
+      matrixCoverage: persist && savedQuestions.length > 0 ? await repository.getQuestionBankMatrixCoverage() : calculateMatrixCoverageStats(allCurrent),
       failedChunks: [],
       failedChunksCount: 0,
     };
@@ -114,31 +114,36 @@ export async function generateQuestionBankBatch(repository: RepositoryService, i
   // 3. Make sure knowledge base is loaded
   loadAllKnowledgeEntities();
 
-  // 4. Pre-allocate chunks upfront using collision-free Pre-Allocation Matrix Planner
-  const plannedChunks = planBatchChunks(allBankQuestions, {
-    mode,
-    targetCount,
-    chunkSize: MAX_BATCH_CHUNK_SIZE,
-    domainId: input.domainId,
-    subtopicId: input.subtopicId,
-    subtopicTitle: input.subtopicTitle,
-    archetypeId: input.archetypeId,
-    difficulty: input.difficulty,
-  });
+  // 4. Chunk Planning: Use dynamic JIT streaming for large batches (>100 questions) or upfront planning for small batches
+  const useDynamic = Boolean(input.useDynamicChunks || targetCount > 100);
+  const plannedChunks = useDynamic
+    ? undefined
+    : planBatchChunks(allBankQuestions, {
+        mode,
+        targetCount,
+        chunkSize: MAX_BATCH_CHUNK_SIZE,
+        domainId: input.domainId,
+        subtopicId: input.subtopicId,
+        subtopicTitle: input.subtopicTitle,
+        archetypeId: input.archetypeId,
+        difficulty: input.difficulty,
+      });
 
   // 5. Dispatch chunk execution via modular batch scheduler
   const scheduled = await executeBatchChunkScheduler({
     repository,
     input,
     plannedChunks,
+    useDynamicChunks: useDynamic,
     allBankQuestions,
     targetCount,
   });
 
-  const finalCoverage = calculateMatrixCoverageStats(allBankQuestions);
+  const finalCoverage = persist ? await repository.getQuestionBankMatrixCoverage() : calculateMatrixCoverageStats(allBankQuestions);
+  const totalChunks = plannedChunks?.length ?? Math.ceil(targetCount / MAX_BATCH_CHUNK_SIZE);
   const hasFailures = scheduled.failedChunks.length > 0;
   const errorSummary = hasFailures
-    ? `${scheduled.failedChunks.length} of ${plannedChunks.length} chunk(s) encountered failures during batch generation: ` +
+    ? `${scheduled.failedChunks.length} of ${totalChunks} chunk(s) encountered failures during batch generation: ` +
       scheduled.failedChunks.map((f) => `Chunk ${f.chunkIndex + 1}: ${f.error}`).join("; ")
     : undefined;
 

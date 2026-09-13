@@ -46,9 +46,11 @@ export type ResolveBgmOptions = {
   recentTrackIds?: string[];
   assets?: Record<string, string>;
   baseDirectory?: string;
+  startSeconds?: number;
+  outroStartSeconds?: number;
 };
 
-export const DEFAULT_BGM_BASE_VOLUME = 0.09;
+export const DEFAULT_BGM_BASE_VOLUME = 0.04;
 
 export { hashStringToSeed };
 

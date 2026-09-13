@@ -54,6 +54,7 @@ export function submitTask(
   topicHint?: string,
   reelId?: string | null,
   shortReelRequest?: GenerateShortReelRequest,
+  parentTaskId?: string,
 ): Task {
   if (taskType === "GENERATE_BUNDLE_IMAGE" && !runtime.imageConfig.enabled)
     throw new RepositoryError("Image generation is disabled in Settings", "IMAGE_GENERATION_DISABLED");
@@ -97,6 +98,7 @@ export function submitTask(
 
   const task = TaskSchema.parse({
     task_id: makeId("task"),
+    ...(parentTaskId ? { parent_task_id: parentTaskId } : {}),
     task_type: taskType,
     channel_id: channelId,
     episode_id: episodeId,

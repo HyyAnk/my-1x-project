@@ -62,7 +62,7 @@ export async function pruneRenderRootIntermediateFiles(renderRoot: string, optio
       const itemPath = path.join(renderRoot, entry.name);
 
       if (entry.isDirectory()) {
-        if (entry.name === "compositions") continue;
+        if (entry.name === "compositions" || entry.name === ".render-resume") continue;
         const dirSize = await calculatePathBytes(itemPath);
         await rm(itemPath, { recursive: true, force: true });
         prunedFiles.push(entry.name);

@@ -69,6 +69,19 @@ export async function assertQuizRenderReady(
   if (!artifacts.quiz || !artifacts.director_plan || !artifacts.asset_plan || !artifacts.voice_plan || !artifacts.timeline) {
     throw new RepositoryError("Complete the Quiz V2 stages before rendering", "QUIZ_V2_INCOMPLETE");
   }
+  let sourcesRepaired = false;
+  for (let i = 0; i < artifacts.quiz.questions.length; i++) {
+    const q = artifacts.quiz.questions[i];
+    if (!q.source_ids || q.source_ids.length === 0) {
+      q.source_ids = [`C${String(q.number || i + 1).padStart(2, "0")}`];
+      q.validation.source_coverage = true;
+      sourcesRepaired = true;
+    }
+  }
+  if (sourcesRepaired) {
+    await input.repository.writeQuiz(input.channelId, input.episodeId, artifacts.quiz);
+  }
+
   const mascot = channel.mascot_id ? await input.repository.getMascot(channel.mascot_id).catch(() => null) : null;
   const preflight = preflightQuizRender({
     quiz: artifacts.quiz,

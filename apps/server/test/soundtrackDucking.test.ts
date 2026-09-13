@@ -97,22 +97,22 @@ function measureRmsRange(buffer: Uint8Array, startSeconds: number, endSeconds: n
 }
 
 describe("Soundtrack Ducking Engine", () => {
-  it("uses professional broadcast BGM base volume of 0.09", () => {
-    expect(DEFAULT_BGM_BASE_VOLUME).toBe(0.09);
+  it("uses subtle unobtrusive BGM base volume of 0.04", () => {
+    expect(DEFAULT_BGM_BASE_VOLUME).toBe(0.04);
 
     const registry = new BgmRegistry();
     const schedule = registry.resolveBgmSchedule(120);
-    expect(schedule[0]?.volume).toBe(0.09);
+    expect(schedule[0]?.volume).toBe(0.04);
 
     const defaultSchedule = defaultBgmRegistry.resolveBgmSchedule(60);
-    expect(defaultSchedule[0]?.volume).toBe(0.09);
+    expect(defaultSchedule[0]?.volume).toBe(0.04);
   });
 
   it("exports calibrated default ducking parameters matching broadcast standards", () => {
     expect(DEFAULT_DUCKING_THRESHOLD).toBe(0.04);
-    expect(DEFAULT_DUCKING_RATIO).toBe(10);
-    expect(DEFAULT_DUCKING_ATTACK_MS).toBe(80);
-    expect(DEFAULT_DUCKING_RELEASE_MS).toBe(450);
+    expect(DEFAULT_DUCKING_RATIO).toBe(4);
+    expect(DEFAULT_DUCKING_ATTACK_MS).toBe(100);
+    expect(DEFAULT_DUCKING_RELEASE_MS).toBe(300);
   });
 
   it("generates correct sidechain compression filter graph with defaults", () => {
@@ -128,7 +128,7 @@ describe("Soundtrack Ducking Engine", () => {
           filePath: "D:/music.mp3",
           startSeconds: 0,
           durationSeconds: 10,
-          volume: 0.09,
+          volume: 0.04,
           fadeInSeconds: 0.5,
           fadeOutSeconds: 1.0,
         },
@@ -143,10 +143,10 @@ describe("Soundtrack Ducking Engine", () => {
 
     const script = buildFilterGraphScript(plan, inputIndices);
     expect(script).toContain(
-      "sidechaincompress=threshold=0.04:ratio=10:attack=80:release=450:makeup=1[bgm_ducked];",
+      "sidechaincompress=threshold=0.04:ratio=4:attack=100:release=300[bgm_ducked];",
     );
     expect(script).toContain("volume=1.0");
-    expect(script).toContain("volume=0.09");
+    expect(script).toContain("volume=0.04");
   });
 
   it("measurably attenuates BGM during speech using real FFmpeg sidechain compression", async () => {
@@ -174,8 +174,8 @@ describe("Soundtrack Ducking Engine", () => {
       const narrationPath = path.join(tmpDir, "speech.wav");
       await writeFile(narrationPath, speechCombined);
 
-      // BGM: 6 seconds continuous tone at base volume 0.09
-      const bgmWav = createPcmToneWav(6, 220, 0.09);
+      // BGM: 6 seconds continuous tone at base volume 0.04
+      const bgmWav = createPcmToneWav(6, 220, 0.04);
       const bgmPath = path.join(tmpDir, "bgm.wav");
       await writeFile(bgmPath, bgmWav);
 
@@ -184,7 +184,7 @@ describe("Soundtrack Ducking Engine", () => {
       const filterScript = [
         "[0:a]aformat=sample_rates=48000:channel_layouts=stereo[sidechain];",
         "[1:a]aformat=sample_rates=48000:channel_layouts=stereo[bgm_in];",
-        `[bgm_in][sidechain]sidechaincompress=threshold=${DEFAULT_DUCKING_THRESHOLD}:ratio=${DEFAULT_DUCKING_RATIO}:attack=${DEFAULT_DUCKING_ATTACK_MS}:release=${DEFAULT_DUCKING_RELEASE_MS}:makeup=1[out]`,
+        `[bgm_in][sidechain]sidechaincompress=threshold=${DEFAULT_DUCKING_THRESHOLD}:ratio=${DEFAULT_DUCKING_RATIO}:attack=${DEFAULT_DUCKING_ATTACK_MS}:release=${DEFAULT_DUCKING_RELEASE_MS}[out]`,
       ].join("\n");
 
       await execFileAsync("ffmpeg", [
@@ -231,7 +231,7 @@ describe("Soundtrack Ducking Engine", () => {
     try {
       const tracksDir = path.join(tmpDir, "tracks");
       await mkdir(tracksDir, { recursive: true });
-      const dummyBgm = createPcmToneWav(60, 200, 0.09);
+      const dummyBgm = createPcmToneWav(60, 200, 0.04);
       await writeFile(path.join(tracksDir, "Games_in_the_Garden.mp3"), dummyBgm);
 
       const dummyQuiz = QuizV2Schema.parse({

@@ -44,7 +44,7 @@ export async function persistRemixedQuiz(options: {
   await repository.saveScenes(channelId, episodeId, validatedScenes);
 
   const history = await repository.readQuestionHistory(channelId);
-  const updatedCheck = checkQuestionsAgainstHistory(episodeId, updatedQuiz.questions, history, passThreshold);
+  const updatedCheck = checkQuestionsAgainstHistory(episodeId, updatedQuiz.questions, history, passThreshold, "episode");
   const finalCheckItems = updatedCheck.items.map((item) => {
     if (targetIds.has(item.current_question_id)) {
       if (item.status === "passed") return { ...item, status: "remixed" as const };

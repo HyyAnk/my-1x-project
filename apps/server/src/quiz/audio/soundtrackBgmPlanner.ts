@@ -51,7 +51,18 @@ export function resolveBgmScheduleItems(
   outroStartSeconds?: number,
 ): BgmScheduleItem[] {
   const registry = bgmRegistry ?? defaultBgmRegistry;
-  const schedule = registry.resolveBgmSchedule(durationSeconds, options);
+  const startSeconds = Math.max(0, options?.startSeconds ?? 0);
+  const effectiveEndSeconds = Math.min(
+    durationSeconds,
+    outroStartSeconds ?? options?.outroStartSeconds ?? durationSeconds,
+  );
+  const activeDuration = Math.max(1, effectiveEndSeconds - startSeconds);
+
+  const schedule = registry.resolveBgmSchedule(activeDuration, {
+    ...options,
+    startSeconds,
+    outroStartSeconds: effectiveEndSeconds,
+  });
   const totalClips = schedule.length;
 
   const items: BgmScheduleItem[] = [];
@@ -70,13 +81,12 @@ export function resolveBgmScheduleItems(
 
     let fadeOutDur: number;
     if (isFinalClip) {
-      let fadeOutSeconds = 2.5;
-      if (typeof outroStartSeconds === "number" && outroStartSeconds > clipStart && outroStartSeconds < durationSeconds - 0.5) {
-        const outroDur = durationSeconds - outroStartSeconds;
-        fadeOutSeconds = Math.max(2.0, Math.min(4.0, outroDur));
+      let fadeOutSeconds = 1.5;
+      if (effectiveEndSeconds >= durationSeconds - 0.05) {
+        fadeOutSeconds = 2.0;
       }
       fadeOutSeconds = Math.min(fadeOutSeconds, clipDuration * 0.5);
-      fadeOutDur = fadeOutSeconds;
+      fadeOutDur = Math.min(2.0, Math.max(0.1, fadeOutSeconds));
     } else {
       fadeOutDur = Math.min(0.6, clipDuration * 0.2);
     }

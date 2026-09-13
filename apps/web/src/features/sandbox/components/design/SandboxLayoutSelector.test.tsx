@@ -1,13 +1,24 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LanguageProvider } from "../../../../i18n/LanguageContext";
-import { SandboxLayoutSelector } from "./SandboxLayoutSelector";
+import {
+  SandboxLayoutSelector,
+  LANDSCAPE_LAYOUT_IDS,
+  getCompatibleLayoutForAspectRatio,
+} from "./SandboxLayoutSelector";
 
 afterEach(() => {
   cleanup();
 });
 
 describe("SandboxLayoutSelector", () => {
+  it("exports LANDSCAPE_LAYOUT_IDS and getCompatibleLayoutForAspectRatio correctly", () => {
+    expect(LANDSCAPE_LAYOUT_IDS).toBeDefined();
+    expect(LANDSCAPE_LAYOUT_IDS.length).toBeGreaterThan(0);
+    expect(getCompatibleLayoutForAspectRatio("baseline")).toBe("media_left_choices_right");
+    expect(getCompatibleLayoutForAspectRatio("media_left_choices_right")).toBe("media_left_choices_right");
+  });
+
   it("offers landscape layout selection only", () => {
     render(
       <LanguageProvider>
@@ -47,5 +58,44 @@ describe("SandboxLayoutSelector", () => {
       </LanguageProvider>,
     );
     expect(screen.queryByTestId("sandbox-layout-media-spec")).toBeNull();
+  });
+
+  it("opens listbox on click and allows selecting an option", () => {
+    const setLayoutId = vi.fn();
+    render(
+      <LanguageProvider>
+        <SandboxLayoutSelector layoutId="media_left_choices_right" setLayoutId={setLayoutId} aspectRatio="16:9" />
+      </LanguageProvider>,
+    );
+
+    const combobox = screen.getByRole("combobox");
+    expect(combobox.getAttribute("aria-expanded")).toBe("false");
+    expect(screen.queryByRole("listbox")).toBeNull();
+
+    fireEvent.click(combobox);
+    expect(combobox.getAttribute("aria-expanded")).toBe("true");
+    expect(screen.getByRole("listbox")).toBeTruthy();
+
+    const options = screen.getAllByRole("option");
+    expect(options.length).toBeGreaterThan(1);
+
+    fireEvent.click(options[1]);
+    expect(setLayoutId).toHaveBeenCalled();
+    expect(screen.queryByRole("listbox")).toBeNull();
+  });
+
+  it("supports keyboard navigation with Escape to close", () => {
+    render(
+      <LanguageProvider>
+        <SandboxLayoutSelector layoutId="media_left_choices_right" setLayoutId={vi.fn()} aspectRatio="16:9" />
+      </LanguageProvider>,
+    );
+
+    const combobox = screen.getByRole("combobox");
+    fireEvent.click(combobox);
+    expect(screen.getByRole("listbox")).toBeTruthy();
+
+    fireEvent.keyDown(combobox, { key: "Escape" });
+    expect(screen.queryByRole("listbox")).toBeNull();
   });
 });

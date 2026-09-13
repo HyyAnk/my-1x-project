@@ -37,4 +37,39 @@ describe("buildDirectQuizOutputContract", () => {
 
     expect(contract).toContain('"language": "en"');
   });
+
+  it("enforces the Franchise Anchor Mandate in direct quiz output contract", () => {
+    const contract = buildDirectQuizOutputContract({
+      taskType: "GENERATE_QUIZ",
+      episode: makeEpisode(),
+      quizQuestionCount: 5,
+      quizLastClaimId: "C05",
+      quizSourceMinimum: 3,
+    });
+
+    expect(contract).toContain("=== FRANCHISE ANCHOR MANDATE (CRITICAL FOR CASUAL AUDIENCE) ===");
+    expect(contract).toContain("NEVER formulate a question around an isolated, naked character name");
+    expect(contract).toContain("ALWAYS explicitly anchor the parent franchise or show title in the question prompt");
+    expect(contract).toContain("In Jujutsu Kaisen, which sorcerer...");
+    expect(contract).toContain("In Dragon Ball Z, whose signature beam is...");
+    expect(contract).toContain("Franchise Anchoring: When generating questions about anime, manga, gaming, comics, movies, or fictional characters");
+  });
+
+  it("enforces Visual Opportunity Entity & Setting Mandate in visual_opportunity prompt contract", () => {
+    const contract = buildDirectQuizOutputContract({
+      taskType: "GENERATE_QUIZ",
+      episode: makeEpisode(),
+      quizQuestionCount: 5,
+      quizLastClaimId: "C05",
+      quizSourceMinimum: 3,
+    });
+
+    expect(contract).toContain("=== VISUAL SPEC & CONTINUITY ANCHOR MANDATE (CRITICAL FOR ACCURATE ILLUSTRATIONS) ===");
+    expect(contract).toContain("ALWAYS explicitly name the character/entity and their parent franchise or lore universe");
+    expect(contract).toContain("NEVER describe iconic subjects with vague generic placeholders");
+    expect(contract).toContain("ALWAYS anchor the subject in an authentic, lore-accurate environment/setting");
+    expect(contract).toContain("Visual Opportunity Entity & Setting Mandate: The \"visual_opportunity\" field is used directly by AI image generators");
+    expect(contract).toContain("ENTITY & FRANCHISE IDENTITY: ALWAYS explicitly name the specific character/entity and their parent franchise or lore universe");
+    expect(contract).toContain("VISUAL PROMPT LANGUAGE: The \"visual_opportunity\" field MUST ALWAYS be written 100% in English");
+  });
 });

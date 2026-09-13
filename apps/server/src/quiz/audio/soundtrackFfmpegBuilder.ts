@@ -2,9 +2,9 @@ import type { BgmScheduleItem } from "./soundtrackBgmPlanner.js";
 import type { SfxScheduleItem } from "./soundtrackSfxPlanner.js";
 
 export const DEFAULT_DUCKING_THRESHOLD = 0.04;
-export const DEFAULT_DUCKING_RATIO = 10;
-export const DEFAULT_DUCKING_ATTACK_MS = 80;
-export const DEFAULT_DUCKING_RELEASE_MS = 450;
+export const DEFAULT_DUCKING_RATIO = 4;
+export const DEFAULT_DUCKING_ATTACK_MS = 100;
+export const DEFAULT_DUCKING_RELEASE_MS = 300;
 
 export interface MasterSoundtrackPlan {
   durationSeconds: number;
@@ -59,7 +59,7 @@ function buildBgmClipFilter(bgm: BgmScheduleItem, inStream: string, outStream: s
   if (bgm.fadeOutSeconds > 0.01 && fadeOutStart > 0) {
     filters.push(`afade=t=out:st=${fadeOutStart.toFixed(3)}:d=${bgm.fadeOutSeconds.toFixed(3)}`);
   }
-  filters.push(`volume=${bgm.volume.toFixed(2)}`);
+  filters.push(`volume=${Number(bgm.volume.toFixed(3))}`);
   if (bgm.startSeconds > 0.001) {
     const delayMs = Math.round(bgm.startSeconds * 1000);
     filters.push(`adelay=${delayMs}|${delayMs}`);
@@ -82,7 +82,7 @@ function buildDuckingFilter(
     bgmInputLabel = "[bgm_combined]";
   }
   lines.push(
-    `${bgmInputLabel}[narr_sidechain]sidechaincompress=threshold=${threshold}:ratio=${ratio}:attack=${attack}:release=${release}:makeup=1[bgm_ducked];`,
+    `${bgmInputLabel}[narr_sidechain]sidechaincompress=threshold=${threshold}:ratio=${ratio}:attack=${attack}:release=${release}[bgm_ducked];`,
   );
   return { lines, duckedOutput: "[bgm_ducked]" };
 }

@@ -111,6 +111,44 @@ describe("Master Soundtrack Mixer", () => {
     }
   });
 
+  it("resolves BGM schedule items respecting startSeconds at Question 1 and fadeout before outro", async () => {
+    const tmpDir = await mkdtemp(path.join(os.tmpdir(), "bgm-timed-test-"));
+    try {
+      const tracksDir = path.join(tmpDir, "tracks");
+      await mkdir(tracksDir, { recursive: true });
+      const dummyWav = createSilenceWav(180);
+      await writeFile(path.join(tracksDir, "Games_in_the_Garden.mp3"), dummyWav);
+
+      const startSeconds = 5.0;
+      const outroStartSeconds = 50.0;
+      const totalDurationSeconds = 60.0;
+
+      const bgmItems = resolveBgmScheduleItems(
+        totalDurationSeconds,
+        [tmpDir, tracksDir, ...defaultBgmCandidateDirectories()],
+        {
+          bpmPreference: "120_bpm_upbeat",
+          seed: "soundtrack-timing-test",
+          trackId: "Games_in_the_Garden",
+          startSeconds,
+          outroStartSeconds,
+        },
+        undefined,
+        outroStartSeconds,
+      );
+
+      expect(bgmItems.length).toBe(1);
+      expect(bgmItems[0].trackId).toBe("Games_in_the_Garden");
+      expect(bgmItems[0].startSeconds).toBe(5.0);
+      expect(bgmItems[0].durationSeconds).toBeCloseTo(45.0, 1);
+      expect(bgmItems[0].fadeInSeconds).toBeGreaterThanOrEqual(0.05);
+      expect(bgmItems[0].fadeOutSeconds).toBeGreaterThanOrEqual(1.0);
+      expect(bgmItems[0].fadeOutSeconds).toBeLessThanOrEqual(2.0);
+    } finally {
+      await rm(tmpDir, { recursive: true, force: true });
+    }
+  });
+
   it("builds clean FFmpeg filtergraph script with dynamic ducking and loudnorm", () => {
     const plan: MasterSoundtrackPlan = {
       durationSeconds: 15,
@@ -170,7 +208,7 @@ describe("Master Soundtrack Mixer", () => {
     // Verify narration line with sidechain split
     expect(script).toContain("[0:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=1.0,asplit=2[narr_stream][narr_sidechain];");
     // Verify sidechain compression
-    expect(script).toContain("sidechaincompress=threshold=0.08:ratio=4:attack=100:release=400:makeup=1[bgm_ducked];");
+    expect(script).toContain("sidechaincompress=threshold=0.08:ratio=4:attack=100:release=400[bgm_ducked];");
     // Verify SFX delay lines
     expect(script).toContain("adelay=3000|3000");
     expect(script).toContain("adelay=4000|4000");
@@ -192,7 +230,7 @@ describe("Master Soundtrack Mixer", () => {
           filePath: "D:/music/bgm.mp3",
           startSeconds: 0,
           durationSeconds: 15,
-          volume: 0.09,
+          volume: 0.04,
           fadeInSeconds: 0.5,
           fadeOutSeconds: 2.0,
         },
@@ -206,7 +244,38 @@ describe("Master Soundtrack Mixer", () => {
     ]);
 
     const script = buildFilterGraphScript(plan, inputIndices);
-    expect(script).toContain("sidechaincompress=threshold=0.04:ratio=10:attack=80:release=450:makeup=1[bgm_ducked];");
+    expect(script).toContain("sidechaincompress=threshold=0.04:ratio=4:attack=100:release=300[bgm_ducked];");
+  });
+
+  it("generates adelay filter for BGM starting after Intro stage and formats subtle volume precision", () => {
+    const plan: MasterSoundtrackPlan = {
+      durationSeconds: 30,
+      narrationPath: "narration.wav",
+      ducking: false,
+      bgmItems: [
+        {
+          id: "bgm-delayed",
+          trackId: "track_intro",
+          filename: "bgm.mp3",
+          filePath: "D:/music/bgm.mp3",
+          startSeconds: 5.5,
+          durationSeconds: 20,
+          volume: 0.035,
+          fadeInSeconds: 0.5,
+          fadeOutSeconds: 1.5,
+        },
+      ],
+      sfxItems: [],
+    };
+
+    const inputIndices = new Map<string, number>([
+      ["narration.wav", 0],
+      ["D:/music/bgm.mp3", 1],
+    ]);
+
+    const script = buildFilterGraphScript(plan, inputIndices);
+    expect(script).toContain("adelay=5500|5500");
+    expect(script).toContain("volume=0.035");
   });
 
   it("mixes real master soundtrack WAV using FFmpeg with ducking, loudnorm, and diagnostics", async () => {

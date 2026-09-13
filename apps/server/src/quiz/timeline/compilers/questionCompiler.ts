@@ -231,7 +231,7 @@ export function compileQuestionBlock(
       question_id: question.id,
       choice_id: null,
       segment_id: null,
-      payload: { state: "celebrate", phase: "explanation_start" },
+      payload: { state: "point", phase: "explanation_start" },
     });
     postReveal = explanationAt + explanationDuration;
   }

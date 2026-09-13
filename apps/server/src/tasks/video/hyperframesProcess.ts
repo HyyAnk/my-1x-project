@@ -27,6 +27,8 @@ export type RunHyperframesProcessOptions = {
   env: NodeJS.ProcessEnv;
   timeoutMs: number;
   heartbeatMs?: number;
+  progressLineMarker?: string;
+  ipc?: boolean;
   logPath: string;
   signal?: AbortSignal;
   onProgress: (event: HyperframesProcessEvent) => Promise<void>;
@@ -107,7 +109,7 @@ export async function runHyperframesProcess(options: RunHyperframesProcessOption
     env: options.env,
     windowsHide: true,
     detached: process.platform !== "win32",
-    stdio: ["ignore", "pipe", "pipe"],
+    stdio: options.ipc ? ["ignore", "pipe", "pipe", "ipc"] : ["ignore", "pipe", "pipe"],
   });
   const exitPromise = waitForExit(child);
 
@@ -145,6 +147,7 @@ export async function runHyperframesProcess(options: RunHyperframesProcessOption
 
   const consumeLine = (source: "stdout" | "stderr", line: string) => {
     appendLog("INFO", source, line);
+    if (options.progressLineMarker && !line.includes(options.progressLineMarker)) return;
     const parsedSample = parseHyperframesProgress(line);
     if (!parsedSample) return;
     const now = Date.now();

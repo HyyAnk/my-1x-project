@@ -8,9 +8,10 @@ import { QuestionBankTable } from "./components/QuestionBankTable";
 import { QuestionBankLivePreview } from "./components/QuestionBankLivePreview";
 import { QuestionBankAiGenerateModal } from "./components/QuestionBankAiGenerateModal";
 import { QuestionBankTargetProgressBar } from "./components/QuestionBankTargetProgressBar";
+import { QuestionBankActivityBar } from "./components/QuestionBankActivityBar";
 import { getMilestoneProgress } from "./utils/questionBankMilestones";
 import { buildBankQuestion } from "./utils/questionBankFormBuilder";
-import type { QuestionBankFilters } from "./types/questionBankUi.types";
+import type { QuestionBankFilters, QuestionBankJobState } from "./types/questionBankUi.types";
 
 function renderWithLanguage(ui: React.ReactElement, lang: string = "en") {
   window.localStorage.setItem("studio-language", lang);
@@ -222,6 +223,56 @@ describe("Question Bank Studio UI Components", () => {
     expect(onEditQuestion).toHaveBeenCalledWith(mockQuestion);
   });
 
+  it("QuestionBankTable renders scoped cooldown badges for short_reel, episode, and fallback", () => {
+    const qShort: BankQuestionWithCooldown = {
+      ...mockQuestion,
+      id: "Q-SHORT-001",
+      channel_cooldown: {
+        is_cooldown: true,
+        days_remaining: 5,
+        content_type: "short_reel",
+      },
+    };
+    const qEpisode: BankQuestionWithCooldown = {
+      ...mockQuestion,
+      id: "Q-EP-001",
+      channel_cooldown: {
+        is_cooldown: true,
+        days_remaining: 12,
+        content_type: "episode",
+      },
+    };
+    const qFallback: BankQuestionWithCooldown = {
+      ...mockQuestion,
+      id: "Q-FALLBACK-001",
+      channel_cooldown: {
+        is_cooldown: true,
+        days_remaining: 3,
+      },
+    };
+
+    renderWithLanguage(
+      <QuestionBankTable
+        questions={[qShort, qEpisode, qFallback]}
+        total={3}
+        loading={false}
+        page={1}
+        pageSize={20}
+        selectedId={null}
+        hasChannelSelected={true}
+        onSelectQuestion={vi.fn()}
+        onEditQuestion={vi.fn()}
+        onDeleteQuestion={vi.fn()}
+        onPageChange={vi.fn()}
+      />,
+      "en",
+    );
+
+    expect(screen.getByText("Short (5d)")).toBeDefined();
+    expect(screen.getByText("Episode (12d)")).toBeDefined();
+    expect(screen.getByText("Cooldown (3d)")).toBeDefined();
+  });
+
   it("QuestionBankLivePreview renders simulated layout and reveals answer in English", () => {
     const onQuickBuildVideo = vi.fn();
 
@@ -234,6 +285,16 @@ describe("Question Bank Studio UI Components", () => {
     const revealBtn = screen.getByText("Show Answer");
     fireEvent.click(revealBtn);
     expect(screen.getByText("✓ CORRECT")).toBeDefined();
+
+    // Verify correct choice has is-correct class and data-correct attribute
+    const correctChoice = screen.getByText("2 ends").closest(".qb-mockup-choice");
+    expect(correctChoice?.classList.contains("is-correct")).toBe(true);
+    expect(correctChoice?.getAttribute("data-correct")).toBe("true");
+
+    // Toggle hide answer removes highlight
+    const hideBtn = screen.getByText("Hide Answer");
+    fireEvent.click(hideBtn);
+    expect(correctChoice?.classList.contains("is-correct")).toBe(false);
 
     // Quick build button
     const quickBuildBtn = screen.getByText("🎬 Create Video Shorts Now (1-Click Build)");
@@ -439,7 +500,7 @@ describe("Question Bank Studio UI Components", () => {
     });
   });
 
-  it("supports custom count input and high volume presets like 1000 and 5000 questions", async () => {
+  it("supports custom count input and high volume presets like 1000 and 5000 questions", () => {
     const onGenerate = vi.fn().mockResolvedValue({
       success: true,
       mode: "auto",
@@ -480,7 +541,7 @@ describe("Question Bank Studio UI Components", () => {
     expect(screen.getByText(/Auto-Fill Matrix \(5000 questions\)/)).toBeDefined();
 
     // Custom input shows 5000
-    const customInput = screen.getByPlaceholderText("e.g. 5000") as HTMLInputElement;
+    const customInput = screen.getByPlaceholderText<HTMLInputElement>("e.g. 5000");
     expect(customInput.value).toBe("5000");
 
     // Type a custom count like 2500
@@ -684,7 +745,7 @@ describe("Question Bank Studio UI Components", () => {
     const progress = getMilestoneProgress(250);
     renderWithLanguage(<QuestionBankTargetProgressBar currentTotal={250} milestoneProgress={progress} />, "en");
 
-    const progressBar = screen.getByRole("progressbar");
+    const [progressBar] = screen.getAllByRole("progressbar");
     expect(progressBar).toBeDefined();
     expect(progressBar.getAttribute("aria-valuenow")).toBe("250");
     expect(progressBar.getAttribute("aria-valuemax")).toBe("2000");
@@ -708,5 +769,153 @@ describe("Question Bank Studio UI Components", () => {
 
     expect(screen.getByText("Max Tier Achieved")).toBeDefined();
     expect(screen.getByText("100%")).toBeDefined();
+  });
+
+  it("QuestionBankActivityBar renders running state and handles cancel", () => {
+    const onCancel = vi.fn().mockResolvedValue(undefined);
+    const onOpen = vi.fn();
+    const runningJob: QuestionBankJobState = {
+      jobId: "job-run-1",
+      status: "running",
+      mode: "auto",
+      targetCount: 50,
+      startedAt: new Date(Date.now() - 5000).toISOString(),
+      updatedAt: new Date().toISOString(),
+      progress: {
+        totalRequested: 50,
+        completedCount: 25,
+        currentChunk: 2,
+        totalChunks: 3,
+        chunkSize: 20,
+        approvedInChunk: 10,
+        rejectedInChunk: 0,
+        approvedTotal: 25,
+        rejectedTotal: 0,
+      },
+    };
+
+    renderWithLanguage(
+      <QuestionBankActivityBar
+        job={runningJob}
+        onCancelJob={onCancel}
+        onOpenQuestionBank={onOpen}
+      />,
+      "en",
+    );
+
+    expect(screen.getByText("AI BATCH")).toBeDefined();
+    expect(screen.getByText(/Question Bank AI Generator \(25\/50 questions\)/)).toBeDefined();
+    expect(screen.getByText(/Chunk 2\/3 • Approved: 25 • Rejected: 0/)).toBeDefined();
+    expect(screen.getByText("50%")).toBeDefined();
+
+    // Click cancel button
+    const cancelBtn = screen.getByTitle("Cancel generation");
+    fireEvent.click(cancelBtn);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onOpen).not.toHaveBeenCalled();
+
+    // Click container triggers onOpenQuestionBank
+    const bar = screen.getByTitle("Click to view Question Bank");
+    fireEvent.click(bar);
+    expect(onOpen).toHaveBeenCalledTimes(1);
+  });
+
+  it("QuestionBankActivityBar renders completed state and triggers dismiss", () => {
+    const onDismiss = vi.fn();
+    const completedJob: QuestionBankJobState = {
+      jobId: "job-done-1",
+      status: "completed",
+      mode: "auto",
+      targetCount: 40,
+      startedAt: new Date(Date.now() - 10000).toISOString(),
+      completedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      progress: {
+        totalRequested: 40,
+        completedCount: 40,
+        currentChunk: 2,
+        totalChunks: 2,
+        chunkSize: 20,
+        approvedInChunk: 20,
+        rejectedInChunk: 0,
+        approvedTotal: 40,
+        rejectedTotal: 0,
+      },
+    };
+
+    renderWithLanguage(
+      <QuestionBankActivityBar
+        job={completedJob}
+        onDismiss={onDismiss}
+      />,
+      "en",
+    );
+
+    expect(screen.getByText("DONE")).toBeDefined();
+    expect(screen.getByText("Batch Complete: 40 questions added to Question Bank")).toBeDefined();
+    expect(screen.getByText("Click to explore newly generated questions")).toBeDefined();
+
+    const dismissBtn = screen.getByTitle("Dismiss notification");
+    fireEvent.click(dismissBtn);
+    expect(onDismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("QuestionBankActivityBar handles failed state and partial failure warnings", () => {
+    const failedJob: QuestionBankJobState = {
+      jobId: "job-err-1",
+      status: "failed",
+      mode: "auto",
+      error: "LLM rate limit reached",
+      targetCount: 20,
+      startedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      progress: {
+        totalRequested: 20,
+        completedCount: 0,
+        currentChunk: 1,
+        totalChunks: 1,
+        chunkSize: 20,
+        approvedInChunk: 0,
+        rejectedInChunk: 0,
+        approvedTotal: 0,
+        rejectedTotal: 0,
+      },
+    };
+
+    const { rerender } = renderWithLanguage(<QuestionBankActivityBar job={failedJob} />, "en");
+
+    expect(screen.getByText("ERROR")).toBeDefined();
+    expect(screen.getByText("Question generation failed")).toBeDefined();
+    expect(screen.getByText("LLM rate limit reached")).toBeDefined();
+
+    // Re-render with warning completed job
+    const warningJob: QuestionBankJobState = {
+      jobId: "job-warn-1",
+      status: "completed",
+      mode: "auto",
+      targetCount: 40,
+      failedChunksCount: 1,
+      errorSummary: "1 chunk failed due to timeout",
+      startedAt: new Date().toISOString(),
+      completedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      progress: {
+        totalRequested: 40,
+        completedCount: 20,
+        currentChunk: 2,
+        totalChunks: 2,
+        chunkSize: 20,
+        approvedInChunk: 0,
+        rejectedInChunk: 0,
+        approvedTotal: 20,
+        rejectedTotal: 0,
+        failedChunksCount: 1,
+      },
+    };
+
+    rerender(<LanguageProvider><QuestionBankActivityBar job={warningJob} /></LanguageProvider>);
+
+    expect(screen.getByText(/Batch Complete with Warnings: 20 questions added \(1 chunk failed\)/)).toBeDefined();
+    expect(screen.getByText("1 chunk failed due to timeout")).toBeDefined();
   });
 });

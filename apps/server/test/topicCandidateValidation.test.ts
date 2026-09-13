@@ -49,6 +49,15 @@ function createValidMixedOutput(themeHint?: string) {
       content_kind: "short_reel",
       archetype: "deep_trivia",
     },
+    {
+      title: "Grizzly vs Gorilla",
+      premise: "Heavyweight animal showdown",
+      why_it_fits: "High intensity match",
+      hook: "Who wins this brute force clash?",
+      estimated_potential: "Viral",
+      content_kind: "short_reel",
+      archetype: "versus_faceoff",
+    },
   ];
   const plan = planTopicSuggestionMatrix({ topicHint: themeHint });
   return candidates.map((candidate, index) => ({
@@ -61,15 +70,15 @@ function createValidMixedOutput(themeHint?: string) {
 describe("validateTopicCandidateSlots", () => {
   const channelId = "ch_test_123";
 
-  it("accepts a valid 3:2 mixed plan and assigns server-owned origins correctly with keyword", () => {
+  it("accepts a valid 3:3 mixed plan and assigns server-owned origins correctly with keyword", () => {
     const plan = planTopicSuggestionMatrix({ topicHint: "predators" });
     const raw = createValidMixedOutput("predators");
 
     const accepted = validateTopicCandidateSlots(raw, plan, channelId);
 
-    expect(accepted).toHaveLength(5);
+    expect(accepted).toHaveLength(6);
     expect(accepted.filter((t) => t.content_kind === "episode")).toHaveLength(3);
-    expect(accepted.filter((t) => t.content_kind === "short_reel")).toHaveLength(2);
+    expect(accepted.filter((t) => t.content_kind === "short_reel")).toHaveLength(3);
 
     const keywordTopics = accepted.filter((t) => t.origin === "keyword");
     expect(keywordTopics).toHaveLength(2);
@@ -78,13 +87,13 @@ describe("validateTopicCandidateSlots", () => {
     expect(keywordTopics[1].theme_hint).toBe("predators");
 
     const discoveryTopics = accepted.filter((t) => t.origin === "discovery");
-    expect(discoveryTopics).toHaveLength(3);
+    expect(discoveryTopics).toHaveLength(4);
     for (const dt of discoveryTopics) {
       expect(dt.theme_hint).toBeUndefined();
     }
   });
 
-  it("sets all 5 slots to discovery when no keyword hint is present", () => {
+  it("sets all 6 slots to discovery when no keyword hint is present", () => {
     const plan = planTopicSuggestionMatrix({});
     const raw = createValidMixedOutput();
 
@@ -93,16 +102,14 @@ describe("validateTopicCandidateSlots", () => {
     expect(accepted.every((t) => t.theme_hint === undefined)).toBe(true);
   });
 
-  it("fails when candidate count is not 5 (e.g. 3, 4, 6, 7)", () => {
+  it("fails when candidate count is not 6 (e.g. 3, 4, 5, 7)", () => {
     const plan = planTopicSuggestionMatrix({});
     const valid = createValidMixedOutput();
 
-    expect(() => validateTopicCandidateSlots(valid.slice(0, 3), plan, channelId)).toThrow(/Expected exactly 5 topic candidates, got 3/);
-    expect(() => validateTopicCandidateSlots(valid.slice(0, 4), plan, channelId)).toThrow(/Expected exactly 5 topic candidates, got 4/);
-    expect(() => validateTopicCandidateSlots([...valid, valid[0]], plan, channelId)).toThrow(/Expected exactly 5 topic candidates, got 6/);
-    expect(() => validateTopicCandidateSlots([...valid, valid[0], valid[1]], plan, channelId)).toThrow(
-      /Expected exactly 5 topic candidates, got 7/,
-    );
+    expect(() => validateTopicCandidateSlots(valid.slice(0, 3), plan, channelId)).toThrow(/Expected exactly 6 topic candidates, got 3/);
+    expect(() => validateTopicCandidateSlots(valid.slice(0, 4), plan, channelId)).toThrow(/Expected exactly 6 topic candidates, got 4/);
+    expect(() => validateTopicCandidateSlots(valid.slice(0, 5), plan, channelId)).toThrow(/Expected exactly 6 topic candidates, got 5/);
+    expect(() => validateTopicCandidateSlots([...valid, valid[0]], plan, channelId)).toThrow(/Expected exactly 6 topic candidates, got 7/);
   });
 
   it("fails when model returns all 5 Episode concepts (relabeled outputs rejected)", () => {
@@ -166,6 +173,6 @@ describe("validateTopicCandidateSlots", () => {
     const jsonString = "```json\n" + JSON.stringify({ candidates: createValidMixedOutput() }) + "\n```";
 
     const accepted = validateTopicCandidateSlots(jsonString, plan, channelId);
-    expect(accepted).toHaveLength(5);
+    expect(accepted).toHaveLength(6);
   });
 });

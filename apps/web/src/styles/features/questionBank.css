@@ -6,6 +6,7 @@
 @import "./questionBank/headerKpi.css";
 @import "./questionBank/milestoneRail.css";
 @import "./questionBank/milestoneStepper.css";
+@import "./questionBank/compactSplitBar.css";
 @import "./questionBank/commandToolbar.css";
 @import "./questionBank/splitLayoutTable.css";
 @import "./questionBank/livePreviewInspector.css";

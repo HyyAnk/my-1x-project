@@ -21,7 +21,7 @@ import { resolveEpisodeTargetLanguage } from "../bank/localization/productLocali
 import { readQuizArtifacts, generateQuiz, generateDirector } from "./stages/quizGenerationStage.js";
 import { planAssets, resolveAssets, planVoice, generateVoice } from "./stages/assetsVoiceStages.js";
 import { compileTimeline, runQa, assertQuizRenderReady } from "./stages/timelineAssessmentStages.js";
-import { generateEpisodeThumbnail } from "../thumbnail/index.js";
+import { ensureEpisodeThumbnail } from "../thumbnail/ensureEpisodeThumbnail.js";
 
 export { remixQuizQuestions } from "./remixQuestions.js";
 export {
@@ -118,7 +118,7 @@ export async function runQuizV2Pipeline(input: QuizOrchestratorInput): Promise<Q
   const qaResult = await runQa(input);
 
   try {
-    await generateEpisodeThumbnail(input.repository, {
+    await ensureEpisodeThumbnail(input.repository, {
       channelId: input.channelId,
       episodeId: input.episodeId,
       activeEngine: input.activeEngine,

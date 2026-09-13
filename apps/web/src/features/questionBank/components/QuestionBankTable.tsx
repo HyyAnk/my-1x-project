@@ -127,9 +127,11 @@ export function QuestionBankTable({
                           >
                             <Clock size={13} weight="bold" />
                             <span>
-                              {t("questionBank.table.cooldownDaysRemaining", {
-                                days: cooldown.days_remaining,
-                              })}
+                              {cooldown.content_type === "short_reel"
+                                ? `Short (${cooldown.days_remaining}d)`
+                                : cooldown.content_type === "episode"
+                                  ? `Episode (${cooldown.days_remaining}d)`
+                                  : `Cooldown (${cooldown.days_remaining}d)`}
                             </span>
                           </span>
                         ) : (

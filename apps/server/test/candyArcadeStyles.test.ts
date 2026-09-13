@@ -15,6 +15,7 @@ import { splitVersusTwoLayout } from "../src/quiz/render/layouts/splitVersusTwo.
 import { verdictTrueFalseLayout } from "../src/quiz/render/layouts/verdictTrueFalse.js";
 import { mysteryRevealLayout } from "../src/quiz/render/layouts/mysteryReveal.js";
 import { clueDeductionLayout } from "../src/quiz/render/layouts/clueDeduction.js";
+import { visualChoicesThreePureLayout } from "../src/quiz/render/layouts/visualChoicesThreePure.js";
 import { baselineLayout } from "../src/quiz/render/layouts/baseline.js";
 import { glossyArcadeVariant } from "../src/quiz/visual/elements/answerCard/variants/glossyArcade.js";
 import { comicChunkyVariant } from "../src/quiz/visual/elements/answerCard/variants/comicChunky.js";
@@ -284,4 +285,57 @@ describe("Candy Arcade CSS architecture, boundaries & tokens", () => {
       expect(css).toContain("--choice-fit-multiline-gain: 6px;");
     }
   });
+
+  it("guarantees reveal animations take precedence over :nth-child float animations across all layouts", () => {
+    // 1. Shared state rules
+    const state = choiceStateStyles();
+    expect(state).toContain(".quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct");
+    expect(state).toContain(".quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct");
+    expect(state).toContain("correct-card-reveal");
+    expect(state).toContain("visual-correct-card-reveal");
+
+    // 2. Full Stack List
+    const fsl = fullStackListLayout.css("16:9");
+    expect(fsl).toContain(".layout-full_stack_list.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct");
+    expect(fsl).toContain("full-stack-correct-reveal");
+
+    // 3. Media Left Choices Right
+    const mlcr = mediaLeftChoicesRightLayout.css("16:9");
+    expect(mlcr).toContain(".layout-media_left_choices_right.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct");
+    expect(mlcr).toContain("correct-card-reveal");
+    expect(mlcr).toContain("incorrect-card-settle-media-left");
+
+    // 4. Split Versus Two
+    const sv2 = splitVersusTwoLayout.css("16:9");
+    expect(sv2).toContain(".layout-split_versus_two.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct");
+    expect(sv2).toContain(".layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct");
+    expect(sv2).toContain("split-versus-winner-coronation");
+    expect(sv2).toContain("split-versus-loser-defeat");
+
+    // 5. Clue Deduction
+    const cd = clueDeductionLayout.css("16:9");
+    expect(cd).toContain(".quiz-question-clip.layout-clue_deduction .choice-card:nth-child(n).answer-reveal-correct");
+    expect(cd).toContain("clue-correct-dock");
+
+    // 6. Mystery Reveal
+    const mr = mysteryRevealLayout.css("16:9");
+    expect(mr).toContain(".quiz-question-clip.layout-mystery_reveal .choice-card:nth-child(n).answer-reveal-correct");
+    expect(mr).toContain("correct-card-reveal");
+
+    // 7. Verdict True False
+    const vtf = verdictTrueFalseLayout.css("16:9");
+    expect(vtf).toContain(".layout-verdict_true_false.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct");
+    expect(vtf).toContain("verdict-correct-pop");
+
+    // 8. Visual Choices Three
+    const vc3 = visualChoicesThreeLayout.css("16:9");
+    expect(vc3).toContain(".layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct");
+    expect(vc3).toContain("visual-correct-card-reveal");
+
+    // 9. Visual Choices Three Pure
+    const vcp = visualChoicesThreePureLayout.css("16:9");
+    expect(vcp).toContain(".layout-visual_choices_three_pure.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct");
+    expect(vcp).toContain("visual-correct-card-reveal");
+  });
 });
+

@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { ALL_THINKING_BAR_STYLES, QuizV2Schema, type QuizThinkingBarStyle } from "@studio/shared";
+import {
+  ALL_THINKING_BAR_STYLES,
+  computeSandboxPhaseTimeline,
+  QuizV2Schema,
+  SETTLED_SANDBOX_PHASE_TIMESTAMPS,
+  type QuizThinkingBarStyle,
+} from "@studio/shared";
 import {
   getThinkingBarsCss,
   getThinkingBarVariant,
@@ -11,6 +17,8 @@ import { buildCandyArcadeCompositionBundle, candyArcadeCss } from "../src/quiz/r
 import { createDefaultDirectorPlan } from "../src/quiz/director/parseDirectorPlan.js";
 import { buildQuizVoicePlan } from "../src/quiz/audio/voicePlan.js";
 import { compileQuizTimeline } from "../src/quiz/timeline/compileTimeline.js";
+import { buildSandboxComposition } from "../src/quiz/render/sandboxComposition.js";
+import { styleAttributes } from "../src/quiz/render/candyArcade/candyArcadeClips.js";
 
 const sampleQuiz = QuizV2Schema.parse({
   schema_version: 2,
@@ -208,6 +216,143 @@ describe("Thinking Bar Element Suite", () => {
     expect(css).toContain("@keyframes query-hold");
     expect(css).toContain("phase-hold var(--timer-duration) steps(1,end) var(--timer-start) both");
     expect(css).toContain("quiz-timer-drain var(--timer-duration) linear var(--timer-start) both");
+  });
+
+  it("defines urgency animations and attaches quiz-timer-danger to timer-progress", () => {
+    const css = candyArcadeCss({ aspectRatio: "16:9" });
+    expect(css).toContain("@keyframes quiz-timer-danger");
+    expect(css).toContain("@keyframes timer-marker-danger");
+    expect(css).toContain("@keyframes timer-urgency-glow");
+    expect(css).toContain("@keyframes timer-exit-fade");
+    expect(css).toContain("@keyframes timer-exit-fade-centered");
+    expect(css).toContain("quiz-timer-danger var(--timer-duration) linear var(--timer-start) both");
+  });
+
+  it("guarantees 100% markup and CSS variable parity between sandbox rehearsal and video clips", () => {
+    const timeline = computeSandboxPhaseTimeline();
+    const rehearsal = buildSandboxComposition({
+      mode: "rehearsal",
+      aspect_ratio: "16:9",
+      thinking_bar_style: "star_slider",
+      question_text: "Test question?",
+      choices: ["A", "B", "C"],
+      correct_choice_index: 0,
+      fact_card_text: "Explanation text",
+    });
+
+    const expectedTiming = calculateThinkingBarTiming({
+      clipStart: 0,
+      revealStart: timeline.revealStart,
+      thinkingStart: timeline.thinkingStart,
+    });
+
+    // Rehearsal stage CSS vars match calculateThinkingBarTiming
+    expect(rehearsal.html).toContain("--timer-start: 0s;");
+    expect(rehearsal.html).toContain(`--timer-duration: ${expectedTiming.duration.toFixed(3)}s;`);
+    expect(rehearsal.html).toContain(`--query-hold-duration: ${expectedTiming.queryHoldDuration.toFixed(3)}s;`);
+    expect(rehearsal.html).toContain(`--cd5-at: ${expectedTiming.cd5.toFixed(3)}s;`);
+    expect(rehearsal.html).toContain(`--cd1-at: ${expectedTiming.cd1.toFixed(3)}s;`);
+
+    // In-element inline style on .thinking-bar
+    const thinkingBarMatch = rehearsal.html.match(/<div class="thinking-bar [^"]*" [^>]*>/);
+    expect(thinkingBarMatch).toBeTruthy();
+    const thinkingBarTag = thinkingBarMatch![0];
+
+    expect(thinkingBarTag).toContain(`--timer-start:0.000s;`);
+    expect(thinkingBarTag).toContain(`--timer-duration:${expectedTiming.duration.toFixed(3)}s;`);
+    expect(thinkingBarTag).toContain(`--query-hold-duration:${expectedTiming.queryHoldDuration.toFixed(3)}s;`);
+    expect(thinkingBarTag).toContain(`--cd5-at:${expectedTiming.cd5.toFixed(3)}s;`);
+    expect(thinkingBarTag).toContain(`--cd1-at:${expectedTiming.cd1.toFixed(3)}s;`);
+
+    // Video clip styleAttributes outputs matching variables
+    const videoSectionStyle = styleAttributes(
+      {
+        palette: {
+          id: "sunny",
+          primary: "#FF6277",
+          accent: "#29B9A8",
+          surface: "#FFFFFF",
+          surfaceAccent: "#FFC436",
+          background: "#172A59",
+          text: "#172A59",
+          border: "#172A59",
+        },
+        backgroundStyle: "candy_rays",
+      } as any,
+      { fontSize: 56, lineHeight: 1.1 } as any,
+      0,
+      timeline.choicesStart,
+      timeline.thinkingStart,
+      timeline.revealStart,
+      timeline.revealStart + 0.8,
+      timeline.totalDuration,
+    );
+
+    expect(videoSectionStyle).toContain(`--timer-start:0.000s;`);
+    expect(videoSectionStyle).toContain(`--timer-duration:${expectedTiming.duration.toFixed(3)}s;`);
+    expect(videoSectionStyle).toContain(`--query-hold-duration:${expectedTiming.queryHoldDuration.toFixed(3)}s;`);
+  });
+
+  it("verifies settled keyframe timing behavior: pre-countdown query hold, thinking countdown tick, and reveal/explain fade-out", () => {
+    const timeline = computeSandboxPhaseTimeline();
+    const timing = calculateThinkingBarTiming({
+      clipStart: 0,
+      revealStart: timeline.revealStart,
+      thinkingStart: timeline.thinkingStart,
+    });
+
+    // 1. Question settled keyframe (0.6s):
+    // queryHoldDuration is 2.47s, so at 0.6s the query mark is cleanly active
+    expect(SETTLED_SANDBOX_PHASE_TIMESTAMPS.question).toBe(0.6);
+    expect(0.6).toBeLessThan(timing.queryHoldDuration);
+    // cd5-at is 2.47s, so no countdown number has started at 0.6s
+    expect(timing.cd5).toBeGreaterThan(0.6);
+    expect(timing.cd5Show).toBe(true);
+
+    // 2. Thinking settled keyframe (3.5s):
+    // cd5 is active in [2.47, 3.47), so at 3.5s cd5 has completed and cd4 is cleanly active in [3.47, 4.47)
+    expect(SETTLED_SANDBOX_PHASE_TIMESTAMPS.thinking).toBe(3.5);
+    expect(timing.cd5).toBeLessThan(3.5);
+    expect(timing.cd4).toBeLessThan(3.5);
+    expect(3.5).toBeLessThan(timing.cd3);
+
+    // 3. Reveal settled keyframe (8.1s) and Explain settled keyframe (8.8s):
+    // Timer duration is 7.47s, exit fade finishes at 7.47s (calc(7.47 - 0.28s) = 7.19s)
+    // Both 8.1s and 8.8s are well past 7.47s, ensuring opacity 0 (cleanly hidden)
+    expect(SETTLED_SANDBOX_PHASE_TIMESTAMPS.reveal).toBe(8.1);
+    expect(SETTLED_SANDBOX_PHASE_TIMESTAMPS.explain).toBe(8.8);
+    expect(timing.duration).toBe(7.47);
+    expect(8.1).toBeGreaterThan(timing.duration);
+    expect(8.8).toBeGreaterThan(timing.duration);
+  });
+
+  it("verifies all 6 thinking bar variants render consistent countdown elements and timing attributes", () => {
+    const timeline = computeSandboxPhaseTimeline();
+    const expectedTiming = calculateThinkingBarTiming({
+      clipStart: 0,
+      revealStart: timeline.revealStart,
+      thinkingStart: timeline.thinkingStart,
+    });
+
+    for (const style of ALL_THINKING_BAR_STYLES) {
+      if (style === "auto") continue;
+      const rehearsal = buildSandboxComposition({
+        mode: "rehearsal",
+        aspect_ratio: "16:9",
+        thinking_bar_style: style,
+        question_text: "Variant test question?",
+        choices: ["Option 1", "Option 2", "Option 3"],
+        correct_choice_index: 1,
+        fact_card_text: "Variant explanation",
+      });
+
+      expect(rehearsal.html).toContain(`thinking-bar-${style.replace(/_/g, "-")}`);
+      expect(rehearsal.html).toContain(`--timer-duration:${expectedTiming.duration.toFixed(3)}s;`);
+      expect(rehearsal.html).toContain(`--query-hold-duration:${expectedTiming.queryHoldDuration.toFixed(3)}s;`);
+      expect(rehearsal.html).toContain("val-query");
+      expect(rehearsal.html).toContain("val-5");
+      expect(rehearsal.html).toContain("val-1");
+    }
   });
 });
 

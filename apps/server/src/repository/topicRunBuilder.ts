@@ -50,7 +50,7 @@ export function buildRunFromCandidates(candidates: TopicCandidate[]): TopicRun {
     run_id: runId,
     generated_at: nowIso(),
     target_episode_count: 3,
-    target_short_reel_count: 2,
+    target_short_reel_count: 3,
     candidates: candidates.map((candidate) => normalizeCandidateWithBindings(candidate, runId)),
     shortages: [],
   };

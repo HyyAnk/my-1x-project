@@ -1,5 +1,6 @@
 import type React from "react";
 import type { ContrastReport } from "../hooks/useSandboxPreviewRenderer";
+import type { SandboxAspectRatio } from "../hooks/useSandboxViewportState";
 import { SandboxVerifiedPreview } from "./SandboxVerifiedPreview";
 import { SandboxMonitorHeader } from "./preview/SandboxMonitorHeader";
 import { SandboxGuidesOverlay } from "./preview/SandboxGuidesOverlay";
@@ -13,7 +14,7 @@ export interface SandboxPreviewCanvasProps {
   setShowSafeArea: (updater: (prev: boolean) => boolean) => void;
   showShortsGuide: boolean;
   setShowShortsGuide: (updater: (prev: boolean) => boolean) => void;
-  aspectRatio: "16:9";
+  aspectRatio: SandboxAspectRatio;
   iframeKey: number;
   setIframeKey: (updater: (prev: number) => number) => void;
   zoom: "fit" | "50" | "75" | "100";
@@ -117,35 +118,42 @@ export function SandboxPreviewCanvas({
         }}
       >
         {/* Canonical output frame wrapper */}
-        <div
-          style={{
-            position: "relative",
-            width: "1920px",
-            height: "1080px",
-            transform: `scale(${scaleFactor})`,
-            transformOrigin: "center center",
-            boxShadow: "0 25px 60px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.12)",
-            borderRadius: "8px",
-            overflow: "hidden",
-            background: "#000",
-            flexShrink: 0,
-          }}
-        >
-          <SandboxVerifiedPreview
-            iframeKey={iframeKey}
-            iframeRef={iframeRef}
-            previewHtml={previewHtml}
-            pendingPreviewHtml={pendingPreviewHtml}
-            loading={loading}
-            previewError={previewError}
-            onPendingPreviewLoad={onPendingPreviewLoad}
-            onRetryPreview={onRetryPreview}
-            width={1920}
-            height={1080}
-          />
+        {(() => {
+          const canvasWidth = aspectRatio === "9:16" ? 1080 : 1920;
+          const canvasHeight = aspectRatio === "9:16" ? 1920 : 1080;
+          return (
+            <div
+              data-testid="sandbox-viewport-wrapper"
+              style={{
+                position: "relative",
+                width: `${canvasWidth}px`,
+                height: `${canvasHeight}px`,
+                transform: `scale(${scaleFactor})`,
+                transformOrigin: "center center",
+                boxShadow: "0 25px 60px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.12)",
+                borderRadius: "8px",
+                overflow: "hidden",
+                background: "#000",
+                flexShrink: 0,
+              }}
+            >
+              <SandboxVerifiedPreview
+                iframeKey={iframeKey}
+                iframeRef={iframeRef}
+                previewHtml={previewHtml}
+                pendingPreviewHtml={pendingPreviewHtml}
+                loading={loading}
+                previewError={previewError}
+                onPendingPreviewLoad={onPendingPreviewLoad}
+                onRetryPreview={onRetryPreview}
+                width={canvasWidth}
+                height={canvasHeight}
+              />
 
-          <SandboxGuidesOverlay showSafeArea={showSafeArea} showShortsGuide={showShortsGuide} aspectRatio={aspectRatio} />
-        </div>
+              <SandboxGuidesOverlay showSafeArea={showSafeArea} showShortsGuide={showShortsGuide} aspectRatio={aspectRatio} />
+            </div>
+          );
+        })()}
       </div>
 
       {/* 3. Timeline & Phase Rehearsal Control Bar */}

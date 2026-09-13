@@ -24,7 +24,7 @@ export const TopicRunResultSchema = z
   .object({
     run_id: z.string().trim().min(1),
     target_episode_count: z.number().int().nonnegative().default(3),
-    target_short_reel_count: z.number().int().nonnegative().default(2),
+    target_short_reel_count: z.number().int().nonnegative().default(3),
     candidates: z.array(TopicRunCandidateSchema),
     shortages: z.array(TopicSourceShortageSchema).default([]),
   })
@@ -36,7 +36,7 @@ export const TopicRunSchema = z
     run_id: z.string().trim().min(1),
     generated_at: z.string(),
     target_episode_count: z.number().int().nonnegative().default(3),
-    target_short_reel_count: z.number().int().nonnegative().default(2),
+    target_short_reel_count: z.number().int().nonnegative().default(3),
     candidates: z.array(TopicRunCandidateSchema),
     shortages: z.array(TopicSourceShortageSchema).default([]),
   })

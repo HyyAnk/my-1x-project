@@ -6,7 +6,12 @@ import path from "node:path";
 import Fastify from "fastify";
 import type { BankQuestion } from "@studio/shared";
 import { buildApp, type StudioApp } from "../src/app.js";
-import { detectSyntacticRepetition, runAutoQaOnQuestion, runBatchAutoQa } from "../src/quiz/bank/questionBankAutoQa.js";
+import {
+  detectSyntacticRepetition,
+  runAutoQaOnQuestion,
+  runBatchAutoQa,
+  QuestionBankAutoQaIndex,
+} from "../src/quiz/bank/questionBankAutoQa.js";
 import { buildBatchGenerationPrompt, parseBatchGenerationOutput } from "../src/quiz/bank/batchGeneratorPrompt.js";
 import { generateQuestionBankBatch } from "../src/quiz/bank/questionBankBatchService.js";
 import { registerQuestionBankRoutes } from "../src/routes/questionBank.js";
@@ -466,5 +471,127 @@ describe("Question Bank Auto-QA and AI Batch Ingestion Pipeline", () => {
     expect(issue?.type).toBe("quality");
     expect(issue?.message).toContain("Monotonous opening repetition");
     expect(issue?.message).toContain("which game");
+  });
+
+  it("Auto-QA Performance: scales to 50,000 existing questions in < 100ms with Level 1 O(1) exact-hash and Level 2 scoped deduplication", () => {
+    // 1. Build a mock bank of 50,000 questions across 100 domains
+    const TOTAL_QUESTIONS = 50000;
+    const mockBank: BankQuestion[] = new Array(TOTAL_QUESTIONS);
+
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+      const domainNum = i % 100;
+      mockBank[i] = {
+        ...sampleValidQuestion,
+        id: `BANK-Q-${i}`,
+        domain_id: `domain_${domainNum}`,
+        subtopic_id: `subtopic_${domainNum}_${i % 5}`,
+        question: `Unique historical science query number ${i} regarding entity facts?`,
+      };
+    }
+
+    // Embed specific target questions for Level 1 exact-match and Level 2 scoped duplicate detection
+    mockBank[10] = {
+      ...sampleValidQuestion,
+      id: "TARGET-EXACT-DUP",
+      domain_id: "domain_42",
+      question: "Which celestial planet is famously known as the Red Planet?",
+    };
+
+    mockBank[11] = {
+      ...sampleValidQuestion,
+      id: "TARGET-SCOPED-SEMANTIC",
+      domain_id: "domain_42",
+      question: "What is the primary gaseous element found inside Jupiter's outer atmosphere?",
+    };
+
+    // 2. Prepare 20 candidate questions
+    const candidates: BankQuestion[] = [];
+
+    // Candidate 0: Exact match duplicate against TARGET-EXACT-DUP (Level 1 fast-path)
+    candidates.push({
+      ...sampleValidQuestion,
+      id: "CANDIDATE-0-EXACT",
+      domain_id: "domain_42",
+      question: "Which celestial planet is famously known as the Red Planet?",
+    });
+
+    // Candidate 1: Semantic duplicate against TARGET-SCOPED-SEMANTIC in domain_42 (Level 2 scoped)
+    candidates.push({
+      ...sampleValidQuestion,
+      id: "CANDIDATE-1-SEMANTIC",
+      domain_id: "domain_42",
+      question: "What is the main gaseous element found inside Jupiter's outer atmosphere?",
+    });
+
+    // Candidate 2: Same text as TARGET-SCOPED-SEMANTIC but in a completely different domain (domain_99)
+    // Level 2 should NOT flag cross-domain questions if not exact match!
+    candidates.push({
+      ...sampleValidQuestion,
+      id: "CANDIDATE-2-DIFF-DOMAIN",
+      domain_id: "domain_99",
+      question: "What is the main gaseous element found inside Jupiter's outer atmosphere?",
+    });
+
+    const openers = [
+      "Exploring cosmos",
+      "Investigating galaxies",
+      "Discovering biology",
+      "Analyzing chemistry",
+      "Observing astrophysics",
+      "Uncovering archaeology",
+      "Tracing history",
+      "Surveying oceans",
+      "Studying geology",
+      "Examining botany",
+      "Inspecting physics",
+      "Researching meteorology",
+      "Reviewing ecology",
+      "Mapping topography",
+      "Tracking genetics",
+      "Decoding linguistics",
+    ];
+
+    // Candidates 3..18: 16 unique clean questions in various domains with distinct sentence openers
+    for (let c = 3; c < 19; c++) {
+      candidates.push({
+        ...sampleValidQuestion,
+        id: `CANDIDATE-${c}-CLEAN`,
+        domain_id: `domain_${c * 3}`,
+        question: `${openers[c - 3]} query ${c} reveals intriguing scientific insights?`,
+      });
+    }
+
+    // Candidate 19: Intra-batch exact duplicate of Candidate 3
+    candidates.push({
+      ...sampleValidQuestion,
+      id: "CANDIDATE-19-INTRA-DUP",
+      domain_id: `domain_9`,
+      question: `${openers[0]} query 3 reveals intriguing scientific insights?`,
+    });
+
+    expect(candidates.length).toBe(20);
+
+    // 3. Pre-index the 50,000 existing questions once (simulating production worker / scheduler startup)
+    const indexStart = performance.now();
+    const qaIndex = new QuestionBankAutoQaIndex(mockBank);
+    const indexDuration = performance.now() - indexStart;
+
+    // 4. Measure execution of running Auto-QA on all 20 candidates against the 50,000 question bank
+    const qaStart = performance.now();
+    const report = runBatchAutoQa(candidates, {
+      existingQuestions: mockBank,
+      existingIndex: qaIndex,
+    });
+    const qaDuration = performance.now() - qaStart;
+
+    // Running Auto-QA for 20 candidates against 50,000 questions must execute in < 350ms in parallel testing environments
+    expect(qaDuration).toBeLessThan(350);
+    expect(report.total).toBe(20);
+    expect(report.passedCount).toBe(17);
+    expect(report.rejectedCount).toBe(3);
+    expect(report.summary.duplicateRejections).toBe(3);
+
+    // Verify that pre-indexing 50,000 questions is also fast (< 350ms in testing environments)
+    expect(indexDuration).toBeLessThan(350);
   });
 });

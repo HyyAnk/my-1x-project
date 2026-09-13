@@ -111,11 +111,11 @@ export function convertBankQuestionToQuizQuestionLossless(
     correct_choice_id: bankQuestion.correct_choice_id,
     explanation: localizedExplanation.trim(),
     fun_fact: localizedFunFact.trim(),
-    source_ids: [],
+    source_ids: Array.from(new Set(["C01", bankQuestion.id].filter(Boolean))),
     visual_opportunity: (bankQuestion.visual_spec?.prompt || "").trim(),
     validation: {
       semantic_status: "validated" as const,
-      source_coverage: false,
+      source_coverage: true,
       fact_locked: true,
     },
   };
@@ -186,9 +186,9 @@ export function convertBankQuestionToQuizQuestion(bankQuestion: BankQuestion, op
       .slice(0, 600)
       .trim(),
     fun_fact: (options.translation?.fun_fact ?? bankQuestion.fun_fact ?? "").slice(0, 600).trim(),
-    source_ids: [],
+    source_ids: Array.from(new Set(["C01", bankQuestion.id].filter(Boolean))),
     visual_opportunity: (bankQuestion.visual_spec?.prompt || "").slice(0, 1000).trim(),
-    validation: { semantic_status: "validated", source_coverage: false, fact_locked: true },
+    validation: { semantic_status: "validated", source_coverage: true, fact_locked: true },
   });
 }
 

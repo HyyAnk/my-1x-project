@@ -13,6 +13,7 @@ import type {
   MascotStyle,
   UpdateMascotSlotInput,
   UpdateMascotStyleInput,
+  QuestionContentType,
   QuestionHistoryCheckResult,
   QuestionHistoryEntry,
   QuizAssessment,
@@ -50,7 +51,8 @@ import type {
   ShortReelSourceSnapshot,
   ShortReelTopicSnapshot,
 } from "@studio/shared";
-import type { QueryQuestionBankParams } from "./quiz/questionBankRepository.js";
+import type { BankCooldownScope, QueryQuestionBankParams } from "./quiz/questionBankRepository.js";
+export type { BankCooldownScope } from "./quiz/questionBankRepository.js";
 import type { BundleImageAsset, BundleImageMeta, RepositoryRoots } from "./types.js";
 import type { EntityIdResolver } from "./cache/entityIdResolver.js";
 import type { ChannelCache } from "./cache/channelCache.js";
@@ -241,6 +243,7 @@ export interface RepositoryRuntime {
     questions: QuizQuestion[],
     ttlDays?: number,
     renderTaskId?: string,
+    contentType?: QuestionContentType,
   ): Promise<void>;
   removeQuestionHistoryEntries(
     channelId: string,
@@ -361,11 +364,19 @@ export interface RepositoryRuntime {
   readQuestionBankIndex(): Promise<BankIndex>;
   listQuestionBankBatches(filter?: { archetypeId?: string; domainId?: string }): Promise<BankSubtopicBatch[]>;
   recalculateQuestionBankIndex(): Promise<BankIndex>;
-  queryQuestionBankQuestions(params?: QueryQuestionBankParams): Promise<{ questions: BankQuestionWithCooldown[]; total: number }>;
+  queryQuestionBankQuestions(
+    params?: QueryQuestionBankParams,
+    scope?: BankCooldownScope,
+  ): Promise<{ questions: BankQuestionWithCooldown[]; total: number }>;
   readQuestionBankQuestionsSnapshot(
     params?: QueryQuestionBankParams,
+    scope?: BankCooldownScope,
   ): Promise<{ questions: BankQuestionWithCooldown[]; total: number; revision: number }>;
-  getQuestionBankQuestion(questionId: string, channelId?: string): Promise<BankQuestionWithCooldown | null>;
+  getQuestionBankQuestion(
+    questionId: string,
+    channelId?: string,
+    scope?: BankCooldownScope,
+  ): Promise<BankQuestionWithCooldown | null>;
   readQuestionBankSnapshot(): Promise<BankQuestionSnapshot>;
   saveQuestionBankQuestion(question: BankQuestion): Promise<BankQuestion>;
   saveQuestionBankTranslation(questionId: string, translation: BankTranslationContent): Promise<BankQuestion | null>;

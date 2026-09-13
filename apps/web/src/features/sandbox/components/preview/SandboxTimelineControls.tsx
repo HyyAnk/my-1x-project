@@ -1,12 +1,17 @@
 import { Pause, Play, SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
-import { computeSandboxPhaseTimeline, getSandboxPhaseAtTime, getSandboxPhaseTimestamps } from "@studio/shared";
+import {
+  computeSandboxPhaseTimeline,
+  getSandboxPhaseAtTime,
+  getSandboxPhaseTimestamps,
+  SETTLED_SANDBOX_PHASE_TIMESTAMPS,
+} from "@studio/shared";
 import { useTranslation } from "../../../../i18n";
 
 export type SandboxTimelineControlsProps = {
   phase: string;
   useScrubber: boolean;
   timelineSeconds: number;
-  handlePhaseChange: (phase: "question" | "choices" | "thinking" | "reveal" | "explain") => void;
+  handlePhaseChange: (phase: "question" | "choices" | "thinking" | "reveal" | "explain", options?: { previewAnimation?: boolean }) => void;
   isPlaying: boolean;
   setIsPlaying: (updater: (prev: boolean) => boolean) => void;
   handleTogglePlay?: () => void;
@@ -76,6 +81,7 @@ export function SandboxTimelineControls({
             ] as const
           ).map((p) => {
             const isActive = !useScrubber && phase === p.id;
+            const settledTime = SETTLED_SANDBOX_PHASE_TIMESTAMPS[p.id];
             return (
               <button
                 key={p.id}
@@ -87,7 +93,18 @@ export function SandboxTimelineControls({
                   borderRadius: "8px",
                   fontWeight: isActive ? 700 : 500,
                 }}
-                onClick={() => handlePhaseChange(p.id)}
+                onClick={() => {
+                  if (p.id === "reveal") {
+                    handlePhaseChange("reveal", { previewAnimation: true });
+                  } else {
+                    handlePhaseChange(p.id);
+                  }
+                }}
+                title={
+                  p.id === "reveal"
+                    ? `Jump to ${p.label} rehearsal (7.47s → ${settledTime.toFixed(1)}s settled)`
+                    : `Jump to ${p.label} settled state (${settledTime.toFixed(1)}s)`
+                }
               >
                 {p.label}
               </button>
@@ -118,6 +135,7 @@ export function SandboxTimelineControls({
           <button
             type="button"
             className={isPlaying ? "primary-button compact" : "quiet-button compact"}
+            aria-label={isPlaying ? "Pause Rehearsal" : "Play Rehearsal"}
             style={{
               padding: "4px 12px",
               borderRadius: "8px",
@@ -160,6 +178,8 @@ export function SandboxTimelineControls({
             step="0.05"
             value={timelineSeconds}
             onChange={(e) => handleScrubberChange(parseFloat(e.target.value))}
+            list="sandbox-timeline-phase-markers"
+            aria-label="Timeline Scrubber"
             style={{
               width: "100%",
               accentColor: "#38BDF8",
@@ -168,6 +188,11 @@ export function SandboxTimelineControls({
               borderRadius: "4px",
             }}
           />
+          <datalist id="sandbox-timeline-phase-markers">
+            {timestamps.map((marker) => (
+              <option key={marker.id} value={marker.time} label={marker.id} />
+            ))}
+          </datalist>
         </div>
 
         {/* Phase timestamp badges beneath the scrubber */}

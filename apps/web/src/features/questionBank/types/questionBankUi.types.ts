@@ -120,3 +120,5 @@ export type {
   BankTranslationContent,
   MatrixCoverageStats,
 };
+
+export * from "./questionBankProgress.types";

@@ -59,7 +59,11 @@ function ArcadeTabContent({
               const highlight = showAnswer && isCorrect;
 
               return (
-                <div key={c.id} className={`qb-mockup-choice ${highlight ? "is-correct" : ""}`}>
+                <div
+                  key={c.id}
+                  className={`qb-mockup-choice ${highlight ? "is-correct" : ""}`}
+                  data-correct={isCorrect ? "true" : "false"}
+                >
                   <span className="qb-mockup-choice-id">{c.id}</span>
                   <span className="qb-mockup-choice-text">{c.text}</span>
                   {highlight && <span className="qb-mockup-correct-tag">{t("questionBank.preview.correctBadge")}</span>}

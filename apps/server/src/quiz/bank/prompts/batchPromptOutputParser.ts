@@ -46,6 +46,16 @@ export function sanitizeBankQuestionText(
     }
   }
 
+  if (archetypeId === "visual_spotting") {
+    const trailingMismatchPattern = /[:\s—–-]+(?:spot|find)\s+the\s+mismatch\s*!?$/i;
+    if (trailingMismatchPattern.test(cleaned)) {
+      cleaned = cleaned.replace(trailingMismatchPattern, "").trim();
+      if (!cleaned.endsWith("?") && !cleaned.endsWith("!")) {
+        cleaned += "?";
+      }
+    }
+  }
+
   return cleaned;
 }
 

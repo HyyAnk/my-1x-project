@@ -165,6 +165,7 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     await this.cleanupExpiredFailedBuilds();
     await this.reconcileStartupState();
     this.startFailedBuildCleanupTimer();
+    await this.pump();
   }
 
   async reload(): Promise<void> {
@@ -252,8 +253,20 @@ export class TaskManager extends EventEmitter implements TaskManagerRuntime {
     requestedImageVariant?: number,
     topicHint?: string,
     reelId?: string | null,
+    parentTaskId?: string,
   ): Task {
-    const task = submitTask(this, taskType, channelId, episodeId, sceneNumber, requestedImageVariant, topicHint, reelId);
+    const task = submitTask(
+      this,
+      taskType,
+      channelId,
+      episodeId,
+      sceneNumber,
+      requestedImageVariant,
+      topicHint,
+      reelId,
+      undefined,
+      parentTaskId,
+    );
     this.tasks.set(task.task_id, task);
     void this.taskMutations.enqueue(task.task_id, () => this.persist(task));
     this.emitTask(task);

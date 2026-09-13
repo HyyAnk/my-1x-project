@@ -96,6 +96,7 @@ export function buildScriptGenerationPrompt(context: ScriptPromptContext): strin
     "   - Segment 1 end_state MUST match Segment 2 start_state for: character_identity, environment, props, and visible_text.",
     "   - Segment 2 end_state MUST match Segment 3 start_state for: character_identity, environment, props, and visible_text.",
     "5. Return ONLY a valid JSON object conforming to the schema below without markdown fences or extra prose.",
+    "6. FRANCHISE CONTEXT: For fictional, anime, gaming, or pop culture topics, ensure video action, narration, and visual framing clearly anchor the parent universe or franchise for casual viewers.",
     "",
     "=== JSON OUTPUT FORMAT ===",
     JSON.stringify(

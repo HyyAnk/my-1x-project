@@ -15,6 +15,29 @@ export const questionBankEn = {
     collapseStats: "Collapse KPI section",
     expandStats: "Expand KPI section",
 
+    // Compact Split Bar & Progress Tracks
+    splitBar: {
+      compactSplitTitle: "Question Bank Target Progress and Matrix Coverage",
+      volumeTrackTitle: "Total Question Volume",
+      volumeTrackSubtitle: "{current} / {target} questions",
+      matrixTrackTitle: "Taxonomy Matrix Coverage",
+      matrixTrackSubtitle: "{covered} / {total} combos ({pct}%)",
+      milestoneTiers: "Milestone Tiers",
+      tierLabel: "Lvl {level} {name}",
+      unfilledCombos: "{count} combos unfilled",
+      unfilledCombosDesc: "{count} archetype combinations need questions",
+      autoFillShortcut: "Auto-Fill Deficit",
+      autoFillTooltip: "Open AI generator configured to auto-fill unfilled combos",
+      allCombosCovered: "Full Matrix Coverage",
+      allCombosCoveredDesc: "All archetype and domain combinations covered",
+      compactAriaMilestones: "Milestones: {current} of {target} questions ({percent}%)",
+      compactAriaMatrix: "Matrix Coverage: {covered} of {total} combos ({percent}%)",
+    },
+    matrixCoverageLabel: "Matrix Coverage",
+    matrixDeficitCount: "{count} combos unfilled",
+    matrixDeficitDesc: "{count} archetype combos require questions",
+    autoFillMatrixShortcut: "Auto-Fill Deficit",
+
     // Archetypes
     archetypes: {
       all: "All Archetypes",

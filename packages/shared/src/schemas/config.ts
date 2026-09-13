@@ -109,6 +109,22 @@ export const QuestionHistorySettingsSchema = z.object({
 
 export type QuestionHistorySettings = z.infer<typeof QuestionHistorySettingsSchema>;
 
+export const QuestionContentTypeSchema = z.enum(["episode", "short_reel"]);
+export type QuestionContentType = z.infer<typeof QuestionContentTypeSchema>;
+
+export function inferQuestionHistoryContentType(entry: {
+  episode_id?: string;
+  content_type?: string | null;
+}): QuestionContentType {
+  if (entry.content_type === "episode" || entry.content_type === "short_reel") {
+    return entry.content_type;
+  }
+  if (entry.episode_id?.startsWith("sreel_")) {
+    return "short_reel";
+  }
+  return "episode";
+}
+
 export const QuestionHistoryEntrySchema = z.object({
   question_id: z.string().min(1),
   question_text: z.string().min(1),
@@ -120,6 +136,7 @@ export const QuestionHistoryEntrySchema = z.object({
   channel_id: z.string().min(1),
   render_task_id: z.string().min(1).optional(),
   rendered_at: IsoDate,
+  content_type: QuestionContentTypeSchema.default("episode"),
 });
 
 export type QuestionHistoryEntry = z.infer<typeof QuestionHistoryEntrySchema>;

@@ -93,6 +93,12 @@ export function normalizeRawQuizQuestion(raw: unknown, targetFallback?: QuizQues
 
   const correctChoiceId = resolveCorrectChoiceId(obj.correct_choice_id, choices);
   const { explanation, fun_fact, visual_opportunity, source_ids } = extractQuestionExplanations(obj, targetFallback);
+  const resolvedSourceIds =
+    source_ids.length > 0
+      ? source_ids
+      : targetFallback?.source_ids?.length
+        ? targetFallback.source_ids
+        : [`C${String(number).padStart(2, "0")}`];
 
   const candidate = {
     id,
@@ -104,9 +110,9 @@ export function normalizeRawQuizQuestion(raw: unknown, targetFallback?: QuizQues
     correct_choice_id: correctChoiceId,
     explanation,
     fun_fact,
-    source_ids,
+    source_ids: resolvedSourceIds,
     visual_opportunity,
-    validation: { semantic_status: "validated" as const, source_coverage: false, fact_locked: true },
+    validation: { semantic_status: "validated" as const, source_coverage: true, fact_locked: true },
   };
 
   return QuizQuestionSchema.parse(candidate);

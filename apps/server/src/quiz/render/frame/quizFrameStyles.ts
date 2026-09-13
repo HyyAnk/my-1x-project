@@ -11,6 +11,10 @@ export function quizFrameCss(): string {
 /* === Unified Landscape Quiz Frame Contract === */
 .quiz-frame-unified.candy-scene {
   padding: 0;
+  --safe-zone-top: 54px;
+  --safe-zone-bottom: 54px;
+  --safe-zone-left: 96px;
+  --safe-zone-right: 96px;
 }
 
 .quiz-frame-unified .game-stage {

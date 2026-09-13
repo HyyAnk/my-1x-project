@@ -35,11 +35,12 @@ export type VideoCompositionContext = {
   preflightAssessment: NonNullable<ReturnType<typeof preflightQuizRender>["assessment"]>;
 };
 
-interface IntroOutroMediaResolution {
+export interface IntroOutroMediaResolution {
   introVideoPath?: string;
   outroVideoPath?: string;
   transitionType?: IntroOutroTransitionType;
   transitionDurationSeconds?: number;
+  audioMode?: "use_video_audio" | "overlay_bgm";
 }
 
 async function validateQuizPreflight(
@@ -50,6 +51,19 @@ async function validateQuizPreflight(
   resolvedAssets: QuizAssetResolution["assets"],
   hasMeasuredAudio: boolean,
 ) {
+  let sourcesRepaired = false;
+  for (let i = 0; i < artifacts.quiz.questions.length; i++) {
+    const q = artifacts.quiz.questions[i];
+    if (!q.source_ids || q.source_ids.length === 0) {
+      q.source_ids = [`C${String(q.number || i + 1).padStart(2, "0")}`];
+      q.validation.source_coverage = true;
+      sourcesRepaired = true;
+    }
+  }
+  if (sourcesRepaired) {
+    await repository.writeQuiz(channelId, episodeId, artifacts.quiz);
+  }
+
   const preflight = preflightQuizRender({
     quiz: artifacts.quiz,
     director: artifacts.director,
@@ -84,7 +98,7 @@ async function writeCompositionFiles(
   }
 }
 
-async function resolveAndCopyIntroOutro(
+export async function resolveAndCopyIntroOutro(
   repository: RepositoryService,
   channel: Channel,
   episode: Episode,
@@ -131,6 +145,7 @@ async function resolveAndCopyIntroOutro(
     outroVideoPath,
     transitionType: style.transition_type,
     transitionDurationSeconds: style.transition_duration_seconds,
+    audioMode: style.audio_mode ?? "use_video_audio",
   };
 }
 
@@ -172,6 +187,7 @@ async function compileCompositionHtml(params: {
     outroVideoPath: introOutro.outroVideoPath,
     transitionType: introOutro.transitionType,
     transitionDurationSeconds: introOutro.transitionDurationSeconds,
+    audioMode: introOutro.audioMode,
   });
   return { html: preparedQuizRender.html, compositionFiles: preparedQuizRender.compositionFiles };
 }
@@ -257,6 +273,7 @@ export async function prepareVideoComposition(options: {
 
   const bgmHistory = await repository.readBgmHistory(channel.channel_id);
   const mascotProfile: MascotProfile | null = await prepareLocalizedMascot(channel, repository, renderRoot);
+  const introOutro = await resolveAndCopyIntroOutro(repository, channel, episode, renderRoot);
 
   const soundtrackResult = await prepareSoundtrack({
     renderRoot,
@@ -265,6 +282,7 @@ export async function prepareVideoComposition(options: {
     episode,
     bgmHistory,
     assetSources,
+    introOutro,
     onProgressMessage: async (message) => {
       await onProgress(message, 15);
     },
@@ -272,7 +290,6 @@ export async function prepareVideoComposition(options: {
   const selectedBgmTrackId = soundtrackResult.selectedBgmTrackId;
   const selectedBgmFilename = soundtrackResult.selectedBgmFilename;
 
-  const introOutro = await resolveAndCopyIntroOutro(repository, channel, episode, renderRoot);
   const renderFps = runtime.videoConfig?.fps ?? 30;
 
   const { html, compositionFiles } = await compileCompositionHtml({

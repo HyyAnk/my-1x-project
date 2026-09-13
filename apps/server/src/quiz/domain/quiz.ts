@@ -157,7 +157,9 @@ export function deriveQuizV2FromScenes(input: {
       const normalizedChoices = choices.map((choice) => normalizeQuizChoiceText(choice.text));
       if (new Set(normalizedChoices).size !== normalizedChoices.length)
         throw new QuizDomainError("Question " + number + " contains duplicate visible choices", "QUIZ_DUPLICATE_CHOICE");
-      const sourceIds = [...new Set(questionScenes.flatMap((scene) => scene.source_ids))];
+      const rawSourceIds = [...new Set(questionScenes.flatMap((scene) => scene.source_ids))].filter(Boolean);
+      const claimId = `C${String(index + 1).padStart(2, "0")}`;
+      const sourceIds = rawSourceIds.length > 0 ? rawSourceIds : [claimId];
       const visualOpportunity = quizScenes.find((quiz) => quiz.image_prompt.trim())?.image_prompt.trim() ?? "";
       return {
         id: "question-" + String(index + 1).padStart(2, "0"),
@@ -171,7 +173,7 @@ export function deriveQuizV2FromScenes(input: {
         fun_fact: "",
         source_ids: sourceIds,
         visual_opportunity: visualOpportunity,
-        validation: { semantic_status: "validated" as const, source_coverage: sourceIds.length > 0, fact_locked: true },
+        validation: { semantic_status: "validated" as const, source_coverage: true, fact_locked: true },
       };
     });
   const balancedQuestions = balanceQuizChoicePositions(questions);

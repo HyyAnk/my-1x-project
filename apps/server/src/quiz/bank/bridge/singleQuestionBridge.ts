@@ -85,12 +85,14 @@ export async function createEpisodeFromQuestionBank(deps: {
   }
 
   const channel = await repository.getChannel(channelId);
-  const rawQuestion = await repository.getQuestionBankQuestion(input.question_id, channelId);
+  const rawQuestion = await repository.getQuestionBankQuestion(input.question_id, channelId, "episode");
   const bankQuestion = validateQuestionAvailability(rawQuestion, input.question_id, channelId, input.force);
 
   const targetLanguage = normalizeTargetLanguage(input.target_language || channel.language || "en");
   const baseQuizQuestion = convertBankQuestionToQuizQuestionLossless(bankQuestion);
   baseQuizQuestion.number = 1;
+  baseQuizQuestion.source_ids = Array.from(new Set(["C01", ...(baseQuizQuestion.source_ids || []), bankQuestion.id].filter(Boolean)));
+  baseQuizQuestion.validation.source_coverage = true;
 
   const blueprint = getQuizGameplayArchetype(bankQuestion.archetype_id);
   const targetLayout = blueprint?.targetLayout ?? "full_stack_list";
@@ -173,7 +175,7 @@ export async function createEpisodeFromQuestionBank(deps: {
     premise,
   });
 
-  await repository.appendQuestionHistory(channelId, episode.episode_id, [quizQuestion]);
+  await repository.appendQuestionHistory(channelId, episode.episode_id, [quizQuestion], 30, undefined, "episode");
   const task = triggerPipelineTask(tasks, channelId, episode.episode_id, input.auto_start_pipeline !== false);
   await repository.updateChannel(channelId, { updated_at: timestamp });
 

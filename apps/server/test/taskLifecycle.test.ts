@@ -2,7 +2,7 @@ import { EventEmitter } from "node:events";
 import { access, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { FAILED_BUILD_RETENTION_MS, TaskSchema, type QuizQuestion, type Task } from "@studio/shared";
 import { ContextEngine } from "../src/context.js";
 import { StudioLogger } from "../src/logger.js";
@@ -121,7 +121,7 @@ describe("failed build lifecycle", () => {
     expect(findExpiredFailedBuilds([successful, failed], now)).toHaveLength(0);
   });
 
-  it("persists interrupted tasks as failed so restart cannot refresh their ten-hour window", async () => {
+  it("requeues interrupted builds so restart can resume from persisted artifacts", async () => {
     const { repository, channel, episode } = await fixture();
     const interrupted = videoTask(channel.channel_id, episode.episode_id, {
       status: "RUNNING",
@@ -132,9 +132,16 @@ describe("failed build lifecycle", () => {
     await writeFile(taskPath, `${JSON.stringify(interrupted)}\n`, "utf8");
     const logger = new StudioLogger(repository.rootDirectory);
     const reloaded = new TaskManager(repository, new ContextEngine(repository, logger), new FakeCodex() as never, 1, 8, logger);
+    const dispatched = vi.spyOn(reloaded, "run").mockImplementation(async (task) => {
+      await reloaded.update(task.task_id, { status: "RUNNING" });
+      await reloaded.finish(task.task_id, "COMPLETED", null);
+    });
     await reloaded.load();
+    await vi.waitFor(() => expect(reloaded.get(interrupted.task_id).status).toBe("COMPLETED"));
+    expect(dispatched).toHaveBeenCalledTimes(1);
     const persisted = TaskSchema.parse(JSON.parse(await readFile(taskPath, "utf8")));
-    expect(persisted.status).toBe("FAILED");
+    expect(persisted.status).toBe("COMPLETED");
+    expect(persisted.restart_recovery_count).toBe(1);
     expect(persisted.completed_at).toBe(reloaded.get(interrupted.task_id).completed_at);
   });
 

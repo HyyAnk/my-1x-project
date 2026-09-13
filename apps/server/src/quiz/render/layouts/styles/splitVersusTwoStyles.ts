@@ -252,11 +252,13 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
 
 /* --- Phase 2: Challenger Entrance Animations --- */
 .layout-split_versus_two.quiz-question-clip .choice-card:nth-child(1) {
-  animation: split-versus-enter-left 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both;
+  animation: split-versus-enter-left 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s)) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.54s) infinite alternate both;
 }
 
 .layout-split_versus_two.quiz-question-clip .choice-card:nth-child(2) {
-  animation: split-versus-enter-right 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s) both;
+  animation: split-versus-enter-right 0.54s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.14s) both,
+             answer-float 3.6s ease-in-out calc(var(--clip-start, 0s) + var(--choices-at, 0s) + 0.68s) infinite alternate both;
 }
 
 .layout-split_versus_two.quiz-question-clip .answer-grid::after,
@@ -298,37 +300,76 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
 }
 
 /* --- Phase 4: Answer Reveal Duel Climax --- */
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct,
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(n).answer-correct,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(n).answer-correct,
+.layout-split_versus_two.quiz-question-clip .answer-card:nth-child(n).answer-reveal-correct,
+.layout-split_versus_two.quiz-question-clip .answer-card:nth-child(n).answer-correct,
+.layout-split_versus_two.quiz-question-clip .choice-card.answer-reveal-correct,
+.layout-split_versus_two.quiz-question-clip .choice-card.answer-correct,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card.answer-reveal-correct,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card.answer-correct,
+.layout-split_versus_two.quiz-question-clip .answer-card.answer-reveal-correct,
+.layout-split_versus_two.quiz-question-clip .answer-card.answer-correct,
 .layout-split_versus_two .choice-card.answer-reveal-correct,
-.layout-split_versus_two .choice-card.answer-correct {
-  animation: split-versus-winner-coronation 0.72s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+.layout-split_versus_two .choice-card.answer-correct,
+.layout-split_versus_two .visual-answer-card.answer-reveal-correct,
+.layout-split_versus_two .visual-answer-card.answer-correct,
+.layout-split_versus_two .answer-card.answer-reveal-correct,
+.layout-split_versus_two .answer-card.answer-correct {
+  animation: split-versus-winner-coronation 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  border-color: #22C55E;
+  box-shadow: 0 16px 0 #15803D, 0 0 50px rgba(74, 222, 128, 0.85), 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 8;
 }
 
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(n).answer-reveal-incorrect,
+.layout-split_versus_two.quiz-question-clip .choice-card:nth-child(n).answer-incorrect,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-incorrect,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card:nth-child(n).answer-incorrect,
+.layout-split_versus_two.quiz-question-clip .answer-card:nth-child(n).answer-reveal-incorrect,
+.layout-split_versus_two.quiz-question-clip .answer-card:nth-child(n).answer-incorrect,
+.layout-split_versus_two.quiz-question-clip .choice-card.answer-reveal-incorrect,
+.layout-split_versus_two.quiz-question-clip .choice-card.answer-incorrect,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card.answer-reveal-incorrect,
+.layout-split_versus_two.quiz-question-clip .visual-answer-card.answer-incorrect,
+.layout-split_versus_two.quiz-question-clip .answer-card.answer-reveal-incorrect,
+.layout-split_versus_two.quiz-question-clip .answer-card.answer-incorrect,
 .layout-split_versus_two .choice-card.answer-reveal-incorrect,
-.layout-split_versus_two .choice-card.answer-incorrect {
-  animation: split-versus-loser-defeat 0.48s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+.layout-split_versus_two .choice-card.answer-incorrect,
+.layout-split_versus_two .visual-answer-card.answer-reveal-incorrect,
+.layout-split_versus_two .visual-answer-card.answer-incorrect,
+.layout-split_versus_two .answer-card.answer-reveal-incorrect,
+.layout-split_versus_two .answer-card.answer-incorrect {
+  animation: split-versus-loser-defeat 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  opacity: 0.35;
+  filter: grayscale(78%) contrast(0.95) brightness(0.92);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 0 rgba(10, 25, 60, 0.08);
 }
 
 @keyframes split-versus-winner-coronation {
   0% { transform: scale(1); }
   45% {
     transform: scale(1.06) translateY(-8px);
-    box-shadow: 0 0 70px rgba(255, 215, 0, 0.95), 0 24px 48px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 18px 0 #15803D, 0 0 70px rgba(74, 222, 128, 0.95), 0 24px 48px rgba(0, 0, 0, 0.35);
   }
   100% {
     transform: scale(1.035) translateY(-4px);
-    border-color: #FFD700;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.85), 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-color: #22C55E;
+    box-shadow: 0 16px 0 #15803D, 0 0 50px rgba(74, 222, 128, 0.85), 0 20px 40px rgba(0, 0, 0, 0.3);
   }
 }
 
 @keyframes split-versus-loser-defeat {
   0% { opacity: 1; transform: scale(1); filter: grayscale(0%); }
   100% {
-    opacity: 0.32;
+    opacity: 0.35;
     transform: scale(0.95) translateY(4px);
-    filter: grayscale(82%) brightness(0.85);
-    border-color: rgba(255, 255, 255, 0.3);
+    filter: grayscale(78%) contrast(0.95) brightness(0.92);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 2px 0 rgba(10, 25, 60, 0.08);
   }
 }
 
@@ -336,8 +377,14 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
 .layout-split_versus_two.quiz-question-clip .answer-grid:has(.answer-reveal-correct)::after,
 .layout-split_versus_two.quiz-question-clip .visual-answer-grid:has(.answer-reveal-correct)::after,
 .layout-split_versus_two.quiz-question-clip .answer-grid:has(.answer-correct)::after,
-.layout-split_versus_two.quiz-question-clip .visual-answer-grid:has(.answer-correct)::after {
+.layout-split_versus_two.quiz-question-clip .visual-answer-grid:has(.answer-correct)::after,
+.layout-split_versus_two .answer-grid:has(.answer-reveal-correct)::after,
+.layout-split_versus_two .visual-answer-grid:has(.answer-reveal-correct)::after,
+.layout-split_versus_two .answer-grid:has(.answer-correct)::after,
+.layout-split_versus_two .visual-answer-grid:has(.answer-correct)::after {
   animation: split-versus-badge-victory 0.6s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  background: linear-gradient(135deg, #FFD700 0%, #FF9100 100%);
+  box-shadow: 0 0 60px rgba(255, 215, 0, 1), 0 10px 0 #B26A00;
 }
 
 @keyframes split-versus-badge-victory {
@@ -381,6 +428,95 @@ export function getSplitVersusTwoCss(_aspectRatio?: MascotRenderAspectRatio): st
   left: 50%;
   transform: translateX(-50%);
   width: min(1280px, 100%);
+}
+
+/* Portrait 9:16 Safe-Zone Responsive Layout */
+${
+  _aspectRatio === "9:16"
+    ? `
+#stage[data-aspect-ratio="9:16"] .candy-scene.layout-split_versus_two .game-stage,
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .game-stage {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "title"
+    "answers"
+    "phase";
+  width: calc(100% - 72px);
+  max-width: 960px;
+  min-height: 0;
+  margin: 184px auto 0;
+  row-gap: 20px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .question-title {
+  width: 100%;
+  max-width: min(860px, calc(100% - 140px));
+  margin: 0 auto;
+}
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .answer-grid,
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .visual-answer-grid,
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .choice-group {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: min(860px, calc(100% - 140px));
+  max-width: 860px;
+  height: auto;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .choice-card,
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .choice-card-text,
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .choice-group-text .choice-card-text,
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .answer-card {
+  width: 100%;
+  height: 220px;
+  min-height: 220px;
+  max-height: 220px;
+  padding: 16px 28px;
+  border-radius: 28px;
+  --choice-card-height: 220px;
+  --choice-card-min-height: 220px;
+  --choice-badge-size: 88px;
+  --choice-font-size-base: 36px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .choice-group-text .choice-label {
+  width: 80px;
+  height: 80px;
+  font-size: 44px;
+  margin-bottom: 8px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .choice-group-text .choice-text {
+  font-size: 36px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .choice-card-visual,
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .visual-answer-card {
+  width: 100%;
+  height: 280px;
+  min-height: 280px;
+  max-height: 280px;
+  border-radius: 28px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .choice-media,
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .option-image {
+  height: 200px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .visual-answer-label {
+  height: 76px;
+  min-height: 76px;
+  margin: -24px 12px 0 24px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .answer-grid::after,
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .visual-answer-grid::after,
+#stage[data-aspect-ratio="9:16"] .layout-split_versus_two .vs-badge {
+  width: 80px;
+  height: 80px;
+  font-size: 34px;
+}
+`
+    : ""
 }
 `;
 }

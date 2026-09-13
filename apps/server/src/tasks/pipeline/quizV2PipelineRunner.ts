@@ -11,7 +11,7 @@ import {
   readQuizArtifacts,
   resolveAssets,
 } from "../../quiz/pipeline/orchestrator.js";
-import { generateEpisodeThumbnail } from "../../quiz/thumbnail/index.js";
+import { ensureEpisodeThumbnail } from "../../quiz/thumbnail/ensureEpisodeThumbnail.js";
 import type { TaskManagerRuntime } from "../runtime.js";
 import { createQuizPipelineTimingsRecorder } from "./quizPipelineTimings.js";
 import {
@@ -155,8 +155,8 @@ export async function runQuizV2Pipeline(this: TaskManagerRuntime, task: Task): P
 
   try {
     const thumbStart = Date.now();
-    await this.update(task.task_id, { progress_message: "Quiz · generating high-CTR thumbnail", progress_percent: 54 });
-    await generateEpisodeThumbnail(this.repository, {
+    await this.update(task.task_id, { progress_message: "Quiz · checking thumbnail", progress_percent: 59 });
+    await ensureEpisodeThumbnail(this.repository, {
       channelId: task.channel_id,
       episodeId: task.episode_id!,
       activeEngine: this.activeEngine,

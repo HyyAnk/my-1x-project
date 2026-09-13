@@ -68,6 +68,14 @@ export function ChannelTopicsTab({
     // Unassigned legacy candidates without run_id belong in history, never inferred into a latest run
     return { latestRunTopics: [], historyTopics: topics, hasEmptyLatestRunShortages: false };
   }, [topics, latestRun]);
+
+  // Split latest run topics by content kind (16:9 Episodes vs 9:16 Short-Reels)
+  const { episodeTopics, shortReelTopics } = useMemo(() => {
+    const episodes = latestRunTopics.filter((t) => t.content_kind === "episode");
+    const shorts = latestRunTopics.filter((t) => t.content_kind === "short_reel");
+    return { episodeTopics: episodes, shortReelTopics: shorts };
+  }, [latestRunTopics]);
+
   return (
     <div>
       <div className="section-heading" style={{ marginTop: "12px" }}>
@@ -143,19 +151,53 @@ export function ChannelTopicsTab({
         />
       ) : (
         <>
-          {latestRunTopics.length > 0 ? (
-            <div className="topic-grid">
-              {latestRunTopics.map((topic) => (
-                <TopicCard
-                  key={topic.topic_id}
-                  topic={topic}
-                  channelStyles={channel.selected_styles}
-                  availability={availabilityMap.get(topic.topic_id)}
-                  busy={confirmingTopicId === topic.topic_id}
-                  disabled={Boolean(confirmingTopicId) || channel.status === "ARCHIVED"}
-                  onConfirm={(questionCount, visualStyle) => void onConfirmTopic(topic, questionCount, visualStyle)}
-                />
-              ))}
+          {episodeTopics.length > 0 ? (
+            <div className="topic-format-section">
+              <div className="topic-format-section-header">
+                <div className="topic-format-heading-left">
+                  <span className="topic-format-indicator is-landscape">16:9</span>
+                  <h3 className="topic-format-title">Long-form Episodes ({episodeTopics.length})</h3>
+                </div>
+                <span className="topic-format-subtitle">Landscape 16:9 Concepts</span>
+              </div>
+              <div className="topic-grid topic-grid-landscape">
+                {episodeTopics.map((topic) => (
+                  <TopicCard
+                    key={topic.topic_id}
+                    topic={topic}
+                    channelStyles={channel.selected_styles}
+                    availability={availabilityMap.get(topic.topic_id)}
+                    busy={confirmingTopicId === topic.topic_id}
+                    disabled={Boolean(confirmingTopicId) || channel.status === "ARCHIVED"}
+                    onConfirm={(questionCount, visualStyle) => void onConfirmTopic(topic, questionCount, visualStyle)}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {shortReelTopics.length > 0 ? (
+            <div className="topic-format-section" style={{ marginTop: "28px" }}>
+              <div className="topic-format-section-header">
+                <div className="topic-format-heading-left">
+                  <span className="topic-format-indicator is-vertical">9:16</span>
+                  <h3 className="topic-format-title">Short-Reels ({shortReelTopics.length})</h3>
+                </div>
+                <span className="topic-format-subtitle">Vertical 9:16 Mobile Concepts</span>
+              </div>
+              <div className="topic-grid topic-grid-vertical">
+                {shortReelTopics.map((topic) => (
+                  <TopicCard
+                    key={topic.topic_id}
+                    topic={topic}
+                    channelStyles={channel.selected_styles}
+                    availability={availabilityMap.get(topic.topic_id)}
+                    busy={confirmingTopicId === topic.topic_id}
+                    disabled={Boolean(confirmingTopicId) || channel.status === "ARCHIVED"}
+                    onConfirm={(questionCount, visualStyle) => void onConfirmTopic(topic, questionCount, visualStyle)}
+                  />
+                ))}
+              </div>
             </div>
           ) : null}
 

@@ -1,5 +1,6 @@
 import type { Episode, QuizImageStyle } from "@studio/shared";
 import { QUIZ_STYLE_CONTRACTS } from "../quiz/assets/promptCompiler.js";
+import { FRANCHISE_ANCHOR_MANDATE_LINES, VISUAL_ANCHOR_MANDATE_LINES } from "../quiz/bank/prompts/archetypePromptGuidelines.js";
 import type { OutputContractInput } from "./taskInstructions.js";
 
 function resolveVisualStyleContract(episode: Episode | null) {
@@ -48,17 +49,27 @@ export function buildDirectQuizOutputContract(input: OutputContractInput): strin
     `  "explanation": "Strictly 1 punchy, child-friendly fun fact under 10 words and under 70 characters",`,
     `  "fun_fact": "Same concise fun fact or interesting trivia nugget",`,
     `  "source_ids": ["C01"] (Claim ID matching question number),`,
-    `  "visual_opportunity": "Anchor illustration prompt for this question: describe the clean hero subject and environment in ${styleContract.continuityPromptBrief}. NEVER include text, UI cards, answer choices, buttons, or countdown timers.",`,
+    `  "visual_opportunity": "Detailed illustration prompt: explicitly name the subject/character and parent franchise (e.g. 'Eren Yeager in Attack Titan form from Attack on Titan', 'Tanjiro Kamado from Demon Slayer'). Include signature anatomy/costume details and anchor in an authentic, iconic world-specific environment (e.g. 'standing before the colossal stone Wall Maria in Shiganshina district with billowing transformation steam and yellow lightning sparks'). Clean artwork ONLY, zero text, zero UI.",`,
     `  "validation": { "semantic_status": "validated", "source_coverage": true, "fact_locked": true }`,
     `}`,
+    ``,
+    ...FRANCHISE_ANCHOR_MANDATE_LINES,
+    ``,
+    ...VISUAL_ANCHOR_MANDATE_LINES,
     ``,
     `Critical Rules:`,
     `1. Choice count: ${choiceCountDesc}. Never add extra choices.`,
     `2. ${questionPhrasingRule}`,
-    `3. Answer distribution: Vary and balance the correct_choice_id across questions (never place the correct answer in the same letter position for two consecutive questions).`,
-    `4. Age appropriateness: Tailor question vocabulary and concepts strictly for age band "${quizConfig?.age_band ?? "7-9"}".`,
-    `5. Visual prompt purity: The "visual_opportunity" field is used by the AI image generator to illustrate this specific question. Focus purely on vibrant character/animal/subject illustration.`,
-    `6. ABSOLUTE LANGUAGE INTEGRITY: Write every question, choice text, explanation, and fun_fact 100% in "${targetLanguage}". Never mix any other language into the content.`,
+    `3. Franchise Anchoring: When generating questions about anime, manga, gaming, comics, movies, or fictional characters, ALWAYS explicitly name the parent franchise in the question hook per the FRANCHISE ANCHOR MANDATE.`,
+    `4. Answer distribution: Vary and balance the correct_choice_id across questions (never place the correct answer in the same letter position for two consecutive questions).`,
+    `5. Age appropriateness: Tailor question vocabulary and concepts strictly for age band "${quizConfig?.age_band ?? "7-9"}".`,
+    `6. Visual Opportunity Entity & Setting Mandate: The "visual_opportunity" field is used directly by AI image generators to illustrate this question. You MUST construct it using the 4-part visual formula:`,
+    `   a. ENTITY & FRANCHISE IDENTITY: ALWAYS explicitly name the specific character/entity and their parent franchise or lore universe (e.g. 'Eren Yeager in Attack Titan form from Attack on Titan', 'Izuku Midoriya (Deku) in U.A. hero costume from My Hero Academia', 'Son Goku in Super Saiyan form from Dragon Ball Z'). NEVER write vague generic descriptions like 'a muscular giant', 'a superhero', or 'a swordsman'.`,
+    `   b. SIGNATURE PHYSICAL ANATOMY & COSTUME: Detail iconic identifying traits, gear, and silhouette (e.g. jagged lipless teeth, pointed titan ears, glowing green eyes, green-checkered haori, hanafuda earrings).`,
+    `   c. ICONIC ENVIRONMENT & CONTEXT: Anchor the subject in its authentic, lore-accurate setting (e.g. the 50-meter stone Wall Maria, Shiganshina district rooftops, billowing heat steam, yellow lightning transformation sparks) rather than a generic or blank backdrop.`,
+    `   d. SCENE PURITY & ZERO STYLE POLLUTION: Focus purely on scene content, subject action, and atmospheric environment. NEVER copy/paste generic camera buzzwords (such as 'wildlife and nature photography style') or UI elements (cards, text, buttons, countdown timers).`,
+    `7. VISUAL PROMPT LANGUAGE: The "visual_opportunity" field MUST ALWAYS be written 100% in English, even when "${targetLanguage}" is requested for the question and choices, because AI image generation models require English prompts.`,
+    `8. ABSOLUTE LANGUAGE INTEGRITY: Write every question, choice text, explanation, and fun_fact 100% in "${targetLanguage}". Never mix any other language into the content.`,
   ];
 
   return lines.join("\n");

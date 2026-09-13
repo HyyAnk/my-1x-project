@@ -281,27 +281,91 @@ export const visualChoicesThreeLayout = {
 }
 
 /* 9. Phase 4: Answer Reveal & Settle Contrast Hardening */
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct,
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-correct,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual:nth-child(n).answer-reveal-correct,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual:nth-child(n).answer-correct,
+.layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct,
+.layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(n).answer-correct,
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-reveal-correct,
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-correct,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual.answer-reveal-correct,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual.answer-correct,
+.layout-visual_choices_three.quiz-question-clip .choice-card.answer-reveal-correct,
+.layout-visual_choices_three.quiz-question-clip .choice-card.answer-correct,
+.layout-visual_choices_three .visual-answer-card.answer-correct,
+.layout-visual_choices_three .choice-card-visual.answer-correct,
+.layout-visual_choices_three .choice-card.answer-correct,
+.layout-visual_choices_three .visual-answer-card.answer-reveal-correct,
+.layout-visual_choices_three .choice-card-visual.answer-reveal-correct,
+.layout-visual_choices_three .choice-card.answer-reveal-correct {
+  animation: visual-correct-card-reveal 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  z-index: 6;
+}
+
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct .option-image,
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-correct .option-image,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual:nth-child(n).answer-reveal-correct .option-image,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual:nth-child(n).answer-correct .option-image,
+.layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct .option-image,
+.layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(n).answer-correct .option-image,
 .layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-reveal-correct .option-image,
-.layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-correct .option-image {
-  border-color: #10B981;
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-correct .option-image,
+.layout-visual_choices_three .visual-answer-card.answer-correct .option-image,
+.layout-visual_choices_three .choice-card-visual.answer-correct .option-image,
+.layout-visual_choices_three .choice-card.answer-correct .option-image,
+.layout-visual_choices_three .visual-answer-card.answer-reveal-correct .option-image,
+.layout-visual_choices_three .choice-card-visual.answer-reveal-correct .option-image,
+.layout-visual_choices_three .choice-card.answer-reveal-correct .option-image {
+  border-color: #22C55E;
   box-shadow:
-    0 0 36px rgba(16, 185, 129, 0.8),
-    0 16px 0 #047857,
+    0 0 36px rgba(74, 222, 128, 0.8),
+    0 16px 0 #15803D,
     inset 0 4px 8px rgba(255, 255, 255, 0.95);
   animation: visual-correct-bloom 0.62s cubic-bezier(0.18, 1.42, 0.34, 1) calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
 }
 
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-correct .visual-answer-label,
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-correct .visual-answer-label,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual:nth-child(n).answer-reveal-correct .visual-answer-label,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual:nth-child(n).answer-correct .visual-answer-label,
+.layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(n).answer-reveal-correct .visual-answer-label,
+.layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(n).answer-correct .visual-answer-label,
 .layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-reveal-correct .visual-answer-label,
-.layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-correct .visual-answer-label {
-  border-color: #10B981;
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-correct .visual-answer-label,
+.layout-visual_choices_three .visual-answer-card.answer-correct .visual-answer-label,
+.layout-visual_choices_three .choice-card-visual.answer-correct .visual-answer-label,
+.layout-visual_choices_three .choice-card.answer-correct .visual-answer-label,
+.layout-visual_choices_three .visual-answer-card.answer-reveal-correct .visual-answer-label,
+.layout-visual_choices_three .choice-card-visual.answer-reveal-correct .visual-answer-label,
+.layout-visual_choices_three .choice-card.answer-reveal-correct .visual-answer-label {
+  border-color: #22C55E;
   box-shadow:
-    0 0 24px rgba(16, 185, 129, 0.6),
-    0 10px 0 #047857;
+    0 0 24px rgba(74, 222, 128, 0.6),
+    0 10px 0 #15803D;
 }
 
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-reveal-incorrect,
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card:nth-child(n).answer-incorrect,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual:nth-child(n).answer-reveal-incorrect,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual:nth-child(n).answer-incorrect,
+.layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(n).answer-reveal-incorrect,
+.layout-visual_choices_three.quiz-question-clip .choice-card:nth-child(n).answer-incorrect,
 .layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-reveal-incorrect,
-.layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-incorrect {
+.layout-visual_choices_three.quiz-question-clip .visual-answer-card.answer-incorrect,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual.answer-reveal-incorrect,
+.layout-visual_choices_three.quiz-question-clip .choice-card-visual.answer-incorrect,
+.layout-visual_choices_three.quiz-question-clip .choice-card.answer-reveal-incorrect,
+.layout-visual_choices_three.quiz-question-clip .choice-card.answer-incorrect,
+.layout-visual_choices_three .visual-answer-card.answer-incorrect,
+.layout-visual_choices_three .choice-card-visual.answer-incorrect,
+.layout-visual_choices_three .choice-card.answer-incorrect,
+.layout-visual_choices_three .visual-answer-card.answer-reveal-incorrect,
+.layout-visual_choices_three .choice-card-visual.answer-reveal-incorrect,
+.layout-visual_choices_three .choice-card.answer-reveal-incorrect {
   animation: incorrect-card-settle-vc3 0.38s ease-out calc(var(--clip-start, 0s) + var(--reveal-at, 0s)) both;
+  opacity: 0.35;
+  filter: grayscale(78%) contrast(0.95) brightness(0.92);
 }
 
 @keyframes visual-correct-bloom {
@@ -317,17 +381,25 @@ export const visualChoicesThreeLayout = {
     filter: grayscale(0%) contrast(1);
   }
   to {
-    opacity: 0.42;
+    opacity: 0.35;
     transform: scale(0.96);
-    filter: grayscale(65%) contrast(0.95);
+    filter: grayscale(78%) contrast(0.95) brightness(0.92);
   }
 }
 
 ${
   aspectRatio === "9:16"
     ? `
-#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .game-stage { grid-template-columns: 1fr; grid-template-areas: "title" "answers"; row-gap: 24px; }
-#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .visual-answer-grid { width: 100%; grid-template-columns: 1fr; gap: 26px; }
+#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .game-stage {
+  grid-template-columns: 1fr;
+  grid-template-areas: "title" "answers" "phase";
+  row-gap: 24px;
+}
+#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .visual-answer-grid {
+  width: 100%;
+  grid-template-columns: 1fr;
+  gap: 26px;
+}
 #stage[data-aspect-ratio="9:16"] .layout-visual_choices_three {
   --choice-media-height: 360px;
   --choice-label-min-height: 74px;
@@ -336,7 +408,9 @@ ${
   --choice-badge-font-size: 52px;
   --choice-fit-max: 42px;
 }
-#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .option-image { height: 320px; }
+#stage[data-aspect-ratio="9:16"] .layout-visual_choices_three .option-image {
+  height: 320px;
+}
 `
     : ""
 }`,

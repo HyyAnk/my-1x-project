@@ -21,11 +21,13 @@ import { SandboxLayoutSelector } from "./design/SandboxLayoutSelector";
 import { SandboxPaletteSelector } from "./design/SandboxPaletteSelector";
 import { SandboxStyleOptionSection } from "./design/SandboxStyleOptionSection";
 
+import type { SandboxAspectRatio } from "../hooks/useSandboxViewportState";
+
 export interface SandboxDesignTabProps {
   layoutId: QuizPreviewLayoutId;
-  setLayoutId: (layout: QuizPreviewLayoutId) => void;
+  setLayoutId: (layoutId: QuizPreviewLayoutId) => void;
   paletteId: string;
-  setPaletteId: (id: string) => void;
+  setPaletteId: (paletteId: string) => void;
   thinkingBarStyle: QuizThinkingBarStyle;
   setThinkingBarStyle: (style: QuizThinkingBarStyle) => void;
   questionBoxStyle: QuizQuestionBoxStyle;
@@ -36,7 +38,7 @@ export interface SandboxDesignTabProps {
   setCounterStyle: (style: QuizQuestionCounterStyle) => void;
   backgroundStyle: QuizBackgroundStyle;
   setBackgroundStyle: (style: QuizBackgroundStyle) => void;
-  aspectRatio?: "16:9";
+  aspectRatio?: SandboxAspectRatio;
 }
 
 export function SandboxDesignTab({

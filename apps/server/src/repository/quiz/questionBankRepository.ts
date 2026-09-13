@@ -20,6 +20,7 @@ export { readQuestionBankIndex, recalculateQuestionBankIndex, getQuestionBankMat
 
 export {
   COOLDOWN_DAYS_DEFAULT,
+  type BankCooldownScope,
   type QueryQuestionBankParams,
   queryQuestionBankQuestions,
   readQuestionBankQuestionsSnapshot,
@@ -50,3 +51,7 @@ export {
   type BankSerializationBoundary,
   type BankQuestionSnapshot,
 } from "./bank/bankSerializationBoundary.js";
+export { getBankSqliteDb, closeBankSqliteDb, closeAllBankSqliteDbs } from "./bank/bankSqliteEngine.js";
+export { upsertBankQuestionSqlite, deleteBankQuestionSqlite, clearBankQuestionsSqlite } from "./bank/bankSqliteMutations.js";
+export { queryBankQuestionsSqlite, getBankQuestionByIdSqlite, getAllBankQuestionsSqlite } from "./bank/bankSqliteQueries.js";
+

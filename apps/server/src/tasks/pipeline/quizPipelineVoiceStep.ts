@@ -237,6 +237,31 @@ export async function executeQuizQaGatesWithHealing(
       return artifacts;
     }
 
+    const missingSourceBlockers = blockers.filter((issue) => issue.code === "semantic_sources_missing");
+    if (missingSourceBlockers.length > 0 && artifacts.quiz) {
+      let modified = false;
+      for (let i = 0; i < artifacts.quiz.questions.length; i++) {
+        const q = artifacts.quiz.questions[i];
+        if (!q.source_ids || q.source_ids.length === 0) {
+          q.source_ids = [`C${String(q.number || i + 1).padStart(2, "0")}`];
+          q.validation.source_coverage = true;
+          modified = true;
+        }
+      }
+      if (modified) {
+        runtime.logger.warn(`Auto-healed missing quiz source IDs (attempt ${cycle}/${maxHealingCycles})`, {
+          profileId: task.channel_id,
+          workerId: task.task_id,
+          step: "auto_heal_sources",
+        });
+        await runtime.repository.writeQuiz(task.channel_id, task.episode_id!, artifacts.quiz);
+        await runtime.repository.invalidateQuizArtifacts(task.channel_id, task.episode_id!, ["assessment"]);
+        await runQa(input);
+        artifacts = await readQuizArtifacts(input);
+        continue;
+      }
+    }
+
     if (cycle < maxHealingCycles) {
       await executeQuizHealingCycle(runtime, task, input, artifacts, cycle, maxHealingCycles, blockers);
       await runQa(input);

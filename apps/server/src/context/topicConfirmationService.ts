@@ -1,10 +1,6 @@
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import {
-  ALL_QUIZ_IMAGE_STYLES,
-  EpisodeSchema,
-  QuizConfigSchema,
-  QuizPaletteIdSchema,
   TopicConfirmInputSchema,
   makeId,
   nowIso,
@@ -29,115 +25,29 @@ import {
   estimateQuizTargetDurationMinutes,
   estimateQuizTargetWordCount,
 } from "../repository/helpers.js";
+import {
+  assertConfirmableCandidate,
+  buildEpisodePaths,
+  buildEpisodeSkeleton,
+  buildQuizConfig,
+  getInitialEpisodeDocuments,
+  resolveCandidateStyles,
+  type BuildEpisodeParams,
+  type EpisodePaths,
+  type ResolvedCandidateStyles,
+} from "./confirmation/index.js";
 
-function assertConfirmableCandidate(candidate: TopicCandidate): void {
-  if (!candidate.source_bindings || candidate.source_bindings.length === 0) {
-    if (
-      candidate.archetype ||
-      (candidate as { slot_id?: string }).slot_id ||
-      candidate.suggested_layout ||
-      candidate.topic_id.toLowerCase().includes("unbound") ||
-      candidate.topic_id.toLowerCase().includes("legacy")
-    ) {
-      throw new RepositoryError(
-        "UNBOUND_LEGACY_TOPIC: Cannot confirm unbound legacy topic candidate. Re-suggest topics to bind canonical sources.",
-        "UNBOUND_LEGACY_TOPIC",
-      );
-    }
-  }
-}
-
-function resolveCandidateStyles(
-  requested?: QuizImageStyle | "mixed",
-  candidateStyle?: QuizImageStyle | "mixed",
-  channelStyles?: QuizImageStyle[],
-): { requestedStyle: QuizImageStyle | "mixed"; resolvedStyle: QuizImageStyle } {
-  const req = requested ?? candidateStyle ?? "mixed";
-  const availableStyles = channelStyles && channelStyles.length > 0 ? channelStyles : ALL_QUIZ_IMAGE_STYLES;
-  const resolved: QuizImageStyle =
-    req === "mixed" ? availableStyles[Math.floor(Math.random() * availableStyles.length)] || "pixar_3d" : req;
-  return { requestedStyle: req, resolvedStyle: resolved };
-}
-
-function buildEpisodePaths(channelSlug: string, episodeSlug: string) {
-  const base = `channels/${channelSlug}/episodes/${episodeSlug}`;
-  return {
-    script_path: `${base}/script.md`,
-    research_path: `${base}/research.md`,
-    treatment_path: `${base}/treatment.md`,
-    visual_bible_path: `${base}/visual_bible.md`,
-    scene_plan_path: `${base}/scene_plan.md`,
-    dialogue_script_path: `${base}/dialogue_script.md`,
-    video_prompts_path: `${base}/video_prompts.md`,
-  };
-}
-
-function buildQuizConfig(
-  candidate: EpisodeTopicCandidate,
-  channel: Channel,
-  selectedQuestionCount: number,
-  requestedStyle: QuizImageStyle | "mixed",
-  resolvedStyle: QuizImageStyle,
-): Episode["quiz_config"] {
-  const channelPalette = QuizPaletteIdSchema.safeParse(channel.default_palette_id);
-  return QuizConfigSchema.parse({
-    question_count: selectedQuestionCount,
-    quiz_format: candidate.quiz_format,
-    age_band: candidate.age_band,
-    answer_mode: "voice_and_reveal",
-    visual_theme: candidate.quiz_format === "image_guess" ? "jungle_jamboree" : "candy_pop",
-    visual_style: requestedStyle,
-    resolved_visual_style: resolvedStyle,
-    thinking_bar_style: channel.default_thinking_bar_style ?? "auto",
-    question_counter_style: channel.default_counter_style ?? "auto",
-    question_box_style: channel.default_question_box_style ?? "auto",
-    answer_card_style: channel.default_answer_card_style ?? "auto",
-    background_style: channel.default_background_style ?? "auto",
-    palette_id: channelPalette.success ? channelPalette.data : "auto",
-    style_preset_id: "auto",
-    channel_brand_name: "",
-    render_aspect_ratio: "16:9",
-    archetype: candidate.archetype,
-    target_layout: candidate.suggested_layout,
-  });
-}
-
-interface BuildEpisodeParams {
-  episodeId: string;
-  channelId: string;
-  channelSlug: string;
-  episodeSlug: string;
-  candidate: EpisodeTopicCandidate;
-  selectedQuestionCount: number;
-  requestedStyle: QuizImageStyle | "mixed";
-  resolvedStyle: QuizImageStyle;
-  channel: Channel;
-  targetDurationMinutes: number;
-  targetWordCount: number;
-  timestamp: string;
-}
-
-function buildEpisodeSkeleton(params: BuildEpisodeParams): Episode {
-  return EpisodeSchema.parse({
-    episode_id: params.episodeId,
-    channel_id: params.channelId,
-    slug: params.episodeSlug,
-    topic: { title: params.candidate.title, premise: params.candidate.premise, hook: params.candidate.hook },
-    stage: "SELECTED",
-    ...buildEpisodePaths(params.channelSlug, params.episodeSlug),
-    target_duration_minutes: params.targetDurationMinutes,
-    target_word_count: params.targetWordCount,
-    quiz_config: buildQuizConfig(
-      params.candidate,
-      params.channel,
-      params.selectedQuestionCount,
-      params.requestedStyle,
-      params.resolvedStyle,
-    ),
-    created_at: params.timestamp,
-    updated_at: params.timestamp,
-  });
-}
+export {
+  assertConfirmableCandidate,
+  buildEpisodePaths,
+  type EpisodePaths,
+  getInitialEpisodeDocuments,
+  resolveCandidateStyles,
+  type ResolvedCandidateStyles,
+  buildQuizConfig,
+  buildEpisodeSkeleton,
+  type BuildEpisodeParams,
+};
 
 async function initializeEpisodeFiles(
   repo: RepositoryRuntime,
@@ -165,15 +75,7 @@ async function initializeEpisodeFiles(
     `# ${candidate.title}\n\n## Premise\n\n${candidate.premise}\n\n## Hook\n\n${candidate.hook}\n`,
   );
 
-  const initialDocs = [
-    { name: "research.md", content: "# Research Dossier\n\nResearch has not started.\n" },
-    { name: "treatment.md", content: "# Treatment\n\nTreatment has not started.\n" },
-    { name: "script.md", content: "# Script\n\nScript generation has not started.\n" },
-    { name: "visual_bible.md", content: "# Episode Visual Bible\n\nVisual development has not started.\n" },
-    { name: "scene_plan.md", content: "# Scene Plan\n\nScene breakdown has not started.\n" },
-    { name: "dialogue_script.md", content: "# Dialogue Script\n\n" },
-    { name: "video_prompts.md", content: "# Video Prompts\n\n" },
-  ];
+  const initialDocs = getInitialEpisodeDocuments();
   await Promise.all(
     initialDocs.map((doc) => repo.writeTextAtomic(path.join(episodeDirectory, doc.name), doc.content)),
   );
@@ -245,30 +147,13 @@ function resolveConfirmInvocation(
   };
 }
 
-export async function confirmTopic(
-  this: RepositoryRuntime | void,
+async function executeTopicConfirmation(
+  repo: RepositoryRuntime,
   channelId: string,
   topicId: string,
   questionCount?: number,
   visualStyle?: QuizImageStyle | "mixed",
-): Promise<Episode>;
-export async function confirmTopic(
-  this: RepositoryRuntime | void,
-  repoOrChannelId: RepositoryRuntime | string,
-  channelIdOrTopicId: string,
-  questionCountOrTopicId?: number | string,
-  visualStyleOrQuestionCount?: QuizImageStyle | "mixed" | number,
-  visualStyleParam?: QuizImageStyle | "mixed",
 ): Promise<Episode> {
-  const { repo, channelId, topicId, questionCount, visualStyle } = resolveConfirmInvocation(
-    this,
-    repoOrChannelId,
-    channelIdOrTopicId,
-    questionCountOrTopicId,
-    visualStyleOrQuestionCount,
-    visualStyleParam,
-  );
-
   const channel = await repo.getChannel(channelId);
   const candidate = (await repo.listTopics(channelId)).find((topic) => topic.topic_id === topicId);
   if (!candidate) throw new RepositoryError("Topic candidate not found", "TOPIC_NOT_FOUND");
@@ -349,3 +234,45 @@ export async function confirmTopic(
 
   return episode;
 }
+
+/**
+ * Core workflow for confirming a topic candidate as an episode.
+ * Accepts either (repo, channelId, topicId, ...) or (channelId, topicId, ...) with bound runtime.
+ */
+export async function confirmTopicCandidate(
+  this: RepositoryRuntime | void,
+  channelId: string,
+  topicId: string,
+  questionCount?: number,
+  visualStyle?: QuizImageStyle | "mixed",
+): Promise<Episode>;
+export async function confirmTopicCandidate(
+  repo: RepositoryRuntime,
+  channelId: string,
+  topicId: string,
+  questionCount?: number,
+  visualStyle?: QuizImageStyle | "mixed",
+): Promise<Episode>;
+export async function confirmTopicCandidate(
+  this: RepositoryRuntime | void,
+  repoOrChannelId: RepositoryRuntime | string,
+  channelIdOrTopicId: string,
+  questionCountOrTopicId?: number | string,
+  visualStyleOrQuestionCount?: QuizImageStyle | "mixed" | number,
+  visualStyleParam?: QuizImageStyle | "mixed",
+): Promise<Episode> {
+  const { repo, channelId, topicId, questionCount, visualStyle } = resolveConfirmInvocation(
+    this,
+    repoOrChannelId,
+    channelIdOrTopicId,
+    questionCountOrTopicId,
+    visualStyleOrQuestionCount,
+    visualStyleParam,
+  );
+  return executeTopicConfirmation(repo, channelId, topicId, questionCount, visualStyle);
+}
+
+/**
+ * Backward-compatible entry point for confirming a topic candidate.
+ */
+export const confirmTopic = confirmTopicCandidate;

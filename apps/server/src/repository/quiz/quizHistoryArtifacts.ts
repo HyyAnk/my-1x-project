@@ -3,8 +3,10 @@ import path from "node:path";
 import {
   BgmHistoryEntrySchema,
   QuestionHistoryEntrySchema,
+  inferQuestionHistoryContentType,
   nowIso,
   type BgmHistoryEntry,
+  type QuestionContentType,
   type QuestionHistoryEntry,
   type QuizQuestion,
 } from "@studio/shared";
@@ -30,11 +32,13 @@ export async function appendQuestionHistory(
   questions: QuizQuestion[],
   ttlDays = 30,
   renderTaskId?: string,
+  contentType?: QuestionContentType,
 ): Promise<void> {
   const channel = await this.getChannel(channelId);
   const episode = await this.getEpisode(channelId, episodeId).catch(() => null);
   const episodeTitle = episode?.topic?.title || episodeId;
   const historyPath = this.resolvePath("channels", channel.slug, "question_history.json");
+  const effectiveContentType = contentType ?? inferQuestionHistoryContentType({ episode_id: episodeId });
   await queueQuestionHistoryWrite.call(this, channelId, async () => {
     const existing = await this.readQuestionHistory(channelId);
     const filteredExisting = existing.filter((entry) => entry.episode_id !== episodeId);
@@ -49,6 +53,7 @@ export async function appendQuestionHistory(
         episode_id: episodeId,
         episode_title: episodeTitle,
         channel_id: channelId,
+        content_type: effectiveContentType,
         ...(renderTaskId ? { render_task_id: renderTaskId } : {}),
         rendered_at: nowIso(),
       };

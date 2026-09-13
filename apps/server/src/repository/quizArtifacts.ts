@@ -34,3 +34,5 @@ export {
 export { readUsageLedger, reconcileUsageLedgerFromDisk, recordVoiceUsage, recordImageUsage } from "./quiz/quizAnalyticsArtifacts.js";
 
 export { invalidateQuizArtifacts } from "./quiz/quizArtifactsInvalidation.js";
+
+export { getQuestionBankQuestion, type BankCooldownScope } from "./quiz/questionBankRepository.js";

@@ -17,6 +17,11 @@ export const CANONICAL_DOMAIN_META: Record<string, { title: string; description:
     description: "World geography, iconic landmarks, flags, and cultural heritage.",
     icon: "Globe",
   },
+  daily_objects: {
+    title: "Daily Objects & Household Essentials",
+    description: "Everyday personal items, home living objects, tools, and kitchenware.",
+    icon: "House",
+  },
   food_gastronomy: {
     title: "Food & Gastronomy",
     description: "Culinary traditions, global cuisine, pastries, ingredients, and street food.",
@@ -26,6 +31,11 @@ export const CANONICAL_DOMAIN_META: Record<string, { title: string; description:
     title: "Human Body & Biology",
     description: "Anatomy, biological systems, senses, organs, and physiology.",
     icon: "Heart",
+  },
+  music_instruments_gear: {
+    title: "Music Instruments & Audio Gear",
+    description: "Acoustic and electric instruments, studio hardware, sound engineering, and gear.",
+    icon: "Music",
   },
   mythology_creatures: {
     title: "Mythology & Creatures",
@@ -37,15 +47,30 @@ export const CANONICAL_DOMAIN_META: Record<string, { title: string; description:
     description: "Wildlife, animal superpowers, marine ecosystems, and biodiversity.",
     icon: "PawPrint",
   },
+  places_facilities: {
+    title: "Places & Facilities",
+    description: "Urban infrastructure, historic sites, architectural wonders, and civic spaces.",
+    icon: "Building",
+  },
   pop_culture_classics: {
     title: "Pop Culture & Classics",
     description: "Cinema legends, animation, gaming icons, classic literature, and art.",
     icon: "Film",
   },
+  school_learning: {
+    title: "School & Learning",
+    description: "Classroom tools, educational science, foundational learning, and academic concepts.",
+    icon: "GraduationCap",
+  },
   space_earth: {
     title: "Space & Earth",
     description: "Cosmic wonders, astronomy, planetary science, and natural phenomena.",
     icon: "Compass",
+  },
+  sports_games: {
+    title: "Sports & Games",
+    description: "Athletic sports, board games, tabletop challenges, and competitive play.",
+    icon: "Trophy",
   },
   vehicles_technology: {
     title: "Vehicles & Technology",

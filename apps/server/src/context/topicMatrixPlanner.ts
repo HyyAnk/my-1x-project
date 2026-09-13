@@ -98,6 +98,15 @@ export const ARCHETYPE_SLOT_DEFINITIONS = [
     contentKind: "short_reel" as const,
     description: "Deep Trivia Short-Reel (9:16 vertical, 1 question)",
   },
+  {
+    slot: 6,
+    name: "Versus Clash (Short-Reel)",
+    archetype: "versus_faceoff" as const,
+    suggestedLayout: "split_versus_two" as const,
+    quizFormat: "multiple_choice" as const,
+    contentKind: "short_reel" as const,
+    description: "High-stakes 1v1 Face-off Short-Reel (9:16 vertical, 1 question)",
+  },
 ] as const;
 
 export type TopicMatrixSlotArchetype = (typeof ARCHETYPE_SLOT_DEFINITIONS)[number]["archetype"];
@@ -125,7 +134,8 @@ export interface TopicMatrixPlan {
   aspectRatio?: "16:9";
 }
 
-const KEYWORD_SYNONYMS: Record<string, string[]> = {
+export const KEYWORD_SYNONYMS: Record<string, string[]> = {
+  anime_manga: ["anime", "manga", "anime legends", "animation", "otaku", "shonen", "ghibli"],
   careers_occupations: [
     "career",
     "careers",
@@ -155,7 +165,10 @@ const KEYWORD_SYNONYMS: Record<string, string[]> = {
     "capital",
   ],
   food_gastronomy: ["food", "dish", "dishes", "culinary", "cuisine", "cooking", "pastry", "ingredients"],
+  gaming_esports: ["gaming", "esports", "video games", "game", "games", "gamer", "rpg", "nintendo", "playstation"],
+  global_brands: ["brand", "brands", "company", "logo", "corporate", "tech giant", "iconic"],
   human_body: ["body", "anatomy", "biology", "health", "senses", "organs", "physiology"],
+  modern_cinema_tv: ["cinema", "movie", "movies", "tv", "series", "hollywood", "superhero", "film"],
   mythology_creatures: ["myth", "mythology", "creature", "creatures", "legend", "folklore", "god", "gods", "monster", "monsters"],
   nature_animals: ["animal", "animals", "wildlife", "nature", "creature", "creatures", "pet", "pets", "safari", "biodiversity"],
   pop_culture_classics: ["pop", "culture", "cinema", "movie", "movies", "animation", "anime", "gaming", "game", "games", "art"],
@@ -254,7 +267,7 @@ export function planTopicSuggestionMatrix(options: {
   const availableDomains = extractNormalizedDomains(taxonomy, index);
   const trimmedHint = topicHint?.trim();
 
-  let selectedFive: Array<{ id: string; title: string; description: string }> = [];
+  let selectedSix: Array<{ id: string; title: string; description: string }> = [];
 
   if (trimmedHint) {
     const hintTokens = normalizeString(trimmedHint).split(/\s+/).filter(Boolean);
@@ -278,14 +291,22 @@ export function planTopicSuggestionMatrix(options: {
     // Slot 3 (idx 2): Episode, discovery
     // Slot 4 (idx 3): Short-Reel, keyword-directed
     // Slot 5 (idx 4): Short-Reel, discovery
-    selectedFive = [steeredDomains[0], remainingDomains[0], remainingDomains[1], steeredDomains[1], remainingDomains[2]];
+    // Slot 6 (idx 5): Short-Reel, discovery
+    selectedSix = [
+      steeredDomains[0],
+      remainingDomains[0],
+      remainingDomains[1],
+      steeredDomains[1],
+      remainingDomains[2],
+      remainingDomains[3] || CANONICAL_FALLBACK_DOMAINS[5],
+    ];
   } else {
     const sorted = [...availableDomains].sort((a, b) => b.score - a.score);
-    selectedFive = sorted.slice(0, 5);
+    selectedSix = sorted.slice(0, 6);
   }
 
   const slots: TopicMatrixSlotPlan[] = slotDefinitions.map((def, idx) => {
-    const assignedDomain = selectedFive[idx] || CANONICAL_FALLBACK_DOMAINS[idx];
+    const assignedDomain = selectedSix[idx] || CANONICAL_FALLBACK_DOMAINS[idx];
     const isKeySteered = Boolean(trimmedHint && (idx === 0 || idx === 3));
     const contentKind: "episode" | "short_reel" = idx >= 3 ? "short_reel" : "episode";
     return {
@@ -320,11 +341,11 @@ export function formatTopicMatrixPrompt(
 } {
   void aspectRatio;
   const trimmedHint = topicHint?.trim();
-  const [slot1, slot2, slot3, slot4, slot5] = plan.slots;
+  const [slot1, slot2, slot3, slot4, slot5, slot6] = plan.slots;
 
   let hintGuidance = "";
   if (trimmedHint) {
-    hintGuidance = `\nIMPORTANT TOPIC THEME REQUIREMENT: The user specifically requested ideas relating to "${trimmedHint}". Exactly 2 candidates MUST be directly inspired by, focused on, or explore specific creative angles of "${trimmedHint}" (include "theme_hint": "${trimmedHint}" in those 2 JSON objects). Slot 1 (Episode) is steered to domain "${slot1.domainId}" (${slot1.domainTitle}) and Slot 4 (Short-Reel) is steered to domain "${slot4.domainId}" (${slot4.domainTitle}). The remaining 3 candidates should be diverse, creative discovery topics aligned with the overall channel DNA, sourced from 3 different domains ("${slot2.domainId}", "${slot3.domainId}", "${slot5.domainId}"), and MUST NOT reuse the keyword.`;
+    hintGuidance = `\nIMPORTANT TOPIC THEME REQUIREMENT: The user specifically requested ideas relating to "${trimmedHint}". Exactly 2 candidates MUST be directly inspired by, focused on, or explore specific creative angles of "${trimmedHint}" (include "theme_hint": "${trimmedHint}" in those 2 JSON objects). Slot 1 (Episode) is steered to domain "${slot1.domainId}" (${slot1.domainTitle}) and Slot 4 (Short-Reel) is steered to domain "${slot4.domainId}" (${slot4.domainTitle}). The remaining 4 candidates should be diverse, creative discovery topics aligned with the overall channel DNA, sourced from 4 different domains ("${slot2.domainId}", "${slot3.domainId}", "${slot5.domainId}", "${slot6.domainId}"), and MUST NOT reuse the keyword.`;
   }
 
   const blueprintGuidance = `\nGAMEPLAY ARCHETYPE BLUEPRINTS FOR DIVERSITY:
@@ -332,9 +353,10 @@ export function formatTopicMatrixPrompt(
 - Slot 2 (Episode - Mystery Reveal): ${slot2.description} (domain_id: "${slot2.domainId}", content_kind: "episode", quiz_format: "image_guess", archetype: "mystery_reveal", suggested_layout: "mystery_reveal").
 - Slot 3 (Episode - True or False): ${slot3.description} (domain_id: "${slot3.domainId}", content_kind: "episode", quiz_format: "true_false", archetype: "verdict_true_false", suggested_layout: "verdict_true_false").
 - Slot 4 (Short-Reel - Versus Face-off): ${slot4.description} (domain_id: "${slot4.domainId}", content_kind: "short_reel", archetype: "versus_faceoff", question_count: 1, aspect_ratio: "9:16").
-- Slot 5 (Short-Reel - Deep Trivia): ${slot5.description} (domain_id: "${slot5.domainId}", content_kind: "short_reel", archetype: "deep_trivia", question_count: 1, aspect_ratio: "9:16").`;
+- Slot 5 (Short-Reel - Deep Trivia): ${slot5.description} (domain_id: "${slot5.domainId}", content_kind: "short_reel", archetype: "deep_trivia", question_count: 1, aspect_ratio: "9:16").
+- Slot 6 (Short-Reel - Versus Clash): ${slot6.description} (domain_id: "${slot6.domainId}", content_kind: "short_reel", archetype: "versus_faceoff", question_count: 1, aspect_ratio: "9:16").`;
 
-  const outputContract = `Return exactly 5 JSON candidates: Slots 1-3 are Episode concepts (content_kind: "episode", 3-10 questions, landscape layout), Slots 4-5 are Short-Reel concepts (content_kind: "short_reel", question_count: 1, 9:16 vertical, archetype "versus_faceoff" or "deep_trivia"). Each candidate must have title, premise, why_it_fits, hook, estimated_potential, domain_id, and content_kind.${blueprintGuidance}${hintGuidance} Do not research or develop them further.`;
+  const outputContract = `Return exactly 6 JSON candidates: Slots 1-3 are Episode concepts (content_kind: "episode", 3-10 questions, landscape layout), Slots 4-6 are Short-Reel concepts (content_kind: "short_reel", question_count: 1, 9:16 vertical, archetype "versus_faceoff" or "deep_trivia"). Each candidate must have title, premise, why_it_fits, hook, estimated_potential, domain_id, and content_kind.${blueprintGuidance}${hintGuidance} Do not research or develop them further.`;
 
   return {
     hintGuidance,

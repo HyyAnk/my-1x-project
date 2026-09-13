@@ -40,6 +40,7 @@ import { renderQuizLayoutBody } from "../layouts/registry.js";
 import { isUnifiedQuizFrame, renderQuizPhaseSlots } from "../frame/renderQuizFrameBody.js";
 import { renderCandyRaysDecorations } from "../../visual/elements/background/variants/candyRays.js";
 import type { QuizSceneTiming } from "../scene/quizScene.types.js";
+import { calculateThinkingBarTiming } from "../../visual/elements/thinkingBar/types.js";
 
 export type SubComposition = {
   id: string;
@@ -360,6 +361,10 @@ export function styleAttributes(
   clipEnd: number,
 ): string {
   const paletteInline = serializeQuizPaletteInlineStyle(visual.palette);
-  const timerDuration = Math.max(0.04, revealStart - clipStart);
-  return `style="${paletteInline}--question-size:${layout.fontSize}px;--question-leading:${layout.lineHeight};--clip-start:${clipStart.toFixed(3)}s;--scene-duration:${Math.max(0.04, clipEnd - clipStart).toFixed(3)}s;--choices-at:${Math.max(0, choicesStart - clipStart).toFixed(3)}s;--thinking-at:${Math.max(0, thinkingStart - clipStart).toFixed(3)}s;--reveal-at:${Math.max(0, revealStart - clipStart).toFixed(3)}s;--reward-at:${Math.max(0, rewardStart - clipStart).toFixed(3)}s;--choices-duration:${Math.max(0.04, revealStart - choicesStart).toFixed(3)}s;--timer-duration:${timerDuration.toFixed(3)}s;--reveal-duration:${Math.max(0.04, rewardStart - revealStart).toFixed(3)}s;--ambient-phase:${ambientPhaseSeconds("drift", 0, String(clipStart))}s"`;
+  const thinkingTiming = calculateThinkingBarTiming({
+    clipStart,
+    revealStart,
+    thinkingStart,
+  });
+  return `style="${paletteInline}--question-size:${layout.fontSize}px;--question-leading:${layout.lineHeight};--clip-start:${clipStart.toFixed(3)}s;--timer-start:${thinkingTiming.timerStart.toFixed(3)}s;--scene-duration:${Math.max(0.04, clipEnd - clipStart).toFixed(3)}s;--choices-at:${Math.max(0, choicesStart - clipStart).toFixed(3)}s;--thinking-at:${Math.max(0, thinkingStart - clipStart).toFixed(3)}s;--reveal-at:${Math.max(0, revealStart - clipStart).toFixed(3)}s;--reward-at:${Math.max(0, rewardStart - clipStart).toFixed(3)}s;--choices-duration:${Math.max(0.04, revealStart - choicesStart).toFixed(3)}s;--timer-duration:${thinkingTiming.duration.toFixed(3)}s;--query-hold-duration:${thinkingTiming.queryHoldDuration.toFixed(3)}s;--reveal-duration:${Math.max(0.04, rewardStart - revealStart).toFixed(3)}s;--ambient-phase:${ambientPhaseSeconds("drift", 0, String(clipStart))}s"`;
 }

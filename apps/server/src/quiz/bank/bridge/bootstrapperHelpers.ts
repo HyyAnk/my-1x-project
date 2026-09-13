@@ -11,10 +11,12 @@ import {
   type Episode,
   type QuizImageStyle,
   type QuizLayoutId,
+  type Scene,
   type Task,
 } from "@studio/shared";
 import type { RepositoryService } from "../../../repository.js";
 import type { TaskManager } from "../../../tasks.js";
+import { serializeDialogue, serializePrompts, serializeScenes } from "../../../repository/sceneCodec.js";
 
 /**
  * Resolves the effective visual style pair for an episode: the caller-requested style
@@ -125,6 +127,7 @@ export function buildEpisodeMarkdownStubs(meta: {
   hook: string;
   premise: string;
   isTopic?: boolean;
+  scenes?: Scene[];
 }): Record<string, string> {
   const dossier = meta.isTopic ? "Research has not started.\n" : "Question Bank direct build.\n";
   const treatment = meta.isTopic ? "Treatment has not started.\n" : "Question Bank direct build.\n";
@@ -132,15 +135,16 @@ export function buildEpisodeMarkdownStubs(meta: {
   const brief = meta.isTopic
     ? `# ${meta.title}\n\n## Premise\n\n${meta.premise}\n\n## Hook\n\n${meta.hook}\n`
     : `# ${meta.title}\n\n## Question\n${meta.hook}\n\n## Answer\n${meta.premise}\n`;
+  const hasScenes = meta.scenes && meta.scenes.length > 0;
   return {
     "brief.md": brief,
     "research.md": `# Research Dossier\n\n${dossier}`,
     "treatment.md": `# Treatment\n\n${treatment}`,
     "script.md": script,
     "visual_bible.md": "# Episode Visual Bible\n\nVisual development has not started.\n",
-    "scene_plan.md": `# Scene Plan\n\n${meta.isTopic ? "Scene breakdown has not started.\n" : ""}`,
-    "dialogue_script.md": "# Dialogue Script\n\n",
-    "video_prompts.md": "# Video Prompts\n\n",
+    "scene_plan.md": hasScenes ? serializeScenes(meta.scenes!) : `# Scene Plan\n\n${meta.isTopic ? "Scene breakdown has not started.\n" : ""}`,
+    "dialogue_script.md": hasScenes ? serializeDialogue(meta.scenes!) : "# Dialogue Script\n\n",
+    "video_prompts.md": hasScenes ? serializePrompts(meta.scenes!) : "# Video Prompts\n\n",
   };
 }
 
@@ -175,7 +179,7 @@ export async function createEpisodeDirectoryStructure(episodeDirectory: string):
 export async function writeEpisodeMarkdownStubs(
   repository: RepositoryService,
   episodeDir: string,
-  meta: { title: string; hook: string; premise: string; isTopic?: boolean },
+  meta: { title: string; hook: string; premise: string; isTopic?: boolean; scenes?: Scene[] },
 ): Promise<void> {
   const stubs = buildEpisodeMarkdownStubs(meta);
   await repository.writeTextAtomic(path.join(episodeDir, "brief.md"), stubs["brief.md"]);

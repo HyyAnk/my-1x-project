@@ -14,6 +14,7 @@ import {
   getThinkingBarsCss,
 } from "../src/quiz/visual/elements/index.js";
 import { energyLaserVariant } from "../src/quiz/visual/elements/thinkingBar/variants/energyLaser.js";
+import { emberTrailVariant } from "../src/quiz/visual/elements/thinkingBar/variants/emberTrail.js";
 import { THINKING_BAR_VARIANTS } from "../src/quiz/visual/elements/thinkingBar/registry.js";
 import {
   BUILT_IN_STYLE_MODULES,
@@ -53,6 +54,17 @@ describe("runtime visual style catalog", () => {
 
     expect(entry?.id).toBe("energy_laser");
     expect(THINKING_BAR_VARIANTS.energy_laser).toBe(energyLaserVariant);
+  });
+
+  it("keeps Ember Trail visually balanced with the larger thinking bar markers", () => {
+    const css = emberTrailVariant.renderCss();
+    const html = emberTrailVariant.renderHtml({ clipStart: 0, revealStart: 12 });
+
+    expect(css).toMatch(/\.ember-trail-track\s*\{[\s\S]*?height:\s*82px/);
+    expect(css).toMatch(/\.ember-trail-bed\s*\{[\s\S]*?height:\s*34px/);
+    expect(css).toMatch(/\.ember-trail-marker\s*\{[\s\S]*?width:\s*clamp\(164px,\s*12vw,\s*190px\)/);
+    expect(css).toContain(".ember-trail-heatline");
+    expect(html).toContain("ember-trail-heatline");
   });
 
   it("aggregates CSS from every catalog module without dropping a slot", () => {

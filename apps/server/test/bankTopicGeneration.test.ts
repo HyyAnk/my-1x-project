@@ -139,8 +139,17 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
           subtopic_id: "electric_cars",
         }),
       ];
+      // 1 versus_faceoff for slot 6 (Short-Reel)
+      const slot6Questions = [
+        makeQuestion({
+          id: "vf_reel_2",
+          archetype_id: "versus_faceoff",
+          domain_id: "countries_nations",
+          subtopic_id: "landmarks",
+        }),
+      ];
 
-      const allQuestions = [...slot1Questions, ...slot2Questions, ...slot3Questions, ...slot4Questions, ...slot5Questions];
+      const allQuestions = [...slot1Questions, ...slot2Questions, ...slot3Questions, ...slot4Questions, ...slot5Questions, ...slot6Questions];
 
       const result = allocateSourceBackedTopicSlots({
         questions: allQuestions,
@@ -149,7 +158,7 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       });
 
       expect(result.scanStatus).toBe("complete_nonempty");
-      expect(result.allocatedSlots).toHaveLength(5);
+      expect(result.allocatedSlots).toHaveLength(6);
       expect(result.shortages).toHaveLength(0);
 
       // Verify slots 1, 2, 3 are episodes
@@ -165,7 +174,7 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       expect(result.allocatedSlots[2].contentKind).toBe("episode");
       expect(result.allocatedSlots[2].allocatedQuestions).toHaveLength(8);
 
-      // Verify slots 4, 5 are short reels
+      // Verify slots 4, 5, 6 are short reels
       expect(result.allocatedSlots[3].slot).toBe(4);
       expect(result.allocatedSlots[3].contentKind).toBe("short_reel");
       expect(result.allocatedSlots[3].allocatedQuestions).toHaveLength(1);
@@ -174,13 +183,18 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       expect(result.allocatedSlots[4].contentKind).toBe("short_reel");
       expect(result.allocatedSlots[4].allocatedQuestions).toHaveLength(1);
 
-      // Verify no repeated source ID across kinds and slots (globally disjoint)
+      expect(result.allocatedSlots[5].slot).toBe(6);
+      expect(result.allocatedSlots[5].contentKind).toBe("short_reel");
+      expect(result.allocatedSlots[5].allocatedQuestions).toHaveLength(1);
+
+      // Verify all question IDs are distinct across allocations
       const allAllocatedIds = result.allocatedSlots.flatMap((s) => s.allocatedQuestions.map((q) => q.question.id));
-      expect(new Set(allAllocatedIds).size).toBe(26); // 8 + 8 + 8 + 1 + 1 = 26
+      expect(new Set(allAllocatedIds).size).toBe(allAllocatedIds.length);
+      expect(allAllocatedIds).toHaveLength(8 * 3 + 1 * 3);
     });
 
     it("stable Episode slots 1/2/3 and Reel slots 4/5 survive holes; steered allocation has priority", () => {
-      // Provide questions for Slot 1 (8), Slot 3 (8), Slot 4 (1), Slot 5 (1), but ZERO for Slot 2 (mystery_reveal)
+      // Provide questions for Slot 1 (8), Slot 3 (8), Slot 4 (1), Slot 5 (1), Slot 6 (1), but ZERO for Slot 2 (mystery_reveal)
       const slot1Questions = Array.from({ length: 8 }, (_, i) =>
         makeQuestion({ id: `dt_ep_${i + 1}`, archetype_id: "deep_trivia", domain_id: "space_earth" }),
       );
@@ -194,18 +208,19 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       );
       const slot4Questions = [makeQuestion({ id: "vf_reel_1", archetype_id: "versus_faceoff", domain_id: "space_earth" })];
       const slot5Questions = [makeQuestion({ id: "dt_reel_1", archetype_id: "deep_trivia", domain_id: "nature_animals" })];
+      const slot6Questions = [makeQuestion({ id: "vf_reel_2", archetype_id: "versus_faceoff", domain_id: "nature_animals" })];
 
       const result = allocateSourceBackedTopicSlots({
-        questions: [...slot1Questions, ...slot3Questions, ...slot4Questions, ...slot5Questions],
+        questions: [...slot1Questions, ...slot3Questions, ...slot4Questions, ...slot5Questions, ...slot6Questions],
         scanStatus: "complete_nonempty",
         channelId: "channel_1",
         topicHint: "space",
       });
 
-      // Survives hole at slot 2: exactly 4 allocated slots, 1 shortage
-      expect(result.allocatedSlots).toHaveLength(4);
+      // Survives hole at slot 2: exactly 5 allocated slots, 1 shortage
+      expect(result.allocatedSlots).toHaveLength(5);
       const allocatedSlotNumbers = result.allocatedSlots.map((s) => s.slot);
-      expect(allocatedSlotNumbers).toEqual([1, 3, 4, 5]);
+      expect(allocatedSlotNumbers).toEqual([1, 3, 4, 5, 6]);
 
       expect(result.shortages).toHaveLength(1);
       expect(result.shortages[0].slot_id).toBe("slot_2");
@@ -225,7 +240,7 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
       });
       expect(scarceResult.allocatedSlots).toHaveLength(1);
       expect(scarceResult.allocatedSlots[0].slot).toBe(5); // deep_trivia reel slot
-      expect(scarceResult.shortages).toHaveLength(4);
+      expect(scarceResult.shortages).toHaveLength(5);
 
       // 2. Complete empty (0 questions)
       const emptyResult = allocateSourceBackedTopicSlots({
@@ -234,7 +249,7 @@ describe("Stage 3: Source-Backed Topic Allocation and Generation", () => {
         channelId: "channel_1",
       });
       expect(emptyResult.allocatedSlots).toHaveLength(0);
-      expect(emptyResult.shortages).toHaveLength(5);
+      expect(emptyResult.shortages).toHaveLength(6);
       expect(emptyResult.shortages.every((s) => s.reason_code === "NO_ELIGIBLE_SOURCES")).toBe(true);
 
       // 3. Incomplete / unavailable scan is a failure (throws)

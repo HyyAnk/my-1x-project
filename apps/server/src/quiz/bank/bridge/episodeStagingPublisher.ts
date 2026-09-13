@@ -3,6 +3,7 @@ import path from "node:path";
 import type { DirectorPlan, Episode, EpisodeTopicCandidate, QuizV2 } from "@studio/shared";
 import type { RepositoryService } from "../../../repository.js";
 import { writeEpisodeMarkdownStubs } from "./bootstrapperHelpers.js";
+import { synthesizeScenesFromQuiz } from "../../domain/quizArtifactSynthesizer.js";
 
 /**
  * Moves a staged episode directory to its final location.
@@ -77,7 +78,8 @@ export async function stageAndPublishSingleQuestionEpisodeFiles(
     await repository.writeJsonAtomic(path.join(stagingDir, "quiz", "quiz-v2.json"), quiz);
     await repository.writeJsonAtomic(path.join(stagingDir, "quiz", "director-plan.json"), directorPlan);
     await repository.writeJsonAtomic(path.join(stagingDir, "localization.json"), localizationArtifact);
-    await writeEpisodeMarkdownStubs(repository, stagingDir, { title, hook, premise });
+    const synthesizedScenes = synthesizeScenesFromQuiz(quiz);
+    await writeEpisodeMarkdownStubs(repository, stagingDir, { title, hook, premise, scenes: synthesizedScenes });
 
     const finalEpisodeDir = path.join(parentDir, episodeSlug);
     await publishStagedEpisode(stagingDir, finalEpisodeDir);
@@ -130,11 +132,13 @@ export async function stageAndPublishTopicEpisodeFiles(
     await repository.writeJsonAtomic(path.join(stagingDir, "quiz", "director-plan.json"), directorPlan);
     await repository.writeJsonAtomic(path.join(stagingDir, "localization.json"), localizationArtifact);
     await repository.writeTextAtomic(path.join(stagingDir, "sources.md"), sourcesContent);
+    const synthesizedScenes = synthesizeScenesFromQuiz(quiz);
     await writeEpisodeMarkdownStubs(repository, stagingDir, {
       title: topic.title,
       hook: topic.hook,
       premise: topic.premise,
       isTopic: true,
+      scenes: synthesizedScenes,
     });
 
     const finalEpisodeDir = path.join(parentDir, episodeSlug);
